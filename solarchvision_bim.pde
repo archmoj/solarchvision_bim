@@ -14,7 +14,7 @@ void setup()
 
 float X_coordinate = 0.5 * X_View;
 float Y_coordinate = 0.5 * Y_View;
-float Z_coordinate = -100;
+float Z_coordinate = -200;
 float S_coordinate = 5.0;
 
 float RX_coordinate = 0;
@@ -64,10 +64,19 @@ class SOLARCHVISION_SunPath {
     
     for (int i = 0; i < 360; i = i + 90){
       pushMatrix();
-      translate(90 * cos(i * PI/180),90 * sin (i * PI/180),0);
-      box(10, 10, 10);
+      translate(100 * cos(i * PI/180),100 * sin (i * PI/180),0);
+      rotateZ(PI);
+      //box(10, 10, 10);
+      
+      fill(0);
+      textSize(s_SunPath * 0.1);
+      textAlign(CENTER, CENTER);
+      text(String.valueOf(((i - 90) % 360)), 0,0,0);
       popMatrix();
     }    
+    
+    
+ 
   } 
 } 
 
