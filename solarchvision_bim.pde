@@ -1,5 +1,20 @@
-SOLARCHVISION_SunPath SunPath1 = new SOLARCHVISION_SunPath(0,0,0,90,45); 
+SOLARCHVISION_SunPath SunPath1 = new SOLARCHVISION_SunPath(); 
 
+String StationName = ""; 
+float StationLatitude = 0;
+float StationLongitude = 0;
+float Delta_NOON = 0;
+float StationElevation = 0;
+
+float[][][] EPW;
+
+int _drybulb = 0;
+int _relhum = 1;
+int _glohorrad = 2;
+int _dirnorrad = 3;
+int _difhorrad = 4;
+int _winddir = 5;
+int _windspd = 6;
 
 int X_View = 500;
 int Y_View = 500;
@@ -9,7 +24,11 @@ void setup()
   size(X_View, Y_View, P3D);
   frameRate(30);
   
-  //noLoop();
+  
+
+  LoadEPW("USA_NV_Las.Vegas-McCarran.Intl.AP.723860_TMY3.epw");
+  
+  noLoop();
 }
 
 float X_coordinate = 0.5 * X_View;
@@ -44,21 +63,22 @@ void draw() {
   fill(255);
   box(10, 10, 10);
   
-  SunPath1.update(); 
+  SunPath1.update(0,0,0,90,StationLatitude); 
 
 } 
  
 class SOLARCHVISION_SunPath { 
   float x_SunPath, y_SunPath, z_SunPath, s_SunPath;
   float StationLatitude; 
-  SOLARCHVISION_SunPath (float x, float y, float z, float s, float l) {  
+  SOLARCHVISION_SunPath () {  
+  } 
+  void update(float x, float y, float z, float s, float l) {
     x_SunPath = x; 
     y_SunPath = y;
     z_SunPath = z;
     s_SunPath = s; 
-    StationLatitude = l;
-  } 
-  void update() { 
+    StationLatitude = l;   
+    
     pushMatrix();
     translate(x_SunPath, y_SunPath, z_SunPath);
     
@@ -66,7 +86,7 @@ class SOLARCHVISION_SunPath {
     line(0, -0.1 * s_SunPath, 0, 0, 0.1 * s_SunPath, 0);
     /*
     for (int DATE = 90; DATE <= 270; DATE += 30){
-      float HOUR_step = (DayTime (StationLatitude, DATE) / 120.0);
+      float HOUR_step = (DayTime (StationLatitude, DATE) / 18.0);
       for (float HOUR = Sunrise(StationLatitude, DATE); HOUR < (Sunset(StationLatitude, DATE) + .01); HOUR += HOUR_step) {
         float[] Sun = SunPosition (StationLatitude, DATE, HOUR);
         point (s_SunPath * Sun[1], s_SunPath * Sun[2], s_SunPath * Sun[3]);
@@ -74,9 +94,20 @@ class SOLARCHVISION_SunPath {
     }
     */
     
+    stroke(255,255,0);
     
     for (int DATE = 90; DATE <= 270; DATE += 30){
-      float HOUR_step = (DayTime (StationLatitude, DATE) / 120.0);
+      float HOUR_step = 1;
+      for (float HOUR = max((int(Sunrise(StationLatitude, DATE))), (Sunrise(StationLatitude, DATE))); HOUR < (Sunset(StationLatitude, DATE) + .01); HOUR += HOUR_step) {
+        float[] Sun = SunPosition (StationLatitude, DATE, HOUR);
+        line (s_SunPath * Sun[1], s_SunPath * Sun[2], s_SunPath * Sun[3], 0.25 * s_SunPath * Sun[1], 0.25 * s_SunPath * Sun[2], 0.25 * s_SunPath * Sun[3]);
+      }
+    }
+    
+    stroke(0);
+    
+    for (int DATE = 90; DATE <= 270; DATE += 30){
+      float HOUR_step = (DayTime (StationLatitude, DATE) / 72.0);
       for (float HOUR = Sunrise(StationLatitude, DATE); HOUR < (Sunset(StationLatitude, DATE) + .01 - HOUR_step); HOUR += HOUR_step){
         float[] SunA = SunPosition (StationLatitude, DATE, HOUR);
         float[] SunB = SunPosition (StationLatitude, DATE, (HOUR + HOUR_step));
@@ -224,5 +255,73 @@ float DayTime (float StationLatitude, float DATE) {
 }
 
 
+
+void LoadEPW (String FileName) {
+  BufferedReader FileSTR = createReader(FileName);
+  String lineSTR;
+  String[] input;
+  
+  EPW = new float [24][365][7];
+
+  try {
+    lineSTR = FileSTR.readLine();
+
+    input = split(lineSTR, ',');
+    for (int i = 0; i < input.length; i = i + 1){
+      //println (input[i]);
+    }
+    StationName = input[1];
+    StationLatitude = float(input[6]);
+    StationLongitude = - float(input[7]);
+    Delta_NOON = float(input[8]) + StationLongitude / 15.0;
+    StationElevation = float(input[9]);
+    
+    println(StationName); 
+    println(StationLatitude);
+    println(StationLongitude);
+    println(Delta_NOON);
+    println(StationElevation);
+    
+    int _OK = 1;
+    while (_OK == 1){
+      lineSTR = FileSTR.readLine();
+
+      input = split(lineSTR, ',');
+      
+      if (input[0].equals("DATA PERIODS")) {
+        _OK = 0;
+      }
+    }
+    
+
+    
+    for (int k = 1; k < 365; k += 1){
+      for (int i = 1; i < 24; i += 1){
+        lineSTR = FileSTR.readLine();
+        
+        input = split(lineSTR, ',');
+        
+        EPW[i][k][_drybulb] = float(input[6]);
+        EPW[i][k][_relhum] = float(input[8]);
+        EPW[i][k][_glohorrad] = float(input[13]);
+        EPW[i][k][_dirnorrad] = float(input[14]);
+        EPW[i][k][_difhorrad] = float(input[15]);
+        EPW[i][k][_winddir] = float(input[20]);
+        if (EPW[i][k][_winddir] < 45) {
+          EPW[i][k][_winddir] += 360;
+        }
+        EPW[i][k][_windspd] = float(input[21]);
+
+      }
+    }
+     
+    println ("Climate Created Successfully.");
+  }
+  
+  catch (IOException e) {
+    println("Unable to read the whole file!");  
+  }
+
+}
 
 
