@@ -14,15 +14,15 @@ void setup()
 
 float X_coordinate = 0.5 * X_View;
 float Y_coordinate = 0.5 * Y_View;
-float Z_coordinate = 120;
+float Z_coordinate = 350;
 float S_coordinate = 5.0;
 
 float RX_coordinate = 75;
 float RY_coordinate = 0;
-float RZ_coordinate = 135;
+float RZ_coordinate = -45;
 float RS_coordinate = 5.0;
 
-float ZOOM_coordinate = 45.0;
+float ZOOM_coordinate = 90.0;
 
 
 void draw() { 
@@ -64,12 +64,36 @@ class SOLARCHVISION_SunPath {
     
     line(-0.1 * s_SunPath, 0, 0, 0.1 * s_SunPath, 0, 0); 
     line(0, -0.1 * s_SunPath, 0, 0, 0.1 * s_SunPath, 0);
-    
+    /*
     for (int DATE = 90; DATE <= 270; DATE += 30){
-      for (float HOUR = Sunrise(StationLatitude, DATE); HOUR < (Sunset(StationLatitude, DATE) + .01); HOUR += (DayTime (StationLatitude, DATE) / 120.0)) {
-      //for (float HOUR = 6.0; HOUR < 18.001; HOUR += 0.25){
+      float HOUR_step = (DayTime (StationLatitude, DATE) / 120.0);
+      for (float HOUR = Sunrise(StationLatitude, DATE); HOUR < (Sunset(StationLatitude, DATE) + .01); HOUR += HOUR_step) {
         float[] Sun = SunPosition (StationLatitude, DATE, HOUR);
         point (s_SunPath * Sun[1], s_SunPath * Sun[2], s_SunPath * Sun[3]);
+      }
+    }
+    */
+    
+    
+    for (int DATE = 90; DATE <= 270; DATE += 30){
+      float HOUR_step = (DayTime (StationLatitude, DATE) / 120.0);
+      for (float HOUR = Sunrise(StationLatitude, DATE); HOUR < (Sunset(StationLatitude, DATE) + .01 - HOUR_step); HOUR += HOUR_step){
+        float[] SunA = SunPosition (StationLatitude, DATE, HOUR);
+        float[] SunB = SunPosition (StationLatitude, DATE, (HOUR + HOUR_step));
+        line (s_SunPath * SunA[1], s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], s_SunPath * SunB[2], s_SunPath * SunB[3]);
+      }
+    }
+    
+    float min_sunrise = int(min(Sunrise(StationLatitude, 90), Sunrise(StationLatitude, 270))); 
+    float max_sunset = int(max(Sunset(StationLatitude, 90), Sunset(StationLatitude, 270)));
+    for (float HOUR = min_sunrise; HOUR < max_sunset + .01; HOUR += 1){
+      float DATE_step = 1;
+      for (int DATE = 90; DATE <= 270; DATE += DATE_step){
+        float[] SunA = SunPosition (StationLatitude, DATE, HOUR);
+        float[] SunB = SunPosition (StationLatitude, (DATE + DATE_step), HOUR);
+        if (SunA[3] >= 0 && SunB[3] >= 0) {
+          line (s_SunPath * SunA[1], s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], s_SunPath * SunB[2], s_SunPath * SunB[3]);
+        }
       }
     }
     
