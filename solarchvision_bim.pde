@@ -1,8 +1,8 @@
 SOLARCHVISION_SunPath SunPath1 = new SOLARCHVISION_SunPath(0,0,0,90,45); 
 
 
-int X_View = 400;
-int Y_View = 400;
+int X_View = 500;
+int Y_View = 500;
 
 void setup() 
 {
@@ -14,27 +14,35 @@ void setup()
 
 float X_coordinate = 0.5 * X_View;
 float Y_coordinate = 0.5 * Y_View;
-float Z_coordinate = -200;
+float Z_coordinate = 120;
 float S_coordinate = 5.0;
 
-float RX_coordinate = 0;
+float RX_coordinate = 75;
 float RY_coordinate = 0;
-float RZ_coordinate = 0;
+float RZ_coordinate = 135;
 float RS_coordinate = 5.0;
+
+float ZOOM_coordinate = 45.0;
 
 
 void draw() { 
   background(233);
   
+  
   //camera(10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
   //frustum(-10, 10, -10, 10, 0.001, 1000);
-  perspective(75,X_View/Y_View,0.001,1000);  //fovy, aspect, zNear, zFar
+  perspective(ZOOM_coordinate * PI/180,X_View/Y_View,0.001,1000);  //fovy, aspect, zNear, zFar
+  
+  lights();
   
   
   translate(X_coordinate, Y_coordinate, Z_coordinate);
   rotateX(RX_coordinate * PI/180);
   rotateY(RY_coordinate * PI/180);
   rotateZ(RZ_coordinate * PI/180);
+  
+  fill(255);
+  box(10, 10, 10);
   
   SunPath1.update(); 
 
@@ -51,8 +59,11 @@ class SOLARCHVISION_SunPath {
     StationLatitude = l;
   } 
   void update() { 
-    line(s_SunPath * (x_SunPath - 0.1), s_SunPath * y_SunPath, s_SunPath * z_SunPath, s_SunPath * (x_SunPath + 0.1), s_SunPath * y_SunPath, s_SunPath * z_SunPath); 
-    line(s_SunPath * x_SunPath, s_SunPath * (y_SunPath - 0.1), s_SunPath * z_SunPath, s_SunPath * x_SunPath, s_SunPath * (y_SunPath + 0.1), s_SunPath * z_SunPath);
+    pushMatrix();
+    translate(x_SunPath, y_SunPath, z_SunPath);
+    
+    line(-0.1 * s_SunPath, 0, 0, 0.1 * s_SunPath, 0, 0); 
+    line(0, -0.1 * s_SunPath, 0, 0, 0.1 * s_SunPath, 0);
     
     for (int DATE = 90; DATE <= 270; DATE += 30){
       for (float HOUR = Sunrise(StationLatitude, DATE); HOUR < (Sunset(StationLatitude, DATE) + .01); HOUR += (DayTime (StationLatitude, DATE) / 120.0)) {
@@ -62,11 +73,18 @@ class SOLARCHVISION_SunPath {
       }
     }
     
+    popMatrix();
+
+    stroke(0);
+    for (int i = 0; i < 360; i = i + 5){
+      line (s_SunPath * cos(i * PI/180), s_SunPath * sin(i * PI/180), 0, s_SunPath * cos((i + 5) * PI/180), s_SunPath * sin((i + 5) * PI/180), 0);  
+    }
+    
     for (int i = 0; i < 360; i = i + 90){
       pushMatrix();
-      translate(100 * cos(i * PI/180),100 * sin (i * PI/180),0);
+      translate(1.1 * s_SunPath * cos(i * PI/180),1.1 * s_SunPath * sin (i * PI/180),0);
       rotateZ(PI);
-      //box(10, 10, 10);
+      
       
       fill(0);
       textSize(s_SunPath * 0.1);
@@ -106,6 +124,9 @@ void keyPressed(){
       case ')' :RY_coordinate += RS_coordinate; break;
       case '[' :RZ_coordinate -= RS_coordinate; break;
       case ']' :RZ_coordinate += RS_coordinate; break;
+      
+      case ',' :ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * ZOOM_coordinate)); break;
+      case '.' :ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * ZOOM_coordinate)); break;
       
     }
 
