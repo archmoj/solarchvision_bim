@@ -16,8 +16,8 @@ int _difhorrad = 4;
 int _winddir = 5;
 int _windspd = 6;
 
-int X_View = 500;
-int Y_View = 500;
+int X_View = 1000;
+int Y_View = 1000;
 
 void setup() 
 {
@@ -28,12 +28,12 @@ void setup()
 
   LoadEPW("USA_NV_Las.Vegas-McCarran.Intl.AP.723860_TMY3.epw");
   
-  noLoop();
+  //noLoop();
 }
 
 float X_coordinate = 0.5 * X_View;
 float Y_coordinate = 0.5 * Y_View;
-float Z_coordinate = 350;
+float Z_coordinate = 700;
 float S_coordinate = 5.0;
 
 float RX_coordinate = 75;
@@ -62,6 +62,7 @@ void draw() {
   
   fill(255);
   box(10, 10, 10);
+  line (0,0,0,0,0,50);
   
   SunPath1.update(0,0,0,90,StationLatitude); 
 
@@ -77,14 +78,18 @@ class SOLARCHVISION_SunPath {
     y_SunPath = y;
     z_SunPath = z;
     s_SunPath = s; 
-    StationLatitude = l;   
+    StationLatitude = l;
+ 
+    float min_sunrise = int(min(Sunrise(StationLatitude, 90), Sunrise(StationLatitude, 270))); 
+    float max_sunset = int(max(Sunset(StationLatitude, 90), Sunset(StationLatitude, 270)));
+   
     
     pushMatrix();
     translate(x_SunPath, y_SunPath, z_SunPath);
     
     line(-0.1 * s_SunPath, 0, 0, 0.1 * s_SunPath, 0, 0); 
     line(0, -0.1 * s_SunPath, 0, 0, 0.1 * s_SunPath, 0);
-    /*
+/*
     for (int DATE = 90; DATE <= 270; DATE += 30){
       float HOUR_step = (DayTime (StationLatitude, DATE) / 18.0);
       for (float HOUR = Sunrise(StationLatitude, DATE); HOUR < (Sunset(StationLatitude, DATE) + .01); HOUR += HOUR_step) {
@@ -92,15 +97,37 @@ class SOLARCHVISION_SunPath {
         point (s_SunPath * Sun[1], s_SunPath * Sun[2], s_SunPath * Sun[3]);
       }
     }
-    */
+*/
+    
+    
     
     stroke(255,255,0);
     
-    for (int DATE = 90; DATE <= 270; DATE += 30){
-      float HOUR_step = 1;
-      for (float HOUR = max((int(Sunrise(StationLatitude, DATE))), (Sunrise(StationLatitude, DATE))); HOUR < (Sunset(StationLatitude, DATE) + .01); HOUR += HOUR_step) {
+    for (float HOUR = min_sunrise; HOUR < max_sunset + .01; HOUR += 1){
+      float DATE_step = 1;
+      for (int DATE = 90; DATE <= 270; DATE += DATE_step){
         float[] Sun = SunPosition (StationLatitude, DATE, HOUR);
-        line (s_SunPath * Sun[1], s_SunPath * Sun[2], s_SunPath * Sun[3], 0.25 * s_SunPath * Sun[1], 0.25 * s_SunPath * Sun[2], 0.25 * s_SunPath * Sun[3]);
+        
+        if (Sun[3] >= 0) {
+          float DIR_RAD1 = EPW[int(HOUR)][int(DATE)][_dirnorrad];
+          float NEED_SS1 = 21 - EPW[int(HOUR)][int(DATE)][_drybulb];
+          
+          float DIR_RAD2 = EPW[int(HOUR)][int((DATE + 180) % 360)][_dirnorrad];
+          float NEED_SS2 = 21 - EPW[int(HOUR)][int((DATE + 180) % 360)][_drybulb];
+          
+          float v = NEED_SS1;
+          if (abs(NEED_SS2) > abs(v)) {
+            v =  NEED_SS2;
+          }
+          
+          float[] COL = DRYWCBD(v * 0.1);
+  
+          //float _effect = (1 - 0.03 * abs(v));
+          float _effect = (1 - 0.03 * v);
+          
+          stroke(COL[1], COL[2], COL[3]);
+          line (s_SunPath * Sun[1], s_SunPath * Sun[2], s_SunPath * Sun[3], _effect * s_SunPath * Sun[1], _effect * s_SunPath * Sun[2], _effect * s_SunPath * Sun[3]);
+        }
       }
     }
     
@@ -115,8 +142,6 @@ class SOLARCHVISION_SunPath {
       }
     }
     
-    float min_sunrise = int(min(Sunrise(StationLatitude, 90), Sunrise(StationLatitude, 270))); 
-    float max_sunset = int(max(Sunset(StationLatitude, 90), Sunset(StationLatitude, 270)));
     for (float HOUR = min_sunrise; HOUR < max_sunset + .01; HOUR += 1){
       float DATE_step = 1;
       for (int DATE = 90; DATE <= 270; DATE += DATE_step){
@@ -227,7 +252,7 @@ float[] SunPosition (float StationLatitude ,float DATE, float HOUR) {
   float y = -(a * cos_ang(StationLatitude) + b * sin_ang(StationLatitude));
   float z =  -a * sin_ang(StationLatitude) + b * cos_ang(StationLatitude);
   
-  float[] return_array = {0, x, y, z}; 
+  float[] return_array = {0, -x, y, z}; //in processing because of start of coordinates from top left we need no make x axis negative! 
   return return_array; 
 }
 
@@ -323,5 +348,62 @@ void LoadEPW (String FileName) {
   }
 
 }
+
+
+float[] DRYWCBD (float _variable) {
+  _variable = atan_ang(_variable * 0.03);
+  //_variable *= 3;
+  
+  float v;
+  float[] COL = {255, 0, 0, 0};
+  if (_variable < -2.75) {
+    COL[1] = 63;
+    COL[2] = 0;
+    COL[3] = 0;
+  }
+  else if (_variable < -2) {
+    v = (-(_variable + 2) * 255);
+    COL[1] = 255 - v;
+    COL[2] = 0;
+    COL[3] = 0;
+  }
+  else if (_variable < -1) {
+    v = (-(_variable + 1) * 255);
+    COL[1] = 255;
+    COL[2] = 255 - v;
+    COL[3] = 0;
+  }
+  else if (_variable < 0) {
+    v = (-_variable * 255);
+    COL[1] = 255;
+    COL[2] = 255;
+    COL[3] = 255 - v;
+  }
+  else if (_variable < 1) {
+    v = (_variable * 255);
+    COL[1] = 255 - v;
+    COL[2] = 255;
+    COL[3] = 255;
+  }
+  else if (_variable < 2) {
+    v = ((_variable - 1) * 255);
+    COL[1] = 0;
+    COL[2] = 255 - v;
+    COL[3] = 255;
+  }
+  else if (_variable < 2.75) {
+    v = ((_variable - 2) * 255);
+    COL[1] = 0;
+    COL[2] = 0;
+    COL[3] = 255 - v;
+  }
+  else {
+    COL[1] = 0;
+    COL[2] = 0;
+    COL[3] = 63;
+  }
+  return COL;
+}
+
 
 
