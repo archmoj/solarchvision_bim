@@ -22,7 +22,7 @@ int Y_View = 1000;
 void setup() 
 {
   size(X_View, Y_View, P3D);
-  frameRate(30);
+  frameRate(24);
   
   
 
@@ -80,8 +80,8 @@ class SOLARCHVISION_SunPath {
     s_SunPath = s; 
     StationLatitude = l;
  
-    float min_sunrise = int(min(Sunrise(StationLatitude, 90), Sunrise(StationLatitude, 270))); 
-    float max_sunset = int(max(Sunset(StationLatitude, 90), Sunset(StationLatitude, 270)));
+    float min_sunrise = int(min(SOLARCHVISION_Sunrise(StationLatitude, 90), SOLARCHVISION_Sunrise(StationLatitude, 270))); 
+    float max_sunset = int(max(SOLARCHVISION_Sunset(StationLatitude, 90), SOLARCHVISION_Sunset(StationLatitude, 270)));
    
     
     pushMatrix();
@@ -106,21 +106,21 @@ class SOLARCHVISION_SunPath {
     for (float HOUR = min_sunrise; HOUR < max_sunset + .01; HOUR += 1){
       float DATE_step = 1;
       for (int DATE = 90; DATE <= 270; DATE += DATE_step){
-        float[] Sun = SunPosition (StationLatitude, DATE, HOUR);
+        float[] Sun = SOLARCHVISION_SunPosition (StationLatitude, DATE, HOUR);
         
         if (Sun[3] >= 0) {
           float DIR_RAD1 = EPW[int(HOUR)][int(DATE)][_dirnorrad];
-          float NEED_SS1 = 21 - EPW[int(HOUR)][int(DATE)][_drybulb];
+          float NEED_SS1 = 18 - EPW[int(HOUR)][int(DATE)][_drybulb];
           
           float DIR_RAD2 = EPW[int(HOUR)][int((DATE + 180) % 360)][_dirnorrad];
-          float NEED_SS2 = 21 - EPW[int(HOUR)][int((DATE + 180) % 360)][_drybulb];
+          float NEED_SS2 = 18 - EPW[int(HOUR)][int((DATE + 180) % 360)][_drybulb];
           
           float v = NEED_SS1;
           if (abs(NEED_SS2) > abs(v)) {
             v =  NEED_SS2;
           }
           
-          float[] COL = DRYWCBD(v * 0.1);
+          float[] COL = SOLARCHVISION_DRYWCBD(v * 0.1);
   
           //float _effect = (1 - 0.03 * abs(v));
           float _effect = (1 - 0.03 * v);
@@ -134,10 +134,10 @@ class SOLARCHVISION_SunPath {
     stroke(0);
     
     for (int DATE = 90; DATE <= 270; DATE += 30){
-      float HOUR_step = (DayTime (StationLatitude, DATE) / 72.0);
-      for (float HOUR = Sunrise(StationLatitude, DATE); HOUR < (Sunset(StationLatitude, DATE) + .01 - HOUR_step); HOUR += HOUR_step){
-        float[] SunA = SunPosition (StationLatitude, DATE, HOUR);
-        float[] SunB = SunPosition (StationLatitude, DATE, (HOUR + HOUR_step));
+      float HOUR_step = (SOLARCHVISION_DayTime (StationLatitude, DATE) / 72.0);
+      for (float HOUR = SOLARCHVISION_Sunrise(StationLatitude, DATE); HOUR < (SOLARCHVISION_Sunset(StationLatitude, DATE) + .01 - HOUR_step); HOUR += HOUR_step){
+        float[] SunA = SOLARCHVISION_SunPosition (StationLatitude, DATE, HOUR);
+        float[] SunB = SOLARCHVISION_SunPosition (StationLatitude, DATE, (HOUR + HOUR_step));
         line (s_SunPath * SunA[1], s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], s_SunPath * SunB[2], s_SunPath * SunB[3]);
       }
     }
@@ -145,8 +145,8 @@ class SOLARCHVISION_SunPath {
     for (float HOUR = min_sunrise; HOUR < max_sunset + .01; HOUR += 1){
       float DATE_step = 1;
       for (int DATE = 90; DATE <= 270; DATE += DATE_step){
-        float[] SunA = SunPosition (StationLatitude, DATE, HOUR);
-        float[] SunB = SunPosition (StationLatitude, (DATE + DATE_step), HOUR);
+        float[] SunA = SOLARCHVISION_SunPosition (StationLatitude, DATE, HOUR);
+        float[] SunB = SOLARCHVISION_SunPosition (StationLatitude, (DATE + DATE_step), HOUR);
         if (SunA[3] >= 0 && SunB[3] >= 0) {
           line (s_SunPath * SunA[1], s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], s_SunPath * SunB[2], s_SunPath * SunB[3]);
         }
@@ -241,22 +241,22 @@ float atan_ang (float a) {
 }
 
 
-float[] SunPosition (float StationLatitude ,float DATE, float HOUR) {
-  float DEC = 23.5 * sin_ang(DATE - 180.0);
+float[] SOLARCHVISION_SunPosition (float StationLatitude, float DATE, float HOUR) {
+  float DEC = 23.45 * sin_ang(DATE - 180.0);
   
   float a = sin_ang(DEC);
   float b = cos_ang(DEC) * -cos_ang(15.0 * HOUR);
   float c = cos_ang(DEC) *  sin_ang(15.0 * HOUR);
   
-  float x =   c; 
+  float x = c; 
   float y = -(a * cos_ang(StationLatitude) + b * sin_ang(StationLatitude));
-  float z =  -a * sin_ang(StationLatitude) + b * cos_ang(StationLatitude);
+  float z = -a * sin_ang(StationLatitude) + b * cos_ang(StationLatitude);
   
-  float[] return_array = {0, -x, y, z}; //in processing because of start of coordinates from top left we need no make x axis negative! 
+  float[] return_array = {0, x, y, z}; 
   return return_array; 
 }
 
-float Sunrise (float StationLatitude, float DATE) {
+float SOLARCHVISION_Sunrise (float StationLatitude, float DATE) {
   float DEC = 23.5 * sin_ang(DATE - 180.0);
   
   float q = -(tan_ang(DEC) * tan_ang(StationLatitude));
@@ -269,14 +269,12 @@ float Sunrise (float StationLatitude, float DATE) {
   else return (acos_ang(q) / 15.0);
 }
 
-
-float Sunset (float StationLatitude, float DATE) {
-  return (24.0 - Sunrise(StationLatitude, DATE));
+float SOLARCHVISION_Sunset (float StationLatitude, float DATE) {
+  return (24.0 - SOLARCHVISION_Sunrise(StationLatitude, DATE));
 }
 
-
-float DayTime (float StationLatitude, float DATE) {
-  return abs((Sunset(StationLatitude, DATE)) - (Sunrise(StationLatitude, DATE)));
+float SOLARCHVISION_DayTime (float StationLatitude, float DATE) {
+  return abs((SOLARCHVISION_Sunset(StationLatitude, DATE)) - (SOLARCHVISION_Sunrise(StationLatitude, DATE)));
 }
 
 
@@ -350,9 +348,8 @@ void LoadEPW (String FileName) {
 }
 
 
-float[] DRYWCBD (float _variable) {
-  _variable = atan_ang(_variable * 0.03);
-  //_variable *= 3;
+float[] SOLARCHVISION_DRYWCBD (float _variable) {
+  _variable *= 2.75;
   
   float v;
   float[] COL = {255, 0, 0, 0};
@@ -402,6 +399,11 @@ float[] DRYWCBD (float _variable) {
     COL[2] = 0;
     COL[3] = 63;
   }
+  /*
+  float _r = COL[1];
+  COL[1] = COL[3];
+  COL[3] = _r;
+  */
   return COL;
 }
 
