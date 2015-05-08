@@ -16,23 +16,23 @@ int _difhorrad = 4;
 int _winddir = 5;
 int _windspd = 6;
 
-int X_View = 1000;
-int Y_View = 1000;
+int X_View = 500;
+int Y_View = 500;
 float R_View = float(Y_View) / float(X_View);
 
-String _Filename = "2013100300_RH_TGL_2_DorvalQc_45p47_m73p75";
+String _Filename = "Diagram";
 
 float X_coordinate = 0 * X_View;
-float Y_coordinate = 1.0 * Y_View;
+float Y_coordinate = 1 * Y_View;
 float Z_coordinate = 0;
 float S_coordinate = 5.0;
 
-float RX_coordinate = 75;
+float RX_coordinate = 45;
 float RY_coordinate = 0;
 float RZ_coordinate = -45;
 float RS_coordinate = 5.0;
 
-float ZOOM_coordinate = 22.5;
+float ZOOM_coordinate = 20000 / X_View;
 
 float W_scale = 3.0;
 float V_scale;
@@ -41,8 +41,8 @@ float O_scale = 20.0;
 int View_Type = 0; // 0: Ortho 1: Perspective
 {
   if (View_Type == 1) {
-    //X_coordinate += 0.5 * X_View; 
-    //Y_coordinate += -0.5 * Y_View;
+    X_coordinate += 0.5 * X_View; 
+    Y_coordinate += -0.5 * Y_View;
   }
 }
 
@@ -52,8 +52,10 @@ void setup()
   frameRate(24);
   
   
+  
+  //LoadEPW("C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW/LAS_VEGAS_NV_US.epw");
+  LoadEPW("C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW/HOUSTON_TX_US.epw");
 
-  LoadEPW("USA_NV_Las.Vegas-McCarran.Intl.AP.723860_TMY3.epw");
   
   //noLoop();
 }
@@ -88,9 +90,9 @@ void draw() {
   
   fill(255);
   box(10, 10, 10);
-  line (0,0,0,0,0,50);
+  line (0, 0, 0, 0, 0, 50);
   
-  SunPath1.update(0,0,0,90,StationLatitude); 
+  SunPath1.update(0, 0, 0, 90, StationLatitude); 
 
 } 
  
@@ -226,22 +228,21 @@ void keyPressed(){
       
       case '{' :RX_coordinate -= RS_coordinate; break;
       case '}' :RX_coordinate += RS_coordinate; break;
-      case '[' :RY_coordinate -= RS_coordinate; break;
-      case ']' :RY_coordinate += RS_coordinate; break;
-      case '(' :RZ_coordinate -= RS_coordinate; break;
+      case '(' :RY_coordinate -= RS_coordinate; break;
+      case ')' :RY_coordinate += RS_coordinate; break;
+      case '[' :RZ_coordinate -= RS_coordinate; break;
+      case ']' :RZ_coordinate += RS_coordinate; break;
       case '@' :RX_coordinate = 0;
                 RY_coordinate = 0;
-                RZ_coordinate = 0; 
-                ZOOM_coordinate = 45.0;              
+                RZ_coordinate = 180; 
+                ZOOM_coordinate = 20000 / X_View;            
                 X_coordinate = 0.5 * X_View;
                 Y_coordinate = 0.5 * Y_View;
                 Z_coordinate = 0;
-                if (View_Type == 1) {
-                  View_Type = 1; X_coordinate += 0.5 * X_View; Y_coordinate += -0.5 * Y_View;
-                }
+                View_Type = 1; 
                 break;
       
-      case ')' :RZ_coordinate += RS_coordinate; break;
+      
       
       case ',' :ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * ZOOM_coordinate)); break;
       case '.' :ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * ZOOM_coordinate)); break;
@@ -338,9 +339,7 @@ void LoadEPW (String FileName) {
     lineSTR = FileSTR.readLine();
 
     input = split(lineSTR, ',');
-    for (int i = 0; i < input.length; i = i + 1){
-      //println (input[i]);
-    }
+
     StationName = input[1];
     StationLatitude = float(input[6]);
     StationLongitude = - float(input[7]);
