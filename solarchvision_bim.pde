@@ -18,6 +18,33 @@ int _windspd = 6;
 
 int X_View = 1000;
 int Y_View = 1000;
+float R_View = float(Y_View) / float(X_View);
+
+String _Filename = "2013100300_RH_TGL_2_DorvalQc_45p47_m73p75";
+
+float X_coordinate = 0 * X_View;
+float Y_coordinate = 1.0 * Y_View;
+float Z_coordinate = 0;
+float S_coordinate = 5.0;
+
+float RX_coordinate = 75;
+float RY_coordinate = 0;
+float RZ_coordinate = -45;
+float RS_coordinate = 5.0;
+
+float ZOOM_coordinate = 22.5;
+
+float W_scale = 3.0;
+float V_scale;
+float O_scale = 20.0;
+
+int View_Type = 0; // 0: Ortho 1: Perspective
+{
+  if (View_Type == 1) {
+    //X_coordinate += 0.5 * X_View; 
+    //Y_coordinate += -0.5 * Y_View;
+  }
+}
 
 void setup() 
 {
@@ -31,17 +58,6 @@ void setup()
   //noLoop();
 }
 
-float X_coordinate = 0.5 * X_View;
-float Y_coordinate = 0.5 * Y_View;
-float Z_coordinate = 700;
-float S_coordinate = 5.0;
-
-float RX_coordinate = 75;
-float RY_coordinate = 0;
-float RZ_coordinate = -45;
-float RS_coordinate = 5.0;
-
-float ZOOM_coordinate = 90.0;
 
 
 void draw() { 
@@ -50,7 +66,17 @@ void draw() {
   
   //camera(10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
   //frustum(-10, 10, -10, 10, 0.001, 1000);
-  perspective(ZOOM_coordinate * PI/180,X_View/Y_View,0.001,1000);  //fovy, aspect, zNear, zFar
+  //perspective(ZOOM_coordinate * PI/180,X_View/Y_View,0.001,1000);  //fovy, aspect, zNear, zFar
+
+  if (View_Type == 1) {
+    perspective(ZOOM_coordinate * PI/180, X_View/Y_View, 0.00001, 100000);  //fovy, aspect, zNear, zFar
+  }
+  else{
+    float ZOOM = 0.4567 * ZOOM_coordinate * PI/180; 
+    ortho(ZOOM * X_View * -1, ZOOM * X_View * 1, ZOOM  * Y_View * -1, ZOOM  * Y_View * 1, 0.00001, 100000);
+  }
+
+
   
   lights();
   
@@ -179,6 +205,8 @@ class SOLARCHVISION_SunPath {
 } 
 
 
+
+
 void keyPressed(){
   //println("key: "+key);
   //println("keyCode: "+keyCode); 
@@ -189,8 +217,6 @@ void keyPressed(){
       case RIGHT :X_coordinate += S_coordinate; break;  
       case UP    :Y_coordinate -= S_coordinate; break;
       case DOWN  :Y_coordinate += S_coordinate; break;
-      
-
     }
   }
   else{
@@ -200,14 +226,36 @@ void keyPressed(){
       
       case '{' :RX_coordinate -= RS_coordinate; break;
       case '}' :RX_coordinate += RS_coordinate; break;
-      case '(' :RY_coordinate -= RS_coordinate; break;
-      case ')' :RY_coordinate += RS_coordinate; break;
-      case '[' :RZ_coordinate -= RS_coordinate; break;
-      case ']' :RZ_coordinate += RS_coordinate; break;
+      case '[' :RY_coordinate -= RS_coordinate; break;
+      case ']' :RY_coordinate += RS_coordinate; break;
+      case '(' :RZ_coordinate -= RS_coordinate; break;
+      case '@' :RX_coordinate = 0;
+                RY_coordinate = 0;
+                RZ_coordinate = 0; 
+                ZOOM_coordinate = 45.0;              
+                X_coordinate = 0.5 * X_View;
+                Y_coordinate = 0.5 * Y_View;
+                Z_coordinate = 0;
+                if (View_Type == 1) {
+                  View_Type = 1; X_coordinate += 0.5 * X_View; Y_coordinate += -0.5 * Y_View;
+                }
+                break;
+      
+      case ')' :RZ_coordinate += RS_coordinate; break;
       
       case ',' :ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * ZOOM_coordinate)); break;
       case '.' :ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * ZOOM_coordinate)); break;
       
+      case '9' :W_scale += 1; break;
+      case '0' :W_scale -= 1; break;
+  
+      case 'o' :if (View_Type != 0) {View_Type = 0; X_coordinate -= 0.5 * X_View; Y_coordinate -= -0.5 * Y_View;}
+                break;
+      case 'p' :if (View_Type != 1) {View_Type = 1; X_coordinate += 0.5 * X_View; Y_coordinate += -0.5 * Y_View;} 
+                break;
+          
+      case '$' :saveFrame("SOLARCHVISION_PLOT_" + _Filename + ".jpg"); println("File created."); break;
+      case '#' :saveFrame("SOLARCHVISION_PLOT_" + _Filename + "_frame####.jpg"); println("File created."); break;
     }
 
   }
