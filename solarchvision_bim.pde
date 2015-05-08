@@ -34,10 +34,6 @@ float RS_coordinate = 5.0;
 
 float ZOOM_coordinate = 20000 / X_View;
 
-float W_scale = 3.0;
-float V_scale;
-float O_scale = 20.0;
-
 int View_Type = 0; // 0: Ortho 1: Perspective
 {
   if (View_Type == 1) {
@@ -54,7 +50,9 @@ void setup()
   
   
   //LoadEPW("C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW/LAS_VEGAS_NV_US.epw");
-  LoadEPW("C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW/HOUSTON_TX_US.epw");
+  //LoadEPW("C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW/HOUSTON_TX_US.epw");
+  LoadEPW("C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW/MONTREAL_DORVAL_QC_CA.epw");
+  
 
   
   //noLoop();
@@ -80,7 +78,7 @@ void draw() {
 
 
   
-  lights();
+  //lights();
   
   
   translate(X_coordinate, Y_coordinate, Z_coordinate);
@@ -132,8 +130,10 @@ class SOLARCHVISION_SunPath {
     stroke(255,255,0);
     
     for (float HOUR = min_sunrise; HOUR < max_sunset + .01; HOUR += 1){
-      float DATE_step = 1;
+      float DATE_step = 4; //1;
+      
       for (int DATE = 90; DATE <= 270; DATE += DATE_step){
+        
         float[] Sun = SOLARCHVISION_SunPosition (StationLatitude, DATE, HOUR);
         
         if (Sun[3] >= 0) {
@@ -148,13 +148,27 @@ class SOLARCHVISION_SunPath {
             v =  NEED_SS2;
           }
           
-          float[] COL = SOLARCHVISION_DRYWCBD(v * 0.1);
+          float[] COL = SOLARCHVISION_DRYWCBD(v * 0.05);
   
-          //float _effect = (1 - 0.03 * abs(v));
-          float _effect = (1 - 0.03 * v);
-          
           stroke(COL[1], COL[2], COL[3]);
-          line (s_SunPath * Sun[1], s_SunPath * Sun[2], s_SunPath * Sun[3], _effect * s_SunPath * Sun[1], _effect * s_SunPath * Sun[2], _effect * s_SunPath * Sun[3]);
+  
+          //float _effect = (1 - 0.03 * v);
+          //line (s_SunPath * Sun[1], s_SunPath * Sun[2], s_SunPath * Sun[3], _effect * s_SunPath * Sun[1], _effect * s_SunPath * Sun[2], _effect * s_SunPath * Sun[3]);
+          
+          fill(COL[1], COL[2], COL[3]);
+          
+          float[] SunA = SOLARCHVISION_SunPosition (StationLatitude, DATE - 0.5 * DATE_step, HOUR - 0.5);
+          float[] SunB = SOLARCHVISION_SunPosition (StationLatitude, DATE - 0.5 * DATE_step, HOUR + 0.5);
+          float[] SunC = SOLARCHVISION_SunPosition (StationLatitude, DATE + 0.5 * DATE_step, HOUR + 0.5);
+          float[] SunD = SOLARCHVISION_SunPosition (StationLatitude, DATE + 0.5 * DATE_step, HOUR - 0.5);
+          
+          beginShape();
+          vertex(s_SunPath * SunA[1], s_SunPath * SunA[2], s_SunPath * SunA[3]);
+          vertex(s_SunPath * SunB[1], s_SunPath * SunB[2], s_SunPath * SunB[3]);
+          vertex(s_SunPath * SunC[1], s_SunPath * SunC[2], s_SunPath * SunC[3]);
+          vertex(s_SunPath * SunD[1], s_SunPath * SunD[2], s_SunPath * SunD[3]);
+
+          endShape(CLOSE);
         }
       }
     }
@@ -247,9 +261,6 @@ void keyPressed(){
       case ',' :ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * ZOOM_coordinate)); break;
       case '.' :ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * ZOOM_coordinate)); break;
       
-      case '9' :W_scale += 1; break;
-      case '0' :W_scale -= 1; break;
-  
       case 'o' :if (View_Type != 0) {View_Type = 0; X_coordinate -= 0.5 * X_View; Y_coordinate -= -0.5 * Y_View;}
                 break;
       case 'p' :if (View_Type != 1) {View_Type = 1; X_coordinate += 0.5 * X_View; Y_coordinate += -0.5 * Y_View;} 
