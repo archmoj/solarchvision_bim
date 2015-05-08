@@ -42,11 +42,18 @@ int View_Type = 0; // 0: Ortho 1: Perspective
   }
 }
 
+
+int _MONTH = -1;
+int _DAY = -1; 
+int _HOUR = -1; 
+float _DATE = -1;
+
 void setup() 
 {
   size(X_View, Y_View, P3D);
   frameRate(24);
-  
+
+  SOLARCHVISION_Calendar();  
   
   
   //LoadEPW("C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW/LAS_VEGAS_NV_US.epw");
@@ -130,23 +137,22 @@ class SOLARCHVISION_SunPath {
     stroke(255,255,0);
     
     for (float HOUR = min_sunrise; HOUR < max_sunset + .01; HOUR += 1){
-      float DATE_step = 4; //1;
+      float DATE_step = 4;
       
-      for (int DATE = 90; DATE <= 270; DATE += DATE_step){
+      //for (int j = 0; j < 365; j += DATE_step){
+      for (int j = 0; j <= 0 ; j += DATE_step){
+    
+        _DATE = (j + 365 - 79) % 365;
+        _update_date();
+        float DATE_ANGLE = Convert2Date(_MONTH, _DAY);
         
-        float[] Sun = SOLARCHVISION_SunPosition (StationLatitude, DATE, HOUR);
+        //println(j, _DATE, DATE_ANGLE); exit();
+       
+        float[] Sun = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE, HOUR);
         
         if (Sun[3] >= 0) {
-          float DIR_RAD1 = EPW[int(HOUR)][int(DATE)][_dirnorrad];
-          float NEED_SS1 = 18 - EPW[int(HOUR)][int(DATE)][_drybulb];
-          
-          float DIR_RAD2 = EPW[int(HOUR)][int((DATE + 180) % 360)][_dirnorrad];
-          float NEED_SS2 = 18 - EPW[int(HOUR)][int((DATE + 180) % 360)][_drybulb];
-          
-          float v = NEED_SS1;
-          if (abs(NEED_SS2) > abs(v)) {
-            v =  NEED_SS2;
-          }
+          float DIR_RAD = EPW[int(HOUR)][int(j % 365)][_dirnorrad];
+          float v = 18 - EPW[int(HOUR)][int(j % 365)][_drybulb];
           
           float[] COL = SOLARCHVISION_DRYWCBD(v * 0.05);
   
@@ -157,10 +163,10 @@ class SOLARCHVISION_SunPath {
           
           fill(COL[1], COL[2], COL[3]);
           
-          float[] SunA = SOLARCHVISION_SunPosition (StationLatitude, DATE - 0.5 * DATE_step, HOUR - 0.5);
-          float[] SunB = SOLARCHVISION_SunPosition (StationLatitude, DATE - 0.5 * DATE_step, HOUR + 0.5);
-          float[] SunC = SOLARCHVISION_SunPosition (StationLatitude, DATE + 0.5 * DATE_step, HOUR + 0.5);
-          float[] SunD = SOLARCHVISION_SunPosition (StationLatitude, DATE + 0.5 * DATE_step, HOUR - 0.5);
+          float[] SunA = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR - 0.5);
+          float[] SunB = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR + 0.5);
+          float[] SunC = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR + 0.5);
+          float[] SunD = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR - 0.5);
           
           beginShape();
           vertex(s_SunPath * SunA[1], s_SunPath * SunA[2], s_SunPath * SunA[3]);
@@ -170,25 +176,26 @@ class SOLARCHVISION_SunPath {
 
           endShape(CLOSE);
         }
+
       }
     }
     
     stroke(0);
     
-    for (int DATE = 90; DATE <= 270; DATE += 30){
-      float HOUR_step = (SOLARCHVISION_DayTime (StationLatitude, DATE) / 72.0);
-      for (float HOUR = SOLARCHVISION_Sunrise(StationLatitude, DATE); HOUR < (SOLARCHVISION_Sunset(StationLatitude, DATE) + .01 - HOUR_step); HOUR += HOUR_step){
-        float[] SunA = SOLARCHVISION_SunPosition (StationLatitude, DATE, HOUR);
-        float[] SunB = SOLARCHVISION_SunPosition (StationLatitude, DATE, (HOUR + HOUR_step));
+    for (int j = 90; j <= 270; j += 30){
+      float HOUR_step = (SOLARCHVISION_DayTime (StationLatitude, j) / 72.0);
+      for (float HOUR = SOLARCHVISION_Sunrise(StationLatitude, j); HOUR < (SOLARCHVISION_Sunset(StationLatitude, j) + .01 - HOUR_step); HOUR += HOUR_step){
+        float[] SunA = SOLARCHVISION_SunPosition (StationLatitude, j, HOUR);
+        float[] SunB = SOLARCHVISION_SunPosition (StationLatitude, j, (HOUR + HOUR_step));
         line (s_SunPath * SunA[1], s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], s_SunPath * SunB[2], s_SunPath * SunB[3]);
       }
     }
     
     for (float HOUR = min_sunrise; HOUR < max_sunset + .01; HOUR += 1){
       float DATE_step = 1;
-      for (int DATE = 90; DATE <= 270; DATE += DATE_step){
-        float[] SunA = SOLARCHVISION_SunPosition (StationLatitude, DATE, HOUR);
-        float[] SunB = SOLARCHVISION_SunPosition (StationLatitude, (DATE + DATE_step), HOUR);
+      for (int j = 90; j <= 270; j += DATE_step){
+        float[] SunA = SOLARCHVISION_SunPosition (StationLatitude, j, HOUR);
+        float[] SunB = SOLARCHVISION_SunPosition (StationLatitude, (j + DATE_step), HOUR);
         if (SunA[3] >= 0 && SunB[3] >= 0) {
           line (s_SunPath * SunA[1], s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], s_SunPath * SunB[2], s_SunPath * SunB[3]);
         }
@@ -266,8 +273,8 @@ void keyPressed(){
       case 'p' :if (View_Type != 1) {View_Type = 1; X_coordinate += 0.5 * X_View; Y_coordinate += -0.5 * Y_View;} 
                 break;
           
-      case '$' :saveFrame("SOLARCHVISION_PLOT_" + _Filename + ".jpg"); println("File created."); break;
-      case '#' :saveFrame("SOLARCHVISION_PLOT_" + _Filename + "_frame####.jpg"); println("File created."); break;
+      case '$' :saveFrame(_Filename + ".jpg"); println("File created."); break;
+      case '#' :saveFrame(_Filename + "_frame####.jpg"); println("File created."); break;
     }
 
   }
@@ -353,7 +360,7 @@ void LoadEPW (String FileName) {
 
     StationName = input[1];
     StationLatitude = float(input[6]);
-    StationLongitude = - float(input[7]);
+    StationLongitude = float(input[7]);
     Delta_NOON = float(input[8]) + StationLongitude / 15.0;
     StationElevation = float(input[9]);
     
@@ -466,4 +473,78 @@ float[] SOLARCHVISION_DRYWCBD (float _variable) {
 }
 
 
+String[][] CalendarMonth = {
+  {"January", "janvier"},
+  {"February", "février"},
+  {"March", "mars"},
+  {"April", "avril"},
+  {"May", "mai"},
+  {"June", "juin"},
+  {"July", "juillet"},
+  {"August", "août"},
+  {"September", "septembre"},
+  {"October", "octobre"},
+  {"November", "novembre"},
+  {"December",  "décembre"}
+};
 
+int CalendarLength[] = {31     , 28     , 31     , 30     , 31     , 30     , 31     , 31     , 30     , 31     , 30     , 31};
+String CalendarDay[][];
+String CalendarMM[][];
+String CalendarDD[][];
+int CalendarDate[][];
+
+void SOLARCHVISION_Calendar () {
+  CalendarMM = new String [365][2];
+  CalendarDD = new String [365][2];
+  CalendarDay = new String [365][2];
+  
+  CalendarDate = new int [365][2];
+  
+  int k = 285;
+  for (int l = 0; l < 2; l += 1){
+    for (int i = 0; i < 12; i += 1){
+      for (int j = 0; j < CalendarLength[i]; j += 1){
+        k += 1;
+        if (k == 365) k = 0; 
+        CalendarMM[k][l] = CalendarMonth[i][l];
+        CalendarDD[k][l] = String.valueOf(j + 1);
+        CalendarDay[k][l] = CalendarDD[k][l] + " " + CalendarMM[k][l];
+        
+        CalendarDate[k][0] = i + 1;
+        CalendarDate[k][1] = j + 1;
+      }
+    }
+  }
+}
+
+int Convert2Day (int Date_Angle) {
+  int DAY = (Date_Angle + 360) % 360;
+  if (DAY >=  31) DAY += 1;
+  if (DAY >=  62) DAY += 1;
+  if (DAY >=  93) DAY += 1;
+  if (DAY >= 124) DAY += 1;
+  if (DAY >= 155) DAY += 1;
+  DAY = DAY % 365;
+  return DAY; 
+}
+
+int Convert2Date (int _MONTH, int _DAY) {
+  int k = 0;
+  for (int i = 0; i < (_MONTH - 1); i += 1){
+    for (int j = 0; j < CalendarLength[i]; j += 1){
+      k += 1;
+      if (k == 365) k = 0; 
+    }
+  }
+  k += _DAY - 1;
+  
+  k = k % 365;
+  return k;
+}
+
+void _update_date () {
+  _MONTH = CalendarDate[int(_DATE)][0]; 
+  _DAY = CalendarDate[int(_DATE)][1];
+  _HOUR = int(24 * (_DATE - int(_DATE)));
+}
