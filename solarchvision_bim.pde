@@ -16,7 +16,7 @@ float RY_coordinate = 0;
 float RZ_coordinate = -45;
 float RS_coordinate = 5.0;
 
-float ZOOM_coordinate = 20000 / X_View;
+float ZOOM_coordinate = 15000.0 / X_View;
 
 int View_Type = 0; // 0: Ortho 1: Perspective
 {
@@ -37,7 +37,7 @@ String _Filename = "";
 String _undefined = "N/A";
 float FLOAT_undefined = 1000000000; // it must be a positive big number that is not included in any data
 
-int STATION_NUMBER = 6; 
+int STATION_NUMBER = 14; 
 
 String[][] DEFINED_STATIONS = {
   
@@ -59,8 +59,6 @@ String[][] DEFINED_STATIONS = {
                                 {"BOSTON_MA_US", "BOSTON", "MA", "42.35843", "-71.05978", "-75", "15.0"},
                                 {"LAS_VEGAS_NV_US", "LAS_VEGAS", "NV", "36.16994", "-115.13983", "-120", "611.0"},
                                 {"DENVER_CO_US", "DENVER", "CO", "39.737568", "-104.98472", "-105", "1608.0"},
-
-                                {"", "", "", "0", "0", "0", "0"},
                              
                               };
 
@@ -175,18 +173,16 @@ class SOLARCHVISION_SunPath {
     stroke(255,255,0);
     
     for (int HOUR = int(roundTo(min_sunrise, 1.0)); HOUR < int(roundTo(max_sunset, 1.0)); HOUR += 1){
-      int DATE_step = 5;
+    //for (int HOUR = int(roundTo(min_sunrise, 1.0)); HOUR <= 12; HOUR += 1){
+      int DATE_step = 1;
       
-      //for (int q = 0; q < 365; q += DATE_step){
-      for (int q = 286; q <= 286 + 91; q += DATE_step){
-      //for (int q = 286 - 91; q <= 286 + 91; q += DATE_step){
+      for (int DATE_ANGLE = 0; DATE_ANGLE < 360; DATE_ANGLE += DATE_step){
+          
+        _DATE = Convert2Day(DATE_ANGLE);
     
-        _DATE = (q + 365) % 365; // ?????????????
-        
         _update_date();
-        float DATE_ANGLE = Convert2Date(_MONTH, _DAY);
         
-        println(q, _DATE, _MONTH, _DAY, DATE_ANGLE); exit();
+        //println(_DATE, _MONTH, _DAY, DATE_ANGLE); exit();
        
         float[] Sun = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE, HOUR);
         
@@ -215,10 +211,10 @@ class SOLARCHVISION_SunPath {
             float[] SunD = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR - 0.5);
             
             beginShape();
-            vertex(s_SunPath * SunA[1], s_SunPath * SunA[2], s_SunPath * SunA[3]);
-            vertex(s_SunPath * SunB[1], s_SunPath * SunB[2], s_SunPath * SunB[3]);
-            vertex(s_SunPath * SunC[1], s_SunPath * SunC[2], s_SunPath * SunC[3]);
-            vertex(s_SunPath * SunD[1], s_SunPath * SunD[2], s_SunPath * SunD[3]);
+            vertex(-s_SunPath * SunA[1], s_SunPath * SunA[2], s_SunPath * SunA[3]);
+            vertex(-s_SunPath * SunB[1], s_SunPath * SunB[2], s_SunPath * SunB[3]);
+            vertex(-s_SunPath * SunC[1], s_SunPath * SunC[2], s_SunPath * SunC[3]);
+            vertex(-s_SunPath * SunD[1], s_SunPath * SunD[2], s_SunPath * SunD[3]);
   
             endShape(CLOSE);
           }
@@ -252,11 +248,11 @@ class SOLARCHVISION_SunPath {
     popMatrix();
 
     stroke(0);
-    for (int i = 0; i < 360; i = i + 5){
+    for (int i = 0; i < 360; i += 5){
       line (s_SunPath * cos(i * PI/180), s_SunPath * sin(i * PI/180), 0, s_SunPath * cos((i + 5) * PI/180), s_SunPath * sin((i + 5) * PI/180), 0);  
     }
     
-    for (int i = 0; i < 360; i = i + 90){
+    for (int i = 0; i < 360; i += 15){
       pushMatrix();
       translate(1.1 * s_SunPath * cos(i * PI/180),1.1 * s_SunPath * sin (i * PI/180),0);
       rotateZ(PI);
@@ -265,7 +261,14 @@ class SOLARCHVISION_SunPath {
       fill(0);
       textSize(s_SunPath * 0.1);
       textAlign(CENTER, CENTER);
-      text(String.valueOf(((i - 90) % 360)), 0,0,0);
+      
+      String txt = nf((i + 270) % 360, 0);
+      if (i == 0) txt = "W";
+      else if (i == 90) txt = "N";
+      else if (i == 180) txt = "E";
+      else if (i == 270) txt = "S";
+      
+      text(txt, 0,0,0);
       popMatrix();
     }    
     
@@ -303,7 +306,7 @@ void keyPressed(){
       case '@' :RX_coordinate = 0;
                 RY_coordinate = 0;
                 RZ_coordinate = 180; 
-                ZOOM_coordinate = 20000 / X_View;            
+                ZOOM_coordinate = 15000.0 / X_View;            
                 X_coordinate = 0.5 * X_View;
                 Y_coordinate = 0.5 * Y_View;
                 Z_coordinate = 0;
@@ -319,6 +322,11 @@ void keyPressed(){
                 break;
       case 'p' :if (View_Type != 1) {View_Type = 1; X_coordinate += 0.5 * X_View; Y_coordinate += -0.5 * Y_View;} 
                 break;
+                
+      case 'S' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_station(); break;
+      case 's' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_station(); break;
+      
+           
           
       case '$' :saveFrame("image.jpg"); println("File created."); break;
       case '#' :saveFrame("image_frame####.jpg"); println("File created."); break;
