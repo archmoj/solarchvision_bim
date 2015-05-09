@@ -1,26 +1,10 @@
 SOLARCHVISION_SunPath SunPath1 = new SOLARCHVISION_SunPath(); 
 
-String StationName = ""; 
-float StationLatitude = 0;
-float StationLongitude = 0;
-float Delta_NOON = 0;
-float StationElevation = 0;
 
-float[][][] EPW;
 
-int _drybulb = 0;
-int _relhum = 1;
-int _glohorrad = 2;
-int _dirnorrad = 3;
-int _difhorrad = 4;
-int _winddir = 5;
-int _windspd = 6;
-
-int X_View = 500;
-int Y_View = 500;
+int X_View = 600;
+int Y_View = 600;
 float R_View = float(Y_View) / float(X_View);
-
-String _Filename = "Diagram";
 
 float X_coordinate = 0 * X_View;
 float Y_coordinate = 1 * Y_View;
@@ -48,19 +32,90 @@ int _DAY = -1;
 int _HOUR = -1; 
 float _DATE = -1;
 
+String _Filename = "";
+
+String _undefined = "N/A";
+float FLOAT_undefined = 1000000000; // it must be a positive big number that is not included in any data
+
+int STATION_NUMBER = 6; 
+
+String[][] DEFINED_STATIONS = {
+  
+                                {"MOSCOW_XX_RU", "MOSCOW", "XX", "55.75", "37.63", "45", "156.0"}, 
+                                {"Istanbul_XX_TR", "Istanbul", "XX", "40.97", "28.82", "30", "37.0"},  
+                                {"Barcelona_XX_SP", "Barcelona", "XX", "41.28", "2.07", "15", "6.0"},
+                                {"Bologna_XX_IT", "Bologna", "XX", "44.53", "11.30", "15", "49.0"},
+                                {"VIENNA_XX_AT", "VIENNA", "XX", "48.12", "16.57", "15", "190.0"},
+                                
+                                {"VANCOUVER_INTL_BC_CA", "VANCOUVER", "BC", "49.25", "-123.25", "-120", "4.30"},
+                                {"MONTREAL_DORVAL_QC_CA", "MONTREAL", "QC", "45.47", "-73.75", "-75", "31.00"},
+
+                                {"NEW_YORK_CITY_NY_US", "NEW_YORK_CITY", "NY", "40.712784", "-74.00594", "-75", "10.0"},
+                                {"WASHINGTON_DC_US", "WASHINGTON", "DC", "38.907192", "-77.03687", "-75", "22.0"},
+                                {"LOS_ANGELES_CA_US", "LOS_ANGELES", "CA", "34.052235", "-118.24368", "-120", "87.0"},
+                                {"CHICAGO_IL_US", "CHICAGO", "IL", "41.878113", "-87.6298", "-90", "181.0"},
+                                {"HOUSTON_TX_US", "HOUSTON", "TX", "29.760193", "-95.36939", "-90", "15.0"},
+                                {"MIAMI_FL_US", "MIAMI", "FL", "25.789097", "-80.20404", "-75", "3.0"},
+                                {"BOSTON_MA_US", "BOSTON", "MA", "42.35843", "-71.05978", "-75", "15.0"},
+                                {"LAS_VEGAS_NV_US", "LAS_VEGAS", "NV", "36.16994", "-115.13983", "-120", "611.0"},
+                                {"DENVER_CO_US", "DENVER", "CO", "39.737568", "-104.98472", "-105", "1608.0"},
+
+                                {"", "", "", "0", "0", "0", "0"},
+                             
+                              };
+
+
+
+
+String CLIMATE_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW";
+
+String[] CLIMATE_EPW_Files = getfiles(CLIMATE_directory);
+
+String THE_STATION;
+String StationName;
+String StationProvince;
+float StationLatitude;
+float StationLongitude;
+float StationTimeZone;
+float StationElevation;
+float Delta_NOON;
+
+int CLIMATE_start = 2005;//1953;
+int CLIMATE_end = 2005;
+
+String[][][][] CLIMATE;
+
+int _winddir = 0;
+int _windspd = 1;
+int _precipitation = 2;
+int _relhum = 3;
+int _drybulb = 4;
+int _dirnorrad = 5;
+int _difhorrad = 6;
+int _glohorrad = 7;
+int _developed = 8;
+int _direffect = 9;
+int _difeffect = 10;
+int _opaquesky = 11;
+int _cloudcover = _opaquesky;
+int _logceilsky = 12;
+int _ceilingsky = 13;
+int _pressure = 14;
+int _heightp500hPa = 15;
+int _thicknesses_1000_500 = 16;
+int _windspd200hPa = 17;
+
+int num_layers = 18; 
+
+
 void setup() 
 {
   size(X_View, Y_View, P3D);
   frameRate(24);
 
   SOLARCHVISION_Calendar();  
-  
-  
-  //LoadEPW("C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW/LAS_VEGAS_NV_US.epw");
-  //LoadEPW("C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW/HOUSTON_TX_US.epw");
-  LoadEPW("C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW/MONTREAL_DORVAL_QC_CA.epw");
-  
 
+  _update_station();
   
   //noLoop();
 }
@@ -71,10 +126,6 @@ void draw() {
   background(233);
   
   
-  //camera(10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
-  //frustum(-10, 10, -10, 10, 0.001, 1000);
-  //perspective(ZOOM_coordinate * PI/180,X_View/Y_View,0.001,1000);  //fovy, aspect, zNear, zFar
-
   if (View_Type == 1) {
     perspective(ZOOM_coordinate * PI/180, X_View/Y_View, 0.00001, 100000);  //fovy, aspect, zNear, zFar
   }
@@ -84,9 +135,7 @@ void draw() {
   }
 
 
-  
   //lights();
-  
   
   translate(X_coordinate, Y_coordinate, Z_coordinate);
   rotateX(RX_coordinate * PI/180);
@@ -122,59 +171,57 @@ class SOLARCHVISION_SunPath {
     
     line(-0.1 * s_SunPath, 0, 0, 0.1 * s_SunPath, 0, 0); 
     line(0, -0.1 * s_SunPath, 0, 0, 0.1 * s_SunPath, 0);
-/*
-    for (int DATE = 90; DATE <= 270; DATE += 30){
-      float HOUR_step = (DayTime (StationLatitude, DATE) / 18.0);
-      for (float HOUR = Sunrise(StationLatitude, DATE); HOUR < (Sunset(StationLatitude, DATE) + .01); HOUR += HOUR_step) {
-        float[] Sun = SunPosition (StationLatitude, DATE, HOUR);
-        point (s_SunPath * Sun[1], s_SunPath * Sun[2], s_SunPath * Sun[3]);
-      }
-    }
-*/
-    
-    
-    
+
     stroke(255,255,0);
     
-    for (float HOUR = min_sunrise; HOUR < max_sunset + .01; HOUR += 1){
-      float DATE_step = 4;
+    for (int HOUR = int(roundTo(min_sunrise, 1.0)); HOUR < int(roundTo(max_sunset, 1.0)); HOUR += 1){
+      int DATE_step = 5;
       
-      //for (int j = 0; j < 365; j += DATE_step){
-      for (int j = 0; j <= 0 ; j += DATE_step){
+      //for (int q = 0; q < 365; q += DATE_step){
+      for (int q = 286; q <= 286 + 91; q += DATE_step){
+      //for (int q = 286 - 91; q <= 286 + 91; q += DATE_step){
     
-        _DATE = (j + 365 - 79) % 365;
+        _DATE = (q + 365) % 365; // ?????????????
+        
         _update_date();
         float DATE_ANGLE = Convert2Date(_MONTH, _DAY);
         
-        //println(j, _DATE, DATE_ANGLE); exit();
+        println(q, _DATE, _MONTH, _DAY, DATE_ANGLE); exit();
        
         float[] Sun = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE, HOUR);
         
         if (Sun[3] >= 0) {
-          float DIR_RAD = EPW[int(HOUR)][int(j % 365)][_dirnorrad];
-          float v = 18 - EPW[int(HOUR)][int(j % 365)][_drybulb];
           
-          float[] COL = SOLARCHVISION_DRYWCBD(v * 0.05);
+          int i = HOUR - 1;  // ??????
+          int j = Convert2Date(_MONTH, _DAY);
+          int k = 0; // on EPW:TMY files we have only one year 
+          
+          //println(i,j,k); exit();
+          
+          String Pa = CLIMATE[i][j][_direffect][k];
+          
+          if (Pa.equals(_undefined)){
+          }
+          else{
+          
+            float[] COL = SOLARCHVISION_DRYWCBD(0.0002 * float(Pa)); // ????????
+    
+            stroke(COL[1], COL[2], COL[3]);
+            fill(COL[1], COL[2], COL[3]);
+            
+            float[] SunA = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR - 0.5);
+            float[] SunB = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR + 0.5);
+            float[] SunC = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR + 0.5);
+            float[] SunD = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR - 0.5);
+            
+            beginShape();
+            vertex(s_SunPath * SunA[1], s_SunPath * SunA[2], s_SunPath * SunA[3]);
+            vertex(s_SunPath * SunB[1], s_SunPath * SunB[2], s_SunPath * SunB[3]);
+            vertex(s_SunPath * SunC[1], s_SunPath * SunC[2], s_SunPath * SunC[3]);
+            vertex(s_SunPath * SunD[1], s_SunPath * SunD[2], s_SunPath * SunD[3]);
   
-          stroke(COL[1], COL[2], COL[3]);
-  
-          //float _effect = (1 - 0.03 * v);
-          //line (s_SunPath * Sun[1], s_SunPath * Sun[2], s_SunPath * Sun[3], _effect * s_SunPath * Sun[1], _effect * s_SunPath * Sun[2], _effect * s_SunPath * Sun[3]);
-          
-          fill(COL[1], COL[2], COL[3]);
-          
-          float[] SunA = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR - 0.5);
-          float[] SunB = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR + 0.5);
-          float[] SunC = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR + 0.5);
-          float[] SunD = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR - 0.5);
-          
-          beginShape();
-          vertex(s_SunPath * SunA[1], s_SunPath * SunA[2], s_SunPath * SunA[3]);
-          vertex(s_SunPath * SunB[1], s_SunPath * SunB[2], s_SunPath * SunB[3]);
-          vertex(s_SunPath * SunC[1], s_SunPath * SunC[2], s_SunPath * SunC[3]);
-          vertex(s_SunPath * SunD[1], s_SunPath * SunD[2], s_SunPath * SunD[3]);
-
-          endShape(CLOSE);
+            endShape(CLOSE);
+          }
         }
 
       }
@@ -273,8 +320,8 @@ void keyPressed(){
       case 'p' :if (View_Type != 1) {View_Type = 1; X_coordinate += 0.5 * X_View; Y_coordinate += -0.5 * Y_View;} 
                 break;
           
-      case '$' :saveFrame(_Filename + ".jpg"); println("File created."); break;
-      case '#' :saveFrame(_Filename + "_frame####.jpg"); println("File created."); break;
+      case '$' :saveFrame("image.jpg"); println("File created."); break;
+      case '#' :saveFrame("image_frame####.jpg"); println("File created."); break;
     }
 
   }
@@ -307,6 +354,22 @@ float atan_ang (float a) {
  return ((atan(a)) * 180/PI); 
 }
 
+float atan2_ang (float a, float b) {
+ return ((atan2(a,b)) * 180/PI); 
+}
+
+float roundTo (float a, float b) {
+  float a_floor = (floor (a / (1.0 * b))) * b;
+  float a_ceil =  (ceil (a / (1.0 * b))) * b;
+  float c;
+  if ((a - a_floor) > (a_ceil - a)) {
+    c = a_ceil;
+  }
+  else{
+    c = a_floor;
+  }
+  return c;
+}
 
 float[] SOLARCHVISION_SunPosition (float StationLatitude, float DATE, float HOUR) {
   float DEC = 23.45 * sin_ang(DATE - 180.0);
@@ -344,72 +407,142 @@ float SOLARCHVISION_DayTime (float StationLatitude, float DATE) {
   return abs((SOLARCHVISION_Sunset(StationLatitude, DATE)) - (SOLARCHVISION_Sunrise(StationLatitude, DATE)));
 }
 
+int try_update_CLIMATE () {
+  int File_Found = 0;
+  
+  CLIMATE = new String [24][365][num_layers][(1 + CLIMATE_end - CLIMATE_start)];
+ 
+  for (int i = 0; i < 24; i += 1){
+    for (int j = 0; j < 365; j += 1){
+      for (int l = 0; l < num_layers; l += 1){
+        for (int k = 0; k < (1 + CLIMATE_end - CLIMATE_start); k += 1){
+          CLIMATE[i][j][l][k] = _undefined;
+        }
+      }
+    }
+  }
+    
+  String FN = THE_STATION;
 
+  for (int i = 0; i < CLIMATE_EPW_Files.length; i++) {
+    
+    int _L = CLIMATE_EPW_Files[i].length();
+    String _Extention = CLIMATE_EPW_Files[i].substring(_L - 4,_L);
+    //println(_Extention);
+    if (_Extention.toLowerCase().equals(".epw")) {
+      _Filename = CLIMATE_EPW_Files[i].substring(0,_L - 4);
+      
+      if (_Filename.equals(FN)){
+        File_Found = 1;
+        SOLARCHVISION_LoadCLIMATE((CLIMATE_directory + "/" + CLIMATE_EPW_Files[i]));
+      }
+    }
+  }
+  
+  if (File_Found == 0) println ("FILE NOT FOUND:", FN);
+  
+  return File_Found;
+}
 
-void LoadEPW (String FileName) {
-  BufferedReader FileSTR = createReader(FileName);
+void SOLARCHVISION_LoadCLIMATE (String FileName) {
+  String[] FileALL = loadStrings(FileName);
+
   String lineSTR;
   String[] input;
   
-  EPW = new float [24][365][7];
-
-  try {
-    lineSTR = FileSTR.readLine();
-
-    input = split(lineSTR, ',');
-
-    StationName = input[1];
-    StationLatitude = float(input[6]);
-    StationLongitude = float(input[7]);
-    Delta_NOON = float(input[8]) + StationLongitude / 15.0;
-    StationElevation = float(input[9]);
     
-    println(StationName); 
-    println(StationLatitude);
-    println(StationLongitude);
-    println(Delta_NOON);
-    println(StationElevation);
-    
-    int _OK = 1;
-    while (_OK == 1){
-      lineSTR = FileSTR.readLine();
+  //println("lines = ", FileALL.length);
 
-      input = split(lineSTR, ',');
-      
-      if (input[0].equals("DATA PERIODS")) {
-        _OK = 0;
-      }
-    }
+  for (int f = 8; f < FileALL.length; f += 1){
     
+    lineSTR = FileALL[f];
+    
+    String[] parts = split(lineSTR, ',');
+    
+    int CLIMATE_YEAR = int(parts[0]);
+    int CLIMATE_MONTH = int(parts[1]);
+    int CLIMATE_DAY = int(parts[2]);
+    int CLIMATE_HOUR = int(parts[3]);
+    
+    //println (CLIMATE_YEAR, CLIMATE_MONTH, CLIMATE_DAY, CLIMATE_HOUR);
+    
+    int i = int(CLIMATE_HOUR) - 1;
+    int j = Convert2Date(CLIMATE_MONTH, CLIMATE_DAY);
+    int k = 0; // on EPW:TMY files we have only one year 
+    
+    //println (i);
+    
+    CLIMATE[i][j][_pressure][k] = parts[9]; // in Pa
+    CLIMATE[i][j][_drybulb][k] = parts[6]; // in °C
+    CLIMATE[i][j][_relhum][k] = parts[8]; // 0 - 110%
+    CLIMATE[i][j][_glohorrad][k] = parts[13]; // Wh/m²
+    CLIMATE[i][j][_dirnorrad][k] = parts[14]; // Wh/m²
+    CLIMATE[i][j][_difhorrad][k] = parts[15]; // Wh/m²
+    CLIMATE[i][j][_windspd][k] = parts[21]; // in m/s
+    CLIMATE[i][j][_winddir][k] = parts[20]; // ° 
+    CLIMATE[i][j][_opaquesky][k] = parts[23]; // 0.1 times in % ... there is also total_sky_cover on [22]
+    CLIMATE[i][j][_ceilingsky][k] = parts[25]; // in m
+    
+    
+    if (CLIMATE[i][j][_pressure][k].equals("999999")) CLIMATE[i][j][_pressure][k] = _undefined;
+    
+    if (CLIMATE[i][j][_drybulb][k].equals("99.9")) CLIMATE[i][j][_drybulb][k] = _undefined;
+    
+    if (CLIMATE[i][j][_relhum][k].equals("999")) CLIMATE[i][j][_relhum][k] = _undefined;
+    
+    if (CLIMATE[i][j][_glohorrad][k].equals("9999")) CLIMATE[i][j][_glohorrad][k] = _undefined;
+    
+    if (int(CLIMATE[i][j][_dirnorrad][k]) >= 9999) CLIMATE[i][j][_dirnorrad][k] = _undefined;
+    if (int(CLIMATE[i][j][_dirnorrad][k]) < 0) CLIMATE[i][j][_dirnorrad][k] = _undefined;
+    
+    if (int(CLIMATE[i][j][_difhorrad][k]) >= 9999) CLIMATE[i][j][_difhorrad][k] = _undefined;
+    if (int(CLIMATE[i][j][_difhorrad][k]) < 0) CLIMATE[i][j][_difhorrad][k] = _undefined;
+    
+    if (CLIMATE[i][j][_windspd][k].equals("999")) CLIMATE[i][j][_windspd][k] = _undefined;
+    else CLIMATE[i][j][_windspd][k] = String.valueOf(3.6 * float(CLIMATE[i][j][_windspd][k]));
+    
+    if (CLIMATE[i][j][_winddir][k].equals("999")) CLIMATE[i][j][_winddir][k] = _undefined;
+    
+    if (CLIMATE[i][j][_opaquesky][k].equals("99")) CLIMATE[i][j][_opaquesky][k] = _undefined;
+    
+    if (CLIMATE[i][j][_ceilingsky][k].equals("77777")) CLIMATE[i][j][_ceilingsky][k] = "1000";
+    if (CLIMATE[i][j][_ceilingsky][k].equals("88888")) CLIMATE[i][j][_ceilingsky][k] = "1000";
+    if (int(CLIMATE[i][j][_ceilingsky][k]) >= 1000) CLIMATE[i][j][_ceilingsky][k] = "1000";    
+    
+    if (CLIMATE[i][j][_ceilingsky][k].equals("99999")) CLIMATE[i][j][_ceilingsky][k] = _undefined;
 
-    
-    for (int k = 1; k < 365; k += 1){
-      for (int i = 1; i < 24; i += 1){
-        lineSTR = FileSTR.readLine();
-        
-        input = split(lineSTR, ',');
-        
-        EPW[i][k][_drybulb] = float(input[6]);
-        EPW[i][k][_relhum] = float(input[8]);
-        EPW[i][k][_glohorrad] = float(input[13]);
-        EPW[i][k][_dirnorrad] = float(input[14]);
-        EPW[i][k][_difhorrad] = float(input[15]);
-        EPW[i][k][_winddir] = float(input[20]);
-        if (EPW[i][k][_winddir] < 45) {
-          EPW[i][k][_winddir] += 360;
+  }
+
+  String Pa, Pb, Pc;
+  float T, R_dir, R_dif;
+  for (int i = 0; i < 24; i += 1){
+    for (int j = 0; j < 365; j += 1){
+      for (int k = 0; k < (1 + CLIMATE_end - CLIMATE_start); k += 1){
+        Pa = CLIMATE[i][j][_drybulb][k];
+        Pb = CLIMATE[i][j][_dirnorrad][k];
+        Pc = CLIMATE[i][j][_difhorrad][k];
+                  
+        if ((Pa.equals(_undefined)) || (Pb.equals(_undefined)) || (Pc.equals(_undefined))){
         }
-        EPW[i][k][_windspd] = float(input[21]);
-
+        else{
+          T = float(Pa);
+          R_dir = float(Pb);
+          R_dif = float(Pc);
+          CLIMATE[i][j][_direffect][k] = String.valueOf((18 - T) * R_dir);
+          CLIMATE[i][j][_difeffect][k] = String.valueOf((18 - T) * R_dif);
+        }
+        
+        Pa = CLIMATE[i][j][_ceilingsky][k];
+        if (Pa.equals(_undefined)){
+        }
+        else{
+          float Px = log(float(Pa)) / log(10.0);
+          if (Px > 2) CLIMATE[i][j][_logceilsky][k] = String.valueOf(roundTo (Px, 0.1));
+          else CLIMATE[i][j][_logceilsky][k] = "2";
+        }
       }
     }
-     
-    println ("Climate Created Successfully.");
   }
-  
-  catch (IOException e) {
-    println("Unable to read the whole file!");  
-  }
-
 }
 
 
@@ -547,4 +680,30 @@ void _update_date () {
   _MONTH = CalendarDate[int(_DATE)][0]; 
   _DAY = CalendarDate[int(_DATE)][1];
   _HOUR = int(24 * (_DATE - int(_DATE)));
+}
+
+void _update_station () {
+  THE_STATION = DEFINED_STATIONS[STATION_NUMBER][0];
+  StationName = DEFINED_STATIONS[STATION_NUMBER][1];
+  StationProvince = DEFINED_STATIONS[STATION_NUMBER][2];
+  StationLatitude = float(DEFINED_STATIONS[STATION_NUMBER][3]);
+  StationLongitude = float(DEFINED_STATIONS[STATION_NUMBER][4]);
+  StationTimeZone = float(DEFINED_STATIONS[STATION_NUMBER][5]);
+  StationElevation = float(DEFINED_STATIONS[STATION_NUMBER][6]);
+  Delta_NOON = (StationTimeZone - StationLongitude) / 15.0;
+  
+  try_update_CLIMATE();
+}
+
+String[] getfiles (String _Folder) {
+  File dir = new File(_Folder);
+  
+  String[] filenames = dir.list();
+  
+  if (filenames != null) {
+    for (int i = 0; i < filenames.length; i++) {
+      //println(filenames[i]);
+    }
+  }
+  return filenames;
 }
