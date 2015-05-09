@@ -11,9 +11,9 @@ float Y_coordinate = 1 * Y_View;
 float Z_coordinate = 0;
 float S_coordinate = 5.0;
 
-float RX_coordinate = 45;
+float RX_coordinate = 0;
 float RY_coordinate = 0;
-float RZ_coordinate = -45;
+float RZ_coordinate = 0;
 float RS_coordinate = 5.0;
 
 float ZOOM_coordinate = 15000.0 / X_View;
@@ -109,11 +109,15 @@ int num_layers = 18;
 void setup() 
 {
   size(X_View, Y_View, P3D);
+  
   frameRate(24);
-
+  
   SOLARCHVISION_Calendar();  
 
   _update_station();
+
+
+  LoadFontStyle();
   
   //noLoop();
 }
@@ -141,8 +145,12 @@ void draw() {
   rotateZ(RZ_coordinate * PI/180);
   
   fill(255);
+  translate(0,0,0);
   box(10, 10, 10);
-  line (0, 0, 0, 0, 0, 50);
+  
+  translate(10,10,10);
+  box(10, 10, 10);
+  
   
   SunPath1.update(0, 0, 0, 90, StationLatitude); 
 
@@ -167,13 +175,12 @@ class SOLARCHVISION_SunPath {
     pushMatrix();
     translate(x_SunPath, y_SunPath, z_SunPath);
     
-    line(-0.1 * s_SunPath, 0, 0, 0.1 * s_SunPath, 0, 0); 
-    line(0, -0.1 * s_SunPath, 0, 0, 0.1 * s_SunPath, 0);
+    line(-1 * s_SunPath, 0, 0, 1 * s_SunPath, 0, 0); 
+    line(0, -1 * s_SunPath, 0, 0, 1 * s_SunPath, 0);
 
     stroke(255,255,0);
     
     for (int HOUR = int(roundTo(min_sunrise, 1.0)); HOUR < int(roundTo(max_sunset, 1.0)); HOUR += 1){
-    //for (int HOUR = int(roundTo(min_sunrise, 1.0)); HOUR <= 12; HOUR += 1){
       int DATE_step = 1;
       
       for (int DATE_ANGLE = 0; DATE_ANGLE < 360; DATE_ANGLE += DATE_step){
@@ -211,10 +218,10 @@ class SOLARCHVISION_SunPath {
             float[] SunD = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR - 0.5);
             
             beginShape();
-            vertex(-s_SunPath * SunA[1], s_SunPath * SunA[2], s_SunPath * SunA[3]);
-            vertex(-s_SunPath * SunB[1], s_SunPath * SunB[2], s_SunPath * SunB[3]);
-            vertex(-s_SunPath * SunC[1], s_SunPath * SunC[2], s_SunPath * SunC[3]);
-            vertex(-s_SunPath * SunD[1], s_SunPath * SunD[2], s_SunPath * SunD[3]);
+            vertex(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3]);
+            vertex(s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
+            vertex(s_SunPath * SunC[1], -s_SunPath * SunC[2], s_SunPath * SunC[3]);
+            vertex(s_SunPath * SunD[1], -s_SunPath * SunD[2], s_SunPath * SunD[3]);
   
             endShape(CLOSE);
           }
@@ -230,7 +237,7 @@ class SOLARCHVISION_SunPath {
       for (float HOUR = SOLARCHVISION_Sunrise(StationLatitude, j); HOUR < (SOLARCHVISION_Sunset(StationLatitude, j) + .01 - HOUR_step); HOUR += HOUR_step){
         float[] SunA = SOLARCHVISION_SunPosition (StationLatitude, j, HOUR);
         float[] SunB = SOLARCHVISION_SunPosition (StationLatitude, j, (HOUR + HOUR_step));
-        line (s_SunPath * SunA[1], s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], s_SunPath * SunB[2], s_SunPath * SunB[3]);
+        line (s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
       }
     }
     
@@ -240,7 +247,7 @@ class SOLARCHVISION_SunPath {
         float[] SunA = SOLARCHVISION_SunPosition (StationLatitude, j, HOUR);
         float[] SunB = SOLARCHVISION_SunPosition (StationLatitude, (j + DATE_step), HOUR);
         if (SunA[3] >= 0 && SunB[3] >= 0) {
-          line (s_SunPath * SunA[1], s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], s_SunPath * SunB[2], s_SunPath * SunB[3]);
+          line (s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
         }
       }
     }
@@ -249,24 +256,24 @@ class SOLARCHVISION_SunPath {
 
     stroke(0);
     for (int i = 0; i < 360; i += 5){
-      line (s_SunPath * cos(i * PI/180), s_SunPath * sin(i * PI/180), 0, s_SunPath * cos((i + 5) * PI/180), s_SunPath * sin((i + 5) * PI/180), 0);  
+      line (s_SunPath * cos(i * PI/180), -s_SunPath * sin(i * PI/180), 0, s_SunPath * cos((i + 5) * PI/180), -s_SunPath * sin((i + 5) * PI/180), 0);  
+      
+      line (s_SunPath * cos(i * PI/180), -s_SunPath * sin(i * PI/180), 0, 1.05 * s_SunPath * cos((i) * PI/180), -1.05 * s_SunPath * sin((i) * PI/180), 0);
     }
     
     for (int i = 0; i < 360; i += 15){
       pushMatrix();
-      translate(1.1 * s_SunPath * cos(i * PI/180),1.1 * s_SunPath * sin (i * PI/180),0);
-      rotateZ(PI);
-      
+      translate(1.15 * s_SunPath * cos(i * PI/180),-1.15 * s_SunPath * sin (i * PI/180),0);
       
       fill(0);
-      textSize(s_SunPath * 0.1);
+      textSize(s_SunPath * 0.05);
       textAlign(CENTER, CENTER);
       
-      String txt = nf((i + 270) % 360, 0);
-      if (i == 0) txt = "W";
-      else if (i == 90) txt = "N";
-      else if (i == 180) txt = "E";
-      else if (i == 270) txt = "S";
+      String txt = nf((90 - i + 360) % 360, 0);
+      if (i == 0) {txt = "E"; textSize(s_SunPath * 0.1);}
+      else if (i == 90) {txt = "N"; textSize(s_SunPath * 0.1);}
+      else if (i == 180) {txt = "W"; textSize(s_SunPath * 0.1);}
+      else if (i == 270) {txt = "S"; textSize(s_SunPath * 0.1);}
       
       text(txt, 0,0,0);
       popMatrix();
@@ -305,7 +312,7 @@ void keyPressed(){
       case ']' :RZ_coordinate += RS_coordinate; break;
       case '@' :RX_coordinate = 0;
                 RY_coordinate = 0;
-                RZ_coordinate = 180; 
+                RZ_coordinate = 0; 
                 ZOOM_coordinate = 15000.0 / X_View;            
                 X_coordinate = 0.5 * X_View;
                 Y_coordinate = 0.5 * Y_View;
@@ -326,6 +333,9 @@ void keyPressed(){
       case 'S' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_station(); break;
       case 's' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_station(); break;
       
+      
+      case 'F' :LoadFontStyle(); break;
+      case 'f' :LoadFontStyle(); break;
            
           
       case '$' :saveFrame("image.jpg"); println("File created."); break;
@@ -714,4 +724,24 @@ String[] getfiles (String _Folder) {
     }
   }
   return filenames;
+}
+
+
+void LoadFontStyle () {
+  
+  int _size = 36;
+
+  textFont(createFont("MS Sans Serif", _size, true));
+  
+  //textFont(createFont("MS Sans Serif", _size));
+  //textFont(createFont("Microsoft Sans Serif", _size));
+  //textFont(createFont("Arial Narrow", _size));
+  //textFont(createFont("Arial", _size));
+  //textFont(createFont("Times New Roman", _size));
+  //textFont(createFont("Calibri", _size));
+  //textFont(createFont("Cambria", _size));
+  //textFont(createFont("Georgia", _size));
+  //textFont(createFont("Courier New", _size));
+  //textFont(createFont("Franklin Gothic Medium", _size));
+  //textFont(createFont("BankGothic Md BT", _size));
 }
