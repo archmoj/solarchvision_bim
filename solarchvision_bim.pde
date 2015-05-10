@@ -119,7 +119,6 @@ void setup()
 
   LoadFontStyle();
   
-  //noLoop();
 }
 
 
@@ -144,6 +143,8 @@ void draw() {
   rotateY(RY_coordinate * PI/180);
   rotateZ(RZ_coordinate * PI/180);
   
+  pushMatrix();
+  
   fill(255);
   translate(0,0,0);
   box(10, 10, 10);
@@ -151,9 +152,12 @@ void draw() {
   translate(10,10,10);
   box(10, 10, 10);
   
+  popMatrix();
+  
   
   SunPath1.update(0, 0, 0, 90, StationLatitude); 
 
+  noLoop();
 } 
  
 class SOLARCHVISION_SunPath { 
@@ -344,6 +348,8 @@ void keyPressed(){
 
   }
   
+  
+  loop();
 }
 
 
