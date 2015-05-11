@@ -181,10 +181,6 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
   line(0, -1 * s_SunPath, 0, 0, 1 * s_SunPath, 0);
 
   stroke(255, 255, 0);
-
-
-  PShape myMesh = createShape();
-  
   
   for (int HOUR = int(roundTo(min_sunrise, 1.0)); HOUR < int(roundTo(max_sunset, 1.0)); HOUR += 1){
     int DATE_step = 1;
@@ -212,30 +208,24 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
         if (Pa.equals(_undefined)){
         }
         else{
-          
+       
           float[] COL = SOLARCHVISION_DRYWCBD(0.0002 * float(Pa)); // ????????
+  
+          stroke(COL[1], COL[2], COL[3], 127);
+          fill(COL[1], COL[2], COL[3], 127);
           
           float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR - 0.5);
           float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR + 0.5);
           float[] SunC = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR + 0.5);
           float[] SunD = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR - 0.5);
+          
+          beginShape();
+          vertex(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3]);
+          vertex(s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
+          vertex(s_SunPath * SunC[1], -s_SunPath * SunC[2], s_SunPath * SunC[3]);
+          vertex(s_SunPath * SunD[1], -s_SunPath * SunD[2], s_SunPath * SunD[3]);
 
-          myMesh.beginShape();
-
-          //myMesh.stroke(COL[1], COL[2], COL[3], 127);
-          //myMesh.fill(COL[1], COL[2], COL[3], 127);  
-          
-          myMesh.stroke(0,0,0);
-          myMesh.fill(255,255,255);
-
-          myMesh.vertex(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3]);
-          myMesh.vertex(s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
-          myMesh.vertex(s_SunPath * SunC[1], -s_SunPath * SunC[2], s_SunPath * SunC[3]);
-          myMesh.vertex(s_SunPath * SunD[1], -s_SunPath * SunD[2], s_SunPath * SunD[3]);
-          
-          //myMesh.endShape();
-          
-          
+          endShape(CLOSE);
           
         }
       }
@@ -243,14 +233,10 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
     }
   }
   
-  myMesh.endShape(CLOSE);  
-  
-  shape(myMesh, 0, 0, 0, 0);
-  
   stroke(0);
   
   for (int j = 90; j <= 270; j += 30){
-    float HOUR_step =(SOLARCHVISION_DayTime(StationLatitude, j) / 12.0);
+    float HOUR_step = (SOLARCHVISION_DayTime(StationLatitude, j) / 12.0);
     for (float HOUR = SOLARCHVISION_Sunrise(StationLatitude, j); HOUR <(SOLARCHVISION_Sunset(StationLatitude, j) + .01 - HOUR_step); HOUR += HOUR_step){
       float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, j, HOUR);
       float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, j, (HOUR + HOUR_step));
@@ -333,19 +319,29 @@ void keyPressed (){
                 ZOOM_coordinate = 17500.0 / Y_View;
                 View_Type = 0; 
                 break;
-      
-      
+
+      case '8' :RX_coordinate -= RS_coordinate; break;
+      case '2' :RX_coordinate += RS_coordinate; break;
+      case '6' :RZ_coordinate -= RS_coordinate; break;
+      case '4' :RZ_coordinate += RS_coordinate; break;      
+
+      case '0' :View_Type = 1; Z_coordinate -= S_coordinate; break;
+      case '5' :View_Type = 1; Z_coordinate += S_coordinate; break;
+
+      case '+' :ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * ZOOM_coordinate)); break;
+      case '-' :ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * ZOOM_coordinate)); break;      
       
       case ',' :ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * ZOOM_coordinate)); break;
       case '.' :ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * ZOOM_coordinate)); break;
       
-      case 'o' :if (View_Type != 0) View_Type = 0;
-                break;
-      case 'p' :if (View_Type != 1) View_Type = 1; 
-                break;
+      case 'O' :View_Type = 0; break;
+      case 'o' :View_Type = 0; break;
+      
+      case 'P' :View_Type = 1; break;                
+      case 'p' :View_Type = 1; break;                
                 
-      case 'S' :STATION_NUMBER =(STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_station(); break;
-      case 's' :STATION_NUMBER =(STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_station(); break;
+      case 'S' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_station(); break;
+      case 's' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_station(); break;
       
       
       case 'F' :LoadFontStyle(); break;
@@ -393,7 +389,7 @@ float atan2_ang (float a, float b) {
 }
 
 float roundTo (float a, float b) {
-  float a_floor =(floor(a /(1.0 * b))) * b;
+  float a_floor = (floor(a /(1.0 * b))) * b;
   float a_ceil = (ceil(a /(1.0 * b))) * b;
   float c;
   if ((a - a_floor) >(a_ceil - a)) {
@@ -621,37 +617,37 @@ float[] SOLARCHVISION_DRYWCBD (float _variable) {
     COL[3] = 0;
   }
   else if (_variable < -2) {
-    v =(-(_variable + 2) * 255);
+    v = (-(_variable + 2) * 255);
     COL[1] = 255 - v;
     COL[2] = 0;
     COL[3] = 0;
   }
   else if (_variable < -1) {
-    v =(-(_variable + 1) * 255);
+    v = (-(_variable + 1) * 255);
     COL[1] = 255;
     COL[2] = 255 - v;
     COL[3] = 0;
   }
   else if (_variable < 0) {
-    v =(-_variable * 255);
+    v = (-_variable * 255);
     COL[1] = 255;
     COL[2] = 255;
     COL[3] = 255 - v;
   }
   else if (_variable < 1) {
-    v =(_variable * 255);
+    v = (_variable * 255);
     COL[1] = 255 - v;
     COL[2] = 255;
     COL[3] = 255;
   }
   else if (_variable < 2) {
-    v =((_variable - 1) * 255);
+    v = ((_variable - 1) * 255);
     COL[1] = 0;
     COL[2] = 255 - v;
     COL[3] = 255;
   }
   else if (_variable < 2.75) {
-    v =((_variable - 2) * 255);
+    v = ((_variable - 2) * 255);
     COL[1] = 0;
     COL[2] = 0;
     COL[3] = 255 - v;
@@ -716,7 +712,7 @@ void SOLARCHVISION_Calendar () {
 }
 
 int Convert2Day (int Date_Angle) {
-  int DAY =(Date_Angle + 360) % 360;
+  int DAY = (Date_Angle + 360) % 360;
   if (DAY >=  31) DAY += 1;
   if (DAY >=  62) DAY += 1;
   if (DAY >=  93) DAY += 1;
@@ -754,7 +750,7 @@ void _update_station () {
   StationLongitude = float(DEFINED_STATIONS[STATION_NUMBER][4]);
   StationTimeZone = float(DEFINED_STATIONS[STATION_NUMBER][5]);
   StationElevation = float(DEFINED_STATIONS[STATION_NUMBER][6]);
-  Delta_NOON =(StationTimeZone - StationLongitude) / 15.0;
+  Delta_NOON = (StationTimeZone - StationLongitude) / 15.0;
   
   try_update_CLIMATE();
 }
