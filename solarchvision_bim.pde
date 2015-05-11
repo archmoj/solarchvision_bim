@@ -93,10 +93,10 @@ int _windspd200hPa = 17;
 
 int num_layers = 18; 
 
-int WIN3D_CX_View = 600;
+int WIN3D_CX_View = 450;
 int WIN3D_CY_View = 0;
-int WIN3D_X_View = 600;
-int WIN3D_Y_View = 600;
+int WIN3D_X_View = 450;
+int WIN3D_Y_View = 300;
 float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
 
 float WIN3D_X_coordinate = 0;
@@ -109,7 +109,7 @@ float WIN3D_RY_coordinate = 0;
 float WIN3D_RZ_coordinate = 0;
 float WIN3D_RS_coordinate = 5.0;
 
-float WIN3D_ZOOM_coordinate = 17500.0 / WIN3D_Y_View;
+float WIN3D_ZOOM_coordinate = 13500.0 / WIN3D_Y_View;
 
 int WIN3D_View_Type = 0; // 0: Ortho 1: Perspective
 
@@ -119,7 +119,7 @@ int WIN3D_Update = 1;
 
 int WORLD_CX_View = 0;
 int WORLD_CY_View = 0;
-int WORLD_X_View = 600;
+int WORLD_X_View = 450;
 int WORLD_Y_View = 300;
 float WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
 
@@ -224,8 +224,6 @@ void _draw_objects () {
 
 }
 
-
-
 void draw () { 
   
   if (WORLD_Update == 1) {
@@ -322,8 +320,8 @@ void draw () {
       WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT! 
     }
     else{
-      float ZOOM = 0.4425 * WIN3D_ZOOM_coordinate * PI/180; 
-      //float ZOOM = 0.0025 * atan_ang(WIN3D_ZOOM_coordinate);
+      
+      float ZOOM = 0.456 * WIN3D_ZOOM_coordinate * PI/180;
       
       WIN3D_Diagrams.ortho(ZOOM * WIN3D_X_View * -1, ZOOM * WIN3D_X_View * 1, ZOOM  * WIN3D_Y_View * -1, ZOOM  * WIN3D_Y_View * 1, 0.00001, 100000);
       
@@ -540,7 +538,7 @@ void keyPressed (){
                 WIN3D_X_coordinate = 0;
                 WIN3D_Y_coordinate = 0;
                 WIN3D_Z_coordinate = 0;
-                WIN3D_ZOOM_coordinate = 17500.0 / WIN3D_Y_View;
+                WIN3D_ZOOM_coordinate = 13500.0 / WIN3D_Y_View;
                 WIN3D_View_Type = 0; 
                 break;
 
