@@ -25,7 +25,7 @@ String _Filename = "";
 String _undefined = "N/A";
 float FLOAT_undefined = 1000000000; // it must be a positive big number that is not included in any data
 
-int STATION_NUMBER = 14; 
+int STATION_NUMBER = 0; 
 
 String[][] DEFINED_STATIONS = {
   
@@ -35,18 +35,41 @@ String[][] DEFINED_STATIONS = {
                                 {"Bologna_XX_IT", "Bologna", "XX", "44.53", "11.30", "15", "49.0"}, 
                                 {"VIENNA_XX_AT", "VIENNA", "XX", "48.12", "16.57", "15", "190.0"}, 
                                 
-                                {"VANCOUVER_INTL_BC_CA", "VANCOUVER", "BC", "49.25", "-123.25", "-120", "4.30"}, 
-                                {"MONTREAL_DORVAL_QC_CA", "MONTREAL", "QC", "45.47", "-73.75", "-75", "31.00"}, 
-
-                                {"NEW_YORK_CITY_NY_US", "NEW_YORK_CITY", "NY", "40.712784", "-74.00594", "-75", "10.0"}, 
-                                {"WASHINGTON_DC_US", "WASHINGTON", "DC", "38.907192", "-77.03687", "-75", "22.0"}, 
-                                {"LOS_ANGELES_CA_US", "LOS_ANGELES", "CA", "34.052235", "-118.24368", "-120", "87.0"}, 
-                                {"CHICAGO_IL_US", "CHICAGO", "IL", "41.878113", "-87.6298", "-90", "181.0"}, 
-                                {"HOUSTON_TX_US", "HOUSTON", "TX", "29.760193", "-95.36939", "-90", "15.0"}, 
-                                {"MIAMI_FL_US", "MIAMI", "FL", "25.789097", "-80.20404", "-75", "3.0"}, 
-                                {"BOSTON_MA_US", "BOSTON", "MA", "42.35843", "-71.05978", "-75", "15.0"}, 
-                                {"LAS_VEGAS_NV_US", "LAS_VEGAS", "NV", "36.16994", "-115.13983", "-120", "611.0"}, 
-                                {"DENVER_CO_US", "DENVER", "CO", "39.737568", "-104.98472", "-105", "1608.0"}, 
+                                {"MONTREAL_DORVAL_QC_CA", "MONTREAL", "QC", "45.47", "-73.75", "-75", "31.00"},
+                                {"CALGARY_INTL_AB_CA", "CALGARY", "AB", "51.10", "-114.02", "-120", "1084.10"},
+                                {"EDMONTON_INTL_A_AB_CA", "EDMONTON_INTL_A", "AB", "53.316666", "-113.583336", "-120", "723.3"},
+                                {"HALIFAX_INTL_AIRPORT_NS_CA", "HALIFAX", "NS", "44.86", "-63.50", "-60", "145.40"},
+                                {"OTTAWA_INTL_ON_CA", "OTTAWA", "ON", "45.38", "-75.72", "-75", "114.00"},
+                                {"QUEBEC_QC_CA", "QUEBEC", "QC", "46.8", "-71.38333", "-75", "74.4"},
+                                {"SUDBURY_ON_CA", "SUDBURY", "ON", "46.625556", "-80.797778", "-75", "348.00"},
+                                {"TORONTO_ISLAND_ON_CA", "TORONTO-ISLAND", "ON", "43.63", "-79.40", "-75", "76.50"},
+                                {"TORONTO_PEARSON_INTL_ON_CA", "TORONTO-PEARSON", "ON", "43.67", "-79.63", "-75", "173.40"},
+                                {"VANCOUVER_INTL_BC_CA", "VANCOUVER", "BC", "49.25", "-123.25", "-120", "4.30"},
+                                {"WINNIPEG_INTL_MB_CA", "WINNIPEG_INTL", "MB", "49.916668", "-97.23333", "-90", "238.7"},
+                                
+                                {"BOSTON_MA_US", "BOSTON", "MA", "42.35843", "-71.05978", "-75", "15.0"},
+                                {"CHICAGO_IL_US", "CHICAGO", "IL", "41.878113", "-87.6298", "-90", "181.0"},
+                                {"DENVER_CO_US", "DENVER", "CO", "39.737568", "-104.98472", "-105", "1608.0"},
+                                {"HOUSTON_TX_US", "HOUSTON", "TX", "29.760193", "-95.36939", "-90", "15.0"},
+                                {"LAS_VEGAS_NV_US", "LAS_VEGAS", "NV", "36.16994", "-115.13983", "-120", "611.0"},
+                                {"LOS_ANGELES_CA_US", "LOS_ANGELES", "CA", "34.052235", "-118.24368", "-120", "87.0"},
+                                {"MIAMI_FL_US", "MIAMI", "FL", "25.789097", "-80.20404", "-75", "3.0"},
+                                {"NEW_YORK_CITY_NY_US", "NEW_YORK_CITY", "NY", "40.712784", "-74.00594", "-75", "10.0"},
+                                {"WASHINGTON_DC_US", "WASHINGTON", "DC", "38.907192", "-77.03687", "-75", "22.0"},
+                                
+                                {"BRASILIA_XX_BR", "BRASILIA", "XX", "-29.176456", "-51.22032", "-45", "774.0"},
+                                {"RIO_DE_JANEIRO_XX_BR", "RIO_DE_JANEIRO", "XX", "-22.893467", "-43.21391", "-45", "6.0"},
+                                {"SAO_PAULO_XX_BR", "SAO_PAULO", "XX", "-14.317596", "-44.45876", "-45", "497.0"},
+                                
+                                {"CIUDAD_DE_MEXICO_DF_MX", "MEXICO_CITY", "DF", "19.432608", "-99.13321", "-105", "2230.0"},
+                                {"HAVANA_XX_CU", "HAVANA", "XX", "23.05407", "-82.34519", "-75", "93.0"},
+                                {"SANTO_DOMINGO_XX_DO", "SANTO_DOMINGO", "XX", "18.482439", "-69.96518", "-75", "62.0"},
+                                {"SAN_SALVADOR_XX_SV", "SAN_SALVADOR", "XX", "13.679502", "-89.21397", "-90", "796.0"},
+                                {"CARACAS_XX_VE", "CARACAS", "XX", "10.960712", "-63.920437", "-60", "32.0"},
+                                {"BOGOTA_XX_CO", "BOGOTA", "XX", "7.894716", "-72.504616", "-75", "302.0"},
+                                {"GUAYAQUIL_XX_EC", "GUAYAQUIL", "XX", "-2.1241937", "-79.59123", "-75", "11.0"},
+                                {"LIMA_XX_PE", "LIMA", "XX", "-12.032012", "-76.92987", "-75", "336.0"},
+                                {"ANTOFAGASTA_XX_CL", "ANTOFAGASTA", "XX", "-23.65", "-70.4", "-75", "13.0"}
                              
                               };
 
