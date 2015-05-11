@@ -1,21 +1,3 @@
-int X_View = 600;
-int Y_View = 600;
-float R_View = float(Y_View) / float(X_View);
-
-float X_coordinate = 0;
-float Y_coordinate = 0;
-float Z_coordinate = 0;
-float S_coordinate = 5.0;
-
-float RX_coordinate = 0;
-float RY_coordinate = 0;
-float RZ_coordinate = 0;
-float RS_coordinate = 5.0;
-
-float ZOOM_coordinate = 17500.0 / Y_View;
-
-int View_Type = 0; // 0: Ortho 1: Perspective
-
 int _MONTH = -1;
 int _DAY = -1; 
 int _HOUR = -1; 
@@ -94,11 +76,28 @@ int _windspd200hPa = 17;
 
 int num_layers = 18; 
 
+int WIN3D_X_View = 600;
+int WIN3D_Y_View = 600;
+float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
+
+float WIN3D_X_coordinate = 0;
+float WIN3D_Y_coordinate = 0;
+float WIN3D_Z_coordinate = 0;
+float WIN3D_S_coordinate = 5.0;
+
+float WIN3D_RX_coordinate = 0;
+float WIN3D_RY_coordinate = 0;
+float WIN3D_RZ_coordinate = 0;
+float WIN3D_RS_coordinate = 5.0;
+
+float WIN3D_ZOOM_coordinate = 17500.0 / WIN3D_Y_View;
+
+int WIN3D_View_Type = 0; // 0: Ortho 1: Perspective
 
 void setup () 
 {
   
-  size(X_View, Y_View, P3D);
+  size(WIN3D_X_View, WIN3D_Y_View, P3D);
   
   frameRate(24);
   
@@ -170,18 +169,18 @@ void _draw_objects () {
 void draw () { 
   background(233);
   
-  if (View_Type == 1) {
-    perspective(ZOOM_coordinate * PI/180, 1.0 / R_View, 0.00001, 100000);  //fovy, aspect, zNear, zFar
+  if (WIN3D_View_Type == 1) {
+    perspective(WIN3D_ZOOM_coordinate * PI/180, 1.0 / WIN3D_R_View, 0.00001, 100000);  //fovy, aspect, zNear, zFar
     
-    translate(0.5 * X_View, 0.5 * Y_View, 0); // << IMPORTANT! 
+    translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT! 
   }
   else{
-    float ZOOM = 0.4425 * ZOOM_coordinate * PI/180; 
-    //float ZOOM = 0.0025 * atan_ang(ZOOM_coordinate);
+    float ZOOM = 0.4425 * WIN3D_ZOOM_coordinate * PI/180; 
+    //float ZOOM = 0.0025 * atan_ang(WIN3D_ZOOM_coordinate);
     
-    ortho(ZOOM * X_View * -1, ZOOM * X_View * 1, ZOOM  * Y_View * -1, ZOOM  * Y_View * 1, 0.00001, 100000);
+    ortho(ZOOM * WIN3D_X_View * -1, ZOOM * WIN3D_X_View * 1, ZOOM  * WIN3D_Y_View * -1, ZOOM  * WIN3D_Y_View * 1, 0.00001, 100000);
     
-    translate(0, 1.0 * Y_View, 0); // << IMPORTANT! 
+    translate(0, 1.0 * WIN3D_Y_View, 0); // << IMPORTANT! 
   }
 
   //lights();
@@ -193,16 +192,16 @@ void draw () {
   translate(0, 0, 0);
   
   fill(0);
-  textSize(10.0 * (ZOOM_coordinate / 30));
+  textSize(10.0 * (WIN3D_ZOOM_coordinate / 30));
   textAlign(CENTER, CENTER);    
-  text(StationName + " [" + nfp(StationLatitude, 0, 1) + ", " + nfp(StationLongitude, 0, 1) + "]", 0, 120 * (ZOOM_coordinate / 30), 0);
+  text(StationName + " [" + nfp(StationLatitude, 0, 1) + ", " + nfp(StationLongitude, 0, 1) + "]", 0, 120 * (WIN3D_ZOOM_coordinate / 30), 0);
  
   popMatrix();
 
-  translate(X_coordinate, Y_coordinate, Z_coordinate);
-  rotateX(RX_coordinate * PI/180);
-  rotateY(RY_coordinate * PI/180);
-  rotateZ(RZ_coordinate * PI/180);
+  translate(WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
+  rotateX(WIN3D_RX_coordinate * PI/180);
+  rotateY(WIN3D_RY_coordinate * PI/180);
+  rotateZ(WIN3D_RZ_coordinate * PI/180);
   
   
   
@@ -345,55 +344,55 @@ void keyPressed (){
   
   if (key == CODED) { 
     switch(keyCode) {
-      case LEFT  :X_coordinate -= S_coordinate; break;
-      case RIGHT :X_coordinate += S_coordinate; break;  
-      case UP    :Y_coordinate -= S_coordinate; break;
-      case DOWN  :Y_coordinate += S_coordinate; break;
+      case LEFT  :WIN3D_X_coordinate -= WIN3D_S_coordinate; break;
+      case RIGHT :WIN3D_X_coordinate += WIN3D_S_coordinate; break;  
+      case UP    :WIN3D_Y_coordinate -= WIN3D_S_coordinate; break;
+      case DOWN  :WIN3D_Y_coordinate += WIN3D_S_coordinate; break;
     }
   }
   else{
     switch(key) {
-      case '<'  :Z_coordinate -= S_coordinate; break;
-      case '>' :Z_coordinate += S_coordinate; break;
+      case '<'  :WIN3D_Z_coordinate -= WIN3D_S_coordinate; break;
+      case '>' :WIN3D_Z_coordinate += WIN3D_S_coordinate; break;
       
-      case '{' :RX_coordinate -= RS_coordinate; break;
-      case '}' :RX_coordinate += RS_coordinate; break;
-      case '(' :RY_coordinate -= RS_coordinate; break;
-      case ')' :RY_coordinate += RS_coordinate; break;
-      case '[' :RZ_coordinate -= RS_coordinate; break;
-      case ']' :RZ_coordinate += RS_coordinate; break;
-      case '@' :RX_coordinate = 0;
-                RY_coordinate = 0;
-                RZ_coordinate = 0; 
-                X_coordinate = 0;
-                Y_coordinate = 0;
-                Z_coordinate = 0;
-                ZOOM_coordinate = 17500.0 / Y_View;
-                View_Type = 0; 
+      case '{' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; break;
+      case '}' :WIN3D_RX_coordinate += WIN3D_RS_coordinate; break;
+      case '(' :WIN3D_RY_coordinate -= WIN3D_RS_coordinate; break;
+      case ')' :WIN3D_RY_coordinate += WIN3D_RS_coordinate; break;
+      case '[' :WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; break;
+      case ']' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; break;
+      case '@' :WIN3D_RX_coordinate = 0;
+                WIN3D_RY_coordinate = 0;
+                WIN3D_RZ_coordinate = 0; 
+                WIN3D_X_coordinate = 0;
+                WIN3D_Y_coordinate = 0;
+                WIN3D_Z_coordinate = 0;
+                WIN3D_ZOOM_coordinate = 17500.0 / WIN3D_Y_View;
+                WIN3D_View_Type = 0; 
                 break;
 
-      case '8' :RX_coordinate -= RS_coordinate; break;
-      case '2' :RX_coordinate += RS_coordinate; break;
-      case '6' :RZ_coordinate -= RS_coordinate; break;
-      case '4' :RZ_coordinate += RS_coordinate; break;      
+      case '8' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; break;
+      case '2' :WIN3D_RX_coordinate += WIN3D_RS_coordinate; break;
+      case '6' :WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; break;
+      case '4' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; break;      
 
-      case '0' :View_Type = 1; Z_coordinate -= S_coordinate; break;
-      case '5' :View_Type = 1; Z_coordinate += S_coordinate; break;
+      case '0' :WIN3D_View_Type = 1; WIN3D_Z_coordinate -= WIN3D_S_coordinate; break;
+      case '5' :WIN3D_View_Type = 1; WIN3D_Z_coordinate += WIN3D_S_coordinate; break;
 
       case '*' :objects_scale *= 2.0; break;
       case '/' :objects_scale /= 2.0; break;
 
-      case '+' :ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * ZOOM_coordinate)); break;
-      case '-' :ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * ZOOM_coordinate)); break;      
+      case '+' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;
+      case '-' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;      
       
-      case ',' :ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * ZOOM_coordinate)); break;
-      case '.' :ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * ZOOM_coordinate)); break;
+      case ',' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;
+      case '.' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;
       
-      case 'O' :View_Type = 0; break;
-      case 'o' :View_Type = 0; break;
+      case 'O' :WIN3D_View_Type = 0; break;
+      case 'o' :WIN3D_View_Type = 0; break;
       
-      case 'P' :View_Type = 1; break;                
-      case 'p' :View_Type = 1; break;                
+      case 'P' :WIN3D_View_Type = 1; break;                
+      case 'p' :WIN3D_View_Type = 1; break;                
                 
       case 'S' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_station(); break;
       case 's' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_station(); break;
