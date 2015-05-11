@@ -16,7 +16,7 @@ float RY_coordinate = 0;
 float RZ_coordinate = 0;
 float RS_coordinate = 5.0;
 
-float ZOOM_coordinate = 15000.0 / X_View;
+float ZOOM_coordinate = 17500.0 / X_View;
 
 int View_Type = 0; // 0: Ortho 1: Perspective
 {
@@ -121,17 +121,14 @@ void setup()
   
 }
 
-
-
 void draw() { 
   background(233);
-  
   
   if (View_Type == 1) {
     perspective(ZOOM_coordinate * PI/180, X_View/Y_View, 0.00001, 100000);  //fovy, aspect, zNear, zFar
   }
   else{
-    float ZOOM = 0.4567 * ZOOM_coordinate * PI/180; 
+    float ZOOM = 0.4425 * ZOOM_coordinate * PI/180; 
     ortho(ZOOM * X_View * -1, ZOOM * X_View * 1, ZOOM  * Y_View * -1, ZOOM  * Y_View * 1, 0.00001, 100000);
   }
 
@@ -280,10 +277,23 @@ class SOLARCHVISION_SunPath {
       else if (i == 270) {txt = "S"; textSize(s_SunPath * 0.1);}
       
       text(txt, 0,0,0);
+      
       popMatrix();
     }    
     
-    
+    fill(0);
+    textSize(s_SunPath * 0.05);
+    textAlign(CENTER, CENTER);    
+    text(StationName, 0,120,0);
+  /*
+  StationName = DEFINED_STATIONS[STATION_NUMBER][1];
+  StationProvince = DEFINED_STATIONS[STATION_NUMBER][2];
+  StationLatitude = float(DEFINED_STATIONS[STATION_NUMBER][3]);
+  StationLongitude = float(DEFINED_STATIONS[STATION_NUMBER][4]);
+  StationTimeZone = float(DEFINED_STATIONS[STATION_NUMBER][5]);
+  StationElevation = float(DEFINED_STATIONS[STATION_NUMBER][6]);
+*/  
+
  
   } 
 } 
@@ -317,7 +327,7 @@ void keyPressed(){
       case '@' :RX_coordinate = 0;
                 RY_coordinate = 0;
                 RZ_coordinate = 0; 
-                ZOOM_coordinate = 15000.0 / X_View;            
+                ZOOM_coordinate = 17500.0 / X_View;            
                 X_coordinate = 0.5 * X_View;
                 Y_coordinate = 0.5 * Y_View;
                 Z_coordinate = 0;
