@@ -43,22 +43,22 @@ String[][] DEFINED_STATIONS = {
   
                                 {"MOSCOW_XX_RU", "MOSCOW", "XX", "55.75", "37.63", "45", "156.0"}, 
                                 {"Istanbul_XX_TR", "Istanbul", "XX", "40.97", "28.82", "30", "37.0"}, 
-                                {"Barcelona_XX_SP", "Barcelona", "XX", "41.28", "2.07", "15", "6.0"},
-                                {"Bologna_XX_IT", "Bologna", "XX", "44.53", "11.30", "15", "49.0"},
-                                {"VIENNA_XX_AT", "VIENNA", "XX", "48.12", "16.57", "15", "190.0"},
+                                {"Barcelona_XX_SP", "Barcelona", "XX", "41.28", "2.07", "15", "6.0"}, 
+                                {"Bologna_XX_IT", "Bologna", "XX", "44.53", "11.30", "15", "49.0"}, 
+                                {"VIENNA_XX_AT", "VIENNA", "XX", "48.12", "16.57", "15", "190.0"}, 
                                 
-                                {"VANCOUVER_INTL_BC_CA", "VANCOUVER", "BC", "49.25", "-123.25", "-120", "4.30"},
-                                {"MONTREAL_DORVAL_QC_CA", "MONTREAL", "QC", "45.47", "-73.75", "-75", "31.00"},
+                                {"VANCOUVER_INTL_BC_CA", "VANCOUVER", "BC", "49.25", "-123.25", "-120", "4.30"}, 
+                                {"MONTREAL_DORVAL_QC_CA", "MONTREAL", "QC", "45.47", "-73.75", "-75", "31.00"}, 
 
-                                {"NEW_YORK_CITY_NY_US", "NEW_YORK_CITY", "NY", "40.712784", "-74.00594", "-75", "10.0"},
-                                {"WASHINGTON_DC_US", "WASHINGTON", "DC", "38.907192", "-77.03687", "-75", "22.0"},
-                                {"LOS_ANGELES_CA_US", "LOS_ANGELES", "CA", "34.052235", "-118.24368", "-120", "87.0"},
-                                {"CHICAGO_IL_US", "CHICAGO", "IL", "41.878113", "-87.6298", "-90", "181.0"},
-                                {"HOUSTON_TX_US", "HOUSTON", "TX", "29.760193", "-95.36939", "-90", "15.0"},
-                                {"MIAMI_FL_US", "MIAMI", "FL", "25.789097", "-80.20404", "-75", "3.0"},
-                                {"BOSTON_MA_US", "BOSTON", "MA", "42.35843", "-71.05978", "-75", "15.0"},
-                                {"LAS_VEGAS_NV_US", "LAS_VEGAS", "NV", "36.16994", "-115.13983", "-120", "611.0"},
-                                {"DENVER_CO_US", "DENVER", "CO", "39.737568", "-104.98472", "-105", "1608.0"},
+                                {"NEW_YORK_CITY_NY_US", "NEW_YORK_CITY", "NY", "40.712784", "-74.00594", "-75", "10.0"}, 
+                                {"WASHINGTON_DC_US", "WASHINGTON", "DC", "38.907192", "-77.03687", "-75", "22.0"}, 
+                                {"LOS_ANGELES_CA_US", "LOS_ANGELES", "CA", "34.052235", "-118.24368", "-120", "87.0"}, 
+                                {"CHICAGO_IL_US", "CHICAGO", "IL", "41.878113", "-87.6298", "-90", "181.0"}, 
+                                {"HOUSTON_TX_US", "HOUSTON", "TX", "29.760193", "-95.36939", "-90", "15.0"}, 
+                                {"MIAMI_FL_US", "MIAMI", "FL", "25.789097", "-80.20404", "-75", "3.0"}, 
+                                {"BOSTON_MA_US", "BOSTON", "MA", "42.35843", "-71.05978", "-75", "15.0"}, 
+                                {"LAS_VEGAS_NV_US", "LAS_VEGAS", "NV", "36.16994", "-115.13983", "-120", "611.0"}, 
+                                {"DENVER_CO_US", "DENVER", "CO", "39.737568", "-104.98472", "-105", "1608.0"}, 
                              
                               };
 
@@ -125,15 +125,15 @@ void draw () {
   background(233);
   
   if (View_Type == 1) {
-    perspective(ZOOM_coordinate * PI/180, X_View/Y_View, 0.00001, 100000);  //fovy, aspect, zNear, zFar
+    perspective(ZOOM_coordinate * PI/180, X_View / Y_View, 0.00001, 100000);  //fovy, aspect, zNear, zFar
     
-    translate(0.5 * X_View,0.5 * Y_View,0); // << IMPORTANT! 
+    translate(0.5 * X_View, 0.5 * Y_View, 0); // << IMPORTANT! 
   }
   else{
     float ZOOM = 0.4425 * ZOOM_coordinate * PI/180; 
     ortho(ZOOM * X_View * -1, ZOOM * X_View * 1, ZOOM  * Y_View * -1, ZOOM  * Y_View * 1, 0.00001, 100000);
     
-    translate(0,1.0 * Y_View,0); // << IMPORTANT! 
+    translate(0, 1.0 * Y_View, 0); // << IMPORTANT! 
   }
 
 
@@ -143,7 +143,7 @@ void draw () {
   
   pushMatrix();
   
-  translate(0,0,0);
+  translate(0, 0, 0);
   
   fill(0);
   textSize(10.0 * (ZOOM_coordinate / 30));
@@ -153,7 +153,7 @@ void draw () {
   popMatrix();
   
   if (View_Type == 1) {
-    translate(-0.5 * X_View,0.5 * Y_View,0); // << IMPORTANT! 
+    translate(-0.5 * X_View, 0.5 * Y_View, 0); // << IMPORTANT! 
   }
   else{
  
@@ -166,7 +166,7 @@ void draw () {
   StationLongitude = float(DEFINED_STATIONS[STATION_NUMBER][4]);
   StationTimeZone = float(DEFINED_STATIONS[STATION_NUMBER][5]);
   StationElevation = float(DEFINED_STATIONS[STATION_NUMBER][6]);
-*/  
+ */ 
 
   translate(X_coordinate, Y_coordinate, Z_coordinate);
 
@@ -177,10 +177,10 @@ void draw () {
   pushMatrix();
   
   fill(255);
-  translate(0,0,0);
+  translate(0, 0, 0);
   box(10, 10, 10);
   
-  translate(10,10,10);
+  translate(10, 10, 10);
   box(10, 10, 10);
   
   popMatrix();
@@ -214,7 +214,7 @@ class SOLARCHVISION_SunPath {
     line(-1 * s_SunPath, 0, 0, 1 * s_SunPath, 0, 0); 
     line(0, -1 * s_SunPath, 0, 0, 1 * s_SunPath, 0);
 
-    stroke(255,255,0);
+    stroke(255, 255, 0);
     
     for (int HOUR = int(roundTo(min_sunrise, 1.0)); HOUR < int(roundTo(max_sunset, 1.0)); HOUR += 1){
       int DATE_step = 1;
@@ -235,7 +235,7 @@ class SOLARCHVISION_SunPath {
           int j = Convert2Date(_MONTH, _DAY);
           int k = 0; // on EPW:TMY files we have only one year 
           
-          //println(i,j,k); exit();
+          //println(i, j, k); exit();
           
           String Pa = CLIMATE[i][j][_direffect][k];
           
@@ -273,7 +273,7 @@ class SOLARCHVISION_SunPath {
       float HOUR_step =(SOLARCHVISION_DayTime(StationLatitude, j) / 12.0);
       for (float HOUR = SOLARCHVISION_Sunrise(StationLatitude, j); HOUR <(SOLARCHVISION_Sunset(StationLatitude, j) + .01 - HOUR_step); HOUR += HOUR_step){
         float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, j, HOUR);
-        float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, j,(HOUR + HOUR_step));
+        float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, j, (HOUR + HOUR_step));
         line(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
       }
     }
@@ -282,7 +282,7 @@ class SOLARCHVISION_SunPath {
       float DATE_step = 1;
       for (int j = 0; j <= 360; j += DATE_step){
         float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, j, HOUR);
-        float[] SunB = SOLARCHVISION_SunPosition(StationLatitude,(j + DATE_step), HOUR);
+        float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, (j + DATE_step), HOUR);
         if (SunA[3] >= 0 && SunB[3] >= 0) {
           line(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
         }
@@ -300,7 +300,7 @@ class SOLARCHVISION_SunPath {
     
     for (int i = 0; i < 360; i += 15){
       pushMatrix();
-      translate(1.15 * s_SunPath * cos(i * PI/180),-1.15 * s_SunPath * sin(i * PI/180),0);
+      translate(1.15 * s_SunPath * cos(i * PI/180), -1.15 * s_SunPath * sin(i * PI/180), 0);
       
       fill(0);
       textSize(s_SunPath * 0.05);
@@ -312,7 +312,7 @@ class SOLARCHVISION_SunPath {
       else if (i == 180) {txt = "W"; textSize(s_SunPath * 0.1);}
       else if (i == 270) {txt = "S"; textSize(s_SunPath * 0.1);}
       
-      text(txt, 0,0,0);
+      text(txt, 0, 0, 0);
       
       popMatrix();
     }    
@@ -327,8 +327,8 @@ class SOLARCHVISION_SunPath {
 
 
 void keyPressed (){
-  //println("key: "+key);
-  //println("keyCode: "+keyCode); 
+  //println("key: " + key);
+  //println("keyCode: " + keyCode); 
   
   if (key == CODED) { 
     switch(keyCode) {
@@ -414,7 +414,7 @@ float atan_ang (float a) {
 }
 
 float atan2_ang (float a, float b) {
- return((atan2(a,b)) * 180/PI); 
+ return((atan2(a, b)) * 180/PI); 
 }
 
 float roundTo (float a, float b) {
@@ -433,7 +433,7 @@ float roundTo (float a, float b) {
 float EquationOfTime (float DateAngle) {
   float b = DateAngle;
 
-  return 0.01 *(9.87 * sin_ang(2 * b) - 7.53 * cos_ang(b) - 1.5 * sin_ang(b));
+  return 0.01  * (9.87 * sin_ang(2 * b) - 7.53 * cos_ang(b) - 1.5 * sin_ang(b));
 }
 
 float[] SOLARCHVISION_SunPosition (float Latitude, float DateAngle, float HourAngleOrigin) {
@@ -516,10 +516,10 @@ int try_update_CLIMATE () {
   for (int i = 0; i < CLIMATE_EPW_Files.length; i++) {
     
     int _L = CLIMATE_EPW_Files[i].length();
-    String _Extention = CLIMATE_EPW_Files[i].substring(_L - 4,_L);
+    String _Extention = CLIMATE_EPW_Files[i].substring(_L - 4, _L);
     //println(_Extention);
     if (_Extention.toLowerCase().equals(".epw")) {
-      _Filename = CLIMATE_EPW_Files[i].substring(0,_L - 4);
+      _Filename = CLIMATE_EPW_Files[i].substring(0, _L - 4);
       
       if (_Filename.equals(FN)){
         File_Found = 1;
@@ -636,7 +636,7 @@ void SOLARCHVISION_LoadCLIMATE (String FileName) {
 
 
 float[] SOLARCHVISION_DRYWCBD (float _variable) {
-  _variable *= 2.75;
+  _variable  *= 2.75;
   
   float v;
   float[] COL = {255, 0, 0, 0};
@@ -696,17 +696,17 @@ float[] SOLARCHVISION_DRYWCBD (float _variable) {
 
 
 String[][] CalendarMonth = {
-  {"January", "janvier"},
-  {"February", "février"},
-  {"March", "mars"},
-  {"April", "avril"},
-  {"May", "mai"},
-  {"June", "juin"},
-  {"July", "juillet"},
-  {"August", "août"},
-  {"September", "septembre"},
-  {"October", "octobre"},
-  {"November", "novembre"},
+  {"January", "janvier"}, 
+  {"February", "février"}, 
+  {"March", "mars"}, 
+  {"April", "avril"}, 
+  {"May", "mai"}, 
+  {"June", "juin"}, 
+  {"July", "juillet"}, 
+  {"August", "août"}, 
+  {"September", "septembre"}, 
+  {"October", "octobre"}, 
+  {"November", "novembre"}, 
   {"December", "décembre"}
 };
 
@@ -768,7 +768,7 @@ int Convert2Date (int _MONTH, int _DAY) {
 void _update_date() {
   _MONTH = CalendarDate[int(_DATE)][0]; 
   _DAY = CalendarDate[int(_DATE)][1];
-  _HOUR = int(24 *(_DATE - int(_DATE)));
+  _HOUR = int(24  * (_DATE - int(_DATE)));
 }
 
 void _update_station () {
