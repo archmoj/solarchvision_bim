@@ -106,7 +106,7 @@ int _windspd200hPa = 17;
 int num_layers = 18; 
 
 
-void setup() 
+void setup () 
 {
   size(X_View, Y_View, P3D);
   
@@ -121,7 +121,7 @@ void setup()
   
 }
 
-void draw() { 
+void draw () { 
   background(233);
   
   if (View_Type == 1) {
@@ -160,7 +160,7 @@ void draw() {
 class SOLARCHVISION_SunPath { 
   float x_SunPath, y_SunPath, z_SunPath, s_SunPath;
   float StationLatitude; 
-  SOLARCHVISION_SunPath () {  
+  SOLARCHVISION_SunPath() {  
   } 
   void update(float x, float y, float z, float s, float l) {
     x_SunPath = x; 
@@ -192,7 +192,7 @@ class SOLARCHVISION_SunPath {
         
         //println(_DATE, _MONTH, _DAY, DATE_ANGLE); exit();
        
-        float[] Sun = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE, HOUR);
+        float[] Sun = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE, HOUR);
         
         if (Sun[3] >= 0) {
           
@@ -207,16 +207,16 @@ class SOLARCHVISION_SunPath {
           if (Pa.equals(_undefined)){
           }
           else{
-          
+/*          
             float[] COL = SOLARCHVISION_DRYWCBD(0.0002 * float(Pa)); // ????????
     
             stroke(COL[1], COL[2], COL[3]);
             fill(COL[1], COL[2], COL[3]);
             
-            float[] SunA = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR - 0.5);
-            float[] SunB = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR + 0.5);
-            float[] SunC = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR + 0.5);
-            float[] SunD = SOLARCHVISION_SunPosition (StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR - 0.5);
+            float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR - 0.5);
+            float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR + 0.5);
+            float[] SunC = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR + 0.5);
+            float[] SunD = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR - 0.5);
             
             beginShape();
             vertex(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3]);
@@ -225,6 +225,7 @@ class SOLARCHVISION_SunPath {
             vertex(s_SunPath * SunD[1], -s_SunPath * SunD[2], s_SunPath * SunD[3]);
   
             endShape(CLOSE);
+*/            
           }
         }
 
@@ -234,21 +235,21 @@ class SOLARCHVISION_SunPath {
     stroke(0);
     
     for (int j = 90; j <= 270; j += 30){
-      float HOUR_step = (SOLARCHVISION_DayTime (StationLatitude, j) / 72.0);
-      for (float HOUR = SOLARCHVISION_Sunrise(StationLatitude, j); HOUR < (SOLARCHVISION_Sunset(StationLatitude, j) + .01 - HOUR_step); HOUR += HOUR_step){
-        float[] SunA = SOLARCHVISION_SunPosition (StationLatitude, j, HOUR);
-        float[] SunB = SOLARCHVISION_SunPosition (StationLatitude, j, (HOUR + HOUR_step));
-        line (s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
+      float HOUR_step =(SOLARCHVISION_DayTime(StationLatitude, j) / 12.0);
+      for (float HOUR = SOLARCHVISION_Sunrise(StationLatitude, j); HOUR <(SOLARCHVISION_Sunset(StationLatitude, j) + .01 - HOUR_step); HOUR += HOUR_step){
+        float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, j, HOUR);
+        float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, j,(HOUR + HOUR_step));
+        line(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
       }
     }
     
     for (float HOUR = min_sunrise; HOUR < max_sunset + .01; HOUR += 1){
       float DATE_step = 1;
-      for (int j = 90; j <= 270; j += DATE_step){
-        float[] SunA = SOLARCHVISION_SunPosition (StationLatitude, j, HOUR);
-        float[] SunB = SOLARCHVISION_SunPosition (StationLatitude, (j + DATE_step), HOUR);
+      for (int j = 0; j <= 360; j += DATE_step){
+        float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, j, HOUR);
+        float[] SunB = SOLARCHVISION_SunPosition(StationLatitude,(j + DATE_step), HOUR);
         if (SunA[3] >= 0 && SunB[3] >= 0) {
-          line (s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
+          line(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
         }
       }
     }
@@ -257,14 +258,14 @@ class SOLARCHVISION_SunPath {
 
     stroke(0);
     for (int i = 0; i < 360; i += 5){
-      line (s_SunPath * cos(i * PI/180), -s_SunPath * sin(i * PI/180), 0, s_SunPath * cos((i + 5) * PI/180), -s_SunPath * sin((i + 5) * PI/180), 0);  
+      line(s_SunPath * cos(i * PI/180), -s_SunPath * sin(i * PI/180), 0, s_SunPath * cos((i + 5) * PI/180), -s_SunPath * sin((i + 5) * PI/180), 0);  
       
-      line (s_SunPath * cos(i * PI/180), -s_SunPath * sin(i * PI/180), 0, 1.05 * s_SunPath * cos((i) * PI/180), -1.05 * s_SunPath * sin((i) * PI/180), 0);
+      line(s_SunPath * cos(i * PI/180), -s_SunPath * sin(i * PI/180), 0, 1.05 * s_SunPath * cos((i) * PI/180), -1.05 * s_SunPath * sin((i) * PI/180), 0);
     }
     
     for (int i = 0; i < 360; i += 15){
       pushMatrix();
-      translate(1.15 * s_SunPath * cos(i * PI/180),-1.15 * s_SunPath * sin (i * PI/180),0);
+      translate(1.15 * s_SunPath * cos(i * PI/180),-1.15 * s_SunPath * sin(i * PI/180),0);
       
       fill(0);
       textSize(s_SunPath * 0.05);
@@ -301,11 +302,11 @@ class SOLARCHVISION_SunPath {
 
 
 
-void keyPressed(){
+void keyPressed (){
   //println("key: "+key);
   //println("keyCode: "+keyCode); 
   
-  if(key == CODED) { 
+  if (key == CODED) { 
     switch(keyCode) {
       case LEFT  :X_coordinate -= S_coordinate; break;
       case RIGHT :X_coordinate += S_coordinate; break;  
@@ -344,8 +345,8 @@ void keyPressed(){
       case 'p' :if (View_Type != 1) {View_Type = 1; X_coordinate += 0.5 * X_View; Y_coordinate += -0.5 * Y_View;} 
                 break;
                 
-      case 'S' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_station(); break;
-      case 's' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_station(); break;
+      case 'S' :STATION_NUMBER =(STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_station(); break;
+      case 's' :STATION_NUMBER =(STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_station(); break;
       
       
       case 'F' :LoadFontStyle(); break;
@@ -377,26 +378,26 @@ float tan_ang (float a) {
 
 
 float asin_ang (float a) {
- return ((asin(a)) * 180/PI); 
+ return((asin(a)) * 180/PI); 
 }
 
 float acos_ang (float a) {
- return ((acos(a)) * 180/PI); 
+ return((acos(a)) * 180/PI); 
 }
 
 float atan_ang (float a) {
- return ((atan(a)) * 180/PI); 
+ return((atan(a)) * 180/PI); 
 }
 
 float atan2_ang (float a, float b) {
- return ((atan2(a,b)) * 180/PI); 
+ return((atan2(a,b)) * 180/PI); 
 }
 
 float roundTo (float a, float b) {
-  float a_floor = (floor (a / (1.0 * b))) * b;
-  float a_ceil =  (ceil (a / (1.0 * b))) * b;
+  float a_floor =(floor(a /(1.0 * b))) * b;
+  float a_ceil = (ceil(a /(1.0 * b))) * b;
   float c;
-  if ((a - a_floor) > (a_ceil - a)) {
+  if ((a - a_floor) >(a_ceil - a)) {
     c = a_ceil;
   }
   else{
@@ -405,51 +406,81 @@ float roundTo (float a, float b) {
   return c;
 }
 
-float[] SOLARCHVISION_SunPosition (float StationLatitude, float DATE, float HOUR) {
-  float DEC = 23.45 * sin_ang(DATE - 180.0);
+float EquationOfTime (float DateAngle) {
+  float b = DateAngle;
+
+  return 0.01 *(9.87 * sin_ang(2 * b) - 7.53 * cos_ang(b) - 1.5 * sin_ang(b));
+}
+
+float[] SOLARCHVISION_SunPosition (float Latitude, float DateAngle, float HourAngleOrigin) {
+  float HourAngle = HourAngleOrigin + EquationOfTime(DateAngle);
   
-  float a = sin_ang(DEC);
-  float b = cos_ang(DEC) * -cos_ang(15.0 * HOUR);
-  float c = cos_ang(DEC) *  sin_ang(15.0 * HOUR);
-  
+  float Declination = 23.45 * sin_ang(DateAngle - 180.0);
+
+  float a = sin_ang(Declination);
+  float b = cos_ang(Declination) * -cos_ang(15.0 * HourAngle);
+  float c = cos_ang(Declination) *  sin_ang(15.0 * HourAngle);
+
   float x = c; 
-  float y = -(a * cos_ang(StationLatitude) + b * sin_ang(StationLatitude));
-  float z = -a * sin_ang(StationLatitude) + b * cos_ang(StationLatitude);
-  
+  float y = -(a * cos_ang(Latitude) + b * sin_ang(Latitude));
+  float z = -a * sin_ang(Latitude) + b * cos_ang(Latitude);
+
   float[] return_array = {0, x, y, z}; 
   return return_array; 
 }
 
-float SOLARCHVISION_Sunrise (float StationLatitude, float DATE) {
-  float DEC = 23.5 * sin_ang(DATE - 180.0);
+
+float SOLARCHVISION_Sunrise (float Latitude, float DateAngle) {
   
-  float q = -(tan_ang(DEC) * tan_ang(StationLatitude));
+  float a = 0;
+  
+  float Declination = 23.5 * sin_ang(DateAngle - 180.0);
+  
+  float q = -(tan_ang(Declination) * tan_ang(Latitude));
   if (q > 1.0) {
-    return 0.0;
+    a = 0.0;
   }
   else if (q < -1.0) {
-    return 24.0;
+    a = 24.0;
   }
-  else return (acos_ang(q) / 15.0);
+  else a = acos_ang(q) / 15.0;
+  
+  
+  return (a - EquationOfTime(DateAngle));
 }
 
-float SOLARCHVISION_Sunset (float StationLatitude, float DATE) {
-  return (24.0 - SOLARCHVISION_Sunrise(StationLatitude, DATE));
+float SOLARCHVISION_Sunset (float Latitude, float DateAngle) {
+  
+  float a = 0;
+  
+  float Declination = 23.5 * sin_ang(DateAngle - 180.0);
+  
+  float q = -(tan_ang(Declination) * tan_ang(Latitude));
+  if (q > 1.0) {
+    a = 0.0;
+  }
+  else if (q < -1.0) {
+    a = 24.0;
+  }
+  else a = acos_ang(q) / 15.0;
+  
+  
+  return ((24 - a) - EquationOfTime(DateAngle));
 }
 
-float SOLARCHVISION_DayTime (float StationLatitude, float DATE) {
-  return abs((SOLARCHVISION_Sunset(StationLatitude, DATE)) - (SOLARCHVISION_Sunrise(StationLatitude, DATE)));
+float SOLARCHVISION_DayTime (float Latitude, float DateAngle) {
+  return abs((SOLARCHVISION_Sunset(Latitude, DateAngle)) -(SOLARCHVISION_Sunrise(Latitude, DateAngle)));
 }
 
 int try_update_CLIMATE () {
   int File_Found = 0;
   
-  CLIMATE = new String [24][365][num_layers][(1 + CLIMATE_end - CLIMATE_start)];
+  CLIMATE = new String[24][365][num_layers][(1 + CLIMATE_end - CLIMATE_start)];
  
   for (int i = 0; i < 24; i += 1){
     for (int j = 0; j < 365; j += 1){
       for (int l = 0; l < num_layers; l += 1){
-        for (int k = 0; k < (1 + CLIMATE_end - CLIMATE_start); k += 1){
+        for (int k = 0; k <(1 + CLIMATE_end - CLIMATE_start); k += 1){
           CLIMATE[i][j][l][k] = _undefined;
         }
       }
@@ -473,7 +504,7 @@ int try_update_CLIMATE () {
     }
   }
   
-  if (File_Found == 0) println ("FILE NOT FOUND:", FN);
+  if (File_Found == 0) println("FILE NOT FOUND:", FN);
   
   return File_Found;
 }
@@ -498,13 +529,13 @@ void SOLARCHVISION_LoadCLIMATE (String FileName) {
     int CLIMATE_DAY = int(parts[2]);
     int CLIMATE_HOUR = int(parts[3]);
     
-    //println (CLIMATE_YEAR, CLIMATE_MONTH, CLIMATE_DAY, CLIMATE_HOUR);
+    //println(CLIMATE_YEAR, CLIMATE_MONTH, CLIMATE_DAY, CLIMATE_HOUR);
     
     int i = int(CLIMATE_HOUR) - 1;
     int j = Convert2Date(CLIMATE_MONTH, CLIMATE_DAY);
     int k = 0; // on EPW:TMY files we have only one year 
     
-    //println (i);
+    //println(i);
     
     CLIMATE[i][j][_pressure][k] = parts[9]; // in Pa
     CLIMATE[i][j][_drybulb][k] = parts[6]; // in °C
@@ -514,7 +545,7 @@ void SOLARCHVISION_LoadCLIMATE (String FileName) {
     CLIMATE[i][j][_difhorrad][k] = parts[15]; // Wh/m²
     CLIMATE[i][j][_windspd][k] = parts[21]; // in m/s
     CLIMATE[i][j][_winddir][k] = parts[20]; // ° 
-    CLIMATE[i][j][_opaquesky][k] = parts[23]; // 0.1 times in % ... there is also total_sky_cover on [22]
+    CLIMATE[i][j][_opaquesky][k] = parts[23]; // 0.1 times in % ... there is also total_sky_cover on[22]
     CLIMATE[i][j][_ceilingsky][k] = parts[25]; // in m
     
     
@@ -551,12 +582,12 @@ void SOLARCHVISION_LoadCLIMATE (String FileName) {
   float T, R_dir, R_dif;
   for (int i = 0; i < 24; i += 1){
     for (int j = 0; j < 365; j += 1){
-      for (int k = 0; k < (1 + CLIMATE_end - CLIMATE_start); k += 1){
+      for (int k = 0; k <(1 + CLIMATE_end - CLIMATE_start); k += 1){
         Pa = CLIMATE[i][j][_drybulb][k];
         Pb = CLIMATE[i][j][_dirnorrad][k];
         Pc = CLIMATE[i][j][_difhorrad][k];
                   
-        if ((Pa.equals(_undefined)) || (Pb.equals(_undefined)) || (Pc.equals(_undefined))){
+        if ((Pa.equals(_undefined)) ||(Pb.equals(_undefined)) ||(Pc.equals(_undefined))){
         }
         else{
           T = float(Pa);
@@ -571,7 +602,7 @@ void SOLARCHVISION_LoadCLIMATE (String FileName) {
         }
         else{
           float Px = log(float(Pa)) / log(10.0);
-          if (Px > 2) CLIMATE[i][j][_logceilsky][k] = String.valueOf(roundTo (Px, 0.1));
+          if (Px > 2) CLIMATE[i][j][_logceilsky][k] = String.valueOf(roundTo(Px, 0.1));
           else CLIMATE[i][j][_logceilsky][k] = "2";
         }
       }
@@ -591,37 +622,37 @@ float[] SOLARCHVISION_DRYWCBD (float _variable) {
     COL[3] = 0;
   }
   else if (_variable < -2) {
-    v = (-(_variable + 2) * 255);
+    v =(-(_variable + 2) * 255);
     COL[1] = 255 - v;
     COL[2] = 0;
     COL[3] = 0;
   }
   else if (_variable < -1) {
-    v = (-(_variable + 1) * 255);
+    v =(-(_variable + 1) * 255);
     COL[1] = 255;
     COL[2] = 255 - v;
     COL[3] = 0;
   }
   else if (_variable < 0) {
-    v = (-_variable * 255);
+    v =(-_variable * 255);
     COL[1] = 255;
     COL[2] = 255;
     COL[3] = 255 - v;
   }
   else if (_variable < 1) {
-    v = (_variable * 255);
+    v =(_variable * 255);
     COL[1] = 255 - v;
     COL[2] = 255;
     COL[3] = 255;
   }
   else if (_variable < 2) {
-    v = ((_variable - 1) * 255);
+    v =((_variable - 1) * 255);
     COL[1] = 0;
     COL[2] = 255 - v;
     COL[3] = 255;
   }
   else if (_variable < 2.75) {
-    v = ((_variable - 2) * 255);
+    v =((_variable - 2) * 255);
     COL[1] = 0;
     COL[2] = 0;
     COL[3] = 255 - v;
@@ -662,11 +693,11 @@ String CalendarDD[][];
 int CalendarDate[][];
 
 void SOLARCHVISION_Calendar () {
-  CalendarMM = new String [365][2];
-  CalendarDD = new String [365][2];
-  CalendarDay = new String [365][2];
+  CalendarMM = new String[365][2];
+  CalendarDD = new String[365][2];
+  CalendarDay = new String[365][2];
   
-  CalendarDate = new int [365][2];
+  CalendarDate = new int[365][2];
   
   int k = 285;
   for (int l = 0; l < 2; l += 1){
@@ -686,7 +717,7 @@ void SOLARCHVISION_Calendar () {
 }
 
 int Convert2Day (int Date_Angle) {
-  int DAY = (Date_Angle + 360) % 360;
+  int DAY =(Date_Angle + 360) % 360;
   if (DAY >=  31) DAY += 1;
   if (DAY >=  62) DAY += 1;
   if (DAY >=  93) DAY += 1;
@@ -698,7 +729,7 @@ int Convert2Day (int Date_Angle) {
 
 int Convert2Date (int _MONTH, int _DAY) {
   int k = 0;
-  for (int i = 0; i < (_MONTH - 1); i += 1){
+  for (int i = 0; i <(_MONTH - 1); i += 1){
     for (int j = 0; j < CalendarLength[i]; j += 1){
       k += 1;
       if (k == 365) k = 0; 
@@ -710,10 +741,10 @@ int Convert2Date (int _MONTH, int _DAY) {
   return k;
 }
 
-void _update_date () {
+void _update_date() {
   _MONTH = CalendarDate[int(_DATE)][0]; 
   _DAY = CalendarDate[int(_DATE)][1];
-  _HOUR = int(24 * (_DATE - int(_DATE)));
+  _HOUR = int(24 *(_DATE - int(_DATE)));
 }
 
 void _update_station () {
@@ -724,12 +755,12 @@ void _update_station () {
   StationLongitude = float(DEFINED_STATIONS[STATION_NUMBER][4]);
   StationTimeZone = float(DEFINED_STATIONS[STATION_NUMBER][5]);
   StationElevation = float(DEFINED_STATIONS[STATION_NUMBER][6]);
-  Delta_NOON = (StationTimeZone - StationLongitude) / 15.0;
+  Delta_NOON =(StationTimeZone - StationLongitude) / 15.0;
   
   try_update_CLIMATE();
 }
 
-String[] getfiles (String _Folder) {
+String[] getfiles(String _Folder) {
   File dir = new File(_Folder);
   
   String[] filenames = dir.list();
