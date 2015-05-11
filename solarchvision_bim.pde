@@ -115,6 +115,8 @@ int WIN3D_View_Type = 0; // 0: Ortho 1: Perspective
 
 PGraphics WIN3D_Diagrams;
 
+int WIN3D_Update = 1;
+
 int WORLD_CX_View = 0;
 int WORLD_CY_View = 0;
 int WORLD_X_View = 600;
@@ -126,6 +128,7 @@ float WORLD_Y_coordinate = 0;
 
 PGraphics WORLD_Diagrams;
 
+int WORLD_Update = 1;
 
 int WORLD_VIEW_Number = 0;
 
@@ -146,13 +149,14 @@ void setup ()
   SOLARCHVISION_Calendar();
 
   _update_folders();
-
+  
   _update_location();
 
   _update_objects();
 
   LoadFontStyle();
   
+  getSWOB_Coordinates();
   
 
   LoadWorldImages();
@@ -224,81 +228,147 @@ void _draw_objects () {
 
 void draw () { 
   
-  background(0);
+  if (WORLD_Update == 1) {
   
-  WORLD_Diagrams.beginDraw();
-  
-  WORLD_Diagrams.background(0, 0, 0);
-  
-  PImage WORLDViewImages = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filename[WORLD_VIEW_Number]);
-  
-  WORLD_Diagrams.image(WORLDViewImages, 0, 0, WORLD_X_View, WORLD_Y_View);
-  
-  
-  
-  WORLD_Diagrams.endDraw();
-  
-  image(WORLD_Diagrams, WORLD_CX_View, WORLD_CY_View, WORLD_X_View, WORLD_Y_View);    
-  
-  
-  
-  
-  WIN3D_Diagrams.beginDraw();
-  
-  WIN3D_Diagrams.background(233);
-  
-  if (WIN3D_View_Type == 1) {
-    WIN3D_Diagrams.perspective(WIN3D_ZOOM_coordinate * PI/180, 1.0 / WIN3D_R_View, 0.00001, 100000);  //fovy, aspect, zNear, zFar
+    WORLD_Diagrams.beginDraw();
     
-    WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT! 
-  }
-  else{
-    float ZOOM = 0.4425 * WIN3D_ZOOM_coordinate * PI/180; 
-    //float ZOOM = 0.0025 * atan_ang(WIN3D_ZOOM_coordinate);
+    WORLD_Diagrams.background(0, 0, 0);
     
-    WIN3D_Diagrams.ortho(ZOOM * WIN3D_X_View * -1, ZOOM * WIN3D_X_View * 1, ZOOM  * WIN3D_Y_View * -1, ZOOM  * WIN3D_Y_View * 1, 0.00001, 100000);
+    PImage WORLDViewImages = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filename[WORLD_VIEW_Number]);
     
-    WIN3D_Diagrams.translate(0, 1.0 * WIN3D_Y_View, 0); // << IMPORTANT! 
-  }
+    WORLD_Diagrams.image(WORLDViewImages, 0, 0, WORLD_X_View, WORLD_Y_View);
+  
+    float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
+    float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
+  
+    float WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
+    float WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;
+    
+    float _lon1 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0];
+    float _lon2 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1];
+    float _lat1 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0];
+    float _lat2 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1];
+    
+    int x_point1 = int(WORLD_X_View * (( 1 * (_lon1 - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX);
+    int y_point1 = int(WORLD_Y_View * ((-1 * (_lat1 - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY);
+    int x_point2 = int(WORLD_X_View * (( 1 * (_lon2 - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX);
+    int y_point2 = int(WORLD_Y_View * ((-1 * (_lat2 - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY);              
 
-  //lights();
+    float R_station = 2;
+    if (WORLD_VIEW_GridDisplay[WORLD_VIEW_Number] == 1) R_station = 5;   
+  
+    WORLD_Diagrams.ellipseMode(CENTER);
 
+    WORLD_Diagrams.strokeWeight(3);
+    WORLD_Diagrams.stroke(0, 0, 127, 255);
+    WORLD_Diagrams.noFill();
+
+    {
+      float _lat = LocationLatitude;
+      float _lon = LocationLongitude; 
+      if (_lon > 180) _lon -= 360; // << important!
+    
+      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;        
   
-  WIN3D_Diagrams.pushMatrix();
+      WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
+   
+    }   
+    
+    WORLD_Diagrams.strokeWeight(0);
+    WORLD_Diagrams.stroke(127, 0, 0, 127);
+    WORLD_Diagrams.fill(127, 0, 0, 127);
+              
+    for (int f = 0; f < STATION_INFO.length; f += 1) {
+      float draw_info = 1;
+    
+      float _lat = float(STATION_INFO[f][3]);
+      float _lon = float(STATION_INFO[f][4]); 
+      if (_lon > 180) _lon -= 360; // << important!
+    
+      if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
+      if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) draw_info = 0;
+      if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) draw_info = 0;
+      if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0;      
+    
+      if (draw_info == 1) {
   
-  WIN3D_Diagrams.translate(0, 0, 0);
-  
-  WIN3D_Diagrams.fill(0);
-  WIN3D_Diagrams.textAlign(CENTER, CENTER);      
-  WIN3D_Diagrams.textSize(10.0 * (WIN3D_ZOOM_coordinate / 30));
-  WIN3D_Diagrams.text(LocationName + " [" + nfp(LocationLatitude, 0, 1) + ", " + nfp(LocationLongitude, 0, 1) + "]", 0, 120 * (WIN3D_ZOOM_coordinate / 30), 0);
+        float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+        float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+        
+        WORLD_Diagrams.ellipse(x_point, y_point, R_station, R_station);
+      
+      }
+    }    
+
  
-  WIN3D_Diagrams.popMatrix();
-
-  WIN3D_Diagrams.translate(WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
-  WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI/180);
-  WIN3D_Diagrams.rotateY(WIN3D_RY_coordinate * PI/180);
-  WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI/180);
+    
+    WORLD_Diagrams.endDraw();
+    
+    image(WORLD_Diagrams, WORLD_CX_View, WORLD_CY_View, WORLD_X_View, WORLD_Y_View);    
+  
+    WORLD_Update = 0;
+  }
+  
+  if (WIN3D_Update == 1) {
+  
+    WIN3D_Diagrams.beginDraw();
+    
+    WIN3D_Diagrams.background(233);
+    
+    if (WIN3D_View_Type == 1) {
+      WIN3D_Diagrams.perspective(WIN3D_ZOOM_coordinate * PI/180, 1.0 / WIN3D_R_View, 0.00001, 100000);  //fovy, aspect, zNear, zFar
+      
+      WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT! 
+    }
+    else{
+      float ZOOM = 0.4425 * WIN3D_ZOOM_coordinate * PI/180; 
+      //float ZOOM = 0.0025 * atan_ang(WIN3D_ZOOM_coordinate);
+      
+      WIN3D_Diagrams.ortho(ZOOM * WIN3D_X_View * -1, ZOOM * WIN3D_X_View * 1, ZOOM  * WIN3D_Y_View * -1, ZOOM  * WIN3D_Y_View * 1, 0.00001, 100000);
+      
+      WIN3D_Diagrams.translate(0, 1.0 * WIN3D_Y_View, 0); // << IMPORTANT! 
+    }
+  
+    //lights();
+  
+    
+    WIN3D_Diagrams.pushMatrix();
+    
+    WIN3D_Diagrams.translate(0, 0, 0);
+    
+    WIN3D_Diagrams.fill(0);
+    WIN3D_Diagrams.textAlign(CENTER, CENTER);      
+    WIN3D_Diagrams.textSize(10.0 * (WIN3D_ZOOM_coordinate / 30));
+    WIN3D_Diagrams.text(LocationName + " [" + nfp(LocationLatitude, 0, 1) + ", " + nfp(LocationLongitude, 0, 1) + "]", 0, 120 * (WIN3D_ZOOM_coordinate / 30), 0);
+   
+    WIN3D_Diagrams.popMatrix();
+  
+    WIN3D_Diagrams.translate(WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
+    WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI/180);
+    WIN3D_Diagrams.rotateY(WIN3D_RY_coordinate * PI/180);
+    WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI/180);
+    
+    
+    
+    WIN3D_Diagrams.fill(127);
   
   
+    //hint(DISABLE_DEPTH_TEST);
   
-  WIN3D_Diagrams.fill(127);
-
-
-  //hint(DISABLE_DEPTH_TEST);
-
-  _draw_objects();
+    _draw_objects();
+    
+    SOLARCHVISION_SunPath(0, 0, 0, 90, LocationLatitude); 
   
-  SOLARCHVISION_SunPath(0, 0, 0, 90, LocationLatitude); 
-
-  //hint(ENABLE_DEPTH_TEST);
-
-  WIN3D_Diagrams.endDraw();
+    //hint(ENABLE_DEPTH_TEST);
   
-  image(WIN3D_Diagrams, WIN3D_CX_View, WIN3D_CY_View, WIN3D_X_View, WIN3D_Y_View);
+    WIN3D_Diagrams.endDraw();
+    
+    image(WIN3D_Diagrams, WIN3D_CX_View, WIN3D_CY_View, WIN3D_X_View, WIN3D_Y_View);
 
 
-
+    WIN3D_Update = 0;
+  }
 
 
 
@@ -511,6 +581,7 @@ void keyPressed (){
 
   }
   
+  WIN3D_Update = 1;
   
   loop();
 }
@@ -1237,6 +1308,8 @@ int FindGoodViewport (float pointLongitude, float pointLatitude) {
     }
   }
   
+  WORLD_Update = 1;
+  
   return (return_VIEWPORT);
 }
 
@@ -1244,3 +1317,81 @@ int isInside (float x, float y, float x1, float y1, float x2, float y2) {
   if ((x1 < x) && (x < x2) && (y1 < y) && (y < y2)) return 1;
   else return 0;
 } 
+
+String StationICAO;
+String StationType;
+
+float StationLatitude;
+float StationLongitude;
+float StationElevation;
+
+int LOCATIONS_NUMBER = 0;
+String[][] STATION_INFO;
+
+
+void getSWOB_Coordinates () {
+  try {
+    String[] FileALL = loadStrings(SWOBFolder + "/SWOB_UTF8.txt");
+  
+    String lineSTR;
+    String[] input;
+  
+    LOCATIONS_NUMBER = FileALL.length - 1; // to skip the first description line 
+  
+    STATION_INFO = new String[LOCATIONS_NUMBER][11]; 
+  
+    int n_Locations = 0;
+  
+    for (int f = 0; f < LOCATIONS_NUMBER; f += 1) {
+      lineSTR = FileALL[f + 1]; // to skip the first description line  
+  
+      String StationNameEnglish = "";
+      String StationNameFrench = "";
+      String StationProvince = "";
+      float StationLatitude = 0.0;
+      float StationLongitude = 0.0;
+      float StationElevation = 0.0;  
+      String StationICAO = "";
+      String StationWMO = "";     
+      String StationClimate = "";
+      String StationDST = ""; //Daylight saving time
+      String StationSTD = ""; //Standard Time      
+  
+      String[] parts = split(lineSTR, '\t');
+  
+      if (12 < parts.length) {
+        
+        StationNameFrench = parts[1];
+        StationNameEnglish = parts[2];
+        StationProvince = parts[3];
+    
+        StationLatitude = float(parts[5]);
+        StationLongitude = float(parts[6]);
+        StationElevation = float(parts[7]);
+    
+        StationICAO = parts[8];
+        StationWMO = parts[9];
+        StationClimate = parts[10];
+        StationDST = parts[11];
+        StationSTD = parts[12];      
+    
+        STATION_INFO[n_Locations][0] = StationNameEnglish;
+        STATION_INFO[n_Locations][1] = StationNameFrench;
+        STATION_INFO[n_Locations][2] = StationProvince;
+        STATION_INFO[n_Locations][3] = String.valueOf(StationLatitude);
+        STATION_INFO[n_Locations][4] = String.valueOf(StationLongitude);
+        STATION_INFO[n_Locations][5] = String.valueOf(StationElevation);
+        STATION_INFO[n_Locations][6] = StationICAO;
+        STATION_INFO[n_Locations][7] = StationWMO;
+        STATION_INFO[n_Locations][8] = StationClimate;
+        STATION_INFO[n_Locations][9] = StationDST;
+        STATION_INFO[n_Locations][10] = StationSTD;
+  
+        n_Locations += 1;
+      }
+    }
+  }
+  catch (Exception e) {
+    println("ERROR reading SWOB coordinates.");
+  }
+}
