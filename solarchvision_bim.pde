@@ -1,3 +1,20 @@
+String BaseFolder = "C:/SOLARCHVISION_2015"; 
+
+String ExportFolder;
+String BackgroundFolder;
+String WorldViewFolder;
+String SWOBFolder;
+
+void _update_folders () {
+
+  ExportFolder       = BaseFolder + "/Export";
+  BackgroundFolder   = BaseFolder + "/Input/BackgroundImages/Standard/Other";
+  WorldViewFolder    = BaseFolder + "/Input/BackgroundImages/Standard/World";
+  SWOBFolder         = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
+
+}
+
+
 int _MONTH = -1;
 int _DAY = -1; 
 int _HOUR = -1; 
@@ -76,7 +93,7 @@ int _windspd200hPa = 17;
 
 int num_layers = 18; 
 
-int WIN3D_CX_View = 0;
+int WIN3D_CX_View = 600;
 int WIN3D_CY_View = 0;
 int WIN3D_X_View = 600;
 int WIN3D_Y_View = 600;
@@ -98,7 +115,7 @@ int WIN3D_View_Type = 0; // 0: Ortho 1: Perspective
 
 PGraphics WIN3D_Diagrams;
 
-int WORLD_CX_View = 600;
+int WORLD_CX_View = 0;
 int WORLD_CY_View = 0;
 int WORLD_X_View = 600;
 int WORLD_Y_View = 300;
@@ -109,24 +126,46 @@ float WORLD_Y_coordinate = 0;
 
 PGraphics WORLD_Diagrams;
 
+
+int WORLD_VIEW_Number = 0;
+
+String[][] WORLD_VIEW_Name;
+float[][] WORLD_VIEW_BoundariesX;
+float[][] WORLD_VIEW_BoundariesY; 
+int[] WORLD_VIEW_GridDisplay;
+String[] WORLD_VIEW_Filename;
+
+int number_of_WORLD_viewports;
+
 void setup () 
 {
   size(1200, 600, P2D);
   
   frameRate(24);
   
-  SOLARCHVISION_Calendar();  
+  SOLARCHVISION_Calendar();
+
+  _update_folders();
 
   _update_station();
 
   _update_objects();
 
   LoadFontStyle();
+  
+  
+
+  LoadWorldImages();
 
   WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);  
   
   WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
+  
+  
+  
 }
+
+
 
 void _update_objects () {
   //add_PolygonExtrude(-1, 0,0,0,  0.5,2.0, 10);
@@ -187,6 +226,23 @@ void draw () {
   
   background(0);
   
+  WORLD_Diagrams.beginDraw();
+  
+  WORLD_Diagrams.background(0, 0, 0);
+  
+  PImage WORLDViewImages = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filename[WORLD_VIEW_Number]);
+  
+  WORLD_Diagrams.image(WORLDViewImages, 0, 0, WORLD_X_View, WORLD_Y_View);
+  
+  
+  
+  WORLD_Diagrams.endDraw();
+  
+  image(WORLD_Diagrams, WORLD_CX_View, WORLD_CY_View, WORLD_X_View, WORLD_Y_View);    
+  
+  
+  
+  
   WIN3D_Diagrams.beginDraw();
   
   WIN3D_Diagrams.background(233);
@@ -207,15 +263,14 @@ void draw () {
 
   //lights();
 
-
   
   WIN3D_Diagrams.pushMatrix();
   
   WIN3D_Diagrams.translate(0, 0, 0);
   
   WIN3D_Diagrams.fill(0);
+  WIN3D_Diagrams.textAlign(CENTER, CENTER);      
   WIN3D_Diagrams.textSize(10.0 * (WIN3D_ZOOM_coordinate / 30));
-  WIN3D_Diagrams.textAlign(CENTER, CENTER);    
   WIN3D_Diagrams.text(StationName + " [" + nfp(StationLatitude, 0, 1) + ", " + nfp(StationLongitude, 0, 1) + "]", 0, 120 * (WIN3D_ZOOM_coordinate / 30), 0);
  
   WIN3D_Diagrams.popMatrix();
@@ -247,16 +302,7 @@ void draw () {
 
 
 
-  WIN3D_Diagrams.beginDraw();
-  
-  WIN3D_Diagrams.background(233);
-  
-  
 
-  
-  WORLD_Diagrams.endDraw();
-  
-  image(WORLD_Diagrams, WORLD_CX_View, WORLD_CY_View, WORLD_X_View, WORLD_Y_View);  
 } 
 
 
@@ -369,10 +415,22 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
     WIN3D_Diagrams.textAlign(CENTER, CENTER);
     
     String txt = nf((90 - i + 360) % 360, 0);
-    if (i == 0) {txt = "E"; textSize(s_SunPath * 0.1);}
-    else if (i == 90) {txt = "N"; textSize(s_SunPath * 0.1);}
-    else if (i == 180) {txt = "W"; textSize(s_SunPath * 0.1);}
-    else if (i == 270) {txt = "S"; textSize(s_SunPath * 0.1);}
+    if (i == 0) {
+      txt = "E"; 
+      WIN3D_Diagrams.textSize(s_SunPath * 0.1);
+    }
+    else if (i == 90) {
+      txt = "N"; 
+      WIN3D_Diagrams.textSize(s_SunPath * 0.1);
+    }
+    else if (i == 180) {
+      txt = "W"; 
+      WIN3D_Diagrams.textSize(s_SunPath * 0.1);
+    }
+    else if (i == 270) {
+      txt = "S"; 
+      WIN3D_Diagrams.textSize(s_SunPath * 0.1);
+    }
     
     WIN3D_Diagrams.text(txt, 0, 0, 0);
     
@@ -852,6 +910,8 @@ void _update_station () {
   Delta_NOON = (StationTimeZone - StationLongitude) / 15.0;
   
   try_update_CLIMATE();
+  
+  WORLD_VIEW_Number = FindGoodViewport(StationLongitude, StationLatitude);  
 }
 
 String[] getfiles(String _Folder) {
@@ -873,7 +933,7 @@ void LoadFontStyle () {
   int _size = 36;
 
   textFont(createFont("MS Sans Serif", _size, true));
-  
+
   //textFont(createFont("MS Sans Serif", _size));
   //textFont(createFont("Microsoft Sans Serif", _size));
   //textFont(createFont("Arial Narrow", _size));
@@ -885,6 +945,7 @@ void LoadFontStyle () {
   //textFont(createFont("Courier New", _size));
   //textFont(createFont("Franklin Gothic Medium", _size));
   //textFont(createFont("BankGothic Md BT", _size));
+
 }
 
 
@@ -1122,3 +1183,64 @@ void add_PolygonExtrude(int m, float cx, float cy, float cz, float r, float h, i
   }
 
 }
+
+
+
+void LoadWorldImages () {
+
+  WORLD_VIEW_Filename = sort(getfiles(WorldViewFolder));
+
+  number_of_WORLD_viewports = WORLD_VIEW_Filename.length;
+
+  WORLD_VIEW_Name = new String[number_of_WORLD_viewports][2];
+  
+  WORLD_VIEW_BoundariesX = new float[number_of_WORLD_viewports][2];
+  WORLD_VIEW_BoundariesY = new float[number_of_WORLD_viewports][2];
+    
+  WORLD_VIEW_GridDisplay = new int[number_of_WORLD_viewports];
+  
+
+  
+  
+  for (int i = 0; i < number_of_WORLD_viewports; i += 1) {
+    String MapFilename = WorldViewFolder + "/" + WORLD_VIEW_Filename[i];
+    
+    String[] Parts = split(WORLD_VIEW_Filename[i], '_');
+    
+    WORLD_VIEW_BoundariesX[i][0] = -float(Parts[1]) * 0.001;
+    WORLD_VIEW_BoundariesY[i][0] =  float(Parts[2]) * 0.001;
+    WORLD_VIEW_BoundariesX[i][1] = -float(Parts[3]) * 0.001;
+    WORLD_VIEW_BoundariesY[i][1] =  float(Parts[4]) * 0.001;
+    
+    WORLD_VIEW_Name[i][0] = Parts[5];
+    WORLD_VIEW_Name[i][1] = Parts[6];
+    
+    float a = (WORLD_VIEW_BoundariesY[i][1] - WORLD_VIEW_BoundariesY[i][0]) / 2;
+    if (a < 1) a = 1;
+    WORLD_VIEW_GridDisplay[i] = int(a);
+    
+  }      
+}
+
+int FindGoodViewport (float pointLongitude, float pointLatitude) {
+  int return_VIEWPORT = 0;
+  
+  float d = FLOAT_undefined;
+  for (int i = 0; i < number_of_WORLD_viewports; i++) {
+    if (isInside(pointLongitude, pointLatitude, WORLD_VIEW_BoundariesX[i][0], WORLD_VIEW_BoundariesY[i][0], WORLD_VIEW_BoundariesX[i][1], WORLD_VIEW_BoundariesY[i][1]) == 1) {
+      float di = dist(WORLD_VIEW_BoundariesX[i][0], WORLD_VIEW_BoundariesY[i][0], WORLD_VIEW_BoundariesX[i][1], WORLD_VIEW_BoundariesY[i][1]);
+      
+      if (d > di) {
+        d = di;
+        return_VIEWPORT = i;
+      }
+    }
+  }
+  
+  return (return_VIEWPORT);
+}
+
+int isInside (float x, float y, float x1, float y1, float x2, float y2) {
+  if ((x1 < x) && (x < x2) && (y1 < y) && (y < y2)) return 1;
+  else return 0;
+} 
