@@ -1,7 +1,3 @@
-SOLARCHVISION_SunPath SunPath1 = new SOLARCHVISION_SunPath(); 
-
-
-
 int X_View = 600;
 int Y_View = 600;
 float R_View = float(Y_View) / float(X_View);
@@ -116,9 +112,7 @@ void setup ()
 
   _update_station();
 
-
   LoadFontStyle();
-  
 }
 
 void draw () { 
@@ -131,15 +125,16 @@ void draw () {
   }
   else{
     float ZOOM = 0.4425 * ZOOM_coordinate * PI/180; 
+    //float ZOOM = 0.0025 * atan_ang(ZOOM_coordinate);
+    
     ortho(ZOOM * X_View * -1, ZOOM * X_View * 1, ZOOM  * Y_View * -1, ZOOM  * Y_View * 1, 0.00001, 100000);
     
     translate(0, 1.0 * Y_View, 0); // << IMPORTANT! 
   }
 
-
   //lights();
 
-  
+
   
   pushMatrix();
   
@@ -149,10 +144,7 @@ void draw () {
   textSize(10.0 * (ZOOM_coordinate / 30));
   textAlign(CENTER, CENTER);    
   text(StationName + " [" + nfp(StationLatitude, 0, 1) + ", " + nfp(StationLongitude, 0, 1) + "]", 0, 120 * (ZOOM_coordinate / 30), 0);
-
-
-
-  
+ 
   popMatrix();
   
   if (View_Type == 1) {
@@ -161,18 +153,8 @@ void draw () {
   else{
  
   }
-    
-  /*
-  StationName = DEFINED_STATIONS[STATION_NUMBER][1];
-  StationProvince = DEFINED_STATIONS[STATION_NUMBER][2];
-  StationLatitude = float(DEFINED_STATIONS[STATION_NUMBER][3]);
-  StationLongitude = float(DEFINED_STATIONS[STATION_NUMBER][4]);
-  StationTimeZone = float(DEFINED_STATIONS[STATION_NUMBER][5]);
-  StationElevation = float(DEFINED_STATIONS[STATION_NUMBER][6]);
- */ 
 
   translate(X_coordinate, Y_coordinate, Z_coordinate);
-
   rotateX(RX_coordinate * PI/180);
   rotateY(RY_coordinate * PI/180);
   rotateZ(RZ_coordinate * PI/180);
@@ -191,142 +173,129 @@ void draw () {
   box(10, 20, 30);
   popMatrix();
   
-
+  hint(DISABLE_DEPTH_TEST);
   
-  SunPath1.update(0, 0, 0, 90, StationLatitude); 
+  SOLARCHVISION_SunPath(0, 0, 0, 90, StationLatitude); 
+
+  hint(ENABLE_DEPTH_TEST);
 
   noLoop();
 } 
  
-class SOLARCHVISION_SunPath { 
-  float x_SunPath, y_SunPath, z_SunPath, s_SunPath;
-  float StationLatitude; 
-  SOLARCHVISION_SunPath() {  
-  } 
-  void update(float x, float y, float z, float s, float l) {
-    x_SunPath = x; 
-    y_SunPath = y;
-    z_SunPath = z;
-    s_SunPath = s; 
-    StationLatitude = l;
+void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float StationLatitude) { 
+
+  float min_sunrise = int(min(SOLARCHVISION_Sunrise(StationLatitude, 90), SOLARCHVISION_Sunrise(StationLatitude, 270))); 
+  float max_sunset = int(max(SOLARCHVISION_Sunset(StationLatitude, 90), SOLARCHVISION_Sunset(StationLatitude, 270)));
  
-    float min_sunrise = int(min(SOLARCHVISION_Sunrise(StationLatitude, 90), SOLARCHVISION_Sunrise(StationLatitude, 270))); 
-    float max_sunset = int(max(SOLARCHVISION_Sunset(StationLatitude, 90), SOLARCHVISION_Sunset(StationLatitude, 270)));
-   
-    
-    pushMatrix();
-    translate(x_SunPath, y_SunPath, z_SunPath);
-    
-    line(-1 * s_SunPath, 0, 0, 1 * s_SunPath, 0, 0); 
-    line(0, -1 * s_SunPath, 0, 0, 1 * s_SunPath, 0);
-
-    stroke(255, 255, 0);
-    
-    for (int HOUR = int(roundTo(min_sunrise, 1.0)); HOUR < int(roundTo(max_sunset, 1.0)); HOUR += 1){
-      int DATE_step = 1;
-      
-      for (int DATE_ANGLE = 0; DATE_ANGLE < 360; DATE_ANGLE += DATE_step){
-          
-        _DATE = Convert2Day(DATE_ANGLE);
-    
-        _update_date();
-        
-        //println(_DATE, _MONTH, _DAY, DATE_ANGLE); exit();
-       
-        float[] Sun = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE, HOUR);
-        
-        if (Sun[3] >= 0) {
-          
-          int i = HOUR - 1;  // ??????
-          int j = Convert2Date(_MONTH, _DAY);
-          int k = 0; // on EPW:TMY files we have only one year 
-          
-          //println(i, j, k); exit();
-          
-          String Pa = CLIMATE[i][j][_direffect][k];
-          
-          if (Pa.equals(_undefined)){
-          }
-          else{
-         
-            float[] COL = SOLARCHVISION_DRYWCBD(0.0002 * float(Pa)); // ????????
-    
-            stroke(COL[1], COL[2], COL[3], 127);
-            fill(COL[1], COL[2], COL[3], 127);
-            
-            float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR - 0.5);
-            float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR + 0.5);
-            float[] SunC = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR + 0.5);
-            float[] SunD = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR - 0.5);
-            
-            beginShape();
-            vertex(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3]);
-            vertex(s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
-            vertex(s_SunPath * SunC[1], -s_SunPath * SunC[2], s_SunPath * SunC[3]);
-            vertex(s_SunPath * SunD[1], -s_SunPath * SunD[2], s_SunPath * SunD[3]);
   
-            endShape(CLOSE);
-            
-          }
-        }
+  pushMatrix();
+  translate(x_SunPath, y_SunPath, z_SunPath);
+  
+  line(-1 * s_SunPath, 0, 0, 1 * s_SunPath, 0, 0); 
+  line(0, -1 * s_SunPath, 0, 0, 1 * s_SunPath, 0);
 
+  stroke(255, 255, 0);
+  
+  for (int HOUR = int(roundTo(min_sunrise, 1.0)); HOUR < int(roundTo(max_sunset, 1.0)); HOUR += 1){
+    int DATE_step = 1;
+    
+    for (int DATE_ANGLE = 0; DATE_ANGLE < 360; DATE_ANGLE += DATE_step){
+        
+      _DATE = Convert2Day(DATE_ANGLE);
+  
+      _update_date();
+      
+      //println(_DATE, _MONTH, _DAY, DATE_ANGLE); exit();
+     
+      float[] Sun = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE, HOUR);
+      
+      if (Sun[3] >= 0) {
+        
+        int i = HOUR - 1;  // ??????
+        int j = Convert2Date(_MONTH, _DAY);
+        int k = 0; // on EPW:TMY files we have only one year 
+        
+        //println(i, j, k); exit();
+        
+        String Pa = CLIMATE[i][j][_direffect][k];
+        
+        if (Pa.equals(_undefined)){
+        }
+        else{
+       
+          float[] COL = SOLARCHVISION_DRYWCBD(0.0002 * float(Pa)); // ????????
+  
+          stroke(COL[1], COL[2], COL[3], 127);
+          fill(COL[1], COL[2], COL[3], 127);
+          
+          float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR - 0.5);
+          float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR + 0.5);
+          float[] SunC = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR + 0.5);
+          float[] SunD = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR - 0.5);
+          
+          beginShape();
+          vertex(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3]);
+          vertex(s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
+          vertex(s_SunPath * SunC[1], -s_SunPath * SunC[2], s_SunPath * SunC[3]);
+          vertex(s_SunPath * SunD[1], -s_SunPath * SunD[2], s_SunPath * SunD[3]);
+
+          endShape(CLOSE);
+          
+        }
       }
+
     }
-    
-    stroke(0);
-    
-    for (int j = 90; j <= 270; j += 30){
-      float HOUR_step =(SOLARCHVISION_DayTime(StationLatitude, j) / 12.0);
-      for (float HOUR = SOLARCHVISION_Sunrise(StationLatitude, j); HOUR <(SOLARCHVISION_Sunset(StationLatitude, j) + .01 - HOUR_step); HOUR += HOUR_step){
-        float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, j, HOUR);
-        float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, j, (HOUR + HOUR_step));
+  }
+  
+  stroke(0);
+  
+  for (int j = 90; j <= 270; j += 30){
+    float HOUR_step =(SOLARCHVISION_DayTime(StationLatitude, j) / 12.0);
+    for (float HOUR = SOLARCHVISION_Sunrise(StationLatitude, j); HOUR <(SOLARCHVISION_Sunset(StationLatitude, j) + .01 - HOUR_step); HOUR += HOUR_step){
+      float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, j, HOUR);
+      float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, j, (HOUR + HOUR_step));
+      line(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
+    }
+  }
+  
+  for (float HOUR = min_sunrise; HOUR < max_sunset + .01; HOUR += 1){
+    float DATE_step = 1;
+    for (int j = 0; j <= 360; j += DATE_step){
+      float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, j, HOUR);
+      float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, (j + DATE_step), HOUR);
+      if (SunA[3] >= 0 && SunB[3] >= 0) {
         line(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
       }
     }
+  }
+  
+  popMatrix();
+
+  stroke(0);
+  for (int i = 0; i < 360; i += 5){
+    line(s_SunPath * cos(i * PI/180), -s_SunPath * sin(i * PI/180), 0, s_SunPath * cos((i + 5) * PI/180), -s_SunPath * sin((i + 5) * PI/180), 0);  
     
-    for (float HOUR = min_sunrise; HOUR < max_sunset + .01; HOUR += 1){
-      float DATE_step = 1;
-      for (int j = 0; j <= 360; j += DATE_step){
-        float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, j, HOUR);
-        float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, (j + DATE_step), HOUR);
-        if (SunA[3] >= 0 && SunB[3] >= 0) {
-          line(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
-        }
-      }
-    }
+    line(s_SunPath * cos(i * PI/180), -s_SunPath * sin(i * PI/180), 0, 1.05 * s_SunPath * cos((i) * PI/180), -1.05 * s_SunPath * sin((i) * PI/180), 0);
+  }
+  
+  for (int i = 0; i < 360; i += 15){
+    pushMatrix();
+    translate(1.15 * s_SunPath * cos(i * PI/180), -1.15 * s_SunPath * sin(i * PI/180), 0);
+    
+    fill(0);
+    textSize(s_SunPath * 0.05);
+    textAlign(CENTER, CENTER);
+    
+    String txt = nf((90 - i + 360) % 360, 0);
+    if (i == 0) {txt = "E"; textSize(s_SunPath * 0.1);}
+    else if (i == 90) {txt = "N"; textSize(s_SunPath * 0.1);}
+    else if (i == 180) {txt = "W"; textSize(s_SunPath * 0.1);}
+    else if (i == 270) {txt = "S"; textSize(s_SunPath * 0.1);}
+    
+    text(txt, 0, 0, 0);
     
     popMatrix();
-
-    stroke(0);
-    for (int i = 0; i < 360; i += 5){
-      line(s_SunPath * cos(i * PI/180), -s_SunPath * sin(i * PI/180), 0, s_SunPath * cos((i + 5) * PI/180), -s_SunPath * sin((i + 5) * PI/180), 0);  
-      
-      line(s_SunPath * cos(i * PI/180), -s_SunPath * sin(i * PI/180), 0, 1.05 * s_SunPath * cos((i) * PI/180), -1.05 * s_SunPath * sin((i) * PI/180), 0);
-    }
-    
-    for (int i = 0; i < 360; i += 15){
-      pushMatrix();
-      translate(1.15 * s_SunPath * cos(i * PI/180), -1.15 * s_SunPath * sin(i * PI/180), 0);
-      
-      fill(0);
-      textSize(s_SunPath * 0.05);
-      textAlign(CENTER, CENTER);
-      
-      String txt = nf((90 - i + 360) % 360, 0);
-      if (i == 0) {txt = "E"; textSize(s_SunPath * 0.1);}
-      else if (i == 90) {txt = "N"; textSize(s_SunPath * 0.1);}
-      else if (i == 180) {txt = "W"; textSize(s_SunPath * 0.1);}
-      else if (i == 270) {txt = "S"; textSize(s_SunPath * 0.1);}
-      
-      text(txt, 0, 0, 0);
-      
-      popMatrix();
-    }    
-    
-
-
- 
-  } 
+  }    
 } 
 
 
