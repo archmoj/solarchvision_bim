@@ -16,7 +16,7 @@ float RY_coordinate = 0;
 float RZ_coordinate = 0;
 float RS_coordinate = 5.0;
 
-float ZOOM_coordinate = 17500.0 / X_View;
+float ZOOM_coordinate = 17500.0 / Y_View;
 
 int View_Type = 0; // 0: Ortho 1: Perspective
 {
@@ -125,7 +125,7 @@ void draw () {
   background(233);
   
   if (View_Type == 1) {
-    perspective(ZOOM_coordinate * PI/180, X_View / Y_View, 0.00001, 100000);  //fovy, aspect, zNear, zFar
+    perspective(ZOOM_coordinate * PI/180, 1.0 / R_View, 0.00001, 100000);  //fovy, aspect, zNear, zFar
     
     translate(0.5 * X_View, 0.5 * Y_View, 0); // << IMPORTANT! 
   }
@@ -148,7 +148,10 @@ void draw () {
   fill(0);
   textSize(10.0 * (ZOOM_coordinate / 30));
   textAlign(CENTER, CENTER);    
-  text(StationName, 0, 120 * (ZOOM_coordinate / 30), 0);
+  text(StationName + " [" + nfp(StationLatitude, 0, 1) + ", " + nfp(StationLongitude, 0, 1) + "]", 0, 120 * (ZOOM_coordinate / 30), 0);
+
+
+
   
   popMatrix();
   
@@ -355,11 +358,11 @@ void keyPressed (){
       case '@' :RX_coordinate = 0;
                 RY_coordinate = 0;
                 RZ_coordinate = 0; 
-                ZOOM_coordinate = 17500.0 / X_View;            
-                X_coordinate = 0.5 * X_View;
-                Y_coordinate = 0.5 * Y_View;
+                X_coordinate = 0;
+                Y_coordinate = 0;
                 Z_coordinate = 0;
-                View_Type = 1; 
+                ZOOM_coordinate = 17500.0 / Y_View;
+                View_Type = 0; 
                 break;
       
       
