@@ -76,6 +76,8 @@ int _windspd200hPa = 17;
 
 int num_layers = 18; 
 
+int WIN3D_CX_View = 0;
+int WIN3D_CY_View = 0;
 int WIN3D_X_View = 600;
 int WIN3D_Y_View = 600;
 float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
@@ -94,10 +96,22 @@ float WIN3D_ZOOM_coordinate = 17500.0 / WIN3D_Y_View;
 
 int WIN3D_View_Type = 0; // 0: Ortho 1: Perspective
 
+PGraphics WIN3D_Diagrams;
+
+int WORLD_CX_View = 600;
+int WORLD_CY_View = 0;
+int WORLD_X_View = 600;
+int WORLD_Y_View = 300;
+float WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
+
+float WORLD_X_coordinate = 0;
+float WORLD_Y_coordinate = 0;
+
+PGraphics WORLD_Diagrams;
+
 void setup () 
 {
-  
-  size(WIN3D_X_View, WIN3D_Y_View, P3D);
+  size(1200, 600, P2D);
   
   frameRate(24);
   
@@ -108,7 +122,10 @@ void setup ()
   _update_objects();
 
   LoadFontStyle();
+
+  WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);  
   
+  WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
 }
 
 void _update_objects () {
@@ -152,14 +169,14 @@ void _draw_objects () {
     else if (face_colorID == 6) c = color(255, 0, 255);
     else if (face_colorID == 7) c = color(255, 255, 255);
     
-    stroke(0, 0, 0);
-    fill (c);    
+    WIN3D_Diagrams.stroke(0, 0, 0);
+    WIN3D_Diagrams.fill (c);    
     
-    beginShape();
+    WIN3D_Diagrams.beginShape();
     for (int j = 0; j < allFaces[i].length; j++) {
-      vertex(allVertices[allFaces[i][j]][0] * objects_scale, allVertices[allFaces[i][j]][1] * objects_scale, allVertices[allFaces[i][j]][2] * objects_scale);
+      WIN3D_Diagrams.vertex(allVertices[allFaces[i][j]][0] * objects_scale, allVertices[allFaces[i][j]][1] * objects_scale, allVertices[allFaces[i][j]][2] * objects_scale);
     }
-    endShape(CLOSE);
+    WIN3D_Diagrams.endShape(CLOSE);
   }
 
 }
@@ -167,45 +184,50 @@ void _draw_objects () {
 
 
 void draw () { 
-  background(233);
+  
+  background(0);
+  
+  WIN3D_Diagrams.beginDraw();
+  
+  WIN3D_Diagrams.background(233);
   
   if (WIN3D_View_Type == 1) {
-    perspective(WIN3D_ZOOM_coordinate * PI/180, 1.0 / WIN3D_R_View, 0.00001, 100000);  //fovy, aspect, zNear, zFar
+    WIN3D_Diagrams.perspective(WIN3D_ZOOM_coordinate * PI/180, 1.0 / WIN3D_R_View, 0.00001, 100000);  //fovy, aspect, zNear, zFar
     
-    translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT! 
+    WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT! 
   }
   else{
     float ZOOM = 0.4425 * WIN3D_ZOOM_coordinate * PI/180; 
     //float ZOOM = 0.0025 * atan_ang(WIN3D_ZOOM_coordinate);
     
-    ortho(ZOOM * WIN3D_X_View * -1, ZOOM * WIN3D_X_View * 1, ZOOM  * WIN3D_Y_View * -1, ZOOM  * WIN3D_Y_View * 1, 0.00001, 100000);
+    WIN3D_Diagrams.ortho(ZOOM * WIN3D_X_View * -1, ZOOM * WIN3D_X_View * 1, ZOOM  * WIN3D_Y_View * -1, ZOOM  * WIN3D_Y_View * 1, 0.00001, 100000);
     
-    translate(0, 1.0 * WIN3D_Y_View, 0); // << IMPORTANT! 
+    WIN3D_Diagrams.translate(0, 1.0 * WIN3D_Y_View, 0); // << IMPORTANT! 
   }
 
   //lights();
 
 
   
-  pushMatrix();
+  WIN3D_Diagrams.pushMatrix();
   
-  translate(0, 0, 0);
+  WIN3D_Diagrams.translate(0, 0, 0);
   
-  fill(0);
-  textSize(10.0 * (WIN3D_ZOOM_coordinate / 30));
-  textAlign(CENTER, CENTER);    
-  text(StationName + " [" + nfp(StationLatitude, 0, 1) + ", " + nfp(StationLongitude, 0, 1) + "]", 0, 120 * (WIN3D_ZOOM_coordinate / 30), 0);
+  WIN3D_Diagrams.fill(0);
+  WIN3D_Diagrams.textSize(10.0 * (WIN3D_ZOOM_coordinate / 30));
+  WIN3D_Diagrams.textAlign(CENTER, CENTER);    
+  WIN3D_Diagrams.text(StationName + " [" + nfp(StationLatitude, 0, 1) + ", " + nfp(StationLongitude, 0, 1) + "]", 0, 120 * (WIN3D_ZOOM_coordinate / 30), 0);
  
-  popMatrix();
+  WIN3D_Diagrams.popMatrix();
 
-  translate(WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
-  rotateX(WIN3D_RX_coordinate * PI/180);
-  rotateY(WIN3D_RY_coordinate * PI/180);
-  rotateZ(WIN3D_RZ_coordinate * PI/180);
+  WIN3D_Diagrams.translate(WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
+  WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI/180);
+  WIN3D_Diagrams.rotateY(WIN3D_RY_coordinate * PI/180);
+  WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI/180);
   
   
   
-  fill(127);
+  WIN3D_Diagrams.fill(127);
 
 
   //hint(DISABLE_DEPTH_TEST);
@@ -216,8 +238,31 @@ void draw () {
 
   //hint(ENABLE_DEPTH_TEST);
 
-  noLoop();
+  WIN3D_Diagrams.endDraw();
+  
+  image(WIN3D_Diagrams, WIN3D_CX_View, WIN3D_CY_View, WIN3D_X_View, WIN3D_Y_View);
+
+
+
+
+
+
+  WIN3D_Diagrams.beginDraw();
+  
+  WIN3D_Diagrams.background(233);
+  
+  
+
+  
+  WORLD_Diagrams.endDraw();
+  
+  image(WORLD_Diagrams, WORLD_CX_View, WORLD_CY_View, WORLD_X_View, WORLD_Y_View);  
 } 
+
+
+
+
+
  
 void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float StationLatitude) { 
 
@@ -225,13 +270,13 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
   float max_sunset = int(max(SOLARCHVISION_Sunset(StationLatitude, 90), SOLARCHVISION_Sunset(StationLatitude, 270)));
  
   
-  pushMatrix();
-  translate(x_SunPath, y_SunPath, z_SunPath);
+  WIN3D_Diagrams.pushMatrix();
+  WIN3D_Diagrams.translate(x_SunPath, y_SunPath, z_SunPath);
   
-  line(-1 * s_SunPath, 0, 0, 1 * s_SunPath, 0, 0); 
-  line(0, -1 * s_SunPath, 0, 0, 1 * s_SunPath, 0);
+  WIN3D_Diagrams.line(-1 * s_SunPath, 0, 0, 1 * s_SunPath, 0, 0); 
+  WIN3D_Diagrams.line(0, -1 * s_SunPath, 0, 0, 1 * s_SunPath, 0);
 
-  stroke(255, 255, 0);
+  WIN3D_Diagrams.stroke(255, 255, 0);
   
   for (int HOUR = int(roundTo(min_sunrise, 1.0)); HOUR < int(roundTo(max_sunset, 1.0)); HOUR += 1){
     int DATE_step = 1;
@@ -262,21 +307,21 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
        
           float[] COL = SOLARCHVISION_DRYWCBD(0.0002 * float(Pa)); // ????????
   
-          stroke(COL[1], COL[2], COL[3], 127);
-          fill(COL[1], COL[2], COL[3], 127);
+          WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], 127);
+          WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], 127);
           
           float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR - 0.5);
           float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR + 0.5);
           float[] SunC = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR + 0.5);
           float[] SunD = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR - 0.5);
           
-          beginShape();
-          vertex(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3]);
-          vertex(s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
-          vertex(s_SunPath * SunC[1], -s_SunPath * SunC[2], s_SunPath * SunC[3]);
-          vertex(s_SunPath * SunD[1], -s_SunPath * SunD[2], s_SunPath * SunD[3]);
+          WIN3D_Diagrams.beginShape();
+          WIN3D_Diagrams.vertex(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3]);
+          WIN3D_Diagrams.vertex(s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
+          WIN3D_Diagrams.vertex(s_SunPath * SunC[1], -s_SunPath * SunC[2], s_SunPath * SunC[3]);
+          WIN3D_Diagrams.vertex(s_SunPath * SunD[1], -s_SunPath * SunD[2], s_SunPath * SunD[3]);
 
-          endShape(CLOSE);
+          WIN3D_Diagrams.endShape(CLOSE);
           
         }
       }
@@ -284,14 +329,14 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
     }
   }
   
-  stroke(0);
+  WIN3D_Diagrams.stroke(0);
   
   for (int j = 90; j <= 270; j += 30){
     float HOUR_step = (SOLARCHVISION_DayTime(StationLatitude, j) / 12.0);
     for (float HOUR = SOLARCHVISION_Sunrise(StationLatitude, j); HOUR <(SOLARCHVISION_Sunset(StationLatitude, j) + .01 - HOUR_step); HOUR += HOUR_step){
       float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, j, HOUR);
       float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, j, (HOUR + HOUR_step));
-      line(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
+      WIN3D_Diagrams.line(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
     }
   }
   
@@ -301,27 +346,27 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
       float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, j, HOUR);
       float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, (j + DATE_step), HOUR);
       if (SunA[3] >= 0 && SunB[3] >= 0) {
-        line(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
+        WIN3D_Diagrams.line(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
       }
     }
   }
   
-  popMatrix();
+  WIN3D_Diagrams.popMatrix();
 
-  stroke(0);
+  WIN3D_Diagrams.stroke(0);
   for (int i = 0; i < 360; i += 5){
-    line(s_SunPath * cos(i * PI/180), -s_SunPath * sin(i * PI/180), 0, s_SunPath * cos((i + 5) * PI/180), -s_SunPath * sin((i + 5) * PI/180), 0);  
+    WIN3D_Diagrams.line(s_SunPath * cos(i * PI/180), -s_SunPath * sin(i * PI/180), 0, s_SunPath * cos((i + 5) * PI/180), -s_SunPath * sin((i + 5) * PI/180), 0);  
     
-    line(s_SunPath * cos(i * PI/180), -s_SunPath * sin(i * PI/180), 0, 1.05 * s_SunPath * cos((i) * PI/180), -1.05 * s_SunPath * sin((i) * PI/180), 0);
+    WIN3D_Diagrams.line(s_SunPath * cos(i * PI/180), -s_SunPath * sin(i * PI/180), 0, 1.05 * s_SunPath * cos((i) * PI/180), -1.05 * s_SunPath * sin((i) * PI/180), 0);
   }
   
   for (int i = 0; i < 360; i += 15){
-    pushMatrix();
-    translate(1.15 * s_SunPath * cos(i * PI/180), -1.15 * s_SunPath * sin(i * PI/180), 0);
+    WIN3D_Diagrams.pushMatrix();
+    WIN3D_Diagrams.translate(1.15 * s_SunPath * cos(i * PI/180), -1.15 * s_SunPath * sin(i * PI/180), 0);
     
-    fill(0);
-    textSize(s_SunPath * 0.05);
-    textAlign(CENTER, CENTER);
+    WIN3D_Diagrams.fill(0);
+    WIN3D_Diagrams.textSize(s_SunPath * 0.05);
+    WIN3D_Diagrams.textAlign(CENTER, CENTER);
     
     String txt = nf((90 - i + 360) % 360, 0);
     if (i == 0) {txt = "E"; textSize(s_SunPath * 0.1);}
@@ -329,9 +374,9 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
     else if (i == 180) {txt = "W"; textSize(s_SunPath * 0.1);}
     else if (i == 270) {txt = "S"; textSize(s_SunPath * 0.1);}
     
-    text(txt, 0, 0, 0);
+    WIN3D_Diagrams.text(txt, 0, 0, 0);
     
-    popMatrix();
+    WIN3D_Diagrams.popMatrix();
   }    
 } 
 
