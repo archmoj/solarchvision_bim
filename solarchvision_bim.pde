@@ -7,8 +7,8 @@ int Y_View = 600;
 float R_View = float(Y_View) / float(X_View);
 
 float X_coordinate = 0 * X_View;
-float Y_coordinate = 1 * Y_View;
-float Z_coordinate = 0;
+float Y_coordinate = 0 * Y_View;
+float Z_coordinate = -100;
 float S_coordinate = 5.0;
 
 float RX_coordinate = 0;
@@ -42,7 +42,7 @@ int STATION_NUMBER = 14;
 String[][] DEFINED_STATIONS = {
   
                                 {"MOSCOW_XX_RU", "MOSCOW", "XX", "55.75", "37.63", "45", "156.0"}, 
-                                {"Istanbul_XX_TR", "Istanbul", "XX", "40.97", "28.82", "30", "37.0"},  
+                                {"Istanbul_XX_TR", "Istanbul", "XX", "40.97", "28.82", "30", "37.0"}, 
                                 {"Barcelona_XX_SP", "Barcelona", "XX", "41.28", "2.07", "15", "6.0"},
                                 {"Bologna_XX_IT", "Bologna", "XX", "44.53", "11.30", "15", "49.0"},
                                 {"VIENNA_XX_AT", "VIENNA", "XX", "48.12", "16.57", "15", "190.0"},
@@ -126,16 +126,50 @@ void draw () {
   
   if (View_Type == 1) {
     perspective(ZOOM_coordinate * PI/180, X_View/Y_View, 0.00001, 100000);  //fovy, aspect, zNear, zFar
+    
+    translate(0.5 * X_View,0.5 * Y_View,0); // << IMPORTANT! 
   }
   else{
     float ZOOM = 0.4425 * ZOOM_coordinate * PI/180; 
     ortho(ZOOM * X_View * -1, ZOOM * X_View * 1, ZOOM  * Y_View * -1, ZOOM  * Y_View * 1, 0.00001, 100000);
+    
+    translate(0,1.0 * Y_View,0); // << IMPORTANT! 
   }
 
 
   //lights();
+
   
+  
+  pushMatrix();
+  
+  translate(0,0,0);
+  
+  fill(0);
+  textSize(10.0 * (ZOOM_coordinate / 30));
+  textAlign(CENTER, CENTER);    
+  text(StationName, 0, 120 * (ZOOM_coordinate / 30), 0);
+  
+  popMatrix();
+  
+  if (View_Type == 1) {
+    translate(-0.5 * X_View,0.5 * Y_View,0); // << IMPORTANT! 
+  }
+  else{
+ 
+  }
+    
+  /*
+  StationName = DEFINED_STATIONS[STATION_NUMBER][1];
+  StationProvince = DEFINED_STATIONS[STATION_NUMBER][2];
+  StationLatitude = float(DEFINED_STATIONS[STATION_NUMBER][3]);
+  StationLongitude = float(DEFINED_STATIONS[STATION_NUMBER][4]);
+  StationTimeZone = float(DEFINED_STATIONS[STATION_NUMBER][5]);
+  StationElevation = float(DEFINED_STATIONS[STATION_NUMBER][6]);
+*/  
+
   translate(X_coordinate, Y_coordinate, Z_coordinate);
+
   rotateX(RX_coordinate * PI/180);
   rotateY(RY_coordinate * PI/180);
   rotateZ(RZ_coordinate * PI/180);
@@ -151,6 +185,7 @@ void draw () {
   
   popMatrix();
   
+
   
   SunPath1.update(0, 0, 0, 90, StationLatitude); 
 
@@ -207,11 +242,11 @@ class SOLARCHVISION_SunPath {
           if (Pa.equals(_undefined)){
           }
           else{
-/*          
+         
             float[] COL = SOLARCHVISION_DRYWCBD(0.0002 * float(Pa)); // ????????
     
-            stroke(COL[1], COL[2], COL[3]);
-            fill(COL[1], COL[2], COL[3]);
+            stroke(COL[1], COL[2], COL[3], 127);
+            fill(COL[1], COL[2], COL[3], 127);
             
             float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR - 0.5);
             float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR + 0.5);
@@ -225,7 +260,7 @@ class SOLARCHVISION_SunPath {
             vertex(s_SunPath * SunD[1], -s_SunPath * SunD[2], s_SunPath * SunD[3]);
   
             endShape(CLOSE);
-*/            
+            
           }
         }
 
@@ -282,18 +317,7 @@ class SOLARCHVISION_SunPath {
       popMatrix();
     }    
     
-    fill(0);
-    textSize(s_SunPath * 0.05);
-    textAlign(CENTER, CENTER);    
-    text(StationName, 0,120,0);
-  /*
-  StationName = DEFINED_STATIONS[STATION_NUMBER][1];
-  StationProvince = DEFINED_STATIONS[STATION_NUMBER][2];
-  StationLatitude = float(DEFINED_STATIONS[STATION_NUMBER][3]);
-  StationLongitude = float(DEFINED_STATIONS[STATION_NUMBER][4]);
-  StationTimeZone = float(DEFINED_STATIONS[STATION_NUMBER][5]);
-  StationElevation = float(DEFINED_STATIONS[STATION_NUMBER][6]);
-*/  
+
 
  
   } 
@@ -683,7 +707,7 @@ String[][] CalendarMonth = {
   {"September", "septembre"},
   {"October", "octobre"},
   {"November", "novembre"},
-  {"December",  "décembre"}
+  {"December", "décembre"}
 };
 
 int CalendarLength[] = {31     , 28     , 31     , 30     , 31     , 30     , 31     , 31     , 30     , 31     , 30     , 31};
