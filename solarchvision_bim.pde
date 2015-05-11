@@ -15,13 +15,6 @@ float RS_coordinate = 5.0;
 float ZOOM_coordinate = 17500.0 / Y_View;
 
 int View_Type = 0; // 0: Ortho 1: Perspective
-{
-  if (View_Type == 1) {
-    X_coordinate += 0.5 * X_View; 
-    Y_coordinate += -0.5 * Y_View;
-  }
-}
-
 
 int _MONTH = -1;
 int _DAY = -1; 
@@ -146,13 +139,6 @@ void draw () {
   text(StationName + " [" + nfp(StationLatitude, 0, 1) + ", " + nfp(StationLongitude, 0, 1) + "]", 0, 120 * (ZOOM_coordinate / 30), 0);
  
   popMatrix();
-  
-  if (View_Type == 1) {
-    translate(-0.5 * X_View, 0.5 * Y_View, 0); // << IMPORTANT! 
-  }
-  else{
- 
-  }
 
   translate(X_coordinate, Y_coordinate, Z_coordinate);
   rotateX(RX_coordinate * PI/180);
@@ -339,9 +325,9 @@ void keyPressed (){
       case ',' :ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * ZOOM_coordinate)); break;
       case '.' :ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * ZOOM_coordinate)); break;
       
-      case 'o' :if (View_Type != 0) {View_Type = 0; X_coordinate -= 0.5 * X_View; Y_coordinate -= -0.5 * Y_View;}
+      case 'o' :if (View_Type != 0) View_Type = 0;
                 break;
-      case 'p' :if (View_Type != 1) {View_Type = 1; X_coordinate += 0.5 * X_View; Y_coordinate += -0.5 * Y_View;} 
+      case 'p' :if (View_Type != 1) View_Type = 1; 
                 break;
                 
       case 'S' :STATION_NUMBER =(STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_station(); break;
