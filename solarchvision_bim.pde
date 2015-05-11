@@ -174,15 +174,18 @@ void draw () {
   rotateY(RY_coordinate * PI/180);
   rotateZ(RZ_coordinate * PI/180);
   
+  
+  
+  fill(127);
+  
   pushMatrix();
+  translate(15, -10, 5);
+  box(30, 20, 10);
+  popMatrix();
   
-  fill(255);
-  translate(0, 0, 0);
-  box(10, 10, 10);
-  
-  translate(10, 10, 10);
-  box(10, 10, 10);
-  
+  pushMatrix();
+  translate(-5, 10, 15);
+  box(10, 20, 30);
   popMatrix();
   
 
