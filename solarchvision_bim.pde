@@ -181,6 +181,10 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
   line(0, -1 * s_SunPath, 0, 0, 1 * s_SunPath, 0);
 
   stroke(255, 255, 0);
+
+
+  PShape myMesh = createShape();
+  
   
   for (int HOUR = int(roundTo(min_sunrise, 1.0)); HOUR < int(roundTo(max_sunset, 1.0)); HOUR += 1){
     int DATE_step = 1;
@@ -208,30 +212,40 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
         if (Pa.equals(_undefined)){
         }
         else{
-       
+          
           float[] COL = SOLARCHVISION_DRYWCBD(0.0002 * float(Pa)); // ????????
-  
-          stroke(COL[1], COL[2], COL[3], 127);
-          fill(COL[1], COL[2], COL[3], 127);
           
           float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR - 0.5);
           float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR + 0.5);
           float[] SunC = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR + 0.5);
           float[] SunD = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR - 0.5);
-          
-          beginShape();
-          vertex(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3]);
-          vertex(s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
-          vertex(s_SunPath * SunC[1], -s_SunPath * SunC[2], s_SunPath * SunC[3]);
-          vertex(s_SunPath * SunD[1], -s_SunPath * SunD[2], s_SunPath * SunD[3]);
 
-          endShape(CLOSE);
+          myMesh.beginShape();
+
+          //myMesh.stroke(COL[1], COL[2], COL[3], 127);
+          //myMesh.fill(COL[1], COL[2], COL[3], 127);  
+          
+          myMesh.stroke(0,0,0);
+          myMesh.fill(255,255,255);
+
+          myMesh.vertex(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3]);
+          myMesh.vertex(s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
+          myMesh.vertex(s_SunPath * SunC[1], -s_SunPath * SunC[2], s_SunPath * SunC[3]);
+          myMesh.vertex(s_SunPath * SunD[1], -s_SunPath * SunD[2], s_SunPath * SunD[3]);
+          
+          //myMesh.endShape();
+          
+          
           
         }
       }
 
     }
   }
+  
+  myMesh.endShape(CLOSE);  
+  
+  shape(myMesh, 0, 0, 0, 0);
   
   stroke(0);
   
