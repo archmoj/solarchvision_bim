@@ -105,8 +105,66 @@ void setup ()
 
   _update_station();
 
+  _update_objects();
+
   LoadFontStyle();
+  
 }
+
+void _update_objects () {
+  //add_PolygonExtrude(-1, 0,0,0,  0.5,2.0, 10);
+  //add_PolygonExtrude(-1, 0,0,0,  1.5,1.0, 5);
+
+  //add_Polygon(1, 0,0,-1, 2,  16);
+  //add_Polygon(2, 0,0,0,  1.5, 5);
+  //add_Polygon(5, 0,0,1,  1,   3);
+  //add_Pentagon(1, 0,0,0, 1);
+  //add_Mesh4(2, -1,-1,1, 1,-1,-1 ,1,1,1, -1,1,-1); // hyper
+  //add_Mesh4(7, -1,-1,0, 1,-1,0, 1,1,0, -1,1,0);
+  //add_Cube(-1, -1,-1,-1,1,1,1);
+
+  //add_Cube(-1, 0.5,1.0,0.0, 1.5,3.0,0.5);
+  add_Cube(-1, 0.0,0.0,0.0, 0.5,1.0,2.0);
+  
+  add_Mesh2(3, 0.5,0.0,0.75, 0.75,1.0,0.75);
+  add_Mesh2(3, 0.5,0.0,1.25, 0.75,1.0,1.25);
+  add_Mesh2(3, 0.5,0.0,1.75, 0.75,1.0,1.75);
+  
+  add_Mesh2(7, -4,-4,0, 4,4,0);
+}
+
+float objects_scale = 10;
+
+void _draw_objects () {
+  
+  for (int i = 1; i < allFaces.length; i++) {
+    
+    int face_colorID = allFaces_MAT[i];
+    
+    color c = color(0, 0, 0);
+
+         if (face_colorID == 0) c = color(255, 127, 0);
+    else if (face_colorID == 1) c = color(255, 0, 0);
+    else if (face_colorID == 2) c = color(255, 255, 0);
+    else if (face_colorID == 3) c = color(0, 255, 0);
+    else if (face_colorID == 4) c = color(0, 255, 255);
+    else if (face_colorID == 5) c = color(0, 0, 255);
+    else if (face_colorID == 6) c = color(255, 0, 255);
+    else if (face_colorID == 7) c = color(255, 255, 255);
+    
+    stroke(0, 0, 0);
+    fill (c);    
+    
+    beginShape();
+    for (int j = 0; j < allFaces[i].length; j++) {
+      vertex(allVertices[allFaces[i][j]][0] * objects_scale, allVertices[allFaces[i][j]][1] * objects_scale, allVertices[allFaces[i][j]][2] * objects_scale);
+    }
+    endShape(CLOSE);
+  }
+
+}
+
+
 
 void draw () { 
   background(233);
@@ -148,22 +206,15 @@ void draw () {
   
   
   fill(127);
-  
-  pushMatrix();
-  translate(15, -10, 5);
-  box(30, 20, 10);
-  popMatrix();
-  
-  pushMatrix();
-  translate(-5, 10, 15);
-  box(10, 20, 30);
-  popMatrix();
-  
-  hint(DISABLE_DEPTH_TEST);
+
+
+  //hint(DISABLE_DEPTH_TEST);
+
+  _draw_objects();
   
   SOLARCHVISION_SunPath(0, 0, 0, 90, StationLatitude); 
 
-  hint(ENABLE_DEPTH_TEST);
+  //hint(ENABLE_DEPTH_TEST);
 
   noLoop();
 } 
@@ -327,6 +378,9 @@ void keyPressed (){
 
       case '0' :View_Type = 1; Z_coordinate -= S_coordinate; break;
       case '5' :View_Type = 1; Z_coordinate += S_coordinate; break;
+
+      case '*' :objects_scale *= 2.0; break;
+      case '/' :objects_scale /= 2.0; break;
 
       case '+' :ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * ZOOM_coordinate)); break;
       case '-' :ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * ZOOM_coordinate)); break;      
@@ -786,4 +840,240 @@ void LoadFontStyle () {
   //textFont(createFont("Courier New", _size));
   //textFont(createFont("Franklin Gothic Medium", _size));
   //textFont(createFont("BankGothic Md BT", _size));
+}
+
+
+int defaultMaterial = 7;
+
+float[][] allVertices = {{}};
+int[][] allFaces = {{}};
+int[] allFaces_MAT = {0};
+
+int addToVertices (float x, float y, float z) {
+  
+  float[][] newVertice = {{x,y,z}}; 
+  
+  allVertices = (float[][]) concat(allVertices, newVertice);
+  
+  return(allVertices.length - 1);
+}
+
+int addToFaces (int[] f) {
+
+  int[] newFace_MAT = {defaultMaterial}; 
+  
+  allFaces_MAT = concat(allFaces_MAT, newFace_MAT);
+  
+  
+  int[][] newFace = {f}; 
+  
+  allFaces = (int[][]) concat(allFaces, newFace);
+
+  return(allFaces.length - 1);
+}
+
+
+
+void add_Cube (int m, float x1, float y1, float z1, float x2, float y2, float z2) {
+
+  int t1 = addToVertices(x2,y2,z2);
+  int t2 = addToVertices(x1,y2,z2);
+  int t3 = addToVertices(x1,y1,z2);
+  int t4 = addToVertices(x2,y1,z2);
+
+  int b1 = addToVertices(x2,y2,z1);
+  int b2 = addToVertices(x1,y2,z1);
+  int b3 = addToVertices(x1,y1,z1);
+  int b4 = addToVertices(x2,y1,z1);
+
+  if (m == -1) defaultMaterial = 0;
+  else defaultMaterial = m;
+
+  {
+    int[] newFace = {t4,t3,t2,t1};
+    if (m == -1) defaultMaterial += 1;
+    addToFaces(newFace);
+  }
+  {
+    int[] newFace = {t1,t2,b2,b1};
+    if (m == -1) defaultMaterial += 1;
+    addToFaces(newFace);
+  }
+  {
+    int[] newFace = {t2,t3,b3,b2};
+    if (m == -1) defaultMaterial += 1;
+    addToFaces(newFace);
+  }
+  {
+    int[] newFace = {t3,t4,b4,b3};
+    if (m == -1) defaultMaterial += 1;
+    addToFaces(newFace);
+  }
+  {
+    int[] newFace = {t4,t1,b1,b4};
+    if (m == -1) defaultMaterial += 1;
+    addToFaces(newFace);
+  }
+  {
+    int[] newFace = {b1,b2,b3,b4};
+    if (m == -1) defaultMaterial += 1;
+    addToFaces(newFace);
+  }  
+
+}
+
+
+void add_Mesh2(int m, float x1, float y1, float z1, float x3, float y3, float z3) {
+
+  float x2 = x3;
+  float y2 = y3;
+  float z2 = z3;
+
+  float x4 = x1;
+  float y4 = y1;
+  float z4 = z1;
+  
+  if (z1 == z3) {
+    y2 = y1;
+    y4 = y3;
+  }
+  else if (y1 == y3) {
+    x2 = x1;
+    x4 = x3;
+  }
+  else if (x1 == x3) {
+    z2 = z1;
+    z4 = z3;
+  }  
+  
+  int v1 = addToVertices(x1,y1,z1);
+  int v2 = addToVertices(x2,y2,z2);
+  int v3 = addToVertices(x3,y3,z3);
+  int v4 = addToVertices(x4,y4,z4);
+  
+  defaultMaterial = m;
+  
+  {
+    int[] newFace = {v1,v2,v3,v4};
+    addToFaces(newFace);
+  }
+
+}
+
+void add_Mesh4(int m, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4) {
+
+  int v1 = addToVertices(x1,y1,z1);
+  int v2 = addToVertices(x2,y2,z2);
+  int v3 = addToVertices(x3,y3,z3);
+  int v4 = addToVertices(x4,y4,z4);
+
+  defaultMaterial = m;
+  
+  {
+    int[] newFace = {v1,v2,v3,v4};
+    addToFaces(newFace);
+  }
+
+}
+
+void add_Mesh3(int m, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) {
+
+  int v1 = addToVertices(x1,y1,z1);
+  int v2 = addToVertices(x2,y2,z2);
+  int v3 = addToVertices(x3,y3,z3);
+
+  defaultMaterial = m;
+
+  {
+    int[] newFace = {v1,v2,v3};
+    addToFaces(newFace);
+  }
+
+}
+
+void add_Mesh5(int m, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float x5, float y5, float z5) {
+
+  int v1 = addToVertices(x1,y1,z1);
+  int v2 = addToVertices(x2,y2,z2);
+  int v3 = addToVertices(x3,y3,z3);
+  int v4 = addToVertices(x4,y4,z4);
+  int v5 = addToVertices(x5,y5,z5);
+
+  defaultMaterial = m;
+  
+  {
+    int[] newFace = {v1,v2,v3,v4,v5};
+    addToFaces(newFace);
+  }
+
+}
+
+void add_Pentagon(int m, float cx, float cy, float cz, float r) {
+
+  int v1 = addToVertices(cos_ang(1*72),sin_ang(1*72),0);
+  int v2 = addToVertices(cos_ang(2*72),sin_ang(2*72),0);
+  int v3 = addToVertices(cos_ang(3*72),sin_ang(3*72),0);
+  int v4 = addToVertices(cos_ang(4*72),sin_ang(4*72),0);
+  int v5 = addToVertices(cos_ang(5*72),sin_ang(5*72),0);
+
+  defaultMaterial = m;
+    
+  {
+    int[] newFace = {v1,v2,v3,v4,v5};
+    addToFaces(newFace);
+  }
+
+}
+
+void add_Polygon(int m, float cx, float cy, float cz, float r, int n) {
+
+  int[] newFace = {addToVertices(cx + r * cos_ang(0), cy + r * sin_ang(0), cz)};
+  for (int i = 1; i < n; i++) {
+    float t = i * 360.0 / float(n);
+    int[] f = {addToVertices(cx + r * cos_ang(t), cy + r * sin_ang(t), cz)};
+    newFace = concat(newFace, f);
+  } 
+ 
+  defaultMaterial = m;
+
+  addToFaces(newFace);
+
+}
+
+void add_PolygonExtrude(int m, float cx, float cy, float cz, float r, float h, int n) {
+
+  int[] vT = new int[n];
+  int[] vB = new int[n];
+  
+  vT[0] = addToVertices(cx + r * cos_ang(0), cy + r * sin_ang(0), cz + h);
+  vB[0] = addToVertices(cx + r * cos_ang(0), cy + r * sin_ang(0), cz);
+  
+  int[] newFaceT = {vT[0]};
+  int[] newFaceB = {vB[0]};
+  for (int i = 1; i < n; i++) {
+    float t = i * 360.0 / float(n);
+    
+    vT[i] = addToVertices(cx + r * cos_ang(t), cy + r * sin_ang(t), cz + h);
+    vB[i] = addToVertices(cx + r * cos_ang(t), cy + r * sin_ang(t), cz);
+    int[] fT = {vT[i]};
+    int[] fB = {vB[i]};
+    
+    newFaceT = concat(newFaceT, fT);
+    newFaceB = concat(newFaceB, fB);
+  } 
+ 
+  if (m == -1) defaultMaterial = 1;
+  else defaultMaterial = m;
+
+  addToFaces(newFaceT);
+  addToFaces(newFaceB);
+  
+  for (int i = 0; i < n; i++) {
+    int next_i = (i + 1) % n;
+   
+    int[] newFace = {vT[i], vT[next_i], vB[next_i], vB[i]};
+    if (m == -1) defaultMaterial += 1;    
+    addToFaces(newFace);
+  }
+
 }
