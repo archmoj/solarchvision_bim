@@ -58,12 +58,12 @@ String CLIMATE_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_E
 String[] CLIMATE_EPW_Files = getfiles(CLIMATE_directory);
 
 String THE_STATION;
-String StationName;
-String StationProvince;
-float StationLatitude;
-float StationLongitude;
-float StationTimeZone;
-float StationElevation;
+String LocationName;
+String LocationProvince;
+float LocationLatitude;
+float LocationLongitude;
+float LocationTimeZone;
+float LocationElevation;
 float Delta_NOON;
 
 int CLIMATE_start = 2005;//1953;
@@ -147,7 +147,7 @@ void setup ()
 
   _update_folders();
 
-  _update_station();
+  _update_location();
 
   _update_objects();
 
@@ -271,7 +271,7 @@ void draw () {
   WIN3D_Diagrams.fill(0);
   WIN3D_Diagrams.textAlign(CENTER, CENTER);      
   WIN3D_Diagrams.textSize(10.0 * (WIN3D_ZOOM_coordinate / 30));
-  WIN3D_Diagrams.text(StationName + " [" + nfp(StationLatitude, 0, 1) + ", " + nfp(StationLongitude, 0, 1) + "]", 0, 120 * (WIN3D_ZOOM_coordinate / 30), 0);
+  WIN3D_Diagrams.text(LocationName + " [" + nfp(LocationLatitude, 0, 1) + ", " + nfp(LocationLongitude, 0, 1) + "]", 0, 120 * (WIN3D_ZOOM_coordinate / 30), 0);
  
   WIN3D_Diagrams.popMatrix();
 
@@ -289,7 +289,7 @@ void draw () {
 
   _draw_objects();
   
-  SOLARCHVISION_SunPath(0, 0, 0, 90, StationLatitude); 
+  SOLARCHVISION_SunPath(0, 0, 0, 90, LocationLatitude); 
 
   //hint(ENABLE_DEPTH_TEST);
 
@@ -310,10 +310,10 @@ void draw () {
 
 
  
-void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float StationLatitude) { 
+void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float LocationLatitude) { 
 
-  float min_sunrise = int(min(SOLARCHVISION_Sunrise(StationLatitude, 90), SOLARCHVISION_Sunrise(StationLatitude, 270))); 
-  float max_sunset = int(max(SOLARCHVISION_Sunset(StationLatitude, 90), SOLARCHVISION_Sunset(StationLatitude, 270)));
+  float min_sunrise = int(min(SOLARCHVISION_Sunrise(LocationLatitude, 90), SOLARCHVISION_Sunrise(LocationLatitude, 270))); 
+  float max_sunset = int(max(SOLARCHVISION_Sunset(LocationLatitude, 90), SOLARCHVISION_Sunset(LocationLatitude, 270)));
  
   
   WIN3D_Diagrams.pushMatrix();
@@ -335,7 +335,7 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
       
       //println(_DATE, _MONTH, _DAY, DATE_ANGLE); exit();
      
-      float[] Sun = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE, HOUR);
+      float[] Sun = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR);
       
       if (Sun[3] >= 0) {
         
@@ -356,10 +356,10 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
           WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], 127);
           WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], 127);
           
-          float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR - 0.5);
-          float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR + 0.5);
-          float[] SunC = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR + 0.5);
-          float[] SunD = SOLARCHVISION_SunPosition(StationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR - 0.5);
+          float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR - 0.5);
+          float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR + 0.5);
+          float[] SunC = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR + 0.5);
+          float[] SunD = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR - 0.5);
           
           WIN3D_Diagrams.beginShape();
           WIN3D_Diagrams.vertex(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3]);
@@ -378,10 +378,10 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
   WIN3D_Diagrams.stroke(0);
   
   for (int j = 90; j <= 270; j += 30){
-    float HOUR_step = (SOLARCHVISION_DayTime(StationLatitude, j) / 12.0);
-    for (float HOUR = SOLARCHVISION_Sunrise(StationLatitude, j); HOUR <(SOLARCHVISION_Sunset(StationLatitude, j) + .01 - HOUR_step); HOUR += HOUR_step){
-      float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, j, HOUR);
-      float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, j, (HOUR + HOUR_step));
+    float HOUR_step = (SOLARCHVISION_DayTime(LocationLatitude, j) / 12.0);
+    for (float HOUR = SOLARCHVISION_Sunrise(LocationLatitude, j); HOUR <(SOLARCHVISION_Sunset(LocationLatitude, j) + .01 - HOUR_step); HOUR += HOUR_step){
+      float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, j, HOUR);
+      float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, j, (HOUR + HOUR_step));
       WIN3D_Diagrams.line(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
     }
   }
@@ -389,8 +389,8 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
   for (float HOUR = min_sunrise; HOUR < max_sunset + .01; HOUR += 1){
     float DATE_step = 1;
     for (int j = 0; j <= 360; j += DATE_step){
-      float[] SunA = SOLARCHVISION_SunPosition(StationLatitude, j, HOUR);
-      float[] SunB = SOLARCHVISION_SunPosition(StationLatitude, (j + DATE_step), HOUR);
+      float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, j, HOUR);
+      float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, (j + DATE_step), HOUR);
       if (SunA[3] >= 0 && SunB[3] >= 0) {
         WIN3D_Diagrams.line(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
       }
@@ -497,8 +497,8 @@ void keyPressed (){
       case 'P' :WIN3D_View_Type = 1; break;                
       case 'p' :WIN3D_View_Type = 1; break;                
                 
-      case 'S' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_station(); break;
-      case 's' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_station(); break;
+      case 'S' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_location(); break;
+      case 's' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_location(); break;
       
       
       case 'F' :LoadFontStyle(); break;
@@ -899,19 +899,19 @@ void _update_date() {
   _HOUR = int(24  * (_DATE - int(_DATE)));
 }
 
-void _update_station () {
+void _update_location () {
   THE_STATION = DEFINED_STATIONS[STATION_NUMBER][0];
-  StationName = DEFINED_STATIONS[STATION_NUMBER][1];
-  StationProvince = DEFINED_STATIONS[STATION_NUMBER][2];
-  StationLatitude = float(DEFINED_STATIONS[STATION_NUMBER][3]);
-  StationLongitude = float(DEFINED_STATIONS[STATION_NUMBER][4]);
-  StationTimeZone = float(DEFINED_STATIONS[STATION_NUMBER][5]);
-  StationElevation = float(DEFINED_STATIONS[STATION_NUMBER][6]);
-  Delta_NOON = (StationTimeZone - StationLongitude) / 15.0;
+  LocationName = DEFINED_STATIONS[STATION_NUMBER][1];
+  LocationProvince = DEFINED_STATIONS[STATION_NUMBER][2];
+  LocationLatitude = float(DEFINED_STATIONS[STATION_NUMBER][3]);
+  LocationLongitude = float(DEFINED_STATIONS[STATION_NUMBER][4]);
+  LocationTimeZone = float(DEFINED_STATIONS[STATION_NUMBER][5]);
+  LocationElevation = float(DEFINED_STATIONS[STATION_NUMBER][6]);
+  Delta_NOON = (LocationTimeZone - LocationLongitude) / 15.0;
   
   try_update_CLIMATE();
   
-  WORLD_VIEW_Number = FindGoodViewport(StationLongitude, StationLatitude);  
+  WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);  
 }
 
 String[] getfiles(String _Folder) {
