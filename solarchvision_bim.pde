@@ -2,9 +2,9 @@ int X_View = 600;
 int Y_View = 600;
 float R_View = float(Y_View) / float(X_View);
 
-float X_coordinate = 0 * X_View;
-float Y_coordinate = 0 * Y_View;
-float Z_coordinate = -100;
+float X_coordinate = 0;
+float Y_coordinate = 0;
+float Z_coordinate = 0;
 float S_coordinate = 5.0;
 
 float RX_coordinate = 0;
@@ -97,6 +97,7 @@ int num_layers = 18;
 
 void setup () 
 {
+  
   size(X_View, Y_View, P3D);
   
   frameRate(24);
