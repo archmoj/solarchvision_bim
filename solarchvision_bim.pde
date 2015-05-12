@@ -41,11 +41,11 @@ String[][] DEFINED_STATIONS = {
                                 {"MONTREAL_DORVAL_QC_CA", "MONTREAL", "QC", "45.47", "-73.75", "-75", "31.00"},
                                 {"CALGARY_INTL_AB_CA", "CALGARY", "AB", "51.10", "-114.02", "-120", "1084.10"},
                                 {"EDMONTON_INTL_A_AB_CA", "EDMONTON_INTL_A", "AB", "53.316666", "-113.583336", "-120", "723.3"},
-                                {"HALIFAX_INTL_AIRPORT_NS_CA", "HALIFAX", "NS", "44.86", "-63.50", "-60", "145.40"},
+                                //{"HALIFAX_INTL_AIRPORT_NS_CA", "HALIFAX", "NS", "44.86", "-63.50", "-60", "145.40"},
                                 {"OTTAWA_INTL_ON_CA", "OTTAWA", "ON", "45.38", "-75.72", "-75", "114.00"},
                                 {"QUEBEC_QC_CA", "QUEBEC", "QC", "46.8", "-71.38333", "-75", "74.4"},
-                                {"SUDBURY_ON_CA", "SUDBURY", "ON", "46.625556", "-80.797778", "-75", "348.00"},
-                                {"TORONTO_ISLAND_ON_CA", "TORONTO-ISLAND", "ON", "43.63", "-79.40", "-75", "76.50"},
+                                //{"SUDBURY_ON_CA", "SUDBURY", "ON", "46.625556", "-80.797778", "-75", "348.00"},
+                                //{"TORONTO_ISLAND_ON_CA", "TORONTO-ISLAND", "ON", "43.63", "-79.40", "-75", "76.50"},
                                 {"TORONTO_PEARSON_INTL_ON_CA", "TORONTO-PEARSON", "ON", "43.67", "-79.63", "-75", "173.40"},
                                 {"VANCOUVER_INTL_BC_CA", "VANCOUVER", "BC", "49.25", "-123.25", "-120", "4.30"},
                                 {"WINNIPEG_INTL_MB_CA", "WINNIPEG_INTL", "MB", "49.916668", "-97.23333", "-90", "238.7"},
@@ -312,12 +312,12 @@ void _draw_objects () {
     color c = color(0, 0, 0);
 
          if (face_colorID == 0) c = color(255, 127, 0);
-    else if (face_colorID == 1) c = color(255, 0, 0);
+    else if (face_colorID == 6) c = color(255, 0, 0);
     else if (face_colorID == 2) c = color(255, 255, 0);
     else if (face_colorID == 3) c = color(0, 255, 0);
     else if (face_colorID == 4) c = color(0, 255, 255);
     else if (face_colorID == 5) c = color(0, 0, 255);
-    else if (face_colorID == 6) c = color(255, 0, 255);
+    else if (face_colorID == 1) c = color(255, 0, 255);
     else if (face_colorID == 7) c = color(255, 255, 255);
     
     WIN3D_Diagrams.stroke(0, 0, 0);
@@ -516,13 +516,15 @@ void draw () {
     WIN3D_Diagrams.fill(127);
   
   
-    //hint(DISABLE_DEPTH_TEST);
+    
+  
+    WIN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
   
     _draw_objects();
     
     SOLARCHVISION_SunPath(0, 0, 0, 90, LocationLatitude); 
   
-    //hint(ENABLE_DEPTH_TEST);
+    
   
     WIN3D_Diagrams.endDraw();
     
@@ -1240,37 +1242,36 @@ void add_Box (int m, float x1, float y1, float z1, float x2, float y2, float z2)
   if (m == -1) defaultMaterial = 0;
   else defaultMaterial = m;
 
-  {//Roof
-    int[] newFace = {t4,t3,t2,t1};
+  {//Bottom
+    int[] newFace = {b4,b3,b2,b1};
     if (m == -1) defaultMaterial += 1;
     addToFaces(newFace);
-  }
+  }    
   {//West
-    int[] newFace = {t2,t3,b3,b2};
+    int[] newFace = {t3,t2,b2,b3};
     if (m == -1) defaultMaterial += 1;
     addToFaces(newFace);
   }  
   {//South
-    int[] newFace = {t3,t4,b4,b3};
+    int[] newFace = {t4,t3,b3,b4};
     if (m == -1) defaultMaterial += 1;
     addToFaces(newFace);
   }  
   {//East
-    int[] newFace = {t4,t1,b1,b4};
+    int[] newFace = {t1,t4,b4,b1};
     if (m == -1) defaultMaterial += 1;
     addToFaces(newFace);
   }  
   {//North
-    int[] newFace = {t1,t2,b2,b1};
+    int[] newFace = {t2,t1,b1,b2};
     if (m == -1) defaultMaterial += 1;
     addToFaces(newFace);
   }
-  {
-    int[] newFace = {b1,b2,b3,b4};
+  {//Roof
+    int[] newFace = {t1,t2,t3,t4};
     if (m == -1) defaultMaterial += 1;
     addToFaces(newFace);
-  }  
-
+  }
 }
 
 
