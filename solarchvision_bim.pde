@@ -119,10 +119,13 @@ int _windspd200hPa = 17;
 
 int num_layers = 18; 
 
-int WIN3D_CX_View = 450;
+int h_pixel = 300;
+int w_pixel = int(h_pixel * 1.5);
+
+int WIN3D_CX_View = w_pixel;
 int WIN3D_CY_View = 0;
-int WIN3D_X_View = 450;
-int WIN3D_Y_View = 300;
+int WIN3D_X_View = w_pixel;
+int WIN3D_Y_View = h_pixel;
 float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
 
 float WIN3D_X_coordinate = 0;
@@ -143,12 +146,13 @@ PGraphics WIN3D_Diagrams;
 
 int WIN3D_Update = 1;
 
-int WIN3D_EDGES = 1;
+int WIN3D_BLACK_EDGES = 1;
+int WIN3D_WHITE_FACES = 1;
 
 int WORLD_CX_View = 0;
 int WORLD_CY_View = 0;
-int WORLD_X_View = 450;
-int WORLD_Y_View = 300;
+int WORLD_X_View = w_pixel;
+int WORLD_Y_View = h_pixel;
 float WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
 
 float WORLD_X_coordinate = 0;
@@ -170,7 +174,7 @@ int number_of_WORLD_viewports;
 
 void setup () 
 {
-  size(1200, 600, P2D);
+  size(2 * w_pixel, 3 * h_pixel, P2D);
   
   frameRate(24);
 
@@ -322,14 +326,19 @@ void _draw_objects () {
     else if (face_colorID == 6) c = color(255, 0, 255);
     else if (face_colorID == 7) c = color(255, 255, 255);
     
-    if (WIN3D_EDGES == 1) {
+    if (WIN3D_BLACK_EDGES == 1) {
       WIN3D_Diagrams.stroke(0, 0, 0);
     }
     else{
       WIN3D_Diagrams.stroke(c);
     }
     
-    WIN3D_Diagrams.fill(c);    
+    if (WIN3D_WHITE_FACES == 1) {
+      WIN3D_Diagrams.fill(255, 255, 255);
+    }
+    else {
+      WIN3D_Diagrams.fill(c);
+    }    
     
     WIN3D_Diagrams.beginShape();
     for (int j = 0; j < allFaces[i].length; j++) {
@@ -753,8 +762,11 @@ void keyPressed (){
       case 'P' :WIN3D_View_Type = 1; break;                
       case 'p' :WIN3D_View_Type = 1; break;     
 
-      case 'E' :WIN3D_EDGES = (WIN3D_EDGES + 1) % 2; break;    
-      case 'e' :WIN3D_EDGES = (WIN3D_EDGES + 1) % 2; break;    
+      case 'E' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; break;    
+      case 'e' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; break;    
+
+      case 'W' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 2; break;    
+      case 'w' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 2; break;    
 
       case 'S' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_location(); break;
       case 's' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_location(); break;
