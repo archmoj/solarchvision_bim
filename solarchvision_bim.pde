@@ -127,14 +127,14 @@ float WIN3D_Y_coordinate = 0;
 float WIN3D_Z_coordinate = 0;
 float WIN3D_S_coordinate = 5.0;
 
-float WIN3D_RX_coordinate = 0;
+float WIN3D_RX_coordinate = 45;
 float WIN3D_RY_coordinate = 0;
-float WIN3D_RZ_coordinate = 0;
+float WIN3D_RZ_coordinate = 135;
 float WIN3D_RS_coordinate = 5.0;
 
 float WIN3D_ZOOM_coordinate = 13500.0 / WIN3D_Y_View;
 
-int WIN3D_View_Type = 0; // 0: Ortho 1: Perspective
+int WIN3D_View_Type = 1; // 0: Ortho 1: Perspective
 
 PGraphics WIN3D_Diagrams;
 
@@ -360,8 +360,8 @@ void draw () {
     
     WIN3D_Diagrams.fill(0);
     WIN3D_Diagrams.textAlign(CENTER, CENTER);      
-    WIN3D_Diagrams.textSize(10.0 * (WIN3D_ZOOM_coordinate / 30));
-    WIN3D_Diagrams.text(LocationName + " [" + nfp(LocationLatitude, 0, 1) + ", " + nfp(LocationLongitude, 0, 1) + "]", 0, 120 * (WIN3D_ZOOM_coordinate / 30), 0);
+    WIN3D_Diagrams.textSize(5 * (WIN3D_ZOOM_coordinate / 30.0));
+    WIN3D_Diagrams.text(LocationName + " [" + nfp(LocationLatitude, 0, 1) + ", " + nfp(LocationLongitude, 0, 1) + "]", 0, 45 * (WIN3D_ZOOM_coordinate / 30.0), 0);
    
     WIN3D_Diagrams.popMatrix();
   
@@ -370,7 +370,7 @@ void draw () {
     WIN3D_Diagrams.rotateY(WIN3D_RY_coordinate * PI/180);
     WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI/180);    
 
-    println(nfp(WIN3D_RX_coordinate, 0, 1), nfp(WIN3D_RY_coordinate, 0, 1), nfp(WIN3D_RZ_coordinate, 0, 1));  
+    //println(nfp(WIN3D_RX_coordinate, 0, 1), nfp(WIN3D_RY_coordinate, 0, 1), nfp(WIN3D_RZ_coordinate, 0, 1));  
 
     
     
