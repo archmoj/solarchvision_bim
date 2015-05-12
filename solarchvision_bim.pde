@@ -4,6 +4,8 @@ String ExportFolder;
 String BackgroundFolder;
 String WorldViewFolder;
 String SWOBFolder;
+String NAEFSFolder;
+String CWEEDSFolder;
 
 void _update_folders () {
 
@@ -11,7 +13,8 @@ void _update_folders () {
   BackgroundFolder   = BaseFolder + "/Input/BackgroundImages/Standard/Other";
   WorldViewFolder    = BaseFolder + "/Input/BackgroundImages/Standard/World";
   SWOBFolder         = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
-
+  NAEFSFolder        = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
+  CWEEDSFolder       = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
 }
 
 
@@ -177,18 +180,23 @@ void setup ()
 
   _update_objects();
 
-  LoadFontStyle();
+
   
   getSWOB_Coordinates();
   
+  getNAEFS_Coordinates();
+
+  getCWEEDS_Coordinates();  
 
   LoadWorldImages();
+  
+  WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);  
 
   WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);  
   
-  WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
+
   
-  
+  LoadFontStyle();  
   
 }
 
@@ -300,11 +308,11 @@ void draw () {
     WORLD_Diagrams.stroke(127, 0, 0, 127);
     WORLD_Diagrams.fill(127, 0, 0, 127);
               
-    for (int f = 0; f < STATION_INFO.length; f += 1) {
+    for (int f = 0; f < STATION_SWOB_INFO.length; f += 1) {
       float draw_info = 1;
     
-      float _lat = float(STATION_INFO[f][3]);
-      float _lon = float(STATION_INFO[f][4]); 
+      float _lat = float(STATION_SWOB_INFO[f][3]);
+      float _lon = float(STATION_SWOB_INFO[f][4]); 
       if (_lon > 180) _lon -= 360; // << important!
     
       if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
@@ -322,7 +330,60 @@ void draw () {
       }
     }    
 
- 
+    WORLD_Diagrams.strokeWeight(0);
+    WORLD_Diagrams.stroke(0, 63, 0, 127);
+    WORLD_Diagrams.fill(0, 63, 0, 127);
+              
+    for (int f = 0; f < STATION_NAEFS_INFO.length; f += 1) {
+      float draw_info = 1;
+    
+      float _lat = float(STATION_NAEFS_INFO[f][1]);
+      float _lon = float(STATION_NAEFS_INFO[f][2]); 
+      if (_lon > 180) _lon -= 360; // << important!
+    
+      if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
+      if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) draw_info = 0;
+      if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) draw_info = 0;
+      if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0;      
+    
+      if (draw_info == 1) {
+  
+        float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+        float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+        
+        WORLD_Diagrams.ellipse(x_point, y_point, 1.5 * R_station, 1.5 * R_station);
+      
+      }
+    } 
+
+    WORLD_Diagrams.strokeWeight(2);
+    WORLD_Diagrams.stroke(63, 63, 63, 63);
+    WORLD_Diagrams.noFill();
+              
+    for (int f = 0; f < STATION_CWEEDS_INFO.length; f += 1) {
+      float draw_info = 1;
+    
+      float _lat = float(STATION_CWEEDS_INFO[f][3]);
+      float _lon = float(STATION_CWEEDS_INFO[f][4]); 
+      if (_lon > 180) _lon -= 360; // << important!
+    
+      if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
+      if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) draw_info = 0;
+      if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) draw_info = 0;
+      if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0;      
+    
+      if (draw_info == 1) {
+  
+        float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+        float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+        
+        WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
+      
+      }
+    } 
+    
+    WORLD_Diagrams.strokeWeight(0);
+  
     
     WORLD_Diagrams.endDraw();
     
@@ -1359,9 +1420,8 @@ float StationLatitude;
 float StationLongitude;
 float StationElevation;
 
-int LOCATIONS_NUMBER = 0;
-String[][] STATION_INFO;
-
+int STATION_SWOB_NUMBER = 0;
+String[][] STATION_SWOB_INFO;
 
 void getSWOB_Coordinates () {
   try {
@@ -1370,13 +1430,13 @@ void getSWOB_Coordinates () {
     String lineSTR;
     String[] input;
   
-    LOCATIONS_NUMBER = FileALL.length - 1; // to skip the first description line 
+    STATION_SWOB_NUMBER = FileALL.length - 1; // to skip the first description line 
   
-    STATION_INFO = new String[LOCATIONS_NUMBER][11]; 
+    STATION_SWOB_INFO = new String[STATION_SWOB_NUMBER][11]; 
   
     int n_Locations = 0;
   
-    for (int f = 0; f < LOCATIONS_NUMBER; f += 1) {
+    for (int f = 0; f < STATION_SWOB_NUMBER; f += 1) {
       lineSTR = FileALL[f + 1]; // to skip the first description line  
   
       String StationNameEnglish = "";
@@ -1409,17 +1469,17 @@ void getSWOB_Coordinates () {
         StationDST = parts[11];
         StationSTD = parts[12];      
     
-        STATION_INFO[n_Locations][0] = StationNameEnglish;
-        STATION_INFO[n_Locations][1] = StationNameFrench;
-        STATION_INFO[n_Locations][2] = StationProvince;
-        STATION_INFO[n_Locations][3] = String.valueOf(StationLatitude);
-        STATION_INFO[n_Locations][4] = String.valueOf(StationLongitude);
-        STATION_INFO[n_Locations][5] = String.valueOf(StationElevation);
-        STATION_INFO[n_Locations][6] = StationICAO;
-        STATION_INFO[n_Locations][7] = StationWMO;
-        STATION_INFO[n_Locations][8] = StationClimate;
-        STATION_INFO[n_Locations][9] = StationDST;
-        STATION_INFO[n_Locations][10] = StationSTD;
+        STATION_SWOB_INFO[n_Locations][0] = StationNameEnglish;
+        STATION_SWOB_INFO[n_Locations][1] = StationNameFrench;
+        STATION_SWOB_INFO[n_Locations][2] = StationProvince;
+        STATION_SWOB_INFO[n_Locations][3] = String.valueOf(StationLatitude);
+        STATION_SWOB_INFO[n_Locations][4] = String.valueOf(StationLongitude);
+        STATION_SWOB_INFO[n_Locations][5] = String.valueOf(StationElevation);
+        STATION_SWOB_INFO[n_Locations][6] = StationICAO;
+        STATION_SWOB_INFO[n_Locations][7] = StationWMO;
+        STATION_SWOB_INFO[n_Locations][8] = StationClimate;
+        STATION_SWOB_INFO[n_Locations][9] = StationDST;
+        STATION_SWOB_INFO[n_Locations][10] = StationSTD;
   
         n_Locations += 1;
       }
@@ -1427,5 +1487,132 @@ void getSWOB_Coordinates () {
   }
   catch (Exception e) {
     println("ERROR reading SWOB coordinates.");
+  }
+}
+
+
+
+int STATION_NAEFS_NUMBER = 0;
+String[][] STATION_NAEFS_INFO;
+
+void getNAEFS_Coordinates () {
+  try {
+    String[] FileALL = loadStrings(NAEFSFolder + "/NAEFS_UTF8.txt");
+  
+    String lineSTR;
+    String[] input;
+  
+    STATION_NAEFS_NUMBER = FileALL.length - 1; // to skip the first description line 
+  
+    STATION_NAEFS_INFO = new String[STATION_NAEFS_NUMBER][11]; 
+  
+    int n_Locations = 0;
+  
+    for (int f = 0; f < STATION_NAEFS_NUMBER; f += 1) {
+      lineSTR = FileALL[f + 1]; // to skip the first description line  
+  
+      String StationNameEnglish = "";
+      float StationLatitude = 0.0;
+      float StationLongitude = 0.0;
+      float StationElevation = 0.0;  
+  
+      String[] parts = split(lineSTR, '\t');
+  
+      if (3 < parts.length) {
+        
+        StationNameEnglish = parts[0];
+    
+        int l = 0;
+        
+        l = parts[1].length();
+        if (((parts[1].substring(l - 1, l)).equals("N")) || ((parts[1].substring(l - 1, l)).equals("S"))) {
+          String[] the_parts = split(parts[1], ':');
+          StationLatitude = float(the_parts[0]) + (float(the_parts[1]) / 60.0) + (float(the_parts[2]) / 3600.0);
+          if ((parts[1].substring(l - 1, l)).equals("S")) StationLatitude *= -1;
+        }
+        else{
+          StationLatitude = float(parts[1]);
+        }
+  
+        l = parts[2].length();
+        if (((parts[2].substring(l - 1, l)).equals("E")) || ((parts[2].substring(l - 1, l)).equals("W"))) {
+          String[] the_parts = split(parts[2], ':');
+          StationLongitude = float(the_parts[0]) + (float(the_parts[1]) / 60.0) + (float(the_parts[2]) / 3600.0);
+          if ((parts[2].substring(l - 1, l)).equals("W")) StationLongitude *= -1;
+        }
+        else{
+          StationLongitude = float(parts[2]);
+        }
+  
+        l = parts[3].length();
+        StationElevation = float(parts[3].substring(0, l - 1));
+    
+        STATION_NAEFS_INFO[n_Locations][0] = StationNameEnglish;
+        STATION_NAEFS_INFO[n_Locations][1] = String.valueOf(StationLatitude);
+        STATION_NAEFS_INFO[n_Locations][2] = String.valueOf(StationLongitude);
+        STATION_NAEFS_INFO[n_Locations][3] = String.valueOf(StationElevation);
+  
+        n_Locations += 1;
+      }
+    }
+  }
+  catch (Exception e) {
+    println("ERROR reading NAEFS coordinates.");
+  }
+}
+
+
+int STATION_CWEEDS_NUMBER = 0;
+String[][] STATION_CWEEDS_INFO;
+
+void getCWEEDS_Coordinates () {
+  try {
+    String[] FileALL = loadStrings(CWEEDSFolder + "/CWEEDS_UTF8.txt");
+  
+    String lineSTR;
+    String[] input;
+  
+    STATION_CWEEDS_NUMBER = FileALL.length - 1; // to skip the first description line 
+  
+    STATION_CWEEDS_INFO = new String[STATION_CWEEDS_NUMBER][11]; 
+  
+    int n_Locations = 0;
+  
+    for (int f = 0; f < STATION_CWEEDS_NUMBER; f += 1) {
+      lineSTR = FileALL[f + 1]; // to skip the first description line  
+
+      String StationNameEnglish = "";
+      String StationProvince = "";
+      String StationCountry = "";
+      float StationLatitude = 0.0;
+      float StationLongitude = 0.0;
+      float StationElevation = 0.0;   
+      
+      String[] parts = split(lineSTR, '_');
+      
+      if (4 < parts.length) {
+  
+        StationCountry = "CA";
+        StationProvince = parts[0];
+        StationNameEnglish = parts[1];
+    
+        
+        StationLatitude = float(parts[2]) * 0.01;
+        StationLongitude = float(parts[3]) * -0.01;
+        StationElevation = 0; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    
+        STATION_CWEEDS_INFO[n_Locations][0] = StationNameEnglish;
+        STATION_CWEEDS_INFO[n_Locations][1] = StationProvince;
+        STATION_CWEEDS_INFO[n_Locations][2] = StationCountry;
+        STATION_CWEEDS_INFO[n_Locations][3] = String.valueOf(StationLatitude);
+        STATION_CWEEDS_INFO[n_Locations][4] = String.valueOf(StationLongitude);
+        STATION_CWEEDS_INFO[n_Locations][5] = String.valueOf(StationElevation);
+  
+        n_Locations += 1;
+      }
+    }
+  }
+  catch (Exception e) {
+    println("ERROR reading CWEEDS coordinates.");
   }
 }
