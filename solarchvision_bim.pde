@@ -143,6 +143,8 @@ PGraphics WIN3D_Diagrams;
 
 int WIN3D_Update = 1;
 
+int WIN3D_EDGES = 1;
+
 int WORLD_CX_View = 0;
 int WORLD_CY_View = 0;
 int WORLD_X_View = 450;
@@ -312,16 +314,22 @@ void _draw_objects () {
     color c = color(0, 0, 0);
 
          if (face_colorID == 0) c = color(255, 127, 0);
-    else if (face_colorID == 6) c = color(255, 0, 0);
+    else if (face_colorID == 1) c = color(255, 0, 0);
     else if (face_colorID == 2) c = color(255, 255, 0);
     else if (face_colorID == 3) c = color(0, 255, 0);
     else if (face_colorID == 4) c = color(0, 255, 255);
     else if (face_colorID == 5) c = color(0, 0, 255);
-    else if (face_colorID == 1) c = color(255, 0, 255);
+    else if (face_colorID == 6) c = color(255, 0, 255);
     else if (face_colorID == 7) c = color(255, 255, 255);
     
-    WIN3D_Diagrams.stroke(0, 0, 0);
-    WIN3D_Diagrams.fill (c);    
+    if (WIN3D_EDGES == 1) {
+      WIN3D_Diagrams.stroke(0, 0, 0);
+    }
+    else{
+      WIN3D_Diagrams.stroke(c);
+    }
+    
+    WIN3D_Diagrams.fill(c);    
     
     WIN3D_Diagrams.beginShape();
     for (int j = 0; j < allFaces[i].length; j++) {
@@ -499,7 +507,7 @@ void draw () {
     WIN3D_Diagrams.fill(0);
     WIN3D_Diagrams.textAlign(CENTER, CENTER);      
     WIN3D_Diagrams.textSize(5 * (WIN3D_ZOOM_coordinate / 30.0));
-    WIN3D_Diagrams.text(LocationName + " [" + nfp(LocationLatitude, 0, 1) + ", " + nfp(LocationLongitude, 0, 1) + "]", 0, 45 * (WIN3D_ZOOM_coordinate / 30.0), 0);
+    WIN3D_Diagrams.text(LocationName + " [" + nfp(LocationLatitude, 0, 1) + ", " + nfp(LocationLongitude, 0, 1) + "]", 0, 60 * (WIN3D_ZOOM_coordinate / 30.0), 0);
    
     WIN3D_Diagrams.popMatrix();
   
@@ -548,10 +556,14 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
 
   float min_sunrise = int(min(SOLARCHVISION_Sunrise(LocationLatitude, 90), SOLARCHVISION_Sunrise(LocationLatitude, 270))); 
   float max_sunset = int(max(SOLARCHVISION_Sunset(LocationLatitude, 90), SOLARCHVISION_Sunset(LocationLatitude, 270)));
- 
+
   
   WIN3D_Diagrams.pushMatrix();
   WIN3D_Diagrams.translate(x_SunPath, y_SunPath, z_SunPath);
+
+  WIN3D_Diagrams.strokeWeight(1);
+  WIN3D_Diagrams.stroke(0, 0, 0);
+  WIN3D_Diagrams.fill(0, 0, 0);
   
   WIN3D_Diagrams.line(-1 * s_SunPath, 0, 0, 1 * s_SunPath, 0, 0); 
   WIN3D_Diagrams.line(0, -1 * s_SunPath, 0, 0, 1 * s_SunPath, 0);
@@ -739,8 +751,11 @@ void keyPressed (){
       case 'o' :WIN3D_View_Type = 0; break;
       
       case 'P' :WIN3D_View_Type = 1; break;                
-      case 'p' :WIN3D_View_Type = 1; break;                
-                
+      case 'p' :WIN3D_View_Type = 1; break;     
+
+      case 'E' :WIN3D_EDGES = (WIN3D_EDGES + 1) % 2; break;    
+      case 'e' :WIN3D_EDGES = (WIN3D_EDGES + 1) % 2; break;    
+
       case 'S' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_location(); break;
       case 's' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_location(); break;
       
@@ -1239,37 +1254,37 @@ void add_Box (int m, float x1, float y1, float z1, float x2, float y2, float z2)
   int b3 = addToVertices(x1,y1,z1);
   int b4 = addToVertices(x2,y1,z1);
 
-  if (m == -1) defaultMaterial = 0;
+  if (m == -1) defaultMaterial = 7;
   else defaultMaterial = m;
 
   {//Bottom
     int[] newFace = {b4,b3,b2,b1};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }    
+  {//North
+    int[] newFace = {t2,t1,b1,b2};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }
+  {//East
+    int[] newFace = {t1,t4,b4,b1};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }    
+  {//South
+    int[] newFace = {t4,t3,b3,b4};
+    if (m == -1) defaultMaterial -= 1;
     addToFaces(newFace);
   }    
   {//West
     int[] newFace = {t3,t2,b2,b3};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial -= 1;
     addToFaces(newFace);
-  }  
-  {//South
-    int[] newFace = {t4,t3,b3,b4};
-    if (m == -1) defaultMaterial += 1;
-    addToFaces(newFace);
-  }  
-  {//East
-    int[] newFace = {t1,t4,b4,b1};
-    if (m == -1) defaultMaterial += 1;
-    addToFaces(newFace);
-  }  
-  {//North
-    int[] newFace = {t2,t1,b1,b2};
-    if (m == -1) defaultMaterial += 1;
-    addToFaces(newFace);
-  }
+  }    
   {//Roof
     int[] newFace = {t1,t2,t3,t4};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial -= 1;
     addToFaces(newFace);
   }
 }
