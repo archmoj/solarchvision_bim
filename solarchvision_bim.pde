@@ -31,13 +31,13 @@ float FLOAT_undefined = 1000000000; // it must be a positive big number that is 
 int STATION_NUMBER = 0; 
 
 String[][] DEFINED_STATIONS = {
-  
+/*  
                                 {"MOSCOW_XX_RU", "MOSCOW", "XX", "55.75", "37.63", "45", "156.0"}, 
                                 {"Istanbul_XX_TR", "Istanbul", "XX", "40.97", "28.82", "30", "37.0"}, 
                                 {"Barcelona_XX_SP", "Barcelona", "XX", "41.28", "2.07", "15", "6.0"}, 
                                 {"Bologna_XX_IT", "Bologna", "XX", "44.53", "11.30", "15", "49.0"}, 
                                 {"VIENNA_XX_AT", "VIENNA", "XX", "48.12", "16.57", "15", "190.0"}, 
-                                
+*/                                
                                 {"MONTREAL_DORVAL_QC_CA", "MONTREAL", "QC", "45.47", "-73.75", "-75", "31.00"},
                                 {"CALGARY_INTL_AB_CA", "CALGARY", "AB", "51.10", "-114.02", "-120", "1084.10"},
                                 {"EDMONTON_INTL_A_AB_CA", "EDMONTON_INTL_A", "AB", "53.316666", "-113.583336", "-120", "723.3"},
@@ -49,7 +49,7 @@ String[][] DEFINED_STATIONS = {
                                 {"TORONTO_PEARSON_INTL_ON_CA", "TORONTO-PEARSON", "ON", "43.67", "-79.63", "-75", "173.40"},
                                 {"VANCOUVER_INTL_BC_CA", "VANCOUVER", "BC", "49.25", "-123.25", "-120", "4.30"},
                                 {"WINNIPEG_INTL_MB_CA", "WINNIPEG_INTL", "MB", "49.916668", "-97.23333", "-90", "238.7"},
-                                
+/*                                
                                 {"BOSTON_MA_US", "BOSTON", "MA", "42.35843", "-71.05978", "-75", "15.0"},
                                 {"CHICAGO_IL_US", "CHICAGO", "IL", "41.878113", "-87.6298", "-90", "181.0"},
                                 {"DENVER_CO_US", "DENVER", "CO", "39.737568", "-104.98472", "-105", "1608.0"},
@@ -73,7 +73,7 @@ String[][] DEFINED_STATIONS = {
                                 {"GUAYAQUIL_XX_EC", "GUAYAQUIL", "XX", "-2.1241937", "-79.59123", "-75", "11.0"},
                                 {"LIMA_XX_PE", "LIMA", "XX", "-12.032012", "-76.92987", "-75", "336.0"},
                                 {"ANTOFAGASTA_XX_CL", "ANTOFAGASTA", "XX", "-23.65", "-70.4", "-75", "13.0"}
-                             
+*/                             
                               };
 
 
@@ -137,7 +137,7 @@ float WIN3D_RS_coordinate = 5.0;
 
 float WIN3D_ZOOM_coordinate = 13500.0 / WIN3D_Y_View;
 
-int WIN3D_View_Type = 1; // 0: Ortho 1: Perspective
+int WIN3D_View_Type = 0; // 0: Ortho 1: Perspective
 
 PGraphics WIN3D_Diagrams;
 
@@ -171,33 +171,31 @@ void setup ()
   size(1200, 600, P2D);
   
   frameRate(24);
+
   
-  SOLARCHVISION_Calendar();
+
+  WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);  
+
+  WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);  
 
   _update_folders();
   
-  _update_location();
+  LoadFontStyle();    
 
-  _update_objects();
-
-
+  LoadWorldImages();
   
+  SOLARCHVISION_Calendar();
+
   getSWOB_Coordinates();
   
   getNAEFS_Coordinates();
 
   getCWEEDS_Coordinates();  
 
-  LoadWorldImages();
-  
-  WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);  
+  _update_location();
 
-  WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);  
-  
+  _update_objects();
 
-  
-  LoadFontStyle();  
-  
 }
 
 
@@ -221,7 +219,7 @@ void _update_objects () {
   add_Mesh2(3, 0.5,0.0,1.25, 0.75,1.0,1.25);
   add_Mesh2(3, 0.5,0.0,1.75, 0.75,1.0,1.75);
   
-  add_Mesh2(7, -4,-4,0, 4,4,0);
+  //add_Mesh2(7, -4,-4,0, 4,4,0);
 }
 
 float objects_scale = 10;
@@ -263,9 +261,9 @@ void draw () {
     
     WORLD_Diagrams.background(0, 0, 0);
     
-    PImage WORLDViewImages = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filename[WORLD_VIEW_Number]);
+    PImage WORLDViewImage = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filename[WORLD_VIEW_Number]);
     
-    WORLD_Diagrams.image(WORLDViewImages, 0, 0, WORLD_X_View, WORLD_Y_View);
+    WORLD_Diagrams.image(WORLDViewImage, 0, 0, WORLD_X_View, WORLD_Y_View);
   
     float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
     float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
@@ -443,7 +441,7 @@ void draw () {
   
     _draw_objects();
     
-    SOLARCHVISION_SunPath(0, 0, 0, 90, LocationLatitude); 
+    //SOLARCHVISION_SunPath(0, 0, 0, 90, LocationLatitude); 
   
     //hint(ENABLE_DEPTH_TEST);
   
@@ -1074,10 +1072,11 @@ void _update_location () {
   LocationTimeZone = float(DEFINED_STATIONS[STATION_NUMBER][5]);
   LocationElevation = float(DEFINED_STATIONS[STATION_NUMBER][6]);
   Delta_NOON = (LocationTimeZone - LocationLongitude) / 15.0;
-  
+
   try_update_CLIMATE();
   
-  WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);  
+  WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
+ 
 }
 
 String[] getfiles(String _Folder) {
