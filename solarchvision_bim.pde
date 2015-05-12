@@ -287,12 +287,21 @@ void _update_objects () {
       allVertices[i][0] -= 6.5;
       allVertices[i][1] += 6.5; // because Y-values are already inverted in the addToVertices function.
     }
+    
+    float model_scale = 12; // to make grid scale equal to 12m. <<<< 
+    
+    for (int i = 1; i < allVertices.length; i++) {
+      allVertices[i][0] *= model_scale;
+      allVertices[i][1] *= model_scale; 
+      allVertices[i][2] *= model_scale; 
+    }
+    
   }
   
   
 }
 
-float objects_scale = 10;
+float objects_scale = 0.5;
 
 void _draw_objects () {
   
