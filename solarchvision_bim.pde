@@ -285,7 +285,7 @@ void _update_objects () {
 
     for (int i = 1; i < allVertices.length; i++) {
       allVertices[i][0] -= 6.5;
-      allVertices[i][1] -= 6.5;
+      allVertices[i][1] += 6.5; // because Y-values are already inverted in the addToVertices function.
     }
   }
   
@@ -511,7 +511,7 @@ void draw () {
   
     _draw_objects();
     
-    //SOLARCHVISION_SunPath(0, 0, 0, 90, LocationLatitude); 
+    SOLARCHVISION_SunPath(0, 0, 0, 90, LocationLatitude); 
   
     //hint(ENABLE_DEPTH_TEST);
   
@@ -1192,7 +1192,8 @@ int[] allFaces_MAT = {0};
 
 int addToVertices (float x, float y, float z) {
   
-  float[][] newVertice = {{x,y,z}}; 
+  //float[][] newVertice = {{x,y,z}}; 
+  float[][] newVertice = {{x,-y,z}};
   
   allVertices = (float[][]) concat(allVertices, newVertice);
   
@@ -1230,28 +1231,28 @@ void add_Box (int m, float x1, float y1, float z1, float x2, float y2, float z2)
   if (m == -1) defaultMaterial = 0;
   else defaultMaterial = m;
 
-  {
+  {//Roof
     int[] newFace = {t4,t3,t2,t1};
     if (m == -1) defaultMaterial += 1;
     addToFaces(newFace);
   }
-  {
-    int[] newFace = {t1,t2,b2,b1};
-    if (m == -1) defaultMaterial += 1;
-    addToFaces(newFace);
-  }
-  {
+  {//West
     int[] newFace = {t2,t3,b3,b2};
     if (m == -1) defaultMaterial += 1;
     addToFaces(newFace);
-  }
-  {
+  }  
+  {//South
     int[] newFace = {t3,t4,b4,b3};
     if (m == -1) defaultMaterial += 1;
     addToFaces(newFace);
-  }
-  {
+  }  
+  {//East
     int[] newFace = {t4,t1,b1,b4};
+    if (m == -1) defaultMaterial += 1;
+    addToFaces(newFace);
+  }  
+  {//North
+    int[] newFace = {t1,t2,b2,b1};
     if (m == -1) defaultMaterial += 1;
     addToFaces(newFace);
   }
