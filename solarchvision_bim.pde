@@ -210,16 +210,86 @@ void _update_objects () {
   //add_Pentagon(1, 0,0,0, 1);
   //add_Mesh4(2, -1,-1,1, 1,-1,-1 ,1,1,1, -1,1,-1); // hyper
   //add_Mesh4(7, -1,-1,0, 1,-1,0, 1,1,0, -1,1,0);
-  //add_Cube(-1, -1,-1,-1,1,1,1);
+  //add_Box(-1, -1,-1,-1,1,1,1);
 
-  //add_Cube(-1, 0.5,1.0,0.0, 1.5,3.0,0.5);
-  add_Cube(-1, 0.0,0.0,0.0, 0.5,1.0,2.0);
+  //add_Box(-1, 0.5,1.0,0.0, 1.5,3.0,0.5);
+  //add_Box(-1, 0.0,0.0,0.0, 0.5,1.0,2.0);
   
-  add_Mesh2(3, 0.5,0.0,0.75, 0.75,1.0,0.75);
-  add_Mesh2(3, 0.5,0.0,1.25, 0.75,1.0,1.25);
-  add_Mesh2(3, 0.5,0.0,1.75, 0.75,1.0,1.75);
+  //add_Mesh2(3, 0.5,0.0,0.75, 0.75,1.0,0.75);
+  //add_Mesh2(3, 0.5,0.0,1.25, 0.75,1.0,1.25);
+  //add_Mesh2(3, 0.5,0.0,1.75, 0.75,1.0,1.75);
   
   //add_Mesh2(7, -4,-4,0, 4,4,0);
+  
+  
+  //SOLARCHVISION Complex:
+  {
+    //add_Box(-1, 0,0,0, 1,3,3);
+    add_Box(-1, 0,0,0, 1,3,1);
+    add_Box(-1, 0,0,1, 1,1,2);
+    add_Box(-1, 0,2,1, 1,3,2);
+    add_Box(-1, 0,0,2, 1,3,3);
+    
+    add_Box(-1, 2,0,0, 6,4,0.5);
+    
+    add_Box(-1, 7,0,0, 9,2,2);
+    
+    add_Box(-1, 7,3,0, 9,4,4);
+    
+    //add_Box(-1, 10,0,0, 13,4,1);
+    add_Box(-1, 10,0,0, 13,1,1);
+    add_Box(-1, 10,1,0, 10.5,3,1);
+    add_Box(-1, 12.5,1,0, 13,3,1);
+    add_Box(-1, 10,3,0, 13,4,1);
+    
+    add_Box(-1, 0,4,0, 1,8,2);
+    
+    //add_Box(-1, 2,5,0, 4,8,2);
+    add_Box(-1, 2,5,0, 4,5.5,2);
+    add_Box(-1, 2,5.5,0, 2.5,7.5,2);
+    add_Box(-1, 3.5,5.5,0, 4,7.5,2);
+    add_Box(-1, 2,7.5,0, 4,8,2);
+    
+    add_Box(-1, 5,5,0, 8,8,1);
+    
+    add_Box(-1, 9,5,0, 11,9,1);
+    
+    add_Box(-1, 12,5,0, 13,7,4);
+    
+    add_Box(-1, 12,8,0, 13,9,8);
+    
+    add_Box(-1, 0,9,0, 4,11,1);
+    
+    //add_Box(-1, 5,9,0, 8,11,2);
+    add_Box(-1, 5,9,0, 5.5,11,2);
+    add_Box(-1, 5.5,9,0, 7.5,9.5,2);
+    add_Box(-1, 5.5,10.5,0, 7.5,11,2);
+    add_Box(-1, 7.5,9,0, 8,11,2);
+    
+    //add_Box(-1, 0,12,0, 3,13,3);
+    add_Box(-1, 0,12,0, 3,13,1);
+    add_Box(-1, 0,12,1, 1,13,2);
+    add_Box(-1, 2,12,1, 3,13,2);
+    add_Box(-1, 0,12,2, 3,13,3);
+    
+    add_Box(-1, 4,12,0, 8,13,2);
+    
+    //add_Box(-1, 9,10,0, 13,13,1);
+    add_Box(-1, 9,10,0, 10,13,1);
+    add_Box(-1, 10,10,0, 12,10.5,1);
+    add_Box(-1, 10,12.5,0, 12,13,1);
+    add_Box(-1, 12,10,0, 13,13,1);
+    
+
+    
+
+    for (int i = 1; i < allVertices.length; i++) {
+      allVertices[i][0] -= 6.5;
+      allVertices[i][1] -= 6.5;
+    }
+  }
+  
+  
 }
 
 float objects_scale = 10;
@@ -609,9 +679,9 @@ void keyPressed (){
   else{
     switch(key) {
       case ',' :WIN3D_Z_coordinate += WIN3D_S_coordinate; break;      
-      case '.'  :WIN3D_Z_coordinate -= WIN3D_S_coordinate; break;
+      case '.' :WIN3D_Z_coordinate -= WIN3D_S_coordinate; break;
 
-      case '0' :WIN3D_View_Type = 1; WIN3D_Z_coordinate += WIN3D_S_coordinate; break;
+      case '0' :WIN3D_Z_coordinate += WIN3D_S_coordinate; break;
       
       case '5' :WIN3D_RX_coordinate = 0;
                 WIN3D_RY_coordinate = 0;
@@ -1145,7 +1215,7 @@ int addToFaces (int[] f) {
 
 
 
-void add_Cube (int m, float x1, float y1, float z1, float x2, float y2, float z2) {
+void add_Box (int m, float x1, float y1, float z1, float x2, float y2, float z2) {
 
   int t1 = addToVertices(x2,y2,z2);
   int t2 = addToVertices(x1,y2,z2);
