@@ -366,9 +366,12 @@ void draw () {
     WIN3D_Diagrams.popMatrix();
   
     WIN3D_Diagrams.translate(WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
-    WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI/180);
+    WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI/180);    
     WIN3D_Diagrams.rotateY(WIN3D_RY_coordinate * PI/180);
-    WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI/180);
+    WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI/180);    
+
+    println(nfp(WIN3D_RX_coordinate, 0, 1), nfp(WIN3D_RY_coordinate, 0, 1), nfp(WIN3D_RZ_coordinate, 0, 1));  
+
     
     
     
@@ -546,15 +549,16 @@ void keyPressed (){
   }
   else{
     switch(key) {
-      case '<'  :WIN3D_Z_coordinate -= WIN3D_S_coordinate; break;
-      case '>' :WIN3D_Z_coordinate += WIN3D_S_coordinate; break;
+      case ',' :WIN3D_Z_coordinate += WIN3D_S_coordinate; break;      
+      case '.'  :WIN3D_Z_coordinate -= WIN3D_S_coordinate; break;
+
+      case '0' :WIN3D_View_Type = 1; WIN3D_Z_coordinate += WIN3D_S_coordinate; break;
       
-      case '{' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; break;
-      case '}' :WIN3D_RX_coordinate += WIN3D_RS_coordinate; break;
-      case '(' :WIN3D_RY_coordinate -= WIN3D_RS_coordinate; break;
-      case ')' :WIN3D_RY_coordinate += WIN3D_RS_coordinate; break;
-      case '[' :WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; break;
-      case ']' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; break;
+      case '5' :WIN3D_RX_coordinate = 0;
+                WIN3D_RY_coordinate = 0;
+                WIN3D_RZ_coordinate = 0; 
+                break;
+
       case '@' :WIN3D_RX_coordinate = 0;
                 WIN3D_RY_coordinate = 0;
                 WIN3D_RZ_coordinate = 0; 
@@ -565,13 +569,22 @@ void keyPressed (){
                 WIN3D_View_Type = 0; 
                 break;
 
-      case '8' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; break;
-      case '2' :WIN3D_RX_coordinate += WIN3D_RS_coordinate; break;
-      case '6' :WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; break;
-      case '4' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; break;      
+      case '1' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 315; break;
+      case '3' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 45; break;
+      case '7' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 225; break;
+      case '9' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 135; break;
 
-      case '0' :WIN3D_View_Type = 1; WIN3D_Z_coordinate -= WIN3D_S_coordinate; break;
-      case '5' :WIN3D_View_Type = 1; WIN3D_Z_coordinate += WIN3D_S_coordinate; break;
+      case '2' :WIN3D_RX_coordinate += WIN3D_RS_coordinate; break;
+      case '4' :WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; break;
+      case '6' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; break;      
+      case '8' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; break;
+
+      case '{' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; break;
+      case '}' :WIN3D_RX_coordinate += WIN3D_RS_coordinate; break;
+      case '(' :WIN3D_RY_coordinate -= WIN3D_RS_coordinate; break;
+      case ')' :WIN3D_RY_coordinate += WIN3D_RS_coordinate; break;
+      case '[' :WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; break;
+      case ']' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; break;
 
       case '*' :objects_scale *= 2.0; break;
       case '/' :objects_scale /= 2.0; break;
@@ -579,8 +592,8 @@ void keyPressed (){
       case '+' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;
       case '-' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;      
       
-      case ',' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;
-      case '.' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;
+      case '>' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;
+      case '<' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;
       
       case 'O' :WIN3D_View_Type = 0; break;
       case 'o' :WIN3D_View_Type = 0; break;
