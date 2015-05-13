@@ -384,7 +384,7 @@ float S_View = 1;
 
 int variation = 2;
 
-int draw_data_lines = 1;
+int draw_data_lines = 0;
 int draw_sorted = 1;
 int draw_normals = 1;
 int draw_sun_altitude = 0;
@@ -7594,8 +7594,6 @@ void setup () {
 
   WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
 
-  WORLD_Diagrams = createGraphics(X_View, Y_View, P2D);    
-
 }
 
 
@@ -7603,13 +7601,13 @@ void setup () {
 
 
 void draw () {
+  
  
   if (VISUAL_Update == 1) {
-    //VISUAL_Diagrams.beginDraw();
     
     VISUAL_draw();
     
-    //VISUAL_Diagrams.endDraw();
+    VISUAL_Update = 0;
   }
  
   
@@ -7960,8 +7958,10 @@ int VISUAL_command = 0;
 
 void keyPressed (){
 
-  if (VISUAL_command == 1) VISUAL_keyPressed();
-  else {
+  //if (VISUAL_command == 1) {
+    VISUAL_keyPressed();
+    VISUAL_Update = 1;
+  //} else {
     
     //println("key: " + key);
     //println("keyCode: " + keyCode); 
@@ -8051,7 +8051,9 @@ void keyPressed (){
     WIN3D_Update = 1;
     
     loop();
-  }
+  //}
+  
+  
 }
 
 
