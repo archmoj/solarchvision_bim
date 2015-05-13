@@ -694,25 +694,31 @@ void VISUAL_draw () {
 
 
 
-int now_drawing = -1; // -1 : Nothing, 0 : Climate, 1: Forecast, 2: Observed 
+int now_drawing = -1; // -1 : Nothing, 0 : Climate WY2, 1: Forecast, 2: Observed, 3 : Climate EPW 
 
 void plot_center (float x, float y, float z, float sx, float sy, float sz) {
 
-  int draw_climate = 0;
+  int draw_climate_WY2 = 0;
   int draw_forecast = 0;
   int draw_observed = 0;
+  int draw_climate_EPW = 0;  
   
-  if (impacts_source == 0) draw_climate = 1;
+  if (impacts_source == 0) draw_climate_WY2 = 1;
   if (impacts_source == 1) draw_forecast = 1;
   if (impacts_source == 2) draw_observed = 1;
+  if (impacts_source == 3) draw_climate_EPW = 1;
   
   //////////////////
   draw_observed = 1;
   //////////////////  
-  
-  if (draw_climate == 1){
+
+  if (draw_climate_EPW == 1){
+    now_drawing = 3;
+    CLIMATE_EPW_DRAW.update(x,y,z,sx,sy,sz);
+  }  
+  if (draw_climate_WY2 == 1){
     now_drawing = 0;
-    CLIMATE_DRAW.update(x,y,z,sx,sy,sz);
+    CLIMATE_WY2_DRAW.update(x,y,z,sx,sy,sz);
   }
   if (draw_forecast == 1){
     now_drawing = 1;
@@ -3092,6 +3098,418 @@ class SOLARCHVISION_PlotCLIMATE_WY2 {
 } 
 
 
+int try_update_CLIMATE_EPW () {
+  int File_Found = 0;
+  
+  CLIMATE_EPW = new String[24][365][num_layers][(1 + CLIMATE_EPW_end - CLIMATE_EPW_start)];
+ 
+  for (int i = 0; i < 24; i += 1){
+    for (int j = 0; j < 365; j += 1){
+      for (int l = 0; l < num_layers; l += 1){
+        for (int k = 0; k <(1 + CLIMATE_EPW_end - CLIMATE_EPW_start); k += 1){
+          CLIMATE_EPW[i][j][l][k] = _undefined;
+        }
+      }
+    }
+  }
+    
+  String FN = THE_STATION;
+
+  for (int i = 0; i < CLIMATE_EPW_Files.length; i++) {
+    
+    int _L = CLIMATE_EPW_Files[i].length();
+    String _Extention = CLIMATE_EPW_Files[i].substring(_L - 4, _L);
+    //println(_Extention);
+    if (_Extention.toLowerCase().equals(".epw")) {
+      _Filename = CLIMATE_EPW_Files[i].substring(0, _L - 4);
+      
+      if (_Filename.equals(FN)){
+        File_Found = 1;
+        SOLARCHVISION_LoadCLIMATE_EPW((CLIMATE_EPW_directory + "/" + CLIMATE_EPW_Files[i]));
+      }
+    }
+  }
+  
+  if (File_Found == 0) println("FILE NOT FOUND:", FN);
+  
+  return File_Found;
+}
+
+void SOLARCHVISION_LoadCLIMATE_EPW (String FileName) {
+  String[] FileALL = loadStrings(FileName);
+
+  String lineSTR;
+  String[] input;
+  
+    
+  //println("lines = ", FileALL.length);
+
+  for (int f = 8; f < FileALL.length; f += 1){
+    
+    lineSTR = FileALL[f];
+    
+    String[] parts = split(lineSTR, ',');
+    
+    int CLIMATE_YEAR = int(parts[0]);
+    int CLIMATE_MONTH = int(parts[1]);
+    int CLIMATE_DAY = int(parts[2]);
+    int CLIMATE_HOUR = int(parts[3]);
+    
+    //println(CLIMATE_YEAR, CLIMATE_MONTH, CLIMATE_DAY, CLIMATE_HOUR);
+    
+    int i = int(CLIMATE_HOUR) - 1;
+    int j = Convert2Date(CLIMATE_MONTH, CLIMATE_DAY);
+    int k = 0; // on EPW:TMY files we have only one year 
+    
+    //println(i);
+    
+    CLIMATE_EPW[i][j][_pressure][k] = parts[9]; // in Pa
+    CLIMATE_EPW[i][j][_drybulb][k] = parts[6]; // in °C
+    CLIMATE_EPW[i][j][_relhum][k] = parts[8]; // 0 - 110%
+    CLIMATE_EPW[i][j][_glohorrad][k] = parts[13]; // Wh/m²
+    CLIMATE_EPW[i][j][_dirnorrad][k] = parts[14]; // Wh/m²
+    CLIMATE_EPW[i][j][_difhorrad][k] = parts[15]; // Wh/m²
+    CLIMATE_EPW[i][j][_windspd][k] = parts[21]; // in m/s
+    CLIMATE_EPW[i][j][_winddir][k] = parts[20]; // ° 
+    CLIMATE_EPW[i][j][_opaquesky][k] = parts[23]; // 0.1 times in % ... there is also total_sky_cover on[22]
+    CLIMATE_EPW[i][j][_ceilingsky][k] = parts[25]; // in m
+    
+    
+    if (CLIMATE_EPW[i][j][_pressure][k].equals("999999")) CLIMATE_EPW[i][j][_pressure][k] = _undefined;
+    
+    if (CLIMATE_EPW[i][j][_drybulb][k].equals("99.9")) CLIMATE_EPW[i][j][_drybulb][k] = _undefined;
+    
+    if (CLIMATE_EPW[i][j][_relhum][k].equals("999")) CLIMATE_EPW[i][j][_relhum][k] = _undefined;
+    
+    if (CLIMATE_EPW[i][j][_glohorrad][k].equals("9999")) CLIMATE_EPW[i][j][_glohorrad][k] = _undefined;
+    
+    if (int(CLIMATE_EPW[i][j][_dirnorrad][k]) >= 9999) CLIMATE_EPW[i][j][_dirnorrad][k] = _undefined;
+    if (int(CLIMATE_EPW[i][j][_dirnorrad][k]) < 0) CLIMATE_EPW[i][j][_dirnorrad][k] = _undefined;
+    
+    if (int(CLIMATE_EPW[i][j][_difhorrad][k]) >= 9999) CLIMATE_EPW[i][j][_difhorrad][k] = _undefined;
+    if (int(CLIMATE_EPW[i][j][_difhorrad][k]) < 0) CLIMATE_EPW[i][j][_difhorrad][k] = _undefined;
+    
+    if (CLIMATE_EPW[i][j][_windspd][k].equals("999")) CLIMATE_EPW[i][j][_windspd][k] = _undefined;
+    else CLIMATE_EPW[i][j][_windspd][k] = String.valueOf(3.6 * float(CLIMATE_EPW[i][j][_windspd][k]));
+    
+    if (CLIMATE_EPW[i][j][_winddir][k].equals("999")) CLIMATE_EPW[i][j][_winddir][k] = _undefined;
+    
+    if (CLIMATE_EPW[i][j][_opaquesky][k].equals("99")) CLIMATE_EPW[i][j][_opaquesky][k] = _undefined;
+    
+    if (CLIMATE_EPW[i][j][_ceilingsky][k].equals("77777")) CLIMATE_EPW[i][j][_ceilingsky][k] = "1000";
+    if (CLIMATE_EPW[i][j][_ceilingsky][k].equals("88888")) CLIMATE_EPW[i][j][_ceilingsky][k] = "1000";
+    if (int(CLIMATE_EPW[i][j][_ceilingsky][k]) >= 1000) CLIMATE_EPW[i][j][_ceilingsky][k] = "1000";    
+    
+    if (CLIMATE_EPW[i][j][_ceilingsky][k].equals("99999")) CLIMATE_EPW[i][j][_ceilingsky][k] = _undefined;
+
+  }
+
+  String Pa, Pb, Pc;
+  float T, R_dir, R_dif;
+  for (int i = 0; i < 24; i += 1){
+    for (int j = 0; j < 365; j += 1){
+      for (int k = 0; k <(1 + CLIMATE_EPW_end - CLIMATE_EPW_start); k += 1){
+        Pa = CLIMATE_EPW[i][j][_drybulb][k];
+        Pb = CLIMATE_EPW[i][j][_dirnorrad][k];
+        Pc = CLIMATE_EPW[i][j][_difhorrad][k];
+                  
+        if ((Pa.equals(_undefined)) ||(Pb.equals(_undefined)) ||(Pc.equals(_undefined))){
+        }
+        else{
+          T = float(Pa);
+          R_dir = float(Pb);
+          R_dif = float(Pc);
+          CLIMATE_EPW[i][j][_direffect][k] = String.valueOf((18 - T) * R_dir);
+          CLIMATE_EPW[i][j][_difeffect][k] = String.valueOf((18 - T) * R_dif);
+        }
+        
+        Pa = CLIMATE_EPW[i][j][_ceilingsky][k];
+        if (Pa.equals(_undefined)){
+        }
+        else{
+          float Px = log(float(Pa)) / log(10.0);
+          if (Px > 2) CLIMATE_EPW[i][j][_logceilsky][k] = String.valueOf(roundTo(Px, 0.1));
+          else CLIMATE_EPW[i][j][_logceilsky][k] = "2";
+        }
+      }
+    }
+  }
+}
+
+class SOLARCHVISION_PlotCLIMATE_EPW { 
+  float x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot;
+  
+  SOLARCHVISION_PlotCLIMATE_EPW () {  
+  }
+  
+  void update(float x, float y, float z, float sx, float sy, float sz) {
+    x_Plot = x; 
+    y_Plot = y;
+    z_Plot = z;
+    sx_Plot = sx; 
+    sy_Plot = sy;
+    sz_Plot = sz;
+    
+    Diagrams_pushMatrix();
+    Diagrams_translate(x_Plot, y_Plot);
+    
+    SOLARCHVISION_draw_Grid_Cartesian_TIME(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+    
+    _pix = (100.0 * S_View / level_pix);
+    
+    int start_z = CLIMATE_EPW_start;
+    int end_z = CLIMATE_EPW_end;
+    
+    switch(H_layer_option) {
+      case 1 : start_z = 1953; end_z = 1959; break;
+      case 2 : start_z = 1960; end_z = 1969; break;
+      case 3 : start_z = 1970; end_z = 1979; break;
+      case 4 : start_z = 1980; end_z = 1989; break;
+      case 5 : start_z = 1990; end_z = 1999; break;
+      case 6 : start_z = 2000; end_z = 2005; break;
+      case 7 : start_z = Sample_Year; end_z = Sample_Year; break; 
+    }
+    
+    if (print_title != 0){
+      
+        Diagrams_stroke(0); 
+        Diagrams_fill(0);
+        Diagrams_strokeWeight(T_scale * 0);
+      
+        Diagrams_textSize(sx_Plot * 0.150 / U_scale);
+        Diagrams_textAlign(RIGHT, CENTER);
+        //my_text(("[" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, (0.3 + V_belowLine[drw_Layer]) * sx_Plot / U_scale, 0);
+    
+        Diagrams_textSize(sx_Plot * 0.150 / U_scale);
+        Diagrams_textAlign(LEFT, CENTER);    
+        my_text((_LAYERS[drw_Layer][(_LAN + 1)]), 0, (0.3 + V_belowLine[drw_Layer]) * sx_Plot / U_scale, 0);
+      
+    }    
+
+    String Pa = "";
+    String Pb = "";
+
+    float[] _valuesA;
+    float[] _valuesB;        
+    _valuesA = new float[((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * num_add_days)];
+    _valuesB = new float[((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * num_add_days)];
+
+    float[] _valuesSUM;        
+    float[] _valuesNUM;
+    int _interval = 0;
+    _valuesSUM = new float[((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * num_add_days)];
+    _valuesNUM = new float[((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * num_add_days)];
+    
+    float[] Ax_LINES = {0};
+    float[] Ay_LINES = {0};
+    float[] Az_LINES = {0};
+    float[] Bx_LINES = {0};
+    float[] By_LINES = {0};
+    float[] Bz_LINES = {0};
+
+    File_output_node = new PrintWriter [(1 + j_end - j_start)];
+    File_output_norm = new PrintWriter [(1 + j_end - j_start)];
+    File_output_prob = new PrintWriter [(1 + j_end - j_start)];
+    
+    String Main_name = MAKE_mainname();
+    
+    for (int j = j_start; j < j_end; j += 1){
+      String _FileNameAdd = "";
+      if (num_add_days > 1){
+          _FileNameAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
+      }
+      if ((save_info_node == 1) && (draw_data_lines == 1)){
+        File_output_node[(j - j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
+        File_output_node[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
+
+        File_output_node[(j - j_start)].print("Hour:\t");
+        for (int l = start_z; l < (1 + end_z); l += 1){
+          File_output_node[(j - j_start)].print(nf(l, 4) + "        \t");
+        }
+        File_output_node[(j - j_start)].println("");
+      }
+      if ((save_info_norm == 1) && (draw_normals == 1)){
+        File_output_norm[(j - j_start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
+        File_output_norm[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
+        File_output_norm[(j - j_start)].print("Hour:\t");
+        for (int l = 0; l < 9; l += 1){
+          File_output_norm[(j - j_start)].print(N_Title[l] + "\t"); 
+        }
+        File_output_norm[(j - j_start)].println("");
+      }
+      if ((save_info_prob == 1) && (draw_probs == 1)){
+        File_output_prob[(j - j_start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
+        File_output_prob[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
+
+        File_output_prob[(j - j_start)].print("Hour:\t");
+        File_output_prob[(j - j_start)].println("");
+      }
+
+      for (int i = 0; i < 24; i += 1){
+        if ((save_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print(nf(i,2) + "\t");
+        if ((save_info_norm == 1) && (draw_normals == 1)) File_output_norm[(j - j_start)].print(nf(i,2) + "\t");
+        if ((save_info_prob == 1) && (draw_probs == 1)) File_output_prob[(j - j_start)].print(nf(i,2) + "\t");
+
+        for (int k = 0; k < (1 + CLIMATE_EPW_end - CLIMATE_EPW_start); k += 1){
+          for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1){
+            
+            _valuesA[(k * num_add_days + j_ADD)] = FLOAT_undefined;
+            _valuesB[(k * num_add_days + j_ADD)] = FLOAT_undefined;
+         
+            SET_COLOR_STYLE(COLOR_STYLE, (1.0 * k / (1 + CLIMATE_EPW_end - CLIMATE_EPW_start)));
+
+            int _plot = 0;
+            if ((start_z <= (k + CLIMATE_EPW_start)) && (end_z >= (k + CLIMATE_EPW_start))){
+              _plot = 1;
+            }
+            
+            if (_plot == 1){
+              
+              int now_k = k;
+              int now_i = i;
+              int now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+              
+              
+              if (now_j >= 365){
+               now_j = now_j % 365; 
+              }
+              if (now_j < 0){
+               now_j = (now_j + 365) % 365; 
+              }
+    
+              int next_i = now_i + 1;
+              int next_j = now_j;
+              int next_k = now_k;
+              if (next_i == 24){
+                next_i = 0;
+                next_j += 1;
+                if (next_j == 365){
+                  next_j = 0;
+                  next_k += 1; 
+                }
+              }
+  
+              Pa = CLIMATE_EPW[now_i][now_j][drw_Layer][now_k]; 
+              if (Pa.equals(_undefined)){
+                _valuesA[(k * num_add_days + j_ADD)] = FLOAT_undefined;
+                
+                if ((save_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("[undefined]\t");
+              }
+              else{
+                int drw_count = SOLARCHVISION_filter("CLIMATE_EPW", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+
+                if (drw_count == 1){
+                  _valuesA[(k * num_add_days + j_ADD)] = float(Pa);
+                  _valuesA[(k * num_add_days + j_ADD)] += V_offset[drw_Layer];
+                  
+                  _valuesSUM[(k * num_add_days + j_ADD)] += _valuesA[(k * num_add_days + j_ADD)];
+                  _valuesNUM[(k * num_add_days + j_ADD)] += 1;
+
+                  if ((save_info_node == 1) && (draw_data_lines == 1)){
+                    if (_valuesA[(k * num_add_days + j_ADD)] < 0.9 * FLOAT_undefined) File_output_node[(j - j_start)].print(nfs(_valuesA[(k * num_add_days + j_ADD)] - V_offset[drw_Layer], 5, 5) + "\t"); 
+                    else File_output_node[(j - j_start)].print("[undefined]\t");
+                  }
+
+                  if (next_k < (1 + CLIMATE_EPW_end - CLIMATE_EPW_start)){
+                    Pb = CLIMATE_EPW[next_i][next_j][drw_Layer][next_k];
+                    if (Pb.equals(_undefined)){
+                      _valuesB[(k * num_add_days + j_ADD)] = FLOAT_undefined;
+                    }
+                    else{
+                      _valuesB[(k * num_add_days + j_ADD)] = float(Pb);
+                      _valuesB[(k * num_add_days + j_ADD)] += V_offset[drw_Layer];
+                      
+                      if (draw_data_lines == 1){
+                        if ((drw_Layer == _winddir) && (abs(_valuesB[(k * num_add_days + j_ADD)] - _valuesA[(k * num_add_days + j_ADD)]) > 180)){
+                        }
+                        else{                        
+                          Ax_LINES = append(Ax_LINES, (j + ((i + 0.5) / 24.0)) * sx_Plot);
+                          Ay_LINES = append(Ay_LINES, _valuesA[(k * num_add_days + j_ADD)] * sy_Plot);
+                          Az_LINES = append(Az_LINES, now_k * sz_Plot * W_scale);
+                          Bx_LINES = append(Bx_LINES, (j + ((i + 1.5) / 24.0)) * sx_Plot);
+                          By_LINES = append(By_LINES, _valuesB[(k * num_add_days + j_ADD)] * sy_Plot);
+                          Bz_LINES = append(Bz_LINES, next_k * sz_Plot * W_scale);
+                        } 
+                      }
+                    }
+                  }
+                }
+                else{
+                  if ((save_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("not_the_case\t");
+                }
+              }
+            }
+          }
+        }
+        
+        if ((save_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].println();
+          
+        _interval += 1;        
+        if ((_interval % sum_interval) == 0){
+          for (int k = 0; k < (1 + CLIMATE_EPW_end - CLIMATE_EPW_start); k += 1){
+            for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1){
+              _valuesSUM[(k * num_add_days + j_ADD)] += _valuesA[(k * num_add_days + j_ADD)];
+              _valuesNUM[(k * num_add_days + j_ADD)] += 1;
+              
+              if ((_valuesSUM[(k * num_add_days + j_ADD)] < 0.9 * FLOAT_undefined) && (_valuesNUM[(k * num_add_days + j_ADD)] != 0)){
+                _valuesSUM[(k * num_add_days + j_ADD)] /= _valuesNUM[(k * num_add_days + j_ADD)];
+              }
+            }
+          }        
+          if (draw_probs == 1){
+            SOLARCHVISION_draw_probabilities(i, j, ((start_z - CLIMATE_EPW_start) * num_add_days + 1), ((end_z - CLIMATE_EPW_start) * num_add_days + num_add_days), _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+          }
+          for (int k = 0; k < (1 + CLIMATE_EPW_end - CLIMATE_EPW_start); k += 1){
+            for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1){
+              _valuesSUM[(k * num_add_days + j_ADD)] = 0;
+              _valuesNUM[(k * num_add_days + j_ADD)] = 0;
+            }
+          }    
+        }      
+        
+        if (draw_sorted == 1){
+          SOLARCHVISION_draw_sorted(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+        }
+
+        if (draw_normals == 1){
+          SOLARCHVISION_draw_normals(i, j, _valuesA, _valuesB, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+        }
+      
+      }
+      
+      if ((save_info_node == 1) && (draw_data_lines == 1)){
+        File_output_node[(j - j_start)].println("Source: " + THE_STATION + ".epw");
+        File_output_node[(j - j_start)].println("Calculated and processed by SOLARCHVISION 2014: www.solarchvision.com");
+        File_output_node[(j - j_start)].flush(); 
+        File_output_node[(j - j_start)].close(); 
+      }
+      
+      if ((save_info_norm == 1) && (draw_normals == 1)){
+        File_output_norm[(j - j_start)].println("Source: " + THE_STATION + ".epw");
+        File_output_norm[(j - j_start)].println("Calculated and processed by SOLARCHVISION 2014: www.solarchvision.com");
+        File_output_norm[(j - j_start)].println("* : SOLARCHVISION internal algorithm");
+        File_output_norm[(j - j_start)].flush(); 
+        File_output_norm[(j - j_start)].close(); 
+      }
+
+      if ((save_info_prob == 1) && (draw_probs == 1)){
+        File_output_prob[(j - j_start)].println("Source: " + THE_STATION + ".epw");
+        File_output_prob[(j - j_start)].println("Calculated and processed by SOLARCHVISION 2014: www.solarchvision.com");
+        File_output_prob[(j - j_start)].flush(); 
+        File_output_prob[(j - j_start)].close(); 
+      }
+
+    }
+    
+    if (draw_data_lines == 1){
+      SOLARCHVISION_draw_data_lines(Ax_LINES, Ay_LINES, Az_LINES, Bx_LINES, By_LINES, Bz_LINES);
+    }       
+    
+    Diagrams_popMatrix();
+  } 
+} 
+
+
 int try_update_observed () {
   int File_Found = 0;
   
@@ -4233,6 +4651,11 @@ void SOLARCHVISION_draw_normals (int i, int j, float[] _valuesA, float[] _values
       Diagrams_stroke(0,0,127);
       Diagrams_fill(0,0,127);
     }
+    if (now_drawing == 3){
+      Diagrams_strokeWeight(T_scale * 4);
+      Diagrams_stroke(0,127,0);
+      Diagrams_fill(0,127,0);
+    }    
 */    
     
     Diagrams_strokeWeight(T_scale * 4);
@@ -7068,8 +7491,9 @@ void draw_spinners () {
 }
 
 
+SOLARCHVISION_PlotCLIMATE_EPW CLIMATE_EPW_DRAW = new SOLARCHVISION_PlotCLIMATE_EPW();
 
-SOLARCHVISION_PlotCLIMATE_WY2 CLIMATE_DRAW = new SOLARCHVISION_PlotCLIMATE_WY2();
+SOLARCHVISION_PlotCLIMATE_WY2 CLIMATE_WY2_DRAW = new SOLARCHVISION_PlotCLIMATE_WY2();
 
 SOLARCHVISION_PlotENSEMBLE ENSEMBLE_DRAW = new SOLARCHVISION_PlotENSEMBLE();
 
@@ -8165,143 +8589,7 @@ float SOLARCHVISION_DayTime (float Latitude, float DateAngle) {
   return abs((SOLARCHVISION_Sunset(Latitude, DateAngle)) -(SOLARCHVISION_Sunrise(Latitude, DateAngle)));
 }
 
-int try_update_CLIMATE_EPW () {
-  int File_Found = 0;
-  
-  CLIMATE_EPW = new String[24][365][num_layers][(1 + CLIMATE_EPW_end - CLIMATE_EPW_start)];
- 
-  for (int i = 0; i < 24; i += 1){
-    for (int j = 0; j < 365; j += 1){
-      for (int l = 0; l < num_layers; l += 1){
-        for (int k = 0; k <(1 + CLIMATE_EPW_end - CLIMATE_EPW_start); k += 1){
-          CLIMATE_EPW[i][j][l][k] = _undefined;
-        }
-      }
-    }
-  }
-    
-  String FN = THE_STATION;
 
-  for (int i = 0; i < CLIMATE_EPW_Files.length; i++) {
-    
-    int _L = CLIMATE_EPW_Files[i].length();
-    String _Extention = CLIMATE_EPW_Files[i].substring(_L - 4, _L);
-    //println(_Extention);
-    if (_Extention.toLowerCase().equals(".epw")) {
-      _Filename = CLIMATE_EPW_Files[i].substring(0, _L - 4);
-      
-      if (_Filename.equals(FN)){
-        File_Found = 1;
-        SOLARCHVISION_LoadCLIMATE_EPW((CLIMATE_EPW_directory + "/" + CLIMATE_EPW_Files[i]));
-      }
-    }
-  }
-  
-  if (File_Found == 0) println("FILE NOT FOUND:", FN);
-  
-  return File_Found;
-}
-
-void SOLARCHVISION_LoadCLIMATE_EPW (String FileName) {
-  String[] FileALL = loadStrings(FileName);
-
-  String lineSTR;
-  String[] input;
-  
-    
-  //println("lines = ", FileALL.length);
-
-  for (int f = 8; f < FileALL.length; f += 1){
-    
-    lineSTR = FileALL[f];
-    
-    String[] parts = split(lineSTR, ',');
-    
-    int CLIMATE_YEAR = int(parts[0]);
-    int CLIMATE_MONTH = int(parts[1]);
-    int CLIMATE_DAY = int(parts[2]);
-    int CLIMATE_HOUR = int(parts[3]);
-    
-    //println(CLIMATE_YEAR, CLIMATE_MONTH, CLIMATE_DAY, CLIMATE_HOUR);
-    
-    int i = int(CLIMATE_HOUR) - 1;
-    int j = Convert2Date(CLIMATE_MONTH, CLIMATE_DAY);
-    int k = 0; // on EPW:TMY files we have only one year 
-    
-    //println(i);
-    
-    CLIMATE_EPW[i][j][_pressure][k] = parts[9]; // in Pa
-    CLIMATE_EPW[i][j][_drybulb][k] = parts[6]; // in °C
-    CLIMATE_EPW[i][j][_relhum][k] = parts[8]; // 0 - 110%
-    CLIMATE_EPW[i][j][_glohorrad][k] = parts[13]; // Wh/m²
-    CLIMATE_EPW[i][j][_dirnorrad][k] = parts[14]; // Wh/m²
-    CLIMATE_EPW[i][j][_difhorrad][k] = parts[15]; // Wh/m²
-    CLIMATE_EPW[i][j][_windspd][k] = parts[21]; // in m/s
-    CLIMATE_EPW[i][j][_winddir][k] = parts[20]; // ° 
-    CLIMATE_EPW[i][j][_opaquesky][k] = parts[23]; // 0.1 times in % ... there is also total_sky_cover on[22]
-    CLIMATE_EPW[i][j][_ceilingsky][k] = parts[25]; // in m
-    
-    
-    if (CLIMATE_EPW[i][j][_pressure][k].equals("999999")) CLIMATE_EPW[i][j][_pressure][k] = _undefined;
-    
-    if (CLIMATE_EPW[i][j][_drybulb][k].equals("99.9")) CLIMATE_EPW[i][j][_drybulb][k] = _undefined;
-    
-    if (CLIMATE_EPW[i][j][_relhum][k].equals("999")) CLIMATE_EPW[i][j][_relhum][k] = _undefined;
-    
-    if (CLIMATE_EPW[i][j][_glohorrad][k].equals("9999")) CLIMATE_EPW[i][j][_glohorrad][k] = _undefined;
-    
-    if (int(CLIMATE_EPW[i][j][_dirnorrad][k]) >= 9999) CLIMATE_EPW[i][j][_dirnorrad][k] = _undefined;
-    if (int(CLIMATE_EPW[i][j][_dirnorrad][k]) < 0) CLIMATE_EPW[i][j][_dirnorrad][k] = _undefined;
-    
-    if (int(CLIMATE_EPW[i][j][_difhorrad][k]) >= 9999) CLIMATE_EPW[i][j][_difhorrad][k] = _undefined;
-    if (int(CLIMATE_EPW[i][j][_difhorrad][k]) < 0) CLIMATE_EPW[i][j][_difhorrad][k] = _undefined;
-    
-    if (CLIMATE_EPW[i][j][_windspd][k].equals("999")) CLIMATE_EPW[i][j][_windspd][k] = _undefined;
-    else CLIMATE_EPW[i][j][_windspd][k] = String.valueOf(3.6 * float(CLIMATE_EPW[i][j][_windspd][k]));
-    
-    if (CLIMATE_EPW[i][j][_winddir][k].equals("999")) CLIMATE_EPW[i][j][_winddir][k] = _undefined;
-    
-    if (CLIMATE_EPW[i][j][_opaquesky][k].equals("99")) CLIMATE_EPW[i][j][_opaquesky][k] = _undefined;
-    
-    if (CLIMATE_EPW[i][j][_ceilingsky][k].equals("77777")) CLIMATE_EPW[i][j][_ceilingsky][k] = "1000";
-    if (CLIMATE_EPW[i][j][_ceilingsky][k].equals("88888")) CLIMATE_EPW[i][j][_ceilingsky][k] = "1000";
-    if (int(CLIMATE_EPW[i][j][_ceilingsky][k]) >= 1000) CLIMATE_EPW[i][j][_ceilingsky][k] = "1000";    
-    
-    if (CLIMATE_EPW[i][j][_ceilingsky][k].equals("99999")) CLIMATE_EPW[i][j][_ceilingsky][k] = _undefined;
-
-  }
-
-  String Pa, Pb, Pc;
-  float T, R_dir, R_dif;
-  for (int i = 0; i < 24; i += 1){
-    for (int j = 0; j < 365; j += 1){
-      for (int k = 0; k <(1 + CLIMATE_EPW_end - CLIMATE_EPW_start); k += 1){
-        Pa = CLIMATE_EPW[i][j][_drybulb][k];
-        Pb = CLIMATE_EPW[i][j][_dirnorrad][k];
-        Pc = CLIMATE_EPW[i][j][_difhorrad][k];
-                  
-        if ((Pa.equals(_undefined)) ||(Pb.equals(_undefined)) ||(Pc.equals(_undefined))){
-        }
-        else{
-          T = float(Pa);
-          R_dir = float(Pb);
-          R_dif = float(Pc);
-          CLIMATE_EPW[i][j][_direffect][k] = String.valueOf((18 - T) * R_dir);
-          CLIMATE_EPW[i][j][_difeffect][k] = String.valueOf((18 - T) * R_dif);
-        }
-        
-        Pa = CLIMATE_EPW[i][j][_ceilingsky][k];
-        if (Pa.equals(_undefined)){
-        }
-        else{
-          float Px = log(float(Pa)) / log(10.0);
-          if (Px > 2) CLIMATE_EPW[i][j][_logceilsky][k] = String.valueOf(roundTo(Px, 0.1));
-          else CLIMATE_EPW[i][j][_logceilsky][k] = "2";
-        }
-      }
-    }
-  }
-}
 
 
 void LoadFontStyle () {
