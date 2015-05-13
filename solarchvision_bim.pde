@@ -131,7 +131,7 @@ int record_JPG = 0;
 int record_PDF = 0;
 
 int j_start = 0;
-int j_end = 6; //16; // Variable
+int j_end = 8; //6; //16; // Variable
 
 int max_j_end_forecast = 16; // Constant
 int max_j_end_observed = 0; // Variable
@@ -229,7 +229,7 @@ int develop_Layer = drw_Layer;
 int print_title = 1;
 
 float T_scale = 0;
-float U_scale = 12.0 / (j_end - j_start);
+float U_scale = 18.0 / (j_end - j_start);
 float[] V_scale = {(100.0/360.0),(10.0/5.0),4.0,1.0,(2.5 * pow(2, 0.5)),0.1,0.1,0.1,0.0,0.0025,0.0025,10.0,25.0,0.01,2.0,1,1,0.5};
 float[] V_offset = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1000,-500,-500,0};
 float[] V_belowLine = {0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,1,1,0};
@@ -506,7 +506,7 @@ String[] WORLD_VIEW_Filename;
 
 int number_of_WORLD_viewports;
 
-int VISUAL_Update = 1;
+int GRAPHS_Update = 1;
 
 void setup () {
 
@@ -561,11 +561,11 @@ void setup () {
 void draw () {
   
  
-  if (VISUAL_Update == 1) {
+  if (GRAPHS_Update == 1) {
     
-    VISUAL_draw();
+    GRAPHS_draw();
     
-    VISUAL_Update = 0;
+    GRAPHS_Update = 0;
   }
  
   
@@ -776,7 +776,7 @@ void draw () {
 
 
 
-void VISUAL_draw () {
+void GRAPHS_draw () {
   
   if (automated != 0) {
     /*
@@ -849,7 +849,7 @@ void VISUAL_draw () {
     
     resetMatrix();
    
-    S_View = (Y_View / h_pixel); 
+    S_View = (Y_View / 400.0); 
     
     //_pix = (100.0 * S_View / level_pix);
     
@@ -866,7 +866,7 @@ void VISUAL_draw () {
     
     draw_spinners();
   
-    U_scale = 12.0 / (j_end - j_start);
+    U_scale = 18.0 / (j_end - j_start);
     update_DevelopDATA = 1; // ??
   
     if (pre_DATE != _DATE) {
@@ -902,28 +902,30 @@ void VISUAL_draw () {
       if ((_setup == 12) || (_setup == 13)) off_screen = 1;    
       
       if (off_screen == 0) Image_Scale = 1; 
-      else Image_Scale = 1.5; //2;
+      else Image_Scale = 1; //1.5; //2;
       
       draw_frame += 1;
       println("frame:", draw_frame);
     
       if (record_PDF == 1){
-        X_coordinate = -0.25 * X_View;
+        X_coordinate = -0.333 * X_View;
         Y_coordinate = 1.0 * Y_View;
         S_View *= 0.575; 
         T_scale = 0.5;
         
         println("PDF:begin");
-        Diagrams = createGraphics(Y_View, Y_View, PDF, MAKE_filename() + ".pdf");
+        //Diagrams = createGraphics(Y_View, Y_View, PDF, MAKE_filename() + ".pdf");
+        Diagrams = createGraphics(X_View, Y_View, PDF, MAKE_filename() + ".pdf");
         beginRecord(Diagrams);
       }
       else{
-        X_coordinate = -0.25 * X_View * Image_Scale;
+        X_coordinate = -0.333 * X_View * Image_Scale;
         Y_coordinate = 1.0 * Y_View * Image_Scale;
         S_View *= 0.575 * Image_Scale; 
         T_scale = 0.5 * Image_Scale;
         
-        Diagrams = createGraphics(int(Y_View * Image_Scale), int(Y_View * Image_Scale), P2D);
+        //Diagrams = createGraphics(int(Y_View * Image_Scale), int(Y_View * Image_Scale), P2D);
+        Diagrams = createGraphics(int(X_View * Image_Scale), int(Y_View * Image_Scale), P2D);
         Diagrams_beginDraw();
       }
     
@@ -1055,7 +1057,7 @@ void VISUAL_draw () {
   }
   
   
-  VISUAL_Update = 0;
+  GRAPHS_Update = 0;
 } 
 
 
@@ -1309,18 +1311,19 @@ void Plot_Setup () {
     int pre_drw_Layer = drw_Layer;
     
     drw_Layer = _windspd;
-    plot_center(0,-525 * S_View,0,(100.0 * U_scale * S_View),(-1.0 * V_scale[drw_Layer] * S_View),1.0 * S_View);
+    //plot_center(0,-525 * S_View,0,(100.0 * U_scale * S_View),(-1.0 * V_scale[drw_Layer] * S_View),1.0 * S_View);
 
     //drw_Layer = _precipitation;
     drw_Layer = _pressure;
     //drw_Layer = _glohorrad;
     plot_center(0,-175 * S_View,0,(100.0 * U_scale * S_View),(-1.0 * V_scale[drw_Layer] * S_View),1.0 * S_View);
 
-    drw_Layer = _relhum;
+    //drw_Layer = _relhum;
+    drw_Layer = _drybulb;
     plot_center(0,175 * S_View,0,(100.0 * U_scale * S_View),(-1.0 * V_scale[drw_Layer] * S_View),1.0 * S_View);
 
     drw_Layer = _drybulb;
-    plot_center(0,525 * S_View,0,(100.0 * U_scale * S_View),(-1.0 * V_scale[drw_Layer] * S_View),1.0 * S_View);
+    //plot_center(0,525 * S_View,0,(100.0 * U_scale * S_View),(-1.0 * V_scale[drw_Layer] * S_View),1.0 * S_View);
 
     drw_Layer = pre_drw_Layer;
   }  
@@ -1553,8 +1556,6 @@ void Plot_Setup () {
     plot_impacts = pre_plot_impacts;    
     impact_layer = pre_impact_layer;
   }
-
-  float X_OFFSET = -250;
 
   if (_setup == 13) {
     int pre_plot_impacts = plot_impacts;
@@ -4775,8 +4776,8 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
     
     float Y_OFFSET = (0.25 + V_belowLine[drw_Layer]) * sx_Plot / U_scale;
  
-    //Diagrams_rect((400 + q * (pal_length / 11.0)) * S_View, 125 * S_View, (pal_length / 11.0) * S_View, 20 * S_View); 
-    Diagrams_rect((400 + q * (pal_length / 11.0)) * S_View, Y_OFFSET, (pal_length / 11.0) * S_View, 20 * S_View);
+    //Diagrams_rect((600 + q * (pal_length / 11.0)) * S_View, 125 * S_View, (pal_length / 11.0) * S_View, 20 * S_View); 
+    Diagrams_rect((600 + q * (pal_length / 11.0)) * S_View, Y_OFFSET, (pal_length / 11.0) * S_View, 20 * S_View);
     
     Diagrams_strokeWeight(2);  
     Diagrams_stroke(255);
@@ -4784,8 +4785,8 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
     
     Diagrams_textSize(15.0 * S_View);
     Diagrams_textAlign(CENTER, CENTER);
-    //my_text((String.valueOf(int(roundTo(100 * _u, 1)))), (20 + 400 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
-    my_text((String.valueOf(int(roundTo(100 * _u, 1)))), (20 + 400 + q * (pal_length / 11.0)) * S_View, Y_OFFSET + (10 - 0.05 * 20) * S_View, 1 * S_View);
+    //my_text((String.valueOf(int(roundTo(100 * _u, 1)))), (20 + 600 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
+    my_text((String.valueOf(int(roundTo(100 * _u, 1)))), (20 + 600 + q * (pal_length / 11.0)) * S_View, Y_OFFSET + (10 - 0.05 * 20) * S_View, 1 * S_View);
   }
 }
 
@@ -4855,8 +4856,8 @@ void SOLARCHVISION_draw_sorted (int i, int j, float[] _valuesA, float[] _valuesB
 
     Diagrams_strokeWeight(0.0);
     Diagrams_stroke(255); Diagrams_strokeWeight(0.5); 
-    //Diagrams_rect((400 + q * (pal_length / 9.0)) * S_View, 125 * S_View, (pal_length / 9.0) * S_View, 20 * S_View);
-    Diagrams_rect((400 + q * (pal_length / 9.0)) * S_View, Y_OFFSET, (pal_length / 9.0) * S_View, 20 * S_View);
+    //Diagrams_rect((600 + q * (pal_length / 9.0)) * S_View, 125 * S_View, (pal_length / 9.0) * S_View, 20 * S_View);
+    Diagrams_rect((600 + q * (pal_length / 9.0)) * S_View, Y_OFFSET, (pal_length / 9.0) * S_View, 20 * S_View);
     
     Diagrams_strokeWeight(0);  
     Diagrams_stroke(63);
@@ -4869,8 +4870,8 @@ void SOLARCHVISION_draw_sorted (int i, int j, float[] _valuesA, float[] _valuesB
 
     Diagrams_textSize(15.0 * S_View);
     Diagrams_textAlign(CENTER, CENTER);
-    //my_text(_txt[q], (25 + 400 + q * (pal_length / 9.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1);
-    my_text(_txt[q], (25 + 400 + q * (pal_length / 9.0)) * S_View, Y_OFFSET + (10 - 0.05 * 20) * S_View, 1);
+    //my_text(_txt[q], (25 + 600 + q * (pal_length / 9.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1);
+    my_text(_txt[q], (25 + 600 + q * (pal_length / 9.0)) * S_View, Y_OFFSET + (10 - 0.05 * 20) * S_View, 1);
     
   }   
 }
@@ -6503,15 +6504,15 @@ class SOLARCHVISION_PlotIMPACT {
         SET_COLOR_STYLE(PAL_TYPE, _u); 
         
         Diagrams_strokeWeight(0);
-        Diagrams_rect((400 + q * (pal_length / 11.0)) * S_View, 125 * S_View, (pal_length / 11.0) * S_View, 20 * S_View); 
+        Diagrams_rect((600 + q * (pal_length / 11.0)) * S_View, 125 * S_View, (pal_length / 11.0) * S_View, 20 * S_View); 
 
         Diagrams_strokeWeight(2);
         Diagrams_stroke(255);
         Diagrams_fill(255);           
         Diagrams_textSize(15.0 * S_View);
         Diagrams_textAlign(CENTER, CENTER);
-        if (Impact_TYPE == Impact_ACTIVE) my_text(nf((roundTo(0.1 * q / _Multiplier, 0.1)), 1, 1), (20 + 400 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
-        if (Impact_TYPE == Impact_PASSIVE) my_text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), (20 + 400 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
+        if (Impact_TYPE == Impact_ACTIVE) my_text(nf((roundTo(0.1 * q / _Multiplier, 0.1)), 1, 1), (20 + 600 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
+        if (Impact_TYPE == Impact_PASSIVE) my_text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), (20 + 600 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
       }
       
      
@@ -6853,15 +6854,15 @@ class SOLARCHVISION_PlotIMPACT {
         SET_COLOR_STYLE(PAL_TYPE, _u); 
         
         Diagrams_strokeWeight(0);
-        Diagrams_rect((400 + q * (pal_length / 11.0)) * S_View, 125 * S_View, (pal_length / 11.0) * S_View, 20 * S_View); 
+        Diagrams_rect((600 + q * (pal_length / 11.0)) * S_View, 125 * S_View, (pal_length / 11.0) * S_View, 20 * S_View); 
 
         Diagrams_strokeWeight(2);
         Diagrams_stroke(255);
         Diagrams_fill(255);           
         Diagrams_textSize(15.0 * S_View);
         Diagrams_textAlign(CENTER, CENTER);
-        if (Impact_TYPE == Impact_ACTIVE) my_text(nf((roundTo(0.1 * q / _Multiplier, 0.1)), 1, 1), (20 + 400 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
-        if (Impact_TYPE == Impact_PASSIVE) my_text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), (20 + 400 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
+        if (Impact_TYPE == Impact_ACTIVE) my_text(nf((roundTo(0.1 * q / _Multiplier, 0.1)), 1, 1), (20 + 600 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
+        if (Impact_TYPE == Impact_PASSIVE) my_text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), (20 + 600 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
       }
       
       
@@ -7136,15 +7137,15 @@ class SOLARCHVISION_PlotIMPACT {
         SET_COLOR_STYLE(PAL_TYPE, _u); 
         
         Diagrams_strokeWeight(0);
-        Diagrams_rect((400 + q * (pal_length / 11.0)) * S_View, 125 * S_View, (pal_length / 11.0) * S_View, 20 * S_View); 
+        Diagrams_rect((600 + q * (pal_length / 11.0)) * S_View, 125 * S_View, (pal_length / 11.0) * S_View, 20 * S_View); 
 
         Diagrams_strokeWeight(2);
         Diagrams_stroke(255);
         Diagrams_fill(255);           
         Diagrams_textSize(15.0 * S_View);
         Diagrams_textAlign(CENTER, CENTER);
-        if (Impact_TYPE == Impact_ACTIVE) my_text(nf(0.1 * q / _Multiplier, 1, 1), (20 + 400 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
-        if (Impact_TYPE == Impact_PASSIVE) my_text(nf(0.4 * (q - 5) / _Multiplier, 1, 1), (20 + 400 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
+        if (Impact_TYPE == Impact_ACTIVE) my_text(nf(0.1 * q / _Multiplier, 1, 1), (20 + 600 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
+        if (Impact_TYPE == Impact_PASSIVE) my_text(nf(0.4 * (q - 5) / _Multiplier, 1, 1), (20 + 600 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
       } 
       
       
@@ -7349,7 +7350,7 @@ class SOLARCHVISION_PlotIMPACT {
           SET_COLOR_STYLE(PAL_TYPE, _u);           
           
           Diagrams_strokeWeight(0);
-          Diagrams_rect((400 + q * (pal_length / 11.0)) * S_View, 125 * S_View, (pal_length / 11.0) * S_View, 20 * S_View); 
+          Diagrams_rect((600 + q * (pal_length / 11.0)) * S_View, 125 * S_View, (pal_length / 11.0) * S_View, 20 * S_View); 
   
           Diagrams_strokeWeight(2);
           Diagrams_stroke(255);
@@ -7357,7 +7358,7 @@ class SOLARCHVISION_PlotIMPACT {
           Diagrams_textSize(15.0 * S_View);
           Diagrams_textAlign(CENTER, CENTER);
 
-          if (Impact_TYPE == Impact_SPD_DIR_TMP) my_text(nf(0.2 * (q - 5) / _Multiplier, 1, 1), (20 + 400 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
+          if (Impact_TYPE == Impact_SPD_DIR_TMP) my_text(nf(0.2 * (q - 5) / _Multiplier, 1, 1), (20 + 600 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
         }
       }         
 
@@ -7403,7 +7404,7 @@ class SOLARCHVISION_PlotIMPACT {
 
 
 
-void VISUAL_keyPressed (){
+void GRAPHS_keyPressed (){
   if (automated == 0) {
     X_clicked = 0;
     Y_clicked = 0;
@@ -7476,12 +7477,12 @@ void VISUAL_keyPressed (){
                 
         case ']' :j_end += 1; 
                   if (j_end > j_start + 61) j_end -= 1;
-                  U_scale = 12.0 / (j_end - j_start);
+                  U_scale = 18.0 / (j_end - j_start);
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break;      
         case '[' :j_end -= 1; 
                   if (j_end <= j_start) j_end += 1;
-                  U_scale = 12.0 / (j_end - j_start);
+                  U_scale = 18.0 / (j_end - j_start);
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break;
   
@@ -7743,7 +7744,13 @@ class SOLARCHVISION_Spinner {
 }
 
 void draw_spinners () {
-  background(255);
+
+  stroke(255); 
+  fill(255);
+  strokeWeight(0);
+  rect(0, 0, X_View, Y_View);
+
+  /*
 
   textFont(createFont("Arial Narrow", 36));
   
@@ -7851,6 +7858,8 @@ void draw_spinners () {
   Climatic_solar_model = int(MySpinner.update(X_spinner, Y_spinner, "Climatic solar model", Climatic_solar_model, 0, 1, 1));
   Climatic_weather_model = int(MySpinner.update(X_spinner, Y_spinner, "Climatic weather model", Climatic_weather_model, 0, 2, 1));
   Y_spinner += 25 * S_View;  
+  
+  */
   
   X_clicked = 0;
   Y_clicked = 0;
@@ -8250,6 +8259,8 @@ float[] SOLARCHVISION_WYRD (float _variable) {
  
 void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float LocationLatitude) { 
 
+  float previous_DATE = _DATE;
+  
   float min_sunrise = int(min(SOLARCHVISION_Sunrise(LocationLatitude, 90), SOLARCHVISION_Sunrise(LocationLatitude, 270))); 
   float max_sunset = int(max(SOLARCHVISION_Sunset(LocationLatitude, 90), SOLARCHVISION_Sunset(LocationLatitude, 270)));
 
@@ -8377,17 +8388,19 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
     WIN3D_Diagrams.text(txt, 0, 0, 0);
     
     WIN3D_Diagrams.popMatrix();
-  }    
+  }   
+ 
+  _DATE = previous_DATE; 
 } 
 
 
-int VISUAL_command = 0;
+int GRAPHS_command = 0;
 
 void keyPressed (){
 
-  //if (VISUAL_command == 1) {
-    VISUAL_keyPressed();
-    VISUAL_Update = 1;
+  //if (GRAPHS_command == 1) {
+    GRAPHS_keyPressed();
+    GRAPHS_Update = 1;
   //} else {
     
     //println("key: " + key);
