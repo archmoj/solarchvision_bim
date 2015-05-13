@@ -1,9 +1,3 @@
-//Duplicate functions:
-//
-//setupX
-//drawX
-//keyPressedX
-
 import processing.pdf.*;
 
 int MODEL_RUN = 0; //12; 
@@ -28,7 +22,7 @@ int _HOUR = MODEL_RUN; //hour();
 int BEGIN_DAY;
 float _DATE;
 
-String MAKE_mainname(){
+String MAKE_mainname (){
   return (nf(_YEAR, 2) + nf(_MONTH, 2) + nf(_DAY, 2) + "_" + nf(j_end, 0) + "dayFORECAST");
   //return (nf(_YEAR, 2) + nf(_MONTH, 2) + nf(_DAY, 2) + "_" + nf(_HOUR, 2) + "Z");
 }
@@ -355,7 +349,7 @@ float RY_coordinate = 0;
 float O_scale = 25.0;
 float W_scale = 3.0;
 
-int _record = 1;
+int _record = 0;
 
 float X_spinner, Y_spinner;
 
@@ -390,8 +384,8 @@ float S_View = 1;
 
 int variation = 2;
 
-int draw_data_lines = 0;
-int draw_sorted = 0;
+int draw_data_lines = 1;
+int draw_sorted = 1;
 int draw_normals = 1;
 int draw_sun_altitude = 0;
 int draw_probs = 0;
@@ -421,40 +415,11 @@ int pre_Climatic_solar_model;
 int pre_Climatic_weather_model;
 
 
-int _setup = 12; //13;
+int _setup = 4; //12; //13;
 
 
-void setupX() {
-  size(1400, 800, P2D);
-  //size(800, 800, P2D);
-  
-  X_View = width;
-  Y_View = height;
-  R_View = float(Y_View) / float(X_View);
-  
-  frameRate(60);
-  
-  SOLARCHVISION_Calendar();
 
-  _DATE = (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
-  
-  //if (_HOUR >= 12) _DATE += 0.5; 
-  
-  _update_date();
-  
-  _update_station();
-  
-  if (automated != 0) {
-    _setup = 12;  // <<<<<<<<<<<<<<<<<<<<<<<<<
-    
-    _setup -= 1;
-    variation = 1;
-  }
-  
-  else noLoop();
-}
-
-void drawX() {
+void VISUAL_draw () {
   
   if (automated != 0) {
     /*
@@ -723,6 +688,8 @@ void drawX() {
     cursor(HAND);
   }
   
+  
+  VISUAL_Update = 0;
 } 
 
 
@@ -779,7 +746,7 @@ void plot_center (float x, float y, float z, float sx, float sy, float sz) {
 
 
 
-void Plot_Setup() {
+void Plot_Setup () {
 
   if (_setup == -2) {
     if (impacts_source == 1) {
@@ -969,19 +936,19 @@ void Plot_Setup() {
   if (_setup == 4) {
     int pre_drw_Layer = drw_Layer;
     
-    //drw_Layer = _windspd;
-    //plot_center(0,-525 * S_View,0,(100.0 * U_scale * S_View),(-1.0 * V_scale[drw_Layer] * S_View),1.0 * S_View);
+    drw_Layer = _windspd;
+    plot_center(0,-525 * S_View,0,(100.0 * U_scale * S_View),(-1.0 * V_scale[drw_Layer] * S_View),1.0 * S_View);
 
     //drw_Layer = _precipitation;
-    //drw_Layer = _pressure;
-    drw_Layer = _glohorrad;
-    plot_center(0,-125 * S_View,0,(100.0 * U_scale * S_View),(-1.0 * V_scale[drw_Layer] * S_View),1.0 * S_View);
+    drw_Layer = _pressure;
+    //drw_Layer = _glohorrad;
+    plot_center(0,-175 * S_View,0,(100.0 * U_scale * S_View),(-1.0 * V_scale[drw_Layer] * S_View),1.0 * S_View);
 
-    //drw_Layer = _relhum;
-    //plot_center(0,175 * S_View,0,(100.0 * U_scale * S_View),(-1.0 * V_scale[drw_Layer] * S_View),1.0 * S_View);
+    drw_Layer = _relhum;
+    plot_center(0,175 * S_View,0,(100.0 * U_scale * S_View),(-1.0 * V_scale[drw_Layer] * S_View),1.0 * S_View);
 
     drw_Layer = _drybulb;
-    plot_center(0,125 * S_View,0,(100.0 * U_scale * S_View),(-1.0 * V_scale[drw_Layer] * S_View),1.0 * S_View);
+    plot_center(0,525 * S_View,0,(100.0 * U_scale * S_View),(-1.0 * V_scale[drw_Layer] * S_View),1.0 * S_View);
 
     drw_Layer = pre_drw_Layer;
   }  
@@ -1269,6 +1236,8 @@ void _update_station () {
   println("Please wait ...");
   // French ??
   
+  try_update_CLIMATE_EPW();
+  
   try_update_CLIMATE_WY2();
 
   BEGIN_DAY = Convert2Date(_MONTH, _DAY);
@@ -1283,7 +1252,10 @@ void _update_station () {
   
   println("Station updated.");
   // French ??
+  
+  WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
 }
+
 
 
 
@@ -6642,7 +6614,7 @@ class SOLARCHVISION_PlotIMPACT {
 
 
 
-void keyPressedX(){
+void VISUAL_keyPressed (){
   if (automated == 0) {
     X_clicked = 0;
     Y_clicked = 0;
@@ -6868,7 +6840,7 @@ void keyPressedX(){
 
 
 
-void mouseClicked() {
+void mouseClicked () {
   if (automated == 0) {
     X_clicked = mouseX;
     Y_clicked = mouseY;
@@ -7526,7 +7498,7 @@ int h_pixel = 300;
 int w_pixel = int(h_pixel * 1.5);
 
 int WIN3D_CX_View = w_pixel;
-int WIN3D_CY_View = 0;
+int WIN3D_CY_View = h_pixel;
 int WIN3D_X_View = w_pixel;
 int WIN3D_Y_View = h_pixel;
 float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
@@ -7553,7 +7525,7 @@ int WIN3D_BLACK_EDGES = 1;
 int WIN3D_WHITE_FACES = 1;
 
 int WORLD_CX_View = 0;
-int WORLD_CY_View = 0;
+int WORLD_CY_View = h_pixel;
 int WORLD_X_View = w_pixel;
 int WORLD_Y_View = h_pixel;
 float WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
@@ -7575,17 +7547,16 @@ String[] WORLD_VIEW_Filename;
 
 int number_of_WORLD_viewports;
 
-void setup () 
-{
+int VISUAL_Update = 1;
+
+void setup () {
+
   size(2 * w_pixel, 3 * h_pixel, P2D);
   
   frameRate(24);
 
-  
 
-  WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);  
 
-  WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);  
 
   _update_folders();
   
@@ -7601,158 +7572,46 @@ void setup ()
 
   getCWEEDS_Coordinates();  
 
-  _update_location();
+
+
+
+  X_View = w_pixel; 
+  Y_View = h_pixel; 
+  R_View = float(Y_View) / float(X_View);
+
+  _DATE = (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
+  
+  //if (_HOUR >= 12) _DATE += 0.5; 
+  
+  _update_date();
+
+  _update_station();
 
   _update_objects();
+  
+
+  WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);  
+
+  WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
+
+  WORLD_Diagrams = createGraphics(X_View, Y_View, P2D);    
 
 }
 
 
 
-void _update_objects () {
-  //add_PolygonExtrude(-1, 0,0,0,  0.5,2.0, 10);
-  //add_PolygonExtrude(-1, 0,0,0,  1.5,1.0, 5);
 
-  //add_Polygon(1, 0,0,-1, 2,  16);
-  //add_Polygon(2, 0,0,0,  1.5, 5);
-  //add_Polygon(5, 0,0,1,  1,   3);
-  //add_Pentagon(1, 0,0,0, 1);
-  //add_Mesh4(2, -1,-1,1, 1,-1,-1 ,1,1,1, -1,1,-1); // hyper
-  //add_Mesh4(7, -1,-1,0, 1,-1,0, 1,1,0, -1,1,0);
-  //add_Box(-1, -1,-1,-1,1,1,1);
 
-  //add_Box(-1, 0.5,1.0,0.0, 1.5,3.0,0.5);
-  //add_Box(-1, 0.0,0.0,0.0, 0.5,1.0,2.0);
-  
-  //add_Mesh2(3, 0.5,0.0,0.75, 0.75,1.0,0.75);
-  //add_Mesh2(3, 0.5,0.0,1.25, 0.75,1.0,1.25);
-  //add_Mesh2(3, 0.5,0.0,1.75, 0.75,1.0,1.75);
-  
-  //add_Mesh2(7, -4,-4,0, 4,4,0);
-  
-  
-  //SOLARCHVISION Complex:
-  {
-    //add_Box(-1, 0,0,0, 1,3,3);
-    add_Box(-1, 0,0,0, 1,3,1);
-    add_Box(-1, 0,0,1, 1,1,2);
-    add_Box(-1, 0,2,1, 1,3,2);
-    add_Box(-1, 0,0,2, 1,3,3);
+void draw () {
+ 
+  if (VISUAL_Update == 1) {
+    //VISUAL_Diagrams.beginDraw();
     
-    add_Box(-1, 2,0,0, 6,4,0.5);
+    VISUAL_draw();
     
-    add_Box(-1, 7,0,0, 9,2,2);
-    
-    add_Box(-1, 7,3,0, 9,4,4);
-    
-    //add_Box(-1, 10,0,0, 13,4,1);
-    add_Box(-1, 10,0,0, 13,1,1);
-    add_Box(-1, 10,1,0, 10.5,3,1);
-    add_Box(-1, 12.5,1,0, 13,3,1);
-    add_Box(-1, 10,3,0, 13,4,1);
-    
-    add_Box(-1, 0,4,0, 1,8,2);
-    
-    //add_Box(-1, 2,5,0, 4,8,2);
-    add_Box(-1, 2,5,0, 4,5.5,2);
-    add_Box(-1, 2,5.5,0, 2.5,7.5,2);
-    add_Box(-1, 3.5,5.5,0, 4,7.5,2);
-    add_Box(-1, 2,7.5,0, 4,8,2);
-    
-    add_Box(-1, 5,5,0, 8,8,1);
-    
-    add_Box(-1, 9,5,0, 11,9,1);
-    
-    add_Box(-1, 12,5,0, 13,7,4);
-    
-    add_Box(-1, 12,8,0, 13,9,8);
-    
-    add_Box(-1, 0,9,0, 4,11,1);
-    
-    //add_Box(-1, 5,9,0, 8,11,2);
-    add_Box(-1, 5,9,0, 5.5,11,2);
-    add_Box(-1, 5.5,9,0, 7.5,9.5,2);
-    add_Box(-1, 5.5,10.5,0, 7.5,11,2);
-    add_Box(-1, 7.5,9,0, 8,11,2);
-    
-    //add_Box(-1, 0,12,0, 3,13,3);
-    add_Box(-1, 0,12,0, 3,13,1);
-    add_Box(-1, 0,12,1, 1,13,2);
-    add_Box(-1, 2,12,1, 3,13,2);
-    add_Box(-1, 0,12,2, 3,13,3);
-    
-    add_Box(-1, 4,12,0, 8,13,2);
-    
-    //add_Box(-1, 9,10,0, 13,13,1);
-    add_Box(-1, 9,10,0, 10,13,1);
-    add_Box(-1, 10,10,0, 12,10.5,1);
-    add_Box(-1, 10,12.5,0, 12,13,1);
-    add_Box(-1, 12,10,0, 13,13,1);
-    
-
-    
-
-    for (int i = 1; i < allVertices.length; i++) {
-      allVertices[i][0] -= 6.5;
-      allVertices[i][1] += 6.5; // because Y-values are already inverted in the addToVertices function.
-    }
-    
-    float model_scale = 12; // to make grid scale equal to 12m. <<<< 
-    
-    for (int i = 1; i < allVertices.length; i++) {
-      allVertices[i][0] *= model_scale;
-      allVertices[i][1] *= model_scale; 
-      allVertices[i][2] *= model_scale; 
-    }
-    
+    //VISUAL_Diagrams.endDraw();
   }
-  
-  
-}
-
-float objects_scale = 0.5;
-
-void _draw_objects () {
-  
-  for (int i = 1; i < allFaces.length; i++) {
-    
-    int face_colorID = allFaces_MAT[i];
-    
-    color c = color(0, 0, 0);
-
-         if (face_colorID == 0) c = color(255, 127, 0);
-    else if (face_colorID == 1) c = color(255, 0, 0);
-    else if (face_colorID == 2) c = color(255, 255, 0);
-    else if (face_colorID == 3) c = color(0, 255, 0);
-    else if (face_colorID == 4) c = color(0, 255, 255);
-    else if (face_colorID == 5) c = color(0, 0, 255);
-    else if (face_colorID == 6) c = color(255, 0, 255);
-    else if (face_colorID == 7) c = color(255, 255, 255);
-    
-    if (WIN3D_BLACK_EDGES == 1) {
-      WIN3D_Diagrams.stroke(0, 0, 0);
-    }
-    else{
-      WIN3D_Diagrams.stroke(c);
-    }
-    
-    if (WIN3D_WHITE_FACES == 1) {
-      WIN3D_Diagrams.fill(255, 255, 255);
-    }
-    else {
-      WIN3D_Diagrams.fill(c);
-    }    
-    
-    WIN3D_Diagrams.beginShape();
-    for (int j = 0; j < allFaces[i].length; j++) {
-      WIN3D_Diagrams.vertex(allVertices[allFaces[i][j]][0] * objects_scale, allVertices[allFaces[i][j]][1] * objects_scale, allVertices[allFaces[i][j]][2] * objects_scale);
-    }
-    WIN3D_Diagrams.endShape(CLOSE);
-  }
-
-}
-
-void draw () { 
+ 
   
   if (WORLD_Update == 1) {
   
@@ -8097,97 +7956,102 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
 } 
 
 
-
+int VISUAL_command = 0;
 
 void keyPressed (){
-  //println("key: " + key);
-  //println("keyCode: " + keyCode); 
-  
-  if (key == CODED) { 
-    switch(keyCode) {
-      case LEFT  :WIN3D_X_coordinate -= WIN3D_S_coordinate; break;
-      case RIGHT :WIN3D_X_coordinate += WIN3D_S_coordinate; break;  
-      case UP    :WIN3D_Y_coordinate -= WIN3D_S_coordinate; break;
-      case DOWN  :WIN3D_Y_coordinate += WIN3D_S_coordinate; break;
+
+  if (VISUAL_command == 1) VISUAL_keyPressed();
+  else {
+    
+    //println("key: " + key);
+    //println("keyCode: " + keyCode); 
+    
+    if (key == CODED) { 
+      switch(keyCode) {
+        case LEFT  :WIN3D_X_coordinate -= WIN3D_S_coordinate; break;
+        case RIGHT :WIN3D_X_coordinate += WIN3D_S_coordinate; break;  
+        case UP    :WIN3D_Y_coordinate -= WIN3D_S_coordinate; break;
+        case DOWN  :WIN3D_Y_coordinate += WIN3D_S_coordinate; break;
+      }
     }
-  }
-  else{
-    switch(key) {
-      case ',' :WIN3D_Z_coordinate += WIN3D_S_coordinate; break;      
-      case '.' :WIN3D_Z_coordinate -= WIN3D_S_coordinate; break;
-
-      case '0' :WIN3D_Z_coordinate += WIN3D_S_coordinate; break;
-      
-      case '5' :WIN3D_RX_coordinate = 0;
-                WIN3D_RY_coordinate = 0;
-                WIN3D_RZ_coordinate = 0; 
-                break;
-
-      case '@' :WIN3D_RX_coordinate = 0;
-                WIN3D_RY_coordinate = 0;
-                WIN3D_RZ_coordinate = 0; 
-                WIN3D_X_coordinate = 0;
-                WIN3D_Y_coordinate = 0;
-                WIN3D_Z_coordinate = 0;
-                WIN3D_ZOOM_coordinate = 13500.0 / WIN3D_Y_View;
-                WIN3D_View_Type = 0; 
-                break;
-
-      case '1' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 315; break;
-      case '3' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 45; break;
-      case '7' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 225; break;
-      case '9' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 135; break;
-
-      case '2' :WIN3D_RX_coordinate += WIN3D_RS_coordinate; break;
-      case '4' :WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; break;
-      case '6' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; break;      
-      case '8' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; break;
-
-      case '{' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; break;
-      case '}' :WIN3D_RX_coordinate += WIN3D_RS_coordinate; break;
-      case '(' :WIN3D_RY_coordinate -= WIN3D_RS_coordinate; break;
-      case ')' :WIN3D_RY_coordinate += WIN3D_RS_coordinate; break;
-      case '[' :WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; break;
-      case ']' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; break;
-
-      case '*' :objects_scale *= 2.0; break;
-      case '/' :objects_scale /= 2.0; break;
-
-      case '+' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;
-      case '-' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;      
-      
-      case '>' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;
-      case '<' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;
-      
-      case 'O' :WIN3D_View_Type = 0; break;
-      case 'o' :WIN3D_View_Type = 0; break;
-      
-      case 'P' :WIN3D_View_Type = 1; break;                
-      case 'p' :WIN3D_View_Type = 1; break;     
-
-      case 'E' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; break;    
-      case 'e' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; break;    
-
-      case 'W' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 2; break;    
-      case 'w' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 2; break;    
-
-      case 'S' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_location(); break;
-      case 's' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_location(); break;
-      
-      
-      case 'F' :LoadFontStyle(); break;
-      case 'f' :LoadFontStyle(); break;
-           
-          
-      case '$' :saveFrame("image.jpg"); println("File created."); break;
-      case '#' :saveFrame("image_frame####.jpg"); println("File created."); break;
+    else{
+      switch(key) {
+        case ',' :WIN3D_Z_coordinate += WIN3D_S_coordinate; break;      
+        case '.' :WIN3D_Z_coordinate -= WIN3D_S_coordinate; break;
+  
+        case '0' :WIN3D_Z_coordinate += WIN3D_S_coordinate; break;
+        
+        case '5' :WIN3D_RX_coordinate = 0;
+                  WIN3D_RY_coordinate = 0;
+                  WIN3D_RZ_coordinate = 0; 
+                  break;
+  
+        case '@' :WIN3D_RX_coordinate = 0;
+                  WIN3D_RY_coordinate = 0;
+                  WIN3D_RZ_coordinate = 0; 
+                  WIN3D_X_coordinate = 0;
+                  WIN3D_Y_coordinate = 0;
+                  WIN3D_Z_coordinate = 0;
+                  WIN3D_ZOOM_coordinate = 13500.0 / WIN3D_Y_View;
+                  WIN3D_View_Type = 0; 
+                  break;
+  
+        case '1' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 315; break;
+        case '3' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 45; break;
+        case '7' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 225; break;
+        case '9' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 135; break;
+  
+        case '2' :WIN3D_RX_coordinate += WIN3D_RS_coordinate; break;
+        case '4' :WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; break;
+        case '6' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; break;      
+        case '8' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; break;
+  
+        case '{' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; break;
+        case '}' :WIN3D_RX_coordinate += WIN3D_RS_coordinate; break;
+        case '(' :WIN3D_RY_coordinate -= WIN3D_RS_coordinate; break;
+        case ')' :WIN3D_RY_coordinate += WIN3D_RS_coordinate; break;
+        case '[' :WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; break;
+        case ']' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; break;
+  
+        case '*' :objects_scale *= 2.0; break;
+        case '/' :objects_scale /= 2.0; break;
+  
+        case '+' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;
+        case '-' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;      
+        
+        case '>' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;
+        case '<' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;
+        
+        case 'O' :WIN3D_View_Type = 0; break;
+        case 'o' :WIN3D_View_Type = 0; break;
+        
+        case 'P' :WIN3D_View_Type = 1; break;                
+        case 'p' :WIN3D_View_Type = 1; break;     
+  
+        case 'E' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; break;    
+        case 'e' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; break;    
+  
+        case 'W' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 2; break;    
+        case 'w' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 2; break;    
+  
+        case 'S' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_station(); break;
+        case 's' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_station(); break;
+        
+        
+        case 'F' :LoadFontStyle(); break;
+        case 'f' :LoadFontStyle(); break;
+             
+            
+        case '$' :saveFrame("image.jpg"); println("File created."); break;
+        case '#' :saveFrame("image_frame####.jpg"); println("File created."); break;
+      }
+  
     }
-
+    
+    WIN3D_Update = 1;
+    
+    loop();
   }
-  
-  WIN3D_Update = 1;
-  
-  loop();
 }
 
 
@@ -8438,27 +8302,6 @@ void SOLARCHVISION_LoadCLIMATE_EPW (String FileName) {
 }
 
 
-
-
-
-
-void _update_location () {
-  THE_STATION = DEFINED_STATIONS[STATION_NUMBER][0];
-  LocationName = DEFINED_STATIONS[STATION_NUMBER][1];
-  LocationProvince = DEFINED_STATIONS[STATION_NUMBER][2];
-  LocationLatitude = float(DEFINED_STATIONS[STATION_NUMBER][3]);
-  LocationLongitude = float(DEFINED_STATIONS[STATION_NUMBER][4]);
-  LocationTimeZone = float(DEFINED_STATIONS[STATION_NUMBER][5]);
-  LocationElevation = float(DEFINED_STATIONS[STATION_NUMBER][6]);
-  Delta_NOON = (LocationTimeZone - LocationLongitude) / 15.0;
-
-  try_update_CLIMATE_EPW();
-  
-  WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
- 
-}
-
-
 void LoadFontStyle () {
   
   int _size = 36;
@@ -8480,240 +8323,7 @@ void LoadFontStyle () {
 }
 
 
-int defaultMaterial = 7;
 
-float[][] allVertices = {{}};
-int[][] allFaces = {{}};
-int[] allFaces_MAT = {0};
-
-int addToVertices (float x, float y, float z) {
-  
-  //float[][] newVertice = {{x,y,z}}; 
-  float[][] newVertice = {{x,-y,z}};
-  
-  allVertices = (float[][]) concat(allVertices, newVertice);
-  
-  return(allVertices.length - 1);
-}
-
-int addToFaces (int[] f) {
-
-  int[] newFace_MAT = {defaultMaterial}; 
-  
-  allFaces_MAT = concat(allFaces_MAT, newFace_MAT);
-  
-  
-  int[][] newFace = {f}; 
-  
-  allFaces = (int[][]) concat(allFaces, newFace);
-
-  return(allFaces.length - 1);
-}
-
-
-
-void add_Box (int m, float x1, float y1, float z1, float x2, float y2, float z2) {
-
-  int t1 = addToVertices(x2,y2,z2);
-  int t2 = addToVertices(x1,y2,z2);
-  int t3 = addToVertices(x1,y1,z2);
-  int t4 = addToVertices(x2,y1,z2);
-
-  int b1 = addToVertices(x2,y2,z1);
-  int b2 = addToVertices(x1,y2,z1);
-  int b3 = addToVertices(x1,y1,z1);
-  int b4 = addToVertices(x2,y1,z1);
-
-  if (m == -1) defaultMaterial = 7;
-  else defaultMaterial = m;
-
-  {//Bottom
-    int[] newFace = {b4,b3,b2,b1};
-    if (m == -1) defaultMaterial -= 1;
-    addToFaces(newFace);
-  }    
-  {//North
-    int[] newFace = {t2,t1,b1,b2};
-    if (m == -1) defaultMaterial -= 1;
-    addToFaces(newFace);
-  }
-  {//East
-    int[] newFace = {t1,t4,b4,b1};
-    if (m == -1) defaultMaterial -= 1;
-    addToFaces(newFace);
-  }    
-  {//South
-    int[] newFace = {t4,t3,b3,b4};
-    if (m == -1) defaultMaterial -= 1;
-    addToFaces(newFace);
-  }    
-  {//West
-    int[] newFace = {t3,t2,b2,b3};
-    if (m == -1) defaultMaterial -= 1;
-    addToFaces(newFace);
-  }    
-  {//Roof
-    int[] newFace = {t1,t2,t3,t4};
-    if (m == -1) defaultMaterial -= 1;
-    addToFaces(newFace);
-  }
-}
-
-
-void add_Mesh2(int m, float x1, float y1, float z1, float x3, float y3, float z3) {
-
-  float x2 = x3;
-  float y2 = y3;
-  float z2 = z3;
-
-  float x4 = x1;
-  float y4 = y1;
-  float z4 = z1;
-  
-  if (z1 == z3) {
-    y2 = y1;
-    y4 = y3;
-  }
-  else if (y1 == y3) {
-    x2 = x1;
-    x4 = x3;
-  }
-  else if (x1 == x3) {
-    z2 = z1;
-    z4 = z3;
-  }  
-  
-  int v1 = addToVertices(x1,y1,z1);
-  int v2 = addToVertices(x2,y2,z2);
-  int v3 = addToVertices(x3,y3,z3);
-  int v4 = addToVertices(x4,y4,z4);
-  
-  defaultMaterial = m;
-  
-  {
-    int[] newFace = {v1,v2,v3,v4};
-    addToFaces(newFace);
-  }
-
-}
-
-void add_Mesh4(int m, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4) {
-
-  int v1 = addToVertices(x1,y1,z1);
-  int v2 = addToVertices(x2,y2,z2);
-  int v3 = addToVertices(x3,y3,z3);
-  int v4 = addToVertices(x4,y4,z4);
-
-  defaultMaterial = m;
-  
-  {
-    int[] newFace = {v1,v2,v3,v4};
-    addToFaces(newFace);
-  }
-
-}
-
-void add_Mesh3(int m, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) {
-
-  int v1 = addToVertices(x1,y1,z1);
-  int v2 = addToVertices(x2,y2,z2);
-  int v3 = addToVertices(x3,y3,z3);
-
-  defaultMaterial = m;
-
-  {
-    int[] newFace = {v1,v2,v3};
-    addToFaces(newFace);
-  }
-
-}
-
-void add_Mesh5(int m, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float x5, float y5, float z5) {
-
-  int v1 = addToVertices(x1,y1,z1);
-  int v2 = addToVertices(x2,y2,z2);
-  int v3 = addToVertices(x3,y3,z3);
-  int v4 = addToVertices(x4,y4,z4);
-  int v5 = addToVertices(x5,y5,z5);
-
-  defaultMaterial = m;
-  
-  {
-    int[] newFace = {v1,v2,v3,v4,v5};
-    addToFaces(newFace);
-  }
-
-}
-
-void add_Pentagon(int m, float cx, float cy, float cz, float r) {
-
-  int v1 = addToVertices(cos_ang(1*72),sin_ang(1*72),0);
-  int v2 = addToVertices(cos_ang(2*72),sin_ang(2*72),0);
-  int v3 = addToVertices(cos_ang(3*72),sin_ang(3*72),0);
-  int v4 = addToVertices(cos_ang(4*72),sin_ang(4*72),0);
-  int v5 = addToVertices(cos_ang(5*72),sin_ang(5*72),0);
-
-  defaultMaterial = m;
-    
-  {
-    int[] newFace = {v1,v2,v3,v4,v5};
-    addToFaces(newFace);
-  }
-
-}
-
-void add_Polygon(int m, float cx, float cy, float cz, float r, int n) {
-
-  int[] newFace = {addToVertices(cx + r * cos_ang(0), cy + r * sin_ang(0), cz)};
-  for (int i = 1; i < n; i++) {
-    float t = i * 360.0 / float(n);
-    int[] f = {addToVertices(cx + r * cos_ang(t), cy + r * sin_ang(t), cz)};
-    newFace = concat(newFace, f);
-  } 
- 
-  defaultMaterial = m;
-
-  addToFaces(newFace);
-
-}
-
-void add_PolygonExtrude(int m, float cx, float cy, float cz, float r, float h, int n) {
-
-  int[] vT = new int[n];
-  int[] vB = new int[n];
-  
-  vT[0] = addToVertices(cx + r * cos_ang(0), cy + r * sin_ang(0), cz + h);
-  vB[0] = addToVertices(cx + r * cos_ang(0), cy + r * sin_ang(0), cz);
-  
-  int[] newFaceT = {vT[0]};
-  int[] newFaceB = {vB[0]};
-  for (int i = 1; i < n; i++) {
-    float t = i * 360.0 / float(n);
-    
-    vT[i] = addToVertices(cx + r * cos_ang(t), cy + r * sin_ang(t), cz + h);
-    vB[i] = addToVertices(cx + r * cos_ang(t), cy + r * sin_ang(t), cz);
-    int[] fT = {vT[i]};
-    int[] fB = {vB[i]};
-    
-    newFaceT = concat(newFaceT, fT);
-    newFaceB = concat(newFaceB, fB);
-  } 
- 
-  if (m == -1) defaultMaterial = 1;
-  else defaultMaterial = m;
-
-  addToFaces(newFaceT);
-  addToFaces(newFaceB);
-  
-  for (int i = 0; i < n; i++) {
-    int next_i = (i + 1) % n;
-   
-    int[] newFace = {vT[i], vT[next_i], vB[next_i], vB[i]};
-    if (m == -1) defaultMaterial += 1;    
-    addToFaces(newFace);
-  }
-
-}
 
 
 
@@ -8976,4 +8586,384 @@ void getCWEEDS_Coordinates () {
   catch (Exception e) {
     println("ERROR reading CWEEDS coordinates.");
   }
+}
+
+
+int defaultMaterial = 7;
+
+float[][] allVertices = {{}};
+int[][] allFaces = {{}};
+int[] allFaces_MAT = {0};
+
+int addToVertices (float x, float y, float z) {
+  
+  //float[][] newVertice = {{x,y,z}}; 
+  float[][] newVertice = {{x,-y,z}};
+  
+  allVertices = (float[][]) concat(allVertices, newVertice);
+  
+  return(allVertices.length - 1);
+}
+
+int addToFaces (int[] f) {
+
+  int[] newFace_MAT = {defaultMaterial}; 
+  
+  allFaces_MAT = concat(allFaces_MAT, newFace_MAT);
+  
+  
+  int[][] newFace = {f}; 
+  
+  allFaces = (int[][]) concat(allFaces, newFace);
+
+  return(allFaces.length - 1);
+}
+
+
+
+void add_Box (int m, float x1, float y1, float z1, float x2, float y2, float z2) {
+
+  int t1 = addToVertices(x2,y2,z2);
+  int t2 = addToVertices(x1,y2,z2);
+  int t3 = addToVertices(x1,y1,z2);
+  int t4 = addToVertices(x2,y1,z2);
+
+  int b1 = addToVertices(x2,y2,z1);
+  int b2 = addToVertices(x1,y2,z1);
+  int b3 = addToVertices(x1,y1,z1);
+  int b4 = addToVertices(x2,y1,z1);
+
+  if (m == -1) defaultMaterial = 7;
+  else defaultMaterial = m;
+
+  {//Bottom
+    int[] newFace = {b4,b3,b2,b1};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }    
+  {//North
+    int[] newFace = {t2,t1,b1,b2};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }
+  {//East
+    int[] newFace = {t1,t4,b4,b1};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }    
+  {//South
+    int[] newFace = {t4,t3,b3,b4};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }    
+  {//West
+    int[] newFace = {t3,t2,b2,b3};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }    
+  {//Roof
+    int[] newFace = {t1,t2,t3,t4};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }
+}
+
+
+void add_Mesh2(int m, float x1, float y1, float z1, float x3, float y3, float z3) {
+
+  float x2 = x3;
+  float y2 = y3;
+  float z2 = z3;
+
+  float x4 = x1;
+  float y4 = y1;
+  float z4 = z1;
+  
+  if (z1 == z3) {
+    y2 = y1;
+    y4 = y3;
+  }
+  else if (y1 == y3) {
+    x2 = x1;
+    x4 = x3;
+  }
+  else if (x1 == x3) {
+    z2 = z1;
+    z4 = z3;
+  }  
+  
+  int v1 = addToVertices(x1,y1,z1);
+  int v2 = addToVertices(x2,y2,z2);
+  int v3 = addToVertices(x3,y3,z3);
+  int v4 = addToVertices(x4,y4,z4);
+  
+  defaultMaterial = m;
+  
+  {
+    int[] newFace = {v1,v2,v3,v4};
+    addToFaces(newFace);
+  }
+
+}
+
+void add_Mesh4(int m, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4) {
+
+  int v1 = addToVertices(x1,y1,z1);
+  int v2 = addToVertices(x2,y2,z2);
+  int v3 = addToVertices(x3,y3,z3);
+  int v4 = addToVertices(x4,y4,z4);
+
+  defaultMaterial = m;
+  
+  {
+    int[] newFace = {v1,v2,v3,v4};
+    addToFaces(newFace);
+  }
+
+}
+
+void add_Mesh3(int m, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) {
+
+  int v1 = addToVertices(x1,y1,z1);
+  int v2 = addToVertices(x2,y2,z2);
+  int v3 = addToVertices(x3,y3,z3);
+
+  defaultMaterial = m;
+
+  {
+    int[] newFace = {v1,v2,v3};
+    addToFaces(newFace);
+  }
+
+}
+
+void add_Mesh5(int m, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float x5, float y5, float z5) {
+
+  int v1 = addToVertices(x1,y1,z1);
+  int v2 = addToVertices(x2,y2,z2);
+  int v3 = addToVertices(x3,y3,z3);
+  int v4 = addToVertices(x4,y4,z4);
+  int v5 = addToVertices(x5,y5,z5);
+
+  defaultMaterial = m;
+  
+  {
+    int[] newFace = {v1,v2,v3,v4,v5};
+    addToFaces(newFace);
+  }
+
+}
+
+void add_Pentagon(int m, float cx, float cy, float cz, float r) {
+
+  int v1 = addToVertices(cos_ang(1*72),sin_ang(1*72),0);
+  int v2 = addToVertices(cos_ang(2*72),sin_ang(2*72),0);
+  int v3 = addToVertices(cos_ang(3*72),sin_ang(3*72),0);
+  int v4 = addToVertices(cos_ang(4*72),sin_ang(4*72),0);
+  int v5 = addToVertices(cos_ang(5*72),sin_ang(5*72),0);
+
+  defaultMaterial = m;
+    
+  {
+    int[] newFace = {v1,v2,v3,v4,v5};
+    addToFaces(newFace);
+  }
+
+}
+
+void add_Polygon(int m, float cx, float cy, float cz, float r, int n) {
+
+  int[] newFace = {addToVertices(cx + r * cos_ang(0), cy + r * sin_ang(0), cz)};
+  for (int i = 1; i < n; i++) {
+    float t = i * 360.0 / float(n);
+    int[] f = {addToVertices(cx + r * cos_ang(t), cy + r * sin_ang(t), cz)};
+    newFace = concat(newFace, f);
+  } 
+ 
+  defaultMaterial = m;
+
+  addToFaces(newFace);
+
+}
+
+void add_PolygonExtrude(int m, float cx, float cy, float cz, float r, float h, int n) {
+
+  int[] vT = new int[n];
+  int[] vB = new int[n];
+  
+  vT[0] = addToVertices(cx + r * cos_ang(0), cy + r * sin_ang(0), cz + h);
+  vB[0] = addToVertices(cx + r * cos_ang(0), cy + r * sin_ang(0), cz);
+  
+  int[] newFaceT = {vT[0]};
+  int[] newFaceB = {vB[0]};
+  for (int i = 1; i < n; i++) {
+    float t = i * 360.0 / float(n);
+    
+    vT[i] = addToVertices(cx + r * cos_ang(t), cy + r * sin_ang(t), cz + h);
+    vB[i] = addToVertices(cx + r * cos_ang(t), cy + r * sin_ang(t), cz);
+    int[] fT = {vT[i]};
+    int[] fB = {vB[i]};
+    
+    newFaceT = concat(newFaceT, fT);
+    newFaceB = concat(newFaceB, fB);
+  } 
+ 
+  if (m == -1) defaultMaterial = 1;
+  else defaultMaterial = m;
+
+  addToFaces(newFaceT);
+  addToFaces(newFaceB);
+  
+  for (int i = 0; i < n; i++) {
+    int next_i = (i + 1) % n;
+   
+    int[] newFace = {vT[i], vT[next_i], vB[next_i], vB[i]};
+    if (m == -1) defaultMaterial += 1;    
+    addToFaces(newFace);
+  }
+
+}
+
+
+void _update_objects () {
+  //add_PolygonExtrude(-1, 0,0,0,  0.5,2.0, 10);
+  //add_PolygonExtrude(-1, 0,0,0,  1.5,1.0, 5);
+
+  //add_Polygon(1, 0,0,-1, 2,  16);
+  //add_Polygon(2, 0,0,0,  1.5, 5);
+  //add_Polygon(5, 0,0,1,  1,   3);
+  //add_Pentagon(1, 0,0,0, 1);
+  //add_Mesh4(2, -1,-1,1, 1,-1,-1 ,1,1,1, -1,1,-1); // hyper
+  //add_Mesh4(7, -1,-1,0, 1,-1,0, 1,1,0, -1,1,0);
+  //add_Box(-1, -1,-1,-1,1,1,1);
+
+  //add_Box(-1, 0.5,1.0,0.0, 1.5,3.0,0.5);
+  //add_Box(-1, 0.0,0.0,0.0, 0.5,1.0,2.0);
+  
+  //add_Mesh2(3, 0.5,0.0,0.75, 0.75,1.0,0.75);
+  //add_Mesh2(3, 0.5,0.0,1.25, 0.75,1.0,1.25);
+  //add_Mesh2(3, 0.5,0.0,1.75, 0.75,1.0,1.75);
+  
+  //add_Mesh2(7, -4,-4,0, 4,4,0);
+  
+  
+  //SOLARCHVISION Complex:
+  {
+    //add_Box(-1, 0,0,0, 1,3,3);
+    add_Box(-1, 0,0,0, 1,3,1);
+    add_Box(-1, 0,0,1, 1,1,2);
+    add_Box(-1, 0,2,1, 1,3,2);
+    add_Box(-1, 0,0,2, 1,3,3);
+    
+    add_Box(-1, 2,0,0, 6,4,0.5);
+    
+    add_Box(-1, 7,0,0, 9,2,2);
+    
+    add_Box(-1, 7,3,0, 9,4,4);
+    
+    //add_Box(-1, 10,0,0, 13,4,1);
+    add_Box(-1, 10,0,0, 13,1,1);
+    add_Box(-1, 10,1,0, 10.5,3,1);
+    add_Box(-1, 12.5,1,0, 13,3,1);
+    add_Box(-1, 10,3,0, 13,4,1);
+    
+    add_Box(-1, 0,4,0, 1,8,2);
+    
+    //add_Box(-1, 2,5,0, 4,8,2);
+    add_Box(-1, 2,5,0, 4,5.5,2);
+    add_Box(-1, 2,5.5,0, 2.5,7.5,2);
+    add_Box(-1, 3.5,5.5,0, 4,7.5,2);
+    add_Box(-1, 2,7.5,0, 4,8,2);
+    
+    add_Box(-1, 5,5,0, 8,8,1);
+    
+    add_Box(-1, 9,5,0, 11,9,1);
+    
+    add_Box(-1, 12,5,0, 13,7,4);
+    
+    add_Box(-1, 12,8,0, 13,9,8);
+    
+    add_Box(-1, 0,9,0, 4,11,1);
+    
+    //add_Box(-1, 5,9,0, 8,11,2);
+    add_Box(-1, 5,9,0, 5.5,11,2);
+    add_Box(-1, 5.5,9,0, 7.5,9.5,2);
+    add_Box(-1, 5.5,10.5,0, 7.5,11,2);
+    add_Box(-1, 7.5,9,0, 8,11,2);
+    
+    //add_Box(-1, 0,12,0, 3,13,3);
+    add_Box(-1, 0,12,0, 3,13,1);
+    add_Box(-1, 0,12,1, 1,13,2);
+    add_Box(-1, 2,12,1, 3,13,2);
+    add_Box(-1, 0,12,2, 3,13,3);
+    
+    add_Box(-1, 4,12,0, 8,13,2);
+    
+    //add_Box(-1, 9,10,0, 13,13,1);
+    add_Box(-1, 9,10,0, 10,13,1);
+    add_Box(-1, 10,10,0, 12,10.5,1);
+    add_Box(-1, 10,12.5,0, 12,13,1);
+    add_Box(-1, 12,10,0, 13,13,1);
+    
+
+    
+
+    for (int i = 1; i < allVertices.length; i++) {
+      allVertices[i][0] -= 6.5;
+      allVertices[i][1] += 6.5; // because Y-values are already inverted in the addToVertices function.
+    }
+    
+    float model_scale = 12; // to make grid scale equal to 12m. <<<< 
+    
+    for (int i = 1; i < allVertices.length; i++) {
+      allVertices[i][0] *= model_scale;
+      allVertices[i][1] *= model_scale; 
+      allVertices[i][2] *= model_scale; 
+    }
+    
+  }
+  
+  
+}
+
+float objects_scale = 0.5;
+
+void _draw_objects () {
+  
+  for (int i = 1; i < allFaces.length; i++) {
+    
+    int face_colorID = allFaces_MAT[i];
+    
+    color c = color(0, 0, 0);
+
+         if (face_colorID == 0) c = color(255, 127, 0);
+    else if (face_colorID == 1) c = color(255, 0, 0);
+    else if (face_colorID == 2) c = color(255, 255, 0);
+    else if (face_colorID == 3) c = color(0, 255, 0);
+    else if (face_colorID == 4) c = color(0, 255, 255);
+    else if (face_colorID == 5) c = color(0, 0, 255);
+    else if (face_colorID == 6) c = color(255, 0, 255);
+    else if (face_colorID == 7) c = color(255, 255, 255);
+    
+    if (WIN3D_BLACK_EDGES == 1) {
+      WIN3D_Diagrams.stroke(0, 0, 0);
+    }
+    else{
+      WIN3D_Diagrams.stroke(c);
+    }
+    
+    if (WIN3D_WHITE_FACES == 1) {
+      WIN3D_Diagrams.fill(255, 255, 255);
+    }
+    else {
+      WIN3D_Diagrams.fill(c);
+    }    
+    
+    WIN3D_Diagrams.beginShape();
+    for (int j = 0; j < allFaces[i].length; j++) {
+      WIN3D_Diagrams.vertex(allVertices[allFaces[i][j]][0] * objects_scale, allVertices[allFaces[i][j]][1] * objects_scale, allVertices[allFaces[i][j]][2] * objects_scale);
+    }
+    WIN3D_Diagrams.endShape(CLOSE);
+  }
+
 }
