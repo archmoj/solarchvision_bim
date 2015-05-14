@@ -158,11 +158,11 @@ String[][] OBSERVED_STATIONS = {
                               };       
 */
 
-int CLIMATE_EPW_start = 2005;
-int CLIMATE_EPW_end = 2005;
+int CLIMATE_EPW_start = 1; 
+int CLIMATE_EPW_end = 1;
 
-int CLIMATE_start = 1953;
-int CLIMATE_end = 2005;
+int CLIMATE_WY2_start = 1953;
+int CLIMATE_WY2_end = 2005;
 
 int ENSEMBLE_start = 1; // min: 1
 int ENSEMBLE_end = 43; // max: 43
@@ -2384,14 +2384,14 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
         float[][][] _valuesO_scattered;
         float[][][] _valuesO_clear;
         
-        _valuesO           = new float[24][max_j_end_forecast][((1 + CLIMATE_end - CLIMATE_start) * num_add_days)];
-        _valuesO_overcast  = new float[24][max_j_end_forecast][((1 + CLIMATE_end - CLIMATE_start) * num_add_days)];
-        _valuesO_scattered = new float[24][max_j_end_forecast][((1 + CLIMATE_end - CLIMATE_start) * num_add_days)];
-        _valuesO_clear     = new float[24][max_j_end_forecast][((1 + CLIMATE_end - CLIMATE_start) * num_add_days)];
+        _valuesO           = new float[24][max_j_end_forecast][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
+        _valuesO_overcast  = new float[24][max_j_end_forecast][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
+        _valuesO_scattered = new float[24][max_j_end_forecast][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
+        _valuesO_clear     = new float[24][max_j_end_forecast][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
   
         for (int i = 0; i < 24; i += 1){      
         
-          for (int k = 0; k < (1 + CLIMATE_end - CLIMATE_start); k += 1){
+          for (int k = 0; k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start); k += 1){
             for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1){
               
               for (int j = 0; j < max_j_end_forecast; j += 1){
@@ -2579,7 +2579,7 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
   
   println("Post-processing solar components ...");
 
-  int num_count = (1 + CLIMATE_end - CLIMATE_start);
+  int num_count = (1 + CLIMATE_WY2_end - CLIMATE_WY2_start);
   
   for (int k = 0; k < (1 + ENSEMBLE_end - ENSEMBLE_start); k += 1){
     for (int j_for = 0; j_for < max_j_end_forecast; j_for += 1){ 
@@ -3034,12 +3034,12 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
 int try_update_CLIMATE_WY2 () {
   int File_Found = 0;
   
-  CLIMATE_WY2 = new String [24][365][num_layers][(1 + CLIMATE_end - CLIMATE_start)];
+  CLIMATE_WY2 = new String [24][365][num_layers][(1 + CLIMATE_WY2_end - CLIMATE_WY2_start)];
  
   for (int i = 0; i < 24; i += 1){
     for (int j = 0; j < 365; j += 1){
       for (int l = 0; l < num_layers; l += 1){
-        for (int k = 0; k < (1 + CLIMATE_end - CLIMATE_start); k += 1){
+        for (int k = 0; k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start); k += 1){
           CLIMATE_WY2[i][j][l][k] = _undefined;
         }
       }
@@ -3099,7 +3099,7 @@ void SOLARCHVISION_LoadCLIMATE_WY2 (String FileName) {
     
     int i = int(CLIMATE_HOUR) - 1;
     int j = Convert2Date(CLIMATE_MONTH, CLIMATE_DAY);
-    int k = (CLIMATE_YEAR - CLIMATE_start);
+    int k = (CLIMATE_YEAR - CLIMATE_WY2_start);
     
     //println (i);
     
@@ -3148,7 +3148,7 @@ void SOLARCHVISION_LoadCLIMATE_WY2 (String FileName) {
   float T, R_dir, R_dif;
   for (int i = 0; i < 24; i += 1){
     for (int j = 0; j < 365; j += 1){
-      for (int k = 0; k < (1 + CLIMATE_end - CLIMATE_start); k += 1){
+      for (int k = 0; k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start); k += 1){
         Pa = CLIMATE_WY2[i][j][_drybulb][k];
         Pb = CLIMATE_WY2[i][j][_dirnorrad][k];
         Pc = CLIMATE_WY2[i][j][_difhorrad][k];
@@ -3186,8 +3186,8 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
   
   _pix = (100.0 * S_View / level_pix);
   
-  int start_z = CLIMATE_start;
-  int end_z = CLIMATE_end;
+  int start_z = CLIMATE_WY2_start;
+  int end_z = CLIMATE_WY2_end;
   
   switch(H_layer_option) {
     case 1 : start_z = 1953; end_z = 1959; break;
@@ -3220,14 +3220,14 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
 
   float[] _valuesA;
   float[] _valuesB;        
-  _valuesA = new float[((1 + CLIMATE_end - CLIMATE_start) * num_add_days)];
-  _valuesB = new float[((1 + CLIMATE_end - CLIMATE_start) * num_add_days)];
+  _valuesA = new float[((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
+  _valuesB = new float[((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
 
   float[] _valuesSUM;        
   float[] _valuesNUM;
   int _interval = 0;
-  _valuesSUM = new float[((1 + CLIMATE_end - CLIMATE_start) * num_add_days)];
-  _valuesNUM = new float[((1 + CLIMATE_end - CLIMATE_start) * num_add_days)];
+  _valuesSUM = new float[((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
+  _valuesNUM = new float[((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
   
   float[] Ax_LINES = {0};
   float[] Ay_LINES = {0};
@@ -3279,16 +3279,16 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       if ((save_info_norm == 1) && (draw_normals == 1)) File_output_norm[(j - j_start)].print(nf(i,2) + "\t");
       if ((save_info_prob == 1) && (draw_probs == 1)) File_output_prob[(j - j_start)].print(nf(i,2) + "\t");
 
-      for (int k = 0; k < (1 + CLIMATE_end - CLIMATE_start); k += 1){
+      for (int k = 0; k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start); k += 1){
         for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1){
           
           _valuesA[(k * num_add_days + j_ADD)] = FLOAT_undefined;
           _valuesB[(k * num_add_days + j_ADD)] = FLOAT_undefined;
        
-          SET_COLOR_STYLE(COLOR_STYLE, (1.0 * k / (1 + CLIMATE_end - CLIMATE_start)));
+          SET_COLOR_STYLE(COLOR_STYLE, (1.0 * k / (1 + CLIMATE_WY2_end - CLIMATE_WY2_start)));
 
           int _plot = 0;
-          if ((start_z <= (k + CLIMATE_start)) && (end_z >= (k + CLIMATE_start))){
+          if ((start_z <= (k + CLIMATE_WY2_start)) && (end_z >= (k + CLIMATE_WY2_start))){
             _plot = 1;
           }
           
@@ -3339,7 +3339,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
                   else File_output_node[(j - j_start)].print("[undefined]\t");
                 }
 
-                if (next_k < (1 + CLIMATE_end - CLIMATE_start)){
+                if (next_k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start)){
                   Pb = CLIMATE_WY2[next_i][next_j][drw_Layer][next_k];
                   if (Pb.equals(_undefined)){
                     _valuesB[(k * num_add_days + j_ADD)] = FLOAT_undefined;
@@ -3375,7 +3375,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
         
       _interval += 1;        
       if ((_interval % sum_interval) == 0){
-        for (int k = 0; k < (1 + CLIMATE_end - CLIMATE_start); k += 1){
+        for (int k = 0; k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start); k += 1){
           for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1){
             _valuesSUM[(k * num_add_days + j_ADD)] += _valuesA[(k * num_add_days + j_ADD)];
             _valuesNUM[(k * num_add_days + j_ADD)] += 1;
@@ -3386,9 +3386,9 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
           }
         }        
         if (draw_probs == 1){
-          SOLARCHVISION_draw_probabilities(i, j, ((start_z - CLIMATE_start) * num_add_days + 1), ((end_z - CLIMATE_start) * num_add_days + num_add_days), _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+          SOLARCHVISION_draw_probabilities(i, j, ((start_z - CLIMATE_WY2_start) * num_add_days + 1), ((end_z - CLIMATE_WY2_start) * num_add_days + num_add_days), _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
         }
-        for (int k = 0; k < (1 + CLIMATE_end - CLIMATE_start); k += 1){
+        for (int k = 0; k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start); k += 1){
           for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1){
             _valuesSUM[(k * num_add_days + j_ADD)] = 0;
             _valuesNUM[(k * num_add_days + j_ADD)] = 0;
@@ -5005,8 +5005,8 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
       
   if (data_source == 0){
 
-    start_z = CLIMATE_start;
-    end_z = CLIMATE_end;        
+    start_z = CLIMATE_WY2_start;
+    end_z = CLIMATE_WY2_end;        
     
     switch(H_layer_option) {
       case 1 : start_z = 1953; end_z = 1959; break;
@@ -5018,8 +5018,8 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
       case 7 : start_z = Sample_Year; end_z = Sample_Year; break; 
     }
     
-    start_z -= CLIMATE_start - 1;
-    end_z -= CLIMATE_start - 1;
+    start_z -= CLIMATE_WY2_start - 1;
+    end_z -= CLIMATE_WY2_start - 1;
   }
   if (data_source == 1){
 
@@ -5036,7 +5036,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
   }    
   
   int layers_count = 1; 
-  if (data_source == 0) layers_count = (1 + CLIMATE_end - CLIMATE_start);
+  if (data_source == 0) layers_count = (1 + CLIMATE_WY2_end - CLIMATE_WY2_start);
   if (data_source == 1) layers_count = (1 + ENSEMBLE_end - ENSEMBLE_start);  
   
  
@@ -5915,8 +5915,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
   if (impacts_source == 0){
 
-    start_z = CLIMATE_start;
-    end_z = CLIMATE_end;        
+    start_z = CLIMATE_WY2_start;
+    end_z = CLIMATE_WY2_end;        
     
     switch(H_layer_option) {
       case 1 : start_z = 1953; end_z = 1959; break;
@@ -5928,8 +5928,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       case 7 : start_z = Sample_Year; end_z = Sample_Year; break; 
     }
     
-    start_z -= CLIMATE_start - 1;
-    end_z -= CLIMATE_start - 1;
+    start_z -= CLIMATE_WY2_start - 1;
+    end_z -= CLIMATE_WY2_start - 1;
   }
   if (impacts_source == 1){
 
@@ -5946,7 +5946,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   }    
   
   int layers_count = 1; 
-  if (impacts_source == 0) layers_count = (1 + CLIMATE_end - CLIMATE_start);
+  if (impacts_source == 0) layers_count = (1 + CLIMATE_WY2_end - CLIMATE_WY2_start);
   if (impacts_source == 1) layers_count = (1 + ENSEMBLE_end - ENSEMBLE_start);
 
 
@@ -6315,7 +6315,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             Diagrams_textSize(sx_Plot * 0.15 / U_scale);
             
             String scenario_text = "";
-            //if (impacts_source == 0) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_start - 1, 0);
+            //if (impacts_source == 0) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
             //if (impacts_source == 1) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
             my_text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / U_scale, 0);
           }
@@ -6397,7 +6397,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
       
       String scenario_text = "";
-      //if (impacts_source == 0) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_start - 1, 0);
+      //if (impacts_source == 0) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
       //if (impacts_source == 1) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
       my_text(scenario_text, ((j_start - 1) - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / U_scale, 0);
 
@@ -6458,7 +6458,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
       Diagrams_textAlign(RIGHT, CENTER); 
-      //if (impacts_source == 0) my_text(("[" + String.valueOf(start_z + CLIMATE_start - 1) + "-" + String.valueOf(end_z + CLIMATE_start - 1) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
+      //if (impacts_source == 0) my_text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
       //if (impacts_source == 1) //my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
 
       String Model_Description = "";
@@ -6741,7 +6741,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             Diagrams_textSize(sx_Plot * 0.15 / U_scale);
             
             String scenario_text = "";
-            //if (impacts_source == 0) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_start - 1, 0);
+            //if (impacts_source == 0) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
             //if (impacts_source == 1) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
             my_text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95 * sx_Plot / U_scale, 0);
           }
@@ -6752,7 +6752,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       }
       
       String scenario_text = "";
-      //if (impacts_source == 0) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_start - 1, 0);
+      //if (impacts_source == 0) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
       //if (impacts_source == 1) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
       my_text(scenario_text, ((j_start - 1) - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / U_scale, 0);
 
@@ -6808,7 +6808,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
       Diagrams_textAlign(RIGHT, CENTER); 
-      //if (impacts_source == 0) my_text(("[" + String.valueOf(start_z + CLIMATE_start - 1) + "-" + String.valueOf(end_z + CLIMATE_start - 1) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
+      //if (impacts_source == 0) my_text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
       //if (impacts_source == 1) my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
       
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
@@ -7025,7 +7025,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             Diagrams_textSize(sx_Plot * 0.15 / U_scale);
             
             String scenario_text = "";
-            //if (impacts_source == 0) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_start - 1, 0);
+            //if (impacts_source == 0) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
             //if (impacts_source == 1) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
             my_text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95  * sx_Plot / U_scale, 0);
             
@@ -7036,7 +7036,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       }
       
       String scenario_text = "";
-      //if (impacts_source == 0) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_start - 1, 0);
+      //if (impacts_source == 0) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
       //if (impacts_source == 1) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
       my_text(scenario_text, ((j_start - 1) - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / U_scale, 0);
 
@@ -7091,7 +7091,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
       Diagrams_textAlign(RIGHT, CENTER); 
-      //if (impacts_source == 0) my_text(("[" + String.valueOf(start_z + CLIMATE_start - 1) + "-" + String.valueOf(end_z + CLIMATE_start - 1) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
+      //if (impacts_source == 0) my_text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
       //if (impacts_source == 1) //my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
       
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
@@ -7305,7 +7305,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
       Diagrams_textAlign(RIGHT, CENTER); 
-      //if (impacts_source == 0) my_text(("[" + String.valueOf(start_z + CLIMATE_start - 1) + "-" + String.valueOf(end_z + CLIMATE_start - 1) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
+      //if (impacts_source == 0) my_text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
       //if (impacts_source == 1) //my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
       
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
@@ -7466,8 +7466,8 @@ void GRAPHS_keyPressed (){
         case '<' : plot_impacts = (plot_impacts + 1) % 7; redraw_scene = 1; break;
         case '>' : plot_impacts = (plot_impacts + 7 - 1) % 7; redraw_scene = 1; break;
         
-        case 'y' :Sample_Year += 1; if (Sample_Year > CLIMATE_end) Sample_Year = CLIMATE_start; redraw_scene = 1; break; 
-        case 'Y' :Sample_Year -= 1; if (Sample_Year < CLIMATE_start) Sample_Year = CLIMATE_end; redraw_scene = 1; break;
+        case 'y' :Sample_Year += 1; if (Sample_Year > CLIMATE_WY2_end) Sample_Year = CLIMATE_WY2_start; redraw_scene = 1; break; 
+        case 'Y' :Sample_Year -= 1; if (Sample_Year < CLIMATE_WY2_start) Sample_Year = CLIMATE_WY2_end; redraw_scene = 1; break;
         case 'h' :H_layer_option = (H_layer_option + 1) % 8; redraw_scene = 1; break;
         case 'H' :H_layer_option = (H_layer_option + 8 - 1) % 8; redraw_scene = 1; break;
         case 'f' :F_layer_option = (F_layer_option + 1) % 5; redraw_scene = 1; break;
@@ -8219,9 +8219,9 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
         int j = Convert2Date(_MONTH, _DAY);
         int k = -1;
 
-             if (impacts_source == 0) k = Sample_Year - 1;
-        else if (impacts_source == 1) k = Sample_Member - 1;
-        else if (impacts_source == 2) k = Sample_Station - 1;
+             if (impacts_source == 0) k = Sample_Year - CLIMATE_EPW_start;
+        else if (impacts_source == 1) k = Sample_Member - ENSEMBLE_start;
+        else if (impacts_source == 2) k = Sample_Station - OBSERVED_start;
         else if (impacts_source == 3) k = 0;
         
         String Pa = _undefined;
@@ -8321,7 +8321,8 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
     WIN3D_Diagrams.popMatrix();
   }   
  
-  _DATE = previous_DATE; 
+  _DATE = previous_DATE;
+  _update_date();
 } 
 
 
