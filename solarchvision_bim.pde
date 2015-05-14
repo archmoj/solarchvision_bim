@@ -7496,11 +7496,9 @@ void GRAPHS_keyPressed () {
         case 'V' :draw_data_lines = int((draw_data_lines + 1) % 2); redraw_scene = 1; break;
         case 'v' :draw_data_lines = int((draw_data_lines + 1) % 2); redraw_scene = 1; break;
   
-     
         case 'W' :j_end = j_start + 365; println("please wait ..."); redraw_scene = 1; break;
         case 'w' :j_end = j_start + 7; redraw_scene = 1; break;
   
-        
         case '~' :num_add_days += 1;
                   if (num_add_days > 365) num_add_days = 365;
                   redraw_scene = 1; break;
@@ -7533,23 +7531,21 @@ void GRAPHS_keyPressed () {
                   println("sum_interval =", sum_interval);
                   redraw_scene = 1; break;
                   
-        case '1' :sky_scenario = 1; redraw_scene = 1; break;
-        case '2' :sky_scenario = 2; redraw_scene = 1; break;
-        case '3' :sky_scenario = 3; redraw_scene = 1; break;
-        case '4' :sky_scenario = 4; redraw_scene = 1; break;
+        case '!' :sky_scenario = 1; redraw_scene = 1; break;
+        case '@' :sky_scenario = 2; redraw_scene = 1; break;
+        case '#' :sky_scenario = 3; redraw_scene = 1; break;
+        case '$' :sky_scenario = 4; redraw_scene = 1; break;
   
-        case 'R' :_record = int((_record + 1) % 2); println("Record:", _record); redraw_scene = 0; break;
         case 'r' :_record = int((_record + 1) % 2); println("Record:", _record); redraw_scene = 0; break;
-        
-        case ' ' : record_JPG = 1; redraw_scene = 1; break;
+        case 'R' :_record = int((_record + 1) % 2); println("Record:", _record); redraw_scene = 0; break;
+
+        case '\\' : record_JPG = 1; redraw_scene = 1; break;
+        case '/' : record_PDF = 1; record_JPG = 0; redraw_scene = 1; break;        
         
         case '^' : draw_data_lines = 1; save_info_node = 1; record_JPG = 0; redraw_scene = 1; break;
         case '&' : draw_normals = 1; save_info_norm = 1; record_JPG = 0; redraw_scene = 1; break;
         case '%' : draw_probs = 1; save_info_prob = 1; record_JPG = 0; redraw_scene = 1; break;
         
-        case 'p' : record_PDF = 1; record_JPG = 0; redraw_scene = 1; break;
-        case 'P' : record_PDF = 1; record_JPG = 0; redraw_scene = 1; break;
-  
         default: record_JPG = 0; redraw_scene = 0; break;
       }
   
@@ -8358,7 +8354,7 @@ void keyPressed () {
                   WIN3D_RZ_coordinate = 0; 
                   break;
   
-        case '@' :WIN3D_RX_coordinate = 0;
+        case '`' :WIN3D_RX_coordinate = 0;
                   WIN3D_RY_coordinate = 0;
                   WIN3D_RZ_coordinate = 0; 
                   WIN3D_X_coordinate = 0;
@@ -8414,8 +8410,6 @@ void keyPressed () {
         case 'f' :LoadFontStyle(); break;
              
             
-        case '$' :saveFrame("image.jpg"); println("File created."); break;
-        case '#' :saveFrame("image_frame####.jpg"); println("File created."); break;
       }
   
     }
