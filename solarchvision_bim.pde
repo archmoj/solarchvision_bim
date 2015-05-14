@@ -170,7 +170,7 @@ int ENSEMBLE_end = 43; // max: 43
 int OBSERVED_start = 1; 
 int OBSERVED_end = OBSERVED_STATIONS.length;
 
-int Sample_Year = 2000; // 2003 as a year with extreme condition
+int Sample_Year = 2005; // 2003 as a year with extreme condition
 int Sample_Member = 22; // deterministic
 int Sample_Station = 1; // Montreal-Dorval
 
@@ -8217,12 +8217,15 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
         
         int i = HOUR - 1;  // ??????
         int j = Convert2Date(_MONTH, _DAY);
-        int k = 0; // on EPW:TMY files we have only one year 
-        
-        //println(i, j, k); exit();
-        
-        String Pa = _undefined; 
+        int k = -1;
 
+             if (impacts_source == 0) k = Sample_Year - 1;
+        else if (impacts_source == 1) k = Sample_Member - 1;
+        else if (impacts_source == 2) k = Sample_Station - 1;
+        else if (impacts_source == 3) k = 0;
+        
+        String Pa = _undefined;
+        
              if (impacts_source == 0) Pa = CLIMATE_WY2[i][j][_direffect][k];
         else if (impacts_source == 1) Pa = ENSEMBLE[i][j][_direffect][k];
         else if (impacts_source == 2) Pa = OBSERVED[i][j][_direffect][k];
