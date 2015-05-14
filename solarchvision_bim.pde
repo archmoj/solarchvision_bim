@@ -8298,7 +8298,12 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
         
         //println(i, j, k); exit();
         
-        String Pa = CLIMATE_EPW[i][j][_direffect][k];
+        String Pa = _undefined; 
+
+             if (impacts_source == 0) Pa = CLIMATE_WY2[i][j][_direffect][k];
+        else if (impacts_source == 1) Pa = ENSEMBLE[i][j][_direffect][k];
+        else if (impacts_source == 2) Pa = OBSERVED[i][j][_direffect][k];
+        else if (impacts_source == 3) Pa = CLIMATE_EPW[i][j][_direffect][k];
         
         if (Pa.equals(_undefined)){
         }
