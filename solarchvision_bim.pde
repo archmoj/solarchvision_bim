@@ -370,7 +370,7 @@ float obj_offset_x = 0.5;
 PGraphics Diagrams;
 
 int plot_impacts = 0; 
-int impacts_source = 1; // 0 = Climate, 1 = Forecast
+int impacts_source = 1; // 0 = Climate WY2, 1 = Forecast, 2 = Observation, 3 = Climate EPW 
 int impact_layer = 1; // 4 = Median
 int update_impacts = 1; 
 
@@ -1062,7 +1062,7 @@ void GRAPHS_draw () {
 
 
 
-int now_drawing = -1; // -1 : Nothing, 0 : Climate WY2, 1: Forecast, 2: Observed, 3 : Climate EPW 
+int now_drawing = -1; // -1 = Nothing, 0 = Climate WY2, 1 = Forecast, 2 = Observation, 3 = Climate EPW 
 
 void plot_center (float x, float y, float z, float sx, float sy, float sz) {
 
