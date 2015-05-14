@@ -7345,7 +7345,7 @@ void GRAPHS_keyPressed () {
     //println("key: "+key);
     //println("keyCode: "+keyCode); 
     
-    if(key == CODED) { 
+    if (key == CODED) { 
       switch(keyCode) {
         case 112 : develop_option = 1; update_DevelopDATA = 1; redraw_scene = 1; break;
         case 113 : develop_option = 2; update_DevelopDATA = 1; redraw_scene = 1; break;
