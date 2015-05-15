@@ -1076,9 +1076,9 @@ void plot_center (float x, float y, float z, float sx, float sy, float sz) {
   int draw_climate_EPW = 0;  
   
   if (impacts_source == databaseNumber_CLIMATE_WY2) draw_climate_WY2 = 1;
-  if (impacts_source == databaseNumber_ENSEMBLE) draw_forecast = databaseNumber_ENSEMBLE;
-  if (impacts_source == databaseNumber_OBSERVED) draw_observed = databaseNumber_OBSERVED;
-  if (impacts_source == databaseNumber_CLIMATE_EPW) draw_climate_EPW = databaseNumber_CLIMATE_EPW;
+  if (impacts_source == databaseNumber_ENSEMBLE) draw_forecast = 1;
+  if (impacts_source == databaseNumber_OBSERVED) draw_observed = 1;
+  if (impacts_source == databaseNumber_CLIMATE_EPW) draw_climate_EPW = 1;
   
   //////////////////
   draw_observed = 1;
@@ -3666,7 +3666,6 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
 
           int _plot = 0;
           //if ((start_z <= (k + CLIMATE_EPW_start)) && (end_z >= (k + CLIMATE_EPW_start))) { <BEFORE>
-          println(start_z, end_z);
           if ((start_z <= k) && (end_z >= k)) {
             _plot = 1;
           }
@@ -4583,10 +4582,10 @@ void SOLARCHVISION_print_other_info (float sx_Plot, float the_V_belowLine) {
   Diagrams_textSize(sx_Plot * 0.150 / U_scale);
   Diagrams_textAlign(LEFT, CENTER);
 
-  if (impacts_source == databaseNumber_CLIMATE_WY2) my_text((_WORDS[0][_LAN] + ":" + LocationName + "\n(" + nf(CLIMATE_WY2_start, 4) + "-" + nf(CLIMATE_WY2_end, 4) + ")"), -1.5 * sx_Plot / U_scale, (0.3 + the_V_belowLine) * sx_Plot / U_scale, 0);
+  if (impacts_source == databaseNumber_CLIMATE_EPW) my_text((_WORDS[0][_LAN] + ":" + LocationName + "\n"), -1.5 * sx_Plot / U_scale, (0.3 + the_V_belowLine) * sx_Plot / U_scale, 0);
+  if (impacts_source == databaseNumber_CLIMATE_WY2) my_text((_WORDS[0][_LAN] + ":" + LocationName + "\n("), -1.5 * sx_Plot / U_scale, (0.3 + the_V_belowLine) * sx_Plot / U_scale, 0);
   if (impacts_source == databaseNumber_ENSEMBLE)    my_text((_WORDS[0][_LAN] + ":" + LocationName + "\n(" + nf(_YEAR, 4) + "_" + nf(_MONTH, 2) + "_" + nf(_DAY, 2) + "_" + nf(_HOUR, 2) + ")"), -1.5 * sx_Plot / U_scale, (0.3 + the_V_belowLine) * sx_Plot / U_scale, 0);
   if (impacts_source == databaseNumber_OBSERVED)    my_text((_WORDS[0][_LAN] + ":" + LocationName + "\n(" + nf(_YEAR, 4) + "_" + nf(_MONTH, 2) + "_" + nf(_DAY, 2) + "_" + nf(_HOUR, 2) + ")"), -1.5 * sx_Plot / U_scale, (0.3 + the_V_belowLine) * sx_Plot / U_scale, 0);
-  if (impacts_source == databaseNumber_CLIMATE_EPW) my_text((_WORDS[0][_LAN] + ":" + LocationName + "\n(Typical Year)"),                                                                 -1.5 * sx_Plot / U_scale, (0.3 + the_V_belowLine) * sx_Plot / U_scale, 0);
 
   switch(sky_scenario) {
     case 1 : Diagrams_stroke(0,0,0); Diagrams_fill(0,0,0); break;
