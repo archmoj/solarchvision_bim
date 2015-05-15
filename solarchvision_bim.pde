@@ -8197,7 +8197,7 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
   WIN3D_Diagrams.line(0, -1 * s_SunPath, 0, 0, 1 * s_SunPath, 0);
 
   WIN3D_Diagrams.stroke(255, 255, 0);
-
+  
   int pre_num_add_days = num_add_days;
   if (impacts_source == 1) num_add_days = 1;
   
