@@ -3275,7 +3275,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
           SET_COLOR_STYLE(COLOR_STYLE, (1.0 * k / (1 + CLIMATE_WY2_end - CLIMATE_WY2_start)));
 
           int _plot = 0;
-          //if ((start_z <= (k + CLIMATE_WY2_start)) && (end_z >= (k + CLIMATE_WY2_start))) { <BEFORE>
+          
           if ((start_z <= k) && (end_z >= k)) {
             _plot = 1;
           }
@@ -3491,7 +3491,7 @@ void SOLARCHVISION_LoadCLIMATE_EPW (String FileName) {
     
     //println(i);
     
-    CLIMATE_EPW[i][j][_pressure][k] = parts[9]; // in Pa
+    CLIMATE_EPW[i][j][_pressure][k] = String.valueOf(float(parts[9]) * 0.01); // 10 times in Pa
     CLIMATE_EPW[i][j][_drybulb][k] = parts[6]; // in °C
     CLIMATE_EPW[i][j][_relhum][k] = parts[8]; // 0 - 110%
     CLIMATE_EPW[i][j][_glohorrad][k] = parts[13]; // Wh/m²
@@ -3665,10 +3665,10 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
           SET_COLOR_STYLE(COLOR_STYLE, (1.0 * k / (1 + CLIMATE_EPW_end - CLIMATE_EPW_start)));
 
           int _plot = 0;
-          //if ((start_z <= (k + CLIMATE_EPW_start)) && (end_z >= (k + CLIMATE_EPW_start))) { <BEFORE>
-          if ((start_z <= k) && (end_z >= k)) {
+
+          //if ((start_z <= k + 1) && (end_z >= k + 1)) {
             _plot = 1;
-          }
+          //}
           
           if (_plot == 1) {
             
