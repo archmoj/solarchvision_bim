@@ -9,8 +9,8 @@ int automated = 0; //0: User interface, 1: Automatic
 
 
 String CLIMATE_EPW_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW";
-String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_EMPTY"; 
-//String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_90s"; 
+//String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_EMPTY"; 
+String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_90s"; 
 //String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED";
 
 String ENSEMBLE_directory = "C:/SOLARCHVISION_2015/Input/WeatherForecast/FORECAST_NAEFS";
@@ -136,8 +136,8 @@ int j_end = 8; //6; //16; // Variable
 int max_j_end_forecast = 16; // Constant
 int max_j_end_observed = 0; // Variable
 
-float per_day = 1; //61; //30.5;
-int num_add_days = 1; //30;//per_day; // it should be set up to 1 in order to plot only one day  
+float per_day = 45; //61; //30.5;
+int num_add_days = 15; //30;//per_day; // it should be set up to 1 in order to plot only one day  
 
 // Note: The first observed station below should match the forecast station because the non-linear interpolation function only uses this station.
 String[][] OBSERVED_STATIONS = {
@@ -370,7 +370,7 @@ float obj_offset_x = 0.5;
 PGraphics Diagrams;
 
 int plot_impacts = 0; 
-int impacts_source = 1; // 0 = Climate WY2, 1 = Forecast, 2 = Observation, 3 = Climate EPW 
+int impacts_source = 0; // 0 = Climate WY2, 1 = Forecast, 2 = Observation, 3 = Climate EPW 
 int impact_layer = 1; // 4 = Median
 int update_impacts = 1; 
 
@@ -7542,7 +7542,7 @@ void GRAPHS_keyPressed () {
         case 'R' :_record = int((_record + 1) % 2); println("Record:", _record); redraw_scene = 0; break;
 
         case '\\' : record_JPG = 1; redraw_scene = 1; break;
-        case '/' : record_PDF = 1; record_JPG = 0; redraw_scene = 1; break;        
+        case '?' : record_PDF = 1; record_JPG = 0; redraw_scene = 1; break;        
         
         case '^' : draw_data_lines = 1; save_info_node = 1; record_JPG = 0; redraw_scene = 1; break;
         case '&' : draw_normals = 1; save_info_norm = 1; record_JPG = 0; redraw_scene = 1; break;
@@ -8189,7 +8189,7 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
   WIN3D_Diagrams.pushMatrix();
   WIN3D_Diagrams.translate(x_SunPath, y_SunPath, z_SunPath);
 
-  WIN3D_Diagrams.strokeWeight(1);
+  WIN3D_Diagrams.strokeWeight(3); // <<<<<<<
   WIN3D_Diagrams.stroke(0, 0, 0);
   WIN3D_Diagrams.fill(0, 0, 0);
   
@@ -8281,6 +8281,8 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
       }
    
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
+      
+      println(j, now_j, DATE_ANGLE);
      
       float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
       float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
@@ -8289,9 +8291,6 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
       Normals_COL_N = new int[9];
       Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
       
-      //println("j =", j);
-      //println(Normals_COL_N);
-  
       for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
         if (nk != -1) {
           int k = int(nk / num_add_days);
@@ -8360,6 +8359,7 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
     }
   }  
 
+  WIN3D_Diagrams.strokeWeight(1);
   WIN3D_Diagrams.stroke(0);
   
   for (int j = 90; j <= 270; j += 30) {
@@ -8479,12 +8479,12 @@ void keyPressed () {
         case '6' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; break;      
         case '8' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; break;
   
-        case '{' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; break;
-        case '}' :WIN3D_RX_coordinate += WIN3D_RS_coordinate; break;
-        case '(' :WIN3D_RY_coordinate -= WIN3D_RS_coordinate; break;
-        case ')' :WIN3D_RY_coordinate += WIN3D_RS_coordinate; break;
-        case '[' :WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; break;
-        case ']' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; break;
+        //case '{' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; break;
+        //case '}' :WIN3D_RX_coordinate += WIN3D_RS_coordinate; break;
+        //case '(' :WIN3D_RY_coordinate -= WIN3D_RS_coordinate; break;
+        //case ')' :WIN3D_RY_coordinate += WIN3D_RS_coordinate; break;
+        //case '[' :WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; break;
+        //case ']' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; break;
   
         case '*' :objects_scale *= 2.0; break;
         case '/' :objects_scale /= 2.0; break;
