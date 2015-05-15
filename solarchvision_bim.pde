@@ -137,7 +137,7 @@ int max_j_end_forecast = 16; // Constant
 int max_j_end_observed = 0; // Variable
 
 float per_day = 45; //61; //30.5;
-int num_add_days = 15; //30;//per_day; // it should be set up to 1 in order to plot only one day  
+int num_add_days = 1; //30;//per_day; // it should be set up to 1 in order to plot only one day  
 
 // Note: The first observed station below should match the forecast station because the non-linear interpolation function only uses this station.
 String[][] OBSERVED_STATIONS = {
@@ -559,15 +559,14 @@ void setup () {
 
 
 void draw () {
-  
- 
+
+
   if (GRAPHS_Update == 1) {
     
     GRAPHS_draw();
     
     GRAPHS_Update = 0;
   }
- 
   
   if (WORLD_Update == 1) {
   
@@ -5910,7 +5909,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   Diagrams_translate(x_Plot, y_Plot);
 
   int pre_num_add_days = num_add_days;
-  if (impacts_source == 1) num_add_days = 1;
+  if ((impacts_source == 1) || (impacts_source == 2)) num_add_days = 1;
   
   int start_z = 0;
   int end_z = 0;        
@@ -7349,6 +7348,7 @@ void GRAPHS_keyPressed () {
     
     if (key == CODED) { 
       switch(keyCode) {
+        /*
         case 112 : develop_option = 1; update_DevelopDATA = 1; redraw_scene = 1; break;
         case 113 : develop_option = 2; update_DevelopDATA = 1; redraw_scene = 1; break;
         case 114 : develop_option = 3; update_DevelopDATA = 1; redraw_scene = 1; break;
@@ -7361,6 +7361,12 @@ void GRAPHS_keyPressed () {
         case 121 : develop_option = 10; update_DevelopDATA = 1; redraw_scene = 1; break;
         case 122 : develop_option = 11; update_DevelopDATA = 1; redraw_scene = 1; break;
         case 123 : develop_option = 12; update_DevelopDATA = 1; redraw_scene = 1; break;
+        */
+        
+        case 112 : impacts_source = 1; redraw_scene = 1; break;
+        case 113 : impacts_source = 2; redraw_scene = 1; break;
+        case 114 : impacts_source = 3; redraw_scene = 1; break;
+        case 115 : impacts_source = 0; redraw_scene = 1; break;
         
         case 35  :_DATE += 1;
                   if (int(_DATE) == 365) _DATE -= 365;
@@ -7413,11 +7419,27 @@ void GRAPHS_keyPressed () {
         case ']' :j_end += 1; 
                   if (j_end > j_start + 61) j_end -= 1;
                   U_scale = 18.0 / (j_end - j_start);
+                  
+                  if ((impacts_source == 0) || (impacts_source == 3)) { 
+                    per_day = int(365 / float(1 + j_end - j_start));
+                  } 
+                  if ((impacts_source == 1) || (impacts_source == 2)) {
+                    per_day = 1;
+                  }
+                  
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break;      
         case '[' :j_end -= 1; 
                   if (j_end <= j_start) j_end += 1;
                   U_scale = 18.0 / (j_end - j_start);
+                  
+                  if ((impacts_source == 0) || (impacts_source == 3)) { 
+                    per_day = int(365 / float(1 + j_end - j_start));
+                  } 
+                  if ((impacts_source == 1) || (impacts_source == 2)) {
+                    per_day = 1;
+                  }                  
+                  
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break;
   
@@ -8199,7 +8221,7 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
   WIN3D_Diagrams.stroke(255, 255, 0);
   
   int pre_num_add_days = num_add_days;
-  if (impacts_source == 1) num_add_days = 1;
+  if ((impacts_source == 1) || (impacts_source == 2)) num_add_days = 1;
   
   int start_z = 0;
   int end_z = 0;        
@@ -8261,6 +8283,7 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
   if (impacts_source == 3) layers_count = 1;
   
   for (int p = 0; p < 1; p += 1) { 
+    
     int l = impact_layer;
   
     int DATE_step = 1;
@@ -8282,7 +8305,7 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
    
       float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
       
-      println(j, now_j, DATE_ANGLE);
+      //println(j, now_j, DATE_ANGLE);
      
       float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
       float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
