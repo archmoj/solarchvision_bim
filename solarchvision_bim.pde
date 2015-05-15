@@ -135,7 +135,7 @@ int j_start = 0;
 int j_end = 8; //6; //16; // Variable
 
 int max_j_end_forecast = 16; // Constant
-int max_j_end_observed = 4; // Variable
+int max_j_end_observed = 0; // Variable
 
 float per_day = 1; //45; //61; //30.5;
 int num_add_days = 1; //30;//per_day; // it should be set up to 1 in order to plot only one day  
@@ -401,7 +401,7 @@ int variation = 2;
 
 int draw_data_lines = 0;
 int draw_sorted = 1;
-int draw_normals = 0;
+int draw_normals = 1;
 int draw_probs = 0;
 int sum_interval = 2;
 float level_pix = 8;
@@ -559,7 +559,6 @@ void setup () {
 
 
 void draw () {
-
 
   if (GRAPHS_Update == 1) {
     
@@ -7576,8 +7575,12 @@ void GRAPHS_keyPressed () {
   
     }
     
-    redraw();
+    //redraw();
+    if (redraw_scene == 1) {
+      GRAPHS_Update = 1;
+    }
   }
+  
 }
 
 
@@ -8399,7 +8402,6 @@ void keyPressed () {
 
   //if (GRAPHS_command == 1) {
     GRAPHS_keyPressed();
-    GRAPHS_Update = 1;
   //} else {
     
     //println("key: " + key);
