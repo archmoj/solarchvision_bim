@@ -373,7 +373,7 @@ int databaseNumber_CLIMATE_WY2 = 0;
 int databaseNumber_ENSEMBLE = 1;
 int databaseNumber_OBSERVED = 2;
 int databaseNumber_CLIMATE_EPW = 3;
-int impacts_source = 0; // 0 = Climate WY2, 1 = Forecast, 2 = Observation, 3 = Climate EPW 
+int impacts_source = 3; // 0 = Climate WY2, 1 = Forecast, 2 = Observation, 3 = Climate EPW 
 
 int impact_layer = 1; // 4 = Median
 int plot_impacts = 0; 
@@ -1076,9 +1076,9 @@ void plot_center (float x, float y, float z, float sx, float sy, float sz) {
   int draw_climate_EPW = 0;  
   
   if (impacts_source == databaseNumber_CLIMATE_WY2) draw_climate_WY2 = 1;
-  if (impacts_source == 1) draw_forecast = databaseNumber_ENSEMBLE;
-  if (impacts_source == 2) draw_observed = databaseNumber_OBSERVED;
-  if (impacts_source == 3) draw_climate_EPW = databaseNumber_CLIMATE_EPW;
+  if (impacts_source == databaseNumber_ENSEMBLE) draw_forecast = databaseNumber_ENSEMBLE;
+  if (impacts_source == databaseNumber_OBSERVED) draw_observed = databaseNumber_OBSERVED;
+  if (impacts_source == databaseNumber_CLIMATE_EPW) draw_climate_EPW = databaseNumber_CLIMATE_EPW;
   
   //////////////////
   draw_observed = 1;
@@ -1127,7 +1127,7 @@ void plot_center (float x, float y, float z, float sx, float sy, float sz) {
 void Plot_Setup () {
 
   if (_setup == -2) {
-    if (impacts_source == 1) {
+    if (impacts_source == databaseNumber_ENSEMBLE) {
       pre_DATE = _DATE;
       int pre_BEGIN_DAY = BEGIN_DAY;
       int delta = 4;
@@ -1167,7 +1167,7 @@ void Plot_Setup () {
   if (_setup == -1) {
     pre_impacts_source = impacts_source;
     
-    impacts_source = 1;    
+    impacts_source = databaseNumber_ENSEMBLE;    
 
     draw_sorted = 0;
     draw_normals = 0;
@@ -1181,7 +1181,7 @@ void Plot_Setup () {
     draw_probs = 0;    
     plot_center(0,175 * S_View,0,(100.0 * U_scale * S_View),(-1.0 * V_scale[drw_Layer] * S_View),1.0 * S_View);
 
-    impacts_source = 0;
+    impacts_source = databaseNumber_CLIMATE_WY2;
     
     draw_sorted = 0;
     draw_normals = 0;
@@ -1201,7 +1201,7 @@ void Plot_Setup () {
   
   
   if (_setup == 0) {
-    if (impacts_source == 0) {
+    if (impacts_source == databaseNumber_CLIMATE_WY2) {
       int pre_H_layer_option = H_layer_option;
       
       H_layer_option = 3;
@@ -1218,7 +1218,7 @@ void Plot_Setup () {
       
       H_layer_option = pre_H_layer_option;
     }       
-    if (impacts_source == 1) {
+    if (impacts_source == databaseNumber_ENSEMBLE) {
       int pre_F_layer_option = F_layer_option;
       
       F_layer_option = 4;
@@ -2422,15 +2422,15 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
                 else {
                   _valuesO[i][j][(k * num_add_days + j_ADD)] = Float.valueOf(Pa);
                   
-                  if (SOLARCHVISION_filter("CLIMATE", _cloudcover, _daily, 2, i, now_j, k) == 1) {
+                  if (SOLARCHVISION_filter("CLIMATE_WY2", _cloudcover, _daily, 2, i, now_j, k) == 1) {
                     _valuesO_overcast[i][j][(k * num_add_days + j_ADD)] = Float.valueOf(Pa);
                   }
                   
-                  if (SOLARCHVISION_filter("CLIMATE", _cloudcover, _daily, 3, i, now_j, k) == 1) {
+                  if (SOLARCHVISION_filter("CLIMATE_WY2", _cloudcover, _daily, 3, i, now_j, k) == 1) {
                     _valuesO_scattered[i][j][(k * num_add_days + j_ADD)] = Float.valueOf(Pa);
                   }
                   
-                  if (SOLARCHVISION_filter("CLIMATE", _cloudcover, _daily, 4, i, now_j, k) == 1) {
+                  if (SOLARCHVISION_filter("CLIMATE_WY2", _cloudcover, _daily, 4, i, now_j, k) == 1) {
                     _valuesO_clear[i][j][(k * num_add_days + j_ADD)] = Float.valueOf(Pa);
                   }                  
                 }
@@ -2783,7 +2783,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
   
     Diagrams_textSize(sx_Plot * 0.150 / U_scale);
     Diagrams_textAlign(RIGHT, CENTER); 
-    //my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, (0.3 + V_belowLine[drw_Layer]) * sx_Plot / U_scale, 0);
+    my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, (0.3 + V_belowLine[drw_Layer]) * sx_Plot / U_scale, 0);
 
     Diagrams_textSize(sx_Plot * 0.150 / U_scale);
     Diagrams_textAlign(LEFT, CENTER);    
@@ -3194,7 +3194,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
     
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
       Diagrams_textAlign(RIGHT, CENTER);
-      //my_text(("[" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, (0.3 + V_belowLine[drw_Layer]) * sx_Plot / U_scale, 0);
+      my_text(("[" + String.valueOf(start_z + CLIMATE_WY2_start) + "-" + String.valueOf(end_z + CLIMATE_WY2_start) + "] "), 0, (0.3 + V_belowLine[drw_Layer]) * sx_Plot / U_scale, 0);
   
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
       Diagrams_textAlign(LEFT, CENTER);    
@@ -3235,7 +3235,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
         _FileNameAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
     }
     if ((save_info_node == 1) && (draw_data_lines == 1)) {
-      File_output_node[(j - j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
+      File_output_node[(j - j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
       File_output_node[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
 
       File_output_node[(j - j_start)].print("Hour:\t");
@@ -3245,7 +3245,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_node[(j - j_start)].println("");
     }
     if ((save_info_norm == 1) && (draw_normals == 1)) {
-      File_output_norm[(j - j_start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
+      File_output_norm[(j - j_start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
       File_output_norm[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
       File_output_norm[(j - j_start)].print("Hour:\t");
       for (int l = 0; l < 9; l += 1) {
@@ -3254,7 +3254,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_norm[(j - j_start)].println("");
     }
     if ((save_info_prob == 1) && (draw_probs == 1)) {
-      File_output_prob[(j - j_start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
+      File_output_prob[(j - j_start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
       File_output_prob[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
 
       File_output_prob[(j - j_start)].print("Hour:\t");
@@ -3313,7 +3313,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
               if ((save_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("[undefined]\t");
             }
             else {
-              int drw_count = SOLARCHVISION_filter("CLIMATE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+              int drw_count = SOLARCHVISION_filter("CLIMATE_WY2", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
 
               if (drw_count == 1) {
                 _valuesA[(k * num_add_days + j_ADD)] = float(Pa);
@@ -3584,7 +3584,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
     
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
       Diagrams_textAlign(RIGHT, CENTER);
-      //my_text(("[" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, (0.3 + V_belowLine[drw_Layer]) * sx_Plot / U_scale, 0);
+      my_text(("[Typical Year] "), 0, (0.3 + V_belowLine[drw_Layer]) * sx_Plot / U_scale, 0);
   
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
       Diagrams_textAlign(LEFT, CENTER);    
@@ -3625,7 +3625,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
         _FileNameAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
     }
     if ((save_info_node == 1) && (draw_data_lines == 1)) {
-      File_output_node[(j - j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
+      File_output_node[(j - j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
       File_output_node[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
 
       File_output_node[(j - j_start)].print("Hour:\t");
@@ -3635,7 +3635,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_node[(j - j_start)].println("");
     }
     if ((save_info_norm == 1) && (draw_normals == 1)) {
-      File_output_norm[(j - j_start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
+      File_output_norm[(j - j_start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
       File_output_norm[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
       File_output_norm[(j - j_start)].print("Hour:\t");
       for (int l = 0; l < 9; l += 1) {
@@ -3644,7 +3644,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_norm[(j - j_start)].println("");
     }
     if ((save_info_prob == 1) && (draw_probs == 1)) {
-      File_output_prob[(j - j_start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
+      File_output_prob[(j - j_start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
       File_output_prob[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
 
       File_output_prob[(j - j_start)].print("Hour:\t");
@@ -3666,6 +3666,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
 
           int _plot = 0;
           //if ((start_z <= (k + CLIMATE_EPW_start)) && (end_z >= (k + CLIMATE_EPW_start))) { <BEFORE>
+          println(start_z, end_z);
           if ((start_z <= k) && (end_z >= k)) {
             _plot = 1;
           }
@@ -4581,10 +4582,11 @@ void SOLARCHVISION_print_other_info (float sx_Plot, float the_V_belowLine) {
   Diagrams_fill(0);
   Diagrams_textSize(sx_Plot * 0.150 / U_scale);
   Diagrams_textAlign(LEFT, CENTER);
-  
-  if (impacts_source == 0) my_text((_WORDS[0][_LAN] + ":" + LocationName + "\n(" + nf(CLIMATE_WY2_start, 4) + "-" + nf(CLIMATE_WY2_end, 4) + ")"), -1.5 * sx_Plot / U_scale, (0.3 + the_V_belowLine) * sx_Plot / U_scale, 0);
-  if (impacts_source == 1) my_text((_WORDS[0][_LAN] + ":" + LocationName + "\n(" + nf(_YEAR, 4) + "_" + nf(_MONTH, 2) + "_" + nf(_DAY, 2) + "_" + nf(_HOUR, 2) + ")"), -1.5 * sx_Plot / U_scale, (0.3 + the_V_belowLine) * sx_Plot / U_scale, 0);
-  if (impacts_source == 3) my_text((_WORDS[0][_LAN] + ":" + LocationName + "\n(Typical Year)"),                                                                 -1.5 * sx_Plot / U_scale, (0.3 + the_V_belowLine) * sx_Plot / U_scale, 0);
+
+  if (impacts_source == databaseNumber_CLIMATE_WY2) my_text((_WORDS[0][_LAN] + ":" + LocationName + "\n(" + nf(CLIMATE_WY2_start, 4) + "-" + nf(CLIMATE_WY2_end, 4) + ")"), -1.5 * sx_Plot / U_scale, (0.3 + the_V_belowLine) * sx_Plot / U_scale, 0);
+  if (impacts_source == databaseNumber_ENSEMBLE)    my_text((_WORDS[0][_LAN] + ":" + LocationName + "\n(" + nf(_YEAR, 4) + "_" + nf(_MONTH, 2) + "_" + nf(_DAY, 2) + "_" + nf(_HOUR, 2) + ")"), -1.5 * sx_Plot / U_scale, (0.3 + the_V_belowLine) * sx_Plot / U_scale, 0);
+  if (impacts_source == databaseNumber_OBSERVED)    my_text((_WORDS[0][_LAN] + ":" + LocationName + "\n(" + nf(_YEAR, 4) + "_" + nf(_MONTH, 2) + "_" + nf(_DAY, 2) + "_" + nf(_HOUR, 2) + ")"), -1.5 * sx_Plot / U_scale, (0.3 + the_V_belowLine) * sx_Plot / U_scale, 0);
+  if (impacts_source == databaseNumber_CLIMATE_EPW) my_text((_WORDS[0][_LAN] + ":" + LocationName + "\n(Typical Year)"),                                                                 -1.5 * sx_Plot / U_scale, (0.3 + the_V_belowLine) * sx_Plot / U_scale, 0);
 
   switch(sky_scenario) {
     case 1 : Diagrams_stroke(0,0,0); Diagrams_fill(0,0,0); break;
@@ -5033,10 +5035,10 @@ int[] get_startZ_endZ (int data_source) {
 
 
 
-  if (impacts_source == 0) layers_count = (1 + CLIMATE_WY2_end - CLIMATE_WY2_start);
-  if (impacts_source == 1) layers_count = (1 + ENSEMBLE_end - ENSEMBLE_start);  
-  if (impacts_source == 2) layers_count = (1 + OBSERVED_end - OBSERVED_start);
-  if (impacts_source == 3) layers_count = 1;
+  if (impacts_source == databaseNumber_CLIMATE_WY2) layers_count = (1 + CLIMATE_WY2_end - CLIMATE_WY2_start);
+  if (impacts_source == databaseNumber_ENSEMBLE) layers_count = (1 + ENSEMBLE_end - ENSEMBLE_start);  
+  if (impacts_source == databaseNumber_OBSERVED) layers_count = (1 + OBSERVED_end - OBSERVED_start);
+  if (impacts_source == databaseNumber_CLIMATE_EPW) layers_count = 1;
   
   a[0] = start_z;
   a[1] = end_z;
@@ -5765,7 +5767,8 @@ int SOLARCHVISION_filter (String data_type, int _cloudcover, int type_of_filter,
   for (int q = start_q; q <= end_q; q += 1) {
     String _sky = _undefined;
     if (data_type.equals("ENSEMBLE")) _sky = ENSEMBLE[q][now_j][_cloudcover][now_k];
-    if (data_type.equals("CLIMATE")) _sky = CLIMATE_WY2[q][now_j][_cloudcover][now_k];
+    if (data_type.equals("CLIMATE_WY2")) _sky = CLIMATE_WY2[q][now_j][_cloudcover][now_k];
+    if (data_type.equals("CLIMATE_EPW")) _sky = CLIMATE_EPW[q][now_j][_cloudcover][now_k];
     
     if (_sky.equals(_undefined)) {
     }
@@ -5864,26 +5867,39 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int layers_count, int start_z, int 
          now_j = (now_j + 365) % 365; 
         }
         
-        if (impacts_source == 0) {
+        if (impacts_source == databaseNumber_CLIMATE_WY2) {
             Pa = CLIMATE_WY2[now_i][now_j][_dirnorrad][now_k]; 
             Pb = CLIMATE_WY2[now_i][now_j][_difhorrad][now_k]; 
             Pc = CLIMATE_WY2[now_i][now_j][_direffect][now_k]; 
             Pd = CLIMATE_WY2[now_i][now_j][_difeffect][now_k]; 
         }
-        if (impacts_source == 1) {
+        if (impacts_source == databaseNumber_ENSEMBLE) {
             Pa = ENSEMBLE[now_i][now_j][_dirnorrad][now_k]; 
             Pb = ENSEMBLE[now_i][now_j][_difhorrad][now_k]; 
             Pc = ENSEMBLE[now_i][now_j][_direffect][now_k]; 
             Pd = ENSEMBLE[now_i][now_j][_difeffect][now_k]; 
         }            
-    
+        if (impacts_source == databaseNumber_OBSERVED) {
+            Pa = OBSERVED[now_i][now_j][_dirnorrad][now_k]; 
+            Pb = OBSERVED[now_i][now_j][_difhorrad][now_k]; 
+            Pc = OBSERVED[now_i][now_j][_direffect][now_k]; 
+            Pd = OBSERVED[now_i][now_j][_difeffect][now_k]; 
+        }   
+        if (impacts_source == databaseNumber_CLIMATE_EPW) {
+            Pa = CLIMATE_EPW[now_i][now_j][_dirnorrad][now_k]; 
+            Pb = CLIMATE_EPW[now_i][now_j][_difhorrad][now_k]; 
+            Pc = CLIMATE_EPW[now_i][now_j][_direffect][now_k]; 
+            Pd = CLIMATE_EPW[now_i][now_j][_difeffect][now_k]; 
+        }   
+        
         if ((Pa.equals(_undefined)) || (Pb.equals(_undefined)) || (Pc.equals(_undefined)) || (Pd.equals(_undefined))) {
         }
         else {
     
           int drw_count = 0;
-          if (impacts_source == 0) drw_count = SOLARCHVISION_filter("CLIMATE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
-          if (impacts_source == 1) drw_count = SOLARCHVISION_filter("ENSEMBLE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+          if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+          if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+          if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
           
           if (drw_count == 1) {
             _values_R_dir = 0.001 * float(Pa);
@@ -5919,7 +5935,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   Diagrams_translate(x_Plot, y_Plot);
 
   int pre_num_add_days = num_add_days;
-  if ((impacts_source == 1) || (impacts_source == 2)) num_add_days = 1;
+  if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) num_add_days = 1;
   
   int start_z = get_startZ_endZ(impacts_source)[0];
   int end_z = get_startZ_endZ(impacts_source)[1];  
@@ -6072,13 +6088,13 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                now_j = (now_j + 365) % 365; 
               }
   
-              if (impacts_source == 0) {
+              if (impacts_source == databaseNumber_CLIMATE_WY2) {
                   Pa = CLIMATE_WY2[now_i][now_j][_dirnorrad][now_k]; 
                   Pb = CLIMATE_WY2[now_i][now_j][_difhorrad][now_k]; 
                   Pc = CLIMATE_WY2[now_i][now_j][_direffect][now_k]; 
                   Pd = CLIMATE_WY2[now_i][now_j][_difeffect][now_k]; 
               }
-              if (impacts_source == 1) {
+              if (impacts_source == databaseNumber_ENSEMBLE) {
                   Pa = ENSEMBLE[now_i][now_j][_dirnorrad][now_k]; 
                   Pb = ENSEMBLE[now_i][now_j][_difhorrad][now_k]; 
                   Pc = ENSEMBLE[now_i][now_j][_direffect][now_k]; 
@@ -6094,8 +6110,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               else {
   
                 int drw_count = 0;
-                if (impacts_source == 0) drw_count = SOLARCHVISION_filter("CLIMATE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
-                if (impacts_source == 1) drw_count = SOLARCHVISION_filter("ENSEMBLE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
                 
                 if (drw_count == 1) {
                   _values_R_dir = 0.001 * float(Pa);
@@ -6287,14 +6304,14 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             Diagrams_textSize(sx_Plot * 0.15 / U_scale);
             
             String scenario_text = "";
-            //if (impacts_source == 0) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
-            //if (impacts_source == 1) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+            //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
+            //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
             my_text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / U_scale, 0);
           }
         }
       }
 
-      if (impacts_source == 0) { // we can also remark this to calculate the results using forecast but it is more useful for climate to present annual values.
+      if (impacts_source == databaseNumber_CLIMATE_WY2) { // we can also remark this to calculate the results using forecast but it is more useful for climate to present annual values.
         total_Image_RGBA.loadPixels();
         
         for (int np = 0; np < (RES1 * RES2); np++) {
@@ -6369,8 +6386,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
       
       String scenario_text = "";
-      //if (impacts_source == 0) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
-      //if (impacts_source == 1) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+      //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
+      //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
       my_text(scenario_text, ((j_start - 1) - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / U_scale, 0);
 
       Diagrams_textSize(sx_Plot * 0.15 / U_scale);
@@ -6430,8 +6447,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
       Diagrams_textAlign(RIGHT, CENTER); 
-      //if (impacts_source == 0) my_text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
-      //if (impacts_source == 1) //my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
+      //if (impacts_source == databaseNumber_CLIMATE_WY2) my_text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
+      //if (impacts_source == databaseNumber_ENSEMBLE) //my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
 
       String Model_Description = "";
       //if (variation == 1) Model_Description = "TR: Place-des-Arts";
@@ -6567,13 +6584,13 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                    now_j = (now_j + 365) % 365; 
                   }
 
-                  if (impacts_source == 0) {
+                  if (impacts_source == databaseNumber_CLIMATE_WY2) {
                       Pa = CLIMATE_WY2[now_i][now_j][_dirnorrad][now_k]; 
                       Pb = CLIMATE_WY2[now_i][now_j][_difhorrad][now_k]; 
                       Pc = CLIMATE_WY2[now_i][now_j][_direffect][now_k]; 
                       Pd = CLIMATE_WY2[now_i][now_j][_difeffect][now_k]; 
                   }
-                  if (impacts_source == 1) {
+                  if (impacts_source == databaseNumber_ENSEMBLE) {
                       Pa = ENSEMBLE[now_i][now_j][_dirnorrad][now_k]; 
                       Pb = ENSEMBLE[now_i][now_j][_difhorrad][now_k]; 
                       Pc = ENSEMBLE[now_i][now_j][_direffect][now_k]; 
@@ -6589,8 +6606,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   else {
   
                     int drw_count = 0;
-                    if (impacts_source == 0) drw_count = SOLARCHVISION_filter("CLIMATE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
-                    if (impacts_source == 1) drw_count = SOLARCHVISION_filter("ENSEMBLE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                    if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                    if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                    if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
                     
                     
                     if (drw_count == 1) {
@@ -6713,8 +6731,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             Diagrams_textSize(sx_Plot * 0.15 / U_scale);
             
             String scenario_text = "";
-            //if (impacts_source == 0) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
-            //if (impacts_source == 1) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+            //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
+            //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
             my_text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95 * sx_Plot / U_scale, 0);
           }
         }
@@ -6724,8 +6742,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       }
       
       String scenario_text = "";
-      //if (impacts_source == 0) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
-      //if (impacts_source == 1) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+      //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
+      //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
       my_text(scenario_text, ((j_start - 1) - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / U_scale, 0);
 
       Diagrams_textSize(sx_Plot * 0.15 / U_scale);
@@ -6780,8 +6798,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
       Diagrams_textAlign(RIGHT, CENTER); 
-      //if (impacts_source == 0) my_text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
-      //if (impacts_source == 1) my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
+      //if (impacts_source == databaseNumber_CLIMATE_WY2) my_text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
+      //if (impacts_source == databaseNumber_ENSEMBLE) my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
       
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
       Diagrams_textAlign(LEFT, TOP);  
@@ -6907,13 +6925,13 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                  now_j = (now_j + 365) % 365; 
                 }
 
-                if (impacts_source == 0) {
+                if (impacts_source == databaseNumber_CLIMATE_WY2) {
                     Pa = CLIMATE_WY2[now_i][now_j][_dirnorrad][now_k]; 
                     Pb = CLIMATE_WY2[now_i][now_j][_difhorrad][now_k]; 
                     Pc = CLIMATE_WY2[now_i][now_j][_direffect][now_k]; 
                     Pd = CLIMATE_WY2[now_i][now_j][_difeffect][now_k]; 
                 }
-                if (impacts_source == 1) {
+                if (impacts_source == databaseNumber_ENSEMBLE) {
                     Pa = ENSEMBLE[now_i][now_j][_dirnorrad][now_k]; 
                     Pb = ENSEMBLE[now_i][now_j][_difhorrad][now_k]; 
                     Pc = ENSEMBLE[now_i][now_j][_direffect][now_k]; 
@@ -6929,8 +6947,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 else {
 
                   int drw_count = 0;
-                  if (impacts_source == 0) drw_count = SOLARCHVISION_filter("CLIMATE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
-                  if (impacts_source == 1) drw_count = SOLARCHVISION_filter("ENSEMBLE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                  if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                  if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                  if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
                     
                   if (drw_count == 1) {
                     _values_R_dir = 0.001 * float(Pa);
@@ -6997,8 +7016,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             Diagrams_textSize(sx_Plot * 0.15 / U_scale);
             
             String scenario_text = "";
-            //if (impacts_source == 0) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
-            //if (impacts_source == 1) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+            //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
+            //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
             my_text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95  * sx_Plot / U_scale, 0);
             
           }
@@ -7008,8 +7027,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       }
       
       String scenario_text = "";
-      //if (impacts_source == 0) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
-      //if (impacts_source == 1) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+      //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
+      //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
       my_text(scenario_text, ((j_start - 1) - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / U_scale, 0);
 
       Diagrams_textSize(sx_Plot * 0.15 / U_scale);
@@ -7063,8 +7082,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
       Diagrams_textAlign(RIGHT, CENTER); 
-      //if (impacts_source == 0) my_text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
-      //if (impacts_source == 1) //my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
+      //if (impacts_source == databaseNumber_CLIMATE_WY2) my_text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
+      //if (impacts_source == databaseNumber_ENSEMBLE) //my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
       
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
       Diagrams_textAlign(LEFT, CENTER);  
@@ -7145,12 +7164,12 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                now_j = (now_j + 365) % 365; 
               }
               
-              if (impacts_source == 0) {
+              if (impacts_source == databaseNumber_CLIMATE_WY2) {
                 Pa = CLIMATE_WY2[now_i][now_j][_winddir][now_k]; 
                 Pb = CLIMATE_WY2[now_i][now_j][_windspd][now_k]; 
                 Pc = CLIMATE_WY2[now_i][now_j][_drybulb][now_k];
               } 
-              if (impacts_source == 1) {
+              if (impacts_source == databaseNumber_ENSEMBLE) {
                 Pa = ENSEMBLE[now_i][now_j][_winddir][now_k]; 
                 Pb = ENSEMBLE[now_i][now_j][_windspd][now_k]; 
                 Pc = ENSEMBLE[now_i][now_j][_drybulb][now_k];
@@ -7163,10 +7182,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               }
               else {
                 int drw_count = 0;
-                if (impacts_source == 0) drw_count = SOLARCHVISION_filter("CLIMATE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
-                if (impacts_source == 1) drw_count = SOLARCHVISION_filter("ENSEMBLE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
                     
-                if ((impacts_source == 1) && (ENSEMBLE_DATA[now_i][now_j][_winddir][now_k] != 1)) drw_count = 0;
+                if ((impacts_source == databaseNumber_ENSEMBLE) && (ENSEMBLE_DATA[now_i][now_j][_winddir][now_k] != 1)) drw_count = 0;
                   
                 if (drw_count == 1) {
 
@@ -7277,8 +7297,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
       Diagrams_textAlign(RIGHT, CENTER); 
-      //if (impacts_source == 0) my_text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
-      //if (impacts_source == 1) //my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
+      //if (impacts_source == databaseNumber_CLIMATE_WY2) my_text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
+      //if (impacts_source == databaseNumber_ENSEMBLE) //my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
       
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
       Diagrams_textAlign(LEFT, CENTER);   
@@ -7334,10 +7354,10 @@ void GRAPHS_keyPressed () {
         case 123 : develop_option = 12; update_DevelopDATA = 1; redraw_scene = 1; break;
         */
         
-        case 112 : impacts_source = 1; redraw_scene = 1; break;
-        case 113 : impacts_source = 2; redraw_scene = 1; break;
-        case 114 : impacts_source = 3; redraw_scene = 1; break;
-        case 115 : impacts_source = 0; redraw_scene = 1; break;
+        case 112 : impacts_source = databaseNumber_ENSEMBLE; redraw_scene = 1; break;
+        case 113 : impacts_source = databaseNumber_OBSERVED; redraw_scene = 1; break;
+        case 114 : impacts_source = databaseNumber_CLIMATE_EPW; redraw_scene = 1; break;
+        case 115 : impacts_source = databaseNumber_CLIMATE_WY2; redraw_scene = 1; break;
         
         case 35  :_DATE += 1;
                   if (int(_DATE) == 365) _DATE -= 365;
@@ -7391,10 +7411,10 @@ void GRAPHS_keyPressed () {
                   if (j_end > j_start + 61) j_end -= 1;
                   U_scale = 18.0 / (j_end - j_start);
                   
-                  if ((impacts_source == 0) || (impacts_source == 3)) { 
+                  if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
                     per_day = int(365 / float(1 + j_end - j_start));
                   } 
-                  if ((impacts_source == 1) || (impacts_source == 2)) {
+                  if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
                     per_day = 1;
                   }
                   
@@ -7404,10 +7424,10 @@ void GRAPHS_keyPressed () {
                   if (j_end <= j_start) j_end += 1;
                   U_scale = 18.0 / (j_end - j_start);
                   
-                  if ((impacts_source == 0) || (impacts_source == 3)) { 
+                  if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
                     per_day = int(365 / float(1 + j_end - j_start));
                   } 
-                  if ((impacts_source == 1) || (impacts_source == 2)) {
+                  if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
                     per_day = 1;
                   }                  
                   
@@ -7766,7 +7786,7 @@ void draw_spinners () {
   
   Y_spinner += 25 * S_View;
   impact_layer = int(MySpinner.update(X_spinner, Y_spinner, "Impact Min/50%/Max", impact_layer, 0, 8, 1));
-  impacts_source = int(MySpinner.update(X_spinner, Y_spinner, "Draw climate/forecast/observation", impacts_source, 0, 2, 1));
+  impacts_source = int(MySpinner.update(X_spinner, Y_spinner, "Draw climate/forecast/observation", impacts_source, 0, 3, 1));
   _setup = int(MySpinner.update(X_spinner, Y_spinner, "Diagram setup", _setup, -2, 13, 1));
   update_impacts = int(MySpinner.update(X_spinner, Y_spinner, "Update impacts", update_impacts, 0, 1, 1));
 
@@ -8192,7 +8212,7 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
   WIN3D_Diagrams.stroke(255, 255, 0);
   
   int pre_num_add_days = num_add_days;
-  if ((impacts_source == 1) || (impacts_source == 2)) num_add_days = 1;
+  if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) num_add_days = 1;
   
   int start_z = get_startZ_endZ(impacts_source)[0];
   int end_z = get_startZ_endZ(impacts_source)[1];  
@@ -8253,16 +8273,16 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
             
             String Pa = _undefined;
   
-            if (impacts_source == 0) {
+            if (impacts_source == databaseNumber_CLIMATE_WY2) {
                 Pa = CLIMATE_WY2[now_i][now_j][_direffect][now_k]; 
             }
-            if (impacts_source == 1) {
+            if (impacts_source == databaseNumber_ENSEMBLE) {
                 Pa = ENSEMBLE[now_i][now_j][_direffect][now_k]; 
             }   
-            if (impacts_source == 2) {
+            if (impacts_source == databaseNumber_OBSERVED) {
                 Pa = OBSERVED[now_i][now_j][_direffect][now_k]; 
             }   
-            if (impacts_source == 3) {
+            if (impacts_source == databaseNumber_CLIMATE_EPW) {
                 Pa = CLIMATE_EPW[now_i][now_j][_direffect][now_k]; 
             }    
  
