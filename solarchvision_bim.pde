@@ -4130,7 +4130,9 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
   int end_z = OBSERVED_end;
   
   switch(O_layer_option) {
-    case 1 : start_z = Sample_Station; end_z = Sample_Station; break;
+    case 1 : start_z = 1; end_z = 1; break;
+    case 2 : start_z = OBSERVED_start; end_z = OBSERVED_end; break;
+    case 3 : start_z = Sample_Station; end_z = Sample_Station; break;
   }
   
   if (print_title != 0) {
@@ -8195,66 +8197,169 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
   WIN3D_Diagrams.line(0, -1 * s_SunPath, 0, 0, 1 * s_SunPath, 0);
 
   WIN3D_Diagrams.stroke(255, 255, 0);
+
+  int pre_num_add_days = num_add_days;
+  if (impacts_source == 1) num_add_days = 1;
   
-  for (int HOUR = int(roundTo(min_sunrise, 1.0)); HOUR < int(roundTo(max_sunset, 1.0)); HOUR += 1) {
-    int DATE_step = 1;
+  int start_z = 0;
+  int end_z = 0;        
+      
+  if (impacts_source == 0) {
+
+    start_z = CLIMATE_WY2_start;
+    end_z = CLIMATE_WY2_end;        
     
-    for (int DATE_ANGLE = 0; DATE_ANGLE < 360; DATE_ANGLE += DATE_step) {
-        
-      _DATE = Convert2Day(DATE_ANGLE);
+    switch(H_layer_option) {
+      case 1 : start_z = 1953; end_z = 1959; break;
+      case 2 : start_z = 1960; end_z = 1969; break;
+      case 3 : start_z = 1970; end_z = 1979; break;
+      case 4 : start_z = 1980; end_z = 1989; break;
+      case 5 : start_z = 1990; end_z = 1999; break;
+      case 6 : start_z = 2000; end_z = 2005; break;
+      case 7 : start_z = Sample_Year; end_z = Sample_Year; break; 
+    }
+    
+    start_z -= CLIMATE_WY2_start - 1;
+    end_z -= CLIMATE_WY2_start - 1;
+  }
+  if (impacts_source == 1) {
+
+    start_z = ENSEMBLE_start;
+    end_z = ENSEMBLE_end;
+    
+    switch(F_layer_option) {
+      case 1 : start_z = 1; end_z = 21; break;
+      case 2 : start_z = 1; end_z = 22; break;
+      case 3 : start_z = 23; end_z = 43; break;
+      case 4 : start_z = Sample_Member; end_z = Sample_Member; break;
+    }
+
+  }    
+  if (impacts_source == 2) {
+
+    start_z = OBSERVED_start;
+    end_z = OBSERVED_end;
+    
+    switch(O_layer_option) {
+      case 1 : start_z = 1; end_z = 1; break;
+      case 2 : start_z = OBSERVED_start; end_z = OBSERVED_end; break;
+      case 3 : start_z = Sample_Station; end_z = Sample_Station; break;
+    }
+
+  }   
+  if (impacts_source == 3) {
+
+    start_z = 1;
+    end_z = 1;
+    
+  }   
+
+  int layers_count = 1; 
+  if (impacts_source == 0) layers_count = (1 + CLIMATE_WY2_end - CLIMATE_WY2_start);
+  if (impacts_source == 1) layers_count = (1 + ENSEMBLE_end - ENSEMBLE_start);  
+  if (impacts_source == 2) layers_count = (1 + OBSERVED_end - OBSERVED_start);
+  if (impacts_source == 3) layers_count = 1;
   
-      _update_date();
+  for (int p = 0; p < 1; p += 1) { 
+    int l = impact_layer;
+  
+    int DATE_step = 1;
+  
+    for (int j = j_start; j < j_end; j += DATE_step) {
       
-      //println(_DATE, _MONTH, _DAY, DATE_ANGLE); exit();
+      int now_i;
+      int now_j;
+      int now_k;
+  
+      now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
+  
+      if (now_j >= 365) {
+       now_j = now_j % 365; 
+      }
+      if (now_j < 0) {
+       now_j = (now_j + 365) % 365; 
+      }
+   
+      float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
      
-      float[] Sun = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR);
+      float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
+      float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
       
-      if (Sun[3] >= 0) {
-        
-        int i = HOUR - 1;  // ??????
-        int j = Convert2Date(_MONTH, _DAY);
-        int k = -1;
-
-             if (impacts_source == 0) k = Sample_Year - CLIMATE_EPW_start;
-        else if (impacts_source == 1) k = Sample_Member - ENSEMBLE_start;
-        else if (impacts_source == 2) k = Sample_Station - OBSERVED_start;
-        else if (impacts_source == 3) k = 0;
-        
-        String Pa = _undefined;
-        
-             if (impacts_source == 0) Pa = CLIMATE_WY2[i][j][_direffect][k];
-        else if (impacts_source == 1) Pa = ENSEMBLE[i][j][_direffect][k];
-        else if (impacts_source == 2) Pa = OBSERVED[i][j][_direffect][k];
-        else if (impacts_source == 3) Pa = CLIMATE_EPW[i][j][_direffect][k];
-        
-        if (Pa.equals(_undefined)) {
-        }
-        else {
-       
-          float[] COL = SOLARCHVISION_DRYWCBD(0.0002 * float(Pa)); // ????????
+      int[] Normals_COL_N;
+      Normals_COL_N = new int[9];
+      Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
+      
+      //println("j =", j);
+      //println(Normals_COL_N);
   
-          WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], 127);
-          WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], 127);
-          
-          float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR - 0.5);
-          float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR + 0.5);
-          float[] SunC = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR + 0.5);
-          float[] SunD = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR - 0.5);
-          
-          WIN3D_Diagrams.beginShape();
-          WIN3D_Diagrams.vertex(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3]);
-          WIN3D_Diagrams.vertex(s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
-          WIN3D_Diagrams.vertex(s_SunPath * SunC[1], -s_SunPath * SunC[2], s_SunPath * SunC[3]);
-          WIN3D_Diagrams.vertex(s_SunPath * SunD[1], -s_SunPath * SunD[2], s_SunPath * SunD[3]);
-
-          WIN3D_Diagrams.endShape(CLOSE);
-          
+      for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
+        if (nk != -1) {
+          int k = int(nk / num_add_days);
+          int j_ADD = nk % num_add_days; 
+  
+          for (int i = 0; i < 24; i += 1) {
+            
+            float HOUR_ANGLE = i;  
+            float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+            
+            now_k = k;
+            now_i = i;
+            now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+  
+            if (now_j >= 365) {
+             now_j = now_j % 365; 
+            }
+            if (now_j < 0) {
+             now_j = (now_j + 365) % 365; 
+            }
+            
+            String Pa = _undefined;
+  
+            if (impacts_source == 0) {
+                Pa = CLIMATE_WY2[now_i][now_j][_direffect][now_k]; 
+            }
+            if (impacts_source == 1) {
+                Pa = ENSEMBLE[now_i][now_j][_direffect][now_k]; 
+            }   
+            if (impacts_source == 2) {
+                Pa = OBSERVED[now_i][now_j][_direffect][now_k]; 
+            }   
+            if (impacts_source == 3) {
+                Pa = CLIMATE_EPW[now_i][now_j][_direffect][now_k]; 
+            }    
+ 
+            if (Pa.equals(_undefined)) {
+            }
+            else {
+           
+              float[] COL = SOLARCHVISION_DRYWCBD(0.0002 * float(Pa)); // ????????
+      
+              WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], 127);
+              WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], 127);
+              
+              float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR_ANGLE - 0.5);
+              float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR_ANGLE + 0.5);
+              float[] SunC = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR_ANGLE + 0.5);
+              float[] SunD = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR_ANGLE - 0.5);
+              
+              WIN3D_Diagrams.beginShape();
+              WIN3D_Diagrams.vertex(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3]);
+              WIN3D_Diagrams.vertex(s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
+              WIN3D_Diagrams.vertex(s_SunPath * SunC[1], -s_SunPath * SunC[2], s_SunPath * SunC[3]);
+              WIN3D_Diagrams.vertex(s_SunPath * SunD[1], -s_SunPath * SunD[2], s_SunPath * SunD[3]);
+    
+              WIN3D_Diagrams.endShape(CLOSE);
+              
+            } 
+ 
+            
+   
+          }
         }
       }
-
     }
-  }
-  
+  }  
+
   WIN3D_Diagrams.stroke(0);
   
   for (int j = 90; j <= 270; j += 30) {
