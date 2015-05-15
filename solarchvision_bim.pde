@@ -369,9 +369,14 @@ float obj_offset_x = 0.5;
 
 PGraphics Diagrams;
 
-int plot_impacts = 0; 
+int databaseNumber_CLIMATE_WY2 = 0;
+int databaseNumber_ENSEMBLE = 1;
+int databaseNumber_OBSERVED = 2;
+int databaseNumber_CLIMATE_EPW = 3;
 int impacts_source = 0; // 0 = Climate WY2, 1 = Forecast, 2 = Observation, 3 = Climate EPW 
+
 int impact_layer = 1; // 4 = Median
+int plot_impacts = 0; 
 int update_impacts = 1; 
 
 int redraw_scene = 1;
@@ -1070,25 +1075,25 @@ void plot_center (float x, float y, float z, float sx, float sy, float sz) {
   int draw_observed = 0;
   int draw_climate_EPW = 0;  
   
-  if (impacts_source == 0) draw_climate_WY2 = 1;
-  if (impacts_source == 1) draw_forecast = 1;
-  if (impacts_source == 2) draw_observed = 1;
-  if (impacts_source == 3) draw_climate_EPW = 1;
+  if (impacts_source == databaseNumber_CLIMATE_WY2) draw_climate_WY2 = 1;
+  if (impacts_source == 1) draw_forecast = databaseNumber_ENSEMBLE;
+  if (impacts_source == 2) draw_observed = databaseNumber_OBSERVED;
+  if (impacts_source == 3) draw_climate_EPW = databaseNumber_CLIMATE_EPW;
   
   //////////////////
   draw_observed = 1;
   //////////////////  
 
   if (draw_climate_EPW == 1) {
-    now_drawing = 3;
+    now_drawing = databaseNumber_CLIMATE_EPW;
     SOLARCHVISION_PlotCLIMATE_EPW(x,y,z,sx,sy,sz);
   }  
   if (draw_climate_WY2 == 1) {
-    now_drawing = 0;
+    now_drawing = databaseNumber_CLIMATE_WY2;
     SOLARCHVISION_PlotCLIMATE_WY2(x,y,z,sx,sy,sz);
   }
   if (draw_forecast == 1) {
-    now_drawing = 1;
+    now_drawing = databaseNumber_ENSEMBLE;
     SOLARCHVISION_PlotENSEMBLE(x,y,z,sx,sy,sz);
   }
   if (draw_observed == 1) {
@@ -1103,7 +1108,7 @@ void plot_center (float x, float y, float z, float sx, float sy, float sz) {
     //draw_normals = 1;
     //draw_probs = 0; 
     
-    now_drawing = 2;
+    now_drawing = databaseNumber_OBSERVED;
     //SOLARCHVISION_PlotOBSERVED(x,y,z,sx,sy,sz);
     
     draw_data_lines = pre_draw_data_lines;
@@ -2767,15 +2772,8 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
   
   SOLARCHVISION_draw_Grid_Cartesian_TIME(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
 
-  int start_z = ENSEMBLE_start;
-  int end_z = ENSEMBLE_end;
-  
-  switch(F_layer_option) {
-    case 1 : start_z = 1; end_z = 21; break;
-    case 2 : start_z = 1; end_z = 22; break;
-    case 3 : start_z = 23; end_z = 43; break;
-    case 4 : start_z = Sample_Member; end_z = Sample_Member; break;
-  }
+  int start_z = get_startZ_endZ(databaseNumber_ENSEMBLE)[0];
+  int end_z = get_startZ_endZ(databaseNumber_ENSEMBLE)[1];  
   
   if (print_title != 0) {
     
@@ -3185,18 +3183,8 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
   
   _pix = (100.0 * S_View / level_pix);
   
-  int start_z = CLIMATE_WY2_start;
-  int end_z = CLIMATE_WY2_end;
-  
-  switch(H_layer_option) {
-    case 1 : start_z = 1953; end_z = 1959; break;
-    case 2 : start_z = 1960; end_z = 1969; break;
-    case 3 : start_z = 1970; end_z = 1979; break;
-    case 4 : start_z = 1980; end_z = 1989; break;
-    case 5 : start_z = 1990; end_z = 1999; break;
-    case 6 : start_z = 2000; end_z = 2005; break;
-    case 7 : start_z = Sample_Year; end_z = Sample_Year; break; 
-  }
+  int start_z = get_startZ_endZ(databaseNumber_CLIMATE_WY2)[0];
+  int end_z = get_startZ_endZ(databaseNumber_CLIMATE_WY2)[1];  
   
   if (print_title != 0) {
     
@@ -3287,7 +3275,8 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
           SET_COLOR_STYLE(COLOR_STYLE, (1.0 * k / (1 + CLIMATE_WY2_end - CLIMATE_WY2_start)));
 
           int _plot = 0;
-          if ((start_z <= (k + CLIMATE_WY2_start)) && (end_z >= (k + CLIMATE_WY2_start))) {
+          //if ((start_z <= (k + CLIMATE_WY2_start)) && (end_z >= (k + CLIMATE_WY2_start))) { <BEFORE>
+          if ((start_z <= k) && (end_z >= k)) {
             _plot = 1;
           }
           
@@ -3583,19 +3572,9 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
   SOLARCHVISION_draw_Grid_Cartesian_TIME(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
   
   _pix = (100.0 * S_View / level_pix);
-  
-  int start_z = CLIMATE_EPW_start;
-  int end_z = CLIMATE_EPW_end;
-  
-  switch(H_layer_option) {
-    case 1 : start_z = 1953; end_z = 1959; break;
-    case 2 : start_z = 1960; end_z = 1969; break;
-    case 3 : start_z = 1970; end_z = 1979; break;
-    case 4 : start_z = 1980; end_z = 1989; break;
-    case 5 : start_z = 1990; end_z = 1999; break;
-    case 6 : start_z = 2000; end_z = 2005; break;
-    case 7 : start_z = Sample_Year; end_z = Sample_Year; break; 
-  }
+
+  int start_z = get_startZ_endZ(databaseNumber_CLIMATE_EPW)[0];
+  int end_z = get_startZ_endZ(databaseNumber_CLIMATE_EPW)[1];  
   
   if (print_title != 0) {
     
@@ -3686,7 +3665,8 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
           SET_COLOR_STYLE(COLOR_STYLE, (1.0 * k / (1 + CLIMATE_EPW_end - CLIMATE_EPW_start)));
 
           int _plot = 0;
-          if ((start_z <= (k + CLIMATE_EPW_start)) && (end_z >= (k + CLIMATE_EPW_start))) {
+          //if ((start_z <= (k + CLIMATE_EPW_start)) && (end_z >= (k + CLIMATE_EPW_start))) { <BEFORE>
+          if ((start_z <= k) && (end_z >= k)) {
             _plot = 1;
           }
           
@@ -4125,14 +4105,8 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
   
   SOLARCHVISION_draw_Grid_Cartesian_TIME(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
 
-  int start_z = OBSERVED_start;
-  int end_z = OBSERVED_end;
-  
-  switch(O_layer_option) {
-    case 1 : start_z = 1; end_z = 1; break;
-    case 2 : start_z = OBSERVED_start; end_z = OBSERVED_end; break;
-    case 3 : start_z = Sample_Station; end_z = Sample_Station; break;
-  }
+  int start_z = get_startZ_endZ(databaseNumber_OBSERVED)[0];
+  int end_z = get_startZ_endZ(databaseNumber_OBSERVED)[1];  
   
   if (print_title != 0) {
     
@@ -4608,8 +4582,9 @@ void SOLARCHVISION_print_other_info (float sx_Plot, float the_V_belowLine) {
   Diagrams_textSize(sx_Plot * 0.150 / U_scale);
   Diagrams_textAlign(LEFT, CENTER);
   
-  if (impacts_source == 0) my_text((_WORDS[0][_LAN] + ":" +  LocationName + "\n(Typical Year)"),                                                                 -1.5 * sx_Plot / U_scale, (0.3 + the_V_belowLine) * sx_Plot / U_scale, 0);
-  if (impacts_source == 1) my_text((_WORDS[0][_LAN] + ":" +  LocationName + "\n(" + _YEAR + "_" + nf(_MONTH, 2) + "_" + nf(_DAY, 2) + "_" + nf(_HOUR, 2) + ")"), -1.5 * sx_Plot / U_scale, (0.3 + the_V_belowLine) * sx_Plot / U_scale, 0);
+  if (impacts_source == 0) my_text((_WORDS[0][_LAN] + ":" + LocationName + "\n(" + nf(CLIMATE_WY2_start, 4) + "-" + nf(CLIMATE_WY2_end, 4) + ")"), -1.5 * sx_Plot / U_scale, (0.3 + the_V_belowLine) * sx_Plot / U_scale, 0);
+  if (impacts_source == 1) my_text((_WORDS[0][_LAN] + ":" + LocationName + "\n(" + nf(_YEAR, 4) + "_" + nf(_MONTH, 2) + "_" + nf(_DAY, 2) + "_" + nf(_HOUR, 2) + ")"), -1.5 * sx_Plot / U_scale, (0.3 + the_V_belowLine) * sx_Plot / U_scale, 0);
+  if (impacts_source == 3) my_text((_WORDS[0][_LAN] + ":" + LocationName + "\n(Typical Year)"),                                                                 -1.5 * sx_Plot / U_scale, (0.3 + the_V_belowLine) * sx_Plot / U_scale, 0);
 
   switch(sky_scenario) {
     case 1 : Diagrams_stroke(0,0,0); Diagrams_fill(0,0,0); break;
@@ -4946,26 +4921,27 @@ void SOLARCHVISION_draw_normals (int i, int j, float[] _valuesA, float[] _values
       Diagrams_stroke(0,0,0);
       Diagrams_fill(0,0,0);
     }
-    
-   
+
+
+
 /////////////////////////////// 
 /*
-    if (now_drawing == 0) {
+    if (now_drawing == databaseNumber_CLIMATE_WY2) {
       Diagrams_strokeWeight(T_scale * 4);
       Diagrams_stroke(0,127,0);
       Diagrams_fill(0,127,0);
     }
-    if (now_drawing == 1) {
+    if (now_drawing == databaseNumber_ENSEMBLE) {
       Diagrams_strokeWeight(T_scale * 4);
       Diagrams_stroke(127,0,0);
       Diagrams_fill(127,0,0);
     }
-    if (now_drawing == 2) {
+    if (now_drawing == databaseNumber_OBSERVED) {
       Diagrams_strokeWeight(T_scale * 4);
       Diagrams_stroke(0,0,127);
       Diagrams_fill(0,0,127);
     }
-    if (now_drawing == 3) {
+    if (now_drawing == databaseNumber_CLIMATE_EPW) {
       Diagrams_strokeWeight(T_scale * 4);
       Diagrams_stroke(0,127,0);
       Diagrams_fill(0,127,0);
@@ -4999,12 +4975,14 @@ void SOLARCHVISION_draw_normals (int i, int j, float[] _valuesA, float[] _values
 }  
 
 
-void SOLARCHVISION_DevelopDATA (int data_source) {
+int[] get_startZ_endZ (int data_source) {
+  int[] a = new int[3];
 
-  int start_z = 0;
-  int end_z = 0;        
-      
-  if (data_source == 0) {
+  int start_z = -1;
+  int end_z = -1;        
+  int layers_count = -1;
+
+  if (data_source == databaseNumber_CLIMATE_WY2) {
 
     start_z = CLIMATE_WY2_start;
     end_z = CLIMATE_WY2_end;        
@@ -5016,13 +4994,13 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
       case 4 : start_z = 1980; end_z = 1989; break;
       case 5 : start_z = 1990; end_z = 1999; break;
       case 6 : start_z = 2000; end_z = 2005; break;
-      case 7 : start_z = Sample_Year; end_z = Sample_Year; break; 
+      case 7: start_z = Sample_Year; end_z = Sample_Year; break;
     }
     
     start_z -= CLIMATE_WY2_start - 1;
     end_z -= CLIMATE_WY2_start - 1;
   }
-  if (data_source == 1) {
+  if (data_source == databaseNumber_ENSEMBLE) {
 
     start_z = ENSEMBLE_start;
     end_z = ENSEMBLE_end;
@@ -5031,15 +5009,47 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
       case 1 : start_z = 1; end_z = 21; break;
       case 2 : start_z = 1; end_z = 22; break;
       case 3 : start_z = 23; end_z = 43; break;
-      case 4 : start_z = Sample_Member; end_z = Sample_Member; break;
+      case 4: start_z = Sample_Member; end_z = Sample_Member; break;
     }
 
   }    
+  if (data_source == databaseNumber_OBSERVED) {
+
+    start_z = OBSERVED_start;
+    end_z = OBSERVED_end;
+    
+    switch(O_layer_option) {
+      case 1 : start_z = 1; end_z = 1; break;
+      case 2 : start_z = Sample_Station; end_z = Sample_Station; break;
+    }
+
+  }   
+  if (data_source == databaseNumber_CLIMATE_EPW) {
+
+    start_z = 1;
+    end_z = 1;
+    
+  }   
+
+
+
+  if (impacts_source == 0) layers_count = (1 + CLIMATE_WY2_end - CLIMATE_WY2_start);
+  if (impacts_source == 1) layers_count = (1 + ENSEMBLE_end - ENSEMBLE_start);  
+  if (impacts_source == 2) layers_count = (1 + OBSERVED_end - OBSERVED_start);
+  if (impacts_source == 3) layers_count = 1;
   
-  int layers_count = 1; 
-  if (data_source == 0) layers_count = (1 + CLIMATE_WY2_end - CLIMATE_WY2_start);
-  if (data_source == 1) layers_count = (1 + ENSEMBLE_end - ENSEMBLE_start);  
+  a[0] = start_z;
+  a[1] = end_z;
+  a[2] = layers_count;
   
+  return  a;
+}
+
+void SOLARCHVISION_DevelopDATA (int data_source) {
+
+  int start_z = get_startZ_endZ(data_source)[0];
+  int end_z = get_startZ_endZ(data_source)[1];       
+  int layers_count = get_startZ_endZ(data_source)[2];  
  
   String Pa = "", Pb = "";
   float RAIN, T, R_dir, R_dif;
@@ -5911,48 +5921,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   int pre_num_add_days = num_add_days;
   if ((impacts_source == 1) || (impacts_source == 2)) num_add_days = 1;
   
-  int start_z = 0;
-  int end_z = 0;        
-      
-  if (impacts_source == 0) {
-
-    start_z = CLIMATE_WY2_start;
-    end_z = CLIMATE_WY2_end;        
-    
-    switch(H_layer_option) {
-      case 1 : start_z = 1953; end_z = 1959; break;
-      case 2 : start_z = 1960; end_z = 1969; break;
-      case 3 : start_z = 1970; end_z = 1979; break;
-      case 4 : start_z = 1980; end_z = 1989; break;
-      case 5 : start_z = 1990; end_z = 1999; break;
-      case 6 : start_z = 2000; end_z = 2005; break;
-      case 7 : start_z = Sample_Year; end_z = Sample_Year; break; 
-    }
-    
-    start_z -= CLIMATE_WY2_start - 1;
-    end_z -= CLIMATE_WY2_start - 1;
-  }
-  if (impacts_source == 1) {
-
-    start_z = ENSEMBLE_start;
-    end_z = ENSEMBLE_end;
-    
-    switch(F_layer_option) {
-      case 1 : start_z = 1; end_z = 21; break;
-      case 2 : start_z = 1; end_z = 22; break;
-      case 3 : start_z = 23; end_z = 43; break;
-      case 4 : start_z = Sample_Member; end_z = Sample_Member; break;
-    }
-
-  }    
-  
-  int layers_count = 1; 
-  if (impacts_source == 0) layers_count = (1 + CLIMATE_WY2_end - CLIMATE_WY2_start);
-  if (impacts_source == 1) layers_count = (1 + ENSEMBLE_end - ENSEMBLE_start);
-
-
-
-
+  int start_z = get_startZ_endZ(impacts_source)[0];
+  int end_z = get_startZ_endZ(impacts_source)[1];  
+  int layers_count = get_startZ_endZ(impacts_source)[2];  
   
   if ((plot_impacts == 0) || (plot_impacts == -1)) {
     if (plot_impacts == 0) Impact_TYPE = Impact_ACTIVE; 
@@ -8223,64 +8194,9 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
   int pre_num_add_days = num_add_days;
   if ((impacts_source == 1) || (impacts_source == 2)) num_add_days = 1;
   
-  int start_z = 0;
-  int end_z = 0;        
-      
-  if (impacts_source == 0) {
-
-    start_z = CLIMATE_WY2_start;
-    end_z = CLIMATE_WY2_end;        
-    
-    switch(H_layer_option) {
-      case 1 : start_z = 1953; end_z = 1959; break;
-      case 2 : start_z = 1960; end_z = 1969; break;
-      case 3 : start_z = 1970; end_z = 1979; break;
-      case 4 : start_z = 1980; end_z = 1989; break;
-      case 5 : start_z = 1990; end_z = 1999; break;
-      case 6 : start_z = 2000; end_z = 2005; break;
-      case 7 : start_z = Sample_Year; end_z = Sample_Year; break; 
-    }
-    
-    start_z -= CLIMATE_WY2_start - 1;
-    end_z -= CLIMATE_WY2_start - 1;
-  }
-  if (impacts_source == 1) {
-
-    start_z = ENSEMBLE_start;
-    end_z = ENSEMBLE_end;
-    
-    switch(F_layer_option) {
-      case 1 : start_z = 1; end_z = 21; break;
-      case 2 : start_z = 1; end_z = 22; break;
-      case 3 : start_z = 23; end_z = 43; break;
-      case 4 : start_z = Sample_Member; end_z = Sample_Member; break;
-    }
-
-  }    
-  if (impacts_source == 2) {
-
-    start_z = OBSERVED_start;
-    end_z = OBSERVED_end;
-    
-    switch(O_layer_option) {
-      case 1 : start_z = 1; end_z = 1; break;
-      case 2 : start_z = OBSERVED_start; end_z = OBSERVED_end; break;
-      case 3 : start_z = Sample_Station; end_z = Sample_Station; break;
-    }
-
-  }   
-  if (impacts_source == 3) {
-
-    start_z = 1;
-    end_z = 1;
-    
-  }   
-
-  int layers_count = 1; 
-  if (impacts_source == 0) layers_count = (1 + CLIMATE_WY2_end - CLIMATE_WY2_start);
-  if (impacts_source == 1) layers_count = (1 + ENSEMBLE_end - ENSEMBLE_start);  
-  if (impacts_source == 2) layers_count = (1 + OBSERVED_end - OBSERVED_start);
-  if (impacts_source == 3) layers_count = 1;
+  int start_z = get_startZ_endZ(impacts_source)[0];
+  int end_z = get_startZ_endZ(impacts_source)[1];  
+  int layers_count = get_startZ_endZ(impacts_source)[2]; 
   
   for (int p = 0; p < 1; p += 1) { 
     
