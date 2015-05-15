@@ -9,9 +9,10 @@ int automated = 0; //0: User interface, 1: Automatic
 
 
 String CLIMATE_EPW_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW";
+
 //String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_EMPTY"; 
-String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_90s"; 
-//String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED";
+//String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_90s"; 
+String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED";
 
 String ENSEMBLE_directory = "C:/SOLARCHVISION_2015/Input/WeatherForecast/FORECAST_NAEFS";
 
@@ -136,7 +137,7 @@ int j_end = 8; //6; //16; // Variable
 int max_j_end_forecast = 16; // Constant
 int max_j_end_observed = 0; // Variable
 
-float per_day = 45; //61; //30.5;
+float per_day = 1; //45; //61; //30.5;
 int num_add_days = 1; //30;//per_day; // it should be set up to 1 in order to plot only one day  
 
 // Note: The first observed station below should match the forecast station because the non-linear interpolation function only uses this station.
@@ -401,7 +402,6 @@ int variation = 2;
 int draw_data_lines = 0;
 int draw_sorted = 1;
 int draw_normals = 1;
-int draw_sun_altitude = 0;
 int draw_probs = 0;
 int sum_interval = 2;
 float level_pix = 8;
@@ -451,11 +451,6 @@ void _update_folders () {
   NAEFSFolder        = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   CWEEDSFolder       = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
 }
-
-
-
-
-
 
 
 int h_pixel = 300;
@@ -2826,6 +2821,20 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
   String Main_name = MAKE_mainname();
 
   for (int j = j_start; j < j_end; j += 1) { 
+    
+    Diagrams_stroke(0);
+    Diagrams_fill(0);
+    Diagrams_textAlign(CENTER, CENTER);   
+
+    if ((U_scale >= 0.75) || (((j - j_start) % int(1.5 / U_scale)) == 0)) {
+      Diagrams_textSize(sx_Plot * 0.15 / U_scale);
+      
+      my_text(CalendarDay[int((365 + j + 286 + BEGIN_DAY) % 365)][_LAN], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / U_scale, 0);
+      if (num_add_days > 1) {
+        my_text(("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1.375 * sx_Plot, 0);
+      }
+    }
+    
     String _FileNameAdd = "";
     if (num_add_days > 1) {
         _FileNameAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
@@ -3230,6 +3239,20 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
   String Main_name = MAKE_mainname();
   
   for (int j = j_start; j < j_end; j += 1) {
+    
+    Diagrams_stroke(0);
+    Diagrams_fill(0);
+    Diagrams_textAlign(CENTER, CENTER);   
+
+    if ((U_scale >= 0.75) || (((j - j_start) % int(1.5 / U_scale)) == 0)) {
+      Diagrams_textSize(sx_Plot * 0.15 / U_scale);
+      
+      my_text(CalendarDay[int((365 + j * per_day + 286 + BEGIN_DAY) % 365)][_LAN], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / U_scale, 0);
+      if (num_add_days > 1) {
+        my_text(("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1.375 * sx_Plot, 0);
+      }
+    }    
+    
     String _FileNameAdd = "";
     if (num_add_days > 1) {
         _FileNameAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
@@ -3620,6 +3643,20 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
   String Main_name = MAKE_mainname();
   
   for (int j = j_start; j < j_end; j += 1) {
+
+    Diagrams_stroke(0);
+    Diagrams_fill(0);
+    Diagrams_textAlign(CENTER, CENTER);   
+
+    if ((U_scale >= 0.75) || (((j - j_start) % int(1.5 / U_scale)) == 0)) {
+      Diagrams_textSize(sx_Plot * 0.15 / U_scale);
+      
+      my_text(CalendarDay[int((365 + j * per_day + 286 + BEGIN_DAY) % 365)][_LAN], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / U_scale, 0);
+      if (num_add_days > 1) {
+        my_text(("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1.375 * sx_Plot, 0);
+      }
+    }    
+    
     String _FileNameAdd = "";
     if (num_add_days > 1) {
         _FileNameAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
@@ -4407,44 +4444,12 @@ void SOLARCHVISION_draw_Grid_Cartesian_TIME (float x_Plot, float y_Plot, float z
   Diagrams_textAlign(CENTER, CENTER);   
 
   for (int i = j_start; i < j_end; i += 1) {
-    if ((U_scale >= 0.75) || (((i - j_start) % int(1.5 / U_scale)) == 0)) {
-      Diagrams_textSize(sx_Plot * 0.15 / U_scale);
-      my_text(CalendarDay[int((365 + i * per_day + 286 + BEGIN_DAY) % 365)][_LAN], (i - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / U_scale, 0);
-      if (num_add_days > 1) {
-        //my_text(("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s"), (0 + i - ((0 - 12) / 24.0)) * sx_Plot, -1.375 * sx_Plot, 0);
-      }
-    }
-    
     if (U_scale >= 0.75) {
       Diagrams_textSize(sx_Plot * 0.125 / U_scale);
       my_text("12:00", (i - ((0 - 12) / 24.0)) * sx_Plot, 0.1 * sx_Plot / U_scale, 0);
     }
   }
-  
-  if (draw_sun_altitude != 0) {
-    Diagrams_strokeWeight(T_scale * 4);
-    Diagrams_stroke(127,127,0,127);
-    Diagrams_fill(127,127,0,127);
-    for (int i = j_start; i < j_end; i += 1) {
-      float DATE_ANGLE = (360 * ((BEGIN_DAY + i + 286) % 365) / 365.0);
-      float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
-      float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
-      float _step = (_sunset - _sunrise) / 16.0;
-      for (float HOUR_ANGLE = _sunrise; HOUR_ANGLE < (_sunset - 0.1); HOUR_ANGLE += _step) {
-        float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
-        float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, (HOUR_ANGLE + _step));
-        my_line((i + HOUR_ANGLE / 24.0) * sx_Plot, 135 * SunA[3] * sy_Plot * S_View / V_scale[drw_Layer], 0, (i + (HOUR_ANGLE + _step) / 24.0) * sx_Plot, 135 * SunB[3] * sy_Plot * S_View / V_scale[drw_Layer], 0);
-        
-      }
-    }
-    
-    for (int i = 100; i > 0; i -= 50) {
-      Diagrams_textSize(sx_Plot * 0.125 / U_scale);
-      Diagrams_textAlign(CENTER, CENTER);
-      my_text(((String.valueOf(int(i * 0.6))) + "°"), 0.5 * (j_end + j_start) * sx_Plot, -i * S_View, 0);
-    }
-  }    
-  
+
   SOLARCHVISION_print_other_info(sx_Plot, V_belowLine[drw_Layer]);
 }  
 
@@ -4528,29 +4533,6 @@ void SOLARCHVISION_draw_Grid_Spherical_POSITION (float x_Plot, float y_Plot, flo
     }
   }
  
-  if (draw_sun_altitude != 0) {
-    Diagrams_strokeWeight(T_scale * 4);
-    Diagrams_stroke(127,127,0,127);
-    Diagrams_fill(127,127,0,127);
-    for (int i = j_start; i < j_end; i += 1) {
-      float DATE_ANGLE = (360 * ((BEGIN_DAY + i + 286) % 365) / 365.0);
-      float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
-      float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
-      float _step = (_sunset - _sunrise) / 16.0;
-      for (float HOUR_ANGLE = _sunrise; HOUR_ANGLE < (_sunset - 0.1); HOUR_ANGLE += _step) {
-        float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
-        float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, (HOUR_ANGLE + _step));
-        
-        float rA = acos_ang(SunA[3]);
-        float tA = 90 - atan2_ang(SunA[1], SunA[2]);
-        
-        float rB = acos_ang(SunB[3]);
-        float tB = 90 - atan2_ang(SunB[1], SunB[2]);        
-        
-        my_line((i + obj_offset_x + rA * obj_scale * (cos_ang(tA))) * sx_Plot, -(rA * obj_scale * (sin_ang(tA))) * sx_Plot, 0, (i + obj_offset_x + rB * obj_scale * (cos_ang(tB))) * sx_Plot, -(rB * obj_scale * (sin_ang(tB))) * sx_Plot, 0);
-      }
-    }
-  }
 }  
 
 
@@ -7405,31 +7387,58 @@ void GRAPHS_keyPressed () {
                   _update_date(); 
                   try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
                   redraw_scene = 1; break; 
+
+        case TAB :if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
+                    if (per_day == 1) { 
+                      per_day = int(365 / float(1 + j_end - j_start));
+                    }
+                    else {
+                      per_day = 1;
+                    }
+                  } 
+                  if (impacts_source == databaseNumber_ENSEMBLE) {
+                    if (per_day == 1) { 
+                      per_day = int(max_j_end_forecast / float(1 + j_end - j_start));
+                    }
+                    else {
+                      per_day = 1;
+                    }
+                  }           
+                  if (impacts_source == databaseNumber_OBSERVED) {
+                    if (per_day == 1) { 
+                      per_day = int(max_j_end_observed / float(1 + j_end - j_start));
+                    }
+                    else {
+                      per_day = 1;
+                    }
+                  }                     
+                  update_DevelopDATA = 1;
+                  redraw_scene = 1; break;
                 
         case ']' :j_end += 1; 
                   if (j_end > j_start + 61) j_end -= 1;
                   U_scale = 18.0 / (j_end - j_start);
-                  
+                  /*
                   if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
                     per_day = int(365 / float(1 + j_end - j_start));
                   } 
                   if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
                     per_day = 1;
                   }
-                  
+                  */
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break;      
         case '[' :j_end -= 1; 
                   if (j_end <= j_start) j_end += 1;
                   U_scale = 18.0 / (j_end - j_start);
-                  
+                  /*
                   if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
                     per_day = int(365 / float(1 + j_end - j_start));
                   } 
                   if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
                     per_day = 1;
                   }                  
-                  
+                  */
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break;
   
@@ -7493,10 +7502,10 @@ void GRAPHS_keyPressed () {
         case 'G' :filter_type = (filter_type + 2 - 1) % 2; redraw_scene = 1; break;
   
         case '=' :V_scale[drw_Layer] *= pow(2.0, (1.0 / 2.0)); redraw_scene = 1; break;
-        case '-' :V_scale[drw_Layer] *= pow(0.5, (1.0 / 2.0)); redraw_scene = 1; break;
+        case '_' :V_scale[drw_Layer] *= pow(0.5, (1.0 / 2.0)); redraw_scene = 1; break;
         
-        case '+' :O_scale *= pow(2.0, (1.0 / 4.0)); redraw_scene = 1; break;
-        case '_' :O_scale *= pow(0.5, (1.0 / 4.0)); redraw_scene = 1; break;
+        //case '+' :O_scale *= pow(2.0, (1.0 / 4.0)); redraw_scene = 1; break;
+        //case '-' :O_scale *= pow(0.5, (1.0 / 4.0)); redraw_scene = 1; break;
         
         case 'c' :COLOR_STYLE = (COLOR_STYLE + 1) % n_COLOR_STYLE; redraw_scene = 1; break;
         case 'C' :COLOR_STYLE = (COLOR_STYLE - 1 + n_COLOR_STYLE) % n_COLOR_STYLE; redraw_scene = 1; break;
@@ -7504,9 +7513,6 @@ void GRAPHS_keyPressed () {
         case 'l' :_LAN = int((_LAN + 1) % 2); redraw_scene = 1; break;
         case 'L' :_LAN = int((_LAN + 1) % 2); redraw_scene = 1; break;
         
-        //case 's' :draw_sun_altitude = int((draw_sun_altitude + 1) % 2); redraw_scene = 1; break;
-        //case 'S' :draw_sun_altitude = int((draw_sun_altitude + 1) % 2); redraw_scene = 1; break;
-  
         case 'V' :draw_data_lines = int((draw_data_lines + 1) % 2); redraw_scene = 1; break;
         case 'v' :draw_data_lines = int((draw_data_lines + 1) % 2); redraw_scene = 1; break;
   
@@ -7730,9 +7736,6 @@ void draw_spinners () {
   Y_spinner += 25 * S_View;
   sky_scenario = int(MySpinner.update(X_spinner, Y_spinner, "Sky status", sky_scenario, 1, 4, 1));
   filter_type = int(MySpinner.update(X_spinner, Y_spinner, "Hourly/daily filter", filter_type, 0, 1, 1));
-
-  Y_spinner += 25 * S_View;
-  draw_sun_altitude = int(MySpinner.update(X_spinner, Y_spinner, "Draw sun altitude", draw_sun_altitude, 0, 1, 1));
  
   Y_spinner += 25 * S_View;
   Pallet_ACTIVE = int(MySpinner.update(X_spinner, Y_spinner, "Active pallet option", Pallet_ACTIVE, -1, 14, 1));
