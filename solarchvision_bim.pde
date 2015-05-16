@@ -10,9 +10,9 @@ int automated = 0; //0: User interface, 1: Automatic
 
 String CLIMATE_EPW_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW";
 
-String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_EMPTY"; 
+//String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_EMPTY"; 
 //String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_90s"; 
-//String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED";
+String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED";
 
 String ENSEMBLE_directory = "C:/SOLARCHVISION_2015/Input/WeatherForecast/FORECAST_NAEFS";
 
@@ -65,7 +65,7 @@ String MAKE_filename () {
 }
 
 
-int STATION_NUMBER = 1; 
+int STATION_NUMBER = 0; 
 
 String[][] DEFINED_STATIONS = {
 /*  
@@ -429,7 +429,7 @@ int pre_Climatic_solar_model;
 int pre_Climatic_weather_model;
 
 
-int _setup = 12; //12; //13;
+int _setup = 4; //12; //13;
 
 
 
@@ -3413,7 +3413,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
           }
         }        
         if (draw_probs == 1) {
-          SOLARCHVISION_draw_probabilities(i, j, ((start_z - CLIMATE_WY2_start) * num_add_days + 1), ((end_z - CLIMATE_WY2_start) * num_add_days + num_add_days), _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+          SOLARCHVISION_draw_probabilities(i, j, ((start_z - 1) * num_add_days + 1), ((end_z - 1) * num_add_days + num_add_days), _valuesSUM, _valuesNUM, x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
         }
         for (int k = 0; k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start); k += 1) {
           for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {
