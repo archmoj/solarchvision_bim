@@ -775,7 +775,7 @@ void GRAPHS_draw () {
   
   cursor(WAIT);
   
-  resetMatrix();
+  //resetMatrix();
  
   S_View = (Y_View / 400.0); 
   
@@ -868,7 +868,7 @@ void GRAPHS_draw () {
 
     Plot_Setup();
 
-    resetMatrix();
+    //resetMatrix();
 
     Diagrams_strokeWeight(T_scale * 1);
       
@@ -901,7 +901,7 @@ void GRAPHS_draw () {
       
       record_PDF = 0;
       if (off_screen != 0) {
-        resetMatrix();
+        //resetMatrix();
         
         stroke(0); 
         fill(0);
@@ -922,7 +922,7 @@ void GRAPHS_draw () {
         println("Image created");
       }
       
-      resetMatrix();
+      //resetMatrix();
       
       stroke(0); 
       fill(0);
@@ -948,7 +948,7 @@ void GRAPHS_draw () {
     }
   }
   else {
-    resetMatrix();
+    //resetMatrix();
     
     stroke(0); 
     fill(0);
@@ -1342,7 +1342,7 @@ void Plot_Setup () {
       SOLARCHVISION_PlotIMPACT(0, -200 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
     }
     else if (record_PDF == 0) {
-      resetMatrix();
+      //resetMatrix();
       
       stroke(0); 
       fill(0);
@@ -1380,7 +1380,7 @@ void Plot_Setup () {
       SOLARCHVISION_PlotIMPACT(0, -200 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
     }
     else if (record_PDF == 0) {  
-      resetMatrix();
+      //resetMatrix();
       
       stroke(0); 
       fill(0);
@@ -7476,7 +7476,15 @@ void GRAPHS_keyPressed () {
                   */
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break;
-  
+
+        case '}' :per_days += 1;
+                  update_DevelopDATA = 1;
+                  redraw_scene = 1; break;
+        case '{' :per_days -= 1;
+                  if (per_days < 1) per_days = 1;
+                  update_DevelopDATA = 1;
+                  redraw_scene = 1; break;
+/*  
         case '}' :join_hour_numbers += 1;
                   if (join_hour_numbers > 240) join_hour_numbers = 240;
                   update_DevelopDATA = 1;
@@ -7485,7 +7493,7 @@ void GRAPHS_keyPressed () {
                   if (join_hour_numbers < 1) join_hour_numbers = 1;
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break;     
-                  
+*/                  
         case '*' :join_type *= -1;
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break;  
