@@ -10,8 +10,8 @@ int automated = 0; //0: User interface, 1: Automatic
 
 String CLIMATE_EPW_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW";
 
-String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_EMPTY"; 
-//String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_90s"; 
+//String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_EMPTY"; 
+String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_90s"; 
 //String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED";
 
 String ENSEMBLE_directory = "C:/SOLARCHVISION_2015/Input/WeatherForecast/FORECAST_NAEFS";
@@ -51,7 +51,7 @@ String MAKE_filename () {
   My_filename += Main_name + "_";
   
   //My_filename += "S" + nf(100 + _setup, 3);
-  //My_filename += "V" + nf(variation, 0);    
+  //My_filename += "V" + nf(variation, 0); 
   
   //My_filename += nf(draw_data_lines, 0);
   //My_filename += nf(draw_sorted, 0);
@@ -153,7 +153,7 @@ String[][] OBSERVED_STATIONS = {
                               , {"CWEW", "AUTO", "L'Assomption"}
                               , {"CWHM", "AUTO", "Varennes"}
                               , {"CWVQ", "AUTO", "Sainte-Anne-de-Bellevue"} 
-                              };       
+                              }; 
 */
 
 int CLIMATE_EPW_start = 1; 
@@ -220,7 +220,7 @@ int _windspd200hPa = 17;
 
 int num_layers = 18; 
 
-int drw_Layer = _drybulb; //_cloudcover; //_developed;  
+int drw_Layer = _drybulb; //_cloudcover; //_developed; 
 
 int develop_Layer = drw_Layer;
 
@@ -403,7 +403,7 @@ int draw_probs = 0;
 int sum_interval = 2;
 float level_pix = 8;
 
-float _pix = 0;  
+float _pix = 0; 
 
 color color_data_lines = color(0, 0, 0);
 
@@ -515,7 +515,7 @@ void setup () {
 
   _update_folders();
   
-  LoadFontStyle();    
+  LoadFontStyle(); 
 
   LoadWorldImages();
   
@@ -525,7 +525,7 @@ void setup () {
   
   getNAEFS_Coordinates();
 
-  getCWEEDS_Coordinates();  
+  getCWEEDS_Coordinates(); 
 
 
 
@@ -545,7 +545,7 @@ void setup () {
   _update_objects();
   
 
-  WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);  
+  WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D); 
 
   WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
 
@@ -582,10 +582,10 @@ void draw () {
     int x_point1 = int(WORLD_X_View * (( 1 * (_lon1 - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX);
     int y_point1 = int(WORLD_Y_View * ((-1 * (_lat1 - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY);
     int x_point2 = int(WORLD_X_View * (( 1 * (_lon2 - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX);
-    int y_point2 = int(WORLD_Y_View * ((-1 * (_lat2 - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY);              
+    int y_point2 = int(WORLD_Y_View * ((-1 * (_lat2 - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY); 
 
     float R_station = 2;
-    if (WORLD_VIEW_GridDisplay[WORLD_VIEW_Number] == 1) R_station = 5;   
+    if (WORLD_VIEW_GridDisplay[WORLD_VIEW_Number] == 1) R_station = 5; 
   
     WORLD_Diagrams.ellipseMode(CENTER);
 
@@ -599,7 +599,7 @@ void draw () {
       if (_lon > 180) _lon -= 360; // << important!
     
       float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;        
+      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
   
       WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
    
@@ -619,7 +619,7 @@ void draw () {
       if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
       if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) draw_info = 0;
       if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) draw_info = 0;
-      if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0;      
+      if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0; 
     
       if (draw_info == 1) {
   
@@ -645,7 +645,7 @@ void draw () {
       if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
       if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) draw_info = 0;
       if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) draw_info = 0;
-      if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0;      
+      if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0; 
     
       if (draw_info == 1) {
   
@@ -671,7 +671,7 @@ void draw () {
       if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
       if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) draw_info = 0;
       if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) draw_info = 0;
-      if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0;      
+      if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0; 
     
       if (draw_info == 1) {
   
@@ -688,7 +688,7 @@ void draw () {
     
     WORLD_Diagrams.endDraw();
     
-    image(WORLD_Diagrams, WORLD_CX_View, WORLD_CY_View, WORLD_X_View, WORLD_Y_View);    
+    image(WORLD_Diagrams, WORLD_CX_View, WORLD_CY_View, WORLD_X_View, WORLD_Y_View); 
   
     WORLD_Update = 0;
   }
@@ -700,7 +700,7 @@ void draw () {
     WIN3D_Diagrams.background(233);
     
     if (WIN3D_View_Type == 1) {
-      WIN3D_Diagrams.perspective(WIN3D_ZOOM_coordinate * PI/180, 1.0 / WIN3D_R_View, 0.00001, 100000);  //fovy, aspect, zNear, zFar
+      WIN3D_Diagrams.perspective(WIN3D_ZOOM_coordinate * PI/180, 1.0 / WIN3D_R_View, 0.00001, 100000); //fovy, aspect, zNear, zFar
       
       WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT! 
     }
@@ -721,18 +721,18 @@ void draw () {
     WIN3D_Diagrams.translate(0, 0, 0);
     
     WIN3D_Diagrams.fill(0);
-    WIN3D_Diagrams.textAlign(CENTER, CENTER);      
+    WIN3D_Diagrams.textAlign(CENTER, CENTER); 
     WIN3D_Diagrams.textSize(5 * (WIN3D_ZOOM_coordinate / 30.0));
     WIN3D_Diagrams.text(LocationName + " [" + nfp(LocationLatitude, 0, 1) + ", " + nfp(LocationLongitude, 0, 1) + "]", 0, 60 * (WIN3D_ZOOM_coordinate / 30.0), 0);
    
     WIN3D_Diagrams.popMatrix();
   
     WIN3D_Diagrams.translate(WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
-    WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI/180);    
+    WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI/180); 
     WIN3D_Diagrams.rotateY(WIN3D_RY_coordinate * PI/180);
-    WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI/180);    
+    WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI/180); 
 
-    //println(nfp(WIN3D_RX_coordinate, 0, 1), nfp(WIN3D_RY_coordinate, 0, 1), nfp(WIN3D_RZ_coordinate, 0, 1));  
+    //println(nfp(WIN3D_RX_coordinate, 0, 1), nfp(WIN3D_RY_coordinate, 0, 1), nfp(WIN3D_RZ_coordinate, 0, 1)); 
 
     
     
@@ -860,7 +860,7 @@ void GRAPHS_draw () {
   
     Diagrams_strokeJoin(ROUND); 
     
-    Diagrams_textFont(createFont("Arial Narrow", 36));  
+    Diagrams_textFont(createFont("Arial Narrow", 36)); 
     
     Diagrams_strokeWeight(0);
     
@@ -982,7 +982,7 @@ void plot_center (float x, float y, float z, float sx, float sy, float sz) {
   int draw_climate_WY2 = 0;
   int draw_forecast = 0;
   int draw_observed = 0;
-  int draw_climate_EPW = 0;  
+  int draw_climate_EPW = 0; 
   
   if (impacts_source == databaseNumber_CLIMATE_WY2) draw_climate_WY2 = 1;
   if (impacts_source == databaseNumber_ENSEMBLE) draw_forecast = 1;
@@ -1023,7 +1023,7 @@ void plot_center (float x, float y, float z, float sx, float sy, float sz) {
     draw_data_lines = pre_draw_data_lines;
     draw_sorted = pre_draw_sorted;
     draw_normals = pre_draw_normals;
-    draw_probs = pre_draw_probs;    
+    draw_probs = pre_draw_probs; 
   }
   
   now_drawing = -1;
@@ -1037,7 +1037,7 @@ void Plot_Setup () {
 
   if (_setup == 100) {
 
-    SOLARCHVISION_PlotIMPACT(0, -175 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);    
+    SOLARCHVISION_PlotIMPACT(0, -175 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View); 
     
     plot_center(0, 175 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
@@ -1086,7 +1086,7 @@ void Plot_Setup () {
   if (_setup == -1) {
     pre_impacts_source = impacts_source;
     
-    impacts_source = databaseNumber_ENSEMBLE;    
+    impacts_source = databaseNumber_ENSEMBLE; 
 
     draw_sorted = 0;
     draw_normals = 0;
@@ -1097,7 +1097,7 @@ void Plot_Setup () {
     draw_sorted = 1;
     draw_normals = 1;
     draw_data_lines = 0;
-    draw_probs = 0;    
+    draw_probs = 0; 
     plot_center(0, 175 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
     impacts_source = databaseNumber_CLIMATE_WY2;
@@ -1112,7 +1112,7 @@ void Plot_Setup () {
     draw_sorted = 1;
     draw_normals = 1;
     draw_data_lines = 0;
-    draw_probs = 0;    
+    draw_probs = 0; 
     plot_center(0, -525 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
     
     impacts_source = pre_impacts_source;
@@ -1162,7 +1162,7 @@ void Plot_Setup () {
     int pre_develop_option = develop_option;
     
     develop_Layer = drw_Layer;
-    drw_Layer = _developed;     
+    drw_Layer = _developed; 
     
     develop_option = 1;
     SOLARCHVISION_DevelopDATA(impacts_source);
@@ -1181,7 +1181,7 @@ void Plot_Setup () {
     plot_center(0, 525 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View); 
 
     develop_option = pre_develop_option;
-    drw_Layer = pre_drw_Layer;    
+    drw_Layer = pre_drw_Layer; 
   }  
   
   
@@ -1317,7 +1317,7 @@ void Plot_Setup () {
     plot_impacts = 6;
     SOLARCHVISION_PlotIMPACT(0, -525 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
    
-    plot_impacts = pre_plot_impacts;    
+    plot_impacts = pre_plot_impacts; 
   }
   
 
@@ -1334,7 +1334,7 @@ void Plot_Setup () {
     draw_sorted = 1;
     draw_normals = 1;
     draw_data_lines = 0;
-    draw_probs = 0;    
+    draw_probs = 0; 
     plot_center(0, 175 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
     if (update_impacts == 1) {    
@@ -1353,7 +1353,7 @@ void Plot_Setup () {
       Diagrams_copy(pre_Diagrams, 0, 0, int(pre_Image_Scale * Y_View), int(pre_Image_Scale * Y_View / 2), 0, 0, int(Image_Scale * Y_View), int(Image_Scale * Y_View / 2));
     }
     
-    plot_impacts = pre_plot_impacts;    
+    plot_impacts = pre_plot_impacts; 
     impact_layer = pre_impact_layer;
   }
 
@@ -1372,7 +1372,7 @@ void Plot_Setup () {
     draw_sorted = 1;
     draw_normals = 1;
     draw_data_lines = 0;
-    draw_probs = 0;    
+    draw_probs = 0; 
     plot_center(0, 175 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
     
     if (update_impacts == 1) {    
@@ -1415,7 +1415,7 @@ void Plot_Setup () {
     plot_impacts = 3;
     SOLARCHVISION_PlotIMPACT(0, -200 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
-    plot_impacts = pre_plot_impacts;    
+    plot_impacts = pre_plot_impacts; 
     impact_layer = pre_impact_layer;
   }
   
@@ -1438,7 +1438,7 @@ void Plot_Setup () {
     plot_impacts = 4;
     SOLARCHVISION_PlotIMPACT(0, -200 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
-    plot_impacts = pre_plot_impacts;    
+    plot_impacts = pre_plot_impacts; 
     impact_layer = pre_impact_layer;
   }  
 
@@ -1458,12 +1458,12 @@ void Plot_Setup () {
 
     drw_Layer = _precipitation ; 
     develop_Layer = drw_Layer;
-    drw_Layer = _developed;     
+    drw_Layer = _developed; 
     develop_option = 0;
-    SOLARCHVISION_DevelopDATA(impacts_source);    
+    SOLARCHVISION_DevelopDATA(impacts_source); 
     plot_center(0, 325 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
-    drw_Layer = _drybulb;  
+    drw_Layer = _drybulb; 
     plot_center(0, 525 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
     plot_impacts = -1;
@@ -1481,9 +1481,9 @@ void Plot_Setup () {
 
     drw_Layer = _precipitation ; 
     develop_Layer = drw_Layer;
-    drw_Layer = _developed;     
+    drw_Layer = _developed; 
     develop_option = 0;
-    SOLARCHVISION_DevelopDATA(impacts_source);    
+    SOLARCHVISION_DevelopDATA(impacts_source); 
     plot_center(0, 125 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 */
 
@@ -1493,7 +1493,7 @@ void Plot_Setup () {
     variation = 1;
     SOLARCHVISION_PlotIMPACT(0, 100 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
-    plot_impacts = pre_plot_impacts;    
+    plot_impacts = pre_plot_impacts; 
     impact_layer = pre_impact_layer;
   }
 
@@ -1509,7 +1509,7 @@ void Plot_Setup () {
     }
     
 
-    drw_Layer = drw_Layer = _dirnorrad;   
+    drw_Layer = drw_Layer = _dirnorrad; 
     plot_center(0, 125 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View); 
 
     drw_Layer = _glohorrad; //_difhorrad; // <<<<<<<<<<<<<< 
@@ -1528,7 +1528,7 @@ void Plot_Setup () {
     SOLARCHVISION_PlotIMPACT(0, -150 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
 
-    plot_impacts = pre_plot_impacts;    
+    plot_impacts = pre_plot_impacts; 
     impact_layer = pre_impact_layer;
 
   }  
@@ -2349,7 +2349,7 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
                 _valuesO          [i][j][(k * num_add_days + j_ADD)] = FLOAT_undefined;
                 _valuesO_overcast [i][j][(k * num_add_days + j_ADD)] = FLOAT_undefined;
                 _valuesO_scattered[i][j][(k * num_add_days + j_ADD)] = FLOAT_undefined;
-                _valuesO_clear    [i][j][(k * num_add_days + j_ADD)] = FLOAT_undefined;            
+                _valuesO_clear    [i][j][(k * num_add_days + j_ADD)] = FLOAT_undefined; 
         
                 String Pa = CLIMATE_WY2[i][now_j][l][k];
       
@@ -2529,7 +2529,7 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
         }
         else {
           float DATE_ANGLE = (360 * ((286 + j) % 365) / 365.0);
-          float HOUR_ANGLE = i;         
+          float HOUR_ANGLE = i; 
           
           float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, float(ENSEMBLE[i][j][_cloudcover][k]));
           float T = float(ENSEMBLE[i][j][_drybulb][k]);
@@ -2590,9 +2590,9 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
                     
                     sum_count += _weight;
                     
-                    if (CLIMATE_WY2[now_i][now_j][_dirnorrad][q].equals(_undefined)) {} else _valuesSUM_DIR += _weight * float(CLIMATE_WY2[now_i][now_j][_dirnorrad][q]);                 
-                    if (CLIMATE_WY2[now_i][now_j][_difhorrad][q].equals(_undefined)) {} else _valuesSUM_DIF += _weight * float(CLIMATE_WY2[now_i][now_j][_difhorrad][q]);                 
-                    if (CLIMATE_WY2[now_i][now_j][_glohorrad][q].equals(_undefined)) {} else _valuesSUM_GLO += _weight * float(CLIMATE_WY2[now_i][now_j][_glohorrad][q]);                 
+                    if (CLIMATE_WY2[now_i][now_j][_dirnorrad][q].equals(_undefined)) {} else _valuesSUM_DIR += _weight * float(CLIMATE_WY2[now_i][now_j][_dirnorrad][q]); 
+                    if (CLIMATE_WY2[now_i][now_j][_difhorrad][q].equals(_undefined)) {} else _valuesSUM_DIF += _weight * float(CLIMATE_WY2[now_i][now_j][_difhorrad][q]); 
+                    if (CLIMATE_WY2[now_i][now_j][_glohorrad][q].equals(_undefined)) {} else _valuesSUM_GLO += _weight * float(CLIMATE_WY2[now_i][now_j][_glohorrad][q]); 
       
                   }
                 }
@@ -2620,7 +2620,7 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
           ENSEMBLE_DATA[i][j][_direffect][k] = 0;
           
           ENSEMBLE[i][j][_difeffect][k] = String.valueOf(float(ENSEMBLE[i][j][_difhorrad][k]) * (18 - T));
-          ENSEMBLE_DATA[i][j][_difeffect][k] = 0;       
+          ENSEMBLE_DATA[i][j][_difeffect][k] = 0; 
           
         }     
       }
@@ -2709,7 +2709,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
   SOLARCHVISION_draw_Grid_Cartesian_TIME(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
 
   int start_z = get_startZ_endZ(databaseNumber_ENSEMBLE)[0];
-  int end_z = get_startZ_endZ(databaseNumber_ENSEMBLE)[1];  
+  int end_z = get_startZ_endZ(databaseNumber_ENSEMBLE)[1]; 
   
   if (print_title != 0) {
     
@@ -2722,7 +2722,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
     my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, (0.3 + V_belowLine[drw_Layer]) * sx_Plot / U_scale, 0);
 
     Diagrams_textSize(sx_Plot * 0.150 / U_scale);
-    Diagrams_textAlign(LEFT, CENTER);    
+    Diagrams_textAlign(LEFT, CENTER); 
     my_text((_LAYERS[drw_Layer][(_LAN + 1)]), 0, (0.3 + V_belowLine[drw_Layer]) * sx_Plot / U_scale, 0);
   
   }
@@ -2731,11 +2731,11 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
   String Pb = "";
 
   float[] _valuesA;
-  float[] _valuesB;        
+  float[] _valuesB; 
   _valuesA = new float[(1 + ENSEMBLE_end - ENSEMBLE_start)];
   _valuesB = new float[(1 + ENSEMBLE_end - ENSEMBLE_start)]; 
 
-  float[] _valuesSUM;        
+  float[] _valuesSUM; 
   float[] _valuesNUM;
   int _interval = 0;
   _valuesSUM = new float[(1 + ENSEMBLE_end - ENSEMBLE_start)];
@@ -2765,20 +2765,20 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
     
     Diagrams_stroke(0);
     Diagrams_fill(0);
-    Diagrams_textAlign(CENTER, CENTER);   
+    Diagrams_textAlign(CENTER, CENTER); 
 
     if ((U_scale >= 0.75) || (((j - j_start) % int(1.5 / U_scale)) == 0)) {
       Diagrams_textSize(sx_Plot * 0.15 / U_scale);
       
       my_text(CalendarDay[int((365 + j + 286 + BEGIN_DAY) % 365)][_LAN], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / U_scale, 0);
       if (num_add_days > 1) {
-        my_text(("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1.375 * sx_Plot, 0);
+        //my_text(("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1.375 * sx_Plot, 0);
       }
     }
     
     String _FileNameAdd = "";
     if (num_add_days > 1) {
-        _FileNameAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
+        //_FileNameAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
     }
     if ((save_info_node == 1) && (draw_data_lines == 1)) {
       File_output_node[(j - j_start)] = createWriter("/" + Main_name + "/FORECAST_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
@@ -2858,7 +2858,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
           if (Pa.equals(_undefined)) {
             _valuesA[k] = FLOAT_undefined;
             
-            if ((save_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("[undefined]\t");              
+            if ((save_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("[undefined]\t"); 
           }
           else {
             int drw_count = SOLARCHVISION_filter("ENSEMBLE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
@@ -2913,7 +2913,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
  
       if ((save_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].println();
   
-      _interval += 1;        
+      _interval += 1; 
       if ((_interval % sum_interval) == 0) {
         for (int k = (start_z - 1); k <= (end_z - 1); k += 1) {
           _valuesSUM[k] += _valuesA[k];
@@ -3084,7 +3084,7 @@ void SOLARCHVISION_LoadCLIMATE_WY2 (String FileName) {
     if (CLIMATE_WY2[i][j][_opaquesky][k].equals("99")) CLIMATE_WY2[i][j][_opaquesky][k] = _undefined;
     
     if (CLIMATE_WY2[i][j][_ceilingsky][k].equals("7777")) CLIMATE_WY2[i][j][_ceilingsky][k] = "1000";
-    if (int(CLIMATE_WY2[i][j][_ceilingsky][k]) >= 1000) CLIMATE_WY2[i][j][_ceilingsky][k] = "1000";    
+    if (int(CLIMATE_WY2[i][j][_ceilingsky][k]) >= 1000) CLIMATE_WY2[i][j][_ceilingsky][k] = "1000"; 
     
     if (CLIMATE_WY2[i][j][_ceilingsky][k].equals("9999")) CLIMATE_WY2[i][j][_ceilingsky][k] = _undefined;
     else CLIMATE_WY2[i][j][_ceilingsky][k] = String.valueOf(10 * float(CLIMATE_WY2[i][j][_ceilingsky][k]));
@@ -3134,7 +3134,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
   _pix = (100.0 * S_View / level_pix);
   
   int start_z = get_startZ_endZ(databaseNumber_CLIMATE_WY2)[0];
-  int end_z = get_startZ_endZ(databaseNumber_CLIMATE_WY2)[1];  
+  int end_z = get_startZ_endZ(databaseNumber_CLIMATE_WY2)[1]; 
   
   if (print_title != 0) {
     
@@ -3147,7 +3147,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       my_text(("[" + String.valueOf(start_z + CLIMATE_WY2_start) + "-" + String.valueOf(end_z + CLIMATE_WY2_start) + "] "), 0, (0.3 + V_belowLine[drw_Layer]) * sx_Plot / U_scale, 0);
   
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
-      Diagrams_textAlign(LEFT, CENTER);    
+      Diagrams_textAlign(LEFT, CENTER); 
       my_text((_LAYERS[drw_Layer][(_LAN + 1)]), 0, (0.3 + V_belowLine[drw_Layer]) * sx_Plot / U_scale, 0);
     
   }   
@@ -3156,11 +3156,11 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
   String Pb = "";
 
   float[] _valuesA;
-  float[] _valuesB;        
+  float[] _valuesB; 
   _valuesA = new float[((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
   _valuesB = new float[((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
 
-  float[] _valuesSUM;        
+  float[] _valuesSUM; 
   float[] _valuesNUM;
   int _interval = 0;
   _valuesSUM = new float[((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
@@ -3183,7 +3183,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
     
     Diagrams_stroke(0);
     Diagrams_fill(0);
-    Diagrams_textAlign(CENTER, CENTER);   
+    Diagrams_textAlign(CENTER, CENTER); 
 
     if ((U_scale >= 0.75) || (((j - j_start) % int(1.5 / U_scale)) == 0)) {
       Diagrams_textSize(sx_Plot * 0.15 / U_scale);
@@ -3325,7 +3325,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       
       if ((save_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].println();
         
-      _interval += 1;        
+      _interval += 1; 
       if ((_interval % sum_interval) == 0) {
         for (int k = 0; k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start); k += 1) {
           for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {
@@ -3490,7 +3490,7 @@ void SOLARCHVISION_LoadCLIMATE_EPW (String FileName) {
     
     if (CLIMATE_EPW[i][j][_ceilingsky][k].equals("77777")) CLIMATE_EPW[i][j][_ceilingsky][k] = "1000";
     if (CLIMATE_EPW[i][j][_ceilingsky][k].equals("88888")) CLIMATE_EPW[i][j][_ceilingsky][k] = "1000";
-    if (int(CLIMATE_EPW[i][j][_ceilingsky][k]) >= 1000) CLIMATE_EPW[i][j][_ceilingsky][k] = "1000";    
+    if (int(CLIMATE_EPW[i][j][_ceilingsky][k]) >= 1000) CLIMATE_EPW[i][j][_ceilingsky][k] = "1000"; 
     
     if (CLIMATE_EPW[i][j][_ceilingsky][k].equals("99999")) CLIMATE_EPW[i][j][_ceilingsky][k] = _undefined;
 
@@ -3538,7 +3538,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
   _pix = (100.0 * S_View / level_pix);
 
   int start_z = get_startZ_endZ(databaseNumber_CLIMATE_EPW)[0];
-  int end_z = get_startZ_endZ(databaseNumber_CLIMATE_EPW)[1];  
+  int end_z = get_startZ_endZ(databaseNumber_CLIMATE_EPW)[1]; 
   
   if (print_title != 0) {
     
@@ -3551,7 +3551,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
       my_text(("[Typical Year] "), 0, (0.3 + V_belowLine[drw_Layer]) * sx_Plot / U_scale, 0);
   
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
-      Diagrams_textAlign(LEFT, CENTER);    
+      Diagrams_textAlign(LEFT, CENTER); 
       my_text((_LAYERS[drw_Layer][(_LAN + 1)]), 0, (0.3 + V_belowLine[drw_Layer]) * sx_Plot / U_scale, 0);
     
   }    
@@ -3560,11 +3560,11 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
   String Pb = "";
 
   float[] _valuesA;
-  float[] _valuesB;        
+  float[] _valuesB; 
   _valuesA = new float[((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * num_add_days)];
   _valuesB = new float[((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * num_add_days)];
 
-  float[] _valuesSUM;        
+  float[] _valuesSUM; 
   float[] _valuesNUM;
   int _interval = 0;
   _valuesSUM = new float[((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * num_add_days)];
@@ -3587,7 +3587,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
 
     Diagrams_stroke(0);
     Diagrams_fill(0);
-    Diagrams_textAlign(CENTER, CENTER);   
+    Diagrams_textAlign(CENTER, CENTER); 
 
     if ((U_scale >= 0.75) || (((j - j_start) % int(1.5 / U_scale)) == 0)) {
       Diagrams_textSize(sx_Plot * 0.15 / U_scale);
@@ -3729,7 +3729,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
       
       if ((save_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].println();
         
-      _interval += 1;        
+      _interval += 1; 
       if ((_interval % sum_interval) == 0) {
         for (int k = 0; k < (1 + CLIMATE_EPW_end - CLIMATE_EPW_start); k += 1) {
           for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {
@@ -4084,7 +4084,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
   SOLARCHVISION_draw_Grid_Cartesian_TIME(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
 
   int start_z = get_startZ_endZ(databaseNumber_OBSERVED)[0];
-  int end_z = get_startZ_endZ(databaseNumber_OBSERVED)[1];  
+  int end_z = get_startZ_endZ(databaseNumber_OBSERVED)[1]; 
   
   if (print_title != 0) {
     
@@ -4097,7 +4097,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
     //my_text(("[Observations:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, (0.3 + V_belowLine[drw_Layer]) * sx_Plot / U_scale, 0);
 
     Diagrams_textSize(sx_Plot * 0.150 / U_scale);
-    Diagrams_textAlign(LEFT, CENTER);    
+    Diagrams_textAlign(LEFT, CENTER); 
     my_text((_LAYERS[drw_Layer][(_LAN + 1)]), 0, (0.3 + V_belowLine[drw_Layer]) * sx_Plot / U_scale, 0);
   
   }
@@ -4106,11 +4106,11 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
   String Pb = "";
 
   float[] _valuesA;
-  float[] _valuesB;        
+  float[] _valuesB; 
   _valuesA = new float[(1 + OBSERVED_end - OBSERVED_start)];
   _valuesB = new float[(1 + OBSERVED_end - OBSERVED_start)]; 
 
-  float[] _valuesSUM;        
+  float[] _valuesSUM; 
   float[] _valuesNUM;
   int _interval = 0;
   _valuesSUM = new float[(1 + OBSERVED_end - OBSERVED_start)];
@@ -4139,7 +4139,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
   for (int j = j_start; j < j_end; j += 1) { 
     String _FileNameAdd = "";
     if (num_add_days > 1) {
-        _FileNameAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
+        //_FileNameAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
     }
     if ((save_info_node == 1) && (draw_data_lines == 1)) {
       File_output_node[(j - j_start)] = createWriter("/" + Main_name + "/OBSERVATION_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
@@ -4219,7 +4219,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
           if (Pa.equals(_undefined)) {
             _valuesA[k] = FLOAT_undefined;
 
-            if ((save_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("[undefined]\t");              
+            if ((save_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("[undefined]\t"); 
           }
           else {
             int drw_count = 1; //SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
@@ -4274,7 +4274,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
  
       if ((save_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].println();
   
-      _interval += 1;        
+      _interval += 1; 
       if ((_interval % sum_interval) == 0) {
         for (int k = (start_z - 1); k <= (end_z - 1); k += 1) {
           _valuesSUM[k] += _valuesA[k];
@@ -4365,7 +4365,7 @@ void SOLARCHVISION_draw_Grid_Cartesian_TIME (float x_Plot, float y_Plot, float z
   }
   
   Diagrams_stroke(0, 63);
-  Diagrams_fill(0, 63);  
+  Diagrams_fill(0, 63); 
   for (int i = j_start; i <= j_end; i += 1) {
     if (i < j_end) {
       int j_step = 3;
@@ -4382,7 +4382,7 @@ void SOLARCHVISION_draw_Grid_Cartesian_TIME (float x_Plot, float y_Plot, float z
   
   Diagrams_stroke(0);
   Diagrams_fill(0);
-  Diagrams_textAlign(CENTER, CENTER);   
+  Diagrams_textAlign(CENTER, CENTER); 
 
   for (int i = j_start; i < j_end; i += 1) {
     if (U_scale >= 0.75) {
@@ -4458,7 +4458,7 @@ void SOLARCHVISION_draw_Grid_Spherical_POSITION (float x_Plot, float y_Plot, flo
       }
       else {
         Diagrams_stroke(0);
-        Diagrams_noFill();      
+        Diagrams_noFill(); 
       }
       
       Diagrams_ellipse((i + obj_offset_x) * sx_Plot, 0, 2 * r * obj_scale * sx_Plot , 2 * r * obj_scale * sx_Plot);
@@ -4481,7 +4481,7 @@ void SOLARCHVISION_draw_Grid_DAILY (float x_Plot, float y_Plot, float z_Plot, fl
   
   Diagrams_stroke(0);
   Diagrams_fill(0);
-  Diagrams_textAlign(CENTER, CENTER);   
+  Diagrams_textAlign(CENTER, CENTER); 
 
   for (int i = j_start; i < j_end; i += 1) {
     if ((U_scale >= 0.75) || (((i - j_start) % int(1.5 / U_scale)) == 0)) {
@@ -4489,7 +4489,7 @@ void SOLARCHVISION_draw_Grid_DAILY (float x_Plot, float y_Plot, float z_Plot, fl
       
       my_text(CalendarDay[int((365 + i * per_day + 286 + BEGIN_DAY) % 365)][_LAN], (i - ((0 - 12) / 24.0)) * sx_Plot, -0.875 * sx_Plot / U_scale, 0);
       if (num_add_days > 1) {
-        //my_text(("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s"), (0 + i - ((0 - 12) / 24.0)) * sx_Plot, -1.375 * sx_Plot, 0);
+        my_text(("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s"), (0 + i - ((0 - 12) / 24.0)) * sx_Plot, -1.375 * sx_Plot, 0);
       }
     }
   }
@@ -4593,7 +4593,7 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
         if ((100 * _u) > 0) {
         
           SET_COLOR_STYLE(-1, (0.5 * _u)); 
-          Diagrams_strokeWeight(T_scale * 0);              
+          Diagrams_strokeWeight(T_scale * 0); 
           Diagrams_rect((j + ((i + 1) / 24.0)) * sx_Plot, -((min_v + n) * _pix) - 0.5 * _pix, -(sum_interval * S_View * 100 / 24.0) * U_scale, _pix); 
           
           Diagrams_stroke(0);
@@ -4625,9 +4625,9 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
     //Diagrams_rect((600 + q * (pal_length / 11.0)) * S_View, 125 * S_View, (pal_length / 11.0) * S_View, 20 * S_View); 
     Diagrams_rect((600 + q * (pal_length / 11.0)) * S_View, Y_OFFSET, (pal_length / 11.0) * S_View, 20 * S_View);
     
-    Diagrams_strokeWeight(2);  
+    Diagrams_strokeWeight(2); 
     Diagrams_stroke(255);
-    Diagrams_fill(255);  
+    Diagrams_fill(255); 
     
     Diagrams_textSize(15.0 * S_View);
     Diagrams_textAlign(CENTER, CENTER);
@@ -4666,7 +4666,7 @@ void SOLARCHVISION_draw_sorted (int i, int j, float[] _valuesA, float[] _valuesB
     //SET_COLOR_STYLE(10, (0.5 - 1.0 * _u));
     //SET_COLOR_STYLE(11, (0.5 - 1.0 * _u));
     
-    Diagrams_strokeWeight(T_scale * 0.0);     
+    Diagrams_strokeWeight(T_scale * 0.0); 
     //Diagrams_rect((j + ((i + 1) / 24.0)) * sx_Plot, sorted_valuesA[l] * sy_Plot, -(1 * 100 / 24.0) * U_scale, (sorted_valuesA[(l + 1)] - sorted_valuesA[l]) * sy_Plot);
     
     float P1x = (j + ((i + 0.5) / 24.0)) * sx_Plot;
@@ -4683,7 +4683,7 @@ void SOLARCHVISION_draw_sorted (int i, int j, float[] _valuesA, float[] _valuesB
     /*
     Diagrams_stroke(255);
     Diagrams_strokeWeight(T_scale * 0.5); 
-    Diagrams_line(P1x, P1y, P4x, P4y);  
+    Diagrams_line(P1x, P1y, P4x, P4y); 
     Diagrams_line(P2x, P2y, P3x, P3y);
     */
   }
@@ -4705,11 +4705,11 @@ void SOLARCHVISION_draw_sorted (int i, int j, float[] _valuesA, float[] _valuesB
     //Diagrams_rect((600 + q * (pal_length / 9.0)) * S_View, 125 * S_View, (pal_length / 9.0) * S_View, 20 * S_View);
     Diagrams_rect((600 + q * (pal_length / 9.0)) * S_View, Y_OFFSET, (pal_length / 9.0) * S_View, 20 * S_View);
     
-    Diagrams_strokeWeight(0);  
+    Diagrams_strokeWeight(0); 
     Diagrams_stroke(63);
     Diagrams_fill(63);
     if ((q != 0) && (q != 8)) {   
-      Diagrams_strokeWeight(2);  
+      Diagrams_strokeWeight(2); 
       Diagrams_stroke(255);
       Diagrams_fill(255); 
     } 
@@ -4886,7 +4886,7 @@ void SOLARCHVISION_draw_normals (int i, int j, float[] _valuesA, float[] _values
     if (l == N_Ave) z_l = 62;
     
     if ((NormalsA[l] < 0.9 * FLOAT_undefined) && (NormalsB[l] < 0.9 * FLOAT_undefined)) {
-      my_line((j + ((i + 0.5) / 24.0)) * sx_Plot, NormalsA[l] * sy_Plot, z_l * sz_Plot * W_scale, (j + ((i + 0.5 + dT) / 24.0)) * sx_Plot, NormalsB[l] * sy_Plot, z_l * sz_Plot * W_scale);               
+      my_line((j + ((i + 0.5) / 24.0)) * sx_Plot, NormalsA[l] * sy_Plot, z_l * sz_Plot * W_scale, (j + ((i + 0.5 + dT) / 24.0)) * sx_Plot, NormalsB[l] * sy_Plot, z_l * sz_Plot * W_scale); 
     } 
     
     if ((save_info_norm == 1) && (draw_normals == 1)) {
@@ -4903,13 +4903,13 @@ int[] get_startZ_endZ (int data_source) {
   int[] a = new int[3];
 
   int start_z = -1;
-  int end_z = -1;        
+  int end_z = -1; 
   int layers_count = -1;
 
   if (data_source == databaseNumber_CLIMATE_WY2) {
 
     start_z = CLIMATE_WY2_start;
-    end_z = CLIMATE_WY2_end;        
+    end_z = CLIMATE_WY2_end; 
     
     switch(H_layer_option) {
       case 1 : start_z = 1953; end_z = 1959; break;
@@ -4958,7 +4958,7 @@ int[] get_startZ_endZ (int data_source) {
 
 
   if (impacts_source == databaseNumber_CLIMATE_WY2) layers_count = (1 + CLIMATE_WY2_end - CLIMATE_WY2_start);
-  if (impacts_source == databaseNumber_ENSEMBLE) layers_count = (1 + ENSEMBLE_end - ENSEMBLE_start);  
+  if (impacts_source == databaseNumber_ENSEMBLE) layers_count = (1 + ENSEMBLE_end - ENSEMBLE_start); 
   if (impacts_source == databaseNumber_OBSERVED) layers_count = (1 + OBSERVED_end - OBSERVED_start);
   if (impacts_source == databaseNumber_CLIMATE_EPW) layers_count = 1;
   
@@ -4972,13 +4972,13 @@ int[] get_startZ_endZ (int data_source) {
 void SOLARCHVISION_DevelopDATA (int data_source) {
 
   int start_z = get_startZ_endZ(data_source)[0];
-  int end_z = get_startZ_endZ(data_source)[1];       
-  int layers_count = get_startZ_endZ(data_source)[2];  
+  int end_z = get_startZ_endZ(data_source)[1]; 
+  int layers_count = get_startZ_endZ(data_source)[2]; 
  
   String Pa = "", Pb = "";
   float RAIN, T, R_dir, R_dif;
 
-  float[] _valuesSUM;        
+  float[] _valuesSUM; 
   _valuesSUM = new float[layers_count];
   
   for (int k = 0; k < layers_count; k += 1) {
@@ -5086,7 +5086,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
         
           
         float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0);
-        float HOUR_ANGLE = now_i;         
+        float HOUR_ANGLE = now_i; 
         
         float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
 
@@ -5636,7 +5636,7 @@ float[] SOLARCHVISION_NORMAL (float[] _values) {
   float[] return_array = {0, 0, 0, 0, 0, 0, 0, 0, 0};
   
   int NV = 0; // the number of values without counting undefined values
-  float _weight = 0;  
+  float _weight = 0; 
   
   _values = sort(_values);
   for (int i = 0; i < _values.length; i += 1) {
@@ -5660,7 +5660,7 @@ float[] SOLARCHVISION_NORMAL (float[] _values) {
         
         _weight = (NV + 1 - i);
         weight_array[N_MidLow] += _weight;
-        return_array[N_MidLow] += _values[i] * _weight;        
+        return_array[N_MidLow] += _values[i] * _weight; 
       }
     }
 
@@ -5736,7 +5736,7 @@ int SOLARCHVISION_filter (String data_type, int _cloudcover, int type_of_filter,
     
     if (scenario_of_sky == 1) _return = 1;
     else if ((scenario_of_sky == 4) && (total_sky <= 3.33)) _return = 1;
-    else if ((scenario_of_sky == 3) && (total_sky > 3.33) && (total_sky <= 6.66)) _return = 1;  
+    else if ((scenario_of_sky == 3) && (total_sky > 3.33) && (total_sky <= 6.66)) _return = 1; 
     else if ((scenario_of_sky == 2) && (total_sky > 6.66)) _return = 1;
   }
   
@@ -5782,7 +5782,7 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int layers_count, int start_z, int 
   float _values_E_dir;
   float _values_E_dif;
 
-  float[] _valuesSUM_RAD;        
+  float[] _valuesSUM_RAD; 
   float[] _valuesSUM_EFF;
   float[] _valuesNUM;
   _valuesSUM_RAD = new float[(layers_count * num_add_days)];
@@ -5803,7 +5803,7 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int layers_count, int start_z, int 
       
       for (int i = 0; i < 24; i += 1) {
         
-        float HOUR_ANGLE = i;  
+        float HOUR_ANGLE = i; 
         float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
         
         int now_k = k;
@@ -5889,8 +5889,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) num_add_days = 1;
   
   int start_z = get_startZ_endZ(impacts_source)[0];
-  int end_z = get_startZ_endZ(impacts_source)[1];  
-  int layers_count = get_startZ_endZ(impacts_source)[2];  
+  int end_z = get_startZ_endZ(impacts_source)[1]; 
+  int layers_count = get_startZ_endZ(impacts_source)[2]; 
   
   if ((plot_impacts == 0) || (plot_impacts == -1)) {
     if (plot_impacts == 0) Impact_TYPE = Impact_ACTIVE; 
@@ -5953,7 +5953,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         total_Matrix_ARGB[0][Image_X][Image_Y] = 0;
         total_Matrix_ARGB[1][Image_X][Image_Y] = 0;
         total_Matrix_ARGB[2][Image_X][Image_Y] = 0;
-        total_Matrix_ARGB[3][Image_X][Image_Y] = 0;                   
+        total_Matrix_ARGB[3][Image_X][Image_Y] = 0; 
       }
 
       for (int j = j_start; j < j_end; j += 1) {
@@ -5988,10 +5988,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         
         if (j == j_start) {
           Diagrams_textSize(sx_Plot * 0.15 / U_scale);
-          Diagrams_textAlign(RIGHT, CENTER);  
+          Diagrams_textAlign(RIGHT, CENTER); 
           Diagrams_stroke(0);
           Diagrams_fill(0);
-          Diagrams_strokeWeight(0);   
+          Diagrams_strokeWeight(0); 
           
           if (Impact_TYPE == Impact_ACTIVE) {  
             my_text(N_Title[l], 0, - (1 * (p - 0.25) * sx_Plot / U_scale), 0);
@@ -6025,7 +6025,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   
             for (int i = 0; i < 24; i += 1) {
               
-              float HOUR_ANGLE = i;  
+              float HOUR_ANGLE = i; 
               float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
               
               now_k = k;
@@ -6068,7 +6068,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 _values_R_dir = FLOAT_undefined;
                 _values_R_dif = FLOAT_undefined;
                 _values_E_dir = FLOAT_undefined;
-                _values_E_dif = FLOAT_undefined;              
+                _values_E_dif = FLOAT_undefined; 
               }
               else {
   
@@ -6104,7 +6104,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                         String File_Name = "";
                         
                         int Round_Latitude = int(roundTo(LocationLatitude, 5));
-                        if (Round_Latitude > 60) Round_Latitude = 60;   // <<<<<<<<<<<<<<<
+                        if (Round_Latitude > 60) Round_Latitude = 60; // <<<<<<<<<<<<<<<
                         if (Round_Latitude < -45) Round_Latitude = -45; // <<<<<<<<<<<<<<<
                         String Near_Latitude = nf(abs(Round_Latitude), 2);
                         
@@ -6155,7 +6155,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                         color COL0 = Shadings[0].get(Image_X, Image_Y);
                         color COL1 = Shadings[1].get(Image_X, Image_Y);
                         //red: COL >>16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
-                        float COL_V0 = (COL0 >> 8 & 0xFF) / 255.0;  
+                        float COL_V0 = (COL0 >> 8 & 0xFF) / 255.0; 
                         float COL_V1 = (COL1 >> 8 & 0xFF) / 255.0;
                        
                         float COL_Alpha = (COL1 >> 24 & 0xFF);
@@ -6206,7 +6206,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               total_Matrix_ARGB[0][Image_X][Image_Y] += Image_A;
               total_Matrix_ARGB[1][Image_X][Image_Y] += Image_R;
               total_Matrix_ARGB[2][Image_X][Image_Y] += Image_G;
-              total_Matrix_ARGB[3][Image_X][Image_Y] += Image_B;              
+              total_Matrix_ARGB[3][Image_X][Image_Y] += Image_B; 
              
               float[] _c = {0, 0, 0, 0};
               
@@ -6244,27 +6244,27 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   
             }
           
-            Image_RGBA.updatePixels();  
+            Image_RGBA.updatePixels(); 
       
             Diagrams_strokeWeight(T_scale * 0);
             Diagrams_stroke(223);
-            Diagrams_fill(223);   
+            Diagrams_fill(223); 
             Diagrams_rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * (p - 0.25) * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
 
           
             Diagrams_strokeWeight(T_scale * 2);
             Diagrams_stroke(255);
-            Diagrams_noFill();   
+            Diagrams_noFill(); 
             Diagrams_rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * (p - 0.25) * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
       
       
-            Diagrams_imageMode(CENTER);    
+            Diagrams_imageMode(CENTER); 
             Diagrams_image(Image_RGBA, (j + 100 * obj_scale) * sx_Plot, - (1 * (p - 0.25) * sx_Plot / U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
   
   
             Diagrams_stroke(0);
             Diagrams_fill(0);
-            Diagrams_textAlign(CENTER, CENTER);   
+            Diagrams_textAlign(CENTER, CENTER); 
             Diagrams_textSize(sx_Plot * 0.15 / U_scale);
             
             String scenario_text = "";
@@ -6323,28 +6323,28 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         
         }
         
-        total_Image_RGBA.updatePixels();  
+        total_Image_RGBA.updatePixels(); 
 
 
         Diagrams_strokeWeight(T_scale * 0);
         Diagrams_stroke(223);
-        Diagrams_fill(223);   
+        Diagrams_fill(223); 
         Diagrams_rect(((j_start - 1) + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * (p - 0.25) * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
         
         
         Diagrams_strokeWeight(T_scale * 2);
         Diagrams_stroke(0);
-        Diagrams_noFill();   
+        Diagrams_noFill(); 
         Diagrams_rect(((j_start - 1) + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * (p - 0.25) * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
         
         
-        Diagrams_imageMode(CENTER);    
+        Diagrams_imageMode(CENTER); 
         Diagrams_image(total_Image_RGBA, ((j_start - 1) + 100 * obj_scale) * sx_Plot, - (1 * (p - 0.25) * sx_Plot / U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
         
         
         Diagrams_stroke(0);
         Diagrams_fill(0);
-        Diagrams_textAlign(CENTER, CENTER);   
+        Diagrams_textAlign(CENTER, CENTER); 
         Diagrams_textSize(sx_Plot * 0.15 / U_scale);
       }
 
@@ -6355,10 +6355,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       my_text(scenario_text, ((j_start - 1) - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / U_scale, 0);
 
       Diagrams_textSize(sx_Plot * 0.15 / U_scale);
-      Diagrams_textAlign(RIGHT, CENTER);  
+      Diagrams_textAlign(RIGHT, CENTER); 
       Diagrams_stroke(0);
       Diagrams_fill(0);
-      Diagrams_strokeWeight(0);  
+      Diagrams_strokeWeight(0); 
       /*
       float deltaY = 0; // so that it does not write on the images.
       if (p == 0) deltaY = -0.9;
@@ -6395,7 +6395,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
       Diagrams_strokeWeight(2);
       Diagrams_stroke(255);
-      Diagrams_fill(255);           
+      Diagrams_fill(255); 
       Diagrams_textSize(15.0 * S_View);
       Diagrams_textAlign(CENTER, CENTER);
       if (Impact_TYPE == Impact_ACTIVE) my_text(nf((roundTo(0.1 * q / _Multiplier, 0.1)), 1, 1), (20 + 600 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
@@ -6419,7 +6419,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       //if (variation == 2) Model_Description = "EV_BUILDING";
 
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
-      Diagrams_textAlign(LEFT, TOP);  
+      Diagrams_textAlign(LEFT, TOP); 
       if (Impact_TYPE == Impact_ACTIVE) {  
         my_text((Model_Description + "Analysis of Active Potentials (kWh/m²/day)"), 0, 1.25 * sx_Plot / U_scale, 0);
         //?? French
@@ -6472,8 +6472,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     }             
     
     float _Multiplier = 1; 
-    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; //0.1 / 0.75; //0.1;  <<<<<<<<<<<<<<<<<<<<<
-    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.01;      
+    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; //0.1 / 0.75; //0.1; <<<<<<<<<<<<<<<<<<<<<
+    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.01; 
 
     //SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
 
@@ -6484,7 +6484,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       //int l = 3 * int(impact_layer / 3) + p;
       
     //for (int p = 0; p < 3; p += 2) { 
-      //int l = 3 * int(impact_layer / 3) + p;          
+      //int l = 3 * int(impact_layer / 3) + p; 
 
     for (int p = 0; p < 1; p += 1) { 
       int l = 3 * int(impact_layer / 3) + 1; //impact_layer;
@@ -6534,7 +6534,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                 for (int i = 0; i < 24; i += 1) {
                   
-                  float HOUR_ANGLE = i;  
+                  float HOUR_ANGLE = i; 
                   float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
   
                   now_k = k;
@@ -6671,21 +6671,21 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   float x1 = (j + obj_offset_x + (90 - Alpha - 0.5 * stp_slp) * obj_scale * (cos_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot;
                   float y1 = (                  -(90 - Alpha - 0.5 * stp_slp) * obj_scale * (sin_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot;
                   float x2 = (j + obj_offset_x + (90 - Alpha + 0.5 * stp_slp) * obj_scale * (cos_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot;
-                  float y2 = (                  -(90 - Alpha + 0.5 * stp_slp) * obj_scale * (sin_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot;                    
+                  float y2 = (                  -(90 - Alpha + 0.5 * stp_slp) * obj_scale * (sin_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot; 
           
                   float x3 = (j + obj_offset_x + (90 - Alpha + 0.5 * stp_slp) * obj_scale * (cos_ang(Beta - 90 + 0.5 * stp_dir))) * sx_Plot;
-                  float y3 = (                  -(90 - Alpha + 0.5 * stp_slp) * obj_scale * (sin_ang(Beta - 90 + 0.5 * stp_dir))) * sx_Plot;  
+                  float y3 = (                  -(90 - Alpha + 0.5 * stp_slp) * obj_scale * (sin_ang(Beta - 90 + 0.5 * stp_dir))) * sx_Plot; 
                   float x4 = (j + obj_offset_x + (90 - Alpha - 0.5 * stp_slp) * obj_scale * (cos_ang(Beta - 90 + 0.5 * stp_dir))) * sx_Plot;
-                  float y4 = (                  -(90 - Alpha - 0.5 * stp_slp) * obj_scale * (sin_ang(Beta - 90 + 0.5 * stp_dir))) * sx_Plot;       
+                  float y4 = (                  -(90 - Alpha - 0.5 * stp_slp) * obj_scale * (sin_ang(Beta - 90 + 0.5 * stp_dir))) * sx_Plot; 
           
-                  Diagrams_quad(x1, y1, x2, y2, x3, y3, x4, y4);                    
+                  Diagrams_quad(x1, y1, x2, y2, x3, y3, x4, y4); 
                   
                  /* 
                   Diagrams_ellipse((j + obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot, 0.075 * sx_Plot, 0.075 * sx_Plot);
                  
                   if ((_u > -0.25) && (_u < 0.25)) {
                     Diagrams_stroke(0);
-                    Diagrams_fill(0);                    
+                    Diagrams_fill(0); 
                   }
                   else {
                     Diagrams_stroke(255);
@@ -6703,7 +6703,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
             Diagrams_stroke(0);
             Diagrams_fill(0);
-            Diagrams_textAlign(CENTER, CENTER);   
+            Diagrams_textAlign(CENTER, CENTER); 
             Diagrams_textSize(sx_Plot * 0.15 / U_scale);
             
             String scenario_text = "";
@@ -6723,10 +6723,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       my_text(scenario_text, ((j_start - 1) - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / U_scale, 0);
 
       Diagrams_textSize(sx_Plot * 0.15 / U_scale);
-      Diagrams_textAlign(RIGHT, CENTER);  
+      Diagrams_textAlign(RIGHT, CENTER); 
       Diagrams_stroke(0);
       Diagrams_fill(0);
-      Diagrams_strokeWeight(0);   
+      Diagrams_strokeWeight(0); 
       if (Impact_TYPE == Impact_ACTIVE) {  
         my_text(N_Title[l], 0, - (1 * (p - 0.25) * sx_Plot / U_scale), 0);
       }
@@ -6758,7 +6758,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
       Diagrams_strokeWeight(2);
       Diagrams_stroke(255);
-      Diagrams_fill(255);           
+      Diagrams_fill(255); 
       Diagrams_textSize(15.0 * S_View);
       Diagrams_textAlign(CENTER, CENTER);
       if (Impact_TYPE == Impact_ACTIVE) my_text(nf((roundTo(0.1 * q / _Multiplier, 0.1)), 1, 1), (20 + 600 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
@@ -6778,7 +6778,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       //if (impacts_source == databaseNumber_ENSEMBLE) my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
       
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
-      Diagrams_textAlign(LEFT, TOP);  
+      Diagrams_textAlign(LEFT, TOP); 
       if (Impact_TYPE == Impact_ACTIVE) {  
         my_text(("Solar radiation on hemisphere"), 0, 1.25 * sx_Plot / U_scale, 0);
         //?? French
@@ -6845,7 +6845,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       //int l = 3 * int(impact_layer / 3) + p;
 
     //for (int p = 0; p < 3; p += 2) { 
-      //int l = 3 * int(impact_layer / 3) + p;  
+      //int l = 3 * int(impact_layer / 3) + p; 
 
     for (int p = 0; p < 1; p += 1) { 
       int l = impact_layer;
@@ -6884,7 +6884,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             for (int i = 0; i < 24; i += 1) {
               if ((i > _sunrise) && (i < _sunset)) {
                 
-                float HOUR_ANGLE = i;  
+                float HOUR_ANGLE = i; 
                 float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
                 
                 float Alpha = 90 - acos_ang(SunR[3]);
@@ -6982,7 +6982,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   
                   if ((_u >= 0.95) || (_u <= 0.05)) {
                     Diagrams_stroke(255);
-                    Diagrams_fill(255);                    
+                    Diagrams_fill(255); 
                   }
                   else {
                     Diagrams_stroke(0);
@@ -7001,7 +7001,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             
             Diagrams_stroke(0);
             Diagrams_fill(0);
-            Diagrams_textAlign(CENTER, CENTER);   
+            Diagrams_textAlign(CENTER, CENTER); 
             Diagrams_textSize(sx_Plot * 0.15 / U_scale);
             
             String scenario_text = "";
@@ -7021,10 +7021,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       my_text(scenario_text, ((j_start - 1) - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / U_scale, 0);
 
       Diagrams_textSize(sx_Plot * 0.15 / U_scale);
-      Diagrams_textAlign(RIGHT, CENTER);  
+      Diagrams_textAlign(RIGHT, CENTER); 
       Diagrams_stroke(0);
       Diagrams_fill(0);
-      Diagrams_strokeWeight(0);   
+      Diagrams_strokeWeight(0); 
       if (Impact_TYPE == Impact_ACTIVE) {  
         my_text(N_Title[l], 0, - (1 * (p - 0.25) * sx_Plot / U_scale), 0);
       }
@@ -7055,7 +7055,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
       Diagrams_strokeWeight(2);
       Diagrams_stroke(255);
-      Diagrams_fill(255);           
+      Diagrams_fill(255); 
       Diagrams_textSize(15.0 * S_View);
       Diagrams_textAlign(CENTER, CENTER);
       if (Impact_TYPE == Impact_ACTIVE) my_text(nf(0.1 * q / _Multiplier, 1, 1), (20 + 600 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
@@ -7075,7 +7075,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       //if (impacts_source == databaseNumber_ENSEMBLE) //my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
       
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
-      Diagrams_textAlign(LEFT, CENTER);  
+      Diagrams_textAlign(LEFT, CENTER); 
       if (Impact_TYPE == Impact_ACTIVE) {  
         my_text(("Direct solar radiation (kWh/m²)"), 0, 1.3 * sx_Plot / U_scale, 0);
         //?? French
@@ -7089,7 +7089,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     
     SOLARCHVISION_draw_Grid_DAILY(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
  
-    Diagrams_popMatrix();       
+    Diagrams_popMatrix(); 
   } 
 
 
@@ -7103,8 +7103,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     String Pc = "";
 
     float[] _values_w_dir;
-    float[] _values_w_spd;  
-    float[] _values_w_tmp;        
+    float[] _values_w_spd; 
+    float[] _values_w_tmp; 
     _values_w_dir = new float[layers_count];
     _values_w_spd = new float[layers_count]; 
     _values_w_tmp = new float[layers_count]; 
@@ -7205,7 +7205,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   float x1 = (j + obj_offset_x + obj_scale * R_in * cos_ang(90 - (teta - 0.5 * D_teta))) * sx_Plot;
                   float y1 = (                   obj_scale * R_in * -sin_ang(90 - (teta - 0.5 * D_teta))) * sx_Plot;
                   float x2 = (j + obj_offset_x + obj_scale * R_in * cos_ang(90 - (teta + 0.5 * D_teta))) * sx_Plot;
-                  float y2 = (                   obj_scale * R_in * -sin_ang(90 - (teta + 0.5 * D_teta))) * sx_Plot;                      
+                  float y2 = (                   obj_scale * R_in * -sin_ang(90 - (teta + 0.5 * D_teta))) * sx_Plot; 
              
                   float x4 = (j + obj_offset_x + obj_scale * R * cos_ang(90 - (teta - 0.5 * D_teta))) * sx_Plot;
                   float y4 = (                   obj_scale * R * -sin_ang(90 - (teta - 0.5 * D_teta))) * sx_Plot;
@@ -7225,14 +7225,16 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                     
                     SET_COLOR_STYLE(PAL_TYPE, _u);
                     */
-                    float _s = 1;
+                    float _s = 255 / (0.333 * layers_count);
+
                     if (sky_scenario > 1) _s *= 3; // to improve visibility of those cases.
-
-                    Diagrams_stroke(0, _s * 2 * 5 / num_add_days);
-                    Diagrams_fill(0, _s * 2 * 5 / num_add_days);  
-
-                    //Diagrams_stroke(0, _s * 2 * 255 / num_add_days);
-                    //Diagrams_fill(0, _s * 2 * 255 / num_add_days);  
+                    
+                    _s /= float(num_add_days);
+                    
+                    if (_s < 10) _s = 10;
+                    
+                    Diagrams_stroke(0, _s);
+                    Diagrams_fill(0, _s); 
 
                     Diagrams_strokeWeight(T_scale * 0);
                   }
@@ -7261,7 +7263,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
 
     Diagrams_translate(0, -0.25 * sx_Plot / U_scale);
-    Diagrams_pushMatrix();      
+    Diagrams_pushMatrix(); 
     
     if (Impact_TYPE != Impact_SPD_DIR) { 
       
@@ -7275,14 +7277,14 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
         if (PAL_DIR == 2) _u =  0.5 * _u;
         
-        SET_COLOR_STYLE(PAL_TYPE, _u);           
+        SET_COLOR_STYLE(PAL_TYPE, _u); 
         
         Diagrams_strokeWeight(0);
         Diagrams_rect((600 + q * (pal_length / 11.0)) * S_View, 125 * S_View, (pal_length / 11.0) * S_View, 20 * S_View); 
 
         Diagrams_strokeWeight(2);
         Diagrams_stroke(255);
-        Diagrams_fill(255);           
+        Diagrams_fill(255); 
         Diagrams_textSize(15.0 * S_View);
         Diagrams_textAlign(CENTER, CENTER);
 
@@ -7303,7 +7305,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       //if (impacts_source == databaseNumber_ENSEMBLE) //my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
       
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
-      Diagrams_textAlign(LEFT, CENTER);   
+      Diagrams_textAlign(LEFT, CENTER); 
       if (Impact_TYPE == Impact_SPD_DIR) {  
         my_text(("Wind direction and speed"), 0, 1.3 * sx_Plot / U_scale, 0);
         //?? French
@@ -7406,10 +7408,10 @@ void GRAPHS_keyPressed () {
                   _update_date(); 
                   BEGIN_DAY = int(365 + BEGIN_DAY - 1) % 365;
                   try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
-                  redraw_scene = 1; break;         
+                  redraw_scene = 1; break; 
               
         case UP :drw_Layer = (drw_Layer + 1) % num_layers; redraw_scene = 1; break;
-        case DOWN :drw_Layer = (drw_Layer + num_layers - 1) % num_layers; redraw_scene = 1; break;    
+        case DOWN :drw_Layer = (drw_Layer + num_layers - 1) % num_layers; redraw_scene = 1; break; 
         
         default: record_JPG = 0; redraw_scene = 0; break;
       }
@@ -7462,7 +7464,7 @@ void GRAPHS_keyPressed () {
                   }
                   */
                   update_DevelopDATA = 1;
-                  redraw_scene = 1; break;      
+                  redraw_scene = 1; break; 
         case '[' :j_end -= 1; 
                   if (j_end <= j_start) j_end += 1;
                   U_scale = 18.0 / (j_end - j_start);
@@ -7477,47 +7479,47 @@ void GRAPHS_keyPressed () {
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break;
 
-        case '}' :per_days += 1;
+        case '}' :num_add_days += 1;
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break;
-        case '{' :per_days -= 1;
-                  if (per_days < 1) per_days = 1;
+        case '{' :num_add_days -= 1;
+                  if (num_add_days < 1) num_add_days = 1;
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break;
 /*  
         case '}' :join_hour_numbers += 1;
                   if (join_hour_numbers > 240) join_hour_numbers = 240;
                   update_DevelopDATA = 1;
-                  redraw_scene = 1; break;    
+                  redraw_scene = 1; break; 
         case '{' :join_hour_numbers -= 1;
                   if (join_hour_numbers < 1) join_hour_numbers = 1;
                   update_DevelopDATA = 1;
-                  redraw_scene = 1; break;     
+                  redraw_scene = 1; break; 
 */                  
         case '*' :join_type *= -1;
                   update_DevelopDATA = 1;
-                  redraw_scene = 1; break;  
+                  redraw_scene = 1; break; 
                   
         case 'a'  :Angle_inclination -= 5;
                   if (Angle_inclination < -90) Angle_inclination = -90;
                   update_DevelopDATA = 1;
-                  redraw_scene = 1; break;        
+                  redraw_scene = 1; break; 
         case 'A'  :Angle_inclination += 5;
                   if (Angle_inclination > 90) Angle_inclination = 90;
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break;
         case 'z' :Angle_orientation = (Angle_orientation - 5 + 360) % 360;
                   update_DevelopDATA = 1;
-                  redraw_scene = 1; break;             
+                  redraw_scene = 1; break; 
         case 'Z' :Angle_orientation = (Angle_orientation + 5) % 360;
-                  redraw_scene = 1; break;                    
+                  redraw_scene = 1; break; 
         
         case 'd' :develop_per_day = (develop_per_day + 1) % 4;
                   update_DevelopDATA = 1;
-                  redraw_scene = 1; break;            
+                  redraw_scene = 1; break; 
         case 'D' :develop_per_day = (develop_per_day - 1 + 4) % 4;
                   update_DevelopDATA = 1;
-                  redraw_scene = 1; break;              
+                  redraw_scene = 1; break; 
       
         case 't' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; 
                   _update_station();
@@ -7603,7 +7605,7 @@ void GRAPHS_keyPressed () {
         case 'R' :_record = int((_record + 1) % 2); println("Record:", _record); redraw_scene = 0; break;
 
         case '\\' : record_JPG = 1; redraw_scene = 1; break;
-        case '?' : record_PDF = 1; record_JPG = 0; redraw_scene = 1; break;        
+        case '?' : record_PDF = 1; record_JPG = 0; redraw_scene = 1; break; 
         
         case '^' : draw_data_lines = 1; save_info_node = 1; record_JPG = 0; redraw_scene = 1; break;
         case '&' : draw_normals = 1; save_info_norm = 1; record_JPG = 0; redraw_scene = 1; break;
@@ -7663,7 +7665,7 @@ class SOLARCHVISION_Spinner {
     
     Y_spinner += 25 * S_View; //(h + 2 * o) * 1.25;
 
-    strokeWeight(0);    
+    strokeWeight(0); 
     stroke(0); 
     fill(0);
     rect(x + o, y - (h / 2) - o, 0.5 * (h + 2 * o) , 0.5 * (h + 2 * o));
@@ -7677,7 +7679,7 @@ class SOLARCHVISION_Spinner {
     
     if (isInside(X_clicked, Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr) == 1) {
       if (stp_v < 0) {
-        new_value *= abs(stp_v);        
+        new_value *= abs(stp_v); 
       }
       else { 
         new_value += abs(stp_v);
@@ -7691,7 +7693,7 @@ class SOLARCHVISION_Spinner {
 
     if (isInside(X_clicked, Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr) == 1) {
       if (stp_v < 0) {
-        new_value /= abs(stp_v);        
+        new_value /= abs(stp_v); 
       }
       else { 
         new_value -= abs(stp_v);
@@ -7700,16 +7702,16 @@ class SOLARCHVISION_Spinner {
       redraw_scene = 1;
     }
 
-    if (new_value < min_v) new_value = max_v;    
-    if (new_value > max_v) new_value = min_v;    
+    if (new_value < min_v) new_value = max_v; 
+    if (new_value > max_v) new_value = min_v; 
     
 
-    strokeWeight(0);    
+    strokeWeight(0); 
     stroke(191); 
     fill(191);
     rect(x - (w1 + w2) - o, y - (h / 2) - o, (w1 + w2) + 2 * o, h + 2 * o);
 
-    strokeWeight(2);    
+    strokeWeight(2); 
     stroke(0); 
     fill(255);
     rect(x - w1, y - (h / 2), w1, h);
@@ -7841,8 +7843,8 @@ void draw_spinners () {
   update_impacts = int(MySpinner.update(X_spinner, Y_spinner, "Update impacts", update_impacts, 0, 1, 1));
 
   if (_setup != pre_setup) update_impacts = 1;
-  if (impacts_source != pre_impacts_source) update_impacts = 1;  
-  if (record_PDF == 1) update_impacts = 1;  
+  if (impacts_source != pre_impacts_source) update_impacts = 1; 
+  if (record_PDF == 1) update_impacts = 1; 
   
   
   
@@ -7851,7 +7853,7 @@ void draw_spinners () {
   
   Climatic_solar_model = int(MySpinner.update(X_spinner, Y_spinner, "Climatic solar model", Climatic_solar_model, 0, 1, 1));
   Climatic_weather_model = int(MySpinner.update(X_spinner, Y_spinner, "Climatic weather model", Climatic_weather_model, 0, 2, 1));
-  Y_spinner += 25 * S_View;  
+  Y_spinner += 25 * S_View; 
   
   */
   
@@ -8265,7 +8267,7 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
   if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) num_add_days = 1;
   
   int start_z = get_startZ_endZ(impacts_source)[0];
-  int end_z = get_startZ_endZ(impacts_source)[1];  
+  int end_z = get_startZ_endZ(impacts_source)[1]; 
   int layers_count = get_startZ_endZ(impacts_source)[2]; 
   
   for (int p = 0; p < 1; p += 1) { 
@@ -8307,7 +8309,7 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
   
           for (int i = 0; i < 24; i += 1) {
             
-            float HOUR_ANGLE = i;  
+            float HOUR_ANGLE = i; 
             float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
             
             now_k = k;
@@ -8395,7 +8397,7 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
 
   WIN3D_Diagrams.stroke(0);
   for (int i = 0; i < 360; i += 5) {
-    WIN3D_Diagrams.line(s_SunPath * cos(i * PI/180), -s_SunPath * sin(i * PI/180), 0, s_SunPath * cos((i + 5) * PI/180), -s_SunPath * sin((i + 5) * PI/180), 0);  
+    WIN3D_Diagrams.line(s_SunPath * cos(i * PI/180), -s_SunPath * sin(i * PI/180), 0, s_SunPath * cos((i + 5) * PI/180), -s_SunPath * sin((i + 5) * PI/180), 0); 
     
     WIN3D_Diagrams.line(s_SunPath * cos(i * PI/180), -s_SunPath * sin(i * PI/180), 0, 1.05 * s_SunPath * cos((i) * PI/180), -1.05 * s_SunPath * sin((i) * PI/180), 0);
   }
@@ -8450,14 +8452,14 @@ void keyPressed () {
     if (key == CODED) { 
       switch(keyCode) {
         //case LEFT  :WIN3D_X_coordinate -= WIN3D_S_coordinate; break;
-        //case RIGHT :WIN3D_X_coordinate += WIN3D_S_coordinate; break;  
+        //case RIGHT :WIN3D_X_coordinate += WIN3D_S_coordinate; break; 
         //case UP    :WIN3D_Y_coordinate -= WIN3D_S_coordinate; break;
         //case DOWN  :WIN3D_Y_coordinate += WIN3D_S_coordinate; break;
       }
     }
     else {
       switch(key) {
-        case ',' :WIN3D_Z_coordinate += WIN3D_S_coordinate; break;      
+        case ',' :WIN3D_Z_coordinate += WIN3D_S_coordinate; break; 
         case '.' :WIN3D_Z_coordinate -= WIN3D_S_coordinate; break;
   
         case '0' :WIN3D_Z_coordinate += WIN3D_S_coordinate; break;
@@ -8484,7 +8486,7 @@ void keyPressed () {
   
         case '2' :WIN3D_RX_coordinate += WIN3D_RS_coordinate; break;
         case '4' :WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; break;
-        case '6' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; break;      
+        case '6' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; break; 
         case '8' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; break;
   
         //case '{' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; break;
@@ -8498,7 +8500,7 @@ void keyPressed () {
         case '/' :objects_scale /= 2.0; break;
   
         case '+' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;
-        case '-' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;      
+        case '-' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break; 
         
         case '>' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;
         case '<' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); break;
@@ -8506,14 +8508,14 @@ void keyPressed () {
         case 'O' :WIN3D_View_Type = 0; break;
         case 'o' :WIN3D_View_Type = 0; break;
         
-        case 'P' :WIN3D_View_Type = 1; break;                
-        case 'p' :WIN3D_View_Type = 1; break;     
+        case 'P' :WIN3D_View_Type = 1; break; 
+        case 'p' :WIN3D_View_Type = 1; break; 
   
-        case 'E' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; break;    
-        case 'e' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; break;    
+        case 'E' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; break; 
+        case 'e' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; break; 
   
-        case 'W' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 2; break;    
-        case 'w' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 2; break;    
+        case 'W' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 2; break; 
+        case 'w' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 2; break; 
   
         case 'S' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_station(); break;
         case 's' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_station(); break;
@@ -8545,7 +8547,7 @@ float EquationOfTime (float DateAngle) {
 float E = 2.7182818284;
 
 float[] SOLARCHVISION_SunPositionRadiation (float LocationLatitude, float DateAngle, float HourAngleOrigin, float CloudCover) {
-  float HourAngle = HourAngleOrigin + EquationOfTime(DateAngle);  
+  float HourAngle = HourAngleOrigin + EquationOfTime(DateAngle); 
   
   float Declination = 23.45 * sin_ang(DateAngle - 180.0);
   
@@ -8760,9 +8762,9 @@ void getSWOB_Coordinates () {
       String StationProvince = "";
       float StationLatitude = 0.0;
       float StationLongitude = 0.0;
-      float StationElevation = 0.0;  
+      float StationElevation = 0.0; 
       String StationICAO = "";
-      String StationWMO = "";     
+      String StationWMO = ""; 
       String StationClimate = "";
       String StationDST = ""; //Daylight saving time
       String StationSTD = ""; //Standard Time      
@@ -8783,7 +8785,7 @@ void getSWOB_Coordinates () {
         StationWMO = parts[9];
         StationClimate = parts[10];
         StationDST = parts[11];
-        StationSTD = parts[12];      
+        StationSTD = parts[12]; 
     
         STATION_SWOB_INFO[n_Locations][0] = StationNameEnglish;
         STATION_SWOB_INFO[n_Locations][1] = StationNameFrench;
@@ -8830,7 +8832,7 @@ void getNAEFS_Coordinates () {
       String StationNameEnglish = "";
       float StationLatitude = 0.0;
       float StationLongitude = 0.0;
-      float StationElevation = 0.0;  
+      float StationElevation = 0.0; 
   
       String[] parts = split(lineSTR, '\t');
   
@@ -8902,7 +8904,7 @@ void getCWEEDS_Coordinates () {
       String StationCountry = "";
       float StationLatitude = 0.0;
       float StationLongitude = 0.0;
-      float StationElevation = 0.0;   
+      float StationElevation = 0.0; 
       
       String[] parts = split(lineSTR, '_');
       
@@ -9163,7 +9165,7 @@ void add_PolygonExtrude(int m, float cx, float cy, float cz, float r, float h, i
     int next_i = (i + 1) % n;
    
     int[] newFace = {vT[i], vT[next_i], vB[next_i], vB[i]};
-    if (m == -1) defaultMaterial += 1;    
+    if (m == -1) defaultMaterial += 1; 
     addToFaces(newFace);
   }
 
