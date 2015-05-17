@@ -10,9 +10,9 @@ int automated = 0; //0: User interface, 1: Automatic
 
 String CLIMATE_EPW_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW";
 
-//String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_EMPTY"; 
+String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_EMPTY"; 
 //String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_90s"; 
-String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED";
+//String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED";
 
 String ENSEMBLE_directory = "C:/SOLARCHVISION_2015/Input/WeatherForecast/FORECAST_NAEFS";
 
@@ -49,9 +49,6 @@ String MAKE_filename () {
   My_filename += "SOLARCHVISION_";
   My_filename += DEFINED_STATIONS[STATION_NUMBER][1] + "_";
   My_filename += Main_name + "_";
-  
-  if (_setup == 12) My_filename += "PASSIVE_WEATHER_SOLAR_IMPACTS";
-  if (_setup == 13) My_filename += "ACTIVE_SOLAR_ENERGY_POTENTIALS";
   
   //My_filename += "S" + nf(100 + _setup, 3);
   //My_filename += "V" + nf(variation, 0);    
@@ -429,7 +426,7 @@ int pre_Climatic_solar_model;
 int pre_Climatic_weather_model;
 
 
-int _setup = 4; //12; //13;
+int _setup = 100; //4; //12; //13;
 
 
 
@@ -776,229 +773,134 @@ void draw () {
 
 void GRAPHS_draw () {
   
-  if (automated != 0) {
-    /*
-    variation += 1;
-    
-    if (variation > 1) {
-      if ((_setup == -1) || (_setup == 7) || (_setup == 8) || (_setup == 9) || (_setup == 10) || (_setup == 11)) {
-        variation = 1;
-        _setup += 1; 
-      }
-    }
-    
-    if (variation > 2) {
-      variation = 1;
-      _setup += 1;
-    }
-    */
-    _setup += 1;
-    
-    
+  cursor(WAIT);
+  
+  resetMatrix();
+ 
+  S_View = (Y_View / 400.0); 
+  
+  //_pix = (100.0 * S_View / level_pix);
+  
+  pre_setup = _setup;
+  pre_impacts_source = impacts_source;
+  pre_STATION_NUMBER = STATION_NUMBER;
+  pre_YEAR = _YEAR;
+  pre_MONTH = _MONTH;
+  pre_DAY = _DAY;
+  pre_DATE = _DATE;
+  pre_HOUR = _HOUR;
+  pre_Climatic_solar_model = Climatic_solar_model;
+  pre_Climatic_weather_model = Climatic_weather_model;
+  
+  draw_spinners();
 
-    update_impacts = 1;
-    redraw_scene = 1;
-    off_screen = 1;
-    record_JPG = 1;
-    record_PDF = 0;
-    
-    if (variation == 1) {    
-      draw_sorted = 1;
-      draw_normals = 1;
-      draw_data_lines = 0;
-      draw_probs = 0;    
-    }
+  U_scale = 18.0 / (j_end - j_start);
+  update_DevelopDATA = 1; // ??
 
-    if (variation == 2) {    
-      draw_sorted = 0;
-      draw_normals = 0;
-      draw_data_lines = 1;
-      draw_probs = 1;    
-    }
-/*    
-    if (_setup == 7) drw_Layer = _precipitation;
-    if (_setup == 8) drw_Layer = _drybulb;
-    if (_setup == 9) drw_Layer = _glohorrad;
-    if (_setup == 10) drw_Layer = _dirnorrad;
-    if (_setup == 11) drw_Layer = _direffect;
-    if (_setup == 12) drw_Layer = _drybulb;
-    if (_setup == 13) drw_Layer = _cloudcover;
-    
-    if (variation == 2) {
-      if (_setup == 12) drw_Layer = _direffect;
-      if (_setup == 13) drw_Layer = _dirnorrad;
-    }   
-*/    
+  if (pre_DATE != _DATE) {
+    _update_date();
+    draw_spinners();
   }
-
-  if (_setup > 13) {  // <<<<<<<<<<<<<<<<<<<<<<<
-    _setup = 11;
-    STATION_NUMBER += 1;
+  
+  if ((pre_YEAR != _YEAR) || (pre_MONTH != _MONTH) || (pre_DAY != _DAY) || (pre_HOUR != _HOUR) || (pre_Climatic_solar_model != Climatic_solar_model) || (pre_Climatic_weather_model != Climatic_weather_model)) {
     
-    if (STATION_NUMBER >= 32) exit();
-    
-    _update_station();
-  }
-  else {
-    
-    if (automated == 0) off_screen = 0;
-    
-    cursor(WAIT);
-    
-    resetMatrix();
-   
-    S_View = (Y_View / 400.0); 
-    
-    //_pix = (100.0 * S_View / level_pix);
-    
-    pre_setup = _setup;
-    pre_impacts_source = impacts_source;
-    pre_STATION_NUMBER = STATION_NUMBER;
-    pre_YEAR = _YEAR;
-    pre_MONTH = _MONTH;
-    pre_DAY = _DAY;
-    pre_DATE = _DATE;
-    pre_HOUR = _HOUR;
-    pre_Climatic_solar_model = Climatic_solar_model;
-    pre_Climatic_weather_model = Climatic_weather_model;
+    BEGIN_DAY = Convert2Date(_MONTH, _DAY);
+    _HOUR = int(24 * (_DATE - int(_DATE)));
+    _DATE = (_HOUR / 24.0) + (286 + Convert2Date(_MONTH, _DAY)) % 365;
+    println("DATE:", _DATE, "\tHOUR:", _HOUR);
+    try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
     
     draw_spinners();
+  }
+
+  if (pre_STATION_NUMBER != STATION_NUMBER) _update_station();
   
-    U_scale = 18.0 / (j_end - j_start);
-    update_DevelopDATA = 1; // ??
-  
-    if (pre_DATE != _DATE) {
-      _update_date();
-      draw_spinners();
+  if ((record_JPG == 1) || (_record == 1)) {
+    if (off_screen == 0) {
+      off_screen = 1;
+      redraw_scene = 1; 
     }
-    
-    if ((pre_YEAR != _YEAR) || (pre_MONTH != _MONTH) || (pre_DAY != _DAY) || (pre_HOUR != _HOUR) || (pre_Climatic_solar_model != Climatic_solar_model) || (pre_Climatic_weather_model != Climatic_weather_model)) {
-      
-      BEGIN_DAY = Convert2Date(_MONTH, _DAY);
-      _HOUR = int(24 * (_DATE - int(_DATE)));
-      _DATE = (_HOUR / 24.0) + (286 + Convert2Date(_MONTH, _DAY)) % 365;
-      println("DATE:", _DATE, "\tHOUR:", _HOUR);
-      try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
-      
-      draw_spinners();
-    }
+  }
+  else {
+    off_screen = 0;
+  }
   
-    if (pre_STATION_NUMBER != STATION_NUMBER) _update_station();
+  if (redraw_scene != 0) {
     
-    if ((record_JPG == 1) || (_record == 1)) {
-      if (off_screen == 0) {
-        off_screen = 1;
-        redraw_scene = 1; 
-      }
+    if (off_screen == 0) Image_Scale = 1; 
+    else Image_Scale = 1; //1.5; //2;
+    
+    draw_frame += 1;
+    println("frame:", draw_frame);
+  
+    if (record_PDF == 1) {
+      X_coordinate = -0.333 * X_View;
+      Y_coordinate = 1.0 * Y_View;
+      S_View *= 0.575; 
+      T_scale = 0.5;
+      
+      println("PDF:begin");
+      Diagrams = createGraphics(X_View, Y_View, PDF, MAKE_filename() + ".pdf");
+      beginRecord(Diagrams);
     }
     else {
-      off_screen = 0;
+      X_coordinate = -0.333 * X_View * Image_Scale;
+      Y_coordinate = 1.0 * Y_View * Image_Scale;
+      S_View *= 0.575 * Image_Scale; 
+      T_scale = 0.5 * Image_Scale;
+
+      Diagrams = createGraphics(int(X_View * Image_Scale), int(Y_View * Image_Scale), P2D);
+      Diagrams_beginDraw();
     }
+  
     
-    if (redraw_scene != 0) {
-      //if ((_setup == 8) || (_setup == 9)) off_screen = 1;
-      if ((_setup == 12) || (_setup == 13)) off_screen = 1;    
-      
-      if (off_screen == 0) Image_Scale = 1; 
-      else Image_Scale = 1; //1.5; //2;
-      
-      draw_frame += 1;
-      println("frame:", draw_frame);
+    Diagrams_background(255);
     
-      if (record_PDF == 1) {
-        X_coordinate = -0.333 * X_View;
-        Y_coordinate = 1.0 * Y_View;
-        S_View *= 0.575; 
-        T_scale = 0.5;
-        
-        println("PDF:begin");
-        //Diagrams = createGraphics(Y_View, Y_View, PDF, MAKE_filename() + ".pdf");
-        Diagrams = createGraphics(X_View, Y_View, PDF, MAKE_filename() + ".pdf");
-        beginRecord(Diagrams);
-      }
-      else {
-        X_coordinate = -0.333 * X_View * Image_Scale;
-        Y_coordinate = 1.0 * Y_View * Image_Scale;
-        S_View *= 0.575 * Image_Scale; 
-        T_scale = 0.5 * Image_Scale;
-        
-        //Diagrams = createGraphics(int(Y_View * Image_Scale), int(Y_View * Image_Scale), P2D);
-        Diagrams = createGraphics(int(X_View * Image_Scale), int(Y_View * Image_Scale), P2D);
-        Diagrams_beginDraw();
-      }
+    Diagrams_blendMode(BLEND);
+  
+    Diagrams_strokeJoin(ROUND); 
     
-      
-      Diagrams_background(255);
-      
-      Diagrams_blendMode(BLEND);
+    Diagrams_textFont(createFont("Arial Narrow", 36));  
     
-      Diagrams_strokeJoin(ROUND); 
-      
-      Diagrams_textFont(createFont("Arial Narrow", 36));  
-      
-      Diagrams_strokeWeight(0);
-      
-      Diagrams_translate(X_coordinate * -0.25, Y_coordinate * 0.5); 
-
-      Plot_Setup();
-
-      resetMatrix();
-
-      Diagrams_strokeWeight(T_scale * 1);
-        
-      Diagrams_stroke(63);
-      Diagrams_fill(63);
-      Diagrams_textAlign(CENTER, CENTER);
-
-      String _text = "SOLARCHVISION ANALYSIS based on the North American Ensemble Forecast System (43 Members), www.solarchvision.com";
-
-      if (record_PDF == 1) {
-        Diagrams_textSize(X_View * 0.01 * 2.0 / 3.0);
-        my_text(_text, X_View * 0.25, Y_View * -0.4925, 0);
-        //my_text(_text, X_View * 0.25, Y_View *  0.4925, 0);
-      }
-      else {
-        if (Image_Scale == 1) Diagrams_textSize(X_View * 0.01 * Image_Scale);
-        else Diagrams_textSize(X_View * 0.01 * Image_Scale * 2.0 / 3.0);
-        
-        my_text(_text, X_View * 0.25 * Image_Scale, Y_View * -0.4925 * Image_Scale, 0);
-        //my_text(_text, X_View * 0.25 * Image_Scale, Y_View *  0.4925 * Image_Scale, 0);
-      }
-
-     
+    Diagrams_strokeWeight(0);
     
-      if (update_DevelopDATA != 0) {
-        SOLARCHVISION_DevelopDATA(impacts_source);
-        update_DevelopDATA = 0;
-      }     
-      if (record_PDF == 1) {
-        endRecord();
-        println("PDF:end");
-        
-        record_PDF = 0;
-        if (off_screen != 0) {
-          resetMatrix();
-          
-          stroke(0); 
-          fill(0);
-          strokeWeight(0);
-          //rect(0, 0, Y_View, Y_View);
-          rect(0, 0, X_View, Y_View);
-          blendMode(REPLACE);
-          
-          imageMode(CORNER);
-          //image(pre_Diagrams, 0, 0, Y_View, Y_View);
-          image(pre_Diagrams, 0, 0, X_View, Y_View);
-        }
-      }
-      else if (off_screen != 0) {
-        Diagrams_endDraw();
-        
-        if ((record_JPG == 1) || (_record == 1)) {
-          Diagrams_save(MAKE_filename() + ".jpg");
-          println("Image created");
-        }
-        
+    Diagrams_translate(X_coordinate * -0.25, Y_coordinate * 0.5); 
+
+    Plot_Setup();
+
+    resetMatrix();
+
+    Diagrams_strokeWeight(T_scale * 1);
+      
+    Diagrams_stroke(63);
+    Diagrams_fill(63);
+    Diagrams_textAlign(CENTER, CENTER);
+
+    String _text = "SOLARCHVISION ANALYSIS based on the North American Ensemble Forecast System (43 Members), www.solarchvision.com";
+
+    if (record_PDF == 1) {
+      Diagrams_textSize(X_View * 0.01 * 2.0 / 3.0);
+      my_text(_text, X_View * 0.25, Y_View * -0.4925, 0);
+    }
+    else {
+      if (Image_Scale == 1) Diagrams_textSize(X_View * 0.01 * Image_Scale);
+      else Diagrams_textSize(X_View * 0.01 * Image_Scale * 2.0 / 3.0);
+      
+      my_text(_text, X_View * 0.25 * Image_Scale, Y_View * -0.4925 * Image_Scale, 0);
+    }
+
+   
+  
+    if (update_DevelopDATA != 0) {
+      SOLARCHVISION_DevelopDATA(impacts_source);
+      update_DevelopDATA = 0;
+    }     
+    if (record_PDF == 1) {
+      endRecord();
+      println("PDF:end");
+      
+      record_PDF = 0;
+      if (off_screen != 0) {
         resetMatrix();
         
         stroke(0); 
@@ -1007,28 +909,19 @@ void GRAPHS_draw () {
         //rect(0, 0, Y_View, Y_View);
         rect(0, 0, X_View, Y_View);
         blendMode(REPLACE);
-  
+        
         imageMode(CORNER);
-        //image(Diagrams, 0, 0, Y_View, Y_View);
-        image(Diagrams, 0, 0, X_View, Y_View);
-        pre_Diagrams = Diagrams;
-        pre_Image_Scale = Image_Scale;
-   
-      }
-      else {
-        PImage get_screen;
-        //get_screen = get(0, 0, Y_View, Y_View);
-        get_screen = get(0, 0, X_View, Y_View);
-        //pre_Diagrams = createGraphics(Y_View, Y_View, P2D);
-        pre_Diagrams = createGraphics(X_View, Y_View, P2D);
-        pre_Diagrams.beginDraw();
-        //pre_Diagrams.image(get_screen, 0, 0, Y_View, Y_View);
-        pre_Diagrams.image(get_screen, 0, 0, X_View, Y_View);
-        pre_Diagrams.endDraw();
-        pre_Image_Scale = 1;
+        image(pre_Diagrams, 0, 0, X_View, Y_View);
       }
     }
-    else {
+    else if (off_screen != 0) {
+      Diagrams_endDraw();
+      
+      if ((record_JPG == 1) || (_record == 1)) {
+        Diagrams_save(MAKE_filename() + ".jpg");
+        println("Image created");
+      }
+      
       resetMatrix();
       
       stroke(0); 
@@ -1037,24 +930,46 @@ void GRAPHS_draw () {
       //rect(0, 0, Y_View, Y_View);
       rect(0, 0, X_View, Y_View);
       blendMode(REPLACE);
-      
-      imageMode(CORNER);
-      //image(pre_Diagrams, 0, 0, Y_View, Y_View);
-      image(pre_Diagrams, 0, 0, X_View, Y_View);
-    }
-  
-    save_info_node = 0;
-    save_info_norm = 0;
-    save_info_prob = 0;
-  
-    redraw_scene = 0;
-     
-    if ((record_JPG == 1) || (_record == 0)) record_JPG = 0;
 
-    cursor(HAND);
+      imageMode(CORNER);
+      image(Diagrams, 0, 0, X_View, Y_View);
+      pre_Diagrams = Diagrams;
+      pre_Image_Scale = Image_Scale;
+ 
+    }
+    else {
+      PImage get_screen;
+      get_screen = get(0, 0, X_View, Y_View);
+      pre_Diagrams = createGraphics(X_View, Y_View, P2D);
+      pre_Diagrams.beginDraw();
+      pre_Diagrams.image(get_screen, 0, 0, X_View, Y_View);
+      pre_Diagrams.endDraw();
+      pre_Image_Scale = 1;
+    }
   }
-  
-  
+  else {
+    resetMatrix();
+    
+    stroke(0); 
+    fill(0);
+    strokeWeight(0);
+    rect(0, 0, X_View, Y_View);
+    blendMode(REPLACE);
+    
+    imageMode(CORNER);
+    image(pre_Diagrams, 0, 0, X_View, Y_View);
+  }
+
+  save_info_node = 0;
+  save_info_norm = 0;
+  save_info_prob = 0;
+
+  redraw_scene = 0;
+   
+  if ((record_JPG == 1) || (_record == 0)) record_JPG = 0;
+
+  cursor(HAND);
+
   GRAPHS_Update = 0;
 } 
 
@@ -1120,6 +1035,14 @@ void plot_center (float x, float y, float z, float sx, float sy, float sz) {
 
 void Plot_Setup () {
 
+  if (_setup == 100) {
+
+    plot_center(0,200 * S_View,0,(100.0 * U_scale * S_View),(-1.0 * V_scale[drw_Layer] * S_View),1.0 * S_View);
+
+  }  
+  
+  // -----------------------------------------------
+  
   if (_setup == -2) {
     if (impacts_source == databaseNumber_ENSEMBLE) {
       pre_DATE = _DATE;
@@ -7889,7 +7812,8 @@ void draw_spinners () {
   Y_spinner += 25 * S_View;
   impact_layer = int(MySpinner.update(X_spinner, Y_spinner, "Impact Min/50%/Max", impact_layer, 0, 8, 1));
   impacts_source = int(MySpinner.update(X_spinner, Y_spinner, "Draw climate/forecast/observation", impacts_source, 0, 3, 1));
-  _setup = int(MySpinner.update(X_spinner, Y_spinner, "Diagram setup", _setup, -2, 13, 1));
+  //_setup = int(MySpinner.update(X_spinner, Y_spinner, "Diagram setup", _setup, -2, 13, 1));
+  _setup = int(MySpinner.update(X_spinner, Y_spinner, "Diagram setup", _setup, 100, 110, 1));
   update_impacts = int(MySpinner.update(X_spinner, Y_spinner, "Update impacts", update_impacts, 0, 1, 1));
 
   if (_setup != pre_setup) update_impacts = 1;
