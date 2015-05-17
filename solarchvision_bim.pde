@@ -394,7 +394,7 @@ int Y_View = 1;
 float R_View = 1;
 float S_View = 1; 
 
-int variation = 2;
+int variation = 1;
 
 int draw_data_lines = 0;
 int draw_sorted = 1;
@@ -1567,6 +1567,12 @@ void _update_station () {
   // French ??
   
   WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
+
+  
+  WORLD_Update = 1;
+  WIN3D_Update = 1; 
+  GRAPHS_Update = 1;    
+  redraw_scene = 1;
 }
 
 
@@ -5885,8 +5891,12 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   Diagrams_pushMatrix();
   Diagrams_translate(x_Plot, y_Plot);
 
+  float pre_per_day = per_day;
   int pre_num_add_days = num_add_days;
-  if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) num_add_days = 1;
+  if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
+    per_day = 1;
+    num_add_days = 1;
+  }
   
   int start_z = get_startZ_endZ(impacts_source)[0];
   int end_z = get_startZ_endZ(impacts_source)[1]; 
@@ -6111,14 +6121,14 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                         if (Round_Latitude < 0) Near_Latitude += "S";
                         else Near_Latitude += "N";
                         
-                        if (DEFINED_STATIONS[STATION_NUMBER][1].equals("MONTREAL")) { 
-                          if (variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/MONTREAL_DOWNTOWN" + "/";
-                          if (variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/EV_BUILDING" + "/";
-                        }
-                        else {
+                        //if (DEFINED_STATIONS[STATION_NUMBER][1].equals("MONTREAL")) { 
+                        //  if (variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/MONTREAL_DOWNTOWN" + "/";
+                        //  if (variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/EV_BUILDING" + "/";
+                        //}
+                        //else {
                           if (variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/Complex_" + Near_Latitude + "/";
                           if (variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/Complex_" + Near_Latitude + "/";
-                        }                          
+                        //}                          
                         
                         
                         if (RAD_TYPE == 0) {
@@ -6128,14 +6138,14 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                           File_Name += "DIF_" + STR_SHD[SHD];
                         }
                         
-                        if (DEFINED_STATIONS[STATION_NUMBER][1].equals("MONTREAL")) { 
-                          if (variation == 1) File_Name += "_" + "Montreal_Downtown.PNG";
-                          if (variation == 2) File_Name += "_" + "Montreal_EV_BUILDING_B.PNG";
-                        }
-                        else {
+                        //if (DEFINED_STATIONS[STATION_NUMBER][1].equals("MONTREAL")) { 
+                          //if (variation == 1) File_Name += "_" + "Montreal_Downtown.PNG";
+                          //if (variation == 2) File_Name += "_" + "Montreal_EV_BUILDING_B.PNG";
+                        //}
+                        //else {
                           if (variation == 1) File_Name += "_" + "Complex_" + Near_Latitude + "_Camera01.PNG";
                           if (variation == 2) File_Name += "_" + "Complex_" + Near_Latitude + "_Camera02.PNG";
-                        }
+                        //}
   
                         //println (File_Name);
                         Shadings[SHD]  = loadImage(File_Name);
@@ -7325,7 +7335,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
 
- 
+  pre_per_day = per_day;
   num_add_days = pre_num_add_days;
 
   Diagrams_popMatrix();
@@ -8250,8 +8260,12 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
 
   WIN3D_Diagrams.stroke(255, 255, 0);
   
+  float pre_per_day = per_day;
   int pre_num_add_days = num_add_days;
-  if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) num_add_days = 1;
+  if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
+    per_day = 1;
+    num_add_days = 1;
+  }
   
   int start_z = get_startZ_endZ(impacts_source)[0];
   int end_z = get_startZ_endZ(impacts_source)[1]; 
@@ -8420,6 +8434,7 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
     WIN3D_Diagrams.popMatrix();
   }   
 
+  per_day = pre_per_day;
   num_add_days = pre_num_add_days; 
   _DATE = previous_DATE;
   _update_date();
@@ -8695,7 +8710,7 @@ void LoadWorldImages () {
     if (a < 1) a = 1;
     WORLD_VIEW_GridDisplay[i] = int(a);
     
-  }      
+  }
 }
 
 int FindGoodViewport (float pointLongitude, float pointLatitude) {
@@ -8712,8 +8727,6 @@ int FindGoodViewport (float pointLongitude, float pointLatitude) {
       }
     }
   }
-  
-  WORLD_Update = 1;
   
   return (return_VIEWPORT);
 }
