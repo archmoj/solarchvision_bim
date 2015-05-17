@@ -10,8 +10,8 @@ int automated = 0; //0: User interface, 1: Automatic
 
 String CLIMATE_EPW_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW";
 
-//String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_EMPTY"; 
-String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_90s"; 
+String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_EMPTY"; 
+//String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_90s"; 
 //String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED";
 
 String ENSEMBLE_directory = "C:/SOLARCHVISION_2015/Input/WeatherForecast/FORECAST_NAEFS";
@@ -2317,7 +2317,7 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
       
         int pre_num_add_days = num_add_days;
         
-        num_add_days = 1; // 1; for faster results      
+        num_add_days = 7; // 1; for faster results      
       
         float[][][] _valuesO;
         float[][][] _valuesO_overcast;
@@ -7434,12 +7434,7 @@ void GRAPHS_keyPressed () {
                     }
                   } 
                   if (impacts_source == databaseNumber_ENSEMBLE) {
-                    if (per_day == 1) { 
-                      per_day = int(max_j_end_forecast / float(1 + j_end - j_start));
-                    }
-                    else {
-                      per_day = 1;
-                    }
+                    per_day = 1;
                   }           
                   if (impacts_source == databaseNumber_OBSERVED) {
                     if (per_day == 1) { 
@@ -7479,14 +7474,6 @@ void GRAPHS_keyPressed () {
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break;
 
-        case '}' :num_add_days += 1;
-                  update_DevelopDATA = 1;
-                  redraw_scene = 1; break;
-        case '{' :num_add_days -= 1;
-                  if (num_add_days < 1) num_add_days = 1;
-                  update_DevelopDATA = 1;
-                  redraw_scene = 1; break;
-/*  
         case '}' :join_hour_numbers += 1;
                   if (join_hour_numbers > 240) join_hour_numbers = 240;
                   update_DevelopDATA = 1;
@@ -7495,7 +7482,7 @@ void GRAPHS_keyPressed () {
                   if (join_hour_numbers < 1) join_hour_numbers = 1;
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break; 
-*/                  
+              
         case '*' :join_type *= -1;
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break; 
@@ -7564,10 +7551,10 @@ void GRAPHS_keyPressed () {
         case 'W' :j_end = j_start + 365; println("please wait ..."); redraw_scene = 1; break;
         case 'w' :j_end = j_start + 7; redraw_scene = 1; break;
   
-        case '~' :num_add_days += 1;
+        case '~' :num_add_days += 2;
                   if (num_add_days > 365) num_add_days = 365;
                   redraw_scene = 1; break;
-        case '`' :num_add_days -= 1;
+        case '`' :num_add_days -= 2;
                   if (num_add_days < 1) num_add_days = 1;
                   redraw_scene = 1; break;
   
@@ -8432,7 +8419,8 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
     
     WIN3D_Diagrams.popMatrix();
   }   
- 
+
+  num_add_days = pre_num_add_days; 
   _DATE = previous_DATE;
   _update_date();
 } 
@@ -8468,7 +8456,7 @@ void keyPressed () {
                   WIN3D_RY_coordinate = 0;
                   WIN3D_RZ_coordinate = 0; 
                   break;
-  
+/*  
         case '`' :WIN3D_RX_coordinate = 0;
                   WIN3D_RY_coordinate = 0;
                   WIN3D_RZ_coordinate = 0; 
@@ -8478,7 +8466,7 @@ void keyPressed () {
                   WIN3D_ZOOM_coordinate = 13500.0 / WIN3D_Y_View;
                   WIN3D_View_Type = 0; 
                   break;
-  
+*/  
         case '1' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 315; break;
         case '3' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 45; break;
         case '7' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 225; break;
