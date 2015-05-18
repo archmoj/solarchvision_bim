@@ -866,13 +866,13 @@ void GRAPHS_draw () {
     
     Diagrams_strokeWeight(0);
     
-    Diagrams_translate(X_coordinate * -0.25, Y_coordinate * 0.5); 
+    //Diagrams_translate(X_coordinate * -0.25, Y_coordinate * 0.5); 
+    Diagrams_translate(X_coordinate * -0.425, Y_coordinate * 0.5);
 
     Plot_Setup();
     
-    Diagrams_translate(X_coordinate * 0.25, Y_coordinate * 0.5);
-
-    //resetMatrix();
+    //Diagrams_translate(X_coordinate * 0.25, Y_coordinate * 0.5);
+    Diagrams_translate(X_coordinate * 0.425, Y_coordinate * 0.5);
 
     Diagrams_strokeWeight(T_scale * 1);
       
@@ -6297,7 +6297,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           }
         }
       }
-      /*
+      
       if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { // we can also remark this to calculate the results using forecast but it is more useful for climate to present annual values.
         total_Image_RGBA.loadPixels();
         
@@ -6369,7 +6369,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         Diagrams_textAlign(CENTER, CENTER); 
         Diagrams_textSize(sx_Plot * 0.15 / U_scale);
       }
-      */
+      
       String scenario_text = "";
       //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
       //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
