@@ -129,7 +129,7 @@ int record_JPG = 0;
 int record_PDF = 0;
 
 int j_start = 0;
-int j_end = 8; //6; //16; // Variable
+int j_end = 6; //8; //6; //16; // Variable
 
 int max_j_end_forecast = 16; // Constant
 int max_j_end_observed = 0; // Variable
@@ -565,7 +565,7 @@ void draw () {
     WORLD_Diagrams.background(0, 0, 0);
     
     PImage WORLDViewImage = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filename[WORLD_VIEW_Number]);
-    
+
     WORLD_Diagrams.image(WORLDViewImage, 0, 0, WORLD_X_View, WORLD_Y_View);
   
     float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
@@ -687,7 +687,8 @@ void draw () {
   
     
     WORLD_Diagrams.endDraw();
-    
+
+    imageMode(CORNER);    
     image(WORLD_Diagrams, WORLD_CX_View, WORLD_CY_View, WORLD_X_View, WORLD_Y_View); 
   
     WORLD_Update = 0;
@@ -751,7 +752,8 @@ void draw () {
     
   
     WIN3D_Diagrams.endDraw();
-    
+
+    imageMode(CORNER);    
     image(WIN3D_Diagrams, WIN3D_CX_View, WIN3D_CY_View, WIN3D_X_View, WIN3D_Y_View);
 
 
@@ -867,6 +869,8 @@ void GRAPHS_draw () {
     Diagrams_translate(X_coordinate * -0.25, Y_coordinate * 0.5); 
 
     Plot_Setup();
+    
+    Diagrams_translate(X_coordinate * 0.25, Y_coordinate * 0.5);
 
     //resetMatrix();
 
@@ -876,17 +880,24 @@ void GRAPHS_draw () {
     Diagrams_fill(63);
     Diagrams_textAlign(CENTER, CENTER);
 
-    String _text = "SOLARCHVISION ANALYSIS based on the North American Ensemble Forecast System (43 Members), www.solarchvision.com";
+    String _text = "SOLARCHVISION post-processing";
+
+    if (impacts_source == databaseNumber_CLIMATE_EPW) _text += " based on typical-year data for Building Energy Simulation (EPW - U.S. Department of Energy)";
+    if (impacts_source == databaseNumber_CLIMATE_WY2) _text += " based on long-term Canadian Weather Energy and Engineering Datasets (CWEEDS - Environment Canada)";
+    if (impacts_source == databaseNumber_ENSEMBLE) _text += " based on the North American Ensemble Forecast System (NAEFS - Environment Canada)";
+    if (impacts_source == databaseNumber_OBSERVED) _text += " based on real-time Surface Weather Observation (SWOB - Environment Canada)";
+    
+    _text += ", www.solarchvision.com";
 
     if (record_PDF == 1) {
       Diagrams_textSize(X_View * 0.01 * 2.0 / 3.0);
-      my_text(_text, X_View * 0.25, Y_View * -0.4925, 0);
+      my_text(_text, X_View * 0.5, Y_View * -0.4925, 0);
     }
     else {
       if (Image_Scale == 1) Diagrams_textSize(X_View * 0.01 * Image_Scale);
       else Diagrams_textSize(X_View * 0.01 * Image_Scale * 2.0 / 3.0);
       
-      my_text(_text, X_View * 0.25 * Image_Scale, Y_View * -0.4925 * Image_Scale, 0);
+      my_text(_text, X_View * 0.5 * Image_Scale, Y_View * -0.4925 * Image_Scale, 0);
     }
 
    
@@ -5903,6 +5914,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   int layers_count = get_startZ_endZ(impacts_source)[2]; 
   
   if ((plot_impacts == 0) || (plot_impacts == -1)) {
+
     if (plot_impacts == 0) Impact_TYPE = Impact_ACTIVE; 
     if (plot_impacts == -1) Impact_TYPE = Impact_PASSIVE;
     
@@ -6255,7 +6267,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             }
           
             Image_RGBA.updatePixels(); 
-      
+           
             Diagrams_strokeWeight(T_scale * 0);
             Diagrams_stroke(223);
             Diagrams_fill(223); 
@@ -6270,7 +6282,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
             Diagrams_imageMode(CENTER); 
             Diagrams_image(Image_RGBA, (j + 100 * obj_scale) * sx_Plot, - (1 * (p - 0.25) * sx_Plot / U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
-  
+            
   
             Diagrams_stroke(0);
             Diagrams_fill(0);
@@ -6281,11 +6293,12 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
             //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
             my_text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / U_scale, 0);
+            
           }
         }
       }
-
-      if (impacts_source == databaseNumber_CLIMATE_WY2) { // we can also remark this to calculate the results using forecast but it is more useful for climate to present annual values.
+      /*
+      if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { // we can also remark this to calculate the results using forecast but it is more useful for climate to present annual values.
         total_Image_RGBA.loadPixels();
         
         for (int np = 0; np < (RES1 * RES2); np++) {
@@ -6335,7 +6348,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         
         total_Image_RGBA.updatePixels(); 
 
-
         Diagrams_strokeWeight(T_scale * 0);
         Diagrams_stroke(223);
         Diagrams_fill(223); 
@@ -6357,8 +6369,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         Diagrams_textAlign(CENTER, CENTER); 
         Diagrams_textSize(sx_Plot * 0.15 / U_scale);
       }
-
-      
+      */
       String scenario_text = "";
       //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
       //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
@@ -6369,19 +6380,18 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       Diagrams_stroke(0);
       Diagrams_fill(0);
       Diagrams_strokeWeight(0); 
-      /*
-      float deltaY = 0; // so that it does not write on the images.
-      if (p == 0) deltaY = -0.9;
-      if (p == 2) deltaY = 0.9;
+
+      //float deltaY = 0; // so that it does not write on the images.
+      //if (p == 0) deltaY = -0.9;
+      //if (p == 2) deltaY = 0.9;
       
-      if (Impact_TYPE == Impact_ACTIVE) {  
-        my_text(N_Title[l], 0, - (1 * (p - 0.25 - deltaY) * sx_Plot / U_scale), 0);
-      }
-      if (Impact_TYPE == Impact_PASSIVE) {  
-        my_text(N_Title[reverse_N[l]], 0, - (1 * (p - 0.25 - deltaY) * sx_Plot / U_scale), 0);
-      }            
-      //?? French
-      */
+      //if (Impact_TYPE == Impact_ACTIVE) {  
+      //  my_text(N_Title[l], 0, - (1 * (p - 0.25 - deltaY) * sx_Plot / U_scale), 0);
+      //}
+      //if (Impact_TYPE == Impact_PASSIVE) {  
+      //  my_text(N_Title[reverse_N[l]], 0, - (1 * (p - 0.25 - deltaY) * sx_Plot / U_scale), 0);
+      //}            
+
     }      
 
     float pal_length = 400;
@@ -6411,8 +6421,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       if (Impact_TYPE == Impact_ACTIVE) my_text(nf((roundTo(0.1 * q / _Multiplier, 0.1)), 1, 1), (20 + 600 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
       if (Impact_TYPE == Impact_PASSIVE) my_text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), (20 + 600 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
     }
-    
-   
+
     if (print_title != 0) {
     
       Diagrams_stroke(0); 
@@ -6440,8 +6449,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       }    
       
     }
-    
-    SOLARCHVISION_draw_Grid_DAILY(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
+
+
   }
 
 
@@ -6799,8 +6808,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       }  
 
     }
-    
-    SOLARCHVISION_draw_Grid_DAILY(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
 
     Diagrams_translate(0, 0.25 * sx_Plot / U_scale);
     Diagrams_pushMatrix();
@@ -7096,8 +7103,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       }  
 
     }   
-    
-    SOLARCHVISION_draw_Grid_DAILY(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
  
     Diagrams_popMatrix(); 
   } 
@@ -7327,13 +7332,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
     }
     
-    SOLARCHVISION_draw_Grid_DAILY(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
-    
     Diagrams_popMatrix();
   } 
 
 
-
+  SOLARCHVISION_draw_Grid_DAILY(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
 
   pre_per_day = per_day;
   num_add_days = pre_num_add_days;
