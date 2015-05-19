@@ -438,6 +438,8 @@ String WorldViewFolder;
 String SWOBFolder;
 String NAEFSFolder;
 String CWEEDSFolder;
+String PeopleFolder;
+
 
 void _update_folders () {
 
@@ -447,6 +449,8 @@ void _update_folders () {
   SWOBFolder         = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   NAEFSFolder        = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   CWEEDSFolder       = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
+  PeopleFolder       = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People";
+
 }
 
 
@@ -500,6 +504,7 @@ float[][] WORLD_VIEW_BoundariesX;
 float[][] WORLD_VIEW_BoundariesY; 
 int[] WORLD_VIEW_GridDisplay;
 String[] WORLD_VIEW_Filename;
+String[] People_Filename;
 
 int number_of_WORLD_viewports;
 
@@ -518,6 +523,8 @@ void setup () {
   LoadFontStyle(); 
 
   LoadWorldImages();
+  
+  LoadPeopleImages();
   
   SOLARCHVISION_Calendar();
 
@@ -8676,6 +8683,41 @@ void LoadFontStyle () {
 }
 
 
+void add_People(int m, float x, float y, float z) {
+
+  int n = m;
+  
+  if ((n < 0) || (n >= PeopleImage.length)) n = int(random(0, PeopleImage.length));
+  
+  int[] newPeople_MAP = {n}; 
+  
+  allPeople_MAP = concat(allPeople_MAP, newPeople_MAP);
+
+  
+  float[][] newPeople_XYZ = {{x, -y, z}};
+  
+  allPeople_XYZ = (float[][]) concat(allPeople_XYZ, newPeople_XYZ);
+
+}
+
+
+
+PImage[] PeopleImage;
+
+void LoadPeopleImages () {
+
+  People_Filename = sort(getfiles(PeopleFolder));
+  
+  int n = People_Filename.length;
+  
+  PeopleImage = new PImage [n];
+ 
+  for (int i = 0; i < n; i += 1) {
+    
+    PeopleImage[i] = loadImage(PeopleFolder + "/" + People_Filename[WORLD_VIEW_Number]);
+  }
+
+}
 
 
 
@@ -8945,6 +8987,10 @@ int defaultMaterial = 7;
 float[][] allVertices = {{}};
 int[][] allFaces = {{}};
 int[] allFaces_MAT = {0};
+
+float[][] allPeople_XYZ = {{}};
+int[] allPeople_MAP = {0};
+
 
 int addToVertices (float x, float y, float z) {
   
@@ -9256,20 +9302,29 @@ void _update_objects () {
     add_Box(-1, 10, 12.5, 0, 12, 13, 1);
     add_Box(-1, 12, 10, 0, 13, 13, 1);
     
-
-    
+    float model_scale = 12; // to make grid scale equal to 12m. <<<<
 
     for (int i = 1; i < allVertices.length; i++) {
       allVertices[i][0] -= 6.5;
       allVertices[i][1] += 6.5; // because Y-values are already inverted in the addToVertices function.
-    }
-    
-    float model_scale = 12; // to make grid scale equal to 12m. <<<< 
-    
-    for (int i = 1; i < allVertices.length; i++) {
+
       allVertices[i][0] *= model_scale;
       allVertices[i][1] *= model_scale; 
       allVertices[i][2] *= model_scale; 
+      
+    }
+
+    add_People(-1, -8,-8,0);
+    add_People(-1, 8,-8,0);
+    add_People(-1, 8,8,0);
+    add_People(-1, -8,8,0);
+
+    
+    for (int i = 1; i < allPeople_XYZ.length; i++) {
+      
+      allPeople_XYZ[i][0] *= model_scale;
+      allPeople_XYZ[i][1] *= model_scale;
+      allPeople_XYZ[i][2] *= model_scale;
     }
     
   }
@@ -9316,5 +9371,36 @@ void _draw_objects () {
     }
     WIN3D_Diagrams.endShape(CLOSE);
   }
+  
+  
+  float[] CAM_pos = {0, 0, 0}; //scene.camera().position(); // <<<<<<<<<<<<<<<<<<<<<<<<<<
+  
+  for (int i = 1; i < allPeople_XYZ.length; i++) {
+    
+    WIN3D_Diagrams.beginShape();
+    
+    int n = allPeople_MAP[i];
+    
+    int w = PeopleImage[n].width; 
+    int h = PeopleImage[n].height;
+            
+    float x = allPeople_XYZ[i][0] * objects_scale;
+    float y = allPeople_XYZ[i][1] * objects_scale;
+    float z = allPeople_XYZ[i][2] * objects_scale;
+
+    WIN3D_Diagrams.texture(PeopleImage[n]);    
+    //WIN3D_Diagrams.stroke(255, 255, 255, 0);
+    //WIN3D_Diagrams.fill(255, 255, 255, 0);
+
+    float t = atan2(y - CAM_pos[1], x - CAM_pos[0]);
+    float r = 1.25;
+    
+    WIN3D_Diagrams.vertex(x - r * cos(t), y - r * sin(t), z, 0, h);
+    WIN3D_Diagrams.vertex(x + r * cos(t), y + r * sin(t), z, w, h);
+    WIN3D_Diagrams.vertex(x + r * cos(t), y + r * sin(t), z + 2 * r, w, 0);
+    WIN3D_Diagrams.vertex(x - r * cos(t), y - r * sin(t), z + 2 * r, 0, 0);
+    
+    WIN3D_Diagrams.endShape(CLOSE);
+  }  
 
 }
