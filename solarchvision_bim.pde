@@ -560,7 +560,7 @@ void setup () {
 
 
 
-
+float[] WIN3D_Diagrams_Camera_Position = {0,0,0};
 
 void draw () {
 
@@ -708,7 +708,19 @@ void draw () {
     WIN3D_Diagrams.background(233);
     
     if (WIN3D_View_Type == 1) {
-      WIN3D_Diagrams.perspective(WIN3D_ZOOM_coordinate * PI/180, 1.0 / WIN3D_R_View, 0.00001, 100000); //fovy, aspect, zNear, zFar
+
+      float fov = WIN3D_ZOOM_coordinate * PI / 180;
+      float aspect = 1.0 / WIN3D_R_View;
+      float zNear = 0.00001;
+      float zFar = 100000;
+      //WIN3D_Diagrams.perspective(fov, aspect, zNear, zFar);
+      
+      float ymax = zNear * tan(fov / 2.0);
+      float ymin = -ymax;
+      float xmin = ymin * aspect;
+      float xmax = ymax * aspect;
+      WIN3D_Diagrams. frustum(xmin, xmax, ymin, ymax, zNear, zFar);
+
       
       WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT! 
     }
@@ -9367,8 +9379,13 @@ void _draw_objects () {
     WIN3D_Diagrams.endShape(CLOSE);
   }
   
-  
-  float[] CAM_pos = {0, 0, 0}; //scene.camera().position(); // <<<<<<<<<<<<<<<<<<<<<<<<<<
+  //////////////////////////////////////
+  PMatrix3D v = (PMatrix3D) getMatrix();
+  println(v.m00, v.m01, v.m02, v.m03);
+  println(v.m10, v.m11, v.m12, v.m13);
+  println(v.m20, v.m21, v.m22, v.m23);
+  println(v.m30, v.m31, v.m32, v.m33);
+  //////////////////////////////////////  
   
   for (int i = 1; i < allObject2D_XYZS.length; i++) {
     
@@ -9384,7 +9401,7 @@ void _draw_objects () {
     float z = allObject2D_XYZS[i][2] * objects_scale;
     
     float r = allObject2D_XYZS[i][3] * 0.5;
-    float t = atan2(y - CAM_pos[1], x - CAM_pos[0]) + 0.5 * PI;
+    float t = atan2(y - WIN3D_Diagrams_Camera_Position[1], x - WIN3D_Diagrams_Camera_Position[0]) + 0.5 * PI;
 
     WIN3D_Diagrams.texture(Object2DImage[n]);    
     //WIN3D_Diagrams.stroke(255, 255, 255, 0);
