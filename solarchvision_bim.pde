@@ -438,7 +438,7 @@ String WorldViewFolder;
 String SWOBFolder;
 String NAEFSFolder;
 String CWEEDSFolder;
-String PeopleFolder;
+String Object2DFolder;
 
 
 void _update_folders () {
@@ -449,7 +449,7 @@ void _update_folders () {
   SWOBFolder         = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   NAEFSFolder        = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   CWEEDSFolder       = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
-  PeopleFolder       = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People";
+  Object2DFolder       = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People";
 
 }
 
@@ -504,7 +504,7 @@ float[][] WORLD_VIEW_BoundariesX;
 float[][] WORLD_VIEW_BoundariesY; 
 int[] WORLD_VIEW_GridDisplay;
 String[] WORLD_VIEW_Filename;
-String[] People_Filename;
+String[] Object2D_Filename;
 
 int number_of_WORLD_viewports;
 
@@ -524,7 +524,7 @@ void setup () {
 
   LoadWorldImages();
   
-  LoadPeopleImages();
+  LoadObject2DImages();
   
   SOLARCHVISION_Calendar();
 
@@ -8683,38 +8683,38 @@ void LoadFontStyle () {
 }
 
 
-void add_People(int m, float x, float y, float z) {
+void add_Object2D (int m, float x, float y, float z, float s) {
 
   int n = m;
   
-  if ((n < 0) || (n >= PeopleImage.length)) n = int(random(0, PeopleImage.length));
+  if ((n < 0) || (n >= Object2DImage.length)) n = int(random(0, Object2DImage.length));
   
-  int[] newPeople_MAP = {n}; 
+  int[] newObject2D_MAP = {n}; 
   
-  allPeople_MAP = concat(allPeople_MAP, newPeople_MAP);
+  allObject2D_MAP = concat(allObject2D_MAP, newObject2D_MAP);
 
   
-  float[][] newPeople_XYZ = {{x, -y, z}};
+  float[][] newObject2D_XYZS = {{x, -y, z, s}};
   
-  allPeople_XYZ = (float[][]) concat(allPeople_XYZ, newPeople_XYZ);
+  allObject2D_XYZS = (float[][]) concat(allObject2D_XYZS, newObject2D_XYZS);
 
 }
 
 
 
-PImage[] PeopleImage;
+PImage[] Object2DImage;
 
-void LoadPeopleImages () {
+void LoadObject2DImages () {
 
-  People_Filename = sort(getfiles(PeopleFolder));
+  Object2D_Filename = sort(getfiles(Object2DFolder));
   
-  int n = People_Filename.length;
+  int n = Object2D_Filename.length;
   
-  PeopleImage = new PImage [n];
+  Object2DImage = new PImage [n];
  
   for (int i = 0; i < n; i += 1) {
     
-    PeopleImage[i] = loadImage(PeopleFolder + "/" + People_Filename[WORLD_VIEW_Number]);
+    Object2DImage[i] = loadImage(Object2DFolder + "/" + Object2D_Filename[WORLD_VIEW_Number]);
   }
 
 }
@@ -8988,8 +8988,8 @@ float[][] allVertices = {{}};
 int[][] allFaces = {{}};
 int[] allFaces_MAT = {0};
 
-float[][] allPeople_XYZ = {{}};
-int[] allPeople_MAP = {0};
+float[][] allObject2D_XYZS = {{}};
+int[] allObject2D_MAP = {0};
 
 
 int addToVertices (float x, float y, float z) {
@@ -9314,19 +9314,14 @@ void _update_objects () {
       
     }
 
-    add_People(-1, -8,-8,0);
-    add_People(-1, 8,-8,0);
-    add_People(-1, 8,8,0);
-    add_People(-1, -8,8,0);
 
-    
-    for (int i = 1; i < allPeople_XYZ.length; i++) {
-      
-      allPeople_XYZ[i][0] *= model_scale;
-      allPeople_XYZ[i][1] *= model_scale;
-      allPeople_XYZ[i][2] *= model_scale;
-    }
-    
+
+    add_Object2D(-1, -100,-100,0, 2.5);
+    add_Object2D(-1, 100,-100,0, 2.5);
+    add_Object2D(-1, 100,100,0, 2.5);
+    add_Object2D(-1, -100,100,0, 2.5);
+
+
   }
   
   
@@ -9375,25 +9370,25 @@ void _draw_objects () {
   
   float[] CAM_pos = {0, 0, 0}; //scene.camera().position(); // <<<<<<<<<<<<<<<<<<<<<<<<<<
   
-  for (int i = 1; i < allPeople_XYZ.length; i++) {
+  for (int i = 1; i < allObject2D_XYZS.length; i++) {
     
     WIN3D_Diagrams.beginShape();
     
-    int n = allPeople_MAP[i];
+    int n = allObject2D_MAP[i];
     
-    int w = PeopleImage[n].width; 
-    int h = PeopleImage[n].height;
+    int w = Object2DImage[n].width; 
+    int h = Object2DImage[n].height;
             
-    float x = allPeople_XYZ[i][0] * objects_scale;
-    float y = allPeople_XYZ[i][1] * objects_scale;
-    float z = allPeople_XYZ[i][2] * objects_scale;
+    float x = allObject2D_XYZS[i][0] * objects_scale;
+    float y = allObject2D_XYZS[i][1] * objects_scale;
+    float z = allObject2D_XYZS[i][2] * objects_scale;
+    
+    float r = allObject2D_XYZS[i][3] * 0.5;
+    float t = atan2(y - CAM_pos[1], x - CAM_pos[0]) + 0.5 * PI;
 
-    WIN3D_Diagrams.texture(PeopleImage[n]);    
+    WIN3D_Diagrams.texture(Object2DImage[n]);    
     //WIN3D_Diagrams.stroke(255, 255, 255, 0);
     //WIN3D_Diagrams.fill(255, 255, 255, 0);
-
-    float t = atan2(y - CAM_pos[1], x - CAM_pos[0]);
-    float r = 1.25;
     
     WIN3D_Diagrams.vertex(x - r * cos(t), y - r * sin(t), z, 0, h);
     WIN3D_Diagrams.vertex(x + r * cos(t), y + r * sin(t), z, w, h);
