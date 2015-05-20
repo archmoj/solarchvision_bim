@@ -466,17 +466,17 @@ float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
 
 float WIN3D_X_coordinate = 0;
 float WIN3D_Y_coordinate = 0;
-float WIN3D_Z_coordinate = 0;
+float WIN3D_Z_coordinate = 175;
 float WIN3D_S_coordinate = 5.0;
 
-float WIN3D_RX_coordinate = 45;
+float WIN3D_RX_coordinate = 75; //45;
 float WIN3D_RY_coordinate = 0;
-float WIN3D_RZ_coordinate = 135;
+float WIN3D_RZ_coordinate = 180; //135;
 float WIN3D_RS_coordinate = 5.0;
 
-float WIN3D_ZOOM_coordinate = 13500.0 / WIN3D_Y_View;
+float WIN3D_ZOOM_coordinate = 27000.0 / WIN3D_Y_View;
 
-int WIN3D_View_Type = 0; // 0: Ortho 1: Perspective
+int WIN3D_View_Type = 1; // 0: Ortho 1: Perspective
 
 PGraphics WIN3D_Diagrams;
 
@@ -7551,11 +7551,11 @@ void GRAPHS_keyPressed () {
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break; 
       
-        case '.' :impact_layer = (impact_layer + 1) % 9; redraw_scene = 1; break;
-        case ',' :impact_layer = (impact_layer + 9 - 1) % 9; redraw_scene = 1; break;
+        //case '.' :impact_layer = (impact_layer + 1) % 9; redraw_scene = 1; break;
+        //case ',' :impact_layer = (impact_layer + 9 - 1) % 9; redraw_scene = 1; break;
         
-        case '<' : plot_impacts = (plot_impacts + 1) % 7; redraw_scene = 1; break;
-        case '>' : plot_impacts = (plot_impacts + 7 - 1) % 7; redraw_scene = 1; break;
+        //case '<' : plot_impacts = (plot_impacts + 1) % 7; redraw_scene = 1; break;
+        //case '>' : plot_impacts = (plot_impacts + 7 - 1) % 7; redraw_scene = 1; break;
         
         case 'y' :Sample_Year += 1; if (Sample_Year > CLIMATE_WY2_end) Sample_Year = CLIMATE_WY2_start; redraw_scene = 1; break; 
         case 'Y' :Sample_Year -= 1; if (Sample_Year < CLIMATE_WY2_start) Sample_Year = CLIMATE_WY2_end; redraw_scene = 1; break;
@@ -7587,10 +7587,10 @@ void GRAPHS_keyPressed () {
         case 'W' :j_end = j_start + 365; println("please wait ..."); redraw_scene = 1; break;
         case 'w' :j_end = j_start + 7; redraw_scene = 1; break;
   
-        case '~' :num_add_days += 2;
+        case '`' :num_add_days += 2;
                   if (num_add_days > 365) num_add_days = 365;
                   redraw_scene = 1; break;
-        case '`' :num_add_days -= 2;
+        case '~' :num_add_days -= 2;
                   if (num_add_days < 1) num_add_days = 1;
                   redraw_scene = 1; break;
   
@@ -8496,6 +8496,10 @@ void keyPressed () {
         case '5' :WIN3D_RX_coordinate = 0;
                   WIN3D_RY_coordinate = 0;
                   WIN3D_RZ_coordinate = 0; 
+                  
+                  WIN3D_X_coordinate = 0;
+                  WIN3D_Y_coordinate = 0;
+                  WIN3D_Z_coordinate = 0;                  
                   break;
 /*  
         case '`' :WIN3D_RX_coordinate = 0;
@@ -9355,7 +9359,7 @@ void _update_objects () {
     }
 
 
-    for (int i = 0; i < 50; i++) {
+    for (int i = 0; i < 25; i++) {
       
       float t = random(360) * PI / 180.0;
       float r = 100; 
