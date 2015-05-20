@@ -468,9 +468,9 @@ float WIN3D_Y_coordinate = 0;
 float WIN3D_Z_coordinate = 0;
 float WIN3D_S_coordinate = 5.0;
 
-float WIN3D_RX_coordinate = 45;
+float WIN3D_RX_coordinate = 0; //45;
 float WIN3D_RY_coordinate = 0;
-float WIN3D_RZ_coordinate = 135;
+float WIN3D_RZ_coordinate = 0; //135;
 float WIN3D_RS_coordinate = 5.0;
 
 float WIN3D_ZOOM_coordinate = 13500.0 / WIN3D_Y_View;
@@ -560,7 +560,7 @@ void setup () {
 
 
 
-float[] WIN3D_Diagrams_Camera_Position = {0,0,0};
+float CAM_x, CAM_y, CAM_z;
 
 void draw () {
 
@@ -719,10 +719,13 @@ void draw () {
       float ymin = -ymax;
       float xmin = ymin * aspect;
       float xmax = ymax * aspect;
-      WIN3D_Diagrams. frustum(xmin, xmax, ymin, ymax, zNear, zFar);
-
+      WIN3D_Diagrams.frustum(xmin, xmax, ymin, ymax, zNear, zFar);
       
-      WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT! 
+      CAM_x = 0;
+      CAM_y = 0;
+      CAM_z = WIN3D_Diagrams.height / tan(0.5 * fov);      
+
+      WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
     }
     else {
       
@@ -7425,7 +7428,7 @@ void GRAPHS_keyPressed () {
                   
         case 34  :BEGIN_DAY = (365 + BEGIN_DAY - 1) % 365; redraw_scene = 1; break;
         case 33  :BEGIN_DAY = (BEGIN_DAY + 1) % 365; redraw_scene = 1; break;
-        
+/*        
         case RIGHT:_DATE += 1; 
                   if (_DATE >= 365) _DATE -= 365;
                   if ((_DATE == 286) || (_DATE == 286.5)) _YEAR += 1;
@@ -7444,7 +7447,7 @@ void GRAPHS_keyPressed () {
               
         case UP :drw_Layer = (drw_Layer + 1) % num_layers; redraw_scene = 1; break;
         case DOWN :drw_Layer = (drw_Layer + num_layers - 1) % num_layers; redraw_scene = 1; break; 
-        
+*/        
         default: record_JPG = 0; redraw_scene = 0; break;
       }
     }
@@ -8476,10 +8479,10 @@ void keyPressed () {
     
     if (key == CODED) { 
       switch(keyCode) {
-        //case LEFT  :WIN3D_X_coordinate -= WIN3D_S_coordinate; break;
-        //case RIGHT :WIN3D_X_coordinate += WIN3D_S_coordinate; break; 
-        //case UP    :WIN3D_Y_coordinate -= WIN3D_S_coordinate; break;
-        //case DOWN  :WIN3D_Y_coordinate += WIN3D_S_coordinate; break;
+        case LEFT  :WIN3D_X_coordinate -= WIN3D_S_coordinate; break;
+        case RIGHT :WIN3D_X_coordinate += WIN3D_S_coordinate; break; 
+        case UP    :WIN3D_Y_coordinate -= WIN3D_S_coordinate; break;
+        case DOWN  :WIN3D_Y_coordinate += WIN3D_S_coordinate; break;
       }
     }
     else {
@@ -9379,14 +9382,21 @@ void _draw_objects () {
     WIN3D_Diagrams.endShape(CLOSE);
   }
   
-  //////////////////////////////////////
-  PMatrix3D v = (PMatrix3D) getMatrix();
-  println(v.m00, v.m01, v.m02, v.m03);
-  println(v.m10, v.m11, v.m12, v.m13);
-  println(v.m20, v.m21, v.m22, v.m23);
-  println(v.m30, v.m31, v.m32, v.m33);
-  //////////////////////////////////////  
+    
+  CAM_x -= WIN3D_X_coordinate;
+  CAM_y -= WIN3D_Y_coordinate;
+  CAM_z -= WIN3D_Z_coordinate;
   
+  //CAM_y =   
+  
+  
+  println(CAM_x, CAM_y, CAM_z);
+/*  
+    WIN3D_Diagrams.translate(WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
+    WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI/180); 
+    WIN3D_Diagrams.rotateY(WIN3D_RY_coordinate * PI/180);
+    WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI/180); 
+*/  
   for (int i = 1; i < allObject2D_XYZS.length; i++) {
     
     WIN3D_Diagrams.beginShape();
@@ -9401,7 +9411,7 @@ void _draw_objects () {
     float z = allObject2D_XYZS[i][2] * objects_scale;
     
     float r = allObject2D_XYZS[i][3] * 0.5;
-    float t = atan2(y - WIN3D_Diagrams_Camera_Position[1], x - WIN3D_Diagrams_Camera_Position[0]) + 0.5 * PI;
+    float t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI;
 
     WIN3D_Diagrams.texture(Object2DImage[n]);    
     //WIN3D_Diagrams.stroke(255, 255, 255, 0);
