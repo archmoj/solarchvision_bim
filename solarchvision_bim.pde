@@ -737,7 +737,8 @@ void draw () {
     }
     else {
       
-      float ZOOM = 0.456 * WIN3D_ZOOM_coordinate * PI / 180;
+      //float ZOOM = 0.456 * WIN3D_ZOOM_coordinate * PI / 180;
+      float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
       
       WIN3D_Diagrams.ortho(ZOOM * WIN3D_X_View * -1, ZOOM * WIN3D_X_View * 1, ZOOM  * WIN3D_Y_View * -1, ZOOM  * WIN3D_Y_View * 1, 0.00001, 100000);
       
@@ -8499,19 +8500,11 @@ void keyPressed () {
                   
                   WIN3D_X_coordinate = 0;
                   WIN3D_Y_coordinate = 0;
-                  WIN3D_Z_coordinate = 0;                  
+                  WIN3D_Z_coordinate = 175;   
+   
+                  WIN3D_ZOOM_coordinate = 27000.0 / WIN3D_Y_View;               
                   break;
-/*  
-        case '`' :WIN3D_RX_coordinate = 0;
-                  WIN3D_RY_coordinate = 0;
-                  WIN3D_RZ_coordinate = 0; 
-                  WIN3D_X_coordinate = 0;
-                  WIN3D_Y_coordinate = 0;
-                  WIN3D_Z_coordinate = 0;
-                  WIN3D_ZOOM_coordinate = 13500.0 / WIN3D_Y_View;
-                  WIN3D_View_Type = 0; 
-                  break;
-*/  
+
         case '1' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 315; break;
         case '3' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 45; break;
         case '7' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 225; break;
