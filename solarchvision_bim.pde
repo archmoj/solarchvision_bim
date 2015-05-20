@@ -456,7 +456,7 @@ void _update_folders () {
 
 
 int h_pixel = 300;
-int w_pixel = int(h_pixel * 1.5);
+int w_pixel = h_pixel; //int(h_pixel * 1.5);
 
 int WIN3D_CX_View = 0; //w_pixel;
 int WIN3D_CY_View = h_pixel;
@@ -466,7 +466,7 @@ float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
 
 float WIN3D_X_coordinate = 0;
 float WIN3D_Y_coordinate = 0;
-float WIN3D_Z_coordinate = 180;
+float WIN3D_Z_coordinate = 0; //180 * (h_pixel / 300.0);
 float WIN3D_S_coordinate = 5.0;
 
 float WIN3D_RX_coordinate = 75; //45;
@@ -474,7 +474,7 @@ float WIN3D_RY_coordinate = 0;
 float WIN3D_RZ_coordinate = 180; //135;
 float WIN3D_RS_coordinate = 5.0;
 
-float WIN3D_ZOOM_coordinate = 90;
+float WIN3D_ZOOM_coordinate = 60; // / (h_pixel / 300.0);
 
 int WIN3D_View_Type = 1; // 0: Ortho 1: Perspective
 
@@ -719,21 +719,39 @@ void draw () {
     
     if (WIN3D_View_Type == 1) {
 
-      float fov = WIN3D_ZOOM_coordinate * PI / 180;
-      float aspect = 1.0 / WIN3D_R_View;
-      float zNear = 0.00001;
-      float zFar = 100000;
-      //WIN3D_Diagrams.perspective(fov, aspect, zNear, zFar);
-      
-      float ymax = zNear * tan(fov / 2.0);
-      float ymin = -ymax;
-      float xmin = ymin * aspect;
-      float xmax = ymax * aspect;
-      WIN3D_Diagrams.frustum(xmin, xmax, ymin, ymax, zNear, zFar);
-      
       CAM_x = 0;
       CAM_y = 0;
       CAM_z = 0.5 * WIN3D_Diagrams.height / tan(PI / 6.0);      
+      
+      float fov = WIN3D_ZOOM_coordinate * PI / 180;
+      //float fov = WIN3D_ZOOM_coordinate * (300.0 / h_pixel) * PI / 180;
+      //float fov = WIN3D_ZOOM_coordinate * (h_pixel / 300.0) * PI / 180;
+      
+      println("CAM_fov =", fov * 180 / PI);
+      
+      float aspect = 1.0 / WIN3D_R_View;
+      //float zNear = CAM_z * 0.1;
+      //float zFar = CAM_z * 10;           
+      //float zNear = 0.0001;
+      //float zFar = 1000.0;           
+      //float zNear = 0.0001 * (h_pixel / 300.0);
+      //float zFar = 1000.0 * (h_pixel / 300.0);  
+      float zNear = 0.0001 * (300.0 / h_pixel);
+      float zFar = 1000.0 * (300.0 / h_pixel);  
+
+
+      float ymax = zNear * tan(0.5 * fov);
+      //float ymax = CAM_z * tan(0.5 * fov);
+      //float ymax = 0.0001 * tan(0.5 * fov);
+      //float ymax = 0.0001 * tan(0.5 * fov) * (h_pixel / 300.0);
+      //float ymax = 0.0001 * tan(0.5 * fov) * (300.0 / h_pixel);
+      //float ymax = 0.0001 * tan(0.5 * fov * (300.0 / h_pixel));
+      
+      float ymin = -ymax;
+      float xmin = ymin * aspect;
+      float xmax = ymax * aspect;
+
+      WIN3D_Diagrams.frustum(xmin, xmax, ymin, ymax, zNear, zFar);
 
       WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
     }
@@ -9450,7 +9468,7 @@ void _draw_objects () {
   CAM_y = py;
   CAM_z = pz;   
   
-  //println(CAM_x, CAM_y, CAM_z);
+  println(CAM_x, CAM_y, CAM_z);
 
   for (int i = 1; i < allObject2D_XYZS.length; i++) {
     
