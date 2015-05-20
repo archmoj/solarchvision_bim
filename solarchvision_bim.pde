@@ -719,47 +719,24 @@ void draw () {
     
     if (WIN3D_View_Type == 1) {
 
+      float fov = WIN3D_ZOOM_coordinate * PI / 180;
+      
       CAM_x = 0;
       CAM_y = 0;
-      CAM_z = 0.5 * WIN3D_Diagrams.height / tan(PI / 6.0);      
+      CAM_z = 0.5 * WIN3D_Diagrams.height / tan(PI / 6.0);
+      //CAM_z = 0.5 * WIN3D_Diagrams.height / tan(0.5 * fov);
+      //CAM_z = (300.0 / (1.0 * h_pixel)) * 0.5 * WIN3D_Diagrams.height / tan(0.5 * fov);
       
-      float fov = WIN3D_ZOOM_coordinate * PI / 180;
-      //float fov = WIN3D_ZOOM_coordinate * (300.0 / h_pixel) * PI / 180;
-      //float fov = WIN3D_ZOOM_coordinate * (h_pixel / 300.0) * PI / 180;
-      
+
       println("CAM_fov =", fov * 180 / PI);
+      println(CAM_x, CAM_y, CAM_z);
       
       float aspect = 1.0 / WIN3D_R_View;
-      //float zNear = CAM_z * 0.1;
-      //float zFar = CAM_z * 10;           
-      float zNear = CAM_z * 0.1 * (h_pixel / 300.0);
-      float zFar = CAM_z * 10 * (h_pixel / 300.0);           
       
+      float zFar = CAM_z * 100; 
+      float zNear = CAM_z * 0.01;
       
-      //float zNear = 0.0001;
-      //float zFar = 1000.0;
-      //float zNear = 0.0001 * (h_pixel / 300.0); // <<<<<<
-      //float zFar = 1000.0 * (h_pixel / 300.0);  // <<<<<<
-      //float zNear = 0.0001 * (300.0 / h_pixel);
-      //float zFar = 1000.0 * (300.0 / h_pixel);  
-
-
-      //float ymax = zNear * tan(0.5 * fov);
       float ymax = zNear * tan(0.5 * fov);
-      
-      //float ymax = 0.00002;
-      //float ymax = 0.00002 * (300.0 / h_pixel); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-      
-      //float ymax = 0.0000001 * CAM_z * tan(0.5 * fov); 
-      //float ymax = 0.0000001 * CAM_z * tan(0.5 * fov) * (300.0 / h_pixel); // <<<<<<<<
-      //float ymax = 0.0000001 * CAM_z * tan(0.5 * fov) * (h_pixel / 300.0);
-
-      
-      //float ymax = 0.0001 * tan(0.5 * fov);
-      //float ymax = 0.0001 * tan(0.5 * fov) * (h_pixel / 300.0);
-      //float ymax = 0.0001 * tan(0.5 * fov) * (300.0 / h_pixel);
-      //float ymax = 0.0001 * tan(0.5 * fov * (300.0 / h_pixel));
-      
       float ymin = -ymax;
       float xmin = ymin * aspect;
       float xmax = ymax * aspect;
@@ -8534,9 +8511,9 @@ void keyPressed () {
                   
                   WIN3D_X_coordinate = 0;
                   WIN3D_Y_coordinate = 0;
-                  WIN3D_Z_coordinate = 175;   
+                  WIN3D_Z_coordinate = 0;   
    
-                  WIN3D_ZOOM_coordinate = 27000.0 / WIN3D_Y_View;               
+                  WIN3D_ZOOM_coordinate = 60;               
                   break;
 
         case '1' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 315; break;
