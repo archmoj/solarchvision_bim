@@ -7434,11 +7434,8 @@ void GRAPHS_keyPressed () {
                   _update_date(); 
                   try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
                   redraw_scene = 1; break;
-                  
-        case 34  :BEGIN_DAY = (365 + BEGIN_DAY - 1) % 365; redraw_scene = 1; break;
-        case 33  :BEGIN_DAY = (BEGIN_DAY + 1) % 365; redraw_scene = 1; break;
      
-        case RIGHT:_DATE += 1; 
+        case 33:_DATE += 1; 
                   if (_DATE >= 365) _DATE -= 365;
                   if ((_DATE == 286) || (_DATE == 286.5)) _YEAR += 1;
                   _update_date(); 
@@ -7446,13 +7443,16 @@ void GRAPHS_keyPressed () {
                   try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
                   redraw_scene = 1; break; 
                   
-        case LEFT :_DATE -= 1; 
+        case 34 :_DATE -= 1; 
                   if (_DATE < 0) _DATE += 365;
                   if ((_DATE == 285) || (_DATE == 285.5)) _YEAR -= 1;
                   _update_date(); 
                   BEGIN_DAY = int(365 + BEGIN_DAY - 1) % 365;
                   try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
                   redraw_scene = 1; break; 
+                  
+        case LEFT  :BEGIN_DAY = (365 + BEGIN_DAY - 1) % 365; redraw_scene = 1; break;
+        case RIGHT  :BEGIN_DAY = (BEGIN_DAY + 1) % 365; redraw_scene = 1; break;
               
         case UP :drw_Layer = (drw_Layer + 1) % num_layers; redraw_scene = 1; break;
         case DOWN :drw_Layer = (drw_Layer + num_layers - 1) % num_layers; redraw_scene = 1; break; 
