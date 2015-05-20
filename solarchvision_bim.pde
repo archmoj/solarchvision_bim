@@ -563,6 +563,10 @@ void setup () {
 float CAM_x, CAM_y, CAM_z;
 
 void draw () {
+  
+  CAM_x = 0;
+  CAM_y = 0;
+  CAM_z = 0;
 
 
   if (WORLD_Update == 1) {
@@ -723,13 +727,13 @@ void draw () {
       
       CAM_x = 0;
       CAM_y = 0;
-      CAM_z = WIN3D_Diagrams.height / tan(0.5 * fov);      
+      CAM_z = 0.5 * WIN3D_Diagrams.height / tan(PI / 6.0);      
 
       WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
     }
     else {
       
-      float ZOOM = 0.456 * WIN3D_ZOOM_coordinate * PI/180;
+      float ZOOM = 0.456 * WIN3D_ZOOM_coordinate * PI / 180;
       
       WIN3D_Diagrams.ortho(ZOOM * WIN3D_X_View * -1, ZOOM * WIN3D_X_View * 1, ZOOM  * WIN3D_Y_View * -1, ZOOM  * WIN3D_Y_View * 1, 0.00001, 100000);
       
@@ -751,9 +755,9 @@ void draw () {
     WIN3D_Diagrams.popMatrix();
   
     WIN3D_Diagrams.translate(WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
-    WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI/180); 
-    WIN3D_Diagrams.rotateY(WIN3D_RY_coordinate * PI/180);
-    WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI/180); 
+    WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI / 180); 
+    WIN3D_Diagrams.rotateY(WIN3D_RY_coordinate * PI / 180);
+    WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI / 180); 
 
     //println(nfp(WIN3D_RX_coordinate, 0, 1), nfp(WIN3D_RY_coordinate, 0, 1), nfp(WIN3D_RZ_coordinate, 0, 1)); 
 
@@ -1648,15 +1652,15 @@ int _Opacity (float O_scale) {
 
 
 float sin_ang (float a) {
- return sin(a * PI/180); 
+ return sin(a * PI / 180); 
 }
 
 float cos_ang (float a) {
- return cos(a * PI/180); 
+ return cos(a * PI / 180); 
 }
 
 float tan_ang (float a) {
- return tan(a * PI/180); 
+ return tan(a * PI / 180); 
 }
 
 
@@ -8423,14 +8427,14 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
 
   WIN3D_Diagrams.stroke(0);
   for (int i = 0; i < 360; i += 5) {
-    WIN3D_Diagrams.line(s_SunPath * cos(i * PI/180), -s_SunPath * sin(i * PI/180), 0, s_SunPath * cos((i + 5) * PI/180), -s_SunPath * sin((i + 5) * PI/180), 0); 
+    WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180), -s_SunPath * sin(i * PI / 180), 0, s_SunPath * cos((i + 5) * PI / 180), -s_SunPath * sin((i + 5) * PI / 180), 0); 
     
-    WIN3D_Diagrams.line(s_SunPath * cos(i * PI/180), -s_SunPath * sin(i * PI/180), 0, 1.05 * s_SunPath * cos((i) * PI/180), -1.05 * s_SunPath * sin((i) * PI/180), 0);
+    WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180), -s_SunPath * sin(i * PI / 180), 0, 1.05 * s_SunPath * cos((i) * PI / 180), -1.05 * s_SunPath * sin((i) * PI / 180), 0);
   }
   
   for (int i = 0; i < 360; i += 15) {
     WIN3D_Diagrams.pushMatrix();
-    WIN3D_Diagrams.translate(1.15 * s_SunPath * cos(i * PI/180), -1.15 * s_SunPath * sin(i * PI/180), 0);
+    WIN3D_Diagrams.translate(1.15 * s_SunPath * cos(i * PI / 180), -1.15 * s_SunPath * sin(i * PI / 180), 0);
     
     WIN3D_Diagrams.fill(0);
     WIN3D_Diagrams.textSize(s_SunPath * 0.05);
@@ -9384,19 +9388,37 @@ void _draw_objects () {
   
     
   CAM_x -= WIN3D_X_coordinate;
-  CAM_y -= WIN3D_Y_coordinate;
+  CAM_y += WIN3D_Y_coordinate;
   CAM_z -= WIN3D_Z_coordinate;
   
-  //CAM_y =   
+  float px, py, pz;
   
+  px = CAM_x;
+  py = CAM_y * cos_ang(WIN3D_RX_coordinate) - CAM_z * sin_ang(WIN3D_RX_coordinate);
+  pz = CAM_y * sin_ang(WIN3D_RX_coordinate) + CAM_z * cos_ang(WIN3D_RX_coordinate);
+  
+  CAM_x = px;
+  CAM_y = py;
+  CAM_z = pz;
+  
+  py = CAM_y;
+  pz = CAM_z * cos_ang(WIN3D_RY_coordinate) - CAM_x * sin_ang(WIN3D_RY_coordinate);
+  px = CAM_z * sin_ang(WIN3D_RY_coordinate) + CAM_x * cos_ang(WIN3D_RY_coordinate);
+  
+  CAM_x = px;
+  CAM_y = py;
+  CAM_z = pz;  
+  
+  pz = CAM_z;
+  px = CAM_x * cos_ang(WIN3D_RZ_coordinate) - CAM_y * sin_ang(WIN3D_RZ_coordinate);
+  py = CAM_x * sin_ang(WIN3D_RZ_coordinate) + CAM_y * cos_ang(WIN3D_RZ_coordinate);
+  
+  CAM_x = px;
+  CAM_y = py;
+  CAM_z = pz;   
   
   println(CAM_x, CAM_y, CAM_z);
-/*  
-    WIN3D_Diagrams.translate(WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
-    WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI/180); 
-    WIN3D_Diagrams.rotateY(WIN3D_RY_coordinate * PI/180);
-    WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI/180); 
-*/  
+
   for (int i = 1; i < allObject2D_XYZS.length; i++) {
     
     WIN3D_Diagrams.beginShape();
@@ -9411,11 +9433,11 @@ void _draw_objects () {
     float z = allObject2D_XYZS[i][2] * objects_scale;
     
     float r = allObject2D_XYZS[i][3] * 0.5;
-    float t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI;
+    float t = atan2(CAM_y + y, x - CAM_x) + 0.5 * PI;
 
     WIN3D_Diagrams.texture(Object2DImage[n]);    
-    //WIN3D_Diagrams.stroke(255, 255, 255, 0);
-    //WIN3D_Diagrams.fill(255, 255, 255, 0);
+    WIN3D_Diagrams.stroke(255, 255, 255, 0);
+    WIN3D_Diagrams.fill(255, 255, 255, 0);
     
     WIN3D_Diagrams.vertex(x - r * cos(t), y - r * sin(t), z, 0, h);
     WIN3D_Diagrams.vertex(x + r * cos(t), y + r * sin(t), z, w, h);
