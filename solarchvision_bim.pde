@@ -7437,7 +7437,7 @@ void GRAPHS_keyPressed () {
                   
         case 34  :BEGIN_DAY = (365 + BEGIN_DAY - 1) % 365; redraw_scene = 1; break;
         case 33  :BEGIN_DAY = (BEGIN_DAY + 1) % 365; redraw_scene = 1; break;
-/*        
+     
         case RIGHT:_DATE += 1; 
                   if (_DATE >= 365) _DATE -= 365;
                   if ((_DATE == 286) || (_DATE == 286.5)) _YEAR += 1;
@@ -7456,7 +7456,7 @@ void GRAPHS_keyPressed () {
               
         case UP :drw_Layer = (drw_Layer + 1) % num_layers; redraw_scene = 1; break;
         case DOWN :drw_Layer = (drw_Layer + num_layers - 1) % num_layers; redraw_scene = 1; break; 
-*/        
+     
         default: record_JPG = 0; redraw_scene = 0; break;
       }
     }
@@ -8481,10 +8481,10 @@ void keyPressed () {
     
     if (key == CODED) { 
       switch(keyCode) {
-        case LEFT  :WIN3D_X_coordinate -= WIN3D_S_coordinate; break;
-        case RIGHT :WIN3D_X_coordinate += WIN3D_S_coordinate; break; 
-        case UP    :WIN3D_Y_coordinate -= WIN3D_S_coordinate; break;
-        case DOWN  :WIN3D_Y_coordinate += WIN3D_S_coordinate; break;
+        //case LEFT  :WIN3D_X_coordinate -= WIN3D_S_coordinate; break;
+        //case RIGHT :WIN3D_X_coordinate += WIN3D_S_coordinate; break; 
+        //case UP    :WIN3D_Y_coordinate -= WIN3D_S_coordinate; break;
+        //case DOWN  :WIN3D_Y_coordinate += WIN3D_S_coordinate; break;
       }
     }
     else {
