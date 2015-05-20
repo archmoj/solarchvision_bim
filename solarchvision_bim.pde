@@ -8746,7 +8746,9 @@ void LoadObject2DImages () {
   Object2DImage = new PImage [n + 1];
  
   for (int i = 1; i < n; i += 1) {
-    println("i=",i);
+    
+    //println("i=",i);
+    
     if (i <= Object2D_Filenames_PEOPLE.length) {
       Object2DImage[i] = loadImage(Object2DFolder_PEOPLE + "/" + Object2D_Filenames[i]);
     }
@@ -9353,14 +9355,25 @@ void _update_objects () {
     }
 
 
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 50; i++) {
       
       float t = random(360) * PI / 180.0;
       float r = 100; 
       
       add_Object2D("PEOPLE", 0, r * cos(t), r * sin(t), 0, 2.5);
-      //add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(5));
     }
+
+    for (int t = 0; t < 360; t += 10) {
+      
+      float q = int(random(2));
+      
+      if (q == 1) {
+        float r = 110; 
+        
+        add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(10));
+      }
+    }
+
 
   }
   
