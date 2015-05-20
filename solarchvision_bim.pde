@@ -466,7 +466,7 @@ float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
 
 float WIN3D_X_coordinate = 0;
 float WIN3D_Y_coordinate = 0;
-float WIN3D_Z_coordinate = 175;
+float WIN3D_Z_coordinate = 180;
 float WIN3D_S_coordinate = 5.0;
 
 float WIN3D_RX_coordinate = 75; //45;
@@ -474,7 +474,7 @@ float WIN3D_RY_coordinate = 0;
 float WIN3D_RZ_coordinate = 180; //135;
 float WIN3D_RS_coordinate = 5.0;
 
-float WIN3D_ZOOM_coordinate = 27000.0 / WIN3D_Y_View;
+float WIN3D_ZOOM_coordinate = 90;
 
 int WIN3D_View_Type = 1; // 0: Ortho 1: Perspective
 
@@ -895,7 +895,7 @@ void GRAPHS_draw () {
   
     Diagrams_strokeJoin(ROUND); 
     
-    Diagrams_textFont(createFont("Arial Narrow", 36)); 
+    //Diagrams_textFont(createFont("Arial Narrow", 36)); 
     
     Diagrams_strokeWeight(0);
     
