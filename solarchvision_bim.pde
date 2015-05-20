@@ -458,9 +458,9 @@ void _update_folders () {
 int h_pixel = 300;
 int w_pixel = int(h_pixel * 1.5);
 
-int WIN3D_CX_View = w_pixel;
+int WIN3D_CX_View = 0; //w_pixel;
 int WIN3D_CY_View = h_pixel;
-int WIN3D_X_View = w_pixel;
+int WIN3D_X_View = 2 * w_pixel;
 int WIN3D_Y_View = h_pixel;
 float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
 
@@ -572,6 +572,8 @@ void draw () {
   CAM_y = 0;
   CAM_z = 0;
 
+
+  WORLD_Update = 0; // <<<<<<<<<<<<<<<<<
 
   if (WORLD_Update == 1) {
   
