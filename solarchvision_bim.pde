@@ -30,13 +30,13 @@ String MAKE_mainname () {
   //return (nf(_YEAR, 2) + nf(_MONTH, 2) + nf(_DAY, 2) + "_" + nf(_HOUR, 2) + "Z");
 }
 
-String MAKE_filename () {
-  String My_filename = "";
+String MAKE_Filenames () {
+  String My_Filenames = "";
   String Main_name = MAKE_mainname();
   
-  My_filename = "C:/SOLARCHVISION_2015/TEST_Output" + "/";
-  My_filename += nf(_YEAR, 2) + "-" + nf(_MONTH, 2) + "-" + nf(_DAY, 2) + "/";
-  My_filename += "NAEFS_" + nf(MODEL_RUN, 2) + "/";
+  My_Filenames = "C:/SOLARCHVISION_2015/TEST_Output" + "/";
+  My_Filenames += nf(_YEAR, 2) + "-" + nf(_MONTH, 2) + "-" + nf(_DAY, 2) + "/";
+  My_Filenames += "NAEFS_" + nf(MODEL_RUN, 2) + "/";
 
   
   String sub_folder = "OTHER";
@@ -44,21 +44,21 @@ String MAKE_filename () {
   if (the_country.toUpperCase().equals("US")) sub_folder = the_country;
   if (the_country.toUpperCase().equals("CA")) sub_folder = the_country;
   if (the_country.toUpperCase().equals("BR")) sub_folder = the_country;
-  My_filename += sub_folder + "/"; 
+  My_Filenames += sub_folder + "/"; 
   
-  My_filename += "SOLARCHVISION_";
-  My_filename += DEFINED_STATIONS[STATION_NUMBER][1] + "_";
-  My_filename += Main_name + "_";
+  My_Filenames += "SOLARCHVISION_";
+  My_Filenames += DEFINED_STATIONS[STATION_NUMBER][1] + "_";
+  My_Filenames += Main_name + "_";
   
-  //My_filename += "S" + nf(100 + _setup, 3);
-  //My_filename += "V" + nf(variation, 0); 
+  //My_Filenames += "S" + nf(100 + _setup, 3);
+  //My_Filenames += "V" + nf(variation, 0); 
   
-  //My_filename += nf(draw_data_lines, 0);
-  //My_filename += nf(draw_sorted, 0);
-  //My_filename += nf(draw_normals, 0);
-  //My_filename += nf(draw_probs, 0);
+  //My_Filenames += nf(draw_data_lines, 0);
+  //My_Filenames += nf(draw_sorted, 0);
+  //My_Filenames += nf(draw_normals, 0);
+  //My_Filenames += nf(draw_probs, 0);
 
-  return My_filename;
+  return My_Filenames;
 }
 
 
@@ -243,7 +243,7 @@ int filter_type = _daily;
 int join_hour_numbers = 24; //48;
 int join_type = -1; // -1: increasing weights, +1: equal weights
 
-String _Filename = "";
+String _Filenames = "";
 
 String _undefined = "N/A";
 float FLOAT_undefined = 1000000000; // it must be a positive big number that is not included in any data
@@ -438,18 +438,19 @@ String WorldViewFolder;
 String SWOBFolder;
 String NAEFSFolder;
 String CWEEDSFolder;
-String Object2DFolder;
-
+String Object2DFolder_PEOPLE;
+String Object2DFolder_TREES;
 
 void _update_folders () {
 
-  ExportFolder       = BaseFolder + "/Export";
-  BackgroundFolder   = BaseFolder + "/Input/BackgroundImages/Standard/Other";
-  WorldViewFolder    = BaseFolder + "/Input/BackgroundImages/Standard/World";
-  SWOBFolder         = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
-  NAEFSFolder        = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
-  CWEEDSFolder       = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
-  Object2DFolder       = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People";
+  ExportFolder          = BaseFolder + "/Export";
+  BackgroundFolder      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
+  WorldViewFolder       = BaseFolder + "/Input/BackgroundImages/Standard/World";
+  SWOBFolder            = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
+  NAEFSFolder           = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
+  CWEEDSFolder          = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
+  Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People";
+  Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees";
 
 }
 
@@ -503,8 +504,11 @@ String[][] WORLD_VIEW_Name;
 float[][] WORLD_VIEW_BoundariesX;
 float[][] WORLD_VIEW_BoundariesY; 
 int[] WORLD_VIEW_GridDisplay;
-String[] WORLD_VIEW_Filename;
-String[] Object2D_Filename;
+String[] WORLD_VIEW_Filenames;
+String[] Object2D_Filenames;
+String[] Object2D_Filenames_PEOPLE;
+String[] Object2D_Filenames_TREES;
+
 
 int number_of_WORLD_viewports;
 
@@ -575,7 +579,7 @@ void draw () {
     
     WORLD_Diagrams.background(0, 0, 0);
     
-    PImage WORLDViewImage = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filename[WORLD_VIEW_Number]);
+    PImage WORLDViewImage = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filenames[WORLD_VIEW_Number]);
 
     WORLD_Diagrams.image(WORLDViewImage, 0, 0, WORLD_X_View, WORLD_Y_View);
   
@@ -868,7 +872,7 @@ void GRAPHS_draw () {
       T_scale = 0.5;
       
       println("PDF:begin");
-      Diagrams = createGraphics(X_View, Y_View, PDF, MAKE_filename() + ".pdf");
+      Diagrams = createGraphics(X_View, Y_View, PDF, MAKE_Filenames() + ".pdf");
       beginRecord(Diagrams);
     }
     else {
@@ -955,7 +959,7 @@ void GRAPHS_draw () {
       Diagrams_endDraw();
       
       if ((record_JPG == 1) || (_record == 1)) {
-        Diagrams_save(MAKE_filename() + ".jpg");
+        Diagrams_save(MAKE_Filenames() + ".jpg");
         println("Image created");
       }
       
@@ -2267,13 +2271,13 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
         String _Extention = FORECAST_XML_Files[i].substring(_L - 4, _L);
         //println(_Extention);
         if (_Extention.toLowerCase().equals(".xml")) {
-          _Filename = FORECAST_XML_Files[i].substring(0, _L - 4);
+          _Filenames = FORECAST_XML_Files[i].substring(0, _L - 4);
           
           //println (FN);
-          //println (_Filename);
+          //println (_Filenames);
           //println ("");
           
-          if (_Filename.equals(FN)) {
+          if (_Filenames.equals(FN)) {
             //println ("FILE FOUND:", FN);
             File_Found = 1;
             SOLARCHVISION_LoadENSEMBLE((ENSEMBLE_directory + "/" + FORECAST_XML_Files[i]), f);
@@ -2819,13 +2823,13 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
       }
     }
     
-    String _FileNameAdd = "";
+    String _FilenamesAdd = "";
     if (num_add_days > 1) {
-        //_FileNameAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
+        //_FilenamesAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
     }
     if ((save_info_node == 1) && (draw_data_lines == 1)) {
-      File_output_node[(j - j_start)] = createWriter("/" + Main_name + "/FORECAST_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
-      File_output_node[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(FORECAST)");
+      File_output_node[(j - j_start)] = createWriter("/" + Main_name + "/FORECAST_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
+      File_output_node[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(FORECAST)");
 
       File_output_node[(j - j_start)].print("Hour\t");
       for (int l = start_z; l < (1 + end_z); l += 1) {
@@ -2834,8 +2838,8 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
       File_output_node[(j - j_start)].println("");
     }
     if ((save_info_norm == 1) && (draw_normals == 1)) {
-      File_output_norm[(j - j_start)] = createWriter("/" + Main_name + "/FORECAST_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
-      File_output_norm[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(FORECAST)");
+      File_output_norm[(j - j_start)] = createWriter("/" + Main_name + "/FORECAST_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
+      File_output_norm[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(FORECAST)");
       File_output_norm[(j - j_start)].print("Hour\t");
       for (int l = 0; l < 9; l += 1) {
         File_output_norm[(j - j_start)].print(N_Title[l] + "\t"); 
@@ -2843,8 +2847,8 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
       File_output_norm[(j - j_start)].println("");
     }
     if ((save_info_prob == 1) && (draw_probs == 1)) {
-      File_output_prob[(j - j_start)] = createWriter("/" + Main_name + "/FORECAST_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
-      File_output_prob[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(FORECAST)");
+      File_output_prob[(j - j_start)] = createWriter("/" + Main_name + "/FORECAST_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
+      File_output_prob[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(FORECAST)");
 
       File_output_prob[(j - j_start)].print("Hour:\t");
       File_output_prob[(j - j_start)].println("");
@@ -3046,13 +3050,13 @@ int try_update_CLIMATE_WY2 () {
     String _Extention = CLIMATE_WY2_Files[i].substring(_L - 4, _L);
     //println(_Extention);
     if (_Extention.toLowerCase().equals(".wy2")) {
-      _Filename = CLIMATE_WY2_Files[i].substring(0, _L - 4);
+      _Filenames = CLIMATE_WY2_Files[i].substring(0, _L - 4);
       
       //println (FN);
-      //println (_Filename);
+      //println (_Filenames);
       //println ("");
       
-      if (_Filename.equals(FN)) {
+      if (_Filenames.equals(FN)) {
         //println ("FILE FOUND:", FN);
         File_Found = 1;
         SOLARCHVISION_LoadCLIMATE_WY2((CLIMATE_WY2_directory + "/" + CLIMATE_WY2_Files[i]));
@@ -3237,13 +3241,13 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       }
     }    
     
-    String _FileNameAdd = "";
+    String _FilenamesAdd = "";
     if (num_add_days > 1) {
-        _FileNameAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
+        _FilenamesAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
     }
     if ((save_info_node == 1) && (draw_data_lines == 1)) {
-      File_output_node[(j - j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
-      File_output_node[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
+      File_output_node[(j - j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
+      File_output_node[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
 
       File_output_node[(j - j_start)].print("Hour:\t");
       for (int l = start_z; l < (1 + end_z); l += 1) {
@@ -3252,8 +3256,8 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_node[(j - j_start)].println("");
     }
     if ((save_info_norm == 1) && (draw_normals == 1)) {
-      File_output_norm[(j - j_start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
-      File_output_norm[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
+      File_output_norm[(j - j_start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
+      File_output_norm[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
       File_output_norm[(j - j_start)].print("Hour:\t");
       for (int l = 0; l < 9; l += 1) {
         File_output_norm[(j - j_start)].print(N_Title[l] + "\t"); 
@@ -3261,8 +3265,8 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_norm[(j - j_start)].println("");
     }
     if ((save_info_prob == 1) && (draw_probs == 1)) {
-      File_output_prob[(j - j_start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
-      File_output_prob[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
+      File_output_prob[(j - j_start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
+      File_output_prob[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
 
       File_output_prob[(j - j_start)].print("Hour:\t");
       File_output_prob[(j - j_start)].println("");
@@ -3456,9 +3460,9 @@ int try_update_CLIMATE_EPW () {
     String _Extention = CLIMATE_EPW_Files[i].substring(_L - 4, _L);
     //println(_Extention);
     if (_Extention.toLowerCase().equals(".epw")) {
-      _Filename = CLIMATE_EPW_Files[i].substring(0, _L - 4);
+      _Filenames = CLIMATE_EPW_Files[i].substring(0, _L - 4);
       
-      if (_Filename.equals(FN)) {
+      if (_Filenames.equals(FN)) {
         File_Found = 1;
         SOLARCHVISION_LoadCLIMATE_EPW((CLIMATE_EPW_directory + "/" + CLIMATE_EPW_Files[i]));
       }
@@ -3641,13 +3645,13 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
       }
     }    
     
-    String _FileNameAdd = "";
+    String _FilenamesAdd = "";
     if (num_add_days > 1) {
-        _FileNameAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
+        _FilenamesAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
     }
     if ((save_info_node == 1) && (draw_data_lines == 1)) {
-      File_output_node[(j - j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
-      File_output_node[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
+      File_output_node[(j - j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
+      File_output_node[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
 
       File_output_node[(j - j_start)].print("Hour:\t");
       for (int l = start_z; l < (1 + end_z); l += 1) {
@@ -3656,8 +3660,8 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_node[(j - j_start)].println("");
     }
     if ((save_info_norm == 1) && (draw_normals == 1)) {
-      File_output_norm[(j - j_start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
-      File_output_norm[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
+      File_output_norm[(j - j_start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
+      File_output_norm[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
       File_output_norm[(j - j_start)].print("Hour:\t");
       for (int l = 0; l < 9; l += 1) {
         File_output_norm[(j - j_start)].print(N_Title[l] + "\t"); 
@@ -3665,8 +3669,8 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_norm[(j - j_start)].println("");
     }
     if ((save_info_prob == 1) && (draw_probs == 1)) {
-      File_output_prob[(j - j_start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
-      File_output_prob[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
+      File_output_prob[(j - j_start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
+      File_output_prob[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
 
       File_output_prob[(j - j_start)].print("Hour:\t");
       File_output_prob[(j - j_start)].println("");
@@ -3897,9 +3901,9 @@ int try_update_observed () {
         String _Extention = OBSERVED_XML_Files[i].substring(_L - 4, _L);
         //println(_Extention);
         if (_Extention.toLowerCase().equals(".xml")) {
-          _Filename = OBSERVED_XML_Files[i].substring(0, _L - 4);
+          _Filenames = OBSERVED_XML_Files[i].substring(0, _L - 4);
 
-          if (_Filename.equals(FN)) {
+          if (_Filenames.equals(FN)) {
             //println ("FILE:", FN);
             File_Found = 1;
             SOLARCHVISION_LoadOBSERVED((OBSERVED_directory + "/" + OBSERVED_XML_Files[i]), f);
@@ -4180,13 +4184,13 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
   String Main_name = MAKE_mainname();
 
   for (int j = j_start; j < j_end; j += 1) { 
-    String _FileNameAdd = "";
+    String _FilenamesAdd = "";
     if (num_add_days > 1) {
-        //_FileNameAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
+        //_FilenamesAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
     }
     if ((save_info_node == 1) && (draw_data_lines == 1)) {
-      File_output_node[(j - j_start)] = createWriter("/" + Main_name + "/OBSERVATION_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
-      File_output_node[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(OBSERVATION)");
+      File_output_node[(j - j_start)] = createWriter("/" + Main_name + "/OBSERVATION_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
+      File_output_node[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(OBSERVATION)");
 
       File_output_node[(j - j_start)].print("Hour\t");
       for (int l = start_z; l < (1 + end_z); l += 1) {
@@ -4195,8 +4199,8 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
       File_output_node[(j - j_start)].println("");
     }
     if ((save_info_norm == 1) && (draw_normals == 1)) {
-      File_output_norm[(j - j_start)] = createWriter("/" + Main_name + "/OBSERVATION_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
-      File_output_norm[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(OBSERVATION)");
+      File_output_norm[(j - j_start)] = createWriter("/" + Main_name + "/OBSERVATION_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
+      File_output_norm[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(OBSERVATION)");
       File_output_norm[(j - j_start)].print("Hour\t");
       for (int l = 0; l < 9; l += 1) {
         File_output_norm[(j - j_start)].print(N_Title[l] + "\t"); 
@@ -4204,8 +4208,8 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
       File_output_norm[(j - j_start)].println("");
     }
     if ((save_info_prob == 1) && (draw_probs == 1)) {
-      File_output_prob[(j - j_start)] = createWriter("/" + Main_name + "/OBSERVATION_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + ".txt");
-      File_output_prob[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FileNameAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(OBSERVATION)");
+      File_output_prob[(j - j_start)] = createWriter("/" + Main_name + "/OBSERVATION_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
+      File_output_prob[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(OBSERVATION)");
 
       File_output_prob[(j - j_start)].print("Hour:\t");
       File_output_prob[(j - j_start)].println("");
@@ -8696,17 +8700,22 @@ void LoadFontStyle () {
 }
 
 
-void add_Object2D (int m, float x, float y, float z, float s) {
+void add_Object2D (String t, int m, float x, float y, float z, float s) {
 
   int n = m;
   
-  if ((n < 0) || (n >= Object2DImage.length)) n = int(random(Object2DImage.length));
+  if (n == 0) {
+    if (t.equals("PEOPLE")) n = int(random(1, 1 + Object2D_Filenames_PEOPLE.length));
+    else if (t.equals("TREES")) n = int(random(1 + Object2D_Filenames_PEOPLE.length, 1 + Object2D_Filenames_PEOPLE.length + Object2D_Filenames_TREES.length));
+  }
+
+  println(t, n);
   
   int d = 1; 
   int r = int(random(2));
   if (r == 0) d = -1; 
 
-  int[] newObject2D_MAP = {d * (n + 1)}; 
+  int[] newObject2D_MAP = {d * n}; 
   
   allObject2D_MAP = concat(allObject2D_MAP, newObject2D_MAP);
 
@@ -8723,14 +8732,27 @@ PImage[] Object2DImage;
 
 void LoadObject2DImages () {
 
-  Object2D_Filename = sort(getfiles(Object2DFolder));
+  Object2D_Filenames = new String[1];
+  Object2D_Filenames[0] = "";
   
-  int n = Object2D_Filename.length;
+  Object2D_Filenames_PEOPLE = sort(getfiles(Object2DFolder_PEOPLE));
+  Object2D_Filenames_TREES = sort(getfiles(Object2DFolder_TREES));
   
-  Object2DImage = new PImage [n];
+  Object2D_Filenames = concat(Object2D_Filenames, Object2D_Filenames_PEOPLE);
+  Object2D_Filenames = concat(Object2D_Filenames, Object2D_Filenames_TREES);
+  
+  int n = Object2D_Filenames.length;
+  
+  Object2DImage = new PImage [n + 1];
  
-  for (int i = 0; i < n; i += 1) {
-    Object2DImage[i] = loadImage(Object2DFolder + "/" + Object2D_Filename[i]);
+  for (int i = 1; i < n; i += 1) {
+    println("i=",i);
+    if (i <= Object2D_Filenames_PEOPLE.length) {
+      Object2DImage[i] = loadImage(Object2DFolder_PEOPLE + "/" + Object2D_Filenames[i]);
+    }
+    else {
+      Object2DImage[i] = loadImage(Object2DFolder_TREES + "/" + Object2D_Filenames[i]);      
+    }
   }
 
 }
@@ -8740,9 +8762,9 @@ void LoadObject2DImages () {
 
 void LoadWorldImages () {
 
-  WORLD_VIEW_Filename = sort(getfiles(WorldViewFolder));
+  WORLD_VIEW_Filenames = sort(getfiles(WorldViewFolder));
 
-  number_of_WORLD_viewports = WORLD_VIEW_Filename.length;
+  number_of_WORLD_viewports = WORLD_VIEW_Filenames.length;
 
   WORLD_VIEW_Name = new String[number_of_WORLD_viewports][2];
   
@@ -8755,9 +8777,9 @@ void LoadWorldImages () {
   
   
   for (int i = 0; i < number_of_WORLD_viewports; i += 1) {
-    String MapFilename = WorldViewFolder + "/" + WORLD_VIEW_Filename[i];
+    String MapFilename = WorldViewFolder + "/" + WORLD_VIEW_Filenames[i];
     
-    String[] Parts = split(WORLD_VIEW_Filename[i], '_');
+    String[] Parts = split(WORLD_VIEW_Filenames[i], '_');
     
     WORLD_VIEW_BoundariesX[i][0] = -float(Parts[1]) * 0.001;
     WORLD_VIEW_BoundariesY[i][0] =  float(Parts[2]) * 0.001;
@@ -9331,12 +9353,13 @@ void _update_objects () {
     }
 
 
-    for (int i = 0; i < 50; i++) {
+    for (int i = 0; i < 20; i++) {
       
       float t = random(360) * PI / 180.0;
       float r = 100; 
       
-      add_Object2D(-1, r * cos(t), r * sin(t), 0, 2.5);
+      add_Object2D("PEOPLE", 0, r * cos(t), r * sin(t), 0, 2.5);
+      //add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(5));
     }
 
   }
@@ -9421,7 +9444,7 @@ void _draw_objects () {
     
     WIN3D_Diagrams.beginShape();
     
-    int n = abs(allObject2D_MAP[i]) - 1;
+    int n = abs(allObject2D_MAP[i]);
     
     int w = Object2DImage[n].width; 
     int h = Object2DImage[n].height;
