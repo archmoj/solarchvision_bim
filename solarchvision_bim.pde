@@ -723,8 +723,8 @@ void draw () {
       CAM_y = 0;
       CAM_z = 0.5 * WIN3D_Diagrams.height / tan(PI / 6.0);      
       
-      float fov = WIN3D_ZOOM_coordinate * PI / 180;
-      //float fov = WIN3D_ZOOM_coordinate * (300.0 / h_pixel) * PI / 180;
+      //float fov = WIN3D_ZOOM_coordinate * PI / 180;
+      float fov = WIN3D_ZOOM_coordinate * (300.0 / h_pixel) * PI / 180;
       //float fov = WIN3D_ZOOM_coordinate * (h_pixel / 300.0) * PI / 180;
       
       println("CAM_fov =", fov * 180 / PI);
@@ -743,8 +743,10 @@ void draw () {
       //float ymax = zNear * tan(0.5 * fov);
       //float ymax = CAM_z * tan(0.5 * fov);
       
-      float ymax = 0.0000001 * CAM_z * tan(0.5 * fov);
-      //float ymax = 0.000001 * CAM_z * tan(0.5 * fov) * (h_pixel / 300.0);
+      //float ymax = 0.0000001 * CAM_z * tan(0.5 * fov); //<<<<<<<<<<
+      //float ymax = 0.0000001 * CAM_z * tan(0.5 * fov) * (300.0 / h_pixel);
+      float ymax = 0.0000001 * CAM_z * tan(0.5 * fov) / (h_pixel / 300.0);
+
       
       //float ymax = 0.0001 * tan(0.5 * fov);
       //float ymax = 0.0001 * tan(0.5 * fov) * (h_pixel / 300.0);
