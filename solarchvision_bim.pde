@@ -742,7 +742,10 @@ void draw () {
 
       //float ymax = zNear * tan(0.5 * fov);
       //float ymax = CAM_z * tan(0.5 * fov);
-      float ymax = 0.000001 * CAM_z * tan(0.5 * fov);
+      
+      float ymax = 0.0000001 * CAM_z * tan(0.5 * fov);
+      //float ymax = 0.000001 * CAM_z * tan(0.5 * fov) * (h_pixel / 300.0);
+      
       //float ymax = 0.0001 * tan(0.5 * fov);
       //float ymax = 0.0001 * tan(0.5 * fov) * (h_pixel / 300.0);
       //float ymax = 0.0001 * tan(0.5 * fov) * (300.0 / h_pixel);
@@ -752,6 +755,7 @@ void draw () {
       float xmin = ymin * aspect;
       float xmax = ymax * aspect;
 
+      println(xmin, xmax, ymin, ymax, zNear, zFar);
       WIN3D_Diagrams.frustum(xmin, xmax, ymin, ymax, zNear, zFar);
 
       WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
