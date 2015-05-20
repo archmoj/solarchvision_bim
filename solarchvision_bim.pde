@@ -468,9 +468,9 @@ float WIN3D_Y_coordinate = 0;
 float WIN3D_Z_coordinate = 0;
 float WIN3D_S_coordinate = 5.0;
 
-float WIN3D_RX_coordinate = 0; //45;
+float WIN3D_RX_coordinate = 45;
 float WIN3D_RY_coordinate = 0;
-float WIN3D_RZ_coordinate = 0; //135;
+float WIN3D_RZ_coordinate = 135;
 float WIN3D_RS_coordinate = 5.0;
 
 float WIN3D_ZOOM_coordinate = 13500.0 / WIN3D_Y_View;
@@ -7547,13 +7547,6 @@ void GRAPHS_keyPressed () {
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break; 
       
-        case 't' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; 
-                  _update_station();
-                  redraw_scene = 1; break;
-        case 'T' :STATION_NUMBER = (STATION_NUMBER + DEFINED_STATIONS.length - 1) % DEFINED_STATIONS.length; 
-                  _update_station();
-                  redraw_scene = 1; break;
-  
         case '.' :impact_layer = (impact_layer + 1) % 9; redraw_scene = 1; break;
         case ',' :impact_layer = (impact_layer + 9 - 1) % 9; redraw_scene = 1; break;
         
@@ -8549,9 +8542,10 @@ void keyPressed () {
         case 'W' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 2; break; 
         case 'w' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 2; break; 
   
-        case 'S' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_station(); break;
-        case 's' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_station(); break;
-        
+        case 'S' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_station(); redraw_scene = 1; break;
+        case 's' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_station(); redraw_scene = 1; break;
+
+       
         
         case 'F' :LoadFontStyle(); break;
         case 'f' :LoadFontStyle(); break;
@@ -8706,9 +8700,13 @@ void add_Object2D (int m, float x, float y, float z, float s) {
 
   int n = m;
   
-  if ((n < 0) || (n >= Object2DImage.length)) n = int(random(0, Object2DImage.length));
+  if ((n < 0) || (n >= Object2DImage.length)) n = int(random(Object2DImage.length));
   
-  int[] newObject2D_MAP = {n}; 
+  int d = 1; 
+  int r = int(random(2));
+  if (r == 0) d = -1; 
+
+  int[] newObject2D_MAP = {d * (n + 1)}; 
   
   allObject2D_MAP = concat(allObject2D_MAP, newObject2D_MAP);
 
@@ -8732,8 +8730,7 @@ void LoadObject2DImages () {
   Object2DImage = new PImage [n];
  
   for (int i = 0; i < n; i += 1) {
-    
-    Object2DImage[i] = loadImage(Object2DFolder + "/" + Object2D_Filename[WORLD_VIEW_Number]);
+    Object2DImage[i] = loadImage(Object2DFolder + "/" + Object2D_Filename[i]);
   }
 
 }
@@ -9334,12 +9331,13 @@ void _update_objects () {
     }
 
 
-
-    add_Object2D(-1, -100,-100,0, 2.5);
-    add_Object2D(-1, 100,-100,0, 2.5);
-    add_Object2D(-1, 100,100,0, 2.5);
-    add_Object2D(-1, -100,100,0, 2.5);
-
+    for (int i = 0; i < 50; i++) {
+      
+      float t = random(360) * PI / 180.0;
+      float r = 100; 
+      
+      add_Object2D(-1, r * cos(t), r * sin(t), 0, 2.5);
+    }
 
   }
   
@@ -9417,13 +9415,13 @@ void _draw_objects () {
   CAM_y = py;
   CAM_z = pz;   
   
-  println(CAM_x, CAM_y, CAM_z);
+  //println(CAM_x, CAM_y, CAM_z);
 
   for (int i = 1; i < allObject2D_XYZS.length; i++) {
     
     WIN3D_Diagrams.beginShape();
     
-    int n = allObject2D_MAP[i];
+    int n = abs(allObject2D_MAP[i]) - 1;
     
     int w = Object2DImage[n].width; 
     int h = Object2DImage[n].height;
@@ -9433,7 +9431,8 @@ void _draw_objects () {
     float z = allObject2D_XYZS[i][2] * objects_scale;
     
     float r = allObject2D_XYZS[i][3] * 0.5;
-    float t = atan2(CAM_y + y, x - CAM_x) + 0.5 * PI;
+    float t = atan2(y + CAM_y, x - CAM_x) + 0.5 * PI;
+    if (allObject2D_MAP[i] < 0) t += PI; 
 
     WIN3D_Diagrams.texture(Object2DImage[n]);    
     WIN3D_Diagrams.stroke(255, 255, 255, 0);
