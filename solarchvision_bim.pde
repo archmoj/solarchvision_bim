@@ -9717,13 +9717,17 @@ float[][] getSubFace (int[] the_Face, int Teselation, int n) {
   else{
     return_vertices = new float[4][3];
       
-    int div = int(roundTo(pow(4, Teselation - 1), 1));
+    int div = the_Face.length;
     
-    int[] part = {int(n / div)};
+    int the_section = int(n / div);
     
-    int the_first = int(n / div);
-    int the_next = (the_first + 1) % the_Face.length;
-    int the_previous = (the_first + the_Face.length - 1) % the_Face.length;
+    int[] sections = {the_section};
+    
+    int the_first = n % div;
+    int the_next = (the_first + 1) % div;
+    int the_previous = (the_first + div - 1) % div;
+    
+    println(the_previous, the_first, the_next);
     
     float[] A = {0,0,0};
     float[] B = {0,0,0};
