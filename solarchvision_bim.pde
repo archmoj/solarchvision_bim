@@ -10,9 +10,9 @@ int automated = 0; //0: User interface, 1: Automatic
 
 String CLIMATE_EPW_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW";
 
-//String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_EMPTY"; 
+String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_EMPTY"; 
 //String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_90s"; 
-String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED";
+//String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED";
 
 String ENSEMBLE_directory = "C:/SOLARCHVISION_2015/Input/WeatherForecast/FORECAST_NAEFS";
 
@@ -449,7 +449,7 @@ void _update_folders () {
   SWOBFolder            = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   NAEFSFolder           = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   CWEEDSFolder          = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
-  Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_ALL";
+  Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People";
   Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees";
 
 }
@@ -458,9 +458,9 @@ void _update_folders () {
 int h_pixel = 300;
 int w_pixel = int(h_pixel * 1.5);
 
-int WIN3D_CX_View = w_pixel;
+int WIN3D_CX_View = 0*w_pixel;
 int WIN3D_CY_View = h_pixel;
-int WIN3D_X_View = w_pixel;
+int WIN3D_X_View = 2*w_pixel;
 int WIN3D_Y_View = h_pixel;
 float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
 
@@ -573,7 +573,7 @@ void draw () {
   CAM_z = 0;
 
 
-  //WORLD_Update = 0; // <<<<<<<<<<<<<<<<<
+  WORLD_Update = 0; // <<<<<<<<<<<<<<<<<
 
   if (WORLD_Update == 1) {
   
@@ -7596,9 +7596,6 @@ void GRAPHS_keyPressed () {
         case 'V' :draw_data_lines = int((draw_data_lines + 1) % 2); redraw_scene = 1; break;
         case 'v' :draw_data_lines = int((draw_data_lines + 1) % 2); redraw_scene = 1; break;
   
-        case 'W' :j_end = j_start + 365; println("please wait ..."); redraw_scene = 1; break;
-        case 'w' :j_end = j_start + 7; redraw_scene = 1; break;
-  
         case '`' :num_add_days += 2;
                   if (num_add_days > 365) num_add_days = 365;
                   redraw_scene = 1; break;
@@ -8551,9 +8548,9 @@ void keyPressed () {
         case 'E' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; break; 
         case 'e' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; break; 
   
-        case 'W' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 2; break; 
-        case 'w' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 2; break; 
-  
+        case 'W' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 3; break; 
+        case 'w' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 3; break; 
+          
         case 'S' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_station(); redraw_scene = 1; break;
         case 's' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_station(); redraw_scene = 1; break;
 
@@ -9413,7 +9410,7 @@ void _draw_objects () {
     else {
       WIN3D_Diagrams.stroke(c);
     }
-    
+
     if (WIN3D_WHITE_FACES == 1) {
       WIN3D_Diagrams.fill(255, 255, 255);
     }
@@ -9422,9 +9419,35 @@ void _draw_objects () {
     }    
     
     WIN3D_Diagrams.beginShape();
-    for (int j = 0; j < allFaces[i].length; j++) {
-      WIN3D_Diagrams.vertex(allVertices[allFaces[i][j]][0] * objects_scale, allVertices[allFaces[i][j]][1] * objects_scale, allVertices[allFaces[i][j]][2] * objects_scale);
+
+    if (WIN3D_WHITE_FACES != 2) {
+      for (int j = 0; j < allFaces[i].length; j++) {
+        int vNo = allFaces[i][j];
+        WIN3D_Diagrams.vertex(allVertices[vNo][0] * objects_scale, allVertices[vNo][1] * objects_scale, allVertices[vNo][2] * objects_scale);
+      }    
     }
+    else {
+      
+      int Teselation = 0;
+      
+      int TotalSubNo = 1;  
+      if (Teselation > 0) TotalSubNo = allFaces[i].length * int(roundTo(pow(4, Teselation - 1), 1));
+      
+      for (int n = 0; n < TotalSubNo; n++) {
+        float[][] subFace = getSubFace(allFaces[i], Teselation, n);
+        
+        for (int j = 0; j < subFace.length; j++) {
+    
+           
+          //float[] RxP = intersect(ray_start, ray_direction, max_dist);
+          
+          WIN3D_Diagrams.fill(255, 127, 0);
+  
+          WIN3D_Diagrams.vertex(subFace[j][0] * objects_scale, subFace[j][1] * objects_scale, subFace[j][2] * objects_scale);
+        }
+      }
+    }
+    
     WIN3D_Diagrams.endShape(CLOSE);
   }
   
@@ -9491,3 +9514,243 @@ void _draw_objects () {
   }  
 
 }
+
+
+
+
+
+
+
+float[] intersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
+
+  float[] ray_normal = fn_normalize(ray_dir);   
+
+
+
+  float[][] hitPoint = new float[allFaces.length][4];
+
+  for (int f = 1; f < allFaces.length; f++) {
+    hitPoint[f][0] = FLOAT_undefined;
+    hitPoint[f][1] = FLOAT_undefined;
+    hitPoint[f][2] = FLOAT_undefined;
+    hitPoint[f][3] = FLOAT_undefined;
+  }
+  
+  float[] pre_angle_to_allFaces = new float[allFaces.length];
+  
+  for (int f = 1; f < allFaces.length; f++) {
+    pre_angle_to_allFaces[f] = FLOAT_undefined;
+  }
+  
+  for (int f = 1; f < allFaces.length; f++) {
+
+    float backAngles = FLOAT_undefined;  
+    float foreAngles = FLOAT_undefined;
+
+    float delta = 0.5; 
+    float delta_step = 0.5;
+    
+    float delta_dir = -1;
+    
+    float[] x = {FLOAT_undefined, FLOAT_undefined};
+    float[] y = {FLOAT_undefined, FLOAT_undefined};
+    float[] z = {FLOAT_undefined, FLOAT_undefined};
+    
+    float[] AnglesAll = {0, 0};   
+    
+    float MAX_AnglesAll = 0;
+    int MAX_o = -1;
+
+    for (int q = 0; q < 16; q++) {
+      
+      for (int o = 0; o < 2; o++) {
+
+        float delta_test = delta;
+        
+        if (o == 0) delta_test -= delta_step;
+        else delta_test += delta_step;
+        
+        x[o] = ray_pnt[0] + delta_test * ray_normal[0] * max_distance; 
+        y[o] = ray_pnt[1] + delta_test * ray_normal[1] * max_distance; 
+        z[o] = ray_pnt[2] + delta_test * ray_normal[2] * max_distance; 
+        
+        AnglesAll[o] = 0;      
+      
+        for (int i = 0; i < allFaces[f].length; i++) {
+          int next_i = (i + 1) % allFaces[f].length;
+          
+          float[] vectA = {allVertices[allFaces[f][i]][0] - x[o], allVertices[allFaces[f][i]][1] - y[o], allVertices[allFaces[f][i]][2] - z[o]}; 
+          float[] vectB = {allVertices[allFaces[f][next_i]][0] - x[o], allVertices[allFaces[f][next_i]][1] - y[o], allVertices[allFaces[f][next_i]][2] - z[o]};
+          
+          float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
+          
+          AnglesAll[o] += t;
+  
+        }
+      }
+
+
+
+
+
+      
+      if (q == 0) {
+        foreAngles = AnglesAll[0];
+        backAngles = AnglesAll[1];
+        
+        //if (AnglesAll[0] < AnglesAll[1]) {
+          MAX_o = 1;
+          delta = 1;
+        //}
+        //else{
+        //  MAX_o = 0;
+        //  delta = 0;       
+        //}
+        
+    
+
+      } 
+      else {
+        
+        if (AnglesAll[0] < AnglesAll[1]) {
+          MAX_o = 1;          
+          MAX_AnglesAll = AnglesAll[1];
+          
+          backAngles = AnglesAll[1]; 
+          
+          delta += delta_step;   
+        }
+        else {
+          MAX_o = 0;
+          MAX_AnglesAll = AnglesAll[0];
+          
+          foreAngles = AnglesAll[0];
+          
+          delta -= delta_step;
+        } 
+        
+        delta_step *= 0.666; // 0.5; <<<<<<<<<<<<<<<          
+
+      }
+
+      //println(delta, delta_step);
+         
+
+      
+      
+      
+
+
+
+      if (MAX_AnglesAll > 359) {
+        if (pre_angle_to_allFaces[f] < MAX_AnglesAll) {
+          pre_angle_to_allFaces[f] = MAX_AnglesAll;
+          
+          hitPoint[f][0] = x[MAX_o];
+          hitPoint[f][1] = y[MAX_o];
+          hitPoint[f][2] = z[MAX_o];
+          hitPoint[f][3] = delta;
+        }        
+      }
+      
+      if (pre_angle_to_allFaces[f] > 0.9 * FLOAT_undefined) {
+        pre_angle_to_allFaces[f] = MAX_AnglesAll;
+      }       
+
+      
+    }
+
+  }
+
+  float[] return_point = {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, -1};
+  
+  float pre_dist = FLOAT_undefined;
+  
+  for (int f = 1; f < allFaces.length; f++) {
+    
+    float hx = hitPoint[f][0];
+    float hy = hitPoint[f][1];
+    float hz = hitPoint[f][2];
+    float h_delta = hitPoint[f][3];
+
+    //if ((hx < 0.9 * FLOAT_undefined) && (hy < 0.9 * FLOAT_undefined) && (hz < 0.9 * FLOAT_undefined)) {
+    
+      float hd = dist(hx, hy, hz, ray_pnt[0], ray_pnt[1], ray_pnt[2]);
+      
+      //if (hd < pre_dist) {
+      //if ((hd < pre_dist) && (hd > 0.02)) {
+      if ((hd < pre_dist) && (h_delta > 0.005)) {
+        
+        pre_dist = hd;
+        
+        return_point[0] = hx;
+        return_point[1] = hy;
+        return_point[2] = hz;
+        return_point[3] = hd;
+        return_point[4] = f;
+      }
+    
+    //}
+  }
+ 
+  return return_point;
+  
+}
+
+
+
+
+float[][] getSubFace (int[] the_Face, int Teselation, int n) {
+
+  float[][] return_vertices = {};
+  
+  int TotalSubNo = 1;
+  if (Teselation > 0) TotalSubNo = the_Face.length * int(roundTo(pow(4, Teselation - 1), 1));   
+  
+  if ((Teselation <= 0) || (n < 0) || (n >= TotalSubNo)) {
+    return_vertices = new float[the_Face.length][3];
+    
+    for (int j = 0; j < the_Face.length; j++) {
+      return_vertices[j] = allVertices[the_Face[j]];
+    }
+  }
+  else{
+    return_vertices = new float[4][3];
+    
+    int div = int(roundTo(pow(4, Teselation - 1), 1));
+    
+    int[] part = {int(n / div)};
+    
+    int the_first = int(n / div);
+    int the_next = (the_first + 1) % the_Face.length;
+    int the_previous = (the_first + the_Face.length - 1) % the_Face.length;
+    
+    float[] A = {0,0,0};
+    float[] B = {0,0,0};
+    float[] C = {0,0,0};
+    float[] D = {0,0,0};
+    
+    for (int i = 0; i < 3; i++) {
+
+      A[i] = allVertices[the_Face[the_first]][i];
+      B[i] = 0.5 * (A[i] + allVertices[the_Face[the_next]][i]);
+      D[i] = 0.5 * (A[i] + allVertices[the_Face[the_previous]][i]);
+      
+      for (int k = 0; k < the_Face.length; k++) {
+        C[i] += allVertices[k][i] / (1.0 * the_Face.length);
+      }
+    }
+    
+    if (Teselation == 1) {
+      return_vertices[0] = A; 
+      return_vertices[0] = B; 
+      return_vertices[0] = C; 
+      return_vertices[0] = D; 
+    } 
+      
+  }
+
+ 
+  return return_vertices;
+}
+  
