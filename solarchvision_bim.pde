@@ -9428,7 +9428,7 @@ void _draw_objects () {
     }
     else {
       
-      int Teselation = 0;
+      int Teselation = 1;
       
       int TotalSubNo = 1;  
       if (Teselation > 0) TotalSubNo = allFaces[i].length * int(roundTo(pow(4, Teselation - 1), 1));
@@ -9703,7 +9703,7 @@ float[] intersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
 float[][] getSubFace (int[] the_Face, int Teselation, int n) {
 
   float[][] return_vertices = {};
-  
+    
   int TotalSubNo = 1;
   if (Teselation > 0) TotalSubNo = the_Face.length * int(roundTo(pow(4, Teselation - 1), 1));   
   
@@ -9716,7 +9716,7 @@ float[][] getSubFace (int[] the_Face, int Teselation, int n) {
   }
   else{
     return_vertices = new float[4][3];
-    
+      
     int div = int(roundTo(pow(4, Teselation - 1), 1));
     
     int[] part = {int(n / div)};
@@ -9736,20 +9736,20 @@ float[][] getSubFace (int[] the_Face, int Teselation, int n) {
       B[i] = 0.5 * (A[i] + allVertices[the_Face[the_next]][i]);
       D[i] = 0.5 * (A[i] + allVertices[the_Face[the_previous]][i]);
       
-      for (int k = 0; k < the_Face.length; k++) {
-        C[i] += allVertices[k][i] / (1.0 * the_Face.length);
+      for (int j = 0; j < the_Face.length; j++) {
+        C[i] += allVertices[the_Face[j]][i] / (1.0 * the_Face.length);
       }
     }
     
     if (Teselation == 1) {
       return_vertices[0] = A; 
-      return_vertices[0] = B; 
-      return_vertices[0] = C; 
-      return_vertices[0] = D; 
+      return_vertices[1] = B; 
+      return_vertices[2] = C; 
+      return_vertices[3] = D; 
     } 
       
   }
-
+  
  
   return return_vertices;
 }
