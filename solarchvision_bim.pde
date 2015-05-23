@@ -9671,20 +9671,20 @@ void _draw_objects () {
           if (PAL_DIR == 2) _u =  0.5 * _u;
           
           SET_COLOR_STYLE(PAL_TYPE, _u);
-          /*
+          
           int Teselation = WIN3D_TESELATION;
           
           int TotalSubNo = 1;  
-          if (Teselation > 0) TotalSubNo = allFaces[i].length * int(roundTo(pow(4, Teselation - 1), 1));
+          if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
           
           for (int n = 0; n < TotalSubNo; n++) {
-            float[][] subFace = getSubFace(allFaces[i], Teselation, n);
+            float[][] subFace = getSubFace(allFaces[f], Teselation, n);
             
             WIN3D_Diagrams.beginShape();
             
-            for (int j = 0; j < subFace.length; j++) {
+            for (int s = 0; s < subFace.length; s++) {
               
-              float[] ray_start = subFace[j];  
+              float[] ray_start = subFace[s];  
               float[] ray_end = {0,0,0};  
           
               float[] ray_direction = new float[3];
@@ -9701,12 +9701,12 @@ void _draw_objects () {
               
               WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
       
-              WIN3D_Diagrams.vertex(subFace[j][0] * objects_scale, subFace[j][1] * objects_scale, subFace[j][2] * objects_scale);
+              WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale, subFace[s][1] * objects_scale, subFace[s][2] * objects_scale);
             }
             
             WIN3D_Diagrams.endShape(CLOSE);
           }
-          */
+          
         }
       
       }
