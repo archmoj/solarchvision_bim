@@ -129,7 +129,7 @@ int record_JPG = 0;
 int record_PDF = 0;
 
 int j_start = 0;
-int j_end = 6; //8; //6; //16; // Variable
+int j_end = 1; //8; //6; //16; // Variable
 
 int max_j_end_forecast = 16; // Constant
 int max_j_end_observed = 0; // Variable
@@ -371,7 +371,7 @@ int databaseNumber_CLIMATE_WY2 = 0;
 int databaseNumber_ENSEMBLE = 1;
 int databaseNumber_OBSERVED = 2;
 int databaseNumber_CLIMATE_EPW = 3;
-int impacts_source = 1; // 0 = Climate WY2, 1 = Forecast, 2 = Observation, 3 = Climate EPW 
+int impacts_source = 3; // 0 = Climate WY2, 1 = Forecast, 2 = Observation, 3 = Climate EPW 
 
 int impact_layer = 1; // 4 = Median
 int plot_impacts = 5; 
@@ -547,7 +547,7 @@ void setup () {
   Y_View = h_pixel; 
   R_View = float(Y_View) / float(X_View);
 
-  _DATE = 288;// (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
+  _DATE = (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   
   //if (_HOUR >= 12) _DATE += 0.5; 
   
@@ -9531,7 +9531,7 @@ void _draw_objects () {
           W = fn_normalize(W);
           
           float Alpha = asin_ang(W[2]);
-          float Beta = atan2_ang(-W[1], W[0]) + 90; // Not Sure!
+          float Beta = atan2_ang(-W[1], W[0]) + 90; 
           
           //println(subFace[s]);
           //println(Alpha, Beta);
