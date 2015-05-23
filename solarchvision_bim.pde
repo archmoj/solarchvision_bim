@@ -484,6 +484,7 @@ int WIN3D_Update = 1;
 
 int WIN3D_BLACK_EDGES = 1;
 int WIN3D_WHITE_FACES = 1;
+int WIN3D_TESELATION = 1;
 
 int WORLD_CX_View = 0;
 int WORLD_CY_View = h_pixel;
@@ -8550,6 +8551,11 @@ void keyPressed () {
   
         case 'W' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 3; break; 
         case 'w' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 3; break; 
+        
+        case 't' :WIN3D_TESELATION += 1; break; 
+        case 'T' :WIN3D_TESELATION -= 1;
+                  if (WIN3D_TESELATION < 0) WIN3D_TESELATION = 0; 
+                  break;
           
         case 'S' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_station(); redraw_scene = 1; break;
         case 's' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_station(); redraw_scene = 1; break;
@@ -9275,7 +9281,7 @@ void _update_objects () {
   //add_Polygon(2, 0, 0, 0,  1.5, 5);
   //add_Polygon(5, 0, 0, 1,  50,   5);
   //add_Pentagon(1, 0, 0, 0, 1);
-  //add_Mesh4(2, -1, -1, 1, 1, -1, -1 , 1, 1, 1, -1, 1, -1); // hyper
+  add_Mesh4(2, -100, -100, 100, 100, -100, -100, 100, 100, 100, -100, 100, -100); // hyper
   //add_Mesh4(7, -1, -1, 0, 1, -1, 0, 1, 1, 0, -1, 1, 0);
   //add_Box(-1, -1, -1, -1, 1, 1, 1);
 
@@ -9288,7 +9294,7 @@ void _update_objects () {
   
   //add_Mesh2(7, -40, -40, 0, 40, 40, 0);
   
-
+/*
   //SOLARCHVISION Complex:
   {
     //add_Box(-1, 0, 0, 0, 1, 3, 3);
@@ -9381,7 +9387,7 @@ void _update_objects () {
 
 
   }
-
+*/
   
 }
 
@@ -9433,7 +9439,7 @@ void _draw_objects () {
     }
     else {
       
-      int Teselation = 2;
+      int Teselation = WIN3D_TESELATION;
       
       int TotalSubNo = 1;  
       if (Teselation > 0) TotalSubNo = allFaces[i].length * int(roundTo(pow(4, Teselation - 1), 1));
