@@ -9117,7 +9117,7 @@ void add_Box (int m, float x1, float y1, float z1, float x2, float y2, float z2)
 }
 
 
-void add_Mesh2(int m, float x1, float y1, float z1, float x3, float y3, float z3) {
+void add_Mesh2 (int m, float x1, float y1, float z1, float x3, float y3, float z3) {
 
   float x2 = x3;
   float y2 = y3;
@@ -9154,7 +9154,7 @@ void add_Mesh2(int m, float x1, float y1, float z1, float x3, float y3, float z3
 
 }
 
-void add_Mesh4(int m, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4) {
+void add_Mesh4 (int m, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4) {
 
   int v1 = addToVertices(x1, y1, z1);
   int v2 = addToVertices(x2, y2, z2);
@@ -9170,7 +9170,7 @@ void add_Mesh4(int m, float x1, float y1, float z1, float x2, float y2, float z2
 
 }
 
-void add_Mesh3(int m, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) {
+void add_Mesh3 (int m, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) {
 
   int v1 = addToVertices(x1, y1, z1);
   int v2 = addToVertices(x2, y2, z2);
@@ -9185,7 +9185,7 @@ void add_Mesh3(int m, float x1, float y1, float z1, float x2, float y2, float z2
 
 }
 
-void add_Mesh5(int m, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float x5, float y5, float z5) {
+void add_Mesh5 (int m, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float x5, float y5, float z5) {
 
   int v1 = addToVertices(x1, y1, z1);
   int v2 = addToVertices(x2, y2, z2);
@@ -9202,7 +9202,7 @@ void add_Mesh5(int m, float x1, float y1, float z1, float x2, float y2, float z2
 
 }
 
-void add_Pentagon(int m, float cx, float cy, float cz, float r) {
+void add_Pentagon (int m, float cx, float cy, float cz, float r) {
 
   int v1 = addToVertices(cos_ang(1*72), sin_ang(1*72), 0);
   int v2 = addToVertices(cos_ang(2*72), sin_ang(2*72), 0);
@@ -9219,7 +9219,7 @@ void add_Pentagon(int m, float cx, float cy, float cz, float r) {
 
 }
 
-void add_Polygon(int m, float cx, float cy, float cz, float r, int n) {
+void add_Polygon (int m, float cx, float cy, float cz, float r, int n) {
 
   int[] newFace = {addToVertices(cx + r * cos_ang(0), cy + r * sin_ang(0), cz)};
   for (int i = 1; i < n; i++) {
@@ -9234,7 +9234,7 @@ void add_Polygon(int m, float cx, float cy, float cz, float r, int n) {
 
 }
 
-void add_PolygonExtrude(int m, float cx, float cy, float cz, float r, float h, int n) {
+void add_PolygonExtrude (int m, float cx, float cy, float cz, float r, float h, int n) {
 
   int[] vT = new int[n];
   int[] vB = new int[n];
@@ -9273,6 +9273,21 @@ void add_PolygonExtrude(int m, float cx, float cy, float cz, float r, float h, i
 }
 
 
+void add_PolygonHyper (int m, float cx, float cy, float cz, float r, int n, float d) {
+
+  int[] newFace = {addToVertices(cx + r * cos_ang(0), cy + r * sin_ang(0), cz)};
+  for (int i = 1; i < n; i++) {
+    float t = i * 360.0 / float(n);
+    int[] f = {addToVertices(cx + r * cos_ang(t), cy + r * sin_ang(t), cz + (i % 2) * d)};
+    newFace = concat(newFace, f);
+  } 
+ 
+  defaultMaterial = m;
+
+  addToFaces(newFace);
+
+}
+
 void _update_objects () {
   //add_PolygonExtrude(-1, 0, 0, 0,  50, 20, 3);
   //add_PolygonExtrude(-1, 0, 0, 0,  50, 20, 5);
@@ -9282,12 +9297,16 @@ void _update_objects () {
   //add_Polygon(5, 0, 0, 1,  50,   5);
   //add_Pentagon(1, 0, 0, 0, 1);
   
-  add_Mesh4(2, -50, -50, 50, 50, -50, -50, 50, 50, 50, -50, 50, -50); // hyper
+  //add_Polygon(2, 0, 0, 0,  50, 5);
+  //add_PolygonHyper(2, 0, 0, 0,  50, 6, 50);
+  add_PolygonHyper(2, 0, 0, 0,  50, 4, 50);
+  
+  //add_Mesh4(2, -50, -50, 50, 50, -50, -50, 50, 50, 50, -50, 50, -50); // hyper
   //add_Mesh4(2, -50, -50, 150, 50, -50, -50, 50, 50, 50, -50, 50, -50); // hyper
  
   
   //add_Mesh4(7, -1, -1, 0, 1, -1, 0, 1, 1, 0, -1, 1, 0);
-  //add_Box(-1, -1, -1, -1, 1, 1, 1);
+  //add_Box(-1, -50, -50, -50, 50, 50, 50);
 
   //add_Box(-1, 0.5, 1.0, 0.0, 1.5, 3.0, 0.5);
   //add_Box(-1, 0.0, 0.0, 0.0, 0.5, 1.0, 2.0);
@@ -9454,10 +9473,23 @@ void _draw_objects () {
         WIN3D_Diagrams.beginShape();
         
         for (int j = 0; j < subFace.length; j++) {
-           
+          
+          float[] ray_start = {0,0,0};         
+          float[] ray_end = subFace[j];    
+      
+          float[] ray_direction = new float[3];
+          
+          ray_direction[0] = ray_end[0] - ray_start[0];
+          ray_direction[1] = ray_end[1] - ray_start[1];
+          ray_direction[2] = ray_end[2] - ray_start[2];
+          
+          float ray_dist = pow(pow(ray_direction[0], 2) + pow(ray_direction[1], 2) + pow(ray_direction[2], 2), 0.5);
+
+          float[] _COL = SOLARCHVISION_DRYWCBD (-1000.0 / pow(ray_dist, 2));
+    
           //float[] RxP = intersect(ray_start, ray_direction, max_dist);
           
-          WIN3D_Diagrams.fill(255, 127, 0);
+          WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
   
           WIN3D_Diagrams.vertex(subFace[j][0] * objects_scale, subFace[j][1] * objects_scale, subFace[j][2] * objects_scale);
         }
