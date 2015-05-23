@@ -9268,12 +9268,12 @@ void add_PolygonExtrude(int m, float cx, float cy, float cz, float r, float h, i
 
 
 void _update_objects () {
-  //add_PolygonExtrude(-1, 0, 0, 0,  0.5, 2.0, 10);
-  //add_PolygonExtrude(-1, 0, 0, 0,  1.5, 1.0, 5);
+  //add_PolygonExtrude(-1, 0, 0, 0,  50, 20, 3);
+  //add_PolygonExtrude(-1, 0, 0, 0,  50, 20, 5);
 
   //add_Polygon(1, 0, 0, -1, 2,  16);
   //add_Polygon(2, 0, 0, 0,  1.5, 5);
-  //add_Polygon(5, 0, 0, 1,  1,   3);
+  //add_Polygon(5, 0, 0, 1,  50,   5);
   //add_Pentagon(1, 0, 0, 0, 1);
   //add_Mesh4(2, -1, -1, 1, 1, -1, -1 , 1, 1, 1, -1, 1, -1); // hyper
   //add_Mesh4(7, -1, -1, 0, 1, -1, 0, 1, 1, 0, -1, 1, 0);
@@ -9286,9 +9286,9 @@ void _update_objects () {
   //add_Mesh2(3, 0.5, 0.0, 1.25, 0.75, 1.0, 1.25);
   //add_Mesh2(3, 0.5, 0.0, 1.75, 0.75, 1.0, 1.75);
   
-  //add_Mesh2(7, -4, -4, 0, 4, 4, 0);
+  //add_Mesh2(7, -40, -40, 0, 40, 40, 0);
   
-  
+
   //SOLARCHVISION Complex:
   {
     //add_Box(-1, 0, 0, 0, 1, 3, 3);
@@ -9381,7 +9381,7 @@ void _update_objects () {
 
 
   }
-  
+
   
 }
 
@@ -9418,17 +9418,22 @@ void _draw_objects () {
       WIN3D_Diagrams.fill(c);
     }    
     
-    WIN3D_Diagrams.beginShape();
+    
 
     if (WIN3D_WHITE_FACES != 2) {
+      
+      WIN3D_Diagrams.beginShape();
+      
       for (int j = 0; j < allFaces[i].length; j++) {
         int vNo = allFaces[i][j];
         WIN3D_Diagrams.vertex(allVertices[vNo][0] * objects_scale, allVertices[vNo][1] * objects_scale, allVertices[vNo][2] * objects_scale);
       }    
+      
+      WIN3D_Diagrams.endShape(CLOSE);
     }
     else {
       
-      int Teselation = 1;
+      int Teselation = 2;
       
       int TotalSubNo = 1;  
       if (Teselation > 0) TotalSubNo = allFaces[i].length * int(roundTo(pow(4, Teselation - 1), 1));
@@ -9436,8 +9441,9 @@ void _draw_objects () {
       for (int n = 0; n < TotalSubNo; n++) {
         float[][] subFace = getSubFace(allFaces[i], Teselation, n);
         
+        WIN3D_Diagrams.beginShape();
+        
         for (int j = 0; j < subFace.length; j++) {
-    
            
           //float[] RxP = intersect(ray_start, ray_direction, max_dist);
           
@@ -9445,10 +9451,12 @@ void _draw_objects () {
   
           WIN3D_Diagrams.vertex(subFace[j][0] * objects_scale, subFace[j][1] * objects_scale, subFace[j][2] * objects_scale);
         }
+        
+        WIN3D_Diagrams.endShape(CLOSE);
       }
     }
     
-    WIN3D_Diagrams.endShape(CLOSE);
+    
   }
   
     
@@ -9719,16 +9727,10 @@ float[][] getSubFace (int[] the_Face, int Teselation, int n) {
       
     int div = the_Face.length;
     
-    int the_section = int(n / div);
-    
-    int[] sections = {the_section};
-    
     int the_first = n % div;
     int the_next = (the_first + 1) % div;
     int the_previous = (the_first + div - 1) % div;
-    
-    println(the_previous, the_first, the_next);
-    
+
     float[] A = {0,0,0};
     float[] B = {0,0,0};
     float[] C = {0,0,0};
@@ -9751,10 +9753,46 @@ float[][] getSubFace (int[] the_Face, int Teselation, int n) {
       return_vertices[2] = C; 
       return_vertices[3] = D; 
     } 
+    else {
+
+      int section = n / div;
+      int res = int(roundTo(pow(2, Teselation - 1), 1));
+      int u = section / res;
+      int v = section % res;
+      
+      float x1 = (1.0 * u) / (1.0 * res);
+      float y1 = (1.0 * v) / (1.0 * res);
+      float x2 = (1.0 * (u + 1)) / (1.0 * res);
+      float y2 = (1.0 * (v + 1)) / (1.0 * res);
+      
+      float[] P0 = {0,0,0};
+      float[] P1 = {0,0,0};
+      float[] P2 = {0,0,0};
+      float[] P3 = {0,0,0};
+      
+      for (int i = 0; i < 3; i++) {
+        P0[i] = Bilinear(A[i], B[i], C[i], D[i], x1, y1); 
+        P1[i] = Bilinear(A[i], B[i], C[i], D[i], x2, y1); 
+        P2[i] = Bilinear(A[i], B[i], C[i], D[i], x2, y2); 
+        P3[i] = Bilinear(A[i], B[i], C[i], D[i], x1, y2); 
+      }      
+      
+      return_vertices[0] = P0; 
+      return_vertices[1] = P1; 
+      return_vertices[2] = P2; 
+      return_vertices[3] = P3;       
+    }
       
   }
   
  
   return return_vertices;
+}
+
+float Bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y) {
+  
+  float f_xy = f_00 * (1 - x) * (1 - y) + f_10 * x * (1 - y) + f_01 * (1 - x) * y + f_11 * x * y;
+
+  return f_xy;
 }
   
