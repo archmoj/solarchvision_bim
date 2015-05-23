@@ -1711,6 +1711,17 @@ float roundTo (float a, float b) {
   return c;
 }
 
+float fn_dist (float[] a, float[] b) {
+
+  float d = 0;
+  for (int i = 0; i < a.length; i++) {
+    d += pow(b[i] - a[i], 2);
+  }
+  d = pow(d, 0.5);
+  
+  return d;
+}
+
 float[] fn_normalize (float[] a) {
   float[] b = a;
   float d = 0;
@@ -9307,7 +9318,14 @@ void _update_objects () {
  
   
   //add_Mesh4(7, -1, -1, 0, 1, -1, 0, 1, 1, 0, -1, 1, 0);
-  add_Box(-1, -40, -40, -40, 40, 40, 40);
+  
+  //add_Box(-1, -40, -40, -40, 40, 40, 40);
+  //add_Mesh2(6, -60, -60, 60, 60, 60, 60);
+  //add_Mesh2(6, -60, -60, 60, 0, 60, 60);
+  //add_Mesh2(6, -60, -60, 20, 0, 60, 20);
+  
+  add_PolygonHyper(2, 0, 0, 0,  40, 40, 4);
+  add_Mesh2(3, -60, -60, 0, 60, 60, 0);
 
   //add_Box(-1, 0.5, 1.0, 0.0, 1.5, 3.0, 0.5);
   //add_Box(-1, 0.0, 0.0, 0.0, 0.5, 1.0, 2.0);
@@ -9519,8 +9537,6 @@ void _draw_objects () {
         
         for (int s = 0; s < subFace.length; s++) {
           
-          float[] ray_start = subFace[s];  
-
           int s_next = (s + 1) % subFace.length;
           int s_prev = (s + subFace.length - 1) % subFace.length;
           
@@ -9574,7 +9590,7 @@ void _draw_objects () {
                 
                 float HOUR_ANGLE = i; 
                 float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
-          
+
                 now_k = k;
                 now_i = i;
                 now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
@@ -9664,9 +9680,17 @@ void _draw_objects () {
                       
                       float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
                       
-                      _valuesSUM_RAD += ((_values_R_dir * SunMask) + (_values_R_dif * SkyMask)); // calculates total horizontal radiation
-                      _valuesSUM_EFF += ((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); // calculates total horizontal effects
-                      _valuesNUM += 1;
+                      float[] ray_start = subFace[s];     
+                      float[] ray_direction = {SunR[1],SunR[2],SunR[3]}; // NOT SURE!
+                      float[] RxP = intersect(ray_start, ray_direction, 1000); // max_dist = 1000 <<<<<<<<<<<      
+                      
+                      if ((RxP[4] > 0) && (fn_dist(ray_start, RxP) > 0.001)) {
+                      }
+                      else{ 
+                        _valuesSUM_RAD += ((_values_R_dir * SunMask) + (_values_R_dif * SkyMask)); // calculates total horizontal radiation
+                        _valuesSUM_EFF += ((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); // calculates total horizontal effects
+                        _valuesNUM += 1;
+                      }
                       
                     }
                   }
