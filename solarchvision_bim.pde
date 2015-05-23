@@ -484,7 +484,8 @@ int WIN3D_Update = 1;
 
 int WIN3D_BLACK_EDGES = 1;
 int WIN3D_WHITE_FACES = 1;
-int WIN3D_TESELATION = 1;
+
+int WIN3D_TESELATION = 0;
 
 int WORLD_CX_View = 0;
 int WORLD_CY_View = h_pixel;
@@ -546,7 +547,7 @@ void setup () {
   Y_View = h_pixel; 
   R_View = float(Y_View) / float(X_View);
 
-  _DATE = (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
+  _DATE = 288;// (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   
   //if (_HOUR >= 12) _DATE += 0.5; 
   
@@ -9273,12 +9274,12 @@ void add_PolygonExtrude (int m, float cx, float cy, float cz, float r, float h, 
 }
 
 
-void add_PolygonHyper (int m, float cx, float cy, float cz, float r, int n, float d) {
+void add_PolygonHyper (int m, float cx, float cy, float cz, float r, float h, int n) {
 
   int[] newFace = {addToVertices(cx + r * cos_ang(0), cy + r * sin_ang(0), cz)};
   for (int i = 1; i < n; i++) {
     float t = i * 360.0 / float(n);
-    int[] f = {addToVertices(cx + r * cos_ang(t), cy + r * sin_ang(t), cz + (i % 2) * d)};
+    int[] f = {addToVertices(cx + r * cos_ang(t), cy + r * sin_ang(t), cz + (i % 2) * h)};
     newFace = concat(newFace, f);
   } 
  
@@ -9298,15 +9299,15 @@ void _update_objects () {
   //add_Pentagon(1, 0, 0, 0, 1);
   
   //add_Polygon(2, 0, 0, 0,  50, 5);
-  //add_PolygonHyper(2, 0, 0, 0,  50, 6, 50);
-  add_PolygonHyper(2, 0, 0, 0,  50, 4, 50);
+  //add_PolygonHyper(2, 0, 0, 0,  50, 50, 6);
+  //add_PolygonHyper(2, 0, 0, 0,  50, 50, 4);
   
   //add_Mesh4(2, -50, -50, 50, 50, -50, -50, 50, 50, 50, -50, 50, -50); // hyper
   //add_Mesh4(2, -50, -50, 150, 50, -50, -50, 50, 50, 50, -50, 50, -50); // hyper
  
   
   //add_Mesh4(7, -1, -1, 0, 1, -1, 0, 1, 1, 0, -1, 1, 0);
-  //add_Box(-1, -50, -50, -50, 50, 50, 50);
+  add_Box(-1, -40, -40, -40, 40, 40, 40);
 
   //add_Box(-1, 0.5, 1.0, 0.0, 1.5, 3.0, 0.5);
   //add_Box(-1, 0.0, 0.0, 0.0, 0.5, 1.0, 2.0);
@@ -9524,13 +9525,16 @@ void _draw_objects () {
           int s_prev = (s + subFace.length - 1) % subFace.length;
           
           PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
-          PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]); 
+          PVector V = new PVector(subFace[s][0] - subFace[s_prev][0], subFace[s][1] - subFace[s_prev][1], subFace[s][2] - subFace[s_prev][2]); 
           PVector UV = U.cross(V);
           float[] W = {UV.x, UV.y, UV.z};
           W = fn_normalize(W);
           
           float Alpha = asin_ang(W[2]);
-          float Beta = atan2_ang(W[1], W[0]) + 90;
+          float Beta = atan2_ang(-W[1], W[0]) + 90; // Not Sure!
+          
+          //println(subFace[s]);
+          //println(Alpha, Beta);
       
 //----------------------------------------------------
 
