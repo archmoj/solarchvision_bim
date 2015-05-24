@@ -9839,12 +9839,6 @@ int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
 
   float[] ray_normal = fn_normalize(ray_dir);   
 
-  // << in order to avoid returning the initial ray point on the surface!
-  ray_pnt[0] += ray_normal[0] * 0.1;
-  ray_pnt[1] += ray_normal[1] * 0.1;
-  ray_pnt[2] += ray_normal[2] * 0.1;
-
-
   int hit = 0;
 
   for (int f = 1; f < allFaces.length; f++) {
@@ -9855,7 +9849,7 @@ int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
       float foreAngles = FLOAT_undefined;
   
       float delta = 0.5; 
-      float delta_step = -0.5;
+      float delta_step = -0.5; // going the other way
       
       float[] x = {FLOAT_undefined, FLOAT_undefined};
       float[] y = {FLOAT_undefined, FLOAT_undefined};
@@ -9866,7 +9860,8 @@ int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
       float MAX_AnglesAll = 0;
       int MAX_o = -1;
   
-      for (int q = 0; q < 16; q++) {
+      //for (int q = 0; q < 16; q++) {
+      for (int q = 0; q < 12; q++) {
         
         if (hit == 0) {
         
@@ -9877,7 +9872,7 @@ int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
             if (o == 0) delta_test -= delta_step;
             else delta_test += delta_step;
             
-            if (delta_test < 0.01) delta_test = 0.01; // << in order to avoid returning the initial ray point!
+            if (delta_test < 0.01) delta_test = 0.01; // << in order to avoid returning the initial ray point on the surface!
             
             x[o] = ray_pnt[0] + delta_test * ray_normal[0] * max_distance; 
             y[o] = ray_pnt[1] + delta_test * ray_normal[1] * max_distance; 
@@ -9897,17 +9892,12 @@ int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
       
             }
           }
-    
-    
-    
-    
-    
-          
+
           if (q == 0) {
             foreAngles = AnglesAll[0];
             backAngles = AnglesAll[1];
 
-            MAX_o = 0;
+            MAX_o = 0; 
             delta = 0;
           } 
           else {
@@ -9933,38 +9923,19 @@ int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
     
           }
     
-          //println(delta, delta_step);
-             
-    
-          if (MAX_AnglesAll > 359) {
+          //if (MAX_AnglesAll > 359) {
+          if (MAX_AnglesAll > 357) {
             
-            //float d = dist(x[MAX_o], y[MAX_o], z[MAX_o], ray_pnt[0], ray_pnt[1], ray_pnt[2]);
-            
-            //println("DIST:", d);
-            //println("delta:", delta);
-            
-            if (delta > 0.01) {
-            //if (d > 0.0) { // <<<<<<<<<<<<<<<<<<<<<<    
+            if (delta > 0.01) { // << in order to avoid returning the initial ray point on the surface!
               hit = 1;
-              
-              //println(ray_pnt[0], ray_pnt[1], ray_pnt[2]);
-              //println(x[MAX_o], y[MAX_o], z[MAX_o]);
-              
-              //println("____________________________");
-              
             }
           }
         }
-        
       }
-      
     }
-
   }
 
-
   return hit;
-  
 }
 
 
