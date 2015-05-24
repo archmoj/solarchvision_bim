@@ -547,7 +547,7 @@ void setup () {
   Y_View = h_pixel; 
   R_View = float(Y_View) / float(X_View);
 
-  _DATE = (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
+  _DATE = 289; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   
   //if (_HOUR >= 12) _DATE += 0.5; 
   
@@ -9318,7 +9318,22 @@ void _update_objects () {
   //add_Box(-1, 0, 0, 0, 60, 20, 40);
   //add_Mesh2(3, -40, -40, 0, 0, 0, 0);
   //add_PolygonHyper(2, -20, -20, 0,  15, 15, 4);
+
+  
+  add_Mesh2(2, 60, 0, 0, 0, 0, 60);
+  add_Mesh2(3, 0, -60, 45, 60, 0, 45);
+  
+
     
+  
+  //add_Box(-1, 0, 0, 0, 30, 10, 10);
+  //add_Box(-1, 0, 0, 10, 10, 10, 20);
+  //add_Box(-1, 20, 0, 10, 30, 10, 20);
+  //add_Box(-1, 0, 0, 20, 30, 10, 30);
+  //add_Mesh2(3, -60, -60, 0, 60, 60, 0);
+  
+
+
   
   //add_Box(-1, -40, -40, -40, 40, 40, 40);
   
@@ -9326,8 +9341,8 @@ void _update_objects () {
   //add_Mesh2(6, -60, -60, 60, 0, 60, 60);
   //add_Mesh2(6, -60, -60, 20, 0, 60, 20);
   
-  add_PolygonHyper(2, 0, 0, 0,  40, 40, 4);
-  add_Mesh2(3, -60, -60, 0, 60, 60, 0);
+  //add_PolygonHyper(2, 0, 0, 0,  40, 40, 4);
+  //add_Mesh2(3, -60, -60, 0, 60, 60, 0);
 
   //add_Box(-1, 0.5, 1.0, 0.0, 1.5, 3.0, 0.5);
   //add_Box(-1, 0.0, 0.0, 0.0, 0.5, 1.0, 2.0);
@@ -9713,7 +9728,7 @@ void _draw_objects () {
                       float[] ray_start = subFace[s];     
                       float[] ray_direction = {SunR[1],SunR[2],SunR[3]}; // NOT SURE!
                       
-                      if (isIntersected(ray_start, ray_direction, 1000) == 1) { // max_dist = 1000 <<<<<<<<<<<
+                      if (isIntersected(ray_start, ray_direction, 100) == 1) { // max_dist = 100 <<<<<<<<<<<
                       }
                       else{ 
                         _valuesSUM_RAD += ((_values_R_dir * SunMask) + (_values_R_dif * SkyMask)); // calculates total horizontal radiation
@@ -9860,8 +9875,8 @@ int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
       float MAX_AnglesAll = 0;
       int MAX_o = -1;
   
-      //for (int q = 0; q < 16; q++) {
-      for (int q = 0; q < 12; q++) {
+      for (int q = 0; q < 16; q++) {
+      //for (int q = 0; q < 12; q++) {
         
         if (hit == 0) {
         
@@ -9923,8 +9938,8 @@ int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
     
           }
     
-          //if (MAX_AnglesAll > 359) {
-          if (MAX_AnglesAll > 357) {
+          if (MAX_AnglesAll > 359) {
+          //if (MAX_AnglesAll > 357) {
             
             if (delta > 0.01) { // << in order to avoid returning the initial ray point on the surface!
               hit = 1;
