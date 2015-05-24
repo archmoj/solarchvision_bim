@@ -9839,6 +9839,10 @@ int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
 
   float[] ray_normal = fn_normalize(ray_dir);   
 
+  // << in order to avoid returning the initial ray point on the surface!
+  ray_pnt[0] += ray_normal[0] * 0.1;
+  ray_pnt[1] += ray_normal[1] * 0.1;
+  ray_pnt[2] += ray_normal[2] * 0.1;
 
 
   int hit = 0;
@@ -9874,6 +9878,8 @@ int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
             
             if (o == 0) delta_test -= delta_step;
             else delta_test += delta_step;
+            
+            //if (delta_test < 0.1) delta_test = 0.1; // << in order to avoid returning the initial ray point!
             
             x[o] = ray_pnt[0] + delta_test * ray_normal[0] * max_distance; 
             y[o] = ray_pnt[1] + delta_test * ray_normal[1] * max_distance; 
@@ -9945,16 +9951,17 @@ int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
             
             float d = dist(x[MAX_o], y[MAX_o], z[MAX_o], ray_pnt[0], ray_pnt[1], ray_pnt[2]);
             
-            println("DIST:", d);
+            //println("DIST:", d);
+            println("delta:", delta);
             
-            if (d > 1.0) { // <<<<<<<<<<<<<<<<<<<<<<    
+            if (delta > 0.01) {
+            //if (d > 0.0) { // <<<<<<<<<<<<<<<<<<<<<<    
               hit = 1;
               
-              println(ray_pnt[0], ray_pnt[1], ray_pnt[2]);
-              println(x[MAX_o], y[MAX_o], z[MAX_o]);
+              //println(ray_pnt[0], ray_pnt[1], ray_pnt[2]);
+              //println(x[MAX_o], y[MAX_o], z[MAX_o]);
               
-              println("____________________________");
-              
+              //println("____________________________");
               
             }
           }
