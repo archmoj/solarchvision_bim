@@ -9502,57 +9502,61 @@ void _draw_objects () {
         WIN3D_Diagrams.endShape(CLOSE);
       }
     }    
-    else if (WIN3D_WHITE_FACES == 3){
-      float pre_per_day = per_day;
-      int pre_num_add_days = num_add_days;
-      if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
-        per_day = 1;
-        num_add_days = 1;
-      }
+  }
+  
+  
+  if (WIN3D_WHITE_FACES == 3){
+    float pre_per_day = per_day;
+    int pre_num_add_days = num_add_days;
+    if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
+      per_day = 1;
+      num_add_days = 1;
+    }
+    
+    int start_z = get_startZ_endZ(impacts_source)[0];
+    int end_z = get_startZ_endZ(impacts_source)[1]; 
+    int layers_count = get_startZ_endZ(impacts_source)[2]; 
       
-      int start_z = get_startZ_endZ(impacts_source)[0];
-      int end_z = get_startZ_endZ(impacts_source)[1]; 
-      int layers_count = get_startZ_endZ(impacts_source)[2]; 
-        
+    
+    Impact_TYPE = Impact_ACTIVE; 
+    //Impact_TYPE = Impact_PASSIVE;
+    
+    String Pa = "";
+    String Pb = "";
+    String Pc = "";
+    String Pd = "";
+    
+    float _values_R_dir;
+    float _values_R_dif;
+    float _values_E_dir;
+    float _values_E_dif;
+    
+    int now_k = 0;
+    int now_i = 0;
+    int now_j = 0;
+    
+    int PAL_TYPE = 0; 
+    int PAL_DIR = 1;
+    
+    if (Impact_TYPE == Impact_ACTIVE) {  
+      PAL_TYPE = 15; PAL_DIR = 1;
       
-      Impact_TYPE = Impact_ACTIVE; 
-      //Impact_TYPE = Impact_PASSIVE;
-      
-      String Pa = "";
-      String Pb = "";
-      String Pc = "";
-      String Pd = "";
-      
-      float _values_R_dir;
-      float _values_R_dif;
-      float _values_E_dir;
-      float _values_E_dif;
-      
-      int now_k = 0;
-      int now_i = 0;
-      int now_j = 0;
-      
-      int PAL_TYPE = 0; 
-      int PAL_DIR = 1;
-      
-      if (Impact_TYPE == Impact_ACTIVE) {  
-        PAL_TYPE = 15; PAL_DIR = 1;
-        
-      }
-      if (Impact_TYPE == Impact_PASSIVE) {  
-        PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
-      }             
-      
-      float _Multiplier = 1; 
-      if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; 
-      if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.01; 
+    }
+    if (Impact_TYPE == Impact_PASSIVE) {  
+      PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
+    }             
+    
+    float _Multiplier = 1; 
+    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; 
+    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.01; 
 
-
+    for (int f = 1; f < allFaces.length; f++) {
+  
       int Teselation = WIN3D_TESELATION;
       
       int TotalSubNo = 1;  
       if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
-
+  
       for (int n = 0; n < TotalSubNo; n++) {
         float[][] subFace = getSubFace(allFaces[f], Teselation, n);
         
@@ -9572,11 +9576,6 @@ void _draw_objects () {
           float Alpha = asin_ang(W[2]);
           float Beta = atan2_ang(W[1], W[0]) + 90; 
           
-          //println(subFace[s]);
-          //println(Alpha, Beta);
-      
-//----------------------------------------------------
-
           float _valuesSUM_RAD = 0;
           float _valuesSUM_EFF = 0;
           int _valuesNUM = 0; 
@@ -9613,7 +9612,7 @@ void _draw_objects () {
                 
                 float HOUR_ANGLE = i; 
                 float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
-
+  
                 now_k = k;
                 now_i = i;
                 now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
@@ -9746,8 +9745,7 @@ void _draw_objects () {
             if (PAL_DIR == -1) _u = 1 - _u;
             if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
             if (PAL_DIR == 2) _u =  0.5 * _u;
-
-//----------------------------------------------------
+  
             float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
   
             WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
@@ -9761,7 +9759,7 @@ void _draw_objects () {
       }
     }
   }
-  
+
     
   CAM_x -= WIN3D_X_coordinate;
   CAM_y += WIN3D_Y_coordinate;
