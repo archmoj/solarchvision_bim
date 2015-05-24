@@ -9712,9 +9712,8 @@ void _draw_objects () {
                 
                       float[] ray_start = subFace[s];     
                       float[] ray_direction = {SunR[1],SunR[2],SunR[3]}; // NOT SURE!
-                      float[] RxP = intersect(ray_start, ray_direction, 1000); // max_dist = 1000 <<<<<<<<<<<      
                       
-                      if ((RxP[4] > 0) && (fn_dist(ray_start, RxP) > 0.001)) {
+                      if (isIntersected(ray_start, ray_direction, 1000) == 1) { // max_dist = 1000 <<<<<<<<<<<
                       }
                       else{ 
                         _valuesSUM_RAD += ((_values_R_dir * SunMask) + (_values_R_dif * SkyMask)); // calculates total horizontal radiation
@@ -9836,179 +9835,139 @@ void _draw_objects () {
 
 
 
-float[] intersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
+int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
 
   float[] ray_normal = fn_normalize(ray_dir);   
 
 
 
-  float[][] hitPoint = new float[allFaces.length][4];
+  int hit = 0;
 
   for (int f = 1; f < allFaces.length; f++) {
-    hitPoint[f][0] = FLOAT_undefined;
-    hitPoint[f][1] = FLOAT_undefined;
-    hitPoint[f][2] = FLOAT_undefined;
-    hitPoint[f][3] = FLOAT_undefined;
-  }
-  
-  float[] pre_angle_to_allFaces = new float[allFaces.length];
-  
-  for (int f = 1; f < allFaces.length; f++) {
-    pre_angle_to_allFaces[f] = FLOAT_undefined;
-  }
-  
-  for (int f = 1; f < allFaces.length; f++) {
+    
+    if (hit == 0) {
 
-    float backAngles = FLOAT_undefined;  
-    float foreAngles = FLOAT_undefined;
-
-    float delta = 0.5; 
-    float delta_step = 0.5;
-    
-    float delta_dir = -1;
-    
-    float[] x = {FLOAT_undefined, FLOAT_undefined};
-    float[] y = {FLOAT_undefined, FLOAT_undefined};
-    float[] z = {FLOAT_undefined, FLOAT_undefined};
-    
-    float[] AnglesAll = {0, 0};   
-    
-    float MAX_AnglesAll = 0;
-    int MAX_o = -1;
-
-    for (int q = 0; q < 16; q++) {
+      float backAngles = FLOAT_undefined;  
+      float foreAngles = FLOAT_undefined;
+  
+      float delta = 0.5; 
+      float delta_step = 0.5;
       
-      for (int o = 0; o < 2; o++) {
-
-        float delta_test = delta;
-        
-        if (o == 0) delta_test -= delta_step;
-        else delta_test += delta_step;
-        
-        x[o] = ray_pnt[0] + delta_test * ray_normal[0] * max_distance; 
-        y[o] = ray_pnt[1] + delta_test * ray_normal[1] * max_distance; 
-        z[o] = ray_pnt[2] + delta_test * ray_normal[2] * max_distance; 
-        
-        AnglesAll[o] = 0;      
+      float delta_dir = -1;
       
-        for (int i = 0; i < allFaces[f].length; i++) {
-          int next_i = (i + 1) % allFaces[f].length;
-          
-          float[] vectA = {allVertices[allFaces[f][i]][0] - x[o], allVertices[allFaces[f][i]][1] - y[o], allVertices[allFaces[f][i]][2] - z[o]}; 
-          float[] vectB = {allVertices[allFaces[f][next_i]][0] - x[o], allVertices[allFaces[f][next_i]][1] - y[o], allVertices[allFaces[f][next_i]][2] - z[o]};
-          
-          float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
-          
-          AnglesAll[o] += t;
+      float[] x = {FLOAT_undefined, FLOAT_undefined};
+      float[] y = {FLOAT_undefined, FLOAT_undefined};
+      float[] z = {FLOAT_undefined, FLOAT_undefined};
+      
+      float[] AnglesAll = {0, 0};   
+      
+      float MAX_AnglesAll = 0;
+      int MAX_o = -1;
   
+      for (int q = 0; q < 16; q++) {
+        
+        if (hit == 0) {
+        
+          for (int o = 0; o < 2; o++) {
+    
+            float delta_test = delta;
+            
+            if (o == 0) delta_test -= delta_step;
+            else delta_test += delta_step;
+            
+            x[o] = ray_pnt[0] + delta_test * ray_normal[0] * max_distance; 
+            y[o] = ray_pnt[1] + delta_test * ray_normal[1] * max_distance; 
+            z[o] = ray_pnt[2] + delta_test * ray_normal[2] * max_distance; 
+            
+            AnglesAll[o] = 0;      
+          
+            for (int i = 0; i < allFaces[f].length; i++) {
+              int next_i = (i + 1) % allFaces[f].length;
+              
+              float[] vectA = {allVertices[allFaces[f][i]][0] - x[o], allVertices[allFaces[f][i]][1] - y[o], allVertices[allFaces[f][i]][2] - z[o]}; 
+              float[] vectB = {allVertices[allFaces[f][next_i]][0] - x[o], allVertices[allFaces[f][next_i]][1] - y[o], allVertices[allFaces[f][next_i]][2] - z[o]};
+              
+              float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
+              
+              AnglesAll[o] += t;
+      
+            }
+          }
+    
+    
+    
+    
+    
+          
+          if (q == 0) {
+            foreAngles = AnglesAll[0];
+            backAngles = AnglesAll[1];
+            
+            //if (AnglesAll[0] < AnglesAll[1]) {
+              MAX_o = 1;
+              delta = 1;
+            //}
+            //else{
+            //  MAX_o = 0;
+            //  delta = 0;       
+            //}
+            
+        
+    
+          } 
+          else {
+            
+            if (AnglesAll[0] < AnglesAll[1]) {
+              MAX_o = 1;          
+              MAX_AnglesAll = AnglesAll[1];
+              
+              backAngles = AnglesAll[1]; 
+              
+              delta += delta_step;   
+            }
+            else {
+              MAX_o = 0;
+              MAX_AnglesAll = AnglesAll[0];
+              
+              foreAngles = AnglesAll[0];
+              
+              delta -= delta_step;
+            } 
+            
+            delta_step *= 0.666; // 0.5; <<<<<<<<<<<<<<<          
+    
+          }
+    
+          //println(delta, delta_step);
+             
+    
+          if (MAX_AnglesAll > 359) {
+            
+            float d = dist(x[MAX_o], y[MAX_o], z[MAX_o], ray_pnt[0], ray_pnt[1], ray_pnt[2]);
+            
+            println("DIST:", d);
+            
+            if (d > 1.0) { // <<<<<<<<<<<<<<<<<<<<<<    
+              hit = 1;
+              
+              println(ray_pnt[0], ray_pnt[1], ray_pnt[2]);
+              println(x[MAX_o], y[MAX_o], z[MAX_o]);
+              
+              println("____________________________");
+              
+              
+            }
+          }
         }
+        
       }
-
-
-
-
-
-      
-      if (q == 0) {
-        foreAngles = AnglesAll[0];
-        backAngles = AnglesAll[1];
-        
-        //if (AnglesAll[0] < AnglesAll[1]) {
-          MAX_o = 1;
-          delta = 1;
-        //}
-        //else{
-        //  MAX_o = 0;
-        //  delta = 0;       
-        //}
-        
-    
-
-      } 
-      else {
-        
-        if (AnglesAll[0] < AnglesAll[1]) {
-          MAX_o = 1;          
-          MAX_AnglesAll = AnglesAll[1];
-          
-          backAngles = AnglesAll[1]; 
-          
-          delta += delta_step;   
-        }
-        else {
-          MAX_o = 0;
-          MAX_AnglesAll = AnglesAll[0];
-          
-          foreAngles = AnglesAll[0];
-          
-          delta -= delta_step;
-        } 
-        
-        delta_step *= 0.666; // 0.5; <<<<<<<<<<<<<<<          
-
-      }
-
-      //println(delta, delta_step);
-         
-
-      
-      
-      
-
-
-
-      if (MAX_AnglesAll > 359) {
-        if (pre_angle_to_allFaces[f] < MAX_AnglesAll) {
-          pre_angle_to_allFaces[f] = MAX_AnglesAll;
-          
-          hitPoint[f][0] = x[MAX_o];
-          hitPoint[f][1] = y[MAX_o];
-          hitPoint[f][2] = z[MAX_o];
-          hitPoint[f][3] = delta;
-        }        
-      }
-      
-      if (pre_angle_to_allFaces[f] > 0.9 * FLOAT_undefined) {
-        pre_angle_to_allFaces[f] = MAX_AnglesAll;
-      }       
-
       
     }
 
   }
 
-  float[] return_point = {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, -1};
-  
-  float pre_dist = FLOAT_undefined;
-  
-  for (int f = 1; f < allFaces.length; f++) {
-    
-    float hx = hitPoint[f][0];
-    float hy = hitPoint[f][1];
-    float hz = hitPoint[f][2];
-    float h_delta = hitPoint[f][3];
 
-    //if ((hx < 0.9 * FLOAT_undefined) && (hy < 0.9 * FLOAT_undefined) && (hz < 0.9 * FLOAT_undefined)) {
-    
-      float hd = dist(hx, hy, hz, ray_pnt[0], ray_pnt[1], ray_pnt[2]);
-      
-      //if (hd < pre_dist) {
-      //if ((hd < pre_dist) && (hd > 0.02)) {
-      if ((hd < pre_dist) && (h_delta > 0.005)) {
-        
-        pre_dist = hd;
-        
-        return_point[0] = hx;
-        return_point[1] = hy;
-        return_point[2] = hz;
-        return_point[3] = hd;
-        return_point[4] = f;
-      }
-    
-    //}
-  }
- 
-  return return_point;
+  return hit;
   
 }
 
