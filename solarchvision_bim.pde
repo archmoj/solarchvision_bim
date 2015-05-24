@@ -8502,10 +8502,10 @@ void keyPressed () {
     
     if (key == CODED) { 
       switch(keyCode) {
-        //case LEFT  :WIN3D_X_coordinate -= WIN3D_S_coordinate; break;
-        //case RIGHT :WIN3D_X_coordinate += WIN3D_S_coordinate; break; 
-        //case UP    :WIN3D_Y_coordinate -= WIN3D_S_coordinate; break;
-        //case DOWN  :WIN3D_Y_coordinate += WIN3D_S_coordinate; break;
+        //case LEFT  :WIN3D_X_coordinate += WIN3D_S_coordinate; break;
+        //case RIGHT :WIN3D_X_coordinate -= WIN3D_S_coordinate; break; 
+        //case UP    :WIN3D_Y_coordinate += WIN3D_S_coordinate; break;
+        //case DOWN  :WIN3D_Y_coordinate -= WIN3D_S_coordinate; break;
       }
     }
     else {
@@ -8561,8 +8561,9 @@ void keyPressed () {
         case 'E' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; break; 
         case 'e' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; break; 
   
-        case 'W' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 3; break; 
-        case 'w' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 3; break; 
+        case 'W' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 4 - 1) % 4; break;
+        case 'w' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 4; break; 
+         
         
         case 't' :WIN3D_TESELATION += 1; break; 
         case 'T' :WIN3D_TESELATION -= 1;
@@ -8572,14 +8573,10 @@ void keyPressed () {
         case 'S' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_station(); redraw_scene = 1; break;
         case 's' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_station(); redraw_scene = 1; break;
 
-       
-        
         case 'F' :LoadFontStyle(); break;
         case 'f' :LoadFontStyle(); break;
-             
-            
-      }
   
+      }
     }
     
     WIN3D_Update = 1;
@@ -8743,7 +8740,7 @@ void add_Object2D (String t, int m, float x, float y, float z, float s) {
   allObject2D_MAP = concat(allObject2D_MAP, newObject2D_MAP);
 
   
-  float[][] newObject2D_XYZS = {{x, -y, z, s}};
+  float[][] newObject2D_XYZS = {{x, y, z, s}};
   
   allObject2D_XYZS = (float[][]) concat(allObject2D_XYZS, newObject2D_XYZS);
 
@@ -9057,8 +9054,7 @@ int[] allObject2D_MAP = {0};
 
 int addToVertices (float x, float y, float z) {
   
-  //float[][] newVertice = {{x, y, z}}; 
-  float[][] newVertice = {{x, -y, z}};
+  float[][] newVertice = {{x, y, z}}; 
   
   allVertices = (float[][]) concat(allVertices, newVertice);
   
@@ -9319,13 +9315,19 @@ void _update_objects () {
   
   //add_Mesh4(7, -1, -1, 0, 1, -1, 0, 1, 1, 0, -1, 1, 0);
   
+  add_Box(-1, 0, 0, 0, 60, 20, 40);
+  add_Mesh2(3, -40, -40, 0, 0, 0, 0);
+  add_PolygonHyper(2, -20, -20, 0,  15, 15, 4);
+    
+  
   //add_Box(-1, -40, -40, -40, 40, 40, 40);
+  
   //add_Mesh2(6, -60, -60, 60, 60, 60, 60);
   //add_Mesh2(6, -60, -60, 60, 0, 60, 60);
   //add_Mesh2(6, -60, -60, 20, 0, 60, 20);
   
-  add_PolygonHyper(2, 0, 0, 0,  40, 40, 4);
-  add_Mesh2(3, -60, -60, 0, 60, 60, 0);
+  //add_PolygonHyper(2, 0, 0, 0,  40, 40, 4);
+  //add_Mesh2(3, -60, -60, 0, 60, 60, 0);
 
   //add_Box(-1, 0.5, 1.0, 0.0, 1.5, 3.0, 0.5);
   //add_Box(-1, 0.0, 0.0, 0.0, 0.5, 1.0, 2.0);
@@ -9399,7 +9401,7 @@ void _update_objects () {
 
     for (int i = 1; i < allVertices.length; i++) {
       allVertices[i][0] -= 6.5;
-      allVertices[i][1] += 6.5; // because Y-values are already inverted in the addToVertices function.
+      allVertices[i][1] -= 6.5; 
 
       allVertices[i][0] *= model_scale;
       allVertices[i][1] *= model_scale; 
@@ -9407,29 +9409,29 @@ void _update_objects () {
       
     }
 
-
-    for (int i = 0; i < 25; i++) {
-      
-      float t = random(360) * PI / 180.0;
-      float r = 100; 
-      
-      add_Object2D("PEOPLE", 0, r * cos(t), r * sin(t), 0, 2.5);
-    }
-
-    for (int t = 0; t < 360; t += 10) {
-      
-      float q = int(random(2));
-      
-      if (q == 1) {
-        float r = 110; 
-        
-        add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(10));
-      }
-    }
-
-
   }
+
 */
+
+
+  for (int i = 0; i < 25; i++) {
+    
+    float t = random(360) * PI / 180.0;
+    float r = 100; 
+    
+    add_Object2D("PEOPLE", 0, r * cos(t), r * sin(t), 0, 2.5);
+  }
+
+  for (int t = 0; t < 360; t += 10) {
+    
+    float q = int(random(2));
+    
+    if (q == 1) {
+      float r = 110; 
+      
+      add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(10));
+    }
+  }
   
 }
 
@@ -9468,18 +9470,39 @@ void _draw_objects () {
     
     
 
-    if (WIN3D_WHITE_FACES != 2) {
+    if (WIN3D_WHITE_FACES < 2) {
       
       WIN3D_Diagrams.beginShape();
       
       for (int j = 0; j < allFaces[f].length; j++) {
         int vNo = allFaces[f][j];
-        WIN3D_Diagrams.vertex(allVertices[vNo][0] * objects_scale, allVertices[vNo][1] * objects_scale, allVertices[vNo][2] * objects_scale);
+        WIN3D_Diagrams.vertex(allVertices[vNo][0] * objects_scale, -(allVertices[vNo][1] * objects_scale), allVertices[vNo][2] * objects_scale);
       }    
       
       WIN3D_Diagrams.endShape(CLOSE);
     }
-    else {
+    else if (WIN3D_WHITE_FACES == 2) {
+      int Teselation = WIN3D_TESELATION;
+      
+      int TotalSubNo = 1;  
+      if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+
+      for (int n = 0; n < TotalSubNo; n++) {
+        float[][] subFace = getSubFace(allFaces[f], Teselation, n);
+     
+        WIN3D_Diagrams.beginShape();
+        
+        for (int s = 0; s < subFace.length; s++) {
+          
+          WIN3D_Diagrams.fill(255, 127, 0);
+  
+          WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale, -(subFace[s][1] * objects_scale), subFace[s][2] * objects_scale);
+        }
+        
+        WIN3D_Diagrams.endShape(CLOSE);
+      }
+    }    
+    else if (WIN3D_WHITE_FACES == 3){
       float pre_per_day = per_day;
       int pre_num_add_days = num_add_days;
       if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
@@ -9541,13 +9564,13 @@ void _draw_objects () {
           int s_prev = (s + subFace.length - 1) % subFace.length;
           
           PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
-          PVector V = new PVector(subFace[s][0] - subFace[s_prev][0], subFace[s][1] - subFace[s_prev][1], subFace[s][2] - subFace[s_prev][2]); 
+          PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
           PVector UV = U.cross(V);
           float[] W = {UV.x, UV.y, UV.z};
           W = fn_normalize(W);
           
           float Alpha = asin_ang(W[2]);
-          float Beta = atan2_ang(-W[1], W[0]) + 90; 
+          float Beta = atan2_ang(W[1], W[0]) + 90; 
           
           //println(subFace[s]);
           //println(Alpha, Beta);
@@ -9729,7 +9752,7 @@ void _draw_objects () {
   
             WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
     
-            WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale, subFace[s][1] * objects_scale, subFace[s][2] * objects_scale);
+            WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale, -(subFace[s][1] * objects_scale), subFace[s][2] * objects_scale);
           }
           
         }
@@ -9786,17 +9809,17 @@ void _draw_objects () {
     float z = allObject2D_XYZS[i][2] * objects_scale;
     
     float r = allObject2D_XYZS[i][3] * 0.5;
-    float t = atan2(y + CAM_y, x - CAM_x) + 0.5 * PI;
+    float t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI;
     if (allObject2D_MAP[i] < 0) t += PI; 
 
     WIN3D_Diagrams.texture(Object2DImage[n]);    
     WIN3D_Diagrams.stroke(255, 255, 255, 0);
     WIN3D_Diagrams.fill(255, 255, 255, 0);
     
-    WIN3D_Diagrams.vertex(x - r * cos(t), y - r * sin(t), z, 0, h);
-    WIN3D_Diagrams.vertex(x + r * cos(t), y + r * sin(t), z, w, h);
-    WIN3D_Diagrams.vertex(x + r * cos(t), y + r * sin(t), z + 2 * r, w, 0);
-    WIN3D_Diagrams.vertex(x - r * cos(t), y - r * sin(t), z + 2 * r, 0, 0);
+    WIN3D_Diagrams.vertex(x - r * cos(t), -(y - r * sin(t)), z, 0, h);
+    WIN3D_Diagrams.vertex(x + r * cos(t), -(y + r * sin(t)), z, w, h);
+    WIN3D_Diagrams.vertex(x + r * cos(t), -(y + r * sin(t)), z + 2 * r, w, 0);
+    WIN3D_Diagrams.vertex(x - r * cos(t), -(y - r * sin(t)), z + 2 * r, 0, 0);
     
     WIN3D_Diagrams.endShape(CLOSE);
   }  
