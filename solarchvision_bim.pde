@@ -9855,9 +9855,7 @@ int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
       float foreAngles = FLOAT_undefined;
   
       float delta = 0.5; 
-      float delta_step = 0.5;
-      
-      float delta_dir = -1;
+      float delta_step = -0.5;
       
       float[] x = {FLOAT_undefined, FLOAT_undefined};
       float[] y = {FLOAT_undefined, FLOAT_undefined};
@@ -9879,7 +9877,7 @@ int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
             if (o == 0) delta_test -= delta_step;
             else delta_test += delta_step;
             
-            //if (delta_test < 0.1) delta_test = 0.1; // << in order to avoid returning the initial ray point!
+            if (delta_test < 0.01) delta_test = 0.01; // << in order to avoid returning the initial ray point!
             
             x[o] = ray_pnt[0] + delta_test * ray_normal[0] * max_distance; 
             y[o] = ray_pnt[1] + delta_test * ray_normal[1] * max_distance; 
@@ -9908,18 +9906,9 @@ int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
           if (q == 0) {
             foreAngles = AnglesAll[0];
             backAngles = AnglesAll[1];
-            
-            //if (AnglesAll[0] < AnglesAll[1]) {
-              MAX_o = 1;
-              delta = 1;
-            //}
-            //else{
-            //  MAX_o = 0;
-            //  delta = 0;       
-            //}
-            
-        
-    
+
+            MAX_o = 0;
+            delta = 0;
           } 
           else {
             
@@ -9949,10 +9938,10 @@ int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
     
           if (MAX_AnglesAll > 359) {
             
-            float d = dist(x[MAX_o], y[MAX_o], z[MAX_o], ray_pnt[0], ray_pnt[1], ray_pnt[2]);
+            //float d = dist(x[MAX_o], y[MAX_o], z[MAX_o], ray_pnt[0], ray_pnt[1], ray_pnt[2]);
             
             //println("DIST:", d);
-            println("delta:", delta);
+            //println("delta:", delta);
             
             if (delta > 0.01) {
             //if (d > 0.0) { // <<<<<<<<<<<<<<<<<<<<<<    
