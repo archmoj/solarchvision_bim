@@ -9550,69 +9550,73 @@ void _draw_objects () {
     if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; 
     if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.01; 
 
-    for (int f = 1; f < allFaces.length; f++) {
-  
-      int Teselation = WIN3D_TESELATION;
+
+          
+    int l = impact_layer;
+    
+    for (int j = j_start; j < j_end; j += 1) {
+    
+      now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
+    
+      if (now_j >= 365) {
+       now_j = now_j % 365; 
+      }
+      if (now_j < 0) {
+       now_j = (now_j + 365) % 365; 
+      }
+     
+      float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
+    
+      float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
+      float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
+    
+      int[] Normals_COL_N;
+      Normals_COL_N = new int[9];
+      Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
+    
+      int nk = Normals_COL_N[l];
       
-      int TotalSubNo = 1;  
-      if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
-  
-      for (int n = 0; n < TotalSubNo; n++) {
-        float[][] subFace = getSubFace(allFaces[f], Teselation, n);
-        
-        WIN3D_Diagrams.beginShape();
-        
-        for (int s = 0; s < subFace.length; s++) {
+      if (nk != -1) {
+        int k = int(nk / num_add_days);
+        int j_ADD = nk % num_add_days; 
+
+
+        for (int f = 1; f < allFaces.length; f++) {
+      
+          int Teselation = WIN3D_TESELATION;
           
-          int s_next = (s + 1) % subFace.length;
-          int s_prev = (s + subFace.length - 1) % subFace.length;
-          
-          PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
-          PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
-          PVector UV = U.cross(V);
-          float[] W = {UV.x, UV.y, UV.z};
-          W = fn_normalize(W);
-          
-          float Alpha = asin_ang(W[2]);
-          float Beta = atan2_ang(W[1], W[0]) + 90; 
-          
-          float _valuesSUM_RAD = 0;
-          float _valuesSUM_EFF = 0;
-          int _valuesNUM = 0; 
-          
-          int l = impact_layer;
-          
-          for (int j = j_start; j < j_end; j += 1) {
-          
-            now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
-          
-            if (now_j >= 365) {
-             now_j = now_j % 365; 
-            }
-            if (now_j < 0) {
-             now_j = (now_j + 365) % 365; 
-            }
-           
-            float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
-          
-            float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
-            float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
-          
-            int[] Normals_COL_N;
-            Normals_COL_N = new int[9];
-            Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
-          
-            int nk = Normals_COL_N[l];
+          int TotalSubNo = 1;  
+          if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+      
+          for (int n = 0; n < TotalSubNo; n++) {
+            float[][] subFace = getSubFace(allFaces[f], Teselation, n);
             
-            if (nk != -1) {
-              int k = int(nk / num_add_days);
-              int j_ADD = nk % num_add_days; 
-          
+            WIN3D_Diagrams.beginShape();
+            
+            for (int s = 0; s < subFace.length; s++) {
+              
+              int s_next = (s + 1) % subFace.length;
+              int s_prev = (s + subFace.length - 1) % subFace.length;
+              
+              PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
+              PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
+              PVector UV = U.cross(V);
+              float[] W = {UV.x, UV.y, UV.z};
+              W = fn_normalize(W);
+              
+              float Alpha = asin_ang(W[2]);
+              float Beta = atan2_ang(W[1], W[0]) + 90; 
+              
+              float _valuesSUM_RAD = 0;
+              float _valuesSUM_EFF = 0;
+              int _valuesNUM = 0; 
+
+    
               for (int i = 0; i < 24; i += 1) {
                 
                 float HOUR_ANGLE = i; 
                 float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
-  
+        
                 now_k = k;
                 now_i = i;
                 now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
@@ -9701,7 +9705,11 @@ void _draw_objects () {
                       if (SunMask <= 0) SunMask = 0; // removes backing faces 
                       
                       float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
-                      
+  
+  
+
+  
+                
                       float[] ray_start = subFace[s];     
                       float[] ray_direction = {SunR[1],SunR[2],SunR[3]}; // NOT SURE!
                       float[] RxP = intersect(ray_start, ray_direction, 1000); // max_dist = 1000 <<<<<<<<<<<      
@@ -9713,49 +9721,47 @@ void _draw_objects () {
                         _valuesSUM_EFF += ((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); // calculates total horizontal effects
                         _valuesNUM += 1;
                       }
-                      
                     }
                   }
                 }
               }
-            }
-          }
-          
-          if (_valuesNUM != 0) {
-            _valuesSUM_RAD *= 24.0 / (1.0 * _valuesNUM);
-            _valuesSUM_EFF *= 24.0 / (1.0 * _valuesNUM);
-          }
-          else {
-            _valuesSUM_RAD = FLOAT_undefined;
-            _valuesSUM_EFF = FLOAT_undefined;
-          }
-          
-          
-          float _valuesSUM = FLOAT_undefined;
-          if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = _valuesSUM_RAD;
-          if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = _valuesSUM_EFF; 
-          
-          if (_valuesSUM < 0.9 * FLOAT_undefined) {
-          
-            float _u = 0;
-            
-            if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
-            if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
-            
-            if (PAL_DIR == -1) _u = 1 - _u;
-            if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-            if (PAL_DIR == 2) _u =  0.5 * _u;
-  
-            float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
-  
-            WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
-    
-            WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale, -(subFace[s][1] * objects_scale), subFace[s][2] * objects_scale);
-          }
-          
-        }
+              
+              if (_valuesNUM != 0) {
+                _valuesSUM_RAD *= 24.0 / (1.0 * _valuesNUM);
+                _valuesSUM_EFF *= 24.0 / (1.0 * _valuesNUM);
+              }
+              else {
+                _valuesSUM_RAD = FLOAT_undefined;
+                _valuesSUM_EFF = FLOAT_undefined;
+              }
+              
+              
+              float _valuesSUM = FLOAT_undefined;
+              if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = _valuesSUM_RAD;
+              if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = _valuesSUM_EFF; 
+              
+              if (_valuesSUM < 0.9 * FLOAT_undefined) {
+              
+                float _u = 0;
+                
+                if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
+                if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
+                
+                if (PAL_DIR == -1) _u = 1 - _u;
+                if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                if (PAL_DIR == 2) _u =  0.5 * _u;
+      
+                float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+      
+                WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
         
-        WIN3D_Diagrams.endShape(CLOSE);
+                WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale, -(subFace[s][1] * objects_scale), subFace[s][2] * objects_scale);
+              }
+            }
+            
+            WIN3D_Diagrams.endShape(CLOSE);
+          }
+        }
       }
     }
   }
