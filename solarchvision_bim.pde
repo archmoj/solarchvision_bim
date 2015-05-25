@@ -7478,11 +7478,11 @@ void GRAPHS_keyPressed () {
                   try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
                   redraw_scene = 1; break; 
                   
-        case LEFT  :BEGIN_DAY = (365 + BEGIN_DAY - 1) % 365; redraw_scene = 1; break;
-        case RIGHT  :BEGIN_DAY = (BEGIN_DAY + 1) % 365; redraw_scene = 1; break;
+        //case LEFT  :BEGIN_DAY = (365 + BEGIN_DAY - 1) % 365; redraw_scene = 1; break;
+        //case RIGHT  :BEGIN_DAY = (BEGIN_DAY + 1) % 365; redraw_scene = 1; break;
               
-        case UP :drw_Layer = (drw_Layer + 1) % num_layers; redraw_scene = 1; break;
-        case DOWN :drw_Layer = (drw_Layer + num_layers - 1) % num_layers; redraw_scene = 1; break; 
+        //case UP :drw_Layer = (drw_Layer + 1) % num_layers; redraw_scene = 1; break;
+        //case DOWN :drw_Layer = (drw_Layer + num_layers - 1) % num_layers; redraw_scene = 1; break; 
      
         default: record_JPG = 0; redraw_scene = 0; break;
       }
@@ -7553,11 +7553,11 @@ void GRAPHS_keyPressed () {
                   if (join_hour_numbers < 1) join_hour_numbers = 1;
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break; 
-              
+        /*      
         case '*' :join_type *= -1;
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break; 
-                  
+        */          
         case 'a'  :Angle_inclination -= 5;
                   if (Angle_inclination < -90) Angle_inclination = -90;
                   update_DevelopDATA = 1;
@@ -8505,10 +8505,10 @@ void keyPressed () {
     
     if (key == CODED) { 
       switch(keyCode) {
-        //case LEFT  :WIN3D_X_coordinate += WIN3D_S_coordinate; break;
-        //case RIGHT :WIN3D_X_coordinate -= WIN3D_S_coordinate; break; 
-        //case UP    :WIN3D_Y_coordinate += WIN3D_S_coordinate; break;
-        //case DOWN  :WIN3D_Y_coordinate -= WIN3D_S_coordinate; break;
+        case LEFT  :WIN3D_X_coordinate += WIN3D_S_coordinate; break;
+        case RIGHT :WIN3D_X_coordinate -= WIN3D_S_coordinate; break; 
+        case UP    :WIN3D_Y_coordinate += WIN3D_S_coordinate; break;
+        case DOWN  :WIN3D_Y_coordinate -= WIN3D_S_coordinate; break;
       }
     }
     else {
@@ -9339,8 +9339,18 @@ void _update_objects () {
   //add_Box(-1, 0, 0, 20, 30, 10, 30);
   //add_Mesh2(3, -60, -60, 0, 60, 60, 0);
   
-  add_PolygonHyper(2, 0, 0, 0,  40, 40, 4);
-  add_Mesh2(3, -60, -60, 0, 60, 60, 0);
+  //add_Polygon(3, 0, 0, 0, 50, 24);
+  //add_Mesh2(0, -30, -30, 0, 30, 30, 0);
+  //add_PolygonHyper(0, 0, 0, 0,  10, 10, 4);
+  
+  add_Mesh5(0, 10,10,0, 10,10,10, 10,15,15, 10,20,10, 10,20,0);
+  add_Mesh5(0, 20,10,0, 20,10,10, 20,15,15, 20,20,10, 20,20,0);
+  add_Mesh4(0, 10,10,0, 10,10,10, 20,10,10, 20,10,0);
+  add_Mesh4(0, 10,20,0, 10,20,10, 20,20,10, 20,20,0);
+  add_Mesh4(0, 10,10,10, 10,15,15, 20,15,15, 20,10,10);
+  add_Mesh4(0, 10,20,10, 10,15,15, 20,15,15, 20,20,10);
+  
+  
   
   //add_Box(-1, -40, -40, -40, 40, 40, 40);
   
@@ -9437,7 +9447,7 @@ void _update_objects () {
   for (int i = 0; i < 25; i++) {
     
     float t = random(360) * PI / 180.0;
-    float r = 100; 
+    float r = random(45); 
     
     add_Object2D("PEOPLE", 0, r * cos(t), r * sin(t), 0, 2.5);
   }
@@ -9447,7 +9457,7 @@ void _update_objects () {
     float q = int(random(2));
     
     if (q == 1) {
-      float r = 110; 
+      float r = 35; 
       
       add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(10));
     }
@@ -9456,8 +9466,9 @@ void _update_objects () {
 
   SOLARCHVISION_LoadLAND(); 
 
-  for (int i = 0; i < 2 * LAND_n_lon; i += 1) {
-    for (int j = 0; j < 2 * LAND_n_lat; j += 1) {
+  //for (int i = 0; i < LAND_n_I - 1; i += 1) {
+  for (int i = 1; i < LAND_n_I - 1; i += 1) { // ignoring the center!
+    for (int j = 0; j < LAND_n_J - 1; j += 1) {
       
       // Material -2 for colored elevations
       
@@ -9473,27 +9484,25 @@ void _update_objects () {
   
 }
 
-float objects_scale = 0.5;
+float objects_scale = 1.0; //0.5;
 
 void _draw_objects () {
   
   for (int f = 1; f < allFaces.length; f++) {
     
-    int face_colorID = allFaces_MAT[f];
-    
     color c = color(0, 0, 0);
 
-    if (face_colorID == -2) {
-      c = color(255, 255, 255);
+    if (allFaces_MAT[f] == -2) {
+      c = color(127, 255, 127);
     }
-    else if (face_colorID == 0) c = color(255, 127, 0);
-    else if (face_colorID == 1) c = color(255, 0, 0);
-    else if (face_colorID == 2) c = color(255, 255, 0);
-    else if (face_colorID == 3) c = color(0, 255, 0);
-    else if (face_colorID == 4) c = color(0, 255, 255);
-    else if (face_colorID == 5) c = color(0, 0, 255);
-    else if (face_colorID == 6) c = color(255, 0, 255);
-    else if (face_colorID == 7) c = color(255, 255, 255);
+    else if (allFaces_MAT[f] == 0) c = color(255, 127, 0);
+    else if (allFaces_MAT[f] == 1) c = color(255, 0, 0);
+    else if (allFaces_MAT[f] == 2) c = color(255, 255, 0);
+    else if (allFaces_MAT[f] == 3) c = color(0, 255, 0);
+    else if (allFaces_MAT[f] == 4) c = color(0, 255, 255);
+    else if (allFaces_MAT[f] == 5) c = color(0, 0, 255);
+    else if (allFaces_MAT[f] == 6) c = color(255, 0, 255);
+    else if (allFaces_MAT[f] == 7) c = color(255, 255, 255);
     
     if (WIN3D_BLACK_EDGES == 1) {
       WIN3D_Diagrams.stroke(0, 0, 0);
@@ -9523,10 +9532,13 @@ void _draw_objects () {
       WIN3D_Diagrams.endShape(CLOSE);
     }
     else if (WIN3D_WHITE_FACES == 2) {
-      int Teselation = WIN3D_TESELATION;
+      int Teselation = 0;
       
       int TotalSubNo = 1;  
-      if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+      if (allFaces_MAT[f] == 0) {
+        Teselation = WIN3D_TESELATION;
+        if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+      }
 
       for (int n = 0; n < TotalSubNo; n++) {
         float[][] subFace = getSubFace(allFaces[f], Teselation, n);
@@ -9535,15 +9547,15 @@ void _draw_objects () {
         
         for (int s = 0; s < subFace.length; s++) {
     
-          if (face_colorID == -2) {
+          if (allFaces_MAT[f] == -2) {
             
             int PAL_TYPE = 1; 
            
-            float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.01 * subFace[s][2]);
+            float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.0025 * subFace[s][2]);
             
             WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
           }
-          else WIN3D_Diagrams.fill(255, 127, 0);
+          //else WIN3D_Diagrams.fill(255, 127, 0);
   
           WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale, -(subFace[s][1] * objects_scale), subFace[s][2] * objects_scale);
         }
@@ -9631,11 +9643,14 @@ void _draw_objects () {
 
         for (int f = 1; f < allFaces.length; f++) {
       
-          int Teselation = WIN3D_TESELATION;
+          int Teselation = 0;
           
           int TotalSubNo = 1;  
-          if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
-      
+          if (allFaces_MAT[f] == 0) {
+            Teselation = WIN3D_TESELATION;
+            if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+          }
+                  
           for (int n = 0; n < TotalSubNo; n++) {
             float[][] subFace = getSubFace(allFaces[f], Teselation, n);
             
@@ -9888,7 +9903,8 @@ void _draw_objects () {
     float y = allObject2D_XYZS[i][1] * objects_scale;
     float z = allObject2D_XYZS[i][2] * objects_scale;
     
-    float r = allObject2D_XYZS[i][3] * 0.5;
+    float r = allObject2D_XYZS[i][3] * 0.5 * objects_scale;
+    
     float t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI;
     if (allObject2D_MAP[i] < 0) t += PI; 
 
@@ -10111,8 +10127,11 @@ float Bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y
   
 // ---------------------------------------------------------
 
-int LAND_n_lat = 15; 
-int LAND_n_lon = 15;    
+int LAND_n_I = 16 + 1;
+//int LAND_n_I = 8 + 1;
+
+int LAND_n_J = 24 + 1;    
+   
 
 double R_earth = 6373 * 1000;
 
@@ -10123,24 +10142,22 @@ float[][][] LAND_MESH;
 
 void SOLARCHVISION_LoadLAND () {
 
-  LAND_MESH = new float[2 * LAND_n_lon + 1][2 * LAND_n_lat + 1][3];
+  LAND_MESH = new float[LAND_n_I][LAND_n_J][3];
 
-
-  for (int j = 0; j < 2 * LAND_n_lat + 1; j += 1) {
+  for (int i = 0; i < LAND_n_I; i += 1) {
 
     String the_link = "";
     
-    XML FileALL = loadXML("C:/SOLARCHVISION_2015/Projects/FIROUZKO/" + nf(LAND_n_lat - j, 0) + ".xml");
+    XML FileALL = loadXML("C:/SOLARCHVISION_2015/Projects/FIROUZKO/" + nf(i, 0) + ".xml");
 
 
     XML[] children0 = FileALL.getChildren("result");
 
-  
-    for (int i = 0; i < 2 * LAND_n_lon + 1; i += 1) {
+    for (int j = 0; j < LAND_n_J; j += 1) {
 
-      String txt_elevation = children0[i].getChild("elevation").getContent();
+      String txt_elevation = children0[j].getChild("elevation").getContent();
       
-      XML[] children1 = children0[i].getChildren("location");
+      XML[] children1 = children0[j].getChildren("location");
       
       String txt_latitude = children1[0].getChild("lat").getContent();
       String txt_longitude = children1[0].getChild("lng").getContent();
@@ -10150,15 +10167,15 @@ void SOLARCHVISION_LoadLAND () {
       double _lon = Double.parseDouble(txt_longitude); 
       double _lat = Double.parseDouble(txt_latitude); 
 
-      double du = ((_lon - LAND_mid_lon) / 180.0) * (2 * PI * R_earth);
-      double dv = ((_lat - LAND_mid_lat) / 180.0) * (2 * PI * R_earth);
+      double du = ((_lon - LAND_mid_lon) / 180.0) * (PI * R_earth);
+      double dv = ((_lat - LAND_mid_lat) / 180.0) * (PI * R_earth);
       
       float x = (float) du * cos_ang((float) _lat);
       float y = (float) dv; 
-      float z = float(txt_elevation);      
+      float z = float(txt_elevation);
 
-      println(i, j);
-      println(x,y,z);
+      //println(i, j);
+      //println(x,y,z);
       
       LAND_MESH[i][j][0] = x;      
       LAND_MESH[i][j][1] = y;      
@@ -10166,10 +10183,10 @@ void SOLARCHVISION_LoadLAND () {
     }
   }
   
-  float h = LAND_MESH[LAND_n_lon][LAND_n_lat][2];
+  float h = LAND_MESH[0][0][2];
   
-  for (int i = 0; i <= 2 * LAND_n_lon; i += 1) {
-    for (int j = 0; j <= 2 * LAND_n_lat; j += 1) {
+  for (int i = 0; i < LAND_n_I; i += 1) {
+    for (int j = 0; j < LAND_n_J; j += 1) {
       
       LAND_MESH[i][j][2] -= h; 
       
