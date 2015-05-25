@@ -547,7 +547,7 @@ void setup () {
   Y_View = h_pixel; 
   R_View = float(Y_View) / float(X_View);
 
-  _DATE = 289; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
+  _DATE = (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   
   //if (_HOUR >= 12) _DATE += 0.5; 
   
