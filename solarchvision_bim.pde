@@ -374,7 +374,7 @@ int databaseNumber_CLIMATE_EPW = 3;
 int impacts_source = 3; // 0 = Climate WY2, 1 = Forecast, 2 = Observation, 3 = Climate EPW 
 
 int impact_layer = 1; // 4 = Median
-int plot_impacts = 5; 
+int plot_impacts = 4; 
 int update_impacts = 1; 
 
 int redraw_scene = 1;
@@ -1366,10 +1366,10 @@ void Plot_Setup () {
     draw_probs = 0;
     plot_center(0, 175 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
     
-    plot_impacts = 5;
+    plot_impacts = 6;
     SOLARCHVISION_PlotIMPACT(0, -200 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
     
-    plot_impacts = 6;
+    plot_impacts = 7;
     SOLARCHVISION_PlotIMPACT(0, -525 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
    
     plot_impacts = pre_plot_impacts; 
@@ -1393,7 +1393,7 @@ void Plot_Setup () {
     plot_center(0, 175 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
     if (update_impacts == 1) {    
-      plot_impacts = 2;
+      plot_impacts = 3;
       SOLARCHVISION_PlotIMPACT(0, -200 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
     }
     else if (record_PDF == 0) {
@@ -1431,7 +1431,7 @@ void Plot_Setup () {
     plot_center(0, 175 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
     
     if (update_impacts == 1) {    
-      plot_impacts = 1;
+      plot_impacts = 2;
       SOLARCHVISION_PlotIMPACT(0, -200 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
     }
     else if (record_PDF == 0) {  
@@ -1467,7 +1467,7 @@ void Plot_Setup () {
     draw_probs = 0;
     plot_center(0, 175 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
     
-    plot_impacts = 3;
+    plot_impacts = 4;
     SOLARCHVISION_PlotIMPACT(0, -200 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
     plot_impacts = pre_plot_impacts; 
@@ -1490,7 +1490,7 @@ void Plot_Setup () {
     draw_probs = 0;
     plot_center(0, 175 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
     
-    plot_impacts = 4;
+    plot_impacts = 5;
     SOLARCHVISION_PlotIMPACT(0, -200 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
     plot_impacts = pre_plot_impacts; 
@@ -1521,17 +1521,17 @@ void Plot_Setup () {
     drw_Layer = _drybulb; 
     plot_center(0, 525 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
-    plot_impacts = -1;
+    plot_impacts = 1;
     variation = 2;
     SOLARCHVISION_PlotIMPACT(0, -625 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
     variation = 1;
     SOLARCHVISION_PlotIMPACT(0, -425 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
-    plot_impacts = 5;
+    plot_impacts = 6;
     SOLARCHVISION_PlotIMPACT(0, -150 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 */
 /*
-    plot_impacts = 5;
+    plot_impacts = 6;
     SOLARCHVISION_PlotIMPACT(0, -150 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
     drw_Layer = _precipitation ; 
@@ -1542,7 +1542,7 @@ void Plot_Setup () {
     plot_center(0, 125 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 */
 
-    plot_impacts = -1;
+    plot_impacts = 1;
     variation = 2;
     SOLARCHVISION_PlotIMPACT(0, -100 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
     variation = 1;
@@ -1579,7 +1579,7 @@ void Plot_Setup () {
     variation = 1;
     SOLARCHVISION_PlotIMPACT(0, -425 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
-    plot_impacts = 1; //3;
+    plot_impacts = 2; //4;
     SOLARCHVISION_PlotIMPACT(0, -150 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
 
@@ -4521,7 +4521,7 @@ void SOLARCHVISION_draw_Grid_Spherical_POSITION (float x_Plot, float y_Plot, flo
     }
     
     float impact_scale = 1;
-    if ((plot_impacts == 5) || (plot_impacts == 6)) impact_scale = V_scale[_windspd] * 45 / 50.0;
+    if ((plot_impacts == 6) || (plot_impacts == 7)) impact_scale = V_scale[_windspd] * 45 / 50.0;
     
     for (int r = 90; r > 0; r -= 15) {
       if ((r % 90) != 0) {
@@ -5968,10 +5968,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   int end_z = get_startZ_endZ(impacts_source)[1]; 
   int layers_count = get_startZ_endZ(impacts_source)[2]; 
   
-  if ((plot_impacts == 0) || (plot_impacts == -1)) {
+  if ((plot_impacts == 0) || (plot_impacts == 1)) {
 
     if (plot_impacts == 0) Impact_TYPE = Impact_ACTIVE; 
-    if (plot_impacts == -1) Impact_TYPE = Impact_PASSIVE;
+    if (plot_impacts == 1) Impact_TYPE = Impact_PASSIVE;
     
     int RES1 = 200;
     int RES2 = 200;
@@ -6512,9 +6512,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
 
-  if ((plot_impacts == 1) || (plot_impacts == 2)) {
-    if (plot_impacts == 1) Impact_TYPE = Impact_ACTIVE; 
-    if (plot_impacts == 2) Impact_TYPE = Impact_PASSIVE;
+  if ((plot_impacts == 2) || (plot_impacts == 3)) {
+    if (plot_impacts == 2) Impact_TYPE = Impact_ACTIVE; 
+    if (plot_impacts == 3) Impact_TYPE = Impact_PASSIVE;
 
     String Pa = "";
     String Pb = "";
@@ -6877,9 +6877,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
 
-  if ((plot_impacts == 3) || (plot_impacts == 4)) {
-    if (plot_impacts == 3) Impact_TYPE = Impact_ACTIVE; 
-    if (plot_impacts == 4) Impact_TYPE = Impact_PASSIVE;
+  if ((plot_impacts == 4) || (plot_impacts == 5)) {
+    if (plot_impacts == 4) Impact_TYPE = Impact_ACTIVE; 
+    if (plot_impacts == 5) Impact_TYPE = Impact_PASSIVE;
 
     String Pa = "";
     String Pb = "";
@@ -7167,9 +7167,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
 
-  if ((plot_impacts == 5) || (plot_impacts == 6)) {
-    if (plot_impacts == 5) Impact_TYPE = Impact_SPD_DIR; 
-    if (plot_impacts == 6) Impact_TYPE = Impact_SPD_DIR_TMP;
+  if ((plot_impacts == 6) || (plot_impacts == 7)) {
+    if (plot_impacts == 6) Impact_TYPE = Impact_SPD_DIR; 
+    if (plot_impacts == 7) Impact_TYPE = Impact_SPD_DIR_TMP;
     
     String Pa = "";
     String Pb = "";
@@ -7434,17 +7434,17 @@ void GRAPHS_keyPressed () {
         case 114 : impacts_source = databaseNumber_CLIMATE_EPW; redraw_scene = 1; break;
         case 115 : impacts_source = databaseNumber_CLIMATE_WY2; redraw_scene = 1; break;
 
-        case 116 : if (plot_impacts != 5) plot_impacts = 5;
-                   else plot_impacts = 6; 
+        case 116 : if (plot_impacts != 6) plot_impacts = 6;
+                   else plot_impacts = 7; 
                    redraw_scene = 1; break;
-        case 117 : if (plot_impacts != 3) plot_impacts = 3;
-                   else plot_impacts = 4; 
+        case 117 : if (plot_impacts != 4) plot_impacts = 4;
+                   else plot_impacts = 5; 
                    redraw_scene = 1; break;
-        case 118 : if (plot_impacts != 1) plot_impacts = 1;
-                   else plot_impacts = 2; 
+        case 118 : if (plot_impacts != 2) plot_impacts = 2;
+                   else plot_impacts = 3; 
                    redraw_scene = 1; break;
         case 119 : if (plot_impacts != 0) plot_impacts = 0;
-                   else plot_impacts = -1; 
+                   else plot_impacts = 1; 
                    redraw_scene = 1; break;
         
         
@@ -7582,8 +7582,8 @@ void GRAPHS_keyPressed () {
         //case '.' :impact_layer = (impact_layer + 1) % 9; redraw_scene = 1; break;
         //case ',' :impact_layer = (impact_layer + 9 - 1) % 9; redraw_scene = 1; break;
         
-        //case '<' : plot_impacts = (plot_impacts + 1) % 7; redraw_scene = 1; break;
-        //case '>' : plot_impacts = (plot_impacts + 7 - 1) % 7; redraw_scene = 1; break;
+        //case '<' : plot_impacts = (plot_impacts + 1) % 8; redraw_scene = 1; break;
+        //case '>' : plot_impacts = (plot_impacts + 8 - 1) % 8; redraw_scene = 1; break;
         
         case 'y' :Sample_Year += 1; if (Sample_Year > CLIMATE_WY2_end) Sample_Year = CLIMATE_WY2_start; redraw_scene = 1; break; 
         case 'Y' :Sample_Year -= 1; if (Sample_Year < CLIMATE_WY2_start) Sample_Year = CLIMATE_WY2_end; redraw_scene = 1; break;
@@ -9537,9 +9537,8 @@ void _draw_objects () {
     int end_z = get_startZ_endZ(impacts_source)[1]; 
     int layers_count = get_startZ_endZ(impacts_source)[2]; 
       
-    
     Impact_TYPE = Impact_ACTIVE; 
-    //Impact_TYPE = Impact_PASSIVE;
+    if (plot_impacts % 2 == 1) Impact_TYPE = Impact_PASSIVE;
     
     String Pa = "";
     String Pb = "";
@@ -9736,10 +9735,13 @@ void _draw_objects () {
                         float[] ray_direction = {SunR[1],SunR[2],SunR[3]}; // NOT SURE!
                         
                         if (isIntersected(ray_start, ray_direction, 100) == 1) { // max_dist = 100 <<<<<<<<<<<
+                          _valuesSUM_RAD += 0;
+                          _valuesSUM_EFF += -((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); // calculates shading effects
+                          _valuesNUM += 1;                        
                         }
                         else{ 
-                          _valuesSUM_RAD += ((_values_R_dir * SunMask) + (_values_R_dif * SkyMask)); // calculates total horizontal radiation
-                          _valuesSUM_EFF += ((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); // calculates total horizontal effects
+                          _valuesSUM_RAD += ((_values_R_dir * SunMask) + (_values_R_dif * SkyMask)); // calculates total radiation
+                          _valuesSUM_EFF += ((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); // calculates total effects
                           _valuesNUM += 1;
                         }
                       }
