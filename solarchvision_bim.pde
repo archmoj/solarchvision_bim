@@ -9452,6 +9452,22 @@ void _update_objects () {
       add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(10));
     }
   }
+
+
+  SOLARCHVISION_LoadLAND(); 
+
+  for (int i = 0; i < 2 * LAND_n_lon; i += 1) {
+    for (int j = 0; j < 2 * LAND_n_lat; j += 1) {
+      
+      add_Mesh4(0 
+        , LAND_MESH[i][j][0],     LAND_MESH[i][j][1],     LAND_MESH[i][j][2]
+        , LAND_MESH[i+1][j][0],   LAND_MESH[i+1][j][1],   LAND_MESH[i+1][j][2]
+        , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2]
+        , LAND_MESH[i][j+1][0],   LAND_MESH[i][j+1][1],   LAND_MESH[i][j+1][2]
+      ); 
+      
+    }
+  }
   
 }
 
@@ -10077,3 +10093,80 @@ float Bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y
   return f_xy;
 }
   
+  
+  
+  
+// ---------------------------------------------------------
+
+int LAND_n_lat = 15; 
+int LAND_n_lon = 15;    
+
+double R_earth = 6373 * 1000;
+
+double LAND_mid_lat = 35.6967;
+double LAND_mid_lon = 52.6383;
+
+float[][][] LAND_MESH;
+
+void SOLARCHVISION_LoadLAND () {
+
+  LAND_MESH = new float[2 * LAND_n_lon + 1][2 * LAND_n_lat + 1][3];
+
+
+  for (int j = 0; j < 2 * LAND_n_lat + 1; j += 1) {
+
+    String the_link = "";
+    
+    XML FileALL = loadXML("C:/SOLARCHVISION_2015/Projects/FIROUZKO/" + nf(LAND_n_lat - j, 0) + ".xml");
+
+
+    XML[] children0 = FileALL.getChildren("result");
+
+  
+    for (int i = 0; i < 2 * LAND_n_lon + 1; i += 1) {
+
+      String txt_elevation = children0[i].getChild("elevation").getContent();
+      
+      XML[] children1 = children0[i].getChildren("location");
+      
+      String txt_latitude = children1[0].getChild("lat").getContent();
+      String txt_longitude = children1[0].getChild("lng").getContent();
+      
+      //println(txt_longitude, txt_latitude, txt_elevation);
+
+      double _lon = Double.parseDouble(txt_longitude); 
+      double _lat = Double.parseDouble(txt_latitude); 
+
+      double du = ((_lon - LAND_mid_lon) / 180.0) * (2 * PI * R_earth);
+      double dv = ((_lat - LAND_mid_lat) / 180.0) * (2 * PI * R_earth);
+      
+      float x = (float) du * cos_ang((float) _lat);
+      float y = (float) dv; 
+      float z = float(txt_elevation);      
+
+      println(i, j);
+      println(x,y,z);
+      
+      LAND_MESH[i][j][0] = x;      
+      LAND_MESH[i][j][1] = y;      
+      LAND_MESH[i][j][2] = z;      
+    }
+  }
+  
+  float h = LAND_MESH[LAND_n_lon][LAND_n_lat][2];
+  
+  for (int i = 0; i < 2 * LAND_n_lon; i += 1) {
+    for (int j = 0; j < 2 * LAND_n_lat; j += 1) {
+      
+      LAND_MESH[i][j][2] -= h; 
+      
+    }
+  }
+ 
+}
+
+
+
+ 
+
+
