@@ -9627,7 +9627,8 @@ void _draw_objects () {
               float Beta = atan2_ang(W[1], W[0]) + 90; 
               
               float _valuesSUM_RAD = 0;
-              float _valuesSUM_EFF = 0;
+              float _valuesSUM_EFF_P = 0;
+              float _valuesSUM_EFF_N = 0;
               int _valuesNUM = 0; 
 
     
@@ -9696,7 +9697,8 @@ void _draw_objects () {
                       
                       if (_valuesSUM_RAD > 0.9 * FLOAT_undefined) {
                         _valuesSUM_RAD = 0;
-                        _valuesSUM_EFF = 0;
+                        _valuesSUM_EFF_P = 0;
+                        _valuesSUM_EFF_N = 0;
                         _valuesNUM = 0; 
                       }                             
                       else {
@@ -9735,15 +9737,25 @@ void _draw_objects () {
                         float[] ray_direction = {SunR[1],SunR[2],SunR[3]}; // NOT SURE!
                         
                         if (isIntersected(ray_start, ray_direction, 100) == 1) { // max_dist = 100 <<<<<<<<<<<
-                          _valuesSUM_RAD += 0;
-                          _valuesSUM_EFF += -((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); // calculates shading effects
-                          _valuesNUM += 1;                        
+                          if (_values_E_dir < 0) {
+                            _valuesSUM_EFF_P += -((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); 
+                          }
+                          else {
+                            _valuesSUM_EFF_N += ((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); 
+                          }
                         }
                         else{ 
+                          if (_values_E_dir < 0) {
+                            _valuesSUM_EFF_N += -((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); 
+                          }
+                          else {
+                            _valuesSUM_EFF_P += ((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); 
+                          }
+                          
                           _valuesSUM_RAD += ((_values_R_dir * SunMask) + (_values_R_dif * SkyMask)); // calculates total radiation
-                          _valuesSUM_EFF += ((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); // calculates total effects
-                          _valuesNUM += 1;
                         }
+                        _valuesNUM += 1;
+
                       }
                     }
                   }
@@ -9752,17 +9764,28 @@ void _draw_objects () {
               
               if (_valuesNUM != 0) {
                 _valuesSUM_RAD *= 24.0 / (1.0 * _valuesNUM);
-                _valuesSUM_EFF *= 24.0 / (1.0 * _valuesNUM);
+                _valuesSUM_EFF_P *= 24.0 / (1.0 * _valuesNUM);
+                _valuesSUM_EFF_N *= 24.0 / (1.0 * _valuesNUM);
               }
               else {
                 _valuesSUM_RAD = 0; //FLOAT_undefined;
-                _valuesSUM_EFF = 0; //FLOAT_undefined;
+                _valuesSUM_EFF_P = 0; //FLOAT_undefined;
+                _valuesSUM_EFF_N = 0; //FLOAT_undefined;
+              }
+
+              float _valuesSUM = _valuesSUM_RAD;
+              
+              if (Impact_TYPE == Impact_PASSIVE) {
+                float AVERAGE, PERCENTAGE, COMPARISON;
+                
+                AVERAGE = (_valuesSUM_EFF_P - _valuesSUM_EFF_N);
+                if ((_valuesSUM_EFF_P + _valuesSUM_EFF_N) > 0.00001) PERCENTAGE = (_valuesSUM_EFF_P - _valuesSUM_EFF_N) / (1.0 * (_valuesSUM_EFF_P + _valuesSUM_EFF_N)); 
+                else PERCENTAGE = 0.0;
+                COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+                
+                _valuesSUM = COMPARISON;
               }
               
-              
-              float _valuesSUM = FLOAT_undefined;
-              if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = _valuesSUM_RAD;
-              if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = _valuesSUM_EFF; 
               
               if (_valuesSUM < 0.9 * FLOAT_undefined) {
               
