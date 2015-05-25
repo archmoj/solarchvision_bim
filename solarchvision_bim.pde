@@ -10168,8 +10168,8 @@ void SOLARCHVISION_LoadLAND () {
   
   float h = LAND_MESH[LAND_n_lon][LAND_n_lat][2];
   
-  for (int i = 0; i < 2 * LAND_n_lon; i += 1) {
-    for (int j = 0; j < 2 * LAND_n_lat; j += 1) {
+  for (int i = 0; i <= 2 * LAND_n_lon; i += 1) {
+    for (int j = 0; j <= 2 * LAND_n_lat; j += 1) {
       
       LAND_MESH[i][j][2] -= h; 
       
