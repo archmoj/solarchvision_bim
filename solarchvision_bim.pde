@@ -9754,8 +9754,8 @@ void _draw_objects () {
                 _valuesSUM_EFF *= 24.0 / (1.0 * _valuesNUM);
               }
               else {
-                _valuesSUM_RAD = FLOAT_undefined;
-                _valuesSUM_EFF = FLOAT_undefined;
+                _valuesSUM_RAD = 0; //FLOAT_undefined;
+                _valuesSUM_EFF = 0; //FLOAT_undefined;
               }
               
               
