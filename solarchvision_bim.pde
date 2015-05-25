@@ -9459,7 +9459,9 @@ void _update_objects () {
   for (int i = 0; i < 2 * LAND_n_lon; i += 1) {
     for (int j = 0; j < 2 * LAND_n_lat; j += 1) {
       
-      add_Mesh4(0 
+      // Material -2 for colored elevations
+      
+      add_Mesh4(-2 
         , LAND_MESH[i][j][0],     LAND_MESH[i][j][1],     LAND_MESH[i][j][2]
         , LAND_MESH[i+1][j][0],   LAND_MESH[i+1][j][1],   LAND_MESH[i+1][j][2]
         , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2]
@@ -9481,7 +9483,10 @@ void _draw_objects () {
     
     color c = color(0, 0, 0);
 
-         if (face_colorID == 0) c = color(255, 127, 0);
+    if (face_colorID == -2) {
+      c = color(255, 255, 255);
+    }
+    else if (face_colorID == 0) c = color(255, 127, 0);
     else if (face_colorID == 1) c = color(255, 0, 0);
     else if (face_colorID == 2) c = color(255, 255, 0);
     else if (face_colorID == 3) c = color(0, 255, 0);
@@ -9529,8 +9534,16 @@ void _draw_objects () {
         WIN3D_Diagrams.beginShape();
         
         for (int s = 0; s < subFace.length; s++) {
-          
-          WIN3D_Diagrams.fill(255, 127, 0);
+    
+          if (face_colorID == -2) {
+            
+            int PAL_TYPE = 1; 
+           
+            float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.01 * subFace[s][2]);
+            
+            WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
+          }
+          else WIN3D_Diagrams.fill(255, 127, 0);
   
           WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale, -(subFace[s][1] * objects_scale), subFace[s][2] * objects_scale);
         }
