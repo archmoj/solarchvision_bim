@@ -6005,7 +6005,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
     }
     
-    float _Multiplier = 2;
+    float _Multiplier = 1;
     if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; //0.1 / 0.75; //0.1; <<<<<<<<<<<<<<<
     if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02; 
 
@@ -9609,7 +9609,8 @@ void _draw_objects () {
       
     Impact_TYPE = Impact_ACTIVE; 
     if (plot_impacts % 2 == 1) Impact_TYPE = Impact_PASSIVE;
-    
+
+  
     String Pa = "";
     String Pb = "";
     String Pc = "";
@@ -9639,8 +9640,7 @@ void _draw_objects () {
     if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; 
     if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.01; 
 
-
-          
+         
     int l = impact_layer;
     
     for (int j = j_start; j < j_end; j += 1) {
@@ -9705,7 +9705,8 @@ void _draw_objects () {
               int _valuesNUM = 0; 
 
     
-              for (int i = 0; i < 24; i += 1) {
+              //for (int i = 0; i < 24; i += 1) {
+              for (int i = 6; i <= 18; i += 3) { // for a quick result! 
                 
                 float HOUR_ANGLE = i; 
                 float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
