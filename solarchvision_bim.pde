@@ -9331,17 +9331,19 @@ void _update_objects () {
   }  
 */
 
-  /*
-  add_Mesh5(0, 10,10,-5, 10,10,5, 10,15,10, 10,20,5, 10,20,-5);
-  add_Mesh5(0, 20,20,-5, 20,20,5, 20,15,10, 20,10,5, 20,10,-5);  
-  add_Mesh4(0, 10,10,-5, 20,10,-5, 20,10,5, 10,10,5);
-  add_Mesh4(0, 10,20,-5, 10,20,5, 20,20,5, 20,20,-5);
-  add_Mesh4(0, 10,10,5, 20,10,5, 20,15,10, 10,15,10);
-  add_Mesh4(0, 10,20,5, 10,15,10, 20,15,10, 20,20,5);
-  */
   
-  add_Mesh2(0, -20, -20, 0, 20, 20, 0);
-  add_PolygonHyper(0, 0, 0, 0,  10, 10, 4);
+  add_Mesh2(0, 0, 0, 0, 40, 40, 0);
+  
+  add_Mesh5(1, 10,10,0, 10,10,5, 10,15,10, 10,20,5, 10,20,0);
+  add_Mesh5(2, 20,20,0, 20,20,5, 20,15,10, 20,10,5, 20,10,0);  
+  add_Mesh4(3, 10,10,0, 20,10,0, 20,10,5, 10,10,5);
+  add_Mesh4(4, 10,20,0, 10,20,5, 20,20,5, 20,20,0);
+  add_Mesh4(5, 10,10,5, 20,10,5, 20,15,10, 10,15,10);
+  add_Mesh4(6, 10,20,5, 10,15,10, 20,15,10, 20,20,5);
+  
+  
+  //add_Mesh2(0, -20, -20, 0, 20, 20, 0);
+  //add_PolygonHyper(0, 0, 0, 0,  10, 10, 4);
   //add_Polygon(3, 0, 0, 0, 50, 24);  
   
   //add_PolygonExtrude(-1, 0, 0, 0,  50, 20, 3);
@@ -9705,8 +9707,8 @@ void _draw_objects () {
               int _valuesNUM = 0; 
 
     
-              //for (int i = 0; i < 24; i += 1) {
-              for (int i = 6; i <= 18; i += 3) { // for a quick result! 
+              for (int i = 0; i < 24; i += 1) {
+              //for (int i = 6; i <= 18; i += 3) { // for a quick result! 
                 
                 float HOUR_ANGLE = i; 
                 float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
