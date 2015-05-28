@@ -72,6 +72,7 @@ String[][] DEFINED_STATIONS = {
                                 {"Bologna_XX_IT", "Bologna", "XX", "44.53", "11.30", "15", "49.0"}, 
                                 {"VIENNA_XX_AT", "VIENNA", "XX", "48.12", "16.57", "15", "190.0"}, 
 */                                
+
                                 {"MONTREAL_DORVAL_QC_CA", "MONTREAL", "QC", "45.47", "-73.75", "-75", "31.00"}, 
                                 {"CALGARY_INTL_AB_CA", "CALGARY", "AB", "51.10", "-114.02", "-120", "1084.10"}, 
                                 {"EDMONTON_INTL_A_AB_CA", "EDMONTON_INTL_A", "AB", "53.316666", "-113.583336", "-120", "723.3"}, 
@@ -449,7 +450,7 @@ void _update_folders () {
   SWOBFolder            = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   NAEFSFolder           = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   CWEEDSFolder          = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
-  Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People";
+  Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_ALL";
   Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees";
 
 }
@@ -9300,6 +9301,49 @@ void add_PolygonHyper (int m, float cx, float cy, float cz, float r, float h, in
 }
 
 void _update_objects () {
+/*  
+  SOLARCHVISION_LoadLAND(); 
+
+  //for (int i = 0; i < LAND_n_I - 1; i += 1) {
+  for (int i = 1; i < LAND_n_I - 1; i += 1) { // ignoring the center!
+    for (int j = 0; j < LAND_n_J - 1; j += 1) {
+      
+      // Material -2 for colored elevations
+      
+      add_Mesh4(-2 
+        , LAND_MESH[i][j][0],     LAND_MESH[i][j][1],     LAND_MESH[i][j][2]
+        , LAND_MESH[i+1][j][0],   LAND_MESH[i+1][j][1],   LAND_MESH[i+1][j][2]
+        , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2]
+        , LAND_MESH[i][j+1][0],   LAND_MESH[i][j+1][1],   LAND_MESH[i][j+1][2]
+      ); 
+      
+      if  ((i > 0) && (i < 6)) {
+        float r = int(random(2));
+        if (r == 1) { 
+          add_Object2D("PEOPLE", 0, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2], 2.5);
+        }
+        else {
+          add_Object2D("TREES", 0, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2], 5 + random(10));
+        }
+      }
+      
+    }
+  }  
+*/
+
+  /*
+  add_Mesh5(0, 10,10,-5, 10,10,5, 10,15,10, 10,20,5, 10,20,-5);
+  add_Mesh5(0, 20,20,-5, 20,20,5, 20,15,10, 20,10,5, 20,10,-5);  
+  add_Mesh4(0, 10,10,-5, 20,10,-5, 20,10,5, 10,10,5);
+  add_Mesh4(0, 10,20,-5, 10,20,5, 20,20,5, 20,20,-5);
+  add_Mesh4(0, 10,10,5, 20,10,5, 20,15,10, 10,15,10);
+  add_Mesh4(0, 10,20,5, 10,15,10, 20,15,10, 20,20,5);
+  */
+  
+  add_Mesh2(0, -20, -20, 0, 20, 20, 0);
+  add_PolygonHyper(0, 0, 0, 0,  10, 10, 4);
+  //add_Polygon(3, 0, 0, 0, 50, 24);  
+  
   //add_PolygonExtrude(-1, 0, 0, 0,  50, 20, 3);
   //add_PolygonExtrude(-1, 0, 0, 0,  50, 20, 5);
 
@@ -9342,14 +9386,14 @@ void _update_objects () {
   //add_Polygon(3, 0, 0, 0, 50, 24);
   //add_Mesh2(0, -30, -30, 0, 30, 30, 0);
   //add_PolygonHyper(0, 0, 0, 0,  10, 10, 4);
-  
+/*  
   add_Mesh5(0, 10,10,0, 10,10,10, 10,15,15, 10,20,10, 10,20,0);
   add_Mesh5(0, 20,20,0, 20,20,10, 20,15,15, 20,10,10, 20,10,0);  
   add_Mesh4(0, 10,10,0, 20,10,0, 20,10,10, 10,10,10);
   add_Mesh4(0, 10,20,0, 10,20,10, 20,20,10, 20,20,0);
   add_Mesh4(0, 10,10,10, 20,10,10, 20,15,15, 10,15,15);
   add_Mesh4(0, 10,20,10, 10,15,15, 20,15,15, 20,20,10);
-  
+*/  
   
   
   //add_Box(-1, -40, -40, -40, 40, 40, 40);
@@ -9444,10 +9488,10 @@ void _update_objects () {
 */
 
 
-  for (int i = 0; i < 25; i++) {
+  for (int i = 0; i < 100; i++) {
     
     float t = random(360) * PI / 180.0;
-    float r = random(45); 
+    float r = random(100); 
     
     add_Object2D("PEOPLE", 0, r * cos(t), r * sin(t), 0, 2.5);
   }
@@ -9463,25 +9507,9 @@ void _update_objects () {
     }
   }
 
-/*
-  SOLARCHVISION_LoadLAND(); 
 
-  //for (int i = 0; i < LAND_n_I - 1; i += 1) {
-  for (int i = 1; i < LAND_n_I - 1; i += 1) { // ignoring the center!
-    for (int j = 0; j < LAND_n_J - 1; j += 1) {
-      
-      // Material -2 for colored elevations
-      
-      add_Mesh4(-2 
-        , LAND_MESH[i][j][0],     LAND_MESH[i][j][1],     LAND_MESH[i][j][2]
-        , LAND_MESH[i+1][j][0],   LAND_MESH[i+1][j][1],   LAND_MESH[i+1][j][2]
-        , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2]
-        , LAND_MESH[i][j+1][0],   LAND_MESH[i][j+1][1],   LAND_MESH[i][j+1][2]
-      ); 
-      
-    }
-  }
-*/
+
+
 
 }
 
@@ -10104,10 +10132,26 @@ float[][] getSubFace (int[] the_Face, int Teselation, int n) {
         P3[i] = Bilinear(A[i], B[i], C[i], D[i], x1, y2); 
       }      
       
-      return_vertices[0] = P0; 
-      return_vertices[1] = P1; 
-      return_vertices[2] = P2; 
-      return_vertices[3] = P3;       
+      //return_vertices[0] = P0; 
+      //return_vertices[1] = P1; 
+      //return_vertices[2] = P2; 
+      //return_vertices[3] = P3;
+
+      //to rotate tri-grid cells:
+
+      int d = ((u % 2) + ((v + 1) % 2)) % 2; 
+      if (d == 0) {
+        return_vertices[0] = P0; 
+        return_vertices[1] = P1; 
+        return_vertices[2] = P2; 
+        return_vertices[3] = P3;     
+      }
+      else {
+        return_vertices[0] = P1; 
+        return_vertices[1] = P2; 
+        return_vertices[2] = P3; 
+        return_vertices[3] = P0;          
+      }  
     }
       
   }
