@@ -9351,6 +9351,9 @@ void _export_objects () {
 
 void _update_objects () {
   
+  add_ParametricGeometries();  
+  
+/*  
   SOLARCHVISION_LoadLAND(); 
 
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
@@ -9378,7 +9381,7 @@ void _update_objects () {
       
     }
   }  
-
+*/
 
 /*
   add_Mesh2(0, 0, 0, 0, 40, 40, 0);
@@ -10001,6 +10004,19 @@ void _draw_objects () {
     WIN3D_Diagrams.endShape(CLOSE);
   }  
 
+
+
+  WIN3D_Diagrams.beginShape();
+  WIN3D_Diagrams.texture(Field_Image);    
+  WIN3D_Diagrams.stroke(255, 255, 255, 0);
+  WIN3D_Diagrams.fill(255, 255, 255, 0);  
+  WIN3D_Diagrams.vertex(-100, -100, 0, 0, Field_RES2);
+  WIN3D_Diagrams.vertex(100, -100, 0, Field_RES1, Field_RES2);
+  WIN3D_Diagrams.vertex(100, 100, 0, Field_RES1, 0);
+  WIN3D_Diagrams.vertex(-100, 100, 0, 0, 0);
+  
+  WIN3D_Diagrams.endShape(CLOSE);
+
 }
 
 
@@ -10304,5 +10320,113 @@ void SOLARCHVISION_LoadLAND () {
 
 
  
+class ParametricGeometry { 
+  float value, posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotZ; 
+  
+  ParametricGeometry (float v, float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float r) {  
+    value = v;
+    posX = x;
+    posY = y; 
+    posZ = z;    
+    powX = px;
+    powY = py;
+    powZ = pz;    
+    scaleX = sx;
+    scaleY = sy; 
+    scaleZ = sz;    
+    rotZ = r;
+  } 
+  
+  void updatePosition (float x, float y, float z) {  
+    posX = x;
+    posY = y; 
+    posZ = z;
+  }   
+  
+  void RotateZ (float r) {  
+    rotZ += r;
+  }    
+ 
+  void Scale (float a, float b, float c) {  
+    scaleX *= a;
+    scaleY *= b;
+    scaleZ *= c;
+  }     
+  
+  float Distance (float a, float b, float c) {
+    a -= posX;
+    b -= posY;    
+    c -= posZ;
+    
+    float x = a * cos_ang(rotZ) - b * sin_ang(rotZ);
+    float y = a * sin_ang(rotZ) + b * cos_ang(rotZ); 
+    float z = c;
+
+    x += posX;
+    y += posY;  
+    z += posZ;
+
+    return(value * pow((pow(scaleX * abs(x - posX), powX) + pow(scaleY * abs(y - posY), powY) + pow(scaleZ * abs(z - posZ), powZ)), (3.0 / (powX + powY + powZ)))); // not sure!
+    
+  } 
+  
+} 
+
+ParametricGeometry[] SolidBuildings;
+
+void add_ParametricGeometries () {
+  
+  SolidBuildings = new ParametricGeometry[4];
+  
+  SolidBuildings[0] = new ParametricGeometry(100, 0,0,0, 8,8,8, 10,10,10, 0);
+  add_Box(-1, -5,-5,-5, 5,5,5);
+  
+  SolidBuildings[1] = new ParametricGeometry(100, 20,50,0, 8,8,8, 10,10,10, 0);
+  add_Box(-1, 20-5,50-5,-5, 20+5,50+5,5);
+
+  SolidBuildings[2] = new ParametricGeometry(100, -20,20,0, 8,8,8, 20,20,20, 0);
+  add_Box(-1, -20-10,20-10,-10, -20+10,20+10,10);
+  
+  SolidBuildings[3] = new ParametricGeometry(100, -50,-50,0, 8,8,8, 20,20,20, 0);
+  add_Box(-1, -50-10,-50-10,-10, -50+10,-50+10,10);
+  
+  calculate_ParametricGeometries_Field();
+
+}
+
+int Field_RES1 = 200;
+int Field_RES2 = 200; 
+
+PImage Field_Image = createImage(Field_RES1, Field_RES2, RGB);
+
+float Field_Multiplier = -10000;
+
+void calculate_ParametricGeometries_Field () {
+
+  Field_Image.loadPixels();
+  
+  for (int i = 0; i < Field_RES1; i++) {
+    for (int j = 0; j < Field_RES2; j++) {
+      
+      float val = 0;
+      for (int n = 0; n < SolidBuildings.length; n++) {
+        float d = SolidBuildings[n].Distance(i - 0.5 * Field_RES1,j - 0.5 * Field_RES2,0);
+        if (d > 0) {
+          val += 1.0 / d;
+        } 
+      }
+
+      float[] _COL = SOLARCHVISION_DRYWCBD(Field_Multiplier * val);
+
+      Field_Image.pixels[i + j * Field_RES1] = color(_COL[1], _COL[2], _COL[3]);
+    }
+  }
+  
+ 
+  Field_Image.updatePixels();
+  
+  
+}
+
 
 
