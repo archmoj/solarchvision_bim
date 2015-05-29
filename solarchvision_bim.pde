@@ -8579,6 +8579,11 @@ void keyPressed () {
 
         case 'F' :LoadFontStyle(); break;
         case 'f' :LoadFontStyle(); break;
+        
+        
+        case 'x' :_export_objects(); break;
+        case 'X' :_export_objects(); break;
+        
   
       }
     }
@@ -9300,12 +9305,56 @@ void add_PolygonHyper (int m, float cx, float cy, float cz, float r, float h, in
 
 }
 
+
+void _export_objects () {
+  
+  PrintWriter File_output_mesh = createWriter("/MeshModel/Mesh.txt");
+
+  File_output_mesh.println("Vertices:" + nf(allVertices.length - 1, 0));
+  File_output_mesh.println("{");
+  for (int i = 1; i < allVertices.length; i++) {
+    for (int j = 0; j < 3; j++) {
+      File_output_mesh.print(allVertices[i][j]);
+      if (j + 1 < 3) {
+        File_output_mesh.print("\t");
+      }
+      else {
+        File_output_mesh.println();
+      }          
+    }    
+  }
+  File_output_mesh.println("}");
+
+  File_output_mesh.println("Faces:" + nf(allFaces.length - 1, 0));
+  File_output_mesh.println("{");
+  for (int f = 1; f < allFaces.length; f++) {
+    for (int j = 0; j < allFaces[f].length; j++) {
+      File_output_mesh.print(allFaces[f][j]);
+      if (j + 1 < allFaces[f].length) {
+        File_output_mesh.print(",");
+      }
+      else {
+        File_output_mesh.println();
+      }          
+    }    
+  }
+  File_output_mesh.println("}");
+  
+  File_output_mesh.flush(); 
+  File_output_mesh.close();   
+  
+  println("End of exporting the mesh."); 
+  
+}
+  
+  
+
 void _update_objects () {
-/*  
+  
   SOLARCHVISION_LoadLAND(); 
 
-  //for (int i = 0; i < LAND_n_I - 1; i += 1) {
-  for (int i = 1; i < LAND_n_I - 1; i += 1) { // ignoring the center!
+  for (int i = 0; i < LAND_n_I - 1; i += 1) {
+  //for (int i = 1; i < LAND_n_I - 1; i += 1) { // ignoring the center!
     for (int j = 0; j < LAND_n_J - 1; j += 1) {
       
       // Material -2 for colored elevations
@@ -9329,9 +9378,9 @@ void _update_objects () {
       
     }
   }  
-*/
 
-  
+
+/*
   add_Mesh2(0, 0, 0, 0, 40, 40, 0);
   
   add_Mesh5(1, 10,10,0, 10,10,5, 10,15,10, 10,20,5, 10,20,0);
@@ -9340,7 +9389,7 @@ void _update_objects () {
   add_Mesh4(4, 10,20,0, 10,20,5, 20,20,5, 20,20,0);
   add_Mesh4(5, 10,10,5, 20,10,5, 20,15,10, 10,15,10);
   add_Mesh4(6, 10,20,5, 10,15,10, 20,15,10, 20,20,5);
-  
+*/  
   
   //add_Mesh2(0, -20, -20, 0, 20, 20, 0);
   //add_PolygonHyper(0, 0, 0, 0,  10, 10, 4);
@@ -9489,7 +9538,7 @@ void _update_objects () {
 
 */
 
-
+/*
   for (int i = 0; i < 100; i++) {
     
     float t = random(360) * PI / 180.0;
@@ -9508,7 +9557,7 @@ void _update_objects () {
       add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(10));
     }
   }
-
+*/
 
 
 
@@ -10175,10 +10224,19 @@ float Bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y
   
 // ---------------------------------------------------------
 
-int LAND_n_I = 16 + 1;
-//int LAND_n_I = 8 + 1;
 
-int LAND_n_J = 24 + 1;    
+
+//Polar
+//int LAND_n_I_base = 0;
+//int LAND_n_J_base = 0;
+//int LAND_n_I = 16 + 1;
+//int LAND_n_J = 24 + 1;    
+
+//Cartesian
+int LAND_n_I_base = 15;
+int LAND_n_J_base = 15;
+int LAND_n_I = LAND_n_I_base * 2 + 1;
+int LAND_n_J = LAND_n_J_base * 2 + 1;    
    
 
 double R_earth = 6373 * 1000;
@@ -10196,7 +10254,7 @@ void SOLARCHVISION_LoadLAND () {
 
     String the_link = "";
     
-    XML FileALL = loadXML("C:/SOLARCHVISION_2015/Projects/FIROUZKO/" + nf(i, 0) + ".xml");
+    XML FileALL = loadXML("C:/SOLARCHVISION_2015/Projects/FIROUZKO/" + nf(i - LAND_n_I_base, 0) + ".xml");
 
 
     XML[] children0 = FileALL.getChildren("result");
@@ -10231,7 +10289,7 @@ void SOLARCHVISION_LoadLAND () {
     }
   }
   
-  float h = LAND_MESH[0][0][2];
+  float h = LAND_MESH[LAND_n_I_base][LAND_n_J_base][2];
   
   for (int i = 0; i < LAND_n_I; i += 1) {
     for (int j = 0; j < LAND_n_J; j += 1) {
