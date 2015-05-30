@@ -10390,8 +10390,8 @@ void add_ParametricGeometries () {
   SolidBuildings = new ParametricGeometry[3];
   
   
-  SolidBuildings[0] = new ParametricGeometry(10, 50,50,0, 8,8,8, 1,1,1, 0);
-  add_Box_CENTER(-1, 50,50,0, 10,10,10);
+  SolidBuildings[0] = new ParametricGeometry(1, 50,50,0, 8,8,8, 10,10,50, 0);
+  add_Box_CENTER(-1, 50,50,0, 10,10,50);
 
   SolidBuildings[1] = new ParametricGeometry(1, -50,-50,0, 8,8,8, 10,10,10, 0);
   add_Box_CENTER(-1, -50,-50,0, 10,10,10);
@@ -10404,12 +10404,12 @@ void add_ParametricGeometries () {
 
 }
 
-int Field_RES1 = 200;
-int Field_RES2 = 200; 
+int Field_RES1 = 100;
+int Field_RES2 = 100; 
 
 PImage Field_Image = createImage(Field_RES1, Field_RES2, RGB);
 
-float Field_Multiplier = 1;
+float Field_Multiplier = 0.5;
 
 float Field_Elevation = 0;
 
