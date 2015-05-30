@@ -8506,10 +8506,16 @@ void keyPressed () {
     
     if (key == CODED) { 
       switch(keyCode) {
+        /*
         case LEFT  :WIN3D_X_coordinate += WIN3D_S_coordinate; break;
         case RIGHT :WIN3D_X_coordinate -= WIN3D_S_coordinate; break; 
         case UP    :WIN3D_Y_coordinate += WIN3D_S_coordinate; break;
         case DOWN  :WIN3D_Y_coordinate -= WIN3D_S_coordinate; break;
+        */
+        
+        case UP    :Field_Elevation += 2.5; calculate_ParametricGeometries_Field(); break;
+        case DOWN  :Field_Elevation -= 2.5; calculate_ParametricGeometries_Field(); break;
+        
       }
     }
     else {
@@ -9084,6 +9090,11 @@ int addToFaces (int[] f) {
   return(allFaces.length - 1);
 }
 
+
+void add_Box_CENTER (int m, float x1, float y1, float z1, float x2, float y2, float z2) {
+
+  add_Box(m,x1-x2/2,y1-y2/2,z1-z2/2,x1+x2/2,y1+y2/2,z1+z2/2);
+}
 
 
 void add_Box (int m, float x1, float y1, float z1, float x2, float y2, float z2) {
@@ -10010,10 +10021,10 @@ void _draw_objects () {
   WIN3D_Diagrams.texture(Field_Image);    
   WIN3D_Diagrams.stroke(255, 255, 255, 0);
   WIN3D_Diagrams.fill(255, 255, 255, 0);  
-  WIN3D_Diagrams.vertex(-100, -100, 0, 0, Field_RES2);
-  WIN3D_Diagrams.vertex(100, -100, 0, Field_RES1, Field_RES2);
-  WIN3D_Diagrams.vertex(100, 100, 0, Field_RES1, 0);
-  WIN3D_Diagrams.vertex(-100, 100, 0, 0, 0);
+  WIN3D_Diagrams.vertex(-100 * objects_scale, -100 * objects_scale, Field_Elevation * objects_scale, 0, Field_RES2);
+  WIN3D_Diagrams.vertex(100 * objects_scale, -100 * objects_scale, Field_Elevation * objects_scale, Field_RES1, Field_RES2);
+  WIN3D_Diagrams.vertex(100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, Field_RES1, 0);
+  WIN3D_Diagrams.vertex(-100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, 0, 0);
   
   WIN3D_Diagrams.endShape(CLOSE);
 
@@ -10366,7 +10377,7 @@ class ParametricGeometry {
     y += posY;  
     z += posZ;
 
-    return(value * pow((pow(scaleX * abs(x - posX), powX) + pow(scaleY * abs(y - posY), powY) + pow(scaleZ * abs(z - posZ), powZ)), (3.0 / (powX + powY + powZ)))); // not sure!
+    return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value); 
     
   } 
   
@@ -10376,20 +10387,19 @@ ParametricGeometry[] SolidBuildings;
 
 void add_ParametricGeometries () {
   
-  SolidBuildings = new ParametricGeometry[4];
+  SolidBuildings = new ParametricGeometry[3];
   
-  SolidBuildings[0] = new ParametricGeometry(100, 0,0,0, 8,8,8, 10,10,10, 0);
-  add_Box(-1, -5,-5,-5, 5,5,5);
   
-  SolidBuildings[1] = new ParametricGeometry(100, 20,50,0, 8,8,8, 10,10,10, 0);
-  add_Box(-1, 20-5,50-5,-5, 20+5,50+5,5);
+  SolidBuildings[0] = new ParametricGeometry(10, 50,50,0, 8,8,8, 1,1,1, 0);
+  add_Box_CENTER(-1, 50,50,0, 10,10,10);
 
-  SolidBuildings[2] = new ParametricGeometry(100, -20,20,0, 8,8,8, 20,20,20, 0);
-  add_Box(-1, -20-10,20-10,-10, -20+10,20+10,10);
-  
-  SolidBuildings[3] = new ParametricGeometry(100, -50,-50,0, 8,8,8, 20,20,20, 0);
-  add_Box(-1, -50-10,-50-10,-10, -50+10,-50+10,10);
-  
+  SolidBuildings[1] = new ParametricGeometry(1, -50,-50,0, 8,8,8, 10,10,10, 0);
+  add_Box_CENTER(-1, -50,-50,0, 10,10,10);
+
+  SolidBuildings[2] = new ParametricGeometry(1, -50,50,0, 8,8,8, 10,20,10, 0);
+  add_Box_CENTER(-1, -50,50,0, 10,20,10);
+
+ 
   calculate_ParametricGeometries_Field();
 
 }
@@ -10399,7 +10409,9 @@ int Field_RES2 = 200;
 
 PImage Field_Image = createImage(Field_RES1, Field_RES2, RGB);
 
-float Field_Multiplier = -10000;
+float Field_Multiplier = 1;
+
+float Field_Elevation = 0;
 
 void calculate_ParametricGeometries_Field () {
 
@@ -10410,13 +10422,15 @@ void calculate_ParametricGeometries_Field () {
       
       float val = 0;
       for (int n = 0; n < SolidBuildings.length; n++) {
-        float d = SolidBuildings[n].Distance(i - 0.5 * Field_RES1,j - 0.5 * Field_RES2,0);
+        
+        float d = SolidBuildings[n].Distance((i - 0.5 * Field_RES1) * (200.0 / Field_RES1), (j - 0.5 * Field_RES2) * (200.0 / Field_RES2), Field_Elevation);
+        
         if (d > 0) {
           val += 1.0 / d;
         } 
       }
 
-      float[] _COL = SOLARCHVISION_DRYWCBD(Field_Multiplier * val);
+      float[] _COL = SOLARCHVISION_DRYWCBD(-Field_Multiplier * val);
 
       Field_Image.pixels[i + j * Field_RES1] = color(_COL[1], _COL[2], _COL[3]);
     }
