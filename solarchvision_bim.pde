@@ -9262,6 +9262,12 @@ void add_Polygon (int m, float cx, float cy, float cz, float r, int n) {
 
 }
 
+
+void add_PolygonExtrude_CENTER (int m, float cx, float cy, float cz, float r, float h, int n) {
+  add_PolygonExtrude(m, cx, cy, cz - h/2, r, h, n);
+}
+
+
 void add_PolygonExtrude (int m, float cx, float cy, float cz, float r, float h, int n) {
 
   int[] vT = new int[n];
@@ -10387,11 +10393,11 @@ ParametricGeometry[] SolidBuildings;
 
 void add_ParametricGeometries () {
   
-  SolidBuildings = new ParametricGeometry[3];
+  SolidBuildings = new ParametricGeometry[6];
   
   
-  SolidBuildings[0] = new ParametricGeometry(1, 50,50,0, 8,8,8, 10,10,50, 0);
-  add_Box_CENTER(-1, 50,50,0, 10,10,50);
+  SolidBuildings[0] = new ParametricGeometry(1, 50,-50,0, 8,8,8, 10,10,50, 0);
+  add_Box_CENTER(-1, 50,-50,0, 10,10,50);
 
   SolidBuildings[1] = new ParametricGeometry(1, -50,-50,0, 8,8,8, 10,10,10, 0);
   add_Box_CENTER(-1, -50,-50,0, 10,10,10);
@@ -10399,13 +10405,22 @@ void add_ParametricGeometries () {
   SolidBuildings[2] = new ParametricGeometry(1, -50,50,0, 8,8,8, 10,20,10, 0);
   add_Box_CENTER(-1, -50,50,0, 10,20,10);
 
+  SolidBuildings[3] = new ParametricGeometry(1, 50,50,0, 2,2,8, 10,10,20, 0);
+  add_PolygonExtrude(0, 50,50,0, 5, 20, 16);
+
+  SolidBuildings[4] = new ParametricGeometry(1, 15,15,0, 2,2,8, 30,30,10, 0);
+  add_PolygonExtrude_CENTER(0, 15,15,0, 15, 10, 16);
+
+  SolidBuildings[5] = new ParametricGeometry(1, 15,15,30, 2,2,8, 30,30,10, 0);
+  add_PolygonExtrude_CENTER(0, 15,15,30, 15, 10, 16);
+
  
   calculate_ParametricGeometries_Field();
 
 }
 
-int Field_RES1 = 100;
-int Field_RES2 = 100; 
+int Field_RES1 = 200;
+int Field_RES2 = 200; 
 
 PImage Field_Image = createImage(Field_RES1, Field_RES2, RGB);
 
@@ -10429,8 +10444,10 @@ void calculate_ParametricGeometries_Field () {
           val += 1.0 / d;
         } 
       }
+      
+      float _u = -Field_Multiplier * val;
 
-      float[] _COL = SOLARCHVISION_DRYWCBD(-Field_Multiplier * val);
+      float[] _COL = SOLARCHVISION_DRYWCBD(roundTo(_u, 0.05));
 
       Field_Image.pixels[i + j * Field_RES1] = color(_COL[1], _COL[2], _COL[3]);
     }
