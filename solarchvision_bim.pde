@@ -8599,10 +8599,13 @@ void keyPressed () {
         case 'w' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 4; break; 
          
         
-        case 't' :WIN3D_TESELATION += 1; break; 
+        case 't' :WIN3D_TESELATION += 1; WIN3D_update_VerticesSolarValue = 1; break; 
         case 'T' :WIN3D_TESELATION -= 1;
-                  if (WIN3D_TESELATION < 0) WIN3D_TESELATION = 0; 
+                  if (WIN3D_TESELATION < 0) WIN3D_TESELATION = 0;
+                  WIN3D_update_VerticesSolarValue = 1; 
                   break;
+                  
+        case ENTER: WIN3D_update_VerticesSolarValue = 1; break;                  
           
         case 'S' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_station(); redraw_scene = 1; break;
         case 's' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_station(); redraw_scene = 1; break;
@@ -9697,6 +9700,11 @@ void _update_objects () {
   //add_Mesh2(3, -40, -40, 0, 0, 0, 0);
   //add_PolygonHyper(2, -20, -20, 0,  15, 15, 4);
 
+
+  add_Mesh2(0, -20, -20, 0, 20, 20, 0);
+  add_PolygonHyper(0, 0, 0, 0,  15, 15, 4);
+
+
   
   //add_Mesh2(2, 60, 0, 0, 0, 0, 60);
   //add_Mesh2(3, 0, -60, 45, 60, 0, 45);
@@ -9818,7 +9826,7 @@ void _update_objects () {
 
 */
 
-/*
+
   for (int i = 0; i < 100; i++) {
     
     float t = random(360) * PI / 180.0;
@@ -9837,7 +9845,7 @@ void _update_objects () {
       add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(10));
     }
   }
-*/
+
 
 
 
@@ -10727,7 +10735,7 @@ void add_ParametricGeometries () {
   
   SolidBuildings[0] = new ParametricGeometry(1, 0,0,0, 2,2,2, 10,10,10, 0);
   //add_QuadSphere(-1, 0,0,0, 10);
-  add_Icosahedron(-1, 0,0,0, 10);
+  //add_Icosahedron(-1, 0,0,0, 10);
   
   
   
