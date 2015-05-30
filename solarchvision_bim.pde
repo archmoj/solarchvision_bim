@@ -9522,9 +9522,9 @@ void add_QuadSphere (int m, float cx, float cy, float cz, float r) {
       int[] newFace = new int [4];
       
       newFace[0] = vT[i];
-      newFace[1] = vM1[i];
+      newFace[1] = vM2[i];
       newFace[2] = vT[next_i];
-      newFace[3] = vM2[i];
+      newFace[3] = vM1[i];
       
       addToFaces(newFace);
     }
@@ -10280,7 +10280,7 @@ void _draw_objects () {
   }  
 
 
-
+/*
   WIN3D_Diagrams.beginShape();
   WIN3D_Diagrams.texture(Field_Image);    
   WIN3D_Diagrams.stroke(255, 255, 255, 0);
@@ -10291,7 +10291,7 @@ void _draw_objects () {
   WIN3D_Diagrams.vertex(-100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, 0, 0);
   
   WIN3D_Diagrams.endShape(CLOSE);
-
+*/
 }
 
 
@@ -10654,7 +10654,8 @@ void add_ParametricGeometries () {
   SolidBuildings = new ParametricGeometry[1];
   
   SolidBuildings[0] = new ParametricGeometry(1, 0,0,0, 2,2,2, 10,10,10, 0);
-  add_QuadSphere(-1, 0,0,0, 10);
+  //add_QuadSphere(-1, 0,0,0, 10);
+  add_Icosahedron(-1, 0,0,0, 10);
   
   
   
