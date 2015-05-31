@@ -11066,35 +11066,39 @@ int addToTempObjectVertices (float x, float y, float z) {
 int addToTempObjectFaces (int[] f) {
 
   int face_existed = 0;
-  /*
+/*  
   for (int i = 1; i < TempObjectFaces.length; i++) {
     if (f.length == TempObjectFaces[i].length) {
       
       for (int j = 0; j < f.length; j++) {
       
         for (int k = 0; k < f.length; k++) { // "k" introduces different variations that two faces could match
+        
+          float total_distances = 0;        
+        
           for (int dir = -1; dir <= -1; dir += 2) { // "dir" introduces different diretions that two faces could match
             
             int q = (j + k * dir) % f.length;
           
-            if (fn_dist(TempObjectVertices[f[q]], TempObjectVertices[TempObjectFaces[i][j]]) < 0.0001) { // avoid creating duplicate faces
+            total_distances += fn_dist(TempObjectVertices[f[q]], TempObjectVertices[TempObjectFaces[i][j]]);
            
-              println("A duplicate face detected :", i);
-            
-              face_existed = i;
-              break;
-            }
-            if (face_existed != 0) break; 
           }
-          if (face_existed != 0) break; 
+          
+          if (total_distances < 0.0001) { // avoid creating duplicate faces
+            println("A duplicate face detected :", i, "total_distances=", total_distances);
+          
+            face_existed = i;
+            break;
+          }
         }
+
         if (face_existed != 0) break; 
       }
       
     }
     if (face_existed != 0) break; 
   }
-  */
+*/  
   if (face_existed == 0) { 
   
     int[][] newFace = {f}; 
