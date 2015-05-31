@@ -9701,8 +9701,8 @@ void _update_objects () {
   //add_PolygonHyper(2, -20, -20, 0,  15, 15, 4);
 
 
-  add_Mesh2(0, -20, -20, 0, 20, 20, 0);
-  add_PolygonHyper(0, 0, 0, 0,  15, 15, 4);
+  //add_Mesh2(0, -20, -20, 0, 20, 20, 0);
+  //add_PolygonHyper(0, 0, 0, 0,  15, 15, 4);
 
 
   
@@ -9826,7 +9826,7 @@ void _update_objects () {
 
 */
 
-
+/*
   for (int i = 0; i < 100; i++) {
     
     float t = random(360) * PI / 180.0;
@@ -9845,7 +9845,7 @@ void _update_objects () {
       add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(10));
     }
   }
-
+*/
 
 
 
@@ -10734,8 +10734,8 @@ void add_ParametricGeometries () {
   SolidBuildings = new ParametricGeometry[1];
   
   SolidBuildings[0] = new ParametricGeometry(1, 0,0,0, 2,2,2, 10,10,10, 0);
-  //add_QuadSphere(-1, 0,0,0, 10);
-  //add_Icosahedron(-1, 0,0,0, 10);
+  add_QuadSphere(0, 0,0,0, 10);
+  //add_Icosahedron(0, 0,0,0, 10);
   
   
   
