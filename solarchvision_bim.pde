@@ -9457,9 +9457,11 @@ void add_QuadSphere (int m, float cx, float cy, float cz, float r) {
                             , {allVertices[vT[B]][0] - cx, allVertices[vT[B]][1] - cy, allVertices[vT[B]][2] - cz}
                             , {allVertices[vT[C]][0] - cx, allVertices[vT[C]][1] - cy, allVertices[vT[C]][2] - cz}};
       
-      G = fn_normalize(fn_G(the_points));
+      G = fn_G(the_points);
+      vM1[i] = addToVertices(cx + G[0], cy + G[1], cz + G[2]);
       
-      vM1[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+      //G = fn_normalize(fn_G(the_points));
+      //vM1[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     }
     
     { 
@@ -9471,9 +9473,11 @@ void add_QuadSphere (int m, float cx, float cy, float cz, float r) {
                             , {allVertices[vT[B]][0] - cx, allVertices[vT[B]][1] - cy, allVertices[vT[B]][2] - cz}
                             , {allVertices[vB[C]][0] - cx, allVertices[vB[C]][1] - cy, allVertices[vB[C]][2] - cz}};
       
-      G = fn_normalize(fn_G(the_points));
+      G = fn_G(the_points);
+      vM2[i] = addToVertices(cx + G[0], cy + G[1], cz + G[2]);
       
-      vM2[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+      //G = fn_normalize(fn_G(the_points));
+      //vM2[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     } 
     
     { 
@@ -9485,9 +9489,11 @@ void add_QuadSphere (int m, float cx, float cy, float cz, float r) {
                             , {allVertices[vB[B]][0] - cx, allVertices[vB[B]][1] - cy, allVertices[vB[B]][2] - cz}
                             , {allVertices[vT[C]][0] - cx, allVertices[vT[C]][1] - cy, allVertices[vT[C]][2] - cz}};
       
-      G = fn_normalize(fn_G(the_points));
+      G = fn_G(the_points);
+      vM3[i] = addToVertices(cx + G[0], cy + G[1], cz + G[2]);
       
-      vM3[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+      //G = fn_normalize(fn_G(the_points));
+      //vM3[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     }    
     
     { 
@@ -9499,9 +9505,11 @@ void add_QuadSphere (int m, float cx, float cy, float cz, float r) {
                             , {allVertices[vB[B]][0] - cx, allVertices[vB[B]][1] - cy, allVertices[vB[B]][2] - cz}
                             , {allVertices[vB[C]][0] - cx, allVertices[vB[C]][1] - cy, allVertices[vB[C]][2] - cz}};
       
-      G = fn_normalize(fn_G(the_points));
+      G = fn_G(the_points);
+      vM4[i] = addToVertices(cx + G[0], cy + G[1], cz + G[2]);
       
-      vM4[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+      //G = fn_normalize(fn_G(the_points));
+      //vM4[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     }      
     
   }    
@@ -9587,565 +9595,6 @@ void add_QuadSphere (int m, float cx, float cy, float cz, float r) {
 }
 
 
-void add_QuadSphere_TES1 (int m, float cx, float cy, float cz, float r) {
-
-  // i.e. Rhombic Triacontahedron 
-  
-  int[] vT = new int[6];
-  int[] vB = new int[6];
-  
-  vT[0] = addToVertices(cx, cy, cz + r);
-  vB[0] = addToVertices(cx, cy, cz - r);
-  
-  for (int i = 1; i <= 5; i++) {
-    float t = i * 72;
-    
-    float R_in = r * pow(5.0, 0.5) * 2.0 / 5.0;  
-    float H_in = r * pow(5.0, 0.5) * 1.0 / 5.0;
-    
-    vT[i] = addToVertices(cx + R_in * cos_ang(t), cy + R_in * sin_ang(t), cz + H_in);
-    vB[i] = addToVertices(cx + R_in * cos_ang(t + 36), cy + R_in * sin_ang(t + 36), cz - H_in);
-  } 
-
-  int[] vM1 = new int[6]; // between T0 and Ti  
-  int[] vM2 = new int[6]; // between Ti and Bi
-  int[] vM3 = new int[6]; // between Ti and Bi
-  int[] vM4 = new int[6]; // between Bi and B0
-  //CAUTION: VMx[0] will remain undefined below to keep simillar i variables! 
-  for (int i = 1; i <= 5; i++) {
-    
-    int next_i = (i % 5) + 1;
-    
-    float[] G;
-    
-    int A, B, C;
-   
-    { 
-      A = i;
-      B = next_i;
-      C = 0;
-      
-      float[][] the_points = {{allVertices[vT[A]][0] - cx, allVertices[vT[A]][1] - cy, allVertices[vT[A]][2] - cz}
-                            , {allVertices[vT[B]][0] - cx, allVertices[vT[B]][1] - cy, allVertices[vT[B]][2] - cz}
-                            , {allVertices[vT[C]][0] - cx, allVertices[vT[C]][1] - cy, allVertices[vT[C]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      
-      vM1[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }
-    
-    { 
-      A = next_i;
-      B = i;
-      C = i;
-      
-      float[][] the_points = {{allVertices[vT[A]][0] - cx, allVertices[vT[A]][1] - cy, allVertices[vT[A]][2] - cz}
-                            , {allVertices[vT[B]][0] - cx, allVertices[vT[B]][1] - cy, allVertices[vT[B]][2] - cz}
-                            , {allVertices[vB[C]][0] - cx, allVertices[vB[C]][1] - cy, allVertices[vB[C]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      
-      vM2[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    } 
-    
-    { 
-      A = i;
-      B = next_i;
-      C = next_i;
-      
-      float[][] the_points = {{allVertices[vB[A]][0] - cx, allVertices[vB[A]][1] - cy, allVertices[vB[A]][2] - cz}
-                            , {allVertices[vB[B]][0] - cx, allVertices[vB[B]][1] - cy, allVertices[vB[B]][2] - cz}
-                            , {allVertices[vT[C]][0] - cx, allVertices[vT[C]][1] - cy, allVertices[vT[C]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      
-      vM3[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }    
-    
-    { 
-      A = next_i;
-      B = i;
-      C = 0;
-      
-      float[][] the_points = {{allVertices[vB[A]][0] - cx, allVertices[vB[A]][1] - cy, allVertices[vB[A]][2] - cz}
-                            , {allVertices[vB[B]][0] - cx, allVertices[vB[B]][1] - cy, allVertices[vB[B]][2] - cz}
-                            , {allVertices[vB[C]][0] - cx, allVertices[vB[C]][1] - cy, allVertices[vB[C]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      
-      vM4[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }      
-    
-  }    
-
-
-  int[] vN1 = new int[6]; 
-  int[] vN2 = new int[6]; 
-  int[] vN3 = new int[6]; 
-  int[] vN4 = new int[6]; 
-  int[] vN5 = new int[6]; 
-  int[] vN6 = new int[6];
-  //CAUTION: VMx[0] will remain undefined below to keep simillar i variables! 
-  for (int i = 1; i <= 5; i++) {
-    
-    int next_i = (i % 5) + 1;
-    int prev_i = ((i + 5 - 2) % 5) + 1;
-    
-    float[] G;
-    
-    int A, B, C, D;
-   
-    { 
-      A = 0;
-      B = prev_i;
-      C = i;
-      D = i;
-      
-      float[][] the_points = {{allVertices[vT[A]][0] - cx, allVertices[vT[A]][1] - cy, allVertices[vT[A]][2] - cz}
-                            , {allVertices[vM1[B]][0] - cx, allVertices[vM1[B]][1] - cy, allVertices[vM1[B]][2] - cz}
-                            , {allVertices[vT[C]][0] - cx, allVertices[vT[C]][1] - cy, allVertices[vT[C]][2] - cz}
-                            , {allVertices[vM1[D]][0] - cx, allVertices[vM1[D]][1] - cy, allVertices[vM1[D]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      
-      vN1[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }
-    
-    { 
-      A = i;
-      B = i;
-      C = i;
-      D = next_i;
-      
-      float[][] the_points = {{allVertices[vM1[A]][0] - cx, allVertices[vM1[A]][1] - cy, allVertices[vM1[A]][2] - cz}
-                            , {allVertices[vT[B]][0] - cx, allVertices[vT[B]][1] - cy, allVertices[vT[B]][2] - cz}
-                            , {allVertices[vM2[C]][0] - cx, allVertices[vM2[C]][1] - cy, allVertices[vM2[C]][2] - cz}
-                            , {allVertices[vT[D]][0] - cx, allVertices[vT[D]][1] - cy, allVertices[vT[D]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      
-      vN2[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }
-
-    { 
-      A = i;
-      B = prev_i;
-      C = i;
-      D = i;
-      
-      float[][] the_points = {{allVertices[vT[A]][0] - cx, allVertices[vT[A]][1] - cy, allVertices[vT[A]][2] - cz}
-                            , {allVertices[vM3[B]][0] - cx, allVertices[vM3[B]][1] - cy, allVertices[vM3[B]][2] - cz}
-                            , {allVertices[vB[C]][0] - cx, allVertices[vB[C]][1] - cy, allVertices[vB[C]][2] - cz}
-                            , {allVertices[vM2[D]][0] - cx, allVertices[vM2[D]][1] - cy, allVertices[vM2[D]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      
-      vN3[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }
-
-    { 
-      A = next_i;
-      B = i;
-      C = i;
-      D = i;
-      
-      float[][] the_points = {{allVertices[vT[A]][0] - cx, allVertices[vT[A]][1] - cy, allVertices[vT[A]][2] - cz}
-                            , {allVertices[vM2[B]][0] - cx, allVertices[vM2[B]][1] - cy, allVertices[vM2[B]][2] - cz}
-                            , {allVertices[vB[C]][0] - cx, allVertices[vB[C]][1] - cy, allVertices[vB[C]][2] - cz}
-                            , {allVertices[vM3[D]][0] - cx, allVertices[vM3[D]][1] - cy, allVertices[vM3[D]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      
-      vN4[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }
-    
-    { 
-      A = i;
-      B = i;
-      C = i;
-      D = next_i;
-      
-      float[][] the_points = {{allVertices[vM3[A]][0] - cx, allVertices[vM3[A]][1] - cy, allVertices[vM3[A]][2] - cz}
-                            , {allVertices[vB[B]][0] - cx, allVertices[vB[B]][1] - cy, allVertices[vB[B]][2] - cz}
-                            , {allVertices[vM4[C]][0] - cx, allVertices[vM4[C]][1] - cy, allVertices[vM4[C]][2] - cz}
-                            , {allVertices[vB[D]][0] - cx, allVertices[vB[D]][1] - cy, allVertices[vB[D]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      
-      vN5[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }    
-
-    { 
-      A = i;
-      B = prev_i;
-      C = 0;
-      D = i;
-      
-      float[][] the_points = {{allVertices[vB[A]][0] - cx, allVertices[vB[A]][1] - cy, allVertices[vB[A]][2] - cz}
-                            , {allVertices[vM4[B]][0] - cx, allVertices[vM4[B]][1] - cy, allVertices[vM4[B]][2] - cz}
-                            , {allVertices[vB[C]][0] - cx, allVertices[vB[C]][1] - cy, allVertices[vB[C]][2] - cz}
-                            , {allVertices[vM4[D]][0] - cx, allVertices[vM4[D]][1] - cy, allVertices[vM4[D]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      
-      vN6[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }
-
-  }    
-
-  if (m == -1) defaultMaterial = 1;
-  else defaultMaterial = m;
-
-  for (int i = 1; i <= 5; i++) {
-    
-    int next_i = (i % 5) + 1;
-    int prev_i = ((i + 5 - 2) % 5) + 1;
-
-    {
-      int[] newFace = new int [4];
-      
-      newFace[0] = vT[0];
-      newFace[1] = vN1[prev_i];
-      newFace[2] = vM1[prev_i];
-      newFace[3] = vN1[i];
-      
-      addToFaces(newFace);
-    }
-    
-    {
-      int[] newFace = new int [4];
-      
-      newFace[0] = vN1[i];
-      newFace[1] = vM1[prev_i];
-      newFace[2] = vN2[prev_i];
-      newFace[3] = vT[i];
-      
-      addToFaces(newFace);
-    }
-
-// ------------------------
-/*
-    {
-      int[] newFace = new int [4];
-      
-      newFace[0] = v[];
-      newFace[1] = v[];
-      newFace[2] = v[];
-      newFace[3] = v[];
-      
-      addToFaces(newFace);
-    }
-*/    
-
-  }
-
-}
-
-void add_QuadSphere_DIR1 (int m, float cx, float cy, float cz, float r) {
-
-  // i.e. Rhombic Triacontahedron with false teselation in one direction! Might be useful one day! 
-  
-  int[] vT = new int[6];
-  int[] vB = new int[6];
-  
-  vT[0] = addToVertices(cx, cy, cz + r);
-  vB[0] = addToVertices(cx, cy, cz - r);
-  
-  for (int i = 1; i <= 5; i++) {
-    float t = i * 72;
-    
-    float R_in = r * pow(5.0, 0.5) * 2.0 / 5.0;  
-    float H_in = r * pow(5.0, 0.5) * 1.0 / 5.0;
-    
-    vT[i] = addToVertices(cx + R_in * cos_ang(t), cy + R_in * sin_ang(t), cz + H_in);
-    vB[i] = addToVertices(cx + R_in * cos_ang(t + 36), cy + R_in * sin_ang(t + 36), cz - H_in);
-  } 
-
-  int[] vM1 = new int[6]; // between T0 and Ti  
-  int[] vM2 = new int[6]; // between Ti and Bi
-  int[] vM3 = new int[6]; // between Ti and Bi
-  int[] vM4 = new int[6]; // between Bi and B0
-  //CAUTION: VMx[0] will remain undefined below to keep simillar i variables! 
-  for (int i = 1; i <= 5; i++) {
-    
-    int next_i = (i % 5) + 1;
-    
-    float[] G;
-    
-    int A, B, C;
-   
-    { 
-      A = i;
-      B = next_i;
-      C = 0;
-      
-      float[][] the_points = {{allVertices[vT[A]][0] - cx, allVertices[vT[A]][1] - cy, allVertices[vT[A]][2] - cz}
-                            , {allVertices[vT[B]][0] - cx, allVertices[vT[B]][1] - cy, allVertices[vT[B]][2] - cz}
-                            , {allVertices[vT[C]][0] - cx, allVertices[vT[C]][1] - cy, allVertices[vT[C]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      
-      vM1[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }
-    
-    { 
-      A = next_i;
-      B = i;
-      C = i;
-      
-      float[][] the_points = {{allVertices[vT[A]][0] - cx, allVertices[vT[A]][1] - cy, allVertices[vT[A]][2] - cz}
-                            , {allVertices[vT[B]][0] - cx, allVertices[vT[B]][1] - cy, allVertices[vT[B]][2] - cz}
-                            , {allVertices[vB[C]][0] - cx, allVertices[vB[C]][1] - cy, allVertices[vB[C]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      
-      vM2[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    } 
-    
-    { 
-      A = i;
-      B = next_i;
-      C = next_i;
-      
-      float[][] the_points = {{allVertices[vB[A]][0] - cx, allVertices[vB[A]][1] - cy, allVertices[vB[A]][2] - cz}
-                            , {allVertices[vB[B]][0] - cx, allVertices[vB[B]][1] - cy, allVertices[vB[B]][2] - cz}
-                            , {allVertices[vT[C]][0] - cx, allVertices[vT[C]][1] - cy, allVertices[vT[C]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      
-      vM3[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }    
-    
-    { 
-      A = next_i;
-      B = i;
-      C = 0;
-      
-      float[][] the_points = {{allVertices[vB[A]][0] - cx, allVertices[vB[A]][1] - cy, allVertices[vB[A]][2] - cz}
-                            , {allVertices[vB[B]][0] - cx, allVertices[vB[B]][1] - cy, allVertices[vB[B]][2] - cz}
-                            , {allVertices[vB[C]][0] - cx, allVertices[vB[C]][1] - cy, allVertices[vB[C]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      
-      vM4[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }      
-    
-  }    
-
-
-  int[] vN1 = new int[6]; 
-  int[] vN2 = new int[6]; 
-  int[] vN3 = new int[6]; 
-  int[] vN4 = new int[6]; 
-  int[] vN5 = new int[6]; 
-  int[] vN6 = new int[6];
-  //CAUTION: VMx[0] will remain undefined below to keep simillar i variables! 
-  for (int i = 1; i <= 5; i++) {
-    
-    int next_i = (i % 5) + 1;
-    int prev_i = ((i + 5 - 2) % 5) + 1;
-    
-    float[] G;
-    
-    int A, B, C, D;
-   
-    { 
-      A = 0;
-      B = prev_i;
-      C = i;
-      D = i;
-      
-      float[][] the_points = {{allVertices[vT[A]][0] - cx, allVertices[vT[A]][1] - cy, allVertices[vT[A]][2] - cz}
-                            , {allVertices[vM1[B]][0] - cx, allVertices[vM1[B]][1] - cy, allVertices[vM1[B]][2] - cz}
-                            , {allVertices[vT[C]][0] - cx, allVertices[vT[C]][1] - cy, allVertices[vT[C]][2] - cz}
-                            , {allVertices[vM1[D]][0] - cx, allVertices[vM1[D]][1] - cy, allVertices[vM1[D]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      
-      vN1[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }
-    
-    { 
-      A = i;
-      B = i;
-      C = i;
-      D = next_i;
-      
-      float[][] the_points = {{allVertices[vM1[A]][0] - cx, allVertices[vM1[A]][1] - cy, allVertices[vM1[A]][2] - cz}
-                            , {allVertices[vT[B]][0] - cx, allVertices[vT[B]][1] - cy, allVertices[vT[B]][2] - cz}
-                            , {allVertices[vM2[C]][0] - cx, allVertices[vM2[C]][1] - cy, allVertices[vM2[C]][2] - cz}
-                            , {allVertices[vT[D]][0] - cx, allVertices[vT[D]][1] - cy, allVertices[vT[D]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      
-      vN2[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }
-
-    { 
-      A = i;
-      B = prev_i;
-      C = i;
-      D = i;
-      
-      float[][] the_points = {{allVertices[vT[A]][0] - cx, allVertices[vT[A]][1] - cy, allVertices[vT[A]][2] - cz}
-                            , {allVertices[vM3[B]][0] - cx, allVertices[vM3[B]][1] - cy, allVertices[vM3[B]][2] - cz}
-                            , {allVertices[vB[C]][0] - cx, allVertices[vB[C]][1] - cy, allVertices[vB[C]][2] - cz}
-                            , {allVertices[vM2[D]][0] - cx, allVertices[vM2[D]][1] - cy, allVertices[vM2[D]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      
-      vN3[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }
-
-    { 
-      A = next_i;
-      B = i;
-      C = i;
-      D = i;
-      
-      float[][] the_points = {{allVertices[vT[A]][0] - cx, allVertices[vT[A]][1] - cy, allVertices[vT[A]][2] - cz}
-                            , {allVertices[vM2[B]][0] - cx, allVertices[vM2[B]][1] - cy, allVertices[vM2[B]][2] - cz}
-                            , {allVertices[vB[C]][0] - cx, allVertices[vB[C]][1] - cy, allVertices[vB[C]][2] - cz}
-                            , {allVertices[vM3[D]][0] - cx, allVertices[vM3[D]][1] - cy, allVertices[vM3[D]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      
-      vN4[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }
-    
-    { 
-      A = i;
-      B = i;
-      C = i;
-      D = next_i;
-      
-      float[][] the_points = {{allVertices[vM3[A]][0] - cx, allVertices[vM3[A]][1] - cy, allVertices[vM3[A]][2] - cz}
-                            , {allVertices[vB[B]][0] - cx, allVertices[vB[B]][1] - cy, allVertices[vB[B]][2] - cz}
-                            , {allVertices[vM4[C]][0] - cx, allVertices[vM4[C]][1] - cy, allVertices[vM4[C]][2] - cz}
-                            , {allVertices[vB[D]][0] - cx, allVertices[vB[D]][1] - cy, allVertices[vB[D]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      
-      vN5[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }    
-
-    { 
-      A = i;
-      B = prev_i;
-      C = 0;
-      D = i;
-      
-      float[][] the_points = {{allVertices[vB[A]][0] - cx, allVertices[vB[A]][1] - cy, allVertices[vB[A]][2] - cz}
-                            , {allVertices[vM4[B]][0] - cx, allVertices[vM4[B]][1] - cy, allVertices[vM4[B]][2] - cz}
-                            , {allVertices[vB[C]][0] - cx, allVertices[vB[C]][1] - cy, allVertices[vB[C]][2] - cz}
-                            , {allVertices[vM4[D]][0] - cx, allVertices[vM4[D]][1] - cy, allVertices[vM4[D]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      
-      vN6[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }
-
-  }    
-
-  if (m == -1) defaultMaterial = 1;
-  else defaultMaterial = m;
-
-  for (int i = 1; i <= 5; i++) {
-    
-    int next_i = (i % 5) + 1;
-    int prev_i = ((i + 5 - 2) % 5) + 1;
-
-    {
-      int[] newFace = new int [4];
-      
-      newFace[0] = vT[0];
-      newFace[1] = vN1[prev_i];
-      newFace[2] = vN2[prev_i];
-      newFace[3] = vN1[i];
-      
-      addToFaces(newFace);
-    }
-    
-    {
-      int[] newFace = new int [4];
-      
-      newFace[0] = vT[i];
-      newFace[1] = vN3[i];
-      newFace[2] = vN2[i];
-      newFace[3] = vN1[i];
-      
-      addToFaces(newFace);
-    }    
-
-    {
-      int[] newFace = new int [4];
-      
-      newFace[0] = vT[i];
-      newFace[1] = vN1[i];
-      newFace[2] = vN2[prev_i];
-      newFace[3] = vN4[prev_i];
-      
-      addToFaces(newFace);
-    }   
-    
-    {
-      int[] newFace = new int [4];
-      
-      newFace[0] = vT[i];
-      newFace[1] = vN4[prev_i];
-      newFace[2] = vN5[prev_i];
-      newFace[3] = vN3[i];
-      
-      addToFaces(newFace);
-    }  
-  
-    {
-      int[] newFace = new int [4];
-      
-      newFace[0] = vB[i];
-      newFace[1] = vN4[i];
-      newFace[2] = vN2[i];
-      newFace[3] = vN3[i];
-      
-      addToFaces(newFace);
-    }  
-  
-    {
-      int[] newFace = new int [4];
-      
-      newFace[0] = vB[i];
-      newFace[1] = vN3[i];
-      newFace[2] = vN5[prev_i];
-      newFace[3] = vN6[i];
-      
-      addToFaces(newFace);
-    }    
-    
-    {
-      int[] newFace = new int [4];
-      
-      newFace[0] = vB[i];
-      newFace[1] = vN6[i];
-      newFace[2] = vN5[i];
-      newFace[3] = vN4[i];
-      
-      addToFaces(newFace);
-    }    
-    
-    {
-      int[] newFace = new int [4];
-      
-      newFace[0] = vB[0];
-      newFace[1] = vN6[i];
-      newFace[2] = vN5[prev_i];
-      newFace[3] = vN6[prev_i];
-      
-      addToFaces(newFace);
-    }    
-
-  }
-
-}
 
 
 void _export_objects () {
@@ -11298,7 +10747,6 @@ void add_ParametricGeometries () {
   SolidBuildings[0] = new ParametricGeometry(1, 0,0,0, 2,2,2, 10,10,10, 0);
   add_Icosahedron(0, -25,0,0, 10);
   add_QuadSphere(0, 25,0,0, 10);
-  add_QuadSphere_TES1(0, 0,0,0, 10);
   
   
   
@@ -11369,4 +10817,13 @@ void calculate_ParametricGeometries_Field () {
 }
 
 
+/*
+int[][] build_FacesFormEdges (int[] Edges,int max_degree) {
+  
+  int[][] return_Faces = {{}};
 
+
+  return return_Faces;
+
+}
+*/
