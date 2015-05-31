@@ -9806,7 +9806,7 @@ void add_QuadSphere_TES1 (int m, float cx, float cy, float cz, float r) {
       
       newFace[0] = vT[0];
       newFace[1] = vN1[prev_i];
-      newFace[2] = vN2[prev_i];
+      newFace[2] = vM1[prev_i];
       newFace[3] = vN1[i];
       
       addToFaces(newFace);
@@ -9815,15 +9815,13 @@ void add_QuadSphere_TES1 (int m, float cx, float cy, float cz, float r) {
     {
       int[] newFace = new int [4];
       
-      newFace[0] = vT[i];
-      newFace[1] = vN2[i];
-      newFace[2] = vN1[i];
-      newFace[3] = vN2[prev_i];
+      newFace[0] = vN1[i];
+      newFace[1] = vM1[prev_i];
+      newFace[2] = vN2[prev_i];
+      newFace[3] = vT[i];
       
       addToFaces(newFace);
     }
-    
-
 
 // ------------------------
 /*
