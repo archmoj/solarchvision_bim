@@ -8777,14 +8777,14 @@ void add_Object2D (String t, int m, float x, float y, float z, float s) {
   int r = int(random(2));
   if (r == 0) d = -1; 
 
-  int[] newObject2D_MAP = {d * n}; 
+  int[] TempObject2D_MAP = {d * n}; 
   
-  allObject2D_MAP = concat(allObject2D_MAP, newObject2D_MAP);
+  allObject2D_MAP = concat(allObject2D_MAP, TempObject2D_MAP);
 
   
-  float[][] newObject2D_XYZS = {{x, y, z, s}};
+  float[][] TempObject2D_XYZS = {{x, y, z, s}};
   
-  allObject2D_XYZS = (float[][]) concat(allObject2D_XYZS, newObject2D_XYZS);
+  allObject2D_XYZS = (float[][]) concat(allObject2D_XYZS, TempObject2D_XYZS);
 
 }
 
@@ -9615,49 +9615,74 @@ void add_QuadSphere (int m, float cx, float cy, float cz, float r, int Teselatio
 
 void addToFaces_afterSphericalTeselation (int m, float cx, float cy, float cz, float r, int[] f) {
 
-    float[] G;
+  int A = f[0];
+  int B = f[1];
+  int C = f[2];
+  int D = f[3];
+
+  int M, N;  // 
+  int MM, NN; // MM: mirror of M based on AB; NN: mirror of N baesd on CD
+
+  float[] G;
+  
+  { 
+    float[][] the_points = {{allVertices[D][0] - cx, allVertices[D][1] - cy, allVertices[D][2] - cz}
+                          , {allVertices[A][0] - cx, allVertices[A][1] - cy, allVertices[A][2] - cz}
+                          , {allVertices[B][0] - cx, allVertices[B][1] - cy, allVertices[B][2] - cz}};
     
-    int A, B, C, D;
-     
-    int M, N;  
+    G = fn_normalize(fn_G(the_points));
+    M = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+    
+    G[0] = (allVertices[C][0] - cx) + (allVertices[D][0] - cx) - (allVertices[M][0] - cx);
+    G[1] = (allVertices[C][1] - cy) + (allVertices[D][1] - cy) - (allVertices[M][1] - cy);
+    G[2] = (allVertices[C][2] - cz) + (allVertices[D][2] - cz) - (allVertices[M][2] - cz);
+    G = fn_normalize(G);
+    MM = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);    
+  }   
+ 
+
+  { 
+    float[][] the_points = {{allVertices[B][0] - cx, allVertices[B][1] - cy, allVertices[B][2] - cz}
+                          , {allVertices[C][0] - cx, allVertices[C][1] - cy, allVertices[C][2] - cz}
+                          , {allVertices[D][0] - cx, allVertices[D][1] - cy, allVertices[D][2] - cz}};
+    
+    G = fn_normalize(fn_G(the_points));
+    N = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+
+    
+    G[0] = (allVertices[A][0] - cx) + (allVertices[B][0] - cx) - (allVertices[N][0] - cx);
+    G[1] = (allVertices[A][1] - cy) + (allVertices[B][1] - cy) - (allVertices[N][1] - cy);
+    G[2] = (allVertices[A][2] - cz) + (allVertices[B][2] - cz) - (allVertices[N][2] - cz);
+    G = fn_normalize(G);    
+    NN = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+    
+  }
+
+
+
 
   
-    { 
-      A = f[1];
-      B = f[2];
-      C = f[3];
-      
-      float[][] the_points = {{allVertices[A][0] - cx, allVertices[A][1] - cy, allVertices[A][2] - cz}
-                            , {allVertices[B][0] - cx, allVertices[B][1] - cy, allVertices[B][2] - cz}
-                            , {allVertices[C][0] - cx, allVertices[C][1] - cy, allVertices[C][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      M = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }      
+  {
+    int[] newFace_MAT = {defaultMaterial}; 
+    
+    allFaces_MAT = concat(allFaces_MAT, newFace_MAT);
+    
+    
+    int[][] newFace = {{M, B, N, D}}; 
+    
+    allFaces = (int[][]) concat(allFaces, newFace);
+  }
 
-    { 
-      A = f[3];
-      B = f[0];
-      C = f[1];
-      
-      float[][] the_points = {{allVertices[A][0] - cx, allVertices[A][1] - cy, allVertices[A][2] - cz}
-                            , {allVertices[B][0] - cx, allVertices[B][1] - cy, allVertices[B][2] - cz}
-                            , {allVertices[C][0] - cx, allVertices[C][1] - cy, allVertices[C][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      N = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }      
-
-  
-  
-  int[] newFace_MAT = {defaultMaterial}; 
-  
-  allFaces_MAT = concat(allFaces_MAT, newFace_MAT);
-  
-  
-  int[][] newFaces = {{M, f[1], N, f[3]}}; 
-  
-  allFaces = (int[][]) concat(allFaces, newFaces);
+  {
+    int[] newFace_MAT = {defaultMaterial}; 
+    
+    allFaces_MAT = concat(allFaces_MAT, newFace_MAT);
+    
+    
+    int[][] newFace = {{MM, B, M, A}}; 
+    
+    //allFaces = (int[][]) concat(allFaces, newFace);
+  }
 
 }
 
@@ -10812,9 +10837,13 @@ void add_ParametricGeometries () {
   SolidBuildings = new ParametricGeometry[1];
   
   SolidBuildings[0] = new ParametricGeometry(1, 0,0,0, 2,2,2, 10,10,10, 0);
-  add_Icosahedron(0, -25,0,0, 10);
-  add_QuadSphere(0, 25,0,0, 10, 0);
-  add_QuadSphere(0, 0,0,0, 10, 1);
+  //add_Icosahedron(0, -25,0,0, 10);
+  //add_QuadSphere(0, 25,0,0, 10, 0);
+  
+  //add_QuadSphere(0, 0,0,0, 10, 1);
+  //add_Icosahedron(0, 0,0,0, 10);
+  
+  add_RecursiveSphere(0, 0,0,0, 10, 1);
   
   
   
@@ -10885,13 +10914,209 @@ void calculate_ParametricGeometries_Field () {
 }
 
 
-/*
-int[][] build_FacesFormEdges (int[] Edges,int max_degree) {
+float YXRatio = pow(3, 0.5); 
+
+void myLozenge(int Teselation, float Scale) {
   
-  int[][] return_Faces = {{}};
+  if (Teselation > 0) {
+ 
+    float x = 0.5 * Scale;
+    float y = x * YXRatio;
 
+    if (Teselation == 1) {
+      strokeWeight(5); 
+      stroke(255,50);
 
-  return return_Faces;
+    }
+    else {
+      strokeWeight(0);
+      stroke(63); 
+      
+    }
 
-}
+      
+    line(-x, 0, 0, -y);
+    line(-x, 0, 0, y);
+    line(x, 0, 0, y);
+    line(x, 0, 0, -y);   
+   //ellipse(0,0,2,2); 
+
+    Teselation -= 1;
+    Scale /= YXRatio;  
+
+    pushMatrix();
+    translate(0, 0);
+    rotate(0.5 * PI);    
+    myLozenge(Teselation, Scale);     
+    popMatrix();
+/*
+    pushMatrix(); 
+    translate(0.5 * -x, 0.5 * -y);
+    rotate(atan2(-x, -y));
+    myLozenge(Teselation, Scale);     
+    popMatrix();        
+
+    pushMatrix(); 
+    translate(0.5 * x, 0.5 * y);
+    rotate(atan2(x, y));
+    myLozenge(Teselation, Scale);     
+    popMatrix();   
 */
+  }
+  
+}
+
+
+
+
+
+float[][] TempObjectVertices = {{}};
+int[][] TempObjectFaces = {{}};
+
+void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Teselation) {
+  
+  TempObjectVertices = new float[1][3];  
+  TempObjectVertices[0][0] = 0;
+  TempObjectVertices[0][1] = 0;
+  TempObjectVertices[0][2] = 0;
+  
+  TempObjectFaces = new int[1][1];
+  TempObjectFaces[0][0] = 0;
+  
+
+  int[] vT = new int[6];
+  int[] vB = new int[6];
+  
+  vT[0] = addToTempObjectVertices(0,0,1);
+  vB[0] = addToTempObjectVertices(0,0,-1);
+  
+  for (int i = 1; i <= 5; i++) {
+    float t = i * 72;
+    
+    float R_in = pow(5.0, 0.5) * 2.0 / 5.0;  
+    float H_in = pow(5.0, 0.5) * 1.0 / 5.0;
+    
+    vT[i] = addToTempObjectVertices(R_in * cos_ang(t), R_in * sin_ang(t), H_in);
+    vB[i] = addToTempObjectVertices(R_in * cos_ang(t + 36), R_in * sin_ang(t + 36), -H_in);
+  } 
+
+
+  for (int i = 1; i <= 5; i++) {
+    
+    int next_i = (i % 5) + 1;
+    
+    {
+      int[] newFace = new int [4];
+      
+      newFace[0] = vT[0];
+      newFace[1] = vT[i];
+      newFace[2] = vB[i];
+      newFace[3] = vT[next_i];
+  
+      addToTempObjectFaces(newFace);
+    }
+
+  }   
+
+  for (int i = 1; i < TempObjectVertices.length; i++) {
+    TempObjectVertices[i] = fn_normalize(TempObjectVertices[i]);
+  }
+
+  for (int i = 1; i < TempObjectVertices.length; i++) {
+    TempObjectVertices[i][0] *= r;
+    TempObjectVertices[i][1] *= r;
+    TempObjectVertices[i][2] *= r;
+  }
+  
+  for (int i = 1; i < TempObjectVertices.length; i++) {
+    TempObjectVertices[i][0] += cx;
+    TempObjectVertices[i][1] += cy;
+    TempObjectVertices[i][2] += cz;
+  }
+
+
+  addTempObjectToScene();  
+}  
+
+
+int addToTempObjectVertices (float x, float y, float z) {
+
+  float[][] newVertice = {{x, y, z}}; 
+  
+  int vertice_existed = 0;
+
+  for (int i = 1; i < TempObjectVertices.length; i++) {
+
+    if (fn_dist(newVertice[0], TempObjectVertices[i]) < 0.0001) { // avoid creating duplicate vertices   
+      vertice_existed = 0;
+      break;
+    }
+  }
+ 
+  if (vertice_existed == 0) { 
+  
+    TempObjectVertices = (float[][]) concat(TempObjectVertices, newVertice);
+    
+    vertice_existed = TempObjectVertices.length - 1;
+  }
+  
+  return(vertice_existed);
+}
+
+int addToTempObjectFaces (int[] f) {
+
+  int face_existed = 0;
+  /*
+  for (int i = 1; i < TempObjectFaces.length; i++) {
+    if (f.length == TempObjectFaces[i].length) {
+      
+      for (int j = 0; j < f.length; j++) {
+      
+        for (int k = 0; k < f.length; k++) { // "k" introduces different variations that two faces could match
+          for (int dir = -1; dir <= -1; dir += 2) { // "dir" introduces different diretions that two faces could match
+            
+            int q = (j + k * dir) % f.length;
+          
+            if (fn_dist(TempObjectVertices[f[q]], TempObjectVertices[TempObjectFaces[i][j]]) < 0.0001) { // avoid creating duplicate faces
+           
+              println("A duplicate face detected :", i);
+            
+              face_existed = i;
+              break;
+            }
+            if (face_existed != 0) break; 
+          }
+          if (face_existed != 0) break; 
+        }
+        if (face_existed != 0) break; 
+      }
+      
+    }
+    if (face_existed != 0) break; 
+  }
+  */
+  if (face_existed == 0) { 
+  
+    int[][] newFace = {f}; 
+    
+    TempObjectFaces = (int[][]) concat(TempObjectFaces, newFace);
+    
+    face_existed = TempObjectFaces.length - 1;
+  }
+  
+  return(face_existed);
+  
+}
+
+void addTempObjectToScene () {
+  
+  for (int i = 1; i < TempObjectVertices.length; i++) {
+    addToVertices(TempObjectVertices[i][0], TempObjectVertices[i][1], TempObjectVertices[i][2]); 
+  }
+  
+  for (int i = 1; i < TempObjectFaces.length; i++) {
+    addToFaces(TempObjectFaces[i]); 
+  }
+    
+}
+
