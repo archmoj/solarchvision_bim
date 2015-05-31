@@ -9806,18 +9806,7 @@ void add_QuadSphere_TES1 (int m, float cx, float cy, float cz, float r) {
       
       newFace[0] = vT[0];
       newFace[1] = vN1[prev_i];
-      newFace[2] = vM1[prev_i];
-      newFace[3] = vN1[i];
-      
-      addToFaces(newFace);
-    }
-
-    {
-      int[] newFace = new int [4];
-      
-      newFace[0] = vM1[prev_i];
-      newFace[1] = vN2[prev_i];
-      newFace[2] = vT[i];
+      newFace[2] = vN2[prev_i];
       newFace[3] = vN1[i];
       
       addToFaces(newFace);
@@ -9826,10 +9815,76 @@ void add_QuadSphere_TES1 (int m, float cx, float cy, float cz, float r) {
     {
       int[] newFace = new int [4];
       
-      newFace[0] = vM1[i];
+      newFace[0] = vT[i];
+      newFace[1] = vN3[i];
+      newFace[2] = vN2[i];
+      newFace[3] = vN1[i];
+      
+      addToFaces(newFace);
+    }    
+
+    {
+      int[] newFace = new int [4];
+      
+      newFace[0] = vT[i];
       newFace[1] = vN1[i];
-      newFace[2] = vT[i];
-      newFace[3] = vN2[i];
+      newFace[2] = vN2[prev_i];
+      newFace[3] = vN4[prev_i];
+      
+      addToFaces(newFace);
+    }   
+    
+    {
+      int[] newFace = new int [4];
+      
+      newFace[0] = vT[i];
+      newFace[1] = vN4[prev_i];
+      newFace[2] = vN5[prev_i];
+      newFace[3] = vN3[i];
+      
+      addToFaces(newFace);
+    }  
+  
+    {
+      int[] newFace = new int [4];
+      
+      newFace[0] = vB[i];
+      newFace[1] = vN4[i];
+      newFace[2] = vN2[i];
+      newFace[3] = vN3[i];
+      
+      addToFaces(newFace);
+    }  
+  
+    {
+      int[] newFace = new int [4];
+      
+      newFace[0] = vB[i];
+      newFace[1] = vN3[i];
+      newFace[2] = vN5[prev_i];
+      newFace[3] = vN6[i];
+      
+      addToFaces(newFace);
+    }    
+    
+    {
+      int[] newFace = new int [4];
+      
+      newFace[0] = vB[i];
+      newFace[1] = vN6[i];
+      newFace[2] = vN5[i];
+      newFace[3] = vN4[i];
+      
+      addToFaces(newFace);
+    }    
+    
+    {
+      int[] newFace = new int [4];
+      
+      newFace[0] = vB[0];
+      newFace[1] = vN6[i];
+      newFace[2] = vN5[prev_i];
+      newFace[3] = vN6[prev_i];
       
       addToFaces(newFace);
     }    
@@ -11002,9 +11057,9 @@ void add_ParametricGeometries () {
   SolidBuildings = new ParametricGeometry[1];
   
   SolidBuildings[0] = new ParametricGeometry(1, 0,0,0, 2,2,2, 10,10,10, 0);
-  //add_Icosahedron(0, 0,0,0, 10);
-  add_QuadSphere(0, 0,0,0, 10);
-  //add_QuadSphere_TES1(0, 0,0,0, 10);
+  add_Icosahedron(0, -25,0,0, 10);
+  add_QuadSphere(0, 25,0,0, 10);
+  add_QuadSphere_TES1(0, 0,0,0, 10);
   
   
   
