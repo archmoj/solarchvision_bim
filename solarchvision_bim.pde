@@ -11004,6 +11004,7 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
   for (int i = 1; i <= 5; i++) {
     
     int next_i = (i % 5) + 1;
+    int prev_i = ((i + 5 - 2) % 5) + 1;
     
     {
       int[] newFace = new int [4];
@@ -11015,6 +11016,18 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
   
       addToTempObjectFaces(newFace);
     }
+    
+    {
+      int[] newFace = new int [4];
+      
+      newFace[3] = vB[0];
+      newFace[2] = vB[i];
+      newFace[1] = vT[i];
+      newFace[0] = vB[prev_i];
+  
+      addToTempObjectFaces(newFace);
+    }
+    
 
   }   
 
@@ -11047,8 +11060,13 @@ int addToTempObjectVertices (float x, float y, float z) {
 
   for (int i = 1; i < TempObjectVertices.length; i++) {
 
-    if (fn_dist(newVertice[0], TempObjectVertices[i]) < 0.0001) { // avoid creating duplicate vertices   
-      vertice_existed = 0;
+    float total_distances = fn_dist(newVertice[0], TempObjectVertices[i]);
+    
+    if (total_distances < 0.0001) { // avoid creating duplicate vertices
+
+      println("A duplicate vertex detected :", i); 
+    
+      vertice_existed = i;
       break;
     }
   }
@@ -11066,39 +11084,43 @@ int addToTempObjectVertices (float x, float y, float z) {
 int addToTempObjectFaces (int[] f) {
 
   int face_existed = 0;
-/*  
+  
   for (int i = 1; i < TempObjectFaces.length; i++) {
     if (f.length == TempObjectFaces[i].length) {
-      
-      for (int j = 0; j < f.length; j++) {
-      
-        for (int k = 0; k < f.length; k++) { // "k" introduces different variations that two faces could match
-        
-          float total_distances = 0;        
-        
-          for (int dir = -1; dir <= -1; dir += 2) { // "dir" introduces different diretions that two faces could match
-            
-            int q = (j + k * dir) % f.length;
+
+      for (int k = 0; k < f.length; k++) { // "k" introduces different variations that two faces could match
+
+        for (int dir = -1; dir <= 1; dir += 2) { // "dir" introduces different diretions that two faces could match
+
+          //println("\ndir=", dir);
+          
+          float total_distances = 0; 
+          
+          for (int j = 0; j < f.length; j++) {
+
+            int q = (j * dir + k + f.length) % f.length;
+
+            //print("q=", q, "; k=" );
           
             total_distances += fn_dist(TempObjectVertices[f[q]], TempObjectVertices[TempObjectFaces[i][j]]);
-           
+  
           }
-          
+
           if (total_distances < 0.0001) { // avoid creating duplicate faces
-            println("A duplicate face detected :", i, "total_distances=", total_distances);
+            println("A duplicate face detected :", i);
           
             face_existed = i;
             break;
-          }
+          }   
+
         }
 
-        if (face_existed != 0) break; 
       }
       
     }
     if (face_existed != 0) break; 
   }
-*/  
+
   if (face_existed == 0) { 
   
     int[][] newFace = {f}; 
