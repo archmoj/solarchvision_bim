@@ -9415,7 +9415,7 @@ void add_Icosahedron (int m, float cx, float cy, float cz, float r) {
 }  
   
 
-void add_QuadSphere (int m, float cx, float cy, float cz, float r) {
+void add_QuadSphere (int m, float cx, float cy, float cz, float r, int Teselation) {
 
   // i.e. Rhombic Triacontahedron
   
@@ -9456,12 +9456,9 @@ void add_QuadSphere (int m, float cx, float cy, float cz, float r) {
       float[][] the_points = {{allVertices[vT[A]][0] - cx, allVertices[vT[A]][1] - cy, allVertices[vT[A]][2] - cz}
                             , {allVertices[vT[B]][0] - cx, allVertices[vT[B]][1] - cy, allVertices[vT[B]][2] - cz}
                             , {allVertices[vT[C]][0] - cx, allVertices[vT[C]][1] - cy, allVertices[vT[C]][2] - cz}};
-      
-      G = fn_G(the_points);
-      vM1[i] = addToVertices(cx + G[0], cy + G[1], cz + G[2]);
-      
-      //G = fn_normalize(fn_G(the_points));
-      //vM1[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+
+      G = fn_normalize(fn_G(the_points));
+      vM1[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     }
     
     { 
@@ -9472,12 +9469,9 @@ void add_QuadSphere (int m, float cx, float cy, float cz, float r) {
       float[][] the_points = {{allVertices[vT[A]][0] - cx, allVertices[vT[A]][1] - cy, allVertices[vT[A]][2] - cz}
                             , {allVertices[vT[B]][0] - cx, allVertices[vT[B]][1] - cy, allVertices[vT[B]][2] - cz}
                             , {allVertices[vB[C]][0] - cx, allVertices[vB[C]][1] - cy, allVertices[vB[C]][2] - cz}};
-      
-      G = fn_G(the_points);
-      vM2[i] = addToVertices(cx + G[0], cy + G[1], cz + G[2]);
-      
-      //G = fn_normalize(fn_G(the_points));
-      //vM2[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+
+      G = fn_normalize(fn_G(the_points));
+      vM2[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     } 
     
     { 
@@ -9489,11 +9483,8 @@ void add_QuadSphere (int m, float cx, float cy, float cz, float r) {
                             , {allVertices[vB[B]][0] - cx, allVertices[vB[B]][1] - cy, allVertices[vB[B]][2] - cz}
                             , {allVertices[vT[C]][0] - cx, allVertices[vT[C]][1] - cy, allVertices[vT[C]][2] - cz}};
       
-      G = fn_G(the_points);
-      vM3[i] = addToVertices(cx + G[0], cy + G[1], cz + G[2]);
-      
-      //G = fn_normalize(fn_G(the_points));
-      //vM3[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+      G = fn_normalize(fn_G(the_points));
+      vM3[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     }    
     
     { 
@@ -9505,11 +9496,8 @@ void add_QuadSphere (int m, float cx, float cy, float cz, float r) {
                             , {allVertices[vB[B]][0] - cx, allVertices[vB[B]][1] - cy, allVertices[vB[B]][2] - cz}
                             , {allVertices[vB[C]][0] - cx, allVertices[vB[C]][1] - cy, allVertices[vB[C]][2] - cz}};
       
-      G = fn_G(the_points);
-      vM4[i] = addToVertices(cx + G[0], cy + G[1], cz + G[2]);
-      
-      //G = fn_normalize(fn_G(the_points));
-      //vM4[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+      G = fn_normalize(fn_G(the_points));
+      vM4[i] = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     }      
     
   }    
@@ -9531,7 +9519,12 @@ void add_QuadSphere (int m, float cx, float cy, float cz, float r) {
       newFace[2] = vT[i];
       newFace[3] = vM1[i];
       
-      addToFaces(newFace);
+      if (Teselation == 0) {
+        addToFaces(newFace);
+      }
+      else{
+        addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
+      }
     }
 
     {
@@ -9542,7 +9535,12 @@ void add_QuadSphere (int m, float cx, float cy, float cz, float r) {
       newFace[2] = vT[next_i];
       newFace[3] = vM1[i];
       
-      addToFaces(newFace);
+      if (Teselation == 0) {
+        addToFaces(newFace);
+      }
+      else{
+        addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
+      }
     }
     
     {
@@ -9553,7 +9551,12 @@ void add_QuadSphere (int m, float cx, float cy, float cz, float r) {
       newFace[2] = vB[i];
       newFace[3] = vM2[i];
       
-      addToFaces(newFace);
+      if (Teselation == 0) {
+        addToFaces(newFace);
+      }
+      else{
+        addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
+      }
     }    
     
     {
@@ -9564,7 +9567,12 @@ void add_QuadSphere (int m, float cx, float cy, float cz, float r) {
       newFace[2] = vB[i];
       newFace[3] = vM3[i];
       
-      addToFaces(newFace);
+      if (Teselation == 0) {
+        addToFaces(newFace);
+      }
+      else{
+        addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
+      }
     }     
 
     {
@@ -9575,7 +9583,12 @@ void add_QuadSphere (int m, float cx, float cy, float cz, float r) {
       newFace[2] = vB[next_i];
       newFace[3] = vM3[i];
       
-      addToFaces(newFace);
+      if (Teselation == 0) {
+        addToFaces(newFace);
+      }
+      else{
+        addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
+      }
     }
     
     {
@@ -9586,11 +9599,65 @@ void add_QuadSphere (int m, float cx, float cy, float cz, float r) {
       newFace[2] = vB[0];
       newFace[3] = vM4[i];
       
-      addToFaces(newFace);
+      if (Teselation == 0) {
+        addToFaces(newFace);
+      }
+      else{
+        addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
+      }
     }    
     
     if (m == -1) defaultMaterial += 1;
   }    
+
+}
+
+
+void addToFaces_afterSphericalTeselation (int m, float cx, float cy, float cz, float r, int[] f) {
+
+    float[] G;
+    
+    int A, B, C, D;
+     
+    int M, N;  
+
+  
+    { 
+      A = f[1];
+      B = f[2];
+      C = f[3];
+      
+      float[][] the_points = {{allVertices[A][0] - cx, allVertices[A][1] - cy, allVertices[A][2] - cz}
+                            , {allVertices[B][0] - cx, allVertices[B][1] - cy, allVertices[B][2] - cz}
+                            , {allVertices[C][0] - cx, allVertices[C][1] - cy, allVertices[C][2] - cz}};
+      
+      G = fn_normalize(fn_G(the_points));
+      M = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+    }      
+
+    { 
+      A = f[3];
+      B = f[0];
+      C = f[1];
+      
+      float[][] the_points = {{allVertices[A][0] - cx, allVertices[A][1] - cy, allVertices[A][2] - cz}
+                            , {allVertices[B][0] - cx, allVertices[B][1] - cy, allVertices[B][2] - cz}
+                            , {allVertices[C][0] - cx, allVertices[C][1] - cy, allVertices[C][2] - cz}};
+      
+      G = fn_normalize(fn_G(the_points));
+      N = addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+    }      
+
+  
+  
+  int[] newFace_MAT = {defaultMaterial}; 
+  
+  allFaces_MAT = concat(allFaces_MAT, newFace_MAT);
+  
+  
+  int[][] newFaces = {{M, f[1], N, f[3]}}; 
+  
+  allFaces = (int[][]) concat(allFaces, newFaces);
 
 }
 
@@ -10746,7 +10813,8 @@ void add_ParametricGeometries () {
   
   SolidBuildings[0] = new ParametricGeometry(1, 0,0,0, 2,2,2, 10,10,10, 0);
   add_Icosahedron(0, -25,0,0, 10);
-  add_QuadSphere(0, 25,0,0, 10);
+  add_QuadSphere(0, 25,0,0, 10, 0);
+  add_QuadSphere(0, 0,0,0, 10, 1);
   
   
   
