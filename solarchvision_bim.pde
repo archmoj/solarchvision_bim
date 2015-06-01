@@ -10843,7 +10843,7 @@ void add_ParametricGeometries () {
   //add_QuadSphere(0, 0,0,0, 10, 1);
   //add_Icosahedron(0, 0,0,0, 10);
   
-  add_RecursiveSphere(0, 0,0,0, 10, 2);
+  add_RecursiveSphere(0, 0,0,0, 10, 4);
   
   
   
@@ -10987,7 +10987,16 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
   
       addToTempObjectFaces(newFace);
       */
+/*
+      myLozenge(
 
+                TempObjectVertices[vT[i]][0], TempObjectVertices[vT[i]][1], TempObjectVertices[vT[i]][2],
+                TempObjectVertices[vB[i]][0], TempObjectVertices[vB[i]][1], TempObjectVertices[vB[i]][2],                    
+                TempObjectVertices[vB[0]][0], TempObjectVertices[vB[0]][1], TempObjectVertices[vB[0]][2],
+                TempObjectVertices[vB[prev_i]][0], TempObjectVertices[vB[prev_i]][1], TempObjectVertices[vB[prev_i]][2],
+            
+                Teselation);
+*/
     }
     
 
@@ -11034,7 +11043,7 @@ int addToTempObjectVertices (float x, float y, float z) {
       }
     }
   }
- 
+  
   if (vertice_existed == 0) { 
   
     TempObjectVertices = (float[][]) concat(TempObjectVertices, newVertice);
@@ -11125,6 +11134,25 @@ void myLozenge(float x1, float y1, float z1, float x2, float y2, float z2, float
       newFace[3] = addToTempObjectVertices(x4,y4,z4);
   
       addToTempObjectFaces(newFace);
+      
+      {
+        // because the vertices might be welded to the near existing verices:  
+        x1 = TempObjectVertices[newFace[0]][0];
+        y1 = TempObjectVertices[newFace[0]][1];
+        z1 = TempObjectVertices[newFace[0]][2];
+
+        x2 = TempObjectVertices[newFace[1]][0];
+        y2 = TempObjectVertices[newFace[1]][1];
+        z2 = TempObjectVertices[newFace[1]][2];
+ 
+        x3 = TempObjectVertices[newFace[2]][0];
+        y3 = TempObjectVertices[newFace[2]][1];
+        z3 = TempObjectVertices[newFace[2]][2];
+ 
+        x4 = TempObjectVertices[newFace[3]][0];
+        y4 = TempObjectVertices[newFace[3]][1];
+        z4 = TempObjectVertices[newFace[3]][2];
+      }       
     }
    
 
