@@ -11020,16 +11020,18 @@ int addToTempObjectVertices (float x, float y, float z) {
   
   int vertice_existed = 0;
 
+  float min_dist = FLOAT_undefined;
+
   for (int i = 1; i < TempObjectVertices.length; i++) {
 
-    float total_distances = fn_dist(newVertice[0], TempObjectVertices[i]);
+    float the_dist = fn_dist(newVertice[0], TempObjectVertices[i]);
     
-    if (total_distances < 0.0001) { // avoid creating duplicate vertices
+    if (the_dist < 0.1) { // avoid creating duplicate vertices - WELD is necessary for recursive spheres!
 
-      println("A duplicate vertex detected :", i); 
-    
-      vertice_existed = i;
-      break;
+      if (min_dist > the_dist) {
+        min_dist = the_dist;
+        vertice_existed = i;
+      }
     }
   }
  
