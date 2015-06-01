@@ -10843,7 +10843,7 @@ void add_ParametricGeometries () {
   //add_QuadSphere(0, 0,0,0, 10, 1);
   //add_Icosahedron(0, 0,0,0, 10);
   
-  add_RecursiveSphere(0, 0,0,0, 10, 1);
+  add_RecursiveSphere(0, 0,0,0, 10, 2);
   
   
   
@@ -10914,57 +10914,7 @@ void calculate_ParametricGeometries_Field () {
 }
 
 
-float YXRatio = pow(3, 0.5); 
 
-void myLozenge(int Teselation, float Scale) {
-  
-  if (Teselation > 0) {
- 
-    float x = 0.5 * Scale;
-    float y = x * YXRatio;
-
-    if (Teselation == 1) {
-      strokeWeight(5); 
-      stroke(255,50);
-
-    }
-    else {
-      strokeWeight(0);
-      stroke(63); 
-      
-    }
-
-      
-    line(-x, 0, 0, -y);
-    line(-x, 0, 0, y);
-    line(x, 0, 0, y);
-    line(x, 0, 0, -y);   
-   //ellipse(0,0,2,2); 
-
-    Teselation -= 1;
-    Scale /= YXRatio;  
-
-    pushMatrix();
-    translate(0, 0);
-    rotate(0.5 * PI);    
-    myLozenge(Teselation, Scale);     
-    popMatrix();
-/*
-    pushMatrix(); 
-    translate(0.5 * -x, 0.5 * -y);
-    rotate(atan2(-x, -y));
-    myLozenge(Teselation, Scale);     
-    popMatrix();        
-
-    pushMatrix(); 
-    translate(0.5 * x, 0.5 * y);
-    rotate(atan2(x, y));
-    myLozenge(Teselation, Scale);     
-    popMatrix();   
-*/
-  }
-  
-}
 
 
 
@@ -11007,17 +10957,27 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
     int prev_i = ((i + 5 - 2) % 5) + 1;
     
     {
+      /*
       int[] newFace = new int [4];
-      
+
       newFace[0] = vT[0];
       newFace[1] = vT[i];
       newFace[2] = vB[i];
       newFace[3] = vT[next_i];
   
       addToTempObjectFaces(newFace);
+      */
+      
+      myLozenge(
+                TempObjectVertices[vT[0]][0], TempObjectVertices[vT[0]][1], TempObjectVertices[vT[0]][2],
+                TempObjectVertices[vT[i]][0], TempObjectVertices[vT[i]][1], TempObjectVertices[vT[i]][2],
+                TempObjectVertices[vB[i]][0], TempObjectVertices[vB[i]][1], TempObjectVertices[vB[i]][2],
+                TempObjectVertices[vT[next_i]][0], TempObjectVertices[vT[next_i]][1], TempObjectVertices[vT[next_i]][2],
+                Teselation);
     }
     
     {
+      /*
       int[] newFace = new int [4];
       
       newFace[3] = vB[0];
@@ -11026,6 +10986,8 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
       newFace[0] = vB[prev_i];
   
       addToTempObjectFaces(newFace);
+      */
+
     }
     
 
@@ -11146,3 +11108,47 @@ void addTempObjectToScene () {
     
 }
 
+void myLozenge(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, int Teselation) {
+  
+
+  if (Teselation > 0) {
+ 
+    if (Teselation == 1) {
+
+      int[] newFace = new int [4];
+      
+      newFace[0] = addToTempObjectVertices(x1,y1,z1);    
+      newFace[1] = addToTempObjectVertices(x2,y2,z2);
+      newFace[2] = addToTempObjectVertices(x3,y3,z3);
+      newFace[3] = addToTempObjectVertices(x4,y4,z4);
+  
+      addToTempObjectFaces(newFace);
+    }
+   
+
+
+    Teselation -= 1;
+
+    float[] M = {(x1 + x2 + x4) / 3.0, (y1 + y2 + y4) / 3.0, (z1 + z2 + z4) / 3.0};
+    float[] N = {(x3 + x2 + x4) / 3.0, (y3 + y2 + y4) / 3.0, (z3 + z2 + z4) / 3.0};
+    
+    M = fn_normalize(M);
+    N = fn_normalize(N);
+
+    myLozenge(x2,y2,z2, N[0],N[1],N[2], x4,y4,z4, M[0],M[1],M[2], Teselation);     
+
+    {
+      float[] H = {x1 + x2 - M[0], y1 + y2 - M[1], z1 + z2 - M[2]};
+      H = fn_normalize(H);
+      myLozenge(x2,y2,z2, M[0],M[1],M[2], x1,y1,z1, H[0],H[1],H[2], Teselation);
+    }    
+
+    {
+      float[] H = {x3 + x4 - N[0], y3 + y4 - N[1], z3 + z4 - N[2]};
+      H = fn_normalize(H);
+      myLozenge(x4,y4,z4, N[0],N[1],N[2], x3,y3,z3, H[0],H[1],H[2], Teselation);
+    }    
+
+  }
+
+}
