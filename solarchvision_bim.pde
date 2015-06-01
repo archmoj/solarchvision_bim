@@ -9736,7 +9736,8 @@ void _update_objects () {
   
   add_ParametricGeometries();  
   
-/*  
+  
+
   SOLARCHVISION_LoadLAND(); 
 
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
@@ -9751,7 +9752,7 @@ void _update_objects () {
         , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2]
         , LAND_MESH[i][j+1][0],   LAND_MESH[i][j+1][1],   LAND_MESH[i][j+1][2]
       ); 
-      
+/*      
       if  ((i > 0) && (i < 6)) {
         float r = int(random(2));
         if (r == 1) { 
@@ -9761,10 +9762,10 @@ void _update_objects () {
           add_Object2D("TREES", 0, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2], 5 + random(10));
         }
       }
-      
+*/      
     }
   }  
-*/
+
 
 /*
   add_Mesh2(0, 0, 0, 0, 40, 40, 0);
@@ -10773,7 +10774,43 @@ void SOLARCHVISION_LoadLAND () {
     }
   }
  
+ 
+/*
+  
+  double[][] LandStations = {{52.640621, 35.697382, 76.915}, 
+                            {52.637762, 35.697199, 100.000},
+                            {52.636453, 35.69634, 108.664},
+                            {52.636439, 35.696112, 107.868},
+                            {52.638382, 35.696081, 97.348}};
+                            
+  float[][] LandStations_XYZ = new float [LandStations.length][3];
+                            
+  for (int i = 0; i < LandStations.length; i += 1) {  
+    for (int j = 0; j < 3; j += 1) {
+    
+      double _lon = LandStations[i][0];
+      double _lat = LandStations[i][1];
+    
+      double du = ((_lon - LAND_mid_lon) / 180.0) * (PI * R_earth);
+      double dv = ((_lat - LAND_mid_lat) / 180.0) * (PI * R_earth);
+      
+      LandStations_XYZ[i][0] = (float) du * cos_ang((float) _lat); 
+      LandStations_XYZ[i][1] = (float) dv; 
+      LandStations_XYZ[i][2] = (float) LandStations[i][2] - 100; // <<<<<<<<<<<<<<<<<<<<<<<<<<<
+    }
+  }
+      
+  add_Mesh5(3,
+            LandStations_XYZ[0][0], LandStations_XYZ[0][1], LandStations_XYZ[0][2], 
+            LandStations_XYZ[1][0], LandStations_XYZ[1][1], LandStations_XYZ[1][2], 
+            LandStations_XYZ[2][0], LandStations_XYZ[2][1], LandStations_XYZ[2][2], 
+            LandStations_XYZ[3][0], LandStations_XYZ[3][1], LandStations_XYZ[3][2], 
+            LandStations_XYZ[4][0], LandStations_XYZ[4][1], LandStations_XYZ[4][2]);
+
+
+*/
 }
+
 
 
 
@@ -10843,7 +10880,7 @@ void add_ParametricGeometries () {
   //add_QuadSphere(0, 0,0,0, 10, 1);
   //add_Icosahedron(0, 0,0,0, 10);
   
-  add_RecursiveSphere(0, 0,0,0, 10, 4);
+  //add_RecursiveSphere(0, 0,0,0, 10, 4);
   
   
   
