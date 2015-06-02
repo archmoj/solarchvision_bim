@@ -10886,14 +10886,12 @@ void add_ParametricGeometries () {
   
   //add_QuadSphere(0, 0,0,0, 10, 1);
   //add_Icosahedron(0, 0,0,0, 10);
+
+  add_RecursiveSphere(0, 10,10,0, 2.5, 1);
+  add_RecursiveSphere(0, 10,-10,0, 5, 2);
+  add_RecursiveSphere(0, -10,-10,0, 7.5, 3);
+  add_RecursiveSphere(0, -10,10,0, 10, 4);    
   
-  //add_RecursiveSphere(0, -20,-20,0, 2.5, 1);
-  
-  //add_RecursiveSphere(0, 20,-20,0, 5, 2);
-  
-  //add_RecursiveSphere(0, 20,20,0, 7.5, 3);
-  
-  add_RecursiveSphere(0, 0,0,0, 10, 4);
 
   
 /*  
@@ -11061,24 +11059,11 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
 
   }
 
-  for (int i = 1; i < POINTER_TempObjectVertices; i++) {
-    TempObjectVertices[i] = fn_normalize(TempObjectVertices[i]);
-  }
 
-  for (int i = 1; i < POINTER_TempObjectVertices; i++) {
-    TempObjectVertices[i][0] *= r;
-    TempObjectVertices[i][1] *= r;
-    TempObjectVertices[i][2] *= r;
-  }
-  
-  for (int i = 1; i < POINTER_TempObjectVertices; i++) {
-    TempObjectVertices[i][0] += cx;
-    TempObjectVertices[i][1] += cy;
-    TempObjectVertices[i][2] += cz;
-  }
+  println("Vertices:", POINTER_TempObjectVertices);
+  println("Faces:", POINTER_TempObjectFaces);
 
-
-  addTempObjectToScene();  
+  addTempObjectToScene(cx,cy,cz,r,r,r);  
   
 }  
 
@@ -11103,7 +11088,7 @@ int addToTempObjectVertices (float x, float y, float z) {
       }
     }
   }
-  
+
   if (vertice_existed == 0) { 
 
     if (POINTER_TempObjectVertices >= TempObjectVertices.length) {
@@ -11116,10 +11101,11 @@ int addToTempObjectVertices (float x, float y, float z) {
     }
 
     vertice_existed = POINTER_TempObjectVertices;
-    
+
     POINTER_TempObjectVertices += 1;
+
   }
-  
+
   return(vertice_existed);
 }
 
@@ -11162,7 +11148,7 @@ int addToTempObjectFaces (int[] f) {
     }
     if (face_existed != 0) break; 
   }
-
+  
   if (face_existed == 0) { 
   
     if (POINTER_TempObjectFaces >= TempObjectFaces.length) {
@@ -11186,14 +11172,20 @@ int addToTempObjectFaces (int[] f) {
   
 }
 
-void addTempObjectToScene () {
-  
-  for (int i = 1; i < POINTER_TempObjectVertices; i++) {
-    addToVertices(TempObjectVertices[i][0], TempObjectVertices[i][1], TempObjectVertices[i][2]); 
-  }
+void addTempObjectToScene (float cx, float cy, float cz, float sx, float sy, float sz) {
   
   for (int i = 1; i < POINTER_TempObjectFaces; i++) {
-    addToFaces(TempObjectFaces[i]); 
+    
+    int[] new_vert_numbers = new int [TempObjectFaces[i].length];
+    
+    for (int j = 0; j < TempObjectFaces[i].length; j++) {
+      
+      new_vert_numbers[j] = addToVertices(
+                                          TempObjectVertices[TempObjectFaces[i][j]][0] * sx + cx,
+                                          TempObjectVertices[TempObjectFaces[i][j]][1] * sy + cy,
+                                          TempObjectVertices[TempObjectFaces[i][j]][2] * sz + cz);
+    }
+    addToFaces(new_vert_numbers);    
   }
 
   POINTER_TempObjectVertices = 1;
@@ -11213,11 +11205,14 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
       newPoly[1] = addToTempObjectVertices(x2,y2,z2);
       newPoly[2] = addToTempObjectVertices(x3,y3,z3);
       newPoly[3] = addToTempObjectVertices(x4,y4,z4);
-  
-      if (BuildFaces != 0) addToTempObjectFaces(newPoly);
+      
+      if (BuildFaces != 0) {
+        addToTempObjectFaces(newPoly);
+      }
       
       {
         // because the vertices might be welded to a nearest point:  
+        
         x1 = TempObjectVertices[newPoly[0]][0];
         y1 = TempObjectVertices[newPoly[0]][1];
         z1 = TempObjectVertices[newPoly[0]][2];
@@ -11233,6 +11228,7 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
         x4 = TempObjectVertices[newPoly[3]][0];
         y4 = TempObjectVertices[newPoly[3]][1];
         z4 = TempObjectVertices[newPoly[3]][2];
+        
       }       
     }
    
