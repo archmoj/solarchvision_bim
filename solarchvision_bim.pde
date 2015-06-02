@@ -9994,6 +9994,7 @@ void _draw_objects () {
 
     if (WIN3D_WHITE_FACES == 1) {
       WIN3D_Diagrams.fill(255, 255, 255);
+      //WIN3D_Diagrams.noFill();
     }
     else {
       WIN3D_Diagrams.fill(c);
@@ -11015,7 +11016,7 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
                   TempObjectVertices[vT[0]][0], TempObjectVertices[vT[0]][1], TempObjectVertices[vT[0]][2],                  
                   Loop_Teselation, BuildFaces);
       }
-      
+/*      
       {
         myLozenge(
                   TempObjectVertices[vT[0]][0], TempObjectVertices[vT[0]][1], TempObjectVertices[vT[0]][2],
@@ -11054,7 +11055,7 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
                   
                   Loop_Teselation, BuildFaces);
       }      
-  
+*/  
     }   
 
   }
@@ -11227,6 +11228,25 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
 
     if (BuildFaces != 0) 
     {
+      
+      PVector A_vec = new PVector(x1,y1,z1);
+      PVector B_vec = new PVector(x2,y2,z2);
+      
+      PVector AxB_vec = A_vec.cross(B_vec);
+      AxB_vec.normalize();
+      
+      float distP_OAB = M[0] * AxB_vec.x + M[1] * AxB_vec.y + M[2] * AxB_vec.z;
+        
+      float[] Q = {M[0] - 2 * distP_OAB * AxB_vec.x, M[1] - 2 * distP_OAB * AxB_vec.y, M[2] - 2 * distP_OAB * AxB_vec.z};
+      
+      Q = fn_normalize(Q);
+      
+      myLozenge(x2,y2,z2, M[0],M[1],M[2], x1,y1,z1, Q[0],Q[1],Q[2], Teselation, BuildFaces);
+    }    
+
+/*
+    if (BuildFaces != 0) 
+    {
       PVector O_vec = new PVector(0,0,0);
       PVector R_vec = new PVector(0.5 * (x1 + x2), 0.5 * (y1 + y2), 0.5 * (z1 + z2));
       PVector P_vec = new PVector(M[0], M[1], M[2]);
@@ -11254,7 +11274,7 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
       
       myLozenge(x4,y4,z4, N[0],N[1],N[2], x3,y3,z3, Q[0],Q[1],Q[2], Teselation, BuildFaces);
     }    
-
+*/
   }
 
 }
