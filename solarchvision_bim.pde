@@ -8557,7 +8557,7 @@ void keyPressed () {
                   WIN3D_Y_coordinate = 0;
                   WIN3D_Z_coordinate = 0;   
    
-                  WIN3D_ZOOM_coordinate = 60;               
+                  //WIN3D_ZOOM_coordinate = 60;               
                   break;
 
         case '1' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 315; break;
@@ -10886,7 +10886,7 @@ void add_ParametricGeometries () {
   //add_QuadSphere(0, 0,0,0, 10, 1);
   //add_Icosahedron(0, 0,0,0, 10);
   
-  add_RecursiveSphere(0, 0,0,0, 10, 4);
+  add_RecursiveSphere(0, 0,0,0, 10, 3);
 
   
 /*  
@@ -11092,7 +11092,7 @@ int addToTempObjectVertices (float x, float y, float z) {
 
     float the_dist = fn_dist(newVertice[0], TempObjectVertices[i]);
     
-    if (the_dist < 0.1) { // avoid creating duplicate vertices - WELD is necessary for recursive spheres!
+    if (the_dist < 0.001) { // avoid creating duplicate vertices - WELD is necessary for recursive spheres!
 
       if (min_dist > the_dist) {
         min_dist = the_dist;
@@ -11224,7 +11224,7 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
 
     myLozenge(x2,y2,z2, N[0],N[1],N[2], x4,y4,z4, M[0],M[1],M[2], Teselation, BuildFaces);     
 
-/*
+
     if (BuildFaces != 0) 
     {
       PVector O_vec = new PVector(0,0,0);
@@ -11254,7 +11254,7 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
       
       myLozenge(x4,y4,z4, N[0],N[1],N[2], x3,y3,z3, Q[0],Q[1],Q[2], Teselation, BuildFaces);
     }    
-*/
+
   }
 
 }
