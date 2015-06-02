@@ -10972,18 +10972,13 @@ void calculate_ParametricGeometries_Field () {
 
 
 
-float[][] TempObjectVertices = {{}};
-int[][] TempObjectFaces = {{}};
+float[][] TempObjectVertices = {{0,0,0}};
+int[][] TempObjectFaces = {{0}};
+
+int POINTER_TempObjectVertices = 1;
+int POINTER_TempObjectFaces = 1;
 
 void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Teselation) {
-  
-  TempObjectVertices = new float[1][3];  
-  TempObjectVertices[0][0] = 0;
-  TempObjectVertices[0][1] = 0;
-  TempObjectVertices[0][2] = 0;
-  
-  TempObjectFaces = new int[1][1];
-  TempObjectFaces[0][0] = 0;
   
   int[] vT = new int[6];
   int[] vB = new int[6];
@@ -11066,17 +11061,17 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
 
   }
 
-  for (int i = 1; i < TempObjectVertices.length; i++) {
+  for (int i = 1; i < POINTER_TempObjectVertices; i++) {
     TempObjectVertices[i] = fn_normalize(TempObjectVertices[i]);
   }
 
-  for (int i = 1; i < TempObjectVertices.length; i++) {
+  for (int i = 1; i < POINTER_TempObjectVertices; i++) {
     TempObjectVertices[i][0] *= r;
     TempObjectVertices[i][1] *= r;
     TempObjectVertices[i][2] *= r;
   }
   
-  for (int i = 1; i < TempObjectVertices.length; i++) {
+  for (int i = 1; i < POINTER_TempObjectVertices; i++) {
     TempObjectVertices[i][0] += cx;
     TempObjectVertices[i][1] += cy;
     TempObjectVertices[i][2] += cz;
@@ -11096,7 +11091,7 @@ int addToTempObjectVertices (float x, float y, float z) {
 
   float min_dist = FLOAT_undefined;
 
-  for (int i = 1; i < TempObjectVertices.length; i++) {
+  for (int i = 1; i < POINTER_TempObjectVertices; i++) {
 
     float the_dist = fn_dist(newVertice[0], TempObjectVertices[i]);
     
@@ -11110,10 +11105,19 @@ int addToTempObjectVertices (float x, float y, float z) {
   }
   
   if (vertice_existed == 0) { 
-  
-    TempObjectVertices = (float[][]) concat(TempObjectVertices, newVertice);
+
+    if (POINTER_TempObjectVertices >= TempObjectVertices.length) {
+      TempObjectVertices = (float[][]) concat(TempObjectVertices, newVertice);
+    }
+    else{
+      TempObjectVertices[POINTER_TempObjectVertices][0] = x;
+      TempObjectVertices[POINTER_TempObjectVertices][1] = y;
+      TempObjectVertices[POINTER_TempObjectVertices][2] = z;
+    }
+
+    vertice_existed = POINTER_TempObjectVertices;
     
-    vertice_existed = TempObjectVertices.length - 1;
+    POINTER_TempObjectVertices += 1;
   }
   
   return(vertice_existed);
@@ -11123,7 +11127,7 @@ int addToTempObjectFaces (int[] f) {
 
   int face_existed = 0;
   
-  for (int i = 1; i < TempObjectFaces.length; i++) {
+  for (int i = 1; i < POINTER_TempObjectFaces; i++) {
     if (f.length == TempObjectFaces[i].length) {
 
       for (int k = 0; k < f.length; k++) { // "k" introduces different variations that two faces could match
@@ -11161,11 +11165,21 @@ int addToTempObjectFaces (int[] f) {
 
   if (face_existed == 0) { 
   
-    int[][] newFace = {f}; 
+    if (POINTER_TempObjectFaces >= TempObjectFaces.length) {
+      int[][] newFace = {f}; 
     
-    TempObjectFaces = (int[][]) concat(TempObjectFaces, newFace);
+      TempObjectFaces = (int[][]) concat(TempObjectFaces, newFace);
+    }
+    else{
+      for (int i = 0; i < f.length; i++) {
+        TempObjectFaces[POINTER_TempObjectFaces][i] = f[i];
+      }
+    }
+
+    face_existed = POINTER_TempObjectFaces;
     
-    face_existed = TempObjectFaces.length - 1;
+    POINTER_TempObjectFaces += 1;    
+    
   }
   
   return(face_existed);
@@ -11174,42 +11188,16 @@ int addToTempObjectFaces (int[] f) {
 
 void addTempObjectToScene () {
   
-  for (int i = 1; i < TempObjectVertices.length; i++) {
+  for (int i = 1; i < POINTER_TempObjectVertices; i++) {
     addToVertices(TempObjectVertices[i][0], TempObjectVertices[i][1], TempObjectVertices[i][2]); 
   }
   
-  for (int i = 1; i < TempObjectFaces.length; i++) {
+  for (int i = 1; i < POINTER_TempObjectFaces; i++) {
     addToFaces(TempObjectFaces[i]); 
   }
-/*
-  TempObjectVertices = null;  
-  TempObjectFaces = null;
-  
-  TempObjectVertices = new float[1][3];  
-  TempObjectVertices[0][0] = 0;
-  TempObjectVertices[0][1] = 0;
-  TempObjectVertices[0][2] = 0;
-  
-  TempObjectFaces = new int[1][1];
-  TempObjectFaces[0][0] = 0;
-*/
 
-  //TempObjectVertices = (float[][]) subset(TempObjectVertices, 0, 1);   
-  //TempObjectFaces = (int[][]) subset(TempObjectFaces, 0, 1);
-/*
-  println("V_Before:", TempObjectVertices.length);
-  while (TempObjectVertices.length > 1) {
-    TempObjectVertices = (float[][]) shorten(TempObjectVertices);
-  }
-  println("V_After:", TempObjectVertices.length);
-  
-
-  println("F_Before:", TempObjectFaces.length);
-  while (TempObjectFaces.length > 1) {
-    TempObjectFaces = (int[][]) shorten(TempObjectFaces);
-  }  
-  println("F_After:", TempObjectFaces.length);  
-*/
+  POINTER_TempObjectVertices = 1;
+  POINTER_TempObjectFaces = 1;
 }
 
 void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, int Teselation, int BuildFaces) {
