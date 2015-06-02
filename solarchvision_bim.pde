@@ -10886,7 +10886,7 @@ void add_ParametricGeometries () {
   //add_QuadSphere(0, 0,0,0, 10, 1);
   //add_Icosahedron(0, 0,0,0, 10);
   
-  add_RecursiveSphere(0, 0,0,0, 10, 3);
+  add_RecursiveSphere(0, 0,0,0, 10, 4);
 
   
 /*  
@@ -11009,15 +11009,32 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
       
       {
         myLozenge(
+                  TempObjectVertices[vT[prev_i]][0], TempObjectVertices[vT[prev_i]][1], TempObjectVertices[vT[prev_i]][2],
+                  TempObjectVertices[vT[i]][0], TempObjectVertices[vT[i]][1], TempObjectVertices[vT[i]][2],
+                  TempObjectVertices[vT[next_i]][0], TempObjectVertices[vT[next_i]][1], TempObjectVertices[vT[next_i]][2],
+                  TempObjectVertices[vT[0]][0], TempObjectVertices[vT[0]][1], TempObjectVertices[vT[0]][2],                  
+                  Loop_Teselation, BuildFaces);
+      }
+      
+      {
+        myLozenge(
                   TempObjectVertices[vT[0]][0], TempObjectVertices[vT[0]][1], TempObjectVertices[vT[0]][2],
                   TempObjectVertices[vT[i]][0], TempObjectVertices[vT[i]][1], TempObjectVertices[vT[i]][2],
                   TempObjectVertices[vB[i]][0], TempObjectVertices[vB[i]][1], TempObjectVertices[vB[i]][2],
                   TempObjectVertices[vT[next_i]][0], TempObjectVertices[vT[next_i]][1], TempObjectVertices[vT[next_i]][2],
                   Loop_Teselation, BuildFaces);
-      }
+      }      
+
+      {
+        myLozenge(
+                  TempObjectVertices[vB[i]][0], TempObjectVertices[vB[i]][1], TempObjectVertices[vB[i]][2],
+                  TempObjectVertices[vT[i]][0], TempObjectVertices[vT[i]][1], TempObjectVertices[vT[i]][2],
+                  TempObjectVertices[vT[prev_i]][0], TempObjectVertices[vT[prev_i]][1], TempObjectVertices[vT[prev_i]][2],
+                  TempObjectVertices[vB[prev_i]][0], TempObjectVertices[vB[prev_i]][1], TempObjectVertices[vB[prev_i]][2],
+                  Loop_Teselation, BuildFaces);
+      }     
       
       {
-/*  
         myLozenge(
   
                   TempObjectVertices[vT[i]][0], TempObjectVertices[vT[i]][1], TempObjectVertices[vT[i]][2],
@@ -11026,9 +11043,17 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
                   TempObjectVertices[vB[prev_i]][0], TempObjectVertices[vB[prev_i]][1], TempObjectVertices[vB[prev_i]][2],
               
                   Loop_Teselation, BuildFaces);
-*/  
       }
-      
+
+      {
+        myLozenge(
+                  TempObjectVertices[vB[prev_i]][0], TempObjectVertices[vB[prev_i]][1], TempObjectVertices[vB[prev_i]][2],
+                  TempObjectVertices[vB[0]][0], TempObjectVertices[vB[0]][1], TempObjectVertices[vB[0]][2],
+                  TempObjectVertices[vB[next_i]][0], TempObjectVertices[vB[next_i]][1], TempObjectVertices[vB[next_i]][2],
+                  TempObjectVertices[vB[i]][0], TempObjectVertices[vB[i]][1], TempObjectVertices[vB[i]][2],
+                  
+                  Loop_Teselation, BuildFaces);
+      }      
   
     }   
 
@@ -11199,6 +11224,8 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
 
     myLozenge(x2,y2,z2, N[0],N[1],N[2], x4,y4,z4, M[0],M[1],M[2], Teselation, BuildFaces);     
 
+/*
+    if (BuildFaces != 0) 
     {
       PVector O_vec = new PVector(0,0,0);
       PVector R_vec = new PVector(0.5 * (x1 + x2), 0.5 * (y1 + y2), 0.5 * (z1 + z2));
@@ -11213,6 +11240,7 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
       myLozenge(x2,y2,z2, M[0],M[1],M[2], x1,y1,z1, Q[0],Q[1],Q[2], Teselation, BuildFaces);
     }    
 
+    if (BuildFaces != 0) 
     {
       PVector O_vec = new PVector(0,0,0);
       PVector R_vec = new PVector(0.5 * (x3 + x4), 0.5 * (y3 + y4), 0.5 * (z3 + z4));
@@ -11226,7 +11254,7 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
       
       myLozenge(x4,y4,z4, N[0],N[1],N[2], x3,y3,z3, Q[0],Q[1],Q[2], Teselation, BuildFaces);
     }    
-
+*/
   }
 
 }
