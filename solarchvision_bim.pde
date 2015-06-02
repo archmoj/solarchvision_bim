@@ -8771,7 +8771,7 @@ void add_Object2D (String t, int m, float x, float y, float z, float s) {
     else if (t.equals("TREES")) n = int(random(1 + Object2D_Filenames_PEOPLE.length, 1 + Object2D_Filenames_PEOPLE.length + Object2D_Filenames_TREES.length));
   }
 
-  println(t, n);
+  //println(t, n);
   
   int d = 1; 
   int r = int(random(2));
@@ -10887,6 +10887,12 @@ void add_ParametricGeometries () {
   //add_QuadSphere(0, 0,0,0, 10, 1);
   //add_Icosahedron(0, 0,0,0, 10);
   
+  //add_RecursiveSphere(0, -20,-20,0, 2.5, 1);
+  
+  //add_RecursiveSphere(0, 20,-20,0, 5, 2);
+  
+  //add_RecursiveSphere(0, 20,20,0, 7.5, 3);
+  
   add_RecursiveSphere(0, 0,0,0, 10, 4);
 
   
@@ -11078,6 +11084,7 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
 
 
   addTempObjectToScene();  
+  
 }  
 
 
@@ -11174,7 +11181,35 @@ void addTempObjectToScene () {
   for (int i = 1; i < TempObjectFaces.length; i++) {
     addToFaces(TempObjectFaces[i]); 
   }
-    
+/*
+  TempObjectVertices = null;  
+  TempObjectFaces = null;
+  
+  TempObjectVertices = new float[1][3];  
+  TempObjectVertices[0][0] = 0;
+  TempObjectVertices[0][1] = 0;
+  TempObjectVertices[0][2] = 0;
+  
+  TempObjectFaces = new int[1][1];
+  TempObjectFaces[0][0] = 0;
+*/
+
+  //TempObjectVertices = (float[][]) subset(TempObjectVertices, 0, 1);   
+  //TempObjectFaces = (int[][]) subset(TempObjectFaces, 0, 1);
+/*
+  println("V_Before:", TempObjectVertices.length);
+  while (TempObjectVertices.length > 1) {
+    TempObjectVertices = (float[][]) shorten(TempObjectVertices);
+  }
+  println("V_After:", TempObjectVertices.length);
+  
+
+  println("F_Before:", TempObjectFaces.length);
+  while (TempObjectFaces.length > 1) {
+    TempObjectFaces = (int[][]) shorten(TempObjectFaces);
+  }  
+  println("F_After:", TempObjectFaces.length);  
+*/
 }
 
 void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, int Teselation, int BuildFaces) {
