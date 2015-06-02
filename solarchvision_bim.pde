@@ -9936,7 +9936,7 @@ void _update_objects () {
 
 */
 
-
+/*
   for (int i = 0; i < 100; i++) {
     
     float t = random(360) * PI / 180.0;
@@ -9955,7 +9955,7 @@ void _update_objects () {
       add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(10));
     }
   }
-
+*/
 
 
 
@@ -10470,7 +10470,7 @@ void _draw_objects () {
   }  
 
 
-
+/*
   WIN3D_Diagrams.beginShape();
   WIN3D_Diagrams.texture(Field_Image);    
   WIN3D_Diagrams.stroke(255, 255, 255, 0);
@@ -10479,9 +10479,8 @@ void _draw_objects () {
   WIN3D_Diagrams.vertex(100 * objects_scale, -100 * objects_scale, Field_Elevation * objects_scale, Field_RES1, Field_RES2);
   WIN3D_Diagrams.vertex(100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, Field_RES1, 0);
   WIN3D_Diagrams.vertex(-100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, 0, 0);
-  
   WIN3D_Diagrams.endShape(CLOSE);
-
+*/
 }
 
 
@@ -10877,7 +10876,7 @@ ParametricGeometry[] SolidBuildings;
 
 void add_ParametricGeometries () {
 
-/*  
+ 
   SolidBuildings = new ParametricGeometry[1];
   
   SolidBuildings[0] = new ParametricGeometry(1, 0,0,0, 2,2,2, 10,10,10, 0);
@@ -10887,10 +10886,10 @@ void add_ParametricGeometries () {
   //add_QuadSphere(0, 0,0,0, 10, 1);
   //add_Icosahedron(0, 0,0,0, 10);
   
-  //add_RecursiveSphere(0, 0,0,0, 10, 4);
-*/  
+  add_RecursiveSphere(0, 0,0,0, 10, 3);
+
   
-  
+/*  
 
   SolidBuildings = new ParametricGeometry[6];
   
@@ -10912,6 +10911,8 @@ void add_ParametricGeometries () {
   SolidBuildings[5] = new ParametricGeometry(1, 15,15,30, 2,2,8, 30,30,10, 0);
   add_PolygonExtrude_CENTER(0, 15,15,30, 15, 10, 16);
 
+
+*/
  
   calculate_ParametricGeometries_Field();
 
@@ -11163,7 +11164,7 @@ void addTempObjectToScene () {
     
 }
 
-void myLozenge(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, int Teselation) {
+void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, int Teselation) {
   
 
   if (Teselation > 0) {
@@ -11180,7 +11181,7 @@ void myLozenge(float x1, float y1, float z1, float x2, float y2, float z2, float
       addToTempObjectFaces(newFace);
       
       {
-        // because the vertices might be welded to the near existing verices:  
+        // because the vertices might be welded to a nearest point:  
         x1 = TempObjectVertices[newFace[0]][0];
         y1 = TempObjectVertices[newFace[0]][1];
         z1 = TempObjectVertices[newFace[0]][2];
@@ -11212,17 +11213,46 @@ void myLozenge(float x1, float y1, float z1, float x2, float y2, float z2, float
     myLozenge(x2,y2,z2, N[0],N[1],N[2], x4,y4,z4, M[0],M[1],M[2], Teselation);     
 
     {
-      float[] H = {x1 + x2 - M[0], y1 + y2 - M[1], z1 + z2 - M[2]};
-      H = fn_normalize(H);
-      myLozenge(x2,y2,z2, M[0],M[1],M[2], x1,y1,z1, H[0],H[1],H[2], Teselation);
+      PVector O_vec = new PVector(0,0,0);
+      PVector R_vec = new PVector(0.5 * (x1 + x2), 0.5 * (y1 + y2), 0.5 * (z1 + z2));
+      PVector P_vec = new PVector(M[0], M[1], M[2]);
+      
+      PVector H_vec = fn_perpendicular(P_vec, O_vec, R_vec);
+      
+      float[] Q = {2 * H_vec.x - P_vec.x, 2 * H_vec.y - P_vec.y, 2 * H_vec.z - P_vec.z};
+      
+      Q = fn_normalize(Q);
+      
+      myLozenge(x2,y2,z2, M[0],M[1],M[2], x1,y1,z1, Q[0],Q[1],Q[2], Teselation);
     }    
 
     {
-      float[] H = {x3 + x4 - N[0], y3 + y4 - N[1], z3 + z4 - N[2]};
-      H = fn_normalize(H);
-      myLozenge(x4,y4,z4, N[0],N[1],N[2], x3,y3,z3, H[0],H[1],H[2], Teselation);
+      PVector O_vec = new PVector(0,0,0);
+      PVector R_vec = new PVector(0.5 * (x3 + x4), 0.5 * (y3 + y4), 0.5 * (z3 + z4));
+      PVector P_vec = new PVector(N[0], N[1], N[2]);
+      
+      PVector H_vec = fn_perpendicular(P_vec, O_vec, R_vec);
+      
+      float[] Q = {2 * H_vec.x - P_vec.x, 2 * H_vec.y - P_vec.y, 2 * H_vec.z - P_vec.z};
+      
+      Q = fn_normalize(Q);      
+      
+      myLozenge(x4,y4,z4, N[0],N[1],N[2], x3,y3,z3, Q[0],Q[1],Q[2], Teselation);
     }    
 
   }
 
 }
+
+PVector fn_perpendicular (PVector M, PVector A, PVector B) {
+
+  PVector AB = PVector.sub(B, A);
+  PVector AM = PVector.sub(M, A);
+  PVector HM = PVector.sub(AM, PVector.mult(AB, PVector.dot(AM, AB) / AB.magSq()));
+  
+  PVector H = PVector.sub(M, HM);
+  
+  return H;
+}
+
+
