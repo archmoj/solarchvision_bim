@@ -10437,7 +10437,7 @@ void _draw_objects () {
   CAM_y = py;
   CAM_z = pz;   
   
-  println(CAM_x, CAM_y, CAM_z);
+  //println(CAM_x, CAM_y, CAM_z);
 
   for (int i = 1; i < allObject2D_XYZS.length; i++) {
     
@@ -10886,7 +10886,7 @@ void add_ParametricGeometries () {
   //add_QuadSphere(0, 0,0,0, 10, 1);
   //add_Icosahedron(0, 0,0,0, 10);
   
-  add_RecursiveSphere(0, 0,0,0, 10, 3);
+  add_RecursiveSphere(0, 0,0,0, 10, 4);
 
   
 /*  
