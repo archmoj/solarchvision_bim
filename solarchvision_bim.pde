@@ -11125,7 +11125,7 @@ int addToTempObjectFaces (int[] f) {
           }
 
           if (total_distances < 0.0001) { // avoid creating duplicate faces
-            println("A duplicate face detected :", i);
+            //println("A duplicate face detected :", i);
           
             face_existed = i;
             break;
