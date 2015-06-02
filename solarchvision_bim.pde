@@ -9936,7 +9936,7 @@ void _update_objects () {
 
 */
 
-/*
+
   for (int i = 0; i < 100; i++) {
     
     float t = random(360) * PI / 180.0;
@@ -9955,7 +9955,7 @@ void _update_objects () {
       add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(10));
     }
   }
-*/
+
 
 
 
@@ -10886,7 +10886,7 @@ void add_ParametricGeometries () {
   //add_QuadSphere(0, 0,0,0, 10, 1);
   //add_Icosahedron(0, 0,0,0, 10);
   
-  add_RecursiveSphere(0, 0,0,0, 10, 4);
+  add_RecursiveSphere(0, 0,0,0, 10, 3);
 
   
 /*  
@@ -10978,7 +10978,6 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
   TempObjectFaces = new int[1][1];
   TempObjectFaces[0][0] = 0;
   
-
   int[] vT = new int[6];
   int[] vB = new int[6];
   
@@ -10996,56 +10995,44 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
   } 
 
 
-  for (int i = 1; i <= 5; i++) {
-    
-    int next_i = (i % 5) + 1;
-    int prev_i = ((i + 5 - 2) % 5) + 1;
-    
-    {
-      /*
-      int[] newFace = new int [4];
+  int BuildFaces = 0;
 
-      newFace[0] = vT[0];
-      newFace[1] = vT[i];
-      newFace[2] = vB[i];
-      newFace[3] = vT[next_i];
-  
-      addToTempObjectFaces(newFace);
-      */
+  for (int Loop_Teselation = 1; Loop_Teselation <= Teselation; Loop_Teselation++) { // added so that the tree generated from the bottom to the top!
+
+    if (Loop_Teselation == Teselation) BuildFaces = 1;
+    else BuildFaces = 0;
+
+    for (int i = 1; i <= 5; i++) {
       
-      myLozenge(
-                TempObjectVertices[vT[0]][0], TempObjectVertices[vT[0]][1], TempObjectVertices[vT[0]][2],
-                TempObjectVertices[vT[i]][0], TempObjectVertices[vT[i]][1], TempObjectVertices[vT[i]][2],
-                TempObjectVertices[vB[i]][0], TempObjectVertices[vB[i]][1], TempObjectVertices[vB[i]][2],
-                TempObjectVertices[vT[next_i]][0], TempObjectVertices[vT[next_i]][1], TempObjectVertices[vT[next_i]][2],
-                Teselation);
-    }
-    
-    {
-      /*
-      int[] newFace = new int [4];
+      int next_i = (i % 5) + 1;
+      int prev_i = ((i + 5 - 2) % 5) + 1;
       
-      newFace[3] = vB[0];
-      newFace[2] = vB[i];
-      newFace[1] = vT[i];
-      newFace[0] = vB[prev_i];
+      {
+        myLozenge(
+                  TempObjectVertices[vT[0]][0], TempObjectVertices[vT[0]][1], TempObjectVertices[vT[0]][2],
+                  TempObjectVertices[vT[i]][0], TempObjectVertices[vT[i]][1], TempObjectVertices[vT[i]][2],
+                  TempObjectVertices[vB[i]][0], TempObjectVertices[vB[i]][1], TempObjectVertices[vB[i]][2],
+                  TempObjectVertices[vT[next_i]][0], TempObjectVertices[vT[next_i]][1], TempObjectVertices[vT[next_i]][2],
+                  Loop_Teselation, BuildFaces);
+      }
+      
+      {
+/*  
+        myLozenge(
   
-      addToTempObjectFaces(newFace);
-      */
-/*
-      myLozenge(
+                  TempObjectVertices[vT[i]][0], TempObjectVertices[vT[i]][1], TempObjectVertices[vT[i]][2],
+                  TempObjectVertices[vB[i]][0], TempObjectVertices[vB[i]][1], TempObjectVertices[vB[i]][2],                    
+                  TempObjectVertices[vB[0]][0], TempObjectVertices[vB[0]][1], TempObjectVertices[vB[0]][2],
+                  TempObjectVertices[vB[prev_i]][0], TempObjectVertices[vB[prev_i]][1], TempObjectVertices[vB[prev_i]][2],
+              
+                  Loop_Teselation, BuildFaces);
+*/  
+      }
+      
+  
+    }   
 
-                TempObjectVertices[vT[i]][0], TempObjectVertices[vT[i]][1], TempObjectVertices[vT[i]][2],
-                TempObjectVertices[vB[i]][0], TempObjectVertices[vB[i]][1], TempObjectVertices[vB[i]][2],                    
-                TempObjectVertices[vB[0]][0], TempObjectVertices[vB[0]][1], TempObjectVertices[vB[0]][2],
-                TempObjectVertices[vB[prev_i]][0], TempObjectVertices[vB[prev_i]][1], TempObjectVertices[vB[prev_i]][2],
-            
-                Teselation);
-*/
-    }
-    
-
-  }   
+  }
 
   for (int i = 1; i < TempObjectVertices.length; i++) {
     TempObjectVertices[i] = fn_normalize(TempObjectVertices[i]);
@@ -11164,39 +11151,39 @@ void addTempObjectToScene () {
     
 }
 
-void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, int Teselation) {
+void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, int Teselation, int BuildFaces) {
   
 
   if (Teselation > 0) {
  
     if (Teselation == 1) {
 
-      int[] newFace = new int [4];
+      int[] newPoly = new int [4];
       
-      newFace[0] = addToTempObjectVertices(x1,y1,z1);    
-      newFace[1] = addToTempObjectVertices(x2,y2,z2);
-      newFace[2] = addToTempObjectVertices(x3,y3,z3);
-      newFace[3] = addToTempObjectVertices(x4,y4,z4);
+      newPoly[0] = addToTempObjectVertices(x1,y1,z1);    
+      newPoly[1] = addToTempObjectVertices(x2,y2,z2);
+      newPoly[2] = addToTempObjectVertices(x3,y3,z3);
+      newPoly[3] = addToTempObjectVertices(x4,y4,z4);
   
-      addToTempObjectFaces(newFace);
+      if (BuildFaces != 0) addToTempObjectFaces(newPoly);
       
       {
         // because the vertices might be welded to a nearest point:  
-        x1 = TempObjectVertices[newFace[0]][0];
-        y1 = TempObjectVertices[newFace[0]][1];
-        z1 = TempObjectVertices[newFace[0]][2];
+        x1 = TempObjectVertices[newPoly[0]][0];
+        y1 = TempObjectVertices[newPoly[0]][1];
+        z1 = TempObjectVertices[newPoly[0]][2];
 
-        x2 = TempObjectVertices[newFace[1]][0];
-        y2 = TempObjectVertices[newFace[1]][1];
-        z2 = TempObjectVertices[newFace[1]][2];
+        x2 = TempObjectVertices[newPoly[1]][0];
+        y2 = TempObjectVertices[newPoly[1]][1];
+        z2 = TempObjectVertices[newPoly[1]][2];
  
-        x3 = TempObjectVertices[newFace[2]][0];
-        y3 = TempObjectVertices[newFace[2]][1];
-        z3 = TempObjectVertices[newFace[2]][2];
+        x3 = TempObjectVertices[newPoly[2]][0];
+        y3 = TempObjectVertices[newPoly[2]][1];
+        z3 = TempObjectVertices[newPoly[2]][2];
  
-        x4 = TempObjectVertices[newFace[3]][0];
-        y4 = TempObjectVertices[newFace[3]][1];
-        z4 = TempObjectVertices[newFace[3]][2];
+        x4 = TempObjectVertices[newPoly[3]][0];
+        y4 = TempObjectVertices[newPoly[3]][1];
+        z4 = TempObjectVertices[newPoly[3]][2];
       }       
     }
    
@@ -11210,7 +11197,7 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
     M = fn_normalize(M);
     N = fn_normalize(N);
 
-    myLozenge(x2,y2,z2, N[0],N[1],N[2], x4,y4,z4, M[0],M[1],M[2], Teselation);     
+    myLozenge(x2,y2,z2, N[0],N[1],N[2], x4,y4,z4, M[0],M[1],M[2], Teselation, BuildFaces);     
 
     {
       PVector O_vec = new PVector(0,0,0);
@@ -11223,7 +11210,7 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
       
       Q = fn_normalize(Q);
       
-      myLozenge(x2,y2,z2, M[0],M[1],M[2], x1,y1,z1, Q[0],Q[1],Q[2], Teselation);
+      myLozenge(x2,y2,z2, M[0],M[1],M[2], x1,y1,z1, Q[0],Q[1],Q[2], Teselation, BuildFaces);
     }    
 
     {
@@ -11237,7 +11224,7 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
       
       Q = fn_normalize(Q);      
       
-      myLozenge(x4,y4,z4, N[0],N[1],N[2], x3,y3,z3, Q[0],Q[1],Q[2], Teselation);
+      myLozenge(x4,y4,z4, N[0],N[1],N[2], x3,y3,z3, Q[0],Q[1],Q[2], Teselation, BuildFaces);
     }    
 
   }
