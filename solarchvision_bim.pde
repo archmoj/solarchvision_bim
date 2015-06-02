@@ -10887,7 +10887,7 @@ void add_ParametricGeometries () {
   //add_QuadSphere(0, 0,0,0, 10, 1);
   //add_Icosahedron(0, 0,0,0, 10);
   
-  add_RecursiveSphere(0, 0,0,0, 10, 3);
+  add_RecursiveSphere(0, 0,0,0, 10, 4);
 
   
 /*  
@@ -11016,7 +11016,7 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
                   TempObjectVertices[vT[0]][0], TempObjectVertices[vT[0]][1], TempObjectVertices[vT[0]][2],                  
                   Loop_Teselation, BuildFaces);
       }
-/*      
+      
       {
         myLozenge(
                   TempObjectVertices[vT[0]][0], TempObjectVertices[vT[0]][1], TempObjectVertices[vT[0]][2],
@@ -11055,7 +11055,7 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
                   
                   Loop_Teselation, BuildFaces);
       }      
-*/  
+  
     }   
 
   }
@@ -11093,7 +11093,7 @@ int addToTempObjectVertices (float x, float y, float z) {
 
     float the_dist = fn_dist(newVertice[0], TempObjectVertices[i]);
     
-    if (the_dist < 0.001) { // avoid creating duplicate vertices - WELD is necessary for recursive spheres!
+    if (the_dist < 0.1) { // avoid creating duplicate vertices - WELD is necessary for recursive spheres!
 
       if (min_dist > the_dist) {
         min_dist = the_dist;
@@ -11229,52 +11229,45 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
     if (BuildFaces != 0) 
     {
       
+      float[] P = M;
+      
       PVector A_vec = new PVector(x1,y1,z1);
       PVector B_vec = new PVector(x2,y2,z2);
       
       PVector AxB_vec = A_vec.cross(B_vec);
       AxB_vec.normalize();
       
-      float distP_OAB = M[0] * AxB_vec.x + M[1] * AxB_vec.y + M[2] * AxB_vec.z;
+      float distP_OAB = P[0] * AxB_vec.x + P[1] * AxB_vec.y + P[2] * AxB_vec.z;
         
-      float[] Q = {M[0] - 2 * distP_OAB * AxB_vec.x, M[1] - 2 * distP_OAB * AxB_vec.y, M[2] - 2 * distP_OAB * AxB_vec.z};
+      float[] Q = {P[0] - 2 * distP_OAB * AxB_vec.x, P[1] - 2 * distP_OAB * AxB_vec.y, P[2] - 2 * distP_OAB * AxB_vec.z};
       
       Q = fn_normalize(Q);
       
-      myLozenge(x2,y2,z2, M[0],M[1],M[2], x1,y1,z1, Q[0],Q[1],Q[2], Teselation, BuildFaces);
-    }    
+      myLozenge(x2,y2,z2, P[0],P[1],P[2], x1,y1,z1, Q[0],Q[1],Q[2], Teselation, BuildFaces);
+    }
 
-/*
+
     if (BuildFaces != 0) 
     {
-      PVector O_vec = new PVector(0,0,0);
-      PVector R_vec = new PVector(0.5 * (x1 + x2), 0.5 * (y1 + y2), 0.5 * (z1 + z2));
-      PVector P_vec = new PVector(M[0], M[1], M[2]);
       
-      PVector H_vec = fn_perpendicular(P_vec, O_vec, R_vec);
+      float[] P = N;
       
-      float[] Q = {2 * H_vec.x - P_vec.x, 2 * H_vec.y - P_vec.y, 2 * H_vec.z - P_vec.z};
+      PVector A_vec = new PVector(x3,y3,z3);
+      PVector B_vec = new PVector(x4,y4,z4);
+      
+      PVector AxB_vec = A_vec.cross(B_vec);
+      AxB_vec.normalize();
+      
+      float distP_OAB = P[0] * AxB_vec.x + P[1] * AxB_vec.y + P[2] * AxB_vec.z;
+        
+      float[] Q = {P[0] - 2 * distP_OAB * AxB_vec.x, P[1] - 2 * distP_OAB * AxB_vec.y, P[2] - 2 * distP_OAB * AxB_vec.z};
       
       Q = fn_normalize(Q);
       
-      myLozenge(x2,y2,z2, M[0],M[1],M[2], x1,y1,z1, Q[0],Q[1],Q[2], Teselation, BuildFaces);
-    }    
+      myLozenge(x4,y4,z4, P[0],P[1],P[2], x3,y3,z3, Q[0],Q[1],Q[2], Teselation, BuildFaces);
+    }
 
-    if (BuildFaces != 0) 
-    {
-      PVector O_vec = new PVector(0,0,0);
-      PVector R_vec = new PVector(0.5 * (x3 + x4), 0.5 * (y3 + y4), 0.5 * (z3 + z4));
-      PVector P_vec = new PVector(N[0], N[1], N[2]);
-      
-      PVector H_vec = fn_perpendicular(P_vec, O_vec, R_vec);
-      
-      float[] Q = {2 * H_vec.x - P_vec.x, 2 * H_vec.y - P_vec.y, 2 * H_vec.z - P_vec.z};
-      
-      Q = fn_normalize(Q);      
-      
-      myLozenge(x4,y4,z4, N[0],N[1],N[2], x3,y3,z3, Q[0],Q[1],Q[2], Teselation, BuildFaces);
-    }    
-*/
+
   }
 
 }
