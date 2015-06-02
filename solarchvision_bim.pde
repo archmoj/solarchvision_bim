@@ -9737,7 +9737,7 @@ void _update_objects () {
   add_ParametricGeometries();  
   
   
-
+/*
   SOLARCHVISION_LoadLAND(); 
 
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
@@ -9751,8 +9751,9 @@ void _update_objects () {
         , LAND_MESH[i+1][j][0],   LAND_MESH[i+1][j][1],   LAND_MESH[i+1][j][2]
         , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2]
         , LAND_MESH[i][j+1][0],   LAND_MESH[i][j+1][1],   LAND_MESH[i][j+1][2]
-      ); 
-/*      
+      );
+      
+    
       if  ((i > 0) && (i < 6)) {
         float r = int(random(2));
         if (r == 1) { 
@@ -9761,10 +9762,15 @@ void _update_objects () {
         else {
           add_Object2D("TREES", 0, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2], 5 + random(10));
         }
+             
+        
       }
-*/      
+ 
+           
     }
   }  
+*/
+
 
 
 /*
@@ -9930,7 +9936,7 @@ void _update_objects () {
 
 */
 
-/*
+
   for (int i = 0; i < 100; i++) {
     
     float t = random(360) * PI / 180.0;
@@ -9949,7 +9955,7 @@ void _update_objects () {
       add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(10));
     }
   }
-*/
+
 
 
 
@@ -10464,7 +10470,7 @@ void _draw_objects () {
   }  
 
 
-/*
+
   WIN3D_Diagrams.beginShape();
   WIN3D_Diagrams.texture(Field_Image);    
   WIN3D_Diagrams.stroke(255, 255, 255, 0);
@@ -10475,7 +10481,7 @@ void _draw_objects () {
   WIN3D_Diagrams.vertex(-100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, 0, 0);
   
   WIN3D_Diagrams.endShape(CLOSE);
-*/
+
 }
 
 
@@ -10871,6 +10877,7 @@ ParametricGeometry[] SolidBuildings;
 
 void add_ParametricGeometries () {
 
+/*  
   SolidBuildings = new ParametricGeometry[1];
   
   SolidBuildings[0] = new ParametricGeometry(1, 0,0,0, 2,2,2, 10,10,10, 0);
@@ -10881,10 +10888,10 @@ void add_ParametricGeometries () {
   //add_Icosahedron(0, 0,0,0, 10);
   
   //add_RecursiveSphere(0, 0,0,0, 10, 4);
+*/  
   
   
-  
-/*  
+
   SolidBuildings = new ParametricGeometry[6];
   
   SolidBuildings[0] = new ParametricGeometry(1, 50,-50,0, 8,8,8, 10,10,50, 0);
@@ -10904,7 +10911,7 @@ void add_ParametricGeometries () {
 
   SolidBuildings[5] = new ParametricGeometry(1, 15,15,30, 2,2,8, 30,30,10, 0);
   add_PolygonExtrude_CENTER(0, 15,15,30, 15, 10, 16);
-*/
+
  
   calculate_ParametricGeometries_Field();
 
