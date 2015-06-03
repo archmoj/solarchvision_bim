@@ -10471,7 +10471,7 @@ void _draw_objects () {
   }  
 
 
-/*
+
   WIN3D_Diagrams.beginShape();
   WIN3D_Diagrams.texture(Field_Image);    
   WIN3D_Diagrams.stroke(255, 255, 255, 0);
@@ -10481,7 +10481,7 @@ void _draw_objects () {
   WIN3D_Diagrams.vertex(100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, Field_RES1, 0);
   WIN3D_Diagrams.vertex(-100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, 0, 0);
   WIN3D_Diagrams.endShape(CLOSE);
-*/
+
 }
 
 
@@ -10878,19 +10878,27 @@ ParametricGeometry[] SolidBuildings;
 void add_ParametricGeometries () {
 
  
-  SolidBuildings = new ParametricGeometry[1];
+  SolidBuildings = new ParametricGeometry[3];
+
+  SolidBuildings[0] = new ParametricGeometry(2, 10,10,10, 2,2,2, 10,10,10, 0);
+  add_RecursiveSphere(0, 10,10,10, 10, 3);  
+  SolidBuildings[1] = new ParametricGeometry(2, -10,-10,5, 2,2,2, 5,5,5, 0);
+  add_RecursiveSphere(0, -10,-10,5, 5, 2);
   
-  SolidBuildings[0] = new ParametricGeometry(1, 0,0,0, 2,2,2, 10,10,10, 0);
+  SolidBuildings[2] = new ParametricGeometry(1, 50,0,10, 8,8,8, 10,30,20, 0);
+  add_Box_CENTER(-1, 50,0,10, 10,30,20);  
+  
+  //add_RecursiveSphere(0, 0,0,0, 90, 5);
+  
   //add_Icosahedron(0, -25,0,0, 10);
+  
   //add_QuadSphere(0, 25,0,0, 10, 0);
   
   //add_QuadSphere(0, 0,0,0, 10, 1);
   //add_Icosahedron(0, 0,0,0, 10);
 
-  add_RecursiveSphere(0, 10,10,0, 2.5, 1);
-  add_RecursiveSphere(0, 10,-10,0, 5, 2);
-  add_RecursiveSphere(0, -10,-10,0, 7.5, 3);
-  add_RecursiveSphere(0, -10,10,0, 10, 4);    
+
+   
   
 
   
