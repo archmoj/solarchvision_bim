@@ -1,5 +1,7 @@
 import processing.pdf.*;
 
+String ProjectSite = "OrBleu"; //"FIROUZKO";
+
 int MODEL_RUN = 0; //12; 
 
 int Climatic_solar_model = 0; //                                   Usedfor solar radiation only
@@ -65,14 +67,7 @@ String MAKE_Filenames () {
 int STATION_NUMBER = 0; 
 
 String[][] DEFINED_STATIONS = {
-/*  
-                                {"MOSCOW_XX_RU", "MOSCOW", "XX", "55.75", "37.63", "45", "156.0"}, 
-                                {"Istanbul_XX_TR", "Istanbul", "XX", "40.97", "28.82", "30", "37.0"}, 
-                                {"Barcelona_XX_SP", "Barcelona", "XX", "41.28", "2.07", "15", "6.0"}, 
-                                {"Bologna_XX_IT", "Bologna", "XX", "44.53", "11.30", "15", "49.0"}, 
-                                {"VIENNA_XX_AT", "VIENNA", "XX", "48.12", "16.57", "15", "190.0"}, 
-*/                                
-
+                                {"WAWA_ON_CA", "WAWA", "ON", "47.69", "-85.01", "-90", "0"},
                                 {"MONTREAL_DORVAL_QC_CA", "MONTREAL", "QC", "45.47", "-73.75", "-75", "31.00"}, 
                                 {"CALGARY_INTL_AB_CA", "CALGARY", "AB", "51.10", "-114.02", "-120", "1084.10"}, 
                                 {"EDMONTON_INTL_A_AB_CA", "EDMONTON_INTL_A", "AB", "53.316666", "-113.583336", "-120", "723.3"}, 
@@ -108,6 +103,7 @@ String[][] DEFINED_STATIONS = {
                                 {"GUAYAQUIL_XX_EC", "GUAYAQUIL", "XX", "-2.1241937", "-79.59123", "-75", "11.0"}, 
                                 {"LIMA_XX_PE", "LIMA", "XX", "-12.032012", "-76.92987", "-75", "336.0"}, 
                                 {"ANTOFAGASTA_XX_CL", "ANTOFAGASTA", "XX", "-23.65", "-70.4", "-75", "13.0"}
+                              
 */                             
                               };
 
@@ -372,7 +368,7 @@ int databaseNumber_CLIMATE_WY2 = 0;
 int databaseNumber_ENSEMBLE = 1;
 int databaseNumber_OBSERVED = 2;
 int databaseNumber_CLIMATE_EPW = 3;
-int impacts_source = 3; // 0 = Climate WY2, 1 = Forecast, 2 = Observation, 3 = Climate EPW 
+int impacts_source = 1; // 0 = Climate WY2, 1 = Forecast, 2 = Observation, 3 = Climate EPW 
 
 int impact_layer = 1; // 4 = Median
 int plot_impacts = 4; 
@@ -451,7 +447,7 @@ void _update_folders () {
   NAEFSFolder           = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   CWEEDSFolder          = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_ALL";
-  Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees";
+  Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_ALL";
 
 }
 
@@ -459,9 +455,9 @@ void _update_folders () {
 int h_pixel = 300;
 int w_pixel = int(h_pixel * 1.5);
 
-int WIN3D_CX_View = 0*w_pixel;
+int WIN3D_CX_View = w_pixel;
 int WIN3D_CY_View = h_pixel;
-int WIN3D_X_View = 2*w_pixel;
+int WIN3D_X_View = w_pixel;
 int WIN3D_Y_View = h_pixel;
 float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
 
@@ -581,7 +577,7 @@ void draw () {
   CAM_z = 0;
 
 
-  WORLD_Update = 0; // <<<<<<<<<<<<<<<<<
+  //WORLD_Update = 0; // <<<<<<<<<<<<<<<<<
 
   if (WORLD_Update == 1) {
   
@@ -659,6 +655,9 @@ void draw () {
     WORLD_Diagrams.strokeWeight(0);
     WORLD_Diagrams.stroke(0, 63, 0, 127);
     WORLD_Diagrams.fill(0, 63, 0, 127);
+
+    int nearest_STATION_NAEFS = -1;
+    float nearest_STATION_NAEFS_dist = FLOAT_undefined;
               
     for (int f = 0; f < STATION_NAEFS_INFO.length; f += 1) {
       float draw_info = 1;
@@ -678,9 +677,37 @@ void draw () {
         float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
         
         WORLD_Diagrams.ellipse(x_point, y_point, 1.5 * R_station, 1.5 * R_station);
-      
+
       }
-    } 
+      
+      float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
+      
+      if (nearest_STATION_NAEFS_dist > d) {
+        nearest_STATION_NAEFS_dist = d;
+        nearest_STATION_NAEFS = f;
+      } 
+      
+    }
+    
+    {   
+        int f = nearest_STATION_NAEFS;
+      
+        float _lat = float(STATION_NAEFS_INFO[f][1]);
+        float _lon = float(STATION_NAEFS_INFO[f][2]); 
+        if (_lon > 180) _lon -= 360; // << important!      
+        
+        float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+        float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+        
+        WORLD_Diagrams.strokeWeight(0);
+        WORLD_Diagrams.stroke(0);
+        WORLD_Diagrams.fill(0);      
+        WORLD_Diagrams.textAlign(RIGHT, CENTER); 
+        WORLD_Diagrams.textSize(10 * R_station);
+        WORLD_Diagrams.text(STATION_NAEFS_INFO[f][0], x_point, y_point);
+        println(STATION_NAEFS_INFO[f][0]);
+    }
+    
 
     WORLD_Diagrams.strokeWeight(2);
     WORLD_Diagrams.stroke(63, 63, 63, 63);
@@ -1715,6 +1742,18 @@ float roundTo (float a, float b) {
     c = a_floor;
   }
   return c;
+}
+
+float dist_lon_lat (double lon1, double lat1, double lon2, double lat2) {
+
+  float dLon = (float) (lon2 - lon1); 
+  float dLat = (float) (lat2 - lat1);
+
+  float a = sin_ang(dLon / 2.0);
+  float b = sin_ang(dLat / 2.0) * sin_ang(dLat / 2.0) + cos_ang((float) lat1) * cos_ang((float) lat2) * a * a;
+  float d = 2 * atan2(sqrt(b), sqrt(1 - b)) * (float) R_earth; 
+
+  return(d);
 }
 
 float fn_dist (float[] a, float[] b) {
@@ -9734,10 +9773,6 @@ void _export_objects () {
 
 void _update_objects () {
   
-  add_ParametricGeometries();  
-  
-  
-/*
   SOLARCHVISION_LoadLAND(); 
 
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
@@ -9752,8 +9787,10 @@ void _update_objects () {
         , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2]
         , LAND_MESH[i][j+1][0],   LAND_MESH[i][j+1][1],   LAND_MESH[i][j+1][2]
       );
+  
+      if (LAND_MESH[i][j][2] > 0) add_Object2D("TREES", 0, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2], 25 + random(25));  
       
-    
+/*    
       if  ((i > 0) && (i < 6)) {
         float r = int(random(2));
         if (r == 1) { 
@@ -9762,16 +9799,11 @@ void _update_objects () {
         else {
           add_Object2D("TREES", 0, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2], 5 + random(10));
         }
-             
-        
       }
- 
-           
+*/ 
+       
     }
   }  
-*/
-
-
 
 /*
   add_Mesh2(0, 0, 0, 0, 40, 40, 0);
@@ -9936,7 +9968,7 @@ void _update_objects () {
 
 */
 
-
+/*
   for (int i = 0; i < 100; i++) {
     
     float t = random(360) * PI / 180.0;
@@ -9955,9 +9987,9 @@ void _update_objects () {
       add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(10));
     }
   }
+*/
 
-
-
+  add_ParametricGeometries(); 
 
 
 }
@@ -10708,22 +10740,27 @@ float Bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y
 
 
 //Polar
-//int LAND_n_I_base = 0;
-//int LAND_n_J_base = 0;
-//int LAND_n_I = 16 + 1;
-//int LAND_n_J = 24 + 1;    
+int LAND_n_I_base = 0;
+int LAND_n_J_base = 0;
+int LAND_n_I = 8 + 1; //16 + 1;
+int LAND_n_J = 24 + 1;    
 
 //Cartesian
-int LAND_n_I_base = 15;
-int LAND_n_J_base = 15;
-int LAND_n_I = LAND_n_I_base * 2 + 1;
-int LAND_n_J = LAND_n_J_base * 2 + 1;    
+//int LAND_n_I_base = 15;
+//int LAND_n_J_base = 15;
+//int LAND_n_I = LAND_n_I_base * 2 + 1;
+//int LAND_n_J = LAND_n_J_base * 2 + 1;    
    
 
 double R_earth = 6373 * 1000;
 
+/*
 double LAND_mid_lat = 35.6967;
 double LAND_mid_lon = 52.6383;
+*/
+double LAND_mid_lat = 47.69036;
+double LAND_mid_lon = -85.01544; 
+
 
 float[][][] LAND_MESH;
 
@@ -10735,8 +10772,7 @@ void SOLARCHVISION_LoadLAND () {
 
     String the_link = "";
     
-    XML FileALL = loadXML("C:/SOLARCHVISION_2015/Projects/FIROUZKO/" + nf(i - LAND_n_I_base, 0) + ".xml");
-
+    XML FileALL = loadXML("C:/SOLARCHVISION_2015/Projects/" + ProjectSite + "/"  + ProjectSite + "/" + nf(i - LAND_n_I_base, 0) + ".xml");
 
     XML[] children0 = FileALL.getChildren("result");
 
@@ -10771,6 +10807,8 @@ void SOLARCHVISION_LoadLAND () {
   }
   
   float h = LAND_MESH[LAND_n_I_base][LAND_n_J_base][2];
+  
+  h += 5; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   
   for (int i = 0; i < LAND_n_I; i += 1) {
     for (int j = 0; j < LAND_n_J; j += 1) {
@@ -10878,16 +10916,20 @@ ParametricGeometry[] SolidBuildings;
 void add_ParametricGeometries () {
 
  
-  SolidBuildings = new ParametricGeometry[3];
+  SolidBuildings = new ParametricGeometry[1];
+  
+  SolidBuildings[0] = new ParametricGeometry(8, 0,0,0, 2,2,2, 1,2,1, 0);
+  add_Box_CENTER(-1, 0,0,0, 1,8,1);  
 
+/*
   SolidBuildings[0] = new ParametricGeometry(2, 10,10,10, 2,2,2, 10,10,10, 0);
   add_RecursiveSphere(0, 10,10,10, 10, 3);  
   SolidBuildings[1] = new ParametricGeometry(2, -10,-10,5, 2,2,2, 5,5,5, 0);
   add_RecursiveSphere(0, -10,-10,5, 5, 2);
-  
   SolidBuildings[2] = new ParametricGeometry(1, 50,0,10, 8,8,8, 10,30,20, 0);
   add_Box_CENTER(-1, 50,0,10, 10,30,20);  
-  
+*/
+
   //add_RecursiveSphere(0, 0,0,0, 90, 5);
   
   //add_Icosahedron(0, -25,0,0, 10);
@@ -10957,7 +10999,8 @@ void calculate_ParametricGeometries_Field () {
         } 
       }
       
-      float _u = -Field_Multiplier * val;
+      //float _u = -Field_Multiplier * val;
+      float _u = Field_Multiplier * val;
 
       float[] _COL = SOLARCHVISION_DRYWCBD(roundTo(_u, 0.05));
 
