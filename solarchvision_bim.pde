@@ -1,6 +1,7 @@
 import processing.pdf.*;
 
 String ProjectSite = "OrBleu"; //"FIROUZKO";
+int SavedScreenShots = 0;
 
 int MODEL_RUN = 0; //12; 
 
@@ -67,7 +68,7 @@ String MAKE_Filenames () {
 int STATION_NUMBER = 0; 
 
 String[][] DEFINED_STATIONS = {
-                                {"WAWA_ON_CA", "WAWA", "ON", "47.69", "-85.01", "-90", "0"},
+                                {"WAWA_ON_CA", "WAWA", "ON", "47.69", "-85.01", "-90", "100"},
                                 {"MONTREAL_DORVAL_QC_CA", "MONTREAL", "QC", "45.47", "-73.75", "-75", "31.00"}, 
                                 {"CALGARY_INTL_AB_CA", "CALGARY", "AB", "51.10", "-114.02", "-120", "1084.10"}, 
                                 {"EDMONTON_INTL_A_AB_CA", "EDMONTON_INTL_A", "AB", "53.316666", "-113.583336", "-120", "723.3"}, 
@@ -126,7 +127,7 @@ int record_JPG = 0;
 int record_PDF = 0;
 
 int j_start = 0;
-int j_end = 1; //8; //6; //16; // Variable
+int j_end = 6; //8; //6; //16; // Variable
 
 int max_j_end_forecast = 16; // Constant
 int max_j_end_observed = 0; // Variable
@@ -446,13 +447,13 @@ void _update_folders () {
   SWOBFolder            = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   NAEFSFolder           = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   CWEEDSFolder          = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
-  Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_ALL";
+  Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_SEL";
   Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_ALL";
 
 }
 
 
-int h_pixel = 300;
+int h_pixel = 400;
 int w_pixel = int(h_pixel * 1.5);
 
 int WIN3D_CX_View = w_pixel;
@@ -703,7 +704,7 @@ void draw () {
         WORLD_Diagrams.stroke(0);
         WORLD_Diagrams.fill(0);      
         WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-        WORLD_Diagrams.textSize(10 * R_station);
+        WORLD_Diagrams.textSize(5 * R_station);
         WORLD_Diagrams.text(STATION_NAEFS_INFO[f][0], x_point, y_point);
         println(STATION_NAEFS_INFO[f][0]);
     }
@@ -7542,11 +7543,11 @@ void GRAPHS_keyPressed () {
                   try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
                   redraw_scene = 1; break; 
                   
-        //case LEFT  :BEGIN_DAY = (365 + BEGIN_DAY - 1) % 365; redraw_scene = 1; break;
-        //case RIGHT  :BEGIN_DAY = (BEGIN_DAY + 1) % 365; redraw_scene = 1; break;
+        //case DOWN  :BEGIN_DAY = (365 + BEGIN_DAY - 1) % 365; redraw_scene = 1; break;
+        //case UP  :BEGIN_DAY = (BEGIN_DAY + 1) % 365; redraw_scene = 1; break;
               
-        //case UP :drw_Layer = (drw_Layer + 1) % num_layers; redraw_scene = 1; break;
-        //case DOWN :drw_Layer = (drw_Layer + num_layers - 1) % num_layers; redraw_scene = 1; break; 
+        case RIGHT :drw_Layer = (drw_Layer + 1) % num_layers; redraw_scene = 1; break;
+        case LEFT :drw_Layer = (drw_Layer + num_layers - 1) % num_layers; redraw_scene = 1; break; 
      
         default: record_JPG = 0; redraw_scene = 0; break;
       }
@@ -8645,6 +8646,10 @@ void keyPressed () {
                   break;
                   
         case ENTER: WIN3D_update_VerticesSolarValue = 1; break;                  
+          
+        case ' ': SavedScreenShots += 1; 
+                  saveFrame("/Output/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_IMG" + nf(SavedScreenShots , 3) + ".jpg");
+                  break;              
           
         case 'S' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_station(); redraw_scene = 1; break;
         case 's' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_station(); redraw_scene = 1; break;
@@ -9787,8 +9792,19 @@ void _update_objects () {
         , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2]
         , LAND_MESH[i][j+1][0],   LAND_MESH[i][j+1][1],   LAND_MESH[i][j+1][2]
       );
-  
-      if (LAND_MESH[i][j][2] > 0) add_Object2D("TREES", 0, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2], 25 + random(25));  
+      
+      for (int n = 0; n < 50; n += 1) {
+        
+        float di = random(1);
+        float dj = random(1);
+
+        float x = Bilinear(LAND_MESH[i][j][0], LAND_MESH[i][j+1][0], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j][0], di, dj);
+        float y = Bilinear(LAND_MESH[i][j][1], LAND_MESH[i][j+1][1], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j][1], di, dj);
+        float z = Bilinear(LAND_MESH[i][j][2], LAND_MESH[i][j+1][2], LAND_MESH[i+1][j+1][2], LAND_MESH[i+1][j][2], di, dj);
+        
+        if (LAND_MESH[i][j][2] > 0) add_Object2D("TREES", 0, x, y, z, 25 + random(25));
+
+      }  
       
 /*    
       if  ((i > 0) && (i < 6)) {
@@ -9803,7 +9819,14 @@ void _update_objects () {
 */ 
        
     }
-  }  
+  }
+
+  add_Object2D("PEOPLE", 1, 0,3,0, 2.5);
+  add_Object2D("PEOPLE", 2, 0,1,0, 2.5);  
+  add_Object2D("PEOPLE", 3, 0,-1,0, 2.5);  
+  add_Object2D("PEOPLE", 4, 0,-3,0, 2.5);  
+
+  
 
 /*
   add_Mesh2(0, 0, 0, 0, 40, 40, 0);
@@ -10973,8 +10996,8 @@ void add_ParametricGeometries () {
 
 }
 
-int Field_RES1 = 200;
-int Field_RES2 = 200; 
+int Field_RES1 = 400;
+int Field_RES2 = 400; 
 
 PImage Field_Image = createImage(Field_RES1, Field_RES2, RGB);
 
