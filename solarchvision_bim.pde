@@ -6614,11 +6614,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; //0.1 / 0.75; //0.1; <<<<<<<<<<<<<<<<<<<<<
     if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.01; 
 
-    //SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
-
-    Diagrams_translate(0, -0.25 * sx_Plot / U_scale);
-    Diagrams_pushMatrix();
-
     //for (int p = 0; p < 3; p += 1) { 
       //int l = 3 * int(impact_layer / 3) + p;
       
