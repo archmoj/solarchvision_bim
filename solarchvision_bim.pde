@@ -65,7 +65,7 @@ String MAKE_Filenames () {
 }
 
 
-int STATION_NUMBER = 0; 
+int STATION_NUMBER = 1; 
 
 String[][] DEFINED_STATIONS = {
                                 {"WAWA_ON_CA", "WAWA", "ON", "47.69", "-85.01", "-90", "100"},
@@ -127,7 +127,7 @@ int record_JPG = 0;
 int record_PDF = 0;
 
 int j_start = 0;
-int j_end = 6; //8; //6; //16; // Variable
+int j_end = 1; //8; //6; //16; // Variable
 
 int max_j_end_forecast = 16; // Constant
 int max_j_end_observed = 0; // Variable
@@ -9775,7 +9775,7 @@ void _export_objects () {
   
 
 void _update_objects () {
-  
+/*  
   SOLARCHVISION_LoadLAND(); 
 
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
@@ -9803,18 +9803,17 @@ void _update_objects () {
         if (LAND_MESH[i][j][2] > 0) add_Object2D("TREES", 0, x, y, z, 25 + random(25));
 
       }  
-      
-/*    
-      if  ((i > 0) && (i < 6)) {
-        float r = int(random(2));
-        if (r == 1) { 
-          add_Object2D("PEOPLE", 0, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2], 2.5);
-        }
-        else {
-          add_Object2D("TREES", 0, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2], 5 + random(10));
-        }
-      }
-*/ 
+ 
+      //if  ((i > 0) && (i < 6)) {
+      //  float r = int(random(2));
+      //  if (r == 1) { 
+      //    add_Object2D("PEOPLE", 0, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2], 2.5);
+      //  }
+      //  else {
+      //    add_Object2D("TREES", 0, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2], 5 + random(10));
+      //  }
+      //}
+
        
     }
   }
@@ -9823,7 +9822,7 @@ void _update_objects () {
   add_Object2D("PEOPLE", 2, 0,1,0, 2.5);  
   add_Object2D("PEOPLE", 3, 0,-1,0, 2.5);  
   add_Object2D("PEOPLE", 4, 0,-3,0, 2.5);  
-
+*/
   
 
 /*
@@ -9864,8 +9863,8 @@ void _update_objects () {
   //add_PolygonHyper(2, -20, -20, 0,  15, 15, 4);
 
 
-  //add_Mesh2(0, -20, -20, 0, 20, 20, 0);
-  //add_PolygonHyper(0, 0, 0, 0,  15, 15, 4);
+  add_Mesh2(0, -20, -20, 0, 20, 20, 0);
+  add_PolygonHyper(0, 0, 0, 0,  15, 15, 4);
 
 
   
@@ -9989,7 +9988,7 @@ void _update_objects () {
 
 */
 
-/*
+
   for (int i = 0; i < 100; i++) {
     
     float t = random(360) * PI / 180.0;
@@ -10008,7 +10007,6 @@ void _update_objects () {
       add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(10));
     }
   }
-*/
 
   add_ParametricGeometries(); 
 
@@ -10524,7 +10522,7 @@ void _draw_objects () {
   }  
 
 
-
+/*
   WIN3D_Diagrams.beginShape();
   WIN3D_Diagrams.texture(Field_Image);    
   WIN3D_Diagrams.stroke(255, 255, 255, 0);
@@ -10534,7 +10532,7 @@ void _draw_objects () {
   WIN3D_Diagrams.vertex(100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, Field_RES1, 0);
   WIN3D_Diagrams.vertex(-100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, 0, 0);
   WIN3D_Diagrams.endShape(CLOSE);
-
+*/
 }
 
 
@@ -10939,8 +10937,11 @@ void add_ParametricGeometries () {
  
   SolidBuildings = new ParametricGeometry[1];
   
-  SolidBuildings[0] = new ParametricGeometry(8, 0,0,0, 2,2,2, 1,2,1, 0);
-  add_Box_CENTER(-1, 0,0,0, 1,8,1);  
+  SolidBuildings[0] = new ParametricGeometry(1, 0,0,0, 2,2,2, 1,1,1, 0);
+  add_RecursiveSphere(0, 0,0,0, 92.5, 4); 
+  
+  //SolidBuildings[0] = new ParametricGeometry(8, 0,0,0, 2,2,2, 1,2,1, 0);
+  //add_Box_CENTER(-1, 0,0,0, 1,8,1);  
 
 /*
   SolidBuildings[0] = new ParametricGeometry(2, 10,10,10, 2,2,2, 10,10,10, 0);
