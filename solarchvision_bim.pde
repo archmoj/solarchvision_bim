@@ -65,10 +65,10 @@ String MAKE_Filenames () {
 }
 
 
-int STATION_NUMBER = 1; 
+int STATION_NUMBER = 0; 
 
 String[][] DEFINED_STATIONS = {
-                                {"WAWA_ON_CA", "WAWA", "ON", "47.69", "-85.01", "-90", "100"},
+                                {"WAWA_ON_CA", "WAWA", "ON", "47.96005", "-85.1936", "-90", "100"},
                                 {"MONTREAL_DORVAL_QC_CA", "MONTREAL", "QC", "45.47", "-73.75", "-75", "31.00"}, 
                                 {"CALGARY_INTL_AB_CA", "CALGARY", "AB", "51.10", "-114.02", "-120", "1084.10"}, 
                                 {"EDMONTON_INTL_A_AB_CA", "EDMONTON_INTL_A", "AB", "53.316666", "-113.583336", "-120", "723.3"}, 
@@ -9775,7 +9775,7 @@ void _export_objects () {
   
 
 void _update_objects () {
-/*  
+
   SOLARCHVISION_LoadLAND(); 
 
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
@@ -9822,7 +9822,7 @@ void _update_objects () {
   add_Object2D("PEOPLE", 2, 0,1,0, 2.5);  
   add_Object2D("PEOPLE", 3, 0,-1,0, 2.5);  
   add_Object2D("PEOPLE", 4, 0,-3,0, 2.5);  
-*/
+
   
 
 /*
@@ -9863,8 +9863,8 @@ void _update_objects () {
   //add_PolygonHyper(2, -20, -20, 0,  15, 15, 4);
 
 
-  add_Mesh2(0, -20, -20, 0, 20, 20, 0);
-  add_PolygonHyper(0, 0, 0, 0,  15, 15, 4);
+  //add_Mesh2(0, -20, -20, 0, 20, 20, 0);
+  //add_PolygonHyper(0, 0, 0, 0,  15, 15, 4);
 
 
   
@@ -9988,7 +9988,7 @@ void _update_objects () {
 
 */
 
-
+/*
   for (int i = 0; i < 100; i++) {
     
     float t = random(360) * PI / 180.0;
@@ -10007,7 +10007,7 @@ void _update_objects () {
       add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(10));
     }
   }
-
+*/
   add_ParametricGeometries(); 
 
 
@@ -10522,7 +10522,6 @@ void _draw_objects () {
   }  
 
 
-/*
   WIN3D_Diagrams.beginShape();
   WIN3D_Diagrams.texture(Field_Image);    
   WIN3D_Diagrams.stroke(255, 255, 255, 0);
@@ -10532,7 +10531,7 @@ void _draw_objects () {
   WIN3D_Diagrams.vertex(100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, Field_RES1, 0);
   WIN3D_Diagrams.vertex(-100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, 0, 0);
   WIN3D_Diagrams.endShape(CLOSE);
-*/
+
 }
 
 
@@ -10777,8 +10776,8 @@ double R_earth = 6373 * 1000;
 double LAND_mid_lat = 35.6967;
 double LAND_mid_lon = 52.6383;
 */
-double LAND_mid_lat = 47.69036;
-double LAND_mid_lon = -85.01544; 
+double LAND_mid_lat = 47.96005; //47.69036;
+double LAND_mid_lon = -85.1936; //-85.01544; 
 
 
 float[][][] LAND_MESH;
@@ -10937,11 +10936,11 @@ void add_ParametricGeometries () {
  
   SolidBuildings = new ParametricGeometry[1];
   
-  SolidBuildings[0] = new ParametricGeometry(1, 0,0,0, 2,2,2, 1,1,1, 0);
-  add_RecursiveSphere(0, 0,0,0, 92.5, 4); 
+  //SolidBuildings[0] = new ParametricGeometry(1, 0,0,0, 2,2,2, 1,1,1, 0);
+  //add_RecursiveSphere(0, 0,0,0, 92.5, 4); 
   
-  //SolidBuildings[0] = new ParametricGeometry(8, 0,0,0, 2,2,2, 1,2,1, 0);
-  //add_Box_CENTER(-1, 0,0,0, 1,8,1);  
+  SolidBuildings[0] = new ParametricGeometry(8, 0,0,0, 2,2,2, 1,2,1, 0);
+  add_Box_CENTER(-1, 0,0,0, 1,8,1);  
 
 /*
   SolidBuildings[0] = new ParametricGeometry(2, 10,10,10, 2,2,2, 10,10,10, 0);
