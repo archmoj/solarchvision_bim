@@ -1,6 +1,6 @@
 import processing.pdf.*;
 
-String ProjectSite = "OrBleu"; //"FIROUZKO";
+String ProjectSite = "Razieh"; //"OrBleu"; //"FIROUZKO";
 int SavedScreenShots = 0;
 
 int MODEL_RUN = 0; //12; 
@@ -9800,7 +9800,7 @@ void _update_objects () {
         float y = Bilinear(LAND_MESH[i][j][1], LAND_MESH[i][j+1][1], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j][1], di, dj);
         float z = Bilinear(LAND_MESH[i][j][2], LAND_MESH[i][j+1][2], LAND_MESH[i+1][j+1][2], LAND_MESH[i+1][j][2], di, dj);
         
-        if (LAND_MESH[i][j][2] > 0) add_Object2D("TREES", 0, x, y, z, 25 + random(25));
+        if (LAND_MESH[i][j][2] > 0) add_Object2D("TREES", 0, x, y, z, 10 + random(10));
 
       }  
  
@@ -9817,12 +9817,12 @@ void _update_objects () {
        
     }
   }
-
+/*
   add_Object2D("PEOPLE", 1, 0,3,0, 2.5);
   add_Object2D("PEOPLE", 2, 0,1,0, 2.5);  
   add_Object2D("PEOPLE", 3, 0,-1,0, 2.5);  
   add_Object2D("PEOPLE", 4, 0,-3,0, 2.5);  
-
+*/
   
 
 /*
@@ -10521,7 +10521,7 @@ void _draw_objects () {
     WIN3D_Diagrams.endShape(CLOSE);
   }  
 
-
+/*
   WIN3D_Diagrams.beginShape();
   WIN3D_Diagrams.texture(Field_Image);    
   WIN3D_Diagrams.stroke(255, 255, 255, 0);
@@ -10531,7 +10531,7 @@ void _draw_objects () {
   WIN3D_Diagrams.vertex(100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, Field_RES1, 0);
   WIN3D_Diagrams.vertex(-100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, 0, 0);
   WIN3D_Diagrams.endShape(CLOSE);
-
+*/
 }
 
 
@@ -10776,9 +10776,13 @@ double R_earth = 6373 * 1000;
 double LAND_mid_lat = 35.6967;
 double LAND_mid_lon = 52.6383;
 */
+
+double LAND_mid_lat = 36.61065;
+double LAND_mid_lon = 51.57665; 
+/*
 double LAND_mid_lat = 47.96005; //47.69036;
 double LAND_mid_lon = -85.1936; //-85.01544; 
-
+*/
 
 float[][][] LAND_MESH;
 
@@ -10826,7 +10830,7 @@ void SOLARCHVISION_LoadLAND () {
   
   float h = LAND_MESH[LAND_n_I_base][LAND_n_J_base][2];
   
-  h += 5; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+  //h += 5; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   
   for (int i = 0; i < LAND_n_I; i += 1) {
     for (int j = 0; j < LAND_n_J; j += 1) {
@@ -10939,8 +10943,11 @@ void add_ParametricGeometries () {
   //SolidBuildings[0] = new ParametricGeometry(1, 0,0,0, 2,2,2, 1,1,1, 0);
   //add_RecursiveSphere(0, 0,0,0, 92.5, 4); 
   
-  SolidBuildings[0] = new ParametricGeometry(8, 0,0,0, 2,2,2, 1,2,1, 0);
-  add_Box_CENTER(-1, 0,0,0, 1,8,1);  
+  //SolidBuildings[0] = new ParametricGeometry(8, 0,0,0, 2,2,2, 1,2,1, 0);
+  //add_Box_CENTER(-1, 0,0,0, 1,8,1);  
+  
+  SolidBuildings[0] = new ParametricGeometry(1, 0,0,0, 2,2,2, 12,12,12, 0);
+  add_Box_CENTER(-1, 0,0,0, 12,12,12);    
 
 /*
   SolidBuildings[0] = new ParametricGeometry(2, 10,10,10, 2,2,2, 10,10,10, 0);
