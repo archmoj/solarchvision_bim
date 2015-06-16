@@ -10395,25 +10395,31 @@ void _draw_objects () {
                           float[] ray_start = subFace[s];     
                           float[] ray_direction = {SunR[1],SunR[2],SunR[3]}; // NOT SURE!
                           
-                          if (isIntersected(ray_start, ray_direction, 100) == 1) { // max_dist = 100 <<<<<<<<<<<
-                            if (_values_E_dir < 0) {
-                              _valuesSUM_EFF_P += -((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); 
+                          if (fn_dot(W, ray_direction) > 0) { // removes backing faces
+                          
+                            if (isIntersected(ray_start, ray_direction, 100) == 1) { // max_dist = 100 <<<<<<<<<<<
+                              if (_values_E_dir < 0) {
+                                _valuesSUM_EFF_P += -((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); 
+                              }
+                              else {
+                                _valuesSUM_EFF_N += ((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); 
+                              }
                             }
-                            else {
-                              _valuesSUM_EFF_N += ((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); 
+                            else{ 
+                              if (_values_E_dir < 0) {
+                                _valuesSUM_EFF_N += -((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); 
+                              }
+                              else {
+                                _valuesSUM_EFF_P += ((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); 
+                              }
+                              
+                              _valuesSUM_RAD += ((_values_R_dir * SunMask) + (_values_R_dif * SkyMask)); // calculates total radiation
                             }
-                          }
-                          else{ 
-                            if (_values_E_dir < 0) {
-                              _valuesSUM_EFF_N += -((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); 
-                            }
-                            else {
-                              _valuesSUM_EFF_P += ((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); 
-                            }
-                            
-                            _valuesSUM_RAD += ((_values_R_dir * SunMask) + (_values_R_dif * SkyMask)); // calculates total radiation
+                          
                           }
                           _valuesNUM += 1;
+                          
+                          
   
                         }
                       }
