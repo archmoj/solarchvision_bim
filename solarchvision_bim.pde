@@ -65,7 +65,7 @@ String MAKE_Filenames () {
 }
 
 
-int STATION_NUMBER = 0; 
+int STATION_NUMBER = 1; 
 
 String[][] DEFINED_STATIONS = {
 
@@ -9777,6 +9777,7 @@ void _export_objects () {
 
 void _update_objects () {
 
+  /*
   SOLARCHVISION_LoadLAND(); 
 
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
@@ -9823,7 +9824,7 @@ void _update_objects () {
   add_Object2D("PEOPLE", 2, 0,1,0, 2.5);  
   add_Object2D("PEOPLE", 3, 0,-1,0, 2.5);  
   add_Object2D("PEOPLE", 4, 0,-3,0, 2.5);  
-
+*/
   
 
 /*
@@ -9859,9 +9860,7 @@ void _update_objects () {
   
   //add_Mesh4(7, -1, -1, 0, 1, -1, 0, 1, 1, 0, -1, 1, 0);
   
-  //add_Box(-1, 0, 0, 0, 60, 20, 40);
-  //add_Mesh2(3, -40, -40, 0, 0, 0, 0);
-  //add_PolygonHyper(2, -20, -20, 0,  15, 15, 4);
+
 
 
   //add_Mesh2(0, -20, -20, 0, 20, 20, 0);
@@ -9989,7 +9988,11 @@ void _update_objects () {
 
 */
 
-/*
+
+  add_Box(0, -20, 0, 0, 20, 20, 30);
+  add_Mesh2(0, -20, -40, 0, 20, 0, 0);
+  add_PolygonHyper(0, 0, -20, 0,  15, 15, 4);
+
   for (int i = 0; i < 100; i++) {
     
     float t = random(360) * PI / 180.0;
@@ -10003,20 +10006,33 @@ void _update_objects () {
     float q = int(random(2));
     
     if (q == 1) {
-      float r = 35; 
+      float r = 60; 
       
       add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(10));
     }
   }
-*/
-  add_ParametricGeometries(); 
+  
+  
 
-
+  //add_ParametricGeometries(); 
 }
 
 float objects_scale = 1.0; //0.5;
 
 void _draw_objects () {
+  
+/*
+  WIN3D_Diagrams.beginShape();
+  WIN3D_Diagrams.texture(Field_Image);    
+  WIN3D_Diagrams.stroke(255, 255, 255, 0);
+  WIN3D_Diagrams.fill(255, 255, 255, 0);  
+  WIN3D_Diagrams.vertex(-100 * objects_scale, -100 * objects_scale, Field_Elevation * objects_scale, 0, Field_RES2);
+  WIN3D_Diagrams.vertex(100 * objects_scale, -100 * objects_scale, Field_Elevation * objects_scale, Field_RES1, Field_RES2);
+  WIN3D_Diagrams.vertex(100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, Field_RES1, 0);
+  WIN3D_Diagrams.vertex(-100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, 0, 0);
+  WIN3D_Diagrams.endShape(CLOSE);
+*/  
+  
   
   for (int f = 1; f < allFaces.length; f++) {
     
@@ -10522,16 +10538,6 @@ void _draw_objects () {
     WIN3D_Diagrams.endShape(CLOSE);
   }  
 
-
-  WIN3D_Diagrams.beginShape();
-  WIN3D_Diagrams.texture(Field_Image);    
-  WIN3D_Diagrams.stroke(255, 255, 255, 0);
-  WIN3D_Diagrams.fill(255, 255, 255, 0);  
-  WIN3D_Diagrams.vertex(-100 * objects_scale, -100 * objects_scale, Field_Elevation * objects_scale, 0, Field_RES2);
-  WIN3D_Diagrams.vertex(100 * objects_scale, -100 * objects_scale, Field_Elevation * objects_scale, Field_RES1, Field_RES2);
-  WIN3D_Diagrams.vertex(100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, Field_RES1, 0);
-  WIN3D_Diagrams.vertex(-100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, 0, 0);
-  WIN3D_Diagrams.endShape(CLOSE);
 
 }
 
