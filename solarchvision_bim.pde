@@ -9920,7 +9920,7 @@ void _update_objects () {
   
   //add_Mesh2(7, -40, -40, 0, 40, 40, 0);
   
-/*
+
   //SOLARCHVISION Complex:
   {
     //add_Box(-1, 0, 0, 0, 1, 3, 3);
@@ -9993,7 +9993,7 @@ void _update_objects () {
 
   }
 
-*/
+
 
 
 
@@ -10016,7 +10016,7 @@ void _update_objects () {
       add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(10));
     }
   }
-  
+/*  
   //add_Box(0, -20, 0, 0, 20, 20, 30);
   {
     float x1 = -20;
@@ -10039,7 +10039,7 @@ void _update_objects () {
   add_PolygonHyper(0, 0, -20, 0,  15, 15, 4);
   
   //add_RecursiveSphere(0, 0,0,0, 92.5, 1, 0); 
-
+*/
   
 
   //add_ParametricGeometries(); 
