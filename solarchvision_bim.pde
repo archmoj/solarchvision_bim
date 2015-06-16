@@ -553,7 +553,7 @@ void setup () {
   Y_View = h_pixel; 
   R_View = float(Y_View) / float(X_View);
 
-  _DATE = (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
+  _DATE = 286; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   
   //if (_HOUR >= 12) _DATE += 0.5; 
   
@@ -10014,7 +10014,23 @@ void _update_objects () {
     }
   }
   
-  add_Box(0, -20, 0, 0, 20, 20, 30);
+  //add_Box(0, -20, 0, 0, 20, 20, 30);
+  {
+    float x1 = -20;
+    float y1 = 0;
+    float z1 = 0;
+    
+    float x2 = 20;
+    float y2 = 20;
+    float z2 = 30;
+    
+    add_Mesh2(0, x2,y1,z1, x1,y1,z2); //south
+    add_Mesh2(1, x2,y1,z1, x2,y2,z2); //east
+    add_Mesh2(1, x1,y2,z1, x2,y2,z2); //north
+    add_Mesh2(1, x1,y2,z1, x1,y1,z2); //west
+    add_Mesh2(1, x1,y1,z2, x2,y2,z2); //top
+  }
+  
   add_Mesh2(0, -20, -40, 0, 20, 0, 0);
   add_Mesh2(1, -15, -10, 25, 15, 0, 25);
   add_PolygonHyper(0, 0, -20, 0,  15, 15, 4);
@@ -10408,11 +10424,15 @@ void _draw_objects () {
                           
                             if (isIntersected(ray_start, ray_direction, MAX_SHADING_DIST) == 1) { 
                               if (_values_E_dir < 0) {
-                                _valuesSUM_EFF_P += -((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); 
+                                _valuesSUM_EFF_P += -(_values_E_dir * SunMask); 
+                                _valuesSUM_EFF_N += -(_values_E_dif * SkyMask); // adding approximate diffuse radiation effect anyway!
                               }
                               else {
-                                _valuesSUM_EFF_N += ((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); 
+                                _valuesSUM_EFF_N += (_values_E_dir * SunMask); 
+                                _valuesSUM_EFF_P += (_values_E_dif * SkyMask); // adding approximate diffuse radiation effect anyway!
                               }
+                              
+                              _valuesSUM_RAD += (_values_R_dif * SkyMask); // only approximate diffuse radiation!
                             }
                             else{ 
                               if (_values_E_dir < 0) {
