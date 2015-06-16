@@ -488,7 +488,8 @@ int WIN3D_WHITE_FACES = 1;
 
 int WIN3D_TESELATION = 0;
 
-float[] WIN3D_VerticesSolarValue;
+float[] WIN3D_VerticesSolarEnergy;
+float[] WIN3D_VerticesSolarEffect;
 int WIN3D_update_VerticesSolarValue = 1;
 
 int WORLD_CX_View = 0;
@@ -563,8 +564,10 @@ void setup () {
 
   _update_objects();
 
-  WIN3D_VerticesSolarValue = new float [1];
-  WIN3D_VerticesSolarValue[0] = FLOAT_undefined;
+  WIN3D_VerticesSolarEnergy = new float [1];
+  WIN3D_VerticesSolarEffect = new float [1];
+  WIN3D_VerticesSolarEnergy[0] = FLOAT_undefined;
+  WIN3D_VerticesSolarEffect[0] = FLOAT_undefined;
 
   WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D); 
 
@@ -10179,7 +10182,9 @@ void _draw_objects () {
 
             N_baked += 1;
             
-            float _valuesSUM = WIN3D_VerticesSolarValue[N_baked];
+            float _valuesSUM = 0;
+            if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = WIN3D_VerticesSolarEnergy[N_baked];
+            if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = WIN3D_VerticesSolarEffect[N_baked];
             
             if (_valuesSUM < 0.9 * FLOAT_undefined) {
               
@@ -10205,8 +10210,10 @@ void _draw_objects () {
       }
     }
     else {
-      WIN3D_VerticesSolarValue = new float [1];
-      WIN3D_VerticesSolarValue[0] = FLOAT_undefined; 
+      WIN3D_VerticesSolarEnergy = new float [1];
+      WIN3D_VerticesSolarEffect = new float [1];
+      WIN3D_VerticesSolarEnergy[0] = FLOAT_undefined; 
+      WIN3D_VerticesSolarEffect[0] = FLOAT_undefined; 
       
       float pre_per_day = per_day;
       int pre_num_add_days = num_add_days;
@@ -10467,21 +10474,25 @@ void _draw_objects () {
                   _valuesSUM_EFF_N = 0; //FLOAT_undefined;
                 }
   
-                float _valuesSUM = _valuesSUM_RAD;
-                
-                if (Impact_TYPE == Impact_PASSIVE) {
-                  float AVERAGE, PERCENTAGE, COMPARISON;
-                  
-                  AVERAGE = (_valuesSUM_EFF_P - _valuesSUM_EFF_N);
-                  if ((_valuesSUM_EFF_P + _valuesSUM_EFF_N) > 0.00001) PERCENTAGE = (_valuesSUM_EFF_P - _valuesSUM_EFF_N) / (1.0 * (_valuesSUM_EFF_P + _valuesSUM_EFF_N)); 
-                  else PERCENTAGE = 0.0;
-                  COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
-                  
-                  _valuesSUM = COMPARISON;
-                }
 
-                float[] ADD_valuesSUM = {_valuesSUM};
-                WIN3D_VerticesSolarValue = concat(WIN3D_VerticesSolarValue, ADD_valuesSUM);
+                float AVERAGE, PERCENTAGE, COMPARISON;
+                
+                AVERAGE = (_valuesSUM_EFF_P - _valuesSUM_EFF_N);
+                if ((_valuesSUM_EFF_P + _valuesSUM_EFF_N) > 0.00001) PERCENTAGE = (_valuesSUM_EFF_P - _valuesSUM_EFF_N) / (1.0 * (_valuesSUM_EFF_P + _valuesSUM_EFF_N)); 
+                else PERCENTAGE = 0.0;
+                COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+                
+                {
+                  float[] ADD_values_RAD = {_valuesSUM_RAD};
+                  WIN3D_VerticesSolarEnergy = concat(WIN3D_VerticesSolarEnergy, ADD_values_RAD);
+                  
+                  float[] ADD_values_EFF = {COMPARISON};
+                  WIN3D_VerticesSolarEffect = concat(WIN3D_VerticesSolarEffect, ADD_values_EFF);
+                }
+                  
+                float _valuesSUM = 0;
+                if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = _valuesSUM_RAD;
+                if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = COMPARISON;
                 
                 if (_valuesSUM < 0.9 * FLOAT_undefined) {
                 
