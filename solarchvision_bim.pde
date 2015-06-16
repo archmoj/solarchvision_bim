@@ -1,5 +1,7 @@
 import processing.pdf.*;
 
+float MAX_SHADING_DIST = 100; // the biggest object should be 100
+
 String ProjectSite = "OrBleu"; //"FIROUZKO";
 int SavedScreenShots = 0;
 
@@ -517,6 +519,8 @@ String[] Object2D_Filenames_TREES;
 int number_of_WORLD_viewports;
 
 int GRAPHS_Update = 1;
+
+
 
 void setup () {
 
@@ -9989,9 +9993,7 @@ void _update_objects () {
 */
 
 
-  add_Box(0, -20, 0, 0, 20, 20, 30);
-  add_Mesh2(0, -20, -40, 0, 20, 0, 0);
-  add_PolygonHyper(0, 0, -20, 0,  15, 15, 4);
+
 
   for (int i = 0; i < 100; i++) {
     
@@ -10012,6 +10014,13 @@ void _update_objects () {
     }
   }
   
+  add_Box(0, -20, 0, 0, 20, 20, 30);
+  add_Mesh2(0, -20, -40, 0, 20, 0, 0);
+  add_Mesh2(1, -15, -10, 25, 15, 0, 25);
+  add_PolygonHyper(0, 0, -20, 0,  15, 15, 4);
+  
+  //add_RecursiveSphere(0, 0,0,0, 92.5, 1, 0); 
+
   
 
   //add_ParametricGeometries(); 
@@ -10397,7 +10406,7 @@ void _draw_objects () {
                           
                           if (fn_dot(W, ray_direction) > 0) { // removes backing faces
                           
-                            if (isIntersected(ray_start, ray_direction, 100) == 1) { // max_dist = 100 <<<<<<<<<<<
+                            if (isIntersected(ray_start, ray_direction, MAX_SHADING_DIST) == 1) { 
                               if (_values_E_dir < 0) {
                                 _valuesSUM_EFF_P += -((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); 
                               }
@@ -10947,23 +10956,20 @@ void add_ParametricGeometries () {
 
  
   SolidBuildings = new ParametricGeometry[1];
-  
-  //SolidBuildings[0] = new ParametricGeometry(1, 0,0,0, 2,2,2, 1,1,1, 0);
-  //add_RecursiveSphere(0, 0,0,0, 92.5, 4); 
-  
+
   SolidBuildings[0] = new ParametricGeometry(8, 0,0,0, 2,2,2, 1,2,1, 0);
   add_Box_CENTER(-1, 0,0,0, 1,8,1);  
 
 /*
   SolidBuildings[0] = new ParametricGeometry(2, 10,10,10, 2,2,2, 10,10,10, 0);
-  add_RecursiveSphere(0, 10,10,10, 10, 3);  
+  add_RecursiveSphere(0, 10,10,10, 10, 3, 0);  
   SolidBuildings[1] = new ParametricGeometry(2, -10,-10,5, 2,2,2, 5,5,5, 0);
-  add_RecursiveSphere(0, -10,-10,5, 5, 2);
+  add_RecursiveSphere(0, -10,-10,5, 5, 2, 0);
   SolidBuildings[2] = new ParametricGeometry(1, 50,0,10, 8,8,8, 10,30,20, 0);
   add_Box_CENTER(-1, 50,0,10, 10,30,20);  
 */
 
-  //add_RecursiveSphere(0, 0,0,0, 90, 5);
+  //add_RecursiveSphere(0, 0,0,0, 90, 5, 0);
   
   //add_Icosahedron(0, -25,0,0, 10);
   
@@ -11060,7 +11066,7 @@ int[][] TempObjectFaces = {{0}};
 int POINTER_TempObjectVertices = 1;
 int POINTER_TempObjectFaces = 1;
 
-void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Teselation) {
+void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Teselation, int isSky) {
   
   int[] vT = new int[6];
   int[] vB = new int[6];
@@ -11147,7 +11153,16 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
   println("Vertices:", POINTER_TempObjectVertices);
   println("Faces:", POINTER_TempObjectFaces);
 
-  addTempObjectToScene(cx,cy,cz,r,r,r);  
+  if (isSky == 0) {
+    addTempObjectToScene(cx,cy,cz,r,r,r);
+  }
+  else{
+    
+    
+    
+    POINTER_TempObjectVertices = 1;
+    POINTER_TempObjectFaces = 1;  
+  }  
   
 }  
 
