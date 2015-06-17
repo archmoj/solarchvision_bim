@@ -10266,7 +10266,8 @@ void _draw_objects () {
            
       int l = impact_layer;
       
-      for (int j = j_start; j < j_end; j += 1) {
+      //for (int j = j_start; j < j_end; j += 1) {
+      for (int j = j_start; j <= j_start; j += 1) { // we could only plot day 1 here.
       
         now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
       
