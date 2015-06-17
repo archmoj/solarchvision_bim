@@ -230,7 +230,7 @@ int develop_Layer = drw_Layer;
 int print_title = 1;
 
 float T_scale = 0;
-float U_scale = 18.0 / (j_end - j_start);
+float U_scale = 18.0 / float(j_end - j_start);
 float[] V_scale = {(100.0/360.0), (10.0/5.0), 4.0, 1.0, (2.5 * pow(2, 0.5)), 0.1, 0.1, 0.1, 0.0, 0.0025, 0.0025, 10.0, 25.0, 0.01, 2.0, 1, 1, 0.5};
 float[] V_offset = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1000, -500, -500, 0};
 float[] V_belowLine = {0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0};
@@ -884,7 +884,7 @@ void GRAPHS_draw () {
   
   draw_spinners();
 
-  U_scale = 18.0 / (j_end - j_start);
+  U_scale = 18.0 / float(j_end - j_start);
   update_DevelopDATA = 1; // ??
 
   if (pre_DATE != _DATE) {
@@ -2902,9 +2902,9 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
   float[] By_LINES = {0};
   float[] Bz_LINES = {0};
   
-  File_output_node = new PrintWriter [(1 + j_end - j_start)];
-  File_output_norm = new PrintWriter [(1 + j_end - j_start)];
-  File_output_prob = new PrintWriter [(1 + j_end - j_start)];
+  File_output_node = new PrintWriter [(j_end - j_start)];
+  File_output_norm = new PrintWriter [(j_end - j_start)];
+  File_output_prob = new PrintWriter [(j_end - j_start)];
   
   String Main_name = MAKE_mainname();
 
@@ -3320,9 +3320,9 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
   float[] By_LINES = {0};
   float[] Bz_LINES = {0};
 
-  File_output_node = new PrintWriter [(1 + j_end - j_start)];
-  File_output_norm = new PrintWriter [(1 + j_end - j_start)];
-  File_output_prob = new PrintWriter [(1 + j_end - j_start)];
+  File_output_node = new PrintWriter [(j_end - j_start)];
+  File_output_norm = new PrintWriter [(j_end - j_start)];
+  File_output_prob = new PrintWriter [(j_end - j_start)];
   
   String Main_name = MAKE_mainname();
   
@@ -3724,9 +3724,9 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
   float[] By_LINES = {0};
   float[] Bz_LINES = {0};
 
-  File_output_node = new PrintWriter [(1 + j_end - j_start)];
-  File_output_norm = new PrintWriter [(1 + j_end - j_start)];
-  File_output_prob = new PrintWriter [(1 + j_end - j_start)];
+  File_output_node = new PrintWriter [(j_end - j_start)];
+  File_output_norm = new PrintWriter [(j_end - j_start)];
+  File_output_prob = new PrintWriter [(j_end - j_start)];
   
   String Main_name = MAKE_mainname();
   
@@ -4277,9 +4277,9 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
   float[] By_LINES = {0};
   float[] Bz_LINES = {0};
 
-  File_output_node = new PrintWriter [(1 + j_end - j_start)];
-  File_output_norm = new PrintWriter [(1 + j_end - j_start)];
-  File_output_prob = new PrintWriter [(1 + j_end - j_start)];
+  File_output_node = new PrintWriter [(j_end - j_start)];
+  File_output_norm = new PrintWriter [(j_end - j_start)];
+  File_output_prob = new PrintWriter [(j_end - j_start)];
   
   String Main_name = MAKE_mainname();
 
@@ -6079,7 +6079,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     
     float _Multiplier = 1; 
     if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; 
-    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.01; 
+    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02; 
 
     //for (int p = 0; p < 3; p += 1) { 
       //int l = 3 * int(impact_layer / 3) + p;
@@ -6429,9 +6429,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           int Image_Y = np / RES1;
         
           float Image_A = total_Matrix_ARGB[0][Image_X][Image_Y] / (1.0 * (j_end - j_start));
-          float Image_R = total_Matrix_ARGB[1][Image_X][Image_Y];
+          float Image_R = total_Matrix_ARGB[1][Image_X][Image_Y] / (1.0 * (j_end - j_start));
           float Image_G = total_Matrix_ARGB[2][Image_X][Image_Y] / (1.0 * (j_end - j_start));
-          float Image_B = total_Matrix_ARGB[3][Image_X][Image_Y];
+          float Image_B = total_Matrix_ARGB[3][Image_X][Image_Y] / (1.0 * (j_end - j_start));
          
           float[] _c = {0, 0, 0, 0};
           
@@ -6613,7 +6613,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     
     float _Multiplier = 1; 
     if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; //0.1 / 0.75; //0.1; <<<<<<<<<<<<<<<<<<<<<
-    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.01; 
+    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02; 
 
     Diagrams_translate(0, -0.25 * sx_Plot / U_scale);
     Diagrams_pushMatrix();
@@ -7569,7 +7569,7 @@ void GRAPHS_keyPressed () {
 
         case TAB :if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
                     if (per_day == 1) { 
-                      per_day = int(365 / float(1 + j_end - j_start));
+                      per_day = int(365 / float(j_end - j_start));
                     }
                     else {
                       per_day = 1;
@@ -7580,7 +7580,7 @@ void GRAPHS_keyPressed () {
                   }           
                   if (impacts_source == databaseNumber_OBSERVED) {
                     if (per_day == 1) { 
-                      per_day = int(max_j_end_observed / float(1 + j_end - j_start));
+                      per_day = int(max_j_end_observed / float(j_end - j_start));
                     }
                     else {
                       per_day = 1;
@@ -7591,10 +7591,10 @@ void GRAPHS_keyPressed () {
                 
         case ']' :j_end += 1; 
                   if (j_end > j_start + 61) j_end -= 1;
-                  U_scale = 18.0 / (j_end - j_start);
+                  U_scale = 18.0 / float(j_end - j_start);
                   /*
                   if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
-                    per_day = int(365 / float(1 + j_end - j_start));
+                    per_day = int(365 / float(j_end - j_start));
                   } 
                   if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
                     per_day = 1;
@@ -7604,10 +7604,10 @@ void GRAPHS_keyPressed () {
                   redraw_scene = 1; break; 
         case '[' :j_end -= 1; 
                   if (j_end <= j_start) j_end += 1;
-                  U_scale = 18.0 / (j_end - j_start);
+                  U_scale = 18.0 / float(j_end - j_start);
                   /*
                   if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
-                    per_day = int(365 / float(1 + j_end - j_start));
+                    per_day = int(365 / float(j_end - j_start));
                   } 
                   if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
                     per_day = 1;
@@ -10164,7 +10164,7 @@ void _draw_objects () {
       
       float _Multiplier = 1; 
       if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; 
-      if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.01;       
+      if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02;       
 
       int N_baked = 0;
       
@@ -10261,7 +10261,7 @@ void _draw_objects () {
       
       float _Multiplier = 1; 
       if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; 
-      if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.01; 
+      if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02; 
   
            
       int l = impact_layer;
