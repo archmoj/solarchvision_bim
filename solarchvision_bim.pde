@@ -6349,6 +6349,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               total_Matrix_ARGB[1][Image_X][Image_Y] += Image_R;
               total_Matrix_ARGB[2][Image_X][Image_Y] += Image_G;
               total_Matrix_ARGB[3][Image_X][Image_Y] += Image_B; 
+
              
               float[] _c = {0, 0, 0, 0};
               
@@ -6371,8 +6372,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 
                 _valuesSUM = COMPARISON;
                 _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
-                
-                Matrix_ARGB[2][Image_X][Image_Y] = COMPARISON;
               }
               
                                       
@@ -6429,10 +6428,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           int Image_X = np % RES1;
           int Image_Y = np / RES1;
         
-          float Image_A = total_Matrix_ARGB[0][Image_X][Image_Y] / (1.0 * (1 + j_end - j_start));
-          float Image_R = total_Matrix_ARGB[1][Image_X][Image_Y] / (1.0 * (1 + j_end - j_start));
-          float Image_G = total_Matrix_ARGB[2][Image_X][Image_Y] / (1.0 * (1 + j_end - j_start));
-          float Image_B = total_Matrix_ARGB[3][Image_X][Image_Y] / (1.0 * (1 + j_end - j_start));
+          float Image_A = total_Matrix_ARGB[0][Image_X][Image_Y] / (1.0 * (j_end - j_start));
+          float Image_R = total_Matrix_ARGB[1][Image_X][Image_Y];
+          float Image_G = total_Matrix_ARGB[2][Image_X][Image_Y] / (1.0 * (j_end - j_start));
+          float Image_B = total_Matrix_ARGB[3][Image_X][Image_Y];
          
           float[] _c = {0, 0, 0, 0};
           
@@ -6455,8 +6454,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             
             _valuesSUM = COMPARISON;
             _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
-            
-            total_Matrix_ARGB[2][Image_X][Image_Y] = COMPARISON;
           }
           
           if (PAL_DIR == -1) _u = 1 - _u;
