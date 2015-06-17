@@ -6375,8 +6375,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               }
               
                                       
-              if ((Image_X == RES1 / 2) && (Image_Y == RES2 / 2)) println("Image Processing: <CENTER> _valuesSUM =", _valuesSUM); 
-              if ((Image_X == RES1 - 1) && (Image_Y == RES2 - 1)) println("Image Processing: <CORNER> _valuesSUM =", _valuesSUM); 
+              //if ((Image_X == RES1 / 2) && (Image_Y == RES2 / 2)) println("Image Processing: <CENTER> _valuesSUM =", _valuesSUM); 
+              //if ((Image_X == RES1 - 1) && (Image_Y == RES2 - 1)) println("Image Processing: <CORNER> _valuesSUM =", _valuesSUM); 
               
               if (PAL_DIR == -1) _u = 1 - _u;
               if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -6796,7 +6796,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = _valuesSUM_RAD;
                 if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = _valuesSUM_EFF; 
                 
-                if ((Alpha == 90.0) && (Beta == 0.0)) println("SPHERICAL >> _valuesSUM_RAD:", _valuesSUM_RAD, "_valuesSUM_EFF:", _valuesSUM_EFF);  
+                //if ((Alpha == 90.0) && (Beta == 0.0)) println("SPHERICAL >> _valuesSUM_RAD:", _valuesSUM_RAD, "_valuesSUM_EFF:", _valuesSUM_EFF);  
                 
                 if (_valuesSUM < 0.9 * FLOAT_undefined) {
                 
@@ -10018,10 +10018,10 @@ void _update_objects () {
   }
   
   
-  //add_Box(0, -20, -20, 0, 20, 20, 40);
-  add_Mesh2(1, -20,-20,0, 20,20,0);
+  //add_Box(3, -20, -20, 0, 20, 20, 40);
+  //add_Mesh2(3, -20,-20,0, 20,20,0);
   
-/*  
+  
   //add_Box(0, -20, 0, 0, 20, 20, 30);
   {
     float x1 = -20;
@@ -10044,7 +10044,7 @@ void _update_objects () {
   add_PolygonHyper(0, 0, -20, 0,  15, 15, 4);
   
   //add_RecursiveSphere(0, 0,0,0, 92.5, 1, 0); 
-*/
+
   
 
   //add_ParametricGeometries(); 
@@ -10485,7 +10485,7 @@ void _draw_objects () {
             else PERCENTAGE = 0.0;
             COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
             
-            println("_valuesSUM_RAD:", _valuesSUM_RAD, "|COMPARISON:", COMPARISON);
+            //println("_valuesSUM_RAD:", _valuesSUM_RAD, "|COMPARISON:", COMPARISON);
             
             {
               float[] ADD_values_RAD = {_valuesSUM_RAD};
