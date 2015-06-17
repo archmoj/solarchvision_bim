@@ -10263,69 +10263,70 @@ void _draw_objects () {
       if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; 
       if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02; 
   
-           
-      int l = impact_layer;
-      
-      //for (int j = j_start; j < j_end; j += 1) {
-      for (int j = j_start; j <= j_start; j += 1) { // we could only plot day 1 here.
-      
-        now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
-      
-        if (now_j >= 365) {
-         now_j = now_j % 365; 
-        }
-        if (now_j < 0) {
-         now_j = (now_j + 365) % 365; 
-        }
-       
-        float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
-      
-        float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
-        float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
-      
-        int[] Normals_COL_N;
-        Normals_COL_N = new int[9];
-        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
-      
-        int nk = Normals_COL_N[l];
-        
-        if (nk != -1) {
-          int k = int(nk / num_add_days);
-          int j_ADD = nk % num_add_days; 
   
-          for (int f = 1; f < allFaces.length; f++) {
+      for (int f = 1; f < allFaces.length; f++) {
+    
+        int Teselation = 0;
         
-            int Teselation = 0;
+        int TotalSubNo = 1;  
+        if (allFaces_MAT[f] == 0) {
+          Teselation = WIN3D_TESELATION;
+          if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+        }
+                
+        for (int n = 0; n < TotalSubNo; n++) {
+          float[][] subFace = getSubFace(allFaces[f], Teselation, n);
+          
+          WIN3D_Diagrams.beginShape();
+          
+          for (int s = 0; s < subFace.length; s++) {
             
-            int TotalSubNo = 1;  
-            if (allFaces_MAT[f] == 0) {
-              Teselation = WIN3D_TESELATION;
-              if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
-            }
-                    
-            for (int n = 0; n < TotalSubNo; n++) {
-              float[][] subFace = getSubFace(allFaces[f], Teselation, n);
+            int s_next = (s + 1) % subFace.length;
+            int s_prev = (s + subFace.length - 1) % subFace.length;
+            
+            PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
+            PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
+            PVector UV = U.cross(V);
+            float[] W = {UV.x, UV.y, UV.z};
+            W = fn_normalize(W);
+            
+            float Alpha = asin_ang(W[2]);
+            float Beta = atan2_ang(W[1], W[0]) + 90; 
+            
+            float _valuesSUM_RAD = 0;
+            float _valuesSUM_EFF_P = 0;
+            float _valuesSUM_EFF_N = 0;
+            int _valuesNUM = 0; 
+            
+            
+            int l = impact_layer;
+            
+            for (int j = j_start; j < j_end; j += 1) {
+            
+              now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
+            
+              if (now_j >= 365) {
+               now_j = now_j % 365; 
+              }
+              if (now_j < 0) {
+               now_j = (now_j + 365) % 365; 
+              }
+             
+              float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
+            
+              float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
+              float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
+            
+              int[] Normals_COL_N;
+              Normals_COL_N = new int[9];
+              Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
+            
+              int nk = Normals_COL_N[l];
               
-              WIN3D_Diagrams.beginShape();
-              
-              for (int s = 0; s < subFace.length; s++) {
-                
-                int s_next = (s + 1) % subFace.length;
-                int s_prev = (s + subFace.length - 1) % subFace.length;
-                
-                PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
-                PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
-                PVector UV = U.cross(V);
-                float[] W = {UV.x, UV.y, UV.z};
-                W = fn_normalize(W);
-                
-                float Alpha = asin_ang(W[2]);
-                float Beta = atan2_ang(W[1], W[0]) + 90; 
-                
-                float _valuesSUM_RAD = 0;
-                float _valuesSUM_EFF_P = 0;
-                float _valuesSUM_EFF_N = 0;
-                int _valuesNUM = 0; 
+              if (nk != -1) {
+                int k = int(nk / num_add_days);
+                int j_ADD = nk % num_add_days; 
+            
       
                 for (int i = 0; i < 24; i += 1) {
                 //for (int i = 6; i <= 18; i += 3) { // for a quick result! 
@@ -10424,10 +10425,6 @@ void _draw_objects () {
                           if (SunMask <= 0) SunMask = 0; // removes backing faces 
                           
                           float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
-      
-      
-    
-      
                     
                           float[] ray_start = subFace[s];     
                           float[] ray_direction = {SunR[1],SunR[2],SunR[3]}; // NOT SURE!
