@@ -556,7 +556,7 @@ void setup () {
   Y_View = h_pixel; 
   R_View = float(Y_View) / float(X_View);
 
-  _DATE = 75; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
+  _DATE = 0; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   
   //if (_HOUR >= 12) _DATE += 0.5; 
   
@@ -2681,10 +2681,10 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
           float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, float(ENSEMBLE[i][j][_cloudcover][k]));
           float T = float(ENSEMBLE[i][j][_drybulb][k]);
   
-          ENSEMBLE[i][j][_dirnorrad][k] = String.valueOf(SunR[4]);
+          ENSEMBLE[i][j][_dirnorrad][k] = "0"; //String.valueOf(SunR[4]);  //zzzzzzzzzzz
           ENSEMBLE_DATA[i][j][_dirnorrad][k] = 0;
           
-          ENSEMBLE[i][j][_difhorrad][k] = String.valueOf(SunR[5]);
+          ENSEMBLE[i][j][_difhorrad][k] = "1000"; //String.valueOf(SunR[5]);  // zzzzzzzzz
           ENSEMBLE_DATA[i][j][_difhorrad][k] = 0;
 
           ENSEMBLE[i][j][_glohorrad][k] = String.valueOf(SunR[4] * SunR[3] + SunR[5]);
@@ -6172,11 +6172,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             }
 
             PImage Image_RGBA = createImage(RES1, RES2, RGB);
+
+            float _valuesMUL = 1; //24.0 / SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE);
   
             for (int i = 4; i <= 20; i += 1) { // to make it faster. Also the images are not available out of this period. 
 
-              float _valuesMUL = 24.0 / SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE);
-              
               float HOUR_ANGLE = i; 
               float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
 
@@ -6231,8 +6231,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
                 
                 if (drw_count == 1) {
-                  _values_R_dir = 0.001 * float(Pa); 
-                  _values_R_dif = 0; //0.001 * float(Pb); zzzzzzzzzzzzz 
+                  _values_R_dir = 0.001 * float(Pa);  
+                  _values_R_dif = 0.001 * float(Pb); 
                   _values_E_dir = 0.001 * float(Pc);
                   _values_E_dif = 0.001 * float(Pd);
                   
@@ -6783,8 +6783,13 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 
       
                 if (_valuesNUM != 0) {
-                  _valuesSUM_RAD *= 24.0 / (1.0 * _valuesNUM);
-                  _valuesSUM_EFF *= 24.0 / (1.0 * _valuesNUM);
+                  //_valuesSUM_RAD *= 24.0 / (1.0 * _valuesNUM);
+                  //_valuesSUM_EFF *= 24.0 / (1.0 * _valuesNUM);
+                  
+                  float _valuesMUL = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / (1.0 * _valuesNUM);  
+                                     
+                  _valuesSUM_RAD *= _valuesMUL;
+                  _valuesSUM_EFF *= _valuesMUL;
                 }
                 else {
                   _valuesSUM_RAD = FLOAT_undefined;
@@ -10325,11 +10330,10 @@ void _draw_objects () {
                 float _valuesSUM_EFF_P = 0;
                 float _valuesSUM_EFF_N = 0;
                 int _valuesNUM = 0; 
-  
       
                 for (int i = 0; i < 24; i += 1) {
                 //for (int i = 6; i <= 18; i += 3) { // for a quick result! 
-                  
+                
                   float HOUR_ANGLE = i; 
                   float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
   
@@ -10387,7 +10391,7 @@ void _draw_objects () {
                       
                       if (drw_count == 1) {
                         _values_R_dir = 0.001 * float(Pa); 
-                        _values_R_dif = 0; //0.001 * float(Pb); zzzzzzzzzzzz 
+                        _values_R_dif = 0.001 * float(Pb);  
                         _values_E_dir = 0.001 * float(Pc);
                         _values_E_dif = 0.001 * float(Pd);
                         
@@ -10460,8 +10464,6 @@ void _draw_objects () {
                           }
                           _valuesNUM += 1;
                           
-                          
-  
                         }
                       }
                     }
@@ -10469,9 +10471,16 @@ void _draw_objects () {
                 }
                 
                 if (_valuesNUM != 0) {
-                  _valuesSUM_RAD *= 24.0 / (1.0 * _valuesNUM);
-                  _valuesSUM_EFF_P *= 24.0 / (1.0 * _valuesNUM);
-                  _valuesSUM_EFF_N *= 24.0 / (1.0 * _valuesNUM);
+                  //_valuesSUM_RAD *= 24.0 / (1.0 * _valuesNUM);
+                  //_valuesSUM_EFF_P *= 24.0 / (1.0 * _valuesNUM);
+                  //_valuesSUM_EFF_N *= 24.0 / (1.0 * _valuesNUM);
+                                
+                   //float _valuesMUL = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / (1.0 * _valuesNUM);  
+                   float _valuesMUL = 1.0; //SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / (1.0 * _valuesNUM);
+                                     
+                  _valuesSUM_RAD *= _valuesMUL;
+                  _valuesSUM_EFF_P *= _valuesMUL;
+                  _valuesSUM_EFF_N *= _valuesMUL;
                 }
                 else {
                   _valuesSUM_RAD = 0; //FLOAT_undefined;
