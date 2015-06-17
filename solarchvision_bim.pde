@@ -556,7 +556,7 @@ void setup () {
   Y_View = h_pixel; 
   R_View = float(Y_View) / float(X_View);
 
-  _DATE = 75; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
+  _DATE = 286; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   
   //if (_HOUR >= 12) _DATE += 0.5; 
   
@@ -6176,10 +6176,12 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             PImage Image_RGBA = createImage(RES1, RES2, RGB);
   
             for (int i = 4; i <= 20; i += 1) { // to make it faster. Also the images are not available out of this period. 
+
+              float _valuesMUL = 24.0 / SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE);
               
               float HOUR_ANGLE = i; 
               float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
-              
+
               now_k = k;
               now_i = i;
               now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
@@ -6248,6 +6250,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       EFF_VALUE = _values_E_dif;
                     }
                     
+                    RAD_VALUE *= _valuesMUL;
+                    EFF_VALUE *= _valuesMUL;
 
                     PImage[] Shadings = new PImage[2];
                     for (int SHD = 0; SHD <= 1; SHD += 1) {
@@ -6316,12 +6320,12 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       Matrix_ARGB[0][Image_X][Image_Y] = COL_Alpha;
                       
                       if (RAD_TYPE == 0) { // to adjust direct gains from the images
-                        COL_V0 *= 2.0; //0.95; zzzzzzzzzz 
-                        COL_V1 *= 2.0; //0.95; zzzzzzzzzz
+                        COL_V0 *= 1.0; //0.95; zzzzzzzzzz 
+                        COL_V1 *= 1.0; //0.95; zzzzzzzzzz
                       }
                       if (RAD_TYPE == 1) { // to adjust diffuse gains from the images
-                        COL_V0 *= 2.0; //2.25; zzzzzzzzzz 
-                        COL_V1 *= 2.0; //2.25; zzzzzzzzzz
+                        COL_V0 *= 1.0; //2.25; zzzzzzzzzz 
+                        COL_V1 *= 1.0; //2.25; zzzzzzzzzz
                       }
 
                       if (Impact_TYPE == Impact_ACTIVE) {  
