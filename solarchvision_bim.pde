@@ -72,7 +72,9 @@ int STATION_NUMBER = 1;
 String[][] DEFINED_STATIONS = {
 
                                 {"GERALDTON_ON_CA", "GERALDTON", "ON", "48.78262", "-86.77764", "-90", "100"},
-                                {"MONTREAL_DORVAL_QC_CA", "MONTREAL", "QC", "45.47", "-73.75", "-75", "31.00"}, 
+                                
+                                {"MONTREAL_DORVAL_QC_CA", "MONTREAL", "QC", "45.47", "-73.75", "-75", "31.00"},
+                                
                                 {"CALGARY_INTL_AB_CA", "CALGARY", "AB", "51.10", "-114.02", "-120", "1084.10"}, 
                                 {"EDMONTON_INTL_A_AB_CA", "EDMONTON_INTL_A", "AB", "53.316666", "-113.583336", "-120", "723.3"}, 
                                 //{"HALIFAX_INTL_AIRPORT_NS_CA", "HALIFAX", "NS", "44.86", "-63.50", "-60", "145.40"}, 
@@ -554,7 +556,7 @@ void setup () {
   Y_View = h_pixel; 
   R_View = float(Y_View) / float(X_View);
 
-  _DATE = 286; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
+  _DATE = 75; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   
   //if (_HOUR >= 12) _DATE += 0.5; 
   
@@ -6173,7 +6175,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
             PImage Image_RGBA = createImage(RES1, RES2, RGB);
   
-            for (int i = 0; i < 24; i += 1) {
+            for (int i = 4; i <= 20; i += 1) { // to make it faster. Also the images are not available out of this period. 
               
               float HOUR_ANGLE = i; 
               float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
@@ -6229,8 +6231,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
                 
                 if (drw_count == 1) {
-                  _values_R_dir = 0.001 * float(Pa);
-                  _values_R_dif = 0.001 * float(Pb);
+                  _values_R_dir = 1; //0.001 * float(Pa); zzzzzzzzzzzzz
+                  _values_R_dif = 0; //0.001 * float(Pb); zzzzzzzzzzzzz
                   _values_E_dir = 0.001 * float(Pc);
                   _values_E_dif = 0.001 * float(Pd);
                   
@@ -6246,97 +6248,96 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       EFF_VALUE = _values_E_dif;
                     }
                     
-                    //if ((HOUR_ANGLE >= 0 + int(_sunrise)) && (HOUR_ANGLE <= 1 + int(_sunset))) {
-                    if ((HOUR_ANGLE >= 4) && (HOUR_ANGLE <= 20)) {
-                      PImage[] Shadings = new PImage[2];
-                      for (int SHD = 0; SHD <= 1; SHD += 1) {
-                        String[] STR_SHD = {"F" , "T"};
-                        String File_Name = "";
-                        
-                        int Round_Latitude = int(roundTo(LocationLatitude, 5));
-                        if (Round_Latitude > 60) Round_Latitude = 60; // <<<<<<<<<<<<<<<
-                        if (Round_Latitude < -45) Round_Latitude = -45; // <<<<<<<<<<<<<<<
-                        String Near_Latitude = nf(abs(Round_Latitude), 2);
-                        
-                        if (Round_Latitude < 0) Near_Latitude += "S";
-                        else Near_Latitude += "N";
-                        
-                        //if (DEFINED_STATIONS[STATION_NUMBER][1].equals("MONTREAL")) { 
-                        //  if (variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/MONTREAL_DOWNTOWN" + "/";
-                        //  if (variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/EV_BUILDING" + "/";
-                        //}
-                        //else {
-                          if (variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/Complex_" + Near_Latitude + "/";
-                          if (variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/Complex_" + Near_Latitude + "/";
-                        //}                          
-                        
-                        
-                        if (RAD_TYPE == 0) {
-                          //File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4); ZZZZZZZZZZZZZZZZZZZZ
-                          File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[0] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
+
+                    PImage[] Shadings = new PImage[2];
+                    for (int SHD = 0; SHD <= 1; SHD += 1) {
+                      String[] STR_SHD = {"F" , "T"};
+                      String File_Name = "";
+                      
+                      int Round_Latitude = int(roundTo(LocationLatitude, 5));
+                      if (Round_Latitude > 60) Round_Latitude = 60; // <<<<<<<<<<<<<<<
+                      if (Round_Latitude < -45) Round_Latitude = -45; // <<<<<<<<<<<<<<<
+                      String Near_Latitude = nf(abs(Round_Latitude), 2);
+                      
+                      if (Round_Latitude < 0) Near_Latitude += "S";
+                      else Near_Latitude += "N";
+                      
+                      //if (DEFINED_STATIONS[STATION_NUMBER][1].equals("MONTREAL")) { 
+                      //  if (variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/MONTREAL_DOWNTOWN" + "/";
+                      //  if (variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/EV_BUILDING" + "/";
+                      //}
+                      //else {
+                        if (variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/Complex_" + Near_Latitude + "/";
+                        if (variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/Complex_" + Near_Latitude + "/";
+                      //}                          
+                      
+                      
+                      if (RAD_TYPE == 0) {
+                        //File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4); ZZZZZZZZZZZZZZZZZZZZ
+                        File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[0] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
+                      }
+                      else {
+                        //File_Name += "DIF_" + STR_SHD[SHD]; ZZZZZZZZZZZZZZZZZ
+                        File_Name += "DIF_" + STR_SHD[0];
+                      }
+                      
+                      //if (DEFINED_STATIONS[STATION_NUMBER][1].equals("MONTREAL")) { 
+                        //if (variation == 1) File_Name += "_" + "Montreal_Downtown.PNG";
+                        //if (variation == 2) File_Name += "_" + "Montreal_EV_BUILDING_B.PNG";
+                      //}
+                      //else {
+                        if (variation == 1) File_Name += "_" + "Complex_" + Near_Latitude + "_Camera01.PNG";
+                        if (variation == 2) File_Name += "_" + "Complex_" + Near_Latitude + "_Camera02.PNG";
+                      //}
+
+                      //println (File_Name);
+                      Shadings[SHD]  = loadImage(File_Name);
+                    }   
+   
+                    for (int np = 0; np < (RES1 * RES2); np++) {
+                      int Image_X = np % RES1;
+                      int Image_Y = np / RES1;
+                      
+                      if (Matrix_ARGB[0][Image_X][Image_Y] > 0.9 * FLOAT_undefined) {
+                        Matrix_ARGB[0][Image_X][Image_Y] = 0;
+                        Matrix_ARGB[1][Image_X][Image_Y] = 0;
+                        Matrix_ARGB[2][Image_X][Image_Y] = 0;
+                        Matrix_ARGB[3][Image_X][Image_Y] = 0;
+                      }                             
+              
+                      color COL0 = Shadings[0].get(Image_X, Image_Y);
+                      color COL1 = Shadings[1].get(Image_X, Image_Y);
+                      //red: COL >>16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+                      float COL_V0 = (COL0 >> 8 & 0xFF) / 255.0; 
+                      float COL_V1 = (COL1 >> 8 & 0xFF) / 255.0;
+                     
+                      float COL_Alpha = (COL1 >> 24 & 0xFF);
+                      
+                      Matrix_ARGB[0][Image_X][Image_Y] = COL_Alpha;
+                      
+                      if (RAD_TYPE == 0) { // to adjust direct gains from the images
+                        COL_V0 *= 2.0; //0.95; zzzzzzzzzz 
+                        COL_V1 *= 2.0; //0.95; zzzzzzzzzz
+                      }
+                      if (RAD_TYPE == 1) { // to adjust diffuse gains from the images
+                        COL_V0 *= 2.0; //2.25; zzzzzzzzzz 
+                        COL_V1 *= 2.0; //2.25; zzzzzzzzzz
+                      }
+
+                      if (Impact_TYPE == Impact_ACTIVE) {  
+                        Matrix_ARGB[2][Image_X][Image_Y] += RAD_VALUE * COL_V1;
+                      }
+                      if (Impact_TYPE == Impact_PASSIVE) {
+                        if (EFF_VALUE < 0) {
+                          Matrix_ARGB[1][Image_X][Image_Y] -= EFF_VALUE * COL_V1;
+                          if (COL_V0 != COL_V1) Matrix_ARGB[3][Image_X][Image_Y] -= EFF_VALUE * (COL_V0 - COL_V1); 
                         }
                         else {
-                          //File_Name += "DIF_" + STR_SHD[SHD]; ZZZZZZZZZZZZZZZZZ
-                          File_Name += "DIF_" + STR_SHD[0];
-                        }
-                        
-                        //if (DEFINED_STATIONS[STATION_NUMBER][1].equals("MONTREAL")) { 
-                          //if (variation == 1) File_Name += "_" + "Montreal_Downtown.PNG";
-                          //if (variation == 2) File_Name += "_" + "Montreal_EV_BUILDING_B.PNG";
-                        //}
-                        //else {
-                          if (variation == 1) File_Name += "_" + "Complex_" + Near_Latitude + "_Camera01.PNG";
-                          if (variation == 2) File_Name += "_" + "Complex_" + Near_Latitude + "_Camera02.PNG";
-                        //}
-  
-                        //println (File_Name);
-                        Shadings[SHD]  = loadImage(File_Name);
-                      }   
-     
-                      for (int np = 0; np < (RES1 * RES2); np++) {
-                        int Image_X = np % RES1;
-                        int Image_Y = np / RES1;
-                        
-                        if (Matrix_ARGB[0][Image_X][Image_Y] > 0.9 * FLOAT_undefined) {
-                          Matrix_ARGB[0][Image_X][Image_Y] = 0;
-                          Matrix_ARGB[1][Image_X][Image_Y] = 0;
-                          Matrix_ARGB[2][Image_X][Image_Y] = 0;
-                          Matrix_ARGB[3][Image_X][Image_Y] = 0;
-                        }                             
-                
-                        color COL0 = Shadings[0].get(Image_X, Image_Y);
-                        color COL1 = Shadings[1].get(Image_X, Image_Y);
-                        //red: COL >>16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
-                        float COL_V0 = (COL0 >> 8 & 0xFF) / 255.0; 
-                        float COL_V1 = (COL1 >> 8 & 0xFF) / 255.0;
-                       
-                        float COL_Alpha = (COL1 >> 24 & 0xFF);
-                        
-                        Matrix_ARGB[0][Image_X][Image_Y] = COL_Alpha;
-                        
-                        if (RAD_TYPE == 0) { // to adjust direct gains from the images
-                          COL_V0 *= 0.95; 
-                          COL_V1 *= 0.95;
-                        }
-                        if (RAD_TYPE == 1) { // to adjust diffuse gains from the images
-                          COL_V0 *= 2.25; 
-                          COL_V1 *= 2.25;
-                        }
-  
-                        if (Impact_TYPE == Impact_ACTIVE) {  
-                          Matrix_ARGB[2][Image_X][Image_Y] += RAD_VALUE * COL_V1;
-                        }
-                        if (Impact_TYPE == Impact_PASSIVE) {
-                          if (EFF_VALUE < 0) {
-                            Matrix_ARGB[1][Image_X][Image_Y] -= EFF_VALUE * COL_V1;
-                            if (COL_V0 != COL_V1) Matrix_ARGB[3][Image_X][Image_Y] -= EFF_VALUE * (COL_V0 - COL_V1); 
-                          }
-                          else {
-                            Matrix_ARGB[3][Image_X][Image_Y] += EFF_VALUE * COL_V1;
-                            if (COL_V0 != COL_V1) Matrix_ARGB[1][Image_X][Image_Y] += EFF_VALUE * (COL_V0 - COL_V1);
-                          }
+                          Matrix_ARGB[3][Image_X][Image_Y] += EFF_VALUE * COL_V1;
+                          if (COL_V0 != COL_V1) Matrix_ARGB[1][Image_X][Image_Y] += EFF_VALUE * (COL_V0 - COL_V1);
                         }
                       }
+
                     }
                   }
                 }
@@ -6386,7 +6387,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               }
               
                                       
-              if ((Image_X == RES1 / 2) && (Image_Y == RES2 / 2)) println("Image Processing: _valuesSUM =", _valuesSUM); 
+              if ((Image_X == RES1 / 2) && (Image_Y == RES2 / 2)) println("Image Processing: <CENTER> _valuesSUM =", _valuesSUM); // zzzzzzzzzzzzzz
+              if ((Image_X == RES1 - 1) && (Image_Y == RES2 - 1)) println("Image Processing: <CORNER> _valuesSUM =", _valuesSUM); // zzzzzzzzzzzzzz
               
               if (PAL_DIR == -1) _u = 1 - _u;
               if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -10393,8 +10395,8 @@ void _draw_objects () {
                       if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
                       
                       if (drw_count == 1) {
-                        _values_R_dir = 0.001 * float(Pa);
-                        _values_R_dif = 0.001 * float(Pb);
+                        _values_R_dir = 1; //0.001 * float(Pa); zzzzzzzzzzzzzzz
+                        _values_R_dif = 0; //0.001 * float(Pb); zzzzzzzzzzzzzzz
                         _values_E_dir = 0.001 * float(Pc);
                         _values_E_dif = 0.001 * float(Pd);
                         
