@@ -772,8 +772,8 @@ void draw () {
       //CAM_z = (300.0 / (1.0 * h_pixel)) * 0.5 * WIN3D_Diagrams.height / tan(0.5 * fov);
       
 
-      println("CAM_fov =", fov * 180 / PI);
-      println(CAM_x, CAM_y, CAM_z);
+      //println("CAM_fov =", fov * 180 / PI);
+      //println(CAM_x, CAM_y, CAM_z);
       
       float aspect = 1.0 / WIN3D_R_View;
       
@@ -785,7 +785,7 @@ void draw () {
       float xmin = ymin * aspect;
       float xmax = ymax * aspect;
 
-      println(xmin, xmax, ymin, ymax, zNear, zFar);
+      //println(xmin, xmax, ymin, ymax, zNear, zFar);
       WIN3D_Diagrams.frustum(xmin, xmax, ymin, ymax, zNear, zFar);
 
       WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
@@ -6272,10 +6272,12 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                         
                         
                         if (RAD_TYPE == 0) {
-                          File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
+                          //File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4); ZZZZZZZZZZZZZZZZZZZZ
+                          File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[0] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
                         }
                         else {
-                          File_Name += "DIF_" + STR_SHD[SHD];
+                          //File_Name += "DIF_" + STR_SHD[SHD]; ZZZZZZZZZZZZZZZZZ
+                          File_Name += "DIF_" + STR_SHD[0];
                         }
                         
                         //if (DEFINED_STATIONS[STATION_NUMBER][1].equals("MONTREAL")) { 
@@ -6382,6 +6384,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 
                 Matrix_ARGB[2][Image_X][Image_Y] = COMPARISON;
               }
+              
+                                      
+              if ((Image_X == RES1 / 2) && (Image_Y == RES2 / 2)) println("Image Processing: _valuesSUM =", _valuesSUM); 
               
               if (PAL_DIR == -1) _u = 1 - _u;
               if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -6797,6 +6802,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 float _valuesSUM = FLOAT_undefined;
                 if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = _valuesSUM_RAD;
                 if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = _valuesSUM_EFF; 
+                
+                if ((Alpha == 90.0) && (Beta == 0.0)) println("SPHERICAL >> _valuesSUM_RAD:", _valuesSUM_RAD, "_valuesSUM_EFF:", _valuesSUM_EFF);  
                 
                 if (_valuesSUM < 0.9 * FLOAT_undefined) {
                 
@@ -9920,7 +9927,7 @@ void _update_objects () {
   
   //add_Mesh2(7, -40, -40, 0, 40, 40, 0);
   
-
+/*
   //SOLARCHVISION Complex:
   {
     //add_Box(-1, 0, 0, 0, 1, 3, 3);
@@ -9992,7 +9999,7 @@ void _update_objects () {
     }
 
   }
-
+*/
 
 
 
@@ -10016,6 +10023,11 @@ void _update_objects () {
       add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(10));
     }
   }
+  
+  
+  //add_Box(0, -20, -20, 0, 20, 20, 40);
+  add_Mesh2(1, -20,-20,0, 20,20,0);
+  
 /*  
   //add_Box(0, -20, 0, 0, 20, 20, 30);
   {
@@ -10481,6 +10493,8 @@ void _draw_objects () {
                 if ((_valuesSUM_EFF_P + _valuesSUM_EFF_N) > 0.00001) PERCENTAGE = (_valuesSUM_EFF_P - _valuesSUM_EFF_N) / (1.0 * (_valuesSUM_EFF_P + _valuesSUM_EFF_N)); 
                 else PERCENTAGE = 0.0;
                 COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+                
+                println("_valuesSUM_RAD:", _valuesSUM_RAD, "|COMPARISON:", COMPARISON);
                 
                 {
                   float[] ADD_values_RAD = {_valuesSUM_RAD};
