@@ -556,7 +556,7 @@ void setup () {
   Y_View = h_pixel; 
   R_View = float(Y_View) / float(X_View);
 
-  _DATE = 0; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
+  _DATE = (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   
   //if (_HOUR >= 12) _DATE += 0.5; 
   
@@ -2681,10 +2681,10 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
           float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, float(ENSEMBLE[i][j][_cloudcover][k]));
           float T = float(ENSEMBLE[i][j][_drybulb][k]);
   
-          ENSEMBLE[i][j][_dirnorrad][k] = "0"; //String.valueOf(SunR[4]);  //zzzzzzzzzzz
+          ENSEMBLE[i][j][_dirnorrad][k] = String.valueOf(SunR[4]);
           ENSEMBLE_DATA[i][j][_dirnorrad][k] = 0;
           
-          ENSEMBLE[i][j][_difhorrad][k] = "1000"; //String.valueOf(SunR[5]);  // zzzzzzzzz
+          ENSEMBLE[i][j][_difhorrad][k] = String.valueOf(SunR[5]);
           ENSEMBLE_DATA[i][j][_difhorrad][k] = 0;
 
           ENSEMBLE[i][j][_glohorrad][k] = String.valueOf(SunR[4] * SunR[3] + SunR[5]);
@@ -6173,8 +6173,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
             PImage Image_RGBA = createImage(RES1, RES2, RGB);
 
-            float _valuesMUL = 1; //24.0 / SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE);
-  
             for (int i = 4; i <= 20; i += 1) { // to make it faster. Also the images are not available out of this period. 
 
               float HOUR_ANGLE = i; 
@@ -6244,12 +6242,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       EFF_VALUE = _values_E_dir;
                     }
                     else { 
-                      RAD_VALUE = _values_R_dif;
-                      EFF_VALUE = _values_E_dif;
+                      RAD_VALUE = _values_R_dif * SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / 7.25; // base on the adjustments
+                      EFF_VALUE = _values_E_dif * SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / 7.25; // base on the adjustments
                     }
-                    
-                    RAD_VALUE *= _valuesMUL;
-                    EFF_VALUE *= _valuesMUL;
 
                     PImage[] Shadings = new PImage[2];
                     for (int SHD = 0; SHD <= 1; SHD += 1) {
