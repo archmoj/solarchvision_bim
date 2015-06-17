@@ -6242,8 +6242,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       EFF_VALUE = _values_E_dir;
                     }
                     else { 
-                      RAD_VALUE = _values_R_dif * SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / 7.25; // base on the adjustments
-                      EFF_VALUE = _values_E_dif * SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / 7.25; // base on the adjustments
+                      //float MULT_dif = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / 7.25; // base on the adjustments
+                      float MULT_dif = int(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE)) / 7.25; // base on the adjustments
+                      
+                      RAD_VALUE = _values_R_dif * MULT_dif;
+                      EFF_VALUE = _values_E_dif * MULT_dif;
                     }
 
                     PImage[] Shadings = new PImage[2];
