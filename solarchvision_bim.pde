@@ -556,7 +556,7 @@ void setup () {
   Y_View = h_pixel; 
   R_View = float(Y_View) / float(X_View);
 
-  _DATE = 0; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
+  _DATE = 286; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   
   //if (_HOUR >= 12) _DATE += 0.5; 
   
@@ -6233,8 +6233,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
                 
                 if (drw_count == 1) {
-                  _values_R_dir = 1; //0.001 * float(Pa); zzzzzzzzzz
-                  _values_R_dif = 0; //0.001 * float(Pb); //zzzzzzzzzzzz 
+                  _values_R_dir = 0; //0.001 * float(Pa); 
+                  _values_R_dif = 1; //0.001 * float(Pb); zzzzzzzzzzzzz
                   _values_E_dir = 0.001 * float(Pc);
                   _values_E_dif = 0.001 * float(Pd);
                   
@@ -6277,12 +6277,12 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       
                       
                       if (RAD_TYPE == 0) {
-                        //File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
-                        File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[0] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4); // zzzzzzzz
+                        //File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4); ZZZZZZZZZZZZZZZZZZZZ
+                        File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[0] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
                       }
                       else {
-                        //File_Name += "DIF_" + STR_SHD[SHD];
-                        File_Name += "DIF_" + STR_SHD[0]; // zzzzzzz
+                        //File_Name += "DIF_" + STR_SHD[SHD]; ZZZZZZZZZZZZZZZZZ
+                        File_Name += "DIF_" + STR_SHD[0];
                       }
                       
                       //if (DEFINED_STATIONS[STATION_NUMBER][1].equals("MONTREAL")) { 
@@ -6319,6 +6319,15 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       
                       Matrix_ARGB[0][Image_X][Image_Y] = COL_Alpha;
                       
+                      if (RAD_TYPE == 0) { // to adjust direct gains from the images
+                        COL_V0 *= 1.0; //0.95; zzzzzzzzzz 
+                        COL_V1 *= 1.0; //0.95; zzzzzzzzzz
+                      }
+                      if (RAD_TYPE == 1) { // to adjust diffuse gains from the images
+                        COL_V0 *= 1.0; //2.25; zzzzzzzzzz 
+                        COL_V1 *= 1.0; //2.25; zzzzzzzzzz
+                      }
+
                       if (Impact_TYPE == Impact_ACTIVE) {  
                         Matrix_ARGB[2][Image_X][Image_Y] += RAD_VALUE * COL_V1;
                       }
@@ -6381,6 +6390,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 Matrix_ARGB[2][Image_X][Image_Y] = COMPARISON;
               }
               
+                                      
               if ((Image_X == RES1 / 2) && (Image_Y == RES2 / 2)) println("Image Processing: <CENTER> _valuesSUM =", _valuesSUM); // zzzzzzzzzzzzzz
               if ((Image_X == RES1 - 1) && (Image_Y == RES2 - 1)) println("Image Processing: <CORNER> _valuesSUM =", _valuesSUM); // zzzzzzzzzzzzzz
               
@@ -6736,8 +6746,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
                       
                       if (drw_count == 1) {
-                        _values_R_dir = 1; //0.001 * float(Pa); zzzzzzzzzz
-                        _values_R_dif = 0; //0.001 * float(Pb); zzzzzzzzzz
+                        _values_R_dir = 0.001 * float(Pa);
+                        _values_R_dif = 0.001 * float(Pb);
                         _values_E_dir = 0.001 * float(Pc);
                         _values_E_dif = 0.001 * float(Pd);
                         
@@ -10389,8 +10399,8 @@ void _draw_objects () {
                       if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
                       
                       if (drw_count == 1) {
-                        _values_R_dir = 0.001 * float(Pa);
-                        _values_R_dif = 0.001 * float(Pb);
+                        _values_R_dir = 0; //0.001 * float(Pa); zzzzzzzzzzzzzzz
+                        _values_R_dif = 1; //0.001 * float(Pb); zzzzzzzzzzzzzzz
                         _values_E_dir = 0.001 * float(Pc);
                         _values_E_dif = 0.001 * float(Pd);
                         
