@@ -556,7 +556,7 @@ void setup () {
   Y_View = h_pixel; 
   R_View = float(Y_View) / float(X_View);
 
-  _DATE = 0; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
+  _DATE = 75; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   
   //if (_HOUR >= 12) _DATE += 0.5; 
   
@@ -6070,18 +6070,16 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     int PAL_DIR = 1;
     
     if (Impact_TYPE == Impact_ACTIVE) {  
-      //PAL_TYPE = Pallet_ACTIVE; PAL_DIR = Pallet_ACTIVE_DIR;
-      //PAL_TYPE = 13; PAL_DIR = Pallet_ACTIVE_DIR; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-      //PAL_TYPE = -1; PAL_DIR = -2;
       PAL_TYPE = 15; PAL_DIR = 1;
+      
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
       PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
-    }
+    }             
     
-    float _Multiplier = 1;
-    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; //0.1 / 0.75; //0.1; <<<<<<<<<<<<<<<
-    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02; 
+    float _Multiplier = 1; 
+    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; 
+    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.01; 
 
     //for (int p = 0; p < 3; p += 1) { 
       //int l = 3 * int(impact_layer / 3) + p;
@@ -6234,7 +6232,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 
                 if (drw_count == 1) {
                   _values_R_dir = 0.001 * float(Pa); 
-                  _values_R_dif = 0.001 * float(Pb); 
+                  _values_R_dif = 0; //0.001 * float(Pb); zzzzzzzzzzzzz 
                   _values_E_dir = 0.001 * float(Pc);
                   _values_E_dif = 0.001 * float(Pd);
                   
@@ -6277,7 +6275,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       
                       
                       if (RAD_TYPE == 0) {
-                        File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4); 
+                        File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
                       }
                       else {
                         File_Name += "DIF_" + STR_SHD[SHD];
@@ -10389,7 +10387,7 @@ void _draw_objects () {
                       
                       if (drw_count == 1) {
                         _values_R_dir = 0.001 * float(Pa); 
-                        _values_R_dif = 0.001 * float(Pb); 
+                        _values_R_dif = 0; //0.001 * float(Pb); zzzzzzzzzzzz 
                         _values_E_dir = 0.001 * float(Pc);
                         _values_E_dif = 0.001 * float(Pd);
                         
@@ -10498,7 +10496,7 @@ void _draw_objects () {
                   float[] ADD_values_EFF = {COMPARISON};
                   WIN3D_VerticesSolarEffect = concat(WIN3D_VerticesSolarEffect, ADD_values_EFF);
                 }
-                  
+
                 float _valuesSUM = 0;
                 if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = _valuesSUM_RAD;
                 if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = COMPARISON;
