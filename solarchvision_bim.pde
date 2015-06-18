@@ -7094,6 +7094,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
     for (int p = 0; p < 1; p += 1) { 
       int l = impact_layer;
+      
+      Diagrams_translate(0, - (1 * (p - 0.25) * sx_Plot / U_scale));      
  
       for (int j = j_start; j < j_end; j += 1) {
 
@@ -7114,8 +7116,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         int[] Normals_COL_N;
         Normals_COL_N = new int[9];
         Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
-
-        Diagrams_translate(0, - (1 * (p - 0.25) * sx_Plot / U_scale));
 
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
           if (nk != -1) {
@@ -7256,8 +7256,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             
           }
         }
-      
-        Diagrams_translate(0, (1 * (p - 0.25) * sx_Plot / U_scale));
       }
       
       String scenario_text = "";
@@ -7276,7 +7274,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       if (Impact_TYPE == Impact_PASSIVE) {  
         my_text(N_Title[reverse_N[l]], 0, - (1 * (p - 0.25) * sx_Plot / U_scale), 0);
       }            
-      //?? French        
+      //?? French
+
+      Diagrams_translate(0, (1 * (p - 0.25) * sx_Plot / U_scale));
     }
     
     float pal_length = 400;
@@ -7329,7 +7329,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         my_text(("Direct solar effects (kWh°C/m²)"), 0, 1.3 * sx_Plot / U_scale, 0);
         //?? French
       }  
-
     }   
  
     Diagrams_popMatrix(); 
