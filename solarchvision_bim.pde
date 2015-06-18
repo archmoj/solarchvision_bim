@@ -556,7 +556,7 @@ void setup () {
   Y_View = h_pixel; 
   R_View = float(Y_View) / float(X_View);
 
-  _DATE = (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
+  _DATE = 75; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   
   //if (_HOUR >= 12) _DATE += 0.5; 
   
@@ -6242,8 +6242,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       EFF_VALUE = _values_E_dir;
                     }
                     else { 
-                      //float MULT_dif = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / 7.25; // base on the adjustments
-                      float MULT_dif = int(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE)) / 7.25; // base on the adjustments
+                      float MULT_dif = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / (2 * PI); // base on the adjustments
+                      //float MULT_dif = int(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE)) / (2 * PI); // base on the adjustments
                       
                       RAD_VALUE = _values_R_dif * MULT_dif;
                       EFF_VALUE = _values_E_dif * MULT_dif;
@@ -6374,9 +6374,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
               }
               
-                                      
+              
               //if ((Image_X == RES1 / 2) && (Image_Y == RES2 / 2)) println("Image Processing: <CENTER> _valuesSUM =", _valuesSUM); 
-              //if ((Image_X == RES1 - 1) && (Image_Y == RES2 - 1)) println("Image Processing: <CORNER> _valuesSUM =", _valuesSUM); 
+              if ((Image_X == RES1 - 1) && (Image_Y == RES2 - 1)) println("Image Processing: <CORNER> _valuesSUM =", _valuesSUM); 
               
               if (PAL_DIR == -1) _u = 1 - _u;
               if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -6626,6 +6626,26 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
     for (int p = 0; p < 1; p += 1) { 
       int l = 3 * int(impact_layer / 3) + 1; //impact_layer;
+
+//////////////
+/*
+      PImage total_Image_RGBA = createImage(RES1, RES2, RGB);
+      
+      float[][][] total_Matrix_ARGB;
+      total_Matrix_ARGB = new float[4][RES1][RES2];
+
+      for (int np = 0; np < (RES1 * RES2); np++) {
+        int Image_X = np % RES1;
+        int Image_Y = np / RES1;
+        
+        total_Matrix_ARGB[0][Image_X][Image_Y] = 0;
+        total_Matrix_ARGB[1][Image_X][Image_Y] = 0;
+        total_Matrix_ARGB[2][Image_X][Image_Y] = 0;
+        total_Matrix_ARGB[3][Image_X][Image_Y] = 0; 
+      }
+*/
+/////////////
+
       
       for (int j = j_start; j < j_end; j += 1) {
 
@@ -6667,7 +6687,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 float Beta = b * stp_dir;
                 
                 float _valuesSUM_RAD = 0;
-                float _valuesSUM_EFF = 0;
+                float _valuesSUM_EFF_P = 0;
+                float _valuesSUM_EFF_N = 0;
                 int _valuesNUM = 0; 
 
                 for (int i = 0; i < 24; i += 1) {
@@ -6735,7 +6756,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                         
                         if (_valuesSUM_RAD > 0.9 * FLOAT_undefined) {
                           _valuesSUM_RAD = 0;
-                          _valuesSUM_EFF = 0;
+                          _valuesSUM_EFF_P = 0;
+                          _valuesSUM_EFF_N = 0;
                           _valuesNUM = 0; 
                         }                             
                         else {
@@ -6765,9 +6787,16 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                           if (SunMask <= 0) SunMask = 0; // removes backing faces 
                           
                           float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
+
+                          if (_values_E_dir < 0) {
+                            _valuesSUM_EFF_N += -((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); 
+                          }
+                          else {
+                            _valuesSUM_EFF_P += ((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); 
+                          }
+
+                          _valuesSUM_RAD += ((_values_R_dir * SunMask) + (_values_R_dif * SkyMask));
                           
-                          _valuesSUM_RAD += ((_values_R_dir * SunMask) + (_values_R_dif * SkyMask)); // calculates total horizontal radiation
-                          _valuesSUM_EFF += ((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); // calculates total horizontal effects
                           _valuesNUM += 1;
                           
                         }
@@ -6778,25 +6807,32 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 
       
                 if (_valuesNUM != 0) {
-                  //_valuesSUM_RAD *= 24.0 / (1.0 * _valuesNUM);
-                  //_valuesSUM_EFF *= 24.0 / (1.0 * _valuesNUM);
-                  
                   float _valuesMUL = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / (1.0 * _valuesNUM);  
                                      
                   _valuesSUM_RAD *= _valuesMUL;
-                  _valuesSUM_EFF *= _valuesMUL;
+                  _valuesSUM_EFF_P *= _valuesMUL;
+                  _valuesSUM_EFF_N *= _valuesMUL;
                 }
                 else {
                   _valuesSUM_RAD = FLOAT_undefined;
-                  _valuesSUM_EFF = FLOAT_undefined;
+                  _valuesSUM_EFF_P = FLOAT_undefined;
+                  _valuesSUM_EFF_N = FLOAT_undefined;
                 }
+
+
+                float AVERAGE, PERCENTAGE, COMPARISON;
+                
+                AVERAGE = (_valuesSUM_EFF_P - _valuesSUM_EFF_N);
+                if ((_valuesSUM_EFF_P + _valuesSUM_EFF_N) > 0.00001) PERCENTAGE = (_valuesSUM_EFF_P - _valuesSUM_EFF_N) / (1.0 * (_valuesSUM_EFF_P + _valuesSUM_EFF_N)); 
+                else PERCENTAGE = 0.0;
+                COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
 
       
                 float _valuesSUM = FLOAT_undefined;
                 if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = _valuesSUM_RAD;
-                if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = _valuesSUM_EFF; 
+                if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = COMPARISON; 
                 
-                //if ((Alpha == 90.0) && (Beta == 0.0)) println("SPHERICAL >> _valuesSUM_RAD:", _valuesSUM_RAD, "_valuesSUM_EFF:", _valuesSUM_EFF);  
+                if ((Alpha == 90.0) && (Beta == 0.0)) println("SPHERICAL >> _valuesSUM_RAD:", _valuesSUM_RAD, "COMPARISON:", COMPARISON);  
                 
                 if (_valuesSUM < 0.9 * FLOAT_undefined) {
                 
@@ -6865,6 +6901,82 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         Diagrams_translate(0, (1 * (p - 0.25) * sx_Plot / U_scale));
       }
       
+      
+////////////////////      
+/*      
+      if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { // we can also remark this to calculate the results using forecast but it is more useful for climate to present annual values.
+        total_Image_RGBA.loadPixels();
+        
+        for (int np = 0; np < (RES1 * RES2); np++) {
+          int Image_X = np % RES1;
+          int Image_Y = np / RES1;
+        
+          float Image_A = total_Matrix_ARGB[0][Image_X][Image_Y] / (1.0 * (j_end - j_start));
+          float Image_R = total_Matrix_ARGB[1][Image_X][Image_Y] / (1.0 * (j_end - j_start));
+          float Image_G = total_Matrix_ARGB[2][Image_X][Image_Y] / (1.0 * (j_end - j_start));
+          float Image_B = total_Matrix_ARGB[3][Image_X][Image_Y] / (1.0 * (j_end - j_start));
+         
+          float[] _c = {0, 0, 0, 0};
+          
+          float _u = 0;
+          
+          float _valuesSUM = FLOAT_undefined;
+          
+          if (Impact_TYPE == Impact_ACTIVE) {
+            _valuesSUM = Image_G;
+            _u = (_Multiplier * _valuesSUM);
+          }
+         
+          if (Impact_TYPE == Impact_PASSIVE) {
+            float AVERAGE, PERCENTAGE, COMPARISON;
+            
+            AVERAGE = (Image_B - Image_R);
+            if ((Image_B + Image_R) > 0.00001) PERCENTAGE = (Image_B - Image_R) / (1.0 * (Image_B + Image_R)); 
+            else PERCENTAGE = 0.0;
+            COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+            
+            _valuesSUM = COMPARISON;
+            _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
+          }
+          
+          if (PAL_DIR == -1) _u = 1 - _u;
+          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+          if (PAL_DIR == 2) _u =  0.5 * _u;
+          
+          _c = GET_COLOR_STYLE(PAL_TYPE, _u);
+          
+          if (Image_A != 0) total_Image_RGBA.pixels[np] = color(_c[1], _c[2], _c[3]);
+          else total_Image_RGBA.pixels[np] = color(223, 223, 223);
+        
+        }
+        
+        total_Image_RGBA.updatePixels(); 
+
+        Diagrams_strokeWeight(T_scale * 0);
+        Diagrams_stroke(223);
+        Diagrams_fill(223); 
+        Diagrams_rect(((j_start - 1) + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * (p - 0.25) * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
+        
+        
+        Diagrams_strokeWeight(T_scale * 2);
+        Diagrams_stroke(0);
+        Diagrams_noFill(); 
+        Diagrams_rect(((j_start - 1) + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * (p - 0.25) * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
+        
+        
+        Diagrams_imageMode(CENTER); 
+        Diagrams_image(total_Image_RGBA, ((j_start - 1) + 100 * obj_scale) * sx_Plot, - (1 * (p - 0.25) * sx_Plot / U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
+        
+        
+        Diagrams_stroke(0);
+        Diagrams_fill(0);
+        Diagrams_textAlign(CENTER, CENTER); 
+        Diagrams_textSize(sx_Plot * 0.15 / U_scale);
+      }      
+*/      
+////////////////////
+
+
       String scenario_text = "";
       //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
       //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
@@ -10019,9 +10131,9 @@ void _update_objects () {
   
   
   //add_Box(3, -20, -20, 0, 20, 20, 40);
-  //add_Mesh2(3, -20,-20,0, 20,20,0);
+  add_Mesh2(3, -20,-20,0, 20,20,0);
   
-  
+/*  
   //add_Box(0, -20, 0, 0, 20, 20, 30);
   {
     float x1 = -20;
@@ -10045,7 +10157,7 @@ void _update_objects () {
   
   //add_RecursiveSphere(0, 0,0,0, 92.5, 1, 0); 
 
-  
+*/  
 
   //add_ParametricGeometries(); 
 }
@@ -10497,7 +10609,7 @@ void _draw_objects () {
             else PERCENTAGE = 0.0;
             COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
             
-            //println("_valuesSUM_RAD:", _valuesSUM_RAD, "|COMPARISON:", COMPARISON);
+            println("3D-Model >> _valuesSUM_RAD:", _valuesSUM_RAD, "|COMPARISON:", COMPARISON);
             
             {
               float[] ADD_values_RAD = {_valuesSUM_RAD};
