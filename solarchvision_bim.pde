@@ -132,7 +132,7 @@ int record_JPG = 0;
 int record_PDF = 0;
 
 int j_start = 0;
-int j_end = 6; //16; // Variable
+int j_end = 1; //16; // Variable
 
 int max_j_end_forecast = 16; // Constant
 int max_j_end_observed = 0; // Variable
@@ -10138,9 +10138,17 @@ void _update_objects () {
     }
   }
   
+
+  add_Mesh5(1, -10,-10,0, -10,-10,5, -10,0,10, -10,10,5, -10,10,0);
+  add_Mesh5(2, 10,10,0, 10,10,5, 10,0,10, 10,-10,5, 10,-10,0);  
+  add_Mesh4(3, -10,-10,0, 10,-10,0, 10,-10,5, -10,-10,5);
+  add_Mesh4(4, -10,10,0, -10,10,5, 10,10,5, 10,10,0);
+  add_Mesh4(5, -10,-10,5, 10,-10,5, 10,0,10, -10,0,10);
+  add_Mesh4(6, -10,10,5, -10,0,10, 10,0,10, 10,10,5);
+
   
   //add_Box(3, -20, -20, 0, 20, 20, 40);
-  add_Mesh2(3, -20,-20,0, 20,20,0);
+  //add_Mesh2(3, -20,-20,0, 20,20,0);
   
 /*  
   //add_Box(0, -20, 0, 0, 20, 20, 30);
@@ -10168,7 +10176,7 @@ void _update_objects () {
 
 */  
 
-  //add_ParametricGeometries(); 
+  add_ParametricGeometries(); 
 }
 
 float objects_scale = 1.0; //0.5;
@@ -11121,10 +11129,10 @@ ParametricGeometry[] SolidBuildings;
 void add_ParametricGeometries () {
 
  
-  SolidBuildings = new ParametricGeometry[1];
+  SolidBuildings = new ParametricGeometry[0];
 
-  SolidBuildings[0] = new ParametricGeometry(8, 0,0,0, 2,2,2, 1,2,1, 0);
-  add_Box_CENTER(-1, 0,0,0, 1,8,1);  
+  //SolidBuildings[0] = new ParametricGeometry(8, 0,0,0, 2,2,2, 1,2,1, 0);
+  //add_Box_CENTER(-1, 0,0,0, 1,8,1);  
 
 /*
   SolidBuildings[0] = new ParametricGeometry(2, 10,10,10, 2,2,2, 10,10,10, 0);
