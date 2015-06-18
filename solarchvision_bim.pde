@@ -10262,7 +10262,8 @@ void _draw_objects () {
       float _Multiplier = 1; 
       if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; 
       if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02; 
-  
+
+      int[][] PROCESSED_DAILY_SCENARIOS = {{}};  
   
       for (int f = 1; f < allFaces.length; f++) {
     
@@ -10316,10 +10317,21 @@ void _draw_objects () {
             
               float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
               float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
-            
+
               int[] Normals_COL_N;
-              Normals_COL_N = new int[9];
-              Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
+              
+            
+              if (PROCESSED_DAILY_SCENARIOS.length > j_end - j_start) {
+                Normals_COL_N = PROCESSED_DAILY_SCENARIOS[j_end - j_start];
+              }
+              else{
+                Normals_COL_N = new int[9];
+                Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
+                
+                int[][] newNormals = {Normals_COL_N};
+                PROCESSED_DAILY_SCENARIOS = (int[][]) concat(PROCESSED_DAILY_SCENARIOS, newNormals);
+                println("length of PROCESSED_DAILY_SCENARIOS =", PROCESSED_DAILY_SCENARIOS.length);
+              }
             
               int nk = Normals_COL_N[l];
               
