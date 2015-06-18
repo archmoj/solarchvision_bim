@@ -6360,7 +6360,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               
               
               //if ((Image_X == RES1 / 2) && (Image_Y == RES2 / 2)) println("Image Processing: <CENTER> _valuesSUM =", _valuesSUM); 
-              if ((Image_X == RES1 - 1) && (Image_Y == RES2 - 1)) println("Image Processing: <CORNER> _valuesSUM =", _valuesSUM); 
+              //if ((Image_X == RES1 - 1) && (Image_Y == RES2 - 1)) println("Image Processing: <CORNER> _valuesSUM =", _valuesSUM); 
               
               if (PAL_DIR == -1) _u = 1 - _u;
               if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -6606,9 +6606,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; //0.1 / 0.75; //0.1; <<<<<<<<<<<<<<<<<<<<<
     if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02; 
 
-    Diagrams_translate(0, -0.25 * sx_Plot / U_scale);
-    Diagrams_pushMatrix();
-
     //for (int p = 0; p < 3; p += 1) { 
       //int l = 3 * int(impact_layer / 3) + p;
       
@@ -6617,8 +6614,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
     for (int p = 0; p < 1; p += 1) { 
       int l = 3 * int(impact_layer / 3) + 1; //impact_layer;
-
-      Diagrams_translate(0, - (1 * (p - 0.25) * sx_Plot / U_scale));
 
       float[][] TOTAL_valuesSUM_RAD = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
       float[][] TOTAL_valuesSUM_EFF_P = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
@@ -6823,7 +6818,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = _valuesSUM_RAD;
                 if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = COMPARISON; 
                 
-                if ((Alpha == 90.0) && (Beta == 0.0)) println("SPHERICAL >> _valuesSUM_RAD:", _valuesSUM_RAD, "COMPARISON:", COMPARISON);  
+                //if ((Alpha == 90.0) && (Beta == 0.0)) println("SPHERICAL >> _valuesSUM_RAD:", _valuesSUM_RAD, "COMPARISON:", COMPARISON);  
                 
                 if (_valuesSUM < 0.9 * FLOAT_undefined) {
                 
@@ -6877,6 +6872,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) 
       { // we can also remark above line to calculate the results using forecast but it is more useful for climate to present annual values.
 
+         int j = -1; // << to put the summary graph before the daily graphs
+
         for (int a = 0; a <= int(90 / stp_slp); a += 1) { 
           float Alpha = a * stp_slp;
           for (int b = 0; b < int(360 / stp_dir); b += 1) {
@@ -6906,7 +6903,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = TOTAL_valuesSUM_RAD[a][b];
             if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = COMPARISON; 
             
-            if ((Alpha == 90.0) && (Beta == 0.0)) println("SPHERICAL >> (TOTAL) _valuesSUM_RAD:", TOTAL_valuesSUM_RAD[a][b], "COMPARISON:", COMPARISON);  
+            //if ((Alpha == 90.0) && (Beta == 0.0)) println("SPHERICAL >> (TOTAL) _valuesSUM_RAD:", TOTAL_valuesSUM_RAD[a][b], "COMPARISON:", COMPARISON);  
             
             if (_valuesSUM < 0.9 * FLOAT_undefined) {
             
@@ -6926,8 +6923,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               
               Diagrams_strokeWeight(0);
               
-              int j = -1; // <<<<<<<<<<<<<<<
-              
               float x1 = (j + obj_offset_x + (90 - Alpha - 0.5 * stp_slp) * obj_scale * (cos_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot;
               float y1 = (                  -(90 - Alpha - 0.5 * stp_slp) * obj_scale * (sin_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot;
               float x2 = (j + obj_offset_x + (90 - Alpha + 0.5 * stp_slp) * obj_scale * (cos_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot;
@@ -6943,6 +6938,24 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             }
           }
         }
+        
+        Diagrams_stroke(0);
+        Diagrams_fill(0);
+        Diagrams_textAlign(CENTER, CENTER); 
+        Diagrams_textSize(sx_Plot * 0.15 / U_scale);
+        
+        String scenario_text = "";
+        //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
+        //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+        my_text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95 * sx_Plot / U_scale, 0);
+
+        int pre_j_start = j_start;
+        int pre_j_end = j_end;
+        j_start = j;
+        j_end = j + 1;
+        SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
+        j_start = pre_j_start;
+        j_end = pre_j_end;
       }
 
 
@@ -6963,8 +6976,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         my_text(N_Title[reverse_N[l]], 0, - (1 * p * sx_Plot / U_scale), 0);
       }            
       //?? French        
-    
-      Diagrams_translate(0, (1 * (p - 0.25) * sx_Plot / U_scale));    
     }
     
     float pal_length = 400;
@@ -7020,12 +7031,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
     }
 
-    Diagrams_translate(0, 0.25 * sx_Plot / U_scale);
-    Diagrams_pushMatrix();
     SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0); 
-    Diagrams_popMatrix();
-    
-    Diagrams_popMatrix();
   } 
 
 
@@ -7066,9 +7072,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
     SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
 
-    Diagrams_translate(0, -0.25 * sx_Plot / U_scale);
-    Diagrams_pushMatrix();
-
     //for (int p = 0; p < 3; p += 1) { 
       //int l = 3 * int(impact_layer / 3) + p;
 
@@ -7077,8 +7080,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
     for (int p = 0; p < 1; p += 1) { 
       int l = impact_layer;
-      
-      Diagrams_translate(0, - (1 * (p - 0.25) * sx_Plot / U_scale));      
  
       for (int j = j_start; j < j_end; j += 1) {
 
@@ -7258,8 +7259,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         my_text(N_Title[reverse_N[l]], 0, - (1 * p * sx_Plot / U_scale), 0);
       }            
       //?? French
-
-      Diagrams_translate(0, (1 * (p - 0.25) * sx_Plot / U_scale));
     }
     
     float pal_length = 400;
@@ -7313,8 +7312,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         //?? French
       }  
     }   
- 
-    Diagrams_popMatrix(); 
   } 
 
 
@@ -7486,9 +7483,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     }
     
     SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
-
-    Diagrams_translate(0, -0.25 * sx_Plot / U_scale);
-    Diagrams_pushMatrix(); 
     
     if (Impact_TYPE != Impact_SPD_DIR) { 
       
@@ -7539,11 +7533,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         my_text(("Wind direction and speed with air temperature"), 0, 1.3 * sx_Plot / U_scale, 0);
         //?? French
       }           
-      
     }
-    
-    Diagrams_popMatrix();
   } 
+
+
 
 
   SOLARCHVISION_draw_Grid_DAILY(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
@@ -10578,7 +10571,7 @@ void _draw_objects () {
             else PERCENTAGE = 0.0;
             COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
             
-            println("3D-Model >> _valuesSUM_RAD:", _valuesSUM_RAD, "|COMPARISON:", COMPARISON);
+            //println("3D-Model >> _valuesSUM_RAD:", _valuesSUM_RAD, "|COMPARISON:", COMPARISON);
             
             {
               float[] ADD_values_RAD = {_valuesSUM_RAD};
