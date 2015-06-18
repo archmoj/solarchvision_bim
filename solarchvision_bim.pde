@@ -6632,6 +6632,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     for (int p = 0; p < 1; p += 1) { 
       int l = 3 * int(impact_layer / 3) + 1; //impact_layer;
 
+      Diagrams_translate(0, - (1 * (p - 0.25) * sx_Plot / U_scale));
+
       float[][] TOTAL_valuesSUM_RAD = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
       float[][] TOTAL_valuesSUM_EFF_P = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
       float[][] TOTAL_valuesSUM_EFF_N = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
@@ -6665,12 +6667,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         int[] Normals_COL_N;
         Normals_COL_N = new int[9];
         Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
-
-
-        
-
-
-        Diagrams_translate(0, - (1 * (p - 0.25) * sx_Plot / U_scale));
 
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
           if (nk != -1) {
@@ -6888,9 +6884,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             my_text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95 * sx_Plot / U_scale, 0);
           }
         }
-      
-
-        Diagrams_translate(0, (1 * (p - 0.25) * sx_Plot / U_scale));
       }
       
       
@@ -6987,7 +6980,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         my_text(N_Title[reverse_N[l]], 0, - (1 * (p - 0.25) * sx_Plot / U_scale), 0);
       }            
       //?? French        
-      
+    
+      Diagrams_translate(0, (1 * (p - 0.25) * sx_Plot / U_scale));    
     }
     
     float pal_length = 400;
