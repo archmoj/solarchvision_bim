@@ -556,7 +556,7 @@ void setup () {
   Y_View = h_pixel; 
   R_View = float(Y_View) / float(X_View);
 
-  _DATE = 75; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
+  _DATE = 300; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   
   //if (_HOUR >= 12) _DATE += 0.5; 
   
@@ -6242,8 +6242,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       EFF_VALUE = _values_E_dir;
                     }
                     else { 
-                      float MULT_dif = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / (2 * PI); // base on the adjustments
-                      //float MULT_dif = int(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE)) / (2 * PI); // base on the adjustments
+                      //float MULT_dif = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / 5.0; //(2 * PI); // base on the adjustments
+                      //float MULT_dif = int(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE)) / 5.0; //(2 * PI); // base on the adjustments
+                      float MULT_dif = 2.0;
                       
                       RAD_VALUE = _values_R_dif * MULT_dif;
                       EFF_VALUE = _values_E_dif * MULT_dif;
@@ -6807,11 +6808,15 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 
       
                 if (_valuesNUM != 0) {
-                  float _valuesMUL = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / (1.0 * _valuesNUM);  
+                  //float _valuesMUL = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / (1.0 * _valuesNUM);  
+                  //float _valuesMUL = int(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE)) / (1.0 * _valuesNUM);
+                  float _valuesMUL = roundTo(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE), 1) / (1.0 * _valuesNUM);
                                      
                   _valuesSUM_RAD *= _valuesMUL;
                   _valuesSUM_EFF_P *= _valuesMUL;
                   _valuesSUM_EFF_N *= _valuesMUL;
+                  
+                  
                 }
                 else {
                   _valuesSUM_RAD = FLOAT_undefined;
@@ -7040,11 +7045,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
       Diagrams_textAlign(LEFT, TOP); 
       if (Impact_TYPE == Impact_ACTIVE) {  
-        my_text(("Solar radiation on hemisphere"), 0, 1.25 * sx_Plot / U_scale, 0);
+        my_text(("Solar radiation on hemisphere (kWh/m²/day)"), 0, 1.25 * sx_Plot / U_scale, 0);
         //?? French
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        my_text(("Solar effects on hemisphere"), 0, 1.25 * sx_Plot / U_scale, 0);
+        my_text(("Solar effects on hemisphere (%kWh°C/m²/day)"), 0, 1.25 * sx_Plot / U_scale, 0);
         //?? French
       }  
 
