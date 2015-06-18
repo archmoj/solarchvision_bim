@@ -6583,6 +6583,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     if (plot_impacts == 2) Impact_TYPE = Impact_ACTIVE; 
     if (plot_impacts == 3) Impact_TYPE = Impact_PASSIVE;
 
+    float stp_slp = 2.5;
+    float stp_dir = 2.5;
+
     String Pa = "";
     String Pb = "";
     String Pc = "";
@@ -6630,19 +6633,19 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 //////////////
 /*
-      PImage total_Image_RGBA = createImage(RES1, RES2, RGB);
-      
-      float[][][] total_Matrix_ARGB;
-      total_Matrix_ARGB = new float[4][RES1][RES2];
 
-      for (int np = 0; np < (RES1 * RES2); np++) {
-        int Image_X = np % RES1;
-        int Image_Y = np / RES1;
-        
-        total_Matrix_ARGB[0][Image_X][Image_Y] = 0;
-        total_Matrix_ARGB[1][Image_X][Image_Y] = 0;
-        total_Matrix_ARGB[2][Image_X][Image_Y] = 0;
-        total_Matrix_ARGB[3][Image_X][Image_Y] = 0; 
+      float[][] TOTAL_valuesSUM_RAD = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
+      float[][] TOTAL_valuesSUM_EFF_P = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
+      float[][] TOTAL_valuesSUM_EFF_N = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
+      int[][] TOTAL_valuesNUM = new int [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
+
+      for (int a = 0; a <= int(90 / stp_slp); a += 1) { 
+        for (int b = 0; b < int(360 / stp_dir); b += 1) {
+          TOTAL_valuesSUM_RAD[a][b] = FLOAT_undefined;
+          TOTAL_valuesSUM_EFF_P[a][b] = FLOAT_undefined;
+          TOTAL_valuesSUM_EFF_N[a][b] = FLOAT_undefined;
+          TOTAL_valuesNUM[a][b] = 0;
+        }
       }
 */
 /////////////
@@ -6679,9 +6682,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             int k = int(nk / num_add_days);
             int j_ADD = nk % num_add_days; 
 
-            float stp_slp = 2.5;
-            float stp_dir = 2.5;
-            
             for (int a = 0; a <= int(90 / stp_slp); a += 1) { 
               float Alpha = a * stp_slp;
               for (int b = 0; b < int(360 / stp_dir); b += 1) {
@@ -6816,7 +6816,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   _valuesSUM_EFF_P *= _valuesMUL;
                   _valuesSUM_EFF_N *= _valuesMUL;
                   
-                  
+                  TOTAL_valuesSUM_RAD += _valuesSUM_RAD;
+                  TOTAL_valuesSUM_EFF_P += _valuesSUM_EFF_P;
+                  TOTAL_valuesSUM_EFF_N += _valuesSUM_EFF_N;
+                  TOTAL_valuesNUM += 1;
                 }
                 else {
                   _valuesSUM_RAD = FLOAT_undefined;
@@ -6869,23 +6872,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           
                   Diagrams_quad(x1, y1, x2, y2, x3, y3, x4, y4); 
                   
-                 /* 
-                  Diagrams_ellipse((j + obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot, 0.075 * sx_Plot, 0.075 * sx_Plot);
-                 
-                  if ((_u > -0.25) && (_u < 0.25)) {
-                    Diagrams_stroke(0);
-                    Diagrams_fill(0); 
-                  }
-                  else {
-                    Diagrams_stroke(255);
-                    Diagrams_fill(255);
-                  }
-                                     
-                  Diagrams_textSize(S_View * 4.0 * U_scale);
-                  Diagrams_textAlign(CENTER, CENTER);
-                  if (Impact_TYPE == Impact_ACTIVE) my_text (nf(_valuesSUM, 1, 1), (j + obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot, 0);
-                  if (Impact_TYPE == Impact_PASSIVE) my_text (nf(int(_valuesSUM), 1), (j + obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot, 0);
-                  */
                 }
               }
             }
