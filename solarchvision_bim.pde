@@ -132,7 +132,7 @@ int record_JPG = 0;
 int record_PDF = 0;
 
 int j_start = 0;
-int j_end = 1; //8; //6; //16; // Variable
+int j_end = 7; //16; // Variable
 
 int max_j_end_forecast = 16; // Constant
 int max_j_end_observed = 0; // Variable
@@ -374,7 +374,9 @@ int databaseNumber_CLIMATE_WY2 = 0;
 int databaseNumber_ENSEMBLE = 1;
 int databaseNumber_OBSERVED = 2;
 int databaseNumber_CLIMATE_EPW = 3;
-int impacts_source = 1; // 0 = Climate WY2, 1 = Forecast, 2 = Observation, 3 = Climate EPW 
+int impacts_source = 1; // 0 = Climate WY2, 1 = Forecast, 2 = Observation, 3 = Climate EPW
+
+int draw_impact_summary = 0;
 
 int impact_layer = 1; // 4 = Median
 int plot_impacts = 4; 
@@ -6405,8 +6407,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         }
       }
       
-      if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) 
-      { // we can also remark above line to calculate the results using forecast but it is more useful for climate to present annual values.
+      if (draw_impact_summary == 1) { 
+        int j = -1; // << to put the summary graph before the daily graphs
+        
         total_Image_RGBA.loadPixels();
         
         for (int np = 0; np < (RES1 * RES2); np++) {
@@ -6457,17 +6460,17 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         Diagrams_strokeWeight(T_scale * 0);
         Diagrams_stroke(223);
         Diagrams_fill(223); 
-        Diagrams_rect(((j_start - 1) + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
+        Diagrams_rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
         
         
         Diagrams_strokeWeight(T_scale * 2);
         Diagrams_stroke(0);
         Diagrams_noFill(); 
-        Diagrams_rect(((j_start - 1) + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
+        Diagrams_rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
         
         
         Diagrams_imageMode(CENTER); 
-        Diagrams_image(total_Image_RGBA, ((j_start - 1) + 100 * obj_scale) * sx_Plot, - (1 * p * sx_Plot / U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
+        Diagrams_image(total_Image_RGBA, (j + 100 * obj_scale) * sx_Plot, - (1 * p * sx_Plot / U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
         
         
         Diagrams_stroke(0);
@@ -6869,8 +6872,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
       
   
-      if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) 
-      { // we can also remark above line to calculate the results using forecast but it is more useful for climate to present annual values.
+      if (draw_impact_summary == 1) { 
 
          int j = -1; // << to put the summary graph before the daily graphs
 
@@ -6938,6 +6940,12 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             }
           }
         }
+
+        Diagrams_strokeWeight(T_scale * 2);
+        Diagrams_stroke(0);
+        Diagrams_noFill(); 
+        Diagrams_rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
+
         
         Diagrams_stroke(0);
         Diagrams_fill(0);
@@ -7639,7 +7647,10 @@ void GRAPHS_keyPressed () {
                   else _DATE -= 0.5;
                   _update_date(); 
                   try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
-                  redraw_scene = 1; break; 
+                  redraw_scene = 1; break;
+                 
+        case ';': draw_impact_summary = (draw_impact_summary + 1) % 2;
+                  redraw_scene = 1; break;
 
         case TAB :if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
                     if (per_day == 1) { 
