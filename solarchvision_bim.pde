@@ -556,7 +556,7 @@ void setup () {
   Y_View = h_pixel; 
   R_View = float(Y_View) / float(X_View);
 
-  _DATE = 300; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
+  _DATE = (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   
   //if (_HOUR >= 12) _DATE += 0.5; 
   
@@ -6134,23 +6134,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         
         //println("j =", j);
         //println(Normals_COL_N);
-
-        
-        if (j == j_start) {
-          Diagrams_textSize(sx_Plot * 0.15 / U_scale);
-          Diagrams_textAlign(RIGHT, CENTER); 
-          Diagrams_stroke(0);
-          Diagrams_fill(0);
-          Diagrams_strokeWeight(0); 
-          
-          if (Impact_TYPE == Impact_ACTIVE) {  
-            my_text(N_Title[l], 0, - (1 * (p - 0.25) * sx_Plot / U_scale), 0);
-          }
-          if (Impact_TYPE == Impact_PASSIVE) {  
-            my_text(N_Title[reverse_N[l]], 0, - (1 * (p - 0.25) * sx_Plot / U_scale), 0);
-          }            
-          //?? French
-        }
         
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
           if (nk != -1) {
@@ -6395,17 +6378,17 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             Diagrams_strokeWeight(T_scale * 0);
             Diagrams_stroke(223);
             Diagrams_fill(223); 
-            Diagrams_rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * (p - 0.25) * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
+            Diagrams_rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
 
           
             Diagrams_strokeWeight(T_scale * 2);
             Diagrams_stroke(255);
             Diagrams_noFill(); 
-            Diagrams_rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * (p - 0.25) * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
+            Diagrams_rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
       
       
             Diagrams_imageMode(CENTER); 
-            Diagrams_image(Image_RGBA, (j + 100 * obj_scale) * sx_Plot, - (1 * (p - 0.25) * sx_Plot / U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
+            Diagrams_image(Image_RGBA, (j + 100 * obj_scale) * sx_Plot, - (1 * p * sx_Plot / U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
             
   
             Diagrams_stroke(0);
@@ -6474,17 +6457,17 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         Diagrams_strokeWeight(T_scale * 0);
         Diagrams_stroke(223);
         Diagrams_fill(223); 
-        Diagrams_rect(((j_start - 1) + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * (p - 0.25) * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
+        Diagrams_rect(((j_start - 1) + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
         
         
         Diagrams_strokeWeight(T_scale * 2);
         Diagrams_stroke(0);
         Diagrams_noFill(); 
-        Diagrams_rect(((j_start - 1) + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * (p - 0.25) * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
+        Diagrams_rect(((j_start - 1) + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
         
         
         Diagrams_imageMode(CENTER); 
-        Diagrams_image(total_Image_RGBA, ((j_start - 1) + 100 * obj_scale) * sx_Plot, - (1 * (p - 0.25) * sx_Plot / U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
+        Diagrams_image(total_Image_RGBA, ((j_start - 1) + 100 * obj_scale) * sx_Plot, - (1 * p * sx_Plot / U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
         
         
         Diagrams_stroke(0);
@@ -6504,16 +6487,19 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       Diagrams_fill(0);
       Diagrams_strokeWeight(0); 
 
-      //float deltaY = 0; // so that it does not write on the images.
-      //if (p == 0) deltaY = -0.9;
-      //if (p == 2) deltaY = 0.9;
+      Diagrams_textSize(sx_Plot * 0.15 / U_scale);
+      Diagrams_textAlign(RIGHT, CENTER); 
+      Diagrams_stroke(0);
+      Diagrams_fill(0);
+      Diagrams_strokeWeight(0); 
       
-      //if (Impact_TYPE == Impact_ACTIVE) {  
-      //  my_text(N_Title[l], 0, - (1 * (p - 0.25 - deltaY) * sx_Plot / U_scale), 0);
-      //}
-      //if (Impact_TYPE == Impact_PASSIVE) {  
-      //  my_text(N_Title[reverse_N[l]], 0, - (1 * (p - 0.25 - deltaY) * sx_Plot / U_scale), 0);
-      //}            
+      if (Impact_TYPE == Impact_ACTIVE) {  
+        my_text(N_Title[l], 0, - (1 * p * sx_Plot / U_scale), 0);
+      }
+      if (Impact_TYPE == Impact_PASSIVE) {  
+        my_text(N_Title[reverse_N[l]], 0, - (1 * p * sx_Plot / U_scale), 0);
+      }            
+      //?? French
 
     }      
 
@@ -6887,7 +6873,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       }
       
       
-////////////////////      
+  
       if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) 
       { // we can also remark above line to calculate the results using forecast but it is more useful for climate to present annual values.
 
@@ -6960,9 +6946,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       }
 
 
-////////////////////
-
-
       String scenario_text = "";
       //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
       //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
@@ -6974,10 +6957,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       Diagrams_fill(0);
       Diagrams_strokeWeight(0); 
       if (Impact_TYPE == Impact_ACTIVE) {  
-        my_text(N_Title[l], 0, - (1 * (p - 0.25) * sx_Plot / U_scale), 0);
+        my_text(N_Title[l], 0, - (1 * p * sx_Plot / U_scale), 0);
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        my_text(N_Title[reverse_N[l]], 0, - (1 * (p - 0.25) * sx_Plot / U_scale), 0);
+        my_text(N_Title[reverse_N[l]], 0, - (1 * p * sx_Plot / U_scale), 0);
       }            
       //?? French        
     
@@ -7269,10 +7252,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       Diagrams_fill(0);
       Diagrams_strokeWeight(0); 
       if (Impact_TYPE == Impact_ACTIVE) {  
-        my_text(N_Title[l], 0, - (1 * (p - 0.25) * sx_Plot / U_scale), 0);
+        my_text(N_Title[l], 0, - (1 * p * sx_Plot / U_scale), 0);
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        my_text(N_Title[reverse_N[l]], 0, - (1 * (p - 0.25) * sx_Plot / U_scale), 0);
+        my_text(N_Title[reverse_N[l]], 0, - (1 * p * sx_Plot / U_scale), 0);
       }            
       //?? French
 
