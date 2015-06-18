@@ -6422,7 +6422,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         }
       }
       
-      if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { // we can also remark this to calculate the results using forecast but it is more useful for climate to present annual values.
+      if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) 
+      { // we can also remark above line to calculate the results using forecast but it is more useful for climate to present annual values.
         total_Image_RGBA.loadPixels();
         
         for (int np = 0; np < (RES1 * RES2); np++) {
@@ -6631,9 +6632,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     for (int p = 0; p < 1; p += 1) { 
       int l = 3 * int(impact_layer / 3) + 1; //impact_layer;
 
-//////////////
-/*
-
       float[][] TOTAL_valuesSUM_RAD = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
       float[][] TOTAL_valuesSUM_EFF_P = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
       float[][] TOTAL_valuesSUM_EFF_N = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
@@ -6647,9 +6645,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           TOTAL_valuesNUM[a][b] = 0;
         }
       }
-*/
-/////////////
-
       
       for (int j = j_start; j < j_end; j += 1) {
 
@@ -6816,10 +6811,16 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   _valuesSUM_EFF_P *= _valuesMUL;
                   _valuesSUM_EFF_N *= _valuesMUL;
                   
-                  TOTAL_valuesSUM_RAD += _valuesSUM_RAD;
-                  TOTAL_valuesSUM_EFF_P += _valuesSUM_EFF_P;
-                  TOTAL_valuesSUM_EFF_N += _valuesSUM_EFF_N;
-                  TOTAL_valuesNUM += 1;
+                  if (TOTAL_valuesNUM[a][b] == 0) {
+                    TOTAL_valuesSUM_RAD[a][b] = 0;
+                    TOTAL_valuesSUM_EFF_P[a][b] = 0;
+                    TOTAL_valuesSUM_EFF_N[a][b] = 0;
+                  }
+
+                  TOTAL_valuesSUM_RAD[a][b] += _valuesSUM_RAD;
+                  TOTAL_valuesSUM_EFF_P[a][b] += _valuesSUM_EFF_P;
+                  TOTAL_valuesSUM_EFF_N[a][b] += _valuesSUM_EFF_N;
+                  TOTAL_valuesNUM[a][b] += 1;
                 }
                 else {
                   _valuesSUM_RAD = FLOAT_undefined;
@@ -6894,77 +6895,78 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
       
 ////////////////////      
-/*      
-      if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { // we can also remark this to calculate the results using forecast but it is more useful for climate to present annual values.
-        total_Image_RGBA.loadPixels();
-        
-        for (int np = 0; np < (RES1 * RES2); np++) {
-          int Image_X = np % RES1;
-          int Image_Y = np / RES1;
-        
-          float Image_A = total_Matrix_ARGB[0][Image_X][Image_Y] / (1.0 * (j_end - j_start));
-          float Image_R = total_Matrix_ARGB[1][Image_X][Image_Y] / (1.0 * (j_end - j_start));
-          float Image_G = total_Matrix_ARGB[2][Image_X][Image_Y] / (1.0 * (j_end - j_start));
-          float Image_B = total_Matrix_ARGB[3][Image_X][Image_Y] / (1.0 * (j_end - j_start));
-         
-          float[] _c = {0, 0, 0, 0};
-          
-          float _u = 0;
-          
-          float _valuesSUM = FLOAT_undefined;
-          
-          if (Impact_TYPE == Impact_ACTIVE) {
-            _valuesSUM = Image_G;
-            _u = (_Multiplier * _valuesSUM);
-          }
-         
-          if (Impact_TYPE == Impact_PASSIVE) {
+      if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) 
+      { // we can also remark above line to calculate the results using forecast but it is more useful for climate to present annual values.
+
+        for (int a = 0; a <= int(90 / stp_slp); a += 1) { 
+          float Alpha = a * stp_slp;
+          for (int b = 0; b < int(360 / stp_dir); b += 1) {
+            float Beta = b * stp_dir;
+
+            if (TOTAL_valuesNUM[a][b] != 0) {
+              TOTAL_valuesSUM_RAD[a][b] /= 1.0 * TOTAL_valuesNUM[a][b];
+              TOTAL_valuesSUM_EFF_P[a][b] /= 1.0 * TOTAL_valuesNUM[a][b];
+              TOTAL_valuesSUM_EFF_N[a][b] /= 1.0 * TOTAL_valuesNUM[a][b];
+            }
+            else {
+              TOTAL_valuesSUM_RAD[a][b] = FLOAT_undefined;
+              TOTAL_valuesSUM_EFF_P[a][b] = FLOAT_undefined;
+              TOTAL_valuesSUM_EFF_N[a][b] = FLOAT_undefined;
+            }
+      
+      
             float AVERAGE, PERCENTAGE, COMPARISON;
             
-            AVERAGE = (Image_B - Image_R);
-            if ((Image_B + Image_R) > 0.00001) PERCENTAGE = (Image_B - Image_R) / (1.0 * (Image_B + Image_R)); 
+            AVERAGE = (TOTAL_valuesSUM_EFF_P[a][b] - TOTAL_valuesSUM_EFF_N[a][b]);
+            if ((TOTAL_valuesSUM_EFF_P[a][b] + TOTAL_valuesSUM_EFF_N[a][b]) > 0.00001) PERCENTAGE = (TOTAL_valuesSUM_EFF_P[a][b] - TOTAL_valuesSUM_EFF_N[a][b]) / (1.0 * (TOTAL_valuesSUM_EFF_P[a][b] + TOTAL_valuesSUM_EFF_N[a][b])); 
             else PERCENTAGE = 0.0;
             COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+      
+      
+            float _valuesSUM = FLOAT_undefined;
+            if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = TOTAL_valuesSUM_RAD[a][b];
+            if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = COMPARISON; 
             
-            _valuesSUM = COMPARISON;
-            _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
+            if ((Alpha == 90.0) && (Beta == 0.0)) println("SPHERICAL >> (TOTAL) _valuesSUM_RAD:", TOTAL_valuesSUM_RAD[a][b], "COMPARISON:", COMPARISON);  
+            
+            if (_valuesSUM < 0.9 * FLOAT_undefined) {
+            
+              float _u = 0;
+              
+              if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
+              if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
+              
+              if (PAL_DIR == -1) _u = 1 - _u;
+              if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+              if (PAL_DIR == 2) _u =  0.5 * _u;
+              
+              //SET_COLOR_STYLE(PAL_TYPE, _u);
+              SET_COLOR_STYLE(PAL_TYPE, roundTo(_u, 0.1));
+              //SET_COLOR_STYLE(PAL_TYPE, roundTo(_u, 0.05));
+              
+              
+              Diagrams_strokeWeight(0);
+              
+              int j = -1; // <<<<<<<<<<<<<<<
+              
+              float x1 = (j + obj_offset_x + (90 - Alpha - 0.5 * stp_slp) * obj_scale * (cos_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot;
+              float y1 = (                  -(90 - Alpha - 0.5 * stp_slp) * obj_scale * (sin_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot;
+              float x2 = (j + obj_offset_x + (90 - Alpha + 0.5 * stp_slp) * obj_scale * (cos_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot;
+              float y2 = (                  -(90 - Alpha + 0.5 * stp_slp) * obj_scale * (sin_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot; 
+      
+              float x3 = (j + obj_offset_x + (90 - Alpha + 0.5 * stp_slp) * obj_scale * (cos_ang(Beta - 90 + 0.5 * stp_dir))) * sx_Plot;
+              float y3 = (                  -(90 - Alpha + 0.5 * stp_slp) * obj_scale * (sin_ang(Beta - 90 + 0.5 * stp_dir))) * sx_Plot; 
+              float x4 = (j + obj_offset_x + (90 - Alpha - 0.5 * stp_slp) * obj_scale * (cos_ang(Beta - 90 + 0.5 * stp_dir))) * sx_Plot;
+              float y4 = (                  -(90 - Alpha - 0.5 * stp_slp) * obj_scale * (sin_ang(Beta - 90 + 0.5 * stp_dir))) * sx_Plot; 
+      
+              Diagrams_quad(x1, y1, x2, y2, x3, y3, x4, y4); 
+              
+            }
           }
-          
-          if (PAL_DIR == -1) _u = 1 - _u;
-          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-          if (PAL_DIR == 2) _u =  0.5 * _u;
-          
-          _c = GET_COLOR_STYLE(PAL_TYPE, _u);
-          
-          if (Image_A != 0) total_Image_RGBA.pixels[np] = color(_c[1], _c[2], _c[3]);
-          else total_Image_RGBA.pixels[np] = color(223, 223, 223);
-        
         }
-        
-        total_Image_RGBA.updatePixels(); 
+      }
 
-        Diagrams_strokeWeight(T_scale * 0);
-        Diagrams_stroke(223);
-        Diagrams_fill(223); 
-        Diagrams_rect(((j_start - 1) + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * (p - 0.25) * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
-        
-        
-        Diagrams_strokeWeight(T_scale * 2);
-        Diagrams_stroke(0);
-        Diagrams_noFill(); 
-        Diagrams_rect(((j_start - 1) + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * (p - 0.25) * sx_Plot / U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
-        
-        
-        Diagrams_imageMode(CENTER); 
-        Diagrams_image(total_Image_RGBA, ((j_start - 1) + 100 * obj_scale) * sx_Plot, - (1 * (p - 0.25) * sx_Plot / U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
-        
-        
-        Diagrams_stroke(0);
-        Diagrams_fill(0);
-        Diagrams_textAlign(CENTER, CENTER); 
-        Diagrams_textSize(sx_Plot * 0.15 / U_scale);
-      }      
-*/      
+
 ////////////////////
 
 
