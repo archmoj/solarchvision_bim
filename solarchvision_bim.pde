@@ -6523,15 +6523,15 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       SET_COLOR_STYLE(PAL_TYPE, _u); 
       
       Diagrams_strokeWeight(0);
-      Diagrams_rect((700 + q * (pal_length / 11.0)) * S_View, 125 * S_View, (pal_length / 11.0) * S_View, 20 * S_View); 
+      Diagrams_rect((700 + q * (pal_length / 11.0)) * S_View, -150 * S_View, (pal_length / 11.0) * S_View, 20 * S_View); 
 
       Diagrams_strokeWeight(2);
       Diagrams_stroke(255);
       Diagrams_fill(255); 
       Diagrams_textSize(15.0 * S_View);
       Diagrams_textAlign(CENTER, CENTER);
-      if (Impact_TYPE == Impact_ACTIVE) my_text(nf((roundTo(0.1 * q / _Multiplier, 0.1)), 1, 1), (20 + 700 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
-      if (Impact_TYPE == Impact_PASSIVE) my_text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
+      if (Impact_TYPE == Impact_ACTIVE) my_text(nf((roundTo(0.1 * q / _Multiplier, 0.1)), 1, 1), (20 + 700 + q * (pal_length / 11.0)) * S_View, (10 - 150 - 0.05 * 20) * S_View, 1 * S_View);
+      if (Impact_TYPE == Impact_PASSIVE) my_text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * S_View, (10 - 150 - 0.05 * 20) * S_View, 1 * S_View);
     }
 
     if (print_title != 0) {
@@ -7003,15 +7003,15 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       SET_COLOR_STYLE(PAL_TYPE, _u); 
       
       Diagrams_strokeWeight(0);
-      Diagrams_rect((700 + q * (pal_length / 11.0)) * S_View, 125 * S_View, (pal_length / 11.0) * S_View, 20 * S_View); 
+      Diagrams_rect((700 + q * (pal_length / 11.0)) * S_View, -150 * S_View, (pal_length / 11.0) * S_View, 20 * S_View); 
 
       Diagrams_strokeWeight(2);
       Diagrams_stroke(255);
       Diagrams_fill(255); 
       Diagrams_textSize(15.0 * S_View);
       Diagrams_textAlign(CENTER, CENTER);
-      if (Impact_TYPE == Impact_ACTIVE) my_text(nf((roundTo(0.1 * q / _Multiplier, 0.1)), 1, 1), (20 + 700 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
-      if (Impact_TYPE == Impact_PASSIVE) my_text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
+      if (Impact_TYPE == Impact_ACTIVE) my_text(nf((roundTo(0.1 * q / _Multiplier, 0.1)), 1, 1), (20 + 700 + q * (pal_length / 11.0)) * S_View, (10 - 150 - 0.05 * 20) * S_View, 1 * S_View);
+      if (Impact_TYPE == Impact_PASSIVE) my_text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * S_View, (10 - 150 - 0.05 * 20) * S_View, 1 * S_View);
     }
     
     
@@ -7286,15 +7286,15 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       SET_COLOR_STYLE(PAL_TYPE, _u); 
       
       Diagrams_strokeWeight(0);
-      Diagrams_rect((700 + q * (pal_length / 11.0)) * S_View, 125 * S_View, (pal_length / 11.0) * S_View, 20 * S_View); 
+      Diagrams_rect((700 + q * (pal_length / 11.0)) * S_View, -150 * S_View, (pal_length / 11.0) * S_View, 20 * S_View); 
 
       Diagrams_strokeWeight(2);
       Diagrams_stroke(255);
       Diagrams_fill(255); 
       Diagrams_textSize(15.0 * S_View);
       Diagrams_textAlign(CENTER, CENTER);
-      if (Impact_TYPE == Impact_ACTIVE) my_text(nf(0.1 * q / _Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
-      if (Impact_TYPE == Impact_PASSIVE) my_text(nf(0.4 * (q - 5) / _Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
+      if (Impact_TYPE == Impact_ACTIVE) my_text(nf(0.1 * q / _Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * S_View, (10 - 150 - 0.05 * 20) * S_View, 1 * S_View);
+      if (Impact_TYPE == Impact_PASSIVE) my_text(nf(0.4 * (q - 5) / _Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * S_View, (10 - 150 - 0.05 * 20) * S_View, 1 * S_View);
     } 
     
     
@@ -7507,7 +7507,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         SET_COLOR_STYLE(PAL_TYPE, _u); 
         
         Diagrams_strokeWeight(0);
-        Diagrams_rect((700 + q * (pal_length / 11.0)) * S_View, 125 * S_View, (pal_length / 11.0) * S_View, 20 * S_View); 
+        Diagrams_rect((700 + q * (pal_length / 11.0)) * S_View, -150 * S_View, (pal_length / 11.0) * S_View, 20 * S_View); 
 
         Diagrams_strokeWeight(2);
         Diagrams_stroke(255);
@@ -7515,7 +7515,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         Diagrams_textSize(15.0 * S_View);
         Diagrams_textAlign(CENTER, CENTER);
 
-        if (Impact_TYPE == Impact_SPD_DIR_TMP) my_text(nf(0.2 * (q - 5) / _Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * S_View, (10 + 125 - 0.05 * 20) * S_View, 1 * S_View);
+        if (Impact_TYPE == Impact_SPD_DIR_TMP) my_text(nf(0.2 * (q - 5) / _Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * S_View, (10 - 150 - 0.05 * 20) * S_View, 1 * S_View);
       }
     }         
 
