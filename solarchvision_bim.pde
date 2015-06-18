@@ -490,11 +490,14 @@ int WIN3D_Update = 1;
 int WIN3D_BLACK_EDGES = 1;
 int WIN3D_WHITE_FACES = 1;
 
-int WIN3D_TESELATION = 0;
+int MODEL3D_TESELATION = 0;
 
 float[] WIN3D_VerticesSolarEnergy;
 float[] WIN3D_VerticesSolarEffect;
 int WIN3D_update_VerticesSolarValue = 1;
+
+
+
 
 int WORLD_CX_View = 0;
 int WORLD_CY_View = h_pixel;
@@ -858,7 +861,7 @@ void draw () {
   }
 
 
-
+  _calculate_surfaces_from_the_sun(0,0,0, 45,0,45);
 } 
 
 
@@ -8766,9 +8769,9 @@ void keyPressed () {
         case 'w' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 4; break; 
          
         
-        case 't' :WIN3D_TESELATION += 1; WIN3D_update_VerticesSolarValue = 1; break; 
-        case 'T' :WIN3D_TESELATION -= 1;
-                  if (WIN3D_TESELATION < 0) WIN3D_TESELATION = 0;
+        case 't' :MODEL3D_TESELATION += 1; WIN3D_update_VerticesSolarValue = 1; break; 
+        case 'T' :MODEL3D_TESELATION -= 1;
+                  if (MODEL3D_TESELATION < 0) MODEL3D_TESELATION = 0;
                   WIN3D_update_VerticesSolarValue = 1; 
                   break;
                   
@@ -10181,6 +10184,187 @@ void _update_objects () {
 
 float objects_scale = 1.0; //0.5;
 
+
+
+int[] _calculate_surfaces_from_the_sun (float SUN3D_X_coordinate, float SUN3D_Y_coordinate, float SUN3D_Z_coordinate, float SUN3D_RX_coordinate, float SUN3D_RY_coordinate, float SUN3D_RZ_coordinate) {
+  
+  int[] return_array = new int [11]; // 0, 1, 2, ..., 9, 10
+
+  int SUN3D_X_View = 100;
+  int SUN3D_Y_View = 100;
+  
+  float SUN3D_ZOOM_coordinate = 60; // / (h_pixel / 300.0);
+
+  PGraphics SUN3D_Diagrams = createGraphics(SUN3D_X_View, SUN3D_Y_View, P3D);   
+
+  
+  SUN3D_Diagrams.beginDraw();
+  
+  SUN3D_Diagrams.background(233);
+  
+  //float ZOOM = 0.456 * SUN3D_ZOOM_coordinate * PI / 180;
+  float ZOOM = 0.125 * SUN3D_ZOOM_coordinate * PI / 180;
+  
+  SUN3D_Diagrams.ortho(ZOOM * SUN3D_X_View * -1, ZOOM * SUN3D_X_View * 1, ZOOM  * SUN3D_Y_View * -1, ZOOM  * SUN3D_Y_View * 1, 0.00001, 100000);
+  
+  SUN3D_Diagrams.translate(0, 1.0 * SUN3D_Y_View, 0); // << IMPORTANT! 
+
+  SUN3D_Diagrams.pushMatrix();
+  
+  SUN3D_Diagrams.translate(0, 0, 0);
+  
+  SUN3D_Diagrams.fill(0);
+  SUN3D_Diagrams.textAlign(CENTER, CENTER); 
+  SUN3D_Diagrams.textSize(5 * (SUN3D_ZOOM_coordinate / 30.0));
+  SUN3D_Diagrams.text(LocationName + " [" + nfp(LocationLatitude, 0, 1) + ", " + nfp(LocationLongitude, 0, 1) + "]", 0, 60 * (SUN3D_ZOOM_coordinate / 30.0), 0);
+ 
+  SUN3D_Diagrams.popMatrix();
+
+  SUN3D_Diagrams.translate(SUN3D_X_coordinate, SUN3D_Y_coordinate, SUN3D_Z_coordinate);
+  SUN3D_Diagrams.rotateX(SUN3D_RX_coordinate * PI / 180); 
+  SUN3D_Diagrams.rotateY(SUN3D_RY_coordinate * PI / 180);
+  SUN3D_Diagrams.rotateZ(SUN3D_RZ_coordinate * PI / 180); 
+
+  SUN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
+
+  for (int f = 1; f < allFaces.length; f++) {
+    
+    color c = color(0, 0, 0);
+
+    if (allFaces_MAT[f] == -2) {
+      c = color(127, 255, 127);
+    }
+    else if (allFaces_MAT[f] == 0) c = color(255, 127, 0);
+    else if (allFaces_MAT[f] == 1) c = color(255, 0, 0);
+    else if (allFaces_MAT[f] == 2) c = color(255, 255, 0);
+    else if (allFaces_MAT[f] == 3) c = color(0, 255, 0);
+    else if (allFaces_MAT[f] == 4) c = color(0, 255, 255);
+    else if (allFaces_MAT[f] == 5) c = color(0, 0, 255);
+    else if (allFaces_MAT[f] == 6) c = color(255, 0, 255);
+    else if (allFaces_MAT[f] == 7) c = color(255, 255, 255);
+    else if (allFaces_MAT[f] == 8) c = color(63, 63, 63);
+    else if (allFaces_MAT[f] == 9) c = color(127, 127, 127);
+    else if (allFaces_MAT[f] > 9) c = color(191, 191, 191);
+    
+
+    SUN3D_Diagrams.stroke(c);
+    SUN3D_Diagrams.fill(c);
+    
+    
+
+
+    int Teselation = 0;
+    
+    int TotalSubNo = 1;  
+    if (allFaces_MAT[f] == 0) {
+      Teselation = MODEL3D_TESELATION;
+      if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+    }
+
+    for (int n = 0; n < TotalSubNo; n++) {
+      float[][] subFace = getSubFace(allFaces[f], Teselation, n);
+   
+      SUN3D_Diagrams.beginShape();
+      
+      for (int s = 0; s < subFace.length; s++) {
+  
+        if (allFaces_MAT[f] == -2) {
+          
+          int PAL_TYPE = 1; 
+         
+          float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.0025 * subFace[s][2]);
+          
+          SUN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
+        }
+        //else SUN3D_Diagrams.fill(255, 127, 0);
+
+        SUN3D_Diagrams.vertex(subFace[s][0] * objects_scale, -(subFace[s][1] * objects_scale), subFace[s][2] * objects_scale);
+      }
+      
+      SUN3D_Diagrams.endShape(CLOSE);
+    }
+    
+  }
+
+  
+    
+  CAM_x -= SUN3D_X_coordinate;
+  CAM_y += SUN3D_Y_coordinate;
+  CAM_z -= SUN3D_Z_coordinate;
+  
+  float px, py, pz;
+  
+  px = CAM_x;
+  py = CAM_y * cos_ang(SUN3D_RX_coordinate) - CAM_z * sin_ang(SUN3D_RX_coordinate);
+  pz = CAM_y * sin_ang(SUN3D_RX_coordinate) + CAM_z * cos_ang(SUN3D_RX_coordinate);
+  
+  CAM_x = px;
+  CAM_y = py;
+  CAM_z = pz;
+  
+  py = CAM_y;
+  pz = CAM_z * cos_ang(SUN3D_RY_coordinate) - CAM_x * sin_ang(SUN3D_RY_coordinate);
+  px = CAM_z * sin_ang(SUN3D_RY_coordinate) + CAM_x * cos_ang(SUN3D_RY_coordinate);
+  
+  CAM_x = px;
+  CAM_y = py;
+  CAM_z = pz;  
+  
+  pz = CAM_z;
+  px = CAM_x * cos_ang(SUN3D_RZ_coordinate) - CAM_y * sin_ang(SUN3D_RZ_coordinate);
+  py = CAM_x * sin_ang(SUN3D_RZ_coordinate) + CAM_y * cos_ang(SUN3D_RZ_coordinate);
+  
+  CAM_x = px;
+  CAM_y = py;
+  CAM_z = pz;   
+  
+  //println(CAM_x, CAM_y, CAM_z);
+
+  for (int i = 1; i < allObject2D_XYZS.length; i++) {
+    
+    SUN3D_Diagrams.beginShape();
+    
+    int n = abs(allObject2D_MAP[i]);
+    
+    int w = Object2DImage[n].width; 
+    int h = Object2DImage[n].height;
+            
+    float x = allObject2D_XYZS[i][0] * objects_scale;
+    float y = allObject2D_XYZS[i][1] * objects_scale;
+    float z = allObject2D_XYZS[i][2] * objects_scale;
+    
+    float r = allObject2D_XYZS[i][3] * 0.5 * objects_scale;
+    
+    float t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI;
+    if (allObject2D_MAP[i] < 0) t += PI; 
+
+    SUN3D_Diagrams.texture(Object2DImage[n]);    
+    SUN3D_Diagrams.stroke(255, 255, 255, 0);
+    SUN3D_Diagrams.fill(255, 255, 255, 0);
+    
+    SUN3D_Diagrams.vertex(x - r * cos(t), -(y - r * sin(t)), z, 0, h);
+    SUN3D_Diagrams.vertex(x + r * cos(t), -(y + r * sin(t)), z, w, h);
+    SUN3D_Diagrams.vertex(x + r * cos(t), -(y + r * sin(t)), z + 2 * r, w, 0);
+    SUN3D_Diagrams.vertex(x - r * cos(t), -(y - r * sin(t)), z + 2 * r, 0, 0);
+    
+    SUN3D_Diagrams.endShape(CLOSE);
+  }
+  
+  SUN3D_Diagrams.endDraw();
+
+  imageMode(CORNER);    
+  image(SUN3D_Diagrams, 0, 0, SUN3D_X_View, SUN3D_Y_View);
+
+
+
+
+
+
+  return return_array;
+}
+
+
+
 void _draw_objects () {
   
 /*
@@ -10248,7 +10432,7 @@ void _draw_objects () {
       
       int TotalSubNo = 1;  
       if (allFaces_MAT[f] == 0) {
-        Teselation = WIN3D_TESELATION;
+        Teselation = MODEL3D_TESELATION;
         if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
       }
 
@@ -10303,7 +10487,7 @@ void _draw_objects () {
         
         int TotalSubNo = 1;  
         if (allFaces_MAT[f] == 0) {
-          Teselation = WIN3D_TESELATION;
+          Teselation = MODEL3D_TESELATION;
           if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
         }
         
@@ -10400,7 +10584,7 @@ void _draw_objects () {
         
         int TotalSubNo = 1;  
         if (allFaces_MAT[f] == 0) {
-          Teselation = WIN3D_TESELATION;
+          Teselation = MODEL3D_TESELATION;
           if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
         }
                 
@@ -10729,11 +10913,6 @@ void _draw_objects () {
 
 
 }
-
-
-
-
-
 
 
 int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
