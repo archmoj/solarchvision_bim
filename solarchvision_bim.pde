@@ -7,7 +7,7 @@ int SavedScreenShots = 0;
 
 int MODEL_RUN = 0; //12; 
 
-int Climatic_solar_model = 0; //                                   Usedfor solar radiation only
+int Climatic_solar_model = 0; //                                   Used for solar radiation only
 int Climatic_weather_model = 1; // 0:linear 1:average 2:sky-based. Used for some parameters namely: air temperature, humidity
 
 int automated = 0; //0: User interface, 1: Automatic
@@ -7840,9 +7840,12 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                
                     }
                   }  
+
+                  for (int mt = 0; mt < AREA_MAT.length; mt++) {                 
+                    AREA_MAT[mt] = 0;
+                  }                          
                   
-                  
-                  println(AREA_MAT);
+                  println(AREA_MAT); 
                   
             
                   Diagrams_imageMode(CORNER);
