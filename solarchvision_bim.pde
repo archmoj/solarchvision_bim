@@ -6553,7 +6553,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               
                       color COL0 = Shadings[0].get(Image_X, Image_Y);
                       color COL1 = Shadings[1].get(Image_X, Image_Y);
-                      //red: COL >>16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+                      //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
                       float COL_V0 = (COL0 >> 8 & 0xFF) / 255.0; 
                       float COL_V1 = (COL1 >> 8 & 0xFF) / 255.0;
                      
@@ -7660,7 +7660,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             float _valuesSUM_EFF = 0;
             int _valuesNUM = 0; 
 
-            for (int i = 0; i < 24; i += 1) {
+            //for (int i = 0; i < 24; i += 1) {
+            for (int i = 10; i <= 14; i += 2) {
               if ((i > _sunrise) && (i < _sunset)) {
                 
                 float HOUR_ANGLE = i; 
@@ -7743,7 +7744,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = _valuesSUM_EFF; 
                 
                 if (_valuesSUM < 0.9 * FLOAT_undefined) {
-                
+                  /*
                   float _u = 0;
                   
                   if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
@@ -7773,12 +7774,76 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   Diagrams_textAlign(CENTER, CENTER);
                   if (Impact_TYPE == Impact_ACTIVE) my_text (nf(_valuesSUM, 1, 1), (j + obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot, 0);
                   if (Impact_TYPE == Impact_PASSIVE) my_text (nf(int(_valuesSUM), 1), (j + obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot, 0);
-
-
-                  PGraphics Image_RGBA = ViewFromTheSky(128,128, 60, 0,0,0, 90-Alpha,0,Beta);
+                  */
                   
+                  int RES1 = 60; 
+                  int RES2 = 60;
+                  float ZOOM = 7200 / float(RES2); // ??? might not be correct!!!!
+
+                  PGraphics Image_RGBA = ViewFromTheSky(RES1,RES2,ZOOM, 0,0,0, 90-Alpha,0,Beta);
+
                   Diagrams_imageMode(CENTER); 
-                  Diagrams_image(Image_RGBA, (j + obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot, 64, 64);
+                  Diagrams_image(Image_RGBA, (j + obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot, RES1, RES2);
+                           
+                  float AREA_MAT[] = new float [11]; // 0, 1, 2, ... , 9, 10                           
+                  
+                  for (int mt = 0; mt < AREA_MAT.length; mt++) {                 
+                    AREA_MAT[mt] = 0;
+                  }                    
+                                    
+                  for (int np = 0; np < (RES1 * RES2); np++) {
+                    int Image_X = np % RES1;
+                    int Image_Y = np / RES1;
+                    
+                    color COL = Image_RGBA.get(Image_X, Image_Y);
+
+                    int COL_A = COL >> 24 & 0xFF;
+                    
+                    if (COL_A != 0) {
+                      int COL_R = COL >> 16 & 0xFF; 
+                      int COL_G = COL >> 8 & 0xFF; 
+                      int COL_B = COL & 0xFF;
+                      
+                      if ((COL_R == 255) && (COL_G == 127) && (COL_B == 0)) {
+                        AREA_MAT[0] += 1;
+                      }
+                      else if ((COL_R == 255) && (COL_G == 0) && (COL_B == 0)) {
+                        AREA_MAT[1] += 1;
+                      }
+                      else if ((COL_R == 255) && (COL_G == 255) && (COL_B == 0)) {
+                        AREA_MAT[2] += 1;
+                      }
+                      else if ((COL_R == 0) && (COL_G == 255) && (COL_B == 0)) {
+                        AREA_MAT[3] += 1;
+                      }
+                      else if ((COL_R == 0) && (COL_G == 255) && (COL_B == 255)) {
+                        AREA_MAT[4] += 1;
+                      }
+                      else if ((COL_R == 0) && (COL_G == 0) && (COL_B == 255)) {
+                        AREA_MAT[5] += 1;
+                      }
+                      else if ((COL_R == 255) && (COL_G == 0) && (COL_B == 255)) {
+                        AREA_MAT[6] += 1;
+                      }
+                      else if ((COL_R == 255) && (COL_G == 255) && (COL_B == 255)) {
+                        AREA_MAT[7] += 1;
+                      }
+                      else if ((COL_R == 63) && (COL_G == 63) && (COL_B == 63)) {
+                        AREA_MAT[8] += 1;
+                      }
+                      else if ((COL_R == 127) && (COL_G == 127) && (COL_B == 127)) {
+                        AREA_MAT[9] += 1;
+                      }
+                      else if ((COL_R == 191) && (COL_G == 191) && (COL_B == 191)) {
+                        AREA_MAT[10] += 1;
+                      }
+               
+                    }
+                  }  
+                  
+                  
+                  println(AREA_MAT);
+                  
             
                   Diagrams_imageMode(CORNER);
                 }
@@ -7918,18 +7983,19 @@ void GRAPHS_keyPressed () {
                    else plot_impacts = 7; 
                    redraw_scene = 1; break;        
 
-        case 116 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != -2)) || (plot_impacts == -1)) plot_impacts = -2;
+        case 116 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 4)) || (plot_impacts == 5)) plot_impacts = 4;
+                   else plot_impacts = 5; 
+                   redraw_scene = 1; break;
+        case 117 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 2)) || (plot_impacts == 3)) plot_impacts = 2;
+                   else plot_impacts = 3; 
+                   redraw_scene = 1; break;                   
+        case 118 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 0)) || (plot_impacts == 1)) plot_impacts = 0;
+                   else plot_impacts = 1; 
+                   redraw_scene = 1; break;           
+        case 119 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != -2)) || (plot_impacts == -1)) plot_impacts = -2;
                    else plot_impacts = -1; 
                    redraw_scene = 1; break;
-        case 117 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 0)) || (plot_impacts == 1)) plot_impacts = 0;
-                   else plot_impacts = 1; 
-                   redraw_scene = 1; break;
-        case 118 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 2)) || (plot_impacts == 3)) plot_impacts = 2;
-                   else plot_impacts = 3; 
-                   redraw_scene = 1; break;
-        case 119 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 4)) || (plot_impacts == 5)) plot_impacts = 4;
-                   else plot_impacts = 5; 
-                   redraw_scene = 1; break;        
+                   
         
         case 35  :_DATE += 1;
                   if (int(_DATE) == 365) _DATE -= 365;
@@ -10569,70 +10635,6 @@ PGraphics ViewFromTheSky (int SKY3D_X_View, int SKY3D_Y_View, float SKY3D_ZOOM_c
     
   }
 
-  
-    
-  CAM_x -= SKY3D_X_coordinate;
-  CAM_y += SKY3D_Y_coordinate;
-  CAM_z -= SKY3D_Z_coordinate;
-  
-  float px, py, pz;
-  
-  px = CAM_x;
-  py = CAM_y * cos_ang(SKY3D_RX_coordinate) - CAM_z * sin_ang(SKY3D_RX_coordinate);
-  pz = CAM_y * sin_ang(SKY3D_RX_coordinate) + CAM_z * cos_ang(SKY3D_RX_coordinate);
-  
-  CAM_x = px;
-  CAM_y = py;
-  CAM_z = pz;
-  
-  py = CAM_y;
-  pz = CAM_z * cos_ang(SKY3D_RY_coordinate) - CAM_x * sin_ang(SKY3D_RY_coordinate);
-  px = CAM_z * sin_ang(SKY3D_RY_coordinate) + CAM_x * cos_ang(SKY3D_RY_coordinate);
-  
-  CAM_x = px;
-  CAM_y = py;
-  CAM_z = pz;  
-  
-  pz = CAM_z;
-  px = CAM_x * cos_ang(SKY3D_RZ_coordinate) - CAM_y * sin_ang(SKY3D_RZ_coordinate);
-  py = CAM_x * sin_ang(SKY3D_RZ_coordinate) + CAM_y * cos_ang(SKY3D_RZ_coordinate);
-  
-  CAM_x = px;
-  CAM_y = py;
-  CAM_z = pz;   
-  
-  //println(CAM_x, CAM_y, CAM_z);
-
-  for (int i = 1; i < allObject2D_XYZS.length; i++) {
-    
-    SKY3D_Diagrams.beginShape();
-    
-    int n = abs(allObject2D_MAP[i]);
-    
-    int w = Object2DImage[n].width; 
-    int h = Object2DImage[n].height;
-            
-    float x = allObject2D_XYZS[i][0] * objects_scale;
-    float y = allObject2D_XYZS[i][1] * objects_scale;
-    float z = allObject2D_XYZS[i][2] * objects_scale;
-    
-    float r = allObject2D_XYZS[i][3] * 0.5 * objects_scale;
-    
-    float t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI;
-    if (allObject2D_MAP[i] < 0) t += PI; 
-
-    SKY3D_Diagrams.texture(Object2DImage[n]);    
-    SKY3D_Diagrams.stroke(255, 255, 255, 0);
-    SKY3D_Diagrams.fill(255, 255, 255, 0);
-    
-    SKY3D_Diagrams.vertex(x - r * cos(t), -(y - r * sin(t)), z, 0, h);
-    SKY3D_Diagrams.vertex(x + r * cos(t), -(y + r * sin(t)), z, w, h);
-    SKY3D_Diagrams.vertex(x + r * cos(t), -(y + r * sin(t)), z + 2 * r, w, 0);
-    SKY3D_Diagrams.vertex(x - r * cos(t), -(y - r * sin(t)), z + 2 * r, 0, 0);
-    
-    SKY3D_Diagrams.endShape(CLOSE);
-  }
-  
   SKY3D_Diagrams.endDraw();
 
   return SKY3D_Diagrams;
