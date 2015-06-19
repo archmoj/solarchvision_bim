@@ -459,7 +459,55 @@ void _update_folders () {
 
 }
 
-
+int Materials_Number = 11; // 0, 1, 2, ... , 10
+int[][] Materials_Color = new int [Materials_Number][4]; // ARGB                            
+{
+  {
+    int[] COL = {255, 255, 127, 0};    
+    Materials_Color[0] = COL;
+  }
+  {
+    int[] COL = {255, 255, 0, 0};    
+    Materials_Color[1] = COL;
+  }  
+  {
+    int[] COL = {255, 255, 255, 0};    
+    Materials_Color[2] = COL;
+  }
+  {
+    int[] COL = {255, 0, 255, 0};    
+    Materials_Color[3] = COL;
+  }
+  {
+    int[] COL = {255, 0, 255, 255};    
+    Materials_Color[4] = COL;
+  }
+  {
+    int[] COL = {255, 0, 0, 255};    
+    Materials_Color[5] = COL;
+  }
+  {
+    int[] COL = {255, 255, 0, 255};    
+    Materials_Color[6] = COL;
+  }
+  {
+    int[] COL = {255, 255, 255, 255};    
+    Materials_Color[7] = COL;
+  }
+  {
+    int[] COL = {255, 63, 63, 63};    
+    Materials_Color[8] = COL;
+  }
+  {
+    int[] COL = {255, 127, 127, 127};    
+    Materials_Color[9] = COL;
+  }
+  {
+    int[] COL = {255, 191, 191, 191};    
+    Materials_Color[10] = COL;
+  }
+}
+                  
 int h_pixel = 400;
 int w_pixel = int(h_pixel * 1.5);
 
@@ -7785,10 +7833,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   Diagrams_imageMode(CENTER); 
                   Diagrams_image(Image_RGBA, (j + obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot, RES1, RES2);
                            
-                  float AREA_MAT[] = new float [11]; // 0, 1, 2, ... , 9, 10                           
+                  float[] Materials_Area = new float [Materials_Number];                            
                   
-                  for (int mt = 0; mt < AREA_MAT.length; mt++) {                 
-                    AREA_MAT[mt] = 0;
+                  for (int mt = 0; mt < Materials_Number; mt++) {                 
+                    Materials_Area[mt] = 0;
                   }                    
                                     
                   for (int np = 0; np < (RES1 * RES2); np++) {
@@ -7804,48 +7852,20 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       int COL_G = COL >> 8 & 0xFF; 
                       int COL_B = COL & 0xFF;
                       
-                      if ((COL_R == 255) && (COL_G == 127) && (COL_B == 0)) {
-                        AREA_MAT[0] += 1;
+                      for (int mt = 0; mt < Materials_Number; mt++) {  
+                      
+                        if ((COL_R == Materials_Color[mt][1]) && (COL_G == Materials_Color[mt][2]) && (COL_B == Materials_Color[mt][3])) {
+                          Materials_Area[mt] += 1;
+                        }
                       }
-                      else if ((COL_R == 255) && (COL_G == 0) && (COL_B == 0)) {
-                        AREA_MAT[1] += 1;
-                      }
-                      else if ((COL_R == 255) && (COL_G == 255) && (COL_B == 0)) {
-                        AREA_MAT[2] += 1;
-                      }
-                      else if ((COL_R == 0) && (COL_G == 255) && (COL_B == 0)) {
-                        AREA_MAT[3] += 1;
-                      }
-                      else if ((COL_R == 0) && (COL_G == 255) && (COL_B == 255)) {
-                        AREA_MAT[4] += 1;
-                      }
-                      else if ((COL_R == 0) && (COL_G == 0) && (COL_B == 255)) {
-                        AREA_MAT[5] += 1;
-                      }
-                      else if ((COL_R == 255) && (COL_G == 0) && (COL_B == 255)) {
-                        AREA_MAT[6] += 1;
-                      }
-                      else if ((COL_R == 255) && (COL_G == 255) && (COL_B == 255)) {
-                        AREA_MAT[7] += 1;
-                      }
-                      else if ((COL_R == 63) && (COL_G == 63) && (COL_B == 63)) {
-                        AREA_MAT[8] += 1;
-                      }
-                      else if ((COL_R == 127) && (COL_G == 127) && (COL_B == 127)) {
-                        AREA_MAT[9] += 1;
-                      }
-                      else if ((COL_R == 191) && (COL_G == 191) && (COL_B == 191)) {
-                        AREA_MAT[10] += 1;
-                      }
-               
                     }
                   }  
 
-                  for (int mt = 0; mt < AREA_MAT.length; mt++) {                 
-                    AREA_MAT[mt] = 0;
+                  for (int mt = 0; mt < Materials_Number; mt++) {                 
+                    Materials_Area[mt] *= 100.0 / (RES1 * RES2) ; //????????
                   }                          
                   
-                  println(AREA_MAT); 
+                  println(Materials_Area); 
                   
             
                   Diagrams_imageMode(CORNER);
@@ -10590,17 +10610,10 @@ PGraphics ViewFromTheSky (int SKY3D_X_View, int SKY3D_Y_View, float SKY3D_ZOOM_c
     if (allFaces_MAT[f] == -2) {
       c = color(127, 255, 127);
     }
-    else if (allFaces_MAT[f] == 0) c = color(255, 127, 0);
-    else if (allFaces_MAT[f] == 1) c = color(255, 0, 0);
-    else if (allFaces_MAT[f] == 2) c = color(255, 255, 0);
-    else if (allFaces_MAT[f] == 3) c = color(0, 255, 0);
-    else if (allFaces_MAT[f] == 4) c = color(0, 255, 255);
-    else if (allFaces_MAT[f] == 5) c = color(0, 0, 255);
-    else if (allFaces_MAT[f] == 6) c = color(255, 0, 255);
-    else if (allFaces_MAT[f] == 7) c = color(255, 255, 255);
-    else if (allFaces_MAT[f] == 8) c = color(63, 63, 63);
-    else if (allFaces_MAT[f] == 9) c = color(127, 127, 127);
-    else if (allFaces_MAT[f] > 9) c = color(191, 191, 191);
+    else{
+      int mt = allFaces_MAT[f];
+      c = color(Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3], Materials_Color[mt][0]);
+    }
     
     SKY3D_Diagrams.stroke(c);
     SKY3D_Diagrams.fill(c);
@@ -10667,17 +10680,10 @@ void _draw_objects () {
     if (allFaces_MAT[f] == -2) {
       c = color(127, 255, 127);
     }
-    else if (allFaces_MAT[f] == 0) c = color(255, 127, 0);
-    else if (allFaces_MAT[f] == 1) c = color(255, 0, 0);
-    else if (allFaces_MAT[f] == 2) c = color(255, 255, 0);
-    else if (allFaces_MAT[f] == 3) c = color(0, 255, 0);
-    else if (allFaces_MAT[f] == 4) c = color(0, 255, 255);
-    else if (allFaces_MAT[f] == 5) c = color(0, 0, 255);
-    else if (allFaces_MAT[f] == 6) c = color(255, 0, 255);
-    else if (allFaces_MAT[f] == 7) c = color(255, 255, 255);
-    else if (allFaces_MAT[f] == 8) c = color(63, 63, 63);
-    else if (allFaces_MAT[f] == 9) c = color(127, 127, 127);
-    else if (allFaces_MAT[f] > 9) c = color(191, 191, 191);
+    else{
+      int mt = allFaces_MAT[f];
+      c = color(Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3], Materials_Color[mt][0]);
+    }
     
     if (WIN3D_BLACK_EDGES == 1) {
       WIN3D_Diagrams.stroke(0, 0, 0);
