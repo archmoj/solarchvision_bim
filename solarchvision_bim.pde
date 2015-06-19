@@ -861,7 +861,8 @@ void draw () {
   }
 
 
-  _calculate_surfaces_from_the_sun(0,0,0, 45,0,45);
+  //_calculate_surfaces_from_the_sun(0,0,0, 45,0,45);
+  _calculate_surfaces_from_the_sun(0,0,0, 0,0,0);
 } 
 
 
