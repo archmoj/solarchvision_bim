@@ -193,7 +193,7 @@ int H_layer_option = 0; //6;
 int F_layer_option = 0; //1;
 int O_layer_option = 0; //1;
 
-int develop_option = 0; //2; // between 0 - 12.... 0 = rain, 
+int develop_option = 0; //2; // between 0 - 12....
 int develop_per_day = 1;
 
 int update_DevelopDATA = 1;
@@ -460,6 +460,11 @@ void _update_folders () {
 }
 
 int Materials_Number = 11; // 0, 1, 2, ... , 10
+
+int Materials_Selection = 2; // yellow
+
+float[][][] Materials_DirectArea = new float [Materials_Number][24][365]; 
+
 int[][] Materials_Color = new int [Materials_Number][4]; // ARGB                            
 {
   {
@@ -507,6 +512,8 @@ int[][] Materials_Color = new int [Materials_Number][4]; // ARGB
     Materials_Color[10] = COL;
   }
 }
+
+
                   
 int h_pixel = 400;
 int w_pixel = int(h_pixel * 1.5);
@@ -1609,7 +1616,7 @@ void Plot_Setup () {
     drw_Layer = _precipitation ; 
     develop_Layer = drw_Layer;
     drw_Layer = _developed; 
-    develop_option = 0;
+    develop_option = 9;
     SOLARCHVISION_DevelopDATA(impacts_source); 
     plot_center(0, 325 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
@@ -1632,7 +1639,7 @@ void Plot_Setup () {
     drw_Layer = _precipitation ; 
     develop_Layer = drw_Layer;
     drw_Layer = _developed; 
-    develop_option = 0;
+    develop_option = 9;
     SOLARCHVISION_DevelopDATA(impacts_source); 
     plot_center(0, 125 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 */
@@ -5290,23 +5297,61 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
 
 
 
-        if (develop_option == 0) {
+
+
+
+        if (develop_option == 0) {  
           
-          if (RAIN < 0.9 * FLOAT_undefined) { 
-            _valuesSUM[now_k] = RAIN;
+          float Alpha = Angle_inclination;
+          float Beta = Angle_orientation;
+          
+          if ((R_dir < 0.9 * FLOAT_undefined) && (R_dif < 0.9 * FLOAT_undefined)) { 
+            float[] VECT = {0, 0, 0}; 
             
-            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
-            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
-            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
+            if (abs(Alpha) < 89.99) {
+              VECT[0] = sin_ang(Beta);
+              VECT[1] = -cos_ang(Beta);
+              VECT[2] = tan_ang(Alpha);
+            } 
+            else if (Alpha == 90.0) {
+              VECT[0] = 0;
+              VECT[1] = 0;
+              VECT[2] = 1;
+            }   
+            else {
+              VECT[0] = 0;
+              VECT[1] = 0;
+              VECT[2] = -1;
+            }   
+            
+            VECT = fn_normalize(VECT);
+            
+            float[] SunV = {SunR[1], SunR[2], SunR[3]};
+            
+            float SunMask = fn_dot(fn_normalize(SunV), fn_normalize(VECT));
+            if (SunMask <= 0) SunMask = 0; // removes backing faces 
+            
+            float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
+           
+            _valuesSUM[now_k] += (R_dir * SunMask) * Materials_DirectArea[Materials_Selection][now_i][now_j]; 
+            
+            //+ (R_dif * SkyMask);  <<<<<<<<<<<< should add diffuse 
+
+            
+            
+            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = String.valueOf(0.001 * _valuesSUM[now_k]);
+            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = String.valueOf(0.001 * _valuesSUM[now_k]);
+            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = String.valueOf(0.001 * _valuesSUM[now_k]);
           }
-            
+
           V_scale[_developed] = 2.5;
-          V_offset[_developed] = 0; //-20.0 / (1.0 * level_pix); // so that we can have two views on probabilites above and below zero.
-          V_belowLine[_developed] = 0; //1;
-          _LAYERS[_developed][0] = "mm/12hours  ";
-          _LAYERS[_developed][1] = "12-hour Surface Accumulated Precipitation";
-          _LAYERS[_developed][2] = _LAYERS[_developed][1]; // ??         
-        } 
+          V_offset[_developed] = -40;
+          V_belowLine[_developed] = 1;
+          _LAYERS[_developed][0] = "kWh";
+          _LAYERS[_developed][1] = "Accumulated radiation on material #" + String.valueOf(Materials_Selection);
+          _LAYERS[_developed][2] = _LAYERS[_developed][1]; // ?? 
+        }         
+
  
         if (develop_option == 1) {
           float Alpha = Angle_inclination;
@@ -5726,8 +5771,26 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           _LAYERS[_developed][2] = String.valueOf(join_hour_numbers) + "-hour ACTIVE trend of " + _LAYERS[develop_Layer][2]; // ??    
         } 
         
+
+        if (develop_option == 9) {
+          
+          if (RAIN < 0.9 * FLOAT_undefined) { 
+            _valuesSUM[now_k] = RAIN;
+            
+            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
+            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
+            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
+          }
+            
+          V_scale[_developed] = 2.5;
+          V_offset[_developed] = 0; //-20.0 / (1.0 * level_pix); // so that we can have two views on probabilites above and below zero.
+          V_belowLine[_developed] = 0; //1;
+          _LAYERS[_developed][0] = "mm/12hours  ";
+          _LAYERS[_developed][1] = "12-hour Surface Accumulated Precipitation";
+          _LAYERS[_developed][2] = _LAYERS[_developed][1]; // ??         
+        } 
         
-        
+
         
         
         
@@ -7708,26 +7771,27 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             float _valuesSUM_EFF = 0;
             int _valuesNUM = 0; 
 
-            //for (int i = 0; i < 24; i += 1) {
-            for (int i = 10; i <= 14; i += 2) {
-              if ((i > _sunrise) && (i < _sunset)) {
-                
-                float HOUR_ANGLE = i; 
-                float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
-                
-                float Alpha = 90 - acos_ang(SunR[3]);
-                float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
+            for (int i = 0; i < 24; i += 1) {
+            //for (int i = 10; i <= 14; i += 2) {
 
-                now_k = k;
-                now_i = i;
-                now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
-    
-                if (now_j >= 365) {
-                 now_j = now_j % 365; 
-                }
-                if (now_j < 0) {
-                 now_j = (now_j + 365) % 365; 
-                }
+              float HOUR_ANGLE = i; 
+              float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+              
+              float Alpha = 90 - acos_ang(SunR[3]);
+              float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
+
+              now_k = k;
+              now_i = i;
+              now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+  
+              if (now_j >= 365) {
+               now_j = now_j % 365; 
+              }
+              if (now_j < 0) {
+               now_j = (now_j + 365) % 365; 
+              }
+
+              if ((i > _sunrise) && (i < _sunset)) {
 
                 if (impacts_source == databaseNumber_CLIMATE_WY2) {
                     Pa = CLIMATE_WY2[now_i][now_j][_dirnorrad][now_k]; 
@@ -7833,10 +7897,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   Diagrams_imageMode(CENTER); 
                   Diagrams_image(Image_RGBA, (j + obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot, RES1, RES2);
                            
-                  float[] Materials_Area = new float [Materials_Number];                            
-                  
                   for (int mt = 0; mt < Materials_Number; mt++) {                 
-                    Materials_Area[mt] = 0;
+                    Materials_DirectArea[mt][now_i][now_j] = 0;
                   }                    
                                     
                   for (int np = 0; np < (RES1 * RES2); np++) {
@@ -7855,22 +7917,27 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       for (int mt = 0; mt < Materials_Number; mt++) {  
                       
                         if ((COL_R == Materials_Color[mt][1]) && (COL_G == Materials_Color[mt][2]) && (COL_B == Materials_Color[mt][3])) {
-                          Materials_Area[mt] += 1;
+                          Materials_DirectArea[mt][now_i][now_j] += 1;
                         }
                       }
                     }
                   }  
 
                   for (int mt = 0; mt < Materials_Number; mt++) {                 
-                    Materials_Area[mt] *= 100.0 / (RES1 * RES2) ; //????????
+                    Materials_DirectArea[mt][now_i][now_j] *= 100.0 / (RES1 * RES2) ; //????????
+                    
+                    if (Materials_Number == Materials_Selection) println(mt, now_i, now_j, Materials_DirectArea[mt][now_i][now_j]); 
                   }                          
-                  
-                  println(Materials_Area); 
-                  
             
                   Diagrams_imageMode(CORNER);
                 }
               }
+              else {
+                for (int mt = 0; mt < Materials_Number; mt++) { 
+                  Materials_DirectArea[mt][now_i][now_j] = 0;
+                }
+              }
+              
             }
             
             Diagrams_stroke(0);
@@ -8407,7 +8474,7 @@ void draw_spinners () {
   Sample_Year = int(MySpinner.update(X_spinner, Y_spinner, "Single year" , Sample_Year, 1953, 2005, 1));
 
   Y_spinner += 25 * S_View;
-  develop_option = int(MySpinner.update(X_spinner, Y_spinner, "Develop layer" , develop_option, 1, 12, 1));
+  develop_option = int(MySpinner.update(X_spinner, Y_spinner, "Develop layer" , develop_option, 0, 12, 1));
   develop_per_day = int(MySpinner.update(X_spinner, Y_spinner, "Dev. per day option" , develop_per_day, 0, 3, 1));
 
   Y_spinner += 25 * S_View;
