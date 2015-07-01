@@ -513,6 +513,18 @@ int[][] Materials_Color = new int [Materials_Number][4]; // ARGB
   }
 }
 
+void empty_Materials_DirectArea () {
+
+  for (int mt = 0; mt < Materials_Number; mt++) {
+    for (int i = 0; i < 24; i += 1) {
+      for (int j = 0; j < 365; j += 1) {
+        Materials_DirectArea[mt][i][j] = FLOAT_undefined;
+      }
+    }  
+  }
+
+}
+
 
                   
 int h_pixel = 400;
@@ -625,6 +637,8 @@ void setup () {
   _update_station();
 
   _update_objects();
+  
+  empty_Materials_DirectArea();
 
   WIN3D_VerticesSolarEnergy = new float [1];
   WIN3D_VerticesSolarEffect = new float [1];
@@ -5302,53 +5316,28 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
 
         if (develop_option == 0) {  
           
-          float Alpha = Angle_inclination;
-          float Beta = Angle_orientation;
-          
           if ((R_dir < 0.9 * FLOAT_undefined) && (R_dif < 0.9 * FLOAT_undefined)) { 
-            float[] VECT = {0, 0, 0}; 
-            
-            if (abs(Alpha) < 89.99) {
-              VECT[0] = sin_ang(Beta);
-              VECT[1] = -cos_ang(Beta);
-              VECT[2] = tan_ang(Alpha);
-            } 
-            else if (Alpha == 90.0) {
-              VECT[0] = 0;
-              VECT[1] = 0;
-              VECT[2] = 1;
-            }   
-            else {
-              VECT[0] = 0;
-              VECT[1] = 0;
-              VECT[2] = -1;
-            }   
-            
-            VECT = fn_normalize(VECT);
-            
-            float[] SunV = {SunR[1], SunR[2], SunR[3]};
-            
-            float SunMask = fn_dot(fn_normalize(SunV), fn_normalize(VECT));
-            if (SunMask <= 0) SunMask = 0; // removes backing faces 
-            
-            float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
            
-            _valuesSUM[now_k] += (R_dir * SunMask) * Materials_DirectArea[Materials_Selection][now_i][now_j]; 
+            if (Materials_DirectArea[Materials_Selection][now_i][now_j] < 0.9 * FLOAT_undefined) {
+              _valuesSUM[now_k] = R_dir * Materials_DirectArea[Materials_Selection][now_i][now_j];
+            } 
+            else {
+              _valuesSUM[now_k] = 0;
+            }
             
-            //+ (R_dif * SkyMask);  <<<<<<<<<<<< should add diffuse 
+            // R_dif * ...  <<<<<<<<<<<< should add diffuse 
 
             
-            
-            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = String.valueOf(0.001 * _valuesSUM[now_k]);
-            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = String.valueOf(0.001 * _valuesSUM[now_k]);
-            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = String.valueOf(0.001 * _valuesSUM[now_k]);
+            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
+            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
+            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
           }
-
-          V_scale[_developed] = 2.5;
-          V_offset[_developed] = -40;
-          V_belowLine[_developed] = 1;
-          _LAYERS[_developed][0] = "kWh";
-          _LAYERS[_developed][1] = "Accumulated radiation on material #" + String.valueOf(Materials_Selection);
+            
+          V_scale[_developed] = 0.1;
+          V_offset[_developed] = 0;
+          V_belowLine[_developed] = 0;
+          _LAYERS[_developed][0] = "W";
+          _LAYERS[_developed][1] = "Direct radiation on surfaces with material #" + String.valueOf(Materials_Selection);
           _LAYERS[_developed][2] = _LAYERS[_developed][1]; // ?? 
         }         
 
@@ -7888,6 +7877,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   if (Impact_TYPE == Impact_PASSIVE) my_text (nf(int(_valuesSUM), 1), (j + obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot, 0);
                   */
                   
+                  
+                  
                   int RES1 = 60; 
                   int RES2 = 60;
                   float ZOOM = 7200 / float(RES2); // ??? might not be correct!!!!
@@ -7896,39 +7887,41 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
                   Diagrams_imageMode(CENTER); 
                   Diagrams_image(Image_RGBA, (j + obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot, RES1, RES2);
+                  
+                  if (Materials_DirectArea[0][now_i][now_j] > 0.9 * FLOAT_undefined) { // to aviod recalculating the program uses material 0 and only updates the results if they were set to undefined 
                            
-                  for (int mt = 0; mt < Materials_Number; mt++) {                 
-                    Materials_DirectArea[mt][now_i][now_j] = 0;
-                  }                    
-                                    
-                  for (int np = 0; np < (RES1 * RES2); np++) {
-                    int Image_X = np % RES1;
-                    int Image_Y = np / RES1;
-                    
-                    color COL = Image_RGBA.get(Image_X, Image_Y);
-
-                    int COL_A = COL >> 24 & 0xFF;
-                    
-                    if (COL_A != 0) {
-                      int COL_R = COL >> 16 & 0xFF; 
-                      int COL_G = COL >> 8 & 0xFF; 
-                      int COL_B = COL & 0xFF;
+                    for (int mt = 0; mt < Materials_Number; mt++) {                 
+                      Materials_DirectArea[mt][now_i][now_j] = 0;
+                    }                    
+                                      
+                    for (int np = 0; np < (RES1 * RES2); np++) {
+                      int Image_X = np % RES1;
+                      int Image_Y = np / RES1;
                       
-                      for (int mt = 0; mt < Materials_Number; mt++) {  
+                      color COL = Image_RGBA.get(Image_X, Image_Y);
+  
+                      int COL_A = COL >> 24 & 0xFF;
                       
-                        if ((COL_R == Materials_Color[mt][1]) && (COL_G == Materials_Color[mt][2]) && (COL_B == Materials_Color[mt][3])) {
-                          Materials_DirectArea[mt][now_i][now_j] += 1;
+                      if (COL_A != 0) {
+                        int COL_R = COL >> 16 & 0xFF; 
+                        int COL_G = COL >> 8 & 0xFF; 
+                        int COL_B = COL & 0xFF;
+                        
+                        for (int mt = 0; mt < Materials_Number; mt++) {  
+                        
+                          if ((COL_R == Materials_Color[mt][1]) && (COL_G == Materials_Color[mt][2]) && (COL_B == Materials_Color[mt][3])) {
+                            Materials_DirectArea[mt][now_i][now_j] += 1;
+                          }
                         }
                       }
-                    }
-                  }  
-
-                  for (int mt = 0; mt < Materials_Number; mt++) {                 
-                    Materials_DirectArea[mt][now_i][now_j] *= 100.0 / (RES1 * RES2) ; //????????
-                    
-                    if (Materials_Number == Materials_Selection) println(mt, now_i, now_j, Materials_DirectArea[mt][now_i][now_j]); 
-                  }                          
-            
+                    }  
+  
+                    for (int mt = 0; mt < Materials_Number; mt++) {                 
+                      Materials_DirectArea[mt][now_i][now_j] *= 100.0 / (RES1 * RES2) ; //????????
+                      
+                      if (Materials_Number == Materials_Selection) println(mt, now_i, now_j, Materials_DirectArea[mt][now_i][now_j]); 
+                    }                          
+                  }
                   Diagrams_imageMode(CORNER);
                 }
               }
@@ -8269,6 +8262,15 @@ void GRAPHS_keyPressed () {
         case '~' :num_add_days -= 2;
                   if (num_add_days < 1) num_add_days = 1;
                   redraw_scene = 1; break;
+                  
+        case 'k' :Materials_Selection += 1;
+                  Materials_Selection %= Materials_Number; 
+                  update_DevelopDATA = 1;
+                  redraw_scene = 1; break;
+        case 'K' :Materials_Selection += Materials_Number - 1;
+                  Materials_Selection %= Materials_Number;
+                  update_DevelopDATA = 1; 
+                  redraw_scene = 1; break;                
   
         case 'm' :draw_sorted = int((draw_sorted + 1) % 2); redraw_scene = 1; break;
         case 'M' :draw_sorted = int((draw_sorted + 1) % 2); redraw_scene = 1; break;
@@ -9244,7 +9246,6 @@ void keyPressed () {
         case 'x' :_export_objects(); WIN3D_Update = 1; break;
         case 'X' :_export_objects(); WIN3D_Update = 1; break;
         
-  
       }
     }
     
@@ -12113,5 +12114,8 @@ PVector fn_perpendicular (PVector M, PVector A, PVector B) {
   
   return H;
 }
+
+
+
 
 
