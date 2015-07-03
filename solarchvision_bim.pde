@@ -223,7 +223,7 @@ int _windspd200hPa = 17;
 
 int num_layers = 18; 
 
-int drw_Layer = _drybulb; //_cloudcover; //_developed; 
+int drw_Layer = _developed; //_drybulb; //_cloudcover; //_developed; 
 
 int develop_Layer = drw_Layer;
 
@@ -464,6 +464,7 @@ int Materials_Number = 11; // 0, 1, 2, ... , 10
 int Materials_Selection = 2; // yellow
 
 float[][][] Materials_DirectArea = new float [Materials_Number][24][365]; 
+int[][] Materials_DirectArea_Flag = new int [24][365];
 
 int[][] Materials_Color = new int [Materials_Number][4]; // ARGB                            
 {
@@ -519,6 +520,7 @@ void empty_Materials_DirectArea () {
     for (int i = 0; i < 24; i += 1) {
       for (int j = 0; j < 365; j += 1) {
         Materials_DirectArea[mt][i][j] = FLOAT_undefined;
+        Materials_DirectArea_Flag[i][j] = -1;
       }
     }  
   }
@@ -5318,14 +5320,16 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           
           if ((R_dir < 0.9 * FLOAT_undefined) && (R_dif < 0.9 * FLOAT_undefined)) { 
            
-            if (Materials_DirectArea[Materials_Selection][now_i][now_j] < 0.9 * FLOAT_undefined) {
-              _valuesSUM[now_k] = R_dir * Materials_DirectArea[Materials_Selection][now_i][now_j];
+            if (Materials_DirectArea_Flag[now_i][now_j] == -1) {
+              _valuesSUM[now_k] = FLOAT_undefined;
             } 
             else {
-              _valuesSUM[now_k] = 0;
+              _valuesSUM[now_k] = R_dir * Materials_DirectArea[Materials_Selection][now_i][now_j];
+              
+                          
+              // R_dif * ...  <<<<<<<<<<<< should add diffuse ??????????? 
             }
-            
-            // R_dif * ...  <<<<<<<<<<<< should add diffuse 
+
 
             
             if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
@@ -7888,7 +7892,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   Diagrams_imageMode(CENTER); 
                   Diagrams_image(Image_RGBA, (j + obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot, RES1, RES2);
                   
-                  if (Materials_DirectArea[0][now_i][now_j] > 0.9 * FLOAT_undefined) { // to aviod recalculating the program uses material 0 and only updates the results if they were set to undefined 
+                  if (Materials_DirectArea_Flag[now_i][now_j] == -1) {
+                    
+                    Materials_DirectArea_Flag[now_i][now_j] = 1; 
                            
                     for (int mt = 0; mt < Materials_Number; mt++) {                 
                       Materials_DirectArea[mt][now_i][now_j] = 0;
