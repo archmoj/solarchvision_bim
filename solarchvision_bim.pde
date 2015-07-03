@@ -7835,7 +7835,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         }
 
         { // Diffuse
-          int RES1 = 25; // 50; 
+          int RES1 = 50; // 100; 
           int RES2 = RES1;
           float ZOOM = 7200 / float(RES1); // ??? might not be correct!!!!
 
@@ -7892,7 +7892,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             }
             for (int mt = 0; mt < Materials_Number; mt++) {                 
               Materials_DiffuseArea[mt][now_i][now_j] *= 0.975 * 1000.0 / (RES1 * RES2); //???
-              Materials_DiffuseArea[mt][now_i][now_j] /= float(num_diffuse_views);
+              Materials_DiffuseArea[mt][now_i][now_j] *= 2.0 / float(num_diffuse_views); // note: multiply by 2 to have a area equal to roof!
               
               if (Materials_Selection == mt) println("Diffuse:", mt, now_i, now_j, Materials_DiffuseArea[mt][now_i][now_j]); 
             }
@@ -10502,12 +10502,12 @@ void _update_objects () {
   }
   
 
-  add_Mesh5(1, -10,-10,0, -10,-10,5, -10,0,10, -10,10,5, -10,10,0);
-  add_Mesh5(2, 10,10,0, 10,10,5, 10,0,10, 10,-10,5, 10,-10,0);  
-  add_Mesh4(3, -10,-10,0, 10,-10,0, 10,-10,5, -10,-10,5);
-  add_Mesh4(4, -10,10,0, -10,10,5, 10,10,5, 10,10,0);
-  add_Mesh4(5, -10,-10,5, 10,-10,5, 10,0,10, -10,0,10);
-  add_Mesh4(6, -10,10,5, -10,0,10, 10,0,10, 10,10,5);
+  //add_Mesh5(1, -10,-10,0, -10,-10,5, -10,0,10, -10,10,5, -10,10,0);
+  //add_Mesh5(2, 10,10,0, 10,10,5, 10,0,10, 10,-10,5, 10,-10,0);  
+  //add_Mesh4(3, -10,-10,0, 10,-10,0, 10,-10,5, -10,-10,5);
+  //add_Mesh4(4, -10,10,0, -10,10,5, 10,10,5, 10,10,0);
+  //add_Mesh4(5, -10,-10,5, 10,-10,5, 10,0,10, -10,0,10);
+  //add_Mesh4(6, -10,10,5, -10,0,10, 10,0,10, 10,10,5);
   
   //add_Mesh2(3, -10,-10.75,3.75, 10,-10,3.75);
   //add_Mesh2(3, -10,-10.75,2.5, 10,-10,2.5);
@@ -10517,7 +10517,7 @@ void _update_objects () {
   //add_PolygonHyper(0, 0, -20, 0,  5, 5, 4);
 
   
-  //add_Box(-1, -5, -5, 0, 5, 5, 10);
+  add_Box(-1, -5, -5, 0, 5, 5, 10);
   //add_Mesh2(3, -20,-20,0, 20,20,0);
   
 /*  
