@@ -5324,7 +5324,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
               _valuesSUM[now_k] = FLOAT_undefined;
             } 
             else {
-              _valuesSUM[now_k] = R_dir * Materials_DirectArea[Materials_Selection][now_i][now_j];
+              _valuesSUM[now_k] = 0.001 * R_dir * Materials_DirectArea[Materials_Selection][now_i][now_j];
               
                           
               // R_dif * ...  <<<<<<<<<<<< should add diffuse ??????????? 
@@ -5337,10 +5337,10 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
             if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
           }
             
-          V_scale[_developed] = 0.1;
+          V_scale[_developed] = 0.5;
           V_offset[_developed] = 0;
-          V_belowLine[_developed] = 0;
-          _LAYERS[_developed][0] = "W";
+          V_belowLine[_developed] = 1;
+          _LAYERS[_developed][0] = "KW";
           _LAYERS[_developed][1] = "Direct radiation on surfaces with material #" + String.valueOf(Materials_Selection);
           _LAYERS[_developed][2] = _LAYERS[_developed][1]; // ?? 
         }         
@@ -10408,12 +10408,12 @@ void _update_objects () {
   }
   
 
-  //add_Mesh5(1, -10,-10,0, -10,-10,5, -10,0,10, -10,10,5, -10,10,0);
-  //add_Mesh5(2, 10,10,0, 10,10,5, 10,0,10, 10,-10,5, 10,-10,0);  
-  //add_Mesh4(3, -10,-10,0, 10,-10,0, 10,-10,5, -10,-10,5);
-  //add_Mesh4(4, -10,10,0, -10,10,5, 10,10,5, 10,10,0);
-  //add_Mesh4(5, -10,-10,5, 10,-10,5, 10,0,10, -10,0,10);
-  //add_Mesh4(6, -10,10,5, -10,0,10, 10,0,10, 10,10,5);
+  add_Mesh5(1, -10,-10,0, -10,-10,5, -10,0,10, -10,10,5, -10,10,0);
+  add_Mesh5(2, 10,10,0, 10,10,5, 10,0,10, 10,-10,5, 10,-10,0);  
+  add_Mesh4(3, -10,-10,0, 10,-10,0, 10,-10,5, -10,-10,5);
+  add_Mesh4(4, -10,10,0, -10,10,5, 10,10,5, 10,10,0);
+  add_Mesh4(5, -10,-10,5, 10,-10,5, 10,0,10, -10,0,10);
+  add_Mesh4(6, -10,10,5, -10,0,10, 10,0,10, 10,10,5);
   
   //add_Mesh2(3, -10,-10.75,3.75, 10,-10,3.75);
   //add_Mesh2(3, -10,-10.75,2.5, 10,-10,2.5);
@@ -10423,7 +10423,7 @@ void _update_objects () {
   //add_PolygonHyper(0, 0, -20, 0,  5, 5, 4);
 
   
-  add_Box(-1, -5, -5, 0, 5, 5, 10);
+  //add_Box(-1, -5, -5, 0, 5, 5, 10);
   //add_Mesh2(3, -20,-20,0, 20,20,0);
   
 /*  
