@@ -928,7 +928,7 @@ void draw () {
   
     SOLARCHVISION_SunPath(0, 0, 0, 90, LocationLatitude);
     
-    _draw_sky(92.5);
+    _draw_sky();
   
     _draw_objects();
     
@@ -10520,7 +10520,7 @@ void _update_objects () {
   //add_Mesh2(0, -10,-30,0, 10,-10,0);
   //add_PolygonHyper(0, 0, -20, 0,  5, 5, 4);
 
-  add_RecursiveSphere(0, 0,0,0, 1, 3, 1); // SKY
+  add_RecursiveSphere(0, 0,0,0, 92.5, 3, 1); // SKY
 
   add_Box(-1, -5, -5, 0, 5, 5, 10);
   //add_Mesh2(3, -20,-20,0, 20,20,0);
@@ -10645,7 +10645,7 @@ PGraphics ViewFromTheSky (int SKY3D_X_View, int SKY3D_Y_View, float SKY3D_ZOOM_c
 }
 
 
-void _draw_sky (float R_sky) {
+void _draw_sky () {
   
   for (int f = 1; f < skyFaces.length; f++) {
     
@@ -10671,7 +10671,7 @@ void _draw_sky (float R_sky) {
     
     for (int j = 0; j < skyFaces[f].length; j++) {
       int vNo = skyFaces[f][j];
-      WIN3D_Diagrams.vertex(R_sky * skyVertices[vNo][0] * objects_scale, R_sky * -(skyVertices[vNo][1] * objects_scale), R_sky * skyVertices[vNo][2] * objects_scale);
+      WIN3D_Diagrams.vertex(skyVertices[vNo][0] * objects_scale, -(skyVertices[vNo][1] * objects_scale), skyVertices[vNo][2] * objects_scale);
     }    
     
     WIN3D_Diagrams.endShape(CLOSE);
@@ -10679,6 +10679,7 @@ void _draw_sky (float R_sky) {
   }
 
 }
+
 
 
 void _draw_objects () {
@@ -11825,6 +11826,14 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
     
     skyVertices = TempObjectVertices;
     skyFaces = TempObjectFaces;
+    
+    for (int i = 1; i < POINTER_TempObjectVertices; i++) {
+      
+      skyVertices[i][0] *= r;
+      skyVertices[i][1] *= r;
+      skyVertices[i][2] *= r;
+       
+    }    
     
     POINTER_skyVertices = POINTER_TempObjectVertices;
     POINTER_skyFaces = POINTER_TempObjectFaces;    
