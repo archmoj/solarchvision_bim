@@ -7834,9 +7834,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 Materials_DirectArea[mt][now_i][now_j] *= 0.975 * 1000.0 / (RES1 * RES2) ; //???
                 
                 if (Materials_Selection == mt) println("Direct:", mt, now_i, now_j, Materials_DirectArea[mt][now_i][now_j]); 
-              }                          
+              }
+
+              Diagrams_imageMode(CORNER);              
             }
-            Diagrams_imageMode(CORNER);
           }
         }
 
@@ -7855,22 +7856,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             
             int num_diffuse_views = 0;
           
-            for (int f = 1; f < skyFaces.length; f++) {
-              float[] G_sky = {0,0,0}; 
-              for (int g = 0; g < skyFaces[f].length; g++) {
-                int vNo = skyFaces[f][g];
-                
-                G_sky[0] += skyVertices[vNo][0];
-                G_sky[1] += skyVertices[vNo][1];
-                G_sky[2] += skyVertices[vNo][2];
-              }
-
-              G_sky[0] /= float(skyFaces[f].length);
-              G_sky[1] /= float(skyFaces[f].length);
-              G_sky[2] /= float(skyFaces[f].length);
-
-              float skyAngle_Alpha = asin_ang(G_sky[2]);
-              float skyAngle_Beta = atan2_ang(G_sky[1], G_sky[0]) + 90;
+            for (int vNo = 1; vNo < skyVertices.length; vNo++) {
+              
+              float skyAngle_Alpha = asin_ang(skyVertices[vNo][2]);
+              float skyAngle_Beta = atan2_ang(skyVertices[vNo][1], skyVertices[vNo][0]) + 90;
                 
               if (skyAngle_Alpha >= 0) {
                 
@@ -10532,7 +10521,7 @@ void _update_objects () {
   //add_Mesh2(0, -10,-30,0, 10,-10,0);
   //add_PolygonHyper(0, 0, -20, 0,  5, 5, 4);
 
-  add_RecursiveSphere(0, 0,0,0, 1, 4, 1); // SKY
+  add_RecursiveSphere(0, 0,0,0, 1, 3, 1); // SKY
 
   add_Box(-1, -5, -5, 0, 5, 5, 10);
   //add_Mesh2(3, -20,-20,0, 20,20,0);
@@ -10643,7 +10632,7 @@ PGraphics ViewFromTheSky (int SKY3D_X_View, int SKY3D_Y_View, float SKY3D_ZOOM_c
         }
         //else SKY3D_Diagrams.fill(255, 127, 0);
 
-        SKY3D_Diagrams.vertex(subFace[s][0] * objects_scale, -(subFace[s][1] * objects_scale), subFace[s][2] * objects_scale);
+        SKY3D_Diagrams.vertex(subFace[s][0], -subFace[s][1], subFace[s][2]);
       }
       
       SKY3D_Diagrams.endShape(CLOSE);
