@@ -931,6 +931,8 @@ void draw () {
     SOLARCHVISION_SunPath(0, 0, 0, 0.95 * sky_scale, LocationLatitude);
     
     _draw_sky();
+    
+    _draw_land();
   
     _draw_objects();
     
@@ -10277,17 +10279,12 @@ void _update_objects () {
   SOLARCHVISION_LoadLAND(); 
 
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
-  //for (int i = 1; i < LAND_n_I - 1; i += 1) { // ignoring the center!
+  //for (int i = 1; i < LAND_n_I - 1; i += 1) { // to ignoring the center!
     for (int j = 0; j < LAND_n_J - 1; j += 1) {
       
       // Material -2 for colored elevations
       
-      add_Mesh4(-2 
-        , LAND_MESH[i][j][0],     LAND_MESH[i][j][1],     LAND_MESH[i][j][2]
-        , LAND_MESH[i+1][j][0],   LAND_MESH[i+1][j][1],   LAND_MESH[i+1][j][2]
-        , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2]
-        , LAND_MESH[i][j+1][0],   LAND_MESH[i][j+1][1],   LAND_MESH[i][j+1][2]
-      );
+      //add_Mesh4(-2, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2] , LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i+1][j][2] , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2] , LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1], LAND_MESH[i][j+1][2] );
       
       for (int n = 0; n < 50; n += 1) {
         
@@ -10676,6 +10673,43 @@ void _draw_sky () {
 
 }
 
+
+void _draw_land () {
+
+  for (int i = 0; i < LAND_n_I - 1; i += 1) {
+  //for (int i = 1; i < LAND_n_I - 1; i += 1) { // to ignoring the center!
+    for (int j = 0; j < LAND_n_J - 1; j += 1) {
+      
+      WIN3D_Diagrams.beginShape();
+      
+      for (int vNo = 0; vNo < 4; vNo += 1) {
+        int plus_i = 0; 
+        int plus_j = 0;
+        if ((vNo == 1) || (vNo == 2)) {
+          plus_i = 1;
+        }
+        if ((vNo == 2) || (vNo == 3)) {
+          plus_j = 1;
+        }       
+        
+        float x = LAND_MESH[i + plus_i][j + plus_j][0];
+        float y = LAND_MESH[i + plus_i][j + plus_j][1];
+        float z = LAND_MESH[i + plus_i][j + plus_j][2];
+        
+
+        int PAL_TYPE = 1; 
+        float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.0025 * z);
+        WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
+        WIN3D_Diagrams.stroke(0);
+      
+        WIN3D_Diagrams.vertex(x * objects_scale, -y * objects_scale, z * objects_scale);
+      }
+      
+      WIN3D_Diagrams.endShape(CLOSE);
+    }
+  }
+
+}
 
 
 void _draw_objects () {
