@@ -2,7 +2,7 @@ import processing.pdf.*;
 
 float MAX_SHADING_DIST = 100; // the biggest object should be 100
 
-String ProjectSite = "OrBleu"; //"FIROUZKO";
+String ProjectSite = "Nowshahr"; //"OrBleu"; //"FIROUZKO";
 int SavedScreenShots = 0;
 
 int MODEL_RUN = 0; //12; 
@@ -365,7 +365,7 @@ float X_spinner, Y_spinner;
 int COLOR_STYLE = 0;
 int n_COLOR_STYLE = 16; //6;
 
-float sky_scale = 90;
+float sky_scale = 900; //90;
 
 float obj_scale = 0.005;
 float obj_offset_x = 0.5;
@@ -928,7 +928,7 @@ void draw () {
   
     WIN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
   
-    SOLARCHVISION_SunPath(0, 0, 0, 90, LocationLatitude);
+    SOLARCHVISION_SunPath(0, 0, 0, 0.95 * sky_scale, LocationLatitude);
     
     _draw_sky();
   
@@ -8868,7 +8868,7 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
   WIN3D_Diagrams.pushMatrix();
   WIN3D_Diagrams.translate(x_SunPath, y_SunPath, z_SunPath);
 
-  WIN3D_Diagrams.strokeWeight(3); // <<<<<<<
+  WIN3D_Diagrams.strokeWeight(0); 
   WIN3D_Diagrams.stroke(0, 0, 0);
   WIN3D_Diagrams.fill(0, 0, 0);
   
@@ -10273,7 +10273,7 @@ void _export_objects () {
 
 void _update_objects () {
 
-  /*
+  
   SOLARCHVISION_LoadLAND(); 
 
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
@@ -10302,26 +10302,21 @@ void _update_objects () {
 
       }  
  
-      //if  ((i > 0) && (i < 6)) {
-      //  float r = int(random(2));
-      //  if (r == 1) { 
-      //    add_Object2D("PEOPLE", 0, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2], 2.5);
-      //  }
-      //  else {
-      //    add_Object2D("TREES", 0, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2], 5 + random(10));
-      //  }
-      //}
+      if  ((i > 0) && (i < 6)) {
+        float r = int(random(2));
+        if (r == 1) { 
+          add_Object2D("PEOPLE", 0, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2], 2.5);
+        }
+        else {
+          add_Object2D("TREES", 0, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2], 5 + random(10));
+        }
+      }
 
        
     }
   }
 
-  add_Object2D("PEOPLE", 1, 0,3,0, 2.5);
-  add_Object2D("PEOPLE", 2, 0,1,0, 2.5);  
-  add_Object2D("PEOPLE", 3, 0,-1,0, 2.5);  
-  add_Object2D("PEOPLE", 4, 0,-3,0, 2.5);  
-*/
-  
+
 
 /*
   add_Mesh2(0, 0, 0, 0, 40, 40, 0);
@@ -10486,7 +10481,7 @@ void _update_objects () {
 
 
 
-
+/*
   for (int i = 0; i < 100; i++) {
     
     float t = random(360) * PI / 180.0;
@@ -10505,26 +10500,26 @@ void _update_objects () {
       add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(10));
     }
   }
-  
+*/  
 
-  //add_Mesh5(1, -10,-10,0, -10,-10,5, -10,0,10, -10,10,5, -10,10,0);
-  //add_Mesh5(2, 10,10,0, 10,10,5, 10,0,10, 10,-10,5, 10,-10,0);  
-  //add_Mesh4(3, -10,-10,0, 10,-10,0, 10,-10,5, -10,-10,5);
-  //add_Mesh4(4, -10,10,0, -10,10,5, 10,10,5, 10,10,0);
-  //add_Mesh4(5, -10,-10,5, 10,-10,5, 10,0,10, -10,0,10);
-  //add_Mesh4(6, -10,10,5, -10,0,10, 10,0,10, 10,10,5);
+  add_Mesh5(1, -10,-10,0, -10,-10,5, -10,0,10, -10,10,5, -10,10,0);
+  add_Mesh5(2, 10,10,0, 10,10,5, 10,0,10, 10,-10,5, 10,-10,0);  
+  add_Mesh4(3, -10,-10,0, 10,-10,0, 10,-10,5, -10,-10,5);
+  add_Mesh4(4, -10,10,0, -10,10,5, 10,10,5, 10,10,0);
+  add_Mesh4(5, -10,-10,5, 10,-10,5, 10,0,10, -10,0,10);
+  add_Mesh4(6, -10,10,5, -10,0,10, 10,0,10, 10,10,5);
   
   //add_Mesh2(3, -10,-10.75,3.75, 10,-10,3.75);
   //add_Mesh2(3, -10,-10.75,2.5, 10,-10,2.5);
   //add_Mesh2(3, -10,-10.75,1.25, 10,-10,1.25);
 
   //add_Mesh2(0, -10,-30,0, 10,-10,0);
-  //add_PolygonHyper(0, 0, -20, 0,  5, 5, 4);
+  add_PolygonHyper(0, 0, -20, 0,  5, 5, 4);
 
-  add_RecursiveSphere(0, 0,0,0, 1, 3, 1); // SKY
+  add_RecursiveSphere(0, 0,0,0, 1, 4, 1); // SKY
 
-  add_Box(-1, -5, -5, 0, 5, 5, 10);
-  //add_Mesh2(3, -20,-20,0, 20,20,0);
+  //add_Box(-1, -5, -5, 0, 5, 5, 10);
+
   
 /*  
   //add_Box(0, -20, 0, 0, 20, 20, 30);
@@ -10660,8 +10655,8 @@ void _draw_sky () {
     }
 
     if (WIN3D_WHITE_FACES == 1) {
-      WIN3D_Diagrams.fill(255, 255, 255);
-      //WIN3D_Diagrams.noFill();
+      //WIN3D_Diagrams.fill(255, 255, 255);
+      WIN3D_Diagrams.noFill();
     }
     else {
       WIN3D_Diagrams.fill(c);
@@ -11461,9 +11456,12 @@ double R_earth = 6373 * 1000;
 /*
 double LAND_mid_lat = 35.6967;
 double LAND_mid_lon = 52.6383;
-*/
+
 double LAND_mid_lat = 48.78262; //47.96005; //47.69036;
 double LAND_mid_lon = -86.77764; //-85.1936; //-85.01544; 
+*/
+double LAND_mid_lat = 36.61065;
+double LAND_mid_lon = 51.57665; 
 
 float[][][] LAND_MESH;
 
@@ -11511,7 +11509,7 @@ void SOLARCHVISION_LoadLAND () {
   
   float h = LAND_MESH[LAND_n_I_base][LAND_n_J_base][2];
   
-  h += 5; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+  //h += 5; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   
   for (int i = 0; i < LAND_n_I; i += 1) {
     for (int j = 0; j < LAND_n_J; j += 1) {
