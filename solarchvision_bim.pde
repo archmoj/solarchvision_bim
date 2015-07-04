@@ -10532,7 +10532,7 @@ void _update_objects () {
   //add_Mesh2(0, -10,-30,0, 10,-10,0);
   //add_PolygonHyper(0, 0, -20, 0,  5, 5, 4);
 
-  add_RecursiveSphere(0, 0,0,0, 1, 3, 1); // SKY
+  add_RecursiveSphere(0, 0,0,0, 1, 4, 1); // SKY
 
   add_Box(-1, -5, -5, 0, 5, 5, 10);
   //add_Mesh2(3, -20,-20,0, 20,20,0);
