@@ -926,9 +926,13 @@ void draw () {
   
     WIN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
   
+    SOLARCHVISION_SunPath(0, 0, 0, 90, LocationLatitude);
+    
+    _draw_sky(92.5);
+  
     _draw_objects();
     
-    SOLARCHVISION_SunPath(0, 0, 0, 90, LocationLatitude); 
+     
   
     
   
@@ -10516,7 +10520,8 @@ void _update_objects () {
   //add_Mesh2(0, -10,-30,0, 10,-10,0);
   //add_PolygonHyper(0, 0, -20, 0,  5, 5, 4);
 
-  
+  add_RecursiveSphere(0, 0,0,0, 1, 3, 1); // SKY
+
   add_Box(-1, -5, -5, 0, 5, 5, 10);
   //add_Mesh2(3, -20,-20,0, 20,20,0);
   
@@ -10639,6 +10644,41 @@ PGraphics ViewFromTheSky (int SKY3D_X_View, int SKY3D_Y_View, float SKY3D_ZOOM_c
   return SKY3D_Diagrams;
 }
 
+
+void _draw_sky (float R_sky) {
+  
+  for (int f = 1; f < skyFaces.length; f++) {
+    
+    color c = color(127, 127, 255);
+
+    if (WIN3D_BLACK_EDGES == 1) {
+      WIN3D_Diagrams.stroke(0, 0, 0);
+    }
+    else {
+      WIN3D_Diagrams.stroke(c);
+    }
+
+    if (WIN3D_WHITE_FACES == 1) {
+      WIN3D_Diagrams.fill(255, 255, 255);
+      //WIN3D_Diagrams.noFill();
+    }
+    else {
+      WIN3D_Diagrams.fill(c);
+    }    
+
+      
+    WIN3D_Diagrams.beginShape();
+    
+    for (int j = 0; j < skyFaces[f].length; j++) {
+      int vNo = skyFaces[f][j];
+      WIN3D_Diagrams.vertex(R_sky * skyVertices[vNo][0] * objects_scale, R_sky * -(skyVertices[vNo][1] * objects_scale), R_sky * skyVertices[vNo][2] * objects_scale);
+    }    
+    
+    WIN3D_Diagrams.endShape(CLOSE);
+
+  }
+
+}
 
 
 void _draw_objects () {
@@ -11678,8 +11718,11 @@ void calculate_ParametricGeometries_Field () {
 
 
 
+float[][] skyVertices = {{0,0,0}};
+int[][] skyFaces = {{0}};
 
-
+int POINTER_skyVertices = 1;
+int POINTER_skyFaces = 1;
 
 
 float[][] TempObjectVertices = {{0,0,0}};
@@ -11780,8 +11823,12 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
   }
   else{
     
+    skyVertices = TempObjectVertices;
+    skyFaces = TempObjectFaces;
     
-    
+    POINTER_skyVertices = POINTER_TempObjectVertices;
+    POINTER_skyFaces = POINTER_TempObjectFaces;    
+
     POINTER_TempObjectVertices = 1;
     POINTER_TempObjectFaces = 1;  
   }  
