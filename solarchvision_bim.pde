@@ -10690,7 +10690,7 @@ void _draw_land () {
         }
         if ((vNo == 2) || (vNo == 3)) {
           plus_j = 1;
-        }       
+        }
         
         float x = LAND_MESH[i + plus_i][j + plus_j][0];
         float y = LAND_MESH[i + plus_i][j + plus_j][1];
