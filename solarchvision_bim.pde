@@ -365,6 +365,8 @@ float X_spinner, Y_spinner;
 int COLOR_STYLE = 0;
 int n_COLOR_STYLE = 16; //6;
 
+float sky_scale = 90;
+
 float obj_scale = 0.005;
 float obj_offset_x = 0.5;
 
@@ -7839,59 +7841,69 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         }
 
         { // Diffuse
-          int RES1 = 50; // 100; 
+          int RES1 = 25; // 100; 
           int RES2 = RES1;
           float ZOOM = 7200 / float(RES1); // ??? might not be correct!!!!
 
           if (Materials_DiffuseArea_Flag[now_i][now_j] == -1) {
             
-            int num_diffuse_views = 0;
-
             Materials_DiffuseArea_Flag[now_i][now_j] = 1; 
             
             for (int mt = 0; mt < Materials_Number; mt++) {                 
               Materials_DiffuseArea[mt][now_i][now_j] = 0;
             }                 
+            
+            int num_diffuse_views = 0;
           
-            for (int skyAngle_Alpha = 0; skyAngle_Alpha <= 90; skyAngle_Alpha += 30) {
-              for (int skyAngle_Beta = 0; skyAngle_Beta <= 360; skyAngle_Beta += 30) {
+            for (int f = 1; f < skyFaces.length; f++) {
+              float[] G_sky = {0,0,0}; 
+              for (int g = 0; g < skyFaces[f].length; g++) {
+                int vNo = skyFaces[f][g];
                 
-                if ((skyAngle_Alpha == 90) && (skyAngle_Beta != 0)) {
-                  
-                }
-                else {
-                  
-                  num_diffuse_views += 1;  
+                G_sky[0] += skyVertices[vNo][0];
+                G_sky[1] += skyVertices[vNo][1];
+                G_sky[2] += skyVertices[vNo][2];
+              }
+
+              G_sky[0] /= float(skyFaces[f].length);
+              G_sky[1] /= float(skyFaces[f].length);
+              G_sky[2] /= float(skyFaces[f].length);
+
+              float skyAngle_Alpha = asin_ang(G_sky[2]);
+              float skyAngle_Beta = atan2_ang(G_sky[1], G_sky[0]) + 90;
+                
+              if (skyAngle_Alpha >= 0) {
+                
+                num_diffuse_views += 1;
     
-                  PGraphics Image_RGBA = ViewFromTheSky(RES1,RES2,ZOOM, 0,0,0, 90-skyAngle_Alpha,0,skyAngle_Beta);
-        
-                  Diagrams_imageMode(CENTER); 
-                  Diagrams_image(Image_RGBA, (j + obj_offset_x + (90 - skyAngle_Alpha) * obj_scale * (cos_ang(skyAngle_Beta - 90))) * sx_Plot, -((90 - skyAngle_Alpha) * obj_scale * (sin_ang(skyAngle_Beta - 90))) * sx_Plot, RES1, RES2);
-                         
-                  for (int np = 0; np < (RES1 * RES2); np++) {
-                    int Image_X = np % RES1;
-                    int Image_Y = np / RES1;
-                    
-                    color COL = Image_RGBA.get(Image_X, Image_Y);
+                PGraphics Image_RGBA = ViewFromTheSky(RES1,RES2,ZOOM, 0,0,0, 90-skyAngle_Alpha,0,skyAngle_Beta);
       
-                    int COL_A = COL >> 24 & 0xFF;
+                Diagrams_imageMode(CENTER); 
+                Diagrams_image(Image_RGBA, (j + obj_offset_x + (90 - skyAngle_Alpha) * obj_scale * (cos_ang(skyAngle_Beta - 90))) * sx_Plot, -((90 - skyAngle_Alpha) * obj_scale * (sin_ang(skyAngle_Beta - 90))) * sx_Plot, RES1, RES2);
+                       
+                for (int np = 0; np < (RES1 * RES2); np++) {
+                  int Image_X = np % RES1;
+                  int Image_Y = np / RES1;
+                  
+                  color COL = Image_RGBA.get(Image_X, Image_Y);
+    
+                  int COL_A = COL >> 24 & 0xFF;
+                  
+                  if (COL_A != 0) {
+                    int COL_R = COL >> 16 & 0xFF; 
+                    int COL_G = COL >> 8 & 0xFF; 
+                    int COL_B = COL & 0xFF;
                     
-                    if (COL_A != 0) {
-                      int COL_R = COL >> 16 & 0xFF; 
-                      int COL_G = COL >> 8 & 0xFF; 
-                      int COL_B = COL & 0xFF;
-                      
-                      for (int mt = 0; mt < Materials_Number; mt++) {  
-                      
-                        if ((COL_R == Materials_Color[mt][1]) && (COL_G == Materials_Color[mt][2]) && (COL_B == Materials_Color[mt][3])) {
-                          Materials_DiffuseArea[mt][now_i][now_j] += 1;
-                        }
+                    for (int mt = 0; mt < Materials_Number; mt++) {  
+                    
+                      if ((COL_R == Materials_Color[mt][1]) && (COL_G == Materials_Color[mt][2]) && (COL_B == Materials_Color[mt][3])) {
+                        Materials_DiffuseArea[mt][now_i][now_j] += 1;
                       }
                     }
-                  }  
-      
-                  Diagrams_imageMode(CORNER);
-                }
+                  }
+                }  
+    
+                Diagrams_imageMode(CORNER);
               }
             }
             for (int mt = 0; mt < Materials_Number; mt++) {                 
@@ -10520,7 +10532,7 @@ void _update_objects () {
   //add_Mesh2(0, -10,-30,0, 10,-10,0);
   //add_PolygonHyper(0, 0, -20, 0,  5, 5, 4);
 
-  add_RecursiveSphere(0, 0,0,0, 92.5, 3, 1); // SKY
+  add_RecursiveSphere(0, 0,0,0, 1, 3, 1); // SKY
 
   add_Box(-1, -5, -5, 0, 5, 5, 10);
   //add_Mesh2(3, -20,-20,0, 20,20,0);
@@ -10671,7 +10683,7 @@ void _draw_sky () {
     
     for (int j = 0; j < skyFaces[f].length; j++) {
       int vNo = skyFaces[f][j];
-      WIN3D_Diagrams.vertex(skyVertices[vNo][0] * objects_scale, -(skyVertices[vNo][1] * objects_scale), skyVertices[vNo][2] * objects_scale);
+      WIN3D_Diagrams.vertex(skyVertices[vNo][0] * sky_scale, -(skyVertices[vNo][1] * sky_scale), skyVertices[vNo][2] * sky_scale);
     }    
     
     WIN3D_Diagrams.endShape(CLOSE);
@@ -11826,14 +11838,6 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
     
     skyVertices = TempObjectVertices;
     skyFaces = TempObjectFaces;
-    
-    for (int i = 1; i < POINTER_TempObjectVertices; i++) {
-      
-      skyVertices[i][0] *= r;
-      skyVertices[i][1] *= r;
-      skyVertices[i][2] *= r;
-       
-    }    
     
     POINTER_skyVertices = POINTER_TempObjectVertices;
     POINTER_skyFaces = POINTER_TempObjectFaces;    
