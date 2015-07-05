@@ -448,7 +448,7 @@ String CWEEDSFolder;
 String Object2DFolder_PEOPLE;
 String Object2DFolder_TREES;
 
-void _update_folders () {
+void SOLARCHVISION_update_folders () {
 
   ExportFolder          = BaseFolder + "/Export";
   BackgroundFolder      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
@@ -625,7 +625,7 @@ void setup () {
 
 
 
-  _update_folders();
+  SOLARCHVISION_update_folders();
   
   LoadFontStyle(); 
 
@@ -652,11 +652,11 @@ void setup () {
   
   //if (_HOUR >= 12) _DATE += 0.5; 
   
-  _update_date();
+  SOLARCHVISION_update_date();
 
-  _update_station();
+  SOLARCHVISION_update_station();
 
-  _update_objects();
+  SOLARCHVISION_update_objects();
   
   empty_Materials_DirectArea();
   empty_Materials_DiffuseArea();
@@ -930,11 +930,11 @@ void draw () {
   
     SOLARCHVISION_SunPath(0, 0, 0, 0.95 * sky_scale, LocationLatitude);
     
-    _draw_sky();
+    SOLARCHVISION_draw_sky();
     
-    _draw_land();
+    SOLARCHVISION_draw_land();
   
-    _draw_objects();
+    SOLARCHVISION_draw_objects();
     
      
   
@@ -987,7 +987,7 @@ void GRAPHS_draw () {
   update_DevelopDATA = 1; // ??
 
   if (pre_DATE != _DATE) {
-    _update_date();
+    SOLARCHVISION_update_date();
     draw_spinners();
   }
   
@@ -1002,7 +1002,7 @@ void GRAPHS_draw () {
     draw_spinners();
   }
 
-  if (pre_STATION_NUMBER != STATION_NUMBER) _update_station();
+  if (pre_STATION_NUMBER != STATION_NUMBER) SOLARCHVISION_update_station();
   
   if ((record_JPG == 1) || (_record == 1)) {
     if (off_screen == 0) {
@@ -1252,28 +1252,28 @@ void Plot_Setup () {
       plot_center(0, 525 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
   
       _DATE -= delta;
-      _update_date();
+      SOLARCHVISION_update_date();
       BEGIN_DAY = Convert2Date(_MONTH, _DAY);
       try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
       BEGIN_DAY = (BEGIN_DAY + delta) % 365;
       plot_center(0, 175 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
   
       _DATE -= delta;
-      _update_date();
+      SOLARCHVISION_update_date();
       BEGIN_DAY = Convert2Date(_MONTH, _DAY);
       try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
       BEGIN_DAY = (BEGIN_DAY + 2 * delta) % 365;
       plot_center(0, -175 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
   
       _DATE -= delta;
-      _update_date();
+      SOLARCHVISION_update_date();
       BEGIN_DAY = Convert2Date(_MONTH, _DAY);
       try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
       BEGIN_DAY = (BEGIN_DAY + 3 * delta) % 365;
       plot_center(0, -525 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
       
       _DATE = pre_DATE;
-      _update_date();
+      SOLARCHVISION_update_date();
       BEGIN_DAY = Convert2Date(_MONTH, _DAY);
       try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
       BEGIN_DAY = pre_BEGIN_DAY;
@@ -1734,7 +1734,7 @@ void Plot_Setup () {
 }
 
 
-void _update_station () {
+void SOLARCHVISION_update_station () {
   THE_STATION = DEFINED_STATIONS[STATION_NUMBER][0];
   LocationName = DEFINED_STATIONS[STATION_NUMBER][1];
   LocationProvince = DEFINED_STATIONS[STATION_NUMBER][2];
@@ -2429,7 +2429,7 @@ int Convert2Date (int _MONTH, int _DAY) {
   return k;
 }
 
-void _update_date () {
+void SOLARCHVISION_update_date () {
   _MONTH = CalendarDate[int(_DATE)][0]; 
   _DAY = CalendarDate[int(_DATE)][1];
   _HOUR = int(24 * (_DATE - int(_DATE)));
@@ -7998,21 +7998,21 @@ void GRAPHS_keyPressed () {
         case 35  :_DATE += 1;
                   if (int(_DATE) == 365) _DATE -= 365;
                   if (int(_DATE) == 286) _YEAR += 1;
-                  _update_date(); 
+                  SOLARCHVISION_update_date(); 
                   try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
                   redraw_scene = 1; break;
                   
         case 36  :_DATE -= 1;
                   if (int(_DATE) < 0) _DATE += 365;
                   if (int(_DATE) == 285) _YEAR -= 1;
-                  _update_date(); 
+                  SOLARCHVISION_update_date(); 
                   try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
                   redraw_scene = 1; break;
      
         case 33:_DATE += 1; 
                   if (_DATE >= 365) _DATE -= 365;
                   if ((_DATE == 286) || (_DATE == 286.5)) _YEAR += 1;
-                  _update_date(); 
+                  SOLARCHVISION_update_date(); 
                   BEGIN_DAY = int(BEGIN_DAY + 1) % 365; 
                   try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
                   redraw_scene = 1; break; 
@@ -8020,7 +8020,7 @@ void GRAPHS_keyPressed () {
         case 34 :_DATE -= 1; 
                   if (_DATE < 0) _DATE += 365;
                   if ((_DATE == 285) || (_DATE == 285.5)) _YEAR -= 1;
-                  _update_date(); 
+                  SOLARCHVISION_update_date(); 
                   BEGIN_DAY = int(365 + BEGIN_DAY - 1) % 365;
                   try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
                   redraw_scene = 1; break; 
@@ -8039,7 +8039,7 @@ void GRAPHS_keyPressed () {
   
         case '|' :if (_DATE == 1.0 * int(_DATE)) _DATE += 0.5;
                   else _DATE -= 0.5;
-                  _update_date(); 
+                  SOLARCHVISION_update_date(); 
                   try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
                   redraw_scene = 1; break;
                  
@@ -9056,7 +9056,7 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
   per_day = pre_per_day;
   num_add_days = pre_num_add_days; 
   _DATE = previous_DATE;
-  _update_date();
+  SOLARCHVISION_update_date();
 } 
 
 
@@ -9151,15 +9151,15 @@ void keyPressed () {
                   saveFrame("/Output/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_IMG" + nf(SavedScreenShots , 3) + ".jpg");
                   WIN3D_Update = 1; break;              
           
-        case 's' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; _update_station(); redraw_scene = 1; WIN3D_Update = 1; break;
-        case 'S' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; _update_station(); redraw_scene = 1; WIN3D_Update = 1; break;
+        case 's' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; SOLARCHVISION_update_station(); redraw_scene = 1; WIN3D_Update = 1; break;
+        case 'S' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; SOLARCHVISION_update_station(); redraw_scene = 1; WIN3D_Update = 1; break;
 
         case 'F' :LoadFontStyle(); WIN3D_Update = 1; break;
         case 'f' :LoadFontStyle(); WIN3D_Update = 1; break;
         
         
-        case 'x' :_export_objects(); WIN3D_Update = 1; break;
-        case 'X' :_export_objects(); WIN3D_Update = 1; break;
+        case 'x' :SOLARCHVISION_export_objects(); WIN3D_Update = 1; break;
+        case 'X' :SOLARCHVISION_export_objects(); WIN3D_Update = 1; break;
         
       }
     }
@@ -9661,7 +9661,7 @@ int addToFaces (int[] f) {
 
 void add_Box_CENTER (int m, float x1, float y1, float z1, float x2, float y2, float z2) {
 
-  add_Box (m, x1-x2/2, y1-y2/2, z1-z2/2, x1+x2/2, y1+y2/2, z1+z2/2);
+  add_Box(m, x1-x2/2, y1-y2/2, z1-z2/2, x1+x2/2, y1+y2/2, z1+z2/2);
 }
 
 
@@ -10230,7 +10230,7 @@ void addToFaces_afterSphericalTeselation (int m, float cx, float cy, float cz, f
 
 
 
-void _export_objects () {
+void SOLARCHVISION_export_objects () {
   
   PrintWriter File_output_mesh = createWriter("/MeshModel/Mesh.txt");
 
@@ -10272,9 +10272,64 @@ void _export_objects () {
 }
   
   
+void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, float cz, float sx, float sy, float sz) {
+  
+  defaultMaterial = m;
 
-void _update_objects () {
+  int[] importVerticeNumber = {0};
+  
+  String[] FileALL = loadStrings(FileName);
 
+  String lineSTR;
+  String[] input;
+  
+    
+  println("lines = ", FileALL.length);
+
+  for (int f = 0; f < FileALL.length; f += 1) {
+    
+    lineSTR = FileALL[f];
+    //println (lineSTR);
+    
+    lineSTR = lineSTR.replace("  ", " ");
+    
+    String[] parts = split(lineSTR, ' ');
+    
+    if (parts[0].toLowerCase().equals("v")) {
+
+      float x = cx + sx * float(parts[1]);
+      float y = cy + sy * float(parts[2]);
+      float z = cz + sz * float(parts[3]);
+      
+      int[] v = {addToVertices(x, y, z)};
+      
+      importVerticeNumber = concat(importVerticeNumber, v);
+    }
+  
+    if (parts[0].toLowerCase().equals("f")) {
+      //int[] newFace = new int[parts.length - 1]; // if we don't have space at the end of the line.
+      int[] newFace = new int[parts.length - 2]; // if we have 1 space at the end of the line. 
+    
+      //println(parts);
+    
+      for (int n = 0; n < newFace.length; n += 1) {
+        newFace[n] = importVerticeNumber[int(parts[n + 1])];
+      }
+      
+      println(newFace);
+      
+      addToFaces(newFace);
+    }
+    
+  }
+}  
+  
+
+void SOLARCHVISION_update_objects () {
+  
+  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, -1,1,1);
+
+  add_RecursiveSphere(0, 0,0,0, 1, 4, 1); // SKY
   
   SOLARCHVISION_LoadLAND(); 
 
@@ -10499,6 +10554,7 @@ void _update_objects () {
   }
 */  
 
+/*
   add_Mesh5(1, -10,-10,0, -10,-10,5, -10,0,10, -10,10,5, -10,10,0);
   add_Mesh5(2, 10,10,0, 10,10,5, 10,0,10, 10,-10,5, 10,-10,0);  
   add_Mesh4(3, -10,-10,0, 10,-10,0, 10,-10,5, -10,-10,5);
@@ -10512,8 +10568,8 @@ void _update_objects () {
 
   //add_Mesh2(0, -10,-30,0, 10,-10,0);
   add_PolygonHyper(0, 0, -20, 0,  5, 5, 4);
-
-  add_RecursiveSphere(0, 0,0,0, 1, 4, 1); // SKY
+*/
+  
 
   //add_Box(-1, -5, -5, 0, 5, 5, 10);
 
@@ -10638,7 +10694,7 @@ PGraphics ViewFromTheSky (int SKY3D_X_View, int SKY3D_Y_View, float SKY3D_ZOOM_c
 }
 
 
-void _draw_sky () {
+void SOLARCHVISION_draw_sky () {
   
   for (int f = 1; f < skyFaces.length; f++) {
     
@@ -10674,7 +10730,7 @@ void _draw_sky () {
 }
 
 
-void _draw_land () {
+void SOLARCHVISION_draw_land () {
 
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
   //for (int i = 1; i < LAND_n_I - 1; i += 1) { // to ignoring the center!
@@ -10712,7 +10768,7 @@ void _draw_land () {
 }
 
 
-void _draw_objects () {
+void SOLARCHVISION_draw_objects () {
   
 /*
   WIN3D_Diagrams.beginShape();
