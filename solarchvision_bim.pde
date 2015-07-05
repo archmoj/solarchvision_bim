@@ -10316,7 +10316,7 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
         newFace[n] = importVerticeNumber[int(parts[n + 1])];
       }
       
-      println(newFace);
+      //println(newFace);
       
       addToFaces(newFace);
     }
@@ -10327,12 +10327,15 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
 
 void SOLARCHVISION_update_objects () {
   
-  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, -1,1,1);
+  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
+  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
+  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
+  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1400,-780,0, 1,1,1);
 
   add_RecursiveSphere(0, 0,0,0, 1, 4, 1); // SKY
   
   SOLARCHVISION_LoadLAND(); 
-
+/*
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
   //for (int i = 1; i < LAND_n_I - 1; i += 1) { // to ignoring the center!
     for (int j = 0; j < LAND_n_J - 1; j += 1) {
@@ -10367,7 +10370,7 @@ void SOLARCHVISION_update_objects () {
        
     }
   }
-
+*/
 
 
 /*
