@@ -2,7 +2,7 @@ import processing.pdf.*;
 
 float MAX_SHADING_DIST = 100; // the biggest object should be 100
 
-String ProjectSite = "Nowshahr"; //"OrBleu"; //"FIROUZKO";
+String ProjectSite = "MontrealDownTown"; //"Nowshahr"; //"OrBleu"; //"FIROUZKO";
 int SavedScreenShots = 0;
 
 int MODEL_RUN = 0; //12; 
@@ -10757,7 +10757,8 @@ void SOLARCHVISION_draw_land () {
         
 
         int PAL_TYPE = 1; 
-        float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.0025 * z);
+        //float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.0025 * z);
+        float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.01 * z);
         WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
         WIN3D_Diagrams.stroke(0);
       
@@ -11534,7 +11535,7 @@ float Bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y
 //Polar
 int LAND_n_I_base = 0;
 int LAND_n_J_base = 0;
-int LAND_n_I = 8 + 1; //16 + 1;
+int LAND_n_I = 16 + 1; //8 + 1;
 int LAND_n_J = 24 + 1;    
 
 //Cartesian
@@ -11552,9 +11553,12 @@ double LAND_mid_lon = 52.6383;
 
 double LAND_mid_lat = 48.78262; //47.96005; //47.69036;
 double LAND_mid_lon = -86.77764; //-85.1936; //-85.01544; 
-*/
+
 double LAND_mid_lat = 36.61065;
 double LAND_mid_lon = 51.57665; 
+*/
+double LAND_mid_lat = 45.499187;
+double LAND_mid_lon = -73.568267;
 
 float[][][] LAND_MESH;
 
