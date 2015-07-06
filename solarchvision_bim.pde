@@ -10208,7 +10208,7 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
 
 void SOLARCHVISION_update_objects () {
   
-  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
+  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
   
@@ -10438,7 +10438,7 @@ void SOLARCHVISION_update_objects () {
   }
 */  
 
-
+/*
   add_Mesh5(1, -10,-10,0, -10,-10,5, -10,0,10, -10,10,5, -10,10,0);
   add_Mesh5(2, 10,10,0, 10,10,5, 10,0,10, 10,-10,5, 10,-10,0);  
   add_Mesh4(3, -10,-10,0, 10,-10,0, 10,-10,5, -10,-10,5);
@@ -10452,7 +10452,7 @@ void SOLARCHVISION_update_objects () {
 
   //add_Mesh2(0, -10,-30,0, 10,-10,0);
   add_PolygonHyper(0, 0, -20, 0,  5, 5, 4);
-
+*/
   
 
   //add_Box(-1, -5, -5, 0, 5, 5, 10);
@@ -10784,12 +10784,12 @@ void SOLARCHVISION_draw_objects () {
           float Alpha = asin_ang(W[2]);
           float Beta = atan2_ang(W[1], W[0]) + 90;       
           
-          int a = int(Alpha / stp_slp);
+          int a = int((Alpha + 90) / stp_slp);
           int b = int(Beta / stp_dir);
           
           if (a < 0) a = 0;
           if (b < 0) b = 0;
-          if (a > int(90 / stp_slp)) a = int(90 / stp_slp);
+          if (a > int(180 / stp_slp)) a = int(180 / stp_slp);
           if (b > int(360 / stp_slp)) b = int(360 / stp_slp);
           
           float _valuesSUM = LocationExposure[a][b];
@@ -12179,7 +12179,7 @@ float SolarAtSurface (float SunR1, float SunR2, float SunR3, float SunR4, float 
 
 float stp_slp = 1;
 float stp_dir = 1;
-int n_slp = 90 + 1;  
+int n_slp = 180 + 1;  
 int n_dir = 360;
 float GlobeRES = 1; //1, 2.5, 5
 
@@ -12189,7 +12189,7 @@ void build_SolarProjection_array (float w) {
   
   stp_slp = w;
   stp_dir = w;
-  n_slp = int(roundTo(90.0 / (1.0 * stp_slp), 1)) + 1;  
+  n_slp = int(roundTo(180.0 / (1.0 * stp_slp), 1)) + 1;  
   n_dir = int(roundTo(360.0 / (1.0 * stp_dir), 1));
 
   LocationExposure = new float[n_slp][n_dir];
@@ -12238,12 +12238,12 @@ void SolarProjection () {
 
   int l = impact_layer;
 
-  float[][] TOTAL_valuesSUM_RAD = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
-  float[][] TOTAL_valuesSUM_EFF_P = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
-  float[][] TOTAL_valuesSUM_EFF_N = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
-  int[][] TOTAL_valuesNUM = new int [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
+  float[][] TOTAL_valuesSUM_RAD = new float [1 + int(180 / stp_slp)][1 + int(360 / stp_dir)];
+  float[][] TOTAL_valuesSUM_EFF_P = new float [1 + int(180 / stp_slp)][1 + int(360 / stp_dir)];
+  float[][] TOTAL_valuesSUM_EFF_N = new float [1 + int(180 / stp_slp)][1 + int(360 / stp_dir)];
+  int[][] TOTAL_valuesNUM = new int [1 + int(180 / stp_slp)][1 + int(360 / stp_dir)];
 
-  for (int a = 0; a <= int(90 / stp_slp); a += 1) { 
+  for (int a = 0; a <= int(180 / stp_slp); a += 1) { 
     for (int b = 0; b < int(360 / stp_dir); b += 1) {
       TOTAL_valuesSUM_RAD[a][b] = FLOAT_undefined;
       TOTAL_valuesSUM_EFF_P[a][b] = FLOAT_undefined;
@@ -12277,8 +12277,8 @@ void SolarProjection () {
         int k = int(nk / num_add_days);
         int j_ADD = nk % num_add_days; 
 
-        for (int a = 0; a <= int(90 / stp_slp); a += 1) { 
-          float Alpha = a * stp_slp;
+        for (int a = 0; a <= int(180 / stp_slp); a += 1) { 
+          float Alpha = a * stp_slp - 90;
           for (int b = 0; b < int(360 / stp_dir); b += 1) {
             float Beta = b * stp_dir;
             
@@ -12426,8 +12426,8 @@ void SolarProjection () {
   }
 
 
-  for (int a = 0; a <= int(90 / stp_slp); a += 1) { 
-    float Alpha = a * stp_slp;
+  for (int a = 0; a <= int(180 / stp_slp); a += 1) { 
+    float Alpha = a * stp_slp - 90;
     for (int b = 0; b < int(360 / stp_dir); b += 1) {
       float Beta = b * stp_dir;
 
