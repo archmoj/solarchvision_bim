@@ -2,6 +2,8 @@ import processing.pdf.*;
 
 float GlobalAlbedo = 0; // 0-100
 
+
+
 float MAX_SHADING_DIST = 100; // the biggest object should be 100
 
 String ProjectSite = "MontrealDownTown"; //"Nowshahr"; //"OrBleu"; //"FIROUZKO";
@@ -671,6 +673,9 @@ void setup () {
   WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D); 
 
   WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
+
+  build_SolarProjection_array(2.5);
+  SolarProjection(); // <<<<<<<<<<
 
 }
 
@@ -6861,9 +6866,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     if (plot_impacts == 2) Impact_TYPE = Impact_ACTIVE; 
     if (plot_impacts == 3) Impact_TYPE = Impact_PASSIVE;
 
-    float stp_slp = 2.5;
-    float stp_dir = 2.5;
-
     String Pa = "";
     String Pb = "";
     String Pc = "";
@@ -7136,7 +7138,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   
       if (draw_impact_summary == 1) { 
 
-         int j = -1; // << to put the summary graph before the daily graphs
+        int j = -1; // << to put the summary graph before the daily graphs
 
         for (int a = 0; a <= int(90 / stp_slp); a += 1) { 
           float Alpha = a * stp_slp;
@@ -12093,3 +12095,287 @@ float SolarAtSurface (float SunR1, float SunR2, float SunR3, float SunR4, float 
   return (return_value);
 }
 
+float stp_slp = 1;
+float stp_dir = 1;
+int n_slp = 90 + 1;  
+int n_dir = 360;
+float GlobeRES = 1; //1, 2.5, 5
+
+float[][]LocationExposure;
+
+void build_SolarProjection_array (float w) {
+  
+  stp_slp = w;
+  stp_dir = w;
+  n_slp = int(roundTo(90.0 / (1.0 * stp_slp), 1)) + 1;  
+  n_dir = int(roundTo(360.0 / (1.0 * stp_dir), 1));
+
+  LocationExposure = new float[n_slp][n_dir];
+
+  for (int a = 0; a < n_slp; a += 1) {
+    for (int b = 0; b < n_dir; b += 1) {  
+      LocationExposure[a][b] = FLOAT_undefined;
+    }
+  } 
+}
+
+
+void SolarProjection () {
+  
+  float pre_per_day = per_day;
+  int pre_num_add_days = num_add_days;
+  if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
+    per_day = 1;
+    num_add_days = 1;
+  }
+  
+  int start_z = get_startZ_endZ(impacts_source)[0];
+  int end_z = get_startZ_endZ(impacts_source)[1]; 
+  int layers_count = get_startZ_endZ(impacts_source)[2];   
+  
+  if (plot_impacts % 2 == 0) Impact_TYPE = Impact_ACTIVE; 
+  else Impact_TYPE = Impact_PASSIVE;
+
+  String Pa = "";
+  String Pb = "";
+  String Pc = "";
+  String Pd = "";
+
+  float _values_R_dir;
+  float _values_R_dif;
+  float _values_E_dir;
+  float _values_E_dif;
+  
+  int now_k = 0;
+  int now_i = 0;
+  int now_j = 0;
+
+  int l = impact_layer;
+
+  float[][] TOTAL_valuesSUM_RAD = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
+  float[][] TOTAL_valuesSUM_EFF_P = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
+  float[][] TOTAL_valuesSUM_EFF_N = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
+  int[][] TOTAL_valuesNUM = new int [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
+
+  for (int a = 0; a <= int(90 / stp_slp); a += 1) { 
+    for (int b = 0; b < int(360 / stp_dir); b += 1) {
+      TOTAL_valuesSUM_RAD[a][b] = FLOAT_undefined;
+      TOTAL_valuesSUM_EFF_P[a][b] = FLOAT_undefined;
+      TOTAL_valuesSUM_EFF_N[a][b] = FLOAT_undefined;
+      TOTAL_valuesNUM[a][b] = 0;
+    }
+  }
+  
+  for (int j = j_start; j < j_end; j += 1) {
+
+    now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
+
+    if (now_j >= 365) {
+     now_j = now_j % 365; 
+    }
+    if (now_j < 0) {
+     now_j = (now_j + 365) % 365; 
+    }
+ 
+    float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
+
+    float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
+    float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
+
+    int[] Normals_COL_N;
+    Normals_COL_N = new int[9];
+    Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
+
+    for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
+      if (nk != -1) {
+        int k = int(nk / num_add_days);
+        int j_ADD = nk % num_add_days; 
+
+        for (int a = 0; a <= int(90 / stp_slp); a += 1) { 
+          float Alpha = a * stp_slp;
+          for (int b = 0; b < int(360 / stp_dir); b += 1) {
+            float Beta = b * stp_dir;
+            
+            float _valuesSUM_RAD = 0;
+            float _valuesSUM_EFF_P = 0;
+            float _valuesSUM_EFF_N = 0;
+            int _valuesNUM = 0; 
+
+            for (int i = 0; i < 24; i += 1) {
+              
+              float HOUR_ANGLE = i; 
+              float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+
+              if (SunR[3] > 0) {
+
+                now_k = k;
+                now_i = i;
+                now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+
+                if (now_j >= 365) {
+                 now_j = now_j % 365; 
+                }
+                if (now_j < 0) {
+                 now_j = (now_j + 365) % 365; 
+                }
+
+                if (impacts_source == databaseNumber_CLIMATE_WY2) {
+                    Pa = CLIMATE_WY2[now_i][now_j][_dirnorrad][now_k]; 
+                    Pb = CLIMATE_WY2[now_i][now_j][_difhorrad][now_k]; 
+                    Pc = CLIMATE_WY2[now_i][now_j][_direffect][now_k]; 
+                    Pd = CLIMATE_WY2[now_i][now_j][_difeffect][now_k]; 
+                }
+                if (impacts_source == databaseNumber_ENSEMBLE) {
+                    Pa = ENSEMBLE[now_i][now_j][_dirnorrad][now_k]; 
+                    Pb = ENSEMBLE[now_i][now_j][_difhorrad][now_k]; 
+                    Pc = ENSEMBLE[now_i][now_j][_direffect][now_k]; 
+                    Pd = ENSEMBLE[now_i][now_j][_difeffect][now_k]; 
+                }            
+                if (impacts_source == databaseNumber_OBSERVED) {
+                    Pa = OBSERVED[now_i][now_j][_dirnorrad][now_k]; 
+                    Pb = OBSERVED[now_i][now_j][_difhorrad][now_k]; 
+                    Pc = OBSERVED[now_i][now_j][_direffect][now_k]; 
+                    Pd = OBSERVED[now_i][now_j][_difeffect][now_k]; 
+                }   
+                if (impacts_source == databaseNumber_CLIMATE_EPW) {
+                    Pa = CLIMATE_EPW[now_i][now_j][_dirnorrad][now_k]; 
+                    Pb = CLIMATE_EPW[now_i][now_j][_difhorrad][now_k]; 
+                    Pc = CLIMATE_EPW[now_i][now_j][_direffect][now_k]; 
+                    Pd = CLIMATE_EPW[now_i][now_j][_difeffect][now_k]; 
+                }       
+    
+                if ((Pa.equals(_undefined)) || (Pb.equals(_undefined)) || (Pc.equals(_undefined)) || (Pd.equals(_undefined))) {
+                  _values_R_dir = FLOAT_undefined;
+                  _values_R_dif = FLOAT_undefined;
+                  _values_E_dir = FLOAT_undefined;
+                  _values_E_dif = FLOAT_undefined;
+                }
+                else {
+
+                  int drw_count = 0;
+                  if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                  if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                  if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                  if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                  
+                  if (drw_count == 1) {
+                    _values_R_dir = 0.001 * float(Pa);
+                    _values_R_dif = 0.001 * float(Pb);
+                    _values_E_dir = 0.001 * float(Pc);
+                    _values_E_dif = 0.001 * float(Pd);
+                    
+                    if (_valuesSUM_RAD > 0.9 * FLOAT_undefined) {
+                      _valuesSUM_RAD = 0;
+                      _valuesSUM_EFF_P = 0;
+                      _valuesSUM_EFF_N = 0;
+                      _valuesNUM = 0; 
+                    }                             
+                    else {
+
+                      if (_values_E_dir < 0) {
+                        _valuesSUM_EFF_N += -SolarAtSurface(SunR[1], SunR[2], SunR[3], _values_E_dir, _values_E_dif, Alpha, Beta, GlobalAlbedo); 
+                      }
+                      else {
+                        _valuesSUM_EFF_P += SolarAtSurface(SunR[1], SunR[2], SunR[3], _values_E_dir, _values_E_dif, Alpha, Beta, GlobalAlbedo); 
+                      }
+
+                      _valuesSUM_RAD += SolarAtSurface(SunR[1], SunR[2], SunR[3], _values_R_dir, _values_R_dif, Alpha, Beta, GlobalAlbedo); 
+                      
+                      _valuesNUM += 1;
+                      
+                    }
+                  }
+                }
+              }
+            }
+            
+  
+            if (_valuesNUM != 0) {
+              //float _valuesMUL = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / (1.0 * _valuesNUM);  
+              //float _valuesMUL = int(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE)) / (1.0 * _valuesNUM);
+              float _valuesMUL = roundTo(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE), 1) / (1.0 * _valuesNUM);
+                                 
+              _valuesSUM_RAD *= _valuesMUL;
+              _valuesSUM_EFF_P *= _valuesMUL;
+              _valuesSUM_EFF_N *= _valuesMUL;
+              
+              if (TOTAL_valuesNUM[a][b] == 0) {
+                TOTAL_valuesSUM_RAD[a][b] = 0;
+                TOTAL_valuesSUM_EFF_P[a][b] = 0;
+                TOTAL_valuesSUM_EFF_N[a][b] = 0;
+              }
+
+              TOTAL_valuesSUM_RAD[a][b] += _valuesSUM_RAD;
+              TOTAL_valuesSUM_EFF_P[a][b] += _valuesSUM_EFF_P;
+              TOTAL_valuesSUM_EFF_N[a][b] += _valuesSUM_EFF_N;
+              TOTAL_valuesNUM[a][b] += 1;
+            }
+            else {
+              _valuesSUM_RAD = FLOAT_undefined;
+              _valuesSUM_EFF_P = FLOAT_undefined;
+              _valuesSUM_EFF_N = FLOAT_undefined;
+            }
+            /*
+
+            float AVERAGE, PERCENTAGE, COMPARISON;
+            
+            AVERAGE = (_valuesSUM_EFF_P - _valuesSUM_EFF_N);
+            if ((_valuesSUM_EFF_P + _valuesSUM_EFF_N) > 0.00001) PERCENTAGE = (_valuesSUM_EFF_P - _valuesSUM_EFF_N) / (1.0 * (_valuesSUM_EFF_P + _valuesSUM_EFF_N)); 
+            else PERCENTAGE = 0.0;
+            COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+  
+            float _valuesSUM = FLOAT_undefined;
+            if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = _valuesSUM_RAD;
+            if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = COMPARISON; 
+
+            if (_valuesSUM < 0.9 * FLOAT_undefined) {
+            
+              
+            }
+            */
+          }
+        }
+      }
+    }
+  }
+
+
+  for (int a = 0; a <= int(90 / stp_slp); a += 1) { 
+    float Alpha = a * stp_slp;
+    for (int b = 0; b < int(360 / stp_dir); b += 1) {
+      float Beta = b * stp_dir;
+
+      if (TOTAL_valuesNUM[a][b] != 0) {
+        TOTAL_valuesSUM_RAD[a][b] /= 1.0 * TOTAL_valuesNUM[a][b];
+        TOTAL_valuesSUM_EFF_P[a][b] /= 1.0 * TOTAL_valuesNUM[a][b];
+        TOTAL_valuesSUM_EFF_N[a][b] /= 1.0 * TOTAL_valuesNUM[a][b];
+      }
+      else {
+        TOTAL_valuesSUM_RAD[a][b] = FLOAT_undefined;
+        TOTAL_valuesSUM_EFF_P[a][b] = FLOAT_undefined;
+        TOTAL_valuesSUM_EFF_N[a][b] = FLOAT_undefined;
+      }
+
+
+      float AVERAGE, PERCENTAGE, COMPARISON;
+      
+      AVERAGE = (TOTAL_valuesSUM_EFF_P[a][b] - TOTAL_valuesSUM_EFF_N[a][b]);
+      if ((TOTAL_valuesSUM_EFF_P[a][b] + TOTAL_valuesSUM_EFF_N[a][b]) > 0.00001) PERCENTAGE = (TOTAL_valuesSUM_EFF_P[a][b] - TOTAL_valuesSUM_EFF_N[a][b]) / (1.0 * (TOTAL_valuesSUM_EFF_P[a][b] + TOTAL_valuesSUM_EFF_N[a][b])); 
+      else PERCENTAGE = 0.0;
+      COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+
+
+      float _valuesSUM = FLOAT_undefined;
+      if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = TOTAL_valuesSUM_RAD[a][b];
+      if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = COMPARISON; 
+
+      if (_valuesSUM < 0.9 * FLOAT_undefined) {
+        
+        LocationExposure[a][b] = _valuesSUM;
+      }
+    }
+  }
+
+  pre_per_day = per_day;
+  num_add_days = pre_num_add_days;
+}
