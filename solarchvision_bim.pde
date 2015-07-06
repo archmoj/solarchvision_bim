@@ -674,9 +674,8 @@ void setup () {
 
   WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
 
-  build_SolarProjection_array(2.5);
-  SolarProjection(); // <<<<<<<<<<
-
+  build_SolarProjection_array(1); // 2.5
+  SolarProjection(); 
 }
 
 
@@ -9011,8 +9010,12 @@ void keyPressed () {
         case 'E' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; WIN3D_Update = 1; break; 
         case 'e' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; WIN3D_Update = 1; break; 
   
-        case 'W' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 5 - 1) % 5; WIN3D_Update = 1; break;
-        case 'w' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 5; WIN3D_Update = 1; break; 
+        case 'W' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 5 - 1) % 5; WIN3D_Update = 1;
+                  if (WIN3D_WHITE_FACES == 3) SolarProjection(); 
+                  break;
+        case 'w' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 5; WIN3D_Update = 1;
+                  if (WIN3D_WHITE_FACES == 3) SolarProjection(); 
+                  break; 
          
         
         case 't' :MODEL3D_TESELATION += 1; WIN3D_update_VerticesSolarValue = 1; WIN3D_Update = 1; break; 
@@ -9021,7 +9024,9 @@ void keyPressed () {
                   WIN3D_update_VerticesSolarValue = 1; 
                   WIN3D_Update = 1; break;
                   
-        case ENTER: WIN3D_update_VerticesSolarValue = 1; WIN3D_Update = 1; break;                  
+        case ENTER: if (WIN3D_WHITE_FACES == 3) SolarProjection();  
+                    if (WIN3D_WHITE_FACES == 4) WIN3D_update_VerticesSolarValue = 1; WIN3D_Update = 1; 
+                    break;                  
           
         case ' ': SavedScreenShots += 1; 
                   saveFrame("/Output/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_IMG" + nf(SavedScreenShots , 3) + ".jpg");
@@ -10203,7 +10208,7 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
 
 void SOLARCHVISION_update_objects () {
   
-  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
+  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
   
@@ -10433,7 +10438,7 @@ void SOLARCHVISION_update_objects () {
   }
 */  
 
-/*
+
   add_Mesh5(1, -10,-10,0, -10,-10,5, -10,0,10, -10,10,5, -10,10,0);
   add_Mesh5(2, 10,10,0, 10,10,5, 10,0,10, 10,-10,5, 10,-10,0);  
   add_Mesh4(3, -10,-10,0, 10,-10,0, 10,-10,5, -10,-10,5);
@@ -10447,7 +10452,7 @@ void SOLARCHVISION_update_objects () {
 
   //add_Mesh2(0, -10,-30,0, 10,-10,0);
   add_PolygonHyper(0, 0, -20, 0,  5, 5, 4);
-*/
+
   
 
   //add_Box(-1, -5, -5, 0, 5, 5, 10);
