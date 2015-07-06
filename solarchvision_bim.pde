@@ -7025,39 +7025,15 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                           _valuesNUM = 0; 
                         }                             
                         else {
-                          float[] VECT = {0, 0, 0}; 
-                          
-                          if (abs(Alpha) > 89.99) {
-                            VECT[0] = 0;
-                            VECT[1] = 0;
-                            VECT[2] = 1;      
-                          } else if (Alpha < -89.99) {
-                            VECT[0] = 0;
-                            VECT[1] = 0;
-                            VECT[2] = -1;
-                          } else {
-                            VECT[0] = sin_ang(Beta);
-                            VECT[1] = -cos_ang(Beta);
-                            VECT[2] = tan_ang(Alpha);      
-                          } 
-                          
-                          VECT = fn_normalize(VECT);
-                          
-                          float[] SunV = {SunR[1], SunR[2], SunR[3]};
-                          
-                          float SunMask = fn_dot(fn_normalize(SunV), fn_normalize(VECT));
-                          if (SunMask <= 0) SunMask = 0; // removes backing faces 
-                          
-                          float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
 
                           if (_values_E_dir < 0) {
-                            _valuesSUM_EFF_N += -((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); 
+                            _valuesSUM_EFF_N += -SolarAtSurface(SunR[1], SunR[2], SunR[3], _values_E_dir, _values_E_dif, Alpha, Beta, GlobalAlbedo); 
                           }
                           else {
-                            _valuesSUM_EFF_P += ((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); 
+                            _valuesSUM_EFF_P += SolarAtSurface(SunR[1], SunR[2], SunR[3], _values_E_dir, _values_E_dif, Alpha, Beta, GlobalAlbedo); 
                           }
 
-                          _valuesSUM_RAD += ((_values_R_dir * SunMask) + (_values_R_dif * SkyMask));
+                          _valuesSUM_RAD += SolarAtSurface(SunR[1], SunR[2], SunR[3], _values_R_dir, _values_R_dif, Alpha, Beta, GlobalAlbedo); 
                           
                           _valuesNUM += 1;
                           
