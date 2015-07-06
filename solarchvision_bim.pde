@@ -1,5 +1,7 @@
 import processing.pdf.*;
 
+float GlobalAlbedo = 0; // 0-100
+
 float MAX_SHADING_DIST = 100; // the biggest object should be 100
 
 String ProjectSite = "MontrealDownTown"; //"Nowshahr"; //"OrBleu"; //"FIROUZKO";
@@ -5372,35 +5374,11 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           float Alpha = Angle_inclination;
           float Beta = Angle_orientation;
           
-          if ((R_dir < 0.9 * FLOAT_undefined) && (R_dif < 0.9 * FLOAT_undefined)) { 
-            float[] VECT = {0, 0, 0}; 
-            
-            if (abs(Alpha) < 89.99) {
-              VECT[0] = sin_ang(Beta);
-              VECT[1] = -cos_ang(Beta);
-              VECT[2] = tan_ang(Alpha);
-            } 
-            else if (Alpha == 90.0) {
-              VECT[0] = 0;
-              VECT[1] = 0;
-              VECT[2] = 1;
-            }   
-            else {
-              VECT[0] = 0;
-              VECT[1] = 0;
-              VECT[2] = -1;
-            }   
-            
-            VECT = fn_normalize(VECT);
-            
-            float[] SunV = {SunR[1], SunR[2], SunR[3]};
-            
-            float SunMask = fn_dot(fn_normalize(SunV), fn_normalize(VECT));
-            if (SunMask <= 0) SunMask = 0; // removes backing faces 
-            
-            float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
            
-            _valuesSUM[now_k] = (R_dir * SunMask) + (R_dif * SkyMask);
+          
+          if ((R_dir < 0.9 * FLOAT_undefined) && (R_dif < 0.9 * FLOAT_undefined)) { 
+           
+            _valuesSUM[now_k] = SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
             
             if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
             if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
@@ -5420,34 +5398,8 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           float Beta = Angle_orientation;
           
           if ((R_dir < 0.9 * FLOAT_undefined) && (R_dif < 0.9 * FLOAT_undefined)) { 
-            float[] VECT = {0, 0, 0}; 
             
-            if (abs(Alpha) < 89.99) {
-              VECT[0] = sin_ang(Beta);
-              VECT[1] = -cos_ang(Beta);
-              VECT[2] = tan_ang(Alpha);
-            } 
-            else if (Alpha == 90.0) {
-              VECT[0] = 0;
-              VECT[1] = 0;
-              VECT[2] = 1;
-            }   
-            else {
-              VECT[0] = 0;
-              VECT[1] = 0;
-              VECT[2] = -1;
-            }   
-            
-            VECT = fn_normalize(VECT);
-            
-            float[] SunV = {SunR[1], SunR[2], SunR[3]};
-            
-            float SunMask = fn_dot(fn_normalize(SunV), fn_normalize(VECT));
-            if (SunMask <= 0) SunMask = 0; // removes backing faces 
-            
-            float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
-           
-            _valuesSUM[now_k] += (R_dir * SunMask) + (R_dif * SkyMask);
+            _valuesSUM[now_k] += SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
             
             if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = String.valueOf(0.001 * _valuesSUM[now_k]);
             if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = String.valueOf(0.001 * _valuesSUM[now_k]);
@@ -5468,34 +5420,8 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           float Beta = atan2_ang(SunR[2], SunR[1]) + 90;
           
           if ((R_dir < 0.9 * FLOAT_undefined) && (R_dif < 0.9 * FLOAT_undefined)) { 
-            float[] VECT = {0, 0, 0}; 
-            
-            if (abs(Alpha) < 89.99) {
-              VECT[0] = sin_ang(Beta);
-              VECT[1] = -cos_ang(Beta);
-              VECT[2] = tan_ang(Alpha);
-            } 
-            else if (Alpha == 90.0) {
-              VECT[0] = 0;
-              VECT[1] = 0;
-              VECT[2] = 1;
-            }   
-            else {
-              VECT[0] = 0;
-              VECT[1] = 0;
-              VECT[2] = -1;
-            }   
-            
-            VECT = fn_normalize(VECT);
-
-            float[] SunV = {SunR[1], SunR[2], SunR[3]};
-            
-            float SunMask = fn_dot(fn_normalize(SunV), fn_normalize(VECT));
-            if (SunMask <= 0) SunMask = 0; // removes backing faces 
-            
-            float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
            
-            _valuesSUM[now_k] = (R_dir * SunMask) + (R_dif * SkyMask);
+            _valuesSUM[now_k] = SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
             
             if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
             if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
@@ -5515,34 +5441,8 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           float Beta = atan2_ang(SunR[2], SunR[1]) + 90;
           
           if ((R_dir < 0.9 * FLOAT_undefined) && (R_dif < 0.9 * FLOAT_undefined)) { 
-            float[] VECT = {0, 0, 0}; 
-            
-            if (abs(Alpha) < 89.99) {
-              VECT[0] = sin_ang(Beta);
-              VECT[1] = -cos_ang(Beta);
-              VECT[2] = tan_ang(Alpha);
-            } 
-            else if (Alpha == 90.0) {
-              VECT[0] = 0;
-              VECT[1] = 0;
-              VECT[2] = 1;
-            }   
-            else {
-              VECT[0] = 0;
-              VECT[1] = 0;
-              VECT[2] = -1;
-            }   
-            
-            VECT = fn_normalize(VECT);
-
-            float[] SunV = {SunR[1], SunR[2], SunR[3]};
-            
-            float SunMask = fn_dot(fn_normalize(SunV), fn_normalize(VECT));
-            if (SunMask <= 0) SunMask = 0; // removes backing faces 
-            
-            float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
            
-            _valuesSUM[now_k] += (R_dir * SunMask) + (R_dif * SkyMask);
+            _valuesSUM[now_k] += SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
             
             if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = String.valueOf(0.001 * _valuesSUM[now_k]);
             if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = String.valueOf(0.001 * _valuesSUM[now_k]);
@@ -7127,21 +7027,19 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                         else {
                           float[] VECT = {0, 0, 0}; 
                           
-                          if (abs(Alpha) < 89.99) {
-                            VECT[0] = sin_ang(Beta);
-                            VECT[1] = -cos_ang(Beta);
-                            VECT[2] = tan_ang(Alpha);
-                          } 
-                          else if (Alpha == 90.0) {
+                          if (abs(Alpha) > 89.99) {
                             VECT[0] = 0;
                             VECT[1] = 0;
-                            VECT[2] = 1;
-                          }   
-                          else {
+                            VECT[2] = 1;      
+                          } else if (Alpha < -89.99) {
                             VECT[0] = 0;
                             VECT[1] = 0;
                             VECT[2] = -1;
-                          }   
+                          } else {
+                            VECT[0] = sin_ang(Beta);
+                            VECT[1] = -cos_ang(Beta);
+                            VECT[2] = tan_ang(Alpha);      
+                          } 
                           
                           VECT = fn_normalize(VECT);
                           
@@ -10327,10 +10225,10 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
 
 void SOLARCHVISION_update_objects () {
   
-  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
+  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
-  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
-  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1400,-780,0, 1,1,1);
+  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
+  
 
   add_RecursiveSphere(0, 0,0,0, 1, 4, 1); // SKY
   
@@ -11126,21 +11024,19 @@ void SOLARCHVISION_draw_objects () {
                         else {
                           float[] VECT = {0, 0, 0}; 
                           
-                          if (abs(Alpha) < 89.99) {
-                            VECT[0] = sin_ang(Beta);
-                            VECT[1] = -cos_ang(Beta);
-                            VECT[2] = tan_ang(Alpha);
-                          } 
-                          else if (Alpha == 90.0) {
+                          if (abs(Alpha) > 89.99) {
                             VECT[0] = 0;
                             VECT[1] = 0;
-                            VECT[2] = 1;
-                          }   
-                          else {
+                            VECT[2] = 1;      
+                          } else if (Alpha < -89.99) {
                             VECT[0] = 0;
                             VECT[1] = 0;
                             VECT[2] = -1;
-                          }   
+                          } else {
+                            VECT[0] = sin_ang(Beta);
+                            VECT[1] = -cos_ang(Beta);
+                            VECT[2] = tan_ang(Alpha);      
+                          }  
                           
                           VECT = fn_normalize(VECT);
                           
@@ -12170,4 +12066,54 @@ PVector fn_perpendicular (PVector M, PVector A, PVector B) {
 
 
 
+float SolarAtSurface (float SunR1, float SunR2, float SunR3, float SunR4, float SunR5, float Alpha, float Beta, float THE_ALBEDO) {
+
+  float return_value = FLOAT_undefined;
+
+  if ((SunR1 < 0.9 * FLOAT_undefined) && (SunR2 < 0.9 * FLOAT_undefined) && (SunR3 < 0.9 * FLOAT_undefined) && (SunR4 < 0.9 * FLOAT_undefined) && (SunR5 < 0.9 * FLOAT_undefined)) { 
+
+    float[] VECT = {0, 0, 0}; 
+
+    if (abs(Alpha) > 89.99) {
+      VECT[0] = 0;
+      VECT[1] = 0;
+      VECT[2] = 1;      
+    } else if (Alpha < -89.99) {
+      VECT[0] = 0;
+      VECT[1] = 0;
+      VECT[2] = -1;
+    } else {
+      VECT[0] = sin_ang(Beta);
+      VECT[1] = -cos_ang(Beta);
+      VECT[2] = tan_ang(Alpha);      
+    }   
+  
+    VECT = fn_normalize(VECT);
+
+
+    float[] SunV = {SunR1, SunR2, SunR3};
+  
+    float SunMask = fn_dot(fn_normalize(SunV), fn_normalize(VECT));
+    if (SunMask <= 0) SunMask = 0; // removes backing faces 
+    
+    float SkyMask = (0.5 * (1.0 + (Alpha / 90.0)));
+    
+    return_value = (SunR4 * SunMask) + (SunR5 * SkyMask);    
+
+    
+/*
+    float[] REF_SunV = {SunR1, SunR2, -SunR3};
+  
+    float REF_SunMask = fn_dot(fn_normalize(REF_SunV), fn_normalize(VECT));
+    if (REF_SunMask <= 0) REF_SunMask = 0; // removes backing faces 
+   
+    float REF_SkyMask = 1 - (0.5 * (1.0 + (Alpha / 90.0)));      
+    
+    return_value +=  (0.01 * THE_ALBEDO) * ((SunR4 * REF_SunMask) + (SunR5 * REF_SkyMask));
+*/
+
+  }
+  
+  return (return_value);
+}
 
