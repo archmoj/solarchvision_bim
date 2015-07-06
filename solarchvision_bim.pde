@@ -9011,8 +9011,8 @@ void keyPressed () {
         case 'E' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; WIN3D_Update = 1; break; 
         case 'e' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; WIN3D_Update = 1; break; 
   
-        case 'W' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 4 - 1) % 4; WIN3D_Update = 1; break;
-        case 'w' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 4; WIN3D_Update = 1; break; 
+        case 'W' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 5 - 1) % 5; WIN3D_Update = 1; break;
+        case 'w' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 5; WIN3D_Update = 1; break; 
          
         
         case 't' :MODEL3D_TESELATION += 1; WIN3D_update_VerticesSolarValue = 1; WIN3D_Update = 1; break; 
@@ -10734,10 +10734,87 @@ void SOLARCHVISION_draw_objects () {
         
         WIN3D_Diagrams.endShape(CLOSE);
       }
-    }    
+    }
+    else if (WIN3D_WHITE_FACES == 3) {
+      
+      int PAL_TYPE = 0; 
+      int PAL_DIR = 1;
+      
+      if (Impact_TYPE == Impact_ACTIVE) {  
+        PAL_TYPE = 15; PAL_DIR = 1;
+        
+      }
+      if (Impact_TYPE == Impact_PASSIVE) {  
+        PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
+      }             
+      
+      float _Multiplier = 1; 
+      if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; 
+      if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02;            
+
+      int Teselation = 0;
+      
+      int TotalSubNo = 1;  
+      if (allFaces_MAT[f] == 0) {
+        Teselation = MODEL3D_TESELATION;
+        if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+      }
+  
+      for (int n = 0; n < TotalSubNo; n++) {
+        float[][] subFace = getSubFace(allFaces[f], Teselation, n);
+     
+        WIN3D_Diagrams.beginShape();
+        
+        for (int s = 0; s < subFace.length; s++) {
+  
+          int s_next = (s + 1) % subFace.length;
+          int s_prev = (s + subFace.length - 1) % subFace.length;
+          
+          PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
+          PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
+          PVector UV = U.cross(V);
+          float[] W = {UV.x, UV.y, UV.z};
+          W = fn_normalize(W);
+          
+          float Alpha = asin_ang(W[2]);
+          float Beta = atan2_ang(W[1], W[0]) + 90;       
+          
+          int a = int(Alpha / stp_slp);
+          int b = int(Beta / stp_dir);
+          
+          if (a < 0) a = 0;
+          if (b < 0) b = 0;
+          if (a > int(90 / stp_slp)) a = int(90 / stp_slp);
+          if (b > int(360 / stp_slp)) b = int(360 / stp_slp);
+          
+          float _valuesSUM = LocationExposure[a][b];
+          
+          if (_valuesSUM < 0.9 * FLOAT_undefined) {
+          
+            float _u = 0;
+            
+            if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
+            if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
+            
+            if (PAL_DIR == -1) _u = 1 - _u;
+            if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+            if (PAL_DIR == 2) _u =  0.5 * _u;
+  
+            float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+  
+            WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+    
+            WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale, -(subFace[s][1] * objects_scale), subFace[s][2] * objects_scale);
+          }
+  
+        }
+        
+        WIN3D_Diagrams.endShape(CLOSE);
+      }
+    }
   }
   
-  if (WIN3D_WHITE_FACES == 3){
+  if (WIN3D_WHITE_FACES == 4) {
     if (WIN3D_update_VerticesSolarValue == 0) {
       
       int PAL_TYPE = 0; 
@@ -12132,9 +12209,13 @@ void SolarProjection () {
   int start_z = get_startZ_endZ(impacts_source)[0];
   int end_z = get_startZ_endZ(impacts_source)[1]; 
   int layers_count = get_startZ_endZ(impacts_source)[2];   
-  
+
+
+
   if (plot_impacts % 2 == 0) Impact_TYPE = Impact_ACTIVE; 
   else Impact_TYPE = Impact_PASSIVE;
+
+
 
   String Pa = "";
   String Pb = "";
