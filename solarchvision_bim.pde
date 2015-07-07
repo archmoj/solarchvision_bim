@@ -10209,15 +10209,16 @@ void SOLARCHVISION_update_objects () {
   
   add_RecursiveSphere(0, 0,0,0, 1, 4, 1); // SKY
   
+  add_RecursiveSphere(0, 0,0,0, 50, 3, 0);
+  
+  /*
   add_RecursiveSphere(0, 0,0,0, 50, 5, 0);
-
-/*  
-  add_RecursiveSphere(0, 0,0,0, 5, 5, 0);
-  add_RecursiveSphere(0, 10,0,0, 4, 4, 0);
-  add_RecursiveSphere(0, 18,0,0, 3, 3, 0);
-  add_RecursiveSphere(0, 24,0,0, 2, 2, 0);
-  add_RecursiveSphere(0, 28,0,0, 1, 1, 0);
-*/  
+  add_RecursiveSphere(0, 100,0,0, 40, 4, 0);
+  add_RecursiveSphere(0, 180,0,0, 30, 3, 0);
+  add_RecursiveSphere(0, 240,0,0, 20, 2, 0);
+  add_RecursiveSphere(0, 280,0,0, 10, 1, 0);
+  */
+  
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
