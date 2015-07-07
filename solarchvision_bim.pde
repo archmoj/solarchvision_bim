@@ -6556,14 +6556,14 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                         File_Name += "DIF_" + STR_SHD[SHD];
                       }
                       
-                      //if (DEFINED_STATIONS[STATION_NUMBER][1].equals("MONTREAL")) { 
-                        //if (variation == 1) File_Name += "_" + "Montreal_Downtown.PNG";
-                        //if (variation == 2) File_Name += "_" + "Montreal_EV_BUILDING_B.PNG";
-                      //}
-                      //else {
+                      if (DEFINED_STATIONS[STATION_NUMBER][1].equals("MONTREAL")) { 
+                        if (variation == 1) File_Name += "_" + "Montreal_Downtown.PNG";
+                        if (variation == 2) File_Name += "_" + "Montreal_EV_BUILDING_B.PNG";
+                      }
+                      else {
                         if (variation == 1) File_Name += "_" + "Complex_" + Near_Latitude + "_Camera01.PNG";
                         if (variation == 2) File_Name += "_" + "Complex_" + Near_Latitude + "_Camera02.PNG";
-                      //}
+                      }
 
                       //println (File_Name);
                       Shadings[SHD]  = loadImage(File_Name);
@@ -10209,7 +10209,7 @@ void SOLARCHVISION_update_objects () {
   
   add_RecursiveSphere(0, 0,0,0, 1, 4, 1); // SKY
   
-  add_RecursiveSphere(0, 0,0,0, 50, 3, 0);
+  //add_RecursiveSphere(0, 0,0,0, 50, 3, 0);
   
   /*
   add_RecursiveSphere(0, 0,0,0, 50, 5, 0);
@@ -10221,7 +10221,7 @@ void SOLARCHVISION_update_objects () {
   
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
-  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
+  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
   
   
   
@@ -10231,7 +10231,7 @@ void SOLARCHVISION_update_objects () {
   
  
   SOLARCHVISION_LoadLAND(); 
-/*
+
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
   //for (int i = 1; i < LAND_n_I - 1; i += 1) { // to ignoring the center!
     for (int j = 0; j < LAND_n_J - 1; j += 1) {
@@ -10273,7 +10273,7 @@ void SOLARCHVISION_update_objects () {
        
     }
   }
-*/
+
 
 
 /*
