@@ -933,11 +933,11 @@ void draw () {
   
     WIN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
   
-    SOLARCHVISION_SunPath(0, 0, 0, 0.95 * sky_scale, LocationLatitude);
+    //SOLARCHVISION_SunPath(0, 0, 0, 0.95 * sky_scale, LocationLatitude);
     
-    SOLARCHVISION_draw_sky();
+    //SOLARCHVISION_draw_sky();
     
-    SOLARCHVISION_draw_land();
+    //SOLARCHVISION_draw_land();
   
     SOLARCHVISION_draw_objects();
     
@@ -10207,15 +10207,23 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
 
 void SOLARCHVISION_update_objects () {
   
-  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
-  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
-  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
-  
-
   add_RecursiveSphere(0, 0,0,0, 1, 4, 1); // SKY
   
+  add_RecursiveSphere(0, 0,0,0, 50, 1, 0);
+  
+  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
+  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
+  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
+  
+  
+  
+  
+  
+  
+  
+ 
   SOLARCHVISION_LoadLAND(); 
-
+/*
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
   //for (int i = 1; i < LAND_n_I - 1; i += 1) { // to ignoring the center!
     for (int j = 0; j < LAND_n_J - 1; j += 1) {
@@ -10257,7 +10265,7 @@ void SOLARCHVISION_update_objects () {
        
     }
   }
-
+*/
 
 
 /*
