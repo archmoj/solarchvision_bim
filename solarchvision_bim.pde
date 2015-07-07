@@ -674,8 +674,8 @@ void setup () {
 
   WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
 
-  build_SolarProjection_array(1); // 2.5
-  SolarProjection(); 
+  build_SolarProjection_array(2.5); // 1.0
+  //SolarProjection(); 
 }
 
 
@@ -6540,14 +6540,14 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       if (Round_Latitude < 0) Near_Latitude += "S";
                       else Near_Latitude += "N";
                       
-                      //if (DEFINED_STATIONS[STATION_NUMBER][1].equals("MONTREAL")) { 
-                      //  if (variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/MONTREAL_DOWNTOWN" + "/";
-                      //  if (variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/EV_BUILDING" + "/";
-                      //}
-                      //else {
+                      if (DEFINED_STATIONS[STATION_NUMBER][1].equals("MONTREAL")) { 
+                        if (variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/MONTREAL_DOWNTOWN" + "/";
+                        if (variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/EV_BUILDING" + "/";
+                      }
+                      else {
                         if (variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/Complex_" + Near_Latitude + "/";
                         if (variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/Complex_" + Near_Latitude + "/";
-                      //}                          
+                      }                          
                       
                       
                       if (RAD_TYPE == 0) {
@@ -10208,15 +10208,15 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
 
 void SOLARCHVISION_update_objects () {
   
-  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
+  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
-  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
+  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
   
 
   add_RecursiveSphere(0, 0,0,0, 1, 4, 1); // SKY
   
   SOLARCHVISION_LoadLAND(); 
-/*
+
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
   //for (int i = 1; i < LAND_n_I - 1; i += 1) { // to ignoring the center!
     for (int j = 0; j < LAND_n_J - 1; j += 1) {
@@ -10225,7 +10225,13 @@ void SOLARCHVISION_update_objects () {
       
       //add_Mesh4(-2, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2] , LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i+1][j][2] , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2] , LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1], LAND_MESH[i][j+1][2] );
       
-      for (int n = 0; n < 50; n += 1) {
+      float pixel_area = dist(LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1]) * dist(LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1]);
+      
+      int max_n = int(pixel_area / 2500.0);
+      if (max_n > 100) max_n = 100; 
+      
+      //for (int n = 0; n < 50; n += 1) {
+      for (int n = 0; n < max_n; n += 1) {
         
         float di = random(1);
         float dj = random(1);
@@ -10234,7 +10240,8 @@ void SOLARCHVISION_update_objects () {
         float y = Bilinear(LAND_MESH[i][j][1], LAND_MESH[i][j+1][1], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j][1], di, dj);
         float z = Bilinear(LAND_MESH[i][j][2], LAND_MESH[i][j+1][2], LAND_MESH[i+1][j+1][2], LAND_MESH[i+1][j][2], di, dj);
         
-        if (LAND_MESH[i][j][2] > 0) add_Object2D("TREES", 0, x, y, z, 25 + random(25));
+        //if (LAND_MESH[i][j][2] > 0) 
+        add_Object2D("TREES", 0, x, y, z, 25 + random(25));
 
       }  
  
@@ -10251,7 +10258,7 @@ void SOLARCHVISION_update_objects () {
        
     }
   }
-*/
+
 
 
 /*
@@ -10582,10 +10589,11 @@ void SOLARCHVISION_draw_sky () {
   
   for (int f = 1; f < skyFaces.length; f++) {
     
-    color c = color(127, 127, 255);
+    color c = color(191, 191, 255);
 
     if (WIN3D_BLACK_EDGES == 1) {
-      WIN3D_Diagrams.stroke(0, 0, 0);
+      //WIN3D_Diagrams.stroke(0, 0, 0);
+      WIN3D_Diagrams.stroke(255, 255, 255);
     }
     else {
       WIN3D_Diagrams.stroke(c);
@@ -10741,6 +10749,8 @@ void SOLARCHVISION_draw_objects () {
       }
     }
     else if (WIN3D_WHITE_FACES == 3) {
+      
+      WIN3D_Diagrams.noStroke(); // <<<<<<<<<<<<
       
       int PAL_TYPE = 0; 
       int PAL_DIR = 1;
