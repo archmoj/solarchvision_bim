@@ -10209,8 +10209,15 @@ void SOLARCHVISION_update_objects () {
   
   add_RecursiveSphere(0, 0,0,0, 1, 4, 1); // SKY
   
-  add_RecursiveSphere(0, 0,0,0, 50, 1, 0);
-  
+  add_RecursiveSphere(0, 0,0,0, 50, 5, 0);
+
+/*  
+  add_RecursiveSphere(0, 0,0,0, 5, 5, 0);
+  add_RecursiveSphere(0, 10,0,0, 4, 4, 0);
+  add_RecursiveSphere(0, 18,0,0, 3, 3, 0);
+  add_RecursiveSphere(0, 24,0,0, 2, 2, 0);
+  add_RecursiveSphere(0, 28,0,0, 1, 1, 0);
+*/  
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
@@ -10802,10 +10809,10 @@ void SOLARCHVISION_draw_objects () {
           int a = int((Alpha + 90) / stp_slp);
           int b = int(Beta / stp_dir);
           
-          if (a < 0) a = 0;
-          if (b < 0) b = 0;
-          if (a > int(180 / stp_slp)) a = int(180 / stp_slp);
-          if (b > int(360 / stp_slp)) b = int(360 / stp_slp);
+          if (a < 0) a += int(180 / stp_slp);
+          if (b < 0) b += int(360 / stp_dir);
+          if (a > int(180 / stp_slp)) a -= int(180 / stp_slp);
+          if (b > int(360 / stp_dir)) b -= int(360 / stp_dir);
           
           float _valuesSUM = LocationExposure[a][b];
           
@@ -11861,14 +11868,14 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
                   TempObjectVertices[vB[prev_i]][0], TempObjectVertices[vB[prev_i]][1], TempObjectVertices[vB[prev_i]][2],
                   Loop_Teselation, BuildFaces);
       }     
-      
+
       {
         myLozenge(
   
                   TempObjectVertices[vT[i]][0], TempObjectVertices[vT[i]][1], TempObjectVertices[vT[i]][2],
-                  TempObjectVertices[vB[i]][0], TempObjectVertices[vB[i]][1], TempObjectVertices[vB[i]][2],                    
+                  TempObjectVertices[vB[prev_i]][0], TempObjectVertices[vB[prev_i]][1], TempObjectVertices[vB[prev_i]][2],                    
                   TempObjectVertices[vB[0]][0], TempObjectVertices[vB[0]][1], TempObjectVertices[vB[0]][2],
-                  TempObjectVertices[vB[prev_i]][0], TempObjectVertices[vB[prev_i]][1], TempObjectVertices[vB[prev_i]][2],
+                  TempObjectVertices[vB[i]][0], TempObjectVertices[vB[i]][1], TempObjectVertices[vB[i]][2],
               
                   Loop_Teselation, BuildFaces);
       }
@@ -11882,6 +11889,7 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
                   
                   Loop_Teselation, BuildFaces);
       }      
+
   
     }   
 
