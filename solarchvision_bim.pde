@@ -674,8 +674,7 @@ void setup () {
 
   WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
 
-  build_SolarProjection_array(2.5); // 1.0
-  //SolarProjection(); 
+  SolarProjection(); 
 }
 
 
@@ -10750,8 +10749,6 @@ void SOLARCHVISION_draw_objects () {
     }
     else if (WIN3D_WHITE_FACES == 3) {
       
-      WIN3D_Diagrams.noStroke(); // <<<<<<<<<<<<
-      
       int PAL_TYPE = 0; 
       int PAL_DIR = 1;
       
@@ -10817,10 +10814,15 @@ void SOLARCHVISION_draw_objects () {
   
             float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
   
+            WIN3D_Diagrams.noStroke(); // <<<<<<<<<<<<
+  
             WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
-    
-            WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale, -(subFace[s][1] * objects_scale), subFace[s][2] * objects_scale);
           }
+          else {
+            WIN3D_Diagrams.fill(223); 
+          }
+          
+          WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale, -(subFace[s][1] * objects_scale), subFace[s][2] * objects_scale);
   
         }
         
@@ -12213,6 +12215,8 @@ void build_SolarProjection_array (float w) {
 
 
 void SolarProjection () {
+  
+  build_SolarProjection_array(2.5);
   
   float pre_per_day = per_day;
   int pre_num_add_days = num_add_days;
