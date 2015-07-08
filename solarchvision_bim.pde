@@ -85,10 +85,10 @@ String[][] DEFINED_STATIONS = {
                                 {"OTTAWA_INTL_ON_CA", "OTTAWA", "ON", "45.38", "-75.72", "-75", "114.00"}, 
                                 {"QUEBEC_QC_CA", "QUEBEC", "QC", "46.8", "-71.38333", "-75", "74.4"}, 
                                 //{"SUDBURY_ON_CA", "SUDBURY", "ON", "46.625556", "-80.797778", "-75", "348.00"}, 
-                                //{"TORONTO_ISLAND_ON_CA", "TORONTO-ISLAND", "ON", "43.63", "-79.40", "-75", "76.50"}, 
-                                {"TORONTO_PEARSON_INTL_ON_CA", "TORONTO-PEARSON", "ON", "43.67", "-79.63", "-75", "173.40"}, 
-                                {"VANCOUVER_INTL_BC_CA", "VANCOUVER", "BC", "49.25", "-123.25", "-120", "4.30"}, 
-                                {"WINNIPEG_INTL_MB_CA", "WINNIPEG_INTL", "MB", "49.916668", "-97.23333", "-90", "238.7"}, 
+                                //{"TORONTO_ISLAND_ON_CA", "TORONTO-ISLAND", "ON", "43.6275", "-79.396111", "-75", "76.8"}, 
+                                {"TORONTO_PEARSON_INTL_ON_CA", "TORONTO-PEARSON", "ON", "43.676667", "-79.630556", "-75", "173.4"}, 
+                                {"VANCOUVER_INTL_BC_CA", "VANCOUVER", "BC", "49.194722", "-123.183889", "-120", "4.3"}, 
+                                {"WINNIPEG_INTL_MB_CA", "WINNIPEG_INTL", "MB", "49.91", "-97.24", "-90", "238.7"}, 
 /*                                
                                 {"BOSTON_MA_US", "BOSTON", "MA", "42.35843", "-71.05978", "-75", "15.0"}, 
                                 {"CHICAGO_IL_US", "CHICAGO", "IL", "41.878113", "-87.6298", "-90", "181.0"}, 
@@ -10214,7 +10214,6 @@ void SOLARCHVISION_update_objects () {
     for (int j = 0; j < LAND_n_J - 1; j += 1) {
       
       // Material -2 for colored elevations
-      
       //add_Mesh4(-2, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2] , LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i+1][j][2] , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2] , LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1], LAND_MESH[i][j+1][2] );
       
       float pixel_area = dist(LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1]) * dist(LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1]);
@@ -10232,22 +10231,13 @@ void SOLARCHVISION_update_objects () {
         float y = Bilinear(LAND_MESH[i][j][1], LAND_MESH[i][j+1][1], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j][1], di, dj);
         float z = Bilinear(LAND_MESH[i][j][2], LAND_MESH[i][j+1][2], LAND_MESH[i+1][j+1][2], LAND_MESH[i+1][j][2], di, dj);
         
-        //if (LAND_MESH[i][j][2] > 0) 
-        add_Object2D("TREES", 0, x, y, z, 25 + random(25));
-
-      }  
- 
-      if  ((i > 0) && (i < 6)) {
-        float r = int(random(2));
-        if (r == 1) { 
-          add_Object2D("PEOPLE", 0, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2], 2.5);
+        if (i > 1) { 
+          add_Object2D("TREES", 0, x, y, z, 5 + random(10));
         }
         else {
-          add_Object2D("TREES", 0, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2], 5 + random(10));
+          add_Object2D("PEOPLE", 0, x, y, z, 2.5);
         }
-      }
-
-       
+      }  
     }
   }
 
