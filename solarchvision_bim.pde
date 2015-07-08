@@ -6,7 +6,6 @@ float GlobalAlbedo = 0; // 0-100
 
 float MAX_SHADING_DIST = 100; // the biggest object should be 100
 
-String ProjectSite = "MontrealDownTown"; //"Nowshahr"; //"OrBleu"; //"FIROUZKO";
 int SavedScreenShots = 0;
 
 int MODEL_RUN = 0; //12; 
@@ -71,24 +70,25 @@ String MAKE_Filenames () {
 }
 
 
-int STATION_NUMBER = 1; 
+int STATION_NUMBER = 10;
+
 
 String[][] DEFINED_STATIONS = {
-
-                                {"GERALDTON_ON_CA", "GERALDTON", "ON", "48.78262", "-86.77764", "-90", "100"},
+  
+                                {"MONTREAL_DORVAL_QC_CA", "Montreal_Downtown", "QC", "45.499187", "-73.568267", "-75", "35.82"},
                                 
-                                {"MONTREAL_DORVAL_QC_CA", "MONTREAL", "QC", "45.47", "-73.75", "-75", "31.00"},
+                                {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36"},
                                 
-                                {"CALGARY_INTL_AB_CA", "CALGARY", "AB", "51.10", "-114.02", "-120", "1084.10"}, 
-                                {"EDMONTON_INTL_A_AB_CA", "EDMONTON_INTL_A", "AB", "53.316666", "-113.583336", "-120", "723.3"}, 
-                                //{"HALIFAX_INTL_AIRPORT_NS_CA", "HALIFAX", "NS", "44.86", "-63.50", "-60", "145.40"}, 
-                                {"OTTAWA_INTL_ON_CA", "OTTAWA", "ON", "45.38", "-75.72", "-75", "114.00"}, 
-                                {"QUEBEC_QC_CA", "QUEBEC", "QC", "46.8", "-71.38333", "-75", "74.4"}, 
-                                //{"SUDBURY_ON_CA", "SUDBURY", "ON", "46.625556", "-80.797778", "-75", "348.00"}, 
-                                //{"TORONTO_ISLAND_ON_CA", "TORONTO-ISLAND", "ON", "43.6275", "-79.396111", "-75", "76.8"}, 
+                                {"CALGARY_INTL_AB_CA", "CALGARY", "AB", "51.113889", "-114.02", "-120", "1084.1"}, 
+                                {"EDMONTON_INTL_A_AB_CA", "EDMONTON", "AB", "53.31", "-113.579444", "-120", "723.3"}, 
+                                {"HALIFAX_INTL_AIRPORT_NS_CA", "HALIFAX", "NS", "44.881111", "-63.508611", "-60", "145.4"}, 
+                                {"OTTAWA_INTL_ON_CA", "OTTAWA", "ON", "45.383333", "-75.716667", "-75", "79.2"}, 
+                                {"QUEBEC_QC_CA", "QUEBEC", "QC", "46.803611", "-71.381667", "-75", "60"}, 
+                                {"SUDBURY_ON_CA", "SUDBURY", "ON", "46.625556", "-80.797778", "-75", "348.4"}, 
+                                {"TORONTO_ISLAND_ON_CA", "TORONTO-ISLAND", "ON", "43.6275", "-79.396111", "-75", "76.8"}, 
                                 {"TORONTO_PEARSON_INTL_ON_CA", "TORONTO-PEARSON", "ON", "43.676667", "-79.630556", "-75", "173.4"}, 
-                                {"VANCOUVER_INTL_BC_CA", "VANCOUVER", "BC", "49.194722", "-123.183889", "-120", "4.3"}, 
-                                {"WINNIPEG_INTL_MB_CA", "WINNIPEG_INTL", "MB", "49.91", "-97.24", "-90", "238.7"}, 
+                                {"VANCOUVER_INTL_BC_CA", "VANCOUVER_Harbour", "BC", "49.295353", "-123.121869", "-120", "2.5"}, 
+                                {"WINNIPEG_INTL_MB_CA", "WINNIPEG", "MB", "49.91", "-97.24", "-90", "238.7"}, 
 /*                                
                                 {"BOSTON_MA_US", "BOSTON", "MA", "42.35843", "-71.05978", "-75", "15.0"}, 
                                 {"CHICAGO_IL_US", "CHICAGO", "IL", "41.878113", "-87.6298", "-90", "181.0"}, 
@@ -449,6 +449,7 @@ String WorldViewFolder;
 String SWOBFolder;
 String NAEFSFolder;
 String CWEEDSFolder;
+String LandFolder;
 String Object2DFolder_PEOPLE;
 String Object2DFolder_TREES;
 
@@ -460,6 +461,7 @@ void SOLARCHVISION_update_folders () {
   SWOBFolder            = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   NAEFSFolder           = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   CWEEDSFolder          = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
+  LandFolder            = BaseFolder + "/Input/CoordinateFiles/Land";
   Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_SEL";
   Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_ALL";
 
@@ -937,7 +939,7 @@ void draw () {
     
     //SOLARCHVISION_draw_sky();
     
-    //SOLARCHVISION_draw_land();
+    SOLARCHVISION_draw_land();
   
     SOLARCHVISION_draw_objects();
     
@@ -1740,6 +1742,7 @@ void Plot_Setup () {
 
 
 void SOLARCHVISION_update_station () {
+  
   THE_STATION = DEFINED_STATIONS[STATION_NUMBER][0];
   LocationName = DEFINED_STATIONS[STATION_NUMBER][1];
   LocationProvince = DEFINED_STATIONS[STATION_NUMBER][2];
@@ -1771,6 +1774,9 @@ void SOLARCHVISION_update_station () {
   
   WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
 
+  LAND_mid_lat = LocationLatitude;
+  LAND_mid_lon = LocationLongitude;
+  SOLARCHVISION_LoadLAND(LocationName);
   
   WORLD_Update = 1;
   WIN3D_Update = 1; 
@@ -10206,9 +10212,6 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
 
 void SOLARCHVISION_update_objects () {
   
- 
-  SOLARCHVISION_LoadLAND(); 
-
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
   //for (int i = 1; i < LAND_n_I - 1; i += 1) { // to ignoring the center!
     for (int j = 0; j < LAND_n_J - 1; j += 1) {
@@ -11510,37 +11513,29 @@ float Bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y
 
 
 
-//Polar
-int LAND_n_I_base = 0;
-int LAND_n_J_base = 0;
-int LAND_n_I = 16 + 1; //8 + 1;
-int LAND_n_J = 24 + 1;    
+  
 
 //Cartesian
 //int LAND_n_I_base = 15;
 //int LAND_n_J_base = 15;
 //int LAND_n_I = LAND_n_I_base * 2 + 1;
 //int LAND_n_J = LAND_n_J_base * 2 + 1;    
-   
+
+//Polar
+int LAND_n_I_base = 0;
+int LAND_n_J_base = 0;
+int LAND_n_I = 16 + 1; //8 + 1;
+int LAND_n_J = 24 + 1;     
 
 double R_earth = 6373 * 1000;
 
-/*
-double LAND_mid_lat = 35.6967;
-double LAND_mid_lon = 52.6383;
 
-double LAND_mid_lat = 48.78262; //47.96005; //47.69036;
-double LAND_mid_lon = -86.77764; //-85.1936; //-85.01544; 
-
-double LAND_mid_lat = 36.61065;
-double LAND_mid_lon = 51.57665; 
-*/
-double LAND_mid_lat = 45.499187;
-double LAND_mid_lon = -73.568267;
+double LAND_mid_lat;
+double LAND_mid_lon;
 
 float[][][] LAND_MESH;
 
-void SOLARCHVISION_LoadLAND () {
+void SOLARCHVISION_LoadLAND (String ProjectSite) {
 
   LAND_MESH = new float[LAND_n_I][LAND_n_J][3];
 
@@ -11548,7 +11543,7 @@ void SOLARCHVISION_LoadLAND () {
 
     String the_link = "";
     
-    XML FileALL = loadXML("C:/SOLARCHVISION_2015/Projects/" + ProjectSite + "/"  + ProjectSite + "/" + nf(i - LAND_n_I_base, 0) + ".xml");
+    XML FileALL = loadXML(LandFolder + "/" + ProjectSite + "/"  + ProjectSite + "/" + nf(i - LAND_n_I_base, 0) + ".xml");
 
     XML[] children0 = FileALL.getChildren("result");
 
