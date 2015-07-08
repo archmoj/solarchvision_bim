@@ -10162,9 +10162,8 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
 
   String lineSTR;
   String[] input;
-  
     
-  println("lines = ", FileALL.length);
+  //println("lines = ", FileALL.length);
 
   for (int f = 0; f < FileALL.length; f += 1) {
     
@@ -10203,31 +10202,9 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
     
   }
 }  
-  
+
 
 void SOLARCHVISION_update_objects () {
-  
-  add_RecursiveSphere(0, 0,0,0, 1, 4, 1); // SKY
-  
-  //add_RecursiveSphere(0, 0,0,0, 50, 3, 0);
-  
-  /*
-  add_RecursiveSphere(0, 0,0,0, 50, 5, 0);
-  add_RecursiveSphere(0, 100,0,0, 40, 4, 0);
-  add_RecursiveSphere(0, 180,0,0, 30, 3, 0);
-  add_RecursiveSphere(0, 240,0,0, 20, 2, 0);
-  add_RecursiveSphere(0, 280,0,0, 10, 1, 0);
-  */
-  
-  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
-  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
-  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
-  
-  
-  
-  
-  
-  
   
  
   SOLARCHVISION_LoadLAND(); 
@@ -10273,6 +10250,33 @@ void SOLARCHVISION_update_objects () {
        
     }
   }
+
+
+  add_RecursiveSphere(0, 0,0,0, 1, 4, 1); // SKY
+  
+  //add_RecursiveSphere(0, 0,0,0, 50, 3, 0);
+  
+  /*
+  add_RecursiveSphere(0, 0,0,0, 50, 5, 0);
+  add_RecursiveSphere(0, 100,0,0, 40, 4, 0);
+  add_RecursiveSphere(0, 180,0,0, 30, 3, 0);
+  add_RecursiveSphere(0, 240,0,0, 20, 2, 0);
+  add_RecursiveSphere(0, 280,0,0, 10, 1, 0);
+  */
+  
+  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
+  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
+  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
+
+/*  
+  for (int i = 1; i <= 123; i += 1) {
+    
+    int m = int(random(1, 7)); 
+    
+    if ((i != 15) && (i != 26) && (i != 52) && (i != 87)) 
+    SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, -1135,-755,0, 1,1,1);
+  }
+*/  
 
 
 
