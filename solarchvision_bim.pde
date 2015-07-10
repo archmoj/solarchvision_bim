@@ -1,7 +1,7 @@
 import processing.pdf.*;
 
 
-int display_Field_Image = 1;
+int display_Field_Image = 0;
 
 float GlobalAlbedo = 0; // 0-100
 
@@ -10189,8 +10189,6 @@ void SOLARCHVISION_export_objects () {
   
 void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, float cz, float sx, float sy, float sz) {
   
-  defaultMaterial = m;
-
   int[] importVerticeNumber = {0};
   
   String[] FileALL = loadStrings(FileName);
@@ -10227,6 +10225,9 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
       //println(parts);
     
       for (int n = 0; n < newFace.length; n += 1) {
+
+        defaultMaterial = m;        
+        
         newFace[n] = importVerticeNumber[int(parts[n + 1])];
       }
       
@@ -10239,6 +10240,94 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
 }  
 
 
+void SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, float cx, float cy, float cz, float sx, float sy, float sz) {
+
+  float[][] importVertices = {{}};
+  
+  String[] FileALL = loadStrings(FileName);
+
+  String lineSTR;
+  String[] input;
+    
+  //println("lines = ", FileALL.length);
+
+  for (int f = 0; f < FileALL.length; f += 1) {
+    
+    lineSTR = FileALL[f];
+    //println (lineSTR);
+    
+    lineSTR = lineSTR.replace("  ", " ");
+    
+    String[] parts = split(lineSTR, ' ');
+    
+    if (parts[0].toLowerCase().equals("v")) {
+
+      float x = cx + sx * float(parts[1]);
+      float y = cy + sy * float(parts[2]);
+      float z = cz + sz * float(parts[3]);
+      
+      float[][] v = {{x, y, z}};
+      
+      importVertices = (float[][]) concat(importVertices, v);
+    }
+  }
+  
+  float min_X = FLOAT_undefined;
+  float max_X = -FLOAT_undefined;
+  float min_Y = FLOAT_undefined;
+  float max_Y = -FLOAT_undefined;
+  float min_Z = FLOAT_undefined;
+  float max_Z = -FLOAT_undefined;
+  
+  for (int vNo = 1; vNo < importVertices.length; vNo++) {
+    float x = importVertices[vNo][0];
+    float y = importVertices[vNo][1];
+    float z = importVertices[vNo][2];
+    
+    if (min_X > x) min_X = x;
+    if (max_X < x) max_X = x;
+    if (min_Y > y) min_Y = y;
+    if (max_Y < y) max_Y = y;
+    if (min_Z > z) min_Z = z;
+    if (max_Z < z) max_Z = z;
+  }
+  
+  float cen_X = 0.5 * (min_X + max_X);
+  float cen_Y = 0.5 * (min_Y + max_Y);
+  float cen_Z = 0.5 * (min_Z + max_Z);
+
+  float R_out = 0;
+  float X_out = 0;
+  float Y_out = 0;
+
+  for (int vNo = 1; vNo < importVertices.length; vNo++) {
+    float x = importVertices[vNo][0];
+    float y = importVertices[vNo][1];
+    float z = importVertices[vNo][2];
+    
+    float r = dist(cen_X, cen_Y, cen_Z, x, y, z);
+    
+    if (R_out < r) {
+      R_out = r;
+      
+      X_out = x;
+      Y_out = y;
+    }
+  }  
+  
+  {
+    float x = cen_X;
+    float y = cen_Y;
+    float z = cen_Z;
+    float r = R_out;
+    add_RecursiveSphere(1, x,y,z, r, 3, 0);
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(r, x,y,z, 2,2,2, 1,1,1, 0)};
+    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+  }
+
+  
+  
+}  
 
 
 void SOLARCHVISION_update_objects2D_onLand () {
@@ -10295,15 +10384,18 @@ void SOLARCHVISION_update_objects () {
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
 
-/*  
-  for (int i = 1; i <= 123; i += 1) {
+  
+  //for (int i = 1; i <= 123; i += 1) {
+  for (int i = 1; i <= 6; i += 1) {
     
-    int m = int(random(1, 7)); 
+    int m = 1 + (i % 6); 
     
     if ((i != 15) && (i != 26) && (i != 52) && (i != 87)) 
     SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, -1135,-755,0, 1,1,1);
+    SOLARCHVISION_import_objects_asParametricBox("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, -1135,-755,0, 1,1,1);
   }
-*/  
+  
+
 
 
 
@@ -11702,6 +11794,8 @@ class ParametricGeometry {
 ParametricGeometry[] SolidBuildings = {};
 
 void add_ParametricGeometries () {
+/*  
+
   {
     float x = 0;
     float y = 0;
@@ -11732,7 +11826,7 @@ void add_ParametricGeometries () {
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }
 
-  
+*/  
 }
 
 int Field_RES1 = 400;
