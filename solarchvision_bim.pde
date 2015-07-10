@@ -11699,19 +11699,19 @@ void add_ParametricGeometries () {
   SolidBuildings = new ParametricGeometry[5];
   
   SolidBuildings[0] = new ParametricGeometry(10, 0,0,0, 2,2,2, 1,1,1, 0);
-  add_RecursiveSphere(0, 0,0,0, 10, 5, 0);
+  add_RecursiveSphere(5, 0,0,0, 10, 5, 0);
 
   SolidBuildings[1] = new ParametricGeometry(8, 20,0,0, 2,2,2, 1,1,1, 0);
-  add_RecursiveSphere(0, 20,0,0, 8, 4, 0);
+  add_RecursiveSphere(4, 20,0,0, 8, 4, 0);
 
   SolidBuildings[2] = new ParametricGeometry(6, -20,0,0, 2,2,2, 1,1,1, 0);
-  add_RecursiveSphere(0, -20,0,0, 6, 3, 0);
+  add_RecursiveSphere(3, -20,0,0, 6, 3, 0);
 
   SolidBuildings[3] = new ParametricGeometry(4, 0,20,0, 2,2,2, 1,1,1, 0);
-  add_RecursiveSphere(0, 0,20,0, 4, 2, 0);
+  add_RecursiveSphere(2, 0,20,0, 4, 2, 0);
 
   SolidBuildings[4] = new ParametricGeometry(2, 0,-20,0, 2,2,2, 1,1,1, 0);
-  add_RecursiveSphere(0, 0,-20,0, 2, 1, 0);  
+  add_RecursiveSphere(1, 0,-20,0, 2, 1, 0);  
   
 
   //SolidBuildings[0] = new ParametricGeometry(8, 0,0,0, 2,2,2, 1,2,1, 0);
