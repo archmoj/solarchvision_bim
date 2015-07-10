@@ -10387,7 +10387,7 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
 
 
 void SOLARCHVISION_update_objects2D_onLand () {
-
+/*
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
   //for (int i = 1; i < LAND_n_I - 1; i += 1) { // to ignoring the center!
     for (int j = 0; j < LAND_n_J - 1; j += 1) {
@@ -10419,12 +10419,13 @@ void SOLARCHVISION_update_objects2D_onLand () {
       }  
     }
   }
+*/ 
 }
 
 
 void SOLARCHVISION_update_objects () {
   
-  add_RecursiveSphere(0, 0,0,0, 1, 4, 1); // SKY
+  add_RecursiveSphere(0, 0,0,0, 1, 3, 1); // SKY
 
   //add_RecursiveSphere(0, 0,0,0, 50, 3, 0);
   
@@ -10440,7 +10441,7 @@ void SOLARCHVISION_update_objects () {
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
 
-  
+/*  
   for (int i = 1; i <= 123; i += 1) {
   //for (int i = 1; i <= 6; i += 1) {
     
@@ -10448,12 +10449,13 @@ void SOLARCHVISION_update_objects () {
     
     if ((i != 15) && (i != 26) && (i != 52) && (i != 87)) {
       
-      float z = SOLARCHVISION_import_objects_asParametricBox("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, -1135,-755,0, 1,1,1);
-      
-      SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, -1135,-755,z, 1,1,1);
+      float x = -1135;
+      float y = -755;
+      float z = SOLARCHVISION_import_objects_asParametricBox("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, x,y,0, 1,1,1);
+      SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, x,y,z, 1,1,1);
     }
   }
-  
+*/  
 
 
 
@@ -11844,7 +11846,8 @@ class ParametricGeometry {
     y += posY;  
     z += posZ;
 
-    return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value); 
+    //return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value); 
+    return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (6.0 / (powX + powY + powZ))) / value);
     
   } 
   
@@ -11854,7 +11857,6 @@ ParametricGeometry[] SolidBuildings = {};
 
 void add_ParametricGeometries () {
 
-/*
   {
     float x = 0;
     float y = 0;
@@ -11884,17 +11886,17 @@ void add_ParametricGeometries () {
     ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(r, x,y,z, 2,2,2, 1,1,1, 0)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }
-*/
+
 }
 
-float Field_scale = 1000;
+float Field_scale = 200; //1000;
 
-int Field_RES1 = 500;
-int Field_RES2 = 500;
+int Field_RES1 = 400;
+int Field_RES2 = 400;
 
 PImage Field_Image = createImage(Field_RES1, Field_RES2, RGB);
 
-float Field_Multiplier = 0.05; //0.25;
+float Field_Multiplier = 10.0; //0.5; //0.05;
 
 float Field_Elevation = 0;
 
