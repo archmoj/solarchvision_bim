@@ -8988,8 +8988,8 @@ void keyPressed () {
         case DOWN  :WIN3D_Y_coordinate -= WIN3D_S_coordinate; WIN3D_Update = 1; break;
         */
         
-        case UP    :Field_Elevation += 25; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
-        case DOWN  :Field_Elevation -= 25; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
+        case UP    :Field_Elevation += 2.5; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
+        case DOWN  :Field_Elevation -= 2.5; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
         
       }
     }
@@ -10441,7 +10441,7 @@ void SOLARCHVISION_update_objects () {
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
 
-  
+/*  
   for (int i = 1; i <= 123; i += 1) {
   //for (int i = 1; i <= 6; i += 1) {
     
@@ -10455,7 +10455,7 @@ void SOLARCHVISION_update_objects () {
       SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, x,y,z, 1,1,1);
     }
   }
-  
+*/  
 
 
 
@@ -11887,9 +11887,49 @@ void add_ParametricGeometries () {
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }
 */
+
+  {
+    float x = 0;
+    float y = 0;
+    float z = 0;
+    float dx = 15;
+    float dy = 10;
+    float dz = 5;
+    float t = 0;
+    add_Box_Core(1, x,y,z, dx, dy, dz, t);
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, t)};
+    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+  }
+
+  {
+    float x = 50;
+    float y = 0;
+    float z = 0;
+    float dx = 5;
+    float dy = 10;
+    float dz = 15;
+    float t = 0;
+    add_Box_Core(1, x,y,z, dx, dy, dz, t);
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, t)};
+    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+  }
+
+  {
+    float x = 0;
+    float y = 50;
+    float z = 0;
+    float dx = 10;
+    float dy = 10;
+    float dz = 10;
+    float t = 45;
+    add_Box_Core(1, x,y,z, dx, dy, dz, t);
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, t)};
+    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+  }
+
 }
 
-float Field_scale = 800; //1000;
+float Field_scale = 200; //800;
 
 int Field_RES1 = 400;
 int Field_RES2 = 400;
