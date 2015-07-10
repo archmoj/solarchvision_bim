@@ -9574,13 +9574,58 @@ int addToFaces (int[] f) {
 }
 
 
-void add_Box_CENTER (int m, float x1, float y1, float z1, float x2, float y2, float z2) {
+void add_Box_Core (int m, float x, float y, float z, float dx, float dy, float dz, float rot) {
+  
+  float teta = rot * PI / 180.0;
 
-  add_Box(m, x1-x2/2, y1-y2/2, z1-z2/2, x1+x2/2, y1+y2/2, z1+z2/2);
+  int t1 = addToVertices(x + (dx * cos(teta) - dy * sin(teta)), y + (dx * sin(teta) + dy * cos(teta)), z + dz);
+  int t2 = addToVertices(x + (-dx * cos(teta) - dy * sin(teta)), y + (-dx * sin(teta) + dy * cos(teta)), z + dz);
+  int t3 = addToVertices(x + (-dx * cos(teta) + dy * sin(teta)), y + (-dx * sin(teta) - dy * cos(teta)), z + dz);
+  int t4 = addToVertices(x + (dx * cos(teta) + dy * sin(teta)), y + (dx * sin(teta) - dy * cos(teta)), z + dz);
+
+  int b1 = addToVertices(x + (dx * cos(teta) - dy * sin(teta)), y + (dx * sin(teta) + dy * cos(teta)), z - dz);
+  int b2 = addToVertices(x + (-dx * cos(teta) - dy * sin(teta)), y + (-dx * sin(teta) + dy * cos(teta)), z - dz);
+  int b3 = addToVertices(x + (-dx * cos(teta) + dy * sin(teta)), y + (-dx * sin(teta) - dy * cos(teta)), z - dz);
+  int b4 = addToVertices(x + (dx * cos(teta) + dy * sin(teta)), y + (dx * sin(teta) - dy * cos(teta)), z - dz);
+
+
+  if (m == -1) defaultMaterial = 7;
+  else defaultMaterial = m;
+
+  {//Bottom
+    int[] newFace = {b4, b3, b2, b1};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }    
+  {//North
+    int[] newFace = {t2, t1, b1, b2};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }
+  {//East
+    int[] newFace = {t1, t4, b4, b1};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }    
+  {//South
+    int[] newFace = {t4, t3, b3, b4};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }    
+  {//West
+    int[] newFace = {t3, t2, b2, b3};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }    
+  {//Roof
+    int[] newFace = {t1, t2, t3, t4};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }
 }
 
 
-void add_Box (int m, float x1, float y1, float z1, float x2, float y2, float z2) {
+void add_Box_Corners (int m, float x1, float y1, float z1, float x2, float y2, float z2) {
 
   int t1 = addToVertices(x2, y2, z2);
   int t2 = addToVertices(x1, y2, z2);
@@ -10299,6 +10344,7 @@ void SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, float
   float R_out = 0;
   float X_out = 0;
   float Y_out = 0;
+  float Z_out = 0;
 
   for (int vNo = 1; vNo < importVertices.length; vNo++) {
     float x = importVertices[vNo][0];
@@ -10310,8 +10356,9 @@ void SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, float
     if (R_out < r) {
       R_out = r;
       
-      X_out = x;
-      Y_out = y;
+      X_out = x - cen_X;
+      Y_out = y - cen_Y;
+      Z_out = z - cen_Z;
     }
   }  
   
@@ -10320,7 +10367,12 @@ void SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, float
     float y = cen_Y;
     float z = cen_Z;
     float r = R_out;
-    add_RecursiveSphere(1, x,y,z, r, 3, 0);
+    //add_RecursiveSphere(m, x,y,z, r, 3, 0);
+    
+    float t = 180 - atan2_ang(Y_out, X_out);
+    
+    add_Box_Core(m, x,y,z, X_out,Y_out,Z_out, t);
+
     ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(r, x,y,z, 2,2,2, 1,1,1, 0)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }
@@ -10450,10 +10502,10 @@ void SOLARCHVISION_update_objects () {
   add_Mesh2(3, 0, -60, 45, 60, 0, 45);
   */ 
   
-  //add_Box(-1, 0, 0, 0, 30, 10, 10);
-  //add_Box(-1, 0, 0, 10, 10, 10, 20);
-  //add_Box(-1, 20, 0, 10, 30, 10, 20);
-  //add_Box(-1, 0, 0, 20, 30, 10, 30);
+  //add_Box_Corners(-1, 0, 0, 0, 30, 10, 10);
+  //add_Box_Corners(-1, 0, 0, 10, 10, 10, 20);
+  //add_Box_Corners(-1, 20, 0, 10, 30, 10, 20);
+  //add_Box_Corners(-1, 0, 0, 20, 30, 10, 30);
   //add_Mesh2(3, -60, -60, 0, 60, 60, 0);
   
   //add_Polygon(3, 0, 0, 0, 50, 24);
@@ -10469,15 +10521,15 @@ void SOLARCHVISION_update_objects () {
 */  
   
   
-  //add_Box(-1, -40, -40, -40, 40, 40, 40);
+  //add_Box_Corners(-1, -40, -40, -40, 40, 40, 40);
   
   //add_Mesh2(6, -60, -60, 60, 60, 60, 60);
   //add_Mesh2(6, -60, -60, 60, 0, 60, 60);
   //add_Mesh2(6, -60, -60, 20, 0, 60, 20);
   
 
-  //add_Box(-1, 0.5, 1.0, 0.0, 1.5, 3.0, 0.5);
-  //add_Box(-1, 0.0, 0.0, 0.0, 0.5, 1.0, 2.0);
+  //add_Box_Corners(-1, 0.5, 1.0, 0.0, 1.5, 3.0, 0.5);
+  //add_Box_Corners(-1, 0.0, 0.0, 0.0, 0.5, 1.0, 2.0);
   
   //add_Mesh2(3, 0.5, 0.0, 0.75, 0.75, 1.0, 0.75);
   //add_Mesh2(3, 0.5, 0.0, 1.25, 0.75, 1.0, 1.25);
@@ -10488,61 +10540,61 @@ void SOLARCHVISION_update_objects () {
 /*
   //SOLARCHVISION Complex:
   {
-    //add_Box(-1, 0, 0, 0, 1, 3, 3);
-    add_Box(-1, 0, 0, 0, 1, 3, 1);
-    add_Box(-1, 0, 0, 1, 1, 1, 2);
-    add_Box(-1, 0, 2, 1, 1, 3, 2);
-    add_Box(-1, 0, 0, 2, 1, 3, 3);
+    //add_Box_Corners(-1, 0, 0, 0, 1, 3, 3);
+    add_Box_Corners(-1, 0, 0, 0, 1, 3, 1);
+    add_Box_Corners(-1, 0, 0, 1, 1, 1, 2);
+    add_Box_Corners(-1, 0, 2, 1, 1, 3, 2);
+    add_Box_Corners(-1, 0, 0, 2, 1, 3, 3);
     
-    add_Box(-1, 2, 0, 0, 6, 4, 0.5);
+    add_Box_Corners(-1, 2, 0, 0, 6, 4, 0.5);
     
-    add_Box(-1, 7, 0, 0, 9, 2, 2);
+    add_Box_Corners(-1, 7, 0, 0, 9, 2, 2);
     
-    add_Box(-1, 7, 3, 0, 9, 4, 4);
+    add_Box_Corners(-1, 7, 3, 0, 9, 4, 4);
     
-    //add_Box(-1, 10, 0, 0, 13, 4, 1);
-    add_Box(-1, 10, 0, 0, 13, 1, 1);
-    add_Box(-1, 10, 1, 0, 10.5, 3, 1);
-    add_Box(-1, 12.5, 1, 0, 13, 3, 1);
-    add_Box(-1, 10, 3, 0, 13, 4, 1);
+    //add_Box_Corners(-1, 10, 0, 0, 13, 4, 1);
+    add_Box_Corners(-1, 10, 0, 0, 13, 1, 1);
+    add_Box_Corners(-1, 10, 1, 0, 10.5, 3, 1);
+    add_Box_Corners(-1, 12.5, 1, 0, 13, 3, 1);
+    add_Box_Corners(-1, 10, 3, 0, 13, 4, 1);
     
-    add_Box(-1, 0, 4, 0, 1, 8, 2);
+    add_Box_Corners(-1, 0, 4, 0, 1, 8, 2);
     
-    //add_Box(-1, 2, 5, 0, 4, 8, 2);
-    add_Box(-1, 2, 5, 0, 4, 5.5, 2);
-    add_Box(-1, 2, 5.5, 0, 2.5, 7.5, 2);
-    add_Box(-1, 3.5, 5.5, 0, 4, 7.5, 2);
-    add_Box(-1, 2, 7.5, 0, 4, 8, 2);
+    //add_Box_Corners(-1, 2, 5, 0, 4, 8, 2);
+    add_Box_Corners(-1, 2, 5, 0, 4, 5.5, 2);
+    add_Box_Corners(-1, 2, 5.5, 0, 2.5, 7.5, 2);
+    add_Box_Corners(-1, 3.5, 5.5, 0, 4, 7.5, 2);
+    add_Box_Corners(-1, 2, 7.5, 0, 4, 8, 2);
     
-    add_Box(-1, 5, 5, 0, 8, 8, 1);
+    add_Box_Corners(-1, 5, 5, 0, 8, 8, 1);
     
-    add_Box(-1, 9, 5, 0, 11, 9, 1);
+    add_Box_Corners(-1, 9, 5, 0, 11, 9, 1);
     
-    add_Box(-1, 12, 5, 0, 13, 7, 4);
+    add_Box_Corners(-1, 12, 5, 0, 13, 7, 4);
     
-    add_Box(-1, 12, 8, 0, 13, 9, 8);
+    add_Box_Corners(-1, 12, 8, 0, 13, 9, 8);
     
-    add_Box(-1, 0, 9, 0, 4, 11, 1);
+    add_Box_Corners(-1, 0, 9, 0, 4, 11, 1);
     
-    //add_Box(-1, 5, 9, 0, 8, 11, 2);
-    add_Box(-1, 5, 9, 0, 5.5, 11, 2);
-    add_Box(-1, 5.5, 9, 0, 7.5, 9.5, 2);
-    add_Box(-1, 5.5, 10.5, 0, 7.5, 11, 2);
-    add_Box(-1, 7.5, 9, 0, 8, 11, 2);
+    //add_Box_Corners(-1, 5, 9, 0, 8, 11, 2);
+    add_Box_Corners(-1, 5, 9, 0, 5.5, 11, 2);
+    add_Box_Corners(-1, 5.5, 9, 0, 7.5, 9.5, 2);
+    add_Box_Corners(-1, 5.5, 10.5, 0, 7.5, 11, 2);
+    add_Box_Corners(-1, 7.5, 9, 0, 8, 11, 2);
     
-    //add_Box(-1, 0, 12, 0, 3, 13, 3);
-    add_Box(-1, 0, 12, 0, 3, 13, 1);
-    add_Box(-1, 0, 12, 1, 1, 13, 2);
-    add_Box(-1, 2, 12, 1, 3, 13, 2);
-    add_Box(-1, 0, 12, 2, 3, 13, 3);
+    //add_Box_Corners(-1, 0, 12, 0, 3, 13, 3);
+    add_Box_Corners(-1, 0, 12, 0, 3, 13, 1);
+    add_Box_Corners(-1, 0, 12, 1, 1, 13, 2);
+    add_Box_Corners(-1, 2, 12, 1, 3, 13, 2);
+    add_Box_Corners(-1, 0, 12, 2, 3, 13, 3);
     
-    add_Box(-1, 4, 12, 0, 8, 13, 2);
+    add_Box_Corners(-1, 4, 12, 0, 8, 13, 2);
     
-    //add_Box(-1, 9, 10, 0, 13, 13, 1);
-    add_Box(-1, 9, 10, 0, 10, 13, 1);
-    add_Box(-1, 10, 10, 0, 12, 10.5, 1);
-    add_Box(-1, 10, 12.5, 0, 12, 13, 1);
-    add_Box(-1, 12, 10, 0, 13, 13, 1);
+    //add_Box_Corners(-1, 9, 10, 0, 13, 13, 1);
+    add_Box_Corners(-1, 9, 10, 0, 10, 13, 1);
+    add_Box_Corners(-1, 10, 10, 0, 12, 10.5, 1);
+    add_Box_Corners(-1, 10, 12.5, 0, 12, 13, 1);
+    add_Box_Corners(-1, 12, 10, 0, 13, 13, 1);
     
     float model_scale = 12; // to make grid scale equal to 12m. <<<<
 
@@ -10580,11 +10632,11 @@ void SOLARCHVISION_update_objects () {
 */
   
 
-  //add_Box(-1, -5, -5, 0, 5, 5, 10);
+  //add_Box_Corners(-1, -5, -5, 0, 5, 5, 10);
 
   
 /*  
-  //add_Box(0, -20, 0, 0, 20, 20, 30);
+  //add_Box_Corners(0, -20, 0, 0, 20, 20, 30);
   {
     float x1 = -20;
     float y1 = 0;
