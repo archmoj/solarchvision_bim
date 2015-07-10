@@ -665,6 +665,16 @@ void setup () {
   SOLARCHVISION_update_station();
 
   SOLARCHVISION_update_objects();
+
+  add_ParametricGeometries(); 
+  
+  calculate_ParametricGeometries_Field();
+  
+  SolarProjection(); 
+  
+  
+  
+  
   
   empty_Materials_DirectArea();
   empty_Materials_DiffuseArea();
@@ -678,7 +688,7 @@ void setup () {
 
   WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
 
-  SolarProjection(); 
+
 }
 
 
@@ -10271,8 +10281,6 @@ void SOLARCHVISION_update_objects () {
   
   add_RecursiveSphere(0, 0,0,0, 1, 4, 1); // SKY
 
-  add_ParametricGeometries(); 
-  
   //add_RecursiveSphere(0, 0,0,0, 50, 3, 0);
   
   /*
@@ -11695,7 +11703,6 @@ ParametricGeometry[] SolidBuildings;
 
 void add_ParametricGeometries () {
 
- 
   SolidBuildings = new ParametricGeometry[5];
   
   SolidBuildings[0] = new ParametricGeometry(10, 0,0,0, 2,2,2, 1,1,1, 0);
@@ -11713,60 +11720,6 @@ void add_ParametricGeometries () {
   SolidBuildings[4] = new ParametricGeometry(2, 0,-20,0, 2,2,2, 1,1,1, 0);
   add_RecursiveSphere(1, 0,-20,0, 2, 1, 0);  
   
-
-  //SolidBuildings[0] = new ParametricGeometry(8, 0,0,0, 2,2,2, 1,2,1, 0);
-  //add_Box_CENTER(-1, 0,0,0, 1,8,1);  
-
-/*
-  SolidBuildings[0] = new ParametricGeometry(2, 10,10,10, 2,2,2, 10,10,10, 0);
-  add_RecursiveSphere(0, 10,10,10, 10, 3, 0);  
-  SolidBuildings[1] = new ParametricGeometry(2, -10,-10,5, 2,2,2, 5,5,5, 0);
-  add_RecursiveSphere(0, -10,-10,5, 5, 2, 0);
-  SolidBuildings[2] = new ParametricGeometry(1, 50,0,10, 8,8,8, 10,30,20, 0);
-  add_Box_CENTER(-1, 50,0,10, 10,30,20);  
-*/
-
-  //add_RecursiveSphere(0, 0,0,0, 90, 5, 0);
-  
-  //add_Icosahedron(0, -25,0,0, 10);
-  
-  //add_QuadSphere(0, 25,0,0, 10, 0);
-  
-  //add_QuadSphere(0, 0,0,0, 10, 1);
-  //add_Icosahedron(0, 0,0,0, 10);
-
-
-   
-  
-
-  
-/*  
-
-  SolidBuildings = new ParametricGeometry[6];
-  
-  SolidBuildings[0] = new ParametricGeometry(1, 50,-50,0, 8,8,8, 10,10,50, 0);
-  add_Box_CENTER(-1, 50,-50,0, 10,10,50);
-
-  SolidBuildings[1] = new ParametricGeometry(1, -50,-50,0, 8,8,8, 10,10,10, 0);
-  add_Box_CENTER(-1, -50,-50,0, 10,10,10);
-
-  SolidBuildings[2] = new ParametricGeometry(1, -50,50,0, 8,8,8, 10,20,10, 0);
-  add_Box_CENTER(-1, -50,50,0, 10,20,10);
-
-  SolidBuildings[3] = new ParametricGeometry(1, 50,50,0, 2,2,8, 10,10,20, 0);
-  add_PolygonExtrude(0, 50,50,0, 5, 20, 16);
-
-  SolidBuildings[4] = new ParametricGeometry(1, 15,15,0, 2,2,8, 30,30,10, 0);
-  add_PolygonExtrude_CENTER(0, 15,15,0, 15, 10, 16);
-
-  SolidBuildings[5] = new ParametricGeometry(1, 15,15,30, 2,2,8, 30,30,10, 0);
-  add_PolygonExtrude_CENTER(0, 15,15,30, 15, 10, 16);
-
-
-*/
- 
-  calculate_ParametricGeometries_Field();
-
 }
 
 int Field_RES1 = 400;
@@ -11827,6 +11780,8 @@ int POINTER_TempObjectVertices = 1;
 int POINTER_TempObjectFaces = 1;
 
 void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Teselation, int isSky) {
+
+  defaultMaterial = m;
   
   int[] vT = new int[6];
   int[] vB = new int[6];
