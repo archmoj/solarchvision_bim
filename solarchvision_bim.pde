@@ -8073,9 +8073,6 @@ void GRAPHS_keyPressed () {
         case 'c' :COLOR_STYLE = (COLOR_STYLE + 1) % n_COLOR_STYLE; redraw_scene = 1; break;
         case 'C' :COLOR_STYLE = (COLOR_STYLE - 1 + n_COLOR_STYLE) % n_COLOR_STYLE; redraw_scene = 1; break;
         
-        case 'l' :_LAN = int((_LAN + 1) % 2); redraw_scene = 1; break;
-        case 'L' :_LAN = int((_LAN + 1) % 2); redraw_scene = 1; break;
-        
         case 'V' :draw_data_lines = int((draw_data_lines + 1) % 2); redraw_scene = 1; break;
         case 'v' :draw_data_lines = int((draw_data_lines + 1) % 2); redraw_scene = 1; break;
   
@@ -8086,14 +8083,17 @@ void GRAPHS_keyPressed () {
                   if (num_add_days < 1) num_add_days = 1;
                   redraw_scene = 1; break;
                   
-        case 'k' :Materials_Selection += 1;
+        case 'l' :Materials_Selection += 1;
                   Materials_Selection %= Materials_Number; 
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break;
-        case 'K' :Materials_Selection += Materials_Number - 1;
+        case 'L' :Materials_Selection += Materials_Number - 1;
                   Materials_Selection %= Materials_Number;
                   update_DevelopDATA = 1; 
-                  redraw_scene = 1; break;                
+                  redraw_scene = 1; break;  
+
+        case 'k' :Field_Multiplier *= 2.0; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
+        case 'K' :Field_Multiplier /= 2.0; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
   
         case 'm' :draw_sorted = int((draw_sorted + 1) % 2); redraw_scene = 1; break;
         case 'M' :draw_sorted = int((draw_sorted + 1) % 2); redraw_scene = 1; break;
@@ -10441,7 +10441,7 @@ void SOLARCHVISION_update_objects () {
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
 
-/*  
+  
   for (int i = 1; i <= 123; i += 1) {
   //for (int i = 1; i <= 6; i += 1) {
     
@@ -10455,7 +10455,7 @@ void SOLARCHVISION_update_objects () {
       SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, x,y,z, 1,1,1);
     }
   }
-*/  
+  
 
 
 
@@ -11856,7 +11856,7 @@ class ParametricGeometry {
 ParametricGeometry[] SolidBuildings = {};
 
 void add_ParametricGeometries () {
-
+/*
   {
     float x = 0;
     float y = 0;
@@ -11886,17 +11886,17 @@ void add_ParametricGeometries () {
     ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(r, x,y,z, 2,2,2, 1,1,1, 0)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }
-
+*/
 }
 
-float Field_scale = 200; //1000;
+float Field_scale = 800; //1000;
 
 int Field_RES1 = 400;
 int Field_RES2 = 400;
 
 PImage Field_Image = createImage(Field_RES1, Field_RES2, RGB);
 
-float Field_Multiplier = 10.0; //0.5; //0.05;
+float Field_Multiplier = 0.2; //10.0; 
 
 float Field_Elevation = 0;
 
