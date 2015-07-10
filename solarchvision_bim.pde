@@ -11699,26 +11699,39 @@ class ParametricGeometry {
   
 } 
 
-ParametricGeometry[] SolidBuildings;
+ParametricGeometry[] SolidBuildings = {};
 
 void add_ParametricGeometries () {
+  {
+    float x = 0;
+    float y = 0;
+    float z = 0;
+    float r = 10;
+    add_RecursiveSphere(1, x,y,z, r, 5, 0);
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(r, x,y,z, 2,2,2, 1,1,1, 0)};
+    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+  }
 
-  SolidBuildings = new ParametricGeometry[5];
-  
-  SolidBuildings[0] = new ParametricGeometry(10, 0,0,0, 2,2,2, 1,1,1, 0);
-  add_RecursiveSphere(5, 0,0,0, 10, 5, 0);
+  {
+    float x = 30;
+    float y = 0;
+    float z = 0;
+    float r = 8;
+    add_RecursiveSphere(2, x,y,z, r, 4, 0);
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(r, x,y,z, 2,2,2, 1,1,1, 0)};
+    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+  }
 
-  SolidBuildings[1] = new ParametricGeometry(8, 20,0,0, 2,2,2, 1,1,1, 0);
-  add_RecursiveSphere(4, 20,0,0, 8, 4, 0);
+  {
+    float x = 0;
+    float y = 20;
+    float z = 0;
+    float r = 8;
+    add_RecursiveSphere(3, x,y,z, r, 3, 0);
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(r, x,y,z, 2,2,2, 1,1,1, 0)};
+    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+  }
 
-  SolidBuildings[2] = new ParametricGeometry(6, -20,0,0, 2,2,2, 1,1,1, 0);
-  add_RecursiveSphere(3, -20,0,0, 6, 3, 0);
-
-  SolidBuildings[3] = new ParametricGeometry(4, 0,20,0, 2,2,2, 1,1,1, 0);
-  add_RecursiveSphere(2, 0,20,0, 4, 2, 0);
-
-  SolidBuildings[4] = new ParametricGeometry(2, 0,-20,0, 2,2,2, 1,1,1, 0);
-  add_RecursiveSphere(1, 0,-20,0, 2, 1, 0);  
   
 }
 
