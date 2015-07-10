@@ -1,7 +1,7 @@
 import processing.pdf.*;
 
 
-int display_Field_Image = 0;
+int display_Field_Image = 1;
 
 float GlobalAlbedo = 0; // 0-100
 
@@ -8988,8 +8988,8 @@ void keyPressed () {
         case DOWN  :WIN3D_Y_coordinate -= WIN3D_S_coordinate; WIN3D_Update = 1; break;
         */
         
-        case UP    :Field_Elevation += 2.5; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
-        case DOWN  :Field_Elevation -= 2.5; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
+        case UP    :Field_Elevation += 25; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
+        case DOWN  :Field_Elevation -= 25; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
         
       }
     }
@@ -10285,7 +10285,7 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
 }  
 
 
-void SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, float cx, float cy, float cz, float sx, float sy, float sz) {
+float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, float cx, float cy, float cz, float sx, float sy, float sz) {
 
   float[][] importVertices = {{}};
   
@@ -10345,7 +10345,7 @@ void SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, float
   float X_out = 0;
   float Y_out = 0;
   float Z_out = 0;
-
+  
   for (int vNo = 1; vNo < importVertices.length; vNo++) {
     float x = importVertices[vNo][0];
     float y = importVertices[vNo][1];
@@ -10356,29 +10356,33 @@ void SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, float
     if (R_out < r) {
       R_out = r;
       
-      X_out = x - cen_X;
-      Y_out = y - cen_Y;
-      Z_out = z - cen_Z;
+      X_out = x;
+      Y_out = y;
+      Z_out = z;
     }
   }  
-  
-  {
-    float x = cen_X;
-    float y = cen_Y;
-    float z = cen_Z;
-    float r = R_out;
-    //add_RecursiveSphere(m, x,y,z, r, 3, 0);
-    
-    float t = 180 - atan2_ang(Y_out, X_out);
-    
-    add_Box_Core(m, x,y,z, X_out,Y_out,Z_out, t);
 
-    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(r, x,y,z, 2,2,2, 1,1,1, 0)};
-    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
-  }
+  float T_out = atan2_ang(Y_out, X_out);
 
+  X_out = 0;
+  Y_out = 0;
+  Z_out = 0;
   
+  for (int vNo = 1; vNo < importVertices.length; vNo++) {
+    float x = (importVertices[vNo][0] - cen_X) * cos_ang(-T_out) - (importVertices[vNo][1] - cen_Y) * sin_ang(-T_out);
+    float y = (importVertices[vNo][0] - cen_X) * sin_ang(-T_out) + (importVertices[vNo][1] - cen_Y) * cos_ang(-T_out);
+    float z = importVertices[vNo][2];
+    
+    if (X_out < abs(x)) X_out = abs(x);
+    if (Y_out < abs(y)) Y_out = abs(y);
+    if (Z_out < abs(z)) Z_out = abs(z);
+  }  
   
+  //add_Box_Core(m, cen_X,cen_Y,cen_Z, X_out,Y_out,Z_out, T_out);
+  ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, cen_X,cen_Y,cen_Z, 8,8,8, X_out,Y_out,Z_out, T_out)}; 
+  SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+  
+  return min_Z;
 }  
 
 
@@ -10437,14 +10441,17 @@ void SOLARCHVISION_update_objects () {
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
 
   
-  //for (int i = 1; i <= 123; i += 1) {
-  for (int i = 1; i <= 6; i += 1) {
+  for (int i = 1; i <= 123; i += 1) {
+  //for (int i = 1; i <= 6; i += 1) {
     
     int m = 1 + (i % 6); 
     
-    if ((i != 15) && (i != 26) && (i != 52) && (i != 87)) 
-    SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, -1135,-755,0, 1,1,1);
-    SOLARCHVISION_import_objects_asParametricBox("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, -1135,-755,0, 1,1,1);
+    if ((i != 15) && (i != 26) && (i != 52) && (i != 87)) {
+      
+      float z = SOLARCHVISION_import_objects_asParametricBox("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, -1135,-755,0, 1,1,1);
+      
+      SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, -1135,-755,z, 1,1,1);
+    }
   }
   
 
@@ -10838,10 +10845,10 @@ void SOLARCHVISION_draw_field_image () {
   WIN3D_Diagrams.texture(Field_Image);    
   WIN3D_Diagrams.stroke(255, 255, 255, 0);
   WIN3D_Diagrams.fill(255, 255, 255, 0);  
-  WIN3D_Diagrams.vertex(-100 * objects_scale, -100 * objects_scale, Field_Elevation * objects_scale, 0, Field_RES2);
-  WIN3D_Diagrams.vertex(100 * objects_scale, -100 * objects_scale, Field_Elevation * objects_scale, Field_RES1, Field_RES2);
-  WIN3D_Diagrams.vertex(100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, Field_RES1, 0);
-  WIN3D_Diagrams.vertex(-100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, 0, 0);
+  WIN3D_Diagrams.vertex(-0.5 * Field_scale * objects_scale, -0.5 * Field_scale * objects_scale, Field_Elevation * objects_scale, 0, Field_RES2);
+  WIN3D_Diagrams.vertex(0.5 * Field_scale * objects_scale, -0.5 * Field_scale * objects_scale, Field_Elevation * objects_scale, Field_RES1, Field_RES2);
+  WIN3D_Diagrams.vertex(0.5 * Field_scale * objects_scale, 0.5 * Field_scale * objects_scale, Field_Elevation * objects_scale, Field_RES1, 0);
+  WIN3D_Diagrams.vertex(-0.5 * Field_scale * objects_scale, 0.5 * Field_scale * objects_scale, Field_Elevation * objects_scale, 0, 0);
   WIN3D_Diagrams.endShape(CLOSE);
  }
   
@@ -11846,8 +11853,8 @@ class ParametricGeometry {
 ParametricGeometry[] SolidBuildings = {};
 
 void add_ParametricGeometries () {
-/*  
 
+/*
   {
     float x = 0;
     float y = 0;
@@ -11877,16 +11884,17 @@ void add_ParametricGeometries () {
     ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(r, x,y,z, 2,2,2, 1,1,1, 0)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }
-
-*/  
+*/
 }
 
-int Field_RES1 = 400;
-int Field_RES2 = 400; 
+float Field_scale = 1000;
+
+int Field_RES1 = 500;
+int Field_RES2 = 500;
 
 PImage Field_Image = createImage(Field_RES1, Field_RES2, RGB);
 
-float Field_Multiplier = 0.5;
+float Field_Multiplier = 0.05; //0.25;
 
 float Field_Elevation = 0;
 
@@ -11900,7 +11908,7 @@ void calculate_ParametricGeometries_Field () {
       float val = 0;
       for (int n = 0; n < SolidBuildings.length; n++) {
         
-        float d = SolidBuildings[n].Distance((i - 0.5 * Field_RES1) * (200.0 / Field_RES1), (j - 0.5 * Field_RES2) * (200.0 / Field_RES2), Field_Elevation);
+        float d = SolidBuildings[n].Distance((i - 0.5 * Field_RES1) * (Field_scale / Field_RES1), (j - 0.5 * Field_RES2) * (Field_scale / Field_RES2), Field_Elevation);
         
         if (d > 0) {
           val += 1.0 / d;
