@@ -1,5 +1,8 @@
 import processing.pdf.*;
 
+
+int display_Field_Image = 1;
+
 float GlobalAlbedo = 0; // 0-100
 
 
@@ -70,8 +73,7 @@ String MAKE_Filenames () {
 }
 
 
-int STATION_NUMBER = 10;
-
+int STATION_NUMBER = 0;
 
 String[][] DEFINED_STATIONS = {
   
@@ -940,8 +942,12 @@ void draw () {
     //SOLARCHVISION_draw_sky();
     
     SOLARCHVISION_draw_land();
-  
+    
+    SOLARCHVISION_draw_field_image();
+    
     SOLARCHVISION_draw_objects();
+    
+    
     
      
   
@@ -1777,6 +1783,18 @@ void SOLARCHVISION_update_station () {
   LAND_mid_lat = LocationLatitude;
   LAND_mid_lon = LocationLongitude;
   SOLARCHVISION_LoadLAND(LocationName);
+  {
+    allObject2D_XYZS = new float[1][3]; 
+    allObject2D_XYZS[0][0] = 0;
+    allObject2D_XYZS[0][1] = 0;
+    allObject2D_XYZS[0][2] = 0;
+    
+    allObject2D_MAP = new int[1];
+    allObject2D_MAP[0] = 0;
+    
+    allObject2D_num = 0;
+  }
+  SOLARCHVISION_update_objects2D_onLand();
   
   WORLD_Update = 1;
   WIN3D_Update = 1; 
@@ -6545,7 +6563,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       if (Round_Latitude < 0) Near_Latitude += "S";
                       else Near_Latitude += "N";
                       
-                      if (DEFINED_STATIONS[STATION_NUMBER][1].equals("MONTREAL")) { 
+                      if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Montreal_Downtown")) { 
                         if (variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/MONTREAL_DOWNTOWN" + "/";
                         if (variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/EV_BUILDING" + "/";
                       }
@@ -6562,7 +6580,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                         File_Name += "DIF_" + STR_SHD[SHD];
                       }
                       
-                      if (DEFINED_STATIONS[STATION_NUMBER][1].equals("MONTREAL")) { 
+                      if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Montreal_Downtown")) { 
                         if (variation == 1) File_Name += "_" + "Montreal_Downtown.PNG";
                         if (variation == 2) File_Name += "_" + "Montreal_EV_BUILDING_B.PNG";
                       }
@@ -9212,7 +9230,7 @@ void add_Object2D (String t, int m, float x, float y, float z, float s) {
   float[][] TempObject2D_XYZS = {{x, y, z, s}};
   
   allObject2D_XYZS = (float[][]) concat(allObject2D_XYZS, TempObject2D_XYZS);
-
+  allObject2D_num += 1;
 }
 
 
@@ -9519,6 +9537,7 @@ int[] allFaces_MAT = {0};
 
 float[][] allObject2D_XYZS = {{}};
 int[] allObject2D_MAP = {0};
+int allObject2D_num = 0; 
 
 
 int addToVertices (float x, float y, float z) {
@@ -10210,8 +10229,10 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
 }  
 
 
-void SOLARCHVISION_update_objects () {
-  
+
+
+void SOLARCHVISION_update_objects2D_onLand () {
+
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
   //for (int i = 1; i < LAND_n_I - 1; i += 1) { // to ignoring the center!
     for (int j = 0; j < LAND_n_J - 1; j += 1) {
@@ -10243,9 +10264,14 @@ void SOLARCHVISION_update_objects () {
       }  
     }
   }
+}
 
 
+void SOLARCHVISION_update_objects () {
+  
   add_RecursiveSphere(0, 0,0,0, 1, 4, 1); // SKY
+
+  add_ParametricGeometries(); 
   
   //add_RecursiveSphere(0, 0,0,0, 50, 3, 0);
   
@@ -10257,7 +10283,7 @@ void SOLARCHVISION_update_objects () {
   add_RecursiveSphere(0, 280,0,0, 10, 1, 0);
   */
   
-  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
+  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
 
@@ -10436,26 +10462,6 @@ void SOLARCHVISION_update_objects () {
 
 
 
-/*
-  for (int i = 0; i < 100; i++) {
-    
-    float t = random(360) * PI / 180.0;
-    float r = random(100); 
-    
-    add_Object2D("PEOPLE", 0, r * cos(t), r * sin(t), 0, 2.5);
-  }
-
-  for (int t = 0; t < 360; t += 10) {
-    
-    float q = int(random(2));
-    
-    if (q == 1) {
-      float r = 60; 
-      
-      add_Object2D("TREES", 0, r * cos(t), r * sin(t), 0, 5 + random(10));
-    }
-  }
-*/  
 
 /*
   add_Mesh5(1, -10,-10,0, -10,-10,5, -10,0,10, -10,10,5, -10,10,0);
@@ -10503,7 +10509,7 @@ void SOLARCHVISION_update_objects () {
 
 */  
 
-  add_ParametricGeometries(); 
+
 }
 
 float objects_scale = 1.0; //0.5;
@@ -10636,8 +10642,8 @@ void SOLARCHVISION_draw_sky () {
 
 void SOLARCHVISION_draw_land () {
 
-  for (int i = 0; i < LAND_n_I - 1; i += 1) {
-  //for (int i = 1; i < LAND_n_I - 1; i += 1) { // to ignoring the center!
+  //for (int i = 0; i < LAND_n_I - 1; i += 1) {
+  for (int i = 1; i < LAND_n_I - 1; i += 1) { // to ignoring the center!
     for (int j = 0; j < LAND_n_J - 1; j += 1) {
       
       WIN3D_Diagrams.beginShape();
@@ -10673,9 +10679,9 @@ void SOLARCHVISION_draw_land () {
 }
 
 
-void SOLARCHVISION_draw_objects () {
-  
-/*
+void SOLARCHVISION_draw_field_image () {
+
+ if (display_Field_Image == 1) {
   WIN3D_Diagrams.beginShape();
   WIN3D_Diagrams.texture(Field_Image);    
   WIN3D_Diagrams.stroke(255, 255, 255, 0);
@@ -10685,9 +10691,12 @@ void SOLARCHVISION_draw_objects () {
   WIN3D_Diagrams.vertex(100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, Field_RES1, 0);
   WIN3D_Diagrams.vertex(-100 * objects_scale, 100 * objects_scale, Field_Elevation * objects_scale, 0, 0);
   WIN3D_Diagrams.endShape(CLOSE);
-*/  
+ }
   
-  
+}
+
+void SOLARCHVISION_draw_objects () {
+
   for (int f = 1; f < allFaces.length; f++) {
     
     color c = color(0, 0, 0);
@@ -11262,7 +11271,7 @@ void SOLARCHVISION_draw_objects () {
   
   //println(CAM_x, CAM_y, CAM_z);
 
-  for (int i = 1; i < allObject2D_XYZS.length; i++) {
+  for (int i = 1; i <= allObject2D_num; i++) {
     
     WIN3D_Diagrams.beginShape();
     
@@ -11687,7 +11696,23 @@ ParametricGeometry[] SolidBuildings;
 void add_ParametricGeometries () {
 
  
-  SolidBuildings = new ParametricGeometry[0];
+  SolidBuildings = new ParametricGeometry[5];
+  
+  SolidBuildings[0] = new ParametricGeometry(10, 0,0,0, 2,2,2, 1,1,1, 0);
+  add_RecursiveSphere(0, 0,0,0, 10, 5, 0);
+
+  SolidBuildings[1] = new ParametricGeometry(8, 20,0,0, 2,2,2, 1,1,1, 0);
+  add_RecursiveSphere(0, 20,0,0, 8, 4, 0);
+
+  SolidBuildings[2] = new ParametricGeometry(6, -20,0,0, 2,2,2, 1,1,1, 0);
+  add_RecursiveSphere(0, -20,0,0, 6, 3, 0);
+
+  SolidBuildings[3] = new ParametricGeometry(4, 0,20,0, 2,2,2, 1,1,1, 0);
+  add_RecursiveSphere(0, 0,20,0, 4, 2, 0);
+
+  SolidBuildings[4] = new ParametricGeometry(2, 0,-20,0, 2,2,2, 1,1,1, 0);
+  add_RecursiveSphere(0, 0,-20,0, 2, 1, 0);  
+  
 
   //SolidBuildings[0] = new ParametricGeometry(8, 0,0,0, 2,2,2, 1,2,1, 0);
   //add_Box_CENTER(-1, 0,0,0, 1,8,1);  
