@@ -12025,8 +12025,8 @@ void add_ParametricGeometries () {
     float dy = 100;
     float dz = 1;
     float t = 0;
-    add_Box_Core(1, x,y,z, dx, dy, dz, t);
-    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(7, x,y,z, 8,8,8, dx,dy,dz, t)};
+    add_Box_Core(7, x,y,z, dx, dy, dz, t);
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, t)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }  
 
@@ -12052,8 +12052,8 @@ void add_ParametricGeometries () {
     float dy = 10;
     float dz = 15;
     float t = 0;
-    add_Box_Core(1, x,y,z, dx, dy, dz, t);
-    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(2, x,y,z, 8,8,8, dx,dy,dz, t)};
+    add_Box_Core(2, x,y,z, dx, dy, dz, t);
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, t)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }
 
@@ -12065,8 +12065,8 @@ void add_ParametricGeometries () {
     float dy = 10;
     float dz = 10;
     float t = 45;
-    add_Box_Core(1, x,y,z, dx, dy, dz, t);
-    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(3, x,y,z, 8,8,8, dx,dy,dz, t)};
+    add_Box_Core(3, x,y,z, dx, dy, dz, t);
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, t)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }
 
