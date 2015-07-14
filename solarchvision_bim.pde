@@ -8095,8 +8095,8 @@ void GRAPHS_keyPressed () {
         case 'e' :Field_scale_U *= pow(2.0, 0.5); Field_scale_V *= pow(2.0, 0.5); calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
         case 'E' :Field_scale_U /= pow(2.0, 0.5); Field_scale_V /= pow(2.0, 0.5); calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
 
-        //case 'e' :Field_Image_rotation = (Field_Image_rotation + 15) % 360; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
-        //case 'E' :Field_Image_rotation = (Field_Image_rotation + 360 - 15) % 360; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
+        case 'r' :Field_Image_rotation = (Field_Image_rotation + 15) % 360; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
+        case 'R' :Field_Image_rotation = (Field_Image_rotation + 360 - 15) % 360; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
 
         case 'w' :display_Field_Image = (display_Field_Image + 1) % 4; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
         case 'W' :display_Field_Image = (display_Field_Image + 4 - 1) % 4; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
@@ -8134,8 +8134,8 @@ void GRAPHS_keyPressed () {
         case '#' :sky_scenario = 3; redraw_scene = 1; break;
         case '$' :sky_scenario = 4; redraw_scene = 1; break;
   
-        case 'r' :_record = int((_record + 1) % 2); println("Record:", _record); redraw_scene = 0; break;
-        case 'R' :_record = int((_record + 1) % 2); println("Record:", _record); redraw_scene = 0; break;
+        //case 'r' :_record = int((_record + 1) % 2); println("Record:", _record); redraw_scene = 0; break;
+        //case 'R' :_record = int((_record + 1) % 2); println("Record:", _record); redraw_scene = 0; break;
 
         case '\\' : record_JPG = 1; redraw_scene = 1; break;
         case '?' : record_PDF = 1; record_JPG = 0; redraw_scene = 1; break; 
@@ -10396,7 +10396,7 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
 
 
 void SOLARCHVISION_update_objects2D_onLand () {
-
+/*
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
   //for (int i = 1; i < LAND_n_I - 1; i += 1) { // to ignoring the center!
     for (int j = 0; j < LAND_n_J - 1; j += 1) {
@@ -10428,7 +10428,7 @@ void SOLARCHVISION_update_objects2D_onLand () {
       }  
     }
   }
-
+*/
 }
 
 
@@ -10860,34 +10860,38 @@ void SOLARCHVISION_draw_field_image () {
     
     WIN3D_Diagrams.fill(255, 255, 255, 0);  
     
-    float z = Field_Elevation * objects_scale;
+    float c = Field_Elevation * objects_scale;
     
     {
       float a = -0.5 * Field_scale_U * objects_scale;
       float b = -0.5 * Field_scale_V * objects_scale;    
       float x = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
-      float y = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      float y = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation);
+      float z = c; 
       WIN3D_Diagrams.vertex(x, y, z, 0, Field_RES2);
     }
     {
       float a = 0.5 * Field_scale_U * objects_scale;
       float b = -0.5 * Field_scale_V * objects_scale;    
       float x = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
-      float y = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      float y = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation);
+      float z = c;  
       WIN3D_Diagrams.vertex(x, y, z, Field_RES1, Field_RES2);
     }  
     {
       float a = 0.5 * Field_scale_U * objects_scale;
       float b = 0.5 * Field_scale_V * objects_scale;    
       float x = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
-      float y = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      float y = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation);
+      float z = c;  
       WIN3D_Diagrams.vertex(x, y, z, Field_RES1, 0);
     }  
     {
       float a = -0.5 * Field_scale_U * objects_scale;
       float b = 0.5 * Field_scale_V * objects_scale;    
       float x = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
-      float y = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      float y = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation);
+      float z = c;  
       WIN3D_Diagrams.vertex(x, y, z, 0, 0);
     }  
     
@@ -10903,34 +10907,38 @@ void SOLARCHVISION_draw_field_image () {
     
     WIN3D_Diagrams.fill(255, 255, 255, 0);  
     
-    float y = Field_Elevation * objects_scale;
+    float c = Field_Elevation * objects_scale;
     
     {
       float a = -0.5 * Field_scale_U * objects_scale;
       float b = -0.5 * Field_scale_V * objects_scale;    
-      float z = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
-      float x = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      float z = a * cos_ang(Field_Image_rotation) - c * sin_ang(Field_Image_rotation);
+      float x = a * sin_ang(Field_Image_rotation) + c * cos_ang(Field_Image_rotation);
+      float y = b; 
       WIN3D_Diagrams.vertex(x, y, z, 0, Field_RES2);
     }
     {
       float a = 0.5 * Field_scale_U * objects_scale;
       float b = -0.5 * Field_scale_V * objects_scale;    
-      float z = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
-      float x = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      float z = a * cos_ang(Field_Image_rotation) - c * sin_ang(Field_Image_rotation);
+      float x = a * sin_ang(Field_Image_rotation) + c * cos_ang(Field_Image_rotation);
+      float y = b; 
       WIN3D_Diagrams.vertex(x, y, z, Field_RES1, Field_RES2);
     }  
     {
       float a = 0.5 * Field_scale_U * objects_scale;
       float b = 0.5 * Field_scale_V * objects_scale;    
-      float z = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
-      float x = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      float z = a * cos_ang(Field_Image_rotation) - c * sin_ang(Field_Image_rotation);
+      float x = a * sin_ang(Field_Image_rotation) + c * cos_ang(Field_Image_rotation);
+      float y = b; 
       WIN3D_Diagrams.vertex(x, y, z, Field_RES1, 0);
     }  
     {
       float a = -0.5 * Field_scale_U * objects_scale;
       float b = 0.5 * Field_scale_V * objects_scale;    
-      float z = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
-      float x = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      float z = a * cos_ang(Field_Image_rotation) - c * sin_ang(Field_Image_rotation);
+      float x = a * sin_ang(Field_Image_rotation) + c * cos_ang(Field_Image_rotation);
+      float y = b; 
       WIN3D_Diagrams.vertex(x, y, z, 0, 0);
     }  
     
@@ -10946,34 +10954,38 @@ void SOLARCHVISION_draw_field_image () {
     
     WIN3D_Diagrams.fill(255, 255, 255, 0);  
     
-    float x = Field_Elevation * objects_scale;
+    float c = Field_Elevation * objects_scale;
     
     {
       float a = -0.5 * Field_scale_U * objects_scale;
       float b = -0.5 * Field_scale_V * objects_scale;    
-      float y = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
-      float z = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      float z = c * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
+      float x = c * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation);
+      float y = a; 
       WIN3D_Diagrams.vertex(x, y, z, 0, Field_RES2);
     }
     {
       float a = 0.5 * Field_scale_U * objects_scale;
       float b = -0.5 * Field_scale_V * objects_scale;    
-      float y = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
-      float z = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      float z = c * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
+      float x = c * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation);
+      float y = a; 
       WIN3D_Diagrams.vertex(x, y, z, Field_RES1, Field_RES2);
     }  
     {
       float a = 0.5 * Field_scale_U * objects_scale;
       float b = 0.5 * Field_scale_V * objects_scale;    
-      float y = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
-      float z = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      float z = c * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
+      float x = c * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation);
+      float y = a; 
       WIN3D_Diagrams.vertex(x, y, z, Field_RES1, 0);
     }  
     {
       float a = -0.5 * Field_scale_U * objects_scale;
       float b = 0.5 * Field_scale_V * objects_scale;    
-      float y = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
-      float z = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      float z = c * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
+      float x = c * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation);
+      float y = a; 
       WIN3D_Diagrams.vertex(x, y, z, 0, 0);
     }  
     
@@ -12178,9 +12190,9 @@ void calculate_ParametricGeometries_Field () {
           float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
           float c = Field_Elevation;
           
-          float z = a * cos_ang(-Field_Image_rotation) - b * sin_ang(-Field_Image_rotation);
-          float x = a * sin_ang(-Field_Image_rotation) + b * cos_ang(-Field_Image_rotation);
-          float y = c; 
+          float z = a * cos_ang(-Field_Image_rotation) - c * sin_ang(-Field_Image_rotation);
+          float x = a * sin_ang(-Field_Image_rotation) + c * cos_ang(-Field_Image_rotation);
+          float y = b; 
           
           d = SolidBuildings[n].Distance(-x, -y, z);
         }
@@ -12189,11 +12201,11 @@ void calculate_ParametricGeometries_Field () {
           float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
           float c = Field_Elevation;
           
-          float y = a * cos_ang(-Field_Image_rotation) - b * sin_ang(-Field_Image_rotation);
-          float z = a * sin_ang(-Field_Image_rotation) + b * cos_ang(-Field_Image_rotation);
-          float x = c; 
+          float z = c * cos_ang(-Field_Image_rotation) - b * sin_ang(-Field_Image_rotation);
+          float x = c * sin_ang(-Field_Image_rotation) + b * cos_ang(-Field_Image_rotation);
+          float y = a; 
           
-          d = SolidBuildings[n].Distance(x, -y, -z);
+          d = SolidBuildings[n].Distance(-x, -y, z);
         }
         
         if (d > 0) {
