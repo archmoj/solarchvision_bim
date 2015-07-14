@@ -1,7 +1,8 @@
 import processing.pdf.*;
 
 
-int display_Field_Image = 1;
+int display_Field_Image = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(left)
+float Field_Image_rotation = 0; 
 
 float GlobalAlbedo = 0; // 0-100
 
@@ -8055,14 +8056,14 @@ void GRAPHS_keyPressed () {
                   redraw_scene = 1;
                   break;
 
-        case 'y' :Sample_Year += 1; if (Sample_Year > CLIMATE_WY2_end) Sample_Year = CLIMATE_WY2_start; redraw_scene = 1; break; 
-        case 'Y' :Sample_Year -= 1; if (Sample_Year < CLIMATE_WY2_start) Sample_Year = CLIMATE_WY2_end; redraw_scene = 1; break;
+        //case 'y' :Sample_Year += 1; if (Sample_Year > CLIMATE_WY2_end) Sample_Year = CLIMATE_WY2_start; redraw_scene = 1; break; 
+        //case 'Y' :Sample_Year -= 1; if (Sample_Year < CLIMATE_WY2_start) Sample_Year = CLIMATE_WY2_end; redraw_scene = 1; break;
         case 'h' :H_layer_option = (H_layer_option + 1) % 8; redraw_scene = 1; break;
         case 'H' :H_layer_option = (H_layer_option + 8 - 1) % 8; redraw_scene = 1; break;
         case 'f' :F_layer_option = (F_layer_option + 1) % 5; redraw_scene = 1; break;
         case 'F' :F_layer_option = (F_layer_option + 5 - 1) % 5; redraw_scene = 1; break;
-        case 'e' :Sample_Member += 1; if (Sample_Member > ENSEMBLE_end) Sample_Member = ENSEMBLE_start; redraw_scene = 1; break; 
-        case 'E' :Sample_Member -= 1; if (Sample_Member < ENSEMBLE_start) Sample_Member = ENSEMBLE_end; redraw_scene = 1; break;
+        //case 'e' :Sample_Member += 1; if (Sample_Member > ENSEMBLE_end) Sample_Member = ENSEMBLE_start; redraw_scene = 1; break; 
+        //case 'E' :Sample_Member -= 1; if (Sample_Member < ENSEMBLE_start) Sample_Member = ENSEMBLE_end; redraw_scene = 1; break;
   
         case 'g' :filter_type = (filter_type + 1) % 2; redraw_scene = 1; break;
         case 'G' :filter_type = (filter_type + 2 - 1) % 2; redraw_scene = 1; break;
@@ -8092,8 +8093,17 @@ void GRAPHS_keyPressed () {
                   update_DevelopDATA = 1; 
                   redraw_scene = 1; break;  
 
-        case 'k' :Field_Multiplier *= 2.0; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
-        case 'K' :Field_Multiplier /= 2.0; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
+        case 'e' :Field_scale *= pow(2.0, 0.5); calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
+        case 'E' :Field_scale /= pow(2.0, 0.5); calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
+
+        //case 'e' :Field_Image_rotation = (Field_Image_rotation + 15) % 360; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
+        //case 'E' :Field_Image_rotation = (Field_Image_rotation + 360 - 15) % 360; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
+
+        case 'w' :display_Field_Image = (display_Field_Image + 1) % 4; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
+        case 'W' :display_Field_Image = (display_Field_Image + 4 - 1) % 4; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
+
+        case 'q' :Field_Multiplier *= pow(2.0, 0.5); calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
+        case 'Q' :Field_Multiplier /= pow(2.0, 0.5); calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
   
         case 'm' :draw_sorted = int((draw_sorted + 1) % 2); redraw_scene = 1; break;
         case 'M' :draw_sorted = int((draw_sorted + 1) % 2); redraw_scene = 1; break;
@@ -9040,13 +9050,13 @@ void keyPressed () {
         case 'P' :WIN3D_View_Type = 1; WIN3D_Update = 1; break; 
         case 'p' :WIN3D_View_Type = 1; WIN3D_Update = 1; break; 
   
-        case 'E' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; WIN3D_Update = 1; break; 
-        case 'e' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; WIN3D_Update = 1; break; 
+        //case 'E' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; WIN3D_Update = 1; break; 
+        //case 'e' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; WIN3D_Update = 1; break; 
   
-        case 'W' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 5 - 1) % 5; WIN3D_Update = 1;
+        case 'K' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 5 - 1) % 5; WIN3D_Update = 1;
                   if (WIN3D_WHITE_FACES == 3) SolarProjection(); 
                   break;
-        case 'w' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 5; WIN3D_Update = 1;
+        case 'k' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 5; WIN3D_Update = 1;
                   if (WIN3D_WHITE_FACES == 3) SolarProjection(); 
                   break; 
          
@@ -10842,18 +10852,135 @@ void SOLARCHVISION_draw_land () {
 
 void SOLARCHVISION_draw_field_image () {
 
- if (display_Field_Image == 1) {
-  WIN3D_Diagrams.beginShape();
-  WIN3D_Diagrams.texture(Field_Image);    
-  WIN3D_Diagrams.stroke(255, 255, 255, 0);
-  WIN3D_Diagrams.fill(255, 255, 255, 0);  
-  WIN3D_Diagrams.vertex(-0.5 * Field_scale * objects_scale, -0.5 * Field_scale * objects_scale, Field_Elevation * objects_scale, 0, Field_RES2);
-  WIN3D_Diagrams.vertex(0.5 * Field_scale * objects_scale, -0.5 * Field_scale * objects_scale, Field_Elevation * objects_scale, Field_RES1, Field_RES2);
-  WIN3D_Diagrams.vertex(0.5 * Field_scale * objects_scale, 0.5 * Field_scale * objects_scale, Field_Elevation * objects_scale, Field_RES1, 0);
-  WIN3D_Diagrams.vertex(-0.5 * Field_scale * objects_scale, 0.5 * Field_scale * objects_scale, Field_Elevation * objects_scale, 0, 0);
-  WIN3D_Diagrams.endShape(CLOSE);
- }
-  
+  if (display_Field_Image == 1) {
+    WIN3D_Diagrams.beginShape();
+    WIN3D_Diagrams.texture(Field_Image);    
+    
+    //WIN3D_Diagrams.stroke(255, 255, 255, 0);
+    WIN3D_Diagrams.stroke(0);
+    
+    WIN3D_Diagrams.fill(255, 255, 255, 0);  
+    
+    float z = Field_Elevation * objects_scale;
+    
+    {
+      float a = -0.5 * Field_scale * objects_scale;
+      float b = -0.5 * Field_scale * objects_scale;    
+      float x = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
+      float y = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      WIN3D_Diagrams.vertex(x, y, z, 0, Field_RES2);
+    }
+    {
+      float a = 0.5 * Field_scale * objects_scale;
+      float b = -0.5 * Field_scale * objects_scale;    
+      float x = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
+      float y = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      WIN3D_Diagrams.vertex(x, y, z, Field_RES1, Field_RES2);
+    }  
+    {
+      float a = 0.5 * Field_scale * objects_scale;
+      float b = 0.5 * Field_scale * objects_scale;    
+      float x = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
+      float y = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      WIN3D_Diagrams.vertex(x, y, z, Field_RES1, 0);
+    }  
+    {
+      float a = -0.5 * Field_scale * objects_scale;
+      float b = 0.5 * Field_scale * objects_scale;    
+      float x = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
+      float y = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      WIN3D_Diagrams.vertex(x, y, z, 0, 0);
+    }  
+    
+    WIN3D_Diagrams.endShape(CLOSE);
+  }
+ 
+  else if (display_Field_Image == 2) {
+    WIN3D_Diagrams.beginShape();
+    WIN3D_Diagrams.texture(Field_Image);    
+    
+    //WIN3D_Diagrams.stroke(255, 255, 255, 0);
+    WIN3D_Diagrams.stroke(0);
+    
+    WIN3D_Diagrams.fill(255, 255, 255, 0);  
+    
+    float y = Field_Elevation * objects_scale;
+    
+    {
+      float a = -0.5 * Field_scale * objects_scale;
+      float b = -0.5 * Field_scale * objects_scale;    
+      float z = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
+      float x = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      WIN3D_Diagrams.vertex(x, y, z, 0, Field_RES2);
+    }
+    {
+      float a = 0.5 * Field_scale * objects_scale;
+      float b = -0.5 * Field_scale * objects_scale;    
+      float z = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
+      float x = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      WIN3D_Diagrams.vertex(x, y, z, Field_RES1, Field_RES2);
+    }  
+    {
+      float a = 0.5 * Field_scale * objects_scale;
+      float b = 0.5 * Field_scale * objects_scale;    
+      float z = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
+      float x = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      WIN3D_Diagrams.vertex(x, y, z, Field_RES1, 0);
+    }  
+    {
+      float a = -0.5 * Field_scale * objects_scale;
+      float b = 0.5 * Field_scale * objects_scale;    
+      float z = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
+      float x = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      WIN3D_Diagrams.vertex(x, y, z, 0, 0);
+    }  
+    
+    WIN3D_Diagrams.endShape(CLOSE);
+  }
+
+  else if (display_Field_Image == 3) {
+    WIN3D_Diagrams.beginShape();
+    WIN3D_Diagrams.texture(Field_Image);    
+    
+    //WIN3D_Diagrams.stroke(255, 255, 255, 0);
+    WIN3D_Diagrams.stroke(0);
+    
+    WIN3D_Diagrams.fill(255, 255, 255, 0);  
+    
+    float x = Field_Elevation * objects_scale;
+    
+    {
+      float a = -0.5 * Field_scale * objects_scale;
+      float b = -0.5 * Field_scale * objects_scale;    
+      float y = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
+      float z = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      WIN3D_Diagrams.vertex(x, y, z, 0, Field_RES2);
+    }
+    {
+      float a = 0.5 * Field_scale * objects_scale;
+      float b = -0.5 * Field_scale * objects_scale;    
+      float y = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
+      float z = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      WIN3D_Diagrams.vertex(x, y, z, Field_RES1, Field_RES2);
+    }  
+    {
+      float a = 0.5 * Field_scale * objects_scale;
+      float b = 0.5 * Field_scale * objects_scale;    
+      float y = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
+      float z = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      WIN3D_Diagrams.vertex(x, y, z, Field_RES1, 0);
+    }  
+    {
+      float a = -0.5 * Field_scale * objects_scale;
+      float b = 0.5 * Field_scale * objects_scale;    
+      float y = a * cos_ang(Field_Image_rotation) - b * sin_ang(Field_Image_rotation);
+      float z = a * sin_ang(Field_Image_rotation) + b * cos_ang(Field_Image_rotation); 
+      WIN3D_Diagrams.vertex(x, y, z, 0, 0);
+    }  
+    
+    WIN3D_Diagrams.endShape(CLOSE);
+  }
+
 }
 
 void SOLARCHVISION_draw_objects () {
@@ -11863,7 +11990,7 @@ void add_ParametricGeometries () {
     float z = 0;
     float r = 10;
     add_RecursiveSphere(1, x,y,z, r, 5, 0);
-    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(r, x,y,z, 2,2,2, 1,1,1, 0)};
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }
 
@@ -11873,7 +12000,7 @@ void add_ParametricGeometries () {
     float z = 0;
     float r = 8;
     add_RecursiveSphere(2, x,y,z, r, 4, 0);
-    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(r, x,y,z, 2,2,2, 1,1,1, 0)};
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }
 
@@ -11883,10 +12010,34 @@ void add_ParametricGeometries () {
     float z = 0;
     float r = 8;
     add_RecursiveSphere(3, x,y,z, r, 3, 0);
-    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(r, x,y,z, 2,2,2, 1,1,1, 0)};
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }
 */
+
+  {
+    float x = 25;
+    float y = 25;
+    float z = 25;
+    float r = 10;
+    add_RecursiveSphere(1, x,y,z, r, 4, 0);
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
+    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+  }
+  
+  {
+    float x = 0;
+    float y = 0;
+    float z = -1;
+    float dx = 200;
+    float dy = 200;
+    float dz = 2;
+    float t = 0;
+    add_Box_Core(1, x,y,z, dx, dy, dz, t);
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, t)};
+    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+  }  
+
 
   {
     float x = 0;
@@ -11926,6 +12077,8 @@ void add_ParametricGeometries () {
     ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, t)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }
+  
+  
 
 }
 
@@ -11936,7 +12089,7 @@ int Field_RES2 = 400;
 
 PImage Field_Image = createImage(Field_RES1, Field_RES2, RGB);
 
-float Field_Multiplier = 0.2; //10.0; 
+float Field_Multiplier = 1.0; //0.1; //10.0; 
 
 float Field_Elevation = 0;
 
@@ -11950,7 +12103,41 @@ void calculate_ParametricGeometries_Field () {
       float val = 0;
       for (int n = 0; n < SolidBuildings.length; n++) {
         
-        float d = SolidBuildings[n].Distance((i - 0.5 * Field_RES1) * (Field_scale / Field_RES1), (j - 0.5 * Field_RES2) * (Field_scale / Field_RES2), Field_Elevation);
+        float d = 0; 
+        
+        if (display_Field_Image == 1) {
+          float a = (i - 0.5 * Field_RES1) * (Field_scale / Field_RES1);
+          float b = (j - 0.5 * Field_RES2) * (Field_scale / Field_RES2);
+          float c = Field_Elevation;
+          
+          float x = a * cos_ang(-Field_Image_rotation) - b * sin_ang(-Field_Image_rotation);
+          float y = a * sin_ang(-Field_Image_rotation) + b * cos_ang(-Field_Image_rotation);
+          float z = c;
+          
+          d = SolidBuildings[n].Distance(x, y, z);
+        }
+        else if (display_Field_Image == 2) {
+          float a = (i - 0.5 * Field_RES1) * (Field_scale / Field_RES1);
+          float b = (j - 0.5 * Field_RES2) * (Field_scale / Field_RES2);
+          float c = Field_Elevation;
+          
+          float z = a * cos_ang(-Field_Image_rotation) - b * sin_ang(-Field_Image_rotation);
+          float x = a * sin_ang(-Field_Image_rotation) + b * cos_ang(-Field_Image_rotation);
+          float y = c; 
+          
+          d = SolidBuildings[n].Distance(-x, -y, z);
+        }
+        else if (display_Field_Image == 3) {
+          float a = (i - 0.5 * Field_RES1) * (Field_scale / Field_RES1);
+          float b = (j - 0.5 * Field_RES2) * (Field_scale / Field_RES2);
+          float c = Field_Elevation;
+          
+          float y = a * cos_ang(-Field_Image_rotation) - b * sin_ang(-Field_Image_rotation);
+          float z = a * sin_ang(-Field_Image_rotation) + b * cos_ang(-Field_Image_rotation);
+          float x = c; 
+          
+          d = SolidBuildings[n].Distance(x, -y, -z);
+        }
         
         if (d > 0) {
           val += 1.0 / d;
