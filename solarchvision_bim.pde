@@ -12015,26 +12015,18 @@ void add_ParametricGeometries () {
   }
 */
 
-  {
-    float x = 25;
-    float y = 25;
-    float z = 25;
-    float r = 10;
-    add_RecursiveSphere(1, x,y,z, r, 4, 0);
-    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
-    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
-  }
+
   
   {
     float x = 0;
     float y = 0;
-    float z = -1;
-    float dx = 200;
-    float dy = 200;
-    float dz = 2;
+    float z = -0.5;
+    float dx = 100;
+    float dy = 100;
+    float dz = 1;
     float t = 0;
     add_Box_Core(1, x,y,z, dx, dy, dz, t);
-    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, t)};
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(7, x,y,z, 8,8,8, dx,dy,dz, t)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }  
 
@@ -12061,7 +12053,7 @@ void add_ParametricGeometries () {
     float dz = 15;
     float t = 0;
     add_Box_Core(1, x,y,z, dx, dy, dz, t);
-    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, t)};
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(2, x,y,z, 8,8,8, dx,dy,dz, t)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }
 
@@ -12074,10 +12066,19 @@ void add_ParametricGeometries () {
     float dz = 10;
     float t = 45;
     add_Box_Core(1, x,y,z, dx, dy, dz, t);
-    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, t)};
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(3, x,y,z, 8,8,8, dx,dy,dz, t)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }
-  
+
+  {
+    float x = 25;
+    float y = 25;
+    float z = 25;
+    float r = 10;
+    add_RecursiveSphere(4, x,y,z, r, 4, 0);
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
+    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+  }  
   
 
 }
