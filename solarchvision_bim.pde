@@ -19,7 +19,6 @@ int Climatic_weather_model = 1; // 0:linear 1:average 2:sky-based. Used for some
 
 int automated = 0; //0: User interface, 1: Automatic
 
-
 String CLIMATE_EPW_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW";
 
 String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_EMPTY"; 
@@ -948,7 +947,7 @@ void draw () {
   
     WIN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
   
-    //SOLARCHVISION_SunPath(0, 0, 0, 0.95 * sky_scale, LocationLatitude);
+    SOLARCHVISION_SunPath(0, 0, 0, 0.95 * sky_scale, LocationLatitude);
     
     //SOLARCHVISION_draw_sky();
     
@@ -10397,7 +10396,7 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
 
 
 void SOLARCHVISION_update_objects2D_onLand () {
-/*
+
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
   //for (int i = 1; i < LAND_n_I - 1; i += 1) { // to ignoring the center!
     for (int j = 0; j < LAND_n_J - 1; j += 1) {
@@ -10429,7 +10428,7 @@ void SOLARCHVISION_update_objects2D_onLand () {
       }  
     }
   }
-*/ 
+
 }
 
 
@@ -12016,7 +12015,6 @@ void add_ParametricGeometries () {
 */
 
 
-  
   {
     float x = 0;
     float y = 0;
@@ -12079,8 +12077,65 @@ void add_ParametricGeometries () {
     ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }  
-  
 
+/*
+  {
+    float x = 50;
+    float y = 0;
+    float z = 0;
+    float dx = 5;
+    float dy = 10;
+    float dz = 15;
+    float t = 0;
+    add_Box_Core(-1, x,y,z, dx, dy, dz, t);
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, t)};
+    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+  }
+
+  {
+    float x = 0;
+    float y = 0;
+    float z = 0;
+    float dx = 5;
+    float dy = 10;
+    float dz = 15;
+    float t = 0;
+    
+    float q = 0.25;
+    {
+      add_Box_Core(1, x,y,z+dz, dx, dy, q, t);
+      ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z+dz, 8,8,8, dx,dy,q, t)};
+      SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+    }
+    {
+      add_Box_Core(6, x,y,z-dz, dx, dy, q, t);
+      ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z-dz, 8,8,8, dx,dy,q, t)};
+      SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);    
+    }
+    
+    {  
+      add_Box_Core(5, x,y+dy,z, dx, q, dz, t);
+      ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y+dy,z, 8,8,8, dx,q,dz, t)};
+      SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+    }    
+    {
+      add_Box_Core(3, x,y-dy,z, dx, q, dz, t);
+      ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y-dy,z, 8,8,8, dx,q,dz, t)};
+      SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+    } 
+    { 
+      add_Box_Core(4, x+dx,y,z, q, dy, dz, t);
+      ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x+dx,y,z, 8,8,8, q,dy,dz, t)};
+      SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding); 
+    }
+    {
+      add_Box_Core(2, x-dx,y,z, q, dy, dz, t);
+      ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x-dx,y,z, 8,8,8, q,dy,dz, t)};
+      SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+    }   
+ 
+  }
+*/
 }
 
 float Field_scale_U = 200; //800;
