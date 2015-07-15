@@ -1,5 +1,7 @@
 import processing.pdf.*;
 
+float Field_Image_Power = 2.0; // 1/2/3
+
 float GlobalAlbedo = 0; // 0-100
 
 float MAX_SHADING_DIST = 100; // the biggest object should be 100
@@ -8085,14 +8087,21 @@ void GRAPHS_keyPressed () {
                   Materials_Selection %= Materials_Number;
                   update_DevelopDATA = 1; 
                   redraw_scene = 1; break;  
-
+        /*
         case 'e' :Field_scale_U *= pow(2.0, 0.5); Field_scale_V *= pow(2.0, 0.5); 
                   if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
         case 'E' :Field_scale_U /= pow(2.0, 0.5); Field_scale_V /= pow(2.0, 0.5);                   
                   if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
-
+        */
+        case 'e' :Field_Image_Power *= pow(2.0, 0.5); Field_scale_V *= pow(2.0, 0.5); 
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;
+        case 'E' :Field_Image_Power /= pow(2.0, 0.5); Field_scale_V /= pow(2.0, 0.5); 
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;
+        
         case 'r' :Field_Image_rotation[display_Field_Image] = (Field_Image_rotation[display_Field_Image] + 15) % 360; 
                   if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
@@ -11991,8 +12000,7 @@ class ParametricGeometry {
     y += posY;  
     z += posZ;
 
-    //return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value); 
-    return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (6.0 / (powX + powY + powZ))) / value);
+    return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value); 
     
   } 
   
@@ -12238,7 +12246,7 @@ void calculate_ParametricGeometries_Field () {
         }
         
         if (d > 0) {
-          val += 1.0 / d;
+          val += 1.0 / pow(d, Field_Image_Power);
         } 
       }
       
@@ -12405,14 +12413,7 @@ void add_SuperSphere (int m, float cx, float cy, float cz, float px, float py, f
     float x = TempObjectVertices[i][0];
     float y = TempObjectVertices[i][1];
     float z = TempObjectVertices[i][2];
-    
-    float d = pow(x*x + y*y + z*z, 0.5);
-    if (d != 0) {
-      x /= d;
-      y /= d;
-      z /= d;
-    } 
-    
+
     float the_dist = (pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value);
     if (the_dist != 0) {
       TempObjectVertices[i][0] = x / the_dist;
