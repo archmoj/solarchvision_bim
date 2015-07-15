@@ -8086,17 +8086,33 @@ void GRAPHS_keyPressed () {
                   update_DevelopDATA = 1; 
                   redraw_scene = 1; break;  
 
-        case 'e' :Field_scale_U *= pow(2.0, 0.5); Field_scale_V *= pow(2.0, 0.5); calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
-        case 'E' :Field_scale_U /= pow(2.0, 0.5); Field_scale_V /= pow(2.0, 0.5); calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
+        case 'e' :Field_scale_U *= pow(2.0, 0.5); Field_scale_V *= pow(2.0, 0.5); 
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;
+        case 'E' :Field_scale_U /= pow(2.0, 0.5); Field_scale_V /= pow(2.0, 0.5);                   
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;
 
-        case 'r' :Field_Image_rotation[display_Field_Image] = (Field_Image_rotation[display_Field_Image] + 15) % 360; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
-        case 'R' :Field_Image_rotation[display_Field_Image] = (Field_Image_rotation[display_Field_Image] + 360 - 15) % 360; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
+        case 'r' :Field_Image_rotation[display_Field_Image] = (Field_Image_rotation[display_Field_Image] + 15) % 360; 
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;
+        case 'R' :Field_Image_rotation[display_Field_Image] = (Field_Image_rotation[display_Field_Image] + 360 - 15) % 360; 
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;
 
-        case 'w' :display_Field_Image = (display_Field_Image + 1) % 4; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
-        case 'W' :display_Field_Image = (display_Field_Image + 4 - 1) % 4; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
+        case 'w' :display_Field_Image = (display_Field_Image + 1) % 4; 
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;
+        case 'W' :display_Field_Image = (display_Field_Image + 4 - 1) % 4;
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;
 
-        case 'q' :Field_Multiplier *= pow(2.0, 0.5); calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
-        case 'Q' :Field_Multiplier /= pow(2.0, 0.5); calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
+        case 'q' :Field_Multiplier *= pow(2.0, 0.5); 
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;
+        case 'Q' :Field_Multiplier /= pow(2.0, 0.5); 
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;
   
         case 'm' :draw_sorted = int((draw_sorted + 1) % 2); redraw_scene = 1; break;
         case 'M' :draw_sorted = int((draw_sorted + 1) % 2); redraw_scene = 1; break;
@@ -12086,12 +12102,12 @@ void add_ParametricGeometries () {
     float x = -25;
     float y = -25;
     float z = 25;
-    float rx = 10;
+    float rx = 40;
     float ry = 10;
-    float rz = 10;
-    float px = 8;
-    float py = 8;
-    float pz = 8;
+    float rz = 20;
+    float px = 2;
+    float py = 2;
+    float pz = 2;
     
     add_SuperSphere (5, x,y,z, pz,py,pz, rx,ry,rz, 5);
     ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, 0)};
