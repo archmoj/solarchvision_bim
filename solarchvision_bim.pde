@@ -664,7 +664,7 @@ void setup () {
 
   SOLARCHVISION_add_3Dobjects();
   
-  SOLARCHVISION_add_ParametricSurfaces(1); 
+  //SOLARCHVISION_add_ParametricSurfaces(1);  
 
   //SOLARCHVISION_add_ParametricGeometries(); 
   
@@ -7932,9 +7932,9 @@ void GRAPHS_keyPressed () {
                   BEGIN_DAY = int(365 + BEGIN_DAY - 1) % 365;
                   try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
                   redraw_scene = 1; break; 
-                  
-        //case DOWN  :BEGIN_DAY = (365 + BEGIN_DAY - 1) % 365; redraw_scene = 1; break;
-        //case UP  :BEGIN_DAY = (BEGIN_DAY + 1) % 365; redraw_scene = 1; break;
+                 
+        case DOWN  :BEGIN_DAY = (365 + BEGIN_DAY - 1) % 365; redraw_scene = 1; break;
+        case UP  :BEGIN_DAY = (BEGIN_DAY + 1) % 365; redraw_scene = 1; break;
               
         case RIGHT :drw_Layer = (drw_Layer + 1) % num_layers; redraw_scene = 1; break;
         case LEFT :drw_Layer = (drw_Layer + num_layers - 1) % num_layers; redraw_scene = 1; break; 
@@ -8015,7 +8015,9 @@ void GRAPHS_keyPressed () {
         case '*' :join_type *= -1;
                   update_DevelopDATA = 1;
                   redraw_scene = 1; break; 
-        */          
+        */
+
+        /*        
         case 'a'  :Angle_inclination -= 5;
                   if (Angle_inclination < -90) Angle_inclination = -90;
                   update_DevelopDATA = 1;
@@ -8029,6 +8031,7 @@ void GRAPHS_keyPressed () {
                   redraw_scene = 1; break; 
         case 'Z' :Angle_orientation = (Angle_orientation + 5) % 360;
                   redraw_scene = 1; break; 
+        */
         
         case 'd' :develop_per_day = (develop_per_day + 1) % 4;
                   update_DevelopDATA = 1;
@@ -8091,18 +8094,18 @@ void GRAPHS_keyPressed () {
                   Materials_Selection %= Materials_Number;
                   update_DevelopDATA = 1; 
                   redraw_scene = 1; break;  
-        /*
-        case 'e' :Field_scale_U *= pow(2.0, 0.5); Field_scale_V *= pow(2.0, 0.5); 
+        
+        case 'w' :Field_scale_U *= pow(2.0, 0.5); Field_scale_V *= pow(2.0, 0.5); 
                   if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
-        case 'E' :Field_scale_U /= pow(2.0, 0.5); Field_scale_V /= pow(2.0, 0.5);                   
+        case 'W' :Field_scale_U /= pow(2.0, 0.5); Field_scale_V /= pow(2.0, 0.5);                   
                   if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
-        */
-        case 'e' :Field_Image_Power *= pow(2.0, 0.5); Field_scale_V *= pow(2.0, 0.5); 
+        
+        case 'e' :Field_Image_Power *= pow(2.0, 0.5); 
                   if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
-        case 'E' :Field_Image_Power /= pow(2.0, 0.5); Field_scale_V /= pow(2.0, 0.5); 
+        case 'E' :Field_Image_Power /= pow(2.0, 0.5);  
                   if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
         
@@ -8113,12 +8116,20 @@ void GRAPHS_keyPressed () {
                   if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
 
-        case 'w' :display_Field_Image = (display_Field_Image + 1) % 4; 
+        case 'a' :display_Field_Image = (display_Field_Image + 1) % 4; 
                   if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
-        case 'W' :display_Field_Image = (display_Field_Image + 4 - 1) % 4;
+        case 'A' :display_Field_Image = (display_Field_Image + 4 - 1) % 4;
                   if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
+
+        case 'z' :Field_Elevation[display_Field_Image] += 2.5;
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;        
+        case 'Z' :Field_Elevation[display_Field_Image] -= 2.5; 
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;        
+
 
         case 'q' :Field_Multiplier *= pow(2.0, 0.5); 
                   if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
@@ -9019,9 +9030,6 @@ void keyPressed () {
         case UP    :WIN3D_Y_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1; break;
         case DOWN  :WIN3D_Y_coordinate -= WIN3D_S_coordinate; WIN3D_Update = 1; break;
         */
-        
-        case UP    :Field_Elevation[display_Field_Image] += 2.5; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
-        case DOWN  :Field_Elevation[display_Field_Image] -= 2.5; calculate_ParametricGeometries_Field(); WIN3D_Update = 1; break;
         
       }
     }
@@ -10468,9 +10476,10 @@ void SOLARCHVISION_add_3Dobjects () {
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
 
-/*  
-  for (int i = 1; i <= 123; i += 1) {
+ 
+  //for (int i = 1; i <= 123; i += 1) {
   //for (int i = 1; i <= 6; i += 1) {
+  for (int i = 20; i <= 30; i += 1) {
     
     int m = 1 + (i % 6); 
     
@@ -10482,7 +10491,7 @@ void SOLARCHVISION_add_3Dobjects () {
       SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, x,y,z, 1,1,1);
     }
   }
-*/  
+  
 
 
 
