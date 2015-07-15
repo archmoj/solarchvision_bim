@@ -659,10 +659,14 @@ void setup () {
   SOLARCHVISION_update_date();
 
   SOLARCHVISION_update_station();
+  
+  SOLARCHVISION_add_SkySphere();
 
-  SOLARCHVISION_update_objects();
+  SOLARCHVISION_add_3Dobjects();
+  
+  SOLARCHVISION_add_ParametricSurfaces(1); 
 
-  add_ParametricGeometries(); 
+  //SOLARCHVISION_add_ParametricGeometries(); 
   
   calculate_ParametricGeometries_Field();
   
@@ -1800,7 +1804,7 @@ void SOLARCHVISION_update_station () {
     
     allObject2D_num = 0;
   }
-  SOLARCHVISION_update_objects2D_onLand();
+  SOLARCHVISION_add_2Dobjects_onLand();
   
   WORLD_Update = 1;
   WIN3D_Update = 1; 
@@ -9319,10 +9323,7 @@ void LoadWorldImages () {
   WORLD_VIEW_BoundariesY = new float[number_of_WORLD_viewports][2];
     
   WORLD_VIEW_GridDisplay = new int[number_of_WORLD_viewports];
-  
 
-  
-  
   for (int i = 0; i < number_of_WORLD_viewports; i += 1) {
     String MapFilename = WorldViewFolder + "/" + WORLD_VIEW_Filenames[i];
     
@@ -10414,7 +10415,7 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
 }  
 
 
-void SOLARCHVISION_update_objects2D_onLand () {
+void SOLARCHVISION_add_2Dobjects_onLand () {
 /*
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
   //for (int i = 1; i < LAND_n_I - 1; i += 1) { // to ignoring the center!
@@ -10451,9 +10452,7 @@ void SOLARCHVISION_update_objects2D_onLand () {
 }
 
 
-void SOLARCHVISION_update_objects () {
-  
-  add_RecursiveSphere(0, 0,0,0, 1, 3, 1); // SKY
+void SOLARCHVISION_add_3Dobjects () {
 
   //add_RecursiveSphere(0, 0,0,0, 50, 3, 0);
   
@@ -10701,7 +10700,83 @@ void SOLARCHVISION_update_objects () {
 
 }
 
-float objects_scale = 1.0; //0.5;
+
+
+void SOLARCHVISION_add_ParametricSurfaces (int m) {
+
+  float stp_u = 0.05;
+  float stp_v = 0.05;
+  
+  for (float a = -1; a < 1; a += stp_u) {
+    for (float b = -1; b < 1; b += stp_v) {
+
+      int[] newFace = {};
+      
+      for (int i = 0; i < 4; i++) {
+        
+        float u = a;
+        float v = b;
+        
+        if ((i == 1) || (i == 2)) u += stp_u;
+        if ((i == 2) || (i == 3)) v += stp_v;
+        
+        /*
+        //---------------------------------------
+        float x = 20 * u; 
+        float y = 20 * v; 
+        float z = 10 * sin(u * PI) * cos(v * PI); 
+        //---------------------------------------
+        */
+
+        //---------------------------------------
+        float x = 10 * sin(u * PI); 
+        float y = 10 * sin(v * PI);
+        float z = 10 * cos((u + v) * PI);
+        //---------------------------------------   
+
+        
+        /*
+        //---------------------------------------
+        float x0 = sin(u * PI); 
+        float y0 = sin(v * PI);
+        float z0 = cos((u + v) * PI);
+        
+        float d = pow(x0*x0 + y0*y0 + z0*z0, 0.5);
+        float x = 0;
+        float y = 0;
+        float z = 0;
+        if (d != 0) {
+          x = 10 * x1 / d;  
+          y = 10 * y1 / d;  
+          z = 10 * z1 / d;  
+        }
+        //---------------------------------------   
+        */     
+
+
+
+        int[] f = {addToVertices(x,y,z)};
+        newFace = concat(newFace, f);
+      }
+      defaultMaterial = m;
+    
+      addToFaces(newFace);      
+    }
+  }
+}
+
+
+
+
+void SOLARCHVISION_add_SkySphere () {
+  
+  add_RecursiveSphere(0, 0,0,0, 1, 3, 1); // SKY
+  
+}
+
+
+
+float objects_scale = 1.0; 
 
 
 
@@ -12008,7 +12083,7 @@ class ParametricGeometry {
 
 ParametricGeometry[] SolidBuildings = {};
 
-void add_ParametricGeometries () {
+void SOLARCHVISION_add_ParametricGeometries () {
 /*
   {
     float x = 0;
@@ -12124,64 +12199,7 @@ void add_ParametricGeometries () {
 
 
 
-/*
-  {
-    float x = 50;
-    float y = 0;
-    float z = 0;
-    float dx = 5;
-    float dy = 10;
-    float dz = 15;
-    float t = 0;
-    add_Box_Core(-1, x,y,z, dx, dy, dz, t);
-    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, t)};
-    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
-  }
 
-  {
-    float x = 0;
-    float y = 0;
-    float z = 0;
-    float dx = 5;
-    float dy = 10;
-    float dz = 15;
-    float t = 0;
-    
-    float q = 0.25;
-    {
-      add_Box_Core(1, x,y,z+dz, dx, dy, q, t);
-      ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z+dz, 8,8,8, dx,dy,q, t)};
-      SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
-    }
-    {
-      add_Box_Core(6, x,y,z-dz, dx, dy, q, t);
-      ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z-dz, 8,8,8, dx,dy,q, t)};
-      SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);    
-    }
-    
-    {  
-      add_Box_Core(5, x,y+dy,z, dx, q, dz, t);
-      ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y+dy,z, 8,8,8, dx,q,dz, t)};
-      SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
-    }    
-    {
-      add_Box_Core(3, x,y-dy,z, dx, q, dz, t);
-      ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y-dy,z, 8,8,8, dx,q,dz, t)};
-      SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
-    } 
-    { 
-      add_Box_Core(4, x+dx,y,z, q, dy, dz, t);
-      ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x+dx,y,z, 8,8,8, q,dy,dz, t)};
-      SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding); 
-    }
-    {
-      add_Box_Core(2, x-dx,y,z, q, dy, dz, t);
-      ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x-dx,y,z, 8,8,8, q,dy,dz, t)};
-      SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
-    }   
- 
-  }
-*/
 }
 
 float Field_scale_U = 200; //800;
