@@ -1,11 +1,6 @@
 import processing.pdf.*;
 
-
-
-
 float GlobalAlbedo = 0; // 0-100
-
-
 
 float MAX_SHADING_DIST = 100; // the biggest object should be 100
 
@@ -11933,14 +11928,11 @@ void SOLARCHVISION_LoadLAND (String ProjectSite) {
 */
 }
 
-
-
-
  
 class ParametricGeometry { 
   float value, posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotZ; 
   
-  ParametricGeometry (float v, float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float r) {  
+  ParametricGeometry (float v, float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float t) {  
     value = v;
     posX = x;
     posY = y; 
@@ -11951,7 +11943,7 @@ class ParametricGeometry {
     scaleX = sx;
     scaleY = sy; 
     scaleZ = sz;    
-    rotZ = r;
+    rotZ = t;
   } 
   
   void updatePosition (float x, float y, float z) {  
@@ -11960,8 +11952,8 @@ class ParametricGeometry {
     posZ = z;
   }   
   
-  void RotateZ (float r) {  
-    rotZ += r;
+  void RotateZ (float t) {  
+    rotZ += t;
   }    
  
   void Scale (float a, float b, float c) {  
@@ -12088,6 +12080,25 @@ void add_ParametricGeometries () {
     ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }  
+
+
+  {
+    float x = -25;
+    float y = -25;
+    float z = 25;
+    float rx = 10;
+    float ry = 10;
+    float rz = 10;
+    float px = 8;
+    float py = 8;
+    float pz = 8;
+    
+    add_SuperSphere (5, x,y,z, pz,py,pz, rx,ry,rz, 5);
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, 0)};
+    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+  }  
+
+
 
 /*
   {
@@ -12339,7 +12350,7 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
   if (isSky == 0) {
     addTempObjectToScene(cx,cy,cz,r,r,r);
   }
-  else{
+  else if (isSky == 1) {
     
     skyVertices = TempObjectVertices;
     skyFaces = TempObjectFaces;
@@ -12350,7 +12361,51 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
     POINTER_TempObjectVertices = 1;
     POINTER_TempObjectFaces = 1;  
   }  
+  else {
+    // Nothing. In this case we should add temp object outside this function. See SuperSphere
+  }
   
+}  
+
+
+void add_SuperSphere (int m, float cx, float cy, float cz, float px, float py, float pz, float sx, float sy, float sz, int Teselation) {
+
+  add_RecursiveSphere(m, cx, cy, cz, 1, Teselation, -1); // passing with isSky:-1
+
+  float value, posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotZ; 
+  value = 1;
+  posX = 0;
+  posY = 0; 
+  posZ = 0;    
+  powX = px;
+  powY = py;
+  powZ = pz;    
+  scaleX = 1;
+  scaleY = 1; 
+  scaleZ = 1;    
+
+  for (int i = 1; i < POINTER_TempObjectVertices; i++) {
+    
+    float x = TempObjectVertices[i][0];
+    float y = TempObjectVertices[i][1];
+    float z = TempObjectVertices[i][2];
+    
+    float d = pow(x*x + y*y + z*z, 0.5);
+    if (d != 0) {
+      x /= d;
+      y /= d;
+      z /= d;
+    } 
+    
+    float the_dist = (pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value);
+    if (the_dist != 0) {
+      TempObjectVertices[i][0] = x / the_dist;
+      TempObjectVertices[i][1] = y / the_dist;
+      TempObjectVertices[i][2] = z / the_dist;
+    }
+  }
+
+  addTempObjectToScene(cx,cy,cz,sx,sy,sz);
 }  
 
 
