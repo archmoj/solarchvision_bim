@@ -662,11 +662,11 @@ void setup () {
   
   SOLARCHVISION_add_SkySphere();
 
-  SOLARCHVISION_add_3Dobjects();
+  //SOLARCHVISION_add_3Dobjects();
   
   //SOLARCHVISION_add_ParametricSurfaces(1);  
 
-  //SOLARCHVISION_add_ParametricGeometries(); 
+  SOLARCHVISION_add_ParametricGeometries(); 
   
   calculate_ParametricGeometries_Field();
   
@@ -9002,23 +9002,54 @@ void keyPressed (KeyEvent e) {
   if (e.isAltDown() == true) {
     if (key == CODED) { 
       switch(keyCode) {
-        case 33 :Field_Elevation[display_Field_Image] += 2.5;
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
-                  break;        
-        case 34 :Field_Elevation[display_Field_Image] -= 2.5; 
+
+        case RIGHT :Field_Image_rotation[display_Field_Image] = (Field_Image_rotation[display_Field_Image] + 15) % 360; 
                   if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
-         
+        case LEFT :Field_Image_rotation[display_Field_Image] = (Field_Image_rotation[display_Field_Image] + 360 - 15) % 360; 
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;           
+        
+        case UP   :Field_Elevation[display_Field_Image] += 2.5;
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;        
+        case DOWN :Field_Elevation[display_Field_Image] -= 2.5; 
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break; 
+
+        case 33 :Field_Elevation[display_Field_Image] += 10;
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;        
+        case 34 :Field_Elevation[display_Field_Image] -= 10; 
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break; 
+        
         case 35 :Field_scale_U *= pow(2.0, 0.5); Field_scale_V *= pow(2.0, 0.5); 
                   if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
         case 36 :Field_scale_U /= pow(2.0, 0.5); Field_scale_V /= pow(2.0, 0.5);                   
                   if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
-                  break;                  
+                  break;
+                 
       }
     }
     else {
       switch(key) {
+
+        case ']' :display_Field_Image = (display_Field_Image + 1) % 4; 
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;
+        case '[' :display_Field_Image = (display_Field_Image + 4 - 1) % 4;
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;        
+        
+        case '0' :Field_Elevation[display_Field_Image] = 0; 
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;
+                  
+        case '.' :Field_Image_rotation[display_Field_Image] = 0; 
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;                  
         
         case '/' :Field_Image_Power *= pow(2.0, 0.5); 
                   if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
@@ -9027,26 +9058,16 @@ void keyPressed (KeyEvent e) {
                   if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
         
-        case '0' :Field_Image_rotation[display_Field_Image] = (Field_Image_rotation[display_Field_Image] + 15) % 360; 
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
-                  break;
-        case '.' :Field_Image_rotation[display_Field_Image] = (Field_Image_rotation[display_Field_Image] + 360 - 15) % 360; 
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
-                  break;
-
-        case ']' :display_Field_Image = (display_Field_Image + 1) % 4; 
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
-                  break;
-        case '[' :display_Field_Image = (display_Field_Image + 4 - 1) % 4;
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
-                  break;
-
         case '+' :Field_Multiplier *= pow(2.0, 0.5); 
                   if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
         case '-' :Field_Multiplier /= pow(2.0, 0.5); 
                   if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
+
+
+
+
  
       }
     }    
@@ -10516,8 +10537,8 @@ void SOLARCHVISION_add_3Dobjects () {
 
  
   //for (int i = 1; i <= 123; i += 1) {
-  //for (int i = 1; i <= 6; i += 1) {
-  for (int i = 20; i <= 30; i += 1) {
+  for (int i = 1; i <= 6; i += 1) {
+  //for (int i = 20; i <= 30; i += 1) {
     
     int m = 1 + (i % 6); 
     
