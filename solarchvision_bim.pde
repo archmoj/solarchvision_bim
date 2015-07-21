@@ -662,11 +662,11 @@ void setup () {
   
   SOLARCHVISION_add_SkySphere();
 
-  //SOLARCHVISION_add_3Dobjects();
+  SOLARCHVISION_add_3Dobjects();
   
   //SOLARCHVISION_add_ParametricSurfaces(1);  
 
-  SOLARCHVISION_add_ParametricGeometries(); 
+  //SOLARCHVISION_add_ParametricGeometries(); 
   
   calculate_ParametricGeometries_Field();
   
@@ -9065,7 +9065,14 @@ void keyPressed (KeyEvent e) {
                   if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
 
-
+        case '>' :Field_Multiplier /= pow(2.0, 0.25); 
+                  Field_Image_Power /= pow(2.0, 0.5); 
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;
+        case '<' :Field_Multiplier *= pow(2.0, 0.25); 
+                  Field_Image_Power *= pow(2.0, 0.5); 
+                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;
 
 
  
@@ -10531,11 +10538,14 @@ void SOLARCHVISION_add_3Dobjects () {
   add_RecursiveSphere(0, 280,0,0, 10, 1, 0);
   */
   
+  
+  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/ogle.obj", 7, 0,0,0, 100000,100000,100000);
+  
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
 
- 
+/* 
   //for (int i = 1; i <= 123; i += 1) {
   for (int i = 1; i <= 6; i += 1) {
   //for (int i = 20; i <= 30; i += 1) {
@@ -10550,7 +10560,7 @@ void SOLARCHVISION_add_3Dobjects () {
       SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, x,y,z, 1,1,1);
     }
   }
-  
+//  
 
 
 
