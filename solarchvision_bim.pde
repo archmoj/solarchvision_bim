@@ -69,7 +69,7 @@ String MAKE_Filenames () {
 }
 
 
-int STATION_NUMBER = 0;
+int STATION_NUMBER = 10;
 
 String[][] DEFINED_STATIONS = {
   
@@ -10337,6 +10337,9 @@ void SOLARCHVISION_export_objects () {
   
 void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, float cz, float sx, float sy, float sz) {
   
+  if (m == -1) defaultMaterial = 0;
+  else defaultMaterial = m;
+  
   int[] importVerticeNumber = {0};
   
   String[] FileALL = loadStrings(FileName);
@@ -10354,6 +10357,10 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
     lineSTR = lineSTR.replace("  ", " ");
     
     String[] parts = split(lineSTR, ' ');
+
+    if (parts[0].toLowerCase().equals("g")) {
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % 8);
+    }
     
     if (parts[0].toLowerCase().equals("v")) {
 
@@ -10365,7 +10372,7 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
       
       importVerticeNumber = concat(importVerticeNumber, v);
     }
-  
+    
     if (parts[0].toLowerCase().equals("f")) {
       //int[] newFace = new int[parts.length - 1]; // if we don't have space at the end of the line.
       int[] newFace = new int[parts.length - 2]; // if we have 1 space at the end of the line. 
@@ -10373,8 +10380,6 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
       //println(parts);
     
       for (int n = 0; n < newFace.length; n += 1) {
-
-        defaultMaterial = m;        
         
         newFace[n] = importVerticeNumber[int(parts[n + 1])];
       }
@@ -10539,7 +10544,9 @@ void SOLARCHVISION_add_3Dobjects () {
   */
   
   
-  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/ogle.obj", 7, 0,0,0, 100000,100000,100000);
+  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/Montreal_Downtown.obj", -1, 0,0,0, 100000,100000,100000);
+  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/Vancouver.obj", -1, 0,0,0, 100000,100000,100000);
+  
   
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
