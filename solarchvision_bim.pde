@@ -69,11 +69,11 @@ String MAKE_Filenames () {
 }
 
 
-int STATION_NUMBER = 10;
+int STATION_NUMBER = 0;
 
 String[][] DEFINED_STATIONS = {
   
-                                {"MONTREAL_DORVAL_QC_CA", "Montreal_Downtown", "QC", "45.499187", "-73.568267", "-75", "35.82"},
+                                {"MONTREAL_DORVAL_QC_CA", "Place_Bonaventure", "QC", "45.4995", "-73.5650", "-75", "30"},
                                 
                                 {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36"},
                                 
@@ -134,7 +134,7 @@ int record_JPG = 0;
 int record_PDF = 0;
 
 int j_start = 0;
-int j_end = 1; //16; // Variable
+int j_end = 4; //16; // Variable
 
 int max_j_end_forecast = 16; // Constant
 int max_j_end_observed = 0; // Variable
@@ -6572,14 +6572,16 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       
                       if (Round_Latitude < 0) Near_Latitude += "S";
                       else Near_Latitude += "N";
-                      
-                      if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Montreal_Downtown")) { 
+
+                      if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Place_Bonaventure")) { 
+                        File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/Place_Bonaventure" + "/";
+                      }                      
+                      else if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Montreal_Downtown")) { 
                         if (variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/MONTREAL_DOWNTOWN" + "/";
                         if (variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/EV_BUILDING" + "/";
                       }
                       else {
-                        if (variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/Complex_" + Near_Latitude + "/";
-                        if (variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/Complex_" + Near_Latitude + "/";
+                        File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/Complex_" + Near_Latitude + "/";
                       }                          
                       
                       
@@ -6589,14 +6591,16 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       else {
                         File_Name += "DIF_" + STR_SHD[SHD];
                       }
-                      
-                      if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Montreal_Downtown")) { 
+
+                      if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Place_Bonaventure")) { 
+                        File_Name += "_" + "Place_Bonaventure_Camera" + nf(variation, 2) + ".PNG";
+                      }                      
+                      else if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Montreal_Downtown")) { 
                         if (variation == 1) File_Name += "_" + "Montreal_Downtown.PNG";
                         if (variation == 2) File_Name += "_" + "Montreal_EV_BUILDING_B.PNG";
                       }
                       else {
-                        if (variation == 1) File_Name += "_" + "Complex_" + Near_Latitude + "_Camera01.PNG";
-                        if (variation == 2) File_Name += "_" + "Complex_" + Near_Latitude + "_Camera02.PNG";
+                        File_Name += "_" + "Complex_" + Near_Latitude + "_Camera" + nf(variation, 2) + ".PNG";
                       }
 
                       //println (File_Name);
@@ -7868,6 +7872,16 @@ void GRAPHS_keyPressed (KeyEvent e) {
       }
       else {
         switch(key) {
+          case '0' : variation = 0; redraw_scene = 1; break;
+          case '1' : variation = 1; redraw_scene = 1; break;
+          case '2' : variation = 2; redraw_scene = 1; break;
+          case '3' : variation = 3; redraw_scene = 1; break;
+          case '4' : variation = 4; redraw_scene = 1; break;
+          case '5' : variation = 5; redraw_scene = 1; break;
+          case '6' : variation = 6; redraw_scene = 1; break;
+          case '7' : variation = 7; redraw_scene = 1; break;
+          case '8' : variation = 8; redraw_scene = 1; break;
+          case '9' : variation = 9; redraw_scene = 1; break;
         }
       }    
     }
@@ -8159,14 +8173,12 @@ void GRAPHS_keyPressed (KeyEvent e) {
         }
     
       }
-      
-      //redraw();
-      if (redraw_scene == 1) {
-        GRAPHS_Update = 1;
-      }
     }
   }
-  
+
+  if (redraw_scene == 1) {
+    GRAPHS_Update = 1;
+  }  
 }
 
 
@@ -10544,8 +10556,8 @@ void SOLARCHVISION_add_3Dobjects () {
   */
   
   
-  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/Montreal_Downtown.obj", -1, 0,0,0, 100000,100000,100000);
-  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/Vancouver.obj", -1, 0,0,0, 100000,100000,100000);
+  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/Place_Bonaventure.obj", -1, 0,0,0, 1,1,1);
+  
   
   
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
