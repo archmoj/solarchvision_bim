@@ -73,6 +73,8 @@ int STATION_NUMBER = 0;
 
 String[][] DEFINED_STATIONS = {
   
+                                {"TORONTO_ISLAND_ON_CA", "Ryerson_University", "ON", "43.6593", "-79.3779", "-75", "95"}, 
+  
                                 {"MONTREAL_DORVAL_QC_CA", "Place_Bonaventure", "QC", "45.4995", "-73.5650", "-75", "30"},
                                 
                                 {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36"},
@@ -6573,8 +6575,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       if (Round_Latitude < 0) Near_Latitude += "S";
                       else Near_Latitude += "N";
 
-                      if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Place_Bonaventure")) { 
-                        File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/Place_Bonaventure" + "/";
+                      if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Ryerson_University")) { 
+                        File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + "Ryerson_University" + "/";
+                      }   
+                      else if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Place_Bonaventure")) { 
+                        File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + "Place_Bonaventure" + "/";
                       }                      
                       else if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Montreal_Downtown")) { 
                         if (variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/MONTREAL_DOWNTOWN" + "/";
@@ -6592,8 +6597,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                         File_Name += "DIF_" + STR_SHD[SHD];
                       }
 
-                      if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Place_Bonaventure")) { 
-                        File_Name += "_" + "Place_Bonaventure_Camera" + nf(variation, 2) + ".PNG";
+                      if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Ryerson_University")) { 
+                        File_Name += "_" + "Ryerson_University" + "_Camera" + nf(variation, 2) + ".PNG";
+                      }    
+                      else if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Place_Bonaventure")) { 
+                        File_Name += "_" + "Place_Bonaventure" + "_Camera" + nf(variation, 2) + ".PNG";
                       }                      
                       else if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Montreal_Downtown")) { 
                         if (variation == 1) File_Name += "_" + "Montreal_Downtown.PNG";
@@ -10556,7 +10564,8 @@ void SOLARCHVISION_add_3Dobjects () {
   */
   
   
-  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/Place_Bonaventure.obj", -1, 0,0,0, 1,1,1);
+  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/Ryerson_University.obj", -1, 0,0,0, 1,1,1);
+  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/Place_Bonaventure.obj", -1, 0,0,0, 1,1,1);
   
   
   
