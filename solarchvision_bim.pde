@@ -72,7 +72,8 @@ String MAKE_Filenames () {
 int STATION_NUMBER = 0;
 
 String[][] DEFINED_STATIONS = {
-  
+                                {"TORONTO_ISLAND_ON_CA", "Financial_District", "ON", "43.6488", "-79.3817", "-75", "86"},
+                                
                                 {"TORONTO_ISLAND_ON_CA", "Ryerson_University", "ON", "43.6593", "-79.3779", "-75", "95"}, 
   
                                 {"MONTREAL_DORVAL_QC_CA", "Place_Bonaventure", "QC", "45.4995", "-73.5650", "-75", "30"},
@@ -1103,13 +1104,13 @@ void GRAPHS_draw () {
 
     if (record_PDF == 1) {
       Diagrams_textSize(X_View * 0.01 * 2.0 / 3.0);
-      my_text(_text, X_View * 0.5, Y_View * -0.4925, 0);
+      my_text(_text, X_View * 0.55, Y_View * -0.4925, 0);
     }
     else {
       if (Image_Scale == 1) Diagrams_textSize(X_View * 0.01 * Image_Scale);
       else Diagrams_textSize(X_View * 0.01 * Image_Scale * 2.0 / 3.0);
       
-      my_text(_text, X_View * 0.5 * Image_Scale, Y_View * -0.4925 * Image_Scale, 0);
+      my_text(_text, X_View * 0.55 * Image_Scale, Y_View * -0.4925 * Image_Scale, 0);
     }
 
    
@@ -6575,7 +6576,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       if (Round_Latitude < 0) Near_Latitude += "S";
                       else Near_Latitude += "N";
 
-                      if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Ryerson_University")) { 
+
+                      if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Financial_District")) { 
+                        File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + "Financial_District" + "/";
+                      }   
+                      else if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Ryerson_University")) { 
                         File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + "Ryerson_University" + "/";
                       }   
                       else if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Place_Bonaventure")) { 
@@ -6596,8 +6601,12 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       else {
                         File_Name += "DIF_" + STR_SHD[SHD];
                       }
-
-                      if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Ryerson_University")) { 
+                      
+                      
+                      if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Financial_District")) { 
+                        File_Name += "_" + "Financial_District" + "_Camera" + nf(variation, 2) + ".PNG";
+                      }    
+                      else if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Ryerson_University")) { 
                         File_Name += "_" + "Ryerson_University" + "_Camera" + nf(variation, 2) + ".PNG";
                       }    
                       else if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Place_Bonaventure")) { 
@@ -10563,8 +10572,8 @@ void SOLARCHVISION_add_3Dobjects () {
   add_RecursiveSphere(0, 280,0,0, 10, 1, 0);
   */
   
-  
-  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/Ryerson_University.obj", -1, 0,0,0, 1,1,1);
+  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/Financial_District.obj", -1, 0,0,0, 1,1,1);
+  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/Ryerson_University.obj", -1, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/Place_Bonaventure.obj", -1, 0,0,0, 1,1,1);
   
   
