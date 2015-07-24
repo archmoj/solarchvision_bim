@@ -69,7 +69,7 @@ String MAKE_Filenames () {
 }
 
 
-int STATION_NUMBER = 3;
+int STATION_NUMBER = 0;
 
 String[][] DEFINED_STATIONS = {
                                 {"TORONTO_ISLAND_ON_CA", "Financial_District", "ON", "43.6488", "-79.3817", "-75", "86"},
@@ -228,7 +228,7 @@ int _windspd200hPa = 17;
 
 int num_layers = 18; 
 
-int drw_Layer = _developed; //_drybulb; //_cloudcover; //_developed; 
+int drw_Layer = _cloudcover; //_drybulb; //_developed; 
 
 int develop_Layer = drw_Layer;
 
@@ -381,7 +381,7 @@ int databaseNumber_CLIMATE_WY2 = 0;
 int databaseNumber_ENSEMBLE = 1;
 int databaseNumber_OBSERVED = 2;
 int databaseNumber_CLIMATE_EPW = 3;
-int impacts_source = 3; // 0 = Climate WY2, 1 = Forecast, 2 = Observation, 3 = Climate EPW
+int impacts_source = 1; // 0 = Climate WY2, 1 = Forecast, 2 = Observation, 3 = Climate EPW
 
 int draw_impact_summary = 0;
 
@@ -10658,6 +10658,7 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
 
 void SOLARCHVISION_add_3Dobjects () {
 
+  /*
   add_Mesh2(0, 0, 0, 0, 40, 40, 0);
   
   add_Mesh5(1, 10,10,0, 10,10,5, 10,15,10, 10,20,5, 10,20,0);
@@ -10666,7 +10667,7 @@ void SOLARCHVISION_add_3Dobjects () {
   add_Mesh4(4, 10,20,0, 10,20,5, 20,20,5, 20,20,0);
   add_Mesh4(5, 10,10,5, 20,10,5, 20,15,10, 10,15,10);
   add_Mesh4(6, 10,20,5, 10,15,10, 20,15,10, 20,20,5);    
-  
+  */
   
   //add_RecursiveSphere(0, 0,0,0, 50, 3, 0);
   
@@ -10680,7 +10681,7 @@ void SOLARCHVISION_add_3Dobjects () {
   add_RecursiveSphere(0, 280,0,0, 10, 1, 0);
   */
   
-  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/Financial_District.obj", -1, 0,0,0, 1,1,1);
+  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/Financial_District.obj", -1, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/Ryerson_University.obj", -1, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/Place_Bonaventure.obj", -1, 0,0,0, 1,1,1);
   
