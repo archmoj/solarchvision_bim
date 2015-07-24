@@ -180,14 +180,14 @@ int Sample_Year = 2005; // 2003 as a year with extreme condition
 int Sample_Member = 22; // deterministic
 int Sample_Station = 1; // Montreal-Dorval
 
-String[][][][] CLIMATE_EPW;
+float[][][][] CLIMATE_EPW;
 
-String[][][][] CLIMATE_WY2;
+float[][][][] CLIMATE_WY2;
 
-String[][][][] ENSEMBLE;
+float[][][][] ENSEMBLE;
 int[][][][] ENSEMBLE_DATA;
 
-String[][][][] OBSERVED;
+float[][][][] OBSERVED;
 int[][][][] OBSERVED_DATA;
 
 PrintWriter[] File_output_node;
@@ -2581,14 +2581,14 @@ void move_BEGIN_DAY_for_observations () {
 int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
   int File_Found = 0;
 
-  ENSEMBLE = new String [24][365][num_layers][(1 + ENSEMBLE_end - ENSEMBLE_start)];
+  ENSEMBLE = new float [24][365][num_layers][(1 + ENSEMBLE_end - ENSEMBLE_start)];
   ENSEMBLE_DATA = new int [24][365][num_layers][(1 + ENSEMBLE_end - ENSEMBLE_start)]; // -1: undefined, 0: interpolated, 1: data
 
   for (int i = 0; i < 24; i += 1) {
     for (int j = 0; j < 365; j += 1) {
       for (int l = 0; l < num_layers; l += 1) {
         for (int k = 0; k < (1 + ENSEMBLE_end - ENSEMBLE_start); k += 1) {
-          ENSEMBLE[i][j][l][k] = _undefined;
+          ENSEMBLE[i][j][l][k] = FLOAT_undefined;
           ENSEMBLE_DATA[i][j][l][k] = -1; 
         }
       }
@@ -2646,7 +2646,7 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
 
           for (int i = 0; i < 24; i += 1) {
             
-            if (ENSEMBLE[i][j][l][k].equals(_undefined)) {
+            if (ENSEMBLE[i][j][l][k] > 0.9 * FLOAT_undefined) {
               if (pre_v < 0.9 * FLOAT_undefined) {
                 pre_num += 1;
                 
@@ -2664,10 +2664,10 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
                   if (next_j == 365) {
                     next_j = 0;
                   }
-                  if (ENSEMBLE[next_i][next_j][l][k].equals(_undefined)) {
+                  if (ENSEMBLE[next_i][next_j][l][k] > 0.9 * FLOAT_undefined) {
                   }
                   else {
-                    next_v = float(ENSEMBLE[next_i][next_j][l][k]);
+                    next_v = ENSEMBLE[next_i][next_j][l][k];
                     
                     if (l == _winddir) {
                       if ((next_v - pre_v) > 180) next_v -= 360;
@@ -2676,8 +2676,8 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
                   }  
                 }
                 if (next_num < MAX_SEARCH) {
-                  if (l == _winddir) ENSEMBLE[i][j][l][k] = String.valueOf(((next_num * pre_v + pre_num * next_v) / (pre_num + next_num) + 360) % 360);
-                  else ENSEMBLE[i][j][l][k] = String.valueOf((next_num * pre_v + pre_num * next_v) / (pre_num + next_num));
+                  if (l == _winddir) ENSEMBLE[i][j][l][k] = ((next_num * pre_v + pre_num * next_v) / (pre_num + next_num) + 360) % 360;
+                  else ENSEMBLE[i][j][l][k] = (next_num * pre_v + pre_num * next_v) / (pre_num + next_num);
                   
                   //println("[i][j][l][k]", i, j, l, k);
                   //ENSEMBLE_DATA[i][j][l][k] = 0; // On Layers: RH and TMP it didn't work with MODEL_RUN == 12!!!!!!!!!!!!!!!!!!??????????
@@ -2689,7 +2689,7 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
             }
             else {
               ENSEMBLE_DATA[i][j][l][k] = 1;
-              pre_v = float(ENSEMBLE[i][j][l][k]);
+              pre_v = ENSEMBLE[i][j][l][k];
               pre_num = 0;
             }
           }
@@ -2736,9 +2736,9 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
                 _valuesO_scattered[i][j][(k * num_add_days + j_ADD)] = FLOAT_undefined;
                 _valuesO_clear    [i][j][(k * num_add_days + j_ADD)] = FLOAT_undefined; 
         
-                String Pa = CLIMATE_WY2[i][now_j][l][k];
+                float Pa = CLIMATE_WY2[i][now_j][l][k];
       
-                if (Pa.equals(_undefined)) {
+                if (Pa > 0.9 * FLOAT_undefined) {
                 }
                 else {
                   _valuesO[i][j][(k * num_add_days + j_ADD)] = Float.valueOf(Pa);
@@ -2828,7 +2828,7 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
                       next_j = 0; 
                     }
                     if (ENSEMBLE_DATA[next_i][next_j][l][k] != 0) { // if it wasn't interpolated then ...
-                      next_v = float(ENSEMBLE[next_i][next_j][l][k]);
+                      next_v = ENSEMBLE[next_i][next_j][l][k];
                       next_hour = next_i;
                       next_day = (int(next_j - _DATE + 286 + 365) % 365); 
   
@@ -2863,7 +2863,7 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
                           }                          
 
   
-                          ENSEMBLE[i][now_j][l][k] = String.valueOf(float(ENSEMBLE[i][now_j][l][k]) + current_dist);
+                          ENSEMBLE[i][now_j][l][k] = ENSEMBLE[i][now_j][l][k] + current_dist;
                         }
                       }       
                       
@@ -2884,7 +2884,7 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
               }
               else {
                 ENSEMBLE_DATA[i][now_j][l][k] = 1;
-                pre_v = float(ENSEMBLE[i][now_j][l][k]);
+                pre_v = ENSEMBLE[i][now_j][l][k];
                 pre_num = 0;
                 
                 pre_hour = i;
@@ -2910,30 +2910,30 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
     for (int j_for = 0; j_for < max_j_end_forecast; j_for += 1) { 
       int j = ((j_for + BEGIN_DAY) % 365);
       for (int i = 0; i < 24; i += 1) {
-        if (ENSEMBLE[i][j][_cloudcover][k].equals(_undefined)) {
+        if (ENSEMBLE[i][j][_cloudcover][k] > 0.9 * FLOAT_undefined) {
         }
         else {
           float DATE_ANGLE = (360 * ((286 + j) % 365) / 365.0);
           float HOUR_ANGLE = i; 
           
-          float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, float(ENSEMBLE[i][j][_cloudcover][k]));
-          float T = float(ENSEMBLE[i][j][_drybulb][k]);
+          float[] SunR = SOLARCHVISION_SunPositionRadiation(LocationLatitude, DATE_ANGLE, HOUR_ANGLE, ENSEMBLE[i][j][_cloudcover][k]);
+          float T = ENSEMBLE[i][j][_drybulb][k];
   
-          ENSEMBLE[i][j][_dirnorrad][k] = String.valueOf(SunR[4]);
+          ENSEMBLE[i][j][_dirnorrad][k] = SunR[4];
           ENSEMBLE_DATA[i][j][_dirnorrad][k] = 0;
           
-          ENSEMBLE[i][j][_difhorrad][k] = String.valueOf(SunR[5]);
+          ENSEMBLE[i][j][_difhorrad][k] = SunR[5];
           ENSEMBLE_DATA[i][j][_difhorrad][k] = 0;
 
-          ENSEMBLE[i][j][_glohorrad][k] = String.valueOf(SunR[4] * SunR[3] + SunR[5]);
+          ENSEMBLE[i][j][_glohorrad][k] = SunR[4] * SunR[3] + SunR[5];
           ENSEMBLE_DATA[i][j][_glohorrad][k] = 0;
 
        
 //---------------------------------------------------------------------
           if (Climatic_solar_model == 1) {
   
-            float Forecast_CC = float(ENSEMBLE[i][j][_cloudcover][k]);
-            float Forecast_AP = float(ENSEMBLE[i][j][_pressure][k]);
+            float Forecast_CC = ENSEMBLE[i][j][_cloudcover][k];
+            float Forecast_AP = ENSEMBLE[i][j][_pressure][k];
             
             float CC_epsilon = 1.0; // defines a range for finding near previous results: 1.0 results in e.g. 2 < CC < 4 for CC at 3  
             float AP_epsilon = 50.0;
@@ -2960,11 +2960,11 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
                 }
       
               
-                if ((CLIMATE_WY2[now_i][now_j][_cloudcover][q].equals(_undefined)) || (CLIMATE_WY2[now_i][now_j][_pressure][q].equals(_undefined))) {
+                if ((CLIMATE_WY2[now_i][now_j][_cloudcover][q] > 0.9 * FLOAT_undefined) || (CLIMATE_WY2[now_i][now_j][_pressure][q] > 0.9 * FLOAT_undefined)) {
                 }
                 else {
-                  float CC_dist = abs(Forecast_CC - float(CLIMATE_WY2[now_i][now_j][_cloudcover][q]));
-                  float AP_dist = abs(Forecast_AP - float(CLIMATE_WY2[now_i][now_j][_pressure][q]));
+                  float CC_dist = abs(Forecast_CC - CLIMATE_WY2[now_i][now_j][_cloudcover][q]);
+                  float AP_dist = abs(Forecast_AP - CLIMATE_WY2[now_i][now_j][_pressure][q]);
                   if ((CC_dist < CC_epsilon) && (AP_dist < AP_epsilon)) {
                     
                     float _weight;
@@ -2975,9 +2975,9 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
                     
                     sum_count += _weight;
                     
-                    if (CLIMATE_WY2[now_i][now_j][_dirnorrad][q].equals(_undefined)) {} else _valuesSUM_DIR += _weight * float(CLIMATE_WY2[now_i][now_j][_dirnorrad][q]); 
-                    if (CLIMATE_WY2[now_i][now_j][_difhorrad][q].equals(_undefined)) {} else _valuesSUM_DIF += _weight * float(CLIMATE_WY2[now_i][now_j][_difhorrad][q]); 
-                    if (CLIMATE_WY2[now_i][now_j][_glohorrad][q].equals(_undefined)) {} else _valuesSUM_GLO += _weight * float(CLIMATE_WY2[now_i][now_j][_glohorrad][q]); 
+                    if (CLIMATE_WY2[now_i][now_j][_dirnorrad][q] > 0.9 * FLOAT_undefined) {} else _valuesSUM_DIR += _weight * CLIMATE_WY2[now_i][now_j][_dirnorrad][q]; 
+                    if (CLIMATE_WY2[now_i][now_j][_difhorrad][q] > 0.9 * FLOAT_undefined) {} else _valuesSUM_DIF += _weight * CLIMATE_WY2[now_i][now_j][_difhorrad][q]; 
+                    if (CLIMATE_WY2[now_i][now_j][_glohorrad][q] > 0.9 * FLOAT_undefined) {} else _valuesSUM_GLO += _weight * CLIMATE_WY2[now_i][now_j][_glohorrad][q]; 
       
                   }
                 }
@@ -2989,9 +2989,9 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
               _valuesSUM_DIF /= sum_count;
               _valuesSUM_GLO /= sum_count;
   
-              ENSEMBLE[i][j][_dirnorrad][k] = String.valueOf(_valuesSUM_DIR);
-              ENSEMBLE[i][j][_difhorrad][k] = String.valueOf(_valuesSUM_DIF);
-              ENSEMBLE[i][j][_glohorrad][k] = String.valueOf(_valuesSUM_GLO);
+              ENSEMBLE[i][j][_dirnorrad][k] = _valuesSUM_DIR;
+              ENSEMBLE[i][j][_difhorrad][k] = _valuesSUM_DIF;
+              ENSEMBLE[i][j][_glohorrad][k] = _valuesSUM_GLO;
               
             }  
             else {
@@ -3001,10 +3001,10 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
 
 //---------------------------------------------------------------------
        
-          ENSEMBLE[i][j][_direffect][k] = String.valueOf(float(ENSEMBLE[i][j][_dirnorrad][k]) * (18 - T));
+          ENSEMBLE[i][j][_direffect][k] = ENSEMBLE[i][j][_dirnorrad][k] * (18 - T);
           ENSEMBLE_DATA[i][j][_direffect][k] = 0;
           
-          ENSEMBLE[i][j][_difeffect][k] = String.valueOf(float(ENSEMBLE[i][j][_difhorrad][k]) * (18 - T));
+          ENSEMBLE[i][j][_difeffect][k] = ENSEMBLE[i][j][_difhorrad][k] * (18 - T);
           ENSEMBLE_DATA[i][j][_difeffect][k] = 0; 
           
         }     
@@ -3069,12 +3069,10 @@ void SOLARCHVISION_LoadENSEMBLE (String FileName, int Load_Layer) {
     
       for (int Lk = 0; Lk < _c.length; Lk++) {
         int k = _c[Lk].getInt("id") - 1;
-        String v;
-        
+       
         if (k < (1 + ENSEMBLE_end - ENSEMBLE_start)) {
 
-          v = String.valueOf(_c[Lk].getContent());
-          ENSEMBLE[now_i][now_j][Load_Layer][k] = v;
+          ENSEMBLE[now_i][now_j][Load_Layer][k] = Float.valueOf(_c[Lk].getContent());
         }
       }
     }
@@ -3112,8 +3110,8 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
   
   }
   
-  String Pa = "";
-  String Pb = "";
+  float Pa = FLOAT_undefined;
+  float Pb = FLOAT_undefined;
 
   float[] _valuesA;
   float[] _valuesB; 
@@ -3240,7 +3238,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
           }
 
           Pa = ENSEMBLE[now_i][now_j][drw_Layer][now_k]; 
-          if (Pa.equals(_undefined)) {
+          if (Pa > 0.9 * FLOAT_undefined) {
             _valuesA[k] = FLOAT_undefined;
             
             if ((save_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("[undefined]\t"); 
@@ -3250,7 +3248,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
             
             if (drw_count == 1) {
 
-              _valuesA[k] = float(Pa);
+              _valuesA[k] = Pa;
               _valuesA[k] += V_offset[drw_Layer];
               
               _valuesSUM[k] += _valuesA[k];
@@ -3266,11 +3264,11 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
               if (next_k < (1 + ENSEMBLE_end - ENSEMBLE_start)) {
                 
                 Pb = ENSEMBLE[next_i][next_j][drw_Layer][next_k];
-                if (Pb.equals(_undefined)) {
+                if (Pb > 0.9 * FLOAT_undefined) {
                   _valuesB[k] = FLOAT_undefined;
                 }
                 else {
-                  _valuesB[k] = float(Pb);
+                  _valuesB[k] = Pb;
                   _valuesB[k] += V_offset[drw_Layer];
                   
                   if (draw_data_lines == 1) {
@@ -3366,13 +3364,13 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
 int try_update_CLIMATE_WY2 () {
   int File_Found = 0;
   
-  CLIMATE_WY2 = new String [24][365][num_layers][(1 + CLIMATE_WY2_end - CLIMATE_WY2_start)];
+  CLIMATE_WY2 = new float [24][365][num_layers][(1 + CLIMATE_WY2_end - CLIMATE_WY2_start)];
  
   for (int i = 0; i < 24; i += 1) {
     for (int j = 0; j < 365; j += 1) {
       for (int l = 0; l < num_layers; l += 1) {
         for (int k = 0; k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start); k += 1) {
-          CLIMATE_WY2[i][j][l][k] = _undefined;
+          CLIMATE_WY2[i][j][l][k] = FLOAT_undefined;
         }
       }
     }
@@ -3435,48 +3433,48 @@ void SOLARCHVISION_LoadCLIMATE_WY2 (String FileName) {
     
     //println (i);
     
-    CLIMATE_WY2[i][j][_pressure][k] = lineSTR.substring(85, 90); // 10 times in Pa
-    CLIMATE_WY2[i][j][_drybulb][k] = lineSTR.substring(91, 95); // 10 times in °C
-    //CLIMATE_WY2[i][j][_relhum][k] = "50"; // Relative Humidity is not presented in DCLIMATE files!
-    CLIMATE_WY2[i][j][_glohorrad][k] = lineSTR.substring(20, 24); // Wh/m²
-    CLIMATE_WY2[i][j][_dirnorrad][k] = lineSTR.substring(26, 30); // Wh/m²
-    CLIMATE_WY2[i][j][_difhorrad][k] = lineSTR.substring(32, 36); // Wh/m²
-    CLIMATE_WY2[i][j][_windspd][k] = lineSTR.substring(105, 109); // 10 times in m/s
-    CLIMATE_WY2[i][j][_winddir][k] = lineSTR.substring(101, 104); // °
-    CLIMATE_WY2[i][j][_opaquesky][k] = lineSTR.substring(113, 115); // 0.1 times in %
-    CLIMATE_WY2[i][j][_ceilingsky][k] = lineSTR.substring(61, 65); // 0.1 times in m
+    CLIMATE_WY2[i][j][_pressure][k] = float(lineSTR.substring(85, 90)); // 10 times in Pa
+    CLIMATE_WY2[i][j][_drybulb][k] = float(lineSTR.substring(91, 95)); // 10 times in °C
+    //CLIMATE_WY2[i][j][_relhum][k] = 50; // Relative Humidity is not presented in DCLIMATE files!
+    CLIMATE_WY2[i][j][_glohorrad][k] = float(lineSTR.substring(20, 24)); // Wh/m²
+    CLIMATE_WY2[i][j][_dirnorrad][k] = float(lineSTR.substring(26, 30)); // Wh/m²
+    CLIMATE_WY2[i][j][_difhorrad][k] = float(lineSTR.substring(32, 36)); // Wh/m²
+    CLIMATE_WY2[i][j][_windspd][k] = float(lineSTR.substring(105, 109)); // 10 times in m/s
+    CLIMATE_WY2[i][j][_winddir][k] = float(lineSTR.substring(101, 104)); // °
+    CLIMATE_WY2[i][j][_opaquesky][k] = float(lineSTR.substring(113, 115)); // 0.1 times in %
+    CLIMATE_WY2[i][j][_ceilingsky][k] = float(lineSTR.substring(61, 65)); // 0.1 times in m
     
-    if (CLIMATE_WY2[i][j][_pressure][k].equals("99999")) CLIMATE_WY2[i][j][_pressure][k] = _undefined;
-    else CLIMATE_WY2[i][j][_pressure][k] = String.valueOf(0.1 * float(CLIMATE_WY2[i][j][_pressure][k]));
+    if (CLIMATE_WY2[i][j][_pressure][k] == 99999) CLIMATE_WY2[i][j][_pressure][k] = FLOAT_undefined;
+    else CLIMATE_WY2[i][j][_pressure][k] = 0.1 * CLIMATE_WY2[i][j][_pressure][k];
     
-    if (CLIMATE_WY2[i][j][_drybulb][k].equals("9999")) CLIMATE_WY2[i][j][_drybulb][k] = _undefined;
-    else CLIMATE_WY2[i][j][_drybulb][k] = String.valueOf(0.1 * float(CLIMATE_WY2[i][j][_drybulb][k]));
+    if (CLIMATE_WY2[i][j][_drybulb][k] == 9999) CLIMATE_WY2[i][j][_drybulb][k] = FLOAT_undefined;
+    else CLIMATE_WY2[i][j][_drybulb][k] = 0.1 * CLIMATE_WY2[i][j][_drybulb][k];
     
-    if (CLIMATE_WY2[i][j][_glohorrad][k].equals("9999")) CLIMATE_WY2[i][j][_glohorrad][k] = _undefined;
-    else CLIMATE_WY2[i][j][_glohorrad][k] = String.valueOf(roundTo ((float(CLIMATE_WY2[i][j][_glohorrad][k]) / 3.6), 1)); // Wh/m²
+    if (CLIMATE_WY2[i][j][_glohorrad][k] == 9999) CLIMATE_WY2[i][j][_glohorrad][k] = FLOAT_undefined;
+    else CLIMATE_WY2[i][j][_glohorrad][k] = CLIMATE_WY2[i][j][_glohorrad][k] / 3.6; // Wh/m²
     
-    if (CLIMATE_WY2[i][j][_dirnorrad][k].equals("9999")) CLIMATE_WY2[i][j][_dirnorrad][k] = _undefined;
-    else CLIMATE_WY2[i][j][_dirnorrad][k] = String.valueOf(roundTo ((float(CLIMATE_WY2[i][j][_dirnorrad][k]) / 3.6), 1)); // Wh/m²
+    if (CLIMATE_WY2[i][j][_dirnorrad][k] == 9999) CLIMATE_WY2[i][j][_dirnorrad][k] = FLOAT_undefined;
+    else CLIMATE_WY2[i][j][_dirnorrad][k] = CLIMATE_WY2[i][j][_dirnorrad][k] / 3.6; // Wh/m²
     
-    if (CLIMATE_WY2[i][j][_difhorrad][k].equals("9999")) CLIMATE_WY2[i][j][_difhorrad][k] = _undefined;
-    else CLIMATE_WY2[i][j][_difhorrad][k] = String.valueOf(roundTo ((float(CLIMATE_WY2[i][j][_difhorrad][k]) / 3.6), 1)); // Wh/m²
+    if (CLIMATE_WY2[i][j][_difhorrad][k] == 9999) CLIMATE_WY2[i][j][_difhorrad][k] = FLOAT_undefined;
+    else CLIMATE_WY2[i][j][_difhorrad][k] = CLIMATE_WY2[i][j][_difhorrad][k] / 3.6; // Wh/m²
     
-    if (CLIMATE_WY2[i][j][_windspd][k].equals("9999")) CLIMATE_WY2[i][j][_windspd][k] = _undefined;
-    else CLIMATE_WY2[i][j][_windspd][k] = String.valueOf(0.1 * 3.6 * float(CLIMATE_WY2[i][j][_windspd][k]));
+    if (CLIMATE_WY2[i][j][_windspd][k] == 9999) CLIMATE_WY2[i][j][_windspd][k] = FLOAT_undefined;
+    else CLIMATE_WY2[i][j][_windspd][k] = 0.1 * 3.6 * CLIMATE_WY2[i][j][_windspd][k];
     
-    if (CLIMATE_WY2[i][j][_winddir][k].equals("999")) CLIMATE_WY2[i][j][_winddir][k] = _undefined;
+    if (CLIMATE_WY2[i][j][_winddir][k] == 999) CLIMATE_WY2[i][j][_winddir][k] = FLOAT_undefined;
     
-    if (CLIMATE_WY2[i][j][_opaquesky][k].equals("99")) CLIMATE_WY2[i][j][_opaquesky][k] = _undefined;
+    if (CLIMATE_WY2[i][j][_opaquesky][k] == 99) CLIMATE_WY2[i][j][_opaquesky][k] = FLOAT_undefined;
     
-    if (CLIMATE_WY2[i][j][_ceilingsky][k].equals("7777")) CLIMATE_WY2[i][j][_ceilingsky][k] = "1000";
-    if (int(CLIMATE_WY2[i][j][_ceilingsky][k]) >= 1000) CLIMATE_WY2[i][j][_ceilingsky][k] = "1000"; 
+    if (CLIMATE_WY2[i][j][_ceilingsky][k] == 7777) CLIMATE_WY2[i][j][_ceilingsky][k] = 1000;
+    if (CLIMATE_WY2[i][j][_ceilingsky][k] >= 1000) CLIMATE_WY2[i][j][_ceilingsky][k] = 1000; // <<<<<<<<<
     
-    if (CLIMATE_WY2[i][j][_ceilingsky][k].equals("9999")) CLIMATE_WY2[i][j][_ceilingsky][k] = _undefined;
-    else CLIMATE_WY2[i][j][_ceilingsky][k] = String.valueOf(10 * float(CLIMATE_WY2[i][j][_ceilingsky][k]));
+    if (CLIMATE_WY2[i][j][_ceilingsky][k] == 9999) CLIMATE_WY2[i][j][_ceilingsky][k] = FLOAT_undefined;
+    else CLIMATE_WY2[i][j][_ceilingsky][k] = 10 * CLIMATE_WY2[i][j][_ceilingsky][k];
 
   }
 
-  String Pa, Pb, Pc;
+  float Pa, Pb, Pc;
   float T, R_dir, R_dif;
   for (int i = 0; i < 24; i += 1) {
     for (int j = 0; j < 365; j += 1) {
@@ -3485,23 +3483,23 @@ void SOLARCHVISION_LoadCLIMATE_WY2 (String FileName) {
         Pb = CLIMATE_WY2[i][j][_dirnorrad][k];
         Pc = CLIMATE_WY2[i][j][_difhorrad][k];
                   
-        if ((Pa.equals(_undefined)) || (Pb.equals(_undefined)) || (Pc.equals(_undefined))) {
+        if ((Pa > 0.9 * FLOAT_undefined) || (Pb > 0.9 * FLOAT_undefined) || (Pc > 0.9 * FLOAT_undefined)) {
         }
         else {
-          T = float(Pa);
-          R_dir = float(Pb);
-          R_dif = float(Pc);
-          CLIMATE_WY2[i][j][_direffect][k] = String.valueOf((18 - T) * R_dir);
-          CLIMATE_WY2[i][j][_difeffect][k] = String.valueOf((18 - T) * R_dif);
+          T = Pa;
+          R_dir = Pb;
+          R_dif = Pc;
+          CLIMATE_WY2[i][j][_direffect][k] = (18 - T) * R_dir;
+          CLIMATE_WY2[i][j][_difeffect][k] = (18 - T) * R_dif;
         }
         
         Pa = CLIMATE_WY2[i][j][_ceilingsky][k];
-        if (Pa.equals(_undefined)) {
+        if (Pa > 0.9 * FLOAT_undefined) {
         }
         else {
-          float Px = log(float(Pa)) / log(10.0);
-          if (Px > 2) CLIMATE_WY2[i][j][_logceilsky][k] = String.valueOf(roundTo (Px, 0.1));
-          else CLIMATE_WY2[i][j][_logceilsky][k] = "2";
+          float Px = log(Pa) / log(10.0);
+          if (Px > 2) CLIMATE_WY2[i][j][_logceilsky][k] = Px;
+          else CLIMATE_WY2[i][j][_logceilsky][k] = 2;
         }
       }
     }
@@ -3537,8 +3535,8 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
     
   }   
 
-  String Pa = "";
-  String Pb = "";
+  float Pa = FLOAT_undefined;
+  float Pb = FLOAT_undefined;
 
   float[] _valuesA;
   float[] _valuesB; 
@@ -3656,7 +3654,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
             }
 
             Pa = CLIMATE_WY2[now_i][now_j][drw_Layer][now_k]; 
-            if (Pa.equals(_undefined)) {
+            if (Pa > 0.9 * FLOAT_undefined) {
               _valuesA[(k * num_add_days + j_ADD)] = FLOAT_undefined;
               
               if ((save_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("[undefined]\t");
@@ -3665,7 +3663,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
               int drw_count = SOLARCHVISION_filter("CLIMATE_WY2", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
 
               if (drw_count == 1) {
-                _valuesA[(k * num_add_days + j_ADD)] = float(Pa);
+                _valuesA[(k * num_add_days + j_ADD)] = Pa;
                 _valuesA[(k * num_add_days + j_ADD)] += V_offset[drw_Layer];
                 
                 _valuesSUM[(k * num_add_days + j_ADD)] += _valuesA[(k * num_add_days + j_ADD)];
@@ -3678,11 +3676,11 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
 
                 if (next_k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start)) {
                   Pb = CLIMATE_WY2[next_i][next_j][drw_Layer][next_k];
-                  if (Pb.equals(_undefined)) {
+                  if (Pb > 0.9 * FLOAT_undefined) {
                     _valuesB[(k * num_add_days + j_ADD)] = FLOAT_undefined;
                   }
                   else {
-                    _valuesB[(k * num_add_days + j_ADD)] = float(Pb);
+                    _valuesB[(k * num_add_days + j_ADD)] = Pb;
                     _valuesB[(k * num_add_days + j_ADD)] += V_offset[drw_Layer];
                     
                     if (draw_data_lines == 1) {
@@ -3778,13 +3776,13 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
 int try_update_CLIMATE_EPW () {
   int File_Found = 0;
   
-  CLIMATE_EPW = new String[24][365][num_layers][(1 + CLIMATE_EPW_end - CLIMATE_EPW_start)];
+  CLIMATE_EPW = new float[24][365][num_layers][(1 + CLIMATE_EPW_end - CLIMATE_EPW_start)];
  
   for (int i = 0; i < 24; i += 1) {
     for (int j = 0; j < 365; j += 1) {
       for (int l = 0; l < num_layers; l += 1) {
         for (int k = 0; k <(1 + CLIMATE_EPW_end - CLIMATE_EPW_start); k += 1) {
-          CLIMATE_EPW[i][j][l][k] = _undefined;
+          CLIMATE_EPW[i][j][l][k] = FLOAT_undefined;
         }
       }
     }
@@ -3840,48 +3838,48 @@ void SOLARCHVISION_LoadCLIMATE_EPW (String FileName) {
     
     //println(i);
     
-    CLIMATE_EPW[i][j][_pressure][k] = String.valueOf(float(parts[9]) * 0.01); // 10 times in Pa
-    CLIMATE_EPW[i][j][_drybulb][k] = parts[6]; // in °C
-    CLIMATE_EPW[i][j][_relhum][k] = parts[8]; // 0 - 110%
-    CLIMATE_EPW[i][j][_glohorrad][k] = parts[13]; // Wh/m²
-    CLIMATE_EPW[i][j][_dirnorrad][k] = parts[14]; // Wh/m²
-    CLIMATE_EPW[i][j][_difhorrad][k] = parts[15]; // Wh/m²
-    CLIMATE_EPW[i][j][_windspd][k] = parts[21]; // in m/s
-    CLIMATE_EPW[i][j][_winddir][k] = parts[20]; // ° 
-    CLIMATE_EPW[i][j][_opaquesky][k] = parts[23]; // 0.1 times in % ... there is also total_sky_cover on[22]
-    CLIMATE_EPW[i][j][_ceilingsky][k] = parts[25]; // in m
+    CLIMATE_EPW[i][j][_pressure][k] = float(parts[9]) * 0.01; // 10 times in Pa
+    CLIMATE_EPW[i][j][_drybulb][k] = float(parts[6]); // in °C
+    CLIMATE_EPW[i][j][_relhum][k] = float(parts[8]); // 0 - 110%
+    CLIMATE_EPW[i][j][_glohorrad][k] = float(parts[13]); // Wh/m²
+    CLIMATE_EPW[i][j][_dirnorrad][k] = float(parts[14]); // Wh/m²
+    CLIMATE_EPW[i][j][_difhorrad][k] = float(parts[15]); // Wh/m²
+    CLIMATE_EPW[i][j][_windspd][k] = float(parts[21]); // in m/s
+    CLIMATE_EPW[i][j][_winddir][k] = float(parts[20]); // ° 
+    CLIMATE_EPW[i][j][_opaquesky][k] = float(parts[23]); // 0.1 times in % ... there is also total_sky_cover on[22]
+    CLIMATE_EPW[i][j][_ceilingsky][k] = float(parts[25]); // in m
     
     
-    if (CLIMATE_EPW[i][j][_pressure][k].equals("999999")) CLIMATE_EPW[i][j][_pressure][k] = _undefined;
+    if (CLIMATE_EPW[i][j][_pressure][k] == 999999) CLIMATE_EPW[i][j][_pressure][k] = FLOAT_undefined;
     
-    if (CLIMATE_EPW[i][j][_drybulb][k].equals("99.9")) CLIMATE_EPW[i][j][_drybulb][k] = _undefined;
+    if (CLIMATE_EPW[i][j][_drybulb][k] == 99.9) CLIMATE_EPW[i][j][_drybulb][k] = FLOAT_undefined;
     
-    if (CLIMATE_EPW[i][j][_relhum][k].equals("999")) CLIMATE_EPW[i][j][_relhum][k] = _undefined;
+    if (CLIMATE_EPW[i][j][_relhum][k] == 999) CLIMATE_EPW[i][j][_relhum][k] = FLOAT_undefined;
     
-    if (CLIMATE_EPW[i][j][_glohorrad][k].equals("9999")) CLIMATE_EPW[i][j][_glohorrad][k] = _undefined;
+    if (CLIMATE_EPW[i][j][_glohorrad][k] == 9999) CLIMATE_EPW[i][j][_glohorrad][k] = FLOAT_undefined;
     
-    if (int(CLIMATE_EPW[i][j][_dirnorrad][k]) >= 9999) CLIMATE_EPW[i][j][_dirnorrad][k] = _undefined;
-    if (int(CLIMATE_EPW[i][j][_dirnorrad][k]) < 0) CLIMATE_EPW[i][j][_dirnorrad][k] = _undefined;
+    if (CLIMATE_EPW[i][j][_dirnorrad][k] >= 9999) CLIMATE_EPW[i][j][_dirnorrad][k] = FLOAT_undefined;
+    if (CLIMATE_EPW[i][j][_dirnorrad][k] < 0) CLIMATE_EPW[i][j][_dirnorrad][k] = FLOAT_undefined;
     
-    if (int(CLIMATE_EPW[i][j][_difhorrad][k]) >= 9999) CLIMATE_EPW[i][j][_difhorrad][k] = _undefined;
-    if (int(CLIMATE_EPW[i][j][_difhorrad][k]) < 0) CLIMATE_EPW[i][j][_difhorrad][k] = _undefined;
+    if (CLIMATE_EPW[i][j][_difhorrad][k] >= 9999) CLIMATE_EPW[i][j][_difhorrad][k] = FLOAT_undefined;
+    if (CLIMATE_EPW[i][j][_difhorrad][k] < 0) CLIMATE_EPW[i][j][_difhorrad][k] = FLOAT_undefined;
     
-    if (CLIMATE_EPW[i][j][_windspd][k].equals("999")) CLIMATE_EPW[i][j][_windspd][k] = _undefined;
-    else CLIMATE_EPW[i][j][_windspd][k] = String.valueOf(3.6 * float(CLIMATE_EPW[i][j][_windspd][k]));
+    if (CLIMATE_EPW[i][j][_windspd][k] == 999) CLIMATE_EPW[i][j][_windspd][k] = FLOAT_undefined;
+    else CLIMATE_EPW[i][j][_windspd][k] = 3.6 * CLIMATE_EPW[i][j][_windspd][k];
     
-    if (CLIMATE_EPW[i][j][_winddir][k].equals("999")) CLIMATE_EPW[i][j][_winddir][k] = _undefined;
+    if (CLIMATE_EPW[i][j][_winddir][k] == 999) CLIMATE_EPW[i][j][_winddir][k] = FLOAT_undefined;
     
-    if (CLIMATE_EPW[i][j][_opaquesky][k].equals("99")) CLIMATE_EPW[i][j][_opaquesky][k] = _undefined;
+    if (CLIMATE_EPW[i][j][_opaquesky][k] == 99) CLIMATE_EPW[i][j][_opaquesky][k] = FLOAT_undefined;
     
-    if (CLIMATE_EPW[i][j][_ceilingsky][k].equals("77777")) CLIMATE_EPW[i][j][_ceilingsky][k] = "1000";
-    if (CLIMATE_EPW[i][j][_ceilingsky][k].equals("88888")) CLIMATE_EPW[i][j][_ceilingsky][k] = "1000";
-    if (int(CLIMATE_EPW[i][j][_ceilingsky][k]) >= 1000) CLIMATE_EPW[i][j][_ceilingsky][k] = "1000"; 
+    if (CLIMATE_EPW[i][j][_ceilingsky][k] == 77777) CLIMATE_EPW[i][j][_ceilingsky][k] = 1000;
+    if (CLIMATE_EPW[i][j][_ceilingsky][k] == 88888) CLIMATE_EPW[i][j][_ceilingsky][k] = 1000;
+    if (CLIMATE_EPW[i][j][_ceilingsky][k] >= 1000) CLIMATE_EPW[i][j][_ceilingsky][k] = 1000; 
     
-    if (CLIMATE_EPW[i][j][_ceilingsky][k].equals("99999")) CLIMATE_EPW[i][j][_ceilingsky][k] = _undefined;
+    if (CLIMATE_EPW[i][j][_ceilingsky][k] == 99999) CLIMATE_EPW[i][j][_ceilingsky][k] = FLOAT_undefined;
 
   }
 
-  String Pa, Pb, Pc;
+  float Pa, Pb, Pc;
   float T, R_dir, R_dif;
   for (int i = 0; i < 24; i += 1) {
     for (int j = 0; j < 365; j += 1) {
@@ -3890,23 +3888,23 @@ void SOLARCHVISION_LoadCLIMATE_EPW (String FileName) {
         Pb = CLIMATE_EPW[i][j][_dirnorrad][k];
         Pc = CLIMATE_EPW[i][j][_difhorrad][k];
                   
-        if ((Pa.equals(_undefined)) ||(Pb.equals(_undefined)) ||(Pc.equals(_undefined))) {
+        if ((Pa > 0.9 * FLOAT_undefined) ||(Pb > 0.9 * FLOAT_undefined) ||(Pc > 0.9 * FLOAT_undefined)) {
         }
         else {
-          T = float(Pa);
-          R_dir = float(Pb);
-          R_dif = float(Pc);
-          CLIMATE_EPW[i][j][_direffect][k] = String.valueOf((18 - T) * R_dir);
-          CLIMATE_EPW[i][j][_difeffect][k] = String.valueOf((18 - T) * R_dif);
+          T = Pa;
+          R_dir = Pb;
+          R_dif = Pc;
+          CLIMATE_EPW[i][j][_direffect][k] = (18 - T) * R_dir;
+          CLIMATE_EPW[i][j][_difeffect][k] = (18 - T) * R_dif;
         }
         
         Pa = CLIMATE_EPW[i][j][_ceilingsky][k];
-        if (Pa.equals(_undefined)) {
+        if (Pa > 0.9 * FLOAT_undefined) {
         }
         else {
-          float Px = log(float(Pa)) / log(10.0);
-          if (Px > 2) CLIMATE_EPW[i][j][_logceilsky][k] = String.valueOf(roundTo(Px, 0.1));
-          else CLIMATE_EPW[i][j][_logceilsky][k] = "2";
+          float Px = log(Pa) / log(10.0);
+          if (Px > 2) CLIMATE_EPW[i][j][_logceilsky][k] = roundTo(Px, 0.1);
+          else CLIMATE_EPW[i][j][_logceilsky][k] = 2;
         }
       }
     }
@@ -3941,8 +3939,8 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
     
   }    
 
-  String Pa = "";
-  String Pb = "";
+  float Pa = FLOAT_undefined;
+  float Pb = FLOAT_undefined;
 
   float[] _valuesA;
   float[] _valuesB; 
@@ -4060,7 +4058,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
             }
 
             Pa = CLIMATE_EPW[now_i][now_j][drw_Layer][now_k]; 
-            if (Pa.equals(_undefined)) {
+            if (Pa > 0.9 * FLOAT_undefined) {
               _valuesA[(k * num_add_days + j_ADD)] = FLOAT_undefined;
               
               if ((save_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("[undefined]\t");
@@ -4069,7 +4067,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
               int drw_count = SOLARCHVISION_filter("CLIMATE_EPW", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
 
               if (drw_count == 1) {
-                _valuesA[(k * num_add_days + j_ADD)] = float(Pa);
+                _valuesA[(k * num_add_days + j_ADD)] = Pa;
                 _valuesA[(k * num_add_days + j_ADD)] += V_offset[drw_Layer];
                 
                 _valuesSUM[(k * num_add_days + j_ADD)] += _valuesA[(k * num_add_days + j_ADD)];
@@ -4082,11 +4080,11 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
 
                 if (next_k < (1 + CLIMATE_EPW_end - CLIMATE_EPW_start)) {
                   Pb = CLIMATE_EPW[next_i][next_j][drw_Layer][next_k];
-                  if (Pb.equals(_undefined)) {
+                  if (Pb > 0.9 * FLOAT_undefined) {
                     _valuesB[(k * num_add_days + j_ADD)] = FLOAT_undefined;
                   }
                   else {
-                    _valuesB[(k * num_add_days + j_ADD)] = float(Pb);
+                    _valuesB[(k * num_add_days + j_ADD)] = Pb;
                     _valuesB[(k * num_add_days + j_ADD)] += V_offset[drw_Layer];
                     
                     if (draw_data_lines == 1) {
@@ -4182,14 +4180,14 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
 int try_update_observed () {
   int File_Found = 0;
   
-  OBSERVED = new String [24][365][num_layers][(1 + OBSERVED_end - OBSERVED_start)];
+  OBSERVED = new float [24][365][num_layers][(1 + OBSERVED_end - OBSERVED_start)];
   OBSERVED_DATA = new int [24][365][num_layers][(1 + OBSERVED_end - OBSERVED_start)]; // -1: undefined, 0: interpolated, 1: data
  
   for (int i = 0; i < 24; i += 1) {
     for (int j = 0; j < 365; j += 1) {
       for (int l = 0; l < num_layers; l += 1) {
         for (int k = 0; k < (1 + OBSERVED_end - OBSERVED_start); k += 1) {
-          OBSERVED[i][j][l][k] = _undefined;
+          OBSERVED[i][j][l][k] = FLOAT_undefined;
           OBSERVED_DATA[i][j][l][k] = -1; 
         }
       }
@@ -4282,7 +4280,7 @@ int try_update_observed () {
         int j = (int(j_for + _DATE - max_j_end_observed + 365 - 286) % 365); // should be controlled.
         
           for (int i = 0; i < 24; i += 1) {
-            if (OBSERVED[i][j][l][k].equals(_undefined)) {
+            if (OBSERVED[i][j][l][k] > 0.9 * FLOAT_undefined) {
               if (pre_v < 0.9 * FLOAT_undefined) {
                 pre_num += 1;
                 
@@ -4300,10 +4298,10 @@ int try_update_observed () {
                   if (next_j == 365) {
                     next_j = 0; 
                   }
-                  if (OBSERVED[next_i][next_j][l][k].equals(_undefined)) {
+                  if (OBSERVED[next_i][next_j][l][k] > 0.9 * FLOAT_undefined) {
                   }
                   else {
-                    next_v = float(OBSERVED[next_i][next_j][l][k]);
+                    next_v = OBSERVED[next_i][next_j][l][k];
                     
                     if (l == _winddir) {
                       if ((next_v - pre_v) > 180) next_v -= 360;
@@ -4312,8 +4310,8 @@ int try_update_observed () {
                   }  
                 }
                 if (next_num < MAX_SEARCH) {
-                  if (l == _winddir) OBSERVED[i][j][l][k] = String.valueOf(((next_num * pre_v + pre_num * next_v) / (pre_num + next_num) + 360) % 360);
-                  else OBSERVED[i][j][l][k] = String.valueOf((next_num * pre_v + pre_num * next_v) / (pre_num + next_num));
+                  if (l == _winddir) OBSERVED[i][j][l][k] = ((next_num * pre_v + pre_num * next_v) / (pre_num + next_num) + 360) % 360;
+                  else OBSERVED[i][j][l][k] = (next_num * pre_v + pre_num * next_v) / (pre_num + next_num);
                   
                   OBSERVED_DATA[i][j][l][k] = 0;
                 }
@@ -4324,7 +4322,7 @@ int try_update_observed () {
             }
             else {
               OBSERVED_DATA[i][j][l][k] = 1;
-              pre_v = float(OBSERVED[i][j][l][k]);
+              pre_v = OBSERVED[i][j][l][k];
               pre_num = 0;
             }
           }
@@ -4392,41 +4390,41 @@ void SOLARCHVISION_LoadOBSERVED (String FileName, int Load_Layer) {
     //println("Li=", Li, _a1, _a2, _a3);
     
     if (_a2.toUpperCase().equals("MSNG")) { // missing values
-      _a2 = _undefined;
+      _a2 = String.valueOf(FLOAT_undefined);
     }
     
     if (_a1.equals("stn_pres")) {
-      OBSERVED[now_i][now_j][_pressure][Load_Layer] = _a2;
+      OBSERVED[now_i][now_j][_pressure][Load_Layer] = Float.valueOf(_a2);
       OBSERVED_DATA[now_i][now_j][_pressure][Load_Layer] = 1;
     }
     
     if (_a1.equals("air_temp")) {
-      OBSERVED[now_i][now_j][_drybulb][Load_Layer] = _a2;
+      OBSERVED[now_i][now_j][_drybulb][Load_Layer] = Float.valueOf(_a2);
       OBSERVED_DATA[now_i][now_j][_drybulb][Load_Layer] = 1;
     }
     
     if (_a1.equals("rel_hum")) {
-      OBSERVED[now_i][now_j][_relhum][Load_Layer] = _a2;
+      OBSERVED[now_i][now_j][_relhum][Load_Layer] = Float.valueOf(_a2);
       OBSERVED_DATA[now_i][now_j][_relhum][Load_Layer] = 1;
     } 
     
     if (_a1.equals("tot_cld_amt")) {
-      OBSERVED[now_i][now_j][_cloudcover][Load_Layer] = _a2;
+      OBSERVED[now_i][now_j][_cloudcover][Load_Layer] = Float.valueOf(_a2);
       OBSERVED_DATA[now_i][now_j][_cloudcover][Load_Layer] = 1;
     }    
     
     if (_a1.equals("avg_wnd_dir_10m_mt50-60")) {
-      OBSERVED[now_i][now_j][_winddir][Load_Layer] = _a2;
+      OBSERVED[now_i][now_j][_winddir][Load_Layer] = Float.valueOf(_a2);
       OBSERVED_DATA[now_i][now_j][_winddir][Load_Layer] = 1;
     }    
     
     if (_a1.equals("avg_wnd_spd_10m_mt50-60")) {
-      OBSERVED[now_i][now_j][_windspd][Load_Layer] = _a2;
+      OBSERVED[now_i][now_j][_windspd][Load_Layer] = Float.valueOf(_a2);
       OBSERVED_DATA[now_i][now_j][_windspd][Load_Layer] = 1;
     }
     
     if (_a1.equals("pcpn_amt_pst6hrs")) {
-      OBSERVED[now_i][now_j][_precipitation][Load_Layer] = _a2; // past 6 hours!
+      OBSERVED[now_i][now_j][_precipitation][Load_Layer] = Float.valueOf(_a2); // past 6 hours!
       OBSERVED_DATA[now_i][now_j][_precipitation][Load_Layer] = 1;
     }
     
@@ -4435,7 +4433,7 @@ void SOLARCHVISION_LoadOBSERVED (String FileName, int Load_Layer) {
       }
       else {
         //if (_a3.equals("W/m²")) {
-          OBSERVED[now_i][now_j][_glohorrad][Load_Layer] = String.valueOf(1000 * Float.valueOf(_a2) / 3.6); // we should check the units!
+          OBSERVED[now_i][now_j][_glohorrad][Load_Layer] = 1000 * Float.valueOf(_a2) / 3.6; // we should check the units!
           OBSERVED_DATA[now_i][now_j][_glohorrad][Load_Layer] = 1;
         //}
       }
@@ -4446,7 +4444,7 @@ void SOLARCHVISION_LoadOBSERVED (String FileName, int Load_Layer) {
       }
       else {
         //if (_a3.equals("kJ/m²")) {
-          OBSERVED[now_i][now_j][_glohorrad][Load_Layer] = String.valueOf(Float.valueOf(_a2) / 3.6); // we should check the units!
+          OBSERVED[now_i][now_j][_glohorrad][Load_Layer] = Float.valueOf(_a2) / 3.6; // we should check the units!
           OBSERVED_DATA[now_i][now_j][_glohorrad][Load_Layer] = 1;
         //}
       }
@@ -4487,8 +4485,8 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
   
   }
   
-  String Pa = "";
-  String Pb = "";
+  float Pa = FLOAT_undefined;
+  float Pb = FLOAT_undefined;
 
   float[] _valuesA;
   float[] _valuesB; 
@@ -4601,7 +4599,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
           }
 
           Pa = OBSERVED[now_i][now_j][drw_Layer][now_k]; 
-          if (Pa.equals(_undefined)) {
+          if (Pa > 0.9 * FLOAT_undefined) {
             _valuesA[k] = FLOAT_undefined;
 
             if ((save_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("[undefined]\t"); 
@@ -4611,7 +4609,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
             
             if (drw_count == 1) {
 
-              _valuesA[k] = float(Pa);
+              _valuesA[k] = Pa;
               _valuesA[k] += V_offset[drw_Layer];
               
               _valuesSUM[k] += _valuesA[k];
@@ -4627,11 +4625,11 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
               if (next_k < (1 + OBSERVED_end - OBSERVED_start)) {
                 
                 Pb = OBSERVED[next_i][next_j][drw_Layer][next_k];
-                if (Pb.equals(_undefined)) {
+                if (Pb > 0.9 * FLOAT_undefined) {
                   _valuesB[k] = FLOAT_undefined;
                 }
                 else {
-                  _valuesB[k] = float(Pb);
+                  _valuesB[k] = Pb;
                   _valuesB[k] += V_offset[drw_Layer];
                   
                   if (draw_data_lines == 1) {
@@ -5360,7 +5358,8 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
   int end_z = get_startZ_endZ(data_source)[1]; 
   int layers_count = get_startZ_endZ(data_source)[2]; 
  
-  String Pa = "", Pb = "";
+  float Pa = FLOAT_undefined;
+  float Pb = FLOAT_undefined;
   float RAIN, T, R_dir, R_dif;
 
   float[] _valuesSUM; 
@@ -5408,9 +5407,9 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           }
         }       
         
-        if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = _undefined;
-        if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = _undefined;
-        if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = _undefined;
+        if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = FLOAT_undefined;
+        if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = FLOAT_undefined;
+        if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = FLOAT_undefined;
         
         T = FLOAT_undefined;
         R_dir = FLOAT_undefined;
@@ -5421,31 +5420,31 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
         if (data_source == databaseNumber_CLIMATE_EPW) Pa = CLIMATE_EPW[now_i][now_j][_dirnorrad][now_k];
         if (data_source == databaseNumber_CLIMATE_WY2) Pa = CLIMATE_WY2[now_i][now_j][_dirnorrad][now_k]; 
         if (data_source == databaseNumber_ENSEMBLE) Pa = ENSEMBLE[now_i][now_j][_dirnorrad][now_k];
-        if (Pa.equals(_undefined)) {
+        if (Pa > 0.9 * FLOAT_undefined) {
           R_dir = FLOAT_undefined;
         }
         else {
-          R_dir = float(Pa);
+          R_dir = Pa;
         }
   
         if (data_source == databaseNumber_CLIMATE_EPW) Pa = CLIMATE_EPW[now_i][now_j][_difhorrad][now_k];
         if (data_source == databaseNumber_CLIMATE_WY2) Pa = CLIMATE_WY2[now_i][now_j][_difhorrad][now_k];
         if (data_source == databaseNumber_ENSEMBLE) Pa = ENSEMBLE[now_i][now_j][_difhorrad][now_k];
-        if (Pa.equals(_undefined)) {
+        if (Pa > 0.9 * FLOAT_undefined) {
           R_dif = FLOAT_undefined;
         }
         else {
-          R_dif = float(Pa);
+          R_dif = Pa;
         }
         
         if (data_source == databaseNumber_CLIMATE_EPW) Pa = CLIMATE_EPW[now_i][now_j][_drybulb][now_k];
         if (data_source == databaseNumber_CLIMATE_WY2) Pa = CLIMATE_WY2[now_i][now_j][_drybulb][now_k];
         if (data_source == databaseNumber_ENSEMBLE) Pa = ENSEMBLE[now_i][now_j][_drybulb][now_k];
-        if (Pa.equals(_undefined)) {
+        if (Pa > 0.9 * FLOAT_undefined) {
           T = FLOAT_undefined;
         }
         else {
-          T = float(Pa);
+          T = Pa;
         }
         
         if (data_source == databaseNumber_CLIMATE_EPW) Pa = CLIMATE_EPW[now_i][now_j][_precipitation][now_k];
@@ -5459,12 +5458,12 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
         //if (data_source == databaseNumber_CLIMATE_WY2) Pb = CLIMATE_WY2[pre_i][pre_j][_precipitation][now_k];
         //if (data_source == databaseNumber_ENSEMBLE) Pb = ENSEMBLE[pre_i][pre_j][_precipitation][now_k];
         
-        if ((Pa.equals(_undefined)) || (Pb.equals(_undefined))) {
+        if ((Pa > 0.9 * FLOAT_undefined) || (Pb > 0.9 * FLOAT_undefined)) {
           RAIN = FLOAT_undefined;
         }
         else {
-          RAIN = float(Pb) - float(Pa);
-          //RAIN = float(Pa) - float(Pb);
+          RAIN = Pb - Pa;
+          //RAIN = Pa - Pb;
           
           //if (T <= 0) RAIN *= -1; // <<<<<<<<<<<<<<<<<<<<
         }    
@@ -5493,9 +5492,9 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
 
 
             
-            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
-            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
-            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
+            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
           }
             
           V_scale[_developed] = 0.5;
@@ -5517,9 +5516,9 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
            
             _valuesSUM[now_k] = SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
             
-            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
-            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
-            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
+            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
           }
             
           V_scale[_developed] = 0.1;
@@ -5538,9 +5537,9 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
             
             _valuesSUM[now_k] += SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
             
-            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = String.valueOf(0.001 * _valuesSUM[now_k]);
-            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = String.valueOf(0.001 * _valuesSUM[now_k]);
-            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = String.valueOf(0.001 * _valuesSUM[now_k]);
+            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = 0.001 * _valuesSUM[now_k];
+            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = 0.001 * _valuesSUM[now_k];
+            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = 0.001 * _valuesSUM[now_k];
           }
 
             
@@ -5560,9 +5559,9 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
            
             _valuesSUM[now_k] = SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
             
-            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
-            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
-            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
+            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
           }
             
           V_scale[_developed] = 0.1;
@@ -5581,9 +5580,9 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
            
             _valuesSUM[now_k] += SolarAtSurface(SunR[1], SunR[2], SunR[3], R_dir, R_dif, Alpha, Beta, GlobalAlbedo);
             
-            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = String.valueOf(0.001 * _valuesSUM[now_k]);
-            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = String.valueOf(0.001 * _valuesSUM[now_k]);
-            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = String.valueOf(0.001 * _valuesSUM[now_k]);
+            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = 0.001 * _valuesSUM[now_k];
+            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = 0.001 * _valuesSUM[now_k];
+            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = 0.001 * _valuesSUM[now_k];
           }
             
           V_scale[_developed] = 2.5;
@@ -5600,9 +5599,9 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           if (T < 0.9 * FLOAT_undefined) { 
             _valuesSUM[now_k] += (18 - T) / 24;
             
-            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
-            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
-            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
+            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
           }
             
           V_scale[_developed] = 1.0;
@@ -5641,11 +5640,11 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
             if (data_source == databaseNumber_CLIMATE_WY2) Pa = CLIMATE_WY2[new_i][new_j][develop_Layer][new_k];
             if (data_source == databaseNumber_ENSEMBLE) Pa = ENSEMBLE[new_i][new_j][develop_Layer][new_k];
 
-            if (Pa.equals(_undefined)) {
+            if (Pa > 0.9 * FLOAT_undefined) {
               T_new = FLOAT_undefined;
             }
             else {
-              T_new = float(Pa);
+              T_new = Pa;
             }            
             
             if (T_new < 0.9 * FLOAT_undefined) {
@@ -5659,15 +5658,15 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
          
           if (sum_count != 0) {
             _valuesSUM[now_k] /= sum_count;
-            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
-            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
-            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
+            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
           }
           else {
             _valuesSUM[now_k] = FLOAT_undefined;
-            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = _undefined;
-            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = _undefined;
-            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = _undefined;
+            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = FLOAT_undefined;
+            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = FLOAT_undefined;
+            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = FLOAT_undefined;
           }
           
           _valuesSUM[now_k] = 0;
@@ -5712,11 +5711,11 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
               if (data_source == databaseNumber_CLIMATE_WY2) Pa = CLIMATE_WY2[new_i][new_j][develop_Layer][new_k];
               if (data_source == databaseNumber_ENSEMBLE) Pa = ENSEMBLE[new_i][new_j][develop_Layer][new_k];
               
-              if (Pa.equals(_undefined)) {
+              if (Pa > 0.9 * FLOAT_undefined) {
                 T_new = FLOAT_undefined;
               }
               else {
-                T_new = float(Pa);
+                T_new = Pa;
               }            
               
               if (T_new < 0.9 * FLOAT_undefined) {
@@ -5731,15 +5730,15 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
          
           if (sum_count != 0) {
             _valuesSUM[now_k] /= sum_count;
-            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
-            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
-            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
+            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
           }
           else {
             _valuesSUM[now_k] = FLOAT_undefined;
-            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = _undefined;
-            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = _undefined;
-            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = _undefined;
+            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = FLOAT_undefined;
+            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = FLOAT_undefined;
+            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = FLOAT_undefined;
           }
           
           _valuesSUM[now_k] = 0;
@@ -5783,11 +5782,11 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
             if (data_source == databaseNumber_CLIMATE_WY2) Pa = CLIMATE_WY2[new_i][new_j][develop_Layer][new_k];
             if (data_source == databaseNumber_ENSEMBLE) Pa = ENSEMBLE[new_i][new_j][develop_Layer][new_k];
 
-            if (Pa.equals(_undefined)) {
+            if (Pa > 0.9 * FLOAT_undefined) {
               T_new = FLOAT_undefined;
             }
             else {
-              T_new = float(Pa);
+              T_new = Pa;
             }            
             
             if (T_new < 0.9 * FLOAT_undefined) {
@@ -5801,15 +5800,15 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
          
           if (sum_count != 0) {
             _valuesSUM[now_k] /= sum_count;
-            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
-            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
-            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
+            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
           }
           else {
             _valuesSUM[now_k] = FLOAT_undefined;
-            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = _undefined;
-            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = _undefined;
-            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = _undefined;
+            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = FLOAT_undefined;
+            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = FLOAT_undefined;
+            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = FLOAT_undefined;
           }
           
           _valuesSUM[now_k] = 0;
@@ -5829,9 +5828,9 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           if (RAIN < 0.9 * FLOAT_undefined) { 
             _valuesSUM[now_k] = RAIN;
             
-            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
-            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
-            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = String.valueOf(_valuesSUM[now_k]);
+            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
           }
             
           V_scale[_developed] = 2.5;
@@ -5853,9 +5852,9 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
          
           if ((i == 23) && (develop_per_day == 1)) {
             for (int l = i + 1 - 24; l <= i ; l += 1) {
-              if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[l][now_j][_developed][now_k] = String.valueOf(CLIMATE_WY2[now_i][now_j][_developed][now_k]);
-              if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[l][now_j][_developed][now_k] = String.valueOf(CLIMATE_WY2[now_i][now_j][_developed][now_k]);
-              if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[l][now_j][_developed][now_k] = String.valueOf(ENSEMBLE[now_i][now_j][_developed][now_k]);
+              if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[l][now_j][_developed][now_k] = CLIMATE_WY2[now_i][now_j][_developed][now_k];
+              if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[l][now_j][_developed][now_k] = CLIMATE_WY2[now_i][now_j][_developed][now_k];
+              if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[l][now_j][_developed][now_k] = ENSEMBLE[now_i][now_j][_developed][now_k];
             }
             //sum_interval = 24;
             V_scale[_developed] = 10;
@@ -5868,9 +5867,9 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           
           if (((i == 11) || (i == 23)) && (develop_per_day == 2)) {
             for (int l = i + 1 - 12 ; l <= i; l += 1) {
-              if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[l][now_j][_developed][now_k] = String.valueOf(CLIMATE_WY2[now_i][now_j][_developed][now_k]);
-              if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[l][now_j][_developed][now_k] = String.valueOf(CLIMATE_WY2[now_i][now_j][_developed][now_k]);
-              if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[l][now_j][_developed][now_k] = String.valueOf(ENSEMBLE[now_i][now_j][_developed][now_k]);
+              if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[l][now_j][_developed][now_k] = CLIMATE_WY2[now_i][now_j][_developed][now_k];
+              if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[l][now_j][_developed][now_k] = CLIMATE_WY2[now_i][now_j][_developed][now_k];
+              if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[l][now_j][_developed][now_k] = ENSEMBLE[now_i][now_j][_developed][now_k];
             }
             //sum_interval = 12;
             V_scale[_developed] = 10;
@@ -5883,9 +5882,9 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
 
           if (((i == 5) || (i == 11) || (i == 17) || (i == 23)) && (develop_per_day == 3)) {
             for (int l = i + 1 - 6 ; l <= i; l += 1) {
-              if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[l][now_j][_developed][now_k] = String.valueOf(CLIMATE_WY2[now_i][now_j][_developed][now_k]);
-              if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[l][now_j][_developed][now_k] = String.valueOf(CLIMATE_WY2[now_i][now_j][_developed][now_k]);
-              if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[l][now_j][_developed][now_k] = String.valueOf(ENSEMBLE[now_i][now_j][_developed][now_k]);
+              if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[l][now_j][_developed][now_k] = CLIMATE_WY2[now_i][now_j][_developed][now_k];
+              if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[l][now_j][_developed][now_k] = CLIMATE_WY2[now_i][now_j][_developed][now_k];
+              if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[l][now_j][_developed][now_k] = ENSEMBLE[now_i][now_j][_developed][now_k];
             }
             //sum_interval = 6;
             V_scale[_developed] = 10;
@@ -6027,16 +6026,16 @@ int SOLARCHVISION_filter (String data_type, int _cloudcover, int type_of_filter,
   }
   
   for (int q = start_q; q <= end_q; q += 1) {
-    String _sky = _undefined;
+    float _sky = FLOAT_undefined;
     if (data_type.equals("OBSERVED")) _sky = OBSERVED[q][now_j][_cloudcover][now_k];
     if (data_type.equals("ENSEMBLE")) _sky = ENSEMBLE[q][now_j][_cloudcover][now_k];
     if (data_type.equals("CLIMATE_WY2")) _sky = CLIMATE_WY2[q][now_j][_cloudcover][now_k];
     if (data_type.equals("CLIMATE_EPW")) _sky = CLIMATE_EPW[q][now_j][_cloudcover][now_k];
     
-    if (_sky.equals(_undefined)) {
+    if (_sky > 0.9 * FLOAT_undefined) {
     }
     else {
-      total_sky += float(_sky);
+      total_sky += _sky;
       num_sky += 1;
     }
   }
@@ -6085,10 +6084,10 @@ int[] SOLARCHVISION_FIND_SCENARIOS_CLOSE_TO_NORMALS (float[] _values) {
 
 int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int layers_count, int start_z, int end_z, int j, float DATE_ANGLE) {
 
-  String Pa = "";
-  String Pb = "";
-  String Pc = "";
-  String Pd = "";
+  float Pa = FLOAT_undefined;
+  float Pb = FLOAT_undefined;
+  float Pc = FLOAT_undefined;
+  float Pd = FLOAT_undefined;
  
   float _values_R_dir;
   float _values_R_dif;
@@ -6155,7 +6154,7 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int layers_count, int start_z, int 
             Pd = CLIMATE_EPW[now_i][now_j][_difeffect][now_k]; 
         }   
         
-        if ((Pa.equals(_undefined)) || (Pb.equals(_undefined)) || (Pc.equals(_undefined)) || (Pd.equals(_undefined))) {
+        if ((Pa > 0.9 * FLOAT_undefined) || (Pb > 0.9 * FLOAT_undefined) || (Pc > 0.9 * FLOAT_undefined) || (Pd > 0.9 * FLOAT_undefined)) {
         }
         else {
     
@@ -6166,10 +6165,10 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int layers_count, int start_z, int 
           if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
           
           if (drw_count == 1) {
-            _values_R_dir = 0.001 * float(Pa);
-            _values_R_dif = 0.001 * float(Pb);
-            _values_E_dir = 0.0001 * float(Pc);
-            _values_E_dif = 0.0001 * float(Pd);
+            _values_R_dir = 0.001 * Pa;
+            _values_R_dif = 0.001 * Pb;
+            _values_E_dir = 0.0001 * Pc;
+            _values_E_dif = 0.0001 * Pd;
             
             if (_valuesSUM_RAD[(k * num_add_days + j_ADD)] > 0.9 * FLOAT_undefined) {
               _valuesSUM_RAD[(k * num_add_days + j_ADD)] = 0;
@@ -6214,9 +6213,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     if (plot_impacts == -2) Impact_TYPE = Impact_SPD_DIR; 
     if (plot_impacts == -1) Impact_TYPE = Impact_SPD_DIR_TMP;
     
-    String Pa = "";
-    String Pb = "";
-    String Pc = "";
+    float Pa = FLOAT_undefined;
+    float Pb = FLOAT_undefined;
+    float Pc = FLOAT_undefined;
 
     float[] _values_w_dir;
     float[] _values_w_spd; 
@@ -6292,7 +6291,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   Pc = CLIMATE_EPW[now_i][now_j][_drybulb][now_k];
               }   
               
-              if (Pa.equals(_undefined) || Pb.equals(_undefined) || Pc.equals(_undefined)) {
+              if (Pa > 0.9 * FLOAT_undefined || Pb > 0.9 * FLOAT_undefined || Pc > 0.9 * FLOAT_undefined) {
                 _values_w_dir[k] = FLOAT_undefined;
                 _values_w_spd[k] = FLOAT_undefined;
                 _values_w_tmp[k] = FLOAT_undefined;
@@ -6308,9 +6307,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   
                 if (drw_count == 1) {
 
-                  _values_w_dir[k] = float(Pa);
-                  _values_w_spd[k] = float(Pb);
-                  _values_w_tmp[k] = float(Pc);
+                  _values_w_dir[k] = Pa;
+                  _values_w_spd[k] = Pb;
+                  _values_w_tmp[k] = Pc;
             
                   float T = _values_w_tmp[k];
                   float teta = _values_w_dir[k];
@@ -6478,10 +6477,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     int RES1 = 200;
     int RES2 = 200;
 
-    String Pa = "";
-    String Pb = "";
-    String Pc = "";
-    String Pd = "";
+    float Pa = FLOAT_undefined;
+    float Pb = FLOAT_undefined;
+    float Pc = FLOAT_undefined;
+    float Pd = FLOAT_undefined;
     
     float _values_R_dir;
     float _values_R_dif;
@@ -6624,7 +6623,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   Pd = CLIMATE_EPW[now_i][now_j][_difeffect][now_k]; 
               }   
 
-              if ((Pa.equals(_undefined)) || (Pb.equals(_undefined)) || (Pc.equals(_undefined)) || (Pd.equals(_undefined))) {
+              if ((Pa > 0.9 * FLOAT_undefined) || (Pb > 0.9 * FLOAT_undefined) || (Pc > 0.9 * FLOAT_undefined) || (Pd > 0.9 * FLOAT_undefined)) {
                 _values_R_dir = FLOAT_undefined;
                 _values_R_dif = FLOAT_undefined;
                 _values_E_dir = FLOAT_undefined;
@@ -6639,10 +6638,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
                 
                 if (drw_count == 1) {
-                  _values_R_dir = 0.001 * float(Pa);  
-                  _values_R_dif = 0.001 * float(Pb); 
-                  _values_E_dir = 0.001 * float(Pc);
-                  _values_E_dif = 0.001 * float(Pd);
+                  _values_R_dir = 0.001 * Pa;  
+                  _values_R_dif = 0.001 * Pb; 
+                  _values_E_dir = 0.001 * Pc;
+                  _values_E_dif = 0.001 * Pd;
                   
                   for (int RAD_TYPE = 0; RAD_TYPE <= 1; RAD_TYPE += 1) { 
                     float RAD_VALUE = 0;
@@ -7016,10 +7015,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     if (plot_impacts == 2) Impact_TYPE = Impact_ACTIVE; 
     if (plot_impacts == 3) Impact_TYPE = Impact_PASSIVE;
 
-    String Pa = "";
-    String Pb = "";
-    String Pc = "";
-    String Pd = "";
+    float Pa = FLOAT_undefined;
+    float Pb = FLOAT_undefined;
+    float Pc = FLOAT_undefined;
+    float Pd = FLOAT_undefined;
 
     float _values_R_dir;
     float _values_R_dif;
@@ -7150,7 +7149,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                         Pd = CLIMATE_EPW[now_i][now_j][_difeffect][now_k]; 
                     }       
         
-                    if ((Pa.equals(_undefined)) || (Pb.equals(_undefined)) || (Pc.equals(_undefined)) || (Pd.equals(_undefined))) {
+                    if ((Pa > 0.9 * FLOAT_undefined) || (Pb > 0.9 * FLOAT_undefined) || (Pc > 0.9 * FLOAT_undefined) || (Pd > 0.9 * FLOAT_undefined)) {
                       _values_R_dir = FLOAT_undefined;
                       _values_R_dif = FLOAT_undefined;
                       _values_E_dir = FLOAT_undefined;
@@ -7165,10 +7164,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
                       
                       if (drw_count == 1) {
-                        _values_R_dir = 0.001 * float(Pa);
-                        _values_R_dif = 0.001 * float(Pb);
-                        _values_E_dir = 0.001 * float(Pc);
-                        _values_E_dif = 0.001 * float(Pd);
+                        _values_R_dir = 0.001 * Pa;
+                        _values_R_dif = 0.001 * Pb;
+                        _values_E_dir = 0.001 * Pc;
+                        _values_E_dif = 0.001 * Pd;
                         
                         if (_valuesSUM_RAD > 0.9 * FLOAT_undefined) {
                           _valuesSUM_RAD = 0;
@@ -7462,10 +7461,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     if (plot_impacts == 4) Impact_TYPE = Impact_ACTIVE; 
     if (plot_impacts == 5) Impact_TYPE = Impact_PASSIVE;
 
-    String Pa = "";
-    String Pb = "";
-    String Pc = "";
-    String Pd = "";
+    float Pa = FLOAT_undefined;
+    float Pb = FLOAT_undefined;
+    float Pc = FLOAT_undefined;
+    float Pd = FLOAT_undefined;
 
     float _values_R_dir;
     float _values_R_dif;
@@ -7577,7 +7576,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                     Pd = CLIMATE_EPW[now_i][now_j][_difeffect][now_k]; 
                 }          
     
-                if ((Pa.equals(_undefined)) || (Pb.equals(_undefined)) || (Pc.equals(_undefined)) || (Pd.equals(_undefined))) {
+                if ((Pa > 0.9 * FLOAT_undefined) || (Pb > 0.9 * FLOAT_undefined) || (Pc > 0.9 * FLOAT_undefined) || (Pd > 0.9 * FLOAT_undefined)) {
                   _values_R_dir = FLOAT_undefined;
                   _values_R_dif = FLOAT_undefined;
                   _values_E_dir = FLOAT_undefined;
@@ -7592,10 +7591,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
                     
                   if (drw_count == 1) {
-                    _values_R_dir = 0.001 * float(Pa);
-                    _values_R_dif = 0.001 * float(Pb);
-                    _values_E_dir = 0.001 * float(Pc);
-                    _values_E_dif = 0.001 * float(Pd);
+                    _values_R_dir = 0.001 * Pa;
+                    _values_R_dif = 0.001 * Pb;
+                    _values_E_dir = 0.001 * Pc;
+                    _values_E_dif = 0.001 * Pd;
                     
                     if (_valuesSUM_RAD > 0.9 * FLOAT_undefined) {
                       _valuesSUM_RAD = 0;
@@ -7742,10 +7741,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     if (plot_impacts == 6) Impact_TYPE = Impact_ACTIVE; 
     if (plot_impacts == 7) Impact_TYPE = Impact_PASSIVE;
 
-    String Pa = "";
-    String Pb = "";
-    String Pc = "";
-    String Pd = "";
+    float Pa = FLOAT_undefined;
+    float Pb = FLOAT_undefined;
+    float Pc = FLOAT_undefined;
+    float Pd = FLOAT_undefined;
 
     float _values_R_dir;
     float _values_R_dif;
@@ -8998,7 +8997,7 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
              now_j = (now_j + 365) % 365; 
             }
             
-            String Pa = _undefined;
+            float Pa = FLOAT_undefined;
   
             if (impacts_source == databaseNumber_CLIMATE_WY2) {
                 Pa = CLIMATE_WY2[now_i][now_j][_direffect][now_k]; 
@@ -9013,11 +9012,11 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
                 Pa = CLIMATE_EPW[now_i][now_j][_direffect][now_k]; 
             }    
  
-            if (Pa.equals(_undefined)) {
+            if (Pa > 0.9 * FLOAT_undefined) {
             }
             else {
            
-              float[] COL = SOLARCHVISION_DRYWCBD(0.0002 * float(Pa)); // ????????
+              float[] COL = SOLARCHVISION_DRYWCBD(0.0002 * Pa); // ????????
       
               WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], 127);
               WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], 127);
@@ -11549,10 +11548,10 @@ void SOLARCHVISION_draw_objects () {
       Impact_TYPE = Impact_ACTIVE; 
       if (plot_impacts % 2 == 1) Impact_TYPE = Impact_PASSIVE;
   
-      String Pa = "";
-      String Pb = "";
-      String Pc = "";
-      String Pd = "";
+      float Pa = FLOAT_undefined;
+      float Pb = FLOAT_undefined;
+      float Pc = FLOAT_undefined;
+      float Pd = FLOAT_undefined;
       
       float _values_R_dir;
       float _values_R_dif;
@@ -11699,7 +11698,7 @@ void SOLARCHVISION_draw_objects () {
                         Pd = CLIMATE_EPW[now_i][now_j][_difeffect][now_k]; 
                     }       
               
-                    if ((Pa.equals(_undefined)) || (Pb.equals(_undefined)) || (Pc.equals(_undefined)) || (Pd.equals(_undefined))) {
+                    if ((Pa > 0.9 * FLOAT_undefined) || (Pb > 0.9 * FLOAT_undefined) || (Pc > 0.9 * FLOAT_undefined) || (Pd > 0.9 * FLOAT_undefined)) {
                       _values_R_dir = FLOAT_undefined;
                       _values_R_dif = FLOAT_undefined;
                       _values_E_dir = FLOAT_undefined;
@@ -11714,10 +11713,10 @@ void SOLARCHVISION_draw_objects () {
                       if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
                       
                       if (drw_count == 1) {
-                        _values_R_dir = 0.001 * float(Pa); 
-                        _values_R_dif = 0.001 * float(Pb);  
-                        _values_E_dir = 0.001 * float(Pc);
-                        _values_E_dif = 0.001 * float(Pd);
+                        _values_R_dir = 0.001 * Pa; 
+                        _values_R_dif = 0.001 * Pb;  
+                        _values_E_dir = 0.001 * Pc;
+                        _values_E_dif = 0.001 * Pd;
                         
                         if (_valuesSUM_RAD > 0.9 * FLOAT_undefined) {
                           _valuesSUM_RAD = 0;
@@ -12997,10 +12996,10 @@ void SolarProjection () {
 
 
 
-  String Pa = "";
-  String Pb = "";
-  String Pc = "";
-  String Pd = "";
+  float Pa = FLOAT_undefined;
+  float Pb = FLOAT_undefined;
+  float Pc = FLOAT_undefined;
+  float Pd = FLOAT_undefined;
 
   float _values_R_dir;
   float _values_R_dif;
@@ -13105,7 +13104,7 @@ void SolarProjection () {
                     Pd = CLIMATE_EPW[now_i][now_j][_difeffect][now_k]; 
                 }       
     
-                if ((Pa.equals(_undefined)) || (Pb.equals(_undefined)) || (Pc.equals(_undefined)) || (Pd.equals(_undefined))) {
+                if ((Pa > 0.9 * FLOAT_undefined) || (Pb > 0.9 * FLOAT_undefined) || (Pc > 0.9 * FLOAT_undefined) || (Pd > 0.9 * FLOAT_undefined)) {
                   _values_R_dir = FLOAT_undefined;
                   _values_R_dif = FLOAT_undefined;
                   _values_E_dir = FLOAT_undefined;
@@ -13120,10 +13119,10 @@ void SolarProjection () {
                   if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
                   
                   if (drw_count == 1) {
-                    _values_R_dir = 0.001 * float(Pa);
-                    _values_R_dif = 0.001 * float(Pb);
-                    _values_E_dir = 0.001 * float(Pc);
-                    _values_E_dif = 0.001 * float(Pd);
+                    _values_R_dir = 0.001 * Pa;
+                    _values_R_dif = 0.001 * Pb;
+                    _values_E_dir = 0.001 * Pc;
+                    _values_E_dif = 0.001 * Pd;
                     
                     if (_valuesSUM_RAD > 0.9 * FLOAT_undefined) {
                       _valuesSUM_RAD = 0;
