@@ -720,13 +720,6 @@ void SOLARCHVISION_update_station (int Step) {
 }
 
 
-void SOLARCHVISION_update_models (int Step) {
-  
-  if ((Step == 0) || (Step == 1)) SOLARCHVISION_add_SkySphere();
-  
-  if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
-
-}
 
 
 float message_size = 15;
@@ -742,18 +735,54 @@ void draw () {
     SOLARCHVISION_update_folders();
     LoadFontStyle();
 
+    float cr;
+
+    cr = 100;
+    PImage SOLARCHVISION_logo = loadImage(BackgroundFolder + "/" + "SOLARCHVISION.jpg");
+    imageMode(CENTER);
+    image(SOLARCHVISION_logo, 0.5 * width, 0.5 * height - 0.75 * message_size - cr + (0.075 * cr), 3.05 * cr, 3.05 * cr);
+    imageMode(CORNER);
+
+    strokeWeight(1);
+    stroke(0);
+    noFill();
+    
+    
+    ellipseMode(CENTER);
+
+    stroke(255);
+    noFill();    
+    SOLARCHVISION_draw_logo(0.2 * width, 0.5 * height - 0.75 * message_size - cr, 0, cr, 1);
+    stroke(0);
+    noFill();    
+    ellipse(0.2 * width, 0.5 * height - 0.75 * message_size - cr, 2 * cr, 2 * cr);
+    
+    stroke(127);
+    noFill();  
+    //SOLARCHVISION_draw_logo(0.5 * width, 0.5 * height - 0.75 * message_size - cr, 0, cr, 0);
+    stroke(0);
+    noFill();    
+    ellipse(0.5 * width, 0.5 * height - 0.75 * message_size - cr, 2 * cr, 2 * cr);
+    
+    stroke(255);
+    noFill();  
+    SOLARCHVISION_draw_logo(0.8 * width, 0.5 * height - 0.75 * message_size - cr, 0, cr, -1);
+    stroke(0);
+    noFill();    
+    ellipse(0.8 * width, 0.5 * height - 0.75 * message_size - cr, 2 * cr, 2 * cr);
+    
     strokeWeight(0);
 
     stroke(255);
     fill(255);
     textAlign(CENTER, CENTER); 
-    textSize(60);
-    text("SOLARCHVISION", 0.5 * width, 0.25 * height); 
+    textSize(45);
+    text("SOLARCHVISION model integrations 2015", 0.5 * width, 0.125 * height); 
 
     stroke(0);
     fill(0);
     textSize(15);
-    text("Raz, Mehr, Mehraz solarch studio\n1998-2015\n©Mojtaba Samimi\nwww.solarchvision.com", 0.5 * width, 0.75 * height);
+    text("Raz, Mehr, Mehraz solarch studio\n1998-2015\nAuthor: Mojtaba Samimi\nwww.solarchvision.com", 0.5 * width, 0.75 * height);
 
     textSize(message_size);
     
@@ -919,17 +948,17 @@ void draw () {
     text("SOLARCHVISION_add_SkySphere();", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 17) {
-    SOLARCHVISION_update_models(1);
+    SOLARCHVISION_add_SkySphere();
     stroke(0);
     fill(0);
     rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_add_3Dobjects();", 0.5 * width, 0.5 * height);
+    text("//SOLARCHVISION_add_3Dobjects();", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 18) {
-    SOLARCHVISION_update_models(2); 
+    //SOLARCHVISION_add_3Dobjects(); 
     stroke(0);
     fill(0);
     rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
@@ -982,7 +1011,7 @@ void draw () {
     fill(255);
     text("Please wait while integrating the models.", 0.5 * width, 0.5 * height);    
   }
-  
+
   else {
   
     CAM_x = 0;
@@ -11072,18 +11101,38 @@ void SOLARCHVISION_add_ParametricSurfaces (int m) {
         if ((i == 2) || (i == 3)) v += stp_v;
         
         /*
+        // LOGO:
+        //--------------------------------------- 
+        float x0 = cos(u * PI); 
+        float y0 = sin(v * PI);
+        float z0 = -sin(u * PI) * cos(v * PI);
+        
+        float d = pow(x0*x0 + y0*y0 + z0*z0, 0.5);
+        float x = 0;
+        float y = 0;
+        float z = 0;
+        if (d != 0) {
+          x = 10 * x0 / d;  
+          y = 10 * y0 / d;  
+          z = 10 * z0 / d;  
+        }        
+        //---------------------------------------
+        */
+        
         //---------------------------------------
         float x = 20 * u; 
         float y = 20 * v; 
         float z = 10 * sin(u * PI) * cos(v * PI); 
         //---------------------------------------
-        */
+        
 
+        /*
         //---------------------------------------
         float x = 10 * sin(u * PI); 
         float y = 10 * sin(v * PI);
         float z = 10 * cos((u + v) * PI);
-        //---------------------------------------   
+        //---------------------------------------
+        */   
 
         
         /*
@@ -11097,9 +11146,9 @@ void SOLARCHVISION_add_ParametricSurfaces (int m) {
         float y = 0;
         float z = 0;
         if (d != 0) {
-          x = 10 * x1 / d;  
-          y = 10 * y1 / d;  
-          z = 10 * z1 / d;  
+          x = 10 * x0 / d;  
+          y = 10 * y0 / d;  
+          z = 10 * z0 / d;  
         }
         //---------------------------------------   
         */     
@@ -13371,4 +13420,95 @@ void SolarProjection () {
 
   pre_per_day = per_day;
   num_add_days = pre_num_add_days;
+}
+
+
+void SOLARCHVISION_draw_logo (float cx, float cy, float cz, float cr, int the_view) {
+  
+  float stp_u = 1.0 / 12.0;
+  float stp_v = 1.0 / 12.0;
+  
+  int n_a = 1;
+  
+  for (float a = -1; a < 1; a += stp_u) {
+    
+    n_a *= -1;
+    
+    int n_b = n_a;
+    
+    for (float b = -1; b < 1; b += stp_v) {
+      
+      n_b *= -1;
+
+      float[][] newQuad = {{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}};
+      
+      for (int i = 0; i < 4; i++) {
+        
+        float u = a;
+        float v = b;
+        
+        if ((i == 1) || (i == 2)) u += stp_u;
+        if ((i == 2) || (i == 3)) v += stp_v;
+
+        //---------------------------------------
+        float x0 = cos(u * PI); 
+        float y0 = sin(u * PI) * cos(v * PI);
+        float z0 = sin(v * PI);
+        
+        float d = pow(x0*x0 + y0*y0 + z0*z0, 0.5);
+        x0 /= d;  
+        y0 /= d;  
+        z0 /= d;  
+        
+        float x = x0;
+        float y = y0;
+        float z = z0;
+
+        if (the_view == 0) { // corner view: logo
+          float t = 0.25 * PI;
+          newQuad[i][0] = x0 * cos(t) - z0 * sin(t);
+          newQuad[i][1] = y0;   
+          newQuad[i][2] = x0 * sin(t) + z0 * cos(t);
+        }           
+        else if (the_view == 1) { // front view
+          newQuad[i][0] = x0;
+          newQuad[i][1] = y0;   
+          newQuad[i][2] = z0;
+        }   
+        else if (the_view == -1) { // top view
+          newQuad[i][0] = x0;
+          newQuad[i][1] = z0;   
+          newQuad[i][2] = y0;
+        }   
+
+      }
+      
+      float x1 = cr * newQuad[0][0] + cx;
+      float y1 = cr * newQuad[0][1] + cy;
+      float z1 = cr * newQuad[0][2] + cz;
+
+      float x2 = cr * newQuad[1][0] + cx;
+      float y2 = cr * newQuad[1][1] + cy;
+      float z2 = cr * newQuad[1][2] + cz;
+
+      float x3 = cr * newQuad[2][0] + cx;
+      float y3 = cr * newQuad[2][1] + cy;
+      float z3 = cr * newQuad[2][2] + cz;
+
+      float x4 = cr * newQuad[3][0] + cx;
+      float y4 = cr * newQuad[3][1] + cy;
+      float z4 = cr * newQuad[3][2] + cz;
+
+      if (n_a * n_b == 1) {
+        triangle(x1,y1, x2,y2, x3,y3);
+        triangle(x3,y3, x4,y4, x1,y1);
+      }
+      else{
+        triangle(x4,y4, x1,y1, x2,y2);
+        triangle(x2,y2, x3,y3, x4,y4);
+      }
+      
+    
+    }
+  }
 }
