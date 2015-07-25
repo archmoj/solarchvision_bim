@@ -12,6 +12,9 @@ int MODEL_RUN = 0; //12;
 
 float interpolation_weight = 0.5;// 0 = linear distance interpolation, 1 = square distance interpolation, 5 = nearest
 
+float GlobeRES = 2.5; //1, 2.5, 5
+
+
 int Climatic_solar_model = 0; //                                   Used for solar radiation only
 int Climatic_weather_model = 1; // 0:linear 1:average 2:sky-based. Used for some parameters namely: air temperature, humidity
 
@@ -19,9 +22,9 @@ int automated = 0; //0: User interface, 1: Automatic
 
 String CLIMATE_EPW_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_EPW";
 
-//String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_EMPTY"; 
+String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_EMPTY"; 
 //String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_90s"; 
-String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED";
+//String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED";
 
 String ENSEMBLE_directory = "C:/SOLARCHVISION_2015/Input/WeatherForecast/FORECAST_NAEFS";
 
@@ -79,7 +82,7 @@ String[][] DEFINED_STATIONS = {
                                 {"TORONTO_ISLAND_ON_CA", "Ryerson_University", "ON", "43.6593", "-79.3779", "-75", "95"}, 
   
                                 {"MONTREAL_DORVAL_QC_CA", "Place_Bonaventure", "QC", "45.4995", "-73.5650", "-75", "30"},
-                                
+/*                                
                                 {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36"},
                                 
                                 {"CALGARY_INTL_AB_CA", "CALGARY", "AB", "51.113889", "-114.02", "-120", "1084.1"}, 
@@ -91,7 +94,11 @@ String[][] DEFINED_STATIONS = {
                                 {"TORONTO_ISLAND_ON_CA", "TORONTO-ISLAND", "ON", "43.6275", "-79.396111", "-75", "76.8"}, 
                                 {"TORONTO_PEARSON_INTL_ON_CA", "TORONTO-PEARSON", "ON", "43.676667", "-79.630556", "-75", "173.4"}, 
                                 {"VANCOUVER_INTL_BC_CA", "VANCOUVER_Harbour", "BC", "49.295353", "-123.121869", "-120", "2.5"}, 
-                                {"WINNIPEG_INTL_MB_CA", "WINNIPEG", "MB", "49.91", "-97.24", "-90", "238.7"}, 
+                                {"WINNIPEG_INTL_MB_CA", "WINNIPEG", "MB", "49.91", "-97.24", "-90", "238.7"},
+                               
+*/
+
+
 /*                                
                                 {"BOSTON_MA_US", "BOSTON", "MA", "42.35843", "-71.05978", "-75", "15.0"}, 
                                 {"CHICAGO_IL_US", "CHICAGO", "IL", "41.878113", "-87.6298", "-90", "181.0"}, 
@@ -671,125 +678,142 @@ void setup () {
 float CAM_x, CAM_y, CAM_z;
 
 
+
+
+
+
 void draw () {
   
   //println("frameCount:", frameCount);
-  
+
   if (frameCount == 1) {
     text("LoadWorldImages();", 10, 15 * frameCount);
-    LoadWorldImages();
-    text("OK.", 300, 15 * frameCount);
-  }
+  }  
   else if (frameCount == 2) {
-    text("LoadObject2DImages();", 10, 15 * frameCount);
-    LoadObject2DImages();
-    text("OK.", 300, 15 * frameCount);
+    LoadWorldImages();
+    text("OK.", 400, 15 * (frameCount - 1));
+    
+    text("LoadWorldImages();", 10, 15 * frameCount);
   }
   else if (frameCount == 3) {
-    text("SOLARCHVISION_Calendar();", 10, 15 * frameCount);
-    SOLARCHVISION_Calendar(); 
-    text("OK.", 300, 15 * frameCount);
+    LoadWorldImages();
+    text("OK.", 400, 15 * (frameCount - 1));
+    
+    text("LoadObject2DImages();", 10, 15 * frameCount);
   }
   else if (frameCount == 4) {
-    text("getSWOB_Coordinates();", 10, 15 * frameCount);
-    getSWOB_Coordinates(); 
-    text("OK.", 300, 15 * frameCount);
+    LoadObject2DImages();
+    text("OK.", 400, 15 * (frameCount - 1));
+
+    text("SOLARCHVISION_Calendar();", 10, 15 * frameCount);
   }
   else if (frameCount == 5) {
-    text("getNAEFS_Coordinates();", 10, 15 * frameCount);
-    getNAEFS_Coordinates(); 
-    text("OK.", 300, 15 * frameCount);
+    SOLARCHVISION_Calendar(); 
+    text("OK.", 400, 15 * (frameCount - 1));
+
+    text("getSWOB_Coordinates();", 10, 15 * frameCount);
   }
   else if (frameCount == 6) {
-    text("getCWEEDS_Coordinates();", 10, 15 * frameCount);
-    getCWEEDS_Coordinates();  
-    text("OK.", 300, 15 * frameCount);
+    getSWOB_Coordinates(); 
+    text("OK.", 400, 15 * (frameCount - 1));
+
+    text("getNAEFS_Coordinates();", 10, 15 * frameCount);
   }
   else if (frameCount == 7) {
-    text("SOLARCHVISION_update_date();", 10, 15 * frameCount);
-    SOLARCHVISION_update_date(); 
-    text("OK.", 300, 15 * frameCount);
+    getNAEFS_Coordinates(); 
+    text("OK.", 400, 15 * (frameCount - 1));
+
+    text("getCWEEDS_Coordinates();", 10, 15 * frameCount);
   }
   else if (frameCount == 8) {
-    text("SOLARCHVISION_update_station(1);", 10, 15 * frameCount);
-    SOLARCHVISION_update_station(1);
-    text("OK.", 300, 15 * frameCount);
+    getCWEEDS_Coordinates();  
+    text("OK.", 400, 15 * (frameCount - 1));
+
+    text("SOLARCHVISION_update_date();", 10, 15 * frameCount);
   }
   else if (frameCount == 9) {
-    text("SOLARCHVISION_update_station(2);", 10, 15 * frameCount);
-    SOLARCHVISION_update_station(2);
-    text("OK.", 300, 15 * frameCount);
+    SOLARCHVISION_update_date(); 
+    text("OK.", 400, 15 * (frameCount - 1));
+
+    text("SOLARCHVISION_update_station(begin);", 10, 15 * frameCount);
   }
   else if (frameCount == 10) {
-    text("SOLARCHVISION_update_station(3);", 10, 15 * frameCount);
-    SOLARCHVISION_update_station(3);
-    text("OK.", 300, 15 * frameCount);
+    SOLARCHVISION_update_station(1);
+    text("OK.", 400, 15 * (frameCount - 1));
+
+    text("SOLARCHVISION_update_station(try_update_CLIMATE_EPW);", 10, 15 * frameCount);
   }
   else if (frameCount == 11) {
-    text("SOLARCHVISION_update_station(4);", 10, 15 * frameCount);
-    SOLARCHVISION_update_station(4);
-    text("OK.", 300, 15 * frameCount);
+    SOLARCHVISION_update_station(2);
+    text("OK.", 400, 15 * (frameCount - 1));
+
+    text("SOLARCHVISION_update_station(try_update_CLIMATE_WY2);", 10, 15 * frameCount);
   }
   else if (frameCount == 12) {
-    text("SOLARCHVISION_update_station(5);", 10, 15 * frameCount);
-    SOLARCHVISION_update_station(5);
-    text("OK.", 300, 15 * frameCount);
+    SOLARCHVISION_update_station(3);
+    text("OK.", 400, 15 * (frameCount - 1));
+
+    text("SOLARCHVISION_update_station(try_update_observed);", 10, 15 * frameCount);
   }
   else if (frameCount == 13) {
-    text("SOLARCHVISION_update_station(6);", 10, 15 * frameCount);
-    SOLARCHVISION_update_station(6);
-    text("OK.", 300, 15 * frameCount);
+    SOLARCHVISION_update_station(4);
+    text("OK.", 400, 15 * (frameCount - 1));
+
+    text("SOLARCHVISION_update_station(try_update_forecast);", 10, 15 * frameCount);
   }
   else if (frameCount == 14) {
-    text("SOLARCHVISION_update_station(7);", 10, 15 * frameCount);
-    SOLARCHVISION_update_station(7);
-    text("OK.", 300, 15 * frameCount);
+    SOLARCHVISION_update_station(5);
+    text("OK.", 400, 15 * (frameCount - 1));
+
+    text("SOLARCHVISION_update_station(try_update_LAND&2Ds);", 10, 15 * frameCount);
   }
   else if (frameCount == 15) {
-    text("SOLARCHVISION_update_station(8);", 10, 15 * frameCount);
-    SOLARCHVISION_update_station(8);
-    text("OK.", 300, 15 * frameCount);
+    SOLARCHVISION_update_station(6);
+    text("OK.", 400, 15 * (frameCount - 1));
+
+    text("SOLARCHVISION_update_station(end);", 10, 15 * frameCount);
   }
   else if (frameCount == 16) {
-    text("SOLARCHVISION_update_station(9);", 10, 15 * frameCount);
-    SOLARCHVISION_update_station(9);
-    text("OK.", 300, 15 * frameCount);
+    SOLARCHVISION_update_station(7);
+    text("OK.", 400, 15 * (frameCount - 1));
+
+    text("SOLARCHVISION_add_SkySphere();", 10, 15 * frameCount);
   }
   else if (frameCount == 17) {
-    text("SOLARCHVISION_update_station(10);", 10, 15 * frameCount);
-    SOLARCHVISION_update_station(10);
-    text("OK.", 300, 15 * frameCount);
+    SOLARCHVISION_add_SkySphere();
+    text("OK.", 400, 15 * (frameCount - 1));
+
+    text("SOLARCHVISION_add_3Dobjects();", 10, 15 * frameCount);
   }
   else if (frameCount == 18) {
-    text("SOLARCHVISION_add_SkySphere();", 10, 15 * frameCount);
-    SOLARCHVISION_add_SkySphere();
-    text("OK.", 300, 15 * frameCount);
+    SOLARCHVISION_add_3Dobjects(); 
+    text("OK.", 400, 15 * (frameCount - 1));
+
+    text("//SOLARCHVISION_add_ParametricSurfaces(1);", 10, 15 * frameCount);
   }
   else if (frameCount == 19) {
-    text("SOLARCHVISION_add_3Dobjects();", 10, 15 * frameCount);
-    SOLARCHVISION_add_3Dobjects(); 
-    text("OK.", 300, 15 * frameCount);
+    //SOLARCHVISION_add_ParametricSurfaces(1);
+    text("OK.", 400, 15 * (frameCount - 1));
+
+    text("//SOLARCHVISION_add_ParametricGeometries();", 10, 15 * frameCount);
   }
   else if (frameCount == 20) {
-    text("//SOLARCHVISION_add_ParametricSurfaces(1);", 10, 15 * frameCount);
-    //SOLARCHVISION_add_ParametricSurfaces(1);
-    text("OK.", 300, 15 * frameCount);
+    //SOLARCHVISION_add_ParametricGeometries();
+    text("OK.", 400, 15 * (frameCount - 1));
+
+    text("calculate_ParametricGeometries_Field();", 10, 15 * frameCount);
   }
   else if (frameCount == 21) {
-    text("//SOLARCHVISION_add_ParametricGeometries();", 10, 15 * frameCount);
-    //SOLARCHVISION_add_ParametricGeometries();
-    text("OK.", 300, 15 * frameCount);
-  }
-  else if (frameCount == 22) {
-    text("calculate_ParametricGeometries_Field();", 10, 15 * frameCount);
     calculate_ParametricGeometries_Field();
-    text("OK.", 300, 15 * frameCount); 
-  }
-  else if (frameCount == 23) {
-    text("SolarProjection();", 10, 15 * frameCount);
-    SolarProjection();
-    text("OK.", 300, 15 * frameCount); 
+    text("OK.", 400, 15 * (frameCount - 1)); 
+
+    text("build_SolarProjection_array();", 10, 15 * frameCount);
   }    
+  else if (frameCount == 22) {  
+     build_SolarProjection_array();
+     text("OK.", 400, 15 * (frameCount - 1)); 
+  }
+  
   else {
   
     CAM_x = 0;
@@ -1865,30 +1889,21 @@ void SOLARCHVISION_update_station (int Step) {
     LocationTimeZone = float(DEFINED_STATIONS[STATION_NUMBER][5]);
     LocationElevation = float(DEFINED_STATIONS[STATION_NUMBER][6]);
     Delta_NOON = (LocationTimeZone - LocationLongitude) / 15.0;
+    
+    WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
+    
+    BEGIN_DAY = Convert2Date(_MONTH, _DAY);
   }
   
   if ((Step == 0) || (Step == 2)) try_update_CLIMATE_EPW();
   
   if ((Step == 0) || (Step == 3)) try_update_CLIMATE_WY2();  
+  
+  if ((Step == 0) || (Step == 4)) try_update_observed();
+  
+  if ((Step == 0) || (Step == 5)) try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
 
-  if ((Step == 0) || (Step == 4)) BEGIN_DAY = Convert2Date(_MONTH, _DAY);
-  
-  if ((Step == 0) || (Step == 5)) try_update_observed();
-  
-  if ((Step == 0) || (Step == 6)) try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
-  
-  if ((Step == 0) || (Step == 7)) {
-  //if (MODEL_RUN == 12) BEGIN_DAY = (BEGIN_DAY + 1) % 365; // don't study first 12 hours; this is to have a complete day in graphs!
-  
-  //move_BEGIN_DAY_for_observations ();
-  
-    println("Station updated.");
-    // French ??
-  }
-  
-  if ((Step == 0) || (Step == 8)) WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
-
-  if ((Step == 0) || (Step == 9)) {
+  if ((Step == 0) || (Step == 6)) {
     LAND_mid_lat = LocationLatitude;
     LAND_mid_lon = LocationLongitude;
     SOLARCHVISION_LoadLAND(LocationName);
@@ -1906,16 +1921,13 @@ void SOLARCHVISION_update_station (int Step) {
     SOLARCHVISION_add_2Dobjects_onLand();
   }
   
-  if ((Step == 0) || (Step == 10)) {
+  if ((Step == 0) || (Step == 7)) {
     WORLD_Update = 1;
     WIN3D_Update = 1; 
     GRAPHS_Update = 1;    
     redraw_scene = 1;
   }
 }
-
-
-
 
 
 
@@ -2574,10 +2586,6 @@ void SOLARCHVISION_update_date () {
   _MONTH = CalendarDate[int(_DATE)][0]; 
   _DAY = CalendarDate[int(_DATE)][1];
   _HOUR = int(24 * (_DATE - int(_DATE)));
-}
-
-void move_BEGIN_DAY_for_observations () {
-  //BEGIN_DAY = (BEGIN_DAY + 365 - 6) % 365;
 }
 
 int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
@@ -10666,33 +10674,9 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
 
 void SOLARCHVISION_add_3Dobjects () {
 
-  /*
-  add_Mesh2(0, 0, 0, 0, 40, 40, 0);
-  
-  add_Mesh5(1, 10,10,0, 10,10,5, 10,15,10, 10,20,5, 10,20,0);
-  add_Mesh5(2, 20,20,0, 20,20,5, 20,15,10, 20,10,5, 20,10,0);  
-  add_Mesh4(3, 10,10,0, 20,10,0, 20,10,5, 10,10,5);
-  add_Mesh4(4, 10,20,0, 10,20,5, 20,20,5, 20,20,0);
-  add_Mesh4(5, 10,10,5, 20,10,5, 20,15,10, 10,15,10);
-  add_Mesh4(6, 10,20,5, 10,15,10, 20,15,10, 20,20,5);    
-  */
-  
-  //add_RecursiveSphere(0, 0,0,0, 50, 3, 0);
-  
 
-  
-  /*
-  add_RecursiveSphere(0, 0,0,0, 50, 5, 0);
-  add_RecursiveSphere(0, 100,0,0, 40, 4, 0);
-  add_RecursiveSphere(0, 180,0,0, 30, 3, 0);
-  add_RecursiveSphere(0, 240,0,0, 20, 2, 0);
-  add_RecursiveSphere(0, 280,0,0, 10, 1, 0);
-  */
-  
-  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/Financial_District.obj", -1, 0,0,0, 1,1,1);
-  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/Ryerson_University.obj", -1, 0,0,0, 1,1,1);
-  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/Place_Bonaventure.obj", -1, 0,0,0, 1,1,1);
-  
+
+  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/" + DEFINED_STATIONS[STATION_NUMBER][1] + ".obj", -1, 0,0,0, 1,1,1);
   
   
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
@@ -10718,6 +10702,28 @@ void SOLARCHVISION_add_3Dobjects () {
 
 
 
+  /*
+  add_Mesh2(0, 0, 0, 0, 40, 40, 0);
+  
+  add_Mesh5(1, 10,10,0, 10,10,5, 10,15,10, 10,20,5, 10,20,0);
+  add_Mesh5(2, 20,20,0, 20,20,5, 20,15,10, 20,10,5, 20,10,0);  
+  add_Mesh4(3, 10,10,0, 20,10,0, 20,10,5, 10,10,5);
+  add_Mesh4(4, 10,20,0, 10,20,5, 20,20,5, 20,20,0);
+  add_Mesh4(5, 10,10,5, 20,10,5, 20,15,10, 10,15,10);
+  add_Mesh4(6, 10,20,5, 10,15,10, 20,15,10, 20,20,5);    
+  */
+  
+  //add_RecursiveSphere(0, 0,0,0, 50, 3, 0);
+  
+
+  
+  /*
+  add_RecursiveSphere(0, 0,0,0, 50, 5, 0);
+  add_RecursiveSphere(0, 100,0,0, 40, 4, 0);
+  add_RecursiveSphere(0, 180,0,0, 30, 3, 0);
+  add_RecursiveSphere(0, 240,0,0, 20, 2, 0);
+  add_RecursiveSphere(0, 280,0,0, 10, 1, 0);
+  */
 
 
 
@@ -12958,18 +12964,18 @@ float SolarAtSurface (float SunR1, float SunR2, float SunR3, float SunR4, float 
 }
 
 
-float GlobeRES = 5; //1, 2.5, 5
-float stp_slp = GlobeRES;
-float stp_dir = GlobeRES;
-int n_slp = int(roundTo(180.0 / (1.0 * stp_slp), 1)) + 1;  
-int n_dir = int(roundTo(360.0 / (1.0 * stp_dir), 1));
+
+float stp_slp;
+float stp_dir;
+int n_slp;  
+int n_dir;
 
 float[][]LocationExposure;
 
-void build_SolarProjection_array (float w) {
+void build_SolarProjection_array () {
   
-  stp_slp = w;
-  stp_dir = w;
+  stp_slp = GlobeRES;
+  stp_dir = GlobeRES;
   n_slp = int(roundTo(180.0 / (1.0 * stp_slp), 1)) + 1;  
   n_dir = int(roundTo(360.0 / (1.0 * stp_dir), 1));
 
@@ -12984,8 +12990,6 @@ void build_SolarProjection_array (float w) {
 
 
 void SolarProjection () {
-  
-  build_SolarProjection_array(2.5);
   
   float pre_per_day = per_day;
   int pre_num_add_days = num_add_days;
