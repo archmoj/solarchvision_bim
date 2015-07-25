@@ -632,6 +632,8 @@ int number_of_WORLD_viewports;
 int GRAPHS_Update = 1;
 
 
+float CAM_x, CAM_y, CAM_z;
+
 
 void setup () {
 
@@ -674,9 +676,56 @@ void setup () {
 }
 
 
+void SOLARCHVISION_update_station (int Step) {
+  
+  if ((Step == 0) || (Step == 1)) {
+    THE_STATION = DEFINED_STATIONS[STATION_NUMBER][0];
+    LocationName = DEFINED_STATIONS[STATION_NUMBER][1];
+    LocationProvince = DEFINED_STATIONS[STATION_NUMBER][2];
+    LocationLatitude = float(DEFINED_STATIONS[STATION_NUMBER][3]);
+    LocationLongitude = float(DEFINED_STATIONS[STATION_NUMBER][4]);
+    LocationTimeZone = float(DEFINED_STATIONS[STATION_NUMBER][5]);
+    LocationElevation = float(DEFINED_STATIONS[STATION_NUMBER][6]);
+    Delta_NOON = (LocationTimeZone - LocationLongitude) / 15.0;
+    
+    WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
+    
+    BEGIN_DAY = Convert2Date(_MONTH, _DAY);
+  }
+  
+  if ((Step == 0) || (Step == 2)) try_update_CLIMATE_EPW();
+  
+  if ((Step == 0) || (Step == 3)) try_update_CLIMATE_WY2();  
+  
+  if ((Step == 0) || (Step == 4)) try_update_observed();
+  
+  if ((Step == 0) || (Step == 5)) try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
 
-float CAM_x, CAM_y, CAM_z;
-
+  if ((Step == 0) || (Step == 6)) {
+    LAND_mid_lat = LocationLatitude;
+    LAND_mid_lon = LocationLongitude;
+    SOLARCHVISION_LoadLAND(LocationName);
+    {
+      allObject2D_XYZS = new float[1][3]; 
+      allObject2D_XYZS[0][0] = 0;
+      allObject2D_XYZS[0][1] = 0;
+      allObject2D_XYZS[0][2] = 0;
+      
+      allObject2D_MAP = new int[1];
+      allObject2D_MAP[0] = 0;
+      
+      allObject2D_num = 0;
+    }
+    SOLARCHVISION_add_2Dobjects_onLand();
+  }
+  
+  if ((Step == 0) || (Step == 7)) {
+    WORLD_Update = 1;
+    WIN3D_Update = 1; 
+    GRAPHS_Update = 1;    
+    redraw_scene = 1;
+  }
+}
 
 
 
@@ -687,11 +736,9 @@ void draw () {
   //println("frameCount:", frameCount);
 
   if (frameCount == 1) {
-    text("LoadWorldImages();", 10, 15 * frameCount);
+
   }  
   else if (frameCount == 2) {
-    LoadWorldImages();
-    text("OK.", 400, 15 * (frameCount - 1));
     
     text("LoadWorldImages();", 10, 15 * frameCount);
   }
@@ -819,9 +866,10 @@ void draw () {
     CAM_x = 0;
     CAM_y = 0;
     CAM_z = 0;
+    
+    
+    if (GRAPHS_Update == 1) WORLD_Update = 1; // <<<<<<<<<<<<<<<<<<<<
   
-  
-    //WORLD_Update = 0; // <<<<<<<<<<<<<<<<<
   
     if (WORLD_Update == 1) {
     
@@ -1878,56 +1926,6 @@ void Plot_Setup () {
 }
 
 
-void SOLARCHVISION_update_station (int Step) {
-  
-  if ((Step == 0) || (Step == 1)) {
-    THE_STATION = DEFINED_STATIONS[STATION_NUMBER][0];
-    LocationName = DEFINED_STATIONS[STATION_NUMBER][1];
-    LocationProvince = DEFINED_STATIONS[STATION_NUMBER][2];
-    LocationLatitude = float(DEFINED_STATIONS[STATION_NUMBER][3]);
-    LocationLongitude = float(DEFINED_STATIONS[STATION_NUMBER][4]);
-    LocationTimeZone = float(DEFINED_STATIONS[STATION_NUMBER][5]);
-    LocationElevation = float(DEFINED_STATIONS[STATION_NUMBER][6]);
-    Delta_NOON = (LocationTimeZone - LocationLongitude) / 15.0;
-    
-    WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
-    
-    BEGIN_DAY = Convert2Date(_MONTH, _DAY);
-  }
-  
-  if ((Step == 0) || (Step == 2)) try_update_CLIMATE_EPW();
-  
-  if ((Step == 0) || (Step == 3)) try_update_CLIMATE_WY2();  
-  
-  if ((Step == 0) || (Step == 4)) try_update_observed();
-  
-  if ((Step == 0) || (Step == 5)) try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
-
-  if ((Step == 0) || (Step == 6)) {
-    LAND_mid_lat = LocationLatitude;
-    LAND_mid_lon = LocationLongitude;
-    SOLARCHVISION_LoadLAND(LocationName);
-    {
-      allObject2D_XYZS = new float[1][3]; 
-      allObject2D_XYZS[0][0] = 0;
-      allObject2D_XYZS[0][1] = 0;
-      allObject2D_XYZS[0][2] = 0;
-      
-      allObject2D_MAP = new int[1];
-      allObject2D_MAP[0] = 0;
-      
-      allObject2D_num = 0;
-    }
-    SOLARCHVISION_add_2Dobjects_onLand();
-  }
-  
-  if ((Step == 0) || (Step == 7)) {
-    WORLD_Update = 1;
-    WIN3D_Update = 1; 
-    GRAPHS_Update = 1;    
-    redraw_scene = 1;
-  }
-}
 
 
 
