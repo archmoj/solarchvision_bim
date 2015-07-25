@@ -671,6 +671,11 @@ void setup () {
 void SOLARCHVISION_update_station (int Step) {
   
   if ((Step == 0) || (Step == 1)) {
+    WORLD_Update = 1;
+    WIN3D_Update = 1; 
+    GRAPHS_Update = 1;    
+    redraw_scene = 1;    
+    
     THE_STATION = DEFINED_STATIONS[STATION_NUMBER][0];
     LocationName = DEFINED_STATIONS[STATION_NUMBER][1];
     LocationProvince = DEFINED_STATIONS[STATION_NUMBER][2];
@@ -697,28 +702,23 @@ void SOLARCHVISION_update_station (int Step) {
     LAND_mid_lat = LocationLatitude;
     LAND_mid_lon = LocationLongitude;
     SOLARCHVISION_LoadLAND(LocationName);
-    {
-      allObject2D_XYZS = new float[1][3]; 
-      allObject2D_XYZS[0][0] = 0;
-      allObject2D_XYZS[0][1] = 0;
-      allObject2D_XYZS[0][2] = 0;
-      
-      allObject2D_MAP = new int[1];
-      allObject2D_MAP[0] = 0;
-      
-      allObject2D_num = 0;
-    }
-    SOLARCHVISION_add_2Dobjects_onLand();
   }
   
   if ((Step == 0) || (Step == 7)) {
-    WORLD_Update = 1;
-    WIN3D_Update = 1; 
-    GRAPHS_Update = 1;    
-    redraw_scene = 1;
-  }
-}
+    allObject2D_XYZS = new float[1][3]; 
+    allObject2D_XYZS[0][0] = 0;
+    allObject2D_XYZS[0][1] = 0;
+    allObject2D_XYZS[0][2] = 0;
+    
+    allObject2D_MAP = new int[1];
+    allObject2D_MAP[0] = 0;
+    
+    allObject2D_num = 0;
 
+    SOLARCHVISION_add_2Dobjects_onLand();
+  }  
+
+}
 
 
 
@@ -884,7 +884,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_update_station(begin);", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_update_station(start)", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 10) {
     SOLARCHVISION_update_station(1);
@@ -895,7 +895,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_update_station(SOLARCHVISION_try_update_CLIMATE_EPW);", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_try_update_CLIMATE_EPW", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 11) {
     SOLARCHVISION_update_station(2);
@@ -906,7 +906,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_update_station(SOLARCHVISION_try_update_CLIMATE_WY2);", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_try_update_CLIMATE_WY2", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 12) {
     SOLARCHVISION_update_station(3);
@@ -917,7 +917,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_update_station(SOLARCHVISION_try_update_observed);", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_try_update_observed", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 13) {
     SOLARCHVISION_update_station(4);
@@ -928,7 +928,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_update_station(SOLARCHVISION_try_update_forecast);", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_try_update_forecast", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 14) {
     SOLARCHVISION_update_station(5);
@@ -939,30 +939,20 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_update_station(SOLARCHVISION_try_update_LAND&2Ds);", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_LoadLAND", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 15) {
     SOLARCHVISION_update_station(6);
+    
     stroke(0);
     fill(0);
     rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_update_station(end);", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_add_2Dobjects_onLand", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 16) {
     SOLARCHVISION_update_station(7);
-    stroke(0);
-    fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
-
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_add_SkySphere();", 0.5 * width, 0.5 * height);
-  }
-  else if (frameCount == 17) {
-    SOLARCHVISION_add_SkySphere();
+    
     stroke(0);
     fill(0);
     rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
@@ -971,8 +961,9 @@ void draw () {
     fill(255);
     text("//SOLARCHVISION_add_3Dobjects();", 0.5 * width, 0.5 * height);
   }
-  else if (frameCount == 18) {
+  else if (frameCount == 17) {
     //SOLARCHVISION_add_3Dobjects(); 
+    
     stroke(0);
     fill(0);
     rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
@@ -981,7 +972,7 @@ void draw () {
     fill(255);
     text("//SOLARCHVISION_add_ParametricSurfaces(1);", 0.5 * width, 0.5 * height);
   }
-  else if (frameCount == 19) {
+  else if (frameCount == 18) {
     //SOLARCHVISION_add_ParametricSurfaces(1);
     
     stroke(0);
@@ -992,7 +983,7 @@ void draw () {
     fill(255);
     text("//SOLARCHVISION_add_ParametricGeometries();", 0.5 * width, 0.5 * height);
   }
-  else if (frameCount == 20) {
+  else if (frameCount == 19) {
     //SOLARCHVISION_add_ParametricGeometries();
     
     stroke(0);
@@ -1003,7 +994,7 @@ void draw () {
     fill(255);
     text("calculate_ParametricGeometries_Field();", 0.5 * width, 0.5 * height);
   }
-  else if (frameCount == 21) {
+  else if (frameCount == 20) {
     calculate_ParametricGeometries_Field();
     
     stroke(0);
@@ -1012,8 +1003,20 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("build_SolarProjection_array();", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_build_SkySphere", 0.5 * width, 0.5 * height);
+    
   }    
+  else if (frameCount == 21) {
+    SOLARCHVISION_build_SkySphere(3);
+    
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    
+    stroke(255);
+    fill(255);
+    text("build_SolarProjection_array();", 0.5 * width, 0.5 * height);
+  }
   else if (frameCount == 22) {  
     build_SolarProjection_array();
      
@@ -11185,9 +11188,9 @@ void SOLARCHVISION_add_ParametricSurfaces (int m) {
 
 
 
-void SOLARCHVISION_add_SkySphere () {
+void SOLARCHVISION_build_SkySphere (int Teselation) {
   
-  add_RecursiveSphere(0, 0,0,0, 1, 3, 1); // SKY
+  add_RecursiveSphere(0, 0,0,0, 1, Teselation, 1); // SKY
   
 }
 
