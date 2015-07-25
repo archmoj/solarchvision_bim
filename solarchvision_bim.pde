@@ -157,7 +157,7 @@ int num_add_days = 1; //30;//per_day; // it should be set up to 1 in order to pl
 // Note: The first observed station below should match the forecast station because the non-linear interpolation function only uses this station.
 String[][] OBSERVED_STATIONS = {
                                 {"CWTQ", "AUTO", "Dorval"}  
-                              };
+                               };
                               
 /*                              
 String[][] OBSERVED_STATIONS = {
@@ -170,7 +170,7 @@ String[][] OBSERVED_STATIONS = {
                               , {"CWEW", "AUTO", "L'Assomption"}
                               , {"CWHM", "AUTO", "Varennes"}
                               , {"CWVQ", "AUTO", "Sainte-Anne-de-Bellevue"} 
-                              }; 
+                               }; 
 */
 
 int CLIMATE_EPW_start = 1; 
@@ -810,10 +810,10 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("LoadWorldImages();", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_LoadWorldImages", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 3) {
-    LoadWorldImages();
+    SOLARCHVISION_LoadWorldImages();
 
     stroke(0);
     fill(0);
@@ -821,10 +821,10 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("LoadObject2DImages();", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_LoadObject2DImages", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 4) {
-    LoadObject2DImages();
+    SOLARCHVISION_LoadObject2DImages();
     
     stroke(0);
     fill(0);
@@ -832,7 +832,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_Calendar();", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_Calendar", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 5) {
     SOLARCHVISION_Calendar(); 
@@ -843,10 +843,10 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("getSWOB_Coordinates();", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_getSWOB_Coordinates", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 6) {
-    getSWOB_Coordinates(); 
+    SOLARCHVISION_getSWOB_Coordinates(); 
     
     stroke(0);
     fill(0);
@@ -854,27 +854,27 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("getNAEFS_Coordinates();", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_getNAEFS_Coordinates", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 7) {
-    getNAEFS_Coordinates(); 
+    SOLARCHVISION_getNAEFS_Coordinates(); 
     stroke(0);
     fill(0);
     rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
     stroke(255);
     fill(255);
-    text("getCWEEDS_Coordinates();", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_getCWEEDS_Coordinates", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 8) {
-    getCWEEDS_Coordinates();  
+    SOLARCHVISION_getCWEEDS_Coordinates();  
     stroke(0);
     fill(0);
     rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_update_date();", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_update_date", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 9) {
     SOLARCHVISION_update_date(); 
@@ -959,7 +959,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("//SOLARCHVISION_add_3Dobjects();", 0.5 * width, 0.5 * height);
+    text("//SOLARCHVISION_add_3Dobjects", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 17) {
     //SOLARCHVISION_add_3Dobjects(); 
@@ -970,7 +970,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("//SOLARCHVISION_add_ParametricSurfaces(1);", 0.5 * width, 0.5 * height);
+    text("//SOLARCHVISION_add_ParametricSurfaces", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 18) {
     //SOLARCHVISION_add_ParametricSurfaces(1);
@@ -981,7 +981,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("//SOLARCHVISION_add_ParametricGeometries();", 0.5 * width, 0.5 * height);
+    text("//SOLARCHVISION_add_ParametricGeometries", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 19) {
     //SOLARCHVISION_add_ParametricGeometries();
@@ -992,10 +992,10 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("calculate_ParametricGeometries_Field();", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_calculate_ParametricGeometries_Field", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 20) {
-    calculate_ParametricGeometries_Field();
+    SOLARCHVISION_calculate_ParametricGeometries_Field();
     
     stroke(0);
     fill(0);
@@ -1015,10 +1015,10 @@ void draw () {
     
     stroke(255);
     fill(255);
-    text("build_SolarProjection_array();", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_build_SolarProjection_array", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 22) {  
-    build_SolarProjection_array();
+    SOLARCHVISION_build_SolarProjection_array();
      
     stroke(0);
     fill(0);
@@ -9311,31 +9311,31 @@ void keyPressed (KeyEvent e) {
       switch(keyCode) {
 
         case RIGHT :Field_Image_rotation[display_Field_Image] = (Field_Image_rotation[display_Field_Image] + 15) % 360; 
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
         case LEFT :Field_Image_rotation[display_Field_Image] = (Field_Image_rotation[display_Field_Image] + 360 - 15) % 360; 
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;           
         
         case UP   :Field_Elevation[display_Field_Image] += 2.5;
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;        
         case DOWN :Field_Elevation[display_Field_Image] -= 2.5; 
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break; 
 
         case 33 :Field_Elevation[display_Field_Image] += 10;
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;        
         case 34 :Field_Elevation[display_Field_Image] -= 10; 
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break; 
         
         case 35 :Field_scale_U *= pow(2.0, 0.5); Field_scale_V *= pow(2.0, 0.5); 
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
         case 36 :Field_scale_U /= pow(2.0, 0.5); Field_scale_V /= pow(2.0, 0.5);                   
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
                  
       }
@@ -9344,41 +9344,41 @@ void keyPressed (KeyEvent e) {
       switch(key) {
 
         case ']' :display_Field_Image = (display_Field_Image + 1) % 4; 
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
         case '[' :display_Field_Image = (display_Field_Image + 4 - 1) % 4;
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;        
         
         case '0' :Field_Elevation[display_Field_Image] = 0; 
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
                   
         case '.' :Field_Image_rotation[display_Field_Image] = 0; 
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;                  
         
         case '/' :Field_Image_Power *= pow(2.0, 0.5); 
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
         case '*' :Field_Image_Power /= pow(2.0, 0.5);  
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
         
         case '+' :Field_Multiplier *= pow(2.0, 0.5); 
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
         case '-' :Field_Multiplier /= pow(2.0, 0.5); 
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
 
         case '>' :Field_Multiplier /= pow(2.0, 0.25); 
                   Field_Image_Power /= pow(2.0, 0.5); 
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
         case '<' :Field_Multiplier *= pow(2.0, 0.25); 
                   Field_Image_Power *= pow(2.0, 0.5); 
-                  if (display_Field_Image != 0) calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
 
 
@@ -9662,7 +9662,7 @@ void add_Object2D (String t, int m, float x, float y, float z, float s) {
 
 PImage[] Object2DImage;
 
-void LoadObject2DImages () {
+void SOLARCHVISION_LoadObject2DImages () {
 
   Object2D_Filenames = new String[1];
   Object2D_Filenames[0] = "";
@@ -9694,7 +9694,7 @@ void LoadObject2DImages () {
 
 
 
-void LoadWorldImages () {
+void SOLARCHVISION_LoadWorldImages () {
 
   WORLD_VIEW_Filenames = sort(getfiles(WorldViewFolder));
 
@@ -9756,7 +9756,7 @@ float StationElevation;
 int STATION_SWOB_NUMBER = 0;
 String[][] STATION_SWOB_INFO;
 
-void getSWOB_Coordinates () {
+void SOLARCHVISION_getSWOB_Coordinates () {
   try {
     String[] FileALL = loadStrings(SWOBFolder + "/SWOB_UTF8.txt");
   
@@ -9828,7 +9828,7 @@ void getSWOB_Coordinates () {
 int STATION_NAEFS_NUMBER = 0;
 String[][] STATION_NAEFS_INFO;
 
-void getNAEFS_Coordinates () {
+void SOLARCHVISION_getNAEFS_Coordinates () {
   try {
     String[] FileALL = loadStrings(NAEFSFolder + "/NAEFS_UTF8.txt");
   
@@ -9898,7 +9898,7 @@ void getNAEFS_Coordinates () {
 int STATION_CWEEDS_NUMBER = 0;
 String[][] STATION_CWEEDS_INFO;
 
-void getCWEEDS_Coordinates () {
+void SOLARCHVISION_getCWEEDS_Coordinates () {
   try {
     String[] FileALL = loadStrings(CWEEDSFolder + "/CWEEDS_UTF8.txt");
   
@@ -12638,7 +12638,7 @@ int display_Field_Image = 0; // 0:off, 1:horizontal, 2:vertical(front), 3:vertic
 float[] Field_Elevation = {0, 0, 0, 0};
 float[] Field_Image_rotation = {0, 0, 0, 0};
 
-void calculate_ParametricGeometries_Field () {
+void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
   Field_Image.loadPixels();
   
@@ -13162,7 +13162,7 @@ int n_dir;
 
 float[][]LocationExposure;
 
-void build_SolarProjection_array () {
+void SOLARCHVISION_build_SolarProjection_array () {
   
   stp_slp = GlobeRES;
   stp_dir = GlobeRES;
