@@ -10,6 +10,8 @@ int SavedScreenShots = 0;
 
 int MODEL_RUN = 0; //12; 
 
+float interpolation_weight = 0.5;// 0 = linear distance interpolation, 1 = square distance interpolation, 5 = nearest
+
 int Climatic_solar_model = 0; //                                   Used for solar radiation only
 int Climatic_weather_model = 1; // 0:linear 1:average 2:sky-based. Used for some parameters namely: air temperature, humidity
 
@@ -2676,8 +2678,14 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
                   }  
                 }
                 if (next_num < MAX_SEARCH) {
-                  if (l == _winddir) ENSEMBLE[i][j][l][k] = ((next_num * pre_v + pre_num * next_v) / (pre_num + next_num) + 360) % 360;
-                  else ENSEMBLE[i][j][l][k] = (next_num * pre_v + pre_num * next_v) / (pre_num + next_num);
+                  //if (l == _winddir) ENSEMBLE[i][j][l][k] = ((next_num * pre_v + pre_num * next_v) / (pre_num + next_num) + 360) % 360;
+                  //else ENSEMBLE[i][j][l][k] = (next_num * pre_v + pre_num * next_v) / (pre_num + next_num);
+                  
+                  float interpolation_pow = pow(2.0, interpolation_weight);
+              
+                  ENSEMBLE[i][j][l][k] = (pow(next_num, interpolation_pow) * pre_v + pow(pre_num, interpolation_pow) * next_v) / (pow(next_num, interpolation_pow) + pow(pre_num, interpolation_pow));
+                  if (l == _winddir) ENSEMBLE[i][j][l][k] = (ENSEMBLE[i][j][l][k] + 360) % 360;
+                  
                   
                   //println("[i][j][l][k]", i, j, l, k);
                   //ENSEMBLE_DATA[i][j][l][k] = 0; // On Layers: RH and TMP it didn't work with MODEL_RUN == 12!!!!!!!!!!!!!!!!!!??????????
