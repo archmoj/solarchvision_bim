@@ -750,23 +750,37 @@ void draw () {
     
     ellipseMode(CENTER);
 
+    strokeWeight(0);
+    stroke(191);
+    fill(191);    
+    ellipse(0.2 * width, 0.5 * height - 0.75 * message_size - cr, 2 * cr, 2 * cr);
+    strokeWeight(1);
     stroke(255);
     noFill();    
     SOLARCHVISION_draw_logo(0.2 * width, 0.5 * height - 0.75 * message_size - cr, 0, cr, 1);
+    strokeWeight(2);
     stroke(0);
     noFill();    
     ellipse(0.2 * width, 0.5 * height - 0.75 * message_size - cr, 2 * cr, 2 * cr);
     
+    strokeWeight(1);
     stroke(127);
     noFill();  
     //SOLARCHVISION_draw_logo(0.5 * width, 0.5 * height - 0.75 * message_size - cr, 0, cr, 0);
+    strokeWeight(2);
     stroke(0);
     noFill();    
     ellipse(0.5 * width, 0.5 * height - 0.75 * message_size - cr, 2 * cr, 2 * cr);
-    
+
+    strokeWeight(0);
+    stroke(191);
+    fill(191);    
+    ellipse(0.8 * width, 0.5 * height - 0.75 * message_size - cr, 2 * cr, 2 * cr);    
+    strokeWeight(1);
     stroke(255);
     noFill();  
     SOLARCHVISION_draw_logo(0.8 * width, 0.5 * height - 0.75 * message_size - cr, 0, cr, -1);
+    strokeWeight(2);
     stroke(0);
     noFill();    
     ellipse(0.8 * width, 0.5 * height - 0.75 * message_size - cr, 2 * cr, 2 * cr);
@@ -9386,6 +9400,8 @@ void keyPressed (KeyEvent e) {
         case '0' :WIN3D_X_coordinate = 0;
                   WIN3D_Y_coordinate = 0;
                   WIN3D_Update = 1; break;
+          
+        case '2' :display_allyObject2D = (display_allyObject2D + 1) % 2; WIN3D_Update = 1; break;
  
       }
     }    
@@ -9942,6 +9958,7 @@ float[][] allObject2D_XYZS = {{}};
 int[] allObject2D_MAP = {0};
 int allObject2D_num = 0; 
 
+int display_allyObject2D = 0;
 
 int addToVertices (float x, float y, float z) {
   
@@ -10785,7 +10802,7 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
 
 
 void SOLARCHVISION_add_2Dobjects_onLand () {
-/*
+
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
   //for (int i = 1; i < LAND_n_I - 1; i += 1) { // to ignoring the center!
     for (int j = 0; j < LAND_n_J - 1; j += 1) {
@@ -10817,7 +10834,7 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
       }  
     }
   }
-*/
+
 }
 
 
@@ -12064,36 +12081,37 @@ void SOLARCHVISION_draw_objects () {
   
   //println(CAM_x, CAM_y, CAM_z);
 
-  for (int i = 1; i <= allObject2D_num; i++) {
-    
-    WIN3D_Diagrams.beginShape();
-    
-    int n = abs(allObject2D_MAP[i]);
-    
-    int w = Object2DImage[n].width; 
-    int h = Object2DImage[n].height;
-            
-    float x = allObject2D_XYZS[i][0] * objects_scale;
-    float y = allObject2D_XYZS[i][1] * objects_scale;
-    float z = allObject2D_XYZS[i][2] * objects_scale;
-    
-    float r = allObject2D_XYZS[i][3] * 0.5 * objects_scale;
-    
-    float t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI;
-    if (allObject2D_MAP[i] < 0) t += PI; 
-
-    WIN3D_Diagrams.texture(Object2DImage[n]);    
-    WIN3D_Diagrams.stroke(255, 255, 255, 0);
-    WIN3D_Diagrams.fill(255, 255, 255, 0);
-    
-    WIN3D_Diagrams.vertex(x - r * cos(t), -(y - r * sin(t)), z, 0, h);
-    WIN3D_Diagrams.vertex(x + r * cos(t), -(y + r * sin(t)), z, w, h);
-    WIN3D_Diagrams.vertex(x + r * cos(t), -(y + r * sin(t)), z + 2 * r, w, 0);
-    WIN3D_Diagrams.vertex(x - r * cos(t), -(y - r * sin(t)), z + 2 * r, 0, 0);
-    
-    WIN3D_Diagrams.endShape(CLOSE);
-  }  
-
+  if (display_allyObject2D != 0) {
+    for (int i = 1; i <= allObject2D_num; i++) {
+      
+      WIN3D_Diagrams.beginShape();
+      
+      int n = abs(allObject2D_MAP[i]);
+      
+      int w = Object2DImage[n].width; 
+      int h = Object2DImage[n].height;
+              
+      float x = allObject2D_XYZS[i][0] * objects_scale;
+      float y = allObject2D_XYZS[i][1] * objects_scale;
+      float z = allObject2D_XYZS[i][2] * objects_scale;
+      
+      float r = allObject2D_XYZS[i][3] * 0.5 * objects_scale;
+      
+      float t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI;
+      if (allObject2D_MAP[i] < 0) t += PI; 
+  
+      WIN3D_Diagrams.texture(Object2DImage[n]);    
+      WIN3D_Diagrams.stroke(255, 255, 255, 0);
+      WIN3D_Diagrams.fill(255, 255, 255, 0);
+      
+      WIN3D_Diagrams.vertex(x - r * cos(t), -(y - r * sin(t)), z, 0, h);
+      WIN3D_Diagrams.vertex(x + r * cos(t), -(y + r * sin(t)), z, w, h);
+      WIN3D_Diagrams.vertex(x + r * cos(t), -(y + r * sin(t)), z + 2 * r, w, 0);
+      WIN3D_Diagrams.vertex(x - r * cos(t), -(y - r * sin(t)), z + 2 * r, 0, 0);
+      
+      WIN3D_Diagrams.endShape(CLOSE);
+    }  
+  }
 
 }
 
