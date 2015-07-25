@@ -659,21 +659,13 @@ void setup () {
   WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
 
 
-  SOLARCHVISION_update_folders();
-  LoadFontStyle();
-
   frameRate(24);
 
-  background(0);
-  
-  stroke(255);
-  fill(255);
-  strokeWeight(0);
-  textAlign(LEFT, CENTER); 
-  textSize(12);
-  
+
 
 }
+
+
 
 
 void SOLARCHVISION_update_station (int Step) {
@@ -693,13 +685,13 @@ void SOLARCHVISION_update_station (int Step) {
     BEGIN_DAY = Convert2Date(_MONTH, _DAY);
   }
   
-  if ((Step == 0) || (Step == 2)) try_update_CLIMATE_EPW();
+  if ((Step == 0) || (Step == 2)) SOLARCHVISION_try_update_CLIMATE_EPW();
   
-  if ((Step == 0) || (Step == 3)) try_update_CLIMATE_WY2();  
+  if ((Step == 0) || (Step == 3)) SOLARCHVISION_try_update_CLIMATE_WY2();  
   
-  if ((Step == 0) || (Step == 4)) try_update_observed();
+  if ((Step == 0) || (Step == 4)) SOLARCHVISION_try_update_observed();
   
-  if ((Step == 0) || (Step == 5)) try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+  if ((Step == 0) || (Step == 5)) SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
 
   if ((Step == 0) || (Step == 6)) {
     LAND_mid_lat = LocationLatitude;
@@ -728,8 +720,16 @@ void SOLARCHVISION_update_station (int Step) {
 }
 
 
+void SOLARCHVISION_update_models (int Step) {
+  
+  if ((Step == 0) || (Step == 1)) SOLARCHVISION_add_SkySphere();
+  
+  if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
+
+}
 
 
+float message_size = 15;
 
 void draw () {
   
@@ -737,128 +737,250 @@ void draw () {
 
   if (frameCount == 1) {
 
+    background(223);
+
+    SOLARCHVISION_update_folders();
+    LoadFontStyle();
+
+    strokeWeight(0);
+
+    stroke(255);
+    fill(255);
+    textAlign(CENTER, CENTER); 
+    textSize(60);
+    text("SOLARCHVISION", 0.5 * width, 0.25 * height); 
+
+    stroke(0);
+    fill(0);
+    textSize(15);
+    text("Raz, Mehr, Mehraz solarch studio\n1998-2015\n©Mojtaba Samimi\nwww.solarchvision.com", 0.5 * width, 0.75 * height);
+
+    textSize(message_size);
+    
+      
+    
   }  
   else if (frameCount == 2) {
-    
-    text("LoadWorldImages();", 10, 15 * frameCount);
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+
+    stroke(255);
+    fill(255);
+    text("LoadWorldImages();", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 3) {
     LoadWorldImages();
-    text("OK.", 400, 15 * (frameCount - 1));
-    
-    text("LoadObject2DImages();", 10, 15 * frameCount);
+
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+
+    stroke(255);
+    fill(255);
+    text("LoadObject2DImages();", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 4) {
     LoadObject2DImages();
-    text("OK.", 400, 15 * (frameCount - 1));
+    
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
-    text("SOLARCHVISION_Calendar();", 10, 15 * frameCount);
+    stroke(255);
+    fill(255);
+    text("SOLARCHVISION_Calendar();", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 5) {
     SOLARCHVISION_Calendar(); 
-    text("OK.", 400, 15 * (frameCount - 1));
 
-    text("getSWOB_Coordinates();", 10, 15 * frameCount);
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+
+    stroke(255);
+    fill(255);
+    text("getSWOB_Coordinates();", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 6) {
     getSWOB_Coordinates(); 
-    text("OK.", 400, 15 * (frameCount - 1));
+    
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
-    text("getNAEFS_Coordinates();", 10, 15 * frameCount);
+    stroke(255);
+    fill(255);
+    text("getNAEFS_Coordinates();", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 7) {
     getNAEFS_Coordinates(); 
-    text("OK.", 400, 15 * (frameCount - 1));
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
-    text("getCWEEDS_Coordinates();", 10, 15 * frameCount);
+    stroke(255);
+    fill(255);
+    text("getCWEEDS_Coordinates();", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 8) {
     getCWEEDS_Coordinates();  
-    text("OK.", 400, 15 * (frameCount - 1));
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
-    text("SOLARCHVISION_update_date();", 10, 15 * frameCount);
+    stroke(255);
+    fill(255);
+    text("SOLARCHVISION_update_date();", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 9) {
     SOLARCHVISION_update_date(); 
-    text("OK.", 400, 15 * (frameCount - 1));
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
-    text("SOLARCHVISION_update_station(begin);", 10, 15 * frameCount);
+    stroke(255);
+    fill(255);
+    text("SOLARCHVISION_update_station(begin);", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 10) {
     SOLARCHVISION_update_station(1);
-    text("OK.", 400, 15 * (frameCount - 1));
+    
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
-    text("SOLARCHVISION_update_station(try_update_CLIMATE_EPW);", 10, 15 * frameCount);
+    stroke(255);
+    fill(255);
+    text("SOLARCHVISION_update_station(SOLARCHVISION_try_update_CLIMATE_EPW);", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 11) {
     SOLARCHVISION_update_station(2);
-    text("OK.", 400, 15 * (frameCount - 1));
+    
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
-    text("SOLARCHVISION_update_station(try_update_CLIMATE_WY2);", 10, 15 * frameCount);
+    stroke(255);
+    fill(255);
+    text("SOLARCHVISION_update_station(SOLARCHVISION_try_update_CLIMATE_WY2);", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 12) {
     SOLARCHVISION_update_station(3);
-    text("OK.", 400, 15 * (frameCount - 1));
+    
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
-    text("SOLARCHVISION_update_station(try_update_observed);", 10, 15 * frameCount);
+    stroke(255);
+    fill(255);
+    text("SOLARCHVISION_update_station(SOLARCHVISION_try_update_observed);", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 13) {
     SOLARCHVISION_update_station(4);
-    text("OK.", 400, 15 * (frameCount - 1));
+    
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
-    text("SOLARCHVISION_update_station(try_update_forecast);", 10, 15 * frameCount);
+    stroke(255);
+    fill(255);
+    text("SOLARCHVISION_update_station(SOLARCHVISION_try_update_forecast);", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 14) {
     SOLARCHVISION_update_station(5);
-    text("OK.", 400, 15 * (frameCount - 1));
+    
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
-    text("SOLARCHVISION_update_station(try_update_LAND&2Ds);", 10, 15 * frameCount);
+    stroke(255);
+    fill(255);
+    text("SOLARCHVISION_update_station(SOLARCHVISION_try_update_LAND&2Ds);", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 15) {
     SOLARCHVISION_update_station(6);
-    text("OK.", 400, 15 * (frameCount - 1));
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
-    text("SOLARCHVISION_update_station(end);", 10, 15 * frameCount);
+    stroke(255);
+    fill(255);
+    text("SOLARCHVISION_update_station(end);", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 16) {
     SOLARCHVISION_update_station(7);
-    text("OK.", 400, 15 * (frameCount - 1));
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
-    text("SOLARCHVISION_add_SkySphere();", 10, 15 * frameCount);
+    stroke(255);
+    fill(255);
+    text("SOLARCHVISION_add_SkySphere();", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 17) {
-    SOLARCHVISION_add_SkySphere();
-    text("OK.", 400, 15 * (frameCount - 1));
+    SOLARCHVISION_update_models(1);
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
-    text("SOLARCHVISION_add_3Dobjects();", 10, 15 * frameCount);
+    stroke(255);
+    fill(255);
+    text("SOLARCHVISION_add_3Dobjects();", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 18) {
-    SOLARCHVISION_add_3Dobjects(); 
-    text("OK.", 400, 15 * (frameCount - 1));
+    SOLARCHVISION_update_models(2); 
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
-    text("//SOLARCHVISION_add_ParametricSurfaces(1);", 10, 15 * frameCount);
+    stroke(255);
+    fill(255);
+    text("//SOLARCHVISION_add_ParametricSurfaces(1);", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 19) {
     //SOLARCHVISION_add_ParametricSurfaces(1);
-    text("OK.", 400, 15 * (frameCount - 1));
+    
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
-    text("//SOLARCHVISION_add_ParametricGeometries();", 10, 15 * frameCount);
+    stroke(255);
+    fill(255);
+    text("//SOLARCHVISION_add_ParametricGeometries();", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 20) {
     //SOLARCHVISION_add_ParametricGeometries();
-    text("OK.", 400, 15 * (frameCount - 1));
+    
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
-    text("calculate_ParametricGeometries_Field();", 10, 15 * frameCount);
+    stroke(255);
+    fill(255);
+    text("calculate_ParametricGeometries_Field();", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 21) {
     calculate_ParametricGeometries_Field();
-    text("OK.", 400, 15 * (frameCount - 1)); 
+    
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
-    text("build_SolarProjection_array();", 10, 15 * frameCount);
+    stroke(255);
+    fill(255);
+    text("build_SolarProjection_array();", 0.5 * width, 0.5 * height);
   }    
   else if (frameCount == 22) {  
-     build_SolarProjection_array();
-     text("OK.", 400, 15 * (frameCount - 1)); 
+    build_SolarProjection_array();
+     
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size);
+   
+    stroke(255);
+    fill(255);
+    text("Please wait while integrating the models.", 0.5 * width, 0.5 * height);    
   }
   
   else {
@@ -1189,7 +1311,7 @@ void GRAPHS_draw () {
     _HOUR = int(24 * (_DATE - int(_DATE)));
     _DATE = (_HOUR / 24.0) + (286 + Convert2Date(_MONTH, _DAY)) % 365;
     println("DATE:", _DATE, "\tHOUR:", _HOUR);
-    try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+    SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
     
     draw_spinners();
   }
@@ -1446,28 +1568,28 @@ void Plot_Setup () {
       _DATE -= delta;
       SOLARCHVISION_update_date();
       BEGIN_DAY = Convert2Date(_MONTH, _DAY);
-      try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+      SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
       BEGIN_DAY = (BEGIN_DAY + delta) % 365;
       plot_center(0, 175 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
   
       _DATE -= delta;
       SOLARCHVISION_update_date();
       BEGIN_DAY = Convert2Date(_MONTH, _DAY);
-      try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+      SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
       BEGIN_DAY = (BEGIN_DAY + 2 * delta) % 365;
       plot_center(0, -175 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
   
       _DATE -= delta;
       SOLARCHVISION_update_date();
       BEGIN_DAY = Convert2Date(_MONTH, _DAY);
-      try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+      SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
       BEGIN_DAY = (BEGIN_DAY + 3 * delta) % 365;
       plot_center(0, -525 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
       
       _DATE = pre_DATE;
       SOLARCHVISION_update_date();
       BEGIN_DAY = Convert2Date(_MONTH, _DAY);
-      try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+      SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
       BEGIN_DAY = pre_BEGIN_DAY;
     }
   }
@@ -2586,7 +2708,7 @@ void SOLARCHVISION_update_date () {
   _HOUR = int(24 * (_DATE - int(_DATE)));
 }
 
-int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
+int SOLARCHVISION_try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
   int File_Found = 0;
 
   ENSEMBLE = new float [24][365][num_layers][(1 + ENSEMBLE_end - ENSEMBLE_start)];
@@ -3375,7 +3497,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
 } 
 
 
-int try_update_CLIMATE_WY2 () {
+int SOLARCHVISION_try_update_CLIMATE_WY2 () {
   int File_Found = 0;
   
   CLIMATE_WY2 = new float [24][365][num_layers][(1 + CLIMATE_WY2_end - CLIMATE_WY2_start)];
@@ -3787,7 +3909,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
 } 
 
 
-int try_update_CLIMATE_EPW () {
+int SOLARCHVISION_try_update_CLIMATE_EPW () {
   int File_Found = 0;
   
   CLIMATE_EPW = new float[24][365][num_layers][(1 + CLIMATE_EPW_end - CLIMATE_EPW_start)];
@@ -4191,7 +4313,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
 } 
 
 
-int try_update_observed () {
+int SOLARCHVISION_try_update_observed () {
   int File_Found = 0;
   
   OBSERVED = new float [24][365][num_layers][(1 + OBSERVED_end - OBSERVED_start)];
@@ -8069,14 +8191,14 @@ void GRAPHS_keyPressed (KeyEvent e) {
                     if (int(_DATE) == 365) _DATE -= 365;
                     if (int(_DATE) == 286) _YEAR += 1;
                     SOLARCHVISION_update_date(); 
-                    try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+                    SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
                     redraw_scene = 1; break;
                     
           case 36  :_DATE -= 1;
                     if (int(_DATE) < 0) _DATE += 365;
                     if (int(_DATE) == 285) _YEAR -= 1;
                     SOLARCHVISION_update_date(); 
-                    try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+                    SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
                     redraw_scene = 1; break;
        
           case 33:_DATE += 1; 
@@ -8084,7 +8206,7 @@ void GRAPHS_keyPressed (KeyEvent e) {
                     if ((_DATE == 286) || (_DATE == 286.5)) _YEAR += 1;
                     SOLARCHVISION_update_date(); 
                     BEGIN_DAY = int(BEGIN_DAY + 1) % 365; 
-                    try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+                    SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
                     redraw_scene = 1; break; 
                     
           case 34 :_DATE -= 1; 
@@ -8092,7 +8214,7 @@ void GRAPHS_keyPressed (KeyEvent e) {
                     if ((_DATE == 285) || (_DATE == 285.5)) _YEAR -= 1;
                     SOLARCHVISION_update_date(); 
                     BEGIN_DAY = int(365 + BEGIN_DAY - 1) % 365;
-                    try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+                    SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
                     redraw_scene = 1; break; 
                    
           case LEFT  :BEGIN_DAY = (365 + BEGIN_DAY - 1) % 365; redraw_scene = 1; break;
@@ -8110,7 +8232,7 @@ void GRAPHS_keyPressed (KeyEvent e) {
           case '|' :if (_DATE == 1.0 * int(_DATE)) _DATE += 0.5;
                     else _DATE -= 0.5;
                     SOLARCHVISION_update_date(); 
-                    try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+                    SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
                     redraw_scene = 1; break;
                    
           case ';': draw_impact_summary = (draw_impact_summary + 1) % 2;
