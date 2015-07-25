@@ -2688,7 +2688,7 @@ int try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR)
                   
                   
                   //println("[i][j][l][k]", i, j, l, k);
-                  //ENSEMBLE_DATA[i][j][l][k] = 0; // On Layers: RH and TMP it didn't work with MODEL_RUN == 12!!!!!!!!!!!!!!!!!!??????????
+                  ENSEMBLE_DATA[i][j][l][k] = 0; // On Layers: RH and TMP it didn't work with MODEL_RUN == 12!!!!!!!!!!!!!!!!!!??????????
                 }
                 else {
                   ENSEMBLE_DATA[i][j][l][k] = -1;
