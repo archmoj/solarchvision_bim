@@ -565,7 +565,7 @@ void empty_Materials_DiffuseArea () {
 
                   
 int h_pixel = 350; 
-int w_pixel = int(h_pixel * 1.0);
+int w_pixel = int(h_pixel * 1.25);
 
 int WIN3D_CX_View = w_pixel;
 int WIN3D_CY_View = h_pixel;
@@ -1383,7 +1383,8 @@ void GRAPHS_draw () {
   
   //resetMatrix();
  
-  S_View = (Y_View / 400.0); 
+  //S_View = (Y_View / 400.0); 
+  S_View = (X_View / 1200.0);
   
   //_pix = (100.0 * S_View / level_pix);
   
