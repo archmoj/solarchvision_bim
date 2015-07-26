@@ -364,11 +364,8 @@ String CalendarMM[][];
 String CalendarDD[][];
 int CalendarDate[][];
 
-float X_coordinate = 0;
-float Y_coordinate = 0;
-
-float RX_coordinate = 0;
-float RY_coordinate = 0;
+float GRAPHS_X_coordinate = 0;
+float GRAPHS_Y_coordinate = 0;
 
 float GRAPHS_O_scale = 50.0;
 float GRAPHS_W_scale = 3.0;
@@ -1457,11 +1454,11 @@ void SOLARCHVISION_draw_GRAPHS () {
     println("frame:", draw_frame);
   
     if (record_PDF == 1) {
-      //X_coordinate = -0.333 * GRAPHS_X_View;
-      X_coordinate = -0.333 * GRAPHS_X_View;      
+      //GRAPHS_X_coordinate = -0.333 * GRAPHS_X_View;
+      GRAPHS_X_coordinate = -0.333 * GRAPHS_X_View;      
       
-      //Y_coordinate = 1.0 * GRAPHS_Y_View;
-      Y_coordinate = 1.0 * GRAPHS_Y_View;
+      //GRAPHS_Y_coordinate = 1.0 * GRAPHS_Y_View;
+      GRAPHS_Y_coordinate = 1.0 * GRAPHS_Y_View;
       
       GRAPHS_S_View *= 0.575; 
       GRAPHS_T_scale = 0.5;
@@ -1471,11 +1468,11 @@ void SOLARCHVISION_draw_GRAPHS () {
       beginRecord(Diagrams);
     }
     else {
-      //X_coordinate = -0.333 * GRAPHS_X_View * Image_Scale;
-      X_coordinate = -0.333 * GRAPHS_X_View * Image_Scale;      
+      //GRAPHS_X_coordinate = -0.333 * GRAPHS_X_View * Image_Scale;
+      GRAPHS_X_coordinate = -0.333 * GRAPHS_X_View * Image_Scale;      
       
-      //Y_coordinate = 1.0 * GRAPHS_Y_View * Image_Scale;
-      Y_coordinate = 1.0 * GRAPHS_Y_View * Image_Scale;
+      //GRAPHS_Y_coordinate = 1.0 * GRAPHS_Y_View * Image_Scale;
+      GRAPHS_Y_coordinate = 1.0 * GRAPHS_Y_View * Image_Scale;
       
       GRAPHS_S_View *= 0.575 * Image_Scale; 
       GRAPHS_T_scale = 0.5 * Image_Scale;
@@ -1495,13 +1492,13 @@ void SOLARCHVISION_draw_GRAPHS () {
     
     Diagrams_strokeWeight(0);
     
-    //Diagrams_translate(X_coordinate * -0.25, Y_coordinate * 0.5); 
-    Diagrams_translate(X_coordinate * -0.425, Y_coordinate * 0.5);
+    //Diagrams_translate(GRAPHS_X_coordinate * -0.25, GRAPHS_Y_coordinate * 0.5); 
+    Diagrams_translate(GRAPHS_X_coordinate * -0.425, GRAPHS_Y_coordinate * 0.5);
 
     Plot_Setup();
     
-    //Diagrams_translate(X_coordinate * 0.25, Y_coordinate * 0.5);
-    Diagrams_translate(X_coordinate * 0.425, Y_coordinate * 0.5);
+    //Diagrams_translate(GRAPHS_X_coordinate * 0.25, GRAPHS_Y_coordinate * 0.5);
+    Diagrams_translate(GRAPHS_X_coordinate * 0.425, GRAPHS_Y_coordinate * 0.5);
 
     Diagrams_strokeWeight(GRAPHS_T_scale * 1);
       
