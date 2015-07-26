@@ -563,7 +563,7 @@ void empty_Materials_DiffuseArea () {
 
 
                   
-int h_pixel = 400;
+int h_pixel = 300;
 int w_pixel = int(h_pixel * 1.5);
 
 int WIN3D_CX_View = w_pixel;
@@ -727,7 +727,7 @@ void SOLARCHVISION_update_models (int Step) {
 }
 
 
-float message_size = 15;
+float message_size = h_pixel / 25.0;
 
 void draw () {
   
@@ -742,7 +742,7 @@ void draw () {
 
     float cr;
 
-    cr = 100;
+    cr = h_pixel / 4.0;
     PImage SOLARCHVISION_logo = loadImage(BackgroundFolder + "/" + "SOLARCHVISION.jpg");
     imageMode(CENTER);
     image(SOLARCHVISION_logo, 0.5 * width, 0.5 * height - 0.75 * message_size - cr + (0.075 * cr), 3.05 * cr, 3.05 * cr);
@@ -795,12 +795,12 @@ void draw () {
     stroke(255);
     fill(255);
     textAlign(CENTER, CENTER); 
-    textSize(45);
+    textSize(3 * message_size);
     text("SOLARCHVISION model integrations 2015", 0.5 * width, 0.125 * height); 
 
     stroke(0);
     fill(0);
-    textSize(15);
+    textSize(message_size);
     text("Raz, Mehr, Mehraz solarch studio\n1998-2015\nAuthor: Mojtaba Samimi\nwww.solarchvision.com", 0.5 * width, 0.75 * height);
 
     textSize(message_size);
@@ -1067,289 +1067,300 @@ void draw () {
     CAM_y = 0;
     CAM_z = 0;
     
+
+
     
-    if (GRAPHS_Update == 1) WORLD_Update = 1; // <<<<<<<<<<<<<<<<<<<<
-  
-  
     if (WORLD_Update == 1) {
-    
-      WORLD_Diagrams.beginDraw();
-      
-      WORLD_Diagrams.background(0, 0, 0);
-      
-      PImage WORLDViewImage = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filenames[WORLD_VIEW_Number]);
-  
-      WORLD_Diagrams.image(WORLDViewImage, 0, 0, WORLD_X_View, WORLD_Y_View);
-    
-      float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
-      float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
-    
-      float WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
-      float WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;
-      
-      float _lon1 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0];
-      float _lon2 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1];
-      float _lat1 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0];
-      float _lat2 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1];
-      
-      int x_point1 = int(WORLD_X_View * (( 1 * (_lon1 - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX);
-      int y_point1 = int(WORLD_Y_View * ((-1 * (_lat1 - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY);
-      int x_point2 = int(WORLD_X_View * (( 1 * (_lon2 - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX);
-      int y_point2 = int(WORLD_Y_View * ((-1 * (_lat2 - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY); 
-  
-      float R_station = 2;
-      if (WORLD_VIEW_GridDisplay[WORLD_VIEW_Number] == 1) R_station = 5; 
-    
-      WORLD_Diagrams.ellipseMode(CENTER);
-  
-      WORLD_Diagrams.strokeWeight(3);
-      WORLD_Diagrams.stroke(0, 0, 127, 255);
-      WORLD_Diagrams.noFill();
-  
-      {
-        float _lat = LocationLatitude;
-        float _lon = LocationLongitude; 
-        if (_lon > 180) _lon -= 360; // << important!
-      
-        float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-        float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
-    
-        WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
-     
-      }   
-      
-      WORLD_Diagrams.strokeWeight(0);
-      WORLD_Diagrams.stroke(127, 0, 0, 127);
-      WORLD_Diagrams.fill(127, 0, 0, 127);
-                
-      for (int f = 0; f < STATION_SWOB_INFO.length; f += 1) {
-        float draw_info = 1;
-      
-        float _lat = float(STATION_SWOB_INFO[f][3]);
-        float _lon = float(STATION_SWOB_INFO[f][4]); 
-        if (_lon > 180) _lon -= 360; // << important!
-      
-        if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
-        if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) draw_info = 0;
-        if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) draw_info = 0;
-        if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0; 
-      
-        if (draw_info == 1) {
-    
-          float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-          float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
-          
-          WORLD_Diagrams.ellipse(x_point, y_point, R_station, R_station);
-        
-        }
-      }    
-  
-      WORLD_Diagrams.strokeWeight(0);
-      WORLD_Diagrams.stroke(0, 63, 0, 127);
-      WORLD_Diagrams.fill(0, 63, 0, 127);
-  
-      int nearest_STATION_NAEFS = -1;
-      float nearest_STATION_NAEFS_dist = FLOAT_undefined;
-                
-      for (int f = 0; f < STATION_NAEFS_INFO.length; f += 1) {
-        float draw_info = 1;
-      
-        float _lat = float(STATION_NAEFS_INFO[f][1]);
-        float _lon = float(STATION_NAEFS_INFO[f][2]); 
-        if (_lon > 180) _lon -= 360; // << important!
-      
-        if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
-        if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) draw_info = 0;
-        if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) draw_info = 0;
-        if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0; 
-      
-        if (draw_info == 1) {
-    
-          float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-          float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
-          
-          WORLD_Diagrams.ellipse(x_point, y_point, 1.5 * R_station, 1.5 * R_station);
-  
-        }
-        
-        float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
-        
-        if (nearest_STATION_NAEFS_dist > d) {
-          nearest_STATION_NAEFS_dist = d;
-          nearest_STATION_NAEFS = f;
-        } 
-        
-      }
-      
-      {   
-          int f = nearest_STATION_NAEFS;
-        
-          float _lat = float(STATION_NAEFS_INFO[f][1]);
-          float _lon = float(STATION_NAEFS_INFO[f][2]); 
-          if (_lon > 180) _lon -= 360; // << important!      
-          
-          float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-          float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
-          
-          WORLD_Diagrams.strokeWeight(0);
-          WORLD_Diagrams.stroke(0);
-          WORLD_Diagrams.fill(0);      
-          WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-          WORLD_Diagrams.textSize(5 * R_station);
-          WORLD_Diagrams.text(STATION_NAEFS_INFO[f][0], x_point, y_point);
-          println(STATION_NAEFS_INFO[f][0]);
-      }
-      
-  
-      WORLD_Diagrams.strokeWeight(2);
-      WORLD_Diagrams.stroke(63, 63, 63, 63);
-      WORLD_Diagrams.noFill();
-                
-      for (int f = 0; f < STATION_CWEEDS_INFO.length; f += 1) {
-        float draw_info = 1;
-      
-        float _lat = float(STATION_CWEEDS_INFO[f][3]);
-        float _lon = float(STATION_CWEEDS_INFO[f][4]); 
-        if (_lon > 180) _lon -= 360; // << important!
-      
-        if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
-        if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) draw_info = 0;
-        if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) draw_info = 0;
-        if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0; 
-      
-        if (draw_info == 1) {
-    
-          float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-          float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
-          
-          WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
-        
-        }
-      } 
-      
-      WORLD_Diagrams.strokeWeight(0);
-    
-      
-      WORLD_Diagrams.endDraw();
-  
-      imageMode(CORNER);    
-      image(WORLD_Diagrams, WORLD_CX_View, WORLD_CY_View, WORLD_X_View, WORLD_Y_View); 
+      WORLD_draw();  
     
       WORLD_Update = 0;
     }
     
     if (WIN3D_Update == 1) {
+      
+      WIN3D_draw();
     
-      WIN3D_Diagrams.beginDraw();
-      
-      WIN3D_Diagrams.background(233);
-      
-      if (WIN3D_View_Type == 1) {
-  
-        float fov = WIN3D_ZOOM_coordinate * PI / 180;
-        
-        CAM_x = 0;
-        CAM_y = 0;
-        CAM_z = 0.5 * WIN3D_Diagrams.height / tan(PI / 6.0);
-        //CAM_z = 0.5 * WIN3D_Diagrams.height / tan(0.5 * fov);
-        //CAM_z = (300.0 / (1.0 * h_pixel)) * 0.5 * WIN3D_Diagrams.height / tan(0.5 * fov);
-        
-  
-        //println("CAM_fov =", fov * 180 / PI);
-        //println(CAM_x, CAM_y, CAM_z);
-        
-        float aspect = 1.0 / WIN3D_R_View;
-        
-        float zFar = CAM_z * 100; 
-        float zNear = CAM_z * 0.01;
-        
-        float ymax = zNear * tan(0.5 * fov);
-        float ymin = -ymax;
-        float xmin = ymin * aspect;
-        float xmax = ymax * aspect;
-  
-        //println(xmin, xmax, ymin, ymax, zNear, zFar);
-        WIN3D_Diagrams.frustum(xmin, xmax, ymin, ymax, zNear, zFar);
-  
-        WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
-      }
-      else {
-        
-        //float ZOOM = 0.456 * WIN3D_ZOOM_coordinate * PI / 180;
-        float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
-        
-        WIN3D_Diagrams.ortho(ZOOM * WIN3D_X_View * -1, ZOOM * WIN3D_X_View * 1, ZOOM  * WIN3D_Y_View * -1, ZOOM  * WIN3D_Y_View * 1, 0.00001, 100000);
-        
-        WIN3D_Diagrams.translate(0, 1.0 * WIN3D_Y_View, 0); // << IMPORTANT! 
-      }
-    
-      //lights();
-    
-      
-      WIN3D_Diagrams.pushMatrix();
-      
-      WIN3D_Diagrams.translate(0, 0, 0);
-      
-      WIN3D_Diagrams.fill(0);
-      WIN3D_Diagrams.textAlign(CENTER, CENTER); 
-      WIN3D_Diagrams.textSize(5 * (WIN3D_ZOOM_coordinate / 30.0));
-      WIN3D_Diagrams.text(LocationName + " [" + nfp(LocationLatitude, 0, 1) + ", " + nfp(LocationLongitude, 0, 1) + "]", 0, 60 * (WIN3D_ZOOM_coordinate / 30.0), 0);
-     
-      WIN3D_Diagrams.popMatrix();
-    
-      WIN3D_Diagrams.translate(WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
-      WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI / 180); 
-      WIN3D_Diagrams.rotateY(WIN3D_RY_coordinate * PI / 180);
-      WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI / 180); 
-  
-      //println(nfp(WIN3D_RX_coordinate, 0, 1), nfp(WIN3D_RY_coordinate, 0, 1), nfp(WIN3D_RZ_coordinate, 0, 1)); 
-  
-      
-      
-      
-      WIN3D_Diagrams.fill(127);
-    
-    
-      
-    
-      WIN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
-    
-      SOLARCHVISION_SunPath(0, 0, 0, 0.95 * sky_scale, LocationLatitude);
-      
-      //SOLARCHVISION_draw_sky();
-      
-      SOLARCHVISION_draw_land();
-      
-      SOLARCHVISION_draw_field_image();
-      
-      SOLARCHVISION_draw_objects();
-      
-      
-      
-       
-    
-      
-    
-      WIN3D_Diagrams.endDraw();
-  
-      imageMode(CORNER);    
-      image(WIN3D_Diagrams, WIN3D_CX_View, WIN3D_CY_View, WIN3D_X_View, WIN3D_Y_View);
-  
-  
       WIN3D_Update = 0;
     }
-  
+
     if (GRAPHS_Update == 1) {
       
       GRAPHS_draw();
       
       GRAPHS_Update = 0;
-    }
+
+    }    
+
+  
+
+
+  
 
 
   }
 } 
 
+
+void WIN3D_draw () {
+  
+  WIN3D_Diagrams.beginDraw();
+  
+  WIN3D_Diagrams.background(233);
+  
+  if (WIN3D_View_Type == 1) {
+
+    float fov = WIN3D_ZOOM_coordinate * PI / 180;
+    
+    CAM_x = 0;
+    CAM_y = 0;
+    CAM_z = 0.5 * WIN3D_Diagrams.height / tan(PI / 6.0);
+    //CAM_z = 0.5 * WIN3D_Diagrams.height / tan(0.5 * fov);
+    //CAM_z = (300.0 / (1.0 * h_pixel)) * 0.5 * WIN3D_Diagrams.height / tan(0.5 * fov);
+    
+
+    //println("CAM_fov =", fov * 180 / PI);
+    //println(CAM_x, CAM_y, CAM_z);
+    
+    float aspect = 1.0 / WIN3D_R_View;
+    
+    float zFar = CAM_z * 100; 
+    float zNear = CAM_z * 0.01;
+    
+    float ymax = zNear * tan(0.5 * fov);
+    float ymin = -ymax;
+    float xmin = ymin * aspect;
+    float xmax = ymax * aspect;
+
+    //println(xmin, xmax, ymin, ymax, zNear, zFar);
+    WIN3D_Diagrams.frustum(xmin, xmax, ymin, ymax, zNear, zFar);
+
+    WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
+  }
+  else {
+    
+    //float ZOOM = 0.456 * WIN3D_ZOOM_coordinate * PI / 180;
+    float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
+    
+    WIN3D_Diagrams.ortho(ZOOM * WIN3D_X_View * -1, ZOOM * WIN3D_X_View * 1, ZOOM  * WIN3D_Y_View * -1, ZOOM  * WIN3D_Y_View * 1, 0.00001, 100000);
+    
+    WIN3D_Diagrams.translate(0, 1.0 * WIN3D_Y_View, 0); // << IMPORTANT! 
+  }
+
+  //lights();
+
+  
+  WIN3D_Diagrams.pushMatrix();
+  
+  WIN3D_Diagrams.translate(0, 0, 0);
+  
+  WIN3D_Diagrams.fill(0);
+  WIN3D_Diagrams.textAlign(CENTER, CENTER); 
+  WIN3D_Diagrams.textSize(5 * (WIN3D_ZOOM_coordinate / 30.0));
+  WIN3D_Diagrams.text(LocationName + " [" + nfp(LocationLatitude, 0, 1) + ", " + nfp(LocationLongitude, 0, 1) + "]", 0, 60 * (WIN3D_ZOOM_coordinate / 30.0), 0);
+ 
+  WIN3D_Diagrams.popMatrix();
+
+  WIN3D_Diagrams.translate(WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
+  WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI / 180); 
+  WIN3D_Diagrams.rotateY(WIN3D_RY_coordinate * PI / 180);
+  WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI / 180); 
+
+  //println(nfp(WIN3D_RX_coordinate, 0, 1), nfp(WIN3D_RY_coordinate, 0, 1), nfp(WIN3D_RZ_coordinate, 0, 1)); 
+
+
+  
+  WIN3D_Diagrams.fill(127);
+
+
+
+  WIN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
+
+  SOLARCHVISION_SunPath(0, 0, 0, 0.95 * sky_scale, LocationLatitude);
+  
+  //SOLARCHVISION_draw_sky();
+  
+  SOLARCHVISION_draw_land();
+  
+  SOLARCHVISION_draw_field_image();
+  
+  SOLARCHVISION_draw_objects();
+  
+
+
+  WIN3D_Diagrams.endDraw();
+
+  imageMode(CORNER);    
+  image(WIN3D_Diagrams, WIN3D_CX_View, WIN3D_CY_View, WIN3D_X_View, WIN3D_Y_View);
+
+
+
+}
+
+
+void WORLD_draw () {
+    
+  WORLD_Diagrams.beginDraw();
+  
+  WORLD_Diagrams.background(0, 0, 0);
+  
+  PImage WORLDViewImage = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filenames[WORLD_VIEW_Number]);
+
+  WORLD_Diagrams.image(WORLDViewImage, 0, 0, WORLD_X_View, WORLD_Y_View);
+
+  float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
+  float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
+
+  float WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
+  float WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;
+  
+  float _lon1 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0];
+  float _lon2 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1];
+  float _lat1 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0];
+  float _lat2 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1];
+  
+  int x_point1 = int(WORLD_X_View * (( 1 * (_lon1 - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX);
+  int y_point1 = int(WORLD_Y_View * ((-1 * (_lat1 - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY);
+  int x_point2 = int(WORLD_X_View * (( 1 * (_lon2 - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX);
+  int y_point2 = int(WORLD_Y_View * ((-1 * (_lat2 - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY); 
+
+  float R_station = 2;
+  if (WORLD_VIEW_GridDisplay[WORLD_VIEW_Number] == 1) R_station = 5; 
+
+  WORLD_Diagrams.ellipseMode(CENTER);
+
+  WORLD_Diagrams.strokeWeight(3);
+  WORLD_Diagrams.stroke(0, 0, 127, 255);
+  WORLD_Diagrams.noFill();
+
+  {
+    float _lat = LocationLatitude;
+    float _lon = LocationLongitude; 
+    if (_lon > 180) _lon -= 360; // << important!
+  
+    float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+    float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
+
+    WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
+ 
+  }   
+  
+  WORLD_Diagrams.strokeWeight(0);
+  WORLD_Diagrams.stroke(127, 0, 0, 127);
+  WORLD_Diagrams.fill(127, 0, 0, 127);
+            
+  for (int f = 0; f < STATION_SWOB_INFO.length; f += 1) {
+    float draw_info = 1;
+  
+    float _lat = float(STATION_SWOB_INFO[f][3]);
+    float _lon = float(STATION_SWOB_INFO[f][4]); 
+    if (_lon > 180) _lon -= 360; // << important!
+  
+    if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
+    if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) draw_info = 0;
+    if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) draw_info = 0;
+    if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0; 
+  
+    if (draw_info == 1) {
+
+      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+      
+      WORLD_Diagrams.ellipse(x_point, y_point, R_station, R_station);
+    
+    }
+  }    
+
+  WORLD_Diagrams.strokeWeight(0);
+  WORLD_Diagrams.stroke(0, 63, 0, 127);
+  WORLD_Diagrams.fill(0, 63, 0, 127);
+
+  int nearest_STATION_NAEFS = -1;
+  float nearest_STATION_NAEFS_dist = FLOAT_undefined;
+            
+  for (int f = 0; f < STATION_NAEFS_INFO.length; f += 1) {
+    float draw_info = 1;
+  
+    float _lat = float(STATION_NAEFS_INFO[f][1]);
+    float _lon = float(STATION_NAEFS_INFO[f][2]); 
+    if (_lon > 180) _lon -= 360; // << important!
+  
+    if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
+    if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) draw_info = 0;
+    if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) draw_info = 0;
+    if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0; 
+  
+    if (draw_info == 1) {
+
+      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+      
+      WORLD_Diagrams.ellipse(x_point, y_point, 1.5 * R_station, 1.5 * R_station);
+
+    }
+    
+    float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
+    
+    if (nearest_STATION_NAEFS_dist > d) {
+      nearest_STATION_NAEFS_dist = d;
+      nearest_STATION_NAEFS = f;
+    } 
+    
+  }
+  
+  {   
+      int f = nearest_STATION_NAEFS;
+    
+      float _lat = float(STATION_NAEFS_INFO[f][1]);
+      float _lon = float(STATION_NAEFS_INFO[f][2]); 
+      if (_lon > 180) _lon -= 360; // << important!      
+      
+      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+      
+      WORLD_Diagrams.strokeWeight(0);
+      WORLD_Diagrams.stroke(0);
+      WORLD_Diagrams.fill(0);      
+      WORLD_Diagrams.textAlign(RIGHT, CENTER); 
+      WORLD_Diagrams.textSize(5 * R_station);
+      WORLD_Diagrams.text(STATION_NAEFS_INFO[f][0], x_point, y_point);
+      println(STATION_NAEFS_INFO[f][0]);
+  }
+  
+
+  WORLD_Diagrams.strokeWeight(2);
+  WORLD_Diagrams.stroke(63, 63, 63, 63);
+  WORLD_Diagrams.noFill();
+            
+  for (int f = 0; f < STATION_CWEEDS_INFO.length; f += 1) {
+    float draw_info = 1;
+  
+    float _lat = float(STATION_CWEEDS_INFO[f][3]);
+    float _lon = float(STATION_CWEEDS_INFO[f][4]); 
+    if (_lon > 180) _lon -= 360; // << important!
+  
+    if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
+    if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) draw_info = 0;
+    if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) draw_info = 0;
+    if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) draw_info = 0; 
+  
+    if (draw_info == 1) {
+
+      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+      
+      WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
+    
+    }
+  } 
+  
+  WORLD_Diagrams.strokeWeight(0);
+
+  
+  WORLD_Diagrams.endDraw();
+
+  imageMode(CORNER);    
+  image(WORLD_Diagrams, WORLD_CX_View, WORLD_CY_View, WORLD_X_View, WORLD_Y_View); 
+}
 
 
 void GRAPHS_draw () {
