@@ -411,11 +411,6 @@ String[] CLIMATE_WY2_Files = getfiles(CLIMATE_WY2_directory);
 String[] FORECAST_XML_Files = getfiles(ENSEMBLE_directory);
 String[] OBSERVED_XML_Files = getfiles(OBSERVED_directory);
 
-int GRAPHS_X_View = 1;
-int GRAPHS_Y_View = 1;
-float GRAPHS_R_View = 1;
-float GRAPHS_S_View = 1; 
-
 int camera_variation = 1;
 
 int draw_data_lines = 0;
@@ -567,11 +562,11 @@ void empty_Materials_DiffuseArea () {
 int h_pixel = 325; 
 int w_pixel = int(h_pixel * 1.5);
 
-int WIN3D_CX_Wiew = 0;
-int WIN3D_CY_Wiew = h_pixel;
-int WIN3D_X_Wiew = w_pixel;
-int WIN3D_Y_Wiew = h_pixel;
-float WIN3D_R_Wiew = float(WIN3D_Y_Wiew) / float(WIN3D_X_Wiew);
+int WIN3D_CX_View = 0;
+int WIN3D_CY_View = h_pixel;
+int WIN3D_X_View = w_pixel;
+int WIN3D_Y_View = h_pixel;
+float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
 
 float WIN3D_X_coordinate = 0;
 float WIN3D_Y_coordinate = 0;
@@ -604,11 +599,11 @@ int WIN3D_update_VerticesSolarValue = 1;
 
 
 
-int WORLD_CX_Wiew = w_pixel;
-int WORLD_CY_Wiew = h_pixel;
-int WORLD_X_Wiew = w_pixel;
-int WORLD_Y_Wiew = h_pixel;
-float WORLD_R_Wiew = float(WORLD_Y_Wiew) / float(WORLD_X_Wiew);
+int WORLD_CX_View = w_pixel;
+int WORLD_CY_View = h_pixel;
+int WORLD_X_View = w_pixel;
+int WORLD_Y_View = h_pixel;
+float WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
 
 PGraphics WORLD_Diagrams;
 
@@ -629,11 +624,12 @@ String[] Object2D_Filenames_TREES;
 int number_of_WORLD_viewports;
 
 
-int GRAPHS_CX_Wiew = 0;
-int GRAPHS_CY_Wiew = 0;
-int GRAPHS_X_Wiew = 2 * w_pixel;
-int GRAPHS_Y_Wiew = 1 * h_pixel;
-float GRAPHS_R_Wiew = float(GRAPHS_Y_Wiew) / float(GRAPHS_X_Wiew);
+int GRAPHS_CX_View = 0;
+int GRAPHS_CY_View = 0;
+int GRAPHS_X_View = 1 * w_pixel;
+int GRAPHS_Y_View = 1 * h_pixel;
+float GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);
+float GRAPHS_S_View;
 
 int GRAPHS_Update = 1;
 int GRAPHS_include = 1;
@@ -664,9 +660,9 @@ void setup () {
   WIN3D_VerticesSolarEnergy[0] = FLOAT_undefined;
   WIN3D_VerticesSolarEffect[0] = FLOAT_undefined;
 
-  WIN3D_Diagrams = createGraphics(WIN3D_X_Wiew, WIN3D_Y_Wiew, P3D); 
+  WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D); 
 
-  WORLD_Diagrams = createGraphics(WORLD_X_Wiew, WORLD_Y_Wiew, P2D);
+  WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
 
 
   frameRate(24);
@@ -1139,7 +1135,7 @@ void SOLARCHVISION_draw_WIN3D () {
     //println("CAM_fov =", fov * 180 / PI);
     //println(CAM_x, CAM_y, CAM_z);
     
-    float aspect = 1.0 / WIN3D_R_Wiew;
+    float aspect = 1.0 / WIN3D_R_View;
     
     float zFar = CAM_z * 100; 
     float zNear = CAM_z * 0.01;
@@ -1152,16 +1148,16 @@ void SOLARCHVISION_draw_WIN3D () {
     //println(xmin, xmax, ymin, ymax, zNear, zFar);
     WIN3D_Diagrams.frustum(xmin, xmax, ymin, ymax, zNear, zFar);
 
-    WIN3D_Diagrams.translate(0.5 * WIN3D_X_Wiew, 0.5 * WIN3D_Y_Wiew, 0); // << IMPORTANT!
+    WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
   }
   else {
     
     //float ZOOM = 0.456 * WIN3D_ZOOM_coordinate * PI / 180;
     float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
     
-    WIN3D_Diagrams.ortho(ZOOM * WIN3D_X_Wiew * -1, ZOOM * WIN3D_X_Wiew * 1, ZOOM  * WIN3D_Y_Wiew * -1, ZOOM  * WIN3D_Y_Wiew * 1, 0.00001, 100000);
+    WIN3D_Diagrams.ortho(ZOOM * WIN3D_X_View * -1, ZOOM * WIN3D_X_View * 1, ZOOM  * WIN3D_Y_View * -1, ZOOM  * WIN3D_Y_View * 1, 0.00001, 100000);
     
-    WIN3D_Diagrams.translate(0, 1.0 * WIN3D_Y_Wiew, 0); // << IMPORTANT! 
+    WIN3D_Diagrams.translate(0, 1.0 * WIN3D_Y_View, 0); // << IMPORTANT! 
   }
 
   //lights();
@@ -1208,7 +1204,7 @@ void SOLARCHVISION_draw_WIN3D () {
   WIN3D_Diagrams.endDraw();
 
   imageMode(CORNER);    
-  image(WIN3D_Diagrams, WIN3D_CX_Wiew, WIN3D_CY_Wiew, WIN3D_X_Wiew, WIN3D_Y_Wiew);
+  image(WIN3D_Diagrams, WIN3D_CX_View, WIN3D_CY_View, WIN3D_X_View, WIN3D_Y_View);
 
 
 
@@ -1223,7 +1219,7 @@ void SOLARCHVISION_draw_WORLD () {
   
   PImage WORLDViewImage = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filenames[WORLD_VIEW_Number]);
 
-  WORLD_Diagrams.image(WORLDViewImage, 0, 0, WORLD_X_Wiew, WORLD_Y_Wiew);
+  WORLD_Diagrams.image(WORLDViewImage, 0, 0, WORLD_X_View, WORLD_Y_View);
 
   float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
   float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
@@ -1236,10 +1232,10 @@ void SOLARCHVISION_draw_WORLD () {
   float _lat1 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0];
   float _lat2 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1];
   
-  int x_point1 = int(WORLD_X_Wiew * (( 1 * (_lon1 - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX);
-  int y_point1 = int(WORLD_Y_Wiew * ((-1 * (_lat1 - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY);
-  int x_point2 = int(WORLD_X_Wiew * (( 1 * (_lon2 - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX);
-  int y_point2 = int(WORLD_Y_Wiew * ((-1 * (_lat2 - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY); 
+  int x_point1 = int(WORLD_X_View * (( 1 * (_lon1 - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX);
+  int y_point1 = int(WORLD_Y_View * ((-1 * (_lat1 - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY);
+  int x_point2 = int(WORLD_X_View * (( 1 * (_lon2 - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX);
+  int y_point2 = int(WORLD_Y_View * ((-1 * (_lat2 - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY); 
 
   float R_station = 2;
   if (WORLD_VIEW_GridDisplay[WORLD_VIEW_Number] == 1) R_station = 5; 
@@ -1255,8 +1251,8 @@ void SOLARCHVISION_draw_WORLD () {
     float _lon = LocationLongitude; 
     if (_lon > 180) _lon -= 360; // << important!
   
-    float x_point = WORLD_X_Wiew * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-    float y_point = WORLD_Y_Wiew * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
+    float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+    float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
 
     WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
  
@@ -1276,8 +1272,8 @@ void SOLARCHVISION_draw_WORLD () {
   
     if (draw_info == 1) {
 
-      float x_point = WORLD_X_Wiew * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-      float y_point = WORLD_Y_Wiew * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
 
       WORLD_Diagrams.strokeWeight(0);
       WORLD_Diagrams.stroke(127, 0, 0, 127);
@@ -1315,8 +1311,8 @@ void SOLARCHVISION_draw_WORLD () {
   
     if (draw_info == 1) {
 
-      float x_point = WORLD_X_Wiew * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-      float y_point = WORLD_Y_Wiew * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
       
       WORLD_Diagrams.ellipse(x_point, y_point, 1.5 * R_station, 1.5 * R_station);
 
@@ -1338,8 +1334,8 @@ void SOLARCHVISION_draw_WORLD () {
       float _lon = float(STATION_NAEFS_INFO[f][2]); 
       if (_lon > 180) _lon -= 360; // << important!      
       
-      float x_point = WORLD_X_Wiew * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-      float y_point = WORLD_Y_Wiew * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
       
       WORLD_Diagrams.strokeWeight(0);
       WORLD_Diagrams.stroke(0);
@@ -1367,8 +1363,8 @@ void SOLARCHVISION_draw_WORLD () {
   
     if (draw_info == 1) {
 
-      float x_point = WORLD_X_Wiew * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-      float y_point = WORLD_Y_Wiew * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
 
       WORLD_Diagrams.strokeWeight(2);
       WORLD_Diagrams.stroke(63, 63, 63, 63);
@@ -1390,7 +1386,7 @@ void SOLARCHVISION_draw_WORLD () {
   WORLD_Diagrams.endDraw();
 
   imageMode(CORNER);    
-  image(WORLD_Diagrams, WORLD_CX_Wiew, WORLD_CY_Wiew, WORLD_X_Wiew, WORLD_Y_Wiew); 
+  image(WORLD_Diagrams, WORLD_CX_View, WORLD_CY_View, WORLD_X_View, WORLD_Y_View); 
 }
 
 
@@ -1401,9 +1397,9 @@ void SOLARCHVISION_draw_GRAPHS () {
   //resetMatrix();
 
   pushMatrix();
-  translate(GRAPHS_CX_Wiew, GRAPHS_CY_Wiew);
+  translate(GRAPHS_CX_View, GRAPHS_CY_View);
  
-  //GRAPHS_S_View = (GRAPHS_X_View / 3600.0) / GRAPHS_R_Wiew;
+  //GRAPHS_S_View = (GRAPHS_X_View / 3600.0) / GRAPHS_R_View;
   GRAPHS_S_View = (GRAPHS_X_View / 1200.0);
   
   //_pix = (100.0 * GRAPHS_S_View / level_pix);
@@ -1462,10 +1458,10 @@ void SOLARCHVISION_draw_GRAPHS () {
   
     if (record_PDF == 1) {
       //X_coordinate = -0.333 * GRAPHS_X_View;
-      X_coordinate = -0.333 * GRAPHS_X_Wiew;      
+      X_coordinate = -0.333 * GRAPHS_X_View;      
       
       //Y_coordinate = 1.0 * GRAPHS_Y_View;
-      Y_coordinate = 1.0 * GRAPHS_Y_Wiew;
+      Y_coordinate = 1.0 * GRAPHS_Y_View;
       
       GRAPHS_S_View *= 0.575; 
       T_scale = 0.5;
@@ -1476,10 +1472,10 @@ void SOLARCHVISION_draw_GRAPHS () {
     }
     else {
       //X_coordinate = -0.333 * GRAPHS_X_View * Image_Scale;
-      X_coordinate = -0.333 * GRAPHS_X_Wiew * Image_Scale;      
+      X_coordinate = -0.333 * GRAPHS_X_View * Image_Scale;      
       
       //Y_coordinate = 1.0 * GRAPHS_Y_View * Image_Scale;
-      Y_coordinate = 1.0 * GRAPHS_Y_Wiew * Image_Scale;
+      Y_coordinate = 1.0 * GRAPHS_Y_View * Image_Scale;
       
       GRAPHS_S_View *= 0.575 * Image_Scale; 
       T_scale = 0.5 * Image_Scale;
@@ -9601,25 +9597,25 @@ void SOLARCHVISION_update_frame_layout () {
     WIN3D_include = 1;
     WORLD_include = 1;
    
-    GRAPHS_CX_Wiew = 0;
-    GRAPHS_CY_Wiew = 0;
-    GRAPHS_X_Wiew = 2 * w_pixel;
-    GRAPHS_Y_Wiew = 1 * h_pixel;
-    GRAPHS_R_Wiew = float(GRAPHS_Y_Wiew) / float(GRAPHS_X_Wiew);   
+    GRAPHS_CX_View = 0;
+    GRAPHS_CY_View = 0;
+    GRAPHS_X_View = 2 * w_pixel;
+    GRAPHS_Y_View = 1 * h_pixel;
+    GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);   
    
-    WIN3D_CX_Wiew = 0;
-    WIN3D_CY_Wiew = h_pixel;
-    WIN3D_X_Wiew = w_pixel;
-    WIN3D_Y_Wiew = h_pixel;
-    WIN3D_R_Wiew = float(WIN3D_Y_Wiew) / float(WIN3D_X_Wiew);
-    WIN3D_Diagrams = createGraphics(WIN3D_X_Wiew, WIN3D_Y_Wiew, P3D);
+    WIN3D_CX_View = 0;
+    WIN3D_CY_View = h_pixel;
+    WIN3D_X_View = w_pixel;
+    WIN3D_Y_View = h_pixel;
+    WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
+    WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
     
-    WORLD_CX_Wiew = w_pixel;
-    WORLD_CY_Wiew = h_pixel;
-    WORLD_X_Wiew = w_pixel;
-    WORLD_Y_Wiew = h_pixel;
-    WORLD_R_Wiew = float(WORLD_Y_Wiew) / float(WORLD_X_Wiew);
-    WORLD_Diagrams = createGraphics(WORLD_X_Wiew, WORLD_Y_Wiew, P2D);    
+    WORLD_CX_View = w_pixel;
+    WORLD_CY_View = h_pixel;
+    WORLD_X_View = w_pixel;
+    WORLD_Y_View = h_pixel;
+    WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
+    WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);    
  }
  else if (frame_variation == 1) {
    
@@ -9627,12 +9623,12 @@ void SOLARCHVISION_update_frame_layout () {
     WIN3D_include = 0;
     WORLD_include = 1;
    
-    WORLD_CX_Wiew = 0;
-    WORLD_CY_Wiew = 0;
-    WORLD_X_Wiew = 2 * w_pixel;
-    WORLD_Y_Wiew = 2 * h_pixel;
-    WORLD_R_Wiew = float(WORLD_Y_Wiew) / float(WORLD_X_Wiew);
-    WORLD_Diagrams = createGraphics(WORLD_X_Wiew, WORLD_Y_Wiew, P2D);    
+    WORLD_CX_View = 0;
+    WORLD_CY_View = 0;
+    WORLD_X_View = 2 * w_pixel;
+    WORLD_Y_View = 2 * h_pixel;
+    WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
+    WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);    
  }    
  else if (frame_variation == 2) {
 
@@ -9640,12 +9636,12 @@ void SOLARCHVISION_update_frame_layout () {
     WIN3D_include = 1;
     WORLD_include = 0;
    
-    WIN3D_CX_Wiew = 0;
-    WIN3D_CY_Wiew = 0;
-    WIN3D_X_Wiew = 2 * w_pixel;
-    WIN3D_Y_Wiew = 2 * h_pixel;
-    WIN3D_R_Wiew = float(WIN3D_Y_Wiew) / float(WIN3D_X_Wiew);
-    WIN3D_Diagrams = createGraphics(WIN3D_X_Wiew, WIN3D_Y_Wiew, P3D);
+    WIN3D_CX_View = 0;
+    WIN3D_CY_View = 0;
+    WIN3D_X_View = 2 * w_pixel;
+    WIN3D_Y_View = 2 * h_pixel;
+    WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
+    WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
  }
  else if (frame_variation == 3) {
 
@@ -9653,11 +9649,11 @@ void SOLARCHVISION_update_frame_layout () {
     WIN3D_include = 0;
     WORLD_include = 0;
    
-    GRAPHS_CX_Wiew = 0;
-    GRAPHS_CY_Wiew = 0;
-    GRAPHS_X_Wiew = 2 * w_pixel;
-    GRAPHS_Y_Wiew = 2 * h_pixel;
-    GRAPHS_R_Wiew = float(GRAPHS_Y_Wiew) / float(GRAPHS_X_Wiew);   
+    GRAPHS_CX_View = 0;
+    GRAPHS_CY_View = 0;
+    GRAPHS_X_View = 2 * w_pixel;
+    GRAPHS_Y_View = 2 * h_pixel;
+    GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);   
   }
  
   WORLD_Update = 1;
@@ -11447,9 +11443,9 @@ float objects_scale = 1.0;
 
 
 
-PGraphics ViewFromTheSky (int SKY3D_X_Wiew, int SKY3D_Y_Wiew, float SKY3D_ZOOM_coordinate, float SKY3D_X_coordinate, float SKY3D_Y_coordinate, float SKY3D_Z_coordinate, float SKY3D_RX_coordinate, float SKY3D_RY_coordinate, float SKY3D_RZ_coordinate) {
+PGraphics ViewFromTheSky (int SKY3D_X_View, int SKY3D_Y_View, float SKY3D_ZOOM_coordinate, float SKY3D_X_coordinate, float SKY3D_Y_coordinate, float SKY3D_Z_coordinate, float SKY3D_RX_coordinate, float SKY3D_RY_coordinate, float SKY3D_RZ_coordinate) {
 
-  PGraphics SKY3D_Diagrams = createGraphics(SKY3D_X_Wiew, SKY3D_Y_Wiew, P3D);   
+  PGraphics SKY3D_Diagrams = createGraphics(SKY3D_X_View, SKY3D_Y_View, P3D);   
   
   SKY3D_Diagrams.beginDraw();
   
@@ -11458,9 +11454,9 @@ PGraphics ViewFromTheSky (int SKY3D_X_Wiew, int SKY3D_Y_Wiew, float SKY3D_ZOOM_c
   //float ZOOM = 0.456 * SKY3D_ZOOM_coordinate * PI / 180;
   float ZOOM = 0.125 * SKY3D_ZOOM_coordinate * PI / 180;
   
-  SKY3D_Diagrams.ortho(ZOOM * SKY3D_X_Wiew * -1, ZOOM * SKY3D_X_Wiew * 1, ZOOM  * SKY3D_Y_Wiew * -1, ZOOM  * SKY3D_Y_Wiew * 1, 0.00001, 100000);
+  SKY3D_Diagrams.ortho(ZOOM * SKY3D_X_View * -1, ZOOM * SKY3D_X_View * 1, ZOOM  * SKY3D_Y_View * -1, ZOOM  * SKY3D_Y_View * 1, 0.00001, 100000);
   
-  SKY3D_Diagrams.translate(0, 1.0 * SKY3D_Y_Wiew, 0); // << IMPORTANT! 
+  SKY3D_Diagrams.translate(0, 1.0 * SKY3D_Y_View, 0); // << IMPORTANT! 
 
   SKY3D_Diagrams.pushMatrix();
   
