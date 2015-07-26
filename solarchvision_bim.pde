@@ -623,7 +623,7 @@ int number_of_WORLD_viewports;
 
 int GRAPHS_CX_View = 0;
 int GRAPHS_CY_View = 0;
-int GRAPHS_X_View = 1 * w_pixel;
+int GRAPHS_X_View = 2 * w_pixel;
 int GRAPHS_Y_View = 1 * h_pixel;
 float GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);
 float GRAPHS_S_View;
@@ -641,10 +641,6 @@ float CAM_x, CAM_y, CAM_z;
 void setup () {
 
   size(2 * w_pixel, 2 * h_pixel, P2D);
-
-  GRAPHS_X_View = 2 * w_pixel; 
-  GRAPHS_Y_View = h_pixel; 
-  GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);
 
   _DATE = (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   //if (_HOUR >= 12) _DATE += 0.5;   
@@ -1396,10 +1392,7 @@ void SOLARCHVISION_draw_GRAPHS () {
   pushMatrix();
   translate(GRAPHS_CX_View, GRAPHS_CY_View);
  
-  //GRAPHS_S_View = (GRAPHS_X_View / 3600.0) / GRAPHS_R_View;
   GRAPHS_S_View = (GRAPHS_X_View / 1200.0);
-  
-  //_pix = (100.0 * GRAPHS_S_View / level_pix);
   
   pre_setup = _setup;
   pre_impacts_source = impacts_source;
@@ -1447,36 +1440,28 @@ void SOLARCHVISION_draw_GRAPHS () {
   
   if (GRAPHS_Update != 0) {
     
-    if (off_screen == 0) Image_Scale = 1; 
-    else Image_Scale = 1; //1.5; //2;
+    if (record_PDF == 1) Image_Scale = 1;
+    else {
+      if (off_screen == 0) Image_Scale = 1; 
+      else Image_Scale = 1; //1.5; //2;
+    }
     
     draw_frame += 1;
     println("frame:", draw_frame);
   
+    GRAPHS_X_coordinate = -0.333 * GRAPHS_X_View * Image_Scale;      
+    
+    GRAPHS_Y_coordinate = 1.0 * GRAPHS_Y_View * Image_Scale;
+    
+    GRAPHS_S_View *= 0.575 * Image_Scale; 
+    GRAPHS_T_scale = 0.5 * Image_Scale;  
+  
     if (record_PDF == 1) {
-      //GRAPHS_X_coordinate = -0.333 * GRAPHS_X_View;
-      GRAPHS_X_coordinate = -0.333 * GRAPHS_X_View;      
-      
-      //GRAPHS_Y_coordinate = 1.0 * GRAPHS_Y_View;
-      GRAPHS_Y_coordinate = 1.0 * GRAPHS_Y_View;
-      
-      GRAPHS_S_View *= 0.575; 
-      GRAPHS_T_scale = 0.5;
-      
       println("PDF:begin");
       Diagrams = createGraphics(GRAPHS_X_View, GRAPHS_Y_View, PDF, MAKE_Filenames() + ".pdf");
       beginRecord(Diagrams);
     }
     else {
-      //GRAPHS_X_coordinate = -0.333 * GRAPHS_X_View * Image_Scale;
-      GRAPHS_X_coordinate = -0.333 * GRAPHS_X_View * Image_Scale;      
-      
-      //GRAPHS_Y_coordinate = 1.0 * GRAPHS_Y_View * Image_Scale;
-      GRAPHS_Y_coordinate = 1.0 * GRAPHS_Y_View * Image_Scale;
-      
-      GRAPHS_S_View *= 0.575 * Image_Scale; 
-      GRAPHS_T_scale = 0.5 * Image_Scale;
-
       Diagrams = createGraphics(int(GRAPHS_X_View * Image_Scale), int(GRAPHS_Y_View * Image_Scale), P2D);
       Diagrams_beginDraw();
     }
