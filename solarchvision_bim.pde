@@ -590,8 +590,8 @@ PGraphics WIN3D_Diagrams;
 
 int WIN3D_Update = 1;
 
-int WIN3D_BLACK_EDGES = 1;
-int WIN3D_WHITE_FACES = 1;
+int WIN3D_EDGES_SHOW = 1;
+int WIN3D_FACES_SHADE = 1;
 
 int MODEL3D_TESELATION = 0;
 
@@ -671,6 +671,11 @@ void setup () {
 void SOLARCHVISION_update_station (int Step) {
   
   if ((Step == 0) || (Step == 1)) {
+    
+    WIN3D_FACES_SHADE = 1;
+    WIN3D_update_VerticesSolarValue = 1;
+    
+    
     WORLD_Update = 1;
     WIN3D_Update = 1; 
     GRAPHS_Update = 1;    
@@ -704,22 +709,22 @@ void SOLARCHVISION_update_station (int Step) {
     SOLARCHVISION_LoadLAND(LocationName);
   }
   
-  if ((Step == 0) || (Step == 7)) {
-    allObject2D_XYZS = new float[1][3]; 
-    allObject2D_XYZS[0][0] = 0;
-    allObject2D_XYZS[0][1] = 0;
-    allObject2D_XYZS[0][2] = 0;
-    
-    allObject2D_MAP = new int[1];
-    allObject2D_MAP[0] = 0;
-    
-    allObject2D_num = 0;
+  if ((Step == 0) || (Step == 7)) SOLARCHVISION_remove_2Dobjects();
 
-    SOLARCHVISION_add_2Dobjects_onLand();
-  }  
+  if ((Step == 0) || (Step == 8)) SOLARCHVISION_add_2Dobjects_onLand();
 
 }
 
+void SOLARCHVISION_update_models (int Step) {
+ 
+   if ((Step == 0) || (Step == 1)) SOLARCHVISION_remove_3Dobjects();
+   //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
+   //if ((Step == 0) || (Step == 3)) SOLARCHVISION_add_ParametricSurfaces(1);
+   if ((Step == 0) || (Step == 4)) SOLARCHVISION_remove_ParametricGeometries();
+   if ((Step == 0) || (Step == 5)) SOLARCHVISION_add_ParametricGeometries();
+   if ((Step == 0) || (Step == 6)) SOLARCHVISION_calculate_ParametricGeometries_Field();
+
+}
 
 
 float message_size = 15;
@@ -943,37 +948,33 @@ void draw () {
   }
   else if (frameCount == 15) {
     SOLARCHVISION_update_station(6);
-    
+
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+
+    text("SOLARCHVISION_remove_2Dobjects", 0.5 * width, 0.5 * height);
+  }
+  else if (frameCount == 16) {
+    SOLARCHVISION_update_station(7);
+
     stroke(0);
     fill(0);
     rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
     text("SOLARCHVISION_add_2Dobjects_onLand", 0.5 * width, 0.5 * height);
   }
-  else if (frameCount == 16) {
-    SOLARCHVISION_update_station(7);
-    
-    stroke(0);
-    fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
-
-    stroke(255);
-    fill(255);
-    text("//SOLARCHVISION_add_3Dobjects", 0.5 * width, 0.5 * height);
-  }
   else if (frameCount == 17) {
-    //SOLARCHVISION_add_3Dobjects(); 
+    SOLARCHVISION_update_station(8);
     
     stroke(0);
     fill(0);
     rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
-    stroke(255);
-    fill(255);
-    text("//SOLARCHVISION_add_ParametricSurfaces", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_remove_3Dobjects", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 18) {
-    //SOLARCHVISION_add_ParametricSurfaces(1);
+    SOLARCHVISION_update_models(1);
     
     stroke(0);
     fill(0);
@@ -981,10 +982,42 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("//SOLARCHVISION_add_ParametricGeometries", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_add_3Dobjects", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 19) {
-    //SOLARCHVISION_add_ParametricGeometries();
+    SOLARCHVISION_update_models(2);
+    
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+
+    stroke(255);
+    fill(255);
+    text("SOLARCHVISION_add_ParametricSurfaces", 0.5 * width, 0.5 * height);
+  }
+  else if (frameCount == 20) {
+    SOLARCHVISION_update_models(3);
+
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+
+    stroke(255);
+    fill(255);
+    text("SOLARCHVISION_remove_ParametricGeometries", 0.5 * width, 0.5 * height);
+  }
+  else if (frameCount == 21) {
+    SOLARCHVISION_update_models(4);    
+    stroke(0);
+    fill(0);
+    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+
+    stroke(255);
+    fill(255);
+    text("SOLARCHVISION_add_ParametricGeometries", 0.5 * width, 0.5 * height);
+  }
+  else if (frameCount == 22) {
+    SOLARCHVISION_update_models(5);
     
     stroke(0);
     fill(0);
@@ -994,8 +1027,8 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_calculate_ParametricGeometries_Field", 0.5 * width, 0.5 * height);
   }
-  else if (frameCount == 20) {
-    SOLARCHVISION_calculate_ParametricGeometries_Field();
+  else if (frameCount == 23) {
+    SOLARCHVISION_update_models(6);
     
     stroke(0);
     fill(0);
@@ -1006,7 +1039,7 @@ void draw () {
     text("SOLARCHVISION_build_SkySphere", 0.5 * width, 0.5 * height);
     
   }    
-  else if (frameCount == 21) {
+  else if (frameCount == 24) {
     SOLARCHVISION_build_SkySphere(3);
     
     stroke(0);
@@ -1017,7 +1050,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_build_SolarProjection_array", 0.5 * width, 0.5 * height);
   }
-  else if (frameCount == 22) {  
+  else if (frameCount == 25) {  
     SOLARCHVISION_build_SolarProjection_array();
      
     stroke(0);
@@ -1028,8 +1061,7 @@ void draw () {
     fill(255);
     text("Please wait while integrating the models.", 0.5 * width, 0.5 * height);    
   }
-
-  else {
+  else if (frameCount > 25) {
   
     CAM_x = 0;
     CAM_y = 0;
@@ -9456,14 +9488,14 @@ void keyPressed (KeyEvent e) {
         case 'P' :WIN3D_View_Type = 1; WIN3D_Update = 1; break; 
         case 'p' :WIN3D_View_Type = 1; WIN3D_Update = 1; break; 
   
-        //case 'E' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; WIN3D_Update = 1; break; 
-        //case 'e' :WIN3D_BLACK_EDGES = (WIN3D_BLACK_EDGES + 1) % 2; WIN3D_Update = 1; break; 
+        //case 'E' :WIN3D_EDGES_SHOW = (WIN3D_EDGES_SHOW + 1) % 2; WIN3D_Update = 1; break; 
+        //case 'e' :WIN3D_EDGES_SHOW = (WIN3D_EDGES_SHOW + 1) % 2; WIN3D_Update = 1; break; 
   
-        case 'K' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 5 - 1) % 5; WIN3D_Update = 1;
-                  if (WIN3D_WHITE_FACES == 3) SolarProjection(); 
+        case 'K' :WIN3D_FACES_SHADE = (WIN3D_FACES_SHADE + 5 - 1) % 5; WIN3D_Update = 1;
+                  if (WIN3D_FACES_SHADE == 3) SolarProjection(); 
                   break;
-        case 'k' :WIN3D_WHITE_FACES = (WIN3D_WHITE_FACES + 1) % 5; WIN3D_Update = 1;
-                  if (WIN3D_WHITE_FACES == 3) SolarProjection(); 
+        case 'k' :WIN3D_FACES_SHADE = (WIN3D_FACES_SHADE + 1) % 5; WIN3D_Update = 1;
+                  if (WIN3D_FACES_SHADE == 3) SolarProjection(); 
                   break; 
          
         
@@ -9473,16 +9505,23 @@ void keyPressed (KeyEvent e) {
                   WIN3D_update_VerticesSolarValue = 1; 
                   WIN3D_Update = 1; break;
                   
-        case ENTER: if (WIN3D_WHITE_FACES == 3) SolarProjection();  
-                    if (WIN3D_WHITE_FACES == 4) WIN3D_update_VerticesSolarValue = 1; WIN3D_Update = 1; 
+        case ENTER: if (WIN3D_FACES_SHADE == 3) SolarProjection();  
+                    if (WIN3D_FACES_SHADE == 4) WIN3D_update_VerticesSolarValue = 1; WIN3D_Update = 1; 
                     break;                  
           
         case ' ': SavedScreenShots += 1; 
                   saveFrame("/Output/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_IMG" + nf(SavedScreenShots , 3) + ".jpg");
                   WIN3D_Update = 1; break;              
           
-        case 's' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; SOLARCHVISION_update_station(0); redraw_scene = 1; WIN3D_Update = 1; break;
-        case 'S' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; SOLARCHVISION_update_station(0); redraw_scene = 1; WIN3D_Update = 1; break;
+        case 's' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; 
+                  //SOLARCHVISION_update_station(0); redraw_scene = 1; WIN3D_Update = 1; 
+                  frameCount = 8; 
+                  break;
+        case 'S' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; 
+                  //SOLARCHVISION_update_station(0); redraw_scene = 1; WIN3D_Update = 1; 
+                  frameCount = 8; 
+                  break;
+
 
         case 'F' :LoadFontStyle(); WIN3D_Update = 1; break;
         case 'f' :LoadFontStyle(); WIN3D_Update = 1; break;
@@ -9953,11 +9992,11 @@ void SOLARCHVISION_getCWEEDS_Coordinates () {
 
 int defaultMaterial = 7;
 
-float[][] allVertices = {{}};
-int[][] allFaces = {{}};
+float[][] allVertices = {{0,0,0}};
+int[][] allFaces = {{0,0,0}};
 int[] allFaces_MAT = {0};
 
-float[][] allObject2D_XYZS = {{}};
+float[][] allObject2D_XYZS = {{0,0,0}};
 int[] allObject2D_MAP = {0};
 int allObject2D_num = 0; 
 
@@ -10804,6 +10843,8 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
 }  
 
 
+
+
 void SOLARCHVISION_add_2Dobjects_onLand () {
 
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
@@ -10840,6 +10881,34 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
 
 }
 
+void SOLARCHVISION_remove_2Dobjects () {
+  allObject2D_XYZS = new float[1][3]; 
+  allObject2D_XYZS[0][0] = 0;
+  allObject2D_XYZS[0][1] = 0;
+  allObject2D_XYZS[0][2] = 0;
+  
+  allObject2D_MAP = new int[1];
+  allObject2D_MAP[0] = 0;
+  
+  allObject2D_num = 0;
+}
+
+void SOLARCHVISION_remove_3Dobjects () {
+
+ allVertices = new float[1][3];
+ allVertices[0][0] = 0;
+ allVertices[0][1] = 0;
+ allVertices[0][2] = 0;
+ 
+ allFaces = new int[1][3];
+ allFaces[0][0] = 0;
+ allFaces[0][1] = 0;
+ allFaces[0][2] = 0;
+  
+ allFaces_MAT = new int[1];
+ allFaces_MAT[0] = 0;
+ 
+}
 
 void SOLARCHVISION_add_3Dobjects () {
 
@@ -11293,7 +11362,7 @@ void SOLARCHVISION_draw_sky () {
     
     color c = color(191, 191, 255);
 
-    if (WIN3D_BLACK_EDGES == 1) {
+    if (WIN3D_EDGES_SHOW == 1) {
       //WIN3D_Diagrams.stroke(0, 0, 0);
       WIN3D_Diagrams.stroke(255, 255, 255);
     }
@@ -11301,7 +11370,7 @@ void SOLARCHVISION_draw_sky () {
       WIN3D_Diagrams.stroke(c);
     }
 
-    if (WIN3D_WHITE_FACES == 1) {
+    if (WIN3D_FACES_SHADE == 1) {
       //WIN3D_Diagrams.fill(255, 255, 255);
       WIN3D_Diagrams.noFill();
     }
@@ -11522,14 +11591,14 @@ void SOLARCHVISION_draw_objects () {
       c = color(Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3], Materials_Color[mt][0]);
     }
     
-    if (WIN3D_BLACK_EDGES == 1) {
+    if (WIN3D_EDGES_SHOW == 1) {
       WIN3D_Diagrams.stroke(0, 0, 0);
     }
     else {
       WIN3D_Diagrams.stroke(c);
     }
 
-    if (WIN3D_WHITE_FACES == 1) {
+    if (WIN3D_FACES_SHADE == 1) {
       WIN3D_Diagrams.fill(255, 255, 255);
       //WIN3D_Diagrams.noFill();
     }
@@ -11539,7 +11608,7 @@ void SOLARCHVISION_draw_objects () {
     
     
 
-    if (WIN3D_WHITE_FACES < 2) {
+    if (WIN3D_FACES_SHADE < 2) {
       
       WIN3D_Diagrams.beginShape();
       
@@ -11550,7 +11619,7 @@ void SOLARCHVISION_draw_objects () {
       
       WIN3D_Diagrams.endShape(CLOSE);
     }
-    else if (WIN3D_WHITE_FACES == 2) {
+    else if (WIN3D_FACES_SHADE == 2) {
       int Teselation = 0;
       
       int TotalSubNo = 1;  
@@ -11582,7 +11651,7 @@ void SOLARCHVISION_draw_objects () {
         WIN3D_Diagrams.endShape(CLOSE);
       }
     }
-    else if (WIN3D_WHITE_FACES == 3) {
+    else if (WIN3D_FACES_SHADE == 3) {
       
       int PAL_TYPE = 0; 
       int PAL_DIR = 1;
@@ -11666,7 +11735,7 @@ void SOLARCHVISION_draw_objects () {
     }
   }
   
-  if (WIN3D_WHITE_FACES == 4) {
+  if (WIN3D_FACES_SHADE == 4) {
     if (WIN3D_update_VerticesSolarValue == 0) {
       
       int PAL_TYPE = 0; 
@@ -12501,6 +12570,12 @@ class ParametricGeometry {
   } 
   
 } 
+
+
+void SOLARCHVISION_remove_ParametricGeometries () {
+  SolidBuildings = new ParametricGeometry[0];
+}
+
 
 ParametricGeometry[] SolidBuildings = {};
 
