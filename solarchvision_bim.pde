@@ -1091,7 +1091,7 @@ void draw () {
     if (WORLD_include == 1) {
       if (WORLD_Update == 1) {
         
-        WORLD_draw();
+        SOLARCHVISION_draw_WORLD();
         
       }
     }
@@ -1100,7 +1100,7 @@ void draw () {
     if (WIN3D_include == 1) {
       if (WIN3D_Update == 1) {
         
-        WIN3D_draw();
+        SOLARCHVISION_draw_WIN3D();
       
       }
     }
@@ -1109,7 +1109,7 @@ void draw () {
     if (GRAPHS_include == 1) {
       if (GRAPHS_Update == 1) {
         
-        GRAPHS_draw();
+        SOLARCHVISION_draw_GRAPHS();
         
       }
     }
@@ -1119,7 +1119,7 @@ void draw () {
 } 
 
 
-void WIN3D_draw () {
+void SOLARCHVISION_draw_WIN3D () {
   
   WIN3D_Diagrams.beginDraw();
   
@@ -1215,7 +1215,7 @@ void WIN3D_draw () {
 }
 
 
-void WORLD_draw () {
+void SOLARCHVISION_draw_WORLD () {
     
   WORLD_Diagrams.beginDraw();
   
@@ -1394,7 +1394,7 @@ void WORLD_draw () {
 }
 
 
-void GRAPHS_draw () {
+void SOLARCHVISION_draw_GRAPHS () {
   
   cursor(WAIT);
   
@@ -1403,7 +1403,8 @@ void GRAPHS_draw () {
   pushMatrix();
   translate(GRAPHS_CX_View, GRAPHS_CY_View);
  
-  S_View = (X_View / 3600.0) / GRAPHS_R_View;
+  //S_View = (X_View / 3600.0) / GRAPHS_R_View;
+  S_View = (X_View / 1200.0);
   
   //_pix = (100.0 * S_View / level_pix);
   
