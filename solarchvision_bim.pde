@@ -9575,6 +9575,40 @@ void keyPressed (KeyEvent e) {
     GRAPHS_keyPressed(e);
   
     WIN3D_keyPressed(e);
+
+    if (e.isAltDown() == true) {
+      if (key == CODED) { 
+        switch(keyCode) {
+
+        }
+      }
+      else {
+        switch(key) {
+          case 'l' : variation = 0; redraw_scene = 1; break;
+        }
+      }    
+    }
+    else if (e.isControlDown() == true) {
+      if (key == CODED) { 
+        switch(keyCode) {
+
+        }
+      }
+      else {
+        switch(key) {
+        }
+      }    
+    }
+    else {
+      if (key == CODED) { 
+        switch(keyCode) {
+        }
+      }
+      else {
+        switch(key) {
+        }
+      }  
+    }      
     
   }
 }
