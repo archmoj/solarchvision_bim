@@ -730,6 +730,8 @@ void SOLARCHVISION_update_models (int Step) {
 
 float message_size = w_pixel / 40.0;
 
+float last_initializationStep = 0;
+
 void draw () {
   
   //println("frameCount:", frameCount);
@@ -1060,9 +1062,11 @@ void draw () {
    
     stroke(255);
     fill(255);
-    text("Please wait while integrating the models.", 0.5 * width, 0.5 * height);    
+    text("Please wait while integrating the models.", 0.5 * width, 0.5 * height);
+
+    last_initializationStep = frameCount; 
   }
-  else if (frameCount > 25) {
+  else {
   
     CAM_x = 0;
     CAM_y = 0;
@@ -8213,6 +8217,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
 void GRAPHS_keyPressed (KeyEvent e) {
+    
   if (automated == 0) {
     X_clicked = 0;
     Y_clicked = 0;
@@ -8531,7 +8536,8 @@ void GRAPHS_keyPressed (KeyEvent e) {
 
   if (redraw_scene == 1) {
     GRAPHS_Update = 1;
-  }  
+  }
+  
 }
 
 
@@ -9355,14 +9361,7 @@ void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, f
 
 
 
-
-void keyPressed (KeyEvent e) {
-
-  GRAPHS_keyPressed(e);
-
-  
-  //println("key: " + key);
-  //println("keyCode: " + keyCode);
+void WIN3D_keyPressed (KeyEvent e) {
 
   if (e.isAltDown() == true) {
     if (key == CODED) { 
@@ -9560,6 +9559,22 @@ void keyPressed (KeyEvent e) {
     }
     
     loop();
+    
+  }
+  
+}
+  
+
+void keyPressed (KeyEvent e) {
+
+  //println("key: " + key);
+  //println("keyCode: " + keyCode);
+  
+  if (frameCount > last_initializationStep) {  
+
+    GRAPHS_keyPressed(e);
+  
+    WIN3D_keyPressed(e);
     
   }
 }
