@@ -567,7 +567,7 @@ void empty_Materials_DiffuseArea () {
 int h_pixel = 325; 
 int w_pixel = int(h_pixel * 1.5);
 
-int WIN3D_CX_View = w_pixel;
+int WIN3D_CX_View = 0;
 int WIN3D_CY_View = h_pixel;
 int WIN3D_X_View = w_pixel;
 int WIN3D_Y_View = h_pixel;
@@ -590,6 +590,7 @@ int WIN3D_View_Type = 1; // 0: Ortho 1: Perspective
 PGraphics WIN3D_Diagrams;
 
 int WIN3D_Update = 1;
+int WIN3D_include = 1;
 
 int WIN3D_EDGES_SHOW = 1;
 int WIN3D_FACES_SHADE = 1;
@@ -603,7 +604,7 @@ int WIN3D_update_VerticesSolarValue = 1;
 
 
 
-int WORLD_CX_View = 0;
+int WORLD_CX_View = w_pixel;
 int WORLD_CY_View = h_pixel;
 int WORLD_X_View = w_pixel;
 int WORLD_Y_View = h_pixel;
@@ -612,6 +613,7 @@ float WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
 PGraphics WORLD_Diagrams;
 
 int WORLD_Update = 1;
+int WORLD_include = 1;
 
 int WORLD_VIEW_Number = 0;
 
@@ -634,11 +636,11 @@ int GRAPHS_Y_View = 1 * h_pixel;
 float GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);
 
 int GRAPHS_Update = 1;
-
-
-int WORLD_include = 1;
-int WIN3D_include = 1;
 int GRAPHS_include = 1;
+
+
+
+
 
 float CAM_x, CAM_y, CAM_z;
 
@@ -962,6 +964,8 @@ void draw () {
     fill(0);
     rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
+    stroke(255);
+    fill(255);
     text("SOLARCHVISION_remove_2Dobjects", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 16) {
@@ -971,6 +975,8 @@ void draw () {
     fill(0);
     rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
+    stroke(255);
+    fill(255);
     text("SOLARCHVISION_add_2Dobjects_onLand", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 17) {
@@ -980,6 +986,8 @@ void draw () {
     fill(0);
     rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
 
+    stroke(255);
+    fill(255);
     text("SOLARCHVISION_remove_3Dobjects", 0.5 * width, 0.5 * height);
   }
   else if (frameCount == 18) {
@@ -1082,37 +1090,30 @@ void draw () {
 
     if (WORLD_include == 1) {
       if (WORLD_Update == 1) {
-        WORLD_draw();  
-      
-        WORLD_Update = 0;
+        
+        WORLD_draw();
+        
       }
     }
+    WORLD_Update = 0;
     
     if (WIN3D_include == 1) {
       if (WIN3D_Update == 1) {
         
         WIN3D_draw();
       
-        WIN3D_Update = 0;
       }
     }
+    WIN3D_Update = 0;
 
     if (GRAPHS_include == 1) {
       if (GRAPHS_Update == 1) {
         
         GRAPHS_draw();
         
-        GRAPHS_Update = 0;
-  
       }
     }
-    
-
-  
-
-
-  
-
+    GRAPHS_Update = 0;
 
   }
 } 
@@ -9595,41 +9596,69 @@ void SOLARCHVISION_update_frame_layout () {
  
  if (frame_variation == 0) {
 
-    WIN3D_CX_View = w_pixel;
-    WIN3D_CY_View = h_pixel;
-    WIN3D_X_View = w_pixel;
-    WIN3D_Y_View = h_pixel;
-    WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
-    
-    WORLD_CX_View = 0;
-    WORLD_CY_View = h_pixel;
-    WORLD_X_View = w_pixel;
-    WORLD_Y_View = h_pixel;
-    WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
- 
-    WORLD_include = 1;
+    GRAPHS_include = 1;
     WIN3D_include = 1;
-    GRAPHS_include = 1;  
- }
- else if (frame_variation == 1) {
-
+    WORLD_include = 1;
+   
+    GRAPHS_CX_View = 0;
+    GRAPHS_CY_View = 0;
+    GRAPHS_X_View = 2 * w_pixel;
+    GRAPHS_Y_View = 1 * h_pixel;
+    GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);   
+   
     WIN3D_CX_View = 0;
     WIN3D_CY_View = h_pixel;
     WIN3D_X_View = w_pixel;
     WIN3D_Y_View = h_pixel;
     WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
+    WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
     
     WORLD_CX_View = w_pixel;
     WORLD_CY_View = h_pixel;
     WORLD_X_View = w_pixel;
     WORLD_Y_View = h_pixel;
     WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
- 
+    WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);    
+ }
+ else if (frame_variation == 1) {
+   
+    GRAPHS_include = 0;
+    WIN3D_include = 0;
     WORLD_include = 1;
-    WIN3D_include = 1;
-    GRAPHS_include = 1;  
+   
+    WORLD_CX_View = 0;
+    WORLD_CY_View = 0;
+    WORLD_X_View = 2 * w_pixel;
+    WORLD_Y_View = 2 * h_pixel;
+    WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
+    WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);    
  }    
+ else if (frame_variation == 2) {
 
+    GRAPHS_include = 0;
+    WIN3D_include = 1;
+    WORLD_include = 0;
+   
+    WIN3D_CX_View = 0;
+    WIN3D_CY_View = 0;
+    WIN3D_X_View = 2 * w_pixel;
+    WIN3D_Y_View = 2 * h_pixel;
+    WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
+    WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
+ }
+ else if (frame_variation == 3) {
+
+    GRAPHS_include = 1;
+    WIN3D_include = 0;
+    WORLD_include = 0;
+   
+    GRAPHS_CX_View = 0;
+    GRAPHS_CY_View = 0;
+    GRAPHS_X_View = 2 * w_pixel;
+    GRAPHS_Y_View = 2 * h_pixel;
+    GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);   
+  }
+ 
   WORLD_Update = 1;
   WIN3D_Update = 1; 
   GRAPHS_Update = 1;    
@@ -9656,8 +9685,8 @@ void keyPressed (KeyEvent e) {
       }
       else {
         switch(key) {
-          case 'l' : frame_variation = (frame_variation + 1) % 2; SOLARCHVISION_update_frame_layout(); break;
-          case 'L' : frame_variation = (frame_variation + 2 - 1) % 2; SOLARCHVISION_update_frame_layout(); break;
+          case 'l' : frame_variation = (frame_variation + 1) % 4; SOLARCHVISION_update_frame_layout(); break;
+          case 'L' : frame_variation = (frame_variation + 4 - 1) % 4; SOLARCHVISION_update_frame_layout(); break;
         }
       }    
     }
