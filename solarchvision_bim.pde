@@ -564,8 +564,8 @@ void empty_Materials_DiffuseArea () {
 
 
                   
-int h_pixel = 350; 
-int w_pixel = int(h_pixel * 1.25);
+int h_pixel = 325; 
+int w_pixel = int(h_pixel * 1.5);
 
 int WIN3D_CX_View = w_pixel;
 int WIN3D_CY_View = h_pixel;
@@ -743,7 +743,7 @@ void draw () {
 
     float cr;
 
-    cr = h_pixel / 6.0;
+    cr = w_pixel / 4.0;
     PImage SOLARCHVISION_logo = loadImage(BackgroundFolder + "/" + "SOLARCHVISION.jpg");
     imageMode(CENTER);
     image(SOLARCHVISION_logo, 0.5 * width, 0.5 * height - 0.75 * message_size - cr + (0.075 * cr), 3.05 * cr, 3.05 * cr);
@@ -797,7 +797,7 @@ void draw () {
     fill(255);
     textAlign(CENTER, CENTER); 
     textSize(3 * message_size);
-    text("SOLARCHVISION model integrations 2015", 0.5 * width, 0.125 * height); 
+    text("SOLARCHVISION model integrations 2015", 0.5 * width, 0.05 * height); 
 
     stroke(0);
     fill(0);
