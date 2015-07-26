@@ -77,6 +77,7 @@ String MAKE_Filenames () {
 int STATION_NUMBER = 0;
 
 String[][] DEFINED_STATIONS = {
+     
                                 {"TORONTO_ISLAND_ON_CA", "Financial_District", "ON", "43.6488", "-79.3817", "-75", "86"},
                                 
                                 {"TORONTO_ISLAND_ON_CA", "Ryerson_University", "ON", "43.6593", "-79.3779", "-75", "95"}, 
@@ -563,8 +564,8 @@ void empty_Materials_DiffuseArea () {
 
 
                   
-int h_pixel = 300;
-int w_pixel = int(h_pixel * 1.5);
+int h_pixel = 350; 
+int w_pixel = int(h_pixel * 1.0);
 
 int WIN3D_CX_View = w_pixel;
 int WIN3D_CY_View = h_pixel;
@@ -727,7 +728,7 @@ void SOLARCHVISION_update_models (int Step) {
 }
 
 
-float message_size = h_pixel / 25.0;
+float message_size = w_pixel / 40.0;
 
 void draw () {
   
@@ -742,7 +743,7 @@ void draw () {
 
     float cr;
 
-    cr = h_pixel / 4.0;
+    cr = h_pixel / 6.0;
     PImage SOLARCHVISION_logo = loadImage(BackgroundFolder + "/" + "SOLARCHVISION.jpg");
     imageMode(CENTER);
     image(SOLARCHVISION_logo, 0.5 * width, 0.5 * height - 0.75 * message_size - cr + (0.075 * cr), 3.05 * cr, 3.05 * cr);
@@ -1244,10 +1245,6 @@ void WORLD_draw () {
  
   }   
   
-  WORLD_Diagrams.strokeWeight(0);
-  WORLD_Diagrams.stroke(127, 0, 0, 127);
-  WORLD_Diagrams.fill(127, 0, 0, 127);
-            
   for (int f = 0; f < STATION_SWOB_INFO.length; f += 1) {
     float draw_info = 1;
   
@@ -1264,8 +1261,18 @@ void WORLD_draw () {
 
       float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
       float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
-      
+
+      WORLD_Diagrams.strokeWeight(0);
+      WORLD_Diagrams.stroke(127, 0, 0, 127);
+      WORLD_Diagrams.fill(127, 0, 0, 127);      
       WORLD_Diagrams.ellipse(x_point, y_point, R_station, R_station);
+
+      WORLD_Diagrams.strokeWeight(0);
+      WORLD_Diagrams.stroke(0);
+      WORLD_Diagrams.fill(0);      
+      WORLD_Diagrams.textAlign(RIGHT, CENTER); 
+      WORLD_Diagrams.textSize(message_size);
+      WORLD_Diagrams.text(STATION_SWOB_INFO[f][6], x_point, y_point);
     
     }
   }    
@@ -1321,15 +1328,13 @@ void WORLD_draw () {
       WORLD_Diagrams.stroke(0);
       WORLD_Diagrams.fill(0);      
       WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-      WORLD_Diagrams.textSize(5 * R_station);
+      WORLD_Diagrams.textSize(message_size);
       WORLD_Diagrams.text(STATION_NAEFS_INFO[f][0], x_point, y_point);
-      println(STATION_NAEFS_INFO[f][0]);
+      //println(STATION_NAEFS_INFO[f][0]);
   }
   
 
-  WORLD_Diagrams.strokeWeight(2);
-  WORLD_Diagrams.stroke(63, 63, 63, 63);
-  WORLD_Diagrams.noFill();
+
             
   for (int f = 0; f < STATION_CWEEDS_INFO.length; f += 1) {
     float draw_info = 1;
@@ -1347,9 +1352,18 @@ void WORLD_draw () {
 
       float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
       float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
-      
+
+      WORLD_Diagrams.strokeWeight(2);
+      WORLD_Diagrams.stroke(63, 63, 63, 63);
+      WORLD_Diagrams.noFill();
       WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
-    
+
+      WORLD_Diagrams.strokeWeight(0);
+      WORLD_Diagrams.stroke(0);
+      WORLD_Diagrams.fill(0);      
+      WORLD_Diagrams.textAlign(RIGHT, CENTER); 
+      WORLD_Diagrams.textSize(message_size);
+      WORLD_Diagrams.text(STATION_CWEEDS_INFO[f][0], x_point, y_point); 
     }
   } 
   
@@ -12687,7 +12701,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }  
 
-
+/*
   {
     float x = -25;
     float y = -25;
@@ -12703,7 +12717,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, 0)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }  
-
+*/
 
 
 
