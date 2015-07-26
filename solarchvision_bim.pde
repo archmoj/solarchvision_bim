@@ -142,9 +142,9 @@ float Delta_NOON;
 int save_frame_number = 0;
 int frame_index_number = 0;
 
-int record_JPG = 0;
+int GRAPHS_record_JPG = 0;
 
-int record_PDF = 0;
+int GRAPHS_record_PDF = 0;
 
 int j_start = 0;
 int j_end = 1; //16; // Variable
@@ -242,7 +242,7 @@ int drw_Layer = _cloudcover; //_drybulb; //_developed;
 
 int develop_Layer = drw_Layer;
 
-int print_title = 1;
+int GRAPHS_print_title = 1;
 
 float GRAPHS_T_scale = 0;
 float GRAPHS_U_scale = 18.0 / float(j_end - j_start);
@@ -370,7 +370,7 @@ float GRAPHS_Y_coordinate = 0;
 float GRAPHS_O_scale = 50.0;
 float GRAPHS_W_scale = 3.0;
 
-int _record = 0;
+int GRAPHS_record_AUTO = 0;
 
 float X_spinner, Y_spinner;
 
@@ -1428,7 +1428,7 @@ void SOLARCHVISION_draw_GRAPHS () {
 
   if (pre_STATION_NUMBER != STATION_NUMBER) SOLARCHVISION_update_station(0);
   
-  if ((record_JPG == 1) || (_record == 1)) {
+  if ((GRAPHS_record_JPG == 1) || (GRAPHS_record_AUTO == 1)) {
     if (off_screen == 0) {
       off_screen = 1;
       GRAPHS_Update = 1; 
@@ -1440,7 +1440,7 @@ void SOLARCHVISION_draw_GRAPHS () {
   
   if (GRAPHS_Update != 0) {
     
-    if (record_PDF == 1) Image_Scale = 1;
+    if (GRAPHS_record_PDF == 1) Image_Scale = 1;
     else {
       if (off_screen == 0) Image_Scale = 1; 
       else Image_Scale = 1; //1.5; //2;
@@ -1456,7 +1456,7 @@ void SOLARCHVISION_draw_GRAPHS () {
     GRAPHS_S_View *= 0.575 * Image_Scale; 
     GRAPHS_T_scale = 0.5 * Image_Scale;  
   
-    if (record_PDF == 1) {
+    if (GRAPHS_record_PDF == 1) {
       println("PDF:begin");
       Diagrams = createGraphics(GRAPHS_X_View, GRAPHS_Y_View, PDF, MAKE_Filenames() + ".pdf");
       beginRecord(Diagrams);
@@ -1500,7 +1500,7 @@ void SOLARCHVISION_draw_GRAPHS () {
     
     _text += ", www.solarchvision.com";
 
-    if (record_PDF == 1) {
+    if (GRAPHS_record_PDF == 1) {
       Diagrams_textSize(GRAPHS_X_View * 0.01 * 2.0 / 3.0);
       my_text(_text, GRAPHS_X_View * 0.55, GRAPHS_Y_View * -0.4925, 0);
     }
@@ -1517,11 +1517,11 @@ void SOLARCHVISION_draw_GRAPHS () {
       SOLARCHVISION_DevelopDATA(impacts_source);
       update_DevelopDATA = 0;
     }     
-    if (record_PDF == 1) {
+    if (GRAPHS_record_PDF == 1) {
       endRecord();
       println("PDF:end");
       
-      record_PDF = 0;
+      GRAPHS_record_PDF = 0;
       if (off_screen != 0) {
         //resetMatrix();
         
@@ -1539,7 +1539,7 @@ void SOLARCHVISION_draw_GRAPHS () {
     else if (off_screen != 0) {
       Diagrams_endDraw();
       
-      if ((record_JPG == 1) || (_record == 1)) {
+      if ((GRAPHS_record_JPG == 1) || (GRAPHS_record_AUTO == 1)) {
         Diagrams_save(MAKE_Filenames() + ".jpg");
         println("Image created");
       }
@@ -1588,7 +1588,7 @@ void SOLARCHVISION_draw_GRAPHS () {
 
   GRAPHS_Update = 0;
    
-  if ((record_JPG == 1) || (_record == 0)) record_JPG = 0;
+  if ((GRAPHS_record_JPG == 1) || (GRAPHS_record_AUTO == 0)) GRAPHS_record_JPG = 0;
 
   popMatrix();
 
@@ -1966,7 +1966,7 @@ void Plot_Setup () {
       plot_impacts = 3;
       SOLARCHVISION_PlotIMPACT(0, -200 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
     }
-    else if (record_PDF == 0) {
+    else if (GRAPHS_record_PDF == 0) {
       //resetMatrix();
       
       stroke(0); 
@@ -2004,7 +2004,7 @@ void Plot_Setup () {
       plot_impacts = 2;
       SOLARCHVISION_PlotIMPACT(0, -200 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
     }
-    else if (record_PDF == 0) {  
+    else if (GRAPHS_record_PDF == 0) {  
       //resetMatrix();
       
       stroke(0); 
@@ -3343,7 +3343,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
   int start_z = get_startZ_endZ(databaseNumber_ENSEMBLE)[0];
   int end_z = get_startZ_endZ(databaseNumber_ENSEMBLE)[1]; 
   
-  if (print_title != 0) {
+  if (GRAPHS_print_title != 0) {
     
     Diagrams_stroke(0); 
     Diagrams_fill(0);
@@ -3768,7 +3768,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
   int start_z = get_startZ_endZ(databaseNumber_CLIMATE_WY2)[0];
   int end_z = get_startZ_endZ(databaseNumber_CLIMATE_WY2)[1]; 
   
-  if (print_title != 0) {
+  if (GRAPHS_print_title != 0) {
     
       Diagrams_stroke(0); 
       Diagrams_fill(0);
@@ -4172,7 +4172,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
   int start_z = get_startZ_endZ(databaseNumber_CLIMATE_EPW)[0];
   int end_z = get_startZ_endZ(databaseNumber_CLIMATE_EPW)[1]; 
   
-  if (print_title != 0) {
+  if (GRAPHS_print_title != 0) {
     
       Diagrams_stroke(0); 
       Diagrams_fill(0);
@@ -4718,7 +4718,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
   int start_z = get_startZ_endZ(databaseNumber_OBSERVED)[0];
   int end_z = get_startZ_endZ(databaseNumber_OBSERVED)[1]; 
   
-  if (print_title != 0) {
+  if (GRAPHS_print_title != 0) {
     
     Diagrams_stroke(0); 
     Diagrams_fill(0);
@@ -6690,7 +6690,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     }         
 
 
-    if (print_title != 0) {
+    if (GRAPHS_print_title != 0) {
     
       Diagrams_stroke(0); 
       Diagrams_fill(0);
@@ -7225,7 +7225,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       if (Impact_TYPE == Impact_PASSIVE) my_text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * GRAPHS_S_View, (10 - 175 - 0.05 * 20) * GRAPHS_S_View, 1 * GRAPHS_S_View);
     }
 
-    if (print_title != 0) {
+    if (GRAPHS_print_title != 0) {
     
       Diagrams_stroke(0); 
       Diagrams_fill(0);
@@ -7677,7 +7677,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     }
     
     
-    if (print_title != 0) {
+    if (GRAPHS_print_title != 0) {
     
       Diagrams_stroke(0); 
       Diagrams_fill(0);
@@ -7960,7 +7960,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     } 
     
     
-    if (print_title != 0) {
+    if (GRAPHS_print_title != 0) {
     
       Diagrams_stroke(0); 
       Diagrams_fill(0);
@@ -8195,7 +8195,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       }
     }
     
-    if (print_title != 0) {
+    if (GRAPHS_print_title != 0) {
     
       Diagrams_stroke(0); 
       Diagrams_fill(0);
@@ -8245,6 +8245,8 @@ void GRAPHS_keyPressed (KeyEvent e) {
           case '7' : camera_variation = 7; GRAPHS_Update = 1; break;
           case '8' : camera_variation = 8; GRAPHS_Update = 1; break;
           case '9' : camera_variation = 9; GRAPHS_Update = 1; break;
+          
+   
         }
       }    
     }
@@ -8256,6 +8258,16 @@ void GRAPHS_keyPressed (KeyEvent e) {
       }
       else {
         switch(key) {
+
+          case 'r' : GRAPHS_record_AUTO = (GRAPHS_record_AUTO + 1) % 2; GRAPHS_Update = 0; break;
+  
+          case 'j' : GRAPHS_record_JPG = 1; GRAPHS_Update = 1; break;
+          case 'p' : GRAPHS_record_PDF = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break; 
+          
+          case '^' : draw_data_lines = 1; save_info_node = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break;
+          case '&' : draw_normals = 1; save_info_norm = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break;
+          case '%' : draw_probs = 1; save_info_prob = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break;                 
+          
         }
       }    
     }
@@ -8337,7 +8349,7 @@ void GRAPHS_keyPressed (KeyEvent e) {
           case UP   :drw_Layer = (drw_Layer + 1) % num_layers; GRAPHS_Update = 1; break;
           case DOWN :drw_Layer = (drw_Layer + num_layers - 1) % num_layers; GRAPHS_Update = 1; break; 
        
-          default: record_JPG = 0; GRAPHS_Update = 0; break;
+          default: GRAPHS_record_JPG = 0; GRAPHS_Update = 0; break;
         }
       }
       else {
@@ -8522,17 +8534,9 @@ void GRAPHS_keyPressed (KeyEvent e) {
           case '#' :sky_scenario = 3; GRAPHS_Update = 1; break;
           case '$' :sky_scenario = 4; GRAPHS_Update = 1; break;
     
-          //case 'r' :_record = int((_record + 1) % 2); println("Record:", _record); GRAPHS_Update = 0; break;
-          //case 'R' :_record = int((_record + 1) % 2); println("Record:", _record); GRAPHS_Update = 0; break;
-  
-          case '\\' : record_JPG = 1; GRAPHS_Update = 1; break;
-          case '?' : record_PDF = 1; record_JPG = 0; GRAPHS_Update = 1; break; 
+
           
-          case '^' : draw_data_lines = 1; save_info_node = 1; record_JPG = 0; GRAPHS_Update = 1; break;
-          case '&' : draw_normals = 1; save_info_norm = 1; record_JPG = 0; GRAPHS_Update = 1; break;
-          case '%' : draw_probs = 1; save_info_prob = 1; record_JPG = 0; GRAPHS_Update = 1; break;
-          
-          default: record_JPG = 0; GRAPHS_Update = 0; break;
+          default: GRAPHS_record_JPG = 0; GRAPHS_Update = 0; break;
         }
     
       }
@@ -8750,8 +8754,8 @@ void draw_spinners () {
   save_info_norm = int(MySpinner.update(X_spinner, Y_spinner, "Create stat-Ascii", save_info_norm, 0, 1, 1));
   save_info_prob = int(MySpinner.update(X_spinner, Y_spinner, "Create prob-Ascii", save_info_prob, 0, 1, 1));
 
-  record_PDF = int(MySpinner.update(X_spinner, Y_spinner, "Record PDF", record_PDF, 0, 1, 1));
-  record_JPG = int(MySpinner.update(X_spinner, Y_spinner, "Record JPG", record_JPG, 0, 1, 1));
+  GRAPHS_record_PDF = int(MySpinner.update(X_spinner, Y_spinner, "Record PDF", GRAPHS_record_PDF, 0, 1, 1));
+  GRAPHS_record_JPG = int(MySpinner.update(X_spinner, Y_spinner, "Record JPG", GRAPHS_record_JPG, 0, 1, 1));
  
   Y_spinner += 25 * GRAPHS_S_View;
   GRAPHS_Update = int(MySpinner.update(X_spinner, Y_spinner, "Redraw scene", GRAPHS_Update, 0, 1, 1));
@@ -8765,7 +8769,7 @@ void draw_spinners () {
 
   if (_setup != pre_setup) update_impacts = 1;
   if (impacts_source != pre_impacts_source) update_impacts = 1; 
-  if (record_PDF == 1) update_impacts = 1; 
+  if (GRAPHS_record_PDF == 1) update_impacts = 1; 
   
   
   
