@@ -63,7 +63,7 @@ String MAKE_Filenames () {
   My_Filenames += Main_name + "_";
   
   //My_Filenames += "S" + nf(100 + _setup, 3);
-  //My_Filenames += "V" + nf(variation, 0); 
+  //My_Filenames += "V" + nf(camera_variation, 0); 
   
   //My_Filenames += nf(draw_data_lines, 0);
   //My_Filenames += nf(draw_sorted, 0);
@@ -416,7 +416,7 @@ int Y_View = 1;
 float R_View = 1;
 float S_View = 1; 
 
-int variation = 1;
+int camera_variation = 1;
 
 int draw_data_lines = 0;
 int draw_sorted = 1;
@@ -609,9 +609,6 @@ int WORLD_X_View = w_pixel;
 int WORLD_Y_View = h_pixel;
 float WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
 
-float WORLD_X_coordinate = 0;
-float WORLD_Y_coordinate = 0;
-
 PGraphics WORLD_Diagrams;
 
 int WORLD_Update = 1;
@@ -632,6 +629,9 @@ int number_of_WORLD_viewports;
 
 int GRAPHS_Update = 1;
 
+int WORLD_include = 1;
+int WIN3D_include = 1;
+int GRAPHS_include = 1;
 
 float CAM_x, CAM_y, CAM_z;
 
@@ -1074,27 +1074,33 @@ void draw () {
     
 
 
-    
-    if (WORLD_Update == 1) {
-      WORLD_draw();  
-    
-      WORLD_Update = 0;
+    if (WORLD_include == 1) {
+      if (WORLD_Update == 1) {
+        WORLD_draw();  
+      
+        WORLD_Update = 0;
+      }
     }
     
-    if (WIN3D_Update == 1) {
+    if (WIN3D_include == 1) {
+      if (WIN3D_Update == 1) {
+        
+        WIN3D_draw();
       
-      WIN3D_draw();
-    
-      WIN3D_Update = 0;
+        WIN3D_Update = 0;
+      }
     }
 
-    if (GRAPHS_Update == 1) {
-      
-      GRAPHS_draw();
-      
-      GRAPHS_Update = 0;
-
-    }    
+    if (GRAPHS_include == 1) {
+      if (GRAPHS_Update == 1) {
+        
+        GRAPHS_draw();
+        
+        GRAPHS_Update = 0;
+  
+      }
+    }
+    
 
   
 
@@ -2087,9 +2093,9 @@ void Plot_Setup () {
     plot_center(0, 525 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
     plot_impacts = 1;
-    variation = 2;
+    camera_variation = 2;
     SOLARCHVISION_PlotIMPACT(0, -625 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
-    variation = 1;
+    camera_variation = 1;
     SOLARCHVISION_PlotIMPACT(0, -425 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
     plot_impacts = -2;
@@ -2108,9 +2114,9 @@ void Plot_Setup () {
 */
 
     plot_impacts = 1;
-    variation = 2;
+    camera_variation = 2;
     SOLARCHVISION_PlotIMPACT(0, -100 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
-    variation = 1;
+    camera_variation = 1;
     SOLARCHVISION_PlotIMPACT(0, 100 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
     plot_impacts = pre_plot_impacts; 
@@ -2139,9 +2145,9 @@ void Plot_Setup () {
     plot_center(0, 525 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
     plot_impacts = 0;
-    variation = 2;
+    camera_variation = 2;
     SOLARCHVISION_PlotIMPACT(0, -625 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
-    variation = 1;
+    camera_variation = 1;
     SOLARCHVISION_PlotIMPACT(0, -425 * S_View, 0, (100.0 * U_scale * S_View), (-1.0 * V_scale[drw_Layer] * S_View), 1.0 * S_View);
 
     plot_impacts = 2; //4;
@@ -6927,8 +6933,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                         File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + "Place_Bonaventure" + "/";
                       }                      
                       else if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Montreal_Downtown")) { 
-                        if (variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/MONTREAL_DOWNTOWN" + "/";
-                        if (variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/EV_BUILDING" + "/";
+                        if (camera_variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/MONTREAL_DOWNTOWN" + "/";
+                        if (camera_variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/EV_BUILDING" + "/";
                       }
                       else {
                         File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/Complex_" + Near_Latitude + "/";
@@ -6944,20 +6950,20 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       
                       
                       if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Financial_District")) { 
-                        File_Name += "_" + "Financial_District" + "_Camera" + nf(variation, 2) + ".PNG";
+                        File_Name += "_" + "Financial_District" + "_Camera" + nf(camera_variation, 2) + ".PNG";
                       }    
                       else if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Ryerson_University")) { 
-                        File_Name += "_" + "Ryerson_University" + "_Camera" + nf(variation, 2) + ".PNG";
+                        File_Name += "_" + "Ryerson_University" + "_Camera" + nf(camera_variation, 2) + ".PNG";
                       }    
                       else if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Place_Bonaventure")) { 
-                        File_Name += "_" + "Place_Bonaventure" + "_Camera" + nf(variation, 2) + ".PNG";
+                        File_Name += "_" + "Place_Bonaventure" + "_Camera" + nf(camera_variation, 2) + ".PNG";
                       }                      
                       else if (DEFINED_STATIONS[STATION_NUMBER][1].equals("Montreal_Downtown")) { 
-                        if (variation == 1) File_Name += "_" + "Montreal_Downtown.PNG";
-                        if (variation == 2) File_Name += "_" + "Montreal_EV_BUILDING_B.PNG";
+                        if (camera_variation == 1) File_Name += "_" + "Montreal_Downtown.PNG";
+                        if (camera_variation == 2) File_Name += "_" + "Montreal_EV_BUILDING_B.PNG";
                       }
                       else {
-                        File_Name += "_" + "Complex_" + Near_Latitude + "_Camera" + nf(variation, 2) + ".PNG";
+                        File_Name += "_" + "Complex_" + Near_Latitude + "_Camera" + nf(camera_variation, 2) + ".PNG";
                       }
 
                       //println (File_Name);
@@ -7232,8 +7238,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       //if (impacts_source == databaseNumber_ENSEMBLE) //my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / U_scale, 0);
 
       String Model_Description = "";
-      //if (variation == 1) Model_Description = "TR: Place-des-Arts";
-      //if (variation == 2) Model_Description = "EV_BUILDING";
+      //if (camera_variation == 1) Model_Description = "TR: Place-des-Arts";
+      //if (camera_variation == 2) Model_Description = "EV_BUILDING";
 
       Diagrams_textSize(sx_Plot * 0.150 / U_scale);
       Diagrams_textAlign(LEFT, TOP); 
@@ -8230,16 +8236,16 @@ void GRAPHS_keyPressed (KeyEvent e) {
       }
       else {
         switch(key) {
-          case '0' : variation = 0; redraw_scene = 1; break;
-          case '1' : variation = 1; redraw_scene = 1; break;
-          case '2' : variation = 2; redraw_scene = 1; break;
-          case '3' : variation = 3; redraw_scene = 1; break;
-          case '4' : variation = 4; redraw_scene = 1; break;
-          case '5' : variation = 5; redraw_scene = 1; break;
-          case '6' : variation = 6; redraw_scene = 1; break;
-          case '7' : variation = 7; redraw_scene = 1; break;
-          case '8' : variation = 8; redraw_scene = 1; break;
-          case '9' : variation = 9; redraw_scene = 1; break;
+          case '0' : camera_variation = 0; redraw_scene = 1; break;
+          case '1' : camera_variation = 1; redraw_scene = 1; break;
+          case '2' : camera_variation = 2; redraw_scene = 1; break;
+          case '3' : camera_variation = 3; redraw_scene = 1; break;
+          case '4' : camera_variation = 4; redraw_scene = 1; break;
+          case '5' : camera_variation = 5; redraw_scene = 1; break;
+          case '6' : camera_variation = 6; redraw_scene = 1; break;
+          case '7' : camera_variation = 7; redraw_scene = 1; break;
+          case '8' : camera_variation = 8; redraw_scene = 1; break;
+          case '9' : camera_variation = 9; redraw_scene = 1; break;
         }
       }    
     }
@@ -9563,7 +9569,55 @@ void WIN3D_keyPressed (KeyEvent e) {
   }
   
 }
-  
+
+int frame_variation = 0;
+
+void SOLARCHVISION_update_frame_layout () {
+ 
+ if (frame_variation == 0) {
+
+    WIN3D_CX_View = w_pixel;
+    WIN3D_CY_View = h_pixel;
+    WIN3D_X_View = w_pixel;
+    WIN3D_Y_View = h_pixel;
+    WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
+    
+    WORLD_CX_View = 0;
+    WORLD_CY_View = h_pixel;
+    WORLD_X_View = w_pixel;
+    WORLD_Y_View = h_pixel;
+    WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
+ 
+    WORLD_include = 1;
+    WIN3D_include = 1;
+    GRAPHS_include = 1;  
+ }
+ else if (frame_variation == 1) {
+
+    WIN3D_CX_View = 0;
+    WIN3D_CY_View = h_pixel;
+    WIN3D_X_View = w_pixel;
+    WIN3D_Y_View = h_pixel;
+    WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
+    
+    WORLD_CX_View = w_pixel;
+    WORLD_CY_View = h_pixel;
+    WORLD_X_View = w_pixel;
+    WORLD_Y_View = h_pixel;
+    WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
+ 
+    WORLD_include = 1;
+    WIN3D_include = 1;
+    GRAPHS_include = 1;  
+ }    
+
+  WORLD_Update = 1;
+  WIN3D_Update = 1; 
+  GRAPHS_Update = 1;    
+  redraw_scene = 1;   
+    
+}
+    
 
 void keyPressed (KeyEvent e) {
 
@@ -9584,7 +9638,8 @@ void keyPressed (KeyEvent e) {
       }
       else {
         switch(key) {
-          case 'l' : variation = 0; redraw_scene = 1; break;
+          case 'l' : frame_variation = (frame_variation + 1) % 2; SOLARCHVISION_update_frame_layout(); break;
+          case 'L' : frame_variation = (frame_variation + 2 - 1) % 2; SOLARCHVISION_update_frame_layout(); break;
         }
       }    
     }
