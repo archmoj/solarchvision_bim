@@ -62,7 +62,7 @@ String MAKE_Filenames () {
   My_Filenames += DEFINED_STATIONS[STATION_NUMBER][1] + "_";
   My_Filenames += Main_name + "_";
   
-  //My_Filenames += "S" + nf(100 + _setup, 3);
+  //My_Filenames += "S" + nf(100 + GRAPHS_setup, 3);
   //My_Filenames += "V" + nf(camera_variation, 0); 
   
   //My_Filenames += nf(draw_data_lines, 0);
@@ -147,7 +147,7 @@ int GRAPHS_record_JPG = 0;
 int GRAPHS_record_PDF = 0;
 
 int j_start = 0;
-int j_end = 4; //16; // Variable
+int j_end = 1; //16; // Variable
 
 int max_j_end_forecast = 16; // Constant
 int max_j_end_observed = 0; // Variable
@@ -428,7 +428,7 @@ float Image_Scale = 1.0;
 float pre_Image_Scale = Image_Scale; 
 
 PGraphics pre_Diagrams;
-int pre_setup;
+int preGRAPHS_setup;
 int pre_impacts_source;
 int pre_STATION_NUMBER;
 int pre_YEAR;
@@ -440,7 +440,7 @@ int pre_Climatic_solar_model;
 int pre_Climatic_weather_model;
 
 
-int _setup = 100; //4; //12; //13;
+int GRAPHS_setup = 100; //4; //12; //13;
 
 
 
@@ -556,10 +556,10 @@ void empty_Materials_DiffuseArea () {
 
 
                   
-int h_pixel = 400; //325; 
+int h_pixel = 325; 
 int w_pixel = int(h_pixel * 1.5);
 
-int WIN3D_CX_View = w_pixel;
+int WIN3D_CX_View = 0;
 int WIN3D_CY_View = h_pixel;
 int WIN3D_X_View = w_pixel;
 int WIN3D_Y_View = h_pixel;
@@ -596,7 +596,7 @@ int WIN3D_update_VerticesSolarValue = 1;
 
 
 
-int WORLD_CX_View = 0;
+int WORLD_CX_View = w_pixel;
 int WORLD_CY_View = h_pixel;
 int WORLD_X_View = w_pixel;
 int WORLD_Y_View = h_pixel;
@@ -631,7 +631,15 @@ float GRAPHS_S_View;
 int GRAPHS_Update = 1;
 int GRAPHS_include = 1;
 
+int SPINNERS_CX_View = 0;
+int SPINNERS_CY_View = 0;
+int SPINNERS_X_View = 2 * w_pixel;
+int SPINNERS_Y_View = 1 * h_pixel;
+float SPINNERS_R_View = float(SPINNERS_Y_View) / float(SPINNERS_X_View);
+float SPINNERS_S_View;
 
+int SPINNERS_Update = 1;
+int SPINNERS_include = 1;
 
 
 
@@ -640,7 +648,8 @@ float CAM_x, CAM_y, CAM_z;
 
 void setup () {
 
-  size(2 * w_pixel, 2 * h_pixel, P2D);
+  //size(2 * w_pixel, 2 * h_pixel, P2D);
+  size(2 * w_pixel + h_pixel / 2, 2 * h_pixel, P2D);
 
   _DATE = (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   //if (_HOUR >= 12) _DATE += 0.5;   
@@ -716,10 +725,10 @@ void SOLARCHVISION_update_station (int Step) {
 void SOLARCHVISION_update_models (int Step) {
  
    if ((Step == 0) || (Step == 1)) SOLARCHVISION_remove_3Dobjects();
-   if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
+   //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
    //if ((Step == 0) || (Step == 3)) SOLARCHVISION_add_ParametricSurfaces(1);
    if ((Step == 0) || (Step == 4)) SOLARCHVISION_remove_ParametricGeometries();
-   //if ((Step == 0) || (Step == 5)) SOLARCHVISION_add_ParametricGeometries();
+   if ((Step == 0) || (Step == 5)) SOLARCHVISION_add_ParametricGeometries();
    if ((Step == 0) || (Step == 6)) SOLARCHVISION_calculate_ParametricGeometries_Field();
 
 }
@@ -1070,11 +1079,61 @@ void draw () {
     last_initializationStep = frameCount; 
   }
   else {
-  
+
     CAM_x = 0;
     CAM_y = 0;
     CAM_z = 0;
     
+    
+    SPINNERS_include = 1; // <<<<
+    SPINNERS_Update = 1; // <<<<
+
+    if (SPINNERS_include == 1) {
+      if (SPINNERS_Update == 1) {
+        
+        preGRAPHS_setup = GRAPHS_setup;
+        pre_impacts_source = impacts_source;
+        pre_STATION_NUMBER = STATION_NUMBER;
+        pre_YEAR = _YEAR;
+        pre_MONTH = _MONTH;
+        pre_DAY = _DAY;
+        pre_DATE = _DATE;
+        pre_HOUR = _HOUR;
+        pre_Climatic_solar_model = Climatic_solar_model;
+        pre_Climatic_weather_model = Climatic_weather_model;
+        
+        SOLARCHVISION_draw_SPINNERS();
+        
+        if (pre_DATE != _DATE) {
+          SOLARCHVISION_update_date();
+          SOLARCHVISION_draw_SPINNERS();
+        }
+        
+        if ((pre_YEAR != _YEAR) || (pre_MONTH != _MONTH) || (pre_DAY != _DAY) || (pre_HOUR != _HOUR) || (pre_Climatic_solar_model != Climatic_solar_model) || (pre_Climatic_weather_model != Climatic_weather_model)) {
+          
+          BEGIN_DAY = Convert2Date(_MONTH, _DAY);
+          _HOUR = int(24 * (_DATE - int(_DATE)));
+          _DATE = (_HOUR / 24.0) + (286 + Convert2Date(_MONTH, _DAY)) % 365;
+          println("DATE:", _DATE, "\tHOUR:", _HOUR);
+          SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+          
+          SOLARCHVISION_draw_SPINNERS();
+        }
+      
+        if (pre_STATION_NUMBER != STATION_NUMBER) SOLARCHVISION_update_station(0);    
+            
+      }
+    }
+    SPINNERS_Update = 0;
+    
+    if (GRAPHS_include == 1) {
+      if (GRAPHS_Update == 1) {
+        
+        SOLARCHVISION_draw_GRAPHS();
+        
+      }
+    }
+    GRAPHS_Update = 0;
 
 
     if (WORLD_include == 1) {
@@ -1106,6 +1165,8 @@ void draw () {
 
   }
 } 
+
+
 
 
 void SOLARCHVISION_draw_WIN3D () {
@@ -1394,39 +1455,11 @@ void SOLARCHVISION_draw_GRAPHS () {
  
   GRAPHS_S_View = (GRAPHS_X_View / 1200.0);
   
-  pre_setup = _setup;
-  pre_impacts_source = impacts_source;
-  pre_STATION_NUMBER = STATION_NUMBER;
-  pre_YEAR = _YEAR;
-  pre_MONTH = _MONTH;
-  pre_DAY = _DAY;
-  pre_DATE = _DATE;
-  pre_HOUR = _HOUR;
-  pre_Climatic_solar_model = Climatic_solar_model;
-  pre_Climatic_weather_model = Climatic_weather_model;
-  
-  draw_spinners();
 
+  
   GRAPHS_U_scale = 18.0 / float(j_end - j_start);
   update_DevelopDATA = 1; // ??
 
-  if (pre_DATE != _DATE) {
-    SOLARCHVISION_update_date();
-    draw_spinners();
-  }
-  
-  if ((pre_YEAR != _YEAR) || (pre_MONTH != _MONTH) || (pre_DAY != _DAY) || (pre_HOUR != _HOUR) || (pre_Climatic_solar_model != Climatic_solar_model) || (pre_Climatic_weather_model != Climatic_weather_model)) {
-    
-    BEGIN_DAY = Convert2Date(_MONTH, _DAY);
-    _HOUR = int(24 * (_DATE - int(_DATE)));
-    _DATE = (_HOUR / 24.0) + (286 + Convert2Date(_MONTH, _DAY)) % 365;
-    println("DATE:", _DATE, "\tHOUR:", _HOUR);
-    SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
-    
-    draw_spinners();
-  }
-
-  if (pre_STATION_NUMBER != STATION_NUMBER) SOLARCHVISION_update_station(0);
   
   if ((GRAPHS_record_JPG == 1) || (GRAPHS_record_AUTO == 1)) {
     if (off_screen == 0) {
@@ -1660,7 +1693,7 @@ void SOLARCHVISION_PlotHOURLY (float x, float y, float z, float sx, float sy, fl
 
 void Plot_Setup () {
 
-  if (_setup == 100) {
+  if (GRAPHS_setup == 100) {
 
     SOLARCHVISION_PlotIMPACT(0, -175 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View); 
     
@@ -1670,7 +1703,7 @@ void Plot_Setup () {
   
   // -----------------------------------------------
   
-  if (_setup == -2) {
+  if (GRAPHS_setup == -2) {
     if (impacts_source == databaseNumber_ENSEMBLE) {
       pre_DATE = _DATE;
       int pre_BEGIN_DAY = BEGIN_DAY;
@@ -1708,7 +1741,7 @@ void Plot_Setup () {
   }
   
   
-  if (_setup == -1) {
+  if (GRAPHS_setup == -1) {
     pre_impacts_source = impacts_source;
     
     impacts_source = databaseNumber_ENSEMBLE; 
@@ -1744,7 +1777,7 @@ void Plot_Setup () {
   }
   
   
-  if (_setup == 0) {
+  if (GRAPHS_setup == 0) {
     if (impacts_source == databaseNumber_CLIMATE_WY2) {
       int pre_H_layer_option = H_layer_option;
       
@@ -1782,7 +1815,7 @@ void Plot_Setup () {
   }
 
 
-  if (_setup == 1) {
+  if (GRAPHS_setup == 1) {
     int pre_drw_Layer = drw_Layer;
     int pre_develop_option = develop_option;
     
@@ -1810,7 +1843,7 @@ void Plot_Setup () {
   }  
   
   
-  if (_setup == 2) {
+  if (GRAPHS_setup == 2) {
     if (drw_Layer != _developed) {
       int pre_drw_Layer = drw_Layer;
       
@@ -1836,7 +1869,7 @@ void Plot_Setup () {
   }  
   
   
-  if (_setup == 3) {
+  if (GRAPHS_setup == 3) {
     int pre_drw_Layer = drw_Layer;
     
     drw_Layer = _windspd200hPa;
@@ -1855,7 +1888,7 @@ void Plot_Setup () {
   }
   
   
-  if (_setup == 4) {
+  if (GRAPHS_setup == 4) {
     int pre_drw_Layer = drw_Layer;
     
     drw_Layer = _windspd;
@@ -1877,7 +1910,7 @@ void Plot_Setup () {
   }  
   
   
-  if (_setup == 5) {
+  if (GRAPHS_setup == 5) {
     int pre_drw_Layer = drw_Layer;
     int pre_develop_option = develop_option;
     
@@ -1902,7 +1935,7 @@ void Plot_Setup () {
   }
   
   
-  if (_setup == 6) {
+  if (GRAPHS_setup == 6) {
     int pre_sky_scenario = sky_scenario;
     
     sky_scenario = 4;
@@ -1921,7 +1954,7 @@ void Plot_Setup () {
   }  
   
   
-  if (_setup == 7) {
+  if (GRAPHS_setup == 7) {
     int pre_plot_impacts = plot_impacts;
     
     draw_sorted = 0;
@@ -1946,7 +1979,7 @@ void Plot_Setup () {
   }
   
 
-  if (_setup == 8) {
+  if (GRAPHS_setup == 8) {
     int pre_plot_impacts = plot_impacts;
     int pre_impact_layer = impact_layer;
     
@@ -1983,7 +2016,7 @@ void Plot_Setup () {
   }
 
 
-  if (_setup == 9) {
+  if (GRAPHS_setup == 9) {
     int pre_plot_impacts = plot_impacts;
     int pre_impact_layer = impact_layer;
 
@@ -2020,7 +2053,7 @@ void Plot_Setup () {
     impact_layer = pre_impact_layer;
   }
 
-  if (_setup == 10) {
+  if (GRAPHS_setup == 10) {
     int pre_plot_impacts = plot_impacts;
     int pre_impact_layer = impact_layer;
 
@@ -2044,7 +2077,7 @@ void Plot_Setup () {
     impact_layer = pre_impact_layer;
   }
   
-  if (_setup == 11) {
+  if (GRAPHS_setup == 11) {
     int pre_plot_impacts = plot_impacts;
     int pre_impact_layer = impact_layer;
     
@@ -2067,7 +2100,7 @@ void Plot_Setup () {
     impact_layer = pre_impact_layer;
   }  
 
-  if (_setup == 12) {
+  if (GRAPHS_setup == 12) {
     int pre_plot_impacts = plot_impacts;
     int pre_impact_layer = impact_layer;
     
@@ -2122,7 +2155,7 @@ void Plot_Setup () {
     impact_layer = pre_impact_layer;
   }
 
-  if (_setup == 13) {
+  if (GRAPHS_setup == 13) {
     int pre_plot_impacts = plot_impacts;
     int pre_impact_layer = impact_layer;
 
@@ -8666,16 +8699,15 @@ class SOLARCHVISION_Spinner {
   }
 }
 
-void draw_spinners () {
-
+void SOLARCHVISION_draw_SPINNERS () {
+  
   stroke(255); 
   fill(255);
   strokeWeight(0);
-  rect(0, 0, GRAPHS_X_View, GRAPHS_Y_View);
+  //rect(0, 0, GRAPHS_X_View, GRAPHS_Y_View);
+  rect(0, 0, width, height);
 
-  /*
-
-  textFont(createFont("Arial Narrow", 36));
+  //textFont(createFont("Arial Narrow", 36));
   
   X_spinner = 980 * GRAPHS_S_View;
   Y_spinner = 25 * GRAPHS_S_View;
@@ -8763,11 +8795,11 @@ void draw_spinners () {
   Y_spinner += 25 * GRAPHS_S_View;
   impact_layer = int(MySpinner.update(X_spinner, Y_spinner, "Impact Min/50%/Max", impact_layer, 0, 8, 1));
   impacts_source = int(MySpinner.update(X_spinner, Y_spinner, "Draw climate/forecast/observation", impacts_source, 0, 3, 1));
-  //_setup = int(MySpinner.update(X_spinner, Y_spinner, "Diagram setup", _setup, -2, 13, 1));
-  _setup = int(MySpinner.update(X_spinner, Y_spinner, "Diagram setup", _setup, 100, 110, 1));
+  //GRAPHS_setup = int(MySpinner.update(X_spinner, Y_spinner, "Diagram setup", GRAPHS_setup, -2, 13, 1));
+  GRAPHS_setup = int(MySpinner.update(X_spinner, Y_spinner, "Diagram setup", GRAPHS_setup, 100, 110, 1));
   update_impacts = int(MySpinner.update(X_spinner, Y_spinner, "Update impacts", update_impacts, 0, 1, 1));
 
-  if (_setup != pre_setup) update_impacts = 1;
+  if (GRAPHS_setup != preGRAPHS_setup) update_impacts = 1;
   if (impacts_source != pre_impacts_source) update_impacts = 1; 
   if (GRAPHS_record_PDF == 1) update_impacts = 1; 
   
@@ -8780,7 +8812,6 @@ void draw_spinners () {
   Climatic_weather_model = int(MySpinner.update(X_spinner, Y_spinner, "Climatic weather model", Climatic_weather_model, 0, 2, 1));
   Y_spinner += 25 * GRAPHS_S_View; 
   
-  */
   
   X_clicked = 0;
   Y_clicked = 0;
