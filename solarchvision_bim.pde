@@ -556,7 +556,7 @@ void empty_Materials_DiffuseArea () {
 
 
                   
-int h_pixel = 325; 
+int h_pixel = 350; //325; 
 int w_pixel = int(h_pixel * 1.5);
 
 int WIN3D_CX_View = 0;
@@ -631,12 +631,12 @@ float GRAPHS_S_View;
 int GRAPHS_Update = 1;
 int GRAPHS_include = 1;
 
-int SPINNERS_CX_View = 0;
+int SPINNERS_CX_View = 2 * w_pixel;
 int SPINNERS_CY_View = 0;
-int SPINNERS_X_View = 2 * w_pixel;
-int SPINNERS_Y_View = 1 * h_pixel;
+int SPINNERS_X_View = 1 * h_pixel;
+int SPINNERS_Y_View = 2 * h_pixel;
 float SPINNERS_R_View = float(SPINNERS_Y_View) / float(SPINNERS_X_View);
-float SPINNERS_S_View;
+float SPINNERS_S_View = 0.75; // ?????
 
 int SPINNERS_Update = 1;
 int SPINNERS_include = 1;
@@ -649,7 +649,7 @@ float CAM_x, CAM_y, CAM_z;
 void setup () {
 
   //size(2 * w_pixel, 2 * h_pixel, P2D);
-  size(2 * w_pixel + h_pixel / 2, 2 * h_pixel, P2D);
+  size(2 * w_pixel + h_pixel, 2 * h_pixel, P2D);
 
   _DATE = (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   //if (_HOUR >= 12) _DATE += 0.5;   
@@ -1085,9 +1085,6 @@ void draw () {
     CAM_z = 0;
     
     
-    SPINNERS_include = 1; // <<<<
-    SPINNERS_Update = 1; // <<<<
-
     if (SPINNERS_include == 1) {
       if (SPINNERS_Update == 1) {
         
@@ -1124,7 +1121,7 @@ void draw () {
             
       }
     }
-    SPINNERS_Update = 0;
+
     
     if (GRAPHS_include == 1) {
       if (GRAPHS_Update == 1) {
@@ -1445,7 +1442,7 @@ void SOLARCHVISION_draw_WORLD () {
 
 
 void SOLARCHVISION_draw_GRAPHS () {
-  
+
   cursor(WAIT);
   
   //resetMatrix();
@@ -1453,12 +1450,17 @@ void SOLARCHVISION_draw_GRAPHS () {
   pushMatrix();
   translate(GRAPHS_CX_View, GRAPHS_CY_View);
  
-  GRAPHS_S_View = (GRAPHS_X_View / 1200.0);
-  
 
-  
+  stroke(255); 
+  fill(255);
+  strokeWeight(0);
+  rect(0, 0, GRAPHS_X_View, GRAPHS_Y_View);
+
+
+  GRAPHS_S_View = (GRAPHS_X_View / 1200.0);
   GRAPHS_U_scale = 18.0 / float(j_end - j_start);
-  update_DevelopDATA = 1; // ??
+  
+  update_DevelopDATA = 1; // ????
 
   
   if ((GRAPHS_record_JPG == 1) || (GRAPHS_record_AUTO == 1)) {
@@ -8615,13 +8617,13 @@ class SOLARCHVISION_Spinner {
     float cx, cy, cr;
     float w1, w2, h, o, t_o; 
     
-    w1 = 32.5 * GRAPHS_S_View;
-    w2 = 142.5 * GRAPHS_S_View;
-    h = 16 * GRAPHS_S_View;
-    o = 2 * GRAPHS_S_View;
-    t_o = h * GRAPHS_S_View / 8.0;
+    w1 = 32.5 * SPINNERS_S_View;
+    w2 = 142.5 * SPINNERS_S_View;
+    h = 16 * SPINNERS_S_View;
+    o = 2 * SPINNERS_S_View;
+    t_o = h * SPINNERS_S_View / 8.0;
     
-    Y_spinner += 25 * GRAPHS_S_View; //(h + 2 * o) * 1.25;
+    Y_spinner += 25 * SPINNERS_S_View; //(h + 2 * o) * 1.25;
 
     strokeWeight(0); 
     stroke(0); 
@@ -8704,62 +8706,67 @@ void SOLARCHVISION_draw_SPINNERS () {
   stroke(255); 
   fill(255);
   strokeWeight(0);
-  //rect(0, 0, GRAPHS_X_View, GRAPHS_Y_View);
-  rect(0, 0, width, height);
+  rect(SPINNERS_CX_View, SPINNERS_CY_View, SPINNERS_X_View, SPINNERS_Y_View);
+  
 
   //textFont(createFont("Arial Narrow", 36));
   
-  X_spinner = 980 * GRAPHS_S_View;
-  Y_spinner = 25 * GRAPHS_S_View;
+  X_spinner = SPINNERS_CX_View;
+  Y_spinner = SPINNERS_CY_View;
 
+  X_spinner += 200 * SPINNERS_S_View;
+  Y_spinner += 25 * SPINNERS_S_View;
+  
   STATION_NUMBER = int(MySpinner.update(X_spinner, Y_spinner, "Station", STATION_NUMBER, 0, DEFINED_STATIONS.length, 1));
 
-  Y_spinner += 25 * GRAPHS_S_View;
-  _DATE = MySpinner.update(X_spinner, Y_spinner, "Solar date", _DATE, 0, 364.5, 0.5);
-  //_DATE = MySpinner.update(X_spinner, Y_spinner, "Solar date", _DATE, 0, 364, 1);
+  Y_spinner += 25 * SPINNERS_S_View;
+  
+  //_DATE = MySpinner.update(X_spinner, Y_spinner, "Solar date", _DATE, 0, 364.5, 0.5);
+  _DATE = MySpinner.update(X_spinner, Y_spinner, "Solar date", _DATE, 0, 364, 1);
   j_end = int(MySpinner.update(X_spinner, Y_spinner, "No. of days to plot" , j_end, 1, 61, 1));
   drw_Layer = int(MySpinner.update(X_spinner, Y_spinner, "Layer", drw_Layer, 0, (num_layers - 1), 1));
-  GRAPHS_V_scale[drw_Layer] = MySpinner.update(X_spinner, Y_spinner, "GRAPHS_V_scale[" + nf(drw_Layer, 2) + "]", GRAPHS_V_scale[drw_Layer], 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));
-  GRAPHS_O_scale = MySpinner.update(X_spinner, Y_spinner, "GRAPHS_O_scale", GRAPHS_O_scale, 1, 100, -pow(2.0, (1.0 / 4.0)));
+  GRAPHS_V_scale[drw_Layer] = MySpinner.update(X_spinner, Y_spinner, "V_scale[" + nf(drw_Layer, 2) + "]", GRAPHS_V_scale[drw_Layer], 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));
+  GRAPHS_O_scale = MySpinner.update(X_spinner, Y_spinner, "O_scale", GRAPHS_O_scale, 1, 100, -pow(2.0, (1.0 / 4.0)));
 
-  Y_spinner += 25 * GRAPHS_S_View;
+  Y_spinner += 25 * SPINNERS_S_View;
   draw_data_lines = int(MySpinner.update(X_spinner, Y_spinner, "Draw data", draw_data_lines, 0, 1, 1));
   draw_sorted = int(MySpinner.update(X_spinner, Y_spinner, "Draw sorted", draw_sorted, 0, 1, 1));
   draw_normals = int(MySpinner.update(X_spinner, Y_spinner, "Draw statistics", draw_normals, 0, 1, 1));
 
-  Y_spinner += 25 * GRAPHS_S_View;
+  Y_spinner += 25 * SPINNERS_S_View;
   H_layer_option = int(MySpinner.update(X_spinner, Y_spinner, "Climate filter option" , H_layer_option, 0, 7, 1));
   Sample_Year = int(MySpinner.update(X_spinner, Y_spinner, "Single year" , Sample_Year, 1953, 2005, 1));
 
-  Y_spinner += 25 * GRAPHS_S_View;
+  Y_spinner += 25 * SPINNERS_S_View;
   develop_option = int(MySpinner.update(X_spinner, Y_spinner, "Develop layer" , develop_option, 0, 12, 1));
   develop_per_day = int(MySpinner.update(X_spinner, Y_spinner, "Dev. per day option" , develop_per_day, 0, 3, 1));
 
-  Y_spinner += 25 * GRAPHS_S_View;
+  Y_spinner += 25 * SPINNERS_S_View;
   Angle_inclination = int(MySpinner.update(X_spinner, Y_spinner, "Inclination angle", Angle_inclination, 0, 90, 5));
   Angle_orientation = int(MySpinner.update(X_spinner, Y_spinner, "Orientation angle", Angle_orientation, 0, 360, 15));
 
-  Y_spinner += 25 * GRAPHS_S_View;
+  Y_spinner += 25 * SPINNERS_S_View;
   sky_scenario = int(MySpinner.update(X_spinner, Y_spinner, "Sky status", sky_scenario, 1, 4, 1));
   filter_type = int(MySpinner.update(X_spinner, Y_spinner, "Hourly/daily filter", filter_type, 0, 1, 1));
  
-  Y_spinner += 25 * GRAPHS_S_View;
+  Y_spinner += 25 * SPINNERS_S_View;
   Pallet_ACTIVE = int(MySpinner.update(X_spinner, Y_spinner, "Active pallet option", Pallet_ACTIVE, -1, 14, 1));
   Pallet_ACTIVE_DIR = int(MySpinner.update(X_spinner, Y_spinner, "Active pallet direction", Pallet_ACTIVE_DIR, -2, 2, 1));
   if (Pallet_ACTIVE_DIR == 0) Pallet_ACTIVE_DIR = 1;
   
-  Y_spinner += 25 * GRAPHS_S_View;
+  Y_spinner += 25 * SPINNERS_S_View;
   Pallet_PASSIVE = int(MySpinner.update(X_spinner, Y_spinner, "Passive pallet option", Pallet_PASSIVE, -1, 14, 1));
   Pallet_PASSIVE_DIR = int(MySpinner.update(X_spinner, Y_spinner, "Passive pallet direction", Pallet_PASSIVE_DIR, -1, 1, 2));
 
+  Climatic_solar_model = int(MySpinner.update(X_spinner, Y_spinner, "Climatic solar model", Climatic_solar_model, 0, 1, 1));
+  Climatic_weather_model = int(MySpinner.update(X_spinner, Y_spinner, "Climatic weather model", Climatic_weather_model, 0, 2, 1));
+  Y_spinner += 25 * SPINNERS_S_View; 
 
-
+  X_spinner = SPINNERS_CX_View;
+  Y_spinner = SPINNERS_CY_View;
  
-  X_spinner += 200 * GRAPHS_S_View;
-  Y_spinner = 25 * GRAPHS_S_View;
-  
-  _LAN = int(MySpinner.update(X_spinner, Y_spinner, "Language", _LAN, 0, 1, 1));
-  Y_spinner += 25 * GRAPHS_S_View;
+  X_spinner += 400 * SPINNERS_S_View;
+  Y_spinner = 25 * SPINNERS_S_View;
   
   BEGIN_DAY = int(MySpinner.update(X_spinner, Y_spinner, "Plot start date" , BEGIN_DAY, 0, 364, 1));
   _DAY = int(MySpinner.update(X_spinner, Y_spinner, "Forecast day" , _DAY, 1, 31, 1));
@@ -8767,21 +8774,21 @@ void SOLARCHVISION_draw_SPINNERS () {
   _YEAR = int(MySpinner.update(X_spinner, Y_spinner, "Forecast year" , _YEAR, 1953, 2100, 1));
   COLOR_STYLE = int(MySpinner.update(X_spinner, Y_spinner, "Color scheme", COLOR_STYLE, 0, (n_COLOR_STYLE - 1), 1));
 
-  Y_spinner += 25 * GRAPHS_S_View;
+  Y_spinner += 25 * SPINNERS_S_View;
   draw_probs = int(MySpinner.update(X_spinner, Y_spinner, "Draw probabilities", draw_probs, 0, 1, 1));
   sum_interval = int(MySpinner.update(X_spinner, Y_spinner, "Probabilities interval", sum_interval, 1, 24, 1));
   level_pix = int(MySpinner.update(X_spinner, Y_spinner, "Probabilities range", level_pix, 2, 32, -2));
 
-  Y_spinner += 25 * GRAPHS_S_View;
+  Y_spinner += 25 * SPINNERS_S_View;
   F_layer_option = int(MySpinner.update(X_spinner, Y_spinner, "Forecast filter option" , F_layer_option, 0, 4, 1));
   Sample_Member = int(MySpinner.update(X_spinner, Y_spinner, "Single member" , Sample_Member, 1, 43, 1));
 
-  Y_spinner += 25 * GRAPHS_S_View;
+  Y_spinner += 25 * SPINNERS_S_View;
   join_hour_numbers = int(MySpinner.update(X_spinner, Y_spinner, "Trend period hours", join_hour_numbers, 1, 24 * 16, 1));
   join_type = int(MySpinner.update(X_spinner, Y_spinner, "Weighted/equal trend", join_type, -1, 1, 2));
 
 
-  Y_spinner += 25 * GRAPHS_S_View;
+  Y_spinner += 25 * SPINNERS_S_View;
   save_info_node = int(MySpinner.update(X_spinner, Y_spinner, "Create data-Ascii", save_info_node, 0, 1, 1));
   save_info_norm = int(MySpinner.update(X_spinner, Y_spinner, "Create stat-Ascii", save_info_norm, 0, 1, 1));
   save_info_prob = int(MySpinner.update(X_spinner, Y_spinner, "Create prob-Ascii", save_info_prob, 0, 1, 1));
@@ -8789,10 +8796,10 @@ void SOLARCHVISION_draw_SPINNERS () {
   GRAPHS_record_PDF = int(MySpinner.update(X_spinner, Y_spinner, "Record PDF", GRAPHS_record_PDF, 0, 1, 1));
   GRAPHS_record_JPG = int(MySpinner.update(X_spinner, Y_spinner, "Record JPG", GRAPHS_record_JPG, 0, 1, 1));
  
-  Y_spinner += 25 * GRAPHS_S_View;
+  Y_spinner += 25 * SPINNERS_S_View;
   GRAPHS_Update = int(MySpinner.update(X_spinner, Y_spinner, "Redraw scene", GRAPHS_Update, 0, 1, 1));
   
-  Y_spinner += 25 * GRAPHS_S_View;
+  Y_spinner += 25 * SPINNERS_S_View;
   impact_layer = int(MySpinner.update(X_spinner, Y_spinner, "Impact Min/50%/Max", impact_layer, 0, 8, 1));
   impacts_source = int(MySpinner.update(X_spinner, Y_spinner, "Draw climate/forecast/observation", impacts_source, 0, 3, 1));
   //GRAPHS_setup = int(MySpinner.update(X_spinner, Y_spinner, "Diagram setup", GRAPHS_setup, -2, 13, 1));
@@ -8803,14 +8810,6 @@ void SOLARCHVISION_draw_SPINNERS () {
   if (impacts_source != pre_impacts_source) update_impacts = 1; 
   if (GRAPHS_record_PDF == 1) update_impacts = 1; 
   
-  
-  
-  X_spinner += 200 * GRAPHS_S_View;
-  Y_spinner = 25 * GRAPHS_S_View;
-  
-  Climatic_solar_model = int(MySpinner.update(X_spinner, Y_spinner, "Climatic solar model", Climatic_solar_model, 0, 1, 1));
-  Climatic_weather_model = int(MySpinner.update(X_spinner, Y_spinner, "Climatic weather model", Climatic_weather_model, 0, 2, 1));
-  Y_spinner += 25 * GRAPHS_S_View; 
   
   
   X_clicked = 0;
