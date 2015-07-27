@@ -147,7 +147,7 @@ int GRAPHS_record_JPG = 0;
 int GRAPHS_record_PDF = 0;
 
 int j_start = 0;
-int j_end = 1; //16; // Variable
+int j_end = 4; //16; // Variable
 
 int max_j_end_forecast = 16; // Constant
 int max_j_end_observed = 0; // Variable
@@ -556,10 +556,10 @@ void empty_Materials_DiffuseArea () {
 
 
                   
-int h_pixel = 325; 
+int h_pixel = 400; //325; 
 int w_pixel = int(h_pixel * 1.5);
 
-int WIN3D_CX_View = 0;
+int WIN3D_CX_View = w_pixel;
 int WIN3D_CY_View = h_pixel;
 int WIN3D_X_View = w_pixel;
 int WIN3D_Y_View = h_pixel;
@@ -596,7 +596,7 @@ int WIN3D_update_VerticesSolarValue = 1;
 
 
 
-int WORLD_CX_View = w_pixel;
+int WORLD_CX_View = 0;
 int WORLD_CY_View = h_pixel;
 int WORLD_X_View = w_pixel;
 int WORLD_Y_View = h_pixel;
@@ -716,10 +716,10 @@ void SOLARCHVISION_update_station (int Step) {
 void SOLARCHVISION_update_models (int Step) {
  
    if ((Step == 0) || (Step == 1)) SOLARCHVISION_remove_3Dobjects();
-   //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
+   if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
    //if ((Step == 0) || (Step == 3)) SOLARCHVISION_add_ParametricSurfaces(1);
    if ((Step == 0) || (Step == 4)) SOLARCHVISION_remove_ParametricGeometries();
-   if ((Step == 0) || (Step == 5)) SOLARCHVISION_add_ParametricGeometries();
+   //if ((Step == 0) || (Step == 5)) SOLARCHVISION_add_ParametricGeometries();
    if ((Step == 0) || (Step == 6)) SOLARCHVISION_calculate_ParametricGeometries_Field();
 
 }
