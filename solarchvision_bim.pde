@@ -669,8 +669,7 @@ void setup () {
 
   frameRate(24);
 
-
-
+  loop();
 }
 
 
@@ -1079,11 +1078,10 @@ void draw () {
     last_initializationStep = frameCount; 
   }
   else {
-
+    
     CAM_x = 0;
     CAM_y = 0;
     CAM_z = 0;
-    
     
     if (SPINNERS_include == 1) {
       if (SPINNERS_Update == 1) {
@@ -1126,6 +1124,7 @@ void draw () {
             
       }
     }
+    SPINNERS_Update = 0;
 
     
     if (GRAPHS_include == 1) {
@@ -1165,6 +1164,7 @@ void draw () {
     }
     GRAPHS_Update = 0;
 
+    noLoop();
   }
 } 
 
@@ -9355,11 +9355,11 @@ void WIN3D_keyPressed (KeyEvent e) {
           
         case 's' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; 
                   //SOLARCHVISION_update_station(0); GRAPHS_Update = 1; WIN3D_Update = 1; 
-                  frameCount = 8; 
+                  frameCount = 8; loop(); 
                   break;
         case 'S' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; 
                   //SOLARCHVISION_update_station(0); GRAPHS_Update = 1; WIN3D_Update = 1; 
-                  frameCount = 8; 
+                  frameCount = 8; loop();
                   break;
 
 
@@ -9372,11 +9372,7 @@ void WIN3D_keyPressed (KeyEvent e) {
         
       }
     }
-    
-    loop();
-    
   }
-  
 }
 
 int frame_variation = 0;
@@ -9500,7 +9496,8 @@ void keyPressed (KeyEvent e) {
         }
       }  
     }      
-    
+
+    if ((GRAPHS_Update != 0) || (WORLD_Update != 0) || (WIN3D_Update != 0) || (SPINNERS_Update != 0)) redraw();    
   }
 }
 
@@ -13580,6 +13577,8 @@ void mouseClicked () {
   if (automated == 0) {
     X_clicked = mouseX;
     Y_clicked = mouseY;
+    
+    SPINNERS_Update = 1;
     
     redraw();
   }
