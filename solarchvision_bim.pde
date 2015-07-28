@@ -414,6 +414,12 @@ String[] CLIMATE_WY2_Files = getfiles(CLIMATE_WY2_directory);
 String[] FORECAST_XML_Files = getfiles(ENSEMBLE_directory);
 String[] OBSERVED_XML_Files = getfiles(OBSERVED_directory);
 
+
+int Load_LAND = 0;
+int Display_LAND = 1;
+int Skip_LAND_Center = 1;
+
+
 int camera_variation = 1;
 
 int draw_data_lines = 0;
@@ -426,7 +432,6 @@ float level_pix = 8;
 float _pix = 0; 
 
 color color_data_lines = color(0, 0, 0);
-
 
 int off_screen = 1; // 1: off 0: on
 
@@ -448,6 +453,12 @@ int pre_Load_CLIMATE_EPW;
 int pre_Load_CLIMATE_WY2;
 int pre_Load_ENSEMBLE;
 int pre_Load_OBSERVED;     
+float pre_LocationLatitude;
+float pre_LocationLongitude;
+float pre_LocationElevation;
+int pre_Load_LAND;
+int pre_Display_LAND;
+int pre_Skip_LAND_Center;
 
 
 int GRAPHS_setup = 100; //4; //12; //13;
@@ -719,11 +730,7 @@ void SOLARCHVISION_update_station (int Step) {
   
   if ((Step == 0) || (Step == 5)) SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
 
-  if ((Step == 0) || (Step == 6)) {
-    LAND_mid_lat = LocationLatitude;
-    LAND_mid_lon = LocationLongitude;
-    SOLARCHVISION_LoadLAND(LocationName);
-  }
+  if ((Step == 0) || (Step == 6)) SOLARCHVISION_LoadLAND(LocationName);
   
   if ((Step == 0) || (Step == 7)) SOLARCHVISION_remove_2Dobjects();
 
@@ -1112,6 +1119,15 @@ void draw () {
         pre_Load_ENSEMBLE = Load_ENSEMBLE;
         pre_Load_OBSERVED = Load_OBSERVED;       
         
+        pre_LocationLatitude = LocationLatitude;
+        pre_LocationLongitude = LocationLongitude;
+        pre_LocationElevation = LocationElevation;
+        
+        pre_Load_LAND = Load_LAND;
+        pre_Display_LAND = Display_LAND;
+        pre_Skip_LAND_Center = Skip_LAND_Center;
+
+
        
         
         SOLARCHVISION_draw_ROLLOUT();
@@ -1139,9 +1155,30 @@ void draw () {
         if (pre_Load_OBSERVED != Load_OBSERVED) SOLARCHVISION_try_update_observed();
         if (pre_Load_ENSEMBLE != Load_ENSEMBLE) SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
 
-        
+        if ((pre_LocationLatitude != LocationLatitude) || (pre_LocationLongitude != LocationLongitude)) {
 
-    
+          WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
+          WORLD_Update = 1; 
+          WIN3D_Update = 1;
+          GRAPHS_Update = 1;
+        }
+        
+        if (pre_LocationElevation != LocationElevation) {
+
+          WIN3D_Update = 1;
+          GRAPHS_Update = 1;
+        }        
+        
+        if (pre_Load_LAND != Load_LAND) {
+          SOLARCHVISION_LoadLAND(LocationName);
+          WIN3D_Update = 1;
+        }
+
+        if ((pre_Display_LAND != Display_LAND) || (pre_Skip_LAND_Center != Skip_LAND_Center)) {
+          WIN3D_Update = 1;
+        }            
+            
+                    
       
         if (GRAPHS_setup != preGRAPHS_setup) update_impacts = 1;
         if (impacts_source != pre_impacts_source) update_impacts = 1; 
@@ -1192,7 +1229,6 @@ void draw () {
     noLoop();
   }
 } 
-
 
 
 
@@ -11410,38 +11446,41 @@ void SOLARCHVISION_draw_sky () {
 
 void SOLARCHVISION_draw_land () {
 
-  //for (int i = 0; i < LAND_n_I - 1; i += 1) {
-  for (int i = 1; i < LAND_n_I - 1; i += 1) { // to ignoring the center!
-    for (int j = 0; j < LAND_n_J - 1; j += 1) {
-      
-      WIN3D_Diagrams.beginShape();
-      
-      for (int vNo = 0; vNo < 4; vNo += 1) {
-        int plus_i = 0; 
-        int plus_j = 0;
-        if ((vNo == 1) || (vNo == 2)) {
-          plus_i = 1;
-        }
-        if ((vNo == 2) || (vNo == 3)) {
-          plus_j = 1;
-        }
-        
-        float x = LAND_MESH[i + plus_i][j + plus_j][0];
-        float y = LAND_MESH[i + plus_i][j + plus_j][1];
-        float z = LAND_MESH[i + plus_i][j + plus_j][2];
-        
+  if ((Display_LAND == 1) && (Load_LAND == 1)) {
 
-        int PAL_TYPE = 1; 
-        //float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.0025 * z);
-        float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.01 * z);
-        WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
-        WIN3D_Diagrams.stroke(0);
-      
-        WIN3D_Diagrams.vertex(x * objects_scale, -y * objects_scale, z * objects_scale);
+    for (int i = Skip_LAND_Center; i < LAND_n_I - 1; i += 1) {
+      for (int j = 0; j < LAND_n_J - 1; j += 1) {
+        
+        WIN3D_Diagrams.beginShape();
+        
+        for (int vNo = 0; vNo < 4; vNo += 1) {
+          int plus_i = 0; 
+          int plus_j = 0;
+          if ((vNo == 1) || (vNo == 2)) {
+            plus_i = 1;
+          }
+          if ((vNo == 2) || (vNo == 3)) {
+            plus_j = 1;
+          }
+          
+          float x = LAND_MESH[i + plus_i][j + plus_j][0];
+          float y = LAND_MESH[i + plus_i][j + plus_j][1];
+          float z = LAND_MESH[i + plus_i][j + plus_j][2];
+          
+  
+          int PAL_TYPE = 1; 
+          //float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.0025 * z);
+          float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.01 * z);
+          WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
+          WIN3D_Diagrams.stroke(0);
+        
+          WIN3D_Diagrams.vertex(x * objects_scale, -y * objects_scale, z * objects_scale);
+        }
+        
+        WIN3D_Diagrams.endShape(CLOSE);
       }
-      
-      WIN3D_Diagrams.endShape(CLOSE);
     }
+    
   }
 
 }
@@ -12420,7 +12459,7 @@ float Bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y
 
 
 
-  
+   
 
 //Cartesian
 //int LAND_n_I_base = 15;
@@ -12444,93 +12483,65 @@ float[][][] LAND_MESH;
 
 void SOLARCHVISION_LoadLAND (String ProjectSite) {
 
+  LAND_mid_lat = LocationLatitude;
+  LAND_mid_lon = LocationLongitude;
+  
   LAND_MESH = new float[LAND_n_I][LAND_n_J][3];
+  
+  if (Load_LAND == 1) {
 
-  for (int i = 0; i < LAND_n_I; i += 1) {
-
-    String the_link = "";
-    
-    XML FileALL = loadXML(LandFolder + "/" + ProjectSite + "/"  + ProjectSite + "/" + nf(i - LAND_n_I_base, 0) + ".xml");
-
-    XML[] children0 = FileALL.getChildren("result");
-
-    for (int j = 0; j < LAND_n_J; j += 1) {
-
-      String txt_elevation = children0[j].getChild("elevation").getContent();
+    for (int i = 0; i < LAND_n_I; i += 1) {
+  
+      String the_link = "";
       
-      XML[] children1 = children0[j].getChildren("location");
-      
-      String txt_latitude = children1[0].getChild("lat").getContent();
-      String txt_longitude = children1[0].getChild("lng").getContent();
-      
-      //println(txt_longitude, txt_latitude, txt_elevation);
-
-      double _lon = Double.parseDouble(txt_longitude); 
-      double _lat = Double.parseDouble(txt_latitude); 
-
-      double du = ((_lon - LAND_mid_lon) / 180.0) * (PI * R_earth);
-      double dv = ((_lat - LAND_mid_lat) / 180.0) * (PI * R_earth);
-      
-      float x = (float) du * cos_ang((float) _lat);
-      float y = (float) dv; 
-      float z = float(txt_elevation);
-
-      //println(i, j);
-      //println(x,y,z);
-      
-      LAND_MESH[i][j][0] = x;      
-      LAND_MESH[i][j][1] = y;      
-      LAND_MESH[i][j][2] = z;      
+      XML FileALL = loadXML(LandFolder + "/" + ProjectSite + "/"  + ProjectSite + "/" + nf(i - LAND_n_I_base, 0) + ".xml");
+  
+      XML[] children0 = FileALL.getChildren("result");
+  
+      for (int j = 0; j < LAND_n_J; j += 1) {
+  
+        String txt_elevation = children0[j].getChild("elevation").getContent();
+        
+        XML[] children1 = children0[j].getChildren("location");
+        
+        String txt_latitude = children1[0].getChild("lat").getContent();
+        String txt_longitude = children1[0].getChild("lng").getContent();
+        
+        //println(txt_longitude, txt_latitude, txt_elevation);
+  
+        double _lon = Double.parseDouble(txt_longitude); 
+        double _lat = Double.parseDouble(txt_latitude); 
+  
+        double du = ((_lon - LAND_mid_lon) / 180.0) * (PI * R_earth);
+        double dv = ((_lat - LAND_mid_lat) / 180.0) * (PI * R_earth);
+        
+        float x = (float) du * cos_ang((float) _lat);
+        float y = (float) dv; 
+        float z = float(txt_elevation);
+  
+        //println(i, j);
+        //println(x,y,z);
+        
+        LAND_MESH[i][j][0] = x;      
+        LAND_MESH[i][j][1] = y;      
+        LAND_MESH[i][j][2] = z;      
+      }
     }
-  }
-  
-  float h = LAND_MESH[LAND_n_I_base][LAND_n_J_base][2];
-  
-  //h += 5; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-  
-  for (int i = 0; i < LAND_n_I; i += 1) {
-    for (int j = 0; j < LAND_n_J; j += 1) {
-      
-      LAND_MESH[i][j][2] -= h; 
-      
-    }
-  }
- 
- 
-/*
-  
-  double[][] LandStations = {{52.640621, 35.697382, 76.915}, 
-                            {52.637762, 35.697199, 100.000},
-                            {52.636453, 35.69634, 108.664},
-                            {52.636439, 35.696112, 107.868},
-                            {52.638382, 35.696081, 97.348}};
-                            
-  float[][] LandStations_XYZ = new float [LandStations.length][3];
-                            
-  for (int i = 0; i < LandStations.length; i += 1) {  
-    for (int j = 0; j < 3; j += 1) {
     
-      double _lon = LandStations[i][0];
-      double _lat = LandStations[i][1];
+    float h = LAND_MESH[LAND_n_I_base][LAND_n_J_base][2];
     
-      double du = ((_lon - LAND_mid_lon) / 180.0) * (PI * R_earth);
-      double dv = ((_lat - LAND_mid_lat) / 180.0) * (PI * R_earth);
-      
-      LandStations_XYZ[i][0] = (float) du * cos_ang((float) _lat); 
-      LandStations_XYZ[i][1] = (float) dv; 
-      LandStations_XYZ[i][2] = (float) LandStations[i][2] - 100; // <<<<<<<<<<<<<<<<<<<<<<<<<<<
+    //h += 5; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    
+    for (int i = 0; i < LAND_n_I; i += 1) {
+      for (int j = 0; j < LAND_n_J; j += 1) {
+        
+        LAND_MESH[i][j][2] -= h; 
+        
+      }
     }
+  
   }
-      
-  add_Mesh5(3,
-            LandStations_XYZ[0][0], LandStations_XYZ[0][1], LandStations_XYZ[0][2], 
-            LandStations_XYZ[1][0], LandStations_XYZ[1][1], LandStations_XYZ[1][2], 
-            LandStations_XYZ[2][0], LandStations_XYZ[2][1], LandStations_XYZ[2][2], 
-            LandStations_XYZ[3][0], LandStations_XYZ[3][1], LandStations_XYZ[3][2], 
-            LandStations_XYZ[4][0], LandStations_XYZ[4][1], LandStations_XYZ[4][2]);
 
-
-*/
 }
 
  
@@ -13793,15 +13804,19 @@ void SOLARCHVISION_draw_ROLLOUT () {
   if (ROLLOUT_parent == 0) { // Location
     STATION_NUMBER = int(MySpinner.update(X_spinner, Y_spinner, "Station", STATION_NUMBER, 0, DEFINED_STATIONS.length, 1));
     
-    LocationLatitude = MySpinner.update(X_spinner, Y_spinner, "Latitude", LocationLatitude, -90, 90, -0.01);
-    LocationLongitude = MySpinner.update(X_spinner, Y_spinner, "Longitude", LocationLongitude, -180, 180, -0.01);
-    LocationElevation = MySpinner.update(X_spinner, Y_spinner, "Elevation", LocationElevation, -100, 8000, -1.0);
+    LocationLatitude = MySpinner.update(X_spinner, Y_spinner, "Latitude", LocationLatitude, -90, 90, 0.1);
+    LocationLongitude = MySpinner.update(X_spinner, Y_spinner, "Longitude", LocationLongitude, -180, 180, 0.1);
+    LocationElevation = int(MySpinner.update(X_spinner, Y_spinner, "Elevation", LocationElevation, -100, 8000, 1.0));
 
-
-    Load_CLIMATE_EPW = int(MySpinner.update(X_spinner, Y_spinner, "Load_CLIMATE_EPW" , Load_CLIMATE_EPW, 0, 1, 1));;
-    Load_CLIMATE_WY2 = int(MySpinner.update(X_spinner, Y_spinner, "Load_CLIMATE_WY2" , Load_CLIMATE_WY2, 0, 1, 1));;
-    Load_ENSEMBLE = int(MySpinner.update(X_spinner, Y_spinner, "Load_ENSEMBLE" , Load_ENSEMBLE, 0, 1, 1));;
-    Load_OBSERVED = int(MySpinner.update(X_spinner, Y_spinner, "Load_OBSERVED" , Load_OBSERVED, 0, 1, 1));;
+    Load_CLIMATE_EPW = int(MySpinner.update(X_spinner, Y_spinner, "Load_CLIMATE_EPW" , Load_CLIMATE_EPW, 0, 1, 1));
+    Load_CLIMATE_WY2 = int(MySpinner.update(X_spinner, Y_spinner, "Load_CLIMATE_WY2" , Load_CLIMATE_WY2, 0, 1, 1));
+    Load_ENSEMBLE = int(MySpinner.update(X_spinner, Y_spinner, "Load_ENSEMBLE" , Load_ENSEMBLE, 0, 1, 1));
+    Load_OBSERVED = int(MySpinner.update(X_spinner, Y_spinner, "Load_OBSERVED" , Load_OBSERVED, 0, 1, 1));
+   
+    Load_LAND = int(MySpinner.update(X_spinner, Y_spinner, "Load_LAND" , Load_LAND, 0, 1, 1));
+    Display_LAND = int(MySpinner.update(X_spinner, Y_spinner, "Display_LAND" , Display_LAND, 0, 1, 1));
+    Skip_LAND_Center = int(MySpinner.update(X_spinner, Y_spinner, "Skip_LAND_Center" , Skip_LAND_Center, 0, LAND_n_I - 1, 1));     
+                
    
   }
   else if (ROLLOUT_parent == 1) { // Geometry
