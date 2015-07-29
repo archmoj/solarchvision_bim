@@ -420,6 +420,9 @@ int Display_LAND = 1;
 int Skip_LAND_Center = 1;
 
 
+int Load_URBAN = 0;
+
+
 int camera_variation = 1;
 
 int draw_data_lines = 0;
@@ -459,6 +462,7 @@ float pre_LocationElevation;
 int pre_Load_LAND;
 int pre_Display_LAND;
 int pre_Skip_LAND_Center;
+int pre_Load_URBAN;
 
 
 int GRAPHS_setup = 100; //4; //12; //13;
@@ -1126,6 +1130,8 @@ void draw () {
         pre_Load_LAND = Load_LAND;
         pre_Display_LAND = Display_LAND;
         pre_Skip_LAND_Center = Skip_LAND_Center;
+        
+        pre_Load_URBAN = Load_URBAN;
 
 
        
@@ -1177,9 +1183,13 @@ void draw () {
         if ((pre_Display_LAND != Display_LAND) || (pre_Skip_LAND_Center != Skip_LAND_Center)) {
           WIN3D_Update = 1;
         }            
+        
+        if (pre_Load_URBAN != Load_URBAN) {
+          SOLARCHVISION_add_urban();
+          
+          WIN3D_Update = 1;
+        }
             
-                    
-      
         if (GRAPHS_setup != preGRAPHS_setup) update_impacts = 1;
         if (impacts_source != pre_impacts_source) update_impacts = 1; 
         if (GRAPHS_record_PDF == 1) update_impacts = 1;         
@@ -10961,12 +10971,28 @@ void SOLARCHVISION_remove_3Dobjects () {
  
 }
 
+int urbanVertices_start = 0;
+int urbanVertices_end = 0;
+
+int urbanFaces_start = 0;
+int urbanFaces_end = 0;
+
+
+void SOLARCHVISION_add_urban () {
+  if (Load_URBAN == 1) {
+    urbanVertices_start = allVertices.length;
+    urbanFaces_start = allFaces.length;
+
+    SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/" + DEFINED_STATIONS[STATION_NUMBER][1] + ".obj", -1, 0,0,0, 1,1,1);
+    
+    urbanVertices_end = allVertices.length;
+    urbanFaces_end = allFaces.length;
+  }
+}
+
 void SOLARCHVISION_add_3Dobjects () {
 
-
-
-  SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/" + DEFINED_STATIONS[STATION_NUMBER][1] + ".obj", -1, 0,0,0, 1,1,1);
-  
+  SOLARCHVISION_add_urban();
   
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
@@ -13816,6 +13842,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
     Load_LAND = int(MySpinner.update(X_spinner, Y_spinner, "Load_LAND" , Load_LAND, 0, 1, 1));
     Display_LAND = int(MySpinner.update(X_spinner, Y_spinner, "Display_LAND" , Display_LAND, 0, 1, 1));
     Skip_LAND_Center = int(MySpinner.update(X_spinner, Y_spinner, "Skip_LAND_Center" , Skip_LAND_Center, 0, LAND_n_I - 1, 1));     
+    
+    Load_URBAN = int(MySpinner.update(X_spinner, Y_spinner, "Load_URBAN" , Load_URBAN, 0, 1, 1));
                 
    
   }
