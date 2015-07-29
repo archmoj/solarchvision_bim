@@ -996,9 +996,21 @@ void draw () {
 
     stroke(255);
     fill(255);
+    text("SOLARCHVISION_build_SkySphere", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    
+  }    
+  else if (frameCount == 15) {
+    SOLARCHVISION_build_SkySphere(3); 
+    
+    stroke(0);
+    fill(0);
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+
+    stroke(255);
+    fill(255);
     text("SOLARCHVISION_LoadLAND", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 15) {
+  else if (frameCount == 16) {
     SOLARCHVISION_update_station(6);
 
     stroke(0);
@@ -1009,7 +1021,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_remove_2Dobjects", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 16) {
+  else if (frameCount == 17) {
     SOLARCHVISION_update_station(7);
 
     stroke(0);
@@ -1020,7 +1032,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_add_2Dobjects_onLand", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 17) {
+  else if (frameCount == 18) {
     SOLARCHVISION_update_station(8);
     
     stroke(0);
@@ -1031,7 +1043,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_remove_3Dobjects", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 18) {
+  else if (frameCount == 19) {
     SOLARCHVISION_update_models(1);
     
     stroke(0);
@@ -1042,7 +1054,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_add_3Dobjects", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 19) {
+  else if (frameCount == 20) {
     SOLARCHVISION_update_models(2);
     
     stroke(0);
@@ -1053,7 +1065,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_add_ParametricSurfaces", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 20) {
+  else if (frameCount == 21) {
     SOLARCHVISION_update_models(3);
 
     stroke(0);
@@ -1064,7 +1076,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_remove_ParametricGeometries", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 21) {
+  else if (frameCount == 22) {
     SOLARCHVISION_update_models(4);    
     stroke(0);
     fill(0);
@@ -1074,7 +1086,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_add_ParametricGeometries", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 22) {
+  else if (frameCount == 23) {
     SOLARCHVISION_update_models(5);
     
     stroke(0);
@@ -1085,25 +1097,13 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_calculate_ParametricGeometries_Field", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 23) {
+  else if (frameCount == 24) {
     SOLARCHVISION_update_models(6);
     
     stroke(0);
     fill(0);
     rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_build_SkySphere", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
-    
-  }    
-  else if (frameCount == 24) {
-    SOLARCHVISION_build_SkySphere(3);
-    
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
-    
     stroke(255);
     fill(255);
     text("SOLARCHVISION_build_SolarProjection_array", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
