@@ -421,10 +421,12 @@ String[] FORECAST_XML_Files = getfiles(ENSEMBLE_directory);
 String[] OBSERVED_XML_Files = getfiles(OBSERVED_directory);
 
 
+int Display_SUN3D = 1;
+int Display_SKY3D = 0;
+
 int Load_LAND = 0;
 int Display_LAND = 1;
 int Skip_LAND_Center = 1;
-
 
 int Load_URBAN = 0;
 int Display_URBAN = 1;
@@ -474,6 +476,8 @@ int pre_Skip_LAND_Center;
 int pre_Load_URBAN;
 int pre_Display_URBAN;
 
+int pre_Display_SUN3D;
+int pre_Display_SKY3D;
 
 
 int GRAPHS_setup = 100; //4; //12; //13;
@@ -1160,6 +1164,9 @@ void draw () {
         pre_Load_URBAN = Load_URBAN;
         pre_Display_URBAN = Display_URBAN;
         
+        pre_Display_SUN3D = Display_SUN3D;
+        pre_Display_SKY3D = Display_SKY3D;
+        
 
 
 
@@ -1231,7 +1238,13 @@ void draw () {
           WIN3D_Update = 1;
         }        
 
-
+        if (pre_Display_SUN3D != Display_SUN3D) {
+          WIN3D_Update = 1;
+        }
+        
+        if (pre_Display_SKY3D != Display_SKY3D) {
+          WIN3D_Update = 1;
+        }
 
             
         if (GRAPHS_setup != preGRAPHS_setup) update_impacts = 1;
@@ -1354,9 +1367,9 @@ void SOLARCHVISION_draw_WIN3D () {
 
   WIN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
 
-  SOLARCHVISION_SunPath(0, 0, 0, 0.95 * sky_scale, LocationLatitude);
+  SOLARCHVISION_draw_SUN3D(0, 0, 0, 0.95 * sky_scale, LocationLatitude);
   
-  //SOLARCHVISION_draw_sky();
+  SOLARCHVISION_draw_SKY3D();
   
   SOLARCHVISION_draw_land();
   
@@ -9105,204 +9118,208 @@ float[] SOLARCHVISION_WYRD (float _variable) {
 
 
  
-void SOLARCHVISION_SunPath (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float LocationLatitude) { 
+void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float LocationLatitude) { 
 
-  float previous_DATE = _DATE;
+  if (Display_SUN3D != 0) {
   
-  float min_sunrise = int(min(SOLARCHVISION_Sunrise(LocationLatitude, 90), SOLARCHVISION_Sunrise(LocationLatitude, 270))); 
-  float max_sunset = int(max(SOLARCHVISION_Sunset(LocationLatitude, 90), SOLARCHVISION_Sunset(LocationLatitude, 270)));
-
-  
-  WIN3D_Diagrams.pushMatrix();
-  WIN3D_Diagrams.translate(x_SunPath, y_SunPath, z_SunPath);
-
-  WIN3D_Diagrams.strokeWeight(0); 
-  WIN3D_Diagrams.stroke(0, 0, 0);
-  WIN3D_Diagrams.fill(0, 0, 0);
-  
-  WIN3D_Diagrams.line(-1 * s_SunPath, 0, 0, 1 * s_SunPath, 0, 0); 
-  WIN3D_Diagrams.line(0, -1 * s_SunPath, 0, 0, 1 * s_SunPath, 0);
-
-  WIN3D_Diagrams.stroke(255, 255, 0);
-  
-  float pre_per_day = per_day;
-  int pre_num_add_days = num_add_days;
-  if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
-    per_day = 1;
-    num_add_days = 1;
-  }
-  
-  int start_z = get_startZ_endZ(impacts_source)[0];
-  int end_z = get_startZ_endZ(impacts_source)[1]; 
-  int layers_count = get_startZ_endZ(impacts_source)[2]; 
-  
-  for (int p = 0; p < 1; p += 1) { 
+    float previous_DATE = _DATE;
     
-    int l = impact_layer;
+    float min_sunrise = int(min(SOLARCHVISION_Sunrise(LocationLatitude, 90), SOLARCHVISION_Sunrise(LocationLatitude, 270))); 
+    float max_sunset = int(max(SOLARCHVISION_Sunset(LocationLatitude, 90), SOLARCHVISION_Sunset(LocationLatitude, 270)));
   
-    int DATE_step = 1;
+    
+    WIN3D_Diagrams.pushMatrix();
+    WIN3D_Diagrams.translate(x_SunPath, y_SunPath, z_SunPath);
   
-    for (int j = j_start; j < j_end; j += DATE_step) {
+    WIN3D_Diagrams.strokeWeight(0); 
+    WIN3D_Diagrams.stroke(0, 0, 0);
+    WIN3D_Diagrams.fill(0, 0, 0);
+    
+    WIN3D_Diagrams.line(-1 * s_SunPath, 0, 0, 1 * s_SunPath, 0, 0); 
+    WIN3D_Diagrams.line(0, -1 * s_SunPath, 0, 0, 1 * s_SunPath, 0);
+  
+    WIN3D_Diagrams.stroke(255, 255, 0);
+    
+    float pre_per_day = per_day;
+    int pre_num_add_days = num_add_days;
+    if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
+      per_day = 1;
+      num_add_days = 1;
+    }
+    
+    int start_z = get_startZ_endZ(impacts_source)[0];
+    int end_z = get_startZ_endZ(impacts_source)[1]; 
+    int layers_count = get_startZ_endZ(impacts_source)[2]; 
+    
+    for (int p = 0; p < 1; p += 1) { 
       
-      int now_i;
-      int now_j;
-      int now_k;
-  
-      now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
-  
-      if (now_j >= 365) {
-       now_j = now_j % 365; 
-      }
-      if (now_j < 0) {
-       now_j = (now_j + 365) % 365; 
-      }
-   
-      float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
-      
-      //println(j, now_j, DATE_ANGLE);
+      int l = impact_layer;
+    
+      int DATE_step = 1;
+    
+      for (int j = j_start; j < j_end; j += DATE_step) {
+        
+        int now_i;
+        int now_j;
+        int now_k;
+    
+        now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
+    
+        if (now_j >= 365) {
+         now_j = now_j % 365; 
+        }
+        if (now_j < 0) {
+         now_j = (now_j + 365) % 365; 
+        }
      
-      float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
-      float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
-      
-      int[] Normals_COL_N;
-      Normals_COL_N = new int[9];
-      Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
-      
-      for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
-        if (nk != -1) {
-          int k = int(nk / num_add_days);
-          int j_ADD = nk % num_add_days; 
-  
-          for (int i = 0; i < 24; i += 1) {
-            
-            float HOUR_ANGLE = i; 
-            float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
-            
-            now_k = k;
-            now_i = i;
-            now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
-  
-            if (now_j >= 365) {
-             now_j = now_j % 365; 
-            }
-            if (now_j < 0) {
-             now_j = (now_j + 365) % 365; 
-            }
-            
-            float Pa = FLOAT_undefined;
-  
-            if (impacts_source == databaseNumber_CLIMATE_WY2) {
-                Pa = CLIMATE_WY2[now_i][now_j][_direffect][now_k]; 
-            }
-            if (impacts_source == databaseNumber_ENSEMBLE) {
-                Pa = ENSEMBLE[now_i][now_j][_direffect][now_k]; 
-            }   
-            if (impacts_source == databaseNumber_OBSERVED) {
-                Pa = OBSERVED[now_i][now_j][_direffect][now_k]; 
-            }   
-            if (impacts_source == databaseNumber_CLIMATE_EPW) {
-                Pa = CLIMATE_EPW[now_i][now_j][_direffect][now_k]; 
-            }    
- 
-            if (Pa > 0.9 * FLOAT_undefined) {
-            }
-            else {
-           
-              float[] COL = SOLARCHVISION_DRYWCBD(0.0002 * Pa); // ????????
-      
-              WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], 127);
-              WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], 127);
-              
-              float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR_ANGLE - 0.5);
-              float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR_ANGLE + 0.5);
-              float[] SunC = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR_ANGLE + 0.5);
-              float[] SunD = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR_ANGLE - 0.5);
-              
-              WIN3D_Diagrams.beginShape();
-              WIN3D_Diagrams.vertex(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3]);
-              WIN3D_Diagrams.vertex(s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
-              WIN3D_Diagrams.vertex(s_SunPath * SunC[1], -s_SunPath * SunC[2], s_SunPath * SunC[3]);
-              WIN3D_Diagrams.vertex(s_SunPath * SunD[1], -s_SunPath * SunD[2], s_SunPath * SunD[3]);
+        float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
+        
+        //println(j, now_j, DATE_ANGLE);
+       
+        float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
+        float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
+        
+        int[] Normals_COL_N;
+        Normals_COL_N = new int[9];
+        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
+        
+        for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
+          if (nk != -1) {
+            int k = int(nk / num_add_days);
+            int j_ADD = nk % num_add_days; 
     
-              WIN3D_Diagrams.endShape(CLOSE);
+            for (int i = 0; i < 24; i += 1) {
               
-            } 
- 
-            
+              float HOUR_ANGLE = i; 
+              float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+              
+              now_k = k;
+              now_i = i;
+              now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+    
+              if (now_j >= 365) {
+               now_j = now_j % 365; 
+              }
+              if (now_j < 0) {
+               now_j = (now_j + 365) % 365; 
+              }
+              
+              float Pa = FLOAT_undefined;
+    
+              if (impacts_source == databaseNumber_CLIMATE_WY2) {
+                  Pa = CLIMATE_WY2[now_i][now_j][_direffect][now_k]; 
+              }
+              if (impacts_source == databaseNumber_ENSEMBLE) {
+                  Pa = ENSEMBLE[now_i][now_j][_direffect][now_k]; 
+              }   
+              if (impacts_source == databaseNumber_OBSERVED) {
+                  Pa = OBSERVED[now_i][now_j][_direffect][now_k]; 
+              }   
+              if (impacts_source == databaseNumber_CLIMATE_EPW) {
+                  Pa = CLIMATE_EPW[now_i][now_j][_direffect][now_k]; 
+              }    
    
+              if (Pa > 0.9 * FLOAT_undefined) {
+              }
+              else {
+             
+                float[] COL = SOLARCHVISION_DRYWCBD(0.0002 * Pa); // ????????
+        
+                WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], 127);
+                WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], 127);
+                
+                float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR_ANGLE - 0.5);
+                float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR_ANGLE + 0.5);
+                float[] SunC = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR_ANGLE + 0.5);
+                float[] SunD = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR_ANGLE - 0.5);
+                
+                WIN3D_Diagrams.beginShape();
+                WIN3D_Diagrams.vertex(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3]);
+                WIN3D_Diagrams.vertex(s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
+                WIN3D_Diagrams.vertex(s_SunPath * SunC[1], -s_SunPath * SunC[2], s_SunPath * SunC[3]);
+                WIN3D_Diagrams.vertex(s_SunPath * SunD[1], -s_SunPath * SunD[2], s_SunPath * SunD[3]);
+      
+                WIN3D_Diagrams.endShape(CLOSE);
+                
+              } 
+   
+              
+     
+            }
           }
         }
       }
-    }
-  }  
-
-  WIN3D_Diagrams.strokeWeight(1);
-  WIN3D_Diagrams.stroke(0);
+    }  
   
-  for (int j = 90; j <= 270; j += 30) {
-    float HOUR_step = (SOLARCHVISION_DayTime(LocationLatitude, j) / 12.0);
-    for (float HOUR = SOLARCHVISION_Sunrise(LocationLatitude, j); HOUR <(SOLARCHVISION_Sunset(LocationLatitude, j) + .01 - HOUR_step); HOUR += HOUR_step) {
-      float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, j, HOUR);
-      float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, j, (HOUR + HOUR_step));
-      WIN3D_Diagrams.line(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
-    }
-  }
-  
-  for (float HOUR = min_sunrise; HOUR < max_sunset + .01; HOUR += 1) {
-    float DATE_step = 1;
-    for (int j = 0; j <= 360; j += DATE_step) {
-      float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, j, HOUR);
-      float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, (j + DATE_step), HOUR);
-      if (SunA[3] >= 0 && SunB[3] >= 0) {
+    WIN3D_Diagrams.strokeWeight(1);
+    WIN3D_Diagrams.stroke(0);
+    
+    for (int j = 90; j <= 270; j += 30) {
+      float HOUR_step = (SOLARCHVISION_DayTime(LocationLatitude, j) / 12.0);
+      for (float HOUR = SOLARCHVISION_Sunrise(LocationLatitude, j); HOUR <(SOLARCHVISION_Sunset(LocationLatitude, j) + .01 - HOUR_step); HOUR += HOUR_step) {
+        float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, j, HOUR);
+        float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, j, (HOUR + HOUR_step));
         WIN3D_Diagrams.line(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
       }
     }
-  }
-  
-  WIN3D_Diagrams.popMatrix();
-
-  WIN3D_Diagrams.stroke(0);
-  for (int i = 0; i < 360; i += 5) {
-    WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180), -s_SunPath * sin(i * PI / 180), 0, s_SunPath * cos((i + 5) * PI / 180), -s_SunPath * sin((i + 5) * PI / 180), 0); 
     
-    WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180), -s_SunPath * sin(i * PI / 180), 0, 1.05 * s_SunPath * cos((i) * PI / 180), -1.05 * s_SunPath * sin((i) * PI / 180), 0);
-  }
-  
-  for (int i = 0; i < 360; i += 15) {
-    WIN3D_Diagrams.pushMatrix();
-    WIN3D_Diagrams.translate(1.15 * s_SunPath * cos(i * PI / 180), -1.15 * s_SunPath * sin(i * PI / 180), 0);
-    
-    WIN3D_Diagrams.fill(0);
-    WIN3D_Diagrams.textSize(s_SunPath * 0.05);
-    WIN3D_Diagrams.textAlign(CENTER, CENTER);
-    
-    String txt = nf((90 - i + 360) % 360, 0);
-    if (i == 0) {
-      txt = "E"; 
-      WIN3D_Diagrams.textSize(s_SunPath * 0.1);
+    for (float HOUR = min_sunrise; HOUR < max_sunset + .01; HOUR += 1) {
+      float DATE_step = 1;
+      for (int j = 0; j <= 360; j += DATE_step) {
+        float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, j, HOUR);
+        float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, (j + DATE_step), HOUR);
+        if (SunA[3] >= 0 && SunB[3] >= 0) {
+          WIN3D_Diagrams.line(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
+        }
+      }
     }
-    else if (i == 90) {
-      txt = "N"; 
-      WIN3D_Diagrams.textSize(s_SunPath * 0.1);
-    }
-    else if (i == 180) {
-      txt = "W"; 
-      WIN3D_Diagrams.textSize(s_SunPath * 0.1);
-    }
-    else if (i == 270) {
-      txt = "S"; 
-      WIN3D_Diagrams.textSize(s_SunPath * 0.1);
-    }
-    
-    WIN3D_Diagrams.text(txt, 0, 0, 0);
     
     WIN3D_Diagrams.popMatrix();
-  }   
-
-  per_day = pre_per_day;
-  num_add_days = pre_num_add_days; 
-  _DATE = previous_DATE;
-  SOLARCHVISION_update_date();
+  
+    WIN3D_Diagrams.stroke(0);
+    for (int i = 0; i < 360; i += 5) {
+      WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180), -s_SunPath * sin(i * PI / 180), 0, s_SunPath * cos((i + 5) * PI / 180), -s_SunPath * sin((i + 5) * PI / 180), 0); 
+      
+      WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180), -s_SunPath * sin(i * PI / 180), 0, 1.05 * s_SunPath * cos((i) * PI / 180), -1.05 * s_SunPath * sin((i) * PI / 180), 0);
+    }
+    
+    for (int i = 0; i < 360; i += 15) {
+      WIN3D_Diagrams.pushMatrix();
+      WIN3D_Diagrams.translate(1.15 * s_SunPath * cos(i * PI / 180), -1.15 * s_SunPath * sin(i * PI / 180), 0);
+      
+      WIN3D_Diagrams.fill(0);
+      WIN3D_Diagrams.textSize(s_SunPath * 0.05);
+      WIN3D_Diagrams.textAlign(CENTER, CENTER);
+      
+      String txt = nf((90 - i + 360) % 360, 0);
+      if (i == 0) {
+        txt = "E"; 
+        WIN3D_Diagrams.textSize(s_SunPath * 0.1);
+      }
+      else if (i == 90) {
+        txt = "N"; 
+        WIN3D_Diagrams.textSize(s_SunPath * 0.1);
+      }
+      else if (i == 180) {
+        txt = "W"; 
+        WIN3D_Diagrams.textSize(s_SunPath * 0.1);
+      }
+      else if (i == 270) {
+        txt = "S"; 
+        WIN3D_Diagrams.textSize(s_SunPath * 0.1);
+      }
+      
+      WIN3D_Diagrams.text(txt, 0, 0, 0);
+      
+      WIN3D_Diagrams.popMatrix();
+    }   
+  
+    per_day = pre_per_day;
+    num_add_days = pre_num_add_days; 
+    _DATE = previous_DATE;
+    SOLARCHVISION_update_date();
+  
+  }
 } 
 
 
@@ -11460,38 +11477,38 @@ float objects_scale = 1.0;
 
 
 
-PGraphics ViewFromTheSky (int SKY3D_X_View, int SKY3D_Y_View, float SKY3D_ZOOM_coordinate, float SKY3D_X_coordinate, float SKY3D_Y_coordinate, float SKY3D_Z_coordinate, float SKY3D_RX_coordinate, float SKY3D_RY_coordinate, float SKY3D_RZ_coordinate) {
+PGraphics ViewFromTheSky (int SKY2D_X_View, int SKY2D_Y_View, float SKY2D_ZOOM_coordinate, float SKY2D_X_coordinate, float SKY2D_Y_coordinate, float SKY2D_Z_coordinate, float SKY2D_RX_coordinate, float SKY2D_RY_coordinate, float SKY2D_RZ_coordinate) {
 
-  PGraphics SKY3D_Diagrams = createGraphics(SKY3D_X_View, SKY3D_Y_View, P3D);   
+  PGraphics SKY2D_Diagrams = createGraphics(SKY2D_X_View, SKY2D_Y_View, P3D);   
   
-  SKY3D_Diagrams.beginDraw();
+  SKY2D_Diagrams.beginDraw();
   
-  SKY3D_Diagrams.background(233);
+  SKY2D_Diagrams.background(233);
   
-  //float ZOOM = 0.456 * SKY3D_ZOOM_coordinate * PI / 180;
-  float ZOOM = 0.125 * SKY3D_ZOOM_coordinate * PI / 180;
+  //float ZOOM = 0.456 * SKY2D_ZOOM_coordinate * PI / 180;
+  float ZOOM = 0.125 * SKY2D_ZOOM_coordinate * PI / 180;
   
-  SKY3D_Diagrams.ortho(ZOOM * SKY3D_X_View * -1, ZOOM * SKY3D_X_View * 1, ZOOM  * SKY3D_Y_View * -1, ZOOM  * SKY3D_Y_View * 1, 0.00001, 100000);
+  SKY2D_Diagrams.ortho(ZOOM * SKY2D_X_View * -1, ZOOM * SKY2D_X_View * 1, ZOOM  * SKY2D_Y_View * -1, ZOOM  * SKY2D_Y_View * 1, 0.00001, 100000);
   
-  SKY3D_Diagrams.translate(0, 1.0 * SKY3D_Y_View, 0); // << IMPORTANT! 
+  SKY2D_Diagrams.translate(0, 1.0 * SKY2D_Y_View, 0); // << IMPORTANT! 
 
-  SKY3D_Diagrams.pushMatrix();
+  SKY2D_Diagrams.pushMatrix();
   
-  SKY3D_Diagrams.translate(0, 0, 0);
+  SKY2D_Diagrams.translate(0, 0, 0);
   
-  SKY3D_Diagrams.fill(0);
-  SKY3D_Diagrams.textAlign(CENTER, CENTER); 
-  SKY3D_Diagrams.textSize(5 * (SKY3D_ZOOM_coordinate / 30.0));
-  SKY3D_Diagrams.text(LocationName + " [" + nfp(LocationLatitude, 0, 1) + ", " + nfp(LocationLongitude, 0, 1) + "]", 0, 60 * (SKY3D_ZOOM_coordinate / 30.0), 0);
+  SKY2D_Diagrams.fill(0);
+  SKY2D_Diagrams.textAlign(CENTER, CENTER); 
+  SKY2D_Diagrams.textSize(5 * (SKY2D_ZOOM_coordinate / 30.0));
+  SKY2D_Diagrams.text(LocationName + " [" + nfp(LocationLatitude, 0, 1) + ", " + nfp(LocationLongitude, 0, 1) + "]", 0, 60 * (SKY2D_ZOOM_coordinate / 30.0), 0);
  
-  SKY3D_Diagrams.popMatrix();
+  SKY2D_Diagrams.popMatrix();
 
-  SKY3D_Diagrams.translate(SKY3D_X_coordinate, SKY3D_Y_coordinate, SKY3D_Z_coordinate);
-  SKY3D_Diagrams.rotateX(SKY3D_RX_coordinate * PI / 180); 
-  SKY3D_Diagrams.rotateY(SKY3D_RY_coordinate * PI / 180);
-  SKY3D_Diagrams.rotateZ(SKY3D_RZ_coordinate * PI / 180); 
+  SKY2D_Diagrams.translate(SKY2D_X_coordinate, SKY2D_Y_coordinate, SKY2D_Z_coordinate);
+  SKY2D_Diagrams.rotateX(SKY2D_RX_coordinate * PI / 180); 
+  SKY2D_Diagrams.rotateY(SKY2D_RY_coordinate * PI / 180);
+  SKY2D_Diagrams.rotateZ(SKY2D_RZ_coordinate * PI / 180); 
 
-  SKY3D_Diagrams.hint(ENABLE_DEPTH_TEST);
+  SKY2D_Diagrams.hint(ENABLE_DEPTH_TEST);
 
   for (int f = 1; f < allFaces.length; f++) {
     
@@ -11505,8 +11522,8 @@ PGraphics ViewFromTheSky (int SKY3D_X_View, int SKY3D_Y_View, float SKY3D_ZOOM_c
       c = color(Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3], Materials_Color[mt][0]);
     }
     
-    SKY3D_Diagrams.stroke(c);
-    SKY3D_Diagrams.fill(c);
+    SKY2D_Diagrams.stroke(c);
+    SKY2D_Diagrams.fill(c);
 
     int Teselation = 0;
     
@@ -11519,7 +11536,7 @@ PGraphics ViewFromTheSky (int SKY3D_X_View, int SKY3D_Y_View, float SKY3D_ZOOM_c
     for (int n = 0; n < TotalSubNo; n++) {
       float[][] subFace = getSubFace(allFaces[f], Teselation, n);
    
-      SKY3D_Diagrams.beginShape();
+      SKY2D_Diagrams.beginShape();
       
       for (int s = 0; s < subFace.length; s++) {
   
@@ -11529,58 +11546,60 @@ PGraphics ViewFromTheSky (int SKY3D_X_View, int SKY3D_Y_View, float SKY3D_ZOOM_c
          
           float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.0025 * subFace[s][2]);
           
-          SKY3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
+          SKY2D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
         }
-        //else SKY3D_Diagrams.fill(255, 127, 0);
+        //else SKY2D_Diagrams.fill(255, 127, 0);
 
-        SKY3D_Diagrams.vertex(subFace[s][0], -subFace[s][1], subFace[s][2]);
+        SKY2D_Diagrams.vertex(subFace[s][0], -subFace[s][1], subFace[s][2]);
       }
       
-      SKY3D_Diagrams.endShape(CLOSE);
+      SKY2D_Diagrams.endShape(CLOSE);
     }
     
   }
 
-  SKY3D_Diagrams.endDraw();
+  SKY2D_Diagrams.endDraw();
 
-  return SKY3D_Diagrams;
+  return SKY2D_Diagrams;
 }
 
 
-void SOLARCHVISION_draw_sky () {
+void SOLARCHVISION_draw_SKY3D () {
   
-  for (int f = 1; f < skyFaces.length; f++) {
-    
-    color c = color(191, 191, 255);
-
-    if (WIN3D_EDGES_SHOW == 1) {
-      //WIN3D_Diagrams.stroke(0, 0, 0);
-      WIN3D_Diagrams.stroke(255, 255, 255);
-    }
-    else {
-      WIN3D_Diagrams.stroke(c);
-    }
-
-    if (WIN3D_FACES_SHADE == 1) {
-      //WIN3D_Diagrams.fill(255, 255, 255);
-      WIN3D_Diagrams.noFill();
-    }
-    else {
-      WIN3D_Diagrams.fill(c);
-    }    
-
+  if (Display_SKY3D != 0) {
+  
+    for (int f = 1; f < skyFaces.length; f++) {
       
-    WIN3D_Diagrams.beginShape();
-    
-    for (int j = 0; j < skyFaces[f].length; j++) {
-      int vNo = skyFaces[f][j];
-      WIN3D_Diagrams.vertex(skyVertices[vNo][0] * sky_scale, -(skyVertices[vNo][1] * sky_scale), skyVertices[vNo][2] * sky_scale);
-    }    
-    
-    WIN3D_Diagrams.endShape(CLOSE);
-
+      color c = color(191, 191, 255);
+  
+      if (WIN3D_EDGES_SHOW == 1) {
+        //WIN3D_Diagrams.stroke(0, 0, 0);
+        WIN3D_Diagrams.stroke(255, 255, 255);
+      }
+      else {
+        WIN3D_Diagrams.stroke(c);
+      }
+  
+      if (WIN3D_FACES_SHADE == 1) {
+        //WIN3D_Diagrams.fill(255, 255, 255);
+        WIN3D_Diagrams.noFill();
+      }
+      else {
+        WIN3D_Diagrams.fill(c);
+      }    
+  
+        
+      WIN3D_Diagrams.beginShape();
+      
+      for (int j = 0; j < skyFaces[f].length; j++) {
+        int vNo = skyFaces[f][j];
+        WIN3D_Diagrams.vertex(skyVertices[vNo][0] * sky_scale, -(skyVertices[vNo][1] * sky_scale), skyVertices[vNo][2] * sky_scale);
+      }    
+      
+      WIN3D_Diagrams.endShape(CLOSE);
+  
+    }
   }
-
 }
 
 
@@ -14028,6 +14047,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
     Load_URBAN = int(MySpinner.update(X_spinner, Y_spinner, "Load_URBAN" , Load_URBAN, 0, 1, 1));
     Display_URBAN = int(MySpinner.update(X_spinner, Y_spinner, "Display_URBAN" , Display_URBAN, 0, 1, 1));
+    
+    Display_SUN3D = int(MySpinner.update(X_spinner, Y_spinner, "Display_SUN3D" , Display_SUN3D, 0, 1, 1));
+    Display_SKY3D = int(MySpinner.update(X_spinner, Y_spinner, "Display_SKY3D" , Display_SKY3D, 0, 1, 1));
                 
    
   }
