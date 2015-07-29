@@ -758,7 +758,7 @@ void SOLARCHVISION_update_models (int Step) {
 
 float message_size = w_pixel / 40.0;
 
-float last_initializationStep = 0;
+int last_initializationStep = 0;
 
 void draw () {
   
@@ -1206,15 +1206,6 @@ void draw () {
     ROLLOUT_Update = 0;
 
     
-    if (GRAPHS_include == 1) {
-      if (GRAPHS_Update == 1) {
-        
-        SOLARCHVISION_draw_GRAPHS();
-        
-      }
-    }
-    GRAPHS_Update = 0;
-
 
     if (WORLD_include == 1) {
       if (WORLD_Update == 1) {
@@ -8400,7 +8391,16 @@ void GRAPHS_keyPressed (KeyEvent e) {
         }
       }    
     }
-    else {
+    else if (e.isShiftDown() == true) {
+      if (key == CODED) { 
+        switch(keyCode) {
+
+        }
+      }
+    }
+
+    
+    if ((e.isAltDown() != true) && (e.isControlDown() != true) && (e.isShiftDown() != true)) {
     
       if (key == CODED) { 
         switch(keyCode) {
@@ -8419,15 +8419,12 @@ void GRAPHS_keyPressed (KeyEvent e) {
           case 123 : develop_option = 12; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
           */
           
-          case 112 : impacts_source = databaseNumber_ENSEMBLE; GRAPHS_Update = 1; break;
-          case 113 : impacts_source = databaseNumber_CLIMATE_WY2; GRAPHS_Update = 1; break;
-          case 114 : impacts_source = databaseNumber_CLIMATE_EPW; GRAPHS_Update = 1; break;
-          //case 115 : impacts_source = databaseNumber_OBSERVED; GRAPHS_Update = 1; break;
-          
+
+          /*
           case 115 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 6)) || (plot_impacts == 7)) plot_impacts = 6;
                      else plot_impacts = 7; 
                      GRAPHS_Update = 1; break;        
-  
+          */
           case 116 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 4)) || (plot_impacts == 5)) plot_impacts = 4;
                      else plot_impacts = 5; 
                      GRAPHS_Update = 1; break;
@@ -8481,7 +8478,11 @@ void GRAPHS_keyPressed (KeyEvent e) {
           default: GRAPHS_record_JPG = 0; GRAPHS_Update = 0; break;
         }
       }
-      else {
+    }
+    
+    if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
+
+      if (key != CODED) { 
         switch(key) {
     
           case '|' :if (_DATE == 1.0 * int(_DATE)) _DATE += 0.5;
@@ -8672,10 +8673,7 @@ void GRAPHS_keyPressed (KeyEvent e) {
     }
   }
 
-  if (GRAPHS_Update == 1) {
-    GRAPHS_Update = 1;
-  }
-  
+ 
 }
 
 
@@ -9370,14 +9368,27 @@ void WIN3D_keyPressed (KeyEvent e) {
       }
     }    
   }
-  else {
-    
+
+  else if (e.isShiftDown() == true) {
     if (key == CODED) { 
       switch(keyCode) {
 
       }
     }
-    else {
+  }
+
+
+  if ((e.isAltDown() != true) && (e.isControlDown() != true) && (e.isShiftDown() != true)) {
+    if (key == CODED) { 
+      switch(key) {
+        
+      } 
+    }   
+  }
+  
+  if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
+    
+    if (key != CODED) { 
       switch(key) {
         case ',' :WIN3D_Z_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1; break; 
         case '.' :WIN3D_Z_coordinate -= WIN3D_S_coordinate; WIN3D_Update = 1; break;
@@ -9547,14 +9558,7 @@ void keyPressed (KeyEvent e) {
     if (e.isAltDown() == true) {
       if (key == CODED) { 
         switch(keyCode) {
-          case 112 : ROLLOUT_child = 1; ROLLOUT_Update = 1; break;
-          case 113 : ROLLOUT_child = 2; ROLLOUT_Update = 1; break;
-          case 114 : ROLLOUT_child = 3; ROLLOUT_Update = 1; break;
-          case 115 : ROLLOUT_child = 4; ROLLOUT_Update = 1; break;
-          case 116 : ROLLOUT_child = 5; ROLLOUT_Update = 1; break;
-          case 117 : ROLLOUT_child = 6; ROLLOUT_Update = 1; break;
-          case 118 : ROLLOUT_child = 7; ROLLOUT_Update = 1; break;
-          case 119 : ROLLOUT_child = 8; ROLLOUT_Update = 1; break;
+
         }
       }
       else {
@@ -9582,21 +9586,47 @@ void keyPressed (KeyEvent e) {
         }
       }    
     }
-    else {
+    else if (e.isShiftDown() == true) {
       if (key == CODED) { 
         switch(keyCode) {
+          case 112 : ROLLOUT_child = 1; ROLLOUT_Update = 1; break;
+          case 113 : ROLLOUT_child = 2; ROLLOUT_Update = 1; break;
+          case 114 : ROLLOUT_child = 3; ROLLOUT_Update = 1; break;
+          case 115 : ROLLOUT_child = 4; ROLLOUT_Update = 1; break;
+          case 116 : ROLLOUT_child = 5; ROLLOUT_Update = 1; break;
+          case 117 : ROLLOUT_child = 6; ROLLOUT_Update = 1; break;
+          case 118 : ROLLOUT_child = 7; ROLLOUT_Update = 1; break;
+          case 119 : ROLLOUT_child = 8; ROLLOUT_Update = 1; break;
         }
       }
-      else {
+    }
+
+    
+    if ((e.isAltDown() != true) && (e.isControlDown() != true) && (e.isShiftDown() != true)) {
+      if (key == CODED) { 
+        switch(key) {
+          case 112 : impacts_source = databaseNumber_ENSEMBLE; GRAPHS_Update = 1; break;
+          case 113 : impacts_source = databaseNumber_OBSERVED; GRAPHS_Update = 1; break;
+          case 114 : impacts_source = databaseNumber_CLIMATE_WY2; GRAPHS_Update = 1; break;
+          case 115 : impacts_source = databaseNumber_CLIMATE_EPW; GRAPHS_Update = 1; break;
+        } 
+      }   
+    }
+    
+    if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
+      
+      if (key != CODED) { 
         switch(key) {
           
           case 's' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; 
-                    //SOLARCHVISION_update_station(0); GRAPHS_Update = 1; WIN3D_Update = 1; 
-                    frameCount = 8; loop(); 
+                    //SOLARCHVISION_update_station(0); GRAPHS_Update = 1; WIN3D_Update = 1;
+                    last_initializationStep = 8; 
+                    frameCount = last_initializationStep; loop(); 
                     break;
           case 'S' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; 
-                    //SOLARCHVISION_update_station(0); GRAPHS_Update = 1; WIN3D_Update = 1; 
-                    frameCount = 8; loop();
+                    //SOLARCHVISION_update_station(0); GRAPHS_Update = 1; WIN3D_Update = 1;
+                    last_initializationStep = 8; 
+                    frameCount = last_initializationStep; loop();
                     break;          
         }
       }  
@@ -13812,13 +13842,12 @@ class SOLARCHVISION_Spinner {
 }
 
 String[][] ROLLOUTS = {
-                        {"Location", "1"}, 
-                        {"Geometry", "1"}, 
-                        {"Time", "1"}, 
-                        {"Data", "1"}, 
-                        {"Process", "1"}, 
-                        {"Products", "1"},
-                        {"Display", "1"}
+                        {"Location & Data", "General"}, 
+                        {"Geometries & Space", "General"}, 
+                        {"Time & Scenarios", "General"}, 
+                        {"Post-Processing", "General"}, 
+                        {"Graph Options", "General"},
+                        {"Other Products", "General"}
                       };
 
 int ROLLOUT_parent = 0; // 0: Location, 1: Geometry, 2: Time, etc.
@@ -13842,10 +13871,19 @@ void SOLARCHVISION_draw_ROLLOUT () {
   fill(0);
   textSize(20 * ROLLOUT_S_View);
   textAlign(LEFT, CENTER);
-  if (ROLLOUT_parent < ROLLOUTS.length){
+  
+  if (ROLLOUT_parent >= ROLLOUTS.length) {
+    ROLLOUT_parent = ROLLOUTS.length - 1;
+  }
+  
+  if (ROLLOUT_child >= ROLLOUTS[ROLLOUT_parent].length) {
+    ROLLOUT_child = ROLLOUTS[ROLLOUT_parent].length - 1;
+  }  
+  
+  if (ROLLOUT_parent < ROLLOUTS.length) {
     text(ROLLOUTS[ROLLOUT_parent][0] + "/", ROLLOUT_CX_View + 10 * ROLLOUT_S_View, ROLLOUT_CY_View + 10 * ROLLOUT_S_View);
     
-    if (ROLLOUT_child < ROLLOUTS[ROLLOUT_parent].length){
+    if (ROLLOUT_child < ROLLOUTS[ROLLOUT_parent].length) {
       text(nf(ROLLOUT_child, 0) + ": " + ROLLOUTS[ROLLOUT_parent][ROLLOUT_child] + "/", ROLLOUT_CX_View + 10 * ROLLOUT_S_View, ROLLOUT_CY_View + 35 * ROLLOUT_S_View);
     }
   }
@@ -13857,7 +13895,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
   Y_spinner += 65 * ROLLOUT_S_View;
 
 
-  if (ROLLOUT_parent == 0) { // Location
+  if (ROLLOUT_parent == 0) { // Location & Data
     STATION_NUMBER = int(MySpinner.update(X_spinner, Y_spinner, "Station", STATION_NUMBER, 0, DEFINED_STATIONS.length, 1));
     
     LocationLatitude = MySpinner.update(X_spinner, Y_spinner, "Latitude", LocationLatitude, -90, 90, 0.1);
@@ -13878,10 +13916,10 @@ void SOLARCHVISION_draw_ROLLOUT () {
                 
    
   }
-  else if (ROLLOUT_parent == 1) { // Geometry
+  else if (ROLLOUT_parent == 1) { // Geometries & Space
     
   }
-  else if (ROLLOUT_parent == 2) { // Time
+  else if (ROLLOUT_parent == 2) { // Time & Scenarios
     
     j_end = int(MySpinner.update(X_spinner, Y_spinner, "No. of days to plot" , j_end, 1, 61, 1));
   
@@ -13892,21 +13930,12 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
     _DAY = int(MySpinner.update(X_spinner, Y_spinner, "Forecast day" , _DAY, 1, 31, 1));
     _MONTH = int(MySpinner.update(X_spinner, Y_spinner, "Forecast month", _MONTH, 1, 12, 1));
-    _YEAR = int(MySpinner.update(X_spinner, Y_spinner, "Forecast year" , _YEAR, 1953, 2100, 1));    
-  }  
-  else if (ROLLOUT_parent == 3) { // Process
-  
+    _YEAR = int(MySpinner.update(X_spinner, Y_spinner, "Forecast year" , _YEAR, 1953, 2100, 1));
+
     drw_Layer = int(MySpinner.update(X_spinner, Y_spinner, "Layer", drw_Layer, 0, (num_layers - 1), 1));
     GRAPHS_V_scale[drw_Layer] = MySpinner.update(X_spinner, Y_spinner, "V_scale[" + nf(drw_Layer, 2) + "]", GRAPHS_V_scale[drw_Layer], 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));
     GRAPHS_O_scale = MySpinner.update(X_spinner, Y_spinner, "O_scale", GRAPHS_O_scale, 1, 100, -pow(2.0, (1.0 / 4.0)));
-  
-    draw_data_lines = int(MySpinner.update(X_spinner, Y_spinner, "Draw data", draw_data_lines, 0, 1, 1));
-    draw_sorted = int(MySpinner.update(X_spinner, Y_spinner, "Draw sorted", draw_sorted, 0, 1, 1));
-    draw_normals = int(MySpinner.update(X_spinner, Y_spinner, "Draw statistics", draw_normals, 0, 1, 1));
-    draw_probs = int(MySpinner.update(X_spinner, Y_spinner, "Draw probabilities", draw_probs, 0, 1, 1));
-    sum_interval = int(MySpinner.update(X_spinner, Y_spinner, "Probabilities interval", sum_interval, 1, 24, 1));
-    level_pix = int(MySpinner.update(X_spinner, Y_spinner, "Probabilities range", level_pix, 2, 32, -2));
-  
+ 
     sky_scenario = int(MySpinner.update(X_spinner, Y_spinner, "Sky status", sky_scenario, 1, 4, 1));
     filter_type = int(MySpinner.update(X_spinner, Y_spinner, "Hourly/daily filter", filter_type, 0, 1, 1));
   
@@ -13914,20 +13943,17 @@ void SOLARCHVISION_draw_ROLLOUT () {
     Sample_Member = int(MySpinner.update(X_spinner, Y_spinner, "Single member" , Sample_Member, 1, 43, 1));  
   
     H_layer_option = int(MySpinner.update(X_spinner, Y_spinner, "Climate filter option" , H_layer_option, 0, 7, 1));
-    Sample_Year = int(MySpinner.update(X_spinner, Y_spinner, "Single year" , Sample_Year, 1953, 2005, 1));
-  
+    Sample_Year = int(MySpinner.update(X_spinner, Y_spinner, "Single year" , Sample_Year, 1953, 2005, 1));    
+  }  
+  else if (ROLLOUT_parent == 3) { // Post-Processing
+
     Climatic_solar_model = int(MySpinner.update(X_spinner, Y_spinner, "Climatic solar model", Climatic_solar_model, 0, 1, 1));
     Climatic_weather_model = int(MySpinner.update(X_spinner, Y_spinner, "Climatic weather model", Climatic_weather_model, 0, 2, 1));    
-  
-    //GRAPHS_setup = int(MySpinner.update(X_spinner, Y_spinner, "Diagram setup", GRAPHS_setup, -2, 13, 1));
-    GRAPHS_setup = int(MySpinner.update(X_spinner, Y_spinner, "Diagram setup", GRAPHS_setup, 100, 110, 1));
-    GRAPHS_Update = int(MySpinner.update(X_spinner, Y_spinner, "Redraw scene", GRAPHS_Update, 0, 1, 1));
       
     impacts_source = int(MySpinner.update(X_spinner, Y_spinner, "Draw climate/forecast/obs.", impacts_source, 0, 3, 1));
     impact_layer = int(MySpinner.update(X_spinner, Y_spinner, "Impact Min/50%/Max", impact_layer, 0, 8, 1));
     
     update_impacts = int(MySpinner.update(X_spinner, Y_spinner, "Update impacts", update_impacts, 0, 1, 1));
-  
   
     develop_option = int(MySpinner.update(X_spinner, Y_spinner, "Develop layer" , develop_option, 0, 12, 1));
     develop_per_day = int(MySpinner.update(X_spinner, Y_spinner, "Dev. per day option" , develop_per_day, 0, 3, 1));
@@ -13938,19 +13964,19 @@ void SOLARCHVISION_draw_ROLLOUT () {
     Angle_inclination = int(MySpinner.update(X_spinner, Y_spinner, "Inclination angle", Angle_inclination, 0, 90, 5));
     Angle_orientation = int(MySpinner.update(X_spinner, Y_spinner, "Orientation angle", Angle_orientation, 0, 360, 15));    
   }  
-  else if (ROLLOUT_parent == 4) { // Product
-  
-  
-  
-    GRAPHS_record_PDF = int(MySpinner.update(X_spinner, Y_spinner, "Record PDF", GRAPHS_record_PDF, 0, 1, 1));
-    GRAPHS_record_JPG = int(MySpinner.update(X_spinner, Y_spinner, "Record JPG", GRAPHS_record_JPG, 0, 1, 1));
-  
-    save_info_node = int(MySpinner.update(X_spinner, Y_spinner, "Create data-Ascii", save_info_node, 0, 1, 1));
-    save_info_norm = int(MySpinner.update(X_spinner, Y_spinner, "Create stat-Ascii", save_info_norm, 0, 1, 1));
-    save_info_prob = int(MySpinner.update(X_spinner, Y_spinner, "Create prob-Ascii", save_info_prob, 0, 1, 1));  
-    
-  }    
-  else if (ROLLOUT_parent == 5) { // Display
+  else if (ROLLOUT_parent == 4) { // Graph Options
+
+    draw_data_lines = int(MySpinner.update(X_spinner, Y_spinner, "Draw data", draw_data_lines, 0, 1, 1));
+    draw_sorted = int(MySpinner.update(X_spinner, Y_spinner, "Draw sorted", draw_sorted, 0, 1, 1));
+    draw_normals = int(MySpinner.update(X_spinner, Y_spinner, "Draw statistics", draw_normals, 0, 1, 1));
+    draw_probs = int(MySpinner.update(X_spinner, Y_spinner, "Draw probabilities", draw_probs, 0, 1, 1));
+    sum_interval = int(MySpinner.update(X_spinner, Y_spinner, "Probabilities interval", sum_interval, 1, 24, 1));
+    level_pix = int(MySpinner.update(X_spinner, Y_spinner, "Probabilities range", level_pix, 2, 32, -2));
+
+    //GRAPHS_setup = int(MySpinner.update(X_spinner, Y_spinner, "Diagram setup", GRAPHS_setup, -2, 13, 1));
+    GRAPHS_setup = int(MySpinner.update(X_spinner, Y_spinner, "Diagram setup", GRAPHS_setup, 100, 110, 1));
+    GRAPHS_Update = int(MySpinner.update(X_spinner, Y_spinner, "Redraw scene", GRAPHS_Update, 0, 1, 1));
+
     Pallet_ACTIVE = int(MySpinner.update(X_spinner, Y_spinner, "Active pallet option", Pallet_ACTIVE, -1, 14, 1));
     Pallet_ACTIVE_DIR = int(MySpinner.update(X_spinner, Y_spinner, "Active pallet direction", Pallet_ACTIVE_DIR, -2, 2, 1));
     
@@ -13960,6 +13986,16 @@ void SOLARCHVISION_draw_ROLLOUT () {
     COLOR_STYLE = int(MySpinner.update(X_spinner, Y_spinner, "Color scheme", COLOR_STYLE, 0, (n_COLOR_STYLE - 1), 1));  
   
   }
+  else if (ROLLOUT_parent == 5) { // Other Products
+
+    GRAPHS_record_PDF = int(MySpinner.update(X_spinner, Y_spinner, "Record PDF", GRAPHS_record_PDF, 0, 1, 1));
+    GRAPHS_record_JPG = int(MySpinner.update(X_spinner, Y_spinner, "Record JPG", GRAPHS_record_JPG, 0, 1, 1));
+  
+    save_info_node = int(MySpinner.update(X_spinner, Y_spinner, "Create data-Ascii", save_info_node, 0, 1, 1));
+    save_info_norm = int(MySpinner.update(X_spinner, Y_spinner, "Create stat-Ascii", save_info_norm, 0, 1, 1));
+    save_info_prob = int(MySpinner.update(X_spinner, Y_spinner, "Create prob-Ascii", save_info_prob, 0, 1, 1));  
+    
+  }    
   else {
 
   } 
