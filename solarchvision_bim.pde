@@ -1,5 +1,8 @@
 import processing.pdf.*;
 
+
+
+
 float Field_Image_Power = 2.0; // 1/2/3
 
 float GlobalAlbedo = 0; // 0-100
@@ -29,6 +32,8 @@ String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMA
 String ENSEMBLE_directory = "C:/SOLARCHVISION_2015/Input/WeatherForecast/FORECAST_NAEFS";
 
 String OBSERVED_directory = "C:/SOLARCHVISION_2015/Input/WeatherRealTime/OBSERVATION_SWOB";
+
+
 
 int _YEAR = year(); 
 int _MONTH = month();
@@ -670,6 +675,11 @@ int ROLLOUT_include = 1;
 
 
 
+float message_size = w_pixel / 40.0;
+
+
+
+
 float CAM_x, CAM_y, CAM_z;
 
 
@@ -756,7 +766,6 @@ void SOLARCHVISION_update_models (int Step) {
 }
 
 
-float message_size = w_pixel / 40.0;
 
 int last_initializationStep = 0;
 
@@ -769,7 +778,7 @@ void draw () {
     background(223);
 
     SOLARCHVISION_update_folders();
-    LoadFontStyle();
+    ResetFontStyle();
 
     float cr;
 
@@ -1205,7 +1214,15 @@ void draw () {
     }
     ROLLOUT_Update = 0;
 
-    
+
+    if (GRAPHS_include == 1) {
+      if (GRAPHS_Update == 1) {
+        
+        SOLARCHVISION_draw_GRAPHS();
+        
+      }
+    }
+    GRAPHS_Update = 0;    
 
     if (WORLD_include == 1) {
       if (WORLD_Update == 1) {
@@ -1225,14 +1242,7 @@ void draw () {
     }
     WIN3D_Update = 0;
 
-    if (GRAPHS_include == 1) {
-      if (GRAPHS_Update == 1) {
-        
-        SOLARCHVISION_draw_GRAPHS();
-        
-      }
-    }
-    GRAPHS_Update = 0;
+
 
     noLoop();
   }
@@ -1544,7 +1554,7 @@ void SOLARCHVISION_draw_GRAPHS () {
     }
   }
   else {
-    off_screen = 0;
+    //off_screen = 0; // to avoid overlaying other windows <<<<<<<<<<<<<<<
   }
   
   if (GRAPHS_Update != 0) {
@@ -1582,7 +1592,7 @@ void SOLARCHVISION_draw_GRAPHS () {
   
     Diagrams_strokeJoin(ROUND); 
     
-    //Diagrams_textFont(createFont("Arial Narrow", 36)); 
+    Diagrams_textFont(SOLARCHVISION_font1);
     
     Diagrams_strokeWeight(0);
     
@@ -8418,7 +8428,11 @@ void GRAPHS_keyPressed (KeyEvent e) {
           case 122 : develop_option = 11; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
           case 123 : develop_option = 12; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
           */
-          
+
+          case 112 : impacts_source = databaseNumber_ENSEMBLE; GRAPHS_Update = 1; break;
+          case 113 : impacts_source = databaseNumber_OBSERVED; GRAPHS_Update = 1; break;
+          case 114 : impacts_source = databaseNumber_CLIMATE_WY2; GRAPHS_Update = 1; break;
+          case 115 : impacts_source = databaseNumber_CLIMATE_EPW; GRAPHS_Update = 1; break;          
 
           /*
           case 115 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 6)) || (plot_impacts == 7)) plot_impacts = 6;
@@ -9456,10 +9470,6 @@ void WIN3D_keyPressed (KeyEvent e) {
 
 
 
-        case 'F' :LoadFontStyle(); WIN3D_Update = 1; break;
-        case 'f' :LoadFontStyle(); WIN3D_Update = 1; break;
-        
-        
         case 'x' :SOLARCHVISION_export_objects(); WIN3D_Update = 1; break;
         case 'X' :SOLARCHVISION_export_objects(); WIN3D_Update = 1; break;
         
@@ -9583,6 +9593,20 @@ void keyPressed (KeyEvent e) {
       }
       else {
         switch(key) {
+          
+          case 'f' :
+            ResetFontStyle();     
+            WORLD_Update = 1;
+            WIN3D_Update = 1; 
+            GRAPHS_Update = 1;
+            break;
+
+          case 'F' :
+            ResetFontStyle();     
+            WORLD_Update = 1;
+            WIN3D_Update = 1; 
+            GRAPHS_Update = 1;
+            break;                         
         }
       }    
     }
@@ -9605,10 +9629,7 @@ void keyPressed (KeyEvent e) {
     if ((e.isAltDown() != true) && (e.isControlDown() != true) && (e.isShiftDown() != true)) {
       if (key == CODED) { 
         switch(key) {
-          case 112 : impacts_source = databaseNumber_ENSEMBLE; GRAPHS_Update = 1; break;
-          case 113 : impacts_source = databaseNumber_OBSERVED; GRAPHS_Update = 1; break;
-          case 114 : impacts_source = databaseNumber_CLIMATE_WY2; GRAPHS_Update = 1; break;
-          case 115 : impacts_source = databaseNumber_CLIMATE_EPW; GRAPHS_Update = 1; break;
+
         } 
       }   
     }
@@ -9619,15 +9640,28 @@ void keyPressed (KeyEvent e) {
         switch(key) {
           
           case 's' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; 
-                    //SOLARCHVISION_update_station(0); GRAPHS_Update = 1; WIN3D_Update = 1;
+                    //SOLARCHVISION_update_station(0); 
+                    WORLD_Update = 1;
+                    WIN3D_Update = 1; 
+                    GRAPHS_Update = 1;
+                    ROLLOUT_Update = 1;
+
                     last_initializationStep = 8; 
                     frameCount = last_initializationStep; loop(); 
+                    
                     break;
           case 'S' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; 
-                    //SOLARCHVISION_update_station(0); GRAPHS_Update = 1; WIN3D_Update = 1;
+                    //SOLARCHVISION_update_station(0); 
+                    WORLD_Update = 1;
+                    WIN3D_Update = 1; 
+                    GRAPHS_Update = 1;
+                    ROLLOUT_Update = 1;
+                    
                     last_initializationStep = 8; 
                     frameCount = last_initializationStep; loop();
-                    break;          
+                    break;         
+                   
+               
         }
       }  
     }      
@@ -9746,25 +9780,25 @@ float SOLARCHVISION_DayTime (float Latitude, float DateAngle) {
 }
 
 
+PFont SOLARCHVISION_font1 = createFont("MS Sans Serif", 36, true);
 
+/*
+"MS Sans Serif"
+"Microsoft Sans Serif"
+"Arial Narrow"
+"Arial"
+"Times New Roman"
+"Calibri"
+"Cambria"
+"Georgia"
+"Courier New"
+"Franklin Gothic Medium"
+"BankGothic Md BT"
+*/
 
-void LoadFontStyle () {
+void ResetFontStyle () {
   
-  int _size = 36;
-
-  textFont(createFont("MS Sans Serif", _size, true));
-
-  //textFont(createFont("MS Sans Serif", _size));
-  //textFont(createFont("Microsoft Sans Serif", _size));
-  //textFont(createFont("Arial Narrow", _size));
-  //textFont(createFont("Arial", _size));
-  //textFont(createFont("Times New Roman", _size));
-  //textFont(createFont("Calibri", _size));
-  //textFont(createFont("Cambria", _size));
-  //textFont(createFont("Georgia", _size));
-  //textFont(createFont("Courier New", _size));
-  //textFont(createFont("Franklin Gothic Medium", _size));
-  //textFont(createFont("BankGothic Md BT", _size));
+  textFont(SOLARCHVISION_font1);
 
 }
 
