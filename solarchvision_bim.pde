@@ -459,6 +459,8 @@ int pre_Load_CLIMATE_EPW;
 int pre_Load_CLIMATE_WY2;
 int pre_Load_ENSEMBLE;
 int pre_Load_OBSERVED;     
+int pre_WORLD_VIEW_Auto;
+int pre_WORLD_VIEW_Number;
 float pre_LocationLatitude;
 float pre_LocationLongitude;
 float pre_LocationElevation;
@@ -467,6 +469,7 @@ int pre_Display_LAND;
 int pre_Skip_LAND_Center;
 int pre_Load_URBAN;
 int pre_Display_URBAN;
+
 
 
 int GRAPHS_setup = 100; //4; //12; //13;
@@ -637,6 +640,7 @@ int WORLD_Update = 1;
 int WORLD_include = 1;
 
 int WORLD_VIEW_Number = 0;
+int WORLD_VIEW_Auto = 1;
 
 String[][] WORLD_VIEW_Name;
 float[][] WORLD_VIEW_BoundariesX;
@@ -1137,6 +1141,9 @@ void draw () {
         pre_Load_CLIMATE_WY2 = Load_CLIMATE_WY2;
         pre_Load_ENSEMBLE = Load_ENSEMBLE;
         pre_Load_OBSERVED = Load_OBSERVED;       
+
+        pre_WORLD_VIEW_Auto = WORLD_VIEW_Auto;        
+        pre_WORLD_VIEW_Number = WORLD_VIEW_Number;
         
         pre_LocationLatitude = LocationLatitude;
         pre_LocationLongitude = LocationLongitude;
@@ -1148,6 +1155,8 @@ void draw () {
         
         pre_Load_URBAN = Load_URBAN;
         pre_Display_URBAN = Display_URBAN;
+        
+
 
 
        
@@ -1176,6 +1185,14 @@ void draw () {
         if (pre_Load_CLIMATE_WY2 != Load_CLIMATE_WY2) SOLARCHVISION_try_update_CLIMATE_WY2();
         if (pre_Load_OBSERVED != Load_OBSERVED) SOLARCHVISION_try_update_observed();
         if (pre_Load_ENSEMBLE != Load_ENSEMBLE) SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+
+        if (pre_WORLD_VIEW_Auto != WORLD_VIEW_Auto) {
+          WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
+        }
+        
+        if (pre_WORLD_VIEW_Number != WORLD_VIEW_Number) {
+          WORLD_Update = 1; 
+        }        
 
         if ((pre_LocationLatitude != LocationLatitude) || (pre_LocationLongitude != LocationLongitude)) {
 
@@ -1209,10 +1226,15 @@ void draw () {
         if (pre_Display_URBAN != Display_URBAN) {
           WIN3D_Update = 1;
         }        
+
+
+
             
         if (GRAPHS_setup != preGRAPHS_setup) update_impacts = 1;
         if (impacts_source != pre_impacts_source) update_impacts = 1; 
-        if (GRAPHS_record_PDF == 1) update_impacts = 1;         
+        if (GRAPHS_record_PDF == 1) update_impacts = 1;
+
+        
             
       }
     }
@@ -1248,7 +1270,7 @@ void draw () {
 
 
 
-    noLoop();
+    //noLoop(); // <<<<<<<<<<<<
   }
 } 
 
@@ -9908,16 +9930,19 @@ void SOLARCHVISION_LoadWorldImages () {
 }
 
 int FindGoodViewport (float pointLongitude, float pointLatitude) {
-  int return_VIEWPORT = 0;
+  int return_VIEWPORT = WORLD_VIEW_Number;
   
-  float d = FLOAT_undefined;
-  for (int i = 0; i < number_of_WORLD_viewports; i++) {
-    if (isInside(pointLongitude, pointLatitude, WORLD_VIEW_BoundariesX[i][0], WORLD_VIEW_BoundariesY[i][0], WORLD_VIEW_BoundariesX[i][1], WORLD_VIEW_BoundariesY[i][1]) == 1) {
-      float di = dist(WORLD_VIEW_BoundariesX[i][0], WORLD_VIEW_BoundariesY[i][0], WORLD_VIEW_BoundariesX[i][1], WORLD_VIEW_BoundariesY[i][1]);
-      
-      if (d > di) {
-        d = di;
-        return_VIEWPORT = i;
+  if (WORLD_VIEW_Auto == 1) {
+  
+    float d = FLOAT_undefined;
+    for (int i = 0; i < number_of_WORLD_viewports; i++) {
+      if (isInside(pointLongitude, pointLatitude, WORLD_VIEW_BoundariesX[i][0], WORLD_VIEW_BoundariesY[i][0], WORLD_VIEW_BoundariesX[i][1], WORLD_VIEW_BoundariesY[i][1]) == 1) {
+        float di = dist(WORLD_VIEW_BoundariesX[i][0], WORLD_VIEW_BoundariesY[i][0], WORLD_VIEW_BoundariesX[i][1], WORLD_VIEW_BoundariesY[i][1]);
+        
+        if (d > di) {
+          d = di;
+          return_VIEWPORT = i;
+        }
       }
     }
   }
@@ -13799,8 +13824,12 @@ class SOLARCHVISION_Spinner {
     float cx, cy, cr;
     float w1, w2, h, o, t_o; 
     
-    w1 = 32.5 * ROLLOUT_S_View;
-    w2 = 142.5 * ROLLOUT_S_View;
+    //w1 = 32.5 * ROLLOUT_S_View;
+    //w2 = 142.5 * ROLLOUT_S_View;
+    
+    w1 = 62.5 * ROLLOUT_S_View;
+    w2 = 150 * ROLLOUT_S_View;
+    
     h = 16 * ROLLOUT_S_View;
     o = 2 * ROLLOUT_S_View;
     t_o = h * ROLLOUT_S_View / 8.0;
@@ -13934,11 +13963,15 @@ void SOLARCHVISION_draw_ROLLOUT () {
   X_spinner = ROLLOUT_CX_View;
   Y_spinner = ROLLOUT_CY_View;
   
-  X_spinner += 185 * ROLLOUT_S_View;
+  X_spinner += 225 * ROLLOUT_S_View;
   Y_spinner += 65 * ROLLOUT_S_View;
 
 
   if (ROLLOUT_parent == 0) { // Location & Data
+
+    WORLD_VIEW_Auto = int(MySpinner.update(X_spinner, Y_spinner, "Map Auto Fit", WORLD_VIEW_Auto, 0, 1, 1));
+    WORLD_VIEW_Number = int(MySpinner.update(X_spinner, Y_spinner, "Map Viewport", WORLD_VIEW_Number, 0, number_of_WORLD_viewports - 1, 1));
+  
     STATION_NUMBER = int(MySpinner.update(X_spinner, Y_spinner, "Station", STATION_NUMBER, 0, DEFINED_STATIONS.length - 1, 1));
     
     LocationLatitude = MySpinner.update(X_spinner, Y_spinner, "Latitude", LocationLatitude, -90, 90, 0.1);
