@@ -141,6 +141,10 @@ float LocationElevation;
 float Delta_NOON;
 
 
+float LocationLatitude_step = 0.1;
+float LocationLongitude_step = 0.1;
+float LocationElevation_step = 1.0;
+
 int save_frame_number = 0;
 int frame_index_number = 0;
 
@@ -677,9 +681,9 @@ int ROLLOUT_include = 1;
 
 float MESSAGE_S_View = w_pixel / 40.0;
 int MESSAGE_CX_View = 0;
-int MESSAGE_CY_View = int(1 * h_pixel - MESSAGE_S_View);
+int MESSAGE_CY_View = int(1 * h_pixel - 0.75 * MESSAGE_S_View);
 int MESSAGE_X_View = 2 * w_pixel + ROLLOUT_X_View;
-int MESSAGE_Y_View = int(2 * MESSAGE_S_View);
+int MESSAGE_Y_View = int(1.5 * MESSAGE_S_View);
 
 
 
@@ -9783,7 +9787,6 @@ float SOLARCHVISION_Sunrise (float Latitude, float DateAngle) {
   }
   else a = acos_ang(q) / 15.0;
   
-  
   return (a - EquationOfTime(DateAngle));
 }
 
@@ -13795,6 +13798,25 @@ void mouseClicked () {
     X_clicked = mouseX;
     Y_clicked = mouseY;
     
+    if (WORLD_include == 1) {
+      if (isInside(X_clicked, Y_clicked, WORLD_CX_View, WORLD_CY_View, WORLD_CX_View + WORLD_X_View, WORLD_CY_View + WORLD_Y_View) == 1) {
+  
+        float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
+        float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
+  
+        float WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
+        float WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;
+  
+        float mouse_lon = 360.0 * ((mouseX - WORLD_CX_View) * WORLD_VIEW_ScaleX / WORLD_X_View - 0.5) + WORLD_VIEW_OffsetX;
+        float mouse_lat = -180.0 * ((mouseY - WORLD_CY_View) * WORLD_VIEW_ScaleY / WORLD_Y_View - 0.5) + WORLD_VIEW_OffsetY;
+        
+        LocationLatitude = mouse_lat;
+        LocationLongitude = mouse_lon;
+        
+        WORLD_Update = 1;
+      } 
+    }
+    
     ROLLOUT_Update = 1;
     
     redraw();
@@ -13849,32 +13871,45 @@ class SOLARCHVISION_Spinner {
     triangle(cx + cr * cos_ang(270), cy + 0.75 * cr * sin_ang(270), cx + 0.75 * cr * cos_ang(30), cy + 0.75 * cr * sin_ang(30), cx + 0.75 * cr * cos_ang(150), cy + 0.75 * cr * sin_ang(150));
     
     if (isInside(X_clicked, Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr) == 1) {
-      if (stp_v < 0) {
-        new_value *= abs(stp_v); 
-      }
-      else { 
-        new_value += abs(stp_v);
-      }
+      if (mouseButton == LEFT) {
       
-      GRAPHS_Update = 1;
+        if (stp_v < 0) {
+          new_value *= abs(stp_v); 
+        }
+        else { 
+          new_value += abs(stp_v);
+        }
+      }
+      else if (mouseButton == RIGHT) {
+        
+        new_value = max_v;
+      }
     }
     
     cy += 2 * cr;
     triangle(cx + cr * cos_ang(90), cy + 0.75 * cr * sin_ang(90), cx + 0.75 * cr * cos_ang(210), cy + 0.75 * cr * sin_ang(210), cx + 0.75 * cr * cos_ang(330), cy + 0.75 * cr * sin_ang(330));
 
     if (isInside(X_clicked, Y_clicked, cx - cr, cy - cr, cx + cr, cy + cr) == 1) {
-      if (stp_v < 0) {
-        new_value /= abs(stp_v); 
-      }
-      else { 
-        new_value -= abs(stp_v);
-      }
       
-      GRAPHS_Update = 1;
+      if (mouseButton == LEFT) {
+      
+        if (stp_v < 0) {
+          new_value /= abs(stp_v); 
+        }
+        else { 
+          new_value -= abs(stp_v);
+        }
+      }
+      else if (mouseButton == RIGHT) {
+        
+        new_value = min_v;
+      }
     }
 
     if (new_value < min_v) new_value = max_v; 
     if (new_value > max_v) new_value = min_v; 
+    
+    if (new_value != v) GRAPHS_Update = 1; // ???
     
 
     strokeWeight(0); 
@@ -13973,10 +14008,14 @@ void SOLARCHVISION_draw_ROLLOUT () {
     WORLD_VIEW_Number = int(MySpinner.update(X_spinner, Y_spinner, "Map Viewport", WORLD_VIEW_Number, 0, number_of_WORLD_viewports - 1, 1));
   
     STATION_NUMBER = int(MySpinner.update(X_spinner, Y_spinner, "Station", STATION_NUMBER, 0, DEFINED_STATIONS.length - 1, 1));
+
+    LocationLatitude = MySpinner.update(X_spinner, Y_spinner, "Latitude", LocationLatitude, -85, 85, LocationLatitude_step);
+    LocationLongitude = MySpinner.update(X_spinner, Y_spinner, "Longitude", LocationLongitude, -180, 180, LocationLongitude_step);
+    LocationElevation = MySpinner.update(X_spinner, Y_spinner, "Elevation", LocationElevation, -100, 8000, LocationElevation_step);
     
-    LocationLatitude = MySpinner.update(X_spinner, Y_spinner, "Latitude", LocationLatitude, -90, 90, 0.1);
-    LocationLongitude = MySpinner.update(X_spinner, Y_spinner, "Longitude", LocationLongitude, -180, 180, 0.1);
-    LocationElevation = int(MySpinner.update(X_spinner, Y_spinner, "Elevation", LocationElevation, -100, 8000, 1.0));
+    LocationLatitude_step = MySpinner.update(X_spinner, Y_spinner, "Latitude_step", LocationLatitude_step, 0.001, 10, -pow(2.0, (1.0 / 2.0)));
+    LocationLongitude_step = MySpinner.update(X_spinner, Y_spinner, "Longitude_step", LocationLongitude_step, 0.001, 10, -pow(2.0, (1.0 / 2.0)));
+    LocationElevation_step = MySpinner.update(X_spinner, Y_spinner, "Elevation_step", LocationElevation_step, 0.125, 1024, -pow(2.0, (1.0 / 2.0)));
 
     Load_CLIMATE_EPW = int(MySpinner.update(X_spinner, Y_spinner, "Load_CLIMATE_EPW" , Load_CLIMATE_EPW, 0, 1, 1));
     Load_CLIMATE_WY2 = int(MySpinner.update(X_spinner, Y_spinner, "Load_CLIMATE_WY2" , Load_CLIMATE_WY2, 0, 1, 1));
@@ -14022,23 +14061,23 @@ void SOLARCHVISION_draw_ROLLOUT () {
     Sample_Year = int(MySpinner.update(X_spinner, Y_spinner, "Single year" , Sample_Year, 1953, 2005, 1));    
   }  
   else if (ROLLOUT_parent == 3) { // Post-Processing
-
-    Climatic_solar_model = int(MySpinner.update(X_spinner, Y_spinner, "Climatic solar model", Climatic_solar_model, 0, 1, 1));
-    Climatic_weather_model = int(MySpinner.update(X_spinner, Y_spinner, "Climatic weather model", Climatic_weather_model, 0, 2, 1));    
+  
+    update_impacts = int(MySpinner.update(X_spinner, Y_spinner, "Update impacts", update_impacts, 0, 1, 1));
       
-    impacts_source = int(MySpinner.update(X_spinner, Y_spinner, "Draw climate/forecast/obs.", impacts_source, 0, 3, 1));
+    impacts_source = int(MySpinner.update(X_spinner, Y_spinner, "Impacts Source", impacts_source, 0, 3, 1));
     impact_layer = int(MySpinner.update(X_spinner, Y_spinner, "Impact Min/50%/Max", impact_layer, 0, 8, 1));
     
-    update_impacts = int(MySpinner.update(X_spinner, Y_spinner, "Update impacts", update_impacts, 0, 1, 1));
-  
     develop_option = int(MySpinner.update(X_spinner, Y_spinner, "Develop layer" , develop_option, 0, 12, 1));
     develop_per_day = int(MySpinner.update(X_spinner, Y_spinner, "Dev. per day option" , develop_per_day, 0, 3, 1));
   
     join_hour_numbers = int(MySpinner.update(X_spinner, Y_spinner, "Trend period hours", join_hour_numbers, 1, 24 * 16, 1));
     join_type = int(MySpinner.update(X_spinner, Y_spinner, "Weighted/equal trend", join_type, -1, 1, 2));
   
+    Climatic_solar_model = int(MySpinner.update(X_spinner, Y_spinner, "Climatic solar model", Climatic_solar_model, 0, 1, 1));
+    Climatic_weather_model = int(MySpinner.update(X_spinner, Y_spinner, "Climatic weather model", Climatic_weather_model, 0, 2, 1));
+
     Angle_inclination = int(MySpinner.update(X_spinner, Y_spinner, "Inclination angle", Angle_inclination, 0, 90, 5));
-    Angle_orientation = int(MySpinner.update(X_spinner, Y_spinner, "Orientation angle", Angle_orientation, 0, 360, 15));    
+    Angle_orientation = int(MySpinner.update(X_spinner, Y_spinner, "Orientation angle", Angle_orientation, 0, 360, 15));      
   }  
   else if (ROLLOUT_parent == 4) { // Graph Options
 
