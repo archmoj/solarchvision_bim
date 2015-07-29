@@ -1,8 +1,5 @@
 import processing.pdf.*;
 
-
-
-
 float Field_Image_Power = 2.0; // 1/2/3
 
 float GlobalAlbedo = 0; // 0-100
@@ -674,8 +671,11 @@ int ROLLOUT_Update = 1;
 int ROLLOUT_include = 1;
 
 
-
-float message_size = w_pixel / 40.0;
+float MESSAGE_S_View = w_pixel / 40.0;
+int MESSAGE_CX_View = 0;
+int MESSAGE_CY_View = int(1 * h_pixel - MESSAGE_S_View);
+int MESSAGE_X_View = 2 * w_pixel + ROLLOUT_X_View;
+int MESSAGE_Y_View = int(2 * MESSAGE_S_View);
 
 
 
@@ -685,8 +685,7 @@ float CAM_x, CAM_y, CAM_z;
 
 void setup () {
 
-  //size(2 * w_pixel, 2 * h_pixel, P2D);
-  size(2 * w_pixel + h_pixel, 2 * h_pixel, P2D);
+  size(2 * w_pixel + ROLLOUT_X_View, 2 * h_pixel, P2D);
 
   _DATE = (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   //if (_HOUR >= 12) _DATE += 0.5;   
@@ -773,6 +772,8 @@ void draw () {
   
   //println("frameCount:", frameCount);
 
+
+
   if (frameCount == 1) {
 
     background(223);
@@ -785,7 +786,7 @@ void draw () {
     cr = w_pixel / 4.0;
     PImage SOLARCHVISION_logo = loadImage(BackgroundFolder + "/" + "SOLARCHVISION.jpg");
     imageMode(CENTER);
-    image(SOLARCHVISION_logo, 0.5 * width, 0.5 * height - 0.75 * message_size - cr + (0.075 * cr), 3.05 * cr, 3.05 * cr);
+    image(SOLARCHVISION_logo, 0.5 * width, 0.5 * height - 0.75 * MESSAGE_S_View - cr + (0.075 * cr), 3.05 * cr, 3.05 * cr);
     imageMode(CORNER);
 
     strokeWeight(1);
@@ -798,291 +799,290 @@ void draw () {
     strokeWeight(0);
     stroke(191);
     fill(191);    
-    ellipse(0.2 * width, 0.5 * height - 0.75 * message_size - cr, 2 * cr, 2 * cr);
+    ellipse(0.2 * width, 0.5 * height - 0.75 * MESSAGE_S_View - cr, 2 * cr, 2 * cr);
     strokeWeight(1);
     stroke(255);
     noFill();    
-    SOLARCHVISION_draw_logo(0.2 * width, 0.5 * height - 0.75 * message_size - cr, 0, cr, 1);
+    SOLARCHVISION_draw_logo(0.2 * width, 0.5 * height - 0.75 * MESSAGE_S_View - cr, 0, cr, 1);
     strokeWeight(2);
     stroke(0);
     noFill();    
-    ellipse(0.2 * width, 0.5 * height - 0.75 * message_size - cr, 2 * cr, 2 * cr);
+    ellipse(0.2 * width, 0.5 * height - 0.75 * MESSAGE_S_View - cr, 2 * cr, 2 * cr);
     
     strokeWeight(1);
     stroke(127);
     noFill();  
-    //SOLARCHVISION_draw_logo(0.5 * width, 0.5 * height - 0.75 * message_size - cr, 0, cr, 0);
+    //SOLARCHVISION_draw_logo(0.5 * width, 0.5 * height - 0.75 * MESSAGE_S_View - cr, 0, cr, 0);
     strokeWeight(2);
     stroke(0);
     noFill();    
-    ellipse(0.5 * width, 0.5 * height - 0.75 * message_size - cr, 2 * cr, 2 * cr);
+    ellipse(0.5 * width, 0.5 * height - 0.75 * MESSAGE_S_View - cr, 2 * cr, 2 * cr);
 
     strokeWeight(0);
     stroke(191);
     fill(191);    
-    ellipse(0.8 * width, 0.5 * height - 0.75 * message_size - cr, 2 * cr, 2 * cr);    
+    ellipse(0.8 * width, 0.5 * height - 0.75 * MESSAGE_S_View - cr, 2 * cr, 2 * cr);    
     strokeWeight(1);
     stroke(255);
     noFill();  
-    SOLARCHVISION_draw_logo(0.8 * width, 0.5 * height - 0.75 * message_size - cr, 0, cr, -1);
+    SOLARCHVISION_draw_logo(0.8 * width, 0.5 * height - 0.75 * MESSAGE_S_View - cr, 0, cr, -1);
     strokeWeight(2);
     stroke(0);
     noFill();    
-    ellipse(0.8 * width, 0.5 * height - 0.75 * message_size - cr, 2 * cr, 2 * cr);
+    ellipse(0.8 * width, 0.5 * height - 0.75 * MESSAGE_S_View - cr, 2 * cr, 2 * cr);
     
     strokeWeight(0);
 
     stroke(255);
     fill(255);
     textAlign(CENTER, CENTER); 
-    textSize(3 * message_size);
+    textSize(3 * MESSAGE_S_View);
     text("SOLARCHVISION model integrations 2015", 0.5 * width, 0.05 * height); 
 
     stroke(0);
     fill(0);
-    textSize(message_size);
+    textAlign(CENTER, CENTER); 
+    textSize(MESSAGE_S_View);
     text("Raz, Mehr, Mehraz solarch studio\n1998-2015\nAuthor: Mojtaba Samimi\nwww.solarchvision.com", 0.5 * width, 0.75 * height);
 
-    textSize(message_size);
-    
-      
-    
+    textAlign(CENTER, CENTER); 
+    textSize(MESSAGE_S_View);
   }  
   else if (frameCount == 2) {
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_LoadWorldImages", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_LoadWorldImages", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 3) {
     SOLARCHVISION_LoadWorldImages();
 
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_LoadObject2DImages", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_LoadObject2DImages", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 4) {
     SOLARCHVISION_LoadObject2DImages();
     
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_Calendar", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_Calendar", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 5) {
     SOLARCHVISION_Calendar(); 
 
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_getSWOB_Coordinates", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_getSWOB_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 6) {
     SOLARCHVISION_getSWOB_Coordinates(); 
     
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_getNAEFS_Coordinates", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_getNAEFS_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 7) {
     SOLARCHVISION_getNAEFS_Coordinates(); 
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_getCWEEDS_Coordinates", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_getCWEEDS_Coordinates", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 8) {
     SOLARCHVISION_getCWEEDS_Coordinates();  
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_update_date", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_update_date", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 9) {
     SOLARCHVISION_update_date(); 
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_update_station(start)", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_update_station(start)", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 10) {
     SOLARCHVISION_update_station(1);
     
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_try_update_CLIMATE_EPW", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_try_update_CLIMATE_EPW", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 11) {
     SOLARCHVISION_update_station(2);
     
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_try_update_CLIMATE_WY2", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_try_update_CLIMATE_WY2", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 12) {
     SOLARCHVISION_update_station(3);
     
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_try_update_observed", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_try_update_observed", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 13) {
     SOLARCHVISION_update_station(4);
     
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_try_update_forecast", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_try_update_forecast", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 14) {
     SOLARCHVISION_update_station(5);
     
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_LoadLAND", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_LoadLAND", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 15) {
     SOLARCHVISION_update_station(6);
 
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_remove_2Dobjects", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_remove_2Dobjects", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 16) {
     SOLARCHVISION_update_station(7);
 
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_add_2Dobjects_onLand", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_add_2Dobjects_onLand", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 17) {
     SOLARCHVISION_update_station(8);
     
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_remove_3Dobjects", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_remove_3Dobjects", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 18) {
     SOLARCHVISION_update_models(1);
     
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_add_3Dobjects", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_add_3Dobjects", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 19) {
     SOLARCHVISION_update_models(2);
     
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_add_ParametricSurfaces", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_add_ParametricSurfaces", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 20) {
     SOLARCHVISION_update_models(3);
 
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_remove_ParametricGeometries", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_remove_ParametricGeometries", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 21) {
     SOLARCHVISION_update_models(4);    
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_add_ParametricGeometries", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_add_ParametricGeometries", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 22) {
     SOLARCHVISION_update_models(5);
     
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_calculate_ParametricGeometries_Field", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_calculate_ParametricGeometries_Field", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 23) {
     SOLARCHVISION_update_models(6);
     
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_build_SkySphere", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_build_SkySphere", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
     
   }    
   else if (frameCount == 24) {
@@ -1090,26 +1090,30 @@ void draw () {
     
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size); 
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
     
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_build_SolarProjection_array", 0.5 * width, 0.5 * height);
+    text("SOLARCHVISION_build_SolarProjection_array", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 25) {  
     SOLARCHVISION_build_SolarProjection_array();
      
     stroke(0);
     fill(0);
-    rect(0, 0.5 * height - 0.75 * message_size, width, 1.5 * message_size);
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
    
     stroke(255);
     fill(255);
-    text("Please wait while integrating the models.", 0.5 * width, 0.5 * height);
+    text("Please wait while integrating the models.", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+
+    MESSAGE_X_View = 2 * w_pixel;
 
     last_initializationStep = frameCount; 
   }
   else {
+    
+    
     
     CAM_x = 0;
     CAM_y = 0;
@@ -1419,7 +1423,7 @@ void SOLARCHVISION_draw_WORLD () {
       WORLD_Diagrams.stroke(0);
       WORLD_Diagrams.fill(0);      
       WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-      WORLD_Diagrams.textSize(message_size);
+      WORLD_Diagrams.textSize(MESSAGE_S_View);
       WORLD_Diagrams.text(STATION_SWOB_INFO[f][6], x_point, y_point);
     
     }
@@ -1476,7 +1480,7 @@ void SOLARCHVISION_draw_WORLD () {
       WORLD_Diagrams.stroke(0);
       WORLD_Diagrams.fill(0);      
       WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-      WORLD_Diagrams.textSize(message_size);
+      WORLD_Diagrams.textSize(MESSAGE_S_View);
       WORLD_Diagrams.text(STATION_NAEFS_INFO[f][0], x_point, y_point);
       //println(STATION_NAEFS_INFO[f][0]);
   }
@@ -1510,7 +1514,7 @@ void SOLARCHVISION_draw_WORLD () {
       WORLD_Diagrams.stroke(0);
       WORLD_Diagrams.fill(0);      
       WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-      WORLD_Diagrams.textSize(message_size);
+      WORLD_Diagrams.textSize(MESSAGE_S_View);
       WORLD_Diagrams.text(STATION_CWEEDS_INFO[f][0], x_point, y_point); 
     }
   } 
@@ -9647,8 +9651,10 @@ void keyPressed (KeyEvent e) {
                     ROLLOUT_Update = 1;
 
                     last_initializationStep = 8; 
-                    frameCount = last_initializationStep; loop(); 
-                    
+                    frameCount = last_initializationStep; 
+                    textAlign(CENTER, CENTER); 
+                    textSize(MESSAGE_S_View);                    
+                    loop(); 
                     break;
           case 'S' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; 
                     //SOLARCHVISION_update_station(0); 
@@ -9658,7 +9664,10 @@ void keyPressed (KeyEvent e) {
                     ROLLOUT_Update = 1;
                     
                     last_initializationStep = 8; 
-                    frameCount = last_initializationStep; loop();
+                    frameCount = last_initializationStep; 
+                    textAlign(CENTER, CENTER); 
+                    textSize(MESSAGE_S_View);                    
+                    loop(); 
                     break;         
                    
                
@@ -13930,7 +13939,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
 
   if (ROLLOUT_parent == 0) { // Location & Data
-    STATION_NUMBER = int(MySpinner.update(X_spinner, Y_spinner, "Station", STATION_NUMBER, 0, DEFINED_STATIONS.length, 1));
+    STATION_NUMBER = int(MySpinner.update(X_spinner, Y_spinner, "Station", STATION_NUMBER, 0, DEFINED_STATIONS.length - 1, 1));
     
     LocationLatitude = MySpinner.update(X_spinner, Y_spinner, "Latitude", LocationLatitude, -90, 90, 0.1);
     LocationLongitude = MySpinner.update(X_spinner, Y_spinner, "Longitude", LocationLongitude, -180, 180, 0.1);
