@@ -389,8 +389,6 @@ float X_spinner, Y_spinner;
 int COLOR_STYLE = 0;
 int n_COLOR_STYLE = 19; //6;
 
-float sky_scale = 900; //90;
-
 float obj_scale = 0.005;
 float obj_offset_x = 0.5;
 
@@ -420,6 +418,10 @@ String[] CLIMATE_WY2_Files = getfiles(CLIMATE_WY2_directory);
 String[] FORECAST_XML_Files = getfiles(ENSEMBLE_directory);
 String[] OBSERVED_XML_Files = getfiles(OBSERVED_directory);
 
+int MODEL3D_TESELATION = 0;
+
+int SKY3D_TESELATION = 2;
+float SKY3D_scale = 1000; 
 
 int Display_SUN3D = 1;
 int Display_SKY3D = 1;
@@ -479,6 +481,9 @@ int pre_Display_URBAN;
 int pre_Display_SUN3D;
 int pre_Display_SKY3D;
 
+float pre_SKY3D_scale;
+int pre_SKY3D_TESELATION;
+int pre_MODEL3D_TESELATION;
 
 int GRAPHS_setup = 100; //4; //12; //13;
 
@@ -627,7 +632,7 @@ int WIN3D_include = 1;
 int WIN3D_EDGES_SHOW = 1;
 int WIN3D_FACES_SHADE = 1;
 
-int MODEL3D_TESELATION = 0;
+
 
 float[] WIN3D_VerticesSolarEnergy;
 float[] WIN3D_VerticesSolarEffect;
@@ -1167,7 +1172,11 @@ void draw () {
         pre_Display_SUN3D = Display_SUN3D;
         pre_Display_SKY3D = Display_SKY3D;
         
+        pre_SKY3D_scale = SKY3D_scale;
 
+        pre_SKY3D_TESELATION = SKY3D_TESELATION;
+        
+        pre_MODEL3D_TESELATION = MODEL3D_TESELATION;
 
 
        
@@ -1246,6 +1255,17 @@ void draw () {
           WIN3D_Update = 1;
         }
 
+        if (pre_SKY3D_scale != SKY3D_scale) {
+          WIN3D_Update = 1;
+        }
+        
+        if (pre_SKY3D_TESELATION != SKY3D_TESELATION) {
+          WIN3D_Update = 1;
+        }
+        
+        if (pre_MODEL3D_TESELATION != MODEL3D_TESELATION) {
+          WIN3D_Update = 1;
+        }        
             
         if (GRAPHS_setup != preGRAPHS_setup) update_impacts = 1;
         if (impacts_source != pre_impacts_source) update_impacts = 1; 
@@ -1376,7 +1396,7 @@ void SOLARCHVISION_draw_WIN3D () {
   
   SOLARCHVISION_draw_SKY3D();
   
-  SOLARCHVISION_draw_SUN3D(0, 0, 0, 0.95 * sky_scale, LocationLatitude);
+  SOLARCHVISION_draw_SUN3D(0, 0, 0, 0.95 * SKY3D_scale, LocationLatitude);
   
   
 
@@ -11258,7 +11278,7 @@ void SOLARCHVISION_add_3Dobjects () {
   //add_PolygonHyper(0, 0, 0, 0,  10, 10, 4);
   //add_Polygon(3, 0, 0, 0, 50, 24);
 
-  add_RecursiveSphere(0, 0,0,0, 25, 4, 0);  
+  add_RecursiveSphere(7, 0,0,0, 25, 4, 0);  
   
 
   //SOLARCHVISION_add_urban();
@@ -11726,7 +11746,7 @@ void SOLARCHVISION_draw_SKY3D () {
         
         for (int j = 0; j < skyFaces[f].length; j++) {
           int vNo = skyFaces[f][j];
-          WIN3D_Diagrams.vertex(skyVertices[vNo][0] * sky_scale, -(skyVertices[vNo][1] * sky_scale), skyVertices[vNo][2] * sky_scale);
+          WIN3D_Diagrams.vertex(skyVertices[vNo][0] * SKY3D_scale, -(skyVertices[vNo][1] * SKY3D_scale), skyVertices[vNo][2] * SKY3D_scale);
         }    
         
         WIN3D_Diagrams.endShape(CLOSE);
@@ -11758,7 +11778,7 @@ void SOLARCHVISION_draw_SKY3D () {
         
         int TotalSubNo = 1;  
         //if (skyFaces_MAT[f] == 0) {
-          Teselation = MODEL3D_TESELATION;
+          Teselation = SKY3D_TESELATION;
           if (Teselation > 0) TotalSubNo = skyFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
         //}
     
@@ -11825,7 +11845,7 @@ void SOLARCHVISION_draw_SKY3D () {
               WIN3D_Diagrams.fill(223); 
             }
             
-            WIN3D_Diagrams.vertex(subFace[s][0] * sky_scale, -(subFace[s][1] * sky_scale), subFace[s][2] * sky_scale);
+            WIN3D_Diagrams.vertex(subFace[s][0] * SKY3D_scale, -(subFace[s][1] * SKY3D_scale), subFace[s][2] * SKY3D_scale);
     
           }
           
@@ -14330,7 +14350,10 @@ void SOLARCHVISION_draw_ROLLOUT () {
     Display_SUN3D = int(MySpinner.update(X_spinner, Y_spinner, "Display_SUN3D" , Display_SUN3D, 0, 1, 1));
     Display_SKY3D = int(MySpinner.update(X_spinner, Y_spinner, "Display_SKY3D" , Display_SKY3D, 0, 1, 1));
                 
-   
+    SKY3D_scale = MySpinner.update(X_spinner, Y_spinner, "SKY3D_scale" , SKY3D_scale, 250, 25000, -pow(2.0, (1.0 / 2.0)));
+    SKY3D_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, "SKY3D_TESELATION" , SKY3D_TESELATION, 0, 5, 1));
+    
+    MODEL3D_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, "MODEL3D_TESELATION" , MODEL3D_TESELATION, 0, 5, 1));
   }
   else if (ROLLOUT_parent == 1) { // Geometries & Space
     
