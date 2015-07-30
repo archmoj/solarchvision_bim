@@ -387,7 +387,7 @@ int GRAPHS_record_AUTO = 0;
 float X_spinner, Y_spinner;
 
 int COLOR_STYLE = 0;
-int n_COLOR_STYLE = 16; //6;
+int n_COLOR_STYLE = 18; //6;
 
 float sky_scale = 90; //900;
 
@@ -2740,7 +2740,7 @@ float[] SOLARCHVISION_DRYWCBD (float _variable) {
   
   float v;
   float[] COL = {255, 0, 0, 0};
-  if (_variable < -2.75) {
+  if (_variable <= -2.75) {
     COL[1] = 63;
     COL[2] = 0;
     COL[3] = 0;
@@ -2786,11 +2786,107 @@ float[] SOLARCHVISION_DRYWCBD (float _variable) {
     COL[2] = 0;
     COL[3] = 63;
   }
-  /*
-  float _r = COL[1];
-  COL[1] = COL[3];
-  COL[3] = _r;
-  */
+
+  return COL;
+}
+
+float[] SOLARCHVISION_DRYWCBDx3 (float _variable) {
+  //_variable *= 3;
+  _variable *= 2.75; // to maintain the ranges with normal DRYWCBD
+  
+  float v;
+  float[] COL = {255, 0, 0, 0};
+  if (_variable <= -3) {
+    COL[1] = 0;
+    COL[2] = 0;
+    COL[3] = 0;
+  }
+  else if (_variable < -2) {
+    v = (-(_variable + 2) * 255);
+    COL[1] = 255 - v;
+    COL[2] = 0;
+    COL[3] = 0;
+  }
+  else if (_variable < -1) {
+    v = (-(_variable + 1) * 255);
+    COL[1] = 255;
+    COL[2] = 255 - v;
+    COL[3] = 0;
+  }
+  else if (_variable < 0) {
+    v = (-_variable * 255);
+    COL[1] = 255;
+    COL[2] = 255;
+    COL[3] = 255 - v;
+  }
+  else if (_variable < 1) {
+    v = (_variable * 255);
+    COL[1] = 255 - v;
+    COL[2] = 255;
+    COL[3] = 255;
+  }
+  else if (_variable < 2) {
+    v = ((_variable - 1) * 255);
+    COL[1] = 0;
+    COL[2] = 255 - v;
+    COL[3] = 255;
+  }
+  else if (_variable < 2.75) {
+    v = ((_variable - 2) * 255);
+    COL[1] = 0;
+    COL[2] = 0;
+    COL[3] = 255 - v;
+  }
+  else {
+    COL[1] = 0;
+    COL[2] = 0;
+    COL[3] = 0;
+  }
+
+  return COL;
+}
+
+float[] SOLARCHVISION_DBCW(float _variable) {
+  _variable = 1 - _variable;
+  _variable *= -3;
+
+  float v;
+  float[] COL = {
+    255, 0, 0, 0
+  };
+  if (_variable < -3) {
+    COL[1] = 0;
+    COL[2] = 0;
+    COL[3] = 0;
+  } else if (_variable < -2) {
+    v = (-(_variable + 2) * 255);
+    COL[1] = 255 - v;
+    COL[2] = 0;
+    COL[3] = 0;
+  } else if (_variable < -1) {
+    v = (-(_variable + 1) * 255);
+    COL[1] = 255;
+    COL[2] = 255 - v;
+    COL[3] = 0;
+  } else if (_variable < 0) {
+    v = (-_variable * 255);
+    COL[1] = 255;
+    COL[2] = 255;
+    COL[3] = 255 - v;
+  } else {
+    COL[1] = 255;
+    COL[2] = 255;
+    COL[3] = 255;
+  }
+  
+  float r,g,b;
+  r = COL[3]; 
+  g = COL[2];
+  b = COL[1];
+  COL[1] = r;
+  COL[2] = g;
+  COL[3] = b;
+
   return COL;
 }
 
@@ -2804,6 +2900,20 @@ float[] GET_COLOR_STYLE (int COLOR_STYLE, float j) {
     c[2] = 0;
     c[3] = 0;
   }
+  else if (COLOR_STYLE == 17) {
+    float[] _COL = SOLARCHVISION_DRYWCBDx3(2.0 * (j - 0.5) * (2.0 / 2.75));
+    c[0] = 255;
+    c[1] = 255 - _COL[3];
+    c[2] = 255 - _COL[2];
+    c[3] = 255 - _COL[1]; 
+  }   
+  else if (COLOR_STYLE == 16) {
+    float[] _COL = SOLARCHVISION_DBCW(j);
+    c[0] = 255;
+    c[1] = _COL[1];
+    c[2] = _COL[2];
+    c[3] = _COL[3];
+  }   
   else if (COLOR_STYLE == 15) {
     float[] _COL = SOLARCHVISION_DRYW(j);
     c[0] = 255;
@@ -2890,14 +3000,14 @@ float[] GET_COLOR_STYLE (int COLOR_STYLE, float j) {
     c[3] = _COL[3];
   } 
   else if (COLOR_STYLE == 2) {
-    float[] _COL = SOLARCHVISION_DRYWCBD (2.0 * (j - 0.5) * (2.0 / 2.75));
+    float[] _COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5) * (2.0 / 2.75));
     c[0] = GRAPHS_O_scale;
     c[1] = _COL[1];
     c[2] = _COL[2];
     c[3] = _COL[3];
   }      
   else if (COLOR_STYLE == 1) {
-    float[] _COL = SOLARCHVISION_DRYWCBD (2.0 * (j - 0.5) * (2.0 / 2.75));
+    float[] _COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5) * (2.0 / 2.75));
     c[0] = 255;
     c[1] = _COL[1];
     c[2] = _COL[2];
@@ -2910,7 +3020,7 @@ float[] GET_COLOR_STYLE (int COLOR_STYLE, float j) {
     c[3] = 0;
   }
   else if (COLOR_STYLE == -1) {
-    float[] _COL = SOLARCHVISION_DRYWCBD (2.0 * (j - 0.5) * (2.0 / 2.75));
+    float[] _COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5) * (2.0 / 2.75));
     c[0] = 255;
     c[1] = 255 - _COL[3];
     c[2] = 255 - _COL[2];
@@ -11614,78 +11724,102 @@ void SOLARCHVISION_draw_SKY3D () {
       }
 
       else if (WIN3D_FACES_SHADE == 3) {
-        
+          
         int PAL_TYPE = 0; 
         int PAL_DIR = 1;
         
         if (Impact_TYPE == Impact_ACTIVE) {  
-          PAL_TYPE = 15; PAL_DIR = 1;
+          //PAL_TYPE = 15; PAL_DIR = 1;
+          PAL_TYPE = 16; PAL_DIR = 1;
           
         }
         if (Impact_TYPE == Impact_PASSIVE) {  
-          PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
+          //PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
+          //PAL_TYPE = 17; PAL_DIR = 1;
+          PAL_TYPE = 17; PAL_DIR = -1;
         }             
         
         float _Multiplier = 1; 
         if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; 
         if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02;            
   
+        int Teselation = 0;
+        
+        int TotalSubNo = 1;  
+        //if (skyFaces_MAT[f] == 0) {
+          Teselation = MODEL3D_TESELATION;
+          if (Teselation > 0) TotalSubNo = skyFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+        //}
     
-        WIN3D_Diagrams.beginShape();
-        
-        for (int s = 0; s < skyFaces[f].length; s++) {
-  
-          int s_next = (s + 1) % skyFaces[f].length;
-          int s_prev = (s + skyFaces[f].length - 1) % skyFaces[f].length;
-
-          PVector U = new PVector(skyVertices[skyFaces[f][s_next]][0] - skyVertices[skyFaces[f][s]][0], skyVertices[skyFaces[f][s_next]][1] - skyVertices[skyFaces[f][s]][1], skyVertices[s_next][2] - skyVertices[skyFaces[f][s]][2]);
-          PVector V = new PVector(skyVertices[skyFaces[f][s_prev]][0] - skyVertices[skyFaces[f][s]][0], skyVertices[skyFaces[f][s_prev]][1] - skyVertices[skyFaces[f][s]][1], skyVertices[s_prev][2] - skyVertices[skyFaces[f][s]][2]);
-          PVector UV = U.cross(V);
-          float[] W = {UV.x, UV.y, UV.z};
-          W = fn_normalize(W);
+        for (int n = 0; n < TotalSubNo; n++) {
           
-          float Alpha = asin_ang(W[2]);
-          float Beta = atan2_ang(W[1], W[0]) + 90;       
-          
-          int a = int((Alpha + 90) / stp_slp);
-          int b = int(Beta / stp_dir);
-          
-          if (a < 0) a += int(180 / stp_slp);
-          if (b < 0) b += int(360 / stp_dir);
-          if (a > int(180 / stp_slp)) a -= int(180 / stp_slp);
-          if (b > int(360 / stp_dir)) b -= int(360 / stp_dir);
-          
-          float _valuesSUM = LocationExposure[a][b];
-          
-          if (_valuesSUM < 0.9 * FLOAT_undefined) {
-          
-            float _u = 0;
-            
-            if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
-            if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
-            
-            if (PAL_DIR == -1) _u = 1 - _u;
-            if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-            if (PAL_DIR == 2) _u =  0.5 * _u;
-  
-            float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
-  
-            WIN3D_Diagrams.noStroke(); // <<<<<<<<<<<<
-  
-            WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+          float[][] base_Vertices = new float [skyFaces[f].length][3];
+          for (int j = 0; j < skyFaces[f].length; j++) {
+            int vNo = skyFaces[f][j];
+            base_Vertices[j][0] = skyVertices[vNo][0];
+            base_Vertices[j][1] = skyVertices[vNo][1];
+            base_Vertices[j][2] = skyVertices[vNo][2];
           }
-          else {
-           
-            WIN3D_Diagrams.fill(223); 
+          
+          float[][] subFace = getSubFace(base_Vertices, Teselation, n);
+          
+          for (int j = 0; j < subFace.length; j++) {
+            subFace[j] = fn_normalize(subFace[j]);
           }
-
-          int vNo = skyFaces[f][s];
-          WIN3D_Diagrams.vertex(skyVertices[vNo][0] * sky_scale, -(skyVertices[vNo][1] * sky_scale), skyVertices[vNo][2] * sky_scale);
-  
+       
+          WIN3D_Diagrams.beginShape();
+          
+          for (int s = 0; s < subFace.length; s++) {
+    
+            int s_next = (s + 1) % subFace.length;
+            int s_prev = (s + subFace.length - 1) % subFace.length;
+            
+            PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
+            PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
+            PVector UV = U.cross(V);
+            float[] W = {UV.x, UV.y, UV.z};
+            W = fn_normalize(W);
+            
+            float Alpha = asin_ang(W[2]);
+            float Beta = atan2_ang(W[1], W[0]) + 90;       
+            
+            int a = int((Alpha + 90) / stp_slp);
+            int b = int(Beta / stp_dir);
+            
+            if (a < 0) a += int(180 / stp_slp);
+            if (b < 0) b += int(360 / stp_dir);
+            if (a > int(180 / stp_slp)) a -= int(180 / stp_slp);
+            if (b > int(360 / stp_dir)) b -= int(360 / stp_dir);
+            
+            float _valuesSUM = LocationExposure[a][b];
+            
+            if (_valuesSUM < 0.9 * FLOAT_undefined) {
+            
+              float _u = 0;
+              
+              if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
+              if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
+              
+              if (PAL_DIR == -1) _u = 1 - _u;
+              if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+              if (PAL_DIR == 2) _u =  0.5 * _u;
+    
+              float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+    
+              WIN3D_Diagrams.noStroke(); // <<<<<<<<<<<<
+    
+              WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+            }
+            else {
+              WIN3D_Diagrams.fill(223); 
+            }
+            
+            WIN3D_Diagrams.vertex(subFace[s][0] * sky_scale, -(subFace[s][1] * sky_scale), subFace[s][2] * sky_scale);
+    
+          }
+          
+          WIN3D_Diagrams.endShape(CLOSE);
         }
-        
-        WIN3D_Diagrams.endShape(CLOSE);
-      
       }
   
     }
