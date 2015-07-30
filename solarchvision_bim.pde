@@ -602,7 +602,7 @@ void empty_Materials_DiffuseArea () {
 
                   
 int h_pixel = 325; 
-int w_pixel = int(h_pixel * 1.5);
+int w_pixel = int(h_pixel * 1.0); //int(h_pixel * 1.5);
 
 int WIN3D_CX_View = 0;
 int WIN3D_CY_View = h_pixel;
@@ -11279,8 +11279,8 @@ void SOLARCHVISION_add_3Dobjects () {
   //add_RecursiveSphere(7, 0,0,0, 25, 4, 0);  
   
   add_Mesh2(0, -100, -100, 0, 100, 100, 0);
-  add_Mesh2(0, -100, 0, -100, 100, 0, 100);
-  add_Mesh2(0, 0, -100, -100, 0, 100, 100);
+  //add_Mesh2(0, -100, 0, -100, 100, 0, 100);
+  //add_Mesh2(0, 0, -100, -100, 0, 100, 100);
 
   //SOLARCHVISION_add_urban();
   
@@ -14305,7 +14305,7 @@ void mouseClicked () {
       if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
   
         int Image_X = X_clicked - WIN3D_CX_View;
-        int Image_Y = Y_clicked - WIN3D_CY_View;
+        int Image_Y = Y_clicked - WIN3D_CY_View; // NOT SURE!    
         float max_RES = WIN3D_X_View; // ??
         
         float[] ray_start = {CAM_x, CAM_y, CAM_z};     
@@ -14359,7 +14359,7 @@ void mouseClicked () {
     
         //println("RIGHT:", nf(camera_right[0], 0,3), nf(camera_right[1], 0, 3), nf(camera_right[2], 0, 3));
         
-        float camera_zoom = 4; // ???????????
+        float camera_zoom = WIN3D_ZOOM_coordinate * 5; //400;//4; // ???????????
     
         ray_direction[0] = ray_end[0] - ray_start[0];
         ray_direction[1] = ray_end[1] - ray_start[1];
@@ -14371,9 +14371,9 @@ void mouseClicked () {
         ray_end[1] += camera_zoom * camera_right[1] * (Image_X / max_RES - 0.5);
         ray_end[2] += camera_zoom * camera_right[2] * (Image_X / max_RES - 0.5);
         
-        ray_end[0] += camera_zoom * camera_up[0] * (Image_Y / max_RES - 0.5);
-        ray_end[1] += camera_zoom * camera_up[1] * (Image_Y / max_RES - 0.5);
-        ray_end[2] += camera_zoom * camera_up[2] * (Image_Y / max_RES - 0.5);
+        ray_end[0] += camera_zoom * camera_up[0] * -(Image_Y / max_RES - 0.5);
+        ray_end[1] += camera_zoom * camera_up[1] * -(Image_Y / max_RES - 0.5);
+        ray_end[2] += camera_zoom * camera_up[2] * -(Image_Y / max_RES - 0.5);
     
         ray_direction[0] = ray_end[0] - ray_start[0];
         ray_direction[1] = ray_end[1] - ray_start[1];
@@ -14386,8 +14386,8 @@ void mouseClicked () {
         println(ray_start[0], ray_start[1], ray_start[2], ">>", ray_end[0], ray_end[1], ray_end[2], ">>", RxP[0], RxP[1], RxP[2]);
         
         if (RxP[4] > 0) {
-          float x = RxP[0];
-          float y = RxP[1];
+          float x = RxP[0]; 
+          float y = RxP[1]; 
           float z = RxP[2];                      
 
           float dx = 2;
