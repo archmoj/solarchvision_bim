@@ -13366,9 +13366,9 @@ PImage Field_Image = createImage(Field_RES1, Field_RES2, RGB);
 
 float Field_Multiplier = 1.0; //0.1; //10.0; 
 
-int display_Field_Image = 0; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
+int display_Field_Image = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
 
-float[] Field_Elevation = {0, 0, 0, 0};
+float[] Field_Elevation = {0, 1, 0, 0};
 float[] Field_Image_rotation = {0, 0, 0, 0};
 
 void SOLARCHVISION_calculate_ParametricGeometries_Field () {
@@ -14390,16 +14390,16 @@ void mouseClicked () {
           float y = RxP[1]; 
           float z = RxP[2];                      
 
-          float dx = 2;
-          float dy = 2;
-          float dz = 2;
+          float dx = 6 * (1 + int(random(4)));
+          float dy = 6 * (1 + int(random(4)));
+          float dz = 6 * (1 + int(random(4)));
           float t = 0;
           add_Box_Core(7, x,y,z, dx, dy, dz, t);
           ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, t)};
           SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
         }          
         
-        //SOLARCHVISION_calculate_ParametricGeometries_Field();
+        SOLARCHVISION_calculate_ParametricGeometries_Field();
         
         WIN3D_Update = 1;
       }       
