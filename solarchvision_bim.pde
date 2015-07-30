@@ -1098,7 +1098,7 @@ void draw () {
     
   }    
   else if (frameCount == 24) {
-    SOLARCHVISION_build_SkySphere(3);
+    SOLARCHVISION_build_SkySphere(3); 
     
     stroke(0);
     fill(0);
@@ -1367,17 +1367,18 @@ void SOLARCHVISION_draw_WIN3D () {
 
   WIN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
 
-  SOLARCHVISION_draw_SUN3D(0, 0, 0, 0.95 * sky_scale, LocationLatitude);
-  
-  SOLARCHVISION_draw_SKY3D();
-  
+
   SOLARCHVISION_draw_land();
   
   SOLARCHVISION_draw_field_image();
   
   SOLARCHVISION_draw_objects();
   
-
+  SOLARCHVISION_draw_SKY3D();
+  
+  SOLARCHVISION_draw_SUN3D(0, 0, 0, 0.95 * sky_scale, LocationLatitude);
+  
+  
 
   WIN3D_Diagrams.endDraw();
 
@@ -11574,38 +11575,113 @@ void SOLARCHVISION_draw_SKY3D () {
   
     for (int f = 1; f < skyFaces.length; f++) {
       
-      color c = color(191, 191, 255);
-  
-      if (WIN3D_EDGES_SHOW == 1) {
-        //WIN3D_Diagrams.stroke(0, 0, 0);
-        WIN3D_Diagrams.stroke(255, 255, 255);
-      }
-      else {
-        WIN3D_Diagrams.stroke(c);
-      }
-  
-      if (WIN3D_FACES_SHADE == 1) {
-        //WIN3D_Diagrams.fill(255, 255, 255);
-        WIN3D_Diagrams.noFill();
-      }
-      else {
-        WIN3D_Diagrams.fill(c);
-      }    
-  
+      if (WIN3D_FACES_SHADE != 3) {
+      
+        color c = color(191, 191, 255);
+    
+        if (WIN3D_EDGES_SHOW == 1) {
+          WIN3D_Diagrams.stroke(255, 255, 255);
+        }
+        else {
+          WIN3D_Diagrams.stroke(c);
+        }
+    
+        if (WIN3D_FACES_SHADE == 1) {
+          //WIN3D_Diagrams.fill(255, 255, 255);
+          WIN3D_Diagrams.noFill();
+        }
+        else {
+          WIN3D_Diagrams.fill(c);
+        }    
         
-      WIN3D_Diagrams.beginShape();
+        WIN3D_Diagrams.beginShape();
+        
+        for (int j = 0; j < skyFaces[f].length; j++) {
+          int vNo = skyFaces[f][j];
+          WIN3D_Diagrams.vertex(skyVertices[vNo][0] * sky_scale, -(skyVertices[vNo][1] * sky_scale), skyVertices[vNo][2] * sky_scale);
+        }    
+        
+        WIN3D_Diagrams.endShape(CLOSE);
+      }
+
+      else if (WIN3D_FACES_SHADE == 3) {
+        
+        int PAL_TYPE = 0; 
+        int PAL_DIR = 1;
+        
+        if (Impact_TYPE == Impact_ACTIVE) {  
+          PAL_TYPE = 15; PAL_DIR = 1;
+          
+        }
+        if (Impact_TYPE == Impact_PASSIVE) {  
+          PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
+        }             
+        
+        float _Multiplier = 1; 
+        if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; 
+        if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02;            
+  
+    
+        WIN3D_Diagrams.beginShape();
+        
+        for (int s = 0; s < skyFaces[f].length; s++) {
+  
+          int s_next = (s + 1) % skyFaces[f].length;
+          int s_prev = (s + skyFaces[f].length - 1) % skyFaces[f].length;
+          
+          PVector U = new PVector(skyVertices[skyFaces[f][s_next]][0] - skyVertices[skyFaces[f][s]][0], skyVertices[skyFaces[f][s_next]][1] - skyVertices[skyFaces[f][s]][1], skyVertices[s_next][2] - skyVertices[skyFaces[f][s]][2]);
+          PVector V = new PVector(skyVertices[skyFaces[f][s_prev]][0] - skyVertices[skyFaces[f][s]][0], skyVertices[skyFaces[f][s_prev]][1] - skyVertices[skyFaces[f][s]][1], skyVertices[s_prev][2] - skyVertices[skyFaces[f][s]][2]);
+          PVector UV = U.cross(V);
+          float[] W = {UV.x, UV.y, UV.z};
+          W = fn_normalize(W);
+          
+          float Alpha = asin_ang(W[2]);
+          float Beta = atan2_ang(W[1], W[0]) + 90;       
+          
+          int a = int((Alpha + 90) / stp_slp);
+          int b = int(Beta / stp_dir);
+          
+          if (a < 0) a += int(180 / stp_slp);
+          if (b < 0) b += int(360 / stp_dir);
+          if (a > int(180 / stp_slp)) a -= int(180 / stp_slp);
+          if (b > int(360 / stp_dir)) b -= int(360 / stp_dir);
+          
+          float _valuesSUM = LocationExposure[a][b];
+          
+          if (_valuesSUM < 0.9 * FLOAT_undefined) {
+          
+            float _u = 0;
+            
+            if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
+            if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
+            
+            if (PAL_DIR == -1) _u = 1 - _u;
+            if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+            if (PAL_DIR == 2) _u =  0.5 * _u;
+  
+            float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+  
+            WIN3D_Diagrams.noStroke(); // <<<<<<<<<<<<
+  
+            WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+          }
+          else {
+           
+            WIN3D_Diagrams.fill(223); 
+          }
+
+          int vNo = skyFaces[f][s];
+          WIN3D_Diagrams.vertex(skyVertices[vNo][0] * sky_scale, -(skyVertices[vNo][1] * sky_scale), skyVertices[vNo][2] * sky_scale);
+  
+        }
+        
+        WIN3D_Diagrams.endShape(CLOSE);
       
-      for (int j = 0; j < skyFaces[f].length; j++) {
-        int vNo = skyFaces[f][j];
-        WIN3D_Diagrams.vertex(skyVertices[vNo][0] * sky_scale, -(skyVertices[vNo][1] * sky_scale), skyVertices[vNo][2] * sky_scale);
-      }    
-      
-      WIN3D_Diagrams.endShape(CLOSE);
+      }
   
     }
   }
 }
-
 
 void SOLARCHVISION_draw_land () {
 
