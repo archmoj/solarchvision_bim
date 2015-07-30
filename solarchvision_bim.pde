@@ -389,7 +389,7 @@ float X_spinner, Y_spinner;
 int COLOR_STYLE = 0;
 int n_COLOR_STYLE = 16; //6;
 
-float sky_scale = 900; //90;
+float sky_scale = 90; //900;
 
 float obj_scale = 0.005;
 float obj_offset_x = 0.5;
@@ -422,7 +422,7 @@ String[] OBSERVED_XML_Files = getfiles(OBSERVED_directory);
 
 
 int Display_SUN3D = 1;
-int Display_SKY3D = 0;
+int Display_SKY3D = 1;
 
 int Load_LAND = 0;
 int Display_LAND = 1;
@@ -11628,7 +11628,7 @@ void SOLARCHVISION_draw_SKY3D () {
   
           int s_next = (s + 1) % skyFaces[f].length;
           int s_prev = (s + skyFaces[f].length - 1) % skyFaces[f].length;
-          
+
           PVector U = new PVector(skyVertices[skyFaces[f][s_next]][0] - skyVertices[skyFaces[f][s]][0], skyVertices[skyFaces[f][s_next]][1] - skyVertices[skyFaces[f][s]][1], skyVertices[s_next][2] - skyVertices[skyFaces[f][s]][2]);
           PVector V = new PVector(skyVertices[skyFaces[f][s_prev]][0] - skyVertices[skyFaces[f][s]][0], skyVertices[skyFaces[f][s_prev]][1] - skyVertices[skyFaces[f][s]][1], skyVertices[s_prev][2] - skyVertices[skyFaces[f][s]][2]);
           PVector UV = U.cross(V);
