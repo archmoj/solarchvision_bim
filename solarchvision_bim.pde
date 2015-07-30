@@ -768,10 +768,10 @@ void SOLARCHVISION_update_station (int Step) {
 void SOLARCHVISION_update_models (int Step) {
  
    if ((Step == 0) || (Step == 1)) SOLARCHVISION_remove_3Dobjects();
-   //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
+   if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
    //if ((Step == 0) || (Step == 3)) SOLARCHVISION_add_ParametricSurfaces(1);
    if ((Step == 0) || (Step == 4)) SOLARCHVISION_remove_ParametricGeometries();
-   if ((Step == 0) || (Step == 5)) SOLARCHVISION_add_ParametricGeometries();
+   //if ((Step == 0) || (Step == 5)) SOLARCHVISION_add_ParametricGeometries();
    if ((Step == 0) || (Step == 6)) SOLARCHVISION_calculate_ParametricGeometries_Field();
 
 }
@@ -996,21 +996,9 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_build_SkySphere", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
-    
-  }    
-  else if (frameCount == 15) {
-    SOLARCHVISION_build_SkySphere(3); 
-    
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
-
-    stroke(255);
-    fill(255);
     text("SOLARCHVISION_LoadLAND", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 16) {
+  else if (frameCount == 15) {
     SOLARCHVISION_update_station(6);
 
     stroke(0);
@@ -1021,7 +1009,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_remove_2Dobjects", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 17) {
+  else if (frameCount == 16) {
     SOLARCHVISION_update_station(7);
 
     stroke(0);
@@ -1032,7 +1020,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_add_2Dobjects_onLand", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 18) {
+  else if (frameCount == 17) {
     SOLARCHVISION_update_station(8);
     
     stroke(0);
@@ -1043,7 +1031,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_remove_3Dobjects", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 19) {
+  else if (frameCount == 18) {
     SOLARCHVISION_update_models(1);
     
     stroke(0);
@@ -1054,7 +1042,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_add_3Dobjects", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 20) {
+  else if (frameCount == 19) {
     SOLARCHVISION_update_models(2);
     
     stroke(0);
@@ -1065,7 +1053,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_add_ParametricSurfaces", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 21) {
+  else if (frameCount == 20) {
     SOLARCHVISION_update_models(3);
 
     stroke(0);
@@ -1076,7 +1064,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_remove_ParametricGeometries", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 22) {
+  else if (frameCount == 21) {
     SOLARCHVISION_update_models(4);    
     stroke(0);
     fill(0);
@@ -1086,7 +1074,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_add_ParametricGeometries", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 23) {
+  else if (frameCount == 22) {
     SOLARCHVISION_update_models(5);
     
     stroke(0);
@@ -1097,13 +1085,25 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_calculate_ParametricGeometries_Field", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 24) {
+  else if (frameCount == 23) {
     SOLARCHVISION_update_models(6);
     
     stroke(0);
     fill(0);
     rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
 
+    stroke(255);
+    fill(255);
+    text("SOLARCHVISION_build_SkySphere", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    
+  }    
+  else if (frameCount == 24) {
+    SOLARCHVISION_build_SkySphere(3);
+    
+    stroke(0);
+    fill(0);
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+    
     stroke(255);
     fill(255);
     text("SOLARCHVISION_build_SolarProjection_array", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
@@ -11122,8 +11122,26 @@ void SOLARCHVISION_add_urban () {
 }
 
 void SOLARCHVISION_add_3Dobjects () {
+  
+  /*
+  add_Mesh2(0, 0, 0, 0, 40, 40, 0);
+  
+  add_Mesh5(1, 10,10,0, 10,10,5, 10,15,10, 10,20,5, 10,20,0);
+  add_Mesh5(2, 20,20,0, 20,20,5, 20,15,10, 20,10,5, 20,10,0);  
+  add_Mesh4(3, 10,10,0, 20,10,0, 20,10,5, 10,10,5);
+  add_Mesh4(4, 10,20,0, 10,20,5, 20,20,5, 20,20,0);
+  add_Mesh4(5, 10,10,5, 20,10,5, 20,15,10, 10,15,10);
+  add_Mesh4(6, 10,20,5, 10,15,10, 20,15,10, 20,20,5);
+  */  
+  
+  //add_Mesh2(0, -20, -20, 0, 20, 20, 0);
+  //add_PolygonHyper(0, 0, 0, 0,  10, 10, 4);
+  //add_Polygon(3, 0, 0, 0, 50, 24);
 
-  SOLARCHVISION_add_urban();
+  add_RecursiveSphere(0, 0,0,0, 25, 4, 0);  
+  
+
+  //SOLARCHVISION_add_urban();
   
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
@@ -11148,20 +11166,8 @@ void SOLARCHVISION_add_3Dobjects () {
 
 
 
-  /*
-  add_Mesh2(0, 0, 0, 0, 40, 40, 0);
-  
-  add_Mesh5(1, 10,10,0, 10,10,5, 10,15,10, 10,20,5, 10,20,0);
-  add_Mesh5(2, 20,20,0, 20,20,5, 20,15,10, 20,10,5, 20,10,0);  
-  add_Mesh4(3, 10,10,0, 20,10,0, 20,10,5, 10,10,5);
-  add_Mesh4(4, 10,20,0, 10,20,5, 20,20,5, 20,20,0);
-  add_Mesh4(5, 10,10,5, 20,10,5, 20,15,10, 10,15,10);
-  add_Mesh4(6, 10,20,5, 10,15,10, 20,15,10, 20,20,5);    
-  */
-  
-  //add_RecursiveSphere(0, 0,0,0, 50, 3, 0);
-  
 
+  
   
   /*
   add_RecursiveSphere(0, 0,0,0, 50, 5, 0);
@@ -11175,9 +11181,7 @@ void SOLARCHVISION_add_3Dobjects () {
 
 
   
-  //add_Mesh2(0, -20, -20, 0, 20, 20, 0);
-  //add_PolygonHyper(0, 0, 0, 0,  10, 10, 4);
-  //add_Polygon(3, 0, 0, 0, 50, 24);  
+
   
   //add_PolygonExtrude(-1, 0, 0, 0,  50, 20, 3);
   //add_PolygonExtrude(-1, 0, 0, 0,  50, 20, 5);
@@ -13261,6 +13265,15 @@ void addTempObjectToScene (float cx, float cy, float cz, float sx, float sy, flo
     }
     addToFaces(new_vert_numbers);    
   }
+
+
+  TempObjectVertices = new float[1][3];
+  TempObjectVertices[0][0] = 0;
+  TempObjectVertices[0][1] = 0;
+  TempObjectVertices[0][2] = 0;
+  
+  TempObjectFaces = new int[1][1];
+  TempObjectFaces[0][0] = 0;
 
   POINTER_TempObjectVertices = 1;
   POINTER_TempObjectFaces = 1;
