@@ -1323,7 +1323,8 @@ void SOLARCHVISION_draw_WIN3D () {
     
     CAM_x = 0;
     CAM_y = 0;
-    CAM_z = 0.5 * WIN3D_Diagrams.height / tan(PI / 6.0);
+    CAM_z = 100;
+    //CAM_z = 0.5 * WIN3D_Diagrams.height / tan(PI / 6.0);
     //CAM_z = 0.5 * WIN3D_Diagrams.height / tan(0.5 * fov);
     //CAM_z = (300.0 / (1.0 * h_pixel)) * 0.5 * WIN3D_Diagrams.height / tan(0.5 * fov);
     
@@ -1333,10 +1334,12 @@ void SOLARCHVISION_draw_WIN3D () {
     
     float aspect = 1.0 / WIN3D_R_View;
     
-    float zFar = CAM_z * 100; 
+    float zFar = CAM_z * 100;
     float zNear = CAM_z * 0.01;
     
-    float ymax = zNear * tan(0.5 * fov);
+    //float ymax = zNear * tan(0.5 * fov);
+    float ymax = tan(0.5 * fov);
+    //float ymax = zNear * tan(0.5 * fov) * float(WIN3D_Diagrams.height) / float(h_pixel);
     float ymin = -ymax;
     float xmin = ymin * aspect;
     float xmax = ymax * aspect;
