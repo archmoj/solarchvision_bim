@@ -14304,26 +14304,91 @@ void mouseClicked () {
     if (WIN3D_include == 1) {
       if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
   
+        int Image_X = X_clicked - WIN3D_CX_View;
+        int Image_Y = Y_clicked - WIN3D_CY_View;
+        float max_RES = WIN3D_X_View; // ??
+        
         float[] ray_start = {CAM_x, CAM_y, CAM_z};     
-        float[] ray_direction = {WIN3D_X_coordinate - CAM_x, WIN3D_Y_coordinate - CAM_y, WIN3D_Z_coordinate - CAM_z}; // NOT SURE!
+        float[] ray_end = {WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate}; // NOT SURE!    
+    
+        float[] ray_direction = new float[3];
+        
+        ray_direction[0] = ray_end[0] - ray_start[0];
+        ray_direction[1] = ray_end[1] - ray_start[1];
+        ray_direction[2] = ray_end[2] - ray_start[2];
         
         ray_direction = fn_normalize(ray_direction);
-         
         
-        float[] ray_hit = intersect(ray_start, ray_direction, MAX_SHADING_DIST);
-
-        println("ray_start");
-        println(ray_start);
-        println("ray_direction");
-        println(ray_direction);
-        println("ray_hit");        
-        println(ray_hit);
+        float[] vect = new float[3];
         
-        if (ray_hit[0] < 0.9 * FLOAT_undefined) 
-        {
-          float x = ray_hit[0];
-          float y = ray_hit[1];
-          float z = ray_hit[2];                      
+        float XY_angle = atan2_ang(ray_direction[1], ray_direction[0]); 
+       
+        float r = 90 - XY_angle; // we want to rotate to make the vetor in YZ plane.
+        
+        vect[0] = 0; //cos_ang(r) * ray_direction[0] - sin_ang(r) * ray_direction[1]; // should be close to zero!  
+        vect[1] = sin_ang(r) * ray_direction[0] + cos_ang(r) * ray_direction[1]; 
+        vect[2] = ray_direction[2]; 
+        
+        //println(nf(vect[0], 0,3), nf(vect[1], 0, 3), nf(vect[2], 0, 3));
+    
+        float[] V_up = new float[3];
+        
+        V_up[0] = 0;   
+        V_up[1] = -vect[2];
+        V_up[2] = vect[1];
+        
+        float[] camera_up = new float[3];
+        
+        camera_up[0] = V_up[0] * cos_ang(-r) - V_up[1] * sin_ang(-r); 
+        camera_up[1] = V_up[0] * sin_ang(-r) + V_up[1] * cos_ang(-r); 
+        camera_up[2] = V_up[2]; 
+        
+        //println("UP:", nf(camera_up[0], 0,3), nf(camera_up[1], 0, 3), nf(camera_up[2], 0, 3));
+    
+        float[] V_right = new float[3];
+        
+        V_right[0] = 1;   
+        V_right[1] = 0;
+        V_right[2] = 0;
+        
+        float[] camera_right = new float[3];
+        
+        camera_right[0] = V_right[0] * cos_ang(-r) - V_right[1] * sin_ang(-r); 
+        camera_right[1] = V_right[0] * sin_ang(-r) + V_right[1] * cos_ang(-r); 
+        camera_right[2] = V_right[2]; 
+    
+        //println("RIGHT:", nf(camera_right[0], 0,3), nf(camera_right[1], 0, 3), nf(camera_right[2], 0, 3));
+        
+        float camera_zoom = 4; // ???????????
+    
+        ray_direction[0] = ray_end[0] - ray_start[0];
+        ray_direction[1] = ray_end[1] - ray_start[1];
+        ray_direction[2] = ray_end[2] - ray_start[2];
+    
+        // without normalization     
+        
+        ray_end[0] += camera_zoom * camera_right[0] * (Image_X / max_RES - 0.5);
+        ray_end[1] += camera_zoom * camera_right[1] * (Image_X / max_RES - 0.5);
+        ray_end[2] += camera_zoom * camera_right[2] * (Image_X / max_RES - 0.5);
+        
+        ray_end[0] += camera_zoom * camera_up[0] * (Image_Y / max_RES - 0.5);
+        ray_end[1] += camera_zoom * camera_up[1] * (Image_Y / max_RES - 0.5);
+        ray_end[2] += camera_zoom * camera_up[2] * (Image_Y / max_RES - 0.5);
+    
+        ray_direction[0] = ray_end[0] - ray_start[0];
+        ray_direction[1] = ray_end[1] - ray_start[1];
+        ray_direction[2] = ray_end[2] - ray_start[2];
+        
+        float max_dist = 2 * dist(ray_start[0], ray_start[1], ray_start[2], ray_end[0], ray_end[1], ray_end[2]);
+        
+        float[] RxP = intersect(ray_start, ray_direction, max_dist);
+        
+        println(ray_start[0], ray_start[1], ray_start[2], ">>", ray_end[0], ray_end[1], ray_end[2], ">>", RxP[0], RxP[1], RxP[2]);
+        
+        if (RxP[4] > 0) {
+          float x = RxP[0];
+          float y = RxP[1];
+          float z = RxP[2];                      
 
           float dx = 2;
           float dy = 2;
