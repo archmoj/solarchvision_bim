@@ -4,7 +4,7 @@ float Field_Image_Power = 2.0; // 1/2/3
 
 float GlobalAlbedo = 0; // 0-100
 
-float MAX_SHADING_DIST = 100; // the biggest object should be 100
+float MAX_SHADING_DIST = 250; // the biggest object should be 250
 
 int SavedScreenShots = 0;
 
@@ -1132,9 +1132,7 @@ void draw () {
     
     
     
-    CAM_x = 0;
-    CAM_y = 0;
-    CAM_z = 0;
+
     
     if (ROLLOUT_include == 1) {
       if (ROLLOUT_Update == 1) {
@@ -11278,8 +11276,11 @@ void SOLARCHVISION_add_3Dobjects () {
   //add_PolygonHyper(0, 0, 0, 0,  10, 10, 4);
   //add_Polygon(3, 0, 0, 0, 50, 24);
 
-  add_RecursiveSphere(7, 0,0,0, 25, 4, 0);  
+  //add_RecursiveSphere(7, 0,0,0, 25, 4, 0);  
   
+  add_Mesh2(0, -100, -100, 0, 100, 100, 0);
+  add_Mesh2(0, -100, 0, -100, 100, 0, 100);
+  add_Mesh2(0, 0, -100, -100, 0, 100, 100);
 
   //SOLARCHVISION_add_urban();
   
@@ -12812,6 +12813,171 @@ int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
 }
 
 
+float[] intersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
+
+  float[] ray_normal = fn_normalize(ray_dir);   
+
+  float[][] hitPoint = new float[allFaces.length][4];
+
+  for (int f = 1; f < allFaces.length; f++) {
+    hitPoint[f][0] = FLOAT_undefined;
+    hitPoint[f][1] = FLOAT_undefined;
+    hitPoint[f][2] = FLOAT_undefined;
+    hitPoint[f][3] = FLOAT_undefined;
+  }
+  
+  float[] pre_angle_to_allFaces = new float[allFaces.length];
+  
+  for (int f = 1; f < allFaces.length; f++) {
+    pre_angle_to_allFaces[f] = FLOAT_undefined;
+  }
+  
+  for (int f = 1; f < allFaces.length; f++) {
+
+    float backAngles = FLOAT_undefined;  
+    float foreAngles = FLOAT_undefined;
+
+    float delta = 0.5; 
+    float delta_step = 0.5;
+    
+    float delta_dir = -1;
+    
+    float[] x = {FLOAT_undefined, FLOAT_undefined};
+    float[] y = {FLOAT_undefined, FLOAT_undefined};
+    float[] z = {FLOAT_undefined, FLOAT_undefined};
+    
+    float[] AnglesAll = {0, 0};   
+    
+    float MAX_AnglesAll = 0;
+    int MAX_o = -1;
+
+    //for (int q = 0; q < 16; q++) {
+    for (int q = 0; q < 32; q++) {
+    
+      for (int o = 0; o < 2; o++) {
+
+        float delta_test = delta;
+        
+        if (o == 0) delta_test -= delta_step;
+        else delta_test += delta_step;
+        
+        x[o] = ray_pnt[0] + delta_test * ray_normal[0] * max_distance; 
+        y[o] = ray_pnt[1] + delta_test * ray_normal[1] * max_distance; 
+        z[o] = ray_pnt[2] + delta_test * ray_normal[2] * max_distance; 
+        
+        AnglesAll[o] = 0;      
+      
+        for (int i = 0; i < allFaces[f].length; i++) {
+          int next_i = (i + 1) % allFaces[f].length;
+          
+          float[] vectA = {allVertices[allFaces[f][i]][0] - x[o], allVertices[allFaces[f][i]][1] - y[o], allVertices[allFaces[f][i]][2] - z[o]}; 
+          float[] vectB = {allVertices[allFaces[f][next_i]][0] - x[o], allVertices[allFaces[f][next_i]][1] - y[o], allVertices[allFaces[f][next_i]][2] - z[o]};
+          
+          float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
+          
+          AnglesAll[o] += t;
+  
+        }
+      }
+
+
+      if (q == 0) {
+        foreAngles = AnglesAll[0];
+        backAngles = AnglesAll[1];
+        
+        //if (AnglesAll[0] < AnglesAll[1]) {
+          MAX_o = 1;
+          delta = 1;
+        //}
+        //else{
+        //  MAX_o = 0;
+        //  delta = 0;       
+        //}
+      } 
+      else {
+        
+        if (AnglesAll[0] < AnglesAll[1]) {
+          MAX_o = 1;          
+          MAX_AnglesAll = AnglesAll[1];
+          
+          backAngles = AnglesAll[1]; 
+          
+          delta += delta_step;   
+        }
+        else {
+          MAX_o = 0;
+          MAX_AnglesAll = AnglesAll[0];
+          
+          foreAngles = AnglesAll[0];
+          
+          delta -= delta_step;
+        } 
+        
+        //delta_step *= 0.666; // 0.5; <<<<<<<<<<<<<<<          
+        delta_step *= 0.75; 
+
+      }
+
+      //println(delta, delta_step);
+         
+
+      //if (MAX_AnglesAll > 359) {
+      if (MAX_AnglesAll > 357) { // <<<<<<<<<<<<<<<<<<<<<<<<<
+        if (pre_angle_to_allFaces[f] < MAX_AnglesAll) {
+          pre_angle_to_allFaces[f] = MAX_AnglesAll;
+          
+          hitPoint[f][0] = x[MAX_o];
+          hitPoint[f][1] = y[MAX_o];
+          hitPoint[f][2] = z[MAX_o];
+          hitPoint[f][3] = delta;
+        }        
+      }
+      
+      if (pre_angle_to_allFaces[f] > 0.9 * FLOAT_undefined) {
+        pre_angle_to_allFaces[f] = MAX_AnglesAll;
+      }       
+
+      
+    }
+
+  }
+
+  float[] return_point = {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, -1};
+  
+  float pre_dist = FLOAT_undefined;
+  
+  for (int f = 1; f < allFaces.length; f++) {
+    
+    float hx = hitPoint[f][0];
+    float hy = hitPoint[f][1];
+    float hz = hitPoint[f][2];
+    float h_delta = hitPoint[f][3];
+
+    //if ((hx < 0.9 * FLOAT_undefined) && (hy < 0.9 * FLOAT_undefined) && (hz < 0.9 * FLOAT_undefined)) {
+    
+      float hd = dist(hx, hy, hz, ray_pnt[0], ray_pnt[1], ray_pnt[2]);
+      
+      //if (hd < pre_dist) {
+      //if ((hd < pre_dist) && (hd > 0.02)) {
+      if ((hd < pre_dist) && (h_delta > 0.005)) {
+        
+        pre_dist = hd;
+        
+        return_point[0] = hx;
+        return_point[1] = hy;
+        return_point[2] = hz;
+        return_point[3] = hd;
+        return_point[4] = f;
+      }
+    
+    //}
+  }
+ 
+  return return_point;
+  
+}
+
+
 
 float[][] getSubFace (float[][] base_Vertices, int Teselation, int n) {
 
@@ -14133,6 +14299,45 @@ void mouseClicked () {
         
         WORLD_Update = 1;
       } 
+    }
+    
+    if (WIN3D_include == 1) {
+      if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
+  
+        float[] ray_start = {CAM_x, CAM_y, CAM_z};     
+        float[] ray_direction = {WIN3D_X_coordinate - CAM_x, WIN3D_Y_coordinate - CAM_y, WIN3D_Z_coordinate - CAM_z}; // NOT SURE!
+        
+        ray_direction = fn_normalize(ray_direction);
+         
+        
+        float[] ray_hit = intersect(ray_start, ray_direction, MAX_SHADING_DIST);
+
+        println("ray_start");
+        println(ray_start);
+        println("ray_direction");
+        println(ray_direction);
+        println("ray_hit");        
+        println(ray_hit);
+        
+        if (ray_hit[0] < 0.9 * FLOAT_undefined) 
+        {
+          float x = ray_hit[0];
+          float y = ray_hit[1];
+          float z = ray_hit[2];                      
+
+          float dx = 2;
+          float dy = 2;
+          float dz = 2;
+          float t = 0;
+          add_Box_Core(7, x,y,z, dx, dy, dz, t);
+          ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, t)};
+          SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+        }          
+        
+        //SOLARCHVISION_calculate_ParametricGeometries_Field();
+        
+        WIN3D_Update = 1;
+      }       
     }
     
     ROLLOUT_Update = 1;
