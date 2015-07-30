@@ -387,9 +387,9 @@ int GRAPHS_record_AUTO = 0;
 float X_spinner, Y_spinner;
 
 int COLOR_STYLE = 0;
-int n_COLOR_STYLE = 18; //6;
+int n_COLOR_STYLE = 19; //6;
 
-float sky_scale = 90; //900;
+float sky_scale = 900; //90;
 
 float obj_scale = 0.005;
 float obj_offset_x = 0.5;
@@ -2900,8 +2900,17 @@ float[] GET_COLOR_STYLE (int COLOR_STYLE, float j) {
     c[2] = 0;
     c[3] = 0;
   }
+  else if (COLOR_STYLE == 18) {
+    //float[] _COL = SOLARCHVISION_DRYWCBDx3(2.0 * (j - 0.5) * (2.0 / 2.75));
+    float[] _COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5) * (2.0 / 2.75));
+    c[0] = 255;
+    c[1] = _COL[3];
+    c[2] = _COL[2];
+    c[3] = _COL[1]; 
+  }  
   else if (COLOR_STYLE == 17) {
-    float[] _COL = SOLARCHVISION_DRYWCBDx3(2.0 * (j - 0.5) * (2.0 / 2.75));
+    //float[] _COL = SOLARCHVISION_DRYWCBDx3(2.0 * (j - 0.5) * (2.0 / 2.75));
+    float[] _COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5) * (2.0 / 2.75));
     c[0] = 255;
     c[1] = 255 - _COL[3];
     c[2] = 255 - _COL[2];
@@ -11735,8 +11744,10 @@ void SOLARCHVISION_draw_SKY3D () {
         }
         if (Impact_TYPE == Impact_PASSIVE) {  
           //PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
+          PAL_TYPE = 18; PAL_DIR = 1;
           //PAL_TYPE = 17; PAL_DIR = 1;
-          PAL_TYPE = 17; PAL_DIR = -1;
+          //PAL_TYPE = 17; PAL_DIR = -1;
+          
         }             
         
         float _Multiplier = 1; 
