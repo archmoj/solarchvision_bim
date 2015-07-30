@@ -3123,10 +3123,10 @@ int SOLARCHVISION_try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY,
           float[][][] _valuesO_scattered;
           float[][][] _valuesO_clear;
           
-          _valuesO           = new float[24][max_j_end_forecast][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
-          _valuesO_overcast  = new float[24][max_j_end_forecast][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
-          _valuesO_scattered = new float[24][max_j_end_forecast][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
-          _valuesO_clear     = new float[24][max_j_end_forecast][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
+          _valuesO           = new float [24][max_j_end_forecast][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
+          _valuesO_overcast  = new float [24][max_j_end_forecast][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
+          _valuesO_scattered = new float [24][max_j_end_forecast][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
+          _valuesO_clear     = new float [24][max_j_end_forecast][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
     
           for (int i = 0; i < 24; i += 1) {      
           
@@ -3180,10 +3180,10 @@ int SOLARCHVISION_try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY,
           float[][] _valuesH_scattered;
           float[][] _valuesH_clear;
           
-          _valuesH           = new float[24][max_j_end_forecast];
-          _valuesH_overcast  = new float[24][max_j_end_forecast];
-          _valuesH_scattered = new float[24][max_j_end_forecast];
-          _valuesH_clear     = new float[24][max_j_end_forecast];
+          _valuesH           = new float [24][max_j_end_forecast];
+          _valuesH_overcast  = new float [24][max_j_end_forecast];
+          _valuesH_scattered = new float [24][max_j_end_forecast];
+          _valuesH_clear     = new float [24][max_j_end_forecast];
           
           for (int i = 0; i < 24; i += 1) {
             for (int j = 0; j < max_j_end_forecast; j += 1) {      
@@ -3529,14 +3529,14 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
 
   float[] _valuesA;
   float[] _valuesB; 
-  _valuesA = new float[(1 + ENSEMBLE_end - ENSEMBLE_start)];
-  _valuesB = new float[(1 + ENSEMBLE_end - ENSEMBLE_start)]; 
+  _valuesA = new float [(1 + ENSEMBLE_end - ENSEMBLE_start)];
+  _valuesB = new float [(1 + ENSEMBLE_end - ENSEMBLE_start)]; 
 
   float[] _valuesSUM; 
   float[] _valuesNUM;
   int _interval = 0;
-  _valuesSUM = new float[(1 + ENSEMBLE_end - ENSEMBLE_start)];
-  _valuesNUM = new float[(1 + ENSEMBLE_end - ENSEMBLE_start)];
+  _valuesSUM = new float [(1 + ENSEMBLE_end - ENSEMBLE_start)];
+  _valuesNUM = new float [(1 + ENSEMBLE_end - ENSEMBLE_start)];
  
   for (int k = 0; k < (1 + ENSEMBLE_end - ENSEMBLE_start); k += 1) { 
     _valuesA[k] = FLOAT_undefined;
@@ -3958,14 +3958,14 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
 
   float[] _valuesA;
   float[] _valuesB; 
-  _valuesA = new float[((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
-  _valuesB = new float[((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
+  _valuesA = new float [((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
+  _valuesB = new float [((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
 
   float[] _valuesSUM; 
   float[] _valuesNUM;
   int _interval = 0;
-  _valuesSUM = new float[((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
-  _valuesNUM = new float[((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
+  _valuesSUM = new float [((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
+  _valuesNUM = new float [((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
   
   float[] Ax_LINES = {0};
   float[] Ay_LINES = {0};
@@ -4194,7 +4194,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
 int SOLARCHVISION_try_update_CLIMATE_EPW () {
   int File_Found = 0;
   
-  CLIMATE_EPW = new float[24][365][num_layers][(1 + CLIMATE_EPW_end - CLIMATE_EPW_start)];
+  CLIMATE_EPW = new float [24][365][num_layers][(1 + CLIMATE_EPW_end - CLIMATE_EPW_start)];
  
   for (int i = 0; i < 24; i += 1) {
     for (int j = 0; j < 365; j += 1) {
@@ -4365,14 +4365,14 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
 
   float[] _valuesA;
   float[] _valuesB; 
-  _valuesA = new float[((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * num_add_days)];
-  _valuesB = new float[((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * num_add_days)];
+  _valuesA = new float [((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * num_add_days)];
+  _valuesB = new float [((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * num_add_days)];
 
   float[] _valuesSUM; 
   float[] _valuesNUM;
   int _interval = 0;
-  _valuesSUM = new float[((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * num_add_days)];
-  _valuesNUM = new float[((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * num_add_days)];
+  _valuesSUM = new float [((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * num_add_days)];
+  _valuesNUM = new float [((1 + CLIMATE_EPW_end - CLIMATE_EPW_start) * num_add_days)];
   
   float[] Ax_LINES = {0};
   float[] Ay_LINES = {0};
@@ -4913,14 +4913,14 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
 
   float[] _valuesA;
   float[] _valuesB; 
-  _valuesA = new float[(1 + OBSERVED_end - OBSERVED_start)];
-  _valuesB = new float[(1 + OBSERVED_end - OBSERVED_start)]; 
+  _valuesA = new float [(1 + OBSERVED_end - OBSERVED_start)];
+  _valuesB = new float [(1 + OBSERVED_end - OBSERVED_start)]; 
 
   float[] _valuesSUM; 
   float[] _valuesNUM;
   int _interval = 0;
-  _valuesSUM = new float[(1 + OBSERVED_end - OBSERVED_start)];
-  _valuesNUM = new float[(1 + OBSERVED_end - OBSERVED_start)];
+  _valuesSUM = new float [(1 + OBSERVED_end - OBSERVED_start)];
+  _valuesNUM = new float [(1 + OBSERVED_end - OBSERVED_start)];
  
   for (int k = 0; k < (1 + OBSERVED_end - OBSERVED_start); k += 1) { 
     _valuesA[k] = FLOAT_undefined;
@@ -5375,7 +5375,7 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
     int[] _probs;
     int total_probs = 0;
     
-    _probs = new int[int((1 + max_v - min_v))];
+    _probs = new int [int((1 + max_v - min_v))];
     
     for (int k = (start_z - 1); k <= (end_z - 1); k += 1) {
       if (_valuesSUM[k] < 0.9 * FLOAT_undefined) {
@@ -5536,8 +5536,8 @@ void SOLARCHVISION_draw_normals (int i, int j, float[] _valuesA, float[] _values
   if (drw_Layer == _winddir) {
     float[] X_valuesA;
     float[] Y_valuesA;
-    X_valuesA = new float[_valuesA.length];
-    Y_valuesA = new float[_valuesA.length];
+    X_valuesA = new float [_valuesA.length];
+    Y_valuesA = new float [_valuesA.length];
     
     for (int l = 0; l < _valuesA.length; l += 1) {
       if (_valuesA[l] < 0.9 * FLOAT_undefined) {
@@ -5566,8 +5566,8 @@ void SOLARCHVISION_draw_normals (int i, int j, float[] _valuesA, float[] _values
     
     float[] X_valuesB;
     float[] Y_valuesB;
-    X_valuesB = new float[_valuesB.length];
-    Y_valuesB = new float[_valuesB.length];
+    X_valuesB = new float [_valuesB.length];
+    Y_valuesB = new float [_valuesB.length];
     
     for (int l = 0; l < _valuesB.length; l += 1) {
       if (_valuesB[l] < 0.9 * FLOAT_undefined) {
@@ -5706,7 +5706,7 @@ void SOLARCHVISION_draw_normals (int i, int j, float[] _valuesA, float[] _values
 
 
 int[] get_startZ_endZ (int data_source) {
-  int[] a = new int[3];
+  int[] a = new int [3];
 
   int start_z = -1;
   int end_z = -1; 
@@ -5786,7 +5786,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
   float RAIN, T, R_dir, R_dif;
 
   float[] _valuesSUM; 
-  _valuesSUM = new float[layers_count];
+  _valuesSUM = new float [layers_count];
   
   for (int k = 0; k < layers_count; k += 1) {
       _valuesSUM[k] = FLOAT_undefined;
@@ -6354,7 +6354,7 @@ String[] N_Title = {
 
 int[] reverse_N;
 {
-  reverse_N = new int[9];
+  reverse_N = new int [9];
   reverse_N[N_MidLow] = N_MidHigh;
   reverse_N[N_Middle] = N_Middle;
   reverse_N[N_MidHigh] = N_MidLow;
@@ -6483,7 +6483,7 @@ int[] SOLARCHVISION_FIND_SCENARIOS_CLOSE_TO_NORMALS (float[] _values) {
   
   float[] _normals = SOLARCHVISION_NORMAL(_values);
   
-  int[] return_array = new int[9];
+  int[] return_array = new int [9];
   
   for (int l = 0; l < 9; l += 1) {
     return_array[l] = -1;
@@ -6520,9 +6520,9 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int layers_count, int start_z, int 
   float[] _valuesSUM_RAD; 
   float[] _valuesSUM_EFF;
   float[] _valuesNUM;
-  _valuesSUM_RAD = new float[(layers_count * num_add_days)];
-  _valuesSUM_EFF = new float[(layers_count * num_add_days)];
-  _valuesNUM = new float[(layers_count * num_add_days)];
+  _valuesSUM_RAD = new float [(layers_count * num_add_days)];
+  _valuesSUM_EFF = new float [(layers_count * num_add_days)];
+  _valuesNUM = new float [(layers_count * num_add_days)];
   
   for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {
     for (int k = 0; k < layers_count; k += 1) { 
@@ -6643,9 +6643,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     float[] _values_w_dir;
     float[] _values_w_spd; 
     float[] _values_w_tmp; 
-    _values_w_dir = new float[layers_count];
-    _values_w_spd = new float[layers_count]; 
-    _values_w_tmp = new float[layers_count]; 
+    _values_w_dir = new float [layers_count];
+    _values_w_spd = new float [layers_count]; 
+    _values_w_tmp = new float [layers_count]; 
 
     for (int k = 0; k < layers_count; k += 1) { 
       _values_w_dir[k] = FLOAT_undefined;
@@ -6943,7 +6943,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       PImage total_Image_RGBA = createImage(RES1, RES2, RGB);
       
       float[][][] total_Matrix_ARGB;
-      total_Matrix_ARGB = new float[4][RES1][RES2];
+      total_Matrix_ARGB = new float [4][RES1][RES2];
 
       for (int np = 0; np < (RES1 * RES2); np++) {
         int Image_X = np % RES1;
@@ -6978,7 +6978,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         //println(DATE_ANGLE, DATE_ANGLE_approximate);
 
         int[] Normals_COL_N;
-        Normals_COL_N = new int[9];
+        Normals_COL_N = new int [9];
         Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
         
         //println("j =", j);
@@ -6991,7 +6991,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
             float[][][] Matrix_ARGB;
             
-            Matrix_ARGB = new float[4][RES1][RES2];
+            Matrix_ARGB = new float [4][RES1][RES2];
 
             for (int np = 0; np < (RES1 * RES2); np++) {
               int Image_X = np % RES1;
@@ -7511,7 +7511,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
 
         int[] Normals_COL_N;
-        Normals_COL_N = new int[9];
+        Normals_COL_N = new int [9];
         Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
 
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
@@ -7942,7 +7942,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
 
         int[] Normals_COL_N;
-        Normals_COL_N = new int[9];
+        Normals_COL_N = new int [9];
         Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
 
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
@@ -8214,7 +8214,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
 
       int[] Normals_COL_N;
-      Normals_COL_N = new int[9];
+      Normals_COL_N = new int [9];
       Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
       
       for (int i = 0; i < 24; i += 1) {
@@ -9181,7 +9181,7 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
         float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
         
         int[] Normals_COL_N;
-        Normals_COL_N = new int[9];
+        Normals_COL_N = new int [9];
         Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
         
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
@@ -9887,7 +9887,7 @@ PImage[] Object2DImage;
 
 void SOLARCHVISION_LoadObject2DImages () {
 
-  Object2D_Filenames = new String[1];
+  Object2D_Filenames = new String [1];
   Object2D_Filenames[0] = "";
   
   Object2D_Filenames_PEOPLE = sort(getfiles(Object2DFolder_PEOPLE));
@@ -9923,12 +9923,12 @@ void SOLARCHVISION_LoadWorldImages () {
 
   number_of_WORLD_viewports = WORLD_VIEW_Filenames.length;
 
-  WORLD_VIEW_Name = new String[number_of_WORLD_viewports][2];
+  WORLD_VIEW_Name = new String [number_of_WORLD_viewports][2];
   
-  WORLD_VIEW_BoundariesX = new float[number_of_WORLD_viewports][2];
-  WORLD_VIEW_BoundariesY = new float[number_of_WORLD_viewports][2];
+  WORLD_VIEW_BoundariesX = new float [number_of_WORLD_viewports][2];
+  WORLD_VIEW_BoundariesY = new float [number_of_WORLD_viewports][2];
     
-  WORLD_VIEW_GridDisplay = new int[number_of_WORLD_viewports];
+  WORLD_VIEW_GridDisplay = new int [number_of_WORLD_viewports];
 
   for (int i = 0; i < number_of_WORLD_viewports; i += 1) {
     String MapFilename = WorldViewFolder + "/" + WORLD_VIEW_Filenames[i];
@@ -9991,7 +9991,7 @@ void SOLARCHVISION_getSWOB_Coordinates () {
   
     STATION_SWOB_NUMBER = FileALL.length - 1; // to skip the first description line 
   
-    STATION_SWOB_INFO = new String[STATION_SWOB_NUMBER][11]; 
+    STATION_SWOB_INFO = new String [STATION_SWOB_NUMBER][11]; 
   
     int n_Locations = 0;
   
@@ -10063,7 +10063,7 @@ void SOLARCHVISION_getNAEFS_Coordinates () {
   
     STATION_NAEFS_NUMBER = FileALL.length - 1; // to skip the first description line 
   
-    STATION_NAEFS_INFO = new String[STATION_NAEFS_NUMBER][11]; 
+    STATION_NAEFS_INFO = new String [STATION_NAEFS_NUMBER][11]; 
   
     int n_Locations = 0;
   
@@ -10133,7 +10133,7 @@ void SOLARCHVISION_getCWEEDS_Coordinates () {
   
     STATION_CWEEDS_NUMBER = FileALL.length - 1; // to skip the first description line 
   
-    STATION_CWEEDS_INFO = new String[STATION_CWEEDS_NUMBER][11]; 
+    STATION_CWEEDS_INFO = new String [STATION_CWEEDS_NUMBER][11]; 
   
     int n_Locations = 0;
   
@@ -10437,8 +10437,8 @@ void add_PolygonExtrude_CENTER (int m, float cx, float cy, float cz, float r, fl
 
 void add_PolygonExtrude (int m, float cx, float cy, float cz, float r, float h, int n) {
 
-  int[] vT = new int[n];
-  int[] vB = new int[n];
+  int[] vT = new int [n];
+  int[] vB = new int [n];
   
   vT[0] = addToVertices(cx + r * cos_ang(0), cy + r * sin_ang(0), cz + h);
   vB[0] = addToVertices(cx + r * cos_ang(0), cy + r * sin_ang(0), cz);
@@ -10493,8 +10493,8 @@ void add_PolygonHyper (int m, float cx, float cy, float cz, float r, float h, in
 
 void add_Icosahedron (int m, float cx, float cy, float cz, float r) {
 
-  int[] vT = new int[6];
-  int[] vB = new int[6];
+  int[] vT = new int [6];
+  int[] vB = new int [6];
   
   vT[0] = addToVertices(cx, cy, cz + r);
   vB[0] = addToVertices(cx, cy, cz - r);
@@ -10559,8 +10559,8 @@ void add_QuadSphere (int m, float cx, float cy, float cz, float r, int Teselatio
 
   // i.e. Rhombic Triacontahedron
   
-  int[] vT = new int[6];
-  int[] vB = new int[6];
+  int[] vT = new int [6];
+  int[] vB = new int [6];
   
   vT[0] = addToVertices(cx, cy, cz + r);
   vB[0] = addToVertices(cx, cy, cz - r);
@@ -10575,7 +10575,7 @@ void add_QuadSphere (int m, float cx, float cy, float cz, float r, int Teselatio
     vB[i] = addToVertices(cx + R_in * cos_ang(t + 36), cy + R_in * sin_ang(t + 36), cz - H_in);
   } 
 
-  int[] vM1 = new int[6]; // between T0 and Ti  
+  int[] vM1 = new int [6]; // between T0 and Ti  
   int[] vM2 = new int[6]; // between Ti and Bi
   int[] vM3 = new int[6]; // between Ti and Bi
   int[] vM4 = new int[6]; // between Bi and B0
@@ -11069,7 +11069,7 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
 }
 
 void SOLARCHVISION_remove_2Dobjects () {
-  allObject2D_XYZS = new float[1][3]; 
+  allObject2D_XYZS = new float [1][3]; 
   allObject2D_XYZS[0][0] = 0;
   allObject2D_XYZS[0][1] = 0;
   allObject2D_XYZS[0][2] = 0;
@@ -11082,7 +11082,7 @@ void SOLARCHVISION_remove_2Dobjects () {
 
 void SOLARCHVISION_remove_3Dobjects () {
 
- allVertices = new float[1][3];
+ allVertices = new float [1][3];
  allVertices[0][0] = 0;
  allVertices[0][1] = 0;
  allVertices[0][2] = 0;
@@ -11539,7 +11539,16 @@ PGraphics ViewFromTheSky (int SKY2D_X_View, int SKY2D_Y_View, float SKY2D_ZOOM_c
     }
 
     for (int n = 0; n < TotalSubNo; n++) {
-      float[][] subFace = getSubFace(allFaces[f], Teselation, n);
+      
+      float[][] base_Vertices = new float [allFaces[f].length][3];
+      for (int j = 0; j < allFaces[f].length; j++) {
+        int vNo = allFaces[f][j];
+        base_Vertices[j][0] = allVertices[vNo][0];
+        base_Vertices[j][1] = allVertices[vNo][1];
+        base_Vertices[j][2] = allVertices[vNo][2];
+      }
+      
+      float[][] subFace = getSubFace(base_Vertices, Teselation, n);
    
       SKY2D_Diagrams.beginShape();
       
@@ -11928,7 +11937,16 @@ void SOLARCHVISION_draw_objects () {
           }
     
           for (int n = 0; n < TotalSubNo; n++) {
-            float[][] subFace = getSubFace(allFaces[f], Teselation, n);
+            
+            float[][] base_Vertices = new float [allFaces[f].length][3];
+            for (int j = 0; j < allFaces[f].length; j++) {
+              int vNo = allFaces[f][j];
+              base_Vertices[j][0] = allVertices[vNo][0];
+              base_Vertices[j][1] = allVertices[vNo][1];
+              base_Vertices[j][2] = allVertices[vNo][2];
+            }
+            
+            float[][] subFace = getSubFace(base_Vertices, Teselation, n);
          
             WIN3D_Diagrams.beginShape();
             
@@ -11976,7 +11994,16 @@ void SOLARCHVISION_draw_objects () {
           }
       
           for (int n = 0; n < TotalSubNo; n++) {
-            float[][] subFace = getSubFace(allFaces[f], Teselation, n);
+            
+            float[][] base_Vertices = new float [allFaces[f].length][3];
+            for (int j = 0; j < allFaces[f].length; j++) {
+              int vNo = allFaces[f][j];
+              base_Vertices[j][0] = allVertices[vNo][0];
+              base_Vertices[j][1] = allVertices[vNo][1];
+              base_Vertices[j][2] = allVertices[vNo][2];
+            }
+            
+            float[][] subFace = getSubFace(base_Vertices, Teselation, n);
          
             WIN3D_Diagrams.beginShape();
             
@@ -12070,7 +12097,16 @@ void SOLARCHVISION_draw_objects () {
           }
           
           for (int n = 0; n < TotalSubNo; n++) {
-            float[][] subFace = getSubFace(allFaces[f], Teselation, n);
+            
+            float[][] base_Vertices = new float [allFaces[f].length][3];
+            for (int j = 0; j < allFaces[f].length; j++) {
+              int vNo = allFaces[f][j];
+              base_Vertices[j][0] = allVertices[vNo][0];
+              base_Vertices[j][1] = allVertices[vNo][1];
+              base_Vertices[j][2] = allVertices[vNo][2];
+            }            
+            
+            float[][] subFace = getSubFace(base_Vertices, Teselation, n);
          
             WIN3D_Diagrams.beginShape();
             
@@ -12172,7 +12208,16 @@ void SOLARCHVISION_draw_objects () {
           }
                   
           for (int n = 0; n < TotalSubNo; n++) {
-            float[][] subFace = getSubFace(allFaces[f], Teselation, n);
+
+            float[][] base_Vertices = new float [allFaces[f].length][3];
+            for (int j = 0; j < allFaces[f].length; j++) {
+              int vNo = allFaces[f][j];
+              base_Vertices[j][0] = allVertices[vNo][0];
+              base_Vertices[j][1] = allVertices[vNo][1];
+              base_Vertices[j][2] = allVertices[vNo][2];
+            }            
+            
+            float[][] subFace = getSubFace(base_Vertices, Teselation, n);
             
             WIN3D_Diagrams.beginShape();
             
@@ -12603,25 +12648,24 @@ int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
 
 
 
-
-float[][] getSubFace (int[] the_Face, int Teselation, int n) {
+float[][] getSubFace (float[][] base_Vertices, int Teselation, int n) {
 
   float[][] return_vertices = {};
     
   int TotalSubNo = 1;
-  if (Teselation > 0) TotalSubNo = the_Face.length * int(roundTo(pow(4, Teselation - 1), 1));   
+  if (Teselation > 0) TotalSubNo = base_Vertices.length * int(roundTo(pow(4, Teselation - 1), 1));   
   
   if ((Teselation <= 0) || (n < 0) || (n >= TotalSubNo)) {
-    return_vertices = new float[the_Face.length][3];
+    return_vertices = new float [base_Vertices.length][3];
     
-    for (int j = 0; j < the_Face.length; j++) {
-      return_vertices[j] = allVertices[the_Face[j]];
+    for (int j = 0; j < base_Vertices.length; j++) {
+      return_vertices[j] = base_Vertices[j];
     }
   }
   else{
-    return_vertices = new float[4][3];
+    return_vertices = new float [4][3];
       
-    int div = the_Face.length;
+    int div = base_Vertices.length;
     
     int the_first = n % div;
     int the_next = (the_first + 1) % div;
@@ -12634,12 +12678,12 @@ float[][] getSubFace (int[] the_Face, int Teselation, int n) {
     
     for (int i = 0; i < 3; i++) {
 
-      A[i] = allVertices[the_Face[the_first]][i];
-      B[i] = 0.5 * (A[i] + allVertices[the_Face[the_next]][i]);
-      D[i] = 0.5 * (A[i] + allVertices[the_Face[the_previous]][i]);
+      A[i] = base_Vertices[the_first][i];
+      B[i] = 0.5 * (A[i] + base_Vertices[the_next][i]);
+      D[i] = 0.5 * (A[i] + base_Vertices[the_previous][i]);
       
-      for (int j = 0; j < the_Face.length; j++) {
-        C[i] += allVertices[the_Face[j]][i] / (1.0 * the_Face.length);
+      for (int j = 0; j < base_Vertices.length; j++) {
+        C[i] += base_Vertices[j][i] / (1.0 * base_Vertices.length);
       }
     }
     
@@ -12701,6 +12745,7 @@ float[][] getSubFace (int[] the_Face, int Teselation, int n) {
   return return_vertices;
 }
 
+
 float Bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y) {
   
   float f_xy = f_00 * (1 - x) * (1 - y) + f_10 * x * (1 - y) + f_01 * (1 - x) * y + f_11 * x * y;
@@ -12742,7 +12787,7 @@ void SOLARCHVISION_LoadLAND (String ProjectSite) {
   LAND_mid_lat = LocationLatitude;
   LAND_mid_lon = LocationLongitude;
   
-  LAND_MESH = new float[LAND_n_I][LAND_n_J][3];
+  LAND_MESH = new float [LAND_n_I][LAND_n_J][3];
   
   if (Load_LAND == 1) {
 
@@ -13343,7 +13388,7 @@ void addTempObjectToScene (float cx, float cy, float cz, float sx, float sy, flo
   }
 
 
-  TempObjectVertices = new float[1][3];
+  TempObjectVertices = new float [1][3];
   TempObjectVertices[0][0] = 0;
   TempObjectVertices[0][1] = 0;
   TempObjectVertices[0][2] = 0;
@@ -13535,7 +13580,7 @@ void SOLARCHVISION_build_SolarProjection_array () {
   n_slp = int(roundTo(180.0 / (1.0 * stp_slp), 1)) + 1;  
   n_dir = int(roundTo(360.0 / (1.0 * stp_dir), 1));
 
-  LocationExposure = new float[n_slp][n_dir];
+  LocationExposure = new float [n_slp][n_dir];
 
   for (int a = 0; a < n_slp; a += 1) {
     for (int b = 0; b < n_dir; b += 1) {  
