@@ -602,7 +602,7 @@ void empty_Materials_DiffuseArea () {
 
                   
 int h_pixel = 325; 
-int w_pixel = int(h_pixel * 1.0); //int(h_pixel * 1.5);
+int w_pixel = int(h_pixel * 1.5); 
 
 float WIN3D_scale3D; 
 
@@ -614,7 +614,7 @@ float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
 
 float WIN3D_X_coordinate = 0;
 float WIN3D_Y_coordinate = 0;
-float WIN3D_Z_coordinate = 0; //180 * (h_pixel / 300.0);
+float WIN3D_Z_coordinate = 0; 
 float WIN3D_S_coordinate = 5.0;
 
 float WIN3D_RX_coordinate = 75; //45;
@@ -1315,9 +1315,9 @@ void draw () {
 
 void SOLARCHVISION_draw_WIN3D () {
   
-  float refScale = h_pixel; // 100;
+  float refScale = 1000; //h_pixel;
   
-  WIN3D_scale3D = WIN3D_Y_View / refScale; 
+  WIN3D_scale3D = WIN3D_Y_View / refScale; // fits field of view to window's height
   
   WIN3D_Diagrams.beginDraw();
   
@@ -1330,8 +1330,7 @@ void SOLARCHVISION_draw_WIN3D () {
     CAM_x = 0;
     CAM_y = 0;
     CAM_z = (0.5 * refScale) / tan(0.5 * fov);
-    //CAM_z = (0.5 * refScale);
-
+    
     float aspect = 1.0 / WIN3D_R_View;
     
     float zFar = CAM_z * 100;
@@ -12668,7 +12667,7 @@ void SOLARCHVISION_draw_objects () {
   CAM_y = py;
   CAM_z = pz;   
   
-  //println(CAM_x, CAM_y, CAM_z);
+  //println(nf(CAM_x,0,4), nf(CAM_y,0,4), nf(CAM_z,0,4));
 
   if (display_allyObject2D != 0) {
     for (int i = 1; i <= allObject2D_num; i++) {
