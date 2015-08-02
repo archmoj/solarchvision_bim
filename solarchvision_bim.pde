@@ -14298,11 +14298,13 @@ void mouseClicked () {
     if (WIN3D_include == 1) {
       if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
   
-        int Image_X = X_clicked - WIN3D_CX_View;
-        int Image_Y = Y_clicked - WIN3D_CY_View; 
+        
+        
+        float Image_X = X_clicked - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
+        float Image_Y = Y_clicked - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
         
         float[] ray_start = {CAM_x, CAM_y, CAM_z};     
-        float[] ray_end = {0,0,0}; // NOT SURE!
+        float[] ray_end = {0,0,0}; // Now it only works well when looking at the origin point. <<<<<<<<<<<<  
     
         println("____________________________");
         println("Start:", ray_start[0], ray_start[1], ray_start[2]); 
@@ -14358,7 +14360,11 @@ void mouseClicked () {
         
         //float camera_zoom = WIN3D_ZOOM_coordinate * 5; //400;//4; // ???????????
         //float camera_zoom = 1; //WIN3D_scale3D / (2 * tan(0.5 * CAM_fov)); // ??
-        float camera_zoom = refScale * tan(0.5 * CAM_fov); // ??
+        //float camera_zoom = 1 * WIN3D_scale3D / tan(0.5 * CAM_fov); // ??
+        //float camera_zoom = tan(0.5 * CAM_fov) / WIN3D_scale3D; // ??
+        //float camera_zoom = 2 / tan(0.5 * CAM_fov); // ??
+        //float camera_zoom = 2 * tan(0.5 * CAM_fov); // ??
+        float camera_zoom = 2.5 * tan(0.5 * CAM_fov); // ??
         
         println("camera_zoom =", camera_zoom);
     
@@ -14368,13 +14374,13 @@ void mouseClicked () {
     
         // without normalization     
         
-        ray_end[0] += camera_zoom * camera_right[0] * (Image_X / float(WIN3D_X_View) - 0.5);
-        ray_end[1] += camera_zoom * camera_right[1] * (Image_X / float(WIN3D_X_View) - 0.5);
-        ray_end[2] += camera_zoom * camera_right[2] * (Image_X / float(WIN3D_X_View) - 0.5);
+        ray_end[0] += camera_zoom * camera_right[0] * Image_X;
+        ray_end[1] += camera_zoom * camera_right[1] * Image_X;
+        ray_end[2] += camera_zoom * camera_right[2] * Image_X;
         
-        ray_end[0] += camera_zoom * camera_up[0] * -(Image_Y / float(WIN3D_Y_View) - 0.5);
-        ray_end[1] += camera_zoom * camera_up[1] * -(Image_Y / float(WIN3D_Y_View) - 0.5);
-        ray_end[2] += camera_zoom * camera_up[2] * -(Image_Y / float(WIN3D_Y_View) - 0.5);
+        ray_end[0] += camera_zoom * camera_up[0] * -Image_Y;
+        ray_end[1] += camera_zoom * camera_up[1] * -Image_Y;
+        ray_end[2] += camera_zoom * camera_up[2] * -Image_Y;
     
         ray_direction[0] = ray_end[0] - ray_start[0];
         ray_direction[1] = ray_end[1] - ray_start[1];
