@@ -602,7 +602,7 @@ void empty_Materials_DiffuseArea () {
 
                   
 int h_pixel = 325; 
-int w_pixel = int(h_pixel * 1.5); 
+int w_pixel = int(h_pixel * 1.0); 
 
 float WIN3D_scale3D; 
 
@@ -14367,8 +14367,9 @@ void mouseClicked () {
         //float camera_zoom = 2 / tan(0.5 * CAM_fov); // ??
         //float camera_zoom = 2 * tan(0.5 * CAM_fov); // ??
         //float camera_zoom = 2.5 * tan(0.5 * CAM_fov); // ??
-        float camera_zoom = 2 * tan(0.5 * CAM_fov) / WIN3D_scale3D; // ??
-        
+        float camera_zoom = 1;
+        camera_zoom /= 2 * tan(0.5 * CAM_fov);
+        camera_zoom /= WIN3D_scale3D; // ??
         camera_zoom *= CAM_dist / refScale; //???
         
         println("camera_zoom =", camera_zoom);
