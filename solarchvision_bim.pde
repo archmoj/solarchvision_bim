@@ -13602,23 +13602,19 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
     skyVertices[0][0] = 0;
     skyVertices[0][1] = 0;
     skyVertices[0][2] = 0;
+
+    for (int i = 1; i < POINTER_TempObjectVertices; i++) {
+
+      float[][] newVertice = {{TempObjectVertices[i][0], TempObjectVertices[i][1], TempObjectVertices[i][2]}}; 
+
+      skyVertices = (float[][]) concat(skyVertices, newVertice);
+
+    }
     
     for (int i = 1; i < POINTER_TempObjectFaces; i++) {
       
-      int[] f = new int [0];
-      
-      for (int j = 0; j < TempObjectFaces[i].length; j++) {
+      int[][] newFace = {{TempObjectFaces[i][0], TempObjectFaces[i][1], TempObjectFaces[i][2], TempObjectFaces[i][3]}}; 
 
-        float[][] newVertice = {{TempObjectVertices[TempObjectFaces[i][j]][0], TempObjectVertices[TempObjectFaces[i][j]][1], TempObjectVertices[TempObjectFaces[i][j]][2]}}; 
-  
-        skyVertices = (float[][]) concat(skyVertices, newVertice);
-        
-        f = (int[]) concat(f, TempObjectFaces[i][j]);
-
-      }
-      
-      int[][] newFace = {f}; 
-      
       skyFaces = (int[][]) concat(skyFaces, newFace);
     }
     
