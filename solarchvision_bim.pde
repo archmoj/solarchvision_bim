@@ -9552,9 +9552,14 @@ void WIN3D_keyPressed (KeyEvent e) {
     }
     else {
       switch(key) {
-        case '0' :WIN3D_X_coordinate = 0;
+        case '.' :WIN3D_X_coordinate = 0;
                   WIN3D_Y_coordinate = 0;
                   WIN3D_Update = 1; break;
+                  
+        case '0' :WIN3D_X_coordinate = 0;
+                  WIN3D_Y_coordinate = 0;
+                  WIN3D_ZOOM_coordinate = 60;  // <<<<<<<<<
+                  WIN3D_Update = 1; break;                  
           
         case '2' :display_allyObject2D = (display_allyObject2D + 1) % 2; WIN3D_Update = 1; break;
  
@@ -14298,123 +14303,126 @@ void mouseClicked () {
     if (WIN3D_include == 1) {
       if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
   
+        if (WIN3D_View_Type == 1) {
         
-        
-        float Image_X = X_clicked - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
-        float Image_Y = Y_clicked - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
-        
-        float[] ray_start = {CAM_x, CAM_y, CAM_z};     
-        float[] ray_end = {0,0,0}; // Now it only works well when looking at the origin point. <<<<<<<<<<<<  
-    
-        float CAM_dist = dist(ray_start[0], ray_start[1], ray_start[2], ray_end[0], ray_end[1], ray_end[2]);
-    
-        println("____________________________");
-        println("Start:", ray_start[0], ray_start[1], ray_start[2]); 
-        println("End Center:", ray_end[0], ray_end[1], ray_end[2]);    
-    
-        float[] ray_direction = new float[3];
-        
-        ray_direction[0] = ray_end[0] - ray_start[0];
-        ray_direction[1] = ray_end[1] - ray_start[1];
-        ray_direction[2] = ray_end[2] - ray_start[2];
-        
-        ray_direction = fn_normalize(ray_direction);
-        
-        float[] vect = new float[3];
-        
-        float XY_angle = atan2_ang(ray_direction[1], ray_direction[0]); 
-       
-        float r = 90 - XY_angle; // we want to rotate to make the vetor in YZ plane.
-        
-        vect[0] = 0; //cos_ang(r) * ray_direction[0] - sin_ang(r) * ray_direction[1]; // should be close to zero!  
-        vect[1] = sin_ang(r) * ray_direction[0] + cos_ang(r) * ray_direction[1]; 
-        vect[2] = ray_direction[2]; 
-        
-        //println(nf(vect[0], 0,3), nf(vect[1], 0, 3), nf(vect[2], 0, 3));
-    
-        float[] V_up = new float[3];
-        
-        V_up[0] = 0;   
-        V_up[1] = -vect[2];
-        V_up[2] = vect[1];
-        
-        float[] camera_up = new float[3];
-        
-        camera_up[0] = V_up[0] * cos_ang(-r) - V_up[1] * sin_ang(-r); 
-        camera_up[1] = V_up[0] * sin_ang(-r) + V_up[1] * cos_ang(-r); 
-        camera_up[2] = V_up[2]; 
-        
-        println("UP:", nf(camera_up[0], 0,3), nf(camera_up[1], 0, 3), nf(camera_up[2], 0, 3));
-    
-        float[] V_right = new float[3];
-        
-        V_right[0] = 1;   
-        V_right[1] = 0;
-        V_right[2] = 0;
-        
-        float[] camera_right = new float[3];
-        
-        camera_right[0] = V_right[0] * cos_ang(-r) - V_right[1] * sin_ang(-r); 
-        camera_right[1] = V_right[0] * sin_ang(-r) + V_right[1] * cos_ang(-r); 
-        camera_right[2] = V_right[2]; 
-    
-        println("RIGHT:", nf(camera_right[0], 0,3), nf(camera_right[1], 0, 3), nf(camera_right[2], 0, 3));
-        
-        //float camera_zoom = WIN3D_ZOOM_coordinate * 5; //400;//4; // ???????????
-        //float camera_zoom = 1; //WIN3D_scale3D / (2 * tan(0.5 * CAM_fov)); // ??
-        //float camera_zoom = 1 * WIN3D_scale3D / tan(0.5 * CAM_fov); // ??
-        //float camera_zoom = tan(0.5 * CAM_fov) / WIN3D_scale3D; // ??
-        //float camera_zoom = 2 / tan(0.5 * CAM_fov); // ??
-        //float camera_zoom = 2 * tan(0.5 * CAM_fov); // ??
-        //float camera_zoom = 2.5 * tan(0.5 * CAM_fov); // ??
-        float camera_zoom = 1;
-        camera_zoom *= 2 * tan(0.5 * CAM_fov);
-        camera_zoom /= WIN3D_scale3D; // ??
-        camera_zoom *= CAM_dist / refScale; //???
-        
-        println("camera_zoom =", camera_zoom);
-    
-        ray_direction[0] = ray_end[0] - ray_start[0];
-        ray_direction[1] = ray_end[1] - ray_start[1];
-        ray_direction[2] = ray_end[2] - ray_start[2];
-    
-        // without normalization     
-        
-        ray_end[0] += camera_zoom * camera_right[0] * Image_X;
-        ray_end[1] += camera_zoom * camera_right[1] * Image_X;
-        ray_end[2] += camera_zoom * camera_right[2] * Image_X;
-        
-        ray_end[0] += camera_zoom * camera_up[0] * -Image_Y;
-        ray_end[1] += camera_zoom * camera_up[1] * -Image_Y;
-        ray_end[2] += camera_zoom * camera_up[2] * -Image_Y;
-    
-        ray_direction[0] = ray_end[0] - ray_start[0];
-        ray_direction[1] = ray_end[1] - ray_start[1];
-        ray_direction[2] = ray_end[2] - ray_start[2];
-        
-        float max_dist = 2 * dist(ray_start[0], ray_start[1], ray_start[2], ray_end[0], ray_end[1], ray_end[2]);
-        
-        float[] RxP = intersect(ray_start, ray_direction, max_dist);
-        
-        println(ray_start[0], ray_start[1], ray_start[2], ">>", ray_end[0], ray_end[1], ray_end[2], ">>", RxP[0], RxP[1], RxP[2]);
-        
-        if (RxP[4] > 0) {
-          float x = RxP[0]; 
-          float y = RxP[1]; 
-          float z = RxP[2];                      
-
-          float dx = 6 * (1 + int(random(4)));
-          float dy = 6 * (1 + int(random(4)));
-          float dz = 6 * (1 + int(random(4)));
-          float t = 0;
-          add_Box_Core(7, x,y,z, dx, dy, dz, t);
-          ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, t)};
-          SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
-        }          
-        
-        SOLARCHVISION_calculate_ParametricGeometries_Field();
-        
-        WIN3D_Update = 1;
+          float Image_X = X_clicked - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
+          float Image_Y = Y_clicked - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
+          
+          float[] ray_start = {CAM_x, CAM_y, CAM_z};     
+          float[] ray_end = {0,0,0}; // Now it only works well when looking at the origin point. <<<<<<<<<<<<  
+      
+          float CAM_dist = dist(ray_start[0], ray_start[1], ray_start[2], ray_end[0], ray_end[1], ray_end[2]);
+      
+          println("____________________________");
+          println("Start:", ray_start[0], ray_start[1], ray_start[2]); 
+          println("End Center:", ray_end[0], ray_end[1], ray_end[2]);    
+      
+          float[] ray_direction = new float[3];
+          
+          ray_direction[0] = ray_end[0] - ray_start[0];
+          ray_direction[1] = ray_end[1] - ray_start[1];
+          ray_direction[2] = ray_end[2] - ray_start[2];
+          
+          ray_direction = fn_normalize(ray_direction);
+          
+          float[] vect = new float[3];
+          
+          float XY_angle = atan2_ang(ray_direction[1], ray_direction[0]); 
+         
+          float r = 90 - XY_angle; // we want to rotate to make the vetor in YZ plane.
+          
+          vect[0] = 0; //cos_ang(r) * ray_direction[0] - sin_ang(r) * ray_direction[1]; // should be close to zero!  
+          vect[1] = sin_ang(r) * ray_direction[0] + cos_ang(r) * ray_direction[1]; 
+          vect[2] = ray_direction[2]; 
+          
+          //println(nf(vect[0], 0,3), nf(vect[1], 0, 3), nf(vect[2], 0, 3));
+      
+          float[] V_up = new float[3];
+          
+          V_up[0] = 0;   
+          V_up[1] = -vect[2];
+          V_up[2] = vect[1];
+          
+          float[] camera_up = new float[3];
+          
+          camera_up[0] = V_up[0] * cos_ang(-r) - V_up[1] * sin_ang(-r); 
+          camera_up[1] = V_up[0] * sin_ang(-r) + V_up[1] * cos_ang(-r); 
+          camera_up[2] = V_up[2]; 
+          
+          println("UP:", nf(camera_up[0], 0,3), nf(camera_up[1], 0, 3), nf(camera_up[2], 0, 3));
+      
+          float[] V_right = new float[3];
+          
+          V_right[0] = 1;   
+          V_right[1] = 0;
+          V_right[2] = 0;
+          
+          float[] camera_right = new float[3];
+          
+          camera_right[0] = V_right[0] * cos_ang(-r) - V_right[1] * sin_ang(-r); 
+          camera_right[1] = V_right[0] * sin_ang(-r) + V_right[1] * cos_ang(-r); 
+          camera_right[2] = V_right[2]; 
+      
+          println("RIGHT:", nf(camera_right[0], 0,3), nf(camera_right[1], 0, 3), nf(camera_right[2], 0, 3));
+          
+          float camera_zoom = 1;
+          
+          camera_zoom *= 2 * tan(0.5 * CAM_fov); // workd well with fov=PI/3
+          
+          camera_zoom /= WIN3D_scale3D; // ??
+          camera_zoom *= CAM_dist / refScale; //???
+          
+          println("camera_zoom =", camera_zoom);
+      
+          ray_direction[0] = ray_end[0] - ray_start[0];
+          ray_direction[1] = ray_end[1] - ray_start[1];
+          ray_direction[2] = ray_end[2] - ray_start[2];
+      
+          // without normalization     
+          
+          ray_end[0] += camera_zoom * camera_right[0] * Image_X;
+          ray_end[1] += camera_zoom * camera_right[1] * Image_X;
+          ray_end[2] += camera_zoom * camera_right[2] * Image_X;
+          
+          ray_end[0] += camera_zoom * camera_up[0] * -Image_Y;
+          ray_end[1] += camera_zoom * camera_up[1] * -Image_Y;
+          ray_end[2] += camera_zoom * camera_up[2] * -Image_Y;
+          
+          //-------------------------- NOT SURE ABOUT THIS
+          ray_end[0] /= objects_scale;
+          ray_end[1] /= objects_scale;
+          ray_end[2] /= objects_scale;
+          //--------------------------
+          
+            
+          ray_direction[0] = ray_end[0] - ray_start[0];
+          ray_direction[1] = ray_end[1] - ray_start[1];
+          ray_direction[2] = ray_end[2] - ray_start[2];
+          
+          float max_dist = 2 * dist(ray_start[0], ray_start[1], ray_start[2], ray_end[0], ray_end[1], ray_end[2]);
+          
+          float[] RxP = intersect(ray_start, ray_direction, max_dist);
+          
+          println(ray_start[0], ray_start[1], ray_start[2], ">>", ray_end[0], ray_end[1], ray_end[2], ">>", RxP[0], RxP[1], RxP[2]);
+          
+          if (RxP[4] > 0) {
+            float x = RxP[0]; 
+            float y = RxP[1]; 
+            float z = RxP[2];                      
+  
+            float dx = 6 * (1 + int(random(4)));
+            float dy = 6 * (1 + int(random(4)));
+            float dz = 6 * (1 + int(random(4)));
+            float t = 0;
+            add_Box_Core(7, x,y,z, dx, dy, dz, t);
+            ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, t)};
+            SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+          }          
+          
+          SOLARCHVISION_calculate_ParametricGeometries_Field();
+          
+          WIN3D_Update = 1;
+        }
       }       
     }
     
