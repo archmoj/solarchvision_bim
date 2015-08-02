@@ -421,14 +421,14 @@ String[] OBSERVED_XML_Files = getfiles(OBSERVED_directory);
 int MODEL3D_TESELATION = 0;
 
 int SKY3D_TESELATION = 2;
-float SKY3D_scale = 1000; 
+float SKY3D_scale = 25000; //1000; 
 
 int Display_SUN3D = 1;
 int Display_SKY3D = 1;
 
-int Load_LAND = 0;
+int Load_LAND = 1;
 int Display_LAND = 1;
-int Skip_LAND_Center = 1;
+int Skip_LAND_Center = 2;
 
 int Load_URBAN = 0;
 int Display_URBAN = 1;
@@ -602,13 +602,13 @@ void empty_Materials_DiffuseArea () {
 
                   
 int h_pixel = 325; 
-int w_pixel = int(h_pixel * 1.0); 
+int w_pixel = int(h_pixel * 1.5); 
 
 float WIN3D_scale3D; 
 
 int WIN3D_CX_View = 0;
 int WIN3D_CY_View = h_pixel;
-int WIN3D_X_View = w_pixel;
+int WIN3D_X_View = h_pixel;
 int WIN3D_Y_View = h_pixel;
 float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
 
@@ -643,9 +643,9 @@ int WIN3D_update_VerticesSolarValue = 1;
 
 
 
-int WORLD_CX_View = w_pixel;
+int WORLD_CX_View = h_pixel;
 int WORLD_CY_View = h_pixel;
-int WORLD_X_View = w_pixel;
+int WORLD_X_View = 2 * h_pixel;
 int WORLD_Y_View = h_pixel;
 float WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
 
@@ -1311,7 +1311,7 @@ void draw () {
   }
 } 
 
-float refScale = 1000;
+float refScale = 500;
 
 void SOLARCHVISION_draw_WIN3D () {
   
@@ -1332,8 +1332,8 @@ void SOLARCHVISION_draw_WIN3D () {
     
     float aspect = 1.0 / WIN3D_R_View;
     
-    float zFar = CAM_z * 100;
-    float zNear = CAM_z * 0.01;
+    float zFar = CAM_z * 1000;
+    float zNear = CAM_z * 0.001;
     
     WIN3D_Diagrams.perspective(CAM_fov, aspect, zNear, zFar);
 
@@ -1351,7 +1351,7 @@ void SOLARCHVISION_draw_WIN3D () {
 
   //lights();
 
-  
+/*  
   WIN3D_Diagrams.pushMatrix();
   
   WIN3D_Diagrams.translate(0, 0, 0);
@@ -1362,6 +1362,8 @@ void SOLARCHVISION_draw_WIN3D () {
   WIN3D_Diagrams.text(LocationName + " [" + nfp(LocationLatitude, 0, 1) + ", " + nfp(LocationLongitude, 0, 1) + "]", 0, 60 * (WIN3D_ZOOM_coordinate / 30.0), 0);
  
   WIN3D_Diagrams.popMatrix();
+*/
+
 
   WIN3D_Diagrams.translate(WIN3D_X_coordinate * WIN3D_scale3D, WIN3D_Y_coordinate * WIN3D_scale3D, WIN3D_Z_coordinate * WIN3D_scale3D);
   
@@ -9680,14 +9682,14 @@ void SOLARCHVISION_update_frame_layout () {
    
     WIN3D_CX_View = 0;
     WIN3D_CY_View = h_pixel;
-    WIN3D_X_View = w_pixel;
+    WIN3D_X_View = h_pixel;
     WIN3D_Y_View = h_pixel;
     WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
     WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
     
-    WORLD_CX_View = w_pixel;
+    WORLD_CX_View = h_pixel;
     WORLD_CY_View = h_pixel;
-    WORLD_X_View = w_pixel;
+    WORLD_X_View = 2 * h_pixel;
     WORLD_Y_View = h_pixel;
     WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
     WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);    
@@ -11277,7 +11279,7 @@ void SOLARCHVISION_add_3Dobjects () {
 
   //add_RecursiveSphere(7, 0,0,0, 25, 4, 0);  
   
-  add_Mesh2(0, -100, -100, 0, 100, 100, 0);
+  add_Mesh2(0, -150, -150, 0, 150, 150, 0);
   //add_Mesh2(0, -100, 0, -100, 100, 0, 100);
   //add_Mesh2(0, 0, -100, -100, 0, 100, 100);
 
@@ -11801,52 +11803,54 @@ void SOLARCHVISION_draw_SKY3D () {
           WIN3D_Diagrams.beginShape();
           
           for (int s = 0; s < subFace.length; s++) {
-    
+            
             int s_next = (s + 1) % subFace.length;
             int s_prev = (s + subFace.length - 1) % subFace.length;
             
-            PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
-            PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
-            PVector UV = U.cross(V);
-            float[] W = {UV.x, UV.y, UV.z};
-            W = fn_normalize(W);
+            if ((subFace[s][2] > -0.2) && (subFace[s_prev][2] > -0.2) && (subFace[s_next][2] > -0.2)) {
             
-            float Alpha = asin_ang(W[2]);
-            float Beta = atan2_ang(W[1], W[0]) + 90;       
-            
-            int a = int((Alpha + 90) / stp_slp);
-            int b = int(Beta / stp_dir);
-            
-            if (a < 0) a += int(180 / stp_slp);
-            if (b < 0) b += int(360 / stp_dir);
-            if (a > int(180 / stp_slp)) a -= int(180 / stp_slp);
-            if (b > int(360 / stp_dir)) b -= int(360 / stp_dir);
-            
-            float _valuesSUM = LocationExposure[a][b];
-            
-            if (_valuesSUM < 0.9 * FLOAT_undefined) {
-            
-              float _u = 0;
+              PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
+              PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
+              PVector UV = U.cross(V);
+              float[] W = {UV.x, UV.y, UV.z};
+              W = fn_normalize(W);
               
-              if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
-              if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
+              float Alpha = asin_ang(W[2]);
+              float Beta = atan2_ang(W[1], W[0]) + 90;       
               
-              if (PAL_DIR == -1) _u = 1 - _u;
-              if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-              if (PAL_DIR == 2) _u =  0.5 * _u;
-    
-              float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
-    
-              WIN3D_Diagrams.noStroke(); // <<<<<<<<<<<<
-    
-              WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+              int a = int((Alpha + 90) / stp_slp);
+              int b = int(Beta / stp_dir);
+              
+              if (a < 0) a += int(180 / stp_slp);
+              if (b < 0) b += int(360 / stp_dir);
+              if (a > int(180 / stp_slp)) a -= int(180 / stp_slp);
+              if (b > int(360 / stp_dir)) b -= int(360 / stp_dir);
+              
+              float _valuesSUM = LocationExposure[a][b];
+              
+              if (_valuesSUM < 0.9 * FLOAT_undefined) {
+              
+                float _u = 0;
+                
+                if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
+                if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
+                
+                if (PAL_DIR == -1) _u = 1 - _u;
+                if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                if (PAL_DIR == 2) _u =  0.5 * _u;
+      
+                float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+      
+                WIN3D_Diagrams.noStroke(); // <<<<<<<<<<<<
+      
+                WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+              }
+              else {
+                WIN3D_Diagrams.fill(223); 
+              }
+              
+              WIN3D_Diagrams.vertex(subFace[s][0] * SKY3D_scale * WIN3D_scale3D, -(subFace[s][1] * SKY3D_scale * WIN3D_scale3D), subFace[s][2] * SKY3D_scale * WIN3D_scale3D);
             }
-            else {
-              WIN3D_Diagrams.fill(223); 
-            }
-            
-            WIN3D_Diagrams.vertex(subFace[s][0] * SKY3D_scale * WIN3D_scale3D, -(subFace[s][1] * SKY3D_scale * WIN3D_scale3D), subFace[s][2] * SKY3D_scale * WIN3D_scale3D);
-    
           }
           
           WIN3D_Diagrams.endShape(CLOSE);
@@ -13355,8 +13359,8 @@ void SOLARCHVISION_add_ParametricGeometries () {
 
 }
 
-float Field_scale_U = 200; //800;
-float Field_scale_V = 200; //800;
+float Field_scale_U = 400; //200;
+float Field_scale_V = 400; //200;
 
 int Field_RES1 = 400;
 int Field_RES2 = 400;
@@ -14410,9 +14414,14 @@ void mouseClicked () {
             float y = RxP[1]; 
             float z = RxP[2];                      
   
-            float dx = 6 * (1 + int(random(4)));
-            float dy = 6 * (1 + int(random(4)));
-            float dz = 6 * (1 + int(random(4)));
+            float dx = 1 + int(random(3));
+            float dy = 1 + int(random(3));
+            float dz = 18.0 / (dx * dy);
+            
+            dx *= 6;
+            dy *= 6;
+            dz *= 6;
+            
             float t = 0;
             add_Box_Core(7, x,y,z, dx, dy, dz, t);
             ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, t)};
