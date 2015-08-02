@@ -8567,9 +8567,13 @@ void GRAPHS_keyPressed (KeyEvent e) {
         switch(key) {
 
           case 'r' : GRAPHS_record_AUTO = (GRAPHS_record_AUTO + 1) % 2; GRAPHS_Update = 0; break;
+          case 'R' : GRAPHS_record_AUTO = (GRAPHS_record_AUTO + 1) % 2; GRAPHS_Update = 0; break;
   
           case 'j' : GRAPHS_record_JPG = 1; GRAPHS_Update = 1; break;
+          case 'J' : GRAPHS_record_JPG = 1; GRAPHS_Update = 1; break;
+          
           case 'p' : GRAPHS_record_PDF = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break; 
+          case 'P' : GRAPHS_record_PDF = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break;
           
           case '^' : draw_data_lines = 1; save_info_node = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break;
           case '&' : draw_normals = 1; save_info_norm = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break;
@@ -9534,8 +9538,14 @@ void WIN3D_keyPressed (KeyEvent e) {
                   Field_Image_Power *= pow(2.0, 0.5); 
                   if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
+                  
+        case 'c' :Field_Color = (Field_Color + 1) % 4; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;                  
 
-
+        case 'C' :Field_Color = (Field_Color + 4 - 1) % 4; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  break;  
  
       }
     }    
@@ -11766,15 +11776,16 @@ void SOLARCHVISION_draw_SKY3D () {
         }
         if (Impact_TYPE == Impact_PASSIVE) {  
           //PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
-          PAL_TYPE = 18; PAL_DIR = 1;
+          PAL_TYPE = 18; PAL_DIR = -1;
+          //PAL_TYPE = 18; PAL_DIR = 1;
           //PAL_TYPE = 17; PAL_DIR = 1;
           //PAL_TYPE = 17; PAL_DIR = -1;
           
         }             
         
         float _Multiplier = 1; 
-        if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; 
-        if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02;            
+        if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.2; //_Multiplier = 0.1; // <<<<<<<<<<< 
+        if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02;             
   
         int Teselation = 0;
         
@@ -12147,7 +12158,8 @@ void SOLARCHVISION_draw_objects () {
             
           }
           if (Impact_TYPE == Impact_PASSIVE) {  
-            PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
+            //PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
+            PAL_TYPE = -1; PAL_DIR = 1;
           }             
           
           float _Multiplier = 1; 
@@ -13359,6 +13371,8 @@ void SOLARCHVISION_add_ParametricGeometries () {
 
 }
 
+int Field_Color = 0; 
+
 float Field_scale_U = 400; //200;
 float Field_scale_V = 400; //200;
 
@@ -13373,6 +13387,8 @@ int display_Field_Image = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertic
 
 float[] Field_Elevation = {0, 1, 0, 0};
 float[] Field_Image_rotation = {0, 0, 0, 0};
+
+
 
 void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
@@ -13428,9 +13444,24 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
       //float _u = -Field_Multiplier * val;
       float _u = Field_Multiplier * val;
 
-      float[] _COL = SOLARCHVISION_DRYWCBD(roundTo(_u, 0.05));
-
-      Field_Image.pixels[i + j * Field_RES1] = color(_COL[1], _COL[2], _COL[3]);
+      float[] _COL = {0,0,0,0};
+      if (Field_Color == 0) {
+        _COL = SOLARCHVISION_DRYWCBD(roundTo(_u, 0.05));
+        Field_Image.pixels[i + j * Field_RES1] = color(_COL[1], _COL[2], _COL[3]);
+      }
+      else if (Field_Color == 1) {
+         _COL = SOLARCHVISION_DRYWCBD(roundTo(-_u, 0.05));
+        Field_Image.pixels[i + j * Field_RES1] = color(_COL[1], _COL[2], _COL[3]);
+      } 
+      else if (Field_Color == 2) {
+         _COL = SOLARCHVISION_DRYWCBD(roundTo(-_u, 0.05));
+        Field_Image.pixels[i + j * Field_RES1] = color(255 - _COL[3], 255 - _COL[2], 255 - _COL[1]);
+      } 
+      else if (Field_Color == 3) {
+         _COL = SOLARCHVISION_DRYWCBD(roundTo(_u, 0.05));
+        Field_Image.pixels[i + j * Field_RES1] = color(255 - _COL[3], 255 - _COL[2], 255 - _COL[1]);
+      } 
+      
     }
   }
   
