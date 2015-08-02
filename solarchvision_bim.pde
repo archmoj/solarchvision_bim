@@ -14306,6 +14306,8 @@ void mouseClicked () {
         float[] ray_start = {CAM_x, CAM_y, CAM_z};     
         float[] ray_end = {0,0,0}; // Now it only works well when looking at the origin point. <<<<<<<<<<<<  
     
+        float CAM_dist = dist(ray_start[0], ray_start[1], ray_start[2], ray_end[0], ray_end[1], ray_end[2]);
+    
         println("____________________________");
         println("Start:", ray_start[0], ray_start[1], ray_start[2]); 
         println("End Center:", ray_end[0], ray_end[1], ray_end[2]);    
@@ -14364,7 +14366,10 @@ void mouseClicked () {
         //float camera_zoom = tan(0.5 * CAM_fov) / WIN3D_scale3D; // ??
         //float camera_zoom = 2 / tan(0.5 * CAM_fov); // ??
         //float camera_zoom = 2 * tan(0.5 * CAM_fov); // ??
-        float camera_zoom = 2.5 * tan(0.5 * CAM_fov); // ??
+        //float camera_zoom = 2.5 * tan(0.5 * CAM_fov); // ??
+        float camera_zoom = 2 * tan(0.5 * CAM_fov) / WIN3D_scale3D; // ??
+        
+        camera_zoom *= CAM_dist / refScale; //???
         
         println("camera_zoom =", camera_zoom);
     
