@@ -1311,11 +1311,10 @@ void draw () {
   }
 } 
 
-
+float refScale = 1000;
 
 void SOLARCHVISION_draw_WIN3D () {
   
-  float refScale = 1000;
   
   WIN3D_scale3D = WIN3D_X_View / refScale; // fits field of view to window's width
   
@@ -1369,7 +1368,7 @@ void SOLARCHVISION_draw_WIN3D () {
   WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI / 180); 
   WIN3D_Diagrams.rotateY(WIN3D_RY_coordinate * PI / 180);
   WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI / 180); 
-
+  
   //println(nfp(WIN3D_RX_coordinate, 0, 1), nfp(WIN3D_RY_coordinate, 0, 1), nfp(WIN3D_RZ_coordinate, 0, 1)); 
 
 
@@ -14300,8 +14299,7 @@ void mouseClicked () {
       if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
   
         int Image_X = X_clicked - WIN3D_CX_View;
-        int Image_Y = Y_clicked - WIN3D_CY_View; // NOT SURE!    
-        float max_RES = WIN3D_X_View; // ??
+        int Image_Y = Y_clicked - WIN3D_CY_View; 
         
         float[] ray_start = {CAM_x, CAM_y, CAM_z};     
         float[] ray_end = {0,0,0}; // NOT SURE!
@@ -14359,7 +14357,8 @@ void mouseClicked () {
         println("RIGHT:", nf(camera_right[0], 0,3), nf(camera_right[1], 0, 3), nf(camera_right[2], 0, 3));
         
         //float camera_zoom = WIN3D_ZOOM_coordinate * 5; //400;//4; // ???????????
-        float camera_zoom = 1; //WIN3D_scale3D / (2 * tan(0.5 * CAM_fov)); // ??
+        //float camera_zoom = 1; //WIN3D_scale3D / (2 * tan(0.5 * CAM_fov)); // ??
+        float camera_zoom = refScale * tan(0.5 * CAM_fov); // ??
         
         println("camera_zoom =", camera_zoom);
     
@@ -14369,13 +14368,13 @@ void mouseClicked () {
     
         // without normalization     
         
-        ray_end[0] += camera_zoom * camera_right[0] * (Image_X / max_RES - 0.5);
-        ray_end[1] += camera_zoom * camera_right[1] * (Image_X / max_RES - 0.5);
-        ray_end[2] += camera_zoom * camera_right[2] * (Image_X / max_RES - 0.5);
+        ray_end[0] += camera_zoom * camera_right[0] * (Image_X / float(WIN3D_X_View) - 0.5);
+        ray_end[1] += camera_zoom * camera_right[1] * (Image_X / float(WIN3D_X_View) - 0.5);
+        ray_end[2] += camera_zoom * camera_right[2] * (Image_X / float(WIN3D_X_View) - 0.5);
         
-        ray_end[0] += camera_zoom * camera_up[0] * -(Image_Y / max_RES - 0.5);
-        ray_end[1] += camera_zoom * camera_up[1] * -(Image_Y / max_RES - 0.5);
-        ray_end[2] += camera_zoom * camera_up[2] * -(Image_Y / max_RES - 0.5);
+        ray_end[0] += camera_zoom * camera_up[0] * -(Image_Y / float(WIN3D_Y_View) - 0.5);
+        ray_end[1] += camera_zoom * camera_up[1] * -(Image_Y / float(WIN3D_Y_View) - 0.5);
+        ray_end[2] += camera_zoom * camera_up[2] * -(Image_Y / float(WIN3D_Y_View) - 0.5);
     
         ray_direction[0] = ray_end[0] - ray_start[0];
         ray_direction[1] = ray_end[1] - ray_start[1];
