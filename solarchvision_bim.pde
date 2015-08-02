@@ -10736,9 +10736,9 @@ void add_QuadSphere (int m, float cx, float cy, float cz, float r, int Teselatio
   } 
 
   int[] vM1 = new int [6]; // between T0 and Ti  
-  int[] vM2 = new int[6]; // between Ti and Bi
-  int[] vM3 = new int[6]; // between Ti and Bi
-  int[] vM4 = new int[6]; // between Bi and B0
+  int[] vM2 = new int [6]; // between Ti and Bi
+  int[] vM3 = new int [6]; // between Ti and Bi
+  int[] vM4 = new int [6]; // between Bi and B0
   //CAUTION: VMx[0] will remain undefined below to keep simillar i variables! 
   for (int i = 1; i <= 5; i++) {
     
@@ -11070,8 +11070,8 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
     }
     
     if (parts[0].toLowerCase().equals("f")) {
-      //int[] newFace = new int[parts.length - 1]; // if we don't have space at the end of the line.
-      int[] newFace = new int[parts.length - 2]; // if we have 1 space at the end of the line. 
+      //int[] newFace = new int [parts.length - 1]; // if we don't have space at the end of the line.
+      int[] newFace = new int [parts.length - 2]; // if we have 1 space at the end of the line. 
     
       //println(parts);
     
@@ -11234,7 +11234,7 @@ void SOLARCHVISION_remove_2Dobjects () {
   allObject2D_XYZS[0][1] = 0;
   allObject2D_XYZS[0][2] = 0;
   
-  allObject2D_MAP = new int[1];
+  allObject2D_MAP = new int [1];
   allObject2D_MAP[0] = 0;
   
   allObject2D_num = 0;
@@ -11247,12 +11247,12 @@ void SOLARCHVISION_remove_3Dobjects () {
  allVertices[0][1] = 0;
  allVertices[0][2] = 0;
  
- allFaces = new int[1][3];
+ allFaces = new int [1][3];
  allFaces[0][0] = 0;
  allFaces[0][1] = 0;
  allFaces[0][2] = 0;
   
- allFaces_MAT = new int[1];
+ allFaces_MAT = new int [1];
  allFaces_MAT[0] = 0;
  
   urbanVertices_start = 0;
@@ -12459,7 +12459,7 @@ void SOLARCHVISION_draw_objects () {
                   Normals_COL_N = PROCESSED_DAILY_SCENARIOS[j_end - j_start];
                 }
                 else{
-                  Normals_COL_N = new int[9];
+                  Normals_COL_N = new int [9];
                   Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
                   
                   int[][] newNormals = {Normals_COL_N};
@@ -13242,8 +13242,8 @@ class ParametricGeometry {
     b -= posY;    
     c -= posZ;
     
-    float x = a * cos_ang(rotZ) - b * sin_ang(rotZ);
-    float y = a * sin_ang(rotZ) + b * cos_ang(rotZ); 
+    float x = a * cos_ang(-rotZ) - b * sin_ang(-rotZ);
+    float y = a * sin_ang(-rotZ) + b * cos_ang(-rotZ); 
     float z = c;
 
     x += posX;
@@ -13373,7 +13373,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float py = 2;
     float pz = 2;
     
-    add_SuperSphere (5, x,y,z, pz,py,pz, rx,ry,rz, 5);
+    add_SuperSphere(5, x,y,z, pz,py,pz, rx,ry,rz, 5);
     ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, 0)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }  
@@ -13503,8 +13503,8 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
 
   defaultMaterial = m;
   
-  int[] vT = new int[6];
-  int[] vB = new int[6];
+  int[] vT = new int [6];
+  int[] vB = new int [6];
   
   vT[0] = addToTempObjectVertices(0,0,1);
   vB[0] = addToTempObjectVertices(0,0,-1);
@@ -13594,8 +13594,33 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
   }
   else if (isSky == 1) {
     
-    skyVertices = TempObjectVertices;
-    skyFaces = TempObjectFaces;
+     
+    skyVertices = new float [1][3]; 
+    skyFaces = new int [1][1];
+    
+    skyFaces[0][0] = 0;
+    skyVertices[0][0] = 0;
+    skyVertices[0][1] = 0;
+    skyVertices[0][2] = 0;
+    
+    for (int i = 1; i < POINTER_TempObjectFaces; i++) {
+      
+      int[] f = new int [0];
+      
+      for (int j = 0; j < TempObjectFaces[i].length; j++) {
+
+        float[][] newVertice = {{TempObjectVertices[TempObjectFaces[i][j]][0], TempObjectVertices[TempObjectFaces[i][j]][1], TempObjectVertices[TempObjectFaces[i][j]][2]}}; 
+  
+        skyVertices = (float[][]) concat(skyVertices, newVertice);
+        
+        f = (int[]) concat(f, TempObjectFaces[i][j]);
+
+      }
+      
+      int[][] newFace = {f}; 
+      
+      skyFaces = (int[][]) concat(skyFaces, newFace);
+    }
     
     POINTER_skyVertices = POINTER_TempObjectVertices;
     POINTER_skyFaces = POINTER_TempObjectFaces;    
@@ -13639,7 +13664,7 @@ void add_SuperSphere (int m, float cx, float cy, float cz, float px, float py, f
       TempObjectVertices[i][2] = z / the_dist;
     }
   }
-
+  
   addTempObjectToScene(cx,cy,cz,sx,sy,sz);
 }  
 
@@ -13764,17 +13789,17 @@ void addTempObjectToScene (float cx, float cy, float cz, float sx, float sy, flo
     addToFaces(new_vert_numbers);    
   }
 
-
   TempObjectVertices = new float [1][3];
   TempObjectVertices[0][0] = 0;
   TempObjectVertices[0][1] = 0;
   TempObjectVertices[0][2] = 0;
   
-  TempObjectFaces = new int[1][1];
+  TempObjectFaces = new int [1][1];
   TempObjectFaces[0][0] = 0;
 
   POINTER_TempObjectVertices = 1;
   POINTER_TempObjectFaces = 1;
+
 }
 
 void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, int Teselation, int BuildFaces) {
@@ -14034,7 +14059,7 @@ void SolarProjection () {
     float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
 
     int[] Normals_COL_N;
-    Normals_COL_N = new int[9];
+    Normals_COL_N = new int [9];
     Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
 
     for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
@@ -14478,7 +14503,7 @@ void mouseClicked () {
             float pz = Create_Input_powZ;
             
             if ((px == 8) && (py == 8) && (pz == 8)) add_Box_Core(Create_Default_Material, x,y,z, dx,dy,dz, t);
-            else add_SuperSphere (Create_Default_Material, x,y,z, pz,py,pz, dx/2,dy/2,dz/2, 4); 
+            else add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, dx/2,dy/2,dz/2, 4); 
             
             ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, dx,dy,dz, t)};
             SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
