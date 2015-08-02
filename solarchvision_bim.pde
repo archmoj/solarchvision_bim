@@ -14368,7 +14368,7 @@ void mouseClicked () {
         //float camera_zoom = 2 * tan(0.5 * CAM_fov); // ??
         //float camera_zoom = 2.5 * tan(0.5 * CAM_fov); // ??
         float camera_zoom = 1;
-        camera_zoom /= 2 * tan(0.5 * CAM_fov);
+        camera_zoom *= 2 * tan(0.5 * CAM_fov);
         camera_zoom /= WIN3D_scale3D; // ??
         camera_zoom *= CAM_dist / refScale; //???
         
