@@ -698,6 +698,18 @@ int MESSAGE_Y_View = int(1.5 * MESSAGE_S_View);
 
 
 
+int Create_Default_Material = 7;
+
+float Create_Input_Length = 0;
+float Create_Input_Width = 0;
+float Create_Input_Height = 0;
+
+float Create_Input_Orientation = 0;
+
+float Create_Input_powX = 8; 
+float Create_Input_powY = 8;
+float Create_Input_powZ = 8;
+
 
 float CAM_x, CAM_y, CAM_z;
 float CAM_fov;
@@ -14441,21 +14453,34 @@ void mouseClicked () {
           println(ray_start[0], ray_start[1], ray_start[2], ">>", ray_end[0], ray_end[1], ray_end[2], ">>", RxP[0], RxP[1], RxP[2]);
           
           if (RxP[4] > 0) {
+            
             float x = RxP[0]; 
             float y = RxP[1]; 
             float z = RxP[2];                      
   
-            float dx = 1 + int(random(3));
-            float dy = 1 + int(random(3));
-            float dz = 18.0 / (dx * dy);
+  
+            float dx = Create_Input_Length;
+            if (dx == 0) dx = 6 * (1 + int(random(3)));
+
+            float dy = Create_Input_Width;
+            if (dy == 0) dy = 6 * (1 + int(random(3)));
+
+            float dz = Create_Input_Height;
+            if (dz == 0) dz = 6 * (1 + int(random(3)));
+              
+            if ((dx == 0) && (dy == 0) && (dz == 0)) dz = 1000 / (dx * dy);
+
+            float t = Create_Input_Orientation;
+            if (t == 360) t = 15 * (int(random(24)));
+
+            float px = Create_Input_powX; 
+            float py = Create_Input_powY;
+            float pz = Create_Input_powZ;
             
-            dx *= 6;
-            dy *= 6;
-            dz *= 6;
+            if ((px == 8) && (py == 8) && (pz == 8)) add_Box_Core(Create_Default_Material, x,y,z, dx,dy,dz, t);
+            else add_SuperSphere (Create_Default_Material, x,y,z, pz,py,pz, dx/2,dy/2,dz/2, 4); 
             
-            float t = 0;
-            add_Box_Core(7, x,y,z, dx, dy, dz, t);
-            ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, t)};
+            ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, dx,dy,dz, t)};
             SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
           }          
           
@@ -14599,7 +14624,7 @@ class SOLARCHVISION_Spinner {
 
 String[][] ROLLOUTS = {
                         {"Location & Data", "General"}, 
-                        {"Geometries & Space", "General"}, 
+                        {"Geometries & Space", "General", "Solids", "Meshes"}, 
                         {"Time & Scenarios", "General"}, 
                         {"Post-Processing", "General"}, 
                         {"Graph Options", "General"},
@@ -14687,6 +14712,18 @@ void SOLARCHVISION_draw_ROLLOUT () {
     MODEL3D_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, "MODEL3D_TESELATION" , MODEL3D_TESELATION, 0, 5, 1));
   }
   else if (ROLLOUT_parent == 1) { // Geometries & Space
+    
+    Create_Default_Material = int(MySpinner.update(X_spinner, Y_spinner, "Create_Default_Material" , Create_Default_Material, -1, 8, 1));
+    Create_Input_Length = MySpinner.update(X_spinner, Y_spinner, "Create_Input_Length" , Create_Input_Length, 0, 120, 3); 
+    Create_Input_Width = MySpinner.update(X_spinner, Y_spinner, "Create_Input_Width" , Create_Input_Width, 0, 120, 3);
+    Create_Input_Height = MySpinner.update(X_spinner, Y_spinner, "Create_Input_Height" , Create_Input_Height, 0, 120, 3);    
+    Create_Input_Orientation = MySpinner.update(X_spinner, Y_spinner, "Create_Input_Orientation" , Create_Input_Orientation, 0, 360, 15);
+    
+    if (ROLLOUT_child == 2) { // Solids
+      Create_Input_powX = MySpinner.update(X_spinner, Y_spinner, "Create_Input_powX" , Create_Input_powX, 0.125, 8, -pow(2.0, (1.0 / 2.0))); 
+      Create_Input_powY = MySpinner.update(X_spinner, Y_spinner, "Create_Input_powY" , Create_Input_powY, 0.125, 8, -pow(2.0, (1.0 / 2.0))); 
+      Create_Input_powZ = MySpinner.update(X_spinner, Y_spinner, "Create_Input_powZ" , Create_Input_powZ, 0.125, 8, -pow(2.0, (1.0 / 2.0))); 
+    }
     
   }
   else if (ROLLOUT_parent == 2) { // Time & Scenarios
