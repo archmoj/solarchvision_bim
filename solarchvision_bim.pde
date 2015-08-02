@@ -1315,7 +1315,9 @@ void draw () {
 
 void SOLARCHVISION_draw_WIN3D () {
   
-  WIN3D_scale3D = WIN3D_Y_View / 100.0; 
+  float refScale = h_pixel; // 100;
+  
+  WIN3D_scale3D = WIN3D_Y_View / refScale; 
   
   WIN3D_Diagrams.beginDraw();
   
@@ -1327,7 +1329,8 @@ void SOLARCHVISION_draw_WIN3D () {
     
     CAM_x = 0;
     CAM_y = 0;
-    CAM_z = 50.0 / tan(0.5 * fov);
+    CAM_z = (0.5 * refScale) / tan(0.5 * fov);
+    //CAM_z = (0.5 * refScale);
 
     float aspect = 1.0 / WIN3D_R_View;
     
@@ -1362,7 +1365,8 @@ void SOLARCHVISION_draw_WIN3D () {
  
   WIN3D_Diagrams.popMatrix();
 
-  WIN3D_Diagrams.translate(WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
+  WIN3D_Diagrams.translate(WIN3D_X_coordinate * WIN3D_scale3D, WIN3D_Y_coordinate * WIN3D_scale3D, WIN3D_Z_coordinate * WIN3D_scale3D);
+  
   WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI / 180); 
   WIN3D_Diagrams.rotateY(WIN3D_RY_coordinate * PI / 180);
   WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI / 180); 
