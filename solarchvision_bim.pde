@@ -1323,37 +1323,14 @@ void SOLARCHVISION_draw_WIN3D () {
     
     CAM_x = 0;
     CAM_y = 0;
-    //CAM_z = 100.0 / tan(0.5 * fov);
-    CAM_z = 100;
-    
-        
-    //CAM_z = 0.5 * WIN3D_Diagrams.height / tan(PI / 6.0);
-    //CAM_z = 0.5 * WIN3D_Diagrams.height / tan(0.5 * fov);
-    //CAM_z = (300.0 / (1.0 * h_pixel)) * 0.5 * WIN3D_Diagrams.height / tan(0.5 * fov);
-    
+    CAM_z = 0.5 * WIN3D_Diagrams.height / tan(0.5 * fov);
 
-    println("CAM_fov =", fov);
-    println(CAM_x, CAM_y, CAM_z);
-    
     float aspect = 1.0 / WIN3D_R_View;
-    
-    //float mult = WIN3D_Diagrams.height / 100.0;
     
     float zFar = CAM_z * 100;
     float zNear = CAM_z * 0.01;
     
-    //float ymax = zNear * tan(0.5 * fov);
-    //float ymax = tan(0.5 * fov);
-    float ymax = tan(0.5 * fov) * WIN3D_Diagrams.height / 100.0;
-    //float ymax = 1;
-    //float ymax = zNear * tan(0.5 * fov) * float(WIN3D_Diagrams.height) / float(h_pixel);
-    float ymin = -ymax;
-    float xmin = ymin * aspect;
-    float xmax = ymax * aspect;
-
-    //println(xmin, xmax, ymin, ymax, zNear, zFar);
-    WIN3D_Diagrams.frustum(xmin, xmax, ymin, ymax, zNear, zFar);
-    //WIN3D_Diagrams.frustum(xmin * mult, xmax * mult, ymin * mult, ymax * mult, zNear * mult, zFar * mult);
+    WIN3D_Diagrams.perspective(fov, aspect, zNear, zFar);
 
     WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
   }
