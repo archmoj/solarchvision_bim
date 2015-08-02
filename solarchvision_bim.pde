@@ -604,6 +604,8 @@ void empty_Materials_DiffuseArea () {
 int h_pixel = 325; 
 int w_pixel = int(h_pixel * 1.0); //int(h_pixel * 1.5);
 
+float WIN3D_scale3D; 
+
 int WIN3D_CX_View = 0;
 int WIN3D_CY_View = h_pixel;
 int WIN3D_X_View = w_pixel;
@@ -1313,6 +1315,8 @@ void draw () {
 
 void SOLARCHVISION_draw_WIN3D () {
   
+  WIN3D_scale3D = WIN3D_Y_View / 100.0; 
+  
   WIN3D_Diagrams.beginDraw();
   
   WIN3D_Diagrams.background(233);
@@ -1323,7 +1327,7 @@ void SOLARCHVISION_draw_WIN3D () {
     
     CAM_x = 0;
     CAM_y = 0;
-    CAM_z = 0.5 * WIN3D_Diagrams.height / tan(0.5 * fov);
+    CAM_z = 50.0 / tan(0.5 * fov);
 
     float aspect = 1.0 / WIN3D_R_View;
     
@@ -9360,10 +9364,10 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
                 float[] SunD = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR_ANGLE - 0.5);
                 
                 WIN3D_Diagrams.beginShape();
-                WIN3D_Diagrams.vertex(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3]);
-                WIN3D_Diagrams.vertex(s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
-                WIN3D_Diagrams.vertex(s_SunPath * SunC[1], -s_SunPath * SunC[2], s_SunPath * SunC[3]);
-                WIN3D_Diagrams.vertex(s_SunPath * SunD[1], -s_SunPath * SunD[2], s_SunPath * SunD[3]);
+                WIN3D_Diagrams.vertex(s_SunPath * SunA[1] * WIN3D_scale3D, -s_SunPath * SunA[2] * WIN3D_scale3D, s_SunPath * SunA[3] * WIN3D_scale3D);
+                WIN3D_Diagrams.vertex(s_SunPath * SunB[1] * WIN3D_scale3D, -s_SunPath * SunB[2] * WIN3D_scale3D, s_SunPath * SunB[3] * WIN3D_scale3D);
+                WIN3D_Diagrams.vertex(s_SunPath * SunC[1] * WIN3D_scale3D, -s_SunPath * SunC[2] * WIN3D_scale3D, s_SunPath * SunC[3] * WIN3D_scale3D);
+                WIN3D_Diagrams.vertex(s_SunPath * SunD[1] * WIN3D_scale3D, -s_SunPath * SunD[2] * WIN3D_scale3D, s_SunPath * SunD[3] * WIN3D_scale3D);
       
                 WIN3D_Diagrams.endShape(CLOSE);
                 
@@ -9385,7 +9389,7 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
       for (float HOUR = SOLARCHVISION_Sunrise(LocationLatitude, j); HOUR <(SOLARCHVISION_Sunset(LocationLatitude, j) + .01 - HOUR_step); HOUR += HOUR_step) {
         float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, j, HOUR);
         float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, j, (HOUR + HOUR_step));
-        WIN3D_Diagrams.line(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
+        WIN3D_Diagrams.line(s_SunPath * SunA[1] * WIN3D_scale3D, -s_SunPath * SunA[2] * WIN3D_scale3D, s_SunPath * SunA[3] * WIN3D_scale3D, s_SunPath * SunB[1] * WIN3D_scale3D, -s_SunPath * SunB[2] * WIN3D_scale3D, s_SunPath * SunB[3] * WIN3D_scale3D);
       }
     }
     
@@ -9395,7 +9399,7 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
         float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, j, HOUR);
         float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, (j + DATE_step), HOUR);
         if (SunA[3] >= 0 && SunB[3] >= 0) {
-          WIN3D_Diagrams.line(s_SunPath * SunA[1], -s_SunPath * SunA[2], s_SunPath * SunA[3], s_SunPath * SunB[1], -s_SunPath * SunB[2], s_SunPath * SunB[3]);
+          WIN3D_Diagrams.line(s_SunPath * SunA[1] * WIN3D_scale3D, -s_SunPath * SunA[2] * WIN3D_scale3D, s_SunPath * SunA[3] * WIN3D_scale3D, s_SunPath * SunB[1] * WIN3D_scale3D, -s_SunPath * SunB[2] * WIN3D_scale3D, s_SunPath * SunB[3] * WIN3D_scale3D);
         }
       }
     }
@@ -9404,14 +9408,14 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
   
     WIN3D_Diagrams.stroke(0);
     for (int i = 0; i < 360; i += 5) {
-      WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180), -s_SunPath * sin(i * PI / 180), 0, s_SunPath * cos((i + 5) * PI / 180), -s_SunPath * sin((i + 5) * PI / 180), 0); 
+      WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180) * WIN3D_scale3D, -s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0, s_SunPath * cos((i + 5) * PI / 180) * WIN3D_scale3D, -s_SunPath * sin((i + 5) * PI / 180) * WIN3D_scale3D, 0); 
       
-      WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180), -s_SunPath * sin(i * PI / 180), 0, 1.05 * s_SunPath * cos((i) * PI / 180), -1.05 * s_SunPath * sin((i) * PI / 180), 0);
+      WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180) * WIN3D_scale3D, -s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0, 1.05 * s_SunPath * cos((i) * PI / 180) * WIN3D_scale3D, -1.05 * s_SunPath * sin((i) * PI / 180) * WIN3D_scale3D, 0);
     }
     
     for (int i = 0; i < 360; i += 15) {
       WIN3D_Diagrams.pushMatrix();
-      WIN3D_Diagrams.translate(1.15 * s_SunPath * cos(i * PI / 180), -1.15 * s_SunPath * sin(i * PI / 180), 0);
+      WIN3D_Diagrams.translate(1.15 * s_SunPath * cos(i * PI / 180) * WIN3D_scale3D, -1.15 * s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0);
       
       WIN3D_Diagrams.fill(0);
       WIN3D_Diagrams.textSize(s_SunPath * 0.05);
@@ -11692,7 +11696,7 @@ PGraphics ViewFromTheSky (int SKY2D_X_View, int SKY2D_Y_View, float SKY2D_ZOOM_c
         }
         //else SKY2D_Diagrams.fill(255, 127, 0);
 
-        SKY2D_Diagrams.vertex(subFace[s][0], -subFace[s][1], subFace[s][2]);
+        SKY2D_Diagrams.vertex(subFace[s][0] * WIN3D_scale3D, -subFace[s][1] * WIN3D_scale3D, subFace[s][2] * WIN3D_scale3D);
       }
       
       SKY2D_Diagrams.endShape(CLOSE);
@@ -11735,7 +11739,7 @@ void SOLARCHVISION_draw_SKY3D () {
         
         for (int j = 0; j < skyFaces[f].length; j++) {
           int vNo = skyFaces[f][j];
-          WIN3D_Diagrams.vertex(skyVertices[vNo][0] * SKY3D_scale, -(skyVertices[vNo][1] * SKY3D_scale), skyVertices[vNo][2] * SKY3D_scale);
+          WIN3D_Diagrams.vertex(skyVertices[vNo][0] * SKY3D_scale * WIN3D_scale3D, -(skyVertices[vNo][1] * SKY3D_scale * WIN3D_scale3D), skyVertices[vNo][2] * SKY3D_scale * WIN3D_scale3D);
         }    
         
         WIN3D_Diagrams.endShape(CLOSE);
@@ -11834,7 +11838,7 @@ void SOLARCHVISION_draw_SKY3D () {
               WIN3D_Diagrams.fill(223); 
             }
             
-            WIN3D_Diagrams.vertex(subFace[s][0] * SKY3D_scale, -(subFace[s][1] * SKY3D_scale), subFace[s][2] * SKY3D_scale);
+            WIN3D_Diagrams.vertex(subFace[s][0] * SKY3D_scale * WIN3D_scale3D, -(subFace[s][1] * SKY3D_scale * WIN3D_scale3D), subFace[s][2] * SKY3D_scale * WIN3D_scale3D);
     
           }
           
@@ -11876,7 +11880,7 @@ void SOLARCHVISION_draw_land () {
           WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
           WIN3D_Diagrams.stroke(0);
         
-          WIN3D_Diagrams.vertex(x * objects_scale, -y * objects_scale, z * objects_scale);
+          WIN3D_Diagrams.vertex(x * objects_scale * WIN3D_scale3D, -y * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
         }
         
         WIN3D_Diagrams.endShape(CLOSE);
@@ -11907,7 +11911,7 @@ void SOLARCHVISION_draw_field_image () {
       float x = a * cos_ang(Field_Image_rotation[display_Field_Image]) - b * sin_ang(Field_Image_rotation[display_Field_Image]);
       float y = a * sin_ang(Field_Image_rotation[display_Field_Image]) + b * cos_ang(Field_Image_rotation[display_Field_Image]);
       float z = c; 
-      WIN3D_Diagrams.vertex(x, y, z, 0, Field_RES2);
+      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, 0, Field_RES2);
     }
     {
       float a = 0.5 * Field_scale_U * objects_scale;
@@ -11915,7 +11919,7 @@ void SOLARCHVISION_draw_field_image () {
       float x = a * cos_ang(Field_Image_rotation[display_Field_Image]) - b * sin_ang(Field_Image_rotation[display_Field_Image]);
       float y = a * sin_ang(Field_Image_rotation[display_Field_Image]) + b * cos_ang(Field_Image_rotation[display_Field_Image]);
       float z = c;  
-      WIN3D_Diagrams.vertex(x, y, z, Field_RES1, Field_RES2);
+      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, Field_RES1, Field_RES2);
     }  
     {
       float a = 0.5 * Field_scale_U * objects_scale;
@@ -11923,7 +11927,7 @@ void SOLARCHVISION_draw_field_image () {
       float x = a * cos_ang(Field_Image_rotation[display_Field_Image]) - b * sin_ang(Field_Image_rotation[display_Field_Image]);
       float y = a * sin_ang(Field_Image_rotation[display_Field_Image]) + b * cos_ang(Field_Image_rotation[display_Field_Image]);
       float z = c;  
-      WIN3D_Diagrams.vertex(x, y, z, Field_RES1, 0);
+      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, Field_RES1, 0);
     }  
     {
       float a = -0.5 * Field_scale_U * objects_scale;
@@ -11931,7 +11935,7 @@ void SOLARCHVISION_draw_field_image () {
       float x = a * cos_ang(Field_Image_rotation[display_Field_Image]) - b * sin_ang(Field_Image_rotation[display_Field_Image]);
       float y = a * sin_ang(Field_Image_rotation[display_Field_Image]) + b * cos_ang(Field_Image_rotation[display_Field_Image]);
       float z = c;  
-      WIN3D_Diagrams.vertex(x, y, z, 0, 0);
+      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, 0, 0);
     }  
     
     WIN3D_Diagrams.endShape(CLOSE);
@@ -11954,7 +11958,7 @@ void SOLARCHVISION_draw_field_image () {
       float x = a * cos_ang(Field_Image_rotation[display_Field_Image]) - c * sin_ang(Field_Image_rotation[display_Field_Image]);
       float y = a * sin_ang(Field_Image_rotation[display_Field_Image]) + c * cos_ang(Field_Image_rotation[display_Field_Image]);
       float z = b; 
-      WIN3D_Diagrams.vertex(x, y, z, 0, Field_RES2);
+      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, 0, Field_RES2);
     }
     {
       float a = 0.5 * Field_scale_U * objects_scale;
@@ -11962,7 +11966,7 @@ void SOLARCHVISION_draw_field_image () {
       float x = a * cos_ang(Field_Image_rotation[display_Field_Image]) - c * sin_ang(Field_Image_rotation[display_Field_Image]);
       float y = a * sin_ang(Field_Image_rotation[display_Field_Image]) + c * cos_ang(Field_Image_rotation[display_Field_Image]);
       float z = b; 
-      WIN3D_Diagrams.vertex(x, y, z, Field_RES1, Field_RES2);
+      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, Field_RES1, Field_RES2);
     }  
     {
       float a = 0.5 * Field_scale_U * objects_scale;
@@ -11970,7 +11974,7 @@ void SOLARCHVISION_draw_field_image () {
       float x = a * cos_ang(Field_Image_rotation[display_Field_Image]) - c * sin_ang(Field_Image_rotation[display_Field_Image]);
       float y = a * sin_ang(Field_Image_rotation[display_Field_Image]) + c * cos_ang(Field_Image_rotation[display_Field_Image]);
       float z = b; 
-      WIN3D_Diagrams.vertex(x, y, z, Field_RES1, 0);
+      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, Field_RES1, 0);
     }  
     {
       float a = -0.5 * Field_scale_U * objects_scale;
@@ -11978,7 +11982,7 @@ void SOLARCHVISION_draw_field_image () {
       float x = a * cos_ang(Field_Image_rotation[display_Field_Image]) - c * sin_ang(Field_Image_rotation[display_Field_Image]);
       float y = a * sin_ang(Field_Image_rotation[display_Field_Image]) + c * cos_ang(Field_Image_rotation[display_Field_Image]);
       float z = b; 
-      WIN3D_Diagrams.vertex(x, y, z, 0, 0);
+      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, 0, 0);
     }  
     
     WIN3D_Diagrams.endShape(CLOSE);
@@ -12001,7 +12005,7 @@ void SOLARCHVISION_draw_field_image () {
       float x = c * cos_ang(Field_Image_rotation[display_Field_Image]) - b * sin_ang(Field_Image_rotation[display_Field_Image]);
       float y = c * sin_ang(Field_Image_rotation[display_Field_Image]) + b * cos_ang(Field_Image_rotation[display_Field_Image]);
       float z = a; 
-      WIN3D_Diagrams.vertex(x, y, z, 0, Field_RES2);
+      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, 0 * WIN3D_scale3D, Field_RES2);
     }
     {
       float a = 0.5 * Field_scale_U * objects_scale;
@@ -12009,7 +12013,7 @@ void SOLARCHVISION_draw_field_image () {
       float x = c * cos_ang(Field_Image_rotation[display_Field_Image]) - b * sin_ang(Field_Image_rotation[display_Field_Image]);
       float y = c * sin_ang(Field_Image_rotation[display_Field_Image]) + b * cos_ang(Field_Image_rotation[display_Field_Image]);
       float z = a; 
-      WIN3D_Diagrams.vertex(x, y, z, Field_RES1, Field_RES2);
+      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, Field_RES1, Field_RES2);
     }  
     {
       float a = 0.5 * Field_scale_U * objects_scale;
@@ -12017,7 +12021,7 @@ void SOLARCHVISION_draw_field_image () {
       float x = c * cos_ang(Field_Image_rotation[display_Field_Image]) - b * sin_ang(Field_Image_rotation[display_Field_Image]);
       float y = c * sin_ang(Field_Image_rotation[display_Field_Image]) + b * cos_ang(Field_Image_rotation[display_Field_Image]);
       float z = a; 
-      WIN3D_Diagrams.vertex(x, y, z, Field_RES1, 0);
+      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, Field_RES1, 0);
     }  
     {
       float a = -0.5 * Field_scale_U * objects_scale;
@@ -12025,7 +12029,7 @@ void SOLARCHVISION_draw_field_image () {
       float x = c * cos_ang(Field_Image_rotation[display_Field_Image]) - b * sin_ang(Field_Image_rotation[display_Field_Image]);
       float y = c * sin_ang(Field_Image_rotation[display_Field_Image]) + b * cos_ang(Field_Image_rotation[display_Field_Image]);
       float z = a; 
-      WIN3D_Diagrams.vertex(x, y, z, 0, 0);
+      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, 0, 0);
     }  
     
     WIN3D_Diagrams.endShape(CLOSE);
@@ -12076,7 +12080,7 @@ void SOLARCHVISION_draw_objects () {
           
           for (int j = 0; j < allFaces[f].length; j++) {
             int vNo = allFaces[f][j];
-            WIN3D_Diagrams.vertex(allVertices[vNo][0] * objects_scale, -(allVertices[vNo][1] * objects_scale), allVertices[vNo][2] * objects_scale);
+            WIN3D_Diagrams.vertex(allVertices[vNo][0] * objects_scale * WIN3D_scale3D, -(allVertices[vNo][1] * objects_scale * WIN3D_scale3D), allVertices[vNo][2] * objects_scale * WIN3D_scale3D);
           }    
           
           WIN3D_Diagrams.endShape(CLOSE);
@@ -12116,7 +12120,7 @@ void SOLARCHVISION_draw_objects () {
               }
               //else WIN3D_Diagrams.fill(255, 127, 0);
       
-              WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale, -(subFace[s][1] * objects_scale), subFace[s][2] * objects_scale);
+              WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -(subFace[s][1] * objects_scale * WIN3D_scale3D), subFace[s][2] * objects_scale * WIN3D_scale3D);
             }
             
             WIN3D_Diagrams.endShape(CLOSE);
@@ -12206,7 +12210,7 @@ void SOLARCHVISION_draw_objects () {
                 WIN3D_Diagrams.fill(223); 
               }
               
-              WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale, -(subFace[s][1] * objects_scale), subFace[s][2] * objects_scale);
+              WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -(subFace[s][1] * objects_scale * WIN3D_scale3D), subFace[s][2] * objects_scale * WIN3D_scale3D);
       
             }
             
@@ -12287,7 +12291,7 @@ void SOLARCHVISION_draw_objects () {
                 
                 WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);          
         
-                WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale, -(subFace[s][1] * objects_scale), subFace[s][2] * objects_scale);
+                WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -(subFace[s][1] * objects_scale * WIN3D_scale3D), subFace[s][2] * objects_scale * WIN3D_scale3D);
               }
             }
             
@@ -12619,7 +12623,7 @@ void SOLARCHVISION_draw_objects () {
       
                 WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
         
-                WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale, -(subFace[s][1] * objects_scale), subFace[s][2] * objects_scale);
+                WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -(subFace[s][1] * objects_scale * WIN3D_scale3D), subFace[s][2] * objects_scale * WIN3D_scale3D);
               }
             }
             WIN3D_Diagrams.endShape(CLOSE);
@@ -12685,10 +12689,10 @@ void SOLARCHVISION_draw_objects () {
       WIN3D_Diagrams.stroke(255, 255, 255, 0);
       WIN3D_Diagrams.fill(255, 255, 255, 0);
       
-      WIN3D_Diagrams.vertex(x - r * cos(t), -(y - r * sin(t)), z, 0, h);
-      WIN3D_Diagrams.vertex(x + r * cos(t), -(y + r * sin(t)), z, w, h);
-      WIN3D_Diagrams.vertex(x + r * cos(t), -(y + r * sin(t)), z + 2 * r, w, 0);
-      WIN3D_Diagrams.vertex(x - r * cos(t), -(y - r * sin(t)), z + 2 * r, 0, 0);
+      WIN3D_Diagrams.vertex((x - r * cos(t)) * WIN3D_scale3D, -(y - r * sin(t)) * WIN3D_scale3D, z * WIN3D_scale3D, 0, h);
+      WIN3D_Diagrams.vertex((x + r * cos(t)) * WIN3D_scale3D, -(y + r * sin(t)) * WIN3D_scale3D, z * WIN3D_scale3D, w, h);
+      WIN3D_Diagrams.vertex((x + r * cos(t)) * WIN3D_scale3D, -(y + r * sin(t)) * WIN3D_scale3D, (z + 2 * r) * WIN3D_scale3D, w, 0);
+      WIN3D_Diagrams.vertex((x - r * cos(t)) * WIN3D_scale3D, -(y - r * sin(t)) * WIN3D_scale3D, (z + 2 * r) * WIN3D_scale3D, 0, 0);
       
       WIN3D_Diagrams.endShape(CLOSE);
     }  
