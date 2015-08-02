@@ -700,7 +700,7 @@ int MESSAGE_Y_View = int(1.5 * MESSAGE_S_View);
 
 
 float CAM_x, CAM_y, CAM_z;
-
+float CAM_fov;
 
 void setup () {
 
@@ -1315,9 +1315,9 @@ void draw () {
 
 void SOLARCHVISION_draw_WIN3D () {
   
-  float refScale = 1000; //h_pixel;
+  float refScale = 1000;
   
-  WIN3D_scale3D = WIN3D_Y_View / refScale; // fits field of view to window's height
+  WIN3D_scale3D = WIN3D_X_View / refScale; // fits field of view to window's width
   
   WIN3D_Diagrams.beginDraw();
   
@@ -1325,18 +1325,18 @@ void SOLARCHVISION_draw_WIN3D () {
   
   if (WIN3D_View_Type == 1) {
 
-    float fov = WIN3D_ZOOM_coordinate * PI / 180;
+    CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
     
     CAM_x = 0;
     CAM_y = 0;
-    CAM_z = (0.5 * refScale) / tan(0.5 * fov);
+    CAM_z = (0.5 * refScale) / tan(0.5 * CAM_fov);
     
     float aspect = 1.0 / WIN3D_R_View;
     
     float zFar = CAM_z * 100;
     float zNear = CAM_z * 0.01;
     
-    WIN3D_Diagrams.perspective(fov, aspect, zNear, zFar);
+    WIN3D_Diagrams.perspective(CAM_fov, aspect, zNear, zFar);
 
     WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
   }
@@ -14304,7 +14304,11 @@ void mouseClicked () {
         float max_RES = WIN3D_X_View; // ??
         
         float[] ray_start = {CAM_x, CAM_y, CAM_z};     
-        float[] ray_end = {WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate}; // NOT SURE!    
+        float[] ray_end = {0,0,0}; // NOT SURE!
+    
+        println("____________________________");
+        println("Start:", ray_start[0], ray_start[1], ray_start[2]); 
+        println("End Center:", ray_end[0], ray_end[1], ray_end[2]);    
     
         float[] ray_direction = new float[3];
         
@@ -14338,7 +14342,7 @@ void mouseClicked () {
         camera_up[1] = V_up[0] * sin_ang(-r) + V_up[1] * cos_ang(-r); 
         camera_up[2] = V_up[2]; 
         
-        //println("UP:", nf(camera_up[0], 0,3), nf(camera_up[1], 0, 3), nf(camera_up[2], 0, 3));
+        println("UP:", nf(camera_up[0], 0,3), nf(camera_up[1], 0, 3), nf(camera_up[2], 0, 3));
     
         float[] V_right = new float[3];
         
@@ -14352,9 +14356,12 @@ void mouseClicked () {
         camera_right[1] = V_right[0] * sin_ang(-r) + V_right[1] * cos_ang(-r); 
         camera_right[2] = V_right[2]; 
     
-        //println("RIGHT:", nf(camera_right[0], 0,3), nf(camera_right[1], 0, 3), nf(camera_right[2], 0, 3));
+        println("RIGHT:", nf(camera_right[0], 0,3), nf(camera_right[1], 0, 3), nf(camera_right[2], 0, 3));
         
-        float camera_zoom = WIN3D_ZOOM_coordinate * 5; //400;//4; // ???????????
+        //float camera_zoom = WIN3D_ZOOM_coordinate * 5; //400;//4; // ???????????
+        float camera_zoom = 1; //WIN3D_scale3D / (2 * tan(0.5 * CAM_fov)); // ??
+        
+        println("camera_zoom =", camera_zoom);
     
         ray_direction[0] = ray_end[0] - ray_start[0];
         ray_direction[1] = ray_end[1] - ray_start[1];
