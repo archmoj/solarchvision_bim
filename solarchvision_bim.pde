@@ -1307,7 +1307,7 @@ void SOLARCHVISION_draw_WIN3D () {
     CAM_x = 0;
     CAM_y = 0;
     CAM_z = (0.5 * refScale) / tan(0.5 * CAM_fov);
-    
+   
     float aspect = 1.0 / WIN3D_R_View;
     
     float zFar = CAM_z * 1000;
@@ -12688,7 +12688,7 @@ void SOLARCHVISION_draw_objects () {
   CAM_y = py;
   CAM_z = pz;   
   
-  //println(nf(CAM_x,0,4), nf(CAM_y,0,4), nf(CAM_z,0,4));
+  println("Camera:", nf(CAM_x,0,4), nf(CAM_y,0,4), nf(CAM_z,0,4));
 
   if (display_allyObject2D != 0) {
     for (int i = 1; i <= allObject2D_num; i++) {
@@ -14439,7 +14439,10 @@ void mouseClicked () {
           
           float camera_zoom = 1;
           
-          camera_zoom *= 2 * tan(0.5 * CAM_fov); // workd well with fov=PI/3
+          camera_zoom *= 2 * tan(0.5 * CAM_fov); // works well with fov=PI/3
+          //camera_zoom *= tan(0.5 * CAM_fov);
+          //camera_zoom *= 4 / * tan(0.5 * CAM_fov);
+          //camera_zoom *= 4;
           
           camera_zoom /= WIN3D_scale3D; // ??
           camera_zoom *= CAM_dist / refScale; //???
