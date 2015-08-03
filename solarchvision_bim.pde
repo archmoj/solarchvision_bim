@@ -13510,7 +13510,7 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
   vB[0] = addToTempObjectVertices(0,0,-1);
   
   for (int i = 1; i <= 5; i++) {
-    float q = i * 72;
+    float q = i * 72 + t;
     
     float R_in = pow(5.0, 0.5) * 2.0 / 5.0;  
     float H_in = pow(5.0, 0.5) * 1.0 / 5.0;
@@ -13605,14 +13605,10 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
 
     for (int i = 1; i < POINTER_TempObjectVertices; i++) {
       
-      float x0 = TempObjectVertices[i][0];
-      float y0 = TempObjectVertices[i][1];
-      float z0 = TempObjectVertices[i][2];
+      float x = TempObjectVertices[i][0];
+      float y = TempObjectVertices[i][1];
+      float z = TempObjectVertices[i][2];
       
-      float x = x0 * cos_ang(t) - y0 * sin_ang(t);
-      float y = x0 * sin_ang(t) + y0 * cos_ang(t);
-      float z = z0;
-
       float[][] newVertice = {{x, y, z}}; 
 
       skyVertices = (float[][]) concat(skyVertices, newVertice);
@@ -13641,7 +13637,7 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
 
 void add_SuperSphere (int m, float cx, float cy, float cz, float px, float py, float pz, float sx, float sy, float sz, int Teselation, float t) {
 
-  add_RecursiveSphere(m, cx, cy, cz, 1, Teselation, -1, t); // passing with isSky:-1
+  add_RecursiveSphere(m, cx, cy, cz, 1, Teselation, -1, 90); // passing with isSky:-1
 
   float value, posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotZ; 
   value = 1;
@@ -13656,17 +13652,18 @@ void add_SuperSphere (int m, float cx, float cy, float cz, float px, float py, f
   scaleZ = 1;    
 
   for (int i = 1; i < POINTER_TempObjectVertices; i++) {
-    
+
     float x = TempObjectVertices[i][0];
     float y = TempObjectVertices[i][1];
     float z = TempObjectVertices[i][2];
 
     float the_dist = (pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value);
     if (the_dist != 0) {
-      TempObjectVertices[i][0] = x / the_dist;
-      TempObjectVertices[i][1] = y / the_dist;
-      TempObjectVertices[i][2] = z / the_dist;
+      x /= the_dist;
+      y /= the_dist;
+      z /= the_dist;
     }
+    
   }
   
   addTempObjectToScene(cx,cy,cz,sx,sy,sz,t);
@@ -13785,15 +13782,15 @@ void addTempObjectToScene (float cx, float cy, float cz, float sx, float sy, flo
     
     for (int j = 0; j < TempObjectFaces[i].length; j++) {
 
-      float x0 = TempObjectVertices[TempObjectFaces[i][j]][0];
-      float y0 = TempObjectVertices[TempObjectFaces[i][j]][1];
-      float z0 = TempObjectVertices[TempObjectFaces[i][j]][2];
+      float x0 = TempObjectVertices[TempObjectFaces[i][j]][0] * sx;
+      float y0 = TempObjectVertices[TempObjectFaces[i][j]][1] * sy;
+      float z0 = TempObjectVertices[TempObjectFaces[i][j]][2] * sz;
       
       float x = x0 * cos_ang(t) - y0 * sin_ang(t);
       float y = x0 * sin_ang(t) + y0 * cos_ang(t);
       float z = z0;
       
-      new_vert_numbers[j] = addToVertices(x * sx + cx, y * sy + cy, z * sz + cz);
+      new_vert_numbers[j] = addToVertices(x + cx, y + cy, z + cz);
     }
     addToFaces(new_vert_numbers);    
   }
