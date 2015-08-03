@@ -457,7 +457,7 @@ float Image_Scale = 1.0;
 float pre_Image_Scale = Image_Scale; 
 
 PGraphics pre_Diagrams;
-int preGRAPHS_setup;
+int pre_GRAPHS_setup;
 int pre_impacts_source;
 int pre_STATION_NUMBER;
 int pre_YEAR;
@@ -467,27 +467,16 @@ int pre_HOUR;
 float pre_DATE;
 int pre_Climatic_solar_model;
 int pre_Climatic_weather_model;
+
 int pre_Load_CLIMATE_EPW;
 int pre_Load_CLIMATE_WY2;
 int pre_Load_ENSEMBLE;
 int pre_Load_OBSERVED;     
-int pre_WORLD_VIEW_Auto;
-int pre_WORLD_VIEW_Number;
 float pre_LocationLatitude;
 float pre_LocationLongitude;
-float pre_LocationElevation;
+int pre_WORLD_VIEW_Auto;
 int pre_Load_LAND;
-int pre_Display_LAND;
-int pre_Skip_LAND_Center;
 int pre_Load_URBAN;
-int pre_Display_URBAN;
-
-int pre_Display_SUN3D;
-int pre_Display_SKY3D;
-
-float pre_SKY3D_scale;
-int pre_SKY3D_TESELATION;
-int pre_MODEL3D_TESELATION;
 int pre_MODEL3D_ERASE;
 
 int GRAPHS_setup = 100; //4; //12; //13;
@@ -1158,7 +1147,7 @@ void draw () {
     if (ROLLOUT_include == 1) {
       if (ROLLOUT_Update == 1) {
         
-        preGRAPHS_setup = GRAPHS_setup;
+        pre_GRAPHS_setup = GRAPHS_setup;
         pre_impacts_source = impacts_source;
         pre_STATION_NUMBER = STATION_NUMBER;
         pre_YEAR = _YEAR;
@@ -1174,28 +1163,13 @@ void draw () {
         pre_Load_ENSEMBLE = Load_ENSEMBLE;
         pre_Load_OBSERVED = Load_OBSERVED;       
 
-        pre_WORLD_VIEW_Auto = WORLD_VIEW_Auto;        
-        pre_WORLD_VIEW_Number = WORLD_VIEW_Number;
-        
         pre_LocationLatitude = LocationLatitude;
         pre_LocationLongitude = LocationLongitude;
-        pre_LocationElevation = LocationElevation;
+        
+        pre_WORLD_VIEW_Auto = WORLD_VIEW_Auto;
         
         pre_Load_LAND = Load_LAND;
-        pre_Display_LAND = Display_LAND;
-        pre_Skip_LAND_Center = Skip_LAND_Center;
-        
         pre_Load_URBAN = Load_URBAN;
-        pre_Display_URBAN = Display_URBAN;
-        
-        pre_Display_SUN3D = Display_SUN3D;
-        pre_Display_SKY3D = Display_SKY3D;
-        
-        pre_SKY3D_scale = SKY3D_scale;
-
-        pre_SKY3D_TESELATION = SKY3D_TESELATION;
-        
-        pre_MODEL3D_TESELATION = MODEL3D_TESELATION;
         
         pre_MODEL3D_ERASE = MODEL3D_ERASE;
 
@@ -1231,9 +1205,7 @@ void draw () {
           WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
         }
         
-        if (pre_WORLD_VIEW_Number != WORLD_VIEW_Number) {
-          WORLD_Update = 1; 
-        }        
+
 
         if ((pre_LocationLatitude != LocationLatitude) || (pre_LocationLongitude != LocationLongitude)) {
 
@@ -1243,20 +1215,12 @@ void draw () {
           GRAPHS_Update = 1;
         }
         
-        if (pre_LocationElevation != LocationElevation) {
-
-          WIN3D_Update = 1;
-          GRAPHS_Update = 1;
-        }        
-        
+       
         if (pre_Load_LAND != Load_LAND) {
           SOLARCHVISION_LoadLAND(LocationName);
           WIN3D_Update = 1;
         }
 
-        if ((pre_Display_LAND != Display_LAND) || (pre_Skip_LAND_Center != Skip_LAND_Center)) {
-          WIN3D_Update = 1;
-        }            
         
         if (pre_Load_URBAN != Load_URBAN) {
           SOLARCHVISION_add_urban();
@@ -1264,29 +1228,6 @@ void draw () {
           WIN3D_Update = 1;
         }
         
-        if (pre_Display_URBAN != Display_URBAN) {
-          WIN3D_Update = 1;
-        }        
-
-        if (pre_Display_SUN3D != Display_SUN3D) {
-          WIN3D_Update = 1;
-        }
-        
-        if (pre_Display_SKY3D != Display_SKY3D) {
-          WIN3D_Update = 1;
-        }
-
-        if (pre_SKY3D_scale != SKY3D_scale) {
-          WIN3D_Update = 1;
-        }
-        
-        if (pre_SKY3D_TESELATION != SKY3D_TESELATION) {
-          WIN3D_Update = 1;
-        }
-        
-        if (pre_MODEL3D_TESELATION != MODEL3D_TESELATION) {
-          WIN3D_Update = 1;
-        }        
         
         if (pre_MODEL3D_ERASE != MODEL3D_ERASE) {
           if (MODEL3D_ERASE == 1) {
@@ -1304,7 +1245,7 @@ void draw () {
           }
         }
             
-        if (GRAPHS_setup != preGRAPHS_setup) update_impacts = 1;
+        if (GRAPHS_setup != pre_GRAPHS_setup) update_impacts = 1;
         if (impacts_source != pre_impacts_source) update_impacts = 1; 
         if (GRAPHS_record_PDF == 1) update_impacts = 1;
 
@@ -9742,6 +9683,19 @@ void SOLARCHVISION_update_frame_layout () {
     WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);    
  }
  else if (frame_variation == 1) {
+
+    GRAPHS_include = 0;
+    WIN3D_include = 1;
+    WORLD_include = 0;
+   
+    WIN3D_CX_View = 0;
+    WIN3D_CY_View = -h_pixel / 2;
+    WIN3D_X_View = 3 * h_pixel;
+    WIN3D_Y_View = 3 * h_pixel;
+    WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
+    WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
+ } 
+ else if (frame_variation == 2) {
    
     GRAPHS_include = 0;
     WIN3D_include = 0;
@@ -9753,20 +9707,7 @@ void SOLARCHVISION_update_frame_layout () {
     WORLD_Y_View = 2 * h_pixel;
     WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
     WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);    
- }    
- else if (frame_variation == 2) {
-
-    GRAPHS_include = 0;
-    WIN3D_include = 1;
-    WORLD_include = 0;
-   
-    WIN3D_CX_View = 0;
-    WIN3D_CY_View = 0;
-    WIN3D_X_View = 2 * w_pixel;
-    WIN3D_Y_View = 2 * h_pixel;
-    WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
-    WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
- }
+ } 
  else if (frame_variation == 3) {
 
     GRAPHS_include = 1;
@@ -11225,10 +11166,10 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
       float pixel_area = dist(LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1]) * dist(LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1]);
       
       int max_n = int(pixel_area / 2500.0);
-      
-      if (i < Skip_LAND_Center) max_n = 20;
-      
-      if (max_n > 100) max_n = 100; 
+      if (max_n > 100) max_n = 100;
+     
+      if (i < Skip_LAND_Center) max_n = 10;
+      else max_n = 0; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       
       //for (int n = 0; n < 50; n += 1) {
       for (int n = 0; n < max_n; n += 1) {
@@ -14779,9 +14720,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
     LocationLongitude = MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Longitude", LocationLongitude, -180, 180, LocationLongitude_step);
     LocationElevation = MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Elevation", LocationElevation, -100, 8000, LocationElevation_step);
     
-    LocationLatitude_step = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Latitude_step", LocationLatitude_step, 0.001, 10, -pow(2.0, (1.0 / 2.0)));
-    LocationLongitude_step = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Longitude_step", LocationLongitude_step, 0.001, 10, -pow(2.0, (1.0 / 2.0)));
-    LocationElevation_step = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Elevation_step", LocationElevation_step, 0.125, 1024, -pow(2.0, (1.0 / 2.0)));
+    LocationLatitude_step = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Latitude_step", LocationLatitude_step, 0.001, 10, -2);
+    LocationLongitude_step = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Longitude_step", LocationLongitude_step, 0.001, 10, -2);
+    LocationElevation_step = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Elevation_step", LocationElevation_step, 0.125, 1024, -2);
 
     Load_CLIMATE_EPW = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_CLIMATE_EPW" , Load_CLIMATE_EPW, 0, 1, 1));
     Load_CLIMATE_WY2 = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_CLIMATE_WY2" , Load_CLIMATE_WY2, 0, 1, 1));
