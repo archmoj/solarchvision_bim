@@ -1289,7 +1289,7 @@ void draw () {
   }
 } 
 
-float refScale = 500;
+float refScale = 250;
 
 void SOLARCHVISION_draw_WIN3D () {
   
