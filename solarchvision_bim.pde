@@ -425,7 +425,7 @@ int MODEL3D_TESELATION = 0;
 int MODEL3D_ERASE = 0;
 
 int SKY3D_TESELATION = 2;
-float SKY3D_scale = 25000; //1000; 
+float SKY3D_scale = 50 * pow(2, 10) ; //1000; 
 
 int Display_SUN3D = 1;
 int Display_SKY3D = 1;
@@ -714,12 +714,16 @@ float Create_Input_Volume = 3000;
 
 float Create_Input_Orientation = 0;
 
+int Create_Input_Align = 0; // 0:Center, 1:Below
+
 float Create_Input_powX = 8; 
 float Create_Input_powY = 8;
 float Create_Input_powZ = 8;
 
 float Create_Input_powAll = 8;
 int Create_Input_powRnd = 0;
+
+int SolidSurface_TESELATION = 4;
 
 
 float CAM_x, CAM_y, CAM_z;
@@ -14569,8 +14573,12 @@ void mouseClicked () {
               pz = px;
             }
             
+            if (Create_Input_Align == 1) {
+              z += rz;
+            }
+            
             if ((px == 8) && (py == 8) && (pz == 8)) add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, t);
-            else add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, 4, t); 
+            else add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, SolidSurface_TESELATION, t); 
             
             ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, t)};
             SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
@@ -14802,7 +14810,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     Display_SUN3D = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Display_SUN3D" , Display_SUN3D, 0, 1, 1));
     Display_SKY3D = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Display_SKY3D" , Display_SKY3D, 0, 1, 1));
                 
-    SKY3D_scale = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_scale" , SKY3D_scale, 250, 25000, -2);
+    SKY3D_scale = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_scale" , SKY3D_scale, 50 * 2, 50 * pow(2, 10), -2);
     SKY3D_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_TESELATION" , SKY3D_TESELATION, 0, 5, 1));
     
 
@@ -14828,6 +14836,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Input_powY = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powY" , Create_Input_powY, 0.25, 8, -2); 
       Create_Input_powZ = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powZ" , Create_Input_powZ, 0.25, 8, -2);
 
+      Create_Input_Align = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Align" , Create_Input_Align, 0, 1, 1));
+
+      SolidSurface_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "SolidSurface_TESELATION" , SolidSurface_TESELATION, 0, 5, 1));
 
       display_Field_Image = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "display_Field_Image" , display_Field_Image, 0, 3, 1));
       Field_Color = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Color" , Field_Color, 0, 3, 1)); 
@@ -14841,8 +14852,13 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Field_scale_V = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_V" , Field_scale_V, 50, 3200, -2);  
     }
     
+    if (ROLLOUT_child == 3) { // Meshes
+      
+
     
     
+    
+    }
     
     
     MODEL3D_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "MODEL3D_TESELATION" , MODEL3D_TESELATION, 0, 5, 1));
