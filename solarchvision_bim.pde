@@ -1,6 +1,6 @@
 import processing.pdf.*;
 
-float Field_Image_Power = 2.0; // 1/2/3
+float Field_Power = 2.0; // 1/2/3
 
 float GlobalAlbedo = 0; // 0-100
 
@@ -478,6 +478,18 @@ int pre_WORLD_VIEW_Auto;
 int pre_Load_LAND;
 int pre_Load_URBAN;
 int pre_MODEL3D_ERASE;
+float pre_Create_Input_powAll;
+float pre_Field_scale_All;
+float pre_Field_scale_U;
+float pre_Field_scale_V;
+int pre_Field_Color; 
+float pre_Field_Multiplier;
+float pre_Field_Power;
+float[] pre_Field_Rotation = {0,0,0,0};
+float[] pre_Field_Elevation = {0,0,0,0};
+      
+
+
 
 int GRAPHS_setup = 100; //4; //12; //13;
 
@@ -705,6 +717,9 @@ float Create_Input_Orientation = 0;
 float Create_Input_powX = 8; 
 float Create_Input_powY = 8;
 float Create_Input_powZ = 8;
+
+float Create_Input_powAll = 8;
+int Create_Input_powRnd = 0;
 
 
 float CAM_x, CAM_y, CAM_z;
@@ -1146,7 +1161,8 @@ void draw () {
     
     if (ROLLOUT_include == 1) {
       if (ROLLOUT_Update == 1) {
-        
+        ROLLOUT_Update = 0;
+      
         pre_GRAPHS_setup = GRAPHS_setup;
         pre_impacts_source = impacts_source;
         pre_STATION_NUMBER = STATION_NUMBER;
@@ -1173,6 +1189,18 @@ void draw () {
         
         pre_MODEL3D_ERASE = MODEL3D_ERASE;
 
+        pre_Create_Input_powAll = Create_Input_powAll;
+        
+        pre_Field_scale_All = Field_scale_All;
+        pre_Field_scale_U = Field_scale_U;
+        pre_Field_scale_V = Field_scale_V;
+        
+        pre_Field_Color = Field_Color; 
+        pre_Field_Multiplier = Field_Multiplier;
+        pre_Field_Power = Field_Power;
+        pre_Field_Rotation[display_Field_Image] = Field_Rotation[display_Field_Image];
+        pre_Field_Elevation[display_Field_Image] = Field_Elevation[display_Field_Image];
+      
 
        
         
@@ -1244,6 +1272,31 @@ void draw () {
             MODEL3D_ERASE = 0;    
           }
         }
+        
+        if (pre_Create_Input_powAll != Create_Input_powAll) {
+          Create_Input_powX = Create_Input_powAll;
+          Create_Input_powY = Create_Input_powAll;
+          Create_Input_powZ = Create_Input_powAll;
+          
+          ROLLOUT_Update = 1;
+        }
+
+        if (pre_Field_scale_All != Field_scale_All) {
+          Field_scale_U = Field_scale_All;
+          Field_scale_V = Field_scale_All;
+          
+          SOLARCHVISION_calculate_ParametricGeometries_Field();
+        } 
+        else if ((pre_Field_scale_U != Field_scale_U) || (pre_Field_scale_V != Field_scale_V)) {
+          
+          SOLARCHVISION_calculate_ParametricGeometries_Field();
+        }
+
+        if (pre_Field_Color != Field_Color) SOLARCHVISION_calculate_ParametricGeometries_Field();
+        if (pre_Field_Multiplier != Field_Multiplier) SOLARCHVISION_calculate_ParametricGeometries_Field();
+        if (pre_Field_Power != Field_Power) SOLARCHVISION_calculate_ParametricGeometries_Field();
+        if (pre_Field_Rotation[display_Field_Image] != Field_Rotation[display_Field_Image]) SOLARCHVISION_calculate_ParametricGeometries_Field();
+        if (pre_Field_Elevation[display_Field_Image] != Field_Elevation[display_Field_Image]) SOLARCHVISION_calculate_ParametricGeometries_Field();
             
         if (GRAPHS_setup != pre_GRAPHS_setup) update_impacts = 1;
         if (impacts_source != pre_impacts_source) update_impacts = 1; 
@@ -1253,7 +1306,7 @@ void draw () {
             
       }
     }
-    ROLLOUT_Update = 0;
+    
 
 
     if (GRAPHS_include == 1) {
@@ -9460,10 +9513,10 @@ void WIN3D_keyPressed (KeyEvent e) {
                   if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break; 
 
-        case 33 :Field_Elevation[display_Field_Image] += 4 * Field_PositionStep;
+        case 33 :Field_Elevation[display_Field_Image] += 8 * Field_PositionStep;
                   if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;        
-        case 34 :Field_Elevation[display_Field_Image] -= 4 * Field_PositionStep; 
+        case 34 :Field_Elevation[display_Field_Image] -= 8 * Field_PositionStep; 
                   if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break; 
         
@@ -9494,10 +9547,10 @@ void WIN3D_keyPressed (KeyEvent e) {
                   if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;                  
         
-        case '/' :Field_Image_Power *= pow(2.0, 0.5); 
+        case '/' :Field_Power *= pow(2.0, 0.5); 
                   if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
-        case '*' :Field_Image_Power /= pow(2.0, 0.5);  
+        case '*' :Field_Power /= pow(2.0, 0.5);  
                   if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
         
@@ -9509,11 +9562,11 @@ void WIN3D_keyPressed (KeyEvent e) {
                   break;
 
         case '>' :Field_Multiplier /= pow(2.0, 0.25); 
-                  Field_Image_Power /= pow(2.0, 0.5); 
+                  Field_Power /= pow(2.0, 0.5); 
                   if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
         case '<' :Field_Multiplier *= pow(2.0, 0.25); 
-                  Field_Image_Power *= pow(2.0, 0.5); 
+                  Field_Power *= pow(2.0, 0.5); 
                   if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
                   
@@ -13374,8 +13427,9 @@ void SOLARCHVISION_add_ParametricGeometries () {
 
 int Field_Color = 0; 
 
-float Field_scale_U = 400; 
-float Field_scale_V = 400; 
+float Field_scale_All = 400; // i.e. 400m
+float Field_scale_U = Field_scale_All; 
+float Field_scale_V = Field_scale_All; 
 
 int Field_RES1 = 400;
 int Field_RES2 = 400;
@@ -13439,7 +13493,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
         }
         
         if (d > 0) {
-          val += 1.0 / pow(d, Field_Image_Power);
+          val += 1.0 / pow(d, Field_Power);
         } 
       }
       
@@ -14509,6 +14563,12 @@ void mouseClicked () {
             float py = Create_Input_powY;
             float pz = Create_Input_powZ;
             
+            if (Create_Input_powRnd == 1) {
+              px = pow(2, int(random(5)) - 1);
+              py = px;
+              pz = px;
+            }
+            
             if ((px == 8) && (py == 8) && (pz == 8)) add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, t);
             else add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, 4, t); 
             
@@ -14761,17 +14821,29 @@ void SOLARCHVISION_draw_ROLLOUT () {
     if (ROLLOUT_child == 2) { // Solids
     
       Create_Input_Volume = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);
-    
-      Create_Input_powX = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powX" , Create_Input_powX, 0.125, 8, -2); 
-      Create_Input_powY = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powY" , Create_Input_powY, 0.125, 8, -2); 
-      Create_Input_powZ = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powZ" , Create_Input_powZ, 0.125, 8, -2);
-     
-      Field_PositionStep = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Field_PositionStep" , Field_PositionStep, 1.25, 40, -2);
-      
-      
-      
-      
+
+      Create_Input_powRnd = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powRnd" , Create_Input_powRnd, 0, 1, 1));    
+      Create_Input_powAll = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powAll" , Create_Input_powAll, 0.25, 8, -2);
+      Create_Input_powX = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powX" , Create_Input_powX, 0.25, 8, -2); 
+      Create_Input_powY = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powY" , Create_Input_powY, 0.25, 8, -2); 
+      Create_Input_powZ = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powZ" , Create_Input_powZ, 0.25, 8, -2);
+
+
+      display_Field_Image = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "display_Field_Image" , display_Field_Image, 0, 3, 1));
+      Field_Color = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Color" , Field_Color, 0, 3, 1)); 
+      Field_Multiplier = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Multiplier" , Field_Multiplier, 1.0 / 64.0, 64.0, -2);
+      Field_Power = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Power" , Field_Power, 1.0 / 64.0, 64.0, -2);      
+      Field_Rotation[display_Field_Image] = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Rotation[" + nf(display_Field_Image, 0) + "]" , Field_Rotation[display_Field_Image], -1000, 1000, -2);
+      Field_Elevation[display_Field_Image] = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Elevation[" + nf(display_Field_Image, 0) + "]" , Field_Elevation[display_Field_Image], -1000, 1000, -2);
+      Field_PositionStep = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_PositionStep" , Field_PositionStep, 1.25, 40, -2);
+      Field_scale_All = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_All" , Field_scale_All, 50, 3200, -2);      
+      Field_scale_U = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_U" , Field_scale_U, 50, 3200, -2);
+      Field_scale_V = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_V" , Field_scale_V, 50, 3200, -2);  
     }
+    
+    
+    
+    
     
     MODEL3D_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "MODEL3D_TESELATION" , MODEL3D_TESELATION, 0, 5, 1));
     
