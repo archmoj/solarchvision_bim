@@ -14822,7 +14822,10 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Input_powY = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powY" , Create_Input_powY, 0.125, 8, -2); 
       Create_Input_powZ = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powZ" , Create_Input_powZ, 0.125, 8, -2);
      
-      Field_PositionStep = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Field_PositionStep" , Field_PositionStep, 0, 1, -2);
+      Field_PositionStep = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Field_PositionStep" , Field_PositionStep, 1.25, 40, -2);
+      
+      
+      
       
     }
     
