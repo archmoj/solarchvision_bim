@@ -131,6 +131,8 @@ String[][] DEFINED_STATIONS = {
                               };
 
 
+float HeightAboveGround = 2.5; // <<<<<<<<<
+
 String THE_STATION;
 String LocationName;
 String LocationProvince;
@@ -420,6 +422,8 @@ String[] OBSERVED_XML_Files = getfiles(OBSERVED_directory);
 
 int MODEL3D_TESELATION = 0;
 
+int MODEL3D_ERASE = 0;
+
 int SKY3D_TESELATION = 2;
 float SKY3D_scale = 25000; //1000; 
 
@@ -428,7 +432,7 @@ int Display_SKY3D = 1;
 
 int Load_LAND = 1;
 int Display_LAND = 1;
-int Skip_LAND_Center = 2;
+int Skip_LAND_Center = 5;
 
 int Load_URBAN = 0;
 int Display_URBAN = 1;
@@ -484,6 +488,7 @@ int pre_Display_SKY3D;
 float pre_SKY3D_scale;
 int pre_SKY3D_TESELATION;
 int pre_MODEL3D_TESELATION;
+int pre_MODEL3D_ERASE;
 
 int GRAPHS_setup = 100; //4; //12; //13;
 
@@ -703,6 +708,8 @@ int Create_Default_Material = 7;
 float Create_Input_Length = 0;
 float Create_Input_Width = 0;
 float Create_Input_Height = 0;
+
+float Create_Input_Volume = 3000;
 
 float Create_Input_Orientation = 0;
 
@@ -1189,6 +1196,8 @@ void draw () {
         pre_SKY3D_TESELATION = SKY3D_TESELATION;
         
         pre_MODEL3D_TESELATION = MODEL3D_TESELATION;
+        
+        pre_MODEL3D_ERASE = MODEL3D_ERASE;
 
 
        
@@ -1278,6 +1287,20 @@ void draw () {
         if (pre_MODEL3D_TESELATION != MODEL3D_TESELATION) {
           WIN3D_Update = 1;
         }        
+        
+        if (pre_MODEL3D_ERASE != MODEL3D_ERASE) {
+          if (MODEL3D_ERASE == 1) {
+            SOLARCHVISION_remove_3Dobjects();
+            
+            SOLARCHVISION_add_3Dbase();
+            
+            SOLARCHVISION_calculate_ParametricGeometries_Field();
+            
+            WIN3D_Update = 1;
+        
+            MODEL3D_ERASE = 0;    
+          }
+        }
             
         if (GRAPHS_setup != preGRAPHS_setup) update_impacts = 1;
         if (impacts_source != pre_impacts_source) update_impacts = 1; 
@@ -10373,19 +10396,19 @@ int addToFaces (int[] f) {
 }
 
 
-void add_Box_Core (int m, float x, float y, float z, float dx, float dy, float dz, float rot) {
+void add_Box_Core (int m, float x, float y, float z, float rx, float ry, float rz, float rot) {
   
   float teta = rot * PI / 180.0;
 
-  int t1 = addToVertices(x + (dx * cos(teta) - dy * sin(teta)), y + (dx * sin(teta) + dy * cos(teta)), z + dz);
-  int t2 = addToVertices(x + (-dx * cos(teta) - dy * sin(teta)), y + (-dx * sin(teta) + dy * cos(teta)), z + dz);
-  int t3 = addToVertices(x + (-dx * cos(teta) + dy * sin(teta)), y + (-dx * sin(teta) - dy * cos(teta)), z + dz);
-  int t4 = addToVertices(x + (dx * cos(teta) + dy * sin(teta)), y + (dx * sin(teta) - dy * cos(teta)), z + dz);
+  int t1 = addToVertices(x + (rx * cos(teta) - ry * sin(teta)), y + (rx * sin(teta) + ry * cos(teta)), z + rz);
+  int t2 = addToVertices(x + (-rx * cos(teta) - ry * sin(teta)), y + (-rx * sin(teta) + ry * cos(teta)), z + rz);
+  int t3 = addToVertices(x + (-rx * cos(teta) + ry * sin(teta)), y + (-rx * sin(teta) - ry * cos(teta)), z + rz);
+  int t4 = addToVertices(x + (rx * cos(teta) + ry * sin(teta)), y + (rx * sin(teta) - ry * cos(teta)), z + rz);
 
-  int b1 = addToVertices(x + (dx * cos(teta) - dy * sin(teta)), y + (dx * sin(teta) + dy * cos(teta)), z - dz);
-  int b2 = addToVertices(x + (-dx * cos(teta) - dy * sin(teta)), y + (-dx * sin(teta) + dy * cos(teta)), z - dz);
-  int b3 = addToVertices(x + (-dx * cos(teta) + dy * sin(teta)), y + (-dx * sin(teta) - dy * cos(teta)), z - dz);
-  int b4 = addToVertices(x + (dx * cos(teta) + dy * sin(teta)), y + (dx * sin(teta) - dy * cos(teta)), z - dz);
+  int b1 = addToVertices(x + (rx * cos(teta) - ry * sin(teta)), y + (rx * sin(teta) + ry * cos(teta)), z - rz);
+  int b2 = addToVertices(x + (-rx * cos(teta) - ry * sin(teta)), y + (-rx * sin(teta) + ry * cos(teta)), z - rz);
+  int b3 = addToVertices(x + (-rx * cos(teta) + ry * sin(teta)), y + (-rx * sin(teta) - ry * cos(teta)), z - rz);
+  int b4 = addToVertices(x + (rx * cos(teta) + ry * sin(teta)), y + (rx * sin(teta) - ry * cos(teta)), z - rz);
 
 
   if (m == -1) defaultMaterial = 7;
@@ -11195,15 +11218,14 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
 void SOLARCHVISION_add_2Dobjects_onLand () {
 
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
-  //for (int i = 1; i < LAND_n_I - 1; i += 1) { // to ignoring the center!
     for (int j = 0; j < LAND_n_J - 1; j += 1) {
-      
-      // Material -2 for colored elevations
-      //add_Mesh4(-2, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2] , LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i+1][j][2] , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2] , LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1], LAND_MESH[i][j+1][2] );
       
       float pixel_area = dist(LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1]) * dist(LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1]);
       
       int max_n = int(pixel_area / 2500.0);
+      
+      if (i < 1) max_n = 50;
+      
       if (max_n > 100) max_n = 100; 
       
       //for (int n = 0; n < 50; n += 1) {
@@ -11216,11 +11238,22 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
         float y = Bilinear(LAND_MESH[i][j][1], LAND_MESH[i][j+1][1], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j][1], di, dj);
         float z = Bilinear(LAND_MESH[i][j][2], LAND_MESH[i][j+1][2], LAND_MESH[i+1][j+1][2], LAND_MESH[i+1][j][2], di, dj);
         
-        if (i > 1) { 
-          add_Object2D("TREES", 0, x, y, z, 5 + random(10));
-        }
-        else {
-          add_Object2D("PEOPLE", 0, x, y, z, 2.5);
+        if (dist(x,y,0,0) > 2.5) { // i.e. No 2D at the center!
+        
+          int t = 1;
+          
+          if (i < Skip_LAND_Center) {
+            float r = random(100);
+            
+            if (r < 80) t = 0; //  to illustrate 4 people per each tree i.e. at the center of model
+          }
+          
+          if (t == 0) {
+            add_Object2D("PEOPLE", 0, x, y, z, 2.5);
+          }
+          else{
+            add_Object2D("TREES", 0, x, y, z, 5 + random(10));
+          }
         }
       }  
     }
@@ -11242,18 +11275,18 @@ void SOLARCHVISION_remove_2Dobjects () {
 
 void SOLARCHVISION_remove_3Dobjects () {
 
- allVertices = new float [1][3];
- allVertices[0][0] = 0;
- allVertices[0][1] = 0;
- allVertices[0][2] = 0;
- 
- allFaces = new int [1][3];
- allFaces[0][0] = 0;
- allFaces[0][1] = 0;
- allFaces[0][2] = 0;
+  allVertices = new float [1][3];
+  allVertices[0][0] = 0;
+  allVertices[0][1] = 0;
+  allVertices[0][2] = 0;
+   
+  allFaces = new int [1][3];
+  allFaces[0][0] = 0;
+  allFaces[0][1] = 0;
+  allFaces[0][2] = 0;
   
- allFaces_MAT = new int [1];
- allFaces_MAT[0] = 0;
+  allFaces_MAT = new int [1];
+  allFaces_MAT[0] = 0;
  
   urbanVertices_start = 0;
   urbanVertices_end = 0;
@@ -11282,7 +11315,20 @@ void SOLARCHVISION_add_urban () {
   }
 }
 
+void SOLARCHVISION_add_3Dbase () {
+  //add_Mesh2(-2, -150, -150, 0, 150, 150, 0);
+  
+  for (int i = 0; i < Skip_LAND_Center; i += 1) {  
+    for (int j = 0; j < LAND_n_J - 1; j += 1) {
+      // Material -2 for colored elevations
+      add_Mesh4(-2, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2] , LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i+1][j][2] , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2] , LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1], LAND_MESH[i][j+1][2] );
+    }
+  }  
+}  
+
 void SOLARCHVISION_add_3Dobjects () {
+  
+  SOLARCHVISION_add_3Dbase();
   
   /*
   add_Mesh2(0, 0, 0, 0, 40, 40, 0);
@@ -11301,9 +11347,7 @@ void SOLARCHVISION_add_3Dobjects () {
 
   //add_RecursiveSphere(7, 0,0,0, 25, 4, 0, 90);  
   
-  add_Mesh2(0, -150, -150, 0, 150, 150, 0);
-  //add_Mesh2(0, -100, 0, -100, 100, 0, 100);
-  //add_Mesh2(0, 0, -100, -100, 0, 100, 100);
+
 
   //SOLARCHVISION_add_urban();
   
@@ -13189,7 +13233,7 @@ void SOLARCHVISION_LoadLAND (String ProjectSite) {
     
     float h = LAND_MESH[LAND_n_I_base][LAND_n_J_base][2];
     
-    //h += 5; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    h += HeightAboveGround;
     
     for (int i = 0; i < LAND_n_I; i += 1) {
       for (int j = 0; j < LAND_n_J; j += 1) {
@@ -13385,8 +13429,8 @@ void SOLARCHVISION_add_ParametricGeometries () {
 
 int Field_Color = 0; 
 
-float Field_scale_U = 400; //200;
-float Field_scale_V = 400; //200;
+float Field_scale_U = 400; 
+float Field_scale_V = 400; 
 
 int Field_RES1 = 400;
 int Field_RES2 = 400;
@@ -13397,7 +13441,7 @@ float Field_Multiplier = 1.0; //0.1; //10.0;
 
 int display_Field_Image = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
 
-float[] Field_Elevation = {0, 1, 0, 0};
+float[] Field_Elevation = {0, 0, 0, 0};
 float[] Field_Image_rotation = {0, 0, 0, 0};
 
 
@@ -14490,16 +14534,20 @@ void mouseClicked () {
             float z = RxP[2];                      
   
   
-            float dx = Create_Input_Length;
-            if (dx == 0) dx = 6 * (1 + int(random(3)));
+            float rx = 0.5 * Create_Input_Length;
+            if (rx == 0) rx = 5 * (1 + int(random(3)));
 
-            float dy = Create_Input_Width;
-            if (dy == 0) dy = 6 * (1 + int(random(3)));
+            float ry = 0.5 * Create_Input_Width;
+            if (ry == 0) ry = 5 * (1 + int(random(3)));
 
-            float dz = Create_Input_Height;
-            if (dz == 0) dz = 6 * (1 + int(random(3)));
+            float rz = 0.5 * Create_Input_Height;
+            if (rz == 0) rz = 5 * (1 + int(random(3)));
               
-            if ((dx == 0) && (dy == 0) && (dz == 0)) dz = 1000 / (dx * dy);
+            if (Create_Input_Volume != 0) { 
+              if ((rx != 0) && (ry != 0)) {
+                rz = Create_Input_Volume / (4 * rx * ry);
+              }
+            }
 
             float t = Create_Input_Orientation;
             if (t == 360) t = 15 * (int(random(24)));
@@ -14508,10 +14556,10 @@ void mouseClicked () {
             float py = Create_Input_powY;
             float pz = Create_Input_powZ;
             
-            if ((px == 8) && (py == 8) && (pz == 8)) add_Box_Core(Create_Default_Material, x,y,z, dx,dy,dz, t);
-            else add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, dx,dy,dz, 4, t); 
+            if ((px == 8) && (py == 8) && (pz == 8)) add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, t);
+            else add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, 4, t); 
             
-            ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, dx,dy,dz, t)};
+            ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, t)};
             SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
           }          
           
@@ -14740,21 +14788,32 @@ void SOLARCHVISION_draw_ROLLOUT () {
     SKY3D_scale = MySpinner.update(X_spinner, Y_spinner, "SKY3D_scale" , SKY3D_scale, 250, 25000, -2);
     SKY3D_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, "SKY3D_TESELATION" , SKY3D_TESELATION, 0, 5, 1));
     
-    MODEL3D_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, "MODEL3D_TESELATION" , MODEL3D_TESELATION, 0, 5, 1));
+
   }
   else if (ROLLOUT_parent == 1) { // Geometries & Space
+
     
     Create_Default_Material = int(MySpinner.update(X_spinner, Y_spinner, "Create_Default_Material" , Create_Default_Material, -1, 8, 1));
-    Create_Input_Length = MySpinner.update(X_spinner, Y_spinner, "Create_Input_Length" , Create_Input_Length, 0, 120, 3); 
-    Create_Input_Width = MySpinner.update(X_spinner, Y_spinner, "Create_Input_Width" , Create_Input_Width, 0, 120, 3);
-    Create_Input_Height = MySpinner.update(X_spinner, Y_spinner, "Create_Input_Height" , Create_Input_Height, 0, 120, 3);    
     Create_Input_Orientation = MySpinner.update(X_spinner, Y_spinner, "Create_Input_Orientation" , Create_Input_Orientation, 0, 360, 15);
     
+    Create_Input_Length = MySpinner.update(X_spinner, Y_spinner, "Create_Input_Length" , Create_Input_Length, 0, 100, 5); 
+    Create_Input_Width = MySpinner.update(X_spinner, Y_spinner, "Create_Input_Width" , Create_Input_Width, 0, 100, 5);
+    Create_Input_Height = MySpinner.update(X_spinner, Y_spinner, "Create_Input_Height" , Create_Input_Height, 0, 100, 5);    
+    
+    
     if (ROLLOUT_child == 2) { // Solids
+    
+      Create_Input_Volume = MySpinner.update(X_spinner, Y_spinner, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);
+    
       Create_Input_powX = MySpinner.update(X_spinner, Y_spinner, "Create_Input_powX" , Create_Input_powX, 0.125, 8, -2); 
       Create_Input_powY = MySpinner.update(X_spinner, Y_spinner, "Create_Input_powY" , Create_Input_powY, 0.125, 8, -2); 
       Create_Input_powZ = MySpinner.update(X_spinner, Y_spinner, "Create_Input_powZ" , Create_Input_powZ, 0.125, 8, -2); 
     }
+    
+    MODEL3D_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, "MODEL3D_TESELATION" , MODEL3D_TESELATION, 0, 5, 1));
+    
+    MODEL3D_ERASE = int(MySpinner.update(X_spinner, Y_spinner, "MODEL3D_ERASE" , MODEL3D_ERASE, 0, 1, 1));
+    
     
   }
   else if (ROLLOUT_parent == 2) { // Time & Scenarios
