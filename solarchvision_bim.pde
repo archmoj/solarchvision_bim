@@ -11299,7 +11299,7 @@ void SOLARCHVISION_add_3Dobjects () {
   //add_PolygonHyper(0, 0, 0, 0,  10, 10, 4);
   //add_Polygon(3, 0, 0, 0, 50, 24);
 
-  //add_RecursiveSphere(7, 0,0,0, 25, 4, 0);  
+  //add_RecursiveSphere(7, 0,0,0, 25, 4, 0, 90);  
   
   add_Mesh2(0, -150, -150, 0, 150, 150, 0);
   //add_Mesh2(0, -100, 0, -100, 100, 0, 100);
@@ -11334,11 +11334,11 @@ void SOLARCHVISION_add_3Dobjects () {
   
   
   /*
-  add_RecursiveSphere(0, 0,0,0, 50, 5, 0);
-  add_RecursiveSphere(0, 100,0,0, 40, 4, 0);
-  add_RecursiveSphere(0, 180,0,0, 30, 3, 0);
-  add_RecursiveSphere(0, 240,0,0, 20, 2, 0);
-  add_RecursiveSphere(0, 280,0,0, 10, 1, 0);
+  add_RecursiveSphere(0, 0,0,0, 50, 5, 0, 90);
+  add_RecursiveSphere(0, 100,0,0, 40, 4, 0, 90);
+  add_RecursiveSphere(0, 180,0,0, 30, 3, 0, 90);
+  add_RecursiveSphere(0, 240,0,0, 20, 2, 0, 90);
+  add_RecursiveSphere(0, 280,0,0, 10, 1, 0, 90);
   */
 
 
@@ -11538,7 +11538,7 @@ void SOLARCHVISION_add_3Dobjects () {
   add_Mesh2(1, -15, -10, 25, 15, 0, 25);
   add_PolygonHyper(0, 0, -20, 0,  15, 15, 4);
   
-  //add_RecursiveSphere(0, 0,0,0, 92.5, 1, 0); 
+  //add_RecursiveSphere(0, 0,0,0, 92.5, 1, 0, 90); 
 
 */  
 
@@ -11635,7 +11635,7 @@ void SOLARCHVISION_add_ParametricSurfaces (int m) {
 
 void SOLARCHVISION_build_SkySphere (int Teselation) {
   
-  add_RecursiveSphere(0, 0,0,0, 1, Teselation, 1); // SKY
+  add_RecursiveSphere(0, 0,0,0, 1, Teselation, 1, 90); // SKY
   
 }
 
@@ -13271,7 +13271,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 0;
     float z = 0;
     float r = 10;
-    add_RecursiveSphere(1, x,y,z, r, 5, 0);
+    add_RecursiveSphere(1, x,y,z, r, 5, 0, 90);
     ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }
@@ -13281,7 +13281,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 0;
     float z = 0;
     float r = 8;
-    add_RecursiveSphere(2, x,y,z, r, 4, 0);
+    add_RecursiveSphere(2, x,y,z, r, 4, 0, 90);
     ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }
@@ -13291,7 +13291,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 20;
     float z = 0;
     float r = 8;
-    add_RecursiveSphere(3, x,y,z, r, 3, 0);
+    add_RecursiveSphere(3, x,y,z, r, 3, 0, 90);
     ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }
@@ -13356,7 +13356,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 25;
     float z = 25;
     float r = 10;
-    add_RecursiveSphere(4, x,y,z, r, 4, 0);
+    add_RecursiveSphere(4, x,y,z, r, 4, 0, 90);
     ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }  
@@ -13373,7 +13373,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float py = 2;
     float pz = 2;
     
-    add_SuperSphere(5, x,y,z, pz,py,pz, rx,ry,rz, 5);
+    add_SuperSphere(5, x,y,z, pz,py,pz, rx,ry,rz, 5, 90);
     ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, 0)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }  
@@ -13499,7 +13499,7 @@ int[][] TempObjectFaces = {{0}};
 int POINTER_TempObjectVertices = 1;
 int POINTER_TempObjectFaces = 1;
 
-void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Teselation, int isSky) {
+void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Teselation, int isSky, float t) {
 
   defaultMaterial = m;
   
@@ -13510,13 +13510,13 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
   vB[0] = addToTempObjectVertices(0,0,-1);
   
   for (int i = 1; i <= 5; i++) {
-    float t = i * 72;
+    float q = i * 72;
     
     float R_in = pow(5.0, 0.5) * 2.0 / 5.0;  
     float H_in = pow(5.0, 0.5) * 1.0 / 5.0;
     
-    vT[i] = addToTempObjectVertices(R_in * cos_ang(t), R_in * sin_ang(t), H_in);
-    vB[i] = addToTempObjectVertices(R_in * cos_ang(t + 36), R_in * sin_ang(t + 36), -H_in);
+    vT[i] = addToTempObjectVertices(R_in * cos_ang(q), R_in * sin_ang(q), H_in);
+    vB[i] = addToTempObjectVertices(R_in * cos_ang(q + 36), R_in * sin_ang(q + 36), -H_in);
   } 
 
 
@@ -13590,7 +13590,7 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
   println("Faces:", POINTER_TempObjectFaces);
 
   if (isSky == 0) {
-    addTempObjectToScene(cx,cy,cz,r,r,r);
+    addTempObjectToScene(cx,cy,cz,r,r,r,t);
   }
   else if (isSky == 1) {
     
@@ -13604,8 +13604,16 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
     skyVertices[0][2] = 0;
 
     for (int i = 1; i < POINTER_TempObjectVertices; i++) {
+      
+      float x0 = TempObjectVertices[i][0];
+      float y0 = TempObjectVertices[i][1];
+      float z0 = TempObjectVertices[i][2];
+      
+      float x = x0 * cos_ang(t) - y0 * sin_ang(t);
+      float y = x0 * sin_ang(t) + y0 * cos_ang(t);
+      float z = z0;
 
-      float[][] newVertice = {{TempObjectVertices[i][0], TempObjectVertices[i][1], TempObjectVertices[i][2]}}; 
+      float[][] newVertice = {{x, y, z}}; 
 
       skyVertices = (float[][]) concat(skyVertices, newVertice);
 
@@ -13631,9 +13639,9 @@ void add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Tese
 }  
 
 
-void add_SuperSphere (int m, float cx, float cy, float cz, float px, float py, float pz, float sx, float sy, float sz, int Teselation) {
+void add_SuperSphere (int m, float cx, float cy, float cz, float px, float py, float pz, float sx, float sy, float sz, int Teselation, float t) {
 
-  add_RecursiveSphere(m, cx, cy, cz, 1, Teselation, -1); // passing with isSky:-1
+  add_RecursiveSphere(m, cx, cy, cz, 1, Teselation, -1, t); // passing with isSky:-1
 
   float value, posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotZ; 
   value = 1;
@@ -13661,7 +13669,7 @@ void add_SuperSphere (int m, float cx, float cy, float cz, float px, float py, f
     }
   }
   
-  addTempObjectToScene(cx,cy,cz,sx,sy,sz);
+  addTempObjectToScene(cx,cy,cz,sx,sy,sz,t);
 }  
 
 
@@ -13769,18 +13777,23 @@ int addToTempObjectFaces (int[] f) {
   
 }
 
-void addTempObjectToScene (float cx, float cy, float cz, float sx, float sy, float sz) {
+void addTempObjectToScene (float cx, float cy, float cz, float sx, float sy, float sz, float t) {
   
   for (int i = 1; i < POINTER_TempObjectFaces; i++) {
     
     int[] new_vert_numbers = new int [TempObjectFaces[i].length];
     
     for (int j = 0; j < TempObjectFaces[i].length; j++) {
+
+      float x0 = TempObjectVertices[TempObjectFaces[i][j]][0];
+      float y0 = TempObjectVertices[TempObjectFaces[i][j]][1];
+      float z0 = TempObjectVertices[TempObjectFaces[i][j]][2];
       
-      new_vert_numbers[j] = addToVertices(
-                                          TempObjectVertices[TempObjectFaces[i][j]][0] * sx + cx,
-                                          TempObjectVertices[TempObjectFaces[i][j]][1] * sy + cy,
-                                          TempObjectVertices[TempObjectFaces[i][j]][2] * sz + cz);
+      float x = x0 * cos_ang(t) - y0 * sin_ang(t);
+      float y = x0 * sin_ang(t) + y0 * cos_ang(t);
+      float z = z0;
+      
+      new_vert_numbers[j] = addToVertices(x * sx + cx, y * sy + cy, z * sz + cz);
     }
     addToFaces(new_vert_numbers);    
   }
@@ -14499,7 +14512,7 @@ void mouseClicked () {
             float pz = Create_Input_powZ;
             
             if ((px == 8) && (py == 8) && (pz == 8)) add_Box_Core(Create_Default_Material, x,y,z, dx,dy,dz, t);
-            else add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, dx/2,dy/2,dz/2, 4); 
+            else add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, dx,dy,dz, 4, t); 
             
             ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, dx,dy,dz, t)};
             SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
@@ -14727,7 +14740,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     Display_SUN3D = int(MySpinner.update(X_spinner, Y_spinner, "Display_SUN3D" , Display_SUN3D, 0, 1, 1));
     Display_SKY3D = int(MySpinner.update(X_spinner, Y_spinner, "Display_SKY3D" , Display_SKY3D, 0, 1, 1));
                 
-    SKY3D_scale = MySpinner.update(X_spinner, Y_spinner, "SKY3D_scale" , SKY3D_scale, 250, 25000, -pow(2.0, (1.0 / 2.0)));
+    SKY3D_scale = MySpinner.update(X_spinner, Y_spinner, "SKY3D_scale" , SKY3D_scale, 250, 25000, -2);
     SKY3D_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, "SKY3D_TESELATION" , SKY3D_TESELATION, 0, 5, 1));
     
     MODEL3D_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, "MODEL3D_TESELATION" , MODEL3D_TESELATION, 0, 5, 1));
@@ -14741,9 +14754,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
     Create_Input_Orientation = MySpinner.update(X_spinner, Y_spinner, "Create_Input_Orientation" , Create_Input_Orientation, 0, 360, 15);
     
     if (ROLLOUT_child == 2) { // Solids
-      Create_Input_powX = MySpinner.update(X_spinner, Y_spinner, "Create_Input_powX" , Create_Input_powX, 0.125, 8, -pow(2.0, (1.0 / 2.0))); 
-      Create_Input_powY = MySpinner.update(X_spinner, Y_spinner, "Create_Input_powY" , Create_Input_powY, 0.125, 8, -pow(2.0, (1.0 / 2.0))); 
-      Create_Input_powZ = MySpinner.update(X_spinner, Y_spinner, "Create_Input_powZ" , Create_Input_powZ, 0.125, 8, -pow(2.0, (1.0 / 2.0))); 
+      Create_Input_powX = MySpinner.update(X_spinner, Y_spinner, "Create_Input_powX" , Create_Input_powX, 0.125, 8, -2); 
+      Create_Input_powY = MySpinner.update(X_spinner, Y_spinner, "Create_Input_powY" , Create_Input_powY, 0.125, 8, -2); 
+      Create_Input_powZ = MySpinner.update(X_spinner, Y_spinner, "Create_Input_powZ" , Create_Input_powZ, 0.125, 8, -2); 
     }
     
   }
