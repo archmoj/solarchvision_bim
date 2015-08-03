@@ -11250,7 +11250,7 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
             if (r < 90) t = 0; //  to illustrate more people at the center
           }
           
-          if (dist(x,y,0,0) > 25) t = 0; // i.e. No tree at the center!
+          if (dist(x,y,0,0) < 25) t = 0; // i.e. No tree around the center!
           
           if (t == 0) {
             add_Object2D("PEOPLE", 0, x, y, z, 2.5);
@@ -14600,7 +14600,7 @@ class SOLARCHVISION_Spinner {
   SOLARCHVISION_Spinner () {  
   }
   
-  float update(float x, float y, String caption, float v, float min_v, float max_v, float stp_v) {
+  float update(float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v) {
     x_Plot = x; 
     y_Plot = y;
     new_value = v;
@@ -14671,7 +14671,11 @@ class SOLARCHVISION_Spinner {
     if (new_value < min_v) new_value = max_v; 
     if (new_value > max_v) new_value = min_v; 
     
-    if (new_value != v) GRAPHS_Update = 1; // ???
+    if (new_value != v) {
+      if (update1 != 0) GRAPHS_Update = 1;
+      if (update2 != 0) WIN3D_Update = 1;
+      if (update3 != 0) WORLD_Update = 1;
+    }
     
 
     strokeWeight(0); 
@@ -14766,65 +14770,65 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
   if (ROLLOUT_parent == 0) { // Location & Data
 
-    WORLD_VIEW_Auto = int(MySpinner.update(X_spinner, Y_spinner, "Map Auto Fit", WORLD_VIEW_Auto, 0, 1, 1));
-    WORLD_VIEW_Number = int(MySpinner.update(X_spinner, Y_spinner, "Map Viewport", WORLD_VIEW_Number, 0, number_of_WORLD_viewports - 1, 1));
+    WORLD_VIEW_Auto = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Map Auto Fit", WORLD_VIEW_Auto, 0, 1, 1));
+    WORLD_VIEW_Number = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Map Viewport", WORLD_VIEW_Number, 0, number_of_WORLD_viewports - 1, 1));
   
-    STATION_NUMBER = int(MySpinner.update(X_spinner, Y_spinner, "Station", STATION_NUMBER, 0, DEFINED_STATIONS.length - 1, 1));
+    STATION_NUMBER = int(MySpinner.update(X_spinner, Y_spinner, 1,1,1, "Station", STATION_NUMBER, 0, DEFINED_STATIONS.length - 1, 1));
 
-    LocationLatitude = MySpinner.update(X_spinner, Y_spinner, "Latitude", LocationLatitude, -85, 85, LocationLatitude_step);
-    LocationLongitude = MySpinner.update(X_spinner, Y_spinner, "Longitude", LocationLongitude, -180, 180, LocationLongitude_step);
-    LocationElevation = MySpinner.update(X_spinner, Y_spinner, "Elevation", LocationElevation, -100, 8000, LocationElevation_step);
+    LocationLatitude = MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Latitude", LocationLatitude, -85, 85, LocationLatitude_step);
+    LocationLongitude = MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Longitude", LocationLongitude, -180, 180, LocationLongitude_step);
+    LocationElevation = MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Elevation", LocationElevation, -100, 8000, LocationElevation_step);
     
-    LocationLatitude_step = MySpinner.update(X_spinner, Y_spinner, "Latitude_step", LocationLatitude_step, 0.001, 10, -pow(2.0, (1.0 / 2.0)));
-    LocationLongitude_step = MySpinner.update(X_spinner, Y_spinner, "Longitude_step", LocationLongitude_step, 0.001, 10, -pow(2.0, (1.0 / 2.0)));
-    LocationElevation_step = MySpinner.update(X_spinner, Y_spinner, "Elevation_step", LocationElevation_step, 0.125, 1024, -pow(2.0, (1.0 / 2.0)));
+    LocationLatitude_step = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Latitude_step", LocationLatitude_step, 0.001, 10, -pow(2.0, (1.0 / 2.0)));
+    LocationLongitude_step = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Longitude_step", LocationLongitude_step, 0.001, 10, -pow(2.0, (1.0 / 2.0)));
+    LocationElevation_step = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Elevation_step", LocationElevation_step, 0.125, 1024, -pow(2.0, (1.0 / 2.0)));
 
-    Load_CLIMATE_EPW = int(MySpinner.update(X_spinner, Y_spinner, "Load_CLIMATE_EPW" , Load_CLIMATE_EPW, 0, 1, 1));
-    Load_CLIMATE_WY2 = int(MySpinner.update(X_spinner, Y_spinner, "Load_CLIMATE_WY2" , Load_CLIMATE_WY2, 0, 1, 1));
-    Load_ENSEMBLE = int(MySpinner.update(X_spinner, Y_spinner, "Load_ENSEMBLE" , Load_ENSEMBLE, 0, 1, 1));
-    Load_OBSERVED = int(MySpinner.update(X_spinner, Y_spinner, "Load_OBSERVED" , Load_OBSERVED, 0, 1, 1));
+    Load_CLIMATE_EPW = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_CLIMATE_EPW" , Load_CLIMATE_EPW, 0, 1, 1));
+    Load_CLIMATE_WY2 = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_CLIMATE_WY2" , Load_CLIMATE_WY2, 0, 1, 1));
+    Load_ENSEMBLE = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_ENSEMBLE" , Load_ENSEMBLE, 0, 1, 1));
+    Load_OBSERVED = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_OBSERVED" , Load_OBSERVED, 0, 1, 1));
    
-    Load_LAND = int(MySpinner.update(X_spinner, Y_spinner, "Load_LAND" , Load_LAND, 0, 1, 1));
-    Display_LAND = int(MySpinner.update(X_spinner, Y_spinner, "Display_LAND" , Display_LAND, 0, 1, 1));
-    Skip_LAND_Center = int(MySpinner.update(X_spinner, Y_spinner, "Skip_LAND_Center" , Skip_LAND_Center, 0, LAND_n_I - 1, 1));     
+    Load_LAND = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Load_LAND" , Load_LAND, 0, 1, 1));
+    Display_LAND = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Display_LAND" , Display_LAND, 0, 1, 1));
+    Skip_LAND_Center = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Skip_LAND_Center" , Skip_LAND_Center, 0, LAND_n_I - 1, 1));     
     
-    Load_URBAN = int(MySpinner.update(X_spinner, Y_spinner, "Load_URBAN" , Load_URBAN, 0, 1, 1));
-    Display_URBAN = int(MySpinner.update(X_spinner, Y_spinner, "Display_URBAN" , Display_URBAN, 0, 1, 1));
+    Load_URBAN = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Load_URBAN" , Load_URBAN, 0, 1, 1));
+    Display_URBAN = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Display_URBAN" , Display_URBAN, 0, 1, 1));
     
-    Display_SUN3D = int(MySpinner.update(X_spinner, Y_spinner, "Display_SUN3D" , Display_SUN3D, 0, 1, 1));
-    Display_SKY3D = int(MySpinner.update(X_spinner, Y_spinner, "Display_SKY3D" , Display_SKY3D, 0, 1, 1));
+    Display_SUN3D = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Display_SUN3D" , Display_SUN3D, 0, 1, 1));
+    Display_SKY3D = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Display_SKY3D" , Display_SKY3D, 0, 1, 1));
                 
-    SKY3D_scale = MySpinner.update(X_spinner, Y_spinner, "SKY3D_scale" , SKY3D_scale, 250, 25000, -2);
-    SKY3D_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, "SKY3D_TESELATION" , SKY3D_TESELATION, 0, 5, 1));
+    SKY3D_scale = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_scale" , SKY3D_scale, 250, 25000, -2);
+    SKY3D_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_TESELATION" , SKY3D_TESELATION, 0, 5, 1));
     
 
   }
   else if (ROLLOUT_parent == 1) { // Geometries & Space
 
     
-    Create_Default_Material = int(MySpinner.update(X_spinner, Y_spinner, "Create_Default_Material" , Create_Default_Material, -1, 8, 1));
-    Create_Input_Orientation = MySpinner.update(X_spinner, Y_spinner, "Create_Input_Orientation" , Create_Input_Orientation, 0, 360, 15);
+    Create_Default_Material = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Default_Material" , Create_Default_Material, -1, 8, 1));
+    Create_Input_Orientation = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Orientation" , Create_Input_Orientation, 0, 360, 15);
     
-    Create_Input_Length = MySpinner.update(X_spinner, Y_spinner, "Create_Input_Length" , Create_Input_Length, 0, 100, 5); 
-    Create_Input_Width = MySpinner.update(X_spinner, Y_spinner, "Create_Input_Width" , Create_Input_Width, 0, 100, 5);
-    Create_Input_Height = MySpinner.update(X_spinner, Y_spinner, "Create_Input_Height" , Create_Input_Height, 0, 100, 5);    
+    Create_Input_Length = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Length" , Create_Input_Length, 0, 100, 5); 
+    Create_Input_Width = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Width" , Create_Input_Width, 0, 100, 5);
+    Create_Input_Height = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Height" , Create_Input_Height, 0, 100, 5);    
     
     
     if (ROLLOUT_child == 2) { // Solids
     
-      Create_Input_Volume = MySpinner.update(X_spinner, Y_spinner, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);
+      Create_Input_Volume = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);
     
-      Create_Input_powX = MySpinner.update(X_spinner, Y_spinner, "Create_Input_powX" , Create_Input_powX, 0.125, 8, -2); 
-      Create_Input_powY = MySpinner.update(X_spinner, Y_spinner, "Create_Input_powY" , Create_Input_powY, 0.125, 8, -2); 
-      Create_Input_powZ = MySpinner.update(X_spinner, Y_spinner, "Create_Input_powZ" , Create_Input_powZ, 0.125, 8, -2);
+      Create_Input_powX = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powX" , Create_Input_powX, 0.125, 8, -2); 
+      Create_Input_powY = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powY" , Create_Input_powY, 0.125, 8, -2); 
+      Create_Input_powZ = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powZ" , Create_Input_powZ, 0.125, 8, -2);
      
-      Field_PositionStep = MySpinner.update(X_spinner, Y_spinner, "Field_PositionStep" , Field_PositionStep, 0, 1, -2);
+      Field_PositionStep = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Field_PositionStep" , Field_PositionStep, 0, 1, -2);
       
     }
     
-    MODEL3D_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, "MODEL3D_TESELATION" , MODEL3D_TESELATION, 0, 5, 1));
+    MODEL3D_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "MODEL3D_TESELATION" , MODEL3D_TESELATION, 0, 5, 1));
     
-    MODEL3D_ERASE = int(MySpinner.update(X_spinner, Y_spinner, "MODEL3D_ERASE" , MODEL3D_ERASE, 0, 1, 1));
+    MODEL3D_ERASE = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "MODEL3D_ERASE" , MODEL3D_ERASE, 0, 1, 1));
     
     
     
@@ -14832,79 +14836,79 @@ void SOLARCHVISION_draw_ROLLOUT () {
   }
   else if (ROLLOUT_parent == 2) { // Time & Scenarios
     
-    j_end = int(MySpinner.update(X_spinner, Y_spinner, "No. of days to plot" , j_end, 1, 61, 1));
+    j_end = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "No. of days to plot" , j_end, 1, 61, 1));
   
-    BEGIN_DAY = int(MySpinner.update(X_spinner, Y_spinner, "Plot start date" , BEGIN_DAY, 0, 364, 1));
+    BEGIN_DAY = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Plot start date" , BEGIN_DAY, 0, 364, 1));
   
-    //_DATE = MySpinner.update(X_spinner, Y_spinner, "Solar date", _DATE, 0, 364.5, 0.5);
-    _DATE = MySpinner.update(X_spinner, Y_spinner, "Solar date", _DATE, 0, 364, 1);
+    //_DATE = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Solar date", _DATE, 0, 364.5, 0.5);
+    _DATE = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Solar date", _DATE, 0, 364, 1);
     
-    _DAY = int(MySpinner.update(X_spinner, Y_spinner, "Forecast day" , _DAY, 1, 31, 1));
-    _MONTH = int(MySpinner.update(X_spinner, Y_spinner, "Forecast month", _MONTH, 1, 12, 1));
-    _YEAR = int(MySpinner.update(X_spinner, Y_spinner, "Forecast year" , _YEAR, 1953, 2100, 1));
+    _DAY = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Forecast day" , _DAY, 1, 31, 1));
+    _MONTH = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Forecast month", _MONTH, 1, 12, 1));
+    _YEAR = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Forecast year" , _YEAR, 1953, 2100, 1));
 
-    drw_Layer = int(MySpinner.update(X_spinner, Y_spinner, "Layer", drw_Layer, 0, (num_layers - 1), 1));
-    GRAPHS_V_scale[drw_Layer] = MySpinner.update(X_spinner, Y_spinner, "V_scale[" + nf(drw_Layer, 2) + "]", GRAPHS_V_scale[drw_Layer], 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));
-    GRAPHS_O_scale = MySpinner.update(X_spinner, Y_spinner, "O_scale", GRAPHS_O_scale, 1, 100, -pow(2.0, (1.0 / 4.0)));
+    drw_Layer = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Layer", drw_Layer, 0, (num_layers - 1), 1));
+    GRAPHS_V_scale[drw_Layer] = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "V_scale[" + nf(drw_Layer, 2) + "]", GRAPHS_V_scale[drw_Layer], 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));
+    GRAPHS_O_scale = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "O_scale", GRAPHS_O_scale, 1, 100, -pow(2.0, (1.0 / 4.0)));
  
-    sky_scenario = int(MySpinner.update(X_spinner, Y_spinner, "Sky status", sky_scenario, 1, 4, 1));
-    filter_type = int(MySpinner.update(X_spinner, Y_spinner, "Hourly/daily filter", filter_type, 0, 1, 1));
+    sky_scenario = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Sky status", sky_scenario, 1, 4, 1));
+    filter_type = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Hourly/daily filter", filter_type, 0, 1, 1));
   
-    F_layer_option = int(MySpinner.update(X_spinner, Y_spinner, "Forecast filter option" , F_layer_option, 0, 4, 1));
-    Sample_Member = int(MySpinner.update(X_spinner, Y_spinner, "Single member" , Sample_Member, 1, 43, 1));  
+    F_layer_option = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Forecast filter option" , F_layer_option, 0, 4, 1));
+    Sample_Member = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Single member" , Sample_Member, 1, 43, 1));  
   
-    H_layer_option = int(MySpinner.update(X_spinner, Y_spinner, "Climate filter option" , H_layer_option, 0, 7, 1));
-    Sample_Year = int(MySpinner.update(X_spinner, Y_spinner, "Single year" , Sample_Year, 1953, 2005, 1));    
+    H_layer_option = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Climate filter option" , H_layer_option, 0, 7, 1));
+    Sample_Year = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Single year" , Sample_Year, 1953, 2005, 1));    
   }  
   else if (ROLLOUT_parent == 3) { // Post-Processing
   
-    update_impacts = int(MySpinner.update(X_spinner, Y_spinner, "Update impacts", update_impacts, 0, 1, 1));
+    update_impacts = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Update impacts", update_impacts, 0, 1, 1));
       
-    impacts_source = int(MySpinner.update(X_spinner, Y_spinner, "Impacts Source", impacts_source, 0, 3, 1));
-    impact_layer = int(MySpinner.update(X_spinner, Y_spinner, "Impact Min/50%/Max", impact_layer, 0, 8, 1));
+    impacts_source = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Impacts Source", impacts_source, 0, 3, 1));
+    impact_layer = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Impact Min/50%/Max", impact_layer, 0, 8, 1));
     
-    develop_option = int(MySpinner.update(X_spinner, Y_spinner, "Develop layer" , develop_option, 0, 12, 1));
-    develop_per_day = int(MySpinner.update(X_spinner, Y_spinner, "Dev. per day option" , develop_per_day, 0, 3, 1));
+    develop_option = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Develop layer" , develop_option, 0, 12, 1));
+    develop_per_day = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Dev. per day option" , develop_per_day, 0, 3, 1));
   
-    join_hour_numbers = int(MySpinner.update(X_spinner, Y_spinner, "Trend period hours", join_hour_numbers, 1, 24 * 16, 1));
-    join_type = int(MySpinner.update(X_spinner, Y_spinner, "Weighted/equal trend", join_type, -1, 1, 2));
+    join_hour_numbers = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Trend period hours", join_hour_numbers, 1, 24 * 16, 1));
+    join_type = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Weighted/equal trend", join_type, -1, 1, 2));
   
-    Climatic_solar_model = int(MySpinner.update(X_spinner, Y_spinner, "Climatic solar model", Climatic_solar_model, 0, 1, 1));
-    Climatic_weather_model = int(MySpinner.update(X_spinner, Y_spinner, "Climatic weather model", Climatic_weather_model, 0, 2, 1));
+    Climatic_solar_model = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Climatic solar model", Climatic_solar_model, 0, 1, 1));
+    Climatic_weather_model = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Climatic weather model", Climatic_weather_model, 0, 2, 1));
 
-    Angle_inclination = int(MySpinner.update(X_spinner, Y_spinner, "Inclination angle", Angle_inclination, 0, 90, 5));
-    Angle_orientation = int(MySpinner.update(X_spinner, Y_spinner, "Orientation angle", Angle_orientation, 0, 360, 15));      
+    Angle_inclination = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Inclination angle", Angle_inclination, 0, 90, 5));
+    Angle_orientation = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Orientation angle", Angle_orientation, 0, 360, 15));      
   }  
   else if (ROLLOUT_parent == 4) { // Graph Options
 
-    draw_data_lines = int(MySpinner.update(X_spinner, Y_spinner, "Draw data", draw_data_lines, 0, 1, 1));
-    draw_sorted = int(MySpinner.update(X_spinner, Y_spinner, "Draw sorted", draw_sorted, 0, 1, 1));
-    draw_normals = int(MySpinner.update(X_spinner, Y_spinner, "Draw statistics", draw_normals, 0, 1, 1));
-    draw_probs = int(MySpinner.update(X_spinner, Y_spinner, "Draw probabilities", draw_probs, 0, 1, 1));
-    sum_interval = int(MySpinner.update(X_spinner, Y_spinner, "Probabilities interval", sum_interval, 1, 24, 1));
-    level_pix = int(MySpinner.update(X_spinner, Y_spinner, "Probabilities range", level_pix, 2, 32, -2));
+    draw_data_lines = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Draw data", draw_data_lines, 0, 1, 1));
+    draw_sorted = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Draw sorted", draw_sorted, 0, 1, 1));
+    draw_normals = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Draw statistics", draw_normals, 0, 1, 1));
+    draw_probs = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Draw probabilities", draw_probs, 0, 1, 1));
+    sum_interval = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Probabilities interval", sum_interval, 1, 24, 1));
+    level_pix = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Probabilities range", level_pix, 2, 32, -2));
 
-    //GRAPHS_setup = int(MySpinner.update(X_spinner, Y_spinner, "Diagram setup", GRAPHS_setup, -2, 13, 1));
-    GRAPHS_setup = int(MySpinner.update(X_spinner, Y_spinner, "Diagram setup", GRAPHS_setup, 100, 110, 1));
-    GRAPHS_Update = int(MySpinner.update(X_spinner, Y_spinner, "Redraw scene", GRAPHS_Update, 0, 1, 1));
+    //GRAPHS_setup = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Diagram setup", GRAPHS_setup, -2, 13, 1));
+    GRAPHS_setup = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Diagram setup", GRAPHS_setup, 100, 110, 1));
+    GRAPHS_Update = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Redraw scene", GRAPHS_Update, 0, 1, 1));
 
-    Pallet_ACTIVE = int(MySpinner.update(X_spinner, Y_spinner, "Active pallet option", Pallet_ACTIVE, -1, 14, 1));
-    Pallet_ACTIVE_DIR = int(MySpinner.update(X_spinner, Y_spinner, "Active pallet direction", Pallet_ACTIVE_DIR, -2, 2, 1));
+    Pallet_ACTIVE = int(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Active pallet option", Pallet_ACTIVE, -1, 14, 1));
+    Pallet_ACTIVE_DIR = int(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Active pallet direction", Pallet_ACTIVE_DIR, -2, 2, 1));
     
-    Pallet_PASSIVE = int(MySpinner.update(X_spinner, Y_spinner, "Passive pallet option", Pallet_PASSIVE, -1, 14, 1));
-    Pallet_PASSIVE_DIR = int(MySpinner.update(X_spinner, Y_spinner, "Passive pallet direction", Pallet_PASSIVE_DIR, -1, 1, 2));
+    Pallet_PASSIVE = int(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Passive pallet option", Pallet_PASSIVE, -1, 14, 1));
+    Pallet_PASSIVE_DIR = int(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Passive pallet direction", Pallet_PASSIVE_DIR, -1, 1, 2));
   
-    COLOR_STYLE = int(MySpinner.update(X_spinner, Y_spinner, "Color scheme", COLOR_STYLE, 0, (n_COLOR_STYLE - 1), 1));  
+    COLOR_STYLE = int(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Color scheme", COLOR_STYLE, 0, (n_COLOR_STYLE - 1), 1));  
   
   }
   else if (ROLLOUT_parent == 5) { // Other Products
 
-    GRAPHS_record_PDF = int(MySpinner.update(X_spinner, Y_spinner, "Record PDF", GRAPHS_record_PDF, 0, 1, 1));
-    GRAPHS_record_JPG = int(MySpinner.update(X_spinner, Y_spinner, "Record JPG", GRAPHS_record_JPG, 0, 1, 1));
+    GRAPHS_record_PDF = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Record PDF", GRAPHS_record_PDF, 0, 1, 1));
+    GRAPHS_record_JPG = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Record JPG", GRAPHS_record_JPG, 0, 1, 1));
   
-    save_info_node = int(MySpinner.update(X_spinner, Y_spinner, "Create data-Ascii", save_info_node, 0, 1, 1));
-    save_info_norm = int(MySpinner.update(X_spinner, Y_spinner, "Create stat-Ascii", save_info_norm, 0, 1, 1));
-    save_info_prob = int(MySpinner.update(X_spinner, Y_spinner, "Create prob-Ascii", save_info_prob, 0, 1, 1));  
+    save_info_node = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Create data-Ascii", save_info_node, 0, 1, 1));
+    save_info_norm = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Create stat-Ascii", save_info_norm, 0, 1, 1));
+    save_info_prob = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Create prob-Ascii", save_info_prob, 0, 1, 1));  
     
   }    
   else {
