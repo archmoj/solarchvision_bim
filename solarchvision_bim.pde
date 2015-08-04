@@ -14599,6 +14599,59 @@ void mouseClicked () {
               }
   
               if ((px == 8) && (py == 8) && (pz == 8)) add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, rot);
+              else if ((px == 1) && (py == 1) && (pz == 1)) {
+
+                float[] X_ = new float [6];
+                float[] Y_ = new float [6];
+                float[] Z_ = new float [6];
+
+                X_[0] = 0;
+                Y_[0] = 0;
+                Z_[0] = pow(2, 0.5);
+
+                X_[1] = -1;
+                Y_[1] = -1;
+                Z_[1] = 0;
+
+                X_[2] = 1;
+                Y_[2] = -1;
+                Z_[2] = 0;
+
+                X_[3] = 1;
+                Y_[3] = 1;
+                Z_[3] = 0;
+
+                X_[4] = -1;
+                Y_[4] = 1;
+                Z_[4] = 0;
+
+                X_[5] = 0;
+                Y_[5] = 0;
+                Z_[5] = -pow(2, 0.5);
+                
+                for (int i = 0; i < 6; i += 1) {
+                  float X_r = X_[i] * cos_ang(rot) - Y_[i] * sin_ang(rot);
+                  float Y_r = X_[i] * sin_ang(rot) + Y_[i] * cos_ang(rot);
+                  float Z_r = Z_[i];
+                  
+                  X_[i] = X_r * rx + x;
+                  Y_[i] = Y_r * ry + y;
+                  Z_[i] = Z_r * rz + z;
+                }
+                
+                
+                add_Mesh3(Create_Default_Material, X_[1], Y_[1], Z_[1], X_[2], Y_[2], Z_[2], X_[0], Y_[0], Z_[0]);
+                add_Mesh3(Create_Default_Material, X_[2], Y_[2], Z_[2], X_[3], Y_[3], Z_[3], X_[0], Y_[0], Z_[0]);
+                add_Mesh3(Create_Default_Material, X_[3], Y_[3], Z_[3], X_[4], Y_[4], Z_[4], X_[0], Y_[0], Z_[0]);
+                add_Mesh3(Create_Default_Material, X_[4], Y_[4], Z_[4], X_[1], Y_[1], Z_[1], X_[0], Y_[0], Z_[0]);                
+              
+                add_Mesh3(Create_Default_Material, X_[1], Y_[1], Z_[1], X_[5], Y_[5], Z_[5], X_[2], Y_[2], Z_[2]);
+                add_Mesh3(Create_Default_Material, X_[2], Y_[2], Z_[2], X_[5], Y_[5], Z_[5], X_[3], Y_[3], Z_[3]);
+                add_Mesh3(Create_Default_Material, X_[3], Y_[3], Z_[3], X_[5], Y_[5], Z_[5], X_[4], Y_[4], Z_[4]);
+                add_Mesh3(Create_Default_Material, X_[4], Y_[4], Z_[4], X_[5], Y_[5], Z_[5], X_[1], Y_[1], Z_[1]);                
+            
+              }
+              
               else add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, SolidSurface_TESELATION, rot); 
               
               ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
