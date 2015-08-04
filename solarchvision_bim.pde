@@ -21,13 +21,14 @@ int Create_Input_powRnd = 0;
 
 int SolidSurface_TESELATION = 4;
 
+
+
+int Create_Poly_Degree = 6;
+
+int Create_Mesh_Poly = 1;
+int Create_Mesh_Extrude = 0;
 int Create_Mesh_Tri = 0;
 int Create_Mesh_Quad = 0;
-int Create_Mesh_Poly = 1;
-
-int Create_Mesh_PolyDegree = 6;
-
-
 
 
 
@@ -10627,8 +10628,8 @@ void add_PolygonExtrude (int m, float cx, float cy, float cz, float r, float h, 
   int[] vT = new int [n];
   int[] vB = new int [n];
   
-  vT[0] = addToVertices(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz + h);
-  vB[0] = addToVertices(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz);
+  vT[0] = addToVertices(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz + 0.5 * h);
+  vB[0] = addToVertices(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz - 0.5 * h);
   
   int[] newFaceT = {vT[0]};
   int[] newFaceB = {vB[0]};
@@ -10663,10 +10664,10 @@ void add_PolygonExtrude (int m, float cx, float cy, float cz, float r, float h, 
 
 void add_PolygonHyper (int m, float cx, float cy, float cz, float r, float h, int n, float rot) {
 
-  int[] newFace = {addToVertices(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz)};
+  int[] newFace = {addToVertices(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz - 0.5 * h)};
   for (int i = 1; i < n; i++) {
     float t = i * 360.0 / float(n);
-    int[] f = {addToVertices(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz + (i % 2) * h)};
+    int[] f = {addToVertices(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz + (2 * (i % 2) - 1) * 0.5 * h)};
     newFace = concat(newFace, f);
   } 
  
@@ -12749,7 +12750,7 @@ void SOLARCHVISION_draw_objects () {
   CAM_y = py;
   CAM_z = pz;   
   
-  println("Camera:", nf(CAM_x,0,4), nf(CAM_y,0,4), nf(CAM_z,0,4));
+  //println("Camera:", nf(CAM_x,0,4), nf(CAM_y,0,4), nf(CAM_z,0,4));
 
   if (display_allyObject2D != 0) {
     for (int i = 1; i <= allObject2D_num; i++) {
@@ -14624,9 +14625,12 @@ void mouseClicked () {
               }
               
               if (Create_Mesh_Poly == 1) {
-                add_PolygonHyper(Create_Default_Material, x, y, z, rx, rz, Create_Mesh_PolyDegree, rot);
+                add_PolygonHyper(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
               }
-              
+
+              if (Create_Mesh_Extrude == 1) {              
+                add_PolygonExtrude(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
+              }
               
               
             }
@@ -14903,11 +14907,14 @@ void SOLARCHVISION_draw_ROLLOUT () {
     }
     
     if (ROLLOUT_child == 3) { // Meshes
+
+      Create_Mesh_Poly = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Poly" , Create_Mesh_Poly, 0, 1, 1));
+      Create_Poly_Degree = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Poly_Degree" , Create_Poly_Degree, 3, 24, 1));
+      Create_Mesh_Extrude = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Extrude" , Create_Mesh_Extrude, 0, 1, 1));
+      Create_Mesh_Tri = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Tri" , Create_Mesh_Tri, 0, 1, 1));
+      Create_Mesh_Quad = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Quad" , Create_Mesh_Quad, 0, 1, 1));
       
-      Create_Mesh_Tri = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Create_Mesh_Tri" , Create_Mesh_Tri, 0, 1, 1));
-      Create_Mesh_Quad = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Create_Mesh_Quad" , Create_Mesh_Quad, 0, 1, 1));
-      Create_Mesh_Poly = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Create_Mesh_Poly" , Create_Mesh_Poly, 0, 1, 1));
-      Create_Mesh_PolyDegree = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Create_Mesh_PolyDegree" , Create_Mesh_PolyDegree, 3, 24, 1));
+      
     
     
     }
