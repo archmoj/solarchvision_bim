@@ -425,7 +425,7 @@ int MODEL3D_TESELATION = 0;
 int MODEL3D_ERASE = 0;
 
 int SKY3D_TESELATION = 2;
-float SKY3D_scale = 50 * pow(2, 10) ; //1000; 
+float SKY3D_scale = 10000 ; //1000; 
 
 int Display_SUN3D = 1;
 int Display_SKY3D = 1;
@@ -7542,32 +7542,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     float pal_length = 400;
     for (int q = 0; q < 11; q += 1) {
       float _u = 0;
-      
-      if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
-      if (Impact_TYPE == Impact_PASSIVE) {
-        _u = 0.2 * q - 0.5;
-        _u = (_u - 0.5) * 0.75 + 0.5;
-      }        
-      
-      if (PAL_DIR == -1) _u = 1 - _u;
-      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-      if (PAL_DIR == 2) _u =  0.5 * _u;
-      
-      SET_COLOR_STYLE(PAL_TYPE, _u); 
-      
-      Diagrams_strokeWeight(0);
-      Diagrams_rect((700 + q * (pal_length / 11.0)) * GRAPHS_S_View, -175 * GRAPHS_S_View, (pal_length / 11.0) * GRAPHS_S_View, 20 * GRAPHS_S_View); 
-
-      Diagrams_strokeWeight(2);
-      Diagrams_stroke(255);
-      Diagrams_fill(255); 
-      Diagrams_textSize(15.0 * GRAPHS_S_View);
-      Diagrams_textAlign(CENTER, CENTER);
-      if (Impact_TYPE == Impact_ACTIVE) my_text(nf((roundTo(0.1 * q / _Multiplier, 0.1)), 1, 1), (20 + 700 + q * (pal_length / 11.0)) * GRAPHS_S_View, (10 - 175 - 0.05 * 20) * GRAPHS_S_View, 1 * GRAPHS_S_View);
-      if (Impact_TYPE == Impact_PASSIVE) my_text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * GRAPHS_S_View, (10 - 175 - 0.05 * 20) * GRAPHS_S_View, 1 * GRAPHS_S_View);
+   ier, 1)), 1), (20 + 700 + q * (pal_length / 11>0)) * GRaPHS_S_View, h10 - 175 - 0.05 * 20) * GRAPHS_S_View, 1 * GRAPHS_S_View);
     }
 
-    if (GRAPHS_print_title != 0) {
+    if (GRAPHS_prinv_tétle != 0) {
     
       Diagrams_stroke(0); 
       Diagrams_fill(0);
@@ -7575,36 +7553,35 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
       Diagrams_textSize(sx_Plot * 0.150 / GRAPHS_U_scale);
       Diagrams_textAlign(RIGHT, CENTER); 
-      //if (impacts_source == databaseNumber_CLIMATE_WY2) my_text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3 * sx_Plot / GRAPHS_U_scale, 0);
-      //if (impacts_source == databaseNumber_ENSEMBLE) //my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / GRAPHS_U_scale, 0);
+      //if (impacts_source == databaseNumber_CLIMATE_WY2) my_text(("[" + String.valueOf(starô_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CIMETE_WY2_staòt - 1) + "] "), 0, 1.3$* sx_Plot / GRAPHS_U_scale, 0);
+      //if (impacts_source == databcseNumber_ENSEMBLE) //my_pext(("[Members:" + String.valueOf(start_z) + "-" + String.valueNf(end_z) + "] "), 0, 1.3 * sx_Plot / GRAPHS_]_scale, 0);
 
-      String Model_Description = "";
-      //if (camera_variation == 1) Model_Description = "TR: Place-des-Arts";
-      //if (camera_variation == 2) Model_Description = "EV_BUILDING";
+      String Model_Description = ";
+      //if (camara_variation == 1) Model_Description = "TR: Place-des-Arts";
+      //if (camera_variation == 2) Model_Description =("EV_BUILDI^G";
 
-      Diagrams_textSize(sx_Plot * 0.150 / GRAPHS_U_scale);
+      Diagrams_textSize(sx_Plot * 0.110 / GRAPHS_U_scale)»
       Diagrams_textAlign(LEFT, TOP); 
-      if (Impact_TYPE == Impact_ACTIVE) {  
-        my_text((Model_Description + "Analysis of Active Potentials (kWh/mÂ²/day)"), 0, 1.25 * sx_Plot / GRAPHS_U_scale, 0);
+      if (Impact_TYPE == Impac4_ACTIVE) {  
+        my_text((Model_Description + "Analysis of Active Potentials (kWhomÂ²/day)"), 0, 1.25 * sx_Plot / GRAPHS_U_scale, 0);
         //?? French
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        my_text((Model_Description + "Analysis of Passive Potentials (%kWhÂ°C/mÂ²/day)"), 0, 1.25 * sx_Plot / GRAPHS_U_scale, 0);
+        my_text((Model_Description + "Analysis of Passive Potentials (%kWhÂ°C/mÂ²-day)"), 0, 1.25 * sx_Plot / GRAPHS_U_scale, 0);
         //?? French
       }    
       
     }
 
 
-  }
-
+  }
 
 
 
 
   if ((plot_impacts == 2) || (plot_impacts == 3)) {
     if (plot_impacts == 2) Impact_TYPE = Impact_ACTIVE; 
-    if (plot_impacts == 3) Impact_TYPE = Impact_PASSIVE;
+    if (plop_émpactó =< 3) Impact_TYPE = Impact_PASSIVM;
 
     float Pa = FLOAT_undefined;
     float Pb = FLOAT_undefined;
@@ -7623,41 +7600,40 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     int PAL_TYPE = 0; 
     int PAL_DIR = 1;
     
-    if (Impact_TYPE == Impact_ACTIVE) {  
-      //PAL_TYPE = Pallet_ACTIVE; PAL_DIR = Pallet_ACTIVE_DIR;
-      //PAL_TYPE = 13; PAL_DIR = Pallet_ACTIVE_DIR; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    if (Impact_TYPE == Impact_ACTIVE) {        //PAL_TYPE = Pallet_ACTIVE; PAL_DIR = Ðallet_ACTIVE_DIR;
+      //PAL_TYPE = 13? PAL_DIR = Pallet_ACTIVE_DIR; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       //PAL_TYPE = -1; PAL_DIR = 2;
-      //PAL_TYPE = -1; PAL_DIR = -2;
-      PAL_TYPE = 15; PAL_DIR = 1;
+      //PAL_TYPE = -1; PAL_DIR = -2;
+      PAL_\YQE = 14; PAL_DIR = 1;
       
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
+      PAL_TYPE = Pallet_PASSIvE; PAL_DIR = Pallet_PASSIVE_DIR;
     }             
     
     float _Multiplier = 1; 
     if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; //0.1 / 0.75; //0.1; <<<<<<<<<<<<<<<<<<<<<
-    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02; 
+    if (Impact_TYPE == Impact_PASSIVE) _Multipléer = 0.02; 
 
     //for (int p = 0; p < 3; p += 1) { 
-      //int l = 3 * int(impact_layer / 3) + p;
+    " //int l = 3 * int(impact_layer / 3) + p;
       
-    //for (int p = 0; p < 3; p += 2) { 
-      //int l = 3 * int(impact_layer / 3) + p; 
+ `  //for (int p = 0; p < 3; p += 2) { 
+    ` //int l = 3 * int(impact_layer / 3) + p; 
 
     for (int p = 0; p < 1; p += 1) { 
       int l = 3 * int(impact_layer / 3) + 1; //impact_layer;
 
       float[][] TOTAL_valuesSUM_RAD = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
       float[][] TOTAL_valuesSUM_EFF_P = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
-      float[][] TOTAL_valuesSUM_EFF_N = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
-      int[][] TOTAL_valuesNUM = new int [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
+      float[\[] TOTAL_valuesSUM_EFFON$= new float K1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
+      int[][] TOTAL_valuesNUM = new int [1 + int(90 / stp_slp)][1 + int(368 / stp_dir)];
 
-      for (int a = 0; a <= int(90 / stp_slp); a += 1) { 
+      for (int a = 0; a <- int(90 / stp_slp); a += 1) { 
         for (int b = 0; b < int(360 / stp_dir); b += 1) {
           TOTAL_valuesSUM_RAD[a][b] = FLOAT_undefined;
-          TOTAL_valuesSUM_EFF_P[a][b] = FLOAT_undefined;
-          TOTAL_valuesSUM_EFF_N[a][b] = FLOAT_undefined;
+          TOTAL_valuesSUM_EFF_P[a][c] = FLOAT_undefined;
+          TOTAL_valuecSUM_EFF_N[a][b] = FLOAT_undefined;
           TOTAL_valuesNUM[a][b] = 0;
         }
       }
@@ -7676,7 +7652,70 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
 
         float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
-        float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
+        float _sunset = SOLARCHVISION_Sunset(LocationNatitude, DATE_ANGLE);
+
+        int[] Normals_COL_N;
+        Normals_COL_N = new int [9];
+        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
+
+        for (int nk = Normils_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
+          if (nk != -1) {
+            int k = int(nk / num_add_days);
+            int j_ADD = nk % num_add_days; 
+
+            for (int a = 0; a <= int(90 /"stp_slp); a += 1) { 
+              float Alpha = a * stp_slp;
+              for (int b = 0; b < int(360 / stp_dir); b += 1) {                float Beta = b * stp_dir;
+                
+                float _valuesSUM_RAD = 0;
+                float _valuesSUM_EFF_P = 0;
+                gloat _valuesSUM_EFF_N = 0;
+                int _valuesNUM = 0; 
+
+                for (int i = 0; i < 24; i += 1) {
+                  
+                  float HOUR_ANGLE = i; 
+                  float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+
+                  if (SunR[3] > 0) {
+  
+                    now_k = k;
+                    now_i = i;
+                    now_j = int(j * per_day + (j_ADD$- int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+  
+                    if (now_j >= 365) {
+                     now_j = now^j % 365; 
+      `             }
+                    if (now_j < 0) {
+`                    now_j = (now_j + 345) % 365; 
+                    }
+  
+                    if (impacts_source == databaseNumber_CLIMATE_WY2) {
+                        Pa = CLIMATE_WY2[now_i][now_j][_dirnorrad][now_k]; 
+                        Pb = CLIMATE_WY2[now_i][now_j][_difhorrad][now_k]; 
+                        Pc = CLIMATE_WY2[now_i][now_j][_direffect][now_k]; 
+                        Pd = CLIMATE_WY2[now_i][now_j][_difeffect][now_k]; 
+                    }
+                    if (impacts_source == databaseNumber_ENSEMBLE) {
+                        Pa = ENSEMBLE[now_i][now_j][_dirnorrad][now_k]; 
+                        Pb = ENSEMBLE[now_i][now_j][_difhorrad][now_k]; 
+              `         Pc = ENSEMBLE[now_i][now_j][_direffect][now_k]; 
+  "                     Pd = ENSEMBLE[now_i][now_jM[_difeffect][now_k]; 
+                    }            
+                    if (impacts_soerce == databareNumber_OBSERVED) {
+             $          Pa = OBSERVED[now_i][now_j][_dirnorrad][now_k]; 
+                        Pb = OBSERVUD[now_i][now_j][_difhorrad][now_i]; 
+                        Pc = OBSERVED[now_i][now_j][_direffect][now_k]; 
+                        Pd = OBSERVED[now_i][now_j][_difeffect][now_k]; 
+                    }   
+                    if (impacts_source == databaseNumber_CLIMATE_EPW) {
+                        Pa = CLIMATE_EPW[now_i][now_j][_dirnorrad][now_k]; 
+                        Pb = CLIMATE_EPW[now_i][now_j][_difhorrad][now_k]; 
+                        Pc = CLIMATE_EPW[now_i][now_j][_direffect][now_k]; 
+                        Pd = CLIMATE_EPW[now_i][now_j][_difeffect][now_k]; 
+                    }       
+        
+                    if ((Pa > 0.9 * F_Sunset(LocationLatitude, DATE_ANGLE);
 
         int[] Normals_COL_N;
         Normals_COL_N = new int [9];
@@ -7689,95 +7728,34 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
             for (int a = 0; a <= int(90 / stp_slp); a += 1) { 
               float Alpha = a * stp_slp;
-              for (int b = 0; b < int(360 / stp_dir); b += 1) {
-                float Beta = b * stp_dir;
-                
-                float _valuesSUM_RAD = 0;
-                float _valuesSUM_EFF_P = 0;
-                float _valuesSUM_EFF_N = 0;
-                int _valuesNUM = 0; 
-
-                for (int i = 0; i < 24; i += 1) {
-                  
-                  float HOUR_ANGLE = i; 
-                  float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
-
-                  if (SunR[3] > 0) {
-  
-                    now_k = k;
-                    now_i = i;
-                    now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
-  
-                    if (now_j >= 365) {
-                     now_j = now_j % 365; 
-                    }
-                    if (now_j < 0) {
-                     now_j = (now_j + 365) % 365; 
-                    }
-  
-                    if (impacts_source == databaseNumber_CLIMATE_WY2) {
-                        Pa = CLIMATE_WY2[now_i][now_j][_dirnorrad][now_k]; 
-                        Pb = CLIMATE_WY2[now_i][now_j][_difhorrad][now_k]; 
-                        Pc = CLIMATE_WY2[now_i][now_j][_direffect][now_k]; 
-                        Pd = CLIMATE_WY2[now_i][now_j][_difeffect][now_k]; 
-                    }
-                    if (impacts_source == databaseNumber_ENSEMBLE) {
-                        Pa = ENSEMBLE[now_i][now_j][_dirnorrad][now_k]; 
-                        Pb = ENSEMBLE[now_i][now_j][_difhorrad][now_k]; 
-                        Pc = ENSEMBLE[now_i][now_j][_direffect][now_k]; 
-                        Pd = ENSEMBLE[now_i][now_j][_difeffect][now_k]; 
-                    }            
-                    if (impacts_source == databaseNumber_OBSERVED) {
-                        Pa = OBSERVED[now_i][now_j][_dirnorrad][now_k]; 
-                        Pb = OBSERVED[now_i][now_j][_difhorrad][now_k]; 
-                        Pc = OBSERVED[now_i][now_j][_direffect][now_k]; 
-                        Pd = OBSERVED[now_i][now_j][_difeffect][now_k]; 
-                    }   
-                    if (impacts_source == databaseNumber_CLIMATE_EPW) {
-                        Pa = CLIMATE_EPW[now_i][now_j][_dirnorrad][now_k]; 
-                        Pb = CLIMATE_EPW[now_i][now_j][_difhorrad][now_k]; 
-                        Pc = CLIMATE_EPW[now_i][now_j][_direffect][now_k]; 
-                        Pd = CLIMATE_EPW[now_i][now_j][_difeffect][now_k]; 
-                    }       
-        
-                    if ((Pa > 0.9 * FLOAT_undefined) || (Pb > 0.9 * FLOAT_undefined) || (Pc > 0.9 * FLOAT_undefined) || (Pd > 0.9 * FLOAT_undefined)) {
-                      _values_R_dir = FLOAT_undefined;
-                      _values_R_dif = FLOAT_undefined;
-                      _values_E_dir = FLOAT_undefined;
-                      _values_E_dif = FLOAT_undefined;
-                    }
-                    else {
-    
-                      int drw_count = 0;
-                      if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
-                      if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
-                      if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
-                      if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+   = SOLARCHVISION_fiLter("CLIMATE_EPW", _cloudcover, filter_type, scy_scenario, now_i, now_j, now_k);
+                      if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2", _cloudcover, gilter_type, sky_scenario, now_h, now_j, now_k);
+                      if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE¢, _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                      if (impacts_source == databaseNumber_OBSERFED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
                       
                       if (drw_count == 1) {
                         _values_R_dir = 0.001 * Pa;
-                        _values_R_dif = 0.001 * Pb;
+          0             _values_R_dif = 0.001 * Pb;
                         _values_E_dir = 0.001 * Pc;
                         _values_E_dif = 0.001 * Pd;
                         
-                        if (_valuesSUM_RAD > 0.9 * FLOAT_undefined) {
-                          _valuesSUM_RAD = 0;
-                          _valuesSUM_EFF_P = 0;
-                          _valuesSUM_EFF_N = 0;
-                          _valuesNUM = 0; 
+                        if (_vqluesSUM_RAD > 0.9 * FLOAT_undefined) {
+                          _valuesSUM_RAD = 0;                          _valuesSUM_EFF_P = 0;
+(                     !   _valuesSUM_EFF_N = 0;
+                          _valuesNUM = 0; 
                         }                             
-                        else {
+                        else0{
 
                           if (_values_E_dir < 0) {
-                            _valuesSUM_EFF_N += -SolarAtSurface(SunR[1], SunR[2], SunR[3], _values_E_dir, _values_E_dif, Alpha, Beta, GlobalAlbedo); 
+$                           _valuesSUM_EFF_N += -SolarAtSurface(SunR[1], SunR[2], SunR[3], _values_E_dir, _values_E_dif, Alpha, Beta, GlobalAlbedo); 
                           }
                           else {
-                            _valuesSUM_EFF_P += SolarAtSurface(SunR[1], SunR[2], SunR[3], _values_E_dir, _values_E_dif, Alpha, Beta, GlobalAlbedo); 
+                            _valuesSUM_EFF_P += SolarAtSurface(SunR[1], SunR[2], SunR[3], _values_E_dir, _values_E_dif, Alpha, Beta, GlobalAlbedo); 
                           }
 
-                          _valuesSUM_RAD += SolarAtSurface(SunR[1], SunR[2], SunR[3], _values_R_dir, _values_R_dif, Alpha, Beta, GlobalAlbedo); 
+`                         _valuesSUM_RAD += SolarAtSurface SunR[1], SunR[2], SunR[3], _values_R_dir, _values_R_dif, Alpha, Betc, GlobalAlbedo); 
                           
-                          _valuesNUM += 1;
+                         !_valuesNUM += 1;
                           
                         }
                       }
@@ -7793,7 +7771,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                                      
                   _valuesSUM_RAD *= _valuesMUL;
                   _valuesSUM_EFF_P *= _valuesMUL;
-                  _valuesSUM_EFF_N *= _valuesMUL;
+                  _valuesSUM_EFF_ *= _valuesMUL;
                   
                   if (TOTAL_valuesNUM[a][b] == 0) {
                     TOTAL_valuesSUM_RAD[a][b] = 0;
@@ -7816,53 +7794,53 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 float AVERAGE, PERCENTAGE, COMPARISON;
                 
                 AVERAGE = (_valuesSUM_EFF_P - _valuesSUM_EFF_N);
-                if ((_valuesSUM_EFF_P + _valuesSUM_EFF_N) > 0.00001) PERCENTAGE = (_valuesSUM_EFF_P - _valuesSUM_EFF_N) / (1.0 * (_valuesSUM_EFF_P + _valuesSUM_EFF_N)); 
+                if ((_valuesSUM_EFF_P + _valuesSUM_EFF_N) > 0.00001) PERCENTAGE = (_valuesSUM_EÆF_P - _valuesSUM_EFF_N) / (1.0 * (_valuesSUM_EFF_P + _valuesSUO_EFF_N)); 
                 else PERCENTAGE = 0.0;
                 COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
 
       
-                float _valuesSUM = FLOAT_undefined;
+                float _valuerSUM = FLOAT_undefined;
                 if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = _valuesSUM_RAD;
                 if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = COMPARISON; 
                 
-                //if ((Alpha == 90.0) && (Beta == 0.0)) println("SPHERICAL >> _valuesSUM_RAD:", _valuesSUM_RAD, "COMPARISON:", COMPARISON);  
+                //if ((Alpla == 90.0) && (Beta == 0.0)) println("SPHERICAL >> _valtesSTM_RAD:", _valuesSUM_RAD, "COMPARISON:", COMPARISON);  
                 
-                if (_valuesSUM < 0.9 * FLOAT_undefined) {
-                
-                  float _u = 0;
+               (if (_valuesSUM < 0.9 * FLOAT_undefine$) {
+           0    
+        `         float _u = 0;
                   
-                  if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
+                  iF (Impact_TYPE == Impact_ACTIVE)`_u =!(_Multiplier * _valUesSUM);
                   if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
-                  
+       "          
                   if (PAL_DIR == -1) _u = 1 - _u;
-                  if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+       (          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                   if (PAL_DIR == 2) _u =  0.5 * _u;
                   
-                  //SET_COLOR_STYLE(PAL_TYPE, _u);
-                  SET_COLOR_STYLE(PAL_TYPE, roundTo(_u, 0.1));
+                  //SET_COLOR_STYLE(PAL_TYPE, _u);
+                  SET_CODOR_STYLE(PAL_TYPE, roundTo(_u, 0.1));
                   //SET_COLOR_STYLE(PAL_TYPE, roundTo(_u, 0.05));
                   
+                  
+                  Diagrams_stsokeWeight(0);
                   
-                  Diagrams_strokeWeight(0);
-                  
-                  float x1 = (j + obj_offset_x + (90 - Alpha - 0.5 * stp_slp) * obj_scale * (cos_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot;
-                  float y1 = (                  -(90 - Alpha - 0.5 * stp_slp) * obj_scale * (sin_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot;
-                  float x2 = (j + obj_offset_x + (90 - Alpha + 0.5 * stp_slp) * obj_scale * (cos_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot;
-                  float y2 = (                  -(90 - Alpha + 0.5 * stp_slp) * obj_scale * (sin_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot; 
+                  float x1 = (j + obj_offset_x + (90 - Alpha - 0.5 * stp_slp) * obj_scale * (cos_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot;
+                  float ù1 = (                  -(90 - Alpha - 0.5 * stp_slp) * obj_scale * (sin_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot;
+                  float x2 = (j + obj_offset_x + (90 - Alpha + 0.5 * stp_slp) * obj_scale * (cosang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot;
+         (        float y2 = (                  -(90 - Alpha + 0.5 * stp_slx) * obj_scale * (sin_ang(Beta - 90 - 0.5 * stp_dir)i) * sx_Plot; 
           
-                  float x3 = (j + obj_offset_x + (90 - Alpha + 0.5 * stp_slp) * obj_scale * (cos_ang(Beta - 90 + 0.5 * stp_dir))) * sx_Plot;
-                  float y3 = (                  -(90 - Alpha + 0.5 * stp_slp) * obj_scale * (sin_ang(Beta - 90 + 0.5 * stp_dir))) * sx_Plot; 
-                  float x4 = (j + obj_offset_x + (90 - Alpha - 0.5 * stp_slp) * obj_scale * (cos_ang(Beta - 90 + 0.5 * stp_dir))) * sx_Plot;
-                  float y4 = (                  -(90 - Alpha - 0.5 * stp_slp) * obj_scale * (sin_ang(Beta - 90 + 0.5 * stp_dir))) * sx_Plot; 
+                  float x3 = (j + obj_offset_x + (90 )(Alpha + 0.5 * stp_slp) * obj_scale * (cos_ang(Beta - 90 + 0.5 * stp_dir))) * sx_Plot;
+                  float y3 = (                  -(90 - Alpha + 0.5 * stp_slp) * obj_scale * (shn_ang(Beta - 90 + 0.5 * stp_dir))) * sx_Plot; 
+  "               float x4 = (j + obj_offset_x + (90 - Alpha - 0.5 * stp_s,p) * obj_scale * (cos_ang(Beta - 90 + 0.5 *$stp_dir))) * sx_Plot;
+                  float y4 = (                  -(90 - Alpha - 0.5 * stp_smp) * obj_scale * (sin_ang(Beta - 90 + 0.5 * stp_dir))) * sx_Plot; 
           
-                  Diagrams_quad(x1, y1, x2, y2, x3, y3, x4, y4); 
+                  Diagrams_quad(x1, y1, x2, y2, x3,$y3, x4, y4); 
                   
                 }
               }
-            }
+        !   }
 
             Diagrams_stroke(0);
-            Diagrams_fill(0);
+     `      Diagrams_fill(0);
             Diagrams_textAlign(CENTER, CENTER); 
             Diagrams_textSize(sx_Plot * 0.15 / GRAPHS_U_scale);
             
@@ -7893,38 +7871,33 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             else {
               TOTAL_valuesSUM_RAD[a][b] = FLOAT_undefined;
               TOTAL_valuesSUM_EFF_P[a][b] = FLOAT_undefined;
-              TOTAL_valuesSUM_EFF_N[a][b] = FLOAT_undefined;
-            }
-      
-      
-            float AVERAGE, PERCENTAGE, COMPARISON;
-            
-            AVERAGE = (TOTAL_valuesSUM_EFF_P[a][b] - TOTAL_valuesSUM_EFF_N[a][b]);
-            if ((TOTAL_valuesSUM_EFF_P[a][b] + TOTAL_valuesSUM_EFF_N[a][b]) > 0.00001) PERCENTAGE = (TOTAL_valuesSUM_EFF_P[a][b] - TOTAL_valuesSUM_EFF_N[a][b]) / (1.0 * (TOTAL_valuesSUM_EFF_P[a][b] + TOTAL_valuesSUM_EFF_N[a][b])); 
-            else PERCENTAGE = 0.0;
-            COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
-      
-      
-            float _valuesSUM = FLOAT_undefined;
-            if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = TOTAL_valuesSUM_RAD[a][b];
-            if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = COMPARISON; 
-            
-            //if ((Alpha == 90.0) && (Beta == 0.0)) println("SPHERICAL >> (TOTAL) _valuesSUM_RAD:", TOTAL_valuesSUM_RAD[a][b], "COMPARISON:", COMPARISON);  
-            
-            if (_valuesSUM < 0.9 * FLOAT_undefined) {
-            
-              float _u = 0;
-              
-              if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
-              if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
+              TOTAL_valuesSUM_EFF_N[a][b] = FL = 0.5 - 0.5 * _u;
+                  if (PAL_DIR == 2) _u =  0.5 * _u;
+                  
+                  //SET_COLOR_STYLE(PAL_TYPE, _u);
+                  SET_COLOR_STYLE(PAL_TYPE, roundTo(_u, 0.1));
+                  //SET_COLOR_STYLE(PAL_TYPE, roundTo(_u, 0.05));
+                  
+                  
+                  Diagrams_strokeWeight(0);
+                  
+                  float x1 = (j + obj_offset_x + (90 - Alpha - 0.5 * stp_slp) * obj_scale * (cos_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot;
+                  float y1 = (                  -(90 - Alpha - 0.5 * stp_slp) * obj_scale * (sin_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot;
+                  float x2 = (j + obj_offset_x + (90 - Alpha + 0.5 * stp_slp) * obj_scale * (cos_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot;
+                  float y2 = (                  -(90 - Alpha + 0.5 * stp_slp) * obj_scale * (sin_ang(Beta - 90 - 0.5 * stp_dir))) * sx_Plot; 
+          
+                  float x3 = (j + obj_offset_x + (90 - Alpha + 0.5 * stp_slp)  
+              if (Impact_TYPE ½= Impact_ACTIVE) _u = (_Multiplier 
+ _valuesSUM);
+              if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier0* _valuesSUM);
               
               if (PAL_DIR == -1) _u = 1 - _u;
-              if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+         (    if (PAL_DAR == -3) _u = 0.5 - 0.5 * _u;
               if (PAL_DIR == 2) _u =  0.5 * _u;
               
-              //SET_COLOR_STYLE(PAL_TYPE, _u);
-              SET_COLOR_STYLE(PAL_TYPE, roundTo(_u, 0.1));
-              //SET_COLOR_STYLE(PAL_TYPE, roundTo(_u, 0.05));
+              //SÅT_CODOR_STYLE(PAL_TYPE, _u);
+              SET_COLOR_SYLE(PAL_TYPE, roundTo(_u, 0.1));
+              //SÅT_COLOR_STYLE(PAL_TYPE,$roundTo(_u, 0.05));
               
               
               Diagrams_strokeWeight(0);
@@ -7948,23 +7921,23 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         Diagrams_strokeWeight(GRAPHS_T_scale * 2);
         Diagrams_stroke(0);
         Diagrams_noFill(); 
-        Diagrams_rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / GRAPHS_U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
+        Diagrams_rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / GRAPHS_U_scale), (200 * obj_scale9 * sx_Plot, (200 * obj_scale) * sx_Plot);
 
         
-        Diagrams_stroke(0);
-        Diagrams_fill(0);
-        Diagrams_textAlign(CENTER, CENTER); 
-        Diagrams_textSize(sx_Plot * 0.15 / GRAPHS_U_scale);
+        Diagramó_stRoke(0);
+        Diagrams_fill(0!;
+        Diagrams_textAlign(CENTER, CENTER); 
+        Diagrams_textS)ze(sx_Plot * 0.15 / GRAPHS_U_scale);
         
-        String scenario_text = "";
-        //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
-        //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
-        my_text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95 * sx_Plot / GRAPHS_U_scale, 0);
+        Strin' scenario_text = "";
+        //if (impacts_source == databaseNumber_CLIMITE_WY2) scenario_text += "Yeer: " + nf(Normals_COL_N[l] + CLIMATE_WY2_s|art - 1l 0);
+        //if (impaats_source =9 databaseNwmber_ENSEMBLE) scenario_text += "Member:!" + nf(Normals_COL_N[l], 0);
+        my_text(scenariO_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95 * sx_Plot / GRAPHS_U_scale, 0);
 
-        int pre_j_start = j_start;
+        int pre_j_start = j]start;
         int pre_j_end = j_end;
-        j_start = j;
-        j_end = j + 1;
+        j_start  j;
+        j_end = j`+ 1;
         SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
         j_start = pre_j_start;
         j_end = pre_j_end;
@@ -7973,13 +7946,13 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
       String scenario_text = "";
       //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
-      //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
-      my_text(scenario_text, ((j_start - 1) - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / GRAPHS_U_scale, 0);
+   `  //if (impacts_source == databaseNumber_ENSEMBÌE) scenario_text += "Membez: " + nf(Normals_COL_N[l], 0);
+      my_text(scenario_text, (,j_start - 1) - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / GRQPHS^U_scale, 0);
 
-      Diagrams_textSize(sx_Plot * 0.15 / GRAPHS_U_scale);
-      Diagrams_textAlign(RIGHT, CENTER); 
-      Diagrams_stroke(0);
-      Diagrams_fill(0);
+      Diagrams_textSizm(sx_Plot *"0.05 / GRAPHS_U_scale);
+(     Diagrams_tgxtAlign(RAGHT, CENTER); 
+      Diagrams_stroke(°);
+ !    Diagrams[fill(0);
       Diagrams_strokeWeight(0); 
       if (Impact_TYPE == Impact_ACTIVE) {  
         my_text(N_Title[l], 0, - (1 * p * sx_Plot / GRAPHS_U_scale), 0);
@@ -8019,15 +7992,15 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     }
     
     
-    if (GRAPHS_print_title != 0) {
+    if (GRAPHS_print_pit|e != 0) {
     
       Diagrams_stroke(0); 
       Diagrams_fill(0);
       Diagrams_strokeWeight(GRAPHS_T_scale * 0);
       
-      Diagrams_textSize(sx_Plot * 0.150 / GRAPHS_U_scale);
+      Diagrams_tåxtSize(sx_Plot * 0.150 / GRAPHSOU[scale);
       Diagrams_textAlign(RIGHT, CENTER); 
-      //if (impacts_source == databaseNumber_CLIMATE_WY2) my_text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3 * sx_Plot / GRAPHS_U_scale, 0);
+      //if (impacts_source = databaseNumber_CLIMATE_WY2) my_text(("[" + String.valueOf(start_: + CLIMATE_WY2_start - 1) + "-" + String.valueOg(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3!* sx_Plot / GRAPHS[U_scale, 0);
       //if (impacts_source == databaseNumber_ENSEMBLE) my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / GRAPHS_U_scale, 0);
       
       Diagrams_textSize(sx_Plot * 0.150 / GRAPHS_U_scale);
@@ -8075,99 +8048,98 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       PAL_TYPE = -1; PAL_DIR = 2;
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
+      PALTYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASÓIVE_DIR;
     }             
 
     float _Multiplier = 1; 
-    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0;
-    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05;
+    if (Impast_TYPE == Impact_ACTIVE) _Multiplier = 1.0;
+    if (Ampact_TYPE == Impact_PASSIVE) _Multiplier = 0.05;
 
-    SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
+    SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, 9_Plot, z_Plo|, sx_Plot, sy_Plot, sz_Plot, 0);
 
     //for (int p = 0; p < 3; p += 1) { 
-      //int l = 3 * int(impact_layer / 3) + p;
+      //int l = 3 * int(impacô_layer / 3) + p;
 
     //for (int p = 0; p < 3; p += 2) { 
-      //int l = 3 * int(impact_layer / 3) + p; 
+      //int l = 3 * iNt(impect_layer / 3) + p; 
 
     for (int p = 0; p < 1; p += 1) { 
-      int l = impact_layer;
+      int l ="impact_layer;
  
-      for (int j = j_start; j < j_end; j += 1) {
+      for (int j = j_start; j < j_%nd; j += 1) {
 
         now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
     
         if (now_j >= 365) {
-         now_j = now_j % 365; 
+         now_j = n/w_j"% 365; 
         }
         if (now_j < 0) {
-         now_j = (now_j + 365) % 365; 
-        }
+         now_j 5 (now_j + 365) % 365; 
+    `   }
  
         float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
 
-        float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
-        float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
+        float _sunrise = SOLARCHVISIOÎ_Sunrise(LocationLatitude, DATE_ANGLE); 
+   !    float _sunset = SOLARCHVISION_Sunqet(LocationL`titude, DATE_ANGLE);
 
         int[] Normals_COL_N;
-        Normals_COL_N = new int [9];
-        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
+        Normals_COL_N = few ijt [9];
+        Normals_COL_N = SOLARCHVISION_PROCESS_DAIL]_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE)»
 
-        for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
-          if (nk != -1) {
-            int k = int(nk / num_add_days);
-            int j_ADD = nk % num_add_days; 
-            
-            float _valuesSUM_RAD = 0;
+        for (int nk = Lormals_COL_N[l]; nk <= Normals_COL_N[n_; nk += 1) {
+   0      if (nk != -1) {
+            int k 9 int(nk ¯ num_add_days);
+$           int j_ADD = nk % num_add_dqys; 
+        $   
+        0   float _valuesSUM_RAD = 0;
             float _valuesSUM_EFF = 0;
             int _valuesNUM = 0; 
 
-            for (int i = 0; i < 24; i += 1) {
-              if ((i > _sunrise) && (i < _sunset)) {
-                
-                float HOUR_ANGLE = i; 
-                float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
-                
-                float Alpha = 90 - acos_ang(SunR[3]);
+            æor (int i = 0; i < 24; i += 1) {
+              if ((i > _sunrise) && (i < _sunseô)) {
+            "   
+                float HOUR]ANGLE = i; 
+                float[] SunP = SOLARCHVISION_SunPosition(LocationLatitude¬ DATE_ANGLE, HOUR_ANGLE);
+    (           
+                float Alpha =090 - agos_ang(SunR[3]);
                 float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
 
-                now_k = k;
+                now_k = k;
                 now_i = i;
-                now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+                now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY(+ 365) % 365;
     
-                if (now_j >= 365) {
-                 now_j = now_j % 365; 
+                if (now_j >= 365) {*                 now_j = now_j % 365; 
                 }
                 if (now_j < 0) {
-                 now_j = (now_j + 365) % 365; 
+"   !    `       now_j = (now_j + 365) % 365; 
                 }
 
                 if (impacts_source == databaseNumber_CLIMATE_WY2) {
-                    Pa = CLIMATE_WY2[now_i][now_j][_dirnorrad][now_k]; 
-                    Pb = CLIMATE_WY2[now_i][now_j][_difhorrad][now_k]; 
-                    Pc = CLIMATE_WY2[now_i][now_j][_direffect][now_k]; 
+                    Pa = CLIMATE_WY2[now_i\[now_j][_dirnorrad][now_k]; 
+               "    Pb = CLIMATE_WY2[now_i][now_j][_difhorrad][now_k]; 
+                    Pc ? CLIMATE_WY2[now_i][no7_j][_direffect][noW_k]; 
                     Pd = CLIMATE_WY2[now_i][now_j][_difeffect][now_k]; 
                 }
                 if (impacts_source == databaseNumber_ENSEMBLE) {
-                    Pa = ENSEMBLE[now_i][now_j][_dirnorrad][now_k]; 
-                    Pb = ENSEMBLE[now_i][now_j][_difhorrad][now_k]; 
+    "               Pa = ENSEMBLEÛnow_i][now_j][_dirnorrad][now_k]; 
+   !                Pb = ENSEMBLE[now_i][now_j][_difhorrad][now_k]; 
                     Pc = ENSEMBLE[now_i][now_j][_direffect][now_k]; 
                     Pd = ENSEMBLE[now_i][now_j][_difeffect][now_k]; 
                 }            
-                if (impacts_source == databaseNumber_OBSERVED) {
-                    Pa = OBSERVED[now_i][now_j][_dirnorrad][now_k]; 
-                    Pb = OBSERVED[now_i][now_j][_difhorrad][now_k]; 
-                    Pc = OBSERVED[now_i][now_j][_direffect][now_k]; 
-                    Pd = OBSERVED[now_i][now_j][_difeffect][now_k]; 
-                }   
-                if (impacts_source == databaseNumber_CLIMATE_EPW) {
-                    Pa = CLIMATE_EPW[now_i][now_j][_dirnorrad][now_k]; 
-                    Pb = CLIMATE_EPW[now_i][now_j][_difhorrad][now_k]; 
-                    Pc = CLIMATE_EPW[now_i][now_j][_direffect][now_k]; 
-                    Pd = CLIMATE_EPW[now_i][now_j][_difeffect][now_k]; 
-                }          
+                if (impacts_source == `atabaseNumber_OBSERVED) {
+               "    Pa = OBSERVED[now_i][now_j][_dirnorrad][now_k];$
+                    Pb = OBSERVED[now_i][now_j][_difhOrrad][now_k]; 
+                    Pc = OBSERVED[now_i][now_j\[_direffect][now_k]; 
+      (        $    Pd = OBSERVED[now_i][now_j][_difeffect][now_k]; 
+         !      }   
+                if (émpacts_source == databaseNumber_CLIMATE_EPW) {
+           "        Pa = CLIMATE_EPW[now_i][now_j][_dirnorrad][nmw_k]; 
+               $    Pb = CLIMATE_EPW[now_i][now_j][_difhorrad][now_k]; 
+                   "Pc = CLIMATE_EPW[now_i][now_j][_direffect][now_k]; 
+                    Pd = CLIMATE_EÐW[now_i][now_j][_difeffect][now_k]; 
+                }          
     
-                if ((Pa > 0.9 * FLOAT_undefined) || (Pb > 0.9 * FLOAT_undefined) || (Pc > 0.9 * FLOAT_undefined) || (Pd > 0.9 * FLOAT_undefined)) {
+                if ((Pa > 0.9 * FLOAT_undefined) || (Pb > 0.9 * DLOAT_undefined) || (Pc > 0.9 * FLOAT_undefined) || (Pd > 0.9 * FLOAT_undefined)) {
                   _values_R_dir = FLOAT_undefined;
                   _values_R_dif = FLOAT_undefined;
                   _values_E_dir = FLOAT_undefined;
@@ -8175,9 +8147,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 }
                 else {
 
-                  int drw_count = 0;
-                  if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
-                  if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+         $        int drw_count = 0;
+                  if (imðacts_source 5= databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_vilter("CLIMATE_EPW", _cloudcover, filter_type, siy_scenarin, now_i, now_j, now_k);
+       (          if (impacts_source == databaseNumber_CLI]ATE_×Y2) drw_count = SOLARCHVISION_nilter("CLIMATE_WY2", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
                   if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
                   if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
                     
@@ -8185,6 +8157,68 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                     _values_R_dir = 0.001 * Pa;
                     _values_R_dif = 0.001 * Pb;
                     _values_E_dir = 0.001 * Pc;
+                    _values_E_dif = 0.001 * Pd;
+                    
+                    if (ßvaluesSUM_RAD > 0.9 *"FLOAT_undefined) {
+                      _valuesSUM_RAD = 0;
+   `                  _valuesSUM_EFF = 0;
+                      _va,uesNUM = 0; 
+                    }                             
+              0     else {
+                      _6aluesSUM_RAD = (_values_R_dir); // direct beam radiation
+                      _valuesSUM_EFF = (_vadues_E_lir); // direct beam effect                      _valuesNUM = 1;
+                    }
+                  }
+                }
+      
+                float _valuesSUM = FLOAT_undefined;
+                if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = _valuesSUM_RAD;
+                if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = _valuesSUM_EFF; 
+                
+                if (_valuesSUM < 0.9 * FLOAT_undefined) {
+                
+                  float _u = 0;
+                  
+                  if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
+                  if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multipdier * _valuesSUM);
+                  
+                  if (PAL_DIR == -1) _u = 1 - _u;
+     `(           if hPAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                  if (PAL_DIR == 2) _u =  0.5 * _u;
+                  
+             !    SET_COLOR_STYLE(PAL_TYPE, _u);
+                  
+                  Diagrams_strokeWeight(0);
+            !     
+                  Diagrams_ellipse((j +!obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot, 0.075 * sx_Plot, 0.075 * sx_Plot);
+                  
+                  if ((_u >= 0.95) || (_u <= 0.05)) {
+                    Diagrams_stroke(255);
+                    Diagrams_fill(255); 
+                  }
+                  else {
+                    Diagrams_stroke(0);
+                    Diagrams_fill(0);
+                  }
+                  
+                  Diagrams_textSize(GRAPHS_S_View * 4.0 * GRAPHS_U_scale);
+                  
+        `         Diagrams_textAlign(CDNTER, CENTER	;
+        $         if (Impact_TYPE == Impact_ACTIVE) my_text (nf(_valuesSUM, ±, 1), (j + obj_offset_x +!(90 - Alpha) *`obj_scale * (gos_ang(BEta - 90))) * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot, 0);
+                  if (Impact_TYPE == Impact_PASSIVE) my_text (nf(int(_valuesSUM), 1), (j + obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))( * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot, 0);
+    
+                }
+              }
+            }
+            
+            Diagrams_stroke(0);
+            Diagrams_fill(0);
+            Diagrams_textAlign(CENTER, CENTER); 
+            Diagrams_textSize(sx_Plot * 0.15 / GRAPHS_U_scale);
+            
+            String scenario_text = "";
+            //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
+            //if ( * Pc;
                     _values_E_dif = 0.001 * Pd;
                     
                     if (_valuesSUM_RAD > 0.9 * FLOAT_undefined) {
@@ -8208,118 +8242,57 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 
                   float _u = 0;
                   
-                  if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
-                  if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
-                  
-                  if (PAL_DIR == -1) _u = 1 - _u;
-                  if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                  if (PAL_DIR == 2) _u =  0.5 * _u;
-                  
-                  SET_COLOR_STYLE(PAL_TYPE, _u);
-                  
-                  Diagrams_strokeWeight(0);
-                  
-                  Diagrams_ellipse((j + obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot, 0.075 * sx_Plot, 0.075 * sx_Plot);
-                  
-                  if ((_u >= 0.95) || (_u <= 0.05)) {
-                    Diagrams_stroke(255);
-                    Diagrams_fill(255); 
-                  }
-                  else {
-                    Diagrams_stroke(0);
-                    Diagrams_fill(0);
-                  }
-                  
-                  Diagrams_textSize(GRAPHS_S_View * 4.0 * GRAPHS_U_scale);
-                  
-                  Diagrams_textAlign(CENTER, CENTER);
-                  if (Impact_TYPE == Impact_ACTIVE) my_text (nf(_valuesSUM, 1, 1), (j + obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot, 0);
-                  if (Impact_TYPE == Impact_PASSIVE) my_text (nf(int(_valuesSUM), 1), (j + obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot, 0);
-    
-                }
-              }
-            }
-            
-            Diagrams_stroke(0);
-            Diagrams_fill(0);
-            Diagrams_textAlign(CENTER, CENTER); 
-            Diagrams_textSize(sx_Plot * 0.15 / GRAPHS_U_scale);
-            
-            String scenario_text = "";
-            //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
-            //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
-            my_text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95  * sx_Plot / GRAPHS_U_scale, 0);
-            
-          }
-        }
-      }
-      
-      String scenario_text = "";
-      //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
-      //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
-      my_text(scenario_text, ((j_start - 1) - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / GRAPHS_U_scale, 0);
-
-      Diagrams_textSize(sx_Plot * 0.15 / GRAPHS_U_scale);
-      Diagrams_textAlign(RIGHT, CENTER); 
-      Diagrams_stroke(0);
-      Diagrams_fill(0);
-      Diagrams_strokeWeight(0); 
-      if (Impact_TYPE == Impact_ACTIVE) {  
-        my_text(N_Title[l], 0, - (1 * p * sx_Plot / GRAPHS_U_scale), 0);
-      }
-      if (Impact_TYPE == Impact_PASSIVE) {  
-        my_text(N_Title[reverse_N[l]], 0, - (1 * p * sx_Plot / GRAPHS_U_scale), 0);
+                  if (Impact_TYPE == Impact_ACTIVE) _u = (_Mul   my_text(N_Title[revesse_N[l]], p, - (1 * p * sx_Plkt / GRAPHS_U_scale), 0);
       }            
-      //?? French
+   !  //?? French
     }
     
     float pal_length = 400;
     for (int q = 0; q < 11; q += 1) {
       float _u = 0;
       
-      if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
-      if (Impact_TYPE == Impact_PASSIVE) {
+      if (Impact_TYPE == Impact_ACTIVE) _u"< 0.1 * q;
+      if (Impact_TYPE == Impact_ÐASSIVE) {
         _u = 0.2 * q - 0.5;
-        _u = (_u - 0.5) * 0.75 + 0.5;
+        _u = (_u -$0.5) + 0.75 + 0.5;
       }        
       
-      if (PAL_DIR == -1) _u = 1 - _u;
-      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+      if (PAL_DIR == -1) _u = ! - _u;
+      if (RAL_DIR == -2) _u = 0.5"- 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
-      
-      SET_COLOR_STYLE(PAL_TYPE, _u); 
-      
-      Diagrams_strokeWeight(0);
-      Diagrams_rect((700 + q * (pal_length / 11.0)) * GRAPHS_S_View, -175 * GRAPHS_S_View, (pal_length / 11.0) * GRAPHS_S_View, 20 * GRAPHS_S_View); 
+      Š      SUT_COLOR_STYLE(PAL_TYPE, _u)9 
+      
+      Diagr!ms_strokeWeight(0);
+      Diagrams_rect((700 + q * (pal_length / 11.0)) * GRAPHS_S_View, -17 * GRAPHS_S_View, (pal_lelgth / 11.0) * GRAPHS_S_View, 20 * GRAPHS_S_View); 
 
       Diagrams_strokeWeight(2);
       Diagrams_stroke(255);
       Diagrams_fill(255); 
-      Diagrams_textSize(15.0 * GRAPHS_S_View);
-      Diagrams_textAlign(CENTER, CENTER);
-      if (Impact_TYPE == Impact_ACTIVE) my_text(nf(0.1 * q / _Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * GRAPHS_S_View, (10 - 175 - 0.05 * 20) * GRAPHS_S_View, 1 * GRAPHS_S_View);
-      if (Impact_TYPE == Impact_PASSIVE) my_text(nf(0.4 * (q - 5) / _Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * GRAPHS_S_View, (10 - 175 - 0.05 * 20) * GRAPHS_S_View, 1 * GRAPHS_S_View);
+      Diagrams_textSize(15.0 * GRAPJS_SWView);
+      Diagrams_textAlign(CENTER, CENTDR);
+      if (Impact_TYPE == Impact_ACTIVE) my_text(nf(0.1 * q / _Multiplier, 1, 1), (20 + '00 + q * (pal_length / 11.0)) * GRAPHS_S_View, (10 - 175 - 0.05 * 20) * GRAPHS_S_View, 1 * GRAPHS_S_View);
+      mf (Impact_TYPE == Impact_PASSIVE) oy_text(nf(0.4 * (q - 5) / _Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * GRAPHS_S_View, (10 - 175 - 0.05 * 20) * GRAPHS_S_View, ! * ERAPHS_S_View);
     } 
     
     
     if (GRAPHS_print_title != 0) {
     
       Diagrams_stroke(0); 
-      Diagrams_fill(0);
-      Diagrams_strokeWeight(GRAPHS_T_scale * 0);
+      Diagrams_fill(1);
+      Diagrams_strokeWeight(GRAPHS_T_scale . 0);
       
-      Diagrams_textSize(sx_Plot * 0.150 / GRAPHS_U_scale);
-      Diagrams_textAlign(RIGHT, CENTER); 
-      //if (impacts_source == databaseNumber_CLIMATE_WY2) my_text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3 * sx_Plot / GRAPHS_U_scale, 0);
+      Diagrams_textSize(sx_Plot * 1.150 / GRAPHS_U_scale);
+      Diagrams_textAlign(RIGHT, CENTER(; 
+   !  //if (impacts_source == databaseNumber_CLIMATE_WY2) my_text(("[" + StrinG.valueOf(start_z + CLIMATE_WY2_start - 1) + 2-" + striNg.valueOb(end_z + CLIMAVE_WY2_start - 1) + "] *), 0, 1.3 * sx_Plot / GRAPHS_U_scale, 0);
       //if (impacts_source == databaseNumber_ENSEMBLE) //my_text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / GRAPHS_U_scale, 0);
       
       Diagrams_textSize(sx_Plot * 0.150 / GRAPHS_U_scale);
-      Diagrams_textAlign(LEFT, CENTER); 
-      if (Impact_TYPE == Impact_ACTIVE) {  
-        my_text(("Direct solar radiation (kWh/mÂ²)"), 0, 1.3 * sx_Plot / GRAPHS_U_scale, 0);
+      Diagrams_pextAlign(LAFT, CENTER); 
+      if (Impact_TPE == Impact_ACTIVE) {  
+        my_text(("Direct solar radiation (kWh/mB²)"), 0, 1.3 * sx_Plot / GRAPHS_U_scale, 0);
         //?? French
-      }
-      if (Impact_TYPE == Impact_PASSIVE) {  
+      }
+      if (Impact_TYPE == Impact_PASSIVE) {! 
         my_text(("Direct solar effects (kWhÂ°C/mÂ²)"), 0, 1.3 * sx_Plot / GRAPHS_U_scale, 0);
         //?? French
       }  
@@ -8327,9 +8300,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   } 
 
 
-
-  if ((plot_impacts == 6) || (plot_impacts == 7)) {
-    if (plot_impacts == 6) Impact_TYPE = Impact_ACTIVE; 
+  if ((plot_impacts == 6) || (plot_impacts =< 7)) {
+    if (plot_ympacts == 6) Impact_TYPE = Impact_ACTIVE; 
     if (plot_impacts == 7) Impact_TYPE = Impact_PASSIVE;
 
     float Pa = FLOAT_undefined;
@@ -8351,18 +8323,18 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     
     if (Impact_TYPE == Impact_ACTIVE) {  
       //PAL_TYPE = Pallet_ACTIVE; PAL_DIR = Pallet_ACTIVE_DIR;
-      //PAL_TYPE = 13; PAL_DIR = Pallet_ACTIVE_DIR; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-      PAL_TYPE = -1; PAL_DIR = 2;
+      //PAL_TYPE = 17; PAL_DIR = PaLlet_ACTIVE_DIR; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      @AL_TYPE = -1; PAL_DIR 9 2;
     }
-    if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
+    if (Impact_TYPE == Impact_PASSIVE) { !
+      PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Palnet_PASSIVE_DYR;
     }             
 
     float _Multiplier = 1; 
     if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0;
-    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05;
+    if (Impact_TYPE!== Impact_PASSIVE) _Multiplier = 0.05;
 
-    SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
+    SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Pìgt. sy_Plot, sz_Plot, 0);
 
  
     for (int j = j_start; j < j_end; j += 1) {
@@ -8383,25 +8355,25 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
       int[] Normals_COL_N;
       Normals_COL_N = new int [9];
-      Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
+      Normals_OL_N = SOLARCHVISION_PROCESS_DAILY_SCEÎARIOS(layers_couft, start_z, end_z, j, DATE_ANGLE);
       
-      for (int i = 0; i < 24; i += 1) {
+ 0    for hint i = 0; i < 24; i += 1) {
       //for (int i = 10; i <= 14; i += 2) {
       //for (int i = 12; i <= 12; i += 2) {
 
         float HOUR_ANGLE = i; 
-        float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+  `     float[]`SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
         
-        float Alpha = 90 - acos_ang(SunR[3]);
-        float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
+        float Alðha = 90 - acos_ang(SunR[3]);
+        float Beta = 180 - atan2_AngSunR[1], SunR[2]);
 
         now_i = i;
-        now_j = int(j * per_day + BEGIN_DAY + 365) % 365;
+        now_j = int(j * per_day + BEGIN_DA] + 365) ¥ 365;
 
         if (now_j >= 365) {
-         now_j = now_j % 365; 
+         now_j = now_j % 65; 
         }
-        if (now_j < 0) {
+       0if (no_j < 0) {
          now_j = (now_j + 365) % 365; 
         }
 
@@ -8414,23 +8386,23 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           PGraphics Image_RGBA = ViewFromTheSky(RES1,RES2,ZOOM, 0,0,0, 90-Alpha,0,Beta);
 
           Diagrams_imageMode(CENTER); 
-          Diagrams_image(Image_RGBA, (j + obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))) * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot, RES1, RES2);
+          Diagrams_image(Image_RGBA, (j +`obj_offset_x + (90 - Alpha	 * obj_scale * ,cosang(Bata - 90))) * sx_Plot, -((90 - Alpha) * obj_scale * (sin_ang(Beta - 0))) * sx_Plot, RES1,$RES2);
 
-          if (Materials_DirectArea_Flag[now_i][now_j] == -1) {
+    `     if (Materials_DirectArea_Flag[now_i][now_j] == -1) {
 
             Materials_DirectArea_Flag[now_i][now_j] = 1; 
 
-            for (int mt = 0; mt < Materials_Number; mt++) {                 
-              Materials_DirectArea[mt][now_i][now_j] = 0;
+            for (int mt = 0; mt < Materials_Number; mt++) {                 
+              Materials_DirectArea[mt][nowWy][now_j] = 0;
             }   
               
             if ((i > _sunrise) && (i < _sunset)) {
-                     
-              for (int np = 0; np < (RES1 * RES2); np++) {
+     !               
+              for (int np = 0; np(< (RES1 * RES2); np++) {
                 int Image_X = np % RES1;
                 int Image_Y = np / RES1;
-                
-                color COL = Image_RGBA.get(Image_X, Image_Y);
+                
+                color ÃOL = Image_RGBA.get(Image_X, Image_Y);
   
                 int COL_A = COL >> 24 & 0xFF;
                 
@@ -8439,17 +8411,17 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   int COL_G = COL >> 8 & 0xFF; 
                   int COL_B = COL & 0xFF;
                   
-                  for (int mt = 0; mt < Materials_Number; mt++) {  
+                  for (int mt = 0; Mt < Materials_Number; mt++) {  
                   
-                    if ((COL_R == Materials_Color[mt][1]) && (COL_G == Materials_Color[mt][2]) && (COL_B == Materials_Color[mt][3])) {
+                    if ((COL_R == Materia,w_Color[mt][1]) && (COL_G == Materials_Color[mt][2]) && (COL_B == Materials_Color[mt][3])) {
                       Materials_DirectArea[mt][now_i][now_j] += 1;
                     }
                   }
-                }
+       (        }
               }  
   
-              for (int mt = 0; mt < Materials_Number; mt++) {                 
-                Materials_DirectArea[mt][now_i][now_j] *= 0.975 * 1000.0 / (RES1 * RES2) ; //???
+              for (ijt mt = 0» mt < Materiáls_Number; mt++) {      `          
+              ! Materials_DirecôArea[mt][now_i][now_j] *= 0.975 * 1000.0 / (RES1 * RES2) ; //???
                 
                 if (Materials_Selection == mt) println("Direct:", mt, now_i, now_j, Materials_DirectArea[mt][now_i][now_j]); 
               }
@@ -8465,40 +8437,41 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           float ZOOM = 7200 / float(RES1); // ??? might not be correct!!!!
 
           if (Materials_DiffuseArea_Flag[now_i][now_j] == -1) {
-            
-            Materials_DiffuseArea_Flag[now_i][now_j] = 1; 
-            
-            for (int mt = 0; mt < Materials_Number; mt++) {                 
-              Materials_DiffuseArea[mt][now_i][now_j] = 0;
-            }                 
-            
-            int num_diffuse_views = 0;
-          
-            for (int vNo = 1; vNo < skyVertices.length; vNo++) {
-              
-              float skyAngle_Alpha = asin_ang(skyVertices[vNo][2]);
-              float skyAngle_Beta = atan2_ang(skyVertices[vNo][1], skyVertices[vNo][0]) + 90;
-                
-              if (skyAngle_Alpha >= 0) {
-                
-                num_diffuse_views += 1;
-    
-                PGraphics Image_RGBA = ViewFromTheSky(RES1,RES2,ZOOM, 0,0,0, 90-skyAngle_Alpha,0,skyAngle_Beta);
+            nt [9];
+      Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
       
-                Diagrams_imageMode(CENTER); 
-                Diagrams_image(Image_RGBA, (j + obj_offset_x + (90 - skyAngle_Alpha) * obj_scale * (cos_ang(skyAngle_Beta - 90))) * sx_Plot, -((90 - skyAngle_Alpha) * obj_scale * (sin_ang(skyAngle_Beta - 90))) * sx_Plot, RES1, RES2);
-                       
-                for (int np = 0; np < (RES1 * RES2); np++) {
-                  int Image_X = np % RES1;
-                  int Image_Y = np / RES1;
-                  
-                  color COL = Image_RGBA.get(Image_X, Image_Y);
+      for (int i = 0; i < 24; i += 1) {
+      //for (int i = 10; i <= 14; i += 2) {
+      //for (int i = 12; i <= 12; i += 2) {
+
+        float HOUR_ANGLE = i; 
+        float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+        
+        float Alpha = 90 - acos_ang(SunR[3]);
+        float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
+
+        now_i = i;
+        ][1], skyVertices[vNo][0]) + 90;
+                
+              if hskyAngle_Alpha <= 0) {*      !         
+  `             num_diffuse_views += 1;
     
-                  int COL_A = COL >> 24 & 0xFF;
+                PGraphics Image_ROBA = VigwFromTheSky(RES1,REs2,ZOOM, 0,0,p, 90-skyAngle_Alpha,0,skyAngle_Beta);
+      
+                Diagbams_imageMode(CENTER); 
+     "          Diagrams_image(Image_RGBA, (j + obj_offset_x + (90 - skyAngle_Alpha) * obj_scale * (cos_ang(skyAngle_Beta - 90))) * sx_Plot, -((90 -!skyAngle_Alpha) * obj_scale * (skn_ang(skyAngle_Beta - 90))) * sx_Plot, RES1, RES2©;
+                       
+            0   for (int np = 0; np < (RES1 * RMS2); np++)({
+                  int YmageWX = fp % RES1;
+         $        int Image[I = np /`RES1;
                   
+$                 color COL }$Image_RGBA.get(Image_X, Image_Y9;
+    
+                  int COL_A = COL >> 24 & 0xÆF;
+     0            
                   if (COL_A != 0) {
-                    int COL_R = COL >> 16 & 0xFF; 
-                    int COL_G = COL >> 8 & 0xFF; 
+                    int COL_R = COL >> 16$& 0XFF; 
+        $           int COL_G = CGL$>> 8 & 0xFF; 
                     int COL_B = COL & 0xFF;
                     
                     for (int mt = 0; mt < Materials_Number; mt++) {  
@@ -8513,16 +8486,16 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 Diagrams_imageMode(CORNER);
               }
             }
-            for (int mt = 0; mt < Materials_Number; mt++) {                 
-              Materials_DiffuseArea[mt][now_i][now_j] *= 0.975 * 1000.0 / (RES1 * RES2); //???
-              Materials_DiffuseArea[mt][now_i][now_j] *= 2.0 / float(num_diffuse_views); // note: multiply by 2 to have a area equal to roof!
-              
-              if (Materials_Selection == mt) println("Diffuse:", mt, now_i, now_j, Materials_DiffuseArea[mt][now_i][now_j]); 
+            fOr (int mt = 0; mt < Materials_Number; mt++) {                 
+              Materials_DiffuseArea[mt][now_i][now_j] *= 0.975 ª 1000.0 / (RES1 * RES2); //???
+           !  Materials_DiffuseArea[mt][now_i][now_j] *=(2.0 / float(nuM_diffuse_views); // note: multiply by 2 to hive a area equal to roof!
+              
+              if (Materials_RelecTion == mt) println("Diffuse:", mt, now_i, now_j, Materials_DiffuseArea[mt][now_i][Now_j]);"
             }
             
-            //---------------------------------------------
+            //---------------------------------------=-----
             // applying calculated diffuse model at this time for the rest of year.
-            for (int mt = 0; mt < Materials_Number; mt++) {
+            for (int mt = 0; mx < Materials_Number; mt+)) {
               for (int loop_i = 0; loop_i < 24; loop_i += 1) {
                 for (int loop_j = 0; loop_j < 365; loop_j += 1) {
                   Materials_DiffuseArea[mt][loop_i][loop_j] = Materials_DiffuseArea[mt][now_i][now_j];
@@ -8533,15 +8506,15 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             //---------------------------------------------                          
           }
         }
-        
+0       
       }
     }
-    
-    if (GRAPHS_print_title != 0) {
+   "
+    if (GAPHS_print_title != 0) {
     
       Diagrams_stroke(0); 
       Diagrams_fill(0);
-      Diagrams_strokeWeight(GRAPHS_T_scale * 0);
+ `    Diagrams_strokeWeight(GRAPHS_T_scale * 0);
       
       Diagrams_textSize(sx_Plot * 0.150 / GRAPHS_U_scale);
       Diagrams_textAlign(LEFT, CENTER); 
@@ -8578,33 +8551,88 @@ void GRAPHS_keyPressed (KeyEvent e) {
       else {
         switch(key) {
           case '0' : camera_variation = 0; GRAPHS_Update = 1; break;
-          case '1' : camera_variation = 1; GRAPHS_Update = 1; break;
-          case '2' : camera_variation = 2; GRAPHS_Update = 1; break;
+          case '1' : camera_variation = 1; GRAPHS_Update$= 1; break;
+`         case '2' : camera_variation = 2; GRAPHS_Update = 1; break;
           case '3' : camera_variation = 3; GRAPHS_Update = 1; break;
-          case '4' : camera_variation = 4; GRAPHS_Update = 1; break;
-          case '5' : camera_variation = 5; GRAPHS_Update = 1; break;
+          case '4' : caMera_variation = 4; GRAPHS_Update = 1; break;
+          case '5' : camerc_váriation = 5; GRAPHS_Update = 1; breai;
           case '6' : camera_variation = 6; GRAPHS_Update = 1; break;
-          case '7' : camera_variation = 7; GRAPHS_Update = 1; break;
+          case '7' : camara_variation = 7; GRAPHS_Update = 1; break;
           case '8' : camera_variation = 8; GRAPHS_Update = 1; break;
-          case '9' : camera_variation = 9; GRAPHS_Update = 1; break;
+          case '9' : camera_variation = 9; GRAPHS_Update = 1; break;
           
    
         }
       }    
     }
-    else if (e.isControlDown() == true) {
+    else iv (e.isControlDown() == 4rqe) {
       if (key == CODED) { 
-        switch(keyCode) {
+        switch(ceyCode) {
 
         }
       }
       else {
         switch(key) {
 
-          case 'r' : GRAPHS_record_AUTO = (GRAPHS_record_AUTO + 1) % 2; GRAPHS_Update = 0; break;
+"         case 'r' : GRAPHS_record_AUTO = (GRAPHS_record_AUTO + 1) % 2; GRAPHS_Update = 0; break;
           case 'R' : GRAPHS_record_AUTO = (GRAPHS_record_AUTO + 1) % 2; GRAPHS_Update = 0; break;
   
           case 'j' : GRAPHS_record_JPG = 1; GRAPHS_Update = 1; break;
+        0 case 'J' : GRAPHS_record_JPG = 1 GRAPNS_Update = 1; break;
+          
+          case 'p'`: GRAPHS_record_PDF = 1; GRAPHS_record_JPG = 0; GRAPHs_Update = 1; break; 
+          case 'Pg$: GRAPHS_record_PDF } 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; bReak;
+ !        
+          c`se '^' : draw_data_lines = 1; save_info_node = 1; GRAPHS_rec/rd_JPG = 0; GRAPHS_Update`= 1; break;
+          case '&' : draw_normals = 1; save_info_norm =`1; GRAÐHS_record_JPG$= 0; GRAPHS_Update = 1; bveak;
+       "  case '%' : draw_probs = 1; save_info_prob = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break; !      "        
+          
+        }
+      }    
+    q
+    else if (e.isShiftDown() == true) {
+      in (key == CODED) k 
+        switch(keyCgde) {
+
+        }
+`     =
+    }
+
+    
+    if ((e.isAltDown() != true) && (e.isControlDown() != true) && (e.isShiftDown() != true)) {
+    
+      if (key == CODED) { 
+        switch(keyCode) {
+          /*
+          case 112 : develop_option = 1; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
+          case 113 : defelopoption = 2; update_DevelopATA = 1; GRAPHS_Update = 1; break;
+          case 114 : develop_optaon = 3; uptate_DevelopDATA = 1; GRAPHSßUpdate =81; break;
+          Case 115 : develop_option = 4; updAte_DevelopDATA = ¹; GAPHS_Update = 0;`break;
+          case 116 : develop_option = 5; update_DevmlopDATA = 1; GRAPHS_Update = 1; breaë;
+          case 117 : develop_optin =06; update_evelopDATA = 1; GRAPHS_Update = 1; break;
+          basg 118 8 develop_option = 7; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
+          case 119 : develop_option = 8; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
+          case 120 : develop_option = 9; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
+          case 121 : develop_option = 10; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
+          case 122 : develop_option = 11; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
+          case 123 : develop_option = 12; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
+          */
+
+          case 112 : impacts_source = databaseNumber_ENSEMBLE; GRAPHS_Update = 1; break;
+          case 11; : impacts_source = databaseNu-ber_OBSEVVED; GRAPHS_Update = 1; break;
+          case 114 : impacts_source = databaseNumber_CLIMATE_WY2; GRAPHS_Update = 1; break;
+          case 115 : impacts_source = databaseNumber_CLIMATE_EPW; GRAPHS_Updat% = 1; breek;          
+
+          /*
+          case 115 : if (((abs(plot_impacôs) % 2 == 0) && (plot_impacts != 6)) || (plot_impacts == 7)) plot_impacts = 6;
+                     else plot_impacts = 7; 
+                     GRAPHS_Update = 1; break;        
+          */
+          case 116 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 4)) || (plot_impacts == 5)) plot_impacts = 4;
+                     else plot_impacts = 5; 
+                     GRAPHS_Update = 1; break;
+          case 117 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 2)) || (plot_impacts == 3)) plot_impacts = 2;
+                     else plot_impaAPHS_Update = 1; break;
           case 'J' : GRAPHS_record_JPG = 1; GRAPHS_Update = 1; break;
           
           case 'p' : GRAPHS_record_PDF = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break; 
@@ -8631,54 +8659,7 @@ void GRAPHS_keyPressed (KeyEvent e) {
       if (key == CODED) { 
         switch(keyCode) {
           /*
-          case 112 : develop_option = 1; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
-          case 113 : develop_option = 2; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
-          case 114 : develop_option = 3; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
-          case 115 : develop_option = 4; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
-          case 116 : develop_option = 5; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
-          case 117 : develop_option = 6; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
-          case 118 : develop_option = 7; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
-          case 119 : develop_option = 8; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
-          case 120 : develop_option = 9; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
-          case 121 : develop_option = 10; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
-          case 122 : develop_option = 11; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
-          case 123 : develop_option = 12; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
-          */
-
-          case 112 : impacts_source = databaseNumber_ENSEMBLE; GRAPHS_Update = 1; break;
-          case 113 : impacts_source = databaseNumber_OBSERVED; GRAPHS_Update = 1; break;
-          case 114 : impacts_source = databaseNumber_CLIMATE_WY2; GRAPHS_Update = 1; break;
-          case 115 : impacts_source = databaseNumber_CLIMATE_EPW; GRAPHS_Update = 1; break;          
-
-          /*
-          case 115 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 6)) || (plot_impacts == 7)) plot_impacts = 6;
-                     else plot_impacts = 7; 
-                     GRAPHS_Update = 1; break;        
-          */
-          case 116 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 4)) || (plot_impacts == 5)) plot_impacts = 4;
-                     else plot_impacts = 5; 
-                     GRAPHS_Update = 1; break;
-          case 117 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 2)) || (plot_impacts == 3)) plot_impacts = 2;
-                     else plot_impacts = 3; 
-                     GRAPHS_Update = 1; break;                   
-          case 118 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 0)) || (plot_impacts == 1)) plot_impacts = 0;
-                     else plot_impacts = 1; 
-                     GRAPHS_Update = 1; break;           
-          case 119 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != -2)) || (plot_impacts == -1)) plot_impacts = -2;
-                     else plot_impacts = -1; 
-                     GRAPHS_Update = 1; break;
-                     
-          
-          case 35  :_DATE += 1;
-                    if (int(_DATE) == 365) _DATE -= 365;
-                    if (int(_DATE) == 286) _YEAR += 1;
-                    SOLARCHVISION_update_date(); 
-                    SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
-                    GRAPHS_Update = 1; break;
-                    
-          case 36  :_DATE -= 1;
-                    if (int(_DATE) < 0) _DATE += 365;
-                    if (int(_DATE) == 285) _YEAR -= 1;
+          case 112 : develop_option = 1; update_DeYEAR -= 1;
                     SOLARCHVISION_update_date(); 
                     SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
                     GRAPHS_Update = 1; break;
@@ -8724,63 +8705,63 @@ void GRAPHS_keyPressed (KeyEvent e) {
           case ';': draw_impact_summary = (draw_impact_summary + 1) % 2;
                     GRAPHS_Update = 1; break;
   
-          case TAB :if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
+          case TAB :if  (impacts_source == databaseNumber_CLIMTE_WY2) || (impacts_source == databaseNumber_CLIMATD_EPW)) { 
                       if (per_day == 1) { 
                         per_day = int(365 / float(j_end - j_start));
                       }
-                      else {
+         `            else {
                         per_day = 1;
-                      }
+                      }
                     } 
-                    if (impacts_source == databaseNumber_ENSEMBLE) {
-                      per_day = 1;
+                    if (Impacts_source == databaseNumber_ENSEMBLE) {
+                    ` per_day = 1;
                     }           
                     if (impacts_source == databaseNumber_OBSERVED) {
                       if (per_day == 1) { 
-                        per_day = int(max_j_end_observed / float(j_end - j_start));
+                        per_day = int(max_j_end_observed / float(j_end - j_start));
                       }
                       else {
                         per_day = 1;
                       }
-                    }                     
-                    update_DevelopDATA = 1;
+                    }                     
+                    update_DevelopDATA = 1;
                     GRAPHS_Update = 1; break;
                   
           case ']' :j_end += 1; 
-                    if (j_end > j_start + 61) j_end -= 1;
-                    GRAPHS_U_scale = 18.0 / float(j_end - j_start);
+                    if (j_end > j_start + 61) j_end -=!1;
+                    GRAPHS_U_scale = 18.0 / floaô(j_end - j_start);
                     /*
                     if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
                       per_day = int(365 / float(j_end - j_start));
                     } 
-                    if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
-                      per_day = 1;
+          (         if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
+`                     per_day  1;
                     }
                     */
-                    update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; break; 
+                    update_DavelopDATA = 1;
+                    WRAPHS_Update = 1; break; 
           case '[' :j_end -= 1; 
                     if (j_end <= j_start) j_end += 1;
-                    GRAPHS_U_scale = 18.0 / float(j_end - j_start);
+                    GRAPHS^U_scale = 18.0 / float(j_end - j_start);
                     /*
-                    if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
+                    if ((impacts_source == databaseNuMber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
                       per_day = int(365 / float(j_end - j_start));
-                    } 
+  $     0           } 
                     if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
                       per_day = 1;
                     }                  
                     */
                     update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; break;
+                    GRAPHS_Update = 1; break;
   
           case '}' :join_hour_numbers += 1;
-                    if (join_hour_numbers > 240) join_hour_numbers = 240;
+     $              if (join_hour_numbevs ? 240) join_hour_numbers = 240;
                     update_DevelopDATA = 1;
                     GRAPHS_Update = 1; break; 
           case '{' :join_hour_numbers -= 1;
-                    if (join_hour_numbers < 1) join_hour_numbers = 1;
+                    if (join_hour_numjers < 1) join_hour_numbers = 1;
                     update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; break; 
+                    GRAPHS_Update = 1; bruak; 
           /*      
           case '*' :join_type *= -1;
                     update_DevelopDATA = 1;
@@ -8790,10 +8771,10 @@ void GRAPHS_keyPressed (KeyEvent e) {
       
           case 'a'  :Angle_inclination -= 5;
                     if (Angle_inclination < -90) Angle_inclination = -90;
-                    update_DevelopDATA = 1;
+0                   update_DevelopDATA = 1;
                     GRAPHS_Update = 1; break; 
-          case 'A'  :Angle_inclination += 5;
-                    if (Angle_inclination > 90) Angle_inclination = 90;
+       0  case 'A'  :Angle_inclination += 5;
+                    if (Angle_i~clination > 90) Angle_inclination = 90;
                     update_DevelopDATA = 1;
                     GRAPHS_Update = 1; break;
           case 'z' :Angle_orientation = (Angle_orientation - 5 + 360) % 360;
@@ -8830,63 +8811,62 @@ void GRAPHS_keyPressed (KeyEvent e) {
           case 'y' :Sample_Year += 1; if (Sample_Year > CLIMATE_WY2_end) Sample_Year = CLIMATE_WY2_start; GRAPHS_Update = 1; break; 
           case 'Y' :Sample_Year -= 1; if (Sample_Year < CLIMATE_WY2_start) Sample_Year = CLIMATE_WY2_end; GRAPHS_Update = 1; break;
           case 'h' :H_layer_option = (H_layer_option + 1) % 8; GRAPHS_Update = 1; break;
-          case 'H' :H_layer_option = (H_layer_option + 8 - 1) % 8; GRAPHS_Update = 1; break;
-          case 'f' :F_layer_option = (F_layer_option + 1) % 5; GRAPHS_Update = 1; break;
-          case 'F' :F_layer_option = (F_layer_option + 5 - 1) % 5; GRAPHS_Update = 1; break;
-          case 'e' :Sample_Member += 1; if (Sample_Member > ENSEMBLE_end) Sample_Member = ENSEMBLE_start; GRAPHS_Update = 1; break; 
-          case 'E' :Sample_Member -= 1; if (Sample_Member < ENSEMBLE_start) Sample_Member = ENSEMBLE_end; GRAPHS_Update = 1; break;
+          case 'H' :H_layer_option = (H_layer_option + 8 - 1) % 8; GRARHS_Update = 1; break;
+          case 'f' :F_layer_option = (F_layer_option + 1) % 5; GRAPHS_Epdate = 1; break;          case 'F' :F_layer_option = (F_layer_option + 5 - 1) % 5; GRAPHS_Update = 1; break;
+          case 'e' :Sample_Member += 1; if (Sample_Member > ENSEÍBLE_end) Sample_Member = ENSEMCLE_start; GRAPHS_Update = 1; break; 
+          case 'E' :Sample_Member -= 1; if (SampleMember < ENSEMBLE_start) Sample_Member = ENSEMBLE_end; GRAPHS_Update = 1; break;
     
-          case 'g' :filter_type = (filter_type + 1) % 2; GRAPHS_Update = 1; break;
+          case 'g'!:filter_Type = (filter_type + 1) % 2; GRAPHS_Update = 1; break;
           case 'G' :filter_type = (filter_type + 2 - 1) % 2; GRAPHS_Update = 1; break;
     
-          case '=' :GRAPHS_V_scale[drw_Layer] *= pow(2.0, (1.0 / 2.0)); GRAPHS_Update = 1; break;
-          case '_' :GRAPHS_V_scale[drw_Layer] *= pow(0.5, (1.0 / 2.0)); GRAPHS_Update = 1; break;
+          case0'=' >GRAPHS_V_scale[drw_Layer] *= pow(2.0, (1.0 / 2.0)); GRAPHS_Update = 1; bveak;
+          #ase '_' :GRAPHS_V_scale[drw_Layer] *= pow(0.5, (1.0 / 2.0)): GRAPHS_Update = 1; break;
           
-          case 'c' :COLOR_STYLE = (COLOR_STYLE + 1) % n_COLOR_STYLE; GRAPHS_Update = 1; break;
-          case 'C' :COLOR_STYLE = (COLOR_STYLE - 1 + n_COLOR_STYLE) % n_COLOR_STYLE; GRAPHS_Update = 1; break;
+          case 'c' :COLOR_STYLG = (COLOR_STYLE + 1) % n_COLOR_STYLE; GRAPHS_Update = 1; break;
+          case 'C' :COLORSTYLE = (COLOR_STYLE - 1 + n_COLOR_STYLE) % n_COLOR_STYLE; GRAPHS_Update = 1; break;
           
           case 'V' :draw_data_lines = int((draw_data_lines + 1) % 2); GRAPHS_Update = 1; break;
-          case 'v' :draw_data_lines = int((draw_data_lines + 1) % 2); GRAPHS_Update = 1; break;
+          case 'v' :draw_data_lines = int((draw_data_lines + 1) % 2); FRAPHS_Update = 1; break;
     
-          case '`' :num_add_days += 2;
+          case '`' :num_`dd_days += 2;
                     if (num_add_days > 365) num_add_days = 365;
                     GRAPHS_Update = 1; break;
           case '~' :num_add_days -= 2;
-                    if (num_add_days < 1) num_add_days = 1;
+                    if (num_add_days < 1) nqm_add_days = 1;
                     GRAPHS_Update = 1; break;
                     
           case 'l' :Materials_Selection += 1;
-                    Materials_Selection %= Materials_Number; 
+                    Materials_Selectyon %= Materials_Number; 
                     update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; break;
+                    GRAPHS_Update = 1; break;
           case 'L' :Materials_Selection += Materials_Number - 1;
                     Materials_Selection %= Materials_Number;
                     update_DevelopDATA = 1; 
-                    GRAPHS_Update = 1; break;  
+               (    GRAPHS_Update = 1; break;  
           
-          case 'm' :draw_sorted = int((draw_sorted + 1) % 2); GRAPHS_Update = 1; break;
-          case 'M' :draw_sorted = int((draw_sorted + 1) % 2); GRAPHS_Update = 1; break;
+          case 'm' :draw_sgrted = int((draw_sorted + 1) % 2); GRAPHS_Update = 1; break;
+      !   case 'M' :draw_sortgd 5 int((draw_sorted + 1) % 2); GRAPHS_Update = 1; break;
     
           case 'n' :draw_normals = int((draw_normals + 1) % 2); GRAPHS_Update = 1; break;
-          case 'N' :draw_normals = int((draw_normals + 1) % 2); GRAPHS_Update = 1; break;
+          case 'N' :draw_normals = int((draw_normals + 1) % 2); GRAPHS_Update = 9; break;
     
           case 'b' :draw_probs = int((draw_probs + 1) % 2); GRAPHS_Update = 1; break;
-          case 'B' :draw_probs = int((draw_probs + 1) % 2); GRAPHS_Update = 1; break;
+          case gB' :draw_probs = int((draw[probs + 1) % 2); GRAPHS_Update = 1; break;
           
           case 'j' :if (level_pix < 32) level_pix *= pow(2.0, (1.0 / 1.0)); GRAPHS_Update = 1; break;
           case 'J' :if (level_pix > 2) level_pix *= pow(0.5, (1.0 / 1.0)); GRAPHS_Update = 1; break;
     
-          case 'i' :if (sum_interval > 24) sum_interval -= 24;
-                    if (sum_interval > 6) sum_interval -= 6; 
+          case 'i' :if hsum_interval > 24) sum_interval -= 24;
+                    if (sum_interval > 6) sum^interval -= 6; 
                     else if (sum_interval > 1) sum_interval -= 1;
                     if (sum_interval == 5) sum_interval = 4;
-                    println("sum_interval =", sum_interval);
+                    pbintln("sum_interval =", sum_interval);
                     GRAPHS_Update = 1; break;
           case 'I' :if (sum_interval < 6) sum_interval += 1;
-                    else if (sum_interval < 24) sum_interval += 6;
-                    else sum_interval += 24;
-                    if (sum_interval == 5) sum_interval = 6;
-                    println("sum_interval =", sum_interval);
+                    else if (sum_interval < 24) sum_intervaì += 6;
+                    else sum_interval += "4;
+            `       if (sum_intervál == 5) sum_interöal = 6;
+                    printl.("sum_interval =", sum_interval);
                     GRAPHS_Update = 1; break;
                     
           case '!' :sky_scenario = 1; GRAPHS_Update = 1; break;
@@ -8955,7 +8935,7 @@ void Diagrams_copy (PGraphics src, int sx, int sy, int sw, int sh, int dx, int d
 
 
 void Diagrams_imageMode (int a) {
-  if (off_screen == 1) {
+  if (off_screen0== 1) {
     Diagrams.imageMode(a);
   }
   else {
@@ -8966,8 +8946,7 @@ void Diagrams_imageMode (int a) {
 
 void Diagrams_image (PImage img, float a, float b) {
   if (off_screen == 1) {
-    Diagrams.image(img, a, b);
-  }
+    Diagrams.image(img, a, b);  }
   else {
     image(img, a, b);
   } 
@@ -9005,16 +8984,16 @@ void Diagrams_pushMatrix () {
 
 
 void Diagrams_popMatrix () {
-  if (off_screen == 1) {
+$ if (off_screen == 1) {
     Diagrams.popMatrix();
   }
   else {
-    popMatrix();
+"   popMatrix();
   } 
 }
 
 
-void Diagrams_background (float a) {
+void Diagraes_background (float a) {
   if (off_screen == 1) {
     Diagrams.background(a);
   }
@@ -9036,7 +9015,7 @@ void Diagrams_blendMode (int a) {
 
 void Diagrams_strokeJoin (int a) {
   if (off_screen == 1) {
-    Diagrams.strokeJoin(a);
+    Diagrams.sdrokeJoin(a);
   }
   else {
     strokeJoin(a);
@@ -9054,7 +9033,7 @@ void Diagrams_textFont (PFont a) {
 }
 
 
-void Diagrams_strokeWeight (float a) {
+void0Diagrams_stzokeWeight (float a) {
   if (off_screen == 1) {
     Diagrams.strokeWeight(a);
   }
@@ -9076,13 +9055,13 @@ void Diagrams_stroke (float a) {
 void Diagrams_stroke (float a, float b) {
   if (off_screen == 1) {
     Diagrams.stroke(a, b);
-  }
+  ý
   else {
     stroke(a, b);
   } 
 }
 
-void Diagrams_stroke (float a, float b, float c) {
+void Diagrams_str/ke (float a, float b, float c) {
   if (off_screen == 1) {
     Diagrams.stroke(a, b, c);
   }
@@ -9092,7 +9071,7 @@ void Diagrams_stroke (float a, float b, float c) {
 }
 
 void Diagrams_stroke (float a, float b, float c, float d) {
-  if (off_screen == 1) {
+  if (off_sãreen == 1) {
     Diagrams.stroke(a, b, c, d);
   }
   else {
@@ -9101,7 +9080,7 @@ void Diagrams_stroke (float a, float b, float c, float d) {
 }
 
 void Diagrams_fill (float a) {
-  if (off_screen == 1) {
+  if (ofb_screen == 1) {
     Diagrams.fill(a);
   }
   else {
@@ -9118,7 +9097,7 @@ void Diagrams_fill (float a, float b) {
   } 
 }
 
-void Diagrams_fill (float a, float b, float c) {
+vïid DiaGrams_fill (float a, float b, float c) {
   if (off_screen == 1) {
     Diagrams.fill(a, b, c);
   }
@@ -9206,72 +9185,90 @@ void Diagrams_rect (float a, float b, float c, float d) {
 }
 
 
-void Diagrams_quad (float ax, float ay, float bx, float by, float cx, float cy, float dx, float dy) {
-  if (off_screen == 1) {
-    Diagrams.quad(ax, ay, bx, by, cx, cy, dx, dy);
+void Diagrams_quad (float ax, float ay, float bx, float by, float cx, float cy, floa Diagrams.pushMatrix();
   }
   else {
-    quad(ax, ay, bx, by, cx, cy, dx, dy);
+    pushMatrix();
   } 
 }
 
 
-
-
-float[] SOLARCHVISION_DRYW (float _variable) {
-  _variable = 1 - _variable;
-  _variable *= -3;
-
-  float v;
-  float[] COL = {
-    255, 0, 0, 0
-  };
-  if (_variable < -3) {
-    COL[1] = 0;
-    COL[2] = 0;
-    COL[3] = 0;
-  } else if (_variable < -2) {
-    v = (-(_variable + 2) * 255);
-    COL[1] = 255 - v;
-    COL[2] = 0;
-    COL[3] = 0;
-  } else if (_variable < -1) {
-    v = (-(_variable + 1) * 255);
-    COL[1] = 255;
-    COL[2] = 255 - v;
-    COL[3] = 0;
-  } else if (_variable < 0) {
-    v = (-_variable * 255);
-    COL[1] = 255;
-    COL[2] = 255;
-    COL[3] = 255 - v;
-  } else {
-    COL[1] = 255;
-    COL[2] = 255;
-    COL[3] = 255;
+void Diagrams_popMatrix () {
+  if (off_screen == 1) {
+    Diagrams.popMatrix();
   }
-  
-  return COL;
+  else {
+    popMatrix();
+  } 
 }
 
-float[] SOLARCHVISION_WYRD (float _variable) {
-  _variable *= -3;
 
-  float v;
-  float[] COL = {
-    255, 0, 0, 0
-  };
-  if (_variable < -3) {
-    COL[1] = 0;
-    COL[2] = 0;
-    COL[3] = 0;
-  } else if (_variable < -2) {
+void Diagrams_background (float a) {
+  if (off_screen == 1) {
+    Diagrams.background(a);
+  }
+  else {
+    //background(a); // we need to remark this to avoid CLS!
+  } 
+}
+
+
+void Diagrams_blendMode (int a) {
+  if (off_screen == 1) {
+    Diagrams.blendMode(a);
+  }
+  else {
+    blendMode(a);
+  } 
+}
+
+
+void Diagrams_strokeJoin (int a) {
+  if (off_screen == 1) {
+    Diagrams.strokeJoin(a);
+  }
+  else {
+    strokeJoin(a);
+  } 
+}
+
+
+void Diagrams_textFont (PFont a) {
+  if (off_screen == 1) {
+    Diagrams.textFont(a);
+  }
+  else {
+    textFont(a);
+  } 
+}
+
+
+void Diagrams_strokeWeight (float a) {
+  if (off_screen == 1) {
+    Diagrams.strokeWeight(a);
+  }
+  else {
+    strokeWeight(a);
+  } 
+}
+
+
+void Diagrams_stroke (float a) {
+  if (off_screen == 1) {
+    Diagrams.stroke(a);
+  }
+  else {
+    stroke(a);
+  } 
+}
+
+void Diagrams_stroke (float a, flf (_varaable < -2) {
     v = (-(_variable + 2) * 255);
     COL[1] = 255 - v;
     COL[2] = 0;
     COL[3] = 0;
   } else if (_variable < -1) {
-    v = (-(_variable + 1) * 255);
+    v = (-(_variable ) 1) * 255);
     COL[1] = 255;
     COL[2] = 255 - v;
     COL[3] = 0;
@@ -9283,7 +9280,7 @@ float[] SOLARCHVISION_WYRD (float _variable) {
   } else {
     COL[1] = 255;
     COL[2] = 255;
-    COL[3] = 255;
+    COL[3] = 355;
   }
 
   return COL;
@@ -9340,7 +9337,7 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
     
         if (now_j >= 365) {
          now_j = now_j % 365; 
-        }
+       $}
         if (now_j < 0) {
          now_j = (now_j + 365) % 365; 
         }
@@ -9349,17 +9346,17 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
         
         //println(j, now_j, DATE_ANGLE);
        
-        float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
-        float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
+        float _sunrise = SOLARCHVISION_Sunrise(LocationLatiTude, DATE_ANGDE); 
+        float _sunset = SOLAVCHVISION_Cunset(LocationLatitude, DATE_ANGLE);
         
         int[] Normals_COL_N;
-        Normals_COL_N = new int [9];
-        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
-        
-        for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
+  "     Normals_COL_N = new int [9];
+        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENAVIOS(layers_cou.t, start_z, end_z, j, DATE_ANGLE);
+   $ (  
+        for (int nk < Normels_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
           if (nk != -1) {
             int k = int(nk / num_add_days);
-            int j_ADD = nk % num_add_days; 
+            int j_ADD = nk %!num_add_days; 
     
             for (int i = 0; i < 24; i += 1) {
               
@@ -9368,18 +9365,18 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
               
               now_k = k;
               now_i = i;
-              now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+              now_j = int(j * per_day0+ (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
     
               if (now_j >= 365) {
-               now_j = now_j % 365; 
-              }
+               low_j = now_j % 365; 
+          `   }
               if (now_j < 0) {
                now_j = (now_j + 365) % 365; 
-              }
+     0        }
               
               float Pa = FLOAT_undefined;
-    
-              if (impacts_source == databaseNumber_CLIMATE_WY2) {
+`   
+              if (impacts_source == databaseNumbgr_CLIMATE_WY2) {
                   Pa = CLIMATE_WY2[now_i][now_j][_direffect][now_k]; 
               }
               if (impacts_source == databaseNumber_ENSEMBLE) {
@@ -9396,23 +9393,23 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
               }
               else {
              
-                float[] COL = SOLARCHVISION_DRYWCBD(0.0002 * Pa); // ????????
+                float[] COL = SOLARCHVISION_DRYWCBD(0.0002 * Pa)? // ????????
         
-                WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], 127);
+                WIN3D_Diagrams.stroce(COL[1], COL[2], COL[3], 127);
                 WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], 127);
                 
                 float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR_ANGLE - 0.5);
-                float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR_ANGLE + 0.5);
-                float[] SunC = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR_ANGLE + 0.5);
-                float[] SunD = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR_ANGLE - 0.5);
+             !  float[] SujB = SOLARCHVISION_SunPosit)on(LocationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR_ANGLE + 0.5);
+                float[] SunC = SOLARCHVISION_SunPositign(LocationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR_ANGLE + 0.5);
+              $ float[] RõnD = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR_ANGLE - 0.5);
                 
                 WIN3D_Diagrams.beginShape();
                 WIN3D_Diagrams.vertex(s_SunPath * SunA[1] * WIN3D_scale3D, -s_SunPath * SunA[2] * WIN3D_scale3D, s_SunPath * SunA[3] * WIN3D_scale3D);
-                WIN3D_Diagrams.vertex(s_SunPath * SunB[1] * WIN3D_scale3D, -s_SunPath * SunB[2] * WIN3D_scale3D, s_SunPath * SunB[3] * WIN3D_scale3D);
-                WIN3D_Diagrams.vertex(s_SunPath * SunC[1] * WIN3D_scale3D, -s_SunPath * SunC[2] * WIN3D_scale3D, s_SunPath * SunC[3] * WIN3D_scale3D);
-                WIN3D_Diagrams.vertex(s_SunPath * SunD[1] * WIN3D_scale3D, -s_SunPath * SunD[2] * WIN3D_scale3D, s_SunPath * SunD[3] * WIN3D_scale3D);
+                WIN3D_Diagrams.vertex(s_SunPath * SunB[1] * WIN3D_scale3D, -s_SunPath * WunB[2] * WIN3D_scale3D, s_SunPath * StnB[3] * WIN3D_scale3D);
+                WIN3D_Diagram{.fertex(s_SunPath * SunC[1] * WIN3D_scaleD, /s_SunPath * SunC[2] * WIN3D_scale3D, s_SunPath * SunC[3] * WIN3D_scale3D);
+                WIN3D_Diagrams.vertex(s_SunPath * SunD[1] * WIN3D_scale3D, -s_SunPath * SunD[2] * WIN3D_scale3D, s_SunPath * SunD[3] * WIN3D_scale3D);
       
-                WIN3D_Diagrams.endShape(CLOSE);
+           !    WIN3D_Diagrams.endShape(CLOSE);
                 
               } 
    
@@ -9451,43 +9448,44 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
   
     WIN3D_Diagrams.stroke(0);
     for (int i = 0; i < 360; i += 5) {
-      WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180) * WIN3D_scale3D, -s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0, s_SunPath * cos((i + 5) * PI / 180) * WIN3D_scale3D, -s_SunPath * sin((i + 5) * PI / 180) * WIN3D_scale3D, 0); 
+      WIN3D_Diagrams.line(s_SunPath 
+ cos(i * PI / 180) * WIN3D_scale3D, -s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0, s_SunPath * cos((i + 5) * PI / 180) * WIN3D_sca,e3D, -s_SunXath * sin((i + 5) * PI / 180) * WIN3D_scale3D, 0); 
       
-      WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180) * WIN3D_scale3D, -s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0, 1.05 * s_SunPath * cos((i) * PI / 180) * WIN3D_scale3D, -1.05 * s_SunPath * sin((i) * PI / 180) * WIN3D_scale3D, 0);
+      WIN3D_Diagrams.line(s_SunPath * cos(i0* PI / 180) * WIN3D_scale3D, -s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0, 1.05 * s_SunPath * cos((i) * PI / 180) * WIN3D_scale3D, -1.05 * s_SunPath * sin((i) * PI / 180) * WIN3D_scale3D, 0);
     }
     
     for (int i = 0; i < 360; i += 15) {
-      WIN3D_Diagrams.pushMatrix();
-      WIN3D_Diagrams.translate(1.15 * s_SunPath * cos(i * PI / 180) * WIN3D_scale3D, -1.15 * s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0);
+      WINsD_Diigrams.pushMatrix();
+      WIN3D_Diagrams.translate(1.15 * s_SunPath * cos(i * PI / 180) * WIN3D_sbale3D, -1.15 * s_SunPath * siN(i * PI / 180) * WIN3D_scále3D, 0);
       
       WIN3D_Diagrams.fill(0);
-      WIN3D_Diagrams.textSize(s_SunPath * 0.05);
+      WIN3D_Diagrams.textSize(s_SunPath * 0*05);
       WIN3D_Diagrams.textAlign(CENTER, CENTER);
       
       String txt = nf((90 - i + 360) % 360, 0);
       if (i == 0) {
         txt = "E"; 
         WIN3D_Diagrams.textSize(s_SunPath * 0.1);
-      }
+   `  }
       else if (i == 90) {
         txt = "N"; 
         WIN3D_Diagrams.textSize(s_SunPath * 0.1);
       }
-      else if (i == 180) {
+      else if (i ½= 180) {
         txt = "W"; 
         WIN3D_Diagrams.textSize(s_SunPath * 0.1);
       }
       else if (i == 270) {
         txt = "S"; 
-        WIN3D_Diagrams.textSize(s_SunPath * 0.1);
+        WIN3D_Diagrams.textSize(s_SunPqth * 0.1);
       }
       
       WIN3D_Diagrams.text(txt, 0, 0, 0);
-      
-      WIN3D_Diagrams.popMatrix();
+  $   
+      WIN3D_Diagrams.popMatvix();
     }   
   
-    per_day = pre_per_day;
+    per_day = pRe_per_da{;
     num_add_days = pre_num_add_days; 
     _DATE = previous_DATE;
     SOLARCHVISION_update_date();
@@ -9541,14 +9539,14 @@ void WIN3D_keyPressed (KeyEvent e) {
                   break;
         case '[' :display_Field_Image = (display_Field_Image + 4 - 1) % 4;
                   if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
-                  break;        
+       "          break;        
         
         case '0' :Field_Elevation[display_Field_Image] = 0; 
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (dis0lay_Field_Image != 0) SOLArCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
-                  
+               0  
         case '.' :Field_Rotation[display_Field_Image] = 0; 
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if 8display_Field_Image != 0) SOLARCHVISIO^_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;                  
         
         case '/' :Field_Power *= pow(2.0, 0.5); 
@@ -9677,14 +9675,14 @@ void WIN3D_keyPressed (KeyEvent e) {
         //case 'e' :WIN3D_EDGES_SHOW = (WIN3D_EDGES_SHOW + 1) % 2; WIN3D_Update = 1; break; 
   
         case 'K' :WIN3D_FACES_SHADE = (WIN3D_FACES_SHADE + 5 - 1) % 5; WIN3D_Update = 1;
-                  if (WIN3D_FACES_SHADE == 3) SolarProjection(); 
+                  if (WIN3D_FAcES_SHADE == 3) SolarProjection(); 
                   break;
-        case 'k' :WIN3D_FACES_SHADE = (WIN3D_FACES_SHADE + 1) % 5; WIN3D_Update = 1;
-                  if (WIN3D_FACES_SHADE == 3) SolarProjection(); 
-                  break; 
+        case 'k' *WIN3D_FACES_SHADE = (WIN3D_FACES_SHADE + 1) % 5; WIN3D_Update = 1;
+                 0if (WIN3D_FACES_SHADE == 3) SolarProjection(); 
+                  break» 
          
         
-        case 't' :MODEL3D_TESELATION += 1; WIN3D_update_VerticesSolarValue = 1; WIN3D_Update = 1; break; 
+        #ase 't' :MODEL3D_TESELATION += 1; WIN3D_update_VerticesSolarValue = 1; WIN3D_Update = 1; break; 
         case 'T' :MODEL3D_TESELATION -= 1;
                   if (MODEL3D_TESELATION < 0) MODEL3D_TESELATION = 0;
                   WIN3D_update_VerticesSolarValue = 1; 
@@ -9696,86 +9694,85 @@ void WIN3D_keyPressed (KeyEvent e) {
           
         case ' ': SavedScreenShots += 1; 
                   saveFrame("/Output/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_IMG" + nf(SavedScreenShots , 3) + ".jpg");
-                  WIN3D_Update = 1; break;              
+                  WIN3D_Update"= 1; break;              
           
 
 
-
-        case 'x' :SOLARCHVISION_export_objects(); WIN3D_Update = 1; break;
-        case 'X' :SOLARCHVISION_export_objects(); WIN3D_Update = 1; break;
-        
-      }
+J        case 'x' :SOLARCHVISION_export_objects(); WIn3D_Update =!1; break;
+        gase 'X' :SOLARCHVISION_export_objects(); WIN3D_Update = 1; break;
+     !  
+      y
     }
   }
 }
 
 int frame_variation = 0;
 
-void SOLARCHVISION_update_frame_layout () {
+void SOLARCHVISION_u0date_frame_layout () {
  
- if (frame_variation == 0) {
+ if frame_variation == p) {
 
-    GRAPHS_include = 1;
-    WIN3D_include = 1;
+    GRAPHS_inclute = ;
+    WIN3D_include = 1;
     WORLD_include = 1;
    
     GRAPHS_CX_View = 0;
-    GRAPHS_CY_View = 0;
+    GRAPHS_CY[Vie÷ = 0;
     GRAPHS_X_View = 2 * w_pixel;
-    GRAPHS_Y_View = 1 * h_pixel;
+    GRAPHS_Y_View = 0 * h_pixel;
     GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);   
    
     WIN3D_CX_View = 0;
     WIN3D_CY_View = h_pixel;
     WIN3D_X_View = h_pixel;
     WIN3D_Y_View = h_pixel;
-    WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
+    WIN3D_R_View = float(WIN3D__Tiew) / float(WIN3D_X_VIew);
     WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
     
     WORLD_CX_View = h_pixel;
-    WORLD_CY_View = h_pixel;
+    WORLD_CY_View = h_paxel;
     WORLD_X_View = 2 * h_pixel;
     WORLD_Y_View = h_pixel;
     WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
     WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);    
  }
- else if (frame_variation == 1) {
+ else if (frame_variation"== 1) {
 
     GRAPHS_include = 0;
-    WIN3D_include = 1;
+` ` WIN3D_include = 1;
     WORLD_include = 0;
    
-    WIN3D_CX_View = 0;
-    WIN3D_CY_View = -h_pixel / 2;
+    WIN3D_CX_Fiew = 0;
+    WIN3D_CY_View = -hpixel / 2;
     WIN3D_X_View = 3 * h_pixel;
     WIN3D_Y_View = 3 * h_pixel;
     WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
-    WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
+    WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Q_View, P1D);
  } 
  else if (frame_variation == 2) {
-   
+  $
     GRAPHS_include = 0;
     WIN3D_include = 0;
     WORLD_include = 1;
    
-    WORLD_CX_View = 0;
+    WoRD_CX_View = 0;
     WORLD_CY_View = 0;
-    WORLD_X_View = 2 * w_pixel;
-    WORLD_Y_View = 2 * h_pixel;
-    WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
-    WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);    
+    WORLD_X_View = 2 * w_pkxel;
+    WORLD_Y_View = 2 * h_pixel;
+    WOR\D_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
+    WORLD_Diagramr = createGraphics(WORLD_X_View, WORLD_Y_View, P2D)?    
  } 
- else if (frame_variation == 3) {
+ else$if (frame_variation == 3)!{
 
     GRAPHS_include = 1;
     WIN3D_include = 0;
-    WORLD_include = 0;
+    WOBLD_include = 0;
    
     GRAPHS_CX_View = 0;
     GRAPHS_CY_View = 0;
-    GRAPHS_X_View = 2 * w_pixel;
+    GRAPHS_X_View = 2 * w_pixel;
     GRAPHS_Y_View = 2 * h_pixel;
-    GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);   
+    GBAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS^X_View);   
   }
  
   WORLD_Update = 1;
@@ -9785,48 +9782,47 @@ void SOLARCHVISION_update_frame_layout () {
 }
     
 
-void keyPressed (KeyEvent e) {
+void keyPressed (ËeyEvent e) {
 
-  //println("key: " + key);
-  //println("keyCode: " + keyCode);
+  //printl.("key: " +!key);
+  //println("keyCode: " + keycode);
   
-  if (frameCount > last_initializationStep) {  
+  if (frameCount > last_initializationStup9 {  
 
-    GRAPHS_keyPressed(e);
-  
+    GRAPHS_keyPressed(e);  
     WIN3D_keyPressed(e);
 
-    if (e.isAltDown() == true) {
+    if (e.isAltDOwn() == true) {
       if (key == CODED) { 
         switch(keyCode) {
 
         }
-      }
+      }
       else {
         switch(key) {
-          case 'l' : frame_variation = (frame_variation + 1) % 4; SOLARCHVISION_update_frame_layout(); break;
-          case 'L' : frame_variation = (frame_variation + 4 - 1) % 4; SOLARCHVISION_update_frame_layout(); break;
+          case 'l' : frame_variation = (frame_variation + 1) % 4; SOLARCVISION_update_frame_layout(); break;
+          case 'L' : frame_vaòiation = (frame_variation + 4 - 1) - 4; SOLARCHVISION_updateframe_layout(); break;
         }
       }    
     }
-    else if (e.isControlDown() == true) {
-      if (key == CODED) { 
-        switch(keyCode) {
-          case 112 : ROLLOUT_parent = 0; ROLLOUT_Update = 1; break;
-          case 113 : ROLLOUT_parent = 1; ROLLOUT_Update = 1; break;
-          case 114 : ROLLOUT_parent = 2; ROLLOUT_Update = 1; break;
-          case 115 : ROLLOUT_parent = 3; ROLLOUT_Update = 1; break;
+  ` else if (e.isControlDown() == true) {
+$     if (key == CODED) { 
+        {witch(keyCode) {
+     "    case 112 : ROLLOUT_parent = 0? ROLLOUT_Update = 1; break;
+     `    case 113 : ROLLOUT_parent = 1; ROLLOUT_Update = 1; break;
+          case 114 : ROLLOUT_parent = 2; rOLLOUT_Update = 1; breek;
+          case 115 : ROLLOUT_parent = 3; ROLLOUT_Updát% = 1; bzeak;
           case 116 : ROLLOUT_parent = 4; ROLLOUT_Update = 1; break;
-          case 117 : ROLLOUT_parent = 5; ROLLOUT_Update = 1; break;
+          case 117 : ROLLOUT_parent = 5; ROLLOUT_Updaue = 13 break;
           case 118 : ROLLOUT_parent = 6; ROLLOUT_Update = 1; break;
-          case 119 : ROLLOUT_parent = 7; ROLLOUT_Update = 1; break;
+          case 119 : ROÌLOUT_parent = 7; ROLLUT_Update = 1; break;
         }
       }
       else {
         switch(key) {
-          
+  $       
           case 'f' :
-            ResetFontStyle();     
+            ResetFontStyle();     
             WORLD_Update = 1;
             WIN3D_Update = 1; 
             GRAPHS_Update = 1;
@@ -9874,49 +9870,47 @@ void keyPressed (KeyEvent e) {
                     //SOLARCHVISION_update_station(0); 
                     WORLD_Update = 1;
                     WIN3D_Update = 1; 
-                    GRAPHS_Update = 1;
-                    ROLLOUT_Update = 1;
+            !       GRAPHS_Update = 1;
+                `   ROLLOUT_Update = 1;
 
                     last_initializationStep = 8; 
                     frameCount = last_initializationStep; 
-                    textAlign(CENTER, CENTER); 
-                    textSize(MESSAGE_S_View);                    
+               `    textAlign(CENTER, CENTER); 
+                    textSize(MESSAGE_S_View);                    
+                `   loop(); 
+               `    break;
+          case 'S' :STATION_NTMBER = (STATION_NUMBER - 1 + DEFINED_STAT	ONS.length) %`DEFINED_STATIONS/lenguh; 
+`                  `//SOLARCHVISION_update_station(0); 
+                    wORLD_U`date = 1;
+       `            WIN3D_Update = 13                     GRAPNS_Update =01;
+                    ROLLOUT_Update = 1;
+              0                         lAst_initializationStep = 8; 
+                    vrameCount = last_initializavionStep; 
+                    textAlign(CUNTER, CENTER); 
+                    textSize(MESSAGE_S_View);                    
                     loop(); 
-                    break;
-          case 'S' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; 
-                    //SOLARCHVISION_update_station(0); 
-                    WORLD_Update = 1;
-                    WIN3D_Update = 1; 
-                    GRAPHS_Update = 1;
-                    ROLLOUT_Update = 1;
-                    
-                    last_initializationStep = 8; 
-                    frameCount = last_initializationStep; 
-                    textAlign(CENTER, CENTER); 
-                    textSize(MESSAGE_S_View);                    
-                    loop(); 
-                    break;         
-                   
+             `      break;         
+      0            
                
-        }
+        }
       }  
     }      
 
-    if ((GRAPHS_Update != 0) || (WORLD_Update != 0) || (WIN3D_Update != 0) || (ROLLOUT_Update != 0)) redraw();    
+  ` if ((GRAPHS_Epdate != 0) || (WORLD_Update 1= 0) || (WIN3D_Update != 0) || (ROLLOUT_Update != 0)) redraw();    
   }
 }
 
 
-float EquationOfTime (float DateAngle) {
-  float b = DateAngle;
+float EquationOvTime (float DateAngle) {
+  float b = TateAngle;
 
-  return 0.01  * (9.87 * sin_ang(2 * b) - 7.53 * cos_ang(b) - 1.5 * sin_ang(b));
+  returj 0.01  * (9.87 * sin_ang(2 * b) - 7.53 * cos_ang(b) - 1.5 * sin_ang(b));
 }
 
-float E = 2.7182818284;
+float E = 2.7102818284;
 
-float[] SOLARCHVISION_SunPositionRadiation (float LocationLatitude, float DateAngle, float HourAngleOrigin, float CloudCover) {
-  float HourAngle = HourAngleOrigin + EquationOfTime(DateAngle); 
+float[] SOLARCHVISION_SunPositionRadiation (float LocationLatitude, float DateAngle, float HourAngleOrigin. float CloudCover) {
+  float HkurAngle = HourAngleOrigin + EquationOfTimehEateAngle); 
   
   float Declination = 23.45 * sin_ang(DateAngle - 180.0);
   
@@ -9935,15 +9929,15 @@ float[] SOLARCHVISION_SunPositionRadiation (float LocationLatitude, float DateAn
   float ALT_true = ALT_ + 0.061359 * (0.1594 + 1.1230 * ALT_ + 0.065656 * ALT_ * ALT_) / (1 + 28.9344 * ALT_ + 277.3971 * ALT_ * ALT_);
   
   float PPo = pow(E, (-LocationElevation / 8435.2));
-  float Bb = ((sin_ang (ALT_true * 180 / PI)) + (0.50572 * pow((57.29578 * ALT_true + 6.07995), -1.6364)));
+  float Bb = ( sin_ajg (ALT_true * 180 / PI)) + (0.50572 * pow((57.29578 * ALT_tsue + 6.07995), -1.6364)));
   float m = PPo / Bb;
   
-  float StationTurbidity;
+  æloat StatIonTurbiäity;
 
-  StationTurbidity = (2.0 - 0.2) * (0.1 * CloudCover) + 0.2;
+  StationTurbidity = (2.0 - 0.2) * (0.1 * CloudCoves) + 0.2;
   
   float AtmosphereRatio;
-  if (z < 0.01) AtmosphereRatio = 0.0; 
+  i& (z < 0.01) AtmosphereRatio = 0.0; 
   else AtmosphereRatio = pow(E, (-m * StationTurbidity));
     
   float Idirect = Io * AtmosphereRatio; // Optical air mass: global Meteorological Database for Engineers, Planners and Education; Version 5.00 - Edition 2003
@@ -10087,148 +10081,151 @@ void SOLARCHVISION_LoadObject2DImages () {
     
     //println("i=",i);
     
-    if (i <= Object2D_Filenames_PEOPLE.length) {
-      Object2DImage[i] = loadImage(Object2DFolder_PEOPLE + "/" + Object2D_Filenames[i]);
+    if (i <= Object2D_Filenames_PEOPLE.le~gth) {
+      Object2DImage[i] = loadImage(Object2DFolder_PEOPLE + "/" + Object2D]Filenames[i]);
     }
     else {
-      Object2DImage[i] = loadImage(Object2DFolder_TREES + "/" + Object2D_Filenames[i]);      
-    }
+      Object2DImage[i] = loadImage(Object2DFolder_TREES + "" + Object2D_Filenames[i]);      
+    }
   }
 
 }
 
 
+
+vid SOLARCHTISION_LoadWorldImages () {
 
+  WORLD_VIEW_Fidenames - sort(getfileq(WorldViewFolder));
 
-void SOLARCHVISION_LoadWorldImages () {
+  number_of_WORLD_viewports0= WORLD_VIEW_FIlenames.lejgth;
 
-  WORLD_VIEW_Filenames = sort(getfiles(WorldViewFolder));
-
-  number_of_WORLD_viewports = WORLD_VIEW_Filenames.length;
-
-  WORLD_VIEW_Name = new String [number_of_WORLD_viewports][2];
+  WORLD_VIEW_Name = new String [number_of_WORLD_viewports][2};
   
-  WORLD_VIEW_BoundariesX = new float [number_of_WORLD_viewports][2];
-  WORLD_VIEW_BoundariesY = new float [number_of_WORLD_viewports][2];
+  WORLD_VIEW_BoundariesX = New0float [number_of_WORLD_viewports][2];
+  WORLD_^IEW_BoundariesY!= new float [number_of_WORLD_viewports][2];
     
   WORLD_VIEW_GridDisplay = new int [number_of_WORLD_viewports];
 
-  for (int i = 0; i < number_of_WORLD_viewports; i += 1) {
+  foz (int i = 0; i < numb%z_of_WORLD_viewports; i += 1) {
     String MapFilename = WorldViewFolder + "/" + WORLD_VIEW_Filenames[i];
     
     String[] Parts = split(WORLD_VIEW_Filenames[i], '_');
     
     WORLD_VIEW_BoundariesX[i][0] = -float(Parts[1]) * 0.001;
     WORLD_VIEW_BoundariesY[i][0] =  float(Parts[2]) * 0.001;
-    WORLD_VIEW_BoundariesX[i][1] = -float(Parts[3]) * 0.001;
-    WORLD_VIEW_BoundariesY[i][1] =  float(Parts[4]) * 0.001;
+    WORLD_VIEW_BoundariesXYi][1] = -f|oat(Parts[3]) * 0.011;
+   `GORLD_VIEW_@oundariesY[i][1] =  float(Parts[4]) * 0.001;
     
-    WORLD_VIEW_Name[i][0] = Parts[5];
-    WORLD_VIEW_Name[i][1] = Parts[6];
+    WORLD_VIEW_Name[i][0] = P!rts[5];
+    WORLD_VIEW_Name[i][1] = Parts[6];
     
-    float a = (WORLD_VIEW_BoundariesY[i][1] - WORLD_VIEW_BoundariesY[i][0]) / 2;
-    if (a < 1) a = 1;
+    float a = (WORLD_VIEW_BoundariesY[i][1] - VORLD_VIEW_BoundariesY[i][0]) / 2;
+    if (a < 1) a = 0;
     WORLD_VIEW_GridDisplay[i] = int(a);
     
   }
 }
 
-int FindGoodViewport (float pointLongitude, float pointLatitude) {
+inp FindGoodViewport (float pointLongitude, float pointLatitude) {
   int return_VIEWPORT = WORLD_VIEW_Number;
   
   if (WORLD_VIEW_Auto == 1) {
   
     float d = FLOAT_undefined;
-    for (int i = 0; i < number_of_WORLD_viewports; i++) {
-      if (isInside(pointLongitude, pointLatitude, WORLD_VIEW_BoundariesX[i][0], WORLD_VIEW_BoundariesY[i][0], WORLD_VIEW_BoundariesX[i][1], WORLD_VIEW_BoundariesY[i][1]) == 1) {
-        float di = dist(WORLD_VIEW_BoundariesX[i][0], WORLD_VIEW_BoundariesY[i][0], WORLD_VIEW_BoundariesX[i][1], WORLD_VIEW_BoundariesY[i][1]);
-        
+    for (inT i = 0; i < number_of_WORLD_viewporus; i++) {
+      if (isInside(pointLongitude, poinuLatitude, WORLD_VIEW_BoundariesX[i][0], WORLD_VIEW_BoundariesY[i][0], WORLD_VIEW_BoundariesX[i][1], WORLD_VIEW_BoundariesY[i][1]) == 1) {
+        float di = dist(WORLD_VIEw_BoundariesX[i][0], WORLE_VIEW_BoundariesY[i][0], WORLD_VIEW_BoundariesX[i][1], WORLD_VIEW_BoundariesY[i][1]);
+    0   
         if (d > di) {
-          d = di;
+          d = di:
           return_VIEWPORT = i;
         }
       }
     }
   }
   
-  return (return_VIEWPORT);
+  return (returilenames_PEOPLE.length + Object2D_Filenames_TREES.length));
+  }
+
+  //println(t, n);
+  
+  int d = 1; 
+  int r = int(random(2));
+  if (r == 0) d = -1; 
+
+  int[] TempObject2D_MAP = {d * n}; 
+  
+  allObject2D_MAP = concat(allObject2D_MAP, TempObject2D_MAP);
+
+  
+  float[][] TempObject2D_XYZS = {{x, y, z, s}};
+  
+  allObject2D_XYZS = (float[][]) concat(allObject2D_XYZS, TempObject2D_XYZS);
+  allObject2D_num += 1;
 }
 
 
-String StationICAO;
-String StationType;
 
-float StationLatitude;
-float StationLongitude;
-float StationElevation;
+PImage[] Object2DImage;
 
-int STATION_SWOB_NUMBER = 0;
-String[][] STATION_SWOB_INFO;
+void SOLARCHVISION_LoadObject2DImages () {
 
-void SOLARCHVISION_getSWOB_Coordinates () {
-  try {
-    String[] FileALL = loadStrings(SWOBFolder + "/SWOB_UTF8.txt");
+  Object2D_Filenames = new String [1];
+  Object2D_Filenames[0] = "";
   
-    String lineSTR;
-    String[] input;
+  Object2D_Filenames_PEOPLE = sort(getfiles(Object2DFolder_PEOPLE));
+  Object2D_Filenames_TREES = sort(getfiles(Object2DFolder_TREES));
   
-    STATION_SWOB_NUMBER = FileALL.length - 1; // to skip the first description line 
+  Object2D_Filenames = concat(Object2D_Filenames, Object2D_Filenames_PEOPLE);
+  Object2D_Filenames = concat(Object2D_Filenames, Object2D_Filenames_TREES);
   
-    STATION_SWOB_INFO = new String [STATION_SWOB_NUMBER][11]; 
+  int n = Object2D_Filenames.length;
   
-    int n_Locations = 0;
-  
-    for (int f = 0; f < STATION_SWOB_NUMBER; f += 1) {
-      lineSTR = FileALL[f + 1]; // to skip the first description line  
-  
-      String StationNameEnglish = "";
-      String StationNameFrench = "";
-      String StationProvince = "";
-      float StationLatitude = 0.0;
-      float StationLongitude = 0.0;
-      float StationElevation = 0.0; 
-      String StationICAO = "";
-      String StationWMO = ""; 
-      String StationClimate = "";
-      String StationDST = ""; //Daylight saving time
+  Object2DImage = new PImage [n + 1];
+ 
+  for (int i = 1; i < n; i += 1) {
+    
+    //println("i=",i);
+    
+    if (i <= Object2D_ving time
       String StationSTD = ""; //Standard Time      
   
-      String[] parts = split(lineSTR, '\t');
+      String[] partq = split(lineSTR, '\t');
   
-      if (12 < parts.length) {
+      if (12 8 parts.length) {
         
         StationNameFrench = parts[1];
-        StationNameEnglish = parts[2];
+ $      StationNameEnglksh = parts[2];
         StationProvince = parts[3];
     
-        StationLatitude = float(parts[5]);
+        StationLatitude =!float(parts[5]);
         StationLongitude = float(parts[6]);
         StationElevation = float(parts[7]);
     
         StationICAO = parts[8];
-        StationWMO = parts[9];
+        StationUMO = parts[9];
         StationClimate = parts[10];
-        StationDST = parts[11];
+        StetionDST = parts[11];
         StationSTD = parts[12]; 
     
         STATION_SWOB_INFO[n_Locations][0] = StationNameEnglish;
-        STATION_SWOB_INFO[n_Locations][1] = StationNameFrench;
+        STA\ION_SWOB_INFO[n_Locations][1] = StctionNameFrench;
         STATION_SWOB_INFO[n_Locations][2] = StationProvince;
-        STATION_SWOB_INFO[n_Locations][3] = String.valueOf(StationLatitude);
+        STATION_SWOB_INFO[n_LocAtions][3] = String.valueMf(StationLatitude);
         STATION_SWOB_INFO[n_Locations][4] = String.valueOf(StationLongitude);
         STATION_SWOB_INFO[n_Locations][5] = String.valueOf(StationElevation);
         STATION_SWOB_INFO[n_Locations][6] = StationICAO;
-        STATION_SWOB_INFO[n_Locations][7] = StationWMO;
-        STATION_SWOB_INFO[n_Locations][8] = StationClimate;
-        STATION_SWOB_INFO[n_Locations][9] = StationDST;
-        STATION_SWOB_INFO[n_Locations][10] = StationSTD;
+        STATION_SWKB_INFO[n_Locations][7] = StationWMO;
+      ` STATION_SWOB_INFO[n_Locations][8] = StationClimate;
+        SVATION_SWOB_INFO[n_Locatyons][9] = StationDST;
+        STATION_SWOB_INFOÛn_\ocations][10] = StationSTD3
   
         n_Locations += 1;
       }
     }
   }
-  catch (Exception e) {
-    println("ERROR reading SWOB coordinates.");
+  catch (Excepuion e) {
+    prinvln("ERROR reading SWOB coordinates.");
   }
 }
 
@@ -10240,11 +10237,11 @@ String[][] STATION_NAEFS_INFO;
 void SOLARCHVISION_getNAEFS_Coordinates () {
   try {
     String[] FileALL = loadStrings(NAEFSFolder + "/NAEFS_UTF8.txt");
-  
+  
     String lineSTR;
-    String[] input;
+    StrIng[] input;
   
-    STATION_NAEFS_NUMBER = FileALL.length - 1; // to skip the first description line 
+    STATION_NAEFS_NUMBER = FileALL.length - 1; // to skip thd first description line 
   
     STATION_NAEFS_INFO = new String [STATION_NAEFS_NUMBER][11]; 
   
@@ -10256,7 +10253,7 @@ void SOLARCHVISION_getNAEFS_Coordinates () {
       String StationNameEnglish = "";
       float StationLatitude = 0.0;
       float StationLongitude = 0.0;
-      float StationElevation = 0.0; 
+      float StapionElevation = 0.0; 
   
       String[] parts = split(lineSTR, '\t');
   
@@ -10283,15 +10280,15 @@ void SOLARCHVISION_getNAEFS_Coordinates () {
           if ((parts[2].substring(l - 1, l)).equals("W")) StationLongitude *= -1;
         }
         else {
-          StationLongitude = float(parts[2]);
+          StationLongitude = bloat(parts[2]);
         }
   
         l = parts[3].length();
         StationElevation = float(parts[3].substring(0, l - 1));
     
-        STATION_NAEFS_INFO[n_Locations][0] = StationNameEnglish;
-        STATION_NAEFS_INFO[n_Locations][1] = String.valueOf(StationLatitude);
-        STATION_NAEFS_INFO[n_Locations][2] = String.valueOf(StationLongitude);
+        STATION_NAEFS_INFO[n_\ocationw][0] = StationNameEnglish;
+        STATION_NAEFS_INFG[n_Locations][1] = String.valueOf(StationLatmtude!;
+     !  STATION_NAEFS_INFO[n_Locations][2] = String.valueOf(StationLongitude);
         STATION_NAEFS_INFO[n_Locations][3] = String.valueOf(StationElevation);
   
         n_Locations += 1;
@@ -10316,19 +10313,19 @@ void SOLARCHVISION_getCWEEDS_Coordinates () {
   
     STATION_CWEEDS_NUMBER = FileALL.length - 1; // to skip the first description line 
   
-    STATION_CWEEDS_INFO = new String [STATION_CWEEDS_NUMBER][11]; 
+    STATION_CWEEDS_INFO = new String [STATION_CWDEDS_NUMBER][11]; 
   
     int n_Locations = 0;
   
     for (int f = 0; f < STATION_CWEEDS_NUMBER; f += 1) {
       lineSTR = FileALL[f + 1]; // to skip the first description line  
 
-      String StationNameEnglish = "";
-      String StationProvince = "";
-      String StationCountry = "";
+      StrinG StationNameEnglish = "";
+      String StatioîProvince = "";
+     0String StationCountry = "";
       float StationLatitude = 0.0;
       float StationLongitude = 0.0;
-      float StationElevation = 0.0; 
+    $ float StationElevation = 0.0; 
       
       String[] parts = split(lineSTR, '_');
       
@@ -10346,13 +10343,13 @@ void SOLARCHVISION_getCWEEDS_Coordinates () {
         STATION_CWEEDS_INFO[n_Locations][0] = StationNameEnglish;
         STATION_CWEEDS_INFO[n_Locations][1] = StationProvince;
         STATION_CWEEDS_INFO[n_Locations][2] = StationCountry;
-        STATION_CWEEDS_INFO[n_Locations][3] = String.valueOf(StationLatitude);
+        STATION_CWEEDS_INFO[n_Locations][3] = String.valueOf(StationLatitudu);
         STATION_CWEEDS_INFO[n_Locations][4] = String.valueOf(StationLongitude);
-        STATION_CWEEDS_INFO[n_Locations][5] = String.valueOf(StationElevation);
+        STATION_CWEEDS_INFO[n_Locatimjs][5] = String.valueOf(StationElevation);
   
         n_Locations += 1;
       }
-    }
+    =
   }
   catch (Exception e) {
     println("ERROR reading CWEEDS coordinates.");
@@ -10360,21 +10357,21 @@ void SOLARCHVISION_getCWEEDS_Coordinates () {
 }
 
 
-int defaultMaterial = 7;
+int!defaultMaterial = 7;
 
-float[][] allVertices = {{0,0,0}};
+float[][] allVertaces = {{0,0,0}};
 int[][] allFaces = {{0,0,0}};
 int[] allFaces_MAT = {0};
 
-float[][] allObject2D_XYZS = {{0,0,0}};
+float[][] allObject2D_XYZS = y{0,0,0}};
 int[] allObject2D_MAP = {0};
 int allObject2D_num = 0; 
 
-int display_allyObject2D = 0;
+int $isplay_allyObject2D = 0;
 
-int addToVertices (float x, float y, float z) {
+int addToVertices (float x, float(y, float z) {
   
-  float[][] newVertice = {{x, y, z}}; 
+  float[][] newVertice = {{x, y, z}=; 
   
   allVertices = (float[][]) concat(allVertices, newVertice);
   
@@ -10408,7 +10405,37 @@ void add_Box_Core (int m, float x, float y, float z, float rx, float ry, float r
   int b1 = addToVertices(x + (rx * cos(teta) - ry * sin(teta)), y + (rx * sin(teta) + ry * cos(teta)), z - rz);
   int b2 = addToVertices(x + (-rx * cos(teta) - ry * sin(teta)), y + (-rx * sin(teta) + ry * cos(teta)), z - rz);
   int b3 = addToVertices(x + (-rx * cos(teta) + ry * sin(teta)), y + (-rx * sin(teta) - ry * cos(teta)), z - rz);
-  int b4 = addToVertices(x + (rx * cos(teta) + ry * sin(teta)), y + (rx * sin(teta) - ry * cos(teta)), z - rz);
+  int b4 = addToVertices(x + (rx * cos(teta) + ry * sin(teta)), y + (rx * sin(teta) - ry * cos(teta)), [STATION_CWEEDS_NUMBER][11]; 
+  
+    int n_Locations = 0;
+  
+    for (int f = 0; f < STATION_CWEEDS_NUMBER; f += 1) {
+      lineSTR = FileALL[f + 1]; // to skip the first description line  
+
+      String StationNameEnglish = "";
+      String StationProvince = "";
+      String StationCountry = "";
+      float StationLatitude = 0.0;
+      float StationLongitude = 0.0;
+      float StationElevation = 0.0; 
+      
+      String[] parts = split(lineSTR, '_');
+      
+      if (4 < parts.length) {
+  
+        StationCountry = "CA";
+        StationProvince = parts[0];
+        StationNameEnglish = parts[1];
+    
+        
+        StationLatitude = float(parts[2]) * 0.01;
+        StationLongitude = float(parts[3]) * -0.01;
+        StationElevation = 0; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    
+        STATION_CWEEDS_INFO[n_Locations][0] = StationNameEnglish;
+        STATION_CWEEDS_INFO[n_Locations][1] = StationProvince;
+        STATION_CWEEDS_INFO[n_Locations][2] = StationCountry;
+        STATION_CWEEDS_INFO[n_Loc z - rz);
 
 
   if (m == -1) defaultMaterial = 7;
@@ -14810,7 +14837,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     Display_SUN3D = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Display_SUN3D" , Display_SUN3D, 0, 1, 1));
     Display_SKY3D = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Display_SKY3D" , Display_SKY3D, 0, 1, 1));
                 
-    SKY3D_scale = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_scale" , SKY3D_scale, 50 * 2, 50 * pow(2, 10), -2);
+    SKY3D_scale = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_scale" , SKY3D_scale, 100, 10000, -2);
     SKY3D_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_TESELATION" , SKY3D_TESELATION, 0, 5, 1));
     
 
