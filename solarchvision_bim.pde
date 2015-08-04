@@ -477,7 +477,7 @@ float pre_LocationLongitude;
 int pre_WORLD_VIEW_Auto;
 int pre_Load_LAND;
 int pre_Load_URBAN;
-int pre_MODEL3D_ERASE;
+
 float pre_Create_Input_powAll;
 float pre_Field_scale_All;
 float pre_Field_scale_U;
@@ -724,6 +724,8 @@ float Create_Input_powAll = 8;
 int Create_Input_powRnd = 0;
 
 int SolidSurface_TESELATION = 4;
+
+int Create_Mesh_Quad = 1; 
 
 
 float CAM_x, CAM_y, CAM_z;
@@ -1191,8 +1193,6 @@ void draw () {
         pre_Load_LAND = Load_LAND;
         pre_Load_URBAN = Load_URBAN;
         
-        pre_MODEL3D_ERASE = MODEL3D_ERASE;
-
         pre_Create_Input_powAll = Create_Input_powAll;
         
         pre_Field_scale_All = Field_scale_All;
@@ -1261,21 +1261,23 @@ void draw () {
         }
         
         
-        if (pre_MODEL3D_ERASE != MODEL3D_ERASE) {
-          if (MODEL3D_ERASE == 1) {
-            SOLARCHVISION_remove_3Dobjects();
-            
-            SOLARCHVISION_add_3Dbase();
-            
-            SOLARCHVISION_remove_ParametricGeometries();
-            
-            SOLARCHVISION_calculate_ParametricGeometries_Field();
-            
-            WIN3D_Update = 1;
         
-            MODEL3D_ERASE = 0;    
-          }
+        if (MODEL3D_ERASE == 1) {
+          SOLARCHVISION_remove_3Dobjects();
+          
+          SOLARCHVISION_add_3Dbase();
+          
+          SOLARCHVISION_remove_ParametricGeometries();
+          
+          SOLARCHVISION_calculate_ParametricGeometries_Field();
+          
+          WIN3D_Update = 1;
+      
+          ROLLOUT_Update = 1;
+      
+          MODEL3D_ERASE = 0;    
         }
+        
         
         if (pre_Create_Input_powAll != Create_Input_powAll) {
           Create_Input_powX = Create_Input_powAll;
@@ -1301,6 +1303,11 @@ void draw () {
         if (pre_Field_Power != Field_Power) SOLARCHVISION_calculate_ParametricGeometries_Field();
         if (pre_Field_Rotation[display_Field_Image] != Field_Rotation[display_Field_Image]) SOLARCHVISION_calculate_ParametricGeometries_Field();
         if (pre_Field_Elevation[display_Field_Image] != Field_Elevation[display_Field_Image]) SOLARCHVISION_calculate_ParametricGeometries_Field();
+
+
+
+
+
             
         if (GRAPHS_setup != pre_GRAPHS_setup) update_impacts = 1;
         if (impacts_source != pre_impacts_source) update_impacts = 1; 
@@ -14547,16 +14554,6 @@ void mouseClicked () {
             float t = Create_Input_Orientation;
             if (t == 360) t = 15 * (int(random(24)));
 
-            float px = Create_Input_powX; 
-            float py = Create_Input_powY;
-            float pz = Create_Input_powZ;
-            
-            if (Create_Input_powRnd == 1) {
-              px = pow(2, int(random(5)) - 1);
-              py = px;
-              pz = px;
-            }
-  
             float rx = 0.5 * Create_Input_Length;
             if (rx == 0) rx = 5 * (1 + int(random(3)));
 
@@ -14565,43 +14562,67 @@ void mouseClicked () {
 
             float rz = 0.5 * Create_Input_Height;
             if (rz == 0) rz = 5 * (1 + int(random(3)));
+
+            if (mouseButton == LEFT) {
+              float px = Create_Input_powX; 
+              float py = Create_Input_powY;
+              float pz = Create_Input_powZ;
               
-            if (Create_Input_Volume != 0) {
-                        
-              if ((rx != 0) && (ry != 0)) {
-                rz = Create_Input_Volume / (8 * rx * ry);
+              if (Create_Input_powRnd == 1) {
+                px = pow(2, int(random(5)) - 1);
+                py = px;
+                pz = px;
+              }
+                
+              if (Create_Input_Volume != 0) {
+                          
+                if ((rx != 0) && (ry != 0)) {
+                  rz = Create_Input_Volume / (8 * rx * ry);
+                }
+                
+                //---------------------------------------------------
+                float A = 1; 
+                // cube volume: 8*r^3, sphere volume: 4*r^3, so maybe:
+                if (pz == 8) A = 1;
+                else if (pz == 4) A = 0.75;
+                else if (pz == 2) A = 0.5;
+                else if (pz == 1) A = 0.25;
+                else if (pz == 0.5) A = 0.125;
+                else if (pz == 0.25) A = 0.0625;
+                
+                rx /= pow(A, (1.0 / 3.0));
+                ry /= pow(A, (1.0 / 3.0));
+                rz /= pow(A, (1.0 / 3.0));
+                //---------------------------------------------------
               }
               
-              //---------------------------------------------------
-              float A = 1; 
-              // cube volume: 8*r^3, sphere volume: 4*r^3, so maybe:
-              if (pz == 8) A = 1;
-              else if (pz == 4) A = 0.75;
-              else if (pz == 2) A = 0.5;
-              else if (pz == 1) A = 0.25;
-              else if (pz == 0.5) A = 0.125;
-              else if (pz == 0.25) A = 0.0625;
+              if (Create_Input_Align == 1) {
+                z += rz;
+              }
+  
+              if ((px == 8) && (py == 8) && (pz == 8)) add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, t);
+              else add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, SolidSurface_TESELATION, t); 
               
-              rx /= pow(A, (1.0 / 3.0));
-              ry /= pow(A, (1.0 / 3.0));
-              rz /= pow(A, (1.0 / 3.0));
-              //---------------------------------------------------
-            }
-
-
-            
-            if (Create_Input_Align == 1) {
-              z += rz;
+              ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, t)};
+              SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+              
+              SOLARCHVISION_calculate_ParametricGeometries_Field();  
             }
             
-            if ((px == 8) && (py == 8) && (pz == 8)) add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, t);
-            else add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, SolidSurface_TESELATION, t); 
+            if (mouseButton == RIGHT) {
+
+              if (Create_Input_Align == 1) {
+                z += rz;
+              }
+              
+              if (Create_Mesh_Quad == 1) {
+                add_Mesh4(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
+              }
+            }
             
-            ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, t)};
-            SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
           }          
           
-          SOLARCHVISION_calculate_ParametricGeometries_Field();
+          
           
           WIN3D_Update = 1;
         }
@@ -14836,24 +14857,24 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
     
     Create_Default_Material = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Default_Material" , Create_Default_Material, -1, 8, 1));
+
+    Create_Input_Align = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Align" , Create_Input_Align, 0, 1, 1));
+    
     Create_Input_Orientation = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Orientation" , Create_Input_Orientation, 0, 360, 15);
     
     Create_Input_Length = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Length" , Create_Input_Length, 0, 100, 5); 
     Create_Input_Width = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Width" , Create_Input_Width, 0, 100, 5);
     Create_Input_Height = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Height" , Create_Input_Height, 0, 100, 5);    
-    
+
+    Create_Input_Volume = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);
     
     if (ROLLOUT_child == 2) { // Solids
-    
-      Create_Input_Volume = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);
 
       Create_Input_powRnd = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powRnd" , Create_Input_powRnd, 0, 1, 1));    
       Create_Input_powAll = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powAll" , Create_Input_powAll, 0.5, 8, -2);
       Create_Input_powX = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powX" , Create_Input_powX, 0.5, 8, -2); 
       Create_Input_powY = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powY" , Create_Input_powY, 0.5, 8, -2); 
       Create_Input_powZ = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powZ" , Create_Input_powZ, 0.5, 8, -2);
-
-      Create_Input_Align = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Align" , Create_Input_Align, 0, 1, 1));
 
       SolidSurface_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "SolidSurface_TESELATION" , SolidSurface_TESELATION, 0, 5, 1));
 
@@ -14871,7 +14892,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
     if (ROLLOUT_child == 3) { // Meshes
       
-
+      Create_Mesh_Quad = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Create_Mesh_Quad" , Create_Mesh_Quad, 0, 1, 1));
     
     
     
