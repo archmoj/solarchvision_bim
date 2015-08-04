@@ -1,6 +1,40 @@
 import processing.pdf.*;
 
-float Field_Power = 2.0; // 1/2/3
+int Create_Default_Material = 0; //7;
+
+float Create_Input_Length = 10;
+float Create_Input_Width = 10;
+float Create_Input_Height = 10;
+
+float Create_Input_Volume = 0; //3000;
+
+float Create_Input_Orientation = 0;
+
+int Create_Input_Align = 0; // 0:Center, 1:Below
+
+float Create_Input_powX = 8; 
+float Create_Input_powY = 8;
+float Create_Input_powZ = 8;
+
+float Create_Input_powAll = 8;
+int Create_Input_powRnd = 0;
+
+int SolidSurface_TESELATION = 4;
+
+int Create_Mesh_Tri = 0;
+int Create_Mesh_Quad = 0;
+int Create_Mesh_Poly = 1;
+
+int Create_Mesh_PolyDegree = 6;
+
+
+
+
+
+
+//-------------------------------
+
+float Field_Power = 1.0; // 1/2/3
 
 float GlobalAlbedo = 0; // 0-100
 
@@ -704,33 +738,7 @@ int MESSAGE_Y_View = int(1.5 * MESSAGE_S_View);
 
 
 
-int Create_Default_Material = 7;
 
-float Create_Input_Length = 10;
-float Create_Input_Width = 10;
-float Create_Input_Height = 10;
-
-float Create_Input_Volume = 0; //3000;
-
-float Create_Input_Orientation = 0;
-
-int Create_Input_Align = 0; // 0:Center, 1:Below
-
-float Create_Input_powX = 8; 
-float Create_Input_powY = 8;
-float Create_Input_powZ = 8;
-
-float Create_Input_powAll = 8;
-int Create_Input_powRnd = 0;
-
-int SolidSurface_TESELATION = 4;
-
-int Create_Mesh_Tri = 0;
-int Create_Mesh_Quad = 1;
-int Create_Mesh_Penta = 0;
-int Create_Mesh_Poly = 0;
-
-int Create_Mesh_PolyDegree = 6;
 
 
 
@@ -10593,28 +10601,11 @@ void add_Mesh5 (int m, float x1, float y1, float z1, float x2, float y2, float z
 
 }
 
-void add_Pentagon (int m, float cx, float cy, float cz, float r) {
-
-  int v1 = addToVertices(cos_ang(1*72), sin_ang(1*72), 0);
-  int v2 = addToVertices(cos_ang(2*72), sin_ang(2*72), 0);
-  int v3 = addToVertices(cos_ang(3*72), sin_ang(3*72), 0);
-  int v4 = addToVertices(cos_ang(4*72), sin_ang(4*72), 0);
-  int v5 = addToVertices(cos_ang(5*72), sin_ang(5*72), 0);
-
-  defaultMaterial = m;
-    
-  {
-    int[] newFace = {v1, v2, v3, v4, v5};
-    addToFaces(newFace);
-  }
-
-}
-
-void add_Polygon (int m, float cx, float cy, float cz, float r, int n) {
+void add_Polygon (int m, float cx, float cy, float cz, float r, int n, float rot) {
 
   int[] newFace = {addToVertices(cx + r * cos_ang(0), cy + r * sin_ang(0), cz)};
   for (int i = 1; i < n; i++) {
-    float t = i * 360.0 / float(n);
+    float t = i * 360.0 / float(n) + rot;
     int[] f = {addToVertices(cx + r * cos_ang(t), cy + r * sin_ang(t), cz)};
     newFace = concat(newFace, f);
   } 
@@ -10626,26 +10617,26 @@ void add_Polygon (int m, float cx, float cy, float cz, float r, int n) {
 }
 
 
-void add_PolygonExtrude_CENTER (int m, float cx, float cy, float cz, float r, float h, int n) {
-  add_PolygonExtrude(m, cx, cy, cz - h/2, r, h, n);
+void add_PolygonExtrude_CENTER (int m, float cx, float cy, float cz, float r, float h, int n, float rot) {
+  add_PolygonExtrude(m, cx, cy, cz - h/2, r, h, n, rot);
 }
 
 
-void add_PolygonExtrude (int m, float cx, float cy, float cz, float r, float h, int n) {
+void add_PolygonExtrude (int m, float cx, float cy, float cz, float r, float h, int n, float rot) {
 
   int[] vT = new int [n];
   int[] vB = new int [n];
   
-  vT[0] = addToVertices(cx + r * cos_ang(0), cy + r * sin_ang(0), cz + h);
-  vB[0] = addToVertices(cx + r * cos_ang(0), cy + r * sin_ang(0), cz);
+  vT[0] = addToVertices(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz + h);
+  vB[0] = addToVertices(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz);
   
   int[] newFaceT = {vT[0]};
   int[] newFaceB = {vB[0]};
   for (int i = 1; i < n; i++) {
     float t = i * 360.0 / float(n);
     
-    vT[i] = addToVertices(cx + r * cos_ang(t), cy + r * sin_ang(t), cz + h);
-    vB[i] = addToVertices(cx + r * cos_ang(t), cy + r * sin_ang(t), cz);
+    vT[i] = addToVertices(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz + h);
+    vB[i] = addToVertices(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz);
     int[] fT = {vT[i]};
     int[] fB = {vB[i]};
     
@@ -10670,12 +10661,12 @@ void add_PolygonExtrude (int m, float cx, float cy, float cz, float r, float h, 
 }
 
 
-void add_PolygonHyper (int m, float cx, float cy, float cz, float r, float h, int n) {
+void add_PolygonHyper (int m, float cx, float cy, float cz, float r, float h, int n, float rot) {
 
-  int[] newFace = {addToVertices(cx + r * cos_ang(0), cy + r * sin_ang(0), cz)};
+  int[] newFace = {addToVertices(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz)};
   for (int i = 1; i < n; i++) {
     float t = i * 360.0 / float(n);
-    int[] f = {addToVertices(cx + r * cos_ang(t), cy + r * sin_ang(t), cz + (i % 2) * h)};
+    int[] f = {addToVertices(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz + (i % 2) * h)};
     newFace = concat(newFace, f);
   } 
  
@@ -10687,7 +10678,7 @@ void add_PolygonHyper (int m, float cx, float cy, float cz, float r, float h, in
 
 
 
-void add_Icosahedron (int m, float cx, float cy, float cz, float r) {
+void add_Icosahedron (int m, float cx, float cy, float cz, float r, float rot) {
 
   int[] vT = new int [6];
   int[] vB = new int [6];
@@ -10701,8 +10692,8 @@ void add_Icosahedron (int m, float cx, float cy, float cz, float r) {
     float R_in = r * pow(5.0, 0.5) * 2.0 / 5.0;  
     float H_in = r * pow(5.0, 0.5) * 1.0 / 5.0;
     
-    vT[i] = addToVertices(cx + R_in * cos_ang(t), cy + R_in * sin_ang(t), cz + H_in);
-    vB[i] = addToVertices(cx + R_in * cos_ang(t + 36), cy + R_in * sin_ang(t + 36), cz - H_in);
+    vT[i] = addToVertices(cx + R_in * cos_ang(t + rot), cy + R_in * sin_ang(t + rot), cz + H_in);
+    vB[i] = addToVertices(cx + R_in * cos_ang(t + 36 + rot), cy + R_in * sin_ang(t + 36 + rot), cz - H_in);
   } 
 
 
@@ -11412,7 +11403,7 @@ void SOLARCHVISION_add_3Dobjects () {
   //add_Polygon(1, 0, 0, -1, 2,  16);
   //add_Polygon(2, 0, 0, 0,  1.5, 5);
   //add_Polygon(5, 0, 0, 1,  50,   5);
-  //add_Pentagon(1, 0, 0, 0, 1);
+  
   
   //add_Polygon(2, 0, 0, 0,  50, 5);
   //add_PolygonHyper(2, 0, 0, 0,  50, 50, 6);
@@ -14557,8 +14548,8 @@ void mouseClicked () {
             float y = RxP[1]; 
             float z = RxP[2];                      
   
-            float t = Create_Input_Orientation;
-            if (t == 360) t = 15 * (int(random(24)));
+            float rot = Create_Input_Orientation;
+            if (rot == 360) rot = 15 * (int(random(24)));
 
             float rx = 0.5 * Create_Input_Length;
             if (rx < 0) rx = random(abs(rx));
@@ -14606,10 +14597,10 @@ void mouseClicked () {
                 z += rz;
               }
   
-              if ((px == 8) && (py == 8) && (pz == 8)) add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, t);
-              else add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, SolidSurface_TESELATION, t); 
+              if ((px == 8) && (py == 8) && (pz == 8)) add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, rot);
+              else add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, SolidSurface_TESELATION, rot); 
               
-              ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, t)};
+              ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
               SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
               
               SOLARCHVISION_calculate_ParametricGeometries_Field();  
@@ -14632,12 +14623,8 @@ void mouseClicked () {
                 add_Mesh4(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
               }
               
-              if (Create_Mesh_Penta == 1) {
-                add_Pentagon(Create_Default_Material, x, y, z, rx);
-              }
-
               if (Create_Mesh_Poly == 1) {
-                add_PolygonHyper(Create_Default_Material, x, y, z, rx, rz, Create_Mesh_PolyDegree);
+                add_PolygonHyper(Create_Default_Material, x, y, z, rx, rz, Create_Mesh_PolyDegree, rot);
               }
               
               
@@ -14919,7 +14906,6 @@ void SOLARCHVISION_draw_ROLLOUT () {
       
       Create_Mesh_Tri = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Create_Mesh_Tri" , Create_Mesh_Tri, 0, 1, 1));
       Create_Mesh_Quad = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Create_Mesh_Quad" , Create_Mesh_Quad, 0, 1, 1));
-      Create_Mesh_Penta = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Create_Mesh_Penta" , Create_Mesh_Penta, 0, 1, 1));
       Create_Mesh_Poly = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Create_Mesh_Poly" , Create_Mesh_Poly, 0, 1, 1));
       Create_Mesh_PolyDegree = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Create_Mesh_PolyDegree" , Create_Mesh_PolyDegree, 3, 24, 1));
     
