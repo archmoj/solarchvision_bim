@@ -14569,6 +14569,8 @@ void mouseClicked () {
                 Create_Input_powY = 8;
                 Create_Input_powZ = 8;
                 
+                
+                
                 ROLLOUT_Update = 1;
               }
               
@@ -14620,7 +14622,7 @@ void mouseClicked () {
                 if (Create_Soild_House == 1) {
                   z += rz;
                   
-                  rot += 45;
+                  if (rx == ry) rot -= 45;
                   
                   px = 1;
                   py = 1;
@@ -14658,13 +14660,17 @@ void mouseClicked () {
                 Z_[5] = -q;
                 
                 for (int i = 0; i < 6; i += 1) {
+                  X_[i] *= rx;
+                  Y_[i] *= ry;
+                  Z_[i] *= rz;
+
                   float X_r = X_[i] * cos_ang(rot) - Y_[i] * sin_ang(rot);
                   float Y_r = X_[i] * sin_ang(rot) + Y_[i] * cos_ang(rot);
                   float Z_r = Z_[i];
                   
-                  X_[i] = X_r * rx + x;
-                  Y_[i] = Y_r * ry + y;
-                  Z_[i] = Z_r * rz + z;
+                  X_[i] = X_r + x;
+                  Y_[i] = Y_r + y;
+                  Z_[i] = Z_r + z;
                 }
                 
                 add_Mesh3(Create_Default_Material, X_[1], Y_[1], Z_[1], X_[2], Y_[2], Z_[2], X_[0], Y_[0], Z_[0]);
