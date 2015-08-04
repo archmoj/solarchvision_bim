@@ -706,11 +706,11 @@ int MESSAGE_Y_View = int(1.5 * MESSAGE_S_View);
 
 int Create_Default_Material = 7;
 
-float Create_Input_Length = 0;
-float Create_Input_Width = 0;
-float Create_Input_Height = 0;
+float Create_Input_Length = 10;
+float Create_Input_Width = 10;
+float Create_Input_Height = 10;
 
-float Create_Input_Volume = 3000;
+float Create_Input_Volume = 0; //3000;
 
 float Create_Input_Orientation = 0;
 
@@ -725,7 +725,13 @@ int Create_Input_powRnd = 0;
 
 int SolidSurface_TESELATION = 4;
 
-int Create_Mesh_Quad = 1; 
+int Create_Mesh_Tri = 0;
+int Create_Mesh_Quad = 1;
+int Create_Mesh_Penta = 0;
+int Create_Mesh_Poly = 0;
+
+int Create_Mesh_PolyDegree = 6;
+
 
 
 float CAM_x, CAM_y, CAM_z;
@@ -14555,13 +14561,13 @@ void mouseClicked () {
             if (t == 360) t = 15 * (int(random(24)));
 
             float rx = 0.5 * Create_Input_Length;
-            if (rx == 0) rx = 5 * (1 + int(random(3)));
+            if (rx < 0) rx = random(abs(rx));
 
             float ry = 0.5 * Create_Input_Width;
-            if (ry == 0) ry = 5 * (1 + int(random(3)));
+            if (ry < 0) ry = random(abs(ry));
 
             float rz = 0.5 * Create_Input_Height;
-            if (rz == 0) rz = 5 * (1 + int(random(3)));
+            if (rz < 0) rz = random(abs(rz));
 
             if (mouseButton == LEFT) {
               float px = Create_Input_powX; 
@@ -14615,10 +14621,29 @@ void mouseClicked () {
                 z += rz;
               }
               
+              if (Create_Mesh_Tri == 1) {
+                add_Mesh3(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
+                add_Mesh3(Create_Default_Material, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
+                add_Mesh3(Create_Default_Material, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
+                add_Mesh3(Create_Default_Material, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
+              }
+              
               if (Create_Mesh_Quad == 1) {
                 add_Mesh4(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
               }
+              
+              if (Create_Mesh_Penta == 1) {
+                add_Pentagon(Create_Default_Material, x, y, z, rx);
+              }
+
+              if (Create_Mesh_Poly == 1) {
+                add_PolygonHyper(Create_Default_Material, x, y, z, rx, rz, Create_Mesh_PolyDegree);
+              }
+              
+              
+              
             }
+            
             
           }          
           
@@ -14862,9 +14887,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
     Create_Input_Orientation = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Orientation" , Create_Input_Orientation, 0, 360, 15);
     
-    Create_Input_Length = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Length" , Create_Input_Length, 0, 100, 5); 
-    Create_Input_Width = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Width" , Create_Input_Width, 0, 100, 5);
-    Create_Input_Height = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Height" , Create_Input_Height, 0, 100, 5);    
+    Create_Input_Length = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Length" , Create_Input_Length, -100, 100, 5); 
+    Create_Input_Width = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Width" , Create_Input_Width, -100, 100, 5);
+    Create_Input_Height = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Height" , Create_Input_Height, -100, 100, 5);    
 
     Create_Input_Volume = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);
     
@@ -14892,8 +14917,11 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
     if (ROLLOUT_child == 3) { // Meshes
       
+      Create_Mesh_Tri = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Create_Mesh_Tri" , Create_Mesh_Tri, 0, 1, 1));
       Create_Mesh_Quad = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Create_Mesh_Quad" , Create_Mesh_Quad, 0, 1, 1));
-    
+      Create_Mesh_Penta = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Create_Mesh_Penta" , Create_Mesh_Penta, 0, 1, 1));
+      Create_Mesh_Poly = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Create_Mesh_Poly" , Create_Mesh_Poly, 0, 1, 1));
+      Create_Mesh_PolyDegree = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Create_Mesh_PolyDegree" , Create_Mesh_PolyDegree, 3, 24, 1));
     
     
     }
