@@ -21,7 +21,7 @@ int Create_Input_powRnd = 0;
 
 int SolidSurface_TESELATION = 4;
 
-
+int Create_Soild_House = 0;
 
 int Create_Poly_Degree = 6;
 
@@ -14562,6 +14562,17 @@ void mouseClicked () {
             if (rz < 0) rz = random(abs(rz));
 
             if (mouseButton == LEFT) {
+              
+              if (Create_Soild_House == 1) {
+                Create_Input_powAll = 8;
+                Create_Input_powX = 8;
+                Create_Input_powY = 8;
+                Create_Input_powZ = 8;
+                
+                ROLLOUT_Update = 1;
+              }
+              
+              
               float px = Create_Input_powX; 
               float py = Create_Input_powY;
               float pz = Create_Input_powZ;
@@ -14598,36 +14609,53 @@ void mouseClicked () {
                 z += rz;
               }
   
-              if ((px == 8) && (py == 8) && (pz == 8)) add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, rot);
-              else if ((px == 1) && (py == 1) && (pz == 1)) {
+              if ((px == 8) && (py == 8) && (pz == 8)) {
+                add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, rot);
 
+                ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
+                SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+              }
+              
+              if (((px == 1) && (py == 1) && (pz == 1)) || (Create_Soild_House == 1)) {
+                if (Create_Soild_House == 1) {
+                  z += rz;
+                  
+                  rot += 45;
+                  
+                  px = 1;
+                  py = 1;
+                  pz = 1;
+                }
+                                
                 float[] X_ = new float [6];
                 float[] Y_ = new float [6];
                 float[] Z_ = new float [6];
 
+                float q = pow(2, 0.5);
+  
                 X_[0] = 0;
                 Y_[0] = 0;
-                Z_[0] = pow(2, 0.5);
+                Z_[0] = q;
 
-                X_[1] = -1;
-                Y_[1] = -1;
+                X_[1] = q;
+                Y_[1] = 0;
                 Z_[1] = 0;
 
-                X_[2] = 1;
-                Y_[2] = -1;
+                X_[2] = 0;
+                Y_[2] = q;
                 Z_[2] = 0;
 
-                X_[3] = 1;
-                Y_[3] = 1;
+                X_[3] = -q;
+                Y_[3] = 0;
                 Z_[3] = 0;
 
-                X_[4] = -1;
-                Y_[4] = 1;
+                X_[4] = 0;
+                Y_[4] = -q;
                 Z_[4] = 0;
 
                 X_[5] = 0;
                 Y_[5] = 0;
-                Z_[5] = -pow(2, 0.5);
+                Z_[5] = -q;
                 
                 for (int i = 0; i < 6; i += 1) {
                   float X_r = X_[i] * cos_ang(rot) - Y_[i] * sin_ang(rot);
@@ -14639,23 +14667,27 @@ void mouseClicked () {
                   Z_[i] = Z_r * rz + z;
                 }
                 
-                
                 add_Mesh3(Create_Default_Material, X_[1], Y_[1], Z_[1], X_[2], Y_[2], Z_[2], X_[0], Y_[0], Z_[0]);
                 add_Mesh3(Create_Default_Material, X_[2], Y_[2], Z_[2], X_[3], Y_[3], Z_[3], X_[0], Y_[0], Z_[0]);
                 add_Mesh3(Create_Default_Material, X_[3], Y_[3], Z_[3], X_[4], Y_[4], Z_[4], X_[0], Y_[0], Z_[0]);
                 add_Mesh3(Create_Default_Material, X_[4], Y_[4], Z_[4], X_[1], Y_[1], Z_[1], X_[0], Y_[0], Z_[0]);                
               
-                add_Mesh3(Create_Default_Material, X_[1], Y_[1], Z_[1], X_[5], Y_[5], Z_[5], X_[2], Y_[2], Z_[2]);
-                add_Mesh3(Create_Default_Material, X_[2], Y_[2], Z_[2], X_[5], Y_[5], Z_[5], X_[3], Y_[3], Z_[3]);
-                add_Mesh3(Create_Default_Material, X_[3], Y_[3], Z_[3], X_[5], Y_[5], Z_[5], X_[4], Y_[4], Z_[4]);
-                add_Mesh3(Create_Default_Material, X_[4], Y_[4], Z_[4], X_[5], Y_[5], Z_[5], X_[1], Y_[1], Z_[1]);                
-            
+                if (Create_Soild_House != 1) {
+                  add_Mesh3(Create_Default_Material, X_[1], Y_[1], Z_[1], X_[5], Y_[5], Z_[5], X_[2], Y_[2], Z_[2]);
+                  add_Mesh3(Create_Default_Material, X_[2], Y_[2], Z_[2], X_[5], Y_[5], Z_[5], X_[3], Y_[3], Z_[3]);
+                  add_Mesh3(Create_Default_Material, X_[3], Y_[3], Z_[3], X_[5], Y_[5], Z_[5], X_[4], Y_[4], Z_[4]);
+                  add_Mesh3(Create_Default_Material, X_[4], Y_[4], Z_[4], X_[5], Y_[5], Z_[5], X_[1], Y_[1], Z_[1]);
+                }
+
+                ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
+                SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
               }
-              
-              else add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, SolidSurface_TESELATION, rot); 
-              
-              ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
-              SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+              else if ((px != 8) || (py != 8) || (pz != 8)) {
+                add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, SolidSurface_TESELATION, rot);
+
+                ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
+                SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+              }
               
               SOLARCHVISION_calculate_ParametricGeometries_Field();  
             }
@@ -14938,6 +14970,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
     Create_Input_Volume = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);
     
     if (ROLLOUT_child == 2) { // Solids
+    
+      Create_Soild_House = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Soild_House" , Create_Soild_House, 0, 1, 1));
 
       Create_Input_powRnd = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powRnd" , Create_Input_powRnd, 0, 1, 1));    
       Create_Input_powAll = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powAll" , Create_Input_powAll, 0.5, 8, -2);
