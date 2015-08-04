@@ -29,6 +29,7 @@ int Create_Mesh_Poly = 1;
 int Create_Mesh_Extrude = 0;
 int Create_Mesh_Tri = 0;
 int Create_Mesh_Quad = 0;
+int Create_Mesh_House = 0;
 
 
 
@@ -10418,6 +10419,100 @@ int addToFaces (int[] f) {
 }
 
 
+void add_House_Core (int m, float x, float y, float z, float rx, float ry, float rz, float h2, float rot) {
+  
+  float teta = rot * PI / 180.0;
+
+  float x1 = rx;  
+  float x2 = -rx;
+  float x3 = -rx;
+  float x4 = rx;
+
+  float y1 = ry;  
+  float y2 = ry;
+  float y3 = -ry;
+  float y4 = -ry;
+  
+  float z0 = -rz; 
+  float z1 = rz;
+  float z2 = h2;
+
+  float[] vx = { 1,-1,-1, 1, 1,-1,-1, 1, 1,-1};
+  float[] vy = { 1, 1,-1,-1, 1, 1,-1,-1, 0, 0};
+  float[] vz = {-1,-1,-1,-1, 1, 1, 1, 1, 1+h2/rz, 1+h2/rz};
+  
+  for (int i = 0; i < 10; i++) {
+    vx[i] *= rx;
+    vy[i] *= ry;
+    vz[i] *= rz;
+    
+    float vx_rot = x + vx[i] * cos(teta) - vy[i] * sin(teta);
+    float vy_rot = y + vx[i] * sin(teta) + vy[i] * cos(teta);
+    float vz_rot = z + vz[i];
+    
+    vx[i] = vx_rot;
+    vy[i] = vy_rot;
+    vz[i] = vz_rot;
+  }  
+
+  int b1 = addToVertices(vx[0], vy[0], vz[0]);
+  int b2 = addToVertices(vx[1], vy[1], vz[1]);
+  int b3 = addToVertices(vx[2], vy[2], vz[2]);
+  int b4 = addToVertices(vx[3], vy[3], vz[3]);
+
+  int t1 = addToVertices(vx[4], vy[4], vz[4]);
+  int t2 = addToVertices(vx[5], vy[5], vz[5]);
+  int t3 = addToVertices(vx[6], vy[6], vz[6]);
+  int t4 = addToVertices(vx[7], vy[7], vz[7]);
+
+  int m1 = addToVertices(vx[8], vy[8], vz[8]);
+  int m2 = addToVertices(vx[9], vy[9], vz[9]);
+
+
+  if (m == -1) defaultMaterial = 7;
+  else defaultMaterial = m;
+
+  {//Bottom
+    int[] newFace = {b4, b3, b2, b1};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }    
+  {//North
+    int[] newFace = {t2, t1, b1, b2};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }
+  {//East
+    int[] newFace = {t1, m1, t4, b4, b1};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }    
+  {//South
+    int[] newFace = {t4, t3, b3, b4};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }    
+  {//West
+    int[] newFace = {t3, m2, t2, b2, b3};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }    
+  {//Roof-South
+    int[] newFace = {t1, t2, m2, m1};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }
+  {//Roof-North
+    int[] newFace = {m1, m2, t3, t4};
+    if (m == -1) defaultMaterial -= 1;
+    addToFaces(newFace);
+  }
+  
+  
+}
+
+
+
 void add_Box_Core (int m, float x, float y, float z, float rx, float ry, float rz, float rot) {
   
   float teta = rot * PI / 180.0;
@@ -14722,6 +14817,13 @@ void mouseClicked () {
               if (Create_Mesh_Extrude == 1) {              
                 add_PolygonExtrude(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
               }
+
+              if (Create_Mesh_House == 1) {              
+                add_House_Core(Create_Default_Material, x, y, z, rx, ry, rz, rz, rot);
+              }
+
+              
+              
               
               
             }
@@ -15001,13 +15103,13 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
     if (ROLLOUT_child == 3) { // Meshes
 
-      Create_Mesh_Poly = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Poly" , Create_Mesh_Poly, 0, 1, 1));
       Create_Poly_Degree = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Poly_Degree" , Create_Poly_Degree, 3, 24, 1));
+      Create_Mesh_Poly = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Poly" , Create_Mesh_Poly, 0, 1, 1));
       Create_Mesh_Extrude = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Extrude" , Create_Mesh_Extrude, 0, 1, 1));
       Create_Mesh_Tri = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Tri" , Create_Mesh_Tri, 0, 1, 1));
       Create_Mesh_Quad = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Quad" , Create_Mesh_Quad, 0, 1, 1));
       
-      
+      Create_Mesh_House = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_House" , Create_Mesh_House, 0, 1, 1));
     
     
     }
