@@ -52,6 +52,10 @@ int Export_3Dmodel = 0; // inactive
 int Export_solids = 0; // inactive
 int Export_meshing = 0; // inactive
 
+int Ensemble_Audio_Output = 0; // inactive
+int Launch_External_Simulation = 0; // inactive
+int Launch_External_Hardware = 0; // inactive
+
 
 //-------------------------------
 
@@ -1179,6 +1183,9 @@ void draw () {
     text("Please wait while integrating the models.", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
 
     MESSAGE_X_View = 2 * w_pixel;
+
+    X_clicked = 0;
+    Y_clicked = 0;
 
     last_initializationStep = frameCount; 
   }
@@ -14994,7 +15001,7 @@ String[][] ROLLOUTS = {
                         {"Location & Data", "General", "Point", "Environment"}, 
                         {"Geometries & Space", "General", "Solids", "Meshes"}, 
                         {"Time & Scenarios", "General"}, 
-                        {"Visualization Options", "General"},
+                        {"Illustration Options", "General"},
                         {"Post-Processing", "General"}, 
                         {"Export Products", "Data", "Media", "Launch"}
                       };
@@ -15223,7 +15230,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     H_layer_option = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Climate filter option" , H_layer_option, 0, 7, 1));
     Sample_Year = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Single year" , Sample_Year, 1953, 2005, 1));    
   }  
-  else if (ROLLOUT_parent == 3) { // Visualization Options
+  else if (ROLLOUT_parent == 3) { // Illustration Options
 
     draw_data_lines = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Draw data", draw_data_lines, 0, 1, 1));
     draw_sorted = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Draw sorted", draw_sorted, 0, 1, 1));
@@ -15279,7 +15286,6 @@ void SOLARCHVISION_draw_ROLLOUT () {
     }  
   
     if (ROLLOUT_child == 2) { // Media
-
       
       GRAPHS_record_PDF = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Record graphs in PDF", GRAPHS_record_PDF, 0, 1, 1));
       GRAPHS_record_JPG = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Record graphs in JPG", GRAPHS_record_JPG, 0, 1, 1));
@@ -15290,14 +15296,15 @@ void SOLARCHVISION_draw_ROLLOUT () {
       ANALYSIS_record_PNG = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Record analysis in PNG", ANALYSIS_record_PNG, 0, 1, 1));
     }
     
+    if (ROLLOUT_child == 3) { // Launch
+      
+      Ensemble_Audio_Output = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Ensemble_Audio_Output", Ensemble_Audio_Output, 0, 1, 1));
+      Launch_External_Simulation = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Launch_External_Simulation", Launch_External_Simulation, 0, 1, 1));
+      Launch_External_Hardware = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Launch_External_Hardware", Launch_External_Hardware, 0, 1, 1));
+      
+    }    
+    
   }    
-  else {
-
-  } 
-
-
-
-
 
   
   X_clicked = 0;
