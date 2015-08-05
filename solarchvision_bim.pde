@@ -25,12 +25,11 @@ int Create_Soild_House = 0;
 
 int Create_Poly_Degree = 6;
 
-int Create_Mesh_Poly = 1;
+int Create_Mesh_Poly = 0;
 int Create_Mesh_Extrude = 0;
 int Create_Mesh_Tri = 0;
 int Create_Mesh_Quad = 0;
 int Create_Mesh_House = 0;
-
 int Create_Mesh_Parametric = 0;
 
 
@@ -821,10 +820,9 @@ void SOLARCHVISION_update_models (int Step) {
  
    if ((Step == 0) || (Step == 1)) SOLARCHVISION_remove_3Dobjects();
    if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
-   //if ((Step == 0) || (Step == 3)) SOLARCHVISION_add_ParametricSurfaces(1);
-   if ((Step == 0) || (Step == 4)) SOLARCHVISION_remove_ParametricGeometries();
-   //if ((Step == 0) || (Step == 5)) SOLARCHVISION_add_ParametricGeometries();
-   if ((Step == 0) || (Step == 6)) SOLARCHVISION_calculate_ParametricGeometries_Field();
+   if ((Step == 0) || (Step == 3)) SOLARCHVISION_remove_ParametricGeometries();
+   //if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
+   if ((Step == 0) || (Step == 5)) SOLARCHVISION_calculate_ParametricGeometries_Field();
 
 }
 
@@ -1103,21 +1101,10 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_add_ParametricSurfaces", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
-  }
-  else if (frameCount == 20) {
-    SOLARCHVISION_update_models(3);
-
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
-
-    stroke(255);
-    fill(255);
     text("SOLARCHVISION_remove_ParametricGeometries", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 21) {
-    SOLARCHVISION_update_models(4);    
+  else if (frameCount == 20) {
+    SOLARCHVISION_update_models(3);    
     stroke(0);
     fill(0);
     rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
@@ -1125,6 +1112,17 @@ void draw () {
     stroke(255);
     fill(255);
     text("SOLARCHVISION_add_ParametricGeometries", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+  }
+  else if (frameCount == 21) {
+    SOLARCHVISION_update_models(4);
+    
+    stroke(0);
+    fill(0);
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+
+    stroke(255);
+    fill(255);
+    text("SOLARCHVISION_calculate_ParametricGeometries_Field", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 22) {
     SOLARCHVISION_update_models(5);
@@ -1135,21 +1133,10 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_calculate_ParametricGeometries_Field", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
-  }
-  else if (frameCount == 23) {
-    SOLARCHVISION_update_models(6);
-    
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
-
-    stroke(255);
-    fill(255);
     text("SOLARCHVISION_build_SkySphere", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
     
   }    
-  else if (frameCount == 24) {
+  else if (frameCount == 23) {
     SOLARCHVISION_build_SkySphere(3); 
     
     stroke(0);
@@ -1160,7 +1147,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_build_SolarProjection_array", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 25) {  
+  else if (frameCount == 24) {  
     SOLARCHVISION_build_SolarProjection_array();
      
     stroke(0);
@@ -11572,7 +11559,7 @@ void SOLARCHVISION_add_3Dobjects () {
 
 
 
-void SOLARCHVISION_add_ParametricSurfaces (int m, float cx, float cy, float cz, float rx, float ry, float rz, int n, float rot) {
+void SOLARCHVISION_add_ParametricSurface (int m, float cx, float cy, float cz, float rx, float ry, float rz, int n, float rot) {
 
   float teta = rot * PI / 180.0;
   
@@ -11611,11 +11598,11 @@ void SOLARCHVISION_add_ParametricSurfaces (int m, float cx, float cy, float cz, 
             z = z0 / d;  
           }        
         }
-        else if (n == 2) {
-          x = u; 
-          y = v; 
-          z = sin(u * PI) * cos(v * PI); 
-        }
+        else if (n == 2) { 
+          x = cos(u * PI); 
+          y = sin(v * PI);
+          z = -sin(u * PI) * cos(v * PI);
+        }        
         else if (n == 3) {
           x = sin(u * PI); 
           y = sin(v * PI);
@@ -11636,6 +11623,22 @@ void SOLARCHVISION_add_ParametricSurfaces (int m, float cx, float cy, float cz, 
             z = z0 / d;  
           }
         }
+        else if (n == 5) {
+          x = u; 
+          y = v; 
+          z = cos(0.5 * u * PI) * cos(0.5 * v * PI); 
+        }        
+        else if (n == 6) {
+          x = u; 
+          y = v; 
+          z = cos(u * PI) * cos(v * PI); 
+        }
+        else if (n == 7) {
+          x = u; 
+          y = v; 
+          z = 0.5 * cos(u * PI) + cos(v * PI); 
+        }
+        
 
         x *= rx;
         y *= ry;
@@ -14706,7 +14709,7 @@ void mouseClicked () {
               }
 
               if (Create_Mesh_Parametric != 0) {
-                SOLARCHVISION_add_ParametricSurfaces(Create_Default_Material, x, y, z, rx, ry, rz, Create_Mesh_Parametric, rot);
+                SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, Create_Mesh_Parametric, rot);
               }
               
               
@@ -14997,7 +15000,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       
       Create_Mesh_House = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_House" , Create_Mesh_House, 0, 1, 1));
       
-      Create_Mesh_Parametric = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Parametric" , Create_Mesh_Parametric, 0, 4, 1));
+      Create_Mesh_Parametric = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Parametric" , Create_Mesh_Parametric, 0, 7, 1));
 
     }
     
