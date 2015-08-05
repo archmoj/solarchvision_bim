@@ -15026,7 +15026,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
   Y_spinner = ROLLOUT_CY_View;
   
   X_spinner += 305 * ROLLOUT_S_View;
-  Y_spinner += 5 * ROLLOUT_S_View;
+  Y_spinner += 7.5 * ROLLOUT_S_View;
 
   if (ROLLOUT_parent >= ROLLOUTS.length) {
     ROLLOUT_parent = ROLLOUTS.length - 1;
@@ -15039,8 +15039,26 @@ void SOLARCHVISION_draw_ROLLOUT () {
   if (ROLLOUT_parent < ROLLOUTS.length) {
     
     for (int i = 0; i < ROLLOUTS.length; i++) {
-    
+
+      float cx = ROLLOUT_CX_View + (150 * (i % 2) + 5) * ROLLOUT_S_View;
+      float cy = Y_spinner;
+      float cr = 6.75 * ROLLOUT_S_View;      
+      
+      textAlign(LEFT, CENTER);    
+
+      if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + 150 * ROLLOUT_S_View, cy + cr) == 1) {
+        ROLLOUT_parent = i;
+        
+        ROLLOUT_Update = 1;
+      }
+
       if (i == ROLLOUT_parent) {
+        strokeWeight(2); 
+        stroke(63); 
+        fill(191);
+        rect(cx - 2.5 * ROLLOUT_S_View, cy - 5 * ROLLOUT_S_View, 150 * ROLLOUT_S_View, 2 * 7.5 * ROLLOUT_S_View);
+        strokeWeight(0); 
+        
         stroke(0); 
         fill(0);
         textSize(15 * ROLLOUT_S_View);
@@ -15050,10 +15068,10 @@ void SOLARCHVISION_draw_ROLLOUT () {
         fill(127);
         textSize(15 * ROLLOUT_S_View);
       }
-      textAlign(LEFT, CENTER);    
-      text(nf(i + 1, 0) + ":" + ROLLOUTS[i][0], ROLLOUT_CX_View + (150 * (i % 2) + 10) * ROLLOUT_S_View, Y_spinner);
-      
-      Y_spinner += (i % 2) * 12.5 * ROLLOUT_S_View;
+
+      text(nf(i + 1, 0) + ":" + ROLLOUTS[i][0], cx, cy);
+
+      Y_spinner += (i % 2) * 15.0 * ROLLOUT_S_View;
     }
     
     strokeWeight(2); 
@@ -15066,6 +15084,18 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
     for (int i = 1; i < ROLLOUTS[ROLLOUT_parent].length; i++) {
 
+      float cx = ROLLOUT_CX_View + (100 * (i - 1) + 10) * ROLLOUT_S_View;
+      float cy = Y_spinner;
+      float cr = 6.75 * ROLLOUT_S_View;        
+      
+      textAlign(LEFT, CENTER);     
+      
+      if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + 100 * ROLLOUT_S_View, cy + cr) == 1) {
+        ROLLOUT_child = i;
+        
+        ROLLOUT_Update = 1;
+      }      
+      
       if (i == ROLLOUT_child) {
         stroke(255,127,0); 
         fill(255,127,0);
@@ -15076,8 +15106,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
         fill(255);
         textSize(12.5 * ROLLOUT_S_View);
       }
-      textAlign(LEFT, CENTER);              
-      text("[" + nf(i, 0) + "]" + ROLLOUTS[ROLLOUT_parent][i], ROLLOUT_CX_View + (100 * (i - 1) + 10) * ROLLOUT_S_View, Y_spinner);
+              
+      text("[" + nf(i, 0) + "]" + ROLLOUTS[ROLLOUT_parent][i], cx, cy);
     }
     Y_spinner += 25 * ROLLOUT_S_View;
     
@@ -15251,6 +15281,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
        
   
     if (ROLLOUT_child == 1) { // Layout
+      
+      frame_variation = int(MySpinner.update(X_spinner, Y_spinner, 1,1,1, "Frame layout variation", frame_variation, 0, 3, 1));
+    
       //GRAPHS_setup = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Diagram setup", GRAPHS_setup, -2, 13, 1));
       GRAPHS_setup = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Diagram setup", GRAPHS_setup, 100, 110, 1));
       GRAPHS_Update = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Redraw scene", GRAPHS_Update, 0, 1, 1));  
