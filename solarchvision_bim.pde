@@ -33,13 +33,13 @@ int Create_Mesh_House = 0;
 int Create_Mesh_Parametric = 0;
 
 
-int Display_SWOB_points = 2;
+int Display_SWOB_points = 1; // 0-2
 int Display_SWOB_nearest = 1;
 
-int Display_NAEFS_points = 1;
+int Display_NAEFS_points = 1; // 0-2
 int Display_NAEFS_nearest = 1;
 
-int Display_CWEEDS_points = 1;
+int Display_CWEEDS_points = 1; // 0-2
 int Display_CWEEDS_nearest = 1;
 
 int FRAME_record_JPG = 0;
@@ -353,9 +353,11 @@ int _LAN = _EN;
 //int Pallet_ACTIVE = -1, Pallet_ACTIVE_DIR = -1;
 //int Pallet_ACTIVE = 6, Pallet_ACTIVE_DIR = -1;
 //int Pallet_ACTIVE = 14, Pallet_ACTIVE_DIR = 1;
-int Pallet_ACTIVE = 12, Pallet_ACTIVE_DIR = 1;
+//int Pallet_ACTIVE = 12, Pallet_ACTIVE_DIR = 1;
+int Pallet_ACTIVE = 15, Pallet_ACTIVE_DIR = 1;
 //int Pallet_ACTIVE = -1, Pallet_ACTIVE_DIR = 2;
 //int Pallet_ACTIVE = -1, Pallet_ACTIVE_DIR = -2;
+
 
 int Pallet_PASSIVE = 1, Pallet_PASSIVE_DIR = 1;
 
@@ -7200,8 +7202,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     int PAL_TYPE = 0; 
     int PAL_DIR = 1;
     
-    if (Impact_TYPE == Impact_ACTIVE) {  
-      PAL_TYPE = 15; PAL_DIR = 1;
+    if (Impact_TYPE == Impact_ACTIVE) {
+      PAL_TYPE = Pallet_ACTIVE; PAL_DIR = Pallet_ACTIVE_DIR;  
+      //PAL_TYPE = 15; PAL_DIR = 1;
       
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
@@ -7738,11 +7741,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     int PAL_DIR = 1;
     
     if (Impact_TYPE == Impact_ACTIVE) {  
-      //PAL_TYPE = Pallet_ACTIVE; PAL_DIR = Pallet_ACTIVE_DIR;
+      PAL_TYPE = Pallet_ACTIVE; PAL_DIR = Pallet_ACTIVE_DIR;
       //PAL_TYPE = 13; PAL_DIR = Pallet_ACTIVE_DIR; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       //PAL_TYPE = -1; PAL_DIR = 2;
       //PAL_TYPE = -1; PAL_DIR = -2;
-      PAL_TYPE = 15; PAL_DIR = 1;
+      //PAL_TYPE = 15; PAL_DIR = 1;
       
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
@@ -8184,9 +8187,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     int PAL_DIR = 1;
     
     if (Impact_TYPE == Impact_ACTIVE) {  
-      //PAL_TYPE = Pallet_ACTIVE; PAL_DIR = Pallet_ACTIVE_DIR;
+      PAL_TYPE = Pallet_ACTIVE; PAL_DIR = Pallet_ACTIVE_DIR;
       //PAL_TYPE = 13; PAL_DIR = Pallet_ACTIVE_DIR; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-      PAL_TYPE = -1; PAL_DIR = 2;
+      //PAL_TYPE = -1; PAL_DIR = 2;
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
       PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
@@ -8464,9 +8467,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     int PAL_DIR = 1;
     
     if (Impact_TYPE == Impact_ACTIVE) {  
-      //PAL_TYPE = Pallet_ACTIVE; PAL_DIR = Pallet_ACTIVE_DIR;
+      PAL_TYPE = Pallet_ACTIVE; PAL_DIR = Pallet_ACTIVE_DIR;
       //PAL_TYPE = 13; PAL_DIR = Pallet_ACTIVE_DIR; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-      PAL_TYPE = -1; PAL_DIR = 2;
+      //PAL_TYPE = -1; PAL_DIR = 2;
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
       PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
@@ -15330,12 +15333,12 @@ void SOLARCHVISION_draw_ROLLOUT () {
     }
     if (ROLLOUT_child == 3) { // Colors
     
-      COLOR_STYLE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Hourly color scheme", COLOR_STYLE, 0, (n_COLOR_STYLE - 1), 1), 1));
+      COLOR_STYLE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Hourly color scheme", COLOR_STYLE, -1, (n_COLOR_STYLE - 1), 1), 1));
     
-      Pallet_ACTIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. opt. (Active)", Pallet_ACTIVE, -1, 14, 1), 1));
+      Pallet_ACTIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. opt. (Active)", Pallet_ACTIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
       Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. dir. (Active)", Pallet_ACTIVE_DIR, -2, 2, 1), 1));
       
-      Pallet_PASSIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. opt. (Passive)", Pallet_PASSIVE, -1, 14, 1), 1));
+      Pallet_PASSIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. opt. (Passive)", Pallet_PASSIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
       Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. dir (Passive)", Pallet_PASSIVE_DIR, -1, 1, 2), 1));
       
       
