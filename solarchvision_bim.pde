@@ -11744,7 +11744,7 @@ void SOLARCHVISION_add_ParametricSurface (int m, float cx, float cy, float cz, f
         else if (n == 6) {
           x = u; 
           y = v; 
-          z = cos(u * PI) * cos(v * PI); 
+          z = sin(u * PI) * sin(v * PI); 
         }
         else if (n == 7) {
           x = u; 
@@ -15330,13 +15330,15 @@ void SOLARCHVISION_draw_ROLLOUT () {
     }
     if (ROLLOUT_child == 3) { // Colors
     
-      Pallet_ACTIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Active pallet option", Pallet_ACTIVE, -1, 14, 1), 1));
-      Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Active pallet direction", Pallet_ACTIVE_DIR, -2, 2, 1), 1));
+      COLOR_STYLE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Hourly color scheme", COLOR_STYLE, 0, (n_COLOR_STYLE - 1), 1), 1));
+    
+      Pallet_ACTIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. opt. (Active)", Pallet_ACTIVE, -1, 14, 1), 1));
+      Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. dir. (Active)", Pallet_ACTIVE_DIR, -2, 2, 1), 1));
       
-      Pallet_PASSIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Passive pallet option", Pallet_PASSIVE, -1, 14, 1), 1));
-      Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Passive pallet direction", Pallet_PASSIVE_DIR, -1, 1, 2), 1));
+      Pallet_PASSIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. opt. (Passive)", Pallet_PASSIVE, -1, 14, 1), 1));
+      Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. dir (Passive)", Pallet_PASSIVE_DIR, -1, 1, 2), 1));
       
-      COLOR_STYLE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Color scheme", COLOR_STYLE, 0, (n_COLOR_STYLE - 1), 1), 1));
+      
      
       GRAPHS_O_scale = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Windrose opacity scale", GRAPHS_O_scale, 1, 100, -pow(2.0, (1.0 / 4.0))); 
     
