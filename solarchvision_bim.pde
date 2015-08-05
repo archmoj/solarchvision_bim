@@ -48,9 +48,9 @@ int FRAME_record_JPG = 0;
 int FIELD_record_JPG = 0; // inactive
 int ANALYSIS_record_JPG = 0; // inactive 
 int ANALYSIS_record_PNG = 0; // inactive
-int export_3Dmodel = 0; // inactive
-int export_solids = 0; // inactive
-int export_meshing = 0; // inactive
+int Export_3Dmodel = 0; // inactive
+int Export_solids = 0; // inactive
+int Export_meshing = 0; // inactive
 
 
 //-------------------------------
@@ -337,9 +337,9 @@ float FLOAT_undefined = 1000000000; // it must be a positive big number that is 
 
 int dT = 1;
 
-int export_info_node = 0;
-int export_info_norm = 0;
-int export_info_prob = 0;
+int Export_info_node = 0;
+int Export_info_norm = 0;
+int Export_info_prob = 0;
 
 int _EN = 0;
 int _FR = 1;
@@ -1903,9 +1903,9 @@ void SOLARCHVISION_draw_GRAPHS () {
     image(pre_Diagrams, 0, 0, GRAPHS_X_View, GRAPHS_Y_View);
   }
 
-  export_info_node = 0;
-  export_info_norm = 0;
-  export_info_prob = 0;
+  Export_info_node = 0;
+  Export_info_norm = 0;
+  Export_info_prob = 0;
 
   GRAPHS_Update = 0;
    
@@ -3854,7 +3854,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
     if (num_add_days > 1) {
         //_FilenamesAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
     }
-    if ((export_info_node == 1) && (draw_data_lines == 1)) {
+    if ((Export_info_node == 1) && (draw_data_lines == 1)) {
       File_output_node[(j - j_start)] = createWriter("/" + Main_name + "/FORECAST_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
       File_output_node[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(FORECAST)");
 
@@ -3864,7 +3864,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
       }
       File_output_node[(j - j_start)].println("");
     }
-    if ((export_info_norm == 1) && (draw_normals == 1)) {
+    if ((Export_info_norm == 1) && (draw_normals == 1)) {
       File_output_norm[(j - j_start)] = createWriter("/" + Main_name + "/FORECAST_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
       File_output_norm[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(FORECAST)");
       File_output_norm[(j - j_start)].print("Hour\t");
@@ -3873,7 +3873,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
       }
       File_output_norm[(j - j_start)].println("");
     }
-    if ((export_info_prob == 1) && (draw_probs == 1)) {
+    if ((Export_info_prob == 1) && (draw_probs == 1)) {
       File_output_prob[(j - j_start)] = createWriter("/" + Main_name + "/FORECAST_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
       File_output_prob[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(FORECAST)");
 
@@ -3882,9 +3882,9 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
     }
 
     for (int i = 0; i < 24; i += 1) {
-      if ((export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print(nf(i, 2) + "\t");
-      if ((export_info_norm == 1) && (draw_normals == 1)) File_output_norm[(j - j_start)].print(nf(i, 2) + "\t");
-      if ((export_info_prob == 1) && (draw_probs == 1)) File_output_prob[(j - j_start)].print(nf(i, 2) + "\t");
+      if ((Export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print(nf(i, 2) + "\t");
+      if ((Export_info_norm == 1) && (draw_normals == 1)) File_output_norm[(j - j_start)].print(nf(i, 2) + "\t");
+      if ((Export_info_prob == 1) && (draw_probs == 1)) File_output_prob[(j - j_start)].print(nf(i, 2) + "\t");
 
       for (int k = (start_z - 1); k <= (end_z - 1); k += 1) {
 
@@ -3932,7 +3932,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
           if (Pa > 0.9 * FLOAT_undefined) {
             _valuesA[k] = FLOAT_undefined;
             
-            if ((export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("[undefined]\t"); 
+            if ((Export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("[undefined]\t"); 
           }
           else {
             int drw_count = SOLARCHVISION_filter("ENSEMBLE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
@@ -3947,7 +3947,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
 
               if ((ENSEMBLE_DATA[now_i][now_j][drw_Layer][now_k] == 1) && ((draw_data_lines == 1))) Diagrams_ellipse((j + ((i + 0.5) / 24.0)) * sx_Plot, _valuesA[k] * sy_Plot, 5, 5);
 
-                if ((export_info_node == 1) && (draw_data_lines == 1)) {
+                if ((Export_info_node == 1) && (draw_data_lines == 1)) {
                   if (_valuesA[k] < 0.9 * FLOAT_undefined) File_output_node[(j - j_start)].print(nfs(_valuesA[k] - V_offset[drw_Layer], 5, 5) + "\t"); 
                   else File_output_node[(j - j_start)].print("[undefined]\t");
                 }
@@ -3979,13 +3979,13 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
               }
             }
             else {
-              if ((export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("not_the_case\t");
+              if ((Export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("not_the_case\t");
             }
           }          
         }
       }
  
-      if ((export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].println();
+      if ((Export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].println();
   
       _interval += 1; 
       if ((_interval % sum_interval) == 0) {
@@ -4017,7 +4017,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
       }
     }
 
-    if ((export_info_node == 1) && (draw_data_lines == 1)) {
+    if ((Export_info_node == 1) && (draw_data_lines == 1)) {
       File_output_node[(j - j_start)].println("Source: " + nf(_YEAR, 4) + nf(_MONTH, 2) + nf(_DAY, 2) + nf(_HOUR, 2) + "_GEPS-NAEFS-RAW_" + THE_STATION + "_" + THE_LAYERS[drw_Layer] + "_000-384.xml" + ", Environment Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
       File_output_node[(j - j_start)].println("Interpolated and processed by SOLARCHVISION 2014: www.solarchvision.com");
       if (_LAYERS[drw_Layer][0].equals("kW°C/m²") || _LAYERS[drw_Layer][0].equals("W/m²")) File_output_node[(j - j_start)].println("Note: direct and diffuse radiation models are derived form cloud cover and air pressure information using SOLARCHVISION program.");
@@ -4025,7 +4025,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
       File_output_node[(j - j_start)].close(); 
     }
     
-    if ((export_info_norm == 1) && (draw_normals == 1)) {
+    if ((Export_info_norm == 1) && (draw_normals == 1)) {
       File_output_norm[(j - j_start)].println("Source: " + nf(_YEAR, 4) + nf(_MONTH, 2) + nf(_DAY, 2) + nf(_HOUR, 2) + "_GEPS-NAEFS-RAW_" + THE_STATION + "_" + THE_LAYERS[drw_Layer] + "_000-384.xml" + ", Environment Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
       File_output_norm[(j - j_start)].println("Calculated and processed by SOLARCHVISION 2014: www.solarchvision.com");
       File_output_norm[(j - j_start)].println("* : SOLARCHVISION internal algorithm");
@@ -4034,7 +4034,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
       File_output_norm[(j - j_start)].close(); 
     }
 
-    if ((export_info_prob == 1) && (draw_probs == 1)) {
+    if ((Export_info_prob == 1) && (draw_probs == 1)) {
       File_output_prob[(j - j_start)].println("Source: " + nf(_YEAR, 4) + nf(_MONTH, 2) + nf(_DAY, 2) + nf(_HOUR, 2) + "_GEPS-NAEFS-RAW_" + THE_STATION + "_" + THE_LAYERS[drw_Layer] + "_000-384.xml" + ", Environment Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
       File_output_prob[(j - j_start)].println("Calculated and processed by SOLARCHVISION 2014: www.solarchvision.com");
       if (_LAYERS[drw_Layer][0].equals("kW°C/m²") || _LAYERS[drw_Layer][0].equals("W/m²")) File_output_prob[(j - j_start)].println("Note: direct and diffuse radiation models are derived form cloud cover and air pressure information using SOLARCHVISION program.");
@@ -4276,7 +4276,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
     if (num_add_days > 1) {
         _FilenamesAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
     }
-    if ((export_info_node == 1) && (draw_data_lines == 1)) {
+    if ((Export_info_node == 1) && (draw_data_lines == 1)) {
       File_output_node[(j - j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
       File_output_node[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
 
@@ -4286,7 +4286,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       }
       File_output_node[(j - j_start)].println("");
     }
-    if ((export_info_norm == 1) && (draw_normals == 1)) {
+    if ((Export_info_norm == 1) && (draw_normals == 1)) {
       File_output_norm[(j - j_start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
       File_output_norm[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
       File_output_norm[(j - j_start)].print("Hour:\t");
@@ -4295,7 +4295,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       }
       File_output_norm[(j - j_start)].println("");
     }
-    if ((export_info_prob == 1) && (draw_probs == 1)) {
+    if ((Export_info_prob == 1) && (draw_probs == 1)) {
       File_output_prob[(j - j_start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
       File_output_prob[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
 
@@ -4304,9 +4304,9 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
     }
 
     for (int i = 0; i < 24; i += 1) {
-      if ((export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print(nf(i, 2) + "\t");
-      if ((export_info_norm == 1) && (draw_normals == 1)) File_output_norm[(j - j_start)].print(nf(i, 2) + "\t");
-      if ((export_info_prob == 1) && (draw_probs == 1)) File_output_prob[(j - j_start)].print(nf(i, 2) + "\t");
+      if ((Export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print(nf(i, 2) + "\t");
+      if ((Export_info_norm == 1) && (draw_normals == 1)) File_output_norm[(j - j_start)].print(nf(i, 2) + "\t");
+      if ((Export_info_prob == 1) && (draw_probs == 1)) File_output_prob[(j - j_start)].print(nf(i, 2) + "\t");
 
       for (int k = 0; k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start); k += 1) {
         for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {
@@ -4352,7 +4352,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
             if (Pa > 0.9 * FLOAT_undefined) {
               _valuesA[(k * num_add_days + j_ADD)] = FLOAT_undefined;
               
-              if ((export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("[undefined]\t");
+              if ((Export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("[undefined]\t");
             }
             else {
               int drw_count = SOLARCHVISION_filter("CLIMATE_WY2", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
@@ -4364,7 +4364,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
                 _valuesSUM[(k * num_add_days + j_ADD)] += _valuesA[(k * num_add_days + j_ADD)];
                 _valuesNUM[(k * num_add_days + j_ADD)] += 1;
 
-                if ((export_info_node == 1) && (draw_data_lines == 1)) {
+                if ((Export_info_node == 1) && (draw_data_lines == 1)) {
                   if (_valuesA[(k * num_add_days + j_ADD)] < 0.9 * FLOAT_undefined) File_output_node[(j - j_start)].print(nfs(_valuesA[(k * num_add_days + j_ADD)] - V_offset[drw_Layer], 5, 5) + "\t"); 
                   else File_output_node[(j - j_start)].print("[undefined]\t");
                 }
@@ -4394,14 +4394,14 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
                 }
               }
               else {
-                if ((export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("not_the_case\t");
+                if ((Export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("not_the_case\t");
               }
             }
           }
         }
       }
       
-      if ((export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].println();
+      if ((Export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].println();
         
       _interval += 1; 
       if ((_interval % sum_interval) == 0) {
@@ -4436,14 +4436,14 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
     
     }
     
-    if ((export_info_node == 1) && (draw_data_lines == 1)) {
+    if ((Export_info_node == 1) && (draw_data_lines == 1)) {
       File_output_node[(j - j_start)].println("Source: " + THE_STATION + ".wy2" + ", Environment Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
       File_output_node[(j - j_start)].println("Calculated and processed by SOLARCHVISION 2014: www.solarchvision.com");
       File_output_node[(j - j_start)].flush(); 
       File_output_node[(j - j_start)].close(); 
     }
     
-    if ((export_info_norm == 1) && (draw_normals == 1)) {
+    if ((Export_info_norm == 1) && (draw_normals == 1)) {
       File_output_norm[(j - j_start)].println("Source: " + THE_STATION + ".wy2" + ", Environment Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
       File_output_norm[(j - j_start)].println("Calculated and processed by SOLARCHVISION 2014: www.solarchvision.com");
       File_output_norm[(j - j_start)].println("* : SOLARCHVISION internal algorithm");
@@ -4451,7 +4451,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_norm[(j - j_start)].close(); 
     }
 
-    if ((export_info_prob == 1) && (draw_probs == 1)) {
+    if ((Export_info_prob == 1) && (draw_probs == 1)) {
       File_output_prob[(j - j_start)].println("Source: " + THE_STATION + ".wy2" + ", Environment Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
       File_output_prob[(j - j_start)].println("Calculated and processed by SOLARCHVISION 2014: www.solarchvision.com");
       File_output_prob[(j - j_start)].flush(); 
@@ -4683,7 +4683,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
     if (num_add_days > 1) {
         _FilenamesAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
     }
-    if ((export_info_node == 1) && (draw_data_lines == 1)) {
+    if ((Export_info_node == 1) && (draw_data_lines == 1)) {
       File_output_node[(j - j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
       File_output_node[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(CWEED)");
 
@@ -4693,7 +4693,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
       }
       File_output_node[(j - j_start)].println("");
     }
-    if ((export_info_norm == 1) && (draw_normals == 1)) {
+    if ((Export_info_norm == 1) && (draw_normals == 1)) {
       File_output_norm[(j - j_start)] = createWriter("/" + Main_name + "Climate_norm_" + LocationName + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
       File_output_norm[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(CWEED)");
       File_output_norm[(j - j_start)].print("Hour:\t");
@@ -4702,7 +4702,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
       }
       File_output_norm[(j - j_start)].println("");
     }
-    if ((export_info_prob == 1) && (draw_probs == 1)) {
+    if ((Export_info_prob == 1) && (draw_probs == 1)) {
       File_output_prob[(j - j_start)] = createWriter("/" + Main_name + "Climate_prob_" + LocationName + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
       File_output_prob[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(CWEED)");
 
@@ -4711,9 +4711,9 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
     }
 
     for (int i = 0; i < 24; i += 1) {
-      if ((export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print(nf(i, 2) + "\t");
-      if ((export_info_norm == 1) && (draw_normals == 1)) File_output_norm[(j - j_start)].print(nf(i, 2) + "\t");
-      if ((export_info_prob == 1) && (draw_probs == 1)) File_output_prob[(j - j_start)].print(nf(i, 2) + "\t");
+      if ((Export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print(nf(i, 2) + "\t");
+      if ((Export_info_norm == 1) && (draw_normals == 1)) File_output_norm[(j - j_start)].print(nf(i, 2) + "\t");
+      if ((Export_info_prob == 1) && (draw_probs == 1)) File_output_prob[(j - j_start)].print(nf(i, 2) + "\t");
 
       for (int k = 0; k < (1 + CLIMATE_EPW_end - CLIMATE_EPW_start); k += 1) {
         for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {
@@ -4759,7 +4759,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
             if (Pa > 0.9 * FLOAT_undefined) {
               _valuesA[(k * num_add_days + j_ADD)] = FLOAT_undefined;
               
-              if ((export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("[undefined]\t");
+              if ((Export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("[undefined]\t");
             }
             else {
               int drw_count = SOLARCHVISION_filter("CLIMATE_EPW", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
@@ -4771,7 +4771,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
                 _valuesSUM[(k * num_add_days + j_ADD)] += _valuesA[(k * num_add_days + j_ADD)];
                 _valuesNUM[(k * num_add_days + j_ADD)] += 1;
 
-                if ((export_info_node == 1) && (draw_data_lines == 1)) {
+                if ((Export_info_node == 1) && (draw_data_lines == 1)) {
                   if (_valuesA[(k * num_add_days + j_ADD)] < 0.9 * FLOAT_undefined) File_output_node[(j - j_start)].print(nfs(_valuesA[(k * num_add_days + j_ADD)] - V_offset[drw_Layer], 5, 5) + "\t"); 
                   else File_output_node[(j - j_start)].print("[undefined]\t");
                 }
@@ -4801,14 +4801,14 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
                 }
               }
               else {
-                if ((export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("not_the_case\t");
+                if ((Export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("not_the_case\t");
               }
             }
           }
         }
       }
       
-      if ((export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].println();
+      if ((Export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].println();
         
       _interval += 1; 
       if ((_interval % sum_interval) == 0) {
@@ -4843,14 +4843,14 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
     
     }
     
-    if ((export_info_node == 1) && (draw_data_lines == 1)) {
+    if ((Export_info_node == 1) && (draw_data_lines == 1)) {
       File_output_node[(j - j_start)].println("Source: " + THE_STATION + ".epw");
       File_output_node[(j - j_start)].println("Calculated and processed by SOLARCHVISION 2014: www.solarchvision.com");
       File_output_node[(j - j_start)].flush(); 
       File_output_node[(j - j_start)].close(); 
     }
     
-    if ((export_info_norm == 1) && (draw_normals == 1)) {
+    if ((Export_info_norm == 1) && (draw_normals == 1)) {
       File_output_norm[(j - j_start)].println("Source: " + THE_STATION + ".epw");
       File_output_norm[(j - j_start)].println("Calculated and processed by SOLARCHVISION 2014: www.solarchvision.com");
       File_output_norm[(j - j_start)].println("* : SOLARCHVISION internal algorithm");
@@ -4858,7 +4858,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
       File_output_norm[(j - j_start)].close(); 
     }
 
-    if ((export_info_prob == 1) && (draw_probs == 1)) {
+    if ((Export_info_prob == 1) && (draw_probs == 1)) {
       File_output_prob[(j - j_start)].println("Source: " + THE_STATION + ".epw");
       File_output_prob[(j - j_start)].println("Calculated and processed by SOLARCHVISION 2014: www.solarchvision.com");
       File_output_prob[(j - j_start)].flush(); 
@@ -5224,7 +5224,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
     if (num_add_days > 1) {
         //_FilenamesAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
     }
-    if ((export_info_node == 1) && (draw_data_lines == 1)) {
+    if ((Export_info_node == 1) && (draw_data_lines == 1)) {
       File_output_node[(j - j_start)] = createWriter("/" + Main_name + "/OBSERVATION_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
       File_output_node[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly data(OBSERVATION)");
 
@@ -5234,7 +5234,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
       }
       File_output_node[(j - j_start)].println("");
     }
-    if ((export_info_norm == 1) && (draw_normals == 1)) {
+    if ((Export_info_norm == 1) && (draw_normals == 1)) {
       File_output_norm[(j - j_start)] = createWriter("/" + Main_name + "/OBSERVATION_norm_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
       File_output_norm[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly normal(OBSERVATION)");
       File_output_norm[(j - j_start)].print("Hour\t");
@@ -5243,7 +5243,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
       }
       File_output_norm[(j - j_start)].println("");
     }
-    if ((export_info_prob == 1) && (draw_probs == 1)) {
+    if ((Export_info_prob == 1) && (draw_probs == 1)) {
       File_output_prob[(j - j_start)] = createWriter("/" + Main_name + "/OBSERVATION_prob_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + _LAYERS[drw_Layer][(_EN + 1)] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
       File_output_prob[(j - j_start)].println(CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + "\t" + sky_scenario_file[sky_scenario] + "\t" + _LAYERS[drw_Layer][(_EN + 1)] + "(" + _LAYERS[drw_Layer][0] + ")" + "\tfrom:" + String.valueOf(start_z) + "\tto:" + String.valueOf(end_z) + "\t" + LocationName + "\tHourly probabilities(OBSERVATION)");
 
@@ -5252,9 +5252,9 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
     }
 
     for (int i = 0; i < 24; i += 1) {
-      if ((export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print(nf(i, 2) + "\t");
-      if ((export_info_norm == 1) && (draw_normals == 1)) File_output_norm[(j - j_start)].print(nf(i, 2) + "\t");
-      if ((export_info_prob == 1) && (draw_probs == 1)) File_output_prob[(j - j_start)].print(nf(i, 2) + "\t");
+      if ((Export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print(nf(i, 2) + "\t");
+      if ((Export_info_norm == 1) && (draw_normals == 1)) File_output_norm[(j - j_start)].print(nf(i, 2) + "\t");
+      if ((Export_info_prob == 1) && (draw_probs == 1)) File_output_prob[(j - j_start)].print(nf(i, 2) + "\t");
 
       for (int k = (start_z - 1); k <= (end_z - 1); k += 1) {
 
@@ -5302,7 +5302,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
           if (Pa > 0.9 * FLOAT_undefined) {
             _valuesA[k] = FLOAT_undefined;
 
-            if ((export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("[undefined]\t"); 
+            if ((Export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("[undefined]\t"); 
           }
           else {
             int drw_count = 1; //SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
@@ -5317,7 +5317,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
 
               //if ((OBSERVED_DATA[now_i][now_j][drw_Layer][now_k] == 1) && ((draw_data_lines == 1))) Diagrams_ellipse((j + ((i + 0.5) / 24.0)) * sx_Plot, _valuesA[k] * sy_Plot, 5, 5);
 
-                if ((export_info_node == 1) && (draw_data_lines == 1)) {
+                if ((Export_info_node == 1) && (draw_data_lines == 1)) {
                   if (_valuesA[k] < 0.9 * FLOAT_undefined) File_output_node[(j - j_start)].print(nfs(_valuesA[k] - V_offset[drw_Layer], 5, 5) + "\t"); 
                   else File_output_node[(j - j_start)].print("[undefined]\t");
                 }
@@ -5349,13 +5349,13 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
               }
             }
             else {
-              if ((export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("not_the_case\t");
+              if ((Export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].print("not_the_case\t");
             }
           }          
         }
       }
  
-      if ((export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].println();
+      if ((Export_info_node == 1) && (draw_data_lines == 1)) File_output_node[(j - j_start)].println();
   
       _interval += 1; 
       if ((_interval % sum_interval) == 0) {
@@ -5387,14 +5387,14 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
       }
     }
 
-    if ((export_info_node == 1) && (draw_data_lines == 1)) {
+    if ((Export_info_node == 1) && (draw_data_lines == 1)) {
       File_output_node[(j - j_start)].println("Source: Environment Canada website at http://dd.weatheroffice.ec.gc.ca/observations/swob-ml/");
       File_output_node[(j - j_start)].println("The data might be interpolated and processed by SOLARCHVISION 2014: www.solarchvision.com");
       File_output_node[(j - j_start)].flush(); 
       File_output_node[(j - j_start)].close(); 
     }
     
-    if ((export_info_norm == 1) && (draw_normals == 1)) {
+    if ((Export_info_norm == 1) && (draw_normals == 1)) {
       File_output_norm[(j - j_start)].println("Source: Environment Canada website at http://dd.weatheroffice.ec.gc.ca/observations/swob-ml/");
       File_output_norm[(j - j_start)].println("Calculated and processed by SOLARCHVISION 2014: www.solarchvision.com");
       File_output_norm[(j - j_start)].println("* : SOLARCHVISION internal algorithm");
@@ -5402,7 +5402,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
       File_output_norm[(j - j_start)].close(); 
     }
 
-    if ((export_info_prob == 1) && (draw_probs == 1)) {
+    if ((Export_info_prob == 1) && (draw_probs == 1)) {
       File_output_prob[(j - j_start)].println("Source: Environment Canada website at http://dd.weatheroffice.ec.gc.ca/observations/swob-ml/");
       File_output_prob[(j - j_start)].println("Calculated and processed by SOLARCHVISION 2014: www.solarchvision.com");
       File_output_prob[(j - j_start)].flush(); 
@@ -5684,13 +5684,13 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
           Diagrams_strokeWeight(GRAPHS_T_scale * 1);
           my_text((String.valueOf(int(roundTo(100 * _u, 1)))), (j + ((i + 1) / 24.0)) * sx_Plot - 0.5 * (sum_interval * GRAPHS_S_View * 100 / 24.0) * GRAPHS_U_scale, -((min_v + n) * _pix) - 0.05 * txt_max_height, 1);
           
-          if ((export_info_prob == 1) && (draw_probs == 1)) {
+          if ((Export_info_prob == 1) && (draw_probs == 1)) {
             File_output_prob[(j - j_start)].print(nfs((min_v + n) * _pix / abs(sy_Plot) - V_offset[drw_Layer], 5, 5) + ":\t" + nf(100 * _u, 3, 3) + "\t"); 
           }
         }
       }  
       
-      if ((export_info_prob == 1) && (draw_probs == 1)) {
+      if ((Export_info_prob == 1) && (draw_probs == 1)) {
         File_output_prob[(j - j_start)].println(""); 
       }
     }
@@ -5972,13 +5972,13 @@ void SOLARCHVISION_draw_normals (int i, int j, float[] _valuesA, float[] _values
       my_line((j + ((i + 0.5) / 24.0)) * sx_Plot, NormalsA[l] * sy_Plot, z_l * sz_Plot * GRAPHS_W_scale, (j + ((i + 0.5 + dT) / 24.0)) * sx_Plot, NormalsB[l] * sy_Plot, z_l * sz_Plot * GRAPHS_W_scale); 
     } 
     
-    if ((export_info_norm == 1) && (draw_normals == 1)) {
+    if ((Export_info_norm == 1) && (draw_normals == 1)) {
       if (NormalsA[l] < 0.9 * FLOAT_undefined) File_output_norm[(j - j_start)].print(nfs(NormalsA[l] - V_offset[drw_Layer], 5, 5) + "\t"); 
       else File_output_norm[(j - j_start)].print("[undefined]\t");
     }
 
   }
-  if ((export_info_norm == 1) && (draw_normals == 1)) File_output_norm[(j - j_start)].println();
+  if ((Export_info_norm == 1) && (draw_normals == 1)) File_output_norm[(j - j_start)].println();
 }  
 
 
@@ -8719,9 +8719,9 @@ void GRAPHS_keyPressed (KeyEvent e) {
           case 'p' : GRAPHS_record_PDF = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break; 
           case 'P' : GRAPHS_record_PDF = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break;
           
-          case '^' : draw_data_lines = 1; export_info_node = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break;
-          case '&' : draw_normals = 1; export_info_norm = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break;
-          case '%' : draw_probs = 1; export_info_prob = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break;                 
+          case '^' : draw_data_lines = 1; Export_info_node = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break;
+          case '&' : draw_normals = 1; Export_info_norm = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break;
+          case '%' : draw_probs = 1; Export_info_prob = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break;                 
           
         }
       }    
@@ -15268,13 +15268,13 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
     if (ROLLOUT_child == 1) { // Data
     
-      export_info_node = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Export ASCII data", export_info_node, 0, 1, 1));
-      export_info_norm = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Export ASCII statistics", export_info_norm, 0, 1, 1));
-      export_info_prob = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Export ASCII probabilities", export_info_prob, 0, 1, 1));
+      Export_info_node = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Export ASCII data", Export_info_node, 0, 1, 1));
+      Export_info_norm = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Export ASCII statistics", Export_info_norm, 0, 1, 1));
+      Export_info_prob = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Export ASCII probabilities", Export_info_prob, 0, 1, 1));
       
-      export_3Dmodel = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "export_3Dmodel", export_3Dmodel, 0, 1, 1));
-      export_solids = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "export_solids", export_solids, 0, 1, 1));
-      export_meshing = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "export_meshing", export_meshing, 0, 1, 1));
+      Export_3Dmodel = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Export_3Dmodel", Export_3Dmodel, 0, 1, 1));
+      Export_solids = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Export_solids", Export_solids, 0, 1, 1));
+      Export_meshing = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Export_meshing", Export_meshing, 0, 1, 1));
       
     }  
   
@@ -15289,6 +15289,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       ANALYSIS_record_JPG = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Record analysis in JPG", ANALYSIS_record_JPG, 0, 1, 1));
       ANALYSIS_record_PNG = int(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Record analysis in PNG", ANALYSIS_record_PNG, 0, 1, 1));
     }
+    
   }    
   else {
 
