@@ -14591,12 +14591,27 @@ void mouseClicked () {
               if (Create_Input_Align == 1) {
                 z += rz;
               }
+              
+              int SOLID_created = 0;
+              
+              
+
+              if ((px == 8) && (py == 8) && (pz == 2)) {
+                SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, 2, rot);
+
+                ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
+                SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+                
+                SOLID_created = 1;
+              }
   
               if ((px == 8) && (py == 8) && (pz == 8)) {
                 SOLARCHVISION_add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, rot);
 
                 ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
                 SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+                
+                SOLID_created = 1;
               }
               
               if (((px == 1) && (py == 1) && (pz == 1)) || (Create_Soild_House == 1)) {
@@ -14668,12 +14683,17 @@ void mouseClicked () {
 
                 ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
                 SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+                
+                SOLID_created = 1;
               }
-              else if ((px != 8) || (py != 8) || (pz != 8)) {
+              
+              if (SOLID_created == 0) {
                 SOLARCHVISION_add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, SolidSurface_TESELATION, rot);
 
                 ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
                 SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+                
+                SOLID_created = 1;
               }
               
               SOLARCHVISION_calculate_ParametricGeometries_Field();  
