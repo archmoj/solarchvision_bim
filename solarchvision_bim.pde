@@ -1273,8 +1273,6 @@ void draw () {
 
           WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
           WORLD_Update = 1; 
-          WIN3D_Update = 1;
-          GRAPHS_Update = 1;
         }
         
        
@@ -14524,8 +14522,15 @@ void mouseClicked () {
         float mouse_lon = 360.0 * ((mouseX - WORLD_CX_View) * WORLD_VIEW_ScaleX / WORLD_X_View - 0.5) + WORLD_VIEW_OffsetX;
         float mouse_lat = -180.0 * ((mouseY - WORLD_CY_View) * WORLD_VIEW_ScaleY / WORLD_Y_View - 0.5) + WORLD_VIEW_OffsetY;
         
+        pre_LocationLatitude = LocationLatitude;
+        pre_LocationLongitude = LocationLongitude;
+        
         LocationLatitude = mouse_lat;
         LocationLongitude = mouse_lon;
+        
+        if (mouseButton == LEFT) {
+          if ((pre_LocationLatitude != LocationLatitude) || (pre_LocationLongitude != LocationLongitude)) WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
+        }  
         
         WORLD_Update = 1;
       } 
@@ -14888,6 +14893,9 @@ class SOLARCHVISION_Spinner {
     y_Plot = y;
     new_value = v;
     
+    if (new_value < min_v) new_value = max_v; 
+    if (new_value > max_v) new_value = min_v;    
+    
     float cx, cy, cr;
     float w1, w2, h, o, t_o; 
     
@@ -15213,9 +15221,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
     Create_Input_Orientation = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Orientation" , Create_Input_Orientation, 0, 360, 15);
     
-    Create_Input_Length = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Length" , Create_Input_Length, -100, 100, 5); 
-    Create_Input_Width = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Width" , Create_Input_Width, -100, 100, 5);
-    Create_Input_Height = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Height" , Create_Input_Height, -100, 100, 5);    
+    Create_Input_Length = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Length" , Create_Input_Length, -100, 100, 1); 
+    Create_Input_Width = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Width" , Create_Input_Width, -100, 100, 1);
+    Create_Input_Height = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Height" , Create_Input_Height, -100, 100, 1);    
 
     Create_Input_Volume = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);
     
