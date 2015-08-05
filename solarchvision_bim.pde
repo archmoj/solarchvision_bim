@@ -14954,22 +14954,49 @@ class SOLARCHVISION_Spinner {
     if (new_value < min_v) new_value = max_v; 
     if (new_value > max_v) new_value = min_v; 
     
-    if (new_value != v) {
-      if (update1 != 0) GRAPHS_Update = 1;
-      if (update2 != 0) WIN3D_Update = 1;
-      if (update3 != 0) WORLD_Update = 1;
-    }
-    
+
 
     strokeWeight(0); 
     stroke(191); 
     fill(191);
     rect(x - (w1 + w2) - o, y - (h / 2) - o, (w1 + w2) + 2 * o, h + 2 * o);
 
-    strokeWeight(2); 
-    stroke(0); 
+    stroke(255); 
     fill(255);
     rect(x - w1, y - (h / 2), w1, h);
+
+    float q = 0;
+    
+    if (max_v - min_v > 0.001) {
+       q = (new_value) / (max_v - min_v);
+    }
+      
+    if (isInside(X_clicked, Y_clicked, x - w1, y - (h / 2), x, y + (h / 2)) == 1) {
+      
+      q = 1;
+
+      if (max_v - min_v > 0.001) {
+         q = (X_clicked - (x - w1)) / w1;
+      }
+      
+      new_value = min_v + q * (max_v - min_v);
+
+      if (new_value < min_v) new_value = max_v; 
+      if (new_value > max_v) new_value = min_v;
+     
+      ROLLOUT_Update = 1; 
+    }
+    
+    strokeWeight(0); 
+    stroke(191,255,191); 
+    fill(191,255,191);
+    rect(x - w1, y - (h / 2), q * w1, h);          
+    
+    
+    strokeWeight(2); 
+    stroke(0); 
+    noFill();
+    rect(x - w1, y - (h / 2), w1, h);    
 
     strokeWeight(0);
     stroke(0); 
@@ -14992,6 +15019,11 @@ class SOLARCHVISION_Spinner {
     //textAlign(RIGHT, CENTER); text(caption + ":", x - w1 - t_o, y - t_o);
     textAlign(LEFT, CENTER); text(caption + ":", x - w1 - w2 + t_o, y - t_o);
 
+    if (new_value != v) {
+      if (update1 != 0) GRAPHS_Update = 1;
+      if (update2 != 0) WIN3D_Update = 1;
+      if (update3 != 0) WORLD_Update = 1;
+    }
 
     return new_value;
   }
