@@ -33,6 +33,16 @@ int Create_Mesh_House = 0;
 int Create_Mesh_Parametric = 0;
 
 
+int Display_SWOB_points = 1;
+int Display_SWOB_nearest = 1;
+
+int Display_NAEFS_points = 0;
+int Display_NAEFS_nearest = 1;
+
+int Display_CWEEDS_points = 0;
+int Display_CWEEDS_nearest = 1;
+
+
 //-------------------------------
 
 float Field_Power = 1.0; // 1/2/3
@@ -1497,7 +1507,9 @@ void SOLARCHVISION_draw_WORLD () {
   }   
   
   for (int f = 0; f < STATION_SWOB_INFO.length; f += 1) {
-    float draw_info = 1;
+    float draw_info = 0;
+  
+    if (Display_SWOB_points == 1) draw_info = 1;
   
     float _lat = float(STATION_SWOB_INFO[f][3]);
     float _lon = float(STATION_SWOB_INFO[f][4]); 
@@ -1536,7 +1548,9 @@ void SOLARCHVISION_draw_WORLD () {
   float nearest_STATION_NAEFS_dist = FLOAT_undefined;
             
   for (int f = 0; f < STATION_NAEFS_INFO.length; f += 1) {
-    float draw_info = 1;
+    float draw_info = 0;
+  
+    if (Display_NAEFS_points == 1) draw_info = 1;
   
     float _lat = float(STATION_NAEFS_INFO[f][1]);
     float _lon = float(STATION_NAEFS_INFO[f][2]); 
@@ -1565,7 +1579,7 @@ void SOLARCHVISION_draw_WORLD () {
     
   }
   
-  {   
+  if (Display_NAEFS_nearest == 1) {   
       int f = nearest_STATION_NAEFS;
     
       float _lat = float(STATION_NAEFS_INFO[f][1]);
@@ -1588,8 +1602,10 @@ void SOLARCHVISION_draw_WORLD () {
 
             
   for (int f = 0; f < STATION_CWEEDS_INFO.length; f += 1) {
-    float draw_info = 1;
+    float draw_info = 0;
   
+    if (Display_CWEEDS_points == 1) draw_info = 1;
+    
     float _lat = float(STATION_CWEEDS_INFO[f][3]);
     float _lon = float(STATION_CWEEDS_INFO[f][4]); 
     if (_lon > 180) _lon -= 360; // << important!
@@ -9618,7 +9634,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                   WIN3D_ZOOM_coordinate = 60;  // <<<<<<<<<
                   WIN3D_Update = 1; break;                  
           
-        case '2' :display_allyObject2D = (display_allyObject2D + 1) % 2; WIN3D_Update = 1; break;
+        case '2' :Display_Trees_People = (Display_Trees_People + 1) % 2; WIN3D_Update = 1; break;
  
       }
     }    
@@ -10380,7 +10396,7 @@ float[][] allObject2D_XYZS = {{0,0,0}};
 int[] allObject2D_MAP = {0};
 int allObject2D_num = 0; 
 
-int display_allyObject2D = 0;
+int Display_Trees_People = 0;
 
 int addToVertices (float x, float y, float z) {
   
@@ -12733,7 +12749,7 @@ void SOLARCHVISION_draw_objects () {
   
   //println("Camera:", nf(CAM_x,0,4), nf(CAM_y,0,4), nf(CAM_z,0,4));
 
-  if (display_allyObject2D != 0) {
+  if (Display_Trees_People != 0) {
     for (int i = 1; i <= allObject2D_num; i++) {
       
       WIN3D_Diagrams.beginShape();
@@ -14883,7 +14899,7 @@ class SOLARCHVISION_Spinner {
 }
 
 String[][] ROLLOUTS = {
-                        {"Location & Data", "General", "Point", "3D-Environment"}, 
+                        {"Location & Data", "General", "Point", "Environment"}, 
                         {"Geometries & Space", "General", "Solids", "Meshes"}, 
                         {"Time & Scenarios", "General"}, 
                         {"Visualization Options", "General"},
@@ -14973,12 +14989,19 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
   if (ROLLOUT_parent == 0) { // Location & Data
 
-    WORLD_VIEW_Auto = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Map Auto Fit", WORLD_VIEW_Auto, 0, 1, 1));
-    WORLD_VIEW_Number = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Map Viewport", WORLD_VIEW_Number, 0, number_of_WORLD_viewports - 1, 1));
-  
     STATION_NUMBER = int(MySpinner.update(X_spinner, Y_spinner, 1,1,1, "Station", STATION_NUMBER, 0, DEFINED_STATIONS.length - 1, 1));
+    
+    if (ROLLOUT_child == 1) { // General
+      Load_ENSEMBLE = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_ENSEMBLE" , Load_ENSEMBLE, 0, 1, 1));
+      Load_OBSERVED = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_OBSERVED" , Load_OBSERVED, 0, 1, 1));
+      Load_CLIMATE_WY2 = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_CLIMATE_WY2" , Load_CLIMATE_WY2, 0, 1, 1));
+      Load_CLIMATE_EPW = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_CLIMATE_EPW" , Load_CLIMATE_EPW, 0, 1, 1));
+    }
 
     if (ROLLOUT_child == 2) { // Point
+
+      WORLD_VIEW_Auto = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Map Auto Fit", WORLD_VIEW_Auto, 0, 1, 1));
+      WORLD_VIEW_Number = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Map Viewport", WORLD_VIEW_Number, 0, number_of_WORLD_viewports - 1, 1));
 
       LocationLatitude = MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Latitude", LocationLatitude, -85, 85, LocationLatitude_step);
       LocationLongitude = MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Longitude", LocationLongitude, -180, 180, LocationLongitude_step);
@@ -14987,18 +15010,24 @@ void SOLARCHVISION_draw_ROLLOUT () {
       LocationLatitude_step = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Latitude_step", LocationLatitude_step, 0.001, 10, -2);
       LocationLongitude_step = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Longitude_step", LocationLongitude_step, 0.001, 10, -2);
       LocationElevation_step = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Elevation_step", LocationElevation_step, 0.125, 1024, -2);
+      
+      Display_SWOB_points = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_SWOB_points" , Display_SWOB_points, 0, 1, 1));
+      Display_SWOB_nearest = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_SWOB_nearest" , Display_SWOB_nearest, 0, 1, 1));
+      
+      Display_NAEFS_points = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_NAEFS_points" , Display_NAEFS_points, 0, 1, 1));
+      Display_NAEFS_nearest = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_NAEFS_nearest" , Display_NAEFS_nearest, 0, 1, 1));
+
+      Display_CWEEDS_points = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_CWEEDS_points" , Display_CWEEDS_points, 0, 1, 1));
+      Display_CWEEDS_nearest = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_CWEEDS_nearest" , Display_CWEEDS_nearest, 0, 1, 1));      
     }
     
-    Load_CLIMATE_EPW = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_CLIMATE_EPW" , Load_CLIMATE_EPW, 0, 1, 1));
-    Load_CLIMATE_WY2 = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_CLIMATE_WY2" , Load_CLIMATE_WY2, 0, 1, 1));
-    Load_ENSEMBLE = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_ENSEMBLE" , Load_ENSEMBLE, 0, 1, 1));
-    Load_OBSERVED = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_OBSERVED" , Load_OBSERVED, 0, 1, 1));
-
     if (ROLLOUT_child == 3) { // Environment
    
       Load_LAND = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Load_LAND" , Load_LAND, 0, 1, 1));
       Display_LAND = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Display_LAND" , Display_LAND, 0, 1, 1));
       Skip_LAND_Center = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Skip_LAND_Center" , Skip_LAND_Center, 0, LAND_n_I - 1, 1));     
+      
+      Display_Trees_People = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Display_Trees_People" , Display_Trees_People, 0, 1, 1));
       
       Load_URBAN = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Load_URBAN" , Load_URBAN, 0, 1, 1));
       Display_URBAN = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Display_URBAN" , Display_URBAN, 0, 1, 1));
@@ -15008,6 +15037,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
                   
       SKY3D_scale = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_scale" , SKY3D_scale, 100, 10000, -2);
       SKY3D_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_TESELATION" , SKY3D_TESELATION, 0, 5, 1));
+      
+      
     }
     
 
