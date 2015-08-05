@@ -14779,8 +14779,8 @@ class SOLARCHVISION_Spinner {
     //w1 = 32.5 * ROLLOUT_S_View;
     //w2 = 142.5 * ROLLOUT_S_View;
     
-    w1 = 62.5 * ROLLOUT_S_View;
-    w2 = 175 * ROLLOUT_S_View;
+    w1 = 100 * ROLLOUT_S_View;
+    w2 = 200 * ROLLOUT_S_View;
     
     h = 16 * ROLLOUT_S_View;
     o = 2 * ROLLOUT_S_View;
@@ -14883,11 +14883,11 @@ class SOLARCHVISION_Spinner {
 }
 
 String[][] ROLLOUTS = {
-                        {"Location & Data", "General"}, 
+                        {"Location & Data", "General", "Point", "3D-Environment"}, 
                         {"Geometries & Space", "General", "Solids", "Meshes"}, 
                         {"Time & Scenarios", "General"}, 
+                        {"Visualization Options", "General"},
                         {"Post-Processing", "General"}, 
-                        {"Graph Options", "General"},
                         {"Other Products", "General"}
                       };
 
@@ -14907,8 +14907,12 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
   float h = 20 * ROLLOUT_S_View;
 
-  strokeWeight(0);
+  X_spinner = ROLLOUT_CX_View;
+  Y_spinner = ROLLOUT_CY_View;
   
+  X_spinner += 305 * ROLLOUT_S_View;
+  Y_spinner += 5 * ROLLOUT_S_View;
+
   if (ROLLOUT_parent >= ROLLOUTS.length) {
     ROLLOUT_parent = ROLLOUTS.length - 1;
   }
@@ -14918,36 +14922,53 @@ void SOLARCHVISION_draw_ROLLOUT () {
   }  
   
   if (ROLLOUT_parent < ROLLOUTS.length) {
-    stroke(0); 
-    fill(0);
-    textSize(20 * ROLLOUT_S_View);
-    textAlign(LEFT, CENTER);    
-    text(nf(1 + ROLLOUT_parent, 0) + ":" + ROLLOUTS[ROLLOUT_parent][0], ROLLOUT_CX_View + 0.5 * ROLLOUT_X_View, ROLLOUT_CY_View + 10 * ROLLOUT_S_View);
     
-    for (int i = 1; i < ROLLOUTS[ROLLOUT_parent].length; i++) {
+    for (int i = 0; i < ROLLOUTS.length; i++) {
     
-      textSize(16 * ROLLOUT_S_View);
-      textAlign(LEFT, CENTER);        
-      
-      if (i == ROLLOUT_child) {
+      if (i == ROLLOUT_parent) {
         stroke(0); 
         fill(0);
+        textSize(15 * ROLLOUT_S_View);
       }
       else{
         stroke(127); 
         fill(127);
+        textSize(15 * ROLLOUT_S_View);
       }
-      text(nf(i, 0) + ":" + ROLLOUTS[ROLLOUT_parent][i], ROLLOUT_CX_View + (100 * (i - 1) + 10) * ROLLOUT_S_View, ROLLOUT_CY_View + 35 * ROLLOUT_S_View);
-
+      textAlign(LEFT, CENTER);    
+      text(nf(i + 1, 0) + ":" + ROLLOUTS[i][0], ROLLOUT_CX_View + (150 * (i % 2) + 10) * ROLLOUT_S_View, Y_spinner);
+      
+      Y_spinner += (i % 2) * 12.5 * ROLLOUT_S_View;
     }
+    
+    strokeWeight(2); 
+    stroke(63); 
+    fill(63);
+    rect(ROLLOUT_CX_View, Y_spinner, ROLLOUT_X_View, 17.5 * ROLLOUT_S_View);
+    strokeWeight(0);    
+
+    Y_spinner += 5 * ROLLOUT_S_View;
+    
+    for (int i = 1; i < ROLLOUTS[ROLLOUT_parent].length; i++) {
+
+      if (i == ROLLOUT_child) {
+        stroke(255,127,0); 
+        fill(255,127,0);
+        textSize(15 * ROLLOUT_S_View);
+      }
+      else{
+        stroke(255); 
+        fill(255);
+        textSize(12.5 * ROLLOUT_S_View);
+      }
+      textAlign(LEFT, CENTER);              
+      text("[" + nf(i, 0) + "]" + ROLLOUTS[ROLLOUT_parent][i], ROLLOUT_CX_View + (100 * (i - 1) + 10) * ROLLOUT_S_View, Y_spinner);
+    }
+    Y_spinner += 25 * ROLLOUT_S_View;
     
   }
 
-  X_spinner = ROLLOUT_CX_View;
-  Y_spinner = ROLLOUT_CY_View;
-  
-  X_spinner += 250 * ROLLOUT_S_View;
-  Y_spinner += 65 * ROLLOUT_S_View;
+
 
 
   if (ROLLOUT_parent == 0) { // Location & Data
@@ -14957,31 +14978,37 @@ void SOLARCHVISION_draw_ROLLOUT () {
   
     STATION_NUMBER = int(MySpinner.update(X_spinner, Y_spinner, 1,1,1, "Station", STATION_NUMBER, 0, DEFINED_STATIONS.length - 1, 1));
 
-    LocationLatitude = MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Latitude", LocationLatitude, -85, 85, LocationLatitude_step);
-    LocationLongitude = MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Longitude", LocationLongitude, -180, 180, LocationLongitude_step);
-    LocationElevation = MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Elevation", LocationElevation, -100, 8000, LocationElevation_step);
-    
-    LocationLatitude_step = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Latitude_step", LocationLatitude_step, 0.001, 10, -2);
-    LocationLongitude_step = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Longitude_step", LocationLongitude_step, 0.001, 10, -2);
-    LocationElevation_step = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Elevation_step", LocationElevation_step, 0.125, 1024, -2);
+    if (ROLLOUT_child == 2) { // Point
 
+      LocationLatitude = MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Latitude", LocationLatitude, -85, 85, LocationLatitude_step);
+      LocationLongitude = MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Longitude", LocationLongitude, -180, 180, LocationLongitude_step);
+      LocationElevation = MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Elevation", LocationElevation, -100, 8000, LocationElevation_step);
+
+      LocationLatitude_step = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Latitude_step", LocationLatitude_step, 0.001, 10, -2);
+      LocationLongitude_step = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Longitude_step", LocationLongitude_step, 0.001, 10, -2);
+      LocationElevation_step = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Elevation_step", LocationElevation_step, 0.125, 1024, -2);
+    }
+    
     Load_CLIMATE_EPW = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_CLIMATE_EPW" , Load_CLIMATE_EPW, 0, 1, 1));
     Load_CLIMATE_WY2 = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_CLIMATE_WY2" , Load_CLIMATE_WY2, 0, 1, 1));
     Load_ENSEMBLE = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_ENSEMBLE" , Load_ENSEMBLE, 0, 1, 1));
     Load_OBSERVED = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_OBSERVED" , Load_OBSERVED, 0, 1, 1));
+
+    if (ROLLOUT_child == 3) { // Environment
    
-    Load_LAND = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Load_LAND" , Load_LAND, 0, 1, 1));
-    Display_LAND = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Display_LAND" , Display_LAND, 0, 1, 1));
-    Skip_LAND_Center = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Skip_LAND_Center" , Skip_LAND_Center, 0, LAND_n_I - 1, 1));     
-    
-    Load_URBAN = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Load_URBAN" , Load_URBAN, 0, 1, 1));
-    Display_URBAN = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Display_URBAN" , Display_URBAN, 0, 1, 1));
-    
-    Display_SUN3D = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Display_SUN3D" , Display_SUN3D, 0, 1, 1));
-    Display_SKY3D = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Display_SKY3D" , Display_SKY3D, 0, 1, 1));
-                
-    SKY3D_scale = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_scale" , SKY3D_scale, 100, 10000, -2);
-    SKY3D_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_TESELATION" , SKY3D_TESELATION, 0, 5, 1));
+      Load_LAND = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Load_LAND" , Load_LAND, 0, 1, 1));
+      Display_LAND = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Display_LAND" , Display_LAND, 0, 1, 1));
+      Skip_LAND_Center = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Skip_LAND_Center" , Skip_LAND_Center, 0, LAND_n_I - 1, 1));     
+      
+      Load_URBAN = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Load_URBAN" , Load_URBAN, 0, 1, 1));
+      Display_URBAN = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Display_URBAN" , Display_URBAN, 0, 1, 1));
+      
+      Display_SUN3D = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Display_SUN3D" , Display_SUN3D, 0, 1, 1));
+      Display_SKY3D = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Display_SKY3D" , Display_SKY3D, 0, 1, 1));
+                  
+      SKY3D_scale = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_scale" , SKY3D_scale, 100, 10000, -2);
+      SKY3D_TESELATION = int(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_TESELATION" , SKY3D_TESELATION, 0, 5, 1));
+    }
     
 
   }
@@ -15073,26 +15100,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     H_layer_option = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Climate filter option" , H_layer_option, 0, 7, 1));
     Sample_Year = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Single year" , Sample_Year, 1953, 2005, 1));    
   }  
-  else if (ROLLOUT_parent == 3) { // Post-Processing
-  
-    update_impacts = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Update impacts", update_impacts, 0, 1, 1));
-      
-    impacts_source = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Impacts Source", impacts_source, 0, 3, 1));
-    impact_layer = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Impact Min/50%/Max", impact_layer, 0, 8, 1));
-    
-    develop_option = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Develop layer" , develop_option, 0, 12, 1));
-    develop_per_day = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Dev. per day option" , develop_per_day, 0, 3, 1));
-  
-    join_hour_numbers = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Trend period hours", join_hour_numbers, 1, 24 * 16, 1));
-    join_type = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Weighted/equal trend", join_type, -1, 1, 2));
-  
-    Climatic_solar_model = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Climatic solar model", Climatic_solar_model, 0, 1, 1));
-    Climatic_weather_model = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Climatic weather model", Climatic_weather_model, 0, 2, 1));
-
-    Angle_inclination = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Inclination angle", Angle_inclination, 0, 90, 5));
-    Angle_orientation = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Orientation angle", Angle_orientation, 0, 360, 15));      
-  }  
-  else if (ROLLOUT_parent == 4) { // Graph Options
+  else if (ROLLOUT_parent == 3) { // Visualization Options
 
     draw_data_lines = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Draw data", draw_data_lines, 0, 1, 1));
     draw_sorted = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Draw sorted", draw_sorted, 0, 1, 1));
@@ -15114,6 +15122,25 @@ void SOLARCHVISION_draw_ROLLOUT () {
     COLOR_STYLE = int(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Color scheme", COLOR_STYLE, 0, (n_COLOR_STYLE - 1), 1));  
   
   }
+  else if (ROLLOUT_parent == 4) { // Post-Processing
+  
+    update_impacts = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Update impacts", update_impacts, 0, 1, 1));
+      
+    impacts_source = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Impacts Source", impacts_source, 0, 3, 1));
+    impact_layer = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Impact Min/50%/Max", impact_layer, 0, 8, 1));
+    
+    develop_option = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Develop layer" , develop_option, 0, 12, 1));
+    develop_per_day = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Dev. per day option" , develop_per_day, 0, 3, 1));
+  
+    join_hour_numbers = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Trend period hours", join_hour_numbers, 1, 24 * 16, 1));
+    join_type = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Weighted/equal trend", join_type, -1, 1, 2));
+  
+    Climatic_solar_model = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Climatic solar model", Climatic_solar_model, 0, 1, 1));
+    Climatic_weather_model = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Climatic weather model", Climatic_weather_model, 0, 2, 1));
+
+    Angle_inclination = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Inclination angle", Angle_inclination, 0, 90, 5));
+    Angle_orientation = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Orientation angle", Angle_orientation, 0, 360, 15));      
+  }   
   else if (ROLLOUT_parent == 5) { // Other Products
 
     GRAPHS_record_PDF = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Record PDF", GRAPHS_record_PDF, 0, 1, 1));
