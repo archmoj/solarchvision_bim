@@ -349,17 +349,40 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-//int Pallet_ACTIVE = 8, Pallet_ACTIVE_DIR = -1;
-//int Pallet_ACTIVE = -1, Pallet_ACTIVE_DIR = -1;
-//int Pallet_ACTIVE = 6, Pallet_ACTIVE_DIR = -1;
-//int Pallet_ACTIVE = 14, Pallet_ACTIVE_DIR = 1;
-//int Pallet_ACTIVE = 12, Pallet_ACTIVE_DIR = 1;
-int Pallet_ACTIVE = 15, Pallet_ACTIVE_DIR = 1;
-//int Pallet_ACTIVE = -1, Pallet_ACTIVE_DIR = 2;
-//int Pallet_ACTIVE = -1, Pallet_ACTIVE_DIR = -2;
+
+int SKY3D_Pallet_ACTIVE = 16;
+int SKY3D_Pallet_ACTIVE_DIR = 1;
+float SKY3D_Pallet_ACTIVE_MLT = 1;
+
+int SKY3D_Pallet_PASSIVE = 18; 
+int SKY3D_Pallet_PASSIVE_DIR = -1;  
+float SKY3D_Pallet_PASSIVE_MLT = 1;
+
+int OBJECTS_Pallet_ACTIVE = 15;
+int OBJECTS_Pallet_ACTIVE_DIR = 1;
+float OBJECTS_Pallet_ACTIVE_MLT = 1;
+
+int OBJECTS_Pallet_PASSIVE = -1; 
+int OBJECTS_Pallet_PASSIVE_DIR = 1;  
+float OBJECTS_Pallet_PASSIVE_MLT = 1;
 
 
-int Pallet_PASSIVE = 1, Pallet_PASSIVE_DIR = 1;
+float GRAPHS_Pallet_ACTIVE_MLT = 1;
+float GRAPHS_Pallet_PASSIVE_MLT = 1;
+
+//int GRAPHS_Pallet_ACTIVE = 8, GRAPHS_Pallet_ACTIVE_DIR = -1;
+//int GRAPHS_Pallet_ACTIVE = -1, GRAPHS_Pallet_ACTIVE_DIR = -1;
+//int GRAPHS_Pallet_ACTIVE = 6, GRAPHS_Pallet_ACTIVE_DIR = -1;
+//int GRAPHS_Pallet_ACTIVE = 14, GRAPHS_Pallet_ACTIVE_DIR = 1;
+//int GRAPHS_Pallet_ACTIVE = 12, GRAPHS_Pallet_ACTIVE_DIR = 1;
+int GRAPHS_Pallet_ACTIVE = 15, GRAPHS_Pallet_ACTIVE_DIR = 1;
+//int GRAPHS_Pallet_ACTIVE = -1, GRAPHS_Pallet_ACTIVE_DIR = 2;
+//int GRAPHS_Pallet_ACTIVE = -1, GRAPHS_Pallet_ACTIVE_DIR = -2;
+
+
+int GRAPHS_Pallet_PASSIVE = 1, GRAPHS_Pallet_PASSIVE_DIR = 1;
+
+
 
 int Impact_ACTIVE = 1;
 int Impact_PASSIVE = 2;
@@ -6941,10 +6964,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     int PAL_DIR = 1;
     
     if (Impact_TYPE == Impact_SPD_DIR) {  
-      PAL_TYPE = Pallet_ACTIVE; PAL_DIR = Pallet_ACTIVE_DIR;
+      PAL_TYPE = GRAPHS_Pallet_ACTIVE; PAL_DIR = GRAPHS_Pallet_ACTIVE_DIR;
     }
     if (Impact_TYPE == Impact_SPD_DIR_TMP) {  
-      PAL_TYPE = Pallet_ACTIVE; PAL_DIR = Pallet_ACTIVE_DIR;
+      PAL_TYPE = GRAPHS_Pallet_ACTIVE; PAL_DIR = GRAPHS_Pallet_ACTIVE_DIR;
     }             
 
     float _Multiplier = 1; 
@@ -7203,17 +7226,17 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     int PAL_DIR = 1;
     
     if (Impact_TYPE == Impact_ACTIVE) {
-      PAL_TYPE = Pallet_ACTIVE; PAL_DIR = Pallet_ACTIVE_DIR;  
+      PAL_TYPE = GRAPHS_Pallet_ACTIVE; PAL_DIR = GRAPHS_Pallet_ACTIVE_DIR;  
       //PAL_TYPE = 15; PAL_DIR = 1;
       
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
+      PAL_TYPE = GRAPHS_Pallet_PASSIVE; PAL_DIR = GRAPHS_Pallet_PASSIVE_DIR;
     }             
     
     float _Multiplier = 1; 
-    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; 
-    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02; 
+    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1 * GRAPHS_Pallet_ACTIVE_MLT; 
+    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02 * GRAPHS_Pallet_PASSIVE_MLT; 
 
     //for (int p = 0; p < 3; p += 1) { 
       //int l = 3 * int(impact_layer / 3) + p;
@@ -7741,20 +7764,20 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     int PAL_DIR = 1;
     
     if (Impact_TYPE == Impact_ACTIVE) {  
-      PAL_TYPE = Pallet_ACTIVE; PAL_DIR = Pallet_ACTIVE_DIR;
-      //PAL_TYPE = 13; PAL_DIR = Pallet_ACTIVE_DIR; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      PAL_TYPE = GRAPHS_Pallet_ACTIVE; PAL_DIR = GRAPHS_Pallet_ACTIVE_DIR;
+      //PAL_TYPE = 13; PAL_DIR = GRAPHS_Pallet_ACTIVE_DIR; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       //PAL_TYPE = -1; PAL_DIR = 2;
       //PAL_TYPE = -1; PAL_DIR = -2;
       //PAL_TYPE = 15; PAL_DIR = 1;
       
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
+      PAL_TYPE = GRAPHS_Pallet_PASSIVE; PAL_DIR = GRAPHS_Pallet_PASSIVE_DIR;
     }             
     
     float _Multiplier = 1; 
-    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; //0.1 / 0.75; //0.1; <<<<<<<<<<<<<<<<<<<<<
-    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02; 
+    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1 * GRAPHS_Pallet_ACTIVE_MLT; //0.1 / 0.75; //0.1; <<<<<<<<<<<<<<<<<<<<<
+    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02 * GRAPHS_Pallet_PASSIVE_MLT; 
 
     //for (int p = 0; p < 3; p += 1) { 
       //int l = 3 * int(impact_layer / 3) + p;
@@ -8187,17 +8210,17 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     int PAL_DIR = 1;
     
     if (Impact_TYPE == Impact_ACTIVE) {  
-      PAL_TYPE = Pallet_ACTIVE; PAL_DIR = Pallet_ACTIVE_DIR;
-      //PAL_TYPE = 13; PAL_DIR = Pallet_ACTIVE_DIR; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      PAL_TYPE = GRAPHS_Pallet_ACTIVE; PAL_DIR = GRAPHS_Pallet_ACTIVE_DIR;
+      //PAL_TYPE = 13; PAL_DIR = GRAPHS_Pallet_ACTIVE_DIR; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       //PAL_TYPE = -1; PAL_DIR = 2;
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
+      PAL_TYPE = GRAPHS_Pallet_PASSIVE; PAL_DIR = GRAPHS_Pallet_PASSIVE_DIR;
     }             
 
     float _Multiplier = 1; 
-    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0;
-    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05;
+    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * GRAPHS_Pallet_ACTIVE_MLT;
+    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * GRAPHS_Pallet_PASSIVE_MLT;
 
     SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
 
@@ -8467,17 +8490,17 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     int PAL_DIR = 1;
     
     if (Impact_TYPE == Impact_ACTIVE) {  
-      PAL_TYPE = Pallet_ACTIVE; PAL_DIR = Pallet_ACTIVE_DIR;
-      //PAL_TYPE = 13; PAL_DIR = Pallet_ACTIVE_DIR; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      PAL_TYPE = GRAPHS_Pallet_ACTIVE; PAL_DIR = GRAPHS_Pallet_ACTIVE_DIR;
+      //PAL_TYPE = 13; PAL_DIR = GRAPHS_Pallet_ACTIVE_DIR; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       //PAL_TYPE = -1; PAL_DIR = 2;
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
+      PAL_TYPE = GRAPHS_Pallet_PASSIVE; PAL_DIR = GRAPHS_Pallet_PASSIVE_DIR;
     }             
 
     float _Multiplier = 1; 
-    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0;
-    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05;
+    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * GRAPHS_Pallet_ACTIVE_MLT;
+    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * GRAPHS_Pallet_PASSIVE_MLT;
 
     SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
 
@@ -11929,23 +11952,20 @@ void SOLARCHVISION_draw_SKY3D () {
         int PAL_TYPE = 0; 
         int PAL_DIR = 1;
         
-        if (Impact_TYPE == Impact_ACTIVE) {  
-          //PAL_TYPE = 15; PAL_DIR = 1;
-          PAL_TYPE = 16; PAL_DIR = 1;
+        if (Impact_TYPE == Impact_ACTIVE) {
+          PAL_TYPE = SKY3D_Pallet_ACTIVE; PAL_DIR = SKY3D_Pallet_ACTIVE_DIR;  
+          //PAL_TYPE = 16; PAL_DIR = 1;
+          
           
         }
-        if (Impact_TYPE == Impact_PASSIVE) {  
-          //PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
-          PAL_TYPE = 18; PAL_DIR = -1;
-          //PAL_TYPE = 18; PAL_DIR = 1;
-          //PAL_TYPE = 17; PAL_DIR = 1;
-          //PAL_TYPE = 17; PAL_DIR = -1;
-          
+        if (Impact_TYPE == Impact_PASSIVE) {
+          PAL_TYPE = SKY3D_Pallet_PASSIVE; PAL_DIR = SKY3D_Pallet_PASSIVE_DIR;  
+          //PAL_TYPE = 18; PAL_DIR = -1;
         }             
         
         float _Multiplier = 1; 
-        if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.2; //_Multiplier = 0.1; // <<<<<<<<<<< 
-        if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02;             
+        if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.2 * SKY3D_Pallet_PASSIVE_MLT; //_Multiplier = 0.1; // <<<<<<<<<<< 
+        if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02 * SKY3D_Pallet_PASSIVE_MLT;             
   
         int Teselation = 0;
         
@@ -12313,18 +12333,18 @@ void SOLARCHVISION_draw_objects () {
           int PAL_TYPE = 0; 
           int PAL_DIR = 1;
           
-          if (Impact_TYPE == Impact_ACTIVE) {  
-            PAL_TYPE = 15; PAL_DIR = 1;
-            
+          if (Impact_TYPE == Impact_ACTIVE) {
+            PAL_TYPE = OBJECTS_Pallet_ACTIVE; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
+            //PAL_TYPE = 15; PAL_DIR = 1;
           }
           if (Impact_TYPE == Impact_PASSIVE) {  
-            //PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
-            PAL_TYPE = -1; PAL_DIR = 1;
+            PAL_TYPE = OBJECTS_Pallet_PASSIVE; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+            //PAL_TYPE = -1; PAL_DIR = 1;
           }             
           
           float _Multiplier = 1; 
-          if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; 
-          if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02;            
+          if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1 * OBJECTS_Pallet_ACTIVE_MLT; 
+          if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02 * OBJECTS_Pallet_PASSIVE_MLT;            
     
           int Teselation = 0;
           
@@ -12408,18 +12428,19 @@ void SOLARCHVISION_draw_objects () {
       
       int PAL_TYPE = 0; 
       int PAL_DIR = 1;
-      
-      if (Impact_TYPE == Impact_ACTIVE) {  
-        PAL_TYPE = 15; PAL_DIR = 1;
-        
+
+      if (Impact_TYPE == Impact_ACTIVE) {
+        PAL_TYPE = OBJECTS_Pallet_ACTIVE; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
+        //PAL_TYPE = 15; PAL_DIR = 1;
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
+        PAL_TYPE = OBJECTS_Pallet_PASSIVE; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+        //PAL_TYPE = -1; PAL_DIR = 1;
       }             
       
       float _Multiplier = 1; 
-      if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; 
-      if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02;       
+      if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1 * OBJECTS_Pallet_ACTIVE_MLT; 
+      if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02 * OBJECTS_Pallet_PASSIVE_MLT;     
 
       int N_baked = 0;
       
@@ -12519,18 +12540,19 @@ void SOLARCHVISION_draw_objects () {
       
       int PAL_TYPE = 0; 
       int PAL_DIR = 1;
-      
-      if (Impact_TYPE == Impact_ACTIVE) {  
-        PAL_TYPE = 15; PAL_DIR = 1;
-        
+
+      if (Impact_TYPE == Impact_ACTIVE) {
+        PAL_TYPE = OBJECTS_Pallet_ACTIVE; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
+        //PAL_TYPE = 15; PAL_DIR = 1;
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        PAL_TYPE = Pallet_PASSIVE; PAL_DIR = Pallet_PASSIVE_DIR;
+        PAL_TYPE = OBJECTS_Pallet_PASSIVE; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+        //PAL_TYPE = -1; PAL_DIR = 1;
       }             
       
       float _Multiplier = 1; 
-      if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1; 
-      if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02; 
+      if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1 * OBJECTS_Pallet_ACTIVE_MLT; 
+      if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02 * OBJECTS_Pallet_PASSIVE_MLT;     
 
       int[][] PROCESSED_DAILY_SCENARIOS = {{}};  
   
@@ -15333,18 +15355,33 @@ void SOLARCHVISION_draw_ROLLOUT () {
     }
     if (ROLLOUT_child == 3) { // Colors
     
-      COLOR_STYLE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Hourly color scheme", COLOR_STYLE, -1, (n_COLOR_STYLE - 1), 1), 1));
-    
-      Pallet_ACTIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. opt. (Active)", Pallet_ACTIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
-      Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. dir. (Active)", Pallet_ACTIVE_DIR, -2, 2, 1), 1));
-      
-      Pallet_PASSIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. opt. (Passive)", Pallet_PASSIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
-      Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. dir (Passive)", Pallet_PASSIVE_DIR, -1, 1, 2), 1));
-      
-      
-     
+      //COLOR_STYLE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Hourly color scheme", COLOR_STYLE, -1, (n_COLOR_STYLE - 1), 1), 1));
+   
       GRAPHS_O_scale = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Windrose opacity scale", GRAPHS_O_scale, 1, 100, -pow(2.0, (1.0 / 4.0))); 
-    
+      
+      GRAPHS_Pallet_ACTIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. opt. (Active)", GRAPHS_Pallet_ACTIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      GRAPHS_Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. dir. (Active)", GRAPHS_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
+      GRAPHS_Pallet_ACTIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. mul. (Active)", GRAPHS_Pallet_ACTIVE_MLT, 0.25, 4, -2);
+      
+      GRAPHS_Pallet_PASSIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. opt. (Passive)", GRAPHS_Pallet_PASSIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      GRAPHS_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. dir (Passive)", GRAPHS_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
+      GRAPHS_Pallet_PASSIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. mul. (Passive)", GRAPHS_Pallet_PASSIVE_MLT, 0.25, 4, -2);
+      
+      OBJECTS_Pallet_ACTIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. opt. (Active)", OBJECTS_Pallet_ACTIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      OBJECTS_Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. dir. (Active)", OBJECTS_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
+      OBJECTS_Pallet_ACTIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. mul. (Active)", OBJECTS_Pallet_ACTIVE_MLT, 0.25, 4, -2);
+      
+      OBJECTS_Pallet_PASSIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. opt. (Passive)", OBJECTS_Pallet_PASSIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      OBJECTS_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. dir (Passive)", OBJECTS_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
+      OBJECTS_Pallet_PASSIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. mul. (Passive)", OBJECTS_Pallet_PASSIVE_MLT, 0.25, 4, -2);
+
+      SKY3D_Pallet_ACTIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. opt. (Active)", SKY3D_Pallet_ACTIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      SKY3D_Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. dir. (Active)", SKY3D_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
+      SKY3D_Pallet_ACTIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. mul. (Active)", SKY3D_Pallet_ACTIVE_MLT, 0.25, 4, -2);
+      
+      SKY3D_Pallet_PASSIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. opt. (Passive)", SKY3D_Pallet_PASSIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      SKY3D_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. dir (Passive)", SKY3D_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
+      SKY3D_Pallet_PASSIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. mul. (Passive)", SKY3D_Pallet_PASSIVE_MLT, 0.25, 4, -2);    
     }      
   
   }
