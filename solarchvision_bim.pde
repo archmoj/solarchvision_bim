@@ -74,8 +74,8 @@ float interpolation_weight = 0.5;// 0 = linear distance interpolation, 1 = squar
 float GlobeRES = 2.5; //1, 2.5, 5
 
 
-int Climatic_solar_model = 0; //                                   Used for solar radiation only
-int Climatic_weather_model = 1; // 0:linear 1:average 2:sky-based. Used for some parameters namely: air temperature, humidity
+int Climatic_solar_forecast = 0; //                                   Used for solar radiation only
+int Climatic_weather_forecast = 1; // 0:linear 1:average 2:sky-based. Used for some parameters namely: air temperature, humidity
 
 int automated = 0; //0: User interface, 1: Automatic
 
@@ -524,8 +524,8 @@ int pre_MONTH;
 int pre_DAY;
 int pre_HOUR;
 float pre_DATE;
-int pre_Climatic_solar_model;
-int pre_Climatic_weather_model;
+int pre_Climatic_solar_forecast;
+int pre_Climatic_weather_forecast;
 
 int pre_Load_CLIMATE_EPW;
 int pre_Load_CLIMATE_WY2;
@@ -1207,8 +1207,8 @@ void draw () {
         pre_DAY = _DAY;
         pre_DATE = _DATE;
         pre_HOUR = _HOUR;
-        pre_Climatic_solar_model = Climatic_solar_model;
-        pre_Climatic_weather_model = Climatic_weather_model;
+        pre_Climatic_solar_forecast = Climatic_solar_forecast;
+        pre_Climatic_weather_forecast = Climatic_weather_forecast;
 
         pre_Load_CLIMATE_EPW = Load_CLIMATE_EPW;
         pre_Load_CLIMATE_WY2 = Load_CLIMATE_WY2;
@@ -1245,7 +1245,7 @@ void draw () {
           SOLARCHVISION_draw_ROLLOUT();
         }
         
-        if ((pre_YEAR != _YEAR) || (pre_MONTH != _MONTH) || (pre_DAY != _DAY) || (pre_HOUR != _HOUR) || (pre_Climatic_solar_model != Climatic_solar_model) || (pre_Climatic_weather_model != Climatic_weather_model)) {
+        if ((pre_YEAR != _YEAR) || (pre_MONTH != _MONTH) || (pre_DAY != _DAY) || (pre_HOUR != _HOUR) || (pre_Climatic_solar_forecast != Climatic_solar_forecast) || (pre_Climatic_weather_forecast != Climatic_weather_forecast)) {
           
           BEGIN_DAY = Convert2Date(_MONTH, _DAY);
           _HOUR = int(24 * (_DATE - int(_DATE)));
@@ -3396,7 +3396,7 @@ int SOLARCHVISION_try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY,
         
         //////////////////////////////////////  PASS 2  //////////////////////////////////////      
         
-        if (Climatic_weather_model != 0) {
+        if (Climatic_weather_forecast != 0) {
         
           int pre_num_add_days = num_add_days;
           
@@ -3540,7 +3540,7 @@ int SOLARCHVISION_try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY,
                             float linear_climate = 0;
                             float current_dist = 0;
     
-                            if (Climatic_weather_model == 1) {
+                            if (Climatic_weather_forecast == 1) {
                               linear_climate = (next_num * _valuesH[pre_hour][pre_day] + pre_num * _valuesH[next_hour][next_day]) / (pre_num + next_num);
                               current_dist = _valuesH[i][j_for] - linear_climate;
                             }
@@ -3628,7 +3628,7 @@ int SOLARCHVISION_try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY,
   
          
   //---------------------------------------------------------------------
-            if (Climatic_solar_model == 1) {
+            if (Climatic_solar_forecast == 1) {
     
               float Forecast_CC = ENSEMBLE[i][j][_cloudcover][k];
               float Forecast_AP = ENSEMBLE[i][j][_pressure][k];
@@ -5880,58 +5880,58 @@ void SOLARCHVISION_draw_normals (int i, int j, float[] _valuesA, float[] _values
   }
   int _OPACITY = 191;
   
-  //for (int l = 0; l < 9; l += 1) {
+  for (int l = 0; l < 9; l += 1) {
   //for (int l = 0; l < 3; l += 1) {
   //for (int l = 3; l < 9; l += 1) {
   
   //for (int p = 0; p < 3; p += 1) { 
     //int l = 3 * int(impact_layer / 3) + p;
 
-  for (int p = 0; p < 1; p += 1) { 
-    int l = impact_layer;
+  //for (int p = 0; p < 1; p += 1) { 
+    //int l = impact_layer;
     
     if (l == N_Middle) {
-      Diagrams_strokeWeight(GRAPHS_T_scale * 2);
+      Diagrams_strokeWeight(GRAPHS_T_scale * 4);
       Diagrams_stroke(0, 191, 0, _OPACITY);
       Diagrams_fill(0, 191, 0, _OPACITY);
     }
     else if (l == N_MidHigh) {
-      Diagrams_strokeWeight(GRAPHS_T_scale * 1);
+      Diagrams_strokeWeight(GRAPHS_T_scale * 2);
       Diagrams_stroke(191, 0, 0, _OPACITY);
       Diagrams_fill(191, 0, 0, _OPACITY);
     } 
     else if (l == N_MidLow) {
-      Diagrams_strokeWeight(GRAPHS_T_scale * 1);
+      Diagrams_strokeWeight(GRAPHS_T_scale * 4);
       Diagrams_stroke(0, 0, 191, _OPACITY);
       Diagrams_fill(0, 0, 191, _OPACITY);
     } 
     else if (l == N_Max) {
-      Diagrams_strokeWeight(GRAPHS_T_scale * 1);
+      Diagrams_strokeWeight(GRAPHS_T_scale * 2);
       Diagrams_stroke(255, 127, 127, _OPACITY);
       Diagrams_fill(255, 127, 127, _OPACITY);
     } 
     else if (l == N_Min) {
-      Diagrams_strokeWeight(GRAPHS_T_scale * 1);
+      Diagrams_strokeWeight(GRAPHS_T_scale * 2);
       Diagrams_stroke(127, 127, 255, _OPACITY);
       Diagrams_fill(127, 127, 255, _OPACITY);
     }
     else if (l == N_M50) {
-      Diagrams_strokeWeight(GRAPHS_T_scale * 0.25);
+      Diagrams_strokeWeight(GRAPHS_T_scale * 1);
       Diagrams_stroke(0, 127, 0);
       Diagrams_fill(0, 127, 0);
     }
     else if (l == N_M75) {
-      Diagrams_strokeWeight(GRAPHS_T_scale * 0.25);
+      Diagrams_strokeWeight(GRAPHS_T_scale * 1);
       Diagrams_stroke(127, 0, 0);
       Diagrams_fill(127, 0, 0);
     } 
     else if (l == N_M25) {
-      Diagrams_strokeWeight(GRAPHS_T_scale * 0.25);
+      Diagrams_strokeWeight(GRAPHS_T_scale * 1);
       Diagrams_stroke(0, 0, 127);
       Diagrams_fill(0, 0, 127);
     } 
     else {
-      Diagrams_strokeWeight(GRAPHS_T_scale * 0.5);
+      Diagrams_strokeWeight(GRAPHS_T_scale * 1);
       Diagrams_stroke(0, 0, 0);
       Diagrams_fill(0, 0, 0);
     }
@@ -5962,9 +5962,9 @@ void SOLARCHVISION_draw_normals (int i, int j, float[] _valuesA, float[] _values
     }    
 */    
     
-    Diagrams_strokeWeight(GRAPHS_T_scale * 4);
-    Diagrams_stroke(0, 127, 0);
-    Diagrams_fill(0, 127, 0);
+    //Diagrams_strokeWeight(GRAPHS_T_scale * 4);
+    //Diagrams_stroke(0, 127, 0);
+    //Diagrams_fill(0, 127, 0);
     
 /////////////////////////////// 
 
@@ -8965,7 +8965,7 @@ void GRAPHS_keyPressed (KeyEvent e) {
           case 'v' :draw_data_lines = int((draw_data_lines + 1) % 2); GRAPHS_Update = 1; break;
     
           case '`' :num_add_days += 2;
-                    if (num_add_days > 365) num_add_days = 365;
+                    if (num_add_days > 61) num_add_days = 61;
                     GRAPHS_Update = 1; break;
           case '~' :num_add_days -= 2;
                     if (num_add_days < 1) num_add_days = 1;
@@ -15000,9 +15000,9 @@ class SOLARCHVISION_Spinner {
 String[][] ROLLOUTS = {
                         {"Location & Data", "General", "Point", "Environment"}, 
                         {"Geometries & Space", "General", "Solids", "Meshes"}, 
-                        {"Time & Scenarios", "General"}, 
-                        {"Illustration Options", "General"},
-                        {"Post-Processing", "General"}, 
+                        {"Time & Scenarios", "General", "Filters", "Ranges"}, 
+                        {"Illustration Options", "Layout", "Layers", "Colors"},
+                        {"Post-Processing", "Interpolation", "Developed", "Impacts"}, 
                         {"Export Products", "Data", "Media", "Launch"}
                       };
 
@@ -15176,9 +15176,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Field_Rotation[display_Field_Image] = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Rotation[" + nf(display_Field_Image, 0) + "]" , Field_Rotation[display_Field_Image], -1000, 1000, -2);
       Field_Elevation[display_Field_Image] = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Elevation[" + nf(display_Field_Image, 0) + "]" , Field_Elevation[display_Field_Image], -1000, 1000, -2);
       Field_PositionStep = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_PositionStep" , Field_PositionStep, 1.25, 40, -2);
-      Field_scale_All = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_All" , Field_scale_All, 50, 3200, -2);      
-      Field_scale_U = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_U" , Field_scale_U, 50, 3200, -2);
-      Field_scale_V = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_V" , Field_scale_V, 50, 3200, -2);  
+      Field_scale_All = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale" , Field_scale_All, 50, 3200, -2);      
+      //Field_scale_U = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_U" , Field_scale_U, 50, 3200, -2);
+      //Field_scale_V = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_V" , Field_scale_V, 50, 3200, -2);  
     }
     
     if (ROLLOUT_child == 3) { // Meshes
@@ -15206,70 +15206,108 @@ void SOLARCHVISION_draw_ROLLOUT () {
   }
   else if (ROLLOUT_parent == 2) { // Time & Scenarios
     
-    j_end = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "No. of days to plot" , j_end, 1, 61, 1));
-  
-    BEGIN_DAY = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Plot start date" , BEGIN_DAY, 0, 364, 1));
-  
-    //_DATE = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Solar date", _DATE, 0, 364.5, 0.5);
-    _DATE = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Solar date", _DATE, 0, 364, 1);
+    if (ROLLOUT_child == 1) { // General
     
-    _DAY = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Forecast day" , _DAY, 1, 31, 1));
-    _MONTH = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Forecast month", _MONTH, 1, 12, 1));
-    _YEAR = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Forecast year" , _YEAR, 1953, 2100, 1));
+      j_end = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "No. of days to plot" , j_end, 1, 61, 1));
+    
+      BEGIN_DAY = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Plot start date" , BEGIN_DAY, 0, 364, 1));
+    
+      //_DATE = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Solar date", _DATE, 0, 364.5, 0.5);
+      _DATE = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Solar date", _DATE, 0, 364, 1);
+      
+      _DAY = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Forecast day" , _DAY, 1, 31, 1));
+      _MONTH = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Forecast month", _MONTH, 1, 12, 1));
+      _YEAR = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Forecast year" , _YEAR, 1953, 2100, 1));
+  
+    }
+   
+    if (ROLLOUT_child == 2) { // Filters
+      sky_scenario = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Sky status", sky_scenario, 1, 4, 1));
+      filter_type = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Hourly/daily filter", filter_type, 0, 1, 1));
+    
+      F_layer_option = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Forecast filter option" , F_layer_option, 0, 4, 1));
+      Sample_Member = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Single member" , Sample_Member, 1, 43, 1));  
+    
+      H_layer_option = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Climate filter option" , H_layer_option, 0, 7, 1));
+      Sample_Year = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Single year" , Sample_Year, 1953, 2005, 1));
+    }
 
-    drw_Layer = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Layer", drw_Layer, 0, (num_layers - 1), 1));
-    GRAPHS_V_scale[drw_Layer] = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "V_scale[" + nf(drw_Layer, 2) + "]", GRAPHS_V_scale[drw_Layer], 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));
-    GRAPHS_O_scale = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "O_scale", GRAPHS_O_scale, 1, 100, -pow(2.0, (1.0 / 4.0)));
- 
-    sky_scenario = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Sky status", sky_scenario, 1, 4, 1));
-    filter_type = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Hourly/daily filter", filter_type, 0, 1, 1));
-  
-    F_layer_option = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Forecast filter option" , F_layer_option, 0, 4, 1));
-    Sample_Member = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Single member" , Sample_Member, 1, 43, 1));  
-  
-    H_layer_option = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Climate filter option" , H_layer_option, 0, 7, 1));
-    Sample_Year = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Single year" , Sample_Year, 1953, 2005, 1));    
+
+    if (ROLLOUT_child == 3) { // Ranges
+      num_add_days = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "num_add_days" , num_add_days, 1, 64, -2));
+    }    
   }  
   else if (ROLLOUT_parent == 3) { // Illustration Options
 
-    draw_data_lines = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Draw data", draw_data_lines, 0, 1, 1));
-    draw_sorted = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Draw sorted", draw_sorted, 0, 1, 1));
-    draw_normals = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Draw statistics", draw_normals, 0, 1, 1));
-    draw_probs = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Draw probabilities", draw_probs, 0, 1, 1));
-    sum_interval = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Probabilities interval", sum_interval, 1, 24, 1));
-    level_pix = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Probabilities range", level_pix, 2, 32, -2));
 
-    //GRAPHS_setup = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Diagram setup", GRAPHS_setup, -2, 13, 1));
-    GRAPHS_setup = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Diagram setup", GRAPHS_setup, 100, 110, 1));
-    GRAPHS_Update = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Redraw scene", GRAPHS_Update, 0, 1, 1));
-
-    Pallet_ACTIVE = int(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Active pallet option", Pallet_ACTIVE, -1, 14, 1));
-    Pallet_ACTIVE_DIR = int(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Active pallet direction", Pallet_ACTIVE_DIR, -2, 2, 1));
-    
-    Pallet_PASSIVE = int(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Passive pallet option", Pallet_PASSIVE, -1, 14, 1));
-    Pallet_PASSIVE_DIR = int(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Passive pallet direction", Pallet_PASSIVE_DIR, -1, 1, 2));
+      
   
-    COLOR_STYLE = int(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Color scheme", COLOR_STYLE, 0, (n_COLOR_STYLE - 1), 1));  
+
+  
+
+  
+
+    
+       
+  
+    if (ROLLOUT_child == 1) { // Layout
+      //GRAPHS_setup = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Diagram setup", GRAPHS_setup, -2, 13, 1));
+      GRAPHS_setup = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Diagram setup", GRAPHS_setup, 100, 110, 1));
+      GRAPHS_Update = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Redraw scene", GRAPHS_Update, 0, 1, 1));  
+    
+      drw_Layer = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Layer", drw_Layer, 0, (num_layers - 1), 1));
+      GRAPHS_V_scale[drw_Layer] = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "V_scale[" + nf(drw_Layer, 2) + "]", GRAPHS_V_scale[drw_Layer], 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));      
+    } 
+    if (ROLLOUT_child == 2) { // Layers
+      draw_data_lines = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Draw data", draw_data_lines, 0, 1, 1));
+      draw_sorted = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Draw sorted", draw_sorted, 0, 1, 1));
+      draw_normals = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Draw statistics", draw_normals, 0, 1, 1));
+      draw_probs = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Draw probabilities", draw_probs, 0, 1, 1));
+      sum_interval = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Probabilities interval", sum_interval, 1, 24, 1));
+      level_pix = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Probabilities range", level_pix, 2, 32, -2));    
+    }
+    if (ROLLOUT_child == 3) { // Colors
+    
+      Pallet_ACTIVE = int(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Active pallet option", Pallet_ACTIVE, -1, 14, 1));
+      Pallet_ACTIVE_DIR = int(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Active pallet direction", Pallet_ACTIVE_DIR, -2, 2, 1));
+      
+      Pallet_PASSIVE = int(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Passive pallet option", Pallet_PASSIVE, -1, 14, 1));
+      Pallet_PASSIVE_DIR = int(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Passive pallet direction", Pallet_PASSIVE_DIR, -1, 1, 2));
+      
+      COLOR_STYLE = int(MySpinner.update(X_spinner, Y_spinner, 1,1,0, "Color scheme", COLOR_STYLE, 0, (n_COLOR_STYLE - 1), 1));
+     
+      GRAPHS_O_scale = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Windrose opacity scale", GRAPHS_O_scale, 1, 100, -pow(2.0, (1.0 / 4.0))); 
+    
+    }      
   
   }
   else if (ROLLOUT_parent == 4) { // Post-Processing
   
-    update_impacts = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Update impacts", update_impacts, 0, 1, 1));
-      
-    impacts_source = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Impacts Source", impacts_source, 0, 3, 1));
-    impact_layer = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Impact Min/50%/Max", impact_layer, 0, 8, 1));
+    if (ROLLOUT_child == 1) { // Interpolation
     
-    develop_option = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Develop layer" , develop_option, 0, 12, 1));
-    develop_per_day = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Dev. per day option" , develop_per_day, 0, 3, 1));
-  
-    join_hour_numbers = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Trend period hours", join_hour_numbers, 1, 24 * 16, 1));
-    join_type = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Weighted/equal trend", join_type, -1, 1, 2));
-  
-    Climatic_solar_model = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Climatic solar model", Climatic_solar_model, 0, 1, 1));
-    Climatic_weather_model = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Climatic weather model", Climatic_weather_model, 0, 2, 1));
+      interpolation_weight = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "interpolation_weight", interpolation_weight, 0, 5, 0.5);
+      Climatic_solar_forecast = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Climate-based solar forecast", Climatic_solar_forecast, 0, 1, 1));
+      Climatic_weather_forecast = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Climate-based temperature forecast", Climatic_weather_forecast, 0, 2, 1));    
+    
+    } 
+    if (ROLLOUT_child == 2) { // Developed
+      develop_option = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Develop layer" , develop_option, 0, 12, 1));
+      develop_per_day = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Dev. per day option" , develop_per_day, 0, 3, 1));
+    
+      join_hour_numbers = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Trend period hours", join_hour_numbers, 1, 24 * 16, 1));
+      join_type = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Weighted/equal trend", join_type, -1, 1, 2));
 
-    Angle_inclination = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Inclination angle", Angle_inclination, 0, 90, 5));
-    Angle_orientation = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Orientation angle", Angle_orientation, 0, 360, 15));      
+      Angle_inclination = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Inclination angle", Angle_inclination, 0, 90, 5));
+      Angle_orientation = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Orientation angle", Angle_orientation, 0, 360, 15));    
+    }
+    if (ROLLOUT_child == 3) { // Impacts
+      impacts_source = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Impacts Source", impacts_source, 0, 3, 1));
+      impact_layer = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Impact Min/50%/Max", impact_layer, 0, 8, 1));
+      update_impacts = int(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Update impacts", update_impacts, 0, 1, 1));    
+    }
+    
+
+  
   }   
   else if (ROLLOUT_parent == 5) { // Export Products
 
