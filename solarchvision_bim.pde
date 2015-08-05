@@ -34,12 +34,15 @@ int Create_Mesh_Parametric = 0;
 
 
 int Display_SWOB_points = 1;
+int Display_SWOB_names = 1;
 int Display_SWOB_nearest = 1;
 
 int Display_NAEFS_points = 0;
+int Display_NAEFS_names = 0;
 int Display_NAEFS_nearest = 1;
 
 int Display_CWEEDS_points = 0;
+int Display_CWEEDS_names = 0;
 int Display_CWEEDS_nearest = 1;
 
 
@@ -1505,6 +1508,9 @@ void SOLARCHVISION_draw_WORLD () {
     WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
  
   }   
+
+  int nearest_STATION_SWOB = -1;
+  float nearest_STATION_SWOB_dist = FLOAT_undefined;
   
   for (int f = 0; f < STATION_SWOB_INFO.length; f += 1) {
     float draw_info = 0;
@@ -1530,15 +1536,43 @@ void SOLARCHVISION_draw_WORLD () {
       WORLD_Diagrams.fill(127, 0, 0, 127);      
       WORLD_Diagrams.ellipse(x_point, y_point, R_station, R_station);
 
-      WORLD_Diagrams.strokeWeight(0);
-      WORLD_Diagrams.stroke(0);
-      WORLD_Diagrams.fill(0);      
-      WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-      WORLD_Diagrams.textSize(MESSAGE_S_View);
-      WORLD_Diagrams.text(STATION_SWOB_INFO[f][6], x_point, y_point);
+      if (Display_SWOB_names == 1) {
+        WORLD_Diagrams.strokeWeight(0);
+        WORLD_Diagrams.stroke(0);
+        WORLD_Diagrams.fill(0);      
+        WORLD_Diagrams.textAlign(RIGHT, CENTER); 
+        WORLD_Diagrams.textSize(MESSAGE_S_View);
+        WORLD_Diagrams.text(STATION_SWOB_INFO[f][6], x_point, y_point);
+      }
     
     }
+    
+    float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
+    
+    if (nearest_STATION_SWOB_dist > d) {
+      nearest_STATION_SWOB_dist = d;
+      nearest_STATION_SWOB = f;
+    }     
   }    
+  
+  if (Display_SWOB_nearest == 1) {   
+    int f = nearest_STATION_SWOB;
+    
+    float _lat = float(STATION_SWOB_INFO[f][3]);
+    float _lon = float(STATION_SWOB_INFO[f][4]); 
+    if (_lon > 180) _lon -= 360; // << important!
+    
+    float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+    float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+    
+    WORLD_Diagrams.strokeWeight(0);
+    WORLD_Diagrams.stroke(0);
+    WORLD_Diagrams.fill(0);      
+    WORLD_Diagrams.textAlign(RIGHT, CENTER);
+    WORLD_Diagrams.textSize(MESSAGE_S_View);
+    WORLD_Diagrams.text(STATION_SWOB_INFO[f][6], x_point, y_point);
+    //println(STATION_SWOB_INFO[f][6]);
+  }  
 
   WORLD_Diagrams.strokeWeight(0);
   WORLD_Diagrams.stroke(0, 63, 0, 127);
@@ -1568,6 +1602,15 @@ void SOLARCHVISION_draw_WORLD () {
       
       WORLD_Diagrams.ellipse(x_point, y_point, 1.5 * R_station, 1.5 * R_station);
 
+      if (Display_NAEFS_names == 1) {
+        WORLD_Diagrams.strokeWeight(0);
+        WORLD_Diagrams.stroke(0);
+        WORLD_Diagrams.fill(0);      
+        WORLD_Diagrams.textAlign(RIGHT, CENTER); 
+        WORLD_Diagrams.textSize(MESSAGE_S_View);
+        WORLD_Diagrams.text(STATION_NAEFS_INFO[f][0], x_point, y_point);
+      }
+
     }
     
     float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
@@ -1580,26 +1623,27 @@ void SOLARCHVISION_draw_WORLD () {
   }
   
   if (Display_NAEFS_nearest == 1) {   
-      int f = nearest_STATION_NAEFS;
+    int f = nearest_STATION_NAEFS;
+  
+    float _lat = float(STATION_NAEFS_INFO[f][1]);
+    float _lon = float(STATION_NAEFS_INFO[f][2]); 
+    if (_lon > 180) _lon -= 360; // << important!      
     
-      float _lat = float(STATION_NAEFS_INFO[f][1]);
-      float _lon = float(STATION_NAEFS_INFO[f][2]); 
-      if (_lon > 180) _lon -= 360; // << important!      
-      
-      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
-      
-      WORLD_Diagrams.strokeWeight(0);
-      WORLD_Diagrams.stroke(0);
-      WORLD_Diagrams.fill(0);      
-      WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-      WORLD_Diagrams.textSize(MESSAGE_S_View);
-      WORLD_Diagrams.text(STATION_NAEFS_INFO[f][0], x_point, y_point);
-      //println(STATION_NAEFS_INFO[f][0]);
+    float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+    float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+    
+    WORLD_Diagrams.strokeWeight(0);
+    WORLD_Diagrams.stroke(0);
+    WORLD_Diagrams.fill(0);      
+    WORLD_Diagrams.textAlign(RIGHT, CENTER); 
+    WORLD_Diagrams.textSize(MESSAGE_S_View);
+    WORLD_Diagrams.text(STATION_NAEFS_INFO[f][0], x_point, y_point);
+    //println(STATION_NAEFS_INFO[f][0]);
   }
   
 
-
+  int nearest_STATION_CWEEDS = -1;
+  float nearest_STATION_CWEEDS_dist = FLOAT_undefined;
             
   for (int f = 0; f < STATION_CWEEDS_INFO.length; f += 1) {
     float draw_info = 0;
@@ -1625,17 +1669,45 @@ void SOLARCHVISION_draw_WORLD () {
       WORLD_Diagrams.noFill();
       WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
 
-      WORLD_Diagrams.strokeWeight(0);
-      WORLD_Diagrams.stroke(0);
-      WORLD_Diagrams.fill(0);      
-      WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-      WORLD_Diagrams.textSize(MESSAGE_S_View);
-      WORLD_Diagrams.text(STATION_CWEEDS_INFO[f][0], x_point, y_point); 
+      if (Display_CWEEDS_names == 1) {
+        WORLD_Diagrams.strokeWeight(0);
+        WORLD_Diagrams.stroke(0);
+        WORLD_Diagrams.fill(0);      
+        WORLD_Diagrams.textAlign(RIGHT, CENTER); 
+        WORLD_Diagrams.textSize(MESSAGE_S_View);
+        WORLD_Diagrams.text(STATION_CWEEDS_INFO[f][0], x_point, y_point);
+      } 
     }
+    
+    float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
+    
+    if (nearest_STATION_CWEEDS_dist > d) {
+      nearest_STATION_CWEEDS_dist = d;
+      nearest_STATION_CWEEDS = f;
+    }     
   } 
+
+  if (Display_CWEEDS_nearest == 1) {   
+    int f = nearest_STATION_CWEEDS;
+  
+    float _lat = float(STATION_CWEEDS_INFO[f][3]);
+    float _lon = float(STATION_CWEEDS_INFO[f][4]);  
+    if (_lon > 180) _lon -= 360; // << important!      
+    
+    float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+    float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+    
+    WORLD_Diagrams.strokeWeight(0);
+    WORLD_Diagrams.stroke(0);
+    WORLD_Diagrams.fill(0);      
+    WORLD_Diagrams.textAlign(RIGHT, CENTER); 
+    WORLD_Diagrams.textSize(MESSAGE_S_View);
+    WORLD_Diagrams.text(STATION_CWEEDS_INFO[f][0], x_point, y_point);
+    //println(STATION_CWEEDS_INFO[f][0]);
+  }
+
   
   WORLD_Diagrams.strokeWeight(0);
-
   
   WORLD_Diagrams.endDraw();
 
@@ -15012,12 +15084,15 @@ void SOLARCHVISION_draw_ROLLOUT () {
       LocationElevation_step = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Elevation_step", LocationElevation_step, 0.125, 1024, -2);
       
       Display_SWOB_points = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_SWOB_points" , Display_SWOB_points, 0, 1, 1));
+      Display_SWOB_names = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_SWOB_names" , Display_SWOB_names, 0, 1, 1));
       Display_SWOB_nearest = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_SWOB_nearest" , Display_SWOB_nearest, 0, 1, 1));
-      
+
       Display_NAEFS_points = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_NAEFS_points" , Display_NAEFS_points, 0, 1, 1));
+      Display_NAEFS_names = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_NAEFS_names" , Display_NAEFS_names, 0, 1, 1));
       Display_NAEFS_nearest = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_NAEFS_nearest" , Display_NAEFS_nearest, 0, 1, 1));
 
       Display_CWEEDS_points = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_CWEEDS_points" , Display_CWEEDS_points, 0, 1, 1));
+      Display_CWEEDS_names = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_CWEEDS_names" , Display_CWEEDS_names, 0, 1, 1));
       Display_CWEEDS_nearest = int(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_CWEEDS_nearest" , Display_CWEEDS_nearest, 0, 1, 1));      
     }
     
