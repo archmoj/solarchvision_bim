@@ -14780,7 +14780,7 @@ class SOLARCHVISION_Spinner {
     //w2 = 142.5 * ROLLOUT_S_View;
     
     w1 = 62.5 * ROLLOUT_S_View;
-    w2 = 150 * ROLLOUT_S_View;
+    w2 = 175 * ROLLOUT_S_View;
     
     h = 16 * ROLLOUT_S_View;
     o = 2 * ROLLOUT_S_View;
@@ -14910,8 +14910,6 @@ void SOLARCHVISION_draw_ROLLOUT () {
   strokeWeight(0);
   stroke(0); 
   fill(0);
-  textSize(20 * ROLLOUT_S_View);
-  textAlign(LEFT, CENTER);
   
   if (ROLLOUT_parent >= ROLLOUTS.length) {
     ROLLOUT_parent = ROLLOUTS.length - 1;
@@ -14922,17 +14920,27 @@ void SOLARCHVISION_draw_ROLLOUT () {
   }  
   
   if (ROLLOUT_parent < ROLLOUTS.length) {
-    text(ROLLOUTS[ROLLOUT_parent][0] + "/", ROLLOUT_CX_View + 10 * ROLLOUT_S_View, ROLLOUT_CY_View + 10 * ROLLOUT_S_View);
+    textSize(16 * ROLLOUT_S_View);
+    textAlign(LEFT, CENTER);    
+    text("Ctrl + F" + nf(1 + ROLLOUT_parent, 0) + ": ", ROLLOUT_CX_View + 10 * ROLLOUT_S_View, ROLLOUT_CY_View + 10 * ROLLOUT_S_View);
+    textSize(20 * ROLLOUT_S_View);
+    textAlign(CENTER, CENTER);    
+    text(ROLLOUTS[ROLLOUT_parent][0], ROLLOUT_CX_View + 0.5 * ROLLOUT_X_View, ROLLOUT_CY_View + 10 * ROLLOUT_S_View);
     
     if (ROLLOUT_child < ROLLOUTS[ROLLOUT_parent].length) {
-      text(nf(ROLLOUT_child, 0) + ": " + ROLLOUTS[ROLLOUT_parent][ROLLOUT_child] + "/", ROLLOUT_CX_View + 10 * ROLLOUT_S_View, ROLLOUT_CY_View + 35 * ROLLOUT_S_View);
+      textSize(16 * ROLLOUT_S_View);
+      textAlign(LEFT, CENTER);         
+      text("Shift + F" + nf(ROLLOUT_child, 0) + ": ", ROLLOUT_CX_View + 10 * ROLLOUT_S_View, ROLLOUT_CY_View + 35 * ROLLOUT_S_View);
+      textSize(20 * ROLLOUT_S_View);
+      textAlign(CENTER, CENTER);         
+      text(ROLLOUTS[ROLLOUT_parent][ROLLOUT_child], ROLLOUT_CX_View + 0.5 * ROLLOUT_X_View, ROLLOUT_CY_View + 35 * ROLLOUT_S_View);
     }
   }
 
   X_spinner = ROLLOUT_CX_View;
   Y_spinner = ROLLOUT_CY_View;
   
-  X_spinner += 225 * ROLLOUT_S_View;
+  X_spinner += 250 * ROLLOUT_S_View;
   Y_spinner += 65 * ROLLOUT_S_View;
 
 
