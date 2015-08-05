@@ -1,5 +1,58 @@
 import processing.pdf.*;
 
+int STATION_NUMBER = 1;
+
+String[][] DEFINED_STATIONS = {
+     
+                                {"TORONTO_ISLAND_ON_CA", "Financial_District", "ON", "43.6488", "-79.3817", "-75", "86"},
+                                
+                                {"TORONTO_ISLAND_ON_CA", "Ryerson_University", "ON", "43.6593", "-79.3779", "-75", "95"}, 
+  
+                                {"MONTREAL_DORVAL_QC_CA", "Place_Bonaventure", "QC", "45.4995", "-73.5650", "-75", "30"},
+/*                                
+                                {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36"},
+                                
+                                {"CALGARY_INTL_AB_CA", "CALGARY", "AB", "51.113889", "-114.02", "-120", "1084.1"}, 
+                                {"EDMONTON_INTL_A_AB_CA", "EDMONTON", "AB", "53.31", "-113.579444", "-120", "723.3"}, 
+                                {"HALIFAX_INTL_AIRPORT_NS_CA", "HALIFAX", "NS", "44.881111", "-63.508611", "-60", "145.4"}, 
+                                {"OTTAWA_INTL_ON_CA", "OTTAWA", "ON", "45.383333", "-75.716667", "-75", "79.2"}, 
+                                {"QUEBEC_QC_CA", "QUEBEC", "QC", "46.803611", "-71.381667", "-75", "60"}, 
+                                {"SUDBURY_ON_CA", "SUDBURY", "ON", "46.625556", "-80.797778", "-75", "348.4"}, 
+                                {"TORONTO_ISLAND_ON_CA", "TORONTO-ISLAND", "ON", "43.6275", "-79.396111", "-75", "76.8"}, 
+                                {"TORONTO_PEARSON_INTL_ON_CA", "TORONTO-PEARSON", "ON", "43.676667", "-79.630556", "-75", "173.4"}, 
+                                {"VANCOUVER_INTL_BC_CA", "VANCOUVER_Harbour", "BC", "49.295353", "-123.121869", "-120", "2.5"}, 
+                                {"WINNIPEG_INTL_MB_CA", "WINNIPEG", "MB", "49.91", "-97.24", "-90", "238.7"},
+*/
+
+/*                                
+                                {"BOSTON_MA_US", "BOSTON", "MA", "42.35843", "-71.05978", "-75", "15.0"}, 
+                                {"CHICAGO_IL_US", "CHICAGO", "IL", "41.878113", "-87.6298", "-90", "181.0"}, 
+                                {"DENVER_CO_US", "DENVER", "CO", "39.737568", "-104.98472", "-105", "1608.0"}, 
+                                {"HOUSTON_TX_US", "HOUSTON", "TX", "29.760193", "-95.36939", "-90", "15.0"}, 
+                                {"LAS_VEGAS_NV_US", "LAS_VEGAS", "NV", "36.16994", "-115.13983", "-120", "611.0"}, 
+                                {"LOS_ANGELES_CA_US", "LOS_ANGELES", "CA", "34.052235", "-118.24368", "-120", "87.0"}, 
+                                {"MIAMI_FL_US", "MIAMI", "FL", "25.789097", "-80.20404", "-75", "3.0"}, 
+                                {"NEW_YORK_CITY_NY_US", "NEW_YORK_CITY", "NY", "40.712784", "-74.00594", "-75", "10.0"}, 
+                                {"WASHINGTON_DC_US", "WASHINGTON", "DC", "38.907192", "-77.03687", "-75", "22.0"}, 
+                                
+                                {"BRASILIA_XX_BR", "BRASILIA", "XX", "-29.176456", "-51.22032", "-45", "774.0"}, 
+                                {"RIO_DE_JANEIRO_XX_BR", "RIO_DE_JANEIRO", "XX", "-22.893467", "-43.21391", "-45", "6.0"}, 
+                                {"SAO_PAULO_XX_BR", "SAO_PAULO", "XX", "-14.317596", "-44.45876", "-45", "497.0"}, 
+                                
+                                {"CIUDAD_DE_MEXICO_DF_MX", "MEXICO_CITY", "DF", "19.432608", "-99.13321", "-105", "2230.0"}, 
+                                {"HAVANA_XX_CU", "HAVANA", "XX", "23.05407", "-82.34519", "-75", "93.0"}, 
+                                {"SANTO_DOMINGO_XX_DO", "SANTO_DOMINGO", "XX", "18.482439", "-69.96518", "-75", "62.0"}, 
+                                {"SAN_SALVADOR_XX_SV", "SAN_SALVADOR", "XX", "13.679502", "-89.21397", "-90", "796.0"}, 
+                                {"CARACAS_XX_VE", "CARACAS", "XX", "10.960712", "-63.920437", "-60", "32.0"}, 
+                                {"BOGOTA_XX_CO", "BOGOTA", "XX", "7.894716", "-72.504616", "-75", "302.0"}, 
+                                {"GUAYAQUIL_XX_EC", "GUAYAQUIL", "XX", "-2.1241937", "-79.59123", "-75", "11.0"}, 
+                                {"LIMA_XX_PE", "LIMA", "XX", "-12.032012", "-76.92987", "-75", "336.0"}, 
+                                {"ANTOFAGASTA_XX_CL", "ANTOFAGASTA", "XX", "-23.65", "-70.4", "-75", "13.0"}
+                              
+*/                             
+                              };
+
+
 int Create_Default_Material = 0; //7;
 
 float Create_Input_Length = 10;
@@ -134,60 +187,6 @@ String MAKE_Filenames () {
   return My_Filenames;
 }
 
-
-int STATION_NUMBER = 0;
-
-String[][] DEFINED_STATIONS = {
-     
-                                {"TORONTO_ISLAND_ON_CA", "Financial_District", "ON", "43.6488", "-79.3817", "-75", "86"},
-                                
-                                {"TORONTO_ISLAND_ON_CA", "Ryerson_University", "ON", "43.6593", "-79.3779", "-75", "95"}, 
-  
-                                {"MONTREAL_DORVAL_QC_CA", "Place_Bonaventure", "QC", "45.4995", "-73.5650", "-75", "30"},
-/*                                
-                                {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36"},
-                                
-                                {"CALGARY_INTL_AB_CA", "CALGARY", "AB", "51.113889", "-114.02", "-120", "1084.1"}, 
-                                {"EDMONTON_INTL_A_AB_CA", "EDMONTON", "AB", "53.31", "-113.579444", "-120", "723.3"}, 
-                                {"HALIFAX_INTL_AIRPORT_NS_CA", "HALIFAX", "NS", "44.881111", "-63.508611", "-60", "145.4"}, 
-                                {"OTTAWA_INTL_ON_CA", "OTTAWA", "ON", "45.383333", "-75.716667", "-75", "79.2"}, 
-                                {"QUEBEC_QC_CA", "QUEBEC", "QC", "46.803611", "-71.381667", "-75", "60"}, 
-                                {"SUDBURY_ON_CA", "SUDBURY", "ON", "46.625556", "-80.797778", "-75", "348.4"}, 
-                                {"TORONTO_ISLAND_ON_CA", "TORONTO-ISLAND", "ON", "43.6275", "-79.396111", "-75", "76.8"}, 
-                                {"TORONTO_PEARSON_INTL_ON_CA", "TORONTO-PEARSON", "ON", "43.676667", "-79.630556", "-75", "173.4"}, 
-                                {"VANCOUVER_INTL_BC_CA", "VANCOUVER_Harbour", "BC", "49.295353", "-123.121869", "-120", "2.5"}, 
-                                {"WINNIPEG_INTL_MB_CA", "WINNIPEG", "MB", "49.91", "-97.24", "-90", "238.7"},
-                               
-*/
-
-
-/*                                
-                                {"BOSTON_MA_US", "BOSTON", "MA", "42.35843", "-71.05978", "-75", "15.0"}, 
-                                {"CHICAGO_IL_US", "CHICAGO", "IL", "41.878113", "-87.6298", "-90", "181.0"}, 
-                                {"DENVER_CO_US", "DENVER", "CO", "39.737568", "-104.98472", "-105", "1608.0"}, 
-                                {"HOUSTON_TX_US", "HOUSTON", "TX", "29.760193", "-95.36939", "-90", "15.0"}, 
-                                {"LAS_VEGAS_NV_US", "LAS_VEGAS", "NV", "36.16994", "-115.13983", "-120", "611.0"}, 
-                                {"LOS_ANGELES_CA_US", "LOS_ANGELES", "CA", "34.052235", "-118.24368", "-120", "87.0"}, 
-                                {"MIAMI_FL_US", "MIAMI", "FL", "25.789097", "-80.20404", "-75", "3.0"}, 
-                                {"NEW_YORK_CITY_NY_US", "NEW_YORK_CITY", "NY", "40.712784", "-74.00594", "-75", "10.0"}, 
-                                {"WASHINGTON_DC_US", "WASHINGTON", "DC", "38.907192", "-77.03687", "-75", "22.0"}, 
-                                
-                                {"BRASILIA_XX_BR", "BRASILIA", "XX", "-29.176456", "-51.22032", "-45", "774.0"}, 
-                                {"RIO_DE_JANEIRO_XX_BR", "RIO_DE_JANEIRO", "XX", "-22.893467", "-43.21391", "-45", "6.0"}, 
-                                {"SAO_PAULO_XX_BR", "SAO_PAULO", "XX", "-14.317596", "-44.45876", "-45", "497.0"}, 
-                                
-                                {"CIUDAD_DE_MEXICO_DF_MX", "MEXICO_CITY", "DF", "19.432608", "-99.13321", "-105", "2230.0"}, 
-                                {"HAVANA_XX_CU", "HAVANA", "XX", "23.05407", "-82.34519", "-75", "93.0"}, 
-                                {"SANTO_DOMINGO_XX_DO", "SANTO_DOMINGO", "XX", "18.482439", "-69.96518", "-75", "62.0"}, 
-                                {"SAN_SALVADOR_XX_SV", "SAN_SALVADOR", "XX", "13.679502", "-89.21397", "-90", "796.0"}, 
-                                {"CARACAS_XX_VE", "CARACAS", "XX", "10.960712", "-63.920437", "-60", "32.0"}, 
-                                {"BOGOTA_XX_CO", "BOGOTA", "XX", "7.894716", "-72.504616", "-75", "302.0"}, 
-                                {"GUAYAQUIL_XX_EC", "GUAYAQUIL", "XX", "-2.1241937", "-79.59123", "-75", "11.0"}, 
-                                {"LIMA_XX_PE", "LIMA", "XX", "-12.032012", "-76.92987", "-75", "336.0"}, 
-                                {"ANTOFAGASTA_XX_CL", "ANTOFAGASTA", "XX", "-23.65", "-70.4", "-75", "13.0"}
-                              
-*/                             
-                              };
 
 
 float HeightAboveGround = 2.5; // <<<<<<<<<
@@ -15113,6 +15112,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + 150 * ROLLOUT_S_View, cy + cr) == 1) {
         ROLLOUT_parent = i;
+        ROLLOUT_child = 1; // <<<<<
         
         ROLLOUT_Update = 1;
       }
@@ -15338,8 +15338,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
       
       frame_variation = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,1,1, "Frame layout variation", frame_variation, 0, 3, 1), 1));
     
-      //GRAPHS_setup = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Diagram setup", GRAPHS_setup, -2, 13, 1), 1));
-      GRAPHS_setup = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Diagram setup", GRAPHS_setup, 100, 110, 1), 1));
+      GRAPHS_setup = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Diagram setup", GRAPHS_setup, -2, 13, 1), 1));
+      //GRAPHS_setup = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Diagram setup", GRAPHS_setup, 100, 110, 1), 1));
+      
       GRAPHS_Update = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Redraw scene", GRAPHS_Update, 0, 1, 1), 1));  
     
       drw_Layer = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Layer", drw_Layer, 0, (num_layers - 1), 1), 1));
@@ -15359,29 +15360,29 @@ void SOLARCHVISION_draw_ROLLOUT () {
    
       GRAPHS_O_scale = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Windrose opacity scale", GRAPHS_O_scale, 1, 100, -pow(2.0, (1.0 / 4.0))); 
       
-      GRAPHS_Pallet_ACTIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. opt. (Active)", GRAPHS_Pallet_ACTIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
-      GRAPHS_Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. dir. (Active)", GRAPHS_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
-      GRAPHS_Pallet_ACTIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. mul. (Active)", GRAPHS_Pallet_ACTIVE_MLT, 0.25, 4, -2);
+      GRAPHS_Pallet_ACTIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_ACTIVE", GRAPHS_Pallet_ACTIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      GRAPHS_Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_ACTIVE_DIR", GRAPHS_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
+      GRAPHS_Pallet_ACTIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_ACTIVE_MLT", GRAPHS_Pallet_ACTIVE_MLT, 0.25, 4, -2);
       
-      GRAPHS_Pallet_PASSIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. opt. (Passive)", GRAPHS_Pallet_PASSIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
-      GRAPHS_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. dir (Passive)", GRAPHS_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
-      GRAPHS_Pallet_PASSIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. mul. (Passive)", GRAPHS_Pallet_PASSIVE_MLT, 0.25, 4, -2);
+      GRAPHS_Pallet_PASSIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_PASSIVE", GRAPHS_Pallet_PASSIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      GRAPHS_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_PASSIVE_DIR", GRAPHS_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
+      GRAPHS_Pallet_PASSIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_PASSIVE_MLT", GRAPHS_Pallet_PASSIVE_MLT, 0.25, 4, -2);
       
-      OBJECTS_Pallet_ACTIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. opt. (Active)", OBJECTS_Pallet_ACTIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
-      OBJECTS_Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. dir. (Active)", OBJECTS_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
-      OBJECTS_Pallet_ACTIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. mul. (Active)", OBJECTS_Pallet_ACTIVE_MLT, 0.25, 4, -2);
+      OBJECTS_Pallet_ACTIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "OBJECTS_Pallet_ACTIVE", OBJECTS_Pallet_ACTIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      OBJECTS_Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "OBJECTS_Pallet_ACTIVE_DIR", OBJECTS_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
+      OBJECTS_Pallet_ACTIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "OBJECTS_Pallet_ACTIVE_MLT", OBJECTS_Pallet_ACTIVE_MLT, 0.25, 4, -2);
       
-      OBJECTS_Pallet_PASSIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. opt. (Passive)", OBJECTS_Pallet_PASSIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
-      OBJECTS_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. dir (Passive)", OBJECTS_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
-      OBJECTS_Pallet_PASSIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. mul. (Passive)", OBJECTS_Pallet_PASSIVE_MLT, 0.25, 4, -2);
+      OBJECTS_Pallet_PASSIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "OBJECTS_Pallet_PASSIVE", OBJECTS_Pallet_PASSIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      OBJECTS_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "OBJECTS_Pallet_PASSIVE_DIR", OBJECTS_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
+      OBJECTS_Pallet_PASSIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "OBJECTS_Pallet_PASSIVE_MLT", OBJECTS_Pallet_PASSIVE_MLT, 0.25, 4, -2);
 
-      SKY3D_Pallet_ACTIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. opt. (Active)", SKY3D_Pallet_ACTIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
-      SKY3D_Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. dir. (Active)", SKY3D_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
-      SKY3D_Pallet_ACTIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. mul. (Active)", SKY3D_Pallet_ACTIVE_MLT, 0.25, 4, -2);
+      SKY3D_Pallet_ACTIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_Pallet_ACTIVE", SKY3D_Pallet_ACTIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      SKY3D_Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_Pallet_ACTIVE_DIR", SKY3D_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
+      SKY3D_Pallet_ACTIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_Pallet_ACTIVE_MLT", SKY3D_Pallet_ACTIVE_MLT, 0.25, 4, -2);
       
-      SKY3D_Pallet_PASSIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. opt. (Passive)", SKY3D_Pallet_PASSIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
-      SKY3D_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. dir (Passive)", SKY3D_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
-      SKY3D_Pallet_PASSIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Daily impact pal. mul. (Passive)", SKY3D_Pallet_PASSIVE_MLT, 0.25, 4, -2);    
+      SKY3D_Pallet_PASSIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_Pallet_PASSIVE", SKY3D_Pallet_PASSIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      SKY3D_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_Pallet_PASSIVE_DIR", SKY3D_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
+      SKY3D_Pallet_PASSIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_Pallet_PASSIVE_MLT", SKY3D_Pallet_PASSIVE_MLT, 0.25, 4, -2);    
     }      
   
   }
