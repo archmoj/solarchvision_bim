@@ -14908,8 +14908,6 @@ void SOLARCHVISION_draw_ROLLOUT () {
   float h = 20 * ROLLOUT_S_View;
 
   strokeWeight(0);
-  stroke(0); 
-  fill(0);
   
   if (ROLLOUT_parent >= ROLLOUTS.length) {
     ROLLOUT_parent = ROLLOUTS.length - 1;
@@ -14920,21 +14918,29 @@ void SOLARCHVISION_draw_ROLLOUT () {
   }  
   
   if (ROLLOUT_parent < ROLLOUTS.length) {
-    textSize(16 * ROLLOUT_S_View);
-    textAlign(LEFT, CENTER);    
-    text("Ctrl + F" + nf(1 + ROLLOUT_parent, 0) + ": ", ROLLOUT_CX_View + 10 * ROLLOUT_S_View, ROLLOUT_CY_View + 10 * ROLLOUT_S_View);
+    stroke(0); 
+    fill(0);
     textSize(20 * ROLLOUT_S_View);
-    textAlign(CENTER, CENTER);    
-    text(ROLLOUTS[ROLLOUT_parent][0], ROLLOUT_CX_View + 0.5 * ROLLOUT_X_View, ROLLOUT_CY_View + 10 * ROLLOUT_S_View);
+    textAlign(LEFT, CENTER);    
+    text(nf(1 + ROLLOUT_parent, 0) + ":" + ROLLOUTS[ROLLOUT_parent][0], ROLLOUT_CX_View + 0.5 * ROLLOUT_X_View, ROLLOUT_CY_View + 10 * ROLLOUT_S_View);
     
-    if (ROLLOUT_child < ROLLOUTS[ROLLOUT_parent].length) {
+    for (int i = 1; i < ROLLOUTS[ROLLOUT_parent].length; i++) {
+    
       textSize(16 * ROLLOUT_S_View);
-      textAlign(LEFT, CENTER);         
-      text("Shift + F" + nf(ROLLOUT_child, 0) + ": ", ROLLOUT_CX_View + 10 * ROLLOUT_S_View, ROLLOUT_CY_View + 35 * ROLLOUT_S_View);
-      textSize(20 * ROLLOUT_S_View);
-      textAlign(CENTER, CENTER);         
-      text(ROLLOUTS[ROLLOUT_parent][ROLLOUT_child], ROLLOUT_CX_View + 0.5 * ROLLOUT_X_View, ROLLOUT_CY_View + 35 * ROLLOUT_S_View);
+      textAlign(LEFT, CENTER);        
+      
+      if (i == ROLLOUT_child) {
+        stroke(0); 
+        fill(0);
+      }
+      else{
+        stroke(127); 
+        fill(127);
+      }
+      text(nf(i, 0) + ":" + ROLLOUTS[ROLLOUT_parent][i], ROLLOUT_CX_View + (100 * (i - 1) + 10) * ROLLOUT_S_View, ROLLOUT_CY_View + 35 * ROLLOUT_S_View);
+
     }
+    
   }
 
   X_spinner = ROLLOUT_CX_View;
