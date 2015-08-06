@@ -11633,7 +11633,7 @@ void SOLARCHVISION_add_3Dbase () {
   }
 }  
 
-int MAX_Default_Models_Number = 4;
+int MAX_Default_Models_Number = 7;
 
 void SOLARCHVISION_add_DefaultModel (int n) {
 
@@ -11652,80 +11652,23 @@ void SOLARCHVISION_add_DefaultModel (int n) {
   if (n == 2) {
     SOLARCHVISION_add_House_Core(0, 0, 0, 0, 6, 6, 6, 6, 0);
   }  
-
+  
   if (n == 3) {
     
     SOLARCHVISION_add_PolygonHyper(0, 0, 0, 5,  10, 10, 4, 0);
     SOLARCHVISION_add_House_Core(7, 25, 25, 0, 6, 6, 6, 6, 0);    
   }   
- 
+
   if (n == 4) {
-   SOLARCHVISION_add_ParametricGeometries();
-  }      
-
- 
-}
-
-void SOLARCHVISION_add_3Dobjects () {
-  
-  SOLARCHVISION_add_3Dbase();
-  
-  SOLARCHVISION_add_DefaultModel(Load_Default_Models);
-  
- 
-  //SOLARCHVISION_add_Mesh2(0, -20, -20, 0, 20, 20, 0);
-  //SOLARCHVISION_add_PolygonHyper(0, 0, 0, 0,  10, 10, 4);
-  //SOLARCHVISION_add_Polygon(3, 0, 0, 0, 50, 24);
-
-  //SOLARCHVISION_add_RecursiveSphere(7, 0,0,0, 25, 4, 0, 90);  
-  
-
-
-  //SOLARCHVISION_add_urban();
-  
-  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
-  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
-  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
-
-/* 
-  //for (int i = 1; i <= 123; i += 1) {
-  for (int i = 1; i <= 6; i += 1) {
-  //for (int i = 20; i <= 30; i += 1) {
-    
-    int m = 1 + (i % 6); 
-    
-    if ((i != 15) && (i != 26) && (i != 52) && (i != 87)) {
-      
-      float x = -1135;
-      float y = -755;
-      float z = SOLARCHVISION_import_objects_asParametricBox("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, x,y,0, 1,1,1);
-      SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, x,y,z, 1,1,1);
+    for (int i = 0; i < int(10 + random(10)); i++) {
+      SOLARCHVISION_add_House_Core(0, random(-40, 40), random(-40, 40), 0, random(5, 10), random(5, 10), random(5, 10), random(2.5, 7.5), random(360));
     }
-  }
-//  
+  }    
 
 
+  if (n == 5) {
+    //SOLARCHVISION Complex:
 
-
-  
-  
-  /*
-  SOLARCHVISION_add_RecursiveSphere(0, 0,0,0, 50, 5, 0, 90);
-  SOLARCHVISION_add_RecursiveSphere(0, 100,0,0, 40, 4, 0, 90);
-  SOLARCHVISION_add_RecursiveSphere(0, 180,0,0, 30, 3, 0, 90);
-  SOLARCHVISION_add_RecursiveSphere(0, 240,0,0, 20, 2, 0, 90);
-  SOLARCHVISION_add_RecursiveSphere(0, 280,0,0, 10, 1, 0, 90);
-  */
-
-
-
-
-  
-
-  
-/*
-  //SOLARCHVISION Complex:
-  {
     //SOLARCHVISION_add_Box_Corners(-1, 0, 0, 0, 1, 3, 3);
     SOLARCHVISION_add_Box_Corners(-1, 0, 0, 0, 1, 3, 1);
     SOLARCHVISION_add_Box_Corners(-1, 0, 0, 1, 1, 1, 2);
@@ -11794,7 +11737,106 @@ void SOLARCHVISION_add_3Dobjects () {
       
     }
 
+  }      
+
+  if (n == 6) {
+    {
+      float x = 0;
+      float y = 0;
+      float z = 0;
+      float r = 10;
+      SOLARCHVISION_add_RecursiveSphere(1, x,y,z, r, 5, 0, 90);
+      ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
+      SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+    }
+  
+    {
+      float x = 30;
+      float y = 0;
+      float z = 0;
+      float r = 8;
+      SOLARCHVISION_add_RecursiveSphere(2, x,y,z, r, 4, 0, 90);
+      ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
+      SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+    }
+  
+    {
+      float x = 0;
+      float y = 20;
+      float z = 0;
+      float r = 8;
+      SOLARCHVISION_add_RecursiveSphere(3, x,y,z, r, 3, 0, 90);
+      ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
+      SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+    }
   }
+ 
+  if (n == 7) {
+   SOLARCHVISION_add_ParametricGeometries();
+  }      
+
+ 
+}
+
+void SOLARCHVISION_add_3Dobjects () {
+  
+  SOLARCHVISION_add_3Dbase();
+  
+  SOLARCHVISION_add_DefaultModel(Load_Default_Models);
+  
+ 
+  //SOLARCHVISION_add_Mesh2(0, -20, -20, 0, 20, 20, 0);
+  //SOLARCHVISION_add_PolygonHyper(0, 0, 0, 0,  10, 10, 4);
+  //SOLARCHVISION_add_Polygon(3, 0, 0, 0, 50, 24);
+
+  //SOLARCHVISION_add_RecursiveSphere(7, 0,0,0, 25, 4, 0, 90);  
+  
+
+
+  //SOLARCHVISION_add_urban();
+  
+  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
+  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
+  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
+
+/* 
+  //for (int i = 1; i <= 123; i += 1) {
+  for (int i = 1; i <= 6; i += 1) {
+  //for (int i = 20; i <= 30; i += 1) {
+    
+    int m = 1 + (i % 6); 
+    
+    if ((i != 15) && (i != 26) && (i != 52) && (i != 87)) {
+      
+      float x = -1135;
+      float y = -755;
+      float z = SOLARCHVISION_import_objects_asParametricBox("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, x,y,0, 1,1,1);
+      SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, x,y,z, 1,1,1);
+    }
+  }
+//  
+
+
+
+
+  
+  
+  /*
+  SOLARCHVISION_add_RecursiveSphere(0, 0,0,0, 50, 5, 0, 90);
+  SOLARCHVISION_add_RecursiveSphere(0, 100,0,0, 40, 4, 0, 90);
+  SOLARCHVISION_add_RecursiveSphere(0, 180,0,0, 30, 3, 0, 90);
+  SOLARCHVISION_add_RecursiveSphere(0, 240,0,0, 20, 2, 0, 90);
+  SOLARCHVISION_add_RecursiveSphere(0, 280,0,0, 10, 1, 0, 90);
+  */
+
+
+
+
+  
+
+  
+/*
+
 */
 
 
@@ -13540,37 +13582,6 @@ void SOLARCHVISION_remove_ParametricGeometries () {
 ParametricGeometry[] SolidBuildings = {};
 
 void SOLARCHVISION_add_ParametricGeometries () {
-/*
-  {
-    float x = 0;
-    float y = 0;
-    float z = 0;
-    float r = 10;
-    SOLARCHVISION_add_RecursiveSphere(1, x,y,z, r, 5, 0, 90);
-    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
-    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
-  }
-
-  {
-    float x = 30;
-    float y = 0;
-    float z = 0;
-    float r = 8;
-    SOLARCHVISION_add_RecursiveSphere(2, x,y,z, r, 4, 0, 90);
-    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
-    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
-  }
-
-  {
-    float x = 0;
-    float y = 20;
-    float z = 0;
-    float r = 8;
-    SOLARCHVISION_add_RecursiveSphere(3, x,y,z, r, 3, 0, 90);
-    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
-    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
-  }
-*/
 
 
   {
@@ -13627,33 +13638,46 @@ void SOLARCHVISION_add_ParametricGeometries () {
   }
 
   {
-    float x = 25;
-    float y = 25;
-    float z = 25;
+    float x = 30;
+    float y = 30;
+    float z = 10;
     float r = 10;
-    SOLARCHVISION_add_RecursiveSphere(4, x,y,z, r, 4, 0, 90);
+    SOLARCHVISION_add_RecursiveSphere(4, x,y,z, r, 4, 0, 0);
     ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }  
 
-/*
   {
-    float x = -25;
-    float y = -25;
-    float z = 25;
-    float rx = 40;
+    float x = -30;
+    float y = -30;
+    float z = 0;
+    float rx = 20;
     float ry = 10;
+    float rz = 30;
+    float px = 4;
+    float py = 4;
+    float pz = 4;
+    float t = 45;
+    SOLARCHVISION_add_SuperSphere(4, x,y,z, pz,py,pz, rx,ry,rz, 5, t);
+    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, t)};
+    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+  }  
+
+  {
+    float x = 30;
+    float y = -30;
+    float z = 0;
+    float rx = 20;
+    float ry = 20;
     float rz = 20;
-    float px = 2;
-    float py = 2;
-    float pz = 2;
+    float px = 0.5;
+    float py = 0.5;
+    float pz = 0.5;
     
-    SOLARCHVISION_add_SuperSphere(5, x,y,z, pz,py,pz, rx,ry,rz, 5, 90);
+    SOLARCHVISION_add_SuperSphere(4, x,y,z, pz,py,pz, rx,ry,rz, 5, 0);
     ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, 0)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }  
-*/
-
 
 
 }
