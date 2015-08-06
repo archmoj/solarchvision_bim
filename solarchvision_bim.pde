@@ -119,7 +119,7 @@ int Launch_External_Hardware = 0; // inactive
 
 //-------------------------------
 
-float Field_Power = 1.0; // 1/2/3
+float Field_Power = 2.0; // 1/2/3
 
 float GlobalAlbedo = 0; // 0-100
 
@@ -698,7 +698,7 @@ void empty_Materials_DiffuseArea () {
 
 
                   
-int h_pixel = 345; //325; 
+int h_pixel = 340; //325; 
 int w_pixel = int(h_pixel * 1.5); 
 
 float WIN3D_scale3D; 
@@ -1348,7 +1348,7 @@ void draw () {
         
         if (pre_Load_Default_Models != Load_Default_Models) {
           SOLARCHVISION_remove_2Dobjects();
-
+          
           SOLARCHVISION_remove_3Dobjects();
           
           SOLARCHVISION_remove_ParametricGeometries();
@@ -11592,6 +11592,9 @@ void SOLARCHVISION_remove_3Dobjects () {
   urbanVertices_end = 0;
   urbanFaces_start = 0;
   urbanFaces_end = 0; 
+  
+  WIN3D_FACES_SHADE = 1;
+  WIN3D_update_VerticesSolarValue = 1;  
  
 }
 
@@ -11630,12 +11633,12 @@ void SOLARCHVISION_add_3Dbase () {
   }
 }  
 
-int MAX_Default_Models_Number = 5;
+int MAX_Default_Models_Number = 4;
 
 void SOLARCHVISION_add_DefaultModel (int n) {
 
   if (n != 0) {
-    SOLARCHVISION_add_Mesh2(-1, -50, -50, 0, 50, 50, 0);
+    SOLARCHVISION_add_Mesh2(0, -50, -50, 0, 50, 50, 0);
     
     if (Load_LAND == 0) {
       SOLARCHVISION_add_2Dobjects(100, 50, 0); // (n, r, z)
@@ -11643,26 +11646,24 @@ void SOLARCHVISION_add_DefaultModel (int n) {
   }
   
   if (n == 1) {
-    SOLARCHVISION_add_House_Core(Create_Default_Material, -1, 0, 0, 6, 6, 6, 6, 90);
+    SOLARCHVISION_add_House_Core(0, 0, 0, 0, 6, 6, 6, 6, 90);
   }
   
   if (n == 2) {
-    SOLARCHVISION_add_House_Core(Create_Default_Material, -1, 0, 0, 6, 6, 6, 6, 0);
+    SOLARCHVISION_add_House_Core(0, 0, 0, 0, 6, 6, 6, 6, 0);
   }  
 
   if (n == 3) {
     
-    SOLARCHVISION_add_PolygonHyper(0, 0, 0, 5,  10, 10, 5, 0);
-    SOLARCHVISION_add_House_Core(-1, 25, 25, 0, 6, 6, 6, 6, 0);    
+    SOLARCHVISION_add_PolygonHyper(0, 0, 0, 5,  10, 10, 4, 0);
+    SOLARCHVISION_add_House_Core(7, 25, 25, 0, 6, 6, 6, 6, 0);    
   }   
  
   if (n == 4) {
-  
+   SOLARCHVISION_add_ParametricGeometries();
   }      
 
-  if (n == 5) {
-    SOLARCHVISION_add_ParametricGeometries();
-  }      
+ 
 }
 
 void SOLARCHVISION_add_3Dobjects () {
@@ -15194,7 +15195,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
   X_spinner = ROLLOUT_CX_View;
   Y_spinner = ROLLOUT_CY_View;
   
-  X_spinner += 305 * ROLLOUT_S_View;
+  X_spinner += 307.5 * ROLLOUT_S_View;
   Y_spinner += 7.5 * ROLLOUT_S_View;
 
   if (ROLLOUT_parent >= ROLLOUTS.length) {
