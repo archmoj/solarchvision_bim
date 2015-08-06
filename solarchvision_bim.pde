@@ -1,6 +1,6 @@
 import processing.pdf.*;
 
-int STATION_NUMBER = 1;
+int STATION_NUMBER = 3;
 
 String[][] DEFINED_STATIONS = {
      
@@ -125,7 +125,7 @@ float GlobalAlbedo = 0; // 0-100
 
 float MAX_SHADING_DIST = 250; // the biggest object should be 250
 
-int SavedScreenShots = 0;
+int SavedScreenShots = 100;
 
 int MODEL_RUN = 0; //12; 
 
@@ -223,17 +223,17 @@ int j_start = 0;
 int j_end = 2; //16; // Variable
 
 int max_j_end_forecast = 16; // Constant
-int max_j_end_observed = 0; // Variable
+int max_j_end_observed = 7; // Variable
 
 float per_day = 1; //45; //61; //30.5;
 int num_add_days = 1; //30;//per_day; // it should be set up to 1 in order to plot only one day  
-
+/*
 // Note: The first observed station below should match the forecast station because the non-linear interpolation function only uses this station.
 String[][] OBSERVED_STATIONS = {
                                 {"CWTQ", "AUTO", "Dorval"}  
                                };
+*/                              
                               
-/*                              
 String[][] OBSERVED_STATIONS = {
                                 {"CWTQ", "AUTO", "Dorval"}    
                               , {"CYUL", "MAN", "Trudeau Int'l A."}
@@ -245,7 +245,7 @@ String[][] OBSERVED_STATIONS = {
                               , {"CWHM", "AUTO", "Varennes"}
                               , {"CWVQ", "AUTO", "Sainte-Anne-de-Bellevue"} 
                                }; 
-*/
+
 
 int CLIMATE_EPW_start = 1; 
 int CLIMATE_EPW_end = 1;
@@ -276,7 +276,7 @@ int[][][][] OBSERVED_DATA;
 int Load_CLIMATE_EPW = 0;
 int Load_CLIMATE_WY2 = 0;
 int Load_ENSEMBLE = 1;
-int Load_OBSERVED = 0;
+int Load_OBSERVED = 1;
 
 
 PrintWriter[] File_output_node;
