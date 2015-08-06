@@ -9,7 +9,7 @@ String[][] DEFINED_STATIONS = {
                                 {"TORONTO_ISLAND_ON_CA", "Ryerson_University", "ON", "43.6593", "-79.3779", "-75", "95"}, 
   
                                 {"MONTREAL_DORVAL_QC_CA", "Place_Bonaventure", "QC", "45.4995", "-73.5650", "-75", "30"},
-/*                                
+
                                 {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36"},
                                 
                                 {"CALGARY_INTL_AB_CA", "CALGARY", "AB", "51.113889", "-114.02", "-120", "1084.1"}, 
@@ -22,7 +22,7 @@ String[][] DEFINED_STATIONS = {
                                 {"TORONTO_PEARSON_INTL_ON_CA", "TORONTO-PEARSON", "ON", "43.676667", "-79.630556", "-75", "173.4"}, 
                                 {"VANCOUVER_INTL_BC_CA", "VANCOUVER_Harbour", "BC", "49.295353", "-123.121869", "-120", "2.5"}, 
                                 {"WINNIPEG_INTL_MB_CA", "WINNIPEG", "MB", "49.91", "-97.24", "-90", "238.7"},
-*/
+
 
 /*                                
                                 {"BOSTON_MA_US", "BOSTON", "MA", "42.35843", "-71.05978", "-75", "15.0"}, 
@@ -51,6 +51,13 @@ String[][] DEFINED_STATIONS = {
                               
 */                             
                               };
+
+    
+int Selected_STATION = STATION_NUMBER;
+int LOAD_STATION = 0; 
+
+int Load_Default_Models = 0;
+
 
 
 int Create_Default_Material = 0; //7;
@@ -571,6 +578,7 @@ float pre_Field_Power;
 float[] pre_Field_Rotation = {0,0,0,0};
 float[] pre_Field_Elevation = {0,0,0,0};
       
+int pre_Load_Default_Models;
 
 
 
@@ -690,7 +698,7 @@ void empty_Materials_DiffuseArea () {
 
 
                   
-int h_pixel = 325; 
+int h_pixel = 345; //325; 
 int w_pixel = int(h_pixel * 1.5); 
 
 float WIN3D_scale3D; 
@@ -1259,7 +1267,7 @@ void draw () {
         pre_Field_Rotation[display_Field_Image] = Field_Rotation[display_Field_Image];
         pre_Field_Elevation[display_Field_Image] = Field_Elevation[display_Field_Image];
       
-
+        pre_Load_Default_Models = Load_Default_Models;
        
         
         SOLARCHVISION_draw_ROLLOUT();
@@ -1281,6 +1289,12 @@ void draw () {
         }
       
         if (pre_STATION_NUMBER != STATION_NUMBER) SOLARCHVISION_update_station(0);
+
+        if (LOAD_STATION == 1) {         
+          STATION_NUMBER = Selected_STATION;
+          SOLARCHVISION_update_station(0);
+          LOAD_STATION = 0;
+        }
         
         if (pre_Load_CLIMATE_EPW != Load_CLIMATE_EPW) SOLARCHVISION_try_update_CLIMATE_EPW();
         if (pre_Load_CLIMATE_WY2 != Load_CLIMATE_WY2) SOLARCHVISION_try_update_CLIMATE_WY2();
@@ -1315,11 +1329,33 @@ void draw () {
         
         
         if (MODEL3D_ERASE == 1) {
+          SOLARCHVISION_remove_2Dobjects();
+          
           SOLARCHVISION_remove_3Dobjects();
+          
+          SOLARCHVISION_remove_ParametricGeometries();
           
           SOLARCHVISION_add_3Dbase();
           
+          SOLARCHVISION_calculate_ParametricGeometries_Field();
+
+          WIN3D_Update = 1;
+      
+          ROLLOUT_Update = 1;
+      
+          MODEL3D_ERASE = 0;    
+        }
+        
+        if (pre_Load_Default_Models != Load_Default_Models) {
+          SOLARCHVISION_remove_2Dobjects();
+
+          SOLARCHVISION_remove_3Dobjects();
+          
           SOLARCHVISION_remove_ParametricGeometries();
+          
+          SOLARCHVISION_add_3Dbase();
+
+          SOLARCHVISION_add_DefaultModel(Load_Default_Models);
           
           SOLARCHVISION_calculate_ParametricGeometries_Field();
           
@@ -1327,7 +1363,7 @@ void draw () {
       
           ROLLOUT_Update = 1;
       
-          MODEL3D_ERASE = 0;    
+          MODEL3D_ERASE = 0;              
         }
         
         
@@ -1369,6 +1405,11 @@ void draw () {
     }
     
 
+//-------------------------------
+    if (STATION_NUMBER > 2) {
+      if (camera_variation > 2) camera_variation = 1;
+    }
+//-------------------------------
 
     if (GRAPHS_include == 1) {
       if (GRAPHS_Update == 1) {
@@ -1848,7 +1889,7 @@ void SOLARCHVISION_draw_GRAPHS () {
     if (impacts_source == databaseNumber_ENSEMBLE) _text += " based on the North American Ensemble Forecast System (NAEFS - Environment Canada)";
     if (impacts_source == databaseNumber_OBSERVED) _text += " based on real-time Surface Weather Observation (SWOB - Environment Canada)";
     
-    _text += ", www.solarchvision.com";
+    //_text += ", www.solarchvision.com";
 
     if (GRAPHS_record_PDF == 1) {
       Diagrams_textSize(GRAPHS_X_View * 0.01 * 2.0 / 3.0);
@@ -2012,17 +2053,17 @@ void Plot_Setup () {
 
   if (GRAPHS_setup == 14) {
 
-    if (frame_variation == 3) {
+    if (frame_variation == 1) {
       
       int pre_impact_layer = impact_layer;
       for (int p = 0; p < 3; p += 1) { 
-        int impact_layer = 3 * int(pre_impact_layer / 3) + p;
+        impact_layer = 3 * int(pre_impact_layer / 3) + p;
 
-        SOLARCHVISION_PlotIMPACT(0, p * 175 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View); 
+        SOLARCHVISION_PlotIMPACT(0, (175 - p * 350) * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View); 
       }
       impact_layer = pre_impact_layer;
     
-      SOLARCHVISION_PlotHOURLY(0, 350 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
+      SOLARCHVISION_PlotHOURLY(0, 525 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
 
     }
     
@@ -6962,7 +7003,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       PAL_TYPE = GRAPHS_Pallet_ACTIVE; PAL_DIR = GRAPHS_Pallet_ACTIVE_DIR;
     }
     if (Impact_TYPE == Impact_SPD_DIR_TMP) {  
-      PAL_TYPE = GRAPHS_Pallet_ACTIVE; PAL_DIR = GRAPHS_Pallet_ACTIVE_DIR;
+      //PAL_TYPE = GRAPHS_Pallet_ACTIVE; PAL_DIR = GRAPHS_Pallet_ACTIVE_DIR;
+      PAL_TYPE = 12; PAL_DIR = -1;
     }             
 
     float _Multiplier = 1; 
@@ -8719,9 +8761,9 @@ void GRAPHS_keyPressed (KeyEvent e) {
           case '4' : camera_variation = 4; GRAPHS_Update = 1; break;
           case '5' : camera_variation = 5; GRAPHS_Update = 1; break;
           case '6' : camera_variation = 6; GRAPHS_Update = 1; break;
-          case '7' : camera_variation = 7; GRAPHS_Update = 1; break;
-          case '8' : camera_variation = 8; GRAPHS_Update = 1; break;
-          case '9' : camera_variation = 9; GRAPHS_Update = 1; break;
+          //case '7' : camera_variation = 7; GRAPHS_Update = 1; break;
+          //case '8' : camera_variation = 8; GRAPHS_Update = 1; break;
+          //case '9' : camera_variation = 9; GRAPHS_Update = 1; break;
           
    
         }
@@ -9885,6 +9927,18 @@ void SOLARCHVISION_update_frame_layout () {
  }
  else if (frame_variation == 1) {
 
+    GRAPHS_include = 1;
+    WIN3D_include = 0;
+    WORLD_include = 0;
+   
+    GRAPHS_CX_View = 0;
+    GRAPHS_CY_View = 0;
+    GRAPHS_X_View = 2 * w_pixel;
+    GRAPHS_Y_View = 2 * h_pixel;
+    GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);   
+ } 
+ else if (frame_variation == 2) {
+
     GRAPHS_include = 0;
     WIN3D_include = 1;
     WORLD_include = 0;
@@ -9896,7 +9950,7 @@ void SOLARCHVISION_update_frame_layout () {
     WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
     WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
  } 
- else if (frame_variation == 2) {
+ else if (frame_variation == 3) {
    
     GRAPHS_include = 0;
     WIN3D_include = 0;
@@ -9909,18 +9963,7 @@ void SOLARCHVISION_update_frame_layout () {
     WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
     WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);    
  } 
- else if (frame_variation == 3) {
 
-    GRAPHS_include = 1;
-    WIN3D_include = 0;
-    WORLD_include = 0;
-   
-    GRAPHS_CX_View = 0;
-    GRAPHS_CY_View = 0;
-    GRAPHS_X_View = 2 * w_pixel;
-    GRAPHS_Y_View = 2 * h_pixel;
-    GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);   
-  }
  
   WORLD_Update = 1;
   WIN3D_Update = 1; 
@@ -11484,6 +11527,40 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
 
 }
 
+void SOLARCHVISION_add_2Dobjects (int n, float r, float z) {
+
+
+      for (int i = 0; i < n; i += 1) {
+        
+        float a = random(360);
+        float b = random(r);
+
+        float x = b * cos_ang(a);
+        float y = b * sin_ang(a);
+        
+        if (dist(x,y,0,0) > 2.5) { // i.e. No 2D at the center!
+        
+          int t = 1;
+          
+          if (i < Skip_LAND_Center) {
+            float q = random(100);
+            
+            if (q < 90) t = 0; //  to illustrate more people at the center
+          }
+          
+          if (dist(x,y,0,0) < 25) t = 0; // i.e. No tree around the center!
+          
+          if (t == 0) {
+            SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
+          }
+          else{
+            SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
+          }
+        }
+      }  
+
+}
+
 void SOLARCHVISION_remove_2Dobjects () {
   allObject2D_XYZS = new float [1][3]; 
   allObject2D_XYZS[0][0] = 0;
@@ -11539,31 +11616,62 @@ void SOLARCHVISION_add_urban () {
 }
 
 void SOLARCHVISION_add_3Dbase () {
-  //SOLARCHVISION_add_Mesh2(-2, -150, -150, 0, 150, 150, 0);
   
-  for (int i = 0; i < Skip_LAND_Center; i += 1) {  
-    for (int j = 0; j < LAND_n_J - 1; j += 1) {
-      // Material -2 for colored elevations
-      SOLARCHVISION_add_Mesh4(-2, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2] , LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i+1][j][2] , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2] , LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1], LAND_MESH[i][j+1][2] );
-    }
-  }  
+  if (Load_LAND != 0) {
+  
+    //SOLARCHVISION_add_Mesh2(-2, -150, -150, 0, 150, 150, 0);
+    
+    for (int i = 0; i < Skip_LAND_Center; i += 1) {  
+      for (int j = 0; j < LAND_n_J - 1; j += 1) {
+        // Material -2 for colored elevations
+        SOLARCHVISION_add_Mesh4(-2, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2] , LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i+1][j][2] , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2] , LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1], LAND_MESH[i][j+1][2] );
+      }
+    }  
+  }
 }  
+
+int MAX_Default_Models_Number = 5;
+
+void SOLARCHVISION_add_DefaultModel (int n) {
+
+  if (n != 0) {
+    SOLARCHVISION_add_Mesh2(-1, -50, -50, 0, 50, 50, 0);
+    
+    if (Load_LAND == 0) {
+      SOLARCHVISION_add_2Dobjects(100, 50, 0); // (n, r, z)
+    }    
+  }
+  
+  if (n == 1) {
+    SOLARCHVISION_add_House_Core(Create_Default_Material, -1, 0, 0, 6, 6, 6, 6, 90);
+  }
+  
+  if (n == 2) {
+    SOLARCHVISION_add_House_Core(Create_Default_Material, -1, 0, 0, 6, 6, 6, 6, 0);
+  }  
+
+  if (n == 3) {
+    
+    SOLARCHVISION_add_PolygonHyper(0, 0, 0, 5,  10, 10, 5, 0);
+    SOLARCHVISION_add_House_Core(-1, 25, 25, 0, 6, 6, 6, 6, 0);    
+  }   
+ 
+  if (n == 4) {
+  
+  }      
+
+  if (n == 5) {
+    SOLARCHVISION_add_ParametricGeometries();
+  }      
+}
 
 void SOLARCHVISION_add_3Dobjects () {
   
   SOLARCHVISION_add_3Dbase();
   
-  /*
-  SOLARCHVISION_add_Mesh2(0, 0, 0, 0, 40, 40, 0);
+  SOLARCHVISION_add_DefaultModel(Load_Default_Models);
   
-  SOLARCHVISION_add_Mesh5(1, 10,10,0, 10,10,5, 10,15,10, 10,20,5, 10,20,0);
-  SOLARCHVISION_add_Mesh5(2, 20,20,0, 20,20,5, 20,15,10, 20,10,5, 20,10,0);  
-  SOLARCHVISION_add_Mesh4(3, 10,10,0, 20,10,0, 20,10,5, 10,10,5);
-  SOLARCHVISION_add_Mesh4(4, 10,20,0, 10,20,5, 20,20,5, 20,20,0);
-  SOLARCHVISION_add_Mesh4(5, 10,10,5, 20,10,5, 20,15,10, 10,15,10);
-  SOLARCHVISION_add_Mesh4(6, 10,20,5, 10,15,10, 20,15,10, 20,20,5);
-  */  
-  
+ 
   //SOLARCHVISION_add_Mesh2(0, -20, -20, 0, 20, 20, 0);
   //SOLARCHVISION_add_PolygonHyper(0, 0, 0, 0,  10, 10, 4);
   //SOLARCHVISION_add_Polygon(3, 0, 0, 0, 50, 24);
@@ -11993,7 +12101,8 @@ void SOLARCHVISION_draw_SKY3D () {
             int s_next = (s + 1) % subFace.length;
             int s_prev = (s + subFace.length - 1) % subFace.length;
             
-            if ((subFace[s][2] > -0.2) && (subFace[s_prev][2] > -0.2) && (subFace[s_next][2] > -0.2)) {
+            //if ((subFace[s][2] > -0.2) && (subFace[s_prev][2] > -0.2) && (subFace[s_next][2] > -0.2)) // to remove below 
+            {
             
               PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
               PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
@@ -15058,9 +15167,9 @@ class SOLARCHVISION_Spinner {
 }
 
 String[][] ROLLOUTS = {
-                        {"Location & Data", "General", "Point", "Environment"}, 
+                        {"Location & Data", "Point", "Weather", "Environment"}, 
                         {"Geometries & Space", "General", "Solids", "Meshes"}, 
-                        {"Time & Scenarios", "General", "Filters", "Ranges"}, 
+                        {"Time & Scenarios", "Period", "Filters", "Ranges"}, 
                         {"Illustration Options", "Layout", "Layers", "Colors"},
                         {"Post-Processing", "Interpolation", "Developed", "Impacts"}, 
                         {"Export Products", "Data", "Media", "Launch"}
@@ -15177,18 +15286,14 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
 
 
-  if (ROLLOUT_parent == 0) { // Location & Data
+  if (ROLLOUT_parent == 0) { // Location & data
 
-    STATION_NUMBER = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,1,1, "Station", STATION_NUMBER, 0, DEFINED_STATIONS.length - 1, 1), 1));
-    
-    if (ROLLOUT_child == 1) { // General
-      Load_ENSEMBLE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_ENSEMBLE" , Load_ENSEMBLE, 0, 1, 1), 1));
-      Load_OBSERVED = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_OBSERVED" , Load_OBSERVED, 0, 1, 1), 1));
-      Load_CLIMATE_WY2 = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_CLIMATE_WY2" , Load_CLIMATE_WY2, 0, 1, 1), 1));
-      Load_CLIMATE_EPW = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_CLIMATE_EPW" , Load_CLIMATE_EPW, 0, 1, 1), 1));
-    }
 
-    if (ROLLOUT_child == 2) { // Point
+    if (ROLLOUT_child == 1) { // Point
+      Selected_STATION = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Selected:" + DEFINED_STATIONS[Selected_STATION][1], Selected_STATION, 0, DEFINED_STATIONS.length - 1, 1), 1));
+      LOAD_STATION = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,1,1, "LOAD_STATION", LOAD_STATION, 0, 1, 1), 1));
+      STATION_NUMBER = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,1,1, "Loaded:" + DEFINED_STATIONS[STATION_NUMBER][1], STATION_NUMBER, 0, DEFINED_STATIONS.length - 1, 1), 1));
+  
 
       WORLD_VIEW_Auto = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Map Auto Fit", WORLD_VIEW_Auto, 0, 1, 1), 1));
       WORLD_VIEW_Number = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Map Viewport", WORLD_VIEW_Number, 0, number_of_WORLD_viewports - 1, 1), 1));
@@ -15209,6 +15314,14 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       Display_CWEEDS_points = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_CWEEDS_points" , Display_CWEEDS_points, 0, 2, 1), 1));
       Display_CWEEDS_nearest = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_CWEEDS_nearest" , Display_CWEEDS_nearest, 0, 1, 1), 1));      
+    }
+
+    if (ROLLOUT_child == 2) { // Weather
+
+      Load_ENSEMBLE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_ENSEMBLE" , Load_ENSEMBLE, 0, 1, 1), 1));
+      Load_OBSERVED = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_OBSERVED" , Load_OBSERVED, 0, 1, 1), 1));
+      Load_CLIMATE_WY2 = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_CLIMATE_WY2" , Load_CLIMATE_WY2, 0, 1, 1), 1));
+      Load_CLIMATE_EPW = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_CLIMATE_EPW" , Load_CLIMATE_EPW, 0, 1, 1), 1));
     }
     
     if (ROLLOUT_child == 3) { // Environment
@@ -15291,13 +15404,15 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
     MODEL3D_ERASE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "MODEL3D_ERASE" , MODEL3D_ERASE, 0, 1, 1), 1));
     
+    Load_Default_Models = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Load_Default_Models" , Load_Default_Models, 0, MAX_Default_Models_Number, 1), 1));
     
+
     
     
   }
   else if (ROLLOUT_parent == 2) { // Time & Scenarios
     
-    if (ROLLOUT_child == 1) { // General
+    if (ROLLOUT_child == 1) { // Period
     
       j_end = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "No. of days to plot" , j_end, 1, 61, 1), 1));
     
