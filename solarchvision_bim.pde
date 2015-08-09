@@ -2485,7 +2485,7 @@ void Plot_Setup () {
     }
 
     drw_Layer = _windspd; 
-    SOLARCHVISION_PlotHOURLY(0, 125 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View); 
+    SOLARCHVISION_PlotHOURLY(0, 175 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View); 
 
     drw_Layer = _precipitation ; 
     develop_Layer = drw_Layer;
@@ -2522,7 +2522,7 @@ void Plot_Setup () {
     
 
     drw_Layer = drw_Layer = _dirnorrad; 
-    SOLARCHVISION_PlotHOURLY(0, 125 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View); 
+    SOLARCHVISION_PlotHOURLY(0, 175 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View); 
 
     drw_Layer = _glohorrad; //_difhorrad; // <<<<<<<<<<<<<< 
     SOLARCHVISION_PlotHOURLY(0, 325 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
@@ -7283,6 +7283,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
     for (int p = 0; p < 1; p += 1) { 
       int l = impact_layer;
+      
+    //for (int p = 0; p < 1; p += 1) { 
+      //int l = 3 * int(impact_layer / 3) + 1; //impact_layer;      
 
       
       PImage total_Image_RGBA = createImage(RES1, RES2, RGB);
@@ -7818,12 +7821,15 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
     //for (int p = 0; p < 3; p += 1) { 
       //int l = 3 * int(impact_layer / 3) + p;
-      
-    //for (int p = 0; p < 3; p += 2) { 
-      //int l = 3 * int(impact_layer / 3) + p; 
 
+    //for (int p = 0; p < 3; p += 2) { 
+      //int l = 3 * int(impact_layer / 3) + p;
+      
     for (int p = 0; p < 1; p += 1) { 
-      int l = 3 * int(impact_layer / 3) + 1; //impact_layer;
+      int l = impact_layer;
+      
+    //for (int p = 0; p < 1; p += 1) { 
+      //int l = 3 * int(impact_layer / 3) + 1; //impact_layer;    
 
       float[][] TOTAL_valuesSUM_RAD = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
       float[][] TOTAL_valuesSUM_EFF_P = new float [1 + int(90 / stp_slp)][1 + int(360 / stp_dir)];
@@ -8265,10 +8271,13 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       //int l = 3 * int(impact_layer / 3) + p;
 
     //for (int p = 0; p < 3; p += 2) { 
-      //int l = 3 * int(impact_layer / 3) + p; 
-
+      //int l = 3 * int(impact_layer / 3) + p;
+      
     for (int p = 0; p < 1; p += 1) { 
       int l = impact_layer;
+      
+    //for (int p = 0; p < 1; p += 1) { 
+      //int l = 3 * int(impact_layer / 3) + 1; //impact_layer;    
  
       for (int j = j_start; j < j_end; j += 1) {
 
