@@ -147,7 +147,8 @@ String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMA
 
 String ENSEMBLE_directory = "C:/SOLARCHVISION_2015/Input/WeatherForecast/FORECAST_NAEFS";
 
-String OBSERVED_directory = "C:/SOLARCHVISION_2015/Input/WeatherRealTime/OBSERVATION_SWOB";
+String OBSERVED_directory = "C:/SOLARCHVISION_2015/Input/WeatherRealTime/OBSERVATION_SWOB_EMPTY";
+//String OBSERVED_directory = "C:/SOLARCHVISION_2015/Input/WeatherRealTime/OBSERVATION_SWOB";
 
 
 
@@ -362,11 +363,11 @@ float SKY3D_Pallet_ACTIVE_MLT = 1;
 
 int SKY3D_Pallet_PASSIVE = 18; 
 int SKY3D_Pallet_PASSIVE_DIR = -1;  
-float SKY3D_Pallet_PASSIVE_MLT = 1;
+float SKY3D_Pallet_PASSIVE_MLT = 2; //1;
 
 int OBJECTS_Pallet_ACTIVE = 15;
 int OBJECTS_Pallet_ACTIVE_DIR = 1;
-float OBJECTS_Pallet_ACTIVE_MLT = 1;
+float OBJECTS_Pallet_ACTIVE_MLT = 2; //1;
 
 int OBJECTS_Pallet_PASSIVE = -1; 
 int OBJECTS_Pallet_PASSIVE_DIR = 1;  
@@ -374,7 +375,7 @@ float OBJECTS_Pallet_PASSIVE_MLT = 1;
 
 
 float GRAPHS_Pallet_ACTIVE_MLT = 1;
-float GRAPHS_Pallet_PASSIVE_MLT = 1;
+float GRAPHS_Pallet_PASSIVE_MLT = 2; //1;
 
 //int GRAPHS_Pallet_ACTIVE = 8, GRAPHS_Pallet_ACTIVE_DIR = -1;
 //int GRAPHS_Pallet_ACTIVE = -1, GRAPHS_Pallet_ACTIVE_DIR = -1;
@@ -588,7 +589,7 @@ int GRAPHS_setup = 14; //4; //12; //13;
 
 String BaseFolder = "C:/SOLARCHVISION_2015"; 
 
-String ExportFolder;
+
 String BackgroundFolder;
 String WorldViewFolder;
 String SWOBFolder;
@@ -597,10 +598,13 @@ String CWEEDSFolder;
 String LandFolder;
 String Object2DFolder_PEOPLE;
 String Object2DFolder_TREES;
+String ExportFolder;
+String ScreenShotFolder;
 
 void SOLARCHVISION_update_folders () {
 
-  ExportFolder          = BaseFolder + "/Export";
+  
+  
   BackgroundFolder      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
   WorldViewFolder       = BaseFolder + "/Input/BackgroundImages/Standard/World";
   SWOBFolder            = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
@@ -609,6 +613,18 @@ void SOLARCHVISION_update_folders () {
   LandFolder            = BaseFolder + "/Input/CoordinateFiles/Land";
   Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_SEL";
   Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_ALL";
+  ExportFolder          = BaseFolder + "/Export";
+  ScreenShotFolder      = "/ScreenShots";
+
+
+  try {
+
+    SavedScreenShots = (getfiles(ScreenShotFolder)).length;
+  
+  }
+  catch (Exception e) {
+    println("No ScreenShotFolder!");
+  }  
 
 }
 
@@ -9897,7 +9913,7 @@ void WIN3D_keyPressed (KeyEvent e) {
 
 void SOLARCHVISION_RecordFrame () {
   SavedScreenShots += 1; 
-  saveFrame("/Output/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_IMG" + nf(SavedScreenShots , 3) + ".jpg");
+  saveFrame(ScreenShotFolder + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_IMG" + nf(SavedScreenShots , 3) + ".jpg");
   
 }
                   
