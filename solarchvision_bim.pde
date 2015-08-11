@@ -168,7 +168,7 @@ String MAKE_Filenames () {
   String My_Filenames = "";
   String Main_name = MAKE_mainname();
   
-  My_Filenames = "C:/SOLARCHVISION_2015/TEST_Output" + "/";
+  My_Filenames = DiagramsFolder + "/";
   My_Filenames += nf(_YEAR, 2) + "-" + nf(_MONTH, 2) + "-" + nf(_DAY, 2) + "/";
   My_Filenames += "NAEFS_" + nf(MODEL_RUN, 2) + "/";
 
@@ -599,11 +599,11 @@ String LandFolder;
 String Object2DFolder_PEOPLE;
 String Object2DFolder_TREES;
 String ExportFolder;
+String DiagramsFolder;
 String ScreenShotFolder;
 
-void SOLARCHVISION_update_folders () {
 
-  
+void SOLARCHVISION_update_folders () {
   
   BackgroundFolder      = BaseFolder + "/Input/BackgroundImages/Standard/Other";
   WorldViewFolder       = BaseFolder + "/Input/BackgroundImages/Standard/World";
@@ -614,17 +614,18 @@ void SOLARCHVISION_update_folders () {
   Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_SEL";
   Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_ALL";
   ExportFolder          = BaseFolder + "/Export";
-  ScreenShotFolder      = "/ScreenShots";
+  DiagramsFolder        = ExportFolder + "/Diagrams";  
+  ScreenShotFolder      = ExportFolder + "/ScreenShots" + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
 
 
-  try {
+  //try {
 
-    SavedScreenShots = (getfiles(ScreenShotFolder)).length;
+    String[] filenames = getfiles(ScreenShotFolder);
+    if (filenames != null) SavedScreenShots = filenames.length;
+    //println("SavedScreenShots:", SavedScreenShots);
   
-  }
-  catch (Exception e) {
-    println("No ScreenShotFolder!");
-  }  
+  //} catch (Exception e) println("No ScreenShotFolder!");
+  
 
 }
 
