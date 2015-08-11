@@ -13481,7 +13481,7 @@ float Bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y
 //Polar
 int LAND_n_I_base = 0;
 int LAND_n_J_base = 0;
-int LAND_n_I = 4 + 1; //16 + 1; //8 + 1;
+int LAND_n_I = 8 + 1; //16 + 1; //8 + 1;
 int LAND_n_J = 24 + 1;     
 
 double R_earth = 6373 * 1000;
