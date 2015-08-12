@@ -876,9 +876,9 @@ void SOLARCHVISION_update_station (int Step) {
   
   if ((Step == 0) || (Step == 3)) SOLARCHVISION_try_update_CLIMATE_WY2();  
   
-  if ((Step == 0) || (Step == 4)) SOLARCHVISION_try_update_observed();
+  if ((Step == 0) || (Step == 4)) SOLARCHVISION_try_update_OBSERVED();
   
-  if ((Step == 0) || (Step == 5)) SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+  if ((Step == 0) || (Step == 5)) SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
 
   if ((Step == 0) || (Step == 6)) SOLARCHVISION_LoadLAND(LocationName);
   
@@ -1096,7 +1096,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_try_update_observed", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_try_update_OBSERVED", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 13) {
     SOLARCHVISION_update_station(4);
@@ -1107,7 +1107,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_try_update_forecast", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_try_update_ENSEMBLE", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 14) {
     SOLARCHVISION_update_station(5);
@@ -1300,7 +1300,7 @@ void draw () {
           _HOUR = int(24 * (_DATE - int(_DATE)));
           _DATE = (_HOUR / 24.0) + (286 + Convert2Date(_MONTH, _DAY)) % 365;
           println("DATE:", _DATE, "\tHOUR:", _HOUR);
-          SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+          SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
           
           SOLARCHVISION_draw_ROLLOUT();
         }
@@ -1317,8 +1317,8 @@ void draw () {
         
         if (pre_Load_CLIMATE_EPW != Load_CLIMATE_EPW) SOLARCHVISION_try_update_CLIMATE_EPW();
         if (pre_Load_CLIMATE_WY2 != Load_CLIMATE_WY2) SOLARCHVISION_try_update_CLIMATE_WY2();
-        if (pre_Load_OBSERVED != Load_OBSERVED) SOLARCHVISION_try_update_observed();
-        if (pre_Load_ENSEMBLE != Load_ENSEMBLE) SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+        if (pre_Load_OBSERVED != Load_OBSERVED) SOLARCHVISION_try_update_OBSERVED();
+        if (pre_Load_ENSEMBLE != Load_ENSEMBLE) SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
 
         if (pre_WORLD_VIEW_Auto != WORLD_VIEW_Auto) {
           WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
@@ -2117,28 +2117,28 @@ void Plot_Setup () {
       _DATE -= delta;
       SOLARCHVISION_update_date();
       BEGIN_DAY = Convert2Date(_MONTH, _DAY);
-      SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+      SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
       BEGIN_DAY = (BEGIN_DAY + delta) % 365;
       SOLARCHVISION_PlotHOURLY(0, 175 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
   
       _DATE -= delta;
       SOLARCHVISION_update_date();
       BEGIN_DAY = Convert2Date(_MONTH, _DAY);
-      SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+      SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
       BEGIN_DAY = (BEGIN_DAY + 2 * delta) % 365;
       SOLARCHVISION_PlotHOURLY(0, -175 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
   
       _DATE -= delta;
       SOLARCHVISION_update_date();
       BEGIN_DAY = Convert2Date(_MONTH, _DAY);
-      SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+      SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
       BEGIN_DAY = (BEGIN_DAY + 3 * delta) % 365;
       SOLARCHVISION_PlotHOURLY(0, -525 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
       
       _DATE = pre_DATE;
       SOLARCHVISION_update_date();
       BEGIN_DAY = Convert2Date(_MONTH, _DAY);
-      SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+      SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
       BEGIN_DAY = pre_BEGIN_DAY;
     }
   }
@@ -3354,7 +3354,7 @@ void SOLARCHVISION_update_date () {
   _HOUR = int(24 * (_DATE - int(_DATE)));
 }
 
-void SOLARCHVISION_try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
+void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
   int File_Found = -1;
 
   ENSEMBLE = new float [24][365][num_layers][(1 + ENSEMBLE_end - ENSEMBLE_start)];
@@ -4973,7 +4973,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
 
 
 
-void SOLARCHVISION_try_update_observed () {
+void SOLARCHVISION_try_update_OBSERVED () {
   
   
   OBSERVED = new float [24][365][num_layers][(1 + OBSERVED_end - OBSERVED_start)];
@@ -8937,14 +8937,14 @@ void GRAPHS_keyPressed (KeyEvent e) {
                     if (int(_DATE) == 365) _DATE -= 365;
                     if (int(_DATE) == 286) _YEAR += 1;
                     SOLARCHVISION_update_date(); 
-                    SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+                    SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
                     GRAPHS_Update = 1; break;
                     
           case 36  :_DATE -= 1;
                     if (int(_DATE) < 0) _DATE += 365;
                     if (int(_DATE) == 285) _YEAR -= 1;
                     SOLARCHVISION_update_date(); 
-                    SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+                    SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
                     GRAPHS_Update = 1; break;
        
           case 33:_DATE += 1; 
@@ -8952,7 +8952,7 @@ void GRAPHS_keyPressed (KeyEvent e) {
                     if ((_DATE == 286) || (_DATE == 286.5)) _YEAR += 1;
                     SOLARCHVISION_update_date(); 
                     BEGIN_DAY = int(BEGIN_DAY + 1) % 365; 
-                    SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+                    SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
                     GRAPHS_Update = 1; break; 
                     
           case 34 :_DATE -= 1; 
@@ -8960,7 +8960,7 @@ void GRAPHS_keyPressed (KeyEvent e) {
                     if ((_DATE == 285) || (_DATE == 285.5)) _YEAR -= 1;
                     SOLARCHVISION_update_date(); 
                     BEGIN_DAY = int(365 + BEGIN_DAY - 1) % 365;
-                    SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+                    SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
                     GRAPHS_Update = 1; break; 
                    
           case LEFT  :BEGIN_DAY = (365 + BEGIN_DAY - 1) % 365; GRAPHS_Update = 1; break;
@@ -8982,7 +8982,7 @@ void GRAPHS_keyPressed (KeyEvent e) {
           case '|' :if (_DATE == 1.0 * int(_DATE)) _DATE += 0.5;
                     else _DATE -= 0.5;
                     SOLARCHVISION_update_date(); 
-                    SOLARCHVISION_try_update_forecast(_YEAR, _MONTH, _DAY, _HOUR);
+                    SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
                     GRAPHS_Update = 1; break;
                    
           case ';': draw_impact_summary = (draw_impact_summary + 1) % 2;
