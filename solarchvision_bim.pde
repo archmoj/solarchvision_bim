@@ -242,13 +242,17 @@ int ENSEMBLE_end = 43; // max: 43
 
 int numberOfNearestStations_ENSEMBLE = 1;  // <<<<<<<<
 
+int[] nearest_Station_ENSEMBLE = new int [numberOfNearestStations_ENSEMBLE];
+float[] nearest_Station_ENSEMBLE_dist = new float [numberOfNearestStations_ENSEMBLE];
+
+
 int numberOfNearestStations_OBSERVED = 5;  // <<<<<<<<
 
 int OBSERVED_start = 1; 
 int OBSERVED_end = numberOfNearestStations_OBSERVED;
 
-int[] nearest_STATION_SWOB = new int [numberOfNearestStations_OBSERVED];
-float[] nearest_STATION_SWOB_dist = new float [numberOfNearestStations_OBSERVED];
+int[] nearest_Station_OBSERVED = new int [numberOfNearestStations_OBSERVED];
+float[] nearest_Station_OBSERVED_dist = new float [numberOfNearestStations_OBSERVED];
 
 
 
@@ -1615,8 +1619,8 @@ void SOLARCHVISION_draw_WORLD () {
  
   }   
 
-  int nearest_STATION_SWOB = -1;
-  float nearest_STATION_SWOB_dist = FLOAT_undefined;
+  int nearest_Station_OBSERVED = -1;
+  float nearest_Station_OBSERVED_dist = FLOAT_undefined;
   
   for (int f = 0; f < STATION_SWOB_INFO.length; f += 1) {
     float draw_info = 0;
@@ -1655,14 +1659,14 @@ void SOLARCHVISION_draw_WORLD () {
     
     float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
     
-    if (nearest_STATION_SWOB_dist > d) {
-      nearest_STATION_SWOB_dist = d;
-      nearest_STATION_SWOB = f;
+    if (nearest_Station_OBSERVED_dist > d) {
+      nearest_Station_OBSERVED_dist = d;
+      nearest_Station_OBSERVED = f;
     }     
   }    
   
   if (Display_SWOB_nearest == 1) {   
-    int f = nearest_STATION_SWOB;
+    int f = nearest_Station_OBSERVED;
     
     float _lat = float(STATION_SWOB_INFO[f][3]);
     float _lon = float(STATION_SWOB_INFO[f][4]); 
@@ -4971,8 +4975,8 @@ void SOLARCHVISION_try_update_OBSERVED () {
   if (Load_OBSERVED == 1) {
     
     for (int q = 0; q < numberOfNearestStations_OBSERVED; q++) {
-      nearest_STATION_SWOB[q] = -1;
-      nearest_STATION_SWOB_dist[q] = FLOAT_undefined;
+      nearest_Station_OBSERVED[q] = -1;
+      nearest_Station_OBSERVED_dist[q] = FLOAT_undefined;
     }
     
     for (int q = 0; q < numberOfNearestStations_OBSERVED; q++) {
@@ -4985,22 +4989,22 @@ void SOLARCHVISION_try_update_OBSERVED () {
        
         float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
         
-        if (nearest_STATION_SWOB_dist[q] > d) {
+        if (nearest_Station_OBSERVED_dist[q] > d) {
           
           int added_before = 0;
           
           for (int p = 0; p < q; p++) {
-            if (nearest_STATION_SWOB[p] == f) added_before = 1;
+            if (nearest_Station_OBSERVED[p] == f) added_before = 1;
           }
           
           if (added_before == 0) {
-            nearest_STATION_SWOB_dist[q] = d;
-            nearest_STATION_SWOB[q] = f;
+            nearest_Station_OBSERVED_dist[q] = d;
+            nearest_Station_OBSERVED[q] = f;
           }
         }     
       }
       
-      nearest_STATION_SWOB[q] = nearest_STATION_SWOB[q];
+      nearest_Station_OBSERVED[q] = nearest_Station_OBSERVED[q];
     }    
     
     
@@ -5038,7 +5042,7 @@ void SOLARCHVISION_try_update_OBSERVED () {
       
       for (int q = 0; q < numberOfNearestStations_OBSERVED; q++) {
         
-        int f = nearest_STATION_SWOB[q];
+        int f = nearest_Station_OBSERVED[q];
         
         if (f != -1) {
         
@@ -5358,7 +5362,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
 
       File_output_node[(j - j_start)].print("Hour\t");
       for (int l = start_z; l < (1 + end_z); l += 1) {
-        File_output_node[(j - j_start)].print(STATION_SWOB_INFO[nearest_STATION_SWOB[l]][6] + "\t"); 
+        File_output_node[(j - j_start)].print(STATION_SWOB_INFO[nearest_Station_OBSERVED[l]][6] + "\t"); 
       }
       File_output_node[(j - j_start)].println("");
     }
