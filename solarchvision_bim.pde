@@ -334,8 +334,6 @@ int filter_type = _daily;
 int join_hour_numbers = 24; //48;
 int join_type = -1; // -1: increasing weights, +1: equal weights
 
-String _Filenames = "";
-
 String _undefined = "N/A";
 float FLOAT_undefined = 1000000000; // it must be a positive big number that is not included in any data
 
@@ -3357,7 +3355,6 @@ void SOLARCHVISION_update_date () {
 }
 
 void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
-  int File_Found = -1;
 
   ENSEMBLE = new float [24][365][num_layers][(1 + ENSEMBLE_end - ENSEMBLE_start)];
   ENSEMBLE_DATA = new int [24][365][num_layers][(1 + ENSEMBLE_end - ENSEMBLE_start)]; // -1: undefined, 0: interpolated, 1: data
@@ -3379,32 +3376,24 @@ void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY
       if (THE_LAYERS[f].equals("")) {
       }
       else {
-        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + THE_STATION + "_" + THE_LAYERS[f] + "_000-384";
-      
+        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + THE_STATION + "_" + THE_LAYERS[f] + "_000-384.xml";
+
+        int File_Found = -1;
+
         //println (FN);
         for (int i = 0; i < ENSEMBLE_XML_Files.length; i++) {
           //println(ENSEMBLE_XML_Files[i]); 
-          
-          int _L = ENSEMBLE_XML_Files[i].length();
-          String _Extention = ENSEMBLE_XML_Files[i].substring(_L - 4, _L);
-          //println(_Extention);
-          if (_Extention.toLowerCase().equals(".xml")) {
-            _Filenames = ENSEMBLE_XML_Files[i].substring(0, _L - 4);
             
-            //println (FN);
-            //println (_Filenames);
-            //println ("");
+          if (ENSEMBLE_XML_Files[i].equals(FN)) {
+            //println ("FILE FOUND:", FN);
+            File_Found = i;
             
-            if (_Filenames.equals(FN)) {
-              //println ("FILE FOUND:", FN);
-              File_Found = 1;
-              SOLARCHVISION_LoadENSEMBLE((ENSEMBLE_directory + "/" + ENSEMBLE_XML_Files[i]), f);
-              
-              break; // <<<<<<<<<<
-            }
+            break; // <<<<<<<<<<
           }
         }
-        if (File_Found == -1) println ("FILE NOT FOUND:", FN);
+        
+        if (File_Found != -1) SOLARCHVISION_LoadENSEMBLE((ENSEMBLE_directory + "/" + ENSEMBLE_XML_Files[File_Found]), f); 
+        else println ("FILE NOT FOUND:", FN);
       }
     }
     
@@ -4149,7 +4138,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
 
 
 void SOLARCHVISION_try_update_CLIMATE_WY2 () {
-  int File_Found = -1;
+  
   
   CLIMATE_WY2 = new float [24][365][num_layers][(1 + CLIMATE_WY2_end - CLIMATE_WY2_start)];
  
@@ -4166,33 +4155,23 @@ void SOLARCHVISION_try_update_CLIMATE_WY2 () {
   
   if (Load_CLIMATE_WY2 == 1) {
 
-    String FN = THE_STATION;
+    String FN = THE_STATION + ".wy2";
+  
+    int File_Found = -1;
   
     //println (FN);
     for (int i = 0; i < CLIMATE_WY2_Files.length; i++) {
-      //println(ENSEMBLE_XML_Files[i]); 
-      
-      int _L = CLIMATE_WY2_Files[i].length();
-      String _Extention = CLIMATE_WY2_Files[i].substring(_L - 4, _L);
-      //println(_Extention);
-      if (_Extention.toLowerCase().equals(".wy2")) {
-        _Filenames = CLIMATE_WY2_Files[i].substring(0, _L - 4);
+
+      if (CLIMATE_WY2_Files[i].toLowerCase().equals(FN.toLowerCase())) {
+        //println ("FILE FOUND:", FN);
+        File_Found = i;
         
-        //println (FN);
-        //println (_Filenames);
-        //println ("");
-        
-        if (_Filenames.equals(FN)) {
-          //println ("FILE FOUND:", FN);
-          File_Found = 1;
-          SOLARCHVISION_LoadCLIMATE_WY2((CLIMATE_WY2_directory + "/" + CLIMATE_WY2_Files[i]));
-          
-          break; // <<<<<<<<<<
-        }
+        break; // <<<<<<<<<<
       }
     }
     
-    if (File_Found == -1) println ("FILE NOT FOUND:", FN);
+    if (File_Found != -1) SOLARCHVISION_LoadCLIMATE_WY2((CLIMATE_WY2_directory + "/" + CLIMATE_WY2_Files[File_Found]));
+    else println ("FILE NOT FOUND:", FN);
   }
 
 }
@@ -4566,7 +4545,6 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
 
 
 void SOLARCHVISION_try_update_CLIMATE_EPW () {
-  int File_Found = -1;
   
   CLIMATE_EPW = new float [24][365][num_layers][(1 + CLIMATE_EPW_end - CLIMATE_EPW_start)];
  
@@ -4581,27 +4559,24 @@ void SOLARCHVISION_try_update_CLIMATE_EPW () {
   }
 
   if (Load_CLIMATE_EPW == 1) {
-    
-    String FN = THE_STATION;
+
+    String FN = THE_STATION + ".epw";
   
+    int File_Found = -1;
+  
+    //println (FN);
     for (int i = 0; i < CLIMATE_EPW_Files.length; i++) {
-      
-      int _L = CLIMATE_EPW_Files[i].length();
-      String _Extention = CLIMATE_EPW_Files[i].substring(_L - 4, _L);
-      //println(_Extention);
-      if (_Extention.toLowerCase().equals(".epw")) {
-        _Filenames = CLIMATE_EPW_Files[i].substring(0, _L - 4);
+
+      if (CLIMATE_EPW_Files[i].toLowerCase().equals(FN.toLowerCase())) {
+        //println ("FILE FOUND:", FN);
+        File_Found = i;
         
-        if (_Filenames.equals(FN)) {
-          File_Found = 1;
-          SOLARCHVISION_LoadCLIMATE_EPW((CLIMATE_EPW_directory + "/" + CLIMATE_EPW_Files[i]));
-          
-          break; // <<<<<<<<<<
-        }
+        break; // <<<<<<<<<<
       }
     }
     
-    if (File_Found == -1) println("FILE NOT FOUND:", FN);
+    if (File_Found != -1) SOLARCHVISION_LoadCLIMATE_EPW((CLIMATE_EPW_directory + "/" + CLIMATE_EPW_Files[File_Found]));
+    else println ("FILE NOT FOUND:", FN);
   }
 
 }
