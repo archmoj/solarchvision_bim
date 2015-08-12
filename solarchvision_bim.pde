@@ -231,12 +231,6 @@ int max_j_end_observations = 0; // Variable
 float per_day = 1; //45; //61; //30.5;
 int num_add_days = 1; //30;//per_day; // it should be set up to 1 in order to plot only one day  
 
-// Note: The first observed station below should match the forecast station because the non-linear interpolation function only uses this station.
-String[][] OBSERVED_STATIONS = {
-                                {"CWTQ", "AUTO", "Dorval"}  
-                               };
-
-
 int CLIMATE_EPW_start = 1; 
 int CLIMATE_EPW_end = 1;
 
@@ -246,8 +240,16 @@ int CLIMATE_WY2_end = 2005;
 int ENSEMBLE_start = 1; // min: 1
 int ENSEMBLE_end = 43; // max: 43
 
+int numberOfNearestStations = 5;  // <<<<<<<<
+
 int OBSERVED_start = 1; 
-int OBSERVED_end = OBSERVED_STATIONS.length;
+int OBSERVED_end = numberOfNearestStations;
+
+int[] nearestStations = new int [numberOfNearestStations];
+
+int[] nearest_STATION_SWOB = new int [numberOfNearestStations];
+float[] nearest_STATION_SWOB_dist = new float [numberOfNearestStations];
+
 
 
 
@@ -482,7 +484,7 @@ int databaseNumber_CLIMATE_WY2 = 0;
 int databaseNumber_ENSEMBLE = 1;
 int databaseNumber_OBSERVED = 2;
 int databaseNumber_CLIMATE_EPW = 3;
-int impacts_source = 1; // 0 = Climate WY2, 1 = Forecast, 2 = Observation, 3 = Climate EPW
+int impacts_source = 1; // 0 = Climate WY2, 1 = Forecast-NAEFS, 2 = Observation, 3 = Climate EPW
 
 int draw_impact_summary = 0;
 
@@ -499,7 +501,7 @@ int Y_clicked = 0;
 
 String[] CLIMATE_EPW_Files = getfiles(CLIMATE_EPW_directory);
 String[] CLIMATE_WY2_Files = getfiles(CLIMATE_WY2_directory);
-String[] FORECAST_XML_Files = getfiles(ENSEMBLE_directory);
+String[] ENSEMBLE_XML_Files = getfiles(ENSEMBLE_directory);
 String[] OBSERVED_XML_Files = getfiles(OBSERVED_directory);
 
 int MODEL3D_TESELATION = 0;
@@ -2018,7 +2020,7 @@ void SOLARCHVISION_draw_GRAPHS () {
 
 
 
-int now_drawing = -1; // -1 = Nothing, 0 = Climate WY2, 1 = Forecast, 2 = Observation, 3 = Climate EPW 
+int now_drawing = -1; // -1 = Nothing, 0 = Climate WY2, 1 = Forecast-NAEFS, 2 = Observation, 3 = Climate EPW 
 
 void SOLARCHVISION_PlotHOURLY (float x, float y, float z, float sx, float sy, float sz) {
 
@@ -3380,14 +3382,14 @@ void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY
         String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + THE_STATION + "_" + THE_LAYERS[f] + "_000-384";
       
         //println (FN);
-        for (int i = 0; i < FORECAST_XML_Files.length; i++) {
-          //println(FORECAST_XML_Files[i]); 
+        for (int i = 0; i < ENSEMBLE_XML_Files.length; i++) {
+          //println(ENSEMBLE_XML_Files[i]); 
           
-          int _L = FORECAST_XML_Files[i].length();
-          String _Extention = FORECAST_XML_Files[i].substring(_L - 4, _L);
+          int _L = ENSEMBLE_XML_Files[i].length();
+          String _Extention = ENSEMBLE_XML_Files[i].substring(_L - 4, _L);
           //println(_Extention);
           if (_Extention.toLowerCase().equals(".xml")) {
-            _Filenames = FORECAST_XML_Files[i].substring(0, _L - 4);
+            _Filenames = ENSEMBLE_XML_Files[i].substring(0, _L - 4);
             
             //println (FN);
             //println (_Filenames);
@@ -3396,7 +3398,7 @@ void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY
             if (_Filenames.equals(FN)) {
               //println ("FILE FOUND:", FN);
               File_Found = 1;
-              SOLARCHVISION_LoadENSEMBLE((ENSEMBLE_directory + "/" + FORECAST_XML_Files[i]), f);
+              SOLARCHVISION_LoadENSEMBLE((ENSEMBLE_directory + "/" + ENSEMBLE_XML_Files[i]), f);
               
               break; // <<<<<<<<<<
             }
@@ -4168,7 +4170,7 @@ void SOLARCHVISION_try_update_CLIMATE_WY2 () {
   
     //println (FN);
     for (int i = 0; i < CLIMATE_WY2_Files.length; i++) {
-      //println(FORECAST_XML_Files[i]); 
+      //println(ENSEMBLE_XML_Files[i]); 
       
       int _L = CLIMATE_WY2_Files[i].length();
       String _Extention = CLIMATE_WY2_Files[i].substring(_L - 4, _L);
@@ -4973,6 +4975,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
 
 
 
+
 void SOLARCHVISION_try_update_OBSERVED () {
   
   
@@ -4991,26 +4994,41 @@ void SOLARCHVISION_try_update_OBSERVED () {
   }
 
   if (Load_OBSERVED == 1) {
-
-    int nearest_STATION_SWOB = -1;
-    float nearest_STATION_SWOB_dist = FLOAT_undefined;
     
-    for (int f = 0; f < STATION_SWOB_INFO.length; f += 1) {
-   
-      float _lat = float(STATION_SWOB_INFO[f][3]);
-      float _lon = float(STATION_SWOB_INFO[f][4]); 
-      if (_lon > 180) _lon -= 360; // << important!
+    for (int q = 0; q < numberOfNearestStations; q++) {
+      nearest_STATION_SWOB[q] = -1;
+      nearest_STATION_SWOB_dist[q] = FLOAT_undefined;
+    }
     
+    for (int q = 0; q < numberOfNearestStations; q++) {
+      for (int f = 0; f < STATION_SWOB_INFO.length; f += 1) {
      
-      float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
+        float _lat = float(STATION_SWOB_INFO[f][3]);
+        float _lon = float(STATION_SWOB_INFO[f][4]); 
+        if (_lon > 180) _lon -= 360; // << important!
       
-      if (nearest_STATION_SWOB_dist > d) {
-        nearest_STATION_SWOB_dist = d;
-        nearest_STATION_SWOB = f;
-      }     
+       
+        float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
+        
+        if (nearest_STATION_SWOB_dist[q] > d) {
+          
+          int added_before = 0;
+          
+          for (int p = 0; p < q; p++) {
+            if (nearest_STATION_SWOB[p] == f) added_before = 1;
+          }
+          
+          if (added_before == 0) {
+            nearest_STATION_SWOB_dist[q] = d;
+            nearest_STATION_SWOB[q] = f;
+          }
+        }     
+      }
+      
+      nearestStations[q] = nearest_STATION_SWOB[q];
     }    
     
-    int[] nearestStations = {nearest_STATION_SWOB};
+    
       
     
     // this line tries to update the most recent files! << 
@@ -5043,58 +5061,60 @@ void SOLARCHVISION_try_update_OBSERVED () {
       THE_MONTH = CalendarDate[int(THE_DATE)][0]; 
       THE_DAY = CalendarDate[int(THE_DATE)][1];
       
-      for (int q = 0; q < nearestStations.length; q++) {
+      for (int q = 0; q < numberOfNearestStations; q++) {
         
         int f = nearestStations[q];
         
-        String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + STATION_SWOB_INFO[f][6] + "-" + STATION_SWOB_INFO[f][11] + "-swob";
-
-        int File_Found = -1;
+        if (f != -1) {
+        
+          String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + STATION_SWOB_INFO[f][6] + "-" + STATION_SWOB_INFO[f][11] + "-swob";
+  
+          int File_Found = -1;
+        
+          if (Download_OBSERVED == 0) {
+        
+            //println (FN);
+            for (int i = 0; i < OBSERVED_XML_Files.length; i++) {
+              //println(OBSERVED_XML_Files[i]); 
+              
+              int _L = OBSERVED_XML_Files[i].length();
+              String _Extention = OBSERVED_XML_Files[i].substring(_L - 4, _L);
+              //println(_Extention);
+              if (_Extention.toLowerCase().equals(".xml")) {
+                _Filenames = OBSERVED_XML_Files[i].substring(0, _L - 4);
       
-        if (Download_OBSERVED == 0) {
-      
-          //println (FN);
-          for (int i = 0; i < OBSERVED_XML_Files.length; i++) {
-            //println(OBSERVED_XML_Files[i]); 
-            
-            int _L = OBSERVED_XML_Files[i].length();
-            String _Extention = OBSERVED_XML_Files[i].substring(_L - 4, _L);
-            //println(_Extention);
-            if (_Extention.toLowerCase().equals(".xml")) {
-              _Filenames = OBSERVED_XML_Files[i].substring(0, _L - 4);
-    
-              if (_Filenames.equals(FN)) {
-                //println ("FILE:", FN);
-                File_Found = i;
-                
-                break; // <<<<<<<<<<
+                if (_Filenames.equals(FN)) {
+                  //println ("FILE:", FN);
+                  File_Found = i;
+                  
+                  break; // <<<<<<<<<<
+                }
               }
             }
           }
-        }
-        else {
-          String the_link = "http://dd.weatheroffice.gc.ca/observations/swob-ml/" + nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + STATION_SWOB_INFO[f][6] + "/" + FN + ".xml";
-          String the_target = OBSERVED_directory + "/" + FN;
-
-          println("Try downloading: " + the_link );
-          
-          try{
-            saveBytes(the_target, loadBytes(the_link));
+          else {
+            String the_link = "http://dd.weatheroffice.gc.ca/observations/swob-ml/" + nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + STATION_SWOB_INFO[f][6] + "/" + FN + ".xml";
+            String the_target = OBSERVED_directory + "/" + FN;
+  
+            println("Try downloading: " + the_link );
             
-            String[] new_file = {FN};
-            OBSERVED_XML_Files = concat(OBSERVED_XML_Files, new_file);
-            
-            File_Found = OBSERVED_XML_Files.length - 1;
-            println("File_Found:", File_Found);
-          } 
-          catch (Exception e) {
-
-          }  
+            try{
+              saveBytes(the_target, loadBytes(the_link));
+              
+              String[] new_file = {FN};
+              OBSERVED_XML_Files = concat(OBSERVED_XML_Files, new_file);
+              
+              File_Found = OBSERVED_XML_Files.length - 1;
+              println("File_Found:", File_Found);
+            } 
+            catch (Exception e) {
+  
+            }  
+          }
+  
+          if (File_Found != -1) SOLARCHVISION_LoadOBSERVED((OBSERVED_directory + "/" + OBSERVED_XML_Files[File_Found]), q);
+          else println ("FILE NOT FOUND:", FN);
         }
-
-        if (File_Found != -1) SOLARCHVISION_LoadOBSERVED((OBSERVED_directory + "/" + OBSERVED_XML_Files[File_Found]), q);
-        else println ("FILE NOT FOUND:", FN);
- 
       }
       
       now_i -= 1;
@@ -5111,67 +5131,66 @@ void SOLARCHVISION_try_update_OBSERVED () {
       THE_HOUR = now_i;
     }
     
+  }
     
-    
-    int MAX_SEARCH = 6; // It defines how many hours the program should seek for each point to find next available data.  
-    
-    for (int l = 0; l < num_layers; l += 1) {
-      if (THE_LAYERS[l].equals("")) {
-      }
-      else {
-        for (int k = 0; k < (1 + OBSERVED_end - OBSERVED_start); k += 1) {
-          float pre_v = FLOAT_undefined;
-          int pre_num = 0;
-          
-          for (int j_for = 0; j_for <= max_j_end_observations; j_for += 1) { // should be controlled.
-          int j = (int(j_for + _DATE - max_j_end_observations + 365 - 286) % 365); // should be controlled.
-          
-            for (int i = 0; i < 24; i += 1) {
-              if (OBSERVED[i][j][l][k] > 0.9 * FLOAT_undefined) {
-                if (pre_v < 0.9 * FLOAT_undefined) {
-                  pre_num += 1;
-                  
-                  float next_v = FLOAT_undefined;
-                  int next_i = i;
-                  int next_j = j;
-                  int next_num = 0;
-                  while ((next_num < MAX_SEARCH) && (next_v > 0.9 * FLOAT_undefined)) {
-                    next_num += 1;
-                    next_i += 1;
-                    if (next_i == 24) {
-                      next_i -= 24;
-                      next_j += 1; 
-                    }
-                    if (next_j == 365) {
-                      next_j = 0; 
-                    }
-                    if (OBSERVED[next_i][next_j][l][k] > 0.9 * FLOAT_undefined) {
-                    }
-                    else {
-                      next_v = OBSERVED[next_i][next_j][l][k];
-                      
-                      if (l == _winddir) {
-                        if ((next_v - pre_v) > 180) next_v -= 360;
-                        if ((next_v - pre_v) < -180) next_v += 360;
-                      } 
-                    }  
+  int MAX_SEARCH = 6; // It defines how many hours the program should seek for each point to find next available data.  
+  
+  for (int l = 0; l < num_layers; l += 1) {
+    if (THE_LAYERS[l].equals("")) {
+    }
+    else {
+      for (int k = 0; k < (1 + OBSERVED_end - OBSERVED_start); k += 1) {
+        float pre_v = FLOAT_undefined;
+        int pre_num = 0;
+        
+        for (int j_for = 0; j_for <= max_j_end_observations; j_for += 1) { // should be controlled.
+        int j = (int(j_for + _DATE - max_j_end_observations + 365 - 286) % 365); // should be controlled.
+        
+          for (int i = 0; i < 24; i += 1) {
+            if (OBSERVED[i][j][l][k] > 0.9 * FLOAT_undefined) {
+              if (pre_v < 0.9 * FLOAT_undefined) {
+                pre_num += 1;
+                
+                float next_v = FLOAT_undefined;
+                int next_i = i;
+                int next_j = j;
+                int next_num = 0;
+                while ((next_num < MAX_SEARCH) && (next_v > 0.9 * FLOAT_undefined)) {
+                  next_num += 1;
+                  next_i += 1;
+                  if (next_i == 24) {
+                    next_i -= 24;
+                    next_j += 1; 
                   }
-                  if (next_num < MAX_SEARCH) {
-                    if (l == _winddir) OBSERVED[i][j][l][k] = ((next_num * pre_v + pre_num * next_v) / (pre_num + next_num) + 360) % 360;
-                    else OBSERVED[i][j][l][k] = (next_num * pre_v + pre_num * next_v) / (pre_num + next_num);
-                    
-                    OBSERVED_DATA[i][j][l][k] = 0;
+                  if (next_j == 365) {
+                    next_j = 0; 
+                  }
+                  if (OBSERVED[next_i][next_j][l][k] > 0.9 * FLOAT_undefined) {
                   }
                   else {
-                    OBSERVED_DATA[i][j][l][k] = -1;
-                  }
+                    next_v = OBSERVED[next_i][next_j][l][k];
+                    
+                    if (l == _winddir) {
+                      if ((next_v - pre_v) > 180) next_v -= 360;
+                      if ((next_v - pre_v) < -180) next_v += 360;
+                    } 
+                  }  
+                }
+                if (next_num < MAX_SEARCH) {
+                  if (l == _winddir) OBSERVED[i][j][l][k] = ((next_num * pre_v + pre_num * next_v) / (pre_num + next_num) + 360) % 360;
+                  else OBSERVED[i][j][l][k] = (next_num * pre_v + pre_num * next_v) / (pre_num + next_num);
+                  
+                  OBSERVED_DATA[i][j][l][k] = 0;
+                }
+                else {
+                  OBSERVED_DATA[i][j][l][k] = -1;
                 }
               }
-              else {
-                OBSERVED_DATA[i][j][l][k] = 1;
-                pre_v = OBSERVED[i][j][l][k];
-                pre_num = 0;
-              }
+            }
+            else {
+              OBSERVED_DATA[i][j][l][k] = 1;
+              pre_v = OBSERVED[i][j][l][k];
+              pre_num = 0;
             }
           }
         }
@@ -5374,7 +5393,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
 
       File_output_node[(j - j_start)].print("Hour\t");
       for (int l = start_z; l < (1 + end_z); l += 1) {
-        File_output_node[(j - j_start)].print(OBSERVED_STATIONS[(l - 1)][2] + "\t"); 
+        File_output_node[(j - j_start)].print(STATION_SWOB_INFO[nearest_STATION_SWOB[l]][6] + "\t"); 
       }
       File_output_node[(j - j_start)].println("");
     }
