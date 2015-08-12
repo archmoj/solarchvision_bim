@@ -5067,40 +5067,33 @@ void SOLARCHVISION_try_update_OBSERVED () {
         
         if (f != -1) {
         
-          String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + STATION_SWOB_INFO[f][6] + "-" + STATION_SWOB_INFO[f][11] + "-swob";
+          String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + STATION_SWOB_INFO[f][6] + "-" + STATION_SWOB_INFO[f][11] + "-swob.xml";
   
           int File_Found = -1;
 
           //println (FN);
-          for (int i = 0; i < OBSERVED_XML_Files.length; i++) {
+          for (int i = OBSERVED_XML_Files.length - 1; i >= 0 ; i--) { //reverse search is faster 
             //println(OBSERVED_XML_Files[i]); 
             
-            int _L = OBSERVED_XML_Files[i].length();
-            String _Extention = OBSERVED_XML_Files[i].substring(_L - 4, _L);
-            //println(_Extention);
-            if (_Extention.toLowerCase().equals(".xml")) {
-              _Filenames = OBSERVED_XML_Files[i].substring(0, _L - 4);
-    
-              if (_Filenames.equals(FN)) {
-                
-                File_Found = i;
-                println("Found:", File_Found);
-                
-                break; // <<<<<<<<<<
-              }
+            if (OBSERVED_XML_Files[i].equals(FN)) {
+              
+              File_Found = i;
+              println("Found:", File_Found);
+              
+              break; // <<<<<<<<<<
             }
           }
           
           if ((File_Found == -1) && (Download_OBSERVED != 0)) {
-            String the_link = "http://dd.weatheroffice.gc.ca/observations/swob-ml/" + nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + STATION_SWOB_INFO[f][6] + "/" + FN + ".xml";
-            String the_target = OBSERVED_directory + "/" + FN + ".xml";
+            String the_link = "http://dd.weatheroffice.gc.ca/observations/swob-ml/" + nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + STATION_SWOB_INFO[f][6] + "/" + FN;
+            String the_target = OBSERVED_directory + "/" + FN;
   
             println("Try downloading: " + the_link);
             
             try{
               saveBytes(the_target, loadBytes(the_link));
               
-              String[] new_file = {FN + ".xml"};
+              String[] new_file = {FN};
               OBSERVED_XML_Files = concat(OBSERVED_XML_Files, new_file);
               
               File_Found = OBSERVED_XML_Files.length - 1;
@@ -5111,7 +5104,7 @@ void SOLARCHVISION_try_update_OBSERVED () {
             }  
           }
   
-          if (File_Found != -1) SOLARCHVISION_LoadOBSERVED((OBSERVED_directory + "/" + OBSERVED_XML_Files[File_Found]), q);
+          if (File_Found != -1) SOLARCHVISION_LoadOBSERVED((OBSERVED_directory + "/" + FN), q);
           else println ("FILE NOT FOUND:", FN);
         }
       }
