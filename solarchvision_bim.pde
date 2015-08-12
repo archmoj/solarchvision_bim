@@ -5100,7 +5100,7 @@ void SOLARCHVISION_try_update_OBSERVED () {
             try{
               saveBytes(the_target, loadBytes(the_link));
               
-              String[] new_file = {FN};
+              String[] new_file = {FN + ".xml"};
               OBSERVED_XML_Files = concat(OBSERVED_XML_Files, new_file);
               
               File_Found = OBSERVED_XML_Files.length - 1;
