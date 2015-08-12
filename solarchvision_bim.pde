@@ -233,20 +233,7 @@ int num_add_days = 1; //30;//per_day; // it should be set up to 1 in order to pl
 String[][] OBSERVED_STATIONS = {
                                 {"CWTQ", "AUTO", "Dorval"}  
                                };
-                              
-/*                              
-String[][] OBSERVED_STATIONS = {
-                                {"CWTQ", "AUTO", "Dorval"}    
-                              , {"CYUL", "MAN", "Trudeau Int'l A."}
-                              , {"CWTA", "AUTO", "McTavish"}                                                         
-                              , {"CYHU", "AUTO", "Saint-Hubert A."}
-                              , {"CYMX", "MAN", "Mirabel Int'l A."}                              
-                              , {"CWIZ", "AUTO", "L'Acadie"} 
-                              , {"CWEW", "AUTO", "L'Assomption"}
-                              , {"CWHM", "AUTO", "Varennes"}
-                              , {"CWVQ", "AUTO", "Sainte-Anne-de-Bellevue"} 
-                               }; 
-*/
+
 
 int CLIMATE_EPW_start = 1; 
 int CLIMATE_EPW_end = 1;
@@ -5006,6 +4993,27 @@ int SOLARCHVISION_try_update_observed () {
 
   if (Load_OBSERVED == 1) {
 
+    int nearest_STATION_SWOB = -1;
+    float nearest_STATION_SWOB_dist = FLOAT_undefined;
+    
+    for (int f = 0; f < STATION_SWOB_INFO.length; f += 1) {
+   
+      float _lat = float(STATION_SWOB_INFO[f][3]);
+      float _lon = float(STATION_SWOB_INFO[f][4]); 
+      if (_lon > 180) _lon -= 360; // << important!
+    
+     
+      float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
+      
+      if (nearest_STATION_SWOB_dist > d) {
+        nearest_STATION_SWOB_dist = d;
+        nearest_STATION_SWOB = f;
+      }     
+    }    
+    
+    int[] nearestStations = {nearest_STATION_SWOB};
+      
+    
     // this line tries to update the most recent files! << 
     int THE_YEAR = year(); 
     int THE_MONTH = month();
@@ -5036,10 +5044,11 @@ int SOLARCHVISION_try_update_observed () {
       THE_MONTH = CalendarDate[int(THE_DATE)][0]; 
       THE_DAY = CalendarDate[int(THE_DATE)][1];
       
-      for (int f = 0; f < 1; f++) {
-      //for (int f = 0; f < (1 + OBSERVED_end - OBSERVED_start); f++) {
+      for (int q = 0; q < nearestStations.length; q++) {
         
-        String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + OBSERVED_STATIONS[f][0] + "-" + OBSERVED_STATIONS[f][1] + "-swob";
+        int f = nearestStations[q];
+        
+        String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + STATION_SWOB_INFO[f][6] + "-" + STATION_SWOB_INFO[f][11] + "-swob";
       
         if (Download_OBSERVED == 0) {
       
@@ -5064,8 +5073,7 @@ int SOLARCHVISION_try_update_observed () {
           }
         }
         else {
-          String the_directory = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + OBSERVED_STATIONS[f][0];          
-          String the_link = "http://dd.weatheroffice.gc.ca/observations/swob-ml/" + the_directory + "/" + FN + ".xml";
+          String the_link = "http://dd.weatheroffice.gc.ca/observations/swob-ml/" + nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + STATION_SWOB_INFO[f][6] + "/" + FN + ".xml";
           String the_target = OBSERVED_directory + "/" + FN;
 
           println("Try downloading: " + the_link );
@@ -10442,7 +10450,7 @@ void SOLARCHVISION_getSWOB_Coordinates () {
   
     STATION_SWOB_NUMBER = FileALL.length - 1; // to skip the first description line 
   
-    STATION_SWOB_INFO = new String [STATION_SWOB_NUMBER][11]; 
+    STATION_SWOB_INFO = new String [STATION_SWOB_NUMBER][12]; 
   
     int n_Locations = 0;
   
@@ -10460,6 +10468,7 @@ void SOLARCHVISION_getSWOB_Coordinates () {
       String StationClimate = "";
       String StationDST = ""; //Daylight saving time
       String StationSTD = ""; //Standard Time      
+      String StationType = ""; // MAN/AUTO
   
       String[] parts = split(lineSTR, '\t');
   
@@ -10468,6 +10477,10 @@ void SOLARCHVISION_getSWOB_Coordinates () {
         StationNameFrench = parts[1];
         StationNameEnglish = parts[2];
         StationProvince = parts[3];
+        
+        StationType = parts[4];
+        if (StationType.equals("Manned")) StationType = "MAN";
+        if (StationType.equals("Auto")) StationType = "AUTO";
     
         StationLatitude = float(parts[5]);
         StationLongitude = float(parts[6]);
@@ -10490,6 +10503,7 @@ void SOLARCHVISION_getSWOB_Coordinates () {
         STATION_SWOB_INFO[n_Locations][8] = StationClimate;
         STATION_SWOB_INFO[n_Locations][9] = StationDST;
         STATION_SWOB_INFO[n_Locations][10] = StationSTD;
+        STATION_SWOB_INFO[n_Locations][11] = StationType;
   
         n_Locations += 1;
       }
