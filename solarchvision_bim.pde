@@ -223,8 +223,8 @@ int GRAPHS_record_PDF = 0;
 int j_start = 0;
 int j_end = 2; //16; // Variable
 
-int max_j_end_forecast = 16; // Constant
-int max_j_end_observed = 0; // Variable
+int max_j_end_parameters = 16; // Constant
+int max_j_end_observations = 0; // Variable
 
 float per_day = 1; //45; //61; //30.5;
 int num_add_days = 1; //30;//per_day; // it should be set up to 1 in order to plot only one day  
@@ -260,6 +260,8 @@ int ENSEMBLE_end = 43; // max: 43
 int OBSERVED_start = 1; 
 int OBSERVED_end = OBSERVED_STATIONS.length;
 
+
+
 int Sample_Year = 2005; // 2003 as a year with extreme condition
 int Sample_Member = 22; // deterministic
 int Sample_Station = 1; // Montreal-Dorval
@@ -278,7 +280,7 @@ int Load_CLIMATE_EPW = 0;
 int Load_CLIMATE_WY2 = 0;
 int Load_ENSEMBLE = 1;
 int Load_OBSERVED = 0;
-
+int Download_OBSERVED = 0;
 
 PrintWriter[] File_output_node;
 PrintWriter[] File_output_norm;
@@ -530,6 +532,12 @@ int Load_URBAN = 0;
 int Display_URBAN = 1;
 
 
+
+
+
+
+
+
 int camera_variation = 1;
 
 int draw_data_lines = 0;
@@ -552,6 +560,7 @@ PGraphics pre_Diagrams;
 int pre_GRAPHS_setup;
 int pre_impacts_source;
 int pre_STATION_NUMBER;
+int pre_Selected_STATION;
 int pre_YEAR;
 int pre_MONTH;
 int pre_DAY;
@@ -1252,6 +1261,7 @@ void draw () {
         pre_GRAPHS_setup = GRAPHS_setup;
         pre_impacts_source = impacts_source;
         pre_STATION_NUMBER = STATION_NUMBER;
+        pre_Selected_STATION = Selected_STATION;
         pre_YEAR = _YEAR;
         pre_MONTH = _MONTH;
         pre_DAY = _DAY;
@@ -1307,6 +1317,8 @@ void draw () {
         }
       
         if (pre_STATION_NUMBER != STATION_NUMBER) SOLARCHVISION_update_station(0);
+        
+        if (pre_Selected_STATION != Selected_STATION) ROLLOUT_Update = 1;
 
         if (LOAD_STATION == 1) {         
           STATION_NUMBER = Selected_STATION;
@@ -3354,7 +3366,7 @@ void SOLARCHVISION_update_date () {
 }
 
 int SOLARCHVISION_try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
-  int File_Found = 0;
+  int File_Found = -1;
 
   ENSEMBLE = new float [24][365][num_layers][(1 + ENSEMBLE_end - ENSEMBLE_start)];
   ENSEMBLE_DATA = new int [24][365][num_layers][(1 + ENSEMBLE_end - ENSEMBLE_start)]; // -1: undefined, 0: interpolated, 1: data
@@ -3396,10 +3408,12 @@ int SOLARCHVISION_try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY,
               //println ("FILE FOUND:", FN);
               File_Found = 1;
               SOLARCHVISION_LoadENSEMBLE((ENSEMBLE_directory + "/" + FORECAST_XML_Files[i]), f);
+              
+              break; // <<<<<<<<<<
             }
           }
         }
-        if (File_Found == 0) println ("FILE NOT FOUND:", FN);
+        if (File_Found == -1) println ("FILE NOT FOUND:", FN);
       }
     }
     
@@ -3418,7 +3432,7 @@ int SOLARCHVISION_try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY,
           float pre_v = FLOAT_undefined;
           int pre_num = 0;
           
-          for (int j_for = 0; j_for < max_j_end_forecast; j_for += 1) { 
+          for (int j_for = 0; j_for < max_j_end_parameters; j_for += 1) { 
           int j = (int(j_for + _DATE + 365 - 286) % 365);
   
             for (int i = 0; i < 24; i += 1) {
@@ -3492,17 +3506,17 @@ int SOLARCHVISION_try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY,
           float[][][] _valuesO_scattered;
           float[][][] _valuesO_clear;
           
-          _valuesO           = new float [24][max_j_end_forecast][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
-          _valuesO_overcast  = new float [24][max_j_end_forecast][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
-          _valuesO_scattered = new float [24][max_j_end_forecast][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
-          _valuesO_clear     = new float [24][max_j_end_forecast][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
+          _valuesO           = new float [24][max_j_end_parameters][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
+          _valuesO_overcast  = new float [24][max_j_end_parameters][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
+          _valuesO_scattered = new float [24][max_j_end_parameters][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
+          _valuesO_clear     = new float [24][max_j_end_parameters][((1 + CLIMATE_WY2_end - CLIMATE_WY2_start) * num_add_days)];
     
           for (int i = 0; i < 24; i += 1) {      
           
             for (int k = 0; k < (1 + CLIMATE_WY2_end - CLIMATE_WY2_start); k += 1) {
               for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {
                 
-                for (int j = 0; j < max_j_end_forecast; j += 1) {
+                for (int j = 0; j < max_j_end_parameters; j += 1) {
                   
                   int now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
     
@@ -3549,13 +3563,13 @@ int SOLARCHVISION_try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY,
           float[][] _valuesH_scattered;
           float[][] _valuesH_clear;
           
-          _valuesH           = new float [24][max_j_end_forecast];
-          _valuesH_overcast  = new float [24][max_j_end_forecast];
-          _valuesH_scattered = new float [24][max_j_end_forecast];
-          _valuesH_clear     = new float [24][max_j_end_forecast];
+          _valuesH           = new float [24][max_j_end_parameters];
+          _valuesH_overcast  = new float [24][max_j_end_parameters];
+          _valuesH_scattered = new float [24][max_j_end_parameters];
+          _valuesH_clear     = new float [24][max_j_end_parameters];
           
           for (int i = 0; i < 24; i += 1) {
-            for (int j = 0; j < max_j_end_forecast; j += 1) {      
+            for (int j = 0; j < max_j_end_parameters; j += 1) {      
               _valuesH          [i][j] = SOLARCHVISION_NORMAL(_valuesO          [i][j])[N_Middle];
               _valuesH_overcast [i][j] = SOLARCHVISION_NORMAL(_valuesO_overcast [i][j])[N_Middle];
               _valuesH_scattered[i][j] = SOLARCHVISION_NORMAL(_valuesO_scattered[i][j])[N_Middle];
@@ -3577,7 +3591,7 @@ int SOLARCHVISION_try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY,
             int pre_hour = -1; // that means it is undefined.
             int pre_day = -1; // that means it is undefined.
             
-            for (int j_for = 0; j_for < max_j_end_forecast; j_for += 1) { 
+            for (int j_for = 0; j_for < max_j_end_parameters; j_for += 1) { 
               int now_j = (int(j_for + _DATE + 365 - 286) % 365);
                if (now_j >= 365) {
                 now_j = now_j % 365; 
@@ -3690,7 +3704,7 @@ int SOLARCHVISION_try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY,
     int num_count = (1 + CLIMATE_WY2_end - CLIMATE_WY2_start);
     
     for (int k = 0; k < (1 + ENSEMBLE_end - ENSEMBLE_start); k += 1) {
-      for (int j_for = 0; j_for < max_j_end_forecast; j_for += 1) { 
+      for (int j_for = 0; j_for < max_j_end_parameters; j_for += 1) { 
         int j = ((j_for + BEGIN_DAY) % 365);
         for (int i = 0; i < 24; i += 1) {
           if (ENSEMBLE[i][j][_cloudcover][k] > 0.9 * FLOAT_undefined) {
@@ -4145,7 +4159,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
 
 
 int SOLARCHVISION_try_update_CLIMATE_WY2 () {
-  int File_Found = 0;
+  int File_Found = -1;
   
   CLIMATE_WY2 = new float [24][365][num_layers][(1 + CLIMATE_WY2_end - CLIMATE_WY2_start)];
  
@@ -4182,11 +4196,13 @@ int SOLARCHVISION_try_update_CLIMATE_WY2 () {
           //println ("FILE FOUND:", FN);
           File_Found = 1;
           SOLARCHVISION_LoadCLIMATE_WY2((CLIMATE_WY2_directory + "/" + CLIMATE_WY2_Files[i]));
+          
+          break; // <<<<<<<<<<
         }
       }
     }
     
-    if (File_Found == 0) println ("FILE NOT FOUND:", FN);
+    if (File_Found == -1) println ("FILE NOT FOUND:", FN);
   }
   
   return File_Found;
@@ -4561,7 +4577,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
 
 
 int SOLARCHVISION_try_update_CLIMATE_EPW () {
-  int File_Found = 0;
+  int File_Found = -1;
   
   CLIMATE_EPW = new float [24][365][num_layers][(1 + CLIMATE_EPW_end - CLIMATE_EPW_start)];
  
@@ -4590,11 +4606,13 @@ int SOLARCHVISION_try_update_CLIMATE_EPW () {
         if (_Filenames.equals(FN)) {
           File_Found = 1;
           SOLARCHVISION_LoadCLIMATE_EPW((CLIMATE_EPW_directory + "/" + CLIMATE_EPW_Files[i]));
+          
+          break; // <<<<<<<<<<
         }
       }
     }
     
-    if (File_Found == 0) println("FILE NOT FOUND:", FN);
+    if (File_Found == -1) println("FILE NOT FOUND:", FN);
   }
   
   return File_Found;
@@ -4967,8 +4985,10 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
 } 
 
 
+
+
 int SOLARCHVISION_try_update_observed () {
-  int File_Found = 0;
+  int File_Found = -1;
   
   OBSERVED = new float [24][365][num_layers][(1 + OBSERVED_end - OBSERVED_start)];
   OBSERVED_DATA = new int [24][365][num_layers][(1 + OBSERVED_end - OBSERVED_start)]; // -1: undefined, 0: interpolated, 1: data
@@ -5011,7 +5031,7 @@ int SOLARCHVISION_try_update_observed () {
     }         
     THE_HOUR = now_i;
   
-    for (int j_for = 0; j_for < max_j_end_observed * 24; j_for += 1) {
+    for (int j_for = 0; j_for < max_j_end_observations * 24; j_for += 1) {
       
       THE_MONTH = CalendarDate[int(THE_DATE)][0]; 
       THE_DAY = CalendarDate[int(THE_DATE)][1];
@@ -5021,25 +5041,51 @@ int SOLARCHVISION_try_update_observed () {
         
         String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + OBSERVED_STATIONS[f][0] + "-" + OBSERVED_STATIONS[f][1] + "-swob";
       
-        //println (FN);
-        for (int i = 0; i < OBSERVED_XML_Files.length; i++) {
-          //println(OBSERVED_XML_Files[i]); 
-          
-          int _L = OBSERVED_XML_Files[i].length();
-          String _Extention = OBSERVED_XML_Files[i].substring(_L - 4, _L);
-          //println(_Extention);
-          if (_Extention.toLowerCase().equals(".xml")) {
-            _Filenames = OBSERVED_XML_Files[i].substring(0, _L - 4);
-  
-            if (_Filenames.equals(FN)) {
-              //println ("FILE:", FN);
-              File_Found = 1;
-              SOLARCHVISION_LoadOBSERVED((OBSERVED_directory + "/" + OBSERVED_XML_Files[i]), f);
-            }
+        if (Download_OBSERVED == 0) {
+      
+          //println (FN);
+          for (int i = 0; i < OBSERVED_XML_Files.length; i++) {
+            //println(OBSERVED_XML_Files[i]); 
+            
+            int _L = OBSERVED_XML_Files[i].length();
+            String _Extention = OBSERVED_XML_Files[i].substring(_L - 4, _L);
+            //println(_Extention);
+            if (_Extention.toLowerCase().equals(".xml")) {
+              _Filenames = OBSERVED_XML_Files[i].substring(0, _L - 4);
     
+              if (_Filenames.equals(FN)) {
+                //println ("FILE:", FN);
+                File_Found = i;
+                SOLARCHVISION_LoadOBSERVED((OBSERVED_directory + "/" + OBSERVED_XML_Files[i]), f);
+                
+                break; // <<<<<<<<<<
+              }
+            }
           }
         }
-        if (File_Found == 0) println ("FILE NOT FOUND:", FN);
+        else {
+          String the_directory = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + OBSERVED_STATIONS[f][0];          
+          String the_link = "http://dd.weatheroffice.gc.ca/observations/swob-ml/" + the_directory + "/" + FN + ".xml";
+          String the_target = OBSERVED_directory + "/" + FN;
+
+          println("Try downloading: " + the_link );
+          
+          try{
+            saveBytes(the_target, loadBytes(the_link));
+            
+            String[] new_file = {FN};
+            OBSERVED_XML_Files = concat(OBSERVED_XML_Files, new_file);
+            
+            File_Found = OBSERVED_XML_Files.length - 1;
+          } 
+          catch (Exception e) {
+
+          }  
+        }
+        
+        if (File_Found != -1) SOLARCHVISION_LoadOBSERVED((OBSERVED_directory + "/" + OBSERVED_XML_Files[File_Found]), f);
+        else println ("FILE NOT FOUND:", FN);
+ 
       }
       
       now_i -= 1;
@@ -5068,8 +5114,8 @@ int SOLARCHVISION_try_update_observed () {
           float pre_v = FLOAT_undefined;
           int pre_num = 0;
           
-          for (int j_for = 0; j_for <= max_j_end_observed; j_for += 1) { // should be controlled.
-          int j = (int(j_for + _DATE - max_j_end_observed + 365 - 286) % 365); // should be controlled.
+          for (int j_for = 0; j_for <= max_j_end_observations; j_for += 1) { // should be controlled.
+          int j = (int(j_for + _DATE - max_j_end_observations + 365 - 286) % 365); // should be controlled.
           
             for (int i = 0; i < 24; i += 1) {
               if (OBSERVED[i][j][l][k] > 0.9 * FLOAT_undefined) {
@@ -8949,7 +8995,7 @@ void GRAPHS_keyPressed (KeyEvent e) {
                     }           
                     if (impacts_source == databaseNumber_OBSERVED) {
                       if (per_day == 1) { 
-                        per_day = int(max_j_end_observed / float(j_end - j_start));
+                        per_day = int(max_j_end_observations / float(j_end - j_start));
                       }
                       else {
                         per_day = 1;
@@ -15483,15 +15529,22 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Display_NAEFS_nearest = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_NAEFS_nearest" , Display_NAEFS_nearest, 0, 1, 1), 1));
 
       Display_CWEEDS_points = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_CWEEDS_points" , Display_CWEEDS_points, 0, 2, 1), 1));
-      Display_CWEEDS_nearest = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_CWEEDS_nearest" , Display_CWEEDS_nearest, 0, 1, 1), 1));      
+      Display_CWEEDS_nearest = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Display_CWEEDS_nearest" , Display_CWEEDS_nearest, 0, 1, 1), 1));
+
+         
     }
 
     if (ROLLOUT_child == 2) { // Weather
 
       Load_ENSEMBLE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_ENSEMBLE" , Load_ENSEMBLE, 0, 1, 1), 1));
-      Load_OBSERVED = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_OBSERVED" , Load_OBSERVED, 0, 1, 1), 1));
       Load_CLIMATE_WY2 = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_CLIMATE_WY2" , Load_CLIMATE_WY2, 0, 1, 1), 1));
       Load_CLIMATE_EPW = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_CLIMATE_EPW" , Load_CLIMATE_EPW, 0, 1, 1), 1));
+      Load_OBSERVED = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Load_OBSERVED" , Load_OBSERVED, 0, 1, 1), 1));
+      
+      max_j_end_observations = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Days of recent observations to load" , max_j_end_observations, 0, 31, 1), 1));
+      Download_OBSERVED = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Download_OBSERVED" , Download_OBSERVED, 0, 1, 1), 1));
+      
+      
     }
     
     if (ROLLOUT_child == 3) { // Environment
@@ -15585,7 +15638,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
     if (ROLLOUT_child == 1) { // Period
     
-      j_end = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "No. of days to plot" , j_end, 1, 61, 1), 1));
+      j_end = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Number of days to plot" , j_end, 1, 61, 1), 1));
     
       BEGIN_DAY = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Plot start date" , BEGIN_DAY, 0, 364, 1), 1));
     
@@ -15595,6 +15648,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       _DAY = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Forecast day" , _DAY, 1, 31, 1), 1));
       _MONTH = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Forecast month", _MONTH, 1, 12, 1), 1));
       _YEAR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Forecast year" , _YEAR, 1953, 2100, 1), 1));
+
   
     }
    
