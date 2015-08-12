@@ -1,16 +1,18 @@
 import processing.pdf.*;
 
-int STATION_NUMBER = 1;
+int STATION_NUMBER = 0;
 
 String[][] DEFINED_STATIONS = {
-     
+
+                                {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36"},
+  
                                 {"TORONTO_ISLAND_ON_CA", "Financial_District", "ON", "43.6488", "-79.3817", "-75", "86"},
                                 
                                 {"TORONTO_ISLAND_ON_CA", "Ryerson_University", "ON", "43.6593", "-79.3779", "-75", "95"}, 
   
                                 {"MONTREAL_DORVAL_QC_CA", "Place_Bonaventure", "QC", "45.4995", "-73.5650", "-75", "30"},
 
-                                {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36"},
+
                                 
                                 {"CALGARY_INTL_AB_CA", "CALGARY", "AB", "51.113889", "-114.02", "-120", "1084.1"}, 
                                 {"EDMONTON_INTL_A_AB_CA", "EDMONTON", "AB", "53.31", "-113.579444", "-120", "723.3"}, 
@@ -307,7 +309,7 @@ int _windspd200hPa = 17;
 
 int num_layers = 18; 
 
-int drw_Layer = _cloudcover; //_drybulb; //_developed; 
+int drw_Layer = _drybulb; ; //_cloudcover; //_developed; 
 
 int develop_Layer = drw_Layer;
 
