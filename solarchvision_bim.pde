@@ -240,15 +240,15 @@ int CLIMATE_WY2_end = 2005;
 int ENSEMBLE_start = 1; // min: 1
 int ENSEMBLE_end = 43; // max: 43
 
-int numberOfNearestStations = 5;  // <<<<<<<<
+int numberOfNearestStations_ENSEMBLE = 1;  // <<<<<<<<
+
+int numberOfNearestStations_OBSERVED = 5;  // <<<<<<<<
 
 int OBSERVED_start = 1; 
-int OBSERVED_end = numberOfNearestStations;
+int OBSERVED_end = numberOfNearestStations_OBSERVED;
 
-int[] nearestStations = new int [numberOfNearestStations];
-
-int[] nearest_STATION_SWOB = new int [numberOfNearestStations];
-float[] nearest_STATION_SWOB_dist = new float [numberOfNearestStations];
+int[] nearest_STATION_SWOB = new int [numberOfNearestStations_OBSERVED];
+float[] nearest_STATION_SWOB_dist = new float [numberOfNearestStations_OBSERVED];
 
 
 
@@ -4970,12 +4970,12 @@ void SOLARCHVISION_try_update_OBSERVED () {
 
   if (Load_OBSERVED == 1) {
     
-    for (int q = 0; q < numberOfNearestStations; q++) {
+    for (int q = 0; q < numberOfNearestStations_OBSERVED; q++) {
       nearest_STATION_SWOB[q] = -1;
       nearest_STATION_SWOB_dist[q] = FLOAT_undefined;
     }
     
-    for (int q = 0; q < numberOfNearestStations; q++) {
+    for (int q = 0; q < numberOfNearestStations_OBSERVED; q++) {
       for (int f = 0; f < STATION_SWOB_INFO.length; f += 1) {
      
         float _lat = float(STATION_SWOB_INFO[f][3]);
@@ -5000,7 +5000,7 @@ void SOLARCHVISION_try_update_OBSERVED () {
         }     
       }
       
-      nearestStations[q] = nearest_STATION_SWOB[q];
+      nearest_STATION_SWOB[q] = nearest_STATION_SWOB[q];
     }    
     
     
@@ -5036,9 +5036,9 @@ void SOLARCHVISION_try_update_OBSERVED () {
       THE_MONTH = CalendarDate[int(THE_DATE)][0]; 
       THE_DAY = CalendarDate[int(THE_DATE)][1];
       
-      for (int q = 0; q < numberOfNearestStations; q++) {
+      for (int q = 0; q < numberOfNearestStations_OBSERVED; q++) {
         
-        int f = nearestStations[q];
+        int f = nearest_STATION_SWOB[q];
         
         if (f != -1) {
         
