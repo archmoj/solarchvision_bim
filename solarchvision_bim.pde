@@ -3352,7 +3352,7 @@ void SOLARCHVISION_update_date () {
   _HOUR = int(24 * (_DATE - int(_DATE)));
 }
 
-int SOLARCHVISION_try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
+void SOLARCHVISION_try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
   int File_Found = -1;
 
   ENSEMBLE = new float [24][365][num_layers][(1 + ENSEMBLE_end - ENSEMBLE_start)];
@@ -3800,8 +3800,7 @@ int SOLARCHVISION_try_update_forecast (int THE_YEAR, int THE_MONTH, int THE_DAY,
   }
   
   //SOLARCHVISION_DevelopDATA(impacts_source);
- 
-  return File_Found;
+
 }
 
 
@@ -4145,7 +4144,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
 } 
 
 
-int SOLARCHVISION_try_update_CLIMATE_WY2 () {
+void SOLARCHVISION_try_update_CLIMATE_WY2 () {
   int File_Found = -1;
   
   CLIMATE_WY2 = new float [24][365][num_layers][(1 + CLIMATE_WY2_end - CLIMATE_WY2_start)];
@@ -4191,8 +4190,7 @@ int SOLARCHVISION_try_update_CLIMATE_WY2 () {
     
     if (File_Found == -1) println ("FILE NOT FOUND:", FN);
   }
-  
-  return File_Found;
+
 }
 
 
@@ -4563,7 +4561,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
 } 
 
 
-int SOLARCHVISION_try_update_CLIMATE_EPW () {
+void SOLARCHVISION_try_update_CLIMATE_EPW () {
   int File_Found = -1;
   
   CLIMATE_EPW = new float [24][365][num_layers][(1 + CLIMATE_EPW_end - CLIMATE_EPW_start)];
@@ -4601,8 +4599,7 @@ int SOLARCHVISION_try_update_CLIMATE_EPW () {
     
     if (File_Found == -1) println("FILE NOT FOUND:", FN);
   }
-  
-  return File_Found;
+
 }
 
 void SOLARCHVISION_LoadCLIMATE_EPW (String FileName) {
@@ -4974,8 +4971,8 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
 
 
 
-int SOLARCHVISION_try_update_observed () {
-  int File_Found = -1;
+void SOLARCHVISION_try_update_observed () {
+  
   
   OBSERVED = new float [24][365][num_layers][(1 + OBSERVED_end - OBSERVED_start)];
   OBSERVED_DATA = new int [24][365][num_layers][(1 + OBSERVED_end - OBSERVED_start)]; // -1: undefined, 0: interpolated, 1: data
@@ -5049,6 +5046,8 @@ int SOLARCHVISION_try_update_observed () {
         int f = nearestStations[q];
         
         String FN = nf(THE_YEAR, 4) + "-" + nf(THE_MONTH, 2) + "-" + nf(THE_DAY, 2) + "-" + nf(THE_HOUR, 2) + "00-" + STATION_SWOB_INFO[f][6] + "-" + STATION_SWOB_INFO[f][11] + "-swob";
+
+        int File_Found = -1;
       
         if (Download_OBSERVED == 0) {
       
@@ -5065,7 +5064,6 @@ int SOLARCHVISION_try_update_observed () {
               if (_Filenames.equals(FN)) {
                 //println ("FILE:", FN);
                 File_Found = i;
-                SOLARCHVISION_LoadOBSERVED((OBSERVED_directory + "/" + OBSERVED_XML_Files[i]), f);
                 
                 break; // <<<<<<<<<<
               }
@@ -5085,13 +5083,14 @@ int SOLARCHVISION_try_update_observed () {
             OBSERVED_XML_Files = concat(OBSERVED_XML_Files, new_file);
             
             File_Found = OBSERVED_XML_Files.length - 1;
+            println("File_Found:", File_Found);
           } 
           catch (Exception e) {
 
           }  
         }
-        
-        if (File_Found != -1) SOLARCHVISION_LoadOBSERVED((OBSERVED_directory + "/" + OBSERVED_XML_Files[File_Found]), f);
+
+        if (File_Found != -1) SOLARCHVISION_LoadOBSERVED((OBSERVED_directory + "/" + OBSERVED_XML_Files[File_Found]), q);
         else println ("FILE NOT FOUND:", FN);
  
       }
@@ -5176,11 +5175,8 @@ int SOLARCHVISION_try_update_observed () {
         }
       }
     }
-  
   }
   
-
-  return File_Found;
 }
 
 
