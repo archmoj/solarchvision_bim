@@ -307,9 +307,12 @@ int addLayer () {
   return(num_layers - 1);
 }
 
+int _windspd200hPa = addLayer();
+int _thicknesses_1000_500 = addLayer();
+int _heightp500hPa = addLayer();
 
-int _cloudcover = addLayer();
 int _ceilingsky = addLayer();
+int _cloudcover = addLayer();
 
 int _winddir = addLayer();
 int _windspd = addLayer();
@@ -327,9 +330,6 @@ int _glohorrad = addLayer();
 int _direffect = addLayer();
 int _difeffect = addLayer();
 
-int _heightp500hPa = -1; //addLayer();
-int _thicknesses_1000_500 = -1; //addLayer();
-int _windspd200hPa = -1; //addLayer();
 
 int A_precipitation = addLayer();
 
@@ -430,7 +430,7 @@ String[][] LAYERS_Title;
   LAYERS_Title = new String[num_layers][2];
   
   int i = -1;
-  
+
   i = _winddir;
   if (i > -1) {
     GRAPHS_V_scale[i] = (100.0/360.0);
@@ -836,6 +836,16 @@ float[] pre_Field_Rotation = {0,0,0,0};
 float[] pre_Field_Elevation = {0,0,0,0};
       
 int pre_Load_Default_Models;
+
+int pre_impact_layer;
+int pre_H_layer_option;
+int pre_F_layer_option;
+int pre_O_layer_option;
+int pre_develop_option;
+int pre_GRAPHS_drw_Layer;
+int pre_sky_scenario;
+int pre_plot_impacts;
+
 
 
 
@@ -1542,7 +1552,21 @@ void draw () {
         pre_Field_Elevation[display_Field_Image] = Field_Elevation[display_Field_Image];
       
         pre_Load_Default_Models = Load_Default_Models;
-       
+
+        pre_impact_layer = impact_layer;
+ 
+        pre_H_layer_option = H_layer_option;
+        pre_F_layer_option = F_layer_option;
+        pre_O_layer_option = O_layer_option;
+        
+        pre_develop_option = develop_option;
+        
+        pre_GRAPHS_drw_Layer = GRAPHS_drw_Layer;
+        
+        pre_sky_scenario = sky_scenario;
+        
+        pre_plot_impacts = plot_impacts;
+        
         
         SOLARCHVISION_draw_ROLLOUT();
         
@@ -2278,7 +2302,7 @@ void SOLARCHVISION_draw_GRAPHS () {
 int now_drawing = -1; // -1 = Nothing, 0 = Climate WY2, 1 = Forecast-NAEFS, 2 = Observation, 3 = Climate EPW 
 
 void SOLARCHVISION_PlotHOURLY (float x, float y, float z, float sx, float sy, float sz) {
-
+  
   int draw_climate_WY2 = 0;
   int draw_forecast = 0;
   int draw_observed = 0;
@@ -2327,6 +2351,7 @@ void SOLARCHVISION_PlotHOURLY (float x, float y, float z, float sx, float sy, fl
   }
   
   now_drawing = -1;
+
 }
 
 
@@ -2339,7 +2364,7 @@ void Plot_Setup () {
 
     if (frame_variation == 1) {
       
-      int pre_impact_layer = impact_layer;
+      
       for (int p = 0; p < 3; p += 1) { 
         impact_layer = 3 * int(pre_impact_layer / 3) + p;
 
@@ -2439,7 +2464,7 @@ void Plot_Setup () {
   
   if (GRAPHS_setup == 0) {
     if (impacts_source == databaseNumber_CLIMATE_WY2) {
-      int pre_H_layer_option = H_layer_option;
+      
       
       H_layer_option = 3;
       SOLARCHVISION_PlotHOURLY(0, -525 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[GRAPHS_drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View); 
@@ -2456,7 +2481,7 @@ void Plot_Setup () {
       H_layer_option = pre_H_layer_option;
     }       
     if (impacts_source == databaseNumber_ENSEMBLE) {
-      int pre_F_layer_option = F_layer_option;
+      
       
       F_layer_option = 4;
       SOLARCHVISION_PlotHOURLY(0, -525 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[GRAPHS_drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View); 
@@ -2476,8 +2501,8 @@ void Plot_Setup () {
 
 
   if (GRAPHS_setup == 1) {
-    int pre_GRAPHS_drw_Layer = GRAPHS_drw_Layer;
-    int pre_develop_option = develop_option;
+    
+    
     
     develop_Layer = GRAPHS_drw_Layer;
     GRAPHS_drw_Layer = _developed; 
@@ -2505,7 +2530,7 @@ void Plot_Setup () {
   
   if (GRAPHS_setup == 2) {
     if (GRAPHS_drw_Layer != _developed) {
-      int pre_GRAPHS_drw_Layer = GRAPHS_drw_Layer;
+      
       
       SOLARCHVISION_PlotHOURLY(0, -525 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[GRAPHS_drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
   
@@ -2530,7 +2555,7 @@ void Plot_Setup () {
   
   
   if (GRAPHS_setup == 3) {
-    int pre_GRAPHS_drw_Layer = GRAPHS_drw_Layer;
+    
     
     GRAPHS_drw_Layer = _windspd200hPa;
     SOLARCHVISION_PlotHOURLY(0, -525 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[GRAPHS_drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
@@ -2549,7 +2574,7 @@ void Plot_Setup () {
   
   
   if (GRAPHS_setup == 4) {
-    int pre_GRAPHS_drw_Layer = GRAPHS_drw_Layer;
+    
     
     GRAPHS_drw_Layer = _windspd;
     SOLARCHVISION_PlotHOURLY(0, -525 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[GRAPHS_drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
@@ -2568,8 +2593,8 @@ void Plot_Setup () {
   
   
   if (GRAPHS_setup == 5) {
-    int pre_GRAPHS_drw_Layer = GRAPHS_drw_Layer;
-    int pre_develop_option = develop_option;
+    
+    
     
     GRAPHS_drw_Layer = _dirnorrad;
     SOLARCHVISION_PlotHOURLY(0, -525 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[GRAPHS_drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
@@ -2593,7 +2618,7 @@ void Plot_Setup () {
   
   
   if (GRAPHS_setup == 6) {
-    int pre_sky_scenario = sky_scenario;
+    
     
     sky_scenario = 4;
     SOLARCHVISION_PlotHOURLY(0, -525 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[GRAPHS_drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
@@ -2612,7 +2637,7 @@ void Plot_Setup () {
   
   
   if (GRAPHS_setup == 7) {
-    int pre_plot_impacts = plot_impacts;
+    
     
     draw_sorted = 0;
     draw_normals = 0;
@@ -2637,8 +2662,8 @@ void Plot_Setup () {
   
 
   if (GRAPHS_setup == 8) {
-    int pre_plot_impacts = plot_impacts;
-    int pre_impact_layer = impact_layer;
+    
+    
     
     draw_sorted = 0;
     draw_normals = 0;
@@ -2674,8 +2699,8 @@ void Plot_Setup () {
 
 
   if (GRAPHS_setup == 9) {
-    int pre_plot_impacts = plot_impacts;
-    int pre_impact_layer = impact_layer;
+    
+    
 
     
     draw_sorted = 0;
@@ -2711,8 +2736,8 @@ void Plot_Setup () {
   }
 
   if (GRAPHS_setup == 10) {
-    int pre_plot_impacts = plot_impacts;
-    int pre_impact_layer = impact_layer;
+    
+    
 
     
     draw_sorted = 0;
@@ -2735,8 +2760,8 @@ void Plot_Setup () {
   }
   
   if (GRAPHS_setup == 11) {
-    int pre_plot_impacts = plot_impacts;
-    int pre_impact_layer = impact_layer;
+    
+    
     
     draw_sorted = 0;
     draw_normals = 0;
@@ -2758,8 +2783,8 @@ void Plot_Setup () {
   }  
 
   if (GRAPHS_setup == 12) {
-    int pre_plot_impacts = plot_impacts;
-    int pre_impact_layer = impact_layer;
+    
+    
     
     if (automated != 0) {
       draw_sorted = 0;
@@ -2794,8 +2819,8 @@ void Plot_Setup () {
   }
 
   if (GRAPHS_setup == 13) {
-    int pre_plot_impacts = plot_impacts;
-    int pre_impact_layer = impact_layer;
+    
+    
 
     if (automated != 0) {
       draw_sorted = 1;
