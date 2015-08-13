@@ -321,8 +321,7 @@ int _developed = addLayer();
 int _direffect = addLayer();
 int _difeffect = addLayer();
 int _cloudcover = addLayer();
-int _logceilsky = addLayer();
-int _ceilingsky = addLayer();
+int _ceilingsky = -1; //addLayer();
 int _pressure = addLayer(); 
 int _heightp500hPa = addLayer();
 int _thicknesses_1000_500 = addLayer();
@@ -554,17 +553,6 @@ String[][] LAYERS_Title;
     LAYERS_Title[i][_EN] = "Total Cloud Cover";
     LAYERS_Title[i][_FR] = "Couvert nuageux total";
     LAYERS_ENSEMBLE[i] = "TCDC";
-  }
-  
-  i = _logceilsky;
-  if (i > -1) {
-    GRAPHS_V_scale[i] = 25.0;
-    GRAPHS_V_offset[i] = 0;
-    GRAPHS_V_belowLine[i] = 0;
-    LAYERS_Unit[i] = "log(m)";
-    LAYERS_Title[i][_EN] = "ceiling height";
-    LAYERS_Title[i][_FR] = "hauteur sous plafond";
-    LAYERS_ENSEMBLE[i] = "";
   }
   
   i = _ceilingsky;
@@ -4526,13 +4514,6 @@ void SOLARCHVISION_LoadCLIMATE_WY2 (String FileName) {
         }
         
         Pa = CLIMATE_WY2[i][j][_ceilingsky][k];
-        if (Pa > 0.9 * FLOAT_undefined) {
-        }
-        else {
-          float Px = log(Pa) / log(10.0);
-          if (Px > 2) CLIMATE_WY2[i][j][_logceilsky][k] = Px;
-          else CLIMATE_WY2[i][j][_logceilsky][k] = 2;
-        }
       }
     }
   }
@@ -4931,13 +4912,6 @@ void SOLARCHVISION_LoadCLIMATE_EPW (String FileName) {
         }
         
         Pa = CLIMATE_EPW[i][j][_ceilingsky][k];
-        if (Pa > 0.9 * FLOAT_undefined) {
-        }
-        else {
-          float Px = log(Pa) / log(10.0);
-          if (Px > 2) CLIMATE_EPW[i][j][_logceilsky][k] = roundTo(Px, 0.1);
-          else CLIMATE_EPW[i][j][_logceilsky][k] = 2;
-        }
       }
     }
   }
