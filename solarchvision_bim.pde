@@ -424,168 +424,203 @@ String[][] LAYERS_Title;
   
   int i = -1;
   
-  
   i = _winddir;
-  GRAPHS_V_scale[i] = (100.0/360.0);
-  GRAPHS_V_offset[i] = 0;
-  GRAPHS_V_belowLine[i] = 0;
-  LAYERS_ENSEMBLE[i] = "WDIR-SFC";
-  LAYERS_Unit[i] = "°";
-  LAYERS_Title[i][_EN] = "Surface Wind Direction";
-  LAYERS_Title[i][_FR] = "Direction du vent à la surface";
-
+  if (i > -1) {
+    GRAPHS_V_scale[i] = (100.0/360.0);
+    GRAPHS_V_offset[i] = 0;
+    GRAPHS_V_belowLine[i] = 0;
+    LAYERS_Unit[i] = "°";
+    LAYERS_Title[i][_EN] = "Surface Wind Direction";
+    LAYERS_Title[i][_FR] = "Direction du vent à la surface";
+    LAYERS_ENSEMBLE[i] = "WDIR-SFC";
+  }
+  
   i = _windspd;
-  GRAPHS_V_scale[i] = (10.0/5.0);
-  GRAPHS_V_offset[i] = 0;
-  GRAPHS_V_belowLine[i] = 0;
-  LAYERS_ENSEMBLE[i] = "WIND-SFC";
-  LAYERS_Unit[i] = "km/h";
-  LAYERS_Title[i][_EN] = "Surface Wind Speed";
-  LAYERS_Title[i][_FR] = "Vitesse du vent à la surface";
+  if (i > -1) {
+    GRAPHS_V_scale[i] = (10.0/5.0);
+    GRAPHS_V_offset[i] = 0;
+    GRAPHS_V_belowLine[i] = 0;
+    LAYERS_Unit[i] = "km/h";
+    LAYERS_Title[i][_EN] = "Surface Wind Speed";
+    LAYERS_Title[i][_FR] = "Vitesse du vent à la surface";
+    LAYERS_ENSEMBLE[i] = "WIND-SFC";
+  }
   
   i = A_precipitation;
-  GRAPHS_V_scale[i] = 4.0;
-  GRAPHS_V_offset[i] = 0;
-  GRAPHS_V_belowLine[i] = 0;
-  LAYERS_ENSEMBLE[i] = "APCP-SFC";
-  LAYERS_Unit[i] = "mm";
-  LAYERS_Title[i][_EN] = "Surface Accumulated Precipitation";
-  LAYERS_Title[i][_FR] = "Précipitations accumulées à la surface";
+  if (i > -1) {
+    GRAPHS_V_scale[i] = 4.0;
+    GRAPHS_V_offset[i] = 0;
+    GRAPHS_V_belowLine[i] = 0;
+    LAYERS_Unit[i] = "mm";
+    LAYERS_Title[i][_EN] = "Surface Accumulated Precipitation";
+    LAYERS_Title[i][_FR] = "Précipitations accumulées à la surface";
+    LAYERS_ENSEMBLE[i] = "APCP-SFC";
+  }
 
   i = _relhum;
-  GRAPHS_V_scale[i] = 1.0;
-  GRAPHS_V_offset[i] = 0;
-  GRAPHS_V_belowLine[i] = 0;
-  LAYERS_ENSEMBLE[i] = "RELH-SFC";
-  LAYERS_Unit[i] = "%";
-  LAYERS_Title[i][_EN] = "Surface Relative Humidity";
-  LAYERS_Title[i][_FR] = "Humidité relative à la surface";
+  if (i > -1) {
+    GRAPHS_V_scale[i] = 1.0;
+    GRAPHS_V_offset[i] = 0;
+    GRAPHS_V_belowLine[i] = 0;
+    LAYERS_Unit[i] = "%";
+    LAYERS_Title[i][_EN] = "Surface Relative Humidity";
+    LAYERS_Title[i][_FR] = "Humidité relative à la surface";
+    LAYERS_ENSEMBLE[i] = "RELH-SFC";
+  }
   
   i = _drybulb;
-  GRAPHS_V_scale[i] = (2.5 * pow(2, 0.5));
-  GRAPHS_V_offset[i] = 0;
-  GRAPHS_V_belowLine[i] = 1;
-  LAYERS_ENSEMBLE[i] = "TMP-SFC";
-  LAYERS_Unit[i] = "°C";
-  LAYERS_Title[i][_EN] = "Surface Air Temperature";
-  LAYERS_Title[i][_FR] = "Température de l'air à la surface";
+  if (i > -1) {
+    GRAPHS_V_scale[i] = (2.5 * pow(2, 0.5));
+    GRAPHS_V_offset[i] = 0;
+    GRAPHS_V_belowLine[i] = 1;
+    LAYERS_Unit[i] = "°C";
+    LAYERS_Title[i][_EN] = "Surface Air Temperature";
+    LAYERS_Title[i][_FR] = "Température de l'air à la surface";
+    LAYERS_ENSEMBLE[i] = "TMP-SFC";
+  }
   
   i = _dirnorrad;
-  GRAPHS_V_scale[i] = 0.1;
-  GRAPHS_V_offset[i] = 0;
-  GRAPHS_V_belowLine[i] = 0;
-  LAYERS_ENSEMBLE[i] = "";
-  LAYERS_Unit[i] = "W/m²";
-  LAYERS_Title[i][_EN] = "direct normal radiation";
-  LAYERS_Title[i][_FR] = "rayonnement direct normal";
+  if (i > -1) {
+    GRAPHS_V_scale[i] = 0.1;
+    GRAPHS_V_offset[i] = 0;
+    GRAPHS_V_belowLine[i] = 0;
+    LAYERS_Unit[i] = "W/m²";
+    LAYERS_Title[i][_EN] = "direct normal radiation";
+    LAYERS_Title[i][_FR] = "rayonnement direct normal";
+    LAYERS_ENSEMBLE[i] = "";
+  }
   
   i = _difhorrad;
-  GRAPHS_V_scale[i] = 0.1;
-  GRAPHS_V_offset[i] = 0;
-  GRAPHS_V_belowLine[i] = 0;
-  LAYERS_ENSEMBLE[i] = "";
-  LAYERS_Unit[i] = "W/m²";
-  LAYERS_Title[i][_EN] = "diffuse horizontal radiation";
-  LAYERS_Title[i][_FR] = "diffus rayonnement horizontal";
+  if (i > -1) {
+    GRAPHS_V_scale[i] = 0.1;
+    GRAPHS_V_offset[i] = 0;
+    GRAPHS_V_belowLine[i] = 0;
+    LAYERS_Unit[i] = "W/m²";
+    LAYERS_Title[i][_EN] = "diffuse horizontal radiation";
+    LAYERS_Title[i][_FR] = "diffus rayonnement horizontal";
+    LAYERS_ENSEMBLE[i] = "";
+  }
 
   i = _glohorrad;
-  GRAPHS_V_scale[i] = 0.1;
-  GRAPHS_V_offset[i] = 0;
-  GRAPHS_V_belowLine[i] = 0;
-  LAYERS_ENSEMBLE[i] = "";
-  LAYERS_Unit[i] = "W/m²";
-  LAYERS_Title[i][_EN] = "global horizontal radiation";
-  LAYERS_Title[i][_FR] = "rayonnement global horizontal";
+  if (i > -1) {
+    GRAPHS_V_scale[i] = 0.1;
+    GRAPHS_V_offset[i] = 0;
+    GRAPHS_V_belowLine[i] = 0;
+    LAYERS_Unit[i] = "W/m²";
+    LAYERS_Title[i][_EN] = "global horizontal radiation";
+    LAYERS_Title[i][_FR] = "rayonnement global horizontal";
+    LAYERS_ENSEMBLE[i] = "";
+  }
   
   i = _developed;
-  GRAPHS_V_scale[i] = 1;
-  GRAPHS_V_offset[i] = 0;
-  GRAPHS_V_belowLine[i] = 0;
-  LAYERS_ENSEMBLE[i] = "";
-  LAYERS_Unit[i] = "";
-  LAYERS_Title[i][_EN] = "";
-  LAYERS_Title[i][_FR] = "";
+  if (i > -1) {
+    GRAPHS_V_scale[i] = 1;
+    GRAPHS_V_offset[i] = 0;
+    GRAPHS_V_belowLine[i] = 0;
+    LAYERS_Unit[i] = "";
+    LAYERS_Title[i][_EN] = "";
+    LAYERS_Title[i][_FR] = "";
+    LAYERS_ENSEMBLE[i] = "";
+  }
   
   i = _direffect;
-  GRAPHS_V_scale[_direffect] = 0.0025;
-  GRAPHS_V_offset[_direffect] = 0;
-  GRAPHS_V_belowLine[_direffect] = 1;
-  LAYERS_ENSEMBLE[i] = "";
-  LAYERS_Unit[i] = "W°C/m²";
-  LAYERS_Title[i][_EN] = "direct normal effect (based on 18°C)";
-  LAYERS_Title[i][_FR] = "effet direct normal (basé sur 18°C)";
+  if (i > -1) {
+    GRAPHS_V_scale[_direffect] = 0.0025;
+    GRAPHS_V_offset[_direffect] = 0;
+    GRAPHS_V_belowLine[_direffect] = 1;
+    LAYERS_Unit[i] = "W°C/m²";
+    LAYERS_Title[i][_EN] = "direct normal effect (based on 18°C)";
+    LAYERS_Title[i][_FR] = "effet direct normal (basé sur 18°C)";
+    LAYERS_ENSEMBLE[i] = "";
+  }
 
   i = _difeffect;
-  GRAPHS_V_scale[i] = 0.0025;
-  GRAPHS_V_offset[i] = 0;
-  GRAPHS_V_belowLine[i] = 1;
-  LAYERS_ENSEMBLE[i] = "";
-  LAYERS_Unit[i] = "W°C/m²";
-  LAYERS_Title[i][_EN] = "diffuse normal effect (based on 18°C)";
-  LAYERS_Title[i][_FR] = "effet diffus normal (basé sur 18°C)";
+  if (i > -1) {
+    GRAPHS_V_scale[i] = 0.0025;
+    GRAPHS_V_offset[i] = 0;
+    GRAPHS_V_belowLine[i] = 1;
+    LAYERS_Unit[i] = "W°C/m²";
+    LAYERS_Title[i][_EN] = "diffuse normal effect (based on 18°C)";
+    LAYERS_Title[i][_FR] = "effet diffus normal (basé sur 18°C)";
+    LAYERS_ENSEMBLE[i] = "";
+  }
   
   i = _cloudcover;
-  GRAPHS_V_scale[i] = 10.0;
-  GRAPHS_V_offset[i] = 0;
-  GRAPHS_V_belowLine[i] = 0;
-  LAYERS_ENSEMBLE[i] = "TCDC";
-  LAYERS_Unit[i] = "tenth";
-  LAYERS_Title[i][_EN] = "Total Cloud Cover";
-  LAYERS_Title[i][_FR] = "Couvert nuageux total";
+  if (i > -1) {
+    GRAPHS_V_scale[i] = 10.0;
+    GRAPHS_V_offset[i] = 0;
+    GRAPHS_V_belowLine[i] = 0;
+    LAYERS_Unit[i] = "tenth";
+    LAYERS_Title[i][_EN] = "Total Cloud Cover";
+    LAYERS_Title[i][_FR] = "Couvert nuageux total";
+    LAYERS_ENSEMBLE[i] = "TCDC";
+  }
   
   i = _logceilsky;
-  GRAPHS_V_scale[i] = 25.0;
-  GRAPHS_V_offset[i] = 0;
-  GRAPHS_V_belowLine[i] = 0;
-  LAYERS_ENSEMBLE[i] = "";
-  LAYERS_Unit[i] = "log(m)";
-  LAYERS_Title[i][_EN] = "ceiling height";
-  LAYERS_Title[i][_FR] = "hauteur sous plafond";
+  if (i > -1) {
+    GRAPHS_V_scale[i] = 25.0;
+    GRAPHS_V_offset[i] = 0;
+    GRAPHS_V_belowLine[i] = 0;
+    LAYERS_Unit[i] = "log(m)";
+    LAYERS_Title[i][_EN] = "ceiling height";
+    LAYERS_Title[i][_FR] = "hauteur sous plafond";
+    LAYERS_ENSEMBLE[i] = "";
+  }
   
   i = _ceilingsky;
-  GRAPHS_V_scale[i] = 0.01;
-  GRAPHS_V_offset[i] = 0;
-  GRAPHS_V_belowLine[i] = 0;
-  LAYERS_ENSEMBLE[i] = "";
-  LAYERS_Unit[i] = "m";
-  LAYERS_Title[i][_EN] = "ceiling height";
-  LAYERS_Title[i][_FR] = "hauteur sous plafond";  
+  if (i > -1) {
+    GRAPHS_V_scale[i] = 0.01;
+    GRAPHS_V_offset[i] = 0;
+    GRAPHS_V_belowLine[i] = 0;
+    LAYERS_Unit[i] = "m";
+    LAYERS_Title[i][_EN] = "ceiling height";
+    LAYERS_Title[i][_FR] = "hauteur sous plafond";  
+    LAYERS_ENSEMBLE[i] = "";
+  }
   
   i = _pressure;
-  GRAPHS_V_scale[i] = 2.0;
-  GRAPHS_V_offset[i] = -1000;
-  GRAPHS_V_belowLine[i] = 1;
-  LAYERS_ENSEMBLE[i] = "MSLP";
-  LAYERS_Unit[i] = "hPa";
-  LAYERS_Title[i][_EN] = "Mean Sea level Pressure";
-  LAYERS_Title[i][_FR] = "Pression moyenne au niveau de la mer";
-  
+  if (i > -1) {
+    GRAPHS_V_scale[i] = 2.0;
+    GRAPHS_V_offset[i] = -1000;
+    GRAPHS_V_belowLine[i] = 1;
+    LAYERS_Unit[i] = "hPa";
+    LAYERS_Title[i][_EN] = "Mean Sea level Pressure";
+    LAYERS_Title[i][_FR] = "Pression moyenne au niveau de la mer";
+    LAYERS_ENSEMBLE[i] = "MSLP";
+  }
+    
   i = _heightp500hPa;
-  GRAPHS_V_scale[i] = 1;
-  GRAPHS_V_offset[i] = -500;
-  GRAPHS_V_belowLine[i] = 1;
-  LAYERS_ENSEMBLE[i] = "HGT-500HPA";
-  LAYERS_Unit[i] = "dam";
-  LAYERS_Title[i][_EN] = "Geopotential at 500 hPa";
-  LAYERS_Title[i][_FR] = "Géopotentiel à 500 hPa";
+  if (i > -1) {
+    GRAPHS_V_scale[i] = 1;
+    GRAPHS_V_offset[i] = -500;
+    GRAPHS_V_belowLine[i] = 1;
+    LAYERS_Unit[i] = "dam";
+    LAYERS_Title[i][_EN] = "Geopotential at 500 hPa";
+    LAYERS_Title[i][_FR] = "Géopotentiel à 500 hPa";
+    LAYERS_ENSEMBLE[i] = "HGT-500HPA";
+  }
   
   i = _thicknesses_1000_500;
-  GRAPHS_V_scale[i] = 1;
-  GRAPHS_V_offset[i] = -500;
-  GRAPHS_V_belowLine[i] = 1;
-  LAYERS_ENSEMBLE[i] = "LAYER-1000-500HPA";
-  LAYERS_Unit[i] = "dam";
-  LAYERS_Title[i][_EN] = "Thicknesses (Geopotentiel Difference) between 1000 and 500 hPa";
-  LAYERS_Title[i][_FR] = "Épaisseurs (différence de géopotentiel entre 1000 et 500 hPa";
+  if (i > -1) {
+    GRAPHS_V_scale[i] = 1;
+    GRAPHS_V_offset[i] = -500;
+    GRAPHS_V_belowLine[i] = 1;
+    LAYERS_Unit[i] = "dam";
+    LAYERS_Title[i][_EN] = "Thicknesses (Geopotentiel Difference) between 1000 and 500 hPa";
+    LAYERS_Title[i][_FR] = "Épaisseurs (différence de géopotentiel entre 1000 et 500 hPa";
+    LAYERS_ENSEMBLE[i] = "LAYER-1000-500HPA";
+  }
 
   i = _windspd200hPa;
-  GRAPHS_V_scale[i] = 0.5;
-  GRAPHS_V_offset[i] = 0;
-  GRAPHS_V_belowLine[i] = 0;
-  LAYERS_ENSEMBLE[i] = "WIND-200HPA";
-  LAYERS_Unit[i] = "knots";
-  LAYERS_Title[i][_EN] = "Wind Speed at 200 hPa";
-  LAYERS_Title[i][_FR] = "Vitesse du vent à 200 hPa";  
+  if (i > -1) {
+    GRAPHS_V_scale[i] = 0.5;
+    GRAPHS_V_offset[i] = 0;
+    GRAPHS_V_belowLine[i] = 0;
+    LAYERS_Unit[i] = "knots";
+    LAYERS_Title[i][_EN] = "Wind Speed at 200 hPa";
+    LAYERS_Title[i][_FR] = "Vitesse du vent à 200 hPa";  
+    LAYERS_ENSEMBLE[i] = "WIND-200HPA";
+  }
 
 }
 
