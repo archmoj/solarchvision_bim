@@ -426,84 +426,183 @@ float[] GRAPHS_V_scale;
 float[] GRAPHS_V_offset;
 float[] GRAPHS_V_belowLine;
 
+String[] ENSEMBLE_LAYERS; 
+
+String[][] INTEGRATION_LAYERS;
+
+
 {
   GRAPHS_V_scale = new float[num_layers];
   GRAPHS_V_offset = new float[num_layers];
   GRAPHS_V_belowLine = new float[num_layers];
+  ENSEMBLE_LAYERS = new String[num_layers];
+  INTEGRATION_LAYERS = new String[num_layers][3];
+  
+  int i = -1;
+  
+  
+  i = _winddir;
+  GRAPHS_V_scale[i] = (100.0/360.0);
+  GRAPHS_V_offset[i] = 0;
+  GRAPHS_V_belowLine[i] = 0;
+  ENSEMBLE_LAYERS[i] = "WDIR-SFC";
+  INTEGRATION_LAYERS[i][0] = "°";
+  INTEGRATION_LAYERS[i][1] = "Surface Wind Direction";
+  INTEGRATION_LAYERS[i][2] = "Direction du vent à la surface";
 
-  GRAPHS_V_scale[_winddir] = (100.0/360.0);
-  GRAPHS_V_offset[_winddir] = 0;
-  GRAPHS_V_belowLine[_winddir] = 0;
+  i = _windspd;
+  GRAPHS_V_scale[i] = (10.0/5.0);
+  GRAPHS_V_offset[i] = 0;
+  GRAPHS_V_belowLine[i] = 0;
+  ENSEMBLE_LAYERS[i] = "WIND-SFC";
+  INTEGRATION_LAYERS[i][0] = "km/h";
+  INTEGRATION_LAYERS[i][1] = "Surface Wind Speed";
+  INTEGRATION_LAYERS[i][2] = "Vitesse du vent à la surface";
+  
+  i = A_precipitation;
+  GRAPHS_V_scale[i] = 4.0;
+  GRAPHS_V_offset[i] = 0;
+  GRAPHS_V_belowLine[i] = 0;
+  ENSEMBLE_LAYERS[i] = "APCP-SFC";
+  INTEGRATION_LAYERS[i][0] = "mm";
+  INTEGRATION_LAYERS[i][1] = "Surface Accumulated Precipitation";
+  INTEGRATION_LAYERS[i][2] = "Précipitations accumulées à la surface";
 
-  GRAPHS_V_scale[_windspd] = (10.0/5.0);
-  GRAPHS_V_offset[_windspd] = 0;
-  GRAPHS_V_belowLine[_windspd] = 0;
+  i = _relhum;
+  GRAPHS_V_scale[i] = 1.0;
+  GRAPHS_V_offset[i] = 0;
+  GRAPHS_V_belowLine[i] = 0;
+  ENSEMBLE_LAYERS[i] = "RELH-SFC";
+  INTEGRATION_LAYERS[i][0] = "%";
+  INTEGRATION_LAYERS[i][1] = "Surface Relative Humidity";
+  INTEGRATION_LAYERS[i][2] = "Humidité relative à la surface";
   
-  GRAPHS_V_scale[A_precipitation] = 4.0;
-  GRAPHS_V_offset[A_precipitation] = 0;
-  GRAPHS_V_belowLine[A_precipitation] = 0;
+  i = _drybulb;
+  GRAPHS_V_scale[i] = (2.5 * pow(2, 0.5));
+  GRAPHS_V_offset[i] = 0;
+  GRAPHS_V_belowLine[i] = 1;
+  ENSEMBLE_LAYERS[i] = "TMP-SFC";
+  INTEGRATION_LAYERS[i][0] = "°C";
+  INTEGRATION_LAYERS[i][1] = "Surface Air Temperature";
+  INTEGRATION_LAYERS[i][2] = "Température de l'air à la surface";
   
-  GRAPHS_V_scale[_relhum] = 1.0;
-  GRAPHS_V_offset[_relhum] = 0;
-  GRAPHS_V_belowLine[_relhum] = 0;
+  i = _dirnorrad;
+  GRAPHS_V_scale[i] = 0.1;
+  GRAPHS_V_offset[i] = 0;
+  GRAPHS_V_belowLine[i] = 0;
+  ENSEMBLE_LAYERS[i] = "";
+  INTEGRATION_LAYERS[i][0] = "W/m²";
+  INTEGRATION_LAYERS[i][1] = "direct normal radiation";
+  INTEGRATION_LAYERS[i][2] = "rayonnement direct normal";
   
-  GRAPHS_V_scale[_drybulb] = (2.5 * pow(2, 0.5));
-  GRAPHS_V_offset[_drybulb] = 0;
-  GRAPHS_V_belowLine[_drybulb] = 1;
+  i = _difhorrad;
+  GRAPHS_V_scale[i] = 0.1;
+  GRAPHS_V_offset[i] = 0;
+  GRAPHS_V_belowLine[i] = 0;
+  ENSEMBLE_LAYERS[i] = "";
+  INTEGRATION_LAYERS[i][0] = "W/m²";
+  INTEGRATION_LAYERS[i][1] = "diffuse horizontal radiation";
+  INTEGRATION_LAYERS[i][2] = "diffus rayonnement horizontal";
+
+  i = _glohorrad;
+  GRAPHS_V_scale[i] = 0.1;
+  GRAPHS_V_offset[i] = 0;
+  GRAPHS_V_belowLine[i] = 0;
+  ENSEMBLE_LAYERS[i] = "";
+  INTEGRATION_LAYERS[i][0] = "W/m²";
+  INTEGRATION_LAYERS[i][1] = "global horizontal radiation";
+  INTEGRATION_LAYERS[i][2] = "rayonnement global horizontal";
   
-  GRAPHS_V_scale[_dirnorrad] = 0.1;
-  GRAPHS_V_offset[_dirnorrad] = 0;
-  GRAPHS_V_belowLine[_dirnorrad] = 0;
+  i = _developed;
+  GRAPHS_V_scale[i] = 1;
+  GRAPHS_V_offset[i] = 0;
+  GRAPHS_V_belowLine[i] = 0;
+  ENSEMBLE_LAYERS[i] = "";
+  INTEGRATION_LAYERS[i][0] = "";
+  INTEGRATION_LAYERS[i][1] = "";
+  INTEGRATION_LAYERS[i][2] = "";
   
-  GRAPHS_V_scale[_difhorrad] = 0.1;
-  GRAPHS_V_offset[_difhorrad] = 0;
-  GRAPHS_V_belowLine[_difhorrad] = 0;
-  
-  GRAPHS_V_scale[_glohorrad] = 0.1;
-  GRAPHS_V_offset[_glohorrad] = 0;
-  GRAPHS_V_belowLine[_glohorrad] = 0;
-  
-  GRAPHS_V_scale[_developed] = 1;
-  GRAPHS_V_offset[_developed] = 0;
-  GRAPHS_V_belowLine[_developed] = 0;
-  
+  i = _direffect;
   GRAPHS_V_scale[_direffect] = 0.0025;
   GRAPHS_V_offset[_direffect] = 0;
   GRAPHS_V_belowLine[_direffect] = 1;
+  ENSEMBLE_LAYERS[i] = "";
+  INTEGRATION_LAYERS[i][0] = "W°C/m²";
+  INTEGRATION_LAYERS[i][1] = "direct normal effect (based on 18°C)";
+  INTEGRATION_LAYERS[i][2] = "effet direct normal (basé sur 18°C)";
+
+  i = _difeffect;
+  GRAPHS_V_scale[i] = 0.0025;
+  GRAPHS_V_offset[i] = 0;
+  GRAPHS_V_belowLine[i] = 1;
+  ENSEMBLE_LAYERS[i] = "";
+  INTEGRATION_LAYERS[i][0] = "W°C/m²";
+  INTEGRATION_LAYERS[i][1] = "diffuse normal effect (based on 18°C)";
+  INTEGRATION_LAYERS[i][2] = "effet diffus normal (basé sur 18°C)";
   
-  GRAPHS_V_scale[_difeffect] = 0.0025;
-  GRAPHS_V_offset[_difeffect] = 0;
-  GRAPHS_V_belowLine[_difeffect] = 1;
+  i = _cloudcover;
+  GRAPHS_V_scale[i] = 10.0;
+  GRAPHS_V_offset[i] = 0;
+  GRAPHS_V_belowLine[i] = 0;
+  ENSEMBLE_LAYERS[i] = "TCDC";
+  INTEGRATION_LAYERS[i][0] = "tenth";
+  INTEGRATION_LAYERS[i][1] = "Total Cloud Cover";
+  INTEGRATION_LAYERS[i][2] = "Couvert nuageux total";
   
-  GRAPHS_V_scale[_cloudcover] = 10.0;
-  GRAPHS_V_offset[_cloudcover] = 0;
-  GRAPHS_V_belowLine[_cloudcover] = 0;
+  i = _logceilsky;
+  GRAPHS_V_scale[i] = 25.0;
+  GRAPHS_V_offset[i] = 0;
+  GRAPHS_V_belowLine[i] = 0;
+  ENSEMBLE_LAYERS[i] = "";
+  INTEGRATION_LAYERS[i][0] = "log(m)";
+  INTEGRATION_LAYERS[i][1] = "ceiling height";
+  INTEGRATION_LAYERS[i][2] = "hauteur sous plafond";
   
-  GRAPHS_V_scale[_logceilsky] = 25.0;
-  GRAPHS_V_offset[_logceilsky] = 0;
-  GRAPHS_V_belowLine[_logceilsky] = 0;
+  i = _ceilingsky;
+  GRAPHS_V_scale[i] = 0.01;
+  GRAPHS_V_offset[i] = 0;
+  GRAPHS_V_belowLine[i] = 0;
+  ENSEMBLE_LAYERS[i] = "";
+  INTEGRATION_LAYERS[i][0] = "m";
+  INTEGRATION_LAYERS[i][1] = "ceiling height";
+  INTEGRATION_LAYERS[i][2] = "hauteur sous plafond";  
   
-  GRAPHS_V_scale[_ceilingsky] = 0.01;
-  GRAPHS_V_offset[_ceilingsky] = 0;
-  GRAPHS_V_belowLine[_ceilingsky] = 0;
+  i = _pressure;
+  GRAPHS_V_scale[i] = 2.0;
+  GRAPHS_V_offset[i] = -1000;
+  GRAPHS_V_belowLine[i] = 1;
+  ENSEMBLE_LAYERS[i] = "MSLP";
+  INTEGRATION_LAYERS[i][0] = "hPa";
+  INTEGRATION_LAYERS[i][1] = "Mean Sea level Pressure";
+  INTEGRATION_LAYERS[i][2] = "Pression moyenne au niveau de la mer";
   
-  GRAPHS_V_scale[_pressure] = 2.0;
-  GRAPHS_V_offset[_pressure] = -1000;
-  GRAPHS_V_belowLine[_pressure] = 1;
+  i = _heightp500hPa;
+  GRAPHS_V_scale[i] = 1;
+  GRAPHS_V_offset[i] = -500;
+  GRAPHS_V_belowLine[i] = 1;
+  ENSEMBLE_LAYERS[i] = "HGT-500HPA";
+  INTEGRATION_LAYERS[i][0] = "dam";
+  INTEGRATION_LAYERS[i][1] = "Geopotential at 500 hPa";
+  INTEGRATION_LAYERS[i][2] = "Géopotentiel à 500 hPa";
   
-  GRAPHS_V_scale[_heightp500hPa] = 1;
-  GRAPHS_V_offset[_heightp500hPa] = -500;
-  GRAPHS_V_belowLine[_heightp500hPa] = 1;
-  
-  GRAPHS_V_scale[_thicknesses_1000_500] = 1;
-  GRAPHS_V_offset[_thicknesses_1000_500] = -500;
-  GRAPHS_V_belowLine[_thicknesses_1000_500] = 1;
-  
-  GRAPHS_V_scale[_windspd200hPa] = 0.5;
-  GRAPHS_V_offset[_windspd200hPa] = 0;
-  GRAPHS_V_belowLine[_windspd200hPa] = 0;
-  
- 
+  i = _thicknesses_1000_500;
+  GRAPHS_V_scale[i] = 1;
+  GRAPHS_V_offset[i] = -500;
+  GRAPHS_V_belowLine[i] = 1;
+  ENSEMBLE_LAYERS[i] = "LAYER-1000-500HPA";
+  INTEGRATION_LAYERS[i][0] = "dam";
+  INTEGRATION_LAYERS[i][1] = "Thicknesses (Geopotentiel Difference) between 1000 and 500 hPa";
+  INTEGRATION_LAYERS[i][2] = "Épaisseurs (différence de géopotentiel entre 1000 et 500 hPa";
+
+  i = _windspd200hPa;
+  GRAPHS_V_scale[i] = 0.5;
+  GRAPHS_V_offset[i] = 0;
+  GRAPHS_V_belowLine[i] = 0;
+  ENSEMBLE_LAYERS[i] = "WIND-200HPA";
+  INTEGRATION_LAYERS[i][0] = "knots";
+  INTEGRATION_LAYERS[i][1] = "Wind Speed at 200 hPa";
+  INTEGRATION_LAYERS[i][2] = "Vitesse du vent à 200 hPa";  
+
 }
 
 int sky_scenario = 1; // 1: all scenarios, 2: Total Cloud Cover < 0.33, 3: middle range, 4: Total Cloud Cover > 0.66
@@ -572,46 +671,8 @@ int Impact_SPD_DIR_TMP = 2;
 
 int Impact_TYPE = 1; 
 
-String[][] INTEGRATION_LAYERS = {
-  {"°", "Surface Wind Direction", "Direction du vent à la surface"}, 
-  {"km/h", "Surface Wind Speed", "Vitesse du vent à la surface"}, 
-  {"mm", "Surface Accumulated Precipitation", "Précipitations accumulées à la surface"}, 
-  {"%", "Surface Relative Humidity", "Humidité relative à la surface"}, 
-  {"°C", "Surface Air Temperature", "Température de l'air à la surface"}, 
-  {"W/m²", "direct normal radiation", "rayonnement direct normal"}, 
-  {"W/m²", "diffuse horizontal radiation", "diffus rayonnement horizontal"}, 
-  {"W/m²", "global horizontal radiation", "rayonnement global horizontal"}, 
-  {"", "", ""}, 
-  {"W°C/m²", "direct normal effect (based on 18°C)", "effet direct normal (basé sur 18°C)"}, 
-  {"W°C/m²", "diffuse normal effect (based on 18°C)", "effet diffus normal (basé sur 18°C)"}, 
-  {"tenth", "Total Cloud Cover", "Couvert nuageux total"}, 
-  {"log(m)", "ceiling height", "hauteur sous plafond"}, 
-  {"m", "ceiling height", "hauteur sous plafond"}, 
-  {"hPa", "Mean Sea level Pressure", "Pression moyenne au niveau de la mer"}, 
-  {"dam", "Geopotential at 500 hPa", "Géopotentiel à 500 hPa" }, 
-  {"dam", "Thicknesses (Geopotentiel Difference) between 1000 and 500 hPa", "Épaisseurs (différence de géopotentiel entre 1000 et 500 hPa"}, 
-  {"knots", "Wind Speed at 200 hPa", "Vitesse du vent à 200 hPa"}
-};
 
-String[] ENSEMBLE_LAYERS = { "WDIR-SFC", 
-                        "WIND-SFC", 
-                        "APCP-SFC", 
-                        "RELH-SFC", 
-                        "TMP-SFC", 
-                        "", 
-                        "", 
-                        "", 
-                        "", 
-                        "", 
-                        "", 
-                        "TCDC", 
-                        "", 
-                        "", 
-                        "MSLP", 
-                        "HGT-500HPA", 
-                        "LAYER-1000-500HPA", 
-                        "WIND-200HPA"
-                      };
+
 
 String[][] _WORDS = {
  {"", ""}, 
