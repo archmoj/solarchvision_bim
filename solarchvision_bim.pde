@@ -275,11 +275,46 @@ int[][][][] ENSEMBLE_Flag;
 float[][][][] OBSERVED;
 int[][][][] OBSERVED_Flag;
 
+
 int Load_CLIMATE_EPW = 0;
 int Load_CLIMATE_WY2 = 0;
 int Load_ENSEMBLE = 1;
 int Load_OBSERVED = 0;
 int Download_OBSERVED = 0;
+
+
+
+int AERIAL_num = 5; // the number of nearest points on the path we want to extract the data 
+
+float[][][] AERIAL;
+int[][][] AERIAL_Flag;
+
+int GRIB2_Hour_Start = 0;
+int GRIB2_Hour_End = 48;
+int GRIB2_Hour_Step = 6;
+
+int GRIB2_Layer_Start = 0;
+int GRIB2_Layer_End = 1;
+int GRIB2_Layer_Step = 1;
+
+int GRIB2_Hour;
+int GRIB2_Layer;
+
+final int GRIB2_DOMAIN_SELECTION = 0; 
+
+/*
+String[][] GRIB2_DOMAINS = {
+                               {"WAVE", "wave/great_lakes/superior", "lake-superior"}  
+                             };
+*/
+
+String[][] GRIB2_DOMAINS = {
+                               {"HRDPS", "hrdps/east", "east"}  
+                             };
+
+
+
+
 
 PrintWriter[] File_output_node;
 PrintWriter[] File_output_norm;
@@ -420,6 +455,10 @@ String[] LAYERS_Unit;
 String[][] LAYERS_Title;
 String[] LAYERS_ENSEMBLE; 
 String[][] LAYERS_GRIB2;
+float[] LAYERS_GRIB2_MUL;
+float[] LAYERS_GRIB2_ADD;
+
+
 
 {
   GRAPHS_V_scale = new float[num_layers];
@@ -428,7 +467,9 @@ String[][] LAYERS_GRIB2;
   LAYERS_Unit = new String[num_layers];  
   LAYERS_Title = new String[num_layers][2];
   LAYERS_ENSEMBLE = new String[num_layers];
-  LAYERS_GRIB2 = new String[num_layers][1]; // for different TGLs. 
+  LAYERS_GRIB2 = new String[num_layers][1]; // for different TGLs.
+  LAYERS_GRIB2_MUL = new float[num_layers];
+  LAYERS_GRIB2_ADD = new float[num_layers];
   
   int i = -1;
 
@@ -442,6 +483,8 @@ String[][] LAYERS_GRIB2;
     LAYERS_Title[i][_FR] = "Direction du vent à la surface";
     LAYERS_ENSEMBLE[i] = "WDIR-SFC";
     LAYERS_GRIB2[i][0] = "WDIR_TGL_10";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
   
   i = _windspd;
@@ -454,6 +497,8 @@ String[][] LAYERS_GRIB2;
     LAYERS_Title[i][_FR] = "Vitesse du vent à la surface";
     LAYERS_ENSEMBLE[i] = "WIND-SFC";
     LAYERS_GRIB2[i][0] = "WIND_TGL_10"; // m/sec
+    LAYERS_GRIB2_MUL[i] = 3.6; // m/s > Km/h    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
   
   i = A_precipitation;
@@ -466,6 +511,8 @@ String[][] LAYERS_GRIB2;
     LAYERS_Title[i][_FR] = "Précipitations accumulées à la surface";
     LAYERS_ENSEMBLE[i] = "APCP-SFC";
     LAYERS_GRIB2[i][0] = "APCP_SFC_0"; // kg/m²
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 
   i = _relhum;
@@ -478,6 +525,8 @@ String[][] LAYERS_GRIB2;
     LAYERS_Title[i][_FR] = "Humidité relative à la surface";
     LAYERS_ENSEMBLE[i] = "RELH-SFC";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
   
   i = _drybulb;
@@ -490,6 +539,8 @@ String[][] LAYERS_GRIB2;
     LAYERS_Title[i][_FR] = "Température de l'air à la surface";
     LAYERS_ENSEMBLE[i] = "TMP-SFC";
     LAYERS_GRIB2[i][0] = "TMP_TGL_2"; // Kelvin
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = -273.15; // °K > °C
   }
   
   i = _dirnorrad;
@@ -502,6 +553,8 @@ String[][] LAYERS_GRIB2;
     LAYERS_Title[i][_FR] = "rayonnement direct normal";
     LAYERS_ENSEMBLE[i] = "";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
   
   i = _difhorrad;
@@ -514,6 +567,8 @@ String[][] LAYERS_GRIB2;
     LAYERS_Title[i][_FR] = "diffus rayonnement horizontal";
     LAYERS_ENSEMBLE[i] = "";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 
   i = _glohorrad;
@@ -526,6 +581,8 @@ String[][] LAYERS_GRIB2;
     LAYERS_Title[i][_FR] = "rayonnement global horizontal";
     LAYERS_ENSEMBLE[i] = "";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
   
   i = _developed;
@@ -538,6 +595,8 @@ String[][] LAYERS_GRIB2;
     LAYERS_Title[i][_FR] = "";
     LAYERS_ENSEMBLE[i] = "";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
   
   i = _direffect;
@@ -550,6 +609,8 @@ String[][] LAYERS_GRIB2;
     LAYERS_Title[i][_FR] = "effet direct normal (basé sur 18°C)";
     LAYERS_ENSEMBLE[i] = "";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 
   i = _difeffect;
@@ -562,6 +623,8 @@ String[][] LAYERS_GRIB2;
     LAYERS_Title[i][_FR] = "effet diffus normal (basé sur 18°C)";
     LAYERS_ENSEMBLE[i] = "";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
   
   i = _cloudcover;
@@ -574,6 +637,8 @@ String[][] LAYERS_GRIB2;
     LAYERS_Title[i][_FR] = "Couvert nuageux total";
     LAYERS_ENSEMBLE[i] = "TCDC";
     LAYERS_GRIB2[i][0] = "TCDC_SFC_0"; // percent
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
   
   i = _ceilingsky;
@@ -586,6 +651,8 @@ String[][] LAYERS_GRIB2;
     LAYERS_Title[i][_FR] = "hauteur sous plafond";  
     LAYERS_ENSEMBLE[i] = "";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
   
   i = _pressure;
@@ -598,6 +665,8 @@ String[][] LAYERS_GRIB2;
     LAYERS_Title[i][_FR] = "Pression moyenne au niveau de la mer";
     LAYERS_ENSEMBLE[i] = "MSLP";
     LAYERS_GRIB2[i][0] = "PRMSL_MSL_0";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
     
   i = _heightp500hPa;
@@ -610,6 +679,8 @@ String[][] LAYERS_GRIB2;
     LAYERS_Title[i][_FR] = "Géopotentiel à 500 hPa";
     LAYERS_ENSEMBLE[i] = "HGT-500HPA";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
   
   i = _thicknesses_1000_500;
@@ -622,6 +693,8 @@ String[][] LAYERS_GRIB2;
     LAYERS_Title[i][_FR] = "Épaisseurs (différence de géopotentiel entre 1000 et 500 hPa";
     LAYERS_ENSEMBLE[i] = "LAYER-1000-500HPA";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 
   i = _windspd200hPa;
@@ -634,6 +707,8 @@ String[][] LAYERS_GRIB2;
     LAYERS_Title[i][_FR] = "Vitesse du vent à 200 hPa";  
     LAYERS_ENSEMBLE[i] = "WIND-200HPA";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_ADD[i] = 0;
   }
 
 }
@@ -16099,4 +16174,143 @@ SOLARCHVISION_Spinner MySpinner = new SOLARCHVISION_Spinner();
 
 
 
-      
+//---------------------------------------------------------------------
+
+void empty_AERIAL () {
+  AERIAL = new float[AERIAL_num][55][num_layers];
+  AERIAL_Flag = new int[AERIAL_num][55][num_layers];
+
+  for (int n = 0; n < AERIAL_num; n += 1) {
+    for (int k = 0; k <= 54; k += 1) {
+      for (int l = 0; l < num_layers; l++) {
+        AERIAL[n][k][l] = FLOAT_undefined;
+        AERIAL_Flag[n][k][l] = -1;
+      }
+    }  
+  }
+}
+
+
+String getGrib2Folder (int s) {
+  return(Grib2ArchiveFolder + "/FORECAST_" + GRIB2_DOMAINS[s][1]);
+}
+
+String getGrib2Filename (int k, int l) {
+  String return_txt = "";
+  
+  if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("WAVE")) {
+    return_txt = "CMC_rdwps_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + LAYERS_GRIB2[l][0] + "_latlon0.05x0.08_" + nf(_YEAR, 4) + nf(_MONTH, 2) + nf(_DAY, 2) + nf(_HOUR, 2) + "_P" + nf(k, 3) + ".grib2"; 
+  }
+  if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("HRDPS")) {
+    return_txt = "CMC_hrdps_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + LAYERS_GRIB2[l][0] + "_ps2.5km_" + nf(_YEAR, 4) + nf(_MONTH, 2) + nf(_DAY, 2) + nf(_HOUR, 2) + "_P" + nf(k, 3) + "-00" + ".grib2";
+  }
+  
+  return return_txt;
+}
+
+String getWgrib2Filename (int k, int l) {
+  return(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + nf(_YEAR, 4) + nf(_MONTH, 2) + nf(_DAY, 2) + "R" + nf(_HOUR, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2[l][0] + "_" + nf(LocationLongitude, 0, 4) + "X" + nf(LocationLatitude, 0, 4) + ".txt");
+}
+
+float getGrib2Value (int k, int l) {
+
+  float v = FLOAT_undefined;
+
+  String ValueFilename = getWgrib2Filename(k, l); 
+
+  String ValueFile = Wgrib2TempFolder + "/" + ValueFilename;
+
+  String[] filenames = getfiles(Wgrib2TempFolder);
+
+  String[] file_lines = {
+  };
+
+  int runWgrib2 = 1;
+
+  if (filenames != null) {
+    for (int i = 0; i < filenames.length; i++) {
+      if (filenames[i].equals(ValueFilename)) {
+
+        file_lines = loadStrings(ValueFile);
+
+        if (file_lines.length > 0) {
+          //println("The previous extraction file is found:", ValueFilename);
+          runWgrib2 = 0;
+        }
+      }
+    }
+  }
+
+  if (runWgrib2 == 1) {
+    String Grib2File = getGrib2Folder(GRIB2_DOMAIN_SELECTION) + "/" + getGrib2Filename(k, l);
+
+    String CommandArguments[] = {
+      "wgrib2", Grib2File.replace("/", "\\"), "-s", "-lon", String.valueOf(LocationLongitude), String.valueOf(LocationLatitude), ">", ValueFile
+    };
+
+    String[] the_command = {
+      CommandArguments[0] + " " + CommandArguments[1] + " " + CommandArguments[2] + " " + CommandArguments[3] + " " + CommandArguments[4] + " " + CommandArguments[5] + " " + CommandArguments[6]
+    };
+
+    println(CommandArguments);
+    open(CommandArguments);
+  } 
+
+  int _stay = 1;
+
+  while ((_stay != 0) && (_stay < 10000)) {
+
+    //println(_stay);
+
+    _stay += 1;
+
+    filenames = getfiles(Wgrib2TempFolder);
+
+    if (filenames != null) {
+      for (int i = 0; i < filenames.length; i++) {
+        //println(filenames[i]);
+
+        if (filenames[i].equals(ValueFilename)) {
+          //println("The wgrib2 extraction is ready:", ValueFilename);
+
+          file_lines = loadStrings(ValueFile);
+
+          if (file_lines.length > 0) _stay = 0;
+        }
+      }
+    }
+  }
+
+  if (_stay != 0) {
+    println("The wgrib2 extraction is not ready:", ValueFilename);
+  } else {
+    //println(file_lines);
+
+    if (file_lines.length > 0) {
+
+      int _posX = file_lines[0].indexOf("lon=");
+      int _posY = file_lines[0].indexOf("lat=");
+      int _posZ = file_lines[0].indexOf("val=");
+
+      float uX = Float.valueOf(file_lines[0].substring(_posX + 4, _posY - 1));
+      float uY = Float.valueOf(file_lines[0].substring(_posY + 4, _posZ - 1));
+
+      if (dist_lon_lat((uX + 360) % 360, (uY + 180) % 180, (LocationLongitude + 360) % 360, (LocationLatitude + 180) % 180) > 5) { // that means the distance should be less than 5km.
+        println(uX, uY, LocationLongitude, LocationLatitude);
+        println((uX + 360) % 360, (uY + 180) % 180, (LocationLongitude + 360) % 360, (LocationLatitude + 180) % 180);
+        println("----------------------------------------");
+      } else {
+        if (_posZ > 0) {
+          v = Float.valueOf(file_lines[0].substring(_posZ + 4));
+
+          v *= LAYERS_GRIB2_MUL[l];
+          v += LAYERS_GRIB2_ADD[l]; // e.g. Kelvin >> C
+          
+        }
+      }
+    }
+  }
+
+  return(v);
+}
+
