@@ -289,7 +289,7 @@ int H_layer_option = 0; //6;
 int F_layer_option = 0; //1;
 int O_layer_option = 0; //1;
 
-int develop_option = 0; //2; // between 0 - 12....
+int develop_option = 10; //2; // between 0 - 12....
 int develop_per_day = 1;
 
 int update_DevelopDATA = 1;
@@ -308,24 +308,32 @@ int addLayer () {
 }
 
 
+int _cloudcover = addLayer();
+int _ceilingsky = addLayer();
 
 int _winddir = addLayer();
 int _windspd = addLayer();
-int A_precipitation = addLayer();
-int _relhum = addLayer();
+
+int _pressure = addLayer();
+
 int _drybulb = addLayer();
+
+int _relhum = addLayer();
+
 int _dirnorrad = addLayer();
 int _difhorrad = addLayer();
 int _glohorrad = addLayer();
-int _developed = addLayer();
+
 int _direffect = addLayer();
 int _difeffect = addLayer();
-int _cloudcover = addLayer();
-int _ceilingsky = -1; //addLayer();
-int _pressure = addLayer(); 
-int _heightp500hPa = addLayer();
-int _thicknesses_1000_500 = addLayer();
-int _windspd200hPa = addLayer();
+
+int _heightp500hPa = -1; //addLayer();
+int _thicknesses_1000_500 = -1; //addLayer();
+int _windspd200hPa = -1; //addLayer();
+
+int A_precipitation = addLayer();
+
+int _developed = addLayer();
 
 /*
 int _albedo = addLayer();
@@ -6528,7 +6536,9 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           RAIN = Pb - Pa;
           //RAIN = Pa - Pb;
           
-          //if (T <= 0) RAIN *= -1; // <<<<<<<<<<<<<<<<<<<<
+          if (T <= 0) RAIN *= -1;  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Lewis
+          //if ((T < 5) && (T > -5)) RAIN *= -1;  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Mojtaba          
+          
         }    
         
           
@@ -6899,12 +6909,28 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           GRAPHS_V_scale[_developed] = 2.5;
           GRAPHS_V_offset[_developed] = 0; //-20.0 / (1.0 * level_pix); // so that we can have two views on probabilites above and below zero.
           GRAPHS_V_belowLine[_developed] = 0; //1;
-          LAYERS_Unit[_developed] = "mm/12hours  ";
+          LAYERS_Unit[_developed] = "mm/12hours";
           LAYERS_Title[_developed][_EN] = "12-hour Surface Accumulated Precipitation";
           LAYERS_Title[_developed][_FR] = LAYERS_Title[_developed][_EN]; // ??         
         } 
-        
 
+        if (develop_option == 10) {
+          
+          if (RAIN < 0.9 * FLOAT_undefined) { 
+            _valuesSUM[now_k] = RAIN;
+            
+            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+          }
+            
+          GRAPHS_V_scale[_developed] = 4.0;
+          GRAPHS_V_offset[_developed] = 0; 
+          GRAPHS_V_belowLine[_developed] = 1;
+          LAYERS_Unit[_developed] = "mm/h";
+          LAYERS_Title[_developed][_EN] = "Hourly Surface Precipitation (interpolated)";
+          LAYERS_Title[_developed][_FR] = LAYERS_Title[_developed][_EN]; // ??         
+        } 
         
         
         
@@ -15962,7 +15988,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
     } 
     if (ROLLOUT_child == 2) { // Developed
-      develop_option = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Develop layer" , develop_option, 0, 12, 1), 1));
+      develop_option = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Develop layer" , develop_option, 0, 10, 1), 1));
       develop_per_day = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Dev. per day option" , develop_per_day, 0, 3, 1), 1));
     
       join_hour_numbers = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Trend period hours", join_hour_numbers, 1, 24 * 16, 1), 1));
