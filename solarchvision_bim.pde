@@ -290,9 +290,21 @@ int develop_per_day = 1;
 
 int update_DevelopDATA = 1;
 
-float Angle_inclination = 45; // 90 = horizontal surface, 0 = Vertical surface 
-float Angle_orientation = 0; // 0 = South, 90 = East
 
+
+
+
+
+
+int num_layers = 0;  
+
+int addLayer () {
+  num_layers += 1;
+  return(num_layers - 1);
+}
+
+
+/*
 int _winddir = 0;
 int _windspd = 1;
 int _precipitation = 2;
@@ -312,10 +324,96 @@ int _pressure = 14;
 int _heightp500hPa = 15;
 int _thicknesses_1000_500 = 16;
 int _windspd200hPa = 17;
+*/
 
-int num_layers = 18; 
+int _winddir = addLayer();
+int _windspd = addLayer();
+int A_precipitation = addLayer();
+int _relhum = addLayer();
+int _drybulb = addLayer();
+int _dirnorrad = addLayer();
+int _difhorrad = addLayer();
+int _glohorrad = addLayer();
+int _developed = addLayer();
+int _direffect = addLayer();
+int _difeffect = addLayer();
+int _cloudcover = addLayer();
+int _logceilsky = addLayer();
+int _ceilingsky = addLayer();
+int _pressure = addLayer(); 
+int _heightp500hPa = addLayer();
+int _thicknesses_1000_500 = addLayer();
+int _windspd200hPa = addLayer();
 
-int drw_Layer = _drybulb; ; //_cloudcover; //_developed; 
+/*
+int _albedo = addLayer();
+int _dewpoint = addLayer();
+int _spchum = addLayer();
+
+int A_rain = addLayer();
+int A_snow = addLayer();
+int A_icepellets = addLayer();
+int A_freezingrain = addLayer();
+int A_shortwave = addLayer(); 
+int A_longwave = addLayer();
+
+int NumberOfGrib2Layers = num_layers;
+
+int H_precipitation = addLayer();
+int H_rain = addLayer();
+int H_snow = addLayer();
+int H_icepellets = addLayer();
+int H_freezingrain = addLayer();
+int H_shortwave = addLayer(); 
+int H_longwave = addLayer();
+
+int distanceToTheHourlyLayers = H_precipitation - A_precipitation;
+
+int _tracker = addLayer();
+
+
+
+int _south15 = addLayer();
+int _south30 = addLayer();
+int _south45 = addLayer();
+int _south60 = addLayer();
+int _south75 = addLayer();
+int _south90 = addLayer();
+
+int _SE90 = addLayer();
+int _east90 = addLayer();
+int _NE90 = addLayer();
+int _north90 = addLayer();
+int _NW90 = addLayer();
+int _west90 = addLayer();
+int _SW90 = addLayer();
+
+int _SE45 = addLayer();
+int _east45 = addLayer();
+int _NE45 = addLayer();
+int _north45 = addLayer();
+int _NW45 = addLayer();
+int _west45 = addLayer();
+int _SW45 = addLayer();
+
+int _userSurface1 = addLayer();
+int _userSurface2 = addLayer();
+
+int _sunX = addLayer();
+int _sunY = addLayer();
+int _sunZ = addLayer();
+
+
+int GroundLevelSelection = 0; // 3: 120m, 2: 80m, 1: 40m, and 0: represents 2m/10m data from HRDPS models. 
+*/
+
+
+
+float Angle_inclination = 45; // 90 = horizontal surface, 0 = Vertical surface 
+float Angle_orientation = 0; // 0 = South, 90 = East
+
+
+int drw_Layer = _drybulb; ; //_cloudcover; //_developed;
 
 int develop_Layer = drw_Layer;
 
@@ -2301,7 +2399,7 @@ void Plot_Setup () {
     drw_Layer = _windspd;
     SOLARCHVISION_PlotHOURLY(0, -525 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
 
-    drw_Layer = _precipitation;
+    drw_Layer = A_precipitation;
     SOLARCHVISION_PlotHOURLY(0, -175 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
 
     drw_Layer = _relhum;
@@ -2518,7 +2616,7 @@ void Plot_Setup () {
     drw_Layer = _windspd; 
     SOLARCHVISION_PlotHOURLY(0, 175 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View); 
 
-    drw_Layer = _precipitation ; 
+    drw_Layer = A_precipitation ; 
     develop_Layer = drw_Layer;
     drw_Layer = _developed; 
     develop_option = 9;
@@ -4216,7 +4314,7 @@ void SOLARCHVISION_LoadCLIMATE_WY2 (String FileName) {
     CLIMATE_WY2[i][j][_difhorrad][k] = float(lineSTR.substring(32, 36)); // Wh/m²
     CLIMATE_WY2[i][j][_windspd][k] = float(lineSTR.substring(105, 109)); // 10 times in m/s
     CLIMATE_WY2[i][j][_winddir][k] = float(lineSTR.substring(101, 104)); // °
-    CLIMATE_WY2[i][j][_opaquesky][k] = float(lineSTR.substring(113, 115)); // 0.1 times in %
+    CLIMATE_WY2[i][j][_cloudcover][k] = float(lineSTR.substring(113, 115)); // 0.1 times in %
     CLIMATE_WY2[i][j][_ceilingsky][k] = float(lineSTR.substring(61, 65)); // 0.1 times in m
     
     if (CLIMATE_WY2[i][j][_pressure][k] == 99999) CLIMATE_WY2[i][j][_pressure][k] = FLOAT_undefined;
@@ -4239,7 +4337,7 @@ void SOLARCHVISION_LoadCLIMATE_WY2 (String FileName) {
     
     if (CLIMATE_WY2[i][j][_winddir][k] == 999) CLIMATE_WY2[i][j][_winddir][k] = FLOAT_undefined;
     
-    if (CLIMATE_WY2[i][j][_opaquesky][k] == 99) CLIMATE_WY2[i][j][_opaquesky][k] = FLOAT_undefined;
+    if (CLIMATE_WY2[i][j][_cloudcover][k] == 99) CLIMATE_WY2[i][j][_cloudcover][k] = FLOAT_undefined;
     
     if (CLIMATE_WY2[i][j][_ceilingsky][k] == 7777) CLIMATE_WY2[i][j][_ceilingsky][k] = 1000;
     if (CLIMATE_WY2[i][j][_ceilingsky][k] >= 1000) CLIMATE_WY2[i][j][_ceilingsky][k] = 1000; // <<<<<<<<<
@@ -4621,7 +4719,7 @@ void SOLARCHVISION_LoadCLIMATE_EPW (String FileName) {
     CLIMATE_EPW[i][j][_difhorrad][k] = float(parts[15]); // Wh/m²
     CLIMATE_EPW[i][j][_windspd][k] = float(parts[21]); // in m/s
     CLIMATE_EPW[i][j][_winddir][k] = float(parts[20]); // ° 
-    CLIMATE_EPW[i][j][_opaquesky][k] = float(parts[23]); // 0.1 times in % ... there is also total_sky_cover on[22]
+    CLIMATE_EPW[i][j][_cloudcover][k] = float(parts[23]); // 0.1 times in % ... there is also total_sky_cover on[22]
     CLIMATE_EPW[i][j][_ceilingsky][k] = float(parts[25]); // in m
     
     
@@ -4644,7 +4742,7 @@ void SOLARCHVISION_LoadCLIMATE_EPW (String FileName) {
     
     if (CLIMATE_EPW[i][j][_winddir][k] == 999) CLIMATE_EPW[i][j][_winddir][k] = FLOAT_undefined;
     
-    if (CLIMATE_EPW[i][j][_opaquesky][k] == 99) CLIMATE_EPW[i][j][_opaquesky][k] = FLOAT_undefined;
+    if (CLIMATE_EPW[i][j][_cloudcover][k] == 99) CLIMATE_EPW[i][j][_cloudcover][k] = FLOAT_undefined;
     
     if (CLIMATE_EPW[i][j][_ceilingsky][k] == 77777) CLIMATE_EPW[i][j][_ceilingsky][k] = 1000;
     if (CLIMATE_EPW[i][j][_ceilingsky][k] == 88888) CLIMATE_EPW[i][j][_ceilingsky][k] = 1000;
@@ -5258,8 +5356,8 @@ void SOLARCHVISION_LoadOBSERVED (String FileName, int Load_Layer) {
     }
     
     if (_a1.equals("pcpn_amt_pst6hrs")) {
-      OBSERVED[now_i][now_j][_precipitation][Load_Layer] = Float.valueOf(_a2); // past 6 hours!
-      OBSERVED_DATA[now_i][now_j][_precipitation][Load_Layer] = 1;
+      OBSERVED[now_i][now_j][A_precipitation][Load_Layer] = Float.valueOf(_a2); // past 6 hours!
+      OBSERVED_DATA[now_i][now_j][A_precipitation][Load_Layer] = 1;
     }
     
     if (_a1.equals("avg_globl_solr_radn_pst1hr")) {
@@ -6279,16 +6377,16 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           T = Pa;
         }
         
-        if (data_source == databaseNumber_CLIMATE_EPW) Pa = CLIMATE_EPW[now_i][now_j][_precipitation][now_k];
-        if (data_source == databaseNumber_CLIMATE_WY2) Pa = CLIMATE_WY2[now_i][now_j][_precipitation][now_k];
-        if (data_source == databaseNumber_ENSEMBLE) Pa = ENSEMBLE[now_i][now_j][_precipitation][now_k];
+        if (data_source == databaseNumber_CLIMATE_EPW) Pa = CLIMATE_EPW[now_i][now_j][A_precipitation][now_k];
+        if (data_source == databaseNumber_CLIMATE_WY2) Pa = CLIMATE_WY2[now_i][now_j][A_precipitation][now_k];
+        if (data_source == databaseNumber_ENSEMBLE) Pa = ENSEMBLE[now_i][now_j][A_precipitation][now_k];
         
-        if (data_source == databaseNumber_CLIMATE_EPW) Pb = CLIMATE_EPW[next_i][next_j][_precipitation][now_k];
-        if (data_source == databaseNumber_CLIMATE_WY2) Pb = CLIMATE_WY2[next_i][next_j][_precipitation][now_k];
-        if (data_source == databaseNumber_ENSEMBLE) Pb = ENSEMBLE[next_i][next_j][_precipitation][now_k];
-        //if (data_source == databaseNumber_CLIMATE_EPW) Pb = CLIMATE_EPW[pre_i][pre_j][_precipitation][now_k];
-        //if (data_source == databaseNumber_CLIMATE_WY2) Pb = CLIMATE_WY2[pre_i][pre_j][_precipitation][now_k];
-        //if (data_source == databaseNumber_ENSEMBLE) Pb = ENSEMBLE[pre_i][pre_j][_precipitation][now_k];
+        if (data_source == databaseNumber_CLIMATE_EPW) Pb = CLIMATE_EPW[next_i][next_j][A_precipitation][now_k];
+        if (data_source == databaseNumber_CLIMATE_WY2) Pb = CLIMATE_WY2[next_i][next_j][A_precipitation][now_k];
+        if (data_source == databaseNumber_ENSEMBLE) Pb = ENSEMBLE[next_i][next_j][A_precipitation][now_k];
+        //if (data_source == databaseNumber_CLIMATE_EPW) Pb = CLIMATE_EPW[pre_i][pre_j][A_precipitation][now_k];
+        //if (data_source == databaseNumber_CLIMATE_WY2) Pb = CLIMATE_WY2[pre_i][pre_j][A_precipitation][now_k];
+        //if (data_source == databaseNumber_ENSEMBLE) Pb = ENSEMBLE[pre_i][pre_j][A_precipitation][now_k];
         
         if ((Pa > 0.9 * FLOAT_undefined) || (Pb > 0.9 * FLOAT_undefined)) {
           RAIN = FLOAT_undefined;
