@@ -3739,6 +3739,11 @@ void SOLARCHVISION_update_date () {
 }
 
 void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
+  
+  //------------------------------------------------
+  ENSEMBLE_XML_Files = getfiles(ENSEMBLE_directory); // if we could solve unzip bz2 files then we can remove this line!
+  //------------------------------------------------
+  
 
   ENSEMBLE = new float [24][365][num_layers][(1 + ENSEMBLE_end - ENSEMBLE_start)];
   ENSEMBLE_Flag = new int [24][365][num_layers][(1 + ENSEMBLE_end - ENSEMBLE_start)]; // -1: undefined, 0: interpolated, 1: data
@@ -3787,11 +3792,13 @@ void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY
             try{
               saveBytes(the_target, loadBytes(the_link));
               
-              String[] new_file = {FN};
-              ENSEMBLE_XML_Files = concat(ENSEMBLE_XML_Files, new_file);
+              //String[] new_file = {FN};
+              //ENSEMBLE_XML_Files = concat(ENSEMBLE_XML_Files, new_file);
+              
+              //open("7z.exe e " + the_target + " -o" + ENSEMBLE_directory);
               
               //File_Found = ENSEMBLE_XML_Files.length - 1;
-              println("Added:", File_Found);              
+              //println("Added:", File_Found);              
             } 
             catch (Exception e) {
               println ("LINK NOT AVAILABLE:", the_link); 
@@ -15347,6 +15354,7 @@ void mouseClicked () {
               ROLLOUT_parent = 0;
               ROLLOUT_child = 1;
               ROLLOUT_Update = 1;
+              
             }
           }
         }        
