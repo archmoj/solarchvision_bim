@@ -282,7 +282,7 @@ int Load_CLIMATE_WY2 = 0;
 int Load_ENSEMBLE = 1;
 int Load_OBSERVED = 0;
 int Download_OBSERVED = 0;
-
+int Download_ENSEMBLE = 1;
 
 
 int AERIAL_num = 5; // the number of nearest points on the path we want to extract the data 
@@ -3765,7 +3765,7 @@ void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY
         int File_Found = -1;
 
         //println (FN);
-        for (int i = 0; i < ENSEMBLE_XML_Files.length; i++) {
+        for (int i = ENSEMBLE_XML_Files.length - 1; i >= 0; i--) { // reverse search is faster 
           //println(ENSEMBLE_XML_Files[i]); 
             
           if (ENSEMBLE_XML_Files[i].equals(FN)) {
@@ -3775,8 +3775,31 @@ void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY
             break; // <<<<<<<<<<
           }
         }
-        
-        if (File_Found != -1) SOLARCHVISION_LoadENSEMBLE((ENSEMBLE_directory + "/" + ENSEMBLE_XML_Files[File_Found]), f); 
+      
+        if (File_Found == -1) {
+          if (Download_ENSEMBLE == 1) {
+            String the_directory = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + nf(THE_HOUR, 2) + "/" + LAYERS_ENSEMBLE[f] + "/raw";
+            String the_link = "http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/xml/" + the_directory + "/" + FN + ".bz2";
+            String the_target = ENSEMBLE_directory + "/" + FN + ".bz2";
+      
+            println("Try downloading: " + the_link);
+      
+            try{
+              saveBytes(the_target, loadBytes(the_link));
+              
+              String[] new_file = {FN};
+              ENSEMBLE_XML_Files = concat(ENSEMBLE_XML_Files, new_file);
+              
+              //File_Found = ENSEMBLE_XML_Files.length - 1;
+              println("Added:", File_Found);              
+            } 
+            catch (Exception e) {
+              println ("LINK NOT AVAILABLE:", the_link); 
+            }              
+          } 
+        }
+
+        if (File_Found != -1) SOLARCHVISION_LoadENSEMBLE((ENSEMBLE_directory + "/" + FN), f);
         else println ("FILE NOT FOUND:", FN);
       }
     }
@@ -4554,7 +4577,7 @@ void SOLARCHVISION_try_update_CLIMATE_WY2 () {
       }
     }
     
-    if (File_Found != -1) SOLARCHVISION_LoadCLIMATE_WY2((CLIMATE_WY2_directory + "/" + CLIMATE_WY2_Files[File_Found]));
+    if (File_Found != -1) SOLARCHVISION_LoadCLIMATE_WY2((CLIMATE_WY2_directory + "/" + FN));
     else println ("FILE NOT FOUND:", FN);
   }
 
@@ -4952,7 +4975,7 @@ void SOLARCHVISION_try_update_CLIMATE_EPW () {
       }
     }
     
-    if (File_Found != -1) SOLARCHVISION_LoadCLIMATE_EPW((CLIMATE_EPW_directory + "/" + CLIMATE_EPW_Files[File_Found]));
+    if (File_Found != -1) SOLARCHVISION_LoadCLIMATE_EPW((CLIMATE_EPW_directory + "/" + FN));
     else println ("FILE NOT FOUND:", FN);
   }
 
@@ -5417,7 +5440,7 @@ void SOLARCHVISION_try_update_OBSERVED () {
           int File_Found = -1;
 
           //println (FN);
-          for (int i = OBSERVED_XML_Files.length - 1; i >= 0 ; i--) { //reverse search is faster 
+          for (int i = OBSERVED_XML_Files.length - 1; i >= 0; i--) { // reverse search is faster 
             //println(OBSERVED_XML_Files[i]); 
             
             if (OBSERVED_XML_Files[i].equals(FN)) {
@@ -15995,6 +16018,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       
       GRAPHS_max_j_end_observations = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Days of recent observations to load" , GRAPHS_max_j_end_observations, 0, 31, 1), 1));
       Download_OBSERVED = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Download_OBSERVED" , Download_OBSERVED, 0, 1, 1), 1));
+      Download_ENSEMBLE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Download_ENSEMBLE" , Download_ENSEMBLE, 0, 1, 1), 1));
       
       
     }
