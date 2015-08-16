@@ -7,8 +7,9 @@ int _LAN = _EN;
 int STATION_NUMBER = 0;
 
 String[][] DEFINED_STATIONS = {
-
                                 {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36"},
+ 
+              //                  {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36"},
   
                                 {"TORONTO_ISLAND_ON_CA", "Financial_District", "ON", "43.6488", "-79.3817", "-75", "86"},
                                 
@@ -300,7 +301,7 @@ int GRIB2_Layer_Step = 1;
 int GRIB2_Hour;
 int GRIB2_Layer;
 
-final int GRIB2_DOMAIN_SELECTION = 0; 
+int GRIB2_DOMAIN_SELECTION = 0; 
 
 /*
 String[][] GRIB2_DOMAINS = {
@@ -1983,14 +1984,17 @@ void SOLARCHVISION_draw_WORLD () {
   WORLD_Diagrams.noFill();
 
   {
-    float _lat = LocationLatitude;
-    float _lon = LocationLongitude; 
-    if (_lon > 180) _lon -= 360; // << important!
+    {
+      float _lat = LocationLatitude;
+      float _lon = LocationLongitude; 
+      if (_lon > 180) _lon -= 360; // << important!
+    
+      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
   
-    float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-    float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
-
-    WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
+      WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
+    }
+    
  
   }   
 
@@ -3749,7 +3753,7 @@ void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY
       }
     }
   }
-  
+
   if (Load_ENSEMBLE == 1) {
   
     for (int f = 0; f < num_layers; f++) {
@@ -13920,61 +13924,77 @@ float[][][] LAND_MESH;
 
 void SOLARCHVISION_LoadLAND (String ProjectSite) {
 
+  
   LAND_mid_lat = LocationLatitude;
   LAND_mid_lon = LocationLongitude;
   
   LAND_MESH = new float [LAND_n_I][LAND_n_J][3];
   
-  if (Load_LAND == 1) {
+  for (int i = 0; i < LAND_n_I; i += 1) {
+    for (int j = 0; j < LAND_n_J; j += 1) {
+      LAND_MESH[i][j][0] = FLOAT_undefined;
+      LAND_MESH[i][j][1] = FLOAT_undefined;
+      LAND_MESH[i][j][2] = FLOAT_undefined;
+    }
+  }
 
-    for (int i = 0; i < LAND_n_I; i += 1) {
+  try { 
   
-      XML FileALL = loadXML(LandFolder + "/" + ProjectSite + "/"  + ProjectSite + "/" + nf(i - LAND_n_I_base, 0) + ".xml");
+    if (Load_LAND == 1) {
   
-      XML[] children0 = FileALL.getChildren("result");
+      for (int i = 0; i < LAND_n_I; i += 1) {
+    
+        XML FileALL = loadXML(LandFolder + "/" + ProjectSite + "/"  + ProjectSite + "/" + nf(i - LAND_n_I_base, 0) + ".xml");;
   
-      for (int j = 0; j < LAND_n_J; j += 1) {
-  
-        String txt_elevation = children0[j].getChild("elevation").getContent();
+        XML[] children0 = FileALL.getChildren("result");
         
-        XML[] children1 = children0[j].getChildren("location");
-        
-        String txt_latitude = children1[0].getChild("lat").getContent();
-        String txt_longitude = children1[0].getChild("lng").getContent();
-        
-        //println(txt_longitude, txt_latitude, txt_elevation);
-  
-        double _lon = Double.parseDouble(txt_longitude); 
-        double _lat = Double.parseDouble(txt_latitude); 
-  
-        double du = ((_lon - LAND_mid_lon) / 180.0) * (PI * R_earth);
-        double dv = ((_lat - LAND_mid_lat) / 180.0) * (PI * R_earth);
-        
-        float x = (float) du * cos_ang((float) _lat);
-        float y = (float) dv; 
-        float z = float(txt_elevation);
-  
-        //println(i, j);
-        //println(x,y,z);
-        
-        LAND_MESH[i][j][0] = x;      
-        LAND_MESH[i][j][1] = y;      
-        LAND_MESH[i][j][2] = z;      
+        for (int j = 0; j < LAND_n_J; j += 1) {
+    
+          String txt_elevation = children0[j].getChild("elevation").getContent();
+          
+          XML[] children1 = children0[j].getChildren("location");
+          
+          String txt_latitude = children1[0].getChild("lat").getContent();
+          String txt_longitude = children1[0].getChild("lng").getContent();
+          
+          //println(txt_longitude, txt_latitude, txt_elevation);
+    
+          double _lon = Double.parseDouble(txt_longitude); 
+          double _lat = Double.parseDouble(txt_latitude); 
+    
+          double du = ((_lon - LAND_mid_lon) / 180.0) * (PI * R_earth);
+          double dv = ((_lat - LAND_mid_lat) / 180.0) * (PI * R_earth);
+          
+          float x = (float) du * cos_ang((float) _lat);
+          float y = (float) dv; 
+          float z = float(txt_elevation);
+    
+          //println(i, j);
+          //println(x,y,z);
+          
+          LAND_MESH[i][j][0] = x;      
+          LAND_MESH[i][j][1] = y;      
+          LAND_MESH[i][j][2] = z;      
+        }
       }
-    }
-    
-    float h = LAND_MESH[LAND_n_I_base][LAND_n_J_base][2];
-    
-    h += HeightAboveGround;
-    
-    for (int i = 0; i < LAND_n_I; i += 1) {
-      for (int j = 0; j < LAND_n_J; j += 1) {
-        
-        LAND_MESH[i][j][2] -= h; 
-        
+      
+      float h = LAND_MESH[LAND_n_I_base][LAND_n_J_base][2];
+      
+      h += HeightAboveGround;
+      
+      for (int i = 0; i < LAND_n_I; i += 1) {
+        for (int j = 0; j < LAND_n_J; j += 1) {
+          
+          LAND_MESH[i][j][2] -= h; 
+          
+        }
       }
+    
     }
+  }
   
+  catch (Exception e) {
+    println("ERROR loading LAND!");  
   }
 
 }
@@ -15256,6 +15276,58 @@ void mouseClicked () {
         if (mouseButton == LEFT) {
           if ((pre_LocationLatitude != LocationLatitude) || (pre_LocationLongitude != LocationLongitude)) WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
         }  
+        
+        
+        {
+          int nearest_STATION_NAEFS = -1;
+          float nearest_STATION_NAEFS_dist = FLOAT_undefined;
+                    
+          for (int f = 0; f < STATION_NAEFS_INFO.length; f += 1) {
+          
+            float _lat = float(STATION_NAEFS_INFO[f][1]);
+            float _lon = float(STATION_NAEFS_INFO[f][2]); 
+            if (_lon > 180) _lon -= 360; // << important!
+          
+            float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
+            
+            if (nearest_STATION_NAEFS_dist > d) {
+              nearest_STATION_NAEFS_dist = d;
+              nearest_STATION_NAEFS = f;
+            } 
+            
+          }
+      
+          {
+            int f = nearest_STATION_NAEFS;
+            
+            if (DEFINED_STATIONS[STATION_NUMBER][0].equals(STATION_NAEFS_INFO[f][0])) {
+            }
+            else {
+      
+              STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
+              
+              DEFINED_STATIONS[STATION_NUMBER][0] = STATION_NAEFS_INFO[f][0];
+  
+              String[] parts = split(STATION_NAEFS_INFO[f][0], '_');
+              DEFINED_STATIONS[STATION_NUMBER][1] = parts[0];
+              for (int i = 1; i < parts.length - 2; i += 1) {
+                DEFINED_STATIONS[STATION_NUMBER][1] += "_" + parts[i];
+              }
+              
+              DEFINED_STATIONS[STATION_NUMBER][2] = parts[parts.length - 2];
+  
+              DEFINED_STATIONS[STATION_NUMBER][3] = STATION_NAEFS_INFO[f][1];
+              DEFINED_STATIONS[STATION_NUMBER][4] = STATION_NAEFS_INFO[f][2];
+              DEFINED_STATIONS[STATION_NUMBER][5] = nf(roundTo(float(STATION_NAEFS_INFO[f][2]), 15), 0, 0);              
+
+              Selected_STATION = STATION_NUMBER;
+              ROLLOUT_parent = 0;
+              ROLLOUT_child = 1;
+              ROLLOUT_Update = 1;
+            }
+          }
+        }        
+            
         
         WORLD_Update = 1;
       } 
