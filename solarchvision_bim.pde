@@ -284,6 +284,13 @@ int Load_OBSERVED = 0;
 int Download_OBSERVED = 0;
 int Download_ENSEMBLE = 1;
 
+int Download_AERIAL = 0;
+
+
+int GRIB2_YEAR = _YEAR; 
+int GRIB2_MONTH = _MONTH; 
+int GRIB2_DAY = _DAY; 
+int GRIB2_RUN = 6; // <<<<<<<<<<<<
 
 int AERIAL_num = 5; // the number of nearest points on the path we want to extract the data 
 
@@ -294,8 +301,8 @@ int GRIB2_Hour_Start = 0;
 int GRIB2_Hour_End = 48;
 int GRIB2_Hour_Step = 6;
 
-int GRIB2_Layer_Start = 0;
-int GRIB2_Layer_End = 1;
+int GRIB2_Layer_Start =  5; //_winddir;
+int GRIB2_Layer_End = 8; //_drybulb;
 int GRIB2_Layer_Step = 1;
 
 int GRIB2_Hour;
@@ -939,6 +946,8 @@ int pre_develop_option;
 int pre_GRAPHS_drw_Layer;
 int pre_sky_scenario;
 int pre_plot_impacts;
+
+
 
 
 
@@ -1667,6 +1676,8 @@ void draw () {
         pre_plot_impacts = plot_impacts;
         
         
+        
+        
         SOLARCHVISION_draw_ROLLOUT();
         
         if (pre_DATE != _DATE) {
@@ -1799,7 +1810,12 @@ void draw () {
         if (pre_Field_Rotation[display_Field_Image] != Field_Rotation[display_Field_Image]) SOLARCHVISION_calculate_ParametricGeometries_Field();
         if (pre_Field_Elevation[display_Field_Image] != Field_Elevation[display_Field_Image]) SOLARCHVISION_calculate_ParametricGeometries_Field();
 
-
+        if (Download_AERIAL != 0) {
+          SOLARCHVISION_try_update_AERIAL(_YEAR, _MONTH, _DAY, _HOUR);
+          
+          Download_AERIAL = 0;
+          ROLLOUT_Update = 1;
+        }
 
 
 
@@ -3737,6 +3753,8 @@ void SOLARCHVISION_update_date () {
   _DAY = CalendarDate[int(_DATE)][1];
   _HOUR = int(24 * (_DATE - int(_DATE)));
 }
+
+
 
 void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
   
@@ -16028,6 +16046,15 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Download_OBSERVED = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Download_OBSERVED" , Download_OBSERVED, 0, 1, 1), 1));
       Download_ENSEMBLE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Download_ENSEMBLE" , Download_ENSEMBLE, 0, 1, 1), 1));
       
+      Download_AERIAL = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "Download_AERIAL" , Download_AERIAL, 0, 1, 1), 1));
+      
+      GRIB2_Hour_Start = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "GRIB2_Hour_Start" , GRIB2_Hour_Start, 0, 48, 1), 1));
+      GRIB2_Hour_End = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "GRIB2_Hour_End" , GRIB2_Hour_End, 0, 48, 1), 1));
+      GRIB2_Hour_Step = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "GRIB2_Hour_Step" , GRIB2_Hour_Step, 1, 24, 1), 1));
+      
+      GRIB2_Layer_Start = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "GRIB2_Layer_Start" , GRIB2_Layer_Start, 0, num_layers, 1), 1));
+      GRIB2_Layer_End = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "GRIB2_Layer_End" , GRIB2_Layer_End, 0, num_layers, 1), 1));
+      GRIB2_Layer_Step = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,1, "GRIB2_Layer_Step" , GRIB2_Layer_Step, 1, num_layers, 1), 1));
       
     }
     
@@ -16280,9 +16307,24 @@ SOLARCHVISION_Spinner MySpinner = new SOLARCHVISION_Spinner();
 
 //---------------------------------------------------------------------
 
-void empty_AERIAL () {
+float[][] AERIAL_Locations;
+
+
+
+void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
+
+
+  GRIB2_YEAR = THE_YEAR;
+  GRIB2_MONTH = THE_MONTH;
+  GRIB2_DAY = THE_DAY;
+  GRIB2_RUN = THE_HOUR;
+
+  
+
+  
   AERIAL = new float[AERIAL_num][55][num_layers];
   AERIAL_Flag = new int[AERIAL_num][55][num_layers];
+  AERIAL_Locations = new float[AERIAL_num][3]; // lon, lat, tgl
 
   for (int n = 0; n < AERIAL_num; n += 1) {
     for (int k = 0; k <= 54; k += 1) {
@@ -16291,8 +16333,89 @@ void empty_AERIAL () {
         AERIAL_Flag[n][k][l] = -1;
       }
     }  
+    
+    float r = 0.5;
+    
+    AERIAL_Locations[n][0] = StationLongitude + r * cos_ang(360 / float(AERIAL_num));
+    AERIAL_Locations[n][1] = StationLatitude + r * sin_ang(360 / float(AERIAL_num));
+    AERIAL_Locations[n][2] = 10;
+  
+  }  
+
+
+  String the_directory = getGrib2Folder(GRIB2_DOMAIN_SELECTION);
+  {  
+    String[] tmpMessage = {nf(GRIB2_YEAR, 4), nf(GRIB2_MONTH, 2), nf(GRIB2_DAY, 2), nf(GRIB2_RUN, 2)};
+    // Creates two temp files to make the destination folders if they were not available.
+    saveStrings(Wgrib2TempFolder + "/TempEmpty.txt", tmpMessage);
+    saveStrings(the_directory + "/TempEmpty.txt", tmpMessage);
   }
+  
+  String[] SavedFiles = sort(getfiles(the_directory));
+  
+  for (int l = GRIB2_Layer_Start; l <= GRIB2_Layer_End; l += GRIB2_Layer_Step) {
+    GRIB2_Layer = l;
+    
+    for (int k = GRIB2_Hour_Start; k <= GRIB2_Hour_End; k += GRIB2_Hour_Step) {
+      GRIB2_Hour = k;
+      
+      String the_filename = getGrib2Filename(GRIB2_Hour, GRIB2_Layer);
+      
+      int File_Found = 0;
+
+      for (int i = SavedFiles.length - 1; i >= 0; i--) {
+        String thisFile = the_directory + "/" + SavedFiles[i];
+        
+        if (thisFile.equals(the_directory + "/" + the_filename)) {
+          File_Found = 1;
+          break;
+        }
+      }
+
+      if (File_Found == 0) {
+
+        String the_target = the_directory + "/" + the_filename;
+
+        String the_link = "";
+        
+        if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("WAVE")) {
+          the_link = "http://dd.weatheroffice.ec.gc.ca/model_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] +"/grib2/" + nf(GRIB2_RUN, 2) + "/" + the_filename;  
+        }
+        if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("HRDPS")) {
+          the_link = "http://dd.weatheroffice.ec.gc.ca/model_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] +"/grib2/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+        }        
+            
+        try {
+          println("Downloading...", the_link);
+          saveBytes(the_target, loadBytes(the_link));
+          println("100%");
+          File_Found = 1;
+        } 
+        catch (Exception e) {
+
+        }  
+      }
+      
+      if (File_Found == 1) {
+        for (int n = 0; n < AERIAL_num; n += 1) {
+
+          LocationLongitude = (float) AERIAL_Locations[n][0];
+          LocationLatitude = (float) AERIAL_Locations[n][1];
+        
+          AERIAL[n][GRIB2_Hour][GRIB2_Layer] = getGrib2Value(GRIB2_Hour, GRIB2_Layer);
+          if (AERIAL[n][GRIB2_Hour][GRIB2_Layer] < 0.9 * FLOAT_undefined) {
+            AERIAL_Flag[n][GRIB2_Hour][GRIB2_Layer] = 1;
+          }
+          else AERIAL_Flag[n][GRIB2_Hour][GRIB2_Layer] = -1;
+        }
+      }
+    }
+  }
+
+  
 }
+
+
 
 
 String getGrib2Folder (int s) {
@@ -16303,17 +16426,17 @@ String getGrib2Filename (int k, int l) {
   String return_txt = "";
   
   if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("WAVE")) {
-    return_txt = "CMC_rdwps_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + LAYERS_GRIB2[l][0] + "_latlon0.05x0.08_" + nf(_YEAR, 4) + nf(_MONTH, 2) + nf(_DAY, 2) + nf(_HOUR, 2) + "_P" + nf(k, 3) + ".grib2"; 
+    return_txt = "CMC_rdwps_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + LAYERS_GRIB2[l][0] + "_latlon0.05x0.08_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + nf(GRIB2_RUN, 2) + "_P" + nf(k, 3) + ".grib2"; 
   }
   if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("HRDPS")) {
-    return_txt = "CMC_hrdps_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + LAYERS_GRIB2[l][0] + "_ps2.5km_" + nf(_YEAR, 4) + nf(_MONTH, 2) + nf(_DAY, 2) + nf(_HOUR, 2) + "_P" + nf(k, 3) + "-00" + ".grib2";
+    return_txt = "CMC_hrdps_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + LAYERS_GRIB2[l][0] + "_ps2.5km_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + nf(GRIB2_RUN, 2) + "_P" + nf(k, 3) + "-00" + ".grib2";
   }
   
   return return_txt;
 }
 
 String getWgrib2Filename (int k, int l) {
-  return(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + nf(_YEAR, 4) + nf(_MONTH, 2) + nf(_DAY, 2) + "R" + nf(_HOUR, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2[l][0] + "_" + nf(LocationLongitude, 0, 4) + "X" + nf(LocationLatitude, 0, 4) + ".txt");
+  return(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + "R" + nf(GRIB2_RUN, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2[l][0] + "_" + nf(LocationLongitude, 0, 4) + "X" + nf(LocationLatitude, 0, 4) + ".txt");
 }
 
 float getGrib2Value (int k, int l) {
@@ -16407,9 +16530,7 @@ float getGrib2Value (int k, int l) {
         if (_posZ > 0) {
           v = Float.valueOf(file_lines[0].substring(_posZ + 4));
 
-          v *= LAYERS_GRIB2_MUL[l];
-          v += LAYERS_GRIB2_ADD[l]; // e.g. Kelvin >> C
-          
+          v += float(LAYERS_GRIB2[l][5]); // e.g. Kelvin >> C
         }
       }
     }
