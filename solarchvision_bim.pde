@@ -16313,7 +16313,9 @@ float[][] AERIAL_Locations;
 
 void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
-
+  pre_LocationLatitude = LocationLatitude;
+  pre_LocationLongitude = LocationLongitude;
+  
   GRIB2_YEAR = THE_YEAR;
   GRIB2_MONTH = THE_MONTH;
   GRIB2_DAY = THE_DAY;
@@ -16336,8 +16338,8 @@ void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, 
     
     float r = 0.5;
     
-    AERIAL_Locations[n][0] = StationLongitude + r * cos_ang(360 / float(AERIAL_num));
-    AERIAL_Locations[n][1] = StationLatitude + r * sin_ang(360 / float(AERIAL_num));
+    AERIAL_Locations[n][0] = LocationLongitude + r * cos_ang(360 * n / float(AERIAL_num));
+    AERIAL_Locations[n][1] = LocationLatitude + r * sin_ang(360 * n / float(AERIAL_num));
     AERIAL_Locations[n][2] = 10;
   
   }  
@@ -16399,8 +16401,8 @@ void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, 
       if (File_Found == 1) {
         for (int n = 0; n < AERIAL_num; n += 1) {
 
-          LocationLongitude = (float) AERIAL_Locations[n][0];
-          LocationLatitude = (float) AERIAL_Locations[n][1];
+          LocationLongitude = AERIAL_Locations[n][0];
+          LocationLatitude = AERIAL_Locations[n][1];
         
           AERIAL[n][GRIB2_Hour][GRIB2_Layer] = getGrib2Value(GRIB2_Hour, GRIB2_Layer);
           if (AERIAL[n][GRIB2_Hour][GRIB2_Layer] < 0.9 * FLOAT_undefined) {
@@ -16412,6 +16414,8 @@ void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, 
     }
   }
 
+  LocationLatitude = pre_LocationLatitude;
+  LocationLongitude = pre_LocationLongitude;
   
 }
 
