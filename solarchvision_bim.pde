@@ -287,10 +287,10 @@ int Download_ENSEMBLE = 1;
 int Download_AERIAL = 0;
 
 
-int GRIB2_YEAR = _YEAR; 
-int GRIB2_MONTH = _MONTH; 
-int GRIB2_DAY = _DAY; 
-int GRIB2_RUN = 6; // <<<<<<<<<<<<
+int GRIB2_YEAR; 
+int GRIB2_MONTH; 
+int GRIB2_DAY; 
+int GRIB2_RUN;
 
 int AERIAL_num = 5; // the number of nearest points on the path we want to extract the data 
 
@@ -308,20 +308,32 @@ int GRIB2_Layer_Step = 1;
 int GRIB2_Hour;
 int GRIB2_Layer;
 
-int GRIB2_DOMAIN_SELECTION = 0; 
+
 
 /*
 String[][] GRIB2_DOMAINS = {
-                               {"WAVE", "wave/great_lakes/superior", "lake-superior"}  
+                               {"WAVE", "model_wave/great_lakes/superior/grib2", "CMC_rdwps_lake-superior", "latlon0.05x0.0"}  
                              };
 */
 
 String[][] GRIB2_DOMAINS = {
-                               {"HRDPS", "hrdps/east", "east"}  
+                               {"HRDPS", "model_hrdps/east/grib2", "CMC_hrdps_east", "ps2.5km"}
+                             , {"GDPS", "model_gem_global/25km/grib2/lat_lon", "CMC_glb", "latlon.24x.24"}
                              };
 
 
 
+
+// http://dd.weatheroffice.ec.gc.ca/model_hrdps/east     /grib2/        00/000/CMC_hrdps_east_TMP_TGL_2_ps2.5km      _2015081800_P000-00.grib2
+// http://dd.weatheroffice.ec.gc.ca/model_gem_global/25km/grib2/lat_lon/00/000/CMC_glb       _TMP_TGL_2_latlon.24x.24_2015081700_P000.grib2  
+
+
+// http://dd.weatheroffice.ec.gc.ca/model_hrdps/east/grib2/00/000/CMC_hrdps_east_TMP_TGL_2_ps2.5km_2015081800_P000-00.grib2
+// http://dd.weatheroffice.ec.gc.ca/model_gem_global/25km/grib2/lat_lon/00/000/CMC_glb_TMP_TGL_2_latlon.24x.24_2015081700_P000.grib2  
+
+
+
+int GRIB2_DOMAIN_SELECTION = 0; 
 
 
 PrintWriter[] File_output_node;
@@ -16316,7 +16328,7 @@ void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, 
   GRIB2_YEAR = THE_YEAR;
   GRIB2_MONTH = THE_MONTH;
   GRIB2_DAY = THE_DAY;
-  GRIB2_RUN = THE_HOUR;
+  GRIB2_RUN = 0; //THE_HOUR; // <<<<<<<<<<<<<<<
 
   
 
@@ -16380,11 +16392,15 @@ void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, 
         String the_link = "";
         
         if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("WAVE")) {
-          the_link = "http://dd.weatheroffice.ec.gc.ca/model_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] +"/grib2/" + nf(GRIB2_RUN, 2) + "/" + the_filename;  
+          the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + the_filename;  
         }
         if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("HRDPS")) {
-          the_link = "http://dd.weatheroffice.ec.gc.ca/model_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] +"/grib2/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
-        }        
+          the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+        }
+        if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("GDPS")) {
+          the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+        }
+       
             
         try {
           println("Downloading...", the_link);
@@ -16445,11 +16461,16 @@ String getGrib2Filename (int k, int l) {
   String return_txt = "";
   
   if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("WAVE")) {
-    return_txt = "CMC_rdwps_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + LAYERS_GRIB2[l][0] + "_latlon0.05x0.08_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + nf(GRIB2_RUN, 2) + "_P" + nf(k, 3) + ".grib2"; 
+    return_txt = GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + LAYERS_GRIB2[l][0] + "_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][3] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + nf(GRIB2_RUN, 2) + "_P" + nf(k, 3) + ".grib2"; 
   }
   if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("HRDPS")) {
-    return_txt = "CMC_hrdps_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + LAYERS_GRIB2[l][0] + "_ps2.5km_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + nf(GRIB2_RUN, 2) + "_P" + nf(k, 3) + "-00" + ".grib2";
+    return_txt = GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + LAYERS_GRIB2[l][0] + "_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][3] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + nf(GRIB2_RUN, 2) + "_P" + nf(k, 3) + "-00" + ".grib2";
   }
+  if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("GDPS")) {
+    return_txt = GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + LAYERS_GRIB2[l][0] + "_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][3] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + nf(GRIB2_RUN, 2) + "_P" + nf(k, 3) + ".grib2";
+  }
+
+
   
   return return_txt;
 }
@@ -16793,9 +16814,9 @@ float[][] getGrib2Value_MultiplePoints (int k, int l) {
             if (_lon < 0) _lon += 360; // << important!
     
             float d = dist_lon_lat(uX, uY, _lon, _lat);
-            if (d > 10000) { // 10km
+            if (d > 100000) { // 100km
             
-              println("out of 10km: d =", d);
+              println("out of 100km: d =", d);
               
               println(uX, uY, _lon, _lat);
               println("----------------------------------------");
