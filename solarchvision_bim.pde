@@ -294,8 +294,8 @@ int GRIB2_RUN = 6; // <<<<<<<<<<<<
 
 int AERIAL_num = 5; // the number of nearest points on the path we want to extract the data 
 
-float[][][] AERIAL;
-int[][][] AERIAL_Flag;
+float[][][][] AERIAL;
+int[][][][] AERIAL_Flag;
 
 int GRIB2_Hour_Start = 0;
 int GRIB2_Hour_End = 0; //48;
@@ -16321,15 +16321,17 @@ void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, 
   
 
   
-  AERIAL = new float[49][num_layers][AERIAL_num];
-  AERIAL_Flag = new int[49][num_layers][AERIAL_num];
+  AERIAL = new float[49][num_layers][AERIAL_num][Scenarios_max];
+  AERIAL_Flag = new int[49][num_layers][AERIAL_num][Scenarios_max];
   AERIAL_Locations = new float[AERIAL_num][3]; // lon, lat, tgl
 
   for (int n = 0; n < AERIAL_num; n += 1) {
     for (int k = 0; k <= 48; k += 1) {
       for (int l = 0; l < num_layers; l++) {
-        AERIAL[k][l][n] = FLOAT_undefined;
-        AERIAL_Flag[k][l][n] = -1;
+        for (int o = 0; o < Scenarios_max; o += 1){   
+          AERIAL[k][l][n][o] = FLOAT_undefined;
+          AERIAL_Flag[k][l][n][o] = -1;        
+        }
       }
     }  
     
@@ -16402,17 +16404,27 @@ void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, 
           LocationLongitude = AERIAL_Locations[n][0];
           LocationLatitude = AERIAL_Locations[n][1];
         
-          AERIAL[GRIB2_Hour][GRIB2_Layer][n] = getGrib2Value(GRIB2_Hour, GRIB2_Layer, AERIAL_Locations[n][0], AERIAL_Locations[n][1]);
+          int o = 0; // now only for deterministic!
+          AERIAL[GRIB2_Hour][GRIB2_Layer][n][o] = getGrib2Value(GRIB2_Hour, GRIB2_Layer, AERIAL_Locations[n][0], AERIAL_Locations[n][1]); 
           
         }
         */
-        AERIAL[GRIB2_Hour][GRIB2_Layer] = getGrib2Value_MultiplePoints(GRIB2_Hour, GRIB2_Layer);
+        
+        float[][] GRIB2_values = getGrib2Value_MultiplePoints(GRIB2_Hour, GRIB2_Layer);
         
         for (int n = 0; n < AERIAL_num; n += 1) {
-          if (AERIAL[GRIB2_Hour][GRIB2_Layer][n] < 0.9 * FLOAT_undefined) {
-            AERIAL_Flag[GRIB2_Hour][GRIB2_Layer][n] = 1;
+          for (int o = 0; o < Scenarios_max; o += 1){
+            AERIAL[GRIB2_Hour][GRIB2_Layer][n][o] = GRIB2_values[n][o];
           }
-          else AERIAL_Flag[GRIB2_Hour][GRIB2_Layer][n] = -1;
+        }        
+
+        for (int n = 0; n < AERIAL_num; n += 1) {
+          for (int o = 0; o < Scenarios_max; o += 1){
+            if (AERIAL[GRIB2_Hour][GRIB2_Layer][n][o] < 0.9 * FLOAT_undefined) {
+              AERIAL_Flag[GRIB2_Hour][GRIB2_Layer][n][o] = 1;
+            }
+            else AERIAL_Flag[GRIB2_Hour][GRIB2_Layer][n][o] = -1;
+          }
         }
 
       }
@@ -16442,19 +16454,19 @@ String getGrib2Filename (int k, int l) {
   return return_txt;
 }
 
-String getWgrib2Filename (int k, int l) {
-  return(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + "R" + nf(GRIB2_RUN, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2[l][0] + "_" + nf(LocationLongitude, 0, 4) + "X" + nf(LocationLatitude, 0, 4) + ".txt");
+String getWgrib2Filename (int k, int l, float _lon, float _lat) {
+  return(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + "R" + nf(GRIB2_RUN, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2[l][0] + "_" + nf(_lon, 0, 4) + "X" + nf(_lat, 0, 4) + ".txt");
 }
 
 String getWgrib2Filename_MultiplePoints (int k, int l, int p) {
-  return(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + "R" + nf(GRIB2_RUN, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2[l][0] + "_p" + nf(p, 3) + ".txt");
+  return(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + "R" + nf(GRIB2_RUN, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2[l][0] + "_" + nf(LocationLongitude, 0, 4) + "X" + nf(LocationLatitude, 0, 4) + "_part" + nf(p, 3) + ".txt");
 }
 
 float getGrib2Value (int k, int l, float _lon, float _lat) {
 
-  float v = FLOAT_undefined;
+  float theValue = FLOAT_undefined;
 
-  String ValueFilename = getWgrib2Filename(k, l); 
+  String ValueFilename = getWgrib2Filename(k, l, _lon, _lat); 
 
   String ValueFile = Wgrib2TempFolder + "/" + ValueFilename;
 
@@ -16495,7 +16507,7 @@ float getGrib2Value (int k, int l, float _lon, float _lat) {
 
   int _stay = 1;
 
-  while ((_stay != 0) && (_stay < 10000)) {
+  while ((_stay != 0) && (_stay < 100000)) {
 
     //println(_stay);
 
@@ -16538,15 +16550,16 @@ float getGrib2Value (int k, int l, float _lon, float _lat) {
         println("----------------------------------------");
       } else {
         if (_posZ > 0) {
-          v = Float.valueOf(file_lines[0].substring(_posZ + 4));
+          theValue = Float.valueOf(file_lines[0].substring(_posZ + 4));
 
-          v += float(LAYERS_GRIB2[l][5]); // e.g. Kelvin >> C
+          theValue *= LAYERS_GRIB2_MUL[l];
+          theValue += LAYERS_GRIB2_ADD[l]; // e.g. Kelvin >> C
         }
       }
     }
   }
 
-  return(v);
+  return(theValue);
 }
 
 
@@ -16554,7 +16567,7 @@ int Scenarios_max = 1; // for GEPS equals to 21
 
 int MAX_GRIB2_PASS = 200;
 
-float[] getGrib2Value_MultiplePoints (int k, int l) {
+float[][] getGrib2Value_MultiplePoints (int k, int l) {
   
   int next_YEAR = GRIB2_YEAR;
   int next_MONTH = GRIB2_MONTH;
@@ -16578,20 +16591,71 @@ float[] getGrib2Value_MultiplePoints (int k, int l) {
   }
 
 
+  XML my_xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
+
+  XML newChild1;
+  XML newChild2;
+  XML newChild3;
   
-  float[] v = new float[AERIAL_num];
+  my_xml.setName(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0] + "_forecast");
+  
+  newChild1 = my_xml.addChild("header");
+  
+  newChild2 = newChild1.addChild("Domain");
+  newChild2.setContent(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0]);
+  
+  newChild2 = newChild1.addChild("valid-begin-time");
+  newChild2.setContent(nf(GRIB2_YEAR, 4) + "-" + nf(GRIB2_MONTH, 2) + "-" + nf(GRIB2_DAY, 2) + "T" + nf(GRIB2_RUN, 2) + "00:00Z");
+
+  newChild2 = newChild1.addChild("model_description");
+  newChild3 = newChild2.addChild("model");
+  newChild3.setInt("id", 22);  // ???????????????????????????????????????????????
+  newChild3.setString("model", GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0]); 
+  newChild3.setString("member", ""); 
+  newChild3.setString("center", "CMC"); 
+  newChild3.setString("domain", GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0]);
+  newChild3.setString("data_type", "RAW"); 
+  
+  if (Scenarios_max == 1) {
+    newChild3.setString("member_type", "deterministic");
+  }
+  else {
+    newChild3.setString("member_type", "ensemble");
+  }
+
+  newChild1 = my_xml.addChild("forecast_element");
+  newChild1.setString("code", LAYERS_GRIB2[l][0]); // <<<<<<<<<<<<<<<< only first TGL code!
+  newChild1.setString("unit_english", LAYERS_Unit[l]); 
+  newChild1.setString("title_english", LAYERS_Title[l][_EN]);
+  newChild1.setString("titre_francais", LAYERS_Title[l][_FR]);
+  newChild1.setString("unite_francaise", LAYERS_Unit[l]);
+  
+  
+  
+  newChild1 = my_xml.addChild("point_description");
   
   for (int n = 0; n < AERIAL_num; n += 1) {
+    newChild2 = newChild1.addChild("point");
+    newChild2.setInt("id", n + 1); // <<<<<<< 1 - n
     
-    v[n] = FLOAT_undefined;
+    newChild2.setString("latitude", String.valueOf(AERIAL_Locations[n][0]));
+    newChild2.setString("longitude", String.valueOf(AERIAL_Locations[n][1]));
+    newChild2.setString("TGL", String.valueOf(AERIAL_Locations[n][2]));    
+  }
+
+
+  
+  float[][] theValues = new float[AERIAL_num][Scenarios_max];
+  
+  for (int n = 0; n < AERIAL_num; n += 1) {
+    for (int o = 0; o < Scenarios_max; o += 1){
+      theValues[n][o] = FLOAT_undefined;
+    }
   }
 
   String[] filenames = getfiles(Wgrib2TempFolder);
 
   String[] file_lines = {};
-  String file_one_line_entered = "";
-  String[] my_lines = {};  
-  
 
   int NUM_ValueFiles = 1 + int(AERIAL_num / MAX_GRIB2_PASS);
   String[] ValueFiles = new String[NUM_ValueFiles];
@@ -16661,7 +16725,7 @@ float[] getGrib2Value_MultiplePoints (int k, int l) {
     
     int _stay = 1;
   
-    while ((_stay != 0) && (_stay < 10000)) {
+    while ((_stay != 0) && (_stay < 100000)) {
   
       //println(_stay);
   
@@ -16692,13 +16756,12 @@ float[] getGrib2Value_MultiplePoints (int k, int l) {
   
       if (file_lines.length > 0) {
 
-        /*
-
         for (int o = 0; o < Scenarios_max; o += 1){       
-      
-          file_one_line_entered = file_lines[o].replace(":station=", "\n");
-          my_lines = split(file_one_line_entered, "\n");      
-    
+
+          String file_one_line_entered = file_lines[o].replace(":station=", "\n");
+          String[] my_lines = split(file_one_line_entered, "\n");  
+              
+
           //println(file_one_line_entered);
           //println("lines:", my_lines.length);
           //println("-----------------------------------------------");
@@ -16720,47 +16783,31 @@ float[] getGrib2Value_MultiplePoints (int k, int l) {
             
             float v = FLOAT_undefined;
             
-            LOCATIONS_LonLat[s][(p * MAX_GRIB2_PASS + q - 1)][0] = ((uX + 180) % 360) - 180;
-            LOCATIONS_LonLat[s][(p * MAX_GRIB2_PASS + q - 1)][1] = uY;
-    
-            //StationLatitude = float(LOCATIONS_INFO[(p * MAX_GRIB2_PASS + q - 1)][3]);
-            //StationLongitude = float(LOCATIONS_INFO[(p * MAX_GRIB2_PASS + q - 1)][4]);
+            int f = p * MAX_GRIB2_PASS + q - 1;
+            //AERIAL_Locations[f][0] = ((uX + 180) % 360) - 180;
+            //AERIAL_Locations[f][1] = uY;
             
-            if (dist_lon_lat((uX + 360) % 360, (uY + 180) % 180, (_lon + 360) % 360, (_lat + 180) % 180) > 50) { // 50km
-              //println(uX, uY, _lon, _lat);
-              //println((uX + 360) % 360, (uY + 180) % 180, (_lon + 360) % 360, (_lat + 180) % 180);
-              //println("----------------------------------------");
+            float _lon = AERIAL_Locations[f][0];
+            float _lat = AERIAL_Locations[f][1];
+            
+            if (_lon < 0) _lon += 360; // << important!
+    
+            float d = dist_lon_lat(uX, uY, _lon, _lat);
+            if (d > 10) { // 10km
+            
+              println("out of 10km: d =", d);
+              
+              println(uX, uY, _lon, _lat);
+              println("----------------------------------------");
             }
             else{
               if (_posZ > 0) {
                 v = Float.valueOf(my_lines[q].substring(_posZ + 4));
-                
-                if ((FORECAST_LAYERS[l][0].substring(0, 3)).equals("TMP")) {
-                  v -= 273.15; // °K > °C
-                }
-                else if ((FORECAST_LAYERS[l][0].substring(0, 4)).equals("UGRD")) {
-                  v *= 3.6; // m/s > Km/h
-                }
-                else if ((FORECAST_LAYERS[l][0].substring(0, 4)).equals("VGRD")) {
-                  v *= 3.6; // m/s > Km/h
-                }                        
-                else if ((FORECAST_LAYERS[l][0].substring(0, 4)).equals("WIND")) {
-                  v *= 3.6; // m/s > Km/h
-                }
-                else if ((FORECAST_LAYERS[l][0].substring(0, 5)).equals("DSWRF")) {
-                  v *= 0.000001; // J >> MJ
-                }
-                else if ((FORECAST_LAYERS[l][0].substring(0, 4)).equals("SPFH")) {
-                  v *= 10000; // Kg/Kg >> %   ???????
-                  if (v > 100) v = 100;    // ???????
-                }
-                else if ((FORECAST_LAYERS[l][0].substring(0, 5)).equals("PRMSL")) {
-                  v *= 0.01;
-                  v -= offset_pressure;
-                }
                
                 //println(v);
-               
+
+                v *= LAYERS_GRIB2_MUL[l];
+                v += LAYERS_GRIB2_ADD[l]; // e.g. Kelvin >> C                        
                   
                 newChild2 = newChild1.addChild("station");
                 newChild2.setInt("id", p * MAX_GRIB2_PASS + q); 
@@ -16770,19 +16817,17 @@ float[] getGrib2Value_MultiplePoints (int k, int l) {
                   
               }
             }
-    
-            //println(v);
-            LOCATIONS_VALUES[o][(p * MAX_GRIB2_PASS + q - 1)][k][l] = v;
+            theValues[f][o] = v;
           }
         }
-        */
+
       }
     }
     
   } 
 
 
-  return v;
+  return theValues;
 }
 
 
