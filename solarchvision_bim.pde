@@ -16609,7 +16609,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l) {
 
   newChild2 = newChild1.addChild("model_description");
   newChild3 = newChild2.addChild("model");
-  newChild3.setInt("id", 22);  // ???????????????????????????????????????????????
+  newChild3.setInt("id", 44);  // ???????????????????????????????????????????????
   newChild3.setString("model", GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0]); 
   newChild3.setString("member", ""); 
   newChild3.setString("center", "CMC"); 
@@ -16793,7 +16793,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l) {
             if (_lon < 0) _lon += 360; // << important!
     
             float d = dist_lon_lat(uX, uY, _lon, _lat);
-            if (d > 10) { // 10km
+            if (d > 10000) { // 10km
             
               println("out of 10km: d =", d);
               
@@ -16809,10 +16809,8 @@ float[][] getGrib2Value_MultiplePoints (int k, int l) {
                 v *= LAYERS_GRIB2_MUL[l];
                 v += LAYERS_GRIB2_ADD[l]; // e.g. Kelvin >> C                        
                   
-                newChild2 = newChild1.addChild("station");
+                newChild2 = newChild1.addChild("point");
                 newChild2.setInt("id", p * MAX_GRIB2_PASS + q); 
-                //newChild2.setString("id", LOCATIONS_INFO[(q - 1)][6]);
-                //newChild2.setString("name", LOCATIONS_INFO[(q - 1)][0]); 
                 newChild2.setContent(nf(v,0,0)); 
                   
               }
@@ -16826,6 +16824,12 @@ float[][] getGrib2Value_MultiplePoints (int k, int l) {
     
   } 
 
+  String THE_XML_filename = ExportFolder;
+  THE_XML_filename += "/XML_layers/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0];
+  THE_XML_filename += "/" + nf(GRIB2_YEAR, 4) + "_" + nf(GRIB2_MONTH, 2) + "_" + nf(GRIB2_DAY, 2) + "_" + nf(GRIB2_RUN, 2);
+  THE_XML_filename += "/" + nfp(LocationLatitude, 2, 3).replace(",", "_").replace(".", "_").replace("+", "N") + nfp(LocationLongitude, 3, 3).replace(",", "_").replace(".", "_").replace("-", "W");
+  THE_XML_filename += ".xml";
+  saveXML(my_xml, THE_XML_filename);
 
   return theValues;
 }
