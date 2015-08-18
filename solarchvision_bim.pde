@@ -16794,6 +16794,10 @@ float[][] getGrib2Value_MultiplePoints (int k, int l) {
 
         for (int o = 0; o < Scenarios_max; o += 1){       
 
+          newChild1 = my_xml.addChild("scenario");
+          newChild1.setInt("scenario_id", o + 1); // <<<<<<<<
+       
+          
           String file_one_line_entered = file_lines[o].replace(":station=", "\n");
           String[] my_lines = split(file_one_line_entered, "\n");  
               
@@ -16802,9 +16806,9 @@ float[][] getGrib2Value_MultiplePoints (int k, int l) {
           //println("lines:", my_lines.length);
           //println("-----------------------------------------------");
               
-          newChild1 = my_xml.addChild("forecast");
-          newChild1.setInt("forecast_hour", k);
-          newChild1.setString("valid_time", nf(next_YEAR, 4) + nf(next_MONTH, 2) + nf(next_DAY, 2) + nf(next_HOUR, 2)); 
+          newChild2 = newChild1.addChild("forecast");
+          newChild2.setInt("forecast_hour", k);
+          newChild2.setString("valid_time", nf(next_YEAR, 4) + nf(next_MONTH, 2) + nf(next_DAY, 2) + nf(next_HOUR, 2)); 
           
           
           for (int q = 1; q < my_lines.length; q += 1){
@@ -16845,9 +16849,9 @@ float[][] getGrib2Value_MultiplePoints (int k, int l) {
                 v *= LAYERS_GRIB2_MUL[l];
                 v += LAYERS_GRIB2_ADD[l]; // e.g. Kelvin >> C                        
                   
-                newChild2 = newChild1.addChild("point");
-                newChild2.setInt("id", p * MAX_GRIB2_PASS + q); 
-                newChild2.setContent(nf(v,0,0)); 
+                newChild3 = newChild2.addChild("point");
+                newChild3.setInt("id", p * MAX_GRIB2_PASS + q); 
+                newChild3.setContent(nf(v,0,0)); 
                   
               }
             }
