@@ -310,30 +310,32 @@ int GRIB2_Layer;
 
 
 
-/*
-String[][] GRIB2_DOMAINS = {
-                               {"WAVE", "model_wave/great_lakes/superior/grib2", "CMC_rdwps_lake-superior", "latlon0.05x0.0"}  
-                             };
-*/
 
 String[][] GRIB2_DOMAINS = {
-                               {"HRDPS", "model_hrdps/east/grib2", "CMC_hrdps_east", "ps2.5km"}
+                               {"GEPS", "ensemble/naefs/grib2/raw", "CMC_naefs-geps-raw", "latlon1p0x1p0"}
                              , {"GDPS", "model_gem_global/25km/grib2/lat_lon", "CMC_glb", "latlon.24x.24"}
+                             , {"HRDPS", "model_hrdps/east/grib2", "CMC_hrdps_east", "ps2.5km"}
+                             , {"WAVE", "model_wave/great_lakes/superior/grib2", "CMC_rdwps_lake-superior", "latlon0.05x0.0"}                             
                              };
 
 
 
+// http://dd.weatheroffice.ec.gc.ca/ensemble/naefs       /grib2/raw    /00/000/CMC_naefs-geps-raw_TMP_TGL_2m_latlon1p0x1p0_2015081800_P000_allmbrs.grib2
+// http://dd.weatheroffice.ec.gc.ca/model_gem_global/25km/grib2/lat_lon/00/000/CMC_glb           _TMP_TGL_2_latlon.24x.24 _2015081800_P000.grib2
+// http://dd.weatheroffice.ec.gc.ca/model_hrdps/east     /grib2        /00/000/CMC_hrdps_east    _TMP_TGL_2_ps2.5km       _2015081800_P000-00.grib2
+  
+  
 
-// http://dd.weatheroffice.ec.gc.ca/model_hrdps/east     /grib2/        00/000/CMC_hrdps_east_TMP_TGL_2_ps2.5km      _2015081800_P000-00.grib2
-// http://dd.weatheroffice.ec.gc.ca/model_gem_global/25km/grib2/lat_lon/00/000/CMC_glb       _TMP_TGL_2_latlon.24x.24_2015081700_P000.grib2  
-
-
+// http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/grib2/raw/00/000/CMC_naefs-geps-raw_TMP_TGL_2m_latlon1p0x1p0_2015081800_P000_allmbrs.grib2
+// http://dd.weatheroffice.ec.gc.ca/model_gem_global/25km/grib2/lat_lon/00/000/CMC_glb_TMP_TGL_2_latlon.24x.24_2015081800_P000.grib2
 // http://dd.weatheroffice.ec.gc.ca/model_hrdps/east/grib2/00/000/CMC_hrdps_east_TMP_TGL_2_ps2.5km_2015081800_P000-00.grib2
-// http://dd.weatheroffice.ec.gc.ca/model_gem_global/25km/grib2/lat_lon/00/000/CMC_glb_TMP_TGL_2_latlon.24x.24_2015081700_P000.grib2  
+  
+  
 
-
-
-int GRIB2_DOMAIN_SELECTION = 0; 
+int GRIB2_DOMAIN_SELECTION = 0; int Scenarios_max = 21;   
+//int GRIB2_DOMAIN_SELECTION = 1; int Scenarios_max = 1;
+//int GRIB2_DOMAIN_SELECTION = 2; int Scenarios_max = 1;
+ 
 
 
 PrintWriter[] File_output_node;
@@ -16400,7 +16402,11 @@ void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, 
         if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("GDPS")) {
           the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
         }
-       
+        if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("GEPS")) {
+          the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+        }
+
+      
             
         try {
           println("Downloading...", the_link);
@@ -16469,7 +16475,16 @@ String getGrib2Filename (int k, int l) {
   if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("GDPS")) {
     return_txt = GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + LAYERS_GRIB2[l][0] + "_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][3] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + nf(GRIB2_RUN, 2) + "_P" + nf(k, 3) + ".grib2";
   }
-
+  if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("GEPS")) {
+    
+    String F_L = LAYERS_GRIB2[l][0];
+    if (F_L.equals("TMP_TGL_2")) F_L += "m";
+    if (F_L.equals("RH_TGL_2")) F_L += "m";
+    if (F_L.equals("UGRD_TGL_10")) F_L += "m";
+    if (F_L.equals("VGRD_TGL_10")) F_L += "m";
+    
+    return_txt = GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + F_L + "_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][3] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + nf(GRIB2_RUN, 2) + "_P" + nf(k, 3) + "_allmbrs.grib2";
+  }
 
   
   return return_txt;
@@ -16584,7 +16599,7 @@ float getGrib2Value (int k, int l, float _lon, float _lat) {
 }
 
 
-int Scenarios_max = 1; // for GEPS equals to 21
+
 
 int MAX_GRIB2_PASS = 200;
 
