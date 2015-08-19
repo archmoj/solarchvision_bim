@@ -301,7 +301,7 @@ int GRIB2_Hour_Start = 0;
 int GRIB2_Hour_End = 0; //48;
 int GRIB2_Hour_Step = 6;
 
-int GRIB2_Layer_Start =  8; //5; //_winddir;
+int GRIB2_Layer_Start =  5; //_winddir;
 int GRIB2_Layer_End = 8; //_drybulb;
 int GRIB2_Layer_Step = 1;
 
@@ -332,9 +332,9 @@ String[][] GRIB2_DOMAINS = {
   
   
 
-int GRIB2_DOMAIN_SELECTION = 0; int Scenarios_max = 21;   
+//int GRIB2_DOMAIN_SELECTION = 0; int Scenarios_max = 21;   
 //int GRIB2_DOMAIN_SELECTION = 1; int Scenarios_max = 1;
-//int GRIB2_DOMAIN_SELECTION = 2; int Scenarios_max = 1;
+int GRIB2_DOMAIN_SELECTION = 2; int Scenarios_max = 1;
  
 
 
@@ -16868,6 +16868,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l) {
   THE_XML_filename += "/XML_layers/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0];
   THE_XML_filename += "/" + nf(GRIB2_YEAR, 4) + "_" + nf(GRIB2_MONTH, 2) + "_" + nf(GRIB2_DAY, 2) + "_" + nf(GRIB2_RUN, 2);
   THE_XML_filename += "/" + nfp(LocationLatitude, 2, 3).replace(",", "_").replace(".", "_").replace("+", "N") + nfp(LocationLongitude, 3, 3).replace(",", "_").replace(".", "_").replace("-", "W");
+  THE_XML_filename += "_" + LAYERS_GRIB2[l][0];
   THE_XML_filename += ".xml";
   saveXML(my_xml, THE_XML_filename);
 
