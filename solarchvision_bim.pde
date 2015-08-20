@@ -295,7 +295,7 @@ int GRIB2_MONTH;
 int GRIB2_DAY; 
 int GRIB2_RUN;
 
-int AERIAL_num = 6; // the number of nearest points on the path we want to extract the data 
+int AERIAL_num = 1 + 6 + 12; // the number of nearest points on the path we want to extract the data 
 
 float AERIAL_Center_Longitude = FLOAT_undefined;
 float AERIAL_Center_Latitude = FLOAT_undefined;
@@ -2016,11 +2016,6 @@ void SOLARCHVISION_draw_WORLD () {
 
   WORLD_Diagrams.ellipseMode(CENTER);
 
-  WORLD_Diagrams.strokeWeight(3);
-  WORLD_Diagrams.stroke(0, 0, 127, 255);
-  WORLD_Diagrams.noFill();
-
-
 
 GRIB2_Layer = GRIB2_Layer_Start;
 GRIB2_Hour = GRIB2_Hour_Start;
@@ -2046,19 +2041,20 @@ GRIB2_Hour = GRIB2_Hour_Start;
         //WORLD_Diagrams.ellipse(0, 0, 1 * R_station, 1 * R_station);    
 
         //-----------------------------
-        int PAL_TYPE = 12; 
-        int PAL_DIR = -1;
-        float _Multiplier = 1.0 / 30.0;
+        int PAL_TYPE = 1;//12; 
+        int PAL_DIR = 1;//-1;
+        float _Multiplier = 0.1;//1.0 / 30.0;
         //-----------------------------
 
         for (int _turn = 1; _turn <= 2; _turn += 1){
           for (int o = 0; o < Scenarios_max; o += 1){
           
-            float _val = AERIAL[GRIB2_Hour][_drybulb][n][o];
+            //float _val = AERIAL[GRIB2_Hour][_drybulb][n][o];
+            float _val = AERIAL[GRIB2_Hour][_windspd][n][o];
               
             float teta = AERIAL[GRIB2_Hour][_winddir][n][o];
             float D_teta = 15; 
-            float R = R_station * AERIAL[GRIB2_Hour][_windspd][n][o];
+            float R = 0.5 * R_station * AERIAL[GRIB2_Hour][_windspd][n][o];
             
             float R_in = 0.0 * R; 
             float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta)));
@@ -2108,7 +2104,7 @@ GRIB2_Hour = GRIB2_Hour_Start;
               else{
                 WORLD_Diagrams.stroke(255);
                 WORLD_Diagrams.fill(255);
-                WORLD_Diagrams.strokeWeight(5);
+                WORLD_Diagrams.strokeWeight(2);
               }              
               WORLD_Diagrams.text(nf(int(roundTo(_val, 1)), 0), 0,0);
             }
@@ -2134,6 +2130,10 @@ GRIB2_Hour = GRIB2_Hour_Start;
   
     float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
     float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
+
+    WORLD_Diagrams.strokeWeight(3);
+    WORLD_Diagrams.stroke(0, 0, 127, 255);
+    WORLD_Diagrams.noFill();
 
     WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
   }   
@@ -16462,10 +16462,26 @@ void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, 
     float stp_lat = 1.0 / 2224.5968; // equals to 50m <<<<<<<<
     float stp_lon = stp_lat / cos_ang(AERIAL_Center_Latitude); 
     
-    float r = 100; // 100x50m = 5km
+    float r = 0; 
+    float t = 0; 
     
-    AERIAL_Locations[n][0] = AERIAL_Center_Longitude + stp_lon * r * cos_ang(360 * n / float(AERIAL_num));
-    AERIAL_Locations[n][1] = AERIAL_Center_Latitude + stp_lat * r * sin_ang(360 * n / float(AERIAL_num));
+    if ((n > 0) && (n <= 6)) {
+      r = 100; // 100x50m = 5km
+      t = 360 * n / 6.0;
+    }  
+
+    if ((n > 6) && (n <= 18)) {
+      r = 200; // 200x50m = 10km
+      t = 360 * (n - 6) / 12.0;
+    }  
+
+    if ((n > 18) && (n <= 36)) {
+      r = 300; // 300x50m = 15km
+      t = 360 * (n - 18) / 18.0;
+    }  
+    
+    AERIAL_Locations[n][0] = AERIAL_Center_Longitude + stp_lon * r * cos_ang(t);
+    AERIAL_Locations[n][1] = AERIAL_Center_Latitude + stp_lat * r * sin_ang(t);
     AERIAL_Locations[n][2] = 10;
   
   }  
