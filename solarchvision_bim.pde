@@ -295,10 +295,12 @@ int GRIB2_MONTH;
 int GRIB2_DAY; 
 int GRIB2_RUN;
 
-int AERIAL_num = 5; // the number of nearest points on the path we want to extract the data 
+int AERIAL_num = 6; // the number of nearest points on the path we want to extract the data 
 
 float AERIAL_Center_Longitude = FLOAT_undefined;
 float AERIAL_Center_Latitude = FLOAT_undefined;
+
+float[][] AERIAL_Locations;
 
 float[][][][] AERIAL;
 int[][][][] AERIAL_Flag;
@@ -16363,9 +16365,6 @@ SOLARCHVISION_Spinner MySpinner = new SOLARCHVISION_Spinner();
 
 //---------------------------------------------------------------------
 
-float[][] AERIAL_Locations;
-
-
 
 void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
@@ -16393,10 +16392,14 @@ void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, 
       }
     }  
     
-    float r = 0.5;
     
-    AERIAL_Locations[n][0] = LocationLongitude + r * cos_ang(360 * n / float(AERIAL_num));
-    AERIAL_Locations[n][1] = LocationLatitude + r * sin_ang(360 * n / float(AERIAL_num));
+    float stp_lat = 1.0 / 2224.5968; // equals to 50m <<<<<<<<
+    float stp_lon = stp_lat / cos_ang(AERIAL_Center_Latitude); 
+    
+    float r = 100; // 100x50m = 5km
+    
+    AERIAL_Locations[n][0] = AERIAL_Center_Longitude + stp_lon * r * cos_ang(360 * n / float(AERIAL_num));
+    AERIAL_Locations[n][1] = AERIAL_Center_Latitude + stp_lat * r * sin_ang(360 * n / float(AERIAL_num));
     AERIAL_Locations[n][2] = 10;
   
   }  
