@@ -1,5 +1,8 @@
 import processing.pdf.*;
 
+String _undefined = "N/A";
+float FLOAT_undefined = 1000000000; // it must be a positive big number that is not included in any data
+
 int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
@@ -293,6 +296,9 @@ int GRIB2_DAY;
 int GRIB2_RUN;
 
 int AERIAL_num = 5; // the number of nearest points on the path we want to extract the data 
+
+float AERIAL_Center_Longitude = FLOAT_undefined;
+float AERIAL_Center_Latitude = FLOAT_undefined;
 
 float[][][][] AERIAL;
 int[][][][] AERIAL_Flag;
@@ -746,8 +752,7 @@ int filter_type = _daily;
 int join_hour_numbers = 24; //48;
 int join_type = -1; // -1: increasing weights, +1: equal weights
 
-String _undefined = "N/A";
-float FLOAT_undefined = 1000000000; // it must be a positive big number that is not included in any data
+
 
 int dT = 1;
 
@@ -2013,19 +2018,56 @@ void SOLARCHVISION_draw_WORLD () {
   WORLD_Diagrams.stroke(0, 0, 127, 255);
   WORLD_Diagrams.noFill();
 
-  {
-    {
-      float _lat = LocationLatitude;
-      float _lon = LocationLongitude; 
-      if (_lon > 180) _lon -= 360; // << important!
+
+
+GRIB2_Layer = GRIB2_Layer_Start;
+GRIB2_Hour = GRIB2_Hour_Start;
+
+
+
+  for (int n = 0; n < AERIAL_num; n += 1) {
     
-      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
+    try {
+    
+      float[] _val = AERIAL[GRIB2_Hour][GRIB2_Layer][n];
+      
+      if (_val[0] < 0.9 * FLOAT_undefined) { // there is no need to check _val[h] != undefined here, the first one is enough
   
-      WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
+        float _lat = AERIAL_Locations[n][1];
+        float _lon = AERIAL_Locations[n][0]; 
+        if (_lon > 180) _lon -= 360; // << important!
+  
+        float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+        float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
+  
+      
+        //for (int o = 0; o < Scenarios_max; o += 1){
+      
+          WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
+        //}
+      }
+    
     }
     
- 
+    catch (Exception e) {
+      
+    }
+
+  }   
+  
+      
+
+
+
+  {
+    float _lat = LocationLatitude;
+    float _lon = LocationLongitude; 
+    if (_lon > 180) _lon -= 360; // << important!
+  
+    float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+    float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
+
+    WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
   }   
 
   int nearest_Station_OBSERVED = -1;
@@ -16338,6 +16380,8 @@ void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, 
   AERIAL = new float[49][num_layers][AERIAL_num][Scenarios_max];
   AERIAL_Flag = new int[49][num_layers][AERIAL_num][Scenarios_max];
   AERIAL_Locations = new float[AERIAL_num][3]; // lon, lat, tgl
+  AERIAL_Center_Longitude = LocationLongitude;
+  AERIAL_Center_Latitude = LocationLatitude;
 
   for (int n = 0; n < AERIAL_num; n += 1) {
     for (int k = 0; k <= 48; k += 1) {
@@ -16367,7 +16411,7 @@ void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, 
   }
   
   String[] SavedFiles = sort(getfiles(the_directory));
-  
+
   for (int l = GRIB2_Layer_Start; l <= GRIB2_Layer_End; l += GRIB2_Layer_Step) {
     GRIB2_Layer = l;
     
@@ -16867,7 +16911,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l) {
   String THE_XML_filename = ExportFolder;
   THE_XML_filename += "/XML_layers/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0];
   THE_XML_filename += "/" + nf(GRIB2_YEAR, 4) + "_" + nf(GRIB2_MONTH, 2) + "_" + nf(GRIB2_DAY, 2) + "_" + nf(GRIB2_RUN, 2);
-  THE_XML_filename += "/" + nfp(LocationLatitude, 2, 3).replace(",", "_").replace(".", "_").replace("+", "N") + nfp(LocationLongitude, 3, 3).replace(",", "_").replace(".", "_").replace("-", "W");
+  THE_XML_filename += "/" + nfp(AERIAL_Center_Latitude, 2, 3).replace(",", "_").replace(".", "_").replace("+", "N") + nfp(AERIAL_Center_Longitude, 3, 3).replace(",", "_").replace(".", "_").replace("-", "W");
   THE_XML_filename += "_" + LAYERS_GRIB2[l][0];
   THE_XML_filename += ".xml";
   saveXML(my_xml, THE_XML_filename);
