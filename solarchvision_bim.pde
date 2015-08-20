@@ -2029,31 +2029,32 @@ GRIB2_Hour = GRIB2_Hour_Start;
 
   for (int n = 0; n < AERIAL_num; n += 1) {
     
-    try {
+    //try {
+      
+      if ((AERIAL_Center_Longitude == LocationLongitude) && (AERIAL_Center_Latitude == LocationLatitude)) {
     
-      float[] _val = AERIAL[GRIB2_Hour][GRIB2_Layer][n];
+        float[] _val = AERIAL[GRIB2_Hour][GRIB2_Layer][n];
+        
+        if (_val[0] < 0.9 * FLOAT_undefined) { // there is no need to check _val[h] != undefined here, the first one is enough
+    
+          float _lat = AERIAL_Locations[n][1];
+          float _lon = AERIAL_Locations[n][0]; 
+          if (_lon > 180) _lon -= 360; // << important!
+    
+          float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+          float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
+    
+        
+          //for (int o = 0; o < Scenarios_max; o += 1){
+        
+            WORLD_Diagrams.ellipse(x_point, y_point, 1 * R_station, 1 * R_station);
+          //}
+        }
       
-      if (_val[0] < 0.9 * FLOAT_undefined) { // there is no need to check _val[h] != undefined here, the first one is enough
-  
-        float _lat = AERIAL_Locations[n][1];
-        float _lon = AERIAL_Locations[n][0]; 
-        if (_lon > 180) _lon -= 360; // << important!
-  
-        float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-        float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
-  
-      
-        //for (int o = 0; o < Scenarios_max; o += 1){
-      
-          WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
-        //}
       }
-    
-    }
-    
-    catch (Exception e) {
-      
-    }
+    //}
+    //catch (Exception e) {
+    //}
 
   }   
   
