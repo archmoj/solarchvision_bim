@@ -2033,24 +2033,89 @@ GRIB2_Hour = GRIB2_Hour_Start;
       
       if ((AERIAL_Center_Longitude == LocationLongitude) && (AERIAL_Center_Latitude == LocationLatitude)) {
     
-        float[] _val = AERIAL[GRIB2_Hour][GRIB2_Layer][n];
-        
-        if (_val[0] < 0.9 * FLOAT_undefined) { // there is no need to check _val[h] != undefined here, the first one is enough
-    
-          float _lat = AERIAL_Locations[n][1];
-          float _lon = AERIAL_Locations[n][0]; 
-          if (_lon > 180) _lon -= 360; // << important!
-    
-          float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-          float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
-    
-        
-          //for (int o = 0; o < Scenarios_max; o += 1){
-        
-            WORLD_Diagrams.ellipse(x_point, y_point, 1 * R_station, 1 * R_station);
-          //}
+        float _lat = AERIAL_Locations[n][1];
+        float _lon = AERIAL_Locations[n][0]; 
+        if (_lon > 180) _lon -= 360; // << important!
+  
+        float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+        float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
+
+        WORLD_Diagrams.pushMatrix();
+        WORLD_Diagrams.translate(x_point, y_point);
+
+        //WORLD_Diagrams.ellipse(0, 0, 1 * R_station, 1 * R_station);    
+
+        //-----------------------------
+        int PAL_TYPE = 12; 
+        int PAL_DIR = -1;
+        float _Multiplier = 1.0 / 30.0;
+        //-----------------------------
+
+        for (int _turn = 1; _turn <= 2; _turn += 1){
+          for (int o = 0; o < Scenarios_max; o += 1){
+          
+            float _val = AERIAL[GRIB2_Hour][_drybulb][n][o];
+              
+            float teta = AERIAL[GRIB2_Hour][_winddir][n][o];
+            float D_teta = 15; 
+            float R = R_station * AERIAL[GRIB2_Hour][_windspd][n][o];
+            
+            float R_in = 0.0 * R; 
+            float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta)));
+            float y1 = (R_in * -sin_ang(90 - (teta - 0.5 * D_teta)));
+            float x2 = (R_in * cos_ang(90 - (teta + 0.5 * D_teta)));
+            float y2 = (R_in * -sin_ang(90 - (teta + 0.5 * D_teta)));                      
+             
+            float x4 = (R * cos_ang(90 - (teta - 0.5 * D_teta)));
+            float y4 = (R * -sin_ang(90 - (teta - 0.5 * D_teta)));
+            float x3 = (R * cos_ang(90 - (teta + 0.5 * D_teta)));
+            float y3 = (R * -sin_ang(90 - (teta + 0.5 * D_teta)));          
+            
+            //float ox = -0.5 * (R * cos_ang(90 - teta));
+            //float oy = -0.5 * (R * -sin_ang(90 - teta));
+            //float ox = -1 * (R * cos_ang(90 - teta));
+            //float oy = -1 * (R * -sin_ang(90 - teta));
+            float ox = -2 * (R * cos_ang(90 - teta)) / 3.0;
+            float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0;            
+
+            float _u = 0.5 + 0.5 * (_Multiplier * _val);
+            if (PAL_DIR == -1) _u = 1 - _u;
+            if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+            if (PAL_DIR == 2) _u =  0.5 * _u;
+            
+            float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
+  
+            if (_turn == 1) {
+              WORLD_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
+              WORLD_Diagrams.fill(_COL[1], _COL[2], _COL[3]);           
+  
+              WORLD_Diagrams.strokeWeight(0);
+              //WORLD_Diagrams.quad(x1, y1, x2, y2, x3, y3, x4, y4);
+              WORLD_Diagrams.quad(x1 + ox, y1 + oy, x2 + ox, y2 + oy, x3 + ox, y3 + oy, x4 + ox, y4 + oy);
+            }
+            
+            if (_turn == 2) {
+              WORLD_Diagrams.textSize(MESSAGE_S_View);
+              WORLD_Diagrams.textAlign(CENTER, CENTER);
+
+              _u = 0.5 + 0.5 * (_Multiplier * _val);
+              
+              if (_COL[1] + _COL[2] + _COL[3] > 1.75 * 255) {
+                WORLD_Diagrams.stroke(127);
+                WORLD_Diagrams.fill(127);
+                WORLD_Diagrams.strokeWeight(0);
+              }
+              else{
+                WORLD_Diagrams.stroke(255);
+                WORLD_Diagrams.fill(255);
+                WORLD_Diagrams.strokeWeight(5);
+              }              
+              WORLD_Diagrams.text(nf(int(roundTo(_val, 1)), 0), 0,0);
+            }
+          }
         }
-      
+        
+        WORLD_Diagrams.popMatrix();
       }
     //}
     //catch (Exception e) {
