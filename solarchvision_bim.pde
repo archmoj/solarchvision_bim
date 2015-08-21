@@ -306,7 +306,7 @@ float[][][][] AERIAL;
 int[][][][] AERIAL_Flag;
 
 int GRIB2_Hour_Start = 0;
-int GRIB2_Hour_End = 24; //48;
+int GRIB2_Hour_End = 0; //48;
 int GRIB2_Hour_Step = 6; //1;
 
 int GRIB2_Layer_Start =  5; //_winddir;
@@ -1929,19 +1929,14 @@ void draw () {
       
       int d = (GRIB2_Hour_End - GRIB2_Hour_Start) / GRIB2_Hour_Step;      
       
-      println("d:", d);
-      
       if (d > 1) {
         
         GRIB2_Hour += GRIB2_Hour_Step * (frameCount % d);
       
         if (GRIB2_Hour > GRIB2_Hour_End) GRIB2_Hour = GRIB2_Hour_Start;
-        
+      
+        WORLD_Update = 1;
       }
-      
-      println("GRIB2_Hour:", GRIB2_Hour);
-      
-      WORLD_Update = 1;
     }
 
 
