@@ -295,7 +295,7 @@ int GRIB2_MONTH;
 int GRIB2_DAY; 
 int GRIB2_RUN;
 
-int AERIAL_num = 2 * (1 + 6 + 12); // the number of nearest points on the path we want to extract the data 
+int AERIAL_num = 4 * (1 + 6 + 12); // the number of nearest points on the path we want to extract the data 
 
 float AERIAL_Center_Longitude = FLOAT_undefined;
 float AERIAL_Center_Latitude = FLOAT_undefined;
@@ -17117,8 +17117,8 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points) {
 
   String THE_XML_filename = ExportFolder;
   THE_XML_filename += "/XML_layers/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0];
-  THE_XML_filename += "/" + nf(GRIB2_YEAR, 4) + "_" + nf(GRIB2_MONTH, 2) + "_" + nf(GRIB2_DAY, 2) + "_" + nf(GRIB2_RUN, 2);
-  THE_XML_filename += "/" + nfp(AERIAL_Center_Latitude, 2, 3).replace(",", "_").replace(".", "_").replace("+", "N") + nfp(AERIAL_Center_Longitude, 3, 3).replace(",", "_").replace(".", "_").replace("-", "W");
+  THE_XML_filename += "/" + nf(GRIB2_YEAR, 4) + "_" + nf(GRIB2_MONTH, 2) + "_" + nf(GRIB2_DAY, 2) + "_run" + nf(GRIB2_RUN, 2);
+  THE_XML_filename += "/fhr" + nf(k, 3) + "_" + nfp(AERIAL_Center_Latitude, 2, 3).replace(",", "_").replace(".", "_").replace("+", "N") + nfp(AERIAL_Center_Longitude, 3, 3).replace(",", "_").replace(".", "_").replace("-", "W");
   THE_XML_filename += "_" + LAYERS_GRIB2[l][h];
   THE_XML_filename += ".xml";
   saveXML(my_xml, THE_XML_filename);
