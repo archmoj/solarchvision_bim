@@ -490,6 +490,8 @@ float[] LAYERS_GRIB2_MUL;
 float[] LAYERS_GRIB2_ADD;
 
 
+int[] GRIB2_TGL_Selected = {1,0,0,0}; // for levels above ground level 
+int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
 
 {
   GRAPHS_V_scale = new float[num_layers];
@@ -498,7 +500,7 @@ float[] LAYERS_GRIB2_ADD;
   LAYERS_Unit = new String[num_layers];  
   LAYERS_Title = new String[num_layers][2];
   LAYERS_ENSEMBLE = new String[num_layers];
-  LAYERS_GRIB2 = new String[num_layers][4]; // for different TGLs.
+  LAYERS_GRIB2 = new String[num_layers][GRIB2_TGL_number]; 
   LAYERS_GRIB2_MUL = new float[num_layers];
   LAYERS_GRIB2_ADD = new float[num_layers];
   
@@ -16522,6 +16524,10 @@ void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, 
   AERIAL_Center_Longitude = LocationLongitude;
   AERIAL_Center_Latitude = LocationLatitude;
 
+  for (int h = 0; h < GRIB2_TGL_number; h += 1) {
+    GRIB2_TGL_Selected[h] = 0; // deselect all layers first.
+  }
+
   for (int n = 0; n < AERIAL_num; n += 1) {
     for (int k = 0; k <= 48; k += 1) {
       for (int l = 0; l < num_layers; l++) {
@@ -16567,6 +16573,7 @@ void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, 
     AERIAL_Locations[n][1] = AERIAL_Center_Latitude + stp_lat * r * sin_ang(t);
     AERIAL_Locations[n][2] = _tgl;
   
+    GRIB2_TGL_Selected[p] = 1;
   }  
 
 
@@ -16579,92 +16586,97 @@ void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, 
   }
   
   String[] SavedFiles = sort(getfiles(the_directory));
-
-  for (int l = GRIB2_Layer_Start; l <= GRIB2_Layer_End; l += GRIB2_Layer_Step) {
-    GRIB2_Layer = l;
+  
+  for (int h = 0; h < GRIB2_TGL_number; h += 1) {
     
-    for (int k = GRIB2_Hour_Start; k <= GRIB2_Hour_End; k += GRIB2_Hour_Step) {
-      GRIB2_Hour = k;
-      
-      String the_filename = getGrib2Filename(GRIB2_Hour, GRIB2_Layer);
-      
-      int File_Found = 0;
-
-      for (int i = SavedFiles.length - 1; i >= 0; i--) {
-        String thisFile = the_directory + "/" + SavedFiles[i];
+    if (GRIB2_TGL_Selected[h] != 0) {
+  
+      for (int l = GRIB2_Layer_Start; l <= GRIB2_Layer_End; l += GRIB2_Layer_Step) {
+        GRIB2_Layer = l;
         
-        if (thisFile.equals(the_directory + "/" + the_filename)) {
-          File_Found = 1;
-          break;
-        }
-      }
-
-      if (File_Found == 0) {
-
-        String the_target = the_directory + "/" + the_filename;
-
-        String the_link = "";
-        
-        if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("WAVE")) {
-          the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + the_filename;  
-        }
-        if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("HRDPS")) {
-          the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
-        }
-        if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("GDPS")) {
-          the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
-        }
-        if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("GEPS")) {
-          the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
-        }
-
-      
-            
-        try {
-          println("Downloading...", the_link);
-          saveBytes(the_target, loadBytes(the_link));
-          println("100%");
-          File_Found = 1;
-        } 
-        catch (Exception e) {
-
-        }  
-      }
-      
-      if (File_Found == 1) {
-        /*
-        for (int n = 0; n < AERIAL_num; n += 1) {
-
-          LocationLongitude = AERIAL_Locations[n][0];
-          LocationLatitude = AERIAL_Locations[n][1];
-        
-          int o = 0; // now only for deterministic!
-          AERIAL[GRIB2_Hour][GRIB2_Layer][n][o] = getGrib2Value(GRIB2_Hour, GRIB2_Layer, AERIAL_Locations[n][0], AERIAL_Locations[n][1]); 
+        for (int k = GRIB2_Hour_Start; k <= GRIB2_Hour_End; k += GRIB2_Hour_Step) {
+          GRIB2_Hour = k;
           
-        }
-        */
-        
-        float[][] GRIB2_values = getGrib2Value_MultiplePoints(GRIB2_Hour, GRIB2_Layer);
-        
-        for (int n = 0; n < AERIAL_num; n += 1) {
-          for (int o = 0; o < Scenarios_max; o += 1){
-            AERIAL[GRIB2_Hour][GRIB2_Layer][n][o] = GRIB2_values[n][o];
-          }
-        }        
-
-        for (int n = 0; n < AERIAL_num; n += 1) {
-          for (int o = 0; o < Scenarios_max; o += 1){
-            if (AERIAL[GRIB2_Hour][GRIB2_Layer][n][o] < 0.9 * FLOAT_undefined) {
-              AERIAL_Flag[GRIB2_Hour][GRIB2_Layer][n][o] = 1;
+          String the_filename = getGrib2Filename(GRIB2_Hour, GRIB2_Layer);
+          
+          int File_Found = 0;
+    
+          for (int i = SavedFiles.length - 1; i >= 0; i--) {
+            String thisFile = the_directory + "/" + SavedFiles[i];
+            
+            if (thisFile.equals(the_directory + "/" + the_filename)) {
+              File_Found = 1;
+              break;
             }
-            else AERIAL_Flag[GRIB2_Hour][GRIB2_Layer][n][o] = -1;
+          }
+    
+          if (File_Found == 0) {
+    
+            String the_target = the_directory + "/" + the_filename;
+    
+            String the_link = "";
+            
+            if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("WAVE")) {
+              the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + the_filename;  
+            }
+            if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("HRDPS")) {
+              the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+            }
+            if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("GDPS")) {
+              the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+            }
+            if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("GEPS")) {
+              the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+            }
+    
+          
+                
+            try {
+              println("Downloading...", the_link);
+              saveBytes(the_target, loadBytes(the_link));
+              println("100%");
+              File_Found = 1;
+            } 
+            catch (Exception e) {
+    
+            }  
+          }
+          
+          if (File_Found == 1) {
+            /*
+            for (int n = 0; n < AERIAL_num; n += 1) {
+    
+              LocationLongitude = AERIAL_Locations[n][0];
+              LocationLatitude = AERIAL_Locations[n][1];
+            
+              int o = 0; // now only for deterministic!
+              AERIAL[GRIB2_Hour][GRIB2_Layer][n][o] = getGrib2Value(GRIB2_Hour, GRIB2_Layer, AERIAL_Locations[n][0], AERIAL_Locations[n][1]); 
+              
+            }
+            */
+            
+            float[][] GRIB2_values = getGrib2Value_MultiplePoints(GRIB2_Hour, GRIB2_Layer);
+            
+            for (int n = 0; n < AERIAL_num; n += 1) {
+              for (int o = 0; o < Scenarios_max; o += 1){
+                AERIAL[GRIB2_Hour][GRIB2_Layer][n][o] = GRIB2_values[n][o];
+              }
+            }        
+    
+            for (int n = 0; n < AERIAL_num; n += 1) {
+              for (int o = 0; o < Scenarios_max; o += 1){
+                if (AERIAL[GRIB2_Hour][GRIB2_Layer][n][o] < 0.9 * FLOAT_undefined) {
+                  AERIAL_Flag[GRIB2_Hour][GRIB2_Layer][n][o] = 1;
+                }
+                else AERIAL_Flag[GRIB2_Hour][GRIB2_Layer][n][o] = -1;
+              }
+            }
+    
           }
         }
-
       }
     }
   }
-
   
 }
 
