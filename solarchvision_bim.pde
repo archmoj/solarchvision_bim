@@ -7,7 +7,7 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 0;
+int STATION_NUMBER = 2;
 
 String[][] DEFINED_STATIONS = {
                                 {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36"},
@@ -295,7 +295,7 @@ int GRIB2_MONTH;
 int GRIB2_DAY; 
 int GRIB2_RUN;
 
-int AERIAL_num = 1 + 6 + 12; // the number of nearest points on the path we want to extract the data 
+int AERIAL_num = 1 * (1 + 6 + 12); // the number of nearest points on the path we want to extract the data 
 
 float AERIAL_Center_Longitude = FLOAT_undefined;
 float AERIAL_Center_Latitude = FLOAT_undefined;
@@ -320,10 +320,10 @@ int GRIB2_Layer;
 
 
 String[][] GRIB2_DOMAINS = {
-                               {"GEPS", "ensemble/naefs/grib2/raw", "CMC_naefs-geps-raw", "latlon1p0x1p0"}
-                             , {"GDPS", "model_gem_global/25km/grib2/lat_lon", "CMC_glb", "latlon.24x.24"}
-                             , {"HRDPS", "model_hrdps/east/grib2", "CMC_hrdps_east", "ps2.5km"}
-                             , {"WAVE", "model_wave/great_lakes/superior/grib2", "CMC_rdwps_lake-superior", "latlon0.05x0.0"}                             
+                               {"GEPS", "ensemble/naefs/grib2/raw", "CMC_naefs-geps-raw", "latlon1p0x1p0", "_allmbrs.grib2", "100"}
+                             , {"GDPS", "model_gem_global/25km/grib2/lat_lon", "CMC_glb", "latlon.24x.24", ".grib2", "20"}
+                             , {"HRDPS", "model_hrdps/east/grib2", "CMC_hrdps_east", "ps2.5km", "-00.grib2", "5"} // <<<<<<<<<<<<<<<<<<<<<<<<< 2.5
+                             , {"WAVE", "model_wave/great_lakes/superior/grib2", "CMC_rdwps_lake-superior", "latlon0.05x0.0", ".grib2", "5"}                             
                              };
 
 
@@ -340,9 +340,10 @@ String[][] GRIB2_DOMAINS = {
   
   
 
-//int GRIB2_DOMAIN_SELECTION = 0; int Scenarios_max = 21;   
+//int GRIB2_DOMAIN_SELECTION = 0; int Scenarios_max = 21; // should convert U&V to wind speed and direction!   
 //int GRIB2_DOMAIN_SELECTION = 1; int Scenarios_max = 1;
 int GRIB2_DOMAIN_SELECTION = 2; int Scenarios_max = 1;
+//int GRIB2_DOMAIN_SELECTION = 3; int Scenarios_max = 1; // not working now!
  
 
 
@@ -497,7 +498,7 @@ float[] LAYERS_GRIB2_ADD;
   LAYERS_Unit = new String[num_layers];  
   LAYERS_Title = new String[num_layers][2];
   LAYERS_ENSEMBLE = new String[num_layers];
-  LAYERS_GRIB2 = new String[num_layers][1]; // for different TGLs.
+  LAYERS_GRIB2 = new String[num_layers][4]; // for different TGLs.
   LAYERS_GRIB2_MUL = new float[num_layers];
   LAYERS_GRIB2_ADD = new float[num_layers];
   
@@ -513,6 +514,9 @@ float[] LAYERS_GRIB2_ADD;
     LAYERS_Title[i][_FR] = "Direction du vent à la surface";
     LAYERS_ENSEMBLE[i] = "WDIR-SFC";
     LAYERS_GRIB2[i][0] = "WDIR_TGL_10";
+    LAYERS_GRIB2[i][1] = "WDIR_TGL_40";
+    LAYERS_GRIB2[i][2] = "WDIR_TGL_80";
+    LAYERS_GRIB2[i][3] = "WDIR_TGL_120";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -527,6 +531,9 @@ float[] LAYERS_GRIB2_ADD;
     LAYERS_Title[i][_FR] = "Vitesse du vent à la surface";
     LAYERS_ENSEMBLE[i] = "WIND-SFC";
     LAYERS_GRIB2[i][0] = "WIND_TGL_10"; // m/sec
+    LAYERS_GRIB2[i][1] = "WIND_TGL_40"; // m/sec
+    LAYERS_GRIB2[i][2] = "WIND_TGL_80"; // m/sec
+    LAYERS_GRIB2[i][3] = "WIND_TGL_120"; // m/sec
     LAYERS_GRIB2_MUL[i] = 3.6; // m/s > Km/h    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -541,6 +548,9 @@ float[] LAYERS_GRIB2_ADD;
     LAYERS_Title[i][_FR] = "Précipitations accumulées à la surface";
     LAYERS_ENSEMBLE[i] = "APCP-SFC";
     LAYERS_GRIB2[i][0] = "APCP_SFC_0"; // kg/m²
+    LAYERS_GRIB2[i][1] = "APCP_SFC_0"; // kg/m²
+    LAYERS_GRIB2[i][2] = "APCP_SFC_0"; // kg/m²
+    LAYERS_GRIB2[i][3] = "APCP_SFC_0"; // kg/m²
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -555,6 +565,9 @@ float[] LAYERS_GRIB2_ADD;
     LAYERS_Title[i][_FR] = "Humidité relative à la surface";
     LAYERS_ENSEMBLE[i] = "RELH-SFC";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2[i][1] = "";
+    LAYERS_GRIB2[i][2] = "";
+    LAYERS_GRIB2[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -569,6 +582,9 @@ float[] LAYERS_GRIB2_ADD;
     LAYERS_Title[i][_FR] = "Température de l'air à la surface";
     LAYERS_ENSEMBLE[i] = "TMP-SFC";
     LAYERS_GRIB2[i][0] = "TMP_TGL_2"; // Kelvin
+    LAYERS_GRIB2[i][1] = "TMP_TGL_40"; // Kelvin
+    LAYERS_GRIB2[i][2] = "TMP_TGL_80"; // Kelvin
+    LAYERS_GRIB2[i][3] = "TMP_TGL_120"; // Kelvin
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = -273.15; // °K > °C
   }
@@ -583,6 +599,9 @@ float[] LAYERS_GRIB2_ADD;
     LAYERS_Title[i][_FR] = "rayonnement direct normal";
     LAYERS_ENSEMBLE[i] = "";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2[i][1] = "";
+    LAYERS_GRIB2[i][2] = "";
+    LAYERS_GRIB2[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -597,6 +616,9 @@ float[] LAYERS_GRIB2_ADD;
     LAYERS_Title[i][_FR] = "diffus rayonnement horizontal";
     LAYERS_ENSEMBLE[i] = "";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2[i][1] = "";
+    LAYERS_GRIB2[i][2] = "";
+    LAYERS_GRIB2[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -611,6 +633,9 @@ float[] LAYERS_GRIB2_ADD;
     LAYERS_Title[i][_FR] = "rayonnement global horizontal";
     LAYERS_ENSEMBLE[i] = "";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2[i][1] = "";
+    LAYERS_GRIB2[i][2] = "";
+    LAYERS_GRIB2[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -625,6 +650,9 @@ float[] LAYERS_GRIB2_ADD;
     LAYERS_Title[i][_FR] = "";
     LAYERS_ENSEMBLE[i] = "";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2[i][1] = "";
+    LAYERS_GRIB2[i][2] = "";
+    LAYERS_GRIB2[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -639,6 +667,9 @@ float[] LAYERS_GRIB2_ADD;
     LAYERS_Title[i][_FR] = "effet direct normal (basé sur 18°C)";
     LAYERS_ENSEMBLE[i] = "";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2[i][1] = "";
+    LAYERS_GRIB2[i][2] = "";
+    LAYERS_GRIB2[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -653,6 +684,9 @@ float[] LAYERS_GRIB2_ADD;
     LAYERS_Title[i][_FR] = "effet diffus normal (basé sur 18°C)";
     LAYERS_ENSEMBLE[i] = "";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2[i][1] = "";
+    LAYERS_GRIB2[i][2] = "";
+    LAYERS_GRIB2[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -667,6 +701,9 @@ float[] LAYERS_GRIB2_ADD;
     LAYERS_Title[i][_FR] = "Couvert nuageux total";
     LAYERS_ENSEMBLE[i] = "TCDC";
     LAYERS_GRIB2[i][0] = "TCDC_SFC_0"; // percent
+    LAYERS_GRIB2[i][1] = "TCDC_SFC_0"; // percent
+    LAYERS_GRIB2[i][2] = "TCDC_SFC_0"; // percent
+    LAYERS_GRIB2[i][3] = "TCDC_SFC_0"; // percent
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -681,6 +718,9 @@ float[] LAYERS_GRIB2_ADD;
     LAYERS_Title[i][_FR] = "hauteur sous plafond";  
     LAYERS_ENSEMBLE[i] = "";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2[i][1] = "";
+    LAYERS_GRIB2[i][2] = "";
+    LAYERS_GRIB2[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -695,6 +735,9 @@ float[] LAYERS_GRIB2_ADD;
     LAYERS_Title[i][_FR] = "Pression moyenne au niveau de la mer";
     LAYERS_ENSEMBLE[i] = "MSLP";
     LAYERS_GRIB2[i][0] = "PRMSL_MSL_0";
+    LAYERS_GRIB2[i][1] = "PRMSL_MSL_0";
+    LAYERS_GRIB2[i][2] = "PRMSL_MSL_0";
+    LAYERS_GRIB2[i][3] = "PRMSL_MSL_0";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -709,6 +752,9 @@ float[] LAYERS_GRIB2_ADD;
     LAYERS_Title[i][_FR] = "Géopotentiel à 500 hPa";
     LAYERS_ENSEMBLE[i] = "HGT-500HPA";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2[i][1] = "";
+    LAYERS_GRIB2[i][2] = "";
+    LAYERS_GRIB2[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -723,6 +769,9 @@ float[] LAYERS_GRIB2_ADD;
     LAYERS_Title[i][_FR] = "Épaisseurs (différence de géopotentiel entre 1000 et 500 hPa";
     LAYERS_ENSEMBLE[i] = "LAYER-1000-500HPA";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2[i][1] = "";
+    LAYERS_GRIB2[i][2] = "";
+    LAYERS_GRIB2[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -737,6 +786,9 @@ float[] LAYERS_GRIB2_ADD;
     LAYERS_Title[i][_FR] = "Vitesse du vent à 200 hPa";  
     LAYERS_ENSEMBLE[i] = "WIND-200HPA";
     LAYERS_GRIB2[i][0] = "";
+    LAYERS_GRIB2[i][1] = "";
+    LAYERS_GRIB2[i][2] = "";
+    LAYERS_GRIB2[i][3] = "";
     LAYERS_GRIB2_MUL[i] = 1;    
     LAYERS_GRIB2_ADD[i] = 0;
   }
@@ -16432,6 +16484,10 @@ SOLARCHVISION_Spinner MySpinner = new SOLARCHVISION_Spinner();
 //---------------------------------------------------------------------
 
 
+
+
+
+
 void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
 
   GRIB2_YEAR = THE_YEAR;
@@ -16459,30 +16515,39 @@ void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, 
     }  
     
     
-    float stp_lat = 1.0 / 2224.5968; // equals to 50m <<<<<<<<
+    float stp_lat = 20.0 / 2224.5968; // equals to 1km <<<<<<<<
     float stp_lon = stp_lat / cos_ang(AERIAL_Center_Latitude); 
     
+    
+    float r1 = float(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][5]);
     float r = 0; 
     float t = 0; 
     
-    if ((n > 0) && (n <= 6)) {
-      r = 100; // 100x50m = 5km
-      t = 360 * n / 6.0;
+    int p = n / (1 + 6 + 12);
+    int q = n % (1 + 6 + 12);
+
+    if ((q > 0) && (q <= 6)) {
+      r = 1 * r1;
+      t = 360 * q / 6.0;
     }  
 
-    if ((n > 6) && (n <= 18)) {
-      r = 200; // 200x50m = 10km
-      t = 360 * (n - 6) / 12.0;
+    if ((q > 6) && (q <= 18)) {
+      r = 2 * r1;
+      t = 360 * (q - 6) / 12.0;
     }  
 
-    if ((n > 18) && (n <= 36)) {
-      r = 300; // 300x50m = 15km
-      t = 360 * (n - 18) / 18.0;
+    if ((q > 18) && (q <= 36)) {
+      r = 3 * r1;
+      t = 360 * (q - 18) / 18.0;
     }  
+    
+    float _tgl = 40 * p;
+   
+    if (_tgl == 0) _tgl = 10; // <<<<<<  
     
     AERIAL_Locations[n][0] = AERIAL_Center_Longitude + stp_lon * r * cos_ang(t);
     AERIAL_Locations[n][1] = AERIAL_Center_Latitude + stp_lat * r * sin_ang(t);
-    AERIAL_Locations[n][2] = 10;
+    AERIAL_Locations[n][2] = _tgl;
   
   }  
 
@@ -16595,25 +16660,18 @@ String getGrib2Folder (int s) {
 String getGrib2Filename (int k, int l) {
   String return_txt = "";
   
-  if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("WAVE")) {
-    return_txt = GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + LAYERS_GRIB2[l][0] + "_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][3] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + nf(GRIB2_RUN, 2) + "_P" + nf(k, 3) + ".grib2"; 
-  }
-  if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("HRDPS")) {
-    return_txt = GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + LAYERS_GRIB2[l][0] + "_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][3] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + nf(GRIB2_RUN, 2) + "_P" + nf(k, 3) + "-00" + ".grib2";
-  }
-  if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("GDPS")) {
-    return_txt = GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + LAYERS_GRIB2[l][0] + "_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][3] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + nf(GRIB2_RUN, 2) + "_P" + nf(k, 3) + ".grib2";
-  }
+  String F_L = LAYERS_GRIB2[l][0];
+  
   if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("GEPS")) {
     
-    String F_L = LAYERS_GRIB2[l][0];
     if (F_L.equals("TMP_TGL_2")) F_L += "m";
     if (F_L.equals("RH_TGL_2")) F_L += "m";
     if (F_L.equals("UGRD_TGL_10")) F_L += "m";
     if (F_L.equals("VGRD_TGL_10")) F_L += "m";
-    
-    return_txt = GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + F_L + "_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][3] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + nf(GRIB2_RUN, 2) + "_P" + nf(k, 3) + "_allmbrs.grib2";
   }
+    
+  return_txt = GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + F_L + "_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][3] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + nf(GRIB2_RUN, 2) + "_P" + nf(k, 3) + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][4];
+
 
   
   return return_txt;
@@ -16962,7 +17020,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l) {
             if (_lon < 0) _lon += 360; // << important!
     
             float d = dist_lon_lat(uX, uY, _lon, _lat);
-            if (d > 100000) { // 100km
+            if (d > 200000) { // 200km
             
               println("out of 100km: d =", d);
               
