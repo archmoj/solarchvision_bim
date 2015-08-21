@@ -306,11 +306,11 @@ float[][][][] AERIAL;
 int[][][][] AERIAL_Flag;
 
 int GRIB2_Hour_Start = 0;
-int GRIB2_Hour_End = 0; //48;
-int GRIB2_Hour_Step = 6;
+int GRIB2_Hour_End = 24; //48;
+int GRIB2_Hour_Step = 6; //1;
 
 int GRIB2_Layer_Start =  5; //_winddir;
-int GRIB2_Layer_End = 8; //_drybulb;
+int GRIB2_Layer_End = 6; //8; //_drybulb;
 int GRIB2_Layer_Step = 1;
 
 int GRIB2_Hour;
@@ -1907,6 +1907,12 @@ void draw () {
     }
 //-------------------------------
 
+    int WORLD_Animate = 0;
+
+    if ((GRAPHS_Update == 0) && (WIN3D_Update == 0)) {
+      WORLD_Animate = 1;
+    }
+
     if (GRAPHS_include == 1) {
       if (GRAPHS_Update == 1) {
         
@@ -1915,6 +1921,29 @@ void draw () {
       }
     }
     GRAPHS_Update = 0;    
+
+    if (WORLD_Animate != 0) {
+      GRIB2_Layer = GRIB2_Layer_Start;
+
+      GRIB2_Hour = GRIB2_Hour_Start;
+      
+      int d = (GRIB2_Hour_End - GRIB2_Hour_Start) / GRIB2_Hour_Step;      
+      
+      println("d:", d);
+      
+      if (d > 1) {
+        
+        GRIB2_Hour += GRIB2_Hour_Step * (frameCount % d);
+      
+        if (GRIB2_Hour > GRIB2_Hour_End) GRIB2_Hour = GRIB2_Hour_Start;
+        
+      }
+      
+      println("GRIB2_Hour:", GRIB2_Hour);
+      
+      WORLD_Update = 1;
+    }
+
 
     if (WORLD_include == 1) {
       if (WORLD_Update == 1) {
@@ -2067,12 +2096,6 @@ void SOLARCHVISION_draw_WORLD () {
   if (WORLD_VIEW_GridDisplay[WORLD_VIEW_Number] == 1) R_station = 5; 
 
   WORLD_Diagrams.ellipseMode(CENTER);
-
-
-GRIB2_Layer = GRIB2_Layer_Start;
-GRIB2_Hour = GRIB2_Hour_Start;
-
-
 
   for (int n = 0; n < AERIAL_num; n += 1) {
     
