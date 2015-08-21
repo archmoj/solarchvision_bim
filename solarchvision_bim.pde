@@ -16859,6 +16859,8 @@ int MAX_GRIB2_PASS = 200;
 
 float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points) {
   
+  // note: the first point is null
+  
   int next_YEAR = GRIB2_YEAR;
   int next_MONTH = GRIB2_MONTH;
   int next_DAY = GRIB2_DAY;
@@ -16924,7 +16926,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points) {
   
   for (int n = 1; n < Points.length; n += 1) {
     newChild2 = newChild1.addChild("point");
-    newChild2.setInt("id", n + 1); // <<<<<<< 1 - n
+    newChild2.setInt("id", n);
     
     newChild2.setString("latitude", String.valueOf(Points[n][0]));
     newChild2.setString("longitude", String.valueOf(Points[n][1]));
@@ -16944,7 +16946,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points) {
 
   String[] file_lines = {};
 
-  int NUM_ValueFiles = 1 + int(Points.length / MAX_GRIB2_PASS);
+  int NUM_ValueFiles = 1 + int((Points.length - 1) / MAX_GRIB2_PASS);
   String[] ValueFiles = new String[NUM_ValueFiles];
 
   for (int p = 0; p < NUM_ValueFiles; p += 1){ 
@@ -16977,11 +16979,11 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points) {
       
       int q_max = MAX_GRIB2_PASS;
       if (p == NUM_ValueFiles - 1) {
-        q_max = (Points.length % MAX_GRIB2_PASS);
+        q_max = ((Points.length - 1) % MAX_GRIB2_PASS);
       }
 
       for (int q = 0; q < q_max; q += 1){
-        int f = p * MAX_GRIB2_PASS + q;
+        int f = p * MAX_GRIB2_PASS + q + 1;
         
         float _lon = Points[f][0];
         float _lat = Points[f][1];
@@ -17074,7 +17076,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points) {
             
             float v = FLOAT_undefined;
             
-            int f = p * MAX_GRIB2_PASS + q - 1;
+            int f = p * MAX_GRIB2_PASS + q;
             
             float _lon = Points[f][0];
             float _lat = Points[f][1];
