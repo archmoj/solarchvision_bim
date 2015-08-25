@@ -2126,7 +2126,7 @@ void SOLARCHVISION_draw_WORLD () {
               
             float teta = AERIAL[GRIB2_Hour][_winddir][n][o];
             float D_teta = 15; 
-            float R = 0.5 * R_station * AERIAL[GRIB2_Hour][_windspd][n][o];
+            float R = 0.25 * R_station * AERIAL[GRIB2_Hour][_windspd][n][o];
             
             float R_in = 0.0 * R; 
             float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta)));
@@ -2178,7 +2178,7 @@ void SOLARCHVISION_draw_WORLD () {
                 WORLD_Diagrams.fill(255);
                 WORLD_Diagrams.strokeWeight(2);
               }              
-              WORLD_Diagrams.text(nf(int(roundTo(_val, 1)), 0), 0,0);
+              if (_val < 0.9 * FLOAT_undefined) WORLD_Diagrams.text(nf(int(roundTo(_val, 1)), 0), 0,0);
             }
           }
         }
@@ -16901,12 +16901,13 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points) {
 
   newChild2 = newChild1.addChild("model_description");
   newChild3 = newChild2.addChild("model");
-  newChild3.setInt("id", 44);  // ???????????????????????????????????????????????
+  //newChild3.setInt("id", 44);  // ???????????????????????????????????????????????
   newChild3.setString("model", GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0]); 
-  newChild3.setString("member", ""); 
+  newChild3.setString("member", Scenarios_max); 
   newChild3.setString("center", "CMC"); 
-  newChild3.setString("domain", GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0]);
+  newChild3.setString("domain", GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2]);
   newChild3.setString("data_type", "RAW"); 
+  newChild3.setString("source", "");
   
   if (Scenarios_max == 1) {
     newChild3.setString("member_type", "deterministic");
