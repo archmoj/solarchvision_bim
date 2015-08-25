@@ -309,8 +309,8 @@ int GRIB2_Hour_Start = 0;
 int GRIB2_Hour_End = 0; //48;
 int GRIB2_Hour_Step = 6; //1;
 
-int GRIB2_Layer_Start =  5; //_winddir;
-int GRIB2_Layer_End = 6; //8; //_drybulb;
+int GRIB2_Layer_Start =  4; //_winddir;
+int GRIB2_Layer_End = 8; //_drybulb;
 int GRIB2_Layer_Step = 1;
 
 int GRIB2_Hour;
@@ -6184,7 +6184,7 @@ void SOLARCHVISION_draw_Grid_Cartesian_TIME (float x_Plot, float y_Plot, float z
       Diagrams_fill(0);
       Diagrams_textSize(sx_Plot * 0.125 / GRAPHS_U_scale);
       Diagrams_textAlign(RIGHT, CENTER);
-      my_text(((String.valueOf(nf(-GRAPHS_V_offset[GRAPHS_drw_Layer] + roundTo(i / GRAPHS_V_scale[GRAPHS_drw_Layer], 0.1), 0, 1))) + LAYERS_Unit[GRAPHS_drw_Layer]), -5, -i * GRAPHS_S_View, 0);
+      my_text(((nf(-GRAPHS_V_offset[GRAPHS_drw_Layer] + roundTo(i / GRAPHS_V_scale[GRAPHS_drw_Layer], 0.1), 0, 1)) + LAYERS_Unit[GRAPHS_drw_Layer]), -5, -i * GRAPHS_S_View, 0);
       //my_text(((String.valueOf(int(-GRAPHS_V_offset[GRAPHS_drw_Layer] + roundTo(i / GRAPHS_V_scale[GRAPHS_drw_Layer], 0.1)))) + LAYERS_Unit[GRAPHS_drw_Layer]), -5, -i * GRAPHS_S_View, 0);
     }
   }
@@ -16609,28 +16609,26 @@ void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, 
               break;
             }
           }
+
+          String the_link = "";
+          
+          if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("WAVE")) {
+            the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + the_filename;  
+          }
+          if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("HRDPS")) {
+            the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+          }
+          if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("GDPS")) {
+            the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+          }
+          if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("GEPS")) {
+            the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+          }
     
           if (File_Found == 0) {
     
             String the_target = the_directory + "/" + the_filename;
     
-            String the_link = "";
-            
-            if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("WAVE")) {
-              the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + the_filename;  
-            }
-            if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("HRDPS")) {
-              the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
-            }
-            if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("GDPS")) {
-              the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
-            }
-            if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("GEPS")) {
-              the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
-            }
-    
-          
-                
             try {
               println("Downloading...", the_link);
               saveBytes(the_target, loadBytes(the_link));
@@ -16674,7 +16672,7 @@ void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, 
                           
             if (Points_num > 1) {
               
-              float[][] GRIB2_values = getGrib2Value_MultiplePoints(GRIB2_Hour, GRIB2_Layer, h, Points);
+              float[][] GRIB2_values = getGrib2Value_MultiplePoints(GRIB2_Hour, GRIB2_Layer, h, Points, the_link);
               
               int nPoint = 0;
               
@@ -16743,6 +16741,7 @@ String getGrib2Filename (int k, int l, int h) {
   
   return return_txt;
 }
+
 
 String getWgrib2Filename (int k, int l, int h, float _lon, float _lat) {
   return(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + "R" + nf(GRIB2_RUN, 2) + "P" + nf(k, 3) + "_" + LAYERS_GRIB2[l][h] + "_" + nf(_lon, 0, 4) + "X" + nf(_lat, 0, 4) + ".txt");
@@ -16857,10 +16856,26 @@ float getGrib2Value (int k, int l, int h, float _lon, float _lat) {
 
 int MAX_GRIB2_PASS = 200;
 
-float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points) {
+float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, String the_link) {
   
   // note: the first point is null
   
+  float[][] theValues = new float[Points.length][Scenarios_max];
+  
+  for (int n = 0; n < Points.length; n += 1) {
+    for (int o = 0; o < Scenarios_max; o += 1){
+      theValues[n][o] = FLOAT_undefined;
+    }
+  }
+
+
+  XML my_xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
+  XML newChild1 = null;
+  XML newChild2 = null;
+  XML newChild3 = null;
+  
+  int build_xml = 1;
+      
   int next_YEAR = GRIB2_YEAR;
   int next_MONTH = GRIB2_MONTH;
   int next_DAY = GRIB2_DAY;
@@ -16882,66 +16897,53 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points) {
     }
   }
 
-
-  XML my_xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
-
-  XML newChild1;
-  XML newChild2;
-  XML newChild3;
+  if (build_xml == 1) {
   
-  my_xml.setName(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0] + "_forecast");
-  
-  newChild1 = my_xml.addChild("header");
-  
-  newChild2 = newChild1.addChild("Domain");
-  newChild2.setContent(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0]);
-  
-  newChild2 = newChild1.addChild("valid-begin-time");
-  newChild2.setContent(nf(GRIB2_YEAR, 4) + "-" + nf(GRIB2_MONTH, 2) + "-" + nf(GRIB2_DAY, 2) + "T" + nf(GRIB2_RUN, 2) + "00:00Z");
-
-  newChild2 = newChild1.addChild("model_description");
-  newChild3 = newChild2.addChild("model");
-  //newChild3.setInt("id", 44);  // ???????????????????????????????????????????????
-  newChild3.setString("model", GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0]); 
-  newChild3.setString("member", Scenarios_max); 
-  newChild3.setString("center", "CMC"); 
-  newChild3.setString("domain", GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2]);
-  newChild3.setString("data_type", "RAW"); 
-  newChild3.setString("source", "");
-  
-  if (Scenarios_max == 1) {
-    newChild3.setString("member_type", "deterministic");
-  }
-  else {
-    newChild3.setString("member_type", "ensemble");
-  }
-
-  newChild1 = my_xml.addChild("forecast_element");
-  newChild1.setString("code", LAYERS_GRIB2[l][h]); 
-  newChild1.setString("unit_english", LAYERS_Unit[l]); 
-  newChild1.setString("title_english", LAYERS_Title[l][_EN]);
-  newChild1.setString("titre_francais", LAYERS_Title[l][_FR]);
-  newChild1.setString("unite_francaise", LAYERS_Unit[l]);
-  
-  newChild1 = my_xml.addChild("point_description");
-  
-  for (int n = 1; n < Points.length; n += 1) {
-    newChild2 = newChild1.addChild("point");
-    newChild2.setInt("id", n);
+    my_xml.setName(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0] + "_forecast");
     
-    newChild2.setString("latitude", String.valueOf(Points[n][0]));
-    newChild2.setString("longitude", String.valueOf(Points[n][1]));
-    newChild2.setString("TGL", String.valueOf(Points[n][2]));    
-  }
-
+    newChild1 = my_xml.addChild("header");
+    
+    newChild2 = newChild1.addChild("Domain");
+    newChild2.setContent(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0]);
+    
+    newChild2 = newChild1.addChild("valid-begin-time");
+    newChild2.setContent(nf(GRIB2_YEAR, 4) + "-" + nf(GRIB2_MONTH, 2) + "-" + nf(GRIB2_DAY, 2) + "T" + nf(GRIB2_RUN, 2) + "00:00Z");
   
-  float[][] theValues = new float[Points.length][Scenarios_max];
+    newChild2 = newChild1.addChild("model_description");
+    newChild3 = newChild2.addChild("model");
+    //newChild3.setInt("id", 44);  // ???????????????????????????????????????????????
+    newChild3.setString("model", GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0]); 
+    newChild3.setString("member", nf(Scenarios_max, 0)); 
+    newChild3.setString("center", "CMC"); 
+    newChild3.setString("domain", GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2]);
+    newChild3.setString("data_type", "RAW"); 
+    newChild3.setString("source", the_link);
+    
+    if (Scenarios_max == 1) {
+      newChild3.setString("member_type", "deterministic");
+    }
+    else {
+      newChild3.setString("member_type", "ensemble");
+    }
   
-  for (int n = 0; n < Points.length; n += 1) {
-    for (int o = 0; o < Scenarios_max; o += 1){
-      theValues[n][o] = FLOAT_undefined;
+    newChild1 = my_xml.addChild("forecast_element");
+    newChild1.setString("code", LAYERS_GRIB2[l][h]); 
+    newChild1.setString("unit", LAYERS_Unit[l]); 
+    newChild1.setString("title_english", LAYERS_Title[l][_EN]);
+    newChild1.setString("titre_francais", LAYERS_Title[l][_FR]);
+    
+    newChild1 = my_xml.addChild("point_description");
+    
+    for (int n = 1; n < Points.length; n += 1) {
+      newChild2 = newChild1.addChild("point");
+      newChild2.setInt("id", n);
+      
+      newChild2.setString("latitude", nf(Points[n][0], 0, 4).replace(",", "."));
+      newChild2.setString("longitude", nf(Points[n][1], 0, 4).replace(",", "."));
+      newChild2.setString("TGL", String.valueOf(Points[n][2]));    
     }
   }
+
 
   String[] filenames = getfiles(Wgrib2TempFolder);
 
@@ -16973,7 +16975,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points) {
     }
 
     if (runWgrib2 == 1) {
-      
+
       String Grib2File = getGrib2Folder(GRIB2_DOMAIN_SELECTION) + "/" + getGrib2Filename(k, l, h);
     
       String CommandArguments[] = {"wgrib2", Grib2File.replace("/", "\\"), "-s"};
@@ -16993,7 +16995,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points) {
         //StationJ = LOCATIONS_IJ[s][f][1];
         
         //if ((GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("GDPS")) || (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("GEPS"))) { 
-          String[] _add = {"-print", ("station=" + ""), "-lon", String.valueOf(nf(360 + _lon, 0,3).replace(",", ".")), String.valueOf(nf(_lat, 0,3).replace(",", "."))};
+          String[] _add = {"-print", ("station=" + ""), "-lon", nf(360 + _lon, 0,4).replace(",", "."), nf(_lat, 0,4).replace(",", ".")};
           CommandArguments = concat(CommandArguments , _add);
         //}
         //else{
@@ -17007,6 +17009,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points) {
       
       println(CommandArguments);
       open(CommandArguments);
+      
     }
 
 
@@ -17048,10 +17051,6 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points) {
 
         for (int o = 0; o < Scenarios_max; o += 1){       
 
-          newChild1 = my_xml.addChild("scenario");
-          newChild1.setInt("scenario_id", o + 1); // <<<<<<<<
-       
-          
           String file_one_line_entered = file_lines[o].replace(":station=", "\n");
           String[] my_lines = split(file_one_line_entered, "\n");  
               
@@ -17060,9 +17059,14 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points) {
           //println("lines:", my_lines.length);
           //println("-----------------------------------------------");
               
-          newChild2 = newChild1.addChild("forecast");
-          newChild2.setInt("forecast_hour", k);
-          newChild2.setString("valid_time", nf(next_YEAR, 4) + nf(next_MONTH, 2) + nf(next_DAY, 2) + nf(next_HOUR, 2)); 
+          if (build_xml == 1) {              
+            newChild1 = my_xml.addChild("scenario");
+            newChild1.setInt("scenario_id", o + 1); // <<<<<<<<           
+            
+            newChild2 = newChild1.addChild("forecast");
+            newChild2.setInt("forecast_hour", k);
+            newChild2.setString("valid_time", nf(next_YEAR, 4) + nf(next_MONTH, 2) + nf(next_DAY, 2) + nf(next_HOUR, 2));
+          } 
           
           
           for (int q = 1; q < my_lines.length; q += 1){
@@ -17100,10 +17104,12 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points) {
 
                 v *= LAYERS_GRIB2_MUL[l];
                 v += LAYERS_GRIB2_ADD[l]; // e.g. Kelvin >> C                        
-                  
-                newChild3 = newChild2.addChild("point");
-                newChild3.setInt("id", f); 
-                newChild3.setContent(nf(v,0,0)); 
+                
+                if (build_xml == 1) {
+                  newChild3 = newChild2.addChild("point");
+                  newChild3.setInt("id", f); 
+                  newChild3.setContent(nf(v,0,0)); 
+                }
                   
               }
             }
@@ -17116,13 +17122,17 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points) {
     
   } 
 
-  String THE_XML_filename = ExportFolder;
-  THE_XML_filename += "/XML_layers/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0];
-  THE_XML_filename += "/" + nf(GRIB2_YEAR, 4) + "_" + nf(GRIB2_MONTH, 2) + "_" + nf(GRIB2_DAY, 2) + "_run" + nf(GRIB2_RUN, 2);
-  THE_XML_filename += "/fhr" + nf(k, 3) + "_" + nfp(AERIAL_Center_Latitude, 2, 3).replace(",", "_").replace(".", "_").replace("+", "N") + nfp(AERIAL_Center_Longitude, 3, 3).replace(",", "_").replace(".", "_").replace("-", "W");
-  THE_XML_filename += "_" + LAYERS_GRIB2[l][h];
-  THE_XML_filename += ".xml";
-  saveXML(my_xml, THE_XML_filename);
+  if (build_xml == 1) { 
+
+    String THE_XML_filename = ExportFolder;
+    THE_XML_filename += "/XML_layers/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0];
+    THE_XML_filename += "/" + nf(GRIB2_YEAR, 4) + "_" + nf(GRIB2_MONTH, 2) + "_" + nf(GRIB2_DAY, 2) + "_run" + nf(GRIB2_RUN, 2);
+    THE_XML_filename += "/" + nfp(AERIAL_Center_Latitude, 2, 3).replace(",", "_").replace(".", "_").replace("+", "N") + nfp(AERIAL_Center_Longitude, 3, 3).replace(",", "_").replace(".", "_").replace("-", "W");
+    THE_XML_filename += "/fhr" + nf(k, 3);
+    THE_XML_filename += "_" + LAYERS_GRIB2[l][h];
+    THE_XML_filename += ".xml";
+    saveXML(my_xml, THE_XML_filename);
+  }
 
   return theValues;
 }
