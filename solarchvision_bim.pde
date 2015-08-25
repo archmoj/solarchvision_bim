@@ -322,7 +322,7 @@ int GRIB2_Layer;
 String[][] GRIB2_DOMAINS = {
                                {"GEPS", "ensemble/naefs/grib2/raw", "CMC_naefs-geps-raw", "latlon1p0x1p0", "_allmbrs.grib2", "100"}
                              , {"GDPS", "model_gem_global/25km/grib2/lat_lon", "CMC_glb", "latlon.24x.24", ".grib2", "20"}
-                             , {"HRDPS", "model_hrdps/east/grib2", "CMC_hrdps_east", "ps2.5km", "-00.grib2", "5"} // <<<<<<<<<<<<<<<<<<<<<<<<< 2.5
+                             , {"HRDPS", "model_hrdps/east/grib2", "CMC_hrdps_east", "ps2.5km", "-00.grib2", "2.5"} 
                              , {"WAVE", "model_wave/great_lakes/superior/grib2", "CMC_rdwps_lake-superior", "latlon0.05x0.0", ".grib2", "5"}                             
                              };
 
@@ -1909,10 +1909,11 @@ void draw () {
     }
 //-------------------------------
 
-    int WORLD_Animate = 0;
+    int Illustrations_Animate = 0;
 
-    if ((GRAPHS_Update == 0) && (WIN3D_Update == 0)) {
-      WORLD_Animate = 1;
+    //if ((GRAPHS_Update == 0) && (WIN3D_Update == 0)) {
+    if (GRAPHS_Update == 0) {
+      Illustrations_Animate = 1;
     }
 
     if (GRAPHS_include == 1) {
@@ -1924,7 +1925,7 @@ void draw () {
     }
     GRAPHS_Update = 0;    
 
-    if (WORLD_Animate != 0) {
+    if (Illustrations_Animate != 0) {
       GRIB2_Layer = GRIB2_Layer_Start;
 
       GRIB2_Hour = GRIB2_Hour_Start;
@@ -1938,6 +1939,7 @@ void draw () {
         if (GRIB2_Hour > GRIB2_Hour_End) GRIB2_Hour = GRIB2_Hour_Start;
       
         WORLD_Update = 1;
+        WIN3D_Update = 1; // <<<<<<<<<<<
       }
     }
 
@@ -2051,6 +2053,96 @@ void SOLARCHVISION_draw_WIN3D () {
   
   SOLARCHVISION_draw_SUN3D(0, 0, 0, 0.95 * SKY3D_scale, LocationLatitude);
   
+
+
+
+
+  WIN3D_Diagrams.ellipseMode(CENTER);
+
+  for (int n = 0; n < AERIAL_num; n += 1) {
+      
+    if ((AERIAL_Center_Longitude == LocationLongitude) && (AERIAL_Center_Latitude == LocationLatitude)) {
+  
+      float _tgl = AERIAL_Locations[n][2];
+      float _lat = AERIAL_Locations[n][1];
+      float _lon = AERIAL_Locations[n][0]; 
+      if (_lon > 180) _lon -= 360; // << important!
+      
+      double du = ((_lon - AERIAL_Center_Longitude) / 180.0) * (PI * R_earth);
+      double dv = ((_lat - AERIAL_Center_Latitude) / 180.0) * (PI * R_earth);
+      
+      float x = 0.1 * (float) du * cos_ang((float) AERIAL_Center_Latitude); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 0.1
+      float y = 0.1 * (float) dv;                                           // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 0.1
+      float z = _tgl - HeightAboveGround;
+
+      //-----------------------------
+      int PAL_TYPE = 1;//12; 
+      int PAL_DIR = 1;//-1;
+      float _Multiplier = 0.1;//1.0 / 30.0;
+      //-----------------------------
+
+      for (int o = 0; o < Scenarios_max; o += 1){
+        
+        //float _val = AERIAL[GRIB2_Hour][_drybulb][n][o];
+        float _val = AERIAL[GRIB2_Hour][_windspd][n][o];
+          
+        float teta = AERIAL[GRIB2_Hour][_winddir][n][o];
+        float D_teta = 15; 
+        float R = 5.0 * AERIAL[GRIB2_Hour][_windspd][n][o];
+        
+        float R_in = 0.0 * R; 
+        float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta)));
+        float y1 = (R_in * -sin_ang(90 - (teta - 0.5 * D_teta)));
+        float x2 = (R_in * cos_ang(90 - (teta + 0.5 * D_teta)));
+        float y2 = (R_in * -sin_ang(90 - (teta + 0.5 * D_teta)));                      
+         
+        float x4 = (R * cos_ang(90 - (teta - 0.5 * D_teta)));
+        float y4 = (R * -sin_ang(90 - (teta - 0.5 * D_teta)));
+        float x3 = (R * cos_ang(90 - (teta + 0.5 * D_teta)));
+        float y3 = (R * -sin_ang(90 - (teta + 0.5 * D_teta)));          
+        
+        //float ox = -0.5 * (R * cos_ang(90 - teta));
+        //float oy = -0.5 * (R * -sin_ang(90 - teta));
+        //float ox = -1 * (R * cos_ang(90 - teta));
+        //float oy = -1 * (R * -sin_ang(90 - teta));
+        float ox = -2 * (R * cos_ang(90 - teta)) / 3.0;
+        float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0;            
+
+        float _u = 0.5 + 0.5 * (_Multiplier * _val);
+        if (PAL_DIR == -1) _u = 1 - _u;
+        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+        if (PAL_DIR == 2) _u =  0.5 * _u;
+        
+        float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
+
+        WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
+        //WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);           
+        WIN3D_Diagrams.noFill();
+
+        WIN3D_Diagrams.strokeWeight(2); // 0; <<<<<<<<<
+       
+        WIN3D_Diagrams.beginShape();
+        WIN3D_Diagrams.vertex((x + x1 + ox) * objects_scale * WIN3D_scale3D, (y + y1 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+        WIN3D_Diagrams.vertex((x + x2 + ox) * objects_scale * WIN3D_scale3D, (y + y2 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+        WIN3D_Diagrams.vertex((x + x3 + ox) * objects_scale * WIN3D_scale3D, (y + y3 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+        WIN3D_Diagrams.vertex((x + x4 + ox) * objects_scale * WIN3D_scale3D, (y + y4 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+        WIN3D_Diagrams.endShape(CLOSE);        
+      }
+    }
+  }   
+  
+
+
+
+
+
+
+
+
+
+
+
+
   
 
   WIN3D_Diagrams.endDraw();
