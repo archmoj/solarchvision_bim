@@ -819,9 +819,9 @@ int Export_GRAPHS_info_prob = 0;
 
 
 
-int SKY3D_Pallet_ACTIVE = 16;
-int SKY3D_Pallet_ACTIVE_DIR = 1;
-float SKY3D_Pallet_ACTIVE_MLT = 1;
+int SKY3D_Pallet_ACTIVE = -1; //7; //8;
+int SKY3D_Pallet_ACTIVE_DIR = -1;
+float SKY3D_Pallet_ACTIVE_MLT = 0.5;
 
 int SKY3D_Pallet_PASSIVE = 18; 
 int SKY3D_Pallet_PASSIVE_DIR = -1;  
@@ -12911,7 +12911,7 @@ void SOLARCHVISION_draw_SKY3D () {
         }             
         
         float _Multiplier = 1; 
-        if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.2 * SKY3D_Pallet_PASSIVE_MLT; //_Multiplier = 0.1; // <<<<<<<<<<< 
+        if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1 * SKY3D_Pallet_ACTIVE_MLT; //_Multiplier = 0.1; // <<<<<<<<<<< 
         if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02 * SKY3D_Pallet_PASSIVE_MLT;             
   
         int Teselation = 0;
