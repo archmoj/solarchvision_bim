@@ -836,11 +836,11 @@ float SKY3D_Pallet_PASSIVE_MLT = 2; //1;
 
 int OBJECTS_Pallet_ACTIVE = 15;
 int OBJECTS_Pallet_ACTIVE_DIR = 1;
-float OBJECTS_Pallet_ACTIVE_MLT = 2; //1;
+float OBJECTS_Pallet_ACTIVE_MLT = 1; //2;
 
 int OBJECTS_Pallet_PASSIVE = -1; 
 int OBJECTS_Pallet_PASSIVE_DIR = 1;  
-float OBJECTS_Pallet_PASSIVE_MLT = 1;
+float OBJECTS_Pallet_PASSIVE_MLT = 2; //1;
 
 int GRAPHS_Pallet_SORT = -1;
 int GRAPHS_Pallet_SORT_DIR = -1;
@@ -971,7 +971,7 @@ int Display_URBAN = 1;
 
 
 
-int camera_variation = 1;
+int camera_variation = 0; // 1;
 
 int draw_data_lines = 0;
 int draw_sorted = 1;
@@ -2053,6 +2053,8 @@ void SOLARCHVISION_draw_WIN3D () {
   SOLARCHVISION_draw_land();
   
   SOLARCHVISION_draw_field_image();
+  
+  SOLARCHVISION_draw_solarch_image(); // i.e. solarch field 
   
   SOLARCHVISION_draw_objects();
   
@@ -8193,8 +8195,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     if (plot_impacts == 0) Impact_TYPE = Impact_ACTIVE; 
     if (plot_impacts == 1) Impact_TYPE = Impact_PASSIVE;
     
-    int RES1 = 200;
-    int RES2 = 200;
+    int RES1 = Solarch_RES1;
+    int RES2 = Solarch_RES2;
 
     float Pa = FLOAT_undefined;
     float Pb = FLOAT_undefined;
@@ -8572,6 +8574,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         }
       }
       
+      //----------------------
+      draw_impact_summary = 1; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      //----------------------
+      
       if (draw_impact_summary == 1) { 
         int j = -1; // << to put the summary graph before the daily graphs
         
@@ -8621,6 +8627,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         }
         
         total_Image_RGBA.updatePixels(); 
+        
+        Solarch_Image = total_Image_RGBA;
 
         Diagrams_strokeWeight(GRAPHS_T_scale * 0);
         Diagrams_stroke(223);
@@ -12662,8 +12670,11 @@ void SOLARCHVISION_add_urban () {
     if (Load_URBAN == 1) {
       urbanVertices_start = allVertices.length;
       urbanFaces_start = allFaces.length;
+      
+      //float h = (HeightAboveGround - LocationElevation);
+      float h = -30; // ?????????????????????????????????????????
   
-      SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/" + DEFINED_STATIONS[STATION_NUMBER][1] + ".obj", -1, 0,0,0, 1,1,1);
+      SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/" + DEFINED_STATIONS[STATION_NUMBER][1] + ".obj", -1, 0,0,h, 1,1,1);
       
       urbanVertices_end = allVertices.length;
       urbanFaces_end = allFaces.length;
@@ -13441,6 +13452,55 @@ void SOLARCHVISION_draw_field_image () {
 
 }
 
+
+void SOLARCHVISION_draw_solarch_image () {
+  
+  WIN3D_Diagrams.beginShape();
+  WIN3D_Diagrams.texture(Solarch_Image);    
+  
+  //WIN3D_Diagrams.stroke(255, 255, 255, 0);
+  WIN3D_Diagrams.stroke(0);
+  
+  WIN3D_Diagrams.fill(255, 255, 255, 0);  
+  
+  float c = HeightAboveGround; // <<< or zero i.e. height of the plane in 3D
+  
+  {
+    float a = -0.5 * Solarch_scale_U * objects_scale;
+    float b = -0.5 * Solarch_scale_V * objects_scale;    
+    float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
+    float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
+    float z = c * objects_scale; 
+    WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, 0, Solarch_RES2);
+  }
+  {
+    float a = 0.5 * Solarch_scale_U * objects_scale;
+    float b = -0.5 * Solarch_scale_V * objects_scale;    
+    float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
+    float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
+    float z = c * objects_scale;  
+    WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, Solarch_RES1, Solarch_RES2);
+  }  
+  {
+    float a = 0.5 * Solarch_scale_U * objects_scale;
+    float b = 0.5 * Solarch_scale_V * objects_scale;    
+    float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
+    float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
+    float z = c * objects_scale;  
+    WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, Solarch_RES1, 0);
+  }  
+  {
+    float a = -0.5 * Solarch_scale_U * objects_scale;
+    float b = 0.5 * Solarch_scale_V * objects_scale;    
+    float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
+    float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
+    float z = c * objects_scale;  
+    WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, 0, 0);
+  }  
+  
+  WIN3D_Diagrams.endShape(CLOSE);
+ 
+}
 
 void SOLARCHVISION_draw_objects () {
 
@@ -14862,6 +14922,26 @@ void SOLARCHVISION_add_ParametricGeometries () {
 
 
 }
+
+
+float Solarch_Rotation = 0; // North is up by default
+
+float Solarch_scale_All = 500; // i.e. 500m
+float Solarch_scale_U = Solarch_scale_All; 
+float Solarch_scale_V = Solarch_scale_All;
+
+int Solarch_RES1 = 200;
+int Solarch_RES2 = 200;
+
+PImage Solarch_Image = createImage(Solarch_RES1, Solarch_RES2, RGB);
+
+int display_Solarch_Image = 0; // 0:off, 1:horizontal
+
+void SOLARCHVISION_calculate_ParametricGeometries_Solarch () {
+
+}
+
+
 
 int Field_Color = 0; 
 
