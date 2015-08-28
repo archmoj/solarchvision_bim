@@ -2064,7 +2064,7 @@ void SOLARCHVISION_draw_WIN3D () {
 
 
 
-  WIN3D_Diagrams.ellipseMode(CENTER);
+  WIN3D_Diagrams.sphereDetail(6, 4);
 
   for (int n = 0; n < AERIAL_num; n += 1) {
       
@@ -2081,62 +2081,107 @@ void SOLARCHVISION_draw_WIN3D () {
       float x = 0.1 * (float) du * cos_ang((float) AERIAL_Center_Latitude); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 0.1
       float y = 0.1 * (float) dv;                                           // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 0.1
       float z = _tgl - HeightAboveGround;
+      
+      if (AERIAL_graphOption == 0) {
+        //-----------------------------
+        int PAL_TYPE = 6; //12; 
+        int PAL_DIR = -1;
+        float _Multiplier = 1.0 / 30.0;
+        //-----------------------------
+  
+        for (int o = 0; o < Scenarios_max; o += 1){
+          
+          float _val = AERIAL[GRIB2_Hour][_drybulb][n][o];
+          
+          if (_val < 0.9 * FLOAT_undefined) {
+    
+            float _u = 0.5 + 0.5 * (_Multiplier * _val);
+            if (PAL_DIR == -1) _u = 1 - _u;
+            if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+            if (PAL_DIR == 2) _u =  0.5 * _u;
+            
+            float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
+    
+            WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
+            WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);           
+            //WIN3D_Diagrams.noFill();
+    
+            WIN3D_Diagrams.strokeWeight(0); // 2; <<<<<<<<<
 
-      //-----------------------------
-      int PAL_TYPE = 1;//12; 
-      int PAL_DIR = 1;//-1;
-      float _Multiplier = 0.1;//1.0 / 30.0;
-      //-----------------------------
-
-      for (int o = 0; o < Scenarios_max; o += 1){
-        
-        //float _val = AERIAL[GRIB2_Hour][_drybulb][n][o];
-        float _val = AERIAL[GRIB2_Hour][_windspd][n][o];
-        
-        if (_val < 0.9 * FLOAT_undefined) {
-          
-          float teta = AERIAL[GRIB2_Hour][_winddir][n][o];
-          float D_teta = 15; 
-          float R = 5.0 * AERIAL[GRIB2_Hour][_windspd][n][o];
-          
-          float R_in = 0.0 * R; 
-          float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta)));
-          float y1 = (R_in * -sin_ang(90 - (teta - 0.5 * D_teta)));
-          float x2 = (R_in * cos_ang(90 - (teta + 0.5 * D_teta)));
-          float y2 = (R_in * -sin_ang(90 - (teta + 0.5 * D_teta)));                      
-           
-          float x4 = (R * cos_ang(90 - (teta - 0.5 * D_teta)));
-          float y4 = (R * -sin_ang(90 - (teta - 0.5 * D_teta)));
-          float x3 = (R * cos_ang(90 - (teta + 0.5 * D_teta)));
-          float y3 = (R * -sin_ang(90 - (teta + 0.5 * D_teta)));          
-          
-          //float ox = -0.5 * (R * cos_ang(90 - teta));
-          //float oy = -0.5 * (R * -sin_ang(90 - teta));
-          //float ox = -1 * (R * cos_ang(90 - teta));
-          //float oy = -1 * (R * -sin_ang(90 - teta));
-          float ox = -2 * (R * cos_ang(90 - teta)) / 3.0;
-          float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0;            
-  
-          float _u = 0.5 + 0.5 * (_Multiplier * _val);
-          if (PAL_DIR == -1) _u = 1 - _u;
-          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-          if (PAL_DIR == 2) _u =  0.5 * _u;
-          
-          float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
-  
-          WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
-          //WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);           
-          WIN3D_Diagrams.noFill();
-  
-          WIN3D_Diagrams.strokeWeight(2); // 0; <<<<<<<<<
-         
-          WIN3D_Diagrams.beginShape();
-          WIN3D_Diagrams.vertex((x + x1 + ox) * objects_scale * WIN3D_scale3D, (y + y1 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
-          WIN3D_Diagrams.vertex((x + x2 + ox) * objects_scale * WIN3D_scale3D, (y + y2 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
-          WIN3D_Diagrams.vertex((x + x3 + ox) * objects_scale * WIN3D_scale3D, (y + y3 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
-          WIN3D_Diagrams.vertex((x + x4 + ox) * objects_scale * WIN3D_scale3D, (y + y4 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
-          WIN3D_Diagrams.endShape(CLOSE);
+            float R = 5;
+            /*         
+            WIN3D_Diagrams.beginShape();
+            for (float teta = 0; teta < 360; teta += 360.0 / 6.0) {
+              WIN3D_Diagrams.vertex((x + R * cos_ang(teta)) * objects_scale * WIN3D_scale3D, (y + R * sin_ang(teta)) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+            }
+            WIN3D_Diagrams.endShape(CLOSE);
+            */
+            WIN3D_Diagrams.pushMatrix();
+            WIN3D_Diagrams.translate(x * objects_scale * WIN3D_scale3D, y * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+            WIN3D_Diagrams.sphere(R);
+            WIN3D_Diagrams.popMatrix();
+          }        
         }        
+      }
+      
+      if (AERIAL_graphOption == 1) {
+        
+        //-----------------------------
+        int PAL_TYPE = 1;//12; 
+        int PAL_DIR = 1;//-1;
+        float _Multiplier = 0.1;//1.0 / 30.0;
+        //-----------------------------
+  
+        for (int o = 0; o < Scenarios_max; o += 1){
+          
+          //float _val = AERIAL[GRIB2_Hour][_drybulb][n][o];
+          float _val = AERIAL[GRIB2_Hour][_windspd][n][o];
+          
+          if (_val < 0.9 * FLOAT_undefined) {
+            
+            float teta = AERIAL[GRIB2_Hour][_winddir][n][o];
+            float D_teta = 15; 
+            float R = 5.0 * AERIAL[GRIB2_Hour][_windspd][n][o];
+            
+            float R_in = 0.0 * R; 
+            float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta)));
+            float y1 = (R_in * -sin_ang(90 - (teta - 0.5 * D_teta)));
+            float x2 = (R_in * cos_ang(90 - (teta + 0.5 * D_teta)));
+            float y2 = (R_in * -sin_ang(90 - (teta + 0.5 * D_teta)));                      
+             
+            float x4 = (R * cos_ang(90 - (teta - 0.5 * D_teta)));
+            float y4 = (R * -sin_ang(90 - (teta - 0.5 * D_teta)));
+            float x3 = (R * cos_ang(90 - (teta + 0.5 * D_teta)));
+            float y3 = (R * -sin_ang(90 - (teta + 0.5 * D_teta)));          
+            
+            //float ox = -0.5 * (R * cos_ang(90 - teta));
+            //float oy = -0.5 * (R * -sin_ang(90 - teta));
+            //float ox = -1 * (R * cos_ang(90 - teta));
+            //float oy = -1 * (R * -sin_ang(90 - teta));
+            float ox = -2 * (R * cos_ang(90 - teta)) / 3.0;
+            float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0;            
+    
+            float _u = 0.5 + 0.5 * (_Multiplier * _val);
+            if (PAL_DIR == -1) _u = 1 - _u;
+            if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+            if (PAL_DIR == 2) _u =  0.5 * _u;
+            
+            float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
+    
+            WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
+            //WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);           
+            WIN3D_Diagrams.noFill();
+    
+            WIN3D_Diagrams.strokeWeight(2); // 0; <<<<<<<<<
+           
+            WIN3D_Diagrams.beginShape();
+            WIN3D_Diagrams.vertex((x + x1 + ox) * objects_scale * WIN3D_scale3D, (y + y1 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+            WIN3D_Diagrams.vertex((x + x2 + ox) * objects_scale * WIN3D_scale3D, (y + y2 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+            WIN3D_Diagrams.vertex((x + x3 + ox) * objects_scale * WIN3D_scale3D, (y + y3 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+            WIN3D_Diagrams.vertex((x + x4 + ox) * objects_scale * WIN3D_scale3D, (y + y4 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+            WIN3D_Diagrams.endShape(CLOSE);
+          }        
+        }
       }
     }
   }   
@@ -2214,7 +2259,7 @@ void SOLARCHVISION_draw_WORLD () {
         
         if (AERIAL_graphOption == 0) {
           //-----------------------------
-          int PAL_TYPE = 12; 
+          int PAL_TYPE = 6; //12; 
           int PAL_DIR = -1;
           float _Multiplier = 1.0 / 30.0;
           //-----------------------------
@@ -10558,7 +10603,7 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
                 if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                 if (PAL_DIR == 2) _u =  0.5 * _u;
                 
-                float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);    
+                float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);    
                 
                 WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
                 WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
@@ -13208,6 +13253,8 @@ void SOLARCHVISION_draw_SKY3D () {
 }
 
 void SOLARCHVISION_draw_land () {
+  
+  WIN3D_Diagrams.strokeWeight(1);
 
   if ((Display_LAND == 1) && (Load_LAND == 1)) {
 
