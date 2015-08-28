@@ -344,7 +344,9 @@ String[][] GRIB2_DOMAINS = {
 //int GRIB2_DOMAIN_SELECTION = 1; int Scenarios_max = 1;
 int GRIB2_DOMAIN_SELECTION = 2; int Scenarios_max = 1;
 //int GRIB2_DOMAIN_SELECTION = 3; int Scenarios_max = 1; // not working now!
- 
+
+
+int AERIAL_graphOption = 0; 
 
 
 PrintWriter[] File_output_node;
@@ -816,7 +818,13 @@ int Export_GRAPHS_info_node = 0;
 int Export_GRAPHS_info_norm = 0;
 int Export_GRAPHS_info_prob = 0;
 
+int SUN3D_Pallet_ACTIVE = 15; //-1; //7; //8;
+int SUN3D_Pallet_ACTIVE_DIR = 1;
+float SUN3D_Pallet_ACTIVE_MLT = 1;
 
+int SUN3D_Pallet_PASSIVE = 18; 
+int SUN3D_Pallet_PASSIVE_DIR = -1;  
+float SUN3D_Pallet_PASSIVE_MLT = 2; //1;
 
 int SKY3D_Pallet_ACTIVE = -1; //7; //8;
 int SKY3D_Pallet_ACTIVE_DIR = -1;
@@ -2204,76 +2212,126 @@ void SOLARCHVISION_draw_WORLD () {
 
         WORLD_Diagrams.pushMatrix();
         WORLD_Diagrams.translate(x_point, y_point);
-
-        //WORLD_Diagrams.ellipse(0, 0, 1 * R_station, 1 * R_station);    
-
-        //-----------------------------
-        int PAL_TYPE = 1;//12; 
-        int PAL_DIR = 1;//-1;
-        float _Multiplier = 0.1;//1.0 / 30.0;
-        //-----------------------------
-
-        for (int _turn = 1; _turn <= 2; _turn += 1){
-          for (int o = 0; o < Scenarios_max; o += 1){
-          
-            //float _val = AERIAL[GRIB2_Hour][_drybulb][n][o];
-            float _val = AERIAL[GRIB2_Hour][_windspd][n][o];
-              
-            float teta = AERIAL[GRIB2_Hour][_winddir][n][o];
-            float D_teta = 15; 
-            float R = 0.25 * R_station * AERIAL[GRIB2_Hour][_windspd][n][o];
-            
-            float R_in = 0.0 * R; 
-            float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta)));
-            float y1 = (R_in * -sin_ang(90 - (teta - 0.5 * D_teta)));
-            float x2 = (R_in * cos_ang(90 - (teta + 0.5 * D_teta)));
-            float y2 = (R_in * -sin_ang(90 - (teta + 0.5 * D_teta)));                      
-             
-            float x4 = (R * cos_ang(90 - (teta - 0.5 * D_teta)));
-            float y4 = (R * -sin_ang(90 - (teta - 0.5 * D_teta)));
-            float x3 = (R * cos_ang(90 - (teta + 0.5 * D_teta)));
-            float y3 = (R * -sin_ang(90 - (teta + 0.5 * D_teta)));          
-            
-            //float ox = -0.5 * (R * cos_ang(90 - teta));
-            //float oy = -0.5 * (R * -sin_ang(90 - teta));
-            //float ox = -1 * (R * cos_ang(90 - teta));
-            //float oy = -1 * (R * -sin_ang(90 - teta));
-            float ox = -2 * (R * cos_ang(90 - teta)) / 3.0;
-            float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0;            
-
-            float _u = 0.5 + 0.5 * (_Multiplier * _val);
-            if (PAL_DIR == -1) _u = 1 - _u;
-            if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-            if (PAL_DIR == 2) _u =  0.5 * _u;
-            
-            float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
+        
+        if (AERIAL_graphOption == 0) {
+          //-----------------------------
+          int PAL_TYPE = 12; 
+          int PAL_DIR = -1;
+          float _Multiplier = 1.0 / 30.0;
+          //-----------------------------
   
-            if (_turn == 1) {
-              WORLD_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
-              WORLD_Diagrams.fill(_COL[1], _COL[2], _COL[3]);           
-  
-              WORLD_Diagrams.strokeWeight(0);
-              //WORLD_Diagrams.quad(x1, y1, x2, y2, x3, y3, x4, y4);
-              WORLD_Diagrams.quad(x1 + ox, y1 + oy, x2 + ox, y2 + oy, x3 + ox, y3 + oy, x4 + ox, y4 + oy);
-            }
+          for (int _turn = 1; _turn <= 2; _turn += 1){
+            for (int o = 0; o < Scenarios_max; o += 1){
             
-            if (_turn == 2) {
-              WORLD_Diagrams.textSize(MESSAGE_S_View);
-              WORLD_Diagrams.textAlign(CENTER, CENTER);
-
-              _u = 0.5 + 0.5 * (_Multiplier * _val);
+              float _val = AERIAL[GRIB2_Hour][_drybulb][n][o];
               
-              if (_COL[1] + _COL[2] + _COL[3] > 1.75 * 255) {
-                WORLD_Diagrams.stroke(127);
-                WORLD_Diagrams.fill(127);
+              float _u = 0.5 + 0.5 * (_Multiplier * _val);
+              if (PAL_DIR == -1) _u = 1 - _u;
+              if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+              if (PAL_DIR == 2) _u =  0.5 * _u;
+              
+              float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
+    
+              if (_turn == 1) {
+                WORLD_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
+                WORLD_Diagrams.fill(_COL[1], _COL[2], _COL[3]);           
+    
                 WORLD_Diagrams.strokeWeight(0);
+                WORLD_Diagrams.ellipse(0, 0, R_station, R_station);
               }
-              else{
-                WORLD_Diagrams.stroke(255);
-                WORLD_Diagrams.fill(255);
-                WORLD_Diagrams.strokeWeight(2);
-              }              
-              if (_val < 0.9 * FLOAT_undefined) WORLD_Diagrams.text(nf(int(roundTo(_val, 1)), 0), 0,0);
+              
+              if (_turn == 2) {
+                WORLD_Diagrams.textSize(MESSAGE_S_View);
+                WORLD_Diagrams.textAlign(CENTER, CENTER);
+  
+                _u = 0.5 + 0.5 * (_Multiplier * _val);
+                
+                if (_COL[1] + _COL[2] + _COL[3] > 1.75 * 255) {
+                  WORLD_Diagrams.stroke(127);
+                  WORLD_Diagrams.fill(127);
+                  WORLD_Diagrams.strokeWeight(0);
+                }
+                else{
+                  WORLD_Diagrams.stroke(255);
+                  WORLD_Diagrams.fill(255);
+                  WORLD_Diagrams.strokeWeight(2);
+                }              
+                if (_val < 0.9 * FLOAT_undefined) WORLD_Diagrams.text(nf(int(roundTo(_val, 1)), 0), 0,0);
+              }
+            }
+          }            
+        }  
+        
+        if (AERIAL_graphOption == 1) {
+
+          //-----------------------------
+          int PAL_TYPE = 1;//12; 
+          int PAL_DIR = 1;//-1;
+          float _Multiplier = 0.1;//1.0 / 30.0;
+          //-----------------------------
+  
+          for (int _turn = 1; _turn <= 2; _turn += 1){
+            for (int o = 0; o < Scenarios_max; o += 1){
+            
+              //float _val = AERIAL[GRIB2_Hour][_drybulb][n][o];
+              float _val = AERIAL[GRIB2_Hour][_windspd][n][o];
+                
+              float teta = AERIAL[GRIB2_Hour][_winddir][n][o];
+              float D_teta = 15; 
+              float R = 0.25 * R_station * AERIAL[GRIB2_Hour][_windspd][n][o];
+              
+              float R_in = 0.0 * R; 
+              float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta)));
+              float y1 = (R_in * -sin_ang(90 - (teta - 0.5 * D_teta)));
+              float x2 = (R_in * cos_ang(90 - (teta + 0.5 * D_teta)));
+              float y2 = (R_in * -sin_ang(90 - (teta + 0.5 * D_teta)));                      
+               
+              float x4 = (R * cos_ang(90 - (teta - 0.5 * D_teta)));
+              float y4 = (R * -sin_ang(90 - (teta - 0.5 * D_teta)));
+              float x3 = (R * cos_ang(90 - (teta + 0.5 * D_teta)));
+              float y3 = (R * -sin_ang(90 - (teta + 0.5 * D_teta)));          
+              
+              //float ox = -0.5 * (R * cos_ang(90 - teta));
+              //float oy = -0.5 * (R * -sin_ang(90 - teta));
+              //float ox = -1 * (R * cos_ang(90 - teta));
+              //float oy = -1 * (R * -sin_ang(90 - teta));
+              float ox = -2 * (R * cos_ang(90 - teta)) / 3.0;
+              float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0;            
+  
+              float _u = 0.5 + 0.5 * (_Multiplier * _val);
+              if (PAL_DIR == -1) _u = 1 - _u;
+              if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+              if (PAL_DIR == 2) _u =  0.5 * _u;
+              
+              float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
+    
+              if (_turn == 1) {
+                WORLD_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
+                WORLD_Diagrams.fill(_COL[1], _COL[2], _COL[3]);           
+    
+                WORLD_Diagrams.strokeWeight(0);
+                //WORLD_Diagrams.quad(x1, y1, x2, y2, x3, y3, x4, y4);
+                WORLD_Diagrams.quad(x1 + ox, y1 + oy, x2 + ox, y2 + oy, x3 + ox, y3 + oy, x4 + ox, y4 + oy);
+              }
+              
+              if (_turn == 2) {
+                WORLD_Diagrams.textSize(MESSAGE_S_View);
+                WORLD_Diagrams.textAlign(CENTER, CENTER);
+  
+                _u = 0.5 + 0.5 * (_Multiplier * _val);
+                
+                if (_COL[1] + _COL[2] + _COL[3] > 1.75 * 255) {
+                  WORLD_Diagrams.stroke(127);
+                  WORLD_Diagrams.fill(127);
+                  WORLD_Diagrams.strokeWeight(0);
+                }
+                else{
+                  WORLD_Diagrams.stroke(255);
+                  WORLD_Diagrams.fill(255);
+                  WORLD_Diagrams.strokeWeight(2);
+                }              
+                if (_val < 0.9 * FLOAT_undefined) WORLD_Diagrams.text(nf(int(roundTo(_val, 1)), 0), 0,0);
+              }
             }
           }
         }
@@ -9892,8 +9950,8 @@ void GRAPHS_keyPressed (KeyEvent e) {
           case 'e' :Sample_Member += 1; if (Sample_Member > ENSEMBLE_end) Sample_Member = ENSEMBLE_start; GRAPHS_Update = 1; break; 
           case 'E' :Sample_Member -= 1; if (Sample_Member < ENSEMBLE_start) Sample_Member = ENSEMBLE_end; GRAPHS_Update = 1; break;
     
-          case 'g' :filter_type = (filter_type + 1) % 2; GRAPHS_Update = 1; break;
-          case 'G' :filter_type = (filter_type + 2 - 1) % 2; GRAPHS_Update = 1; break;
+          //case 'g' :filter_type = (filter_type + 1) % 2; GRAPHS_Update = 1; break;
+          //case 'G' :filter_type = (filter_type + 2 - 1) % 2; GRAPHS_Update = 1; break;
     
           case '=' :GRAPHS_V_scale[GRAPHS_drw_Layer] *= pow(2.0, (1.0 / 2.0)); GRAPHS_Update = 1; break;
           case '_' :GRAPHS_V_scale[GRAPHS_drw_Layer] *= pow(0.5, (1.0 / 2.0)); GRAPHS_Update = 1; break;
@@ -10350,7 +10408,22 @@ float[] SOLARCHVISION_WYRD (float _variable) {
 void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float LocationLatitude) { 
 
   if (Display_SUN3D != 0) {
-  
+
+    int PAL_TYPE = 0; 
+    int PAL_DIR = 1;
+    
+    if (Impact_TYPE == Impact_ACTIVE) {  
+      PAL_TYPE = SUN3D_Pallet_ACTIVE; PAL_DIR = SUN3D_Pallet_ACTIVE_DIR;
+    }
+    if (Impact_TYPE == Impact_PASSIVE) {  
+      PAL_TYPE = SUN3D_Pallet_PASSIVE; PAL_DIR = SUN3D_Pallet_PASSIVE_DIR;
+    }             
+
+    float _Multiplier = 1; 
+    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * SUN3D_Pallet_ACTIVE_MLT;
+    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * SUN3D_Pallet_PASSIVE_MLT;
+    
+    
     float previous_DATE = _DATE;
     
     float min_sunrise = int(min(SOLARCHVISION_Sunrise(LocationLatitude, 90), SOLARCHVISION_Sunrise(LocationLatitude, 270))); 
@@ -10434,33 +10507,66 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
               }
               
               float Pa = FLOAT_undefined;
-    
-              if (impacts_source == databaseNumber_CLIMATE_WY2) {
-                  Pa = CLIMATE_WY2[now_i][now_j][_direffect][now_k]; 
-              }
-              if (impacts_source == databaseNumber_ENSEMBLE) {
-                  Pa = ENSEMBLE[now_i][now_j][_direffect][now_k]; 
-              }   
-              if (impacts_source == databaseNumber_OBSERVED) {
-                  Pa = OBSERVED[now_i][now_j][_direffect][now_k]; 
-              }   
-              if (impacts_source == databaseNumber_CLIMATE_EPW) {
-                  Pa = CLIMATE_EPW[now_i][now_j][_direffect][now_k]; 
-              }    
+              
+              if (Impact_TYPE == Impact_ACTIVE) {
+                if (impacts_source == databaseNumber_CLIMATE_WY2) {
+                    Pa = CLIMATE_WY2[now_i][now_j][_dirnorrad][now_k]; 
+                }
+                if (impacts_source == databaseNumber_ENSEMBLE) {
+                    Pa = ENSEMBLE[now_i][now_j][_dirnorrad][now_k]; 
+                }   
+                if (impacts_source == databaseNumber_OBSERVED) {
+                    Pa = OBSERVED[now_i][now_j][_dirnorrad][now_k]; 
+                }   
+                if (impacts_source == databaseNumber_CLIMATE_EPW) {
+                    Pa = CLIMATE_EPW[now_i][now_j][_dirnorrad][now_k]; 
+                }
+              } 
+              
+              if (Impact_TYPE == Impact_PASSIVE) {
+                if (impacts_source == databaseNumber_CLIMATE_WY2) {
+                    Pa = CLIMATE_WY2[now_i][now_j][_direffect][now_k]; 
+                }
+                if (impacts_source == databaseNumber_ENSEMBLE) {
+                    Pa = ENSEMBLE[now_i][now_j][_direffect][now_k]; 
+                }   
+                if (impacts_source == databaseNumber_OBSERVED) {
+                    Pa = OBSERVED[now_i][now_j][_direffect][now_k]; 
+                }   
+                if (impacts_source == databaseNumber_CLIMATE_EPW) {
+                    Pa = CLIMATE_EPW[now_i][now_j][_direffect][now_k]; 
+                }
+              }                  
    
               if (Pa > 0.9 * FLOAT_undefined) {
               }
               else {
-             
-                float[] COL = SOLARCHVISION_DRYWCBD(0.0002 * Pa); // ????????
-        
-                WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], 127);
-                WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], 127);
+
+                float sun_V = 0.001 * Pa; // ???????????
                 
-                float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR_ANGLE - 0.5);
-                float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE - 0.5 * DATE_step, HOUR_ANGLE + 0.5);
-                float[] SunC = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR_ANGLE + 0.5);
-                float[] SunD = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE + 0.5 * DATE_step, HOUR_ANGLE - 0.5);
+                float _u = 0;
+                
+                if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * sun_V);
+                if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * sun_V);
+                
+                if (PAL_DIR == -1) _u = 1 - _u;
+                if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                if (PAL_DIR == 2) _u =  0.5 * _u;
+                
+                float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);    
+                
+                WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
+                WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
+                
+                //float delta = 0.5 * DATE_step;
+                float delta = 0.5;
+               
+                if ((GRAPHS_j_end - GRAPHS_j_start == 1) || (per_day > 5)) delta = 2.5; // to make the sun plot thicker
+
+                float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE - delta, HOUR_ANGLE - 0.5);
+                float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE - delta, HOUR_ANGLE + 0.5);
+                float[] SunC = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE + delta, HOUR_ANGLE + 0.5);
+                float[] SunD = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE + delta, HOUR_ANGLE - 0.5);
                 
                 WIN3D_Diagrams.beginShape();
                 WIN3D_Diagrams.vertex(s_SunPath * SunA[1] * WIN3D_scale3D, -s_SunPath * SunA[2] * WIN3D_scale3D, s_SunPath * SunA[3] * WIN3D_scale3D);
@@ -10903,7 +11009,19 @@ void keyPressed (KeyEvent e) {
             WORLD_Update = 1;
             WIN3D_Update = 1; 
             GRAPHS_Update = 1;
-            break;                         
+            break;                   
+      
+          case 'g' :
+            AERIAL_graphOption = (AERIAL_graphOption + 1) % 2;
+            WORLD_Update = 1;
+            WIN3D_Update = 1; 
+            break;
+      
+          case 'G' :
+            AERIAL_graphOption = (AERIAL_graphOption + 2 - 1) % 2;
+            WORLD_Update = 1;
+            WIN3D_Update = 1; 
+            break;      
         }
       }    
     }
@@ -16578,13 +16696,13 @@ void SOLARCHVISION_draw_ROLLOUT () {
    
       GRAPHS_O_scale = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Windrose opacity scale", GRAPHS_O_scale, 1, 100, -pow(2.0, (1.0 / 4.0))); 
 
-      GRAPHS_Pallet_SORT = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_SORT", GRAPHS_Pallet_SORT, -1, (n_COLOR_STYLE - 1), 1), 1));
-      GRAPHS_Pallet_SORT_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_SORT_DIR", GRAPHS_Pallet_SORT_DIR, -1, 1, 2), 1));
-      GRAPHS_Pallet_SORT_MLT = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_SORT_MLT", GRAPHS_Pallet_SORT_MLT, 0.25, 4, -2);
+      //GRAPHS_Pallet_SORT = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_SORT", GRAPHS_Pallet_SORT, -1, (n_COLOR_STYLE - 1), 1), 1));
+      //GRAPHS_Pallet_SORT_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_SORT_DIR", GRAPHS_Pallet_SORT_DIR, -1, 1, 2), 1));
+      //GRAPHS_Pallet_SORT_MLT = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_SORT_MLT", GRAPHS_Pallet_SORT_MLT, 0.25, 4, -2);
 
-      GRAPHS_Pallet_PROB = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_PROB", GRAPHS_Pallet_PROB, -1, (n_COLOR_STYLE - 1), 1), 1));
-      GRAPHS_Pallet_PROB_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_PROB_DIR", GRAPHS_Pallet_PROB_DIR, -1, 1, 2), 1));
-      GRAPHS_Pallet_PROB_MLT = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_PROB_MLT", GRAPHS_Pallet_PROB_MLT, 0.25, 4, -2);
+      //GRAPHS_Pallet_PROB = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_PROB", GRAPHS_Pallet_PROB, -1, (n_COLOR_STYLE - 1), 1), 1));
+      //GRAPHS_Pallet_PROB_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_PROB_DIR", GRAPHS_Pallet_PROB_DIR, -1, 1, 2), 1));
+      //GRAPHS_Pallet_PROB_MLT = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_PROB_MLT", GRAPHS_Pallet_PROB_MLT, 0.25, 4, -2);
       
       GRAPHS_Pallet_ACTIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_ACTIVE", GRAPHS_Pallet_ACTIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
       GRAPHS_Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_ACTIVE_DIR", GRAPHS_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
@@ -16608,7 +16726,15 @@ void SOLARCHVISION_draw_ROLLOUT () {
       
       SKY3D_Pallet_PASSIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_Pallet_PASSIVE", SKY3D_Pallet_PASSIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
       SKY3D_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_Pallet_PASSIVE_DIR", SKY3D_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
-      SKY3D_Pallet_PASSIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_Pallet_PASSIVE_MLT", SKY3D_Pallet_PASSIVE_MLT, 0.25, 4, -2);    
+      SKY3D_Pallet_PASSIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_Pallet_PASSIVE_MLT", SKY3D_Pallet_PASSIVE_MLT, 0.25, 4, -2);
+  
+      SUN3D_Pallet_ACTIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SUN3D_Pallet_ACTIVE", SUN3D_Pallet_ACTIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      SUN3D_Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SUN3D_Pallet_ACTIVE_DIR", SUN3D_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
+      SUN3D_Pallet_ACTIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SUN3D_Pallet_ACTIVE_MLT", SUN3D_Pallet_ACTIVE_MLT, 0.25, 4, -2);
+      
+      SUN3D_Pallet_PASSIVE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SUN3D_Pallet_PASSIVE", SUN3D_Pallet_PASSIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      SUN3D_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SUN3D_Pallet_PASSIVE_DIR", SUN3D_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
+      SUN3D_Pallet_PASSIVE_MLT = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SUN3D_Pallet_PASSIVE_MLT", SUN3D_Pallet_PASSIVE_MLT, 0.25, 4, -2);          
     }      
   
   }
