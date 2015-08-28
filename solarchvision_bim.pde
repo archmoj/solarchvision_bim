@@ -2036,7 +2036,6 @@ void SOLARCHVISION_draw_WIN3D () {
   WIN3D_Diagrams.popMatrix();
 */
 
-
   WIN3D_Diagrams.translate(WIN3D_X_coordinate * WIN3D_scale3D, WIN3D_Y_coordinate * WIN3D_scale3D, WIN3D_Z_coordinate * WIN3D_scale3D);
   
   WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI / 180); 
@@ -2045,14 +2044,11 @@ void SOLARCHVISION_draw_WIN3D () {
   
   //println(nfp(WIN3D_RX_coordinate, 0, 1), nfp(WIN3D_RY_coordinate, 0, 1), nfp(WIN3D_RZ_coordinate, 0, 1)); 
 
-
-  
-  WIN3D_Diagrams.fill(127);
-
-
-
   WIN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
 
+  WIN3D_Diagrams.fill(127);
+  WIN3D_Diagrams.strokeWeight(0);
+  
 
   SOLARCHVISION_draw_land();
   
@@ -2096,48 +2092,51 @@ void SOLARCHVISION_draw_WIN3D () {
         
         //float _val = AERIAL[GRIB2_Hour][_drybulb][n][o];
         float _val = AERIAL[GRIB2_Hour][_windspd][n][o];
+        
+        if (_val < 0.9 * FLOAT_undefined) {
           
-        float teta = AERIAL[GRIB2_Hour][_winddir][n][o];
-        float D_teta = 15; 
-        float R = 5.0 * AERIAL[GRIB2_Hour][_windspd][n][o];
-        
-        float R_in = 0.0 * R; 
-        float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta)));
-        float y1 = (R_in * -sin_ang(90 - (teta - 0.5 * D_teta)));
-        float x2 = (R_in * cos_ang(90 - (teta + 0.5 * D_teta)));
-        float y2 = (R_in * -sin_ang(90 - (teta + 0.5 * D_teta)));                      
+          float teta = AERIAL[GRIB2_Hour][_winddir][n][o];
+          float D_teta = 15; 
+          float R = 5.0 * AERIAL[GRIB2_Hour][_windspd][n][o];
+          
+          float R_in = 0.0 * R; 
+          float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta)));
+          float y1 = (R_in * -sin_ang(90 - (teta - 0.5 * D_teta)));
+          float x2 = (R_in * cos_ang(90 - (teta + 0.5 * D_teta)));
+          float y2 = (R_in * -sin_ang(90 - (teta + 0.5 * D_teta)));                      
+           
+          float x4 = (R * cos_ang(90 - (teta - 0.5 * D_teta)));
+          float y4 = (R * -sin_ang(90 - (teta - 0.5 * D_teta)));
+          float x3 = (R * cos_ang(90 - (teta + 0.5 * D_teta)));
+          float y3 = (R * -sin_ang(90 - (teta + 0.5 * D_teta)));          
+          
+          //float ox = -0.5 * (R * cos_ang(90 - teta));
+          //float oy = -0.5 * (R * -sin_ang(90 - teta));
+          //float ox = -1 * (R * cos_ang(90 - teta));
+          //float oy = -1 * (R * -sin_ang(90 - teta));
+          float ox = -2 * (R * cos_ang(90 - teta)) / 3.0;
+          float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0;            
+  
+          float _u = 0.5 + 0.5 * (_Multiplier * _val);
+          if (PAL_DIR == -1) _u = 1 - _u;
+          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+          if (PAL_DIR == 2) _u =  0.5 * _u;
+          
+          float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
+  
+          WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
+          //WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);           
+          WIN3D_Diagrams.noFill();
+  
+          WIN3D_Diagrams.strokeWeight(2); // 0; <<<<<<<<<
          
-        float x4 = (R * cos_ang(90 - (teta - 0.5 * D_teta)));
-        float y4 = (R * -sin_ang(90 - (teta - 0.5 * D_teta)));
-        float x3 = (R * cos_ang(90 - (teta + 0.5 * D_teta)));
-        float y3 = (R * -sin_ang(90 - (teta + 0.5 * D_teta)));          
-        
-        //float ox = -0.5 * (R * cos_ang(90 - teta));
-        //float oy = -0.5 * (R * -sin_ang(90 - teta));
-        //float ox = -1 * (R * cos_ang(90 - teta));
-        //float oy = -1 * (R * -sin_ang(90 - teta));
-        float ox = -2 * (R * cos_ang(90 - teta)) / 3.0;
-        float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0;            
-
-        float _u = 0.5 + 0.5 * (_Multiplier * _val);
-        if (PAL_DIR == -1) _u = 1 - _u;
-        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-        if (PAL_DIR == 2) _u =  0.5 * _u;
-        
-        float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
-
-        WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
-        //WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);           
-        WIN3D_Diagrams.noFill();
-
-        WIN3D_Diagrams.strokeWeight(2); // 0; <<<<<<<<<
-       
-        WIN3D_Diagrams.beginShape();
-        WIN3D_Diagrams.vertex((x + x1 + ox) * objects_scale * WIN3D_scale3D, (y + y1 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
-        WIN3D_Diagrams.vertex((x + x2 + ox) * objects_scale * WIN3D_scale3D, (y + y2 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
-        WIN3D_Diagrams.vertex((x + x3 + ox) * objects_scale * WIN3D_scale3D, (y + y3 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
-        WIN3D_Diagrams.vertex((x + x4 + ox) * objects_scale * WIN3D_scale3D, (y + y4 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
-        WIN3D_Diagrams.endShape(CLOSE);        
+          WIN3D_Diagrams.beginShape();
+          WIN3D_Diagrams.vertex((x + x1 + ox) * objects_scale * WIN3D_scale3D, (y + y1 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+          WIN3D_Diagrams.vertex((x + x2 + ox) * objects_scale * WIN3D_scale3D, (y + y2 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+          WIN3D_Diagrams.vertex((x + x3 + ox) * objects_scale * WIN3D_scale3D, (y + y3 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+          WIN3D_Diagrams.vertex((x + x4 + ox) * objects_scale * WIN3D_scale3D, (y + y4 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+          WIN3D_Diagrams.endShape(CLOSE);
+        }        
       }
     }
   }   
@@ -2225,38 +2224,41 @@ void SOLARCHVISION_draw_WORLD () {
             
               float _val = AERIAL[GRIB2_Hour][_drybulb][n][o];
               
-              float _u = 0.5 + 0.5 * (_Multiplier * _val);
-              if (PAL_DIR == -1) _u = 1 - _u;
-              if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-              if (PAL_DIR == 2) _u =  0.5 * _u;
+              if (_val < 0.9 * FLOAT_undefined) {
               
-              float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
-    
-              if (_turn == 1) {
-                WORLD_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
-                WORLD_Diagrams.fill(_COL[1], _COL[2], _COL[3]);           
-    
-                WORLD_Diagrams.strokeWeight(0);
-                WORLD_Diagrams.ellipse(0, 0, R_station, R_station);
-              }
-              
-              if (_turn == 2) {
-                WORLD_Diagrams.textSize(MESSAGE_S_View);
-                WORLD_Diagrams.textAlign(CENTER, CENTER);
-  
-                _u = 0.5 + 0.5 * (_Multiplier * _val);
+                float _u = 0.5 + 0.5 * (_Multiplier * _val);
+                if (PAL_DIR == -1) _u = 1 - _u;
+                if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                if (PAL_DIR == 2) _u =  0.5 * _u;
                 
-                if (_COL[1] + _COL[2] + _COL[3] > 1.75 * 255) {
-                  WORLD_Diagrams.stroke(127);
-                  WORLD_Diagrams.fill(127);
+                float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
+      
+                if (_turn == 1) {
+                  WORLD_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
+                  WORLD_Diagrams.fill(_COL[1], _COL[2], _COL[3]);           
+      
                   WORLD_Diagrams.strokeWeight(0);
+                  WORLD_Diagrams.ellipse(0, 0, R_station, R_station);
                 }
-                else{
-                  WORLD_Diagrams.stroke(255);
-                  WORLD_Diagrams.fill(255);
-                  WORLD_Diagrams.strokeWeight(2);
-                }              
-                if (_val < 0.9 * FLOAT_undefined) WORLD_Diagrams.text(nf(int(roundTo(_val, 1)), 0), 0,0);
+                
+                if (_turn == 2) {
+                  WORLD_Diagrams.textSize(MESSAGE_S_View);
+                  WORLD_Diagrams.textAlign(CENTER, CENTER);
+    
+                  _u = 0.5 + 0.5 * (_Multiplier * _val);
+                  
+                  if (_COL[1] + _COL[2] + _COL[3] > 1.75 * 255) {
+                    WORLD_Diagrams.stroke(127);
+                    WORLD_Diagrams.fill(127);
+                    WORLD_Diagrams.strokeWeight(0);
+                  }
+                  else{
+                    WORLD_Diagrams.stroke(255);
+                    WORLD_Diagrams.fill(255);
+                    WORLD_Diagrams.strokeWeight(2);
+                  }              
+                  if (_val < 0.9 * FLOAT_undefined) WORLD_Diagrams.text(nf(int(roundTo(_val, 1)), 0), 0,0);
+                }
               }
             }
           }            
@@ -2275,62 +2277,65 @@ void SOLARCHVISION_draw_WORLD () {
             
               //float _val = AERIAL[GRIB2_Hour][_drybulb][n][o];
               float _val = AERIAL[GRIB2_Hour][_windspd][n][o];
+              
+              if (_val < 0.9 * FLOAT_undefined) {              
                 
-              float teta = AERIAL[GRIB2_Hour][_winddir][n][o];
-              float D_teta = 15; 
-              float R = 0.25 * R_station * AERIAL[GRIB2_Hour][_windspd][n][o];
-              
-              float R_in = 0.0 * R; 
-              float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta)));
-              float y1 = (R_in * -sin_ang(90 - (teta - 0.5 * D_teta)));
-              float x2 = (R_in * cos_ang(90 - (teta + 0.5 * D_teta)));
-              float y2 = (R_in * -sin_ang(90 - (teta + 0.5 * D_teta)));                      
-               
-              float x4 = (R * cos_ang(90 - (teta - 0.5 * D_teta)));
-              float y4 = (R * -sin_ang(90 - (teta - 0.5 * D_teta)));
-              float x3 = (R * cos_ang(90 - (teta + 0.5 * D_teta)));
-              float y3 = (R * -sin_ang(90 - (teta + 0.5 * D_teta)));          
-              
-              //float ox = -0.5 * (R * cos_ang(90 - teta));
-              //float oy = -0.5 * (R * -sin_ang(90 - teta));
-              //float ox = -1 * (R * cos_ang(90 - teta));
-              //float oy = -1 * (R * -sin_ang(90 - teta));
-              float ox = -2 * (R * cos_ang(90 - teta)) / 3.0;
-              float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0;            
-  
-              float _u = 0.5 + 0.5 * (_Multiplier * _val);
-              if (PAL_DIR == -1) _u = 1 - _u;
-              if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-              if (PAL_DIR == 2) _u =  0.5 * _u;
-              
-              float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
-    
-              if (_turn == 1) {
-                WORLD_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
-                WORLD_Diagrams.fill(_COL[1], _COL[2], _COL[3]);           
-    
-                WORLD_Diagrams.strokeWeight(0);
-                //WORLD_Diagrams.quad(x1, y1, x2, y2, x3, y3, x4, y4);
-                WORLD_Diagrams.quad(x1 + ox, y1 + oy, x2 + ox, y2 + oy, x3 + ox, y3 + oy, x4 + ox, y4 + oy);
-              }
-              
-              if (_turn == 2) {
-                WORLD_Diagrams.textSize(MESSAGE_S_View);
-                WORLD_Diagrams.textAlign(CENTER, CENTER);
-  
-                _u = 0.5 + 0.5 * (_Multiplier * _val);
+                float teta = AERIAL[GRIB2_Hour][_winddir][n][o];
+                float D_teta = 15; 
+                float R = 0.25 * R_station * AERIAL[GRIB2_Hour][_windspd][n][o];
                 
-                if (_COL[1] + _COL[2] + _COL[3] > 1.75 * 255) {
-                  WORLD_Diagrams.stroke(127);
-                  WORLD_Diagrams.fill(127);
+                float R_in = 0.0 * R; 
+                float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta)));
+                float y1 = (R_in * -sin_ang(90 - (teta - 0.5 * D_teta)));
+                float x2 = (R_in * cos_ang(90 - (teta + 0.5 * D_teta)));
+                float y2 = (R_in * -sin_ang(90 - (teta + 0.5 * D_teta)));                      
+                 
+                float x4 = (R * cos_ang(90 - (teta - 0.5 * D_teta)));
+                float y4 = (R * -sin_ang(90 - (teta - 0.5 * D_teta)));
+                float x3 = (R * cos_ang(90 - (teta + 0.5 * D_teta)));
+                float y3 = (R * -sin_ang(90 - (teta + 0.5 * D_teta)));          
+                
+                //float ox = -0.5 * (R * cos_ang(90 - teta));
+                //float oy = -0.5 * (R * -sin_ang(90 - teta));
+                //float ox = -1 * (R * cos_ang(90 - teta));
+                //float oy = -1 * (R * -sin_ang(90 - teta));
+                float ox = -2 * (R * cos_ang(90 - teta)) / 3.0;
+                float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0;            
+    
+                float _u = 0.5 + 0.5 * (_Multiplier * _val);
+                if (PAL_DIR == -1) _u = 1 - _u;
+                if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                if (PAL_DIR == 2) _u =  0.5 * _u;
+                
+                float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
+      
+                if (_turn == 1) {
+                  WORLD_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
+                  WORLD_Diagrams.fill(_COL[1], _COL[2], _COL[3]);           
+      
                   WORLD_Diagrams.strokeWeight(0);
+                  //WORLD_Diagrams.quad(x1, y1, x2, y2, x3, y3, x4, y4);
+                  WORLD_Diagrams.quad(x1 + ox, y1 + oy, x2 + ox, y2 + oy, x3 + ox, y3 + oy, x4 + ox, y4 + oy);
                 }
-                else{
-                  WORLD_Diagrams.stroke(255);
-                  WORLD_Diagrams.fill(255);
-                  WORLD_Diagrams.strokeWeight(2);
-                }              
-                if (_val < 0.9 * FLOAT_undefined) WORLD_Diagrams.text(nf(int(roundTo(_val, 1)), 0), 0,0);
+                
+                if (_turn == 2) {
+                  WORLD_Diagrams.textSize(MESSAGE_S_View);
+                  WORLD_Diagrams.textAlign(CENTER, CENTER);
+    
+                  _u = 0.5 + 0.5 * (_Multiplier * _val);
+                  
+                  if (_COL[1] + _COL[2] + _COL[3] > 1.75 * 255) {
+                    WORLD_Diagrams.stroke(127);
+                    WORLD_Diagrams.fill(127);
+                    WORLD_Diagrams.strokeWeight(0);
+                  }
+                  else{
+                    WORLD_Diagrams.stroke(255);
+                    WORLD_Diagrams.fill(255);
+                    WORLD_Diagrams.strokeWeight(2);
+                  }              
+                  if (_val < 0.9 * FLOAT_undefined) WORLD_Diagrams.text(nf(int(roundTo(_val, 1)), 0), 0,0);
+                }
               }
             }
           }
@@ -11011,17 +11016,7 @@ void keyPressed (KeyEvent e) {
             GRAPHS_Update = 1;
             break;                   
       
-          case 'g' :
-            AERIAL_graphOption = (AERIAL_graphOption + 1) % 2;
-            WORLD_Update = 1;
-            WIN3D_Update = 1; 
-            break;
-      
-          case 'G' :
-            AERIAL_graphOption = (AERIAL_graphOption + 2 - 1) % 2;
-            WORLD_Update = 1;
-            WIN3D_Update = 1; 
-            break;      
+   
         }
       }    
     }
@@ -11081,7 +11076,17 @@ void keyPressed (KeyEvent e) {
                     loop(); 
                     break;         
                    
-               
+          case 'g' :
+                    AERIAL_graphOption = (AERIAL_graphOption + 1) % 2;
+                    WORLD_Update = 1;
+                    WIN3D_Update = 1; 
+                    break;
+      
+          case 'G' :
+                    AERIAL_graphOption = (AERIAL_graphOption + 2 - 1) % 2;
+                    WORLD_Update = 1;
+                    WIN3D_Update = 1; 
+                    break;                 
         }
       }  
     }      
