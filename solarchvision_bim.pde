@@ -834,6 +834,10 @@ int OBJECTS_Pallet_PASSIVE = -1;
 int OBJECTS_Pallet_PASSIVE_DIR = 1;  
 float OBJECTS_Pallet_PASSIVE_MLT = 1;
 
+int GRAPHS_Pallet_SORT = -1;
+int GRAPHS_Pallet_SORT_DIR = -1;
+float GRAPHS_Pallet_SORT_MLT = 2;
+
 int GRAPHS_Pallet_PROB = -1;
 int GRAPHS_Pallet_PROB_DIR = 1;
 float GRAPHS_Pallet_PROB_MLT = 0.5;
@@ -6588,6 +6592,11 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
 
 
 void SOLARCHVISION_draw_sorted (int i, int j, float[] _valuesA, float[] _valuesB, float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
+
+  int PAL_TYPE = GRAPHS_Pallet_SORT; 
+  int PAL_DIR = GRAPHS_Pallet_SORT_DIR;  
+  float _Multiplier = GRAPHS_Pallet_SORT_MLT;
+
   float[] sorted_valuesA = sort(_valuesA);
   int num_sorted_valuesA = 0;
   for (int l = 0; l < sorted_valuesA.length; l += 1) {
@@ -6609,12 +6618,15 @@ void SOLARCHVISION_draw_sorted (int i, int j, float[] _valuesA, float[] _valuesB
   int num_sorted_valuesAB = min(num_sorted_valuesA, num_sorted_valuesB);
   
   for (int l = 0; l < (num_sorted_valuesAB - 1); l += 1) {
-    float _u = 1.1 * (0.5 - ((num_sorted_valuesAB - (l + 1)) / float(num_sorted_valuesAB)));
+    float sort_V = 1.1 * (0.5 - ((num_sorted_valuesAB - (l + 1)) / float(num_sorted_valuesAB)));
     
-    SET_COLOR_STYLE(-1, (0.5 - 1.0 * _u));
-    //SET_COLOR_STYLE(7, (0.5 - 1.0 * _u));
-    //SET_COLOR_STYLE(10, (0.5 - 1.0 * _u));
-    //SET_COLOR_STYLE(11, (0.5 - 1.0 * _u));
+    float _u = 0.5 + 0.5 * 0.75 * (_Multiplier * sort_V);
+    
+    if (PAL_DIR == -1) _u = 1 - _u;
+    if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+    if (PAL_DIR == 2) _u =  0.5 * _u;
+    
+    float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);   
     
     Diagrams_strokeWeight(GRAPHS_T_scale * 0.0); 
     //Diagrams_rect((j + ((i + 1) / 24.0)) * sx_Plot, sorted_valuesA[l] * sy_Plot, -(1 * 100 / 24.0) * GRAPHS_U_scale, (sorted_valuesA[(l + 1)] - sorted_valuesA[l]) * sy_Plot);
@@ -6641,28 +6653,33 @@ void SOLARCHVISION_draw_sorted (int i, int j, float[] _valuesA, float[] _valuesB
   String[] _txt = {"MIN", "", "25%", "", "MED", "", "75%", "", "MAX"}; 
   float pal_length = 400;
   for (int q = 0; q < 9; q += 1) {
-    float _u = 1.1 * (q - 4) / 8.0;
+    float sort_V = 1.1 * (q - 4) / 8.0;
     
-    SET_COLOR_STYLE(-1, (0.5 - 1.0 * _u)); 
-    //SET_COLOR_STYLE(7, (0.5 - 1.0 * _u));
-    //SET_COLOR_STYLE(10, (0.5 - 1.0 * _u));
-    //SET_COLOR_STYLE(11, (0.5 - 1.0 * _u));
+    float _u = 0.5 + 0.5 * 0.75 * (_Multiplier * sort_V);
+    
+    if (PAL_DIR == -1) _u = 1 - _u;
+    if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+    if (PAL_DIR == 2) _u =  0.5 * _u;
+    
+    float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);       
      
     float Y_OFFSET = (0.25 + GRAPHS_V_belowLine[GRAPHS_drw_Layer]) * sx_Plot / GRAPHS_U_scale;
 
-    Diagrams_strokeWeight(0.0);
+    //Diagrams_strokeWeight(0.0);
     Diagrams_stroke(255); Diagrams_strokeWeight(0.5); 
     //Diagrams_rect((700 + q * (pal_length / 9.0)) * GRAPHS_S_View, 125 * GRAPHS_S_View, (pal_length / 9.0) * GRAPHS_S_View, 20 * GRAPHS_S_View);
     Diagrams_rect((700 + q * (pal_length / 9.0)) * GRAPHS_S_View, Y_OFFSET, (pal_length / 9.0) * GRAPHS_S_View, 20 * GRAPHS_S_View);
     
-    Diagrams_strokeWeight(0); 
-    Diagrams_stroke(63);
-    Diagrams_fill(63);
-    if ((q != 0) && (q != 8)) {   
-      Diagrams_strokeWeight(2); 
+    if (_COL[1] + _COL[2] + _COL[3] > 1.75 * 255) {
+      Diagrams_stroke(127);
+      Diagrams_fill(127);
+      Diagrams_strokeWeight(0);
+    }
+    else{
       Diagrams_stroke(255);
-      Diagrams_fill(255); 
-    } 
+      Diagrams_fill(255);
+      Diagrams_strokeWeight(2);
+    }   
 
     Diagrams_textSize(15.0 * GRAPHS_S_View);
     Diagrams_textAlign(CENTER, CENTER);
@@ -16560,6 +16577,10 @@ void SOLARCHVISION_draw_ROLLOUT () {
       //COLOR_STYLE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Hourly color scheme", COLOR_STYLE, -1, (n_COLOR_STYLE - 1), 1), 1));
    
       GRAPHS_O_scale = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Windrose opacity scale", GRAPHS_O_scale, 1, 100, -pow(2.0, (1.0 / 4.0))); 
+
+      GRAPHS_Pallet_SORT = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_SORT", GRAPHS_Pallet_SORT, -1, (n_COLOR_STYLE - 1), 1), 1));
+      GRAPHS_Pallet_SORT_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_SORT_DIR", GRAPHS_Pallet_SORT_DIR, -1, 1, 2), 1));
+      GRAPHS_Pallet_SORT_MLT = MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_SORT_MLT", GRAPHS_Pallet_SORT_MLT, 0.25, 4, -2);
 
       GRAPHS_Pallet_PROB = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_PROB", GRAPHS_Pallet_PROB, -1, (n_COLOR_STYLE - 1), 1), 1));
       GRAPHS_Pallet_PROB_DIR = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "GRAPHS_Pallet_PROB_DIR", GRAPHS_Pallet_PROB_DIR, -1, 1, 2), 1));
