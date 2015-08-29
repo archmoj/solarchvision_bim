@@ -7,7 +7,7 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 2;
+int STATION_NUMBER = 3;
 
 String[][] DEFINED_STATIONS = {
                                 {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36"},
@@ -207,7 +207,7 @@ String MAKE_Filenames () {
 
 
 
-float HeightAboveGround = 2.5; // <<<<<<<<<
+float HeightAboveGround = 0; //2.5; // <<<<<<<<<
 
 String THE_STATION;
 String LocationName;
@@ -818,7 +818,15 @@ int Export_GRAPHS_info_node = 0;
 int Export_GRAPHS_info_norm = 0;
 int Export_GRAPHS_info_prob = 0;
 
-int SUN3D_Pallet_ACTIVE = 15; //-1; //7; //8;
+int GRAPHS_Pallet_SORT = -1;
+int GRAPHS_Pallet_SORT_DIR = -1;
+float GRAPHS_Pallet_SORT_MLT = 2;
+
+int GRAPHS_Pallet_PROB = -1;
+int GRAPHS_Pallet_PROB_DIR = 1;
+float GRAPHS_Pallet_PROB_MLT = 0.5;
+
+int SUN3D_Pallet_ACTIVE = 15; 
 int SUN3D_Pallet_ACTIVE_DIR = 1;
 float SUN3D_Pallet_ACTIVE_MLT = 1;
 
@@ -836,33 +844,19 @@ float SKY3D_Pallet_PASSIVE_MLT = 2; //1;
 
 int OBJECTS_Pallet_ACTIVE = 15;
 int OBJECTS_Pallet_ACTIVE_DIR = 1;
-float OBJECTS_Pallet_ACTIVE_MLT = 1; //2;
+float OBJECTS_Pallet_ACTIVE_MLT = 1; 
 
 int OBJECTS_Pallet_PASSIVE = -1; 
 int OBJECTS_Pallet_PASSIVE_DIR = 1;  
-float OBJECTS_Pallet_PASSIVE_MLT = 2; //1;
+float OBJECTS_Pallet_PASSIVE_MLT = 2; 
 
-int GRAPHS_Pallet_SORT = -1;
-int GRAPHS_Pallet_SORT_DIR = -1;
-float GRAPHS_Pallet_SORT_MLT = 2;
-
-int GRAPHS_Pallet_PROB = -1;
-int GRAPHS_Pallet_PROB_DIR = 1;
-float GRAPHS_Pallet_PROB_MLT = 0.5;
-
+int GRAPHS_Pallet_ACTIVE = 15; 
+int GRAPHS_Pallet_ACTIVE_DIR = 1;
 float GRAPHS_Pallet_ACTIVE_MLT = 1;
-float GRAPHS_Pallet_PASSIVE_MLT = 2; //1;
 
-//int GRAPHS_Pallet_ACTIVE = 8, GRAPHS_Pallet_ACTIVE_DIR = -1;
-//int GRAPHS_Pallet_ACTIVE = -1, GRAPHS_Pallet_ACTIVE_DIR = -1;
-//int GRAPHS_Pallet_ACTIVE = 6, GRAPHS_Pallet_ACTIVE_DIR = -1;
-//int GRAPHS_Pallet_ACTIVE = 14, GRAPHS_Pallet_ACTIVE_DIR = 1;
-//int GRAPHS_Pallet_ACTIVE = 12, GRAPHS_Pallet_ACTIVE_DIR = 1;
-int GRAPHS_Pallet_ACTIVE = 15, GRAPHS_Pallet_ACTIVE_DIR = 1;
-//int GRAPHS_Pallet_ACTIVE = -1, GRAPHS_Pallet_ACTIVE_DIR = 2;
-//int GRAPHS_Pallet_ACTIVE = -1, GRAPHS_Pallet_ACTIVE_DIR = -2;
-
-int GRAPHS_Pallet_PASSIVE = 1, GRAPHS_Pallet_PASSIVE_DIR = 1;
+int GRAPHS_Pallet_PASSIVE = 1; 
+int GRAPHS_Pallet_PASSIVE_DIR = 1;
+float GRAPHS_Pallet_PASSIVE_MLT = 2; 
 
 int Impact_ACTIVE = 1;
 int Impact_PASSIVE = 2;
@@ -13463,14 +13457,14 @@ void SOLARCHVISION_draw_solarch_image () {
   
   WIN3D_Diagrams.fill(255, 255, 255, 0);  
   
-  float c = HeightAboveGround; // <<< or zero i.e. height of the plane in 3D
+  float c = HeightAboveGround * objects_scale; // <<< or zero i.e. height of the plane in 3D
   
   {
     float a = -0.5 * Solarch_scale_U * objects_scale;
     float b = -0.5 * Solarch_scale_V * objects_scale;    
     float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
     float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
-    float z = c * objects_scale; 
+    float z = c; 
     WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, 0, Solarch_RES2);
   }
   {
@@ -13478,7 +13472,7 @@ void SOLARCHVISION_draw_solarch_image () {
     float b = -0.5 * Solarch_scale_V * objects_scale;    
     float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
     float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
-    float z = c * objects_scale;  
+    float z = c;  
     WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, Solarch_RES1, Solarch_RES2);
   }  
   {
@@ -13486,7 +13480,7 @@ void SOLARCHVISION_draw_solarch_image () {
     float b = 0.5 * Solarch_scale_V * objects_scale;    
     float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
     float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
-    float z = c * objects_scale;  
+    float z = c;  
     WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, Solarch_RES1, 0);
   }  
   {
@@ -13494,7 +13488,7 @@ void SOLARCHVISION_draw_solarch_image () {
     float b = 0.5 * Solarch_scale_V * objects_scale;    
     float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
     float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
-    float z = c * objects_scale;  
+    float z = c;  
     WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, 0, 0);
   }  
   
@@ -14926,7 +14920,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
 
 float Solarch_Rotation = 0; // North is up by default
 
-float Solarch_scale_All = 466.666; // i.e. 500m  //??????????
+float Solarch_scale_All = 666.666; //466.666; // i.e. 500m  //??????????
 float Solarch_scale_U = Solarch_scale_All; 
 float Solarch_scale_V = Solarch_scale_All;
 
