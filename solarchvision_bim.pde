@@ -854,7 +854,7 @@ int GRAPHS_Pallet_ACTIVE = 15;
 int GRAPHS_Pallet_ACTIVE_DIR = 1;
 float GRAPHS_Pallet_ACTIVE_MLT = 1;
 
-int GRAPHS_Pallet_PASSIVE = 1; 
+int GRAPHS_Pallet_PASSIVE = -1; 
 int GRAPHS_Pallet_PASSIVE_DIR = 1;
 float GRAPHS_Pallet_PASSIVE_MLT = 2; 
 
@@ -8569,7 +8569,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       }
       
       //----------------------
-      draw_impact_summary = 1; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      if (camera_variation == 0) draw_impact_summary = 1; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       //----------------------
       
       if (draw_impact_summary == 1) { 
@@ -8622,7 +8622,24 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         
         total_Image_RGBA.updatePixels(); 
         
-        Solarch_Image = total_Image_RGBA;
+        if (camera_variation == 0) {
+          
+          Solarch_Image = total_Image_RGBA;  // <<<<<<<<<<<<<<<<
+          
+          if (Impact_TYPE == Impact_ACTIVE) {
+            OBJECTS_Pallet_ACTIVE = GRAPHS_Pallet_ACTIVE;
+            OBJECTS_Pallet_ACTIVE_DIR = GRAPHS_Pallet_ACTIVE_DIR;
+            OBJECTS_Pallet_ACTIVE_MLT = GRAPHS_Pallet_ACTIVE_MLT;
+          } 
+
+          if (Impact_TYPE == Impact_PASSIVE) {
+            OBJECTS_Pallet_PASSIVE = GRAPHS_Pallet_PASSIVE;
+            OBJECTS_Pallet_PASSIVE_DIR = GRAPHS_Pallet_PASSIVE_DIR;
+            OBJECTS_Pallet_PASSIVE_MLT = GRAPHS_Pallet_PASSIVE_MLT;
+          } 
+          
+        }
+
 
         Diagrams_strokeWeight(GRAPHS_T_scale * 0);
         Diagrams_stroke(223);
@@ -13448,52 +13465,53 @@ void SOLARCHVISION_draw_field_image () {
 
 
 void SOLARCHVISION_draw_solarch_image () {
-  
-  WIN3D_Diagrams.beginShape();
-  WIN3D_Diagrams.texture(Solarch_Image);    
-  
-  //WIN3D_Diagrams.stroke(255, 255, 255, 0);
-  WIN3D_Diagrams.stroke(0);
-  
-  WIN3D_Diagrams.fill(255, 255, 255, 0);  
-  
-  float c = HeightAboveGround * objects_scale; // <<< or zero i.e. height of the plane in 3D
-  
-  {
-    float a = -0.5 * Solarch_scale_U * objects_scale;
-    float b = -0.5 * Solarch_scale_V * objects_scale;    
-    float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
-    float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
-    float z = c; 
-    WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, 0, Solarch_RES2);
+
+  if (display_Solarch_Image == 1) {  
+    WIN3D_Diagrams.beginShape();
+    WIN3D_Diagrams.texture(Solarch_Image);    
+    
+    //WIN3D_Diagrams.stroke(255, 255, 255, 0);
+    WIN3D_Diagrams.stroke(0);
+    
+    WIN3D_Diagrams.fill(255, 255, 255, 0);  
+    
+    float c = HeightAboveGround * objects_scale; // <<< or zero i.e. height of the plane in 3D
+    
+    {
+      float a = -0.5 * Solarch_scale_U * objects_scale;
+      float b = -0.5 * Solarch_scale_V * objects_scale;    
+      float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
+      float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
+      float z = c; 
+      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, 0, Solarch_RES2);
+    }
+    {
+      float a = 0.5 * Solarch_scale_U * objects_scale;
+      float b = -0.5 * Solarch_scale_V * objects_scale;    
+      float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
+      float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
+      float z = c;  
+      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, Solarch_RES1, Solarch_RES2);
+    }  
+    {
+      float a = 0.5 * Solarch_scale_U * objects_scale;
+      float b = 0.5 * Solarch_scale_V * objects_scale;    
+      float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
+      float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
+      float z = c;  
+      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, Solarch_RES1, 0);
+    }  
+    {
+      float a = -0.5 * Solarch_scale_U * objects_scale;
+      float b = 0.5 * Solarch_scale_V * objects_scale;    
+      float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
+      float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
+      float z = c;  
+      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, 0, 0);
+    }  
+    
+    WIN3D_Diagrams.endShape(CLOSE);
   }
-  {
-    float a = 0.5 * Solarch_scale_U * objects_scale;
-    float b = -0.5 * Solarch_scale_V * objects_scale;    
-    float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
-    float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
-    float z = c;  
-    WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, Solarch_RES1, Solarch_RES2);
-  }  
-  {
-    float a = 0.5 * Solarch_scale_U * objects_scale;
-    float b = 0.5 * Solarch_scale_V * objects_scale;    
-    float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
-    float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
-    float z = c;  
-    WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, Solarch_RES1, 0);
-  }  
-  {
-    float a = -0.5 * Solarch_scale_U * objects_scale;
-    float b = 0.5 * Solarch_scale_V * objects_scale;    
-    float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
-    float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
-    float z = c;  
-    WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, 0, 0);
-  }  
-  
-  WIN3D_Diagrams.endShape(CLOSE);
- 
 }
 
 void SOLARCHVISION_draw_objects () {
@@ -16691,7 +16709,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
                   
       SKY3D_scale = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_scale" , SKY3D_scale, 100, 10000, -2);
       SKY3D_TESELATION = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_TESELATION" , SKY3D_TESELATION, 0, 5, 1), 1));
-      
+
+      display_Solarch_Image = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "display_Solarch_Image" , display_Solarch_Image, 0, 1, 1), 1));      
       
     }
     
