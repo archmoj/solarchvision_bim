@@ -4203,17 +4203,48 @@ void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY
             String the_target = ENSEMBLE_directory + "/" + FN + ".bz2";
       
             println("Try downloading: " + the_link);
-      
+            
             try{
               saveBytes(the_target, loadBytes(the_link));
               
-              //String[] new_file = {FN};
-              //ENSEMBLE_XML_Files = concat(ENSEMBLE_XML_Files, new_file);
+              /*
+              open("C:\\SOLARCHVISION_2015\\BatchFiles\\unzipNAEFS.bat");
               
-              //open("7z.exe e " + the_target + " -o" + ENSEMBLE_directory);
+              int _stay = 1;
+            
+              while ((_stay != 0) && (_stay < 25)) {
+            
+                println(_stay);
+            
+                _stay += 1;
+            
+                String[] filenames = getfiles(ENSEMBLE_directory);
+            
+                if (filenames != null) {
+                  for (int i = filenames.length - 1; i >= 0 ; i--) { //faster
+                    //println(filenames[i]);
+            
+                    if (filenames[i].equals(FN)) {
+                      //println("The xml is extracted:", FN);
+            
+                    }
+                  }
+                }
+              }
               
-              //File_Found = ENSEMBLE_XML_Files.length - 1;
-              //println("Added:", File_Found);              
+          
+              if (_stay != 0) {
+                println("The xml is not ready:", FN);
+              } else {
+
+                String[] new_file = {FN};
+                ENSEMBLE_XML_Files = concat(ENSEMBLE_XML_Files, new_file); // fast
+                //ENSEMBLE_XML_Files = getfiles(ENSEMBLE_directory); //slow! 
+                
+                File_Found = ENSEMBLE_XML_Files.length - 1;
+                //println("Added:", File_Found);    
+              }
+              */
             } 
             catch (Exception e) {
               println ("LINK NOT AVAILABLE:", the_link); 
@@ -4231,6 +4262,9 @@ void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY
     SOLARCHVISION_postProcess_ENSEMBLE();
   }
   
+  //--------------------------------------------------------
+  open("C:\\SOLARCHVISION_2015\\BatchFiles\\unzipNAEFS.bat");
+  //--------------------------------------------------------
 }
 
 void SOLARCHVISION_postProcess_ENSEMBLE () {
