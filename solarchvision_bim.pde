@@ -245,8 +245,8 @@ int CLIMATE_EPW_end = 1;
 int CLIMATE_WY2_start = 1953;
 int CLIMATE_WY2_end = 2005;
 
-int ENSEMBLE_start = 1; // min: 1
-int ENSEMBLE_end = 43; // max: 43
+int ENSEMBLE_start = 1; 
+int ENSEMBLE_end = 44; // NAEFS:1-43 HRDPS:44 
 
 int numberOfNearestStations_ENSEMBLE = 1;  // <<<<<<<<
 
@@ -266,7 +266,7 @@ float[] nearest_Station_OBSERVED_dist = new float [numberOfNearestStations_OBSER
 
 
 int Sample_Year = 2005; // 2003 as a year with extreme condition
-int Sample_Member = 22; // deterministic
+int Sample_Member = 44; // HRDPS 22; // deterministic
 int Sample_Station = 1; // Montreal-Dorval
 
 float[][][][] CLIMATE_EPW;
@@ -309,7 +309,7 @@ int GRIB2_Hour_Start = 0;
 int GRIB2_Hour_End = 0; //48;
 int GRIB2_Hour_Step = 6; //1;
 
-int GRIB2_Layer_Start =  4; //_winddir;
+int GRIB2_Layer_Start = 8; // 4; //_winddir;
 int GRIB2_Layer_End = 8; //_drybulb;
 int GRIB2_Layer_Step = 1;
 
@@ -4227,6 +4227,15 @@ void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY
     }
     
     println("End of initializing xml files.");
+    
+    SOLARCHVISION_postProcess_ENSEMBLE();
+  }
+  
+}
+
+void SOLARCHVISION_postProcess_ENSEMBLE () {
+
+  if (Load_ENSEMBLE == 1) {
     
     int MAX_SEARCH = 6; // It defines how many hours the program should seek for each point to find next available data.  
     
@@ -16963,12 +16972,12 @@ SOLARCHVISION_Spinner MySpinner = new SOLARCHVISION_Spinner();
 
 
 
-void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
+void SOLARCHVISION_try_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin_DAY, int begin_HOUR) {
 
-  GRIB2_YEAR = THE_YEAR;
-  GRIB2_MONTH = THE_MONTH;
-  GRIB2_DAY = THE_DAY;
-  GRIB2_RUN = 0; //THE_HOUR; // <<<<<<<<<<<<<<<
+  GRIB2_YEAR = begin_YEAR;
+  GRIB2_MONTH = begin_MONTH;
+  GRIB2_DAY = begin_DAY;
+  GRIB2_RUN = 0; //begin_HOUR; // <<<<<<<<<<<<<<<
 
   
 
@@ -17167,7 +17176,58 @@ void SOLARCHVISION_try_update_AERIAL (int THE_YEAR, int THE_MONTH, int THE_DAY, 
     }
   }
 
+  for (int l = GRIB2_Layer_Start; l <= GRIB2_Layer_End; l += GRIB2_Layer_Step) {
+    GRIB2_Layer = l;
+    
+    for (int k = GRIB2_Hour_Start; k <= GRIB2_Hour_End; k += GRIB2_Hour_Step) {
+      GRIB2_Hour = k;
+
+      for (int n = 0; n < 1; n += 1) { // <<<<<<<<<<<<<<<< For now: only the first point (i.e. the center)
+        for (int o = 0; o < 1; o += 1){  // <<<<<<<<<<<<<<<< For now: only the first member
+
+          int THE_YEAR = GRIB2_YEAR;
+          int THE_MONTH = GRIB2_MONTH;
+          int THE_DAY = GRIB2_DAY;
+          int THE_HOUR = GRIB2_RUN;
+
+          int now_i = int(THE_HOUR);
+          int now_j = Convert2Date(THE_MONTH, THE_DAY);
+          
+          now_i -= int(-LocationTimeZone / 15);
+          if (now_i < 0) {
+            now_i += 24;
+            now_j -= 1;
+            if (now_j < 0) {
+              now_j += 365;
+            } 
+          }          
+
+          int next_i = now_i + k;
+          int next_j = now_j;
+          if (next_i >= 24) {
+            
+            next_j += int(next_i / 24);
+            if (next_j >= 365) {
+              next_j = next_j % 365;
+            }
+            
+            next_i = next_i % 24;
+          }
+
+          
+          ENSEMBLE[next_i][next_j][l][43] = AERIAL[GRIB2_Hour][GRIB2_Layer][n][o]; // <<<<<<<<<<< writing as member 44
+
+          println("HRDPS:", next_i, next_j, l, ENSEMBLE[next_i][next_j][l][43]);          
+          println("GDPS:", next_i, next_j, l, ENSEMBLE[next_i][next_j][l][21]);
+        }
+      }          
+    }
+  }
+
+  SOLARCHVISION_postProcess_ENSEMBLE();
   
+  F_layer_option = 4;
+  GRAPHS_Update = 1; 
 }
 
 
