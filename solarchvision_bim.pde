@@ -309,7 +309,7 @@ int GRIB2_Hour_Start = 0;
 int GRIB2_Hour_End = 0; //48;
 int GRIB2_Hour_Step = 6; //1;
 
-int GRIB2_Layer_Start = 8; // 4; //_winddir;
+int GRIB2_Layer_Start = 4; //_cloudcover;
 int GRIB2_Layer_End = 8; //_drybulb;
 int GRIB2_Layer_Step = 1;
 
@@ -708,7 +708,7 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_GRIB2[i][1] = "TCDC_SFC_0"; // percent
     LAYERS_GRIB2[i][2] = "TCDC_SFC_0"; // percent
     LAYERS_GRIB2[i][3] = "TCDC_SFC_0"; // percent
-    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_MUL[i] = 0.1; // percent >> tenth    
     LAYERS_GRIB2_ADD[i] = 0;
   }
   
@@ -4240,9 +4240,11 @@ void SOLARCHVISION_postProcess_ENSEMBLE () {
     int MAX_SEARCH = 6; // It defines how many hours the program should seek for each point to find next available data.  
     
     for (int l = 0; l < num_layers; l += 1) {
-      if (LAYERS_ENSEMBLE[l].equals("")) {
+      
+      if (LAYERS_ENSEMBLE[l].equals("")) {  // <<<<<<<<<< to make it faster but this won't process the HRDPS layers those not available in NAEFS layers! 
       }
-      else {
+      else 
+      {
     
         //////////////////////////////////////  PASS 1  //////////////////////////////////////  
         
@@ -4307,6 +4309,8 @@ void SOLARCHVISION_postProcess_ENSEMBLE () {
                 pre_v = ENSEMBLE[i][j][l][k];
                 pre_num = 0;
               }
+              
+              //if ((k == 43) && (ENSEMBLE[i][j][l][k] < 0.9 * FLOAT_undefined)) println("HRDPS:", i, j, l, ENSEMBLE[i][j][l][k]);
             }
           }
         }
