@@ -246,7 +246,7 @@ int CLIMATE_WY2_start = 1953;
 int CLIMATE_WY2_end = 2005;
 
 int ENSEMBLE_start = 1; 
-int ENSEMBLE_end = 44; // NAEFS:1-43 HRDPS:44 
+int ENSEMBLE_end = 43; // NAEFS:1-43 we append HRDPS or other scenarions at the end  of this list
 
 int numberOfNearestStations_ENSEMBLE = 1;  // <<<<<<<<
 
@@ -266,8 +266,8 @@ float[] nearest_Station_OBSERVED_dist = new float [numberOfNearestStations_OBSER
 
 
 int Sample_Year = 2005; // 2003 as a year with extreme condition
-int Sample_Member = 44; // HRDPS 22; // deterministic
-int Sample_Station = 1; // Montreal-Dorval
+int Sample_Member = 22; // deterministic
+int Sample_Station = 1; 
 
 float[][][][] CLIMATE_EPW;
 
@@ -348,6 +348,10 @@ int GRIB2_DOMAIN_SELECTION = 0; int Scenarios_max = 21; // should convert U&V to
 //int GRIB2_DOMAIN_SELECTION = 2; int Scenarios_max = 1;
 //int GRIB2_DOMAIN_SELECTION = 3; int Scenarios_max = 1;
 //int GRIB2_DOMAIN_SELECTION = 4; int Scenarios_max = 1; // not working now!
+
+{
+  ENSEMBLE_end += Scenarios_max = 21; // <<<<<<<<<<<<<<<<
+}
 
 
 int AERIAL_graphOption = 0; 
@@ -7052,10 +7056,13 @@ int[] get_startZ_endZ (int data_source) {
     end_z = ENSEMBLE_end;
     
     switch(F_layer_option) {
-      case 1 : start_z = 1; end_z = 21; break;
-      case 2 : start_z = 1; end_z = 22; break;
-      case 3 : start_z = 23; end_z = 43; break;
-      case 4: start_z = Sample_Member; end_z = Sample_Member; break;
+      case 1 : start_z = 23; end_z = 43; break; //xml: US
+      case 2 : start_z = 1; end_z = 22; break; //xml: GEPS + GDPS
+      case 3: start_z = 44; end_z = end_z; break; // additional GRIB2 domains
+      case 4: start_z = 1; end_z = 43; break; //xml: NAEFS
+      case 5: start_z = Sample_Member; end_z = Sample_Member; break;
+      
+      
     }
 
   }    
@@ -10065,8 +10072,8 @@ void GRAPHS_keyPressed (KeyEvent e) {
           case 'Y' :Sample_Year -= 1; if (Sample_Year < CLIMATE_WY2_start) Sample_Year = CLIMATE_WY2_end; GRAPHS_Update = 1; break;
           case 'h' :H_layer_option = (H_layer_option + 1) % 8; GRAPHS_Update = 1; break;
           case 'H' :H_layer_option = (H_layer_option + 8 - 1) % 8; GRAPHS_Update = 1; break;
-          case 'f' :F_layer_option = (F_layer_option + 1) % 5; GRAPHS_Update = 1; break;
-          case 'F' :F_layer_option = (F_layer_option + 5 - 1) % 5; GRAPHS_Update = 1; break;
+          case 'f' :F_layer_option = (F_layer_option + 1) % 6; GRAPHS_Update = 1; break;
+          case 'F' :F_layer_option = (F_layer_option + 6 - 1) % 6; GRAPHS_Update = 1; break;
           case 'e' :Sample_Member += 1; if (Sample_Member > ENSEMBLE_end) Sample_Member = ENSEMBLE_start; GRAPHS_Update = 1; break; 
           case 'E' :Sample_Member -= 1; if (Sample_Member < ENSEMBLE_start) Sample_Member = ENSEMBLE_end; GRAPHS_Update = 1; break;
     
@@ -16853,11 +16860,11 @@ void SOLARCHVISION_draw_ROLLOUT () {
       sky_scenario = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Sky status", sky_scenario, 1, 4, 1), 1));
       filter_type = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Hourly/daily filter", filter_type, 0, 1, 1), 1));
     
-      F_layer_option = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Forecast filter option" , F_layer_option, 0, 4, 1), 1));
-      Sample_Member = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Single member" , Sample_Member, 1, 43, 1), 1));  
+      F_layer_option = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Forecast filter option" , F_layer_option, 0, 5, 1), 1));
+      Sample_Member = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Single member" , Sample_Member, ENSEMBLE_end, ENSEMBLE_end, 1), 1));  
     
       H_layer_option = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Climate filter option" , H_layer_option, 0, 7, 1), 1));
-      Sample_Year = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Single year" , Sample_Year, 1953, 2005, 1), 1));
+      Sample_Year = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Single year" , Sample_Year, CLIMATE_WY2_start, CLIMATE_WY2_end, 1), 1));
     }
 
 
@@ -17256,7 +17263,7 @@ void SOLARCHVISION_try_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin
       GRIB2_Hour = k;
 
       for (int n = 0; n < 1; n += 1) { // <<<<<<<<<<<<<<<< For now: only the first point (i.e. the center)
-        for (int o = 0; o < 1; o += 1){  // <<<<<<<<<<<<<<<< For now: only the first member
+        for (int o = 0; o < Scenarios_max; o += 1){  
 
           int THE_YEAR = GRIB2_YEAR;
           int THE_MONTH = GRIB2_MONTH;
@@ -17288,9 +17295,9 @@ void SOLARCHVISION_try_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin
           }
 
           
-          ENSEMBLE[next_i][next_j][l][43] = AERIAL[GRIB2_Hour][GRIB2_Layer][n][o]; // <<<<<<<<<<< writing as member 44
+          ENSEMBLE[next_i][next_j][l][43 + o] = AERIAL[GRIB2_Hour][GRIB2_Layer][n][o]; // <<<<<<<<<<< writing after member 43
 
-          println(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0] + ":", next_i, next_j, l, ENSEMBLE[next_i][next_j][l][43]);          
+          println(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0] + "[" + nf(o, 0) + "]:", next_i, next_j, l, ENSEMBLE[next_i][next_j][l][43 + o]);          
           println("GDPS:", next_i, next_j, l, ENSEMBLE[next_i][next_j][l][21]);
         }
       }          
@@ -17299,7 +17306,7 @@ void SOLARCHVISION_try_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin
 
   SOLARCHVISION_postProcess_ENSEMBLE();
   
-  F_layer_option = 4;
+  F_layer_option = 5;
   GRAPHS_Update = 1; 
 }
 
