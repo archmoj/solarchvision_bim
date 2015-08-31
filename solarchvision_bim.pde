@@ -542,7 +542,7 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_GRIB2[i][1] = "WIND_TGL_40"; // m/sec
     LAYERS_GRIB2[i][2] = "WIND_TGL_80"; // m/sec
     LAYERS_GRIB2[i][3] = "WIND_TGL_120"; // m/sec
-    LAYERS_GRIB2_MUL[i] = 3.6; // m/s > Km/h    
+    LAYERS_GRIB2_MUL[i] = 3.6; // m/s > Km/h  ----> because for some domains we need to calculate wind speed and direction via U & V this value is not applied actually. Search for other line that we infact converted from m/s > Km/h
     LAYERS_GRIB2_ADD[i] = 0;
   }
   
@@ -746,7 +746,7 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_GRIB2[i][1] = "PRMSL_MSL_0";
     LAYERS_GRIB2[i][2] = "PRMSL_MSL_0";
     LAYERS_GRIB2[i][3] = "PRMSL_MSL_0";
-    LAYERS_GRIB2_MUL[i] = 1;    
+    LAYERS_GRIB2_MUL[i] = 0.01; // Pa >> hPa ??????????????    
     LAYERS_GRIB2_ADD[i] = 0;
   }
     
@@ -4348,7 +4348,7 @@ void SOLARCHVISION_postProcess_ENSEMBLE () {
                 pre_num = 0;
               }
               
-              //if ((k == 43) && (ENSEMBLE[i][j][l][k] < 0.9 * FLOAT_undefined)) println("HRDPS:", i, j, l, ENSEMBLE[i][j][l][k]);
+              //if ((k == 43) && (ENSEMBLE[i][j][l][k] < 0.9 * FLOAT_undefined)) println(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0] + ":", i, j, l, ENSEMBLE[i][j][l][k]);
             }
           }
         }
@@ -17204,7 +17204,33 @@ void SOLARCHVISION_try_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin
     }
   }
 
+  
+  for (int n = 0; n < AERIAL_num; n += 1) {
+    
+    int h = int(roundTo(AERIAL_Locations[n][2] / 40.0, 1)); 
+    
+    if ((LAYERS_GRIB2[_winddir][h].substring(0, 4)).equals("UGRD") && (LAYERS_GRIB2[_windspd][h].substring(0, 4)).equals("VGRD")) {
 
+      for (int k = GRIB2_Hour_Start; k <= GRIB2_Hour_End; k += GRIB2_Hour_Step) {
+      GRIB2_Hour = k;    
+      
+        for (int o = 0; o < Scenarios_max; o += 1){
+          
+          float u = AERIAL[GRIB2_Hour][_winddir][n][o]; // because U component stored in _winddir 
+          float v = AERIAL[GRIB2_Hour][_windspd][n][o]; // because U component stored in _windspd
+          
+          if ((abs(u) < 0.9 * FLOAT_undefined) && (abs(v) < 0.9 * FLOAT_undefined)) { 
+            AERIAL[GRIB2_Hour][_windspd][n][o] = 3.6 * pow((pow(u, 2) + pow(v, 2)), 0.5); // now converting from m/s >> Km/h 
+            AERIAL[GRIB2_Hour][_winddir][n][o] = 180 + atan2_ang(u, v); // ???????????? range checking?
+          }
+          
+        }
+      }
+    }
+  }
+
+
+  
   
   for (int l = GRIB2_Layer_Start; l <= GRIB2_Layer_End; l += GRIB2_Layer_Step) {
     GRIB2_Layer = l;
@@ -17264,7 +17290,7 @@ void SOLARCHVISION_try_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin
           
           ENSEMBLE[next_i][next_j][l][43] = AERIAL[GRIB2_Hour][GRIB2_Layer][n][o]; // <<<<<<<<<<< writing as member 44
 
-          println("HRDPS:", next_i, next_j, l, ENSEMBLE[next_i][next_j][l][43]);          
+          println(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0] + ":", next_i, next_j, l, ENSEMBLE[next_i][next_j][l][43]);          
           println("GDPS:", next_i, next_j, l, ENSEMBLE[next_i][next_j][l][21]);
         }
       }          
@@ -17289,11 +17315,32 @@ String getGrib2Filename (int k, int l, int h) {
   
   String F_L = LAYERS_GRIB2[l][h];
   
-  if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][h].equals("GEPS")) {
+  if (l == _winddir) {
+    if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][h].equals("GEPS")) {
+      F_L = F_L.replace("WDIR", "UGRD");
+      LAYERS_GRIB2[l][h] = F_L;      
+    }
+    else {
+      F_L = F_L.replace("UGRD", "WDIR");
+      LAYERS_GRIB2[l][h] = F_L;  
+    }
+  }
+  
+  if (l == _windspd) {
+    if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][h].equals("GEPS")) {
     
-    if (F_L.substring(0, 4).equals("WDIR")) F_L = F_L.replace("WDIR", "UGRD");
-    if (F_L.substring(0, 4).equals("WIND")) F_L = F_L.replace("WIND", "VGRD");
-    
+      F_L = F_L.replace("WIND", "VGRD");
+      LAYERS_GRIB2[l][h] = F_L;
+      LAYERS_GRIB2_MUL[l] = 1; // that is for no unit conversion!
+    }
+    else {
+      F_L = F_L.replace("VGRD", "WIND");
+      LAYERS_GRIB2[l][h] = F_L;  
+      LAYERS_GRIB2_MUL[l] = 3.6; // m/s > Km/h
+    }
+  }
+
+  if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][h].equals("GEPS")) {    
     if (F_L.equals("TMP_TGL_2")) F_L += "m";
     if (F_L.equals("RH_TGL_2")) F_L += "m";
     if (F_L.equals("UGRD_TGL_10")) F_L += "m";
@@ -17302,8 +17349,6 @@ String getGrib2Filename (int k, int l, int h) {
     
   return_txt = GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2] + "_" + F_L + "_" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][3] + "_" + nf(GRIB2_YEAR, 4) + nf(GRIB2_MONTH, 2) + nf(GRIB2_DAY, 2) + nf(GRIB2_RUN, 2) + "_P" + nf(k, 3) + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][4];
 
-
-  
   return return_txt;
 }
 
@@ -17666,7 +17711,9 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
                 v = Float.valueOf(my_lines[q].substring(_posZ + 4));
                
                 //println(v);
+                
 
+                  
                 v *= LAYERS_GRIB2_MUL[l];
                 v += LAYERS_GRIB2_ADD[l]; // e.g. Kelvin >> C                        
                 
