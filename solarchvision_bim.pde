@@ -343,9 +343,9 @@ String[][] GRIB2_DOMAINS = {
   
   
 
-//int GRIB2_DOMAIN_SELECTION = 0; int Scenarios_max = 21; // should convert U&V to wind speed and direction!   
+int GRIB2_DOMAIN_SELECTION = 0; int Scenarios_max = 21; // should convert U&V to wind speed and direction!   
 //int GRIB2_DOMAIN_SELECTION = 1; int Scenarios_max = 1;
-int GRIB2_DOMAIN_SELECTION = 2; int Scenarios_max = 1;
+//int GRIB2_DOMAIN_SELECTION = 2; int Scenarios_max = 1;
 //int GRIB2_DOMAIN_SELECTION = 3; int Scenarios_max = 1;
 //int GRIB2_DOMAIN_SELECTION = 4; int Scenarios_max = 1; // not working now!
 
@@ -17188,13 +17188,15 @@ void SOLARCHVISION_try_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin
               for (int n = 0; n < AERIAL_num; n += 1) {
                 int p = int(roundTo(AERIAL_Locations[n][2] / 40.0, 1)); 
                 
-                if (p == h) {                
+                if (p == h) {
+
+                  nPoint += 1;
+                  
                   for (int o = 0; o < Scenarios_max; o += 1){
-                    nPoint += 1;
                     AERIAL[GRIB2_Hour][GRIB2_Layer][n][o] = GRIB2_values[nPoint][o];
                   }
                 }
-              }        
+              }
             }
           }
         }
@@ -17288,6 +17290,9 @@ String getGrib2Filename (int k, int l, int h) {
   String F_L = LAYERS_GRIB2[l][h];
   
   if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][h].equals("GEPS")) {
+    
+    if (F_L.substring(0, 4).equals("WDIR")) F_L = F_L.replace("WDIR", "UGRD");
+    if (F_L.substring(0, 4).equals("WIND")) F_L = F_L.replace("WIND", "VGRD");
     
     if (F_L.equals("TMP_TGL_2")) F_L += "m";
     if (F_L.equals("RH_TGL_2")) F_L += "m";
