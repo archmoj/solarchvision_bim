@@ -322,20 +322,23 @@ int GRIB2_Layer;
 String[][] GRIB2_DOMAINS = {
                                {"GEPS", "ensemble/naefs/grib2/raw", "CMC_naefs-geps-raw", "latlon1p0x1p0", "_allmbrs.grib2", "100"}
                              , {"GDPS", "model_gem_global/25km/grib2/lat_lon", "CMC_glb", "latlon.24x.24", ".grib2", "20"}
+                             , {"RDPS", "model_gem_regional/10km/grib2", "CMC_reg", "ps10km", ".grib2", "10"}
                              , {"HRDPS", "model_hrdps/east/grib2", "CMC_hrdps_east", "ps2.5km", "-00.grib2", "2.5"} 
                              , {"WAVE", "model_wave/great_lakes/superior/grib2", "CMC_rdwps_lake-superior", "latlon0.05x0.0", ".grib2", "5"}                             
                              };
 
 
 
-// http://dd.weatheroffice.ec.gc.ca/ensemble/naefs       /grib2/raw    /00/000/CMC_naefs-geps-raw_TMP_TGL_2m_latlon1p0x1p0_2015081800_P000_allmbrs.grib2
+// http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/grib2/raw           /00/000/CMC_naefs-geps-raw_TMP_TGL_2m_latlon1p0x1p0_2015081800_P000_allmbrs.grib2
 // http://dd.weatheroffice.ec.gc.ca/model_gem_global/25km/grib2/lat_lon/00/000/CMC_glb           _TMP_TGL_2_latlon.24x.24 _2015081800_P000.grib2
-// http://dd.weatheroffice.ec.gc.ca/model_hrdps/east     /grib2        /00/000/CMC_hrdps_east    _TMP_TGL_2_ps2.5km       _2015081800_P000-00.grib2
+// http://dd.weatheroffice.ec.gc.ca/model_gem_regional/10km/grib2      /00/000/CMC_reg           _TMP_TGL_2_ps10km        _2015083100_P000.grib2 
+// http://dd.weatheroffice.ec.gc.ca/model_hrdps/east/grib2             /00/000/CMC_hrdps_east    _TMP_TGL_2_ps2.5km       _2015081800_P000-00.grib2
   
   
 
 // http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/grib2/raw/00/000/CMC_naefs-geps-raw_TMP_TGL_2m_latlon1p0x1p0_2015081800_P000_allmbrs.grib2
 // http://dd.weatheroffice.ec.gc.ca/model_gem_global/25km/grib2/lat_lon/00/000/CMC_glb_TMP_TGL_2_latlon.24x.24_2015081800_P000.grib2
+// http://dd.weatheroffice.ec.gc.ca/model_gem_regional/10km/grib2/00/000/CMC_reg_TMP_TGL_2_ps10km_2015083100_P000.grib2 
 // http://dd.weatheroffice.ec.gc.ca/model_hrdps/east/grib2/00/000/CMC_hrdps_east_TMP_TGL_2_ps2.5km_2015081800_P000-00.grib2
   
   
@@ -343,7 +346,8 @@ String[][] GRIB2_DOMAINS = {
 //int GRIB2_DOMAIN_SELECTION = 0; int Scenarios_max = 21; // should convert U&V to wind speed and direction!   
 //int GRIB2_DOMAIN_SELECTION = 1; int Scenarios_max = 1;
 int GRIB2_DOMAIN_SELECTION = 2; int Scenarios_max = 1;
-//int GRIB2_DOMAIN_SELECTION = 3; int Scenarios_max = 1; // not working now!
+//int GRIB2_DOMAIN_SELECTION = 3; int Scenarios_max = 1;
+//int GRIB2_DOMAIN_SELECTION = 4; int Scenarios_max = 1; // not working now!
 
 
 int AERIAL_graphOption = 0; 
@@ -17120,6 +17124,9 @@ void SOLARCHVISION_try_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin
           if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("HRDPS")) {
             the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
           }
+          if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("RDPS")) {
+            the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
+          }          
           if (GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0].equals("GDPS")) {
             the_link = "http://dd.weatheroffice.ec.gc.ca/" + GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][1] + "/" + nf(GRIB2_RUN, 2) + "/" + nf(GRIB2_Hour, 3) + "/" + the_filename;
           }
