@@ -746,7 +746,7 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     LAYERS_GRIB2[i][1] = "PRMSL_MSL_0";
     LAYERS_GRIB2[i][2] = "PRMSL_MSL_0";
     LAYERS_GRIB2[i][3] = "PRMSL_MSL_0";
-    LAYERS_GRIB2_MUL[i] = 0.01; // Pa >> hPa ??????????????    
+    LAYERS_GRIB2_MUL[i] = 0.01; // Pa >> hPa 
     LAYERS_GRIB2_ADD[i] = 0;
   }
     
