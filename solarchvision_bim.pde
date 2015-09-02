@@ -13534,7 +13534,12 @@ void SOLARCHVISION_draw_solarch_image () {
     
     WIN3D_Diagrams.fill(255, 255, 255, 0);  
     
-    float c = HeightAboveGround * objects_scale; // <<< or zero i.e. height of the plane in 3D
+    //------------------------------------
+    Solarch_Elevation = Field_Elevation[1]; // <<<<<<<<<<< later there would be no need for this line here
+    //------------------------------------
+    
+    //float c = HeightAboveGround * objects_scale; // <<< or zero i.e. height of the plane in 3D
+    float c = Solarch_Elevation * objects_scale;
     
     {
       float a = -0.5 * Solarch_scale_U * objects_scale;
@@ -15003,6 +15008,8 @@ float Solarch_scale_V = Solarch_scale_All;
 
 int Solarch_RES1 = 200;
 int Solarch_RES2 = 200;
+
+float Solarch_Elevation;
 
 PImage Solarch_Image = createImage(Solarch_RES1, Solarch_RES2, RGB);
 
@@ -17762,8 +17769,12 @@ String defaultSceneName = "Complex";
 void RenderShadowsOnUrbanPlane() {
 
   String SceneName = "Scene";
-  
+
   defaultSceneName = SceneName;
+  
+ 
+  Solarch_Elevation = Field_Elevation[1];
+  
 
   int RES1 = Solarch_RES1;
   int RES2 = Solarch_RES2;
@@ -17835,12 +17846,12 @@ void RenderShadowsOnUrbanPlane() {
                   int s_next = (s + 1) % subFace.length;
                   int s_prev = (s + subFace.length - 1) % subFace.length;
                   
-                  float z = subFace[s][2];
+                  float z = subFace[s][2] - Solarch_Elevation;
                   
                   float x = (subFace[s][0] - z * SunR[1] / SunR[3]);
                   float y = (subFace[s][1] - z * SunR[2] / SunR[3]);
                   
-                  SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY);
+                  if (z >= 0) SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY);
                 }
                 
                 SHADOW_Diagrams.endShape(CLOSE);
@@ -17953,12 +17964,12 @@ void RenderShadowsOnUrbanPlane() {
                 int s_next = (s + 1) % subFace.length;
                 int s_prev = (s + subFace.length - 1) % subFace.length;
                 
-                float z = subFace[s][2];
+                float z = subFace[s][2] - Solarch_Elevation;
                 
                 float x = (subFace[s][0] - z * SunR[1] / SunR[3]);
                 float y = (subFace[s][1] - z * SunR[2] / SunR[3]);
                 
-                SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY);
+                if (z >= 0) SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY);
               }
               
               SHADOW_Diagrams.endShape(CLOSE);
