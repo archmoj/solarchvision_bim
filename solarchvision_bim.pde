@@ -17763,13 +17763,14 @@ void RenderShadowsOnUrbanPlane() {
 
   String SceneName = "Scene";
 
-  float SHADOW_scale3D = 1; //Solarch_scale_All * 0.01;
-
   int RES1 = Solarch_RES1;
   int RES2 = Solarch_RES2;
+  
+  float SHADOW_scaleX = RES1 / Solarch_scale_All;
+  float SHADOW_scaleY = RES2 / Solarch_scale_All;
 
   PGraphics SHADOW_Diagrams = createGraphics(RES1, RES2, P2D);
-/*  
+ 
   {  
     int RAD_TYPE = 0;
      
@@ -17784,6 +17785,8 @@ void RenderShadowsOnUrbanPlane() {
         for (int SHD = 0; SHD <= 1; SHD += 1) {
   
           SHADOW_Diagrams.beginDraw();
+
+          SHADOW_Diagrams.blendMode(REPLACE);
   
           float _val = 0;
           if (SunR[3] > 0) _val = SunR[3];
@@ -17833,11 +17836,9 @@ void RenderShadowsOnUrbanPlane() {
                   float z = subFace[s][2];
                   
                   float x = (subFace[s][0] - z * SunR[1] / SunR[3]);
-                  float y = (subFace[s][1] + z * SunR[2] / SunR[3]);
+                  float y = (subFace[s][1] - z * SunR[2] / SunR[3]);
                   
-                  SHADOW_Diagrams.vertex(x * SHADOW_scale3D, -y * SHADOW_scale3D);
-                  
-                  SHADOW_Diagrams.vertex(x, -y);
+                  SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY);
                 }
                 
                 SHADOW_Diagrams.endShape(CLOSE);
@@ -17874,27 +17875,27 @@ void RenderShadowsOnUrbanPlane() {
       }
     }
   }
-*/ 
+
   {  
     int RAD_TYPE = 1;
 
     float EachLayerOpacity = 1.0 / (0.5 * (skyFaces.length - 1));
 
-    float[][] Matrix_G;
-    Matrix_G = new float [RES1][RES2];
-
-    for (int np = 0; np < (RES1 * RES2); np++) {
-      int Image_X = np % RES1;
-      int Image_Y = np / RES1;
-      
-      Matrix_G[Image_X][Image_Y] = 0;
-    }
-
     for (int SHD = 0; SHD <= 1; SHD += 1) {
       
+      SHADOW_Diagrams.beginDraw();
+
+      SHADOW_Diagrams.blendMode(REPLACE);
+
+      SHADOW_Diagrams.fill(255); 
+      SHADOW_Diagrams.stroke(255);
+      SHADOW_Diagrams.strokeWeight(0);
+      SHADOW_Diagrams.rectMode(CORNER);
+      SHADOW_Diagrams.rect(0, 0, RES1, RES2);
+      
+      SHADOW_Diagrams.blendMode(BLEND); // ???????
+      
       for (int i = 1; i < skyFaces.length; i++) {
-        
-        println(i, skyFaces.length);
         
         float[] SunR = {0,0,0,0};
         
@@ -17904,12 +17905,10 @@ void RenderShadowsOnUrbanPlane() {
           SunR[3] = skyVertices[skyFaces[i][j]][2] / float(skyFaces[i].length);
         }
 
-        SHADOW_Diagrams.beginDraw();          
-
         float _val = 0;
         if (SunR[3] > 0) _val = SunR[3];
-        SHADOW_Diagrams.fill(255 * _val); 
-        SHADOW_Diagrams.stroke(255 * _val);
+        SHADOW_Diagrams.fill(255 * _val, 255 * EachLayerOpacity); 
+        SHADOW_Diagrams.stroke(255 * _val, 255 * EachLayerOpacity);
         SHADOW_Diagrams.strokeWeight(0);
         SHADOW_Diagrams.rectMode(CORNER);
         SHADOW_Diagrams.rect(0, 0, RES1, RES2);
@@ -17919,8 +17918,8 @@ void RenderShadowsOnUrbanPlane() {
           SHADOW_Diagrams.pushMatrix();
           SHADOW_Diagrams.translate(Solarch_RES1 / 2, Solarch_RES2 / 2);            
           
-          SHADOW_Diagrams.stroke(0); 
-          SHADOW_Diagrams.fill(0);
+          SHADOW_Diagrams.stroke(0, 255 * EachLayerOpacity); 
+          SHADOW_Diagrams.fill(0, 255 * EachLayerOpacity);
           
           for (int f = 1; f < allFaces.length; f++) {
             
@@ -17954,9 +17953,9 @@ void RenderShadowsOnUrbanPlane() {
                 float z = subFace[s][2];
                 
                 float x = (subFace[s][0] - z * SunR[1] / SunR[3]);
-                float y = (subFace[s][1] + z * SunR[2] / SunR[3]);
+                float y = (subFace[s][1] - z * SunR[2] / SunR[3]);
                 
-                SHADOW_Diagrams.vertex(x * SHADOW_scale3D, -y * SHADOW_scale3D);
+                SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY);
               }
               
               SHADOW_Diagrams.endShape(CLOSE);
@@ -17965,19 +17964,10 @@ void RenderShadowsOnUrbanPlane() {
           
           SHADOW_Diagrams.popMatrix();  
           
-          
-          SHADOW_Diagrams.endDraw();
-          
-          for (int np = 0; np < (RES1 * RES2); np++) {
-            int Image_X = np % RES1;
-            int Image_Y = np / RES1;
-            
-            color COL0 = SHADOW_Diagrams.get(Image_X, Image_Y);
-            
-            Matrix_G[Image_X][Image_Y] += (COL0 >> 8 & 0xFF) * EachLayerOpacity; 
-          }          
         }
       }
+      
+      SHADOW_Diagrams.endDraw();
   
       String[] STR_SHD = {"F" , "T"};
       String File_Name = "";
@@ -17995,21 +17985,8 @@ void RenderShadowsOnUrbanPlane() {
       File_Name += "DIF_" + STR_SHD[SHD];
   
       File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.JPG"; // <<<<< PNG <<<<<<
-  
-      PImage total_Image_RGBA = createImage(RES1, RES2, RGB);
 
-      total_Image_RGBA.loadPixels();
-      
-      for (int np = 0; np < (RES1 * RES2); np++) {
-        int Image_X = np % RES1;
-        int Image_Y = np / RES1;
-      
-        total_Image_RGBA.pixels[np] = color(Matrix_G[Image_X][Image_Y]);
-      }
-      
-      total_Image_RGBA.updatePixels(); 
-      
-      total_Image_RGBA.save(File_Name);
+      SHADOW_Diagrams.save(File_Name);
       println (File_Name);
    
     }
