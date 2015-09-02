@@ -17762,10 +17762,14 @@ void RenderShadowsOnUrbanPlane() {
 
   String SceneName = "Scene";
 
+  float SHADOW_scale3D = 1; //Solarch_scale_All * 0.01;
+
   int SHADOW_RES1 = Solarch_RES1;
   int SHADOW_RES2 = Solarch_RES2;
 
   PGraphics SHADOW_Diagrams = createGraphics(SHADOW_RES1, SHADOW_RES2, P2D);
+  
+  
    
   for (int DATE_ANGLE = 0; DATE_ANGLE < 360; DATE_ANGLE += 15) {
     
@@ -17778,11 +17782,10 @@ void RenderShadowsOnUrbanPlane() {
       //for (int RAD_TYPE = 0; RAD_TYPE <= 1; RAD_TYPE += 1) { 
       for (int RAD_TYPE = 0; RAD_TYPE <= 0; RAD_TYPE += 1) { // only direct for now! <<<<<<<<<  
       
-        //for (int SHD = 0; SHD <= 1; SHD += 1) {
-        for (int SHD = 0; SHD <= 0; SHD += 1) { // only with no shadows for now! <<<<<<<<<
+        for (int SHD = 0; SHD <= 1; SHD += 1) {
 
           SHADOW_Diagrams.beginDraw();
-          
+
           float _val = 0;
           if (SunR[3] > 0) _val = SunR[3];
           SHADOW_Diagrams.fill(255 * _val); 
@@ -17790,9 +17793,15 @@ void RenderShadowsOnUrbanPlane() {
           SHADOW_Diagrams.strokeWeight(0);
           SHADOW_Diagrams.rectMode(CORNER);
           SHADOW_Diagrams.rect(0, 0, SHADOW_RES1, SHADOW_RES2);
-          
-          if (SHD == 1) {
 
+          if ((SHD == 1) && (SunR[3] > 0)) {
+
+            SHADOW_Diagrams.pushMatrix();
+            SHADOW_Diagrams.translate(Solarch_RES1 / 2, Solarch_RES2 / 2);            
+            
+            SHADOW_Diagrams.stroke(0); 
+            SHADOW_Diagrams.fill(0);             
+            
             for (int f = 1; f < allFaces.length; f++) {
             
               int Teselation = 0;
@@ -17815,23 +17824,26 @@ void RenderShadowsOnUrbanPlane() {
                 
                 float[][] subFace = getSubFace(base_Vertices, Teselation, n);
              
-                //SHADOW_Diagrams.beginShape();
+                SHADOW_Diagrams.beginShape();
                 
                 for (int s = 0; s < subFace.length; s++) {
             
                   int s_next = (s + 1) % subFace.length;
                   int s_prev = (s + subFace.length - 1) % subFace.length;
                   
-                  SHADOW_Diagrams.stroke(0); 
-                  SHADOW_Diagrams.fill(0); 
+                  float z = subFace[s][2];
                   
-                  //SHADOW_Diagrams.vertex(subFace[s][0] * objects_scale * SHADOW_scale3D, -(subFace[s][1] * objects_scale * SHADOW_scale3D), subFace[s][2] * objects_scale * SHADOW_scale3D);
-            
+                  float x = (subFace[s][0] - z * SunR[1] / SunR[3]) * SHADOW_scale3D;
+                  float y = (subFace[s][1] + z * SunR[2] / SunR[3]) * SHADOW_scale3D;
+                  
+                  SHADOW_Diagrams.vertex(x, -y);
                 }
                 
-                //SHADOW_Diagrams.endShape(CLOSE);
+                SHADOW_Diagrams.endShape(CLOSE);
               }
             }
+            
+            SHADOW_Diagrams.popMatrix();  
           }
           
           
@@ -17856,6 +17868,8 @@ void RenderShadowsOnUrbanPlane() {
           }
       
           File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.JPG"; // <<<<< PNG <<<<<<
+
+
 
           SHADOW_Diagrams.endDraw();          
           
