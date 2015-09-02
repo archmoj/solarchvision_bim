@@ -1672,7 +1672,8 @@ void draw () {
     
   }    
   else if (frameCount == 23) {
-    SOLARCHVISION_build_SkySphere(3); 
+    
+    SOLARCHVISION_build_SkySphere(1); //3 
     
     stroke(0);
     fill(0);
