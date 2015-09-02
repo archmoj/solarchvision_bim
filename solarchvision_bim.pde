@@ -17783,7 +17783,7 @@ void RenderShadowsOnUrbanPlane() {
   float SHADOW_scaleY = RES2 / Solarch_scale_All;
 
   PGraphics SHADOW_Diagrams = createGraphics(RES1, RES2, P2D);
- 
+/* 
   {  
     int RAD_TYPE = 0;
      
@@ -17877,7 +17877,7 @@ void RenderShadowsOnUrbanPlane() {
       
           File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
       
-          File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.PNG"; // <<<<< PNG <<<<<<
+          File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.PNG"; 
   
           SHADOW_Diagrams.endDraw();          
 
@@ -17888,41 +17888,46 @@ void RenderShadowsOnUrbanPlane() {
       }
     }
   }
+*/
+  {
+    PGraphics DIFFUSE_Diagrams = createGraphics(RES1, RES2, P2D);
 
-  {  
     int RAD_TYPE = 1;
 
     float EachLayerOpacity = 1.0 / (0.5 * (skyFaces.length - 1));
 
     for (int SHD = 0; SHD <= 1; SHD += 1) {
       
-      SHADOW_Diagrams.beginDraw();
+      DIFFUSE_Diagrams.beginDraw();
 
-      SHADOW_Diagrams.blendMode(REPLACE);
+      DIFFUSE_Diagrams.blendMode(REPLACE);
 
-      SHADOW_Diagrams.fill(255); 
-      SHADOW_Diagrams.stroke(255);
-      SHADOW_Diagrams.strokeWeight(0);
-      SHADOW_Diagrams.rectMode(CORNER);
-      SHADOW_Diagrams.rect(0, 0, RES1, RES2);
-      
-      SHADOW_Diagrams.blendMode(BLEND); // ???????
+      DIFFUSE_Diagrams.fill(0); 
+      DIFFUSE_Diagrams.stroke(0);
+      DIFFUSE_Diagrams.strokeWeight(0);
+      DIFFUSE_Diagrams.rectMode(CORNER);
+      DIFFUSE_Diagrams.rect(0, 0, RES1, RES2);
+     
       
       
       for (int i = 1; i < skyFaces.length; i++) {
-        
+
+        SHADOW_Diagrams.beginDraw();
+
+        SHADOW_Diagrams.blendMode(REPLACE);
+
         float[] SunR = {0,0,0,0};
         
         for (int j = 0; j < skyFaces[i].length; j++) {
-          SunR[1] = skyVertices[skyFaces[i][j]][0] / float(skyFaces[i].length);
-          SunR[2] = skyVertices[skyFaces[i][j]][1] / float(skyFaces[i].length);
-          SunR[3] = skyVertices[skyFaces[i][j]][2] / float(skyFaces[i].length);
+          SunR[1] += skyVertices[skyFaces[i][j]][0] / float(skyFaces[i].length);
+          SunR[2] += skyVertices[skyFaces[i][j]][1] / float(skyFaces[i].length);
+          SunR[3] += skyVertices[skyFaces[i][j]][2] / float(skyFaces[i].length);
         }
 
         float _val = 0;
         if (SunR[3] > 0) _val = SunR[3];
-        SHADOW_Diagrams.fill(255 * _val, 255 * EachLayerOpacity); 
-        SHADOW_Diagrams.stroke(255 * _val, 255 * EachLayerOpacity);
+        SHADOW_Diagrams.fill(255 * (1 - _val)); 
+        SHADOW_Diagrams.stroke(255 * (1 - _val));
         SHADOW_Diagrams.strokeWeight(0);
         SHADOW_Diagrams.rectMode(CORNER);
         SHADOW_Diagrams.rect(0, 0, RES1, RES2);
@@ -17932,8 +17937,8 @@ void RenderShadowsOnUrbanPlane() {
           SHADOW_Diagrams.pushMatrix();
           SHADOW_Diagrams.translate(Solarch_RES1 / 2, Solarch_RES2 / 2);            
           
-          SHADOW_Diagrams.stroke(0, 255 * EachLayerOpacity); 
-          SHADOW_Diagrams.fill(0, 255 * EachLayerOpacity);
+          SHADOW_Diagrams.stroke(255); 
+          SHADOW_Diagrams.fill(255);
           
           for (int f = 1; f < allFaces.length; f++) {
             
@@ -17979,9 +17984,27 @@ void RenderShadowsOnUrbanPlane() {
           SHADOW_Diagrams.popMatrix();  
           
         }
+        
+        SHADOW_Diagrams.endDraw();
+        
+        SHADOW_Diagrams.save("C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_45N" + "/" + nf(SHD, 1) + nf(i, 3) + ".JPG");
+     
+     
+     
+        //DIFFUSE_Diagrams.blendMode(BLEND); // ???????
+        DIFFUSE_Diagrams.blendMode(SUBTRACT); // ???????
+        //DIFFUSE_Diagrams.blendMode(ADD); // ???????
+        
+        DIFFUSE_Diagrams.tint(255, 255 * EachLayerOpacity);
+        
+        DIFFUSE_Diagrams.image(SHADOW_Diagrams, 0, 0, RES1, RES2);
+        
+        DIFFUSE_Diagrams.noTint();
       }
       
-      SHADOW_Diagrams.endDraw();
+      DIFFUSE_Diagrams.endDraw();
+      
+      
   
       String[] STR_SHD = {"F" , "T"};
       String File_Name = "";
@@ -17998,9 +18021,9 @@ void RenderShadowsOnUrbanPlane() {
   
       File_Name += "DIF_" + STR_SHD[SHD];
   
-      File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.PNG"; // <<<<< PNG <<<<<<
+      File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.JPG"; // <<<<< PNG <<<<<<
 
-      SHADOW_Diagrams.save(File_Name);
+      DIFFUSE_Diagrams.save(File_Name);
       println (File_Name);
    
     }
