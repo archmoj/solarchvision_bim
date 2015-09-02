@@ -8465,7 +8465,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                         if (camera_variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/EV_BUILDING" + "/";
                       }
                       else {
-                        File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/Complex_" + Near_Latitude + "/";
+                        File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + defaultSceneName + "_" + Near_Latitude + "/";
                       }                          
                       
                       
@@ -8491,7 +8491,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                         if (camera_variation == 2) File_Name += "_" + "Montreal_EV_BUILDING_B.PNG";
                       }
                       else {
-                        File_Name += "_" + "Complex_" + Near_Latitude + "_Camera" + nf(camera_variation, 2) + ".PNG";
+                        File_Name += "_" + defaultSceneName + "_" + Near_Latitude + "_Camera" + nf(camera_variation, 2) + ".PNG";
                       }
 
                       //println (File_Name);
@@ -12772,7 +12772,7 @@ int MAX_Default_Models_Number = 7;
 void SOLARCHVISION_add_DefaultModel (int n) {
 
   if (n != 0) {
-    if (n != 5) SOLARCHVISION_add_Mesh2(0, -50, -50, 0, 50, 50, 0);
+    //if (n != 5) SOLARCHVISION_add_Mesh2(0, -50, -50, 0, 50, 50, 0);
     
     if (Load_LAND == 0) {
       SOLARCHVISION_add_2Dobjects(100, 50, 0); // (n, r, z)
@@ -14895,7 +14895,7 @@ ParametricGeometry[] SolidBuildings = {};
 
 void SOLARCHVISION_add_ParametricGeometries () {
 
-
+/*
   {
     float x = 0;
     float y = 0;
@@ -14908,7 +14908,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, t)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }  
-
+*/
 
   {
     float x = 0;
@@ -17757,11 +17757,13 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
   return theValues;
 }
 
-
+String defaultSceneName = "Complex";
                   
 void RenderShadowsOnUrbanPlane() {
 
   String SceneName = "Scene";
+  
+  defaultSceneName = SceneName;
 
   int RES1 = Solarch_RES1;
   int RES2 = Solarch_RES2;
@@ -17864,7 +17866,7 @@ void RenderShadowsOnUrbanPlane() {
       
           File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
       
-          File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.JPG"; // <<<<< PNG <<<<<<
+          File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.PNG"; // <<<<< PNG <<<<<<
   
           SHADOW_Diagrams.endDraw();          
 
@@ -17984,7 +17986,7 @@ void RenderShadowsOnUrbanPlane() {
   
       File_Name += "DIF_" + STR_SHD[SHD];
   
-      File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.JPG"; // <<<<< PNG <<<<<<
+      File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.PNG"; // <<<<< PNG <<<<<<
 
       SHADOW_Diagrams.save(File_Name);
       println (File_Name);
