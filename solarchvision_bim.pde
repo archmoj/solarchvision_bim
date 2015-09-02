@@ -66,7 +66,7 @@ String[][] DEFINED_STATIONS = {
 int Selected_STATION = STATION_NUMBER;
 int LOAD_STATION = 0; 
 
-int Load_Default_Models = 0;
+int Load_Default_Models = 5;
 
 
 
@@ -960,7 +960,7 @@ int Display_SKY3D = 1;
 
 int Download_LAND = 0;
 int Load_LAND = 1;
-int Display_LAND = 1;
+int Display_LAND = 0; // 1;
 int Skip_LAND_Center = 0; //5;
 
 int Load_URBAN = 0;
@@ -8708,11 +8708,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         Diagrams_strokeWeight(GRAPHS_T_scale * 2);
         Diagrams_stroke(0);
         Diagrams_noFill(); 
-        Diagrams_rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / GRAPHS_U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
+        //Diagrams_rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / GRAPHS_U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
         
         
         Diagrams_imageMode(CENTER); 
-        Diagrams_image(total_Image_RGBA, (j + 100 * obj_scale) * sx_Plot, - (1 * p * sx_Plot / GRAPHS_U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
+        //Diagrams_image(total_Image_RGBA, (j + 100 * obj_scale) * sx_Plot, - (1 * p * sx_Plot / GRAPHS_U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
         
         
         Diagrams_stroke(0);
@@ -10899,6 +10899,8 @@ void WIN3D_keyPressed (KeyEvent e) {
           
         case '2' :Display_Trees_People = (Display_Trees_People + 1) % 2; WIN3D_Update = 1; break;
  
+ 
+        case ENTER :RenderShadowsOnUrbanPlane(); break;
       }
     }    
   }
@@ -11003,8 +11005,6 @@ void SOLARCHVISION_RecordFrame () {
   saveFrame(ScreenShotFolder + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_IMG" + nf(SavedScreenShots , 3) + ".jpg");
   
 }
-                  
-
 
 
 int frame_variation = 0;
@@ -15005,7 +15005,7 @@ int Solarch_RES2 = 200;
 
 PImage Solarch_Image = createImage(Solarch_RES1, Solarch_RES2, RGB);
 
-int display_Solarch_Image = 0; // 0:off, 1:horizontal
+int display_Solarch_Image = 1; // 0:off, 1:horizontal
 
 void SOLARCHVISION_calculate_ParametricGeometries_Solarch () {
 
@@ -17755,5 +17755,122 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
 
   return theValues;
 }
+
+
+                  
+void RenderShadowsOnUrbanPlane() {
+
+  String SceneName = "Scene";
+
+  int SHADOW_RES1 = Solarch_RES1;
+  int SHADOW_RES2 = Solarch_RES2;
+
+  PGraphics SHADOW_Diagrams = createGraphics(SHADOW_RES1, SHADOW_RES2, P2D);
+   
+  for (int DATE_ANGLE = 0; DATE_ANGLE < 360; DATE_ANGLE += 15) {
+    
+    //for (int i = 0; i < 24; i += 1) {
+    for (int i = 4; i <= 20; i += 1) { // to make it faster. Also the images are not needed out of this period. 
+
+      float HOUR_ANGLE = i; 
+      float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+        
+      //for (int RAD_TYPE = 0; RAD_TYPE <= 1; RAD_TYPE += 1) { 
+      for (int RAD_TYPE = 0; RAD_TYPE <= 0; RAD_TYPE += 1) { // only direct for now! <<<<<<<<<  
+      
+        //for (int SHD = 0; SHD <= 1; SHD += 1) {
+        for (int SHD = 0; SHD <= 0; SHD += 1) { // only with no shadows for now! <<<<<<<<<
+
+          SHADOW_Diagrams.beginDraw();
+          
+          float _val = 0;
+          if (SunR[3] > 0) _val = SunR[3];
+          SHADOW_Diagrams.fill(255 * _val); 
+          SHADOW_Diagrams.stroke(255 * _val);
+          SHADOW_Diagrams.strokeWeight(0);
+          SHADOW_Diagrams.rectMode(CORNER);
+          SHADOW_Diagrams.rect(0, 0, SHADOW_RES1, SHADOW_RES2);
+          
+          if (SHD == 1) {
+
+            for (int f = 1; f < allFaces.length; f++) {
+            
+              int Teselation = 0;
+              
+              int TotalSubNo = 1;  
+              if (allFaces_MAT[f] == 0) {
+                Teselation = MODEL3D_TESELATION;
+                if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+              }
+            
+              for (int n = 0; n < TotalSubNo; n++) {
+                
+                float[][] base_Vertices = new float [allFaces[f].length][3];
+                for (int j = 0; j < allFaces[f].length; j++) {
+                  int vNo = allFaces[f][j];
+                  base_Vertices[j][0] = allVertices[vNo][0];
+                  base_Vertices[j][1] = allVertices[vNo][1];
+                  base_Vertices[j][2] = allVertices[vNo][2];
+                }
+                
+                float[][] subFace = getSubFace(base_Vertices, Teselation, n);
+             
+                //SHADOW_Diagrams.beginShape();
+                
+                for (int s = 0; s < subFace.length; s++) {
+            
+                  int s_next = (s + 1) % subFace.length;
+                  int s_prev = (s + subFace.length - 1) % subFace.length;
+                  
+                  SHADOW_Diagrams.stroke(0); 
+                  SHADOW_Diagrams.fill(0); 
+                  
+                  //SHADOW_Diagrams.vertex(subFace[s][0] * objects_scale * SHADOW_scale3D, -(subFace[s][1] * objects_scale * SHADOW_scale3D), subFace[s][2] * objects_scale * SHADOW_scale3D);
+            
+                }
+                
+                //SHADOW_Diagrams.endShape(CLOSE);
+              }
+            }
+          }
+          
+          
+          String[] STR_SHD = {"F" , "T"};
+          String File_Name = "";
+          
+          int Round_Latitude = int(roundTo(LocationLatitude, 5));
+          if (Round_Latitude > 70) Round_Latitude = 70; // <<<<<<<<<<<<<<<
+          if (Round_Latitude < -45) Round_Latitude = -45; // <<<<<<<<<<<<<<<
+          String Near_Latitude = nf(abs(Round_Latitude), 2);
+          
+          if (Round_Latitude < 0) Near_Latitude += "S";
+          else Near_Latitude += "N";
+      
+          File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + Near_Latitude + "/";
+      
+          if (RAD_TYPE == 0) {
+            File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
+          }
+          else {
+            File_Name += "DIF_" + STR_SHD[SHD];
+          }
+      
+          File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.JPG"; // <<<<< PNG <<<<<<
+
+          SHADOW_Diagrams.endDraw();          
+          
+          println (File_Name);          
+          SHADOW_Diagrams.save(File_Name);
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+
 
 
