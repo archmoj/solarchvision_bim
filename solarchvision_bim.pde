@@ -17897,6 +17897,7 @@ void RenderShadowsOnUrbanPlane() {
       
       SHADOW_Diagrams.blendMode(BLEND); // ???????
       
+      
       for (int i = 1; i < skyFaces.length; i++) {
         
         float[] SunR = {0,0,0,0};
