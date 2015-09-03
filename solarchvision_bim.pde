@@ -1673,7 +1673,7 @@ void draw () {
   }    
   else if (frameCount == 23) {
     
-    SOLARCHVISION_build_SkySphere(1); //3 
+    SOLARCHVISION_build_SkySphere(3); //1 - 3 
     
     stroke(0);
     fill(0);
@@ -17783,7 +17783,7 @@ void RenderShadowsOnUrbanPlane() {
   float SHADOW_scaleY = RES2 / Solarch_scale_All;
 
   PGraphics SHADOW_Diagrams = createGraphics(RES1, RES2, P2D);
-/*
+
   {  
     int RAD_TYPE = 0;
      
@@ -17891,7 +17891,6 @@ void RenderShadowsOnUrbanPlane() {
     }
   }
 
-*/
 
 
   {
