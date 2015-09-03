@@ -952,7 +952,7 @@ int MODEL3D_TESELATION = 0;
 
 int MODEL3D_ERASE = 0;
 
-int SKY3D_TESELATION = 1; //2;
+int SKY3D_TESELATION = 0; //2;
 float SKY3D_scale = 10000 ; //1000; 
 
 int Display_SUN3D = 1;
@@ -12795,7 +12795,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
 
   if (n == 4) {
     for (int i = 0; i < int(10 + random(10)); i++) {
-      SOLARCHVISION_add_House_Core(0, random(-40, 40), random(-40, 40), 0, random(5, 10), random(5, 10), random(5, 10), random(2.5, 7.5), random(360));
+      SOLARCHVISION_add_House_Core(0, random(-80, 80), random(-80, 80), 0, random(5, 10), random(5, 10), random(5, 10), random(2.5, 7.5), random(360));
     }
   }    
 
@@ -17870,7 +17870,8 @@ void RenderShadowsOnUrbanPlane() {
                   float x = (subFace[s][0] - z * SunR[1] / SunR[3]);
                   float y = (subFace[s][1] - z * SunR[2] / SunR[3]);
                   
-                  if (z >= 0) SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY);
+                  //if (z >= 0)
+                  SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY);
                 }
                 
                 SHADOW_Diagrams.endShape(CLOSE);
@@ -17898,7 +17899,7 @@ void RenderShadowsOnUrbanPlane() {
 
     for (int SHD = 0; SHD <= 1; SHD += 1) {
 
-      PGraphics DIFFUSE_Diagrams = createGraphics(RES1, RES2); // should not be P2D!      
+      PGraphics DIFFUSE_Diagrams = createGraphics(RES1, RES2, P2D);    
       
       
       String[] STR_SHD = {"F" , "T"};
@@ -17995,7 +17996,8 @@ void RenderShadowsOnUrbanPlane() {
                 float x = (subFace[s][0] - z * SunR[1] / SunR[3]);
                 float y = (subFace[s][1] - z * SunR[2] / SunR[3]);
                 
-                if (z >= 0) SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY);
+                //if (z >= 0)
+                SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY);
               }
               
               SHADOW_Diagrams.endShape(CLOSE);
