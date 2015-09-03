@@ -18149,7 +18149,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 */
 
 
-    fill(0,127,0,127);
+    noFill();
     stroke(0,127,0,127);
     strokeWeight(1);   
 
@@ -18195,6 +18195,22 @@ void SOLARCHVISION_draw_Perspective_Internally () {
   
           float px, py, pz;
           
+          pz = PNT_z;
+          px = PNT_x * cos_ang(-WIN3D_RZ_coordinate) - PNT_y * sin_ang(-WIN3D_RZ_coordinate);
+          py = PNT_x * sin_ang(-WIN3D_RZ_coordinate) + PNT_y * cos_ang(-WIN3D_RZ_coordinate);
+          
+          PNT_x = px;
+          PNT_y = py;
+          PNT_z = pz;    
+ 
+          py = PNT_y;
+          pz = PNT_z * cos_ang(WIN3D_RY_coordinate) - PNT_x * sin_ang(WIN3D_RY_coordinate);
+          px = PNT_z * sin_ang(WIN3D_RY_coordinate) + PNT_x * cos_ang(WIN3D_RY_coordinate);
+          
+          PNT_x = px;
+          PNT_y = py;
+          PNT_z = pz;   
+          
           px = PNT_x;
           py = PNT_y * cos_ang(WIN3D_RX_coordinate) - PNT_z * sin_ang(WIN3D_RX_coordinate);
           pz = PNT_y * sin_ang(WIN3D_RX_coordinate) + PNT_z * cos_ang(WIN3D_RX_coordinate);
@@ -18203,21 +18219,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           PNT_y = py;
           PNT_z = pz;
           
-          py = PNT_y;
-          pz = PNT_z * cos_ang(WIN3D_RY_coordinate) - PNT_x * sin_ang(WIN3D_RY_coordinate);
-          px = PNT_z * sin_ang(WIN3D_RY_coordinate) + PNT_x * cos_ang(WIN3D_RY_coordinate);
+
           
-          PNT_x = px;
-          PNT_y = py;
-          PNT_z = pz;  
-          
-          pz = PNT_z;
-          px = PNT_x * cos_ang(-WIN3D_RZ_coordinate) - PNT_y * sin_ang(-WIN3D_RZ_coordinate);
-          py = PNT_x * sin_ang(-WIN3D_RZ_coordinate) + PNT_y * cos_ang(-WIN3D_RZ_coordinate);
-          
-          PNT_x = px;
-          PNT_y = py;
-          PNT_z = pz;   
+
 
           
           if (PNT_z > 0) {
