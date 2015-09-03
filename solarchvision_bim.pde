@@ -18179,13 +18179,15 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         
         for (int s = 0; s < subFace.length; s++) {
           
-          float PNT_x = -subFace[s][0] * objects_scale;
-          float PNT_y = -subFace[s][1] * objects_scale;
+          float PNT_x = subFace[s][0] * objects_scale;
+          float PNT_y = subFace[s][1] * objects_scale;
           float PNT_z = -subFace[s][2] * objects_scale;
 
-    PNT_x += CAM_x;
-    PNT_y += CAM_y;
+
+    PNT_x -= CAM_x;
+    PNT_y -= CAM_y;
     PNT_z += CAM_z;
+       
 
   //PNT_x -= WIN3D_X_coordinate;
   //PNT_y += WIN3D_Y_coordinate;
@@ -18210,22 +18212,20 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           PNT_z = pz;  
           
           pz = PNT_z;
-          px = PNT_x * cos_ang(WIN3D_RZ_coordinate) - PNT_y * sin_ang(WIN3D_RZ_coordinate);
-          py = PNT_x * sin_ang(WIN3D_RZ_coordinate) + PNT_y * cos_ang(WIN3D_RZ_coordinate);
+          px = PNT_x * cos_ang(-WIN3D_RZ_coordinate) - PNT_y * sin_ang(-WIN3D_RZ_coordinate);
+          py = PNT_x * sin_ang(-WIN3D_RZ_coordinate) + PNT_y * cos_ang(-WIN3D_RZ_coordinate);
           
           PNT_x = px;
           PNT_y = py;
           PNT_z = pz;   
 
-
-       
           
           if (PNT_z > 0) {
           
             float X_perspective = (PNT_x / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
             float Y_perspective = (PNT_y / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
             
-            vertex(-X_perspective, Y_perspective);
+            vertex(X_perspective, -Y_perspective);
           }
         }
         
