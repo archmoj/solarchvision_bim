@@ -17864,16 +17864,44 @@ void RenderShadowsOnUrbanPlane() {
                 SHADOW_Diagrams.beginShape();
                 
                 for (int s = 0; s < subFace.length; s++) {
-            
-                  int s_next = (s + 1) % subFace.length;
-                  int s_prev = (s + subFace.length - 1) % subFace.length;
-                  
+
                   float z = subFace[s][2] - Solarch_Elevation;
-                  
                   float x = (subFace[s][0] - z * SunR[1] / SunR[3]);
                   float y = (subFace[s][1] - z * SunR[2] / SunR[3]);
-                  
-                  if (z >= 0) SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY);
+                    
+                  if (z >= 0) {
+                    SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY);
+                  }
+                  else {
+                    int s_next = (s + 1) % subFace.length;
+                    int s_prev = (s + subFace.length - 1) % subFace.length;         
+         
+                    float z_prev = subFace[s_prev][2] - Solarch_Elevation;
+                    if (z_prev > 0) { 
+                      float x_prev = (subFace[s_prev][0] - z_prev * SunR[1] / SunR[3]);
+                      float y_prev = (subFace[s_prev][1] - z_prev * SunR[2] / SunR[3]);
+
+                      float ratio = z_prev / (z_prev - z);
+                      
+                      float x_trim = x_prev * (1 - ratio) + x * ratio;
+                      float y_trim = y_prev * (1 - ratio) + y * ratio;
+                      
+                      SHADOW_Diagrams.vertex(x_trim * SHADOW_scaleX, -y_trim * SHADOW_scaleY);
+                    }
+
+                    float z_next = subFace[s_next][2] - Solarch_Elevation;
+                    if (z_next > 0) { 
+                      float x_next = (subFace[s_next][0] - z_next * SunR[1] / SunR[3]);
+                      float y_next = (subFace[s_next][1] - z_next * SunR[2] / SunR[3]);
+
+                      float ratio = z_next / (z_next - z);
+                      
+                      float x_trim = x_next * (1 - ratio) + x * ratio;
+                      float y_trim = y_next * (1 - ratio) + y * ratio;
+                      
+                      SHADOW_Diagrams.vertex(x_trim * SHADOW_scaleX, -y_trim * SHADOW_scaleY);
+                    }                    
+                  }
                 }
                 
                 SHADOW_Diagrams.endShape(CLOSE);
@@ -17971,16 +17999,44 @@ void RenderShadowsOnUrbanPlane() {
               SHADOW_Diagrams.beginShape();
               
               for (int s = 0; s < subFace.length; s++) {
-          
-                int s_next = (s + 1) % subFace.length;
-                int s_prev = (s + subFace.length - 1) % subFace.length;
-                
+
                 float z = subFace[s][2] - Solarch_Elevation;
-                
                 float x = (subFace[s][0] - z * SunR[1] / SunR[3]);
                 float y = (subFace[s][1] - z * SunR[2] / SunR[3]);
-                
-                if (z >= 0) SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY);
+                  
+                if (z >= 0) {
+                  SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY);
+                }
+                else {
+                  int s_next = (s + 1) % subFace.length;
+                  int s_prev = (s + subFace.length - 1) % subFace.length;         
+       
+                  float z_prev = subFace[s_prev][2] - Solarch_Elevation;
+                  if (z_prev > 0) { 
+                    float x_prev = (subFace[s_prev][0] - z_prev * SunR[1] / SunR[3]);
+                    float y_prev = (subFace[s_prev][1] - z_prev * SunR[2] / SunR[3]);
+
+                    float ratio = z_prev / (z_prev - z);
+                    
+                    float x_trim = x_prev * (1 - ratio) + x * ratio;
+                    float y_trim = y_prev * (1 - ratio) + y * ratio;
+                    
+                    SHADOW_Diagrams.vertex(x_trim * SHADOW_scaleX, -y_trim * SHADOW_scaleY);
+                  }
+
+                  float z_next = subFace[s_next][2] - Solarch_Elevation;
+                  if (z_next > 0) { 
+                    float x_next = (subFace[s_next][0] - z_next * SunR[1] / SunR[3]);
+                    float y_next = (subFace[s_next][1] - z_next * SunR[2] / SunR[3]);
+
+                    float ratio = z_next / (z_next - z);
+                    
+                    float x_trim = x_next * (1 - ratio) + x * ratio;
+                    float y_trim = y_next * (1 - ratio) + y * ratio;
+                    
+                    SHADOW_Diagrams.vertex(x_trim * SHADOW_scaleX, -y_trim * SHADOW_scaleY);
+                  }                    
+                }
               }
               
               SHADOW_Diagrams.endShape(CLOSE);
