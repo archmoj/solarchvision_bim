@@ -17899,9 +17899,6 @@ void RenderShadowsOnUrbanPlane() {
 
     for (int SHD = 0; SHD <= 1; SHD += 1) {
 
-      PGraphics DIFFUSE_Diagrams = createGraphics(RES1, RES2, P2D);    
-      
-      
       String[] STR_SHD = {"F" , "T"};
       String File_Name = "";
       
@@ -17916,22 +17913,7 @@ void RenderShadowsOnUrbanPlane() {
       File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + Near_Latitude + "/";
   
       File_Name += "DIF_" + STR_SHD[SHD];
-  
 
-      
-      
-      DIFFUSE_Diagrams.beginDraw();
-
-      DIFFUSE_Diagrams.blendMode(REPLACE);
-
-      DIFFUSE_Diagrams.fill(0); 
-      DIFFUSE_Diagrams.stroke(0);
-      DIFFUSE_Diagrams.strokeWeight(0);
-      DIFFUSE_Diagrams.rectMode(CORNER);
-      DIFFUSE_Diagrams.rect(0, 0, RES1, RES2);
-     
-      
-      
       for (int i = 1; i < skyFaces.length; i++) {
 
         float[] SunR = {0,0,0,0};
@@ -18010,7 +17992,24 @@ void RenderShadowsOnUrbanPlane() {
         SHADOW_Diagrams.endDraw();
         
         SHADOW_Diagrams.save(File_Name + nf(i, 3) + ".JPG");
-     
+      }
+
+
+
+      PGraphics DIFFUSE_Diagrams = createGraphics(RES1, RES2, P2D);    
+      
+      DIFFUSE_Diagrams.beginDraw();
+
+      DIFFUSE_Diagrams.blendMode(REPLACE);
+
+      DIFFUSE_Diagrams.fill(0); 
+      DIFFUSE_Diagrams.stroke(0);
+      DIFFUSE_Diagrams.strokeWeight(0);
+      DIFFUSE_Diagrams.rectMode(CORNER);
+      DIFFUSE_Diagrams.rect(0, 0, RES1, RES2);
+      
+      for (int i = 1; i < skyFaces.length; i++) {
+      
         PImage img = loadImage(File_Name + nf(i, 3) + ".JPG");
      
         DIFFUSE_Diagrams.blendMode(ADD); 
