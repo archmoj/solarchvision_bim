@@ -12775,7 +12775,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
 
   
   if (n != 0) {
-    //if (n != 5) SOLARCHVISION_add_Mesh2(0, -50, -50, 0, 50, 50, 0);
+    SOLARCHVISION_add_Mesh2(0, -100, -100, -1, 100, 100, -1);
   }
   
   if (n == 1) {
@@ -14218,7 +14218,7 @@ void SOLARCHVISION_draw_objects () {
   
 
   
-  println("Camera:", nf(CAM_x,0,4), nf(CAM_y,0,4), nf(CAM_z,0,4));
+  //println("Camera:", nf(CAM_x,0,4), nf(CAM_y,0,4), nf(CAM_z,0,4));
 
   if (Display_Trees_People != 0) {
     for (int i = 1; i <= allObject2D_num; i++) {
@@ -14236,7 +14236,9 @@ void SOLARCHVISION_draw_objects () {
       
       float r = allObject2D_XYZS[i][3] * 0.5 * objects_scale;
       
-      float t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI;
+      //float t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI;
+      float t = WIN3D_RZ_coordinate * PI / 180.0;
+      
       if (allObject2D_MAP[i] < 0) t += PI; 
   
       WIN3D_Diagrams.texture(Object2DImage[n]);    
