@@ -17915,7 +17915,7 @@ void RenderShadowsOnUrbanPlane() {
   
       File_Name += "DIF_" + STR_SHD[SHD];
   
-      File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.JPG"; // <<<<< PNG <<<<<<      
+
 
       
       DIFFUSE_Diagrams.beginDraw();
@@ -18007,9 +18007,9 @@ void RenderShadowsOnUrbanPlane() {
         
         SHADOW_Diagrams.endDraw();
         
-        SHADOW_Diagrams.save("C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_45N" + "/" + nf(SHD, 1) + nf(i, 3) + ".JPG");
+        SHADOW_Diagrams.save(File_Name + nf(i, 3) + ".JPG");
      
-        PImage img = loadImage("C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_45N" + "/" + nf(SHD, 1) + nf(i, 3) + ".JPG");
+        PImage img = loadImage(File_Name + nf(i, 3) + ".JPG");
      
         DIFFUSE_Diagrams.blendMode(ADD); 
         
@@ -18022,6 +18022,7 @@ void RenderShadowsOnUrbanPlane() {
       
       DIFFUSE_Diagrams.endDraw();
 
+      File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.PNG"; // <<<<< PNG <<<<<<      
 
       DIFFUSE_Diagrams.save(File_Name);
       println (File_Name);
