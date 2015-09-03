@@ -1996,15 +1996,15 @@ void SOLARCHVISION_draw_WIN3D () {
   WIN3D_Diagrams.beginDraw();
   
   WIN3D_Diagrams.background(233);
+
+  CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
+  
+  CAM_x = 0;
+  CAM_y = 0;
+  CAM_z = (0.5 * refScale) / tan(0.5 * CAM_fov);
   
   if (WIN3D_View_Type == 1) {
 
-    CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
-    
-    CAM_x = 0;
-    CAM_y = 0;
-    CAM_z = (0.5 * refScale) / tan(0.5 * CAM_fov);
-   
     float aspect = 1.0 / WIN3D_R_View;
     
     float zFar = CAM_z * 1000;
@@ -2015,8 +2015,7 @@ void SOLARCHVISION_draw_WIN3D () {
     WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
   }
   else {
-    
-    //float ZOOM = 0.456 * WIN3D_ZOOM_coordinate * PI / 180;
+
     float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
     
     WIN3D_Diagrams.ortho(ZOOM * WIN3D_X_View * -1, ZOOM * WIN3D_X_View * 1, ZOOM  * WIN3D_Y_View * -1, ZOOM  * WIN3D_Y_View * 1, 0.00001, 100000);
@@ -10927,10 +10926,32 @@ void WIN3D_keyPressed (KeyEvent e) {
     
     if (key != CODED) { 
       switch(key) {
-        case ',' :WIN3D_Z_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1; break; 
-        case '.' :WIN3D_Z_coordinate -= WIN3D_S_coordinate; WIN3D_Update = 1; break;
+        case ',' :
+                  if (WIN3D_View_Type == 1) {
+                    WIN3D_Z_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1;
+                  } 
+                  else {
+                    WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1;
+                  }
+                  break;
+                  
+        case '.' :
+                  if (WIN3D_View_Type == 1) {
+                    WIN3D_Z_coordinate -= WIN3D_S_coordinate; WIN3D_Update = 1;
+                  } 
+                  else {
+                    WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1;
+                  }
+                  break;
   
-        case '0' :WIN3D_Z_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1; break;
+        case '0' :
+                  if (WIN3D_View_Type == 1) {
+                    WIN3D_Z_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1;
+                  } 
+                  else {
+                    WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1;
+                  }
+                  break;
         
         case '5' :WIN3D_RX_coordinate = 0;
                   WIN3D_RY_coordinate = 0;
@@ -18106,92 +18127,104 @@ void RenderShadowsOnUrbanPlane() {
 void SOLARCHVISION_draw_Perspective_Internally () {
 
   pushMatrix();
-  
+
   translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
   
-   if (WIN3D_View_Type == 1) {
 
-    noFill();
-    stroke(0,127,0,127);
-    strokeWeight(1);   
+  noFill();
+  stroke(0,127,0,127);
+  strokeWeight(1);   
 
-    for (int f = 1; f < allFaces.length; f++) {
-  
-      int Teselation = 0;
-      
-      int TotalSubNo = 1;  
-      if (allFaces_MAT[f] == 0) {
-        Teselation = MODEL3D_TESELATION;
-        if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
-      }
-  
-      for (int n = 0; n < TotalSubNo; n++) {
-        
-        float[][] base_Vertices = new float [allFaces[f].length][3];
-        for (int j = 0; j < allFaces[f].length; j++) {
-          int vNo = allFaces[f][j];
-          base_Vertices[j][0] = allVertices[vNo][0];
-          base_Vertices[j][1] = allVertices[vNo][1];
-          base_Vertices[j][2] = allVertices[vNo][2];
-        }
-        
-        float[][] subFace = getSubFace(base_Vertices, Teselation, n);
-     
-        beginShape();
-        
-        for (int s = 0; s < subFace.length; s++) {
-          
-          float PNT_x = subFace[s][0] * objects_scale;
-          float PNT_y = subFace[s][1] * objects_scale;
-          float PNT_z = -subFace[s][2] * objects_scale;
+  for (int f = 1; f < allFaces.length; f++) {
 
-          PNT_x -= CAM_x;
-          PNT_y -= CAM_y;
-          PNT_z += CAM_z;
+    int Teselation = 0;
     
-          float px, py, pz;
-          
-          pz = PNT_z;
-          px = PNT_x * cos_ang(-WIN3D_RZ_coordinate) - PNT_y * sin_ang(-WIN3D_RZ_coordinate);
-          py = PNT_x * sin_ang(-WIN3D_RZ_coordinate) + PNT_y * cos_ang(-WIN3D_RZ_coordinate);
-          
-          PNT_x = px;
-          PNT_y = py;
-          PNT_z = pz;    
+    int TotalSubNo = 1;  
+    if (allFaces_MAT[f] == 0) {
+      Teselation = MODEL3D_TESELATION;
+      if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+    }
+
+    for (int n = 0; n < TotalSubNo; n++) {
+      
+      float[][] base_Vertices = new float [allFaces[f].length][3];
+      for (int j = 0; j < allFaces[f].length; j++) {
+        int vNo = allFaces[f][j];
+        base_Vertices[j][0] = allVertices[vNo][0];
+        base_Vertices[j][1] = allVertices[vNo][1];
+        base_Vertices[j][2] = allVertices[vNo][2];
+      }
+      
+      float[][] subFace = getSubFace(base_Vertices, Teselation, n);
+   
+      beginShape();
+      
+      for (int s = 0; s < subFace.length; s++) {
+        
+        float PNT_x = subFace[s][0] * objects_scale;
+        float PNT_y = subFace[s][1] * objects_scale;
+        float PNT_z = -subFace[s][2] * objects_scale;
+
+        PNT_x -= CAM_x;
+        PNT_y -= CAM_y;
+        PNT_z += CAM_z;
+  
+        float px, py, pz;
+        
+        pz = PNT_z;
+        px = PNT_x * cos_ang(-WIN3D_RZ_coordinate) - PNT_y * sin_ang(-WIN3D_RZ_coordinate);
+        py = PNT_x * sin_ang(-WIN3D_RZ_coordinate) + PNT_y * cos_ang(-WIN3D_RZ_coordinate);
+        
+        PNT_x = px;
+        PNT_y = py;
+        PNT_z = pz;    
  
-          py = PNT_y;
-          pz = PNT_z * cos_ang(WIN3D_RY_coordinate) - PNT_x * sin_ang(WIN3D_RY_coordinate);
-          px = PNT_z * sin_ang(WIN3D_RY_coordinate) + PNT_x * cos_ang(WIN3D_RY_coordinate);
+        py = PNT_y;
+        pz = PNT_z * cos_ang(WIN3D_RY_coordinate) - PNT_x * sin_ang(WIN3D_RY_coordinate);
+        px = PNT_z * sin_ang(WIN3D_RY_coordinate) + PNT_x * cos_ang(WIN3D_RY_coordinate);
+        
+        PNT_x = px;
+        PNT_y = py;
+        PNT_z = pz;   
+        
+        px = PNT_x;
+        py = PNT_y * cos_ang(WIN3D_RX_coordinate) - PNT_z * sin_ang(WIN3D_RX_coordinate);
+        pz = PNT_y * sin_ang(WIN3D_RX_coordinate) + PNT_z * cos_ang(WIN3D_RX_coordinate);
+        
+        PNT_x = px;
+        PNT_y = py;
+        PNT_z = pz;
+        
           
-          PNT_x = px;
-          PNT_y = py;
-          PNT_z = pz;   
+        if (PNT_z > 0) {
           
-          px = PNT_x;
-          py = PNT_y * cos_ang(WIN3D_RX_coordinate) - PNT_z * sin_ang(WIN3D_RX_coordinate);
-          pz = PNT_y * sin_ang(WIN3D_RX_coordinate) + PNT_z * cos_ang(WIN3D_RX_coordinate);
-          
-          PNT_x = px;
-          PNT_y = py;
-          PNT_z = pz;
-          
-          if (PNT_z > 0) {
-          
-            float X_perspective = (PNT_x / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
-            float Y_perspective = (PNT_y / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
+          if (WIN3D_View_Type == 1) {
             
-            if (isInside(X_perspective, -Y_perspective, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(X_perspective, -Y_perspective);
+            float X_perspective = (PNT_x / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
+            float Y_perspective = -(PNT_y / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
+            
+            if (isInside(X_perspective, Y_perspective, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(X_perspective, Y_perspective);
+          }
+          else {
+            
+            float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
+
+            float X_orthographic = (PNT_x / ZOOM) * (0.5 * WIN3D_scale3D);
+            float Y_orthographic = -(PNT_y / ZOOM) * (0.5 * WIN3D_scale3D);         
+            
+            if (isInside(X_orthographic, Y_orthographic, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(X_orthographic, Y_orthographic);
           }
         }
-        
-        endShape(CLOSE);
       }
+      
+      endShape(CLOSE);
     }
-    
-    strokeWeight(0);   
+  }
+  
+  strokeWeight(0);   
 
 
-  } 
+
   
   popMatrix();
 }
