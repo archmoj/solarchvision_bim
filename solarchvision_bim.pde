@@ -2211,7 +2211,7 @@ void SOLARCHVISION_draw_WIN3D () {
   image(WIN3D_Diagrams, WIN3D_CX_View, WIN3D_CY_View, WIN3D_X_View, WIN3D_Y_View);
 
 
-
+  SOLARCHVISION_draw_Perspective_Internally(); // <<<<<<<<<< to test 
 }
 
 
@@ -18093,4 +18093,150 @@ void RenderShadowsOnUrbanPlane() {
 }
 
 
+void SOLARCHVISION_draw_Perspective_Internally () {
 
+  pushMatrix();
+  
+  translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+  
+   if (WIN3D_View_Type == 1) {
+/*
+    CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
+    
+    CAM_x = 0;
+    CAM_y = 0;
+    CAM_z = (0.5 * refScale) / tan(0.5 * CAM_fov);
+   
+    float aspect = 1.0 / WIN3D_R_View;
+    
+    float zFar = CAM_z * 1000;
+    float zNear = CAM_z * 0.001;
+    
+    WIN3D_Diagrams.perspective(CAM_fov, aspect, zNear, zFar);
+
+    WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
+*/
+/*
+  CAM_x -= WIN3D_X_coordinate;
+  CAM_y += WIN3D_Y_coordinate;
+  CAM_z -= WIN3D_Z_coordinate;
+  
+  float px, py, pz;
+  
+  px = CAM_x;
+  py = CAM_y * cos_ang(WIN3D_RX_coordinate) - CAM_z * sin_ang(WIN3D_RX_coordinate);
+  pz = CAM_y * sin_ang(WIN3D_RX_coordinate) + CAM_z * cos_ang(WIN3D_RX_coordinate);
+  
+  CAM_x = px;
+  CAM_y = py;
+  CAM_z = pz;
+  
+  py = CAM_y;
+  pz = CAM_z * cos_ang(WIN3D_RY_coordinate) - CAM_x * sin_ang(WIN3D_RY_coordinate);
+  px = CAM_z * sin_ang(WIN3D_RY_coordinate) + CAM_x * cos_ang(WIN3D_RY_coordinate);
+  
+  CAM_x = px;
+  CAM_y = py;
+  CAM_z = pz;  
+  
+  pz = CAM_z;
+  px = CAM_x * cos_ang(WIN3D_RZ_coordinate) - CAM_y * sin_ang(WIN3D_RZ_coordinate);
+  py = CAM_x * sin_ang(WIN3D_RZ_coordinate) + CAM_y * cos_ang(WIN3D_RZ_coordinate);
+  
+  CAM_x = px;
+  CAM_y = py;
+  CAM_z = pz;   
+*/
+
+
+    fill(0,127,0,127);
+    stroke(0,127,0,127);
+    strokeWeight(1);   
+
+    for (int f = 1; f < allFaces.length; f++) {
+  
+      int Teselation = 0;
+      
+      int TotalSubNo = 1;  
+      if (allFaces_MAT[f] == 0) {
+        Teselation = MODEL3D_TESELATION;
+        if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+      }
+  
+      for (int n = 0; n < TotalSubNo; n++) {
+        
+        float[][] base_Vertices = new float [allFaces[f].length][3];
+        for (int j = 0; j < allFaces[f].length; j++) {
+          int vNo = allFaces[f][j];
+          base_Vertices[j][0] = allVertices[vNo][0];
+          base_Vertices[j][1] = allVertices[vNo][1];
+          base_Vertices[j][2] = allVertices[vNo][2];
+        }
+        
+        float[][] subFace = getSubFace(base_Vertices, Teselation, n);
+     
+        beginShape();
+        
+        for (int s = 0; s < subFace.length; s++) {
+          
+          float PNT_x = -subFace[s][0] * objects_scale;
+          float PNT_y = -subFace[s][1] * objects_scale;
+          float PNT_z = -subFace[s][2] * objects_scale;
+
+    PNT_x += CAM_x;
+    PNT_y += CAM_y;
+    PNT_z += CAM_z;
+
+  //PNT_x -= WIN3D_X_coordinate;
+  //PNT_y += WIN3D_Y_coordinate;
+  //PNT_z -= WIN3D_Z_coordinate;
+  
+          float px, py, pz;
+          
+          px = PNT_x;
+          py = PNT_y * cos_ang(WIN3D_RX_coordinate) - PNT_z * sin_ang(WIN3D_RX_coordinate);
+          pz = PNT_y * sin_ang(WIN3D_RX_coordinate) + PNT_z * cos_ang(WIN3D_RX_coordinate);
+          
+          PNT_x = px;
+          PNT_y = py;
+          PNT_z = pz;
+          
+          py = PNT_y;
+          pz = PNT_z * cos_ang(WIN3D_RY_coordinate) - PNT_x * sin_ang(WIN3D_RY_coordinate);
+          px = PNT_z * sin_ang(WIN3D_RY_coordinate) + PNT_x * cos_ang(WIN3D_RY_coordinate);
+          
+          PNT_x = px;
+          PNT_y = py;
+          PNT_z = pz;  
+          
+          pz = PNT_z;
+          px = PNT_x * cos_ang(WIN3D_RZ_coordinate) - PNT_y * sin_ang(WIN3D_RZ_coordinate);
+          py = PNT_x * sin_ang(WIN3D_RZ_coordinate) + PNT_y * cos_ang(WIN3D_RZ_coordinate);
+          
+          PNT_x = px;
+          PNT_y = py;
+          PNT_z = pz;   
+
+
+       
+          
+          if (PNT_z > 0) {
+          
+            float X_perspective = (PNT_x / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
+            float Y_perspective = (PNT_y / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
+            
+            vertex(-X_perspective, Y_perspective);
+          }
+        }
+        
+        endShape(CLOSE);
+      }
+    }
+    
+    strokeWeight(0);   
+
+
+  } 
+  
+  popMatrix();
+}
