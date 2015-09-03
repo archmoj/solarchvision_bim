@@ -14179,10 +14179,20 @@ void SOLARCHVISION_draw_objects () {
       WIN3D_update_VerticesSolarValue = 0;
     }
   }
+
+
+  // ???????????????????????????????????????????????
+  CAM_x *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
+  CAM_y *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
+  CAM_z *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
+  // ??????????????????????????????????????????????? 
+
     
   CAM_x -= WIN3D_X_coordinate;
   CAM_y += WIN3D_Y_coordinate;
   CAM_z -= WIN3D_Z_coordinate;
+
+
   
   float px, py, pz;
   
@@ -14210,7 +14220,9 @@ void SOLARCHVISION_draw_objects () {
   CAM_y = py;
   CAM_z = pz;   
   
-  //println("Camera:", nf(CAM_x,0,4), nf(CAM_y,0,4), nf(CAM_z,0,4));
+
+  
+  println("Camera:", nf(CAM_x,0,4), nf(CAM_y,0,4), nf(CAM_z,0,4));
 
   if (Display_Trees_People != 0) {
     for (int i = 1; i <= allObject2D_num; i++) {
@@ -18183,16 +18195,16 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           float PNT_y = subFace[s][1] * objects_scale;
           float PNT_z = -subFace[s][2] * objects_scale;
 
-
+/*
     PNT_x -= CAM_x * tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
     PNT_y -= CAM_y * tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
     PNT_z += CAM_z * tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
-       
+*/       
 
-  //PNT_x -= WIN3D_X_coordinate;
-  //PNT_y += WIN3D_Y_coordinate;
-  //PNT_z -= WIN3D_Z_coordinate;
-  
+    PNT_x -= CAM_x;
+    PNT_y -= CAM_y;
+    PNT_z += CAM_z;
+    
           float px, py, pz;
           
           pz = PNT_z;
