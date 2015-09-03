@@ -1439,7 +1439,7 @@ void draw () {
     stroke(0);
     fill(0);
     textAlign(CENTER, CENTER); 
-    textSize(MESSAGE_S_View);
+    textSize(1.5 * MESSAGE_S_View);
     text("Raz, Mehr, Mehraz solarch studio\n1998-2015\nAuthor: Mojtaba Samimi\nwww.solarchvision.com", 0.5 * width, 0.75 * height);
 
     textAlign(CENTER, CENTER); 
@@ -17783,7 +17783,7 @@ void RenderShadowsOnUrbanPlane() {
   float SHADOW_scaleY = RES2 / Solarch_scale_All;
 
   PGraphics SHADOW_Diagrams = createGraphics(RES1, RES2, P2D);
-
+/*
   {  
     int RAD_TYPE = 0;
      
@@ -17870,8 +17870,7 @@ void RenderShadowsOnUrbanPlane() {
                   float x = (subFace[s][0] - z * SunR[1] / SunR[3]);
                   float y = (subFace[s][1] - z * SunR[2] / SunR[3]);
                   
-                  //if (z >= 0)
-                  SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY);
+                  if (z >= 0) SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY);
                 }
                 
                 SHADOW_Diagrams.endShape(CLOSE);
@@ -17892,10 +17891,11 @@ void RenderShadowsOnUrbanPlane() {
     }
   }
 
+*/
+
+
   {
     int RAD_TYPE = 1;
-
-    
 
     for (int SHD = 0; SHD <= 1; SHD += 1) {
 
@@ -17918,14 +17918,14 @@ void RenderShadowsOnUrbanPlane() {
       File_Name += "DIF_" + STR_SHD[SHD];
   
 
-
+      
       
       DIFFUSE_Diagrams.beginDraw();
 
       DIFFUSE_Diagrams.blendMode(REPLACE);
 
-      DIFFUSE_Diagrams.fill(255); 
-      DIFFUSE_Diagrams.stroke(255);
+      DIFFUSE_Diagrams.fill(0); 
+      DIFFUSE_Diagrams.stroke(0);
       DIFFUSE_Diagrams.strokeWeight(0);
       DIFFUSE_Diagrams.rectMode(CORNER);
       DIFFUSE_Diagrams.rect(0, 0, RES1, RES2);
@@ -17996,8 +17996,7 @@ void RenderShadowsOnUrbanPlane() {
                 float x = (subFace[s][0] - z * SunR[1] / SunR[3]);
                 float y = (subFace[s][1] - z * SunR[2] / SunR[3]);
                 
-                //if (z >= 0)
-                SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY);
+                if (z >= 0) SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY);
               }
               
               SHADOW_Diagrams.endShape(CLOSE);
@@ -18016,7 +18015,7 @@ void RenderShadowsOnUrbanPlane() {
      
         DIFFUSE_Diagrams.blendMode(ADD); 
         
-        DIFFUSE_Diagrams.tint(255, 255 / float(skyFaces.length));
+        DIFFUSE_Diagrams.tint(255, 255 / (0.5 * float(skyFaces.length)));
         
         DIFFUSE_Diagrams.image(img, 0, 0, RES1, RES2);
         
