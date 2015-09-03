@@ -952,7 +952,7 @@ int MODEL3D_TESELATION = 0;
 
 int MODEL3D_ERASE = 0;
 
-int SKY3D_TESELATION = 0; //2;
+int SKY3D_TESELATION = 2;
 float SKY3D_scale = 10000 ; //1000; 
 
 int Display_SUN3D = 1;
@@ -10931,7 +10931,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                     WIN3D_Z_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1;
                   } 
                   else {
-                    WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1;
+                    WIN3D_ZOOM_coordinate /= pow(2.0, 0.25); WIN3D_Update = 1;
                   }
                   break;
                   
@@ -10940,7 +10940,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                     WIN3D_Z_coordinate -= WIN3D_S_coordinate; WIN3D_Update = 1;
                   } 
                   else {
-                    WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1;
+                    WIN3D_ZOOM_coordinate *= pow(2.0, 0.25); WIN3D_Update = 1;
                   }
                   break;
   
@@ -10949,7 +10949,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                     WIN3D_Z_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1;
                   } 
                   else {
-                    WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1;
+                    WIN3D_ZOOM_coordinate /= pow(2.0, 0.25); WIN3D_Update = 1;
                   }
                   break;
         
@@ -14257,8 +14257,9 @@ void SOLARCHVISION_draw_objects () {
       
       float r = allObject2D_XYZS[i][3] * 0.5 * objects_scale;
       
-      //float t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI;
       float t = WIN3D_RZ_coordinate * PI / 180.0;
+      if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
+      
       
       if (allObject2D_MAP[i] < 0) t += PI; 
   
