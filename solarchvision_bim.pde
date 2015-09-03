@@ -17783,7 +17783,7 @@ void RenderShadowsOnUrbanPlane() {
   float SHADOW_scaleY = RES2 / Solarch_scale_All;
 
   PGraphics SHADOW_Diagrams = createGraphics(RES1, RES2, P2D);
-/* 
+
   {  
     int RAD_TYPE = 0;
      
@@ -17890,16 +17890,17 @@ void RenderShadowsOnUrbanPlane() {
       }
     }
   }
-*/
-  {
-    PGraphics DIFFUSE_Diagrams = createGraphics(RES1, RES2); // should not be P2D!
 
+  {
     int RAD_TYPE = 1;
 
-    float EachLayerOpacity = 0.5 / float(skyFaces.length - 1);
+    
 
     for (int SHD = 0; SHD <= 1; SHD += 1) {
 
+      PGraphics DIFFUSE_Diagrams = createGraphics(RES1, RES2); // should not be P2D!      
+      
+      
       String[] STR_SHD = {"F" , "T"};
       String File_Name = "";
       
@@ -18013,16 +18014,17 @@ void RenderShadowsOnUrbanPlane() {
      
         DIFFUSE_Diagrams.blendMode(ADD); 
         
-        DIFFUSE_Diagrams.tint(255, 255 * EachLayerOpacity);
+        DIFFUSE_Diagrams.tint(255, 255 / float(skyFaces.length));
         
         DIFFUSE_Diagrams.image(img, 0, 0, RES1, RES2);
         
         DIFFUSE_Diagrams.noTint();
+
       }
       
       DIFFUSE_Diagrams.endDraw();
 
-      File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.PNG"; // <<<<< PNG <<<<<<      
+      File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.PNG"; 
 
       DIFFUSE_Diagrams.save(File_Name);
       println (File_Name);
