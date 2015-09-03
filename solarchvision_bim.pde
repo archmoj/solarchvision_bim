@@ -18184,9 +18184,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           float PNT_z = -subFace[s][2] * objects_scale;
 
 
-    PNT_x -= CAM_x;
-    PNT_y -= CAM_y;
-    PNT_z += CAM_z;
+    PNT_x -= CAM_x * tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
+    PNT_y -= CAM_y * tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
+    PNT_z += CAM_z * tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
        
 
   //PNT_x -= WIN3D_X_coordinate;
