@@ -959,7 +959,7 @@ int Display_SUN3D = 1;
 int Display_SKY3D = 1;
 
 int Download_LAND = 0;
-int Load_LAND = 1;
+int Load_LAND = 0; // 1;
 int Display_LAND = 0; // 1;
 int Skip_LAND_Center = 0; //5;
 
@@ -12659,37 +12659,31 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
 }
 
 void SOLARCHVISION_add_2Dobjects (int n, float r, float z) {
+  
+  for (int i = 0; i < n; i += 1) {
+    
+    float a = random(360);
+    float b = random(r);
 
-
-      for (int i = 0; i < n; i += 1) {
-        
-        float a = random(360);
-        float b = random(r);
-
-        float x = b * cos_ang(a);
-        float y = b * sin_ang(a);
-        
-        if (dist(x,y,0,0) > 2.5) { // i.e. No 2D at the center!
-        
-          int t = 1;
-          
-          if (i < Skip_LAND_Center) {
-            float q = random(100);
-            
-            if (q < 90) t = 0; //  to illustrate more people at the center
-          }
-          
-          if (dist(x,y,0,0) < 25) t = 0; // i.e. No tree around the center!
-          
-          if (t == 0) {
-            SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
-          }
-          else{
-            SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
-          }
-        }
-      }  
-
+    float x = b * cos_ang(a);
+    float y = b * sin_ang(a);
+    
+    if (dist(x,y,0,0) > 2.5) { // i.e. No 2D at the center!
+    
+      int t = 1;
+      
+      float q = random(100);
+      
+      if (dist(x,y,0,0) < 25) t = 0; // i.e. No tree around the center!
+      
+      if (t == 0) {
+        SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
+      }
+      else{
+        SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
+      }
+    }
+  }  
 }
 
 void SOLARCHVISION_remove_2Dobjects () {
@@ -12771,15 +12765,17 @@ int MAX_Default_Models_Number = 7;
 
 void SOLARCHVISION_add_DefaultModel (int n) {
 
+  if (Load_LAND == 1) {
+    SOLARCHVISION_add_2Dobjects_onLand(); 
+  }    
+  else {
+    SOLARCHVISION_add_2Dobjects(100, 50, 0); // (n, r, z)
+  }  
+
+
+  
   if (n != 0) {
     //if (n != 5) SOLARCHVISION_add_Mesh2(0, -50, -50, 0, 50, 50, 0);
-    
-    if (Load_LAND == 1) {
-      SOLARCHVISION_add_2Dobjects_onLand(); 
-    }    
-    else {
-      SOLARCHVISION_add_2Dobjects(100, 50, 0); // (n, r, z)
-    }
   }
   
   if (n == 1) {
@@ -18112,54 +18108,6 @@ void SOLARCHVISION_draw_Perspective_Internally () {
   translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
   
    if (WIN3D_View_Type == 1) {
-/*
-    CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
-    
-    CAM_x = 0;
-    CAM_y = 0;
-    CAM_z = (0.5 * refScale) / tan(0.5 * CAM_fov);
-   
-    float aspect = 1.0 / WIN3D_R_View;
-    
-    float zFar = CAM_z * 1000;
-    float zNear = CAM_z * 0.001;
-    
-    WIN3D_Diagrams.perspective(CAM_fov, aspect, zNear, zFar);
-
-    WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
-*/
-/*
-  CAM_x -= WIN3D_X_coordinate;
-  CAM_y += WIN3D_Y_coordinate;
-  CAM_z -= WIN3D_Z_coordinate;
-  
-  float px, py, pz;
-  
-  px = CAM_x;
-  py = CAM_y * cos_ang(WIN3D_RX_coordinate) - CAM_z * sin_ang(WIN3D_RX_coordinate);
-  pz = CAM_y * sin_ang(WIN3D_RX_coordinate) + CAM_z * cos_ang(WIN3D_RX_coordinate);
-  
-  CAM_x = px;
-  CAM_y = py;
-  CAM_z = pz;
-  
-  py = CAM_y;
-  pz = CAM_z * cos_ang(WIN3D_RY_coordinate) - CAM_x * sin_ang(WIN3D_RY_coordinate);
-  px = CAM_z * sin_ang(WIN3D_RY_coordinate) + CAM_x * cos_ang(WIN3D_RY_coordinate);
-  
-  CAM_x = px;
-  CAM_y = py;
-  CAM_z = pz;  
-  
-  pz = CAM_z;
-  px = CAM_x * cos_ang(WIN3D_RZ_coordinate) - CAM_y * sin_ang(WIN3D_RZ_coordinate);
-  py = CAM_x * sin_ang(WIN3D_RZ_coordinate) + CAM_y * cos_ang(WIN3D_RZ_coordinate);
-  
-  CAM_x = px;
-  CAM_y = py;
-  CAM_z = pz;   
-*/
-
 
     noFill();
     stroke(0,127,0,127);
@@ -18195,15 +18143,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           float PNT_y = subFace[s][1] * objects_scale;
           float PNT_z = -subFace[s][2] * objects_scale;
 
-/*
-    PNT_x -= CAM_x * tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
-    PNT_y -= CAM_y * tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
-    PNT_z += CAM_z * tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
-*/       
-
-    PNT_x -= CAM_x;
-    PNT_y -= CAM_y;
-    PNT_z += CAM_z;
+          PNT_x -= CAM_x;
+          PNT_y -= CAM_y;
+          PNT_z += CAM_z;
     
           float px, py, pz;
           
@@ -18231,17 +18173,12 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           PNT_y = py;
           PNT_z = pz;
           
-
-          
-
-
-          
           if (PNT_z > 0) {
           
             float X_perspective = (PNT_x / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
             float Y_perspective = (PNT_y / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
             
-            vertex(X_perspective, -Y_perspective);
+            if (isInside(X_perspective, -Y_perspective, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(X_perspective, -Y_perspective);
           }
         }
         
