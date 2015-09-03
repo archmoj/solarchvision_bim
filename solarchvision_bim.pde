@@ -12774,9 +12774,12 @@ void SOLARCHVISION_add_DefaultModel (int n) {
   if (n != 0) {
     //if (n != 5) SOLARCHVISION_add_Mesh2(0, -50, -50, 0, 50, 50, 0);
     
-    if (Load_LAND == 0) {
-      SOLARCHVISION_add_2Dobjects(100, 50, 0); // (n, r, z)
+    if (Load_LAND == 1) {
+      SOLARCHVISION_add_2Dobjects_onLand(); 
     }    
+    else {
+      SOLARCHVISION_add_2Dobjects(100, 50, 0); // (n, r, z)
+    }
   }
   
   if (n == 1) {
