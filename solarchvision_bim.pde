@@ -17797,6 +17797,25 @@ void RenderShadowsOnUrbanPlane() {
         
         for (int SHD = 0; SHD <= 1; SHD += 1) {
   
+          String[] STR_SHD = {"F" , "T"};
+          String File_Name = "";
+          
+          int Round_Latitude = int(roundTo(LocationLatitude, 5));
+          if (Round_Latitude > 70) Round_Latitude = 70; // <<<<<<<<<<<<<<<
+          if (Round_Latitude < -45) Round_Latitude = -45; // <<<<<<<<<<<<<<<
+          String Near_Latitude = nf(abs(Round_Latitude), 2);
+          
+          if (Round_Latitude < 0) Near_Latitude += "S";
+          else Near_Latitude += "N";
+      
+          File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + Near_Latitude + "/";
+      
+          File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
+      
+          File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.PNG"; 
+          
+          
+          
           SHADOW_Diagrams.beginDraw();
 
           SHADOW_Diagrams.blendMode(REPLACE);
@@ -17862,23 +17881,6 @@ void RenderShadowsOnUrbanPlane() {
           }
           
           
-          String[] STR_SHD = {"F" , "T"};
-          String File_Name = "";
-          
-          int Round_Latitude = int(roundTo(LocationLatitude, 5));
-          if (Round_Latitude > 70) Round_Latitude = 70; // <<<<<<<<<<<<<<<
-          if (Round_Latitude < -45) Round_Latitude = -45; // <<<<<<<<<<<<<<<
-          String Near_Latitude = nf(abs(Round_Latitude), 2);
-          
-          if (Round_Latitude < 0) Near_Latitude += "S";
-          else Near_Latitude += "N";
-      
-          File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + Near_Latitude + "/";
-      
-          File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
-      
-          File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.PNG"; 
-  
           SHADOW_Diagrams.endDraw();          
 
           SHADOW_Diagrams.save(File_Name);
@@ -17890,20 +17892,38 @@ void RenderShadowsOnUrbanPlane() {
   }
 */
   {
-    PGraphics DIFFUSE_Diagrams = createGraphics(RES1, RES2, P2D);
+    PGraphics DIFFUSE_Diagrams = createGraphics(RES1, RES2); // should not be P2D!
 
     int RAD_TYPE = 1;
 
-    float EachLayerOpacity = 1.0 / (0.5 * (skyFaces.length - 1));
+    float EachLayerOpacity = 0.5 / float(skyFaces.length - 1);
 
     for (int SHD = 0; SHD <= 1; SHD += 1) {
+
+      String[] STR_SHD = {"F" , "T"};
+      String File_Name = "";
+      
+      int Round_Latitude = int(roundTo(LocationLatitude, 5));
+      if (Round_Latitude > 70) Round_Latitude = 70; // <<<<<<<<<<<<<<<
+      if (Round_Latitude < -45) Round_Latitude = -45; // <<<<<<<<<<<<<<<
+      String Near_Latitude = nf(abs(Round_Latitude), 2);
+      
+      if (Round_Latitude < 0) Near_Latitude += "S";
+      else Near_Latitude += "N";
+  
+      File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + Near_Latitude + "/";
+  
+      File_Name += "DIF_" + STR_SHD[SHD];
+  
+      File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.JPG"; // <<<<< PNG <<<<<<      
+
       
       DIFFUSE_Diagrams.beginDraw();
 
       DIFFUSE_Diagrams.blendMode(REPLACE);
 
-      DIFFUSE_Diagrams.fill(0); 
-      DIFFUSE_Diagrams.stroke(0);
+      DIFFUSE_Diagrams.fill(255); 
+      DIFFUSE_Diagrams.stroke(255);
       DIFFUSE_Diagrams.strokeWeight(0);
       DIFFUSE_Diagrams.rectMode(CORNER);
       DIFFUSE_Diagrams.rect(0, 0, RES1, RES2);
@@ -17911,10 +17931,6 @@ void RenderShadowsOnUrbanPlane() {
       
       
       for (int i = 1; i < skyFaces.length; i++) {
-
-        SHADOW_Diagrams.beginDraw();
-
-        SHADOW_Diagrams.blendMode(REPLACE);
 
         float[] SunR = {0,0,0,0};
         
@@ -17924,10 +17940,14 @@ void RenderShadowsOnUrbanPlane() {
           SunR[3] += skyVertices[skyFaces[i][j]][2] / float(skyFaces[i].length);
         }
 
+        SHADOW_Diagrams.beginDraw();
+
+        SHADOW_Diagrams.blendMode(REPLACE);
+
         float _val = 0;
         if (SunR[3] > 0) _val = SunR[3];
-        SHADOW_Diagrams.fill(255 * (1 - _val)); 
-        SHADOW_Diagrams.stroke(255 * (1 - _val));
+        SHADOW_Diagrams.fill(255 * _val); 
+        SHADOW_Diagrams.stroke(255 * _val);
         SHADOW_Diagrams.strokeWeight(0);
         SHADOW_Diagrams.rectMode(CORNER);
         SHADOW_Diagrams.rect(0, 0, RES1, RES2);
@@ -17937,8 +17957,8 @@ void RenderShadowsOnUrbanPlane() {
           SHADOW_Diagrams.pushMatrix();
           SHADOW_Diagrams.translate(Solarch_RES1 / 2, Solarch_RES2 / 2);            
           
-          SHADOW_Diagrams.stroke(255); 
-          SHADOW_Diagrams.fill(255);
+          SHADOW_Diagrams.stroke(0); 
+          SHADOW_Diagrams.fill(0);
           
           for (int f = 1; f < allFaces.length; f++) {
             
@@ -17989,39 +18009,19 @@ void RenderShadowsOnUrbanPlane() {
         
         SHADOW_Diagrams.save("C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_45N" + "/" + nf(SHD, 1) + nf(i, 3) + ".JPG");
      
+        PImage img = loadImage("C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_45N" + "/" + nf(SHD, 1) + nf(i, 3) + ".JPG");
      
-     
-        //DIFFUSE_Diagrams.blendMode(BLEND); // ???????
-        DIFFUSE_Diagrams.blendMode(SUBTRACT); // ???????
-        //DIFFUSE_Diagrams.blendMode(ADD); // ???????
+        DIFFUSE_Diagrams.blendMode(ADD); 
         
         DIFFUSE_Diagrams.tint(255, 255 * EachLayerOpacity);
         
-        DIFFUSE_Diagrams.image(SHADOW_Diagrams, 0, 0, RES1, RES2);
+        DIFFUSE_Diagrams.image(img, 0, 0, RES1, RES2);
         
         DIFFUSE_Diagrams.noTint();
       }
       
       DIFFUSE_Diagrams.endDraw();
-      
-      
-  
-      String[] STR_SHD = {"F" , "T"};
-      String File_Name = "";
-      
-      int Round_Latitude = int(roundTo(LocationLatitude, 5));
-      if (Round_Latitude > 70) Round_Latitude = 70; // <<<<<<<<<<<<<<<
-      if (Round_Latitude < -45) Round_Latitude = -45; // <<<<<<<<<<<<<<<
-      String Near_Latitude = nf(abs(Round_Latitude), 2);
-      
-      if (Round_Latitude < 0) Near_Latitude += "S";
-      else Near_Latitude += "N";
-  
-      File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + Near_Latitude + "/";
-  
-      File_Name += "DIF_" + STR_SHD[SHD];
-  
-      File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.JPG"; // <<<<< PNG <<<<<<
+
 
       DIFFUSE_Diagrams.save(File_Name);
       println (File_Name);
