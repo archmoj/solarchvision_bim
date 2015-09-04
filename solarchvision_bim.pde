@@ -13530,7 +13530,7 @@ void SOLARCHVISION_draw_field_image () {
 void SOLARCHVISION_draw_solarch_image () {
 
   WIN3D_Diagrams.stroke(0);
-  WIN3D_Diagrams.fill(255,255,127);    
+  WIN3D_Diagrams.fill(127,127,127);    
   
   if (display_Solarch_Image == 1) {  
     WIN3D_Diagrams.beginShape();
@@ -13541,12 +13541,21 @@ void SOLARCHVISION_draw_solarch_image () {
 
     int display_solarch_texture = 0;
     
-    if ((Solarch_scale_U == Rendered_Solarch_scale_U) && (Solarch_scale_V == Rendered_Solarch_scale_V) && (Solarch_Elevation == Rendered_Solarch_Elevation)) {
+    //if ((Solarch_scale_U == Rendered_Solarch_scale_U) && (Solarch_scale_V == Rendered_Solarch_scale_V) && (Solarch_Elevation == Rendered_Solarch_Elevation)) {
+    if (Solarch_Elevation == Rendered_Solarch_Elevation) {      
       
       display_solarch_texture = 1;
       
       WIN3D_Diagrams.texture(Solarch_Image);
     }    
+
+    float dU = Solarch_scale_U / Rendered_Solarch_scale_U;
+    float dV = Solarch_scale_V / Rendered_Solarch_scale_V;
+    
+    float minU = 0.5 * Solarch_RES1 - (0.5 * Solarch_RES1 * dU);
+    float maxU = 0.5 * Solarch_RES1 + (0.5 * Solarch_RES1 * dU);
+    float minV = 0.5 * Solarch_RES2 - (0.5 * Solarch_RES2 * dV);
+    float maxV = 0.5 * Solarch_RES2 + (0.5 * Solarch_RES2 * dV);
 
 
     
@@ -13561,7 +13570,7 @@ void SOLARCHVISION_draw_solarch_image () {
       float z = c; 
       
       if (display_solarch_texture == 1) {
-        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, 0, Solarch_RES2);
+        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, minU, maxV);
       }
       else {
         WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D);
@@ -13575,7 +13584,7 @@ void SOLARCHVISION_draw_solarch_image () {
       float z = c;  
       
       if (display_solarch_texture == 1) {
-        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, Solarch_RES1, Solarch_RES2);
+        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, maxU, maxV);
       }
       else {
         WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D);
@@ -13589,7 +13598,7 @@ void SOLARCHVISION_draw_solarch_image () {
       float z = c;  
       
       if (display_solarch_texture == 1) {
-        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, Solarch_RES1, 0);
+        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, maxU, minV);
       }
       else {
         WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D);
@@ -13604,7 +13613,7 @@ void SOLARCHVISION_draw_solarch_image () {
       float z = c; 
      
       if (display_solarch_texture == 1) { 
-        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, 0, 0);
+        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, minU, minV);
       }
       else {
         WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D);
@@ -15075,8 +15084,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Solarch () {
 
 int Field_Color = 0; 
 
-float Field_scale_U = 200; // i.e. 200m
-float Field_scale_V = 200; // i.e. 200m
+float Field_scale_U = 100; // i.e. 100m
+float Field_scale_V = 100; // i.e. 100m
 
 int Field_RES1 = 300;
 int Field_RES2 = 300;
@@ -16259,7 +16268,7 @@ void mouseClicked () {
             float rz = 0.5 * Create_Input_Height;
             if (rz < 0) rz = random(abs(rz));
 
-            if (mouseButton == LEFT) {
+            if (mouseButton == RIGHT) {
               
               if (Create_Soild_House == 1) {
                 Create_Input_powAll = 8;
@@ -16416,7 +16425,7 @@ void mouseClicked () {
               SOLARCHVISION_calculate_ParametricGeometries_Field();  
             }
             
-            if (mouseButton == RIGHT) {
+            if (mouseButton == LEFT) {
 
               if (Create_Input_Align == 1) {
                 z += rz;
