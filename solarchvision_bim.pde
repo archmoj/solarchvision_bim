@@ -16150,7 +16150,10 @@ void mouseClicked () {
           float Image_Y = Y_clicked - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
           
           float[] ray_start = {CAM_x, CAM_y, CAM_z};     
-          float[] ray_end = {0,0,0}; // Now it only works well when looking at the origin point. <<<<<<<<<<<<  
+
+
+          float[] ray_end = {0,0,0}; // Now it only works well when looking at the origin point. <<<<<<<<<<<<
+          //float[] ray_end = {WIN3D_X_coordinate,-WIN3D_Y_coordinate,WIN3D_Z_coordinate}; // ????
       
           float CAM_dist = dist(ray_start[0], ray_start[1], ray_start[2], ray_end[0], ray_end[1], ray_end[2]);
       
@@ -16223,7 +16226,7 @@ void mouseClicked () {
           ray_end[0] += camera_zoom * camera_up[0] * -Image_Y;
           ray_end[1] += camera_zoom * camera_up[1] * -Image_Y;
           ray_end[2] += camera_zoom * camera_up[2] * -Image_Y;
-          
+
           //-------------------------- NOW SURE ABOUT THIS : )
           ray_start[0] /= objects_scale;
           ray_start[1] /= objects_scale;
