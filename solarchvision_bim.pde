@@ -13541,7 +13541,6 @@ void SOLARCHVISION_draw_solarch_image () {
 
     int display_solarch_texture = 0;
     
-    //if ((Solarch_scale_U == Rendered_Solarch_scale_U) && (Solarch_scale_V == Rendered_Solarch_scale_V) && (Solarch_Elevation == Rendered_Solarch_Elevation)) {
     if (Solarch_Elevation == Rendered_Solarch_Elevation) {      
       
       display_solarch_texture = 1;
@@ -16207,15 +16206,7 @@ void mouseClicked () {
       
           println("RIGHT:", nf(camera_right[0], 0,3), nf(camera_right[1], 0, 3), nf(camera_right[2], 0, 3));
           
-          float camera_zoom = 1;
-          
-          camera_zoom *= 2 * tan(0.5 * CAM_fov); // works well with fov=PI/3
-          //camera_zoom *= tan(0.5 * CAM_fov);
-          //camera_zoom *= 4 / * tan(0.5 * CAM_fov);
-          //camera_zoom *= 4;
-          
-          camera_zoom /= WIN3D_scale3D; // ??
-          camera_zoom *= CAM_dist / refScale; //???
+          float camera_zoom = CAM_dist / (refScale * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)));       
           
           println("camera_zoom =", camera_zoom);
       
@@ -16233,7 +16224,11 @@ void mouseClicked () {
           ray_end[1] += camera_zoom * camera_up[1] * -Image_Y;
           ray_end[2] += camera_zoom * camera_up[2] * -Image_Y;
           
-          //-------------------------- NOT SURE ABOUT THIS
+          //-------------------------- NOW SURE ABOUT THIS : )
+          ray_start[0] /= objects_scale;
+          ray_start[1] /= objects_scale;
+          ray_start[2] /= objects_scale;          
+          
           ray_end[0] /= objects_scale;
           ray_end[1] /= objects_scale;
           ray_end[2] /= objects_scale;
