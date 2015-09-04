@@ -13406,7 +13406,7 @@ void SOLARCHVISION_draw_field_image () {
     //WIN3D_Diagrams.stroke(255, 255, 255, 0);
     WIN3D_Diagrams.stroke(0);
     
-    WIN3D_Diagrams.fill(255, 255, 255, 0);  
+    WIN3D_Diagrams.fill(223, 223, 223, 0);  
     
     float c = Field_Elevation[display_Field_Image] * objects_scale;
     
@@ -13453,7 +13453,7 @@ void SOLARCHVISION_draw_field_image () {
     //WIN3D_Diagrams.stroke(255, 255, 255, 0);
     WIN3D_Diagrams.stroke(0);
     
-    WIN3D_Diagrams.fill(255, 255, 255, 0);  
+    WIN3D_Diagrams.fill(223, 223, 223, 0);   
     
     float c = Field_Elevation[display_Field_Image] * objects_scale;
     
@@ -13500,7 +13500,7 @@ void SOLARCHVISION_draw_field_image () {
     //WIN3D_Diagrams.stroke(255, 255, 255, 0);
     WIN3D_Diagrams.stroke(0);
     
-    WIN3D_Diagrams.fill(255, 255, 255, 0);  
+    WIN3D_Diagrams.fill(223, 223, 223, 0);   
     
     float c = Field_Elevation[display_Field_Image] * objects_scale;
     
@@ -13543,20 +13543,36 @@ void SOLARCHVISION_draw_field_image () {
 }
 
 
+
+
 void SOLARCHVISION_draw_solarch_image () {
 
   if (display_Solarch_Image == 1) {  
     WIN3D_Diagrams.beginShape();
-    WIN3D_Diagrams.texture(Solarch_Image);    
+
+    int display_solarch_texture = 0;
+    
+    if ((Solarch_scale_All != Rendered_Solarch_scale_All) || (Solarch_Elevation != Rendered_Solarch_Elevation)) {
+      
+      display_solarch_texture = 0;
+    }
+    
+    if (display_solarch_texture == 1) {    
+      
+      WIN3D_Diagrams.texture(Solarch_Image);
+    }    
+
+    Solarch_Elevation = Field_Elevation[0];
+    Solarch_scale_All = Field_scale_All;
+    Solarch_scale_U = Solarch_scale_All; 
+    Solarch_scale_V = Solarch_scale_All;    
+    
     
     //WIN3D_Diagrams.stroke(255, 255, 255, 0);
     WIN3D_Diagrams.stroke(0);
     
-    WIN3D_Diagrams.fill(255, 255, 255, 0);  
+    WIN3D_Diagrams.fill(223, 223, 223,0);  
     
-    //------------------------------------
-    Solarch_Elevation = Field_Elevation[1]; // <<<<<<<<<<< later there would be no need for this line here
-    //------------------------------------
     
     //float c = HeightAboveGround * objects_scale; // <<< or zero i.e. height of the plane in 3D
     float c = Solarch_Elevation * objects_scale;
@@ -13567,7 +13583,13 @@ void SOLARCHVISION_draw_solarch_image () {
       float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
       float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
       float z = c; 
-      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, 0, Solarch_RES2);
+      
+      if (display_solarch_texture == 1) {
+        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, 0, Solarch_RES2);
+      }
+      else {
+        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D);
+      }
     }
     {
       float a = 0.5 * Solarch_scale_U * objects_scale;
@@ -13575,7 +13597,13 @@ void SOLARCHVISION_draw_solarch_image () {
       float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
       float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
       float z = c;  
-      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, Solarch_RES1, Solarch_RES2);
+      
+      if (display_solarch_texture == 1) {
+        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, Solarch_RES1, Solarch_RES2);
+      }
+      else {
+        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D);
+      }
     }  
     {
       float a = 0.5 * Solarch_scale_U * objects_scale;
@@ -13583,15 +13611,29 @@ void SOLARCHVISION_draw_solarch_image () {
       float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
       float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
       float z = c;  
-      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, Solarch_RES1, 0);
+      
+      if (display_solarch_texture == 1) {
+        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, Solarch_RES1, 0);
+      }
+      else {
+        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D);
+      }
+
     }  
     {
       float a = -0.5 * Solarch_scale_U * objects_scale;
       float b = 0.5 * Solarch_scale_V * objects_scale;    
       float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
       float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
-      float z = c;  
-      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, 0, 0);
+      float z = c; 
+     
+      if (display_solarch_texture == 1) { 
+        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, 0, 0);
+      }
+      else {
+        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D);
+      }
+
     }  
     
     WIN3D_Diagrams.endShape(CLOSE);
@@ -17799,6 +17841,10 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
   return theValues;
 }
 
+
+float Rendered_Solarch_scale_All = FLOAT_undefined;
+float Rendered_Solarch_Elevation = FLOAT_undefined;
+
 String defaultSceneName = "Complex";
                   
 void RenderShadowsOnUrbanPlane() {
@@ -17808,8 +17854,14 @@ void RenderShadowsOnUrbanPlane() {
   defaultSceneName = SceneName;
   
  
-  Solarch_Elevation = Field_Elevation[1];
+  Solarch_Elevation = Field_Elevation[0];
+  Solarch_scale_All = Field_scale_All;
+  Solarch_scale_U = Solarch_scale_All; 
+  Solarch_scale_V = Solarch_scale_All;
+  if (display_Field_Image == 0) display_Solarch_Image = 1;  
   
+  Rendered_Solarch_scale_All = Solarch_scale_All;
+  Rendered_Solarch_Elevation = Solarch_Elevation;
 
   int RES1 = Solarch_RES1;
   int RES2 = Solarch_RES2;
