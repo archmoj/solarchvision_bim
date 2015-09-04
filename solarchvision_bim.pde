@@ -57,7 +57,7 @@ String[][] DEFINED_STATIONS = {
                                 {"BOGOTA_XX_CO", "BOGOTA", "XX", "7.894716", "-72.504616", "-75", "302.0", "240.0"}, 
                                 {"GUAYAQUIL_XX_EC", "GUAYAQUIL", "XX", "-2.1241937", "-79.59123", "-75", "11.0", "240.0"}, 
                                 {"LIMA_XX_PE", "LIMA", "XX", "-12.032012", "-76.92987", "-75", "336.0", "240.0"}, 
-                                {"ANTOFAGASTA_XX_CL", "ANTOFAGASTA", "XX", "-23.65", "-70.4", "-75", "13.0", "100.0"}
+                                {"ANTOFAGASTA_XX_CL", "ANTOFAGASTA", "XX", "-23.65", "-70.4", "-75", "13.0", "240.0"}
                               
 */                             
                               };
@@ -66,7 +66,7 @@ String[][] DEFINED_STATIONS = {
 int Selected_STATION = STATION_NUMBER;
 int LOAD_STATION = 0; 
 
-int Load_Default_Models = 5;
+int Load_Default_Models = 3; //5;
 
 
 
@@ -1673,7 +1673,7 @@ void draw () {
   }    
   else if (frameCount == 23) {
     
-    SOLARCHVISION_build_SkySphere(3); //1 - 3 
+    SOLARCHVISION_build_SkySphere(2); //1 - 3 
     
     stroke(0);
     fill(0);
@@ -11748,7 +11748,8 @@ void SOLARCHVISION_add_House_Core (int m, float x, float y, float z, float rx, f
 
   float[] vx = { 1,-1,-1, 1, 1,-1,-1, 1, 1,-1};
   float[] vy = { 1, 1,-1,-1, 1, 1,-1,-1, 0, 0};
-  float[] vz = {-1,-1,-1,-1, 1, 1, 1, 1, 1+h2/rz, 1+h2/rz};
+  //float[] vz = {-1,-1,-1,-1, 1, 1, 1, 1, 1+h2/rz, 1+h2/rz};
+  float[] vz = {0,0,0,0, 1, 1, 1, 1, 1+h2/rz, 1+h2/rz};
   
   for (int i = 0; i < 10; i++) {
     vx[i] *= rx;
@@ -12789,7 +12790,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
 
   
   if (n != 0) {
-    SOLARCHVISION_add_Mesh2(0, -100, -100, -1, 100, 100, -1);
+    SOLARCHVISION_add_Mesh2(8, -100, -100, -1, 100, 100, -1);
   }
   
   if (n == 1) {
@@ -13393,7 +13394,7 @@ void SOLARCHVISION_draw_land () {
 void SOLARCHVISION_draw_field_image () {
 
   WIN3D_Diagrams.stroke(0);
-  WIN3D_Diagrams.fill(191,255,191);    
+  WIN3D_Diagrams.fill(127,255,127);    
   
   if (display_Field_Image == 1) {
     WIN3D_Diagrams.beginShape();
@@ -13529,7 +13530,7 @@ void SOLARCHVISION_draw_field_image () {
 void SOLARCHVISION_draw_solarch_image () {
 
   WIN3D_Diagrams.stroke(0);
-  WIN3D_Diagrams.fill(255,255,191);    
+  WIN3D_Diagrams.fill(255,255,127);    
   
   if (display_Solarch_Image == 1) {  
     WIN3D_Diagrams.beginShape();
@@ -15074,11 +15075,11 @@ void SOLARCHVISION_calculate_ParametricGeometries_Solarch () {
 
 int Field_Color = 0; 
 
-float Field_scale_U = 400; // i.e. 400m
-float Field_scale_V = 400; // i.e. 400m
+float Field_scale_U = 200; // i.e. 200m
+float Field_scale_V = 200; // i.e. 200m
 
-int Field_RES1 = 400;
-int Field_RES2 = 400;
+int Field_RES1 = 300;
+int Field_RES2 = 300;
 
 PImage Field_Image = createImage(Field_RES1, Field_RES2, RGB);
 
