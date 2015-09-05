@@ -17846,10 +17846,11 @@ void RenderShadowsOnUrbanPlane() {
   int RES1 = Solarch_RES1;
   int RES2 = Solarch_RES2;
   
-  float SHADOW_scaleX = RES1 / Solarch_scale_U;
-  float SHADOW_scaleY = RES2 / Solarch_scale_V;
+  float Shades_scaleX = RES1 / Solarch_scale_U;
+  float Shades_scaleY = RES2 / Solarch_scale_V;
 
   PGraphics SHADOW_Diagrams = createGraphics(RES1, RES2, P2D);
+  PGraphics TREES_Diagrams = createGraphics(RES1, RES2, P2D);
 
   {  
     int RAD_TYPE = 0;
@@ -17879,9 +17880,85 @@ void RenderShadowsOnUrbanPlane() {
       
           File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
       
-          File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.PNG"; 
+          File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00";
+          
+          TREES_Diagrams.beginDraw();
+
+          TREES_Diagrams.blendMode(REPLACE);
+
+          TREES_Diagrams.fill(255); 
+          TREES_Diagrams.stroke(255);
+          TREES_Diagrams.strokeWeight(0);
+          TREES_Diagrams.rectMode(CORNER);
+          TREES_Diagrams.rect(0, 0, RES1, RES2);
+  
+          if ((SHD == 1) && (SunR[3] > 0)) {
+  
+            TREES_Diagrams.pushMatrix();
+            TREES_Diagrams.translate(Solarch_RES1 / 2, Solarch_RES2 / 2);            
+            
+            TREES_Diagrams.stroke(0); 
+            TREES_Diagrams.fill(0);             
+            
+            if (Display_Trees_People != 0) {
+              for (int f = 1; f <= allObject2D_num; f++) {
+
+                int n = abs(allObject2D_MAP[f]);
+                
+                int w = Object2DImage[n].width; 
+                int h = Object2DImage[n].height;
+                        
+
+                
+                float r = allObject2D_XYZS[f][3] * 0.5 * objects_scale;
+                
+                float t = atan2(SunR[2], SunR[1]) + 0.5 * PI; 
+                
+                if (allObject2D_MAP[f] < 0) t += PI;         
+               
+                TREES_Diagrams.beginShape();
+                
+                TREES_Diagrams.texture(Object2DImage[n]); 
+                
+                for (int s = 0; s < 4; s++) {
+
+                  float x0 = allObject2D_XYZS[f][0] * objects_scale;
+                  float y0 = allObject2D_XYZS[f][1] * objects_scale;
+                  float z0 = allObject2D_XYZS[f][2] * objects_scale;
+                  float u = 0;
+                  float v = 0; 
+         
+                  if (s == 0) {x0 += -r * cos(t); y0 += -r * sin(t); z0 += 0    ; u = 0; v = h;}
+                  if (s == 1) {x0 +=  r * cos(t); y0 +=  r * sin(t); z0 += 0    ; u = w; v = h;}
+                  if (s == 2) {x0 +=  r * cos(t); y0 +=  r * sin(t); z0 += 2 * r; u = w; v = 0;}
+                  if (s == 3) {x0 += -r * cos(t); y0 += -r * sin(t); z0 += 2 * r; u = 0; v = 0;}
+                  
+                  float z = z0 - Solarch_Elevation;
+                  float x = (x0 - z * SunR[1] / SunR[3]);
+                  float y = (y0 - z * SunR[2] / SunR[3]);
+                    
+                  //if (z >= 0) {
+                    TREES_Diagrams.vertex(x * Shades_scaleX, -y * Shades_scaleY, u, v);
+                    
+                  //}
+                }
+                
+                TREES_Diagrams.endShape(CLOSE);
+
+
+              }  
+            }            
+            
+            
+            TREES_Diagrams.popMatrix();  
+          }
           
           
+          TREES_Diagrams.endDraw();     
+     
+          TREES_Diagrams.save(File_Name + "_2D.JPG");
+
+
           
           SHADOW_Diagrams.beginDraw();
 
@@ -17934,7 +18011,7 @@ void RenderShadowsOnUrbanPlane() {
                   float y = (subFace[s][1] - z * SunR[2] / SunR[3]);
                     
                   if (z >= 0) {
-                    SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY);
+                    SHADOW_Diagrams.vertex(x * Shades_scaleX, -y * Shades_scaleY);
                   }
                   else {
                     int s_next = (s + 1) % subFace.length;
@@ -17950,7 +18027,7 @@ void RenderShadowsOnUrbanPlane() {
                       float x_trim = x_prev * (1 - ratio) + x * ratio;
                       float y_trim = y_prev * (1 - ratio) + y * ratio;
                       
-                      SHADOW_Diagrams.vertex(x_trim * SHADOW_scaleX, -y_trim * SHADOW_scaleY);
+                      SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
                     }
 
                     float z_next = subFace[s_next][2] - Solarch_Elevation;
@@ -17963,7 +18040,7 @@ void RenderShadowsOnUrbanPlane() {
                       float x_trim = x_next * (1 - ratio) + x * ratio;
                       float y_trim = y_next * (1 - ratio) + y * ratio;
                       
-                      SHADOW_Diagrams.vertex(x_trim * SHADOW_scaleX, -y_trim * SHADOW_scaleY);
+                      SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
                     }                    
                   }
                 }
@@ -17972,64 +18049,30 @@ void RenderShadowsOnUrbanPlane() {
               }
             }
             
-            if (Display_Trees_People != 0) {
-              for (int f = 1; f <= allObject2D_num; f++) {
-
-                int n = abs(allObject2D_MAP[f]);
-                
-                int w = Object2DImage[n].width; 
-                int h = Object2DImage[n].height;
-                        
-
-                
-                float r = allObject2D_XYZS[f][3] * 0.5 * objects_scale;
-                
-                float t = atan2(SunR[2], SunR[1]) + 0.5 * PI; 
-                
-                if (allObject2D_MAP[f] < 0) t += PI;         
-               
-                SHADOW_Diagrams.beginShape();
-                
-                SHADOW_Diagrams.texture(Object2DImage[n]); 
-                
-                for (int s = 0; s < 4; s++) {
-
-                  float x0 = allObject2D_XYZS[f][0] * objects_scale;
-                  float y0 = allObject2D_XYZS[f][1] * objects_scale;
-                  float z0 = allObject2D_XYZS[f][2] * objects_scale;
-                  float u = 0;
-                  float v = 0; 
-         
-                  if (s == 0) {x0 += -r * cos(t); y0 += -r * sin(t); z0 += 0    ; u = 0; v = h;}
-                  if (s == 1) {x0 +=  r * cos(t); y0 +=  r * sin(t); z0 += 0    ; u = w; v = h;}
-                  if (s == 2) {x0 +=  r * cos(t); y0 +=  r * sin(t); z0 += 2 * r; u = w; v = 0;}
-                  if (s == 3) {x0 += -r * cos(t); y0 += -r * sin(t); z0 += 2 * r; u = 0; v = 0;}
-                  
-                  float z = z0 - Solarch_Elevation;
-                  float x = (x0 - z * SunR[1] / SunR[3]);
-                  float y = (y0 - z * SunR[2] / SunR[3]);
-                    
-                  //if (z >= 0) {
-                    SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY, u, v);
-                    
-                  //}
-                }
-                
-                SHADOW_Diagrams.endShape(CLOSE);
-
-
-              }  
-            }            
-            
-            
             SHADOW_Diagrams.popMatrix();  
           }
           
-          
-          SHADOW_Diagrams.endDraw();          
 
-          SHADOW_Diagrams.save(File_Name);
-          //println (File_Name);          
+          SHADOW_Diagrams.save(File_Name + "3D_.JPG"); //just to test   
+
+          if (Display_Trees_People != 0) {
+          
+            PImage img = loadImage(File_Name + "_2D.JPG");
+          
+            SHADOW_Diagrams.blendMode(DARKEST); 
+            
+            SHADOW_Diagrams.tint(255, 255);
+            
+            SHADOW_Diagrams.image(img, 0, 0, RES1, RES2);
+            
+            SHADOW_Diagrams.noTint();        
+          }  
+
+          SHADOW_Diagrams.endDraw();        
+       
+       
+          SHADOW_Diagrams.save(File_Name + ".PNG");   
+          
         }
       
       }
@@ -18119,7 +18162,7 @@ void RenderShadowsOnUrbanPlane() {
                 float y = (subFace[s][1] - z * SunR[2] / SunR[3]);
                   
                 if (z >= 0) {
-                  SHADOW_Diagrams.vertex(x * SHADOW_scaleX, -y * SHADOW_scaleY);
+                  SHADOW_Diagrams.vertex(x * Shades_scaleX, -y * Shades_scaleY);
                 }
                 else {
                   int s_next = (s + 1) % subFace.length;
@@ -18135,7 +18178,7 @@ void RenderShadowsOnUrbanPlane() {
                     float x_trim = x_prev * (1 - ratio) + x * ratio;
                     float y_trim = y_prev * (1 - ratio) + y * ratio;
                     
-                    SHADOW_Diagrams.vertex(x_trim * SHADOW_scaleX, -y_trim * SHADOW_scaleY);
+                    SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
                   }
 
                   float z_next = subFace[s_next][2] - Solarch_Elevation;
@@ -18148,7 +18191,7 @@ void RenderShadowsOnUrbanPlane() {
                     float x_trim = x_next * (1 - ratio) + x * ratio;
                     float y_trim = y_next * (1 - ratio) + y * ratio;
                     
-                    SHADOW_Diagrams.vertex(x_trim * SHADOW_scaleX, -y_trim * SHADOW_scaleY);
+                    SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
                   }                    
                 }
               }
