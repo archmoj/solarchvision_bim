@@ -70,7 +70,7 @@ int Load_Default_Models = 3; //5;
 
 
 
-int Create_Default_Material = 0; //7;
+int Create_Default_Material = 7; //0;
 
 float Create_Input_Length = 10;
 float Create_Input_Width = 10;
@@ -78,7 +78,7 @@ float Create_Input_Height = 10;
 
 float Create_Input_Volume = 0; //3000;
 
-float Create_Input_Orientation = 0;
+float Create_Input_Orientation = 360; //0; // 360: random
 
 int Create_Input_Align = 0; // 0:Center, 1:Below
 
@@ -99,7 +99,7 @@ int Create_Mesh_Poly = 0;
 int Create_Mesh_Extrude = 0;
 int Create_Mesh_Tri = 0;
 int Create_Mesh_Quad = 0;
-int Create_Mesh_House = 0;
+int Create_Mesh_House = 1; // 0; //<<<<<<<<<<<<<
 int Create_Mesh_Parametric = 0;
 
 
@@ -1208,7 +1208,7 @@ int WIN3D_Update = 1;
 int WIN3D_include = 1;
 
 int WIN3D_EDGES_SHOW = 1;
-int WIN3D_FACES_SHADE = 1;
+int WIN3D_FACES_SHADE = 2; // <<<<<
 
 
 
@@ -1313,7 +1313,7 @@ void SOLARCHVISION_update_station (int Step) {
   
   if ((Step == 0) || (Step == 1)) {
     
-    WIN3D_FACES_SHADE = 1;
+    WIN3D_FACES_SHADE = 2;
     WIN3D_update_VerticesSolarValue = 1;
     
     
@@ -12733,7 +12733,7 @@ void SOLARCHVISION_remove_3Dobjects () {
   urbanFaces_start = 0;
   urbanFaces_end = 0; 
   
-  WIN3D_FACES_SHADE = 1;
+  WIN3D_FACES_SHADE = 2;
   WIN3D_update_VerticesSolarValue = 1;  
  
 }
@@ -12790,7 +12790,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
 
   
   if (n != 0) {
-    SOLARCHVISION_add_Mesh2(8, -100, -100, -1, 100, 100, -1);
+    SOLARCHVISION_add_Mesh2(8, -100, -100, 0, 100, 100, 0);
   }
   
   if (n == 1) {
@@ -13535,7 +13535,7 @@ void SOLARCHVISION_draw_solarch_image () {
   if (display_Solarch_Image == 1) {  
     WIN3D_Diagrams.beginShape();
     
-    Solarch_Elevation = Field_Elevation[0];
+    Solarch_Elevation = 0.1 + Field_Elevation[0];
     Solarch_scale_U = Field_scale_U; 
     Solarch_scale_V = Field_scale_V;        
 
@@ -17834,7 +17834,7 @@ void RenderShadowsOnUrbanPlane() {
   defaultSceneName = SceneName;
   
  
-  Solarch_Elevation = Field_Elevation[0];
+  Solarch_Elevation = 0.1 + Field_Elevation[0];
   Solarch_scale_U = Field_scale_U; 
   Solarch_scale_V = Field_scale_V;
   if (display_Field_Image == 0) display_Solarch_Image = 1;  
