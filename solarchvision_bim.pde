@@ -17907,43 +17907,44 @@ void RenderShadowsOnUrbanPlane() {
                 
                 int w = Object2DImage[n].width; 
                 int h = Object2DImage[n].height;
-                        
 
-                
                 float r = allObject2D_XYZS[f][3] * 0.5 * objects_scale;
                 
                 float t = atan2(SunR[2], SunR[1]) + 0.5 * PI; 
                 
                 if (allObject2D_MAP[f] < 0) t += PI;         
                
-                TREES_Diagrams.beginShape();
-                
-                TREES_Diagrams.texture(Object2DImage[n]); 
-                
-                for (int s = 0; s < 4; s++) {
-
-                  float x0 = allObject2D_XYZS[f][0] * objects_scale;
-                  float y0 = allObject2D_XYZS[f][1] * objects_scale;
-                  float z0 = allObject2D_XYZS[f][2] * objects_scale;
-                  float u = 0;
-                  float v = 0; 
-         
-                  if (s == 0) {x0 += -r * cos(t); y0 += -r * sin(t); z0 += 0    ; u = 0; v = h;}
-                  if (s == 1) {x0 +=  r * cos(t); y0 +=  r * sin(t); z0 += 0    ; u = w; v = h;}
-                  if (s == 2) {x0 +=  r * cos(t); y0 +=  r * sin(t); z0 += 2 * r; u = w; v = 0;}
-                  if (s == 3) {x0 += -r * cos(t); y0 += -r * sin(t); z0 += 2 * r; u = 0; v = 0;}
+                if (r > 2.5) { // to select only tress!               
+               
+                  TREES_Diagrams.beginShape();
                   
-                  float z = z0 - Solarch_Elevation;
-                  float x = (x0 - z * SunR[1] / SunR[3]);
-                  float y = (y0 - z * SunR[2] / SunR[3]);
+                  TREES_Diagrams.texture(Object2DImage[n]); 
+                  
+                  for (int s = 0; s < 4; s++) {
+  
+                    float x0 = allObject2D_XYZS[f][0] * objects_scale;
+                    float y0 = allObject2D_XYZS[f][1] * objects_scale;
+                    float z0 = allObject2D_XYZS[f][2] * objects_scale;
+                    float u = 0;
+                    float v = 0; 
+           
+                    if (s == 0) {x0 += -r * cos(t); y0 += -r * sin(t); z0 += 0    ; u = 0; v = h;}
+                    if (s == 1) {x0 +=  r * cos(t); y0 +=  r * sin(t); z0 += 0    ; u = w; v = h;}
+                    if (s == 2) {x0 +=  r * cos(t); y0 +=  r * sin(t); z0 += 2 * r; u = w; v = 0;}
+                    if (s == 3) {x0 += -r * cos(t); y0 += -r * sin(t); z0 += 2 * r; u = 0; v = 0;}
                     
-                  //if (z >= 0) {
-                    TREES_Diagrams.vertex(x * Shades_scaleX, -y * Shades_scaleY, u, v);
-                    
-                  //}
+                    float z = z0 - Solarch_Elevation;
+                    float x = (x0 - z * SunR[1] / SunR[3]);
+                    float y = (y0 - z * SunR[2] / SunR[3]);
+                      
+                    //if (z >= 0) {
+                      TREES_Diagrams.vertex(x * Shades_scaleX, -y * Shades_scaleY, u, v);
+                      
+                    //}
+                  }
+                  
+                  TREES_Diagrams.endShape(CLOSE);
                 }
-                
-                TREES_Diagrams.endShape(CLOSE);
 
 
               }  
@@ -18058,6 +18059,8 @@ void RenderShadowsOnUrbanPlane() {
           if (Display_Trees_People != 0) {
           
             PImage img = loadImage(File_Name + "_2D.JPG");
+
+            img.filter(THRESHOLD, 0.9); // Converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter. The parameter must be between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
           
             SHADOW_Diagrams.blendMode(DARKEST); 
             
