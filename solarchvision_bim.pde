@@ -2039,19 +2039,19 @@ void SOLARCHVISION_draw_WIN3D () {
   
   //println(nfp(WIN3D_RX_coordinate, 0, 1), nfp(WIN3D_RY_coordinate, 0, 1), nfp(WIN3D_RZ_coordinate, 0, 1)); 
 
-  WIN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
+  
     
 
   WIN3D_Diagrams.fill(127);
   WIN3D_Diagrams.strokeWeight(0);
   
 
+  WIN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
 
-
+  SOLARCHVISION_draw_SUN3D(0, 0, 0, 0.95 * SKY3D_scale, LocationLatitude);
+  
   SOLARCHVISION_draw_SKY3D();
   
-  SOLARCHVISION_draw_SUN3D(0, 0, 0, 0.95 * SKY3D_scale, LocationLatitude);
-
   SOLARCHVISION_draw_land();
   
   SOLARCHVISION_draw_solarch_image(); // i.e. solarch field
@@ -10735,7 +10735,9 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
     }
     
     WIN3D_Diagrams.popMatrix();
-  
+    
+    /*
+    
     WIN3D_Diagrams.stroke(0);
     for (int i = 0; i < 360; i += 5) {
       WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180) * WIN3D_scale3D, -s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0, s_SunPath * cos((i + 5) * PI / 180) * WIN3D_scale3D, -s_SunPath * sin((i + 5) * PI / 180) * WIN3D_scale3D, 0); 
@@ -10773,6 +10775,8 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
       
       WIN3D_Diagrams.popMatrix();
     }   
+    
+    */
   
     per_day = pre_per_day;
     num_add_days = pre_num_add_days; 
@@ -14289,49 +14293,49 @@ void SOLARCHVISION_draw_2Dobjects () {
     
     float[] DistZ = new float [1 + allObject2D_num];
    
-    for (int i = 1; i <= allObject2D_num; i++) {
-      float x = allObject2D_XYZS[i][0] * objects_scale;
-      float y = allObject2D_XYZS[i][1] * objects_scale;
-      float z = allObject2D_XYZS[i][2] * objects_scale;
+    for (int f = 1; f <= allObject2D_num; f++) {
+      float x = allObject2D_XYZS[f][0] * objects_scale;
+      float y = allObject2D_XYZS[f][1] * objects_scale;
+      float z = allObject2D_XYZS[f][2] * objects_scale;
       
-      DistZ[i] = dist(x, y, z, CAM_x, CAM_y, CAM_z);
+      DistZ[f] = dist(x, y, z, CAM_x, CAM_y, CAM_z);
     }
     
  
     
-    for (int j = 1; j <= allObject2D_num; j++) {
+    for (int g = 1; g <= allObject2D_num; g++) {
       
-      int i = 0;
+      int f = 0;
       float max_dist = -1;
       
       for (int q = 1; q <= allObject2D_num; q++) {
         if (max_dist < DistZ[q]) {
           max_dist = DistZ[q];
-          i = q;
+          f = q;
         }
       }
       
-      DistZ[i] = -1;
+      DistZ[f] = -1;
       
-      if (i != 0) {
+      if (f != 0) {
       
         WIN3D_Diagrams.beginShape();
         
-        int n = abs(allObject2D_MAP[i]);
+        int n = abs(allObject2D_MAP[f]);
         
         int w = Object2DImage[n].width; 
         int h = Object2DImage[n].height;
                 
-        float x = allObject2D_XYZS[i][0] * objects_scale;
-        float y = allObject2D_XYZS[i][1] * objects_scale;
-        float z = allObject2D_XYZS[i][2] * objects_scale;
+        float x = allObject2D_XYZS[f][0] * objects_scale;
+        float y = allObject2D_XYZS[f][1] * objects_scale;
+        float z = allObject2D_XYZS[f][2] * objects_scale;
         
-        float r = allObject2D_XYZS[i][3] * 0.5 * objects_scale;
+        float r = allObject2D_XYZS[f][3] * 0.5 * objects_scale;
         
         float t = WIN3D_RZ_coordinate * PI / 180.0;
         if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
         
-        if (allObject2D_MAP[i] < 0) t += PI; 
+        if (allObject2D_MAP[f] < 0) t += PI; 
     
         WIN3D_Diagrams.texture(Object2DImage[n]);    
         WIN3D_Diagrams.stroke(255, 255, 255, 0);
