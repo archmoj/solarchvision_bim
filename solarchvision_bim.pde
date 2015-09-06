@@ -14346,7 +14346,7 @@ void SOLARCHVISION_draw_2Dobjects () {
         
         WIN3D_Diagrams.endShape(CLOSE);
         
-        if (r > 2.5) { // to select only tress!   
+        if (r / objects_scale > 2.5) { // to select only trees!   
         
           float ratio = 0.5;
         
@@ -17981,17 +17981,17 @@ void RenderShadowsOnUrbanPlane() {
                 int w = Object2DImage[n].width; 
                 int h = Object2DImage[n].height;
 
-                float r = allObject2D_XYZS[f][3] * 0.5 * objects_scale;
+                float r = allObject2D_XYZS[f][3] * 0.5;
                 
                 float t = atan2(SunR[2], SunR[1]) + 0.5 * PI; 
                 
                 if (allObject2D_MAP[f] < 0) t += PI;         
                
-                if (r > 2.5) { // to select only tress!               
+                if (r > 2.5) { // to select only trees!               
 
-                  float x = allObject2D_XYZS[f][0] * objects_scale;
-                  float y = allObject2D_XYZS[f][1] * objects_scale;
-                  float z = allObject2D_XYZS[f][2] * objects_scale;
+                  float x = allObject2D_XYZS[f][0];
+                  float y = allObject2D_XYZS[f][1];
+                  float z = allObject2D_XYZS[f][2];
 
                   { // Vertical mask
                     TREES_Diagrams.beginShape();
