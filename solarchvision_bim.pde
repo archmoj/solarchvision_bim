@@ -2040,22 +2040,27 @@ void SOLARCHVISION_draw_WIN3D () {
   //println(nfp(WIN3D_RX_coordinate, 0, 1), nfp(WIN3D_RY_coordinate, 0, 1), nfp(WIN3D_RZ_coordinate, 0, 1)); 
 
   WIN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
+    
 
   WIN3D_Diagrams.fill(127);
   WIN3D_Diagrams.strokeWeight(0);
   
 
-  SOLARCHVISION_draw_land();
 
+
+  SOLARCHVISION_draw_SKY3D();
+  
+  SOLARCHVISION_draw_SUN3D(0, 0, 0, 0.95 * SKY3D_scale, LocationLatitude);
+
+  SOLARCHVISION_draw_land();
+  
   SOLARCHVISION_draw_solarch_image(); // i.e. solarch field
   
   SOLARCHVISION_draw_field_image();
   
-  SOLARCHVISION_draw_objects();
-  
-  SOLARCHVISION_draw_SKY3D();
-  
-  SOLARCHVISION_draw_SUN3D(0, 0, 0, 0.95 * SKY3D_scale, LocationLatitude);
+  SOLARCHVISION_draw_3Dobjects();
+
+  SOLARCHVISION_draw_2Dobjects();
   
 
 
@@ -11419,7 +11424,16 @@ void SOLARCHVISION_LoadObject2DImages () {
     else {
       Object2DImage[i] = loadImage(Object2DFolder_TREES + "/" + Object2D_Filenames[i]);      
     }
+
+    /*    
+    PImage img = Object2DImage[i];
+    img.filter(THRESHOLD, 0.5); // convert to black and white
+    img.filter(INVERT);
+    Object2DImage[i].mask(img);
+    */
+
   }
+  
 
 }
 
@@ -13624,7 +13638,7 @@ void SOLARCHVISION_draw_solarch_image () {
   }
 }
 
-void SOLARCHVISION_draw_objects () {
+void SOLARCHVISION_draw_3Dobjects () {
 
   if (WIN3D_FACES_SHADE < 4) {
     for (int f = 1; f < allFaces.length; f++) {
@@ -14223,7 +14237,11 @@ void SOLARCHVISION_draw_objects () {
     }
   }
 
+}
+  
 
+void SOLARCHVISION_draw_2Dobjects () {
+  
   // ???????????????????????????????????????????????
   CAM_x *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
   CAM_y *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
@@ -14268,6 +14286,7 @@ void SOLARCHVISION_draw_objects () {
   //println("Camera:", nf(CAM_x,0,4), nf(CAM_y,0,4), nf(CAM_z,0,4));
 
   if (Display_Trees_People != 0) {
+    
     for (int i = 1; i <= allObject2D_num; i++) {
       
       WIN3D_Diagrams.beginShape();
@@ -14285,7 +14304,6 @@ void SOLARCHVISION_draw_objects () {
       
       float t = WIN3D_RZ_coordinate * PI / 180.0;
       if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
-      
       
       if (allObject2D_MAP[i] < 0) t += PI; 
   
