@@ -14287,37 +14287,64 @@ void SOLARCHVISION_draw_2Dobjects () {
 
   if (Display_Trees_People != 0) {
     
+    float[] DistZ = new float [1 + allObject2D_num];
+   
     for (int i = 1; i <= allObject2D_num; i++) {
-      
-      WIN3D_Diagrams.beginShape();
-      
-      int n = abs(allObject2D_MAP[i]);
-      
-      int w = Object2DImage[n].width; 
-      int h = Object2DImage[n].height;
-              
       float x = allObject2D_XYZS[i][0] * objects_scale;
       float y = allObject2D_XYZS[i][1] * objects_scale;
       float z = allObject2D_XYZS[i][2] * objects_scale;
       
-      float r = allObject2D_XYZS[i][3] * 0.5 * objects_scale;
+      DistZ[i] = dist(x, y, z, CAM_x, CAM_y, CAM_z);
+    }
+    
+ 
+    
+    for (int j = 1; j <= allObject2D_num; j++) {
       
-      float t = WIN3D_RZ_coordinate * PI / 180.0;
-      if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
+      int i = 0;
+      float max_dist = -1;
       
-      if (allObject2D_MAP[i] < 0) t += PI; 
-  
-      WIN3D_Diagrams.texture(Object2DImage[n]);    
-      WIN3D_Diagrams.stroke(255, 255, 255, 0);
-      WIN3D_Diagrams.fill(255, 255, 255, 0);
+      for (int q = 1; q <= allObject2D_num; q++) {
+        if (max_dist < DistZ[q]) {
+          max_dist = DistZ[q];
+          i = q;
+        }
+      }
       
-      WIN3D_Diagrams.vertex((x - r * cos(t)) * WIN3D_scale3D, -(y - r * sin(t)) * WIN3D_scale3D, z * WIN3D_scale3D, 0, h);
-      WIN3D_Diagrams.vertex((x + r * cos(t)) * WIN3D_scale3D, -(y + r * sin(t)) * WIN3D_scale3D, z * WIN3D_scale3D, w, h);
-      WIN3D_Diagrams.vertex((x + r * cos(t)) * WIN3D_scale3D, -(y + r * sin(t)) * WIN3D_scale3D, (z + 2 * r) * WIN3D_scale3D, w, 0);
-      WIN3D_Diagrams.vertex((x - r * cos(t)) * WIN3D_scale3D, -(y - r * sin(t)) * WIN3D_scale3D, (z + 2 * r) * WIN3D_scale3D, 0, 0);
+      DistZ[i] = -1;
       
-      WIN3D_Diagrams.endShape(CLOSE);
-    }  
+      if (i != 0) {
+      
+        WIN3D_Diagrams.beginShape();
+        
+        int n = abs(allObject2D_MAP[i]);
+        
+        int w = Object2DImage[n].width; 
+        int h = Object2DImage[n].height;
+                
+        float x = allObject2D_XYZS[i][0] * objects_scale;
+        float y = allObject2D_XYZS[i][1] * objects_scale;
+        float z = allObject2D_XYZS[i][2] * objects_scale;
+        
+        float r = allObject2D_XYZS[i][3] * 0.5 * objects_scale;
+        
+        float t = WIN3D_RZ_coordinate * PI / 180.0;
+        if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
+        
+        if (allObject2D_MAP[i] < 0) t += PI; 
+    
+        WIN3D_Diagrams.texture(Object2DImage[n]);    
+        WIN3D_Diagrams.stroke(255, 255, 255, 0);
+        WIN3D_Diagrams.fill(255, 255, 255, 0);
+        
+        WIN3D_Diagrams.vertex((x - r * cos(t)) * WIN3D_scale3D, -(y - r * sin(t)) * WIN3D_scale3D, z * WIN3D_scale3D, 0, h);
+        WIN3D_Diagrams.vertex((x + r * cos(t)) * WIN3D_scale3D, -(y + r * sin(t)) * WIN3D_scale3D, z * WIN3D_scale3D, w, h);
+        WIN3D_Diagrams.vertex((x + r * cos(t)) * WIN3D_scale3D, -(y + r * sin(t)) * WIN3D_scale3D, (z + 2 * r) * WIN3D_scale3D, w, 0);
+        WIN3D_Diagrams.vertex((x - r * cos(t)) * WIN3D_scale3D, -(y - r * sin(t)) * WIN3D_scale3D, (z + 2 * r) * WIN3D_scale3D, 0, 0);
+        
+        WIN3D_Diagrams.endShape(CLOSE);
+      }  
+    }
   }
 
 }
