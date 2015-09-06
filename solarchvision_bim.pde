@@ -1285,7 +1285,7 @@ void setup () {
 
   size(2 * w_pixel + ROLLOUT_X_View, 2 * h_pixel, P2D);
 
-  _DATE = 90; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
+  _DATE = (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   //if (_HOUR >= 12) _DATE += 0.5;   
 
   empty_Materials_DirectArea();
@@ -17972,7 +17972,7 @@ void RenderShadowsOnUrbanPlane() {
                   float x = allObject2D_XYZS[f][0] * objects_scale;
                   float y = allObject2D_XYZS[f][1] * objects_scale;
                   float z = allObject2D_XYZS[f][2] * objects_scale;
-/*
+
                   { // Vertical mask
                     TREES_Diagrams.beginShape();
                     
@@ -18022,49 +18022,54 @@ void RenderShadowsOnUrbanPlane() {
                     
                     TREES_Diagrams.endShape(CLOSE);
                   }
-*/                  
+                  
                   { // Horizontal mask
                     float ratio = 0.5; // put the mask at half of the height of the tree 
                   
-                    TREES_Diagrams.beginShape();
-                    
-                    TREES_Diagrams.texture(Object2DImage[n]); 
-                    
-                    float x1 = x - r * cos(t); float y1 = y - r * sin(t); float z1 = z + 2 * r * ratio; 
-                    float x2 = x + r * cos(t); float y2 = y + r * sin(t); float z2 = z + 2 * r * ratio; 
-                    float x3 = x + r * cos(t) + r * cos(PI / 2 + t); float y3 = y + r * sin(t) + r * sin(PI / 2 + t); float z3 = z + 2 * r * ratio; 
-                    float x4 = x - r * cos(t) + r * cos(PI / 2 + t); float y4 = y - r * sin(t) + r * sin(PI / 2 + t); float z4 = z + 2 * r * ratio;    
-  
-                    float u1 = 0; float v1 = h * ratio;
-                    float u2 = w; float v2 = h * ratio;
-                    float u3 = w; float v3 = 0;
-                    float u4 = 0; float v4 = 0;   
-  
-                    if (z + 2 * r * ratio > 0) {
-                    
-                      z1 = z1 - Solarch_Elevation;
-                      x1 = (x1 - z1 * SunR[1] / SunR[3]);
-                      y1 = (y1 - z1 * SunR[2] / SunR[3]);                  
-    
-                      z2 = z2 - Solarch_Elevation;
-                      x2 = (x2 - z2 * SunR[1] / SunR[3]);
-                      y2 = (y2 - z2 * SunR[2] / SunR[3]);
+                    for (int back_front = -1; back_front <= 1; back_front += 2) {
                       
-                      z3 = z3 - Solarch_Elevation;
-                      x3 = (x3 - z3 * SunR[1] / SunR[3]);
-                      y3 = (y3 - z3 * SunR[2] / SunR[3]);
+                      float rot = back_front * PI / 2 + t;
+                  
+                      TREES_Diagrams.beginShape();
+                      
+                      TREES_Diagrams.texture(Object2DImage[n]); 
+                      
+                      float x1 = x - r * cos(t); float y1 = y - r * sin(t); float z1 = z + 2 * r * ratio; 
+                      float x2 = x + r * cos(t); float y2 = y + r * sin(t); float z2 = z + 2 * r * ratio; 
+                      float x3 = x + r * cos(t) + r * cos(rot); float y3 = y + r * sin(t) + r * sin(rot); float z3 = z + 2 * r * ratio; 
+                      float x4 = x - r * cos(t) + r * cos(rot); float y4 = y - r * sin(t) + r * sin(rot); float z4 = z + 2 * r * ratio;    
     
-                      z4 = z4 - Solarch_Elevation;
-                      x4 = (x4 - z4 * SunR[1] / SunR[3]);
-                      y4 = (y4 - z4 * SunR[2] / SunR[3]);                  
+                      float u1 = 0; float v1 = h * ratio;
+                      float u2 = w; float v2 = h * ratio;
+                      float u3 = w; float v3 = 0;
+                      float u4 = 0; float v4 = 0;   
     
-                      TREES_Diagrams.vertex(x1 * Shades_scaleX, -y1 * Shades_scaleY, u1, v1);
-                      TREES_Diagrams.vertex(x2 * Shades_scaleX, -y2 * Shades_scaleY, u2, v2);
-                      TREES_Diagrams.vertex(x3 * Shades_scaleX, -y3 * Shades_scaleY, u3, v3);
-                      TREES_Diagrams.vertex(x4 * Shades_scaleX, -y4 * Shades_scaleY, u4, v4);
+                      if (z + 2 * r * ratio > 0) {
+                      
+                        z1 = z1 - Solarch_Elevation;
+                        x1 = (x1 - z1 * SunR[1] / SunR[3]);
+                        y1 = (y1 - z1 * SunR[2] / SunR[3]);                  
+      
+                        z2 = z2 - Solarch_Elevation;
+                        x2 = (x2 - z2 * SunR[1] / SunR[3]);
+                        y2 = (y2 - z2 * SunR[2] / SunR[3]);
+                        
+                        z3 = z3 - Solarch_Elevation;
+                        x3 = (x3 - z3 * SunR[1] / SunR[3]);
+                        y3 = (y3 - z3 * SunR[2] / SunR[3]);
+      
+                        z4 = z4 - Solarch_Elevation;
+                        x4 = (x4 - z4 * SunR[1] / SunR[3]);
+                        y4 = (y4 - z4 * SunR[2] / SunR[3]);                  
+      
+                        TREES_Diagrams.vertex(x1 * Shades_scaleX, -y1 * Shades_scaleY, u1, v1);
+                        TREES_Diagrams.vertex(x2 * Shades_scaleX, -y2 * Shades_scaleY, u2, v2);
+                        TREES_Diagrams.vertex(x3 * Shades_scaleX, -y3 * Shades_scaleY, u3, v3);
+                        TREES_Diagrams.vertex(x4 * Shades_scaleX, -y4 * Shades_scaleY, u4, v4);
+                      }
+                      
+                      TREES_Diagrams.endShape(CLOSE);
                     }
-                    
-                    TREES_Diagrams.endShape(CLOSE);
                   }                  
                 }
               }            
