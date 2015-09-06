@@ -14316,9 +14316,7 @@ void SOLARCHVISION_draw_2Dobjects () {
       DistZ[f] = -1;
       
       if (f != 0) {
-      
-        WIN3D_Diagrams.beginShape();
-        
+
         int n = abs(allObject2D_MAP[f]);
         
         int w = Object2DImage[n].width; 
@@ -14333,8 +14331,10 @@ void SOLARCHVISION_draw_2Dobjects () {
         float t = WIN3D_RZ_coordinate * PI / 180.0;
         if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
         
-        if (allObject2D_MAP[f] < 0) t += PI; 
-    
+        if (allObject2D_MAP[f] < 0) t += PI;         
+        
+        WIN3D_Diagrams.beginShape();
+        
         WIN3D_Diagrams.texture(Object2DImage[n]);    
         WIN3D_Diagrams.stroke(255, 255, 255, 0);
         WIN3D_Diagrams.fill(255, 255, 255, 0);
@@ -14345,6 +14345,29 @@ void SOLARCHVISION_draw_2Dobjects () {
         WIN3D_Diagrams.vertex((x - r * cos(t)) * WIN3D_scale3D, -(y - r * sin(t)) * WIN3D_scale3D, (z + 2 * r) * WIN3D_scale3D, 0, 0);
         
         WIN3D_Diagrams.endShape(CLOSE);
+        
+        if (r > 2.5) { // to select only tress!   
+        
+          float ratio = 0.5;
+        
+          for (int back_front = -1; back_front <= 1; back_front += 2) {
+            
+            float rot = back_front * PI / 2 + t;
+            
+            WIN3D_Diagrams.beginShape();
+            
+            WIN3D_Diagrams.texture(Object2DImage[n]);    
+            WIN3D_Diagrams.stroke(255, 255, 255, 0);
+            WIN3D_Diagrams.fill(255, 255, 255, 0);
+            
+            WIN3D_Diagrams.vertex((x - r * cos(t)) * WIN3D_scale3D, -(y - r * sin(t)) * WIN3D_scale3D, (z + 2 * r * ratio) * WIN3D_scale3D, 0, h * ratio);
+            WIN3D_Diagrams.vertex((x + r * cos(t)) * WIN3D_scale3D, -(y + r * sin(t)) * WIN3D_scale3D, (z + 2 * r * ratio) * WIN3D_scale3D, w, h * ratio);
+            WIN3D_Diagrams.vertex((x + r * cos(t) + r * cos(rot)) * WIN3D_scale3D, -(y + r * sin(t) + r * sin(rot)) * WIN3D_scale3D, (z + 2 * r * ratio) * WIN3D_scale3D, w, 0);
+            WIN3D_Diagrams.vertex((x - r * cos(t) + r * cos(rot)) * WIN3D_scale3D, -(y - r * sin(t) + r * sin(rot)) * WIN3D_scale3D, (z + 2 * r * ratio) * WIN3D_scale3D, 0, 0);
+            
+            WIN3D_Diagrams.endShape(CLOSE);
+          }    
+        }    
       }  
     }
   }
