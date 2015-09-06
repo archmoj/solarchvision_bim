@@ -17988,15 +17988,18 @@ void RenderShadowsOnUrbanPlane() {
                     float u3 = w; float v3 = 0;
                     float u4 = 0; float v4 = 0;   
   
-                    if ((z < 0) && (z + 2 * r > 0)) {
-                      z1 = 0;
-                      z2 = 0;       
+                    if ((z < Solarch_Elevation) && (Solarch_Elevation < z + 2 * r)) {
                       
-                      v1 = h * (z + 2 * r) / (2 * r);
-                      v2 = h * (z + 2 * r) / (2 * r);
+                      float ratio = (Solarch_Elevation - z) / (2 * r);
+                      
+                      z1 = z + 2 * r * ratio;
+                      z2 = z + 2 * r * ratio;       
+                      
+                      v1 = h * (1 - ratio);
+                      v2 = h * (1 - ratio);
                     }
                     
-                    if (z + 2 * r > 0) {
+                    if (z + 2 * r > Solarch_Elevation) {
                     
                       z1 = z1 - Solarch_Elevation;
                       x1 = (x1 - z1 * SunR[1] / SunR[3]);
@@ -18044,7 +18047,7 @@ void RenderShadowsOnUrbanPlane() {
                       float u3 = w; float v3 = 0;
                       float u4 = 0; float v4 = 0;   
     
-                      if (z + 2 * r * ratio > 0) {
+                      if (z + 2 * r * ratio > Solarch_Elevation) {
                       
                         z1 = z1 - Solarch_Elevation;
                         x1 = (x1 - z1 * SunR[1] / SunR[3]);
