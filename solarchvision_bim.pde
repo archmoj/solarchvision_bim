@@ -17953,103 +17953,73 @@ void RenderShadowsOnUrbanPlane() {
             TREES_Diagrams.blendMode(BLEND);        
             
             if (Display_Trees_People != 0) {
-              /*
-              float[] DistZ = new float [1 + allObject2D_num];
-             
+
               for (int f = 1; f <= allObject2D_num; f++) {
-                float x = allObject2D_XYZS[f][0] * objects_scale;
-                float y = allObject2D_XYZS[f][1] * objects_scale;
-                float z = allObject2D_XYZS[f][2] * objects_scale;
-                
-                DistZ[f] = dist(x, y, z, 100000 * SunR[1], 100000 * SunR[2], 100000 * SunR[3]);
-              }
-              */
 
-              for (int g = 1; g <= allObject2D_num; g++) {
-                /*
-                int f = 0;
-                float max_dist = -1;
+                int n = abs(allObject2D_MAP[f]);
                 
-                for (int q = 1; q <= allObject2D_num; q++) {
-                  if (max_dist < DistZ[q]) {
-                    max_dist = DistZ[q];
-                    f = q;
-                  }
-                }
-                
-                DistZ[f] = -1;
-                */
-                int f = g; 
-                
-                if (f != 0) {
+                int w = Object2DImage[n].width; 
+                int h = Object2DImage[n].height;
 
-                  int n = abs(allObject2D_MAP[f]);
+                float r = allObject2D_XYZS[f][3] * 0.5 * objects_scale;
+                
+                float t = atan2(SunR[2], SunR[1]) + 0.5 * PI; 
+                
+                if (allObject2D_MAP[f] < 0) t += PI;         
+               
+                if (r > 2.5) { // to select only tress!               
+               
+                  TREES_Diagrams.beginShape();
                   
-                  int w = Object2DImage[n].width; 
-                  int h = Object2DImage[n].height;
-  
-                  float r = allObject2D_XYZS[f][3] * 0.5 * objects_scale;
+                  TREES_Diagrams.texture(Object2DImage[n]); 
                   
-                  float t = atan2(SunR[2], SunR[1]) + 0.5 * PI; 
+                  float x = allObject2D_XYZS[f][0] * objects_scale;
+                  float y = allObject2D_XYZS[f][1] * objects_scale;
+                  float z = allObject2D_XYZS[f][2] * objects_scale;
                   
-                  if (allObject2D_MAP[f] < 0) t += PI;         
-                 
-                  if (r > 2.5) { // to select only tress!               
-                 
-                    TREES_Diagrams.beginShape();
+                  float x1 = x - r * cos(t); float y1 = y - r * sin(t); float z1 = z; 
+                  float x2 = x + r * cos(t); float y2 = y + r * sin(t); float z2 = z; 
+                  float x3 = x + r * cos(t); float y3 = y + r * sin(t); float z3 = z + 2 * r; 
+                  float x4 = x - r * cos(t); float y4 = y - r * sin(t); float z4 = z + 2 * r;            
+
+                  float u1 = 0; float v1 = h;
+                  float u2 = w; float v2 = h;
+                  float u3 = w; float v3 = 0;
+                  float u4 = 0; float v4 = 0;   
+
+                  if ((z < 0) && (z + 2 * r > 0)) {
+                    z1 = 0;
+                    z2 = 0;       
                     
-                    TREES_Diagrams.texture(Object2DImage[n]); 
-                    
-                    float x = allObject2D_XYZS[f][0] * objects_scale;
-                    float y = allObject2D_XYZS[f][1] * objects_scale;
-                    float z = allObject2D_XYZS[f][2] * objects_scale;
-                    
-                    float x1 = x - r * cos(t); float y1 = y - r * sin(t); float z1 = z; 
-                    float x2 = x + r * cos(t); float y2 = y + r * sin(t); float z2 = z; 
-                    float x3 = x + r * cos(t); float y3 = y + r * sin(t); float z3 = z + 2 * r; 
-                    float x4 = x - r * cos(t); float y4 = y - r * sin(t); float z4 = z + 2 * r;            
-  
-                    float u1 = 0; float v1 = h;
-                    float u2 = w; float v2 = h;
-                    float u3 = w; float v3 = 0;
-                    float u4 = 0; float v4 = 0;   
-  
-                    if ((z < 0) && (z + 2 * r > 0)) {
-                      z1 = 0;
-                      z2 = 0;       
-                      
-                      v1 = h * (z + 2 * r) / (2 * r);
-                      v2 = h * (z + 2 * r) / (2 * r);
-                    }
-                    
-                    if (z + 2 * r > 0) {
-                    
-                      z1 = z1 - Solarch_Elevation;
-                      x1 = (x1 - z1 * SunR[1] / SunR[3]);
-                      y1 = (y1 - z1 * SunR[2] / SunR[3]);                  
-    
-                      z2 = z2 - Solarch_Elevation;
-                      x2 = (x2 - z2 * SunR[1] / SunR[3]);
-                      y2 = (y2 - z2 * SunR[2] / SunR[3]);
-                      
-                      z3 = z3 - Solarch_Elevation;
-                      x3 = (x3 - z3 * SunR[1] / SunR[3]);
-                      y3 = (y3 - z3 * SunR[2] / SunR[3]);
-    
-                      z4 = z4 - Solarch_Elevation;
-                      x4 = (x4 - z4 * SunR[1] / SunR[3]);
-                      y4 = (y4 - z4 * SunR[2] / SunR[3]);                  
-    
-                      TREES_Diagrams.vertex(x1 * Shades_scaleX, -y1 * Shades_scaleY, u1, v1);
-                      TREES_Diagrams.vertex(x2 * Shades_scaleX, -y2 * Shades_scaleY, u2, v2);
-                      TREES_Diagrams.vertex(x3 * Shades_scaleX, -y3 * Shades_scaleY, u3, v3);
-                      TREES_Diagrams.vertex(x4 * Shades_scaleX, -y4 * Shades_scaleY, u4, v4);
-                    }
-                    
-                    TREES_Diagrams.endShape(CLOSE);
+                    v1 = h * (z + 2 * r) / (2 * r);
+                    v2 = h * (z + 2 * r) / (2 * r);
                   }
+                  
+                  if (z + 2 * r > 0) {
+                  
+                    z1 = z1 - Solarch_Elevation;
+                    x1 = (x1 - z1 * SunR[1] / SunR[3]);
+                    y1 = (y1 - z1 * SunR[2] / SunR[3]);                  
   
+                    z2 = z2 - Solarch_Elevation;
+                    x2 = (x2 - z2 * SunR[1] / SunR[3]);
+                    y2 = (y2 - z2 * SunR[2] / SunR[3]);
+                    
+                    z3 = z3 - Solarch_Elevation;
+                    x3 = (x3 - z3 * SunR[1] / SunR[3]);
+                    y3 = (y3 - z3 * SunR[2] / SunR[3]);
   
+                    z4 = z4 - Solarch_Elevation;
+                    x4 = (x4 - z4 * SunR[1] / SunR[3]);
+                    y4 = (y4 - z4 * SunR[2] / SunR[3]);                  
+  
+                    TREES_Diagrams.vertex(x1 * Shades_scaleX, -y1 * Shades_scaleY, u1, v1);
+                    TREES_Diagrams.vertex(x2 * Shades_scaleX, -y2 * Shades_scaleY, u2, v2);
+                    TREES_Diagrams.vertex(x3 * Shades_scaleX, -y3 * Shades_scaleY, u3, v3);
+                    TREES_Diagrams.vertex(x4 * Shades_scaleX, -y4 * Shades_scaleY, u4, v4);
+                  }
+                  
+                  TREES_Diagrams.endShape(CLOSE);
                 }
               }            
             }
