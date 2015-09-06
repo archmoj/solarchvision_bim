@@ -17929,9 +17929,6 @@ void RenderShadowsOnUrbanPlane() {
       
           File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00";
           
-          //TREES_Diagrams.hint(ENABLE_DEPTH_TEST);
-          //TREES_Diagrams.hint(DISABLE_DEPTH_TEST);
-          
           TREES_Diagrams.beginDraw();
 
           TREES_Diagrams.blendMode(REPLACE);
@@ -18187,7 +18184,7 @@ void RenderShadowsOnUrbanPlane() {
           
             PImage img = loadImage(File_Name + "_2D.JPG");
 
-            img.filter(THRESHOLD, 0.9); // Converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter. The parameter must be between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
+            img.filter(THRESHOLD, 0.75); // Converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter. The parameter must be between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
           
             SHADOW_Diagrams.blendMode(DARKEST); 
             
