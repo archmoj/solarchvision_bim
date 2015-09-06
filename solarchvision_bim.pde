@@ -17929,6 +17929,9 @@ void RenderShadowsOnUrbanPlane() {
       
           File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00";
           
+          //TREES_Diagrams.hint(ENABLE_DEPTH_TEST);
+          //TREES_Diagrams.hint(DISABLE_DEPTH_TEST);
+          
           TREES_Diagrams.beginDraw();
 
           TREES_Diagrams.blendMode(REPLACE);
@@ -17948,7 +17951,7 @@ void RenderShadowsOnUrbanPlane() {
             TREES_Diagrams.fill(0);             
             
             if (Display_Trees_People != 0) {
-
+              /*
               float[] DistZ = new float [1 + allObject2D_num];
              
               for (int f = 1; f <= allObject2D_num; f++) {
@@ -17958,20 +17961,23 @@ void RenderShadowsOnUrbanPlane() {
                 
                 DistZ[f] = dist(x, y, z, 100000 * SunR[1], 100000 * SunR[2], 100000 * SunR[3]);
               }
+              */
 
               for (int g = 1; g <= allObject2D_num; g++) {
-                
+                /*
                 int f = 0;
-                float min_dist = FLOAT_undefined;
+                float max_dist = -1;
                 
                 for (int q = 1; q <= allObject2D_num; q++) {
-                  if (min_dist > DistZ[q]) {
-                    min_dist = DistZ[q];
+                  if (max_dist < DistZ[q]) {
+                    max_dist = DistZ[q];
                     f = q;
                   }
                 }
                 
-                DistZ[f] = FLOAT_undefined;
+                DistZ[f] = -1;
+                */
+                int f = g; 
                 
                 if (f != 0) {
 
