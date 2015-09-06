@@ -17941,14 +17941,16 @@ void RenderShadowsOnUrbanPlane() {
           TREES_Diagrams.strokeWeight(0);
           TREES_Diagrams.rectMode(CORNER);
           TREES_Diagrams.rect(0, 0, RES1, RES2);
-  
+          
           if ((SHD == 1) && (SunR[3] > 0)) {
   
             TREES_Diagrams.pushMatrix();
             TREES_Diagrams.translate(Solarch_RES1 / 2, Solarch_RES2 / 2);            
             
             TREES_Diagrams.stroke(0); 
-            TREES_Diagrams.fill(0);             
+            TREES_Diagrams.fill(0);     
+    
+            TREES_Diagrams.blendMode(BLEND);        
             
             if (Display_Trees_People != 0) {
               /*
