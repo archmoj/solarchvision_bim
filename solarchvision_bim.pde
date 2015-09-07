@@ -12433,98 +12433,93 @@ void addToFaces_afterSphericalTeselation (int m, float cx, float cy, float cz, f
 
 void SOLARCHVISION_export_land () {
   
-  PrintWriter File_output_mesh = createWriter(Model3DFolder + "/" + "LandMesh.txt");
+  PrintWriter File_output_mesh = createWriter(Model3DFolder + "/" + "LandMesh.obj");
+  
+  File_output_mesh.println("#SOLARCHVISION");
 
-  File_output_mesh.println("Vertices:" + nf(allVertices.length - 1, 0));
-  File_output_mesh.println("{");
   for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
     
     int the_I = i / LAND_n_J;
     int the_J = i % LAND_n_J;
     
+    File_output_mesh.print("v ");
+    
     for (int j = 0; j < 3; j++) {
       File_output_mesh.print(LAND_MESH[the_I][the_J][j]);
       if (j + 1 < 3) {
-        File_output_mesh.print("\t");
+        File_output_mesh.print(" ");
       }
       else {
         File_output_mesh.println();
       }          
     }    
   }
-  File_output_mesh.println("}");
 
-  File_output_mesh.println("Faces:" + nf(allFaces.length - 1, 0));
-  File_output_mesh.println("{");
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
     for (int j = 0; j < LAND_n_J - 1; j += 1) {
-
-      File_output_mesh.print(i * LAND_n_J + j);
-      File_output_mesh.print(",");
+      
+      File_output_mesh.print("f ");
 
       File_output_mesh.print(i * LAND_n_J + j + 1);
-      File_output_mesh.print(",");
+      File_output_mesh.print(" ");
 
       File_output_mesh.print((i + 1) * LAND_n_J + j + 1);
-      File_output_mesh.print(",");  
+      File_output_mesh.print(" ");      
 
-      File_output_mesh.print((i + 1) * LAND_n_J + j);
+      File_output_mesh.print((i + 1) * LAND_n_J + j + 2);
+      File_output_mesh.print(" ");  
+
+      File_output_mesh.print(i * LAND_n_J + j + 2);
       File_output_mesh.println();
+
     }
   }
-  File_output_mesh.println("}");
-  
+
   File_output_mesh.flush(); 
   File_output_mesh.close();   
   
   println("End of exporting the mesh.");
- 
-  //open("explorer /select," + File_output_mesh.replace("/", "\\"));    
-  
+
 }
 
 
 void SOLARCHVISION_export_objects () {
 
-  PrintWriter File_output_mesh = createWriter(Model3DFolder + "/" + "ObjectsMesh.txt");
+  PrintWriter File_output_mesh = createWriter(Model3DFolder + "/" + "ObjectsMesh.obj");
+  
+  File_output_mesh.println("#SOLARCHVISION");
 
-  File_output_mesh.println("Vertices:" + nf(allVertices.length - 1, 0));
-  File_output_mesh.println("{");
   for (int i = 1; i < allVertices.length; i++) {
+    File_output_mesh.print("v ");
     for (int j = 0; j < 3; j++) {
       File_output_mesh.print(allVertices[i][j]);
       if (j + 1 < 3) {
-        File_output_mesh.print("\t");
+        File_output_mesh.print(" ");
       }
       else {
         File_output_mesh.println();
       }          
     }    
   }
-  File_output_mesh.println("}");
 
-  File_output_mesh.println("Faces:" + nf(allFaces.length - 1, 0));
-  File_output_mesh.println("{");
   for (int f = 1; f < allFaces.length; f++) {
+    File_output_mesh.print("f ");
     for (int j = 0; j < allFaces[f].length; j++) {
       File_output_mesh.print(allFaces[f][j]);
       if (j + 1 < allFaces[f].length) {
-        File_output_mesh.print(",");
+        File_output_mesh.print(" ");
       }
       else {
         File_output_mesh.println();
       }          
     }    
   }
-  File_output_mesh.println("}");
   
   File_output_mesh.flush(); 
   File_output_mesh.close();   
   
   println("End of exporting the mesh."); 
-  
-  //open("explorer /select," + File_output_mesh.replace("/", "\\"));    
-  
+ 
 }
     
   
