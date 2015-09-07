@@ -2034,7 +2034,6 @@ void SOLARCHVISION_draw_WIN3D () {
   WIN3D_Diagrams.translate(WIN3D_X_coordinate * WIN3D_scale3D, WIN3D_Y_coordinate * WIN3D_scale3D, WIN3D_Z_coordinate * WIN3D_scale3D);
   
   WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI / 180); 
-  WIN3D_Diagrams.rotateY(WIN3D_RY_coordinate * PI / 180);
   WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI / 180); 
   
   //println(nfp(WIN3D_RX_coordinate, 0, 1), nfp(WIN3D_RY_coordinate, 0, 1), nfp(WIN3D_RZ_coordinate, 0, 1)); 
@@ -2048,7 +2047,7 @@ void SOLARCHVISION_draw_WIN3D () {
 
   WIN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
 
-  SOLARCHVISION_draw_SUN3D(0, 0, 0, 0.95 * SKY3D_scale, LocationLatitude);
+  SOLARCHVISION_draw_SUN3D(0, 0, 0, 0.9 * SKY3D_scale, LocationLatitude);
   
   SOLARCHVISION_draw_SKY3D();
   
@@ -10965,7 +10964,7 @@ void WIN3D_keyPressed (KeyEvent e) {
    
                   //WIN3D_ZOOM_coordinate = 60;               
                   WIN3D_Update = 1; break;
-
+        
         case '1' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 315; WIN3D_Update = 1; break;
         case '3' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 45; WIN3D_Update = 1; break;
         case '7' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 225; WIN3D_Update = 1; break;
@@ -10975,7 +10974,7 @@ void WIN3D_keyPressed (KeyEvent e) {
         case '4' :WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; WIN3D_Update = 1; break;
         case '6' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; WIN3D_Update = 1; break; 
         case '8' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; WIN3D_Update = 1; break;
-  
+        
         case '*' :objects_scale *= 2.0; WIN3D_Update = 1; break;
         case '/' :objects_scale /= 2.0; WIN3D_Update = 1; break;
   
@@ -14258,14 +14257,6 @@ void SOLARCHVISION_draw_2Dobjects () {
   CAM_x = px;
   CAM_y = py;
   CAM_z = pz;
-  
-  py = CAM_y;
-  pz = CAM_z * cos_ang(WIN3D_RY_coordinate) - CAM_x * sin_ang(WIN3D_RY_coordinate);
-  px = CAM_z * sin_ang(WIN3D_RY_coordinate) + CAM_x * cos_ang(WIN3D_RY_coordinate);
-  
-  CAM_x = px;
-  CAM_y = py;
-  CAM_z = pz;  
   
   pz = CAM_z;
   px = CAM_x * cos_ang(WIN3D_RZ_coordinate) - CAM_y * sin_ang(WIN3D_RZ_coordinate);
@@ -18612,7 +18603,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         PNT_z += CAM_z;
   
         float px, py, pz;
-        
+
+
         pz = PNT_z;
         px = PNT_x * cos_ang(-WIN3D_RZ_coordinate) - PNT_y * sin_ang(-WIN3D_RZ_coordinate);
         py = PNT_x * sin_ang(-WIN3D_RZ_coordinate) + PNT_y * cos_ang(-WIN3D_RZ_coordinate);
@@ -18620,14 +18612,6 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         PNT_x = px;
         PNT_y = py;
         PNT_z = pz;    
- 
-        py = PNT_y;
-        pz = PNT_z * cos_ang(WIN3D_RY_coordinate) - PNT_x * sin_ang(WIN3D_RY_coordinate);
-        px = PNT_z * sin_ang(WIN3D_RY_coordinate) + PNT_x * cos_ang(WIN3D_RY_coordinate);
-        
-        PNT_x = px;
-        PNT_y = py;
-        PNT_z = pz;   
         
         px = PNT_x;
         py = PNT_y * cos_ang(WIN3D_RX_coordinate) - PNT_z * sin_ang(WIN3D_RX_coordinate);
@@ -18637,7 +18621,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         PNT_y = py;
         PNT_z = pz;
         
-          
+
+        
         if (PNT_z > 0) {
           
           if (WIN3D_View_Type == 1) {
@@ -18669,4 +18654,44 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
   
   popMatrix();
+}
+
+
+float[] SOLARCHVISION_calculate_Click3D (float X_perspective, float Y_perspective) {
+
+  
+  float PNT_x = FLOAT_undefined;
+  float PNT_y = FLOAT_undefined;
+  float PNT_z = 1;
+  
+  PNT_x = PNT_z * X_perspective / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
+  PNT_y = -PNT_z * Y_perspective / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
+
+
+  float px, py, pz;
+ 
+  px = PNT_x;
+  py = PNT_y * cos_ang(-WIN3D_RX_coordinate) - PNT_z * sin_ang(-WIN3D_RX_coordinate);
+  pz = PNT_y * sin_ang(-WIN3D_RX_coordinate) + PNT_z * cos_ang(-WIN3D_RX_coordinate);
+
+  PNT_x = px;
+  PNT_y = py;
+  PNT_z = pz;    
+ 
+  pz = PNT_z;
+  px = PNT_x * cos_ang(WIN3D_RZ_coordinate) - PNT_y * sin_ang(WIN3D_RZ_coordinate);
+  py = PNT_x * sin_ang(WIN3D_RZ_coordinate) + PNT_y * cos_ang(WIN3D_RZ_coordinate);
+  
+  PNT_x += CAM_x;
+  PNT_y += CAM_y;
+  PNT_z -= CAM_z;  
+  
+  PNT_x /= objects_scale;
+  PNT_y /= objects_scale;
+  PNT_z /= objects_scale;
+  
+
+  float[] return_array = {PNT_x, PNT_y, PNT_z};
+  
+  return return_array;
 }
