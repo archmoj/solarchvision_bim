@@ -66,7 +66,7 @@ String[][] DEFINED_STATIONS = {
 int Selected_STATION = STATION_NUMBER;
 int LOAD_STATION = 0; 
 
-int Load_Default_Models = 3; //5;
+int Load_Default_Models = 0; //3; //5;
 
 
 
@@ -1060,6 +1060,7 @@ String Object2DFolder_TREES;
 String ExportFolder;
 String DiagramsFolder;
 String ScreenShotFolder;
+String Model3DFolder;
 
 
 void SOLARCHVISION_update_folders () {
@@ -1078,6 +1079,7 @@ void SOLARCHVISION_update_folders () {
   ExportFolder          = BaseFolder + "/Export";
   DiagramsFolder        = ExportFolder + "/Diagrams";  
   ScreenShotFolder      = ExportFolder + "/ScreenShots" + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
+  Model3DFolder         = ExportFolder + "/Model_3D" + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
 
 
   //try {
@@ -11015,7 +11017,7 @@ void WIN3D_keyPressed (KeyEvent e) {
 
 
         case 'x' :SOLARCHVISION_export_objects(); break;
-        case 'X' :SOLARCHVISION_export_objects(); break;
+        case 'X' :SOLARCHVISION_export_land(); break;
         
       }
     }
@@ -12429,9 +12431,62 @@ void addToFaces_afterSphericalTeselation (int m, float cx, float cy, float cz, f
 
 
 
-void SOLARCHVISION_export_objects () {
+void SOLARCHVISION_export_land () {
   
-  PrintWriter File_output_mesh = createWriter("/MeshModel/Mesh.txt");
+  PrintWriter File_output_mesh = createWriter(Model3DFolder + "/" + "LandMesh.txt");
+
+  File_output_mesh.println("Vertices:" + nf(allVertices.length - 1, 0));
+  File_output_mesh.println("{");
+  for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
+    
+    int the_I = i / LAND_n_J;
+    int the_J = i % LAND_n_J;
+    
+    for (int j = 0; j < 3; j++) {
+      File_output_mesh.print(LAND_MESH[the_I][the_J][j]);
+      if (j + 1 < 3) {
+        File_output_mesh.print("\t");
+      }
+      else {
+        File_output_mesh.println();
+      }          
+    }    
+  }
+  File_output_mesh.println("}");
+
+  File_output_mesh.println("Faces:" + nf(allFaces.length - 1, 0));
+  File_output_mesh.println("{");
+  for (int i = 0; i < LAND_n_I - 1; i += 1) {
+    for (int j = 0; j < LAND_n_J - 1; j += 1) {
+
+      File_output_mesh.print(i * LAND_n_J + j);
+      File_output_mesh.print(",");
+
+      File_output_mesh.print(i * LAND_n_J + j + 1);
+      File_output_mesh.print(",");
+
+      File_output_mesh.print((i + 1) * LAND_n_J + j + 1);
+      File_output_mesh.print(",");  
+
+      File_output_mesh.print((i + 1) * LAND_n_J + j);
+      File_output_mesh.println();
+    }
+  }
+  File_output_mesh.println("}");
+  
+  File_output_mesh.flush(); 
+  File_output_mesh.close();   
+  
+  println("End of exporting the mesh.");
+ 
+  //open("explorer /select," + File_output_mesh.replace("/", "\\"));    
+  
+}
+
+
+void SOLARCHVISION_export_objects () {
+
+  PrintWriter File_output_mesh = createWriter(Model3DFolder + "/" + "ObjectsMesh.txt");
 
   File_output_mesh.println("Vertices:" + nf(allVertices.length - 1, 0));
   File_output_mesh.println("{");
@@ -12468,8 +12523,10 @@ void SOLARCHVISION_export_objects () {
   
   println("End of exporting the mesh."); 
   
-}
+  //open("explorer /select," + File_output_mesh.replace("/", "\\"));    
   
+}
+    
   
 void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, float cz, float sx, float sy, float sz) {
   
@@ -13396,6 +13453,8 @@ void SOLARCHVISION_draw_land () {
   }
 
 }
+
+
 
 
 void SOLARCHVISION_draw_field_image () {
@@ -14749,7 +14808,7 @@ float Bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y
 //Polar
 int LAND_n_I_base = 0;
 int LAND_n_J_base = 0;
-int LAND_n_I = 8 + 1; //16 + 1; //8 + 1;
+int LAND_n_I = 16 + 1; //8 + 1;
 int LAND_n_J = 24 + 1;     
 
 double R_earth = 6373 * 1000;
