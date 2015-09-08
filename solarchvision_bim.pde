@@ -10899,6 +10899,17 @@ void WIN3D_keyPressed (KeyEvent e) {
                   WIN3D_Y_coordinate = 0;
                   //WIN3D_ZOOM_coordinate = 60;
                   WIN3D_Update = 1; break;                  
+                  
+        case '5' :WIN3D_RX_coordinate = 0;
+                  WIN3D_RY_coordinate = 0;
+                  WIN3D_RZ_coordinate = 0; 
+                  
+                  WIN3D_X_coordinate = 0;
+                  WIN3D_Y_coordinate = 0;
+                  WIN3D_Z_coordinate = 0;   
+   
+                  WIN3D_ZOOM_coordinate = 60;               
+                  WIN3D_Update = 1; break;
           
         case '2' :Display_Trees_People = (Display_Trees_People + 1) % 2; WIN3D_Update = 1; break;
  
@@ -10959,12 +10970,6 @@ void WIN3D_keyPressed (KeyEvent e) {
         case '5' :WIN3D_RX_coordinate = 0;
                   WIN3D_RY_coordinate = 0;
                   WIN3D_RZ_coordinate = 0; 
-                  
-                  //WIN3D_X_coordinate = 0;
-                  //WIN3D_Y_coordinate = 0;
-                  //WIN3D_Z_coordinate = 0;   
-   
-                  //WIN3D_ZOOM_coordinate = 60;               
                   WIN3D_Update = 1; break;
         
         case '1' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 315; WIN3D_Update = 1; break;
@@ -16254,18 +16259,8 @@ void mouseClicked () {
         float Image_X = 0;
         float Image_Y = 0;
 
-        if (WIN3D_View_Type == 1) {
-          Image_X = X_clicked - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
-          Image_Y = Y_clicked - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
-          
-          println(Image_X, Image_Y); 
-        }
-        else {
-          Image_X = X_clicked - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
-          Image_Y = Y_clicked - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
-
-          println(Image_X, Image_Y);          
-        }
+        Image_X = X_clicked - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
+        Image_Y = Y_clicked - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
 
         float[] ray_direction = new float[3];
 
@@ -16280,6 +16275,18 @@ void mouseClicked () {
         ray_end[0] /= objects_scale;
         ray_end[1] /= objects_scale;
         ray_end[2] /= objects_scale;
+
+        if (WIN3D_View_Type == 0) {
+          float[] ray_center = SOLARCHVISION_calculate_Click3D (0, 0);
+
+          ray_center[0] /= objects_scale;
+          ray_center[1] /= objects_scale;
+          ray_center[2] /= objects_scale;
+          
+          ray_start[0] += ray_end[0] - ray_center[0];
+          ray_start[1] += ray_end[1] - ray_center[1];
+          ray_start[2] += ray_end[2] - ray_center[2];
+        }
         
         ray_direction[0] = ray_end[0] - ray_start[0];
         ray_direction[1] = ray_end[1] - ray_start[1];
@@ -18651,7 +18658,7 @@ float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
 
   if (WIN3D_View_Type == 1) {
     
-    PNT_z = 100;
+    PNT_z = (0.5 * refScale) / tan(0.5 * PI / 3.0); //100; // the plane we need the results on
     
     PNT_x = PNT_z * Image_X / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
     PNT_y = PNT_z * -Image_Y / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
@@ -18659,7 +18666,7 @@ float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
   else {
     float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
 
-    PNT_z = 220; //225; //0.5 * WIN3D_X_View; //150; //refScale; // ?????????????????????
+    PNT_z = (0.5 * refScale) / tan(0.5 * PI / 3.0);
 
     PNT_x = ZOOM * Image_X / (0.5 * WIN3D_scale3D);
     PNT_y = ZOOM * -Image_Y / (0.5 * WIN3D_scale3D);
