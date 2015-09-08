@@ -12848,9 +12848,9 @@ void SOLARCHVISION_add_DefaultModel (int n) {
 
 
   
-  if (n != 0) {
+  //if (n != 0) {
     SOLARCHVISION_add_Mesh2(8, -100, -100, 0, 100, 100, 0);
-  }
+  //}
   
   if (n == 1) {
     SOLARCHVISION_add_House_Core(0, 0, 0, 0, 6, 6, 6, 6, 90);
@@ -16253,10 +16253,15 @@ void mouseClicked () {
         
           float Image_X = X_clicked - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
           float Image_Y = Y_clicked - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
+
+          float[] ray_direction = new float[3];
+
+          float[] ray_start = {CAM_x, CAM_y, CAM_z};
+
+          float[] ray_end = SOLARCHVISION_calculate_Click3D (Image_X, Image_Y);
           
-          float[] ray_start = {CAM_x, CAM_y, CAM_z};     
-
-
+          /*  
+          
           float[] ray_end = {0,0,0}; // Now it only works well when looking at the origin point. <<<<<<<<<<<<
           //float[] ray_end = {WIN3D_X_coordinate,-WIN3D_Y_coordinate,WIN3D_Z_coordinate}; // ????
       
@@ -16265,8 +16270,6 @@ void mouseClicked () {
           println("____________________________");
           println("Start:", ray_start[0], ray_start[1], ray_start[2]); 
           println("End Center:", ray_end[0], ray_end[1], ray_end[2]);    
-      
-          float[] ray_direction = new float[3];
           
           ray_direction[0] = ray_end[0] - ray_start[0];
           ray_direction[1] = ray_end[1] - ray_start[1];
@@ -16342,10 +16345,12 @@ void mouseClicked () {
           ray_end[2] /= objects_scale;
           //--------------------------
           
-            
+          */
           ray_direction[0] = ray_end[0] - ray_start[0];
           ray_direction[1] = ray_end[1] - ray_start[1];
           ray_direction[2] = ray_end[2] - ray_start[2];
+
+
           
           float max_dist = 2 * dist(ray_start[0], ray_start[1], ray_start[2], ray_end[0], ray_end[1], ray_end[2]);
           
@@ -18716,7 +18721,7 @@ float[] SOLARCHVISION_calculate_Click3D (float X_perspective, float Y_perspectiv
   
   float PNT_x = FLOAT_undefined;
   float PNT_y = FLOAT_undefined;
-  float PNT_z = 1;
+  float PNT_z = 100;
   
   PNT_x = PNT_z * X_perspective / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
   PNT_y = -PNT_z * Y_perspective / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
@@ -18745,7 +18750,7 @@ float[] SOLARCHVISION_calculate_Click3D (float X_perspective, float Y_perspectiv
   PNT_z /= objects_scale;
   
 
-  float[] return_array = {PNT_x, PNT_y, PNT_z};
+  float[] return_array = {PNT_x, PNT_y, -PNT_z};
   
   return return_array;
 }
