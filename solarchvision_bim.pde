@@ -18749,11 +18749,11 @@ float[] SOLARCHVISION_calculate_Click3D (float X_perspective, float Y_perspectiv
   PNT_y += CAM_y;
   PNT_z -= CAM_z;  
   
-  /*
+  
   PNT_x /= objects_scale;
   PNT_y /= objects_scale;
   PNT_z /= objects_scale;
-  */
+  
 
   float[] return_array = {PNT_x, PNT_y, -PNT_z};
   
