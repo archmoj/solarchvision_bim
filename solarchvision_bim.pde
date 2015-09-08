@@ -10897,7 +10897,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                   
         case '0' :WIN3D_X_coordinate = 0;
                   WIN3D_Y_coordinate = 0;
-                  WIN3D_ZOOM_coordinate = 60;  // <<<<<<<<<
+                  //WIN3D_ZOOM_coordinate = 60;
                   WIN3D_Update = 1; break;                  
           
         case '2' :Display_Trees_People = (Display_Trees_People + 1) % 2; WIN3D_Update = 1; break;
@@ -10960,9 +10960,9 @@ void WIN3D_keyPressed (KeyEvent e) {
                   WIN3D_RY_coordinate = 0;
                   WIN3D_RZ_coordinate = 0; 
                   
-                  WIN3D_X_coordinate = 0;
-                  WIN3D_Y_coordinate = 0;
-                  WIN3D_Z_coordinate = 0;   
+                  //WIN3D_X_coordinate = 0;
+                  //WIN3D_Y_coordinate = 0;
+                  //WIN3D_Z_coordinate = 0;   
    
                   //WIN3D_ZOOM_coordinate = 60;               
                   WIN3D_Update = 1; break;
