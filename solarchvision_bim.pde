@@ -18659,7 +18659,7 @@ float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
   else {
     float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
 
-    PNT_z = 225; //0.5 * WIN3D_X_View; //150; //refScale; // ?????????????????????
+    PNT_z = 220; //225; //0.5 * WIN3D_X_View; //150; //refScale; // ?????????????????????
 
     PNT_x = ZOOM * Image_X / (0.5 * WIN3D_scale3D);
     PNT_y = ZOOM * -Image_Y / (0.5 * WIN3D_scale3D);
