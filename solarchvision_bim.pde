@@ -18732,23 +18732,28 @@ float[] SOLARCHVISION_calculate_Click3D (float X_perspective, float Y_perspectiv
   px = PNT_x;
   py = PNT_y * cos_ang(-WIN3D_RX_coordinate) - PNT_z * sin_ang(-WIN3D_RX_coordinate);
   pz = PNT_y * sin_ang(-WIN3D_RX_coordinate) + PNT_z * cos_ang(-WIN3D_RX_coordinate);
-
+  
   PNT_x = px;
   PNT_y = py;
-  PNT_z = pz;    
+  PNT_z = pz;
  
   pz = PNT_z;
   px = PNT_x * cos_ang(WIN3D_RZ_coordinate) - PNT_y * sin_ang(WIN3D_RZ_coordinate);
   py = PNT_x * sin_ang(WIN3D_RZ_coordinate) + PNT_y * cos_ang(WIN3D_RZ_coordinate);
   
+  PNT_x = px;
+  PNT_y = py;
+  PNT_z = pz;    
+  
   PNT_x += CAM_x;
   PNT_y += CAM_y;
   PNT_z -= CAM_z;  
   
+  /*
   PNT_x /= objects_scale;
   PNT_y /= objects_scale;
   PNT_z /= objects_scale;
-  
+  */
 
   float[] return_array = {PNT_x, PNT_y, -PNT_z};
   
