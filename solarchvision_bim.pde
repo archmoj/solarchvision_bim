@@ -16249,255 +16249,262 @@ void mouseClicked () {
     if (WIN3D_include == 1) {
       if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
   
-        //if (WIN3D_View_Type == 1) {
+      
+      
+        float Image_X = 0;
+        float Image_Y = 0;
+
+        if (WIN3D_View_Type == 1) {
+          Image_X = X_clicked - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
+          Image_Y = Y_clicked - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
+          
+          println(Image_X, Image_Y); 
+        }
+        else {
+          Image_X = X_clicked - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
+          Image_Y = Y_clicked - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
+
+          println(Image_X, Image_Y);          
+        }
+
+        float[] ray_direction = new float[3];
+
+        float[] ray_start = {CAM_x, CAM_y, CAM_z};
+
+        float[] ray_end = SOLARCHVISION_calculate_Click3D (Image_X, Image_Y);
         
-          float Image_X = X_clicked - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
-          float Image_Y = Y_clicked - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
+        ray_start[0] /= objects_scale;
+        ray_start[1] /= objects_scale;
+        ray_start[2] /= objects_scale;          
+        
+        ray_end[0] /= objects_scale;
+        ray_end[1] /= objects_scale;
+        ray_end[2] /= objects_scale;
+        
+        ray_direction[0] = ray_end[0] - ray_start[0];
+        ray_direction[1] = ray_end[1] - ray_start[1];
+        ray_direction[2] = ray_end[2] - ray_start[2];
+        
+        float max_dist = 2 * dist(ray_start[0], ray_start[1], ray_start[2], ray_end[0], ray_end[1], ray_end[2]);
+        
+        float[] RxP = intersect(ray_start, ray_direction, max_dist);
+        
+        println(ray_start[0], ray_start[1], ray_start[2], ">>", ray_end[0], ray_end[1], ray_end[2], ">>", RxP[0], RxP[1], RxP[2]);
+        
+        if (RxP[4] > 0) {
+          
+          float x = RxP[0]; 
+          float y = RxP[1]; 
+          float z = RxP[2];                      
 
-          float[] ray_direction = new float[3];
+          float rot = Create_Input_Orientation;
+          if (rot == 360) rot = 15 * (int(random(24)));
 
-          float[] ray_start = {CAM_x, CAM_y, CAM_z};
+          float rx = 0.5 * Create_Input_Length;
+          if (rx < 0) rx = random(abs(rx));
 
-          float[] ray_end = SOLARCHVISION_calculate_Click3D (Image_X, Image_Y);
-          
-          ray_start[0] /= objects_scale;
-          ray_start[1] /= objects_scale;
-          ray_start[2] /= objects_scale;          
-          
-          ray_end[0] /= objects_scale;
-          ray_end[1] /= objects_scale;
-          ray_end[2] /= objects_scale;
-          
-          ray_direction[0] = ray_end[0] - ray_start[0];
-          ray_direction[1] = ray_end[1] - ray_start[1];
-          ray_direction[2] = ray_end[2] - ray_start[2];
-          
-          float max_dist = 2 * dist(ray_start[0], ray_start[1], ray_start[2], ray_end[0], ray_end[1], ray_end[2]);
-          
-          float[] RxP = intersect(ray_start, ray_direction, max_dist);
-          
-          println(ray_start[0], ray_start[1], ray_start[2], ">>", ray_end[0], ray_end[1], ray_end[2], ">>", RxP[0], RxP[1], RxP[2]);
-          
-          if (RxP[4] > 0) {
+          float ry = 0.5 * Create_Input_Width;
+          if (ry < 0) ry = random(abs(ry));
+
+          float rz = 0.5 * Create_Input_Height;
+          if (rz < 0) rz = random(abs(rz));
+
+          if (mouseButton == RIGHT) {
             
-            float x = RxP[0]; 
-            float y = RxP[1]; 
-            float z = RxP[2];                      
-  
-            float rot = Create_Input_Orientation;
-            if (rot == 360) rot = 15 * (int(random(24)));
-
-            float rx = 0.5 * Create_Input_Length;
-            if (rx < 0) rx = random(abs(rx));
-
-            float ry = 0.5 * Create_Input_Width;
-            if (ry < 0) ry = random(abs(ry));
-
-            float rz = 0.5 * Create_Input_Height;
-            if (rz < 0) rz = random(abs(rz));
-
-            if (mouseButton == RIGHT) {
+            if (Create_Soild_House == 1) {
+              Create_Input_powAll = 8;
+              Create_Input_powX = 8;
+              Create_Input_powY = 8;
+              Create_Input_powZ = 8;
               
+              
+              
+              ROLLOUT_Update = 1;
+            }
+            
+            
+            float px = Create_Input_powX; 
+            float py = Create_Input_powY;
+            float pz = Create_Input_powZ;
+            
+            if (Create_Input_powRnd == 1) {
+              px = pow(2, int(random(5)) - 1);
+              py = px;
+              pz = px;
+            }
+              
+            if (Create_Input_Volume != 0) {
+                        
+              if ((rx != 0) && (ry != 0)) {
+                rz = Create_Input_Volume / (8 * rx * ry);
+              }
+              
+              //---------------------------------------------------
+              float A = 1; 
+              // cube volume: 8*r^3, sphere volume: 4*r^3, so maybe:
+              if (pz == 8) A = 1;
+              else if (pz == 4) A = 0.75;
+              else if (pz == 2) A = 0.5;
+              else if (pz == 1) A = 0.25;
+              else if (pz == 0.5) A = 0.125;
+              else if (pz == 0.25) A = 0.0625;
+              
+              rx /= pow(A, (1.0 / 3.0));
+              ry /= pow(A, (1.0 / 3.0));
+              rz /= pow(A, (1.0 / 3.0));
+              //---------------------------------------------------
+            }
+            
+            if (Create_Input_Align == 1) {
+              z += rz;
+            }
+            
+            int SOLID_created = 0;
+            
+            
+
+            if ((px == 8) && (py == 8) && (pz == 2)) {
+              SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, 2, rot);
+
+              ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
+              SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+              
+              SOLID_created = 1;
+            }
+
+            if ((px == 8) && (py == 8) && (pz == 8)) {
+              SOLARCHVISION_add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, rot);
+
+              ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
+              SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+              
+              SOLID_created = 1;
+            }
+            
+            if (((px == 1) && (py == 1) && (pz == 1)) || (Create_Soild_House == 1)) {
               if (Create_Soild_House == 1) {
-                Create_Input_powAll = 8;
-                Create_Input_powX = 8;
-                Create_Input_powY = 8;
-                Create_Input_powZ = 8;
-                
-                
-                
-                ROLLOUT_Update = 1;
-              }
-              
-              
-              float px = Create_Input_powX; 
-              float py = Create_Input_powY;
-              float pz = Create_Input_powZ;
-              
-              if (Create_Input_powRnd == 1) {
-                px = pow(2, int(random(5)) - 1);
-                py = px;
-                pz = px;
-              }
-                
-              if (Create_Input_Volume != 0) {
-                          
-                if ((rx != 0) && (ry != 0)) {
-                  rz = Create_Input_Volume / (8 * rx * ry);
-                }
-                
-                //---------------------------------------------------
-                float A = 1; 
-                // cube volume: 8*r^3, sphere volume: 4*r^3, so maybe:
-                if (pz == 8) A = 1;
-                else if (pz == 4) A = 0.75;
-                else if (pz == 2) A = 0.5;
-                else if (pz == 1) A = 0.25;
-                else if (pz == 0.5) A = 0.125;
-                else if (pz == 0.25) A = 0.0625;
-                
-                rx /= pow(A, (1.0 / 3.0));
-                ry /= pow(A, (1.0 / 3.0));
-                rz /= pow(A, (1.0 / 3.0));
-                //---------------------------------------------------
-              }
-              
-              if (Create_Input_Align == 1) {
                 z += rz;
+                
+                if (rx == ry) rot -= 45;
+                
+                px = 1;
+                py = 1;
+                pz = 1;
+              }
+                              
+              float[] X_ = new float [6];
+              float[] Y_ = new float [6];
+              float[] Z_ = new float [6];
+
+              float q = pow(2, 0.5);
+
+              X_[0] = 0;
+              Y_[0] = 0;
+              Z_[0] = q;
+
+              X_[1] = q;
+              Y_[1] = 0;
+              Z_[1] = 0;
+
+              X_[2] = 0;
+              Y_[2] = q;
+              Z_[2] = 0;
+
+              X_[3] = -q;
+              Y_[3] = 0;
+              Z_[3] = 0;
+
+              X_[4] = 0;
+              Y_[4] = -q;
+              Z_[4] = 0;
+
+              X_[5] = 0;
+              Y_[5] = 0;
+              Z_[5] = -q;
+              
+              for (int i = 0; i < 6; i += 1) {
+                X_[i] *= rx;
+                Y_[i] *= ry;
+                Z_[i] *= rz;
+
+                float X_r = X_[i] * cos_ang(rot) - Y_[i] * sin_ang(rot);
+                float Y_r = X_[i] * sin_ang(rot) + Y_[i] * cos_ang(rot);
+                float Z_r = Z_[i];
+                
+                X_[i] = X_r + x;
+                Y_[i] = Y_r + y;
+                Z_[i] = Z_r + z;
               }
               
-              int SOLID_created = 0;
-              
-              
-
-              if ((px == 8) && (py == 8) && (pz == 2)) {
-                SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, 2, rot);
-
-                ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
-                SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
-                
-                SOLID_created = 1;
+              SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[1], Y_[1], Z_[1], X_[2], Y_[2], Z_[2], X_[0], Y_[0], Z_[0]);
+              SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[2], Y_[2], Z_[2], X_[3], Y_[3], Z_[3], X_[0], Y_[0], Z_[0]);
+              SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[3], Y_[3], Z_[3], X_[4], Y_[4], Z_[4], X_[0], Y_[0], Z_[0]);
+              SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[4], Y_[4], Z_[4], X_[1], Y_[1], Z_[1], X_[0], Y_[0], Z_[0]);                
+            
+              if (Create_Soild_House != 1) {
+                SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[1], Y_[1], Z_[1], X_[5], Y_[5], Z_[5], X_[2], Y_[2], Z_[2]);
+                SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[2], Y_[2], Z_[2], X_[5], Y_[5], Z_[5], X_[3], Y_[3], Z_[3]);
+                SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[3], Y_[3], Z_[3], X_[5], Y_[5], Z_[5], X_[4], Y_[4], Z_[4]);
+                SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[4], Y_[4], Z_[4], X_[5], Y_[5], Z_[5], X_[1], Y_[1], Z_[1]);
               }
-  
-              if ((px == 8) && (py == 8) && (pz == 8)) {
-                SOLARCHVISION_add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, rot);
 
-                ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
-                SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
-                
-                SOLID_created = 1;
-              }
+              ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
+              SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
               
-              if (((px == 1) && (py == 1) && (pz == 1)) || (Create_Soild_House == 1)) {
-                if (Create_Soild_House == 1) {
-                  z += rz;
-                  
-                  if (rx == ry) rot -= 45;
-                  
-                  px = 1;
-                  py = 1;
-                  pz = 1;
-                }
-                                
-                float[] X_ = new float [6];
-                float[] Y_ = new float [6];
-                float[] Z_ = new float [6];
-
-                float q = pow(2, 0.5);
-  
-                X_[0] = 0;
-                Y_[0] = 0;
-                Z_[0] = q;
-
-                X_[1] = q;
-                Y_[1] = 0;
-                Z_[1] = 0;
-
-                X_[2] = 0;
-                Y_[2] = q;
-                Z_[2] = 0;
-
-                X_[3] = -q;
-                Y_[3] = 0;
-                Z_[3] = 0;
-
-                X_[4] = 0;
-                Y_[4] = -q;
-                Z_[4] = 0;
-
-                X_[5] = 0;
-                Y_[5] = 0;
-                Z_[5] = -q;
-                
-                for (int i = 0; i < 6; i += 1) {
-                  X_[i] *= rx;
-                  Y_[i] *= ry;
-                  Z_[i] *= rz;
-
-                  float X_r = X_[i] * cos_ang(rot) - Y_[i] * sin_ang(rot);
-                  float Y_r = X_[i] * sin_ang(rot) + Y_[i] * cos_ang(rot);
-                  float Z_r = Z_[i];
-                  
-                  X_[i] = X_r + x;
-                  Y_[i] = Y_r + y;
-                  Z_[i] = Z_r + z;
-                }
-                
-                SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[1], Y_[1], Z_[1], X_[2], Y_[2], Z_[2], X_[0], Y_[0], Z_[0]);
-                SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[2], Y_[2], Z_[2], X_[3], Y_[3], Z_[3], X_[0], Y_[0], Z_[0]);
-                SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[3], Y_[3], Z_[3], X_[4], Y_[4], Z_[4], X_[0], Y_[0], Z_[0]);
-                SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[4], Y_[4], Z_[4], X_[1], Y_[1], Z_[1], X_[0], Y_[0], Z_[0]);                
-              
-                if (Create_Soild_House != 1) {
-                  SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[1], Y_[1], Z_[1], X_[5], Y_[5], Z_[5], X_[2], Y_[2], Z_[2]);
-                  SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[2], Y_[2], Z_[2], X_[5], Y_[5], Z_[5], X_[3], Y_[3], Z_[3]);
-                  SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[3], Y_[3], Z_[3], X_[5], Y_[5], Z_[5], X_[4], Y_[4], Z_[4]);
-                  SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[4], Y_[4], Z_[4], X_[5], Y_[5], Z_[5], X_[1], Y_[1], Z_[1]);
-                }
-
-                ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
-                SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
-                
-                SOLID_created = 1;
-              }
-              
-              if (SOLID_created == 0) {
-                SOLARCHVISION_add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, SolidSurface_TESELATION, rot);
-
-                ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
-                SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
-                
-                SOLID_created = 1;
-              }
-              
-              SOLARCHVISION_calculate_ParametricGeometries_Field();  
+              SOLID_created = 1;
             }
             
-            if (mouseButton == LEFT) {
+            if (SOLID_created == 0) {
+              SOLARCHVISION_add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, SolidSurface_TESELATION, rot);
 
-              if (Create_Input_Align == 1) {
-                z += rz;
-              }
+              ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
+              SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
               
-              if (Create_Mesh_Tri == 1) {
-                SOLARCHVISION_add_Mesh3(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
-                SOLARCHVISION_add_Mesh3(Create_Default_Material, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
-                SOLARCHVISION_add_Mesh3(Create_Default_Material, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
-                SOLARCHVISION_add_Mesh3(Create_Default_Material, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
-              }
-              
-              if (Create_Mesh_Quad == 1) {
-                SOLARCHVISION_add_Mesh4(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
-              }
-              
-              if (Create_Mesh_Poly == 1) {
-                SOLARCHVISION_add_PolygonHyper(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
-              }
-
-              if (Create_Mesh_Extrude == 1) {              
-                SOLARCHVISION_add_PolygonExtrude(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
-              }
-
-              if (Create_Mesh_House == 1) {              
-                SOLARCHVISION_add_House_Core(Create_Default_Material, x, y, z, rx, ry, rz, ry, rot);
-              }
-
-              if (Create_Mesh_Parametric != 0) {
-                SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, Create_Mesh_Parametric, rot);
-              }
-              
-              
-              
-              
+              SOLID_created = 1;
             }
             
+            SOLARCHVISION_calculate_ParametricGeometries_Field();  
+          }
+          
+          if (mouseButton == LEFT) {
+
+            if (Create_Input_Align == 1) {
+              z += rz;
+            }
             
-          }          
+            if (Create_Mesh_Tri == 1) {
+              SOLARCHVISION_add_Mesh3(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
+              SOLARCHVISION_add_Mesh3(Create_Default_Material, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
+              SOLARCHVISION_add_Mesh3(Create_Default_Material, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
+              SOLARCHVISION_add_Mesh3(Create_Default_Material, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
+            }
+            
+            if (Create_Mesh_Quad == 1) {
+              SOLARCHVISION_add_Mesh4(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
+            }
+            
+            if (Create_Mesh_Poly == 1) {
+              SOLARCHVISION_add_PolygonHyper(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
+            }
+
+            if (Create_Mesh_Extrude == 1) {              
+              SOLARCHVISION_add_PolygonExtrude(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
+            }
+
+            if (Create_Mesh_House == 1) {              
+              SOLARCHVISION_add_House_Core(Create_Default_Material, x, y, z, rx, ry, rz, ry, rot);
+            }
+
+            if (Create_Mesh_Parametric != 0) {
+              SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, Create_Mesh_Parametric, rot);
+            }
+            
+          }
           
-          
-          
-          WIN3D_Update = 1;
-        //}
+        }          
+        
+        WIN3D_Update = 1;
+
       }       
     }
     
@@ -18652,7 +18659,7 @@ float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
   else {
     float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
 
-    PNT_z = refScale; // ?????????????????????
+    PNT_z = 210; //0.5 * WIN3D_X_View; //150; //refScale; // ?????????????????????
 
     PNT_x = ZOOM * Image_X / (0.5 * WIN3D_scale3D);
     PNT_y = ZOOM * -Image_Y / (0.5 * WIN3D_scale3D);
