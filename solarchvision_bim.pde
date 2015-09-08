@@ -101,6 +101,12 @@ int Create_Mesh_Tri = 0;
 int Create_Mesh_Quad = 0;
 int Create_Mesh_House = 1; // 0; //<<<<<<<<<<<<<
 int Create_Mesh_Parametric = 0;
+int Create_Mesh_Person = 0;
+int Create_Mesh_Plant = 0;
+
+int Create_Mesh_Plant_Type = 0;
+int Create_Mesh_Person_Type = 0;
+
 
 
 int Display_SWOB_points = 1; // 0-2
@@ -948,11 +954,14 @@ String[] CLIMATE_WY2_Files = getfiles(CLIMATE_WY2_directory);
 String[] ENSEMBLE_XML_Files = getfiles(ENSEMBLE_directory);
 String[] OBSERVED_XML_Files = getfiles(OBSERVED_directory);
 
-int MODEL3D_TESELATION = 2;
 
+
+int MODEL2D_ERASE = 0;
 int MODEL3D_ERASE = 0;
 
-int SKY3D_TESELATION = 2;
+int MODEL3D_TESELATION = 2;
+
+int SKY3D_TESELATION = 3;
 float SKY3D_scale = 10000 ; //1000; 
 
 int Display_SUN3D = 1;
@@ -1834,7 +1843,16 @@ void draw () {
           WIN3D_Update = 1;
         }
         
-        
+
+        if (MODEL2D_ERASE == 1) {
+          SOLARCHVISION_remove_2Dobjects();
+          
+          WIN3D_Update = 1;
+      
+          ROLLOUT_Update = 1;
+      
+          MODEL2D_ERASE = 0;    
+        }        
         
         if (MODEL3D_ERASE == 1) {
           SOLARCHVISION_remove_2Dobjects();
@@ -1870,8 +1888,6 @@ void draw () {
           WIN3D_Update = 1;
       
           ROLLOUT_Update = 1;
-      
-          MODEL3D_ERASE = 0;              
         }
         
         
@@ -16507,7 +16523,16 @@ void mouseClicked () {
             if (Create_Mesh_Parametric != 0) {
               SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, Create_Mesh_Parametric, rot);
             }
-            
+
+            if (Create_Mesh_Person != 0) {
+              SOLARCHVISION_add_Object2D("PEOPLE", Create_Mesh_Person_Type, x, y, z, 2.5);
+            }
+            if (Create_Mesh_Plant != 0) {
+              int n = 0;
+              if (Create_Mesh_Plant_Type > 0) n = Create_Mesh_Plant_Type + Object2D_Filenames_PEOPLE.length;              
+              SOLARCHVISION_add_Object2D("TREES", n, x, y, z, 2 * rz);
+            }        
+
           }
           
         }          
@@ -16689,7 +16714,7 @@ class SOLARCHVISION_Spinner {
 
 String[][] ROLLOUTS = {
                         {"Location & Data", "Point", "Weather", "Environment"}, 
-                        {"Geometries & Space", "General", "Solids", "Meshes"}, 
+                        {"Geometries & Space", "General", "Meshes", "Solids"}, 
                         {"Time & Scenarios", "Period", "Filters", "Ranges"}, 
                         {"Illustration Options", "Layout", "Layers", "Colors"},
                         {"Post-Processing", "Interpolation", "Developed", "Impacts"}, 
@@ -16900,8 +16925,26 @@ void SOLARCHVISION_draw_ROLLOUT () {
     Create_Input_Height = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Height" , Create_Input_Height, -100, 100, 1);    
 
     Create_Input_Volume = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);
+
+    if (ROLLOUT_child == 2) { // Meshes
+
+      Create_Poly_Degree = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Poly_Degree" , Create_Poly_Degree, 3, 24, 1), 1));
+      Create_Mesh_Poly = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Poly" , Create_Mesh_Poly, 0, 1, 1), 1));
+      Create_Mesh_Extrude = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Extrude" , Create_Mesh_Extrude, 0, 1, 1), 1));
+      Create_Mesh_Tri = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Tri" , Create_Mesh_Tri, 0, 1, 1), 1));
+      Create_Mesh_Quad = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Quad" , Create_Mesh_Quad, 0, 1, 1), 1));
+      
+      Create_Mesh_House = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_House" , Create_Mesh_House, 0, 1, 1), 1));
+      
+      Create_Mesh_Parametric = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Parametric" , Create_Mesh_Parametric, 0, 7, 1), 1));
+      
+      Create_Mesh_Person = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Person" , Create_Mesh_Person, 0, 1, 1), 1));
+      Create_Mesh_Plant = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Plant" , Create_Mesh_Plant, 0, 1, 1), 1));
+      Create_Mesh_Plant_Type = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Plant_Type" , Create_Mesh_Plant_Type, 0, Object2D_Filenames_TREES.length, 1), 1));
+      Create_Mesh_Person_Type = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Person_Type" , Create_Mesh_Person_Type, 0, Object2D_Filenames_PEOPLE.length, 1), 1));
+    }
     
-    if (ROLLOUT_child == 2) { // Solids
+    if (ROLLOUT_child == 3) { // Solids
     
       Create_Soild_House = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Soild_House" , Create_Soild_House, 0, 1, 1), 1));
 
@@ -16922,26 +16965,19 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Field_PositionStep = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_PositionStep" , Field_PositionStep, 1.25, 40, -2);
       Field_scale_U = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_U" , Field_scale_U, 50, 3200, -2);
       Field_scale_V = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_V" , Field_scale_V, 50, 3200, -2);  
-    }
-    
-    if (ROLLOUT_child == 3) { // Meshes
-
-      Create_Poly_Degree = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Poly_Degree" , Create_Poly_Degree, 3, 24, 1), 1));
-      Create_Mesh_Poly = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Poly" , Create_Mesh_Poly, 0, 1, 1), 1));
-      Create_Mesh_Extrude = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Extrude" , Create_Mesh_Extrude, 0, 1, 1), 1));
-      Create_Mesh_Tri = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Tri" , Create_Mesh_Tri, 0, 1, 1), 1));
-      Create_Mesh_Quad = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Quad" , Create_Mesh_Quad, 0, 1, 1), 1));
-      
-      Create_Mesh_House = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_House" , Create_Mesh_House, 0, 1, 1), 1));
-      
-      Create_Mesh_Parametric = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Parametric" , Create_Mesh_Parametric, 0, 7, 1), 1));
 
     }
     
+
     
-    MODEL3D_TESELATION = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "MODEL3D_TESELATION" , MODEL3D_TESELATION, 0, 5, 1), 1));
+    
+    
+    
+    MODEL2D_ERASE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "MODEL2D_ERASE" , MODEL2D_ERASE, 0, 1, 1), 1));
     
     MODEL3D_ERASE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "MODEL3D_ERASE" , MODEL3D_ERASE, 0, 1, 1), 1));
+    
+    MODEL3D_TESELATION = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "MODEL3D_TESELATION" , MODEL3D_TESELATION, 0, 5, 1), 1));
     
     Load_Default_Models = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Load_Default_Models" , Load_Default_Models, 0, MAX_Default_Models_Number, 1), 1));
     
