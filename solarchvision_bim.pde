@@ -16249,7 +16249,7 @@ void mouseClicked () {
     if (WIN3D_include == 1) {
       if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
   
-        if (WIN3D_View_Type == 1) {
+        //if (WIN3D_View_Type == 1) {
         
           float Image_X = X_clicked - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
           float Image_Y = Y_clicked - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
@@ -16260,86 +16260,6 @@ void mouseClicked () {
 
           float[] ray_end = SOLARCHVISION_calculate_Click3D (Image_X, Image_Y);
           
-          /*  
-          
-          // KEEP THIS FOR RENDER WINDOW!
-          
-          float[] ray_end = {0,0,0}; // Now it only works well when looking at the origin point. <<<<<<<<<<<<
-          //float[] ray_end = {WIN3D_X_coordinate,-WIN3D_Y_coordinate,WIN3D_Z_coordinate}; // ????
-      
-          float CAM_dist = dist(ray_start[0], ray_start[1], ray_start[2], ray_end[0], ray_end[1], ray_end[2]);
-      
-          println("____________________________");
-          println("Start:", ray_start[0], ray_start[1], ray_start[2]); 
-          println("End Center:", ray_end[0], ray_end[1], ray_end[2]);    
-          
-          ray_direction[0] = ray_end[0] - ray_start[0];
-          ray_direction[1] = ray_end[1] - ray_start[1];
-          ray_direction[2] = ray_end[2] - ray_start[2];
-          
-          ray_direction = fn_normalize(ray_direction);
-          
-          float[] vect = new float[3];
-          
-          float XY_angle = atan2_ang(ray_direction[1], ray_direction[0]); 
-         
-          float r = 90 - XY_angle; // we want to rotate to make the vetor in YZ plane.
-          
-          vect[0] = 0; //cos_ang(r) * ray_direction[0] - sin_ang(r) * ray_direction[1]; // should be close to zero!  
-          vect[1] = sin_ang(r) * ray_direction[0] + cos_ang(r) * ray_direction[1]; 
-          vect[2] = ray_direction[2]; 
-          
-          //println(nf(vect[0], 0,3), nf(vect[1], 0, 3), nf(vect[2], 0, 3));
-      
-          float[] V_up = new float[3];
-          
-          V_up[0] = 0;   
-          V_up[1] = -vect[2];
-          V_up[2] = vect[1];
-          
-          float[] camera_up = new float[3];
-          
-          camera_up[0] = V_up[0] * cos_ang(-r) - V_up[1] * sin_ang(-r); 
-          camera_up[1] = V_up[0] * sin_ang(-r) + V_up[1] * cos_ang(-r); 
-          camera_up[2] = V_up[2]; 
-          
-          println("UP:", nf(camera_up[0], 0,3), nf(camera_up[1], 0, 3), nf(camera_up[2], 0, 3));
-      
-          float[] V_right = new float[3];
-          
-          V_right[0] = 1;   
-          V_right[1] = 0;
-          V_right[2] = 0;
-          
-          float[] camera_right = new float[3];
-          
-          camera_right[0] = V_right[0] * cos_ang(-r) - V_right[1] * sin_ang(-r); 
-          camera_right[1] = V_right[0] * sin_ang(-r) + V_right[1] * cos_ang(-r); 
-          camera_right[2] = V_right[2]; 
-      
-          println("RIGHT:", nf(camera_right[0], 0,3), nf(camera_right[1], 0, 3), nf(camera_right[2], 0, 3));
-          
-          float camera_zoom = CAM_dist / (refScale * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)));       
-          
-          println("camera_zoom =", camera_zoom);
-      
-          ray_direction[0] = ray_end[0] - ray_start[0];
-          ray_direction[1] = ray_end[1] - ray_start[1];
-          ray_direction[2] = ray_end[2] - ray_start[2];
-      
-          // without normalization     
-          
-          ray_end[0] += camera_zoom * camera_right[0] * Image_X;
-          ray_end[1] += camera_zoom * camera_right[1] * Image_X;
-          ray_end[2] += camera_zoom * camera_right[2] * Image_X;
-          
-          ray_end[0] += camera_zoom * camera_up[0] * -Image_Y;
-          ray_end[1] += camera_zoom * camera_up[1] * -Image_Y;
-          ray_end[2] += camera_zoom * camera_up[2] * -Image_Y;
-          
-          */
-          
-          //-------------------------- NOW SURE ABOUT THIS : )
           ray_start[0] /= objects_scale;
           ray_start[1] /= objects_scale;
           ray_start[2] /= objects_scale;          
@@ -16348,12 +16268,9 @@ void mouseClicked () {
           ray_end[1] /= objects_scale;
           ray_end[2] /= objects_scale;
           
-          
           ray_direction[0] = ray_end[0] - ray_start[0];
           ray_direction[1] = ray_end[1] - ray_start[1];
           ray_direction[2] = ray_end[2] - ray_start[2];
-
-
           
           float max_dist = 2 * dist(ray_start[0], ray_start[1], ray_start[2], ray_end[0], ray_end[1], ray_end[2]);
           
@@ -16580,7 +16497,7 @@ void mouseClicked () {
           
           
           WIN3D_Update = 1;
-        }
+        //}
       }       
     }
     
@@ -18719,16 +18636,27 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 }
 
 
-float[] SOLARCHVISION_calculate_Click3D (float X_perspective, float Y_perspective) {
-
+float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
   
   float PNT_x = FLOAT_undefined;
   float PNT_y = FLOAT_undefined;
-  float PNT_z = 100;
-  
-  PNT_x = PNT_z * X_perspective / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
-  PNT_y = -PNT_z * Y_perspective / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
+  float PNT_z = FLOAT_undefined;
 
+  if (WIN3D_View_Type == 1) {
+    
+    PNT_z = 100;
+    
+    PNT_x = PNT_z * Image_X / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
+    PNT_y = -PNT_z * Image_Y / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
+  }
+  else {
+    float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
+
+    PNT_z = 200;
+
+    PNT_x = ZOOM * Image_X / (0.5 * WIN3D_scale3D);
+    PNT_y = ZOOM * -Image_Y / (0.5 * WIN3D_scale3D);
+  }
 
   float px, py, pz;
  
