@@ -18606,19 +18606,19 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           
           if (WIN3D_View_Type == 1) {
             
-            float X_perspective = (PNT_x / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
-            float Y_perspective = -(PNT_y / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
+            float Image_X = (PNT_x / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
+            float Image_Y = -(PNT_y / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
             
-            if (isInside(X_perspective, Y_perspective, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(X_perspective, Y_perspective);
+            if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
           }
           else {
             
             float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
 
-            float X_orthographic = (PNT_x / ZOOM) * (0.5 * WIN3D_scale3D);
-            float Y_orthographic = -(PNT_y / ZOOM) * (0.5 * WIN3D_scale3D);         
+            float Image_X = (PNT_x / ZOOM) * (0.5 * WIN3D_scale3D);
+            float Image_Y = -(PNT_y / ZOOM) * (0.5 * WIN3D_scale3D);         
             
-            if (isInside(X_orthographic, Y_orthographic, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(X_orthographic, Y_orthographic);
+            if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
           }
         }
       }
@@ -18647,12 +18647,12 @@ float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
     PNT_z = 100;
     
     PNT_x = PNT_z * Image_X / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
-    PNT_y = -PNT_z * Image_Y / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
+    PNT_y = PNT_z * -Image_Y / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
   }
   else {
     float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
 
-    PNT_z = 200;
+    PNT_z = refScale; // ?????????????????????
 
     PNT_x = ZOOM * Image_X / (0.5 * WIN3D_scale3D);
     PNT_y = ZOOM * -Image_Y / (0.5 * WIN3D_scale3D);
