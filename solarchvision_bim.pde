@@ -10991,8 +10991,10 @@ void WIN3D_keyPressed (KeyEvent e) {
         case 'O' :WIN3D_View_Type = 0; WIN3D_Update = 1; break;
         case 'o' :WIN3D_View_Type = 0; WIN3D_Update = 1; break;
         
-        case 'P' :WIN3D_View_Type = 1; WIN3D_Update = 1; break; 
-        case 'p' :WIN3D_View_Type = 1; WIN3D_Update = 1; break; 
+        case 'P' :WIN3D_ZOOM_coordinate = 60;
+                  WIN3D_View_Type = 1; WIN3D_Update = 1; break; 
+        case 'p' :WIN3D_ZOOM_coordinate = 60;
+                  WIN3D_View_Type = 1; WIN3D_Update = 1; break; 
   
         //case 'E' :WIN3D_EDGES_SHOW = (WIN3D_EDGES_SHOW + 1) % 2; WIN3D_Update = 1; break; 
         //case 'e' :WIN3D_EDGES_SHOW = (WIN3D_EDGES_SHOW + 1) % 2; WIN3D_Update = 1; break; 
@@ -18558,8 +18560,11 @@ void SOLARCHVISION_draw_Perspective_Internally () {
   
 
   noFill();
-  stroke(0,127,0,127);
-  strokeWeight(1);   
+  
+  //stroke(0,127,0,127);   
+  stroke(127); 
+  
+  strokeWeight(1);
 
   for (int f = 1; f < allFaces.length; f++) {
 
@@ -18658,7 +18663,7 @@ float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
 
   if (WIN3D_View_Type == 1) {
     
-    PNT_z = (0.5 * refScale) / tan(0.5 * PI / 3.0); //100; // the plane we need the results on
+    PNT_z = (0.5 * refScale) / tan(0.5 * PI / 3.0); //100; // for perspective: any value the plane we need the results on!
     
     PNT_x = PNT_z * Image_X / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
     PNT_y = PNT_z * -Image_Y / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
@@ -18666,7 +18671,7 @@ float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
   else {
     float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
 
-    PNT_z = (0.5 * refScale) / tan(0.5 * PI / 3.0);
+    PNT_z = (0.5 * refScale) / tan(0.5 * PI / 3.0); // for orthographic: should be this.
 
     PNT_x = ZOOM * Image_X / (0.5 * WIN3D_scale3D);
     PNT_y = ZOOM * -Image_Y / (0.5 * WIN3D_scale3D);
