@@ -237,7 +237,7 @@ int GRAPHS_record_JPG = 0;
 int GRAPHS_record_PDF = 0;
 
 int GRAPHS_i_start = 0;
-int GRAPHS_i_end = 11; //23;
+int GRAPHS_i_end = 23;
 
 int GRAPHS_j_start = 0;
 int GRAPHS_j_end = 2; //16; // Variable
@@ -17010,6 +17010,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
   else if (ROLLOUT_parent == 2) { // Time & Scenarios
     
     if (ROLLOUT_child == 1) { // Period
+      GRAPHS_i_start = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Start hour" , GRAPHS_i_start, 0, 23, 1), 1));
+      GRAPHS_i_end = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "End hour" , GRAPHS_i_end, 0, 23, 1), 1));
     
       GRAPHS_j_end = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Number of days to plot" , GRAPHS_j_end, 1, 61, 1), 1));
     
