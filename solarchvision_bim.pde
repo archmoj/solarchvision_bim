@@ -2002,7 +2002,7 @@ float refScale = 250;
 void SOLARCHVISION_draw_WIN3D () {
   
   
-  WIN3D_scale3D = WIN3D_X_View / refScale; // fits field of view to window's width
+  WIN3D_scale3D = WIN3D_Y_View / refScale; // fits field of view to window's height
   
   WIN3D_Diagrams.beginDraw();
   
@@ -11104,9 +11104,9 @@ void SOLARCHVISION_update_frame_layout () {
     WORLD_include = 0;
    
     WIN3D_CX_View = 0;
-    WIN3D_CY_View = -h_pixel / 2;
+    WIN3D_CY_View = 0;
     WIN3D_X_View = 3 * h_pixel;
-    WIN3D_Y_View = 3 * h_pixel;
+    WIN3D_Y_View = 2 * h_pixel;
     WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
     WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
  } 
@@ -11734,7 +11734,7 @@ float[][] allObject2D_XYZS = {{0,0,0}};
 int[] allObject2D_MAP = {0};
 int allObject2D_num = 0; 
 
-int Display_Trees_People = 0;
+int Display_Trees_People = 1;
 
 int addToVertices (float x, float y, float z) {
   
