@@ -13530,39 +13530,24 @@ void SOLARCHVISION_draw_field_image () {
     WIN3D_Diagrams.texture(Field_Image);    
     
     float c = Field_Elevation[display_Field_Image] * objects_scale;
-    
-    {
-      float a = -0.5 * Field_scale_U * objects_scale;
-      float b = -0.5 * Field_scale_V * objects_scale;    
+
+    for (int q = 0; q < 4; q++) {
+      
+      float qx = 0, qy = 0, u = 0, v = 0;
+      
+      if (q == 0)      {qx = -1; qy = -1; u = 0; v = Field_RES2;}
+      else if (q == 1) {qx = 1; qy = -1; u = Field_RES1; v = Field_RES2;}
+      else if (q == 2) {qx = 1; qy = 1; u = Field_RES1; v = 0;}
+      else if (q == 3) {qx = -1; qy = 1; u = 0; v = 0;}    
+      
+      float a = qx * 0.5 * Field_scale_U * objects_scale;
+      float b = qy * 0.5 * Field_scale_V * objects_scale;    
       float x = a * cos_ang(Field_Rotation[display_Field_Image]) - c * sin_ang(Field_Rotation[display_Field_Image]);
       float y = a * sin_ang(Field_Rotation[display_Field_Image]) + c * cos_ang(Field_Rotation[display_Field_Image]);
-      float z = b; 
-      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, 0, Field_RES2);
+      float z = b;
+      
+      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, u, v);
     }
-    {
-      float a = 0.5 * Field_scale_U * objects_scale;
-      float b = -0.5 * Field_scale_V * objects_scale;    
-      float x = a * cos_ang(Field_Rotation[display_Field_Image]) - c * sin_ang(Field_Rotation[display_Field_Image]);
-      float y = a * sin_ang(Field_Rotation[display_Field_Image]) + c * cos_ang(Field_Rotation[display_Field_Image]);
-      float z = b; 
-      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, Field_RES1, Field_RES2);
-    }  
-    {
-      float a = 0.5 * Field_scale_U * objects_scale;
-      float b = 0.5 * Field_scale_V * objects_scale;    
-      float x = a * cos_ang(Field_Rotation[display_Field_Image]) - c * sin_ang(Field_Rotation[display_Field_Image]);
-      float y = a * sin_ang(Field_Rotation[display_Field_Image]) + c * cos_ang(Field_Rotation[display_Field_Image]);
-      float z = b; 
-      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, Field_RES1, 0);
-    }  
-    {
-      float a = -0.5 * Field_scale_U * objects_scale;
-      float b = 0.5 * Field_scale_V * objects_scale;    
-      float x = a * cos_ang(Field_Rotation[display_Field_Image]) - c * sin_ang(Field_Rotation[display_Field_Image]);
-      float y = a * sin_ang(Field_Rotation[display_Field_Image]) + c * cos_ang(Field_Rotation[display_Field_Image]);
-      float z = b; 
-      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, 0, 0);
-    }  
     
     WIN3D_Diagrams.endShape(CLOSE);
   }
@@ -13572,40 +13557,25 @@ void SOLARCHVISION_draw_field_image () {
     WIN3D_Diagrams.texture(Field_Image);    
     
     float c = Field_Elevation[display_Field_Image] * objects_scale;
-    
-    {
-      float a = -0.5 * Field_scale_U * objects_scale;
-      float b = -0.5 * Field_scale_V * objects_scale;    
+
+    for (int q = 0; q < 4; q++) {
+      
+      float qx = 0, qy = 0, u = 0, v = 0;
+      
+      if (q == 0)      {qx = -1; qy = -1; u = 0; v = Field_RES2;}
+      else if (q == 1) {qx = 1; qy = -1; u = Field_RES1; v = Field_RES2;}
+      else if (q == 2) {qx = 1; qy = 1; u = Field_RES1; v = 0;}
+      else if (q == 3) {qx = -1; qy = 1; u = 0; v = 0;}    
+      
+      float a = qx * 0.5 * Field_scale_U * objects_scale;
+      float b = qy * 0.5 * Field_scale_V * objects_scale;    
       float x = c * cos_ang(Field_Rotation[display_Field_Image]) - b * sin_ang(Field_Rotation[display_Field_Image]);
       float y = c * sin_ang(Field_Rotation[display_Field_Image]) + b * cos_ang(Field_Rotation[display_Field_Image]);
       float z = a; 
-      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, 0 * WIN3D_scale3D, Field_RES2);
-    }
-    {
-      float a = 0.5 * Field_scale_U * objects_scale;
-      float b = -0.5 * Field_scale_V * objects_scale;    
-      float x = c * cos_ang(Field_Rotation[display_Field_Image]) - b * sin_ang(Field_Rotation[display_Field_Image]);
-      float y = c * sin_ang(Field_Rotation[display_Field_Image]) + b * cos_ang(Field_Rotation[display_Field_Image]);
-      float z = a; 
-      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, Field_RES1, Field_RES2);
-    }  
-    {
-      float a = 0.5 * Field_scale_U * objects_scale;
-      float b = 0.5 * Field_scale_V * objects_scale;    
-      float x = c * cos_ang(Field_Rotation[display_Field_Image]) - b * sin_ang(Field_Rotation[display_Field_Image]);
-      float y = c * sin_ang(Field_Rotation[display_Field_Image]) + b * cos_ang(Field_Rotation[display_Field_Image]);
-      float z = a; 
-      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, Field_RES1, 0);
-    }  
-    {
-      float a = -0.5 * Field_scale_U * objects_scale;
-      float b = 0.5 * Field_scale_V * objects_scale;    
-      float x = c * cos_ang(Field_Rotation[display_Field_Image]) - b * sin_ang(Field_Rotation[display_Field_Image]);
-      float y = c * sin_ang(Field_Rotation[display_Field_Image]) + b * cos_ang(Field_Rotation[display_Field_Image]);
-      float z = a; 
-      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, 0, 0);
-    }  
-    
+      
+      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, u, v);
+    }    
+
     WIN3D_Diagrams.endShape(CLOSE);
   }
 
