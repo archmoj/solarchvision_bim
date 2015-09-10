@@ -17995,7 +17995,7 @@ void RenderShadowsOnUrbanPlane() {
           TREES_Diagrams.rectMode(CORNER);
           TREES_Diagrams.rect(0, 0, RES1, RES2);
           
-          if ((SHD == 1) && (SunR[3] > 0)) {
+          if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[3] > 0)) { // i.e. one-sided plane
   
             TREES_Diagrams.pushMatrix();
             TREES_Diagrams.translate(Solarch_RES1 / 2, Solarch_RES2 / 2);            
@@ -18187,7 +18187,7 @@ void RenderShadowsOnUrbanPlane() {
           SHADOW_Diagrams.rectMode(CORNER);
           SHADOW_Diagrams.rect(0, 0, RES1, RES2);
   
-          if ((SHD == 1) && (SunR[3] > 0)) {
+          if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[3] > 0)) { // i.e. one-sided plane
   
             SHADOW_Diagrams.pushMatrix();
             SHADOW_Diagrams.translate(Solarch_RES1 / 2, Solarch_RES2 / 2);            
@@ -18395,7 +18395,7 @@ void RenderShadowsOnUrbanPlane() {
         TREES_Diagrams.rectMode(CORNER);
         TREES_Diagrams.rect(0, 0, RES1, RES2);
         
-        if ((SHD == 1) && (SunR[3] > 0)) {
+        if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[3] > 0)) { // i.e. one-sided plane
 
           TREES_Diagrams.pushMatrix();
           TREES_Diagrams.translate(Solarch_RES1 / 2, Solarch_RES2 / 2);            
@@ -18588,7 +18588,7 @@ void RenderShadowsOnUrbanPlane() {
         SHADOW_Diagrams.rectMode(CORNER);
         SHADOW_Diagrams.rect(0, 0, RES1, RES2);
 
-        if ((SHD == 1) && (SunR[3] > 0)) {
+        if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[3] > 0)) { // i.e. one-sided plane
 
           SHADOW_Diagrams.pushMatrix();
           SHADOW_Diagrams.translate(Solarch_RES1 / 2, Solarch_RES2 / 2);            
