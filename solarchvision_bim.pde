@@ -10863,10 +10863,12 @@ void WIN3D_keyPressed (KeyEvent e) {
       switch(key) {
 
         case ']' :display_Field_Image = (display_Field_Image + 1) % 4; 
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
                   break;
         case '[' :display_Field_Image = (display_Field_Image + 4 - 1) % 4;
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1; 
                   break;        
         
         case '0' :Field_Elevation[display_Field_Image] = 0; 
@@ -13551,11 +13553,13 @@ void SOLARCHVISION_draw_solarch_image () {
   WIN3D_Diagrams.stroke(0);
   WIN3D_Diagrams.fill(127,127,127);    
   
-  if (display_Solarch_Image == 1) {  
+  display_Solarch_Image = display_Field_Image; // <<<<<
+  
+  if (display_Solarch_Image != 0) {  
     WIN3D_Diagrams.beginShape();
     
-    Solarch_Rotation = Field_Rotation[display_Field_Image];
-    Solarch_Elevation = 0.1 + Field_Elevation[display_Field_Image];
+    Solarch_Rotation = Field_Rotation[display_Solarch_Image];
+    Solarch_Elevation = 0.1 + Field_Elevation[display_Solarch_Image];
     Solarch_scale_U = Field_scale_U; 
     Solarch_scale_V = Field_scale_V;        
 
