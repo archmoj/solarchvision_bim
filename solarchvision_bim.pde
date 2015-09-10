@@ -18154,7 +18154,7 @@ void RenderShadowsOnUrbanPlane() {
                             TY[q] = px * sin_ang(-Solarch_Rotation) + py * cos_ang(-Solarch_Rotation);
                           }                            
         
-                          TREES_Diagrams.vertex(TX[q] * Shades_scaleX, -TY[q] * Shades_scaleY, TU[q], TV[q]);
+                          //TREES_Diagrams.vertex(TX[q] * Shades_scaleX, -TY[q] * Shades_scaleY, TU[q], TV[q]);
                         }
                       }
                       
@@ -18554,7 +18554,7 @@ void RenderShadowsOnUrbanPlane() {
                           TY[q] = px * sin_ang(-Solarch_Rotation) + py * cos_ang(-Solarch_Rotation);
                         }      
       
-                        TREES_Diagrams.vertex(TX[q] * Shades_scaleX, -TY[q] * Shades_scaleY, TU[q], TV[q]);
+                        //TREES_Diagrams.vertex(TX[q] * Shades_scaleX, -TY[q] * Shades_scaleY, TU[q], TV[q]);
                       }
                     }
                     
