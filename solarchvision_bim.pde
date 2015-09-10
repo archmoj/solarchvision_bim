@@ -17959,7 +17959,7 @@ void RenderShadowsOnUrbanPlane() {
           float c = SunR_Rotated[3];
 
           SunR_Rotated[1] = a;
-          SunR_Rotated[2] = c; // = -c;
+          SunR_Rotated[2] = c;
           SunR_Rotated[3] = -b;
         }
         else if (display_Solarch_Image == 3) {
@@ -18016,7 +18016,7 @@ void RenderShadowsOnUrbanPlane() {
 
                 float r = allObject2D_XYZS[f][3] * 0.5;
                 
-                float t = atan2(SunR_Rotated[2], SunR_Rotated[1]) + 0.5 * PI; 
+                float t = atan2(SunR[2], SunR[1]) + 0.5 * PI; 
                 
                 if (allObject2D_MAP[f] < 0) t += PI;         
                
@@ -18046,6 +18046,21 @@ void RenderShadowsOnUrbanPlane() {
                     TU[1] = w; TV[1] = h;
                     TU[2] = w; TV[2] = 0;
                     TU[3] = 0; TV[3] = 0;   
+                    
+                    if (display_Solarch_Image == 2) {
+                      for (int q = 0; q < 4; q++) {
+                        float a = TX[q];
+                        float b = TY[q];
+                        float c = TZ[q];
+                      
+                        TX[q] = a;      
+                        TY[q] = c;      
+                        TZ[q] = -b;
+                      } 
+                    }
+                    else if (display_Solarch_Image == 3) {
+                      
+                    }                        
   
                     if ((z < Solarch_Elevation) && (Solarch_Elevation < z + 2 * r)) {
                       
@@ -18107,6 +18122,21 @@ void RenderShadowsOnUrbanPlane() {
                       TU[1] = w; TV[1] = h * ratio;
                       TU[2] = w; TV[2] = 0;
                       TU[3] = 0; TV[3] = 0;   
+
+                      if (display_Solarch_Image == 2) {
+                        for (int q = 0; q < 4; q++) {
+                          float a = TX[q];
+                          float b = TY[q];
+                          float c = TZ[q];
+                        
+                          TX[q] = a;      
+                          TY[q] = c;      
+                          TZ[q] = -b;
+                        } 
+                      }
+                      else if (display_Solarch_Image == 3) {
+                        
+                      }     
     
                       if (z + 2 * r * ratio > Solarch_Elevation) {
                       
@@ -18195,7 +18225,7 @@ void RenderShadowsOnUrbanPlane() {
                     float c = subFace_Rotated[s][2];
                     
                     subFace_Rotated[s][0] = a;      
-                    subFace_Rotated[s][1] = c; // = -c;      
+                    subFace_Rotated[s][1] = c;      
                     subFace_Rotated[s][2] = -b;      
                   }
                   else if (display_Solarch_Image == 3) {
@@ -18346,7 +18376,7 @@ void RenderShadowsOnUrbanPlane() {
           float c = SunR_Rotated[3];
 
           SunR_Rotated[1] = a;
-          SunR_Rotated[2] = c; // = -c;
+          SunR_Rotated[2] = c;
           SunR_Rotated[3] = -b;
         }
         else if (display_Solarch_Image == 3) {
@@ -18386,7 +18416,7 @@ void RenderShadowsOnUrbanPlane() {
 
               float r = allObject2D_XYZS[f][3] * 0.5;
               
-              float t = atan2(SunR_Rotated[2], SunR_Rotated[1]) + 0.5 * PI; 
+              float t = atan2(SunR[2], SunR[1]) + 0.5 * PI;
               
               if (allObject2D_MAP[f] < 0) t += PI;         
              
@@ -18416,6 +18446,21 @@ void RenderShadowsOnUrbanPlane() {
                   TU[1] = w; TV[1] = h;
                   TU[2] = w; TV[2] = 0;
                   TU[3] = 0; TV[3] = 0;   
+
+                  if (display_Solarch_Image == 2) {
+                    for (int q = 0; q < 4; q++) {
+                      float a = TX[q];
+                      float b = TY[q];
+                      float c = TZ[q];
+                    
+                      TX[q] = a;      
+                      TY[q] = c;      
+                      TZ[q] = -b;
+                    } 
+                  }
+                  else if (display_Solarch_Image == 3) {
+                    
+                  }     
 
                   if ((z < Solarch_Elevation) && (Solarch_Elevation < z + 2 * r)) {
                     
@@ -18477,6 +18522,21 @@ void RenderShadowsOnUrbanPlane() {
                     TU[1] = w; TV[1] = h * ratio;
                     TU[2] = w; TV[2] = 0;
                     TU[3] = 0; TV[3] = 0;   
+
+                    if (display_Solarch_Image == 2) {
+                      for (int q = 0; q < 4; q++) {
+                        float a = TX[q];
+                        float b = TY[q];
+                        float c = TZ[q];
+                      
+                        TX[q] = a;      
+                        TY[q] = c;      
+                        TZ[q] = -b;
+                      } 
+                    }
+                    else if (display_Solarch_Image == 3) {
+                      
+                    }     
   
                     if (z + 2 * r * ratio > Solarch_Elevation) {
                     
@@ -18566,7 +18626,7 @@ void RenderShadowsOnUrbanPlane() {
                   float c = subFace_Rotated[s][2];
                   
                   subFace_Rotated[s][0] = a;      
-                  subFace_Rotated[s][1] = c; // = -c;      
+                  subFace_Rotated[s][1] = c;      
                   subFace_Rotated[s][2] = -b;      
                 }
                 else if (display_Solarch_Image == 3) {
