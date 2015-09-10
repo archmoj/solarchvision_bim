@@ -13498,7 +13498,7 @@ void SOLARCHVISION_draw_field_image () {
   WIN3D_Diagrams.stroke(0);
   WIN3D_Diagrams.fill(127,255,127);    
   
-  if (display_Field_Image == 1) {
+  if (display_Field_Image != 0) {
     WIN3D_Diagrams.beginShape();
     WIN3D_Diagrams.texture(Field_Image);    
     
@@ -13515,9 +13515,25 @@ void SOLARCHVISION_draw_field_image () {
       
       float a = qx * 0.5 * Field_scale_U * objects_scale;
       float b = qy * 0.5 * Field_scale_V * objects_scale;    
-      float x = a * cos_ang(Field_Rotation[display_Field_Image]) - b * sin_ang(Field_Rotation[display_Field_Image]);
-      float y = a * sin_ang(Field_Rotation[display_Field_Image]) + b * cos_ang(Field_Rotation[display_Field_Image]);
-      float z = c; 
+      
+      float x = 0, y = 0, z = 0;
+      
+      if (display_Field_Image == 1) {
+        x = a * cos_ang(Field_Rotation[display_Field_Image]) - b * sin_ang(Field_Rotation[display_Field_Image]);
+        y = a * sin_ang(Field_Rotation[display_Field_Image]) + b * cos_ang(Field_Rotation[display_Field_Image]);
+        z = c;         
+      }
+      else if (display_Field_Image == 2) {
+        x = a * cos_ang(Field_Rotation[display_Field_Image]) - c * sin_ang(Field_Rotation[display_Field_Image]);
+        y = a * sin_ang(Field_Rotation[display_Field_Image]) + c * cos_ang(Field_Rotation[display_Field_Image]);
+        z = b;        
+      }
+      else if (display_Field_Image == 3) {
+        x = c * cos_ang(Field_Rotation[display_Field_Image]) - b * sin_ang(Field_Rotation[display_Field_Image]);
+        y = c * sin_ang(Field_Rotation[display_Field_Image]) + b * cos_ang(Field_Rotation[display_Field_Image]);
+        z = a;    
+      }      
+
       
       WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, u, v);
     }
@@ -13525,60 +13541,6 @@ void SOLARCHVISION_draw_field_image () {
     WIN3D_Diagrams.endShape(CLOSE);
   }
  
-  else if (display_Field_Image == 2) {
-    WIN3D_Diagrams.beginShape();
-    WIN3D_Diagrams.texture(Field_Image);    
-    
-    float c = Field_Elevation[display_Field_Image] * objects_scale;
-
-    for (int q = 0; q < 4; q++) {
-      
-      float qx = 0, qy = 0, u = 0, v = 0;
-      
-      if (q == 0)      {qx = -1; qy = -1; u = 0; v = Field_RES2;}
-      else if (q == 1) {qx = 1; qy = -1; u = Field_RES1; v = Field_RES2;}
-      else if (q == 2) {qx = 1; qy = 1; u = Field_RES1; v = 0;}
-      else if (q == 3) {qx = -1; qy = 1; u = 0; v = 0;}    
-      
-      float a = qx * 0.5 * Field_scale_U * objects_scale;
-      float b = qy * 0.5 * Field_scale_V * objects_scale;    
-      float x = a * cos_ang(Field_Rotation[display_Field_Image]) - c * sin_ang(Field_Rotation[display_Field_Image]);
-      float y = a * sin_ang(Field_Rotation[display_Field_Image]) + c * cos_ang(Field_Rotation[display_Field_Image]);
-      float z = b;
-      
-      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, u, v);
-    }
-    
-    WIN3D_Diagrams.endShape(CLOSE);
-  }
-
-  else if (display_Field_Image == 3) {
-    WIN3D_Diagrams.beginShape();
-    WIN3D_Diagrams.texture(Field_Image);    
-    
-    float c = Field_Elevation[display_Field_Image] * objects_scale;
-
-    for (int q = 0; q < 4; q++) {
-      
-      float qx = 0, qy = 0, u = 0, v = 0;
-      
-      if (q == 0)      {qx = -1; qy = -1; u = 0; v = Field_RES2;}
-      else if (q == 1) {qx = 1; qy = -1; u = Field_RES1; v = Field_RES2;}
-      else if (q == 2) {qx = 1; qy = 1; u = Field_RES1; v = 0;}
-      else if (q == 3) {qx = -1; qy = 1; u = 0; v = 0;}    
-      
-      float a = qx * 0.5 * Field_scale_U * objects_scale;
-      float b = qy * 0.5 * Field_scale_V * objects_scale;    
-      float x = c * cos_ang(Field_Rotation[display_Field_Image]) - b * sin_ang(Field_Rotation[display_Field_Image]);
-      float y = c * sin_ang(Field_Rotation[display_Field_Image]) + b * cos_ang(Field_Rotation[display_Field_Image]);
-      float z = a; 
-      
-      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, u, v);
-    }    
-
-    WIN3D_Diagrams.endShape(CLOSE);
-  }
-
 }
 
 
