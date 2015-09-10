@@ -12886,7 +12886,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
     SOLARCHVISION_add_2Dobjects_onLand(); 
   }    
   else {
-    //SOLARCHVISION_add_2Dobjects(100, 50, 0); // (n, r, z)
+    SOLARCHVISION_add_2Dobjects(100, 50, 0); // (n, r, z)
   }  
 
 
