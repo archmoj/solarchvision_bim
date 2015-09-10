@@ -13580,68 +13580,50 @@ void SOLARCHVISION_draw_solarch_image () {
     float minV = 0.5 * Solarch_RES2 - (0.5 * Solarch_RES2 * dV);
     float maxV = 0.5 * Solarch_RES2 + (0.5 * Solarch_RES2 * dV);
 
+    //float c = HeightAboveGround * objects_scale; // <<< or zero i.e. height of the plane in 3D  // ?????????
+    float c = Solarch_Elevation * objects_scale; 
 
+    if (display_Solarch_Image != 0) {
+      WIN3D_Diagrams.beginShape();
+      WIN3D_Diagrams.texture(Solarch_Image);    
     
-    //float c = HeightAboveGround * objects_scale; // <<< or zero i.e. height of the plane in 3D
-    float c = Solarch_Elevation * objects_scale;
+      for (int q = 0; q < 4; q++) {
+        
+        float qx = 0, qy = 0, u = 0, v = 0;
+        
+        if (q == 0)      {qx = -1; qy = -1; u = minU; v = maxV;}
+        else if (q == 1) {qx = 1; qy = -1; u = maxU; v = maxV;}
+        else if (q == 2) {qx = 1; qy = 1; u = maxU; v = minV;}
+        else if (q == 3) {qx = -1; qy = 1; u = minU; v = minV;}    
+        
+        float a = qx * 0.5 * Solarch_scale_U * objects_scale;
+        float b = qy * 0.5 * Solarch_scale_V * objects_scale;    
+        
+        float x = 0, y = 0, z = 0;
+        
+        if (display_Solarch_Image == 1) {
+          x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
+          y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
+          z = c;         
+        }
+        else if (display_Solarch_Image == 2) {
+          x = a * cos_ang(Solarch_Rotation) - c * sin_ang(Solarch_Rotation);
+          y = a * sin_ang(Solarch_Rotation) + c * cos_ang(Solarch_Rotation);
+          z = b;        
+        }
+        else if (display_Solarch_Image == 3) {
+          x = c * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
+          y = c * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
+          z = a;    
+        }      
     
-    {
-      float a = -0.5 * Solarch_scale_U * objects_scale;
-      float b = -0.5 * Solarch_scale_V * objects_scale;    
-      float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
-      float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
-      float z = c; 
-      
-      if (display_solarch_texture == 1) {
-        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, minU, maxV);
-      }
-      else {
-        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D);
-      }
-    }
-    {
-      float a = 0.5 * Solarch_scale_U * objects_scale;
-      float b = -0.5 * Solarch_scale_V * objects_scale;    
-      float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
-      float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
-      float z = c;  
-      
-      if (display_solarch_texture == 1) {
-        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, maxU, maxV);
-      }
-      else {
-        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D);
-      }
-    }  
-    {
-      float a = 0.5 * Solarch_scale_U * objects_scale;
-      float b = 0.5 * Solarch_scale_V * objects_scale;    
-      float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
-      float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
-      float z = c;  
-      
-      if (display_solarch_texture == 1) {
-        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, maxU, minV);
-      }
-      else {
-        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D);
-      }
-
-    }  
-    {
-      float a = -0.5 * Solarch_scale_U * objects_scale;
-      float b = 0.5 * Solarch_scale_V * objects_scale;    
-      float x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
-      float y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
-      float z = c; 
-     
-      if (display_solarch_texture == 1) { 
-        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, minU, minV);
-      }
-      else {
-        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D);
-      }
-
+        if (display_solarch_texture == 1) {
+          WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, u, v);
+        }
+        else {
+          WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D);
+        }     
+      }   
     }  
     
     WIN3D_Diagrams.endShape(CLOSE);
