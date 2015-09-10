@@ -18260,18 +18260,27 @@ void RenderShadowsOnUrbanPlane() {
                 SHADOW_Diagrams.beginShape();
                 
                 for (int s = 0; s < subFace.length; s++) {
-
-                  float x = subFace[s][0];
-                  float y = subFace[s][1];
-                  float z = subFace[s][2];
-
+                  
+                  float x = 0, y = 0, z = 0;
+                  
+                  
                   if (display_Solarch_Image == 1) {
+                    x = subFace[s][0];
+                    y = subFace[s][1];
+                    z = subFace[s][2];
+                    
                     z -= Solarch_Elevation;
                     x -= z * SunR[1] / SunR[3];
                     y -= z * SunR[2] / SunR[3];    
                   }
                   else if (display_Solarch_Image == 2) {
-     
+                    x = subFace[s][0];
+                    y = -subFace[s][2];
+                    z = subFace[s][1];                    
+                    
+                    z -= Solarch_Elevation;
+                    x -= z * SunR[1] / -SunR[2];
+                    y -= z * SunR[3] / -SunR[2];         
                   }
                   else if (display_Solarch_Image == 3) {
                     
