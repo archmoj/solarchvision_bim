@@ -2074,9 +2074,9 @@ void SOLARCHVISION_draw_WIN3D () {
   
   SOLARCHVISION_draw_land();
   
-  //SOLARCHVISION_draw_solarch_image(); 
+  SOLARCHVISION_draw_solarch_image(); 
   
-  SOLARCHVISION_draw_field_image();
+  //SOLARCHVISION_draw_field_image();
   
   SOLARCHVISION_draw_3Dobjects();
 
@@ -13561,14 +13561,16 @@ void SOLARCHVISION_draw_solarch_image () {
 
     int display_solarch_texture = 0;
     
-    if (Solarch_Rotation == Rendered_Solarch_Rotation) {      
-      if (Solarch_Elevation == Rendered_Solarch_Elevation) {
-      
-        display_solarch_texture = 1;
+    if (Rendered_Solarch_Type == display_Solarch_Image) {
+      if (Rendered_Solarch_Rotation == Solarch_Rotation) {      
+        if (Rendered_Solarch_Elevation == Solarch_Elevation) {
         
-        WIN3D_Diagrams.texture(Solarch_Image);
-      }
-    }    
+          display_solarch_texture = 1;
+          
+          WIN3D_Diagrams.texture(Solarch_Image);
+        }
+      } 
+    }   
 
     float dU = Solarch_scale_U / Rendered_Solarch_scale_U;
     float dV = Solarch_scale_V / Rendered_Solarch_scale_V;
@@ -15141,7 +15143,7 @@ float Solarch_Elevation;
 
 PImage Solarch_Image = createImage(Solarch_RES1, Solarch_RES2, RGB);
 
-int display_Solarch_Image = 1; // 0:off, 1:horizontal
+int display_Solarch_Image = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
 
 void SOLARCHVISION_calculate_ParametricGeometries_Solarch () {
 
@@ -16847,7 +16849,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       SKY3D_scale = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_scale" , SKY3D_scale, 100, 10000, -2);
       SKY3D_TESELATION = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_TESELATION" , SKY3D_TESELATION, 0, 5, 1), 1));
 
-      display_Solarch_Image = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "display_Solarch_Image" , display_Solarch_Image, 0, 1, 1), 1));      
+      display_Solarch_Image = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "display_Solarch_Image" , display_Solarch_Image, 0, 4, 1), 1));      
       
     }
     
@@ -17999,10 +18001,12 @@ float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
   return return_array;
 }
 
+int Rendered_Solarch_Type = -1;
 float Rendered_Solarch_scale_U = FLOAT_undefined;
 float Rendered_Solarch_scale_V = FLOAT_undefined;
 float Rendered_Solarch_Elevation = FLOAT_undefined;
 float Rendered_Solarch_Rotation = FLOAT_undefined;
+ 
 
 String defaultSceneName = "Complex";
                   
@@ -18016,12 +18020,13 @@ void RenderShadowsOnUrbanPlane() {
   Solarch_Elevation = 0.1 + Field_Elevation[display_Field_Image];
   Solarch_scale_U = Field_scale_U; 
   Solarch_scale_V = Field_scale_V;
-  if (display_Field_Image == 0) display_Solarch_Image = 1;  
   
+  Rendered_Solarch_Type = display_Solarch_Image;
   Rendered_Solarch_scale_U = Solarch_scale_U;
   Rendered_Solarch_scale_V = Solarch_scale_V;
   Rendered_Solarch_Elevation = Solarch_Elevation;
   Rendered_Solarch_Rotation = Solarch_Rotation;
+  
 
   int RES1 = Solarch_RES1;
   int RES2 = Solarch_RES2;
