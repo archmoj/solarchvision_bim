@@ -17960,7 +17960,7 @@ void RenderShadowsOnUrbanPlane() {
 
           SunR_Rotated[1] = a;
           SunR_Rotated[2] = c; // = -c;
-          SunR_Rotated[3] = b;
+          SunR_Rotated[3] = -b;
         }
         else if (display_Solarch_Image == 3) {
         
@@ -18196,7 +18196,7 @@ void RenderShadowsOnUrbanPlane() {
                     
                     subFace_Rotated[s][0] = a;      
                     subFace_Rotated[s][1] = c; // = -c;      
-                    subFace_Rotated[s][2] = b;      
+                    subFace_Rotated[s][2] = -b;      
                   }
                   else if (display_Solarch_Image == 3) {
                     
@@ -18347,7 +18347,7 @@ void RenderShadowsOnUrbanPlane() {
 
           SunR_Rotated[1] = a;
           SunR_Rotated[2] = c; // = -c;
-          SunR_Rotated[3] = b;
+          SunR_Rotated[3] = -b;
         }
         else if (display_Solarch_Image == 3) {
         
@@ -18567,7 +18567,7 @@ void RenderShadowsOnUrbanPlane() {
                   
                   subFace_Rotated[s][0] = a;      
                   subFace_Rotated[s][1] = c; // = -c;      
-                  subFace_Rotated[s][2] = b;      
+                  subFace_Rotated[s][2] = -b;      
                 }
                 else if (display_Solarch_Image == 3) {
                   
@@ -18782,7 +18782,7 @@ void SOLARCHVISION_draw_solarch_image () {
         }
         else if (display_Solarch_Image == 2) {
           x = a * cos_ang(Solarch_Rotation) - c * sin_ang(Solarch_Rotation);
-          y = a * sin_ang(Solarch_Rotation) + c * cos_ang(Solarch_Rotation);
+          y = -(a * sin_ang(Solarch_Rotation) + c * cos_ang(Solarch_Rotation));
           z = b;       
         }
         else if (display_Solarch_Image == 3) {
