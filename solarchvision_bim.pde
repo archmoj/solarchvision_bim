@@ -18256,8 +18256,8 @@ void RenderShadowsOnUrbanPlane() {
                 for (int s = 0; s < subFace.length; s++) {
 
                   float z = subFace[s][2] - Solarch_Elevation;
-                  float x = (subFace[s][0] - z * SunR[1] / SunR[3]);
-                  float y = (subFace[s][1] - z * SunR[2] / SunR[3]);
+                  float x = subFace[s][0] - z * SunR[1] / SunR[3];
+                  float y = subFace[s][1] - z * SunR[2] / SunR[3];
                     
                   if (z >= 0) {
                     
@@ -18272,12 +18272,12 @@ void RenderShadowsOnUrbanPlane() {
                   else {
                     int s_next = (s + 1) % subFace.length;
                     int s_prev = (s + subFace.length - 1) % subFace.length;         
-         
-                    float z_prev = subFace[s_prev][2] - Solarch_Elevation;
-                    if (z_prev > 0) { 
-                      float x_prev = (subFace[s_prev][0] - z_prev * SunR[1] / SunR[3]);
-                      float y_prev = (subFace[s_prev][1] - z_prev * SunR[2] / SunR[3]);
 
+                    float x_prev = subFace[s_prev][0] - z_prev * SunR[1] / SunR[3];
+                    float y_prev = subFace[s_prev][1] - z_prev * SunR[2] / SunR[3];
+                    float z_prev = subFace[s_prev][2] - Solarch_Elevation;
+                      
+                    if (z_prev > 0) { 
                       float ratio = z_prev / (z_prev - z);
                       
                       float x_trim = x_prev * (1 - ratio) + x * ratio;
@@ -18292,11 +18292,11 @@ void RenderShadowsOnUrbanPlane() {
                       SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
                     }
 
+                    float x_next = subFace[s_next][0] - z_next * SunR[1] / SunR[3];
+                    float y_next = subFace[s_next][1] - z_next * SunR[2] / SunR[3];
                     float z_next = subFace[s_next][2] - Solarch_Elevation;
-                    if (z_next > 0) { 
-                      float x_next = (subFace[s_next][0] - z_next * SunR[1] / SunR[3]);
-                      float y_next = (subFace[s_next][1] - z_next * SunR[2] / SunR[3]);
 
+                    if (z_next > 0) { 
                       float ratio = z_next / (z_next - z);
                       
                       float x_trim = x_next * (1 - ratio) + x * ratio;
@@ -18586,8 +18586,8 @@ void RenderShadowsOnUrbanPlane() {
               for (int s = 0; s < subFace.length; s++) {
 
                 float z = subFace[s][2] - Solarch_Elevation;
-                float x = (subFace[s][0] - z * SunR[1] / SunR[3]);
-                float y = (subFace[s][1] - z * SunR[2] / SunR[3]);
+                float x = subFace[s][0] - z * SunR[1] / SunR[3];
+                float y = subFace[s][1] - z * SunR[2] / SunR[3];
                   
                 if (z >= 0) {
                   float px = x;
@@ -18601,12 +18601,12 @@ void RenderShadowsOnUrbanPlane() {
                 else {
                   int s_next = (s + 1) % subFace.length;
                   int s_prev = (s + subFace.length - 1) % subFace.length;         
-       
+                  
+                  float x_prev = subFace[s_prev][0] - z_prev * SunR[1] / SunR[3];
+                  float y_prev = subFace[s_prev][1] - z_prev * SunR[2] / SunR[3];       
                   float z_prev = subFace[s_prev][2] - Solarch_Elevation;
+                  
                   if (z_prev > 0) { 
-                    float x_prev = (subFace[s_prev][0] - z_prev * SunR[1] / SunR[3]);
-                    float y_prev = (subFace[s_prev][1] - z_prev * SunR[2] / SunR[3]);
-
                     float ratio = z_prev / (z_prev - z);
                     
                     float x_trim = x_prev * (1 - ratio) + x * ratio;
@@ -18621,11 +18621,11 @@ void RenderShadowsOnUrbanPlane() {
                     SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
                   }
 
+                  float x_next = subFace[s_next][0] - z_next * SunR[1] / SunR[3];
+                  float y_next = subFace[s_next][1] - z_next * SunR[2] / SunR[3];
                   float z_next = subFace[s_next][2] - Solarch_Elevation;
+                  
                   if (z_next > 0) { 
-                    float x_next = (subFace[s_next][0] - z_next * SunR[1] / SunR[3]);
-                    float y_next = (subFace[s_next][1] - z_next * SunR[2] / SunR[3]);
-
                     float ratio = z_next / (z_next - z);
                     
                     float x_trim = x_next * (1 - ratio) + x * ratio;
