@@ -13548,91 +13548,7 @@ void SOLARCHVISION_draw_field_image () {
 
 
 
-void SOLARCHVISION_draw_solarch_image () {
 
-  WIN3D_Diagrams.stroke(0);
-  WIN3D_Diagrams.fill(127,127,127);    
-  
-  display_Solarch_Image = display_Field_Image; // <<<<<
-  
-  if (display_Solarch_Image != 0) {  
-    WIN3D_Diagrams.beginShape();
-    
-    Solarch_Rotation = Field_Rotation[display_Solarch_Image];
-    Solarch_Elevation = 0.1 + Field_Elevation[display_Solarch_Image];
-    Solarch_scale_U = Field_scale_U; 
-    Solarch_scale_V = Field_scale_V;        
-
-    int display_solarch_texture = 0;
-    
-    if (Rendered_Solarch_Type == display_Solarch_Image) {
-      if (Rendered_Solarch_Rotation == Solarch_Rotation) {      
-        if (Rendered_Solarch_Elevation == Solarch_Elevation) {
-        
-          display_solarch_texture = 1;
-          
-          WIN3D_Diagrams.texture(Solarch_Image);
-        }
-      } 
-    }   
-
-    float dU = Solarch_scale_U / Rendered_Solarch_scale_U;
-    float dV = Solarch_scale_V / Rendered_Solarch_scale_V;
-    
-    float minU = 0.5 * Solarch_RES1 - (0.5 * Solarch_RES1 * dU);
-    float maxU = 0.5 * Solarch_RES1 + (0.5 * Solarch_RES1 * dU);
-    float minV = 0.5 * Solarch_RES2 - (0.5 * Solarch_RES2 * dV);
-    float maxV = 0.5 * Solarch_RES2 + (0.5 * Solarch_RES2 * dV);
-
-    //float c = HeightAboveGround * objects_scale; // <<< or zero i.e. height of the plane in 3D  // ?????????
-    float c = Solarch_Elevation * objects_scale; 
-
-    if (display_Solarch_Image != 0) {
-      WIN3D_Diagrams.beginShape();
-      WIN3D_Diagrams.texture(Solarch_Image);    
-    
-      for (int q = 0; q < 4; q++) {
-        
-        float qx = 0, qy = 0, u = 0, v = 0;
-        
-        if (q == 0)      {qx = -1; qy = -1; u = minU; v = maxV;}
-        else if (q == 1) {qx = 1; qy = -1; u = maxU; v = maxV;}
-        else if (q == 2) {qx = 1; qy = 1; u = maxU; v = minV;}
-        else if (q == 3) {qx = -1; qy = 1; u = minU; v = minV;}    
-        
-        float a = qx * 0.5 * Solarch_scale_U * objects_scale;
-        float b = qy * 0.5 * Solarch_scale_V * objects_scale;    
-        
-        float x = 0, y = 0, z = 0;
-        
-        if (display_Solarch_Image == 1) {
-          x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
-          y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
-          z = c;         
-        }
-        else if (display_Solarch_Image == 2) {
-          x = a * cos_ang(Solarch_Rotation) - c * sin_ang(Solarch_Rotation);
-          y = a * sin_ang(Solarch_Rotation) + c * cos_ang(Solarch_Rotation);
-          z = b;        
-        }
-        else if (display_Solarch_Image == 3) {
-          x = c * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
-          y = c * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
-          z = a;    
-        }      
-    
-        if (display_solarch_texture == 1) {
-          WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, u, v);
-        }
-        else {
-          WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D);
-        }     
-      }   
-    }  
-    
-    WIN3D_Diagrams.endShape(CLOSE);
-  }
-}
 
 void SOLARCHVISION_draw_3Dobjects () {
 
@@ -18035,6 +17951,20 @@ void RenderShadowsOnUrbanPlane() {
   
         float HOUR_ANGLE = i; 
         float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+        float[] SunR_Rotated = SunR; 
+        
+        if (display_Solarch_Image == 2) {
+          float a = SunR_Rotated[1];
+          float b = SunR_Rotated[2];
+          float c = SunR_Rotated[3];
+
+          SunR_Rotated[1] = a;
+          SunR_Rotated[2] = -c;
+          SunR_Rotated[3] = b;
+        }
+        else if (display_Solarch_Image == 3) {
+        
+        }   
         
         for (int SHD = 0; SHD <= 1; SHD += 1) {
   
@@ -18065,7 +17995,7 @@ void RenderShadowsOnUrbanPlane() {
           TREES_Diagrams.rectMode(CORNER);
           TREES_Diagrams.rect(0, 0, RES1, RES2);
           
-          if ((SHD == 1) && (SunR[3] > 0)) {
+          if ((SHD == 1) && (SunR_Rotated[3] > 0)) {
   
             TREES_Diagrams.pushMatrix();
             TREES_Diagrams.translate(Solarch_RES1 / 2, Solarch_RES2 / 2);            
@@ -18086,7 +18016,7 @@ void RenderShadowsOnUrbanPlane() {
 
                 float r = allObject2D_XYZS[f][3] * 0.5;
                 
-                float t = atan2(SunR[2], SunR[1]) + 0.5 * PI; 
+                float t = atan2(SunR_Rotated[2], SunR_Rotated[1]) + 0.5 * PI; 
                 
                 if (allObject2D_MAP[f] < 0) t += PI;         
                
@@ -18133,8 +18063,8 @@ void RenderShadowsOnUrbanPlane() {
                       for (int q = 0; q < 4; q++) {
                       
                         TZ[q] = TZ[q] - Solarch_Elevation;
-                        TX[q] = (TX[q] - TZ[q] * SunR[1] / SunR[3]);
-                        TY[q] = (TY[q] - TZ[q] * SunR[2] / SunR[3]);   
+                        TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
+                        TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);   
          
                         if (display_Solarch_Image == 1) {
                           float px = TX[q];
@@ -18183,8 +18113,8 @@ void RenderShadowsOnUrbanPlane() {
                         for (int q = 0; q < 4; q++) {
                         
                           TZ[q] = TZ[q] - Solarch_Elevation;
-                          TX[q] = (TX[q] - TZ[q] * SunR[1] / SunR[3]);
-                          TY[q] = (TY[q] - TZ[q] * SunR[2] / SunR[3]);  
+                          TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
+                          TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);  
           
                           if (display_Solarch_Image == 1) {
                             float px = TX[q];
@@ -18220,14 +18150,14 @@ void RenderShadowsOnUrbanPlane() {
           SHADOW_Diagrams.blendMode(REPLACE);
   
           float _val = 0;
-          if (SunR[3] > 0) _val = SunR[3];
+          if (SunR_Rotated[3] > 0) _val = SunR_Rotated[3];
           SHADOW_Diagrams.fill(255 * _val); 
           SHADOW_Diagrams.stroke(255 * _val);
           SHADOW_Diagrams.strokeWeight(0);
           SHADOW_Diagrams.rectMode(CORNER);
           SHADOW_Diagrams.rect(0, 0, RES1, RES2);
   
-          if ((SHD == 1) && (SunR[3] > 0)) {
+          if ((SHD == 1) && (SunR_Rotated[3] > 0)) {
   
             SHADOW_Diagrams.pushMatrix();
             SHADOW_Diagrams.translate(Solarch_RES1 / 2, Solarch_RES2 / 2);            
@@ -18256,38 +18186,30 @@ void RenderShadowsOnUrbanPlane() {
                 }
                 
                 float[][] subFace = getSubFace(base_Vertices, Teselation, n);
-             
-                SHADOW_Diagrams.beginShape();
+                float[][] subFace_Rotated = subFace;
                 
-                for (int s = 0; s < subFace.length; s++) {
-                  
-                  float x = 0, y = 0, z = 0;
-                  
-                  
-                  if (display_Solarch_Image == 1) {
-                    x = subFace[s][0];
-                    y = subFace[s][1];
-                    z = subFace[s][2];
+                for (int s = 0; s < subFace_Rotated.length; s++) {
+                  if (display_Solarch_Image == 2) {
+                    float a = subFace_Rotated[s][0];
+                    float b = subFace_Rotated[s][1];
+                    float c = subFace_Rotated[s][2];
                     
-                    z -= Solarch_Elevation;
-                    x -= z * SunR[1] / SunR[3];
-                    y -= z * SunR[2] / SunR[3];    
-                  }
-                  else if (display_Solarch_Image == 2) {
-                    x = subFace[s][0];
-                    y = -subFace[s][2];
-                    z = subFace[s][1];                    
-                    
-                    z -= Solarch_Elevation;
-                    x -= z * SunR[1] / -SunR[2];
-                    y -= z * SunR[3] / -SunR[2];         
+                    subFace_Rotated[s][0] = a;      
+                    subFace_Rotated[s][1] = -c;      
+                    subFace_Rotated[s][2] = b;      
                   }
                   else if (display_Solarch_Image == 3) {
                     
-                  }   
-
-
-
+                  }                  
+                }  
+             
+                SHADOW_Diagrams.beginShape();
+                
+                for (int s = 0; s < subFace_Rotated.length; s++) {
+                  
+                  float z = subFace_Rotated[s][2] - Solarch_Elevation;
+                  float x = subFace_Rotated[s][0] - z * SunR_Rotated[1] / SunR_Rotated[3];
+                  float y = subFace_Rotated[s][1] - z * SunR_Rotated[2] / SunR_Rotated[3];
 
                   if (z >= 0) {
                     
@@ -18302,12 +18224,12 @@ void RenderShadowsOnUrbanPlane() {
                     SHADOW_Diagrams.vertex(x * Shades_scaleX, -y * Shades_scaleY);
                   }
                   else {
-                    int s_next = (s + 1) % subFace.length;
-                    int s_prev = (s + subFace.length - 1) % subFace.length;         
+                    int s_next = (s + 1) % subFace_Rotated.length;
+                    int s_prev = (s + subFace_Rotated.length - 1) % subFace_Rotated.length;         
 
-                    float z_prev = subFace[s_prev][2] - Solarch_Elevation;
-                    float x_prev = subFace[s_prev][0] - z_prev * SunR[1] / SunR[3];
-                    float y_prev = subFace[s_prev][1] - z_prev * SunR[2] / SunR[3];
+                    float z_prev = subFace_Rotated[s_prev][2] - Solarch_Elevation;
+                    float x_prev = subFace_Rotated[s_prev][0] - z_prev * SunR_Rotated[1] / SunR_Rotated[3];
+                    float y_prev = subFace_Rotated[s_prev][1] - z_prev * SunR_Rotated[2] / SunR_Rotated[3];
                     
                     if (z_prev > 0) { 
                       float ratio = z_prev / (z_prev - z);
@@ -18326,9 +18248,9 @@ void RenderShadowsOnUrbanPlane() {
                       SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
                     }
 
-                    float z_next = subFace[s_next][2] - Solarch_Elevation;
-                    float x_next = subFace[s_next][0] - z_next * SunR[1] / SunR[3];
-                    float y_next = subFace[s_next][1] - z_next * SunR[2] / SunR[3];
+                    float z_next = subFace_Rotated[s_next][2] - Solarch_Elevation;
+                    float x_next = subFace_Rotated[s_next][0] - z_next * SunR_Rotated[1] / SunR_Rotated[3];
+                    float y_next = subFace_Rotated[s_next][1] - z_next * SunR_Rotated[2] / SunR_Rotated[3];
 
                     if (z_next > 0) { 
                       float ratio = z_next / (z_next - z);
@@ -18408,13 +18330,28 @@ void RenderShadowsOnUrbanPlane() {
 
       for (int i = 1; i < skyFaces.length; i++) {
 
-        float[] SunR = {0,0,0,0};
+        float[] SunR= {0,0,0,0};
         
         for (int j = 0; j < skyFaces[i].length; j++) {
           SunR[1] += skyVertices[skyFaces[i][j]][0] / float(skyFaces[i].length);
           SunR[2] += skyVertices[skyFaces[i][j]][1] / float(skyFaces[i].length);
           SunR[3] += skyVertices[skyFaces[i][j]][2] / float(skyFaces[i].length);
         }
+        
+        float[] SunR_Rotated = SunR; 
+        
+        if (display_Solarch_Image == 2) {
+          float a = SunR_Rotated[1];
+          float b = SunR_Rotated[2];
+          float c = SunR_Rotated[3];
+
+          SunR_Rotated[1] = a;
+          SunR_Rotated[2] = -c;
+          SunR_Rotated[3] = b;
+        }
+        else if (display_Solarch_Image == 3) {
+        
+        }           
 
 
 //------------------------------------ start of copy & paste from the direct version!
@@ -18428,7 +18365,7 @@ void RenderShadowsOnUrbanPlane() {
         TREES_Diagrams.rectMode(CORNER);
         TREES_Diagrams.rect(0, 0, RES1, RES2);
         
-        if ((SHD == 1) && (SunR[3] > 0)) {
+        if ((SHD == 1) && (SunR_Rotated[3] > 0)) {
 
           TREES_Diagrams.pushMatrix();
           TREES_Diagrams.translate(Solarch_RES1 / 2, Solarch_RES2 / 2);            
@@ -18449,7 +18386,7 @@ void RenderShadowsOnUrbanPlane() {
 
               float r = allObject2D_XYZS[f][3] * 0.5;
               
-              float t = atan2(SunR[2], SunR[1]) + 0.5 * PI; 
+              float t = atan2(SunR_Rotated[2], SunR_Rotated[1]) + 0.5 * PI; 
               
               if (allObject2D_MAP[f] < 0) t += PI;         
              
@@ -18496,8 +18433,8 @@ void RenderShadowsOnUrbanPlane() {
                     for (int q = 0; q < 4; q++) {
                     
                       TZ[q] = TZ[q] - Solarch_Elevation;
-                      TX[q] = (TX[q] - TZ[q] * SunR[1] / SunR[3]);
-                      TY[q] = (TY[q] - TZ[q] * SunR[2] / SunR[3]);                  
+                      TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
+                      TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);                  
 
                       if (display_Solarch_Image == 1) {
                         float px = TX[q];
@@ -18546,8 +18483,8 @@ void RenderShadowsOnUrbanPlane() {
                       for (int q = 0; q < 4; q++) {
                       
                         TZ[q] = TZ[q] - Solarch_Elevation;
-                        TX[q] = (TX[q] - TZ[q] * SunR[1] / SunR[3]);
-                        TY[q] = (TY[q] - TZ[q] * SunR[2] / SunR[3]);                  
+                        TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
+                        TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);                  
 
                         if (display_Solarch_Image == 1) {
                           float px = TX[q];
@@ -18584,14 +18521,14 @@ void RenderShadowsOnUrbanPlane() {
         SHADOW_Diagrams.blendMode(REPLACE);
 
         float _val = 0;
-        if (SunR[3] > 0) _val = SunR[3];
+        if (SunR_Rotated[3] > 0) _val = SunR_Rotated[3];
         SHADOW_Diagrams.fill(255 * _val); 
         SHADOW_Diagrams.stroke(255 * _val);
         SHADOW_Diagrams.strokeWeight(0);
         SHADOW_Diagrams.rectMode(CORNER);
         SHADOW_Diagrams.rect(0, 0, RES1, RES2);
 
-        if ((SHD == 1) && (SunR[3] > 0)) {
+        if ((SHD == 1) && (SunR_Rotated[3] > 0)) {
 
           SHADOW_Diagrams.pushMatrix();
           SHADOW_Diagrams.translate(Solarch_RES1 / 2, Solarch_RES2 / 2);            
@@ -18620,14 +18557,30 @@ void RenderShadowsOnUrbanPlane() {
               }
               
               float[][] subFace = getSubFace(base_Vertices, Teselation, n);
+              float[][] subFace_Rotated = subFace;
+              
+              for (int s = 0; s < subFace_Rotated.length; s++) {
+                if (display_Solarch_Image == 2) {
+                  float a = subFace_Rotated[s][0];
+                  float b = subFace_Rotated[s][1];
+                  float c = subFace_Rotated[s][2];
+                  
+                  subFace_Rotated[s][0] = a;      
+                  subFace_Rotated[s][1] = -c;      
+                  subFace_Rotated[s][2] = b;      
+                }
+                else if (display_Solarch_Image == 3) {
+                  
+                }                  
+              }                
            
               SHADOW_Diagrams.beginShape();
               
-              for (int s = 0; s < subFace.length; s++) {
-
-                float z = subFace[s][2] - Solarch_Elevation;
-                float x = subFace[s][0] - z * SunR[1] / SunR[3];
-                float y = subFace[s][1] - z * SunR[2] / SunR[3];
+              for (int s = 0; s < subFace_Rotated.length; s++) {
+                
+                float z = subFace_Rotated[s][2] - Solarch_Elevation;
+                float x = subFace_Rotated[s][0] - z * SunR_Rotated[1] / SunR_Rotated[3];
+                float y = subFace_Rotated[s][1] - z * SunR_Rotated[2] / SunR_Rotated[3];
                   
                 if (z >= 0) {
                   
@@ -18642,12 +18595,12 @@ void RenderShadowsOnUrbanPlane() {
                   SHADOW_Diagrams.vertex(x * Shades_scaleX, -y * Shades_scaleY);
                 }
                 else {
-                  int s_next = (s + 1) % subFace.length;
-                  int s_prev = (s + subFace.length - 1) % subFace.length;         
+                  int s_next = (s + 1) % subFace_Rotated.length;
+                  int s_prev = (s + subFace_Rotated.length - 1) % subFace_Rotated.length;         
                   
-                  float z_prev = subFace[s_prev][2] - Solarch_Elevation;
-                  float x_prev = subFace[s_prev][0] - z_prev * SunR[1] / SunR[3];
-                  float y_prev = subFace[s_prev][1] - z_prev * SunR[2] / SunR[3];       
+                  float z_prev = subFace_Rotated[s_prev][2] - Solarch_Elevation;
+                  float x_prev = subFace_Rotated[s_prev][0] - z_prev * SunR_Rotated[1] / SunR_Rotated[3];
+                  float y_prev = subFace_Rotated[s_prev][1] - z_prev * SunR_Rotated[2] / SunR_Rotated[3];       
                   
                   if (z_prev > 0) { 
                     float ratio = z_prev / (z_prev - z);
@@ -18666,9 +18619,9 @@ void RenderShadowsOnUrbanPlane() {
                     SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
                   }
 
-                  float z_next = subFace[s_next][2] - Solarch_Elevation;
-                  float x_next = subFace[s_next][0] - z_next * SunR[1] / SunR[3];
-                  float y_next = subFace[s_next][1] - z_next * SunR[2] / SunR[3];
+                  float z_next = subFace_Rotated[s_next][2] - Solarch_Elevation;
+                  float x_next = subFace_Rotated[s_next][0] - z_next * SunR_Rotated[1] / SunR_Rotated[3];
+                  float y_next = subFace_Rotated[s_next][1] - z_next * SunR_Rotated[2] / SunR_Rotated[3];
                   
                   if (z_next > 0) { 
                     float ratio = z_next / (z_next - z);
@@ -18763,3 +18716,90 @@ void RenderShadowsOnUrbanPlane() {
 
 
 
+
+
+void SOLARCHVISION_draw_solarch_image () {
+
+  WIN3D_Diagrams.stroke(0);
+  WIN3D_Diagrams.fill(127,127,127);    
+  
+  display_Solarch_Image = display_Field_Image; // <<<<<
+  
+  if (display_Solarch_Image != 0) {  
+    WIN3D_Diagrams.beginShape();
+    
+    Solarch_Rotation = Field_Rotation[display_Solarch_Image];
+    Solarch_Elevation = 0.1 + Field_Elevation[display_Solarch_Image];
+    Solarch_scale_U = Field_scale_U; 
+    Solarch_scale_V = Field_scale_V;        
+
+    int display_solarch_texture = 0;
+    
+    if (Rendered_Solarch_Type == display_Solarch_Image) {
+      if (Rendered_Solarch_Rotation == Solarch_Rotation) {      
+        if (Rendered_Solarch_Elevation == Solarch_Elevation) {
+        
+          display_solarch_texture = 1;
+          
+          WIN3D_Diagrams.texture(Solarch_Image);
+        }
+      } 
+    }   
+
+    float dU = Solarch_scale_U / Rendered_Solarch_scale_U;
+    float dV = Solarch_scale_V / Rendered_Solarch_scale_V;
+    
+    float minU = 0.5 * Solarch_RES1 - (0.5 * Solarch_RES1 * dU);
+    float maxU = 0.5 * Solarch_RES1 + (0.5 * Solarch_RES1 * dU);
+    float minV = 0.5 * Solarch_RES2 - (0.5 * Solarch_RES2 * dV);
+    float maxV = 0.5 * Solarch_RES2 + (0.5 * Solarch_RES2 * dV);
+
+    //float c = HeightAboveGround * objects_scale; // <<< or zero i.e. height of the plane in 3D  // ?????????
+    float c = Solarch_Elevation * objects_scale; 
+
+    if (display_Solarch_Image != 0) {
+      WIN3D_Diagrams.beginShape();
+      WIN3D_Diagrams.texture(Solarch_Image);    
+    
+      for (int q = 0; q < 4; q++) {
+        
+        float qx = 0, qy = 0, u = 0, v = 0;
+        
+        if (q == 0)      {qx = -1; qy = -1; u = minU; v = maxV;}
+        else if (q == 1) {qx = 1; qy = -1; u = maxU; v = maxV;}
+        else if (q == 2) {qx = 1; qy = 1; u = maxU; v = minV;}
+        else if (q == 3) {qx = -1; qy = 1; u = minU; v = minV;}    
+        
+        float a = qx * 0.5 * Solarch_scale_U * objects_scale;
+        float b = qy * 0.5 * Solarch_scale_V * objects_scale;    
+        
+        float x = 0, y = 0, z = 0;
+        
+        if (display_Solarch_Image == 1) {
+          x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
+          y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
+          z = c;         
+        }
+        else if (display_Solarch_Image == 2) {
+          x = a * cos_ang(Solarch_Rotation) - c * sin_ang(Solarch_Rotation);
+          y = a * sin_ang(Solarch_Rotation) + c * cos_ang(Solarch_Rotation);
+          z = -b; // <<<<<<<<<  ??????????????      
+        }
+        else if (display_Solarch_Image == 3) {
+          x = c * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
+          y = c * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
+          z = a;    
+        }      
+    
+        if (display_solarch_texture == 1) {
+          WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, u, v);
+        }
+        else {
+          WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D);
+        }     
+      }   
+    }  
+    
+    WIN3D_Diagrams.endShape(CLOSE);
+  }
+}
