@@ -66,7 +66,7 @@ String[][] DEFINED_STATIONS = {
 int Selected_STATION = STATION_NUMBER;
 int LOAD_STATION = 0; 
 
-int Load_Default_Models = 0; //3; //5;
+int Load_Default_Models = 3;//0; //3; //5;
 
 
 
@@ -12884,7 +12884,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
     SOLARCHVISION_add_2Dobjects_onLand(); 
   }    
   else {
-    SOLARCHVISION_add_2Dobjects(100, 50, 0); // (n, r, z)
+    //SOLARCHVISION_add_2Dobjects(100, 50, 0); // (n, r, z)
   }  
 
 
@@ -13637,17 +13637,20 @@ void SOLARCHVISION_draw_solarch_image () {
   if (display_Solarch_Image == 1) {  
     WIN3D_Diagrams.beginShape();
     
+    Solarch_Rotation = Field_Rotation[0];
     Solarch_Elevation = 0.1 + Field_Elevation[0];
     Solarch_scale_U = Field_scale_U; 
     Solarch_scale_V = Field_scale_V;        
 
     int display_solarch_texture = 0;
     
-    if (Solarch_Elevation == Rendered_Solarch_Elevation) {      
+    if (Solarch_Rotation == Rendered_Solarch_Rotation) {      
+      if (Solarch_Elevation == Rendered_Solarch_Elevation) {
       
-      display_solarch_texture = 1;
-      
-      WIN3D_Diagrams.texture(Solarch_Image);
+        display_solarch_texture = 1;
+        
+        WIN3D_Diagrams.texture(Solarch_Image);
+      }
     }    
 
     float dU = Solarch_scale_U / Rendered_Solarch_scale_U;
@@ -17927,9 +17930,162 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
   return theValues;
 }
 
+void SOLARCHVISION_draw_Perspective_Internally () {
+
+  pushMatrix();
+
+  translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+  
+
+  noFill();
+  
+  //stroke(0,127,0,127);   
+  stroke(127); 
+  
+  strokeWeight(1);
+
+  for (int f = 1; f < allFaces.length; f++) {
+
+    int Teselation = 0;
+    
+    int TotalSubNo = 1;  
+    if (allFaces_MAT[f] == 0) {
+      Teselation = MODEL3D_TESELATION;
+      if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+    }
+
+    for (int n = 0; n < TotalSubNo; n++) {
+      
+      float[][] base_Vertices = new float [allFaces[f].length][3];
+      for (int j = 0; j < allFaces[f].length; j++) {
+        int vNo = allFaces[f][j];
+        base_Vertices[j][0] = allVertices[vNo][0];
+        base_Vertices[j][1] = allVertices[vNo][1];
+        base_Vertices[j][2] = allVertices[vNo][2];
+      }
+      
+      float[][] subFace = getSubFace(base_Vertices, Teselation, n);
+   
+      beginShape();
+      
+      for (int s = 0; s < subFace.length; s++) {
+        
+        float PNT_x = subFace[s][0] * objects_scale;
+        float PNT_y = subFace[s][1] * objects_scale;
+        float PNT_z = -subFace[s][2] * objects_scale;
+
+        PNT_x -= CAM_x;
+        PNT_y -= CAM_y;
+        PNT_z += CAM_z;
+  
+        float px, py, pz;
+
+
+        pz = PNT_z;
+        px = PNT_x * cos_ang(-WIN3D_RZ_coordinate) - PNT_y * sin_ang(-WIN3D_RZ_coordinate);
+        py = PNT_x * sin_ang(-WIN3D_RZ_coordinate) + PNT_y * cos_ang(-WIN3D_RZ_coordinate);
+        
+        PNT_x = px;
+        PNT_y = py;
+        PNT_z = pz;    
+        
+        px = PNT_x;
+        py = PNT_y * cos_ang(WIN3D_RX_coordinate) - PNT_z * sin_ang(WIN3D_RX_coordinate);
+        pz = PNT_y * sin_ang(WIN3D_RX_coordinate) + PNT_z * cos_ang(WIN3D_RX_coordinate);
+        
+        PNT_x = px;
+        PNT_y = py;
+        PNT_z = pz;
+        
+
+        
+        if (PNT_z > 0) {
+          
+          if (WIN3D_View_Type == 1) {
+            
+            float Image_X = (PNT_x / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
+            float Image_Y = -(PNT_y / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
+            
+            if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
+          }
+          else {
+            
+            float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
+
+            float Image_X = (PNT_x / ZOOM) * (0.5 * WIN3D_scale3D);
+            float Image_Y = -(PNT_y / ZOOM) * (0.5 * WIN3D_scale3D);         
+            
+            if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
+          }
+        }
+      }
+      
+      endShape(CLOSE);
+    }
+  }
+  
+  strokeWeight(0);   
+
+
+
+  
+  popMatrix();
+}
+
+
+float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
+  
+  float PNT_x = FLOAT_undefined;
+  float PNT_y = FLOAT_undefined;
+  float PNT_z = FLOAT_undefined;
+
+  if (WIN3D_View_Type == 1) {
+    
+    PNT_z = (0.5 * refScale) / tan(0.5 * PI / 3.0); //100; // for perspective: any value the plane we need the results on!
+    
+    PNT_x = PNT_z * Image_X / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
+    PNT_y = PNT_z * -Image_Y / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
+  }
+  else {
+    float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
+
+    PNT_z = (0.5 * refScale) / tan(0.5 * PI / 3.0); // for orthographic: should be this.
+
+    PNT_x = ZOOM * Image_X / (0.5 * WIN3D_scale3D);
+    PNT_y = ZOOM * -Image_Y / (0.5 * WIN3D_scale3D);
+  }
+
+  float px, py, pz;
+ 
+  px = PNT_x;
+  py = PNT_y * cos_ang(-WIN3D_RX_coordinate) - PNT_z * sin_ang(-WIN3D_RX_coordinate);
+  pz = PNT_y * sin_ang(-WIN3D_RX_coordinate) + PNT_z * cos_ang(-WIN3D_RX_coordinate);
+  
+  PNT_x = px;
+  PNT_y = py;
+  PNT_z = pz;
+ 
+  pz = PNT_z;
+  px = PNT_x * cos_ang(WIN3D_RZ_coordinate) - PNT_y * sin_ang(WIN3D_RZ_coordinate);
+  py = PNT_x * sin_ang(WIN3D_RZ_coordinate) + PNT_y * cos_ang(WIN3D_RZ_coordinate);
+  
+  PNT_x = px;
+  PNT_y = py;
+  PNT_z = pz;    
+  
+  PNT_x += CAM_x;
+  PNT_y += CAM_y;
+  PNT_z -= CAM_z;  
+
+  float[] return_array = {PNT_x, PNT_y, -PNT_z};
+  
+  return return_array;
+}
+
 float Rendered_Solarch_scale_U = FLOAT_undefined;
 float Rendered_Solarch_scale_V = FLOAT_undefined;
 float Rendered_Solarch_Elevation = FLOAT_undefined;
+float Rendered_Solarch_Rotation = FLOAT_undefined;
 
 String defaultSceneName = "Complex";
                   
@@ -17939,7 +18095,7 @@ void RenderShadowsOnUrbanPlane() {
 
   defaultSceneName = SceneName;
   
- 
+  Solarch_Rotation =  Field_Rotation[0];
   Solarch_Elevation = 0.1 + Field_Elevation[0];
   Solarch_scale_U = Field_scale_U; 
   Solarch_scale_V = Field_scale_V;
@@ -17948,6 +18104,7 @@ void RenderShadowsOnUrbanPlane() {
   Rendered_Solarch_scale_U = Solarch_scale_U;
   Rendered_Solarch_scale_V = Solarch_scale_V;
   Rendered_Solarch_Elevation = Solarch_Elevation;
+  Rendered_Solarch_Rotation = Solarch_Rotation;
 
   int RES1 = Solarch_RES1;
   int RES2 = Solarch_RES2;
@@ -18195,6 +18352,13 @@ void RenderShadowsOnUrbanPlane() {
                   float y = (subFace[s][1] - z * SunR[2] / SunR[3]);
                     
                   if (z >= 0) {
+                    
+                    float px = x;
+                    float py = y;
+                    
+                    x = px * cos_ang(-Solarch_Rotation) - py * sin_ang(-Solarch_Rotation); 
+                    y = px * sin_ang(-Solarch_Rotation) + py * cos_ang(-Solarch_Rotation); 
+                    
                     SHADOW_Diagrams.vertex(x * Shades_scaleX, -y * Shades_scaleY);
                   }
                   else {
@@ -18210,6 +18374,12 @@ void RenderShadowsOnUrbanPlane() {
                       
                       float x_trim = x_prev * (1 - ratio) + x * ratio;
                       float y_trim = y_prev * (1 - ratio) + y * ratio;
+
+                      float px = x_trim;
+                      float py = y_trim;
+                      
+                      x_trim = px * cos_ang(-Solarch_Rotation) - py * sin_ang(-Solarch_Rotation); 
+                      y_trim = px * sin_ang(-Solarch_Rotation) + py * cos_ang(-Solarch_Rotation); 
                       
                       SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
                     }
@@ -18223,6 +18393,12 @@ void RenderShadowsOnUrbanPlane() {
                       
                       float x_trim = x_next * (1 - ratio) + x * ratio;
                       float y_trim = y_next * (1 - ratio) + y * ratio;
+                      
+                      float px = x_trim;
+                      float py = y_trim;
+                      
+                      x_trim = px * cos_ang(-Solarch_Rotation) - py * sin_ang(-Solarch_Rotation); 
+                      y_trim = px * sin_ang(-Solarch_Rotation) + py * cos_ang(-Solarch_Rotation); 
                       
                       SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
                     }                    
@@ -18507,6 +18683,12 @@ void RenderShadowsOnUrbanPlane() {
                 float y = (subFace[s][1] - z * SunR[2] / SunR[3]);
                   
                 if (z >= 0) {
+                  float px = x;
+                  float py = y;
+                  
+                  x = px * cos_ang(-Solarch_Rotation) - py * sin_ang(-Solarch_Rotation); 
+                  y = px * sin_ang(-Solarch_Rotation) + py * cos_ang(-Solarch_Rotation);                   
+                  
                   SHADOW_Diagrams.vertex(x * Shades_scaleX, -y * Shades_scaleY);
                 }
                 else {
@@ -18523,6 +18705,12 @@ void RenderShadowsOnUrbanPlane() {
                     float x_trim = x_prev * (1 - ratio) + x * ratio;
                     float y_trim = y_prev * (1 - ratio) + y * ratio;
                     
+                    float px = x_trim;
+                    float py = y_trim;
+                    
+                    x_trim = px * cos_ang(-Solarch_Rotation) - py * sin_ang(-Solarch_Rotation); 
+                    y_trim = px * sin_ang(-Solarch_Rotation) + py * cos_ang(-Solarch_Rotation);                     
+                    
                     SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
                   }
 
@@ -18535,6 +18723,12 @@ void RenderShadowsOnUrbanPlane() {
                     
                     float x_trim = x_next * (1 - ratio) + x * ratio;
                     float y_trim = y_next * (1 - ratio) + y * ratio;
+                    
+                    float px = x_trim;
+                    float py = y_trim;
+                    
+                    x_trim = px * cos_ang(-Solarch_Rotation) - py * sin_ang(-Solarch_Rotation); 
+                    y_trim = px * sin_ang(-Solarch_Rotation) + py * cos_ang(-Solarch_Rotation);                     
                     
                     SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
                   }                    
@@ -18612,154 +18806,4 @@ void RenderShadowsOnUrbanPlane() {
 }
 
 
-void SOLARCHVISION_draw_Perspective_Internally () {
 
-  pushMatrix();
-
-  translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
-  
-
-  noFill();
-  
-  //stroke(0,127,0,127);   
-  stroke(127); 
-  
-  strokeWeight(1);
-
-  for (int f = 1; f < allFaces.length; f++) {
-
-    int Teselation = 0;
-    
-    int TotalSubNo = 1;  
-    if (allFaces_MAT[f] == 0) {
-      Teselation = MODEL3D_TESELATION;
-      if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
-    }
-
-    for (int n = 0; n < TotalSubNo; n++) {
-      
-      float[][] base_Vertices = new float [allFaces[f].length][3];
-      for (int j = 0; j < allFaces[f].length; j++) {
-        int vNo = allFaces[f][j];
-        base_Vertices[j][0] = allVertices[vNo][0];
-        base_Vertices[j][1] = allVertices[vNo][1];
-        base_Vertices[j][2] = allVertices[vNo][2];
-      }
-      
-      float[][] subFace = getSubFace(base_Vertices, Teselation, n);
-   
-      beginShape();
-      
-      for (int s = 0; s < subFace.length; s++) {
-        
-        float PNT_x = subFace[s][0] * objects_scale;
-        float PNT_y = subFace[s][1] * objects_scale;
-        float PNT_z = -subFace[s][2] * objects_scale;
-
-        PNT_x -= CAM_x;
-        PNT_y -= CAM_y;
-        PNT_z += CAM_z;
-  
-        float px, py, pz;
-
-
-        pz = PNT_z;
-        px = PNT_x * cos_ang(-WIN3D_RZ_coordinate) - PNT_y * sin_ang(-WIN3D_RZ_coordinate);
-        py = PNT_x * sin_ang(-WIN3D_RZ_coordinate) + PNT_y * cos_ang(-WIN3D_RZ_coordinate);
-        
-        PNT_x = px;
-        PNT_y = py;
-        PNT_z = pz;    
-        
-        px = PNT_x;
-        py = PNT_y * cos_ang(WIN3D_RX_coordinate) - PNT_z * sin_ang(WIN3D_RX_coordinate);
-        pz = PNT_y * sin_ang(WIN3D_RX_coordinate) + PNT_z * cos_ang(WIN3D_RX_coordinate);
-        
-        PNT_x = px;
-        PNT_y = py;
-        PNT_z = pz;
-        
-
-        
-        if (PNT_z > 0) {
-          
-          if (WIN3D_View_Type == 1) {
-            
-            float Image_X = (PNT_x / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
-            float Image_Y = -(PNT_y / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
-            
-            if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
-          }
-          else {
-            
-            float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
-
-            float Image_X = (PNT_x / ZOOM) * (0.5 * WIN3D_scale3D);
-            float Image_Y = -(PNT_y / ZOOM) * (0.5 * WIN3D_scale3D);         
-            
-            if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
-          }
-        }
-      }
-      
-      endShape(CLOSE);
-    }
-  }
-  
-  strokeWeight(0);   
-
-
-
-  
-  popMatrix();
-}
-
-
-float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
-  
-  float PNT_x = FLOAT_undefined;
-  float PNT_y = FLOAT_undefined;
-  float PNT_z = FLOAT_undefined;
-
-  if (WIN3D_View_Type == 1) {
-    
-    PNT_z = (0.5 * refScale) / tan(0.5 * PI / 3.0); //100; // for perspective: any value the plane we need the results on!
-    
-    PNT_x = PNT_z * Image_X / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
-    PNT_y = PNT_z * -Image_Y / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
-  }
-  else {
-    float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
-
-    PNT_z = (0.5 * refScale) / tan(0.5 * PI / 3.0); // for orthographic: should be this.
-
-    PNT_x = ZOOM * Image_X / (0.5 * WIN3D_scale3D);
-    PNT_y = ZOOM * -Image_Y / (0.5 * WIN3D_scale3D);
-  }
-
-  float px, py, pz;
- 
-  px = PNT_x;
-  py = PNT_y * cos_ang(-WIN3D_RX_coordinate) - PNT_z * sin_ang(-WIN3D_RX_coordinate);
-  pz = PNT_y * sin_ang(-WIN3D_RX_coordinate) + PNT_z * cos_ang(-WIN3D_RX_coordinate);
-  
-  PNT_x = px;
-  PNT_y = py;
-  PNT_z = pz;
- 
-  pz = PNT_z;
-  px = PNT_x * cos_ang(WIN3D_RZ_coordinate) - PNT_y * sin_ang(WIN3D_RZ_coordinate);
-  py = PNT_x * sin_ang(WIN3D_RZ_coordinate) + PNT_y * cos_ang(WIN3D_RZ_coordinate);
-  
-  PNT_x = px;
-  PNT_y = py;
-  PNT_z = pz;    
-  
-  PNT_x += CAM_x;
-  PNT_y += CAM_y;
-  PNT_z -= CAM_z;  
-
-  float[] return_array = {PNT_x, PNT_y, -PNT_z};
-  
-  return return_array;
-}
