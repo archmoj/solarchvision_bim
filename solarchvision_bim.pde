@@ -66,7 +66,7 @@ String[][] DEFINED_STATIONS = {
 int Selected_STATION = STATION_NUMBER;
 int LOAD_STATION = 0; 
 
-int Load_Default_Models = 3;//0; //3; //5;
+int Load_Default_Models = 0; //3;//0; //3; //5;
 
 
 
@@ -2074,9 +2074,9 @@ void SOLARCHVISION_draw_WIN3D () {
   
   SOLARCHVISION_draw_land();
   
-  SOLARCHVISION_draw_solarch_image(); 
+  //SOLARCHVISION_draw_solarch_image(); 
   
-  //SOLARCHVISION_draw_field_image();
+  SOLARCHVISION_draw_field_image();
   
   SOLARCHVISION_draw_3Dobjects();
 
@@ -8713,6 +8713,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         if (camera_variation == 0) {
           
           Solarch_Image = total_Image_RGBA;  // <<<<<<<<<<<<<<<<
+          total_Image_RGBA.save("/Output/Solarch.jpg");
           
           if (Impact_TYPE == Impact_ACTIVE) {
             OBJECTS_Pallet_ACTIVE = GRAPHS_Pallet_ACTIVE;
@@ -12886,7 +12887,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
     SOLARCHVISION_add_2Dobjects_onLand(); 
   }    
   else {
-    SOLARCHVISION_add_2Dobjects(100, 50, 0); // (n, r, z)
+    //SOLARCHVISION_add_2Dobjects(100, 50, 0); // (n, r, z)
   }  
 
 
@@ -13521,8 +13522,8 @@ void SOLARCHVISION_draw_field_image () {
       float x = 0, y = 0, z = 0;
       
       if (display_Field_Image == 1) {
-        x = a * cos_ang(Field_Rotation[display_Field_Image]) - b * sin_ang(Field_Rotation[display_Field_Image]);
-        y = a * sin_ang(Field_Rotation[display_Field_Image]) + b * cos_ang(Field_Rotation[display_Field_Image]);
+        x = a * cos_ang(Field_Rotation[display_Field_Image]) - -b * sin_ang(Field_Rotation[display_Field_Image]);
+        y = a * sin_ang(Field_Rotation[display_Field_Image]) + -b * cos_ang(Field_Rotation[display_Field_Image]);
         z = c;         
       }
       else if (display_Field_Image == 2) {
@@ -15058,8 +15059,8 @@ int Field_Color = 0;
 float Field_scale_U = 100; // i.e. 100m
 float Field_scale_V = 100; // i.e. 100m
 
-int Field_RES1 = 300;
-int Field_RES2 = 300;
+int Field_RES1 = 200;
+int Field_RES2 = 200;
 
 PImage Field_Image = createImage(Field_RES1, Field_RES2, RGB);
 
@@ -15090,16 +15091,16 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
           float c = Field_Elevation[display_Field_Image];
           
-          float x = a * cos_ang(-Field_Rotation[display_Field_Image]) - b * sin_ang(-Field_Rotation[display_Field_Image]);
-          float y = a * sin_ang(-Field_Rotation[display_Field_Image]) + b * cos_ang(-Field_Rotation[display_Field_Image]);
+          float x = a * cos_ang(Field_Rotation[display_Field_Image]) - b * sin_ang(Field_Rotation[display_Field_Image]);
+          float y = a * sin_ang(Field_Rotation[display_Field_Image]) + b * cos_ang(Field_Rotation[display_Field_Image]);
           float z = c;
           
-          d = SolidBuildings[n].Distance(x, y, z);
+          d = SolidBuildings[n].Distance(x, -y, z);
         }
         else if (display_Field_Image == 2) {
           float a = (i - 0.5 * Field_RES1) * (Field_scale_U / Field_RES1);
           float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
-          float c = -Field_Elevation[display_Field_Image];
+          float c = Field_Elevation[display_Field_Image];
           
           float x = a * cos_ang(-Field_Rotation[display_Field_Image]) - c * sin_ang(-Field_Rotation[display_Field_Image]);
           float y = a * sin_ang(-Field_Rotation[display_Field_Image]) + c * cos_ang(-Field_Rotation[display_Field_Image]);
@@ -15150,6 +15151,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   
  
   Field_Image.updatePixels();
+  
+  Field_Image.save("/Output/Field.jpg");
   
   
 }
