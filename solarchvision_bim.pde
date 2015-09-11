@@ -18080,11 +18080,25 @@ void RenderShadowsOnUrbanPlane() {
                       
                       float ratio = (Solarch_Elevation - z) / (2 * r);
                       
-                      TZ[0] = z + 2 * r * ratio;
-                      TZ[1] = z + 2 * r * ratio;       
+                      if (display_Solarch_Image == 1) {
+                        TZ[0] = (TZ[0] * (1 - ratio) + TZ[2] * ratio);
+                        TZ[1] = (TZ[1] * (1 - ratio) + TZ[3] * ratio);       
+                        
+                        TV[0] = (TV[0] * (1 - ratio) + TV[2] * ratio);
+                        TV[1] = (TV[1] * (1 - ratio) + TV[3] * ratio);
+                      }
+                      else if (display_Solarch_Image == 2) {
+                        TZ[0] = (TZ[0] * (1 - ratio) + TZ[2] * ratio);
+                        TZ[1] = (TZ[1] * (1 - ratio) + TZ[3] * ratio);       
+                        
+                        TU[0] = (TU[0] * (1 - ratio) + TU[2] * ratio);
+                        TU[1] = (TU[1] * (1 - ratio) + TU[3] * ratio);
+                      }
+                      else if (display_Solarch_Image == 3) {
+
+                      }
                       
-                      TV[0] = h * (1 - ratio);
-                      TV[1] = h * (1 - ratio);
+                      
                     }
                     
                     if (z + 2 * r > Solarch_Elevation) {
