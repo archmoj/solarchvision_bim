@@ -13532,9 +13532,9 @@ void SOLARCHVISION_draw_field_image () {
         z = b;        
       }
       else if (display_Field_Image == 3) {
-        x = c * cos_ang(Field_Rotation[display_Field_Image]) - b * sin_ang(Field_Rotation[display_Field_Image]);
-        y = c * sin_ang(Field_Rotation[display_Field_Image]) + b * cos_ang(Field_Rotation[display_Field_Image]);
-        z = a;    
+        x = a * cos_ang(90 + Field_Rotation[display_Field_Image]) - c * sin_ang(90 + Field_Rotation[display_Field_Image]);
+        y = a * sin_ang(90 + Field_Rotation[display_Field_Image]) + c * cos_ang(90 + Field_Rotation[display_Field_Image]);
+        z = b;    
       }      
 
       
@@ -15102,22 +15102,22 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
           float c = Field_Elevation[display_Field_Image];
           
-          float x = a * cos_ang(-Field_Rotation[display_Field_Image]) - c * sin_ang(-Field_Rotation[display_Field_Image]);
-          float y = a * sin_ang(-Field_Rotation[display_Field_Image]) + c * cos_ang(-Field_Rotation[display_Field_Image]);
+          float x = a * cos_ang(Field_Rotation[display_Field_Image]) - c * sin_ang(Field_Rotation[display_Field_Image]);
+          float y = a * sin_ang(Field_Rotation[display_Field_Image]) + c * cos_ang(Field_Rotation[display_Field_Image]);
           float z = b; 
           
-          d = SolidBuildings[n].Distance(x, y, -z);
+          d = SolidBuildings[n].Distance(x, -y, -z);
         }
         else if (display_Field_Image == 3) {
           float a = (i - 0.5 * Field_RES1) * (Field_scale_U / Field_RES1);
           float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
           float c = Field_Elevation[display_Field_Image];
           
-          float x = c * cos_ang(-Field_Rotation[display_Field_Image]) - b * sin_ang(-Field_Rotation[display_Field_Image]);
-          float y = c * sin_ang(-Field_Rotation[display_Field_Image]) + b * cos_ang(-Field_Rotation[display_Field_Image]);
-          float z = a; 
+          float x = a * cos_ang(90 + Field_Rotation[display_Field_Image]) - c * sin_ang(90 + Field_Rotation[display_Field_Image]);
+          float y = a * sin_ang(90 + Field_Rotation[display_Field_Image]) + c * cos_ang(90 + Field_Rotation[display_Field_Image]);
+          float z = b; 
           
-          d = SolidBuildings[n].Distance(x, y, z);
+          d = SolidBuildings[n].Distance(x, -y, -z);
         }
         
         if (d > 0) {
