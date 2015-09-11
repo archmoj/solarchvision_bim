@@ -17958,9 +17958,9 @@ void RenderShadowsOnUrbanPlane() {
           float b = -SunR_Rotated[2];
           float c = SunR_Rotated[3];
 
-          SunR_Rotated[1] = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
+          SunR_Rotated[1] = a * cos_ang(-Solarch_Rotation) - b * sin_ang(-Solarch_Rotation);
           SunR_Rotated[2] = c;
-          SunR_Rotated[3] = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
+          SunR_Rotated[3] = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);
         }
         else if (display_Solarch_Image == 3) {
         
@@ -18056,9 +18056,9 @@ void RenderShadowsOnUrbanPlane() {
                           float b = -TY[q];
                           float c = TZ[q];
 
-                          TX[q] = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
+                          TX[q] = a * cos_ang(-Solarch_Rotation) - b * sin_ang(-Solarch_Rotation);
                           TY[q] = c;
-                          TZ[q] = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
+                          TZ[q] = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);
                         }
                       } 
                       { // now that we rotated 2D we could rotate x,y,z
@@ -18066,9 +18066,9 @@ void RenderShadowsOnUrbanPlane() {
                           float b = -y;
                           float c = z;
 
-                          x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
+                          x = a * cos_ang(-Solarch_Rotation) - b * sin_ang(-Solarch_Rotation);
                           y = c;
-                          z = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
+                          z = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);
                       }                   
                     }
                     else if (display_Solarch_Image == 3) {
@@ -18243,9 +18243,9 @@ void RenderShadowsOnUrbanPlane() {
                     float b = -subFace_Rotated[s][1];
                     float c = subFace_Rotated[s][2];
       
-                    subFace_Rotated[s][0] = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);     
+                    subFace_Rotated[s][0] = a * cos_ang(-Solarch_Rotation) - b * sin_ang(-Solarch_Rotation);     
                     subFace_Rotated[s][1] = c;    
-                    subFace_Rotated[s][2] = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);      
+                    subFace_Rotated[s][2] = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);      
                   }
                   else if (display_Solarch_Image == 3) {
                     
@@ -18394,9 +18394,9 @@ void RenderShadowsOnUrbanPlane() {
           float b = -SunR_Rotated[2];
           float c = SunR_Rotated[3];
 
-          SunR_Rotated[1] = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
+          SunR_Rotated[1] = a * cos_ang(-Solarch_Rotation) - b * sin_ang(-Solarch_Rotation);
           SunR_Rotated[2] = c;
-          SunR_Rotated[3] = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
+          SunR_Rotated[3] = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);
         }
         else if (display_Solarch_Image == 3) {
         
@@ -18477,9 +18477,9 @@ void RenderShadowsOnUrbanPlane() {
                         float b = -TY[q];
                         float c = TZ[q];
 
-                        TX[q] = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
+                        TX[q] = a * cos_ang(-Solarch_Rotation) - b * sin_ang(-Solarch_Rotation);
                         TY[q] = c;
-                        TZ[q] = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
+                        TZ[q] = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);
                       }
                     } 
                     { // now that we rotated 2D we could rotate x,y,z
@@ -18487,9 +18487,9 @@ void RenderShadowsOnUrbanPlane() {
                         float b = -y;
                         float c = z;
 
-                        x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
+                        x = a * cos_ang(-Solarch_Rotation) - b * sin_ang(-Solarch_Rotation);
                         y = c;
-                        z = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
+                        z = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);
                     }                   
                   }
                   else if (display_Solarch_Image == 3) {
@@ -18660,9 +18660,9 @@ void RenderShadowsOnUrbanPlane() {
                   float b = -subFace_Rotated[s][1];
                   float c = subFace_Rotated[s][2];
                   
-                  subFace_Rotated[s][0] = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);     
+                  subFace_Rotated[s][0] = a * cos_ang(-Solarch_Rotation) - b * sin_ang(-Solarch_Rotation);     
                   subFace_Rotated[s][1] = c;      
-                  subFace_Rotated[s][2] = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);      
+                  subFace_Rotated[s][2] = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);      
                 }
                 else if (display_Solarch_Image == 3) {
                   
