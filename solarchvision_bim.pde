@@ -2074,7 +2074,7 @@ void SOLARCHVISION_draw_WIN3D () {
   
   SOLARCHVISION_draw_land();
   
-  //SOLARCHVISION_draw_solarch_image(); 
+  SOLARCHVISION_draw_solarch_image(); 
   
   SOLARCHVISION_draw_field_image();
   
@@ -10863,11 +10863,13 @@ void WIN3D_keyPressed (KeyEvent e) {
     else {
       switch(key) {
 
-        case ']' :display_Field_Image = (display_Field_Image + 1) % 4; 
+        case ']' :display_Field_Image = (display_Field_Image + 1) % 4;
+                  display_Solarch_Image = display_Field_Image; 
                   if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
                   WIN3D_Update = 1;
                   break;
         case '[' :display_Field_Image = (display_Field_Image + 4 - 1) % 4;
+                  display_Solarch_Image = display_Field_Image;
                   if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
                   WIN3D_Update = 1; 
                   break;        
@@ -13522,8 +13524,8 @@ void SOLARCHVISION_draw_field_image () {
       float x = 0, y = 0, z = 0;
       
       if (display_Field_Image == 1) {
-        x = a * cos_ang(Field_Rotation[display_Field_Image]) - -b * sin_ang(Field_Rotation[display_Field_Image]);
-        y = a * sin_ang(Field_Rotation[display_Field_Image]) + -b * cos_ang(Field_Rotation[display_Field_Image]);
+        x = a * cos_ang(-Field_Rotation[display_Field_Image]) - -b * sin_ang(-Field_Rotation[display_Field_Image]);
+        y = a * sin_ang(-Field_Rotation[display_Field_Image]) + -b * cos_ang(-Field_Rotation[display_Field_Image]);
         z = c;         
       }
       else if (display_Field_Image == 2) {
@@ -13532,8 +13534,8 @@ void SOLARCHVISION_draw_field_image () {
         z = b;        
       }
       else if (display_Field_Image == 3) {
-        x = a * cos_ang(90 + Field_Rotation[display_Field_Image]) - c * sin_ang(90 + Field_Rotation[display_Field_Image]);
-        y = a * sin_ang(90 + Field_Rotation[display_Field_Image]) + c * cos_ang(90 + Field_Rotation[display_Field_Image]);
+        x = a * cos_ang(90 - Field_Rotation[display_Field_Image]) - c * sin_ang(90 - Field_Rotation[display_Field_Image]);
+        y = a * sin_ang(90 - Field_Rotation[display_Field_Image]) + c * cos_ang(90 - Field_Rotation[display_Field_Image]);
         z = b;    
       }      
 
@@ -15091,8 +15093,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
           float c = Field_Elevation[display_Field_Image];
           
-          float x = a * cos_ang(Field_Rotation[display_Field_Image]) - b * sin_ang(Field_Rotation[display_Field_Image]);
-          float y = a * sin_ang(Field_Rotation[display_Field_Image]) + b * cos_ang(Field_Rotation[display_Field_Image]);
+          float x = a * cos_ang(-Field_Rotation[display_Field_Image]) - b * sin_ang(-Field_Rotation[display_Field_Image]);
+          float y = a * sin_ang(-Field_Rotation[display_Field_Image]) + b * cos_ang(-Field_Rotation[display_Field_Image]);
           float z = c;
           
           d = SolidBuildings[n].Distance(x, -y, z);
@@ -15113,8 +15115,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
           float c = Field_Elevation[display_Field_Image];
           
-          float x = a * cos_ang(90 + Field_Rotation[display_Field_Image]) - c * sin_ang(90 + Field_Rotation[display_Field_Image]);
-          float y = a * sin_ang(90 + Field_Rotation[display_Field_Image]) + c * cos_ang(90 + Field_Rotation[display_Field_Image]);
+          float x = a * cos_ang(90 - Field_Rotation[display_Field_Image]) - c * sin_ang(90 - Field_Rotation[display_Field_Image]);
+          float y = a * sin_ang(90 - Field_Rotation[display_Field_Image]) + c * cos_ang(90 - Field_Rotation[display_Field_Image]);
           float z = b; 
           
           d = SolidBuildings[n].Distance(x, -y, -z);
@@ -18820,8 +18822,6 @@ void SOLARCHVISION_draw_solarch_image () {
 
   WIN3D_Diagrams.stroke(0);
   WIN3D_Diagrams.fill(127,127,127);    
-  
-  display_Solarch_Image = display_Field_Image; // <<<<<
   
   if (display_Solarch_Image != 0) {  
     WIN3D_Diagrams.beginShape();
