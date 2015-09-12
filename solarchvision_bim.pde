@@ -8694,6 +8694,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
             
             _valuesSUM = COMPARISON;
+            
+            //_valuesSUM *= 4 * ParametricGeometries_Field_at(Image_X, Image_Y); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            
             _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
           }
           
@@ -15041,8 +15044,8 @@ float Solarch_Rotation = 0; // North is up by default
 float Solarch_scale_U = float(DEFINED_STATIONS[STATION_NUMBER][7]); // i.e. 500 = 500m 
 float Solarch_scale_V = float(DEFINED_STATIONS[STATION_NUMBER][7]); // i.e. 500 = 500m 
 
-int Solarch_RES1 = 500;
-int Solarch_RES2 = 500;
+int Solarch_RES1 = 200;
+int Solarch_RES2 = 200;
 
 float Solarch_Elevation;
 
@@ -15061,8 +15064,8 @@ int Field_Color = 0;
 float Field_scale_U = 100; // i.e. 100m
 float Field_scale_V = 100; // i.e. 100m
 
-int Field_RES1 = 500;
-int Field_RES2 = 500;
+int Field_RES1 = 200;
+int Field_RES2 = 200;
 
 PImage Field_Image = createImage(Field_RES1, Field_RES2, RGB);
 
@@ -15083,49 +15086,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   for (int i = 0; i < Field_RES1; i++) {
     for (int j = 0; j < Field_RES2; j++) {
       
-      float val = 0;
-      for (int n = 0; n < SolidBuildings.length; n++) {
-        
-        float d = 0; 
-        
-        if (display_Field_Image == 1) {
-          float a = (i - 0.5 * Field_RES1) * (Field_scale_U / Field_RES1);
-          float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
-          float c = Field_Elevation[display_Field_Image];
-          
-          float x = a * cos_ang(-Field_Rotation[display_Field_Image]) - b * sin_ang(-Field_Rotation[display_Field_Image]);
-          float y = a * sin_ang(-Field_Rotation[display_Field_Image]) + b * cos_ang(-Field_Rotation[display_Field_Image]);
-          float z = c;
-          
-          d = SolidBuildings[n].Distance(x, -y, z);
-        }
-        else if (display_Field_Image == 2) {
-          float a = (i - 0.5 * Field_RES1) * (Field_scale_U / Field_RES1);
-          float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
-          float c = Field_Elevation[display_Field_Image];
-          
-          float x = a * cos_ang(Field_Rotation[display_Field_Image]) - c * sin_ang(Field_Rotation[display_Field_Image]);
-          float y = a * sin_ang(Field_Rotation[display_Field_Image]) + c * cos_ang(Field_Rotation[display_Field_Image]);
-          float z = b; 
-          
-          d = SolidBuildings[n].Distance(x, -y, -z);
-        }
-        else if (display_Field_Image == 3) {
-          float a = (i - 0.5 * Field_RES1) * (Field_scale_U / Field_RES1);
-          float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
-          float c = Field_Elevation[display_Field_Image];
-          
-          float x = a * cos_ang(90 - Field_Rotation[display_Field_Image]) - c * sin_ang(90 - Field_Rotation[display_Field_Image]);
-          float y = a * sin_ang(90 - Field_Rotation[display_Field_Image]) + c * cos_ang(90 - Field_Rotation[display_Field_Image]);
-          float z = b; 
-          
-          d = SolidBuildings[n].Distance(x, -y, -z);
-        }
-        
-        if (d > 0) {
-          val += 1.0 / pow(d, Field_Power);
-        } 
-      }
+      float val = ParametricGeometries_Field_at(i, j);
       
       //float _u = -Field_Multiplier * val;
       float _u = Field_Multiplier * val;
@@ -15157,6 +15118,55 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   Field_Image.save("/Output/Field.jpg");
   
   
+}
+
+
+float ParametricGeometries_Field_at (float i, float j){
+  float val = 0;
+  for (int n = 0; n < SolidBuildings.length; n++) {
+    
+    float d = 0; 
+    
+    if (display_Field_Image == 1) {
+      float a = (i - 0.5 * Field_RES1) * (Field_scale_U / Field_RES1);
+      float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
+      float c = Field_Elevation[display_Field_Image];
+      
+      float x = a * cos_ang(-Field_Rotation[display_Field_Image]) - b * sin_ang(-Field_Rotation[display_Field_Image]);
+      float y = a * sin_ang(-Field_Rotation[display_Field_Image]) + b * cos_ang(-Field_Rotation[display_Field_Image]);
+      float z = c;
+      
+      d = SolidBuildings[n].Distance(x, -y, z);
+    }
+    else if (display_Field_Image == 2) {
+      float a = (i - 0.5 * Field_RES1) * (Field_scale_U / Field_RES1);
+      float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
+      float c = Field_Elevation[display_Field_Image];
+      
+      float x = a * cos_ang(Field_Rotation[display_Field_Image]) - c * sin_ang(Field_Rotation[display_Field_Image]);
+      float y = a * sin_ang(Field_Rotation[display_Field_Image]) + c * cos_ang(Field_Rotation[display_Field_Image]);
+      float z = b; 
+      
+      d = SolidBuildings[n].Distance(x, -y, -z);
+    }
+    else if (display_Field_Image == 3) {
+      float a = (i - 0.5 * Field_RES1) * (Field_scale_U / Field_RES1);
+      float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
+      float c = Field_Elevation[display_Field_Image];
+      
+      float x = a * cos_ang(90 - Field_Rotation[display_Field_Image]) - c * sin_ang(90 - Field_Rotation[display_Field_Image]);
+      float y = a * sin_ang(90 - Field_Rotation[display_Field_Image]) + c * cos_ang(90 - Field_Rotation[display_Field_Image]);
+      float z = b; 
+      
+      d = SolidBuildings[n].Distance(x, -y, -z);
+    }
+    
+    if (d > 0) {
+      val += 1.0 / pow(d, Field_Power);
+    } 
+  }  
+  
+  return val;
 }
 
 
