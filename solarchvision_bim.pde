@@ -72,9 +72,9 @@ int Load_Default_Models = 0; //3;//0; //3; //5;
 
 int Create_Default_Material = 7; //0;
 
-float Create_Input_Length = 10;
-float Create_Input_Width = 10;
-float Create_Input_Height = 10;
+float Create_Input_Length = -20;
+float Create_Input_Width = -20;
+float Create_Input_Height = -20;
 
 float Create_Input_Volume = 0; //3000;
 
@@ -99,10 +99,10 @@ int Create_Mesh_Poly = 0;
 int Create_Mesh_Extrude = 0;
 int Create_Mesh_Tri = 0;
 int Create_Mesh_Quad = 0;
-int Create_Mesh_House = 1; // 0; //<<<<<<<<<<<<<
+int Create_Mesh_House = 0; 
 int Create_Mesh_Parametric = 0;
 int Create_Mesh_Person = 0;
-int Create_Mesh_Plant = 0;
+int Create_Mesh_Plant = 1;
 
 int Create_Mesh_Plant_Type = 0;
 int Create_Mesh_Person_Type = 0;
@@ -15041,8 +15041,8 @@ float Solarch_Rotation = 0; // North is up by default
 float Solarch_scale_U = float(DEFINED_STATIONS[STATION_NUMBER][7]); // i.e. 500 = 500m 
 float Solarch_scale_V = float(DEFINED_STATIONS[STATION_NUMBER][7]); // i.e. 500 = 500m 
 
-int Solarch_RES1 = 200;
-int Solarch_RES2 = 200;
+int Solarch_RES1 = 500;
+int Solarch_RES2 = 500;
 
 float Solarch_Elevation;
 
@@ -15061,8 +15061,8 @@ int Field_Color = 0;
 float Field_scale_U = 100; // i.e. 100m
 float Field_scale_V = 100; // i.e. 100m
 
-int Field_RES1 = 200;
-int Field_RES2 = 200;
+int Field_RES1 = 500;
+int Field_RES2 = 500;
 
 PImage Field_Image = createImage(Field_RES1, Field_RES2, RGB);
 
