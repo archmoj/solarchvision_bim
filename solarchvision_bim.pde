@@ -17945,6 +17945,14 @@ void RenderShadowsOnUrbanPlane() {
 
   PGraphics SHADOW_Diagrams = createGraphics(RES1, RES2, P2D);
   PGraphics TREES_Diagrams = createGraphics(RES1, RES2, P2D);
+  
+  int pre_display_Solarch_Image = display_Solarch_Image;
+  float pre_Solarch_Rotation = Solarch_Rotation;
+  
+  if (display_Solarch_Image == 3) {
+    display_Solarch_Image = 2;
+    Solarch_Rotation = 90 - Solarch_Rotation;    
+  }
 
   {  
     int RAD_TYPE = 0;
@@ -18810,6 +18818,9 @@ void RenderShadowsOnUrbanPlane() {
     }
   }
   
+  display_Solarch_Image = pre_display_Solarch_Image;
+  Solarch_Rotation = pre_Solarch_Rotation;  
+  
   cursor(HAND);
  
 }
@@ -18884,9 +18895,9 @@ void SOLARCHVISION_draw_solarch_image () {
           z = b;       
         }
         else if (display_Solarch_Image == 3) {
-          x = c * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
-          y = c * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
-          z = a;    
+          x = a * cos_ang(90 - Solarch_Rotation) - c * sin_ang(90 - Solarch_Rotation);
+          y = -(a * sin_ang(90 - Solarch_Rotation) + c * cos_ang(90 - Solarch_Rotation));
+          z = b;     
         }      
     
         if (display_solarch_texture == 1) {
