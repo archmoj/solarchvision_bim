@@ -2076,13 +2076,13 @@ void SOLARCHVISION_draw_WIN3D () {
  
   SOLARCHVISION_draw_3Dobjects();
 
-  SOLARCHVISION_draw_2Dobjects();
-  
   SOLARCHVISION_draw_solarch_image(); 
   
   SOLARCHVISION_draw_field_image();
 
   SOLARCHVISION_draw_field_lines();
+  
+  SOLARCHVISION_draw_2Dobjects();  
 
 
   WIN3D_Diagrams.sphereDetail(6, 4);
@@ -15233,7 +15233,7 @@ float[] traceContour (float x, float y, float z, float dx, float dy, float dz, f
   
   float min_dist = FLOAT_undefined;  
   
-  float r = 2; // <<<<<<<<<<<<<<
+  float r = 0.2; //2; // <<<<<<<<<<<<<<
   
   float t = atan2_ang(dy, dx);
 
@@ -15330,28 +15330,60 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
       float g = roundTo(Field_Multiplier * val, 0.05);
 
-      if ((g == roundTo(Field_Multiplier * val, 0.005)) && (g != 0)) {
+      if ((g == roundTo(Field_Multiplier * val, 0.01)) && (g != 0)) {
         
          float[] test_point_dir = {x, y, z, dx, dy, dz}; 
         
 
-        for (int n = 0; n < 10; n++) {
-        
-          println("n=", n);
+        for (int n = 0; n < 10; n++) { // <<<<<<<<<
         
           float[][] preVertice = {{test_point_dir[0], -test_point_dir[1], test_point_dir[2], g}};
-          Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, preVertice);
-          int point_prev = Field_Countours_Vertices.length - 1;
-      
+          int point_prev = 0; 
+          {
+            int nearestPoint = 0;
+            
+            for (int q = 1; q < Field_Countours_Vertices.length; q++) {
+            
+              if (dist(preVertice[0][0], preVertice[0][1], preVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]) < 0.001) { 
+             
+                point_prev = q;
+                break; 
+              }
+            }
+           
+            if (point_prev == 0) {
+              Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, preVertice);              
+              point_prev = Field_Countours_Vertices.length - 1;
+            } 
+          } 
+          
+          //--------------------------------------------------------------------------------------------------------------------------------------------------
           test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], val);
+          //--------------------------------------------------------------------------------------------------------------------------------------------------
 
-          float[][] newVertice = {{test_point_dir[0], -test_point_dir[1], test_point_dir[2], g}}; 
-          Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, newVertice);
-          int point_next = Field_Countours_Vertices.length - 1;
+          float[][] newVertice = {{test_point_dir[0], -test_point_dir[1], test_point_dir[2], g}};
+          int point_next = 0; 
+          {
+            int nearestPoint = 0;
+            
+            for (int q = 1; q < Field_Countours_Vertices.length; q++) {
+            
+              if (dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]) < 0.001) { 
+             
+                point_next = q;
+                break; 
+              }
+            }
+           
+            if (point_next == 0) {
+              Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, newVertice);              
+              point_next = Field_Countours_Vertices.length - 1;
+            } 
+          }           
+          
           
           int[][] newULine = {{point_prev, point_next}};
           Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);          
-          
           
         }         
       }
