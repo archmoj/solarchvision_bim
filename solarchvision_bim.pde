@@ -15233,7 +15233,7 @@ float[] traceContour (float x, float y, float z, float dx, float dy, float dz, f
   
   float min_dist = FLOAT_undefined;  
   
-  float r = 0.2; //2; // <<<<<<<<<<<<<<
+  float r = 0.5; //2; // <<<<<<<<<<<<<<
   
   float t = atan2_ang(dy, dx);
 
@@ -15330,12 +15330,12 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
       float g = roundTo(Field_Multiplier * val, 0.05);
 
-      if ((g == roundTo(Field_Multiplier * val, 0.01)) && (g != 0)) {
+      if ((g == roundTo(Field_Multiplier * val, 0.001)) && (g != 0)) {
         
          float[] test_point_dir = {x, y, z, dx, dy, dz}; 
         
 
-        for (int n = 0; n < 10; n++) { // <<<<<<<<<
+        for (int n = 0; n < 100; n++) { // <<<<<<<<<
         
           float[][] preVertice = {{test_point_dir[0], -test_point_dir[1], test_point_dir[2], g}};
           int point_prev = 0; 
@@ -15344,7 +15344,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
             
             for (int q = 1; q < Field_Countours_Vertices.length; q++) {
             
-              if (dist(preVertice[0][0], preVertice[0][1], preVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]) < 0.001) { 
+              if (dist(preVertice[0][0], preVertice[0][1], preVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]) < 0.1) { // i.e. min: 10cm
              
                 point_prev = q;
                 break; 
@@ -15379,6 +15379,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
               Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, newVertice);              
               point_next = Field_Countours_Vertices.length - 1;
             } 
+            else break; // because it reached an existing line! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
+             
           }           
           
           
@@ -15463,7 +15465,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   Field_Image.save("/Output/Field.jpg");
   
   //SOLARCHVISION_process_ParametricGeometries_UContours();
-  //SOLARCHVISION_process_ParametricGeometries_VContours();
+  SOLARCHVISION_process_ParametricGeometries_VContours();
 }
 
 
