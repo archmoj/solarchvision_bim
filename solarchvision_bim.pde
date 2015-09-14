@@ -15209,7 +15209,7 @@ float fn_dot2D (float x1, float y1, float x2, float y2) {
   return x1 * x2 + y1 * y2;
 }
 
-float[] traceContour (float x, float y, float z, float dx, float dy, float dz, float v) {
+float[] traceContour (float x, float y, float z, float Ix, float Iy, float Iz, float Jx, float Jy, float Jz, float v) {
 
   float t_max = FLOAT_undefined;
   float t_min = FLOAT_undefined;
@@ -15221,21 +15221,21 @@ float[] traceContour (float x, float y, float z, float dx, float dy, float dz, f
   
   float x_max = FLOAT_undefined;
   float x_min = FLOAT_undefined;
-  float x_equ = x + dx; //FLOAT_undefined;
+  float x_equ = x + Ix; //FLOAT_undefined;
   
   float y_max = FLOAT_undefined;
   float y_min = FLOAT_undefined;
-  float y_equ = y + dy; //FLOAT_undefined;
+  float y_equ = y + Iy; //FLOAT_undefined;
   
   float z_max = FLOAT_undefined;
   float z_min = FLOAT_undefined;
-  float z_equ = z + dz; //FLOAT_undefined;
+  float z_equ = z + Iz; //FLOAT_undefined;
   
   float min_dist = FLOAT_undefined;  
   
   float r = 0.5; //2; // <<<<<<<<<<<<<<
   
-  float t = atan2_ang(dy, dx);
+  float t = atan2_ang(Iy, Ix);
 
   for (int test_t = -180; test_t < 180; test_t += 1) { 
     
