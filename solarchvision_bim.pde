@@ -15167,22 +15167,33 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
       
       float[] getField = ParametricGeometries_Field_at(i, j);
 
+      float x = getField[0];
+      float y = getField[1];
+      float z = getField[2];
       float val = getField[3];
 
-      float _u = Field_Multiplier * val;
-
-      float g = roundTo(_u, 0.05);
+      float g = roundTo(Field_Multiplier * val, 0.05);
 
       color c = color(255, 255, 255, 0);
 
       int draw_contour = 0;
 
-      //if (g == roundTo(_u, 0.02)) draw_contour = 1; //contour line
+      float val_UP = ParametricGeometries_Field_at(i, j + 0.5)[3];
+      float val_DN = ParametricGeometries_Field_at(i, j - 0.5)[3];
 
-      if (g != roundTo(Field_Multiplier * ParametricGeometries_Field_at(i + 0.5, j)[3], 0.05)) draw_contour = 1;
-      else if (g != roundTo(Field_Multiplier * ParametricGeometries_Field_at(i, j + 0.5)[3], 0.05)) draw_contour = 1;
-      //else if (g != roundTo(Field_Multiplier * ParametricGeometries_Field_at(i, j - 0.5)[3], 0.05)) draw_contour = 2; // to avoid duplicate vertices on different levels
-      //else if (g != roundTo(Field_Multiplier * ParametricGeometries_Field_at(i - 0.5, j)[3], 0.05)) draw_contour = 2; // to avoid duplicate vertices on different levels
+      float g_UP = roundTo(Field_Multiplier * val_UP, 0.05);
+      float g_DN = roundTo(Field_Multiplier * val_DN, 0.05);
+
+      if (g_UP != g_DN) draw_contour = 1;
+      else {
+        val_UP = ParametricGeometries_Field_at(i + 0.5, j)[3];
+        val_DN = ParametricGeometries_Field_at(i - 0.5, j)[3];
+
+        g_UP = roundTo(Field_Multiplier * val_UP, 0.05);
+        g_DN = roundTo(Field_Multiplier * val_DN, 0.05);
+        
+        if (g_UP != g_DN) draw_contour = 1;
+      }
       
       if (draw_contour == 1) {      
 
@@ -15202,10 +15213,23 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           float[] _COL = SOLARCHVISION_DRYWCBD(g);
           c = color(255 - _COL[3], 255 - _COL[2], 255 - _COL[1], 255);
         }
-
-        float[][] newVertice = {getField};
-
-        Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, newVertice);        
+        
+        int closePointFound = 0;
+        
+        for (int q = 1; q < Field_Countours_Vertices.length; q++) {
+        
+          if (dist(x, y, z, Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]) < 1) { //i.e. less than 1m <<<<<<<<<<<<<<<
+         
+            closePointFound = 1;
+            break; 
+          }
+        }
+        
+        if (closePointFound == 0) { 
+          float[][] newVertice = {{x, y, z, g}}; // NOTE: using g rather val
+          
+          Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, newVertice);
+        }        
       }
       
       Field_Image.pixels[i + j * Field_RES1] = c;
@@ -15234,7 +15258,7 @@ void SOLARCHVISION_process_ParametricGeometries_UContours () {
       
       if (i != j) {
         
-        if (roundTo(Field_Countours_Vertices[i][3], 0.025) == roundTo(Field_Countours_Vertices[j][3], 0.025)) { // if two points were on the same Field level, less value is used!
+        if (Field_Countours_Vertices[i][3] == Field_Countours_Vertices[j][3]) { // if two points were on the same Field level
   
           float d = dist(Field_Countours_Vertices[i][0], Field_Countours_Vertices[i][1], Field_Countours_Vertices[i][2], Field_Countours_Vertices[j][0], Field_Countours_Vertices[j][1], Field_Countours_Vertices[j][2]);
           
@@ -15265,7 +15289,7 @@ void SOLARCHVISION_process_ParametricGeometries_UContours () {
       
       if ((i != j) && (pre_nearest_point != j)) {
         
-        if (roundTo(Field_Countours_Vertices[i][3], 0.025) == roundTo(Field_Countours_Vertices[j][3], 0.025)) { // if two points were on the same Field level, less value is used!
+        if (Field_Countours_Vertices[i][3] == Field_Countours_Vertices[j][3]) { // if two points were on the same Field level
   
           float d = dist(Field_Countours_Vertices[i][0], Field_Countours_Vertices[i][1], Field_Countours_Vertices[i][2], Field_Countours_Vertices[j][0], Field_Countours_Vertices[j][1], Field_Countours_Vertices[j][2]);
           
@@ -15280,6 +15304,9 @@ void SOLARCHVISION_process_ParametricGeometries_UContours () {
 
     if (min_dist < 2) { // the distance should be less than 2m! 
       if (nearest_point != -1) {
+        
+        
+        
         int[][] newULine = {{i, nearest_point}};
       
         Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);
@@ -15302,7 +15329,7 @@ void SOLARCHVISION_process_ParametricGeometries_VContours () {
       
       if (i != j) {
         
-        if (roundTo(Field_Countours_Vertices[i][3], 0.05) == roundTo(Field_Countours_Vertices[j][3] + 0.05, 0.05)) { // if two points were on the next Field levels
+        if (Field_Countours_Vertices[i][3] == Field_Countours_Vertices[j][3] + 0.05) { // if two points were on the same Field level
   
           float d = dist(Field_Countours_Vertices[i][0], Field_Countours_Vertices[i][1], Field_Countours_Vertices[i][2], Field_Countours_Vertices[j][0], Field_Countours_Vertices[j][1], Field_Countours_Vertices[j][2]);
           
@@ -15372,7 +15399,7 @@ void SOLARCHVISION_draw_field_lines () {
       float y2 = Field_Countours_Vertices[n2][1];
       float z2 = Field_Countours_Vertices[n2][2];
       
-      WIN3D_Diagrams.line(x1 * WIN3D_scale3D, y1 * WIN3D_scale3D, z1 * WIN3D_scale3D, x2 * WIN3D_scale3D, y2 * WIN3D_scale3D, z2 * WIN3D_scale3D);
+      WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
     }
 
     WIN3D_Diagrams.strokeWeight(2);
@@ -15392,7 +15419,7 @@ void SOLARCHVISION_draw_field_lines () {
       float y2 = Field_Countours_Vertices[n2][1];
       float z2 = Field_Countours_Vertices[n2][2];
       
-      WIN3D_Diagrams.line(x1 * WIN3D_scale3D, y1 * WIN3D_scale3D, z1 * WIN3D_scale3D, x2 * WIN3D_scale3D, y2 * WIN3D_scale3D, z2 * WIN3D_scale3D);
+      WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
     }
 
 
