@@ -15317,22 +15317,30 @@ void SOLARCHVISION_process_ParametricGeometries_VContours () {
     
     if (nearest_point != -1) {
       
+      int found_similar_line = 0;
+      
       float min_dist_to_similar_line = FLOAT_undefined; 
       
       for (int q = 1; q < Field_Countours_VLines.length; q++) {
         
         // comparing the new point with (only) the second vertice of the existing lines!
-        int j = nearest_point; 
-        int k = Field_Countours_VLines[q][1]; 
+        int i1 = i;
+        int i2 = nearest_point; 
+        int j1 = Field_Countours_VLines[q][0]; 
+        int j2 = Field_Countours_VLines[q][1];
         
-        float d = dist(Field_Countours_Vertices[k][0], Field_Countours_Vertices[k][1], Field_Countours_Vertices[k][2], Field_Countours_Vertices[j][0], Field_Countours_Vertices[j][1], Field_Countours_Vertices[j][2]);
+        float d1 = dist(Field_Countours_Vertices[i1][0], Field_Countours_Vertices[i1][1], Field_Countours_Vertices[i1][2], Field_Countours_Vertices[j1][0], Field_Countours_Vertices[j1][1], Field_Countours_Vertices[j1][2]);
+        float d2 = dist(Field_Countours_Vertices[i2][0], Field_Countours_Vertices[i2][1], Field_Countours_Vertices[i2][2], Field_Countours_Vertices[j2][0], Field_Countours_Vertices[j2][1], Field_Countours_Vertices[j2][2]);
         
-        if (min_dist_to_similar_line > d) {
-          min_dist_to_similar_line = d;
+        if ((d1 < 1) || (d2 < 1)) { //i.e. a similar line at 1m
+        
+          found_similar_line = 1; 
+          break;
         }      
       }      
   
-      if ((min_dist_to_similar_line > 1) || (min_dist_to_similar_line > 0.9 * FLOAT_undefined)) { // the distance should be more than 1m!
+      if (found_similar_line == 0) {
+      
         int[][] newVLine = {{i, nearest_point}};
         
         Field_Countours_VLines = (int[][]) concat(Field_Countours_VLines, newVLine);
