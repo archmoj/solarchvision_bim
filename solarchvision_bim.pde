@@ -15091,42 +15091,28 @@ float[] ParametricGeometries_Field_at (float i, float j){
   float val = 0;
   
   for (int n = 0; n < SolidBuildings.length; n++) {
-    
-    float d = 0; 
+
+    float a = (i - 0.5 * Field_RES1) * (Field_scale_U / Field_RES1);
+    float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
+    float c = Field_Elevation[display_Field_Image];
     
     if (display_Field_Image == 1) {
-      float a = (i - 0.5 * Field_RES1) * (Field_scale_U / Field_RES1);
-      float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
-      float c = Field_Elevation[display_Field_Image];
-      
       x = a * cos_ang(-Field_Rotation[display_Field_Image]) - b * sin_ang(-Field_Rotation[display_Field_Image]);
-      y = a * sin_ang(-Field_Rotation[display_Field_Image]) + b * cos_ang(-Field_Rotation[display_Field_Image]);
+      y = -(a * sin_ang(-Field_Rotation[display_Field_Image]) + b * cos_ang(-Field_Rotation[display_Field_Image]));
       z = c;
-      
-      d = SolidBuildings[n].Distance(x, -y, z);
     }
     else if (display_Field_Image == 2) {
-      float a = (i - 0.5 * Field_RES1) * (Field_scale_U / Field_RES1);
-      float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
-      float c = Field_Elevation[display_Field_Image];
-      
       x = a * cos_ang(Field_Rotation[display_Field_Image]) - c * sin_ang(Field_Rotation[display_Field_Image]);
-      y = a * sin_ang(Field_Rotation[display_Field_Image]) + c * cos_ang(Field_Rotation[display_Field_Image]);
-      z = b; 
-      
-      d = SolidBuildings[n].Distance(x, -y, -z);
+      y = -(a * sin_ang(Field_Rotation[display_Field_Image]) + c * cos_ang(Field_Rotation[display_Field_Image]));
+      z = -b; 
     }
     else if (display_Field_Image == 3) {
-      float a = (i - 0.5 * Field_RES1) * (Field_scale_U / Field_RES1);
-      float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
-      float c = Field_Elevation[display_Field_Image];
-      
       x = a * cos_ang(90 - Field_Rotation[display_Field_Image]) - c * sin_ang(90 - Field_Rotation[display_Field_Image]);
-      y = a * sin_ang(90 - Field_Rotation[display_Field_Image]) + c * cos_ang(90 - Field_Rotation[display_Field_Image]);
-      z = b; 
-      
-      d = SolidBuildings[n].Distance(x, -y, -z);
+      y = -(a * sin_ang(90 - Field_Rotation[display_Field_Image]) + c * cos_ang(90 - Field_Rotation[display_Field_Image]));
+      z = -b; 
     }
+      
+    float d = SolidBuildings[n].Distance(x, y, z);
     
     if (d > 0) {
       val += 1.0 / pow(d, Field_Power);
@@ -15138,10 +15124,174 @@ float[] ParametricGeometries_Field_at (float i, float j){
   return return_array;
 }
 
+float[] get_Field_normals (){
+
+  float x0 = 0;
+  float y0 = 0;
+  float z0 = 0;
+  
+  float xi = 0;
+  float yi = 0;
+  float zi = 0;
+
+  float xj = 0;
+  float yj = 0;
+  float zj = 0;
+
+  for (int q = 0; q < 3; q++) {
+    float i = 0;
+    float j = 0;
+    
+    if (q == 1) i = 1;
+    if (q == 2) j = 1;
+    
+    float a = i * (Field_scale_U / Field_RES1);
+    float b = j * (Field_scale_V / Field_RES2);
+    float c = Field_Elevation[display_Field_Image];
+    
+    float x = 0;
+    float y = 0;
+    float z = 0;
+      
+    if (display_Field_Image == 1) {
+      x = a * cos_ang(-Field_Rotation[display_Field_Image]) - b * sin_ang(-Field_Rotation[display_Field_Image]);
+      y = -(a * sin_ang(-Field_Rotation[display_Field_Image]) + b * cos_ang(-Field_Rotation[display_Field_Image]));
+      z = c;
+    }
+    else if (display_Field_Image == 2) {
+      x = a * cos_ang(Field_Rotation[display_Field_Image]) - c * sin_ang(Field_Rotation[display_Field_Image]);
+      y = -(a * sin_ang(Field_Rotation[display_Field_Image]) + c * cos_ang(Field_Rotation[display_Field_Image]));
+      z = -b; 
+    }
+    else if (display_Field_Image == 3) {
+      x = a * cos_ang(90 - Field_Rotation[display_Field_Image]) - c * sin_ang(90 - Field_Rotation[display_Field_Image]);
+      y = -(a * sin_ang(90 - Field_Rotation[display_Field_Image]) + c * cos_ang(90 - Field_Rotation[display_Field_Image]));
+      z = -b; 
+    }
+    
+    if (q == 0) {
+      x0 = x;
+      y0 = y;
+      z0 = z;
+    }
+    if (q == 1) {
+      xi = x;
+      yi = y;
+      zi = z;
+    }
+    if (q == 2) {
+      xj = x;
+      yj = y;
+      zj = z;
+    }
+  }
+
+  float[] return_array = {xi - x0, yi - y0, zi - z0, xj - x0, yj- y0, zj - z0};
+  
+  return return_array;
+}
+
+float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
+  float val = 0;
+  for (int n = 0; n < SolidBuildings.length; n++) {
+    
+    float d = SolidBuildings[n].Distance(x, y, z);
+
+    if (d > 0) {
+      val += 1.0 / pow(d, Field_Power);
+    } 
+    
+  }
+  return val;
+}
+
+float fn_dot2D (float x1, float y1, float x2, float y2) {
+  return x1 * x2 + y1 * y2;
+}
+
+float[] traceContour (float x, float y, float z, float dx, float dy, float dz, float v) {
+
+  float t_max = FLOAT_undefined;
+  float t_min = FLOAT_undefined;
+  float t_equ = 0; //FLOAT_undefined;  
+  
+  float v_max = FLOAT_undefined;
+  float v_min = FLOAT_undefined;
+  float v_equ = FLOAT_undefined;
+  
+  float x_max = FLOAT_undefined;
+  float x_min = FLOAT_undefined;
+  float x_equ = x + dx; //FLOAT_undefined;
+  
+  float y_max = FLOAT_undefined;
+  float y_min = FLOAT_undefined;
+  float y_equ = y + dy; //FLOAT_undefined;
+  
+  float z_max = FLOAT_undefined;
+  float z_min = FLOAT_undefined;
+  float z_equ = z + dz; //FLOAT_undefined;
+  
+  float min_dist = FLOAT_undefined;  
+  
+  float r = 2; // <<<<<<<<<<<<<<
+  
+  float t = atan2_ang(dy, dx);
+
+  for (int test_t = -180; test_t < 180; test_t += 1) { 
+    
+    float test_x = x + r * cos_ang(t + test_t);
+    float test_y = y + r * sin_ang(t + test_t);
+    float test_z = z;
+    
+    float test_v = ParametricGeometries_Field_atXYZ(test_x, test_y, test_z);        
+    
+    if ((test_v < v_min) || (v_min > 0.9 * FLOAT_undefined)) {
+      v_min = test_v;
+      t_min = test_t;
+      x_min = test_x;
+      y_min = test_y;
+      z_min = test_z;
+    }
+    if ((test_v > v_max) || (v_max > 0.9 * FLOAT_undefined))  {
+      v_max = test_v;
+      t_max = test_t;
+      x_max = test_x;
+      y_max = test_y;          
+      z_max = test_z;
+    }
+    
+    //if (((abs(test_v - v) < min_dist) && (fn_dot2D(test_x - x, test_y - y, dx, dy) >= 0)) || (v_equ > 0.9 * FLOAT_undefined))  {
+    if ((abs(test_v - v) < min_dist) || (v_equ > 0.9 * FLOAT_undefined))  {
+      if (fn_dot2D(test_x - x, test_y - y, dx, dy) >= 0) {
+      
+        min_dist = abs(test_v - v);
+        
+        v_equ = test_v;
+        t_equ = test_t;
+        x_equ = test_x;
+        y_equ = test_y;          
+        z_equ = test_z;
+      }
+    }
+    
+  }     
+
+  //float[] return_array = {x_max, y_max, z_max, cos_ang(t + t_max), sin_ang(t + t_max), 0};
+  //float[] return_array = {x_min, y_min, z_min, cos_ang(t + t_min), sin_ang(t + t_min), 0};
+  float[] return_array = {x_equ, y_equ, z_equ, cos_ang(t + t_equ), sin_ang(t + t_equ), 0};
+  
+  return return_array;
+}
+
+
+
+
 
 float[][] Field_Countours_Vertices = {{0,0,0,0}}; // keeping Field value at the 4th member
 int[][] Field_Countours_ULines = {{0,0}};
 int[][] Field_Countours_VLines = {{0,0}};
+
+
 
 
 void SOLARCHVISION_calculate_ParametricGeometries_Field () {
@@ -15161,19 +15311,42 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   Field_Countours_VLines[0][1] = 0;
   
   Field_Image.loadPixels();
+
+  float[] FieldNormal = get_Field_normals();
+  
+  float dx = FieldNormal[0];
+  float dy = FieldNormal[1];
+  float dz = FieldNormal[2];
   
   for (int i = 0; i < Field_RES1; i++) {
     for (int j = 0; j < Field_RES2; j++) {
       
-      float[] getField = ParametricGeometries_Field_at(i, j);
+      float[] FieldPoint = ParametricGeometries_Field_at(i, j);
 
-      float x = getField[0];
-      float y = getField[1];
-      float z = getField[2];
-      float val = getField[3];
+      float x = FieldPoint[0];
+      float y = FieldPoint[1];
+      float z = FieldPoint[2];
+      float val = FieldPoint[3];
 
       float g = roundTo(Field_Multiplier * val, 0.05);
 
+      if (g == roundTo(Field_Multiplier * val, 0.01)) {
+        
+         float[] test_point_dir = {x, y, z, dx, dy, dz}; 
+        
+
+        for (int n = 0; n < 100; n++) {  
+      
+          test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], val);
+
+          float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g}}; // NOTE: using g rather val
+          
+          Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, newVertice);
+        }         
+      }
+      
+      /*
+      
       int draw_contour = 0;
 
       float val_UP = ParametricGeometries_Field_at(i, j + 0.5)[3];
@@ -15192,10 +15365,12 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
         
         if (g_UP != g_DN) draw_contour = 1;
       }
+      
+      */
 
       color c = color(255, 255, 255, 0);        
 
-      if (draw_contour == 1) {      
+      //if (draw_contour == 1) {      
         
         if (Field_Color == 0) {
           float[] _COL = SOLARCHVISION_DRYWCBD(g);
@@ -15214,6 +15389,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           c = color(255 - _COL[3], 255 - _COL[2], 255 - _COL[1], 255);
         }
         
+        /*
         int closePointFound = 0;
         
         for (int q = 1; q < Field_Countours_Vertices.length; q++) {
@@ -15229,8 +15405,9 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           float[][] newVertice = {{x, y, z, g}}; // NOTE: using g rather val
           
           Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, newVertice);
-        }        
-      }
+        }  
+        */      
+      //}
       
       Field_Image.pixels[i + j * Field_RES1] = c;
       
@@ -15242,8 +15419,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   
   Field_Image.save("/Output/Field.jpg");
   
-  SOLARCHVISION_process_ParametricGeometries_UContours();
-  SOLARCHVISION_process_ParametricGeometries_VContours();
+  //SOLARCHVISION_process_ParametricGeometries_UContours();
+  //SOLARCHVISION_process_ParametricGeometries_VContours();
 }
 
 
