@@ -15218,7 +15218,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
         
         for (int q = 1; q < Field_Countours_Vertices.length; q++) {
         
-          if (dist(x, y, z, Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]) < 1) { //i.e. less than 1m <<<<<<<<<<<<<<<
+          if (dist(x, y, z, Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]) < 0.25) { //i.e. less than 0.25m <<<<<<<<<<<<<<<
          
             closePointFound = 1;
             break; 
@@ -15251,6 +15251,14 @@ void SOLARCHVISION_process_ParametricGeometries_UContours () {
   
   for (int i = 1; i < Field_Countours_Vertices.length; i++) {
 
+    float x0 = Field_Countours_Vertices[i][0];
+    float y0 = Field_Countours_Vertices[i][1];
+    float z0 = Field_Countours_Vertices[i][2];
+    
+    float x1 = 0;
+    float y1 = 0;
+    float z1 = 0;
+    
     float min_dist = FLOAT_undefined;
     int nearest_point = -1;
     
@@ -15260,12 +15268,16 @@ void SOLARCHVISION_process_ParametricGeometries_UContours () {
         
         if (Field_Countours_Vertices[i][3] == Field_Countours_Vertices[j][3]) { // if two points were on the same Field level
   
-          float d = dist(Field_Countours_Vertices[i][0], Field_Countours_Vertices[i][1], Field_Countours_Vertices[i][2], Field_Countours_Vertices[j][0], Field_Countours_Vertices[j][1], Field_Countours_Vertices[j][2]);
+          float d = dist(x0, y0, z0, Field_Countours_Vertices[j][0], Field_Countours_Vertices[j][1], Field_Countours_Vertices[j][2]);
           
           if (min_dist > d) {
             min_dist = d;
             
             nearest_point = j;
+            
+            x1 = Field_Countours_Vertices[j][0];
+            y1 = Field_Countours_Vertices[j][1];
+            z1 = Field_Countours_Vertices[j][2];
           } 
         }
       }
@@ -15278,9 +15290,9 @@ void SOLARCHVISION_process_ParametricGeometries_UContours () {
         Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);
       }        
     }  
-/* 
+
     // now finding second nearest point! we should redo it in opposite diection later, to join all!
-    
+
     int pre_nearest_point = nearest_point;  
     min_dist = FLOAT_undefined;
     nearest_point = -1;
@@ -15290,14 +15302,26 @@ void SOLARCHVISION_process_ParametricGeometries_UContours () {
       if ((i != j) && (nearest_point != j)) {
         
         if (Field_Countours_Vertices[i][3] == Field_Countours_Vertices[j][3]) { // if two points were on the same Field level
+
+          float x2 = Field_Countours_Vertices[j][0];
+          float y2 = Field_Countours_Vertices[j][1];
+          float z2 = Field_Countours_Vertices[j][2];   
+         
+          float[] P1 = {x1 - x0, y1 - y0, z1 - z0};  
+          float[] P2 = {x2 - x0, y2 - y0, z2 - z0};
+
+          if (fn_dot(fn_normalize(P1), fn_normalize(P2)) < 0) { // kind of opposite direction : )
   
-          float d = dist(Field_Countours_Vertices[i][0], Field_Countours_Vertices[i][1], Field_Countours_Vertices[i][2], Field_Countours_Vertices[j][0], Field_Countours_Vertices[j][1], Field_Countours_Vertices[j][2]);
-          
-          if (min_dist > d) {
-            min_dist = d;
+            float d = dist(x0, y0, z0, Field_Countours_Vertices[j][0], Field_Countours_Vertices[j][1], Field_Countours_Vertices[j][2]);
             
-            nearest_point = j;
-          } 
+            if (min_dist > d) {
+              min_dist = d;
+              
+              nearest_point = j;
+              
+          
+            } 
+          }
         }
       }
     }    
@@ -15310,7 +15334,7 @@ void SOLARCHVISION_process_ParametricGeometries_UContours () {
         Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);
       }        
     }  
-*/
+
  
   }
   
@@ -15342,35 +15366,37 @@ void SOLARCHVISION_process_ParametricGeometries_VContours () {
     }
     
     if (nearest_point != -1) {
+      if (min_dist < 25) { // the distance should be less than 25m! 
       
-      int found_similar_line = 0;
-      
-      float min_dist_to_similar_line = FLOAT_undefined; 
-      
-      for (int q = 1; q < Field_Countours_VLines.length; q++) {
+        int found_similar_line = 0;
         
-        // comparing the new point with (only) the second vertice of the existing lines!
-        int i1 = i;
-        int i2 = nearest_point; 
-        int j1 = Field_Countours_VLines[q][0]; 
-        int j2 = Field_Countours_VLines[q][1];
+        float min_dist_to_similar_line = FLOAT_undefined; 
         
-        float d1 = dist(Field_Countours_Vertices[i1][0], Field_Countours_Vertices[i1][1], Field_Countours_Vertices[i1][2], Field_Countours_Vertices[j1][0], Field_Countours_Vertices[j1][1], Field_Countours_Vertices[j1][2]);
-        float d2 = dist(Field_Countours_Vertices[i2][0], Field_Countours_Vertices[i2][1], Field_Countours_Vertices[i2][2], Field_Countours_Vertices[j2][0], Field_Countours_Vertices[j2][1], Field_Countours_Vertices[j2][2]);
-        
-        if ((d1 < 1) || (d2 < 1)) { //i.e. a similar line at 1m
-        
-          found_similar_line = 1; 
-          break;
+        for (int q = 1; q < Field_Countours_VLines.length; q++) {
+          
+          // comparing the new point with (only) the second vertice of the existing lines!
+          int i1 = i;
+          int i2 = nearest_point; 
+          int j1 = Field_Countours_VLines[q][0]; 
+          int j2 = Field_Countours_VLines[q][1];
+          
+          float d1 = dist(Field_Countours_Vertices[i1][0], Field_Countours_Vertices[i1][1], Field_Countours_Vertices[i1][2], Field_Countours_Vertices[j1][0], Field_Countours_Vertices[j1][1], Field_Countours_Vertices[j1][2]);
+          float d2 = dist(Field_Countours_Vertices[i2][0], Field_Countours_Vertices[i2][1], Field_Countours_Vertices[i2][2], Field_Countours_Vertices[j2][0], Field_Countours_Vertices[j2][1], Field_Countours_Vertices[j2][2]);
+          
+          if ((d1 < 1) || (d2 < 1)) { //i.e. a similar line at 1m
+          
+            found_similar_line = 1; 
+            break;
+          }      
         }      
-      }      
-  
-      if (found_similar_line == 0) {
-      
-        int[][] newVLine = {{i, nearest_point}};
+    
+        if (found_similar_line == 0) {
         
-        Field_Countours_VLines = (int[][]) concat(Field_Countours_VLines, newVLine);
-      }  
+          int[][] newVLine = {{i, nearest_point}};
+          
+          Field_Countours_VLines = (int[][]) concat(Field_Countours_VLines, newVLine);
+        }  
+      }
     }
   
   }
