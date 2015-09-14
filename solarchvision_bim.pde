@@ -15076,7 +15076,7 @@ float Field_Multiplier = 1.0; //0.1; //10.0;
 int display_Field_Image = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
 
 float[] Field_Elevation = {0, 1, 0, 0};
-float[] Field_Rotation = {0, 1, 0, 0};
+float[] Field_Rotation = {0, 0, 0, 0};
 
 float Field_PositionStep = 1.25;
 
@@ -15314,9 +15314,12 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
   float[] FieldNormal = get_Field_normals();
   
-  float dx = FieldNormal[0];
-  float dy = FieldNormal[1];
-  float dz = FieldNormal[2];
+  float Ix = FieldNormal[0];
+  float Iy = FieldNormal[1];
+  float Iz = FieldNormal[2];
+  float Jx = FieldNormal[3];
+  float Jy = FieldNormal[4];
+  float Jz = FieldNormal[5];
   
   for (int i = 0; i < Field_RES1; i++) {
     for (int j = 0; j < Field_RES2; j++) {
@@ -15332,7 +15335,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
       if ((g == roundTo(Field_Multiplier * val, 0.001)) && (g != 0)) {
         
-         float[] test_point_dir = {x, y, z, dx, dy, dz}; 
+         float[] test_point_dir = {x, y, z, Ix, Iy, Iz, Jx, Jy, Jz}; 
         
 
         for (int n = 0; n < 100; n++) { // <<<<<<<<<
@@ -15358,7 +15361,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           } 
           
           //--------------------------------------------------------------------------------------------------------------------------------------------------
-          test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], val);
+          test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], test_point_dir[6], test_point_dir[7], test_point_dir[8], val);
           //--------------------------------------------------------------------------------------------------------------------------------------------------
 
           float[][] newVertice = {{test_point_dir[0], -test_point_dir[1], test_point_dir[2], g}};
