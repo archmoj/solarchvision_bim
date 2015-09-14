@@ -15123,7 +15123,7 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
   
   return return_array;
 }
-
+/*
 float[] get_Field_normals (){
 
   float x0 = 0;
@@ -15190,7 +15190,7 @@ float[] get_Field_normals (){
   
   return return_array;
 }
-
+*/
 float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
   float val = 0;
   for (int n = 0; n < SolidBuildings.length; n++) {
@@ -15238,10 +15238,36 @@ float[] traceContour (float x, float y, float z, float dx, float dy, float dz, f
   float t = atan2_ang(dy, dx);
 
   for (int test_t = -180; test_t < 180; test_t += 1) { 
+
+    float a = r * cos_ang(t + test_t);
+    float b = r * sin_ang(t + test_t);
+    float c = 0;
     
-    float test_x = x + r * cos_ang(t + test_t);
-    float test_y = y + r * sin_ang(t + test_t);
-    float test_z = z;
+    if (display_Field_Image == 1) {
+      float Qx = a * cos_ang(-Field_Rotation[display_Field_Image]) - b * sin_ang(-Field_Rotation[display_Field_Image]);
+      float Qy = -(a * sin_ang(-Field_Rotation[display_Field_Image]) + b * cos_ang(-Field_Rotation[display_Field_Image]));
+      float Qz = c;
+      
+      a = Qx; b = Qy; c = Qz; 
+    }
+    else if (display_Field_Image == 2) {
+      float Qx = a * cos_ang(Field_Rotation[display_Field_Image]) - c * sin_ang(Field_Rotation[display_Field_Image]);
+      float Qy = -(a * sin_ang(Field_Rotation[display_Field_Image]) + c * cos_ang(Field_Rotation[display_Field_Image]));
+      float Qz = -b; 
+
+      a = Qx; b = Qy; c = Qz; 
+    }
+    else if (display_Field_Image == 3) {
+      float Qx = a * cos_ang(90 - Field_Rotation[display_Field_Image]) - c * sin_ang(90 - Field_Rotation[display_Field_Image]);
+      float Qy = -(a * sin_ang(90 - Field_Rotation[display_Field_Image]) + c * cos_ang(90 - Field_Rotation[display_Field_Image]));
+      float Qz = -b; 
+
+      a = Qx; b = Qy; c = Qz; 
+    }
+    
+    float test_x = x + a;
+    float test_y = y + b;
+    float test_z = z + c;
     
     float test_v = ParametricGeometries_Field_atXYZ(test_x, test_y, test_z);        
     
@@ -15312,14 +15338,9 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   
   Field_Image.loadPixels();
 
-  float[] FieldNormal = get_Field_normals();
-  
-  float Ix = FieldNormal[0];
-  float Iy = FieldNormal[1];
-  float Iz = FieldNormal[2];
-  float Jx = FieldNormal[3];
-  float Jy = FieldNormal[4];
-  float Jz = FieldNormal[5];
+  float dx = 1;
+  float dy = 0;
+  float dz = 0;
   
   for (int i = 0; i < Field_RES1; i++) {
     for (int j = 0; j < Field_RES2; j++) {
@@ -15335,10 +15356,10 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
       if ((g == roundTo(Field_Multiplier * val, 0.001)) && (g != 0)) {
         
-         float[] test_point_dir = {x, y, z, Ix, Iy, Iz, Jx, Jy, Jz}; 
-        
+        float[] test_point_dir = {x, y, z, dx, dy, dz}; 
+       
 
-        for (int n = 0; n < 100; n++) { // <<<<<<<<<
+        for (int n = 0; n < 10; n++) { // <<<<<<<<<
         
           float[][] preVertice = {{test_point_dir[0], -test_point_dir[1], test_point_dir[2], g}};
           int point_prev = 0; 
@@ -15361,7 +15382,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           } 
           
           //--------------------------------------------------------------------------------------------------------------------------------------------------
-          test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], test_point_dir[6], test_point_dir[7], test_point_dir[8], val);
+          test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], val);
           //--------------------------------------------------------------------------------------------------------------------------------------------------
 
           float[][] newVertice = {{test_point_dir[0], -test_point_dir[1], test_point_dir[2], g}};
@@ -15383,9 +15404,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
               point_next = Field_Countours_Vertices.length - 1;
             } 
             else break; // because it reached an existing line! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
-             
           }           
-          
           
           int[][] newULine = {{point_prev, point_next}};
           Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);          
@@ -15393,176 +15412,35 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
         }         
       }
       
-      /*
-      
-      int draw_contour = 0;
-
-      float val_UP = ParametricGeometries_Field_atIJ(i, j + 0.5)[3];
-      float val_DN = ParametricGeometries_Field_atIJ(i, j - 0.5)[3];
-
-      float g_UP = roundTo(Field_Multiplier * val_UP, 0.05);
-      float g_DN = roundTo(Field_Multiplier * val_DN, 0.05);
-
-      if (g_UP != g_DN) draw_contour = 1;
-      else {
-        val_UP = ParametricGeometries_Field_atIJ(i + 0.5, j)[3];
-        val_DN = ParametricGeometries_Field_atIJ(i - 0.5, j)[3];
-
-        g_UP = roundTo(Field_Multiplier * val_UP, 0.05);
-        g_DN = roundTo(Field_Multiplier * val_DN, 0.05);
-        
-        if (g_UP != g_DN) draw_contour = 1;
-      }
-      
-      */
-
       color c = color(255, 255, 255, 0);        
+  
+      if (Field_Color == 0) {
+        float[] _COL = SOLARCHVISION_DRYWCBD(g);
+        c = color(_COL[1], _COL[2], _COL[3], 255);
+      }
+      else if (Field_Color == 1) {
+        float[] _COL = SOLARCHVISION_DRYWCBD(-g);
+        c = color(_COL[1], _COL[2], _COL[3], 255);
+      } 
+      else if (Field_Color == 2) {
+        float[] _COL = SOLARCHVISION_DRYWCBD(-g);
+        c = color(255 - _COL[3], 255 - _COL[2], 255 - _COL[1], 255);
+      } 
+      else if (Field_Color == 3) {
+        float[] _COL = SOLARCHVISION_DRYWCBD(g);
+        c = color(255 - _COL[3], 255 - _COL[2], 255 - _COL[1], 255);
+      }
 
-      //if (draw_contour == 1) {      
-        
-        if (Field_Color == 0) {
-          float[] _COL = SOLARCHVISION_DRYWCBD(g);
-          c = color(_COL[1], _COL[2], _COL[3], 255);
-        }
-        else if (Field_Color == 1) {
-          float[] _COL = SOLARCHVISION_DRYWCBD(-g);
-          c = color(_COL[1], _COL[2], _COL[3], 255);
-        } 
-        else if (Field_Color == 2) {
-          float[] _COL = SOLARCHVISION_DRYWCBD(-g);
-          c = color(255 - _COL[3], 255 - _COL[2], 255 - _COL[1], 255);
-        } 
-        else if (Field_Color == 3) {
-          float[] _COL = SOLARCHVISION_DRYWCBD(g);
-          c = color(255 - _COL[3], 255 - _COL[2], 255 - _COL[1], 255);
-        }
-        
-        /*
-        int closePointFound = 0;
-        
-        for (int q = 1; q < Field_Countours_Vertices.length; q++) {
-        
-          if (dist(x, y, z, Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]) < 0.25) { //i.e. less than 0.25m <<<<<<<<<<<<<<<
-         
-            closePointFound = 1;
-            break; 
-          }
-        }
-        
-        if (closePointFound == 0) { 
-          float[][] newVertice = {{x, y, z, g}}; // NOTE: using g rather val
-          
-          Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, newVertice);
-        }  
-        */      
-      //}
-      
       Field_Image.pixels[i + j * Field_RES1] = c;
       
     }
   }
-  
  
   Field_Image.updatePixels();
   
   Field_Image.save("/Output/Field.jpg");
   
-  //SOLARCHVISION_process_ParametricGeometries_UContours();
-  SOLARCHVISION_process_ParametricGeometries_VContours();
-}
-
-
-void SOLARCHVISION_process_ParametricGeometries_UContours () {
-  
-  for (int i = 1; i < Field_Countours_Vertices.length; i++) {
-
-    float x0 = Field_Countours_Vertices[i][0];
-    float y0 = Field_Countours_Vertices[i][1];
-    float z0 = Field_Countours_Vertices[i][2];
-    
-    float x1 = 0;
-    float y1 = 0;
-    float z1 = 0;
-    
-    float min_dist = FLOAT_undefined;
-    int nearest_point = -1;
-    
-    for (int j = 1; j < Field_Countours_Vertices.length; j++) {
-      
-      if (i != j) {
-        
-        if (Field_Countours_Vertices[i][3] == Field_Countours_Vertices[j][3]) { // if two points were on the same Field level
-  
-          float d = dist(x0, y0, z0, Field_Countours_Vertices[j][0], Field_Countours_Vertices[j][1], Field_Countours_Vertices[j][2]);
-          
-          if (min_dist > d) {
-            min_dist = d;
-            
-            nearest_point = j;
-            
-            x1 = Field_Countours_Vertices[j][0];
-            y1 = Field_Countours_Vertices[j][1];
-            z1 = Field_Countours_Vertices[j][2];
-          } 
-        }
-      }
-    }
-
-    if (min_dist < 2) { // the distance should be less than 2m! 
-      if (nearest_point != -1) {
-        int[][] newULine = {{i, nearest_point}};
-      
-        Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);
-      }        
-    }  
-
-    // now finding second nearest point! we should redo it in opposite diection later, to join all!
-
-    int pre_nearest_point = nearest_point;  
-    min_dist = FLOAT_undefined;
-    nearest_point = -1;
-    
-    for (int j = 1; j < Field_Countours_Vertices.length; j++) {
-      
-      if ((i != j) && (nearest_point != j)) {
-        
-        if (Field_Countours_Vertices[i][3] == Field_Countours_Vertices[j][3]) { // if two points were on the same Field level
-
-          float x2 = Field_Countours_Vertices[j][0];
-          float y2 = Field_Countours_Vertices[j][1];
-          float z2 = Field_Countours_Vertices[j][2];   
-         
-          float[] P1 = {x1 - x0, y1 - y0, z1 - z0};  
-          float[] P2 = {x2 - x0, y2 - y0, z2 - z0};
-
-          if (fn_dot(fn_normalize(P1), fn_normalize(P2)) < 0) { // kind of opposite direction : )
-  
-            float d = dist(x0, y0, z0, Field_Countours_Vertices[j][0], Field_Countours_Vertices[j][1], Field_Countours_Vertices[j][2]);
-            
-            if (min_dist > d) {
-              min_dist = d;
-              
-              nearest_point = j;
-              
-          
-            } 
-          }
-        }
-      }
-    }    
-
-    if (min_dist < 2) { // the distance should be less than 2m! 
-      if (nearest_point != -1) {
-        
-        int[][] newULine = {{i, nearest_point}};
-      
-        Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);
-      }        
-    }  
-
- 
-  }
-  
+  //SOLARCHVISION_process_ParametricGeometries_VContours();
 }
 
 
