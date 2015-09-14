@@ -15271,13 +15271,13 @@ void SOLARCHVISION_process_ParametricGeometries_UContours () {
       }
     }
 
-    if (min_dist < 2) { // the distance should be less than 2m! 
+    //if (min_dist < 2) { // the distance should be less than 2m! 
       if (nearest_point != -1) {
         int[][] newULine = {{i, nearest_point}};
       
         Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);
       }        
-    }  
+    //}  
     
     // now finding second nearest point! we should redo it in opposite diection later, to join all!
     
@@ -15302,7 +15302,7 @@ void SOLARCHVISION_process_ParametricGeometries_UContours () {
       }
     }    
 
-    if (min_dist < 2) { // the distance should be less than 2m! 
+    //if (min_dist < 2) { // the distance should be less than 2m! 
       if (nearest_point != -1) {
         
         
@@ -15311,7 +15311,7 @@ void SOLARCHVISION_process_ParametricGeometries_UContours () {
       
         Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);
       }        
-    }  
+    //}  
   }
   
   
@@ -15329,7 +15329,7 @@ void SOLARCHVISION_process_ParametricGeometries_VContours () {
       
       if (i != j) {
         
-        if (Field_Countours_Vertices[i][3] == Field_Countours_Vertices[j][3] + 0.05) { // if two points were on the same Field level
+        if (Field_Countours_Vertices[i][3] == Field_Countours_Vertices[j][3] + 0.05) { // if two points were on the Field levels next to each other
   
           float d = dist(Field_Countours_Vertices[i][0], Field_Countours_Vertices[i][1], Field_Countours_Vertices[i][2], Field_Countours_Vertices[j][0], Field_Countours_Vertices[j][1], Field_Countours_Vertices[j][2]);
           
