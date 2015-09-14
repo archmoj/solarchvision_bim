@@ -2073,15 +2073,14 @@ void SOLARCHVISION_draw_WIN3D () {
   SOLARCHVISION_draw_SKY3D();
   
   SOLARCHVISION_draw_land();
-  
-  SOLARCHVISION_draw_solarch_image(); 
-  
-  SOLARCHVISION_draw_field_image();
-  
+ 
   SOLARCHVISION_draw_3Dobjects();
 
   SOLARCHVISION_draw_2Dobjects();
   
+  SOLARCHVISION_draw_solarch_image(); 
+  
+  SOLARCHVISION_draw_field_image();
 
 
 
@@ -13508,7 +13507,10 @@ void SOLARCHVISION_draw_field_image () {
   
   if (display_Field_Image != 0) {
     WIN3D_Diagrams.beginShape();
+    
     WIN3D_Diagrams.texture(Field_Image);    
+    WIN3D_Diagrams.stroke(255, 255, 255, 0);
+    WIN3D_Diagrams.fill(255, 255, 255, 0);
     
     float c = Field_Elevation[display_Field_Image] * objects_scale;
     
@@ -15064,17 +15066,17 @@ int Field_Color = 0;
 float Field_scale_U = 100; // i.e. 100m
 float Field_scale_V = 100; // i.e. 100m
 
-int Field_RES1 = 200;
-int Field_RES2 = 200;
+int Field_RES1 = 400;
+int Field_RES2 = 400;
 
-PImage Field_Image = createImage(Field_RES1, Field_RES2, RGB);
+PImage Field_Image = createImage(Field_RES1, Field_RES2, ARGB);
 
 float Field_Multiplier = 1.0; //0.1; //10.0; 
 
 int display_Field_Image = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
 
-float[] Field_Elevation = {0, 0, 0, 0};
-float[] Field_Rotation = {0, 0, 0, 0};
+float[] Field_Elevation = {0, 1, 0, 0};
+float[] Field_Rotation = {0, 1, 0, 0};
 
 float Field_PositionStep = 1.25;
 
@@ -15087,27 +15089,36 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
     for (int j = 0; j < Field_RES2; j++) {
       
       float val = ParametricGeometries_Field_at(i, j);
-      
-      //float _u = -Field_Multiplier * val;
+
       float _u = Field_Multiplier * val;
 
-      float[] _COL = {0,0,0,0};
-      if (Field_Color == 0) {
-        _COL = SOLARCHVISION_DRYWCBD(roundTo(_u, 0.05));
-        Field_Image.pixels[i + j * Field_RES1] = color(_COL[1], _COL[2], _COL[3]);
+      float g = roundTo(_u, 0.05);
+
+      color c = color(255, 255, 255, 0);
+
+      if (g == roundTo(_u, 0.02)) //contour line
+      {      
+
+        if (Field_Color == 0) {
+          float[] _COL = SOLARCHVISION_DRYWCBD(g);
+          c = color(_COL[1], _COL[2], _COL[3], 255);
+        }
+        else if (Field_Color == 1) {
+          float[] _COL = SOLARCHVISION_DRYWCBD(-g);
+          c = color(_COL[1], _COL[2], _COL[3], 255);
+        } 
+        else if (Field_Color == 2) {
+          float[] _COL = SOLARCHVISION_DRYWCBD(-g);
+          c = color(255 - _COL[3], 255 - _COL[2], 255 - _COL[1], 255);
+        } 
+        else if (Field_Color == 3) {
+          float[] _COL = SOLARCHVISION_DRYWCBD(g);
+          c = color(255 - _COL[3], 255 - _COL[2], 255 - _COL[1], 255);
+        }
+     
       }
-      else if (Field_Color == 1) {
-         _COL = SOLARCHVISION_DRYWCBD(roundTo(-_u, 0.05));
-        Field_Image.pixels[i + j * Field_RES1] = color(_COL[1], _COL[2], _COL[3]);
-      } 
-      else if (Field_Color == 2) {
-         _COL = SOLARCHVISION_DRYWCBD(roundTo(-_u, 0.05));
-        Field_Image.pixels[i + j * Field_RES1] = color(255 - _COL[3], 255 - _COL[2], 255 - _COL[1]);
-      } 
-      else if (Field_Color == 3) {
-         _COL = SOLARCHVISION_DRYWCBD(roundTo(_u, 0.05));
-        Field_Image.pixels[i + j * Field_RES1] = color(255 - _COL[3], 255 - _COL[2], 255 - _COL[1]);
-      } 
+      
+      Field_Image.pixels[i + j * Field_RES1] = c;
       
     }
   }
@@ -17923,7 +17934,6 @@ float Rendered_Solarch_scale_U = FLOAT_undefined;
 float Rendered_Solarch_scale_V = FLOAT_undefined;
 float Rendered_Solarch_Elevation = FLOAT_undefined;
 float Rendered_Solarch_Rotation = FLOAT_undefined;
- 
 
 String defaultSceneName = "Complex";
                   
@@ -17936,7 +17946,7 @@ void RenderShadowsOnUrbanPlane() {
   defaultSceneName = SceneName;
   
   Solarch_Rotation =  Field_Rotation[display_Field_Image];
-  Solarch_Elevation = 0.1 + Field_Elevation[display_Field_Image];
+  Solarch_Elevation = 0.0 + Field_Elevation[display_Field_Image];
   Solarch_scale_U = Field_scale_U; 
   Solarch_scale_V = Field_scale_V;
   
@@ -17945,7 +17955,6 @@ void RenderShadowsOnUrbanPlane() {
   Rendered_Solarch_scale_V = Solarch_scale_V;
   Rendered_Solarch_Elevation = Solarch_Elevation;
   Rendered_Solarch_Rotation = Solarch_Rotation;
-  
 
   int RES1 = Solarch_RES1;
   int RES2 = Solarch_RES2;
@@ -18848,7 +18857,7 @@ void SOLARCHVISION_draw_solarch_image () {
     WIN3D_Diagrams.beginShape();
     
     Solarch_Rotation = Field_Rotation[display_Solarch_Image];
-    Solarch_Elevation = 0.1 + Field_Elevation[display_Solarch_Image];
+    Solarch_Elevation = 0.0 + Field_Elevation[display_Solarch_Image];
     Solarch_scale_U = Field_scale_U; 
     Solarch_scale_V = Field_scale_V;        
 
@@ -18860,7 +18869,8 @@ void SOLARCHVISION_draw_solarch_image () {
         
           display_solarch_texture = 1;
           
-          WIN3D_Diagrams.texture(Solarch_Image);
+          //WIN3D_Diagrams.texture(Solarch_Image); // ????????????
+        
         }
       } 
     }   
@@ -18878,8 +18888,11 @@ void SOLARCHVISION_draw_solarch_image () {
 
     if (display_Solarch_Image != 0) {
       WIN3D_Diagrams.beginShape();
-      WIN3D_Diagrams.texture(Solarch_Image);    
-    
+  
+      WIN3D_Diagrams.texture(Solarch_Image);  
+      WIN3D_Diagrams.stroke(255, 255, 255, 0);
+      WIN3D_Diagrams.fill(255, 255, 255, 0);  
+      
       for (int q = 0; q < 4; q++) {
         
         float qx = 0, qy = 0, u = 0, v = 0;
