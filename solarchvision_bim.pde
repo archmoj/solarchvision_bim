@@ -15081,57 +15081,6 @@ float[] Field_Rotation = {0, 1, 0, 0};
 float Field_PositionStep = 1.25;
 
 
-void SOLARCHVISION_calculate_ParametricGeometries_Field () {
-
-  Field_Image.loadPixels();
-  
-  for (int i = 0; i < Field_RES1; i++) {
-    for (int j = 0; j < Field_RES2; j++) {
-      
-      float val = ParametricGeometries_Field_at(i, j);
-
-      float _u = Field_Multiplier * val;
-
-      float g = roundTo(_u, 0.05);
-
-      color c = color(255, 255, 255, 0);
-
-      if (g == roundTo(_u, 0.02)) //contour line
-      {      
-
-        if (Field_Color == 0) {
-          float[] _COL = SOLARCHVISION_DRYWCBD(g);
-          c = color(_COL[1], _COL[2], _COL[3], 255);
-        }
-        else if (Field_Color == 1) {
-          float[] _COL = SOLARCHVISION_DRYWCBD(-g);
-          c = color(_COL[1], _COL[2], _COL[3], 255);
-        } 
-        else if (Field_Color == 2) {
-          float[] _COL = SOLARCHVISION_DRYWCBD(-g);
-          c = color(255 - _COL[3], 255 - _COL[2], 255 - _COL[1], 255);
-        } 
-        else if (Field_Color == 3) {
-          float[] _COL = SOLARCHVISION_DRYWCBD(g);
-          c = color(255 - _COL[3], 255 - _COL[2], 255 - _COL[1], 255);
-        }
-     
-      }
-      
-      Field_Image.pixels[i + j * Field_RES1] = c;
-      
-    }
-  }
-  
- 
-  Field_Image.updatePixels();
-  
-  Field_Image.save("/Output/Field.jpg");
-  
-  
-}
-
-
 float ParametricGeometries_Field_at (float i, float j){
   float val = 0;
   for (int n = 0; n < SolidBuildings.length; n++) {
@@ -15181,6 +15130,125 @@ float ParametricGeometries_Field_at (float i, float j){
 }
 
 
+
+void SOLARCHVISION_calculate_ParametricGeometries_Field () {
+
+  Field_Image.loadPixels();
+  
+  for (int i = 0; i < Field_RES1; i++) {
+    for (int j = 0; j < Field_RES2; j++) {
+      
+      float val = ParametricGeometries_Field_at(i, j);
+
+      float _u = Field_Multiplier * val;
+
+      float g = roundTo(_u, 0.05);
+
+      color c = color(255, 255, 255, 0);
+
+      int draw_contour = 0;
+
+      //if (g == roundTo(_u, 0.02)) draw_contour = 1; //contour line
+
+      if (g != roundTo(Field_Multiplier * ParametricGeometries_Field_at(i + 0.5, j), 0.05)) draw_contour = 1;
+      else if (g != roundTo(Field_Multiplier * ParametricGeometries_Field_at(i, j + 0.5), 0.05)) draw_contour = 1;
+      else if (g != roundTo(Field_Multiplier * ParametricGeometries_Field_at(i, j - 0.5), 0.05)) draw_contour = 1;
+      else if (g != roundTo(Field_Multiplier * ParametricGeometries_Field_at(i - 0.5, j), 0.05)) draw_contour = 1;
+      
+      if (draw_contour == 1) {      
+
+        if (Field_Color == 0) {
+          float[] _COL = SOLARCHVISION_DRYWCBD(g);
+          c = color(_COL[1], _COL[2], _COL[3], 255);
+        }
+        else if (Field_Color == 1) {
+          float[] _COL = SOLARCHVISION_DRYWCBD(-g);
+          c = color(_COL[1], _COL[2], _COL[3], 255);
+        } 
+        else if (Field_Color == 2) {
+          float[] _COL = SOLARCHVISION_DRYWCBD(-g);
+          c = color(255 - _COL[3], 255 - _COL[2], 255 - _COL[1], 255);
+        } 
+        else if (Field_Color == 3) {
+          float[] _COL = SOLARCHVISION_DRYWCBD(g);
+          c = color(255 - _COL[3], 255 - _COL[2], 255 - _COL[1], 255);
+        }
+     
+      }
+      
+      Field_Image.pixels[i + j * Field_RES1] = c;
+      
+    }
+  }
+  
+ 
+  Field_Image.updatePixels();
+  
+  Field_Image.save("/Output/Field.jpg");
+  
+  
+}
+
+
+//float[][] Field_Countours = {{0,0,0});
+
+void SOLARCHVISION_process_ParametricGeometries_Contours () {
+
+  Field_Image.loadPixels();
+  
+  for (int i = 0; i < Field_RES1; i++) {
+    for (int j = 0; j < Field_RES2; j++) {
+      
+      float val = ParametricGeometries_Field_at(i, j);
+
+      float _u = Field_Multiplier * val;
+
+      float g = roundTo(_u, 0.05);
+
+      color c = color(255, 255, 255, 0);
+
+      int draw_contour = 0;
+
+      //if (g == roundTo(_u, 0.02)) draw_contour = 1; //contour line
+
+      if (g != roundTo(Field_Multiplier * ParametricGeometries_Field_at(i + 1, j), 0.05)) draw_contour = 1;
+      else if (g != roundTo(Field_Multiplier * ParametricGeometries_Field_at(i, j + 1), 0.05)) draw_contour = 1;
+      //else if (g != roundTo(Field_Multiplier * ParametricGeometries_Field_at(i, j - 1), 0.05)) draw_contour = 1;
+      //else if (g != roundTo(Field_Multiplier * ParametricGeometries_Field_at(i - 1, j), 0.05)) draw_contour = 1;
+      
+      if (draw_contour == 1) {      
+
+        if (Field_Color == 0) {
+          float[] _COL = SOLARCHVISION_DRYWCBD(g);
+          c = color(_COL[1], _COL[2], _COL[3], 255);
+        }
+        else if (Field_Color == 1) {
+          float[] _COL = SOLARCHVISION_DRYWCBD(-g);
+          c = color(_COL[1], _COL[2], _COL[3], 255);
+        } 
+        else if (Field_Color == 2) {
+          float[] _COL = SOLARCHVISION_DRYWCBD(-g);
+          c = color(255 - _COL[3], 255 - _COL[2], 255 - _COL[1], 255);
+        } 
+        else if (Field_Color == 3) {
+          float[] _COL = SOLARCHVISION_DRYWCBD(g);
+          c = color(255 - _COL[3], 255 - _COL[2], 255 - _COL[1], 255);
+        }
+     
+      }
+      
+      Field_Image.pixels[i + j * Field_RES1] = c;
+      
+    }
+  }
+  
+ 
+  Field_Image.updatePixels();
+  
+  Field_Image.save("/Output/Field.jpg");
+  
+  
+}
 
 
 float[][] skyVertices = {{0,0,0}};
