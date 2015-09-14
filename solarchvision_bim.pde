@@ -15174,8 +15174,6 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
       float g = roundTo(Field_Multiplier * val, 0.05);
 
-      color c = color(255, 255, 255, 0);
-
       int draw_contour = 0;
 
       float val_UP = ParametricGeometries_Field_at(i, j + 0.5)[3];
@@ -15194,9 +15192,11 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
         
         if (g_UP != g_DN) draw_contour = 1;
       }
-      
-      if (draw_contour == 1) {      
 
+      color c = color(255, 255, 255, 0);        
+
+      if (draw_contour == 1) {      
+        
         if (Field_Color == 0) {
           float[] _COL = SOLARCHVISION_DRYWCBD(g);
           c = color(_COL[1], _COL[2], _COL[3], 255);
@@ -15271,14 +15271,14 @@ void SOLARCHVISION_process_ParametricGeometries_UContours () {
       }
     }
 
-    //if (min_dist < 2) { // the distance should be less than 2m! 
+    if (min_dist < 2) { // the distance should be less than 2m! 
       if (nearest_point != -1) {
         int[][] newULine = {{i, nearest_point}};
       
         Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);
       }        
-    //}  
-    
+    }  
+/* 
     // now finding second nearest point! we should redo it in opposite diection later, to join all!
     
     int pre_nearest_point = nearest_point;  
@@ -15287,7 +15287,7 @@ void SOLARCHVISION_process_ParametricGeometries_UContours () {
     
     for (int j = 1; j < Field_Countours_Vertices.length; j++) {
       
-      if ((i != j) && (pre_nearest_point != j)) {
+      if ((i != j) && (nearest_point != j)) {
         
         if (Field_Countours_Vertices[i][3] == Field_Countours_Vertices[j][3]) { // if two points were on the same Field level
   
@@ -15302,18 +15302,17 @@ void SOLARCHVISION_process_ParametricGeometries_UContours () {
       }
     }    
 
-    //if (min_dist < 2) { // the distance should be less than 2m! 
+    if (min_dist < 2) { // the distance should be less than 2m! 
       if (nearest_point != -1) {
-        
-        
         
         int[][] newULine = {{i, nearest_point}};
       
         Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);
       }        
-    //}  
+    }  
+*/
+ 
   }
-  
   
 }
 
@@ -15382,7 +15381,7 @@ void SOLARCHVISION_draw_field_lines () {
 
   //if (display_Field_Lines != 0) {
 
-    WIN3D_Diagrams.strokeWeight(2);
+    WIN3D_Diagrams.strokeWeight(1);
     WIN3D_Diagrams.stroke(0, 255, 0);
     WIN3D_Diagrams.fill(0, 255, 0);  
     
@@ -15402,7 +15401,7 @@ void SOLARCHVISION_draw_field_lines () {
       WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
     }
 
-    WIN3D_Diagrams.strokeWeight(2);
+    WIN3D_Diagrams.strokeWeight(1);
     WIN3D_Diagrams.stroke(255, 0, 0);
     WIN3D_Diagrams.fill(255, 0, 0);  
 
