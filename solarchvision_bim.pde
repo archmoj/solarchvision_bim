@@ -15330,20 +15330,29 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
       float g = roundTo(Field_Multiplier * val, 0.05);
 
-      if ((g == roundTo(Field_Multiplier * val, 0.01)) && (g != 0)) {
+      if ((g == roundTo(Field_Multiplier * val, 0.005)) && (g != 0)) {
         
          float[] test_point_dir = {x, y, z, dx, dy, dz}; 
         
 
-        for (int n = 0; n < 1; n++) {
+        for (int n = 0; n < 10; n++) {
         
-          println("n=", n);  
+          println("n=", n);
+        
+          float[][] preVertice = {{test_point_dir[0], -test_point_dir[1], test_point_dir[2], g}};
+          Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, preVertice);
+          int point_prev = Field_Countours_Vertices.length - 1;
       
           test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], val);
 
-          float[][] newVertice = {{test_point_dir[0], -test_point_dir[1], test_point_dir[2], g}}; // NOTE: using g rather val
-          
+          float[][] newVertice = {{test_point_dir[0], -test_point_dir[1], test_point_dir[2], g}}; 
           Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, newVertice);
+          int point_next = Field_Countours_Vertices.length - 1;
+          
+          int[][] newULine = {{point_prev, point_next}};
+          Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);          
+          
+          
         }         
       }
       
@@ -15421,7 +15430,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   
   Field_Image.save("/Output/Field.jpg");
   
-  SOLARCHVISION_process_ParametricGeometries_UContours();
+  //SOLARCHVISION_process_ParametricGeometries_UContours();
   //SOLARCHVISION_process_ParametricGeometries_VContours();
 }
 
