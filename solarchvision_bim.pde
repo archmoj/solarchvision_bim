@@ -8694,7 +8694,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             
             _valuesSUM = COMPARISON;
             
-            //_valuesSUM *= 4 * ParametricGeometries_Field_at(Image_X, Image_Y); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            //_valuesSUM *= 4 * ParametricGeometries_Field_atIJ(Image_X, Image_Y); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             
             _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
           }
@@ -15082,7 +15082,7 @@ float Field_PositionStep = 1.25;
 
 
 
-float[] ParametricGeometries_Field_at (float i, float j){
+float[] ParametricGeometries_Field_atIJ (float i, float j){
   
   float x = 0;
   float y = 0;
@@ -15321,7 +15321,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   for (int i = 0; i < Field_RES1; i++) {
     for (int j = 0; j < Field_RES2; j++) {
       
-      float[] FieldPoint = ParametricGeometries_Field_at(i, j);
+      float[] FieldPoint = ParametricGeometries_Field_atIJ(i, j);
 
       float x = FieldPoint[0];
       float y = FieldPoint[1];
@@ -15330,16 +15330,18 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
       float g = roundTo(Field_Multiplier * val, 0.05);
 
-      if (g == roundTo(Field_Multiplier * val, 0.01)) {
+      if ((g == roundTo(Field_Multiplier * val, 0.01)) && (g != 0)) {
         
          float[] test_point_dir = {x, y, z, dx, dy, dz}; 
         
 
-        for (int n = 0; n < 100; n++) {  
+        for (int n = 0; n < 1; n++) {
+        
+          println("n=", n);  
       
           test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], val);
 
-          float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g}}; // NOTE: using g rather val
+          float[][] newVertice = {{test_point_dir[0], -test_point_dir[1], test_point_dir[2], g}}; // NOTE: using g rather val
           
           Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, newVertice);
         }         
@@ -15349,16 +15351,16 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
       
       int draw_contour = 0;
 
-      float val_UP = ParametricGeometries_Field_at(i, j + 0.5)[3];
-      float val_DN = ParametricGeometries_Field_at(i, j - 0.5)[3];
+      float val_UP = ParametricGeometries_Field_atIJ(i, j + 0.5)[3];
+      float val_DN = ParametricGeometries_Field_atIJ(i, j - 0.5)[3];
 
       float g_UP = roundTo(Field_Multiplier * val_UP, 0.05);
       float g_DN = roundTo(Field_Multiplier * val_DN, 0.05);
 
       if (g_UP != g_DN) draw_contour = 1;
       else {
-        val_UP = ParametricGeometries_Field_at(i + 0.5, j)[3];
-        val_DN = ParametricGeometries_Field_at(i - 0.5, j)[3];
+        val_UP = ParametricGeometries_Field_atIJ(i + 0.5, j)[3];
+        val_DN = ParametricGeometries_Field_atIJ(i - 0.5, j)[3];
 
         g_UP = roundTo(Field_Multiplier * val_UP, 0.05);
         g_DN = roundTo(Field_Multiplier * val_DN, 0.05);
@@ -15419,7 +15421,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   
   Field_Image.save("/Output/Field.jpg");
   
-  //SOLARCHVISION_process_ParametricGeometries_UContours();
+  SOLARCHVISION_process_ParametricGeometries_UContours();
   //SOLARCHVISION_process_ParametricGeometries_VContours();
 }
 
