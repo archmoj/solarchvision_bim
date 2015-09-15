@@ -15171,7 +15171,7 @@ float[] traceContour (float x, float y, float z, float dx, float dy, float dz, f
   
   float t = atan2_ang(dy, dx);
 
-  for (int test_t = -180; test_t < 180; test_t += 1) { 
+  for (int test_t = -180; test_t < 180; test_t += 15) { // <<<<
 
     float a = r * cos_ang(t + test_t);
     float b = r * sin_ang(t + test_t);
