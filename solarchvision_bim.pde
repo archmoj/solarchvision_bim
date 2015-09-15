@@ -15254,7 +15254,8 @@ int[][] Field_Countours_ULines = {{0,0}};
 int[][] Field_Countours_VLines = {{0,0}};
 
 
-
+float deltaField = 0.05;
+float deltaFieldLines = 0.2 * deltaField;
 
 void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
@@ -15288,8 +15289,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
       float z = FieldPoint[2];
       float val = FieldPoint[3];
 
-      float g =      roundTo(Field_Multiplier * val, 0.05);
-      float g_line = roundTo(Field_Multiplier * val, 0.01);
+      float g =      roundTo(Field_Multiplier * val, deltaField);
+      float g_line = roundTo(Field_Multiplier * val, deltaFieldLines);
       
       if ((g == g_line) && (g != 0)) {
         
@@ -15342,7 +15343,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
               
               float val_new = ParametricGeometries_Field_atXYZ(newVertice[0][0], newVertice[0][1], newVertice[0][2]);
               
-              float g_new = roundTo(Field_Multiplier * val, 0.01);
+              float g_new = roundTo(Field_Multiplier * val, deltaFieldLines);
               
               if (g_new == g_line) {
                 Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, newVertice);              
@@ -15354,15 +15355,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           }           
           
           if (Point1_existed == 1) { // when having the first point of the line
-          
-            if (n == 0) {
-              int[][] newVLine = {{point_prev, point_next}};
-              Field_Countours_VLines = (int[][]) concat(Field_Countours_VLines, newVLine);
-            }
-            else {
-              int[][] newULine = {{point_prev, point_next}};
-              Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);              
-            }
+            int[][] newULine = {{point_prev, point_next}};
+            Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);              
           }
 
           if (Point2_created == 0) {
@@ -15400,7 +15394,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   
   Field_Image.save("/Output/Field.jpg");
   
-  //SOLARCHVISION_process_ParametricGeometries_VContours();
+  SOLARCHVISION_process_ParametricGeometries_VContours();
 }
 
 
@@ -15415,7 +15409,7 @@ void SOLARCHVISION_process_ParametricGeometries_VContours () {
       
       if (i != j) {
         
-        if (Field_Countours_Vertices[i][3] == Field_Countours_Vertices[j][3] + 0.05) { // if two points were on the Field levels next to each other
+        if (Field_Countours_Vertices[i][3] == Field_Countours_Vertices[j][3] + deltaField) { // if two points were on the Field levels next to each other
   
           float d = dist(Field_Countours_Vertices[i][0], Field_Countours_Vertices[i][1], Field_Countours_Vertices[i][2], Field_Countours_Vertices[j][0], Field_Countours_Vertices[j][1], Field_Countours_Vertices[j][2]);
           
