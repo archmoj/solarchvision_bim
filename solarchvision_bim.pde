@@ -15288,13 +15288,14 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
       float z = FieldPoint[2];
       float val = FieldPoint[3];
 
-      float g = roundTo(Field_Multiplier * val, 0.05);
-
-      if ((g == roundTo(Field_Multiplier * val, 0.01)) && (g != 0)) {
+      float g =      roundTo(Field_Multiplier * val, 0.05);
+      float g_line = roundTo(Field_Multiplier * val, 0.01);
+      
+      if ((g == g_line) && (g != 0)) {
         
         float[] test_point_dir = {x, y, z, dx, dy, dz}; 
        
-        for (int n = 0; n < 500; n++) { // <<<<<<<<<
+        for (int n = 0; n < 1; n++) { // <<<<<<<<<
 
           int Point1_existed = 0;
           int Point2_created = 0;
@@ -15328,19 +15329,27 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
             int nearestPoint = 0;
             
             for (int q = 1; q < Field_Countours_Vertices.length; q++) {
-            
-              if (dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]) < 1) {  //i.e. 1m
-             
-                point_next = q;
-                break; 
+              if (newVertice[0][3] == Field_Countours_Vertices[q][3]) {
+                if (dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]) < 1) {  //i.e. 1m
+               
+                  point_next = q;
+                  break; 
+                }
               }
             }
            
             if (point_next == 0) {
-              Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, newVertice);              
-              point_next = Field_Countours_Vertices.length - 1;
               
-              Point2_created = 1;
+              float val_new = ParametricGeometries_Field_atXYZ(newVertice[0][0], newVertice[0][1], newVertice[0][2]);
+              
+              float g_new = roundTo(Field_Multiplier * val, 0.01);
+              
+              if (g_new == g_line) {
+                Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, newVertice);              
+                point_next = Field_Countours_Vertices.length - 1;
+              
+                Point2_created = 1;
+              }
             } 
           }           
           
