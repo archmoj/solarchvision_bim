@@ -15123,74 +15123,8 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
   
   return return_array;
 }
-/*
-float[] get_Field_normals (){
 
-  float x0 = 0;
-  float y0 = 0;
-  float z0 = 0;
-  
-  float xi = 0;
-  float yi = 0;
-  float zi = 0;
 
-  float xj = 0;
-  float yj = 0;
-  float zj = 0;
-
-  for (int q = 0; q < 3; q++) {
-    float i = 0;
-    float j = 0;
-    
-    if (q == 1) i = 1;
-    if (q == 2) j = 1;
-    
-    float a = i * (Field_scale_U / Field_RES1);
-    float b = j * (Field_scale_V / Field_RES2);
-    float c = Field_Elevation[display_Field_Image];
-    
-    float x = 0;
-    float y = 0;
-    float z = 0;
-      
-    if (display_Field_Image == 1) {
-      x = a * cos_ang(-Field_Rotation[display_Field_Image]) - b * sin_ang(-Field_Rotation[display_Field_Image]);
-      y = -(a * sin_ang(-Field_Rotation[display_Field_Image]) + b * cos_ang(-Field_Rotation[display_Field_Image]));
-      z = c;
-    }
-    else if (display_Field_Image == 2) {
-      x = a * cos_ang(Field_Rotation[display_Field_Image]) - c * sin_ang(Field_Rotation[display_Field_Image]);
-      y = -(a * sin_ang(Field_Rotation[display_Field_Image]) + c * cos_ang(Field_Rotation[display_Field_Image]));
-      z = -b; 
-    }
-    else if (display_Field_Image == 3) {
-      x = a * cos_ang(90 - Field_Rotation[display_Field_Image]) - c * sin_ang(90 - Field_Rotation[display_Field_Image]);
-      y = -(a * sin_ang(90 - Field_Rotation[display_Field_Image]) + c * cos_ang(90 - Field_Rotation[display_Field_Image]));
-      z = -b; 
-    }
-    
-    if (q == 0) {
-      x0 = x;
-      y0 = y;
-      z0 = z;
-    }
-    if (q == 1) {
-      xi = x;
-      yi = y;
-      zi = z;
-    }
-    if (q == 2) {
-      xj = x;
-      yj = y;
-      zj = z;
-    }
-  }
-
-  float[] return_array = {xi - x0, yi - y0, zi - z0, xj - x0, yj- y0, zj - z0};
-  
-  return return_array;
-}
-*/
 float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
   float val = 0;
   for (int n = 0; n < SolidBuildings.length; n++) {
@@ -15354,12 +15288,12 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
       float g = roundTo(Field_Multiplier * val, 0.05);
 
-      if ((g == roundTo(Field_Multiplier * val, 0.001)) && (g != 0)) {
+      if ((g == roundTo(Field_Multiplier * val, 0.005)) && (g != 0)) {
         
         float[] test_point_dir = {x, y, z, dx, dy, dz}; 
        
 
-        for (int n = 0; n < 10; n++) { // <<<<<<<<<
+        for (int n = 0; n < 50; n++) { // <<<<<<<<<
         
           float[][] preVertice = {{test_point_dir[0], -test_point_dir[1], test_point_dir[2], g}};
           int point_prev = 0; 
@@ -15367,11 +15301,12 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
             int nearestPoint = 0;
             
             for (int q = 1; q < Field_Countours_Vertices.length; q++) {
-            
-              if (dist(preVertice[0][0], preVertice[0][1], preVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]) < 0.1) { // i.e. min: 10cm
+              if (preVertice[0][3] == Field_Countours_Vertices[q][3]) {
+                if (dist(preVertice[0][0], preVertice[0][1], preVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]) < 0.5) { // i.e. min: 0.5m
              
-                point_prev = q;
-                break; 
+                  point_prev = q;
+                  break; 
+                }
               }
             }
            
@@ -15403,11 +15338,12 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
               Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, newVertice);              
               point_next = Field_Countours_Vertices.length - 1;
             } 
-            else break; // because it reached an existing line! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
           }           
           
           int[][] newULine = {{point_prev, point_next}};
-          Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);          
+          Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);
+
+          if (point_next != Field_Countours_Vertices.length - 1) break; // because it reached an existing line! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
           
         }         
       }
