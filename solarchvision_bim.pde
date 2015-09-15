@@ -15173,7 +15173,7 @@ float[] traceContour (float x, float y, float z, float dx, float dy, float dz, f
   
   float t = atan2_ang(dy, dx);
 
-  for (int test_t = -180; test_t < 180; test_t += 15) { // <<<<
+  for (int test_t = -180; test_t < 180; test_t += 5) { // <<<<
 
     float a = r * cos_ang(t + test_t);
     float b = r * sin_ang(t + test_t);
@@ -15289,7 +15289,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
       float val = FieldPoint[3];
 
       float g =      roundTo(Field_Multiplier * val, 0.05);
-      float g_line = roundTo(Field_Multiplier * val, 0.01);
+      float g_line = roundTo(Field_Multiplier * val, 0.005);
       
       if ((g == g_line) && (g != 0)) {
         
