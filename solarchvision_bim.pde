@@ -15288,12 +15288,14 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
       float g = roundTo(Field_Multiplier * val, 0.05);
 
-      if ((g == roundTo(Field_Multiplier * val, 0.01)) && (g != 0)) {
+      if ((g == roundTo(Field_Multiplier * val, 0.025)) && (g != 0)) {
         
         float[] test_point_dir = {x, y, z, dx, dy, dz}; 
        
+        for (int n = 0; n < 10; n++) { // <<<<<<<<<
 
-        for (int n = 0; n < 500; n++) { // <<<<<<<<<
+          int Point1_existed = 0;
+          int Point2_created = 0;
         
           float[][] preVertice = {{test_point_dir[0], -test_point_dir[1], test_point_dir[2], g}};
           int point_prev = 0; 
@@ -15304,6 +15306,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
               if (preVertice[0][3] == Field_Countours_Vertices[q][3]) {
                 if (dist(preVertice[0][0], preVertice[0][1], preVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]) < 0.01) { // i.e. min: 0.01m
              
+                  Point1_existed = 1;             
+             
                   point_prev = q;
                   break; 
                 }
@@ -15311,8 +15315,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
             }
            
             if (point_prev == 0) {
-              Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, preVertice);              
-              point_prev = Field_Countours_Vertices.length - 1;
+              //Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, preVertice);              
+              //point_prev = Field_Countours_Vertices.length - 1;
             } 
           } 
           
@@ -15338,13 +15342,19 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
             if (point_next == 0) {
               Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, newVertice);              
               point_next = Field_Countours_Vertices.length - 1;
+              
+              Point2_created = 1;
             } 
           }           
           
-          int[][] newULine = {{point_prev, point_next}};
-          Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);
+          if (Point1_existed == 1) { // when having the first point of the line
+            int[][] newULine = {{point_prev, point_next}};
+            Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);
+          }
 
-          if (point_next != Field_Countours_Vertices.length - 1) break; // because it reached an existing line! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
+          if (Point2_created == 0) {
+            break; // when reaching an existing line
+          } 
           
         }         
       }
@@ -15377,7 +15387,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   
   Field_Image.save("/Output/Field.jpg");
   
-  //SOLARCHVISION_process_ParametricGeometries_VContours();
+  SOLARCHVISION_process_ParametricGeometries_VContours();
 }
 
 
