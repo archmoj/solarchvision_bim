@@ -374,7 +374,7 @@ int H_layer_option = 0; //6;
 int F_layer_option = 0; //1;
 int O_layer_option = 0; //1;
 
-int develop_option = 10; //2; // between 0 - 12....
+int develop_option = 11; //10; //2; // between 0 - 12....
 int develop_per_day = 1;
 
 int update_DevelopDATA = 1;
@@ -488,7 +488,7 @@ float Angle_inclination = 45; // 90 = horizontal surface, 0 = Vertical surface
 float Angle_orientation = 0; // 0 = South, 90 = East
 
 
-int GRAPHS_drw_Layer = _drybulb; ; //_cloudcover; //_developed;
+int GRAPHS_drw_Layer = _developed; //_drybulb; ; //_cloudcover; 
 
 int develop_Layer = GRAPHS_drw_Layer;
 
@@ -7125,7 +7125,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
  
   float Pa = FLOAT_undefined;
   float Pb = FLOAT_undefined;
-  float RAIN, T, R_dir, R_dif;
+  float RAIN, T, WS, R_dir, R_dif;
 
   float[] _valuesSUM; 
   _valuesSUM = new float [layers_count];
@@ -7211,6 +7211,16 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
         else {
           T = Pa;
         }
+        
+        if (data_source == databaseNumber_CLIMATE_EPW) Pa = CLIMATE_EPW[now_i][now_j][_windspd][now_k];
+        if (data_source == databaseNumber_CLIMATE_WY2) Pa = CLIMATE_WY2[now_i][now_j][_windspd][now_k];
+        if (data_source == databaseNumber_ENSEMBLE) Pa = ENSEMBLE[now_i][now_j][_windspd][now_k];
+        if (Pa > 0.9 * FLOAT_undefined) {
+          WS = FLOAT_undefined;
+        }
+        else {
+          WS = Pa;
+        }        
         
         if (data_source == databaseNumber_CLIMATE_EPW) Pa = CLIMATE_EPW[now_i][now_j][A_precipitation][now_k];
         if (data_source == databaseNumber_CLIMATE_WY2) Pa = CLIMATE_WY2[now_i][now_j][A_precipitation][now_k];
@@ -7627,6 +7637,26 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
         } 
         
         
+        if (develop_option == 11) {
+         
+          if (WS < 0.9 * FLOAT_undefined) { 
+           
+            _valuesSUM[now_k] = 0.5 * 1.23 * 1 * pow(WS / 3.6, 3); 
+            
+            if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+            if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+            if (data_source == databaseNumber_ENSEMBLE) ENSEMBLE[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
+          }
+            
+          GRAPHS_V_scale[_developed] = 0.1;
+          GRAPHS_V_offset[_developed] = 0;
+          GRAPHS_V_belowLine[_developed] = 0;
+          LAYERS_Unit[_developed] = "W/m²";
+          LAYERS_Title[_developed][_EN] = "Wind power";
+          LAYERS_Title[_developed][_FR] = LAYERS_Title[_developed][_EN]; // ?? 
+        }    
+
+
         
         
         
