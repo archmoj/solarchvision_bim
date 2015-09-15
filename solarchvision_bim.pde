@@ -240,12 +240,12 @@ int GRAPHS_i_start = 0;
 int GRAPHS_i_end = 23;
 
 int GRAPHS_j_start = 0;
-int GRAPHS_j_end = 2; //16; // Variable
+int GRAPHS_j_end = 6; //2; //16; // Variable
 
 int GRAPHS_max_j_end_parameters = 16; // Constant
 int GRAPHS_max_j_end_observations = 0; // Variable
 
-float per_day = 1; //45; //61; //30.5;
+float per_day = 61; //1; //45; //61; //30.5;
 int num_add_days = 1; //30;//per_day; // it should be set up to 1 in order to plot only one day  
 
 int CLIMATE_EPW_start = 1; 
@@ -289,12 +289,12 @@ float[][][][] OBSERVED;
 int[][][][] OBSERVED_Flag;
 
 
-int Load_CLIMATE_EPW = 0;
-int Load_CLIMATE_WY2 = 0;
+int Load_CLIMATE_EPW = 1;
+int Load_CLIMATE_WY2 = 1;
 int Load_ENSEMBLE = 1;
 int Load_OBSERVED = 0;
 int Download_OBSERVED = 0;
-int Download_ENSEMBLE = 1;
+int Download_ENSEMBLE = 0;
 
 int Download_AERIAL = 0;
 
@@ -937,7 +937,7 @@ int databaseNumber_CLIMATE_WY2 = 0;
 int databaseNumber_ENSEMBLE = 1;
 int databaseNumber_OBSERVED = 2;
 int databaseNumber_CLIMATE_EPW = 3;
-int impacts_source = 1; // 0 = Climate WY2, 1 = Forecast-NAEFS, 2 = Observation, 3 = Climate EPW
+int impacts_source = 0; // 0 = Climate WY2, 1 = Forecast-NAEFS, 2 = Observation, 3 = Climate EPW
 
 int draw_impact_summary = 0;
 
@@ -15257,7 +15257,7 @@ int[][] Field_Countours_VLines = {{0,0}};
 float deltaField = 0.05;
 float deltaFieldLines = 0.2 * deltaField;
 
-int PROCESS_subdivisions = 1;
+int PROCESS_subdivisions = 0;
 
 void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
@@ -16948,7 +16948,7 @@ class SOLARCHVISION_Spinner {
 String[][] ROLLOUTS = {
                         {"Location & Data", "Point", "Weather", "Environment"}, 
                         {"Geometries & Space", "General", "Meshes", "Solids"}, 
-                        {"Time & Scenarios", "Period", "Filters", "Ranges"}, 
+                        {"Time & Scenarios", "Period", "Ranges", "Filters"}, 
                         {"Illustration Options", "Layout", "Layers", "Colors"},
                         {"Post-Processing", "Interpolation", "Developed", "Impacts"}, 
                         {"Export Products", "Data", "Media", "Launch"}
@@ -17221,9 +17221,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
   else if (ROLLOUT_parent == 2) { // Time & Scenarios
     
     if (ROLLOUT_child == 1) { // Period
-      GRAPHS_i_start = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Start hour" , GRAPHS_i_start, 0, 23, 1), 1));
-      GRAPHS_i_end = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "End hour" , GRAPHS_i_end, 0, 23, 1), 1));
-    
+
       GRAPHS_j_end = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Number of days to plot" , GRAPHS_j_end, 1, 61, 1), 1));
     
       BEGIN_DAY = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Plot start date" , BEGIN_DAY, 0, 364, 1), 1));
@@ -17238,7 +17236,14 @@ void SOLARCHVISION_draw_ROLLOUT () {
   
     }
    
-    if (ROLLOUT_child == 2) { // Filters
+    if (ROLLOUT_child == 2) { // Ranges
+      GRAPHS_i_start = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Start hour" , GRAPHS_i_start, 0, 23, 1), 1));
+      GRAPHS_i_end = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "End hour" , GRAPHS_i_end, 0, 23, 1), 1));
+
+      num_add_days = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "num_add_days" , num_add_days, 1, 64, -2), 1));
+    }
+
+    if (ROLLOUT_child == 3) { // Filters
       sky_scenario = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Sky status", sky_scenario, 1, 4, 1), 1));
       filter_type = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Hourly/daily filter", filter_type, 0, 1, 1), 1));
     
@@ -17248,11 +17253,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       H_layer_option = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Climate filter option" , H_layer_option, 0, 7, 1), 1));
       Sample_Year = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Single year" , Sample_Year, CLIMATE_WY2_start, CLIMATE_WY2_end, 1), 1));
     }
-
-
-    if (ROLLOUT_child == 3) { // Ranges
-      num_add_days = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "num_add_days" , num_add_days, 1, 64, -2), 1));
-    }    
+    
   }  
   else if (ROLLOUT_parent == 3) { // Illustration Options
 
