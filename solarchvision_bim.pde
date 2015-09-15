@@ -15288,12 +15288,12 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
       float g = roundTo(Field_Multiplier * val, 0.05);
 
-      if ((g == roundTo(Field_Multiplier * val, 0.005)) && (g != 0)) {
+      if ((g == roundTo(Field_Multiplier * val, 0.01)) && (g != 0)) {
         
         float[] test_point_dir = {x, y, z, dx, dy, dz}; 
        
 
-        for (int n = 0; n < 50; n++) { // <<<<<<<<<
+        for (int n = 0; n < 500; n++) { // <<<<<<<<<
         
           float[][] preVertice = {{test_point_dir[0], -test_point_dir[1], test_point_dir[2], g}};
           int point_prev = 0; 
@@ -15302,7 +15302,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
             
             for (int q = 1; q < Field_Countours_Vertices.length; q++) {
               if (preVertice[0][3] == Field_Countours_Vertices[q][3]) {
-                if (dist(preVertice[0][0], preVertice[0][1], preVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]) < 0.5) { // i.e. min: 0.5m
+                if (dist(preVertice[0][0], preVertice[0][1], preVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]) < 0.01) { // i.e. min: 0.01m
              
                   point_prev = q;
                   break; 
@@ -15317,7 +15317,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           } 
           
           //--------------------------------------------------------------------------------------------------------------------------------------------------
-          test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], val);
+          //test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], val);
+          test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g / Field_Multiplier);
           //--------------------------------------------------------------------------------------------------------------------------------------------------
 
           float[][] newVertice = {{test_point_dir[0], -test_point_dir[1], test_point_dir[2], g}};
