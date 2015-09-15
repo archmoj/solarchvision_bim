@@ -15327,7 +15327,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
             
             for (int q = 1; q < Field_Countours_Vertices.length; q++) {
             
-              if (dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]) < 0.001) { 
+              if (dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]) < 0.1) {  //i.e. 0.1m
              
                 point_next = q;
                 break; 
