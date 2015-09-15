@@ -15288,16 +15288,16 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
       float g = roundTo(Field_Multiplier * val, 0.05);
 
-      if ((g == roundTo(Field_Multiplier * val, 0.025)) && (g != 0)) {
+      if ((g == roundTo(Field_Multiplier * val, 0.005)) && (g != 0)) {
         
         float[] test_point_dir = {x, y, z, dx, dy, dz}; 
        
-        for (int n = 0; n < 10; n++) { // <<<<<<<<<
+        for (int n = 0; n < 100; n++) { // <<<<<<<<<
 
           int Point1_existed = 0;
           int Point2_created = 0;
         
-          float[][] preVertice = {{test_point_dir[0], -test_point_dir[1], test_point_dir[2], g}};
+          float[][] preVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g}};
           int point_prev = 0; 
           {
             int nearestPoint = 0;
@@ -15325,7 +15325,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g / Field_Multiplier);
           //--------------------------------------------------------------------------------------------------------------------------------------------------
 
-          float[][] newVertice = {{test_point_dir[0], -test_point_dir[1], test_point_dir[2], g}};
+          float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g}};
           int point_next = 0; 
           {
             int nearestPoint = 0;
@@ -15387,7 +15387,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   
   Field_Image.save("/Output/Field.jpg");
   
-  SOLARCHVISION_process_ParametricGeometries_VContours();
+  //SOLARCHVISION_process_ParametricGeometries_VContours();
 }
 
 
@@ -15474,7 +15474,7 @@ void SOLARCHVISION_draw_field_lines () {
       float y2 = Field_Countours_Vertices[n2][1];
       float z2 = Field_Countours_Vertices[n2][2];
       
-      WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
+      WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
     }
 
     WIN3D_Diagrams.strokeWeight(1);
@@ -15494,7 +15494,7 @@ void SOLARCHVISION_draw_field_lines () {
       float y2 = Field_Countours_Vertices[n2][1];
       float z2 = Field_Countours_Vertices[n2][2];
       
-      WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
+      WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
     }
 
 
