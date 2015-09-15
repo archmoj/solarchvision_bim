@@ -15321,7 +15321,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           
           //--------------------------------------------------------------------------------------------------------------------------------------------------
           //test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], val);
-          test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g / Field_Multiplier);
+          test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier);
           //--------------------------------------------------------------------------------------------------------------------------------------------------
 
           float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g}};
@@ -15331,7 +15331,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
             
             for (int q = 1; q < Field_Countours_Vertices.length; q++) {
               if (newVertice[0][3] == Field_Countours_Vertices[q][3]) {
-                if (dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]) < 0.5) {  //i.e. 0.5m
+                if (dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]) < 0.25) {  //i.e. 0.25m
                
                   point_next = q;
                   break; 
@@ -15409,7 +15409,8 @@ void SOLARCHVISION_process_ParametricGeometries_VContours () {
       
       if (i != j) {
         
-        if (Field_Countours_Vertices[i][3] == Field_Countours_Vertices[j][3] + deltaField) { // if two points were on the Field levels next to each other
+        //if (abs(Field_Countours_Vertices[i][3] - Field_Countours_Vertices[j][3] + deltaField) < 0.01) { // if two points were on the Field levels next to each other
+        if (Field_Countours_Vertices[i][3] != Field_Countours_Vertices[j][3]) { // if two points were on the Field levels next to each other
   
           float d = dist(Field_Countours_Vertices[i][0], Field_Countours_Vertices[i][1], Field_Countours_Vertices[i][2], Field_Countours_Vertices[j][0], Field_Countours_Vertices[j][1], Field_Countours_Vertices[j][2]);
           
@@ -15426,7 +15427,7 @@ void SOLARCHVISION_process_ParametricGeometries_VContours () {
       if (min_dist < 25) { // the distance should be less than 25m! 
       
         int found_similar_line = 0;
-        
+        /*
         float min_dist_to_similar_line = FLOAT_undefined; 
         
         for (int q = 1; q < Field_Countours_VLines.length; q++) {
@@ -15440,13 +15441,14 @@ void SOLARCHVISION_process_ParametricGeometries_VContours () {
           float d1 = dist(Field_Countours_Vertices[i1][0], Field_Countours_Vertices[i1][1], Field_Countours_Vertices[i1][2], Field_Countours_Vertices[j1][0], Field_Countours_Vertices[j1][1], Field_Countours_Vertices[j1][2]);
           float d2 = dist(Field_Countours_Vertices[i2][0], Field_Countours_Vertices[i2][1], Field_Countours_Vertices[i2][2], Field_Countours_Vertices[j2][0], Field_Countours_Vertices[j2][1], Field_Countours_Vertices[j2][2]);
           
-          if ((d1 < 1) || (d2 < 1)) { //i.e. a similar line at 1m
+          //if ((d1 < 1) || (d2 < 1)) { //i.e. a similar line at 1m
+          if ((d1 < 1) && (d2 < 1)) { //i.e. a similar line at 1m
           
             found_similar_line = 1; 
             break;
           }      
         }      
-    
+        */
         if (found_similar_line == 0) {
         
           int[][] newVLine = {{i, nearest_point}};
@@ -15489,8 +15491,8 @@ void SOLARCHVISION_draw_field_lines () {
   //if (display_Field_Lines != 0) {
 
     WIN3D_Diagrams.strokeWeight(1);
-    WIN3D_Diagrams.stroke(0, 255, 0);
-    WIN3D_Diagrams.fill(0, 255, 0);  
+    WIN3D_Diagrams.stroke(255, 0, 0);
+    WIN3D_Diagrams.fill(255, 0, 0);  
     
     for (int q = 1; q < Field_Countours_ULines.length; q++) {
       
@@ -15509,8 +15511,8 @@ void SOLARCHVISION_draw_field_lines () {
     }
 
     WIN3D_Diagrams.strokeWeight(1);
-    WIN3D_Diagrams.stroke(255, 0, 0);
-    WIN3D_Diagrams.fill(255, 0, 0);  
+    WIN3D_Diagrams.stroke(0, 255, 0);
+    WIN3D_Diagrams.fill(0, 255, 0);  
 
     for (int q = 1; q < Field_Countours_VLines.length; q++) {
       
