@@ -978,13 +978,6 @@ int Skip_LAND_Center = 0; //5;
 int Load_URBAN = 0;
 int Display_URBAN = 1;
 
-
-
-
-
-
-
-
 int camera_variation = 0; // 1;
 
 int draw_data_lines = 0;
@@ -1035,6 +1028,8 @@ float pre_Field_Multiplier;
 float pre_Field_Power;
 float[] pre_Field_Rotation = {0,0,0,0};
 float[] pre_Field_Elevation = {0,0,0,0};
+      
+int pre_PROCESS_subdivisions;
       
 int pre_Load_Default_Models;
 
@@ -1761,6 +1756,8 @@ void draw () {
         pre_Field_Rotation[display_Field_Image] = Field_Rotation[display_Field_Image];
         pre_Field_Elevation[display_Field_Image] = Field_Elevation[display_Field_Image];
       
+        pre_PROCESS_subdivisions = PROCESS_subdivisions;
+      
         pre_Load_Default_Models = Load_Default_Models;
 
         pre_impact_layer = impact_layer;
@@ -1902,16 +1899,17 @@ void draw () {
           ROLLOUT_Update = 1;
         }
 
-        if ((pre_Field_scale_U != Field_scale_U) || (pre_Field_scale_V != Field_scale_V)) {
-          
-          SOLARCHVISION_calculate_ParametricGeometries_Field();
-        }
+        if (pre_Field_scale_U != Field_scale_U) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
+        if (pre_Field_scale_V != Field_scale_V) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
 
-        if (pre_Field_Color != Field_Color) SOLARCHVISION_calculate_ParametricGeometries_Field();
-        if (pre_Field_Multiplier != Field_Multiplier) SOLARCHVISION_calculate_ParametricGeometries_Field();
-        if (pre_Field_Power != Field_Power) SOLARCHVISION_calculate_ParametricGeometries_Field();
-        if (pre_Field_Rotation[display_Field_Image] != Field_Rotation[display_Field_Image]) SOLARCHVISION_calculate_ParametricGeometries_Field();
-        if (pre_Field_Elevation[display_Field_Image] != Field_Elevation[display_Field_Image]) SOLARCHVISION_calculate_ParametricGeometries_Field();
+
+        if (pre_PROCESS_subdivisions != PROCESS_subdivisions) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
+        if (pre_Field_Color != Field_Color) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
+        if (pre_Field_Multiplier != Field_Multiplier) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
+        if (pre_Field_Power != Field_Power) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
+        if (pre_Field_Rotation[display_Field_Image] != Field_Rotation[display_Field_Image]) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
+        if (pre_Field_Elevation[display_Field_Image] != Field_Elevation[display_Field_Image]) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
+        
 
         if (Download_AERIAL != 0) {
           SOLARCHVISION_try_update_AERIAL(_YEAR, _MONTH, _DAY, _HOUR);
@@ -15131,10 +15129,11 @@ float Field_Multiplier = 1.0; //0.1; //10.0;
 
 int display_Field_Image = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
 
-float[] Field_Elevation = {0, 1, 0, 0};
+float[] Field_Elevation = {0, 0.1, 0, 0}; // <<<
 float[] Field_Rotation = {0, 0, 0, 0};
 
 float Field_PositionStep = 1.25;
+
 
 
 
@@ -15307,11 +15306,12 @@ float[][] Field_Countours_Vertices = {{0,0,0,0}}; // keeping Field value at the 
 int[][] Field_Countours_ULines = {{0,0}};
 int[][] Field_Countours_VLines = {{0,0}};
 
+int PROCESS_subdivisions = 0; // 0,1,2
 
 float deltaField = 0.05;
-float deltaFieldLines = 0.2 * deltaField;
+float deltaFieldLines = 0.25 * deltaField;
 
-int PROCESS_subdivisions = 0;
+
 
 void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
@@ -15367,9 +15367,13 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
         c = color(255 - _COL[3], 255 - _COL[2], 255 - _COL[1], 255);
       }
 
+      if (PROCESS_subdivisions == 1) {
+        if (g != g_line) c = color(255, 255, 255, 0);
+      } 
+
       Field_Image.pixels[i + j * Field_RES1] = c;
 
-      if (PROCESS_subdivisions == 1) {
+      if (PROCESS_subdivisions == 2) {
       
         if ((g == g_line) && (g != 0)) {
           
@@ -16613,13 +16617,13 @@ void mouseClicked () {
           if (rot == 360) rot = 15 * (int(random(24)));
 
           float rx = 0.5 * Create_Input_Length;
-          if (rx < 0) rx = random(abs(rx));
+          if (rx < 0) rx = random(0.25 * abs(rx), abs(rx));
 
           float ry = 0.5 * Create_Input_Width;
-          if (ry < 0) ry = random(abs(ry));
+          if (ry < 0) ry = random(0.25 * abs(ry), abs(ry));
 
           float rz = 0.5 * Create_Input_Height;
-          if (rz < 0) rz = random(abs(rz));
+          if (rz < 0) rz = random(0.25 * abs(rz), abs(rz));
 
           if (mouseButton == RIGHT) {
             
@@ -17213,6 +17217,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
     Create_Input_Volume = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);
 
+    
+
     if (ROLLOUT_child == 2) { // Meshes
 
       Create_Poly_Degree = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Poly_Degree" , Create_Poly_Degree, 3, 24, 1), 1));
@@ -17252,6 +17258,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Field_PositionStep = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_PositionStep" , Field_PositionStep, 1.25, 40, -2);
       Field_scale_U = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_U" , Field_scale_U, 50, 3200, -2);
       Field_scale_V = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_V" , Field_scale_V, 50, 3200, -2);  
+
+      PROCESS_subdivisions = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "PROCESS_subdivisions" , PROCESS_subdivisions, 0, 2, 1), 1));
 
     }
     
