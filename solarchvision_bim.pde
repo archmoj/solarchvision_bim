@@ -978,6 +978,12 @@ int Skip_LAND_Center = 0; //5;
 int Load_URBAN = 0;
 int Display_URBAN = 1;
 
+int display_Field_Points = 1;
+int display_Field_Lines = 1;
+
+int display_MODEL3D_EDGES = 0;
+
+
 int camera_variation = 0; // 1;
 
 int draw_data_lines = 0;
@@ -1030,6 +1036,12 @@ float[] pre_Field_Rotation = {0,0,0,0};
 float[] pre_Field_Elevation = {0,0,0,0};
       
 int pre_PROCESS_subdivisions;
+
+int pre_display_Field_Points;
+int pre_display_Field_Lines;
+
+int pre_display_MODEL3D_EDGES;
+
       
 int pre_Load_Default_Models;
 
@@ -1758,6 +1770,11 @@ void draw () {
       
         pre_PROCESS_subdivisions = PROCESS_subdivisions;
       
+        pre_display_Field_Points = display_Field_Points;
+        pre_display_Field_Lines = display_Field_Lines;
+        
+        pre_display_MODEL3D_EDGES = display_MODEL3D_EDGES;
+      
         pre_Load_Default_Models = Load_Default_Models;
 
         pre_impact_layer = impact_layer;
@@ -1902,14 +1919,20 @@ void draw () {
         if (pre_Field_scale_U != Field_scale_U) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
         if (pre_Field_scale_V != Field_scale_V) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
 
-
-        if (pre_PROCESS_subdivisions != PROCESS_subdivisions) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
         if (pre_Field_Color != Field_Color) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
         if (pre_Field_Multiplier != Field_Multiplier) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
         if (pre_Field_Power != Field_Power) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
         if (pre_Field_Rotation[display_Field_Image] != Field_Rotation[display_Field_Image]) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
         if (pre_Field_Elevation[display_Field_Image] != Field_Elevation[display_Field_Image]) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
+        if (pre_PROCESS_subdivisions != PROCESS_subdivisions) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
+
+
+        if (pre_display_Field_Points == display_Field_Points) WIN3D_Update = 1;
+        if (pre_display_Field_Lines == display_Field_Lines) WIN3D_Update = 1;
         
+        if (pre_display_MODEL3D_EDGES == display_MODEL3D_EDGES) WIN3D_Update = 1;
+        
+             
 
         if (Download_AERIAL != 0) {
           SOLARCHVISION_try_update_AERIAL(_YEAR, _MONTH, _DAY, _HOUR);
@@ -2227,7 +2250,7 @@ void SOLARCHVISION_draw_WIN3D () {
   image(WIN3D_Diagrams, WIN3D_CX_View, WIN3D_CY_View, WIN3D_X_View, WIN3D_Y_View);
 
 
-  SOLARCHVISION_draw_Perspective_Internally(); // <<<<<<<<<< to test 
+  SOLARCHVISION_draw_Perspective_Internally(); 
 }
 
 
@@ -15526,7 +15549,7 @@ void SOLARCHVISION_process_ParametricGeometries_VContours () {
 }
 
 void SOLARCHVISION_draw_field_points () {
-  //if (display_Field_Points != 0) {
+  if (display_Field_Points != 0) {
 
     WIN3D_Diagrams.strokeWeight(0);
     WIN3D_Diagrams.stroke(255, 127, 0);
@@ -15546,12 +15569,12 @@ void SOLARCHVISION_draw_field_points () {
       WIN3D_Diagrams.popMatrix();
     }
     
-  //}
+  }
 }
 
 void SOLARCHVISION_draw_field_lines () {
 
-  //if (display_Field_Lines != 0) {
+  if (display_Field_Lines != 0) {
 
     WIN3D_Diagrams.strokeWeight(1);
     WIN3D_Diagrams.stroke(255, 0, 0);
@@ -15596,7 +15619,7 @@ void SOLARCHVISION_draw_field_lines () {
 
     WIN3D_Diagrams.strokeWeight(0);
 
-  //}
+  }
   
 }
 
@@ -17261,9 +17284,13 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       PROCESS_subdivisions = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "PROCESS_subdivisions" , PROCESS_subdivisions, 0, 3, 1), 1));
 
+      display_Field_Points = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "display_Field_Points" , display_Field_Points, 0, 1, 1), 1));
+      display_Field_Lines = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "display_Field_Lines" , display_Field_Lines, 0, 1, 1), 1));
+
     }
     
-
+      
+    display_MODEL3D_EDGES = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "display_MODEL3D_EDGES" , display_MODEL3D_EDGES, 0, 1, 1), 1));
     
     
     
@@ -18203,104 +18230,104 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
 
 void SOLARCHVISION_draw_Perspective_Internally () {
 
-  pushMatrix();
-
-  translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
-  
-
-  noFill();
-  
-  //stroke(0,127,0,127);   
-  stroke(127); 
-  
-  strokeWeight(1);
-
-  for (int f = 1; f < allFaces.length; f++) {
-
-    int Teselation = 0;
+  if (pre_display_MODEL3D_EDGES != 0) {
     
-    int TotalSubNo = 1;  
-    if (allFaces_MAT[f] == 0) {
-      Teselation = MODEL3D_TESELATION;
-      if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
-    }
-
-    for (int n = 0; n < TotalSubNo; n++) {
-      
-      float[][] base_Vertices = new float [allFaces[f].length][3];
-      for (int j = 0; j < allFaces[f].length; j++) {
-        int vNo = allFaces[f][j];
-        base_Vertices[j][0] = allVertices[vNo][0];
-        base_Vertices[j][1] = allVertices[vNo][1];
-        base_Vertices[j][2] = allVertices[vNo][2];
-      }
-      
-      float[][] subFace = getSubFace(base_Vertices, Teselation, n);
-   
-      beginShape();
-      
-      for (int s = 0; s < subFace.length; s++) {
-        
-        float PNT_x = subFace[s][0] * objects_scale;
-        float PNT_y = subFace[s][1] * objects_scale;
-        float PNT_z = -subFace[s][2] * objects_scale;
-
-        PNT_x -= CAM_x;
-        PNT_y -= CAM_y;
-        PNT_z += CAM_z;
+    pushMatrix();
   
-        float px, py, pz;
-
-
-        pz = PNT_z;
-        px = PNT_x * cos_ang(-WIN3D_RZ_coordinate) - PNT_y * sin_ang(-WIN3D_RZ_coordinate);
-        py = PNT_x * sin_ang(-WIN3D_RZ_coordinate) + PNT_y * cos_ang(-WIN3D_RZ_coordinate);
+    translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+    
+  
+    noFill();
+    
+    //stroke(0,127,0,127);   
+    stroke(127); 
+    
+    strokeWeight(1);
+  
+    for (int f = 1; f < allFaces.length; f++) {
+  
+      int Teselation = 0;
+      
+      int TotalSubNo = 1;  
+      if (allFaces_MAT[f] == 0) {
+        Teselation = MODEL3D_TESELATION;
+        if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+      }
+  
+      for (int n = 0; n < TotalSubNo; n++) {
         
-        PNT_x = px;
-        PNT_y = py;
-        PNT_z = pz;    
+        float[][] base_Vertices = new float [allFaces[f].length][3];
+        for (int j = 0; j < allFaces[f].length; j++) {
+          int vNo = allFaces[f][j];
+          base_Vertices[j][0] = allVertices[vNo][0];
+          base_Vertices[j][1] = allVertices[vNo][1];
+          base_Vertices[j][2] = allVertices[vNo][2];
+        }
         
-        px = PNT_x;
-        py = PNT_y * cos_ang(WIN3D_RX_coordinate) - PNT_z * sin_ang(WIN3D_RX_coordinate);
-        pz = PNT_y * sin_ang(WIN3D_RX_coordinate) + PNT_z * cos_ang(WIN3D_RX_coordinate);
+        float[][] subFace = getSubFace(base_Vertices, Teselation, n);
+     
+        beginShape();
         
-        PNT_x = px;
-        PNT_y = py;
-        PNT_z = pz;
-        
-
-        
-        if (PNT_z > 0) {
+        for (int s = 0; s < subFace.length; s++) {
           
-          if (WIN3D_View_Type == 1) {
+          float PNT_x = subFace[s][0] * objects_scale;
+          float PNT_y = subFace[s][1] * objects_scale;
+          float PNT_z = -subFace[s][2] * objects_scale;
+  
+          PNT_x -= CAM_x;
+          PNT_y -= CAM_y;
+          PNT_z += CAM_z;
+    
+          float px, py, pz;
+  
+  
+          pz = PNT_z;
+          px = PNT_x * cos_ang(-WIN3D_RZ_coordinate) - PNT_y * sin_ang(-WIN3D_RZ_coordinate);
+          py = PNT_x * sin_ang(-WIN3D_RZ_coordinate) + PNT_y * cos_ang(-WIN3D_RZ_coordinate);
+          
+          PNT_x = px;
+          PNT_y = py;
+          PNT_z = pz;    
+          
+          px = PNT_x;
+          py = PNT_y * cos_ang(WIN3D_RX_coordinate) - PNT_z * sin_ang(WIN3D_RX_coordinate);
+          pz = PNT_y * sin_ang(WIN3D_RX_coordinate) + PNT_z * cos_ang(WIN3D_RX_coordinate);
+          
+          PNT_x = px;
+          PNT_y = py;
+          PNT_z = pz;
+          
+  
+          
+          if (PNT_z > 0) {
             
-            float Image_X = (PNT_x / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
-            float Image_Y = -(PNT_y / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
-            
-            if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
-          }
-          else {
-            
-            float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
-
-            float Image_X = (PNT_x / ZOOM) * (0.5 * WIN3D_scale3D);
-            float Image_Y = -(PNT_y / ZOOM) * (0.5 * WIN3D_scale3D);         
-            
-            if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
+            if (WIN3D_View_Type == 1) {
+              
+              float Image_X = (PNT_x / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
+              float Image_Y = -(PNT_y / PNT_z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
+              
+              if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
+            }
+            else {
+              
+              float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
+  
+              float Image_X = (PNT_x / ZOOM) * (0.5 * WIN3D_scale3D);
+              float Image_Y = -(PNT_y / ZOOM) * (0.5 * WIN3D_scale3D);         
+              
+              if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
+            }
           }
         }
+        
+        endShape(CLOSE);
       }
-      
-      endShape(CLOSE);
     }
+    
+    strokeWeight(0);   
+  
+    popMatrix();
   }
-  
-  strokeWeight(0);   
-
-
-
-  
-  popMatrix();
 }
 
 
