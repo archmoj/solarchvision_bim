@@ -89,7 +89,7 @@ float Create_Input_powZ = 8;
 float Create_Input_powAll = 8;
 int Create_Input_powRnd = 0;
 
-int SolidSurface_TESELATION = 4;
+int SolidSurface_TESELATION = 2; //4;
 
 int Create_Soild_House = 0;
 
@@ -2903,7 +2903,7 @@ void Plot_Setup () {
 
   if (GRAPHS_setup == 14) {
 
-    if (frame_variation == 1) {
+    if (frame_variation == 2) {
       
       
       for (int p = 0; p < 3; p += 1) { 
@@ -11166,18 +11166,6 @@ void SOLARCHVISION_update_frame_layout () {
  }
  else if (frame_variation == 1) {
 
-    GRAPHS_include = 1;
-    WIN3D_include = 0;
-    WORLD_include = 0;
-   
-    GRAPHS_CX_View = 0;
-    GRAPHS_CY_View = 0;
-    GRAPHS_X_View = 2 * w_pixel;
-    GRAPHS_Y_View = 2 * h_pixel;
-    GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);   
- } 
- else if (frame_variation == 2) {
-
     GRAPHS_include = 0;
     WIN3D_include = 1;
     WORLD_include = 0;
@@ -11188,6 +11176,18 @@ void SOLARCHVISION_update_frame_layout () {
     WIN3D_Y_View = 2 * h_pixel;
     WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
     WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
+ }  
+ else if (frame_variation == 2) {
+
+    GRAPHS_include = 1;
+    WIN3D_include = 0;
+    WORLD_include = 0;
+   
+    GRAPHS_CX_View = 0;
+    GRAPHS_CY_View = 0;
+    GRAPHS_X_View = 2 * w_pixel;
+    GRAPHS_Y_View = 2 * h_pixel;
+    GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);   
  } 
  else if (frame_variation == 3) {
    
@@ -15120,8 +15120,8 @@ int Field_Color = 0;
 float Field_scale_U = 100; // i.e. 100m
 float Field_scale_V = 100; // i.e. 100m
 
-int Field_RES1 = 200;
-int Field_RES2 = 200;
+int Field_RES1 = 400;
+int Field_RES2 = 400;
 
 PImage Field_Image = createImage(Field_RES1, Field_RES2, ARGB);
 
@@ -15306,10 +15306,10 @@ float[][] Field_Countours_Vertices = {{0,0,0,0}}; // keeping Field value at the 
 int[][] Field_Countours_ULines = {{0,0}};
 int[][] Field_Countours_VLines = {{0,0}};
 
-int PROCESS_subdivisions = 0; // 0,1,2
+int PROCESS_subdivisions = 1; // 0,1,2,3
 
 float deltaField = 0.05;
-float deltaFieldLines = 0.25 * deltaField;
+float deltaFieldLines = 0.2 * deltaField;
 
 
 
@@ -15367,13 +15367,13 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
         c = color(255 - _COL[3], 255 - _COL[2], 255 - _COL[1], 255);
       }
 
-      if (PROCESS_subdivisions == 1) {
+      if ((PROCESS_subdivisions == 1) || (PROCESS_subdivisions == 2)) {
         if (g != g_line) c = color(255, 255, 255, 0);
       } 
 
       Field_Image.pixels[i + j * Field_RES1] = c;
 
-      if (PROCESS_subdivisions == 2) {
+      if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
       
         if ((g == g_line) && (g != 0)) {
           
@@ -17241,11 +17241,11 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
       Create_Soild_House = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Soild_House" , Create_Soild_House, 0, 1, 1), 1));
 
-      Create_Input_powRnd = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powRnd" , Create_Input_powRnd, 0, 1, 1), 1));    
+      //Create_Input_powRnd = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powRnd" , Create_Input_powRnd, 0, 1, 1), 1));    
       Create_Input_powAll = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powAll" , Create_Input_powAll, 0.5, 8, -2);
-      Create_Input_powX = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powX" , Create_Input_powX, 0.5, 8, -2); 
-      Create_Input_powY = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powY" , Create_Input_powY, 0.5, 8, -2); 
-      Create_Input_powZ = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powZ" , Create_Input_powZ, 0.5, 8, -2);
+      //Create_Input_powX = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powX" , Create_Input_powX, 0.5, 8, -2); 
+      //Create_Input_powY = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powY" , Create_Input_powY, 0.5, 8, -2); 
+      //Create_Input_powZ = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powZ" , Create_Input_powZ, 0.5, 8, -2);
 
       SolidSurface_TESELATION = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "SolidSurface_TESELATION" , SolidSurface_TESELATION, 0, 5, 1), 1));
 
@@ -17259,7 +17259,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Field_scale_U = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_U" , Field_scale_U, 50, 3200, -2);
       Field_scale_V = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_V" , Field_scale_V, 50, 3200, -2);  
 
-      PROCESS_subdivisions = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "PROCESS_subdivisions" , PROCESS_subdivisions, 0, 2, 1), 1));
+      PROCESS_subdivisions = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "PROCESS_subdivisions" , PROCESS_subdivisions, 0, 3, 1), 1));
 
     }
     
