@@ -77,10 +77,10 @@ float[][] allObject2D_XYZS = {{0,0,0,0}};
 int[] allObject2D_MAP = {0};
 int allObject2D_num = 0; 
 
-float[][] allObjectRecursives_XYZS = {{0,0,0,0}};
-int[] allObjectRecursives_Type = {0};
-int[] allObjectRecursives_Degree = {0};
-int allObjectRecursives_num = 0; 
+float[][] allObjectRecursive_XYZS = {{0,0,0,0}};
+int[] allObjectRecursive_Type = {0};
+int[] allObjectRecursive_Degree = {0};
+int allObjectRecursive_num = 0; 
 
 
 int Display_Trees_People = 1;
@@ -12910,19 +12910,19 @@ void SOLARCHVISION_add_2Dobjects (int n, float r, float z) {
 }
 
 void SOLARCHVISION_remove_RecursivePlants () {
-  allObjectRecursives_XYZS = new float [1][4]; 
-  allObjectRecursives_XYZS[0][0] = 0;
-  allObjectRecursives_XYZS[0][1] = 0;
-  allObjectRecursives_XYZS[0][2] = 0;
-  allObjectRecursives_XYZS[0][3] = 0;
+  allObjectRecursive_XYZS = new float [1][4]; 
+  allObjectRecursive_XYZS[0][0] = 0;
+  allObjectRecursive_XYZS[0][1] = 0;
+  allObjectRecursive_XYZS[0][2] = 0;
+  allObjectRecursive_XYZS[0][3] = 0;
   
-  allObjectRecursives_Type = new int [1];
-  allObjectRecursives_Type[0] = 0;
+  allObjectRecursive_Type = new int [1];
+  allObjectRecursive_Type[0] = 0;
 
-  allObjectRecursives_Degree = new int [1];
-  allObjectRecursives_Degree[0] = 0;
+  allObjectRecursive_Degree = new int [1];
+  allObjectRecursive_Degree[0] = 0;
   
-  allObjectRecursives_num = 0;
+  allObjectRecursive_num = 0;
 }
 
 void SOLARCHVISION_remove_2Dobjects () {
@@ -13118,7 +13118,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float y = 0;
       float z = 0;
       float r = 10;
-      SOLARCHVISION_add_RecursiveSphere(1, x,y,z, r, 5, 0, 90);
+      SOLARCHVISION_add_Recursivephere(1, x,y,z, r, 5, 0, 90);
       ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
       SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
     }
@@ -13128,7 +13128,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float y = 0;
       float z = 0;
       float r = 8;
-      SOLARCHVISION_add_RecursiveSphere(2, x,y,z, r, 4, 0, 90);
+      SOLARCHVISION_add_Recursivephere(2, x,y,z, r, 4, 0, 90);
       ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
       SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
     }
@@ -13138,7 +13138,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float y = 20;
       float z = 0;
       float r = 8;
-      SOLARCHVISION_add_RecursiveSphere(3, x,y,z, r, 3, 0, 90);
+      SOLARCHVISION_add_Recursivephere(3, x,y,z, r, 3, 0, 90);
       ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
       SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
     }
@@ -13162,7 +13162,7 @@ void SOLARCHVISION_add_3Dobjects () {
   //SOLARCHVISION_add_PolygonHyper(0, 0, 0, 0,  10, 10, 4);
   //SOLARCHVISION_add_Polygon(3, 0, 0, 0, 50, 24);
 
-  //SOLARCHVISION_add_RecursiveSphere(7, 0,0,0, 25, 4, 0, 90);  
+  //SOLARCHVISION_add_Recursivephere(7, 0,0,0, 25, 4, 0, 90);  
   
 
 
@@ -13195,11 +13195,11 @@ void SOLARCHVISION_add_3Dobjects () {
   
   
   /*
-  SOLARCHVISION_add_RecursiveSphere(0, 0,0,0, 50, 5, 0, 90);
-  SOLARCHVISION_add_RecursiveSphere(0, 100,0,0, 40, 4, 0, 90);
-  SOLARCHVISION_add_RecursiveSphere(0, 180,0,0, 30, 3, 0, 90);
-  SOLARCHVISION_add_RecursiveSphere(0, 240,0,0, 20, 2, 0, 90);
-  SOLARCHVISION_add_RecursiveSphere(0, 280,0,0, 10, 1, 0, 90);
+  SOLARCHVISION_add_Recursivephere(0, 0,0,0, 50, 5, 0, 90);
+  SOLARCHVISION_add_Recursivephere(0, 100,0,0, 40, 4, 0, 90);
+  SOLARCHVISION_add_Recursivephere(0, 180,0,0, 30, 3, 0, 90);
+  SOLARCHVISION_add_Recursivephere(0, 240,0,0, 20, 2, 0, 90);
+  SOLARCHVISION_add_Recursivephere(0, 280,0,0, 10, 1, 0, 90);
   */
 
 
@@ -13325,7 +13325,7 @@ void SOLARCHVISION_add_ParametricSurface (int m, float cx, float cy, float cz, f
 
 void SOLARCHVISION_build_SkySphere (int Teselation) {
   
-  SOLARCHVISION_add_RecursiveSphere(0, 0,0,0, 1, Teselation, 1, 90); // SKY
+  SOLARCHVISION_add_Recursivephere(0, 0,0,0, 1, Teselation, 1, 90); // SKY
   
 }
 
@@ -15079,7 +15079,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 0;
     float z = 10;
     float r = 10;
-    SOLARCHVISION_add_RecursiveSphere(1, x,y,z, r, 2, 0, 0);
+    SOLARCHVISION_add_Recursivephere(1, x,y,z, r, 2, 0, 0);
     ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
     SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
   }  
@@ -15732,7 +15732,7 @@ int[][] TempObjectFaces = {{0}};
 int POINTER_TempObjectVertices = 1;
 int POINTER_TempObjectFaces = 1;
 
-void SOLARCHVISION_add_RecursiveSphere (int m, float cx, float cy, float cz, float r, int Teselation, int isSky, float t) {
+void SOLARCHVISION_add_Recursivephere (int m, float cx, float cy, float cz, float r, int Teselation, int isSky, float t) {
 
   defaultMaterial = m;
   
@@ -15870,7 +15870,7 @@ void SOLARCHVISION_add_RecursiveSphere (int m, float cx, float cy, float cz, flo
 
 void SOLARCHVISION_add_SuperSphere (int m, float cx, float cy, float cz, float px, float py, float pz, float sx, float sy, float sz, int Teselation, float t) {
 
-  SOLARCHVISION_add_RecursiveSphere(m, cx, cy, cz, 1, Teselation, -1, 90); // passing with isSky:-1
+  SOLARCHVISION_add_Recursivephere(m, cx, cy, cz, 1, Teselation, -1, 90); // passing with isSky:-1
 
   float value, posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotZ; 
   value = 1;
@@ -19491,22 +19491,18 @@ void SOLARCHVISION_draw_solarch_image () {
 }
 
 void SOLARCHVISION_add_RecursivePlant(int PlantType, float x, float y, float z, float s, int PlantDegree) {
-  
-  if (PlantType == 0) {
  
-    int[] TempObjectRecursives_Type = {PlantType}; 
-    
-    allObjectRecursives_Type = concat(allObjectRecursives_Type, TempObjectRecursives_Type);
+  int[] TempObjectRecursive_Type = {PlantType}; 
   
-    int[] TempObjectRecursives_Degree = {PlantDegree}; 
-    
-    allObjectRecursives_Degree = concat(allObjectRecursives_Degree, TempObjectRecursives_Degree);
+  allObjectRecursive_Type = concat(allObjectRecursive_Type, TempObjectRecursive_Type);
+
+  int[] TempObjectRecursive_Degree = {PlantDegree}; 
   
-    float[][] TempObjectRecursives_XYZS = {{x, y, z, s}};
-    
-    allObjectRecursives_XYZS = (float[][]) concat(allObjectRecursives_XYZS, TempObjectRecursives_XYZS);
-    allObjectRecursives_num += 1;
-    
-  }
+  allObjectRecursive_Degree = concat(allObjectRecursive_Degree, TempObjectRecursive_Degree);
+
+  float[][] TempObjectRecursive_XYZS = {{x, y, z, s}};
   
+  allObjectRecursive_XYZS = (float[][]) concat(allObjectRecursive_XYZS, TempObjectRecursive_XYZS);
+  allObjectRecursive_num += 1;
+
 }
