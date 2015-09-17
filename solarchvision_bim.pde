@@ -69,6 +69,23 @@ int LOAD_STATION = 0;
 int Load_Default_Models = 0; //3;//0; //3; //5;
 
 
+float[][] allVertices = {{0,0,0}};
+int[][] allFaces = {{0,0,0}};
+int[] allFaces_MAT = {0};
+
+float[][] allObject2D_XYZS = {{0,0,0,0}};
+int[] allObject2D_MAP = {0};
+int allObject2D_num = 0; 
+
+float[][] allObjectRecursives_XYZS = {{0,0,0,0}};
+int[] allObjectRecursives_Type = {0};
+int[] allObjectRecursives_Degree = {0};
+int allObjectRecursives_num = 0; 
+
+
+int Display_Trees_People = 1;
+
+int defaultMaterial = 7;
 
 int Create_Default_Material = 7; //0;
 
@@ -102,10 +119,13 @@ int Create_Mesh_Quad = 0;
 int Create_Mesh_House = 0; 
 int Create_Mesh_Parametric = 0;
 int Create_Mesh_Person = 0;
-int Create_Mesh_Plant = 1;
+int Create_Mesh_Plant = 0;
+int Create_Recursive_Plant = 1;
 
-int Create_Mesh_Plant_Type = 0;
 int Create_Mesh_Person_Type = 0;
+int Create_Mesh_Plant_Type = 0;
+int Create_Recursive_Plant_Type = 0;
+int Create_Recursive_Plant_Degree = 8;
 
 
 
@@ -290,7 +310,7 @@ int[][][][] OBSERVED_Flag;
 
 
 int Load_CLIMATE_EPW = 1;
-int Load_CLIMATE_WY2 = 1;
+int Load_CLIMATE_WY2 = 0;
 int Load_ENSEMBLE = 1;
 int Load_OBSERVED = 0;
 int Download_OBSERVED = 0;
@@ -478,8 +498,6 @@ int _sunX = addLayer();
 int _sunY = addLayer();
 int _sunZ = addLayer();
 
-
-int GroundLevelSelection = 0; // 3: 120m, 2: 80m, 1: 40m, and 0: represents 2m/10m data from HRDPS models. 
 */
 
 
@@ -937,7 +955,7 @@ int databaseNumber_CLIMATE_WY2 = 0;
 int databaseNumber_ENSEMBLE = 1;
 int databaseNumber_OBSERVED = 2;
 int databaseNumber_CLIMATE_EPW = 3;
-int impacts_source = 0; // 0 = Climate WY2, 1 = Forecast-NAEFS, 2 = Observation, 3 = Climate EPW
+int impacts_source = 3; // 0 = Climate WY2, 1 = Forecast-NAEFS, 2 = Observation, 3 = Climate EPW
 
 int draw_impact_summary = 0;
 
@@ -1366,9 +1384,11 @@ void SOLARCHVISION_update_station (int Step) {
 
   if ((Step == 0) || (Step == 6)) SOLARCHVISION_LoadLAND(LocationName);
   
-  if ((Step == 0) || (Step == 7)) SOLARCHVISION_remove_2Dobjects();
-
-  if ((Step == 0) || (Step == 8)) SOLARCHVISION_add_2Dobjects_onLand();
+  if ((Step == 0) || (Step == 7)) SOLARCHVISION_remove_RecursivePlants();
+  
+  if ((Step == 0) || (Step == 8)) SOLARCHVISION_remove_2Dobjects();
+  
+  if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_2Dobjects_onLand();
 
 }
 
@@ -1613,10 +1633,25 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_remove_2Dobjects", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_remove_RecursivePlants", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 16) {
     SOLARCHVISION_update_station(7);
+
+    stroke(0);
+    fill(0);
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+
+    stroke(0);
+    fill(0);
+    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
+
+    stroke(255);
+    fill(255);
+    text("SOLARCHVISION_remove_2Dobjects", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+  }
+  else if (frameCount == 17) {
+    SOLARCHVISION_update_station(8);
 
     stroke(0);
     fill(0);
@@ -1626,8 +1661,8 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_add_2Dobjects_onLand", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 17) {
-    SOLARCHVISION_update_station(8);
+  else if (frameCount == 18) {
+    SOLARCHVISION_update_station(9);
     
     stroke(0);
     fill(0);
@@ -1637,7 +1672,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_remove_3Dobjects", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 18) {
+  else if (frameCount == 19) {
     SOLARCHVISION_update_models(1);
     
     stroke(0);
@@ -1648,7 +1683,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_add_3Dobjects", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 19) {
+  else if (frameCount == 20) {
     SOLARCHVISION_update_models(2);
     
     stroke(0);
@@ -1659,7 +1694,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_remove_ParametricGeometries", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 20) {
+  else if (frameCount == 21) {
     SOLARCHVISION_update_models(3);    
     stroke(0);
     fill(0);
@@ -1669,7 +1704,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_add_ParametricGeometries", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 21) {
+  else if (frameCount == 22) {
     SOLARCHVISION_update_models(4);
     
     stroke(0);
@@ -1680,7 +1715,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_calculate_ParametricGeometries_Field", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 22) {
+  else if (frameCount == 23) {
     SOLARCHVISION_update_models(5);
     
     stroke(0);
@@ -1692,7 +1727,7 @@ void draw () {
     text("SOLARCHVISION_build_SkySphere", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
     
   }    
-  else if (frameCount == 23) {
+  else if (frameCount == 24) {
     
     SOLARCHVISION_build_SkySphere(2); //1 - 3 
     
@@ -1704,7 +1739,7 @@ void draw () {
     fill(255);
     text("SOLARCHVISION_build_SolarProjection_array", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
-  else if (frameCount == 24) {  
+  else if (frameCount == 25) {  
     SOLARCHVISION_build_SolarProjection_array();
      
     stroke(0);
@@ -11826,17 +11861,6 @@ void SOLARCHVISION_getCWEEDS_Coordinates () {
 }
 
 
-int defaultMaterial = 7;
-
-float[][] allVertices = {{0,0,0}};
-int[][] allFaces = {{0,0,0}};
-int[] allFaces_MAT = {0};
-
-float[][] allObject2D_XYZS = {{0,0,0}};
-int[] allObject2D_MAP = {0};
-int allObject2D_num = 0; 
-
-int Display_Trees_People = 1;
 
 int addToVertices (float x, float y, float z) {
   
@@ -12885,11 +12909,28 @@ void SOLARCHVISION_add_2Dobjects (int n, float r, float z) {
   }  
 }
 
+void SOLARCHVISION_remove_RecursivePlants () {
+  allObjectRecursives_XYZS = new float [1][4]; 
+  allObjectRecursives_XYZS[0][0] = 0;
+  allObjectRecursives_XYZS[0][1] = 0;
+  allObjectRecursives_XYZS[0][2] = 0;
+  allObjectRecursives_XYZS[0][3] = 0;
+  
+  allObjectRecursives_Type = new int [1];
+  allObjectRecursives_Type[0] = 0;
+
+  allObjectRecursives_Degree = new int [1];
+  allObjectRecursives_Degree[0] = 0;
+  
+  allObjectRecursives_num = 0;
+}
+
 void SOLARCHVISION_remove_2Dobjects () {
-  allObject2D_XYZS = new float [1][3]; 
+  allObject2D_XYZS = new float [1][4]; 
   allObject2D_XYZS[0][0] = 0;
   allObject2D_XYZS[0][1] = 0;
   allObject2D_XYZS[0][2] = 0;
+  allObject2D_XYZS[0][3] = 0;
   
   allObject2D_MAP = new int [1];
   allObject2D_MAP[0] = 0;
@@ -16894,11 +16935,16 @@ void mouseClicked () {
             if (Create_Mesh_Person != 0) {
               SOLARCHVISION_add_Object2D("PEOPLE", Create_Mesh_Person_Type, x, y, z, 2.5);
             }
+            
             if (Create_Mesh_Plant != 0) {
               int n = 0;
               if (Create_Mesh_Plant_Type > 0) n = Create_Mesh_Plant_Type + Object2D_Filenames_PEOPLE.length;              
               SOLARCHVISION_add_Object2D("TREES", n, x, y, z, 2 * rz);
             }        
+
+            if (Create_Recursive_Plant != 0) {
+              SOLARCHVISION_add_RecursivePlant(Create_Recursive_Plant_Type, x, y, z, 2 * rz, Create_Recursive_Plant_Degree);
+            }    
 
           }
           
@@ -17308,9 +17354,13 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Mesh_Parametric = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Parametric" , Create_Mesh_Parametric, 0, 7, 1), 1));
       
       Create_Mesh_Person = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Person" , Create_Mesh_Person, 0, 1, 1), 1));
+      Create_Mesh_Person_Type = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Person_Type" , Create_Mesh_Person_Type, 0, Object2D_Filenames_PEOPLE.length, 1), 1));
       Create_Mesh_Plant = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Plant" , Create_Mesh_Plant, 0, 1, 1), 1));
       Create_Mesh_Plant_Type = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Plant_Type" , Create_Mesh_Plant_Type, 0, Object2D_Filenames_TREES.length, 1), 1));
-      Create_Mesh_Person_Type = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Person_Type" , Create_Mesh_Person_Type, 0, Object2D_Filenames_PEOPLE.length, 1), 1));
+
+      Create_Recursive_Plant = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant" , Create_Recursive_Plant, 0, 1, 1), 1));
+      Create_Recursive_Plant_Type = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Type" , Create_Recursive_Plant_Type, 0, 0, 1), 1));
+      Create_Recursive_Plant_Degree = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Degree" , Create_Recursive_Plant_Degree, 1, 9, 1), 1));
     }
     
     if (ROLLOUT_child == 3) { // Solids
@@ -19438,4 +19488,25 @@ void SOLARCHVISION_draw_solarch_image () {
     
     WIN3D_Diagrams.endShape(CLOSE);
   }
+}
+
+void SOLARCHVISION_add_RecursivePlant(int PlantType, float x, float y, float z, float s, int PlantDegree) {
+  
+  if (PlantType == 0) {
+ 
+    int[] TempObjectRecursives_Type = {PlantType}; 
+    
+    allObjectRecursives_Type = concat(allObjectRecursives_Type, TempObjectRecursives_Type);
+  
+    int[] TempObjectRecursives_Degree = {PlantDegree}; 
+    
+    allObjectRecursives_Degree = concat(allObjectRecursives_Degree, TempObjectRecursives_Degree);
+  
+    float[][] TempObjectRecursives_XYZS = {{x, y, z, s}};
+    
+    allObjectRecursives_XYZS = (float[][]) concat(allObjectRecursives_XYZS, TempObjectRecursives_XYZS);
+    allObjectRecursives_num += 1;
+    
+  }
+  
 }
