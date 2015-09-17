@@ -19620,7 +19620,7 @@ void Plant_branch (float h, int d, int Plant_max_degree) {
 
     WIN3D_Diagrams.rotate(random(-PI / 12, PI / 12));
 
-    //WIN3D_Diagrams.sphere(1);
+    WIN3D_Diagrams.sphere(0.25);
 
   }
 }
