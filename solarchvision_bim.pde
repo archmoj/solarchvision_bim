@@ -80,6 +80,7 @@ int allObject2D_num = 0;
 float[][] allObjectRecursive_XYZS = {{0,0,0,0}};
 int[] allObjectRecursive_Type = {0};
 int[] allObjectRecursive_Degree = {0};
+int[] allObjectRecursive_Seed = {0};
 int allObjectRecursive_num = 0; 
 
 
@@ -126,7 +127,7 @@ int Create_Mesh_Person_Type = 0;
 int Create_Mesh_Plant_Type = 0;
 int Create_Recursive_Plant_Type = 0;
 int Create_Recursive_Plant_Degree = 8;
-
+int Create_Recursive_Plant_Seed = 0;
 
 
 int Display_SWOB_points = 1; // 0-2
@@ -1907,6 +1908,9 @@ void draw () {
         }        
         
         if (MODEL3D_ERASE == 1) {
+
+          SOLARCHVISION_remove_RecursivePlants();
+
           SOLARCHVISION_remove_2Dobjects();
           
           SOLARCHVISION_remove_3Dobjects();
@@ -1925,6 +1929,9 @@ void draw () {
         }
         
         if (pre_Load_Default_Models != Load_Default_Models) {
+          
+          SOLARCHVISION_remove_RecursivePlants();
+          
           SOLARCHVISION_remove_2Dobjects();
           
           SOLARCHVISION_remove_3Dobjects();
@@ -2129,8 +2136,10 @@ void SOLARCHVISION_draw_WIN3D () {
   SOLARCHVISION_draw_SKY3D();
   
   SOLARCHVISION_draw_land();
- 
+  
   SOLARCHVISION_draw_3Dobjects();
+  
+  SOLARCHVISION_draw_RecursivePlants();
 
   SOLARCHVISION_draw_solarch_image(); 
   
@@ -12921,6 +12930,9 @@ void SOLARCHVISION_remove_RecursivePlants () {
 
   allObjectRecursive_Degree = new int [1];
   allObjectRecursive_Degree[0] = 0;
+
+  allObjectRecursive_Seed = new int [1];
+  allObjectRecursive_Seed[0] = 0;
   
   allObjectRecursive_num = 0;
 }
@@ -16943,7 +16955,7 @@ void mouseClicked () {
             }        
 
             if (Create_Recursive_Plant != 0) {
-              SOLARCHVISION_add_RecursivePlant(Create_Recursive_Plant_Type, x, y, z, 2 * rz, Create_Recursive_Plant_Degree);
+              SOLARCHVISION_add_RecursivePlant(Create_Recursive_Plant_Type, x, y, z, 2 * rz, Create_Recursive_Plant_Degree, Create_Recursive_Plant_Seed);
             }    
 
           }
@@ -17361,6 +17373,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Recursive_Plant = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant" , Create_Recursive_Plant, 0, 1, 1), 1));
       Create_Recursive_Plant_Type = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Type" , Create_Recursive_Plant_Type, 0, 0, 1), 1));
       Create_Recursive_Plant_Degree = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Degree" , Create_Recursive_Plant_Degree, 1, 9, 1), 1));
+      Create_Recursive_Plant_Seed = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Seed" , Create_Recursive_Plant_Seed, 0, 100, 1), 1));
     }
     
     if (ROLLOUT_child == 3) { // Solids
@@ -19490,19 +19503,124 @@ void SOLARCHVISION_draw_solarch_image () {
   }
 }
 
-void SOLARCHVISION_add_RecursivePlant(int PlantType, float x, float y, float z, float s, int PlantDegree) {
+void SOLARCHVISION_add_RecursivePlant (int PlantType, float x, float y, float z, float s, int PlantDegree, int PlantSeed) {
  
   int[] TempObjectRecursive_Type = {PlantType}; 
-  
   allObjectRecursive_Type = concat(allObjectRecursive_Type, TempObjectRecursive_Type);
 
   int[] TempObjectRecursive_Degree = {PlantDegree}; 
-  
   allObjectRecursive_Degree = concat(allObjectRecursive_Degree, TempObjectRecursive_Degree);
 
+  int[] TempObjectRecursive_Seed = {PlantSeed}; 
+  allObjectRecursive_Seed = concat(allObjectRecursive_Seed, TempObjectRecursive_Seed);
+
   float[][] TempObjectRecursive_XYZS = {{x, y, z, s}};
-  
   allObjectRecursive_XYZS = (float[][]) concat(allObjectRecursive_XYZS, TempObjectRecursive_XYZS);
+
   allObjectRecursive_num += 1;
 
+}
+
+
+void SOLARCHVISION_draw_RecursivePlants () {
+  
+  if (Display_Trees_People != 0) {
+
+    for (int f = 1; f <= allObjectRecursive_num; f++) {
+
+      float x = allObjectRecursive_XYZS[f][0] * objects_scale * WIN3D_scale3D;
+      float y = allObjectRecursive_XYZS[f][1] * objects_scale * WIN3D_scale3D;
+      float z = allObjectRecursive_XYZS[f][2] * objects_scale * WIN3D_scale3D;
+      
+      float r = allObjectRecursive_XYZS[f][3] * 0.5 * objects_scale * WIN3D_scale3D;      
+
+      int n = allObjectRecursive_Type[f];
+
+      int d = allObjectRecursive_Degree[f];
+
+      int s = allObjectRecursive_Seed[f];
+      
+      randomSeed(s);
+
+      WIN3D_Diagrams.pushMatrix();
+
+      WIN3D_Diagrams.translate(x, -y, z);
+      
+      if (n == 0) {
+      
+        Plant_branch(r, 1, d);
+        
+      }
+              
+      WIN3D_Diagrams.popMatrix();     
+    }
+  }
+
+}
+
+
+float Plant_teta = 0.25 * PI + random(0.5 * PI);
+
+void Plant_branch (float h, int d, int Plant_max_degree) {
+
+  //h *= 0.666;
+  //h *= 0.4 + random(0.4);
+  //h *= 0.6 + random(0.3);
+  //h *= 0.75 + random(-0.15, 0.15);
+  //h *= 0.75 + random(-0.1, 0);
+  //h *= 1 / pow(d, 0.25);
+  //h *= 0.8 / pow(d, 0.2);
+  //h *= 0.85 / pow(d, 0.25);
+  //h *= 0.75 / pow(d, 0.125);
+  h *= 0.75 / pow(d, 0.06125);
+
+
+  int r = 1;
+  //int r = int(random(5));
+  //int r = int(random(0.5 * h));
+
+  if ((r != 0) && (d < Plant_max_degree)) {
+
+    for (int i = 1; i <= d; i++) {  
+      WIN3D_Diagrams.pushMatrix();    
+
+      float rotX = random(-PI / 12, PI / 12);
+      float rotY = random(-PI / 12, PI / 12);
+
+      if (d > 1) rotX = Plant_teta * (random(1, d) / (0.5 * d) - 1.5);
+      if (d > 1) rotY = Plant_teta * (random(1, d) / (0.5 * d) - 1.5);
+
+      WIN3D_Diagrams.rotateX(rotX);
+      WIN3D_Diagrams.rotateY(rotY);
+
+      float w = 0.5 * pow(Plant_max_degree - d - 1, 1.5);
+
+      WIN3D_Diagrams.strokeWeight(w);
+      
+      float[] COL = {255, 100 - 6 * w, 50 - 3 * w, 0};
+      
+      WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3]); 
+      WIN3D_Diagrams.fill(COL[1], COL[2], COL[3]);
+      
+      WIN3D_Diagrams.line(0, 0, 0, 0, 0, h);  
+      WIN3D_Diagrams.translate(0, 0, h); 
+      Plant_branch(h, d + 1, Plant_max_degree);       
+      WIN3D_Diagrams.popMatrix();
+    }
+  } else {
+    WIN3D_Diagrams.strokeWeight(0);
+
+
+    int c = int(random(127));    
+
+    float[] COL = {127, 2 * c, 191 - c, 0};  // opaque!
+    
+    WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]); 
+    WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
+
+    WIN3D_Diagrams.rotate(random(-PI / 12, PI / 12));
+
+    //WIN3D_Diagrams.sphere(1);
+
+  }
 }
