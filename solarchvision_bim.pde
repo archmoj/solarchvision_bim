@@ -18502,6 +18502,9 @@ float Rendered_Solarch_scale_V = FLOAT_undefined;
 float Rendered_Solarch_Elevation = FLOAT_undefined;
 float Rendered_Solarch_Rotation = FLOAT_undefined;
 
+
+PGraphics SHADOW_Diagrams; // to be accessible to recursive plants
+
 String defaultSceneName = "Complex";
                   
 void RenderShadowsOnUrbanPlane() {
@@ -18529,7 +18532,8 @@ void RenderShadowsOnUrbanPlane() {
   float Shades_scaleX = RES1 / Solarch_scale_U;
   float Shades_scaleY = RES2 / Solarch_scale_V;
 
-  PGraphics SHADOW_Diagrams = createGraphics(RES1, RES2, P2D);
+  SHADOW_Diagrams = createGraphics(RES1, RES2, P2D); 
+  
   PGraphics TREES_Diagrams = createGraphics(RES1, RES2, P2D);
   
   int pre_display_Solarch_Image = display_Solarch_Image;
@@ -18925,7 +18929,36 @@ void RenderShadowsOnUrbanPlane() {
             
             //now calculating recursive plants
             if (Display_Trees_People != 0) {
-  
+              
+              for (int f = 1; f <= allObjectRecursive_num; f++) {
+
+                float x = allObjectRecursive_XYZS[f][0] * objects_scale * WIN3D_scale3D;
+                float y = allObjectRecursive_XYZS[f][1] * objects_scale * WIN3D_scale3D;
+                float z = allObjectRecursive_XYZS[f][2] * objects_scale * WIN3D_scale3D;
+                
+                float r = allObjectRecursive_XYZS[f][3] * 0.5 * objects_scale * WIN3D_scale3D;      
+          
+                int n = allObjectRecursive_Type[f];
+          
+                int d = allObjectRecursive_Degree[f];
+          
+                int s = allObjectRecursive_Seed[f];
+                
+                randomSeed(s);
+          
+                SHADOW_Diagrams.pushMatrix();
+          
+                SHADOW_Diagrams.translate(x, -y, z);
+                
+                if (n == 0) {
+                
+                  Plant_branch_SHADOW(r, 1, d, SunR_Rotated, Shades_scaleX, Shades_scaleY);
+                  
+                }
+                        
+                SHADOW_Diagrams.popMatrix();     
+              }
+            
             }            
             
             SHADOW_Diagrams.popMatrix();  
@@ -19602,20 +19635,19 @@ void Plant_branch (float h, int d, int Plant_max_degree) {
       
       //WIN3D_Diagrams.strokeWeight(w); WIN3D_Diagrams.line(0, 0, 0, 0, 0, h);
 
-      //float the_thickness = 0.05 * w;
       float the_thickness = 0.02 * w * h;
-      //float the_thickness = 0.1 * h;
       
-      float nSeg = 6; 
+      int nSeg = 6;
+      
       for (int q = 0; q < int(nSeg); q++) {
       
         WIN3D_Diagrams.beginShape();
         
-        float x1 = the_thickness * cos(q * TWO_PI / nSeg);
-        float y1 = the_thickness * sin(q * TWO_PI / nSeg);
+        float x1 = the_thickness * cos(q * TWO_PI / float(nSeg));
+        float y1 = the_thickness * sin(q * TWO_PI / float(nSeg));
 
-        float x2 = the_thickness * cos((q + 1) * TWO_PI / nSeg);
-        float y2 = the_thickness * sin((q + 1) * TWO_PI / nSeg);
+        float x2 = the_thickness * cos((q + 1) * TWO_PI / float(nSeg));
+        float y2 = the_thickness * sin((q + 1) * TWO_PI / float(nSeg));
 
         WIN3D_Diagrams.vertex(x1, y1, 0);
         WIN3D_Diagrams.vertex(x2, y2, 0);
@@ -19645,6 +19677,154 @@ void Plant_branch (float h, int d, int Plant_max_degree) {
     WIN3D_Diagrams.rotate(random(-PI / 12, PI / 12));
 
     WIN3D_Diagrams.sphere(0.1 * objects_scale * WIN3D_scale3D);
+
+  }
+}
+
+void Plant_branch_SHADOW (float h, int d, int Plant_max_degree, float[] SunR_Rotated, float Shades_scaleX, float Shades_scaleY) {
+
+  h *= 0.75 / pow(d, 0.06125);
+
+  int birth = 1;
+
+  if ((birth != 0) && (d < Plant_max_degree)) {
+
+    for (int i = 1; i <= d; i++) {  
+      
+      SHADOW_Diagrams.pushMatrix();    
+
+      float rotX = random(-PI / 12, PI / 12);
+      float rotY = random(-PI / 12, PI / 12);
+
+      if (d > 1) rotX = Plant_teta * (random(1, d) / (0.5 * d) - 1.5);
+      if (d > 1) rotY = Plant_teta * (random(1, d) / (0.5 * d) - 1.5);
+
+      SHADOW_Diagrams.rotateX(rotX);
+      SHADOW_Diagrams.rotateY(rotY);
+
+      //float w = 0.5 * pow(Plant_max_degree - d - 1, 1.0);
+      float w = 0.5 * pow(Plant_max_degree - d - 1, 1.25);
+      //float w = 0.5 * pow(Plant_max_degree - d - 1, 1.5);
+      
+
+      float[] COL = {255, 100 - 6 * w, 50 - 3 * w, 0};
+      
+      SHADOW_Diagrams.stroke(0); 
+      SHADOW_Diagrams.fill(0);
+      
+      //SHADOW_Diagrams.strokeWeight(w); SHADOW_Diagrams.line(0, 0, 0, 0, 0, h);
+
+      float the_thickness = 0.02 * w * h;
+
+      int nSeg = 6; 
+
+      float[][] subFace = new float [nSeg * 4][3];
+
+      for (int q = 0; q < int(nSeg); q++) {
+        
+        float x1 = the_thickness * cos(q * TWO_PI / float(nSeg));
+        float y1 = the_thickness * sin(q * TWO_PI / float(nSeg));
+
+        float x2 = the_thickness * cos((q + 1) * TWO_PI / float(nSeg));
+        float y2 = the_thickness * sin((q + 1) * TWO_PI / float(nSeg));
+
+        subFace[q * 4 + 0][0] = x1; subFace[q * 4 + 0][1] = y1; subFace[q * 4 + 0][2] = 0;
+        subFace[q * 4 + 1][0] = x2; subFace[q * 4 + 1][1] = y2; subFace[q * 4 + 1][2] = 0;
+        subFace[q * 4 + 2][0] = x2; subFace[q * 4 + 2][1] = y2; subFace[q * 4 + 2][2] = h;
+        subFace[q * 4 + 3][0] = x1; subFace[q * 4 + 3][1] = y1; subFace[q * 4 + 3][2] = h;
+      }
+      
+      float[][] subFace_Rotated = subFace;
+
+      SHADOW_Diagrams.beginShape();
+      
+      for (int s = 0; s < subFace_Rotated.length; s++) {
+        
+        float z = subFace_Rotated[s][2] - Solarch_Elevation;
+        float x = subFace_Rotated[s][0] - z * SunR_Rotated[1] / SunR_Rotated[3];
+        float y = subFace_Rotated[s][1] - z * SunR_Rotated[2] / SunR_Rotated[3];
+
+        if (z >= 0) {
+          
+          if (display_Solarch_Image == 1) {                    
+            float px = x;
+            float py = y;
+          
+            x = px * cos_ang(-Solarch_Rotation) - py * sin_ang(-Solarch_Rotation); 
+            y = px * sin_ang(-Solarch_Rotation) + py * cos_ang(-Solarch_Rotation);
+          } 
+          
+          SHADOW_Diagrams.vertex(x * Shades_scaleX, -y * Shades_scaleY);
+        }
+        else {
+          int s_next = (s + 1) % subFace_Rotated.length;
+          int s_prev = (s + subFace_Rotated.length - 1) % subFace_Rotated.length;         
+
+          float z_prev = subFace_Rotated[s_prev][2] - Solarch_Elevation;
+          float x_prev = subFace_Rotated[s_prev][0] - z_prev * SunR_Rotated[1] / SunR_Rotated[3];
+          float y_prev = subFace_Rotated[s_prev][1] - z_prev * SunR_Rotated[2] / SunR_Rotated[3];
+          
+          if (z_prev > 0) { 
+            float ratio = z_prev / (z_prev - z);
+            
+            float x_trim = x_prev * (1 - ratio) + x * ratio;
+            float y_trim = y_prev * (1 - ratio) + y * ratio;
+            
+            if (display_Solarch_Image == 1) {
+              float px = x_trim;
+              float py = y_trim;
+            
+              x_trim = px * cos_ang(-Solarch_Rotation) - py * sin_ang(-Solarch_Rotation); 
+              y_trim = px * sin_ang(-Solarch_Rotation) + py * cos_ang(-Solarch_Rotation);
+            } 
+            
+            SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
+          }
+
+          float z_next = subFace_Rotated[s_next][2] - Solarch_Elevation;
+          float x_next = subFace_Rotated[s_next][0] - z_next * SunR_Rotated[1] / SunR_Rotated[3];
+          float y_next = subFace_Rotated[s_next][1] - z_next * SunR_Rotated[2] / SunR_Rotated[3];
+
+          if (z_next > 0) { 
+            float ratio = z_next / (z_next - z);
+            
+            float x_trim = x_next * (1 - ratio) + x * ratio;
+            float y_trim = y_next * (1 - ratio) + y * ratio;
+            
+            if (display_Solarch_Image == 1) {
+              float px = x_trim;
+              float py = y_trim;
+            
+              x_trim = px * cos_ang(-Solarch_Rotation) - py * sin_ang(-Solarch_Rotation); 
+              y_trim = px * sin_ang(-Solarch_Rotation) + py * cos_ang(-Solarch_Rotation);
+            } 
+            
+            SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
+          }                    
+        }
+      }
+   
+      SHADOW_Diagrams.translate(0, 0, h); 
+      
+      Plant_branch_SHADOW(h, d + 1, Plant_max_degree, SunR_Rotated, Shades_scaleX, Shades_scaleY);
+      
+      SHADOW_Diagrams.popMatrix();
+    }
+  } else {
+    SHADOW_Diagrams.strokeWeight(0);
+
+
+    int c = int(random(127));    
+
+    float[] COL = {127, 2 * c, 191 - c, 0};  // opaque!
+    
+    SHADOW_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]); 
+    SHADOW_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
+
+    SHADOW_Diagrams.rotate(random(-PI / 12, PI / 12));
+
+    //SHADOW_Diagrams.sphere(0.1 * objects_scale * SHADOW_scale3D);
+    SHADOW_Diagrams.sphere(0.1 * objects_scale); // ??????????????????????
 
   }
 }
