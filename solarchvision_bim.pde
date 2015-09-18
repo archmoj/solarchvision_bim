@@ -127,7 +127,7 @@ int Create_Mesh_Person_Type = 0;
 int Create_Mesh_Plant_Type = 0;
 int Create_Recursive_Plant_Type = 0;
 int Create_Recursive_Plant_Degree = 8;
-int Create_Recursive_Plant_Seed = 0;
+int Create_Recursive_Plant_Seed = -1; // -1:random, 0-99 choice
 
 
 int Display_SWOB_points = 1; // 0-2
@@ -17373,7 +17373,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Recursive_Plant = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant" , Create_Recursive_Plant, 0, 1, 1), 1));
       Create_Recursive_Plant_Type = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Type" , Create_Recursive_Plant_Type, 0, 0, 1), 1));
       Create_Recursive_Plant_Degree = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Degree" , Create_Recursive_Plant_Degree, 1, 9, 1), 1));
-      Create_Recursive_Plant_Seed = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Seed" , Create_Recursive_Plant_Seed, 0, 100, 1), 1));
+      Create_Recursive_Plant_Seed = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Seed" , Create_Recursive_Plant_Seed, -1, 100, 1), 1));
     }
     
     if (ROLLOUT_child == 3) { // Solids
@@ -19511,7 +19511,10 @@ void SOLARCHVISION_add_RecursivePlant (int PlantType, float x, float y, float z,
   int[] TempObjectRecursive_Degree = {PlantDegree}; 
   allObjectRecursive_Degree = concat(allObjectRecursive_Degree, TempObjectRecursive_Degree);
 
-  int[] TempObjectRecursive_Seed = {PlantSeed}; 
+  int q = PlantSeed;
+  if (q == -1) q = int(random(0, 100));
+
+  int[] TempObjectRecursive_Seed = {q}; 
   allObjectRecursive_Seed = concat(allObjectRecursive_Seed, TempObjectRecursive_Seed);
 
   float[][] TempObjectRecursive_XYZS = {{x, y, z, s}};
@@ -19548,7 +19551,7 @@ void SOLARCHVISION_draw_RecursivePlants () {
       
       if (n == 0) {
       
-        Plant_branch(r, 1, d);
+        Plant_branch(r, 1, d, "WIN3D");
         
       }
               
@@ -19561,7 +19564,7 @@ void SOLARCHVISION_draw_RecursivePlants () {
 
 float Plant_teta = 0.25 * PI + random(0.5 * PI);
 
-void Plant_branch (float h, int d, int Plant_max_degree) {
+void Plant_branch (float h, int d, int Plant_max_degree, String the_Window) {
 
   //h *= 0.666;
   //h *= 0.4 + random(0.4);
@@ -19582,7 +19585,8 @@ void Plant_branch (float h, int d, int Plant_max_degree) {
   if ((r != 0) && (d < Plant_max_degree)) {
 
     for (int i = 1; i <= d; i++) {  
-      WIN3D_Diagrams.pushMatrix();    
+      
+      if (the_Window.equals("WIN3D")) WIN3D_Diagrams.pushMatrix();    
 
       float rotX = random(-PI / 12, PI / 12);
       float rotY = random(-PI / 12, PI / 12);
@@ -19590,37 +19594,39 @@ void Plant_branch (float h, int d, int Plant_max_degree) {
       if (d > 1) rotX = Plant_teta * (random(1, d) / (0.5 * d) - 1.5);
       if (d > 1) rotY = Plant_teta * (random(1, d) / (0.5 * d) - 1.5);
 
-      WIN3D_Diagrams.rotateX(rotX);
-      WIN3D_Diagrams.rotateY(rotY);
+      if (the_Window.equals("WIN3D")) WIN3D_Diagrams.rotateX(rotX);
+      if (the_Window.equals("WIN3D")) WIN3D_Diagrams.rotateY(rotY);
 
       float w = 0.5 * pow(Plant_max_degree - d - 1, 1.5);
 
-      WIN3D_Diagrams.strokeWeight(w);
+      if (the_Window.equals("WIN3D")) WIN3D_Diagrams.strokeWeight(w);
       
       float[] COL = {255, 100 - 6 * w, 50 - 3 * w, 0};
       
-      WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3]); 
-      WIN3D_Diagrams.fill(COL[1], COL[2], COL[3]);
+      if (the_Window.equals("WIN3D")) WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3]); 
+      if (the_Window.equals("WIN3D")) WIN3D_Diagrams.fill(COL[1], COL[2], COL[3]);
       
-      WIN3D_Diagrams.line(0, 0, 0, 0, 0, h);  
-      WIN3D_Diagrams.translate(0, 0, h); 
-      Plant_branch(h, d + 1, Plant_max_degree);       
-      WIN3D_Diagrams.popMatrix();
+      if (the_Window.equals("WIN3D")) WIN3D_Diagrams.line(0, 0, 0, 0, 0, h);  
+      if (the_Window.equals("WIN3D")) WIN3D_Diagrams.translate(0, 0, h); 
+      
+      Plant_branch(h, d + 1, Plant_max_degree, the_Window);
+      
+      if (the_Window.equals("WIN3D")) WIN3D_Diagrams.popMatrix();
     }
   } else {
-    WIN3D_Diagrams.strokeWeight(0);
+    if (the_Window.equals("WIN3D")) WIN3D_Diagrams.strokeWeight(0);
 
 
     int c = int(random(127));    
 
     float[] COL = {127, 2 * c, 191 - c, 0};  // opaque!
     
-    WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]); 
-    WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
+    if (the_Window.equals("WIN3D")) WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]); 
+    if (the_Window.equals("WIN3D")) WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
 
-    WIN3D_Diagrams.rotate(random(-PI / 12, PI / 12));
+    if (the_Window.equals("WIN3D")) WIN3D_Diagrams.rotate(random(-PI / 12, PI / 12));
 
-    WIN3D_Diagrams.sphere(0.25);
+    if (the_Window.equals("WIN3D")) WIN3D_Diagrams.sphere(0.25);
 
   }
 }
