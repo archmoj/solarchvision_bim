@@ -19568,9 +19568,9 @@ void Plant_branch (float h, int d, int Plant_max_degree) {
 
   h *= 0.75 / pow(d, 0.06125);
 
-  int r = 1;
+  int birth = 1;
 
-  if ((r != 0) && (d < Plant_max_degree)) {
+  if ((birth != 0) && (d < Plant_max_degree)) {
 
     for (int i = 1; i <= d; i++) {  
       
@@ -19585,7 +19585,10 @@ void Plant_branch (float h, int d, int Plant_max_degree) {
       WIN3D_Diagrams.rotateX(rotX);
       WIN3D_Diagrams.rotateY(rotY);
 
-      float w = 0.5 * pow(Plant_max_degree - d - 1, 1.5);
+      //float w = 0.5 * pow(Plant_max_degree - d - 1, 1.0);
+      float w = 0.5 * pow(Plant_max_degree - d - 1, 1.25);
+      //float w = 0.5 * pow(Plant_max_degree - d - 1, 1.5);
+      
 
       float[] COL = {255, 100 - 6 * w, 50 - 3 * w, 0};
       
@@ -19594,7 +19597,13 @@ void Plant_branch (float h, int d, int Plant_max_degree) {
       
       //WIN3D_Diagrams.strokeWeight(w); WIN3D_Diagrams.line(0, 0, 0, 0, 0, h);
       
-      float the_thickness = 0.03 * objects_scale * WIN3D_scale3D * w;
+      //float the_thickness = 0.03 * w * objects_scale * WIN3D_scale3D;
+      //float the_thickness = 0.01 * w * h * objects_scale * WIN3D_scale3D;
+      //float the_thickness = 0.05 * h * objects_scale * WIN3D_scale3D;
+      
+      //float the_thickness = 0.05 * w;
+      float the_thickness = 0.02 * w * h;
+      //float the_thickness = 0.1 * h;
       
       float nSeg = 6; 
       for (int q = 0; q < int(nSeg); q++) {
