@@ -19566,21 +19566,9 @@ float Plant_teta = 0.25 * PI + random(0.5 * PI);
 
 void Plant_branch (float h, int d, int Plant_max_degree) {
 
-  //h *= 0.666;
-  //h *= 0.4 + random(0.4);
-  //h *= 0.6 + random(0.3);
-  //h *= 0.75 + random(-0.15, 0.15);
-  //h *= 0.75 + random(-0.1, 0);
-  //h *= 1 / pow(d, 0.25);
-  //h *= 0.8 / pow(d, 0.2);
-  //h *= 0.85 / pow(d, 0.25);
-  //h *= 0.75 / pow(d, 0.125);
   h *= 0.75 / pow(d, 0.06125);
 
-
   int r = 1;
-  //int r = int(random(5));
-  //int r = int(random(0.5 * h));
 
   if ((r != 0) && (d < Plant_max_degree)) {
 
@@ -19626,7 +19614,7 @@ void Plant_branch (float h, int d, int Plant_max_degree) {
 
     WIN3D_Diagrams.rotate(random(-PI / 12, PI / 12));
 
-    WIN3D_Diagrams.sphere(0.25);
+    WIN3D_Diagrams.sphere(0.1 * objects_scale * WIN3D_scale3D);
 
   }
 }
