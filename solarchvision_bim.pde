@@ -18923,6 +18923,11 @@ void RenderShadowsOnUrbanPlane() {
               }
             }
             
+            //now calculating recursive plants
+            if (Display_Trees_People != 0) {
+  
+            }            
+            
             SHADOW_Diagrams.popMatrix();  
           }
           
@@ -19596,11 +19601,7 @@ void Plant_branch (float h, int d, int Plant_max_degree) {
       WIN3D_Diagrams.fill(COL[1], COL[2], COL[3]);
       
       //WIN3D_Diagrams.strokeWeight(w); WIN3D_Diagrams.line(0, 0, 0, 0, 0, h);
-      
-      //float the_thickness = 0.03 * w * objects_scale * WIN3D_scale3D;
-      //float the_thickness = 0.01 * w * h * objects_scale * WIN3D_scale3D;
-      //float the_thickness = 0.05 * h * objects_scale * WIN3D_scale3D;
-      
+
       //float the_thickness = 0.05 * w;
       float the_thickness = 0.02 * w * h;
       //float the_thickness = 0.1 * h;
@@ -19623,8 +19624,6 @@ void Plant_branch (float h, int d, int Plant_max_degree) {
         
         WIN3D_Diagrams.endShape(CLOSE);
       }
-      
-      
       
       WIN3D_Diagrams.translate(0, 0, h); 
       
