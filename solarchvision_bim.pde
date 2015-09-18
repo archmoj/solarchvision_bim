@@ -19587,14 +19587,36 @@ void Plant_branch (float h, int d, int Plant_max_degree) {
 
       float w = 0.5 * pow(Plant_max_degree - d - 1, 1.5);
 
-      WIN3D_Diagrams.strokeWeight(w);
-      
       float[] COL = {255, 100 - 6 * w, 50 - 3 * w, 0};
       
       WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3]); 
       WIN3D_Diagrams.fill(COL[1], COL[2], COL[3]);
       
-      WIN3D_Diagrams.line(0, 0, 0, 0, 0, h);  
+      //WIN3D_Diagrams.strokeWeight(w); WIN3D_Diagrams.line(0, 0, 0, 0, 0, h);
+      
+      float the_thickness = 0.03 * objects_scale * WIN3D_scale3D * w;
+      
+      float nSeg = 6; 
+      for (int q = 0; q < int(nSeg); q++) {
+      
+        WIN3D_Diagrams.beginShape();
+        
+        float x1 = the_thickness * cos(q * TWO_PI / nSeg);
+        float y1 = the_thickness * sin(q * TWO_PI / nSeg);
+
+        float x2 = the_thickness * cos((q + 1) * TWO_PI / nSeg);
+        float y2 = the_thickness * sin((q + 1) * TWO_PI / nSeg);
+
+        WIN3D_Diagrams.vertex(x1, y1, 0);
+        WIN3D_Diagrams.vertex(x2, y2, 0);
+        WIN3D_Diagrams.vertex(x2, y2, h);
+        WIN3D_Diagrams.vertex(x1, y1, h);
+        
+        WIN3D_Diagrams.endShape(CLOSE);
+      }
+      
+      
+      
       WIN3D_Diagrams.translate(0, 0, h); 
       
       Plant_branch(h, d + 1, Plant_max_degree);
