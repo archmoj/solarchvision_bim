@@ -19585,7 +19585,7 @@ void SOLARCHVISION_draw_RecursivePlants () {
 
       if (n == 0) {
         
-        float Alpha = HALF_PI;
+        float Alpha = 0;
         float Beta = 0; 
       
         Plant_branch(x, y, z, Alpha, Beta, r, 1, d);
@@ -19610,7 +19610,7 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
 
     for (int i = 1; i <= d; i++) {  
       
-      Alpha += d * random(-PI / 12, PI / 12);
+      float rotZX = Alpha + d * random(-PI / 12, PI / 12);
              
       //float w = 0.5 * pow(Plant_max_degree - d - 1, 1.0);
       float w = 0.5 * pow(Plant_max_degree - d - 1, 1.25);
@@ -19621,9 +19621,9 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
       WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3]); 
       WIN3D_Diagrams.fill(COL[1], COL[2], COL[3]);
 
-      float x1 = x0 + h * cos(Alpha);
+      float x1 = x0 + h * sin(rotZX);
       float y1 = y0;
-      float z1 = z0 + h * sin(Alpha);
+      float z1 = z0 + h * cos(rotZX);
       
       WIN3D_Diagrams.strokeWeight(w); 
       WIN3D_Diagrams.line(x0, -y0, z0, x1, -y1, z1); 
@@ -19651,7 +19651,7 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
         WIN3D_Diagrams.endShape(CLOSE);
       }
       */
-      Plant_branch(x1, y1, z1, Alpha, Beta, h, d + 1, Plant_max_degree);
+      Plant_branch(x1, y1, z1, rotZX, Beta, h, d + 1, Plant_max_degree);
 
     }
   } else {
