@@ -19611,6 +19611,7 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
     for (int i = 1; i <= d; i++) {  
       
       float rotZX = Alpha + d * random(-PI / 12, PI / 12);
+      float rotXY = random(-PI, PI);
              
       //float w = 0.5 * pow(Plant_max_degree - d - 1, 1.0);
       float w = 0.5 * pow(Plant_max_degree - d - 1, 1.25);
@@ -19621,12 +19622,20 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
       WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3]); 
       WIN3D_Diagrams.fill(COL[1], COL[2], COL[3]);
 
-      float x1 = x0 + h * sin(rotZX);
-      float y1 = y0;
-      float z1 = z0 + h * cos(rotZX);
+      float x1 = 0;
+      float y1 = 0;
+      float z1 = h;
+
+      float x2 = ??? * sin(rotZX);
+      float y2 = 0;
+      float z2 = h * cos(rotZX);
+      
+      float x_new = x0 + x2 * cos(rotXY) - y2 * sin(rotXY);
+      float y_new = y0 + x2 * sin(rotXY) + y2 * cos(rotXY);
+      float z_new = z0 + z2; 
       
       WIN3D_Diagrams.strokeWeight(w); 
-      WIN3D_Diagrams.line(x0, -y0, z0, x1, -y1, z1); 
+      WIN3D_Diagrams.line(x0, -y0, z0, x_new, -y_new, z_new); 
 
       /*
       float the_thickness = 0.02 * w * h;
@@ -19651,7 +19660,7 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
         WIN3D_Diagrams.endShape(CLOSE);
       }
       */
-      Plant_branch(x1, y1, z1, rotZX, Beta, h, d + 1, Plant_max_degree);
+      Plant_branch(x_new, y_new, z_new, rotZX, rotXY, h, d + 1, Plant_max_degree);
 
     }
   } else {
