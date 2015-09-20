@@ -19854,10 +19854,26 @@ void Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta,
     }
   } else {
     if (Display_recursivePlant_Leaves != 0) {
-        
-      float z = z0 - Solarch_Elevation;
-      float x = x0 - z * SunR_Rotated[1] / SunR_Rotated[3];
-      float y = y0 - z * SunR_Rotated[2] / SunR_Rotated[3];
+
+      float x0_Rotated = x0;
+      float y0_Rotated = y0;
+      float z0_Rotated = z0;
+      
+      if (display_Solarch_Image == 2) {
+        float a = x0;
+        float b = -y0;
+        float c = z0;
+
+        x0_Rotated = a * cos_ang(-Solarch_Rotation) - b * sin_ang(-Solarch_Rotation);     
+        y0_Rotated = c;    
+        z0_Rotated= a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);      
+      }
+      else if (display_Solarch_Image == 3) {}
+
+
+      float z = z0_Rotated - Solarch_Elevation;
+      float x = x0_Rotated - z * SunR_Rotated[1] / SunR_Rotated[3];
+      float y = y0_Rotated - z * SunR_Rotated[2] / SunR_Rotated[3];
 
       if (z >= 0) {
         
