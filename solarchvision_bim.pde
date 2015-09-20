@@ -19669,7 +19669,7 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
 
     WIN3D_Diagrams.pushMatrix(); 
     WIN3D_Diagrams.translate(x0 * objects_scale * WIN3D_scale3D, -y0 * objects_scale * WIN3D_scale3D, z0 * objects_scale * WIN3D_scale3D);
-    WIN3D_Diagrams.sphere(0.1 * objects_scale * WIN3D_scale3D);
+    WIN3D_Diagrams.sphere(0.25 * objects_scale * WIN3D_scale3D);
     WIN3D_Diagrams.popMatrix();
 
   }
@@ -19833,7 +19833,7 @@ void Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta,
 
     }
   } else {
-    /*
+    
     SHADOW_Diagrams.strokeWeight(0);
 
     int c = int(random(127));    
@@ -19845,9 +19845,9 @@ void Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta,
 
     SHADOW_Diagrams.pushMatrix(); 
     SHADOW_Diagrams.translate(x0, -y0, z0);
-    SHADOW_Diagrams.sphere(0.1 * objects_scale * WIN3D_scale3D);
+    SHADOW_Diagrams.sphere(0.25 * objects_scale * WIN3D_scale3D);
     SHADOW_Diagrams.popMatrix();
-    */
+    
   }
 }
 
