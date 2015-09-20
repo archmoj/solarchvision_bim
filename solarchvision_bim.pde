@@ -18946,19 +18946,15 @@ void RenderShadowsOnUrbanPlane() {
                 
                 randomSeed(s);
           
-                SHADOW_Diagrams.pushMatrix();
-          
-                SHADOW_Diagrams.translate(x, -y, z);
-                
                 if (n == 0) {
+                  
+                  float Alpha = 0;
+                  float Beta = 0; 
                 
-                  Plant_branch_SHADOW(r, 1, d, SunR_Rotated, Shades_scaleX, Shades_scaleY);
+                  Plant_branch_SHADOW(x, y, z, Alpha, Beta, r, 1, d, SunR_Rotated, Shades_scaleX, Shades_scaleY);
                   
                 }
-                        
-                SHADOW_Diagrams.popMatrix();     
               }
-            
             }            
             
             SHADOW_Diagrams.popMatrix();  
@@ -19598,7 +19594,7 @@ void SOLARCHVISION_draw_RecursivePlants () {
 }
 
 
-float Plant_teta = 0.25 * PI + random(0.5 * PI);
+
 
 float getRatio_Plant_branch (float d) {
  return 0.75 / pow(d, 0.06125);
@@ -19641,12 +19637,7 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
       float y_new = y0 + x_rot * sin(rotXY) + y_rot * cos(rotXY);
       float z_new = z0 + z_rot; 
 
-      //WIN3D_Diagrams.strokeWeight(w); 
-      //WIN3D_Diagrams.line(x0, -y0, z0, x_new, -y_new, z_new); 
-
-      
       int nSeg = 6; 
-      //float[][] subFace = new float [nSeg * 4][3];
       for (int q = 0; q < nSeg; q++) {
         WIN3D_Diagrams.beginShape();
         for (int j = 0; j < 4; j++) {
@@ -19672,7 +19663,6 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
           float Trunk_y_new = y0 + Trunk_x_rot * sin(rotXY) + Trunk_y_rot * cos(rotXY);
           float Trunk_z_new = z0 + Trunk_z_rot; 
   
-          //subFace[q * 4 + j][0] = Trunk_x_new; subFace[q * 4 + j][1] = Trunk_y_new; subFace[q * 4 + j][2] = Trunk_z_new;
           WIN3D_Diagrams.vertex(Trunk_x_new, -Trunk_y_new, Trunk_z_new);
         }
         WIN3D_Diagrams.endShape(CLOSE);
@@ -19699,9 +19689,15 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
   }
 }
 
-void Plant_branch_SHADOW (float h, int d, int Plant_max_degree, float[] SunR_Rotated, float Shades_scaleX, float Shades_scaleY) {
 
-  h *= 0.75 / pow(d, 0.06125);
+void Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta, float h, int d, int Plant_max_degree, float[] SunR_Rotated, float Shades_scaleX, float Shades_scaleY) {
+
+  SHADOW_Diagrams.strokeWeight(0);
+  
+  SHADOW_Diagrams.stroke(0);
+  SHADOW_Diagrams.fill(0);
+  
+  h *= getRatio_Plant_branch(d);
 
   int birth = 1;
 
@@ -19709,53 +19705,75 @@ void Plant_branch_SHADOW (float h, int d, int Plant_max_degree, float[] SunR_Rot
 
     for (int i = 1; i <= d; i++) {  
       
-      SHADOW_Diagrams.pushMatrix();    
-
-      float rotX = random(-PI / 12, PI / 12);
-      float rotY = random(-PI / 12, PI / 12);
-
-      if (d > 1) rotX = Plant_teta * (random(1, d) / (0.5 * d) - 1.5);
-      if (d > 1) rotY = Plant_teta * (random(1, d) / (0.5 * d) - 1.5);
-
-      SHADOW_Diagrams.rotateX(rotX);
-      SHADOW_Diagrams.rotateY(rotY);
-
+      float rotZX = Alpha + d * random(-PI / 12, PI / 12);
+      float rotXY = Beta + random(-PI, PI);
+             
       //float w = 0.5 * pow(Plant_max_degree - d - 1, 1.0);
       float w = 0.5 * pow(Plant_max_degree - d - 1, 1.25);
       //float w = 0.5 * pow(Plant_max_degree - d - 1, 1.5);
-      
 
-      float[] COL = {255, 100 - 6 * w, 50 - 3 * w, 0};
-      
-      SHADOW_Diagrams.stroke(0); 
-      SHADOW_Diagrams.fill(0);
-      
-      //SHADOW_Diagrams.strokeWeight(w); SHADOW_Diagrams.line(0, 0, 0, 0, 0, h);
 
-      float the_thickness = 0.02 * w * h;
+      float x_dif = 0;
+      float y_dif = 0;
+      float z_dif = h;
+
+      float x_rot = z_dif * sin(rotZX) +  x_dif * cos(rotZX);
+      float y_rot = y_dif;
+      float z_rot = z_dif * cos(rotZX) - x_dif * sin(rotZX);
+      
+      float x_new = x0 + x_rot * cos(rotXY) - y_rot * sin(rotXY);
+      float y_new = y0 + x_rot * sin(rotXY) + y_rot * cos(rotXY);
+      float z_new = z0 + z_rot; 
 
       int nSeg = 6; 
-
       float[][] subFace = new float [nSeg * 4][3];
-
       for (int q = 0; q < nSeg; q++) {
-        
-        float x1 = the_thickness * cos(q * TWO_PI / float(nSeg));
-        float y1 = the_thickness * sin(q * TWO_PI / float(nSeg));
+        for (int j = 0; j < 4; j++) {
 
-        float x2 = the_thickness * cos((q + 1) * TWO_PI / float(nSeg));
-        float y2 = the_thickness * sin((q + 1) * TWO_PI / float(nSeg));
+          float the_U = 0;
+          if ((j == 1) || (j == 2)) the_U = 1;
 
-        subFace[q * 4 + 0][0] = x1; subFace[q * 4 + 0][1] = y1; subFace[q * 4 + 0][2] = 0;
-        subFace[q * 4 + 1][0] = x2; subFace[q * 4 + 1][1] = y2; subFace[q * 4 + 1][2] = 0;
-        subFace[q * 4 + 2][0] = x2; subFace[q * 4 + 2][1] = y2; subFace[q * 4 + 2][2] = h;
-        subFace[q * 4 + 3][0] = x1; subFace[q * 4 + 3][1] = y1; subFace[q * 4 + 3][2] = h;
+          float the_V = 0;
+          if ((j == 2) || (j == 3)) the_V = 1;
+          
+          float the_thickness = 0.02 * w * h;
+          if ((j == 2) || (j == 3)) the_thickness *= getRatio_Plant_branch(d + 1); // for conic truncks
+          
+          float Trunk_x_dif = the_thickness * cos((q + the_U) * TWO_PI / float(nSeg));
+          float Trunk_y_dif = the_thickness * sin((q + the_U) * TWO_PI / float(nSeg));
+          float Trunk_z_dif = h * the_V;
+
+          float Trunk_x_rot = Trunk_z_dif * sin(rotZX) +  Trunk_x_dif * cos(rotZX);
+          float Trunk_y_rot = Trunk_y_dif;
+          float Trunk_z_rot = Trunk_z_dif * cos(rotZX) - Trunk_x_dif * sin(rotZX);
+          
+          float Trunk_x_new = x0 + Trunk_x_rot * cos(rotXY) - Trunk_y_rot * sin(rotXY);
+          float Trunk_y_new = y0 + Trunk_x_rot * sin(rotXY) + Trunk_y_rot * cos(rotXY);
+          float Trunk_z_new = z0 + Trunk_z_rot; 
+  
+          subFace[q * 4 + j][0] = Trunk_x_new; subFace[q * 4 + j][1] = Trunk_y_new; subFace[q * 4 + j][2] = Trunk_z_new;
+        }
       }
-      
+
       float[][] subFace_Rotated = subFace;
 
+      for (int s = 0; s < subFace_Rotated.length; s++) {
+        if (display_Solarch_Image == 2) {
+          float a = subFace_Rotated[s][0];
+          float b = -subFace_Rotated[s][1];
+          float c = subFace_Rotated[s][2];
+
+          subFace_Rotated[s][0] = a * cos_ang(-Solarch_Rotation) - b * sin_ang(-Solarch_Rotation);     
+          subFace_Rotated[s][1] = c;    
+          subFace_Rotated[s][2] = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);      
+        }
+        else if (display_Solarch_Image == 3) {
+          
+        }                  
+      }  
+
       SHADOW_Diagrams.beginShape();
-      
+
       for (int s = 0; s < subFace_Rotated.length; s++) {
         
         float z = subFace_Rotated[s][2] - Solarch_Elevation;
@@ -19821,16 +19839,15 @@ void Plant_branch_SHADOW (float h, int d, int Plant_max_degree, float[] SunR_Rot
           }                    
         }
       }
-   
-      SHADOW_Diagrams.translate(0, 0, h); 
+
+      SHADOW_Diagrams.endShape(CLOSE);      
       
-      Plant_branch_SHADOW(h, d + 1, Plant_max_degree, SunR_Rotated, Shades_scaleX, Shades_scaleY);
-      
-      SHADOW_Diagrams.popMatrix();
+      Plant_branch_SHADOW(x_new, y_new, z_new, rotZX, rotXY, h, d + 1, Plant_max_degree, SunR_Rotated, Shades_scaleX, Shades_scaleY);
+
     }
   } else {
+    /*
     SHADOW_Diagrams.strokeWeight(0);
-
 
     int c = int(random(127));    
 
@@ -19839,10 +19856,12 @@ void Plant_branch_SHADOW (float h, int d, int Plant_max_degree, float[] SunR_Rot
     SHADOW_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]); 
     SHADOW_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
 
-    SHADOW_Diagrams.rotate(random(-PI / 12, PI / 12));
-
-    //SHADOW_Diagrams.sphere(0.1 * objects_scale * SHADOW_scale3D);
-    SHADOW_Diagrams.sphere(0.1 * objects_scale); // ??????????????????????
-
+    SHADOW_Diagrams.pushMatrix(); 
+    SHADOW_Diagrams.translate(x0, -y0, z0);
+    SHADOW_Diagrams.sphere(0.1 * objects_scale * WIN3D_scale3D);
+    SHADOW_Diagrams.popMatrix();
+    */
   }
 }
+
+
