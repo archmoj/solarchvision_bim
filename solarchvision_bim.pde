@@ -15249,8 +15249,8 @@ int Field_Color = 0;
 float Field_scale_U = 100; // i.e. 100m
 float Field_scale_V = 100; // i.e. 100m
 
-int Field_RES1 = 400;
-int Field_RES2 = 400;
+int Field_RES1 = 200;
+int Field_RES2 = 200;
 
 PImage Field_Image = createImage(Field_RES1, Field_RES2, ARGB);
 
@@ -18925,11 +18925,11 @@ void RenderShadowsOnUrbanPlane() {
               
               for (int f = 1; f <= allObjectRecursive_num; f++) {
 
-                float x = allObjectRecursive_XYZS[f][0] * objects_scale * WIN3D_scale3D;
-                float y = allObjectRecursive_XYZS[f][1] * objects_scale * WIN3D_scale3D;
-                float z = allObjectRecursive_XYZS[f][2] * objects_scale * WIN3D_scale3D;
+                float x = allObjectRecursive_XYZS[f][0];
+                float y = allObjectRecursive_XYZS[f][1];
+                float z = allObjectRecursive_XYZS[f][2];
                 
-                float r = allObjectRecursive_XYZS[f][3] * 0.5 * objects_scale * WIN3D_scale3D;      
+                float r = allObjectRecursive_XYZS[f][3] * 0.5;      
           
                 int n = allObjectRecursive_Type[f];
           
@@ -19551,11 +19551,11 @@ void SOLARCHVISION_draw_RecursivePlants () {
 
     for (int f = 1; f <= allObjectRecursive_num; f++) {
 
-      float x = allObjectRecursive_XYZS[f][0] * objects_scale * WIN3D_scale3D;
-      float y = allObjectRecursive_XYZS[f][1] * objects_scale * WIN3D_scale3D;
-      float z = allObjectRecursive_XYZS[f][2] * objects_scale * WIN3D_scale3D;
+      float x = allObjectRecursive_XYZS[f][0];
+      float y = allObjectRecursive_XYZS[f][1];
+      float z = allObjectRecursive_XYZS[f][2];
       
-      float r = allObjectRecursive_XYZS[f][3] * 0.5 * objects_scale * WIN3D_scale3D;      
+      float r = allObjectRecursive_XYZS[f][3] * 0.5;      
 
       int n = allObjectRecursive_Type[f];
 
@@ -19583,7 +19583,7 @@ void SOLARCHVISION_draw_RecursivePlants () {
 
 
 float getRatio_Plant_branch (float d) {
- return 0.75 / pow(d, 0.06125);
+ return (0.75 / pow(d, 0.06125));
 }
 
 void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float h, int d, int Plant_max_degree) {
@@ -19649,7 +19649,7 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
           float Trunk_y_new = y0 + Trunk_x_rot * sin(rotXY) + Trunk_y_rot * cos(rotXY);
           float Trunk_z_new = z0 + Trunk_z_rot; 
   
-          WIN3D_Diagrams.vertex(Trunk_x_new, -Trunk_y_new, Trunk_z_new);
+          WIN3D_Diagrams.vertex(Trunk_x_new * objects_scale * WIN3D_scale3D, -Trunk_y_new * objects_scale * WIN3D_scale3D, Trunk_z_new * objects_scale * WIN3D_scale3D);
         }
         WIN3D_Diagrams.endShape(CLOSE);
       }
@@ -19668,7 +19668,7 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
     WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
 
     WIN3D_Diagrams.pushMatrix(); 
-    WIN3D_Diagrams.translate(x0, -y0, z0);
+    WIN3D_Diagrams.translate(x0 * objects_scale * WIN3D_scale3D, -y0 * objects_scale * WIN3D_scale3D, z0 * objects_scale * WIN3D_scale3D);
     WIN3D_Diagrams.sphere(0.1 * objects_scale * WIN3D_scale3D);
     WIN3D_Diagrams.popMatrix();
 
@@ -19677,7 +19677,7 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
 
 
 void Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta, float h, int d, int Plant_max_degree, float[] SunR_Rotated, float Shades_scaleX, float Shades_scaleY) {
-
+  
   SHADOW_Diagrams.strokeWeight(0);
   
   SHADOW_Diagrams.stroke(0);
@@ -19737,7 +19737,9 @@ void Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta,
           float Trunk_y_new = y0 + Trunk_x_rot * sin(rotXY) + Trunk_y_rot * cos(rotXY);
           float Trunk_z_new = z0 + Trunk_z_rot; 
   
-          subFace[q * 4 + j][0] = Trunk_x_new; subFace[q * 4 + j][1] = Trunk_y_new; subFace[q * 4 + j][2] = Trunk_z_new;
+          subFace[q * 4 + j][0] = Trunk_x_new;
+          subFace[q * 4 + j][1] = Trunk_y_new; 
+          subFace[q * 4 + j][2] = Trunk_z_new;
         }
       }
 
