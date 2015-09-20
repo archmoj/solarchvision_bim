@@ -126,7 +126,7 @@ int Create_Recursive_Plant = 1;
 int Create_Mesh_Person_Type = 0;
 int Create_Mesh_Plant_Type = 0;
 int Create_Recursive_Plant_Type = 0;
-int Create_Recursive_Plant_Degree = 8;
+int Create_Recursive_Plant_Degree = 6; //8;
 int Create_Recursive_Plant_Seed = -1; // -1:random, 0-99 choice
 
 
