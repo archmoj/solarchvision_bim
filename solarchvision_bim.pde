@@ -131,7 +131,7 @@ int Create_Mesh_Plant_Type = 0;
 int Create_Recursive_Plant_Type = 0;
 int Create_Recursive_Plant_Degree = 6; //8;
 int Create_Recursive_Plant_Seed = -1; // -1:random, 0-99 choice
-float Create_Recursive_Plant_leafSize = 0.5; 
+float Create_Recursive_Plant_leafSize = 1; 
 
 
 int Display_SWOB_points = 1; // 0-2
@@ -2147,7 +2147,7 @@ void SOLARCHVISION_draw_WIN3D () {
 
   SOLARCHVISION_draw_solarch_image(); 
   
-  SOLARCHVISION_draw_field_image();
+  //SOLARCHVISION_draw_field_image();
 
   SOLARCHVISION_draw_field_lines();
   
@@ -15256,8 +15256,8 @@ int Field_Color = 0;
 float Field_scale_U = 100; // i.e. 100m
 float Field_scale_V = 100; // i.e. 100m
 
-int Field_RES1 = 200;
-int Field_RES2 = 200;
+int Field_RES1 = 400;
+int Field_RES2 = 400;
 
 PImage Field_Image = createImage(Field_RES1, Field_RES2, ARGB);
 
@@ -15504,7 +15504,9 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
       }
 
       if ((PROCESS_subdivisions == 1) || (PROCESS_subdivisions == 2)) {
-        if (g != g_line) c = color(255, 255, 255, 0);
+        if ((g == g_line) && (g != 0)) {
+          c = color(255, 255, 255, 0);
+        }
       } 
 
       Field_Image.pixels[i + j * Field_RES1] = c;
@@ -18954,7 +18956,7 @@ void RenderShadowsOnUrbanPlane() {
                   float Alpha = 0;
                   float Beta = 0; 
                 
-                  Plant_branch_SHADOW(x, y, z, Alpha, Beta, r, 1, d, leafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY);
+                  Plant_branch_SHADOW(x, y, z, Alpha, Beta, r, 2, d, leafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY);
                   
                 }
               }
@@ -19585,7 +19587,7 @@ void SOLARCHVISION_draw_RecursivePlants () {
         float Alpha = 0;
         float Beta = 0; 
       
-        Plant_branch(x, y, z, Alpha, Beta, r, 1, d, leafSize);
+        Plant_branch(x, y, z, Alpha, Beta, r, 2, d, leafSize);
         
       }
               
@@ -19611,7 +19613,7 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
 
     for (int i = 1; i <= d; i++) {  
       
-      float rotZX = Alpha + d * random(-PI / 12, PI / 12);
+      float rotZX = Alpha + d * random(-PI / 8, PI / 8);
       float rotXY = Beta + random(-PI, PI);
              
       //float w = 0.5 * pow(Plant_max_degree - d - 1, 1.0);
@@ -19687,7 +19689,7 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
   
       WIN3D_Diagrams.pushMatrix(); 
       WIN3D_Diagrams.translate(x0 * objects_scale * WIN3D_scale3D, -y0 * objects_scale * WIN3D_scale3D, z0 * objects_scale * WIN3D_scale3D);
-      WIN3D_Diagrams.sphere(leafSize * objects_scale * WIN3D_scale3D);
+      WIN3D_Diagrams.sphere(0.5 * leafSize * objects_scale * WIN3D_scale3D);
       WIN3D_Diagrams.popMatrix();
     }
 
@@ -19710,7 +19712,7 @@ void Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta,
 
     for (int i = 1; i <= d; i++) {  
       
-      float rotZX = Alpha + d * random(-PI / 12, PI / 12);
+      float rotZX = Alpha + d * random(-PI / 8, PI / 8);
       float rotXY = Beta + random(-PI, PI);
              
       //float w = 0.5 * pow(Plant_max_degree - d - 1, 1.0);
@@ -19867,7 +19869,9 @@ void Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta,
           y = px * sin_ang(-Solarch_Rotation) + py * cos_ang(-Solarch_Rotation);
         } 
 
-        SHADOW_Diagrams.ellipse(x * Shades_scaleX, -y * Shades_scaleY, leafSize, leafSize);
+
+
+        SHADOW_Diagrams.ellipse(x * Shades_scaleX, -y * Shades_scaleY, 2 * leafSize, 2 * leafSize);
       }
 
    
