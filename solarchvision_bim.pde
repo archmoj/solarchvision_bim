@@ -19611,7 +19611,7 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
     for (int i = 1; i <= d; i++) {  
       
       float rotZX = Alpha + d * random(-PI / 12, PI / 12);
-      float rotXY = random(-PI, PI);
+      float rotXY = Beta + random(-PI, PI);
              
       //float w = 0.5 * pow(Plant_max_degree - d - 1, 1.0);
       float w = 0.5 * pow(Plant_max_degree - d - 1, 1.25);
@@ -19626,9 +19626,9 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
       float y1 = 0;
       float z1 = h;
 
-      float x2 = ??? * sin(rotZX);
-      float y2 = 0;
-      float z2 = h * cos(rotZX);
+      float x2 = z1 * sin(rotZX) +  x1 * cos(rotZX);
+      float y2 = y1;
+      float z2 = z1 * cos(rotZX) - x1 * sin(rotZX);
       
       float x_new = x0 + x2 * cos(rotXY) - y2 * sin(rotXY);
       float y_new = y0 + x2 * sin(rotXY) + y2 * cos(rotXY);
