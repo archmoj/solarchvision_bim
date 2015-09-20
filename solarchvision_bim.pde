@@ -19618,48 +19618,62 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
       //float w = 0.5 * pow(Plant_max_degree - d - 1, 1.5);
       
       float[] COL = {255, 100 - 6 * w, 50 - 3 * w, 0};
+
+      WIN3D_Diagrams.strokeWeight(1);
       
-      WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3]); 
+      WIN3D_Diagrams.stroke(0);
+      //WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3]); 
       WIN3D_Diagrams.fill(COL[1], COL[2], COL[3]);
 
-      float x1 = 0;
-      float y1 = 0;
-      float z1 = h;
+      float x_dif = 0;
+      float y_dif = 0;
+      float z_dif = h;
 
-      float x2 = z1 * sin(rotZX) +  x1 * cos(rotZX);
-      float y2 = y1;
-      float z2 = z1 * cos(rotZX) - x1 * sin(rotZX);
+      float x_rot = z_dif * sin(rotZX) +  x_dif * cos(rotZX);
+      float y_rot = y_dif;
+      float z_rot = z_dif * cos(rotZX) - x_dif * sin(rotZX);
       
-      float x_new = x0 + x2 * cos(rotXY) - y2 * sin(rotXY);
-      float y_new = y0 + x2 * sin(rotXY) + y2 * cos(rotXY);
-      float z_new = z0 + z2; 
-      
-      WIN3D_Diagrams.strokeWeight(w); 
-      WIN3D_Diagrams.line(x0, -y0, z0, x_new, -y_new, z_new); 
+      float x_new = x0 + x_rot * cos(rotXY) - y_rot * sin(rotXY);
+      float y_new = y0 + x_rot * sin(rotXY) + y_rot * cos(rotXY);
+      float z_new = z0 + z_rot; 
 
-      /*
+      //WIN3D_Diagrams.strokeWeight(w); 
+      //WIN3D_Diagrams.line(x0, -y0, z0, x_new, -y_new, z_new); 
+
       float the_thickness = 0.02 * w * h;
-      
-      int nSeg = 6;
-      
-      for (int q = 0; q < int(nSeg); q++) {
-      
+
+      int nSeg = 6; 
+
+      //float[][] subFace = new float [nSeg * 4][3];
+
+      for (int q = 0; q < nSeg; q++) {
         WIN3D_Diagrams.beginShape();
-        
-        float xA = the_thickness * cos(q * TWO_PI / float(nSeg));
-        float yA = the_thickness * sin(q * TWO_PI / float(nSeg));
+        for (int j = 0; j < 4; j++) {
 
-        float xB = the_thickness * cos((q + 1) * TWO_PI / float(nSeg));
-        float yB = the_thickness * sin((q + 1) * TWO_PI / float(nSeg));
+          float the_U = 0;
+          if ((j == 1) || (j == 2)) the_U = 1;
 
-        WIN3D_Diagrams.vertex(xA, yA, 0);
-        WIN3D_Diagrams.vertex(xB, yB, 0);
-        WIN3D_Diagrams.vertex(xB, yB, h);
-        WIN3D_Diagrams.vertex(xA, yA, h);
-        
+          float the_V = 0;
+          if ((j == 2) || (j == 3)) the_V = 1;
+          
+          float Trunk_x_dif = the_thickness * cos((q + the_U) * TWO_PI / float(nSeg));
+          float Trunk_y_dif = the_thickness * sin((q + the_U) * TWO_PI / float(nSeg));
+          float Trunk_z_dif = h * the_V;
+
+          float Trunk_x_rot = Trunk_z_dif * sin(rotZX) +  Trunk_x_dif * cos(rotZX);
+          float Trunk_y_rot = Trunk_y_dif;
+          float Trunk_z_rot = Trunk_z_dif * cos(rotZX) - Trunk_x_dif * sin(rotZX);
+          
+          float Trunk_x_new = x0 + Trunk_x_rot * cos(rotXY) - Trunk_y_rot * sin(rotXY);
+          float Trunk_y_new = y0 + Trunk_x_rot * sin(rotXY) + Trunk_y_rot * cos(rotXY);
+          float Trunk_z_new = z0 + Trunk_z_rot; 
+  
+          //subFace[q * 4 + j][0] = Trunk_x_new; subFace[q * 4 + j][1] = Trunk_y_new; subFace[q * 4 + j][2] = Trunk_z_new;
+          WIN3D_Diagrams.vertex(Trunk_x_new, -Trunk_y_new, Trunk_z_new);
+        }
         WIN3D_Diagrams.endShape(CLOSE);
       }
-      */
+
       Plant_branch(x_new, y_new, z_new, rotZX, rotXY, h, d + 1, Plant_max_degree);
 
     }
@@ -19720,7 +19734,7 @@ void Plant_branch_SHADOW (float h, int d, int Plant_max_degree, float[] SunR_Rot
 
       float[][] subFace = new float [nSeg * 4][3];
 
-      for (int q = 0; q < int(nSeg); q++) {
+      for (int q = 0; q < nSeg; q++) {
         
         float x1 = the_thickness * cos(q * TWO_PI / float(nSeg));
         float y1 = the_thickness * sin(q * TWO_PI / float(nSeg));
