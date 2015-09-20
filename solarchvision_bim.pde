@@ -19600,9 +19600,13 @@ void SOLARCHVISION_draw_RecursivePlants () {
 
 float Plant_teta = 0.25 * PI + random(0.5 * PI);
 
-void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float h, int d, int Plant_max_degree) {
+float getRatio_Plant_branch (float d) {
+ return 0.75 / pow(d, 0.06125);
+}
 
-  h *= 0.75 / pow(d, 0.06125);
+void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float h, int d, int Plant_max_degree) {
+  
+  h *= getRatio_Plant_branch(d);
 
   int birth = 1;
 
@@ -19640,12 +19644,9 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
       //WIN3D_Diagrams.strokeWeight(w); 
       //WIN3D_Diagrams.line(x0, -y0, z0, x_new, -y_new, z_new); 
 
-      float the_thickness = 0.02 * w * h;
-
+      
       int nSeg = 6; 
-
       //float[][] subFace = new float [nSeg * 4][3];
-
       for (int q = 0; q < nSeg; q++) {
         WIN3D_Diagrams.beginShape();
         for (int j = 0; j < 4; j++) {
@@ -19655,6 +19656,9 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
 
           float the_V = 0;
           if ((j == 2) || (j == 3)) the_V = 1;
+          
+          float the_thickness = 0.02 * w * h;
+          if ((j == 2) || (j == 3)) the_thickness *= getRatio_Plant_branch(d + 1); // for conic truncks
           
           float Trunk_x_dif = the_thickness * cos((q + the_U) * TWO_PI / float(nSeg));
           float Trunk_y_dif = the_thickness * sin((q + the_U) * TWO_PI / float(nSeg));
