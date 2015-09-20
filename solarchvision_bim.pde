@@ -18565,9 +18565,7 @@ void RenderShadowsOnUrbanPlane() {
           SunR_Rotated[2] = c;
           SunR_Rotated[3] = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);
         }
-        else if (display_Solarch_Image == 3) {
-        
-        }   
+        else if (display_Solarch_Image == 3) {}
         
         for (int SHD = 0; SHD <= 1; SHD += 1) {
   
@@ -18674,9 +18672,7 @@ void RenderShadowsOnUrbanPlane() {
                           z = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);
                       }                   
                     }
-                    else if (display_Solarch_Image == 3) {
-                      
-                    }                   
+                    else if (display_Solarch_Image == 3) {}
                
                     if ((TZ[0] < Solarch_Elevation) && (Solarch_Elevation < TZ[2])) {
                       
@@ -18695,9 +18691,7 @@ void RenderShadowsOnUrbanPlane() {
                         TU[1] = (TU[1] * (1 - ratio) + TU[3] * ratio);
                         TU[2] = (TU[2] * (1 - ratio) + TU[0] * ratio);
                       }
-                      else if (display_Solarch_Image == 3) {
-
-                      }
+                      else if (display_Solarch_Image == 3) {}
                       
                     }
                     
@@ -18850,9 +18844,8 @@ void RenderShadowsOnUrbanPlane() {
                     subFace_Rotated[s][1] = c;    
                     subFace_Rotated[s][2] = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);      
                   }
-                  else if (display_Solarch_Image == 3) {
-                    
-                  }                  
+                  else if (display_Solarch_Image == 3) {}
+
                 }  
              
                 SHADOW_Diagrams.beginShape();
@@ -19031,9 +19024,7 @@ void RenderShadowsOnUrbanPlane() {
           SunR_Rotated[2] = c;
           SunR_Rotated[3] = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);
         }
-        else if (display_Solarch_Image == 3) {
-        
-        }           
+        else if (display_Solarch_Image == 3) {}
 
 
 //------------------------------------ start of copy & paste from the direct version!
@@ -19125,9 +19116,7 @@ void RenderShadowsOnUrbanPlane() {
                         z = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);
                     }                   
                   }
-                  else if (display_Solarch_Image == 3) {
-                    
-                  }                   
+                  else if (display_Solarch_Image == 3) {}
              
                   if ((TZ[0] < Solarch_Elevation) && (Solarch_Elevation < TZ[2])) {
                     
@@ -19146,9 +19135,7 @@ void RenderShadowsOnUrbanPlane() {
                       TU[1] = (TU[1] * (1 - ratio) + TU[3] * ratio);
                       TU[2] = (TU[2] * (1 - ratio) + TU[0] * ratio);
                     }
-                    else if (display_Solarch_Image == 3) {
-
-                    }
+                    else if (display_Solarch_Image == 3) {}
                     
                   }
                   
@@ -19297,9 +19284,8 @@ void RenderShadowsOnUrbanPlane() {
                   subFace_Rotated[s][1] = c;      
                   subFace_Rotated[s][2] = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);      
                 }
-                else if (display_Solarch_Image == 3) {
-                  
-                }                  
+                else if (display_Solarch_Image == 3) {}
+
               }                
            
               SHADOW_Diagrams.beginShape();
@@ -19648,7 +19634,7 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
           float the_V = 0;
           if ((j == 2) || (j == 3)) the_V = 1;
           
-          float the_thickness = 0.02 * w * h;
+          float the_thickness = 0.1 * w * h;
           if ((j == 2) || (j == 3)) the_thickness *= getRatio_Plant_branch(d + 1); // for conic truncks
           
           float Trunk_x_dif = the_thickness * cos((q + the_U) * TWO_PI / float(nSeg));
@@ -19736,7 +19722,7 @@ void Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta,
           float the_V = 0;
           if ((j == 2) || (j == 3)) the_V = 1;
           
-          float the_thickness = 0.02 * w * h;
+          float the_thickness = 0.1 * w * h;
           if ((j == 2) || (j == 3)) the_thickness *= getRatio_Plant_branch(d + 1); // for conic truncks
           
           float Trunk_x_dif = the_thickness * cos((q + the_U) * TWO_PI / float(nSeg));
@@ -19767,9 +19753,8 @@ void Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta,
           subFace_Rotated[s][1] = c;    
           subFace_Rotated[s][2] = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);      
         }
-        else if (display_Solarch_Image == 3) {
-          
-        }                  
+        else if (display_Solarch_Image == 3) {}
+
       }  
 
       SHADOW_Diagrams.beginShape();
