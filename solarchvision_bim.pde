@@ -79,7 +79,8 @@ int allObject2D_num = 0;
 
 float[][] allObjectRecursive_XYZS = {{0,0,0,0}};
 int[] allObjectRecursive_Type = {0};
-int[] allObjectRecursive_Degree = {0};
+int[] allObjectRecursive_DegreeMin = {0};
+int[] allObjectRecursive_DegreeMax = {0};
 int[] allObjectRecursive_Seed = {0};
 float[] allObjectRecursive_leafSize = {0};
 int allObjectRecursive_num = 0; 
@@ -129,7 +130,8 @@ int Create_Recursive_Plant = 1;
 int Create_Mesh_Person_Type = 0;
 int Create_Mesh_Plant_Type = 0;
 int Create_Recursive_Plant_Type = 0;
-int Create_Recursive_Plant_Degree = 3; //6; //8;
+int Create_Recursive_Plant_DegreeMin = 1; //2; 
+int Create_Recursive_Plant_DegreeMax = 3; //6; //8;
 int Create_Recursive_Plant_Seed = -1; // -1:random, 0-99 choice
 float Create_Recursive_Plant_leafSize = 5; //1; 
 
@@ -12932,8 +12934,11 @@ void SOLARCHVISION_remove_RecursivePlants () {
   allObjectRecursive_Type = new int [1];
   allObjectRecursive_Type[0] = 0;
 
-  allObjectRecursive_Degree = new int [1];
-  allObjectRecursive_Degree[0] = 0;
+  allObjectRecursive_DegreeMin = new int [1];
+  allObjectRecursive_DegreeMin[0] = 0;
+
+  allObjectRecursive_DegreeMax = new int [1];
+  allObjectRecursive_DegreeMax[0] = 0;
 
   allObjectRecursive_Seed = new int [1];
   allObjectRecursive_Seed[0] = 0;
@@ -16964,7 +16969,7 @@ void mouseClicked () {
             }        
 
             if (Create_Recursive_Plant != 0) {
-              SOLARCHVISION_add_RecursivePlant(Create_Recursive_Plant_Type, x, y, z, 2 * rz, Create_Recursive_Plant_Degree, Create_Recursive_Plant_Seed, Create_Recursive_Plant_leafSize);
+              SOLARCHVISION_add_RecursivePlant(Create_Recursive_Plant_Type, x, y, z, 2 * rz, Create_Recursive_Plant_DegreeMin, Create_Recursive_Plant_DegreeMax, Create_Recursive_Plant_Seed, Create_Recursive_Plant_leafSize);
             }    
 
           }
@@ -17381,7 +17386,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       Create_Recursive_Plant = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant" , Create_Recursive_Plant, 0, 1, 1), 1));
       Create_Recursive_Plant_Type = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Type" , Create_Recursive_Plant_Type, 0, 0, 1), 1));
-      Create_Recursive_Plant_Degree = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Degree" , Create_Recursive_Plant_Degree, 1, 9, 1), 1));
+      Create_Recursive_Plant_DegreeMin = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_DegreeMin" , Create_Recursive_Plant_DegreeMin, 1, 9, 1), 1));
+      Create_Recursive_Plant_DegreeMax = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_DegreeMax" , Create_Recursive_Plant_DegreeMax, 1, 9, 1), 1));
       Create_Recursive_Plant_Seed = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Seed" , Create_Recursive_Plant_Seed, -1, 100, 1), 1));
       Create_Recursive_Plant_leafSize = roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_leafSize" , Create_Recursive_Plant_leafSize, 0, 10, 0.1), 0.1);
     }
@@ -18942,8 +18948,10 @@ void RenderShadowsOnUrbanPlane() {
                 float r = allObjectRecursive_XYZS[f][3] * 0.5;      
           
                 int n = allObjectRecursive_Type[f];
+
+                int dMin = allObjectRecursive_DegreeMin[f];
           
-                int d = allObjectRecursive_Degree[f];
+                int dMax = allObjectRecursive_DegreeMax[f];
           
                 int s = allObjectRecursive_Seed[f];
                 
@@ -18956,7 +18964,7 @@ void RenderShadowsOnUrbanPlane() {
                   float Alpha = 0;
                   float Beta = 0; 
                 
-                  Plant_branch_SHADOW(x, y, z, Alpha, Beta, r, 2, d, leafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY);
+                  Plant_branch_SHADOW(x, y, z, Alpha, Beta, r, dMin, dMax, leafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY);
                   
                 }
               }
@@ -19535,7 +19543,7 @@ void SOLARCHVISION_draw_solarch_image () {
   }
 }
 
-void SOLARCHVISION_add_RecursivePlant (int PlantType, float x, float y, float z, float s, int PlantDegree, int PlantSeed, float leafSize) {
+void SOLARCHVISION_add_RecursivePlant (int PlantType, float x, float y, float z, float s, int PlantDegreeMin, int PlantDegreeMax, int PlantSeed, float leafSize) {
 
   float[] TempObjectRecursive_leafSize = {leafSize}; 
   allObjectRecursive_leafSize = concat(allObjectRecursive_leafSize, TempObjectRecursive_leafSize);
@@ -19543,8 +19551,11 @@ void SOLARCHVISION_add_RecursivePlant (int PlantType, float x, float y, float z,
   int[] TempObjectRecursive_Type = {PlantType}; 
   allObjectRecursive_Type = concat(allObjectRecursive_Type, TempObjectRecursive_Type);
 
-  int[] TempObjectRecursive_Degree = {PlantDegree}; 
-  allObjectRecursive_Degree = concat(allObjectRecursive_Degree, TempObjectRecursive_Degree);
+  int[] TempObjectRecursive_DegreeMin = {PlantDegreeMin}; 
+  allObjectRecursive_DegreeMin = concat(allObjectRecursive_DegreeMin, TempObjectRecursive_DegreeMin);
+  
+  int[] TempObjectRecursive_DegreeMax = {PlantDegreeMax}; 
+  allObjectRecursive_DegreeMax = concat(allObjectRecursive_DegreeMax, TempObjectRecursive_DegreeMax);
 
   int q = PlantSeed;
   if (q == -1) q = int(random(0, 100));
@@ -19574,7 +19585,9 @@ void SOLARCHVISION_draw_RecursivePlants () {
 
       int n = allObjectRecursive_Type[f];
 
-      int d = allObjectRecursive_Degree[f];
+      int dMin = allObjectRecursive_DegreeMin[f];
+
+      int dMax = allObjectRecursive_DegreeMax[f];
 
       int s = allObjectRecursive_Seed[f];
       
@@ -19587,7 +19600,7 @@ void SOLARCHVISION_draw_RecursivePlants () {
         float Alpha = 0;
         float Beta = 0; 
       
-        Plant_branch(x, y, z, Alpha, Beta, r, 2, d, leafSize);
+        Plant_branch(x, y, z, Alpha, Beta, r, dMin, dMax, leafSize);
         
       }
               
