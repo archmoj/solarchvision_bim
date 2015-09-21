@@ -18972,7 +18972,7 @@ void RenderShadowsOnUrbanPlane() {
                   float Alpha = 0;
                   float Beta = 0; 
                 
-                  Plant_branch_SHADOW(x, y, z, Alpha, Beta, r, dMin, dMax, trunckSize, leafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY);
+                  SOLARCHVISION_Plant_branch_SHADOW(x, y, z, Alpha, Beta, r, dMin, dMax, trunckSize, leafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY);
                   
                 }
               }
@@ -19613,7 +19613,7 @@ void SOLARCHVISION_draw_RecursivePlants () {
         float Alpha = 0;
         float Beta = 0; 
       
-        Plant_branch(x, y, z, Alpha, Beta, r, dMin, dMax, trunckSize, leafSize);
+        SOLARCHVISION_Plant_branch(x, y, z, Alpha, Beta, r, dMin, dMax, trunckSize, leafSize);
         
       }
               
@@ -19629,7 +19629,7 @@ float getRatio_Plant_branch (float d) {
  return (0.75 / pow(d, 0.06125));
 }
 
-void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float h, int d, int Plant_max_degree, float trunckSize, float leafSize) {
+void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float h, int d, int Plant_max_degree, float trunckSize, float leafSize) {
   
   h *= getRatio_Plant_branch(d);
 
@@ -19639,12 +19639,12 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
 
     for (int i = 1; i <= d; i++) {  
       
-      float rotZX = Alpha + d * random(-PI / 8, PI / 8);
+      float rotZX = Alpha + (Plant_max_degree - d) * random(-PI / 8, PI / 8);
       float rotXY = Beta + random(-PI, PI);
              
-      //float w = trunckSize * pow(Plant_max_degree - d - 1, 1.0);
-      float w = trunckSize * pow(Plant_max_degree - d - 1, 1.25);
-      //float w = trunckSize * pow(Plant_max_degree - d - 1, 1.5);
+      //float w = trunckSize * pow(Plant_max_degree - d + 1, 1.0);
+      float w = trunckSize * pow(Plant_max_degree - d + 1, 1.25);
+      //float w = trunckSize * pow(Plant_max_degree - d + 1, 1.5);
       
       float[] COL = {255, 100 - 6 * w, 50 - 3 * w, 0};
 
@@ -19697,7 +19697,7 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
         WIN3D_Diagrams.endShape(CLOSE);
       }
 
-      Plant_branch(x_new, y_new, z_new, rotZX, rotXY, h, d + 1, Plant_max_degree, trunckSize, leafSize);
+      SOLARCHVISION_Plant_branch(x_new, y_new, z_new, rotZX, rotXY, h, d + 1, Plant_max_degree, trunckSize, leafSize);
 
     }
   } else {
@@ -19723,7 +19723,7 @@ void Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float 
 }
 
 
-void Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta, float h, int d, int Plant_max_degree, float trunckSize, float leafSize, float[] SunR_Rotated, float Shades_scaleX, float Shades_scaleY) {
+void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta, float h, int d, int Plant_max_degree, float trunckSize, float leafSize, float[] SunR_Rotated, float Shades_scaleX, float Shades_scaleY) {
   
   SHADOW_Diagrams.strokeWeight(0);
   
@@ -19738,12 +19738,12 @@ void Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta,
 
     for (int i = 1; i <= d; i++) {  
       
-      float rotZX = Alpha + d * random(-PI / 8, PI / 8);
+      float rotZX = Alpha + (Plant_max_degree - d) * random(-PI / 8, PI / 8);
       float rotXY = Beta + random(-PI, PI);
              
-      //float w = trunckSize * pow(Plant_max_degree - d - 1, 1.0);
-      float w = trunckSize * pow(Plant_max_degree - d - 1, 1.25);
-      //float w = trunckSize * pow(Plant_max_degree - d - 1, 1.5);
+      //float w = trunckSize * pow(Plant_max_degree - d + 1, 1.0);
+      float w = trunckSize * pow(Plant_max_degree - d + 1, 1.25);
+      //float w = trunckSize * pow(Plant_max_degree - d + 1, 1.5);
 
       float x_dif = 0;
       float y_dif = 0;
@@ -19875,7 +19875,7 @@ void Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta,
 
       SHADOW_Diagrams.endShape(CLOSE);      
       
-      Plant_branch_SHADOW(x_new, y_new, z_new, rotZX, rotXY, h, d + 1, Plant_max_degree, trunckSize, leafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY);
+      SOLARCHVISION_Plant_branch_SHADOW(x_new, y_new, z_new, rotZX, rotXY, h, d + 1, Plant_max_degree, trunckSize, leafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY);
 
     }
   } else {
