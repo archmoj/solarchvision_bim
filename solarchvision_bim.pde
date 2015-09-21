@@ -19598,7 +19598,7 @@ void SOLARCHVISION_draw_RecursivePlants () {
       float z = allObjectRecursive_XYZS[f][2];
       
       float r = allObjectRecursive_XYZS[f][3] * 0.5;
-      float as_Solid = allObjectRecursive_XYZS[f][4];      
+      float as_Solid = allObjectRecursive_XYZS[f][4];
 
       int n = allObjectRecursive_Type[f];
 
@@ -19700,7 +19700,7 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
           float Trunk_y_new = y0 + Trunk_x_rot * sin(rotXY) + Trunk_y_rot * cos(rotXY);
           float Trunk_z_new = z0 + Trunk_z_rot; 
   
-          WIN3D_Diagrams.vertex(Trunk_x_new * objects_scale * WIN3D_scale3D, -Trunk_y_new * objects_scale * WIN3D_scale3D, Trunk_z_new * objects_scale * WIN3D_scale3D, as_Solid);
+          WIN3D_Diagrams.vertex(Trunk_x_new * objects_scale * WIN3D_scale3D, -Trunk_y_new * objects_scale * WIN3D_scale3D, Trunk_z_new * objects_scale * WIN3D_scale3D);
         }
         WIN3D_Diagrams.endShape(CLOSE);
       }
@@ -19725,12 +19725,13 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
       WIN3D_Diagrams.translate(x0 * objects_scale * WIN3D_scale3D, -y0 * objects_scale * WIN3D_scale3D, z0 * objects_scale * WIN3D_scale3D);
       WIN3D_Diagrams.sphere(0.5 * leafSize * objects_scale * WIN3D_scale3D);
       WIN3D_Diagrams.popMatrix();
-      
+   
       if (as_Solid != 0) {
-        float r = 0.5 * leafSize;
-        ParametricGeometry[] newSolidObject = {new ParametricGeometry(as_Solid, x0,y0,z0, 2,2,2, r,r,r, 0)};
+        float r0 = 0.5 * leafSize;
+        ParametricGeometry[] newSolidObject = {new ParametricGeometry(as_Solid, x0,y0,z0, 2,2,2, r0,r0,r0, 0)};
         SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
       }
+  
     }
 
   }
