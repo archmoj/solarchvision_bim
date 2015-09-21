@@ -132,10 +132,10 @@ int Create_Mesh_Person_Type = 0;
 int Create_Mesh_Plant_Type = 0;
 int Create_Recursive_Plant_Type = 0;
 int Create_Recursive_Plant_DegreeMin = 1; //2; 
-int Create_Recursive_Plant_DegreeMax = 3; //6; //8;
+int Create_Recursive_Plant_DegreeMax = 5; //6; //8;
 int Create_Recursive_Plant_Seed = -1; // -1:random, 0-99 choice
 float Create_Recursive_Plant_trunckSize = 1; //0.5;
-float Create_Recursive_Plant_leafSize = 5; //1; 
+float Create_Recursive_Plant_leafSize = 1; //1; 
 
 
 int Display_SWOB_points = 1; // 0-2
@@ -17370,6 +17370,16 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
     Create_Input_Volume = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);
 
+
+    if (ROLLOUT_child == 1) { // General + recursivePlants
+      Create_Recursive_Plant = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant" , Create_Recursive_Plant, 0, 1, 1), 1));
+      Create_Recursive_Plant_Type = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Type" , Create_Recursive_Plant_Type, 0, 0, 1), 1));
+      Create_Recursive_Plant_DegreeMin = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_DegreeMin" , Create_Recursive_Plant_DegreeMin, 1, 9, 1), 1));
+      Create_Recursive_Plant_DegreeMax = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_DegreeMax" , Create_Recursive_Plant_DegreeMax, 1, 9, 1), 1));
+      Create_Recursive_Plant_Seed = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Seed" , Create_Recursive_Plant_Seed, -1, 100, 1), 1));
+      Create_Recursive_Plant_trunckSize = roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_trunckSize" , Create_Recursive_Plant_trunckSize, 0, 10, 0.1), 0.1);
+      Create_Recursive_Plant_leafSize = roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_leafSize" , Create_Recursive_Plant_leafSize, 0, 10, 0.1), 0.1);    
+    }
     
 
     if (ROLLOUT_child == 2) { // Meshes
@@ -17389,13 +17399,6 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Mesh_Plant = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Plant" , Create_Mesh_Plant, 0, 1, 1), 1));
       Create_Mesh_Plant_Type = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Mesh_Plant_Type" , Create_Mesh_Plant_Type, 0, Object2D_Filenames_TREES.length, 1), 1));
 
-      Create_Recursive_Plant = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant" , Create_Recursive_Plant, 0, 1, 1), 1));
-      Create_Recursive_Plant_Type = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Type" , Create_Recursive_Plant_Type, 0, 0, 1), 1));
-      Create_Recursive_Plant_DegreeMin = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_DegreeMin" , Create_Recursive_Plant_DegreeMin, 1, 9, 1), 1));
-      Create_Recursive_Plant_DegreeMax = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_DegreeMax" , Create_Recursive_Plant_DegreeMax, 1, 9, 1), 1));
-      Create_Recursive_Plant_Seed = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Seed" , Create_Recursive_Plant_Seed, -1, 100, 1), 1));
-      Create_Recursive_Plant_trunckSize = roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_trunckSize" , Create_Recursive_Plant_trunckSize, 0, 10, 0.1), 0.1);
-      Create_Recursive_Plant_leafSize = roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_leafSize" , Create_Recursive_Plant_leafSize, 0, 10, 0.1), 0.1);
     }
     
     if (ROLLOUT_child == 3) { // Solids
@@ -18972,7 +18975,7 @@ void RenderShadowsOnUrbanPlane() {
                   float Alpha = 0;
                   float Beta = 0; 
                 
-                  SOLARCHVISION_Plant_branch_SHADOW(x, y, z, Alpha, Beta, r, dMin, dMax, trunckSize, leafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY);
+                  SOLARCHVISION_Plant_branch_SHADOW(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, trunckSize, leafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY);
                   
                 }
               }
@@ -19613,7 +19616,7 @@ void SOLARCHVISION_draw_RecursivePlants () {
         float Alpha = 0;
         float Beta = 0; 
       
-        SOLARCHVISION_Plant_branch(x, y, z, Alpha, Beta, r, dMin, dMax, trunckSize, leafSize);
+        SOLARCHVISION_Plant_branch(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, trunckSize, leafSize);
         
       }
               
@@ -19629,7 +19632,7 @@ float getRatio_Plant_branch (float d) {
  return (0.75 / pow(d, 0.06125));
 }
 
-void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float h, int d, int Plant_max_degree, float trunckSize, float leafSize) {
+void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float trunckSize, float leafSize) {
   
   h *= getRatio_Plant_branch(d);
 
@@ -19639,12 +19642,10 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
 
     for (int i = 1; i <= d; i++) {  
       
-      float rotZX = Alpha + (Plant_max_degree - d) * random(-PI / 8, PI / 8);
+      float rotZX = Alpha + (d - Plant_min_degree) * random(-PI / 8, PI / 8);
       float rotXY = Beta + random(-PI, PI);
              
-      //float w = trunckSize * pow(Plant_max_degree - d + 1, 1.0);
-      float w = trunckSize * pow(Plant_max_degree - d + 1, 1.25);
-      //float w = trunckSize * pow(Plant_max_degree - d + 1, 1.5);
+      float w = trunckSize * 0.5 * pow(Plant_max_degree - d + 1, 1.25);
       
       float[] COL = {255, 100 - 6 * w, 50 - 3 * w, 0};
 
@@ -19697,7 +19698,7 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
         WIN3D_Diagrams.endShape(CLOSE);
       }
 
-      SOLARCHVISION_Plant_branch(x_new, y_new, z_new, rotZX, rotXY, h, d + 1, Plant_max_degree, trunckSize, leafSize);
+      SOLARCHVISION_Plant_branch(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, trunckSize, leafSize);
 
     }
   } else {
@@ -19723,7 +19724,7 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
 }
 
 
-void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta, float h, int d, int Plant_max_degree, float trunckSize, float leafSize, float[] SunR_Rotated, float Shades_scaleX, float Shades_scaleY) {
+void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float trunckSize, float leafSize, float[] SunR_Rotated, float Shades_scaleX, float Shades_scaleY) {
   
   SHADOW_Diagrams.strokeWeight(0);
   
@@ -19738,12 +19739,10 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
 
     for (int i = 1; i <= d; i++) {  
       
-      float rotZX = Alpha + (Plant_max_degree - d) * random(-PI / 8, PI / 8);
+      float rotZX = Alpha + (d - Plant_min_degree) * random(-PI / 8, PI / 8);
       float rotXY = Beta + random(-PI, PI);
              
-      //float w = trunckSize * pow(Plant_max_degree - d + 1, 1.0);
-      float w = trunckSize * pow(Plant_max_degree - d + 1, 1.25);
-      //float w = trunckSize * pow(Plant_max_degree - d + 1, 1.5);
+      float w = trunckSize * 0.5 * pow(Plant_max_degree - d + 1, 1.25);
 
       float x_dif = 0;
       float y_dif = 0;
@@ -19875,7 +19874,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
 
       SHADOW_Diagrams.endShape(CLOSE);      
       
-      SOLARCHVISION_Plant_branch_SHADOW(x_new, y_new, z_new, rotZX, rotXY, h, d + 1, Plant_max_degree, trunckSize, leafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY);
+      SOLARCHVISION_Plant_branch_SHADOW(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, trunckSize, leafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY);
 
     }
   } else {
