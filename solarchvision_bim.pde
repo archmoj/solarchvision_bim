@@ -19642,7 +19642,7 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
 
     for (int i = 1; i <= d; i++) {  
       
-      float rotZX = Alpha + (d - Plant_min_degree) * random(-PI / 8, PI / 8);
+      float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
       float rotXY = Beta + random(-PI, PI);
              
       float w = trunckSize * 0.5 * pow(Plant_max_degree - d + 1, 1.25);
@@ -19739,7 +19739,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
 
     for (int i = 1; i <= d; i++) {  
       
-      float rotZX = Alpha + (d - Plant_min_degree) * random(-PI / 8, PI / 8);
+      float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
       float rotXY = Beta + random(-PI, PI);
              
       float w = trunckSize * 0.5 * pow(Plant_max_degree - d + 1, 1.25);
