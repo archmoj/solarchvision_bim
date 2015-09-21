@@ -77,7 +77,7 @@ float[][] allObject2D_XYZS = {{0,0,0,0}};
 int[] allObject2D_MAP = {0};
 int allObject2D_num = 0; 
 
-float[][] allObjectRecursive_XYZS = {{0,0,0,0}};
+float[][] allObjectRecursive_XYZS = {{0,0,0,0,0}};
 int[] allObjectRecursive_Type = {0};
 int[] allObjectRecursive_DegreeMin = {0};
 int[] allObjectRecursive_DegreeMax = {0};
@@ -2151,7 +2151,7 @@ void SOLARCHVISION_draw_WIN3D () {
 
   SOLARCHVISION_draw_solarch_image(); 
   
-  //SOLARCHVISION_draw_field_image();
+  SOLARCHVISION_draw_field_image();
 
   SOLARCHVISION_draw_field_lines();
   
@@ -12841,8 +12841,8 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
   }  
   
   //SOLARCHVISION_add_Box_Core(m, cen_X,cen_Y,cen_Z, X_out,Y_out,Z_out, T_out);
-  ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, cen_X,cen_Y,cen_Z, 8,8,8, X_out,Y_out,Z_out, T_out)}; 
-  SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+  ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, cen_X,cen_Y,cen_Z, 8,8,8, X_out,Y_out,Z_out, T_out)}; 
+  SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
   
   return min_Z;
 }  
@@ -12927,11 +12927,12 @@ void SOLARCHVISION_add_2Dobjects (int n, float r, float z) {
 }
 
 void SOLARCHVISION_remove_RecursivePlants () {
-  allObjectRecursive_XYZS = new float [1][4]; 
+  allObjectRecursive_XYZS = new float [1][5]; 
   allObjectRecursive_XYZS[0][0] = 0;
   allObjectRecursive_XYZS[0][1] = 0;
   allObjectRecursive_XYZS[0][2] = 0;
   allObjectRecursive_XYZS[0][3] = 0;
+  allObjectRecursive_XYZS[0][4] = 0;
   
   allObjectRecursive_Type = new int [1];
   allObjectRecursive_Type[0] = 0;
@@ -13148,8 +13149,8 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float z = 0;
       float r = 10;
       SOLARCHVISION_add_Recursivephere(1, x,y,z, r, 5, 0, 90);
-      ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
-      SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+      ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
+      SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
     }
   
     {
@@ -13158,8 +13159,8 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float z = 0;
       float r = 8;
       SOLARCHVISION_add_Recursivephere(2, x,y,z, r, 4, 0, 90);
-      ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
-      SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+      ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
+      SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
     }
   
     {
@@ -13168,8 +13169,8 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float z = 0;
       float r = 8;
       SOLARCHVISION_add_Recursivephere(3, x,y,z, r, 3, 0, 90);
-      ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
-      SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+      ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
+      SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
     }
   }
  
@@ -15080,11 +15081,11 @@ class ParametricGeometry {
 
 
 void SOLARCHVISION_remove_ParametricGeometries () {
-  SolidBuildings = new ParametricGeometry[0];
+  SolidObjects = new ParametricGeometry[0];
 }
 
 
-ParametricGeometry[] SolidBuildings = {};
+ParametricGeometry[] SolidObjects = {};
 
 void SOLARCHVISION_add_ParametricGeometries () {
 
@@ -15098,8 +15099,8 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float dz = 1;
     float rot = 0;
     SOLARCHVISION_add_Box_Core(7, x,y,z, dx, dy, dz, t);
-    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, rot)};
-    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+    ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, rot)};
+    SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
   }  
 */
 
@@ -15109,8 +15110,8 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float z = 10;
     float r = 10;
     SOLARCHVISION_add_Recursivephere(1, x,y,z, r, 2, 0, 0);
-    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
-    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+    ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
+    SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
   }  
 
   {
@@ -15122,8 +15123,8 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float dz = 20;
     float rot = 0;
     SOLARCHVISION_add_Box_Core(2, x,y,z, dx, dy, dz, rot);
-    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, rot)};
-    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+    ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, rot)};
+    SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
   }
 
   {
@@ -15135,8 +15136,8 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float dz = 10;
     float rot = 60;
     SOLARCHVISION_add_Box_Core(3, x,y,z, dx, dy, dz, rot);
-    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, rot)};
-    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+    ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, 8,8,8, dx,dy,dz, rot)};
+    SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
   }
 
 
@@ -15153,8 +15154,8 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float pz = 4;
     float rot = 30;
     SOLARCHVISION_add_SuperSphere(4, x,y,z, pz,py,pz, rx,ry,rz, 4, rot);
-    ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
-    SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+    ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
+    SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
   }  
 
   {
@@ -15234,8 +15235,8 @@ void SOLARCHVISION_add_ParametricGeometries () {
               SOLARCHVISION_add_Mesh3(m, X_[3], Y_[3], Z_[3], X_[5], Y_[5], Z_[5], X_[4], Y_[4], Z_[4]);
               SOLARCHVISION_add_Mesh3(m, X_[4], Y_[4], Z_[4], X_[5], Y_[5], Z_[5], X_[1], Y_[1], Z_[1]);
 
-              ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
-              SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+              ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
+              SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
   }
 
 }
@@ -15291,7 +15292,7 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
   
   float val = 0;
   
-  for (int n = 0; n < SolidBuildings.length; n++) {
+  for (int n = 0; n < SolidObjects.length; n++) {
 
     float a = (i - 0.5 * Field_RES1) * (Field_scale_U / Field_RES1);
     float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
@@ -15313,7 +15314,7 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
       z = -b; 
     }
       
-    float d = SolidBuildings[n].Distance(x, y, z);
+    float d = SolidObjects[n].Distance(x, y, z);
     
     if (d > 0) {
       val += 1.0 / pow(d, Field_Power);
@@ -15328,9 +15329,9 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
 
 float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
   float val = 0;
-  for (int n = 0; n < SolidBuildings.length; n++) {
+  for (int n = 0; n < SolidObjects.length; n++) {
     
-    float d = SolidBuildings[n].Distance(x, y, z);
+    float d = SolidObjects[n].Distance(x, y, z);
 
     if (d > 0) {
       val += 1.0 / pow(d, Field_Power);
@@ -16830,8 +16831,8 @@ void mouseClicked () {
             if ((px == 8) && (py == 8) && (pz == 2)) {
               SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, 2, rot);
 
-              ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
-              SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+              ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
+              SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
               
               SOLID_created = 1;
             }
@@ -16839,8 +16840,8 @@ void mouseClicked () {
             if ((px == 8) && (py == 8) && (pz == 8)) {
               SOLARCHVISION_add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, rot);
 
-              ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
-              SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+              ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
+              SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
               
               SOLID_created = 1;
             }
@@ -16912,8 +16913,8 @@ void mouseClicked () {
                 SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[4], Y_[4], Z_[4], X_[5], Y_[5], Z_[5], X_[1], Y_[1], Z_[1]);
               }
 
-              ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
-              SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+              ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
+              SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
               
               SOLID_created = 1;
             }
@@ -16921,8 +16922,8 @@ void mouseClicked () {
             if (SOLID_created == 0) {
               SOLARCHVISION_add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, SolidSurface_TESELATION, rot);
 
-              ParametricGeometry[] newSolidBuilding = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
-              SolidBuildings = (ParametricGeometry[]) concat(SolidBuildings, newSolidBuilding);
+              ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
+              SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
               
               SOLID_created = 1;
             }
@@ -16974,7 +16975,8 @@ void mouseClicked () {
             }        
 
             if (Create_Recursive_Plant != 0) {
-              SOLARCHVISION_add_RecursivePlant(Create_Recursive_Plant_Type, x, y, z, 2 * rz, Create_Recursive_Plant_DegreeMin, Create_Recursive_Plant_DegreeMax, Create_Recursive_Plant_Seed, Create_Recursive_Plant_trunckSize, Create_Recursive_Plant_leafSize);
+              float as_Solid = 1;
+              SOLARCHVISION_add_RecursivePlant(Create_Recursive_Plant_Type, x, y, z, 2 * rz, Create_Recursive_Plant_DegreeMin, Create_Recursive_Plant_DegreeMax, Create_Recursive_Plant_Seed, Create_Recursive_Plant_trunckSize, Create_Recursive_Plant_leafSize, as_Solid);
             }    
 
           }
@@ -19554,7 +19556,7 @@ void SOLARCHVISION_draw_solarch_image () {
   }
 }
 
-void SOLARCHVISION_add_RecursivePlant (int PlantType, float x, float y, float z, float s, int PlantDegreeMin, int PlantDegreeMax, int PlantSeed, float trunckSize, float leafSize) {
+void SOLARCHVISION_add_RecursivePlant (int PlantType, float x, float y, float z, float s, int PlantDegreeMin, int PlantDegreeMax, int PlantSeed, float trunckSize, float leafSize, float as_Solid) {
 
   float[] TempObjectRecursive_trunckSize = {trunckSize}; 
   allObjectRecursive_trunckSize = concat(allObjectRecursive_trunckSize, TempObjectRecursive_trunckSize);  
@@ -19577,7 +19579,7 @@ void SOLARCHVISION_add_RecursivePlant (int PlantType, float x, float y, float z,
   int[] TempObjectRecursive_Seed = {q}; 
   allObjectRecursive_Seed = concat(allObjectRecursive_Seed, TempObjectRecursive_Seed);
 
-  float[][] TempObjectRecursive_XYZS = {{x, y, z, s}};
+  float[][] TempObjectRecursive_XYZS = {{x, y, z, s, as_Solid}};
   allObjectRecursive_XYZS = (float[][]) concat(allObjectRecursive_XYZS, TempObjectRecursive_XYZS);
 
   allObjectRecursive_num += 1;
@@ -19595,7 +19597,8 @@ void SOLARCHVISION_draw_RecursivePlants () {
       float y = allObjectRecursive_XYZS[f][1];
       float z = allObjectRecursive_XYZS[f][2];
       
-      float r = allObjectRecursive_XYZS[f][3] * 0.5;      
+      float r = allObjectRecursive_XYZS[f][3] * 0.5;
+      float as_Solid = allObjectRecursive_XYZS[f][4];      
 
       int n = allObjectRecursive_Type[f];
 
@@ -19616,8 +19619,11 @@ void SOLARCHVISION_draw_RecursivePlants () {
         float Alpha = 0;
         float Beta = 0; 
       
-        SOLARCHVISION_Plant_branch(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, trunckSize, leafSize);
+        SOLARCHVISION_Plant_branch(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, trunckSize, leafSize, as_Solid);
         
+        if (as_Solid != 0) {
+          allObjectRecursive_XYZS[f][4] = 0; 
+        }
       }
               
     }
@@ -19628,11 +19634,12 @@ void SOLARCHVISION_draw_RecursivePlants () {
 
 
 
+
 float getRatio_Plant_branch (float d) {
  return (0.75 / pow(d, 0.06125));
 }
 
-void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float trunckSize, float leafSize) {
+void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float trunckSize, float leafSize, float as_Solid) {
   
   h *= getRatio_Plant_branch(d);
 
@@ -19693,12 +19700,12 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
           float Trunk_y_new = y0 + Trunk_x_rot * sin(rotXY) + Trunk_y_rot * cos(rotXY);
           float Trunk_z_new = z0 + Trunk_z_rot; 
   
-          WIN3D_Diagrams.vertex(Trunk_x_new * objects_scale * WIN3D_scale3D, -Trunk_y_new * objects_scale * WIN3D_scale3D, Trunk_z_new * objects_scale * WIN3D_scale3D);
+          WIN3D_Diagrams.vertex(Trunk_x_new * objects_scale * WIN3D_scale3D, -Trunk_y_new * objects_scale * WIN3D_scale3D, Trunk_z_new * objects_scale * WIN3D_scale3D, as_Solid);
         }
         WIN3D_Diagrams.endShape(CLOSE);
       }
 
-      SOLARCHVISION_Plant_branch(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, trunckSize, leafSize);
+      SOLARCHVISION_Plant_branch(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, trunckSize, leafSize, as_Solid);
 
     }
   } else {
@@ -19718,6 +19725,12 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
       WIN3D_Diagrams.translate(x0 * objects_scale * WIN3D_scale3D, -y0 * objects_scale * WIN3D_scale3D, z0 * objects_scale * WIN3D_scale3D);
       WIN3D_Diagrams.sphere(0.5 * leafSize * objects_scale * WIN3D_scale3D);
       WIN3D_Diagrams.popMatrix();
+      
+      if (as_Solid != 0) {
+        float r = 0.5 * leafSize;
+        ParametricGeometry[] newSolidObject = {new ParametricGeometry(as_Solid, x0,y0,z0, 2,2,2, r,r,r, 0)};
+        SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
+      }
     }
 
   }
