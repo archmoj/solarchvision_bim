@@ -129,9 +129,9 @@ int Create_Recursive_Plant = 1;
 int Create_Mesh_Person_Type = 0;
 int Create_Mesh_Plant_Type = 0;
 int Create_Recursive_Plant_Type = 0;
-int Create_Recursive_Plant_Degree = 6; //8;
+int Create_Recursive_Plant_Degree = 3; //6; //8;
 int Create_Recursive_Plant_Seed = -1; // -1:random, 0-99 choice
-float Create_Recursive_Plant_leafSize = 1; 
+float Create_Recursive_Plant_leafSize = 5; //1; 
 
 
 int Display_SWOB_points = 1; // 0-2
@@ -17383,7 +17383,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Recursive_Plant_Type = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Type" , Create_Recursive_Plant_Type, 0, 0, 1), 1));
       Create_Recursive_Plant_Degree = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Degree" , Create_Recursive_Plant_Degree, 1, 9, 1), 1));
       Create_Recursive_Plant_Seed = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Seed" , Create_Recursive_Plant_Seed, -1, 100, 1), 1));
-      Create_Recursive_Plant_leafSize = roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_leafSize" , Create_Recursive_Plant_leafSize, 0, 4, 0.1), 0.1);
+      Create_Recursive_Plant_leafSize = roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_leafSize" , Create_Recursive_Plant_leafSize, 0, 10, 0.1), 0.1);
     }
     
     if (ROLLOUT_child == 3) { // Solids
@@ -19887,7 +19887,7 @@ void Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta,
 
 
 
-        SHADOW_Diagrams.ellipse(x * Shades_scaleX, -y * Shades_scaleY, 2 * leafSize, 2 * leafSize);
+        SHADOW_Diagrams.ellipse(x * Shades_scaleX, -y * Shades_scaleY, leafSize * Shades_scaleX, leafSize * Shades_scaleY);
       }
 
    
