@@ -15460,6 +15460,9 @@ float deltaFieldLines = 0.2 * deltaField;
 
 
 
+
+
+
 void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
   Field_Countours_Vertices = new float [1][4];
@@ -15475,6 +15478,11 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   Field_Countours_VLines = new int [1][2];
   Field_Countours_VLines[0][0] = 0;
   Field_Countours_VLines[0][1] = 0;
+
+
+
+  
+  
   
   Field_Image.loadPixels();
 
@@ -15605,6 +15613,18 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   Field_Image.updatePixels();
   
   Field_Image.save("/Output/Field.jpg");
+  
+
+  {
+    PGraphics PDF_Field_Image = createGraphics(Field_RES1, Field_RES2, PDF, "/Output/Field.pdf");
+    beginRecord(PDF_Field_Image);
+    
+    PDF_Field_Image.image(Field_Image, 0, 0, Field_RES1, Field_RES2);
+  
+    //PDF_Field_Image.nextPage();
+    endRecord();
+  }
+
   
   //SOLARCHVISION_process_ParametricGeometries_VContours();
 }
