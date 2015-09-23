@@ -15455,7 +15455,7 @@ float[][] Field_Countours_Vertices = {{0,0,0,0}}; // keeping Field value at the 
 int[][] Field_Countours_ULines = {{0,0}};
 int[][] Field_Countours_VLines = {{0,0}};
 
-int PROCESS_subdivisions = 1; // 0,1,2,3
+int PROCESS_subdivisions = 3; //1; // 0,1,2,3
 
 float deltaField = 0.05;
 float deltaFieldLines = 0.2 * deltaField;
@@ -15620,6 +15620,55 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
     Field_PDF.beginDraw();
     
     Field_PDF.image(Field_Image, 0, 0, Field_RES1, Field_RES2);
+
+    if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
+      if (display_Field_Lines != 0) {
+    
+        Field_PDF.strokeWeight(1);
+        Field_PDF.stroke(255, 0, 0);
+        Field_PDF.fill(255, 0, 0);  
+        
+        for (int q = 1; q < Field_Countours_ULines.length; q++) {
+          
+          float[] i = {0,0};
+          float[] j = {0,0};
+          
+          for (int p = 0; p < 2; p++) {
+          
+            int n = Field_Countours_ULines[q][p];
+
+            float x = Field_Countours_Vertices[n][0];
+            float y = Field_Countours_Vertices[n][1];
+            float z = Field_Countours_Vertices[n][2];
+        
+            float a = 0;
+            float b = 0;
+            
+            if (display_Field_Image == 1) {
+              a = x * cos_ang(-Field_Rotation[display_Field_Image]) - y * sin_ang(-Field_Rotation[display_Field_Image]);
+              b = -(x * sin_ang(-Field_Rotation[display_Field_Image]) + y * cos_ang(-Field_Rotation[display_Field_Image]));
+            }
+            else if (display_Field_Image == 2) {
+              a = x * cos_ang(-Field_Rotation[display_Field_Image]) - z * sin_ang(-Field_Rotation[display_Field_Image]);
+              b = -(x * sin_ang(-Field_Rotation[display_Field_Image]) + z * cos_ang(-Field_Rotation[display_Field_Image]));
+            }
+            else if (display_Field_Image == 3) {
+              a = x * cos_ang(-(90 - Field_Rotation[display_Field_Image])) - z * sin_ang(-(90 - Field_Rotation[display_Field_Image]));
+              b = -(x * sin_ang(-(90 - Field_Rotation[display_Field_Image])) + z * cos_ang(-(90 - Field_Rotation[display_Field_Image])));
+            }         
+           
+            i[p] = a * (Field_RES1 / Field_scale_U) + 0.5 * Field_RES1;
+            j[p] = b * (Field_RES2 / Field_scale_V) + 0.5 * Field_RES2;
+          }   
+              
+          Field_PDF.line(i[0], j[0], i[1], j[1]);
+        }
+    
+        Field_PDF.strokeWeight(0);
+    
+      }
+    }
+
   
     Field_PDF.dispose();
     
