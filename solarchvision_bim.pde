@@ -15460,7 +15460,7 @@ float deltaFieldLines = 0.2 * deltaField;
 
 
 
-
+PGraphics PDF_Field_Image;
 
 
 void SOLARCHVISION_calculate_ParametricGeometries_Field () {
@@ -15616,12 +15616,16 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   
 
   {
-    PGraphics PDF_Field_Image = createGraphics(Field_RES1, Field_RES2, PDF, "/Output/Field.pdf");
+    PDF_Field_Image = createGraphics(Field_RES1, Field_RES2, PDF, "/Output/Field.pdf");
+    
     beginRecord(PDF_Field_Image);
     
     PDF_Field_Image.image(Field_Image, 0, 0, Field_RES1, Field_RES2);
   
-    //PDF_Field_Image.nextPage();
+    //PGraphicsPDF PDF_Field_Renderer = (PGraphicsPDF) g;  // Get the renderer
+  
+    //PDF_Field_Renderer.nextPage();
+    
     endRecord();
   }
 
