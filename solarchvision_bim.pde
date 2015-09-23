@@ -15649,12 +15649,18 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
               b = -(x * sin_ang(-Field_Rotation[display_Field_Image]) + y * cos_ang(-Field_Rotation[display_Field_Image]));
             }
             else if (display_Field_Image == 2) {
-              a = x * cos_ang(-Field_Rotation[display_Field_Image]) - z * sin_ang(-Field_Rotation[display_Field_Image]);
-              b = -(x * sin_ang(-Field_Rotation[display_Field_Image]) + z * cos_ang(-Field_Rotation[display_Field_Image]));
+              //a = x * cos_ang(-Field_Rotation[display_Field_Image]) - z * sin_ang(-Field_Rotation[display_Field_Image]);
+              //b = -(x * sin_ang(-Field_Rotation[display_Field_Image]) + z * cos_ang(-Field_Rotation[display_Field_Image]));
+              
+              a = x * cos_ang(-Field_Rotation[display_Field_Image]);
+              b = -(z * cos_ang(-Field_Rotation[display_Field_Image]));
             }
             else if (display_Field_Image == 3) {
-              a = x * cos_ang(-(90 - Field_Rotation[display_Field_Image])) - z * sin_ang(-(90 - Field_Rotation[display_Field_Image]));
-              b = -(x * sin_ang(-(90 - Field_Rotation[display_Field_Image])) + z * cos_ang(-(90 - Field_Rotation[display_Field_Image])));
+//              a = x * cos_ang(-(90 - Field_Rotation[display_Field_Image])) - z * sin_ang(-(90 - Field_Rotation[display_Field_Image]));
+//              b = -(x * sin_ang(-(90 - Field_Rotation[display_Field_Image])) + z * cos_ang(-(90 - Field_Rotation[display_Field_Image])));
+              a = x * cos_ang(-(90 - Field_Rotation[display_Field_Image]));
+              b = -(z * cos_ang(-(90 - Field_Rotation[display_Field_Image])));
+
             }         
            
             i[p] = a * (Field_RES1 / Field_scale_U) + 0.5 * Field_RES1;
