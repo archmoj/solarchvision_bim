@@ -242,6 +242,8 @@ String MAKE_Filenames () {
 
 
 
+
+
 float HeightAboveGround = 0; //2.5; // <<<<<<<<<
 
 String THE_STATION;
@@ -15459,6 +15461,7 @@ float deltaField = 0.05;
 float deltaFieldLines = 0.2 * deltaField;
 
 
+
 void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
   Field_Countours_Vertices = new float [1][4];
@@ -15608,11 +15611,11 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
  
   Field_Image.updatePixels();
   
-  Field_Image.save("/Output/Field.jpg");
+  Field_Image.save(get_Field_Filename() + ".jpg");
   
 
   {
-    PGraphics Field_PDF = createGraphics(Field_RES1, Field_RES2, PDF, "/Output/Field.pdf");
+    PGraphics Field_PDF = createGraphics(Field_RES1, Field_RES2, PDF, get_Field_Filename() + ".pdf");
     
     Field_PDF.beginDraw();
     
@@ -15626,6 +15629,11 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   
   //SOLARCHVISION_process_ParametricGeometries_VContours();
 }
+
+String get_Field_Filename () {
+  return "/Output/Field" + nf(display_Field_Image, 0) + "h" + nf(int(roundTo(Field_Elevation[display_Field_Image], 1)), 4) + "r" + nf(int(roundTo(Field_Rotation[display_Field_Image], 1)), 3);
+}
+
 
 
 void SOLARCHVISION_process_ParametricGeometries_VContours () {
