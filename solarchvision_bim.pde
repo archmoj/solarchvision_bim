@@ -15637,31 +15637,41 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           
             int n = Field_Countours_ULines[q][p];
 
-            float x = Field_Countours_Vertices[n][0];
-            float y = Field_Countours_Vertices[n][1];
-            float z = Field_Countours_Vertices[n][2];
+            float x0 = Field_Countours_Vertices[n][0];
+            float y0 = Field_Countours_Vertices[n][1];
+            float z0 = Field_Countours_Vertices[n][2];
+            
+            float r = 0;
+            
+            if (display_Field_Image == 1) {
+              r = -Field_Rotation[display_Field_Image];
+            }
+            else if (display_Field_Image == 2) {
+              r = Field_Rotation[display_Field_Image];
+            }
+            else if (display_Field_Image == 3) {
+              r = -Field_Rotation[display_Field_Image];              
+            }     
+            
+            float x = x0 * cos_ang(r) - y0 * sin_ang(r);
+            float y = x0 * sin_ang(r) + y0 * cos_ang(r);
+            float z = z0;
         
             float a = 0;
             float b = 0;
-            float c = 0;
-
-           
+            
             if (display_Field_Image == 1) {
-              a = x * cos_ang(-Field_Rotation[display_Field_Image]) - y * sin_ang(-Field_Rotation[display_Field_Image]);
-              b = -(x * sin_ang(-Field_Rotation[display_Field_Image]) + y * cos_ang(-Field_Rotation[display_Field_Image]));
-              c = z;
-            }
-            else if (display_Field_Image == 2) {
-              a = x * cos_ang(90-Field_Rotation[display_Field_Image]) - z * sin_ang(90-Field_Rotation[display_Field_Image]);
-              c = -(x * sin_ang(90-Field_Rotation[display_Field_Image]) + z * cos_ang(90-Field_Rotation[display_Field_Image]));
+              a = x;
               b = -y;
             }
+            else if (display_Field_Image == 2) {
+              a = x;
+              b = -z;
+            }
             else if (display_Field_Image == 3) {
-              b = x * cos_ang(90 - Field_Rotation[display_Field_Image]) - z * sin_ang(90 - Field_Rotation[display_Field_Image]);
-              c = -(x * sin_ang(90 - Field_Rotation[display_Field_Image]) + z * cos_ang(90 - Field_Rotation[display_Field_Image]));
               a = -y;
-            }     
-           
+              b = -z;
+            }
            
             i[p] = a * (Field_RES1 / Field_scale_U) + 0.5 * Field_RES1;
             j[p] = b * (Field_RES2 / Field_scale_V) + 0.5 * Field_RES2;
