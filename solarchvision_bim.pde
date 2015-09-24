@@ -15613,11 +15613,12 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
               }
             
               
-              //if (Point1_existed == 1) { // when having the first point of the line
-              if ((Point1_existed == 1) && (Point2_created == 1)) { 
-                int[][] newULine = {{point_prev, point_next}};
-                Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);              
-              }
+              //if (Point1_existed == 1) {
+                if (point_prev != 0) {
+                  int[][] newULine = {{point_prev, point_next}};
+                  Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);
+                }                
+              //}
     
               if (Point2_created == 0) {
                 
