@@ -15563,7 +15563,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
                 }
               }
             } 
-            
+         
             //--------------------------------------------------------------------------------------------------------------------------------------------------
             //test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], val);
             test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier);
@@ -15581,7 +15581,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
                   float d = dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]);
                   
                   //if (d < 0.5) {  //i.e. 0.5m
-                  if ((point_prev != q) && (d < 0.5)) {  //i.e. 0.5m
+                  if ((point_prev != q) && (d < 0.25)) {  //i.e. 0.25m
                  
                     point_next = q;
                     break; 
@@ -15603,7 +15603,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
                   Point2_created = 1;
                 }
               } 
-            }           
+            }
+          
             
             if (Point1_existed == 1) { // when having the first point of the line
               int[][] newULine = {{point_prev, point_next}};
