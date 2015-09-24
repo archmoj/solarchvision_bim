@@ -15371,7 +15371,7 @@ float[] traceContour (float x, float y, float z, float dx, float dy, float dz, f
   
   float min_dist = FLOAT_undefined;  
   
-  float r = 0.25; //1; //0.5; //2; // <<<<<<<<<<<<<<
+  float r = 1; //0.25; //1; //0.5; //2; // <<<<<<<<<<<<<<
   
   float t = atan2_ang(dy, dx);
 
@@ -15489,7 +15489,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   float dy = 0;
   float dz = 0;
   
-  for (int i = 0; i < Field_RES1; i++) {
+  //for (int i = 0; i < Field_RES1; i++) {
+  for (int i = 175; i <= 225; i++) {
     for (int j = 0; j < Field_RES2; j++) {
       
       float[] FieldPoint = ParametricGeometries_Field_atIJ(i, j);
