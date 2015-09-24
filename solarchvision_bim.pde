@@ -15570,7 +15570,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
                   }
                 }
               } 
-           
+ 
               //--------------------------------------------------------------------------------------------------------------------------------------------------
               //test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], val);
               test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier);
@@ -15663,7 +15663,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
             float x0 = Field_Countours_Vertices[n][0];
             float y0 = Field_Countours_Vertices[n][1];
             float z0 = Field_Countours_Vertices[n][2];
-            
+
             float r = 0;
             
             if (display_Field_Image == 1) {
@@ -15700,7 +15700,10 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
             j[p] = b * (Field_RES2 / Field_scale_V) + 0.5 * Field_RES2;
           }   
               
-          Field_PDF.line(i[0], j[0], i[1], j[1]);
+              
+          if (Field_Countours_Vertices[Field_Countours_ULines[q][0]][3] * Field_Multiplier < 1.0){ // the value of the first point of the line
+            Field_PDF.line(i[0], j[0], i[1], j[1]);
+          }
         }
     
         Field_PDF.strokeWeight(0);
