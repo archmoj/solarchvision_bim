@@ -15539,7 +15539,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
             
             float[] test_point_dir = {x, y, z, dx, dy, dz}; 
            
-            for (int n = 0; n < 10; n++) { // <<<<<<<<<
+            for (int n = 0; n < 100; n++) { // <<<<<<<<<
     
               int Point1_existed = 0;
               int Point2_created = 0;
@@ -15613,12 +15613,12 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
               }
             
               
-              //if (Point1_existed == 1) {
-                if (point_prev != 0) {
+              if (Point1_existed == 1) {
+                //if (point_prev != 0) {
                   int[][] newULine = {{point_prev, point_next}};
                   Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);
-                }                
-              //}
+                //}                
+              }
     
               if (Point2_created == 0) {
                 
