@@ -15376,7 +15376,7 @@ float[] traceContour (float x, float y, float z, float dx, float dy, float dz, f
   float t = atan2_ang(dy, dx);
 
   //for (int test_t = -180; test_t < 180; test_t += 5) { // <<<<
-  for (int test_t = -120; test_t < 120; test_t += 5) { // <<<<
+  for (int test_t = -150; test_t < 150; test_t += 5) { // <<<<
 
     float a = r * cos_ang(t + test_t);
     float b = r * sin_ang(t + test_t);
@@ -15428,7 +15428,6 @@ float[] traceContour (float x, float y, float z, float dx, float dy, float dz, f
     //if (((abs(test_v - v) < min_dist) && (fn_dot2D(test_x - x, test_y - y, dx, dy) >= 0)) || (v_equ > 0.9 * FLOAT_undefined))  {
     if ((abs(test_v - v) < min_dist) || (v_equ > 0.9 * FLOAT_undefined))  {
       //if (fn_dot2D(test_x - x, test_y - y, dx, dy) >= 0) {
-      //if (fn_dot2D(test_x - x, test_y - y, dx, dy) <= 0) {
       
         min_dist = abs(test_v - v);
         
