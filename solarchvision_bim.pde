@@ -15545,7 +15545,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
             float[][] preVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g}};
             int point_prev = 0; 
             {
-              int nearestPoint = 0;
+              float nearestPointDist = FLOAT_undefined;
+              int nearestPointNum = 0;
               
               for (int q = 1; q < Field_Countours_Vertices.length; q++) {
                 //if (preVertice[0][3] == Field_Countours_Vertices[q][3]) {
@@ -15553,44 +15554,49 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
                   
                   float d = dist(preVertice[0][0], preVertice[0][1], preVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]);
                   
-                  if (d < 0.5) { // i.e. min: 0.5m
-               
-                    Point1_existed = 1;             
-               
-                    point_prev = q;
-                    
-                    test_point_dir[0] = Field_Countours_Vertices[q][0];
-                    test_point_dir[1] = Field_Countours_Vertices[q][1];
-                    test_point_dir[2] = Field_Countours_Vertices[q][2];
-                    
-                    break; 
+                  if (nearestPointDist > d) { 
+                    nearestPointDist = d;
+                    nearestPointNum = q;
                   }
                 }
               }
+              
+              if (nearestPointDist < 0.1) {  //i.e. 0.1m 
+                Point1_existed = 1;             
+           
+                point_prev = nearestPointNum;
+                
+                test_point_dir[0] = Field_Countours_Vertices[point_prev][0];
+                test_point_dir[1] = Field_Countours_Vertices[point_prev][1];
+                test_point_dir[2] = Field_Countours_Vertices[point_prev][2];
+              }             
             } 
- 
+
+
             //--------------------------------------------------------------------------------------------------------------------------------------------------
-            //test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], val);
             test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier);
             //--------------------------------------------------------------------------------------------------------------------------------------------------
   
             float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
             int point_next = 0; 
             {
-              int nearestPoint = 0;
+              float nearestPointDist = FLOAT_undefined;
+              int nearestPointNum = 0;
               
               for (int q = 1; q < Field_Countours_Vertices.length; q++) {
                 //if (newVertice[0][3] == Field_Countours_Vertices[q][3]) {
                 if (abs(newVertice[0][3] - Field_Countours_Vertices[q][3]) < 0.001) {
                   
                   float d = dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]);
-                  
-                  //if (d < 0.1) {  //i.e. 0.1m
-                  if ((point_prev != q) && (d < 0.5)) {  //i.e. 0.5m
-                 
-                    point_next = q;
-                    break; 
+
+                  if (nearestPointDist > d) { 
+                    nearestPointDist = d;
+                    nearestPointNum = q;
                   }
+                }
+                
+                if (nearestPointDist < 0.1) {  //i.e. 0.1m 
+                  point_next = nearestPointNum;
                 }
               }
              
