@@ -15427,6 +15427,7 @@ float[] traceContour (float x, float y, float z, float dx, float dy, float dz, f
     //if (((abs(test_v - v) < min_dist) && (fn_dot2D(test_x - x, test_y - y, dx, dy) >= 0)) || (v_equ > 0.9 * FLOAT_undefined))  {
     if ((abs(test_v - v) < min_dist) || (v_equ > 0.9 * FLOAT_undefined))  {
       if (fn_dot2D(test_x - x, test_y - y, dx, dy) >= 0) {
+      //if (fn_dot2D(test_x - x, test_y - y, dx, dy) <= 0) {
       
         min_dist = abs(test_v - v);
         
@@ -15561,7 +15562,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
                 }
               }
               
-              if (nearestPointDist < 0.1) {  //i.e. 0.1m 
+              if (nearestPointDist < 0.5) {  //i.e. 0.5m 
                 Point1_existed = 1;             
            
                 point_prev = nearestPointNum;
@@ -15573,9 +15574,9 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
             } 
 
 
-            //--------------------------------------------------------------------------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier);
-            //--------------------------------------------------------------------------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   
             float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
             int point_next = 0; 
@@ -15595,7 +15596,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
                   }
                 }
                 
-                if (nearestPointDist < 0.1) {  //i.e. 0.1m 
+                if (nearestPointDist < 0.5) {  //i.e. 0.5m 
                   point_next = nearestPointNum;
                 }
               }
