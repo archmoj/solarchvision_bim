@@ -15533,7 +15533,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
       if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
       
-        if ((abs(g - g_line) < 0.001) && (g != 0) && (g_line < 1)) {
+        if ((abs(g - g_line) < 0.001) && (g != 0) && (g_line <= 1)) {
           
           float[] test_point_dir = {x, y, z, dx, dy, dz}; 
          
@@ -15585,8 +15585,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
                   
                   float d = dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]);
                   
-                  if (d < 0.25) {  //i.e. 0.25m
-                  //if ((point_prev != q) && (d < 0.25)) {  //i.e. 0.25m
+                  //if (d < 0.1) {  //i.e. 0.1m
+                  if ((point_prev != q) && (d < 0.5)) {  //i.e. 0.5m
                  
                     point_next = q;
                     break; 
@@ -15645,7 +15645,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
     if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
       if (display_Field_Lines != 0) {
     
-        Field_PDF.strokeWeight(1);
+        Field_PDF.strokeWeight(0.25);
         Field_PDF.stroke(255, 0, 0);
         Field_PDF.fill(255, 0, 0);  
         
@@ -15699,6 +15699,55 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           }   
               
           Field_PDF.line(i[0], j[0], i[1], j[1]);
+        }
+
+        Field_PDF.strokeWeight(0.5);
+        Field_PDF.stroke(255, 127, 0);
+        Field_PDF.noFill();  
+        Field_PDF.ellipseMode(CENTER);
+        
+        for (int n = 1; n < Field_Countours_Vertices.length; n++) {
+          
+          float x0 = Field_Countours_Vertices[n][0];
+          float y0 = Field_Countours_Vertices[n][1];
+          float z0 = Field_Countours_Vertices[n][2];
+
+          float r = 0;
+          
+          if (display_Field_Image == 1) {
+            r = -Field_Rotation[display_Field_Image];
+          }
+          else if (display_Field_Image == 2) {
+            r = Field_Rotation[display_Field_Image];
+          }
+          else if (display_Field_Image == 3) {
+            r = -Field_Rotation[display_Field_Image];              
+          }     
+          
+          float x = x0 * cos_ang(r) - y0 * sin_ang(r);
+          float y = x0 * sin_ang(r) + y0 * cos_ang(r);
+          float z = z0;
+      
+          float a = 0;
+          float b = 0;
+          
+          if (display_Field_Image == 1) {
+            a = x;
+            b = -y;
+          }
+          else if (display_Field_Image == 2) {
+            a = x;
+            b = -z;
+          }
+          else if (display_Field_Image == 3) {
+            a = -y;
+            b = -z;
+          }
+
+          float i = a * (Field_RES1 / Field_scale_U) + 0.5 * Field_RES1;
+          float j = b * (Field_RES2 / Field_scale_V) + 0.5 * Field_RES2;
+         
+          Field_PDF.ellipse(i, j, 1, 1);
         }
     
         Field_PDF.strokeWeight(0);
