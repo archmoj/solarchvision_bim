@@ -15459,7 +15459,7 @@ int[][] Field_Countours_VLines = {{0,0}};
 int PROCESS_subdivisions = 3; //1; // 0,1,2,3
 
 float deltaField = 0.05;
-float deltaFieldLines = 0.1 * deltaField;
+float deltaFieldLines = 0.05 * deltaField;
 
 
 
@@ -15500,7 +15500,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
       float z = FieldPoint[2];
       float val = FieldPoint[3];
 
-      float g =      roundTo(Field_Multiplier * val, deltaField);
+      float g =      roundTo(Field_Multiplier * val, deltaField) - 0.5 * deltaField;
       float g_line = roundTo(Field_Multiplier * val, deltaFieldLines);
       
       color c = color(255, 255, 255, 0);        
@@ -15630,7 +15630,10 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   Field_Image.updatePixels();
   
   Field_Image.save(get_Field_Filename() + ".jpg");
+
   
+  SOLARCHVISION_process_ParametricGeometries_VContours();
+
 
   {
     PGraphics Field_PDF = createGraphics(Field_RES1, Field_RES2, PDF, get_Field_Filename() + ".pdf");
@@ -15641,63 +15644,82 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
     if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
       if (display_Field_Lines != 0) {
+        
+        for (int U_or_V = 0; U_or_V < 2; U_or_V++) {
     
-        Field_PDF.strokeWeight(0.25);
-        Field_PDF.stroke(255, 0, 0);
-        Field_PDF.fill(255, 0, 0);  
-        
-        for (int q = 1; q < Field_Countours_ULines.length; q++) {
+          Field_PDF.strokeWeight(0.25);
+          Field_PDF.stroke(255, 0, 0);
+          Field_PDF.fill(255, 0, 0);  
           
-          float[] i = {0,0};
-          float[] j = {0,0};
+          int q_num = 0;
+          if (U_or_V == 0) {
+            q_num = Field_Countours_ULines.length;
+          } 
+          else {
+            q_num = Field_Countours_VLines.length;
+          }
           
-          for (int p = 0; p < 2; p++) {
-          
-            int n = Field_Countours_ULines[q][p];
-
-            float x0 = Field_Countours_Vertices[n][0];
-            float y0 = Field_Countours_Vertices[n][1];
-            float z0 = Field_Countours_Vertices[n][2];
-
-            float r = 0;
+          for (int q = 1; q < q_num; q++) {
             
-            if (display_Field_Image == 1) {
-              r = -Field_Rotation[display_Field_Image];
-            }
-            else if (display_Field_Image == 2) {
-              r = Field_Rotation[display_Field_Image];
-            }
-            else if (display_Field_Image == 3) {
-              r = -Field_Rotation[display_Field_Image];              
-            }     
+            float[] i = {0,0};
+            float[] j = {0,0};
             
-            float x = x0 * cos_ang(r) - y0 * sin_ang(r);
-            float y = x0 * sin_ang(r) + y0 * cos_ang(r);
-            float z = z0;
-        
-            float a = 0;
-            float b = 0;
+            for (int p = 0; p < 2; p++) {
             
-            if (display_Field_Image == 1) {
-              a = x;
-              b = -y;
-            }
-            else if (display_Field_Image == 2) {
-              a = x;
-              b = -z;
-            }
-            else if (display_Field_Image == 3) {
-              a = -y;
-              b = -z;
-            }
-           
-            i[p] = a * (Field_RES1 / Field_scale_U) + 0.5 * Field_RES1;
-            j[p] = b * (Field_RES2 / Field_scale_V) + 0.5 * Field_RES2;
-          }   
+              int n = 0;
+              if (U_or_V == 0) {
+                n = Field_Countours_ULines[q][p];
+              }
+              else {
+                n = Field_Countours_VLines[q][p];                
+              }
+  
+              float x0 = Field_Countours_Vertices[n][0];
+              float y0 = Field_Countours_Vertices[n][1];
+              float z0 = Field_Countours_Vertices[n][2];
+  
+              float r = 0;
               
-          Field_PDF.line(i[0], j[0], i[1], j[1]);
+              if (display_Field_Image == 1) {
+                r = -Field_Rotation[display_Field_Image];
+              }
+              else if (display_Field_Image == 2) {
+                r = Field_Rotation[display_Field_Image];
+              }
+              else if (display_Field_Image == 3) {
+                r = -Field_Rotation[display_Field_Image];              
+              }     
+              
+              float x = x0 * cos_ang(r) - y0 * sin_ang(r);
+              float y = x0 * sin_ang(r) + y0 * cos_ang(r);
+              float z = z0;
+          
+              float a = 0;
+              float b = 0;
+              
+              if (display_Field_Image == 1) {
+                a = x;
+                b = -y;
+              }
+              else if (display_Field_Image == 2) {
+                a = x;
+                b = -z;
+              }
+              else if (display_Field_Image == 3) {
+                a = -y;
+                b = -z;
+              }
+             
+              i[p] = a * (Field_RES1 / Field_scale_U) + 0.5 * Field_RES1;
+              j[p] = b * (Field_RES2 / Field_scale_V) + 0.5 * Field_RES2;
+            }   
+                
+            Field_PDF.line(i[0], j[0], i[1], j[1]);
+          }
         }
-
+      }
+      
+      if (display_Field_Points != 0) {
         Field_PDF.strokeWeight(0.5);
         Field_PDF.stroke(255, 127, 0);
         Field_PDF.noFill();  
@@ -15758,8 +15780,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
     Field_PDF.endDraw();
   }
 
-  
-  //SOLARCHVISION_process_ParametricGeometries_VContours();
+
 }
 
 String get_Field_Filename () {
