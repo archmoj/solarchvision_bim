@@ -15800,8 +15800,8 @@ void SOLARCHVISION_process_ParametricGeometries_VContours () {
       
       if (i != j) {
         
-        //if (abs(Field_Countours_Vertices[i][3] - Field_Countours_Vertices[j][3] + deltaField) < 0.01) { // if two points were on the Field levels next to each other
-        if (Field_Countours_Vertices[i][3] != Field_Countours_Vertices[j][3]) { // if two points were on the Field levels next to each other
+        // if two points were on the Field levels next to each other
+        if ((abs(Field_Countours_Vertices[i][3] - Field_Countours_Vertices[j][3] - deltaField) < 0.001) || (abs(Field_Countours_Vertices[i][3] - Field_Countours_Vertices[j][3] + deltaField) < 0.001)) { 
   
           float d = dist(Field_Countours_Vertices[i][0], Field_Countours_Vertices[i][1], Field_Countours_Vertices[i][2], Field_Countours_Vertices[j][0], Field_Countours_Vertices[j][1], Field_Countours_Vertices[j][2]);
           
