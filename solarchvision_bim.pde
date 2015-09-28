@@ -1335,7 +1335,7 @@ void setup () {
 
   size(2 * w_pixel + ROLLOUT_X_View, 2 * h_pixel, P2D);
 
-  _DATE = 90; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
+  _DATE = (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   //if (_HOUR >= 12) _DATE += 0.5;   
 
   empty_Materials_DirectArea();
@@ -13797,9 +13797,6 @@ void SOLARCHVISION_draw_3Dobjects () {
           }
         }
         else if (WIN3D_FACES_SHADE == 3) {
-
-          WIN3D_Diagrams.stroke(0);
-          WIN3D_Diagrams.strokeWeight(1);
           
           int PAL_TYPE = 0; 
           int PAL_DIR = 1;
@@ -13876,7 +13873,7 @@ void SOLARCHVISION_draw_3Dobjects () {
       
                 float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
       
-                WIN3D_Diagrams.noStroke(); // <<<<<<<<<<<<
+                //WIN3D_Diagrams.noStroke(); // <<<<<<<<<<<<
       
                 WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
               }
@@ -15636,7 +15633,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   Field_Image.save(get_Field_Filename() + ".jpg");
 
   
-  //SOLARCHVISION_process_ParametricGeometries_VContours();
+  SOLARCHVISION_process_ParametricGeometries_VContours();
 
 
   {
