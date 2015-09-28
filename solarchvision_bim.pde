@@ -95,9 +95,9 @@ int defaultMaterial = 7;
 
 int Create_Default_Material = 7; //0;
 
-float Create_Input_Length = -20;
-float Create_Input_Width = -20;
-float Create_Input_Height = -20;
+float Create_Input_Length = 10;
+float Create_Input_Width = 10;
+float Create_Input_Height = 10;
 
 float Create_Input_Volume = 0; //3000;
 
@@ -122,11 +122,11 @@ int Create_Mesh_Poly = 0;
 int Create_Mesh_Extrude = 0;
 int Create_Mesh_Tri = 0;
 int Create_Mesh_Quad = 0;
-int Create_Mesh_House = 0; 
+int Create_Mesh_House = 1; 
 int Create_Mesh_Parametric = 0;
 int Create_Mesh_Person = 0;
 int Create_Mesh_Plant = 0;
-int Create_Recursive_Plant = 1;
+int Create_Recursive_Plant = 0;
 
 int Create_Mesh_Person_Type = 0;
 int Create_Mesh_Plant_Type = 0;
@@ -15457,7 +15457,7 @@ float[][] Field_Countours_Vertices = {{0,0,0,0}}; // keeping Field value at the 
 int[][] Field_Countours_ULines = {{0,0}};
 int[][] Field_Countours_VLines = {{0,0}};
 
-int PROCESS_subdivisions = 3; //1; // 0,1,2,3
+int PROCESS_subdivisions = 1; //1; // 0,1,2,3
 
 float deltaField = 0.05;
 float deltaFieldLines = 0.05 * deltaField;
