@@ -1335,7 +1335,7 @@ void setup () {
 
   size(2 * w_pixel + ROLLOUT_X_View, 2 * h_pixel, P2D);
 
-  _DATE = (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
+  _DATE = 90; //(286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   //if (_HOUR >= 12) _DATE += 0.5;   
 
   empty_Materials_DirectArea();
@@ -10977,10 +10977,10 @@ void WIN3D_keyPressed (KeyEvent e) {
                   if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break; 
 
-        case 33 :Field_Elevation[display_Field_Image] += 8 * Field_PositionStep;
+        case 33 :Field_Elevation[display_Field_Image] += 4 * Field_PositionStep;
                   if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;        
-        case 34 :Field_Elevation[display_Field_Image] -= 8 * Field_PositionStep; 
+        case 34 :Field_Elevation[display_Field_Image] -= 4 * Field_PositionStep; 
                   if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break; 
         
@@ -13797,6 +13797,9 @@ void SOLARCHVISION_draw_3Dobjects () {
           }
         }
         else if (WIN3D_FACES_SHADE == 3) {
+
+          WIN3D_Diagrams.stroke(0);
+          WIN3D_Diagrams.strokeWeight(1);
           
           int PAL_TYPE = 0; 
           int PAL_DIR = 1;
@@ -15111,7 +15114,8 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 0;
     float z = 10;
     float r = 10;
-    SOLARCHVISION_add_Recursivephere(1, x,y,z, r, 2, 0, 0);
+    //SOLARCHVISION_add_Recursivephere(1, x,y,z, r, 2, 0, 0);
+    SOLARCHVISION_add_Recursivephere(1, x,y,z, r, 4, 0, 0);
     ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, 2,2,2, r,r,r, 0)};
     SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
   }  
@@ -15632,7 +15636,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   Field_Image.save(get_Field_Filename() + ".jpg");
 
   
-  SOLARCHVISION_process_ParametricGeometries_VContours();
+  //SOLARCHVISION_process_ParametricGeometries_VContours();
 
 
   {
@@ -15784,7 +15788,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 }
 
 String get_Field_Filename () {
-  return "/Output/Field" + nf(display_Field_Image, 0) + "h" + nf(int(roundTo(Field_Elevation[display_Field_Image], 1)), 4) + "r" + nf(int(roundTo(Field_Rotation[display_Field_Image], 1)), 3);
+  
+  return "/Output/Field" + nf(display_Field_Image, 0) + "h" + nf(int(roundTo(Field_Elevation[display_Field_Image], 1)), 4) + "r" + nf(int(roundTo(Field_Rotation[display_Field_Image], 1)), 3) + "p" + nf(Field_Power, 2, 2).replace(".", "_")  + "m" + nf(Field_Multiplier, 2, 2).replace(".", "_");
 }
 
 
@@ -18552,7 +18557,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
 
 void SOLARCHVISION_draw_Perspective_Internally () {
 
-  if (pre_display_MODEL3D_EDGES != 0) {
+  if (display_MODEL3D_EDGES != 0) {
     
     pushMatrix();
   
@@ -18562,9 +18567,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     noFill();
     
     //stroke(0,127,0,127);   
-    stroke(127); 
-    
-    strokeWeight(1);
+    //stroke(127); strokeWeight(1);
+    stroke(0); strokeWeight(0.5);
   
     for (int f = 1; f < allFaces.length; f++) {
   
