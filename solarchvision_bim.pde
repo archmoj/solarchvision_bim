@@ -1811,8 +1811,8 @@ void draw () {
         pre_Field_Color = Field_Color; 
         pre_Field_Multiplier = Field_Multiplier;
         pre_Field_Power = Field_Power;
-        pre_Field_Rotation[display_Field_Image] = Field_Rotation[display_Field_Image];
-        pre_Field_Elevation[display_Field_Image] = Field_Elevation[display_Field_Image];
+        pre_Field_Rotation[Field_Image_Section] = Field_Rotation[Field_Image_Section];
+        pre_Field_Elevation[Field_Image_Section] = Field_Elevation[Field_Image_Section];
       
         pre_PROCESS_subdivisions = PROCESS_subdivisions;
       
@@ -1974,8 +1974,8 @@ void draw () {
         if (pre_Field_Color != Field_Color) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
         if (pre_Field_Multiplier != Field_Multiplier) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
         if (pre_Field_Power != Field_Power) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
-        if (pre_Field_Rotation[display_Field_Image] != Field_Rotation[display_Field_Image]) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
-        if (pre_Field_Elevation[display_Field_Image] != Field_Elevation[display_Field_Image]) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
+        if (pre_Field_Rotation[Field_Image_Section] != Field_Rotation[Field_Image_Section]) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
+        if (pre_Field_Elevation[Field_Image_Section] != Field_Elevation[Field_Image_Section]) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
         if (pre_PROCESS_subdivisions != PROCESS_subdivisions) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
 
 
@@ -8837,7 +8837,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         total_Image_RGBA.updatePixels(); 
         
         if (camera_variation == 0) {
-          
+
           Solarch_Image = total_Image_RGBA;  // <<<<<<<<<<<<<<<<
           total_Image_RGBA.save("/Output/Solarch.jpg");
           
@@ -10963,32 +10963,32 @@ void WIN3D_keyPressed (KeyEvent e) {
     if (key == CODED) { 
       switch(keyCode) {
 
-        case RIGHT :Field_Rotation[display_Field_Image] = (Field_Rotation[display_Field_Image] + 15) % 360; 
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+        case RIGHT :Field_Rotation[Field_Image_Section] = (Field_Rotation[Field_Image_Section] + 15) % 360; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
-        case LEFT :Field_Rotation[display_Field_Image] = (Field_Rotation[display_Field_Image] + 360 - 15) % 360; 
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+        case LEFT :Field_Rotation[Field_Image_Section] = (Field_Rotation[Field_Image_Section] + 360 - 15) % 360; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;           
         
-        case UP   :Field_Elevation[display_Field_Image] += Field_PositionStep;
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+        case UP   :Field_Elevation[Field_Image_Section] += Field_PositionStep;
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;        
-        case DOWN :Field_Elevation[display_Field_Image] -= Field_PositionStep; 
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+        case DOWN :Field_Elevation[Field_Image_Section] -= Field_PositionStep; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break; 
 
-        case 33 :Field_Elevation[display_Field_Image] += 4 * Field_PositionStep;
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+        case 33 :Field_Elevation[Field_Image_Section] += 4 * Field_PositionStep;
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;        
-        case 34 :Field_Elevation[display_Field_Image] -= 4 * Field_PositionStep; 
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+        case 34 :Field_Elevation[Field_Image_Section] -= 4 * Field_PositionStep; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break; 
         
         case 35 :Field_scale_U *= pow(2.0, 0.5); Field_scale_V *= pow(2.0, 0.5); 
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
         case 36 :Field_scale_U /= pow(2.0, 0.5); Field_scale_V /= pow(2.0, 0.5);                   
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
                  
       }
@@ -10996,54 +10996,54 @@ void WIN3D_keyPressed (KeyEvent e) {
     else {
       switch(key) {
 
-        case ']' :display_Field_Image = (display_Field_Image + 1) % 4;
-                  display_Solarch_Image = display_Field_Image; 
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+        case ']' :Field_Image_Section = (Field_Image_Section + 1) % 4;
+                  Solarch_Image_Section = Field_Image_Section; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
                   WIN3D_Update = 1;
                   break;
-        case '[' :display_Field_Image = (display_Field_Image + 4 - 1) % 4;
-                  display_Solarch_Image = display_Field_Image;
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+        case '[' :Field_Image_Section = (Field_Image_Section + 4 - 1) % 4;
+                  Solarch_Image_Section = Field_Image_Section;
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
                   WIN3D_Update = 1; 
                   break;        
         
-        case '0' :Field_Elevation[display_Field_Image] = 0; 
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+        case '0' :Field_Elevation[Field_Image_Section] = 0; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
                   
-        case '.' :Field_Rotation[display_Field_Image] = 0; 
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+        case '.' :Field_Rotation[Field_Image_Section] = 0; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;                  
         
         case '/' :Field_Power *= pow(2.0, 0.5); 
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
         case '*' :Field_Power /= pow(2.0, 0.5);  
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
         
         case '+' :Field_Multiplier *= pow(2.0, 0.5); 
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
         case '-' :Field_Multiplier /= pow(2.0, 0.5); 
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
 
         case '>' :Field_Multiplier /= pow(2.0, 0.25); 
                   Field_Power /= pow(2.0, 0.5); 
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
         case '<' :Field_Multiplier *= pow(2.0, 0.25); 
                   Field_Power *= pow(2.0, 0.5); 
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;
                   
         case 'c' :Field_Color = (Field_Color + 1) % 4; 
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;                  
 
         case 'C' :Field_Color = (Field_Color + 4 - 1) % 4; 
-                  if (display_Field_Image != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;  
  
       }
@@ -11086,7 +11086,7 @@ void WIN3D_keyPressed (KeyEvent e) {
         case '2' :Display_Trees_People = (Display_Trees_People + 1) % 2; WIN3D_Update = 1; break;
  
  
-        case ENTER :RenderShadowsOnUrbanPlane(); break;
+        case ENTER :RenderShadowsOnUrbanPlane(); display_Solarch_Image = 1; break;
       }
     }    
   }
@@ -13652,55 +13652,57 @@ void SOLARCHVISION_draw_land () {
 
 void SOLARCHVISION_draw_field_image () {
 
-  WIN3D_Diagrams.stroke(0);
-  WIN3D_Diagrams.fill(127,255,127);    
-  
   if (display_Field_Image != 0) {
-    WIN3D_Diagrams.beginShape();
-    
-    WIN3D_Diagrams.texture(Field_Image);    
-    WIN3D_Diagrams.stroke(255, 255, 255, 0);
-    WIN3D_Diagrams.fill(255, 255, 255, 0);
-    
-    float c = Field_Elevation[display_Field_Image] * objects_scale;
-    
-    for (int q = 0; q < 4; q++) {
+    if (Field_Image_Section != 0) {
+  
+      WIN3D_Diagrams.stroke(0);
+      WIN3D_Diagrams.fill(127,255,127);  
       
-      float qx = 0, qy = 0, u = 0, v = 0;
+      WIN3D_Diagrams.beginShape();
       
-      if (q == 0)      {qx = -1; qy = -1; u = 0; v = Field_RES2;}
-      else if (q == 1) {qx = 1; qy = -1; u = Field_RES1; v = Field_RES2;}
-      else if (q == 2) {qx = 1; qy = 1; u = Field_RES1; v = 0;}
-      else if (q == 3) {qx = -1; qy = 1; u = 0; v = 0;}    
+      WIN3D_Diagrams.texture(Field_Image);    
+      WIN3D_Diagrams.stroke(255, 255, 255, 0);
+      WIN3D_Diagrams.fill(255, 255, 255, 0);
       
-      float a = qx * 0.5 * Field_scale_U * objects_scale;
-      float b = qy * 0.5 * Field_scale_V * objects_scale;    
+      float c = Field_Elevation[Field_Image_Section] * objects_scale;
       
-      float x = 0, y = 0, z = 0;
-      
-      if (display_Field_Image == 1) {
-        x = a * cos_ang(-Field_Rotation[display_Field_Image]) - -b * sin_ang(-Field_Rotation[display_Field_Image]);
-        y = a * sin_ang(-Field_Rotation[display_Field_Image]) + -b * cos_ang(-Field_Rotation[display_Field_Image]);
-        z = c;         
+      for (int q = 0; q < 4; q++) {
+        
+        float qx = 0, qy = 0, u = 0, v = 0;
+        
+        if (q == 0)      {qx = -1; qy = -1; u = 0; v = Field_RES2;}
+        else if (q == 1) {qx = 1; qy = -1; u = Field_RES1; v = Field_RES2;}
+        else if (q == 2) {qx = 1; qy = 1; u = Field_RES1; v = 0;}
+        else if (q == 3) {qx = -1; qy = 1; u = 0; v = 0;}    
+        
+        float a = qx * 0.5 * Field_scale_U * objects_scale;
+        float b = qy * 0.5 * Field_scale_V * objects_scale;    
+        
+        float x = 0, y = 0, z = 0;
+        
+        if (Field_Image_Section == 1) {
+          x = a * cos_ang(-Field_Rotation[Field_Image_Section]) - -b * sin_ang(-Field_Rotation[Field_Image_Section]);
+          y = a * sin_ang(-Field_Rotation[Field_Image_Section]) + -b * cos_ang(-Field_Rotation[Field_Image_Section]);
+          z = c;         
+        }
+        else if (Field_Image_Section == 2) {
+          x = a * cos_ang(Field_Rotation[Field_Image_Section]) - c * sin_ang(Field_Rotation[Field_Image_Section]);
+          y = a * sin_ang(Field_Rotation[Field_Image_Section]) + c * cos_ang(Field_Rotation[Field_Image_Section]);
+          z = b;        
+        }
+        else if (Field_Image_Section == 3) {
+          x = a * cos_ang(90 - Field_Rotation[Field_Image_Section]) - c * sin_ang(90 - Field_Rotation[Field_Image_Section]);
+          y = a * sin_ang(90 - Field_Rotation[Field_Image_Section]) + c * cos_ang(90 - Field_Rotation[Field_Image_Section]);
+          z = b;    
+        }      
+  
+        
+        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, u, v);
       }
-      else if (display_Field_Image == 2) {
-        x = a * cos_ang(Field_Rotation[display_Field_Image]) - c * sin_ang(Field_Rotation[display_Field_Image]);
-        y = a * sin_ang(Field_Rotation[display_Field_Image]) + c * cos_ang(Field_Rotation[display_Field_Image]);
-        z = b;        
-      }
-      else if (display_Field_Image == 3) {
-        x = a * cos_ang(90 - Field_Rotation[display_Field_Image]) - c * sin_ang(90 - Field_Rotation[display_Field_Image]);
-        y = a * sin_ang(90 - Field_Rotation[display_Field_Image]) + c * cos_ang(90 - Field_Rotation[display_Field_Image]);
-        z = b;    
-      }      
-
       
-      WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, u, v);
+      WIN3D_Diagrams.endShape(CLOSE);
     }
-    
-    WIN3D_Diagrams.endShape(CLOSE);
   }
- 
 }
 
 
@@ -15257,7 +15259,8 @@ float Solarch_Elevation;
 
 PImage Solarch_Image = createImage(Solarch_RES1, Solarch_RES2, RGB);
 
-int display_Solarch_Image = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
+int display_Solarch_Image = 0; // 0:talse 1:true
+int Solarch_Image_Section = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
 
 void SOLARCHVISION_calculate_ParametricGeometries_Solarch () {
 
@@ -15277,7 +15280,8 @@ PImage Field_Image = createImage(Field_RES1, Field_RES2, ARGB);
 
 float Field_Multiplier = 1.0; //0.1; //10.0; 
 
-int display_Field_Image = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
+int display_Field_Image = 0; // 0:false, 1:true
+int Field_Image_Section = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
 
 float[] Field_Elevation = {0, 0.1, 0, 0}; // <<<
 float[] Field_Rotation = {0, 0, 0, 0};
@@ -15299,21 +15303,21 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
 
     float a = (i - 0.5 * Field_RES1) * (Field_scale_U / Field_RES1);
     float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
-    float c = Field_Elevation[display_Field_Image];
+    float c = Field_Elevation[Field_Image_Section];
     
-    if (display_Field_Image == 1) {
-      x = a * cos_ang(-Field_Rotation[display_Field_Image]) - b * sin_ang(-Field_Rotation[display_Field_Image]);
-      y = -(a * sin_ang(-Field_Rotation[display_Field_Image]) + b * cos_ang(-Field_Rotation[display_Field_Image]));
+    if (Field_Image_Section == 1) {
+      x = a * cos_ang(-Field_Rotation[Field_Image_Section]) - b * sin_ang(-Field_Rotation[Field_Image_Section]);
+      y = -(a * sin_ang(-Field_Rotation[Field_Image_Section]) + b * cos_ang(-Field_Rotation[Field_Image_Section]));
       z = c;
     }
-    else if (display_Field_Image == 2) {
-      x = a * cos_ang(Field_Rotation[display_Field_Image]) - c * sin_ang(Field_Rotation[display_Field_Image]);
-      y = -(a * sin_ang(Field_Rotation[display_Field_Image]) + c * cos_ang(Field_Rotation[display_Field_Image]));
+    else if (Field_Image_Section == 2) {
+      x = a * cos_ang(Field_Rotation[Field_Image_Section]) - c * sin_ang(Field_Rotation[Field_Image_Section]);
+      y = -(a * sin_ang(Field_Rotation[Field_Image_Section]) + c * cos_ang(Field_Rotation[Field_Image_Section]));
       z = -b; 
     }
-    else if (display_Field_Image == 3) {
-      x = a * cos_ang(90 - Field_Rotation[display_Field_Image]) - c * sin_ang(90 - Field_Rotation[display_Field_Image]);
-      y = -(a * sin_ang(90 - Field_Rotation[display_Field_Image]) + c * cos_ang(90 - Field_Rotation[display_Field_Image]));
+    else if (Field_Image_Section == 3) {
+      x = a * cos_ang(90 - Field_Rotation[Field_Image_Section]) - c * sin_ang(90 - Field_Rotation[Field_Image_Section]);
+      y = -(a * sin_ang(90 - Field_Rotation[Field_Image_Section]) + c * cos_ang(90 - Field_Rotation[Field_Image_Section]));
       z = -b; 
     }
       
@@ -15383,23 +15387,23 @@ float[] traceContour (float x, float y, float z, float dx, float dy, float dz, f
     float b = r * sin_ang(t + test_t);
     float c = 0;
     
-    if (display_Field_Image == 1) {
-      float Qx = a * cos_ang(-Field_Rotation[display_Field_Image]) - b * sin_ang(-Field_Rotation[display_Field_Image]);
-      float Qy = -(a * sin_ang(-Field_Rotation[display_Field_Image]) + b * cos_ang(-Field_Rotation[display_Field_Image]));
+    if (Field_Image_Section == 1) {
+      float Qx = a * cos_ang(-Field_Rotation[Field_Image_Section]) - b * sin_ang(-Field_Rotation[Field_Image_Section]);
+      float Qy = -(a * sin_ang(-Field_Rotation[Field_Image_Section]) + b * cos_ang(-Field_Rotation[Field_Image_Section]));
       float Qz = c;
       
       a = Qx; b = Qy; c = Qz; 
     }
-    else if (display_Field_Image == 2) {
-      float Qx = a * cos_ang(Field_Rotation[display_Field_Image]) - c * sin_ang(Field_Rotation[display_Field_Image]);
-      float Qy = -(a * sin_ang(Field_Rotation[display_Field_Image]) + c * cos_ang(Field_Rotation[display_Field_Image]));
+    else if (Field_Image_Section == 2) {
+      float Qx = a * cos_ang(Field_Rotation[Field_Image_Section]) - c * sin_ang(Field_Rotation[Field_Image_Section]);
+      float Qy = -(a * sin_ang(Field_Rotation[Field_Image_Section]) + c * cos_ang(Field_Rotation[Field_Image_Section]));
       float Qz = -b; 
 
       a = Qx; b = Qy; c = Qz; 
     }
-    else if (display_Field_Image == 3) {
-      float Qx = a * cos_ang(90 - Field_Rotation[display_Field_Image]) - c * sin_ang(90 - Field_Rotation[display_Field_Image]);
-      float Qy = -(a * sin_ang(90 - Field_Rotation[display_Field_Image]) + c * cos_ang(90 - Field_Rotation[display_Field_Image]));
+    else if (Field_Image_Section == 3) {
+      float Qx = a * cos_ang(90 - Field_Rotation[Field_Image_Section]) - c * sin_ang(90 - Field_Rotation[Field_Image_Section]);
+      float Qy = -(a * sin_ang(90 - Field_Rotation[Field_Image_Section]) + c * cos_ang(90 - Field_Rotation[Field_Image_Section]));
       float Qz = -b; 
 
       a = Qx; b = Qy; c = Qz; 
@@ -15681,14 +15685,14 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   
               float r = 0;
               
-              if (display_Field_Image == 1) {
-                r = -Field_Rotation[display_Field_Image];
+              if (Field_Image_Section == 1) {
+                r = -Field_Rotation[Field_Image_Section];
               }
-              else if (display_Field_Image == 2) {
-                r = Field_Rotation[display_Field_Image];
+              else if (Field_Image_Section == 2) {
+                r = Field_Rotation[Field_Image_Section];
               }
-              else if (display_Field_Image == 3) {
-                r = -Field_Rotation[display_Field_Image];              
+              else if (Field_Image_Section == 3) {
+                r = -Field_Rotation[Field_Image_Section];              
               }     
               
               float x = x0 * cos_ang(r) - y0 * sin_ang(r);
@@ -15698,15 +15702,15 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
               float a = 0;
               float b = 0;
               
-              if (display_Field_Image == 1) {
+              if (Field_Image_Section == 1) {
                 a = x;
                 b = -y;
               }
-              else if (display_Field_Image == 2) {
+              else if (Field_Image_Section == 2) {
                 a = x;
                 b = -z;
               }
-              else if (display_Field_Image == 3) {
+              else if (Field_Image_Section == 3) {
                 a = -y;
                 b = -z;
               }
@@ -15734,14 +15738,14 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
           float r = 0;
           
-          if (display_Field_Image == 1) {
-            r = -Field_Rotation[display_Field_Image];
+          if (Field_Image_Section == 1) {
+            r = -Field_Rotation[Field_Image_Section];
           }
-          else if (display_Field_Image == 2) {
-            r = Field_Rotation[display_Field_Image];
+          else if (Field_Image_Section == 2) {
+            r = Field_Rotation[Field_Image_Section];
           }
-          else if (display_Field_Image == 3) {
-            r = -Field_Rotation[display_Field_Image];              
+          else if (Field_Image_Section == 3) {
+            r = -Field_Rotation[Field_Image_Section];              
           }     
           
           float x = x0 * cos_ang(r) - y0 * sin_ang(r);
@@ -15751,15 +15755,15 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           float a = 0;
           float b = 0;
           
-          if (display_Field_Image == 1) {
+          if (Field_Image_Section == 1) {
             a = x;
             b = -y;
           }
-          else if (display_Field_Image == 2) {
+          else if (Field_Image_Section == 2) {
             a = x;
             b = -z;
           }
-          else if (display_Field_Image == 3) {
+          else if (Field_Image_Section == 3) {
             a = -y;
             b = -z;
           }
@@ -15786,7 +15790,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
 String get_Field_Filename () {
   
-  return "/Output/Field" + nf(display_Field_Image, 0) + "h" + nf(int(roundTo(Field_Elevation[display_Field_Image], 1)), 4) + "r" + nf(int(roundTo(Field_Rotation[display_Field_Image], 1)), 3) + "p" + nf(Field_Power, 2, 2).replace(".", "_")  + "m" + nf(Field_Multiplier, 2, 2).replace(".", "_");
+  return "/Output/Field" + nf(Field_Image_Section, 0) + "h" + nf(int(roundTo(Field_Elevation[Field_Image_Section], 1)), 4) + "r" + nf(int(roundTo(Field_Rotation[Field_Image_Section], 1)), 3) + "p" + nf(Field_Power, 2, 2).replace(".", "_")  + "m" + nf(Field_Multiplier, 2, 2).replace(".", "_");
 }
 
 
@@ -17532,7 +17536,11 @@ void SOLARCHVISION_draw_ROLLOUT () {
       SKY3D_scale = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_scale" , SKY3D_scale, 100, 10000, -2);
       SKY3D_TESELATION = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "SKY3D_TESELATION" , SKY3D_TESELATION, 0, 5, 1), 1));
 
-      display_Solarch_Image = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "display_Solarch_Image" , display_Solarch_Image, 0, 4, 1), 1));      
+      display_Field_Image = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "display_Field_Image" , display_Field_Image, 0, 1, 1), 1));
+      display_Solarch_Image = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "display_Solarch_Image" , display_Solarch_Image, 0, 1, 1), 1));
+
+      Solarch_Image_Section = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Solarch_Image_Section" , Solarch_Image_Section, 0, 3, 1), 1));      
+      Field_Image_Section = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Image_Section" , Field_Image_Section, 0, 3, 1), 1));
       
     }
     
@@ -17596,12 +17604,12 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       SolidSurface_TESELATION = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "SolidSurface_TESELATION" , SolidSurface_TESELATION, 0, 5, 1), 1));
 
-      display_Field_Image = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "display_Field_Image" , display_Field_Image, 0, 3, 1), 1));
+
       Field_Color = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Color" , Field_Color, 0, 3, 1), 1)); 
       Field_Multiplier = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Multiplier" , Field_Multiplier, 1.0 / 64.0, 64.0, -2);
       Field_Power = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Power" , Field_Power, 1.0 / 64.0, 64.0, -2);      
-      Field_Rotation[display_Field_Image] = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Rotation[" + nf(display_Field_Image, 0) + "]" , Field_Rotation[display_Field_Image], -1000, 1000, -2);
-      Field_Elevation[display_Field_Image] = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Elevation[" + nf(display_Field_Image, 0) + "]" , Field_Elevation[display_Field_Image], -1000, 1000, -2);
+      Field_Rotation[Field_Image_Section] = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Rotation[" + nf(Field_Image_Section, 0) + "]" , Field_Rotation[Field_Image_Section], -1000, 1000, -2);
+      Field_Elevation[Field_Image_Section] = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Elevation[" + nf(Field_Image_Section, 0) + "]" , Field_Elevation[Field_Image_Section], -1000, 1000, -2);
       Field_PositionStep = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_PositionStep" , Field_PositionStep, 1.25, 40, -2);
       Field_scale_U = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_U" , Field_scale_U, 50, 3200, -2);
       Field_scale_V = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_V" , Field_scale_V, 50, 3200, -2);  
@@ -18722,12 +18730,12 @@ void RenderShadowsOnUrbanPlane() {
 
   defaultSceneName = SceneName;
   
-  Solarch_Rotation =  Field_Rotation[display_Field_Image];
-  Solarch_Elevation = 0.0 + Field_Elevation[display_Field_Image];
+  Solarch_Rotation =  Field_Rotation[Field_Image_Section];
+  Solarch_Elevation = 0.0 + Field_Elevation[Field_Image_Section];
   Solarch_scale_U = Field_scale_U; 
   Solarch_scale_V = Field_scale_V;
   
-  Rendered_Solarch_Type = display_Solarch_Image;
+  Rendered_Solarch_Type = Solarch_Image_Section;
   Rendered_Solarch_scale_U = Solarch_scale_U;
   Rendered_Solarch_scale_V = Solarch_scale_V;
   Rendered_Solarch_Elevation = Solarch_Elevation;
@@ -18743,11 +18751,11 @@ void RenderShadowsOnUrbanPlane() {
   
   PGraphics TREES_Diagrams = createGraphics(RES1, RES2, P2D);
   
-  int pre_display_Solarch_Image = display_Solarch_Image;
+  int pre_Solarch_Image_Section = Solarch_Image_Section;
   float pre_Solarch_Rotation = Solarch_Rotation;
   
-  if (display_Solarch_Image == 3) {
-    display_Solarch_Image = 2;
+  if (Solarch_Image_Section == 3) {
+    Solarch_Image_Section = 2;
     Solarch_Rotation = 90 - Solarch_Rotation;    
   }
 
@@ -18763,7 +18771,7 @@ void RenderShadowsOnUrbanPlane() {
         float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
         float[] SunR_Rotated = SunR; 
         
-        if (display_Solarch_Image == 2) {
+        if (Solarch_Image_Section == 2) {
           float a = SunR_Rotated[1];
           float b = -SunR_Rotated[2];
           float c = SunR_Rotated[3];
@@ -18772,7 +18780,7 @@ void RenderShadowsOnUrbanPlane() {
           SunR_Rotated[2] = c;
           SunR_Rotated[3] = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);
         }
-        else if (display_Solarch_Image == 3) {}
+        else if (Solarch_Image_Section == 3) {}
         
         for (int SHD = 0; SHD <= 1; SHD += 1) {
   
@@ -18857,7 +18865,7 @@ void RenderShadowsOnUrbanPlane() {
                     TU[2] = w; TV[2] = 0;
                     TU[3] = 0; TV[3] = 0;   
                     
-                    if (display_Solarch_Image == 2) {
+                    if (Solarch_Image_Section == 2) {
                       {
                         for (int q = 0; q < 4; q++) {
                           float a = TX[q];
@@ -18879,7 +18887,7 @@ void RenderShadowsOnUrbanPlane() {
                           z = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);
                       }                   
                     }
-                    else if (display_Solarch_Image == 3) {}
+                    else if (Solarch_Image_Section == 3) {}
                
                     if ((TZ[0] < Solarch_Elevation) && (Solarch_Elevation < TZ[2])) {
                       
@@ -18888,17 +18896,17 @@ void RenderShadowsOnUrbanPlane() {
                       TZ[0] = (TZ[0] * (1 - ratio) + TZ[2] * ratio);
                       TZ[1] = (TZ[1] * (1 - ratio) + TZ[3] * ratio);    
                       
-                      if (display_Solarch_Image == 1) {
+                      if (Solarch_Image_Section == 1) {
                         
                         TV[0] = (TV[0] * (1 - ratio) + TV[2] * ratio);
                         TV[1] = (TV[1] * (1 - ratio) + TV[3] * ratio);
                       }
-                      else if (display_Solarch_Image == 2) {
+                      else if (Solarch_Image_Section == 2) {
                         
                         TU[1] = (TU[1] * (1 - ratio) + TU[3] * ratio);
                         TU[2] = (TU[2] * (1 - ratio) + TU[0] * ratio);
                       }
-                      else if (display_Solarch_Image == 3) {}
+                      else if (Solarch_Image_Section == 3) {}
                       
                     }
                     
@@ -18910,7 +18918,7 @@ void RenderShadowsOnUrbanPlane() {
                         TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
                         TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);   
          
-                        if (display_Solarch_Image == 1) {
+                        if (Solarch_Image_Section == 1) {
                           float px = TX[q];
                           float py = TY[q];
 
@@ -18958,7 +18966,7 @@ void RenderShadowsOnUrbanPlane() {
                       TU[2] = w; TV[2] = 0;
                       TU[3] = 0; TV[3] = 0;   
 
-                      if (display_Solarch_Image == 1) {
+                      if (Solarch_Image_Section == 1) {
     
                         if (z + 2 * r * ratio > Solarch_Elevation) {
                         
@@ -18968,7 +18976,7 @@ void RenderShadowsOnUrbanPlane() {
                             TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
                             TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);  
             
-                            if (display_Solarch_Image == 1) {
+                            if (Solarch_Image_Section == 1) {
                               float px = TX[q];
                               float py = TY[q];
     
@@ -19042,7 +19050,7 @@ void RenderShadowsOnUrbanPlane() {
                 float[][] subFace_Rotated = subFace;
                 
                 for (int s = 0; s < subFace_Rotated.length; s++) {
-                  if (display_Solarch_Image == 2) {
+                  if (Solarch_Image_Section == 2) {
                     float a = subFace_Rotated[s][0];
                     float b = -subFace_Rotated[s][1];
                     float c = subFace_Rotated[s][2];
@@ -19051,7 +19059,7 @@ void RenderShadowsOnUrbanPlane() {
                     subFace_Rotated[s][1] = c;    
                     subFace_Rotated[s][2] = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);      
                   }
-                  else if (display_Solarch_Image == 3) {}
+                  else if (Solarch_Image_Section == 3) {}
 
                 }  
              
@@ -19065,7 +19073,7 @@ void RenderShadowsOnUrbanPlane() {
 
                   if (z >= 0) {
                     
-                    if (display_Solarch_Image == 1) {                    
+                    if (Solarch_Image_Section == 1) {                    
                       float px = x;
                       float py = y;
                     
@@ -19089,7 +19097,7 @@ void RenderShadowsOnUrbanPlane() {
                       float x_trim = x_prev * (1 - ratio) + x * ratio;
                       float y_trim = y_prev * (1 - ratio) + y * ratio;
                       
-                      if (display_Solarch_Image == 1) {
+                      if (Solarch_Image_Section == 1) {
                         float px = x_trim;
                         float py = y_trim;
                       
@@ -19110,7 +19118,7 @@ void RenderShadowsOnUrbanPlane() {
                       float x_trim = x_next * (1 - ratio) + x * ratio;
                       float y_trim = y_next * (1 - ratio) + y * ratio;
                       
-                      if (display_Solarch_Image == 1) {
+                      if (Solarch_Image_Section == 1) {
                         float px = x_trim;
                         float py = y_trim;
                       
@@ -19228,7 +19236,7 @@ void RenderShadowsOnUrbanPlane() {
         
         float[] SunR_Rotated = SunR; 
         
-        if (display_Solarch_Image == 2) {
+        if (Solarch_Image_Section == 2) {
           float a = SunR_Rotated[1];
           float b = -SunR_Rotated[2];
           float c = SunR_Rotated[3];
@@ -19237,7 +19245,7 @@ void RenderShadowsOnUrbanPlane() {
           SunR_Rotated[2] = c;
           SunR_Rotated[3] = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);
         }
-        else if (display_Solarch_Image == 3) {}
+        else if (Solarch_Image_Section == 3) {}
 
 
 //------------------------------------ start of copy & paste from the direct version!
@@ -19307,7 +19315,7 @@ void RenderShadowsOnUrbanPlane() {
                   TU[2] = w; TV[2] = 0;
                   TU[3] = 0; TV[3] = 0;   
                   
-                  if (display_Solarch_Image == 2) {
+                  if (Solarch_Image_Section == 2) {
                     {
                       for (int q = 0; q < 4; q++) {
                         float a = TX[q];
@@ -19329,7 +19337,7 @@ void RenderShadowsOnUrbanPlane() {
                         z = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);
                     }                   
                   }
-                  else if (display_Solarch_Image == 3) {}
+                  else if (Solarch_Image_Section == 3) {}
              
                   if ((TZ[0] < Solarch_Elevation) && (Solarch_Elevation < TZ[2])) {
                     
@@ -19338,17 +19346,17 @@ void RenderShadowsOnUrbanPlane() {
                     TZ[0] = (TZ[0] * (1 - ratio) + TZ[2] * ratio);
                     TZ[1] = (TZ[1] * (1 - ratio) + TZ[3] * ratio);    
                     
-                    if (display_Solarch_Image == 1) {
+                    if (Solarch_Image_Section == 1) {
                       
                       TV[0] = (TV[0] * (1 - ratio) + TV[2] * ratio);
                       TV[1] = (TV[1] * (1 - ratio) + TV[3] * ratio);
                     }
-                    else if (display_Solarch_Image == 2) {
+                    else if (Solarch_Image_Section == 2) {
                       
                       TU[1] = (TU[1] * (1 - ratio) + TU[3] * ratio);
                       TU[2] = (TU[2] * (1 - ratio) + TU[0] * ratio);
                     }
-                    else if (display_Solarch_Image == 3) {}
+                    else if (Solarch_Image_Section == 3) {}
                     
                   }
                   
@@ -19360,7 +19368,7 @@ void RenderShadowsOnUrbanPlane() {
                       TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
                       TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);   
        
-                      if (display_Solarch_Image == 1) {
+                      if (Solarch_Image_Section == 1) {
                         float px = TX[q];
                         float py = TY[q];
 
@@ -19404,7 +19412,7 @@ void RenderShadowsOnUrbanPlane() {
                     TU[2] = w; TV[2] = 0;
                     TU[3] = 0; TV[3] = 0;   
 
-                    if (display_Solarch_Image == 1) {
+                    if (Solarch_Image_Section == 1) {
                       if (z + 2 * r * ratio > Solarch_Elevation) {
                       
                         for (int q = 0; q < 4; q++) {
@@ -19413,7 +19421,7 @@ void RenderShadowsOnUrbanPlane() {
                           TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
                           TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);                  
   
-                          if (display_Solarch_Image == 1) {
+                          if (Solarch_Image_Section == 1) {
                             float px = TX[q];
                             float py = TY[q];
   
@@ -19488,7 +19496,7 @@ void RenderShadowsOnUrbanPlane() {
               float[][] subFace_Rotated = subFace;
               
               for (int s = 0; s < subFace_Rotated.length; s++) {
-                if (display_Solarch_Image == 2) {
+                if (Solarch_Image_Section == 2) {
                   float a = subFace_Rotated[s][0];
                   float b = -subFace_Rotated[s][1];
                   float c = subFace_Rotated[s][2];
@@ -19497,7 +19505,7 @@ void RenderShadowsOnUrbanPlane() {
                   subFace_Rotated[s][1] = c;      
                   subFace_Rotated[s][2] = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);      
                 }
-                else if (display_Solarch_Image == 3) {}
+                else if (Solarch_Image_Section == 3) {}
 
               }                
            
@@ -19511,7 +19519,7 @@ void RenderShadowsOnUrbanPlane() {
                   
                 if (z >= 0) {
                   
-                  if (display_Solarch_Image == 1) {
+                  if (Solarch_Image_Section == 1) {
                     float px = x;
                     float py = y;
                   
@@ -19535,7 +19543,7 @@ void RenderShadowsOnUrbanPlane() {
                     float x_trim = x_prev * (1 - ratio) + x * ratio;
                     float y_trim = y_prev * (1 - ratio) + y * ratio;
                     
-                    if (display_Solarch_Image == 1) {
+                    if (Solarch_Image_Section == 1) {
                       float px = x_trim;
                       float py = y_trim;
                     
@@ -19556,7 +19564,7 @@ void RenderShadowsOnUrbanPlane() {
                     float x_trim = x_next * (1 - ratio) + x * ratio;
                     float y_trim = y_next * (1 - ratio) + y * ratio;
                     
-                    if (display_Solarch_Image == 1) {
+                    if (Solarch_Image_Section == 1) {
                       float px = x_trim;
                       float py = y_trim;
                     
@@ -19637,7 +19645,7 @@ void RenderShadowsOnUrbanPlane() {
     }
   }
   
-  display_Solarch_Image = pre_display_Solarch_Image;
+  Solarch_Image_Section = pre_Solarch_Image_Section;
   Solarch_Rotation = pre_Solarch_Rotation;  
   
   cursor(HAND);
@@ -19650,89 +19658,93 @@ void RenderShadowsOnUrbanPlane() {
 
 void SOLARCHVISION_draw_solarch_image () {
 
-  WIN3D_Diagrams.stroke(0);
-  WIN3D_Diagrams.fill(127,127,127);    
+  if (display_Solarch_Image != 0) {
+    if (Solarch_Image_Section != 0) {  
   
-  if (display_Solarch_Image != 0) {  
-    WIN3D_Diagrams.beginShape();
-    
-    Solarch_Rotation = Field_Rotation[display_Solarch_Image];
-    Solarch_Elevation = 0.0 + Field_Elevation[display_Solarch_Image];
-    Solarch_scale_U = Field_scale_U; 
-    Solarch_scale_V = Field_scale_V;        
-
-    int display_solarch_texture = 0;
-    
-    if (Rendered_Solarch_Type == display_Solarch_Image) {
-      if (Rendered_Solarch_Rotation == Solarch_Rotation) {      
-        if (Rendered_Solarch_Elevation == Solarch_Elevation) {
-        
-          display_solarch_texture = 1;
-          
-          //WIN3D_Diagrams.texture(Solarch_Image); // ????????????
-        
-        }
-      } 
-    }   
-
-    float dU = Solarch_scale_U / Rendered_Solarch_scale_U;
-    float dV = Solarch_scale_V / Rendered_Solarch_scale_V;
-    
-    float minU = 0.5 * Solarch_RES1 - (0.5 * Solarch_RES1 * dU);
-    float maxU = 0.5 * Solarch_RES1 + (0.5 * Solarch_RES1 * dU);
-    float minV = 0.5 * Solarch_RES2 - (0.5 * Solarch_RES2 * dV);
-    float maxV = 0.5 * Solarch_RES2 + (0.5 * Solarch_RES2 * dV);
-
-    //float c = HeightAboveGround * objects_scale; // <<< or zero i.e. height of the plane in 3D  // ?????????
-    float c = Solarch_Elevation * objects_scale; 
-
-    if (display_Solarch_Image != 0) {
+      WIN3D_Diagrams.stroke(0);
+      WIN3D_Diagrams.fill(127,127,127);    
+  
+  
       WIN3D_Diagrams.beginShape();
-  
-      WIN3D_Diagrams.texture(Solarch_Image);  
-      WIN3D_Diagrams.stroke(255, 255, 255, 0);
-      WIN3D_Diagrams.fill(255, 255, 255, 0);  
       
-      for (int q = 0; q < 4; q++) {
-        
-        float qx = 0, qy = 0, u = 0, v = 0;
-        
-        if (q == 0)      {qx = -1; qy = -1; u = minU; v = maxV;}
-        else if (q == 1) {qx = 1; qy = -1; u = maxU; v = maxV;}
-        else if (q == 2) {qx = 1; qy = 1; u = maxU; v = minV;}
-        else if (q == 3) {qx = -1; qy = 1; u = minU; v = minV;}    
-        
-        float a = qx * 0.5 * Solarch_scale_U * objects_scale;
-        float b = qy * 0.5 * Solarch_scale_V * objects_scale;    
-        
-        float x = 0, y = 0, z = 0;
-        
-        if (display_Solarch_Image == 1) {
-          x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
-          y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
-          z = c;         
-        }
-        else if (display_Solarch_Image == 2) {
-          x = a * cos_ang(Solarch_Rotation) - c * sin_ang(Solarch_Rotation);
-          y = -(a * sin_ang(Solarch_Rotation) + c * cos_ang(Solarch_Rotation));
-          z = b;       
-        }
-        else if (display_Solarch_Image == 3) {
-          x = a * cos_ang(90 - Solarch_Rotation) - c * sin_ang(90 - Solarch_Rotation);
-          y = -(a * sin_ang(90 - Solarch_Rotation) + c * cos_ang(90 - Solarch_Rotation));
-          z = b;     
-        }      
-    
-        if (display_solarch_texture == 1) {
-          WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, u, v);
-        }
-        else {
-          WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D);
-        }     
+      Solarch_Rotation = Field_Rotation[Solarch_Image_Section];
+      Solarch_Elevation = 0.0 + Field_Elevation[Solarch_Image_Section];
+      Solarch_scale_U = Field_scale_U; 
+      Solarch_scale_V = Field_scale_V;        
+  
+      int display_solarch_texture = 0;
+      
+      if (Rendered_Solarch_Type == Solarch_Image_Section) {
+        if (Rendered_Solarch_Rotation == Solarch_Rotation) {      
+          if (Rendered_Solarch_Elevation == Solarch_Elevation) {
+          
+            display_solarch_texture = 1;
+            
+            //WIN3D_Diagrams.texture(Solarch_Image); // ????????????
+          
+          }
+        } 
       }   
-    }  
+  
+      float dU = Solarch_scale_U / Rendered_Solarch_scale_U;
+      float dV = Solarch_scale_V / Rendered_Solarch_scale_V;
+      
+      float minU = 0.5 * Solarch_RES1 - (0.5 * Solarch_RES1 * dU);
+      float maxU = 0.5 * Solarch_RES1 + (0.5 * Solarch_RES1 * dU);
+      float minV = 0.5 * Solarch_RES2 - (0.5 * Solarch_RES2 * dV);
+      float maxV = 0.5 * Solarch_RES2 + (0.5 * Solarch_RES2 * dV);
+  
+      //float c = HeightAboveGround * objects_scale; // <<< or zero i.e. height of the plane in 3D  // ?????????
+      float c = Solarch_Elevation * objects_scale; 
+  
+      if (Solarch_Image_Section != 0) {
+        WIN3D_Diagrams.beginShape();
     
-    WIN3D_Diagrams.endShape(CLOSE);
+        WIN3D_Diagrams.texture(Solarch_Image);  
+        WIN3D_Diagrams.stroke(255, 255, 255, 0);
+        WIN3D_Diagrams.fill(255, 255, 255, 0);  
+        
+        for (int q = 0; q < 4; q++) {
+          
+          float qx = 0, qy = 0, u = 0, v = 0;
+          
+          if (q == 0)      {qx = -1; qy = -1; u = minU; v = maxV;}
+          else if (q == 1) {qx = 1; qy = -1; u = maxU; v = maxV;}
+          else if (q == 2) {qx = 1; qy = 1; u = maxU; v = minV;}
+          else if (q == 3) {qx = -1; qy = 1; u = minU; v = minV;}    
+          
+          float a = qx * 0.5 * Solarch_scale_U * objects_scale;
+          float b = qy * 0.5 * Solarch_scale_V * objects_scale;    
+          
+          float x = 0, y = 0, z = 0;
+          
+          if (Solarch_Image_Section == 1) {
+            x = a * cos_ang(Solarch_Rotation) - b * sin_ang(Solarch_Rotation);
+            y = a * sin_ang(Solarch_Rotation) + b * cos_ang(Solarch_Rotation);
+            z = c;         
+          }
+          else if (Solarch_Image_Section == 2) {
+            x = a * cos_ang(Solarch_Rotation) - c * sin_ang(Solarch_Rotation);
+            y = -(a * sin_ang(Solarch_Rotation) + c * cos_ang(Solarch_Rotation));
+            z = b;       
+          }
+          else if (Solarch_Image_Section == 3) {
+            x = a * cos_ang(90 - Solarch_Rotation) - c * sin_ang(90 - Solarch_Rotation);
+            y = -(a * sin_ang(90 - Solarch_Rotation) + c * cos_ang(90 - Solarch_Rotation));
+            z = b;     
+          }      
+      
+          if (display_solarch_texture == 1) {
+            WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, u, v);
+          }
+          else {
+            WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D);
+          }     
+        }   
+      }  
+      
+      WIN3D_Diagrams.endShape(CLOSE);
+    }
   }
 }
 
@@ -19985,7 +19997,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
       float[][] subFace_Rotated = subFace;
 
       for (int s = 0; s < subFace_Rotated.length; s++) {
-        if (display_Solarch_Image == 2) {
+        if (Solarch_Image_Section == 2) {
           float a = subFace_Rotated[s][0];
           float b = -subFace_Rotated[s][1];
           float c = subFace_Rotated[s][2];
@@ -19994,7 +20006,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
           subFace_Rotated[s][1] = c;    
           subFace_Rotated[s][2] = a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);      
         }
-        else if (display_Solarch_Image == 3) {}
+        else if (Solarch_Image_Section == 3) {}
 
       }  
 
@@ -20008,7 +20020,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
 
         if (z >= 0) {
           
-          if (display_Solarch_Image == 1) {                    
+          if (Solarch_Image_Section == 1) {                    
             float px = x;
             float py = y;
           
@@ -20032,7 +20044,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
             float x_trim = x_prev * (1 - ratio) + x * ratio;
             float y_trim = y_prev * (1 - ratio) + y * ratio;
             
-            if (display_Solarch_Image == 1) {
+            if (Solarch_Image_Section == 1) {
               float px = x_trim;
               float py = y_trim;
             
@@ -20053,7 +20065,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
             float x_trim = x_next * (1 - ratio) + x * ratio;
             float y_trim = y_next * (1 - ratio) + y * ratio;
             
-            if (display_Solarch_Image == 1) {
+            if (Solarch_Image_Section == 1) {
               float px = x_trim;
               float py = y_trim;
             
@@ -20078,7 +20090,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
       float y0_Rotated = y0;
       float z0_Rotated = z0;
       
-      if (display_Solarch_Image == 2) {
+      if (Solarch_Image_Section == 2) {
         float a = x0;
         float b = -y0;
         float c = z0;
@@ -20087,7 +20099,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
         y0_Rotated = c;    
         z0_Rotated= a * sin_ang(-Solarch_Rotation) + b * cos_ang(-Solarch_Rotation);      
       }
-      else if (display_Solarch_Image == 3) {}
+      else if (Solarch_Image_Section == 3) {}
 
 
       float z = z0_Rotated - Solarch_Elevation;
@@ -20096,7 +20108,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
 
       if (z >= 0) {
         
-        if (display_Solarch_Image == 1) {                    
+        if (Solarch_Image_Section == 1) {                    
           float px = x;
           float py = y;
         
