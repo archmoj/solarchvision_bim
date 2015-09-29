@@ -1010,7 +1010,7 @@ int Display_URBAN = 1;
 int display_Field_Points = 1;
 int display_Field_Lines = 1;
 
-int display_MODEL3D_EDGES = 1; //0;
+int display_MODEL3D_EDGES = 0;
 
 
 int camera_variation = 0; // 1;
@@ -18648,115 +18648,6 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
             }
           }
-          
-          else {
-            int s_next = (s + 1) % subFace.length;
-            int s_prev = (s + subFace.length - 1) % subFace.length;         
-
-            float x_prev = subFace[s_prev][0] * objects_scale;
-            float y_prev = subFace[s_prev][1] * objects_scale;
-            float z_prev = -subFace[s_prev][2] * objects_scale;
-            {
-              float px, py, pz;
-      
-              x_prev -= CAM_x;
-              y_prev -= CAM_y;
-              z_prev += CAM_z;
-      
-              pz = z_prev;
-              px = x_prev * cos_ang(-WIN3D_RZ_coordinate) - y_prev * sin_ang(-WIN3D_RZ_coordinate);
-              py = x_prev * sin_ang(-WIN3D_RZ_coordinate) + y_prev * cos_ang(-WIN3D_RZ_coordinate);
-              
-              x_prev = px;
-              y_prev = py;
-              z_prev = pz;    
-              
-              px = x_prev;
-              py = y_prev * cos_ang(WIN3D_RX_coordinate) - z_prev * sin_ang(WIN3D_RX_coordinate);
-              pz = y_prev * sin_ang(WIN3D_RX_coordinate) + z_prev * cos_ang(WIN3D_RX_coordinate);
-              
-              x_prev = px;
-              y_prev = py;
-              z_prev = pz;
-            }        
-            
-            if (z_prev > 0) { 
-              float ratio = z_prev / (z_prev - z);
-              
-              float x_trim = x_prev * (1 - ratio) + x * ratio;
-              float y_trim = y_prev * (1 - ratio) + y * ratio;
-              float z_trim = z_prev * (1 - ratio) + z * ratio;
-              
-              if (WIN3D_View_Type == 1) {
-                
-                float Image_X = (x_trim / z_trim) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
-                float Image_Y = -(y_trim / z_trim) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
-                
-                if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
-              }
-              else {
-                
-                float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
-    
-                float Image_X = (x_trim / ZOOM) * (0.5 * WIN3D_scale3D);
-                float Image_Y = -(y_trim / ZOOM) * (0.5 * WIN3D_scale3D);         
-                
-                if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
-              }
-            }
-        
-            float x_next = subFace[s_next][0] * objects_scale;
-            float y_next = subFace[s_next][1] * objects_scale;
-            float z_next = -subFace[s_next][2] * objects_scale;
-            {
-              float px, py, pz;
-      
-              x_next -= CAM_x;
-              y_next -= CAM_y;
-              z_next += CAM_z;
-      
-              pz = z_next;
-              px = x_next * cos_ang(-WIN3D_RZ_coordinate) - y_next * sin_ang(-WIN3D_RZ_coordinate);
-              py = x_next * sin_ang(-WIN3D_RZ_coordinate) + y_next * cos_ang(-WIN3D_RZ_coordinate);
-              
-              x_next = px;
-              y_next = py;
-              z_next = pz;    
-              
-              px = x_next;
-              py = y_next * cos_ang(WIN3D_RX_coordinate) - z_next * sin_ang(WIN3D_RX_coordinate);
-              pz = y_next * sin_ang(WIN3D_RX_coordinate) + z_next * cos_ang(WIN3D_RX_coordinate);
-              
-              x_next = px;
-              y_next = py;
-              z_next = pz;
-            }        
-            
-            if (z_next > 0) { 
-              float ratio = z_next / (z_next - z);
-              
-              float x_trim = x_next * (1 - ratio) + x * ratio;
-              float y_trim = y_next * (1 - ratio) + y * ratio;
-              float z_trim = z_next * (1 - ratio) + z * ratio;
-              
-              if (WIN3D_View_Type == 1) {
-                
-                float Image_X = (x_trim / z_next) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
-                float Image_Y = -(y_trim / z_next) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
-                
-                if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
-              }
-              else {
-                
-                float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
-    
-                float Image_X = (x_trim / ZOOM) * (0.5 * WIN3D_scale3D);
-                float Image_Y = -(y_trim / ZOOM) * (0.5 * WIN3D_scale3D);         
-                
-                if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
-              }
-            }
-          }    
           
         }
         
