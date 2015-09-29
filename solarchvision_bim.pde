@@ -69,12 +69,18 @@ int LOAD_STATION = 0;
 int Load_Default_Models = 0; //3;//0; //3; //5;
 
 
-int addToLastObject = 1;
+int addToLastPolymesh = 1;
+
+int selectedPolymesh = 0;
+
+int[][] allPolymeshes = {{0,0}}; // start face - end face
 
 float[][] allVertices = {{0,0,0}};
 int[][] allFaces = {{0,0,0}};
 int[] allFaces_MAT = {0};
-int[][] allObjects = {{0,0}}; // start face - end face
+
+
+
 
 float[][] allObject2D_XYZS = {{0,0,0,0}};
 int[] allObject2D_MAP = {0};
@@ -2063,9 +2069,10 @@ void draw () {
         
         SOLARCHVISION_draw_WIN3D();
 
-        for (int i = 0; i < allObjects.length; i++) {
-          println("allObjects", i, allObjects[i][0], allObjects[i][1]);
+        for (int i = 0; i < allPolymeshes.length; i++) {
+          println("allPolymeshes", i, allPolymeshes[i][0], allPolymeshes[i][1]);
         }
+        println("selectedPolymesh:", selectedPolymesh);
 
       
       }
@@ -11067,11 +11074,24 @@ void WIN3D_keyPressed (KeyEvent e) {
   else if (e.isControlDown() == true) {
     if (key == CODED) { 
       switch(keyCode) {
+
+        
+        case 33: selectedPolymesh -= 1;
+                  if (selectedPolymesh < 0) selectedPolymesh = allPolymeshes.length - 1;
+                  WIN3D_Update = 1;
+                  break;  
+
+        case 34: selectedPolymesh += 1;
+                  if (selectedPolymesh > allPolymeshes.length - 1) selectedPolymesh = 0;
+                  WIN3D_Update = 1;
+                  break;          
         
         case LEFT  :WIN3D_X_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1; break;
         case RIGHT :WIN3D_X_coordinate -= WIN3D_S_coordinate; WIN3D_Update = 1; break; 
         case UP    :WIN3D_Y_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1; break;
         case DOWN  :WIN3D_Y_coordinate -= WIN3D_S_coordinate; WIN3D_Update = 1; break;
+        
+        
       }
     }
     else {
@@ -11098,6 +11118,10 @@ void WIN3D_keyPressed (KeyEvent e) {
           
         case '2' :Display_Trees_People = (Display_Trees_People + 1) % 2; WIN3D_Update = 1; break;
  
+
+
+          
+
  
         case ENTER :RenderShadowsOnUrbanPlane(); display_Solarch_Image = 1; break;
       }
@@ -11204,7 +11228,6 @@ void WIN3D_keyPressed (KeyEvent e) {
           
         case ' ': SOLARCHVISION_RecordFrame();
                   break;              
-          
 
 
 
@@ -11913,11 +11936,11 @@ int addToFaces (int[] f) {
   
   allFaces = (int[][]) concat(allFaces, newFace);
   
-  if (addToLastObject == 0) {
+  if (addToLastPolymesh == 0) {
     beginNewObject();
   }
   else {
-    allObjects[allObjects.length - 1][1] = allFaces.length - 1;    
+    allPolymeshes[allPolymeshes.length - 1][1] = allFaces.length - 1;    
   }
 
   return(allFaces.length - 1);
@@ -11925,14 +11948,14 @@ int addToFaces (int[] f) {
 
 int beginNewObject () {
   
-  if (addToLastObject == 0) { 
+  if (addToLastPolymesh == 0) { 
   
     int[][] newObject = {{allFaces.length, 0}}; // at first it is null because start > end   
     
-    allObjects = (int[][]) concat(allObjects, newObject);
+    allPolymeshes = (int[][]) concat(allPolymeshes, newObject);
   }
 
-  return(allObjects.length - 1);
+  return(allPolymeshes.length - 1);
 }
 
 
@@ -13015,8 +13038,14 @@ void SOLARCHVISION_remove_3Dobjects () {
   
   allFaces_MAT = new int [1];
   allFaces_MAT[0] = 0;
+  
+  allPolymeshes = new int [1][2];
+  allPolymeshes[0][0] = 0;
+  allPolymeshes[0][1] = 0;
 
-  addToLastObject = 0; beginNewObject(); addToLastObject = 1; // <<<<<<<<<<<<<<<
+  addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
+ 
+  selectedPolymesh = 0; 
  
   urbanVertices_start = 0;
   urbanVertices_end = 0;
@@ -13082,25 +13111,31 @@ void SOLARCHVISION_add_DefaultModel (int n) {
 
   
   //if (n != 0) {
+    addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
     SOLARCHVISION_add_Mesh2(8, -100, -100, 0, 100, 100, 0);
   //}
   
   if (n == 1) {
+    addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
     SOLARCHVISION_add_House_Core(0, 0, 0, 0, 6, 6, 6, 6, 90);
   }
   
   if (n == 2) {
+    addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
     SOLARCHVISION_add_House_Core(0, 0, 0, 0, 6, 6, 6, 6, 0);
   }  
   
   if (n == 3) {
-    
+    addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
     SOLARCHVISION_add_PolygonHyper(0, 0, 0, 5,  10, 10, 4, 0);
+    
+    addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
     SOLARCHVISION_add_House_Core(7, 25, 25, 0, 6, 6, 6, 6, 0);    
   }   
 
   if (n == 4) {
     for (int i = 0; i < int(10 + random(10)); i++) {
+      addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
       SOLARCHVISION_add_House_Core(0, random(-80, 80), random(-80, 80), 0, random(5, 10), random(5, 10), random(5, 10), random(2.5, 7.5), random(360));
     }
   }    
@@ -13181,6 +13216,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
 
   if (n == 6) {
     {
+      addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
       float x = 0;
       float y = 0;
       float z = 0;
@@ -13191,6 +13227,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
     }
   
     {
+      addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
       float x = 30;
       float y = 0;
       float z = 0;
@@ -13201,6 +13238,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
     }
   
     {
+      addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
       float x = 0;
       float y = 20;
       float z = 0;
@@ -13212,7 +13250,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
   }
  
   if (n == 7) {
-   SOLARCHVISION_add_ParametricGeometries();
+    SOLARCHVISION_add_ParametricGeometries();
   }      
 
  
@@ -15130,6 +15168,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
 
 /*
   {
+    addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
     float x = 0;
     float y = 0;
     float z = -0.5;
@@ -15144,6 +15183,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
 */
 
   {
+    addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
     float x = 0;
     float y = 0;
     float z = 10;
@@ -15155,6 +15195,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
   }  
 
   {
+    addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
     float x = 40;
     float y = 0;
     float z = 0;
@@ -15168,6 +15209,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
   }
 
   {
+    addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
     float x = 0;
     float y = 40;
     float z = 0;
@@ -15183,6 +15225,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
 
 
   {
+    addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
     float x = -30;
     float y = -30;
     float z = 0;
@@ -15199,7 +15242,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
   }  
 
   {
-
+    addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
     float x = -30;
     float y = 30;
     float z = 0;
@@ -16932,8 +16975,6 @@ void mouseClicked () {
     if (WIN3D_include == 1) {
       if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
   
-      
-      
         float Image_X = 0;
         float Image_Y = 0;
 
@@ -16995,6 +17036,8 @@ void mouseClicked () {
           if (rz < 0) rz = random(0.25 * abs(rz), abs(rz));
 
           if (mouseButton == RIGHT) {
+
+            addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1; 
             
             if (Create_Soild_House == 1) {
               Create_Input_powAll = 16;
@@ -17152,6 +17195,8 @@ void mouseClicked () {
           }
           
           if (mouseButton == LEFT) {
+            
+            addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1; 
 
             if (Create_Input_Align == 1) {
               z += rz;
@@ -18597,7 +18642,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
 
 void SOLARCHVISION_draw_Perspective_Internally () {
 
-  if (display_MODEL3D_EDGES != 0) {
+  //if (display_MODEL3D_EDGES != 0) {
     
     pushMatrix();
   
@@ -18609,91 +18654,94 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     stroke(127); strokeWeight(2);
     //stroke(0); strokeWeight(0.5);
   
-    for (int f = 1; f < allFaces.length; f++) {
+    //for (int f = 1; f < allFaces.length; f++) {
+    for (int f = allPolymeshes[selectedPolymesh][0]; f <= allPolymeshes[selectedPolymesh][1]; f++) {
+      if ((0 < f) && (f < allFaces.length)) { 
   
-      int Teselation = 0;
+        int Teselation = 0;
+        
+        int TotalSubNo = 1;  
+        if (allFaces_MAT[f] == 0) {
+          Teselation = MODEL3D_TESELATION;
+          if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+        }
+    
+        for (int n = 0; n < TotalSubNo; n++) {
+          
+          float[][] base_Vertices = new float [allFaces[f].length][3];
+          for (int j = 0; j < allFaces[f].length; j++) {
+            int vNo = allFaces[f][j];
+            base_Vertices[j][0] = allVertices[vNo][0];
+            base_Vertices[j][1] = allVertices[vNo][1];
+            base_Vertices[j][2] = allVertices[vNo][2];
+          }
+          
+          float[][] subFace = getSubFace(base_Vertices, Teselation, n);
+       
+          beginShape();
+          
+          for (int s = 0; s < subFace.length; s++) {
+            
+            float x = subFace[s][0] * objects_scale;
+            float y = subFace[s][1] * objects_scale;
+            float z = -subFace[s][2] * objects_scale;
+            {
+              float px, py, pz;
       
-      int TotalSubNo = 1;  
-      if (allFaces_MAT[f] == 0) {
-        Teselation = MODEL3D_TESELATION;
-        if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
-      }
-  
-      for (int n = 0; n < TotalSubNo; n++) {
-        
-        float[][] base_Vertices = new float [allFaces[f].length][3];
-        for (int j = 0; j < allFaces[f].length; j++) {
-          int vNo = allFaces[f][j];
-          base_Vertices[j][0] = allVertices[vNo][0];
-          base_Vertices[j][1] = allVertices[vNo][1];
-          base_Vertices[j][2] = allVertices[vNo][2];
-        }
-        
-        float[][] subFace = getSubFace(base_Vertices, Teselation, n);
-     
-        beginShape();
-        
-        for (int s = 0; s < subFace.length; s++) {
-          
-          float x = subFace[s][0] * objects_scale;
-          float y = subFace[s][1] * objects_scale;
-          float z = -subFace[s][2] * objects_scale;
-          {
-            float px, py, pz;
+              x -= CAM_x;
+              y -= CAM_y;
+              z += CAM_z;
+      
+              pz = z;
+              px = x * cos_ang(-WIN3D_RZ_coordinate) - y * sin_ang(-WIN3D_RZ_coordinate);
+              py = x * sin_ang(-WIN3D_RZ_coordinate) + y * cos_ang(-WIN3D_RZ_coordinate);
+              
+              x = px;
+              y = py;
+              z = pz;    
+              
+              px = x;
+              py = y * cos_ang(WIN3D_RX_coordinate) - z * sin_ang(WIN3D_RX_coordinate);
+              pz = y * sin_ang(WIN3D_RX_coordinate) + z * cos_ang(WIN3D_RX_coordinate);
+              
+              x = px;
+              y = py;
+              z = pz;
+            }
+            
     
-            x -= CAM_x;
-            y -= CAM_y;
-            z += CAM_z;
+            
+            if (z > 0) {
+              
+              if (WIN3D_View_Type == 1) {
+                
+                float Image_X = (x / z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
+                float Image_Y = -(y / z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
+                
+                if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
+              }
+              else {
+                
+                float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
     
-            pz = z;
-            px = x * cos_ang(-WIN3D_RZ_coordinate) - y * sin_ang(-WIN3D_RZ_coordinate);
-            py = x * sin_ang(-WIN3D_RZ_coordinate) + y * cos_ang(-WIN3D_RZ_coordinate);
+                float Image_X = (x / ZOOM) * (0.5 * WIN3D_scale3D);
+                float Image_Y = -(y / ZOOM) * (0.5 * WIN3D_scale3D);         
+                
+                if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
+              }
+            }
             
-            x = px;
-            y = py;
-            z = pz;    
-            
-            px = x;
-            py = y * cos_ang(WIN3D_RX_coordinate) - z * sin_ang(WIN3D_RX_coordinate);
-            pz = y * sin_ang(WIN3D_RX_coordinate) + z * cos_ang(WIN3D_RX_coordinate);
-            
-            x = px;
-            y = py;
-            z = pz;
           }
           
-  
-          
-          if (z > 0) {
-            
-            if (WIN3D_View_Type == 1) {
-              
-              float Image_X = (x / z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
-              float Image_Y = -(y / z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
-              
-              if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
-            }
-            else {
-              
-              float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
-  
-              float Image_X = (x / ZOOM) * (0.5 * WIN3D_scale3D);
-              float Image_Y = -(y / ZOOM) * (0.5 * WIN3D_scale3D);         
-              
-              if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
-            }
-          }
-          
+          endShape(CLOSE);
         }
-        
-        endShape(CLOSE);
       }
     }
     
     strokeWeight(0);   
   
     popMatrix();
-  }
+  //}
 }
 
 
