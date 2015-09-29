@@ -147,6 +147,8 @@ float Create_Recursive_Plant_trunckSize = 1; //0.5;
 float Create_Recursive_Plant_leafSize = 1; //1; 
 
 
+int Create_Select_Modify = 1;
+
 int Display_SWOB_points = 1; // 0-2
 int Display_SWOB_nearest = 1;
 
@@ -1081,6 +1083,8 @@ int pre_display_Field_Lines;
 
 int pre_display_MODEL3D_EDGES;
 
+int pre_selectedPolymesh;
+
       
 int pre_Load_Default_Models;
 
@@ -1830,6 +1834,8 @@ void draw () {
         pre_display_Field_Lines = display_Field_Lines;
         
         pre_display_MODEL3D_EDGES = display_MODEL3D_EDGES;
+        
+        pre_selectedPolymesh = selectedPolymesh;
       
         pre_Load_Default_Models = Load_Default_Models;
 
@@ -1913,6 +1919,10 @@ void draw () {
         if (pre_Load_URBAN != Load_URBAN) {
           SOLARCHVISION_add_urban();
           
+          WIN3D_Update = 1;
+        }
+        
+        if (pre_selectedPolymesh != selectedPolymesh) {
           WIN3D_Update = 1;
         }
         
@@ -2068,12 +2078,13 @@ void draw () {
       if (WIN3D_Update == 1) {
         
         SOLARCHVISION_draw_WIN3D();
-
+        
+        /*
         for (int i = 0; i < allPolymeshes.length; i++) {
           println("allPolymeshes", i, allPolymeshes[i][0], allPolymeshes[i][1]);
         }
         println("selectedPolymesh:", selectedPolymesh);
-
+        */
       
       }
     }
@@ -17018,232 +17029,287 @@ void mouseClicked () {
         println(ray_start[0], ray_start[1], ray_start[2], ">>", ray_end[0], ray_end[1], ray_end[2], ">>", RxP[0], RxP[1], RxP[2]);
         
         if (RxP[4] > 0) {
-          
-          float x = RxP[0]; 
-          float y = RxP[1]; 
-          float z = RxP[2];                      
 
-          float rot = Create_Input_Orientation;
-          if (rot == 360) rot = 15 * (int(random(24)));
+          if (Create_Select_Modify == 2) {
 
-          float rx = 0.5 * Create_Input_Length;
-          if (rx < 0) rx = random(0.25 * abs(rx), abs(rx));
-
-          float ry = 0.5 * Create_Input_Width;
-          if (ry < 0) ry = random(0.25 * abs(ry), abs(ry));
-
-          float rz = 0.5 * Create_Input_Height;
-          if (rz < 0) rz = random(0.25 * abs(rz), abs(rz));
-
-          if (mouseButton == RIGHT) {
-
-            addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1; 
+            int[] PolymeshVetices = {0};
             
-            if (Create_Soild_House == 1) {
-              Create_Input_powAll = 16;
-              Create_Input_powX = 16;
-              Create_Input_powY = 16;
-              Create_Input_powZ = 16;
-              
-              
-              
-              ROLLOUT_Update = 1;
-            }
-            
-            
-            float px = Create_Input_powX; 
-            float py = Create_Input_powY;
-            float pz = Create_Input_powZ;
-            
-            if (Create_Input_powRnd == 1) {
-              px = pow(2, int(random(5)) - 1);
-              py = px;
-              pz = px;
-            }
-              
-            if (Create_Input_Volume != 0) {
-                        
-              if ((rx != 0) && (ry != 0)) {
-                rz = Create_Input_Volume / (8 * rx * ry);
+            for (int f = allPolymeshes[selectedPolymesh][0]; f <= allPolymeshes[selectedPolymesh][1]; f++) {
+              if ((0 < f) && (f < allFaces.length)) { 
+                for (int j = 0; j < allFaces[f].length; j++) {
+                  int vNo = allFaces[f][j];
+                  
+                  int vertex_listed = 0;
+                  
+                  for (int i = 1; i < PolymeshVetices.length; i++) {
+                    if (vNo == PolymeshVetices[i]) {
+                      vertex_listed = 1;
+                      break;                      
+                    }
+                  }         
+                 
+                  if (vertex_listed == 0) {
+                    int[] newVertexListed = {vNo};
+                    PolymeshVetices = concat(PolymeshVetices, newVertexListed);  
+                  } 
+                }
               }
-              
-              //---------------------------------------------------
-              float A = 1; 
-              // cube volume: 8*r^3, sphere volume: 4*r^3, so maybe:
-              if (pz == 8) A = 1;
-              else if (pz == 4) A = 0.75;
-              else if (pz == 2) A = 0.5;
-              else if (pz == 1) A = 0.25;
-              else if (pz == 0.5) A = 0.125;
-              else if (pz == 0.25) A = 0.0625;
-              
-              rx /= pow(A, (1.0 / 3.0));
-              ry /= pow(A, (1.0 / 3.0));
-              rz /= pow(A, (1.0 / 3.0));
-              //---------------------------------------------------
             }
             
-            if (Create_Input_Align == 1) {
-              z += rz;
-            }
-            
-            int SOLID_created = 0;
-            
-            
-
-            if ((px == 8) && (py == 8) && (pz == 2)) {
-              SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, 2, rot);
-
-              ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
-              SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
+            for (int i = 1; i < PolymeshVetices.length; i++) {
               
-              SOLID_created = 1;
-            }
-
-            if ((px == 8) && (py == 8) && (pz == 8)) {
-              SOLARCHVISION_add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, rot);
-
-              ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
-              SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
+              int n = PolymeshVetices[i];
               
-              SOLID_created = 1;
+              float x = allVertices[n][0]; 
+              float y = allVertices[n][1]; 
+              float z = allVertices[n][2];
+             
+              allVertices[n][0] = x * cos_ang(15) - y * sin_ang(15); 
+              allVertices[n][1] = x * sin_ang(15) + y * cos_ang(15);
+              allVertices[n][2] = z;
             }
             
-            if (((px == 1) && (py == 1) && (pz == 1)) || (Create_Soild_House == 1)) {
+          }            
+          if (Create_Select_Modify == 1) {
+            
+            int f = int(RxP[4]);
+            
+            for (int i = 0; i < allPolymeshes.length; i++) {
+              if ((allPolymeshes[i][0] <= f) && (f <= allPolymeshes[i][1])) {
+                selectedPolymesh = i;
+                WIN3D_Update = 1;
+              }
+            }
+          }            
+          if (Create_Select_Modify == 0) {
+
+            float x = RxP[0]; 
+            float y = RxP[1]; 
+            float z = RxP[2];             
+            
+            float rot = Create_Input_Orientation;
+            if (rot == 360) rot = 15 * (int(random(24)));
+  
+            float rx = 0.5 * Create_Input_Length;
+            if (rx < 0) rx = random(0.25 * abs(rx), abs(rx));
+  
+            float ry = 0.5 * Create_Input_Width;
+            if (ry < 0) ry = random(0.25 * abs(ry), abs(ry));
+  
+            float rz = 0.5 * Create_Input_Height;
+            if (rz < 0) rz = random(0.25 * abs(rz), abs(rz));
+  
+            if (mouseButton == RIGHT) {
+              
+              addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1; 
+              
               if (Create_Soild_House == 1) {
+                Create_Input_powAll = 16;
+                Create_Input_powX = 16;
+                Create_Input_powY = 16;
+                Create_Input_powZ = 16;
+                
+                
+                
+                ROLLOUT_Update = 1;
+              }
+              
+              
+              float px = Create_Input_powX; 
+              float py = Create_Input_powY;
+              float pz = Create_Input_powZ;
+              
+              if (Create_Input_powRnd == 1) {
+                px = pow(2, int(random(5)) - 1);
+                py = px;
+                pz = px;
+              }
+                
+              if (Create_Input_Volume != 0) {
+                          
+                if ((rx != 0) && (ry != 0)) {
+                  rz = Create_Input_Volume / (8 * rx * ry);
+                }
+                
+                //---------------------------------------------------
+                float A = 1; 
+                // cube volume: 8*r^3, sphere volume: 4*r^3, so maybe:
+                if (pz == 8) A = 1;
+                else if (pz == 4) A = 0.75;
+                else if (pz == 2) A = 0.5;
+                else if (pz == 1) A = 0.25;
+                else if (pz == 0.5) A = 0.125;
+                else if (pz == 0.25) A = 0.0625;
+                
+                rx /= pow(A, (1.0 / 3.0));
+                ry /= pow(A, (1.0 / 3.0));
+                rz /= pow(A, (1.0 / 3.0));
+                //---------------------------------------------------
+              }
+              
+              if (Create_Input_Align == 1) {
                 z += rz;
-                
-                if (rx == ry) rot -= 45;
-                
-                px = 1;
-                py = 1;
-                pz = 1;
-              }
-                              
-              float[] X_ = new float [6];
-              float[] Y_ = new float [6];
-              float[] Z_ = new float [6];
-
-              float q = pow(2, 0.5);
-
-              X_[0] = 0;
-              Y_[0] = 0;
-              Z_[0] = q;
-
-              X_[1] = q;
-              Y_[1] = 0;
-              Z_[1] = 0;
-
-              X_[2] = 0;
-              Y_[2] = q;
-              Z_[2] = 0;
-
-              X_[3] = -q;
-              Y_[3] = 0;
-              Z_[3] = 0;
-
-              X_[4] = 0;
-              Y_[4] = -q;
-              Z_[4] = 0;
-
-              X_[5] = 0;
-              Y_[5] = 0;
-              Z_[5] = -q;
-              
-              for (int i = 0; i < 6; i += 1) {
-                X_[i] *= rx;
-                Y_[i] *= ry;
-                Z_[i] *= rz;
-
-                float X_r = X_[i] * cos_ang(rot) - Y_[i] * sin_ang(rot);
-                float Y_r = X_[i] * sin_ang(rot) + Y_[i] * cos_ang(rot);
-                float Z_r = Z_[i];
-                
-                X_[i] = X_r + x;
-                Y_[i] = Y_r + y;
-                Z_[i] = Z_r + z;
               }
               
-              SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[1], Y_[1], Z_[1], X_[2], Y_[2], Z_[2], X_[0], Y_[0], Z_[0]);
-              SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[2], Y_[2], Z_[2], X_[3], Y_[3], Z_[3], X_[0], Y_[0], Z_[0]);
-              SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[3], Y_[3], Z_[3], X_[4], Y_[4], Z_[4], X_[0], Y_[0], Z_[0]);
-              SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[4], Y_[4], Z_[4], X_[1], Y_[1], Z_[1], X_[0], Y_[0], Z_[0]);                
-            
-              if (Create_Soild_House != 1) {
-                SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[1], Y_[1], Z_[1], X_[5], Y_[5], Z_[5], X_[2], Y_[2], Z_[2]);
-                SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[2], Y_[2], Z_[2], X_[5], Y_[5], Z_[5], X_[3], Y_[3], Z_[3]);
-                SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[3], Y_[3], Z_[3], X_[5], Y_[5], Z_[5], X_[4], Y_[4], Z_[4]);
-                SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[4], Y_[4], Z_[4], X_[5], Y_[5], Z_[5], X_[1], Y_[1], Z_[1]);
-              }
-
-              ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
-              SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
+              int SOLID_created = 0;
               
-              SOLID_created = 1;
+              
+  
+              if ((px == 8) && (py == 8) && (pz == 2)) {
+                SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, 2, rot);
+  
+                ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
+                SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
+                
+                SOLID_created = 1;
+              }
+  
+              if ((px == 8) && (py == 8) && (pz == 8)) {
+                SOLARCHVISION_add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, rot);
+  
+                ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
+                SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
+                
+                SOLID_created = 1;
+              }
+              
+              if (((px == 1) && (py == 1) && (pz == 1)) || (Create_Soild_House == 1)) {
+                if (Create_Soild_House == 1) {
+                  z += rz;
+                  
+                  if (rx == ry) rot -= 45;
+                  
+                  px = 1;
+                  py = 1;
+                  pz = 1;
+                }
+                                
+                float[] X_ = new float [6];
+                float[] Y_ = new float [6];
+                float[] Z_ = new float [6];
+  
+                float q = pow(2, 0.5);
+  
+                X_[0] = 0;
+                Y_[0] = 0;
+                Z_[0] = q;
+  
+                X_[1] = q;
+                Y_[1] = 0;
+                Z_[1] = 0;
+  
+                X_[2] = 0;
+                Y_[2] = q;
+                Z_[2] = 0;
+  
+                X_[3] = -q;
+                Y_[3] = 0;
+                Z_[3] = 0;
+  
+                X_[4] = 0;
+                Y_[4] = -q;
+                Z_[4] = 0;
+  
+                X_[5] = 0;
+                Y_[5] = 0;
+                Z_[5] = -q;
+                
+                for (int i = 0; i < 6; i += 1) {
+                  X_[i] *= rx;
+                  Y_[i] *= ry;
+                  Z_[i] *= rz;
+  
+                  float X_r = X_[i] * cos_ang(rot) - Y_[i] * sin_ang(rot);
+                  float Y_r = X_[i] * sin_ang(rot) + Y_[i] * cos_ang(rot);
+                  float Z_r = Z_[i];
+                  
+                  X_[i] = X_r + x;
+                  Y_[i] = Y_r + y;
+                  Z_[i] = Z_r + z;
+                }
+                
+                SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[1], Y_[1], Z_[1], X_[2], Y_[2], Z_[2], X_[0], Y_[0], Z_[0]);
+                SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[2], Y_[2], Z_[2], X_[3], Y_[3], Z_[3], X_[0], Y_[0], Z_[0]);
+                SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[3], Y_[3], Z_[3], X_[4], Y_[4], Z_[4], X_[0], Y_[0], Z_[0]);
+                SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[4], Y_[4], Z_[4], X_[1], Y_[1], Z_[1], X_[0], Y_[0], Z_[0]);                
+              
+                if (Create_Soild_House != 1) {
+                  SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[1], Y_[1], Z_[1], X_[5], Y_[5], Z_[5], X_[2], Y_[2], Z_[2]);
+                  SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[2], Y_[2], Z_[2], X_[5], Y_[5], Z_[5], X_[3], Y_[3], Z_[3]);
+                  SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[3], Y_[3], Z_[3], X_[5], Y_[5], Z_[5], X_[4], Y_[4], Z_[4]);
+                  SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[4], Y_[4], Z_[4], X_[5], Y_[5], Z_[5], X_[1], Y_[1], Z_[1]);
+                }
+  
+                ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
+                SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
+                
+                SOLID_created = 1;
+              }
+              
+              if (SOLID_created == 0) {
+                SOLARCHVISION_add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, SolidSurface_TESELATION, rot);
+  
+                ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
+                SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
+                
+                SOLID_created = 1;
+              }
+              
+              SOLARCHVISION_calculate_ParametricGeometries_Field();  
             }
             
-            if (SOLID_created == 0) {
-              SOLARCHVISION_add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, SolidSurface_TESELATION, rot);
-
-              ParametricGeometry[] newSolidObject = {new ParametricGeometry(1, x,y,z, px,py,pz, rx,ry,rz, rot)};
-              SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);
+            if (mouseButton == LEFT) {
               
-              SOLID_created = 1;
+              addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1; 
+  
+              if (Create_Input_Align == 1) {
+                z += rz;
+              }
+              
+              if (Create_Mesh_Tri == 1) {
+                SOLARCHVISION_add_Mesh3(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
+                SOLARCHVISION_add_Mesh3(Create_Default_Material, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
+                SOLARCHVISION_add_Mesh3(Create_Default_Material, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
+                SOLARCHVISION_add_Mesh3(Create_Default_Material, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
+              }
+              
+              if (Create_Mesh_Quad == 1) {
+                SOLARCHVISION_add_Mesh4(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
+              }
+              
+              if (Create_Mesh_Poly == 1) {
+                SOLARCHVISION_add_PolygonHyper(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
+              }
+  
+              if (Create_Mesh_Extrude == 1) {              
+                SOLARCHVISION_add_PolygonExtrude(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
+              }
+  
+              if (Create_Mesh_House == 1) {              
+                SOLARCHVISION_add_House_Core(Create_Default_Material, x, y, z, rx, ry, rz, ry, rot);
+              }
+  
+              if (Create_Mesh_Parametric != 0) {
+                SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, Create_Mesh_Parametric, rot);
+              }
+  
+              if (Create_Mesh_Person != 0) {
+                SOLARCHVISION_add_Object2D("PEOPLE", Create_Mesh_Person_Type, x, y, z, 2.5);
+              }
+              
+              if (Create_Mesh_Plant != 0) {
+                int n = 0;
+                if (Create_Mesh_Plant_Type > 0) n = Create_Mesh_Plant_Type + Object2D_Filenames_PEOPLE.length;              
+                SOLARCHVISION_add_Object2D("TREES", n, x, y, z, 2 * rz);
+              }        
+  
+              if (Create_Recursive_Plant != 0) {
+                float as_Solid = 1;
+                SOLARCHVISION_add_RecursivePlant(Create_Recursive_Plant_Type, x, y, z, 2 * rz, Create_Recursive_Plant_DegreeMin, Create_Recursive_Plant_DegreeMax, Create_Recursive_Plant_Seed, Create_Recursive_Plant_trunckSize, Create_Recursive_Plant_leafSize, as_Solid);
+              }    
+  
             }
-            
-            SOLARCHVISION_calculate_ParametricGeometries_Field();  
-          }
           
-          if (mouseButton == LEFT) {
-            
-            addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1; 
-
-            if (Create_Input_Align == 1) {
-              z += rz;
-            }
-            
-            if (Create_Mesh_Tri == 1) {
-              SOLARCHVISION_add_Mesh3(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
-              SOLARCHVISION_add_Mesh3(Create_Default_Material, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
-              SOLARCHVISION_add_Mesh3(Create_Default_Material, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
-              SOLARCHVISION_add_Mesh3(Create_Default_Material, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
-            }
-            
-            if (Create_Mesh_Quad == 1) {
-              SOLARCHVISION_add_Mesh4(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
-            }
-            
-            if (Create_Mesh_Poly == 1) {
-              SOLARCHVISION_add_PolygonHyper(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
-            }
-
-            if (Create_Mesh_Extrude == 1) {              
-              SOLARCHVISION_add_PolygonExtrude(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
-            }
-
-            if (Create_Mesh_House == 1) {              
-              SOLARCHVISION_add_House_Core(Create_Default_Material, x, y, z, rx, ry, rz, ry, rot);
-            }
-
-            if (Create_Mesh_Parametric != 0) {
-              SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, Create_Mesh_Parametric, rot);
-            }
-
-            if (Create_Mesh_Person != 0) {
-              SOLARCHVISION_add_Object2D("PEOPLE", Create_Mesh_Person_Type, x, y, z, 2.5);
-            }
-            
-            if (Create_Mesh_Plant != 0) {
-              int n = 0;
-              if (Create_Mesh_Plant_Type > 0) n = Create_Mesh_Plant_Type + Object2D_Filenames_PEOPLE.length;              
-              SOLARCHVISION_add_Object2D("TREES", n, x, y, z, 2 * rz);
-            }        
-
-            if (Create_Recursive_Plant != 0) {
-              float as_Solid = 1;
-              SOLARCHVISION_add_RecursivePlant(Create_Recursive_Plant_Type, x, y, z, 2 * rz, Create_Recursive_Plant_DegreeMin, Create_Recursive_Plant_DegreeMax, Create_Recursive_Plant_Seed, Create_Recursive_Plant_trunckSize, Create_Recursive_Plant_leafSize, as_Solid);
-            }    
-
           }
           
         }          
@@ -17627,7 +17693,11 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
   }
   else if (ROLLOUT_parent == 1) { // Geometries & Space
+  
+  
+    Create_Select_Modify = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Select_Modify" , Create_Select_Modify, 0, 2, 1), 1));
 
+    selectedPolymesh = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh" , selectedPolymesh, 0, allPolymeshes.length - 1, 1), 1));
     
     Create_Default_Material = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Default_Material" , Create_Default_Material, -1, 8, 1), 1));
 
