@@ -9200,6 +9200,15 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   //float _valuesMUL = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / (1.0 * _valuesNUM);  
                   //float _valuesMUL = int(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE)) / (1.0 * _valuesNUM);
                   float _valuesMUL = roundTo(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE), 1) / (1.0 * _valuesNUM);
+
+                  int GRAPHS_i_number = 0;
+                  for (int i = 0; i < 24; i += 1) {
+                    if (isInHourlyRange(i) == 1) {
+                      
+                      GRAPHS_i_number += 1;
+                    }
+                  }                
+                  _valuesMUL *= float(GRAPHS_i_number) / 24.0;
                                      
                   _valuesSUM_RAD *= _valuesMUL;
                   _valuesSUM_EFF_P *= _valuesMUL;
@@ -14199,7 +14208,7 @@ void SOLARCHVISION_draw_3Dobjects () {
               
         
                   for (int i = 0; i < 24; i += 1) {
-                  //for (int i = 6; i <= 18; i += 3) { // for a quick result! 
+                  
                     if (isInHourlyRange(i) == 1) {
                   
                       float HOUR_ANGLE = i; 
@@ -14335,7 +14344,17 @@ void SOLARCHVISION_draw_3Dobjects () {
                 }
               }    
               if (_valuesNUM != 0) {
-                 float _valuesMUL = 1.0 / float(GRAPHS_j_end - GRAPHS_j_start);
+                
+                float _valuesMUL = 1.0 / float(GRAPHS_j_end - GRAPHS_j_start);                
+                
+                int GRAPHS_i_number = 0;
+                for (int i = 0; i < 24; i += 1) {
+                  if (isInHourlyRange(i) == 1) {
+                    
+                    GRAPHS_i_number += 1;
+                  }
+                }                
+                _valuesMUL *= float(GRAPHS_i_number) / 24.0;
                                    
                 _valuesSUM_RAD *= _valuesMUL;
                 _valuesSUM_EFF_P *= _valuesMUL;
@@ -16721,6 +16740,16 @@ void SolarProjection () {
               //float _valuesMUL = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / (1.0 * _valuesNUM);  
               //float _valuesMUL = int(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE)) / (1.0 * _valuesNUM);
               float _valuesMUL = roundTo(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE), 1) / (1.0 * _valuesNUM);
+
+              int GRAPHS_i_number = 0;
+              for (int i = 0; i < 24; i += 1) {
+                if (isInHourlyRange(i) == 1) {
+                  
+                  GRAPHS_i_number += 1;
+                }
+              }                
+              _valuesMUL *= float(GRAPHS_i_number) / 24.0;
+
                                  
               _valuesSUM_RAD *= _valuesMUL;
               _valuesSUM_EFF_P *= _valuesMUL;
