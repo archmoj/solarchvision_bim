@@ -69,9 +69,12 @@ int LOAD_STATION = 0;
 int Load_Default_Models = 0; //3;//0; //3; //5;
 
 
+int addToLastObject = 1;
+
 float[][] allVertices = {{0,0,0}};
 int[][] allFaces = {{0,0,0}};
 int[] allFaces_MAT = {0};
+int[][] allObjects = {{0,0}}; // start face - end face
 
 float[][] allObject2D_XYZS = {{0,0,0,0}};
 int[] allObject2D_MAP = {0};
@@ -149,10 +152,11 @@ int Display_CWEEDS_nearest = 1;
 
 int FRAME_record_JPG = 0;
 
+int Field_record_PDF = 0;
+int Field_record_JPG = 0;
 
-int FIELD_record_JPG = 0; // inactive
-int ANALYSIS_record_JPG = 0; // inactive 
-int ANALYSIS_record_PNG = 0; // inactive
+int Solarch_record_JPG = 0;  
+
 int Export_3Dmodel = 0; // inactive
 int Export_solids = 0; // inactive
 int Export_meshing = 0; // inactive
@@ -2058,6 +2062,11 @@ void draw () {
       if (WIN3D_Update == 1) {
         
         SOLARCHVISION_draw_WIN3D();
+
+        for (int i = 0; i < allObjects.length; i++) {
+          println("allObjects", i, allObjects[i][0], allObjects[i][1]);
+        }
+
       
       }
     }
@@ -2071,6 +2080,8 @@ void draw () {
 
     //noLoop(); // <<<<<<<<<<<<
   }
+
+
 } 
 
 float refScale = 250;
@@ -8839,7 +8850,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         if (camera_variation == 0) {
 
           Solarch_Image = total_Image_RGBA;  // <<<<<<<<<<<<<<<<
-          total_Image_RGBA.save("/Output/Solarch.jpg");
+          
+          if (Solarch_record_JPG == 1) total_Image_RGBA.save(get_Field_Filename() + "_solar_" + nf(Impact_TYPE, 1) +".jpg");
+          
           
           if (Impact_TYPE == Impact_ACTIVE) {
             OBJECTS_Pallet_ACTIVE = GRAPHS_Pallet_ACTIVE;
@@ -11896,12 +11909,30 @@ int addToFaces (int[] f) {
   
   allFaces_MAT = concat(allFaces_MAT, newFace_MAT);
   
-  
   int[][] newFace = {f}; 
   
   allFaces = (int[][]) concat(allFaces, newFace);
+  
+  if (addToLastObject == 0) {
+    beginNewObject();
+  }
+  else {
+    allObjects[allObjects.length - 1][1] = allFaces.length - 1;    
+  }
 
   return(allFaces.length - 1);
+}
+
+int beginNewObject () {
+  
+  if (addToLastObject == 0) { 
+  
+    int[][] newObject = {{allFaces.length, 0}}; // at first it is null because start > end   
+    
+    allObjects = (int[][]) concat(allObjects, newObject);
+  }
+
+  return(allObjects.length - 1);
 }
 
 
@@ -12984,6 +13015,8 @@ void SOLARCHVISION_remove_3Dobjects () {
   
   allFaces_MAT = new int [1];
   allFaces_MAT[0] = 0;
+
+  addToLastObject = 0; beginNewObject(); addToLastObject = 1; // <<<<<<<<<<<<<<<
  
   urbanVertices_start = 0;
   urbanVertices_end = 0;
@@ -12992,6 +13025,8 @@ void SOLARCHVISION_remove_3Dobjects () {
   
   WIN3D_FACES_SHADE = 2;
   WIN3D_update_VerticesSolarValue = 1;  
+  
+  
  
 }
 
@@ -15634,13 +15669,13 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
  
   Field_Image.updatePixels();
   
-  Field_Image.save(get_Field_Filename() + ".jpg");
+  if (Field_record_JPG == 1) Field_Image.save(get_Field_Filename() + ".jpg");
 
   
   SOLARCHVISION_process_ParametricGeometries_VContours();
 
 
-  {
+  if (Field_record_PDF == 1) {
     PGraphics Field_PDF = createGraphics(Field_RES1, Field_RES2, PDF, get_Field_Filename() + ".pdf");
     
     Field_PDF.beginDraw();
@@ -17793,9 +17828,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
       GRAPHS_record_JPG = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Record graphs in JPG", GRAPHS_record_JPG, 0, 1, 1), 1));
       FRAME_record_JPG = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Record screen in JPG", FRAME_record_JPG, 0, 1, 1), 1));
       
-      FIELD_record_JPG = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Record field in JPG", FIELD_record_JPG, 0, 1, 1), 1));
-      ANALYSIS_record_JPG = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Record analysis in JPG", ANALYSIS_record_JPG, 0, 1, 1), 1));
-      ANALYSIS_record_PNG = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Record analysis in PNG", ANALYSIS_record_PNG, 0, 1, 1), 1));
+      Field_record_PDF = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Record field in PDF", Field_record_PDF, 0, 1, 1), 1));
+      Field_record_JPG = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Record field in JPG", Field_record_JPG, 0, 1, 1), 1));
+      Solarch_record_JPG = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Record solar analysis JPG", Solarch_record_JPG, 0, 1, 1), 1));
     }
     
     if (ROLLOUT_child == 3) { // Launch
