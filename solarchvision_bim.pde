@@ -71,7 +71,17 @@ int Load_Default_Models = 0; //3;//0; //3; //5;
 
 int addToLastPolymesh = 1;
 
-int selectedPolymesh = 0;
+int selectedPolymesh_num = 0;
+
+float selectedPolymesh_posVector = 0; // 0:X, 1:Y, 2:Z
+float selectedPolymesh_rotVector = 0; // 0:X, 1:Y, 2:Z
+float selectedPolymesh_scaleVector = 0; // 0:X, 1:Y, 2:Z, 3:All
+
+float selectedPolymesh_posValue = 0;
+float selectedPolymesh_rotValue = 0;  
+float selectedPolymesh_scaleValue = 1; 
+
+
 
 int[][] allPolymesh_Faces = {{0,0}}; // start face - end face
 
@@ -1083,7 +1093,7 @@ int pre_display_Field_Lines;
 
 int pre_display_MODEL3D_EDGES;
 
-int pre_selectedPolymesh;
+int pre_selectedPolymesh_num;
 
       
 int pre_Load_Default_Models;
@@ -1835,7 +1845,7 @@ void draw () {
         
         pre_display_MODEL3D_EDGES = display_MODEL3D_EDGES;
         
-        pre_selectedPolymesh = selectedPolymesh;
+        pre_selectedPolymesh_num = selectedPolymesh_num;
       
         pre_Load_Default_Models = Load_Default_Models;
 
@@ -1922,7 +1932,7 @@ void draw () {
           WIN3D_Update = 1;
         }
         
-        if (pre_selectedPolymesh != selectedPolymesh) {
+        if (pre_selectedPolymesh_num != selectedPolymesh_num) {
           WIN3D_Update = 1;
         }
         
@@ -11089,13 +11099,13 @@ void WIN3D_keyPressed (KeyEvent e) {
       switch(keyCode) {
 
         
-        case 33: selectedPolymesh -= 1;
-                  if (selectedPolymesh < 0) selectedPolymesh = allPolymesh_Faces.length - 1;
+        case 33: selectedPolymesh_num -= 1;
+                  if (selectedPolymesh_num < 0) selectedPolymesh_num = allPolymesh_Faces.length - 1;
                   WIN3D_Update = 1;
                   break;  
 
-        case 34: selectedPolymesh += 1;
-                  if (selectedPolymesh > allPolymesh_Faces.length - 1) selectedPolymesh = 0;
+        case 34: selectedPolymesh_num += 1;
+                  if (selectedPolymesh_num > allPolymesh_Faces.length - 1) selectedPolymesh_num = 0;
                   WIN3D_Update = 1;
                   break;          
         
@@ -13058,7 +13068,7 @@ void SOLARCHVISION_remove_3Dobjects () {
 
   addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
  
-  selectedPolymesh = 0; 
+  selectedPolymesh_num = 0; 
  
   urbanVertices_start = 0;
   urbanVertices_end = 0;
@@ -17056,7 +17066,7 @@ void mouseClicked () {
 
             int[] PolymeshVetices = {0};
             
-            for (int f = allPolymesh_Faces[selectedPolymesh][0]; f <= allPolymesh_Faces[selectedPolymesh][1]; f++) {
+            for (int f = allPolymesh_Faces[selectedPolymesh_num][0]; f <= allPolymesh_Faces[selectedPolymesh_num][1]; f++) {
               if ((0 < f) && (f < allFaces.length)) { 
                 for (int j = 0; j < allFaces[f].length; j++) {
                   int vNo = allFaces[f][j];
@@ -17103,7 +17113,7 @@ void mouseClicked () {
             
             for (int i = 0; i < allPolymesh_Faces.length; i++) {
               if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
-                selectedPolymesh = i;
+                selectedPolymesh_num = i;
                 WIN3D_Update = 1;
               }
             }
@@ -17727,7 +17737,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
   
     Create_Select_Modify = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Select_Modify" , Create_Select_Modify, 0, 2, 1), 1));
 
-    selectedPolymesh = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh" , selectedPolymesh, 0, allPolymesh_Faces.length - 1, 1), 1));
+    selectedPolymesh_num = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_num" , selectedPolymesh_num, 0, allPolymesh_Faces.length - 1, 1), 1));
     
     Create_Default_Material = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Default_Material" , Create_Default_Material, -1, 8, 1), 1));
 
@@ -18756,7 +18766,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     //stroke(0); strokeWeight(0.5);
   
     //for (int f = 1; f < allFaces.length; f++) {
-    for (int f = allPolymesh_Faces[selectedPolymesh][0]; f <= allPolymesh_Faces[selectedPolymesh][1]; f++) {
+    for (int f = allPolymesh_Faces[selectedPolymesh_num][0]; f <= allPolymesh_Faces[selectedPolymesh_num][1]; f++) {
       if ((0 < f) && (f < allFaces.length)) { 
   
         int Teselation = 0;
@@ -20318,7 +20328,7 @@ float[][] selectedPolymesh_Pivot_XYZ_SSS_RRR = {{0,0,0}, {1,1,1}, {0,0,0}};
 void SOLARCHVISION_calculate_selectedPolymesh_Pivot () {
   int[] PolymeshVetices = {0};
   
-  for (int f = allPolymesh_Faces[selectedPolymesh][0]; f <= allPolymesh_Faces[selectedPolymesh][1]; f++) {
+  for (int f = allPolymesh_Faces[selectedPolymesh_num][0]; f <= allPolymesh_Faces[selectedPolymesh_num][1]; f++) {
     if ((0 < f) && (f < allFaces.length)) { 
       for (int j = 0; j < allFaces[f].length; j++) {
         int vNo = allFaces[f][j];
