@@ -13124,6 +13124,10 @@ void SOLARCHVISION_remove_3Dobjects () {
   allPolymesh_Faces[0][0] = 0;
   allPolymesh_Faces[0][1] = 0;
 
+  allPolymesh_Solids = new int [1][2];
+  allPolymesh_Solids[0][0] = 0;
+  allPolymesh_Solids[0][1] = 0;
+
   addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
  
   selectedPolymesh_num = 0; 
@@ -15194,7 +15198,7 @@ void SOLARCHVISION_DownloadLAND() {
 
  
 class ParametricGeometry { 
-  float value, posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotZ; 
+  float value, posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotX, rotY, rotZ; 
   
   ParametricGeometry (float v, float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float t) {  
     value = v;
@@ -15207,7 +15211,7 @@ class ParametricGeometry {
     scaleX = sx;
     scaleY = sy; 
     scaleZ = sz;    
-    rotZ = t;
+    rotZ = -t;
   } 
   
   void updatePosition (float x, float y, float z) {  
@@ -15216,9 +15220,17 @@ class ParametricGeometry {
     posZ = z;
   }   
   
+  void RotateX (float t) {  
+    rotX -= t;
+  }
+
+  void RotateY (float t) {  
+    rotY -= t;
+  }   
+
   void RotateZ (float t) {  
-    rotZ += t;
-  }    
+    rotZ -= t;
+  }     
  
   void Scale (float a, float b, float c) {  
     scaleX *= a;
@@ -15231,8 +15243,8 @@ class ParametricGeometry {
     b -= posY;    
     c -= posZ;
     
-    float x = a * cos_ang(-rotZ) - b * sin_ang(-rotZ);
-    float y = a * sin_ang(-rotZ) + b * cos_ang(-rotZ); 
+    float x = a * cos_ang(rotZ) - b * sin_ang(rotZ);
+    float y = a * sin_ang(rotZ) + b * cos_ang(rotZ); 
     float z = c;
 
     x += posX;
@@ -17177,7 +17189,24 @@ void mouseClicked () {
               allVertices[n][2] = z0 + (z);
             }
             
-            SOLARCHVISION_calculate_selectedPolymesh_Pivot(); 
+            SOLARCHVISION_calculate_selectedPolymesh_Pivot();
+           
+            int Solids_updated = 0;
+            for (int g = allPolymesh_Solids[selectedPolymesh_num][0]; g <= allPolymesh_Solids[selectedPolymesh_num][1]; g++) {
+              if ((0 <= g) && (g < SolidObjects.length)) {
+                
+                float x = SolidObjects[g].posX - x0; 
+                float y = SolidObjects[g].posY - y0; 
+                float z = SolidObjects[g].posZ - z0;
+                
+                SolidObjects[g].updatePosition(x0 + (x * cos(r) - y * sin(r)), y0 + (x * sin(r) + y * cos(r)), z0 + (z));
+                
+                SolidObjects[g].RotateZ(r * 180 / PI);
+
+                Solids_updated = 1;  
+              }
+            }
+            if (Solids_updated != 0) SOLARCHVISION_calculate_ParametricGeometries_Field();              
           }   
 
           if (Create_Select_Modify == 2) {
@@ -20578,6 +20607,35 @@ void SOLARCHVISION_rotate_selectedPolymesh (float the_Value, int the_Vector) {
   
   SOLARCHVISION_calculate_selectedPolymesh_Pivot(); 
   
+  int Solids_updated = 0;
+  for (int g = allPolymesh_Solids[selectedPolymesh_num][0]; g <= allPolymesh_Solids[selectedPolymesh_num][1]; g++) {
+    if ((0 <= g) && (g < SolidObjects.length)) {
+      
+      float x = SolidObjects[g].posX - x0; 
+      float y = SolidObjects[g].posY - y0; 
+      float z = SolidObjects[g].posZ - z0;
+      
+      if (the_Vector == 2) {
+        SolidObjects[g].updatePosition(x0 + (x * cos(r) - y * sin(r)), y0 + (x * sin(r) + y * cos(r)), z0 + (z));
+      
+        SolidObjects[g].RotateZ(r * 180 / PI);
+      }
+      else if (the_Vector == 1) {
+        SolidObjects[g].updatePosition(x0 + (z * sin(r) + x * cos(r)), y0 + (y), z0 + (z * cos(r) - x * sin(r)));
+      
+        SolidObjects[g].RotateY(r * 180 / PI);
+      }
+      else if (the_Vector == 0) {
+        SolidObjects[g].updatePosition(x0 + (x), y0 + (y * cos(r) - z * sin(r)), z0 + (y * sin(r) + z * cos(r)));
+      
+        SolidObjects[g].RotateX(r * 180 / PI);
+      }
+      
+      Solids_updated = 1;  
+    }
+  }
+  if (Solids_updated != 0) SOLARCHVISION_calculate_ParametricGeometries_Field();   
+  
 }
 
 void SOLARCHVISION_scale_selectedPolymesh (float the_Value, int the_Vector) {
@@ -20610,6 +20668,18 @@ void SOLARCHVISION_scale_selectedPolymesh (float the_Value, int the_Vector) {
   }
   
   SOLARCHVISION_calculate_selectedPolymesh_Pivot(); 
+  
+  int Solids_updated = 0;
+  for (int g = allPolymesh_Solids[selectedPolymesh_num][0]; g <= allPolymesh_Solids[selectedPolymesh_num][1]; g++) {
+    if ((0 <= g) && (g < SolidObjects.length)) {
+      SolidObjects[g].updatePosition((SolidObjects[g].posX - x0) * sx + x0, (SolidObjects[g].posY - y0) * sy + y0, (SolidObjects[g].posZ - z0) * sz + z0);
+      
+      SolidObjects[g].Scale(sx, sy, sz);
+
+      Solids_updated = 1;  
+    }
+  }
+  if (Solids_updated != 0) SOLARCHVISION_calculate_ParametricGeometries_Field();        
   
 }
 
