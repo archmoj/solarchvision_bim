@@ -84,6 +84,7 @@ float selectedPolymesh_scaleValue = 0;
 
 
 int[][] allPolymesh_Faces = {{0,0}}; // start face - end face
+int[][] allPolymesh_Solids = {{0,0}}; // start solid - end solid
 
 float[][] allVertices = {{0,0,0}};
 int[][] allFaces = {{0,0,0}};
@@ -12001,22 +12002,37 @@ int addToFaces (int[] f) {
     beginNewObject();
   }
   else {
-    allPolymesh_Faces[allPolymesh_Faces.length - 1][1] = allFaces.length - 1;    
+    allPolymesh_Faces[allPolymesh_Faces.length - 1][1] = allFaces.length - 1;
   }
 
   return(allFaces.length - 1);
 }
 
-int beginNewObject () {
+int addToSolids (int[] f) {
+
+  if (addToLastPolymesh == 0) {
+    // no nead to call beginNewObject(); here again!
+  }
+  else {
+    allPolymesh_Solids[allPolymesh_Solids.length - 1][1] = SolidObjects.length - 1;
+  }
+
+  return(allFaces.length - 1);
+}
+
+void beginNewObject () {
   
   if (addToLastPolymesh == 0) { 
   
-    int[][] newObject = {{allFaces.length, 0}}; // at first it is null because start > end   
+    int[][] newObject_Faces = {{allFaces.length, 0}}; // i.e. null because start > end   
     
-    allPolymesh_Faces = (int[][]) concat(allPolymesh_Faces, newObject);
+    allPolymesh_Faces = (int[][]) concat(allPolymesh_Faces, newObject_Faces);
+    
+    int[][] newObject_Solids = {{SolidObjects.length, 0}}; // i.e. null because start > end 
+    
+    allPolymesh_Solids = (int[][]) concat(allPolymesh_Solids, newObject_Solids);    
   }
 
-  return(allPolymesh_Faces.length - 1);
 }
 
 
@@ -15429,7 +15445,7 @@ PImage Field_Image = createImage(Field_RES1, Field_RES2, ARGB);
 
 float Field_Multiplier = 1.0; //0.1; //10.0; 
 
-int display_Field_Image = 0; // 0:false, 1:true
+int display_Field_Image = 1; // 0:false, 1:true
 int Field_Image_Section = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
 
 float[] Field_Elevation = {0, 0.1, 0, 0}; // <<<
