@@ -73,9 +73,9 @@ int addToLastPolymesh = 1;
 
 int selectedPolymesh_num = 0;
 
-int selectedPolymesh_posVector = 3; // 0:X, 1:Y, 2:Z, 3: All
+int selectedPolymesh_posVector = 2; // 0:X, 1:Y, 2:Z, 3: All
 int selectedPolymesh_rotVector = 2; // 0:X, 1:Y, 2:Z
-int selectedPolymesh_scaleVector = 3; // 0:X, 1:Y, 2:Z, 3:All
+int selectedPolymesh_scaleVector = 2; // 0:X, 1:Y, 2:Z, 3:All
 
 float selectedPolymesh_posValue = 0;
 float selectedPolymesh_rotValue = 0;  
@@ -1947,16 +1947,21 @@ void draw () {
         }
         
 
-        if (pre_selectedPolymesh_posValue == selectedPolymesh_posValue) {
+        if (pre_selectedPolymesh_posValue != selectedPolymesh_posValue) {
           SOLARCHVISION_move_selectedPolymesh(selectedPolymesh_posValue, selectedPolymesh_posVector);
           WIN3D_Update = 1;
         }
-        if (pre_selectedPolymesh_rotValue == selectedPolymesh_rotValue) {
-          SOLARCHVISION_rotate_selectedPolymesh(selectedPolymesh_rotValue, selectedPolymesh_rotVector);
+        if (pre_selectedPolymesh_rotValue != selectedPolymesh_rotValue) {
+          float r = selectedPolymesh_rotValue - pre_selectedPolymesh_rotValue;
+          
+          SOLARCHVISION_rotate_selectedPolymesh(r, selectedPolymesh_rotVector);
           WIN3D_Update = 1;
         }
-        if (pre_selectedPolymesh_scaleValue == selectedPolymesh_scaleValue) {
-          SOLARCHVISION_scale_selectedPolymesh(selectedPolymesh_scaleValue, selectedPolymesh_scaleVector);
+        if (pre_selectedPolymesh_scaleValue != selectedPolymesh_scaleValue) {
+          
+          float s = pow(2.0, selectedPolymesh_scaleValue - pre_selectedPolymesh_scaleValue);
+          
+          SOLARCHVISION_scale_selectedPolymesh(s, selectedPolymesh_scaleVector);
           WIN3D_Update = 1;
         }        
 
@@ -11129,6 +11134,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                    selectedPolymesh_num = allPolymesh_Faces.length - 1;
                  }
                  SOLARCHVISION_calculate_selectedPolymesh_Pivot();
+                 SOLARCHVISION_reset_selectedPolymesh_Pivot();  
                  WIN3D_Update = 1;
                  break;  
 
@@ -11137,6 +11143,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                    selectedPolymesh_num = 0;
                  }
                  SOLARCHVISION_calculate_selectedPolymesh_Pivot();
+                 SOLARCHVISION_reset_selectedPolymesh_Pivot();  
                  WIN3D_Update = 1;
                  break;          
         
@@ -17184,7 +17191,9 @@ void mouseClicked () {
               }
             }
             
-            SOLARCHVISION_calculate_selectedPolymesh_Pivot();        
+            SOLARCHVISION_calculate_selectedPolymesh_Pivot();
+    
+            if (mouseButton == LEFT) SOLARCHVISION_reset_selectedPolymesh_Pivot();        
           }         
           
           if (Create_Select_Modify == 0) {
@@ -17809,8 +17818,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
     selectedPolymesh_rotVector =  int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_rotVector" , selectedPolymesh_rotVector, 0, 2, 1), 1));
     selectedPolymesh_scaleVector =  int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_scaleVector" , selectedPolymesh_scaleVector, 0, 3, 1), 1));
   
-    selectedPolymesh_posValue = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_posValue" , selectedPolymesh_posValue, -100, 100, 0.1);
-    selectedPolymesh_rotValue = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_rotValue" , selectedPolymesh_rotValue, 0, 360, 5); 
+    selectedPolymesh_posValue = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_posValue" , selectedPolymesh_posValue, -50, 50, 1);
+    selectedPolymesh_rotValue = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_rotValue" , selectedPolymesh_rotValue, -180, 180, 5); 
     selectedPolymesh_scaleValue = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_scaleValue" , selectedPolymesh_scaleValue, -8, 8, 0.5); 
 
 
@@ -20455,16 +20464,11 @@ void SOLARCHVISION_calculate_selectedPolymesh_Pivot () {
     selectedPolymesh_Pivot_XYZ[j] = 0.5 * (POS_min + POS_max); 
   }
   
-  SOLARCHVISION_reset_selectedPolymesh_Pivot();
-
+  
 }
 
 void SOLARCHVISION_reset_selectedPolymesh_Pivot () {
   
-  selectedPolymesh_posVector = 3; // 0:X, 1:Y, 2:Z, 3:All
-  selectedPolymesh_rotVector = 2; // 0:X, 1:Y, 2:Z
-  selectedPolymesh_scaleVector = 3; // 0:X, 1:Y, 2:Z, 3:All
-
   selectedPolymesh_posValue = 0;  
   selectedPolymesh_rotValue = 0;  
   selectedPolymesh_scaleValue = 0; 
@@ -20472,13 +20476,100 @@ void SOLARCHVISION_reset_selectedPolymesh_Pivot () {
 
 void SOLARCHVISION_move_selectedPolymesh (float the_Value, int the_Vector) {
 
+  int[] PolymeshVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
+  
+  float dx = the_Value;
+  float dy = the_Value;
+  float dz = the_Value;
+  
+  if (the_Vector == 0) {dy = 0; dz = 0;}  
+  if (the_Vector == 1) {dz = 0; dx = 0;}  
+  if (the_Vector == 2) {dx = 0; dy = 0;}  
+  
+  for (int q = 1; q < PolymeshVertices.length; q++) {
+    
+    int n = PolymeshVertices[q];
+  
+    allVertices[n][0] += dx; 
+    allVertices[n][1] += dy;
+    allVertices[n][2] += dz;
+  }
+  
+  SOLARCHVISION_calculate_selectedPolymesh_Pivot();   
+  
 }
 
 void SOLARCHVISION_rotate_selectedPolymesh (float the_Value, int the_Vector) {
+
+  int[] PolymeshVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
+  
+  float x0 = selectedPolymesh_Pivot_XYZ[0];
+  float y0 = selectedPolymesh_Pivot_XYZ[1];
+  float z0 = selectedPolymesh_Pivot_XYZ[2];
+  
+  float r = the_Value * PI / 180.0;
+
+    
+  
+  for (int q = 1; q < PolymeshVertices.length; q++) {
+    
+    int n = PolymeshVertices[q];
+
+    float x = allVertices[n][0] - x0; 
+    float y = allVertices[n][1] - y0; 
+    float z = allVertices[n][2] - z0;
+    
+    if (the_Vector == 2) {
+      allVertices[n][0] = x0 + (x * cos(r) - y * sin(r)); 
+      allVertices[n][1] = y0 + (x * sin(r) + y * cos(r));
+      allVertices[n][2] = z0 + (z);
+    }
+    else if (the_Vector == 1) {
+      allVertices[n][0] = x0 + (z * sin(r) + x * cos(r)); 
+      allVertices[n][1] = y0 + (y);
+      allVertices[n][2] = z0 + (z * cos(r) - x * sin(r));
+    }    
+    else if (the_Vector == 0) {
+      allVertices[n][0] = x0 + (x); 
+      allVertices[n][1] = y0 + (y * cos(r) - z * sin(r));
+      allVertices[n][2] = z0 + (y * sin(r) + z * cos(r));
+    }    
+  }
+  
+  SOLARCHVISION_calculate_selectedPolymesh_Pivot(); 
   
 }
 
 void SOLARCHVISION_scale_selectedPolymesh (float the_Value, int the_Vector) {
+
+  int[] PolymeshVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
+  
+  float x0 = selectedPolymesh_Pivot_XYZ[0];
+  float y0 = selectedPolymesh_Pivot_XYZ[1];
+  float z0 = selectedPolymesh_Pivot_XYZ[2];
+  
+  float sx = the_Value;
+  float sy = the_Value;
+  float sz = the_Value;
+
+  if (the_Vector == 0) {sy = 1; sz = 1;}  
+  if (the_Vector == 1) {sz = 1; sx = 1;}  
+  if (the_Vector == 2) {sx = 1; sy = 1;}  
+  
+  for (int q = 1; q < PolymeshVertices.length; q++) {
+    
+    int n = PolymeshVertices[q];
+
+    float x = allVertices[n][0] - x0; 
+    float y = allVertices[n][1] - y0; 
+    float z = allVertices[n][2] - z0;
+   
+    allVertices[n][0] = x0 + sx * x; 
+    allVertices[n][1] = y0 + sy * y;
+    allVertices[n][2] = z0 + sz * z;
+  }
+  
+  SOLARCHVISION_calculate_selectedPolymesh_Pivot(); 
   
 }
 
