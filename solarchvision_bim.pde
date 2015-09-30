@@ -12010,9 +12010,9 @@ int addToFaces (int[] f) {
   return(allFaces.length - 1);
 }
 
-int addToSolids (float v, float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float t) {
+int addToSolids (float v, float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float tx, float ty, float tz) {
   
-  ParametricGeometry[] newSolidObject = {new ParametricGeometry(v, x, y, z, px, py, pz, sx, sy, sz, t)}; 
+  ParametricGeometry[] newSolidObject = {new ParametricGeometry(v, x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz)}; 
   SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);  
   
   if (addToLastPolymesh == 0) {
@@ -12979,7 +12979,7 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
   }  
   
   //SOLARCHVISION_add_Box_Core(m, cen_X,cen_Y,cen_Z, X_out,Y_out,Z_out, T_out);
-  addToSolids(1, cen_X,cen_Y,cen_Z, 16,16,16, X_out,Y_out,Z_out, T_out);
+  addToSolids(1, cen_X,cen_Y,cen_Z, 16,16,16, X_out,Y_out,Z_out, 0, 0, T_out);
   
   return min_Z;
 }  
@@ -13307,7 +13307,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float z = 0;
       float r = 10;
       SOLARCHVISION_add_Recursivephere(1, x,y,z, r, 5, 0, 90);
-      addToSolids(1, x,y,z, 2,2,2, r,r,r, 0);
+      addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
     }
   
     {
@@ -13317,7 +13317,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float z = 0;
       float r = 8;
       SOLARCHVISION_add_Recursivephere(2, x,y,z, r, 4, 0, 90);
-      addToSolids(1, x,y,z, 2,2,2, r,r,r, 0);
+      addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
     }
   
     {
@@ -13327,7 +13327,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float z = 0;
       float r = 8;
       SOLARCHVISION_add_Recursivephere(3, x,y,z, r, 3, 0, 90);
-      addToSolids(1, x,y,z, 2,2,2, r,r,r, 0);
+      addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
     }
   }
  
@@ -15200,7 +15200,7 @@ void SOLARCHVISION_DownloadLAND() {
 class ParametricGeometry { 
   float value, posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotX, rotY, rotZ; 
   
-  ParametricGeometry (float v, float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float t) {  
+  ParametricGeometry (float v, float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float tx, float ty, float tz) {  
     value = v;
     posX = x;
     posY = y; 
@@ -15210,8 +15210,10 @@ class ParametricGeometry {
     powZ = pz;    
     scaleX = sx;
     scaleY = sy; 
-    scaleZ = sz;    
-    rotZ = -t;
+    scaleZ = sz;
+    rotX = -tx;
+    rotY = -ty;
+    rotZ = -tz;
   } 
   
   void updatePosition (float x, float y, float z) {  
@@ -15243,9 +15245,28 @@ class ParametricGeometry {
     b -= posY;    
     c -= posZ;
     
+    
+///////////////////////// NOT SURE START!    
+    float x1 = a;
+    float y1 = b * cos_ang(rotX) - c * sin_ang(rotX); 
+    float z1 = b * sin_ang(rotX) + c * cos_ang(rotX);
+   
+    a = x1;
+    b = y1;
+    c = z1;  
+
+    float x2 = c * sin_ang(rotY) + a * cos_ang(rotY);
+    float y2 = b; 
+    float z2 = c * cos_ang(rotY) - a * sin_ang(rotY);
+    
+    a = x2;
+    b = y2;
+    c = z2;      
+///////////////////////// NOT SURE END!
+    
     float x = a * cos_ang(rotZ) - b * sin_ang(rotZ);
     float y = a * sin_ang(rotZ) + b * cos_ang(rotZ); 
-    float z = c;
+    float z = c;    
 
     x += posX;
     y += posY;  
@@ -15290,7 +15311,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float r = 10;
     //SOLARCHVISION_add_Recursivephere(1, x,y,z, r, 2, 0, 0);
     SOLARCHVISION_add_Recursivephere(1, x,y,z, r, 4, 0, 0);
-    addToSolids(1, x,y,z, 2,2,2, r,r,r, 0);
+    addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
   }  
 
   {
@@ -15303,7 +15324,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float dz = 20;
     float rot = 0;
     SOLARCHVISION_add_Box_Core(2, x,y,z, dx, dy, dz, rot);
-    addToSolids(1, x,y,z, 16,16,16, dx,dy,dz, rot);
+    addToSolids(1, x,y,z, 16,16,16, dx,dy,dz, 0,0,rot);
   }
 
   {
@@ -15316,7 +15337,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float dz = 10;
     float rot = 60;
     SOLARCHVISION_add_Box_Core(3, x,y,z, dx, dy, dz, rot);
-    addToSolids(1, x,y,z, 16,16,16, dx,dy,dz, rot);
+    addToSolids(1, x,y,z, 16,16,16, dx,dy,dz, 0,0,rot);
   }
 
 
@@ -15334,7 +15355,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float pz = 4;
     float rot = 30;
     SOLARCHVISION_add_SuperSphere(4, x,y,z, pz,py,pz, rx,ry,rz, 4, rot);
-    addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, rot);
+    addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, 0,0,rot);
   }  
 
   {
@@ -15414,7 +15435,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
               SOLARCHVISION_add_Mesh3(m, X_[3], Y_[3], Z_[3], X_[5], Y_[5], Z_[5], X_[4], Y_[4], Z_[4]);
               SOLARCHVISION_add_Mesh3(m, X_[4], Y_[4], Z_[4], X_[5], Y_[5], Z_[5], X_[1], Y_[1], Z_[1]);
 
-              addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, rot);
+              addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, 0,0,rot);
   }
 
 }
@@ -17337,7 +17358,7 @@ void mouseClicked () {
               if ((px == 8) && (py == 8) && (pz == 2)) {
                 SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, 2, rot);
   
-                addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, rot);
+                addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, 0,0,rot);
                 
                 SOLID_created = 1;
               }
@@ -17345,7 +17366,7 @@ void mouseClicked () {
               if ((px == 8) && (py == 8) && (pz == 8)) {
                 SOLARCHVISION_add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, rot);
   
-                addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, rot);
+                addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, 0,0,rot);
                 
                 SOLID_created = 1;
               }
@@ -17417,7 +17438,7 @@ void mouseClicked () {
                   SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[4], Y_[4], Z_[4], X_[5], Y_[5], Z_[5], X_[1], Y_[1], Z_[1]);
                 }
   
-                addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, rot);
+                addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, 0,0,rot);
                 
                 SOLID_created = 1;
               }
@@ -17425,7 +17446,7 @@ void mouseClicked () {
               if (SOLID_created == 0) {
                 SOLARCHVISION_add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, SolidSurface_TESELATION, rot);
   
-                addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, rot);
+                addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, 0,0,rot);
                 
                 SOLID_created = 1;
               }
@@ -20259,7 +20280,7 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
    
       if (as_Solid != 0) {
         float r0 = 0.5 * leafSize;
-        addToSolids(as_Solid, x0,y0,z0, 2,2,2, r0,r0,r0, 0);
+        addToSolids(as_Solid, x0,y0,z0, 2,2,2, r0,r0,r0, 0,0,0);
       }
   
     }
