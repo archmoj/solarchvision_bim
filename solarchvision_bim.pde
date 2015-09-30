@@ -73,7 +73,7 @@ int addToLastPolymesh = 1;
 
 int selectedPolymesh = 0;
 
-int[][] allPolymeshes = {{0,0}}; // start face - end face
+int[][] allPolymesh_Faces = {{0,0}}; // start face - end face
 
 float[][] allVertices = {{0,0,0}};
 int[][] allFaces = {{0,0,0}};
@@ -2078,14 +2078,7 @@ void draw () {
       if (WIN3D_Update == 1) {
         
         SOLARCHVISION_draw_WIN3D();
-        
-        /*
-        for (int i = 0; i < allPolymeshes.length; i++) {
-          println("allPolymeshes", i, allPolymeshes[i][0], allPolymeshes[i][1]);
-        }
-        println("selectedPolymesh:", selectedPolymesh);
-        */
-      
+     
       }
     }
     WIN3D_Update = 0;
@@ -11097,12 +11090,12 @@ void WIN3D_keyPressed (KeyEvent e) {
 
         
         case 33: selectedPolymesh -= 1;
-                  if (selectedPolymesh < 0) selectedPolymesh = allPolymeshes.length - 1;
+                  if (selectedPolymesh < 0) selectedPolymesh = allPolymesh_Faces.length - 1;
                   WIN3D_Update = 1;
                   break;  
 
         case 34: selectedPolymesh += 1;
-                  if (selectedPolymesh > allPolymeshes.length - 1) selectedPolymesh = 0;
+                  if (selectedPolymesh > allPolymesh_Faces.length - 1) selectedPolymesh = 0;
                   WIN3D_Update = 1;
                   break;          
         
@@ -11960,7 +11953,7 @@ int addToFaces (int[] f) {
     beginNewObject();
   }
   else {
-    allPolymeshes[allPolymeshes.length - 1][1] = allFaces.length - 1;    
+    allPolymesh_Faces[allPolymesh_Faces.length - 1][1] = allFaces.length - 1;    
   }
 
   return(allFaces.length - 1);
@@ -11972,10 +11965,10 @@ int beginNewObject () {
   
     int[][] newObject = {{allFaces.length, 0}}; // at first it is null because start > end   
     
-    allPolymeshes = (int[][]) concat(allPolymeshes, newObject);
+    allPolymesh_Faces = (int[][]) concat(allPolymesh_Faces, newObject);
   }
 
-  return(allPolymeshes.length - 1);
+  return(allPolymesh_Faces.length - 1);
 }
 
 
@@ -13059,9 +13052,9 @@ void SOLARCHVISION_remove_3Dobjects () {
   allFaces_MAT = new int [1];
   allFaces_MAT[0] = 0;
   
-  allPolymeshes = new int [1][2];
-  allPolymeshes[0][0] = 0;
-  allPolymeshes[0][1] = 0;
+  allPolymesh_Faces = new int [1][2];
+  allPolymesh_Faces[0][0] = 0;
+  allPolymesh_Faces[0][1] = 0;
 
   addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
  
@@ -17063,15 +17056,15 @@ void mouseClicked () {
 
             int[] PolymeshVetices = {0};
             
-            for (int f = allPolymeshes[selectedPolymesh][0]; f <= allPolymeshes[selectedPolymesh][1]; f++) {
+            for (int f = allPolymesh_Faces[selectedPolymesh][0]; f <= allPolymesh_Faces[selectedPolymesh][1]; f++) {
               if ((0 < f) && (f < allFaces.length)) { 
                 for (int j = 0; j < allFaces[f].length; j++) {
                   int vNo = allFaces[f][j];
                   
                   int vertex_listed = 0;
                   
-                  for (int i = 1; i < PolymeshVetices.length; i++) {
-                    if (vNo == PolymeshVetices[i]) {
+                  for (int q = 1; q < PolymeshVetices.length; q++) {
+                    if (vNo == PolymeshVetices[q]) {
                       vertex_listed = 1;
                       break;                      
                     }
@@ -17085,31 +17078,39 @@ void mouseClicked () {
               }
             }
             
-            for (int i = 1; i < PolymeshVetices.length; i++) {
+            for (int q = 1; q < PolymeshVetices.length; q++) {
               
-              int n = PolymeshVetices[i];
+              int n = PolymeshVetices[q];
               
-              float x = allVertices[n][0]; 
-              float y = allVertices[n][1]; 
-              float z = allVertices[n][2];
+              float x0 = selectedPolymesh_Pivot_XYZ_SSS_RRR[0][0];
+              float y0 = selectedPolymesh_Pivot_XYZ_SSS_RRR[0][1];
+              float z0 = selectedPolymesh_Pivot_XYZ_SSS_RRR[0][2];
+              
+              float x = allVertices[n][0] - x0; 
+              float y = allVertices[n][1] - y0; 
+              float z = allVertices[n][2] - z0;
              
-              allVertices[n][0] = x * cos_ang(15) - y * sin_ang(15); 
-              allVertices[n][1] = x * sin_ang(15) + y * cos_ang(15);
-              allVertices[n][2] = z;
+              allVertices[n][0] = x0 + (x * cos_ang(15) - y * sin_ang(15)); 
+              allVertices[n][1] = y0 + (x * sin_ang(15) + y * cos_ang(15));
+              allVertices[n][2] = z0 + (z);
             }
             
-          }            
+          }   
+          
           if (Create_Select_Modify == 1) {
             
             int f = int(RxP[4]);
             
-            for (int i = 0; i < allPolymeshes.length; i++) {
-              if ((allPolymeshes[i][0] <= f) && (f <= allPolymeshes[i][1])) {
+            for (int i = 0; i < allPolymesh_Faces.length; i++) {
+              if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
                 selectedPolymesh = i;
                 WIN3D_Update = 1;
               }
             }
-          }            
+            
+            SOLARCHVISION_calculate_selectedPolymesh_Pivot();        
+          }         
+          
           if (Create_Select_Modify == 0) {
 
             float x = RxP[0]; 
@@ -17726,7 +17727,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
   
     Create_Select_Modify = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Select_Modify" , Create_Select_Modify, 0, 2, 1), 1));
 
-    selectedPolymesh = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh" , selectedPolymesh, 0, allPolymeshes.length - 1, 1), 1));
+    selectedPolymesh = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh" , selectedPolymesh, 0, allPolymesh_Faces.length - 1, 1), 1));
     
     Create_Default_Material = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Default_Material" , Create_Default_Material, -1, 8, 1), 1));
 
@@ -18741,6 +18742,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
 
 void SOLARCHVISION_draw_Perspective_Internally () {
 
+  
   //if (display_MODEL3D_EDGES != 0) {
     
     pushMatrix();
@@ -18754,7 +18756,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     //stroke(0); strokeWeight(0.5);
   
     //for (int f = 1; f < allFaces.length; f++) {
-    for (int f = allPolymeshes[selectedPolymesh][0]; f <= allPolymeshes[selectedPolymesh][1]; f++) {
+    for (int f = allPolymesh_Faces[selectedPolymesh][0]; f <= allPolymesh_Faces[selectedPolymesh][1]; f++) {
       if ((0 < f) && (f < allFaces.length)) { 
   
         int Teselation = 0;
@@ -20310,3 +20312,57 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
 }
 
 
+float[][] selectedPolymesh_Pivot_XYZ_SSS_RRR = {{0,0,0}, {1,1,1}, {0,0,0}};
+
+
+void SOLARCHVISION_calculate_selectedPolymesh_Pivot () {
+  int[] PolymeshVetices = {0};
+  
+  for (int f = allPolymesh_Faces[selectedPolymesh][0]; f <= allPolymesh_Faces[selectedPolymesh][1]; f++) {
+    if ((0 < f) && (f < allFaces.length)) { 
+      for (int j = 0; j < allFaces[f].length; j++) {
+        int vNo = allFaces[f][j];
+        
+        int vertex_listed = 0;
+        
+        for (int i = 1; i < PolymeshVetices.length; i++) {
+          if (vNo == PolymeshVetices[i]) {
+            vertex_listed = 1;
+            break;                      
+          }
+        }         
+       
+        if (vertex_listed == 0) {
+          int[] newVertexListed = {vNo};
+          PolymeshVetices = concat(PolymeshVetices, newVertexListed);  
+        } 
+      }
+    }
+  }
+  
+  for (int j = 0; j < 3; j++) {
+    selectedPolymesh_Pivot_XYZ_SSS_RRR[0][j] = 0; // position
+    selectedPolymesh_Pivot_XYZ_SSS_RRR[1][j] = 1; // scale
+    selectedPolymesh_Pivot_XYZ_SSS_RRR[2][j] = 0; // rotation
+  }
+  
+  for (int j = 0; j < 3; j++) {
+      
+    float POS_min = FLOAT_undefined;
+    float POS_max = -FLOAT_undefined;
+
+    for (int q = 1; q < PolymeshVetices.length; q++) {
+      int n = PolymeshVetices[q];
+      
+      float POS_now = allVertices[n][j];
+     
+      if (POS_min > POS_now) POS_min = POS_now;   
+      if (POS_max < POS_now) POS_max = POS_now;   
+    }
+    
+    selectedPolymesh_Pivot_XYZ_SSS_RRR[0][j] = 0.5 * (POS_min + POS_max); 
+  }
+  
+
+  
+}
