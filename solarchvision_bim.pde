@@ -17138,6 +17138,18 @@ void mouseClicked () {
             }
             
             SOLARCHVISION_calculate_selectedPolymesh_Pivot(); 
+            
+            int Solids_updated = 0;
+            for (int g = allPolymesh_Solids[selectedPolymesh_num][0]; g <= allPolymesh_Solids[selectedPolymesh_num][1]; g++) {
+              if ((0 <= g) && (g < SolidObjects.length)) {
+                SolidObjects[g].updatePosition((SolidObjects[g].posX - x0) * s + x0, (SolidObjects[g].posY - y0) * s + y0, (SolidObjects[g].posZ - z0) * s + z0);
+                
+                SolidObjects[g].Scale(s, s, s);
+
+                Solids_updated = 1;  
+              }
+            }
+            if (Solids_updated != 0) SOLARCHVISION_calculate_ParametricGeometries_Field();            
           }             
           
           if (Create_Select_Modify == 3) {
