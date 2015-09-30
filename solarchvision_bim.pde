@@ -15190,6 +15190,7 @@ void SOLARCHVISION_DownloadLAND() {
 
 }
 
+
  
 class ParametricGeometry { 
   float value, posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotZ; 
@@ -17193,7 +17194,14 @@ void mouseClicked () {
               allVertices[n][2] -= dz;
             }
             
-            SOLARCHVISION_calculate_selectedPolymesh_Pivot(); 
+            SOLARCHVISION_calculate_selectedPolymesh_Pivot();
+
+            for (int g = allPolymesh_Solids[selectedPolymesh_num][0]; g <= allPolymesh_Solids[selectedPolymesh_num][1]; g++) {
+              if ((0 <= g) && (g < SolidObjects.length)) {
+                SolidObjects[g].updatePosition(SolidObjects[g].posX - dx, SolidObjects[g].posY - dy, SolidObjects[g].posZ - dz);  
+              }
+            }
+            
           }   
           
           if (Create_Select_Modify == 1) {
@@ -20428,7 +20436,7 @@ float[] selectedPolymesh_Pivot_XYZ = {0,0,0};
 
 int[] SOLARCHVISION_get_selectedPolymesh_Vertices () {
 
-   int[] PolymeshVertices = {0};
+  int[] PolymeshVertices = {0};
   
   for (int f = allPolymesh_Faces[selectedPolymesh_num][0]; f <= allPolymesh_Faces[selectedPolymesh_num][1]; f++) {
     if ((0 < f) && (f < allFaces.length)) { 
