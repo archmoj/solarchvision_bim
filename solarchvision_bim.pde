@@ -17818,9 +17818,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
     selectedPolymesh_rotVector =  int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_rotVector" , selectedPolymesh_rotVector, 0, 2, 1), 1));
     selectedPolymesh_scaleVector =  int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_scaleVector" , selectedPolymesh_scaleVector, 0, 3, 1), 1));
   
-    selectedPolymesh_posValue = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_posValue" , selectedPolymesh_posValue, -50, 50, 1);
-    selectedPolymesh_rotValue = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_rotValue" , selectedPolymesh_rotValue, -180, 180, 5); 
-    selectedPolymesh_scaleValue = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_scaleValue" , selectedPolymesh_scaleValue, -8, 8, 0.5); 
+    selectedPolymesh_posValue = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_posValue" , selectedPolymesh_posValue, -50, 50, 1), 1));
+    selectedPolymesh_rotValue = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_rotValue" , selectedPolymesh_rotValue, -180, 180, 5), 5)); 
+    selectedPolymesh_scaleValue = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_scaleValue" , selectedPolymesh_scaleValue, -8, 8, 0.5), 0.5)); 
 
 
     
