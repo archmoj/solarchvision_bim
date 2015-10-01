@@ -19152,14 +19152,14 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     
     strokeWeight(2);
     
-    float mid_X = selectedPolymesh_BoundingBox[1][0];
-    float mid_Y = selectedPolymesh_BoundingBox[1][1];
-    float mid_Z = selectedPolymesh_BoundingBox[1][2];
+    float Pivot_X = selectedPolymesh_BoundingBox[1 + selectedPolymesh_alignX][0];
+    float Pivot_Y = selectedPolymesh_BoundingBox[1 + selectedPolymesh_alignY][1];
+    float Pivot_Z = selectedPolymesh_BoundingBox[1 + selectedPolymesh_alignZ][2];
     
-    float[][] BoundingBox_Vertices = {{mid_X, mid_Y, mid_Z},
-                                      {mid_X + 10, mid_Y, mid_Z},
-                                      {mid_X, mid_Y + 10, mid_Z},
-                                      {mid_X, mid_Y, mid_Z + 10}}; 
+    float[][] BoundingBox_Vertices = {{Pivot_X, Pivot_Y, Pivot_Z},
+                                      {Pivot_X + 10, Pivot_Y, Pivot_Z},
+                                      {Pivot_X, Pivot_Y + 10, Pivot_Z},
+                                      {Pivot_X, Pivot_Y, Pivot_Z + 10}}; 
     
     int[][] BoundingBox_Lines = {{0,1}, {0,2}, {0,3}};
 
