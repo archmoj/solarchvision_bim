@@ -1040,7 +1040,7 @@ int Skip_LAND_Center = 0; //5;
 int Load_URBAN = 0;
 int Display_URBAN = 1;
 
-int display_Field_Points = 1;
+int display_Field_Points = 0;
 int display_Field_Lines = 1;
 
 int display_MODEL3D_EDGES = 1;
@@ -15960,9 +15960,98 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
         
         
 //////////////////////////////////////////////////////
+        
+        //g = 1;
+        //g_line = 1; // <<<<<<<<< this forces to start only at the edges of the geometries... also avoid duplicates
+        
+        if ((abs(g - g_line) < 0.0001) && (g != 0) && (g_line <= 1)) {
+          
+          float[] test_point_dir = {x, y, z, dx, dy, dz}; 
+         
+          for (int n = 0; n < 25; n++) { // <<<<<<<<<
+  
+            int Point1_existed = 0;
+            int Point2_created = 0;
+          
+            float[][] preVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g}};
+            int point_prev = 0; 
+            {
+              float nearestPointDist = FLOAT_undefined;
+              int nearestPointNum = 0;
+              
+              for (int q = 1; q < Field_Countours_Vertices.length; q++) {
+                //if (preVertice[0][3] == Field_Countours_Vertices[q][3]) {
+                if (preVertice[0][3] - Field_Countours_Vertices[q][3] < 0.0001) {
+                  
+                  float d = dist(preVertice[0][0], preVertice[0][1], preVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]);
+                  
+                  if (nearestPointDist > d) { 
+                    nearestPointDist = d;
+                    nearestPointNum = q;
+                  }
+                }
+              }
+              
+              if (nearestPointDist < 0.5) {  //i.e. 0.5m 
+                Point1_existed = 1;             
+           
+                point_prev = nearestPointNum;
+                
+                test_point_dir[0] = Field_Countours_Vertices[point_prev][0];
+                test_point_dir[1] = Field_Countours_Vertices[point_prev][1];
+                test_point_dir[2] = Field_Countours_Vertices[point_prev][2];
+              }             
+            } 
 
 
+            //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            test_point_dir = SOLARCHVISION_traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier, -1);
+            //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  
+            float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
+            int point_next = 0; 
+            {
+              float nearestPointDist = FLOAT_undefined;
+              int nearestPointNum = 0;
+              
+              for (int q = 1; q < Field_Countours_Vertices.length; q++) {
+                //if (newVertice[0][3] == Field_Countours_Vertices[q][3]) {
+                if (abs(newVertice[0][3] - Field_Countours_Vertices[q][3]) < 0.0001) {
+                  
+                  float d = dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]);
 
+                  if (nearestPointDist > d) { 
+                    nearestPointDist = d;
+                    nearestPointNum = q;
+                  }
+                }
+                
+                if (nearestPointDist < 0.5) {  //i.e. 0.5m 
+                  point_next = nearestPointNum;
+                }
+              }
+             
+              if (point_next == 0) {
+                Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, newVertice);              
+                point_next = Field_Countours_Vertices.length - 1;
+              
+                Point2_created = 1;
+              } 
+            }
+          
+            
+            if (Point1_existed == 1) {
+                int[][] newVLine = {{point_prev, point_next}};
+                Field_Countours_VLines = (int[][]) concat(Field_Countours_VLines, newVLine);
+            }
+  
+            if (Point2_created == 0) {
+              
+              break; // when reaching an existing line
+            } 
+            
+          }         
+        }
 
       }
 
@@ -16245,8 +16334,8 @@ void SOLARCHVISION_draw_field_lines () {
     }
 
     WIN3D_Diagrams.strokeWeight(1);
-    WIN3D_Diagrams.stroke(0, 255, 0);
-    WIN3D_Diagrams.fill(0, 255, 0);  
+    //WIN3D_Diagrams.stroke(0, 255, 0);
+    //WIN3D_Diagrams.fill(0, 255, 0);  
 
     for (int q = 1; q < Field_Countours_VLines.length; q++) {
       
