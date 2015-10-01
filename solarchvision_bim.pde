@@ -131,11 +131,11 @@ float Create_Input_Orientation = 360; //0; // 360: random
 
 int Create_Input_Align = 0; // 0:Center, 1:Below
 
-float Create_Input_powX = 16; 
-float Create_Input_powY = 16;
-float Create_Input_powZ = 16;
+float Create_Input_powX = 8; 
+float Create_Input_powY = 8;
+float Create_Input_powZ = 8;
 
-float Create_Input_powAll = 16;
+float Create_Input_powAll = 8;
 int Create_Input_powRnd = 0;
 
 int SolidSurface_TESELATION = 2; //4;
@@ -13039,7 +13039,7 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
   }  
   
   //SOLARCHVISION_add_Box_Core(m, cen_X,cen_Y,cen_Z, X_out,Y_out,Z_out, T_out);
-  addToSolids(1, cen_X,cen_Y,cen_Z, 16,16,16, X_out,Y_out,Z_out, 0, 0, T_out);
+  addToSolids(1, cen_X,cen_Y,cen_Z, 8,8,8, X_out,Y_out,Z_out, 0, 0, T_out);
   
   return min_Z;
 }  
@@ -15362,7 +15362,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float dz = 1;
     float rot = 0;
     SOLARCHVISION_add_Box_Core(7, x,y,z, dx, dy, dz, t);
-    addToSolids(1, x,y,z, 16,16,16, dx,dy,dz, rot);
+    addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, rot);
   }  
 */
 
@@ -15387,7 +15387,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float dz = 20;
     float rot = 0;
     SOLARCHVISION_add_Box_Core(2, x,y,z, dx, dy, dz, rot);
-    addToSolids(1, x,y,z, 16,16,16, dx,dy,dz, 0,0,rot);
+    addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
   }
 
   {
@@ -15400,7 +15400,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float dz = 10;
     float rot = 60;
     SOLARCHVISION_add_Box_Core(3, x,y,z, dx, dy, dz, rot);
-    addToSolids(1, x,y,z, 16,16,16, dx,dy,dz, 0,0,rot);
+    addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
   }
 
 
@@ -17381,10 +17381,10 @@ void mouseClicked () {
               addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1; 
               
               if (Create_Soild_House == 1) {
-                Create_Input_powAll = 16;
-                Create_Input_powX = 16;
-                Create_Input_powY = 16;
-                Create_Input_powZ = 16;
+                Create_Input_powAll = 8;
+                Create_Input_powX = 8;
+                Create_Input_powY = 8;
+                Create_Input_powZ = 8;
                 
                 
                 
@@ -18030,10 +18030,10 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Soild_House = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Soild_House" , Create_Soild_House, 0, 1, 1), 1));
 
       //Create_Input_powRnd = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powRnd" , Create_Input_powRnd, 0, 1, 1), 1));    
-      Create_Input_powAll = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powAll" , Create_Input_powAll, 0.5, 16, -2);
-      //Create_Input_powX = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powX" , Create_Input_powX, 0.5, 16, -2); 
-      //Create_Input_powY = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powY" , Create_Input_powY, 0.5, 16, -2); 
-      //Create_Input_powZ = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powZ" , Create_Input_powZ, 0.5, 16, -2);
+      Create_Input_powAll = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powAll" , Create_Input_powAll, 0.5, 8, -2);
+      //Create_Input_powX = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powX" , Create_Input_powX, 0.5, 8, -2); 
+      //Create_Input_powY = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powY" , Create_Input_powY, 0.5, 8, -2); 
+      //Create_Input_powZ = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_powZ" , Create_Input_powZ, 0.5, 8, -2);
 
       SolidSurface_TESELATION = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "SolidSurface_TESELATION" , SolidSurface_TESELATION, 0, 5, 1), 1));
 
