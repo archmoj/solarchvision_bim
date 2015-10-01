@@ -15351,7 +15351,7 @@ ParametricGeometry[] SolidObjects = {};
 
 void SOLARCHVISION_add_ParametricGeometries () {
 
-/*
+
   {
     addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
     float x = 0;
@@ -15361,10 +15361,10 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float dy = 100;
     float dz = 1;
     float rot = 0;
-    SOLARCHVISION_add_Box_Core(7, x,y,z, dx, dy, dz, t);
-    addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, rot);
+    SOLARCHVISION_add_Box_Core(7, x,y,z, dx, dy, dz, rot);
+    addToSolids(100, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); // <<<<<<<<<<<<<<<<<< 100!
   }  
-*/
+
 
   {
     addToLastPolymesh = 0; beginNewObject(); addToLastPolymesh = 1;
