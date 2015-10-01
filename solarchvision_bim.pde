@@ -15662,7 +15662,7 @@ float fn_dot2D (float x1, float y1, float x2, float y2) {
   return x1 * x2 + y1 * y2;
 }
 
-float[] traceContour (float x, float y, float z, float dx, float dy, float dz, float v) {
+float[] SOLARCHVISION_traceContour (float x, float y, float z, float dx, float dy, float dz, float v, int traceType) {
 
   float t_max = FLOAT_undefined;
   float t_min = FLOAT_undefined;
@@ -15756,9 +15756,29 @@ float[] traceContour (float x, float y, float z, float dx, float dy, float dz, f
     
   }     
 
-  //float[] return_array = {x_max, y_max, z_max, cos_ang(t + t_max), sin_ang(t + t_max), 0};
-  //float[] return_array = {x_min, y_min, z_min, cos_ang(t + t_min), sin_ang(t + t_min), 0};
-  float[] return_array = {x_equ, y_equ, z_equ, cos_ang(t + t_equ), sin_ang(t + t_equ), 0};
+
+  float the_X = 0, the_Y = 0, the_Z = 0, the_T = 0;
+  
+  if (traceType == 0) {
+    the_X = x_equ;
+    the_Y = y_equ;
+    the_Z = z_equ;
+    the_T = t_equ;
+  }
+  if (traceType == -1) {
+    the_X = x_min;
+    the_Y = y_min;
+    the_Z = z_min;
+    the_T = t_min;
+  }
+  if (traceType == 1) {
+    the_X = x_max;
+    the_Y = y_max;
+    the_Z = z_max;
+    the_T = t_max;
+  }
+  
+  float[] return_array = {the_X, the_Y, the_Z, cos_ang(t + the_T), sin_ang(t + the_T), 0};
   
   return return_array;
 }
@@ -15890,7 +15910,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
 
             //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-            test_point_dir = traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier);
+            test_point_dir = SOLARCHVISION_traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier, 0);
             //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   
             float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
@@ -15937,6 +15957,13 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
             
           }         
         }
+        
+        
+//////////////////////////////////////////////////////
+
+
+
+
       }
 
     }
@@ -15947,7 +15974,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   if (Field_record_JPG == 1) Field_Image.save(get_Field_Filename() + ".jpg");
 
   
-  //SOLARCHVISION_process_ParametricGeometries_VContours(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+  //SOLARCHVISION_process_ParametricGeometries_VContours(); 
 
 
   if (Field_record_PDF == 1) {
