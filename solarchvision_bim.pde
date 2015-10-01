@@ -15519,10 +15519,6 @@ PImage Solarch_Image = createImage(Solarch_RES1, Solarch_RES2, RGB);
 int display_Solarch_Image = 0; // 0:talse 1:true
 int Solarch_Image_Section = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
 
-void SOLARCHVISION_calculate_ParametricGeometries_Solarch () {
-
-}
-
 
 
 int Field_Color = 0; 
@@ -15555,6 +15551,7 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
   float z = 0;
   
   float val = 0;
+
   
   for (int n = 0; n < SolidObjects.length; n++) {
 
@@ -15577,13 +15574,30 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
       y = -(a * sin_ang(90 - Field_Rotation[Field_Image_Section]) + c * cos_ang(90 - Field_Rotation[Field_Image_Section]));
       z = -b; 
     }
-      
-    float d = SolidObjects[n].Distance(x, y, z);
     
+    /*
+    float d = SolidObjects[n].Distance(x, y, z);
     if (d > 0) {
       val += 1.0 / pow(d, Field_Power);
-    } 
-  }  
+    }     
+    */
+    {
+      float val1 = 0;
+      float d1 = SolidObjects[n].Distance(x-1, y, z);
+      if (d1 > 0) {
+        val1 += 1.0 / pow(d1, Field_Power);
+      } 
+      
+      float val2= 0;
+      float d2 = SolidObjects[n].Distance(x+1, y, z);
+      if (d2 > 0) {
+        val2 += 1.0 / pow(d2, Field_Power);
+      }     
+      
+      val += (val2 - val1);
+    }
+  }
+
   
   float[] return_array = {x, y, z, val};
   
@@ -15756,7 +15770,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
     for (int j = 0; j < Field_RES2; j++) {
       
       float[] FieldPoint = ParametricGeometries_Field_atIJ(i, j);
-
+      
       float x = FieldPoint[0];
       float y = FieldPoint[1];
       float z = FieldPoint[2];
