@@ -1113,6 +1113,9 @@ int pre_selectedPolymesh_alignZ;
 int pre_selectedPolymesh_displayPivot;
 int pre_selectedPolymesh_displayEdges;
 int pre_selectedPolymesh_displayBox;      
+
+int pre_WIN3D_EDGES_SHOW;
+int pre_WIN3D_FACES_SHADE;
       
 int pre_Load_Default_Models;
 
@@ -1876,6 +1879,11 @@ void draw () {
         pre_selectedPolymesh_displayPivot = selectedPolymesh_displayPivot;
         pre_selectedPolymesh_displayEdges = selectedPolymesh_displayEdges;
         pre_selectedPolymesh_displayBox = pre_selectedPolymesh_displayBox;        
+
+        pre_WIN3D_EDGES_SHOW = WIN3D_EDGES_SHOW;
+        pre_WIN3D_FACES_SHADE = WIN3D_FACES_SHADE;
+  
+
       
         pre_Load_Default_Models = Load_Default_Models;
 
@@ -1962,18 +1970,6 @@ void draw () {
           WIN3D_Update = 1;
         }
         
-        if (pre_selectedPolymesh_displayPivot != selectedPolymesh_displayPivot) {
-          WIN3D_Update = 1;          
-        }
-        
-        if (pre_selectedPolymesh_displayEdges != selectedPolymesh_displayEdges) {
-          WIN3D_Update = 1;          
-        }
-        
-        if (pre_selectedPolymesh_displayBox != pre_selectedPolymesh_displayBox) {
-          WIN3D_Update = 1;
-        }          
-        
         if (pre_selectedPolymesh_num != selectedPolymesh_num) {
           SOLARCHVISION_calculate_selectedPolymesh_Pivot();
           WIN3D_Update = 1;
@@ -2014,7 +2010,25 @@ void draw () {
           WIN3D_Update = 1;
         }        
 
+        if (pre_selectedPolymesh_displayPivot != selectedPolymesh_displayPivot) {
+          WIN3D_Update = 1;          
+        }
         
+        if (pre_selectedPolymesh_displayEdges != selectedPolymesh_displayEdges) {
+          WIN3D_Update = 1;          
+        }
+        
+        if (pre_selectedPolymesh_displayBox != pre_selectedPolymesh_displayBox) {
+          WIN3D_Update = 1;
+        }     
+        
+        if (pre_WIN3D_EDGES_SHOW != WIN3D_EDGES_SHOW) {
+          WIN3D_Update = 1;
+        }               
+          
+        if (pre_WIN3D_FACES_SHADE != WIN3D_FACES_SHADE) {
+          WIN3D_Update = 1;
+        }             
 
         if (MODEL2D_ERASE == 1) {
           SOLARCHVISION_remove_2Dobjects();
@@ -18107,6 +18121,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
       draw_probs = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Draw probabilities", draw_probs, 0, 1, 1), 1));
       sum_interval = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Probabilities interval", sum_interval, 1, 24, 1), 1));
       level_pix = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Probabilities range", level_pix, 2, 32, -2), 1));    
+      
+      WIN3D_EDGES_SHOW = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "WIN3D_EDGES_SHOW", WIN3D_EDGES_SHOW, 0, 1, 1), 1));  
+      WIN3D_FACES_SHADE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "WIN3D_FACES_SHADE", WIN3D_FACES_SHADE, 0, 4, 1), 1));  
     }
     if (ROLLOUT_child == 3) { // Colors
     
