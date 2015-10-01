@@ -15602,7 +15602,6 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
     }     
     */
     {
-      
       float val1 = 0;
       float d1 = SolidObjects[n].Distance(x - 0.5 * deltaX, y - 0.5 * deltaY, z);
       if (d1 > 0) {
@@ -15614,7 +15613,6 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
       if (d2 > 0) {
         val2 += 1.0 / pow(d2, Field_Power);
       }     
-      
       val += (val2 - val1);
     }
   }
@@ -15627,14 +15625,34 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
 
 
 float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
+
+  float deltaX = Field_Wspd * cos_ang(Field_Wdir);
+  float deltaY = Field_Wspd * sin_ang(Field_Wdir);
+
+
   float val = 0;
   for (int n = 0; n < SolidObjects.length; n++) {
-    
+    /*
     float d = SolidObjects[n].Distance(x, y, z);
 
     if (d > 0) {
       val += 1.0 / pow(d, Field_Power);
     } 
+    */
+    {
+      float val1 = 0;
+      float d1 = SolidObjects[n].Distance(x - 0.5 * deltaX, y - 0.5 * deltaY, z);
+      if (d1 > 0) {
+        val1 += 1.0 / pow(d1, Field_Power);
+      } 
+      
+      float val2= 0;
+      float d2 = SolidObjects[n].Distance(x + 0.5 * deltaX, y + 0.5 * deltaY, z);
+      if (d2 > 0) {
+        val2 += 1.0 / pow(d2, Field_Power);
+      }     
+      val += (val2 - val1);
+    }    
     
   }
   return val;
