@@ -17750,7 +17750,7 @@ class SOLARCHVISION_Spinner {
 
 String[][] ROLLOUTS = {
                         {"Location & Data", "Point", "Weather", "Environment"}, 
-                        {"Geometries & Space", "General", "Meshes", "Solids"}, 
+                        {"Geometries & Space", "General", "Meshes", "Solids", "Fractals", "Modify"},
                         {"Time & Scenarios", "Period", "Ranges", "Filters"}, 
                         {"Illustration Options", "Layout", "Layers", "Colors"},
                         {"Post-Processing", "Interpolation", "Developed", "Impacts"}, 
@@ -17823,20 +17823,20 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       text(nf(i + 1, 0) + ":" + ROLLOUTS[i][0], cx, cy);
 
-      Y_spinner += (i % 2) * 15.0 * ROLLOUT_S_View;
+      if (i % 2 == 1) Y_spinner += 15.0 * ROLLOUT_S_View;
     }
     
     strokeWeight(2); 
     stroke(63); 
     fill(63);
-    rect(ROLLOUT_CX_View, Y_spinner, ROLLOUT_X_View, 17.5 * ROLLOUT_S_View);
+    rect(ROLLOUT_CX_View, Y_spinner, ROLLOUT_X_View, 17.5 * ceil((ROLLOUTS[ROLLOUT_parent].length - 1) / 3.0) * ROLLOUT_S_View);
     strokeWeight(0);    
 
     Y_spinner += 5 * ROLLOUT_S_View;
     
     for (int i = 1; i < ROLLOUTS[ROLLOUT_parent].length; i++) {
 
-      float cx = ROLLOUT_CX_View + (100 * (i - 1) + 10) * ROLLOUT_S_View;
+      float cx = ROLLOUT_CX_View + (100 * ((i - 1) % 3) + 10) * ROLLOUT_S_View;
       float cy = Y_spinner;
       float cr = 6.75 * ROLLOUT_S_View;        
       
@@ -17860,8 +17860,12 @@ void SOLARCHVISION_draw_ROLLOUT () {
       }
               
       text("[" + nf(i, 0) + "]" + ROLLOUTS[ROLLOUT_parent][i], cx, cy);
+      
+      if (i % 3 == 0) Y_spinner += 15.0 * ROLLOUT_S_View;
     }
     Y_spinner += 25 * ROLLOUT_S_View;
+    
+    
     
   }
 
@@ -17956,23 +17960,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
   
     Create_Select_Modify = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Select_Modify" , Create_Select_Modify, 0, 4, 1), 1));
 
-    selectedPolymesh_num = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_num" , selectedPolymesh_num, 0, allPolymesh_Faces.length - 1, 1), 1));
 
-    selectedPolymesh_posVector = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_posVector" , selectedPolymesh_posVector, 0, 3, 1), 1));
-    selectedPolymesh_rotVector =  int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_rotVector" , selectedPolymesh_rotVector, 0, 2, 1), 1));
-    selectedPolymesh_scaleVector =  int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_scaleVector" , selectedPolymesh_scaleVector, 0, 3, 1), 1));
-  
-    selectedPolymesh_posValue = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_posValue" , selectedPolymesh_posValue, -50, 50, 1), 1));
-    selectedPolymesh_rotValue = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_rotValue" , selectedPolymesh_rotValue, -180, 180, 5), 5)); 
-    selectedPolymesh_scaleValue = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_scaleValue" , selectedPolymesh_scaleValue, -8, 8, 0.5), 0.5)); 
-
-    selectedPolymesh_alignX = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_alignX" , selectedPolymesh_alignX, -1, 1, 1), 1));
-    selectedPolymesh_alignY = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_alignY" , selectedPolymesh_alignY, -1, 1, 1), 1));
-    selectedPolymesh_alignZ = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_alignZ" , selectedPolymesh_alignZ, -1, 1, 1), 1));
-
-    selectedPolymesh_displayPivot = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_displayPivot" , selectedPolymesh_displayPivot, 0, 1, 1), 1));
-    selectedPolymesh_displayEdges = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_displayEdges" , selectedPolymesh_displayEdges, 0, 1, 1), 1));
-    selectedPolymesh_displayBox = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_displayBox" , selectedPolymesh_displayBox, 0, 1, 1), 1));
     
     Create_Default_Material = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Default_Material" , Create_Default_Material, -1, 8, 1), 1));
 
@@ -17987,14 +17975,12 @@ void SOLARCHVISION_draw_ROLLOUT () {
     Create_Input_Volume = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);
 
 
-    if (ROLLOUT_child == 1) { // General + recursivePlants
-      Create_Recursive_Plant = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant" , Create_Recursive_Plant, 0, 1, 1), 1));
-      Create_Recursive_Plant_Type = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Type" , Create_Recursive_Plant_Type, 0, 0, 1), 1));
-      Create_Recursive_Plant_DegreeMin = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_DegreeMin" , Create_Recursive_Plant_DegreeMin, 1, 9, 1), 1));
-      Create_Recursive_Plant_DegreeMax = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_DegreeMax" , Create_Recursive_Plant_DegreeMax, 1, 9, 1), 1));
-      Create_Recursive_Plant_Seed = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Seed" , Create_Recursive_Plant_Seed, -1, 100, 1), 1));
-      Create_Recursive_Plant_trunckSize = roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_trunckSize" , Create_Recursive_Plant_trunckSize, 0, 10, 0.1), 0.1);
-      Create_Recursive_Plant_leafSize = roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_leafSize" , Create_Recursive_Plant_leafSize, 0, 10, 0.1), 0.1);    
+    if (ROLLOUT_child == 1) { // General
+
+      WIN3D_EDGES_SHOW = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "WIN3D_EDGES_SHOW", WIN3D_EDGES_SHOW, 0, 1, 1), 1));  
+      WIN3D_FACES_SHADE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "WIN3D_FACES_SHADE", WIN3D_FACES_SHADE, 0, 4, 1), 1));  
+
+      display_MODEL3D_EDGES = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "display_MODEL3D_EDGES" , display_MODEL3D_EDGES, 0, 1, 1), 1));
     }
     
 
@@ -18046,10 +18032,37 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
     }
     
-      
-    display_MODEL3D_EDGES = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "display_MODEL3D_EDGES" , display_MODEL3D_EDGES, 0, 1, 1), 1));
+    if (ROLLOUT_child == 4) { // Fractals
+
+      Create_Recursive_Plant = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant" , Create_Recursive_Plant, 0, 1, 1), 1));
+      Create_Recursive_Plant_Type = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Type" , Create_Recursive_Plant_Type, 0, 0, 1), 1));
+      Create_Recursive_Plant_DegreeMin = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_DegreeMin" , Create_Recursive_Plant_DegreeMin, 1, 9, 1), 1));
+      Create_Recursive_Plant_DegreeMax = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_DegreeMax" , Create_Recursive_Plant_DegreeMax, 1, 9, 1), 1));
+      Create_Recursive_Plant_Seed = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_Seed" , Create_Recursive_Plant_Seed, -1, 100, 1), 1));
+      Create_Recursive_Plant_trunckSize = roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_trunckSize" , Create_Recursive_Plant_trunckSize, 0, 10, 0.1), 0.1);
+      Create_Recursive_Plant_leafSize = roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Recursive_Plant_leafSize" , Create_Recursive_Plant_leafSize, 0, 10, 0.1), 0.1);    
+    }
     
+    if (ROLLOUT_child == 5) { // Modify
+
+      selectedPolymesh_num = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_num" , selectedPolymesh_num, 0, allPolymesh_Faces.length - 1, 1), 1));
+  
+      selectedPolymesh_posVector = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_posVector" , selectedPolymesh_posVector, 0, 3, 1), 1));
+      selectedPolymesh_rotVector =  int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_rotVector" , selectedPolymesh_rotVector, 0, 2, 1), 1));
+      selectedPolymesh_scaleVector =  int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_scaleVector" , selectedPolymesh_scaleVector, 0, 3, 1), 1));
     
+      selectedPolymesh_posValue = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_posValue" , selectedPolymesh_posValue, -50, 50, 1), 1));
+      selectedPolymesh_rotValue = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_rotValue" , selectedPolymesh_rotValue, -180, 180, 5), 5)); 
+      selectedPolymesh_scaleValue = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_scaleValue" , selectedPolymesh_scaleValue, -8, 8, 0.5), 0.5)); 
+  
+      selectedPolymesh_alignX = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_alignX" , selectedPolymesh_alignX, -1, 1, 1), 1));
+      selectedPolymesh_alignY = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_alignY" , selectedPolymesh_alignY, -1, 1, 1), 1));
+      selectedPolymesh_alignZ = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_alignZ" , selectedPolymesh_alignZ, -1, 1, 1), 1));
+  
+      selectedPolymesh_displayPivot = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_displayPivot" , selectedPolymesh_displayPivot, 0, 1, 1), 1));
+      selectedPolymesh_displayEdges = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_displayEdges" , selectedPolymesh_displayEdges, 0, 1, 1), 1));
+      selectedPolymesh_displayBox = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_displayBox" , selectedPolymesh_displayBox, 0, 1, 1), 1));      
+    }
     
     
     MODEL2D_ERASE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "MODEL2D_ERASE" , MODEL2D_ERASE, 0, 1, 1), 1));
@@ -18122,8 +18135,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       sum_interval = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Probabilities interval", sum_interval, 1, 24, 1), 1));
       level_pix = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Probabilities range", level_pix, 2, 32, -2), 1));    
       
-      WIN3D_EDGES_SHOW = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "WIN3D_EDGES_SHOW", WIN3D_EDGES_SHOW, 0, 1, 1), 1));  
-      WIN3D_FACES_SHADE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "WIN3D_FACES_SHADE", WIN3D_FACES_SHADE, 0, 4, 1), 1));  
+
     }
     if (ROLLOUT_child == 3) { // Colors
     
