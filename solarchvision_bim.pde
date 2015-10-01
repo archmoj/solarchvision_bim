@@ -81,9 +81,9 @@ float selectedPolymesh_posValue = 0;
 float selectedPolymesh_rotValue = 0;  
 float selectedPolymesh_scaleValue = 0; 
 
-float selectedPolymesh_alignX = 0;
-float selectedPolymesh_alignY = 0;
-float selectedPolymesh_alignZ = 0;
+int selectedPolymesh_alignX = 0;
+int selectedPolymesh_alignY = 0;
+int selectedPolymesh_alignZ = 0;
 
 int selectedPolymesh_displayPivot = 1;
 int selectedPolymesh_displayEdges = 1;
@@ -1106,9 +1106,9 @@ float pre_selectedPolymesh_posValue;
 float pre_selectedPolymesh_rotValue;
 float pre_selectedPolymesh_scaleValue;
 
-float pre_selectedPolymesh_alignX;
-float pre_selectedPolymesh_alignY;
-float pre_selectedPolymesh_alignZ;
+int pre_selectedPolymesh_alignX;
+int pre_selectedPolymesh_alignY;
+int pre_selectedPolymesh_alignZ;
       
 int pre_selectedPolymesh_displayPivot;
 int pre_selectedPolymesh_displayEdges;
@@ -19033,7 +19033,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     
     noFill();
     
-    stroke(127); strokeWeight(2);
+    stroke(127); 
+    strokeWeight(2);
   
     for (int f = allPolymesh_Faces[selectedPolymesh_num][0]; f <= allPolymesh_Faces[selectedPolymesh_num][1]; f++) {
       if ((0 < f) && (f < allFaces.length)) { 
@@ -19092,48 +19093,101 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     
     noFill();
     
-    stroke(0,127,0,127);   
-  
-    for (int f = allPolymesh_Faces[selectedPolymesh_num][0]; f <= allPolymesh_Faces[selectedPolymesh_num][1]; f++) {
-      if ((0 < f) && (f < allFaces.length)) { 
-  
-        int Teselation = 0;
-        
-        int TotalSubNo = 1;  
-        if (allFaces_MAT[f] == 0) {
-          Teselation = MODEL3D_TESELATION;
-          if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
-        }
+    stroke(0,127,0,127);
+    strokeWeight(2);
     
-        for (int n = 0; n < TotalSubNo; n++) {
-          
-          float[][] base_Vertices = new float [allFaces[f].length][3];
-          for (int j = 0; j < allFaces[f].length; j++) {
-            int vNo = allFaces[f][j];
-            base_Vertices[j][0] = allVertices[vNo][0];
-            base_Vertices[j][1] = allVertices[vNo][1];
-            base_Vertices[j][2] = allVertices[vNo][2];
-          }
-          
-          float[][] subFace = getSubFace(base_Vertices, Teselation, n);
-       
-          beginShape();
-          
-          for (int s = 0; s < subFace.length; s++) {
+    float min_X = selectedPolymesh_BoundingBox[0][0];
+    float min_Y = selectedPolymesh_BoundingBox[0][1];
+    float min_Z = selectedPolymesh_BoundingBox[0][2];
 
-            float x = subFace[s][0] * objects_scale;
-            float y = subFace[s][1] * objects_scale;            
-            float z = -subFace[s][2] * objects_scale;
-            
-            float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
-            
-            if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
-            }
-            
+    float max_X = selectedPolymesh_BoundingBox[2][0];
+    float max_Y = selectedPolymesh_BoundingBox[2][1];
+    float max_Z = selectedPolymesh_BoundingBox[2][2];
+    
+    float[][] BoundingBox_Vertices = {{min_X, min_Y, min_Z},
+                                      {max_X, min_Y, min_Z}, 
+                                      {max_X, max_Y, min_Z}, 
+                                      {min_X, max_Y, min_Z}, 
+                                      {min_X, min_Y, max_Z},
+                                      {max_X, min_Y, max_Z}, 
+                                      {max_X, max_Y, max_Z}, 
+                                      {min_X, max_Y, max_Z}}; 
+    
+    int[][] BoundingBox_Faces = {{3,2,1,0}, {0,1,5,4}, {1,2,6,5}, {2,3,7,6}, {3,0,4,7}, {4,5,6,7}};
+
+    for (int f = 0; f < BoundingBox_Faces.length; f++) {
+      
+      beginShape();
+      
+      for (int g = 0; g < BoundingBox_Faces[f].length; g++) {
+  
+        int vNo = BoundingBox_Faces[f][g];
+  
+        float x = BoundingBox_Vertices[vNo][0] * objects_scale;
+        float y = BoundingBox_Vertices[vNo][1] * objects_scale;            
+        float z = -BoundingBox_Vertices[vNo][2] * objects_scale;
+        
+        float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+        
+        if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+          if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+        }
+        
+      }
+      endShape(CLOSE);
+    }
+    
+    strokeWeight(0);   
+  
+    popMatrix();
+  }  
+  
+  if (selectedPolymesh_displayPivot != 0) {
+    
+    pushMatrix();
+  
+    translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+    
+    noFill();
+    
+    strokeWeight(2);
+    
+    float mid_X = selectedPolymesh_BoundingBox[1][0];
+    float mid_Y = selectedPolymesh_BoundingBox[1][1];
+    float mid_Z = selectedPolymesh_BoundingBox[1][2];
+    
+    float[][] BoundingBox_Vertices = {{mid_X, mid_Y, mid_Z},
+                                      {mid_X + 10, mid_Y, mid_Z},
+                                      {mid_X, mid_Y + 10, mid_Z},
+                                      {mid_X, mid_Y, mid_Z + 10}}; 
+    
+    int[][] BoundingBox_Lines = {{0,1}, {0,2}, {0,3}};
+
+    for (int f = 0; f < BoundingBox_Lines.length; f++) {
+      
+      if (f == 0) stroke(255,0,0);
+      if (f == 1) stroke(0,0,255);
+      if (f == 2) stroke(127,127,0);
+      
+      int a = BoundingBox_Lines[f][0];
+      int b = BoundingBox_Lines[f][1];
+
+      float x1 = BoundingBox_Vertices[a][0] * objects_scale;
+      float y1 = BoundingBox_Vertices[a][1] * objects_scale;            
+      float z1 = -BoundingBox_Vertices[a][2] * objects_scale;
+
+      float x2 = BoundingBox_Vertices[b][0] * objects_scale;
+      float y2 = BoundingBox_Vertices[b][1] * objects_scale;            
+      float z2 = -BoundingBox_Vertices[b][2] * objects_scale;
+      
+      float[] Image_XYZa = SOLARCHVISION_calculate_Perspective_Internally(x1,y1,z1);            
+      float[] Image_XYZb = SOLARCHVISION_calculate_Perspective_Internally(x2,y2,z2);
+      
+      if ((Image_XYZa[2] > 0) && (Image_XYZb[2] > 0)) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+        if (isInside(Image_XYZa[0], Image_XYZa[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) {
+          if (isInside(Image_XYZb[0], Image_XYZb[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) {
+            line(Image_XYZa[0], Image_XYZa[1], Image_XYZb[0], Image_XYZb[1]);
           }
-          
-          endShape(CLOSE);
         }
       }
     }
@@ -19141,7 +19195,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     strokeWeight(0);   
   
     popMatrix();
-  }  
+  }    
 }
 
 
@@ -20642,12 +20696,11 @@ int[] SOLARCHVISION_get_selectedPolymesh_Vertices () {
   return PolymeshVertices;
 } 
 
-float[][] SOLARCHVISION_calculate_selectedPolymesh_BoundingBox () {
-  
-  float[][] BoundingBox = {{0,0,0}, {0,0,0}, {0,0,0}}; // [min|mid|max]
+float[][] selectedPolymesh_BoundingBox = {{0,0,0}, {0,0,0}, {0,0,0}}; // [min|mid|max]
+
+void SOLARCHVISION_calculate_selectedPolymesh_BoundingBox () {
 
   int[] PolymeshVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
-  
   
   for (int j = 0; j < 3; j++) {
     
@@ -20665,21 +20718,18 @@ float[][] SOLARCHVISION_calculate_selectedPolymesh_BoundingBox () {
     
     for (int i = 0; i < 3; i++) {
       float ratio = 0.5 * i;
-      BoundingBox[i][j] = (1 - ratio) * POS_min + ratio * POS_max;
+      selectedPolymesh_BoundingBox[i][j] = (1 - ratio) * POS_min + ratio * POS_max;
     } 
   }
-
- 
-  return BoundingBox;  
 }
 
 void SOLARCHVISION_calculate_selectedPolymesh_Pivot () {
   
-  float [][] BoundingBox = SOLARCHVISION_calculate_selectedPolymesh_BoundingBox();
+  SOLARCHVISION_calculate_selectedPolymesh_BoundingBox();
 
-  selectedPolymesh_Pivot_XYZ[0] = BoundingBox[(selectedPolymesh_alignX + 1)][0];
-  selectedPolymesh_Pivot_XYZ[1] = BoundingBox[(selectedPolymesh_alignX + 1)][1];
-  selectedPolymesh_Pivot_XYZ[2] = BoundingBox[(selectedPolymesh_alignX + 1)][2];
+  selectedPolymesh_Pivot_XYZ[0] = selectedPolymesh_BoundingBox[1 + selectedPolymesh_alignX][0];
+  selectedPolymesh_Pivot_XYZ[1] = selectedPolymesh_BoundingBox[1 + selectedPolymesh_alignY][1];
+  selectedPolymesh_Pivot_XYZ[2] = selectedPolymesh_BoundingBox[1 + selectedPolymesh_alignZ][2];
   
 }
 
