@@ -85,6 +85,10 @@ float selectedPolymesh_alignX = 0;
 float selectedPolymesh_alignY = 0;
 float selectedPolymesh_alignZ = 0;
 
+int selectedPolymesh_displayPivot = 1;
+int selectedPolymesh_displayEdges = 1;
+int selectedPolymesh_displayBox = 1;
+
 int[][] allPolymesh_Faces = {{0,0}}; // start face - end face
 int[][] allPolymesh_Solids = {{0,0}}; // start solid - end solid
 
@@ -1035,7 +1039,7 @@ int Display_URBAN = 1;
 int display_Field_Points = 1;
 int display_Field_Lines = 1;
 
-int display_MODEL3D_EDGES = 0;
+int display_MODEL3D_EDGES = 1;
 
 
 int camera_variation = 0; // 1;
@@ -1105,6 +1109,10 @@ float pre_selectedPolymesh_scaleValue;
 float pre_selectedPolymesh_alignX;
 float pre_selectedPolymesh_alignY;
 float pre_selectedPolymesh_alignZ;
+      
+int pre_selectedPolymesh_displayPivot;
+int pre_selectedPolymesh_displayEdges;
+int pre_selectedPolymesh_displayBox;      
       
 int pre_Load_Default_Models;
 
@@ -1864,6 +1872,10 @@ void draw () {
         pre_selectedPolymesh_alignX = selectedPolymesh_alignX;
         pre_selectedPolymesh_alignY = selectedPolymesh_alignY;
         pre_selectedPolymesh_alignZ = selectedPolymesh_alignZ;
+        
+        pre_selectedPolymesh_displayPivot = selectedPolymesh_displayPivot;
+        pre_selectedPolymesh_displayEdges = selectedPolymesh_displayEdges;
+        pre_selectedPolymesh_displayBox = pre_selectedPolymesh_displayBox;        
       
         pre_Load_Default_Models = Load_Default_Models;
 
@@ -1949,6 +1961,18 @@ void draw () {
           
           WIN3D_Update = 1;
         }
+        
+        if (pre_selectedPolymesh_displayPivot != selectedPolymesh_displayPivot) {
+          WIN3D_Update = 1;          
+        }
+        
+        if (pre_selectedPolymesh_displayEdges != selectedPolymesh_displayEdges) {
+          WIN3D_Update = 1;          
+        }
+        
+        if (pre_selectedPolymesh_displayBox != pre_selectedPolymesh_displayBox) {
+          WIN3D_Update = 1;
+        }          
         
         if (pre_selectedPolymesh_num != selectedPolymesh_num) {
           SOLARCHVISION_calculate_selectedPolymesh_Pivot();
@@ -13906,11 +13930,16 @@ void SOLARCHVISION_draw_3Dobjects () {
           c = color(Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3], Materials_Color[mt][0]);
         }
         
-        if (WIN3D_EDGES_SHOW == 1) {
-          WIN3D_Diagrams.stroke(0, 0, 0);
+        if (display_MODEL3D_EDGES == 0) {
+          WIN3D_Diagrams.noStroke();
         }
         else {
-          WIN3D_Diagrams.stroke(c);
+          if (WIN3D_EDGES_SHOW == 1) {
+            WIN3D_Diagrams.stroke(0, 0, 0);
+          }
+          else {
+            WIN3D_Diagrams.stroke(c);
+          }          
         }
     
         if (WIN3D_FACES_SHADE == 1) {
@@ -14051,8 +14080,6 @@ void SOLARCHVISION_draw_3Dobjects () {
                 if (PAL_DIR == 2) _u =  0.5 * _u;
       
                 float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
-      
-                //WIN3D_Diagrams.noStroke(); // <<<<<<<<<<<<
       
                 WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
               }
@@ -17928,6 +17955,10 @@ void SOLARCHVISION_draw_ROLLOUT () {
     selectedPolymesh_alignX = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_alignX" , selectedPolymesh_alignX, -1, 1, 1), 1));
     selectedPolymesh_alignY = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_alignY" , selectedPolymesh_alignY, -1, 1, 1), 1));
     selectedPolymesh_alignZ = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_alignZ" , selectedPolymesh_alignZ, -1, 1, 1), 1));
+
+    selectedPolymesh_displayPivot = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_displayPivot" , selectedPolymesh_displayPivot, 0, 1, 1), 1));
+    selectedPolymesh_displayEdges = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_displayEdges" , selectedPolymesh_displayEdges, 0, 1, 1), 1));
+    selectedPolymesh_displayBox = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_displayBox" , selectedPolymesh_displayBox, 0, 1, 1), 1));
     
     Create_Default_Material = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Default_Material" , Create_Default_Material, -1, 8, 1), 1));
 
@@ -18940,10 +18971,61 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
   return theValues;
 }
 
-void SOLARCHVISION_draw_Perspective_Internally () {
+float[] SOLARCHVISION_calculate_Perspective_Internally (float x, float y, float z) {
+
+  float Image_X = FLOAT_undefined;
+  float Image_Y = FLOAT_undefined;
+  float Image_Z = -FLOAT_undefined; // negative so that it automatically illuminated by Draw function 
+  
+
+  float px, py, pz;
+
+  x -= CAM_x;
+  y -= CAM_y;
+  z += CAM_z;
+
+  pz = z;
+  px = x * cos_ang(-WIN3D_RZ_coordinate) - y * sin_ang(-WIN3D_RZ_coordinate);
+  py = x * sin_ang(-WIN3D_RZ_coordinate) + y * cos_ang(-WIN3D_RZ_coordinate);
+  
+  x = px;
+  y = py;
+  z = pz;    
+  
+  px = x;
+  py = y * cos_ang(WIN3D_RX_coordinate) - z * sin_ang(WIN3D_RX_coordinate);
+  pz = y * sin_ang(WIN3D_RX_coordinate) + z * cos_ang(WIN3D_RX_coordinate);
+  
+  x = px;
+  y = py;
+  z = pz;
 
   
-  //if (display_MODEL3D_EDGES != 0) {
+  if (z > 0) {
+    if (WIN3D_View_Type == 1) {
+      
+      Image_X = (x / z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
+      Image_Y = -(y / z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
+      Image_Z = z;
+    }
+    else {
+      
+      float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
+
+      Image_X = (x / ZOOM) * (0.5 * WIN3D_scale3D);
+      Image_Y = -(y / ZOOM) * (0.5 * WIN3D_scale3D);
+      Image_Z = z;      
+    }
+  }
+  
+  float[] theValues = {Image_X, Image_Y, Image_Z};
+  
+  return theValues;              
+}
+
+void SOLARCHVISION_draw_Perspective_Internally () {
+
+  if (selectedPolymesh_displayEdges != 0) {
     
     pushMatrix();
   
@@ -18982,54 +19064,15 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           beginShape();
           
           for (int s = 0; s < subFace.length; s++) {
-            
+
             float x = subFace[s][0] * objects_scale;
-            float y = subFace[s][1] * objects_scale;
+            float y = subFace[s][1] * objects_scale;            
             float z = -subFace[s][2] * objects_scale;
-            {
-              float px, py, pz;
-      
-              x -= CAM_x;
-              y -= CAM_y;
-              z += CAM_z;
-      
-              pz = z;
-              px = x * cos_ang(-WIN3D_RZ_coordinate) - y * sin_ang(-WIN3D_RZ_coordinate);
-              py = x * sin_ang(-WIN3D_RZ_coordinate) + y * cos_ang(-WIN3D_RZ_coordinate);
-              
-              x = px;
-              y = py;
-              z = pz;    
-              
-              px = x;
-              py = y * cos_ang(WIN3D_RX_coordinate) - z * sin_ang(WIN3D_RX_coordinate);
-              pz = y * sin_ang(WIN3D_RX_coordinate) + z * cos_ang(WIN3D_RX_coordinate);
-              
-              x = px;
-              y = py;
-              z = pz;
-            }
             
-    
+            float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
             
-            if (z > 0) {
-              
-              if (WIN3D_View_Type == 1) {
-                
-                float Image_X = (x / z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
-                float Image_Y = -(y / z) * (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
-                
-                if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
-              }
-              else {
-                
-                float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
-    
-                float Image_X = (x / ZOOM) * (0.5 * WIN3D_scale3D);
-                float Image_Y = -(y / ZOOM) * (0.5 * WIN3D_scale3D);         
-                
-                if (isInside(Image_X, Image_Y, -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_X, Image_Y);
-              }
+            if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
             }
             
           }
@@ -19042,7 +19085,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     strokeWeight(0);   
   
     popMatrix();
-  //}
+  }
 }
 
 
