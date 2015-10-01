@@ -17823,7 +17823,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       text(nf(i + 1, 0) + ":" + ROLLOUTS[i][0], cx, cy);
 
-      if (i % 2 == 1) Y_spinner += 15.0 * ROLLOUT_S_View;
+      if (i % 2 == 1) Y_spinner += 15 * ROLLOUT_S_View;
     }
     
     strokeWeight(2); 
@@ -17861,9 +17861,12 @@ void SOLARCHVISION_draw_ROLLOUT () {
               
       text("[" + nf(i, 0) + "]" + ROLLOUTS[ROLLOUT_parent][i], cx, cy);
       
-      if (i % 3 == 0) Y_spinner += 15.0 * ROLLOUT_S_View;
+      if (i % 3 == 0) Y_spinner += 15 * ROLLOUT_S_View;
     }
-    Y_spinner += 25 * ROLLOUT_S_View;
+    
+    if (ROLLOUTS[ROLLOUT_parent].length % 3 == 0) Y_spinner += 15 * ROLLOUT_S_View;
+    
+    Y_spinner += 15 * ROLLOUT_S_View;
     
     
     
@@ -17961,26 +17964,31 @@ void SOLARCHVISION_draw_ROLLOUT () {
     Create_Select_Modify = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Select_Modify" , Create_Select_Modify, 0, 4, 1), 1));
 
 
-    
-    Create_Default_Material = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Default_Material" , Create_Default_Material, -1, 8, 1), 1));
-
-    Create_Input_Align = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Align" , Create_Input_Align, 0, 1, 1), 1));
-    
-    Create_Input_Orientation = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Orientation" , Create_Input_Orientation, 0, 360, 15);
-    
-    Create_Input_Length = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Length" , Create_Input_Length, -100, 100, 1); 
-    Create_Input_Width = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Width" , Create_Input_Width, -100, 100, 1);
-    Create_Input_Height = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Height" , Create_Input_Height, -100, 100, 1);    
-
-    Create_Input_Volume = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);
+    if (ROLLOUT_child != 5) {
+      
+      Create_Default_Material = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Default_Material" , Create_Default_Material, -1, 8, 1), 1));
+  
+      Create_Input_Align = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Align" , Create_Input_Align, 0, 1, 1), 1));
+      
+      Create_Input_Orientation = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Orientation" , Create_Input_Orientation, 0, 360, 15);
+      
+      Create_Input_Length = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Length" , Create_Input_Length, -100, 100, 1); 
+      Create_Input_Width = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Width" , Create_Input_Width, -100, 100, 1);
+      Create_Input_Height = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Height" , Create_Input_Height, -100, 100, 1);    
+  
+      Create_Input_Volume = MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);
+    }
 
 
     if (ROLLOUT_child == 1) { // General
-
-      WIN3D_EDGES_SHOW = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "WIN3D_EDGES_SHOW", WIN3D_EDGES_SHOW, 0, 1, 1), 1));  
-      WIN3D_FACES_SHADE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "WIN3D_FACES_SHADE", WIN3D_FACES_SHADE, 0, 4, 1), 1));  
-
-      display_MODEL3D_EDGES = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "display_MODEL3D_EDGES" , display_MODEL3D_EDGES, 0, 1, 1), 1));
+    
+      MODEL2D_ERASE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "MODEL2D_ERASE" , MODEL2D_ERASE, 0, 1, 1), 1));
+      
+      MODEL3D_ERASE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "MODEL3D_ERASE" , MODEL3D_ERASE, 0, 1, 1), 1));
+      
+      MODEL3D_TESELATION = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "MODEL3D_TESELATION" , MODEL3D_TESELATION, 0, 5, 1), 1));
+      
+      Load_Default_Models = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Load_Default_Models" , Load_Default_Models, 0, MAX_Default_Models_Number, 1), 1));
     }
     
 
@@ -18065,13 +18073,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     }
     
     
-    MODEL2D_ERASE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "MODEL2D_ERASE" , MODEL2D_ERASE, 0, 1, 1), 1));
-    
-    MODEL3D_ERASE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "MODEL3D_ERASE" , MODEL3D_ERASE, 0, 1, 1), 1));
-    
-    MODEL3D_TESELATION = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "MODEL3D_TESELATION" , MODEL3D_TESELATION, 0, 5, 1), 1));
-    
-    Load_Default_Models = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Load_Default_Models" , Load_Default_Models, 0, MAX_Default_Models_Number, 1), 1));
+
     
 
     
@@ -18135,6 +18137,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
       sum_interval = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Probabilities interval", sum_interval, 1, 24, 1), 1));
       level_pix = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Probabilities range", level_pix, 2, 32, -2), 1));    
       
+      WIN3D_FACES_SHADE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "WIN3D_FACES_SHADE", WIN3D_FACES_SHADE, 0, 4, 1), 1));
+      WIN3D_EDGES_SHOW = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "WIN3D_EDGES_SHOW", WIN3D_EDGES_SHOW, 0, 1, 1), 1));  
+      display_MODEL3D_EDGES = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "display_MODEL3D_EDGES" , display_MODEL3D_EDGES, 0, 1, 1), 1));
 
     }
     if (ROLLOUT_child == 3) { // Colors
