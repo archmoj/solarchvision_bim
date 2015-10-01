@@ -193,6 +193,10 @@ int Launch_External_Hardware = 0; // inactive
 
 //-------------------------------
 
+float Field_Wspd = 5.0; 
+float Field_Wdir = 0.0;
+
+
 float Field_Power = 3.0; //2.0; // 1/2/3
 
 float GlobalAlbedo = 0; // 0-100
@@ -1092,6 +1096,9 @@ float pre_Field_Multiplier;
 float pre_Field_Power;
 float[] pre_Field_Rotation = {0,0,0,0};
 float[] pre_Field_Elevation = {0,0,0,0};
+
+float pre_Field_Wspd; 
+float pre_Field_Wdir;
       
 int pre_PROCESS_subdivisions;
 
@@ -1858,6 +1865,9 @@ void draw () {
         pre_Field_Power = Field_Power;
         pre_Field_Rotation[Field_Image_Section] = Field_Rotation[Field_Image_Section];
         pre_Field_Elevation[Field_Image_Section] = Field_Elevation[Field_Image_Section];
+        
+        pre_Field_Wspd = Field_Wspd; 
+        pre_Field_Wdir = Field_Wdir;
       
         pre_PROCESS_subdivisions = PROCESS_subdivisions;
       
@@ -2099,8 +2109,12 @@ void draw () {
         if (pre_Field_Power != Field_Power) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
         if (pre_Field_Rotation[Field_Image_Section] != Field_Rotation[Field_Image_Section]) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
         if (pre_Field_Elevation[Field_Image_Section] != Field_Elevation[Field_Image_Section]) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
-        if (pre_PROCESS_subdivisions != PROCESS_subdivisions) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
+        
+        if (pre_Field_Wspd != Field_Wspd) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
+        if (pre_Field_Wdir != Field_Wdir) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
 
+
+        if (pre_PROCESS_subdivisions != PROCESS_subdivisions) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
 
         if (pre_display_Field_Points == display_Field_Points) WIN3D_Update = 1;
         if (pre_display_Field_Lines == display_Field_Lines) WIN3D_Update = 1;
@@ -15545,6 +15559,12 @@ float Field_PositionStep = 1.25;
 
 
 float[] ParametricGeometries_Field_atIJ (float i, float j){
+
+  float deltaX = Field_Wspd * cos_ang(Field_Wdir);
+  float deltaY = Field_Wspd * sin_ang(Field_Wdir);
+
+
+
   
   float x = 0;
   float y = 0;
@@ -15582,14 +15602,15 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
     }     
     */
     {
+      
       float val1 = 0;
-      float d1 = SolidObjects[n].Distance(x-1, y, z);
+      float d1 = SolidObjects[n].Distance(x - 0.5 * deltaX, y - 0.5 * deltaY, z);
       if (d1 > 0) {
         val1 += 1.0 / pow(d1, Field_Power);
       } 
       
       float val2= 0;
-      float d2 = SolidObjects[n].Distance(x+1, y, z);
+      float d2 = SolidObjects[n].Distance(x + 0.5 * deltaX, y + 0.5 * deltaY, z);
       if (d2 > 0) {
         val2 += 1.0 / pow(d2, Field_Power);
       }     
@@ -15908,7 +15929,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   if (Field_record_JPG == 1) Field_Image.save(get_Field_Filename() + ".jpg");
 
   
-  SOLARCHVISION_process_ParametricGeometries_VContours();
+  //SOLARCHVISION_process_ParametricGeometries_VContours(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
   if (Field_record_PDF == 1) {
@@ -18045,7 +18066,10 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Field_Elevation[Field_Image_Section] = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Elevation[" + nf(Field_Image_Section, 0) + "]" , Field_Elevation[Field_Image_Section], -1000, 1000, -2);
       Field_PositionStep = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_PositionStep" , Field_PositionStep, 1.25, 40, -2);
       Field_scale_U = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_U" , Field_scale_U, 50, 3200, -2);
-      Field_scale_V = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_V" , Field_scale_V, 50, 3200, -2);  
+      Field_scale_V = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_V" , Field_scale_V, 50, 3200, -2);
+    
+      Field_Wspd = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Wspd" , Field_Wspd, 1, 32, -2); 
+      Field_Wdir = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Wdir" , Field_Wdir, 0, 360, 15);
 
       PROCESS_subdivisions = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "PROCESS_subdivisions" , PROCESS_subdivisions, 0, 3, 1), 1));
 
