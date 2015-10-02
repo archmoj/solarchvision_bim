@@ -15665,7 +15665,7 @@ float fn_dot2D (float x1, float y1, float x2, float y2) {
   return x1 * x2 + y1 * y2;
 }
 
-float[] SOLARCHVISION_traceContour (float x, float y, float z, float dx, float dy, float dz, float v, int traceType) {
+float[] SOLARCHVISION_traceContour (int traceType, float epsilon, float x, float y, float z, float dx, float dy, float dz, float v) {
 
   float t_max = FLOAT_undefined;
   float t_min = FLOAT_undefined;
@@ -15689,7 +15689,7 @@ float[] SOLARCHVISION_traceContour (float x, float y, float z, float dx, float d
   
   float min_dist = FLOAT_undefined;  
   
-  float r = 1; //0.25; //1; //0.5; //2; // <<<<<<<<<<<<<<
+  float r = epsilon;
   
   float t = atan2_ang(dy, dx);
 
@@ -16157,7 +16157,7 @@ void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Trie
     } 
 
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    test_point_dir = SOLARCHVISION_traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier, 0);
+    test_point_dir = SOLARCHVISION_traceContour(0, 2.5, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier);
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
@@ -16251,7 +16251,7 @@ void SOLARCHVISION_trace_VLine (float[] test_point_dir, float g_line, int n_Trie
     */
 
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    test_point_dir = SOLARCHVISION_traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier, -1);
+    test_point_dir = SOLARCHVISION_traceContour(-1, 0.5, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier);
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     
     float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
