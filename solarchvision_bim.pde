@@ -15903,7 +15903,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
     int start_UVertices_PASS2 = 1;
     int end_UVertices_PASS2 = 0;
     
-    for (int o = 0; o < 10; o++) {  // <<<<<
+    for (int o = 0; o < 4; o++) {  // <<<<<
   
       end_UVertices_PASS1 = Field_Countours_UVertices.length;    
       
