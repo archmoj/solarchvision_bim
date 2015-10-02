@@ -15869,8 +15869,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
       
       if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
  
-        if ((abs(g - g_line) < 0.0001) && (g != 0) && (g_line <= 1)) {
-        //if ((g_line > 1 - deltaFieldLines) && (g_line <= 1)) { // not sure!
+        //if ((abs(g - g_line) < 0.0001) && (g != 0) && (g_line <= 1)) {
+        if ((g_line > 1 - deltaFieldLines) && (g_line <= 1)) { // not sure!
           
           //println("Edge at:", i, j, " val:", val, g_line, g);
 
@@ -15880,7 +15880,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           
           float[] test_point_dir = {x, y, z, dx, dy, dz};
 
-          SOLARCHVISION_trace_ULine(test_point_dir, g_line, 10);
+          SOLARCHVISION_trace_ULine(test_point_dir, g_line, 100);
           
         }
       }
@@ -15903,7 +15903,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
       
       for (int k = 1; k < Field_Contours_UVertices.length; k++) {  
         
-        if (abs(Field_Contours_UVertices[k][3] - ContourLevel) < 0.0001) {
+        if (abs(Field_Contours_UVertices[k][3] - ContourLevel) < deltaField) {
         
           float x = Field_Contours_UVertices[k][0];
           float y = Field_Contours_UVertices[k][1];
@@ -15932,7 +15932,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
       
       for (int k = 1; k < Field_Contours_UVertices.length; k++) {
         
-        if (abs(Field_Contours_UVertices[k][3] - ContourLevel) < 0.0001) {
+        if (abs(Field_Contours_UVertices[k][3] - ContourLevel) < deltaField) {
   
           float x = Field_Contours_UVertices[k][0];
           float y = Field_Contours_UVertices[k][1];
