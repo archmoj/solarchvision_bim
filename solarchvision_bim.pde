@@ -15845,7 +15845,6 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
       float z = FieldPoint[2];
       float val = FieldPoint[3];
       
-      float g_old =  roundTo(Field_Multiplier * val, deltaField);
       float g =      roundTo(Field_Multiplier * val, deltaField) - 0.5 * deltaField;
       float g_line = roundTo(Field_Multiplier * val, deltaFieldLines);
       
@@ -15889,7 +15888,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
             int Point1_existed = 0;
             int Point2_created = 0;
           
-            float[][] preVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g}};
+            float[][] preVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
             int point_prev = 0; 
             {
               float nearestPointDist = FLOAT_undefined;
@@ -15997,12 +15996,12 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           }      
 
          
-          for (int n = 0; n < 10; n++) { // <<<<<<<<<
+          for (int n = 0; n < 25; n++) { // <<<<<<<<<
   
             int Point1_existed = 0;
             int Point2_created = 0;
           
-            float[][] preVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g}};
+            float[][] preVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
             int point_prev = 0; 
             {
               float nearestPointDist = FLOAT_undefined;
@@ -16049,9 +16048,9 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
               Field_Countours_VLines = (int[][]) concat(Field_Countours_VLines, newVLine);
               
               float val_new = ParametricGeometries_Field_atXYZ(test_point_dir[0], test_point_dir[1], test_point_dir[2]);
-              float g_new = roundTo(Field_Multiplier * val_new, deltaField);
+              float g_line_new = roundTo(Field_Multiplier * val_new, deltaFieldLines);
               
-              if (g_new != g_old) {
+              if (g_line - g_line_new >= deltaField) {
                 break; // when reaching the next contour level
               }
             }
