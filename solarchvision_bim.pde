@@ -15897,11 +15897,11 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
     
  
-    for (float ContourLevel = 1; ContourLevel > 0.5; ContourLevel -= deltaField) {
+    //for (float ContourLevel = 1; ContourLevel > 0.5; ContourLevel -= deltaField) {
       
       for (int k = 1; k < Field_Contours_UVertices.length; k++) {  
 
-        if (abs(Field_Contours_UVertices[k][3] - ContourLevel) < deltaField) {
+        //if (abs(Field_Contours_UVertices[k][3] - ContourLevel) < deltaField) {
         
           float x = Field_Contours_UVertices[k][0];
           float y = Field_Contours_UVertices[k][1];
@@ -15924,8 +15924,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
             Field_Contours_VVertices = (float[][]) concat(Field_Contours_VVertices, newVertice);
           }      
     
-          SOLARCHVISION_trace_VLine(test_point_dir, g_line, 25);
-        }    
+          SOLARCHVISION_trace_VLine(test_point_dir, g_line, 5);
+        //}    
       }
       /*
       
@@ -15958,7 +15958,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
       */
             
 
-    }
+    //}
 
 
 
@@ -16215,11 +16215,11 @@ void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Trie
 
 void SOLARCHVISION_trace_VLine (float[] test_point_dir, float g_line, int n_Tries) {
 
-  int point_prev = 0; 
+  int point_prev = Field_Contours_VVertices.length - 1; // the last added point
   int point_next = 0;
   
   for (int n = 0; n < n_Tries; n++) {
-
+    /*
     float[][] preVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
     
     if (point_prev == 0) {
@@ -16246,7 +16246,9 @@ void SOLARCHVISION_trace_VLine (float[] test_point_dir, float g_line, int n_Trie
         test_point_dir[1] = Field_Contours_VVertices[point_prev][1];
         test_point_dir[2] = Field_Contours_VVertices[point_prev][2];
       }             
-    } 
+    }
+   
+    */ 
 
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     test_point_dir = SOLARCHVISION_traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier, -1);
