@@ -16125,11 +16125,10 @@ String get_Field_Filename () {
 void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Tries) {
 
   int point_prev = 0; 
+  int point_next = 0;
+  
   for (int n = 0; n < n_Tries; n++) {
 
-    int Point1_existed = 0;
-    int Point2_created = 0;
-  
     float[][] preVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
     
     if (point_prev == 0) {
@@ -16150,8 +16149,6 @@ void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Trie
       }
       
       if (nearestPointDist < 0.5) {  //i.e. 0.5m 
-        Point1_existed = 1;             
-   
         point_prev = nearestPointNum;
         
         test_point_dir[0] = Field_Contours_UVertices[point_prev][0];
@@ -16165,7 +16162,7 @@ void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Trie
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
-    int point_next = 0; 
+    point_next = 0; 
     {
       float nearestPointDist = FLOAT_undefined;
       int nearestPointNum = 0;
@@ -16194,20 +16191,18 @@ void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Trie
       if (point_next == 0) {
         Field_Contours_UVertices = (float[][]) concat(Field_Contours_UVertices, newVertice);              
         point_next = Field_Contours_UVertices.length - 1;
-      
-        Point2_created = 1;
       } 
     }
   
     
-    if (Point1_existed == 1) {
+    if ((point_prev != 0) && (point_next != 0)) {
         int[][] newULine = {{point_prev, point_next}};
         Field_Contours_ULines = (int[][]) concat(Field_Contours_ULines, newULine);
         
         point_prev = point_next; 
     }
 
-    if (Point2_created == 0) {
+    if (point_next == 0) {
       
       break; // when reaching an existing line
     } 
@@ -16216,15 +16211,15 @@ void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Trie
 }
 
 void SOLARCHVISION_trace_VLine (float[] test_point_dir, float g_line, int n_Tries) {
+
+  int point_prev = 0; 
+  int point_next = 0;
   
   for (int n = 0; n < n_Tries; n++) {
 
-    int Point1_existed = 0;
-    int Point2_created = 0;
-  
     float[][] preVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
-    int point_prev = 0; 
-    {
+    
+    if (point_prev == 0) {
       float nearestPointDist = FLOAT_undefined;
       int nearestPointNum = 0;
       
@@ -16242,8 +16237,6 @@ void SOLARCHVISION_trace_VLine (float[] test_point_dir, float g_line, int n_Trie
       }
       
       if (nearestPointDist < 0.5) {  //i.e. 0.5m 
-        Point1_existed = 1;             
-   
         point_prev = nearestPointNum;
         
         test_point_dir[0] = Field_Contours_VVertices[point_prev][0];
@@ -16258,11 +16251,15 @@ void SOLARCHVISION_trace_VLine (float[] test_point_dir, float g_line, int n_Trie
     
     float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
 
-    Field_Contours_VVertices = (float[][]) concat(Field_Contours_VVertices, newVertice);              
-    int point_next = Field_Contours_VVertices.length - 1;
+    point_next = 0;
+    
+    {
+      Field_Contours_VVertices = (float[][]) concat(Field_Contours_VVertices, newVertice);              
+      point_next = Field_Contours_VVertices.length - 1;
+    }
 
     
-    if (Point1_existed == 1) {
+    if ((point_prev != 0) && (point_next != 0)) {
       int[][] newVLine = {{point_prev, point_next}};
       Field_Contours_VLines = (int[][]) concat(Field_Contours_VLines, newVLine);
       
@@ -16277,9 +16274,10 @@ void SOLARCHVISION_trace_VLine (float[] test_point_dir, float g_line, int n_Trie
           float[][] newVertice_nextULevel = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line_new / Field_Multiplier}};
           Field_Contours_UVertices = (float[][]) concat(Field_Contours_UVertices, newVertice_nextULevel);
         }           
-        
         break; // when reaching the area outside contour level
       }
+      
+       point_prev = point_next; 
     }
     
   }
