@@ -16036,7 +16036,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           
           float[] test_point_dir = {x, y, z, dx, dy, dz};
 
-          SOLARCHVISION_trace_ULine(test_point_dir, g_line, 100);
+          SOLARCHVISION_trace_ULine(test_point_dir, g_line, 1);
           
         }
       }
@@ -16055,9 +16055,37 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
     
     int start_UVertices = 1;
+    int end_UVertices = 0;
     {
 
-      for (int k = 1; k < Field_Countours_UVertices.length; k++) {
+      end_UVertices = Field_Countours_UVertices.length;
+
+      for (int k = start_UVertices; k < end_UVertices; k++) {        
+  
+        float x = Field_Countours_UVertices[k][0];
+        float y = Field_Countours_UVertices[k][1];
+        float z = Field_Countours_UVertices[k][2];
+        
+        float val = ParametricGeometries_Field_atXYZ(x, y, z);     
+        
+        float g =      roundTo(Field_Multiplier * val, deltaField) - 0.5 * deltaField;
+        float g_line = roundTo(Field_Multiplier * val, deltaFieldLines);
+  
+        if ((abs(g - g_line) < 0.0001) && (g != 0) && (g_line <= 1)) {
+          
+          float dx = 1;
+          float dy = 0;
+          float dz = 0;             
+          
+          float[] test_point_dir = {x, y, z, dx, dy, dz}; 
+         
+          SOLARCHVISION_trace_ULine(test_point_dir, g_line, 100);
+        }
+      }        
+  
+      end_UVertices = Field_Countours_UVertices.length;    
+      
+      for (int k = start_UVertices; k < end_UVertices; k++) {  
         
         float x = Field_Countours_UVertices[k][0];
         float y = Field_Countours_UVertices[k][1];
@@ -16083,30 +16111,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
         SOLARCHVISION_trace_VLine(test_point_dir, g_line, 25);    
       }
       
-      int end_UVertices = Field_Countours_UVertices.length;
 
-      for (int k = start_UVertices; k < end_UVertices; k++) {        
-  
-        float x = Field_Countours_UVertices[k][0];
-        float y = Field_Countours_UVertices[k][1];
-        float z = Field_Countours_UVertices[k][2];
-        
-        float val = ParametricGeometries_Field_atXYZ(x, y, z);     
-        
-        float g =      roundTo(Field_Multiplier * val, deltaField) - 0.5 * deltaField;
-        float g_line = roundTo(Field_Multiplier * val, deltaFieldLines);
-  
-        if ((abs(g - g_line) < 0.0001) && (g != 0) && (g_line <= 1)) {
-          
-          float dx = 1;
-          float dy = 0;
-          float dz = 0;             
-          
-          float[] test_point_dir = {x, y, z, dx, dy, dz}; 
-         
-          SOLARCHVISION_trace_ULine(test_point_dir, g_line, 100);
-        }
-      }      
         
       
       start_UVertices = end_UVertices;
