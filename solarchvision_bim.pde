@@ -15844,7 +15844,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
       float y = FieldPoint[1];
       float z = FieldPoint[2];
       float val = FieldPoint[3];
-
+      
+      float g_old =  roundTo(Field_Multiplier * val, deltaField);
       float g =      roundTo(Field_Multiplier * val, deltaField) - 0.5 * deltaField;
       float g_line = roundTo(Field_Multiplier * val, deltaFieldLines);
       
@@ -16046,38 +16047,14 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
             if (Point1_existed == 1) {
               int[][] newVLine = {{point_prev, point_next}};
               Field_Countours_VLines = (int[][]) concat(Field_Countours_VLines, newVLine);
-            }
-  
-            {
-/*              
-
-              float nearestPointDist = FLOAT_undefined;
-              int nearestPointNum = 0;
               
-              for (int q = 1; q < Field_Countours_UVertices.length; q++) {
-                //if (newVertice[0][3] == Field_Countours_UVertices[q][3]) {
-                if (abs(newVertice[0][3] - Field_Countours_UVertices[q][3]) < 0.0001) {
-                  
-                  float d = dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Countours_UVertices[q][0], Field_Countours_UVertices[q][1], Field_Countours_UVertices[q][2]);
-
-                  if (nearestPointDist > d) { 
-                    nearestPointDist = d;
-                    nearestPointNum = q;
-                  }
-                }
-                
-                if (nearestPointDist < 0.5) {  //i.e. 0.5m 
-                  point_next = nearestPointNum;
-                }
+              float val_new = ParametricGeometries_Field_atXYZ(test_point_dir[0], test_point_dir[1], test_point_dir[2]);
+              float g_new = roundTo(Field_Multiplier * val_new, deltaField);
+              
+              if (g_new != g_old) {
+                break; // when reaching the next contour level
               }
-             
-              if (point_next == 0) {
-
-              } 
-                          
-*/              
-              //break; // when reaching an existing line
-            } 
+            }
             
           }         
         }
