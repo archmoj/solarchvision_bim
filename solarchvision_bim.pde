@@ -15903,7 +15903,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
     int start_UVertices_PASS2 = 1;
     int end_UVertices_PASS2 = 0;
     
-    for (int o = 0; o < 4; o++) {  // <<<<<
+    for (int o = 0; o < 20; o++) {  // <<<<<
   
       end_UVertices_PASS1 = Field_Countours_UVertices.length;    
       
@@ -16186,7 +16186,7 @@ void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Trie
           }
         }
         
-        if (nearestPointDist < 0.5) {  //i.e. 0.5m 
+        if (nearestPointDist < 0.1) {  //i.e. 0.1m 
           point_next = nearestPointNum;
         }
       }
@@ -16265,12 +16265,13 @@ void SOLARCHVISION_trace_VLine (float[] test_point_dir, float g_line, int n_Trie
       Field_Countours_VLines = (int[][]) concat(Field_Countours_VLines, newVLine);
       
       float val_new = ParametricGeometries_Field_atXYZ(test_point_dir[0], test_point_dir[1], test_point_dir[2]);
+      float g_new =      roundTo(Field_Multiplier * val_new, deltaField) - 0.5 * deltaField;
       float g_line_new = roundTo(Field_Multiplier * val_new, deltaFieldLines);
       
       if (g_line - g_line_new >= deltaField) {
         
-        // making a UVertice at the end
-        {
+        // making a UVertice at the end if it located on a contour
+        if ((abs(g_new - g_line_new) < 0.0001) && (g_new != 0) && (g_line_new <= 1)) {
           float[][] newVertice_nextULevel = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line_new / Field_Multiplier}};
           Field_Countours_UVertices = (float[][]) concat(Field_Countours_UVertices, newVertice_nextULevel);
         }           
