@@ -15869,9 +15869,10 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
       
       if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
  
-        if ((g_line > 1 - deltaFieldLines) && (g_line <= 1)) { // not sure!
+        if ((abs(g - g_line) < 0.0001) && (g != 0) && (g_line <= 1)) {
+        //if ((g_line > 1 - deltaFieldLines) && (g_line <= 1)) { // not sure!
           
-          println("Edge at:", i, j, " val:", val, g_line, g);
+          //println("Edge at:", i, j, " val:", val, g_line, g);
 
           float dx = 1;
           float dy = 0;
@@ -15879,7 +15880,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           
           float[] test_point_dir = {x, y, z, dx, dy, dz};
 
-          SOLARCHVISION_trace_ULine(test_point_dir, g_line, 100);
+          SOLARCHVISION_trace_ULine(test_point_dir, g_line, 10);
           
         }
       }
@@ -16140,7 +16141,7 @@ void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Trie
           
           float d = dist(preVertice[0][0], preVertice[0][1], preVertice[0][2], Field_Contours_UVertices[q][0], Field_Contours_UVertices[q][1], Field_Contours_UVertices[q][2]);
           
-          if (nearestPointDist > d) { 
+          if (nearestPointDist > d)  {
             nearestPointDist = d;
             nearestPointNum = q;
           }
@@ -16180,7 +16181,7 @@ void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Trie
           }
         }
         
-        if (nearestPointDist < 0.1) {  //i.e. 0.1m 
+        if (nearestPointDist < 0.5) {  //i.e. 0.5m 
           point_next = nearestPointNum;
         }
       }
@@ -16203,7 +16204,7 @@ void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Trie
       
       break; // when reaching an existing line
     } 
-    
+   
   }
 }
 
