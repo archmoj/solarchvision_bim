@@ -16124,14 +16124,15 @@ String get_Field_Filename () {
 
 void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Tries) {
 
+  int point_prev = 0; 
   for (int n = 0; n < n_Tries; n++) {
 
     int Point1_existed = 0;
     int Point2_created = 0;
   
     float[][] preVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
-    int point_prev = 0; 
-    {
+    
+    if (point_prev == 0) {
       float nearestPointDist = FLOAT_undefined;
       int nearestPointNum = 0;
       
@@ -16198,6 +16199,8 @@ void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Trie
     if (Point1_existed == 1) {
         int[][] newULine = {{point_prev, point_next}};
         Field_Contours_ULines = (int[][]) concat(Field_Contours_ULines, newULine);
+        
+        point_prev = point_next; 
     }
 
     if (Point2_created == 0) {
