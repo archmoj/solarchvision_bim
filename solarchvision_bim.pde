@@ -15801,6 +15801,94 @@ float deltaField = 0.05;
 float deltaFieldLines = 0.05 * deltaField;
 
 
+ 
+         
+void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line) {
+
+  for (int n = 0; n < 100; n++) { // <<<<<<<<<
+
+    int Point1_existed = 0;
+    int Point2_created = 0;
+  
+    float[][] preVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
+    int point_prev = 0; 
+    {
+      float nearestPointDist = FLOAT_undefined;
+      int nearestPointNum = 0;
+      
+      for (int q = 1; q < Field_Countours_UVertices.length; q++) {
+        //if (preVertice[0][3] == Field_Countours_UVertices[q][3]) {
+        if (preVertice[0][3] - Field_Countours_UVertices[q][3] < 0.0001) {
+          
+          float d = dist(preVertice[0][0], preVertice[0][1], preVertice[0][2], Field_Countours_UVertices[q][0], Field_Countours_UVertices[q][1], Field_Countours_UVertices[q][2]);
+          
+          if (nearestPointDist > d) { 
+            nearestPointDist = d;
+            nearestPointNum = q;
+          }
+        }
+      }
+      
+      if (nearestPointDist < 0.5) {  //i.e. 0.5m 
+        Point1_existed = 1;             
+   
+        point_prev = nearestPointNum;
+        
+        test_point_dir[0] = Field_Countours_UVertices[point_prev][0];
+        test_point_dir[1] = Field_Countours_UVertices[point_prev][1];
+        test_point_dir[2] = Field_Countours_UVertices[point_prev][2];
+      }             
+    } 
+
+
+    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    test_point_dir = SOLARCHVISION_traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier, 0);
+    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
+    int point_next = 0; 
+    {
+      float nearestPointDist = FLOAT_undefined;
+      int nearestPointNum = 0;
+      
+      for (int q = 1; q < Field_Countours_UVertices.length; q++) {
+        //if (newVertice[0][3] == Field_Countours_UVertices[q][3]) {
+        if (abs(newVertice[0][3] - Field_Countours_UVertices[q][3]) < 0.0001) {
+          
+          float d = dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Countours_UVertices[q][0], Field_Countours_UVertices[q][1], Field_Countours_UVertices[q][2]);
+
+          if (nearestPointDist > d) { 
+            nearestPointDist = d;
+            nearestPointNum = q;
+          }
+        }
+        
+        if (nearestPointDist < 0.5) {  //i.e. 0.5m 
+          point_next = nearestPointNum;
+        }
+      }
+     
+      if (point_next == 0) {
+        Field_Countours_UVertices = (float[][]) concat(Field_Countours_UVertices, newVertice);              
+        point_next = Field_Countours_UVertices.length - 1;
+      
+        Point2_created = 1;
+      } 
+    }
+  
+    
+    if (Point1_existed == 1) {
+        int[][] newULine = {{point_prev, point_next}};
+        Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);
+    }
+
+    if (Point2_created == 0) {
+      
+      break; // when reaching an existing line
+    } 
+    
+  }
+}
 
 void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
@@ -15869,6 +15957,12 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           c = color(255, 255, 255, 0);
         }
       } 
+      
+      if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
+        if ((abs(g - g_line) < 0.0001) && (g != 0) && (g_line <= 1)) {
+          
+        }
+      }
 
       Field_Image.pixels[i + j * Field_RES1] = c;
       
@@ -15900,89 +15994,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           
           float[] test_point_dir = {x, y, z, dx, dy, dz}; 
          
-          for (int n = 0; n < 100; n++) { // <<<<<<<<<
-  
-            int Point1_existed = 0;
-            int Point2_created = 0;
-          
-            float[][] preVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
-            int point_prev = 0; 
-            {
-              float nearestPointDist = FLOAT_undefined;
-              int nearestPointNum = 0;
-              
-              for (int q = 1; q < Field_Countours_UVertices.length; q++) {
-                //if (preVertice[0][3] == Field_Countours_UVertices[q][3]) {
-                if (preVertice[0][3] - Field_Countours_UVertices[q][3] < 0.0001) {
-                  
-                  float d = dist(preVertice[0][0], preVertice[0][1], preVertice[0][2], Field_Countours_UVertices[q][0], Field_Countours_UVertices[q][1], Field_Countours_UVertices[q][2]);
-                  
-                  if (nearestPointDist > d) { 
-                    nearestPointDist = d;
-                    nearestPointNum = q;
-                  }
-                }
-              }
-              
-              if (nearestPointDist < 0.5) {  //i.e. 0.5m 
-                Point1_existed = 1;             
-           
-                point_prev = nearestPointNum;
-                
-                test_point_dir[0] = Field_Countours_UVertices[point_prev][0];
-                test_point_dir[1] = Field_Countours_UVertices[point_prev][1];
-                test_point_dir[2] = Field_Countours_UVertices[point_prev][2];
-              }             
-            } 
-
-
-            //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-            test_point_dir = SOLARCHVISION_traceContour(test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier, 0);
-            //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  
-            float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
-            int point_next = 0; 
-            {
-              float nearestPointDist = FLOAT_undefined;
-              int nearestPointNum = 0;
-              
-              for (int q = 1; q < Field_Countours_UVertices.length; q++) {
-                //if (newVertice[0][3] == Field_Countours_UVertices[q][3]) {
-                if (abs(newVertice[0][3] - Field_Countours_UVertices[q][3]) < 0.0001) {
-                  
-                  float d = dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Countours_UVertices[q][0], Field_Countours_UVertices[q][1], Field_Countours_UVertices[q][2]);
-
-                  if (nearestPointDist > d) { 
-                    nearestPointDist = d;
-                    nearestPointNum = q;
-                  }
-                }
-                
-                if (nearestPointDist < 0.5) {  //i.e. 0.5m 
-                  point_next = nearestPointNum;
-                }
-              }
-             
-              if (point_next == 0) {
-                Field_Countours_UVertices = (float[][]) concat(Field_Countours_UVertices, newVertice);              
-                point_next = Field_Countours_UVertices.length - 1;
-              
-                Point2_created = 1;
-              } 
-            }
-          
-            
-            if (Point1_existed == 1) {
-                int[][] newULine = {{point_prev, point_next}};
-                Field_Countours_ULines = (int[][]) concat(Field_Countours_ULines, newULine);
-            }
-  
-            if (Point2_created == 0) {
-              
-              break; // when reaching an existing line
-            } 
-            
-          }         
+          SOLARCHVISION_trace_ULine(test_point_dir, g_line);
         }
       }
     }
