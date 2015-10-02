@@ -15790,7 +15790,8 @@ float[] SOLARCHVISION_traceContour (float x, float y, float z, float dx, float d
 
 
 
-float[][] Field_Countours_Vertices = {{0,0,0,0}}; // keeping Field value at the 4th member
+float[][] Field_Countours_UVertices = {{0,0,0,0}}; // keeping Field value at the 4th member
+float[][] Field_Countours_VVertices = {{0,0,0,0}}; // keeping Field value at the 4th member
 int[][] Field_Countours_ULines = {{0,0}};
 int[][] Field_Countours_VLines = {{0,0}};
 
@@ -15803,11 +15804,17 @@ float deltaFieldLines = 0.05 * deltaField;
 
 void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
-  Field_Countours_Vertices = new float [1][4];
-  Field_Countours_Vertices[0][0] = 0; 
-  Field_Countours_Vertices[0][1] = 0; 
-  Field_Countours_Vertices[0][2] = 0; 
-  Field_Countours_Vertices[0][3] = 0; 
+  Field_Countours_UVertices = new float [1][4];
+  Field_Countours_UVertices[0][0] = 0; 
+  Field_Countours_UVertices[0][1] = 0; 
+  Field_Countours_UVertices[0][2] = 0; 
+  Field_Countours_UVertices[0][3] = 0;   
+  
+  Field_Countours_VVertices = new float [1][4];
+  Field_Countours_VVertices[0][0] = 0; 
+  Field_Countours_VVertices[0][1] = 0; 
+  Field_Countours_VVertices[0][2] = 0; 
+  Field_Countours_VVertices[0][3] = 0; 
 
   Field_Countours_ULines = new int [1][2];
   Field_Countours_ULines[0][0] = 0;
@@ -15887,11 +15894,11 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
               float nearestPointDist = FLOAT_undefined;
               int nearestPointNum = 0;
               
-              for (int q = 1; q < Field_Countours_Vertices.length; q++) {
-                //if (preVertice[0][3] == Field_Countours_Vertices[q][3]) {
-                if (preVertice[0][3] - Field_Countours_Vertices[q][3] < 0.0001) {
+              for (int q = 1; q < Field_Countours_UVertices.length; q++) {
+                //if (preVertice[0][3] == Field_Countours_UVertices[q][3]) {
+                if (preVertice[0][3] - Field_Countours_UVertices[q][3] < 0.0001) {
                   
-                  float d = dist(preVertice[0][0], preVertice[0][1], preVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]);
+                  float d = dist(preVertice[0][0], preVertice[0][1], preVertice[0][2], Field_Countours_UVertices[q][0], Field_Countours_UVertices[q][1], Field_Countours_UVertices[q][2]);
                   
                   if (nearestPointDist > d) { 
                     nearestPointDist = d;
@@ -15905,9 +15912,9 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
            
                 point_prev = nearestPointNum;
                 
-                test_point_dir[0] = Field_Countours_Vertices[point_prev][0];
-                test_point_dir[1] = Field_Countours_Vertices[point_prev][1];
-                test_point_dir[2] = Field_Countours_Vertices[point_prev][2];
+                test_point_dir[0] = Field_Countours_UVertices[point_prev][0];
+                test_point_dir[1] = Field_Countours_UVertices[point_prev][1];
+                test_point_dir[2] = Field_Countours_UVertices[point_prev][2];
               }             
             } 
 
@@ -15922,11 +15929,11 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
               float nearestPointDist = FLOAT_undefined;
               int nearestPointNum = 0;
               
-              for (int q = 1; q < Field_Countours_Vertices.length; q++) {
-                //if (newVertice[0][3] == Field_Countours_Vertices[q][3]) {
-                if (abs(newVertice[0][3] - Field_Countours_Vertices[q][3]) < 0.0001) {
+              for (int q = 1; q < Field_Countours_UVertices.length; q++) {
+                //if (newVertice[0][3] == Field_Countours_UVertices[q][3]) {
+                if (abs(newVertice[0][3] - Field_Countours_UVertices[q][3]) < 0.0001) {
                   
-                  float d = dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]);
+                  float d = dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Countours_UVertices[q][0], Field_Countours_UVertices[q][1], Field_Countours_UVertices[q][2]);
 
                   if (nearestPointDist > d) { 
                     nearestPointDist = d;
@@ -15940,8 +15947,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
               }
              
               if (point_next == 0) {
-                Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, newVertice);              
-                point_next = Field_Countours_Vertices.length - 1;
+                Field_Countours_UVertices = (float[][]) concat(Field_Countours_UVertices, newVertice);              
+                point_next = Field_Countours_UVertices.length - 1;
               
                 Point2_created = 1;
               } 
@@ -15971,7 +15978,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           
           float[] test_point_dir = {x, y, z, dx, dy, dz}; 
          
-          for (int n = 0; n < 25; n++) { // <<<<<<<<<
+          for (int n = 0; n < 10; n++) { // <<<<<<<<<
   
             int Point1_existed = 0;
             int Point2_created = 0;
@@ -15982,11 +15989,11 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
               float nearestPointDist = FLOAT_undefined;
               int nearestPointNum = 0;
               
-              for (int q = 1; q < Field_Countours_Vertices.length; q++) {
-                //if (preVertice[0][3] == Field_Countours_Vertices[q][3]) {
-                if (preVertice[0][3] - Field_Countours_Vertices[q][3] < 0.0001) {
+              for (int q = 1; q < Field_Countours_VVertices.length; q++) {
+                //if (preVertice[0][3] == Field_Countours_VVertices[q][3]) {
+                if (preVertice[0][3] - Field_Countours_VVertices[q][3] < 0.0001) {
                   
-                  float d = dist(preVertice[0][0], preVertice[0][1], preVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]);
+                  float d = dist(preVertice[0][0], preVertice[0][1], preVertice[0][2], Field_Countours_VVertices[q][0], Field_Countours_VVertices[q][1], Field_Countours_VVertices[q][2]);
                   
                   if (nearestPointDist > d) { 
                     nearestPointDist = d;
@@ -16000,9 +16007,9 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
            
                 point_prev = nearestPointNum;
                 
-                test_point_dir[0] = Field_Countours_Vertices[point_prev][0];
-                test_point_dir[1] = Field_Countours_Vertices[point_prev][1];
-                test_point_dir[2] = Field_Countours_Vertices[point_prev][2];
+                test_point_dir[0] = Field_Countours_VVertices[point_prev][0];
+                test_point_dir[1] = Field_Countours_VVertices[point_prev][1];
+                test_point_dir[2] = Field_Countours_VVertices[point_prev][2];
               }             
             } 
 
@@ -16017,11 +16024,11 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
               float nearestPointDist = FLOAT_undefined;
               int nearestPointNum = 0;
               
-              for (int q = 1; q < Field_Countours_Vertices.length; q++) {
-                //if (newVertice[0][3] == Field_Countours_Vertices[q][3]) {
-                if (abs(newVertice[0][3] - Field_Countours_Vertices[q][3]) < 0.0001) {
+              for (int q = 1; q < Field_Countours_VVertices.length; q++) {
+                //if (newVertice[0][3] == Field_Countours_VVertices[q][3]) {
+                if (abs(newVertice[0][3] - Field_Countours_VVertices[q][3]) < 0.0001) {
                   
-                  float d = dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Countours_Vertices[q][0], Field_Countours_Vertices[q][1], Field_Countours_Vertices[q][2]);
+                  float d = dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Countours_VVertices[q][0], Field_Countours_VVertices[q][1], Field_Countours_VVertices[q][2]);
 
                   if (nearestPointDist > d) { 
                     nearestPointDist = d;
@@ -16035,8 +16042,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
               }
              
               if (point_next == 0) {
-                Field_Countours_Vertices = (float[][]) concat(Field_Countours_Vertices, newVertice);              
-                point_next = Field_Countours_Vertices.length - 1;
+                Field_Countours_VVertices = (float[][]) concat(Field_Countours_VVertices, newVertice);              
+                point_next = Field_Countours_VVertices.length - 1;
               
                 Point2_created = 1;
               } 
@@ -16066,7 +16073,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   if (Field_record_JPG == 1) Field_Image.save(get_Field_Filename() + ".jpg");
 
   
-  //SOLARCHVISION_process_ParametricGeometries_VContours(); 
+   
 
 
   if (Field_record_PDF == 1) {
@@ -16101,16 +16108,20 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
             for (int p = 0; p < 2; p++) {
             
               int n = 0;
+              float x0 = 0, y0 = 0, z0 = 0;
+              
               if (U_or_V == 0) {
                 n = Field_Countours_ULines[q][p];
+                x0 = Field_Countours_UVertices[n][0];
+                y0 = Field_Countours_UVertices[n][1];
+                z0 = Field_Countours_UVertices[n][2];                
               }
               else {
-                n = Field_Countours_VLines[q][p];                
+                n = Field_Countours_VLines[q][p];        
+                x0 = Field_Countours_VVertices[n][0];
+                y0 = Field_Countours_VVertices[n][1];
+                z0 = Field_Countours_VVertices[n][2];
               }
-  
-              float x0 = Field_Countours_Vertices[n][0];
-              float y0 = Field_Countours_Vertices[n][1];
-              float z0 = Field_Countours_Vertices[n][2];
   
               float r = 0;
               
@@ -16159,11 +16170,11 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
         Field_PDF.noFill();  
         Field_PDF.ellipseMode(CENTER);
         
-        for (int n = 1; n < Field_Countours_Vertices.length; n++) {
+        for (int n = 1; n < Field_Countours_UVertices.length; n++) {
           
-          float x0 = Field_Countours_Vertices[n][0];
-          float y0 = Field_Countours_Vertices[n][1];
-          float z0 = Field_Countours_Vertices[n][2];
+          float x0 = Field_Countours_UVertices[n][0];
+          float y0 = Field_Countours_UVertices[n][1];
+          float z0 = Field_Countours_UVertices[n][2];
 
           float r = 0;
           
@@ -16224,69 +16235,6 @@ String get_Field_Filename () {
 
 
 
-void SOLARCHVISION_process_ParametricGeometries_VContours () {
-  
-  for (int i = 1; i < Field_Countours_Vertices.length; i++) {
-
-    float min_dist = FLOAT_undefined;
-    int nearest_point = -1;
-    
-    for (int j = 1; j < Field_Countours_Vertices.length; j++) {
-      
-      if (i != j) {
-        
-        // if two points were on the Field levels next to each other
-        if ((abs(Field_Countours_Vertices[i][3] - Field_Countours_Vertices[j][3] - deltaField) < 0.001) || (abs(Field_Countours_Vertices[i][3] - Field_Countours_Vertices[j][3] + deltaField) < 0.001)) { 
-  
-          float d = dist(Field_Countours_Vertices[i][0], Field_Countours_Vertices[i][1], Field_Countours_Vertices[i][2], Field_Countours_Vertices[j][0], Field_Countours_Vertices[j][1], Field_Countours_Vertices[j][2]);
-          
-          if (min_dist > d) {
-            min_dist = d;
-            
-            nearest_point = j;
-          } 
-        }
-      }
-    }
-    
-    if (nearest_point != -1) {
-      if (min_dist < 25) { // the distance should be less than 25m! 
-      
-        int found_similar_line = 0;
-        /*
-        float min_dist_to_similar_line = FLOAT_undefined; 
-        
-        for (int q = 1; q < Field_Countours_VLines.length; q++) {
-          
-          // comparing the new point with (only) the second vertice of the existing lines!
-          int i1 = i;
-          int i2 = nearest_point; 
-          int j1 = Field_Countours_VLines[q][0]; 
-          int j2 = Field_Countours_VLines[q][1];
-          
-          float d1 = dist(Field_Countours_Vertices[i1][0], Field_Countours_Vertices[i1][1], Field_Countours_Vertices[i1][2], Field_Countours_Vertices[j1][0], Field_Countours_Vertices[j1][1], Field_Countours_Vertices[j1][2]);
-          float d2 = dist(Field_Countours_Vertices[i2][0], Field_Countours_Vertices[i2][1], Field_Countours_Vertices[i2][2], Field_Countours_Vertices[j2][0], Field_Countours_Vertices[j2][1], Field_Countours_Vertices[j2][2]);
-          
-          //if ((d1 < 1) || (d2 < 1)) { //i.e. a similar line at 1m
-          if ((d1 < 1) && (d2 < 1)) { //i.e. a similar line at 1m
-          
-            found_similar_line = 1; 
-            break;
-          }      
-        }      
-        */
-        if (found_similar_line == 0) {
-        
-          int[][] newVLine = {{i, nearest_point}};
-          
-          Field_Countours_VLines = (int[][]) concat(Field_Countours_VLines, newVLine);
-        }  
-      }
-    }
-  
-  }
-    
-}
 
 void SOLARCHVISION_draw_field_points () {
   if (display_Field_Points != 0) {
@@ -16297,11 +16245,11 @@ void SOLARCHVISION_draw_field_points () {
     
     float R = 0.2;
     
-    for (int n = 1; n < Field_Countours_Vertices.length; n++) {
+    for (int n = 1; n < Field_Countours_UVertices.length; n++) {
 
-      float x = Field_Countours_Vertices[n][0];
-      float y = Field_Countours_Vertices[n][1];
-      float z = Field_Countours_Vertices[n][2];
+      float x = Field_Countours_UVertices[n][0];
+      float y = Field_Countours_UVertices[n][1];
+      float z = Field_Countours_UVertices[n][2];
       
       WIN3D_Diagrams.pushMatrix();
       WIN3D_Diagrams.translate(x * objects_scale * WIN3D_scale3D, -y * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
@@ -16325,13 +16273,13 @@ void SOLARCHVISION_draw_field_lines () {
       int n1 = Field_Countours_ULines[q][0];
       int n2 = Field_Countours_ULines[q][1];
       
-      float x1 = Field_Countours_Vertices[n1][0];
-      float y1 = Field_Countours_Vertices[n1][1];
-      float z1 = Field_Countours_Vertices[n1][2];
+      float x1 = Field_Countours_UVertices[n1][0];
+      float y1 = Field_Countours_UVertices[n1][1];
+      float z1 = Field_Countours_UVertices[n1][2];
 
-      float x2 = Field_Countours_Vertices[n2][0];
-      float y2 = Field_Countours_Vertices[n2][1];
-      float z2 = Field_Countours_Vertices[n2][2];
+      float x2 = Field_Countours_UVertices[n2][0];
+      float y2 = Field_Countours_UVertices[n2][1];
+      float z2 = Field_Countours_UVertices[n2][2];
       
       WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
     }
@@ -16345,13 +16293,13 @@ void SOLARCHVISION_draw_field_lines () {
       int n1 = Field_Countours_VLines[q][0];
       int n2 = Field_Countours_VLines[q][1];
       
-      float x1 = Field_Countours_Vertices[n1][0];
-      float y1 = Field_Countours_Vertices[n1][1];
-      float z1 = Field_Countours_Vertices[n1][2];
+      float x1 = Field_Countours_VVertices[n1][0];
+      float y1 = Field_Countours_VVertices[n1][1];
+      float z1 = Field_Countours_VVertices[n1][2];
 
-      float x2 = Field_Countours_Vertices[n2][0];
-      float y2 = Field_Countours_Vertices[n2][1];
-      float z2 = Field_Countours_Vertices[n2][2];
+      float x2 = Field_Countours_VVertices[n2][0];
+      float y2 = Field_Countours_VVertices[n2][1];
+      float z2 = Field_Countours_VVertices[n2][2];
       
       WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
     }
