@@ -15823,10 +15823,6 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   Field_Countours_VLines = new int [1][2];
   Field_Countours_VLines[0][0] = 0;
   Field_Countours_VLines[0][1] = 0;
-
-
-
-  
   
   
   Field_Image.loadPixels();
@@ -15875,10 +15871,31 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
       } 
 
       Field_Image.pixels[i + j * Field_RES1] = c;
-
-
-      if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
       
+    }
+  }
+ 
+  Field_Image.updatePixels();
+  
+  if (Field_record_JPG == 1) Field_Image.save(get_Field_Filename() + ".jpg");            
+
+
+
+  if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
+    
+    for (int i = 0; i < Field_RES1; i++) {
+      for (int j = 0; j < Field_RES2; j++) {
+        
+        float[] FieldPoint = ParametricGeometries_Field_atIJ(i, j);
+        
+        float x = FieldPoint[0];
+        float y = FieldPoint[1];
+        float z = FieldPoint[2];
+        float val = FieldPoint[3];
+        
+        float g =      roundTo(Field_Multiplier * val, deltaField) - 0.5 * deltaField;
+        float g_line = roundTo(Field_Multiplier * val, deltaFieldLines);
+
         if ((abs(g - g_line) < 0.0001) && (g != 0) && (g_line <= 1)) {
           
           float[] test_point_dir = {x, y, z, dx, dy, dz}; 
@@ -15969,11 +15986,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
         }
       }
     }
-  }
-        
-  //////////////////////////////////////////////////////
+   
 
-  {
     {
       {
         for (int k = 1; k < Field_Countours_UVertices.length; k++) {
@@ -16063,9 +16077,6 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
     }
   }
  
-  Field_Image.updatePixels();
-  
-  if (Field_record_JPG == 1) Field_Image.save(get_Field_Filename() + ".jpg");
 
   
    
