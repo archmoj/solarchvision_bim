@@ -15899,7 +15899,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
     
     
-    for (float ContourLevel = 1; ContourLevel > 0; ContourLevel -= deltaField) {  
+    for (float ContourLevel = 1; ContourLevel > 0.5; ContourLevel -= deltaField) {  
       
       for (int k = 1; k < Field_Contours_UVertices.length; k++) {  
         
@@ -16179,7 +16179,8 @@ void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Trie
           }
         }
         
-        if (nearestPointDist < 0.5) {  //i.e. 0.5m 
+        //if (nearestPointDist < 0.1) {  //i.e. 0.1m 
+        if (nearestPointDist < 0.25) {  //i.e. 0.25m
           point_next = nearestPointNum;
           
           test_point_dir[0] = Field_Contours_UVertices[point_next][0];
@@ -16189,9 +16190,12 @@ void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Trie
       }
      
       if (point_next == 0) {
+        
         Field_Contours_UVertices = (float[][]) concat(Field_Contours_UVertices, newVertice);              
         point_next = Field_Contours_UVertices.length - 1;
+        
       } 
+      
     }
   
     
