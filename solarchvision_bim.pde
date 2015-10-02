@@ -16176,7 +16176,7 @@ void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Trie
           
           float d = dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Contours_UVertices[q][0], Field_Contours_UVertices[q][1], Field_Contours_UVertices[q][2]);
 
-          if (nearestPointDist > d) { 
+          if ((nearestPointDist > d) && (point_prev != q)) { 
             nearestPointDist = d;
             nearestPointNum = q;
           }
@@ -16184,6 +16184,10 @@ void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Trie
         
         if (nearestPointDist < 0.5) {  //i.e. 0.5m 
           point_next = nearestPointNum;
+          
+          test_point_dir[0] = Field_Contours_UVertices[point_next][0];
+          test_point_dir[1] = Field_Contours_UVertices[point_next][1];
+          test_point_dir[2] = Field_Contours_UVertices[point_next][2];          
         }
       }
      
