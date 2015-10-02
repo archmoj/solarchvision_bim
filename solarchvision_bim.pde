@@ -15987,8 +15987,14 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           float g =      roundTo(Field_Multiplier * val, deltaField) - 0.5 * deltaField;
           float g_line = roundTo(Field_Multiplier * val, deltaFieldLines);
 
-          
           float[] test_point_dir = {x, y, z, dx, dy, dz}; 
+
+          // making the first VVertice on the UVertice
+          {
+            float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
+            Field_Countours_VVertices = (float[][]) concat(Field_Countours_VVertices, newVertice);
+          }      
+
          
           for (int n = 0; n < 10; n++) { // <<<<<<<<<
   
@@ -16032,17 +16038,27 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   
             
             float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
-            int point_next = 0;
-            /*
+
+            Field_Countours_VVertices = (float[][]) concat(Field_Countours_VVertices, newVertice);              
+            int point_next = Field_Countours_VVertices.length - 1;
+
+            
+            if (Point1_existed == 1) {
+              int[][] newVLine = {{point_prev, point_next}};
+              Field_Countours_VLines = (int[][]) concat(Field_Countours_VLines, newVLine);
+            }
+  
             {
+/*              
+
               float nearestPointDist = FLOAT_undefined;
               int nearestPointNum = 0;
               
-              for (int q = 1; q < Field_Countours_VVertices.length; q++) {
-                //if (newVertice[0][3] == Field_Countours_VVertices[q][3]) {
-                if (abs(newVertice[0][3] - Field_Countours_VVertices[q][3]) < 0.0001) {
+              for (int q = 1; q < Field_Countours_UVertices.length; q++) {
+                //if (newVertice[0][3] == Field_Countours_UVertices[q][3]) {
+                if (abs(newVertice[0][3] - Field_Countours_UVertices[q][3]) < 0.0001) {
                   
-                  float d = dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Countours_VVertices[q][0], Field_Countours_VVertices[q][1], Field_Countours_VVertices[q][2]);
+                  float d = dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], Field_Countours_UVertices[q][0], Field_Countours_UVertices[q][1], Field_Countours_UVertices[q][2]);
 
                   if (nearestPointDist > d) { 
                     nearestPointDist = d;
@@ -16056,22 +16072,10 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
               }
              
               if (point_next == 0) {
-                */
-                Field_Countours_VVertices = (float[][]) concat(Field_Countours_VVertices, newVertice);              
-                point_next = Field_Countours_VVertices.length - 1;
-                /*
-                Point2_created = 1;
+
               } 
-            }
-            */
-            
-            if (Point1_existed == 1) {
-                int[][] newVLine = {{point_prev, point_next}};
-                Field_Countours_VLines = (int[][]) concat(Field_Countours_VLines, newVLine);
-            }
-  
-            if (Point2_created == 0) {
-              
+                          
+*/              
               //break; // when reaching an existing line
             } 
             
