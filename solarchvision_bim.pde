@@ -15878,7 +15878,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           
           float[] test_point_dir = {x, y, z, dx, dy, dz};
 
-          SOLARCHVISION_trace_ULine(test_point_dir, g_line, 100);
+          SOLARCHVISION_trace_ULine(test_point_dir, g_line, 10);
           
         }
       }
@@ -15897,11 +15897,11 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
     
  
-    //for (float ContourLevel = 1; ContourLevel > 0.5; ContourLevel -= deltaField) {
+    for (float ContourLevel = 1; ContourLevel > 0.5; ContourLevel -= deltaField) {
       
       for (int k = 1; k < Field_Contours_UVertices.length; k++) {  
 
-        //if (abs(Field_Contours_UVertices[k][3] - ContourLevel) < deltaField) {
+        if (abs(Field_Contours_UVertices[k][3] - ContourLevel) < deltaField) {
         
           float x = Field_Contours_UVertices[k][0];
           float y = Field_Contours_UVertices[k][1];
@@ -15925,9 +15925,10 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           }      
     
           SOLARCHVISION_trace_VLine(test_point_dir, g_line, 25);
-        //}    
+        }    
       }
       /*
+      
       for (int k = 1; k < Field_Contours_UVertices.length; k++) {
         
         if (abs(Field_Contours_UVertices[k][3] - ContourLevel) < deltaField) {
@@ -15953,9 +15954,11 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
           }
         }
       }    
-      */      
+      
+      */
+            
 
-    //}
+    }
 
 
 
@@ -16239,7 +16242,7 @@ void SOLARCHVISION_trace_VLine (float[] test_point_dir, float g_line, int n_Trie
         }
       }
       
-      if (nearestPointDist < 0.5) {  //i.e. 0.5m 
+      if (nearestPointDist < 0.2) {  //i.e. 0.2m 
         point_prev = nearestPointNum;
         
         test_point_dir[0] = Field_Contours_VVertices[point_prev][0];
@@ -16272,12 +16275,12 @@ void SOLARCHVISION_trace_VLine (float[] test_point_dir, float g_line, int n_Trie
       
       if (g_line - g_line_new >= deltaField) {
         
-        /*        
-        if ((abs(g_new - g_line_new) < 0.0001) && (g_new != 0) && (g_line_new <= 1)) { // making a UVertice at the end, if it located on a contour
+               
+        //if ((abs(g_new - g_line_new) < 0.0001) && (g_new != 0) && (g_line_new <= 1)) { // making a UVertice at the end, if it located on a contour
           float[][] newVertice_nextULevel = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line_new / Field_Multiplier}};
           Field_Contours_UVertices = (float[][]) concat(Field_Contours_UVertices, newVertice_nextULevel);
-        }
-        */
+        //}
+        
         
         break; // when reaching the area outside contour level
       }
