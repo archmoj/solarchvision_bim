@@ -16270,13 +16270,13 @@ void SOLARCHVISION_trace_VLine (float[] test_point_dir, float g_line, int n_Trie
       
       if (g_line - g_line_new >= deltaField) {
         
-        // making a UVertice at the end if it located on a contour
+        // making a UVertice at the end, if it located on a contour
         if ((abs(g_new - g_line_new) < 0.0001) && (g_new != 0) && (g_line_new <= 1)) {
           float[][] newVertice_nextULevel = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line_new / Field_Multiplier}};
           Field_Countours_UVertices = (float[][]) concat(Field_Countours_UVertices, newVertice_nextULevel);
         }           
         
-        break; // when reaching the next contour level
+        break; // when reaching the area outside contour level
       }
     }
     
