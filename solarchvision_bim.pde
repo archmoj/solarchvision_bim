@@ -15976,11 +15976,11 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   {
     {
       {
-        for (int i = 1; i < Field_Countours_UVertices.length; i++) {
+        for (int k = 1; k < Field_Countours_UVertices.length; k++) {
           
-          float x = Field_Countours_UVertices[i][0];
-          float y = Field_Countours_UVertices[i][1];
-          float z = Field_Countours_UVertices[i][2];
+          float x = Field_Countours_UVertices[k][0];
+          float y = Field_Countours_UVertices[k][1];
+          float z = Field_Countours_UVertices[k][2];
           
           float val = ParametricGeometries_Field_atXYZ(x, y, z);
           
