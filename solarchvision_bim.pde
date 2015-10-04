@@ -15792,8 +15792,10 @@ float[] SOLARCHVISION_traceContour (int traceType, float epsilon, float x, float
 
 float[][] Field_Contours_UVertices = {{0,0,0,0}}; // keeping Field value at the 4th member
 float[][] Field_Contours_VVertices = {{0,0,0,0}}; // keeping Field value at the 4th member
+float[][] Field_Contours_WVertices = {{0,0,0,0}}; // keeping Field value at the 4th member
 int[][] Field_Contours_ULines = {{0,0}};
 int[][] Field_Contours_VLines = {{0,0}};
+int[][] Field_Contours_WLines = {{0,0}};
 
 int PROCESS_subdivisions = 1; //1; // 0,1,2,3
 
@@ -15815,6 +15817,12 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   Field_Contours_VVertices[0][2] = 0; 
   Field_Contours_VVertices[0][3] = 0;
 
+  Field_Contours_WVertices = new float [1][4];
+  Field_Contours_WVertices[0][0] = 0; 
+  Field_Contours_WVertices[0][1] = 0; 
+  Field_Contours_WVertices[0][2] = 0; 
+  Field_Contours_WVertices[0][3] = 0;
+
   Field_Contours_ULines = new int [1][2];
   Field_Contours_ULines[0][0] = 0;
   Field_Contours_ULines[0][1] = 0;
@@ -15822,7 +15830,10 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
   Field_Contours_VLines = new int [1][2];
   Field_Contours_VLines[0][0] = 0;
   Field_Contours_VLines[0][1] = 0;
-  
+
+  Field_Contours_WLines = new int [1][2];
+  Field_Contours_WLines[0][0] = 0;
+  Field_Contours_WLines[0][1] = 0;  
   
   Field_Image.loadPixels();
 
@@ -15896,68 +15907,31 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
 
   if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
     
- 
-    //for (float ContourLevel = 1; ContourLevel > 0.5; ContourLevel -= deltaField) {
+    for (int k = 1; k < Field_Contours_UVertices.length; k++) {  
+
+      float x = Field_Contours_UVertices[k][0];
+      float y = Field_Contours_UVertices[k][1];
+      float z = Field_Contours_UVertices[k][2];
       
-      for (int k = 1; k < Field_Contours_UVertices.length; k++) {  
+      float val = Field_Contours_UVertices[k][3]; //ParametricGeometries_Field_atXYZ(x, y, z);
+      
+      float g =      roundTo(Field_Multiplier * val, deltaField) - 0.5 * deltaField;
+      float g_line = roundTo(Field_Multiplier * val, deltaFieldLines);
 
-        //if (abs(Field_Contours_UVertices[k][3] - ContourLevel) < deltaField) {
-        
-          float x = Field_Contours_UVertices[k][0];
-          float y = Field_Contours_UVertices[k][1];
-          float z = Field_Contours_UVertices[k][2];
-          
-          float val = Field_Contours_UVertices[k][3]; //ParametricGeometries_Field_atXYZ(x, y, z);
-          
-          float g =      roundTo(Field_Multiplier * val, deltaField) - 0.5 * deltaField;
-          float g_line = roundTo(Field_Multiplier * val, deltaFieldLines);
-    
-          float dx = 1;
-          float dy = 0;
-          float dz = 0;   
-    
-          float[] test_point_dir = {x, y, z, dx, dy, dz}; 
-    
-          // making the first VVertice on the UVertice
-          {
-            float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
-            Field_Contours_VVertices = (float[][]) concat(Field_Contours_VVertices, newVertice);
-          }      
-    
-          SOLARCHVISION_trace_VLine(test_point_dir, g_line, 25);
-        //}    
-      }
-      /*
-      for (int k = 1; k < Field_Contours_UVertices.length; k++) {
-        
-        if (abs(Field_Contours_UVertices[k][3] - ContourLevel) < deltaField) {
-  
-          float x = Field_Contours_UVertices[k][0];
-          float y = Field_Contours_UVertices[k][1];
-          float z = Field_Contours_UVertices[k][2];
-          
-          float val = Field_Contours_UVertices[k][3]; //ParametricGeometries_Field_atXYZ(x, y, z);     
-          
-          float g =      roundTo(Field_Multiplier * val, deltaField) - 0.5 * deltaField;
-          float g_line = roundTo(Field_Multiplier * val, deltaFieldLines);
-    
-          if ((abs(g - g_line) < 0.0001) && (g != 0) && (g_line <= 1)) {
-            
-            float dx = 1;
-            float dy = 0;
-            float dz = 0;             
-            
-            float[] test_point_dir = {x, y, z, dx, dy, dz}; 
-           
-            SOLARCHVISION_trace_ULine(test_point_dir, g_line, 100);
-          }
-        }
-      }    
-      */      
+      float dx = 1;
+      float dy = 0;
+      float dz = 0;   
 
-    //}
+      float[] test_point_dir = {x, y, z, dx, dy, dz}; 
 
+      // making the first VVertice on the UVertice
+      {
+        float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
+        Field_Contours_VVertices = (float[][]) concat(Field_Contours_VVertices, newVertice);
+      }      
 
+      SOLARCHVISION_trace_VLine(test_point_dir, g_line, 25);
+    }
 
 
 
@@ -15973,25 +15947,33 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
     if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
       if (display_Field_Lines != 0) {
         
-        for (int U_or_V = 0; U_or_V < 2; U_or_V++) {
+        for (int U_or_V_or_W = 0; U_or_V_or_W < 3; U_or_V_or_W++) {
     
-          if (U_or_V == 0) {
+          if (U_or_V_or_W == 0) {
             Field_PDF.strokeWeight(0.25);
             Field_PDF.stroke(255, 0, 0);
             Field_PDF.fill(255, 0, 0);  
             } 
-          else {
+          if (U_or_V_or_W == 1) {
             Field_PDF.strokeWeight(0.25);
             Field_PDF.stroke(0, 255, 0);
             Field_PDF.fill(0, 255, 0);  
           }
+          if (U_or_V_or_W == 2) {
+            Field_PDF.strokeWeight(0.25);
+            Field_PDF.stroke(0, 0, 255);
+            Field_PDF.fill(0, 0, 255);  
+          }
           
           int q_num = 0;
-          if (U_or_V == 0) {
+          if (U_or_V_or_W == 0) {
             q_num = Field_Contours_ULines.length;
           } 
-          else {
+          if (U_or_V_or_W == 1) {
             q_num = Field_Contours_VLines.length;
+          }
+          if (U_or_V_or_W == 2) {
+            q_num = Field_Contours_WLines.length;
           }
           
           for (int q = 1; q < q_num; q++) {
@@ -16004,19 +15986,25 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
               int n = 0;
               float x0 = 0, y0 = 0, z0 = 0;
               
-              if (U_or_V == 0) {
+              if (U_or_V_or_W == 0) {
                 n = Field_Contours_ULines[q][p];
                 x0 = Field_Contours_UVertices[n][0];
                 y0 = Field_Contours_UVertices[n][1];
                 z0 = Field_Contours_UVertices[n][2];                
               }
-              else {
+              if (U_or_V_or_W == 1) {
                 n = Field_Contours_VLines[q][p];        
                 x0 = Field_Contours_VVertices[n][0];
                 y0 = Field_Contours_VVertices[n][1];
                 z0 = Field_Contours_VVertices[n][2];
               }
-  
+              if (U_or_V_or_W == 2) {
+                n = Field_Contours_WLines[q][p];        
+                x0 = Field_Contours_WVertices[n][0];
+                y0 = Field_Contours_WVertices[n][1];
+                z0 = Field_Contours_WVertices[n][2];
+              }
+              
               float r = 0;
               
               if (Field_Image_Section == 1) {
@@ -16132,10 +16120,10 @@ void SOLARCHVISION_draw_field_lines () {
 
   if (display_Field_Lines != 0) {
 
-    WIN3D_Diagrams.strokeWeight(1);
+    WIN3D_Diagrams.strokeWeight(0.25);
     WIN3D_Diagrams.stroke(255, 0, 0);
     WIN3D_Diagrams.fill(255, 0, 0);  
-    
+
     for (int q = 1; q < Field_Contours_ULines.length; q++) {
       
       int n1 = Field_Contours_ULines[q][0];
@@ -16172,6 +16160,25 @@ void SOLARCHVISION_draw_field_lines () {
       WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
     }
 
+    WIN3D_Diagrams.strokeWeight(1);
+    WIN3D_Diagrams.stroke(0, 0, 255);
+    WIN3D_Diagrams.fill(0, 0, 255);  
+
+    for (int q = 1; q < Field_Contours_WLines.length; q++) {
+      
+      int n1 = Field_Contours_WLines[q][0];
+      int n2 = Field_Contours_WLines[q][1];
+      
+      float x1 = Field_Contours_WVertices[n1][0];
+      float y1 = Field_Contours_WVertices[n1][1];
+      float z1 = Field_Contours_WVertices[n1][2];
+
+      float x2 = Field_Contours_WVertices[n2][0];
+      float y2 = Field_Contours_WVertices[n2][1];
+      float z2 = Field_Contours_WVertices[n2][2];
+      
+      WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
+    }
 
     WIN3D_Diagrams.strokeWeight(0);
 
@@ -16179,10 +16186,35 @@ void SOLARCHVISION_draw_field_lines () {
   
 }
 
+void SOLARCHVISION_draw_field_points () {
+  if (display_Field_Points != 0) {
+
+    WIN3D_Diagrams.strokeWeight(0);
+    WIN3D_Diagrams.stroke(255, 127, 0);
+    WIN3D_Diagrams.fill(255, 127, 0);  
+    
+    float R = 1; //0.2;
+    
+    for (int n = 1; n < Field_Contours_UVertices.length; n++) {
+
+      float x = Field_Contours_UVertices[n][0];
+      float y = Field_Contours_UVertices[n][1];
+      float z = Field_Contours_UVertices[n][2];
+      
+      WIN3D_Diagrams.pushMatrix();
+      WIN3D_Diagrams.translate(x * objects_scale * WIN3D_scale3D, -y * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+      WIN3D_Diagrams.sphere(R);
+      WIN3D_Diagrams.popMatrix();
+    }
+    
+  }
+}
 
 
 
 void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Tries) {
+  
+  float Minimum_U_Distance = 1.0;
 
   int point_prev = 0; 
   int point_next = 0;
@@ -16218,7 +16250,7 @@ void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Trie
     } 
 
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    test_point_dir = SOLARCHVISION_traceContour(0, 1.0, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier);
+    test_point_dir = SOLARCHVISION_traceContour(0, Minimum_U_Distance, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier);
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
@@ -16241,10 +16273,7 @@ void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Trie
         }
       }
       
-      //if (nearestPointDist < 0.1) {  //i.e. 0.1m 
-      //if (nearestPointDist < 0.25) {  //i.e. 0.25m
-      //if (nearestPointDist < 0.5) {  //i.e. 0.5m
-      if (nearestPointDist < 1) {  //i.e. 1m
+      if (nearestPointDist < Minimum_U_Distance) {
         point_next = nearestPointNum;
         
         test_point_dir[0] = Field_Contours_UVertices[point_next][0];
@@ -16276,44 +16305,16 @@ void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Trie
 }
 
 void SOLARCHVISION_trace_VLine (float[] test_point_dir, float g_line, int n_Tries) {
+  
+   float Minimum_V_Distance = 0.5;
 
   int point_prev = Field_Contours_VVertices.length - 1; // the last added point
   int point_next = 0;
   
   for (int n = 0; n < n_Tries; n++) {
-    /*
-    float[][] preVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
-    
-    if (point_prev == 0) {
-      float nearestPointDist = FLOAT_undefined;
-      int nearestPointNum = 0;
-      
-      for (int q = 1; q < Field_Contours_VVertices.length; q++) {
-        //if (preVertice[0][3] == Field_Contours_VVertices[q][3]) {
-        if (preVertice[0][3] - Field_Contours_VVertices[q][3] < 0.0001) {
-          
-          float d = dist(preVertice[0][0], preVertice[0][1], preVertice[0][2], Field_Contours_VVertices[q][0], Field_Contours_VVertices[q][1], Field_Contours_VVertices[q][2]);
-          
-          if (nearestPointDist > d) { 
-            nearestPointDist = d;
-            nearestPointNum = q;
-          }
-        }
-      }
-      
-      if (nearestPointDist < 0.5) {  //i.e. 0.5m 
-        point_prev = nearestPointNum;
-        
-        test_point_dir[0] = Field_Contours_VVertices[point_prev][0];
-        test_point_dir[1] = Field_Contours_VVertices[point_prev][1];
-        test_point_dir[2] = Field_Contours_VVertices[point_prev][2];
-      }             
-    } 
-    
-    */
 
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    test_point_dir = SOLARCHVISION_traceContour(-1, 0.5, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier);
+    test_point_dir = SOLARCHVISION_traceContour(-1, Minimum_V_Distance, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier);
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     
     float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
@@ -16324,7 +16325,6 @@ void SOLARCHVISION_trace_VLine (float[] test_point_dir, float g_line, int n_Trie
       Field_Contours_VVertices = (float[][]) concat(Field_Contours_VVertices, newVertice);              
       point_next = Field_Contours_VVertices.length - 1;
     }
-
     
     if ((point_prev != 0) && (point_next != 0)) {
       int[][] newVLine = {{point_prev, point_next}};
@@ -16352,29 +16352,6 @@ void SOLARCHVISION_trace_VLine (float[] test_point_dir, float g_line, int n_Trie
   }
 }
 
-void SOLARCHVISION_draw_field_points () {
-  if (display_Field_Points != 0) {
-
-    WIN3D_Diagrams.strokeWeight(0);
-    WIN3D_Diagrams.stroke(255, 127, 0);
-    WIN3D_Diagrams.fill(255, 127, 0);  
-    
-    float R = 0.5; //0.2;
-    
-    for (int n = 1; n < Field_Contours_UVertices.length; n++) {
-
-      float x = Field_Contours_UVertices[n][0];
-      float y = Field_Contours_UVertices[n][1];
-      float z = Field_Contours_UVertices[n][2];
-      
-      WIN3D_Diagrams.pushMatrix();
-      WIN3D_Diagrams.translate(x * objects_scale * WIN3D_scale3D, -y * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
-      WIN3D_Diagrams.sphere(R);
-      WIN3D_Diagrams.popMatrix();
-    }
-    
-  }
-}
 
 
 
