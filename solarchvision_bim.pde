@@ -15798,7 +15798,7 @@ int[][] Field_Contours_VLines = {{0,0}};
 int PROCESS_subdivisions = 1; //1; // 0,1,2,3
 
 float deltaField = 0.05;
-float deltaFieldLines = 0.05 * deltaField;
+float deltaFieldLines = 0.1 * deltaField;
 
 
 void SOLARCHVISION_calculate_ParametricGeometries_Field () {
@@ -15975,9 +15975,16 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
         
         for (int U_or_V = 0; U_or_V < 2; U_or_V++) {
     
-          Field_PDF.strokeWeight(0.25);
-          Field_PDF.stroke(255, 0, 0);
-          Field_PDF.fill(255, 0, 0);  
+          if (U_or_V == 0) {
+            Field_PDF.strokeWeight(0.25);
+            Field_PDF.stroke(255, 0, 0);
+            Field_PDF.fill(255, 0, 0);  
+            } 
+          else {
+            Field_PDF.strokeWeight(0.25);
+            Field_PDF.stroke(0, 255, 0);
+            Field_PDF.fill(0, 255, 0);  
+          }
           
           int q_num = 0;
           if (U_or_V == 0) {
@@ -16121,6 +16128,60 @@ String get_Field_Filename () {
 }
 
 
+void SOLARCHVISION_draw_field_lines () {
+
+  if (display_Field_Lines != 0) {
+
+    WIN3D_Diagrams.strokeWeight(1);
+    WIN3D_Diagrams.stroke(255, 0, 0);
+    WIN3D_Diagrams.fill(255, 0, 0);  
+    
+    for (int q = 1; q < Field_Contours_ULines.length; q++) {
+      
+      int n1 = Field_Contours_ULines[q][0];
+      int n2 = Field_Contours_ULines[q][1];
+      
+      float x1 = Field_Contours_UVertices[n1][0];
+      float y1 = Field_Contours_UVertices[n1][1];
+      float z1 = Field_Contours_UVertices[n1][2];
+
+      float x2 = Field_Contours_UVertices[n2][0];
+      float y2 = Field_Contours_UVertices[n2][1];
+      float z2 = Field_Contours_UVertices[n2][2];
+      
+      WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
+    }
+
+    WIN3D_Diagrams.strokeWeight(1);
+    WIN3D_Diagrams.stroke(0, 255, 0);
+    WIN3D_Diagrams.fill(0, 255, 0);  
+
+    for (int q = 1; q < Field_Contours_VLines.length; q++) {
+      
+      int n1 = Field_Contours_VLines[q][0];
+      int n2 = Field_Contours_VLines[q][1];
+      
+      float x1 = Field_Contours_VVertices[n1][0];
+      float y1 = Field_Contours_VVertices[n1][1];
+      float z1 = Field_Contours_VVertices[n1][2];
+
+      float x2 = Field_Contours_VVertices[n2][0];
+      float y2 = Field_Contours_VVertices[n2][1];
+      float z2 = Field_Contours_VVertices[n2][2];
+      
+      WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
+    }
+
+
+    WIN3D_Diagrams.strokeWeight(0);
+
+  }
+  
+}
+
+
+
+
 void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Tries) {
 
   int point_prev = 0; 
@@ -16157,7 +16218,7 @@ void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Trie
     } 
 
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    test_point_dir = SOLARCHVISION_traceContour(0, 2.5, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier);
+    test_point_dir = SOLARCHVISION_traceContour(0, 1.0, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier);
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
@@ -16182,7 +16243,8 @@ void SOLARCHVISION_trace_ULine (float[] test_point_dir, float g_line, int n_Trie
       
       //if (nearestPointDist < 0.1) {  //i.e. 0.1m 
       //if (nearestPointDist < 0.25) {  //i.e. 0.25m
-      if (nearestPointDist < 0.5) {  //i.e. 0.5m
+      //if (nearestPointDist < 0.5) {  //i.e. 0.5m
+      if (nearestPointDist < 1) {  //i.e. 1m
         point_next = nearestPointNum;
         
         test_point_dir[0] = Field_Contours_UVertices[point_next][0];
@@ -16312,57 +16374,6 @@ void SOLARCHVISION_draw_field_points () {
     }
     
   }
-}
-
-void SOLARCHVISION_draw_field_lines () {
-
-  if (display_Field_Lines != 0) {
-
-    WIN3D_Diagrams.strokeWeight(1);
-    WIN3D_Diagrams.stroke(255, 0, 0);
-    WIN3D_Diagrams.fill(255, 0, 0);  
-    
-    for (int q = 1; q < Field_Contours_ULines.length; q++) {
-      
-      int n1 = Field_Contours_ULines[q][0];
-      int n2 = Field_Contours_ULines[q][1];
-      
-      float x1 = Field_Contours_UVertices[n1][0];
-      float y1 = Field_Contours_UVertices[n1][1];
-      float z1 = Field_Contours_UVertices[n1][2];
-
-      float x2 = Field_Contours_UVertices[n2][0];
-      float y2 = Field_Contours_UVertices[n2][1];
-      float z2 = Field_Contours_UVertices[n2][2];
-      
-      WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
-    }
-
-    WIN3D_Diagrams.strokeWeight(1);
-    //WIN3D_Diagrams.stroke(0, 255, 0);
-    //WIN3D_Diagrams.fill(0, 255, 0);  
-
-    for (int q = 1; q < Field_Contours_VLines.length; q++) {
-      
-      int n1 = Field_Contours_VLines[q][0];
-      int n2 = Field_Contours_VLines[q][1];
-      
-      float x1 = Field_Contours_VVertices[n1][0];
-      float y1 = Field_Contours_VVertices[n1][1];
-      float z1 = Field_Contours_VVertices[n1][2];
-
-      float x2 = Field_Contours_VVertices[n2][0];
-      float y2 = Field_Contours_VVertices[n2][1];
-      float z2 = Field_Contours_VVertices[n2][2];
-      
-      WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
-    }
-
-
-    WIN3D_Diagrams.strokeWeight(0);
-
-  }
-  
 }
 
 
