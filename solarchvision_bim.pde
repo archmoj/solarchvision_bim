@@ -16352,14 +16352,15 @@ void SOLARCHVISION_trace_VLine (float[] test_point_dir, float g_line, int n_Trie
         for (int q = 1; q < Field_Contours_UVertices.length; q++) {
 
           //if (abs(g_line_new / Field_Multiplier - Field_Contours_UVertices[q][3]) < 0.0001) {
+          if (g_line - g_line_new < 2 * deltaField) {
             
             float d = dist(test_point_dir[0], test_point_dir[1], test_point_dir[2], Field_Contours_UVertices[q][0], Field_Contours_UVertices[q][1], Field_Contours_UVertices[q][2]);
     
-            if ((nearestPointDist > d) && (point_prev != q)) { 
+            if (nearestPointDist > d) { 
               nearestPointDist = d;
               nearestPointNum = q;
             }
-          //}
+          }
           
         }
         
