@@ -16168,8 +16168,8 @@ void SOLARCHVISION_draw_field_lines () {
     }
 
     WIN3D_Diagrams.strokeWeight(1);
-    WIN3D_Diagrams.stroke(0, 0, 255);
-    WIN3D_Diagrams.fill(0, 0, 255);  
+    WIN3D_Diagrams.stroke(255, 0, 0);
+    WIN3D_Diagrams.fill(255, 0, 0);  
 
     for (int q = 1; q < Field_Contours_WLines.length; q++) {
       
