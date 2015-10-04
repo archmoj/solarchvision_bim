@@ -15929,6 +15929,13 @@ void SOLARCHVISION_calculate_ParametricGeometries_Field () {
         float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
         Field_Contours_VVertices = (float[][]) concat(Field_Contours_VVertices, newVertice);
       }      
+      
+      // making the first WVertice on the UVertice
+      {
+        float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
+        Field_Contours_WVertices = (float[][]) concat(Field_Contours_WVertices, newVertice);
+      }      
+      
 
       SOLARCHVISION_trace_VLine(test_point_dir, g_line, 25);
     }
@@ -16336,12 +16343,12 @@ void SOLARCHVISION_trace_VLine (float[] test_point_dir, float g_line, int n_Trie
       
       if (g_line - g_line_new >= deltaField) {
         
-        /*        
-        if ((abs(g_new - g_line_new) < 0.0001) && (g_new != 0) && (g_line_new <= 1)) { // making a UVertice at the end, if it located on a contour
-          float[][] newVertice_nextULevel = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line_new / Field_Multiplier}};
-          Field_Contours_UVertices = (float[][]) concat(Field_Contours_UVertices, newVertice_nextULevel);
-        }
-        */
+        float[][] endVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
+        Field_Contours_WVertices = (float[][]) concat(Field_Contours_WVertices, endVertice);
+        
+        int[][] newWLine = {{Field_Contours_WVertices.length - 2, Field_Contours_WVertices.length - 1}}; // last two WVertices
+        Field_Contours_WLines = (int[][]) concat(Field_Contours_WLines, newWLine);
+        
         
         break; // when reaching the area outside contour level
       }
