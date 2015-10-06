@@ -148,10 +148,10 @@ int Create_Mesh_Poly = 0;
 int Create_Mesh_Extrude = 0;
 int Create_Mesh_Tri = 0;
 int Create_Mesh_Quad = 0;
-int Create_Mesh_House = 1; 
+int Create_Mesh_House = 0; 
 int Create_Mesh_Parametric = 0;
 int Create_Mesh_Person = 0;
-int Create_Mesh_Plant = 0;
+int Create_Mesh_Plant = 1;
 int Create_Recursive_Plant = 0;
 
 int Create_Mesh_Person_Type = 0;
@@ -14667,15 +14667,20 @@ void SOLARCHVISION_draw_3Dobjects () {
 
 
 
-int[][] allObject2D_TempFaces;
-float[][] allObject2D_TempVertices;
+int[][] allObject2D_Faces;
+float[][] allObject2D_Vertices;
 
    
 
 void SOLARCHVISION_draw_2Dobjects () {
   
-  allObject2D_TempFaces = new int [0][0];
-  allObject2D_TempVertices = new float [0][0];
+  allObject2D_Faces = new int [1][1];
+  allObject2D_Faces[0][0] = 0;
+  
+  allObject2D_Vertices = new float [1][3];
+  allObject2D_Vertices[0][0] = 0;
+  allObject2D_Vertices[0][1] = 0;
+  allObject2D_Vertices[0][2] = 0;
   
   // ???????????????????????????????????????????????
   CAM_x *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
@@ -14770,18 +14775,18 @@ void SOLARCHVISION_draw_2Dobjects () {
         WIN3D_Diagrams.endShape(CLOSE);
         
         {
-          float[][] newVertices = {{(x - r * cos(t)), -(y - r * sin(t)), z},
-                                   {(x + r * cos(t)), -(y + r * sin(t)), z},
-                                   {(x + r * cos(t)), -(y + r * sin(t)), (z + 2 * r)},
-                                   {(x - r * cos(t)), -(y - r * sin(t)), (z + 2 * r)}};
+          float[][] newVertices = {{x - r * cos(t), y - r * sin(t), z},
+                                   {x + r * cos(t), y + r * sin(t), z},
+                                   {x + r * cos(t), y + r * sin(t), z + 2 * r},
+                                   {x - r * cos(t), y - r * sin(t), z + 2 * r}};
             
-          allObject2D_TempVertices = (float[][]) concat(allObject2D_TempVertices, newVertices);
+          allObject2D_Vertices = (float[][]) concat(allObject2D_Vertices, newVertices);
           
-          int nVo = allObject2D_TempVertices.length;
+          int nVo = allObject2D_Vertices.length;
           
           int[][] newFace = {{nVo - 4, nVo - 3, nVo - 2, nVo - 1}};
   
-          allObject2D_TempFaces = (int[][]) concat(allObject2D_TempFaces, newFace);
+          allObject2D_Faces = (int[][]) concat(allObject2D_Faces, newFace);
         }        
         
 
@@ -15089,22 +15094,22 @@ float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
   float[] ray_normal = fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float[allObject2D_TempFaces.length][4];
+  float[][] hitPoint = new float[allObject2D_Faces.length][4];
 
-  for (int f = 1; f < allObject2D_TempFaces.length; f++) {
+  for (int f = 1; f < allObject2D_Faces.length; f++) {
     hitPoint[f][0] = FLOAT_undefined;
     hitPoint[f][1] = FLOAT_undefined;
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
   }
   
-  float[] pre_angle_to_allObject2D_TempFaces = new float[allObject2D_TempFaces.length];
+  float[] pre_angle_to_allObject2D_Faces = new float[allObject2D_Faces.length];
   
-  for (int f = 1; f < allObject2D_TempFaces.length; f++) {
-    pre_angle_to_allObject2D_TempFaces[f] = FLOAT_undefined;
+  for (int f = 1; f < allObject2D_Faces.length; f++) {
+    pre_angle_to_allObject2D_Faces[f] = FLOAT_undefined;
   }
   
-  for (int f = 1; f < allObject2D_TempFaces.length; f++) {
+  for (int f = 1; f < allObject2D_Faces.length; f++) {
 
     float backAngles = FLOAT_undefined;  
     float foreAngles = FLOAT_undefined;
@@ -15139,11 +15144,11 @@ float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
         
         AnglesAll[o] = 0;      
       
-        for (int i = 0; i < allObject2D_TempFaces[f].length; i++) {
-          int next_i = (i + 1) % allObject2D_TempFaces[f].length;
+        for (int i = 0; i < allObject2D_Faces[f].length; i++) {
+          int next_i = (i + 1) % allObject2D_Faces[f].length;
           
-          float[] vectA = {allObject2D_TempVertices[allObject2D_TempFaces[f][i]][0] - x[o], allObject2D_TempVertices[allObject2D_TempFaces[f][i]][1] - y[o], allObject2D_TempVertices[allObject2D_TempFaces[f][i]][2] - z[o]}; 
-          float[] vectB = {allObject2D_TempVertices[allObject2D_TempFaces[f][next_i]][0] - x[o], allObject2D_TempVertices[allObject2D_TempFaces[f][next_i]][1] - y[o], allObject2D_TempVertices[allObject2D_TempFaces[f][next_i]][2] - z[o]};
+          float[] vectA = {allObject2D_Vertices[allObject2D_Faces[f][i]][0] - x[o], allObject2D_Vertices[allObject2D_Faces[f][i]][1] - y[o], allObject2D_Vertices[allObject2D_Faces[f][i]][2] - z[o]}; 
+          float[] vectB = {allObject2D_Vertices[allObject2D_Faces[f][next_i]][0] - x[o], allObject2D_Vertices[allObject2D_Faces[f][next_i]][1] - y[o], allObject2D_Vertices[allObject2D_Faces[f][next_i]][2] - z[o]};
           
           float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
           
@@ -15195,8 +15200,8 @@ float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
       //if (MAX_AnglesAll > 359) {
       if (MAX_AnglesAll > 357) { // <<<<<<<<<<<<<<<<<<<<<<<<<
-        if (pre_angle_to_allObject2D_TempFaces[f] < MAX_AnglesAll) {
-          pre_angle_to_allObject2D_TempFaces[f] = MAX_AnglesAll;
+        if (pre_angle_to_allObject2D_Faces[f] < MAX_AnglesAll) {
+          pre_angle_to_allObject2D_Faces[f] = MAX_AnglesAll;
           
           hitPoint[f][0] = x[MAX_o];
           hitPoint[f][1] = y[MAX_o];
@@ -15205,8 +15210,8 @@ float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
         }        
       }
       
-      if (pre_angle_to_allObject2D_TempFaces[f] > 0.9 * FLOAT_undefined) {
-        pre_angle_to_allObject2D_TempFaces[f] = MAX_AnglesAll;
+      if (pre_angle_to_allObject2D_Faces[f] > 0.9 * FLOAT_undefined) {
+        pre_angle_to_allObject2D_Faces[f] = MAX_AnglesAll;
       }       
 
       
@@ -15218,7 +15223,7 @@ float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
   
   float pre_dist = FLOAT_undefined;
   
-  for (int f = 1; f < allObject2D_TempFaces.length; f++) {
+  for (int f = 1; f < allObject2D_Faces.length; f++) {
     
     float hx = hitPoint[f][0];
     float hy = hitPoint[f][1];
@@ -19566,8 +19571,56 @@ float[] SOLARCHVISION_calculate_Perspective_Internally (float x, float y, float 
   return theValues;              
 }
 
+
+
+int selectedObject2D_displayEdges = 1;
+int selectedObject2D_num = 0;
+
+
+
 void SOLARCHVISION_draw_Perspective_Internally () {
 
+  if (selectedObject2D_displayEdges != 0) {
+    
+    pushMatrix();
+  
+    translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+    
+    noFill();
+    
+    stroke(127); 
+    strokeWeight(2);
+  
+    //for (int f = allObject2D_Faces[selectedObject2D_num][0]; f <= allObject2D_Faces[selectedObject2D_num][1]; f++) {
+    for (int f = 1; f < allObject2D_Faces.length; f++) {
+      if ((0 < f) && (f < allObject2D_Faces.length)) { 
+          
+        beginShape();
+        
+        for (int j = 0; j < allObject2D_Faces[f].length; j++) {
+          int vNo = allFaces[f][j];
+          
+          float x = allObject2D_Vertices[vNo][0];
+          float y = allObject2D_Vertices[vNo][1];            
+          float z = -allObject2D_Vertices[vNo][2];
+          
+          float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+          
+          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+            if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+          }
+          
+        }
+        
+        endShape(CLOSE);
+      }
+    }
+    
+    strokeWeight(0);   
+  
+    popMatrix();
+  }  
+  
   if (selectedPolymesh_displayEdges != 0) {
     
     pushMatrix();
