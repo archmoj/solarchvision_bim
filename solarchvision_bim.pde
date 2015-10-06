@@ -14558,7 +14558,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                               
                               if (fn_dot(W, ray_direction) > 0) { // removes backing faces
                               
-                                if (SOLARCHVISION_isSOLARCHVISION_3Dintersected(ray_start, ray_direction, MAX_SHADING_DIST) == 1) { 
+                                if (SOLARCHVISION_is3Dintersected(ray_start, ray_direction, MAX_SHADING_DIST) == 1) { 
                                   if (_values_E_dir < 0) {
                                     _valuesSUM_EFF_P += -(_values_E_dir * SunMask); 
                                     _valuesSUM_EFF_N += -(_values_E_dif * SkyMask); // adding approximate diffuse radiation effect anyway!
@@ -14789,7 +14789,7 @@ void SOLARCHVISION_draw_2Dobjects () {
 }
 
 
-int SOLARCHVISION_isSOLARCHVISION_3Dintersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
+int SOLARCHVISION_is3Dintersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
 
   float[] ray_normal = fn_normalize(ray_dir);   
 
