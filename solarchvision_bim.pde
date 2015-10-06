@@ -14558,7 +14558,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                               
                               if (fn_dot(W, ray_direction) > 0) { // removes backing faces
                               
-                                if (isIntersected(ray_start, ray_direction, MAX_SHADING_DIST) == 1) { 
+                                if (SOLARCHVISION_isSOLARCHVISION_3Dintersected(ray_start, ray_direction, MAX_SHADING_DIST) == 1) { 
                                   if (_values_E_dir < 0) {
                                     _valuesSUM_EFF_P += -(_values_E_dir * SunMask); 
                                     _valuesSUM_EFF_N += -(_values_E_dif * SkyMask); // adding approximate diffuse radiation effect anyway!
@@ -14789,7 +14789,7 @@ void SOLARCHVISION_draw_2Dobjects () {
 }
 
 
-int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
+int SOLARCHVISION_isSOLARCHVISION_3Dintersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
 
   float[] ray_normal = fn_normalize(ray_dir);   
 
@@ -14893,7 +14893,7 @@ int isIntersected (float[] ray_pnt, float[] ray_dir, float max_distance) {
 }
 
 
-float[] intersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
+float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
 
   float[] ray_normal = fn_normalize(ray_dir);   
 
@@ -17481,7 +17481,7 @@ void mouseClicked () {
 
         float[] ray_start = {CAM_x, CAM_y, CAM_z};
 
-        float[] ray_end = SOLARCHVISION_calculate_Click3D (Image_X, Image_Y);
+        float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);
         
         ray_start[0] /= objects_scale;
         ray_start[1] /= objects_scale;
@@ -17492,7 +17492,7 @@ void mouseClicked () {
         ray_end[2] /= objects_scale;
 
         if (WIN3D_View_Type == 0) {
-          float[] ray_center = SOLARCHVISION_calculate_Click3D (0, 0);
+          float[] ray_center = SOLARCHVISION_calculate_Click3D(0, 0);
 
           ray_center[0] /= objects_scale;
           ray_center[1] /= objects_scale;
@@ -17509,7 +17509,7 @@ void mouseClicked () {
         
         float max_dist = 2 * dist(ray_start[0], ray_start[1], ray_start[2], ray_end[0], ray_end[1], ray_end[2]);
         
-        float[] RxP = intersect(ray_start, ray_direction, max_dist);
+        float[] RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
         
         println(ray_start[0], ray_start[1], ray_start[2], ">>", ray_end[0], ray_end[1], ray_end[2], ">>", RxP[0], RxP[1], RxP[2]);
         
