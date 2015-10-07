@@ -1109,8 +1109,10 @@ int pre_PROCESS_subdivisions;
 int pre_display_Field_Points;
 int pre_display_Field_Lines;
 
-int pre_display_MODEL3D_EDGES;
+int pre_selectedObject2D_num;
+int pre_selectedObject2D_displayEdges;
 
+int pre_display_MODEL3D_EDGES;
 int pre_selectedPolymesh_num;
 
 float pre_selectedPolymesh_posValue;
@@ -1883,8 +1885,10 @@ void draw () {
         pre_display_Field_Points = display_Field_Points;
         pre_display_Field_Lines = display_Field_Lines;
         
-        pre_display_MODEL3D_EDGES = display_MODEL3D_EDGES;
+        pre_selectedObject2D_num = selectedObject2D_num;
+        pre_selectedObject2D_displayEdges = selectedObject2D_displayEdges;
         
+        pre_display_MODEL3D_EDGES = display_MODEL3D_EDGES;
         pre_selectedPolymesh_num = selectedPolymesh_num;
         
         pre_selectedPolymesh_posValue = selectedPolymesh_posValue;
@@ -1987,6 +1991,14 @@ void draw () {
         if (pre_Load_URBAN != Load_URBAN) {
           SOLARCHVISION_add_urban();
           
+          WIN3D_Update = 1;
+        }
+
+        if (pre_selectedObject2D_displayEdges != selectedObject2D_displayEdges) {
+          WIN3D_Update = 1;
+        }     
+        
+        if (pre_selectedObject2D_num != selectedObject2D_num) {
           WIN3D_Update = 1;
         }
         
@@ -14681,21 +14693,25 @@ void SOLARCHVISION_draw_3Dobjects () {
 
 
 
-int[][] allObject2D_Faces;
-float[][] allObject2D_Vertices;
 
-   
+float[][] allObject2D_Vertices;
+int[][] allObject2D_Faces;
+int[][] allObject2D_FaceNumbers; //begin-end   
 
 void SOLARCHVISION_draw_2Dobjects () {
-  
-  allObject2D_Faces = new int [1][1];
-  allObject2D_Faces[0][0] = 0;
-  
+
   allObject2D_Vertices = new float [1][3];
   allObject2D_Vertices[0][0] = 0;
   allObject2D_Vertices[0][1] = 0;
   allObject2D_Vertices[0][2] = 0;
   
+  allObject2D_Faces = new int [1][1];
+  allObject2D_Faces[0][0] = 0;
+  
+  allObject2D_FaceNumbers = new int [1][2];
+  allObject2D_FaceNumbers[0][0] = 0; // begin
+  allObject2D_FaceNumbers[0][1] = 0; // end
+ 
   // ???????????????????????????????????????????????
   CAM_x *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
   CAM_y *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
@@ -14789,6 +14805,9 @@ void SOLARCHVISION_draw_2Dobjects () {
         WIN3D_Diagrams.endShape(CLOSE);
         
         {
+          int FaceNumber_start = allObject2D_Faces.length;
+          int FaceNumber_end = 0;
+          
           float[][] newVertices = {{x - r * cos(t), y - r * sin(t), z},
                                    {x + r * cos(t), y + r * sin(t), z},
                                    {x + r * cos(t), y + r * sin(t), z + 2 * r},
@@ -14801,6 +14820,14 @@ void SOLARCHVISION_draw_2Dobjects () {
           int[][] newFace = {{nVo - 4, nVo - 3, nVo - 2, nVo - 1}};
   
           allObject2D_Faces = (int[][]) concat(allObject2D_Faces, newFace);
+          
+          
+          
+          FaceNumber_end = allObject2D_Faces.length - 1;
+          
+          int[][] newFaceNumbers = {{FaceNumber_start, FaceNumber_end}};
+          
+          allObject2D_FaceNumbers = (int[][]) concat(allObject2D_FaceNumbers, newFaceNumbers);
         }        
         
 
@@ -18580,7 +18607,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     }
     
     if (ROLLOUT_child == 5) { // Modify
-
+    
       selectedPolymesh_num = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_num" , selectedPolymesh_num, 0, allPolymesh_Faces.length - 1, 1), 1));
   
       selectedPolymesh_posVector = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_posVector" , selectedPolymesh_posVector, 0, 3, 1), 1));
@@ -18596,8 +18623,13 @@ void SOLARCHVISION_draw_ROLLOUT () {
       selectedPolymesh_alignZ = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_alignZ" , selectedPolymesh_alignZ, -1, 1, 1), 1));
   
       selectedPolymesh_displayPivot = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_displayPivot" , selectedPolymesh_displayPivot, 0, 1, 1), 1));
+      selectedPolymesh_displayBox = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_displayBox" , selectedPolymesh_displayBox, 0, 1, 1), 1));
       selectedPolymesh_displayEdges = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_displayEdges" , selectedPolymesh_displayEdges, 0, 1, 1), 1));
-      selectedPolymesh_displayBox = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedPolymesh_displayBox" , selectedPolymesh_displayBox, 0, 1, 1), 1));      
+      
+      selectedObject2D_displayEdges = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedObject2D_displayEdges" , selectedObject2D_displayEdges, 0, 1, 1), 1));
+
+      selectedObject2D_num = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "selectedObject2D_num" , selectedObject2D_num, 0, allObject2D_num, 1), 1));
+            
     }
     
     
@@ -19603,8 +19635,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     stroke(127); 
     strokeWeight(2);
   
-    //for (int f = allObject2D_Faces[selectedObject2D_num][0]; f <= allObject2D_Faces[selectedObject2D_num][1]; f++) {
-    for (int f = 1; f < allObject2D_Faces.length; f++) {
+    for (int f = allObject2D_FaceNumbers[selectedObject2D_num][0]; f <= allObject2D_FaceNumbers[selectedObject2D_num][1]; f++) {
       if ((0 < f) && (f < allObject2D_Faces.length)) { 
           
         beginShape();
