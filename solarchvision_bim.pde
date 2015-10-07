@@ -198,8 +198,8 @@ int Launch_External_Hardware = 0; // inactive
 
 //-------------------------------
 
-float Field_Wspd = 5.0; 
-float Field_Wdir = 0.0;
+float Field_Wspd = 8.0; 
+float Field_Wdir = 180.0;
 float Field_Wratio = 0.5;
 
 
@@ -15975,7 +15975,7 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
     } 
     */    
     
-
+    /*
     {
       float val1 = 0;
       float d1 = SolidObjects[n].Distance(x - Field_Wratio * deltaX, y - Field_Wratio * deltaY, z);
@@ -15990,6 +15990,18 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
       }     
       val += (val2 - val1);
     }
+    */
+    for (int m = 1; m < 5; m++) {
+      
+      float p = pow(0.5, m); // 0.5, 0.25, 0.125, 0.0625
+      float q = 1 - pow(0.5, m - 1); // 0, 0.5, 0.75, 0.875
+      
+      float d = SolidObjects[n].Distance(x + q * deltaX , y + q * deltaY, z);
+      if (d > 0) {
+        val += p / pow(d, Field_Power);
+      }
+    }    
+    
     
   }
 
@@ -16009,13 +16021,14 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
   float val = 0;
   for (int n = 0; n < SolidObjects.length; n++) {
     
-    float d = SolidObjects[n].Distance(x, y, z);
     /*
+    float d = SolidObjects[n].Distance(x, y, z);
     if (d > 0) {
       val += 1.0 / pow(d, Field_Power);
     } 
-    /*/
+    */
     
+    /*
     {
       float val1 = 0;
       float d1 = SolidObjects[n].Distance(x - Field_Wratio * deltaX, y - Field_Wratio * deltaY, z);
@@ -16030,7 +16043,19 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
       }     
       val += (val2 - val1);
     }   
-    
+    */
+
+
+    for (int m = 1; m < 5; n++) {
+      
+      float p = pow(0.5, m); // 0.5, 0.25, 0.125, 0.0625
+      float q = 1 - pow(0.5, m - 1); // 0, 0.5, 0.75, 0.875
+      
+      float d = SolidObjects[n].Distance(x + q * deltaX , y + q * deltaY, z);
+      if (d > 0) {
+        val += p / pow(d, Field_Power);
+      }
+    }      
     
   }
   return val;
@@ -18693,7 +18718,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
     
       Field_Wratio = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Wratio" , Field_Wratio, 0, 1, 0.125);
-      Field_Wspd = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Wspd" , Field_Wspd, 1, 32, -2); 
+      Field_Wspd = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Wspd" , Field_Wspd, 1, 64, -2); 
       Field_Wdir = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Wdir" , Field_Wdir, 0, 360, 15);
       
 
