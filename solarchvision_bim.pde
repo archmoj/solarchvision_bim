@@ -169,7 +169,7 @@ float Create_Recursive_Plant_leafSize = 1; //1;
 
 int Work_with_2D_or_3D = 3; // 2:2D, 3:3D
 
-int Create_Select_Modify = 1;
+int Create_Select_Modify = 0; // -1:Create 0:Select 1:Move 2:Rotate 3:Scale 
 
 int Display_SWOB_points = 1; // 0-2
 int Display_SWOB_nearest = 1;
@@ -11299,7 +11299,7 @@ void WIN3D_keyPressed (KeyEvent e) {
       switch(keyCode) {
 
         case 155: // INSERT 
-                  Create_Select_Modify = 0;
+                  Create_Select_Modify = -1;
                   
                   selectedPolymesh_num = 0;
                   SOLARCHVISION_calculate_selectedPolymesh_Pivot();
@@ -17743,7 +17743,7 @@ void mouseClicked () {
         
         float[] RxP = new float [5];
         
-        if ((Work_with_2D_or_3D == 2) && (Create_Select_Modify == 1))  { // only if the user wants to select a 2D-object 
+        if ((Work_with_2D_or_3D == 2) && (Create_Select_Modify == 0))  { // only if the user wants to select a 2D-object 
           RxP = SOLARCHVISION_2Dintersect(ray_start, ray_direction, max_dist);
         }
         else {
@@ -17755,7 +17755,7 @@ void mouseClicked () {
         
         if (RxP[4] > 0) {
 
-          if (Create_Select_Modify == 4) { // scale
+          if (Create_Select_Modify == 3) { // scale
 
             float x0 = RxP[0];
             float y0 = RxP[1];
@@ -17812,7 +17812,7 @@ void mouseClicked () {
             }            
           }             
           
-          if (Create_Select_Modify == 3) { // rotate
+          if (Create_Select_Modify == 2) { // rotate
 
             if (Work_with_2D_or_3D == 3) {
               int[] PolymeshVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
@@ -17859,7 +17859,7 @@ void mouseClicked () {
             }              
           }   
 
-          if (Create_Select_Modify == 2) { // move
+          if (Create_Select_Modify == 1) { // move
           
             if (Work_with_2D_or_3D == 3) {
               int[] PolymeshVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
@@ -17906,7 +17906,7 @@ void mouseClicked () {
             
           }   
           
-          if (Create_Select_Modify == 1) { // select
+          if (Create_Select_Modify == 0) { // select
             
             if (Work_with_2D_or_3D == 3) {
 
@@ -17935,9 +17935,10 @@ void mouseClicked () {
           }      
      
           
-          if (Create_Select_Modify == 0) {
+          if (Create_Select_Modify == -1) {
 
-            int pre_numPolymeshes = allPolymesh_Faces.length;
+            int pre_number_of_Polymeshes = allPolymesh_Faces.length;
+            int pre_number_of_2DObjects = allObject2D_XYZS.length;
             
             float x = RxP[0]; 
             float y = RxP[1]; 
@@ -18179,11 +18180,16 @@ void mouseClicked () {
               
             }
 
-            if (pre_numPolymeshes != allPolymesh_Faces.length) { // if any 3D-mesh created during the process
+            if (pre_number_of_Polymeshes != allPolymesh_Faces.length) { // if any 3D-mesh created during the process
               
               selectedPolymesh_num = allPolymesh_Faces.length - 1;
               SOLARCHVISION_calculate_selectedPolymesh_Pivot();
             }
+            
+            if (pre_number_of_2DObjects != allObject2D_XYZS.length) { // if any 2D-mesh created during the process
+              
+              selectedObject2D_num = allObject2D_XYZS.length - 1;
+            }            
           
           }
           
@@ -18578,7 +18584,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
   
     Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 2, 3, 1), 1));
   
-    Create_Select_Modify = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Select_Modify" , Create_Select_Modify, 0, 4, 1), 1));
+    Create_Select_Modify = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Select_Modify" , Create_Select_Modify, -1, 3, 1), 1));
 
 
     if (ROLLOUT_child != 5) {
