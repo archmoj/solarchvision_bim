@@ -14699,13 +14699,12 @@ int[][] allObject2D_Faces;
 
 void SOLARCHVISION_draw_2Dobjects () {
 
-  allObject2D_Vertices = new float [1][3];
+  allObject2D_Faces = new int [1 + allObject2D_num][4];
+    
+  allObject2D_Vertices = new float [4 * allObject2D_num + 1][3];
   allObject2D_Vertices[0][0] = 0;
   allObject2D_Vertices[0][1] = 0;
   allObject2D_Vertices[0][2] = 0;
-  
-  allObject2D_Faces = new int [1 + allObject2D_num][4];
-  
  
   // ???????????????????????????????????????????????
   CAM_x *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
@@ -14800,19 +14799,26 @@ void SOLARCHVISION_draw_2Dobjects () {
         WIN3D_Diagrams.endShape(CLOSE);
         
         {
-          float[][] newVertices = {{x - r * cos(t), y - r * sin(t), z},
-                                   {x + r * cos(t), y + r * sin(t), z},
-                                   {x + r * cos(t), y + r * sin(t), z + 2 * r},
-                                   {x - r * cos(t), y - r * sin(t), z + 2 * r}};
-            
-          allObject2D_Vertices = (float[][]) concat(allObject2D_Vertices, newVertices);
-          
-          int nVo = allObject2D_Vertices.length;
-          
-          allObject2D_Faces[g][0] = nVo - 4;
-          allObject2D_Faces[g][1] = nVo - 3;
-          allObject2D_Faces[g][2] = nVo - 2;
-          allObject2D_Faces[g][3] = nVo - 1;
+          allObject2D_Vertices[f * 4 - 3][0] = x - r * cos(t);
+          allObject2D_Vertices[f * 4 - 3][1] = y - r * sin(t);
+          allObject2D_Vertices[f * 4 - 3][2] = z;
+
+          allObject2D_Vertices[f * 4 - 2][0] = x + r * cos(t);
+          allObject2D_Vertices[f * 4 - 2][1] = y + r * sin(t);
+          allObject2D_Vertices[f * 4 - 2][2] = z;
+
+          allObject2D_Vertices[f * 4 - 1][0] = x + r * cos(t);
+          allObject2D_Vertices[f * 4 - 1][1] = y + r * sin(t);
+          allObject2D_Vertices[f * 4 - 1][2] = z + 2 * r;
+
+          allObject2D_Vertices[f * 4 - 0][0] = x - r * cos(t);
+          allObject2D_Vertices[f * 4 - 0][1] = y - r * sin(t);
+          allObject2D_Vertices[f * 4 - 0][2] = z + 2 * r;
+
+          allObject2D_Faces[f][0] = f * 4 - 3;
+          allObject2D_Faces[f][1] = f * 4 - 2;
+          allObject2D_Faces[f][2] = f * 4 - 1;
+          allObject2D_Faces[f][3] = f * 4 - 0;
         }        
         
 
@@ -17878,6 +17884,8 @@ void mouseClicked () {
           
           if (Create_Select_Modify == 0) {
 
+            int pre_numPolymeshes = allPolymesh_Faces.length;
+            
             float x = RxP[0]; 
             float y = RxP[1]; 
             float z = RxP[2];             
@@ -17903,8 +17911,6 @@ void mouseClicked () {
                 Create_Input_powX = 8;
                 Create_Input_powY = 8;
                 Create_Input_powZ = 8;
-                
-                
                 
                 ROLLOUT_Update = 1;
               }
@@ -18051,13 +18057,13 @@ void mouseClicked () {
             
             if (mouseButton == LEFT) {
               
-              addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
-  
               if (Create_Input_Align == 1) {
                 z += rz;
               }
               
               if (Create_Mesh_Tri == 1) {
+                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
+                
                 SOLARCHVISION_add_Mesh3(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
                 SOLARCHVISION_add_Mesh3(Create_Default_Material, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
                 SOLARCHVISION_add_Mesh3(Create_Default_Material, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
@@ -18065,46 +18071,60 @@ void mouseClicked () {
               }
               
               if (Create_Mesh_Quad == 1) {
+                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
+                
                 SOLARCHVISION_add_Mesh4(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
               }
               
               if (Create_Mesh_Poly == 1) {
+                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
+                
                 SOLARCHVISION_add_PolygonHyper(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
               }
   
-              if (Create_Mesh_Extrude == 1) {              
+              if (Create_Mesh_Extrude == 1) {       
+                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+                
                 SOLARCHVISION_add_PolygonExtrude(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
               }
   
-              if (Create_Mesh_House == 1) {              
+              if (Create_Mesh_House == 1) {   
+                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
+     
                 SOLARCHVISION_add_House_Core(Create_Default_Material, x, y, z, rx, ry, rz, ry, rot);
               }
   
               if (Create_Mesh_Parametric != 0) {
+                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
+                
                 SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, Create_Mesh_Parametric, rot);
               }
+  
+              if (Create_Recursive_Plant != 0) {
+                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
+                
+                float as_Solid = 1;
+                SOLARCHVISION_add_RecursivePlant(Create_Recursive_Plant_Type, x, y, z, 2 * rz, Create_Recursive_Plant_DegreeMin, Create_Recursive_Plant_DegreeMax, Create_Recursive_Plant_Seed, Create_Recursive_Plant_trunckSize, Create_Recursive_Plant_leafSize, as_Solid);
+              }      
+
+              if (Create_Mesh_Plant != 0) {
+                int n = 0;
+                if (Create_Mesh_Plant_Type > 0) n = Create_Mesh_Plant_Type + Object2D_Filenames_PEOPLE.length;              
+                SOLARCHVISION_add_Object2D("TREES", n, x, y, z, 2 * rz);
+              }    
   
               if (Create_Mesh_Person != 0) {
                 SOLARCHVISION_add_Object2D("PEOPLE", Create_Mesh_Person_Type, x, y, z, 2.5);
               }
               
-              if (Create_Mesh_Plant != 0) {
-                int n = 0;
-                if (Create_Mesh_Plant_Type > 0) n = Create_Mesh_Plant_Type + Object2D_Filenames_PEOPLE.length;              
-                SOLARCHVISION_add_Object2D("TREES", n, x, y, z, 2 * rz);
-              }        
-  
-              if (Create_Recursive_Plant != 0) {
-                float as_Solid = 1;
-                SOLARCHVISION_add_RecursivePlant(Create_Recursive_Plant_Type, x, y, z, 2 * rz, Create_Recursive_Plant_DegreeMin, Create_Recursive_Plant_DegreeMax, Create_Recursive_Plant_Seed, Create_Recursive_Plant_trunckSize, Create_Recursive_Plant_leafSize, as_Solid);
-              }    
-              
               
             }
 
-
-            selectedPolymesh_num = allPolymesh_Faces.length - 1;
-            SOLARCHVISION_calculate_selectedPolymesh_Pivot();
+            if (pre_numPolymeshes != allPolymesh_Faces.length) { // if any 3D-mesh created during the process
+              
+              selectedPolymesh_num = allPolymesh_Faces.length - 1;
+              SOLARCHVISION_calculate_selectedPolymesh_Pivot();
+            }
           
           }
           
