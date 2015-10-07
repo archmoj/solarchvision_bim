@@ -17904,8 +17904,6 @@ void mouseClicked () {
   
             if (mouseButton == RIGHT) {
               
-              addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
-              
               if (Create_Soild_House == 1) {
                 Create_Input_powAll = 8;
                 Create_Input_powX = 8;
@@ -17957,6 +17955,8 @@ void mouseClicked () {
               
   
               if ((px == 8) && (py == 8) && (pz == 2)) {
+                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+                
                 SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, 2, rot);
   
                 SOLARCHVISION_addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, 0,0,rot);
@@ -17965,6 +17965,8 @@ void mouseClicked () {
               }
   
               if ((px == 8) && (py == 8) && (pz == 8)) {
+                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+                
                 SOLARCHVISION_add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, rot);
   
                 SOLARCHVISION_addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, 0,0,rot);
@@ -17973,6 +17975,8 @@ void mouseClicked () {
               }
               
               if (((px == 1) && (py == 1) && (pz == 1)) || (Create_Soild_House == 1)) {
+                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+                
                 if (Create_Soild_House == 1) {
                   z += rz;
                   
@@ -18045,6 +18049,8 @@ void mouseClicked () {
               }
               
               if (SOLID_created == 0) {
+                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+                
                 SOLARCHVISION_add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, SolidSurface_TESELATION, rot);
   
                 SOLARCHVISION_addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, 0,0,rot);
