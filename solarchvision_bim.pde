@@ -12255,7 +12255,26 @@ void SOLARCHVISION_deleteSelectedPolymesh () {
   
   
   if (Work_with_2D_or_3D == 2) {
-    //zzzzzzzzzzzzzzzzzzz
+    if (selectedObject2D_num > 0) {
+
+      {
+        float[][] startList = (float[][]) subset(allObject2D_XYZS, 0, selectedObject2D_num);
+        float[][] endList = (float[][]) subset(allObject2D_XYZS, selectedObject2D_num + 1);
+        
+        allObject2D_XYZS = (float[][]) concat(startList, endList);
+      }
+  
+      {
+        int[] startList = (int[]) subset(allObject2D_MAP, 0, selectedObject2D_num);
+        int[] endList = (int[]) subset(allObject2D_MAP, selectedObject2D_num + 1);
+        
+        allObject2D_MAP = (int[]) concat(startList, endList);
+      }   
+      
+      allObject2D_num -= 1;
+      
+      selectedObject2D_num = 0;
+    }
     
   }
 }
