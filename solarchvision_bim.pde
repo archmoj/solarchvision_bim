@@ -169,7 +169,7 @@ float Create_Recursive_Plant_leafSize = 1; //1;
 
 int Work_with_2D_or_3D = 3; // 2:2D, 3:3D
 
-int Create_Select_Modify = 0; // -1:Create 0:Select 1:Move 2:Rotate 3:Scale 
+int Create_Select_Modify = 0; // -1:Create 0:Select 1:Move 2:Scale 3:Rotate 
 
 int Display_SWOB_points = 1; // 0-2
 int Display_SWOB_nearest = 1;
@@ -12153,103 +12153,111 @@ void SOLARCHVISION_beginNewObject () {
 }
 
 void SOLARCHVISION_deleteSelectedPolymesh () {
+
+  if (Work_with_2D_or_3D == 3) {
   
-  if (selectedPolymesh_num > 0) {
-    
-    int startFace = allPolymesh_Faces[selectedPolymesh_num][0];
-    int endFace = allPolymesh_Faces[selectedPolymesh_num][1];
-
-    int startVertice = allVertices.length;
-    int endVertice = 0;
-    
-    for (int f = startFace; f <= endFace; f++) {
-      if ((0 < f) && (f < allFaces.length)) { 
-    
-        for (int j = 0; j < allFaces[f].length; j++) {
-
-          int vNo = allFaces[f][j];
-          
-          if (startVertice > vNo) startVertice = vNo; 
-          if (endVertice < vNo) endVertice = vNo;
-
+    if (selectedPolymesh_num > 0) {
+      
+      int startFace = allPolymesh_Faces[selectedPolymesh_num][0];
+      int endFace = allPolymesh_Faces[selectedPolymesh_num][1];
+  
+      int startVertice = allVertices.length;
+      int endVertice = 0;
+      
+      for (int f = startFace; f <= endFace; f++) {
+        if ((0 < f) && (f < allFaces.length)) { 
+      
+          for (int j = 0; j < allFaces[f].length; j++) {
+  
+            int vNo = allFaces[f][j];
+            
+            if (startVertice > vNo) startVertice = vNo; 
+            if (endVertice < vNo) endVertice = vNo;
+  
+          }
         }
       }
+      
+      if ((0 < startVertice) && (startVertice <= endVertice )) {
+  
+        float[][] startList = (float[][]) subset(allVertices, 0, startVertice);
+        float[][] endList = (float[][]) subset(allVertices, endVertice + 1);
+  
+        allVertices = (float[][]) concat(startList, endList);
+        
+        for (int f = 1; f < allFaces.length; f++) {
+          for (int j = 0; j < allFaces[f].length; j++) {
+  
+            if (startVertice <= allFaces[f][j]) allFaces[f][j] -= 1 + endVertice - startVertice; 
+          }
+        }      
+      }
+  
+      
+      {
+        
+        for (int i = selectedPolymesh_num + 1; i < allPolymesh_Faces.length; i++) {
+          for (int j = 0; j < 2; j++) {
+            allPolymesh_Faces[i][j] -= 1 + endFace - startFace;
+          }
+        }    
+        
+        int[][] startList = (int[][]) subset(allPolymesh_Faces, 0, selectedPolymesh_num);
+        int[][] endList = (int[][]) subset(allPolymesh_Faces, selectedPolymesh_num + 1);
+        
+        allPolymesh_Faces = (int[][]) concat(startList, endList);
+      }  
+     
+      {
+        int[][] startList = (int[][]) subset(allFaces, 0, startFace);
+        int[][] endList = (int[][]) subset(allFaces, endFace + 1);
+        
+        allFaces = (int[][]) concat(startList, endList);
+      }
+      
+      {
+        int[] startList = (int[]) subset(allFaces_MAT, 0, startFace);
+        int[] endList = (int[]) subset(allFaces_MAT, endFace + 1);
+        
+        allFaces_MAT = (int[]) concat(startList, endList);
+      }
+      
+      int startSolid = allPolymesh_Solids[selectedPolymesh_num][0];
+      int endSolid = allPolymesh_Solids[selectedPolymesh_num][1];
+      
+      {
+        
+        for (int i = selectedPolymesh_num + 1; i < allPolymesh_Solids.length; i++) {
+          for (int j = 0; j < 2; j++) {
+            allPolymesh_Solids[i][j] -= 1 + endSolid - startSolid;
+          }
+        }    
+        
+        int[][] startList = (int[][]) subset(allPolymesh_Solids, 0, selectedPolymesh_num);
+        int[][] endList = (int[][]) subset(allPolymesh_Solids, selectedPolymesh_num + 1);
+        
+        allPolymesh_Solids = (int[][]) concat(startList, endList);
+      }  
+  
+      
+      if ((0 <= startSolid) && (startSolid <= endSolid)) {
+        
+        ParametricGeometry[] startList = (ParametricGeometry[]) subset(SolidObjects, 0, startSolid);
+        ParametricGeometry[] endList = (ParametricGeometry[]) subset(SolidObjects, endSolid + 1);
+        
+        SolidObjects = (ParametricGeometry[]) concat(startList, endList);
+        
+        SOLARCHVISION_calculate_ParametricGeometries_Field();
+      }
+  
     }
-    
-    if ((0 < startVertice) && (startVertice <= endVertice )) {
-
-      float[][] startList = (float[][]) subset(allVertices, 0, startVertice);
-      float[][] endList = (float[][]) subset(allVertices, endVertice + 1);
-
-      allVertices = (float[][]) concat(startList, endList);
-      
-      for (int f = 1; f < allFaces.length; f++) {
-        for (int j = 0; j < allFaces[f].length; j++) {
-
-          if (startVertice <= allFaces[f][j]) allFaces[f][j] -= 1 + endVertice - startVertice; 
-        }
-      }      
-    }
-
-    
-    {
-      
-      for (int i = selectedPolymesh_num + 1; i < allPolymesh_Faces.length; i++) {
-        for (int j = 0; j < 2; j++) {
-          allPolymesh_Faces[i][j] -= 1 + endFace - startFace;
-        }
-      }    
-      
-      int[][] startList = (int[][]) subset(allPolymesh_Faces, 0, selectedPolymesh_num);
-      int[][] endList = (int[][]) subset(allPolymesh_Faces, selectedPolymesh_num + 1);
-      
-      allPolymesh_Faces = (int[][]) concat(startList, endList);
-    }  
-   
-    {
-      int[][] startList = (int[][]) subset(allFaces, 0, startFace);
-      int[][] endList = (int[][]) subset(allFaces, endFace + 1);
-      
-      allFaces = (int[][]) concat(startList, endList);
-    }
-    
-    {
-      int[] startList = (int[]) subset(allFaces_MAT, 0, startFace);
-      int[] endList = (int[]) subset(allFaces_MAT, endFace + 1);
-      
-      allFaces_MAT = (int[]) concat(startList, endList);
-    }
-    
-    int startSolid = allPolymesh_Solids[selectedPolymesh_num][0];
-    int endSolid = allPolymesh_Solids[selectedPolymesh_num][1];
-    
-    {
-      
-      for (int i = selectedPolymesh_num + 1; i < allPolymesh_Solids.length; i++) {
-        for (int j = 0; j < 2; j++) {
-          allPolymesh_Solids[i][j] -= 1 + endSolid - startSolid;
-        }
-      }    
-      
-      int[][] startList = (int[][]) subset(allPolymesh_Solids, 0, selectedPolymesh_num);
-      int[][] endList = (int[][]) subset(allPolymesh_Solids, selectedPolymesh_num + 1);
-      
-      allPolymesh_Solids = (int[][]) concat(startList, endList);
-    }  
-
-    
-    if ((0 <= startSolid) && (startSolid <= endSolid)) {
-      
-      ParametricGeometry[] startList = (ParametricGeometry[]) subset(SolidObjects, 0, startSolid);
-      ParametricGeometry[] endList = (ParametricGeometry[]) subset(SolidObjects, endSolid + 1);
-      
-      SolidObjects = (ParametricGeometry[]) concat(startList, endList);
-      
-      SOLARCHVISION_calculate_ParametricGeometries_Field();
-    }
-
   }
-
+  
+  
+  if (Work_with_2D_or_3D == 2) {
+    //zzzzzzzzzzzzzzzzzzz
+    
+  }
 }
 
 
@@ -14800,21 +14808,21 @@ void SOLARCHVISION_draw_2Dobjects () {
         WIN3D_Diagrams.endShape(CLOSE);
         
         {
-          allObject2D_Vertices[f * 4 - 3][0] = x - r * cos(t);
-          allObject2D_Vertices[f * 4 - 3][1] = y - r * sin(t);
-          allObject2D_Vertices[f * 4 - 3][2] = z;
+          allObject2D_Vertices[f * 4 - 3][0] = (x - r * cos(t)) / objects_scale;
+          allObject2D_Vertices[f * 4 - 3][1] = (y - r * sin(t)) / objects_scale;
+          allObject2D_Vertices[f * 4 - 3][2] = (z) / objects_scale;
 
-          allObject2D_Vertices[f * 4 - 2][0] = x + r * cos(t);
-          allObject2D_Vertices[f * 4 - 2][1] = y + r * sin(t);
-          allObject2D_Vertices[f * 4 - 2][2] = z;
+          allObject2D_Vertices[f * 4 - 2][0] = (x + r * cos(t)) / objects_scale;
+          allObject2D_Vertices[f * 4 - 2][1] = (y + r * sin(t)) / objects_scale;
+          allObject2D_Vertices[f * 4 - 2][2] = (z) / objects_scale;
 
-          allObject2D_Vertices[f * 4 - 1][0] = x + r * cos(t);
-          allObject2D_Vertices[f * 4 - 1][1] = y + r * sin(t);
-          allObject2D_Vertices[f * 4 - 1][2] = z + 2 * r;
+          allObject2D_Vertices[f * 4 - 1][0] = (x + r * cos(t)) / objects_scale;
+          allObject2D_Vertices[f * 4 - 1][1] = (y + r * sin(t)) / objects_scale;
+          allObject2D_Vertices[f * 4 - 1][2] = (z + 2 * r) / objects_scale;
 
-          allObject2D_Vertices[f * 4 - 0][0] = x - r * cos(t);
-          allObject2D_Vertices[f * 4 - 0][1] = y - r * sin(t);
-          allObject2D_Vertices[f * 4 - 0][2] = z + 2 * r;
+          allObject2D_Vertices[f * 4 - 0][0] = (x - r * cos(t)) / objects_scale;
+          allObject2D_Vertices[f * 4 - 0][1] = (y - r * sin(t)) / objects_scale;
+          allObject2D_Vertices[f * 4 - 0][2] = (z + 2 * r) / objects_scale;
 
           allObject2D_Faces[f][0] = f * 4 - 3;
           allObject2D_Faces[f][1] = f * 4 - 2;
@@ -17755,7 +17763,56 @@ void mouseClicked () {
         
         if (RxP[4] > 0) {
 
-          if (Create_Select_Modify == 3) { // scale
+                       
+          
+          if (Create_Select_Modify == 3) { // rotate
+
+            if (Work_with_2D_or_3D == 3) {
+              int[] PolymeshVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
+              
+              float x0 = RxP[0];
+              float y0 = RxP[1];
+              float z0 = RxP[2];
+  
+              float r = 0;
+              if (mouseButton == RIGHT) r = 15 * PI / 180.0;
+              if (mouseButton == LEFT) r = -15 * PI / 180.0;
+              
+              for (int q = 1; q < PolymeshVertices.length; q++) {
+                
+                int n = PolymeshVertices[q];
+  
+                float x = allVertices[n][0] - x0; 
+                float y = allVertices[n][1] - y0; 
+                float z = allVertices[n][2] - z0;
+               
+                allVertices[n][0] = x0 + (x * cos(r) - y * sin(r)); 
+                allVertices[n][1] = y0 + (x * sin(r) + y * cos(r));
+                allVertices[n][2] = z0 + (z);
+              }
+              
+              SOLARCHVISION_calculate_selectedPolymesh_Pivot();
+             
+              int Solids_updated = 0;
+              for (int g = allPolymesh_Solids[selectedPolymesh_num][0]; g <= allPolymesh_Solids[selectedPolymesh_num][1]; g++) {
+                if ((0 <= g) && (g < SolidObjects.length)) {
+                  
+                  float x = SolidObjects[g].posX - x0; 
+                  float y = SolidObjects[g].posY - y0; 
+                  float z = SolidObjects[g].posZ - z0;
+                  
+                  SolidObjects[g].updatePosition(x0 + (x * cos(r) - y * sin(r)), y0 + (x * sin(r) + y * cos(r)), z0 + (z));
+                  
+                  SolidObjects[g].RotateZ(r * 180 / PI);
+  
+                  Solids_updated = 1;  
+                }
+              }
+              if (Solids_updated != 0) SOLARCHVISION_calculate_ParametricGeometries_Field();
+            }              
+          }   
+          
+          if (Create_Select_Modify == 2) { // scale
 
             float x0 = RxP[0];
             float y0 = RxP[1];
@@ -17810,54 +17867,7 @@ void mouseClicked () {
               
               WIN3D_Update = 1;
             }            
-          }             
-          
-          if (Create_Select_Modify == 2) { // rotate
-
-            if (Work_with_2D_or_3D == 3) {
-              int[] PolymeshVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
-              
-              float x0 = RxP[0];
-              float y0 = RxP[1];
-              float z0 = RxP[2];
-  
-              float r = 0;
-              if (mouseButton == RIGHT) r = 15 * PI / 180.0;
-              if (mouseButton == LEFT) r = -15 * PI / 180.0;
-              
-              for (int q = 1; q < PolymeshVertices.length; q++) {
-                
-                int n = PolymeshVertices[q];
-  
-                float x = allVertices[n][0] - x0; 
-                float y = allVertices[n][1] - y0; 
-                float z = allVertices[n][2] - z0;
-               
-                allVertices[n][0] = x0 + (x * cos(r) - y * sin(r)); 
-                allVertices[n][1] = y0 + (x * sin(r) + y * cos(r));
-                allVertices[n][2] = z0 + (z);
-              }
-              
-              SOLARCHVISION_calculate_selectedPolymesh_Pivot();
-             
-              int Solids_updated = 0;
-              for (int g = allPolymesh_Solids[selectedPolymesh_num][0]; g <= allPolymesh_Solids[selectedPolymesh_num][1]; g++) {
-                if ((0 <= g) && (g < SolidObjects.length)) {
-                  
-                  float x = SolidObjects[g].posX - x0; 
-                  float y = SolidObjects[g].posY - y0; 
-                  float z = SolidObjects[g].posZ - z0;
-                  
-                  SolidObjects[g].updatePosition(x0 + (x * cos(r) - y * sin(r)), y0 + (x * sin(r) + y * cos(r)), z0 + (z));
-                  
-                  SolidObjects[g].RotateZ(r * 180 / PI);
-  
-                  Solids_updated = 1;  
-                }
-              }
-              if (Solids_updated != 0) SOLARCHVISION_calculate_ParametricGeometries_Field();
-            }              
-          }   
+          }          
 
           if (Create_Select_Modify == 1) { // move
           
@@ -19718,9 +19728,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           for (int j = 0; j < allObject2D_Faces[f].length; j++) {
             int vNo = allFaces[f][j];
             
-            float x = allObject2D_Vertices[vNo][0];
-            float y = allObject2D_Vertices[vNo][1];            
-            float z = -allObject2D_Vertices[vNo][2];
+            float x = allObject2D_Vertices[vNo][0] * objects_scale;;
+            float y = allObject2D_Vertices[vNo][1] * objects_scale;;
+            float z = -allObject2D_Vertices[vNo][2] * objects_scale;;
             
             float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
             
