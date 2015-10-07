@@ -14696,7 +14696,6 @@ void SOLARCHVISION_draw_3Dobjects () {
 
 float[][] allObject2D_Vertices;
 int[][] allObject2D_Faces;
-int[][] allObject2D_FaceNumbers; //begin-end   
 
 void SOLARCHVISION_draw_2Dobjects () {
 
@@ -14705,12 +14704,8 @@ void SOLARCHVISION_draw_2Dobjects () {
   allObject2D_Vertices[0][1] = 0;
   allObject2D_Vertices[0][2] = 0;
   
-  allObject2D_Faces = new int [1][1];
-  allObject2D_Faces[0][0] = 0;
+  allObject2D_Faces = new int [1 + allObject2D_num][4];
   
-  allObject2D_FaceNumbers = new int [1][2];
-  allObject2D_FaceNumbers[0][0] = 0; // begin
-  allObject2D_FaceNumbers[0][1] = 0; // end
  
   // ???????????????????????????????????????????????
   CAM_x *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
@@ -14805,9 +14800,6 @@ void SOLARCHVISION_draw_2Dobjects () {
         WIN3D_Diagrams.endShape(CLOSE);
         
         {
-          int FaceNumber_start = allObject2D_Faces.length;
-          int FaceNumber_end = 0;
-          
           float[][] newVertices = {{x - r * cos(t), y - r * sin(t), z},
                                    {x + r * cos(t), y + r * sin(t), z},
                                    {x + r * cos(t), y + r * sin(t), z + 2 * r},
@@ -14817,17 +14809,10 @@ void SOLARCHVISION_draw_2Dobjects () {
           
           int nVo = allObject2D_Vertices.length;
           
-          int[][] newFace = {{nVo - 4, nVo - 3, nVo - 2, nVo - 1}};
-  
-          allObject2D_Faces = (int[][]) concat(allObject2D_Faces, newFace);
-          
-          
-          
-          FaceNumber_end = allObject2D_Faces.length - 1;
-          
-          int[][] newFaceNumbers = {{FaceNumber_start, FaceNumber_end}};
-          
-          allObject2D_FaceNumbers = (int[][]) concat(allObject2D_FaceNumbers, newFaceNumbers);
+          allObject2D_Faces[g][0] = nVo - 4;
+          allObject2D_Faces[g][1] = nVo - 3;
+          allObject2D_Faces[g][2] = nVo - 2;
+          allObject2D_Faces[g][3] = nVo - 1;
         }        
         
 
@@ -19635,7 +19620,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     stroke(127); 
     strokeWeight(2);
   
-    for (int f = allObject2D_FaceNumbers[selectedObject2D_num][0]; f <= allObject2D_FaceNumbers[selectedObject2D_num][1]; f++) {
+    {
+      int f = selectedObject2D_num;
+      
       if ((0 < f) && (f < allObject2D_Faces.length)) { 
           
         beginShape();
