@@ -96,6 +96,10 @@ float[][] allVertices = {{0,0,0}};
 int[][] allFaces = {{0,0,0}};
 int[] allFaces_MAT = {0};
 
+int selectedObject2D_displayEdges = 1;
+int selectedObject2D_num = 0;
+
+
 
 
 
@@ -1121,8 +1125,12 @@ int pre_selectedPolymesh_displayPivot;
 int pre_selectedPolymesh_displayEdges;
 int pre_selectedPolymesh_displayBox;      
 
+int pre_WIN3D_VERTS_SHOW;
 int pre_WIN3D_EDGES_SHOW;
 int pre_WIN3D_FACES_SHADE;
+
+
+
       
 int pre_Load_Default_Models;
 
@@ -1309,6 +1317,7 @@ PGraphics WIN3D_Diagrams;
 int WIN3D_Update = 1;
 int WIN3D_include = 1;
 
+int WIN3D_VERTS_SHOW = 0;
 int WIN3D_EDGES_SHOW = 1;
 int WIN3D_FACES_SHADE = 2; // <<<<<
 
@@ -1890,6 +1899,7 @@ void draw () {
         pre_selectedPolymesh_displayEdges = selectedPolymesh_displayEdges;
         pre_selectedPolymesh_displayBox = pre_selectedPolymesh_displayBox;        
 
+        pre_WIN3D_VERTS_SHOW = WIN3D_VERTS_SHOW;
         pre_WIN3D_EDGES_SHOW = WIN3D_EDGES_SHOW;
         pre_WIN3D_FACES_SHADE = WIN3D_FACES_SHADE;
   
@@ -2031,6 +2041,10 @@ void draw () {
         if (pre_selectedPolymesh_displayBox != pre_selectedPolymesh_displayBox) {
           WIN3D_Update = 1;
         }     
+        
+        if (pre_WIN3D_VERTS_SHOW != WIN3D_VERTS_SHOW) {
+          WIN3D_Update = 1;
+        }             
         
         if (pre_WIN3D_EDGES_SHOW != WIN3D_EDGES_SHOW) {
           WIN3D_Update = 1;
@@ -18651,7 +18665,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
       sum_interval = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Probabilities interval", sum_interval, 1, 24, 1), 1));
       level_pix = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "Probabilities range", level_pix, 2, 32, -2), 1));    
       
+      
       WIN3D_FACES_SHADE = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "WIN3D_FACES_SHADE", WIN3D_FACES_SHADE, 0, 4, 1), 1));
+      WIN3D_VERTS_SHOW = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "WIN3D_VERTS_SHOW", WIN3D_VERTS_SHOW, 0, 1, 1), 1));
       WIN3D_EDGES_SHOW = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 1,0,0, "WIN3D_EDGES_SHOW", WIN3D_EDGES_SHOW, 0, 1, 1), 1));  
       display_MODEL3D_EDGES = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "display_MODEL3D_EDGES" , display_MODEL3D_EDGES, 0, 1, 1), 1));
 
@@ -19573,10 +19589,6 @@ float[] SOLARCHVISION_calculate_Perspective_Internally (float x, float y, float 
 
 
 
-int selectedObject2D_displayEdges = 1;
-int selectedObject2D_num = 0;
-
-
 
 void SOLARCHVISION_draw_Perspective_Internally () {
 
@@ -19793,7 +19805,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     popMatrix();
   }
 
-  if (WIN3D_displayVertices != 0) {
+  if (WIN3D_VERTS_SHOW != 0) {
 
     pushMatrix();
   
@@ -19811,14 +19823,14 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     
     for (int vNo = 1; vNo < allVertices.length; vNo++) {
 
-      float x = allVertices[vNo][0];
-      float y = allVertices[vNo][1];
-      float z = -allVertices[vNo][2];
+      float x = allVertices[vNo][0] * objects_scale;
+      float y = allVertices[vNo][1] * objects_scale;
+      float z = -allVertices[vNo][2] * objects_scale;
 
       float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
       
       if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-        if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
+        if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View + R, -0.5 * WIN3D_Y_View + R, 0.5 * WIN3D_X_View - R, 0.5 * WIN3D_Y_View - R) == 1) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
       }
 
     }    
@@ -19830,7 +19842,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 }
 
 
-int WIN3D_displayVertices = 0; 
+ 
 
 
 
