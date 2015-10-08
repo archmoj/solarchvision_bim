@@ -1324,7 +1324,7 @@ int WIN3D_include = 1;
 
 int WIN3D_VERTS_SHOW = 0;
 int WIN3D_EDGES_SHOW = 1;
-int WIN3D_FACES_SHADE = 2; // <<<<<
+int WIN3D_FACES_SHADE = 1; // <<<<<
 
 
 
@@ -1429,7 +1429,7 @@ void SOLARCHVISION_update_station (int Step) {
   
   if ((Step == 0) || (Step == 1)) {
     
-    WIN3D_FACES_SHADE = 2;
+    WIN3D_FACES_SHADE = 1;
     WIN3D_update_VerticesSolarValue = 1;
     
     
@@ -2067,6 +2067,9 @@ void draw () {
         }               
           
         if (pre_WIN3D_FACES_SHADE != WIN3D_FACES_SHADE) {
+          
+          if (WIN3D_FACES_SHADE == 3) SolarProjection(); 
+          
           WIN3D_Update = 1;
         }             
 
@@ -14138,7 +14141,7 @@ void SOLARCHVISION_draw_3Dobjects () {
           }          
         }
     
-        if (WIN3D_FACES_SHADE == 1) {
+        if (WIN3D_FACES_SHADE == 0) {
           WIN3D_Diagrams.fill(255, 255, 255);
           //WIN3D_Diagrams.noFill();
         }
@@ -14148,7 +14151,7 @@ void SOLARCHVISION_draw_3Dobjects () {
         
         
     
-        if (WIN3D_FACES_SHADE < 2) {
+        if (WIN3D_FACES_SHADE == 0) {
           
           WIN3D_Diagrams.beginShape();
           
@@ -14159,7 +14162,7 @@ void SOLARCHVISION_draw_3Dobjects () {
           
           WIN3D_Diagrams.endShape(CLOSE);
         }
-        else if (WIN3D_FACES_SHADE == 2) {
+        else if (WIN3D_FACES_SHADE == 1) {
           int Teselation = 0;
           
           int TotalSubNo = 1;  
@@ -14200,6 +14203,61 @@ void SOLARCHVISION_draw_3Dobjects () {
             WIN3D_Diagrams.endShape(CLOSE);
           }
         }
+        else if (WIN3D_FACES_SHADE == 2) {
+          
+          int Teselation = 0;
+          
+          int TotalSubNo = 1;  
+          if (allFaces_MAT[f] == 0) {
+            Teselation = MODEL3D_TESELATION;
+            if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+          }
+      
+          for (int n = 0; n < TotalSubNo; n++) {
+            
+            float[][] base_Vertices = new float [allFaces[f].length][3];
+            for (int j = 0; j < allFaces[f].length; j++) {
+              int vNo = allFaces[f][j];
+              base_Vertices[j][0] = allVertices[vNo][0];
+              base_Vertices[j][1] = allVertices[vNo][1];
+              base_Vertices[j][2] = allVertices[vNo][2];
+            }
+            
+            float[][] subFace = getSubFace(base_Vertices, Teselation, n);
+         
+            WIN3D_Diagrams.beginShape();
+            
+            for (int s = 0; s < subFace.length; s++) {
+              
+              float val = ParametricGeometries_Field_atXYZ(subFace[s][0], subFace[s][1], subFace[s][2]);
+              
+              float g = Field_Multiplier * val;
+          
+              if (Field_Color == 0) {
+                float[] _COL = SOLARCHVISION_DRYWCBD(g);
+                WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
+              }
+              else if (Field_Color == 1) {
+                float[] _COL = SOLARCHVISION_DRYWCBD(-g);
+                WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
+              } 
+              else if (Field_Color == 2) {
+                float[] _COL = SOLARCHVISION_DRYWCBD(-g);
+                WIN3D_Diagrams.fill(255 - _COL[3], 255 - _COL[2], 255 - _COL[1]);
+              } 
+              else if (Field_Color == 3) {
+                float[] _COL = SOLARCHVISION_DRYWCBD(g);
+                WIN3D_Diagrams.fill(255 - _COL[3], 255 - _COL[2], 255 - _COL[1]);
+              }
+
+              WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -(subFace[s][1] * objects_scale * WIN3D_scale3D), subFace[s][2] * objects_scale * WIN3D_scale3D);
+      
+            }
+            
+            WIN3D_Diagrams.endShape(CLOSE);
+          }
+        }        
+        
         else if (WIN3D_FACES_SHADE == 3) {
           
           int PAL_TYPE = 0; 
@@ -15993,6 +16051,8 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
       val += (val2 - val1);
     }
     */
+
+    float totalP = 0;
     for (int m = 1; m <= WindSamples; m++) {
       
       //float p = pow(0.5, m); // 0.5, 0.25, 0.125, 0.0625
@@ -16002,10 +16062,12 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
       
       float d = SolidObjects[n].Distance(x + q * deltaX , y + q * deltaY, z);
       if (d > 0) {
-        //val += p / pow(d, Field_Power);
-        val += p / pow(d, Field_Power * p);
+        val += p / pow(d, Field_Power);
+        
+        totalP += p;
       }
-    }    
+    }      
+    if (totalP > 0) val /= totalP; 
     
     
   }
@@ -16052,7 +16114,7 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
     }   
     */
 
-
+    float totalP = 0;
     for (int m = 1; m <= WindSamples; m++) {
       
       //float p = pow(0.5, m); // 0.5, 0.25, 0.125, 0.0625
@@ -16062,10 +16124,13 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
       
       float d = SolidObjects[n].Distance(x + q * deltaX , y + q * deltaY, z);
       if (d > 0) {
-        //val += p / pow(d, Field_Power);
-        val += p / pow(d, Field_Power * p);
+        val += p / pow(d, Field_Power);
+        
+        totalP += p;
       }
     }      
+    if (totalP > 0) val /= totalP;
+    
     
   }
   
