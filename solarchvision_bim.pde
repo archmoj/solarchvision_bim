@@ -15966,7 +15966,7 @@ int Solarch_Image_Section = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vert
 
 
 
-int Field_Color = 0; 
+int Field_Color = 3; // 0-3 
 
 float Field_scale_U = 100; // i.e. 100m
 float Field_scale_V = 100; // i.e. 100m
@@ -16075,7 +16075,7 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
 
 
   val = 1 - val;
-  //val = 0.5 - val;
+  
   
   float[] return_array = {x, y, z, val};
   
@@ -16139,7 +16139,7 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
   
   
   val = 1 - val;
-  //val = 0.5 - val;
+  
   
   return val;
 }
