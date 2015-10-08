@@ -15994,7 +15994,7 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
     for (int m = 1; m < 5; m++) {
       
       float p = pow(0.5, m); // 0.5, 0.25, 0.125, 0.0625
-      float q = 1 - pow(0.5, m - 1); // 0, 0.5, 0.75, 0.875
+      float q = (m - 1) / 4.0; // 0.0, 0.25, 0.5, 0.75, 1.0 
       
       float d = SolidObjects[n].Distance(x + q * deltaX , y + q * deltaY, z);
       if (d > 0) {
@@ -16049,7 +16049,7 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
     for (int m = 1; m < 5; n++) {
       
       float p = pow(0.5, m); // 0.5, 0.25, 0.125, 0.0625
-      float q = 1 - pow(0.5, m - 1); // 0, 0.5, 0.75, 0.875
+      float q = (m - 1) / 4.0; // 0.0, 0.25, 0.5, 0.75, 1.0
       
       float d = SolidObjects[n].Distance(x + q * deltaX , y + q * deltaY, z);
       if (d > 0) {
