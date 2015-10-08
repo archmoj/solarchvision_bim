@@ -16002,7 +16002,8 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
       
       float d = SolidObjects[n].Distance(x + q * deltaX , y + q * deltaY, z);
       if (d > 0) {
-        val += p / pow(d, Field_Power);
+        //val += p / pow(d, Field_Power);
+        val += p / pow(d, Field_Power * p);
       }
     }    
     
@@ -16061,7 +16062,8 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
       
       float d = SolidObjects[n].Distance(x + q * deltaX , y + q * deltaY, z);
       if (d > 0) {
-        val += p / pow(d, Field_Power);
+        //val += p / pow(d, Field_Power);
+        val += p / pow(d, Field_Power * p);
       }
     }      
     
