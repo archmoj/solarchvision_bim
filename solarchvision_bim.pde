@@ -16002,77 +16002,55 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
   float x = 0;
   float y = 0;
   float z = 0;
+
+  float[] val = {0, 0};
+
+  for (int o = 0; o < 2; o++) {
+    
+    for (int n = 0; n < SolidObjects.length; n++) {
   
-  float val = 0;
-
-  
-  for (int n = 0; n < SolidObjects.length; n++) {
-
-    float a = (i - 0.5 * Field_RES1) * (Field_scale_U / Field_RES1);
-    float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
-    float c = Field_Elevation[Field_Image_Section];
-    
-    if (Field_Image_Section == 1) {
-      x = a * cos_ang(-Field_Rotation[Field_Image_Section]) - b * sin_ang(-Field_Rotation[Field_Image_Section]);
-      y = -(a * sin_ang(-Field_Rotation[Field_Image_Section]) + b * cos_ang(-Field_Rotation[Field_Image_Section]));
-      z = c;
-    }
-    else if (Field_Image_Section == 2) {
-      x = a * cos_ang(Field_Rotation[Field_Image_Section]) - c * sin_ang(Field_Rotation[Field_Image_Section]);
-      y = -(a * sin_ang(Field_Rotation[Field_Image_Section]) + c * cos_ang(Field_Rotation[Field_Image_Section]));
-      z = -b; 
-    }
-    else if (Field_Image_Section == 3) {
-      x = a * cos_ang(90 - Field_Rotation[Field_Image_Section]) - c * sin_ang(90 - Field_Rotation[Field_Image_Section]);
-      y = -(a * sin_ang(90 - Field_Rotation[Field_Image_Section]) + c * cos_ang(90 - Field_Rotation[Field_Image_Section]));
-      z = -b; 
-    }
-    
-    /*
-    float d = SolidObjects[n].Distance(x, y, z);
-    if (d > 0) {
-      val += 1.0 / pow(d, Field_Power);
-    } 
-    */    
-    
-    /*
-    {
-      float val1 = 0;
-      float d1 = SolidObjects[n].Distance(x - Field_Wratio * deltaX, y - Field_Wratio * deltaY, z);
-      if (d1 > 0) {
-        val1 += 1.0 / pow(d1, Field_Power);
-      } 
+      float a = (i - 0.5 * Field_RES1) * (Field_scale_U / Field_RES1);
+      float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
+      float c = Field_Elevation[Field_Image_Section];
       
-      float val2= 0;
-      float d2 = SolidObjects[n].Distance(x + (1 - Field_Wratio) * deltaX, y + (1 - Field_Wratio) * deltaY, z);
-      if (d2 > 0) {
-        val2 += 1.0 / pow(d2, Field_Power);
-      }     
-      val += (val2 - val1);
-    }
-    */
-
-    float totalP = 0;
-    for (int m = 1; m <= WindSamples; m++) {
-      
-      //float p = pow(0.5, m); // 0.5, 0.25, 0.125, 0.0625
-      float p = pow(Field_Wratio, m);
-      
-      float q = (m - 1) / float(WindSamples); // 0.0, 0.25, 0.5, 0.75, 1.0
-      
-      float d = SolidObjects[n].Distance(x + q * deltaX , y + q * deltaY, z);
-      if (d > 0) {
-        val += p / pow(d, Field_Power);
-        
-        totalP += p;
+      if (Field_Image_Section == 1) {
+        x = a * cos_ang(-Field_Rotation[Field_Image_Section]) - b * sin_ang(-Field_Rotation[Field_Image_Section]);
+        y = -(a * sin_ang(-Field_Rotation[Field_Image_Section]) + b * cos_ang(-Field_Rotation[Field_Image_Section]));
+        z = c;
       }
-    }      
-    if (totalP > 0) val /= 0.5 * totalP; 
-  }
-
-  val = 1 - val;
+      else if (Field_Image_Section == 2) {
+        x = a * cos_ang(Field_Rotation[Field_Image_Section]) - c * sin_ang(Field_Rotation[Field_Image_Section]);
+        y = -(a * sin_ang(Field_Rotation[Field_Image_Section]) + c * cos_ang(Field_Rotation[Field_Image_Section]));
+        z = -b; 
+      }
+      else if (Field_Image_Section == 3) {
+        x = a * cos_ang(90 - Field_Rotation[Field_Image_Section]) - c * sin_ang(90 - Field_Rotation[Field_Image_Section]);
+        y = -(a * sin_ang(90 - Field_Rotation[Field_Image_Section]) + c * cos_ang(90 - Field_Rotation[Field_Image_Section]));
+        z = -b; 
+      }
+      
+      float totalP = 0;
+      for (int m = 1; m <= WindSamples; m++) {
+        
+        //float p = pow(0.5, m); // 0.5, 0.25, 0.125, 0.0625
+        float p = pow(Field_Wratio, m);
+        
+        float q = (o - 0.5) + (m - 1) / float(WindSamples); // 0.0, 0.25, 0.5, 0.75, 1.0
+        
+        float d = SolidObjects[n].Distance(x + q * deltaX , y + q * deltaY, z);
+        if (d > 0) {
+          val[o] += p / pow(d, Field_Power);
+          
+          totalP += p;
+        }
+      }      
+      if (totalP > 0) val[o] /= 0.5 * totalP; 
+    }
   
-  float[] return_array = {x, y, z, val};
+    val[o] = 1 - val[o];
+  }
+  
+  float[] return_array = {x, y, z, val[1] - val[0]};
   
   return return_array;
 }
@@ -16083,56 +16061,35 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
   float deltaX = Field_Wspd * cos_ang(Field_Wdir);
   float deltaY = Field_Wspd * sin_ang(Field_Wdir);
 
+  float[] val = {0, 0};
 
-  float val = 0;
-  for (int n = 0; n < SolidObjects.length; n++) {
-    
-    /*
-    float d = SolidObjects[n].Distance(x, y, z);
-    if (d > 0) {
-      val += 1.0 / pow(d, Field_Power);
-    } 
-    */
-    
-    /*
-    {
-      float val1 = 0;
-      float d1 = SolidObjects[n].Distance(x - Field_Wratio * deltaX, y - Field_Wratio * deltaY, z);
-      if (d1 > 0) {
-        val1 += 1.0 / pow(d1, Field_Power);
-      } 
-      
-      float val2= 0;
-      float d2 = SolidObjects[n].Distance(x + (1 - Field_Wratio) * deltaX, y + (1 - Field_Wratio) * deltaY, z);
-      if (d2 > 0) {
-        val2 += 1.0 / pow(d2, Field_Power);
-      }     
-      val += (val2 - val1);
-    }   
-    */
+  for (int o = 0; o < 2; o++) {
 
-    float totalP = 0;
-    for (int m = 1; m <= WindSamples; m++) {
+    for (int n = 0; n < SolidObjects.length; n++) {
       
-      //float p = pow(0.5, m); // 0.5, 0.25, 0.125, 0.0625
-      float p = pow(Field_Wratio, m);
-      
-      float q = (m - 1) / float(WindSamples); // 0.0, 0.25, 0.5, 0.75, 1.0
-      
-      float d = SolidObjects[n].Distance(x + q * deltaX , y + q * deltaY, z);
-      if (d > 0) {
-        val += p / pow(d, Field_Power);
+      float totalP = 0;
+      for (int m = 1; m <= WindSamples; m++) {
         
-        totalP += p;
-      }
-    }      
-    if (totalP > 0) val /= 0.5 * totalP; 
+        //float p = pow(0.5, m); // 0.5, 0.25, 0.125, 0.0625
+        float p = pow(Field_Wratio, m);
+        
+        float q = (o - 0.5) + (m - 1) / float(WindSamples); // 0.0, 0.25, 0.5, 0.75, 1.0
+        
+        float d = SolidObjects[n].Distance(x + q * deltaX , y + q * deltaY, z);
+        if (d > 0) {
+          val[o] += p / pow(d, Field_Power);
+          
+          totalP += p;
+        }
+      }      
+      if (totalP > 0) val[o] /= 0.5 * totalP; 
+    }
+  
+    val[o] = 1 - val[o];
   }
-
-  val = 1 - val;
   
   
-  return val;
+  return val[1] - val[0];
 }
 
 float fn_dot2D (float x1, float y1, float x2, float y2) {
