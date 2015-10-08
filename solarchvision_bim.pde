@@ -16067,15 +16067,10 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
         totalP += p;
       }
     }      
-    //if (totalP > 0) val /= totalP; 
-    if (totalP > 0) val /= 0.5 * totalP;
-    
-    
+    if (totalP > 0) val /= 0.5 * totalP; 
   }
 
-
   val = 1 - val;
-  
   
   float[] return_array = {x, y, z, val};
   
@@ -16131,13 +16126,9 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
         totalP += p;
       }
     }      
-    //if (totalP > 0) val /= totalP; 
-    if (totalP > 0) val /= 0.5 * totalP;
-    
-    
+    if (totalP > 0) val /= 0.5 * totalP; 
   }
-  
-  
+
   val = 1 - val;
   
   
