@@ -15931,6 +15931,8 @@ float Field_PositionStep = 1.25;
 
 
 
+int WindSamples = 8; //4;
+
 float[] ParametricGeometries_Field_atIJ (float i, float j){
 
   float deltaX = Field_Wspd * cos_ang(Field_Wdir);
@@ -15991,10 +15993,10 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
       val += (val2 - val1);
     }
     */
-    for (int m = 1; m < 5; m++) {
+    for (int m = 1; m <= WindSamples; m++) {
       
       float p = pow(0.5, m); // 0.5, 0.25, 0.125, 0.0625
-      float q = (m - 1) / 4.0; // 0.0, 0.25, 0.5, 0.75, 1.0 
+      float q = (m - 1) / float(WindSamples); // 0.0, 0.25, 0.5, 0.75, 1.0
       
       float d = SolidObjects[n].Distance(x + q * deltaX , y + q * deltaY, z);
       if (d > 0) {
@@ -16048,10 +16050,10 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
     */
 
 
-    for (int m = 1; m < 5; n++) {
+    for (int m = 1; m <= WindSamples; m++) {
       
       float p = pow(0.5, m); // 0.5, 0.25, 0.125, 0.0625
-      float q = (m - 1) / 4.0; // 0.0, 0.25, 0.5, 0.75, 1.0
+      float q = (m - 1) / float(WindSamples); // 0.0, 0.25, 0.5, 0.75, 1.0
       
       float d = SolidObjects[n].Distance(x + q * deltaX , y + q * deltaY, z);
       if (d > 0) {
