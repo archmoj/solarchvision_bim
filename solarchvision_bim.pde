@@ -200,7 +200,7 @@ int Launch_External_Hardware = 0; // inactive
 
 float Field_Wspd = 8.0; 
 float Field_Wdir = 180.0;
-float Field_Wratio = 0.5;
+float Field_Wratio = 0.618; //0.5;
 
 
 float Field_Power = 3.0; //2.0; // 1/2/3
@@ -16074,6 +16074,7 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
 
 
   val = 1 - val;
+  //val = 0.5 - val;
   
   float[] return_array = {x, y, z, val};
   
@@ -16136,6 +16137,7 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
   
   
   val = 1 - val;
+  //val = 0.5 - val;
   
   return val;
 }
