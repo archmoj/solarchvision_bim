@@ -1030,7 +1030,7 @@ String[] OBSERVED_XML_Files = getfiles(OBSERVED_directory);
 int MODEL2D_ERASE = 0;
 int MODEL3D_ERASE = 0;
 
-int MODEL3D_TESELATION = 2;
+int MODEL3D_TESELATION = 4;
 
 int SKY3D_TESELATION = 3;
 float SKY3D_scale = 10000 ; //1000; 
@@ -15817,21 +15817,21 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float z = 10;
     float r = 10;
     //SOLARCHVISION_add_Recursivephere(1, x,y,z, r, 2, 0, 0);
-    SOLARCHVISION_add_Recursivephere(1, x,y,z, r, 4, 0, 0);
+    SOLARCHVISION_add_Recursivephere(2, x,y,z, r, 4, 0, 0);
     SOLARCHVISION_addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
   }  
 
 
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    float x = 40;
+    float x = 25;
     float y = 0;
     float z = 0;
-    float dx = 10;
+    float dx = 5;
     float dy = 15;
     float dz = 20;
     float rot = 0;
-    SOLARCHVISION_add_Box_Core(2, x,y,z, dx, dy, dz, rot);
+    SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot);
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
   }
 
