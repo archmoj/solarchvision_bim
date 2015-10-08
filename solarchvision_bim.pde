@@ -16005,6 +16005,8 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
     
   }
 
+
+  val = 1 - val;
   
   float[] return_array = {x, y, z, val};
   
@@ -16058,6 +16060,10 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
     }      
     
   }
+  
+  
+  val = 1 - val;
+  
   return val;
 }
 
