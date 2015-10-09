@@ -14118,7 +14118,7 @@ void SOLARCHVISION_draw_windFlow () {
   float deltaY = Field_Wspd * sin_ang(Field_Wdir);
   float deltaZ = 0;   
   
-  WIN3D_Diagrams.strokeWeight(2);
+  
   WIN3D_Diagrams.stroke(0);
   WIN3D_Diagrams.fill(0);
 
@@ -14137,9 +14137,15 @@ void SOLARCHVISION_draw_windFlow () {
         test_point_dir = SOLARCHVISION_traceContour(0, MinimumDistance_trace, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], val);
         //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     
-        float dx = test_point_dir[0] - x;
-        float dy = test_point_dir[1] - y;
-        float dz = test_point_dir[2] - z;
+
+        PVector U = new PVector(test_point_dir[0] - x, test_point_dir[1] - y, test_point_dir[2] - z);
+        PVector V = new PVector(deltaX, deltaY, deltaZ);
+        PVector UV = U.cross(V);
+        
+        float dx = UV.x;
+        float dy = UV.y;
+        float dz = UV.z;
+        
 
 
         float x1 = x - 0.5 * dx;
@@ -14150,7 +14156,13 @@ void SOLARCHVISION_draw_windFlow () {
         float y2 = y + 0.5 * dy;
         float z2 = z + 0.5 * dz;
         
+        
+        WIN3D_Diagrams.strokeWeight(1);
         WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
+
+        WIN3D_Diagrams.strokeWeight(4);
+        WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x * objects_scale * WIN3D_scale3D, -y * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+
       }
     }
   }  
