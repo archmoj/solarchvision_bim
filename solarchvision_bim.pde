@@ -14122,7 +14122,8 @@ void SOLARCHVISION_draw_windFlow () {
   WIN3D_Diagrams.stroke(0);
   WIN3D_Diagrams.fill(0);
 
-  for (float z = 0; z < 50; z += 5) {
+  for (float z = 5; z <= 25; z += 10) {
+    
     for (float y = -50; y < 50; y += 5) {
       for (float x = -50; x < 50; x += 5) {
 
