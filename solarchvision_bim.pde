@@ -198,9 +198,9 @@ int Launch_External_Hardware = 0; // inactive
 
 //-------------------------------
 
-float Field_Wspd = 16.0; 
+float Field_Wspd = 8.0; // (8m/s = 30 km/h) 
 float Field_Wdir = 180.0;
-float Field_Wratio = 0.618; //0.5;
+float Field_Wdie = 0.5;
 
 
 float Field_Power = 3.0; //2.0; // 1/2/3
@@ -1105,7 +1105,7 @@ float[] pre_Field_Elevation = {0,0,0,0};
 
 float pre_Field_Wspd; 
 float pre_Field_Wdir;
-float pre_Field_Wratio;
+float pre_Field_Wdie;
       
 int pre_PROCESS_subdivisions;
 
@@ -1882,7 +1882,7 @@ void draw () {
         
         pre_Field_Wspd = Field_Wspd; 
         pre_Field_Wdir = Field_Wdir;
-        pre_Field_Wratio = Field_Wratio;
+        pre_Field_Wdie = Field_Wdie;
       
         pre_PROCESS_subdivisions = PROCESS_subdivisions;
       
@@ -2145,7 +2145,7 @@ void draw () {
         
         if (pre_Field_Wspd != Field_Wspd) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
         if (pre_Field_Wdir != Field_Wdir) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
-        if (pre_Field_Wratio != Field_Wratio) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
+        if (pre_Field_Wdie != Field_Wdie) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
 
 
         if (pre_PROCESS_subdivisions != PROCESS_subdivisions) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
@@ -15834,7 +15834,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot);
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
   }
-
+/*
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float x = 0;
@@ -15945,7 +15945,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
 
               SOLARCHVISION_addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, 0,0,rot);
   }
-
+*/
 }
 
 
@@ -16033,7 +16033,7 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
       for (int m = 1; m <= WindSamples; m++) {
         
         //float p = pow(0.5, m); // 0.5, 0.25, 0.125, 0.0625
-        float p = pow(Field_Wratio, m);
+        float p = pow(1 - Field_Wdie, m);
         
         //float q = (o - 0.5) + (m - 1) / float(WindSamples); // 0.0, 0.25, 0.5, 0.75, 1.0
         float q = o + (m - 1) / float(WindSamples); // 0.0, 0.25, 0.5, 0.75, 1.0
@@ -16072,7 +16072,7 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
       for (int m = 1; m <= WindSamples; m++) {
         
         //float p = pow(0.5, m); // 0.5, 0.25, 0.125, 0.0625
-        float p = pow(Field_Wratio, m);
+        float p = pow(1 - Field_Wdie, m);
         
         //float q = (o - 0.5) + (m - 1) / float(WindSamples); // 0.0, 0.25, 0.5, 0.75, 1.0
         float q = o + (m - 1) / float(WindSamples); // 0.0, 0.25, 0.5, 0.75, 1.0
@@ -18750,10 +18750,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
       //Field_scale_U = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_U" , Field_scale_U, 50, 3200, -2);
       //Field_scale_V = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_scale_V" , Field_scale_V, 50, 3200, -2);
     
-    
-      Field_Wratio = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Wratio" , Field_Wratio, 0, 1, 0.125);
-      Field_Wspd = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Wspd" , Field_Wspd, 1, 64, -2); 
+      Field_Wspd = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Wspd (m/s)" , Field_Wspd, 1, 64, -2); 
       Field_Wdir = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Wdir" , Field_Wdir, 0, 360, 15);
+      Field_Wdie = MySpinner.update(X_spinner, Y_spinner, 0,1,0, "Field_Wdie" , Field_Wdie, 0, 1, 0.125);
       
 
       PROCESS_subdivisions = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "PROCESS_subdivisions" , PROCESS_subdivisions, 0, 3, 1), 1));
