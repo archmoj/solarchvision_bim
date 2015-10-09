@@ -1324,7 +1324,7 @@ int WIN3D_include = 1;
 
 int WIN3D_VERTS_SHOW = 0;
 int WIN3D_EDGES_SHOW = 1;
-int WIN3D_FACES_SHADE = 1; // <<<<<
+int WIN3D_FACES_SHADE = 0; // <<<<<
 
 
 
@@ -1429,7 +1429,7 @@ void SOLARCHVISION_update_station (int Step) {
   
   if ((Step == 0) || (Step == 1)) {
     
-    WIN3D_FACES_SHADE = 1;
+    WIN3D_FACES_SHADE = 0;
     WIN3D_update_VerticesSolarValue = 1;
     
     
@@ -2333,6 +2333,8 @@ void SOLARCHVISION_draw_WIN3D () {
   SOLARCHVISION_draw_field_points();
   
   SOLARCHVISION_draw_2Dobjects();  
+  
+  SOLARCHVISION_draw_windFlow();
 
 
   WIN3D_Diagrams.sphereDetail(6, 4);
@@ -13384,7 +13386,7 @@ void SOLARCHVISION_remove_3Dobjects () {
   urbanFaces_start = 0;
   urbanFaces_end = 0; 
   
-  WIN3D_FACES_SHADE = 2;
+  WIN3D_FACES_SHADE = 0;
   WIN3D_update_VerticesSolarValue = 1;  
  
 }
@@ -14107,6 +14109,55 @@ void SOLARCHVISION_draw_field_image () {
 
 
 
+
+
+void SOLARCHVISION_draw_windFlow () {
+
+        
+  float deltaX = Field_Wspd * cos_ang(Field_Wdir);
+  float deltaY = Field_Wspd * sin_ang(Field_Wdir);
+  float deltaZ = 0;   
+  
+  WIN3D_Diagrams.strokeWeight(2);
+  WIN3D_Diagrams.stroke(0);
+  WIN3D_Diagrams.fill(0);
+
+  for (float z = 0; z < 50; z += 10) {
+    for (float y = -50; y < 50; y += 10) {
+      for (float x = -50; x < 50; x += 10) {
+
+        float val = ParametricGeometries_Field_atXYZ(x,y,z);
+
+        float[] test_point_dir = {x, y, z, deltaX, deltaY, deltaZ};
+
+
+        float MinimumDistance_trace = Field_Wspd;
+
+        //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        test_point_dir = SOLARCHVISION_traceContour(0, MinimumDistance_trace, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], val);
+        //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    
+        float dx = test_point_dir[0] - x;
+        float dy = test_point_dir[1] - y;
+        float dz = test_point_dir[2] - z;
+
+
+        float x1 = x - 0.5 * dx;
+        float y1 = y - 0.5 * dy;
+        float z1 = z - 0.5 * dz;
+        
+        float x2 = x + 0.5 * dx;
+        float y2 = y + 0.5 * dy;
+        float z2 = z + 0.5 * dz;
+        
+        WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
+      }
+    }
+  }  
+  
+  
+  WIN3D_Diagrams.strokeWeight(0);
+}
 
 
 
@@ -16003,9 +16054,10 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
   float y = 0;
   float z = 0;
 
-  float[] val = {0, 0};
+  float[] val = {0,0};
 
-  for (int o = 0; o < 2; o++) {
+  for (int o = 0; o < 1; o++) {
+  //for (int o = 0; o < 2; o++) {
     
     for (int n = 0; n < SolidObjects.length; n++) {
   
@@ -16051,7 +16103,8 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
     val[o] = 1 - val[o];
   }
   
-  float[] return_array = {x, y, z, val[1] - val[0]};
+  float[] return_array = {x, y, z, val[0]};
+  //float[] return_array = {x, y, z, val[1] - val[0]};
   
   return return_array;
 }
@@ -16064,7 +16117,8 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
 
   float[] val = {0, 0};
 
-  for (int o = 0; o < 2; o++) {
+  for (int o = 0; o < 1; o++) {
+  //for (int o = 0; o < 2; o++) {
 
     for (int n = 0; n < SolidObjects.length; n++) {
       
@@ -16092,7 +16146,8 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
   }
   
   
-  return val[1] - val[0];
+  return val[0];
+  //return val[1] - val[0];
 }
 
 float fn_dot2D (float x1, float y1, float x2, float y2) {
