@@ -14114,47 +14114,47 @@ void SOLARCHVISION_draw_field_image () {
 void SOLARCHVISION_draw_windFlow () {
 
         
-  float deltaX = Field_Wspd * cos_ang(Field_Wdir);
-  float deltaY = Field_Wspd * sin_ang(Field_Wdir);
+  float deltaX = -Field_Wspd * cos_ang(Field_Wdir);
+  float deltaY = -Field_Wspd * sin_ang(Field_Wdir);
   float deltaZ = 0;   
   
   
   WIN3D_Diagrams.stroke(0);
   WIN3D_Diagrams.fill(0);
 
-  for (float z = 0; z < 50; z += 10) {
-    for (float y = -50; y < 50; y += 10) {
-      for (float x = -50; x < 50; x += 10) {
+  for (float z = 0; z < 50; z += 5) {
+    for (float y = -50; y < 50; y += 5) {
+      for (float x = -50; x < 50; x += 5) {
 
-        float val = ParametricGeometries_Field_atXYZ(x,y,z);
+        float val = ParametricGeometries_Field_atXYZ(x, y, z);
 
         float[] test_point_dir = {x, y, z, deltaX, deltaY, deltaZ};
 
-
-        float MinimumDistance_trace = Field_Wspd;
+        float MinimumDistance_trace = 1.0; //Field_Wspd;
 
         //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         test_point_dir = SOLARCHVISION_traceContour(0, MinimumDistance_trace, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], val);
         //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    
-
-        PVector U = new PVector(test_point_dir[0] - x, test_point_dir[1] - y, test_point_dir[2] - z);
-        PVector V = new PVector(deltaX, deltaY, deltaZ);
-        PVector UV = U.cross(V);
-        
-        float dx = UV.x;
-        float dy = UV.y;
-        float dz = UV.z;
-        
 
 
-        float x1 = x - 0.5 * dx;
-        float y1 = y - 0.5 * dy;
-        float z1 = z - 0.5 * dz;
         
-        float x2 = x + 0.5 * dx;
-        float y2 = y + 0.5 * dy;
-        float z2 = z + 0.5 * dz;
+        float[] W = {test_point_dir[0] - x, test_point_dir[1] - y, test_point_dir[2] - z};
+        W = fn_normalize(W);
+              
+        float dx = 0.5 * (W[0] * Field_Wspd + deltaX);
+        float dy = 0.5 * (W[1] * Field_Wspd + deltaY);
+        float dz = 0.5 * (W[2] * Field_Wspd + deltaZ);
+
+
+        float scale = 0.25;
+
+        float x1 = x - 0.5 * dx * scale;
+        float y1 = y - 0.5 * dy * scale;
+        float z1 = z - 0.5 * dz * scale;
+        
+        float x2 = x + 0.5 * dx * scale;
+        float y2 = y + 0.5 * dy * scale;
+        float z2 = z + 0.5 * dz * scale;
         
         
         WIN3D_Diagrams.strokeWeight(1);
