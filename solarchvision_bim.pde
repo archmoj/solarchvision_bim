@@ -14157,7 +14157,7 @@ void SOLARCHVISION_draw_windFlow () {
         float dz = 0.5 * (v1[2] + v2[2] * Field_Wspd);
 
 
-        float scale = 0.5;
+        float scale = 10.0 / Field_Wspd;
 
         float x1 = x - 0.5 * dx * scale;
         float y1 = y - 0.5 * dy * scale;
