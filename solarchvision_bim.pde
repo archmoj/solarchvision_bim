@@ -14122,7 +14122,7 @@ void SOLARCHVISION_draw_windFlow () {
   WIN3D_Diagrams.stroke(0);
   WIN3D_Diagrams.fill(0);
 
-  for (float z = 5; z <= 25; z += 10) {
+  for (float z = 5; z <= 5; z += 10) {
     
     for (float y = -50; y < 50; y += 5) {
       for (float x = -50; x < 50; x += 5) {
@@ -14133,13 +14133,15 @@ void SOLARCHVISION_draw_windFlow () {
 
         float MinimumDistance_trace = 1.0; //Field_Wspd;
 
-        //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        test_point_dir = SOLARCHVISION_traceContour(0, MinimumDistance_trace, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], val);
-        //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------------------------------------
+        float[][] tracedPoints = SOLARCHVISION_3DtraceContour(MinimumDistance_trace, test_point_dir[0], test_point_dir[1], test_point_dir[2], val);
+        //-----------------------------------------------------------------------------------------------------------------------------------------
 
-
+        float[] point_min = tracedPoints[0];
+        float[] point_equ = tracedPoints[1];
+        float[] point_max = tracedPoints[2];
         
-        float[] W = {test_point_dir[0] - x, test_point_dir[1] - y, test_point_dir[2] - z};
+        float[] W = {point_equ[0] - x, point_equ[1] - y, point_equ[2] - z};
         W = fn_normalize(W);
               
         float dx = 0.5 * (W[0] * Field_Wspd + deltaX);
@@ -16167,7 +16169,7 @@ float fn_dot2D (float x1, float y1, float x2, float y2) {
   return x1 * x2 + y1 * y2;
 }
 
-float[] SOLARCHVISION_traceContour (int traceType, float epsilon, float x, float y, float z, float dx, float dy, float dz, float v) {
+float[] SOLARCHVISION_2DtraceContour (int traceType, float epsilon, float x, float y, float z, float dx, float dy, float dz, float v) {
 
   float t_max = FLOAT_undefined;
   float t_min = FLOAT_undefined;
@@ -16195,8 +16197,8 @@ float[] SOLARCHVISION_traceContour (int traceType, float epsilon, float x, float
   
   float t = atan2_ang(dy, dx);
 
-  //for (int test_t = -180; test_t < 180; test_t += 5) { // <<<<
-  for (int test_t = -150; test_t < 150; test_t += 5) { // <<<<
+  //for (int test_t = -180; test_t < 180; test_t += 5) { 
+  for (int test_t = -150; test_t <= 150; test_t += 5) { // <<<<
 
     float a = r * cos_ang(t + test_t);
     float b = r * sin_ang(t + test_t);
@@ -16284,6 +16286,90 @@ float[] SOLARCHVISION_traceContour (int traceType, float epsilon, float x, float
   }
   
   float[] return_array = {the_X, the_Y, the_Z, cos_ang(t + the_T), sin_ang(t + the_T), 0};
+  
+  return return_array;
+}
+
+
+float[][] SOLARCHVISION_3DtraceContour (float epsilon, float x, float y, float z, float v) {
+  
+  float tz_max = FLOAT_undefined;
+  float tz_min = FLOAT_undefined;
+  float tz_equ = FLOAT_undefined;  
+
+  float txy_max = FLOAT_undefined;
+  float txy_min = FLOAT_undefined;
+  float txy_equ = FLOAT_undefined;  
+  
+  float v_max = FLOAT_undefined;
+  float v_min = FLOAT_undefined;
+  float v_equ = FLOAT_undefined;
+  
+  float x_max = FLOAT_undefined;
+  float x_min = FLOAT_undefined;
+  float x_equ = FLOAT_undefined;
+  
+  float y_max = FLOAT_undefined;
+  float y_min = FLOAT_undefined;
+  float y_equ = FLOAT_undefined;
+  
+  float z_max = FLOAT_undefined;
+  float z_min = FLOAT_undefined;
+  float z_equ = FLOAT_undefined;
+  
+  float min_dist = FLOAT_undefined;  
+  
+  float r = epsilon;
+
+  for (int test_tz = -90; test_tz <= 90; test_tz += 30) { 
+    
+    float c = r * sin_ang(test_tz);
+    
+    for (int test_txy = -180; test_txy < 180; test_txy += 30) { 
+  
+      float a = r * cos_ang(test_tz) * cos_ang(test_txy);
+      float b = r * cos_ang(test_tz) * sin_ang(test_txy);
+      
+      
+      float test_x = x + a;
+      float test_y = y + b;
+      float test_z = z + c;
+      
+      float test_v = ParametricGeometries_Field_atXYZ(test_x, test_y, test_z);        
+      
+      if ((test_v < v_min) || (v_min > 0.9 * FLOAT_undefined)) {
+        v_min = test_v;
+        tz_min = test_tz;
+        txy_min = test_txy;
+        x_min = test_x;
+        y_min = test_y;
+        z_min = test_z;
+      }
+      if ((test_v > v_max) || (v_max > 0.9 * FLOAT_undefined))  {
+        v_max = test_v;
+        tz_max = test_tz;
+        txy_max = test_txy;
+        x_max = test_x;
+        y_max = test_y;          
+        z_max = test_z;
+      }
+      
+      if ((abs(test_v - v) < min_dist) || (v_equ > 0.9 * FLOAT_undefined))  {
+        
+        min_dist = abs(test_v - v);
+        
+        v_equ = test_v;
+        tz_equ = test_tz;
+        txy_equ = test_txy;
+        x_equ = test_x;
+        y_equ = test_y;          
+        z_equ = test_z;
+      }
+      
+    }     
+  }
+
+  float[][] return_array = {{x_min, y_min, z_min}, {x_equ, y_equ, z_equ}, {x_max, y_max, z_max}};
   
   return return_array;
 }
@@ -16760,7 +16846,7 @@ void SOLARCHVISION_trace_U1Line (float[] test_point_dir, float g_line, int n_Tri
     } 
 
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    test_point_dir = SOLARCHVISION_traceContour(0, MinimumDistance_traceU, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier);
+    test_point_dir = SOLARCHVISION_2DtraceContour(0, MinimumDistance_traceU, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier);
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
@@ -16825,7 +16911,7 @@ void SOLARCHVISION_trace_V1Line (float[] test_point_dir, float g_line, int n_Tri
   for (int n = 0; n < n_Tries; n++) {
 
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    test_point_dir = SOLARCHVISION_traceContour(-1, MinimumDistance_traceV, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier);
+    test_point_dir = SOLARCHVISION_2DtraceContour(-1, MinimumDistance_traceV, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / Field_Multiplier);
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     
     float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / Field_Multiplier}};
