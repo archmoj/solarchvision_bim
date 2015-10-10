@@ -14122,7 +14122,7 @@ void SOLARCHVISION_draw_windFlow () {
   WIN3D_Diagrams.stroke(0);
   WIN3D_Diagrams.fill(0);
 
-  for (float z = 5; z <= 5; z += 10) {
+  for (float z = 2.5; z <= 10; z += 2.5) {
     
     for (float y = -50; y < 50; y += 5) {
       for (float x = -50; x < 50; x += 5) {
@@ -14141,15 +14141,23 @@ void SOLARCHVISION_draw_windFlow () {
         float[] point_equ = tracedPoints[1];
         float[] point_max = tracedPoints[2];
         
-        float[] W = {point_equ[0] - x, point_equ[1] - y, point_equ[2] - z};
-        W = fn_normalize(W);
-              
-        float dx = 0.5 * (W[0] * Field_Wspd + deltaX);
-        float dy = 0.5 * (W[1] * Field_Wspd + deltaY);
-        float dz = 0.5 * (W[2] * Field_Wspd + deltaZ);
+        float[] v1 = {deltaX, deltaY, deltaZ};
+        float[] v2 = {point_equ[0] - x, point_equ[1] - y, point_equ[2] - z};
+        
+        /*
+        if (fn_dot(v1, v2) < 0 ){
+          v2[0] *= -1;
+          v2[1] *= -1;
+          v2[2] *= -1;
+        }
+        */
+        
+        float dx = 0.5 * (v1[0] + v2[0] * Field_Wspd);
+        float dy = 0.5 * (v1[1] + v2[1] * Field_Wspd);
+        float dz = 0.5 * (v1[2] + v2[2] * Field_Wspd);
 
 
-        float scale = 0.25;
+        float scale = 1.0;
 
         float x1 = x - 0.5 * dx * scale;
         float y1 = y - 0.5 * dy * scale;
@@ -16321,11 +16329,12 @@ float[][] SOLARCHVISION_3DtraceContour (float epsilon, float x, float y, float z
   
   float r = epsilon;
 
-  for (int test_tz = -90; test_tz <= 90; test_tz += 30) { 
+  for (int test_tz = -90; test_tz <= 90; test_tz += 30) { // in the space 
+  //for (int test_tz = 0; test_tz <= 0; test_tz += 30) { // on the surface! 
     
     float c = r * sin_ang(test_tz);
     
-    for (int test_txy = -180; test_txy < 180; test_txy += 30) { 
+    for (int test_txy = -180; test_txy < 180; test_txy += 15) { 
   
       float a = r * cos_ang(test_tz) * cos_ang(test_txy);
       float b = r * cos_ang(test_tz) * sin_ang(test_txy);
