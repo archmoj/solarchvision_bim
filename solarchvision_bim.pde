@@ -2054,7 +2054,7 @@ void draw () {
           WIN3D_Update = 1;          
         }
         
-        if (pre_selectedPolymesh_displayBox != pre_selectedPolymesh_displayBox) {
+        if (pre_selectedPolymesh_displayBox != selectedPolymesh_displayBox) {
           WIN3D_Update = 1;
         }     
         
@@ -2150,10 +2150,10 @@ void draw () {
 
         if (pre_PROCESS_subdivisions != PROCESS_subdivisions) {SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1;}
 
-        if (pre_display_Field_Points == display_Field_Points) WIN3D_Update = 1;
-        if (pre_display_Field_Lines == display_Field_Lines) WIN3D_Update = 1;
+        if (pre_display_Field_Points != display_Field_Points) WIN3D_Update = 1;
+        if (pre_display_Field_Lines != display_Field_Lines) WIN3D_Update = 1;
         
-        if (pre_display_MODEL3D_EDGES == display_MODEL3D_EDGES) WIN3D_Update = 1;
+        if (pre_display_MODEL3D_EDGES != display_MODEL3D_EDGES) WIN3D_Update = 1;
         
              
 
@@ -14122,7 +14122,7 @@ void SOLARCHVISION_draw_windFlow () {
   WIN3D_Diagrams.stroke(127);
   WIN3D_Diagrams.fill(127);
 
-  for (float z = 2.5; z <= 2.5; z += 2.5) {
+  for (float z = 2.5; z <= 25; z += 5) {
     
     for (float y = -50; y < 50; y += 5) {
       for (float x = -50; x < 50; x += 5) {
@@ -16340,8 +16340,8 @@ float[][] SOLARCHVISION_3DtraceContour (float epsilon, float x, float y, float z
   
   float r = epsilon;
 
-  //for (int test_tz = -90; test_tz <= 90; test_tz += 30) { // in the space 
-  for (int test_tz = 0; test_tz <= 0; test_tz += 30) { // on the surface! 
+  for (int test_tz = -90; test_tz <= 90; test_tz += 30) { // in the space 
+  //for (int test_tz = 0; test_tz <= 0; test_tz += 30) { // on the surface! 
     
     float c = r * sin_ang(test_tz);
     
