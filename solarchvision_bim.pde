@@ -14107,89 +14107,105 @@ void SOLARCHVISION_draw_field_image () {
 }
 
 
-
+int display_windFlow = 1;
 
 
 void SOLARCHVISION_draw_windFlow () {
 
+  if (display_windFlow != 0) {
         
-  float deltaX = -Field_Wspd * cos_ang(Field_Wdir);
-  float deltaY = -Field_Wspd * sin_ang(Field_Wdir);
-  float deltaZ = 0;   
-  
-  
-  WIN3D_Diagrams.stroke(127);
-  WIN3D_Diagrams.fill(127);
-
-  for (float z = 2.5; z <= 25; z += 5) {
+    float deltaX = -Field_Wspd * cos_ang(Field_Wdir);
+    float deltaY = -Field_Wspd * sin_ang(Field_Wdir);
+    float deltaZ = 0;   
     
-    for (float y = -50; y < 50; y += 5) {
-      for (float x = -50; x < 50; x += 5) {
+    
+    WIN3D_Diagrams.stroke(127);
+    WIN3D_Diagrams.fill(127);
 
-        float val = ParametricGeometries_Field_atXYZ(x, y, z);
-        
-        if ((-10 < val) && (val < 1)) {
 
-          float[] test_point_dir = {x, y, z, deltaX, deltaY, deltaZ};
+    for (int i = 0; i < Field_RES1; i += 25) {
+      for (int j = 0; j < Field_RES2; j += 25) {
+        {
+          float[] FieldPoint = ParametricGeometries_Field_atIJ(i, j);
+          
+          float x = FieldPoint[0];
+          float y = FieldPoint[1];
+          float z = FieldPoint[2];
+          float val = FieldPoint[3];
+
+/*  
+    for (float z = 2.5; z <= 25; z += 5) {
+      
+      for (float y = -50; y < 50; y += 5) {
+        for (float x = -50; x < 50; x += 5) {
+ 
+          float val = ParametricGeometries_Field_atXYZ(x, y, z);
+*/          
+
+
+          if ((-10 < val) && (val < 1)) {
   
-          float MinimumDistance_trace = 1.0; //Field_Wspd;
+            float[] test_point_dir = {x, y, z, deltaX, deltaY, deltaZ};
+    
+            float MinimumDistance_trace = 1.0; //Field_Wspd;
+    
+            //-----------------------------------------------------------------------------------------------------------------------------------------
+            float[][] tracedPoints = SOLARCHVISION_3DtraceContour(MinimumDistance_trace, test_point_dir[0], test_point_dir[1], test_point_dir[2], val);
+            //-----------------------------------------------------------------------------------------------------------------------------------------
+    
+            float[] point_min = tracedPoints[0];
+            float[] point_equ = tracedPoints[1];
+            float[] point_max = tracedPoints[2];
+            
+            float[] v1 = {deltaX, deltaY, deltaZ};
+            
+            float[] v2 = {point_min[0] - x, point_min[1] - y, point_min[2] - z};
+            /*
+            float[] v2 = {point_equ[0] - x, point_equ[1] - y, point_equ[2] - z};
+            
+            
+            if (fn_dot(v1, v2) < 0 ){
+              v2[0] *= -1;
+              v2[1] *= -1;
+              v2[2] *= -1;
+            }
+            */
+            v2 = fn_normalize(v2);
+            
+      
+            float dx = 0.5 * (v1[0] * 1 + v2[0] * Field_Wspd * val);
+            float dy = 0.5 * (v1[1] * 1 + v2[1] * Field_Wspd * val);
+            float dz = 0.5 * (v1[2] * 1 + v2[2] * Field_Wspd * val);
   
-          //-----------------------------------------------------------------------------------------------------------------------------------------
-          float[][] tracedPoints = SOLARCHVISION_3DtraceContour(MinimumDistance_trace, test_point_dir[0], test_point_dir[1], test_point_dir[2], val);
-          //-----------------------------------------------------------------------------------------------------------------------------------------
-  
-          float[] point_min = tracedPoints[0];
-          float[] point_equ = tracedPoints[1];
-          float[] point_max = tracedPoints[2];
+    
+    
+    
+            float scale = 10.0 / Field_Wspd;
+    
+            float x1 = x - 0.5 * dx * scale;
+            float y1 = y - 0.5 * dy * scale;
+            float z1 = z - 0.5 * dz * scale;
+            
+            float x2 = x + 0.5 * dx * scale;
+            float y2 = y + 0.5 * dy * scale;
+            float z2 = z + 0.5 * dz * scale;
+            
+            
+            WIN3D_Diagrams.strokeWeight(1);
+            WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
+    
+            WIN3D_Diagrams.strokeWeight(4);
+            WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x * objects_scale * WIN3D_scale3D, -y * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
           
-          float[] v1 = {deltaX, deltaY, deltaZ};
-          
-          float[] v2 = {point_min[0] - x, point_min[1] - y, point_min[2] - z};
-          /*
-          float[] v2 = {point_equ[0] - x, point_equ[1] - y, point_equ[2] - z};
-          
-          
-          if (fn_dot(v1, v2) < 0 ){
-            v2[0] *= -1;
-            v2[1] *= -1;
-            v2[2] *= -1;
           }
-          */
-          v2 = fn_normalize(v2);
           
-    
-          float dx = 0.5 * (v1[0] * 1 + v2[0] * Field_Wspd * val);
-          float dy = 0.5 * (v1[1] * 1 + v2[1] * Field_Wspd * val);
-          float dz = 0.5 * (v1[2] * 1 + v2[2] * Field_Wspd * val);
-
-  
-  
-  
-          float scale = 10.0 / Field_Wspd;
-  
-          float x1 = x - 0.5 * dx * scale;
-          float y1 = y - 0.5 * dy * scale;
-          float z1 = z - 0.5 * dz * scale;
-          
-          float x2 = x + 0.5 * dx * scale;
-          float y2 = y + 0.5 * dy * scale;
-          float z2 = z + 0.5 * dz * scale;
-          
-          
-          WIN3D_Diagrams.strokeWeight(1);
-          WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
-  
-          WIN3D_Diagrams.strokeWeight(4);
-          WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x * objects_scale * WIN3D_scale3D, -y * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
-        
         }
-        
       }
-    }
-  }  
-  
-  
-  WIN3D_Diagrams.strokeWeight(0);
+    }  
+    
+    
+    WIN3D_Diagrams.strokeWeight(0);
+  }
 }
 
 
