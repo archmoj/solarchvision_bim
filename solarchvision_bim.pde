@@ -1905,7 +1905,7 @@ void draw () {
         
         pre_selectedPolymesh_displayPivot = selectedPolymesh_displayPivot;
         pre_selectedPolymesh_displayEdges = selectedPolymesh_displayEdges;
-        pre_selectedPolymesh_displayBox = pre_selectedPolymesh_displayBox;        
+        pre_selectedPolymesh_displayBox = selectedPolymesh_displayBox;        
 
         pre_WIN3D_VERTS_SHOW = WIN3D_VERTS_SHOW;
         pre_WIN3D_EDGES_SHOW = WIN3D_EDGES_SHOW;
@@ -1928,9 +1928,6 @@ void draw () {
         pre_sky_scenario = sky_scenario;
         
         pre_plot_impacts = plot_impacts;
-        
-        
-        
         
         SOLARCHVISION_draw_ROLLOUT();
         
@@ -1990,8 +1987,6 @@ void draw () {
         }
         
         
-
-        
         if (pre_Load_URBAN != Load_URBAN) {
           SOLARCHVISION_add_urban();
           
@@ -2046,6 +2041,7 @@ void draw () {
           WIN3D_Update = 1;
         }        
 
+
         if (pre_selectedPolymesh_displayPivot != selectedPolymesh_displayPivot) {
           WIN3D_Update = 1;          
         }
@@ -2053,18 +2049,22 @@ void draw () {
         if (pre_selectedPolymesh_displayEdges != selectedPolymesh_displayEdges) {
           WIN3D_Update = 1;          
         }
+
         
         if (pre_selectedPolymesh_displayBox != selectedPolymesh_displayBox) {
           WIN3D_Update = 1;
         }     
+
         
         if (pre_WIN3D_VERTS_SHOW != WIN3D_VERTS_SHOW) {
           WIN3D_Update = 1;
         }             
+
         
         if (pre_WIN3D_EDGES_SHOW != WIN3D_EDGES_SHOW) {
           WIN3D_Update = 1;
-        }               
+        }             
+
           
         if (pre_WIN3D_FACES_SHADE != WIN3D_FACES_SHADE) {
           
@@ -2072,6 +2072,7 @@ void draw () {
           
           WIN3D_Update = 1;
         }             
+
 
         if (MODEL2D_ERASE == 1) {
           SOLARCHVISION_remove_2Dobjects();
@@ -2163,8 +2164,6 @@ void draw () {
           Download_AERIAL = 0;
           ROLLOUT_Update = 1;
         }
-
-
 
             
         if (GRAPHS_setup != pre_GRAPHS_setup) update_impacts = 1;
