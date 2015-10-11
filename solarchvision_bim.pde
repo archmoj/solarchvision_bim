@@ -14128,52 +14128,58 @@ void SOLARCHVISION_draw_windFlow () {
       for (float x = -50; x < 50; x += 5) {
 
         float val = ParametricGeometries_Field_atXYZ(x, y, z);
-
-        float[] test_point_dir = {x, y, z, deltaX, deltaY, deltaZ};
-
-        float MinimumDistance_trace = 1.0; //Field_Wspd;
-
-        //-----------------------------------------------------------------------------------------------------------------------------------------
-        float[][] tracedPoints = SOLARCHVISION_3DtraceContour(MinimumDistance_trace, test_point_dir[0], test_point_dir[1], test_point_dir[2], val);
-        //-----------------------------------------------------------------------------------------------------------------------------------------
-
-        float[] point_min = tracedPoints[0];
-        float[] point_equ = tracedPoints[1];
-        float[] point_max = tracedPoints[2];
         
-        float[] v1 = {deltaX, deltaY, deltaZ};
-        float[] v2 = {point_equ[0] - x, point_equ[1] - y, point_equ[2] - z};
+        if (abs(val) < 1) {
+
+          float[] test_point_dir = {x, y, z, deltaX, deltaY, deltaZ};
+  
+          float MinimumDistance_trace = 1.0; //Field_Wspd;
+  
+          //-----------------------------------------------------------------------------------------------------------------------------------------
+          float[][] tracedPoints = SOLARCHVISION_3DtraceContour(MinimumDistance_trace, test_point_dir[0], test_point_dir[1], test_point_dir[2], val);
+          //-----------------------------------------------------------------------------------------------------------------------------------------
+  
+          float[] point_min = tracedPoints[0];
+          float[] point_equ = tracedPoints[1];
+          float[] point_max = tracedPoints[2];
+          
+          float[] v1 = {deltaX, deltaY, deltaZ};
+          float[] v2 = {point_equ[0] - x, point_equ[1] - y, point_equ[2] - z};
+          
+          
+          if (fn_dot(v1, v2) < 0 ){
+            v2[0] *= -1;
+            v2[1] *= -1;
+            v2[2] *= -1;
+          }
+          
+          //v2 = fn_normalize(v2);
+          
+          
+          float dx = 0.5 * (v1[0] * 0 + v2[0] * Field_Wspd * val);
+          float dy = 0.5 * (v1[1] * 0 + v2[1] * Field_Wspd * val);
+          float dz = 0.5 * (v1[2] * 0 + v2[2] * Field_Wspd * val);
+  
+  
+          float scale = 1; //10.0 / Field_Wspd;
+  
+          float x1 = x - 0.5 * dx * scale;
+          float y1 = y - 0.5 * dy * scale;
+          float z1 = z - 0.5 * dz * scale;
+          
+          float x2 = x + 0.5 * dx * scale;
+          float y2 = y + 0.5 * dy * scale;
+          float z2 = z + 0.5 * dz * scale;
+          
+          
+          WIN3D_Diagrams.strokeWeight(1);
+          WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
+  
+          WIN3D_Diagrams.strokeWeight(4);
+          WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x * objects_scale * WIN3D_scale3D, -y * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
         
-        
-        if (fn_dot(v1, v2) < 0 ){
-          v2[0] *= -1;
-          v2[1] *= -1;
-          v2[2] *= -1;
         }
         
-        
-        float dx = 0.5 * (v1[0] * 0 + v2[0] * Field_Wspd);
-        float dy = 0.5 * (v1[1] * 0 + v2[1] * Field_Wspd);
-        float dz = 0.5 * (v1[2] * 0 + v2[2] * Field_Wspd);
-
-
-        float scale = 10.0 / Field_Wspd;
-
-        float x1 = x - 0.5 * dx * scale;
-        float y1 = y - 0.5 * dy * scale;
-        float z1 = z - 0.5 * dz * scale;
-        
-        float x2 = x + 0.5 * dx * scale;
-        float y2 = y + 0.5 * dy * scale;
-        float z2 = z + 0.5 * dz * scale;
-        
-        
-        WIN3D_Diagrams.strokeWeight(1);
-        WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
-
-        WIN3D_Diagrams.strokeWeight(4);
-        WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x * objects_scale * WIN3D_scale3D, -y * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
-
       }
     }
   }  
