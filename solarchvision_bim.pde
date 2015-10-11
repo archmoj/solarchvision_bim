@@ -16096,7 +16096,7 @@ float Field_PositionStep = 1.25;
 
 
 
-int WindSamples = 1; //8; //4;
+int WindSamples = 8; //8; //4; //1;
 
 float[] ParametricGeometries_Field_atIJ (float i, float j){
 
