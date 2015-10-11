@@ -14148,7 +14148,7 @@ void SOLARCHVISION_draw_windFlow () {
 */          
 
 
-          if ((-10 < val) && (val < 1)) {
+          if ((-10 < val) && (val < 2)) {
   
             float[] test_point_dir = {x, y, z, deltaX, deltaY, deltaZ};
     
@@ -14177,10 +14177,12 @@ void SOLARCHVISION_draw_windFlow () {
             */
             v2 = fn_normalize(v2);
             
-      
-            float dx = 0.5 * (v1[0] * 1 + v2[0] * Field_Wspd * val);
-            float dy = 0.5 * (v1[1] * 1 + v2[1] * Field_Wspd * val);
-            float dz = 0.5 * (v1[2] * 1 + v2[2] * Field_Wspd * val);
+            //float q = Field_Wspd * val;
+            float q = Field_Wspd * abs(val);
+            
+            float dx = 0.5 * (v1[0] * 1 + v2[0] * q);
+            float dy = 0.5 * (v1[1] * 1 + v2[1] * q);
+            float dz = 0.5 * (v1[2] * 1 + v2[2] * q);
   
     
     
@@ -16094,7 +16096,7 @@ float Field_PositionStep = 1.25;
 
 
 
-int WindSamples = 4; //8; //4;
+int WindSamples = 8; //8; //4;
 
 float[] ParametricGeometries_Field_atIJ (float i, float j){
 
