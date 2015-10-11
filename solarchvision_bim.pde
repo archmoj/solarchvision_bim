@@ -14148,7 +14148,7 @@ void SOLARCHVISION_draw_windFlow () {
 */          
 
 
-          if ((-10 < val) && (val < 2)) {
+          if ((-8 < val) && (val < 4)) {  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   
             float[] test_point_dir = {x, y, z, deltaX, deltaY, deltaZ};
     
@@ -16083,7 +16083,7 @@ int Field_RES2 = 400;
 
 PImage Field_Image = createImage(Field_RES1, Field_RES2, ARGB);
 
-float Field_Multiplier = 1.0; //0.1; //10.0; 
+float Field_Multiplier = 0.1; //1.0; //0.1; //10.0; 
 
 int display_Field_Image = 1; // 0:false, 1:true
 int Field_Image_Section = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
@@ -16096,7 +16096,7 @@ float Field_PositionStep = 1.25;
 
 
 
-int WindSamples = 8; //8; //4;
+int WindSamples = 1; //8; //4;
 
 float[] ParametricGeometries_Field_atIJ (float i, float j){
 
