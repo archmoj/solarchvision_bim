@@ -1051,6 +1051,8 @@ int display_Field_Lines = 1;
 
 int display_MODEL3D_EDGES = 1;
 
+int display_windFlow = 0;
+
 
 int camera_variation = 0; // 1;
 
@@ -1111,6 +1113,8 @@ int pre_PROCESS_subdivisions;
 
 int pre_display_Field_Points;
 int pre_display_Field_Lines;
+
+int pre_display_windFlow;
 
 int pre_selectedObject2D_num;
 int pre_selectedObject2D_displayEdges;
@@ -1889,6 +1893,8 @@ void draw () {
         pre_display_Field_Points = display_Field_Points;
         pre_display_Field_Lines = display_Field_Lines;
         
+        pre_display_windFlow = display_windFlow;
+        
         pre_selectedObject2D_num = selectedObject2D_num;
         pre_selectedObject2D_displayEdges = selectedObject2D_displayEdges;
         
@@ -2156,7 +2162,7 @@ void draw () {
         
         if (pre_display_MODEL3D_EDGES != display_MODEL3D_EDGES) WIN3D_Update = 1;
         
-             
+        if (pre_display_windFlow != display_windFlow) WIN3D_Update = 1;
 
         if (Download_AERIAL != 0) {
           SOLARCHVISION_try_update_AERIAL(_YEAR, _MONTH, _DAY, _HOUR);
@@ -14107,7 +14113,6 @@ void SOLARCHVISION_draw_field_image () {
 }
 
 
-int display_windFlow = 1;
 
 
 void SOLARCHVISION_draw_windFlow () {
@@ -14123,8 +14128,8 @@ void SOLARCHVISION_draw_windFlow () {
     WIN3D_Diagrams.fill(127);
 
 
-    for (int i = 0; i < Field_RES1; i += 25) {
-      for (int j = 0; j < Field_RES2; j += 25) {
+    for (int i = 0; i < Field_RES1; i += 10) {
+      for (int j = 0; j < Field_RES2; j += 10) {
         {
           float[] FieldPoint = ParametricGeometries_Field_atIJ(i, j);
           
@@ -14180,7 +14185,7 @@ void SOLARCHVISION_draw_windFlow () {
     
     
     
-            float scale = 10.0 / Field_Wspd;
+            float scale = 5.0 / Field_Wspd;
     
             float x1 = x - 0.5 * dx * scale;
             float y1 = y - 0.5 * dy * scale;
@@ -16089,7 +16094,7 @@ float Field_PositionStep = 1.25;
 
 
 
-int WindSamples = 8; //4;
+int WindSamples = 4; //8; //4;
 
 float[] ParametricGeometries_Field_atIJ (float i, float j){
 
@@ -18948,6 +18953,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       display_Field_Points = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "display_Field_Points" , display_Field_Points, 0, 1, 1), 1));
       display_Field_Lines = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "display_Field_Lines" , display_Field_Lines, 0, 1, 1), 1));
+
+      display_windFlow = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "display_windFlow" , display_windFlow, 0, 1, 1), 1));
 
     }
     
