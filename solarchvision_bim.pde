@@ -14179,16 +14179,12 @@ void SOLARCHVISION_draw_windFlow () {
             */
             v2 = fn_normalize(v2);
             
-            //float q = abs(val);
             float q = -val;
-            
-
             
             //float dx = v1[0] * q + v2[0] * (1 - q) * Field_Wspd;
             //float dy = v1[1] * q + v2[1] * (1 - q) * Field_Wspd;
             //float dz = v1[2] * q + v2[2] * (1 - q) * Field_Wspd;
 
-            
             float dx = v1[0] + v2[0] * (1 - q) * Field_Wspd;
             float dy = v1[1] + v2[1] * (1 - q) * Field_Wspd;
             float dz = v1[2] + v2[2] * (1 - q) * Field_Wspd;
