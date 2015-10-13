@@ -14129,7 +14129,7 @@ void SOLARCHVISION_draw_windFlow () {
     WIN3D_Diagrams.stroke(127);
     WIN3D_Diagrams.fill(127);
 
-
+/*
     for (int i = 0; i < Field_RES1; i += 10) {
       for (int j = 0; j < Field_RES2; j += 10) {
         {
@@ -14139,15 +14139,13 @@ void SOLARCHVISION_draw_windFlow () {
           float y = FieldPoint[1];
           float z = FieldPoint[2];
           float val = FieldPoint[3];
-
-/*  
+*/
+ 
     for (float z = 2.5; z <= 25; z += 5) {
-      
       for (float y = -50; y < 50; y += 5) {
         for (float x = -50; x < 50; x += 5) {
- 
           float val = ParametricGeometries_Field_atXYZ(x, y, z);
-*/          
+         
 
 
           if ((-1 < val) && (val < 2)) {  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
