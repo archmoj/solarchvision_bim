@@ -202,6 +202,8 @@ float Field_Wspd = 8.0; // (8m/s = 30 km/h)
 float Field_Wdir = 180.0;
 float Field_Wdie = 0.25; // ??????????
 
+int WindSamples = 8; //4; //1;
+
 
 float Field_Power = 3.0; //2.0; // 1/2/3
 
@@ -16095,8 +16097,6 @@ float Field_PositionStep = 1.25;
 
 
 
-
-int WindSamples = 1; //8; //4; //1;
 
 float[] ParametricGeometries_Field_atIJ (float i, float j){
 
