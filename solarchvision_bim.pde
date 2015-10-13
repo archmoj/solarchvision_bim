@@ -14121,8 +14121,8 @@ void SOLARCHVISION_draw_windFlow () {
 
   if (display_windFlow != 0) {
         
-    float deltaX = Field_Wspd * cos_ang(Field_Wdir);
-    float deltaY = Field_Wspd * sin_ang(Field_Wdir);
+    float deltaX = -Field_Wspd * cos_ang(Field_Wdir);
+    float deltaY = -Field_Wspd * sin_ang(Field_Wdir);
     float deltaZ = 0;   
     
     
@@ -14179,17 +14179,26 @@ void SOLARCHVISION_draw_windFlow () {
             */
             v2 = fn_normalize(v2);
             
-            float q = val;
             //float q = abs(val);
+            float q = -val;
             
-            float dx = 0.5 * (v1[0] * (1 - q) + v2[0] * q * Field_Wspd);
-            float dy = 0.5 * (v1[1] * (1 - q) + v2[1] * q * Field_Wspd);
-            float dz = 0.5 * (v1[2] * (1 - q) + v2[2] * q * Field_Wspd);
+
+            //float dx = v1[0] * q;
+            //float dy = v1[1] * q;
+            //float dz = v1[2] * q;    
+    
+            //float dx = v2[0] * (1 - q) * Field_Wspd;
+            //float dy = v2[1] * (1 - q) * Field_Wspd;
+            //float dz = v2[2] * (1 - q) * Field_Wspd;
+            
+            float dx = v1[0] * q + v2[0] * (1 - q) * Field_Wspd;
+            float dy = v1[1] * q + v2[1] * (1 - q) * Field_Wspd;
+            float dz = v1[2] * q + v2[2] * (1 - q) * Field_Wspd;
 
     
+
     
-    
-            float scale = 5.0 / Field_Wspd;
+            float scale = 0.25; //5.0 / Field_Wspd;
     
             float x1 = x - 0.5 * dx * scale;
             float y1 = y - 0.5 * dy * scale;
