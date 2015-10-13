@@ -15940,10 +15940,10 @@ void SOLARCHVISION_add_ParametricGeometries () {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float dx = 5;
     float dy = 15;
-    float dz = 20;
+    float dz = 40;
     float x = 25;
     float y = 0;
-    float z = dz;
+    float z = 0;
     float rot = 0;
     SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot);
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
