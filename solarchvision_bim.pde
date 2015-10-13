@@ -16083,7 +16083,7 @@ int Field_RES2 = 400;
 
 PImage Field_Image = createImage(Field_RES1, Field_RES2, ARGB);
 
-float Field_Multiplier = 0.1; //1.0; //0.1; //10.0; 
+float Field_Multiplier = 1.0; //0.1; //10.0; 
 
 int display_Field_Image = 1; // 0:false, 1:true
 int Field_Image_Section = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
@@ -16115,6 +16115,8 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
   for (int o = 0; o < 1; o++) {
   //for (int o = 0; o < 2; o++) {
     
+    float totalP = 0;    
+    
     for (int n = 0; n < SolidObjects.length; n++) {
   
       float a = (i - 0.5 * Field_RES1) * (Field_scale_U / Field_RES1);
@@ -16137,7 +16139,6 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
         z = -b; 
       }
       
-      float totalP = 0;
       for (int m = 1; m <= WindSamples; m++) {
         
         //float p = pow(0.5, m); // 0.5, 0.25, 0.125, 0.0625
@@ -16153,8 +16154,9 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
           totalP += p;
         }
       }      
-      if (totalP > 0) val[o] /= 0.5 * totalP; 
     }
+    
+    if (totalP > 0) val[o] /= 0.5 * totalP; 
   
     //val[o] = 1 - val[o];
   }
@@ -16175,10 +16177,11 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
 
   for (int o = 0; o < 1; o++) {
   //for (int o = 0; o < 2; o++) {
+    
+    float totalP = 0;
 
     for (int n = 0; n < SolidObjects.length; n++) {
       
-      float totalP = 0;
       for (int m = 1; m <= WindSamples; m++) {
         
         //float p = pow(0.5, m); // 0.5, 0.25, 0.125, 0.0625
@@ -16195,8 +16198,10 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
           totalP += p;
         }
       }      
-      if (totalP > 0) val[o] /= 0.5 * totalP; 
+       
     }
+    
+    if (totalP > 0) val[o] /= 0.5 * totalP;
   
     //val[o] = 1 - val[o];
   }
