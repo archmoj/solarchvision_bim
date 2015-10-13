@@ -14150,7 +14150,7 @@ void SOLARCHVISION_draw_windFlow () {
 */          
 
 
-          if ((-1 < val) && (val < 4)) {  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+          if ((-1 < val) && (val < 2)) {  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   
             float[] test_point_dir = {x, y, z, deltaX, deltaY, deltaZ};
     
