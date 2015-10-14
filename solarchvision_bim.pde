@@ -14228,8 +14228,8 @@ void SOLARCHVISION_calculate_windFlow () {
             float y2 = test_point[1] + 0.5 * dy * scale;
             float z2 = test_point[2] + 0.5 * dz * scale;
   
-  
-            float AB = (dist(x1,y1,z1, x2,y2,z2) - Field_Wspd) / Field_Wspd; // <<<<<<<<<
+
+            float AB = (dist(x1,y1,z1, x2,y2,z2) / scale - Field_Wspd) / Field_Wspd; 
         
             int point_prev = 0;
             int point_next = 0;
@@ -14278,7 +14278,9 @@ void SOLARCHVISION_calculate_windFlow () {
 
 }
 
-float windFlow_Multiplier = 10;
+float windFlow_Multiplier = 1;
+int windFlow_Color = 1;
+
 
 void SOLARCHVISION_draw_windFlow () {
   
@@ -14287,9 +14289,8 @@ void SOLARCHVISION_draw_windFlow () {
   if (display_windFlow != 0) {  
 
     
-    int PAL_TYPE = 6; //12; 
-    int PAL_DIR = -1;
-
+    WIN3D_Diagrams.stroke(127);
+    WIN3D_Diagrams.fill(127);  
 
     for (int q = 1; q < windFlow_Lines.length; q++) {
 
@@ -14304,19 +14305,30 @@ void SOLARCHVISION_draw_windFlow () {
       float y2 = windFlow_Vertices[n2][1];
       float z2 = windFlow_Vertices[n2][2];
       
-      float _val = windFlow_Vertices[n1][3]; // the same as end point!
-
-      float _u = 0.5 + 0.5 * (windFlow_Multiplier * _val);
+      float g = windFlow_Multiplier * windFlow_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
+  
+  
+      if (windFlow_Color == 0) {
+        float[] _COL = SOLARCHVISION_DRYWCBD(g);
+        WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
+        WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
+      }
+      else if (windFlow_Color == 1) {
+        float[] _COL = SOLARCHVISION_DRYWCBD(-g);
+        WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
+        WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
+      } 
+      else if (windFlow_Color == 2) {
+        float[] _COL = SOLARCHVISION_DRYWCBD(-g);
+        WIN3D_Diagrams.stroke(255 - _COL[3], 255 - _COL[2], 255 - _COL[1]);
+        WIN3D_Diagrams.fill(255 - _COL[3], 255 - _COL[2], 255 - _COL[1]);
+      } 
+      else if (windFlow_Color == 3) {
+        float[] _COL = SOLARCHVISION_DRYWCBD(g);
+        WIN3D_Diagrams.stroke(255 - _COL[3], 255 - _COL[2], 255 - _COL[1]);
+        WIN3D_Diagrams.fill(255 - _COL[3], 255 - _COL[2], 255 - _COL[1]);
+      }      
       
-      if (PAL_DIR == -1) _u = 1 - _u;
-      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-      if (PAL_DIR == 2) _u =  0.5 * _u;
-      
-      float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
-
-      WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
-      WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);           
-     
       
       WIN3D_Diagrams.strokeWeight(1);
       
