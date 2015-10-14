@@ -205,7 +205,7 @@ float Field_Wdie = 0.25; // ??????????
 int WindSamples = 8; //4; //1;
 
 
-float Field_Power = 3.0; //2.0; // 1/2/3
+float Field_Power = 2.0; //3.0; //2.0; // 1/2/3
 
 float GlobalAlbedo = 0; // 0-100
 
@@ -14229,7 +14229,7 @@ void SOLARCHVISION_calculate_windFlow () {
             float z2 = test_point[2] + 0.5 * dz * scale;
   
   
-            float AB = dist(x1,y1,z1, x2,y2,z2);
+            float AB = dist(x1,y1,z1, x2,y2,z2) - Field_Wspd; // <<<<<<<<<
         
             int point_prev = 0;
             int point_next = 0;
