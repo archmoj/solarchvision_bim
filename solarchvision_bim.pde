@@ -14151,7 +14151,7 @@ void SOLARCHVISION_calculate_windFlow () {
   float deltaY = -Field_Wspd * sin_ang(Field_Wdir);
   float deltaZ = 0;   
 
-
+/* 
   for (int i = 0; i < Field_RES1; i += 10) {
     for (int j = 0; j < Field_RES2; j += 10) {
       {
@@ -14161,14 +14161,14 @@ void SOLARCHVISION_calculate_windFlow () {
         float y = FieldPoint[1];
         float z = FieldPoint[2];
 
+*/   
 
 
-/* 
-  for (float z = 2.5; z <= 25; z += 5) {
-    for (float y = -50; y < 50; y += 5) {
-      for (float x = -50; x < 50; x += 5) {
+  for (float z = 2.5; z <= 40; z += 5) {
+    for (float y = -40; y < 40; y += 5) {
+      for (float x = -40; x < 40; x += 5) {
         
-*/       
+    
 
         float[] test_point = {x, y, z};
 
@@ -16098,6 +16098,19 @@ void SOLARCHVISION_add_ParametricGeometries () {
     SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot);
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
   }  
+
+  {
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    float dx = 20;
+    float dy = 5;
+    float dz = 15;
+    float x = 0;
+    float y = 25;
+    float z = 0;
+    float rot = 15;
+    SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot);
+    SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
+  } 
   
 /*
   {
