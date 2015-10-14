@@ -14170,11 +14170,12 @@ void SOLARCHVISION_calculate_windFlow () {
         
 */       
 
-        for (int n = 0; n < 4; n += 1) {
-          
-          float[] test_point = {x, y, z};
+        float[] test_point = {x, y, z};
 
 
+        int num_steps = 4;
+        
+        for (int n = 0; n < num_steps; n += 1) {
           
           float val = ParametricGeometries_Field_atXYZ(test_point[0], test_point[1], test_point[2]);
           
@@ -14217,15 +14218,15 @@ void SOLARCHVISION_calculate_windFlow () {
             float dz = v1[2] + v2[2] * (1 - q) * Field_Wspd;
   
     
-            float scale = 0.25; //5.0 / Field_Wspd;
+            float scale = 1.0 / float(num_steps);            
     
-            float x1 = x - 0.5 * dx * scale;
-            float y1 = y - 0.5 * dy * scale;
-            float z1 = z - 0.5 * dz * scale;
+            float x1 = test_point[0] - 0.5 * dx * scale;
+            float y1 = test_point[1] - 0.5 * dy * scale;
+            float z1 = test_point[2] - 0.5 * dz * scale;
             
-            float x2 = x + 0.5 * dx * scale;
-            float y2 = y + 0.5 * dy * scale;
-            float z2 = z + 0.5 * dz * scale;
+            float x2 = test_point[0] + 0.5 * dx * scale;
+            float y2 = test_point[1] + 0.5 * dy * scale;
+            float z2 = test_point[2] + 0.5 * dz * scale;
   
   
             float AB = dist(x1,y1,z1, x2,y2,z2);
