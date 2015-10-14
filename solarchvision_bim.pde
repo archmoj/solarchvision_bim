@@ -14289,7 +14289,6 @@ void SOLARCHVISION_draw_windFlow () {
     
     int PAL_TYPE = 6; //12; 
     int PAL_DIR = -1;
-    float _Multiplier = 1.0 / 30.0;    
 
 
     for (int q = 1; q < windFlow_Lines.length; q++) {
