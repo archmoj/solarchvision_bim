@@ -16045,7 +16045,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
   }  
 
-
+/*
 
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
@@ -16072,7 +16072,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
   }
   
-  
+*/  
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float dx = 20;
@@ -16085,6 +16085,19 @@ void SOLARCHVISION_add_ParametricGeometries () {
     SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot);
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
   }
+  
+  {
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    float dx = 20;
+    float dy = 5;
+    float dz = 15;
+    float x = 0;
+    float y = 0;
+    float z = 0;
+    float rot = 0;
+    SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot);
+    SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
+  }  
   
 /*
   {
