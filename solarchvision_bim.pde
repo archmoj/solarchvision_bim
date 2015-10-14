@@ -14172,11 +14172,11 @@ void SOLARCHVISION_calculate_windFlow () {
 
         for (int n = 0; n < 4; n += 1) {
           
-          float[] test_point_dir = {x, y, z, deltaX, deltaY, deltaZ};
+          float[] test_point = {x, y, z};
 
 
           
-          float val = ParametricGeometries_Field_atXYZ(test_point_dir[0], test_point_dir[1], test_point_dir[2]);
+          float val = ParametricGeometries_Field_atXYZ(test_point[0], test_point[1], test_point[2]);
           
           
           if ((-1 < val) && (val < 2)) {  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -14184,7 +14184,7 @@ void SOLARCHVISION_calculate_windFlow () {
             float MinimumDistance_trace = 1.0; //Field_Wspd;
     
             //-----------------------------------------------------------------------------------------------------------------------------------------
-            float[][] tracedPoints = SOLARCHVISION_3DtraceContour(MinimumDistance_trace, test_point_dir[0], test_point_dir[1], test_point_dir[2], val);
+            float[][] tracedPoints = SOLARCHVISION_3DtraceContour(MinimumDistance_trace, test_point[0], test_point[1], test_point[2], val);
             //-----------------------------------------------------------------------------------------------------------------------------------------
     
             float[] point_min = tracedPoints[0];
@@ -14256,9 +14256,10 @@ void SOLARCHVISION_calculate_windFlow () {
             }      
      
      
-            test_point_dir[0] = x2;       
-            test_point_dir[1] = y2;
-            test_point_dir[2] = z2;
+            test_point[0] = x2;       
+            test_point[1] = y2;
+            test_point[2] = z2;
+
   
           }
           else {
