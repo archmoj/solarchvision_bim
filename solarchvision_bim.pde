@@ -14278,7 +14278,7 @@ void SOLARCHVISION_calculate_windFlow () {
 
 }
 
-float windFlow_Multiplier = 1;
+float windFlow_Multiplier = 10;
 
 void SOLARCHVISION_draw_windFlow () {
   
@@ -14307,6 +14307,7 @@ void SOLARCHVISION_draw_windFlow () {
       float _val = windFlow_Vertices[n1][3]; // the same as end point!
 
       float _u = 0.5 + 0.5 * (windFlow_Multiplier * _val);
+      
       if (PAL_DIR == -1) _u = 1 - _u;
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
