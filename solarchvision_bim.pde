@@ -14279,17 +14279,12 @@ void SOLARCHVISION_calculate_windFlow () {
 }
 
 float windFlow_Multiplier = 1;
-int windFlow_Color = 0;
+int windFlow_Color = 1;
 
 
 void SOLARCHVISION_draw_windFlow () {
   
-  
-  //------------------------------------
-  windFlow_Multiplier = Field_Multiplier;
-  windFlow_Color = Field_Color;
-  //------------------------------------
-  
+ 
   
   if (display_windFlow != 0) {  
 
