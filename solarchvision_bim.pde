@@ -11238,6 +11238,9 @@ void WIN3D_keyPressed (KeyEvent e) {
         case 'C' :Field_Color = (Field_Color + 4 - 1) % 4; 
                   if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
                   break;  
+                  
+        
+        case ENTER :SOLARCHVISION_calculate_windFlow(); display_windFlow = 1; WIN3D_Update = 1; break;                  
  
       }
     }    
@@ -11305,6 +11308,7 @@ void WIN3D_keyPressed (KeyEvent e) {
 
  
         case ENTER :RenderShadowsOnUrbanPlane(); display_Solarch_Image = 1; break;
+        
       }
     }    
   }
@@ -14115,107 +14119,182 @@ void SOLARCHVISION_draw_field_image () {
 }
 
 
+float[][] windFlow_Vertices = {{0,0,0,0}}; // keeping values at the 4th member
+int[][] windFlow_Lines = {{0,0}};
+
+
+
+
+
+
+
+
+
+void SOLARCHVISION_calculate_windFlow () {
+
+  cursor(WAIT);  
+  
+  windFlow_Vertices = new float [1][4];
+  windFlow_Vertices[0][0] = 0; 
+  windFlow_Vertices[0][1] = 0; 
+  windFlow_Vertices[0][2] = 0; 
+  windFlow_Vertices[0][3] = 0;   
+
+
+  windFlow_Lines = new int [1][2];
+  windFlow_Lines[0][0] = 0;
+  windFlow_Lines[0][1] = 0;  
+  
+
+        
+  float deltaX = -Field_Wspd * cos_ang(Field_Wdir);
+  float deltaY = -Field_Wspd * sin_ang(Field_Wdir);
+  float deltaZ = 0;   
+
+/*
+  for (int i = 0; i < Field_RES1; i += 10) {
+    for (int j = 0; j < Field_RES2; j += 10) {
+      {
+        float[] FieldPoint = ParametricGeometries_Field_atIJ(i, j);
+        
+        float x = FieldPoint[0];
+        float y = FieldPoint[1];
+        float z = FieldPoint[2];
+        float val = FieldPoint[3];
+*/
+ 
+  for (float z = 2.5; z <= 25; z += 5) {
+    for (float y = -50; y < 50; y += 5) {
+      for (float x = -50; x < 50; x += 5) {
+        float val = ParametricGeometries_Field_atXYZ(x, y, z);
+       
+
+
+        if ((-1 < val) && (val < 2)) {  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+          float[] test_point_dir = {x, y, z, deltaX, deltaY, deltaZ};
+  
+          float MinimumDistance_trace = 1.0; //Field_Wspd;
+  
+          //-----------------------------------------------------------------------------------------------------------------------------------------
+          float[][] tracedPoints = SOLARCHVISION_3DtraceContour(MinimumDistance_trace, test_point_dir[0], test_point_dir[1], test_point_dir[2], val);
+          //-----------------------------------------------------------------------------------------------------------------------------------------
+  
+          float[] point_min = tracedPoints[0];
+          float[] point_equ = tracedPoints[1];
+          float[] point_max = tracedPoints[2];
+          
+          float[] v1 = {deltaX, deltaY, deltaZ};
+          
+          float[] v2 = {point_min[0] - x, point_min[1] - y, point_min[2] - z};
+          /*
+          float[] v2 = {point_equ[0] - x, point_equ[1] - y, point_equ[2] - z};
+          
+          
+          if (fn_dot(v1, v2) < 0 ){
+            v2[0] *= -1;
+            v2[1] *= -1;
+            v2[2] *= -1;
+          }
+          */
+          v2 = fn_normalize(v2);
+          
+          float q = -val;
+          
+          //float dx = v1[0] * q + v2[0] * (1 - q) * Field_Wspd;
+          //float dy = v1[1] * q + v2[1] * (1 - q) * Field_Wspd;
+          //float dz = v1[2] * q + v2[2] * (1 - q) * Field_Wspd;
+
+          float dx = v1[0] + v2[0] * (1 - q) * Field_Wspd;
+          float dy = v1[1] + v2[1] * (1 - q) * Field_Wspd;
+          float dz = v1[2] + v2[2] * (1 - q) * Field_Wspd;
+
+  
+          float scale = 0.25; //5.0 / Field_Wspd;
+  
+          float x1 = x - 0.5 * dx * scale;
+          float y1 = y - 0.5 * dy * scale;
+          float z1 = z - 0.5 * dz * scale;
+          
+          float x2 = x + 0.5 * dx * scale;
+          float y2 = y + 0.5 * dy * scale;
+          float z2 = z + 0.5 * dz * scale;
+
+
+          float AB = dist(x1,y1,z1, x2,y2,z2);
+      
+          int point_prev = 0;
+          int point_next = 0;
+          
+          {
+            float[][] newVertice = {{x1, y1, z1, AB}};
+            windFlow_Vertices = (float[][]) concat(windFlow_Vertices, newVertice);
+            
+            point_prev = windFlow_Vertices.length - 1;
+          }      
+      
+
+          {
+            float[][] newVertice = {{x2, y2, z2, AB}};
+            windFlow_Vertices = (float[][]) concat(windFlow_Vertices, newVertice);
+            
+            point_next = windFlow_Vertices.length - 1;
+          }      
+      
+          if ((point_prev != 0) && (point_next != 0)) {
+            int[][] newU1Line = {{point_prev, point_next}};
+            windFlow_Lines = (int[][]) concat(windFlow_Lines, newU1Line);
+            
+            point_prev = point_next; 
+          }             
+
+        }
+        
+      }
+    }
+  }  
+  
+  cursor(HAND);    
+
+}
 
 
 void SOLARCHVISION_draw_windFlow () {
+  
+  if (display_windFlow != 0) {  
 
-  if (display_windFlow != 0) {
-        
-    float deltaX = -Field_Wspd * cos_ang(Field_Wdir);
-    float deltaY = -Field_Wspd * sin_ang(Field_Wdir);
-    float deltaZ = 0;   
-    
     
     WIN3D_Diagrams.stroke(127);
-    WIN3D_Diagrams.fill(127);
+    WIN3D_Diagrams.fill(127);  
 
-/*
-    for (int i = 0; i < Field_RES1; i += 10) {
-      for (int j = 0; j < Field_RES2; j += 10) {
-        {
-          float[] FieldPoint = ParametricGeometries_Field_atIJ(i, j);
-          
-          float x = FieldPoint[0];
-          float y = FieldPoint[1];
-          float z = FieldPoint[2];
-          float val = FieldPoint[3];
-*/
- 
-    for (float z = 2.5; z <= 25; z += 5) {
-      for (float y = -50; y < 50; y += 5) {
-        for (float x = -50; x < 50; x += 5) {
-          float val = ParametricGeometries_Field_atXYZ(x, y, z);
-         
+    for (int q = 1; q < windFlow_Lines.length; q++) {
+      
+      int n1 = windFlow_Lines[q][0];
+      int n2 = windFlow_Lines[q][1];
+      
+      float x1 = windFlow_Vertices[n1][0];
+      float y1 = windFlow_Vertices[n1][1];
+      float z1 = windFlow_Vertices[n1][2];
+
+      float x2 = windFlow_Vertices[n2][0];
+      float y2 = windFlow_Vertices[n2][1];
+      float z2 = windFlow_Vertices[n2][2];
+      
+      WIN3D_Diagrams.strokeWeight(1);
+      
+      WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
+      
+      WIN3D_Diagrams.strokeWeight(4);      
+      
+      WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, 0.5 * (x2 + x1) * objects_scale * WIN3D_scale3D, -0.5 * (y2 + y1) * objects_scale * WIN3D_scale3D, 0.5 * (z2 + z1) * objects_scale * WIN3D_scale3D);
+    }
 
 
-          if ((-1 < val) && (val < 2)) {  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-  
-            float[] test_point_dir = {x, y, z, deltaX, deltaY, deltaZ};
-    
-            float MinimumDistance_trace = 1.0; //Field_Wspd;
-    
-            //-----------------------------------------------------------------------------------------------------------------------------------------
-            float[][] tracedPoints = SOLARCHVISION_3DtraceContour(MinimumDistance_trace, test_point_dir[0], test_point_dir[1], test_point_dir[2], val);
-            //-----------------------------------------------------------------------------------------------------------------------------------------
-    
-            float[] point_min = tracedPoints[0];
-            float[] point_equ = tracedPoints[1];
-            float[] point_max = tracedPoints[2];
-            
-            float[] v1 = {deltaX, deltaY, deltaZ};
-            
-            float[] v2 = {point_min[0] - x, point_min[1] - y, point_min[2] - z};
-            /*
-            float[] v2 = {point_equ[0] - x, point_equ[1] - y, point_equ[2] - z};
-            
-            
-            if (fn_dot(v1, v2) < 0 ){
-              v2[0] *= -1;
-              v2[1] *= -1;
-              v2[2] *= -1;
-            }
-            */
-            v2 = fn_normalize(v2);
-            
-            float q = -val;
-            
-            //float dx = v1[0] * q + v2[0] * (1 - q) * Field_Wspd;
-            //float dy = v1[1] * q + v2[1] * (1 - q) * Field_Wspd;
-            //float dz = v1[2] * q + v2[2] * (1 - q) * Field_Wspd;
-
-            float dx = v1[0] + v2[0] * (1 - q) * Field_Wspd;
-            float dy = v1[1] + v2[1] * (1 - q) * Field_Wspd;
-            float dz = v1[2] + v2[2] * (1 - q) * Field_Wspd;
-
-    
-            float scale = 0.25; //5.0 / Field_Wspd;
-    
-            float x1 = x - 0.5 * dx * scale;
-            float y1 = y - 0.5 * dy * scale;
-            float z1 = z - 0.5 * dz * scale;
-            
-            float x2 = x + 0.5 * dx * scale;
-            float y2 = y + 0.5 * dy * scale;
-            float z2 = z + 0.5 * dz * scale;
-            
-            
-            WIN3D_Diagrams.strokeWeight(1);
-            WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
-    
-            WIN3D_Diagrams.strokeWeight(4);
-            WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x * objects_scale * WIN3D_scale3D, -y * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
-          
-          }
-          
-        }
-      }
-    }  
-    
-    
     WIN3D_Diagrams.strokeWeight(0);
-  }
-}
 
+  }
+
+}
 
 
 void SOLARCHVISION_draw_3Dobjects () {
@@ -15934,7 +16013,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float dx = 5;
     float dy = 15;
-    float dz = 40;
+    float dz = 20;
     float x = 25;
     float y = 0;
     float z = 0;
@@ -15946,9 +16025,9 @@ void SOLARCHVISION_add_ParametricGeometries () {
   
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    float dx = 15;
+    float dx = 20;
     float dy = 5;
-    float dz = 40;
+    float dz = 15;
     float x = 0;
     float y = -25;
     float z = 0;
