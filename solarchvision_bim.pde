@@ -7,14 +7,14 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 0;
+int STATION_NUMBER = 1;
 
 String[][] DEFINED_STATIONS = {
                                 {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36", "240.0"},
- 
-              //                  {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36", "240.0"},
   
-                                {"TORONTO_ISLAND_ON_CA", "Ryerson_University", "ON", "43.6593", "-79.3779", "-75", "95", "461.88"}, 
+                                {"TORONTO_ISLAND_ON_CA", "Toronto", "ON", "43.6593", "-79.3779", "-75", "95", "461.88"},
+  
+                                //{"TORONTO_ISLAND_ON_CA", "Ryerson_University", "ON", "43.6593", "-79.3779", "-75", "95", "461.88"}, 
 
                                 {"TORONTO_ISLAND_ON_CA", "Financial_District", "ON", "43.6488", "-79.3817", "-75", "86", "692.82"},
   
@@ -10199,11 +10199,11 @@ void GRAPHS_keyPressed (KeyEvent e) {
           case 'r' : GRAPHS_record_AUTO = (GRAPHS_record_AUTO + 1) % 2; GRAPHS_Update = 0; break;
           case 'R' : GRAPHS_record_AUTO = (GRAPHS_record_AUTO + 1) % 2; GRAPHS_Update = 0; break;
   
-          case 'j' : GRAPHS_record_JPG = 1; GRAPHS_Update = 1; break;
-          case 'J' : GRAPHS_record_JPG = 1; GRAPHS_Update = 1; break;
+          case 'g' : GRAPHS_record_JPG = 1; GRAPHS_Update = 1; break;
+          case 'G' : GRAPHS_record_JPG = 1; GRAPHS_Update = 1; break;
           
-          case 'p' : GRAPHS_record_PDF = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break; 
-          case 'P' : GRAPHS_record_PDF = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break;
+          case 'f' : GRAPHS_record_PDF = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; println("PRESSED!"); break; 
+          case 'F' : GRAPHS_record_PDF = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break;
           
           case '^' : draw_data_lines = 1; Export_GRAPHS_info_node = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break;
           case '&' : draw_normals = 1; Export_GRAPHS_info_norm = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break;
@@ -16031,6 +16031,65 @@ ParametricGeometry[] SolidObjects = {};
 
 void SOLARCHVISION_add_ParametricGeometries () {
 
+  {
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    float dx = 10;
+    float dy = 10;
+    float dz = 10;
+    float x = -20;
+    float y = -20;
+    float z = 0;
+    float rot = 0;
+    SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot);
+    SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
+  }    
+  
+  {
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    float dx = 10;
+    float dy = 10;
+    float dz = 10;
+    float x = 0;
+    float y = -20;
+    float z = 0;
+    float rot = 0;
+    SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot);
+    SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
+  }
+  
+  {
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    float dx = 10;
+    float dy = 10;
+    float dz = 10;
+    float x = 20;
+    float y = -20;
+    float z = 0;
+    float rot = 0;
+    SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot);
+    SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
+  }  
+  
+  {
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    float dx = 30;
+    float dy = 10;
+    float dz = 10;
+    float x = 0;
+    float y = 20;
+    float z = 0;
+    float rot = 0;
+    SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot);
+    SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
+  }    
+  
+  
+  
+  
+  
+  
+  
+  
 
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
@@ -16072,7 +16131,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
   }
   
-*/  
+ 
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float dx = 20;
@@ -16112,7 +16171,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
   } 
   
-/*
+
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float x = 0;
