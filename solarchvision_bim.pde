@@ -7,7 +7,7 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 1;
+int STATION_NUMBER = 0;
 
 String[][] DEFINED_STATIONS = {
                                 {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36", "240.0"},
@@ -246,8 +246,13 @@ int BEGIN_DAY;
 float _DATE;
 
 String MAKE_mainname () {
-  return (nf(_YEAR, 2) + nf(_MONTH, 2) + nf(_DAY, 2) + "_" + nf(GRAPHS_j_end, 0) + "dayFORECAST");
-  //return (nf(_YEAR, 2) + nf(_MONTH, 2) + nf(_DAY, 2) + "_" + nf(_HOUR, 2) + "Z");
+  
+  String s = "";
+
+  if (impacts_source == 1) s = nf(_YEAR, 2) + nf(_MONTH, 2) + nf(_DAY, 2) + "_" + nf(GRAPHS_j_end, 0) + "dayFORECAST_";
+  
+  return s;
+
 }
 
 String MAKE_Filenames () {
@@ -256,19 +261,23 @@ String MAKE_Filenames () {
   
   My_Filenames = DiagramsFolder + "/";
   My_Filenames += nf(_YEAR, 2) + "-" + nf(_MONTH, 2) + "-" + nf(_DAY, 2) + "/";
-  My_Filenames += "NAEFS_" + nf(MODEL_RUN, 2) + "/";
+  My_Filenames += databaseString[impacts_source] + "/";  
 
-  
+/*  
   String sub_folder = "OTHER";
   String the_country = THE_STATION.substring(THE_STATION.length() - 2, THE_STATION.length());
   if (the_country.toUpperCase().equals("US")) sub_folder = the_country;
   if (the_country.toUpperCase().equals("CA")) sub_folder = the_country;
   if (the_country.toUpperCase().equals("BR")) sub_folder = the_country;
-  My_Filenames += sub_folder + "/"; 
+  My_Filenames += sub_folder + "/";
+*/ 
   
-  My_Filenames += "SOLARCHVISION_";
+  //My_Filenames += "SOLARCHVISION_";
   My_Filenames += DEFINED_STATIONS[STATION_NUMBER][1] + "_";
-  My_Filenames += Main_name + "_";
+  
+  My_Filenames += LAYERS_Title[GRAPHS_drw_Layer][_EN] + "_" ;
+  
+  My_Filenames += Main_name;
   
   //My_Filenames += "S" + nf(100 + GRAPHS_setup, 3);
   //My_Filenames += "V" + nf(camera_variation, 0); 
@@ -277,6 +286,8 @@ String MAKE_Filenames () {
   //My_Filenames += nf(draw_sorted, 0);
   //My_Filenames += nf(draw_normals, 0);
   //My_Filenames += nf(draw_probs, 0);
+  
+  My_Filenames += sky_scenario_file[sky_scenario];
 
   return My_Filenames;
 }
@@ -362,7 +373,7 @@ int[][][][] OBSERVED_Flag;
 
 
 int Load_CLIMATE_EPW = 1;
-int Load_CLIMATE_WY2 = 0;
+int Load_CLIMATE_WY2 = 1;
 int Load_ENSEMBLE = 1;
 int Load_OBSERVED = 0;
 int Download_OBSERVED = 0;
@@ -1008,6 +1019,8 @@ int databaseNumber_ENSEMBLE = 1;
 int databaseNumber_OBSERVED = 2;
 int databaseNumber_CLIMATE_EPW = 3;
 int impacts_source = 3; // 0 = Climate WY2, 1 = Forecast-NAEFS, 2 = Observation, 3 = Climate EPW
+
+String[] databaseString = {"CWEEDS", "NAEFS", "SWOB", "TMY"};
 
 int draw_impact_summary = 0;
 
@@ -2946,7 +2959,7 @@ void SOLARCHVISION_draw_GRAPHS () {
     if (GRAPHS_record_PDF == 1) Image_Scale = 1;
     else {
       if (off_screen == 0) Image_Scale = 1; 
-      else Image_Scale = 1; //1.5; //2;
+      else Image_Scale = 3; //1; //1.5; //2;
     }
     
     draw_frame += 1;
@@ -6877,7 +6890,7 @@ void SOLARCHVISION_print_other_info (float sx_Plot, float the_GRAPHS_V_belowLine
   
   Diagrams_textAlign(RIGHT, CENTER);
 
-  my_text(sky_scenario_text[sky_scenario], (GRAPHS_j_end - GRAPHS_j_start) * sx_Plot, (0.3 + the_GRAPHS_V_belowLine) * sx_Plot / GRAPHS_U_scale, 0);
+  my_text(sky_scenario_text[sky_scenario], (GRAPHS_j_end - GRAPHS_j_start - 0.05) * sx_Plot, (0.3 + the_GRAPHS_V_belowLine) * sx_Plot / GRAPHS_U_scale, 0);
 }  
 
 
@@ -10196,14 +10209,36 @@ void GRAPHS_keyPressed (KeyEvent e) {
       else {
         switch(key) {
 
+          case 's' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; 
+                    //SOLARCHVISION_update_station(0); 
+                    WORLD_Update = 1;
+                    WIN3D_Update = 1; 
+                    GRAPHS_Update = 1;
+                    ROLLOUT_Update = 1;
+
+                    last_initializationStep = 8; 
+                    frameCount = last_initializationStep; 
+                    textAlign(CENTER, CENTER); 
+                    textSize(MESSAGE_S_View);                    
+                    loop(); 
+                    break;
+          case 'S' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; 
+                    //SOLARCHVISION_update_station(0); 
+                    WORLD_Update = 1;
+                    WIN3D_Update = 1; 
+                    GRAPHS_Update = 1;
+                    ROLLOUT_Update = 1;
+                    
+                    last_initializationStep = 8; 
+                    frameCount = last_initializationStep; 
+                    textAlign(CENTER, CENTER); 
+                    textSize(MESSAGE_S_View);                    
+                    loop(); 
+                    break;              
+          
           case 'r' : GRAPHS_record_AUTO = (GRAPHS_record_AUTO + 1) % 2; GRAPHS_Update = 0; break;
           case 'R' : GRAPHS_record_AUTO = (GRAPHS_record_AUTO + 1) % 2; GRAPHS_Update = 0; break;
   
-          case 'g' : GRAPHS_record_JPG = 1; GRAPHS_Update = 1; break;
-          case 'G' : GRAPHS_record_JPG = 1; GRAPHS_Update = 1; break;
-          
-          case 'f' : GRAPHS_record_PDF = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; println("PRESSED!"); break; 
-          case 'F' : GRAPHS_record_PDF = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break;
           
           case '^' : draw_data_lines = 1; Export_GRAPHS_info_node = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break;
           case '&' : draw_normals = 1; Export_GRAPHS_info_norm = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; break;
@@ -10303,8 +10338,6 @@ void GRAPHS_keyPressed (KeyEvent e) {
                 
           case UP   :GRAPHS_drw_Layer = (GRAPHS_drw_Layer + 1) % num_layers; GRAPHS_Update = 1; break;
           case DOWN :GRAPHS_drw_Layer = (GRAPHS_drw_Layer + num_layers - 1) % num_layers; GRAPHS_Update = 1; break; 
-       
-          default: GRAPHS_record_JPG = 0; GRAPHS_Update = 0; break;
         }
       }
     }
@@ -10496,9 +10529,10 @@ void GRAPHS_keyPressed (KeyEvent e) {
           case '#' :sky_scenario = 3; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
           case '$' :sky_scenario = 4; update_DevelopDATA = 1; GRAPHS_Update = 1; break;
     
+          case 's' : GRAPHS_record_JPG = 1; GRAPHS_Update = 1; break;
+          case 'S' : GRAPHS_record_PDF = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; println("PRESSED!"); break; 
 
-          
-          default: GRAPHS_record_JPG = 0; GRAPHS_Update = 0; break;
+
         }
     
       }
@@ -11607,32 +11641,7 @@ void keyPressed (KeyEvent e) {
       if (key != CODED) { 
         switch(key) {
           
-          case 's' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; 
-                    //SOLARCHVISION_update_station(0); 
-                    WORLD_Update = 1;
-                    WIN3D_Update = 1; 
-                    GRAPHS_Update = 1;
-                    ROLLOUT_Update = 1;
-
-                    last_initializationStep = 8; 
-                    frameCount = last_initializationStep; 
-                    textAlign(CENTER, CENTER); 
-                    textSize(MESSAGE_S_View);                    
-                    loop(); 
-                    break;
-          case 'S' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; 
-                    //SOLARCHVISION_update_station(0); 
-                    WORLD_Update = 1;
-                    WIN3D_Update = 1; 
-                    GRAPHS_Update = 1;
-                    ROLLOUT_Update = 1;
-                    
-                    last_initializationStep = 8; 
-                    frameCount = last_initializationStep; 
-                    textAlign(CENTER, CENTER); 
-                    textSize(MESSAGE_S_View);                    
-                    loop(); 
-                    break;         
+     
                    
           case 'g' :
                     AERIAL_graphOption = (AERIAL_graphOption + 1) % 2;
