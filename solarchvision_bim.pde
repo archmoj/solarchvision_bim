@@ -12503,10 +12503,10 @@ void SOLARCHVISION_add_Box_Corners (int m, float x1, float y1, float z1, float x
 }
 
 
-void SOLARCHVISION_add_H_shade (int m, float x0, float y0, float z0, float r, float w, float Alpha, float Beta) {
+void SOLARCHVISION_add_H_shade (int m, float x0, float y0, float z0, float d, float w, float Alpha, float Beta) {
 
-  float rx = r * cos_ang(Beta);
-  float ry = r * sin_ang(Beta);
+  float rx = 0.5 * d * cos_ang(Beta);
+  float ry = 0.5 * d * sin_ang(Beta);
   
   float wx = w * cos_ang(Beta - 90) * cos_ang(Alpha);
   float wy = w * sin_ang(Beta - 90) * cos_ang(Alpha);
@@ -12528,6 +12528,7 @@ void SOLARCHVISION_add_H_shade (int m, float x0, float y0, float z0, float r, fl
   float y4 = wy + y0 + ry;
   float z4 = wz + z0;
   
+  
 
 
   
@@ -12544,6 +12545,47 @@ void SOLARCHVISION_add_H_shade (int m, float x0, float y0, float z0, float r, fl
   }
 
 }
+
+
+void SOLARCHVISION_add_V_shade (int m, float x0, float y0, float z0, float h, float d, float t, float t0) {
+
+  float dx = d * cos_ang(t + t0 - 90);
+  float dy = d * sin_ang(t + t0 - 90);
+
+  float x1 = x0;
+  float y1 = y0;
+  float z1 = z0 - 0.5 * h;
+
+  float x2 = x0;
+  float y2 = y0;
+  float z2 = z0 + 0.5 * h;
+
+  float x3 = x0 + dx;
+  float y3 = y0 + dy;
+  float z3 = z0 + 0.5 * h;
+
+  float x4 = x0 + dx;
+  float y4 = y0 + dy;
+  float z4 = z0 - 0.5 * h;
+  
+
+
+  
+  int v1 = SOLARCHVISION_addToVertices(x1, y1, z1);
+  int v2 = SOLARCHVISION_addToVertices(x2, y2, z2);
+  int v3 = SOLARCHVISION_addToVertices(x3, y3, z3);
+  int v4 = SOLARCHVISION_addToVertices(x4, y4, z4);
+  
+  defaultMaterial = m;
+  
+  {
+    int[] newFace = {v1, v2, v3, v4};
+    SOLARCHVISION_addToFaces(newFace);
+  }
+
+}
+
+
 
 void SOLARCHVISION_add_Mesh2 (int m, float x1, float y1, float z1, float x3, float y3, float z3) {
 
@@ -16093,17 +16135,24 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 10.1;
     float z = 0;
     float rot = 0;
-    SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot);
+    //SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot);
     SOLARCHVISION_addToSolids(0, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
   }    
  
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     for (float i = 0; i < 45; i += 1) {
-       //SOLARCHVISION_add_Mesh2 (5, -10,-1,i, 10,0,i);
        
-       SOLARCHVISION_add_H_shade (5, 0,0,i, 10,1, i*2,i*2);
+      SOLARCHVISION_add_H_shade(1, 0,0,i, 20,1, -2*i,0); // south
+      SOLARCHVISION_add_H_shade(2, 10,10,i, 20,1, -2*i,90); // east
+      SOLARCHVISION_add_H_shade(3, -10,10,i, 20,1, -2*i,270); // west
+
     }
+    
+    for (float i = -10; i <= 10; i += 1) {
+       
+      SOLARCHVISION_add_V_shade(4, i,20,22.5, 45,1, -4.5*i,180); // north
+    }    
   }
  
   
