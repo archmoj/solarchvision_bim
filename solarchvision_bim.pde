@@ -16142,13 +16142,13 @@ void SOLARCHVISION_add_ParametricGeometries () {
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     
-    float d = 3;
+    float d = 1.5;
     
     for (float i = 0; i < 45; i += d) {
        
-      SOLARCHVISION_add_H_shade(1, 0,0,i, 20,d, -2*i,0); // south
-      SOLARCHVISION_add_H_shade(2, 10,10,i, 20,d, -2*i,90); // east
-      SOLARCHVISION_add_H_shade(3, -10,10,i, 20,d, -2*i,270); // west
+      SOLARCHVISION_add_H_shade(1, 0,0,i, 20,d, 90-4*i,0); // south
+      SOLARCHVISION_add_H_shade(2, 10,10,i, 20,d, 90-4*i,90); // east
+      SOLARCHVISION_add_H_shade(3, -10,10,i, 20,d, 90-4*i,270); // west
 
     }
     
