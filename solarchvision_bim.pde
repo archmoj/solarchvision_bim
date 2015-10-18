@@ -12,9 +12,9 @@ int STATION_NUMBER = 0;
 String[][] DEFINED_STATIONS = {
                                 {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36", "240.0"},
   
-                                {"TORONTO_ISLAND_ON_CA", "Toronto", "ON", "43.6593", "-79.3779", "-75", "95", "461.88"},
+                                //{"TORONTO_ISLAND_ON_CA", "Toronto", "ON", "43.6593", "-79.3779", "-75", "95", "461.88"},
   
-                                //{"TORONTO_ISLAND_ON_CA", "Ryerson_University", "ON", "43.6593", "-79.3779", "-75", "95", "461.88"}, 
+                                {"TORONTO_ISLAND_ON_CA", "Ryerson_University", "ON", "43.6593", "-79.3779", "-75", "95", "461.88"}, 
 
                                 {"TORONTO_ISLAND_ON_CA", "Financial_District", "ON", "43.6488", "-79.3817", "-75", "86", "692.82"},
   
@@ -373,8 +373,8 @@ int[][][][] OBSERVED_Flag;
 
 
 int Load_CLIMATE_EPW = 1;
-int Load_CLIMATE_WY2 = 1;
-int Load_ENSEMBLE = 1;
+int Load_CLIMATE_WY2 = 0;
+int Load_ENSEMBLE = 0;
 int Load_OBSERVED = 0;
 int Download_OBSERVED = 0;
 int Download_ENSEMBLE = 0;
@@ -16040,61 +16040,28 @@ ParametricGeometry[] SolidObjects = {};
 
 void SOLARCHVISION_add_ParametricGeometries () {
 
-  {
-    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    float dx = 10;
-    float dy = 10;
-    float dz = 10;
-    float x = -20;
-    float y = -20;
-    float z = 0;
-    float rot = 0;
-    SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot);
-    SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
-  }    
+
   
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float dx = 10;
     float dy = 10;
-    float dz = 10;
+    float dz = 50;
     float x = 0;
-    float y = -20;
+    float y = 10.1;
     float z = 0;
     float rot = 0;
     SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot);
-    SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
+    SOLARCHVISION_addToSolids(0, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
+  }    
+ 
+  {
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    for (float i = 0; i < 50; i += 1) {
+       SOLARCHVISION_add_Mesh2 (5, -10,-1,i, 10,0,i);
+    }
   }
-  
-  {
-    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    float dx = 10;
-    float dy = 10;
-    float dz = 10;
-    float x = 20;
-    float y = -20;
-    float z = 0;
-    float rot = 0;
-    SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot);
-    SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
-  }  
-  
-  {
-    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    float dx = 30;
-    float dy = 10;
-    float dz = 10;
-    float x = 0;
-    float y = 20;
-    float z = 0;
-    float rot = 0;
-    SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot);
-    SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
-  }    
-  
-  
-  
-  
+ 
   
   
   
@@ -20232,7 +20199,7 @@ float[] SOLARCHVISION_calculate_Perspective_Internally (float x, float y, float 
 
 
 void SOLARCHVISION_draw_Perspective_Internally () {
-  
+ 
   if (Work_with_2D_or_3D == 2) {
 
     if (selectedObject2D_displayEdges != 0) {
@@ -20248,13 +20215,14 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     
       {
         int f = selectedObject2D_num;
-        
+
         if ((0 < f) && (f < allObject2D_Faces.length)) { 
             
           beginShape();
           
           for (int j = 0; j < allObject2D_Faces[f].length; j++) {
-            int vNo = allFaces[f][j];
+            
+            int vNo = allObject2D_Faces[f][j];
             
             float x = allObject2D_Vertices[vNo][0] * objects_scale;;
             float y = allObject2D_Vertices[vNo][1] * objects_scale;;
@@ -20278,7 +20246,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     }  
     
   }
-  
+
   
   
     
