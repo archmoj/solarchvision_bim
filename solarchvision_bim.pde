@@ -12503,6 +12503,48 @@ void SOLARCHVISION_add_Box_Corners (int m, float x1, float y1, float z1, float x
 }
 
 
+void SOLARCHVISION_add_H_shade (int m, float x0, float y0, float z0, float r, float w, float Alpha, float Beta) {
+
+  float rx = r * cos_ang(Beta);
+  float ry = r * sin_ang(Beta);
+  
+  float wx = w * cos_ang(Beta - 90) * cos_ang(Alpha);
+  float wy = w * sin_ang(Beta - 90) * cos_ang(Alpha);
+  float wz = w * sin_ang(Alpha);
+  
+  float x1 = x0 + rx;
+  float y1 = y0 + ry;
+  float z1 = z0;
+
+  float x2 = x0 - rx;
+  float y2 = y0 - ry;
+  float z2 = z0;
+
+  float x3 = wx + x0 - rx;
+  float y3 = wy + y0 - ry;
+  float z3 = wz + z0;
+
+  float x4 = wx + x0 + rx;
+  float y4 = wy + y0 + ry;
+  float z4 = wz + z0;
+  
+
+
+  
+  int v1 = SOLARCHVISION_addToVertices(x1, y1, z1);
+  int v2 = SOLARCHVISION_addToVertices(x2, y2, z2);
+  int v3 = SOLARCHVISION_addToVertices(x3, y3, z3);
+  int v4 = SOLARCHVISION_addToVertices(x4, y4, z4);
+  
+  defaultMaterial = m;
+  
+  {
+    int[] newFace = {v1, v2, v3, v4};
+    SOLARCHVISION_addToFaces(newFace);
+  }
+
+}
+
 void SOLARCHVISION_add_Mesh2 (int m, float x1, float y1, float z1, float x3, float y3, float z3) {
 
   float x2 = x3;
@@ -16046,7 +16088,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float dx = 10;
     float dy = 10;
-    float dz = 50;
+    float dz = 45;
     float x = 0;
     float y = 10.1;
     float z = 0;
@@ -16057,8 +16099,10 @@ void SOLARCHVISION_add_ParametricGeometries () {
  
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    for (float i = 0; i < 50; i += 1) {
-       SOLARCHVISION_add_Mesh2 (5, -10,-1,i, 10,0,i);
+    for (float i = 0; i < 45; i += 1) {
+       //SOLARCHVISION_add_Mesh2 (5, -10,-1,i, 10,0,i);
+       
+       SOLARCHVISION_add_H_shade (5, 0,0,i, 10,1, i*2,i*2);
     }
   }
  
