@@ -10,6 +10,13 @@ int _LAN = _EN;
 int STATION_NUMBER = 0;
 
 String[][] DEFINED_STATIONS = {
+  
+
+  
+                                //{"HOLLYWOOD_CA_US", "Hollywood", "CA", "34.116672", "-118.326568", "-120", "0", "240.0"},
+  
+                                {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36", "240.0"},
+  
                                 {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36", "240.0"},
   
                                 //{"TORONTO_ISLAND_ON_CA", "Toronto", "ON", "43.6593", "-79.3779", "-75", "95", "461.88"},
