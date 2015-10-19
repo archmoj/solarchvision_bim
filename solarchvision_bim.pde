@@ -569,7 +569,7 @@ float Angle_inclination = 45; // 90 = horizontal surface, 0 = Vertical surface
 float Angle_orientation = 0; // 0 = South, 90 = East
 
 
-int GRAPHS_drw_Layer = _developed; //_drybulb; ; //_cloudcover; 
+int GRAPHS_drw_Layer = _dirnorrad; //_developed; //_drybulb; ; //_cloudcover; 
 
 int develop_Layer = GRAPHS_drw_Layer;
 
@@ -924,7 +924,7 @@ int GRAPHS_Pallet_PROB = -1;
 int GRAPHS_Pallet_PROB_DIR = 1;
 float GRAPHS_Pallet_PROB_MLT = 0.5;
 
-int SUN3D_Pallet_ACTIVE = 15; 
+int SUN3D_Pallet_ACTIVE = 14; //15;
 int SUN3D_Pallet_ACTIVE_DIR = 1;
 float SUN3D_Pallet_ACTIVE_MLT = 1;
 
@@ -940,7 +940,7 @@ int SKY3D_Pallet_PASSIVE = 18;
 int SKY3D_Pallet_PASSIVE_DIR = -1;  
 float SKY3D_Pallet_PASSIVE_MLT = 2; //1;
 
-int OBJECTS_Pallet_ACTIVE = 15;
+int OBJECTS_Pallet_ACTIVE = 14; //15;
 int OBJECTS_Pallet_ACTIVE_DIR = 1;
 float OBJECTS_Pallet_ACTIVE_MLT = 1; 
 
@@ -948,7 +948,7 @@ int OBJECTS_Pallet_PASSIVE = 1;
 int OBJECTS_Pallet_PASSIVE_DIR = 1;  
 float OBJECTS_Pallet_PASSIVE_MLT = 2; 
 
-int GRAPHS_Pallet_ACTIVE = 15; 
+int GRAPHS_Pallet_ACTIVE = 14; //15; 
 int GRAPHS_Pallet_ACTIVE_DIR = 1;
 float GRAPHS_Pallet_ACTIVE_MLT = 1;
 
@@ -1025,7 +1025,7 @@ String[] databaseString = {"CWEEDS", "NAEFS", "SWOB", "TMY"};
 int draw_impact_summary = 0;
 
 int impact_layer = 1; // 4 = Median
-int plot_impacts = -2; //4; 
+int plot_impacts = 4; //-2: wind 4:sun
 int update_impacts = 1; 
 
 
@@ -13387,15 +13387,16 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
 
 }
 
-void SOLARCHVISION_add_2Dobjects (int n, float r, float z) {
+void SOLARCHVISION_add_2Dobjects_polar (int n, float x0, float y0, float z0, float r) {
   
   for (int i = 0; i < n; i += 1) {
     
     float a = random(360);
-    float b = random(r);
+    float b = pow(random(r * r), 0.5); // to make it uniform on the surface 
 
-    float x = b * cos_ang(a);
-    float y = b * sin_ang(a);
+    float x = x0 + b * cos_ang(a);
+    float y = y0 + b * sin_ang(a);
+    float z = z0;
     
     if (dist(x,y,0,0) > 2.5) { // i.e. No 2D at the center!
     
@@ -13403,7 +13404,7 @@ void SOLARCHVISION_add_2Dobjects (int n, float r, float z) {
       
       float q = random(100);
       
-      if (dist(x,y,0,0) < 25) t = 0; // i.e. No tree around the center!
+      //if (dist(x,y,0,0) < 25) t = 0; // i.e. No tree around the center!
       
       if (t == 0) {
         SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
@@ -13411,6 +13412,40 @@ void SOLARCHVISION_add_2Dobjects (int n, float r, float z) {
       else{
         SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
       }
+    }
+  }  
+}
+
+void SOLARCHVISION_add_2Dobjects_plane (int n, float x0, float y0, float z0, float rx, float ry) {
+  
+  for (int i = 0; i < n; i += 1) {
+    
+    //float a = random(-rx, rx); 
+    //float b = random(-ry, ry);
+
+    // 1 meter offset from the edge! <<<<<<<<<<<<<<<<<<<
+    float a = random(1-rx, rx-1);  
+    float b = random(1-ry, ry-1);
+
+
+    float x = x0 + a;
+    float y = y0 + b;
+    float z = z0;
+    
+    if (dist(x,y,0,0) > 2.5) { // i.e. No 2D at the center!
+    
+      int t = 1;
+      
+      float q = random(100);
+      
+      //if (dist(x,y,0,0) < 25) t = 0; // i.e. No tree around the center!
+      
+      //if (t == 0) {
+        SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
+      //}
+      //else{
+        //SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
+      //}
     }
   }  
 }
@@ -13541,7 +13576,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
     SOLARCHVISION_add_2Dobjects_onLand(); 
   }    
   else {
-    //SOLARCHVISION_add_2Dobjects(100, 50, 0); // (n, r, z)
+    //SOLARCHVISION_add_2Dobjects_polar(100, 0,0,0, 50); // (n, x, y, z, r)
   }  
 
 
@@ -16134,8 +16169,18 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 10.1;
     float z = 0;
     float rot = 0;
-    SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot);
+    //SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
+
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    SOLARCHVISION_add_Box_Core(5, x,y,z, dx/3, dy/3, dz, rot); // building core
+    
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    for (float i = 0; i < 45; i += 3) {
+      SOLARCHVISION_add_Mesh2(2, x-dx,y-dy,i, x+dx,y+dy,i); // floors
+      
+      SOLARCHVISION_add_2Dobjects_plane(10, x,y,i, dx, dy); // people  
+    }   
   }  
 
   {
@@ -16147,8 +16192,18 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 10.1;
     float z = 0;
     float rot = 0;
-    SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot);
+    //SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
+
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    SOLARCHVISION_add_Box_Core(5, x,y,z, dx/3, dy/3, dz, rot); // building core
+    
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    for (float i = 0; i < 45; i += 3) {
+      SOLARCHVISION_add_Mesh2(2, x-dx,y-dy,i, x+dx,y+dy,i); // floors
+      
+      SOLARCHVISION_add_2Dobjects_plane(10, x,y,i, dx, dy); // people  
+    }   
   }    
   
   {
@@ -16160,14 +16215,24 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 10.1;
     float z = 0;
     float rot = 0;
-    SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot);
+    //SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
+
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    SOLARCHVISION_add_Box_Core(5, x,y,z, dx/3, dy/3, dz, rot); // building core
+    
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    for (float i = 0; i < 45; i += 3) {
+      SOLARCHVISION_add_Mesh2(2, x-dx,y-dy,i, x+dx,y+dy,i); // floors
+      
+      SOLARCHVISION_add_2Dobjects_plane(10, x,y,i, dx, dy); // people  
+    }    
   }    
  
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     
-    float d = 1.5;
+    float d = 1.0;
     
     for (float i = 0; i < 45; i += d) {
        
@@ -16183,13 +16248,19 @@ void SOLARCHVISION_add_ParametricGeometries () {
        
       //SOLARCHVISION_add_V_shade(4, i,20,22.5, 45,d, 4.5*i,180); // north
       
-      SOLARCHVISION_add_V_shade(4, i,0,22.5, 45,d, 4.5*i,0); // south
-      SOLARCHVISION_add_V_shade(4, i-30,0,22.5, 45,d, 4.5*i,0); // south
+      SOLARCHVISION_add_V_shade(6, i,0,22.5, 45,d, 4.5*i,0); // south
+      SOLARCHVISION_add_V_shade(6, i-30,0,22.5, 45,d, 4.5*i,0); // south
     }    
   }
  
   
+  SOLARCHVISION_add_2Dobjects_polar(100, 0,0,0, 50); // people and trees
+
+  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+  SOLARCHVISION_add_PolygonHyper(0, 0,-30,0, 10, 10, 4, 0);
   
+  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+  SOLARCHVISION_add_House_Core(7, -30,-30,0, 6, 6, 6, 6, 0); 
   
   
 
@@ -16206,20 +16277,19 @@ void SOLARCHVISION_add_ParametricGeometries () {
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
   }  
 
-/*
 
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float r = 10;    
-    float x = 0;
-    float y = 0;
+    float x = 30;
+    float y = -30;
     float z = r;
     //SOLARCHVISION_add_Recursivephere(1, x,y,z, r, 2, 0, 0);
-    SOLARCHVISION_add_Recursivephere(2, x,y,z, r, 4, 0, 0);
+    SOLARCHVISION_add_Recursivephere(2, x,y,z, r, 3, 0, 0);
     SOLARCHVISION_addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
   }  
 
-
+/*
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float dx = 5;
