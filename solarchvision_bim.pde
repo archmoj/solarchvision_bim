@@ -11472,7 +11472,7 @@ void WIN3D_keyPressed (KeyEvent e) {
 
 void SOLARCHVISION_RecordFrame () {
   SavedScreenShots += 1; 
-  saveFrame(ScreenShotFolder + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_IMG" + nf(SavedScreenShots , 3) + ".jpg");
+  saveFrame(ScreenShotFolder + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + nf(hour(), 2) + "_IMG" + nf(SavedScreenShots , 3) + ".jpg");
   
 }
 
@@ -13387,7 +13387,7 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
 
 }
 
-void SOLARCHVISION_add_2Dobjects_polar (int n, float x0, float y0, float z0, float r) {
+void SOLARCHVISION_add_2Dobjects_polar (int people_or_trees, int n, float x0, float y0, float z0, float r) {
   
   for (int i = 0; i < n; i += 1) {
     
@@ -13398,27 +13398,16 @@ void SOLARCHVISION_add_2Dobjects_polar (int n, float x0, float y0, float z0, flo
     float y = y0 + b * sin_ang(a);
     float z = z0;
     
-    if (dist(x,y,0,0) > 2.5) { // i.e. No 2D at the center!
-    
-      //int t = 1; // only trees in large distance
-      int t = int(random(2));
-      
-      
-      float q = random(100);
-      
-      //if (dist(x,y,0,0) < 25) t = 0; // i.e. No tree around the center!
-      
-      if (t == 0) {
-        SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
-      }
-      else{
-        SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
-      }
+    if (people_or_trees == 0) {
+      SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
+    }
+    else{
+      SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
     }
   }  
 }
 
-void SOLARCHVISION_add_2Dobjects_plane (int n, float x0, float y0, float z0, float rx, float ry) {
+void SOLARCHVISION_add_2Dobjects_plane (int people_or_trees, int n, float x0, float y0, float z0, float rx, float ry) {
   
   for (int i = 0; i < n; i += 1) {
     
@@ -13429,25 +13418,15 @@ void SOLARCHVISION_add_2Dobjects_plane (int n, float x0, float y0, float z0, flo
     float a = random(1-rx, rx-1);  
     float b = random(1-ry, ry-1);
 
-
     float x = x0 + a;
     float y = y0 + b;
     float z = z0;
     
-    if (dist(x,y,0,0) > 2.5) { // i.e. No 2D at the center!
-    
-      int t = 1;
-      
-      float q = random(100);
-      
-      //if (dist(x,y,0,0) < 25) t = 0; // i.e. No tree around the center!
-      
-      //if (t == 0) {
-        SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
-      //}
-      //else{
-        //SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
-      //}
+    if (people_or_trees == 0) {
+      SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
+    }
+    else{
+      SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
     }
   }  
 }
@@ -13578,7 +13557,8 @@ void SOLARCHVISION_add_DefaultModel (int n) {
     SOLARCHVISION_add_2Dobjects_onLand(); 
   }    
   else {
-    //SOLARCHVISION_add_2Dobjects_polar(100, 0,0,0, 50); // (n, x, y, z, r)
+    //SOLARCHVISION_add_2Dobjects_polar(0, 50, 0,0,0, 50); // (t, n, x, y, z, r) // people
+    //SOLARCHVISION_add_2Dobjects_polar(1, 50, 0,0,0, 50); // (t, n, x, y, z, r) // trees
   }  
 
 
@@ -16212,7 +16192,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     for (float i = 0; i < 45; i += 3) {
       SOLARCHVISION_add_Mesh2(2, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
-      SOLARCHVISION_add_2Dobjects_plane(10, x,y,i, dx, dy); // people  
+      SOLARCHVISION_add_2Dobjects_plane(0, 10, x,y,i, dx, dy); // people  
     }   
   }  
 
@@ -16235,7 +16215,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     for (float i = 0; i < 45; i += 3) {
       SOLARCHVISION_add_Mesh2(2, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
-      SOLARCHVISION_add_2Dobjects_plane(10, x,y,i, dx, dy); // people  
+      SOLARCHVISION_add_2Dobjects_plane(0, 10, x,y,i, dx, dy); // people  
     }   
   }    
   
@@ -16258,7 +16238,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     for (float i = 0; i < 45; i += 3) {
       SOLARCHVISION_add_Mesh2(2, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
-      SOLARCHVISION_add_2Dobjects_plane(10, x,y,i, dx, dy); // people  
+      SOLARCHVISION_add_2Dobjects_plane(0, 10, x,y,i, dx, dy); // people  
     }    
   }    
  
@@ -16287,7 +16267,9 @@ void SOLARCHVISION_add_ParametricGeometries () {
   }
  
   
-  SOLARCHVISION_add_2Dobjects_polar(100, 0,0,0, 50); // people and trees
+  SOLARCHVISION_add_2Dobjects_plane(0, 100, 0,0,0, 50,50); // people
+  SOLARCHVISION_add_2Dobjects_plane(1, 25, 0,40,0, 50,10); // trees back
+  SOLARCHVISION_add_2Dobjects_plane(1, 25, 0,-30,0, 50,20); // trees front
 
   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
   SOLARCHVISION_add_PolygonHyper(0, 30,-30,4.5, 9, 9, 6, 0);  // hyper
