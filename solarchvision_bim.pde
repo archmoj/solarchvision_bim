@@ -176,7 +176,7 @@ float Create_Recursive_Plant_leafSize = 1; //1;
 
 int Work_with_2D_or_3D = 3; // 2:2D, 3:3D
 
-int Create_Select_Modify = 1; // 0:Create -1:Select 1:Move 2:Scale 3:Rotate 
+int Create_Select_Modify = -1; // -1:Select 0:Create 1:Move 2:Scale 3:Rotate 
 
 int Display_SWOB_points = 1; // 0-2
 int Display_SWOB_nearest = 1;
@@ -13510,6 +13510,8 @@ void SOLARCHVISION_remove_2Dobjects () {
   allObject2D_MAP[0] = 0;
   
   allObject2D_num = 0;
+  
+  selectedObject2D_num = 0;
 }
 
 void SOLARCHVISION_remove_3Dobjects () {
@@ -18375,6 +18377,128 @@ void SOLARCHVISION_draw_logo (float cx, float cy, float cz, float cr, int the_vi
   }
 }
 
+void mouseWheel(MouseEvent event) {
+  float Wheel_Value = event.getCount(); 
+  
+  if (automated == 0) {
+    X_clicked = mouseX;
+    Y_clicked = mouseY;
+    
+    if (WIN3D_include == 1) {
+      if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
+        
+        float x0 = 0;
+        float y0 = 0;
+        float z0 = 0;
+        
+        if (Work_with_2D_or_3D == 3) {
+
+          x0 = selectedPolymesh_Pivot_XYZ[0];
+          y0 = selectedPolymesh_Pivot_XYZ[1];
+          z0 = selectedPolymesh_Pivot_XYZ[2];
+        }
+        
+        if (Work_with_2D_or_3D == 2) {
+ 
+          x0 = allObject2D_XYZS[selectedObject2D_num][0];
+          y0 = allObject2D_XYZS[selectedObject2D_num][1]; 
+          z0 = allObject2D_XYZS[selectedObject2D_num][2];
+        }          
+        
+        if (Create_Select_Modify == 3) { // rotate
+
+          float r = (15 * Wheel_Value) * PI / 180.0;
+          
+          int the_Vector = selectedPolymesh_rotVector;
+          
+          SOLARCHVISION_rotate_Selection(x0, y0, z0, r, the_Vector);
+          
+          WIN3D_Update = 1;
+          
+        }   
+        
+        if (Create_Select_Modify == 2) { // scale
+
+          float s = pow(2.0, Wheel_Value);
+          
+          float sx = s;
+          float sy = s;
+          float sz = s;
+          
+          int the_Vector = selectedPolymesh_scaleVector;
+        
+          if (the_Vector == 0) {sy = 1; sz = 1;}  
+          if (the_Vector == 1) {sz = 1; sx = 1;}  
+          if (the_Vector == 2) {sx = 1; sy = 1;}                    
+          
+          SOLARCHVISION_scale_Selection(x0, y0, z0, sx, sy, sz);
+          
+          WIN3D_Update = 1;
+
+        }          
+
+        if (Create_Select_Modify == 1) { // move
+        
+          float d = Wheel_Value;
+
+          float dx = 1;
+          float dy = 1;
+          float dz = 1;
+          
+          int the_Vector = selectedPolymesh_posVector;
+        
+          if (the_Vector == 0) {dy = 0; dz = 0;}  
+          if (the_Vector == 1) {dz = 0; dx = 0;}  
+          if (the_Vector == 2) {dx = 0; dy = 0;}  
+
+          SOLARCHVISION_move_Selection(dx, dy, dz);
+          
+          WIN3D_Update = 1;
+          
+        }   
+        
+        if (Create_Select_Modify == -1) { // select
+          if (Work_with_2D_or_3D == 3) {
+
+            selectedPolymesh_num += int(Wheel_Value);
+            
+            if (selectedPolymesh_num < 0) {
+              selectedPolymesh_num = allPolymesh_Faces.length - 1;
+            }
+
+            if (selectedPolymesh_num > allPolymesh_Faces.length - 1) {
+              selectedPolymesh_num = 0;
+            }
+        
+            if (pre_selectedPolymesh_num != selectedPolymesh_num) SOLARCHVISION_calculate_selectedPolymesh_Pivot();
+
+            WIN3D_Update = 1;            
+          }
+
+          if (Work_with_2D_or_3D == 2) {
+
+            if (allObject2D_num > 0) {
+              
+              selectedObject2D_num += int(Wheel_Value);
+              
+
+              if (selectedObject2D_num < 0) {
+                selectedObject2D_num = allObject2D_num - 1;
+              }
+  
+              if (selectedObject2D_num > allObject2D_num - 1) {
+                selectedObject2D_num = 0;
+              }
+            }
+            
+            WIN3D_Update = 1;
+          }
+        }    
+      }
+    }   
+  }  
+}
+
 
 void mouseClicked () {
   if (automated == 0) {
@@ -18529,7 +18653,7 @@ void mouseClicked () {
             if (mouseButton == RIGHT) r = 15 * PI / 180.0;
             if (mouseButton == LEFT) r = -15 * PI / 180.0;
             
-            int the_Vector = 2; // 2: Z-axis
+            int the_Vector = selectedPolymesh_rotVector;
             
             SOLARCHVISION_rotate_Selection(x0, y0, z0, r, the_Vector);
             
@@ -18548,6 +18672,12 @@ void mouseClicked () {
             float sx = s;
             float sy = s;
             float sz = s;
+            
+            int the_Vector = selectedPolymesh_scaleVector;
+          
+            if (the_Vector == 0) {sy = 1; sz = 1;}  
+            if (the_Vector == 1) {sz = 1; sx = 1;}  
+            if (the_Vector == 2) {sx = 1; sy = 1;}                
             
             SOLARCHVISION_scale_Selection(x0, y0, z0, sx, sy, sz);
 
