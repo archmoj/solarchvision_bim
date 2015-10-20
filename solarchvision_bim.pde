@@ -18499,7 +18499,7 @@ void mouseClicked () {
               if (mouseButton == RIGHT) r = 15 * PI / 180.0;
               if (mouseButton == LEFT) r = -15 * PI / 180.0;
               
-              SOLARCHVISION_rotate_Objects(x0, y0, z0, r);
+              SOLARCHVISION_rotate_Selected(x0, y0, z0, r);
               
             }              
           }   
@@ -18514,7 +18514,7 @@ void mouseClicked () {
             if (mouseButton == RIGHT) s = 0.5;
             if (mouseButton == LEFT) s = 2;
             
-            SOLARCHVISION_scale_Objects(x0, y0, z0, s);
+            SOLARCHVISION_scale_Selected(x0, y0, z0, s);
 
           }          
 
@@ -18530,7 +18530,7 @@ void mouseClicked () {
               float dy = y0 - selectedPolymesh_Pivot_XYZ[1]; 
               float dz = z0 - selectedPolymesh_Pivot_XYZ[2];
               
-              SOLARCHVISION_move_Objects(dx, dy, dz);
+              SOLARCHVISION_move_Selected(dx, dy, dz);
               
             }
 
@@ -22296,46 +22296,7 @@ void SOLARCHVISION_scale_selectedPolymesh (float the_Value, int the_Vector) {
   
 }
 
-
-void SOLARCHVISION_rotate_Objects (float x0, float y0, float z0, float r) {
-
-  int[] PolymeshVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
-  
-  for (int q = 1; q < PolymeshVertices.length; q++) {
-    
-    int n = PolymeshVertices[q];
-
-    float x = allVertices[n][0] - x0; 
-    float y = allVertices[n][1] - y0; 
-    float z = allVertices[n][2] - z0;
-   
-    allVertices[n][0] = x0 + (x * cos(r) - y * sin(r)); 
-    allVertices[n][1] = y0 + (x * sin(r) + y * cos(r));
-    allVertices[n][2] = z0 + (z);
-  }
-  
-  SOLARCHVISION_calculate_selectedPolymesh_Pivot();
- 
-  int Solids_updated = 0;
-  for (int g = allPolymesh_Solids[selectedPolymesh_num][0]; g <= allPolymesh_Solids[selectedPolymesh_num][1]; g++) {
-    if ((0 <= g) && (g < SolidObjects.length)) {
-      
-      float x = SolidObjects[g].posX - x0; 
-      float y = SolidObjects[g].posY - y0; 
-      float z = SolidObjects[g].posZ - z0;
-      
-      SolidObjects[g].updatePosition(x0 + (x * cos(r) - y * sin(r)), y0 + (x * sin(r) + y * cos(r)), z0 + (z));
-      
-      SolidObjects[g].RotateZ(r * 180 / PI);
-
-      Solids_updated = 1;  
-    }
-  }
-  if (Solids_updated != 0) SOLARCHVISION_calculate_ParametricGeometries_Field();    
-} 
-
-
-void SOLARCHVISION_scale_Objects (float x0, float y0, float z0, float s) {
+void SOLARCHVISION_scale_Selected (float x0, float y0, float z0, float s) {
 
   if (Work_with_2D_or_3D == 3) {
     int[] PolymeshVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
@@ -22384,7 +22345,48 @@ void SOLARCHVISION_scale_Objects (float x0, float y0, float z0, float s) {
   }
 }
 
-void SOLARCHVISION_move_Objects (float dx, float dy, float dz) {
+
+void SOLARCHVISION_rotate_Selected (float x0, float y0, float z0, float r) {
+
+  int[] PolymeshVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
+  
+  for (int q = 1; q < PolymeshVertices.length; q++) {
+    
+    int n = PolymeshVertices[q];
+
+    float x = allVertices[n][0] - x0; 
+    float y = allVertices[n][1] - y0; 
+    float z = allVertices[n][2] - z0;
+   
+    allVertices[n][0] = x0 + (x * cos(r) - y * sin(r)); 
+    allVertices[n][1] = y0 + (x * sin(r) + y * cos(r));
+    allVertices[n][2] = z0 + (z);
+  }
+  
+  SOLARCHVISION_calculate_selectedPolymesh_Pivot();
+ 
+  int Solids_updated = 0;
+  for (int g = allPolymesh_Solids[selectedPolymesh_num][0]; g <= allPolymesh_Solids[selectedPolymesh_num][1]; g++) {
+    if ((0 <= g) && (g < SolidObjects.length)) {
+      
+      float x = SolidObjects[g].posX - x0; 
+      float y = SolidObjects[g].posY - y0; 
+      float z = SolidObjects[g].posZ - z0;
+      
+      SolidObjects[g].updatePosition(x0 + (x * cos(r) - y * sin(r)), y0 + (x * sin(r) + y * cos(r)), z0 + (z));
+      
+      SolidObjects[g].RotateZ(r * 180 / PI);
+
+      Solids_updated = 1;  
+    }
+  }
+  if (Solids_updated != 0) SOLARCHVISION_calculate_ParametricGeometries_Field();    
+} 
+
+
+
+
+void SOLARCHVISION_move_Selected (float dx, float dy, float dz) {
               
   int[] PolymeshVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
 
