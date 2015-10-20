@@ -176,7 +176,7 @@ float Create_Recursive_Plant_leafSize = 1; //1;
 
 int Work_with_2D_or_3D = 3; // 2:2D, 3:3D
 
-int Create_Select_Modify = -1; // -1:Select 0:Create 1:Move 2:Scale 3:Rotate 
+int Create_Select_Modify = -1; // -2:Zoom -1:Select 0:Create 1:Move 2:Scale 3:Rotate 
 
 int Display_SWOB_points = 1; // 0-2
 int Display_SWOB_nearest = 1;
@@ -18493,12 +18493,50 @@ void mouseWheel(MouseEvent event) {
             
             WIN3D_Update = 1;
           }
-        }    
+        }
+    
+        if (Create_Select_Modify == -2) { // viewport
+
+          if (WIN3D_View_Type == 1) {
+            WIN3D_Z_coordinate += Wheel_Value; 
+          } 
+          else {
+            WIN3D_ZOOM_coordinate /= pow(2.0, Wheel_Value);
+          }
+          
+          WIN3D_Update = 1;
+
+        }
       }
     }   
   }  
 }
 
+
+void mouseDragged () {
+  
+  if (automated == 0) {
+    X_clicked = pmouseX; // << previous point
+    Y_clicked = pmouseY; // << previous point
+    
+    if (WIN3D_include == 1) {
+      if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
+        
+        if (Create_Select_Modify == -2) { // viewport
+        
+          float dx = (mouseX - X_clicked) / float(WIN3D_X_View);
+          float dy = (mouseY - Y_clicked) / float(WIN3D_Y_View);
+
+          WIN3D_X_coordinate += dx * WIN3D_S_coordinate; // <<<<<<<<<<< not perfect!
+          WIN3D_Y_coordinate += dy * WIN3D_S_coordinate;
+          
+          WIN3D_Update = 1;
+
+        }
+      }
+    }   
+  }     
+}
 
 void mouseClicked () {
   if (automated == 0) {
