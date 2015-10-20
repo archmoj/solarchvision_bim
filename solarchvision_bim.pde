@@ -2062,10 +2062,22 @@ void draw () {
           WIN3D_Update = 1;
         }
         if (pre_selectedPolymesh_scaleValue != selectedPolymesh_scaleValue) {
+
+          float x0 = selectedPolymesh_Pivot_XYZ[0];
+          float y0 = selectedPolymesh_Pivot_XYZ[1];
+          float z0 = selectedPolymesh_Pivot_XYZ[2];          
           
           float s = pow(2.0, selectedPolymesh_scaleValue - pre_selectedPolymesh_scaleValue);
           
-          SOLARCHVISION_scale_selectedPolymesh(s, selectedPolymesh_scaleVector);
+          float sx = s;
+          float sy = s;
+          float sz = s;
+        
+          if (selectedPolymesh_scaleVector == 0) {sy = 1; sz = 1;}  
+          if (selectedPolymesh_scaleVector == 1) {sz = 1; sx = 1;}  
+          if (selectedPolymesh_scaleVector == 2) {sx = 1; sy = 1;}           
+          
+          SOLARCHVISION_scale_selectedPolymesh(x0, y0, z0, sx, sy, sz);
           WIN3D_Update = 1;
         }        
 
@@ -18514,7 +18526,11 @@ void mouseClicked () {
             if (mouseButton == RIGHT) s = 0.5;
             if (mouseButton == LEFT) s = 2;
             
-            SOLARCHVISION_scale_Selected(x0, y0, z0, s);
+            float sx = s;
+            float sy = s;
+            float sz = s;
+            
+            SOLARCHVISION_scale_Selected(x0, y0, z0, sx, sy, sz);
 
           }          
 
@@ -22251,21 +22267,9 @@ void SOLARCHVISION_rotate_selectedPolymesh (float the_Value, int the_Vector) {
   
 }
 
-void SOLARCHVISION_scale_selectedPolymesh (float the_Value, int the_Vector) {
+void SOLARCHVISION_scale_selectedPolymesh (float x0, float y0, float z0, float sx, float sy, float sz) {
 
   int[] PolymeshVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
-  
-  float x0 = selectedPolymesh_Pivot_XYZ[0];
-  float y0 = selectedPolymesh_Pivot_XYZ[1];
-  float z0 = selectedPolymesh_Pivot_XYZ[2];
-  
-  float sx = the_Value;
-  float sy = the_Value;
-  float sz = the_Value;
-
-  if (the_Vector == 0) {sy = 1; sz = 1;}  
-  if (the_Vector == 1) {sz = 1; sx = 1;}  
-  if (the_Vector == 2) {sx = 1; sy = 1;}  
   
   for (int q = 1; q < PolymeshVertices.length; q++) {
     
@@ -22296,37 +22300,10 @@ void SOLARCHVISION_scale_selectedPolymesh (float the_Value, int the_Vector) {
   
 }
 
-void SOLARCHVISION_scale_Selected (float x0, float y0, float z0, float s) {
+void SOLARCHVISION_scale_Selected (float x0, float y0, float z0, float sx, float sy, float sz) {
 
   if (Work_with_2D_or_3D == 3) {
-    int[] PolymeshVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
-    
-    for (int q = 1; q < PolymeshVertices.length; q++) {
-      
-      int n = PolymeshVertices[q];
-
-      float x = allVertices[n][0] - x0; 
-      float y = allVertices[n][1] - y0; 
-      float z = allVertices[n][2] - z0;
-     
-      allVertices[n][0] = x0 + s * x; 
-      allVertices[n][1] = y0 + s * y;
-      allVertices[n][2] = z0 + s * z;
-    }
-    
-    SOLARCHVISION_calculate_selectedPolymesh_Pivot(); 
-    
-    int Solids_updated = 0;
-    for (int g = allPolymesh_Solids[selectedPolymesh_num][0]; g <= allPolymesh_Solids[selectedPolymesh_num][1]; g++) {
-      if ((0 <= g) && (g < SolidObjects.length)) {
-        SolidObjects[g].updatePosition((SolidObjects[g].posX - x0) * s + x0, (SolidObjects[g].posY - y0) * s + y0, (SolidObjects[g].posZ - z0) * s + z0);
-        
-        SolidObjects[g].Scale(s, s, s);
-
-        Solids_updated = 1;  
-      }
-    }
-    if (Solids_updated != 0) SOLARCHVISION_calculate_ParametricGeometries_Field();
+    SOLARCHVISION_scale_selectedPolymesh(x0, y0, z0, sx, sy, sz);
   }
 
   if (Work_with_2D_or_3D == 2) {
@@ -22335,11 +22312,11 @@ void SOLARCHVISION_scale_Selected (float x0, float y0, float z0, float s) {
     float y = allObject2D_XYZS[selectedObject2D_num][1] - y0; 
     float z = allObject2D_XYZS[selectedObject2D_num][2] - z0;
    
-    allObject2D_XYZS[selectedObject2D_num][0] = x0 + s * x; 
-    allObject2D_XYZS[selectedObject2D_num][1] = y0 + s * y;
-    allObject2D_XYZS[selectedObject2D_num][2] = z0 + s * z;
+    allObject2D_XYZS[selectedObject2D_num][0] = x0 + sx * x; 
+    allObject2D_XYZS[selectedObject2D_num][1] = y0 + sy * y;
+    allObject2D_XYZS[selectedObject2D_num][2] = z0 + sz * z;
 
-    allObject2D_XYZS[selectedObject2D_num][3] *= s;
+    allObject2D_XYZS[selectedObject2D_num][3] *= sz; // <<<<<<<<<<<<<<
     
     WIN3D_Update = 1;
   }
