@@ -18571,8 +18571,8 @@ void mouseClicked () {
             if (Work_with_2D_or_3D == 2) {
 
               float dx = x0 - allObject2D_XYZS[selectedObject2D_num][0]; 
-              float dy = y0 - allObject2D_XYZS[selectedObject2D_num][0]; 
-              float dz = z0 - allObject2D_XYZS[selectedObject2D_num][0];              
+              float dy = y0 - allObject2D_XYZS[selectedObject2D_num][1]; 
+              float dz = z0 - allObject2D_XYZS[selectedObject2D_num][2];              
 
               SOLARCHVISION_move_Selection(dx, dy, dz);
             }
@@ -18588,6 +18588,7 @@ void mouseClicked () {
               for (int i = 0; i < allPolymesh_Faces.length; i++) {
                 if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
                   selectedPolymesh_num = i;
+                  
                   WIN3D_Update = 1;
                   break;
                 }
@@ -22347,9 +22348,9 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
 
   if (Work_with_2D_or_3D == 2) {
 
-    float x = allObject2D_XYZS[selectedObject2D_num][0] + dx; 
-    float y = allObject2D_XYZS[selectedObject2D_num][1] + dy; 
-    float z = allObject2D_XYZS[selectedObject2D_num][2] + dz;
+    allObject2D_XYZS[selectedObject2D_num][0] += dx; 
+    allObject2D_XYZS[selectedObject2D_num][1] += dy; 
+    allObject2D_XYZS[selectedObject2D_num][2] += dz;
   }  
   
 }
