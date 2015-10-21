@@ -18606,12 +18606,12 @@ void mouseWheel(MouseEvent event) {
 }
 
 
-void mouseDragged () {
-  
+void mouseReleased () {
+
   if (automated == 0) {
-    X_clicked = pmouseX; // << previous point
-    Y_clicked = pmouseY; // << previous point
-    
+    X_clicked = mouseX; 
+    Y_clicked = mouseY; 
+
     if (WIN3D_include == 1) {
       if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
 
@@ -18624,37 +18624,25 @@ void mouseDragged () {
           float corner2y = -0.5 * WIN3D_Y_View;
           
           if (X_clicked < mouseX) {
-            corner1x += X_clicked - WIN3D_CX_View;
+            corner1x += pmouseX - WIN3D_CX_View;
             corner2x += mouseX - WIN3D_CX_View;
           }
           else {
             corner1x += mouseX - WIN3D_CX_View;
-            corner2x += X_clicked - WIN3D_CX_View;
+            corner2x += pmouseX - WIN3D_CX_View;
           }
 
           if (Y_clicked < mouseY) {
-            corner1y += Y_clicked - WIN3D_CY_View;
+            corner1y += pmouseY - WIN3D_CY_View;
             corner2y += mouseY - WIN3D_CY_View;
           }
           else {
             corner1y += mouseY - WIN3D_CY_View;
-            corner2y += Y_clicked - WIN3D_CY_View;
+            corner2y += pmouseY - WIN3D_CY_View;
           }
           
           println("CORNERS:", corner1x, corner1y, corner2x, corner2y);
 
-          pushMatrix();
-        
-          translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
-          
-          noFill();
-          
-          stroke(127); 
-          strokeWeight(2);
-          
-          rect(corner1x, corner1y, corner2x - corner1x, corner2y - corner1y);
-          
-          popMatrix();
 
           
           if (Work_with_2D_or_3D == 3) {
@@ -18720,6 +18708,61 @@ void mouseDragged () {
             WIN3D_Update = 1;
           }
                       
+        }
+      }
+    }
+  }
+  
+}
+
+void mouseDragged () {
+  
+  if (automated == 0) {
+    X_clicked = pmouseX; // << previous point
+    Y_clicked = pmouseY; // << previous point
+    
+    if (WIN3D_include == 1) {
+      if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
+
+        if (Create_Select_Modify == -2) { // RectSelect
+        
+          float corner1x = -0.5 * WIN3D_X_View;
+          float corner1y = -0.5 * WIN3D_Y_View;
+
+          float corner2x = -0.5 * WIN3D_X_View;
+          float corner2y = -0.5 * WIN3D_Y_View;
+          
+          if (X_clicked < mouseX) {
+            corner1x += pmouseX - WIN3D_CX_View;
+            corner2x += mouseX - WIN3D_CX_View;
+          }
+          else {
+            corner1x += mouseX - WIN3D_CX_View;
+            corner2x += pmouseX - WIN3D_CX_View;
+          }
+
+          if (Y_clicked < mouseY) {
+            corner1y += pmouseY - WIN3D_CY_View;
+            corner2y += mouseY - WIN3D_CY_View;
+          }
+          else {
+            corner1y += mouseY - WIN3D_CY_View;
+            corner2y += pmouseY - WIN3D_CY_View;
+          }
+          
+          pushMatrix();
+        
+          translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+          
+          noFill();
+          
+          stroke(127); 
+          strokeWeight(2);
+          
+          rect(corner1x, corner1y, corner2x - corner1x, corner2y - corner1y);
+          
+          popMatrix();
+
         }        
         
        
