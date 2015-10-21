@@ -176,7 +176,7 @@ float Create_Recursive_Plant_leafSize = 1; //1;
 
 int Work_with_2D_or_3D = 3; // 2:2D, 3:3D
 
-int Create_Select_Modify = -3; // -3:orbit -2:Zoom/Pan -1:Select 0:Create 1:Move 2:Scale 3:Rotate 
+int Create_Select_Modify = -2; // -3:Pan/Height -2:Zoom/Orbit -1:Select 0:Create 1:Move 2:Scale 3:Rotate 
 
 int Display_SWOB_points = 1; // 0-2
 int Display_SWOB_nearest = 1;
@@ -11232,31 +11232,46 @@ void WIN3D_keyPressed (KeyEvent e) {
       switch(keyCode) {
 
         case RIGHT :Field_Rotation[Field_Image_Section] = (Field_Rotation[Field_Image_Section] + 15) % 360; 
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;  
                   break;
         case LEFT :Field_Rotation[Field_Image_Section] = (Field_Rotation[Field_Image_Section] + 360 - 15) % 360; 
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;  
                   break;           
         
         case UP   :Field_Elevation[Field_Image_Section] += Field_PositionStep;
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;  
                   break;        
         case DOWN :Field_Elevation[Field_Image_Section] -= Field_PositionStep; 
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1; ROLLOUT_Update = 1;  
                   break; 
 
         case 33 :Field_Elevation[Field_Image_Section] += 4 * Field_PositionStep;
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;  
                   break;        
         case 34 :Field_Elevation[Field_Image_Section] -= 4 * Field_PositionStep; 
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;  
                   break; 
         
         case 35 :Field_scale_U *= pow(2.0, 0.5); Field_scale_V *= pow(2.0, 0.5); 
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1; 
                   break;
         case 36 :Field_scale_U /= pow(2.0, 0.5); Field_scale_V /= pow(2.0, 0.5);                   
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1; 
                   break;
         
       }
@@ -11268,50 +11283,72 @@ void WIN3D_keyPressed (KeyEvent e) {
                   Solarch_Image_Section = Field_Image_Section; 
                   if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
                   WIN3D_Update = 1;
+                  ROLLOUT_Update = 1; 
                   break;
         case '[' :Field_Image_Section = (Field_Image_Section + 4 - 1) % 4;
                   Solarch_Image_Section = Field_Image_Section;
                   if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
                   WIN3D_Update = 1; 
+                  ROLLOUT_Update = 1; 
                   break;        
         
         case '0' :Field_Elevation[Field_Image_Section] = 0; 
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;  
                   break;
                   
         case '.' :Field_Rotation[Field_Image_Section] = 0; 
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field();
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;                   
                   break;                  
         
         case '/' :Field_Power *= pow(2.0, 0.5); 
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;  
                   break;
         case '*' :Field_Power /= pow(2.0, 0.5);  
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;  
                   break;
         
         case '+' :Field_Multiplier *= pow(2.0, 0.5); 
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;  
                   break;
         case '-' :Field_Multiplier /= pow(2.0, 0.5); 
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;  
                   break;
 
         case '>' :Field_Multiplier /= pow(2.0, 0.25); 
                   Field_Power /= pow(2.0, 0.5); 
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;  
                   break;
         case '<' :Field_Multiplier *= pow(2.0, 0.25); 
                   Field_Power *= pow(2.0, 0.5); 
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;  
                   break;
                   
         case 'c' :Field_Color = (Field_Color + 1) % 4; 
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;  
                   break;                  
 
         case 'C' :Field_Color = (Field_Color + 4 - 1) % 4; 
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); WIN3D_Update = 1; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;  
                   break;  
                   
         
@@ -11334,6 +11371,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                  SOLARCHVISION_calculate_selectedPolymesh_Pivot();
                  SOLARCHVISION_reset_selectedPolymesh_Pivot();  
                  WIN3D_Update = 1;
+                 ROLLOUT_Update = 1; 
                  break;  
 
         case 34: selectedPolymesh_num += 1;
@@ -11343,12 +11381,13 @@ void WIN3D_keyPressed (KeyEvent e) {
                  SOLARCHVISION_calculate_selectedPolymesh_Pivot();
                  SOLARCHVISION_reset_selectedPolymesh_Pivot();  
                  WIN3D_Update = 1;
+                 ROLLOUT_Update = 1; 
                  break;          
         
-        case LEFT  :WIN3D_X_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1; break;
-        case RIGHT :WIN3D_X_coordinate -= WIN3D_S_coordinate; WIN3D_Update = 1; break; 
-        case UP    :WIN3D_Y_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1; break;
-        case DOWN  :WIN3D_Y_coordinate -= WIN3D_S_coordinate; WIN3D_Update = 1; break;
+        case LEFT  :WIN3D_X_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case RIGHT :WIN3D_X_coordinate -= WIN3D_S_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
+        case UP    :WIN3D_Y_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case DOWN  :WIN3D_Y_coordinate -= WIN3D_S_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         
         
       }
@@ -11357,12 +11396,12 @@ void WIN3D_keyPressed (KeyEvent e) {
       switch(key) {
         case '.' :WIN3D_X_coordinate = 0;
                   WIN3D_Y_coordinate = 0;
-                  WIN3D_Update = 1; break;
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
                   
         case '0' :WIN3D_X_coordinate = 0;
                   WIN3D_Y_coordinate = 0;
                   //WIN3D_ZOOM_coordinate = 60;
-                  WIN3D_Update = 1; break;                  
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;                  
                   
         case '5' :WIN3D_RX_coordinate = 0;
                   WIN3D_RY_coordinate = 0;
@@ -11373,16 +11412,16 @@ void WIN3D_keyPressed (KeyEvent e) {
                   WIN3D_Z_coordinate = 0;   
    
                   WIN3D_ZOOM_coordinate = 60;               
-                  WIN3D_Update = 1; break;
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
           
-        case '2' :Display_Trees_People = (Display_Trees_People + 1) % 2; WIN3D_Update = 1; break;
+        case '2' :Display_Trees_People = (Display_Trees_People + 1) % 2; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
  
 
 
           
 
  
-        case ENTER :RenderShadowsOnUrbanPlane(); display_Solarch_Image = 1; break;
+        case ENTER :RenderShadowsOnUrbanPlane(); display_Solarch_Image = 1; ROLLOUT_Update = 1; break;
         
       }
     }    
@@ -11414,73 +11453,76 @@ void WIN3D_keyPressed (KeyEvent e) {
                   SOLARCHVISION_calculate_selectedPolymesh_Pivot();
                   
                   WIN3D_Update = 1;
+                  ROLLOUT_Update = 1; 
 
                   break;        
         
         case ',' :
                   if (WIN3D_View_Type == 1) {
-                    WIN3D_Z_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1;
+                    WIN3D_Z_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; 
                   } 
                   else {
-                    WIN3D_ZOOM_coordinate /= pow(2.0, 0.25); WIN3D_Update = 1;
+                    WIN3D_ZOOM_coordinate /= pow(2.0, 0.25); WIN3D_Update = 1; ROLLOUT_Update = 1; 
                   }
                   break;
                   
         case '.' :
                   if (WIN3D_View_Type == 1) {
-                    WIN3D_Z_coordinate -= WIN3D_S_coordinate; WIN3D_Update = 1;
+                    WIN3D_Z_coordinate -= WIN3D_S_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; 
                   } 
                   else {
-                    WIN3D_ZOOM_coordinate *= pow(2.0, 0.25); WIN3D_Update = 1;
+                    WIN3D_ZOOM_coordinate *= pow(2.0, 0.25); WIN3D_Update = 1; ROLLOUT_Update = 1; 
                   }
                   break;
   
         case '0' :
                   if (WIN3D_View_Type == 1) {
-                    WIN3D_Z_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1;
+                    WIN3D_Z_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; 
                   } 
                   else {
-                    WIN3D_ZOOM_coordinate /= pow(2.0, 0.25); WIN3D_Update = 1;
+                    WIN3D_ZOOM_coordinate /= pow(2.0, 0.25); WIN3D_Update = 1; ROLLOUT_Update = 1; 
                   }
                   break;
         
         case '5' :WIN3D_RX_coordinate = 0;
                   WIN3D_RY_coordinate = 0;
                   WIN3D_RZ_coordinate = 0; 
-                  WIN3D_Update = 1; break;
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         
-        case '1' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 315; WIN3D_Update = 1; break;
-        case '3' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 45; WIN3D_Update = 1; break;
-        case '7' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 225; WIN3D_Update = 1; break;
-        case '9' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 135; WIN3D_Update = 1; break;
+        case '1' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 315; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '3' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 45; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '7' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 225; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '9' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 135; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
   
-        case '2' :WIN3D_RX_coordinate += WIN3D_RS_coordinate; WIN3D_Update = 1; break;
-        case '4' :WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; WIN3D_Update = 1; break;
-        case '6' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; WIN3D_Update = 1; break; 
-        case '8' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; WIN3D_Update = 1; break;
+        case '2' :WIN3D_RX_coordinate += WIN3D_RS_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '4' :WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '6' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
+        case '8' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         
-        case '*' :objects_scale *= 2.0; WIN3D_Update = 1; break;
-        case '/' :objects_scale /= 2.0; WIN3D_Update = 1; break;
+        case '*' :objects_scale *= 2.0; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '/' :objects_scale /= 2.0; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
   
-        case '+' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1; break;
-        case '-' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1; break; 
+        case '+' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '-' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
         
-        case 'O' :WIN3D_View_Type = 0; WIN3D_Update = 1; break;
-        case 'o' :WIN3D_View_Type = 0; WIN3D_Update = 1; break;
+        case 'O' :WIN3D_View_Type = 0; WIN3D_Update = 1; ROLLOUT_Update = 1; ROLLOUT_Update = 1; break;
+        case 'o' :WIN3D_View_Type = 0; WIN3D_Update = 1; ROLLOUT_Update = 1; ROLLOUT_Update = 1; break;
         
         case 'P' :WIN3D_ZOOM_coordinate = 60;
-                  WIN3D_View_Type = 1; WIN3D_Update = 1; break; 
+                  WIN3D_View_Type = 1; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
         case 'p' :WIN3D_ZOOM_coordinate = 60;
-                  WIN3D_View_Type = 1; WIN3D_Update = 1; break; 
+                  WIN3D_View_Type = 1; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
   
-        //case 'E' :WIN3D_EDGES_SHOW = (WIN3D_EDGES_SHOW + 1) % 2; WIN3D_Update = 1; break; 
-        //case 'e' :WIN3D_EDGES_SHOW = (WIN3D_EDGES_SHOW + 1) % 2; WIN3D_Update = 1; break; 
+        //case 'E' :WIN3D_EDGES_SHOW = (WIN3D_EDGES_SHOW + 1) % 2; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
+        //case 'e' :WIN3D_EDGES_SHOW = (WIN3D_EDGES_SHOW + 1) % 2; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
   
         case 'K' :WIN3D_FACES_SHADE = (WIN3D_FACES_SHADE + 5 - 1) % 5; WIN3D_Update = 1;
                   if (WIN3D_FACES_SHADE == 3) SolarProjection(); 
+                  ROLLOUT_Update = 1; 
                   break;
         case 'k' :WIN3D_FACES_SHADE = (WIN3D_FACES_SHADE + 1) % 5; WIN3D_Update = 1;
                   if (WIN3D_FACES_SHADE == 3) SolarProjection(); 
+                  ROLLOUT_Update = 1; 
                   break; 
          
         
@@ -11488,19 +11530,22 @@ void WIN3D_keyPressed (KeyEvent e) {
         case 'T' :MODEL3D_TESELATION -= 1;
                   if (MODEL3D_TESELATION < 0) MODEL3D_TESELATION = 0;
                   WIN3D_update_VerticesSolarValue = 1; 
-                  WIN3D_Update = 1; break;
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
                   
         case ENTER: if (WIN3D_FACES_SHADE == 3) SolarProjection();  
-                    if (WIN3D_FACES_SHADE == 4) WIN3D_update_VerticesSolarValue = 1; WIN3D_Update = 1; 
+                    if (WIN3D_FACES_SHADE == 4) WIN3D_update_VerticesSolarValue = 1;
+                    WIN3D_Update = 1;
+                    ROLLOUT_Update = 1;  
                     break;                  
           
         case ' ': SOLARCHVISION_RecordFrame();
+                  ROLLOUT_Update = 1; 
                   break;              
 
 
 
-        case 'x' :SOLARCHVISION_export_objects(); break;
-        case 'X' :SOLARCHVISION_export_land(); break;
+        case 'x' :SOLARCHVISION_export_objects(); ROLLOUT_Update = 1; break;
+        case 'X' :SOLARCHVISION_export_land(); ROLLOUT_Update = 1; break;
         
 
                       
@@ -11614,8 +11659,8 @@ void keyPressed (KeyEvent e) {
       }
       else {
         switch(key) {
-          case 'l' : frame_variation = (frame_variation + 1) % 4; SOLARCHVISION_update_frame_layout(); break;
-          case 'L' : frame_variation = (frame_variation + 4 - 1) % 4; SOLARCHVISION_update_frame_layout(); break;
+          case 'l' : frame_variation = (frame_variation + 1) % 4; SOLARCHVISION_update_frame_layout(); ROLLOUT_Update = 1; break;
+          case 'L' : frame_variation = (frame_variation + 4 - 1) % 4; SOLARCHVISION_update_frame_layout(); ROLLOUT_Update = 1; break;
         }
       }    
     }
@@ -11640,6 +11685,7 @@ void keyPressed (KeyEvent e) {
             WORLD_Update = 1;
             WIN3D_Update = 1; 
             GRAPHS_Update = 1;
+            ROLLOUT_Update = 1; 
             break;
 
           case 'F' :
@@ -11647,6 +11693,7 @@ void keyPressed (KeyEvent e) {
             WORLD_Update = 1;
             WIN3D_Update = 1; 
             GRAPHS_Update = 1;
+            ROLLOUT_Update = 1; 
             break;                   
       
    
@@ -11688,12 +11735,14 @@ void keyPressed (KeyEvent e) {
                     AERIAL_graphOption = (AERIAL_graphOption + 1) % 2;
                     WORLD_Update = 1;
                     WIN3D_Update = 1; 
+                    ROLLOUT_Update = 1; 
                     break;
       
           case 'G' :
                     AERIAL_graphOption = (AERIAL_graphOption + 2 - 1) % 2;
                     WORLD_Update = 1;
                     WIN3D_Update = 1; 
+                    ROLLOUT_Update = 1; 
                     break;                 
         }
       }  
@@ -18531,8 +18580,20 @@ void mouseDragged () {
     
     if (WIN3D_include == 1) {
       if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
+
+        if (Create_Select_Modify == -2) { // viewport:orbit
         
-        if (Create_Select_Modify == -2) { // viewport:pan
+          float dx = (mouseX - X_clicked) / float(WIN3D_X_View);
+          float dy = (mouseY - Y_clicked) / float(WIN3D_Y_View);
+
+          WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate; // <<<<<<<<<<< not perfect!
+          WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
+          
+          WIN3D_Update = 1;
+
+        }  
+        
+        if (Create_Select_Modify == -3) { // viewport:pan
         
           float dx = (mouseX - X_clicked) / float(WIN3D_X_View);
           float dy = (mouseY - Y_clicked) / float(WIN3D_Y_View);
@@ -18544,17 +18605,7 @@ void mouseDragged () {
 
         }
         
-        if (Create_Select_Modify == -3) { // viewport:orbit
-        
-          float dx = (mouseX - X_clicked) / float(WIN3D_X_View);
-          float dy = (mouseY - Y_clicked) / float(WIN3D_Y_View);
-
-          WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate; // <<<<<<<<<<< not perfect!
-          WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
-          
-          WIN3D_Update = 1;
-
-        }        
+      
       }
     }   
   }     
