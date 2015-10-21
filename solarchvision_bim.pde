@@ -18664,11 +18664,12 @@ void mouseReleased () {
             
             if (Work_with_2D_or_3D == 3) {
               
-              println("OBJECTS SELECTED BEFORE:", selectedPolymesh_numbers.length);
+              SOLARCHVISION_deselectAll(); // <<<<<<<<< NOTE: to add to previous selection we should remark and check for duplicates
               
               for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length - 1; OBJ_NUM++) {
                 
                 int Polymesh_added = 0;     
+                if (mouseButton == RIGHT) Polymesh_added = 1;
 
                 for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
                   if ((0 < f) && (f < allFaces.length)) { 
@@ -18681,36 +18682,41 @@ void mouseReleased () {
                       float z = -allVertices[vNo][2] * objects_scale;
                       
                       float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
-                      
+
                       if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
                         if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
-                          
-                          int[] new_Polymesh_number = {OBJ_NUM};
-                          
-                          selectedPolymesh_numbers = concat(selectedPolymesh_numbers, new_Polymesh_number);
-                          
-                          WIN3D_Update = 1;
-
-                          println("OBJECT_NUMBER:", OBJ_NUM);
-                          
-                          Polymesh_added = 1;
-                          
-                          break; 
+                          if (mouseButton == LEFT) {
+                            Polymesh_added = 1;
+                            break;
+                          }
+                        }
+                        else {
+                          if (mouseButton == RIGHT) {
+                            Polymesh_added = 0;
+                            break;
+                          }                          
                         }
                       }
-
                       
                       if (Polymesh_added != 0) break;
                     }
                     
-                    if (Polymesh_added != 0) break;
+                    if (Polymesh_added != 0) {
+                      
+                      println("OBJECT_NUMBER:", OBJ_NUM);
+                      
+                      int[] new_Polymesh_number = {OBJ_NUM};
+                      
+                      selectedPolymesh_numbers = concat(selectedPolymesh_numbers, new_Polymesh_number);
+                      
+                      break;
+                    }
                   }
                 }
               }
   
               println("OBJECTS SELECTED AFTER:", selectedPolymesh_numbers.length);
   
-              
               if (pre_selectedPolymesh_numbers_lastItem != selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1]) SOLARCHVISION_calculate_selectedPolymesh_Pivot();
       
               if (mouseButton == LEFT) SOLARCHVISION_reset_selectedPolymesh_Pivot();
@@ -18720,9 +18726,9 @@ void mouseReleased () {
   
               //selectedObject2D_num = int(RxP[4]);
               
-              WIN3D_Update = 1;
             }
-                        
+
+            WIN3D_Update = 1;                        
           }
         }
       }
