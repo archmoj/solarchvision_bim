@@ -12371,8 +12371,8 @@ void SOLARCHVISION_deleteSelection () {
           
           allFaces_MAT = (int[]) concat(startList, endList);
         }
-        /*
-        zzzzzzzzzzzzzzzzzzzzz
+        
+        
         
         int startSolid = allPolymesh_Solids[OBJ_NUM][0];
         int endSolid = allPolymesh_Solids[OBJ_NUM][1];
@@ -12402,7 +12402,7 @@ void SOLARCHVISION_deleteSelection () {
           Solids_updated = 1;
           
         }
-        */
+
       }
     }
     
