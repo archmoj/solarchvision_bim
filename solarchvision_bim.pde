@@ -176,7 +176,7 @@ float Create_Recursive_Plant_leafSize = 1; //1;
 
 int Work_with_2D_or_3D = 3; // 2:2D, 3:3D
 
-int Create_Select_Modify = -1; // -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 
+int Create_Select_Modify = -2; // -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 
 
 int Display_SWOB_points = 1; // 0-2
 int Display_SWOB_nearest = 1;
@@ -1039,8 +1039,13 @@ int update_impacts = 1;
 
 int draw_frame = 0;
 
-int X_clicked = 0;
-int Y_clicked = 0;
+int X_clicked = -1;
+int Y_clicked = -1;
+
+int X_click1 = -1;
+int Y_click1 = -1;
+int X_click2 = -1;
+int Y_click2 = -1;
 
 String[] CLIMATE_EPW_Files = getfiles(CLIMATE_EPW_directory);
 String[] CLIMATE_WY2_Files = getfiles(CLIMATE_WY2_directory);
@@ -1855,8 +1860,8 @@ void draw () {
 
     MESSAGE_X_View = 2 * w_pixel;
 
-    X_clicked = 0;
-    Y_clicked = 0;
+    X_clicked = -1;
+    Y_clicked = -1;
 
     last_initializationStep = frameCount; 
   }
@@ -10213,8 +10218,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 void GRAPHS_keyPressed (KeyEvent e) {
     
   if (automated == 0) {
-    X_clicked = 0;
-    Y_clicked = 0;
+    X_clicked = -1;
+    Y_clicked = -1;
 
     if (e.isAltDown() == true) {
       if (key == CODED) { 
@@ -11433,8 +11438,6 @@ void WIN3D_keyPressed (KeyEvent e) {
       switch(keyCode) {
 
         case 155: // INSERT 
-                  Create_Select_Modify = 0;
-                  
                   SOLARCHVISION_deselectAll();
 
                   WIN3D_Update = 1;
@@ -18606,56 +18609,66 @@ void mouseWheel(MouseEvent event) {
 }
 
 
+int dragging_started = 0;
+
 void mouseReleased () {
 
   if (automated == 0) {
-    X_clicked = mouseX; 
-    Y_clicked = mouseY; 
+    
+    if (dragging_started != 0) {
+    
+      if (WIN3D_include == 1) {
+        if (isInside(mouseX, mouseY, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
+  
+          if (Create_Select_Modify == -2) { // RectSelect
 
-    if (WIN3D_include == 1) {
-      if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
-
-        if (Create_Select_Modify == -2) { // RectSelect
-        
-          float corner1x = -0.5 * WIN3D_X_View;
-          float corner1y = -0.5 * WIN3D_Y_View;
-
-          float corner2x = -0.5 * WIN3D_X_View;
-          float corner2y = -0.5 * WIN3D_Y_View;
-          
-          if (X_clicked < mouseX) {
-            corner1x += pmouseX - WIN3D_CX_View;
-            corner2x += mouseX - WIN3D_CX_View;
-          }
-          else {
-            corner1x += mouseX - WIN3D_CX_View;
-            corner2x += pmouseX - WIN3D_CX_View;
-          }
-
-          if (Y_clicked < mouseY) {
-            corner1y += pmouseY - WIN3D_CY_View;
-            corner2y += mouseY - WIN3D_CY_View;
-          }
-          else {
-            corner1y += mouseY - WIN3D_CY_View;
-            corner2y += pmouseY - WIN3D_CY_View;
-          }
-          
-          println("CORNERS:", corner1x, corner1y, corner2x, corner2y);
-
-
-          
-          if (Work_with_2D_or_3D == 3) {
+            X_click2 = mouseX;
+            Y_click2 = mouseY;
             
-            println("OBJECTS SELECTED BEFORE:", selectedPolymesh_numbers.length);
+            int swap_tmp = 0;
             
-            for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
+            if (X_click2 < X_click1) {
+              swap_tmp = X_click2;
+              X_click2 = X_click1;
+              X_click1 = swap_tmp;
+            }
+      
+            if (Y_click2 < Y_click1) {
+              swap_tmp = Y_click2;
+              Y_click2 = Y_click1;
+              Y_click1 = swap_tmp;
+            }     
+            
+            float corner1x = X_click1 - 0.5 * WIN3D_X_View;
+            float corner1y = Y_click1 - 0.5 * WIN3D_Y_View;
+  
+            float corner2x = X_click2 - 0.5 * WIN3D_X_View;
+            float corner2y = Y_click2 - 0.5 * WIN3D_Y_View;
+            
+            println("CORNERS:", corner1x, corner1y, corner2x, corner2y);
+            
+            pushMatrix();
+          
+            translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+            
+            noFill();
+            
+            stroke(127); 
+            strokeWeight(2);
+            
+            rect(corner1x, corner1y, corner2x - corner1x, corner2y - corner1y);
+            
+            popMatrix();            
+  
+  
+            
+            if (Work_with_2D_or_3D == 3) {
               
-              int OBJ_NUM = selectedPolymesh_numbers[o];
+              println("OBJECTS SELECTED BEFORE:", selectedPolymesh_numbers.length);
               
-              if (OBJ_NUM != 0) {       
-           
-                 int Polymesh_added = 0;     
+              for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length - 1; OBJ_NUM++) {
+                
+                int Polymesh_added = 0;     
 
                 for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
                   if ((0 < f) && (f < allFaces.length)) { 
@@ -18676,40 +18689,46 @@ void mouseReleased () {
                           
                           selectedPolymesh_numbers = concat(selectedPolymesh_numbers, new_Polymesh_number);
                           
-                          Polymesh_added = 1;
-                          
                           WIN3D_Update = 1;
+
+                          println("OBJECT_NUMBER:", OBJ_NUM);
+                          
+                          Polymesh_added = 1;
                           
                           break; 
                         }
                       }
+
                       
-                      println("OBJECT_NUMBER:", OBJ_NUM);
-                      
-                      if (Polymesh_added != 0)  break;
+                      if (Polymesh_added != 0) break;
                     }
+                    
+                    if (Polymesh_added != 0) break;
                   }
                 }
               }
+  
+              println("OBJECTS SELECTED AFTER:", selectedPolymesh_numbers.length);
+  
+              
+              if (pre_selectedPolymesh_numbers_lastItem != selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1]) SOLARCHVISION_calculate_selectedPolymesh_Pivot();
+      
+              if (mouseButton == LEFT) SOLARCHVISION_reset_selectedPolymesh_Pivot();
             }
-
-            println("OBJECTS SELECTED AFTER:", selectedPolymesh_numbers.length);
-
-            
-            if (pre_selectedPolymesh_numbers_lastItem != selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1]) SOLARCHVISION_calculate_selectedPolymesh_Pivot();
-    
-            if (mouseButton == LEFT) SOLARCHVISION_reset_selectedPolymesh_Pivot();
+  
+            if (Work_with_2D_or_3D == 2) {
+  
+              //selectedObject2D_num = int(RxP[4]);
+              
+              WIN3D_Update = 1;
+            }
+                        
           }
-
-          if (Work_with_2D_or_3D == 2) {
-
-            //selectedObject2D_num = int(RxP[4]);
-            
-            WIN3D_Update = 1;
-          }
-                      
         }
       }
+      
+      
+      dragging_started = 0;
     }
   }
   
@@ -18718,103 +18737,71 @@ void mouseReleased () {
 void mouseDragged () {
   
   if (automated == 0) {
-    X_clicked = pmouseX; // << previous point
-    Y_clicked = pmouseY; // << previous point
     
     if (WIN3D_include == 1) {
-      if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
+      if (isInside(pmouseX, pmouseY, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
+        if (isInside(mouseX, mouseY, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
 
-        if (Create_Select_Modify == -2) { // RectSelect
-        
-          float corner1x = -0.5 * WIN3D_X_View;
-          float corner1y = -0.5 * WIN3D_Y_View;
-
-          float corner2x = -0.5 * WIN3D_X_View;
-          float corner2y = -0.5 * WIN3D_Y_View;
-          
-          if (X_clicked < mouseX) {
-            corner1x += pmouseX - WIN3D_CX_View;
-            corner2x += mouseX - WIN3D_CX_View;
-          }
-          else {
-            corner1x += mouseX - WIN3D_CX_View;
-            corner2x += pmouseX - WIN3D_CX_View;
-          }
-
-          if (Y_clicked < mouseY) {
-            corner1y += pmouseY - WIN3D_CY_View;
-            corner2y += mouseY - WIN3D_CY_View;
-          }
-          else {
-            corner1y += mouseY - WIN3D_CY_View;
-            corner2y += pmouseY - WIN3D_CY_View;
+          if (dragging_started == 0) {
+            
+            X_click1 = pmouseX;
+            Y_click1 = pmouseY;
+    
+            dragging_started = 1;
           }
           
-          pushMatrix();
-        
-          translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
-          
-          noFill();
-          
-          stroke(127); 
-          strokeWeight(2);
-          
-          rect(corner1x, corner1y, corner2x - corner1x, corner2y - corner1y);
-          
-          popMatrix();
+    
 
-        }        
-        
-       
-        if (Create_Select_Modify == -3) { // viewport
-        
-          if (mouseButton == LEFT) { // orbit
-        
-            float dx = (mouseX - X_clicked) / float(WIN3D_X_View);
-            float dy = (mouseY - Y_clicked) / float(WIN3D_Y_View);
+         
+          if (Create_Select_Modify == -3) { // viewport
+          
+            if (mouseButton == LEFT) { // orbit
+          
+              float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
+              float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
+    
+              WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate; 
+              WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
+              
+              WIN3D_Update = 1;
+            }
+            
+            if (mouseButton == RIGHT) { // pan
+          
+              float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
+              float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
+    
+              WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate; 
+              WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate;
+              
+              WIN3D_Update = 1;
+            }          
   
-            WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate; 
-            WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
+          }  
+          
+          if (Create_Select_Modify == -4) { 
+  
+            float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
+            float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);          
             
-            WIN3D_Update = 1;
+            if (mouseButton == RIGHT) { // move X
+  
+              WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate; 
+              
+              WIN3D_Update = 1;    
+            }    
+            
+            if (mouseButton == LEFT) { // move Y
+  
+              WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate; 
+              
+              WIN3D_Update = 1;    
+            }    
+  
+  
           }
           
-          if (mouseButton == RIGHT) { // pan
-        
-            float dx = (mouseX - X_clicked) / float(WIN3D_X_View);
-            float dy = (mouseY - Y_clicked) / float(WIN3D_Y_View);
-  
-            WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate; 
-            WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate;
-            
-            WIN3D_Update = 1;
-          }          
-
-        }  
-        
-        if (Create_Select_Modify == -4) { 
-
-          float dx = (mouseX - X_clicked) / float(WIN3D_X_View);
-          float dy = (mouseY - Y_clicked) / float(WIN3D_Y_View);          
-          
-          if (mouseButton == RIGHT) { // move X
-
-            WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate; 
-            
-            WIN3D_Update = 1;    
-          }    
-          
-          if (mouseButton == LEFT) { // move Y
-
-            WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate; 
-            
-            WIN3D_Update = 1;    
-          }    
-
-
         }
-        
-      
       }
     }   
   }     
@@ -20012,8 +19999,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
   }    
 
   
-  X_clicked = 0;
-  Y_clicked = 0;
+  X_clicked = -1;
+  Y_clicked = -1;
 }
 
 
