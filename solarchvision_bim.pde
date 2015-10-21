@@ -12292,6 +12292,11 @@ void SOLARCHVISION_beginNewObject () {
 
 void SOLARCHVISION_deleteSelection () {
 
+  println("before:"); 
+  for (int i = 0; i < allPolymesh_Solids.length; i++) {
+    println(allPolymesh_Solids[i][0], allPolymesh_Solids[i][1]);
+  }      
+  
   if (Work_with_2D_or_3D == 3) {
 
     selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
@@ -12324,7 +12329,8 @@ void SOLARCHVISION_deleteSelection () {
           }
         }
         
-        if ((0 < startVertice) && (startVertice <= endVertice )) {
+        //if ((0 < startVertice) && (startVertice <= endVertice))
+        {
     
           float[][] startList = (float[][]) subset(allVertices, 0, startVertice);
           float[][] endList = (float[][]) subset(allVertices, endVertice + 1);
@@ -12346,11 +12352,14 @@ void SOLARCHVISION_deleteSelection () {
           
         {
         
-          for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
-            for (int j = 0; j < 2; j++) {
-              allPolymesh_Faces[i][j] -= 1 + endFace - startFace;
-            }
-          }    
+          if (startFace <= endFace) {
+          
+            for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
+              for (int j = 0; j < 2; j++) {
+                allPolymesh_Faces[i][j] -= 1 + endFace - startFace;
+              }
+            }  
+          }  
           
           int[][] startList = (int[][]) subset(allPolymesh_Faces, 0, OBJ_NUM);
           int[][] endList = (int[][]) subset(allPolymesh_Faces, OBJ_NUM + 1);
@@ -12379,11 +12388,14 @@ void SOLARCHVISION_deleteSelection () {
         
         {
           
-          for (int i = OBJ_NUM + 1; i < allPolymesh_Solids.length; i++) {
-            for (int j = 0; j < 2; j++) {
-              allPolymesh_Solids[i][j] -= 1 + endSolid - startSolid;
-            }
-          }    
+          if (startSolid <= endSolid) {
+            for (int i = OBJ_NUM + 1; i < allPolymesh_Solids.length; i++) {
+            
+              for (int j = 0; j < 2; j++) {
+                allPolymesh_Solids[i][j] -= 1 + endSolid - startSolid;
+              }
+            }    
+          }
           
           int[][] startList = (int[][]) subset(allPolymesh_Solids, 0, OBJ_NUM);
           int[][] endList = (int[][]) subset(allPolymesh_Solids, OBJ_NUM + 1);
@@ -12392,7 +12404,8 @@ void SOLARCHVISION_deleteSelection () {
         }  
     
         
-        if ((0 <= startSolid) && (startSolid <= endSolid)) {
+        //if ((0 <= startSolid) && (startSolid <= endSolid)) 
+        {
           
           ParametricGeometry[] startList = (ParametricGeometry[]) subset(SolidObjects, 0, startSolid);
           ParametricGeometry[] endList = (ParametricGeometry[]) subset(SolidObjects, endSolid + 1);
@@ -12439,6 +12452,13 @@ void SOLARCHVISION_deleteSelection () {
     }
     
   }
+  
+  println("after:"); 
+  for (int i = 0; i < allPolymesh_Solids.length; i++) {
+    println(allPolymesh_Solids[i][0], allPolymesh_Solids[i][1]);
+  }        
+  
+  println("__________________"); 
   
   SOLARCHVISION_deselectAll();
 }
@@ -13648,11 +13668,11 @@ void SOLARCHVISION_remove_3Dobjects () {
   
   allPolymesh_Faces = new int [1][2];
   allPolymesh_Faces[0][0] = 0;
-  allPolymesh_Faces[0][1] = 0;
+  allPolymesh_Faces[0][1] = -1;
 
   allPolymesh_Solids = new int [1][2];
   allPolymesh_Solids[0][0] = 0;
-  allPolymesh_Solids[0][1] = 0;
+  allPolymesh_Solids[0][1] = -1;
 
   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
  
