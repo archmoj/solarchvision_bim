@@ -11370,6 +11370,13 @@ void WIN3D_keyPressed (KeyEvent e) {
 
         
         case 33: 
+                 if (Work_with_2D_or_3D == 2) {
+                   selectedObject2D_numbers[selectedObject2D_numbers.length - 1] -= 1;
+                   if (selectedObject2D_numbers[selectedObject2D_numbers.length - 1] < 0) {
+                     selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = allObject2D_XYZS.length - 1;
+                   }
+                 }        
+        
                  if (Work_with_2D_or_3D == 3) {
                    selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] -= 1;
                    if (selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] < 0) {
@@ -11383,6 +11390,13 @@ void WIN3D_keyPressed (KeyEvent e) {
                  break;  
 
         case 34: 
+                 if (Work_with_2D_or_3D == 2) {
+                   selectedObject2D_numbers[selectedObject2D_numbers.length - 1] += 1;
+                   if (selectedObject2D_numbers[selectedObject2D_numbers.length - 1] > allObject2D_XYZS.length - 1) {
+                     selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = 0;
+                   }
+                 } 
+                 
                  if (Work_with_2D_or_3D == 3) {
                    selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] += 1;
                    if (selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] > allPolymesh_Faces.length - 1) {
@@ -16055,7 +16069,7 @@ void SOLARCHVISION_LoadLAND (String ProjectSite) {
   
       for (int i = 0; i < LAND_n_I; i += 1) {
     
-        XML FileALL = loadXML(LandFolder + "/" + ProjectSite + "/"  + ProjectSite + "/" + nf(i - LAND_n_I_base, 0) + ".xml");;
+        XML FileALL = loadXML(LandFolder + "/" + ProjectSite + "/"  + ProjectSite + "/" + nf(i - LAND_n_I_base, 0) + ".xml");
   
         XML[] children0 = FileALL.getChildren("result");
         
@@ -18662,7 +18676,6 @@ void mouseReleased () {
             float corner2x = X_click2 - 0.5 * WIN3D_X_View;
             float corner2y = Y_click2 - 0.5 * WIN3D_Y_View;
             
-            println("CORNERS:", corner1x, corner1y, corner2x, corner2y);
             
             pushMatrix();
           
@@ -18677,16 +18690,14 @@ void mouseReleased () {
             
             popMatrix();            
   
-  
+            SOLARCHVISION_deselectAll(); // <<<<<<<<< NOTE: to add to previous selection we should remark and check for duplicates
             
             if (Work_with_2D_or_3D == 3) {
               
-              SOLARCHVISION_deselectAll(); // <<<<<<<<< NOTE: to add to previous selection we should remark and check for duplicates
-              
               for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
                 
-                int Polymesh_added = 0;     
-                if (mouseButton == LEFT) Polymesh_added = 1;
+                int add_OBJ_to_Selection = 0;     
+                if (mouseButton == LEFT) add_OBJ_to_Selection = 1;
 
                 for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
                   if ((0 < f) && (f < allFaces.length)) { 
@@ -18703,31 +18714,29 @@ void mouseReleased () {
                       if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
                         if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
                           if (mouseButton == RIGHT) {
-                            Polymesh_added = 1;
+                            add_OBJ_to_Selection = 1;
                           }
                         }
                         else {
                           if (mouseButton == LEFT) {
-                            Polymesh_added = 0;
+                            add_OBJ_to_Selection = 0;
                           }                          
                         }
                       }
                       
                       if (mouseButton == RIGHT) {
-                        if (Polymesh_added == 1) break;
+                        if (add_OBJ_to_Selection == 1) break;
                       }
                       if (mouseButton == LEFT) {
-                        if (Polymesh_added == 0) break;
+                        if (add_OBJ_to_Selection == 0) break;
                       }                      
                     }
                     
-                    if (Polymesh_added == 1) {
+                    if (add_OBJ_to_Selection == 1) {
                       
-                      println("OBJECT_NUMBER:", OBJ_NUM);
+                      int[] new_OBJ_number = {OBJ_NUM};
                       
-                      int[] new_Polymesh_number = {OBJ_NUM};
-                      
-                      selectedPolymesh_numbers = concat(selectedPolymesh_numbers, new_Polymesh_number);
+                      selectedPolymesh_numbers = concat(selectedPolymesh_numbers, new_OBJ_number);
                       
                       break;
                     }
@@ -18735,18 +18744,61 @@ void mouseReleased () {
                 }
               }
   
-              println("OBJECTS SELECTED AFTER:", selectedPolymesh_numbers.length);
-  
               if (pre_selectedPolymesh_numbers_lastItem != selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1]) SOLARCHVISION_calculate_selectedPolymesh_Pivot();
       
               if (mouseButton == LEFT) SOLARCHVISION_reset_selectedPolymesh_Pivot();
             }
-  
+            
             if (Work_with_2D_or_3D == 2) {
-  
-              //selectedObject2D_numbers = int(RxP[4]);
               
-            }
+              for (int OBJ_NUM = 1; OBJ_NUM < allObject2D_Faces.length; OBJ_NUM++) {
+                
+                int f = OBJ_NUM;
+                
+                int add_OBJ_to_Selection = 0;     
+                if (mouseButton == LEFT) add_OBJ_to_Selection = 1;
+
+                for (int j = 0; j < allObject2D_Faces[f].length; j++) {
+                  
+                  int vNo = allObject2D_Faces[f][j];
+                  
+                  float x = allObject2D_Vertices[vNo][0] * objects_scale;
+                  float y = allObject2D_Vertices[vNo][1] * objects_scale;
+                  float z = -allObject2D_Vertices[vNo][2] * objects_scale;
+                  
+                  float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+
+                  if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+                    if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+                      if (mouseButton == RIGHT) {
+                        add_OBJ_to_Selection = 1;
+                      }
+                    }
+                    else {
+                      if (mouseButton == LEFT) {
+                        add_OBJ_to_Selection = 0;
+                      }                          
+                    }
+                  }
+                  
+                  if (mouseButton == RIGHT) {
+                    if (add_OBJ_to_Selection == 1) break;
+                  }
+                  if (mouseButton == LEFT) {
+                    if (add_OBJ_to_Selection == 0) break;
+                  }                      
+                }
+                
+                if (add_OBJ_to_Selection == 1) {
+                  
+                  int[] new_OBJ_number = {OBJ_NUM};
+                  
+                  selectedObject2D_numbers = concat(selectedObject2D_numbers, new_OBJ_number);
+
+                }
+              }
+            }    
+
 
             WIN3D_Update = 1;                        
           }
@@ -20853,7 +20905,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           
           if (OBJ_NUM != 0) {            
             
-            int f = OBJ_NUM;
+            int f = OBJ_NUM; 
     
             if ((0 < f) && (f < allObject2D_Faces.length)) { 
                 
@@ -20863,9 +20915,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
                 
                 int vNo = allObject2D_Faces[f][j];
                 
-                float x = allObject2D_Vertices[vNo][0] * objects_scale;;
-                float y = allObject2D_Vertices[vNo][1] * objects_scale;;
-                float z = -allObject2D_Vertices[vNo][2] * objects_scale;;
+                float x = allObject2D_Vertices[vNo][0] * objects_scale;
+                float y = allObject2D_Vertices[vNo][1] * objects_scale;
+                float z = -allObject2D_Vertices[vNo][2] * objects_scale;
                 
                 float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
                 
