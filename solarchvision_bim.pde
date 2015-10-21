@@ -19801,7 +19801,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
   
     Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 2, 3, 1), 1));
   
-    Create_Select_Modify = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Select_Modify" , Create_Select_Modify, -3, 3, 1), 1));
+    Create_Select_Modify = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Select_Modify" , Create_Select_Modify, -4, 3, 1), 1));
 
 
     if (ROLLOUT_child != 5) {
