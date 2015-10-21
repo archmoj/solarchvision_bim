@@ -18691,13 +18691,11 @@ void mouseReleased () {
                         if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
                           if (mouseButton == RIGHT) {
                             Polymesh_added = 1;
-                            break;
                           }
                         }
                         else {
                           if (mouseButton == LEFT) {
                             Polymesh_added = 0;
-                            break;
                           }                          
                         }
                       }
