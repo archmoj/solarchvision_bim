@@ -18753,16 +18753,22 @@ void mouseReleased () {
                       }                      
                     }
                     
-                    if (add_OBJ_to_Selection == 1) {
-                      
-                      int[] new_OBJ_number = {OBJ_NUM};
-                      
-                      selectedPolymesh_numbers = concat(selectedPolymesh_numbers, new_OBJ_number);
-                      
-                      break;
+                    if (mouseButton == RIGHT) {
+                      if (add_OBJ_to_Selection == 1) break;
                     }
+                    if (mouseButton == LEFT) {
+                      if (add_OBJ_to_Selection == 0) break;
+                    }                       
+                    
                   }
                 }
+                
+                if (add_OBJ_to_Selection == 1) {
+                  
+                  int[] new_OBJ_number = {OBJ_NUM};
+                  
+                  selectedPolymesh_numbers = concat(selectedPolymesh_numbers, new_OBJ_number);
+                }                
               }
   
               SOLARCHVISION_calculate_selectedPolymesh_Pivot();
