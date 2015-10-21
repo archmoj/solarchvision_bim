@@ -12282,6 +12282,8 @@ void SOLARCHVISION_deleteSelection () {
       
       int OBJ_NUM = selectedPolymesh_numbers[o];
       
+      println("OBJ_NUM[", o, "] =", OBJ_NUM); 
+      
       if (OBJ_NUM != 0) {
       
         int startFace = allPolymesh_Faces[OBJ_NUM][0];
@@ -12351,6 +12353,8 @@ void SOLARCHVISION_deleteSelection () {
           
           allFaces_MAT = (int[]) concat(startList, endList);
         }
+        /*
+        zzzzzzzzzzzzzzzzzzzzz
         
         int startSolid = allPolymesh_Solids[OBJ_NUM][0];
         int endSolid = allPolymesh_Solids[OBJ_NUM][1];
@@ -12380,7 +12384,7 @@ void SOLARCHVISION_deleteSelection () {
           Solids_updated = 1;
           
         }
-  
+        */
       }
     }
     
@@ -18666,10 +18670,10 @@ void mouseReleased () {
               
               SOLARCHVISION_deselectAll(); // <<<<<<<<< NOTE: to add to previous selection we should remark and check for duplicates
               
-              for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length - 1; OBJ_NUM++) {
+              for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
                 
                 int Polymesh_added = 0;     
-                if (mouseButton == RIGHT) Polymesh_added = 1;
+                if (mouseButton == LEFT) Polymesh_added = 1;
 
                 for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
                   if ((0 < f) && (f < allFaces.length)) { 
@@ -18685,23 +18689,28 @@ void mouseReleased () {
 
                       if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
                         if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
-                          if (mouseButton == LEFT) {
+                          if (mouseButton == RIGHT) {
                             Polymesh_added = 1;
                             break;
                           }
                         }
                         else {
-                          if (mouseButton == RIGHT) {
+                          if (mouseButton == LEFT) {
                             Polymesh_added = 0;
                             break;
                           }                          
                         }
                       }
                       
-                      if (Polymesh_added != 0) break;
+                      if (mouseButton == RIGHT) {
+                        if (Polymesh_added == 1) break;
+                      }
+                      if (mouseButton == LEFT) {
+                        if (Polymesh_added == 0) break;
+                      }                      
                     }
                     
-                    if (Polymesh_added != 0) {
+                    if (Polymesh_added == 1) {
                       
                       println("OBJECT_NUMBER:", OBJ_NUM);
                       
