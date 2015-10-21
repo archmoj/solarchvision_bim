@@ -104,7 +104,7 @@ int[][] allFaces = {{0,0,0}};
 int[] allFaces_MAT = {0};
 
 int selectedObject2D_displayEdges = 1;
-int selectedObject2D_num = 0;
+int[] selectedObject2D_numbers = {0};
 
 
 
@@ -1143,7 +1143,7 @@ int pre_display_Field_Lines;
 
 int pre_display_windFlow;
 
-int pre_selectedObject2D_num;
+int pre_selectedObject2D_numbers_lastItem;
 int pre_selectedObject2D_displayEdges;
 
 int pre_display_MODEL3D_EDGES;
@@ -1922,7 +1922,7 @@ void draw () {
         
         pre_display_windFlow = display_windFlow;
         
-        pre_selectedObject2D_num = selectedObject2D_num;
+        pre_selectedObject2D_numbers_lastItem = selectedObject2D_numbers[selectedObject2D_numbers.length - 1];
         pre_selectedObject2D_displayEdges = selectedObject2D_displayEdges;
         
         pre_display_MODEL3D_EDGES = display_MODEL3D_EDGES;
@@ -2030,7 +2030,7 @@ void draw () {
           WIN3D_Update = 1;
         }     
         
-        if (pre_selectedObject2D_num != selectedObject2D_num) {
+        if (pre_selectedObject2D_numbers_lastItem != selectedObject2D_numbers[selectedObject2D_numbers.length - 1]) {
           WIN3D_Update = 1;
         }
         
@@ -11369,22 +11369,28 @@ void WIN3D_keyPressed (KeyEvent e) {
       switch(keyCode) {
 
         
-        case 33: selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] -= 1;
-                 if (selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] < 0) {
-                   selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = allPolymesh_Faces.length - 1;
+        case 33: 
+                 if (Work_with_2D_or_3D == 3) {
+                   selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] -= 1;
+                   if (selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] < 0) {
+                     selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = allPolymesh_Faces.length - 1;
+                   }
+                   SOLARCHVISION_calculate_selectedPolymesh_Pivot();
+                   SOLARCHVISION_reset_selectedPolymesh_Pivot();  
                  }
-                 SOLARCHVISION_calculate_selectedPolymesh_Pivot();
-                 SOLARCHVISION_reset_selectedPolymesh_Pivot();  
                  WIN3D_Update = 1;
                  ROLLOUT_Update = 1; 
                  break;  
 
-        case 34: selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] += 1;
-                 if (selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] > allPolymesh_Faces.length - 1) {
-                   selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = 0;
-                 }
-                 SOLARCHVISION_calculate_selectedPolymesh_Pivot();
-                 SOLARCHVISION_reset_selectedPolymesh_Pivot();  
+        case 34: 
+                 if (Work_with_2D_or_3D == 3) {
+                   selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] += 1;
+                   if (selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] > allPolymesh_Faces.length - 1) {
+                     selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = 0;
+                   }
+                   SOLARCHVISION_calculate_selectedPolymesh_Pivot();
+                   SOLARCHVISION_reset_selectedPolymesh_Pivot();
+                 }  
                  WIN3D_Update = 1;
                  ROLLOUT_Update = 1; 
                  break;          
@@ -12282,8 +12288,6 @@ void SOLARCHVISION_deleteSelection () {
       
       int OBJ_NUM = selectedPolymesh_numbers[o];
       
-      println("OBJ_NUM[", o, "] =", OBJ_NUM); 
-      
       if (OBJ_NUM != 0) {
       
         int startFace = allPolymesh_Faces[OBJ_NUM][0];
@@ -12394,23 +12398,29 @@ void SOLARCHVISION_deleteSelection () {
   
   
   if (Work_with_2D_or_3D == 2) {
-    if (selectedObject2D_num > 0) {
-
-      {
-        float[][] startList = (float[][]) subset(allObject2D_XYZS, 0, selectedObject2D_num);
-        float[][] endList = (float[][]) subset(allObject2D_XYZS, selectedObject2D_num + 1);
-        
-        allObject2D_XYZS = (float[][]) concat(startList, endList);
-      }
-  
-      {
-        int[] startList = (int[]) subset(allObject2D_MAP, 0, selectedObject2D_num);
-        int[] endList = (int[]) subset(allObject2D_MAP, selectedObject2D_num + 1);
-        
-        allObject2D_MAP = (int[]) concat(startList, endList);
-      }   
+    
+    for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
       
-      allObject2D_num -= 1;
+      int OBJ_NUM = selectedObject2D_numbers[o];
+      
+      if (OBJ_NUM != 0) {    
+
+        {
+          float[][] startList = (float[][]) subset(allObject2D_XYZS, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allObject2D_XYZS, OBJ_NUM + 1);
+          
+          allObject2D_XYZS = (float[][]) concat(startList, endList);
+        }
+    
+        {
+          int[] startList = (int[]) subset(allObject2D_MAP, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(allObject2D_MAP, OBJ_NUM + 1);
+          
+          allObject2D_MAP = (int[]) concat(startList, endList);
+        }   
+        
+        allObject2D_num -= 1;
+      }
 
     }
     
@@ -12421,7 +12431,7 @@ void SOLARCHVISION_deleteSelection () {
 
 void SOLARCHVISION_deselectAll () {
 
-  // below condition remarks are necessary!
+  // remarking below condition are necessary!
   
   //if (Work_with_2D_or_3D == 3)
   {
@@ -12433,7 +12443,8 @@ void SOLARCHVISION_deselectAll () {
   
   //if (Work_with_2D_or_3D == 2)
   {
-    selectedObject2D_num = 0;
+    selectedObject2D_numbers = new int [1];
+    selectedObject2D_numbers[0] = 0;
   }
 }
             
@@ -18490,10 +18501,12 @@ void mouseWheel(MouseEvent event) {
         }
         
         if (Work_with_2D_or_3D == 2) {
- 
-          x0 = allObject2D_XYZS[selectedObject2D_num][0];
-          y0 = allObject2D_XYZS[selectedObject2D_num][1]; 
-          z0 = allObject2D_XYZS[selectedObject2D_num][2];
+          
+          // it is not perfect. only picks the pivot of the last object added to the list
+
+          x0 = allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][0];
+          y0 = allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][1]; 
+          z0 = allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][2];
         }          
         
         if (Create_Select_Modify == 3) { // rotate
@@ -18570,15 +18583,15 @@ void mouseWheel(MouseEvent event) {
 
             if (allObject2D_num > 0) {
               
-              selectedObject2D_num += int(Wheel_Value);
+              selectedObject2D_numbers[selectedObject2D_numbers.length - 1] += int(Wheel_Value);
               
 
-              if (selectedObject2D_num < 0) {
-                selectedObject2D_num = allObject2D_num - 1;
+              if (selectedObject2D_numbers[selectedObject2D_numbers.length - 1] < 0) {
+                selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = allObject2D_num - 1;
               }
   
-              if (selectedObject2D_num > allObject2D_num - 1) {
-                selectedObject2D_num = 0;
+              if (selectedObject2D_numbers[selectedObject2D_numbers.length - 1] > allObject2D_num - 1) {
+                selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = 0;
               }
             }
             
@@ -18731,7 +18744,7 @@ void mouseReleased () {
   
             if (Work_with_2D_or_3D == 2) {
   
-              //selectedObject2D_num = int(RxP[4]);
+              //selectedObject2D_numbers = int(RxP[4]);
               
             }
 
@@ -19020,9 +19033,9 @@ void mouseClicked () {
 
             if (Work_with_2D_or_3D == 2) {
 
-              float dx = x0 - allObject2D_XYZS[selectedObject2D_num][0]; 
-              float dy = y0 - allObject2D_XYZS[selectedObject2D_num][1]; 
-              float dz = z0 - allObject2D_XYZS[selectedObject2D_num][2];              
+              float dx = x0 - allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][0]; 
+              float dy = y0 - allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][1]; 
+              float dz = z0 - allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][2];              
 
               SOLARCHVISION_move_Selection(dx, dy, dz);
             }
@@ -19051,7 +19064,7 @@ void mouseClicked () {
 
             if (Work_with_2D_or_3D == 2) {
 
-              selectedObject2D_num = int(RxP[4]);
+              selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = int(RxP[4]);
               
               WIN3D_Update = 1;
             }
@@ -19313,7 +19326,7 @@ void mouseClicked () {
             
             if (pre_number_of_2DObjects != allObject2D_XYZS.length) { // if any 2D-mesh created during the process
               
-              selectedObject2D_num = allObject2D_XYZS.length - 1;
+              selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = allObject2D_XYZS.length - 1;
             }            
           
           }
@@ -20834,32 +20847,40 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       strokeWeight(2);
     
       {
-        int f = selectedObject2D_num;
-
-        if ((0 < f) && (f < allObject2D_Faces.length)) { 
-            
-          beginShape();
+        for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
           
-          for (int j = 0; j < allObject2D_Faces[f].length; j++) {
+          int OBJ_NUM = selectedObject2D_numbers[o];
+          
+          if (OBJ_NUM != 0) {            
             
-            int vNo = allObject2D_Faces[f][j];
-            
-            float x = allObject2D_Vertices[vNo][0] * objects_scale;;
-            float y = allObject2D_Vertices[vNo][1] * objects_scale;;
-            float z = -allObject2D_Vertices[vNo][2] * objects_scale;;
-            
-            float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
-            
-            if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+            int f = OBJ_NUM;
+    
+            if ((0 < f) && (f < allObject2D_Faces.length)) { 
+                
+              beginShape();
+              
+              for (int j = 0; j < allObject2D_Faces[f].length; j++) {
+                
+                int vNo = allObject2D_Faces[f][j];
+                
+                float x = allObject2D_Vertices[vNo][0] * objects_scale;;
+                float y = allObject2D_Vertices[vNo][1] * objects_scale;;
+                float z = -allObject2D_Vertices[vNo][2] * objects_scale;;
+                
+                float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+                
+                if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+                  if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+                }
+                
+              }
+              
+              endShape(CLOSE);
             }
-            
           }
-          
-          endShape(CLOSE);
         }
       }
-      
+          
       strokeWeight(0);   
     
       popMatrix();
@@ -22799,7 +22820,6 @@ void SOLARCHVISION_scale_selectedPolymesh (float x0, float y0, float z0, float s
 
 
 
-
 void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, float sy, float sz) {
 
   if (Work_with_2D_or_3D == 3) {
@@ -22809,15 +22829,23 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
 
   if (Work_with_2D_or_3D == 2) {
 
-    float x = allObject2D_XYZS[selectedObject2D_num][0] - x0; 
-    float y = allObject2D_XYZS[selectedObject2D_num][1] - y0; 
-    float z = allObject2D_XYZS[selectedObject2D_num][2] - z0;
-   
-    allObject2D_XYZS[selectedObject2D_num][0] = x0 + sx * x; 
-    allObject2D_XYZS[selectedObject2D_num][1] = y0 + sy * y;
-    allObject2D_XYZS[selectedObject2D_num][2] = z0 + sz * z;
-
-    allObject2D_XYZS[selectedObject2D_num][3] *= sz; // <<<<<<<<<<<<<<
+    for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
+      
+      int OBJ_NUM = selectedObject2D_numbers[o];
+      
+      if (OBJ_NUM != 0) {      
+    
+        float x = allObject2D_XYZS[OBJ_NUM][0] - x0; 
+        float y = allObject2D_XYZS[OBJ_NUM][1] - y0; 
+        float z = allObject2D_XYZS[OBJ_NUM][2] - z0;
+       
+        allObject2D_XYZS[OBJ_NUM][0] = x0 + sx * x; 
+        allObject2D_XYZS[OBJ_NUM][1] = y0 + sy * y;
+        allObject2D_XYZS[OBJ_NUM][2] = z0 + sz * z;
+    
+        allObject2D_XYZS[OBJ_NUM][3] *= sz; // <<<<<<<<<<<<<<
+      }
+    }
   }
 }
 
@@ -22842,9 +22870,17 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
 
   if (Work_with_2D_or_3D == 2) {
 
-    allObject2D_XYZS[selectedObject2D_num][0] += dx; 
-    allObject2D_XYZS[selectedObject2D_num][1] += dy; 
-    allObject2D_XYZS[selectedObject2D_num][2] += dz;
+    for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
+      
+      int OBJ_NUM = selectedObject2D_numbers[o];
+      
+      if (OBJ_NUM != 0) {      
+        
+        allObject2D_XYZS[OBJ_NUM][0] += dx; 
+        allObject2D_XYZS[OBJ_NUM][1] += dy; 
+        allObject2D_XYZS[OBJ_NUM][2] += dz;
+      }
+    }
   }  
   
 }
