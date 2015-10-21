@@ -176,7 +176,7 @@ float Create_Recursive_Plant_leafSize = 1; //1;
 
 int Work_with_2D_or_3D = 3; // 2:2D, 3:3D
 
-int Create_Select_Modify = -2; // -3:Pan/Height -2:Zoom/Orbit/Pan -1:Select 0:Create 1:Move 2:Scale 3:Rotate 
+int Create_Select_Modify = -2; // -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 
 
 int Display_SWOB_points = 1; // 0-2
 int Display_SWOB_nearest = 1;
@@ -11433,7 +11433,7 @@ void WIN3D_keyPressed (KeyEvent e) {
       switch(keyCode) {
 
         case 155: // INSERT 
-                  Create_Select_Modify = -1;
+                  Create_Select_Modify = 0;
                   
                   selectedPolymesh_num = 0;
                   SOLARCHVISION_calculate_selectedPolymesh_Pivot();
@@ -18508,7 +18508,7 @@ void mouseWheel(MouseEvent event) {
           
         }   
         
-        if (Create_Select_Modify == -1) { // select
+        if (Create_Select_Modify == -1) { // PickSelect
           if (Work_with_2D_or_3D == 3) {
 
             selectedPolymesh_num += int(Wheel_Value);
@@ -18545,8 +18545,8 @@ void mouseWheel(MouseEvent event) {
             WIN3D_Update = 1;
           }
         }
-    
-        if (Create_Select_Modify == -2) { // viewport:zoom
+        
+        if (Create_Select_Modify == -3) { // viewport:zoom
 
           if (WIN3D_View_Type == 1) {
             WIN3D_Z_coordinate += Wheel_Value; 
@@ -18559,7 +18559,7 @@ void mouseWheel(MouseEvent event) {
 
         }
         
-        if (Create_Select_Modify == -3) { // viewport:elevation
+        if (Create_Select_Modify == -4) { // viewport:elevation
           
           if (Wheel_Value > 0) WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); 
           if (Wheel_Value < 0) WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate));
@@ -18581,8 +18581,76 @@ void mouseDragged () {
     
     if (WIN3D_include == 1) {
       if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
+/*
+        if (Create_Select_Modify == -1) { // PickSelect
+          
+          if (Work_with_2D_or_3D == 3) {
 
-        if (Create_Select_Modify == -2) { // viewport
+            for (int f = allPolymesh_Faces[selectedPolymesh_num][0]; f <= allPolymesh_Faces[selectedPolymesh_num][1]; f++) {
+              if ((0 < f) && (f < allFaces.length)) { 
+          
+                int Teselation = 0;
+                
+                int TotalSubNo = 1;  
+                if (allFaces_MAT[f] == 0) {
+                  Teselation = MODEL3D_TESELATION;
+                  if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+                }
+            
+                for (int n = 0; n < TotalSubNo; n++) {
+                  
+                  float[][] base_Vertices = new float [allFaces[f].length][3];
+                  for (int j = 0; j < allFaces[f].length; j++) {
+                    int vNo = allFaces[f][j];
+                    base_Vertices[j][0] = allVertices[vNo][0];
+                    base_Vertices[j][1] = allVertices[vNo][1];
+                    base_Vertices[j][2] = allVertices[vNo][2];
+                  }
+                  
+                  float[][] subFace = getSubFace(base_Vertices, Teselation, n);
+
+                  for (int s = 0; s < subFace.length; s++) {
+        
+                    float x = subFace[s][0] * objects_scale;
+                    float y = subFace[s][1] * objects_scale;            
+                    float z = -subFace[s][2] * objects_scale;
+                    
+                    float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+                    
+                    if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+                      if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) {
+                        
+                        selectedPolymesh_num = concat(selectedPolymesh_num, new ...
+                        WIN3D_Update = 1;
+                        somehow break;
+                      }
+                    }
+                    
+                  }
+                }
+              }
+            }
+
+            
+
+            
+            if (pre_selectedPolymesh_num != selectedPolymesh_num) SOLARCHVISION_calculate_selectedPolymesh_Pivot();
+    
+            if (mouseButton == LEFT) SOLARCHVISION_reset_selectedPolymesh_Pivot();
+          }
+
+          if (Work_with_2D_or_3D == 2) {
+
+            selectedObject2D_num = int(RxP[4]);
+            
+            WIN3D_Update = 1;
+          }
+                      
+        }        
+        
+        
+*/        
+        if (Create_Select_Modify == -3) { // viewport
         
           if (mouseButton == LEFT) { // orbit
         
@@ -18608,7 +18676,7 @@ void mouseDragged () {
 
         }  
         
-        if (Create_Select_Modify == -3) { 
+        if (Create_Select_Modify == -4) { 
 
           float dx = (mouseX - X_clicked) / float(WIN3D_X_View);
           float dy = (mouseY - Y_clicked) / float(WIN3D_Y_View);          
@@ -18845,7 +18913,7 @@ void mouseClicked () {
             
           }   
           
-          if (Create_Select_Modify == -1) { // select
+          if (Create_Select_Modify == -1) { // PickSelect
             
             if (Work_with_2D_or_3D == 3) {
 
