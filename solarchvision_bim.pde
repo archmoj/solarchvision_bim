@@ -11775,6 +11775,11 @@ void keyPressed (KeyEvent e) {
   }
 }
 
+void keyReleased() {   
+    
+  addNewSelectionToPreviousSelection = 0;
+}
+
 
 float EquationOfTime (float DateAngle) {
   float b = DateAngle;
@@ -19023,7 +19028,11 @@ void mouseReleased () {
                   
                   if (use_it == 1) {
                     if (addNewSelectionToPreviousSelection == -1) {
+                      println("HELLO!");
+                      
                       if (found_at != -1) {
+                        
+                        
                         int[] startList = (int[]) subset(selectedPolymesh_numbers, 0, found_at);
                         int[] endList = (int[]) subset(selectedPolymesh_numbers, found_at + 1);
                         
@@ -19052,9 +19061,6 @@ void mouseReleased () {
           }
         }
       }
-      
-          
-      addNewSelectionToPreviousSelection = 0;
       
       dragging_started = 0;
     }
