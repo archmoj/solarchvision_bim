@@ -2348,62 +2348,13 @@ void SOLARCHVISION_draw_WIN3D () {
   
   WIN3D_Diagrams.background(233);
 
-  CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
-  
-  CAM_x = 0;
-  CAM_y = 0;
-  CAM_z = (0.5 * refScale) / tan(0.5 * CAM_fov);
-  
-  if (WIN3D_View_Type == 1) {
-
-    float aspect = 1.0 / WIN3D_R_View;
-    
-    float zFar = CAM_z * 1000;
-    float zNear = CAM_z * 0.001;
-    
-    WIN3D_Diagrams.perspective(CAM_fov, aspect, zNear, zFar);
-
-    WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
-  }
-  else {
-
-    float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
-    
-    WIN3D_Diagrams.ortho(ZOOM * WIN3D_X_View * -1, ZOOM * WIN3D_X_View * 1, ZOOM  * WIN3D_Y_View * -1, ZOOM  * WIN3D_Y_View * 1, 0.00001, 100000);
-    
-    WIN3D_Diagrams.translate(0, 1.0 * WIN3D_Y_View, 0); // << IMPORTANT! 
-  }
-
-  //lights();
-
-/*  
-  WIN3D_Diagrams.pushMatrix();
-  
-  WIN3D_Diagrams.translate(0, 0, 0);
-  
-  WIN3D_Diagrams.fill(0);
-  WIN3D_Diagrams.textAlign(CENTER, CENTER); 
-  WIN3D_Diagrams.textSize(5 * (WIN3D_ZOOM_coordinate / 30.0));
-  WIN3D_Diagrams.text(LocationName + " [" + nfp(LocationLatitude, 0, 1) + ", " + nfp(LocationLongitude, 0, 1) + "]", 0, 60 * (WIN3D_ZOOM_coordinate / 30.0), 0);
- 
-  WIN3D_Diagrams.popMatrix();
-*/
-
-  WIN3D_Diagrams.translate(WIN3D_X_coordinate * WIN3D_scale3D, WIN3D_Y_coordinate * WIN3D_scale3D, WIN3D_Z_coordinate * WIN3D_scale3D);
-  
-  WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI / 180); 
-  WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI / 180); 
-  
-  //println(nfp(WIN3D_RX_coordinate, 0, 1), nfp(WIN3D_RY_coordinate, 0, 1), nfp(WIN3D_RZ_coordinate, 0, 1)); 
-
-  
-    
-
   WIN3D_Diagrams.fill(127);
   WIN3D_Diagrams.strokeWeight(0);
   
 
   WIN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
+  
+  SOLARCHVISION_transform_Camera();
 
   SOLARCHVISION_draw_SUN3D(0, 0, 0, 0.9 * SKY3D_scale, LocationLatitude);
   
@@ -15453,32 +15404,49 @@ void SOLARCHVISION_draw_3Dobjects () {
 }
 
 
+void SOLARCHVISION_transform_Camera () {
+  
+  CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
+  
+  CAM_x = 0;
+  CAM_y = 0;
+  CAM_z = (0.5 * refScale) / tan(0.5 * CAM_fov);
+  
+  if (WIN3D_View_Type == 1) {
 
-
-float[][] allObject2D_Vertices;
-int[][] allObject2D_Faces;
-
-void SOLARCHVISION_draw_2Dobjects () {
-
-  allObject2D_Faces = new int [1 + allObject2D_num][4];
+    float aspect = 1.0 / WIN3D_R_View;
     
-  allObject2D_Vertices = new float [4 * allObject2D_num + 1][3];
-  allObject2D_Vertices[0][0] = 0;
-  allObject2D_Vertices[0][1] = 0;
-  allObject2D_Vertices[0][2] = 0;
- 
-  // ???????????????????????????????????????????????
+    float zFar = CAM_z * 1000;
+    float zNear = CAM_z * 0.001;
+    
+    WIN3D_Diagrams.perspective(CAM_fov, aspect, zNear, zFar);
+
+    WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
+  }
+  else {
+
+    float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
+    
+    WIN3D_Diagrams.ortho(ZOOM * WIN3D_X_View * -1, ZOOM * WIN3D_X_View * 1, ZOOM  * WIN3D_Y_View * -1, ZOOM  * WIN3D_Y_View * 1, 0.00001, 100000);
+    
+    WIN3D_Diagrams.translate(0, 1.0 * WIN3D_Y_View, 0); // << IMPORTANT! 
+  }
+
+  WIN3D_Diagrams.translate(WIN3D_X_coordinate * WIN3D_scale3D, WIN3D_Y_coordinate * WIN3D_scale3D, WIN3D_Z_coordinate * WIN3D_scale3D);
+  
+  WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI / 180); 
+  WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI / 180); 
+
+
+  
+  
   CAM_x *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
   CAM_y *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
   CAM_z *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
-  // ??????????????????????????????????????????????? 
-
     
   CAM_x -= WIN3D_X_coordinate;
   CAM_y += WIN3D_Y_coordinate;
   CAM_z -= WIN3D_Z_coordinate;
-
-
   
   float px, py, pz;
   
@@ -15497,10 +15465,26 @@ void SOLARCHVISION_draw_2Dobjects () {
   CAM_x = px;
   CAM_y = py;
   CAM_z = pz;   
+}
   
 
   
   //println("Camera:", nf(CAM_x,0,4), nf(CAM_y,0,4), nf(CAM_z,0,4));
+
+float[][] allObject2D_Vertices;
+int[][] allObject2D_Faces;
+
+void SOLARCHVISION_draw_2Dobjects () {
+
+  allObject2D_Faces = new int [1 + allObject2D_num][4];
+    
+  allObject2D_Vertices = new float [4 * allObject2D_num + 1][3];
+  allObject2D_Vertices[0][0] = 0;
+  allObject2D_Vertices[0][1] = 0;
+  allObject2D_Vertices[0][2] = 0;
+ 
+
+
 
   if (Display_Trees_People != 0) {
     
@@ -21135,7 +21119,7 @@ float[] SOLARCHVISION_calculate_Perspective_Internally (float x, float y, float 
 
 
 void SOLARCHVISION_draw_Perspective_Internally () {
-/*
+
    if (Work_with_2D_or_3D == 1) {
 
     if (selectedFractal_displayEdges != 0) {
@@ -21190,7 +21174,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     }  
     
   }
-*/  
+  
   if (Work_with_2D_or_3D == 2) {
 
     if (selectedObject2D_displayEdges != 0) {
@@ -22594,6 +22578,13 @@ int[][] allFractal_Faces;
 
 
 void SOLARCHVISION_draw_FractalPlants () {
+
+  allFractal_Faces = new int [1 + allFractal_num][4];
+    
+  allFractal_Vertices = new float [4 * allFractal_num + 1][3];
+  allFractal_Vertices[0][0] = 0;
+  allFractal_Vertices[0][1] = 0;
+  allFractal_Vertices[0][2] = 0;
   
   if (Display_Trees_People != 0) {
 
