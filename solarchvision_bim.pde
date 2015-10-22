@@ -97,6 +97,9 @@ int selectedPolymesh_displayEdges = 1;
 int selectedPolymesh_displayBox = 1;
 
 
+int addToSelection = 0;
+int subFromSelection = 0;
+
 int[] selectedFractal_numbers = {0};
 int[] selectedObject2D_numbers = {0};
 int[] selectedPolymesh_numbers = {0};
@@ -169,7 +172,7 @@ int Create_Mesh_House = 0;
 int Create_Mesh_Parametric = 0;
 int Create_Mesh_Person = 0;
 int Create_Mesh_Plant = 0;
-int Create_Fractal_Plant = 1;
+int Create_Fractal_Plant = 0;
 
 int Create_Mesh_Person_Type = 0;
 int Create_Mesh_Plant_Type = 0;
@@ -180,9 +183,9 @@ int Create_Fractal_Plant_Seed = -1; // -1:random, 0-99 choice
 float Create_Fractal_Plant_trunckSize = 1; //0.5;
 float Create_Fractal_Plant_leafSize = 1; //1; 
 
-int Work_with_2D_or_3D = 1; // 1:Fractals 2:2D, 3:3D
+int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D
 
-int Create_Select_Modify = 0; // -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 
+int Create_Select_Modify = -2; // -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 
 
 int Display_SWOB_points = 1; // 0-2
 int Display_SWOB_nearest = 1;
@@ -10195,374 +10198,370 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 void GRAPHS_keyPressed (KeyEvent e) {
     
-  if (automated == 0) {
-    X_clicked = -1;
-    Y_clicked = -1;
 
-    if (e.isAltDown() == true) {
-      if (key == CODED) { 
-        switch(keyCode) {
 
-        }
-      }
-      else {
-        switch(key) {
-          case '0' : camera_variation = 0; GRAPHS_Update = 1; GRAPHS_record_PDF = 1;break;
-          case '1' : camera_variation = 1; GRAPHS_Update = 1; GRAPHS_record_PDF = 1;break;
-          case '2' : camera_variation = 2; GRAPHS_Update = 1; GRAPHS_record_PDF = 1;break;
-          case '3' : camera_variation = 3; GRAPHS_Update = 1; GRAPHS_record_PDF = 1;break;
-          case '4' : camera_variation = 4; GRAPHS_Update = 1; GRAPHS_record_PDF = 1;break;
-          case '5' : camera_variation = 5; GRAPHS_Update = 1; GRAPHS_record_PDF = 1;break;
-          case '6' : camera_variation = 6; GRAPHS_Update = 1; GRAPHS_record_PDF = 1;break;
-          //case '7' : camera_variation = 7; GRAPHS_Update = 1; GRAPHS_record_PDF = 1;break;
-          //case '8' : camera_variation = 8; GRAPHS_Update = 1; GRAPHS_record_PDF = 1;break;
-          //case '9' : camera_variation = 9; GRAPHS_Update = 1; GRAPHS_record_PDF = 1;break;
-          
-   
-        }
-      }    
-    }
-    else if (e.isControlDown() == true) {
-      if (key == CODED) { 
-        switch(keyCode) {
+  if (e.isAltDown() == true) {
+    if (key == CODED) { 
+      switch(keyCode) {
 
-        }
-      }
-      else {
-        switch(key) {
-
-          case 's' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; 
-                    //SOLARCHVISION_update_station(0); 
-                    WORLD_Update = 1;
-                    WIN3D_Update = 1; 
-                    GRAPHS_Update = 1;
-                    ROLLOUT_Update = 1;
-
-                    last_initializationStep = 8; 
-                    frameCount = last_initializationStep; 
-                    textAlign(CENTER, CENTER); 
-                    textSize(MESSAGE_S_View);                    
-                    loop(); 
-                    break;
-          case 'S' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; 
-                    //SOLARCHVISION_update_station(0); 
-                    WORLD_Update = 1;
-                    WIN3D_Update = 1; 
-                    GRAPHS_Update = 1;
-                    ROLLOUT_Update = 1;
-                    
-                    last_initializationStep = 8; 
-                    frameCount = last_initializationStep; 
-                    textAlign(CENTER, CENTER); 
-                    textSize(MESSAGE_S_View);                    
-                    loop(); 
-                    break;              
-          
-          case 'r' : GRAPHS_record_AUTO = (GRAPHS_record_AUTO + 1) % 2; GRAPHS_Update = 0; ROLLOUT_Update = 1; break;
-          case 'R' : GRAPHS_record_AUTO = (GRAPHS_record_AUTO + 1) % 2; GRAPHS_Update = 0; ROLLOUT_Update = 1; break;
-  
-          
-          case '^' : draw_data_lines = 1; Export_GRAPHS_info_node = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case '&' : draw_normals = 1; Export_GRAPHS_info_norm = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case '%' : draw_probs = 1; Export_GRAPHS_info_prob = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;                 
-          
-        }
-      }    
-    }
-    else if (e.isShiftDown() == true) {
-      if (key == CODED) { 
-        switch(keyCode) {
-
-        }
       }
     }
-
-    
-    if ((e.isAltDown() != true) && (e.isControlDown() != true) && (e.isShiftDown() != true)) {
-    
-      if (key == CODED) { 
-        switch(keyCode) {
-          /*
-          case 112 : develop_option = 1; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 113 : develop_option = 2; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 114 : develop_option = 3; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 115 : develop_option = 4; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 116 : develop_option = 5; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 117 : develop_option = 6; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 118 : develop_option = 7; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 119 : develop_option = 8; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 120 : develop_option = 9; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 121 : develop_option = 10; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 122 : develop_option = 11; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 123 : develop_option = 12; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          */
-
-          case 112 : impacts_source = databaseNumber_ENSEMBLE; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 113 : impacts_source = databaseNumber_OBSERVED; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 114 : impacts_source = databaseNumber_CLIMATE_WY2; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 115 : impacts_source = databaseNumber_CLIMATE_EPW; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;          
-
-          /*
-          case 115 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 6)) || (plot_impacts == 7)) plot_impacts = 6;
-                     else plot_impacts = 7; 
-                     GRAPHS_Update = 1; ROLLOUT_Update = 1; break;        
-          */
-          case 116 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 4)) || (plot_impacts == 5)) plot_impacts = 4;
-                     else plot_impacts = 5; 
-                     GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 117 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 2)) || (plot_impacts == 3)) plot_impacts = 2;
-                     else plot_impacts = 3; 
-                     GRAPHS_Update = 1; ROLLOUT_Update = 1; break;                   
-          case 118 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 0)) || (plot_impacts == 1)) plot_impacts = 0;
-                     else plot_impacts = 1; 
-                     GRAPHS_Update = 1; ROLLOUT_Update = 1; break;           
-          case 119 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != -2)) || (plot_impacts == -1)) plot_impacts = -2;
-                     else plot_impacts = -1; 
-                     GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-                     
-          
-          case 35  :_DATE += 1;
-                    if (int(_DATE) == 365) _DATE -= 365;
-                    if (int(_DATE) == 286) _YEAR += 1;
-                    SOLARCHVISION_update_date(); 
-                    SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
-                    update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-                    
-          case 36  :_DATE -= 1;
-                    if (int(_DATE) < 0) _DATE += 365;
-                    if (int(_DATE) == 285) _YEAR -= 1;
-                    SOLARCHVISION_update_date(); 
-                    SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
-                    update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-       
-          case 33:_DATE += 1; 
-                    if (_DATE >= 365) _DATE -= 365;
-                    if ((_DATE == 286) || (_DATE == 286.5)) _YEAR += 1;
-                    SOLARCHVISION_update_date(); 
-                    BEGIN_DAY = int(BEGIN_DAY + 1) % 365; 
-                    SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
-                    update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
-                    
-          case 34 :_DATE -= 1; 
-                    if (_DATE < 0) _DATE += 365;
-                    if ((_DATE == 285) || (_DATE == 285.5)) _YEAR -= 1;
-                    SOLARCHVISION_update_date(); 
-                    BEGIN_DAY = int(365 + BEGIN_DAY - 1) % 365;
-                    SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
-                    update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
-                   
-          case LEFT  :BEGIN_DAY = (365 + BEGIN_DAY - 1) % 365; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case RIGHT :BEGIN_DAY = (BEGIN_DAY + 1) % 365; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-                
-          case UP   :GRAPHS_drw_Layer = (GRAPHS_drw_Layer + 1) % num_layers; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case DOWN :GRAPHS_drw_Layer = (GRAPHS_drw_Layer + num_layers - 1) % num_layers; GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
-        }
-      }
-    }
-    
-    if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
-
-      if (key != CODED) { 
-        switch(key) {
-    
-          case '|' :if (_DATE == 1.0 * int(_DATE)) _DATE += 0.5;
-                    else _DATE -= 0.5;
-                    SOLARCHVISION_update_date(); 
-                    SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-                   
-          case ';': draw_impact_summary = (draw_impact_summary + 1) % 2;
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-  
-          case TAB :if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
-                      if (per_day == 1) { 
-                        per_day = int(365 / float(GRAPHS_j_end - GRAPHS_j_start));
-                      }
-                      else {
-                        per_day = 1;
-                      }
-                    } 
-                    if (impacts_source == databaseNumber_ENSEMBLE) {
-                      per_day = 1;
-                    }           
-                    if (impacts_source == databaseNumber_OBSERVED) {
-                      if (per_day == 1) { 
-                        per_day = int(GRAPHS_max_j_end_observations / float(GRAPHS_j_end - GRAPHS_j_start));
-                      }
-                      else {
-                        per_day = 1;
-                      }
-                    }                     
-                    update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-                  
-          case ']' :GRAPHS_j_end += 1; 
-                    if (GRAPHS_j_end > GRAPHS_j_start + 61) GRAPHS_j_end -= 1;
-                    GRAPHS_U_scale = 18.0 / float(GRAPHS_j_end - GRAPHS_j_start);
-                    /*
-                    if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
-                      per_day = int(365 / float(GRAPHS_j_end - GRAPHS_j_start));
-                    } 
-                    if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
-                      per_day = 1;
-                    }
-                    */
-                    update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
-          case '[' :GRAPHS_j_end -= 1; 
-                    if (GRAPHS_j_end <= GRAPHS_j_start) GRAPHS_j_end += 1;
-                    GRAPHS_U_scale = 18.0 / float(GRAPHS_j_end - GRAPHS_j_start);
-                    /*
-                    if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
-                      per_day = int(365 / float(GRAPHS_j_end - GRAPHS_j_start));
-                    } 
-                    if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
-                      per_day = 1;
-                    }                  
-                    */
-                    update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-  
-          case '}' :join_hour_numbers += 1;
-                    if (join_hour_numbers > 240) join_hour_numbers = 240;
-                    update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
-          case '{' :join_hour_numbers -= 1;
-                    if (join_hour_numbers < 1) join_hour_numbers = 1;
-                    update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
-          /*      
-          case '*' :join_type *= -1;
-                    update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
-          */
-  
-      
-          case 'a'  :Angle_inclination -= 5;
-                    if (Angle_inclination < -90) Angle_inclination = -90;
-                    update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
-          case 'A'  :Angle_inclination += 5;
-                    if (Angle_inclination > 90) Angle_inclination = 90;
-                    update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 'z' :Angle_orientation = (Angle_orientation - 5 + 360) % 360;
-                    update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
-          case 'Z' :Angle_orientation = (Angle_orientation + 5) % 360;
-                    update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
-          
-          case 'd' :develop_per_day = (develop_per_day + 1) % 4;
-                    update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
-          case 'D' :develop_per_day = (develop_per_day - 1 + 4) % 4;
-                    update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
+    else {
+      switch(key) {
+        case '0' : camera_variation = 0; GRAPHS_Update = 1; GRAPHS_record_PDF = 1;break;
+        case '1' : camera_variation = 1; GRAPHS_Update = 1; GRAPHS_record_PDF = 1;break;
+        case '2' : camera_variation = 2; GRAPHS_Update = 1; GRAPHS_record_PDF = 1;break;
+        case '3' : camera_variation = 3; GRAPHS_Update = 1; GRAPHS_record_PDF = 1;break;
+        case '4' : camera_variation = 4; GRAPHS_Update = 1; GRAPHS_record_PDF = 1;break;
+        case '5' : camera_variation = 5; GRAPHS_Update = 1; GRAPHS_record_PDF = 1;break;
+        case '6' : camera_variation = 6; GRAPHS_Update = 1; GRAPHS_record_PDF = 1;break;
+        //case '7' : camera_variation = 7; GRAPHS_Update = 1; GRAPHS_record_PDF = 1;break;
+        //case '8' : camera_variation = 8; GRAPHS_Update = 1; GRAPHS_record_PDF = 1;break;
+        //case '9' : camera_variation = 9; GRAPHS_Update = 1; GRAPHS_record_PDF = 1;break;
         
-          case '>' :if ((plot_impacts == -2) || (plot_impacts == -1)) {
-                      GRAPHS_O_scale *= ROLLOUT_Update = 1; pow(2.0, (1.0 / 4.0)); 
-                    }
-                    else {
-                      impact_layer = (impact_layer + 1) % 9; 
-                    }
-                    GRAPHS_Update = 1;
-                    ROLLOUT_Update = 1; 
-                    break;
-          case '<' :if ((plot_impacts == -2) || (plot_impacts == -1)) {
-                      GRAPHS_O_scale *= ROLLOUT_Update = 1; pow(0.5, (1.0 / 4.0)); 
-                    }
-                    else {
-                      impact_layer = (impact_layer + 9 - 1) % 9;
-                       
-                    }
-                    GRAPHS_Update = 1;
-                    ROLLOUT_Update = 1; 
-                    break;
-  
-          case 'y' :Sample_Year += 1; if (Sample_Year > CLIMATE_WY2_end) Sample_Year = CLIMATE_WY2_start; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
-          case 'Y' :Sample_Year -= 1; if (Sample_Year < CLIMATE_WY2_start) Sample_Year = CLIMATE_WY2_end; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 'h' :H_layer_option = (H_layer_option + 1) % 8; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 'H' :H_layer_option = (H_layer_option + 8 - 1) % 8; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 'f' :F_layer_option = (F_layer_option + 1) % 6; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 'F' :F_layer_option = (F_layer_option + 6 - 1) % 6; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 'e' :Sample_Member += 1; if (Sample_Member > ENSEMBLE_end) Sample_Member = ENSEMBLE_start; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
-          case 'E' :Sample_Member -= 1; if (Sample_Member < ENSEMBLE_start) Sample_Member = ENSEMBLE_end; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-    
-          //case 'g' :filter_type = (filter_type + 1) % 2; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          //case 'G' :filter_type = (filter_type + 2 - 1) % 2; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-    
-          case '=' :GRAPHS_V_scale[GRAPHS_drw_Layer] *= pow(2.0, (1.0 / 2.0)); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case '_' :GRAPHS_V_scale[GRAPHS_drw_Layer] *= pow(0.5, (1.0 / 2.0)); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          
-          case 'c' :COLOR_STYLE = (COLOR_STYLE + 1) % n_COLOR_STYLE; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 'C' :COLOR_STYLE = (COLOR_STYLE - 1 + n_COLOR_STYLE) % n_COLOR_STYLE; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          
-          case 'V' :draw_data_lines = int((draw_data_lines + 1) % 2); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 'v' :draw_data_lines = int((draw_data_lines + 1) % 2); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-    
-          case '`' :num_add_days += 2;
-                    if (num_add_days > 61) num_add_days = 61;
-                    update_DevelopDATA = 1; 
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case '~' :num_add_days -= 2;
-                    if (num_add_days < 1) num_add_days = 1;
-                    update_DevelopDATA = 1; 
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-                    
-          case 'l' :Materials_Selection += 1;
-                    Materials_Selection %= Materials_Number; 
-                    update_DevelopDATA = 1;
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 'L' :Materials_Selection += Materials_Number - 1;
-                    Materials_Selection %= Materials_Number;
-                    update_DevelopDATA = 1; 
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break;  
-          
-          case 'm' :draw_sorted = int((draw_sorted + 1) % 2); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 'M' :draw_sorted = int((draw_sorted + 1) % 2); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-    
-          case 'n' :draw_normals = int((draw_normals + 1) % 2); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 'N' :draw_normals = int((draw_normals + 1) % 2); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-    
-          case 'b' :draw_probs = int((draw_probs + 1) % 2); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 'B' :draw_probs = int((draw_probs + 1) % 2); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          
-          case 'j' :if (level_pix < 32) level_pix *= pow(2.0, (1.0 / 1.0)); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 'J' :if (level_pix > 2) level_pix *= pow(0.5, (1.0 / 1.0)); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-    
-          case 'i' :if (sum_interval > 24) sum_interval -= 24;
-                    if (sum_interval > 6) sum_interval -= 6; 
-                    else if (sum_interval > 1) sum_interval -= 1;
-                    if (sum_interval == 5) sum_interval = 4;
-                    println("sum_interval =", sum_interval);
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 'I' :if (sum_interval < 6) sum_interval += 1;
-                    else if (sum_interval < 24) sum_interval += 6;
-                    else sum_interval += 24;
-                    if (sum_interval == 5) sum_interval = 6;
-                    println("sum_interval =", sum_interval);
-                    GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-                    
-          case '!' :sky_scenario = 1; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case '@' :sky_scenario = 2; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case '#' :sky_scenario = 3; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case '$' :sky_scenario = 4; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-    
-          case 's' : GRAPHS_record_JPG = 1; GRAPHS_record_PDF = 0; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
-          case 'S' : GRAPHS_record_PDF = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
+ 
+      }
+    }    
+  }
+  else if (e.isControlDown() == true) {
+    if (key == CODED) { 
+      switch(keyCode) {
 
+      }
+    }
+    else {
+      switch(key) {
 
-        }
-    
+        case 's' :STATION_NUMBER = (STATION_NUMBER + 1) % DEFINED_STATIONS.length; 
+                  //SOLARCHVISION_update_station(0); 
+                  WORLD_Update = 1;
+                  WIN3D_Update = 1; 
+                  GRAPHS_Update = 1;
+                  ROLLOUT_Update = 1;
+
+                  last_initializationStep = 8; 
+                  frameCount = last_initializationStep; 
+                  textAlign(CENTER, CENTER); 
+                  textSize(MESSAGE_S_View);                    
+                  loop(); 
+                  break;
+        case 'S' :STATION_NUMBER = (STATION_NUMBER - 1 + DEFINED_STATIONS.length) % DEFINED_STATIONS.length; 
+                  //SOLARCHVISION_update_station(0); 
+                  WORLD_Update = 1;
+                  WIN3D_Update = 1; 
+                  GRAPHS_Update = 1;
+                  ROLLOUT_Update = 1;
+                  
+                  last_initializationStep = 8; 
+                  frameCount = last_initializationStep; 
+                  textAlign(CENTER, CENTER); 
+                  textSize(MESSAGE_S_View);                    
+                  loop(); 
+                  break;              
+        
+        case 'r' : GRAPHS_record_AUTO = (GRAPHS_record_AUTO + 1) % 2; GRAPHS_Update = 0; ROLLOUT_Update = 1; break;
+        case 'R' : GRAPHS_record_AUTO = (GRAPHS_record_AUTO + 1) % 2; GRAPHS_Update = 0; ROLLOUT_Update = 1; break;
+
+        
+        case '^' : draw_data_lines = 1; Export_GRAPHS_info_node = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case '&' : draw_normals = 1; Export_GRAPHS_info_norm = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case '%' : draw_probs = 1; Export_GRAPHS_info_prob = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;                 
+        
+      }
+    }    
+  }
+  else if (e.isShiftDown() == true) {
+    if (key == CODED) { 
+      switch(keyCode) {
+
       }
     }
   }
 
+  
+  if ((e.isAltDown() != true) && (e.isControlDown() != true) && (e.isShiftDown() != true)) {
+  
+    if (key == CODED) { 
+      switch(keyCode) {
+        /*
+        case 112 : develop_option = 1; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 113 : develop_option = 2; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 114 : develop_option = 3; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 115 : develop_option = 4; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 116 : develop_option = 5; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 117 : develop_option = 6; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 118 : develop_option = 7; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 119 : develop_option = 8; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 120 : develop_option = 9; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 121 : develop_option = 10; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 122 : develop_option = 11; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 123 : develop_option = 12; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        */
+
+        case 112 : impacts_source = databaseNumber_ENSEMBLE; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 113 : impacts_source = databaseNumber_OBSERVED; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 114 : impacts_source = databaseNumber_CLIMATE_WY2; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 115 : impacts_source = databaseNumber_CLIMATE_EPW; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;          
+
+        /*
+        case 115 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 6)) || (plot_impacts == 7)) plot_impacts = 6;
+                   else plot_impacts = 7; 
+                   GRAPHS_Update = 1; ROLLOUT_Update = 1; break;        
+        */
+        case 116 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 4)) || (plot_impacts == 5)) plot_impacts = 4;
+                   else plot_impacts = 5; 
+                   GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 117 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 2)) || (plot_impacts == 3)) plot_impacts = 2;
+                   else plot_impacts = 3; 
+                   GRAPHS_Update = 1; ROLLOUT_Update = 1; break;                   
+        case 118 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 0)) || (plot_impacts == 1)) plot_impacts = 0;
+                   else plot_impacts = 1; 
+                   GRAPHS_Update = 1; ROLLOUT_Update = 1; break;           
+        case 119 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != -2)) || (plot_impacts == -1)) plot_impacts = -2;
+                   else plot_impacts = -1; 
+                   GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+                   
+        
+        case 35  :_DATE += 1;
+                  if (int(_DATE) == 365) _DATE -= 365;
+                  if (int(_DATE) == 286) _YEAR += 1;
+                  SOLARCHVISION_update_date(); 
+                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
+                  update_DevelopDATA = 1;
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+                  
+        case 36  :_DATE -= 1;
+                  if (int(_DATE) < 0) _DATE += 365;
+                  if (int(_DATE) == 285) _YEAR -= 1;
+                  SOLARCHVISION_update_date(); 
+                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
+                  update_DevelopDATA = 1;
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+     
+        case 33:_DATE += 1; 
+                  if (_DATE >= 365) _DATE -= 365;
+                  if ((_DATE == 286) || (_DATE == 286.5)) _YEAR += 1;
+                  SOLARCHVISION_update_date(); 
+                  BEGIN_DAY = int(BEGIN_DAY + 1) % 365; 
+                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
+                  update_DevelopDATA = 1;
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
+                  
+        case 34 :_DATE -= 1; 
+                  if (_DATE < 0) _DATE += 365;
+                  if ((_DATE == 285) || (_DATE == 285.5)) _YEAR -= 1;
+                  SOLARCHVISION_update_date(); 
+                  BEGIN_DAY = int(365 + BEGIN_DAY - 1) % 365;
+                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
+                  update_DevelopDATA = 1;
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
+                 
+        case LEFT  :BEGIN_DAY = (365 + BEGIN_DAY - 1) % 365; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case RIGHT :BEGIN_DAY = (BEGIN_DAY + 1) % 365; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+              
+        case UP   :GRAPHS_drw_Layer = (GRAPHS_drw_Layer + 1) % num_layers; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case DOWN :GRAPHS_drw_Layer = (GRAPHS_drw_Layer + num_layers - 1) % num_layers; GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
+      }
+    }
+  }
+  
+  if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
+
+    if (key != CODED) { 
+      switch(key) {
+  
+        case '|' :if (_DATE == 1.0 * int(_DATE)) _DATE += 0.5;
+                  else _DATE -= 0.5;
+                  SOLARCHVISION_update_date(); 
+                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+                 
+        case ';': draw_impact_summary = (draw_impact_summary + 1) % 2;
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+
+        case TAB :if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
+                    if (per_day == 1) { 
+                      per_day = int(365 / float(GRAPHS_j_end - GRAPHS_j_start));
+                    }
+                    else {
+                      per_day = 1;
+                    }
+                  } 
+                  if (impacts_source == databaseNumber_ENSEMBLE) {
+                    per_day = 1;
+                  }           
+                  if (impacts_source == databaseNumber_OBSERVED) {
+                    if (per_day == 1) { 
+                      per_day = int(GRAPHS_max_j_end_observations / float(GRAPHS_j_end - GRAPHS_j_start));
+                    }
+                    else {
+                      per_day = 1;
+                    }
+                  }                     
+                  update_DevelopDATA = 1;
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+                
+        case ']' :GRAPHS_j_end += 1; 
+                  if (GRAPHS_j_end > GRAPHS_j_start + 61) GRAPHS_j_end -= 1;
+                  GRAPHS_U_scale = 18.0 / float(GRAPHS_j_end - GRAPHS_j_start);
+                  /*
+                  if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
+                    per_day = int(365 / float(GRAPHS_j_end - GRAPHS_j_start));
+                  } 
+                  if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
+                    per_day = 1;
+                  }
+                  */
+                  update_DevelopDATA = 1;
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
+        case '[' :GRAPHS_j_end -= 1; 
+                  if (GRAPHS_j_end <= GRAPHS_j_start) GRAPHS_j_end += 1;
+                  GRAPHS_U_scale = 18.0 / float(GRAPHS_j_end - GRAPHS_j_start);
+                  /*
+                  if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
+                    per_day = int(365 / float(GRAPHS_j_end - GRAPHS_j_start));
+                  } 
+                  if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
+                    per_day = 1;
+                  }                  
+                  */
+                  update_DevelopDATA = 1;
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+
+        case '}' :join_hour_numbers += 1;
+                  if (join_hour_numbers > 240) join_hour_numbers = 240;
+                  update_DevelopDATA = 1;
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
+        case '{' :join_hour_numbers -= 1;
+                  if (join_hour_numbers < 1) join_hour_numbers = 1;
+                  update_DevelopDATA = 1;
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
+        /*      
+        case '*' :join_type *= -1;
+                  update_DevelopDATA = 1;
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
+        */
+
+    
+        case 'a'  :Angle_inclination -= 5;
+                  if (Angle_inclination < -90) Angle_inclination = -90;
+                  update_DevelopDATA = 1;
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
+        case 'A'  :Angle_inclination += 5;
+                  if (Angle_inclination > 90) Angle_inclination = 90;
+                  update_DevelopDATA = 1;
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 'z' :Angle_orientation = (Angle_orientation - 5 + 360) % 360;
+                  update_DevelopDATA = 1;
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
+        case 'Z' :Angle_orientation = (Angle_orientation + 5) % 360;
+                  update_DevelopDATA = 1;
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
+        
+        case 'd' :develop_per_day = (develop_per_day + 1) % 4;
+                  update_DevelopDATA = 1;
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
+        case 'D' :develop_per_day = (develop_per_day - 1 + 4) % 4;
+                  update_DevelopDATA = 1;
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
+      
+        case '>' :if ((plot_impacts == -2) || (plot_impacts == -1)) {
+                    GRAPHS_O_scale *= ROLLOUT_Update = 1; pow(2.0, (1.0 / 4.0)); 
+                  }
+                  else {
+                    impact_layer = (impact_layer + 1) % 9; 
+                  }
+                  GRAPHS_Update = 1;
+                  ROLLOUT_Update = 1; 
+                  break;
+        case '<' :if ((plot_impacts == -2) || (plot_impacts == -1)) {
+                    GRAPHS_O_scale *= ROLLOUT_Update = 1; pow(0.5, (1.0 / 4.0)); 
+                  }
+                  else {
+                    impact_layer = (impact_layer + 9 - 1) % 9;
+                     
+                  }
+                  GRAPHS_Update = 1;
+                  ROLLOUT_Update = 1; 
+                  break;
+
+        case 'y' :Sample_Year += 1; if (Sample_Year > CLIMATE_WY2_end) Sample_Year = CLIMATE_WY2_start; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
+        case 'Y' :Sample_Year -= 1; if (Sample_Year < CLIMATE_WY2_start) Sample_Year = CLIMATE_WY2_end; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 'h' :H_layer_option = (H_layer_option + 1) % 8; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 'H' :H_layer_option = (H_layer_option + 8 - 1) % 8; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 'f' :F_layer_option = (F_layer_option + 1) % 6; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 'F' :F_layer_option = (F_layer_option + 6 - 1) % 6; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 'e' :Sample_Member += 1; if (Sample_Member > ENSEMBLE_end) Sample_Member = ENSEMBLE_start; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
+        case 'E' :Sample_Member -= 1; if (Sample_Member < ENSEMBLE_start) Sample_Member = ENSEMBLE_end; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+  
+        //case 'g' :filter_type = (filter_type + 1) % 2; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        //case 'G' :filter_type = (filter_type + 2 - 1) % 2; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+  
+        case '=' :GRAPHS_V_scale[GRAPHS_drw_Layer] *= pow(2.0, (1.0 / 2.0)); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case '_' :GRAPHS_V_scale[GRAPHS_drw_Layer] *= pow(0.5, (1.0 / 2.0)); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        
+        case 'c' :COLOR_STYLE = (COLOR_STYLE + 1) % n_COLOR_STYLE; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 'C' :COLOR_STYLE = (COLOR_STYLE - 1 + n_COLOR_STYLE) % n_COLOR_STYLE; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        
+        case 'V' :draw_data_lines = int((draw_data_lines + 1) % 2); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 'v' :draw_data_lines = int((draw_data_lines + 1) % 2); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+  
+        case '`' :num_add_days += 2;
+                  if (num_add_days > 61) num_add_days = 61;
+                  update_DevelopDATA = 1; 
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case '~' :num_add_days -= 2;
+                  if (num_add_days < 1) num_add_days = 1;
+                  update_DevelopDATA = 1; 
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+                  
+        case 'l' :Materials_Selection += 1;
+                  Materials_Selection %= Materials_Number; 
+                  update_DevelopDATA = 1;
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 'L' :Materials_Selection += Materials_Number - 1;
+                  Materials_Selection %= Materials_Number;
+                  update_DevelopDATA = 1; 
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break;  
+        
+        case 'm' :draw_sorted = int((draw_sorted + 1) % 2); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 'M' :draw_sorted = int((draw_sorted + 1) % 2); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+  
+        case 'n' :draw_normals = int((draw_normals + 1) % 2); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 'N' :draw_normals = int((draw_normals + 1) % 2); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+  
+        case 'b' :draw_probs = int((draw_probs + 1) % 2); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 'B' :draw_probs = int((draw_probs + 1) % 2); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        
+        case 'j' :if (level_pix < 32) level_pix *= pow(2.0, (1.0 / 1.0)); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 'J' :if (level_pix > 2) level_pix *= pow(0.5, (1.0 / 1.0)); GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+  
+        case 'i' :if (sum_interval > 24) sum_interval -= 24;
+                  if (sum_interval > 6) sum_interval -= 6; 
+                  else if (sum_interval > 1) sum_interval -= 1;
+                  if (sum_interval == 5) sum_interval = 4;
+                  println("sum_interval =", sum_interval);
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 'I' :if (sum_interval < 6) sum_interval += 1;
+                  else if (sum_interval < 24) sum_interval += 6;
+                  else sum_interval += 24;
+                  if (sum_interval == 5) sum_interval = 6;
+                  println("sum_interval =", sum_interval);
+                  GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+                  
+        case '!' :sky_scenario = 1; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case '@' :sky_scenario = 2; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case '#' :sky_scenario = 3; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case '$' :sky_scenario = 4; update_DevelopDATA = 1; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+  
+        case 's' : GRAPHS_record_JPG = 1; GRAPHS_record_PDF = 0; GRAPHS_Update = 1; ROLLOUT_Update = 1; break;
+        case 'S' : GRAPHS_record_PDF = 1; GRAPHS_record_JPG = 0; GRAPHS_Update = 1; ROLLOUT_Update = 1; break; 
+
+
+      }
+  
+    }
+  }
  
 }
 
@@ -11653,113 +11652,127 @@ void SOLARCHVISION_update_frame_layout () {
 
 void keyPressed (KeyEvent e) {
 
-  //println("key: " + key);
-  //println("keyCode: " + keyCode);
+  if (automated == 0) {
+    X_clicked = -1;
+    Y_clicked = -1;
   
-  if (frameCount > last_initializationStep) {  
-
-    GRAPHS_keyPressed(e);
+    addToSelection = 0;
+    subFromSelection = 0;  
   
-    WIN3D_keyPressed(e);
-
-    if (e.isAltDown() == true) {
-      if (key == CODED) { 
-        switch(keyCode) {
-
-        }
-      }
-      else {
-        switch(key) {
-          case 'l' : frame_variation = (frame_variation + 1) % 4; SOLARCHVISION_update_frame_layout(); ROLLOUT_Update = 1; break;
-          case 'L' : frame_variation = (frame_variation + 4 - 1) % 4; SOLARCHVISION_update_frame_layout(); ROLLOUT_Update = 1; break;
-        }
-      }    
-    }
-    else if (e.isControlDown() == true) {
-      if (key == CODED) { 
-        switch(keyCode) {
-          case 112 : ROLLOUT_parent = 0; ROLLOUT_Update = 1; break;
-          case 113 : ROLLOUT_parent = 1; ROLLOUT_Update = 1; break;
-          case 114 : ROLLOUT_parent = 2; ROLLOUT_Update = 1; break;
-          case 115 : ROLLOUT_parent = 3; ROLLOUT_Update = 1; break;
-          case 116 : ROLLOUT_parent = 4; ROLLOUT_Update = 1; break;
-          case 117 : ROLLOUT_parent = 5; ROLLOUT_Update = 1; break;
-          case 118 : ROLLOUT_parent = 6; ROLLOUT_Update = 1; break;
-          case 119 : ROLLOUT_parent = 7; ROLLOUT_Update = 1; break;
-        }
-      }
-      else {
-        switch(key) {
-          
-          case 'f' :
-            ResetFontStyle();     
-            WORLD_Update = 1;
-            WIN3D_Update = 1; 
-            GRAPHS_Update = 1;
-            ROLLOUT_Update = 1; 
-            break;
-
-          case 'F' :
-            ResetFontStyle();     
-            WORLD_Update = 1;
-            WIN3D_Update = 1; 
-            GRAPHS_Update = 1;
-            ROLLOUT_Update = 1; 
-            break;                   
-      
-   
-        }
-      }    
-    }
-    else if (e.isShiftDown() == true) {
-      if (key == CODED) { 
-        switch(keyCode) {
-          case 112 : ROLLOUT_child = 1; ROLLOUT_Update = 1; break;
-          case 113 : ROLLOUT_child = 2; ROLLOUT_Update = 1; break;
-          case 114 : ROLLOUT_child = 3; ROLLOUT_Update = 1; break;
-          case 115 : ROLLOUT_child = 4; ROLLOUT_Update = 1; break;
-          case 116 : ROLLOUT_child = 5; ROLLOUT_Update = 1; break;
-          case 117 : ROLLOUT_child = 6; ROLLOUT_Update = 1; break;
-          case 118 : ROLLOUT_child = 7; ROLLOUT_Update = 1; break;
-          case 119 : ROLLOUT_child = 8; ROLLOUT_Update = 1; break;
-        }
-      }
-    }
-
+    //println("key: " + key);
+    //println("keyCode: " + keyCode);
     
-    if ((e.isAltDown() != true) && (e.isControlDown() != true) && (e.isShiftDown() != true)) {
-      if (key == CODED) { 
-        switch(key) {
-
-        } 
-      }   
-    }
+    if (frameCount > last_initializationStep) {  
+  
+      GRAPHS_keyPressed(e);
     
-    if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
-      
-      if (key != CODED) { 
-        switch(key) {
-          
+      WIN3D_keyPressed(e);
+  
+      if (e.isAltDown() == true) {
+        
+        subFromSelection = 1;
+        
+        if (key == CODED) { 
+          switch(keyCode) {
+  
+          }
+        }
+        else {
+          switch(key) {
+            case 'l' : frame_variation = (frame_variation + 1) % 4; SOLARCHVISION_update_frame_layout(); ROLLOUT_Update = 1; break;
+            case 'L' : frame_variation = (frame_variation + 4 - 1) % 4; SOLARCHVISION_update_frame_layout(); ROLLOUT_Update = 1; break;
+          }
+        }    
+      }
+      else if (e.isControlDown() == true) {
+        
+        addToSelection = 1;
+        
+        if (key == CODED) { 
+          switch(keyCode) {
+            case 112 : ROLLOUT_parent = 0; ROLLOUT_Update = 1; break;
+            case 113 : ROLLOUT_parent = 1; ROLLOUT_Update = 1; break;
+            case 114 : ROLLOUT_parent = 2; ROLLOUT_Update = 1; break;
+            case 115 : ROLLOUT_parent = 3; ROLLOUT_Update = 1; break;
+            case 116 : ROLLOUT_parent = 4; ROLLOUT_Update = 1; break;
+            case 117 : ROLLOUT_parent = 5; ROLLOUT_Update = 1; break;
+            case 118 : ROLLOUT_parent = 6; ROLLOUT_Update = 1; break;
+            case 119 : ROLLOUT_parent = 7; ROLLOUT_Update = 1; break;
+          }
+        }
+        else {
+          switch(key) {
+            
+            case 'f' :
+              ResetFontStyle();     
+              WORLD_Update = 1;
+              WIN3D_Update = 1; 
+              GRAPHS_Update = 1;
+              ROLLOUT_Update = 1; 
+              break;
+  
+            case 'F' :
+              ResetFontStyle();     
+              WORLD_Update = 1;
+              WIN3D_Update = 1; 
+              GRAPHS_Update = 1;
+              ROLLOUT_Update = 1; 
+              break;                   
+        
      
-                   
-          case 'g' :
-                    AERIAL_graphOption = (AERIAL_graphOption + 1) % 2;
-                    WORLD_Update = 1;
-                    WIN3D_Update = 1; 
-                    ROLLOUT_Update = 1; 
-                    break;
-      
-          case 'G' :
-                    AERIAL_graphOption = (AERIAL_graphOption + 2 - 1) % 2;
-                    WORLD_Update = 1;
-                    WIN3D_Update = 1; 
-                    ROLLOUT_Update = 1; 
-                    break;                 
+          }
+        }    
+      }
+      else if (e.isShiftDown() == true) {
+        if (key == CODED) { 
+          switch(keyCode) {
+            case 112 : ROLLOUT_child = 1; ROLLOUT_Update = 1; break;
+            case 113 : ROLLOUT_child = 2; ROLLOUT_Update = 1; break;
+            case 114 : ROLLOUT_child = 3; ROLLOUT_Update = 1; break;
+            case 115 : ROLLOUT_child = 4; ROLLOUT_Update = 1; break;
+            case 116 : ROLLOUT_child = 5; ROLLOUT_Update = 1; break;
+            case 117 : ROLLOUT_child = 6; ROLLOUT_Update = 1; break;
+            case 118 : ROLLOUT_child = 7; ROLLOUT_Update = 1; break;
+            case 119 : ROLLOUT_child = 8; ROLLOUT_Update = 1; break;
+          }
         }
-      }  
-    }      
-
-    if ((GRAPHS_Update != 0) || (WORLD_Update != 0) || (WIN3D_Update != 0) || (ROLLOUT_Update != 0)) redraw();    
+      }
+  
+      
+      if ((e.isAltDown() != true) && (e.isControlDown() != true) && (e.isShiftDown() != true)) {
+        if (key == CODED) { 
+          switch(key) {
+  
+          } 
+        }   
+      }
+      
+      if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
+        
+        if (key != CODED) { 
+          switch(key) {
+            
+       
+                     
+            case 'g' :
+                      AERIAL_graphOption = (AERIAL_graphOption + 1) % 2;
+                      WORLD_Update = 1;
+                      WIN3D_Update = 1; 
+                      ROLLOUT_Update = 1; 
+                      break;
+        
+            case 'G' :
+                      AERIAL_graphOption = (AERIAL_graphOption + 2 - 1) % 2;
+                      WORLD_Update = 1;
+                      WIN3D_Update = 1; 
+                      ROLLOUT_Update = 1; 
+                      break;                 
+          }
+        }  
+      }      
+  
+      if ((GRAPHS_Update != 0) || (WORLD_Update != 0) || (WIN3D_Update != 0) || (ROLLOUT_Update != 0)) redraw();    
+    }
   }
 }
 
@@ -13833,7 +13846,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
   if (n == 4) {
     for (int i = 0; i < int(10 + random(10)); i++) {
       addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-      SOLARCHVISION_add_House_Core(0, random(-80, 80), random(-80, 80), 0, random(5, 10), random(5, 10), random(5, 10), random(2.5, 7.5), random(360));
+      SOLARCHVISION_add_House_Core(7, random(-80, 80), random(-80, 80), 0, random(5, 10), random(5, 10), random(5, 10), random(2.5, 7.5), random(360));
     }
   }    
 
@@ -18840,7 +18853,7 @@ void mouseReleased () {
             
             popMatrix();            
   
-            SOLARCHVISION_deselectAll(); // <<<<<<<<< NOTE: to add to previous selection we should remark and check for duplicates
+            //SOLARCHVISION_deselectAll(); // <<<<<<<<< NOTE: to add to previous selection we should remark and check for duplicates
 
 
             if (Work_with_2D_or_3D == 1) {
@@ -18887,7 +18900,7 @@ void mouseReleased () {
                   
                   int[] new_OBJ_number = {OBJ_NUM};
                   
-                  selectedFractal_numbers = concat(selectedFractal_numbers, new_OBJ_number);
+                  selectedFractal_numbers = (int[]) concat(selectedFractal_numbers, new_OBJ_number);
 
                 }
               }
@@ -18937,7 +18950,7 @@ void mouseReleased () {
                   
                   int[] new_OBJ_number = {OBJ_NUM};
                   
-                  selectedObject2D_numbers = concat(selectedObject2D_numbers, new_OBJ_number);
+                  selectedObject2D_numbers = (int[]) concat(selectedObject2D_numbers, new_OBJ_number);
 
                 }
               }
@@ -18995,9 +19008,43 @@ void mouseReleased () {
                 
                 if (add_OBJ_to_Selection == 1) {
                   
-                  int[] new_OBJ_number = {OBJ_NUM};
+                  int add_it = 1;
+                  int sub_it = 0;
+                 
+                  int found_at = -1;
                   
-                  selectedPolymesh_numbers = concat(selectedPolymesh_numbers, new_OBJ_number);
+                  if (addToSelection == 1) {
+                    for (int o = 0; o < selectedPolymesh_numbers.length; o++) {
+                      if (selectedPolymesh_numbers[o] == OBJ_NUM) {
+                        found_at = o;
+                        add_it = 0;
+                        break;
+                      } 
+                    }
+                  }
+                  else if (subFromSelection == 1) {
+                    for (int o = 0; o < selectedPolymesh_numbers.length; o++) {
+                      if (selectedPolymesh_numbers[o] == OBJ_NUM) {
+                        found_at = o;
+                        add_it = 0;
+                        sub_it = 1;
+                        break;
+                      } 
+                    }
+                  }                  
+                  
+                  if (add_it == 1) {
+                    int[] new_OBJ_number = {OBJ_NUM};
+                    
+                    selectedPolymesh_numbers = (int[]) concat(selectedPolymesh_numbers, new_OBJ_number);
+                  }
+                  else if (sub_it == 1) {
+                    int[] startList = (int[]) subset(selectedPolymesh_numbers, 0, found_at);
+                    int[] endList = (int[]) subset(selectedPolymesh_numbers, found_at + 1);
+                    
+                    selectedPolymesh_numbers = (int[]) concat(startList, endList);
+                  }                  
+                  
                 }                
               }
   
