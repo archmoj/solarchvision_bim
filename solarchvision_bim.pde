@@ -15465,11 +15465,13 @@ void SOLARCHVISION_transform_Camera () {
   CAM_x = px;
   CAM_y = py;
   CAM_z = pz;   
+  
+  //println("Camera:", nf(CAM_x,0,4), nf(CAM_y,0,4), nf(CAM_z,0,4));
 }
   
 
   
-  //println("Camera:", nf(CAM_x,0,4), nf(CAM_y,0,4), nf(CAM_z,0,4));
+
 
 float[][] allObject2D_Vertices;
 int[][] allObject2D_Faces;
@@ -15482,9 +15484,6 @@ void SOLARCHVISION_draw_2Dobjects () {
   allObject2D_Vertices[0][0] = 0;
   allObject2D_Vertices[0][1] = 0;
   allObject2D_Vertices[0][2] = 0;
- 
-
-
 
   if (Display_Trees_People != 0) {
     
@@ -22621,6 +22620,37 @@ void SOLARCHVISION_draw_FractalPlants () {
         if (as_Solid != 0) {
           allFractal_XYZS[f][4] = 0; 
         }
+        
+        
+        
+              
+       
+        float t = WIN3D_RZ_coordinate * PI / 180.0;
+        if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
+
+        {
+          allFractal_Vertices[f * 4 - 3][0] = (x - r * cos(t)) / objects_scale;
+          allFractal_Vertices[f * 4 - 3][1] = (y - r * sin(t)) / objects_scale;
+          allFractal_Vertices[f * 4 - 3][2] = (z) / objects_scale;
+
+          allFractal_Vertices[f * 4 - 2][0] = (x + r * cos(t)) / objects_scale;
+          allFractal_Vertices[f * 4 - 2][1] = (y + r * sin(t)) / objects_scale;
+          allFractal_Vertices[f * 4 - 2][2] = (z) / objects_scale;
+
+          allFractal_Vertices[f * 4 - 1][0] = (x + r * cos(t)) / objects_scale;
+          allFractal_Vertices[f * 4 - 1][1] = (y + r * sin(t)) / objects_scale;
+          allFractal_Vertices[f * 4 - 1][2] = (z + 2 * r) / objects_scale;
+
+          allFractal_Vertices[f * 4 - 0][0] = (x - r * cos(t)) / objects_scale;
+          allFractal_Vertices[f * 4 - 0][1] = (y - r * sin(t)) / objects_scale;
+          allFractal_Vertices[f * 4 - 0][2] = (z + 2 * r) / objects_scale;
+
+          allFractal_Faces[f][0] = f * 4 - 3;
+          allFractal_Faces[f][1] = f * 4 - 2;
+          allFractal_Faces[f][2] = f * 4 - 1;
+          allFractal_Faces[f][3] = f * 4 - 0;
+        }        
+                
       }
               
     }
