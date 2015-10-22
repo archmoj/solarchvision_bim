@@ -97,7 +97,7 @@ int selectedPolymesh_displayEdges = 1;
 int selectedPolymesh_displayBox = 1;
 
 
-int addToSelection = 0;
+int addNewSelectionToPreviousSelection = 0;
 
 
 int[] selectedFractal_numbers = {0};
@@ -11656,7 +11656,7 @@ void keyPressed (KeyEvent e) {
     X_clicked = -1;
     Y_clicked = -1;
   
-    addToSelection = 0;
+    addNewSelectionToPreviousSelection = 0;
   
     //println("key: " + key);
     //println("keyCode: " + keyCode);
@@ -11669,7 +11669,7 @@ void keyPressed (KeyEvent e) {
   
       if (e.isAltDown() == true) {
         
-        addToSelection = -1;
+        addNewSelectionToPreviousSelection = -1;
         
         if (key == CODED) { 
           switch(keyCode) {
@@ -11685,7 +11685,7 @@ void keyPressed (KeyEvent e) {
       }
       else if (e.isControlDown() == true) {
         
-        addToSelection = 1;
+        addNewSelectionToPreviousSelection = 1;
         
         if (key == CODED) { 
           switch(keyCode) {
@@ -18852,9 +18852,7 @@ void mouseReleased () {
             
             popMatrix();            
   
-            if (addToSelection == 0) {
-              SOLARCHVISION_deselectAll();
-            }
+            if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselectAll();
 
 
             if (Work_with_2D_or_3D == 1) {
@@ -19009,32 +19007,35 @@ void mouseReleased () {
                 
                 if (add_OBJ_to_Selection == 1) {
                  
-                  int add_it = 1;
-                  if (addToSelection == -1) add_it = -1;
+                  int use_it = 1;
                   
                   int found_at = -1;
                   
-                  if (addToSelection == 1) {
+                  if (addNewSelectionToPreviousSelection != 0) {
                     for (int o = 0; o < selectedPolymesh_numbers.length; o++) {
                       if (selectedPolymesh_numbers[o] == OBJ_NUM) {
                         found_at = o;
-                        add_it = 0;
+                        use_it = 0;
                         break;
                       } 
                     }
                   }
-
-                  if (add_it == 1) {
-                    int[] new_OBJ_number = {OBJ_NUM};
-                    
-                    selectedPolymesh_numbers = (int[]) concat(selectedPolymesh_numbers, new_OBJ_number);
+                  
+                  if (use_it == 1) {
+                    if (addNewSelectionToPreviousSelection == -1) {
+                      if (found_at != -1) {
+                        int[] startList = (int[]) subset(selectedPolymesh_numbers, 0, found_at);
+                        int[] endList = (int[]) subset(selectedPolymesh_numbers, found_at + 1);
+                        
+                        selectedPolymesh_numbers = (int[]) concat(startList, endList);
+                      }
+                    }
+                    else { // i.e. addNewSelectionToPreviousSelection == 1 OR addNewSelectionToPreviousSelection == 0                 
+                      int[] new_OBJ_number = {OBJ_NUM};
+                      
+                      selectedPolymesh_numbers = (int[]) concat(selectedPolymesh_numbers, new_OBJ_number);
+                    }
                   }
-                  else if (add_it == -1) {
-                    int[] startList = (int[]) subset(selectedPolymesh_numbers, 0, found_at);
-                    int[] endList = (int[]) subset(selectedPolymesh_numbers, found_at + 1);
-                    
-                    selectedPolymesh_numbers = (int[]) concat(startList, endList);
-                  }                  
                   
                 }                
               }
@@ -19052,6 +19053,8 @@ void mouseReleased () {
         }
       }
       
+          
+      addNewSelectionToPreviousSelection = 0;
       
       dragging_started = 0;
     }
