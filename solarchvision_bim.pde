@@ -22622,8 +22622,12 @@ void SOLARCHVISION_draw_FractalPlants () {
         }
         
         
-        
-              
+        // ----------------
+        x *= objects_scale;
+        y *= objects_scale;
+        z *= objects_scale;
+        r *= objects_scale;
+        // ----------------        
        
         float t = WIN3D_RZ_coordinate * PI / 180.0;
         if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
