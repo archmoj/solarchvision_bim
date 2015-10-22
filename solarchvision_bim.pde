@@ -98,7 +98,7 @@ int selectedPolymesh_displayBox = 1;
 
 
 int addToSelection = 0;
-int subFromSelection = 0;
+
 
 int[] selectedFractal_numbers = {0};
 int[] selectedObject2D_numbers = {0};
@@ -11657,7 +11657,6 @@ void keyPressed (KeyEvent e) {
     Y_clicked = -1;
   
     addToSelection = 0;
-    subFromSelection = 0;  
   
     //println("key: " + key);
     //println("keyCode: " + keyCode);
@@ -11670,7 +11669,7 @@ void keyPressed (KeyEvent e) {
   
       if (e.isAltDown() == true) {
         
-        subFromSelection = 1;
+        addToSelection = -1;
         
         if (key == CODED) { 
           switch(keyCode) {
@@ -18853,7 +18852,9 @@ void mouseReleased () {
             
             popMatrix();            
   
-            //SOLARCHVISION_deselectAll(); // <<<<<<<<< NOTE: to add to previous selection we should remark and check for duplicates
+            if (addToSelection == 0) {
+              SOLARCHVISION_deselectAll();
+            }
 
 
             if (Work_with_2D_or_3D == 1) {
@@ -19007,10 +19008,10 @@ void mouseReleased () {
                 }
                 
                 if (add_OBJ_to_Selection == 1) {
-                  
-                  int add_it = 1;
-                  int sub_it = 0;
                  
+                  int add_it = 1;
+                  if (addToSelection == -1) add_it = -1;
+                  
                   int found_at = -1;
                   
                   if (addToSelection == 1) {
@@ -19022,23 +19023,13 @@ void mouseReleased () {
                       } 
                     }
                   }
-                  else if (subFromSelection == 1) {
-                    for (int o = 0; o < selectedPolymesh_numbers.length; o++) {
-                      if (selectedPolymesh_numbers[o] == OBJ_NUM) {
-                        found_at = o;
-                        add_it = 0;
-                        sub_it = 1;
-                        break;
-                      } 
-                    }
-                  }                  
-                  
+
                   if (add_it == 1) {
                     int[] new_OBJ_number = {OBJ_NUM};
                     
                     selectedPolymesh_numbers = (int[]) concat(selectedPolymesh_numbers, new_OBJ_number);
                   }
-                  else if (sub_it == 1) {
+                  else if (add_it == -1) {
                     int[] startList = (int[]) subset(selectedPolymesh_numbers, 0, found_at);
                     int[] endList = (int[]) subset(selectedPolymesh_numbers, found_at + 1);
                     
