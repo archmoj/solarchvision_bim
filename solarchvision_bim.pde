@@ -11669,8 +11669,6 @@ void keyPressed (KeyEvent e) {
   
       if (e.isAltDown() == true) {
         
-        addNewSelectionToPreviousSelection = -1;
-        
         if (key == CODED) { 
           switch(keyCode) {
   
@@ -11723,6 +11721,9 @@ void keyPressed (KeyEvent e) {
         }    
       }
       else if (e.isShiftDown() == true) {
+        
+        addNewSelectionToPreviousSelection = -1;
+        
         if (key == CODED) { 
           switch(keyCode) {
             case 112 : ROLLOUT_child = 1; ROLLOUT_Update = 1; break;
@@ -16048,6 +16049,171 @@ float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 }
 
 
+float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
+
+  float[] ray_normal = fn_normalize(ray_dir);   
+
+  float[][] hitPoint = new float[allFractal_Faces.length][4];
+
+  for (int f = 1; f < allFractal_Faces.length; f++) {
+    hitPoint[f][0] = FLOAT_undefined;
+    hitPoint[f][1] = FLOAT_undefined;
+    hitPoint[f][2] = FLOAT_undefined;
+    hitPoint[f][3] = FLOAT_undefined;
+  }
+  
+  float[] pre_angle_to_allFractal_Faces = new float[allFractal_Faces.length];
+  
+  for (int f = 1; f < allFractal_Faces.length; f++) {
+    pre_angle_to_allFractal_Faces[f] = FLOAT_undefined;
+  }
+  
+  for (int f = 1; f < allFractal_Faces.length; f++) {
+
+    float backAngles = FLOAT_undefined;  
+    float foreAngles = FLOAT_undefined;
+
+    float delta = 0.5; 
+    float delta_step = 0.5;
+    
+    float delta_dir = -1;
+    
+    float[] x = {FLOAT_undefined, FLOAT_undefined};
+    float[] y = {FLOAT_undefined, FLOAT_undefined};
+    float[] z = {FLOAT_undefined, FLOAT_undefined};
+    
+    float[] AnglesAll = {0, 0};   
+    
+    float MAX_AnglesAll = 0;
+    int MAX_o = -1;
+
+    //for (int q = 0; q < 16; q++) {
+    for (int q = 0; q < 32; q++) {
+    
+      for (int o = 0; o < 2; o++) {
+
+        float delta_test = delta;
+        
+        if (o == 0) delta_test -= delta_step;
+        else delta_test += delta_step;
+        
+        x[o] = ray_pnt[0] + delta_test * ray_normal[0] * max_distance; 
+        y[o] = ray_pnt[1] + delta_test * ray_normal[1] * max_distance; 
+        z[o] = ray_pnt[2] + delta_test * ray_normal[2] * max_distance; 
+        
+        AnglesAll[o] = 0;      
+      
+        for (int i = 0; i < allFractal_Faces[f].length; i++) {
+          int next_i = (i + 1) % allFractal_Faces[f].length;
+          
+          float[] vectA = {allFractal_Vertices[allFractal_Faces[f][i]][0] - x[o], allFractal_Vertices[allFractal_Faces[f][i]][1] - y[o], allFractal_Vertices[allFractal_Faces[f][i]][2] - z[o]}; 
+          float[] vectB = {allFractal_Vertices[allFractal_Faces[f][next_i]][0] - x[o], allFractal_Vertices[allFractal_Faces[f][next_i]][1] - y[o], allFractal_Vertices[allFractal_Faces[f][next_i]][2] - z[o]};
+          
+          float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
+          
+          AnglesAll[o] += t;
+  
+        }
+      }
+
+
+      if (q == 0) {
+        foreAngles = AnglesAll[0];
+        backAngles = AnglesAll[1];
+        
+        //if (AnglesAll[0] < AnglesAll[1]) {
+          MAX_o = 1;
+          delta = 1;
+        //}
+        //else{
+        //  MAX_o = 0;
+        //  delta = 0;       
+        //}
+      } 
+      else {
+        
+        if (AnglesAll[0] < AnglesAll[1]) {
+          MAX_o = 1;          
+          MAX_AnglesAll = AnglesAll[1];
+          
+          backAngles = AnglesAll[1]; 
+          
+          delta += delta_step;   
+        }
+        else {
+          MAX_o = 0;
+          MAX_AnglesAll = AnglesAll[0];
+          
+          foreAngles = AnglesAll[0];
+          
+          delta -= delta_step;
+        } 
+        
+        //delta_step *= 0.666; // 0.5; <<<<<<<<<<<<<<<          
+        delta_step *= 0.75; 
+
+      }
+
+      //println(delta, delta_step);
+         
+
+      //if (MAX_AnglesAll > 359) {
+      if (MAX_AnglesAll > 357) { // <<<<<<<<<<<<<<<<<<<<<<<<<
+        if (pre_angle_to_allFractal_Faces[f] < MAX_AnglesAll) {
+          pre_angle_to_allFractal_Faces[f] = MAX_AnglesAll;
+          
+          hitPoint[f][0] = x[MAX_o];
+          hitPoint[f][1] = y[MAX_o];
+          hitPoint[f][2] = z[MAX_o];
+          hitPoint[f][3] = delta;
+        }        
+      }
+      
+      if (pre_angle_to_allFractal_Faces[f] > 0.9 * FLOAT_undefined) {
+        pre_angle_to_allFractal_Faces[f] = MAX_AnglesAll;
+      }       
+
+      
+    }
+
+  }
+
+  float[] return_point = {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, -1};
+  
+  float pre_dist = FLOAT_undefined;
+  
+  for (int f = 1; f < allFractal_Faces.length; f++) {
+    
+    float hx = hitPoint[f][0];
+    float hy = hitPoint[f][1];
+    float hz = hitPoint[f][2];
+    float h_delta = hitPoint[f][3];
+
+    //if ((hx < 0.9 * FLOAT_undefined) && (hy < 0.9 * FLOAT_undefined) && (hz < 0.9 * FLOAT_undefined)) {
+    
+      float hd = dist(hx, hy, hz, ray_pnt[0], ray_pnt[1], ray_pnt[2]);
+      
+      //if (hd < pre_dist) {
+      //if ((hd < pre_dist) && (hd > 0.02)) {
+      if ((hd < pre_dist) && (h_delta > 0.005)) {
+        
+        pre_dist = hd;
+        
+        return_point[0] = hx;
+        return_point[1] = hy;
+        return_point[2] = hz;
+        return_point[3] = hd;
+        return_point[4] = f;
+      }
+    
+    //}
+  }
+ 
+  return return_point;
+  
+}
+
+
 
 float[][] getSubFace (float[][] base_Vertices, int Teselation, int n) {
 
@@ -18863,11 +19029,15 @@ void mouseReleased () {
             if (Work_with_2D_or_3D == 1) {
               
               for (int OBJ_NUM = 1; OBJ_NUM < allFractal_Faces.length; OBJ_NUM++) {
+
+                int break_loops = 0;
+                
+                int include_OBJ_in_newSelection = -1;    
+
+                if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
+                if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
                 
                 int f = OBJ_NUM;
-                
-                int include_OBJ_in_newSelection = 0;     
-                if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
 
                 for (int j = 0; j < allFractal_Faces[f].length; j++) {
                   
@@ -18883,29 +19053,61 @@ void mouseReleased () {
                     if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
                       if (mouseButton == RIGHT) {
                         include_OBJ_in_newSelection = 1;
+                        break_loops = 1;
                       }
                     }
                     else {
                       if (mouseButton == LEFT) {
                         include_OBJ_in_newSelection = 0;
+                        break_loops = 1;
                       }                          
                     }
+                    
+                    if (break_loops == 1) break;
                   }
                   
-                  if (mouseButton == RIGHT) {
-                    if (include_OBJ_in_newSelection == 1) break;
-                  }
-                  if (mouseButton == LEFT) {
-                    if (include_OBJ_in_newSelection == 0) break;
-                  }                      
+                  if (break_loops == 1) break;                  
                 }
                 
                 if (include_OBJ_in_newSelection == 1) {
-                  
-                  int[] new_OBJ_number = {OBJ_NUM};
-                  
-                  selectedFractal_numbers = (int[]) concat(selectedFractal_numbers, new_OBJ_number);
 
+                  int found_at = -1;
+                  
+                  int use_it = 0; // 0:nothing 1:add -1:subtract
+                  
+                  if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+                  if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+                  if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+                  
+                  if (addNewSelectionToPreviousSelection != 0) {
+
+                    for (int o = selectedFractal_numbers.length - 1; o >= 0; o--) {
+                      if (selectedFractal_numbers[o] == OBJ_NUM) {
+                        found_at = o;
+                        if (addNewSelectionToPreviousSelection == 1) {
+                          use_it = 0;
+                        }
+                        if (addNewSelectionToPreviousSelection == -1) {
+                          use_it = -1; 
+                        }
+                        break;
+                      } 
+                    }
+                  }
+                  
+                  if (use_it == -1) {
+                    int[] startList = (int[]) subset(selectedFractal_numbers, 0, found_at);
+                    int[] endList = (int[]) subset(selectedFractal_numbers, found_at + 1);
+                    
+                    selectedFractal_numbers = (int[]) concat(startList, endList);
+                  }
+                  
+                  if (use_it == 1) {
+                    int[] new_OBJ_number = {OBJ_NUM};
+                    
+                    selectedFractal_numbers = (int[]) concat(selectedFractal_numbers, new_OBJ_number);
+                  }
+                  
                 }
               }
             }    
@@ -19024,8 +19226,6 @@ void mouseReleased () {
                         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
                           if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
                             if (mouseButton == RIGHT) {
-                              println("cross:", OBJ_NUM);
-                              
                               include_OBJ_in_newSelection = 1;
                               break_loops = 1;
                             }
@@ -19309,8 +19509,11 @@ void mouseClicked () {
         
         
         float[] RxP = new float [5];
-        
-        if ((Work_with_2D_or_3D == 2) && (Create_Select_Modify == -1))  { // only if the user wants to select a 2D-object 
+
+        if ((Work_with_2D_or_3D == 1) && (Create_Select_Modify == -1))  { // only if the user wants to select a Fractal-Tree 
+          RxP = SOLARCHVISION_1Dintersect(ray_start, ray_direction, max_dist);
+        }        
+        else if ((Work_with_2D_or_3D == 2) && (Create_Select_Modify == -1))  { // only if the user wants to select a 2D-object 
           RxP = SOLARCHVISION_2Dintersect(ray_start, ray_direction, max_dist);
         }
         else {
