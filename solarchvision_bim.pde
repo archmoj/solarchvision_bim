@@ -18870,9 +18870,9 @@ void mouseWheel(MouseEvent event) {
         
           float d = Wheel_Value;
 
-          float dx = 1;
-          float dy = 1;
-          float dz = 1;
+          float dx = d;
+          float dy = d;
+          float dz = d;
           
           int the_Vector = selectedPolymesh_posVector;
         
@@ -23554,6 +23554,23 @@ void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int 
     
     SOLARCHVISION_rotate_selectedPolymesh(x0, y0, z0, r, the_Vector);
   }
+  
+  if (Work_with_2D_or_3D == 2) {
+    // no rotation.
+  }
+
+  if (Work_with_2D_or_3D == 1) {
+
+    for (int o = selectedFractal_numbers.length - 1; o >= 0; o--) {
+      
+      int OBJ_NUM = selectedFractal_numbers[o];
+      
+      if (OBJ_NUM != 0) {      
+        
+        allFractal_XYZS[OBJ_NUM][4] += r; 
+      }
+    }
+  }    
 
 } 
 
