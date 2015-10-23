@@ -18866,8 +18866,8 @@ void mouseReleased () {
                 
                 int f = OBJ_NUM;
                 
-                int add_OBJ_to_Selection = 0;     
-                if (mouseButton == LEFT) add_OBJ_to_Selection = 1;
+                int add_OBJ_to_newSelection = 0;     
+                if (mouseButton == LEFT) add_OBJ_to_newSelection = 1;
 
                 for (int j = 0; j < allFractal_Faces[f].length; j++) {
                   
@@ -18882,25 +18882,25 @@ void mouseReleased () {
                   if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
                     if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
                       if (mouseButton == RIGHT) {
-                        add_OBJ_to_Selection = 1;
+                        add_OBJ_to_newSelection = 1;
                       }
                     }
                     else {
                       if (mouseButton == LEFT) {
-                        add_OBJ_to_Selection = 0;
+                        add_OBJ_to_newSelection = 0;
                       }                          
                     }
                   }
                   
                   if (mouseButton == RIGHT) {
-                    if (add_OBJ_to_Selection == 1) break;
+                    if (add_OBJ_to_newSelection == 1) break;
                   }
                   if (mouseButton == LEFT) {
-                    if (add_OBJ_to_Selection == 0) break;
+                    if (add_OBJ_to_newSelection == 0) break;
                   }                      
                 }
                 
-                if (add_OBJ_to_Selection == 1) {
+                if (add_OBJ_to_newSelection == 1) {
                   
                   int[] new_OBJ_number = {OBJ_NUM};
                   
@@ -18916,8 +18916,8 @@ void mouseReleased () {
                 
                 int f = OBJ_NUM;
                 
-                int add_OBJ_to_Selection = 0;     
-                if (mouseButton == LEFT) add_OBJ_to_Selection = 1;
+                int add_OBJ_to_newSelection = 0;     
+                if (mouseButton == LEFT) add_OBJ_to_newSelection = 1;
 
                 for (int j = 0; j < allObject2D_Faces[f].length; j++) {
                   
@@ -18932,25 +18932,25 @@ void mouseReleased () {
                   if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
                     if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
                       if (mouseButton == RIGHT) {
-                        add_OBJ_to_Selection = 1;
+                        add_OBJ_to_newSelection = 1;
                       }
                     }
                     else {
                       if (mouseButton == LEFT) {
-                        add_OBJ_to_Selection = 0;
+                        add_OBJ_to_newSelection = 0;
                       }                          
                     }
                   }
                   
                   if (mouseButton == RIGHT) {
-                    if (add_OBJ_to_Selection == 1) break;
+                    if (add_OBJ_to_newSelection == 1) break;
                   }
                   if (mouseButton == LEFT) {
-                    if (add_OBJ_to_Selection == 0) break;
+                    if (add_OBJ_to_newSelection == 0) break;
                   }                      
                 }
                 
-                if (add_OBJ_to_Selection == 1) {
+                if (add_OBJ_to_newSelection == 1) {
                   
                   int[] new_OBJ_number = {OBJ_NUM};
                   
@@ -18964,8 +18964,8 @@ void mouseReleased () {
               
               for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
                 
-                int add_OBJ_to_Selection = 0;     
-                if (mouseButton == LEFT) add_OBJ_to_Selection = 1;
+                int add_OBJ_to_newSelection = 0;     
+                if (mouseButton == LEFT) add_OBJ_to_newSelection = 1;
 
                 for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
                   if ((0 < f) && (f < allFaces.length)) { 
@@ -18982,68 +18982,76 @@ void mouseReleased () {
                       if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
                         if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
                           if (mouseButton == RIGHT) {
-                            add_OBJ_to_Selection = 1;
+                            add_OBJ_to_newSelection = 1;
                           }
                         }
                         else {
                           if (mouseButton == LEFT) {
-                            add_OBJ_to_Selection = 0;
+                            add_OBJ_to_newSelection = 0;
                           }                          
                         }
                       }
                       
                       if (mouseButton == RIGHT) {
-                        if (add_OBJ_to_Selection == 1) break;
+                        if (add_OBJ_to_newSelection == 1) break;
                       }
                       if (mouseButton == LEFT) {
-                        if (add_OBJ_to_Selection == 0) break;
+                        if (add_OBJ_to_newSelection == 0) break;
                       }                      
                     }
                     
                     if (mouseButton == RIGHT) {
-                      if (add_OBJ_to_Selection == 1) break;
+                      if (add_OBJ_to_newSelection == 1) break;
                     }
                     if (mouseButton == LEFT) {
-                      if (add_OBJ_to_Selection == 0) break;
+                      if (add_OBJ_to_newSelection == 0) break;
                     }                       
                     
                   }
                 }
                 
-                if (add_OBJ_to_Selection == 1) {
+               
+                if (add_OBJ_to_newSelection == 1) {
+                  println("OBJ_NUM:", OBJ_NUM);
                  
-                  int use_it = 1;
-                  
                   int found_at = -1;
                   
+                  int use_it = 0; // 0:nothing 1:add -1:subtract
+                  
+                  if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+                  if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+                  if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+                  
                   if (addNewSelectionToPreviousSelection != 0) {
-                    for (int o = 0; o < selectedPolymesh_numbers.length; o++) {
+
+                    for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
                       if (selectedPolymesh_numbers[o] == OBJ_NUM) {
                         found_at = o;
-                        use_it = 0;
+                        if (addNewSelectionToPreviousSelection == 1) {
+                          use_it = 0;
+                        }
+                        if (addNewSelectionToPreviousSelection == -1) {
+                          use_it = -1; 
+                        }
                         break;
                       } 
                     }
                   }
                   
+                  if (use_it == -1) {
+                    
+                    println("Hello!", OBJ_NUM);
+                    
+                    int[] startList = (int[]) subset(selectedPolymesh_numbers, 0, found_at);
+                    int[] endList = (int[]) subset(selectedPolymesh_numbers, found_at + 1);
+                    
+                    selectedPolymesh_numbers = (int[]) concat(startList, endList);
+                  }
+                  
                   if (use_it == 1) {
-                    if (addNewSelectionToPreviousSelection == -1) {
-                      println("HELLO!");
-                      
-                      if (found_at != -1) {
-                        
-                        
-                        int[] startList = (int[]) subset(selectedPolymesh_numbers, 0, found_at);
-                        int[] endList = (int[]) subset(selectedPolymesh_numbers, found_at + 1);
-                        
-                        selectedPolymesh_numbers = (int[]) concat(startList, endList);
-                      }
-                    }
-                    else { // i.e. addNewSelectionToPreviousSelection == 1 OR addNewSelectionToPreviousSelection == 0                 
-                      int[] new_OBJ_number = {OBJ_NUM};
-                      
-                      selectedPolymesh_numbers = (int[]) concat(selectedPolymesh_numbers, new_OBJ_number);
-                    }
+                    int[] new_OBJ_number = {OBJ_NUM};
+                    
+                    selectedPolymesh_numbers = (int[]) concat(selectedPolymesh_numbers, new_OBJ_number);
                   }
                   
                 }                
