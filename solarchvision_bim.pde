@@ -18866,8 +18866,8 @@ void mouseReleased () {
                 
                 int f = OBJ_NUM;
                 
-                int add_OBJ_to_newSelection = 0;     
-                if (mouseButton == LEFT) add_OBJ_to_newSelection = 1;
+                int include_OBJ_in_newSelection = 0;     
+                if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
 
                 for (int j = 0; j < allFractal_Faces[f].length; j++) {
                   
@@ -18882,25 +18882,25 @@ void mouseReleased () {
                   if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
                     if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
                       if (mouseButton == RIGHT) {
-                        add_OBJ_to_newSelection = 1;
+                        include_OBJ_in_newSelection = 1;
                       }
                     }
                     else {
                       if (mouseButton == LEFT) {
-                        add_OBJ_to_newSelection = 0;
+                        include_OBJ_in_newSelection = 0;
                       }                          
                     }
                   }
                   
                   if (mouseButton == RIGHT) {
-                    if (add_OBJ_to_newSelection == 1) break;
+                    if (include_OBJ_in_newSelection == 1) break;
                   }
                   if (mouseButton == LEFT) {
-                    if (add_OBJ_to_newSelection == 0) break;
+                    if (include_OBJ_in_newSelection == 0) break;
                   }                      
                 }
                 
-                if (add_OBJ_to_newSelection == 1) {
+                if (include_OBJ_in_newSelection == 1) {
                   
                   int[] new_OBJ_number = {OBJ_NUM};
                   
@@ -18916,8 +18916,8 @@ void mouseReleased () {
                 
                 int f = OBJ_NUM;
                 
-                int add_OBJ_to_newSelection = 0;     
-                if (mouseButton == LEFT) add_OBJ_to_newSelection = 1;
+                int include_OBJ_in_newSelection = 0;     
+                if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
 
                 for (int j = 0; j < allObject2D_Faces[f].length; j++) {
                   
@@ -18932,25 +18932,25 @@ void mouseReleased () {
                   if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
                     if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
                       if (mouseButton == RIGHT) {
-                        add_OBJ_to_newSelection = 1;
+                        include_OBJ_in_newSelection = 1;
                       }
                     }
                     else {
                       if (mouseButton == LEFT) {
-                        add_OBJ_to_newSelection = 0;
+                        include_OBJ_in_newSelection = 0;
                       }                          
                     }
                   }
                   
                   if (mouseButton == RIGHT) {
-                    if (add_OBJ_to_newSelection == 1) break;
+                    if (include_OBJ_in_newSelection == 1) break;
                   }
                   if (mouseButton == LEFT) {
-                    if (add_OBJ_to_newSelection == 0) break;
+                    if (include_OBJ_in_newSelection == 0) break;
                   }                      
                 }
                 
-                if (add_OBJ_to_newSelection == 1) {
+                if (include_OBJ_in_newSelection == 1) {
                   
                   int[] new_OBJ_number = {OBJ_NUM};
                   
@@ -18964,55 +18964,53 @@ void mouseReleased () {
               
               for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
                 
-                int add_OBJ_to_newSelection = 0;     
-                if (mouseButton == LEFT) add_OBJ_to_newSelection = 1;
-
-                for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
-                  if ((0 < f) && (f < allFaces.length)) { 
-              
-                    for (int j = 0; j < allFaces[f].length; j++) {
-                      int vNo = allFaces[f][j];
-          
-                      float x = allVertices[vNo][0] * objects_scale;
-                      float y = allVertices[vNo][1] * objects_scale;            
-                      float z = -allVertices[vNo][2] * objects_scale;
-                      
-                      float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
-
-                      if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                        if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
-                          if (mouseButton == RIGHT) {
-                            add_OBJ_to_newSelection = 1;
+                int include_OBJ_in_newSelection = 0;    
+                
+                if (allPolymesh_Faces[OBJ_NUM][0] < allPolymesh_Faces[OBJ_NUM][1]) {
+                  
+                  if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
+  
+                  for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
+                    if ((0 < f) && (f < allFaces.length)) { 
+                
+                      for (int j = 0; j < allFaces[f].length; j++) {
+                        int vNo = allFaces[f][j];
+            
+                        float x = allVertices[vNo][0] * objects_scale;
+                        float y = allVertices[vNo][1] * objects_scale;            
+                        float z = -allVertices[vNo][2] * objects_scale;
+                        
+                        float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+  
+                        if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+                          if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+                            if (mouseButton == RIGHT) {
+                              include_OBJ_in_newSelection = 1;
+                            }
+                          }
+                          else {
+                            if (mouseButton == LEFT) {
+                              include_OBJ_in_newSelection = 0;
+                            }                          
                           }
                         }
-                        else {
-                          if (mouseButton == LEFT) {
-                            add_OBJ_to_newSelection = 0;
-                          }                          
-                        }
+                        
+                        if ((mouseButton == RIGHT) && (include_OBJ_in_newSelection == 1)) break;
+                        else if ((mouseButton == LEFT) && (include_OBJ_in_newSelection == 0)) break;
                       }
                       
-                      if (mouseButton == RIGHT) {
-                        if (add_OBJ_to_newSelection == 1) break;
-                      }
-                      if (mouseButton == LEFT) {
-                        if (add_OBJ_to_newSelection == 0) break;
-                      }                      
+                      if ((mouseButton == RIGHT) && (include_OBJ_in_newSelection == 1)) break;
+                      else if ((mouseButton == LEFT) && (include_OBJ_in_newSelection == 0)) break;                    
+                      
                     }
-                    
-                    if (mouseButton == RIGHT) {
-                      if (add_OBJ_to_newSelection == 1) break;
-                    }
-                    if (mouseButton == LEFT) {
-                      if (add_OBJ_to_newSelection == 0) break;
-                    }                       
-                    
                   }
                 }
-                
+                  
+                  
+                println("OBJ_NUM:", OBJ_NUM, "include_OBJ_in_newSelection:", include_OBJ_in_newSelection, addNewSelectionToPreviousSelection);
                
-                if (add_OBJ_to_newSelection == 1) {
-                  println("OBJ_NUM:", OBJ_NUM);
+                if (include_OBJ_in_newSelection == 1) {
+                  
                  
                   int found_at = -1;
                   
