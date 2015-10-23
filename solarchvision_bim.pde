@@ -18964,6 +18964,8 @@ void mouseReleased () {
               
               for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
                 
+                int break_loops = 0;
+                
                 int include_OBJ_in_newSelection = 0;    
                 
                 if (allPolymesh_Faces[OBJ_NUM][0] < allPolymesh_Faces[OBJ_NUM][1]) {
@@ -18985,6 +18987,8 @@ void mouseReleased () {
                         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
                           if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
                             if (mouseButton == RIGHT) {
+                              println("cross!");
+                              
                               include_OBJ_in_newSelection = 1;
                             }
                           }
@@ -18994,13 +18998,14 @@ void mouseReleased () {
                             }                          
                           }
                         }
+
+                        if ((mouseButton == RIGHT) && (include_OBJ_in_newSelection == 1)) break_loops = 1;
+                        if ((mouseButton == LEFT) && (include_OBJ_in_newSelection == 0)) break_loops = 1;
                         
-                        if ((mouseButton == RIGHT) && (include_OBJ_in_newSelection == 1)) break;
-                        else if ((mouseButton == LEFT) && (include_OBJ_in_newSelection == 0)) break;
+                        if (break_loops == 1) break;
                       }
                       
-                      if ((mouseButton == RIGHT) && (include_OBJ_in_newSelection == 1)) break;
-                      else if ((mouseButton == LEFT) && (include_OBJ_in_newSelection == 0)) break;                    
+                      if (break_loops == 1) break;
                       
                     }
                   }
