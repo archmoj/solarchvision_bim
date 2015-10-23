@@ -122,7 +122,7 @@ int allObject2D_num = 0;
 int selectedObject2D_displayEdges = 1;
 int selectedFractal_displayEdges = 1;
 
-float[][] allFractal_XYZS = {{0,0,0,0,0}};
+float[][] allFractal_XYZS = {{0,0,0,0,0,0}};
 int[] allFractal_Type = {0};
 int[] allFractal_DegreeMin = {0};
 int[] allFractal_DegreeMax = {0};
@@ -13691,12 +13691,13 @@ void SOLARCHVISION_add_2Dobjects_plane (int people_or_trees, int n, float x0, fl
 }
 
 void SOLARCHVISION_remove_FractalPlants () {
-  allFractal_XYZS = new float [1][5]; 
+  allFractal_XYZS = new float [1][6]; 
   allFractal_XYZS[0][0] = 0;
   allFractal_XYZS[0][1] = 0;
   allFractal_XYZS[0][2] = 0;
   allFractal_XYZS[0][3] = 0;
   allFractal_XYZS[0][4] = 0;
+  allFractal_XYZS[0][5] = 0;
   
   allFractal_Type = new int [1];
   allFractal_Type[0] = 0;
@@ -18848,7 +18849,7 @@ void mouseWheel(MouseEvent event) {
         
         if (Create_Select_Modify == 2) { // scale
 
-          float s = pow(2.0, Wheel_Value);
+          float s = pow(pow(2.0, 0.25), Wheel_Value);
           
           float sx = s;
           float sy = s;
@@ -19869,7 +19870,7 @@ void mouseClicked () {
                 addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
                 
                 float as_Solid = 1;
-                SOLARCHVISION_add_FractalPlant(Create_Fractal_Plant_Type, x, y, z, 2 * rz, Create_Fractal_Plant_DegreeMin, Create_Fractal_Plant_DegreeMax, Create_Fractal_Plant_Seed, Create_Fractal_Plant_trunckSize, Create_Fractal_Plant_leafSize, as_Solid);
+                SOLARCHVISION_add_FractalPlant(Create_Fractal_Plant_Type, x, y, z, 2 * rz, rot, Create_Fractal_Plant_DegreeMin, Create_Fractal_Plant_DegreeMax, Create_Fractal_Plant_Seed, Create_Fractal_Plant_trunckSize, Create_Fractal_Plant_leafSize, as_Solid);
               }      
 
               if (Create_Mesh_Plant != 0) {
@@ -22228,7 +22229,8 @@ void RenderShadowsOnUrbanPlane() {
                 float y = allFractal_XYZS[f][1];
                 float z = allFractal_XYZS[f][2];
                 
-                float r = allFractal_XYZS[f][3] * 0.5;      
+                float r = allFractal_XYZS[f][3] * 0.5;
+                float rot = allFractal_XYZS[f][4];      
           
                 int n = allFractal_Type[f];
 
@@ -22247,7 +22249,7 @@ void RenderShadowsOnUrbanPlane() {
                 if (n == 0) {
                   
                   float Alpha = 0;
-                  float Beta = 0; 
+                  float Beta = rot; 
                 
                   SOLARCHVISION_Plant_branch_SHADOW(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, trunckSize, leafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY);
                   
@@ -22832,7 +22834,7 @@ void SOLARCHVISION_draw_solarch_image () {
   }
 }
 
-void SOLARCHVISION_add_FractalPlant (int PlantType, float x, float y, float z, float s, int PlantDegreeMin, int PlantDegreeMax, int PlantSeed, float trunckSize, float leafSize, float as_Solid) {
+void SOLARCHVISION_add_FractalPlant (int PlantType, float x, float y, float z, float s, float rot, int PlantDegreeMin, int PlantDegreeMax, int PlantSeed, float trunckSize, float leafSize, float as_Solid) {
 
   float[] TempFractal_trunckSize = {trunckSize}; 
   allFractal_trunckSize = concat(allFractal_trunckSize, TempFractal_trunckSize);  
@@ -22855,7 +22857,7 @@ void SOLARCHVISION_add_FractalPlant (int PlantType, float x, float y, float z, f
   int[] TempFractal_Seed = {q}; 
   allFractal_Seed = concat(allFractal_Seed, TempFractal_Seed);
 
-  float[][] TempFractal_XYZS = {{x, y, z, s, as_Solid}};
+  float[][] TempFractal_XYZS = {{x, y, z, s, rot, as_Solid}};
   allFractal_XYZS = (float[][]) concat(allFractal_XYZS, TempFractal_XYZS);
 
   allFractal_num += 1;
@@ -22884,7 +22886,8 @@ void SOLARCHVISION_draw_FractalPlants () {
       float z = allFractal_XYZS[f][2];
       
       float r = allFractal_XYZS[f][3] * 0.5;
-      float as_Solid = allFractal_XYZS[f][4];
+      float rot = allFractal_XYZS[f][4];
+      float as_Solid = allFractal_XYZS[f][5];
 
       int n = allFractal_Type[f];
 
@@ -22903,12 +22906,12 @@ void SOLARCHVISION_draw_FractalPlants () {
       if (n == 0) {
         
         float Alpha = 0;
-        float Beta = 0; 
+        float Beta = rot; 
       
         SOLARCHVISION_Plant_branch(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, trunckSize, leafSize, as_Solid);
         
         if (as_Solid != 0) {
-          allFractal_XYZS[f][4] = 0; 
+          allFractal_XYZS[f][5] = 0; 
         }
         
         
