@@ -12304,6 +12304,8 @@ void SOLARCHVISION_deleteSelection () {
 
   if (Work_with_2D_or_3D == 1) {
     
+    selectedFractal_numbers = sort(selectedFractal_numbers);
+    
     for (int o = selectedFractal_numbers.length - 1; o >= 0; o--) {
       
       int OBJ_NUM = selectedFractal_numbers[o];
@@ -12369,6 +12371,8 @@ void SOLARCHVISION_deleteSelection () {
   
   if (Work_with_2D_or_3D == 2) {
     
+    selectedObject2D_numbers = sort(selectedObject2D_numbers);
+    
     for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
       
       int OBJ_NUM = selectedObject2D_numbers[o];
@@ -12399,13 +12403,6 @@ void SOLARCHVISION_deleteSelection () {
   
   if (Work_with_2D_or_3D == 3) {
 
-  /*
-    println("before:"); 
-    for (int i = 0; i < allPolymesh_Solids.length; i++) {
-      println(allPolymesh_Solids[i][0], allPolymesh_Solids[i][1]);
-    }      
-  */      
-    
     selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
     
     int Solids_updated = 0;  
@@ -12523,15 +12520,6 @@ void SOLARCHVISION_deleteSelection () {
     
     if (Solids_updated != 0) SOLARCHVISION_calculate_ParametricGeometries_Field();
 
-  /*  
-    println("after:"); 
-    for (int i = 0; i < allPolymesh_Solids.length; i++) {
-      println(allPolymesh_Solids[i][0], allPolymesh_Solids[i][1]);
-    }        
-    
-    println("__________________"); 
-  */
-    
   }
 
 
@@ -19666,12 +19654,6 @@ void mouseClicked () {
                 
                 selectedObject2D_numbers = (int[]) concat(selectedObject2D_numbers, new_OBJ_number);
               }
-
-              for (int o = 0; o < selectedObject2D_numbers.length; o++) {
-                print(selectedObject2D_numbers[o], ","); 
-              }
-              println("________________________");
-
 
               WIN3D_Update = 1;
             }
