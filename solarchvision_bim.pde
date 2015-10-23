@@ -18886,7 +18886,7 @@ void mouseWheel(MouseEvent event) {
           WIN3D_Update = 1;
           
         }   
-        
+       
         if (Create_Select_Modify == -1) { // PickSelect
 
           if (Work_with_2D_or_3D == 1) {
@@ -19522,7 +19522,7 @@ void mouseClicked () {
         }
         
         
-        println(ray_start[0], ray_start[1], ray_start[2], ">>", ray_end[0], ray_end[1], ray_end[2], ">>", RxP[0], RxP[1], RxP[2]);
+        println(ray_start[0], ray_start[1], ray_start[2], ">>", ray_end[0], ray_end[1], ray_end[2], ">>", RxP[0], RxP[1], RxP[2], RxP[3], RxP[4]);
         
         if (RxP[4] > 0) {
 
@@ -19604,6 +19604,8 @@ void mouseClicked () {
           }   
           
           if (Create_Select_Modify == -1) { // PickSelect
+          
+            if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselectAll();
             
             if (Work_with_2D_or_3D == 3) {
 
@@ -19625,14 +19627,96 @@ void mouseClicked () {
 
             if (Work_with_2D_or_3D == 2) {
 
-              selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = int(RxP[4]);
+              int OBJ_NUM = int(RxP[4]);
               
+
+              int found_at = -1;
+              
+              int use_it = 0; // 0:nothing 1:add -1:subtract
+              
+              if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+              if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+              if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+              
+              if (addNewSelectionToPreviousSelection != 0) {
+
+                for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
+                  if (selectedObject2D_numbers[o] == OBJ_NUM) {
+                    found_at = o;
+                    if (addNewSelectionToPreviousSelection == 1) {
+                      use_it = 0;
+                    }
+                    if (addNewSelectionToPreviousSelection == -1) {
+                      use_it = -1; 
+                    }
+                    break;
+                  } 
+                }
+              }
+              
+              if (use_it == -1) {
+                int[] startList = (int[]) subset(selectedObject2D_numbers, 0, found_at);
+                int[] endList = (int[]) subset(selectedObject2D_numbers, found_at + 1);
+                
+                selectedObject2D_numbers = (int[]) concat(startList, endList);
+              }
+              
+              if (use_it == 1) {
+                int[] new_OBJ_number = {OBJ_NUM};
+                
+                selectedObject2D_numbers = (int[]) concat(selectedObject2D_numbers, new_OBJ_number);
+              }
+
+              for (int o = 0; o < selectedObject2D_numbers.length; o++) {
+                print(selectedObject2D_numbers[o], ","); 
+              }
+              println("________________________");
+
+
               WIN3D_Update = 1;
             }
 
             if (Work_with_2D_or_3D == 1) {
+              
+              int OBJ_NUM = int(RxP[4]);
+              
 
-              selectedFractal_numbers[selectedFractal_numbers.length - 1] = int(RxP[4]);
+              int found_at = -1;
+              
+              int use_it = 0; // 0:nothing 1:add -1:subtract
+              
+              if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+              if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+              if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+              
+              if (addNewSelectionToPreviousSelection != 0) {
+
+                for (int o = selectedFractal_numbers.length - 1; o >= 0; o--) {
+                  if (selectedFractal_numbers[o] == OBJ_NUM) {
+                    found_at = o;
+                    if (addNewSelectionToPreviousSelection == 1) {
+                      use_it = 0;
+                    }
+                    if (addNewSelectionToPreviousSelection == -1) {
+                      use_it = -1; 
+                    }
+                    break;
+                  } 
+                }
+              }
+              
+              if (use_it == -1) {
+                int[] startList = (int[]) subset(selectedFractal_numbers, 0, found_at);
+                int[] endList = (int[]) subset(selectedFractal_numbers, found_at + 1);
+                
+                selectedFractal_numbers = (int[]) concat(startList, endList);
+              }
+              
+              if (use_it == 1) {
+                int[] new_OBJ_number = {OBJ_NUM};
+                
+                selectedFractal_numbers = (int[]) concat(selectedFractal_numbers, new_OBJ_number);
+              }
               
               WIN3D_Update = 1;
             }
