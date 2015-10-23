@@ -185,7 +185,7 @@ float Create_Fractal_Plant_leafSize = 1; //1;
 
 int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D
 
-int Create_Select_Modify = -2; // -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 
+int Create_Select_Modify = 4; // -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Properties
 
 int Display_SWOB_points = 1; // 0-2
 int Display_SWOB_nearest = 1;
@@ -18822,6 +18822,16 @@ void mouseWheel(MouseEvent event) {
           y0 = selectedPolymesh_Pivot_XYZ[1];
           z0 = selectedPolymesh_Pivot_XYZ[2];
         }        
+
+        if (Create_Select_Modify == 4) { // properties
+
+          int p = int(Wheel_Value);
+          
+          SOLARCHVISION_property_Selection(p);
+          
+          WIN3D_Update = 1;
+          
+        }   
         
         if (Create_Select_Modify == 3) { // rotate
 
@@ -20406,7 +20416,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
   
     Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 3, 1), 1));
   
-    Create_Select_Modify = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Select_Modify" , Create_Select_Modify, -4, 3, 1), 1));
+    Create_Select_Modify = int(roundTo(MySpinner.update(X_spinner, Y_spinner, 0,0,0, "Create_Select_Modify" , Create_Select_Modify, -4, 4, 1), 1));
 
 
     if (ROLLOUT_child != 5) {
@@ -23726,3 +23736,54 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
   }    
   
 }
+
+void SOLARCHVISION_property_Selection (int p) {
+
+  if (Work_with_2D_or_3D == 3) {
+    
+  }
+  
+  if (Work_with_2D_or_3D == 2) {
+    for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
+      
+      int OBJ_NUM = selectedObject2D_numbers[o];
+      
+      if (OBJ_NUM != 0) {      
+         
+        int n = allObject2D_MAP[OBJ_NUM];
+        int sign_n = 1;
+        if (n < 0) sign_n = -1;
+        
+        n = abs(n);
+        
+        int n1 = Object2D_Filenames_PEOPLE.length;
+        int n2 = Object2D_Filenames_PEOPLE.length + Object2D_Filenames_TREES.length;
+        
+        
+        if (n <= n1) {  // case: people 
+
+          n += p;
+          
+          if (n > n1) {n = 1; sign_n *= -1;}
+          if (n < 1) {n = n1; sign_n *= -1;}  
+        }
+        else { // case: trees
+
+          n += p;
+          
+          if (n > n2) {n = n1 + 1; sign_n *= -1;}
+          if (n < n1 + 1) {n = n2; sign_n *= -1;}            
+        }
+        
+        n *= sign_n;
+        
+        allObject2D_MAP[OBJ_NUM] = n; 
+      }
+    }    
+  }
+
+  if (Work_with_2D_or_3D == 1) {
+
+  }    
+
+} 
