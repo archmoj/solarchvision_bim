@@ -18966,10 +18966,11 @@ void mouseReleased () {
                 
                 int break_loops = 0;
                 
-                int include_OBJ_in_newSelection = 0;    
-                
+                int include_OBJ_in_newSelection = -1;    
+
                 if (allPolymesh_Faces[OBJ_NUM][0] < allPolymesh_Faces[OBJ_NUM][1]) {
                   
+                  if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
                   if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
   
                   for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
@@ -18990,17 +18991,16 @@ void mouseReleased () {
                               println("cross!");
                               
                               include_OBJ_in_newSelection = 1;
+                              break_loops = 1;
                             }
                           }
                           else {
                             if (mouseButton == LEFT) {
                               include_OBJ_in_newSelection = 0;
+                              break_loops = 1;
                             }                          
                           }
                         }
-
-                        if ((mouseButton == RIGHT) && (include_OBJ_in_newSelection == 1)) break_loops = 1;
-                        if ((mouseButton == LEFT) && (include_OBJ_in_newSelection == 0)) break_loops = 1;
                         
                         if (break_loops == 1) break;
                       }
@@ -19010,7 +19010,7 @@ void mouseReleased () {
                     }
                   }
                 }
-                  
+                
                   
                 println("OBJ_NUM:", OBJ_NUM, "include_OBJ_in_newSelection:", include_OBJ_in_newSelection, addNewSelectionToPreviousSelection);
                
