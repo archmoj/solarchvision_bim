@@ -18988,7 +18988,7 @@ void mouseReleased () {
                         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
                           if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
                             if (mouseButton == RIGHT) {
-                              println("cross!");
+                              println("cross:", OBJ_NUM);
                               
                               include_OBJ_in_newSelection = 1;
                               break_loops = 1;
@@ -19010,10 +19010,7 @@ void mouseReleased () {
                     }
                   }
                 }
-                
-                  
-                println("OBJ_NUM:", OBJ_NUM, "include_OBJ_in_newSelection:", include_OBJ_in_newSelection, addNewSelectionToPreviousSelection);
-               
+
                 if (include_OBJ_in_newSelection == 1) {
                   
                  
@@ -19042,9 +19039,6 @@ void mouseReleased () {
                   }
                   
                   if (use_it == -1) {
-                    
-                    println("Hello!", OBJ_NUM);
-                    
                     int[] startList = (int[]) subset(selectedPolymesh_numbers, 0, found_at);
                     int[] endList = (int[]) subset(selectedPolymesh_numbers, found_at + 1);
                     
