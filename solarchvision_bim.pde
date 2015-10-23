@@ -23784,6 +23784,17 @@ void SOLARCHVISION_property_Selection (int p) {
 
   if (Work_with_2D_or_3D == 1) {
 
+    for (int o = selectedFractal_numbers.length - 1; o >= 0; o--) {
+      
+      int OBJ_NUM = selectedFractal_numbers[o];
+      
+      if (OBJ_NUM != 0) {      
+        
+        allFractal_Seed[OBJ_NUM] += p; 
+        
+      }
+    }    
+    
   }    
 
 } 
