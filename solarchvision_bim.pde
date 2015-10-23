@@ -23740,6 +23740,28 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
 void SOLARCHVISION_property_Selection (int p) {
 
   if (Work_with_2D_or_3D == 3) {
+
+    for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
+      
+      int OBJ_NUM = selectedPolymesh_numbers[o];
+      
+      if (OBJ_NUM != 0) {      
+        
+        for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
+          if ((0 < f) && (f < allFaces.length)) {
+        
+            int n = allFaces_MAT[f];
+            
+            n += p;
+            
+            if (n > 8) n = 0;
+            if (n < 0) n = 8;
+            
+            allFaces_MAT[f] = n;
+          }
+        }
+      }
+    } 
     
   }
   
