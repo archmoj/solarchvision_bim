@@ -18913,12 +18913,16 @@ void mouseReleased () {
             if (Work_with_2D_or_3D == 2) {
               
               for (int OBJ_NUM = 1; OBJ_NUM < allObject2D_Faces.length; OBJ_NUM++) {
+
+                int break_loops = 0;
+                
+                int include_OBJ_in_newSelection = -1;    
+
+                if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
+                if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
                 
                 int f = OBJ_NUM;
                 
-                int include_OBJ_in_newSelection = 0;     
-                if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
-
                 for (int j = 0; j < allObject2D_Faces[f].length; j++) {
                   
                   int vNo = allObject2D_Faces[f][j];
@@ -18933,30 +18937,62 @@ void mouseReleased () {
                     if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
                       if (mouseButton == RIGHT) {
                         include_OBJ_in_newSelection = 1;
+                        break_loops = 1;
                       }
                     }
                     else {
                       if (mouseButton == LEFT) {
                         include_OBJ_in_newSelection = 0;
+                        break_loops = 1;
                       }                          
                     }
+                    
+                    if (break_loops == 1) break;
                   }
                   
-                  if (mouseButton == RIGHT) {
-                    if (include_OBJ_in_newSelection == 1) break;
-                  }
-                  if (mouseButton == LEFT) {
-                    if (include_OBJ_in_newSelection == 0) break;
-                  }                      
+                  if (break_loops == 1) break;              
                 }
                 
                 if (include_OBJ_in_newSelection == 1) {
-                  
-                  int[] new_OBJ_number = {OBJ_NUM};
-                  
-                  selectedObject2D_numbers = (int[]) concat(selectedObject2D_numbers, new_OBJ_number);
 
-                }
+                  int found_at = -1;
+                  
+                  int use_it = 0; // 0:nothing 1:add -1:subtract
+                  
+                  if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+                  if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+                  if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+                  
+                  if (addNewSelectionToPreviousSelection != 0) {
+
+                    for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
+                      if (selectedObject2D_numbers[o] == OBJ_NUM) {
+                        found_at = o;
+                        if (addNewSelectionToPreviousSelection == 1) {
+                          use_it = 0;
+                        }
+                        if (addNewSelectionToPreviousSelection == -1) {
+                          use_it = -1; 
+                        }
+                        break;
+                      } 
+                    }
+                  }
+                  
+                  if (use_it == -1) {
+                    int[] startList = (int[]) subset(selectedObject2D_numbers, 0, found_at);
+                    int[] endList = (int[]) subset(selectedObject2D_numbers, found_at + 1);
+                    
+                    selectedObject2D_numbers = (int[]) concat(startList, endList);
+                  }
+                  
+                  if (use_it == 1) {
+                    int[] new_OBJ_number = {OBJ_NUM};
+                    
+                    selectedObject2D_numbers = (int[]) concat(selectedObject2D_numbers, new_OBJ_number);
+                  }
+                  
+                }                
               }
             }    
             
@@ -19012,8 +19048,7 @@ void mouseReleased () {
                 }
 
                 if (include_OBJ_in_newSelection == 1) {
-                  
-                 
+
                   int found_at = -1;
                   
                   int use_it = 0; // 0:nothing 1:add -1:subtract
