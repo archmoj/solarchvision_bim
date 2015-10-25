@@ -1334,13 +1334,18 @@ void empty_Materials_DiffuseArea () {
 
 }
 
-int a_pixel = 15; // menu bar
-int b_pixel = 30; // tool bar
+
 
 
                   
 int h_pixel = 325; //340; 
 int w_pixel = int(h_pixel * 1.5); 
+
+float MESSAGE_S_View = w_pixel / 40.0;
+
+
+int a_pixel = int(1.5 * MESSAGE_S_View); // menu bar
+int b_pixel = int(3 * MESSAGE_S_View); // tool bar
 
 float WIN3D_scale3D; 
 
@@ -1429,7 +1434,6 @@ int ROLLOUT_Update = 1;
 int ROLLOUT_include = 1;
 
 
-float MESSAGE_S_View = w_pixel / 40.0;
 int MESSAGE_CX_View = 0;
 int MESSAGE_CY_View = int(1 * h_pixel - 0.75 * MESSAGE_S_View + 0.5 * (a_pixel + b_pixel));
 int MESSAGE_X_View = 2 * w_pixel + ROLLOUT_X_View;
