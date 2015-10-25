@@ -11687,7 +11687,7 @@ void keyPressed (KeyEvent e) {
       BAR_a_selected_parent = -1;
       BAR_a_selected_child = 0;
   
-      image(pre_screen, 0, a_pixel);
+      image(pre_screen_a, 0, a_pixel);
     }
     
     if ((BAR_b_selected_parent != -1) || (BAR_b_selected_child != 0)) {
@@ -11695,7 +11695,7 @@ void keyPressed (KeyEvent e) {
       BAR_b_selected_parent = -1;
       BAR_b_selected_child = 0;
   
-      image(pre_screen, 0, a_pixel);
+      image(pre_screen_b, 0, a_pixel + b_pixel);
     }
   
     addNewSelectionToPreviousSelection = 0;
@@ -19432,7 +19432,7 @@ void mouseClicked () {
       BAR_a_selected_parent = -1;
       BAR_a_selected_child = 0;
   
-      image(pre_screen, 0, a_pixel);
+      image(pre_screen_a, 0, a_pixel);
       
       X_clicked = -1;
       Y_clicked = -1;
@@ -23913,7 +23913,7 @@ void mouseMoved () {
 
 
 
-PImage pre_screen;
+PImage pre_screen_a;
 
 int BAR_a_Update = 1;
 
@@ -23953,21 +23953,23 @@ void SOLARCHVISION_draw_window_BAR_a () {
     float cx = X_control + i * BAR_a_width_parent;
     float cy = Y_control;
     float cr = 0.5 * a_pixel;      
-  
-    if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + BAR_a_width_parent, cy + cr) == 1) {
 
-      if (BAR_a_selected_parent == -1) {
-        pre_screen = get(0, a_pixel, width, height - a_pixel);
+    if (BAR_b_selected_parent == -1) { // check to make sure the other bar is not clicked.
+      if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + BAR_a_width_parent, cy + cr) == 1) {
+  
+        if (BAR_a_selected_parent == -1) {
+          pre_screen_a = get(0, a_pixel, width, height - a_pixel);
+          
+          println("Screen GET!");
+        }     
         
-        println("Screen GET!");
+        BAR_a_selected_parent = i;
+        
+        BAR_a_selected_child = 0;
+        
+        BAR_a_Update = 1;
       }     
-      
-      BAR_a_selected_parent = i;
-      
-      BAR_a_selected_child = 0;
-      
-      BAR_a_Update = 1;
-    }      
+    } 
 
     textAlign(LEFT, CENTER);   
    
@@ -23989,7 +23991,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
 
     if (BAR_a_selected_parent == i) {
       
-      image(pre_screen, 0, a_pixel);
+      image(pre_screen_a, 0, a_pixel);
       
       for (int j = 1; j < BAR_a_Items[BAR_a_selected_parent].length; j++) {
         
@@ -24034,6 +24036,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
 
 }
 
+PImage pre_screen_b;
 
 int BAR_b_Update = 1;
 
@@ -24082,22 +24085,23 @@ void SOLARCHVISION_draw_window_BAR_b () {
     float cr = 0.5 * b_pixel;      
   
       
-    
-    if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + BAR_b_width_parent, cy + cr) == 1) {
-
-      if (BAR_b_selected_parent == -1) {
-        pre_screen = get(0, a_pixel, width, height - a_pixel);
+    if (BAR_a_selected_parent == -1) { // check to make sure the other bar is not clicked.
+      if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + BAR_b_width_parent, cy + cr) == 1) {
+  
+        if (BAR_b_selected_parent == -1) {
+          pre_screen_b = get(0, a_pixel + b_pixel, width, height - (a_pixel + b_pixel));
+          
+          println("Screen GET!");
+        }     
         
-        println("Screen GET!");
-      }     
-      
-      BAR_b_selected_parent = i;
-      
-      BAR_b_selected_child = 0;
-      
-      BAR_b_Update = 1;
-
-    }      
+        BAR_b_selected_parent = i;
+        
+        BAR_b_selected_child = 0;
+        
+        BAR_b_Update = 1;
+  
+      }  
+    }    
 
     textAlign(LEFT, CENTER);   
     stroke(255); 
@@ -24108,7 +24112,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
     
     if (BAR_b_selected_parent == i) {
       
-      image(pre_screen, 0, a_pixel);
+      image(pre_screen_b, 0, a_pixel + b_pixel);
       
       for (int j = 1; j < BAR_b_Items[BAR_b_selected_parent].length; j++) {
         
@@ -24125,7 +24129,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
           BAR_b_selected_parent = -1;
           BAR_b_selected_child = 0;
       
-          image(pre_screen, 0, a_pixel); 
+          image(pre_screen_b, 0, a_pixel + b_pixel); 
           BAR_b_Update = 1;
           
           X_clicked = -1;
