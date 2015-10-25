@@ -11679,6 +11679,14 @@ void keyPressed (KeyEvent e) {
   if (automated == 0) {
     X_clicked = -1;
     Y_clicked = -1;
+    
+    if (BAR_a_selected_parent != -1) {
+    
+      BAR_a_selected_parent = -1;
+      BAR_a_selected_child = 0;
+  
+      image(pre_screen, 0, a_pixel);
+    }
   
     addNewSelectionToPreviousSelection = 0;
   
@@ -23859,30 +23867,49 @@ void SOLARCHVISION_property_Selection (int p) {
 
 } 
 
+void mouseMoved () {
+  
+  if (automated == 0) {
+
+    if (BAR_a_selected_parent != -1) {
+      
+      if ((X_clicked != mouseX) || (Y_clicked != mouseY)) {
+      
+        X_clicked = mouseX;
+        Y_clicked = mouseY;      
+        
+        BAR_a_Update = 1;     
+       
+        redraw(); 
+      }
+    } 
+  }
+}
+
 String[][] BAR_a_Items = {
                         {"Files", "New", "Open...", "Save", "Save As...", "Import...", "Export...", "Preferences", "Exit"}, 
-                        {"Edit", "Move", "Rotate", "Scale", "Parameter", "Align"},
-                        {"Tools"}, 
-                        {"Views"},
-                        {"Create"}, 
-                        {"Modify"},
-                        {"Analysis"},
-                        {"About"},
+                        {"Edit", "Pivot", "Move", "Rotate", "Scale", "Seed", "Copy", "Array"},
+                        {"Views", "Zoom", "Orbit", "Pan", "Distance", "Center"},
+                        {"Create", "Sphere", "Box", "House", "Hyper", "Plane"}, 
+                        {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
+                        {"About", "Developed by Mojtaba Samimi"},
                       };
 
 int BAR_a_Update = 1;
 int BAR_b_Update = 1;
 
-float BAR_a_width_parent = 75;
-float BAR_a_width_child = 300;
+float BAR_a_width_parent = 4 * a_pixel;
+float BAR_a_width_child = 3 * BAR_a_width_parent;
 
 int BAR_a_selected_parent = -1;
 int BAR_a_selected_child = 0;
 
+PImage pre_screen;
+
 void SOLARCHVISION_draw_window_BAR_a () {
   
   BAR_a_Update = 0;
-
+  
   fill(127);
   noStroke();
   
@@ -23900,9 +23927,21 @@ void SOLARCHVISION_draw_window_BAR_a () {
     textAlign(LEFT, CENTER);     
     
     if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + BAR_a_width_parent, cy + cr) == 1) {
+
+      if (BAR_a_selected_parent == -1) {
+        pre_screen = get(0, a_pixel, width, height);
+        
+        println("Screen GET!");
+      }     
+      
       BAR_a_selected_parent = i;
       
+      BAR_a_selected_child = 0;
+      
       BAR_a_Update = 1;
+
+  
+    
     }      
    
     if (BAR_a_selected_parent == i) {
@@ -23917,27 +23956,36 @@ void SOLARCHVISION_draw_window_BAR_a () {
       textSize(1.25 * MESSAGE_S_View);
     }
             
-    text(BAR_a_Items[i][0], cx + 0.5 * MESSAGE_S_View, cy);
+    text(BAR_a_Items[i][0], cx + 0.5 * MESSAGE_S_View, cy - 0.1 * MESSAGE_S_View);
 
-    if (BAR_a_selected_parent != -1) {
+
+
+    if (BAR_a_selected_parent == i) {
+      
+      image(pre_screen, 0, a_pixel);
+      
       for (int j = 1; j < BAR_a_Items[BAR_a_selected_parent].length; j++) {
         
-        fill(127);
-        noStroke();
+        if (isInside(X_clicked, Y_clicked, cx, cy - cr + j * a_pixel, cx + BAR_a_width_child, cy + cr + j * a_pixel) == 1) {
+          BAR_a_selected_child = j;
+          
+          BAR_a_Update = 1;
+          
+          //X_clicked = -1;
+          //Y_clicked = -1;
+          
+          fill(255,127,0);
+          noStroke();
+          rect(cx, cy - cr + j * a_pixel, BAR_a_width_child, a_pixel);          
+        }  
+        else {
+          fill(127, 127);
+          noStroke();
+          rect(cx, cy - cr + j * a_pixel, BAR_a_width_child, a_pixel);          
+        }
         
-        rect(cx, cy + j * a_pixel, BAR_a_width_child, a_pixel);
-
         textAlign(LEFT, CENTER);
-/*
-    if (isInside(X_clicked, Y_clicked, ...) == 1) {
-      BAR_a_selected_child = j;
-      
-      BAR_a_Update = 1;
-      
-      X_clicked = -1;
-      Y_clicked = -1;
-    }  
-*/        
+        
         if (BAR_a_selected_child == j) {
           
           stroke(0); 
@@ -23949,8 +23997,8 @@ void SOLARCHVISION_draw_window_BAR_a () {
           fill(255);
           textSize(1.25 * MESSAGE_S_View);
         }
-        
-        text(BAR_a_Items[i][j], cx + 0.5 * MESSAGE_S_View, cy + j * a_pixel);
+
+        text(BAR_a_Items[i][j], cx + 0.5 * MESSAGE_S_View, cy - 0.1 * MESSAGE_S_View + j * a_pixel);
         
       }     
     } 
