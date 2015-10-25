@@ -11682,7 +11682,7 @@ void keyPressed (KeyEvent e) {
     X_clicked = -1;
     Y_clicked = -1;
 
-    if (BAR_a_selected_child != 0) {
+    if ((BAR_a_selected_parent != -1) || (BAR_a_selected_child != 0)) {
     
       BAR_a_selected_parent = -1;
       BAR_a_selected_child = 0;
@@ -11690,10 +11690,10 @@ void keyPressed (KeyEvent e) {
       image(pre_screen, 0, a_pixel);
     }
     
-    if (BAR_a_selected_parent != -1) {
+    if ((BAR_b_selected_parent != -1) || (BAR_b_selected_child != 0)) {
     
-      BAR_a_selected_parent = -1;
-      BAR_a_selected_child = 0;
+      BAR_b_selected_parent = -1;
+      BAR_b_selected_child = 0;
   
       image(pre_screen, 0, a_pixel);
     }
@@ -19438,20 +19438,6 @@ void mouseClicked () {
       Y_clicked = -1;
       
     }   
-    else if (BAR_b_selected_child != 0) {
-
-      BAR_b_Items[BAR_b_selected_parent][0] = BAR_b_Items[BAR_b_selected_parent][BAR_b_selected_child];   
-      
-      BAR_b_selected_parent = -1;
-      BAR_b_selected_child = 0;
-  
-      image(pre_screen, 0, a_pixel); // ?????
-      BAR_b_Update = 1;
-      
-      X_clicked = -1;
-      Y_clicked = -1;
-      
-    }    
     else {    
       
       X_clicked = mouseX;
@@ -23968,8 +23954,6 @@ void SOLARCHVISION_draw_window_BAR_a () {
     float cy = Y_control;
     float cr = 0.5 * a_pixel;      
   
-    textAlign(LEFT, CENTER);     
-    
     if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + BAR_a_width_parent, cy + cr) == 1) {
 
       if (BAR_a_selected_parent == -1) {
@@ -23984,6 +23968,8 @@ void SOLARCHVISION_draw_window_BAR_a () {
       
       BAR_a_Update = 1;
     }      
+
+    textAlign(LEFT, CENTER);   
    
     if (BAR_a_selected_parent == i) {
       
@@ -24052,7 +24038,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
 int BAR_b_Update = 1;
 
 float BAR_b_width_parent = 1 * b_pixel;
-float BAR_b_width_child = 1 * BAR_a_width_parent;
+float BAR_b_width_child = 0.5 * BAR_a_width_parent;
 
 int BAR_b_selected_parent = -1;
 int BAR_b_selected_child = 0;
@@ -24095,7 +24081,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
     float cy = Y_control;
     float cr = 0.5 * b_pixel;      
   
-    textAlign(LEFT, CENTER);     
+      
     
     if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + BAR_b_width_parent, cy + cr) == 1) {
 
@@ -24112,17 +24098,11 @@ void SOLARCHVISION_draw_window_BAR_b () {
       BAR_b_Update = 1;
 
     }      
-   
-    if (BAR_b_selected_parent == i) {
-      stroke(255,127,0); 
-      fill(255,127,0);      
-      textSize(1.25 * MESSAGE_S_View);
-    }
-    else{
-      stroke(255); 
-      fill(255);
-      textSize(1.25 * MESSAGE_S_View);
-    }
+
+    textAlign(LEFT, CENTER);   
+    stroke(255); 
+    fill(255);
+    textSize(1.25 * MESSAGE_S_View);
             
     text(BAR_b_Items[i][0], cx + 0.5 * MESSAGE_S_View, cy - 0.1 * MESSAGE_S_View);
     
@@ -24137,12 +24117,21 @@ void SOLARCHVISION_draw_window_BAR_b () {
           
           BAR_b_Update = 1;
           
-          //X_clicked = -1;
-          //Y_clicked = -1;
+          println("[BAR_b_selected_parent][BAR_b_selected_child]", BAR_b_selected_parent, BAR_b_selected_child);
           
-          fill(255,127,0);
-          noStroke();
-          rect(cx, cy - cr + j * b_pixel, BAR_b_width_child, b_pixel);          
+
+          BAR_b_Items[BAR_b_selected_parent][0] = BAR_b_Items[BAR_b_selected_parent][BAR_b_selected_child];   
+          
+          BAR_b_selected_parent = -1;
+          BAR_b_selected_child = 0;
+      
+          image(pre_screen, 0, a_pixel); 
+          BAR_b_Update = 1;
+          
+          X_clicked = -1;
+          Y_clicked = -1;
+
+          break;   
         }  
         else {
           fill(127, 127);
