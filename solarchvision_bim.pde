@@ -1334,15 +1334,18 @@ void empty_Materials_DiffuseArea () {
 
 }
 
+int a_pixel = 15; // menu bar
+int b_pixel = 30; // tool bar
+
 
                   
-int h_pixel = 340; //325; 
+int h_pixel = 325; //340; 
 int w_pixel = int(h_pixel * 1.5); 
 
 float WIN3D_scale3D; 
 
-int WIN3D_CX_View = 0;
-int WIN3D_CY_View = h_pixel;
+int WIN3D_CX_View = 2 * h_pixel;
+int WIN3D_CY_View = a_pixel + b_pixel + 0;
 int WIN3D_X_View = h_pixel;
 int WIN3D_Y_View = h_pixel;
 float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
@@ -1379,8 +1382,8 @@ int WIN3D_update_VerticesSolarValue = 1;
 
 
 
-int WORLD_CX_View = h_pixel;
-int WORLD_CY_View = h_pixel;
+int WORLD_CX_View = 0;
+int WORLD_CY_View = a_pixel + b_pixel + 0;
 int WORLD_X_View = 2 * h_pixel;
 int WORLD_Y_View = h_pixel;
 float WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
@@ -1406,7 +1409,7 @@ int number_of_WORLD_viewports;
 
 
 int GRAPHS_CX_View = 0;
-int GRAPHS_CY_View = 0;
+int GRAPHS_CY_View = a_pixel + b_pixel + h_pixel;
 int GRAPHS_X_View = 2 * w_pixel;
 int GRAPHS_Y_View = 1 * h_pixel;
 float GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);
@@ -1416,7 +1419,7 @@ int GRAPHS_Update = 1;
 int GRAPHS_include = 1;
 
 int ROLLOUT_CX_View = 2 * w_pixel;
-int ROLLOUT_CY_View = 0;
+int ROLLOUT_CY_View = a_pixel + b_pixel + 0;
 int ROLLOUT_X_View = 1 * h_pixel;
 int ROLLOUT_Y_View = 2 * h_pixel;
 float ROLLOUT_R_View = float(ROLLOUT_Y_View) / float(ROLLOUT_X_View);
@@ -1428,7 +1431,7 @@ int ROLLOUT_include = 1;
 
 float MESSAGE_S_View = w_pixel / 40.0;
 int MESSAGE_CX_View = 0;
-int MESSAGE_CY_View = int(1 * h_pixel - 0.75 * MESSAGE_S_View);
+int MESSAGE_CY_View = int(1 * h_pixel - 0.75 * MESSAGE_S_View + 0.5 * (a_pixel + b_pixel));
 int MESSAGE_X_View = 2 * w_pixel + ROLLOUT_X_View;
 int MESSAGE_Y_View = int(1.5 * MESSAGE_S_View);
 
@@ -1443,7 +1446,7 @@ float CAM_fov;
 
 void setup () {
 
-  size(2 * w_pixel + ROLLOUT_X_View, 2 * h_pixel, P2D);
+  size(2 * w_pixel + ROLLOUT_X_View, a_pixel + b_pixel + 2 * h_pixel, P2D);
 
   _DATE = (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   //if (_HOUR >= 12) _DATE += 0.5;   
@@ -2327,11 +2330,29 @@ void draw () {
       }
     }
     WIN3D_Update = 0;
+    
+    if (BAR_a_Update == 1) {
+        
+      SOLARCHVISION_draw_window_BAR_a();
+     
+    }
+    BAR_a_Update = 0;    
+
+
+    if (BAR_b_Update == 1) {
+        
+      SOLARCHVISION_draw_window_BAR_b();
+     
+    }
+    BAR_b_Update = 0;       
+
 
     if (FRAME_record_JPG == 1) {
       SOLARCHVISION_RecordFrame();
       FRAME_record_JPG = 0;
     }
+    
+    
 
 
     //noLoop(); // <<<<<<<<<<<<
@@ -11584,20 +11605,20 @@ void SOLARCHVISION_update_frame_layout () {
     WORLD_include = 1;
    
     GRAPHS_CX_View = 0;
-    GRAPHS_CY_View = 0;
+    GRAPHS_CY_View = a_pixel + b_pixel + h_pixel;
     GRAPHS_X_View = 2 * w_pixel;
     GRAPHS_Y_View = 1 * h_pixel;
     GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);   
    
-    WIN3D_CX_View = 0;
-    WIN3D_CY_View = h_pixel;
+    WIN3D_CX_View = 2 * h_pixel;
+    WIN3D_CY_View = a_pixel + b_pixel + 0;
     WIN3D_X_View = h_pixel;
     WIN3D_Y_View = h_pixel;
     WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
     WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
     
-    WORLD_CX_View = h_pixel;
-    WORLD_CY_View = h_pixel;
+    WORLD_CX_View = 0;
+    WORLD_CY_View = a_pixel + b_pixel + 0;
     WORLD_X_View = 2 * h_pixel;
     WORLD_Y_View = h_pixel;
     WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
@@ -11610,7 +11631,7 @@ void SOLARCHVISION_update_frame_layout () {
     WORLD_include = 0;
    
     WIN3D_CX_View = 0;
-    WIN3D_CY_View = 0;
+    WIN3D_CY_View = a_pixel + b_pixel + 0;
     WIN3D_X_View = 3 * h_pixel;
     WIN3D_Y_View = 2 * h_pixel;
     WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
@@ -11623,7 +11644,7 @@ void SOLARCHVISION_update_frame_layout () {
     WORLD_include = 0;
    
     GRAPHS_CX_View = 0;
-    GRAPHS_CY_View = 0;
+    GRAPHS_CY_View = a_pixel + b_pixel + 0;
     GRAPHS_X_View = 2 * w_pixel;
     GRAPHS_Y_View = 2 * h_pixel;
     GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);   
@@ -11635,18 +11656,16 @@ void SOLARCHVISION_update_frame_layout () {
     WORLD_include = 1;
    
     WORLD_CX_View = 0;
-    WORLD_CY_View = 0;
+    WORLD_CY_View = a_pixel + b_pixel + 0;
     WORLD_X_View = 2 * w_pixel;
     WORLD_Y_View = 2 * h_pixel;
     WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
     WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);    
  } 
 
- 
   WORLD_Update = 1;
   WIN3D_Update = 1; 
   GRAPHS_Update = 1;    
-    
 }
     
 
@@ -16743,8 +16762,8 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float x = 0;
     float y = -30;
     float z = r;
-    //SOLARCHVISION_add_Fractalphere(1, x,y,z, r, 2, 0, 0);
-    SOLARCHVISION_add_Fractalphere(2, x,y,z, r, 4, 0, 0);
+    SOLARCHVISION_add_Fractalphere(1, x,y,z, r, 2, 0, 0);
+    //SOLARCHVISION_add_Fractalphere(2, x,y,z, r, 4, 0, 0);
     SOLARCHVISION_addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
   }    
   
@@ -16956,8 +16975,8 @@ int Field_Color = 3; // 0-3
 float Field_scale_U = 100; // i.e. 100m
 float Field_scale_V = 100; // i.e. 100m
 
-int Field_RES1 = 400;
-int Field_RES2 = 400;
+int Field_RES1 = 200; //400;
+int Field_RES2 = 200; //400;
 
 PImage Field_Image = createImage(Field_RES1, Field_RES2, ARGB);
 
@@ -23820,3 +23839,23 @@ void SOLARCHVISION_property_Selection (int p) {
   }    
 
 } 
+
+int BAR_a_Update = 1;
+int BAR_b_Update = 1;
+
+void SOLARCHVISION_draw_window_BAR_a () {
+
+  fill(127);
+  noStroke();
+  
+  rect(0, 0, width, a_pixel);
+
+}
+
+void SOLARCHVISION_draw_window_BAR_b () {
+  
+  fill(0);
+  noStroke();
+  rect(0, a_pixel, width, b_pixel);
+
+}   
