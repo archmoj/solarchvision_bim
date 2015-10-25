@@ -11687,7 +11687,7 @@ void keyPressed (KeyEvent e) {
       BAR_a_selected_parent = -1;
       BAR_a_selected_child = 0;
   
-      image(pre_screen_a, 0, a_pixel);
+      image(pre_screen, 0, a_pixel);
     }
     
     if ((BAR_b_selected_parent != -1) || (BAR_b_selected_child != 0)) {
@@ -11695,7 +11695,7 @@ void keyPressed (KeyEvent e) {
       BAR_b_selected_parent = -1;
       BAR_b_selected_child = 0;
   
-      image(pre_screen_b, 0, a_pixel + b_pixel);
+      image(pre_screen, 0, a_pixel + b_pixel);
     }
   
     addNewSelectionToPreviousSelection = 0;
@@ -19425,18 +19425,20 @@ void mouseDragged () {
 void mouseClicked () {
   if (automated == 0) {
 
-   if (BAR_a_selected_child != 0) {
+    if (BAR_a_selected_parent != -1) {
+      if (BAR_a_selected_child != 0) {
+  
+         // should call the functions here!
 
-       // should call the functions here!
-     
+      }
+      
       BAR_a_selected_parent = -1;
       BAR_a_selected_child = 0;
   
-      image(pre_screen_a, 0, a_pixel);
+      image(pre_screen, 0, a_pixel);
       
       X_clicked = -1;
-      Y_clicked = -1;
-      
+      Y_clicked = -1;      
     }   
     else {    
       
@@ -23922,7 +23924,7 @@ void mouseMoved () {
       
       if (isInside(mouseX, mouseY, x1, y1, x2, y2) != 1) {
 
-        image(pre_screen_b, 0, a_pixel + b_pixel); 
+        image(pre_screen, 0, a_pixel + b_pixel); 
         
         BAR_b_selected_parent = -1; 
         BAR_b_selected_child = 0;
@@ -23943,7 +23945,7 @@ void mouseMoved () {
 
 
 
-PImage pre_screen_a;
+PImage pre_screen;
 
 int BAR_a_Update = 1;
 
@@ -23993,7 +23995,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
       if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + BAR_a_width_parent, cy + cr) == 1) {
   
         if (BAR_a_selected_parent == -1) {
-          pre_screen_a = get(0, a_pixel, width, height - a_pixel);
+          pre_screen = get(0, a_pixel, width, height - a_pixel);
           
           println("Screen GET!");
         }     
@@ -24026,7 +24028,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
 
     if (BAR_a_selected_parent == i) {
       
-      image(pre_screen_a, 0, a_pixel);
+      image(pre_screen, 0, a_pixel);
       
       for (int j = 1; j < BAR_a_Items[BAR_a_selected_parent].length; j++) {
         
@@ -24071,12 +24073,12 @@ void SOLARCHVISION_draw_window_BAR_a () {
 
 }
 
-PImage pre_screen_b;
+
 
 int BAR_b_Update = 1;
 
-float BAR_b_width_parent = 1 * b_pixel;
-float BAR_b_width_child = 0.5 * BAR_a_width_parent;
+float BAR_b_width_parent = 1.25 * b_pixel;
+float BAR_b_width_child = 1 * BAR_b_width_parent;
 
 int BAR_b_selected_parent = -1;
 int BAR_b_selected_child = 0;
@@ -24106,30 +24108,27 @@ void SOLARCHVISION_draw_window_BAR_b () {
   
   BAR_b_Update = 0;
   
-  fill(0);
-  noStroke();
-  rect(0, a_pixel, width, b_pixel);
+  if (BAR_a_selected_parent == -1) { // check to make sure the other bar is not clicked.
   
-  X_control = 1.25 * MESSAGE_S_View;
-  Y_control = a_pixel + 0.5 * b_pixel;
+    fill(0);
+    noStroke();
+    rect(0, a_pixel, width, b_pixel);
+    
+    X_control = 1.25 * MESSAGE_S_View;
+    Y_control = a_pixel + 0.5 * b_pixel;
+    
+    for (int i = 0; i < BAR_b_Items.length; i++) {
   
-  for (int i = 0; i < BAR_b_Items.length; i++) {
-
-    float cx = X_control + i * BAR_b_width_parent;
-    float cy = Y_control;
-    float cr = 0.5 * b_pixel;      
+      float cx = X_control + i * BAR_b_width_parent;
+      float cy = Y_control;
+      float cr = 0.5 * b_pixel;      
+    
+        
   
-      
-    if (BAR_a_selected_parent != -1) { // check to make sure the other bar is not clicked.
-      BAR_b_selected_parent = -1;
-      
-      BAR_b_selected_child = 0;    
-    }
-    else {
       if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + BAR_b_width_parent, cy + cr) == 1) {
   
         if (BAR_b_selected_parent == -1) {
-          pre_screen_b = get(0, a_pixel + b_pixel, width, height - (a_pixel + b_pixel));
+          pre_screen = get(0, a_pixel + b_pixel, width, height - (a_pixel + b_pixel));
           
           println("Screen GET!");
         }     
@@ -24140,76 +24139,75 @@ void SOLARCHVISION_draw_window_BAR_b () {
         
         BAR_b_Update = 1;
   
-      }  
-    }   
-
-
-    textAlign(LEFT, CENTER);   
-    stroke(255); 
-    fill(255);
-    textSize(1.25 * MESSAGE_S_View);
-            
-    text(BAR_b_Items[i][0], cx + 0.5 * MESSAGE_S_View, cy - 0.1 * MESSAGE_S_View);
-    
-    if (BAR_b_selected_parent == i) {
-      
-      image(pre_screen_b, 0, a_pixel + b_pixel);
-      
-
-      
-      for (int j = 1; j < BAR_b_Items[BAR_b_selected_parent].length; j++) {
-        
-        if (isInside(X_clicked, Y_clicked, cx, cy - cr + j * b_pixel, cx + BAR_b_width_child, cy + cr + j * b_pixel) == 1) {
-          BAR_b_selected_child = j;
-          
-          BAR_b_Update = 1;
-          
-          println("[BAR_b_selected_parent][BAR_b_selected_child]", BAR_b_selected_parent, BAR_b_selected_child);
-          
-
-          BAR_b_Items[BAR_b_selected_parent][0] = BAR_b_Items[BAR_b_selected_parent][BAR_b_selected_child];   
-          
-          BAR_b_selected_parent = -1;
-          BAR_b_selected_child = 0;
-      
-          image(pre_screen_b, 0, a_pixel + b_pixel); 
-          BAR_b_Update = 1;
-          
-          X_clicked = -1;
-          Y_clicked = -1;
-
-          break;   
-        }  
-        else {
-          fill(127, 127);
-          noStroke();
-          rect(cx, cy - cr + j * b_pixel, BAR_b_width_child, b_pixel);          
-        }
-        
-        textAlign(LEFT, CENTER);
-        
-        if (BAR_b_selected_child == j) {
-          
-          stroke(255,127,0); 
-          fill(255,127,0);  
-          textSize(1.25 * MESSAGE_S_View);
-        }
-        else{
-          stroke(255); 
-          fill(255);
-          textSize(1.25 * MESSAGE_S_View);
-        }
-
-        text(BAR_b_Items[i][j], cx + 0.5 * MESSAGE_S_View, cy - 0.1 * MESSAGE_S_View + j * b_pixel);
-        
       }   
-
+  
+  
+      textAlign(LEFT, CENTER);   
+      stroke(255); 
+      fill(255);
+      textSize(1.25 * MESSAGE_S_View);
+              
+      text(BAR_b_Items[i][0], cx + 0.5 * MESSAGE_S_View, cy - 0.1 * MESSAGE_S_View);
+      
+      if (BAR_b_selected_parent == i) {
+        
+        image(pre_screen, 0, a_pixel + b_pixel);
+        
+  
+        
+        for (int j = 1; j < BAR_b_Items[BAR_b_selected_parent].length; j++) {
+          
+          if (isInside(X_clicked, Y_clicked, cx, cy - cr + j * b_pixel, cx + BAR_b_width_child, cy + cr + j * b_pixel) == 1) {
+            BAR_b_selected_child = j;
+            
+            BAR_b_Update = 1;
+            
+            println("[BAR_b_selected_parent][BAR_b_selected_child]", BAR_b_selected_parent, BAR_b_selected_child);
+            
+  
+            BAR_b_Items[BAR_b_selected_parent][0] = BAR_b_Items[BAR_b_selected_parent][BAR_b_selected_child];   
+            
+            BAR_b_selected_parent = -1;
+            BAR_b_selected_child = 0;
+        
+            image(pre_screen, 0, a_pixel + b_pixel); 
+            BAR_b_Update = 1;
+            
+            X_clicked = -1;
+            Y_clicked = -1;
+  
+            break;   
+          }  
+          else {
+            fill(127, 127);
+            noStroke();
+            rect(cx, cy - cr + j * b_pixel, BAR_b_width_child, b_pixel);          
+          }
+          
+          textAlign(LEFT, CENTER);
+          
+          if (BAR_b_selected_child == j) {
+            
+            stroke(255,127,0); 
+            fill(255,127,0);  
+            textSize(1.25 * MESSAGE_S_View);
+          }
+          else{
+            stroke(255); 
+            fill(255);
+            textSize(1.25 * MESSAGE_S_View);
+          }
+  
+          text(BAR_b_Items[i][j], cx + 0.5 * MESSAGE_S_View, cy - 0.1 * MESSAGE_S_View + j * b_pixel);
+          
+        }   
+  
+      }
+      
+  
+      
     }
-    
-
-    
-  }
-
+  }  
 
     
   
