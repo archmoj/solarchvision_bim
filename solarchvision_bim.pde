@@ -24084,21 +24084,21 @@ int BAR_b_selected_parent = -1;
 int BAR_b_selected_child = 0;
 
 String[][] BAR_b_Items = {
-                        {"LY", "LY"}, 
-                        {"CR", "CR",},
-                        {"X|", "X|", "X<", "X>"},
-                        {"Y|", "Y|","Y<", "Y>"},
-                        {"Z|", "Z|","Z<", "Z>"},
-                        {"MV", "MV", "MVz", "MVy", "MVx"}, 
-                        {"RT", "RT", "RTy", "RTx"}, 
-                        {"SC", "SC", "SCz", "SCy", "SCx"}, 
-                        {"SD", "SD"}, 
-                        {"CS", "CS", "+CS", "-CS"},
-                        {"CW", "CW", "+CW", "-CW"}, 
-                        {"OR", "OR", "ORx", "ORy"}, 
-                        {"PA", "PA", "PAy", "PAx"}, 
-                        {"Z±", "Z±"}, 
-                        {"Dz", "Dz", "Dy", "Dx"}, 
+                        {"1", "LY"}, 
+                        {"1", "CR",},
+                        {"1", "X|", "X<", "X>"},
+                        {"1", "Y|","Y<", "Y>"},
+                        {"1", "Z|","Z<", "Z>"},
+                        {"1", "MV", "MVz", "MVy", "MVx"}, 
+                        {"1", "RT", "RTy", "RTx"}, 
+                        {"1", "SC", "SCz", "SCy", "SCx"}, 
+                        {"1", "SD"}, 
+                        {"1", "CS", "+CS", "-CS"},
+                        {"1", "WS", "+WS", "-WS"}, 
+                        {"1", "OR", "ORx", "ORy"}, 
+                        {"1", "PA", "PAy", "PAx"}, 
+                        {"1", "Z±"}, 
+                        {"1", "Dz", "Dy", "Dx"}, 
                         
                       };                      
 
@@ -24147,7 +24147,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
       fill(255);
       textSize(1.25 * MESSAGE_S_View);
               
-      text(BAR_b_Items[i][0], cx + 0.5 * MESSAGE_S_View, cy - 0.1 * MESSAGE_S_View);
+      text(BAR_b_Items[i][int(BAR_b_Items[i][0])], cx + 0.5 * MESSAGE_S_View, cy - 0.1 * MESSAGE_S_View);
       
       if (BAR_b_selected_parent == i) {
         
@@ -24165,7 +24165,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
             println("[BAR_b_selected_parent][BAR_b_selected_child]", BAR_b_selected_parent, BAR_b_selected_child);
             
   
-            BAR_b_Items[BAR_b_selected_parent][0] = BAR_b_Items[BAR_b_selected_parent][BAR_b_selected_child];   
+            BAR_b_Items[BAR_b_selected_parent][0] = nf(BAR_b_selected_child, 0);   
             
             BAR_b_selected_parent = -1;
             BAR_b_selected_child = 0;
