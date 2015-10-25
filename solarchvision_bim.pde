@@ -23886,6 +23886,18 @@ void mouseMoved () {
   }
 }
 
+
+
+PImage pre_screen;
+
+int BAR_a_Update = 1;
+
+float BAR_a_width_parent = 4 * a_pixel;
+float BAR_a_width_child = 3 * BAR_a_width_parent;
+
+int BAR_a_selected_parent = -1;
+int BAR_a_selected_child = 0;
+
 String[][] BAR_a_Items = {
                         {"Files", "New", "Open...", "Save", "Save As...", "Import...", "Export...", "Preferences", "Exit"}, 
                         {"Edit", "Pivot", "Move", "Rotate", "Scale", "Seed", "Copy", "Array"},
@@ -23895,16 +23907,9 @@ String[][] BAR_a_Items = {
                         {"About", "Developed by Mojtaba Samimi"},
                       };
 
-int BAR_a_Update = 1;
-int BAR_b_Update = 1;
 
-float BAR_a_width_parent = 4 * a_pixel;
-float BAR_a_width_child = 3 * BAR_a_width_parent;
 
-int BAR_a_selected_parent = -1;
-int BAR_a_selected_child = 0;
 
-PImage pre_screen;
 
 void SOLARCHVISION_draw_window_BAR_a () {
   
@@ -23929,7 +23934,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
     if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + BAR_a_width_parent, cy + cr) == 1) {
 
       if (BAR_a_selected_parent == -1) {
-        pre_screen = get(0, a_pixel, width, height);
+        pre_screen = get(0, a_pixel, width, height - a_pixel);
         
         println("Screen GET!");
       }     
@@ -24005,10 +24010,37 @@ void SOLARCHVISION_draw_window_BAR_a () {
     
   }
 
-
-  
-
 }
+
+
+int BAR_b_Update = 1;
+
+float BAR_b_width_parent = 1 * b_pixel;
+float BAR_b_width_child = 1 * BAR_a_width_parent;
+
+int BAR_b_selected_parent = -1;
+int BAR_b_selected_child = 0;
+
+String[][] BAR_b_Items = {
+                        {"LY"}, 
+                        {"CR"},
+                        {"Xcen", "Xmin", "Xmax"},
+                        {"Ycen", "Ymin", "Ymax"},
+                        {"Zcen", "Zmin", "Zmax"}, 
+                        {"MV", "MVz", "MVy", "MVx"}, 
+                        {"RT", "RTy", "RTx"}, 
+                        {"SC", "SCz", "SCy", "SCx"}, 
+                        {"SD"}, 
+                        {"CS", "+CS", "-CS"},
+                        {"CW", "+CW", "-CW"}, 
+                        {"OR", "ORx", "ORy"}, 
+                        {"PA", "PAy", "PAx"}, 
+                        {"Z±"}, 
+                        {"Dz", "Dy", "Dx"}, 
+                        
+                      };                      
+
+
 
 void SOLARCHVISION_draw_window_BAR_b () {
   
@@ -24018,10 +24050,49 @@ void SOLARCHVISION_draw_window_BAR_b () {
   noStroke();
   rect(0, a_pixel, width, b_pixel);
   
-  X_control = 1 * MESSAGE_S_View;
+  X_control = 1.25 * MESSAGE_S_View;
   Y_control = a_pixel + 0.5 * b_pixel;
+  
+  for (int i = 0; i < BAR_b_Items.length; i++) {
 
+    float cx = X_control + i * BAR_b_width_parent;
+    float cy = Y_control;
+    float cr = 0.5 * b_pixel;      
+  
+    textAlign(LEFT, CENTER);     
+    
+    if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + BAR_b_width_parent, cy + cr) == 1) {
 
+      if (BAR_b_selected_parent == -1) {
+        pre_screen = get(0, a_pixel, width, height - a_pixel);
+        
+        println("Screen GET!");
+      }     
+      
+      BAR_b_selected_parent = i;
+      
+      BAR_b_selected_child = 0;
+      
+      BAR_b_Update = 1;
+
+  
+    
+    }      
+   
+    if (BAR_b_selected_parent == i) {
+      
+      stroke(0); 
+      fill(0);
+      textSize(1.25 * MESSAGE_S_View);
+    }
+    else{
+      stroke(255); 
+      fill(255);
+      textSize(1.25 * MESSAGE_S_View);
+    }
+            
+    text(BAR_b_Items[i][0], cx + 0.5 * MESSAGE_S_View, cy - 0.1 * MESSAGE_S_View);
+  }
 
 
     
