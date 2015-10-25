@@ -23908,6 +23908,36 @@ void mouseMoved () {
         redraw(); 
       }
     } 
+ 
+    if (BAR_b_selected_parent != -1) {
+      
+      float cx = X_control + BAR_b_selected_parent * BAR_b_width_parent;
+      float cy = Y_control;
+      float cr = 0.5 * b_pixel;          
+      
+      float x1 = cx;
+      float y1 = cy - cr;
+      float x2 = cx + BAR_b_width_parent; // cx + BAR_b_width_child;
+      float y2 = cy + cr + BAR_b_Items[BAR_b_selected_parent].length * b_pixel;
+      
+      if (isInside(mouseX, mouseY, x1, y1, x2, y2) != 1) {
+
+        image(pre_screen_b, 0, a_pixel + b_pixel); 
+        
+        BAR_b_selected_parent = -1; 
+        BAR_b_selected_child = 0;
+
+        X_clicked = -1;
+        Y_clicked = -1;      
+
+        BAR_b_Update = 1;
+        
+        redraw(); 
+      }
+    }  
+ 
+
+ 
   }
 }
 
@@ -23954,7 +23984,12 @@ void SOLARCHVISION_draw_window_BAR_a () {
     float cy = Y_control;
     float cr = 0.5 * a_pixel;      
 
-    if (BAR_b_selected_parent == -1) { // check to make sure the other bar is not clicked.
+    if (BAR_b_selected_parent != -1) { // check to make sure the other bar is not clicked.
+      BAR_a_selected_parent = -1;
+      
+      BAR_a_selected_child = 0;    
+    }
+    else {
       if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + BAR_a_width_parent, cy + cr) == 1) {
   
         if (BAR_a_selected_parent == -1) {
@@ -24085,7 +24120,12 @@ void SOLARCHVISION_draw_window_BAR_b () {
     float cr = 0.5 * b_pixel;      
   
       
-    if (BAR_a_selected_parent == -1) { // check to make sure the other bar is not clicked.
+    if (BAR_a_selected_parent != -1) { // check to make sure the other bar is not clicked.
+      BAR_b_selected_parent = -1;
+      
+      BAR_b_selected_child = 0;    
+    }
+    else {
       if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + BAR_b_width_parent, cy + cr) == 1) {
   
         if (BAR_b_selected_parent == -1) {
@@ -24101,7 +24141,8 @@ void SOLARCHVISION_draw_window_BAR_b () {
         BAR_b_Update = 1;
   
       }  
-    }    
+    }   
+
 
     textAlign(LEFT, CENTER);   
     stroke(255); 
@@ -24113,6 +24154,8 @@ void SOLARCHVISION_draw_window_BAR_b () {
     if (BAR_b_selected_parent == i) {
       
       image(pre_screen_b, 0, a_pixel + b_pixel);
+      
+
       
       for (int j = 1; j < BAR_b_Items[BAR_b_selected_parent].length; j++) {
         
@@ -24159,8 +24202,12 @@ void SOLARCHVISION_draw_window_BAR_b () {
 
         text(BAR_b_Items[i][j], cx + 0.5 * MESSAGE_S_View, cy - 0.1 * MESSAGE_S_View + j * b_pixel);
         
-      }     
-    }     
+      }   
+
+    }
+    
+
+    
   }
 
 
