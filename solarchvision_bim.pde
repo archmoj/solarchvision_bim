@@ -11693,6 +11693,8 @@ void keyPressed (KeyEvent e) {
       image(pre_screen, 0, a_pixel);
     }
     
+    BAR_b_Update = 1; // <<<<<<<<< to diactivate/hide the BAR_b selection
+    
   
     addNewSelectionToPreviousSelection = 0;
   
@@ -14175,7 +14177,7 @@ void SOLARCHVISION_build_SkySphere (int Teselation) {
 
 
 
-float objects_scale = 1.0; 
+float objects_scale = 2.0; // 1.0; // <<<<<<<<< 
 
 
 
@@ -23992,18 +23994,19 @@ PImage pre_screen;
 int BAR_a_Update = 1;
 
 float BAR_a_width_parent = 4 * a_pixel;
-float BAR_a_width_child = 3 * BAR_a_width_parent;
+float BAR_a_width_child = 2.5 * BAR_a_width_parent;
 
 int BAR_a_selected_parent = -1;
 int BAR_a_selected_child = 0;
 
 String[][] BAR_a_Items = {
+                        {"SOLARCHVISION - 15", "Designed & Developed", "by Mojtaba Samimi", "www.solarchvision.com"},  
                         {"Files", "New", "Open...", "Save", "Save As...", "Import...", "Export...", "Preferences", "Exit"}, 
                         {"Edit", "Pivot", "Move", "Rotate", "Scale", "Seed", "Copy", "Array"},
                         {"Views", "Zoom", "Orbit", "Pan", "Distance", "Center"},
                         {"Create", "Sphere", "Box", "House", "Hyper", "Plane"}, 
                         {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
-                        {"About", "Developed by Mojtaba Samimi"},
+
                       };
 
 
@@ -24026,7 +24029,9 @@ void SOLARCHVISION_draw_window_BAR_a () {
 
     float cx = X_control + i * BAR_a_width_parent;
     float cy = Y_control;
-    float cr = 0.5 * a_pixel;      
+    float cr = 0.5 * a_pixel; 
+
+    if (i > 0) cx += 1.5 * BAR_a_width_parent; // to include SOLARCHVISION title     
 
     if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + BAR_a_width_parent, cy + cr) == 1) {
 
@@ -24058,7 +24063,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
       textSize(1.25 * MESSAGE_S_View);
     }
             
-    text(BAR_a_Items[i][0], cx + 0.5 * MESSAGE_S_View, cy - 0.1 * MESSAGE_S_View);
+    text(BAR_a_Items[i][0], cx + 0.5 * MESSAGE_S_View, cy - 0.2 * MESSAGE_S_View);
 
 
 
@@ -24100,7 +24105,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
           textSize(1.25 * MESSAGE_S_View);
         }
 
-        text(BAR_a_Items[i][j], cx + 0.5 * MESSAGE_S_View, cy - 0.1 * MESSAGE_S_View + j * a_pixel);
+        text(BAR_a_Items[i][j], cx + 0.5 * MESSAGE_S_View, cy - 0.2 * MESSAGE_S_View + j * a_pixel);
         
       }     
     } 
@@ -24128,11 +24133,13 @@ String[][] BAR_b_Items = {
                           {"1", "±CS", "+CS", "-CS", "ClickSelect"},
                           {"1", "±WS", "+WS", "-WS", "WindowSelect"},
                           {"1", "±ZM", "Zoom"},                           
-                          {"1", "Per", "Ort", "CameraType"}, 
+                          {"1", "P><", "P<>", "ProjectionType"}, 
                           {"1", "DIz", "DIx", "DIy", "Truck"},                         
                           {"3", "OR", "ORx", "ORz", "Orbit"}, 
-                          {"1", "PA", "Pan"}, 
-                      };                      
+                          {"1", "PA", "Pan"},
+                          {"1", "CE", "CenterOrigin"}, 
+                          {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "SW", "SE", "NE", "NW", "Viewport"},
+                        };                      
 
 int[] BAR_b_Selection = new int[BAR_b_Items.length];
 
@@ -24184,10 +24191,11 @@ void SOLARCHVISION_draw_window_BAR_b () {
        
         String Bar_Switch = BAR_b_Items[i][BAR_b_Items[i].length - 1];
 
-        if (Bar_Switch.equals("CameraType")) {
+        if (Bar_Switch.equals("ProjectionType")) {
           WIN3D_View_Type = 2 - int(BAR_b_Items[i][0]);
           
-          WIN3D_Update = 1;          
+          WIN3D_Update = 1;   
+          ROLLOUT_Update = 1;        
         }
   
         if (Bar_Switch.equals("LayerType")) {
@@ -24234,12 +24242,28 @@ void SOLARCHVISION_draw_window_BAR_b () {
         
         if (Bar_Switch.equals("ClickSelect")) {
           View_Select_Create_Modify = -1;
+
+          if (int(BAR_b_Items[i][0]) == 2) {
+            addNewSelectionToPreviousSelection = 1; 
+          }
+
+          if (int(BAR_b_Items[i][0]) == 3) {
+            addNewSelectionToPreviousSelection = -1; 
+          }
           
           ROLLOUT_Update = 1;          
         }
         
         if (Bar_Switch.equals("WindowSelect")) {
           View_Select_Create_Modify = -2;
+          
+          if (int(BAR_b_Items[i][0]) == 2) {
+            addNewSelectionToPreviousSelection = 1; 
+          }
+
+          if (int(BAR_b_Items[i][0]) == 3) {
+            addNewSelectionToPreviousSelection = -1; 
+          }
           
           ROLLOUT_Update = 1;          
         }    
@@ -24303,6 +24327,94 @@ void SOLARCHVISION_draw_window_BAR_b () {
         }          
 
 
+        if (Bar_Switch.equals("CenterOrigin")) {
+
+          WIN3D_X_coordinate = 0;
+          WIN3D_Y_coordinate = 0;
+          WIN3D_Z_coordinate = 0; 
+          
+          WIN3D_Update = 1;   
+          ROLLOUT_Update = 1;         
+        } 
+
+        if (Bar_Switch.equals("Viewport")) {
+          
+          if (int(BAR_b_Items[i][0]) == 1) {
+          
+            WIN3D_RX_coordinate = 0;
+            WIN3D_RY_coordinate = 0;
+            WIN3D_RZ_coordinate = 0; 
+          }
+          
+          if (int(BAR_b_Items[i][0]) == 2) {
+          
+            WIN3D_RX_coordinate = 90;
+            WIN3D_RY_coordinate = 0;
+            WIN3D_RZ_coordinate = 0; 
+          }          
+
+          if (int(BAR_b_Items[i][0]) == 3) {
+          
+            WIN3D_RX_coordinate = 90;
+            WIN3D_RY_coordinate = 0;
+            WIN3D_RZ_coordinate = -90; 
+          }    
+
+          if (int(BAR_b_Items[i][0]) == 4) {
+          
+            WIN3D_RX_coordinate = 90;
+            WIN3D_RY_coordinate = 0;
+            WIN3D_RZ_coordinate = 180; 
+          }   
+
+          if (int(BAR_b_Items[i][0]) == 5) {
+          
+            WIN3D_RX_coordinate = 90;
+            WIN3D_RY_coordinate = 0;
+            WIN3D_RZ_coordinate = 90; 
+          }  
+         
+          if (int(BAR_b_Items[i][0]) == 6) {
+          
+            WIN3D_RX_coordinate = 180;
+            WIN3D_RY_coordinate = 0;
+            WIN3D_RZ_coordinate = 0; 
+          }             
+
+          if (int(BAR_b_Items[i][0]) == 7) {
+          
+            WIN3D_RX_coordinate = 45;
+            WIN3D_RY_coordinate = 0;
+            WIN3D_RZ_coordinate = -45; 
+          }             
+          
+          if (int(BAR_b_Items[i][0]) == 8) {
+          
+            WIN3D_RX_coordinate = 45;
+            WIN3D_RY_coordinate = 0;
+            WIN3D_RZ_coordinate = 45; 
+          }     
+
+          if (int(BAR_b_Items[i][0]) == 9) {
+          
+            WIN3D_RX_coordinate = 45;
+            WIN3D_RY_coordinate = 0;
+            WIN3D_RZ_coordinate = 135; 
+          }     
+
+          if (int(BAR_b_Items[i][0]) == 10) {
+          
+            WIN3D_RX_coordinate = 45;
+            WIN3D_RY_coordinate = 0;
+            WIN3D_RZ_coordinate = -135; 
+          }               
+          WIN3D_Update = 1;   
+          ROLLOUT_Update = 1;   
+        } 
+
+
+
+
 
         if (Bar_Switch.equals("PivotX")) {
           selectedPolymesh_alignX = int(BAR_b_Items[i][0]) - 2;
@@ -24335,7 +24447,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
     fill(255);
     textSize(1.25 * MESSAGE_S_View);
             
-    text(BAR_b_Items[i][int(BAR_b_Items[i][0])], cx + 0.5 * MESSAGE_S_View, cy - 0.1 * MESSAGE_S_View);
+    text(BAR_b_Items[i][int(BAR_b_Items[i][0])], cx + 0.5 * MESSAGE_S_View, cy - 0.2 * MESSAGE_S_View);
     
 
     
