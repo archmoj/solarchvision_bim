@@ -24040,7 +24040,7 @@ int BAR_b_Update = 1;
 float BAR_b_tab = 1.25 * b_pixel;
 
 String[][] BAR_b_Items = {
-                          {"3", "XD", "2D", "3D", "4D", "Layer"},  
+                          {"3", "XD", "2D", "3D", "4D", "LayerType"},  
                           {"1", "CR", "Create"},
                           {"2", "X<", "X|", "X>", "PivotX"},
                           {"2", "Y<","Y|", "Y>", "PivotY"},
@@ -24104,7 +24104,73 @@ void SOLARCHVISION_draw_window_BAR_b () {
       if (BAR_b_Selection[i] != 0) {
         fill(255,127,0);
         noStroke();
-        rect(cx, cy - cr, BAR_b_tab, b_pixel);            
+        rect(cx, cy - cr, BAR_b_tab, b_pixel);      
+  
+        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("LayerType")) {
+          Work_with_2D_or_3D = int(BAR_b_Items[i][0]);
+          
+          ROLLOUT_Update = 1;          
+        }
+
+        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("Rotate")) {
+          Create_Select_Modify = 3;
+          
+          ROLLOUT_Update = 1;          
+        }
+
+        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("Scale")) {
+          Create_Select_Modify = 2;
+          
+          ROLLOUT_Update = 1;          
+        }
+
+        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("Move")) {
+          Create_Select_Modify = 1;
+          
+          ROLLOUT_Update = 1;          
+        }
+
+        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("Create")) {
+          Create_Select_Modify = 0;
+          
+          ROLLOUT_Update = 1;          
+        }
+        
+        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("ClickSelect")) {
+          Create_Select_Modify = -1;
+          
+          ROLLOUT_Update = 1;          
+        }
+        
+        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("WindowSelect")) {
+          Create_Select_Modify = -2;
+          
+          ROLLOUT_Update = 1;          
+        }    
+
+        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("Orbit")) {
+          Create_Select_Modify = -3;
+          
+          ROLLOUT_Update = 1;          
+        }  
+
+        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("Pan")) {
+          Create_Select_Modify = -3;
+          
+          ROLLOUT_Update = 1;          
+        }     
+
+        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("Trunck")) {
+          Create_Select_Modify = -3;
+          
+          ROLLOUT_Update = 1;          
+        }  
+  
+        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("Zoom")) {
+          Create_Select_Modify = -4;
+          
+          ROLLOUT_Update = 1;          
+        }          
       }    
       
     }   
