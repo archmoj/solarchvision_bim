@@ -24040,14 +24040,14 @@ int BAR_b_Update = 1;
 float BAR_b_tab = 1.25 * b_pixel;
 
 String[][] BAR_b_Items = {
-                          {"3", "XD", "2D", "3D", "4D", "LayerType"},  
+                          {"3", "*D", "2D", "3D", "4D", "LayerType"},  
                           {"1", "CR", "Create"},
                           {"2", "X<", "X|", "X>", "PivotX"},
                           {"2", "Y<","Y|", "Y>", "PivotY"},
                           {"2", "Z<","Z|", "Z>", "PivotZ"},
-                          {"1", "MV", "MVx", "MVy", "MVz", "Move"}, 
+                          {"3", "MVx", "MVy", "MVz", "MV³", "Move"},
+                          {"3", "SCx", "SCy", "SCz", "SC³", "Scale"}, 
                           {"3", "RTx", "RTy", "RTz", "Rotate"}, 
-                          {"4", "SC", "SCx", "SCy", "SCz", "Scale"}, 
                           {"1", "SD", "Seed"}, 
                           {"1", "±CS", "+CS", "-CS", "ClickSelect"},
                           {"1", "±WS", "+WS", "-WS", "WindowSelect"},
