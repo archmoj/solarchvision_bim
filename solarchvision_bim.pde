@@ -19419,10 +19419,12 @@ void mouseClicked () {
   if (automated == 0) {
 
     if (BAR_a_selected_parent != -1) {
-      if (BAR_a_selected_child != 0) {
+      
+      if (mouseButton == LEFT) {
+        if (BAR_a_selected_child != 0) {
   
-         // should call the functions here!
-
+          // should call the functions here!
+        }
       }
       
       BAR_a_selected_parent = -1;
@@ -24038,21 +24040,21 @@ int BAR_b_Update = 1;
 float BAR_b_tab = 1.25 * b_pixel;
 
 String[][] BAR_b_Items = {
-                        {"1", "LY"}, 
+                        {"3", "XD", "2D", "3D", "4D"}, 
                         {"1", "CR",},
-                        {"1", "X|", "X<", "X>"},
-                        {"1", "Y|","Y<", "Y>"},
-                        {"1", "Z|","Z<", "Z>"},
-                        {"1", "MV", "MVz", "MVy", "MVx"}, 
-                        {"1", "RT", "RTy", "RTx"}, 
-                        {"1", "SC", "SCz", "SCy", "SCx"}, 
+                        {"2", "X<", "X|", "X>"},
+                        {"2", "Y<","Y|", "Y>"},
+                        {"2", "Z<","Z|", "Z>"},
+                        {"1", "MV", "MVx", "MVy", "MVz"}, 
+                        {"3", "RTx", "RTy", "RTz"}, 
+                        {"4", "SC", "SCx", "SCy", "SCz"}, 
                         {"1", "SD"}, 
-                        {"1", "CS", "+CS", "-CS"},
-                        {"1", "WS", "+WS", "-WS"}, 
+                        {"1", "CS", "CS+", "CS-"},
+                        {"1", "WS", "WS+", "WS-"}, 
                         {"1", "OR", "ORx", "ORy"}, 
-                        {"1", "PA", "PAy", "PAx"}, 
+                        {"1", "PA", "PAx", "PAy"}, 
                         {"1", "Z±"}, 
-                        {"1", "Dz", "Dy", "Dx"}, 
+                        {"3", "Dx", "Dy", "Dz"}, 
                         
                       };                      
 
