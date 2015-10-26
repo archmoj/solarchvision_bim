@@ -24104,78 +24104,120 @@ void SOLARCHVISION_draw_window_BAR_b () {
       if (BAR_b_Selection[i] != 0) {
         fill(255,127,0);
         noStroke();
-        rect(cx, cy - cr, BAR_b_tab, b_pixel);      
+        rect(cx, cy - cr, BAR_b_tab, b_pixel);     
+       
+        String Bar_Switch = BAR_b_Items[i][BAR_b_Items[i].length - 1];
+
+        if (Bar_Switch.equals("CameraType")) {
+          WIN3D_View_Type = 2 - int(BAR_b_Items[i][0]);
+          
+          WIN3D_Update = 1;          
+        }
   
-        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("LayerType")) {
+        if (Bar_Switch.equals("LayerType")) {
           Work_with_2D_or_3D = int(BAR_b_Items[i][0]);
           
           ROLLOUT_Update = 1;          
         }
+        
+        if (Bar_Switch.equals("Seed")) {
+          Create_Select_Modify = 4;
+          
+          ROLLOUT_Update = 1;          
+        }        
 
-        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("Rotate")) {
+        if (Bar_Switch.equals("Rotate")) {
           Create_Select_Modify = 3;
           
+          selectedPolymesh_rotVector = int(BAR_b_Items[i][0]) - 1;
+          
           ROLLOUT_Update = 1;          
         }
 
-        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("Scale")) {
+        if (Bar_Switch.equals("Scale")) {
           Create_Select_Modify = 2;
           
-          ROLLOUT_Update = 1;          
-        }
-
-        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("Move")) {
-          Create_Select_Modify = 1;
+          selectedPolymesh_scaleVector = int(BAR_b_Items[i][0]) - 1;
           
           ROLLOUT_Update = 1;          
         }
 
-        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("Create")) {
+        if (Bar_Switch.equals("Move")) {
+          Create_Select_Modify = 1;
+          
+          selectedPolymesh_posVector = int(BAR_b_Items[i][0]) - 1;
+          
+          ROLLOUT_Update = 1;          
+        }
+
+        if (Bar_Switch.equals("Create")) {
           Create_Select_Modify = 0;
           
           ROLLOUT_Update = 1;          
         }
         
-        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("ClickSelect")) {
+        if (Bar_Switch.equals("ClickSelect")) {
           Create_Select_Modify = -1;
           
           ROLLOUT_Update = 1;          
         }
         
-        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("WindowSelect")) {
+        if (Bar_Switch.equals("WindowSelect")) {
           Create_Select_Modify = -2;
           
           ROLLOUT_Update = 1;          
         }    
 
-        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("Orbit")) {
+        if (Bar_Switch.equals("Orbit")) {
           Create_Select_Modify = -3;
           
           ROLLOUT_Update = 1;          
         }  
 
-        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("Pan")) {
+        if (Bar_Switch.equals("Pan")) {
           Create_Select_Modify = -3;
           
           ROLLOUT_Update = 1;          
         }     
 
-        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("Trunck")) {
+        if (Bar_Switch.equals("Trunck")) {
           Create_Select_Modify = -3;
           
           ROLLOUT_Update = 1;          
         }  
   
-        if (BAR_b_Items[i][BAR_b_Items[i].length - 1].equals("Zoom")) {
+        if (Bar_Switch.equals("Zoom")) {
           Create_Select_Modify = -4;
           
           ROLLOUT_Update = 1;          
         }          
+
+
+
+        if (Bar_Switch.equals("PivotX")) {
+          selectedPolymesh_alignX = int(BAR_b_Items[i][0]) - 2;
+          
+          WIN3D_Update = 1; 
+          ROLLOUT_Update = 1;          
+        }
+
+        if (Bar_Switch.equals("PivotY")) {
+          selectedPolymesh_alignY = int(BAR_b_Items[i][0]) - 2;
+          
+          WIN3D_Update = 1; 
+          ROLLOUT_Update = 1;          
+        }
+        
+        if (Bar_Switch.equals("PivotZ")) {
+          selectedPolymesh_alignZ = int(BAR_b_Items[i][0]) - 2;
+          
+          WIN3D_Update = 1; 
+          ROLLOUT_Update = 1;          
+        }        
+
       }    
       
     }   
-
-  
 
 
     textAlign(LEFT, CENTER);   
