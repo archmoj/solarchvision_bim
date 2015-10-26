@@ -946,7 +946,7 @@ float SUN3D_Pallet_ACTIVE_MLT = 1;
 
 int SUN3D_Pallet_PASSIVE = 18; 
 int SUN3D_Pallet_PASSIVE_DIR = -1;  
-float SUN3D_Pallet_PASSIVE_MLT = 2; //1;
+float SUN3D_Pallet_PASSIVE_MLT = 1; //2;
 
 int SKY3D_Pallet_ACTIVE = -1; //7; //8;
 int SKY3D_Pallet_ACTIVE_DIR = -1;
@@ -956,17 +956,17 @@ int SKY3D_Pallet_PASSIVE = 18;
 int SKY3D_Pallet_PASSIVE_DIR = -1;  
 float SKY3D_Pallet_PASSIVE_MLT = 2; //1;
 
-int OBJECTS_Pallet_ACTIVE = 14; //15;
+int OBJECTS_Pallet_ACTIVE = 15; //14;
 int OBJECTS_Pallet_ACTIVE_DIR = 1;
-float OBJECTS_Pallet_ACTIVE_MLT = 2; //1; 
+float OBJECTS_Pallet_ACTIVE_MLT = 1; //2; 
 
 int OBJECTS_Pallet_PASSIVE = 1; 
 int OBJECTS_Pallet_PASSIVE_DIR = 1;  
 float OBJECTS_Pallet_PASSIVE_MLT = 2; 
 
-int GRAPHS_Pallet_ACTIVE = 14; //15; 
+int GRAPHS_Pallet_ACTIVE = 15; //14; 
 int GRAPHS_Pallet_ACTIVE_DIR = 1;
-float GRAPHS_Pallet_ACTIVE_MLT = 2; //1;
+float GRAPHS_Pallet_ACTIVE_MLT = 1; //2;
 
 int GRAPHS_Pallet_PASSIVE = 1; 
 int GRAPHS_Pallet_PASSIVE_DIR = 1;
@@ -18869,7 +18869,7 @@ void mouseWheel(MouseEvent event) {
 
           int p = int(Wheel_Value);
           
-          SOLARCHVISION_property_Selection(p);
+          SOLARCHVISION_seed_Selection(p);
           
           WIN3D_Update = 1;
           
@@ -23810,7 +23810,7 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
   
 }
 
-void SOLARCHVISION_property_Selection (int p) {
+void SOLARCHVISION_seed_Selection (int p) {
 
   if (Work_with_2D_or_3D == 3) {
 
@@ -23935,6 +23935,15 @@ void mouseMoved () {
         BAR_b_Update = 1;
         
         redraw(); 
+      }
+      else {
+        
+        X_clicked = mouseX;
+        Y_clicked = mouseY;      
+        
+        BAR_b_Update = 1;     
+       
+        redraw();         
       }
     }  
  
@@ -24129,8 +24138,6 @@ void SOLARCHVISION_draw_window_BAR_b () {
       float cx = X_control + i * BAR_b_width_parent;
       float cy = Y_control;
       float cr = 0.5 * b_pixel;      
-    
-        
   
       if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + BAR_b_width_parent, cy + cr) == 1) {
   
@@ -24144,14 +24151,21 @@ void SOLARCHVISION_draw_window_BAR_b () {
         
         BAR_b_selected_child = 0;
         
-        BAR_b_Selection[i] = 1 - BAR_b_Selection[i];
-
-        
-
-        BAR_b_Update = 1;
-           
+        if (mouseButton == LEFT) {
+          BAR_b_Selection[i] = 1 - BAR_b_Selection[i];
+        }
+        if (mouseButton == RIGHT) {
+          BAR_b_Update = 1;
+        }           
   
       }   
+    }
+    
+    for (int i = 0; i < BAR_b_Items.length; i++) {
+  
+      float cx = X_control + i * BAR_b_width_parent;
+      float cy = Y_control;
+      float cr = 0.5 * b_pixel;        
       
       if (BAR_b_Selection[i] == 1) {
         fill(255,127,0);
@@ -24169,18 +24183,16 @@ void SOLARCHVISION_draw_window_BAR_b () {
       
 
       
-      if (BAR_b_selected_parent == i) {
+      if ((BAR_b_selected_parent == i) && (mouseButton == RIGHT)) {
         
         image(pre_screen, 0, a_pixel + b_pixel);
-        
-  
-        
+
+        println("hello!", mouseX, mouseY);
+
         for (int j = 1; j < BAR_b_Items[BAR_b_selected_parent].length; j++) {
           
           if (isInside(X_clicked, Y_clicked, cx, cy - cr + j * b_pixel, cx + BAR_b_width_child, cy + cr + j * b_pixel) == 1) {
             BAR_b_selected_child = j;
-            
-            BAR_b_Update = 1;
             
             println("[BAR_b_selected_parent][BAR_b_selected_child]", BAR_b_selected_parent, BAR_b_selected_child);
             
@@ -24191,11 +24203,12 @@ void SOLARCHVISION_draw_window_BAR_b () {
             BAR_b_selected_child = 0;
         
             image(pre_screen, 0, a_pixel + b_pixel); 
+            
             BAR_b_Update = 1;
             
             X_clicked = -1;
             Y_clicked = -1;
-  
+            
             break;   
           }  
           else {
