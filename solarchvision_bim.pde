@@ -24102,6 +24102,13 @@ String[][] BAR_b_Items = {
                         
                       };                      
 
+int[] BAR_b_Selection = new int[BAR_b_Items.length];
+
+{
+  for (int i = 0; i < BAR_b_Selection.length; i++) {
+    BAR_b_Selection[i] = 0;
+  }
+}
 
 
 void SOLARCHVISION_draw_window_BAR_b () {
@@ -24137,9 +24144,20 @@ void SOLARCHVISION_draw_window_BAR_b () {
         
         BAR_b_selected_child = 0;
         
+        BAR_b_Selection[i] = 1 - BAR_b_Selection[i];
+
+        
+
         BAR_b_Update = 1;
+           
   
       }   
+      
+      if (BAR_b_Selection[i] == 1) {
+        fill(255,127,0);
+        noStroke();
+        rect(cx, cy - cr, BAR_b_width_child, b_pixel);            
+      }      
   
   
       textAlign(LEFT, CENTER);   
@@ -24148,6 +24166,8 @@ void SOLARCHVISION_draw_window_BAR_b () {
       textSize(1.25 * MESSAGE_S_View);
               
       text(BAR_b_Items[i][int(BAR_b_Items[i][0])], cx + 0.5 * MESSAGE_S_View, cy - 0.1 * MESSAGE_S_View);
+      
+
       
       if (BAR_b_selected_parent == i) {
         
@@ -24203,6 +24223,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
         }   
   
       }
+
       
   
       
