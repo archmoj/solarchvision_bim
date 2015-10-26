@@ -24040,22 +24040,22 @@ int BAR_b_Update = 1;
 float BAR_b_tab = 1.25 * b_pixel;
 
 String[][] BAR_b_Items = {
-                        {"3", "XD", "2D", "3D", "4D"}, 
-                        {"1", "CR",},
-                        {"2", "X<", "X|", "X>"},
-                        {"2", "Y<","Y|", "Y>"},
-                        {"2", "Z<","Z|", "Z>"},
-                        {"1", "MV", "MVx", "MVy", "MVz"}, 
-                        {"3", "RTx", "RTy", "RTz"}, 
-                        {"4", "SC", "SCx", "SCy", "SCz"}, 
-                        {"1", "SD"}, 
-                        {"1", "CS", "CS+", "CS-"},
-                        {"1", "WS", "WS+", "WS-"}, 
-                        {"1", "OR", "ORx", "ORy"}, 
-                        {"1", "PA", "PAx", "PAy"}, 
-                        {"1", "Z±"}, 
-                        {"3", "Dx", "Dy", "Dz"}, 
-                        
+                          {"3", "XD", "2D", "3D", "4D", "Layer"},  
+                          {"1", "CR", "Create"},
+                          {"2", "X<", "X|", "X>", "PivotX"},
+                          {"2", "Y<","Y|", "Y>", "PivotY"},
+                          {"2", "Z<","Z|", "Z>", "PivotZ"},
+                          {"1", "MV", "MVx", "MVy", "MVz", "Move"}, 
+                          {"3", "RTx", "RTy", "RTz", "Rotate"}, 
+                          {"4", "SC", "SCx", "SCy", "SCz", "Scale"}, 
+                          {"1", "SD", "Seed"}, 
+                          {"1", "±CS", "+CS", "-CS", "ClickSelect"},
+                          {"1", "±WS", "+WS", "-WS", "WindowSelect"},
+                          {"1", "±ZM", "Zoom"},                           
+                          {"1", "Per", "Ort", "CameraType"}, 
+                          {"3", "Dx", "Dy", "Dz", "Truck"},                         
+                          {"1", "OR", "ORx", "ORy", "Orbit"}, 
+                          {"1", "PA", "PAx", "PAy", "Pan"}, 
                       };                      
 
 int[] BAR_b_Selection = new int[BAR_b_Items.length];
@@ -24096,18 +24096,20 @@ void SOLARCHVISION_draw_window_BAR_b () {
         
         n += 1;
         
-        if (n >= BAR_b_Items[i].length) n = 1;
+        if (n >= BAR_b_Items[i].length - 1) n = 1;
         
         BAR_b_Items[i][0] = nf(n, 0);
       }               
+
+      if (BAR_b_Selection[i] != 0) {
+        fill(255,127,0);
+        noStroke();
+        rect(cx, cy - cr, BAR_b_tab, b_pixel);            
+      }    
       
     }   
 
-    if (BAR_b_Selection[i] != 0) {
-      fill(255,127,0);
-      noStroke();
-      rect(cx, cy - cr, BAR_b_tab, b_pixel);            
-    }      
+  
 
 
     textAlign(LEFT, CENTER);   
