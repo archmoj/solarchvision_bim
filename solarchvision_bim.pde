@@ -24169,10 +24169,10 @@ void SOLARCHVISION_draw_window_BAR_b () {
 
     if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + BAR_b_tab, cy + cr) == 1) {
       
-      if (mouseButton == LEFT) {
-        
+      if (mouseButton == LEFT) {       
         BAR_b_Selection[i] = 1 - BAR_b_Selection[i];
       }
+      
       if (mouseButton == RIGHT) {
         
         int n = int(BAR_b_Items[i][0]);
@@ -24182,6 +24182,8 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (n >= BAR_b_Items[i].length - 1) n = 1;
         
         BAR_b_Items[i][0] = nf(n, 0);
+        
+        BAR_b_Selection[i] = 1;
       }               
 
       if (BAR_b_Selection[i] != 0) {
