@@ -24121,8 +24121,13 @@ int BAR_b_Update = 1;
 float BAR_b_tab = 1.25 * b_pixel;
 
 String[][] BAR_b_Items = {
-                          {"3", "*D", "2D", "3D", "4D", "LayerType"},  
+                          {"2", "∞-D", "2½D", "3-D", "SLD", "4-D", "LayerType"},  
+                          
                           {"1", "CR", "Create"},
+                          {"2", "Tree+", "Tree", "Person", "2D-Type"},
+                          {"1", "House", "Box", "Octahedron", "Sphere", "Cylinder", "3D-Type"},
+                          {"2", "Solid", "Mesh", "Solid-Type"},
+                          
                           {"2", "X<", "X|", "X>", "PivotX"},
                           {"2", "Y<","Y|", "Y>", "PivotY"},
                           {"2", "Z<","Z|", "Z>", "PivotZ"},
