@@ -24147,15 +24147,9 @@ String[][] BAR_b_Items = {
                           {"2", "Fractal", "Tree", "Person", "LivingType", "1.5"},
                           {"3", "Parametric", "Hyper", "Tri", "Poly", "Extrude", "House", "Box", "Octahedron", "Sphere", "Cylinder", "BuildingType", "2.0"},
                           {"2", "as_Solid", "as_Mesh", "Solid-Type", "2.0"},  
-                        };                      
-
-int[] BAR_b_Selection = new int[BAR_b_Items.length];
-
-{
-  for (int i = 0; i < BAR_b_Selection.length; i++) {
-    BAR_b_Selection[i] = 0;
-  }
-}
+                        };         
+           
+int Bar_b_Selection = -1;                        
 
 
 void SOLARCHVISION_draw_window_BAR_b () {
@@ -24177,7 +24171,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
     
     for (int i = 0; i < BAR_b_Items.length; i++) {
       
-      int j = int(BAR_b_Items[i][0]);
+      int j = int(BAR_b_Items[i][0]);; 
       
       float Item_width = BAR_b_tab * float(BAR_b_Items[i][BAR_b_Items[i].length - 1]);
   
@@ -24187,351 +24181,361 @@ void SOLARCHVISION_draw_window_BAR_b () {
       rect(cx, cy - cr, Item_width, b_pixel);
       strokeWeight(0);  
   
-      if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + Item_width, cy + cr) != 1) {
-        BAR_b_Selection[i] = 0;
-      }
-      else {
-        
+      if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + Item_width, cy + cr) == 1) {
+
         if (mouseButton == RIGHT) {       
-          int n = int(BAR_b_Items[i][0]);
           
-          n -= 1;
-          
-          if (n <= 0) n = BAR_b_Items[i].length - 3;
-          
-          BAR_b_Items[i][0] = nf(n, 0);
-          
-          BAR_b_Selection[i] = 1;
+          if (Bar_b_Selection != i) {
+            Bar_b_Selection = i;
+          }
+          else {
+            
+            int n = int(BAR_b_Items[i][0]);
+            
+            n -= 1;
+            
+            if (n <= 0) n = BAR_b_Items[i].length - 3;
+            
+            BAR_b_Items[i][0] = nf(n, 0);
+            
+            j = n;
+          }
         }
         
         if (mouseButton == LEFT) {
-          
-          int n = int(BAR_b_Items[i][0]);
-          
-          n += 1;
-          
-          if (n >= BAR_b_Items[i].length - 2) n = 1;
-          
-          BAR_b_Items[i][0] = nf(n, 0);
-          
-          BAR_b_Selection[i] = 1;
+
+          if (Bar_b_Selection != i) {
+            Bar_b_Selection = i;
+          }
+          else {
+              
+            int n = int(BAR_b_Items[i][0]);
+            
+            n += 1;
+            
+            if (n >= BAR_b_Items[i].length - 2) n = 1;
+            
+            BAR_b_Items[i][0] = nf(n, 0);
+            
+            j = n;
+          }
         }               
-  
-        if (BAR_b_Selection[i] != 0) {
-          fill(255,127,0);
-          noStroke();
-          rect(cx, cy - cr, Item_width, b_pixel);     
-         
-          String Bar_Switch = BAR_b_Items[i][BAR_b_Items[i].length - 2];
+
+        
+        fill(255,127,0);
+        noStroke();
+        rect(cx, cy - cr, Item_width, b_pixel);     
+       
+        String Bar_Switch = BAR_b_Items[i][BAR_b_Items[i].length - 2];
+        
+        
+
+        if ((Bar_Switch.equals("LivingType")) || (Bar_Switch.equals("BuildingType"))) {
           
-          
-  
-          if ((Bar_Switch.equals("LivingType")) || (Bar_Switch.equals("BuildingType"))) {
-            
-            Create_Soild_House = 0;
-            Create_Mesh_Poly = 0;
-            Create_Mesh_Extrude = 0;
-            Create_Mesh_Tri = 0;
-            Create_Mesh_Quad = 0;
-            Create_Mesh_House = 0; 
-            Create_Mesh_Parametric = 0;
-            Create_Mesh_Person = 0;
-            Create_Mesh_Plant = 0;
-            Create_Fractal_Plant = 0;
-  
-            if ((BAR_b_Items[i][j]).equals("Fractal")) {
-              Create_Fractal_Plant = 1;
-            }
-            else if ((BAR_b_Items[i][j]).equals("Tree")) {
-              Create_Mesh_Plant = 1;
-            }
-            else if ((BAR_b_Items[i][j]).equals("Person")) {
-              Create_Mesh_Person = 1;
-            }
-            else if ((BAR_b_Items[i][j]).equals("Parametric")) {
-              Create_Mesh_Parametric = 1;
-            }  
-            else if ((BAR_b_Items[i][j]).equals("Tri")) {
-              Create_Mesh_Tri = 1;
-            }
-            else if ((BAR_b_Items[i][j]).equals("Poly")) {
-              Create_Mesh_Poly = 1;
-            }
-            else if ((BAR_b_Items[i][j]).equals("Extrude")) {
-              Create_Mesh_Extrude = 1;
-            }  
-            else if ((BAR_b_Items[i][j]).equals("Hyper")) {
-              Create_Mesh_Quad = 1;
-            }          
-            else if ((BAR_b_Items[i][j]).equals("House")) {
-              Create_Mesh_House = 1;
-            }
-            else if ((BAR_b_Items[i][j]).equals("Box")) {
-              // ???
-            }
-            else if ((BAR_b_Items[i][j]).equals("Octahedron")) {
-              // ???
-            }          
-            else if ((BAR_b_Items[i][j]).equals("Sphere")) {
-              // ???
-            }
-            else if ((BAR_b_Items[i][j]).equals("Cylinder")) {
-              // ???
-            }          
-            
-            
-            View_Select_Create_Modify = 0;
-            
-            ROLLOUT_Update = 1;          
+          Create_Soild_House = 0;
+          Create_Mesh_Poly = 0;
+          Create_Mesh_Extrude = 0;
+          Create_Mesh_Tri = 0;
+          Create_Mesh_Quad = 0;
+          Create_Mesh_House = 0; 
+          Create_Mesh_Parametric = 0;
+          Create_Mesh_Person = 0;
+          Create_Mesh_Plant = 0;
+          Create_Fractal_Plant = 0;
+
+          if ((BAR_b_Items[i][j]).equals("Fractal")) {
+            Create_Fractal_Plant = 1;
           }
-  
-          if (Bar_Switch.equals("ProjectionType")) {
-            WIN3D_View_Type = 2 - j;
-            
-            WIN3D_Update = 1;   
-            ROLLOUT_Update = 1;        
+          else if ((BAR_b_Items[i][j]).equals("Tree")) {
+            Create_Mesh_Plant = 1;
           }
-    
-          if (Bar_Switch.equals("LayerType")) {
-            Work_with_2D_or_3D = j;
-            
-            ROLLOUT_Update = 1;          
+          else if ((BAR_b_Items[i][j]).equals("Person")) {
+            Create_Mesh_Person = 1;
           }
-          
-          if (Bar_Switch.equals("Seed")) {
-            View_Select_Create_Modify = 4;
-            
-            ROLLOUT_Update = 1;          
-          }        
-  
-          if (Bar_Switch.equals("Rotate")) {
-            View_Select_Create_Modify = 3;
-            
-            selectedPolymesh_rotVector = j - 1;
-            
-            ROLLOUT_Update = 1;          
-          }
-  
-          if (Bar_Switch.equals("Scale")) {
-            View_Select_Create_Modify = 2;
-            
-            selectedPolymesh_scaleVector = j - 1;
-            
-            ROLLOUT_Update = 1;          
-          }
-  
-          if (Bar_Switch.equals("Move")) {
-            View_Select_Create_Modify = 1;
-            
-            selectedPolymesh_posVector = j - 1;
-            
-            ROLLOUT_Update = 1;          
-          }
-  
-          if (Bar_Switch.equals("Create|Modify")) {
-            View_Select_Create_Modify = 0;
-            
-            ROLLOUT_Update = 1;          
-          }
-          
-          if (Bar_Switch.equals("ClickSelect")) {
-            View_Select_Create_Modify = -1;
-  
-            if (j == 2) {
-              addNewSelectionToPreviousSelection = 1; 
-            }
-  
-            if (j == 3) {
-              addNewSelectionToPreviousSelection = -1; 
-            }
-            
-            ROLLOUT_Update = 1;          
-          }
-          
-          if (Bar_Switch.equals("WindowSelect")) {
-            View_Select_Create_Modify = -2;
-            
-            if (j == 2) {
-              addNewSelectionToPreviousSelection = 1; 
-            }
-  
-            if (j == 3) {
-              addNewSelectionToPreviousSelection = -1; 
-            }
-            
-            ROLLOUT_Update = 1;          
-          }    
-  
-          if (Bar_Switch.equals("Truck")) {
-  
-            if (j == 1) {
-              View_Select_Create_Modify = -3;
-            }
-  
-            if (j == 2) {
-              View_Select_Create_Modify = -5;
-              Modify_Object_Parameters = 0;            
-              View_XYZ_Constraints = 0;  
-            } 
-  
-            if (j == 3) {
-              View_Select_Create_Modify = -5;
-              Modify_Object_Parameters = 0;            
-              View_XYZ_Constraints = 1;  
-            }           
-            
-            
-            ROLLOUT_Update = 1;          
+          else if ((BAR_b_Items[i][j]).equals("Parametric")) {
+            Create_Mesh_Parametric = 1;
           }  
-  
-          if (Bar_Switch.equals("Orbit")) {
-  
-            if (j == 1) {
-              View_Select_Create_Modify = -3;
-            }
-  
-            if (j == 2) {
-              View_Select_Create_Modify = -5;
-              Modify_Object_Parameters = 1;            
-              View_XYZ_Constraints = 0;  
-            } 
-  
-            if (j == 3) {
-              View_Select_Create_Modify = -5;
-              Modify_Object_Parameters = 1;            
-              View_XYZ_Constraints = 1;  
-            }           
-            
-            
-            ROLLOUT_Update = 1;          
+          else if ((BAR_b_Items[i][j]).equals("Tri")) {
+            Create_Mesh_Tri = 1;
+          }
+          else if ((BAR_b_Items[i][j]).equals("Poly")) {
+            Create_Mesh_Poly = 1;
+          }
+          else if ((BAR_b_Items[i][j]).equals("Extrude")) {
+            Create_Mesh_Extrude = 1;
           }  
-  
-          if (Bar_Switch.equals("Pan")) {
-  
-            View_Select_Create_Modify = -3;
-           
-            ROLLOUT_Update = 1;          
-          }  
-  
-  
-          if (Bar_Switch.equals("Zoom")) {
-            View_Select_Create_Modify = -4;
-            
-            ROLLOUT_Update = 1;          
+          else if ((BAR_b_Items[i][j]).equals("Hyper")) {
+            Create_Mesh_Quad = 1;
           }          
-  
-  
-          if (Bar_Switch.equals("CenterOrigin")) {
-  
-            WIN3D_X_coordinate = 0;
-            WIN3D_Y_coordinate = 0;
-            WIN3D_Z_coordinate = 0; 
-            
-            WIN3D_Update = 1;   
-            ROLLOUT_Update = 1;         
-          } 
-  
-          if (Bar_Switch.equals("Viewport")) {
-            
-            if (j == 1) {
-            
-              WIN3D_RX_coordinate = 0;
-              WIN3D_RY_coordinate = 0;
-              WIN3D_RZ_coordinate = 0; 
-            }
-            
-            if (j == 2) {
-            
-              WIN3D_RX_coordinate = 90;
-              WIN3D_RY_coordinate = 0;
-              WIN3D_RZ_coordinate = 0; 
-            }          
-  
-            if (j == 3) {
-            
-              WIN3D_RX_coordinate = 90;
-              WIN3D_RY_coordinate = 0;
-              WIN3D_RZ_coordinate = -90; 
-            }    
-  
-            if (j == 4) {
-            
-              WIN3D_RX_coordinate = 90;
-              WIN3D_RY_coordinate = 0;
-              WIN3D_RZ_coordinate = 180; 
-            }   
-  
-            if (j == 5) {
-            
-              WIN3D_RX_coordinate = 90;
-              WIN3D_RY_coordinate = 0;
-              WIN3D_RZ_coordinate = 90; 
-            }  
-           
-            if (j == 6) {
-            
-              WIN3D_RX_coordinate = 180;
-              WIN3D_RY_coordinate = 0;
-              WIN3D_RZ_coordinate = 0; 
-            }             
-  
-            if (j == 7) {
-            
-              WIN3D_RX_coordinate = 45;
-              WIN3D_RY_coordinate = 0;
-              WIN3D_RZ_coordinate = -45; 
-            }             
-            
-            if (j == 8) {
-            
-              WIN3D_RX_coordinate = 45;
-              WIN3D_RY_coordinate = 0;
-              WIN3D_RZ_coordinate = 45; 
-            }     
-  
-            if (j == 9) {
-            
-              WIN3D_RX_coordinate = 45;
-              WIN3D_RY_coordinate = 0;
-              WIN3D_RZ_coordinate = 135; 
-            }     
-  
-            if (j == 10) {
-            
-              WIN3D_RX_coordinate = 45;
-              WIN3D_RY_coordinate = 0;
-              WIN3D_RZ_coordinate = -135; 
-            }               
-            WIN3D_Update = 1;   
-            ROLLOUT_Update = 1;   
-          } 
-  
-  
-  
-  
-  
-          if (Bar_Switch.equals("PivotX")) {
-            selectedPolymesh_alignX = j - 2;
-            
-            WIN3D_Update = 1; 
-            ROLLOUT_Update = 1;          
+          else if ((BAR_b_Items[i][j]).equals("House")) {
+            Create_Mesh_House = 1;
           }
+          else if ((BAR_b_Items[i][j]).equals("Box")) {
+            // ???
+          }
+          else if ((BAR_b_Items[i][j]).equals("Octahedron")) {
+            // ???
+          }          
+          else if ((BAR_b_Items[i][j]).equals("Sphere")) {
+            // ???
+          }
+          else if ((BAR_b_Items[i][j]).equals("Cylinder")) {
+            // ???
+          }          
+          
+          
+          View_Select_Create_Modify = 0;
+          
+          ROLLOUT_Update = 1;          
+        }
+
+        if (Bar_Switch.equals("ProjectionType")) {
+          WIN3D_View_Type = 2 - j;
+          
+          WIN3D_Update = 1;   
+          ROLLOUT_Update = 1;        
+        }
   
-          if (Bar_Switch.equals("PivotY")) {
-            selectedPolymesh_alignY = j - 2;
-            
-            WIN3D_Update = 1; 
-            ROLLOUT_Update = 1;          
+        if (Bar_Switch.equals("LayerType")) {
+          Work_with_2D_or_3D = j;
+          
+          ROLLOUT_Update = 1;          
+        }
+        
+        if (Bar_Switch.equals("Seed")) {
+          View_Select_Create_Modify = 4;
+          
+          ROLLOUT_Update = 1;          
+        }        
+
+        if (Bar_Switch.equals("Rotate")) {
+          View_Select_Create_Modify = 3;
+          
+          selectedPolymesh_rotVector = j - 1;
+          
+          ROLLOUT_Update = 1;          
+        }
+
+        if (Bar_Switch.equals("Scale")) {
+          View_Select_Create_Modify = 2;
+          
+          selectedPolymesh_scaleVector = j - 1;
+          
+          ROLLOUT_Update = 1;          
+        }
+
+        if (Bar_Switch.equals("Move")) {
+          View_Select_Create_Modify = 1;
+          
+          selectedPolymesh_posVector = j - 1;
+          
+          ROLLOUT_Update = 1;          
+        }
+
+        if (Bar_Switch.equals("Create|Modify")) {
+          View_Select_Create_Modify = 0;
+          
+          ROLLOUT_Update = 1;          
+        }
+        
+        if (Bar_Switch.equals("ClickSelect")) {
+          View_Select_Create_Modify = -1;
+
+          if (j == 2) {
+            addNewSelectionToPreviousSelection = 1; 
+          }
+
+          if (j == 3) {
+            addNewSelectionToPreviousSelection = -1; 
           }
           
-          if (Bar_Switch.equals("PivotZ")) {
-            selectedPolymesh_alignZ = j - 2;
-            
-            WIN3D_Update = 1; 
-            ROLLOUT_Update = 1;          
-          }        
-  
+          ROLLOUT_Update = 1;          
+        }
+        
+        if (Bar_Switch.equals("WindowSelect")) {
+          View_Select_Create_Modify = -2;
+          
+          if (j == 2) {
+            addNewSelectionToPreviousSelection = 1; 
+          }
+
+          if (j == 3) {
+            addNewSelectionToPreviousSelection = -1; 
+          }
+          
+          ROLLOUT_Update = 1;          
         }    
+
+        if (Bar_Switch.equals("Truck")) {
+
+          if (j == 1) {
+            View_Select_Create_Modify = -3;
+          }
+
+          if (j == 2) {
+            View_Select_Create_Modify = -5;
+            Modify_Object_Parameters = 0;            
+            View_XYZ_Constraints = 0;  
+          } 
+
+          if (j == 3) {
+            View_Select_Create_Modify = -5;
+            Modify_Object_Parameters = 0;            
+            View_XYZ_Constraints = 1;  
+          }           
+          
+          
+          ROLLOUT_Update = 1;          
+        }  
+
+        if (Bar_Switch.equals("Orbit")) {
+
+          if (j == 1) {
+            View_Select_Create_Modify = -3;
+          }
+
+          if (j == 2) {
+            View_Select_Create_Modify = -5;
+            Modify_Object_Parameters = 1;            
+            View_XYZ_Constraints = 0;  
+          } 
+
+          if (j == 3) {
+            View_Select_Create_Modify = -5;
+            Modify_Object_Parameters = 1;            
+            View_XYZ_Constraints = 1;  
+          }           
+          
+          
+          ROLLOUT_Update = 1;          
+        }  
+
+        if (Bar_Switch.equals("Pan")) {
+
+          View_Select_Create_Modify = -3;
+         
+          ROLLOUT_Update = 1;          
+        }  
+
+
+        if (Bar_Switch.equals("Zoom")) {
+          View_Select_Create_Modify = -4;
+          
+          ROLLOUT_Update = 1;          
+        }          
+
+
+        if (Bar_Switch.equals("CenterOrigin")) {
+
+          WIN3D_X_coordinate = 0;
+          WIN3D_Y_coordinate = 0;
+          WIN3D_Z_coordinate = 0; 
+          
+          WIN3D_Update = 1;   
+          ROLLOUT_Update = 1;         
+        } 
+
+        if (Bar_Switch.equals("Viewport")) {
+          
+          if (j == 1) {
+          
+            WIN3D_RX_coordinate = 0;
+            WIN3D_RY_coordinate = 0;
+            WIN3D_RZ_coordinate = 0; 
+          }
+          
+          if (j == 2) {
+          
+            WIN3D_RX_coordinate = 90;
+            WIN3D_RY_coordinate = 0;
+            WIN3D_RZ_coordinate = 0; 
+          }          
+
+          if (j == 3) {
+          
+            WIN3D_RX_coordinate = 90;
+            WIN3D_RY_coordinate = 0;
+            WIN3D_RZ_coordinate = -90; 
+          }    
+
+          if (j == 4) {
+          
+            WIN3D_RX_coordinate = 90;
+            WIN3D_RY_coordinate = 0;
+            WIN3D_RZ_coordinate = 180; 
+          }   
+
+          if (j == 5) {
+          
+            WIN3D_RX_coordinate = 90;
+            WIN3D_RY_coordinate = 0;
+            WIN3D_RZ_coordinate = 90; 
+          }  
+         
+          if (j == 6) {
+          
+            WIN3D_RX_coordinate = 180;
+            WIN3D_RY_coordinate = 0;
+            WIN3D_RZ_coordinate = 0; 
+          }             
+
+          if (j == 7) {
+          
+            WIN3D_RX_coordinate = 45;
+            WIN3D_RY_coordinate = 0;
+            WIN3D_RZ_coordinate = -45; 
+          }             
+          
+          if (j == 8) {
+          
+            WIN3D_RX_coordinate = 45;
+            WIN3D_RY_coordinate = 0;
+            WIN3D_RZ_coordinate = 45; 
+          }     
+
+          if (j == 9) {
+          
+            WIN3D_RX_coordinate = 45;
+            WIN3D_RY_coordinate = 0;
+            WIN3D_RZ_coordinate = 135; 
+          }     
+
+          if (j == 10) {
+          
+            WIN3D_RX_coordinate = 45;
+            WIN3D_RY_coordinate = 0;
+            WIN3D_RZ_coordinate = -135; 
+          }               
+          WIN3D_Update = 1;   
+          ROLLOUT_Update = 1;   
+        } 
+
+
+
+
+
+        if (Bar_Switch.equals("PivotX")) {
+          selectedPolymesh_alignX = j - 2;
+          
+          WIN3D_Update = 1; 
+          ROLLOUT_Update = 1;          
+        }
+
+        if (Bar_Switch.equals("PivotY")) {
+          selectedPolymesh_alignY = j - 2;
+          
+          WIN3D_Update = 1; 
+          ROLLOUT_Update = 1;          
+        }
+        
+        if (Bar_Switch.equals("PivotZ")) {
+          selectedPolymesh_alignZ = j - 2;
+          
+          WIN3D_Update = 1; 
+          ROLLOUT_Update = 1;          
+        }        
+
+
         
       }
   
