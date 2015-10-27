@@ -11693,9 +11693,6 @@ void keyPressed (KeyEvent e) {
       image(pre_screen, 0, a_pixel);
     }
     
-    BAR_b_Update = 1; // <<<<<<<<< to diactivate/hide the BAR_b selection
-    
-  
     addNewSelectionToPreviousSelection = 0;
   
     //println("key: " + key);
@@ -24142,7 +24139,7 @@ String[][] BAR_b_Items = {
                           
                           {"1", "Create", "Modify", "Create|Modify", "1.5"},
                           {"2", "Fractal", "Tree", "Person", "LivingType", "1.5"},
-                          {"3", "Parametric", "Hyper", "House", "Box", "Octahedron", "Sphere", "Cylinder", "BuildingType", "2.0"},
+                          {"3", "Parametric", "Hyper", "Tri", "Poly", "Extrude", "House", "Box", "Octahedron", "Sphere", "Cylinder", "BuildingType", "2.0"},
                           {"2", "as_Solid", "as_Mesh", "Solid-Type", "2.0"},  
                         };                      
 
@@ -24182,15 +24179,24 @@ void SOLARCHVISION_draw_window_BAR_b () {
     rect(cx, cy - cr, Item_width, b_pixel);
     strokeWeight(0);  
 
-    if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + Item_width, cy + cr) == 1) {
-
+    if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + Item_width, cy + cr) != 1) {
+      BAR_b_Selection[i] = 0;
+    }
+    else {
       
-      
-      if (mouseButton == LEFT) {       
-        BAR_b_Selection[i] = 1 - BAR_b_Selection[i];
+      if (mouseButton == RIGHT) {       
+        int n = int(BAR_b_Items[i][0]);
+        
+        n -= 1;
+        
+        if (n <= 0) n = BAR_b_Items[i].length - 3;
+        
+        BAR_b_Items[i][0] = nf(n, 0);
+        
+        BAR_b_Selection[i] = 1;
       }
       
-      if (mouseButton == RIGHT) {
+      if (mouseButton == LEFT) {
         
         int n = int(BAR_b_Items[i][0]);
         
@@ -24236,7 +24242,16 @@ void SOLARCHVISION_draw_window_BAR_b () {
           }
           else if ((BAR_b_Items[i][j]).equals("Parametric")) {
             Create_Mesh_Parametric = 1;
-          }          
+          }  
+          else if ((BAR_b_Items[i][j]).equals("Tri")) {
+            Create_Mesh_Tri = 1;
+          }
+          else if ((BAR_b_Items[i][j]).equals("Poly")) {
+            Create_Mesh_Poly = 1;
+          }
+          else if ((BAR_b_Items[i][j]).equals("Extrude")) {
+            Create_Mesh_Extrude = 1;
+          }  
           else if ((BAR_b_Items[i][j]).equals("Hyper")) {
             Create_Mesh_Quad = 1;
           }          
