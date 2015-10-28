@@ -24652,8 +24652,13 @@ void SOLARCHVISION_draw_window_BAR_b () {
         }       
         if (Bar_Switch.equals("WindowSelect")) {
           dessin_WindowSelect(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }   
+        if (Bar_Switch.equals("ProjectionType")) {
+          dessin_ProjectionType(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }          
-        
+        if (Bar_Switch.equals("Zoom")) {
+          dessin_Zoom(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }   
         
         
       }
@@ -24740,7 +24745,7 @@ void dessin_Scale (int _type, float x, float y, float r) {
   line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);
   
   strokeWeight(5);
-  stroke(255,0,0); 
+  stroke(0,255,0); 
   noFill();  
   
   if (_type == 1) line(-0.4 * r, 0, 0.4 * r, 0);
@@ -24781,7 +24786,7 @@ void dessin_Rotate (int _type, float x, float y, float r) {
   if (_type == 3) line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);
  
   strokeWeight(2);
-  stroke(255,0,0);
+  stroke(0,0,255);
   noFill();
   float d = 15;
   if (_type == 1) {arc(0, 0, d, d, 0.25 * PI, 1.75 * PI);}
@@ -24819,7 +24824,7 @@ void dessin_Seed (int _type, float x, float y, float r) {
   line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);
   
   strokeWeight(1);
-  stroke(255,0,0); 
+  stroke(255,255,0); 
   noFill();  
 
   for (int i = 0; i < 360; i += 30) {
@@ -24895,3 +24900,195 @@ void dessin_WindowSelect (int _type, float x, float y, float r) {
   BAR_b_Display_Text = 0;
 }
 
+
+
+
+void dessin_ProjectionType (int _type, float x, float y, float r) {
+  
+  pushMatrix();
+  translate(x, y);
+
+  strokeWeight(2);
+  stroke(255); 
+  noFill();
+
+    
+  float d = 0.8 * r;
+  
+  if (_type == 1) {
+
+    beginShape();
+    vertex(0, 0);
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0.75 * sin_ang(0) * d, 0.75 * -cos_ang(0) * d);
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    endShape(CLOSE);
+  
+    beginShape();
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0,d);
+    vertex(0.75 * sin_ang(120) * d, 0.75 * -cos_ang(120) * d);
+    endShape(CLOSE);
+
+    beginShape();
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0,d);
+    vertex(0.75 * sin_ang(240) * d, 0.75 * -cos_ang(240) * d);
+    endShape(CLOSE);
+  }
+  
+  if (_type == 2) {
+    
+    beginShape();
+    vertex(0, 0);
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, -d);
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    endShape(CLOSE);
+  
+    beginShape();
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0,d);
+    vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    endShape(CLOSE);
+
+    beginShape();
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0,d);
+    vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    endShape(CLOSE);
+
+  }  
+
+  strokeWeight(0);
+
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+
+
+void dessin_Zoom (int _type, float x, float y, float r) {
+  
+  pushMatrix();
+  translate(x, y);
+
+  
+  {
+    pushMatrix();
+    translate(0.25 * r, 0.25 * r);
+  
+    stroke(255); 
+    
+    fill(127);  
+    strokeWeight(1);
+    ellipse(-0.4 * r, -0.4 * r, 0.8 * r, 0.8 * r); 
+  
+    noFill();  
+    strokeWeight(4);
+    line(-0.1 * r, -0.1 * r, 0.3 * r, 0.3 * r);
+  
+    stroke(255,255,0);
+    strokeWeight(2);
+    if (_type == 1) {line(-0.6 * r, -0.4 * r, -0.2 * r, -0.4 * r); line(-0.4 * r, -0.6 * r, -0.4 * r, -0.2 * r);} 
+    if (_type == 2) {line(-0.6 * r, -0.4 * r, -0.2 * r, -0.4 * r);}
+    
+    popMatrix();
+  }
+
+  strokeWeight(0);
+
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+void dessin_zzzzzzzzzzzzzz (int _type, float x, float y, float r) {
+  
+  pushMatrix();
+  translate(x, y);
+
+  strokeWeight(1);
+  stroke(255); 
+  noFill();
+  
+  if (_type == 1) {
+    beginShape();
+    vertex(-0.75 * r, -0.75 * r);
+    vertex(0.75 * r, -0.75 * r);
+    vertex(0.25 * r, -0.25 * r);
+    vertex(-0.25 * r, -0.25 * r);
+    endShape(CLOSE);
+  
+    beginShape();
+    vertex(-0.75 * r, 0.75 * r);
+    vertex(0.75 * r, 0.75 * r);
+    vertex(0.25 * r, 0.25 * r);
+    vertex(-0.25 * r, 0.25 * r);
+    endShape(CLOSE);
+  
+    beginShape();
+    vertex(0.75 * r, -0.75 * r);
+    vertex(0.75 * r, 0.75 * r);
+    vertex(0.25 * r, 0.25 * r);
+    vertex(0.25 * r, -0.25 * r);
+    endShape(CLOSE);
+  
+    beginShape();
+    vertex(-0.75 * r, -0.75 * r);
+    vertex(-0.75 * r, 0.75 * r);
+    vertex(-0.25 * r, 0.25 * r);
+    vertex(-0.25 * r, -0.25 * r);
+    endShape(CLOSE);
+  }
+  
+  if (_type == 2) {
+    
+    float d = 0.8 * r;
+    
+    beginShape();
+    vertex(0, 0);
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 2 * -sin_ang(30) * d);
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    endShape(CLOSE);
+  
+    beginShape();
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0,d);
+    vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    endShape(CLOSE);
+
+    beginShape();
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0,d);
+    vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    endShape(CLOSE);
+
+  }  
+
+  strokeWeight(0);
+
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
