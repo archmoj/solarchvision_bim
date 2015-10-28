@@ -19020,8 +19020,17 @@ void mouseWheel(MouseEvent event) {
           WIN3D_Update = 1; 
 
         }  
+        
+        if (View_Select_Create_Modify == -5) { // viewport:modelSize
+          
+          if (Wheel_Value > 0) objects_scale *= pow(2.0, 0.25);
+          if (Wheel_Value < 0) objects_scale /= pow(2.0, 0.25);
 
-        if (View_Select_Create_Modify == -5) { // viewport:different functions with wheel
+          WIN3D_Update = 1; 
+
+        }          
+
+        if (View_Select_Create_Modify == -6) { // viewport:different functions with wheel
 
           if (Modify_Object_Parameters == 0) { // Truck
 
@@ -19496,7 +19505,32 @@ void mouseDragged () {
               
               WIN3D_Update = 1;    
             }    
-  
+
+          }
+
+          if (View_Select_Create_Modify == -5) { // viewport
+          
+            if (mouseButton == RIGHT) { // Orbit
+          
+              float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
+              float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
+    
+              WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate; 
+              WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
+              
+              WIN3D_Update = 1;
+            }
+            
+            if (mouseButton == LEFT) { // pan
+          
+              float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
+              float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
+    
+              WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate; 
+              WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate;
+              
+              WIN3D_Update = 1;
+            }          
   
           }
           
@@ -20572,7 +20606,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
   
     Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 3, 1), 1));
   
-    View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -5, 5, 1), 1));
+    View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -6, 5, 1), 1));
     View_XYZ_Constraints = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_Constraints" , View_XYZ_Constraints, 0, 6, 1), 1));
     Modify_Object_Parameters = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Object_Parameters" , Modify_Object_Parameters, 0, 9, 1), 1));
 
@@ -23788,6 +23822,8 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
 
   if (Work_with_2D_or_3D == 2) {
 
+    int n1 = Object2D_Filenames_PEOPLE.length;    
+    
     for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
       
       int OBJ_NUM = selectedObject2D_numbers[o];
@@ -23796,33 +23832,37 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
     
         float x = allObject2D_XYZS[OBJ_NUM][0] - x0; 
         float y = allObject2D_XYZS[OBJ_NUM][1] - y0; 
-        float z = allObject2D_XYZS[OBJ_NUM][2] - z0;
+        //float z = allObject2D_XYZS[OBJ_NUM][2] - z0;
        
         allObject2D_XYZS[OBJ_NUM][0] = x0 + sx * x; 
         allObject2D_XYZS[OBJ_NUM][1] = y0 + sy * y;
-        allObject2D_XYZS[OBJ_NUM][2] = z0 + sz * z;
-    
-        allObject2D_XYZS[OBJ_NUM][3] *= sz; // <<<<<<<<<<<<<<
+        //allObject2D_XYZS[OBJ_NUM][2] = z0 + sz * z;
+
+        int n = allObject2D_MAP[OBJ_NUM];
+
+        if (abs(n) > n1) { // does not scale poeple!    
+          allObject2D_XYZS[OBJ_NUM][3] *= sz; 
+        }
       }
     }
   }
   
   if (Work_with_2D_or_3D == 1) {
-
+    
     for (int o = selectedFractal_numbers.length - 1; o >= 0; o--) {
       
       int OBJ_NUM = selectedFractal_numbers[o];
-      
+        
       if (OBJ_NUM != 0) {      
     
         float x = allFractal_XYZS[OBJ_NUM][0] - x0; 
         float y = allFractal_XYZS[OBJ_NUM][1] - y0; 
-        float z = allFractal_XYZS[OBJ_NUM][2] - z0;
-       
+        //float z = allFractal_XYZS[OBJ_NUM][2] - z0;
+        
         allFractal_XYZS[OBJ_NUM][0] = x0 + sx * x; 
         allFractal_XYZS[OBJ_NUM][1] = y0 + sy * y;
-        allFractal_XYZS[OBJ_NUM][2] = z0 + sz * z;
-    
+        //allFractal_XYZS[OBJ_NUM][2] = z0 + sz * z;
+
         allFractal_XYZS[OBJ_NUM][3] *= sz; // <<<<<<<<<<<<<<
       }
     }
@@ -24141,7 +24181,7 @@ int BAR_b_Update = 1;
 float BAR_b_tab = 1.25 * b_pixel;
 
 String[][] BAR_b_Items = {
-                          {"2", "∞-D", "2½D", "3-D", "SLD", "4-D", "LayerType", "1.0"},  
+                          {"3", "∞-D", "2½D", "3-D", "SLD", "4-D", "LayerType", "1.0"},  
 
                           {"2", "X<", "X|", "X>", "PivotX", "1.0"},
                           {"2", "Y<","Y|", "Y>", "PivotY", "1.0"},
@@ -24152,16 +24192,14 @@ String[][] BAR_b_Items = {
                           {"1", "SD", "Seed", "1.0"}, 
                           {"1", "±CS", "+CS", "-CS", "ClickSelect", "1.0"},
                           {"1", "±WS", "+WS", "-WS", "WindowSelect", "1.0"},
-                          {"1", "AllViewsports", "Expand3DView", "3DViewSpace", "2.5"},
-                          {"1", "*SZ", "/SZ", "3DModelSize", "1.0"},                          
-                          {"1", "±ZM", "0ZM", "Zoom", "1.0"},
-                          {"1", "P><", "P<>", "ProjectionType", "1.0"}, 
+                          {"2", "AllViewsports", "Expand3DView", "3DViewSpace", "2.5"},
+                          {"1", "P><", "P<>", "ProjectionType", "1.0"},
+                          {"1", "±ZM", "0ZM", "Zoom", "1.0"},                          
                           {"1", "DIz", "DIx", "DIy", "Truck", "1.0"},
                           {"3", "OR", "ORx", "ORz", "Orbit", "1.0"}, 
                           {"1", "Pan", "Cen", "Pan", "1.0"},
+                          {"1", "±SZ", "3DModelSize", "1.0"},                          
                           {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "SW", "SE", "NE", "NW", "3DViewPoint", "1.5"},
-
-                          
                           {"1", "Create", "Modify", "Create|Modify", "1.5"},
                           {"2", "Fractal", "Tree", "Person", "LivingType", "1.5"},
                           {"3", "Parametric", "Hyper", "Tri", "Poly", "Extrude", "House", "Box", "Octahedron", "Sphere", "Cylinder", "BuildingType", "2.0"},
@@ -24202,7 +24240,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
   
       if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + Item_width, cy + cr) == 1) {
 
-        if (mouseButton == RIGHT) {       
+        if (mouseButton == LEFT) {       
           
           if (Bar_b_Selection != i) {
             Bar_b_Selection = i;
@@ -24221,7 +24259,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
           }
         }
         
-        if (mouseButton == LEFT) {
+        if (mouseButton == RIGHT) {
 
           if (Bar_b_Selection != i) {
             Bar_b_Selection = i;
@@ -24392,13 +24430,13 @@ void SOLARCHVISION_draw_window_BAR_b () {
           }
 
           if (j == 2) {
-            View_Select_Create_Modify = -5;
+            View_Select_Create_Modify = -6;
             Modify_Object_Parameters = 0;            
             View_XYZ_Constraints = 0;  
           } 
 
           if (j == 3) {
-            View_Select_Create_Modify = -5;
+            View_Select_Create_Modify = -6;
             Modify_Object_Parameters = 0;            
             View_XYZ_Constraints = 1;  
           }           
@@ -24414,13 +24452,13 @@ void SOLARCHVISION_draw_window_BAR_b () {
           }
 
           if (j == 2) {
-            View_Select_Create_Modify = -5;
+            View_Select_Create_Modify = -6;
             Modify_Object_Parameters = 1;            
             View_XYZ_Constraints = 0;  
           } 
 
           if (j == 3) {
-            View_Select_Create_Modify = -5;
+            View_Select_Create_Modify = -6;
             Modify_Object_Parameters = 1;            
             View_XYZ_Constraints = 1;  
           }           
@@ -24431,7 +24469,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
 
         if (Bar_Switch.equals("Pan")) {
 
-          View_Select_Create_Modify = -3;
+          View_Select_Create_Modify = -5;
           
           if (j == 2) {
             WIN3D_X_coordinate = 0;
@@ -24462,13 +24500,8 @@ void SOLARCHVISION_draw_window_BAR_b () {
         
         if (Bar_Switch.equals("3DModelSize")) {
 
-          if (j == 1) {
-            objects_scale *= pow(2.0, 0.25);
-          }
-          else if (j == 2) {
-            objects_scale /= pow(2.0, 0.25);
-          }
-
+          View_Select_Create_Modify = -5;
+          
           WIN3D_Update = 1;  
             
           ROLLOUT_Update = 1;          
