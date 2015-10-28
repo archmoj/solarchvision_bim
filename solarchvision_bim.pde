@@ -24659,7 +24659,9 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("Zoom")) {
           dessin_Zoom(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }   
-        
+        if (Bar_Switch.equals("Orbit")) {
+          dessin_Orbit(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }           
         
       }
   
@@ -24704,16 +24706,16 @@ void dessin_Move (int _type, float x, float y, float r) {
   noFill();  
   
   if (_type == 1) line(-0.8 * r, 0, 0.8 * r, 0);
-  if (_type == 2) line(0, 0.8 * r, 0, -0.8 * r);
-  if (_type == 3) line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);
+  if (_type == 2) line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);  
+  if (_type == 3) line(0, 0.8 * r, 0, -0.8 * r);
   if (_type == 4) line(-0.4 * r, -0.4 * r, 0.4 * r, 0.4 * r);
  
   noStroke();
   fill(255,0,0);
   float d = 5;
   if (_type == 1) {ellipse(-0.8 * r, 0, d, d); ellipse(0.8 * r, 0, d, d);}
-  if (_type == 2) {ellipse(0, 0.8 * r, d, d); ellipse(0, -0.8 * r, d, d);}
-  if (_type == 3) {ellipse(0.4 * r, -0.4 * r, d, d); ellipse(-0.4 * r, 0.4 * r, d, d);}  
+  if (_type == 2) {ellipse(0.4 * r, -0.4 * r, d, d); ellipse(-0.4 * r, 0.4 * r, d, d);}    
+  if (_type == 3) {ellipse(0, 0.8 * r, d, d); ellipse(0, -0.8 * r, d, d);}
   if (_type == 4) {ellipse(-0.4 * r, -0.4 * r, d, d); ellipse(0.4 * r, 0.4 * r, d, d);}  
 
   strokeWeight(0);
@@ -24749,8 +24751,8 @@ void dessin_Scale (int _type, float x, float y, float r) {
   noFill();  
   
   if (_type == 1) line(-0.4 * r, 0, 0.4 * r, 0);
-  if (_type == 2) line(0, 0.4 * r, 0, -0.4 * r);
-  if (_type == 3) line(0.2 * r, -0.2 * r, -0.2 * r, 0.2 * r);
+  if (_type == 2) line(0.2 * r, -0.2 * r, -0.2 * r, 0.2 * r);  
+  if (_type == 3) line(0, 0.4 * r, 0, -0.4 * r);
   if (_type == 4) {
     line(-0.4 * r, 0, 0.4 * r, 0);
     line(0, 0.4 * r, 0, -0.4 * r);
@@ -24782,16 +24784,16 @@ void dessin_Rotate (int _type, float x, float y, float r) {
   noFill();  
   
   if (_type == 1) line(-0.8 * r, 0, 0.8 * r, 0);
-  if (_type == 2) line(0, 0.8 * r, 0, -0.8 * r);
-  if (_type == 3) line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);
+  if (_type == 2) line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);
+  if (_type == 3) line(0, 0.8 * r, 0, -0.8 * r);
  
   strokeWeight(2);
   stroke(0,0,255);
   noFill();
-  float d = 15;
+  float d = 0.85 * r;
   if (_type == 1) {arc(0, 0, d, d, 0.25 * PI, 1.75 * PI);}
-  if (_type == 2) {arc(0, 0, d, d, (0.25 - 0.5) * PI, (1.75 - 0.5) * PI);}
-  if (_type == 3) {arc(0, 0, d, d, (0.25 + 0.75) * PI, (1.75 + 0.75) * PI);}
+  if (_type == 2) {arc(0, 0, d, d, (0.25 + 0.75) * PI, (1.75 + 0.75) * PI);}
+  if (_type == 3) {arc(0, 0, d, d, (0.25 - 0.5) * PI, (1.75 - 0.5) * PI);}
   
   
   strokeWeight(0);
@@ -25009,6 +25011,34 @@ void dessin_Zoom (int _type, float x, float y, float r) {
 }
 
 
+void dessin_Orbit (int _type, float x, float y, float r) {
+
+  pushMatrix();
+  translate(x, y);
+
+  strokeWeight(2);
+  stroke(255); 
+  noFill();  
+  
+  float d = 1.5 * r;
+  
+  ellipse(0,0, d,d); 
+  
+  strokeWeight(2);
+  stroke(255); 
+  noFill();  
+  
+  if (_type == 3) arc(0,0, d,0.333 * d, 0, PI); 
+  if (_type == 2) arc(0,0, 0.333 * d,d, 0.5 * PI, 1.5 * PI); 
+  if (_type == 1) {arc(0,0, 0.333 * d,d, 0.5 * PI, 1.5 * PI); arc(0,0, d,0.333 * d, 0, PI);}
+ 
+  
+  strokeWeight(0);
+  
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
 
 
 
@@ -25029,62 +25059,35 @@ void dessin_zzzzzzzzzzzzzz (int _type, float x, float y, float r) {
   stroke(255); 
   noFill();
   
-  if (_type == 1) {
-    beginShape();
-    vertex(-0.75 * r, -0.75 * r);
-    vertex(0.75 * r, -0.75 * r);
-    vertex(0.25 * r, -0.25 * r);
-    vertex(-0.25 * r, -0.25 * r);
-    endShape(CLOSE);
-  
-    beginShape();
-    vertex(-0.75 * r, 0.75 * r);
-    vertex(0.75 * r, 0.75 * r);
-    vertex(0.25 * r, 0.25 * r);
-    vertex(-0.25 * r, 0.25 * r);
-    endShape(CLOSE);
-  
-    beginShape();
-    vertex(0.75 * r, -0.75 * r);
-    vertex(0.75 * r, 0.75 * r);
-    vertex(0.25 * r, 0.25 * r);
-    vertex(0.25 * r, -0.25 * r);
-    endShape(CLOSE);
-  
-    beginShape();
-    vertex(-0.75 * r, -0.75 * r);
-    vertex(-0.75 * r, 0.75 * r);
-    vertex(-0.25 * r, 0.25 * r);
-    vertex(-0.25 * r, -0.25 * r);
-    endShape(CLOSE);
-  }
-  
-  if (_type == 2) {
-    
-    float d = 0.8 * r;
-    
-    beginShape();
-    vertex(0, 0);
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
-    vertex(0, 2 * -sin_ang(30) * d);
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
-    endShape(CLOSE);
-  
-    beginShape();
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
-    vertex(0, 0);
-    vertex(0,d);
-    vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
-    endShape(CLOSE);
 
-    beginShape();
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
-    vertex(0, 0);
-    vertex(0,d);
-    vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
-    endShape(CLOSE);
+  beginShape();
+  vertex(-0.75 * r, -0.75 * r);
+  vertex(0.75 * r, -0.75 * r);
+  vertex(0.25 * r, -0.25 * r);
+  vertex(-0.25 * r, -0.25 * r);
+  endShape(CLOSE);
 
-  }  
+  beginShape();
+  vertex(-0.75 * r, 0.75 * r);
+  vertex(0.75 * r, 0.75 * r);
+  vertex(0.25 * r, 0.25 * r);
+  vertex(-0.25 * r, 0.25 * r);
+  endShape(CLOSE);
+
+  beginShape();
+  vertex(0.75 * r, -0.75 * r);
+  vertex(0.75 * r, 0.75 * r);
+  vertex(0.25 * r, 0.25 * r);
+  vertex(0.25 * r, -0.25 * r);
+  endShape(CLOSE);
+
+  beginShape();
+  vertex(-0.75 * r, -0.75 * r);
+  vertex(-0.75 * r, 0.75 * r);
+  vertex(-0.25 * r, 0.25 * r);
+  vertex(-0.25 * r, -0.25 * r);
+  endShape(CLOSE);
+
 
   strokeWeight(0);
 
