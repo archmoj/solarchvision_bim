@@ -15448,6 +15448,16 @@ void SOLARCHVISION_draw_3Dobjects () {
 }
 
 
+float Orthographic_Zoom () {
+
+  float ZOOM = 0.5 * WIN3D_ZOOM_coordinate * PI / 180;
+  
+  //ZOOM *= CAM_z;
+
+  return ZOOM;
+}
+
+
 void SOLARCHVISION_transform_Camera () {
   
   CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
@@ -15455,6 +15465,8 @@ void SOLARCHVISION_transform_Camera () {
   CAM_x = 0;
   CAM_y = 0;
   CAM_z = (0.5 * refScale) / tan(0.5 * CAM_fov);
+  
+  println("CAM_z =", CAM_z);
   
   if (WIN3D_View_Type == 1) {
 
@@ -15469,7 +15481,7 @@ void SOLARCHVISION_transform_Camera () {
   }
   else {
 
-    float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
+    float ZOOM = Orthographic_Zoom();
     
     WIN3D_Diagrams.ortho(ZOOM * WIN3D_X_View * -1, ZOOM * WIN3D_X_View * 1, ZOOM  * WIN3D_Y_View * -1, ZOOM  * WIN3D_Y_View * 1, 0.00001, 100000);
     
@@ -21655,7 +21667,7 @@ float[] SOLARCHVISION_calculate_Perspective_Internally (float x, float y, float 
     }
     else {
       
-      float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
+      float ZOOM = Orthographic_Zoom();
 
       Image_X = (x / ZOOM) * (0.5 * WIN3D_scale3D);
       Image_Y = -(y / ZOOM) * (0.5 * WIN3D_scale3D);
@@ -22024,7 +22036,7 @@ float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
     PNT_y = PNT_z * -Image_Y / ((0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale);
   }
   else {
-    float ZOOM = 0.125 * WIN3D_ZOOM_coordinate * PI / 180;
+    float ZOOM = Orthographic_Zoom();
 
     PNT_z = (0.5 * refScale) / tan(0.5 * PI / 3.0); // for orthographic: should be this.
 
