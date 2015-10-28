@@ -24178,7 +24178,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
 
 int BAR_b_Update = 1;
 
-float BAR_b_tab = 1.25 * b_pixel;
+float BAR_b_tab = b_pixel;
 
 String[][] BAR_b_Items = {
                           {"3", "∞-D", "2½D", "3-D", "SLD", "4-D", "LayerType", "1.0"},  
@@ -24192,7 +24192,7 @@ String[][] BAR_b_Items = {
                           {"1", "SD", "Seed", "1.0"}, 
                           {"1", "±CS", "+CS", "-CS", "ClickSelect", "1.0"},
                           {"1", "±WS", "+WS", "-WS", "WindowSelect", "1.0"},
-                          {"2", "AllViewsports", "Expand3DView", "3DViewSpace", "2.5"},
+                          {"2", "AllViewsports", "Expand3DView", "3DViewSpace", "3"},
                           {"1", "P><", "P<>", "ProjectionType", "1.0"},
                           {"1", "±ZM", "0ZM", "Zoom", "1.0"},                          
                           {"1", "DIz", "DIx", "DIy", "Truck", "1.0"},
@@ -24208,6 +24208,8 @@ String[][] BAR_b_Items = {
            
 int Bar_b_Selection = -1;                        
 
+
+int BAR_b_Display_Text; 
 
 void SOLARCHVISION_draw_window_BAR_b () {
   
@@ -24236,7 +24238,8 @@ void SOLARCHVISION_draw_window_BAR_b () {
       stroke(255);
       strokeWeight(1);
       rect(cx, cy - cr, Item_width, b_pixel);
-      strokeWeight(0);  
+      strokeWeight(0);
+
   
       if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + Item_width, cy + cr) == 1) {
 
@@ -24624,13 +24627,46 @@ void SOLARCHVISION_draw_window_BAR_b () {
 
         
       }
+
+    
+      BAR_b_Display_Text = 1;  
+
+      { // drawing the icons where available
+        
+        String Bar_Switch = BAR_b_Items[i][BAR_b_Items[i].length - 2];
+
+        if (Bar_Switch.equals("Move")) {
+          dessin_Move(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }
+        if (Bar_Switch.equals("Scale")) {
+          dessin_Scale(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }          
+        if (Bar_Switch.equals("Rotate")) {
+          dessin_Rotate(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }    
+        if (Bar_Switch.equals("Seed")) {
+          dessin_Seed(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }    
+        if (Bar_Switch.equals("ClickSelect")) {
+          dessin_ClickSelect(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }       
+        if (Bar_Switch.equals("WindowSelect")) {
+          dessin_WindowSelect(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }          
+        
+        
+        
+      }
   
-      textAlign(LEFT, CENTER);   
-      stroke(255); 
-      fill(255);
-      textSize(1.25 * MESSAGE_S_View);
-              
-      text(BAR_b_Items[i][j], cx + 0.5 * MESSAGE_S_View, cy - 0.2 * MESSAGE_S_View);
+      if (BAR_b_Display_Text == 1) { // writing titles where the icon is not available
+  
+        textAlign(CENTER, CENTER);   
+        stroke(255); 
+        fill(255);
+        textSize(1.25 * MESSAGE_S_View);
+                
+        text(BAR_b_Items[i][j], cx + 0.5 * Item_width, cy - 0.2 * MESSAGE_S_View);
+      }
       
   
       cx += Item_width;    
@@ -24641,3 +24677,221 @@ void SOLARCHVISION_draw_window_BAR_b () {
     Y_clicked = -1;
   }  
 }   
+
+          
+
+
+void dessin_Move (int _type, float x, float y, float r) {
+  
+  pushMatrix();
+  translate(x, y);
+
+  strokeWeight(1);
+  stroke(255); 
+  noFill();  
+  
+  line(0, 0, 0.8 * r, 0); 
+  line(0, 0, 0, -0.8 * r); 
+  line(0, 0, -0.4 * r, 0.4 * r); 
+  
+  strokeWeight(3);
+  stroke(255); 
+  noFill();  
+  
+  if (_type == 1) line(-0.8 * r, 0, 0.8 * r, 0);
+  if (_type == 2) line(0, 0.8 * r, 0, -0.8 * r);
+  if (_type == 3) line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);
+  if (_type == 4) line(-0.4 * r, -0.4 * r, 0.4 * r, 0.4 * r);
+ 
+  noStroke();
+  fill(255,0,0);
+  float d = 5;
+  if (_type == 1) {ellipse(-0.8 * r, 0, d, d); ellipse(0.8 * r, 0, d, d);}
+  if (_type == 2) {ellipse(0, 0.8 * r, d, d); ellipse(0, -0.8 * r, d, d);}
+  if (_type == 3) {ellipse(0.4 * r, -0.4 * r, d, d); ellipse(-0.4 * r, 0.4 * r, d, d);}  
+  if (_type == 4) {ellipse(-0.4 * r, -0.4 * r, d, d); ellipse(0.4 * r, 0.4 * r, d, d);}  
+
+  strokeWeight(0);
+  
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+void dessin_Scale (int _type, float x, float y, float r) {
+  
+  pushMatrix();
+  translate(x, y);
+
+  strokeWeight(1);
+  stroke(255); 
+  noFill();  
+  
+  line(0, 0, 0.8 * r, 0); 
+  line(0, 0, 0, -0.8 * r); 
+  line(0, 0, -0.4 * r, 0.4 * r); 
+
+  strokeWeight(1);
+  stroke(255); 
+  noFill();  
+  
+  line(-0.8 * r, 0, 0.8 * r, 0);
+  line(0, 0.8 * r, 0, -0.8 * r);
+  line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);
+  
+  strokeWeight(5);
+  stroke(255,0,0); 
+  noFill();  
+  
+  if (_type == 1) line(-0.4 * r, 0, 0.4 * r, 0);
+  if (_type == 2) line(0, 0.4 * r, 0, -0.4 * r);
+  if (_type == 3) line(0.2 * r, -0.2 * r, -0.2 * r, 0.2 * r);
+  if (_type == 4) {
+    line(-0.4 * r, 0, 0.4 * r, 0);
+    line(0, 0.4 * r, 0, -0.4 * r);
+    line(0.2 * r, -0.2 * r, -0.2 * r, 0.2 * r);
+  }  
+
+  strokeWeight(0);
+  
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+void dessin_Rotate (int _type, float x, float y, float r) {
+  
+  pushMatrix();
+  translate(x, y);
+
+  strokeWeight(1);
+  stroke(255); 
+  noFill();  
+  
+  line(0, 0, 0.8 * r, 0); 
+  line(0, 0, 0, -0.8 * r); 
+  line(0, 0, -0.4 * r, 0.4 * r); 
+  
+  strokeWeight(3);
+  stroke(255); 
+  noFill();  
+  
+  if (_type == 1) line(-0.8 * r, 0, 0.8 * r, 0);
+  if (_type == 2) line(0, 0.8 * r, 0, -0.8 * r);
+  if (_type == 3) line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);
+ 
+  strokeWeight(2);
+  stroke(255,0,0);
+  noFill();
+  float d = 15;
+  if (_type == 1) {arc(0, 0, d, d, 0.25 * PI, 1.75 * PI);}
+  if (_type == 2) {arc(0, 0, d, d, (0.25 - 0.5) * PI, (1.75 - 0.5) * PI);}
+  if (_type == 3) {arc(0, 0, d, d, (0.25 + 0.75) * PI, (1.75 + 0.75) * PI);}
+  
+  
+  strokeWeight(0);
+  
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+
+void dessin_Seed (int _type, float x, float y, float r) {
+  
+  pushMatrix();
+  translate(x, y);
+
+  strokeWeight(1);
+  stroke(255); 
+  noFill();  
+  
+  line(0, 0, 0.8 * r, 0); 
+  line(0, 0, 0, -0.8 * r); 
+  line(0, 0, -0.4 * r, 0.4 * r); 
+
+  strokeWeight(1);
+  stroke(255); 
+  noFill();  
+  
+  line(-0.8 * r, 0, 0.8 * r, 0);
+  line(0, 0.8 * r, 0, -0.8 * r);
+  line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);
+  
+  strokeWeight(1);
+  stroke(255,0,0); 
+  noFill();  
+
+  for (int i = 0; i < 360; i += 30) {
+    float d = random(0.25,0.75);
+    
+    line(0, 0, 0.8 * r * d * cos(i), 0.8 * r * d * sin(i));
+  }  
+
+  strokeWeight(0);
+
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+void dessin_ClickSelect (int _type, float x, float y, float r) {
+  
+  pushMatrix();
+  translate(x, y);
+
+  strokeWeight(1);
+  stroke(255); 
+  fill(255);  
+  
+  float d = 0.3 * r;
+  triangle(-d,-d, -d,d, d,-d); 
+
+  strokeWeight(5);
+  line(0,0, d,d);
+
+  stroke(255,0,0);
+  strokeWeight(3);
+  if (_type == 2) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);} 
+  if (_type == 3) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r);}
+
+  strokeWeight(0);
+
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+
+void dessin_WindowSelect (int _type, float x, float y, float r) {
+  
+  pushMatrix();
+  translate(x, y);
+
+  strokeWeight(1);
+  stroke(255); 
+  fill(63);  
+  rect(-0.5 * r, -0.5 * r, 1.25 * r, 1.25 * r);
+
+  strokeWeight(1);
+  stroke(255); 
+  fill(255);  
+  
+  float d = 0.3 * r;
+  triangle(-d,-d, -d,d, d,-d); 
+
+  strokeWeight(5);
+  line(0,0, d,d);
+
+  stroke(255,0,0);
+  strokeWeight(3);
+  if (_type == 2) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);} 
+  if (_type == 3) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r);}
+
+  strokeWeight(0);
+
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
