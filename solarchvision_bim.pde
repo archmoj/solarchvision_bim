@@ -11522,7 +11522,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                     WIN3D_ZOOM_coordinate /= pow(2.0, 0.25); WIN3D_Update = 1; ROLLOUT_Update = 1; 
                   }
                   break;
-        
+                  
         case '5' :WIN3D_RX_coordinate = 0;
                   WIN3D_RY_coordinate = 0;
                   WIN3D_RZ_coordinate = 0; 
@@ -24152,12 +24152,15 @@ String[][] BAR_b_Items = {
                           {"1", "SD", "Seed", "1.0"}, 
                           {"1", "±CS", "+CS", "-CS", "ClickSelect", "1.0"},
                           {"1", "±WS", "+WS", "-WS", "WindowSelect", "1.0"},
+                          {"1", "AllViewsports", "Expand3DView", "3DViewSpace", "2.5"},
+                          {"1", "*SZ", "/SZ", "3DModelSize", "1.0"},                          
                           {"1", "±ZM", "0ZM", "Zoom", "1.0"},
                           {"1", "P><", "P<>", "ProjectionType", "1.0"}, 
                           {"1", "DIz", "DIx", "DIy", "Truck", "1.0"},
                           {"3", "OR", "ORx", "ORz", "Orbit", "1.0"}, 
                           {"1", "Pan", "Cen", "Pan", "1.0"},
-                          {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "SW", "SE", "NE", "NW", "Viewport", "1.5"},
+                          {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "SW", "SE", "NE", "NW", "3DViewPoint", "1.5"},
+
                           
                           {"1", "Create", "Modify", "Create|Modify", "1.5"},
                           {"2", "Fractal", "Tree", "Person", "LivingType", "1.5"},
@@ -24455,10 +24458,37 @@ void SOLARCHVISION_draw_window_BAR_b () {
           }
           
           ROLLOUT_Update = 1;          
-        }          
+        }        
+        
+        if (Bar_Switch.equals("3DModelSize")) {
+
+          if (j == 1) {
+            objects_scale *= pow(2.0, 0.25);
+          }
+          else if (j == 2) {
+            objects_scale /= pow(2.0, 0.25);
+          }
+
+          WIN3D_Update = 1;  
+            
+          ROLLOUT_Update = 1;          
+        }        
+  
+      
+        if (Bar_Switch.equals("3DViewSpace")) {
+
+          frame_variation = j - 1;
+          SOLARCHVISION_update_frame_layout();
+          
+          //BAR_b_Items[i][0] = nf(3 - j); // << set it to default choice next time
+
+          ROLLOUT_Update = 1;
+        }
+      
+        
 
 
-        if (Bar_Switch.equals("Viewport")) {
+        if (Bar_Switch.equals("3DViewPoint")) {
           
           if (j == 1) {
           
