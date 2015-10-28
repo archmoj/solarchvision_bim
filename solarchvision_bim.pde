@@ -19074,27 +19074,6 @@ void mouseWheel(MouseEvent event) {
           }
           
           
-          if (Modify_Object_Parameters == 2) { // Pan
-
-            if (View_XYZ_Constraints == 0) {
-
-              WIN3D_RX_coordinate += Wheel_Value * WIN3D_RS_coordinate;
-              
-              WIN3D_Update = 1;
-              
-            }
-
-            if (View_XYZ_Constraints == 1) {
-
-              WIN3D_RZ_coordinate += Wheel_Value * WIN3D_RS_coordinate;
-              
-              WIN3D_Update = 1;
-              
-            }            
-         
-          }
-          
-
           WIN3D_Update = 1; 
 
         }  
@@ -19457,16 +19436,13 @@ void mouseDragged () {
     
             dragging_started = 1;
           }
-          
     
-
+          float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
+          float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
          
           if (View_Select_Create_Modify == -3) { // viewport
           
             if (mouseButton == LEFT) { // orbit
-          
-              float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
-              float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
     
               WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate; 
               WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
@@ -19475,10 +19451,7 @@ void mouseDragged () {
             }
             
             if (mouseButton == RIGHT) { // pan
-          
-              float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
-              float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
-    
+
               WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate; 
               WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate;
               
@@ -19489,9 +19462,6 @@ void mouseDragged () {
           
           if (View_Select_Create_Modify == -4) { 
   
-            float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
-            float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);          
-            
             if (mouseButton == RIGHT) { // move X
   
               WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate; 
@@ -19512,9 +19482,6 @@ void mouseDragged () {
           
             if (mouseButton == RIGHT) { // Orbit
           
-              float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
-              float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
-    
               WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate; 
               WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
               
@@ -19523,9 +19490,6 @@ void mouseDragged () {
             
             if (mouseButton == LEFT) { // pan
           
-              float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
-              float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
-    
               WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate; 
               WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate;
               
@@ -19533,7 +19497,54 @@ void mouseDragged () {
             }          
   
           }
-          
+
+          if (View_Select_Create_Modify == -6) { // viewport:different functions with wheel
+  
+            if (Modify_Object_Parameters == 0) { // Truck
+  
+              if (View_XYZ_Constraints == 0) {
+  
+                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate; 
+                
+                WIN3D_Update = 1;
+                
+              }
+  
+              if (View_XYZ_Constraints == 1) {
+  
+                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate;
+                
+                WIN3D_Update = 1;
+                
+              }            
+           
+            }
+            
+            
+            if (Modify_Object_Parameters == 1) {  // Orbit
+  
+              if (View_XYZ_Constraints == 0) {
+  
+                WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
+                
+                WIN3D_Update = 1;
+                
+              }
+  
+              if (View_XYZ_Constraints == 1) {
+  
+                WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate;
+                
+                WIN3D_Update = 1;
+                
+              }            
+           
+            }
+            
+            
+            WIN3D_Update = 1; 
+  
+          }  
         }
       }
     }   
@@ -24195,8 +24206,8 @@ String[][] BAR_b_Items = {
                           {"2", "AllViewsports", "Expand3DView", "3DViewSpace", "3"},
                           {"1", "P><", "P<>", "ProjectionType", "1.0"},
                           {"1", "±ZM", "0ZM", "Zoom", "1.0"},                          
-                          {"1", "DIz", "DIx", "DIy", "Truck", "1.0"},
-                          {"3", "OR", "ORx", "ORz", "Orbit", "1.0"}, 
+                          {"3", "DIz", "DIx", "DIy", "Truck", "1.0"},
+                          {"1", "OR", "ORx", "ORz", "Orbit", "1.0"}, 
                           {"1", "Pan", "Cen", "Pan", "1.0"},
                           {"1", "±SZ", "3DModelSize", "1.0"},                          
                           {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "SW", "SE", "NE", "NW", "3DViewPoint", "1.5"},
@@ -24662,7 +24673,17 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("Orbit")) {
           dessin_Orbit(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }           
-        
+        if (Bar_Switch.equals("Pan")) {
+          dessin_Pan(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }          
+        if (Bar_Switch.equals("Truck")) {
+          dessin_Truck(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }      
+        if (Bar_Switch.equals("3DModelSize")) {
+          dessin_3DModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }      
+   
+      
       }
   
       if (BAR_b_Display_Text == 1) { // writing titles where the icon is not available
@@ -24974,6 +24995,93 @@ void dessin_ProjectionType (int _type, float x, float y, float r) {
 }
 
 
+void dessin_Truck (int _type, float x, float y, float r) {
+  
+  pushMatrix();
+  translate(x, y);
+
+  
+  stroke(255); 
+  noFill();
+
+  float d = 0.625 * r;
+  
+  float a = 0;
+  float b = 0;
+  if (_type == 1) {a = cos_ang(30) * d; b = -sin_ang(30) * d;}
+  if (_type == 2) {a = -cos_ang(30) * d; b = -sin_ang(30) * d;}
+  if (_type == 3) {a = 0; b = d;}
+  
+  strokeWeight(1);
+  {
+    pushMatrix();
+    translate(0.5 * a, 0.5 * b);
+      
+    beginShape();
+    vertex(0, 0);
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, -d);
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    endShape(CLOSE);
+  
+    beginShape();
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0,d);
+    vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    endShape(CLOSE);
+  
+    beginShape();
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0,d);
+    vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    endShape(CLOSE);
+  
+    popMatrix();
+  }
+    
+
+
+  
+  strokeWeight(2);
+  {
+    pushMatrix();
+    translate(-0.5 * a, -0.5 * b);
+      
+    beginShape();
+    vertex(0, 0);
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, -d);
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    endShape(CLOSE);
+  
+    beginShape();
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0,d);
+    vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    endShape(CLOSE);
+  
+    beginShape();
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0,d);
+    vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    endShape(CLOSE);
+  
+    popMatrix();
+  }
+
+  strokeWeight(0);
+
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+
+
 
 void dessin_Zoom (int _type, float x, float y, float r) {
   
@@ -25016,12 +25124,11 @@ void dessin_Orbit (int _type, float x, float y, float r) {
   pushMatrix();
   translate(x, y);
 
-  strokeWeight(2);
+  float d = 1.5 * r;
+
+  strokeWeight(1);
   stroke(255); 
   noFill();  
-  
-  float d = 1.5 * r;
-  
   ellipse(0,0, d,d); 
   
   strokeWeight(2);
@@ -25031,7 +25138,6 @@ void dessin_Orbit (int _type, float x, float y, float r) {
   if (_type == 3) arc(0,0, d,0.333 * d, 0, PI); 
   if (_type == 2) arc(0,0, 0.333 * d,d, 0.5 * PI, 1.5 * PI); 
   if (_type == 1) {arc(0,0, 0.333 * d,d, 0.5 * PI, 1.5 * PI); arc(0,0, d,0.333 * d, 0, PI);}
- 
   
   strokeWeight(0);
   
@@ -25040,9 +25146,55 @@ void dessin_Orbit (int _type, float x, float y, float r) {
   BAR_b_Display_Text = 0;
 }
 
+void dessin_Pan (int _type, float x, float y, float r) {
 
+  pushMatrix();
+  translate(x, y);
 
+  float d = 1.0 * r;
 
+  strokeWeight(1);
+  stroke(255); 
+  noFill();  
+  arc(0,0, d,d, 0,PI); 
+
+  stroke(255); 
+  noFill();  
+  
+  for (float i = -1.5; i <= 1.5; i++) { 
+    line(i * 0.25 * d - 0.125 * d, -0.5 * d, i * 0.25 * d + 0.125 * d, 0);
+    
+    if (i < 1.5) arc(i * 0.25 * d,-0.5 * d, 0.25 * d, 0.25 * d, PI,2*PI); 
+  }
+  
+  strokeWeight(0);
+  
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+void dessin_3DModelSize (int _type, float x, float y, float r) {
+
+  pushMatrix();
+  translate(x, y);
+
+  strokeWeight(1);
+  stroke(255); 
+  line(-r, -0.5 * r, r, -0.5 * r);
+  strokeWeight(2);
+  line(0, -0.5 * r, r, 0);
+  line(0, -0.5 * r, -r, 0);
+  strokeWeight(2);
+  line(0, -0.5 * r, 0, r);
+
+  
+  strokeWeight(0);
+  
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
 
 
 
