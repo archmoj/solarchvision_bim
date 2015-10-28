@@ -11547,9 +11547,9 @@ void WIN3D_keyPressed (KeyEvent e) {
         case 'O' :WIN3D_View_Type = 0; WIN3D_Update = 1; ROLLOUT_Update = 1; ROLLOUT_Update = 1; break;
         case 'o' :WIN3D_View_Type = 0; WIN3D_Update = 1; ROLLOUT_Update = 1; ROLLOUT_Update = 1; break;
         
-        case 'P' :WIN3D_ZOOM_coordinate = 60;
+        case 'P' ://WIN3D_ZOOM_coordinate = 60;
                   WIN3D_View_Type = 1; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
-        case 'p' :WIN3D_ZOOM_coordinate = 60;
+        case 'p' ://WIN3D_ZOOM_coordinate = 60;
                   WIN3D_View_Type = 1; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
   
         //case 'E' :WIN3D_EDGES_SHOW = (WIN3D_EDGES_SHOW + 1) % 2; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
@@ -15452,7 +15452,7 @@ float Orthographic_Zoom () {
 
   float ZOOM = 0.5 * WIN3D_ZOOM_coordinate * PI / 180;
   
-  //ZOOM *= CAM_z;
+  ZOOM *= CAM_z / 56.0;
 
   return ZOOM;
 }
@@ -15460,41 +15460,16 @@ float Orthographic_Zoom () {
 
 void SOLARCHVISION_transform_Camera () {
   
+ 
+
   CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
+
+  float CAM_dist = (0.5 * refScale) / tan(0.5 * CAM_fov);
   
   CAM_x = 0;
   CAM_y = 0;
-  CAM_z = (0.5 * refScale) / tan(0.5 * CAM_fov);
-  
-  println("CAM_z =", CAM_z);
-  
-  if (WIN3D_View_Type == 1) {
+  CAM_z = CAM_dist;
 
-    float aspect = 1.0 / WIN3D_R_View;
-    
-    float zFar = CAM_z * 1000;
-    float zNear = CAM_z * 0.001;
-    
-    WIN3D_Diagrams.perspective(CAM_fov, aspect, zNear, zFar);
-
-    WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
-  }
-  else {
-
-    float ZOOM = Orthographic_Zoom();
-    
-    WIN3D_Diagrams.ortho(ZOOM * WIN3D_X_View * -1, ZOOM * WIN3D_X_View * 1, ZOOM  * WIN3D_Y_View * -1, ZOOM  * WIN3D_Y_View * 1, 0.00001, 100000);
-    
-    WIN3D_Diagrams.translate(0, 1.0 * WIN3D_Y_View, 0); // << IMPORTANT! 
-  }
-
-  WIN3D_Diagrams.translate(WIN3D_X_coordinate * WIN3D_scale3D, WIN3D_Y_coordinate * WIN3D_scale3D, WIN3D_Z_coordinate * WIN3D_scale3D);
-  
-  WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI / 180); 
-  WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI / 180); 
-
-
-  
   
   CAM_x *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
   CAM_y *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
@@ -15523,6 +15498,36 @@ void SOLARCHVISION_transform_Camera () {
   CAM_z = pz;   
   
   //println("Camera:", nf(CAM_x,0,4), nf(CAM_y,0,4), nf(CAM_z,0,4));
+  
+  
+  if (WIN3D_View_Type == 1) {
+
+    float aspect = 1.0 / WIN3D_R_View;
+    
+    float zFar = CAM_dist * 1000;
+    float zNear = CAM_dist * 0.001;
+    
+    WIN3D_Diagrams.perspective(CAM_fov, aspect, zNear, zFar);
+
+    WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
+  }
+  else {
+
+    float ZOOM = Orthographic_Zoom();
+    
+    WIN3D_Diagrams.ortho(ZOOM * WIN3D_X_View * -1, ZOOM * WIN3D_X_View * 1, ZOOM  * WIN3D_Y_View * -1, ZOOM  * WIN3D_Y_View * 1, 0.00001, 100000);
+    
+    WIN3D_Diagrams.translate(0, 1.0 * WIN3D_Y_View, 0); // << IMPORTANT! 
+  }
+
+  WIN3D_Diagrams.translate(WIN3D_X_coordinate * WIN3D_scale3D, WIN3D_Y_coordinate * WIN3D_scale3D, WIN3D_Z_coordinate * WIN3D_scale3D);
+  
+  WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI / 180); 
+  WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI / 180); 
+
+
+  
+
 }
   
 
@@ -24147,7 +24152,7 @@ String[][] BAR_b_Items = {
                           {"1", "SD", "Seed", "1.0"}, 
                           {"1", "±CS", "+CS", "-CS", "ClickSelect", "1.0"},
                           {"1", "±WS", "+WS", "-WS", "WindowSelect", "1.0"},
-                          {"1", "±ZM", "Zoom", "1.0"},
+                          {"1", "±ZM", "0ZM", "Zoom", "1.0"},
                           {"1", "P><", "P<>", "ProjectionType", "1.0"}, 
                           {"1", "DIz", "DIx", "DIy", "Truck", "1.0"},
                           {"3", "OR", "ORx", "ORz", "Orbit", "1.0"}, 
@@ -24432,6 +24437,11 @@ void SOLARCHVISION_draw_window_BAR_b () {
 
         if (Bar_Switch.equals("Zoom")) {
           View_Select_Create_Modify = -4;
+
+          if (j == 2) {
+            WIN3D_ZOOM_coordinate = 60;
+            WIN3D_Update = 1;  
+          }
           
           ROLLOUT_Update = 1;          
         }          
