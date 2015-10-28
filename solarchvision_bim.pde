@@ -24156,8 +24156,7 @@ String[][] BAR_b_Items = {
                           {"1", "P><", "P<>", "ProjectionType", "1.0"}, 
                           {"1", "DIz", "DIx", "DIy", "Truck", "1.0"},
                           {"3", "OR", "ORx", "ORz", "Orbit", "1.0"}, 
-                          {"1", "PA", "Pan", "1.0"},
-                          {"1", "CE", "CenterOrigin", "1.0"}, 
+                          {"1", "Pan", "Cen", "Pan", "1.0"},
                           {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "SW", "SE", "NE", "NW", "Viewport", "1.5"},
                           
                           {"1", "Create", "Modify", "Create|Modify", "1.5"},
@@ -24430,6 +24429,16 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("Pan")) {
 
           View_Select_Create_Modify = -3;
+          
+          if (j == 2) {
+            WIN3D_X_coordinate = 0;
+            WIN3D_Y_coordinate = 0;
+            WIN3D_Z_coordinate = 0; 
+            
+            WIN3D_Update = 1;
+            
+            BAR_b_Items[i][0] = "1"; // << set it to default choice next time
+          }           
          
           ROLLOUT_Update = 1;          
         }  
@@ -24441,21 +24450,13 @@ void SOLARCHVISION_draw_window_BAR_b () {
           if (j == 2) {
             WIN3D_ZOOM_coordinate = 60;
             WIN3D_Update = 1;  
+            
+            BAR_b_Items[i][0] = "1"; // << set it to default choice next time
           }
           
           ROLLOUT_Update = 1;          
         }          
 
-
-        if (Bar_Switch.equals("CenterOrigin")) {
-
-          WIN3D_X_coordinate = 0;
-          WIN3D_Y_coordinate = 0;
-          WIN3D_Z_coordinate = 0; 
-          
-          WIN3D_Update = 1;   
-          ROLLOUT_Update = 1;         
-        } 
 
         if (Bar_Switch.equals("Viewport")) {
           
