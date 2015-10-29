@@ -24229,9 +24229,9 @@ String[][] BAR_b_Items = {
                           {"1", "Pan", "Cen", "Pan", "1.0"},
                           {"1", "±SZ", "3DModelSize", "1.0"},                          
                           {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "SW", "SE", "NE", "NW", "3DViewPoint", "1.5"},
-                          {"1", "Create", "Modify", "Create|Modify", "1.5"},
                           {"2", "Fractal", "Tree", "Person", "LivingType", "1.5"},
-                          {"3", "Parametric", "Hyper", "Tri", "Poly", "Extrude", "House", "Box", "Octahedron", "Sphere", "Cylinder", "BuildingType", "2.0"},
+                          {"1", "House", "Box", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "BuildingType", "2.0"},
+                          
                           {"2", "as_Solid", "as_Mesh", "Solid-Type", "2.0"},  
                         };         
            
@@ -24272,7 +24272,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
   
       if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + Item_width, cy + cr) == 1) {
 
-        if (mouseButton == LEFT) {       
+        if (mouseButton == RIGHT) {       
           
           if (Bar_b_Selection != i) {
             Bar_b_Selection = i;
@@ -24291,7 +24291,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
           }
         }
         
-        if (mouseButton == RIGHT) {
+        if (mouseButton == LEFT) {
 
           if (Bar_b_Selection != i) {
             Bar_b_Selection = i;
@@ -24421,12 +24421,6 @@ void SOLARCHVISION_draw_window_BAR_b () {
           ROLLOUT_Update = 1;          
         }
 
-        if (Bar_Switch.equals("Create|Modify")) {
-          View_Select_Create_Modify = 0;
-          
-          ROLLOUT_Update = 1;          
-        }
-        
         if (Bar_Switch.equals("ClickSelect")) {
           View_Select_Create_Modify = -1;
 
