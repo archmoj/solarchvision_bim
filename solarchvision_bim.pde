@@ -17011,12 +17011,12 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
     
     if (totalP > 0) val[o] /= 0.5 * totalP; 
   
-    //val[o] = 1 - val[o];
-    val[o] = val[o] - 1;
+    val[o] = 1 - val[o];
+    //val[o] = val[o] - 1;
   }
   
-  float[] return_array = {x, y, z, val[0]};
-  //float[] return_array = {x, y, z, val[1] - val[0]};
+  //float[] return_array = {x, y, z, val[0]};
+  float[] return_array = {x, y, z, val[1] - val[0]};
   
   return return_array;
 }
@@ -17029,8 +17029,8 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
 
   float[] val = {0, 0};
 
-  for (int o = 0; o < 1; o++) {
-  //for (int o = 0; o < 2; o++) {
+  //for (int o = 0; o < 1; o++) {
+  for (int o = 0; o < 2; o++) {
     
     float totalP = 0;
 
@@ -17057,8 +17057,8 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
     
     if (totalP > 0) val[o] /= 0.5 * totalP;
   
-    //val[o] = 1 - val[o];
-    val[o] = val[o] - 1;
+    val[o] = 1 - val[o];
+    //val[o] = val[o] - 1;
   }
   
   
