@@ -12994,8 +12994,8 @@ void SOLARCHVISION_add_PolygonExtrude (int m, float cx, float cy, float cz, floa
   for (int i = 1; i < n; i++) {
     float t = i * 360.0 / float(n);
     
-    vT[i] = SOLARCHVISION_addToVertices(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz + h);
-    vB[i] = SOLARCHVISION_addToVertices(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz);
+    vT[i] = SOLARCHVISION_addToVertices(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz + 0.5 * h);
+    vB[i] = SOLARCHVISION_addToVertices(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz - 0.5 * h);
     int[] fT = {vT[i]};
     int[] fB = {vB[i]};
     
@@ -19882,6 +19882,12 @@ void mouseClicked () {
                   
                   SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, 2, rot);
                 }
+                
+                else if ((px == 2) && (py == 2) && (pz == 8)) {
+                  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+                  
+                  SOLARCHVISION_add_PolygonExtrude(Create_Default_Material, x, y, z, rx, 2 * rz, 24, rot);
+                }                
     
                 else if ((px == 8) && (py == 8) && (pz == 8)) {
                   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
@@ -24027,7 +24033,7 @@ String[][] BAR_b_Items = {
                          
                           
                           {"2", "Fractal", "Tree", "Person", "LivingType", "1.5"},
-                          {"1", "House", "Box", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "BuildingType", "2.0"},
+                          {"1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "BuildingType", "2.0"},
                           {"1", "as_Mesh", "as_Solid", "Mesh|Solid", "2.0"},  
                           
                           {"3", "∞-D", "2½D", "3-D", "4-D", "LayerType", "1.0"},
@@ -24231,6 +24237,15 @@ void SOLARCHVISION_draw_window_BAR_b () {
             Create_Input_powX = 2;  
             Create_Input_powY = 2; 
             Create_Input_powZ = 8;            
+            
+            Work_with_2D_or_3D = 3;
+          }           
+          else if ((BAR_b_Items[i][j]).equals("Cushion")) {
+            Create_Mesh_SuperOBJ = 1;
+
+            Create_Input_powX = 8;  
+            Create_Input_powY = 8; 
+            Create_Input_powZ = 2;            
             
             Work_with_2D_or_3D = 3;
           }          
