@@ -19154,7 +19154,7 @@ void mouseReleased () {
                 
                 int include_OBJ_in_newSelection = -1;    
 
-                if (allPolymesh_Faces[OBJ_NUM][0] < allPolymesh_Faces[OBJ_NUM][1]) {
+                if (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1]) {
                   
                   if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
                   if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
