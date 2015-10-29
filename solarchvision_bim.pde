@@ -12594,6 +12594,94 @@ void SOLARCHVISION_deselectAll () {
 
 }
             
+            
+void SOLARCHVISION_add_Octahedron (int m, float x, float y, float z, float rx, float ry, float rz, float rot) {
+
+  float teta = rot * PI / 180.0;
+  
+  float[] X_ = new float [6];
+  float[] Y_ = new float [6];
+  float[] Z_ = new float [6];
+
+  float q = pow(2, 0.5);
+
+  X_[0] = 0;  Y_[0] = 0;  Z_[0] = q;
+  X_[1] = q;  Y_[1] = 0;  Z_[1] = 0;
+  X_[2] = 0;  Y_[2] = q;  Z_[2] = 0;
+  X_[3] = -q;  Y_[3] = 0;  Z_[3] = 0;
+  X_[4] = 0;  Y_[4] = -q;  Z_[4] = 0;
+  X_[5] = 0;  Y_[5] = 0;  Z_[5] = -q;
+  
+  for (int i = 0; i < 6; i += 1) {
+    X_[i] *= rx;
+    Y_[i] *= ry;
+    Z_[i] *= rz;
+
+    float X_r = X_[i] * cos(teta) - Y_[i] * sin(teta);
+    float Y_r = X_[i] * sin(teta) + Y_[i] * cos(teta);
+    float Z_r = Z_[i];
+    
+    X_[i] = X_r + x;
+    Y_[i] = Y_r + y;
+    Z_[i] = Z_r + z;
+  }
+  
+  int[] v = new int [6];
+  
+  for(int i = 0; i < 6; i++) {
+    v[i] = SOLARCHVISION_addToVertices(X_[i], Y_[i], Z_[i]); 
+  } 
+
+  if (m == -1) defaultMaterial = 9;
+  else defaultMaterial = m;
+  
+  {
+    int[] newFace = {v[1], v[2], v[0]};
+    if (m == -1) defaultMaterial -= 1;
+    SOLARCHVISION_addToFaces(newFace);
+  }      
+
+  {
+    int[] newFace = {v[2], v[3], v[0]};
+    if (m == -1) defaultMaterial -= 1;
+    SOLARCHVISION_addToFaces(newFace);
+  }      
+
+  {
+    int[] newFace = {v[3], v[4], v[0]};
+    if (m == -1) defaultMaterial -= 1;
+    SOLARCHVISION_addToFaces(newFace);
+  }      
+
+  {
+    int[] newFace = {v[4], v[1], v[0]};
+    if (m == -1) defaultMaterial -= 1;
+    SOLARCHVISION_addToFaces(newFace);
+  }      
+
+  {
+    int[] newFace = {v[1], v[5], v[2]};
+    if (m == -1) defaultMaterial -= 1;
+    SOLARCHVISION_addToFaces(newFace);
+  }      
+
+  {
+    int[] newFace = {v[2], v[5], v[3]};
+    if (m == -1) defaultMaterial -= 1;
+    SOLARCHVISION_addToFaces(newFace);
+  }      
+  {
+    int[] newFace = {v[3], v[5], v[4]};
+    if (m == -1) defaultMaterial -= 1;
+    SOLARCHVISION_addToFaces(newFace);
+  }  
+  
+  {
+    int[] newFace = {v[4], v[5], v[1]};
+    if (m == -1) defaultMaterial -= 1;
+    SOLARCHVISION_addToFaces(newFace);
+  }      
+}            
      
 
 
@@ -19898,54 +19986,7 @@ void mouseClicked () {
                 else if ((px == 1) && (py == 1) && (pz == 1)) {
                   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
                   
-                  float[] X_ = new float [6];
-                  float[] Y_ = new float [6];
-                  float[] Z_ = new float [6];
-    
-                  float q = pow(2, 0.5);
-    
-                  X_[0] = 0;
-                  Y_[0] = 0;
-                  Z_[0] = q;
-    
-                  X_[1] = q;
-                  Y_[1] = 0;
-                  Z_[1] = 0;
-    
-                  X_[2] = 0;
-                  Y_[2] = q;
-                  Z_[2] = 0;
-    
-                  X_[3] = -q;
-                  Y_[3] = 0;
-                  Z_[3] = 0;
-    
-                  X_[4] = 0;
-                  Y_[4] = -q;
-                  Z_[4] = 0;
-    
-                  X_[5] = 0;
-                  Y_[5] = 0;
-                  Z_[5] = -q;
-                  
-                  for (int i = 0; i < 6; i += 1) {
-                    X_[i] *= rx;
-                    Y_[i] *= ry;
-                    Z_[i] *= rz;
-    
-                    float X_r = X_[i] * cos_ang(rot) - Y_[i] * sin_ang(rot);
-                    float Y_r = X_[i] * sin_ang(rot) + Y_[i] * cos_ang(rot);
-                    float Z_r = Z_[i];
-                    
-                    X_[i] = X_r + x;
-                    Y_[i] = Y_r + y;
-                    Z_[i] = Z_r + z;
-                  }
-                  
-                  SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[1], Y_[1], Z_[1], X_[2], Y_[2], Z_[2], X_[0], Y_[0], Z_[0]);
-                  SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[2], Y_[2], Z_[2], X_[3], Y_[3], Z_[3], X_[0], Y_[0], Z_[0]);
-                  SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[3], Y_[3], Z_[3], X_[4], Y_[4], Z_[4], X_[0], Y_[0], Z_[0]);
-                  SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[4], Y_[4], Z_[4], X_[1], Y_[1], Z_[1], X_[0], Y_[0], Z_[0]);                
+                  SOLARCHVISION_add_Octahedron(Create_Default_Material, x,y,z, rx,ry,rz, rot);
                 }
                 
                 else {
@@ -25171,3 +25212,8 @@ void dessin_zzzzzzzzzzzzzz (int _type, float x, float y, float r) {
 
   BAR_b_Display_Text = 0;
 }
+
+
+
+
+      
