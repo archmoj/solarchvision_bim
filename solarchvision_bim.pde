@@ -24016,11 +24016,13 @@ String[][] BAR_b_Items = {
                           {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "SW", "SE", "NE", "NW", "3DViewPoint", "1.5"},
                           {"1", "P><", "P<>", "ProjectionType", "1.0"},
                           {"1", "OR", "ORx", "ORz", "Orbit", "1.0"},
-                          {"1", "±ZM", "0ZM", "Zoom", "1.0"},      
-                          {"1", "Pan", "Cen", "Pan", "1.0"},                          
+                                
+                          {"1", "Pan", "Cen", "Pan", "1.0"},
+                          
                           {"3", "DIz", "DIx", "DIy", "Truck", "1.0"},
+                          {"1", "Walk", "DistZ", "1.0"},
                           {"1", "±SZ", "3DModelSize", "1.0"},                          
-                        
+                          {"1", "±ZM", "0ZM", "Zoom", "1.0"},
                          
                           
                           {"2", "Fractal", "Tree", "Person", "LivingType", "1.5"},
@@ -24306,6 +24308,15 @@ void SOLARCHVISION_draw_window_BAR_b () {
           ROLLOUT_Update = 1;          
         }    
 
+
+
+        if (Bar_Switch.equals("DistZ")) {
+
+          View_Select_Create_Modify = -3;
+          
+          ROLLOUT_Update = 1;          
+        }  
+
         if (Bar_Switch.equals("Truck")) {
 
           if (j == 1) {
@@ -24327,6 +24338,8 @@ void SOLARCHVISION_draw_window_BAR_b () {
           
           ROLLOUT_Update = 1;          
         }  
+
+
 
         if (Bar_Switch.equals("Orbit")) {
 
@@ -24544,10 +24557,13 @@ void SOLARCHVISION_draw_window_BAR_b () {
         }           
         if (Bar_Switch.equals("Pan")) {
           dessin_Pan(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
-        }          
+        }
+        if (Bar_Switch.equals("DistZ")) {
+          dessin_DistZ(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }        
         if (Bar_Switch.equals("Truck")) {
           dessin_Truck(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
-        }      
+        }
         if (Bar_Switch.equals("3DModelSize")) {
           dessin_3DModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }      
@@ -24964,7 +24980,7 @@ void dessin_Zoom (int _type, float x, float y, float r) {
   
     stroke(255); 
     
-    fill(127);  
+    noFill(); //fill(127);  
     strokeWeight(1);
     ellipse(-0.4 * r, -0.4 * r, 0.8 * r, 0.8 * r); 
   
@@ -25043,6 +25059,8 @@ void dessin_Pan (int _type, float x, float y, float r) {
   BAR_b_Display_Text = 0;
 }
 
+
+
 void dessin_3DModelSize (int _type, float x, float y, float r) {
 
   pushMatrix();
@@ -25066,6 +25084,27 @@ void dessin_3DModelSize (int _type, float x, float y, float r) {
 }
 
 
+void dessin_DistZ (int _type, float x, float y, float r) {
+
+  pushMatrix();
+  translate(x, y);
+
+  strokeWeight(1);
+  stroke(255); 
+  line(-r, 0, r, 0);
+  strokeWeight(2);
+  line(0, 0, r, 0.5 * r);
+  line(0, 0, -r, 0.5 * r);
+  strokeWeight(2);
+  line(0, 0, 0, r);
+
+  
+  strokeWeight(0);
+  
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
 
 
 
