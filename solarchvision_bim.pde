@@ -160,8 +160,7 @@ int Create_Input_powRnd = 0;
 
 int SolidSurface_TESELATION = 2; //4;
 
-int Create_Soild_House = 0;
-int Create_Solid_SuperOBJ = 0;
+
 
 int Create_Poly_Degree = 6;
 
@@ -172,6 +171,7 @@ int Create_Mesh_Tri = 0;
 int Create_Mesh_Quad = 0;
 int Create_Mesh_House = 0; 
 int Create_Mesh_Parametric = 0;
+int Create_Mesh_SuperOBJ = 0;
 int Create_Mesh_Person = 0;
 int Create_Mesh_Plant = 0;
 int Create_Fractal_Plant = 0;
@@ -186,6 +186,8 @@ float Create_Fractal_Plant_trunckSize = 1; //0.5;
 float Create_Fractal_Plant_leafSize = 1; //1; 
 
 int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:4D
+
+int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
 int View_Select_Create_Modify = 4; // -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Properties
 int View_XYZ_Constraints = 3; // 0:x 1:y 2:z 3:xyz 4:xy 5:yz 6:zx
@@ -19833,91 +19835,63 @@ void mouseClicked () {
               float rz = 0.5 * Create_Input_Height;
               if (rz < 0) rz = random(0.25 * abs(rz), abs(rz));
     
-              if (mouseButton == RIGHT) {
+              
                 
-                if (Create_Soild_House == 1) {
-                  Create_Input_powAll = 8;
-                  Create_Input_powX = 8;
-                  Create_Input_powY = 8;
-                  Create_Input_powZ = 8;
-                  
-                  ROLLOUT_Update = 1;
+              float px = Create_Input_powX; 
+              float py = Create_Input_powY;
+              float pz = Create_Input_powZ;
+              
+              if (Create_Input_powRnd == 1) {
+                px = pow(2, int(random(5)) - 1);
+                py = px;
+                pz = px;
+              }
+                
+              if (Create_Input_Volume != 0) {
+                          
+                if ((rx != 0) && (ry != 0)) {
+                  rz = Create_Input_Volume / (8 * rx * ry);
                 }
                 
+                //---------------------------------------------------
+                float A = 1; 
+                // cube volume: 8*r^3, sphere volume: 4*r^3, so maybe:
+                if (pz == 8) A = 1;
+                else if (pz == 4) A = 0.75;
+                else if (pz == 2) A = 0.5;
+                else if (pz == 1) A = 0.25;
+                else if (pz == 0.5) A = 0.125;
+                else if (pz == 0.25) A = 0.0625;
                 
-                float px = Create_Input_powX; 
-                float py = Create_Input_powY;
-                float pz = Create_Input_powZ;
-                
-                if (Create_Input_powRnd == 1) {
-                  px = pow(2, int(random(5)) - 1);
-                  py = px;
-                  pz = px;
-                }
-                  
-                if (Create_Input_Volume != 0) {
-                            
-                  if ((rx != 0) && (ry != 0)) {
-                    rz = Create_Input_Volume / (8 * rx * ry);
-                  }
-                  
-                  //---------------------------------------------------
-                  float A = 1; 
-                  // cube volume: 8*r^3, sphere volume: 4*r^3, so maybe:
-                  if (pz == 8) A = 1;
-                  else if (pz == 4) A = 0.75;
-                  else if (pz == 2) A = 0.5;
-                  else if (pz == 1) A = 0.25;
-                  else if (pz == 0.5) A = 0.125;
-                  else if (pz == 0.25) A = 0.0625;
-                  
-                  rx /= pow(A, (1.0 / 3.0));
-                  ry /= pow(A, (1.0 / 3.0));
-                  rz /= pow(A, (1.0 / 3.0));
-                  //---------------------------------------------------
-                }
+                rx /= pow(A, (1.0 / 3.0));
+                ry /= pow(A, (1.0 / 3.0));
+                rz /= pow(A, (1.0 / 3.0));
+                //---------------------------------------------------
+              }
 
-                x += rx * selectedPolymesh_alignX;
-                y += ry * selectedPolymesh_alignY;
-                z += rz * selectedPolymesh_alignZ;
-                
-                int SOLID_created = 0;
-                
-                
-    
+              x += rx * selectedPolymesh_alignX;
+              y += ry * selectedPolymesh_alignY;
+              z += rz * selectedPolymesh_alignZ;
+              
+              int SOLID_created = 0;
+              
+              if (Create_Mesh_SuperOBJ == 1) {
+  
                 if ((px == 8) && (py == 8) && (pz == 2)) {
                   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
                   
                   SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, 2, rot);
-    
-                  SOLARCHVISION_addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, 0,0,rot);
-                  
-                  SOLID_created = 1;
                 }
     
-                if ((px == 8) && (py == 8) && (pz == 8)) {
+                else if ((px == 8) && (py == 8) && (pz == 8)) {
                   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
                   
                   SOLARCHVISION_add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, rot);
-    
-                  SOLARCHVISION_addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, 0,0,rot);
-                  
-                  SOLID_created = 1;
                 }
                 
-                if (((px == 1) && (py == 1) && (pz == 1)) || (Create_Soild_House == 1)) {
+                else if ((px == 1) && (py == 1) && (pz == 1)) {
                   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
                   
-                  if (Create_Soild_House == 1) {
-                    z += rz;
-                    
-                    if (rx == ry) rot -= 45;
-                    
-                    px = 1;
-                    py = 1;
-                    pz = 1;
-                  }
-                                  
                   float[] X_ = new float [6];
                   float[] Y_ = new float [6];
                   float[] Z_ = new float [6];
@@ -19966,96 +19940,86 @@ void mouseClicked () {
                   SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[2], Y_[2], Z_[2], X_[3], Y_[3], Z_[3], X_[0], Y_[0], Z_[0]);
                   SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[3], Y_[3], Z_[3], X_[4], Y_[4], Z_[4], X_[0], Y_[0], Z_[0]);
                   SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[4], Y_[4], Z_[4], X_[1], Y_[1], Z_[1], X_[0], Y_[0], Z_[0]);                
-                
-                  if (Create_Soild_House != 1) {
-                    SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[1], Y_[1], Z_[1], X_[5], Y_[5], Z_[5], X_[2], Y_[2], Z_[2]);
-                    SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[2], Y_[2], Z_[2], X_[5], Y_[5], Z_[5], X_[3], Y_[3], Z_[3]);
-                    SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[3], Y_[3], Z_[3], X_[5], Y_[5], Z_[5], X_[4], Y_[4], Z_[4]);
-                    SOLARCHVISION_add_Mesh3(Create_Default_Material, X_[4], Y_[4], Z_[4], X_[5], Y_[5], Z_[5], X_[1], Y_[1], Z_[1]);
-                  }
-    
-                  SOLARCHVISION_addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, 0,0,rot);
-                  
-                  SOLID_created = 1;
                 }
                 
-                if (SOLID_created == 0) {
+                else {
                   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
                   
                   SOLARCHVISION_add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, SolidSurface_TESELATION, rot);
-    
+                }
+                
+                
+                
+                
+                if (Create_Mesh_or_Solid == 2) {
                   SOLARCHVISION_addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, 0,0,rot);
                   
                   SOLID_created = 1;
-                }
-                
-                SOLARCHVISION_calculate_ParametricGeometries_Field();  
+                }                
               }
               
-              if (mouseButton == LEFT) {
+               
+              
+              
 
-                x += rx * selectedPolymesh_alignX;
-                y += ry * selectedPolymesh_alignY;
-                z += rz * selectedPolymesh_alignZ;
                 
-                if (Create_Mesh_Tri == 1) {
-                  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
-                  
-                  SOLARCHVISION_add_Mesh3(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
-                  SOLARCHVISION_add_Mesh3(Create_Default_Material, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
-                  SOLARCHVISION_add_Mesh3(Create_Default_Material, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
-                  SOLARCHVISION_add_Mesh3(Create_Default_Material, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
-                }
+              if (Create_Mesh_Tri == 1) {
+                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
                 
-                if (Create_Mesh_Quad == 1) {
-                  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
-                  
-                  SOLARCHVISION_add_Mesh4(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
-                }
-                
-                if (Create_Mesh_Poly == 1) {
-                  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
-                  
-                  SOLARCHVISION_add_PolygonHyper(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
-                }
-    
-                if (Create_Mesh_Extrude == 1) {       
-                  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-                  
-                  SOLARCHVISION_add_PolygonExtrude(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
-                }
-    
-                if (Create_Mesh_House == 1) {   
-                  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
-       
-                  SOLARCHVISION_add_House_Core(Create_Default_Material, x, y, z, rx, ry, rz, ry, rot);
-                }
-    
-                if (Create_Mesh_Parametric != 0) {
-                  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
-                  
-                  SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, Create_Mesh_Parametric, rot);
-                }
-    
-                if (Create_Fractal_Plant != 0) {
-                  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
-                  
-                  float as_Solid = 1;
-                  SOLARCHVISION_add_FractalPlant(Create_Fractal_Plant_Type, x, y, z, 2 * rz, rot, Create_Fractal_Plant_DegreeMin, Create_Fractal_Plant_DegreeMax, Create_Fractal_Plant_Seed, Create_Fractal_Plant_trunckSize, Create_Fractal_Plant_leafSize, as_Solid);
-                }      
-  
-                if (Create_Mesh_Plant != 0) {
-                  int n = 0;
-                  if (Create_Mesh_Plant_Type > 0) n = Create_Mesh_Plant_Type + Object2D_Filenames_PEOPLE.length;              
-                  SOLARCHVISION_add_Object2D("TREES", n, x, y, z, 2 * rz);
-                }    
-    
-                if (Create_Mesh_Person != 0) {
-                  SOLARCHVISION_add_Object2D("PEOPLE", Create_Mesh_Person_Type, x, y, z, 2.5);
-                }
-                
-                
+                SOLARCHVISION_add_Mesh3(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
+                SOLARCHVISION_add_Mesh3(Create_Default_Material, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
+                SOLARCHVISION_add_Mesh3(Create_Default_Material, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
+                SOLARCHVISION_add_Mesh3(Create_Default_Material, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
               }
+              
+              if (Create_Mesh_Quad == 1) {
+                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
+                
+                SOLARCHVISION_add_Mesh4(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
+              }
+              
+              if (Create_Mesh_Poly == 1) {
+                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
+                
+                SOLARCHVISION_add_PolygonHyper(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
+              }
+  
+              if (Create_Mesh_Extrude == 1) {       
+                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+                
+                SOLARCHVISION_add_PolygonExtrude(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
+              }
+  
+              if (Create_Mesh_House == 1) {   
+                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
+     
+                SOLARCHVISION_add_House_Core(Create_Default_Material, x, y, z, rx, ry, rz, ry, rot);
+              }
+  
+              if (Create_Mesh_Parametric != 0) {
+                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
+                
+                SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, Create_Mesh_Parametric, rot);
+              }
+  
+              if (Create_Fractal_Plant != 0) {
+                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
+                
+                float as_Solid = 1;
+                SOLARCHVISION_add_FractalPlant(Create_Fractal_Plant_Type, x, y, z, 2 * rz, rot, Create_Fractal_Plant_DegreeMin, Create_Fractal_Plant_DegreeMax, Create_Fractal_Plant_Seed, Create_Fractal_Plant_trunckSize, Create_Fractal_Plant_leafSize, as_Solid);
+              }      
+
+              if (Create_Mesh_Plant != 0) {
+                int n = 0;
+                if (Create_Mesh_Plant_Type > 0) n = Create_Mesh_Plant_Type + Object2D_Filenames_PEOPLE.length;              
+                SOLARCHVISION_add_Object2D("TREES", n, x, y, z, 2 * rz);
+              }    
+  
+              if (Create_Mesh_Person != 0) {
+                SOLARCHVISION_add_Object2D("PEOPLE", Create_Mesh_Person_Type, x, y, z, 2.5);
+              }
+              
+              
   
               if (pre_number_of_Polymeshes != allPolymesh_Faces.length) { // if any 3D-mesh created during the process
                 
@@ -20073,6 +20037,8 @@ void mouseClicked () {
                 
                 selectedFractal_numbers[selectedFractal_numbers.length - 1] = allFractal_XYZS.length - 1;
               } 
+              
+              if (SOLID_created != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             
             }
             
@@ -20465,6 +20431,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
   }
   else if (ROLLOUT_parent == 1) { // Geometries & Space
+
+    Create_Mesh_or_Solid = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_or_Solid" , Create_Mesh_or_Solid, 1, 2, 1), 1));
   
     Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 4, 1), 1));
   
@@ -20521,9 +20489,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
     if (ROLLOUT_child == 3) { // Solids
     
-      Create_Soild_House = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Soild_House" , Create_Soild_House, 0, 1, 1), 1));
-
-      Create_Solid_SuperOBJ = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Solid_SuperOBJ" , Create_Solid_SuperOBJ, 0, 1, 1), 1));
+      Create_Mesh_SuperOBJ = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_SuperOBJ" , Create_Mesh_SuperOBJ, 0, 1, 1), 1));
 
       //Create_Input_powRnd = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powRnd" , Create_Input_powRnd, 0, 1, 1), 1));    
       Create_Input_powAll = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powAll" , Create_Input_powAll, 0.5, 8, -2);
@@ -24059,7 +24025,7 @@ String[][] BAR_b_Items = {
                           
                           {"2", "Fractal", "Tree", "Person", "LivingType", "1.5"},
                           {"1", "House", "Box", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "BuildingType", "2.0"},
-                          {"2", "as_Solid", "as_Mesh", "Solid-Type", "2.0"},  
+                          {"1", "as_Mesh", "as_Solid", "Mesh|Solid", "2.0"},  
                           
                           {"3", "∞-D", "2½D", "3-D", "4-D", "LayerType", "1.0"},
                           {"1", "±CS", "+CS", "-CS", "ClickSelect", "1.0"},
@@ -24166,19 +24132,29 @@ void SOLARCHVISION_draw_window_BAR_b () {
         rect(cx, cy - cr, Item_width, b_pixel);     
        
         String Bar_Switch = BAR_b_Items[i][BAR_b_Items[i].length - 2];
+
+
+        if (Bar_Switch.equals("LayerType")) {
+          Work_with_2D_or_3D = j;
+          
+          ROLLOUT_Update = 1;          
+        }
         
-        
+        if (Bar_Switch.equals("Mesh|Solid")) {
+          Create_Mesh_or_Solid = j;
+          
+          ROLLOUT_Update = 1;          
+        }        
 
         if ((Bar_Switch.equals("LivingType")) || (Bar_Switch.equals("BuildingType"))) {
- 
-          Create_Soild_House = 0;          
-          Create_Solid_SuperOBJ = 0;
+          
           Create_Mesh_Poly = 0;
           Create_Mesh_Extrude = 0;
           Create_Mesh_Tri = 0;
           Create_Mesh_Quad = 0;
           Create_Mesh_House = 0; 
           Create_Mesh_Parametric = 0;
+          Create_Mesh_SuperOBJ = 0;
           Create_Mesh_Person = 0;
           Create_Mesh_Plant = 0;
           Create_Fractal_Plant = 0;
@@ -24220,7 +24196,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
             Work_with_2D_or_3D = 3;
           }
           else if ((BAR_b_Items[i][j]).equals("Box")) {
-            Create_Solid_SuperOBJ = 1;
+            Create_Mesh_SuperOBJ = 1;
 
             Create_Input_powX = 8;  
             Create_Input_powY = 8;
@@ -24229,7 +24205,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
             Work_with_2D_or_3D = 3;
           }
           else if ((BAR_b_Items[i][j]).equals("Octahedron")) {
-            Create_Solid_SuperOBJ = 1;
+            Create_Mesh_SuperOBJ = 1;
 
             Create_Input_powX = 1;  
             Create_Input_powY = 1; 
@@ -24238,7 +24214,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
             Work_with_2D_or_3D = 3;
           }          
           else if ((BAR_b_Items[i][j]).equals("Sphere")) {
-            Create_Solid_SuperOBJ = 1;
+            Create_Mesh_SuperOBJ = 1;
 
             Create_Input_powX = 2;  
             Create_Input_powY = 2; 
@@ -24247,7 +24223,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
             Work_with_2D_or_3D = 3;
           }
           else if ((BAR_b_Items[i][j]).equals("Cylinder")) {
-            Create_Solid_SuperOBJ = 1;
+            Create_Mesh_SuperOBJ = 1;
 
             Create_Input_powX = 2;  
             Create_Input_powY = 2; 
@@ -24269,11 +24245,8 @@ void SOLARCHVISION_draw_window_BAR_b () {
           ROLLOUT_Update = 1;        
         }
   
-        if (Bar_Switch.equals("LayerType")) {
-          Work_with_2D_or_3D = j;
-          
-          ROLLOUT_Update = 1;          
-        }
+
+       
         
         if (Bar_Switch.equals("Seed")) {
           View_Select_Create_Modify = 4;
