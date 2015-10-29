@@ -19777,6 +19777,12 @@ void mouseClicked () {
                 float dx = x0 - selectedPolymesh_Pivot_XYZ[0]; 
                 float dy = y0 - selectedPolymesh_Pivot_XYZ[1]; 
                 float dz = z0 - selectedPolymesh_Pivot_XYZ[2];
+
+                int the_Vector = selectedPolymesh_posVector;
+              
+                if (the_Vector == 0) {dy = 0; dz = 0;}  
+                if (the_Vector == 1) {dz = 0; dx = 0;}  
+                if (the_Vector == 2) {dx = 0; dy = 0;} 
   
                 SOLARCHVISION_move_Selection(dx, dy, dz);
               }
@@ -19786,6 +19792,12 @@ void mouseClicked () {
                 float dx = x0 - allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][0]; 
                 float dy = y0 - allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][1]; 
                 float dz = z0 - allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][2];              
+
+                int the_Vector = selectedPolymesh_posVector;
+              
+                if (the_Vector == 0) {dy = 0; dz = 0;}  
+                if (the_Vector == 1) {dz = 0; dx = 0;}  
+                if (the_Vector == 2) {dx = 0; dy = 0;} 
   
                 SOLARCHVISION_move_Selection(dx, dy, dz);
               }
@@ -19795,6 +19807,12 @@ void mouseClicked () {
                 float dx = x0 - allFractal_XYZS[selectedFractal_numbers[selectedFractal_numbers.length - 1]][0]; 
                 float dy = y0 - allFractal_XYZS[selectedFractal_numbers[selectedFractal_numbers.length - 1]][1]; 
                 float dz = z0 - allFractal_XYZS[selectedFractal_numbers[selectedFractal_numbers.length - 1]][2];              
+
+                int the_Vector = selectedPolymesh_posVector;
+              
+                if (the_Vector == 0) {dy = 0; dz = 0;}  
+                if (the_Vector == 1) {dz = 0; dx = 0;}  
+                if (the_Vector == 2) {dx = 0; dy = 0;} 
   
                 SOLARCHVISION_move_Selection(dx, dy, dz);
               }
