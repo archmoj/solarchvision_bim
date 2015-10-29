@@ -11433,10 +11433,10 @@ void WIN3D_keyPressed (KeyEvent e) {
                  ROLLOUT_Update = 1; 
                  break;          
         
-        case LEFT  :WIN3D_X_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case RIGHT :WIN3D_X_coordinate -= WIN3D_S_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
-        case UP    :WIN3D_Y_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case DOWN  :WIN3D_Y_coordinate -= WIN3D_S_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case LEFT  :WIN3D_X_coordinate += WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case RIGHT :WIN3D_X_coordinate -= WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
+        case UP    :WIN3D_Y_coordinate += WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case DOWN  :WIN3D_Y_coordinate -= WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         
         
       }
@@ -11502,7 +11502,7 @@ void WIN3D_keyPressed (KeyEvent e) {
         
         case ',' :
                   if (WIN3D_View_Type == 1) {
-                    WIN3D_Z_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                    WIN3D_Z_coordinate += WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; 
                   } 
                   else {
                     WIN3D_ZOOM_coordinate /= pow(2.0, 0.25); WIN3D_Update = 1; ROLLOUT_Update = 1; 
@@ -11511,7 +11511,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                   
         case '.' :
                   if (WIN3D_View_Type == 1) {
-                    WIN3D_Z_coordinate -= WIN3D_S_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                    WIN3D_Z_coordinate -= WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; 
                   } 
                   else {
                     WIN3D_ZOOM_coordinate *= pow(2.0, 0.25); WIN3D_Update = 1; ROLLOUT_Update = 1; 
@@ -11520,7 +11520,7 @@ void WIN3D_keyPressed (KeyEvent e) {
   
         case '0' :
                   if (WIN3D_View_Type == 1) {
-                    WIN3D_Z_coordinate += WIN3D_S_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                    WIN3D_Z_coordinate += WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; 
                   } 
                   else {
                     WIN3D_ZOOM_coordinate /= pow(2.0, 0.25); WIN3D_Update = 1; ROLLOUT_Update = 1; 
@@ -18837,7 +18837,7 @@ void mouseWheel(MouseEvent event) {
         if (View_Select_Create_Modify == -3) { // viewport:zoom
 
           if (WIN3D_View_Type == 1) {
-            WIN3D_Z_coordinate += Wheel_Value; 
+            WIN3D_Z_coordinate += Wheel_Value * WIN3D_S_coordinate * objects_scale; 
           } 
           else {
             WIN3D_ZOOM_coordinate /= pow(2.0, Wheel_Value);
@@ -18871,7 +18871,7 @@ void mouseWheel(MouseEvent event) {
 
             if (View_XYZ_Constraints == 0) {
 
-              WIN3D_X_coordinate += Wheel_Value * WIN3D_S_coordinate;
+              WIN3D_X_coordinate += Wheel_Value * WIN3D_S_coordinate * objects_scale;
               
               WIN3D_Update = 1;
               
@@ -18879,7 +18879,7 @@ void mouseWheel(MouseEvent event) {
 
             if (View_XYZ_Constraints == 1) {
 
-              WIN3D_Y_coordinate += Wheel_Value * WIN3D_S_coordinate;
+              WIN3D_Y_coordinate += Wheel_Value * WIN3D_S_coordinate * objects_scale;
               
               WIN3D_Update = 1;
               
@@ -19287,8 +19287,8 @@ void mouseDragged () {
             
             if (mouseButton == RIGHT) { // pan
 
-              WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate; 
-              WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate;
+              WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
+              WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
               
               WIN3D_Update = 1;
             }          
@@ -19299,14 +19299,14 @@ void mouseDragged () {
   
             if (mouseButton == RIGHT) { // move X
   
-              WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate; 
+              WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
               
               WIN3D_Update = 1;    
             }    
             
             if (mouseButton == LEFT) { // move Y
   
-              WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate; 
+              WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale; 
               
               WIN3D_Update = 1;    
             }    
@@ -19325,8 +19325,8 @@ void mouseDragged () {
             
             if (mouseButton == LEFT) { // pan
           
-              WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate; 
-              WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate;
+              WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
+              WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
               
               WIN3D_Update = 1;
             }          
@@ -19339,7 +19339,7 @@ void mouseDragged () {
   
               if (View_XYZ_Constraints == 0) {
   
-                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate; 
+                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
                 
                 WIN3D_Update = 1;
                 
@@ -19347,7 +19347,7 @@ void mouseDragged () {
   
               if (View_XYZ_Constraints == 1) {
   
-                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate;
+                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
                 
                 WIN3D_Update = 1;
                 
@@ -24017,10 +24017,11 @@ String[][] BAR_b_Items = {
                           {"1", "P><", "P<>", "ProjectionType", "1.0"},
                           {"1", "OR", "ORx", "ORz", "Orbit", "1.0"},
                                 
-                          {"1", "Pan", "Cen", "Pan", "1.0"},
+                          
                           
                           {"3", "DIz", "DIx", "DIy", "Truck", "1.0"},
                           {"1", "Walk", "DistZ", "1.0"},
+                          {"1", "Pan", "Cen", "Pan", "1.0"},
                           {"1", "±SZ", "3DModelSize", "1.0"},                          
                           {"1", "±ZM", "0ZM", "Zoom", "1.0"},
                          
@@ -25070,10 +25071,10 @@ void dessin_3DModelSize (int _type, float x, float y, float r) {
   stroke(255); 
   line(-r, -0.5 * r, r, -0.5 * r);
   strokeWeight(2);
-  line(0, -0.5 * r, r, 0);
-  line(0, -0.5 * r, -r, 0);
+  line(-0.5 * r, -0.5 * r, r, 0);
+  line(-0.5 * r, -0.5 * r, -r, 0);
   strokeWeight(2);
-  line(0, -0.5 * r, 0, r);
+  line(-0.5 * r, -0.5 * r, 0, r);
 
   
   strokeWeight(0);
