@@ -149,7 +149,7 @@ float Create_Input_Volume = 0; //3000;
 
 float Create_Input_Orientation = 360; //0; // 360: random
 
-int Create_Input_Align = 0; // 0:Center, 1:Below
+
 
 float Create_Input_powX = 8; 
 float Create_Input_powY = 8;
@@ -19987,7 +19987,7 @@ void mouseClicked () {
               float x = RxP[0]; 
               float y = RxP[1]; 
               float z = RxP[2];             
-              
+
               float rot = Create_Input_Orientation;
               if (rot == 360) rot = 15 * (int(random(24)));
     
@@ -20043,10 +20043,10 @@ void mouseClicked () {
                   rz /= pow(A, (1.0 / 3.0));
                   //---------------------------------------------------
                 }
-                
-                if (Create_Input_Align == 1) {
-                  z += rz;
-                }
+
+                x += rx * selectedPolymesh_alignX;
+                y += ry * selectedPolymesh_alignY;
+                z += rz * selectedPolymesh_alignZ;
                 
                 int SOLID_created = 0;
                 
@@ -20160,10 +20160,10 @@ void mouseClicked () {
               }
               
               if (mouseButton == LEFT) {
-                
-                if (Create_Input_Align == 1) {
-                  z += rz;
-                }
+
+                x += rx * selectedPolymesh_alignX;
+                y += ry * selectedPolymesh_alignY;
+                z += rz * selectedPolymesh_alignZ;
                 
                 if (Create_Mesh_Tri == 1) {
                   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
@@ -20643,8 +20643,6 @@ void SOLARCHVISION_draw_ROLLOUT () {
       
       Create_Default_Material = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Material" , Create_Default_Material, -1, 8, 1), 1));
   
-      Create_Input_Align = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Align" , Create_Input_Align, 0, 1, 1), 1));
-      
       Create_Input_Orientation = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Orientation" , Create_Input_Orientation, 0, 360, 15);
       
       Create_Input_Length = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Length" , Create_Input_Length, -100, 100, 1); 
@@ -24210,29 +24208,32 @@ int BAR_b_Update = 1;
 float BAR_b_tab = b_pixel;
 
 String[][] BAR_b_Items = {
-                          {"3", "∞-D", "2½D", "3-D", "SLD", "4-D", "LayerType", "1.0"},  
-
+                          
+                          {"2", "AllViewsports", "Expand3DView", "3DViewSpace", "3"},
+                          {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "SW", "SE", "NE", "NW", "3DViewPoint", "1.5"},
+                          {"1", "P><", "P<>", "ProjectionType", "1.0"},
+                          {"1", "OR", "ORx", "ORz", "Orbit", "1.0"},
+                          {"1", "±ZM", "0ZM", "Zoom", "1.0"},      
+                          {"1", "Pan", "Cen", "Pan", "1.0"},                          
+                          {"3", "DIz", "DIx", "DIy", "Truck", "1.0"},
+                          {"1", "±SZ", "3DModelSize", "1.0"},                          
+                        
+                         
+                          
+                          {"2", "Fractal", "Tree", "Person", "LivingType", "1.5"},
+                          {"1", "House", "Box", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "BuildingType", "2.0"},
+                          {"2", "as_Solid", "as_Mesh", "Solid-Type", "2.0"},  
+                          
+                          {"3", "∞-D", "2½D", "3-D", "SLD", "4-D", "LayerType", "1.0"},
+                          {"1", "±CS", "+CS", "-CS", "ClickSelect", "1.0"},
+                          {"1", "±WS", "+WS", "-WS", "WindowSelect", "1.0"},                          
                           {"2", "X<", "X|", "X>", "PivotX", "1.0"},
                           {"2", "Y<","Y|", "Y>", "PivotY", "1.0"},
                           {"2", "Z<","Z|", "Z>", "PivotZ", "1.0"},
                           {"3", "MVx", "MVy", "MVz", "MV³", "Move", "1.0"},
                           {"3", "SCx", "SCy", "SCz", "SC³", "Scale", "1.0"}, 
                           {"3", "RTx", "RTy", "RTz", "Rotate", "1.0"}, 
-                          {"1", "SD", "Seed", "1.0"}, 
-                          {"1", "±CS", "+CS", "-CS", "ClickSelect", "1.0"},
-                          {"1", "±WS", "+WS", "-WS", "WindowSelect", "1.0"},
-                          {"2", "AllViewsports", "Expand3DView", "3DViewSpace", "3"},
-                          {"1", "P><", "P<>", "ProjectionType", "1.0"},
-                          {"1", "±ZM", "0ZM", "Zoom", "1.0"},                          
-                          {"3", "DIz", "DIx", "DIy", "Truck", "1.0"},
-                          {"1", "OR", "ORx", "ORz", "Orbit", "1.0"}, 
-                          {"1", "Pan", "Cen", "Pan", "1.0"},
-                          {"1", "±SZ", "3DModelSize", "1.0"},                          
-                          {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "SW", "SE", "NE", "NW", "3DViewPoint", "1.5"},
-                          {"2", "Fractal", "Tree", "Person", "LivingType", "1.5"},
-                          {"1", "House", "Box", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "BuildingType", "2.0"},
-                          
-                          {"2", "as_Solid", "as_Mesh", "Solid-Type", "2.0"},  
+                          {"1", "SD", "Seed", "1.0"},                             
                         };         
            
 int Bar_b_Selection = -1;                        
@@ -24259,6 +24260,16 @@ void SOLARCHVISION_draw_window_BAR_b () {
     
     for (int i = 0; i < BAR_b_Items.length; i++) {
       
+      {
+        String Bar_Switch = BAR_b_Items[i][BAR_b_Items[i].length - 2];
+        
+        if (Bar_Switch.equals("LayerType")) {
+          BAR_b_Items[i][0] = nf(Work_with_2D_or_3D, 0);
+        }
+      }
+
+
+      
       int j = int(BAR_b_Items[i][0]);; 
       
       float Item_width = BAR_b_tab * float(BAR_b_Items[i][BAR_b_Items[i].length - 1]);
@@ -24268,6 +24279,8 @@ void SOLARCHVISION_draw_window_BAR_b () {
       strokeWeight(1);
       rect(cx, cy - cr, Item_width, b_pixel);
       strokeWeight(0);
+      
+
 
   
       if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + Item_width, cy + cr) == 1) {
@@ -24334,30 +24347,39 @@ void SOLARCHVISION_draw_window_BAR_b () {
 
           if ((BAR_b_Items[i][j]).equals("Fractal")) {
             Create_Fractal_Plant = 1;
+            Work_with_2D_or_3D = 1;
           }
           else if ((BAR_b_Items[i][j]).equals("Tree")) {
             Create_Mesh_Plant = 1;
+            Work_with_2D_or_3D = 2;
           }
           else if ((BAR_b_Items[i][j]).equals("Person")) {
             Create_Mesh_Person = 1;
+            Work_with_2D_or_3D = 2;
           }
           else if ((BAR_b_Items[i][j]).equals("Parametric")) {
             Create_Mesh_Parametric = 1;
+            Work_with_2D_or_3D = 3;
           }  
           else if ((BAR_b_Items[i][j]).equals("Tri")) {
             Create_Mesh_Tri = 1;
+            Work_with_2D_or_3D = 3;
           }
           else if ((BAR_b_Items[i][j]).equals("Poly")) {
             Create_Mesh_Poly = 1;
+            Work_with_2D_or_3D = 3;
           }
           else if ((BAR_b_Items[i][j]).equals("Extrude")) {
             Create_Mesh_Extrude = 1;
+            Work_with_2D_or_3D = 3;
           }  
           else if ((BAR_b_Items[i][j]).equals("Hyper")) {
             Create_Mesh_Quad = 1;
+            Work_with_2D_or_3D = 3;
           }          
           else if ((BAR_b_Items[i][j]).equals("House")) {
             Create_Mesh_House = 1;
+            Work_with_2D_or_3D = 3;
           }
           else if ((BAR_b_Items[i][j]).equals("Box")) {
             // ???
