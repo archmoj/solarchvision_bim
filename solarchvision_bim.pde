@@ -16750,7 +16750,8 @@ class ParametricGeometry {
     y += posY;  
     z += posZ;
 
-    return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value); 
+    //return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value); 
+    return(-1 + pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value);
     
   } 
   
@@ -16949,9 +16950,64 @@ float[] Field_Rotation = {0, 0, 0, 0};
 float Field_PositionStep = 1.25;
 
 
-
-
 float[] ParametricGeometries_Field_atIJ (float i, float j){
+  
+  float x = 0;
+  float y = 0;
+  float z = 0;
+  
+  float val = 0;
+  
+  for (int n = 0; n < SolidObjects.length; n++) {
+
+    float a = (i - 0.5 * Field_RES1) * (Field_scale_U / Field_RES1);
+    float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
+    float c = Field_Elevation[display_Field_Image];
+    
+    if (display_Field_Image == 1) {
+      x = a * cos_ang(-Field_Rotation[display_Field_Image]) - b * sin_ang(-Field_Rotation[display_Field_Image]);
+      y = -(a * sin_ang(-Field_Rotation[display_Field_Image]) + b * cos_ang(-Field_Rotation[display_Field_Image]));
+      z = c;
+    }
+    else if (display_Field_Image == 2) {
+      x = a * cos_ang(Field_Rotation[display_Field_Image]) - c * sin_ang(Field_Rotation[display_Field_Image]);
+      y = -(a * sin_ang(Field_Rotation[display_Field_Image]) + c * cos_ang(Field_Rotation[display_Field_Image]));
+      z = -b; 
+    }
+    else if (display_Field_Image == 3) {
+      x = a * cos_ang(90 - Field_Rotation[display_Field_Image]) - c * sin_ang(90 - Field_Rotation[display_Field_Image]);
+      y = -(a * sin_ang(90 - Field_Rotation[display_Field_Image]) + c * cos_ang(90 - Field_Rotation[display_Field_Image]));
+      z = -b; 
+    }
+      
+    float d = SolidObjects[n].Distance(x, y, z);
+    
+    if (d > 0) {
+      val += 1.0 / pow(d, Field_Power);
+    } 
+  }  
+  
+  float[] return_array = {x, y, z, val};
+  
+  return return_array;
+}
+
+
+float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
+  float val = 0;
+  for (int n = 0; n < SolidObjects.length; n++) {
+    
+    float d = SolidObjects[n].Distance(x, y, z);
+
+    if (d > 0) {
+      val += 1.0 / pow(d, Field_Power);
+    } 
+    
+  }
+  return val;
+}
+
+float[] ParametricGeometries_Field_atIJ_wind (float i, float j){
 
   float deltaX = Field_Wspd * cos_ang(Field_Wdir);
   float deltaY = Field_Wspd * sin_ang(Field_Wdir);
@@ -17011,26 +17067,26 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
     
     if (totalP > 0) val[o] /= 0.5 * totalP; 
   
-    val[o] = 1 - val[o];
-    //val[o] = val[o] - 1;
+    //val[o] = 1 - val[o];
+    val[o] = val[o] - 1;
   }
   
-  //float[] return_array = {x, y, z, val[0]};
-  float[] return_array = {x, y, z, val[1] - val[0]};
+  float[] return_array = {x, y, z, val[0]};
+  //float[] return_array = {x, y, z, val[1] - val[0]};
   
   return return_array;
 }
 
 
-float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
+float ParametricGeometries_Field_atXYZ_wind (float x, float y, float z) {
 
   float deltaX = Field_Wspd * cos_ang(Field_Wdir);
   float deltaY = Field_Wspd * sin_ang(Field_Wdir);
 
   float[] val = {0, 0};
 
-  //for (int o = 0; o < 1; o++) {
-  for (int o = 0; o < 2; o++) {
+  for (int o = 0; o < 1; o++) {
+  //for (int o = 0; o < 2; o++) {
     
     float totalP = 0;
 
@@ -17057,8 +17113,8 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
     
     if (totalP > 0) val[o] /= 0.5 * totalP;
   
-    val[o] = 1 - val[o];
-    //val[o] = val[o] - 1;
+    //val[o] = 1 - val[o];
+    val[o] = val[o] - 1;
   }
   
   
