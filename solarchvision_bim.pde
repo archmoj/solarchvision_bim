@@ -17001,7 +17001,7 @@ float[] Field_Rotation = {0, 0, 0, 0};
 float Field_PositionStep = 1.25;
 
 
-float[] ParametricGeometries_Field_atIJ (float i, float j){
+float[] ParametricGeometries_Field_atIJ_simple (float i, float j){
   
   float x = 0;
   float y = 0;
@@ -17038,14 +17038,13 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
     } 
   }  
   
-  //float[] return_array = {x, y, z, val};
   float[] return_array = {x, y, z, val - 1};
   
   return return_array;
 }
 
 
-float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
+float ParametricGeometries_Field_atXYZ_simple (float x, float y, float z) {
   float val = 0;
   for (int n = 0; n < SolidObjects.length; n++) {
     
@@ -17057,11 +17056,10 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
     
   }
   
-  //return val;
   return val - 1;
 }
 
-float[] ParametricGeometries_Field_atIJ_wind (float i, float j){
+float[] ParametricGeometries_Field_atIJ (float i, float j){
 
   float deltaX = Field_Wspd * cos_ang(Field_Wdir);
   float deltaY = Field_Wspd * sin_ang(Field_Wdir);
@@ -17132,7 +17130,7 @@ float[] ParametricGeometries_Field_atIJ_wind (float i, float j){
 }
 
 
-float ParametricGeometries_Field_atXYZ_wind (float x, float y, float z) {
+float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
 
   float deltaX = Field_Wspd * cos_ang(Field_Wdir);
   float deltaY = Field_Wspd * sin_ang(Field_Wdir);
@@ -20589,16 +20587,17 @@ void SOLARCHVISION_draw_ROLLOUT () {
   }
   else if (ROLLOUT_parent == 1) { // Geometries & Space
 
-    Create_Mesh_or_Solid = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_or_Solid" , Create_Mesh_or_Solid, 1, 2, 1), 1));
-  
-    Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 4, 1), 1));
-  
-    View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -6, 5, 1), 1));
-    View_XYZ_Constraints = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_Constraints" , View_XYZ_Constraints, 0, 6, 1), 1));
-    Modify_Object_Parameters = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Object_Parameters" , Modify_Object_Parameters, 0, 9, 1), 1));
 
-    if (ROLLOUT_child != 5) {
-      
+    if (ROLLOUT_child == 1) { // General
+
+      Create_Mesh_or_Solid = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_or_Solid" , Create_Mesh_or_Solid, 1, 2, 1), 1));
+    
+      Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 4, 1), 1));
+    
+      View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -6, 5, 1), 1));
+      View_XYZ_Constraints = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_Constraints" , View_XYZ_Constraints, 0, 6, 1), 1));
+      Modify_Object_Parameters = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Object_Parameters" , Modify_Object_Parameters, 0, 9, 1), 1));
+
       Create_Default_Material = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Material" , Create_Default_Material, -1, 8, 1), 1));
   
       Create_Input_Orientation = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Orientation" , Create_Input_Orientation, 0, 360, 15);
@@ -20608,10 +20607,6 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Input_Height = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Height" , Create_Input_Height, -100, 100, 1);    
   
       Create_Input_Volume = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);
-    }
-
-
-    if (ROLLOUT_child == 1) { // General
     
       MODEL1D_ERASE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL1D_ERASE" , MODEL1D_ERASE, 0, 1, 1), 1));
     
@@ -20649,7 +20644,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Mesh_SuperOBJ = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_SuperOBJ" , Create_Mesh_SuperOBJ, 0, 1, 1), 1));
 
       //Create_Input_powRnd = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powRnd" , Create_Input_powRnd, 0, 1, 1), 1));    
-      Create_Input_powAll = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powAll" , Create_Input_powAll, 0.5, 8, -2);
+      //Create_Input_powAll = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powAll" , Create_Input_powAll, 0.5, 8, -2);
       Create_Input_powX = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powX" , Create_Input_powX, 0.5, 8, -2); 
       Create_Input_powY = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powY" , Create_Input_powY, 0.5, 8, -2); 
       Create_Input_powZ = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powZ" , Create_Input_powZ, 0.5, 8, -2);
