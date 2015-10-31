@@ -16802,7 +16802,7 @@ class ParametricGeometry {
     z += posZ;
 
     //return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value); 
-    return(-1 + pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value);
+    return((pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) - 1) / value);
     
   } 
   
@@ -20225,7 +20225,7 @@ class SOLARCHVISION_Spinner {
   SOLARCHVISION_Spinner () {  
   }
   
-  float update(float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v) {
+  float update (float x, float y, int update1, int update2, int update3, String caption, float v, float min_v, float max_v, float stp_v) {
     x_Plot = x; 
     y_Plot = y;
     new_value = v;
