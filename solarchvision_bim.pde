@@ -17015,19 +17015,19 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
     float b = (j - 0.5 * Field_RES2) * (Field_scale_V / Field_RES2);
     float c = Field_Elevation[display_Field_Image];
     
-    if (display_Field_Image == 1) {
-      x = a * cos_ang(-Field_Rotation[display_Field_Image]) - b * sin_ang(-Field_Rotation[display_Field_Image]);
-      y = -(a * sin_ang(-Field_Rotation[display_Field_Image]) + b * cos_ang(-Field_Rotation[display_Field_Image]));
+    if (Field_Image_Section == 1) {
+      x = a * cos_ang(-Field_Rotation[Field_Image_Section]) - b * sin_ang(-Field_Rotation[Field_Image_Section]);
+      y = -(a * sin_ang(-Field_Rotation[Field_Image_Section]) + b * cos_ang(-Field_Rotation[Field_Image_Section]));
       z = c;
     }
-    else if (display_Field_Image == 2) {
-      x = a * cos_ang(Field_Rotation[display_Field_Image]) - c * sin_ang(Field_Rotation[display_Field_Image]);
-      y = -(a * sin_ang(Field_Rotation[display_Field_Image]) + c * cos_ang(Field_Rotation[display_Field_Image]));
+    else if (Field_Image_Section == 2) {
+      x = a * cos_ang(Field_Rotation[Field_Image_Section]) - c * sin_ang(Field_Rotation[Field_Image_Section]);
+      y = -(a * sin_ang(Field_Rotation[Field_Image_Section]) + c * cos_ang(Field_Rotation[Field_Image_Section]));
       z = -b; 
     }
-    else if (display_Field_Image == 3) {
-      x = a * cos_ang(90 - Field_Rotation[display_Field_Image]) - c * sin_ang(90 - Field_Rotation[display_Field_Image]);
-      y = -(a * sin_ang(90 - Field_Rotation[display_Field_Image]) + c * cos_ang(90 - Field_Rotation[display_Field_Image]));
+    else if (Field_Image_Section == 3) {
+      x = a * cos_ang(90 - Field_Rotation[Field_Image_Section]) - c * sin_ang(90 - Field_Rotation[Field_Image_Section]);
+      y = -(a * sin_ang(90 - Field_Rotation[Field_Image_Section]) + c * cos_ang(90 - Field_Rotation[Field_Image_Section]));
       z = -b; 
     }
       
