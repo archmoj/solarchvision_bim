@@ -17038,7 +17038,8 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
     } 
   }  
   
-  float[] return_array = {x, y, z, val};
+  //float[] return_array = {x, y, z, val};
+  float[] return_array = {x, y, z, val - 1};
   
   return return_array;
 }
@@ -17055,7 +17056,9 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
     } 
     
   }
-  return val;
+  
+  //return val;
+  return val - 1;
 }
 
 float[] ParametricGeometries_Field_atIJ_wind (float i, float j){
