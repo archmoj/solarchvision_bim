@@ -963,7 +963,7 @@ int SKY3D_Pallet_PASSIVE = 18;
 int SKY3D_Pallet_PASSIVE_DIR = -1;  
 float SKY3D_Pallet_PASSIVE_MLT = 2; //1;
 
-int OBJECTS_Pallet_ACTIVE = 15; //14;
+int OBJECTS_Pallet_ACTIVE = 19; //15; //14;
 int OBJECTS_Pallet_ACTIVE_DIR = 1;
 float OBJECTS_Pallet_ACTIVE_MLT = 1; //2; 
 
@@ -971,7 +971,7 @@ int OBJECTS_Pallet_PASSIVE = 1;
 int OBJECTS_Pallet_PASSIVE_DIR = 1;  
 float OBJECTS_Pallet_PASSIVE_MLT = 2; 
 
-int GRAPHS_Pallet_ACTIVE = 15; //14; 
+int GRAPHS_Pallet_ACTIVE = 19; //15; //14; 
 int GRAPHS_Pallet_ACTIVE_DIR = 1;
 float GRAPHS_Pallet_ACTIVE_MLT = 1; //2;
 
@@ -1030,7 +1030,7 @@ int GRAPHS_record_AUTO = 0;
 float X_control, Y_control;
 
 int COLOR_STYLE = 0;
-int n_COLOR_STYLE = 19; //6;
+int n_COLOR_STYLE = 20; //6;
 
 float obj_scale = 0.005;
 float obj_offset_x = 0.5;
@@ -4078,6 +4078,50 @@ float[] SOLARCHVISION_DWBGR (float _variable) {
   return COL;
 }
 
+float[] SOLARCHVISION_DWYR (float _variable) {
+  _variable *= 400.0;
+  
+  float v;
+  float[] COL = {255, 0, 0, 0};
+  if (_variable < 0) {
+    COL[1] = 0;
+    COL[2] = 0;
+    COL[3] = 0;
+  }
+  else if (_variable < 100) {
+    v = ((_variable) * 2.55);
+    COL[1] = v;
+    COL[2] = v;
+    COL[3] = v;
+  }
+  else if (_variable < 200) {
+    v = ((_variable - 100) * 2.55);
+    COL[1] = 255;
+    COL[2] = 255;
+    COL[3] = (255 - v);
+  }
+  else if (_variable < 300) {
+    v = ((_variable - 200) * 2.55);
+    COL[1] = 255;
+    COL[2] = (255 - v);
+    COL[3] = 0;
+  }
+  else if (_variable < 400) {
+    v = ((_variable - 300) * 2.55);
+    COL[1] = 255 - 0.5 * v;
+    COL[2] = 0;
+    COL[3] = 0;
+  }  
+  else{
+    COL[1] = 127;
+    COL[2] = 0;
+    COL[3] = 0;
+  }
+  
+  return COL;
+}
+
+
 float[] SOLARCHVISION_VDWBGR (float _variable) {
   _variable *= 700.0;
   
@@ -4304,6 +4348,13 @@ float[] GET_COLOR_STYLE (int COLOR_STYLE, float j) {
     c[2] = 0;
     c[3] = 0;
   }
+  else if (COLOR_STYLE == 19) {
+    float[] _COL = SOLARCHVISION_DWYR(j);
+    c[0] = 255;
+    c[1] = _COL[1];
+    c[2] = _COL[2];
+    c[3] = _COL[3];
+  } 
   else if (COLOR_STYLE == 18) {
     //float[] _COL = SOLARCHVISION_DRYWCBDx3(2.0 * (j - 0.5) * (2.0 / 2.75));
     float[] _COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5) * (2.0 / 2.75));
@@ -24011,7 +24062,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
     
     rect(0, 0, width, a_pixel);
   
-    X_control = 1.25 * MESSAGE_S_View;
+    X_control = 0; //0.25 * MESSAGE_S_View;
     Y_control = 0.5 * a_pixel;
     
     for (int i = 0; i < BAR_a_Items.length; i++) {
@@ -24160,7 +24211,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
     noStroke();
     rect(0, a_pixel, width, b_pixel);
     
-    X_control = 1.25 * MESSAGE_S_View;
+    X_control = 0; //0.25 * MESSAGE_S_View;
     Y_control = a_pixel + 0.5 * b_pixel;
   
     float cx = X_control;
