@@ -16801,8 +16801,8 @@ class ParametricGeometry {
     y += posY;  
     z += posZ;
 
-    //return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value); 
-    return((pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) - 1) / value);
+    return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value); 
+    
     
   } 
   
@@ -17033,7 +17033,7 @@ float[] ParametricGeometries_Field_atIJ (float i, float j){
       
     float d = SolidObjects[n].Distance(x, y, z);
     
-    if (d > 0) {
+    if (d != 0) {
       val += 1.0 / pow(d, Field_Power);
     } 
   }  
@@ -17050,7 +17050,7 @@ float ParametricGeometries_Field_atXYZ (float x, float y, float z) {
     
     float d = SolidObjects[n].Distance(x, y, z);
 
-    if (d > 0) {
+    if (d != 0) {
       val += 1.0 / pow(d, Field_Power);
     } 
     
@@ -17108,7 +17108,7 @@ float[] ParametricGeometries_Field_atIJ_wind (float i, float j){
         float q = o + (m - 1) / float(WindSamples); // 0.0, 0.25, 0.5, 0.75, 1.0
         
         float d = SolidObjects[n].Distance(x + q * deltaX , y + q * deltaY, z);
-        if (d > 0) {
+        if (d != 0) {
           val[o] += p / pow(d, Field_Power);
           
           totalP += p;
@@ -17116,7 +17116,7 @@ float[] ParametricGeometries_Field_atIJ_wind (float i, float j){
       }      
     }
     
-    if (totalP > 0) val[o] /= 0.5 * totalP; 
+    if (totalP != 0) val[o] /= 0.5 * totalP; 
   
     //val[o] = 1 - val[o];
     val[o] = val[o] - 1;
@@ -17153,7 +17153,7 @@ float ParametricGeometries_Field_atXYZ_wind (float x, float y, float z) {
 
         
         float d = SolidObjects[n].Distance(x + q * deltaX , y + q * deltaY, z);
-        if (d > 0) {
+        if (d != 0) {
           val[o] += p / pow(d, Field_Power);
           
           totalP += p;
@@ -17162,7 +17162,7 @@ float ParametricGeometries_Field_atXYZ_wind (float x, float y, float z) {
        
     }
     
-    if (totalP > 0) val[o] /= 0.5 * totalP;
+    if (totalP != 0) val[o] /= 0.5 * totalP;
   
     //val[o] = 1 - val[o];
     val[o] = val[o] - 1;
