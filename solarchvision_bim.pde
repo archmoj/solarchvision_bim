@@ -13151,7 +13151,7 @@ void SOLARCHVISION_add_PolygonExtrude (int m, float cx, float cy, float cz, floa
   for (int i = 0; i < n; i++) {
     int next_i = (i + 1) % n;
    
-    int[] newFace = {vT[i], vT[next_i], vB[next_i], vB[i]};
+    int[] newFace = {vT[i], vB[i], vB[next_i], vT[next_i]};
     if (m == -1) defaultMaterial += 1; 
     SOLARCHVISION_addToFaces(newFace);
   }
