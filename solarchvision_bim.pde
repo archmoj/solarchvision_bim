@@ -19613,102 +19613,79 @@ void mouseClicked () {
       
       
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Fractal")) {
-            set_to_CreateNothing();
-            set_to_Fractal();
-            ROLLOUT_Update = 1; 
-            BAR_b_Update = 1;
-          }    
-          
+            set_to_Create_Fractal();
+            BAR_b_Update = 1;  
+          }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Tree")) {
-            set_to_CreateNothing();
-            set_to_Tree();
-            ROLLOUT_Update = 1;
-            BAR_b_Update = 1; 
-          }            
-
+            set_to_Create_Tree();
+            BAR_b_Update = 1;  
+          }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Person")) {
-            set_to_CreateNothing();
-            set_to_Person();
-            ROLLOUT_Update = 1; 
-            BAR_b_Update = 1;
-          }     
-          
+            set_to_Create_Person();
+            BAR_b_Update = 1;  
+          }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Parametric")) {
-            set_to_CreateNothing();
-            set_to_Parametric();
-            ROLLOUT_Update = 1; 
-            BAR_b_Update = 1;
-          }    
-          
+            set_to_Create_Parametric();
+            BAR_b_Update = 1;  
+          }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Tri")) {
-            set_to_CreateNothing();
-            set_to_Tri();
-            ROLLOUT_Update = 1; 
-            BAR_b_Update = 1;
-          }            
-
+            set_to_Create_Tri();
+            BAR_b_Update = 1;  
+          }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Poly")) {
-            set_to_CreateNothing();
-            set_to_Poly();
-            ROLLOUT_Update = 1; 
-            BAR_b_Update = 1;
-          }     
-          
+            set_to_Create_Poly();
+            BAR_b_Update = 1;  
+          }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Extrude")) {
-            set_to_CreateNothing();
-            set_to_Extrude();
-            ROLLOUT_Update = 1; 
-            BAR_b_Update = 1;
-          }    
-          
+            set_to_Create_Extrude();
+            BAR_b_Update = 1;  
+          }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Hyper")) {
-            set_to_CreateNothing();
-            set_to_Hyper();
-            ROLLOUT_Update = 1; 
-            BAR_b_Update = 1;
-          }            
-
+            set_to_Create_Hyper();
+            BAR_b_Update = 1;  
+          }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("House")) {
-            set_to_CreateNothing();
-            set_to_House();
-            ROLLOUT_Update = 1; 
-            BAR_b_Update = 1;
-          }     
-          
+            set_to_Create_House();
+            BAR_b_Update = 1;  
+          }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Box")) {
-            set_to_CreateNothing();
-            set_to_Box();
-            ROLLOUT_Update = 1; 
-            BAR_b_Update = 1;
-          }    
-          
+            set_to_Create_Box();
+            BAR_b_Update = 1;  
+          }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Octahedron")) {
-            set_to_CreateNothing();
-            set_to_Octahedron();
-            ROLLOUT_Update = 1; 
-            BAR_b_Update = 1;
-          }            
-
+            set_to_Create_Octahedron();
+            BAR_b_Update = 1;  
+          }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Sphere")) {
-            set_to_CreateNothing();
-            set_to_Sphere();
-            ROLLOUT_Update = 1; 
-            BAR_b_Update = 1;
-          }     
-          
+            set_to_Create_Sphere();
+            BAR_b_Update = 1;  
+          }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Cylinder")) {
-            set_to_CreateNothing();
-            set_to_Cylinder();
-            ROLLOUT_Update = 1; 
-            BAR_b_Update = 1;
-          }     
-          
+            set_to_Create_Cylinder();
+            BAR_b_Update = 1;  
+          }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Cushion")) {
-            set_to_CreateNothing();
-            set_to_Cushion();
-            ROLLOUT_Update = 1; 
-            BAR_b_Update = 1;
-          }     
+            set_to_Create_Cushion();
+            BAR_b_Update = 1;  
+          }
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Move")) {
+            set_to_Modify_Move(selectedPolymesh_posVector);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Scale")) {
+            set_to_Modify_Scale(selectedPolymesh_scaleVector);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Rotate")) {
+            set_to_Modify_Rotate(selectedPolymesh_rotVector);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Seed")) {
+            set_to_Modify_Seed();
+            BAR_b_Update = 1;  
+          }          
+
   
         }
       }
@@ -24863,7 +24840,7 @@ String[][] BAR_b_Items = {
                           
                           {"2", "AllViewsports", "Expand3DView", "3DViewSpace", "3"},
                           {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "SW", "SE", "NE", "NW", "3DViewPoint", "1.5"},
-                          {"1", "P><", "P<>", "ProjectionType", "1.0"},
+                          {"2", "P<>", "P><", "ProjectionType", "1.0"},
                           {"1", "OR", "ORx", "ORz", "Orbit", "1.0"},
                                 
                           
@@ -24998,64 +24975,28 @@ void SOLARCHVISION_draw_window_BAR_b () {
         }        
 
         if ((Bar_Switch.equals("LivingType")) || (Bar_Switch.equals("BuildingType"))) {
-          
-          set_to_CreateNothing();
-          
-          if ((BAR_b_Items[i][j]).equals("Fractal")) set_to_Fractal();
-          else if ((BAR_b_Items[i][j]).equals("Tree")) set_to_Tree();
-          else if ((BAR_b_Items[i][j]).equals("Person")) set_to_Person();
-          else if ((BAR_b_Items[i][j]).equals("Parametric")) set_to_Parametric();
-          else if ((BAR_b_Items[i][j]).equals("Tri")) set_to_Tri();
-          else if ((BAR_b_Items[i][j]).equals("Poly")) set_to_Poly();
-          else if ((BAR_b_Items[i][j]).equals("Extrude")) set_to_Extrude();
-          else if ((BAR_b_Items[i][j]).equals("Hyper")) set_to_Hyper();
-          else if ((BAR_b_Items[i][j]).equals("House")) set_to_House();
-          else if ((BAR_b_Items[i][j]).equals("Box")) set_to_Box();
-          else if ((BAR_b_Items[i][j]).equals("Octahedron")) set_to_Octahedron();
-          else if ((BAR_b_Items[i][j]).equals("Sphere")) set_to_Sphere();
-          else if ((BAR_b_Items[i][j]).equals("Cylinder")) set_to_Cylinder();
-          else if ((BAR_b_Items[i][j]).equals("Cushion")) set_to_Cushion();
-          
-          ROLLOUT_Update = 1;      
+          if ((BAR_b_Items[i][j]).equals("Fractal")) set_to_Create_Fractal();
+          else if ((BAR_b_Items[i][j]).equals("Tree")) set_to_Create_Tree();
+          else if ((BAR_b_Items[i][j]).equals("Person")) set_to_Create_Person();
+          else if ((BAR_b_Items[i][j]).equals("Parametric")) set_to_Create_Parametric();
+          else if ((BAR_b_Items[i][j]).equals("Tri")) set_to_Create_Tri();
+          else if ((BAR_b_Items[i][j]).equals("Poly")) set_to_Create_Poly();
+          else if ((BAR_b_Items[i][j]).equals("Extrude")) set_to_Create_Extrude();
+          else if ((BAR_b_Items[i][j]).equals("Hyper")) set_to_Create_Hyper();
+          else if ((BAR_b_Items[i][j]).equals("House")) set_to_Create_House();
+          else if ((BAR_b_Items[i][j]).equals("Box")) set_to_Create_Box();
+          else if ((BAR_b_Items[i][j]).equals("Octahedron")) set_to_Create_Octahedron();
+          else if ((BAR_b_Items[i][j]).equals("Sphere")) set_to_Create_Sphere();
+          else if ((BAR_b_Items[i][j]).equals("Cylinder")) set_to_Create_Cylinder();
+          else if ((BAR_b_Items[i][j]).equals("Cushion")) set_to_Create_Cushion();
         }
 
-        if (Bar_Switch.equals("ProjectionType")) {
-          WIN3D_View_Type = 2 - j;
-          
-          WIN3D_Update = 1;   
-          ROLLOUT_Update = 1;        
-        }
-       
-        
-        if (Bar_Switch.equals("Seed")) {
-          View_Select_Create_Modify = 4;
-          
-          ROLLOUT_Update = 1;          
-        }        
+        if (Bar_Switch.equals("Seed")) set_to_Modify_Seed();
+        if (Bar_Switch.equals("Rotate")) set_to_Modify_Rotate(j - 1);
+        if (Bar_Switch.equals("Scale")) set_to_Modify_Scale(j - 1);
+        if (Bar_Switch.equals("Move")) set_to_Modify_Move(j - 1);
 
-        if (Bar_Switch.equals("Rotate")) {
-          View_Select_Create_Modify = 3;
-          
-          selectedPolymesh_rotVector = j - 1;
-          
-          ROLLOUT_Update = 1;          
-        }
-
-        if (Bar_Switch.equals("Scale")) {
-          View_Select_Create_Modify = 2;
-          
-          selectedPolymesh_scaleVector = j - 1;
-          
-          ROLLOUT_Update = 1;          
-        }
-
-        if (Bar_Switch.equals("Move")) {
-          View_Select_Create_Modify = 1;
-          
-          selectedPolymesh_posVector = j - 1;
-          
-          ROLLOUT_Update = 1;          
-        }
+        if (Bar_Switch.equals("ProjectionType")) set_to_View_ProjectionType(j - 1);
 
         if (Bar_Switch.equals("ClickSelect")) {
           View_Select_Create_Modify = -1;
@@ -25372,106 +25313,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
 
 
 
-
-
-
-void set_to_Fractal () {
-  Create_Fractal_Plant = 1;
-  Work_with_2D_or_3D = 1;
-}  
-
-
-void set_to_Tree () {
-  Create_Mesh_Plant = 1;
-  Work_with_2D_or_3D = 2;  
-}
-
-void set_to_Person () {
-  Create_Mesh_Person = 1;
-  Work_with_2D_or_3D = 2;  
-}
-
-void set_to_Parametric () {
-  Create_Mesh_Parametric = 1;
-  Work_with_2D_or_3D = 3;  
-}
-
-void set_to_Tri () {
-  Create_Mesh_Tri = 1;
-  Work_with_2D_or_3D = 3;  
-}
-
-void set_to_Poly () {
-  Create_Mesh_Poly = 1;
-  Work_with_2D_or_3D = 3;  
-}
-
-void set_to_Extrude () {
-  Create_Mesh_Extrude = 1;
-  Work_with_2D_or_3D = 3;  
-}
-
-void set_to_Hyper () {
-  Create_Mesh_Quad = 1;
-  Work_with_2D_or_3D = 3;  
-}
-
-void set_to_House () {
-  Create_Mesh_House = 1;
-  Work_with_2D_or_3D = 3;  
-}
-
-void set_to_Box () {
-  Create_Mesh_SuperOBJ = 1;
-
-  Create_Input_powX = 8;  
-  Create_Input_powY = 8;
-  Create_Input_powZ = 8;            
-  
-  Work_with_2D_or_3D = 3;  
-}
-
-void set_to_Octahedron () {
-  Create_Mesh_SuperOBJ = 1;
-
-  Create_Input_powX = 1;  
-  Create_Input_powY = 1; 
-  Create_Input_powZ = 1;            
-  
-  Work_with_2D_or_3D = 3;  
-}
-
-void set_to_Sphere () {
-  Create_Mesh_SuperOBJ = 1;
-
-  Create_Input_powX = 2;  
-  Create_Input_powY = 2; 
-  Create_Input_powZ = 2;            
-  
-  Work_with_2D_or_3D = 3;  
-}
-
-void set_to_Cylinder () {
-  Create_Mesh_SuperOBJ = 1;
-
-  Create_Input_powX = 2;  
-  Create_Input_powY = 2; 
-  Create_Input_powZ = 8;            
-  
-  Work_with_2D_or_3D = 3;
-}
-
-void set_to_Cushion () {
-  Create_Mesh_SuperOBJ = 1;
-
-  Create_Input_powX = 8;  
-  Create_Input_powY = 8; 
-  Create_Input_powZ = 2;            
-  
-  Work_with_2D_or_3D = 3;  
-}
-
-void set_to_CreateNothing () {
+void set_to_Create_Nothing () {
   
   Create_Mesh_Poly = 0;
   Create_Mesh_Extrude = 0;
@@ -25485,17 +25327,174 @@ void set_to_CreateNothing () {
   Create_Fractal_Plant = 0;
   
   View_Select_Create_Modify = 0;
-}
-/*
-void set_to_ () {
   
+  ROLLOUT_Update = 1;    
 }
 
-void set_to_ () {
+
+void set_to_Create_Fractal () {
+  set_to_Create_Nothing();
   
+  Create_Fractal_Plant = 1;
+  Work_with_2D_or_3D = 1;
+}  
+
+
+void set_to_Create_Tree () {
+  set_to_Create_Nothing();
+  
+  Create_Mesh_Plant = 1;
+  Work_with_2D_or_3D = 2;  
+}
+
+void set_to_Create_Person () {
+  set_to_Create_Nothing();
+  
+  Create_Mesh_Person = 1;
+  Work_with_2D_or_3D = 2;  
+}
+
+void set_to_Create_Parametric () {
+  set_to_Create_Nothing();
+  
+  Create_Mesh_Parametric = 1;
+  Work_with_2D_or_3D = 3;  
+}
+
+void set_to_Create_Tri () {
+  set_to_Create_Nothing();
+  
+  Create_Mesh_Tri = 1;
+  Work_with_2D_or_3D = 3;  
+}
+
+void set_to_Create_Poly () {
+  set_to_Create_Nothing();
+  
+  Create_Mesh_Poly = 1;
+  Work_with_2D_or_3D = 3;  
+}
+
+void set_to_Create_Extrude () {
+  set_to_Create_Nothing();
+  
+  Create_Mesh_Extrude = 1;
+  Work_with_2D_or_3D = 3;  
+}
+
+void set_to_Create_Hyper () {
+  set_to_Create_Nothing();
+  
+  Create_Mesh_Quad = 1;
+  Work_with_2D_or_3D = 3;  
+}
+
+void set_to_Create_House () {
+  set_to_Create_Nothing();
+  
+  Create_Mesh_House = 1;
+  Work_with_2D_or_3D = 3;  
+}
+
+void set_to_Create_Box () {
+  set_to_Create_Nothing();
+  
+  Create_Mesh_SuperOBJ = 1;
+
+  Create_Input_powX = 8;  
+  Create_Input_powY = 8;
+  Create_Input_powZ = 8;            
+  
+  Work_with_2D_or_3D = 3;  
+}
+
+void set_to_Create_Octahedron () {
+  set_to_Create_Nothing();
+  
+  Create_Mesh_SuperOBJ = 1;
+
+  Create_Input_powX = 1;  
+  Create_Input_powY = 1; 
+  Create_Input_powZ = 1;            
+  
+  Work_with_2D_or_3D = 3;  
+}
+
+void set_to_Create_Sphere () {
+  set_to_Create_Nothing();
+  
+  Create_Mesh_SuperOBJ = 1;
+
+  Create_Input_powX = 2;  
+  Create_Input_powY = 2; 
+  Create_Input_powZ = 2;            
+  
+  Work_with_2D_or_3D = 3;  
+}
+
+void set_to_Create_Cylinder () {
+  set_to_Create_Nothing();
+  
+  Create_Mesh_SuperOBJ = 1;
+
+  Create_Input_powX = 2;  
+  Create_Input_powY = 2; 
+  Create_Input_powZ = 8;            
+  
+  Work_with_2D_or_3D = 3;
+}
+
+void set_to_Create_Cushion () {
+  set_to_Create_Nothing();
+  
+  Create_Mesh_SuperOBJ = 1;
+
+  Create_Input_powX = 8;  
+  Create_Input_powY = 8; 
+  Create_Input_powZ = 2;            
+  
+  Work_with_2D_or_3D = 3;  
 }
 
 
-*/
+
+
+void set_to_Modify_Seed () {
+  View_Select_Create_Modify = 4;
+
+  ROLLOUT_Update = 1; 
+}
+
+void set_to_Modify_Rotate (int j) {
+  View_Select_Create_Modify = 3;
+  
+  selectedPolymesh_rotVector = j;
+
+  ROLLOUT_Update = 1;
+}
+  
+void set_to_Modify_Scale (int j) {
+  View_Select_Create_Modify = 2;
+  
+  selectedPolymesh_scaleVector = j;
+
+  ROLLOUT_Update = 1;
+}
+
+void set_to_Modify_Move (int j) {
+  View_Select_Create_Modify = 1;
+  
+  selectedPolymesh_posVector = j;
+  
+  ROLLOUT_Update = 1;
+}
+
+void set_to_View_ProjectionType (int j) {
+  WIN3D_View_Type = j;
+  
+  WIN3D_Update = 1; 
+  ROLLOUT_Update = 1; 
+}
+
+
          
-  
