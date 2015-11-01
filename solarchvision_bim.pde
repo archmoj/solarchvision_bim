@@ -19603,258 +19603,363 @@ void mouseClicked () {
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Quit")) { 
             exit();
           }      
-      
-      
+
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Fractal")) {
             set_to_Create_Fractal();
+            SOLARCHVISION_highlight_in_BAR_b("Fractal");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Tree")) {
             set_to_Create_Tree();
+            SOLARCHVISION_highlight_in_BAR_b("Tree");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Person")) {
             set_to_Create_Person();
+            SOLARCHVISION_highlight_in_BAR_b("Person");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Parametric")) {
             set_to_Create_Parametric();
+            SOLARCHVISION_highlight_in_BAR_b("Parametric");      
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Tri")) {
             set_to_Create_Tri();
+            SOLARCHVISION_highlight_in_BAR_b("Tri");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Poly")) {
             set_to_Create_Poly();
+            SOLARCHVISION_highlight_in_BAR_b("Poly");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Extrude")) {
             set_to_Create_Extrude();
+            SOLARCHVISION_highlight_in_BAR_b("Extrude");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Hyper")) {
             set_to_Create_Hyper();
+            SOLARCHVISION_highlight_in_BAR_b("Hyper");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("House")) {
             set_to_Create_House();
+            SOLARCHVISION_highlight_in_BAR_b("House");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Box")) {
             set_to_Create_Box();
+            SOLARCHVISION_highlight_in_BAR_b("Box");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Octahedron")) {
             set_to_Create_Octahedron();
+            SOLARCHVISION_highlight_in_BAR_b("Octahedron");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Sphere")) {
             set_to_Create_Sphere();
+            SOLARCHVISION_highlight_in_BAR_b("Sphere");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Cylinder")) {
             set_to_Create_Cylinder();
+            SOLARCHVISION_highlight_in_BAR_b("Cylinder");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Cushion")) {
             set_to_Create_Cushion();
+            SOLARCHVISION_highlight_in_BAR_b("Cushion");
             BAR_b_Update = 1;  
           }
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Move")) {
             set_to_Modify_Move(selectedPolymesh_posVector);
+            SOLARCHVISION_highlight_in_BAR_b("MV³");
             BAR_b_Update = 1;  
           }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("MoveX")) {
+            set_to_Modify_Move(0);
+            SOLARCHVISION_highlight_in_BAR_b("MVx");
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("MoveY")) {
+            set_to_Modify_Move(1);
+            SOLARCHVISION_highlight_in_BAR_b("MVy");
+            BAR_b_Update = 1;  
+          }              
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("MoveZ")) {
+            set_to_Modify_Move(2);
+            SOLARCHVISION_highlight_in_BAR_b("MVz");
+            BAR_b_Update = 1;  
+          }              
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Scale")) {
             set_to_Modify_Scale(selectedPolymesh_scaleVector);
+            SOLARCHVISION_highlight_in_BAR_b("SC³");
             BAR_b_Update = 1;  
           }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("ScaleX")) {
+            set_to_Modify_Scale(0);
+            SOLARCHVISION_highlight_in_BAR_b("SCx");
+            BAR_b_Update = 1;  
+          }          
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("ScaleY")) {
+            set_to_Modify_Scale(1);
+            SOLARCHVISION_highlight_in_BAR_b("SCy");
+            BAR_b_Update = 1;  
+          }      
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("ScaleZ")) {
+            set_to_Modify_Scale(2);
+            SOLARCHVISION_highlight_in_BAR_b("SCz");
+            BAR_b_Update = 1;  
+          }                
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Rotate")) {
             set_to_Modify_Rotate(selectedPolymesh_rotVector);
             BAR_b_Update = 1;  
           }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("RotateX")) {
+            set_to_Modify_Rotate(0);
+            SOLARCHVISION_highlight_in_BAR_b("RTx");
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("RotateY")) {
+            set_to_Modify_Rotate(1);
+            SOLARCHVISION_highlight_in_BAR_b("RTy");
+            BAR_b_Update = 1;  
+          } 
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("RotateZ")) {
+            set_to_Modify_Rotate(2);
+            SOLARCHVISION_highlight_in_BAR_b("RTz");
+            BAR_b_Update = 1;  
+          }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Seed")) {
             set_to_Modify_Seed();
+            SOLARCHVISION_highlight_in_BAR_b("SD");
             BAR_b_Update = 1;  
           }
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Orthographic")) {
             set_to_View_ProjectionType(0);
+            SOLARCHVISION_highlight_in_BAR_b("P<>");
             BAR_b_Update = 1;  
           }           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Perspective")) {
             set_to_View_ProjectionType(1);
+            SOLARCHVISION_highlight_in_BAR_b("P><");
             BAR_b_Update = 1;  
           }   
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Click Select")) {
             set_to_View_ClickSelect(0);
+            SOLARCHVISION_highlight_in_BAR_b("±CS");
             BAR_b_Update = 1;  
           } 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Click Select+")) {
             set_to_View_ClickSelect(1);
+            SOLARCHVISION_highlight_in_BAR_b("+CS");
             BAR_b_Update = 1;  
           } 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Click Select-")) {
             set_to_View_ClickSelect(2);
+            SOLARCHVISION_highlight_in_BAR_b("-CS");
             BAR_b_Update = 1;  
           }           
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Window Select")) {
             set_to_View_WindowSelect(0);
+            SOLARCHVISION_highlight_in_BAR_b("±WS");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Window Select+")) {
             set_to_View_WindowSelect(1);
+            SOLARCHVISION_highlight_in_BAR_b("+WS");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Window Select-")) {
             set_to_View_WindowSelect(2);
+            SOLARCHVISION_highlight_in_BAR_b("-WS");
             BAR_b_Update = 1;  
           }
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Orbit")) {
             set_to_View_Orbit(0);
+            SOLARCHVISION_highlight_in_BAR_b("OR");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("OrbitXY")) {
             set_to_View_Orbit(1);
+            SOLARCHVISION_highlight_in_BAR_b("ORxy");
             BAR_b_Update = 1;  
           }   
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("OrbitZ")) {
             set_to_View_Orbit(2);
+            SOLARCHVISION_highlight_in_BAR_b("ORz");
             BAR_b_Update = 1;  
           }           
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pan")) {
             set_to_View_Pan(0);
+            SOLARCHVISION_highlight_in_BAR_b("Pan");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Look at origin")) {
             set_to_View_Pan(1);
+            SOLARCHVISION_highlight_in_BAR_b("Cen");
             BAR_b_Update = 1;  
           }
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Zoom")) {
             set_to_View_Zoom(0);
+            SOLARCHVISION_highlight_in_BAR_b("±ZM");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Zoom as default")) {
             set_to_View_Zoom(1);
+            SOLARCHVISION_highlight_in_BAR_b("0ZM");
             BAR_b_Update = 1;  
           }
 
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TruckZ")) {
-            set_to_View_Truck(0);
-            BAR_b_Update = 1;  
-          }
+
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TruckX")) {
             set_to_View_Truck(1);
+            SOLARCHVISION_highlight_in_BAR_b("DIx");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TruckY")) {
             set_to_View_Truck(2);
+            SOLARCHVISION_highlight_in_BAR_b("DIy");
             BAR_b_Update = 1;  
           }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TruckZ")) {
+            set_to_View_Truck(0);
+            SOLARCHVISION_highlight_in_BAR_b("DIz");
+            BAR_b_Update = 1;  
+          }          
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Walk")) {
+            set_to_View_Truck(2);
+            SOLARCHVISION_highlight_in_BAR_b("Walk");
+            BAR_b_Update = 1;  
+          }          
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("3DModelSize")) {
             set_to_View_3DModelSize();
+            SOLARCHVISION_highlight_in_BAR_b("±SZ");
             BAR_b_Update = 1;  
           }          
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shrink 3DViewSpace")) {
             set_to_View_3DViewSpace(0);
+            SOLARCHVISION_highlight_in_BAR_b("AllViewsports");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Enlarge 3DViewSpace")) {
             set_to_View_3DViewSpace(1);
+            SOLARCHVISION_highlight_in_BAR_b("Expand3DView");
             BAR_b_Update = 1;  
           } 
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Top")) {
             set_to_View_3DViewPoint(0);
+            SOLARCHVISION_highlight_in_BAR_b("Top");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Front")) {
             set_to_View_3DViewPoint(1);
+            SOLARCHVISION_highlight_in_BAR_b("Front");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Left")) {
             set_to_View_3DViewPoint(2);
+            SOLARCHVISION_highlight_in_BAR_b("Left");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Back")) {
             set_to_View_3DViewPoint(3);
+            SOLARCHVISION_highlight_in_BAR_b("Back");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Right")) {
             set_to_View_3DViewPoint(4);
+            SOLARCHVISION_highlight_in_BAR_b("Right");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Bottom")) {
             set_to_View_3DViewPoint(5);
+            SOLARCHVISION_highlight_in_BAR_b("Bottom");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("S.W.")) {
             set_to_View_3DViewPoint(6);
+            SOLARCHVISION_highlight_in_BAR_b("S.W.");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("S.E.")) {
             set_to_View_3DViewPoint(7);
+            SOLARCHVISION_highlight_in_BAR_b("S.E.");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("N.E.")) {
             set_to_View_3DViewPoint(8);
+            SOLARCHVISION_highlight_in_BAR_b("N.E.");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("N.W.")) {
             set_to_View_3DViewPoint(9);
+            SOLARCHVISION_highlight_in_BAR_b("N.W.");
             BAR_b_Update = 1;  
           }
           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotX:Minimum")) {
             set_to_View_PivotX(-1);
+            SOLARCHVISION_highlight_in_BAR_b("X<");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotX:Center")) {
             set_to_View_PivotX(0);
+            SOLARCHVISION_highlight_in_BAR_b("X|");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotX:Maximum")) {
             set_to_View_PivotX(1);
+            SOLARCHVISION_highlight_in_BAR_b("X>");
             BAR_b_Update = 1;  
           }
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotY:Minimum")) {
             set_to_View_PivotY(-1);
+            SOLARCHVISION_highlight_in_BAR_b("Y<");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotY:Center")) {
             set_to_View_PivotY(0);
+            SOLARCHVISION_highlight_in_BAR_b("Y|");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotY:Maximum")) {
             set_to_View_PivotY(1);
+            SOLARCHVISION_highlight_in_BAR_b("Y>");
             BAR_b_Update = 1;  
           }
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotZ:Minimum")) {
             set_to_View_PivotZ(-1);
+            SOLARCHVISION_highlight_in_BAR_b("Z<");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotZ:Center")) {
             set_to_View_PivotZ(0);
+            SOLARCHVISION_highlight_in_BAR_b("Z|");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotZ:Maximum")) {
             set_to_View_PivotZ(1);
+            SOLARCHVISION_highlight_in_BAR_b("Z>");
             BAR_b_Update = 1;  
           }
 
 
-
-  
         }
       }
       
@@ -24883,8 +24988,8 @@ String[][] BAR_a_Items = {
                         {"SOLARCHVISION-2015", "Designed & Developed", "by Mojtaba Samimi", "www.solarchvision.com"},  
                         {"File", "New", "Open...", "Save", "Save As...", "Import...", "Export...", "Preferences", "Quit"}, 
                         {"Select", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
-                        {"Edit", "Seed", "Move", "Scale", "Rotate", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum"},
-                        {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Orbit", "OrbitXY", "OrbitZ", "Pan", "Look at origin", "TruckX", "TruckY", "TruckZ", "3DModelSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
+                        {"Edit", "Seed", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum"},
+                        {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Orbit", "OrbitXY", "OrbitZ", "Pan", "Look at origin", "TruckX", "TruckY", "TruckZ", "Walk", "3DModelSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
                         {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
 
@@ -25015,9 +25120,9 @@ float BAR_b_tab = b_pixel;
 String[][] BAR_b_Items = {
                           
                           {"2", "AllViewsports", "Expand3DView", "3DViewSpace", "3"},
-                          {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "SW", "SE", "NE", "NW", "3DViewPoint", "1.5"},
+                          {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "3DViewPoint", "1.5"},
                           {"2", "P<>", "P><", "ProjectionType", "1.0"},
-                          {"1", "OR", "ORx", "ORz", "Orbit", "1.0"},
+                          {"1", "OR", "ORxy", "ORz", "Orbit", "1.0"},
                           {"3", "DIz", "DIx", "DIy", "Truck", "1.0"},
                           {"1", "Walk", "DistZ", "1.0"},
                           {"1", "Pan", "Cen", "Pan", "1.0"},
@@ -25039,11 +25144,35 @@ String[][] BAR_b_Items = {
                           {"3", "RTx", "RTy", "RTz", "Rotate", "1.0"}, 
                           {"1", "SD", "Seed", "1.0"},                             
                         };         
-           
+
+
+
 int Bar_b_Selection = -1;                        
 
 
 int BAR_b_Display_Text; 
+
+
+void SOLARCHVISION_highlight_in_BAR_b (String s) {
+
+  int break_loops = 0;
+  
+  for (int i = 0; i < BAR_b_Items.length; i++) {
+    for (int j = 1; j < BAR_b_Items[i].length - 2; j++) {
+      if (BAR_b_Items[i][j].equals(s)) {
+        
+        BAR_b_Items[i][0] = nf(j, 0);
+        
+        break_loops = 1; 
+      }
+      
+      if (break_loops == 1) break;
+    }
+    if (break_loops == 1) break;
+  }
+  
+}
+
 
 void SOLARCHVISION_draw_window_BAR_b () {
   
@@ -25069,10 +25198,6 @@ void SOLARCHVISION_draw_window_BAR_b () {
         
         if (Bar_Switch.equals("LayerType")) {
           BAR_b_Items[i][0] = nf(Work_with_2D_or_3D, 0);
-        }
-        
-        if (Bar_Switch.equals("ProjectionType")) {
-          BAR_b_Items[i][0] = nf(1 + WIN3D_View_Type, 0);
         }
       }
 
