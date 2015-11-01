@@ -19616,84 +19616,98 @@ void mouseClicked () {
             set_to_CreateNothing();
             set_to_Fractal();
             ROLLOUT_Update = 1; 
+            BAR_b_Update = 1;
           }    
           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Tree")) {
             set_to_CreateNothing();
             set_to_Tree();
-            ROLLOUT_Update = 1; 
+            ROLLOUT_Update = 1;
+            BAR_b_Update = 1; 
           }            
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Person")) {
             set_to_CreateNothing();
             set_to_Person();
             ROLLOUT_Update = 1; 
+            BAR_b_Update = 1;
           }     
           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Parametric")) {
             set_to_CreateNothing();
             set_to_Parametric();
             ROLLOUT_Update = 1; 
+            BAR_b_Update = 1;
           }    
           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Tri")) {
             set_to_CreateNothing();
             set_to_Tri();
             ROLLOUT_Update = 1; 
+            BAR_b_Update = 1;
           }            
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Poly")) {
             set_to_CreateNothing();
             set_to_Poly();
             ROLLOUT_Update = 1; 
+            BAR_b_Update = 1;
           }     
           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Extrude")) {
             set_to_CreateNothing();
             set_to_Extrude();
             ROLLOUT_Update = 1; 
+            BAR_b_Update = 1;
           }    
           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Hyper")) {
             set_to_CreateNothing();
             set_to_Hyper();
             ROLLOUT_Update = 1; 
+            BAR_b_Update = 1;
           }            
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("House")) {
             set_to_CreateNothing();
             set_to_House();
             ROLLOUT_Update = 1; 
+            BAR_b_Update = 1;
           }     
           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Box")) {
             set_to_CreateNothing();
             set_to_Box();
             ROLLOUT_Update = 1; 
+            BAR_b_Update = 1;
           }    
           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Octahedron")) {
             set_to_CreateNothing();
             set_to_Octahedron();
             ROLLOUT_Update = 1; 
+            BAR_b_Update = 1;
           }            
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Sphere")) {
             set_to_CreateNothing();
             set_to_Sphere();
             ROLLOUT_Update = 1; 
+            BAR_b_Update = 1;
           }     
           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Cylinder")) {
             set_to_CreateNothing();
             set_to_Cylinder();
             ROLLOUT_Update = 1; 
+            BAR_b_Update = 1;
           }     
           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Cushion")) {
             set_to_CreateNothing();
             set_to_Cushion();
             ROLLOUT_Update = 1; 
+            BAR_b_Update = 1;
           }     
   
         }
