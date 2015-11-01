@@ -19603,6 +19603,71 @@ void mouseClicked () {
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Quit")) { 
             exit();
           }      
+          
+
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Vertices")) {
+            WIN3D_VERTS_SHOW = (WIN3D_VERTS_SHOW  + 1) % 2;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          }            
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Edges")) {
+            WIN3D_EDGES_SHOW = (WIN3D_EDGES_SHOW  + 1) % 2;
+            display_MODEL3D_EDGES = WIN3D_EDGES_SHOW; // <<<<<<<<<
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          } 
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Leaves")) {
+            Display_FractalPlant_Leaves = (Display_FractalPlant_Leaves + 1) % 2;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          }                
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Living Objects")) {
+            Display_Trees_People = (Display_Trees_People + 1) % 2;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          } 
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Urban")) {
+            Display_URBAN = (Display_URBAN + 1) % 2;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          } 
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Sky")) {
+            Display_SKY3D = (Display_SKY3D + 1) % 2;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Sun")) {
+            Display_SUN3D = (Display_SUN3D + 1) % 2;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          }           
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Shading Section")) {
+            display_Solarch_Image = (display_Solarch_Image + 1) % 2;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          }  
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Spatial Section")) {
+            display_Field_Image = (display_Field_Image + 1) % 2;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          } 
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Wind Flow")) {
+            display_windFlow = (display_windFlow  + 1) % 2;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          }
+
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Fractal")) {
             set_to_Create_Fractal();
@@ -19838,7 +19903,7 @@ void mouseClicked () {
             BAR_b_Update = 1;  
           }          
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Walk")) {
-            set_to_View_Truck(2);
+            set_to_View_Truck(0);
             SOLARCHVISION_highlight_in_BAR_b("Walk");
             BAR_b_Update = 1;  
           }          
@@ -20959,13 +21024,13 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
     if (ROLLOUT_child == 1) { // General
 
-      Create_Mesh_or_Solid = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_or_Solid" , Create_Mesh_or_Solid, 1, 2, 1), 1));
+      //Create_Mesh_or_Solid = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_or_Solid" , Create_Mesh_or_Solid, 1, 2, 1), 1));
     
-      Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 4, 1), 1));
+      //Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 4, 1), 1));
     
-      View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -6, 5, 1), 1));
-      View_XYZ_ChangeOption = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_ChangeOption" , View_XYZ_ChangeOption, 0, 6, 1), 1));
-      Modify_Object_Parameters = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Object_Parameters" , Modify_Object_Parameters, 0, 9, 1), 1));
+      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -6, 5, 1), 1));
+      //View_XYZ_ChangeOption = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_ChangeOption" , View_XYZ_ChangeOption, 0, 6, 1), 1));
+      //Modify_Object_Parameters = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Object_Parameters" , Modify_Object_Parameters, 0, 9, 1), 1));
 
       Create_Default_Material = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Material" , Create_Default_Material, -1, 8, 1), 1));
   
@@ -24979,7 +25044,7 @@ PImage pre_screen;
 int BAR_a_Update = 1;
 
 float BAR_a_width_parent = 4 * a_pixel;
-float BAR_a_width_child = 2.5 * BAR_a_width_parent;
+float BAR_a_width_child = 3 * BAR_a_width_parent;
 
 int BAR_a_selected_parent = -1;
 int BAR_a_selected_child = 0;
@@ -24990,6 +25055,7 @@ String[][] BAR_a_Items = {
                         {"Select", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
                         {"Edit", "Seed", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum"},
                         {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Orbit", "OrbitXY", "OrbitZ", "Pan", "Look at origin", "TruckX", "TruckY", "TruckZ", "Walk", "3DModelSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
+                        {"Display", "Display/Hide Vertices", "Display/Hide Edges", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Land", "Display/Hide Sky", "Display/Hide Sun", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow"},
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
                         {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
 
