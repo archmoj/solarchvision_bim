@@ -19529,24 +19529,20 @@ void mouseDragged () {
   
           }
 
-          if (View_Select_Create_Modify == -6) { // viewport:different functions with wheel
+          if (View_Select_Create_Modify == -6) { // viewport:different functions
   
             if (Modify_Object_Parameters == 0) { // Truck
-  
+
               if (View_XYZ_ChangeOption == 0) {
-  
-                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
-                
-                WIN3D_Update = 1;
-                
+                if (mouseButton == LEFT) WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
+                if (mouseButton == RIGHT) WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
+                WIN3D_Update = 1;  
               }
   
               if (View_XYZ_ChangeOption == 1) {
-  
-                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
-                
-                WIN3D_Update = 1;
-                
+                if (mouseButton == RIGHT) WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
+                if (mouseButton == LEFT) WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
+                WIN3D_Update = 1; 
               }            
            
             }
@@ -19555,19 +19551,16 @@ void mouseDragged () {
             if (Modify_Object_Parameters == 1) {  // Orbit
   
               if (View_XYZ_ChangeOption == 0) {
-  
-                WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
-                
+                if (mouseButton == LEFT) WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
+                if (mouseButton == RIGHT) WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate;
                 WIN3D_Update = 1;
-                
               }
   
               if (View_XYZ_ChangeOption == 1) {
-  
-                WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate;
-                
+                if (mouseButton == RIGHT) WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
+                if (mouseButton == LEFT) WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate;
                 WIN3D_Update = 1;
-                
+
               }            
            
             }
@@ -24933,7 +24926,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
         if (BAR_a_selected_parent == -1) {
           pre_screen = get(0, a_pixel, width, height - a_pixel);
           
-          println("Screen GET!");
+          //println("Screen GET!");
         }     
         
         BAR_a_selected_parent = i;
@@ -25076,6 +25069,10 @@ void SOLARCHVISION_draw_window_BAR_b () {
         
         if (Bar_Switch.equals("LayerType")) {
           BAR_b_Items[i][0] = nf(Work_with_2D_or_3D, 0);
+        }
+        
+        if (Bar_Switch.equals("ProjectionType")) {
+          BAR_b_Items[i][0] = nf(1 + WIN3D_View_Type, 0);
         }
       }
 
