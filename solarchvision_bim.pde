@@ -190,7 +190,7 @@ int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:4D
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
 int View_Select_Create_Modify = 4; // -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Properties
-int View_XYZ_Constraints = 3; // 0:x 1:y 2:z 3:xyz 4:xy 5:yz 6:zx
+int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. fractal trees
 
 
@@ -19065,7 +19065,7 @@ void mouseWheel(MouseEvent event) {
 
           if (Modify_Object_Parameters == 0) { // Truck
 
-            if (View_XYZ_Constraints == 0) {
+            if (View_XYZ_ChangeOption == 0) {
 
               WIN3D_X_coordinate += Wheel_Value * WIN3D_S_coordinate * objects_scale;
               
@@ -19073,7 +19073,7 @@ void mouseWheel(MouseEvent event) {
               
             }
 
-            if (View_XYZ_Constraints == 1) {
+            if (View_XYZ_ChangeOption == 1) {
 
               WIN3D_Y_coordinate += Wheel_Value * WIN3D_S_coordinate * objects_scale;
               
@@ -19086,7 +19086,7 @@ void mouseWheel(MouseEvent event) {
           
           if (Modify_Object_Parameters == 1) {  // Orbit
 
-            if (View_XYZ_Constraints == 0) {
+            if (View_XYZ_ChangeOption == 0) {
 
               WIN3D_RX_coordinate += Wheel_Value * WIN3D_RS_coordinate;
               
@@ -19094,7 +19094,7 @@ void mouseWheel(MouseEvent event) {
               
             }
 
-            if (View_XYZ_Constraints == 1) {
+            if (View_XYZ_ChangeOption == 1) {
 
               WIN3D_RZ_coordinate += Wheel_Value * WIN3D_RS_coordinate;
               
@@ -19533,7 +19533,7 @@ void mouseDragged () {
   
             if (Modify_Object_Parameters == 0) { // Truck
   
-              if (View_XYZ_Constraints == 0) {
+              if (View_XYZ_ChangeOption == 0) {
   
                 WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
                 
@@ -19541,7 +19541,7 @@ void mouseDragged () {
                 
               }
   
-              if (View_XYZ_Constraints == 1) {
+              if (View_XYZ_ChangeOption == 1) {
   
                 WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
                 
@@ -19554,7 +19554,7 @@ void mouseDragged () {
             
             if (Modify_Object_Parameters == 1) {  // Orbit
   
-              if (View_XYZ_Constraints == 0) {
+              if (View_XYZ_ChangeOption == 0) {
   
                 WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
                 
@@ -19562,7 +19562,7 @@ void mouseDragged () {
                 
               }
   
-              if (View_XYZ_Constraints == 1) {
+              if (View_XYZ_ChangeOption == 1) {
   
                 WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate;
                 
@@ -19684,7 +19684,182 @@ void mouseClicked () {
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Seed")) {
             set_to_Modify_Seed();
             BAR_b_Update = 1;  
+          }
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Orthographic")) {
+            set_to_View_ProjectionType(0);
+            BAR_b_Update = 1;  
+          }           
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Perspective")) {
+            set_to_View_ProjectionType(1);
+            BAR_b_Update = 1;  
+          }   
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Click Select")) {
+            set_to_View_ClickSelect(0);
+            BAR_b_Update = 1;  
+          } 
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Click Select+")) {
+            set_to_View_ClickSelect(1);
+            BAR_b_Update = 1;  
+          } 
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Click Select-")) {
+            set_to_View_ClickSelect(2);
+            BAR_b_Update = 1;  
+          }           
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Window Select")) {
+            set_to_View_WindowSelect(0);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Window Select+")) {
+            set_to_View_WindowSelect(1);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Window Select-")) {
+            set_to_View_WindowSelect(2);
+            BAR_b_Update = 1;  
+          }
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Orbit")) {
+            set_to_View_Orbit(0);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("OrbitXY")) {
+            set_to_View_Orbit(1);
+            BAR_b_Update = 1;  
+          }   
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("OrbitZ")) {
+            set_to_View_Orbit(2);
+            BAR_b_Update = 1;  
+          }           
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pan")) {
+            set_to_View_Pan(0);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Look at origin")) {
+            set_to_View_Pan(1);
+            BAR_b_Update = 1;  
+          }
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Zoom")) {
+            set_to_View_Zoom(0);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Zoom as default")) {
+            set_to_View_Zoom(1);
+            BAR_b_Update = 1;  
+          }
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TruckZ")) {
+            set_to_View_Truck(0);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TruckX")) {
+            set_to_View_Truck(1);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TruckY")) {
+            set_to_View_Truck(2);
+            BAR_b_Update = 1;  
+          }
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("3DModelSize")) {
+            set_to_View_3DModelSize();
+            BAR_b_Update = 1;  
           }          
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shrink 3DViewSpace")) {
+            set_to_View_3DViewSpace(0);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Enlarge 3DViewSpace")) {
+            set_to_View_3DViewSpace(1);
+            BAR_b_Update = 1;  
+          } 
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Top")) {
+            set_to_View_3DViewPoint(0);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Front")) {
+            set_to_View_3DViewPoint(1);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Left")) {
+            set_to_View_3DViewPoint(2);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Back")) {
+            set_to_View_3DViewPoint(3);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Right")) {
+            set_to_View_3DViewPoint(4);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Bottom")) {
+            set_to_View_3DViewPoint(5);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("S.W.")) {
+            set_to_View_3DViewPoint(6);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("S.E.")) {
+            set_to_View_3DViewPoint(7);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("N.E.")) {
+            set_to_View_3DViewPoint(8);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("N.W.")) {
+            set_to_View_3DViewPoint(9);
+            BAR_b_Update = 1;  
+          }
+          
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotX:Minimum")) {
+            set_to_View_PivotX(-1);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotX:Center")) {
+            set_to_View_PivotX(0);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotX:Maximum")) {
+            set_to_View_PivotX(1);
+            BAR_b_Update = 1;  
+          }
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotY:Minimum")) {
+            set_to_View_PivotY(-1);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotY:Center")) {
+            set_to_View_PivotY(0);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotY:Maximum")) {
+            set_to_View_PivotY(1);
+            BAR_b_Update = 1;  
+          }
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotZ:Minimum")) {
+            set_to_View_PivotZ(-1);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotZ:Center")) {
+            set_to_View_PivotZ(0);
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotZ:Maximum")) {
+            set_to_View_PivotZ(1);
+            BAR_b_Update = 1;  
+          }
+
+
 
   
         }
@@ -20691,7 +20866,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 4, 1), 1));
     
       View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -6, 5, 1), 1));
-      View_XYZ_Constraints = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_Constraints" , View_XYZ_Constraints, 0, 6, 1), 1));
+      View_XYZ_ChangeOption = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_ChangeOption" , View_XYZ_ChangeOption, 0, 6, 1), 1));
       Modify_Object_Parameters = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Object_Parameters" , Modify_Object_Parameters, 0, 9, 1), 1));
 
       Create_Default_Material = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Material" , Create_Default_Material, -1, 8, 1), 1));
@@ -24331,32 +24506,8 @@ void dessin_ProjectionType (int _type, float x, float y, float r) {
 
     
   float d = 0.8 * r;
-  
+
   if (_type == 1) {
-
-    beginShape();
-    vertex(0, 0);
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
-    vertex(0.75 * sin_ang(0) * d, 0.75 * -cos_ang(0) * d);
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
-    endShape(CLOSE);
-  
-    beginShape();
-    vertex(cos_ang(30) * d, -sin_ang(30) * d);
-    vertex(0, 0);
-    vertex(0,d);
-    vertex(0.75 * sin_ang(120) * d, 0.75 * -cos_ang(120) * d);
-    endShape(CLOSE);
-
-    beginShape();
-    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
-    vertex(0, 0);
-    vertex(0,d);
-    vertex(0.75 * sin_ang(240) * d, 0.75 * -cos_ang(240) * d);
-    endShape(CLOSE);
-  }
-  
-  if (_type == 2) {
     
     beginShape();
     vertex(0, 0);
@@ -24380,6 +24531,32 @@ void dessin_ProjectionType (int _type, float x, float y, float r) {
     endShape(CLOSE);
 
   }  
+  
+  if (_type == 2) {
+
+    beginShape();
+    vertex(0, 0);
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0.75 * sin_ang(0) * d, 0.75 * -cos_ang(0) * d);
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    endShape(CLOSE);
+  
+    beginShape();
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0,d);
+    vertex(0.75 * sin_ang(120) * d, 0.75 * -cos_ang(120) * d);
+    endShape(CLOSE);
+
+    beginShape();
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0,d);
+    vertex(0.75 * sin_ang(240) * d, 0.75 * -cos_ang(240) * d);
+    endShape(CLOSE);
+  }
+  
+
 
   strokeWeight(0);
 
@@ -24712,12 +24889,18 @@ int BAR_a_selected_child = 0;
 String[][] BAR_a_Items = {
                         {"SOLARCHVISION-2015", "Designed & Developed", "by Mojtaba Samimi", "www.solarchvision.com"},  
                         {"File", "New", "Open...", "Save", "Save As...", "Import...", "Export...", "Preferences", "Quit"}, 
-                        {"Edit", "Pivot", "Move", "Rotate", "Scale", "Seed", "Copy", "Array"},
-                        {"View", "Zoom", "Orbit", "Pan", "Truck", "Center"},
+                        {"Select", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
+                        {"Edit", "Seed", "Move", "Scale", "Rotate", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum"},
+                        {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Orbit", "OrbitXY", "OrbitZ", "Pan", "Look at origin", "TruckX", "TruckY", "TruckZ", "3DModelSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
                         {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
 
                       };
+
+
+
+
+
 
 
 
@@ -24842,9 +25025,6 @@ String[][] BAR_b_Items = {
                           {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "SW", "SE", "NE", "NW", "3DViewPoint", "1.5"},
                           {"2", "P<>", "P><", "ProjectionType", "1.0"},
                           {"1", "OR", "ORx", "ORz", "Orbit", "1.0"},
-                                
-                          
-                          
                           {"3", "DIz", "DIx", "DIy", "Truck", "1.0"},
                           {"1", "Walk", "DistZ", "1.0"},
                           {"1", "Pan", "Cen", "Pan", "1.0"},
@@ -24998,242 +25178,38 @@ void SOLARCHVISION_draw_window_BAR_b () {
 
         if (Bar_Switch.equals("ProjectionType")) set_to_View_ProjectionType(j - 1);
 
-        if (Bar_Switch.equals("ClickSelect")) {
-          View_Select_Create_Modify = -1;
+        if (Bar_Switch.equals("ClickSelect")) set_to_View_ClickSelect(j - 1);
+        if (Bar_Switch.equals("WindowSelect")) set_to_View_WindowSelect(j - 1);
 
-          if (j == 2) {
-            addNewSelectionToPreviousSelection = 1; 
-          }
-
-          if (j == 3) {
-            addNewSelectionToPreviousSelection = -1; 
-          }
-          
-          ROLLOUT_Update = 1;          
-        }
-        
-        if (Bar_Switch.equals("WindowSelect")) {
-          View_Select_Create_Modify = -2;
-          
-          if (j == 2) {
-            addNewSelectionToPreviousSelection = 1; 
-          }
-
-          if (j == 3) {
-            addNewSelectionToPreviousSelection = -1; 
-          }
-          
-          ROLLOUT_Update = 1;          
-        }    
-
-
-
-        if (Bar_Switch.equals("DistZ")) {
-
-          View_Select_Create_Modify = -3;
-          
-          ROLLOUT_Update = 1;          
-        }  
-
-        if (Bar_Switch.equals("Truck")) {
-
-          if (j == 1) {
-            View_Select_Create_Modify = -3;
-          }
-
-          if (j == 2) {
-            View_Select_Create_Modify = -6;
-            Modify_Object_Parameters = 0;            
-            View_XYZ_Constraints = 0;  
-          } 
-
-          if (j == 3) {
-            View_Select_Create_Modify = -6;
-            Modify_Object_Parameters = 0;            
-            View_XYZ_Constraints = 1;  
-          }           
-          
-          
-          ROLLOUT_Update = 1;          
-        }  
-
-
-
-        if (Bar_Switch.equals("Orbit")) {
-
-          if (j == 1) {
-            View_Select_Create_Modify = -3;
-          }
-
-          if (j == 2) {
-            View_Select_Create_Modify = -6;
-            Modify_Object_Parameters = 1;            
-            View_XYZ_Constraints = 0;  
-          } 
-
-          if (j == 3) {
-            View_Select_Create_Modify = -6;
-            Modify_Object_Parameters = 1;            
-            View_XYZ_Constraints = 1;  
-          }           
-          
-          
-          ROLLOUT_Update = 1;          
-        }  
+        if (Bar_Switch.equals("Orbit")) set_to_View_Orbit(j - 1);
 
         if (Bar_Switch.equals("Pan")) {
-
-          View_Select_Create_Modify = -5;
           
-          if (j == 2) {
-            WIN3D_X_coordinate = 0;
-            WIN3D_Y_coordinate = 0;
-            WIN3D_Z_coordinate = 0; 
-            
-            WIN3D_Update = 1;
-            
-            BAR_b_Items[i][0] = "1"; // << set it to default choice next time
-          }           
-         
-          ROLLOUT_Update = 1;          
+          set_to_View_Pan(j - 1);
+
+          BAR_b_Items[i][0] = "1"; // << set it to default choice next time
         }  
 
-
         if (Bar_Switch.equals("Zoom")) {
-          View_Select_Create_Modify = -4;
+          set_to_View_Zoom(j - 1);
 
-          if (j == 2) {
-            WIN3D_ZOOM_coordinate = 60;
-            WIN3D_Update = 1;  
-            
-            BAR_b_Items[i][0] = "1"; // << set it to default choice next time
-          }
-          
-          ROLLOUT_Update = 1;          
-        }        
+          BAR_b_Items[i][0] = "1"; // << set it to default choice next time
+        }     
+
+        if (Bar_Switch.equals("DistZ")) set_to_View_Truck(0);
+        if (Bar_Switch.equals("Truck")) set_to_View_Truck(j - 1);
         
-        if (Bar_Switch.equals("3DModelSize")) {
-
-          View_Select_Create_Modify = -5;
-          
-          WIN3D_Update = 1;  
-            
-          ROLLOUT_Update = 1;          
-        }        
-  
+        if (Bar_Switch.equals("3DModelSize")) set_to_View_3DModelSize();
       
-        if (Bar_Switch.equals("3DViewSpace")) {
+        if (Bar_Switch.equals("3DViewSpace")) set_to_View_3DViewSpace(j - 1);
 
-          frame_variation = j - 1;
-          SOLARCHVISION_update_frame_layout();
-          
-          //BAR_b_Items[i][0] = nf(3 - j); // << set it to default choice next time
-
-          ROLLOUT_Update = 1;
-        }
-      
-        
-
-
-        if (Bar_Switch.equals("3DViewPoint")) {
-          
-          if (j == 1) {
-          
-            WIN3D_RX_coordinate = 0;
-            WIN3D_RY_coordinate = 0;
-            WIN3D_RZ_coordinate = 0; 
-          }
-          
-          if (j == 2) {
-          
-            WIN3D_RX_coordinate = 90;
-            WIN3D_RY_coordinate = 0;
-            WIN3D_RZ_coordinate = 0; 
-          }          
-
-          if (j == 3) {
-          
-            WIN3D_RX_coordinate = 90;
-            WIN3D_RY_coordinate = 0;
-            WIN3D_RZ_coordinate = -90; 
-          }    
-
-          if (j == 4) {
-          
-            WIN3D_RX_coordinate = 90;
-            WIN3D_RY_coordinate = 0;
-            WIN3D_RZ_coordinate = 180; 
-          }   
-
-          if (j == 5) {
-          
-            WIN3D_RX_coordinate = 90;
-            WIN3D_RY_coordinate = 0;
-            WIN3D_RZ_coordinate = 90; 
-          }  
-         
-          if (j == 6) {
-          
-            WIN3D_RX_coordinate = 180;
-            WIN3D_RY_coordinate = 0;
-            WIN3D_RZ_coordinate = 0; 
-          }             
-
-          if (j == 7) {
-          
-            WIN3D_RX_coordinate = 45;
-            WIN3D_RY_coordinate = 0;
-            WIN3D_RZ_coordinate = -45; 
-          }             
-          
-          if (j == 8) {
-          
-            WIN3D_RX_coordinate = 45;
-            WIN3D_RY_coordinate = 0;
-            WIN3D_RZ_coordinate = 45; 
-          }     
-
-          if (j == 9) {
-          
-            WIN3D_RX_coordinate = 45;
-            WIN3D_RY_coordinate = 0;
-            WIN3D_RZ_coordinate = 135; 
-          }     
-
-          if (j == 10) {
-          
-            WIN3D_RX_coordinate = 45;
-            WIN3D_RY_coordinate = 0;
-            WIN3D_RZ_coordinate = -135; 
-          }               
-          WIN3D_Update = 1;   
-          ROLLOUT_Update = 1;   
-        } 
+        if (Bar_Switch.equals("3DViewPoint")) set_to_View_3DViewPoint(j - 1);
 
 
 
-
-
-        if (Bar_Switch.equals("PivotX")) {
-          selectedPolymesh_alignX = j - 2;
-          
-          WIN3D_Update = 1; 
-          ROLLOUT_Update = 1;          
-        }
-
-        if (Bar_Switch.equals("PivotY")) {
-          selectedPolymesh_alignY = j - 2;
-          
-          WIN3D_Update = 1; 
-          ROLLOUT_Update = 1;          
-        }
-        
-        if (Bar_Switch.equals("PivotZ")) {
-          selectedPolymesh_alignZ = j - 2;
-          
-          WIN3D_Update = 1; 
-          ROLLOUT_Update = 1;          
-        }        
+        if (Bar_Switch.equals("PivotX")) set_to_View_PivotX(j - 2);
+        if (Bar_Switch.equals("PivotY")) set_to_View_PivotY(j - 2);
+        if (Bar_Switch.equals("PivotZ")) set_to_View_PivotZ(j - 2);
 
 
         
@@ -25465,36 +25441,257 @@ void set_to_Modify_Seed () {
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Modify_Rotate (int j) {
+void set_to_Modify_Rotate (int n) {
   View_Select_Create_Modify = 3;
   
-  selectedPolymesh_rotVector = j;
+  selectedPolymesh_rotVector = n;
 
   ROLLOUT_Update = 1;
 }
   
-void set_to_Modify_Scale (int j) {
+void set_to_Modify_Scale (int n) {
   View_Select_Create_Modify = 2;
   
-  selectedPolymesh_scaleVector = j;
+  selectedPolymesh_scaleVector = n;
 
   ROLLOUT_Update = 1;
 }
 
-void set_to_Modify_Move (int j) {
+void set_to_Modify_Move (int n) {
   View_Select_Create_Modify = 1;
   
-  selectedPolymesh_posVector = j;
+  selectedPolymesh_posVector = n;
   
   ROLLOUT_Update = 1;
 }
 
-void set_to_View_ProjectionType (int j) {
-  WIN3D_View_Type = j;
+void set_to_View_ProjectionType (int n) {
+  WIN3D_View_Type = n;
   
   WIN3D_Update = 1; 
   ROLLOUT_Update = 1; 
 }
 
+void set_to_View_ClickSelect (int n) {
 
-         
+  View_Select_Create_Modify = -1;
+
+  if (n == 1) {
+    addNewSelectionToPreviousSelection = 1; 
+  }
+
+  if (n == 2) {
+    addNewSelectionToPreviousSelection = -1; 
+  }
+  
+  ROLLOUT_Update = 1;          
+}
+
+void set_to_View_WindowSelect (int n) {
+  View_Select_Create_Modify = -2;
+  
+  if (n == 1) {
+    addNewSelectionToPreviousSelection = 1; 
+  }
+
+  if (n == 2) {
+    addNewSelectionToPreviousSelection = -1; 
+  }
+  
+  ROLLOUT_Update = 1;          
+}    
+
+
+void set_to_View_Truck (int n) {
+
+  if (n == 0) {
+    View_Select_Create_Modify = -3;
+  }
+
+  if (n == 1) {
+    View_Select_Create_Modify = -6;
+    Modify_Object_Parameters = 0;            
+    View_XYZ_ChangeOption = 0;  
+  } 
+
+  if (n == 2) {
+    View_Select_Create_Modify = -6;
+    Modify_Object_Parameters = 0;            
+    View_XYZ_ChangeOption = 1;  
+  }           
+  
+  ROLLOUT_Update = 1;          
+}  
+
+
+
+void set_to_View_Orbit (int n) {
+
+  if (n == 0) {
+    View_Select_Create_Modify = -3;
+  }
+
+  if (n == 1) {
+    View_Select_Create_Modify = -6;
+    Modify_Object_Parameters = 1;            
+    View_XYZ_ChangeOption = 0;  
+  } 
+
+  if (n == 2) {
+    View_Select_Create_Modify = -6;
+    Modify_Object_Parameters = 1;            
+    View_XYZ_ChangeOption = 1;  
+  }           
+  
+  ROLLOUT_Update = 1;          
+}  
+
+void set_to_View_Pan (int n) {
+
+  View_Select_Create_Modify = -5;
+  
+  if (n == 1) {
+    WIN3D_X_coordinate = 0;
+    WIN3D_Y_coordinate = 0;
+    WIN3D_Z_coordinate = 0; 
+    
+    WIN3D_Update = 1;
+  }           
+ 
+  ROLLOUT_Update = 1;    
+}  
+
+
+void set_to_View_Zoom (int n) {
+  View_Select_Create_Modify = -4;
+
+  if (n == 1) {
+    WIN3D_ZOOM_coordinate = 60;
+    WIN3D_Update = 1;  
+    
+    
+  }
+  
+  ROLLOUT_Update = 1;     
+}        
+
+void set_to_View_3DModelSize () {
+
+  View_Select_Create_Modify = -5;
+  
+  WIN3D_Update = 1;  
+    
+  ROLLOUT_Update = 1;          
+}        
+
+void set_to_View_3DViewSpace (int n) {
+
+  frame_variation = n;
+  SOLARCHVISION_update_frame_layout();
+  
+
+  ROLLOUT_Update = 1;
+}
+
+void set_to_View_3DViewPoint (int n) {
+  
+  if (n == 0) {
+  
+    WIN3D_RX_coordinate = 0;
+    WIN3D_RY_coordinate = 0;
+    WIN3D_RZ_coordinate = 0; 
+  }
+  
+  if (n == 1) {
+  
+    WIN3D_RX_coordinate = 90;
+    WIN3D_RY_coordinate = 0;
+    WIN3D_RZ_coordinate = 0; 
+  }          
+
+  if (n == 2) {
+  
+    WIN3D_RX_coordinate = 90;
+    WIN3D_RY_coordinate = 0;
+    WIN3D_RZ_coordinate = -90; 
+  }    
+
+  if (n == 3) {
+  
+    WIN3D_RX_coordinate = 90;
+    WIN3D_RY_coordinate = 0;
+    WIN3D_RZ_coordinate = 180; 
+  }   
+
+  if (n == 4) {
+  
+    WIN3D_RX_coordinate = 90;
+    WIN3D_RY_coordinate = 0;
+    WIN3D_RZ_coordinate = 90; 
+  }  
+ 
+  if (n == 5) {
+  
+    WIN3D_RX_coordinate = 180;
+    WIN3D_RY_coordinate = 0;
+    WIN3D_RZ_coordinate = 0; 
+  }             
+
+  if (n == 6) {
+  
+    WIN3D_RX_coordinate = 45;
+    WIN3D_RY_coordinate = 0;
+    WIN3D_RZ_coordinate = -45; 
+  }             
+  
+  if (n == 7) {
+  
+    WIN3D_RX_coordinate = 45;
+    WIN3D_RY_coordinate = 0;
+    WIN3D_RZ_coordinate = 45; 
+  }     
+
+  if (n == 8) {
+  
+    WIN3D_RX_coordinate = 45;
+    WIN3D_RY_coordinate = 0;
+    WIN3D_RZ_coordinate = 135; 
+  }     
+
+  if (n == 9) {
+  
+    WIN3D_RX_coordinate = 45;
+    WIN3D_RY_coordinate = 0;
+    WIN3D_RZ_coordinate = -135; 
+  }               
+  WIN3D_Update = 1;   
+  ROLLOUT_Update = 1;   
+} 
+
+
+
+
+void set_to_View_PivotX (int n) {
+
+  selectedPolymesh_alignX = n;
+  
+  WIN3D_Update = 1; 
+  ROLLOUT_Update = 1;          
+}
+
+void set_to_View_PivotY (int n) {
+
+  selectedPolymesh_alignY = n;
+  
+  WIN3D_Update = 1; 
+  ROLLOUT_Update = 1;          
+}
+
+void set_to_View_PivotZ (int n) {
+
+  selectedPolymesh_alignZ = n;
+  
+  WIN3D_Update = 1; 
+  ROLLOUT_Update = 1;          
+}        
+ 
