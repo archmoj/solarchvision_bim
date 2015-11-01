@@ -19582,6 +19582,15 @@ void mouseDragged () {
   }     
 }
 
+
+void fileSelected(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    println("User selected " + selection.getAbsolutePath());
+  }
+}     
+
 void mouseClicked () {
   if (automated == 0) {
 
@@ -19591,6 +19600,16 @@ void mouseClicked () {
         if (BAR_a_selected_child != 0) {
   
           // should call the functions here!
+          
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Open...")) { 
+            selectInput("Select a file to open:", "fileSelected");
+          }          
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Save As...")) { 
+            selectOutput("Select a file to write to:", "fileSelected");
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Quit")) { 
+            exit();
+          }          
         }
       }
       
@@ -24036,10 +24055,10 @@ int BAR_a_selected_parent = -1;
 int BAR_a_selected_child = 0;
 
 String[][] BAR_a_Items = {
-                        {"SOLARCHVISION - 15", "Designed & Developed", "by Mojtaba Samimi", "www.solarchvision.com"},  
-                        {"Files", "New", "Open...", "Save", "Save As...", "Import...", "Export...", "Preferences", "Exit"}, 
+                        {"SOLARCHVISION-2015", "Designed & Developed", "by Mojtaba Samimi", "www.solarchvision.com"},  
+                        {"File", "New", "Open...", "Save", "Save As...", "Import...", "Export...", "Preferences", "Quit"}, 
                         {"Edit", "Pivot", "Move", "Rotate", "Scale", "Seed", "Copy", "Array"},
-                        {"Views", "Zoom", "Orbit", "Pan", "Distance", "Center"},
+                        {"View", "Zoom", "Orbit", "Pan", "Truck", "Center"},
                         {"Create", "Sphere", "Box", "House", "Hyper", "Plane"}, 
                         {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
 
@@ -25322,3 +25341,4 @@ void dessin_zzzzzzzzzzzzzz (int _type, float x, float y, float r) {
 
 
       
+ 
