@@ -1185,7 +1185,7 @@ int pre_WIN3D_VERTS_SHOW;
 int pre_WIN3D_EDGES_SHOW;
 int pre_WIN3D_FACES_SHADE;
 
-
+int pre_MODEL3D_TESELATION;
 
       
 int pre_Load_Default_Models;
@@ -1970,6 +1970,7 @@ void draw () {
         pre_WIN3D_EDGES_SHOW = WIN3D_EDGES_SHOW;
         pre_WIN3D_FACES_SHADE = WIN3D_FACES_SHADE;
   
+        pre_MODEL3D_TESELATION = MODEL3D_TESELATION;
 
       
         pre_Load_Default_Models = Load_Default_Models;
@@ -2163,7 +2164,6 @@ void draw () {
         if (pre_WIN3D_EDGES_SHOW != WIN3D_EDGES_SHOW) {
           WIN3D_Update = 1;
         }             
-
           
         if (pre_WIN3D_FACES_SHADE != WIN3D_FACES_SHADE) {
           
@@ -2171,6 +2171,10 @@ void draw () {
           
           WIN3D_Update = 1;
         }             
+        
+        if (pre_MODEL3D_TESELATION != MODEL3D_TESELATION) {
+          WIN3D_update_VerticesSolarValue = 1;
+        }
 
 
         if (MODEL1D_ERASE == 1) {
@@ -3162,7 +3166,7 @@ void SOLARCHVISION_draw_GRAPHS () {
 
   popMatrix();
 
-  cursor(HAND);
+  cursor(ARROW);
 
   GRAPHS_Update = 0;
   
@@ -12390,6 +12394,7 @@ void SOLARCHVISION_beginNewObject () {
     allPolymesh_Solids = (int[][]) concat(allPolymesh_Solids, newObject_Solids);    
   }
 
+  WIN3D_update_VerticesSolarValue = 1; // <<<<<<<
 }
 
 void SOLARCHVISION_deleteSelection () {
@@ -12611,6 +12616,8 @@ void SOLARCHVISION_deleteSelection () {
     }
     
     if (Solids_updated != 0) SOLARCHVISION_calculate_ParametricGeometries_Field();
+    
+    WIN3D_update_VerticesSolarValue = 1;
 
   }
 
@@ -14207,8 +14214,8 @@ void SOLARCHVISION_add_ParametricSurface (int m, float cx, float cy, float cz, f
 
   float teta = rot * PI / 180.0;
   
-  float stp_u = 0.05;
-  float stp_v = 0.05;
+  float stp_u = 0.1; //0.05;
+  float stp_v = 0.1; //0.05;
   
   for (float a = -1; a < 1; a += stp_u) {
     for (float b = -1; b < 1; b += stp_v) {
@@ -14815,7 +14822,7 @@ void SOLARCHVISION_calculate_windFlow () {
     }
   }  
   
-  cursor(HAND);    
+  cursor(ARROW);    
 
 }
 
@@ -15164,86 +15171,89 @@ void SOLARCHVISION_draw_3Dobjects () {
     }
     else if (WIN3D_FACES_SHADE == 4) {
       if (WIN3D_update_VerticesSolarValue == 0) {
-        
-        int PAL_TYPE = 0; 
-        int PAL_DIR = 1;
-  
-        if (Impact_TYPE == Impact_ACTIVE) {
-          PAL_TYPE = OBJECTS_Pallet_ACTIVE; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
-          //PAL_TYPE = 15; PAL_DIR = 1;
-        }
-        if (Impact_TYPE == Impact_PASSIVE) {  
-          PAL_TYPE = OBJECTS_Pallet_PASSIVE; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
-          //PAL_TYPE = -1; PAL_DIR = 1;
-        }             
-        
-        float _Multiplier = 1; 
-        if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1 * OBJECTS_Pallet_ACTIVE_MLT; 
-        if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02 * OBJECTS_Pallet_PASSIVE_MLT;     
-  
-        int N_baked = 0;
-        
-        for (int f = 1; f < allFaces.length; f++) {
-          
-          if (((Load_URBAN == 0) || (Display_URBAN == 0)) && (urbanFaces_start <= f) && (urbanFaces_end >= f)) {
-          }
-          else{
-  
-            int Teselation = 0;
-            
-            int TotalSubNo = 1;  
-            if (allFaces_MAT[f] == 0) {
-              Teselation = MODEL3D_TESELATION;
-              if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
-            }
-            
-            for (int n = 0; n < TotalSubNo; n++) {
-              
-              float[][] base_Vertices = new float [allFaces[f].length][3];
-              for (int j = 0; j < allFaces[f].length; j++) {
-                int vNo = allFaces[f][j];
-                base_Vertices[j][0] = allVertices[vNo][0];
-                base_Vertices[j][1] = allVertices[vNo][1];
-                base_Vertices[j][2] = allVertices[vNo][2];
-              }            
-              
-              float[][] subFace = getSubFace(base_Vertices, Teselation, n);
-           
-              WIN3D_Diagrams.beginShape();
-              
-              for (int s = 0; s < subFace.length; s++) {
+        try {
+          int PAL_TYPE = 0; 
+          int PAL_DIR = 1;
     
-                N_baked += 1;
-                
-                float _valuesSUM = 0;
-                if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = WIN3D_VerticesSolarEnergy[N_baked];
-                if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = WIN3D_VerticesSolarEffect[N_baked];
-                
-                if (_valuesSUM < 0.9 * FLOAT_undefined) {
-                  
-                  float _u = 0;
-                
-                  if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
-                  if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
-                  
-                  if (PAL_DIR == -1) _u = 1 - _u;
-                  if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                  if (PAL_DIR == 2) _u =  0.5 * _u;
-        
-                  float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
-                  
-                  WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);          
+          if (Impact_TYPE == Impact_ACTIVE) {
+            PAL_TYPE = OBJECTS_Pallet_ACTIVE; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
+            //PAL_TYPE = 15; PAL_DIR = 1;
+          }
+          if (Impact_TYPE == Impact_PASSIVE) {  
+            PAL_TYPE = OBJECTS_Pallet_PASSIVE; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+            //PAL_TYPE = -1; PAL_DIR = 1;
+          }             
           
-                  WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -(subFace[s][1] * objects_scale * WIN3D_scale3D), subFace[s][2] * objects_scale * WIN3D_scale3D);
-                }
+          float _Multiplier = 1; 
+          if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1 * OBJECTS_Pallet_ACTIVE_MLT; 
+          if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02 * OBJECTS_Pallet_PASSIVE_MLT;     
+    
+          int N_baked = 0;
+          
+          for (int f = 1; f < allFaces.length; f++) {
+            
+            if (((Load_URBAN == 0) || (Display_URBAN == 0)) && (urbanFaces_start <= f) && (urbanFaces_end >= f)) {
+            }
+            else{
+    
+              int Teselation = 0;
+              
+              int TotalSubNo = 1;  
+              if (allFaces_MAT[f] == 0) {
+                Teselation = MODEL3D_TESELATION;
+                if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
               }
               
-              WIN3D_Diagrams.endShape(CLOSE);
+              for (int n = 0; n < TotalSubNo; n++) {
+                
+                float[][] base_Vertices = new float [allFaces[f].length][3];
+                for (int j = 0; j < allFaces[f].length; j++) {
+                  int vNo = allFaces[f][j];
+                  base_Vertices[j][0] = allVertices[vNo][0];
+                  base_Vertices[j][1] = allVertices[vNo][1];
+                  base_Vertices[j][2] = allVertices[vNo][2];
+                }            
+                
+                float[][] subFace = getSubFace(base_Vertices, Teselation, n);
+             
+                WIN3D_Diagrams.beginShape();
+                
+                for (int s = 0; s < subFace.length; s++) {
+      
+                  N_baked += 1;
+                  
+                  float _valuesSUM = 0;
+                  if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = WIN3D_VerticesSolarEnergy[N_baked];
+                  if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = WIN3D_VerticesSolarEffect[N_baked];
+                  
+                  if (_valuesSUM < 0.9 * FLOAT_undefined) {
+                    
+                    float _u = 0;
+                  
+                    if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
+                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
+                    
+                    if (PAL_DIR == -1) _u = 1 - _u;
+                    if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                    if (PAL_DIR == 2) _u =  0.5 * _u;
+          
+                    float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+                    
+                    WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);          
+            
+                    WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -(subFace[s][1] * objects_scale * WIN3D_scale3D), subFace[s][2] * objects_scale * WIN3D_scale3D);
+                  }
+                }
+                
+                WIN3D_Diagrams.endShape(CLOSE);
+              }
             }
           }
-        }
+        } catch (Exception e) {WIN3D_update_VerticesSolarValue = 1; WIN3D_Update = 1;}
       }
       else {
+        cursor(WAIT);
+        
         WIN3D_VerticesSolarEnergy = new float [1];
         WIN3D_VerticesSolarEffect = new float [1];
         WIN3D_VerticesSolarEnergy[0] = FLOAT_undefined; 
@@ -15297,6 +15307,8 @@ void SOLARCHVISION_draw_3Dobjects () {
     
         for (int f = 1; f < allFaces.length; f++) {
   
+          println("calculating %", nf(100.0 * f / (1.0 * allFaces.length), 0,2)); 
+          
           if (((Load_URBAN == 0) || (Display_URBAN == 0)) && (urbanFaces_start <= f) && (urbanFaces_end >= f)) {
           }
           else{    
@@ -15587,6 +15599,8 @@ void SOLARCHVISION_draw_3Dobjects () {
           }
         }
         WIN3D_update_VerticesSolarValue = 0;
+        
+        cursor(ARROW);
       }
     }
   }
@@ -23507,7 +23521,7 @@ void RenderShadowsOnUrbanPlane() {
   Solarch_Image_Section = pre_Solarch_Image_Section;
   Solarch_Rotation = pre_Solarch_Rotation;  
   
-  cursor(HAND);
+  cursor(ARROW);
  
 }
 
