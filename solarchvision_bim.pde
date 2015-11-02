@@ -25040,10 +25040,10 @@ void mouseMoved () {
 
     if (BAR_a_selected_parent != -1) {
       
-      if ((X_clicked != mouseX) || (Y_clicked != mouseY)) {
+      if ((X_moved != mouseX) || (Y_moved != mouseY)) {
       
-        X_clicked = mouseX;
-        Y_clicked = mouseY;      
+        X_moved = mouseX;
+        Y_moved = mouseY;      
         
         BAR_a_Update = 1;     
        
@@ -25084,12 +25084,15 @@ String[][] BAR_a_Items = {
 
 
 
-
+int X_moved = -1;
+int Y_moved = -1;
 
 
 void SOLARCHVISION_draw_window_BAR_a () {
   
   if (BAR_a_Update == 1) {
+    
+    println("Update BAR!");
     
     BAR_a_Update = 0;
     
@@ -25109,19 +25112,19 @@ void SOLARCHVISION_draw_window_BAR_a () {
   
       if (i > 0) cx += 1.5 * BAR_a_width_parent; // to include SOLARCHVISION title     
   
-      if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + BAR_a_width_parent, cy + cr) == 1) {
+      if (isInside(mouseX, mouseY, cx, cy - cr, cx + BAR_a_width_parent, cy + cr) == 1) {
   
         if (BAR_a_selected_parent == -1) {
           pre_screen = get(0, a_pixel, width, height - a_pixel);
           
-          //println("Screen GET!");
+          println("Screen GET!");
         }     
         
         BAR_a_selected_parent = i;
         
         BAR_a_selected_child = 0;
         
-        BAR_a_Update = 1;
+        //BAR_a_Update = 1;
       }     
       
   
@@ -25141,18 +25144,21 @@ void SOLARCHVISION_draw_window_BAR_a () {
               
       text(BAR_a_Items[i][0], cx + 0.5 * MESSAGE_S_View, cy - 0.2 * MESSAGE_S_View);
   
-  
+ 
   
       if (BAR_a_selected_parent == i) {
         
         image(pre_screen, 0, a_pixel);
+
+        BAR_a_selected_child = 0; 
         
         for (int j = 1; j < BAR_a_Items[BAR_a_selected_parent].length; j++) {
           
-          if (isInside(X_clicked, Y_clicked, cx, cy - cr + j * a_pixel, cx + BAR_a_width_child, cy + cr + j * a_pixel) == 1) {
+          if (isInside(X_moved,Y_moved, cx, cy - cr + j * a_pixel, cx + BAR_a_width_child, cy + cr + j * a_pixel) == 1) {
+
             BAR_a_selected_child = j;
             
-            BAR_a_Update = 1;
+            //BAR_a_Update = 1;
             
             //X_clicked = -1;
             //Y_clicked = -1;
@@ -25162,6 +25168,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
             rect(cx, cy - cr + j * a_pixel, BAR_a_width_child, a_pixel);          
           }  
           else {
+            
             fill(127, 127);
             noStroke();
             rect(cx, cy - cr + j * a_pixel, BAR_a_width_child, a_pixel);          
@@ -25872,8 +25879,6 @@ void set_to_View_3DViewPoint (int n) {
   WIN3D_Update = 1;   
   ROLLOUT_Update = 1;   
 } 
-
-
 
 
 void set_to_View_PivotX (int n) {
