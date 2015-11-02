@@ -19605,9 +19605,39 @@ void mouseClicked () {
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Quit")) { 
             exit();
           }      
-          
 
-
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Surface White")) {
+            WIN3D_FACES_SHADE = 0;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          } 
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Surface Materials")) {
+            WIN3D_FACES_SHADE = 1;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          } 
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Vertex Spatial")) {
+            WIN3D_FACES_SHADE = 2;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          } 
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Global Solar")) {
+            WIN3D_FACES_SHADE = 3;
+            
+            SolarProjection(); // <<<<<<<<<<
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          } 
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Vertex Solar")) {
+            WIN3D_FACES_SHADE = 4;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          }           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Vertices")) {
             WIN3D_VERTS_SHOW = (WIN3D_VERTS_SHOW  + 1) % 2;
             
@@ -25077,13 +25107,14 @@ String[][] BAR_a_Items = {
                         {"Select", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
                         {"Edit", "Seed", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum"},
                         {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Orbit", "OrbitXY", "OrbitZ", "Pan", "Look at origin", "TruckX", "TruckY", "TruckZ", "Walk", "3DModelSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
-                        {"Display", "Display/Hide Vertices", "Display/Hide Edges", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Land", "Display/Hide Sky", "Display/Hide Sun", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow"},
+                        {"Hide", "Display/Hide Vertices", "Display/Hide Edges", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Land", "Display/Hide Sky", "Display/Hide Sun", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow"},
+                        {"Shade", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial"},
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
                         {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
 
                       };
 
-
+ 
 
 
 
