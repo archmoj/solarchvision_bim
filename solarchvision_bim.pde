@@ -25034,6 +25034,11 @@ void dessin_zzzzzzzzzzzzzz (int _type, float x, float y, float r) {
 
 
 
+
+int X_moved = -1;
+int Y_moved = -1;
+
+
 void mouseMoved () {
   
   if (automated == 0) {
@@ -25083,16 +25088,11 @@ String[][] BAR_a_Items = {
 
 
 
-
-int X_moved = -1;
-int Y_moved = -1;
-
-
 void SOLARCHVISION_draw_window_BAR_a () {
   
   if (BAR_a_Update == 1) {
     
-    println("Update BAR!");
+    //println("Update BAR!");
     
     BAR_a_Update = 0;
     
@@ -25117,14 +25117,13 @@ void SOLARCHVISION_draw_window_BAR_a () {
         if (BAR_a_selected_parent == -1) {
           pre_screen = get(0, a_pixel, width, height - a_pixel);
           
-          println("Screen GET!");
+          //println("Screen GET!");
         }     
         
         BAR_a_selected_parent = i;
         
         BAR_a_selected_child = 0;
-        
-        //BAR_a_Update = 1;
+
       }     
       
   
@@ -25157,11 +25156,6 @@ void SOLARCHVISION_draw_window_BAR_a () {
           if (isInside(X_moved,Y_moved, cx, cy - cr + j * a_pixel, cx + BAR_a_width_child, cy + cr + j * a_pixel) == 1) {
 
             BAR_a_selected_child = j;
-            
-            //BAR_a_Update = 1;
-            
-            //X_clicked = -1;
-            //Y_clicked = -1;
             
             fill(255,127,0);
             noStroke();
