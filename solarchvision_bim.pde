@@ -19620,8 +19620,20 @@ void mouseClicked () {
             exit();
           }      
 
+    
+          if (BAR_a_Items[BAR_a_selected_parent][0].equals("Site")) {
+            if (BAR_a_selected_child > 0) {
+              if (STATION_NUMBER != BAR_a_selected_child - 1) {
+                
+                STATION_NUMBER = BAR_a_selected_child - 1;
+                
+                SOLARCHVISION_update_station(0);
+              }
+            } 
+          }
 
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Typical Meteorological Year (TMY)")) {
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Typical Year (TMY)")) {
             impacts_source = 3;
             
             if (Load_CLIMATE_EPW == 0) {
@@ -19634,7 +19646,7 @@ void mouseClicked () {
             GRAPHS_Update = 1;
             ROLLOUT_Update = 1;
           } 
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Long-term Historical Data (CWEED)")) {
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Long-term (CWEEDS)")) {
             impacts_source = 0;
             
             if (Load_CLIMATE_WY2 == 0) {
@@ -19647,7 +19659,7 @@ void mouseClicked () {
             GRAPHS_Update = 1;
             ROLLOUT_Update = 1;
           }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Ensemble Weather Forecast (NAEFS)")) {
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Weather Forecast (NAEFS)")) {
             impacts_source = 1;
             
             if (Load_ENSEMBLE == 0) {
@@ -19660,7 +19672,7 @@ void mouseClicked () {
             GRAPHS_Update = 1;
             ROLLOUT_Update = 1;
           } 
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Real-time Observed Weather Data (SWOB)")) {
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Real-time Observed (SWOB)")) {
             impacts_source = 2;
             
             if (Load_OBSERVED == 0) {
@@ -20224,6 +20236,11 @@ void mouseClicked () {
                 DEFINED_STATIONS[STATION_NUMBER][5] = nf(roundTo(float(STATION_NAEFS_INFO[f][2]), 15), 0, 0);              
   
                 Selected_STATION = STATION_NUMBER;
+                
+ 
+                BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][1]; // <<<<<<<<
+             
+                
                 ROLLOUT_parent = 0;
                 ROLLOUT_child = 1;
                 ROLLOUT_Update = 1;
@@ -25171,8 +25188,9 @@ int BAR_a_selected_child = 0;
 
 String[][] BAR_a_Items = {
                         {"SOLARCHVISION-2015", "Designed & Developed", "by Mojtaba Samimi", "www.solarchvision.com"},  
-                        {"File", "New", "Open...", "Save", "Save As...", "Import...", "Export...", "Preferences", "Quit"},
-                        {"Data", "Typical Meteorological Year (TMY)", "Long-term Historical Data (CWEED)", "Ensemble Weather Forecast (NAEFS)", "Real-time Observed Weather Data (SWOB)"},
+                        {"Project", "New", "Open...", "Save", "Save As...", "Import...", "Export...", "Preferences", "Quit"},
+                        {"Site"}, // Locations
+                        {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
                         {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Orbit", "OrbitXY", "OrbitZ", "Pan", "Look at origin", "TruckX", "TruckY", "TruckZ", "Walk", "3DModelSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
                         {"Display", "Display/Hide Vertices", "Display/Hide Edges", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Land", "Display/Hide Sky", "Display/Hide Sun", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow"},
                         {"Shade", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial"},
@@ -25183,7 +25201,20 @@ String[][] BAR_a_Items = {
 
                       };
 
- 
+
+int N_Site_in_Bar_a = 2; 
+{
+  
+  BAR_a_Items[N_Site_in_Bar_a] = new String [1 + DEFINED_STATIONS.length];
+  
+  BAR_a_Items[N_Site_in_Bar_a][0] = "Site";
+  
+  for (int i = 0; i < DEFINED_STATIONS.length; i++) {
+  
+    BAR_a_Items[N_Site_in_Bar_a][i + 1] = DEFINED_STATIONS[i][1];
+    
+  }
+} 
 
 
 
