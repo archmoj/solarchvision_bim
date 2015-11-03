@@ -19620,6 +19620,60 @@ void mouseClicked () {
             exit();
           }      
 
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Typical Meteorological Year (TMY)")) {
+            impacts_source = 3;
+            
+            if (Load_CLIMATE_EPW == 0) {
+              Load_CLIMATE_EPW = 1;
+              SOLARCHVISION_try_update_CLIMATE_EPW();
+            }
+           
+            WORLD_Update = 1;
+            WIN3D_Update = 1;  
+            GRAPHS_Update = 1;
+            ROLLOUT_Update = 1;
+          } 
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Long-term Historical Data (CWEED)")) {
+            impacts_source = 0;
+            
+            if (Load_CLIMATE_WY2 == 0) {
+              Load_CLIMATE_WY2 = 1;
+              SOLARCHVISION_try_update_CLIMATE_WY2();
+            }
+           
+            WORLD_Update = 1;
+            WIN3D_Update = 1;  
+            GRAPHS_Update = 1;
+            ROLLOUT_Update = 1;
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Ensemble Weather Forecast (NAEFS)")) {
+            impacts_source = 1;
+            
+            if (Load_ENSEMBLE == 0) {
+              Load_ENSEMBLE = 1;
+              SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
+            }
+           
+            WORLD_Update = 1;
+            WIN3D_Update = 1;  
+            GRAPHS_Update = 1;
+            ROLLOUT_Update = 1;
+          } 
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Real-time Observed Weather Data (SWOB)")) {
+            impacts_source = 2;
+            
+            if (Load_OBSERVED == 0) {
+              Load_OBSERVED = 1;
+              SOLARCHVISION_try_update_OBSERVED();
+            }
+            
+            WORLD_Update = 1;
+            WIN3D_Update = 1;  
+            GRAPHS_Update = 1;
+            ROLLOUT_Update = 1;
+          }           
+          
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Surface White")) {
             WIN3D_FACES_SHADE = 0;
             
@@ -25117,7 +25171,8 @@ int BAR_a_selected_child = 0;
 
 String[][] BAR_a_Items = {
                         {"SOLARCHVISION-2015", "Designed & Developed", "by Mojtaba Samimi", "www.solarchvision.com"},  
-                        {"File", "New", "Open...", "Save", "Save As...", "Import...", "Export...", "Preferences", "Quit"}, 
+                        {"File", "New", "Open...", "Save", "Save As...", "Import...", "Export...", "Preferences", "Quit"},
+                        {"Data", "Typical Meteorological Year (TMY)", "Long-term Historical Data (CWEED)", "Ensemble Weather Forecast (NAEFS)", "Real-time Observed Weather Data (SWOB)"},
                         {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Orbit", "OrbitXY", "OrbitZ", "Pan", "Look at origin", "TruckX", "TruckY", "TruckZ", "Walk", "3DModelSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
                         {"Display", "Display/Hide Vertices", "Display/Hide Edges", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Land", "Display/Hide Sky", "Display/Hide Sun", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow"},
                         {"Shade", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial"},
