@@ -96,6 +96,8 @@ int selectedPolymesh_displayPivot = 1;
 int selectedPolymesh_displayEdges = 1;
 int selectedPolymesh_displayBox = 1;
 
+int selectedObject2D_displayEdges = 1;
+int selectedFractal_displayEdges = 1;
 
 int addNewSelectionToPreviousSelection = 0;
 
@@ -119,8 +121,7 @@ float[][] allObject2D_XYZS = {{0,0,0,0}};
 int[] allObject2D_MAP = {0};
 int allObject2D_num = 0; 
 
-int selectedObject2D_displayEdges = 1;
-int selectedFractal_displayEdges = 1;
+
 
 float[][] allFractal_XYZS = {{0,0,0,0,0,0}};
 int[] allFractal_Type = {0};
@@ -1519,11 +1520,11 @@ void SOLARCHVISION_update_station (int Step) {
 
   if ((Step == 0) || (Step == 6)) SOLARCHVISION_LoadLAND(LocationName);
   
-  if ((Step == 0) || (Step == 7)) SOLARCHVISION_remove_FractalPlants();
+  //if ((Step == 0) || (Step == 7)) SOLARCHVISION_remove_FractalPlants();
   
-  if ((Step == 0) || (Step == 8)) SOLARCHVISION_remove_2Dobjects();
+  //if ((Step == 0) || (Step == 8)) SOLARCHVISION_remove_2Dobjects();
   
-  if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_2Dobjects_onLand();
+  //if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_2Dobjects_onLand();
 
 }
 
@@ -18520,6 +18521,8 @@ void SOLARCHVISION_build_SolarProjection_array () {
 
 void SolarProjection () {
   
+  cursor(WAIT);
+  
   float pre_per_day = per_day;
   int pre_num_add_days = num_add_days;
   if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
@@ -18792,6 +18795,8 @@ void SolarProjection () {
 
   pre_per_day = per_day;
   num_add_days = pre_num_add_days;
+  
+  cursor(ARROW);
 }
 
 
@@ -19787,7 +19792,73 @@ void mouseClicked () {
             WIN3D_Update = 1;  
             ROLLOUT_Update = 1;
           }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 3-D Pivot")) {
+            selectedPolymesh_displayPivot = (selectedPolymesh_displayPivot  + 1) % 2;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          }          
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 3-D Edges")) {
+            selectedPolymesh_displayEdges = (selectedPolymesh_displayEdges  + 1) % 2;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          }    
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 3-D Bounding Box")) {
+            selectedPolymesh_displayBox = (selectedPolymesh_displayBox  + 1) % 2;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          }    
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 2½D Edges")) {
+            selectedObject2D_displayEdges = (selectedObject2D_displayEdges  + 1) % 2;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          }    
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected ∞-D Edges")) {
+            selectedFractal_displayEdges = (selectedFractal_displayEdges  + 1) % 2;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          }              
 
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide SWOB points")) {
+            Display_SWOB_points = (Display_SWOB_points  + 1) % 2;
+            
+            WORLD_Update = 1;  
+            ROLLOUT_Update = 1;
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide SWOB nearest")) {
+            Display_SWOB_nearest = (Display_SWOB_nearest  + 1) % 2;
+            
+            WORLD_Update = 1;  
+            ROLLOUT_Update = 1;
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide NAEFS points")) {
+            Display_NAEFS_points = (Display_NAEFS_points  + 1) % 2;
+            
+            WORLD_Update = 1;  
+            ROLLOUT_Update = 1;
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide NAEFS nearest")) {
+            Display_NAEFS_nearest = (Display_NAEFS_nearest  + 1) % 2;
+            
+            WORLD_Update = 1;  
+            ROLLOUT_Update = 1;
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide CWEEDS points")) {
+            Display_CWEEDS_points = (Display_CWEEDS_points  + 1) % 2;
+            
+            WORLD_Update = 1;  
+            ROLLOUT_Update = 1;
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide CWEEDS nearest")) {
+            Display_CWEEDS_nearest = (Display_CWEEDS_nearest  + 1) % 2;
+            
+            WORLD_Update = 1;  
+            ROLLOUT_Update = 1;
+          }
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Fractal")) {
             set_to_Create_Fractal();
@@ -25181,7 +25252,7 @@ PImage pre_screen;
 int BAR_a_Update = 1;
 
 float BAR_a_width_parent = 4 * a_pixel;
-float BAR_a_width_child = 3 * BAR_a_width_parent;
+float BAR_a_width_child = 3.5 * BAR_a_width_parent;
 
 int BAR_a_selected_parent = -1;
 int BAR_a_selected_child = 0;
@@ -25192,7 +25263,7 @@ String[][] BAR_a_Items = {
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
                         {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Orbit", "OrbitXY", "OrbitZ", "Pan", "Look at origin", "TruckX", "TruckY", "TruckZ", "Walk", "3DModelSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
-                        {"Display", "Display/Hide Vertices", "Display/Hide Edges", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Land", "Display/Hide Sky", "Display/Hide Sun", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow"},
+                        {"Display", "Display/Hide Vertices", "Display/Hide Edges", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Land", "Display/Hide Sky", "Display/Hide Sun", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Bounding Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest"},
                         {"Shade", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial"},
                         {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
@@ -25200,6 +25271,7 @@ String[][] BAR_a_Items = {
                         {"Modify", "Seed", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum"},
 
                       };
+
 
 
 int N_Site_in_Bar_a = 2; 
