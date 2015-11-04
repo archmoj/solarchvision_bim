@@ -13,58 +13,43 @@ String[][] DEFINED_STATIONS = {
   
 
   
-                                //{"HOLLYWOOD_CA_US", "Hollywood", "CA", "34.116672", "-118.326568", "-120", "0", "240.0"},
+                                {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36", "240.0", "EPW-filename"},
   
-                                {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36", "240.0"},
+                                {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36", "240.0", "EPW-filename"},
   
-                                {"MONTREAL_DORVAL_QC_CA", "Montreal_Dorval", "QC", "45.470556", "-73.740833", "-75", "36", "240.0"},
+                                //{"TORONTO_ISLAND_ON_CA", "Toronto", "ON", "43.6593", "-79.3779", "-75", "95", "461.88", "EPW-filename"},
   
-                                //{"TORONTO_ISLAND_ON_CA", "Toronto", "ON", "43.6593", "-79.3779", "-75", "95", "461.88"},
-  
-                                {"TORONTO_ISLAND_ON_CA", "Ryerson_University", "ON", "43.6593", "-79.3779", "-75", "95", "461.88"}, 
+                                {"TORONTO_ISLAND_ON_CA", "Ryerson_University", "ON", "43.6593", "-79.3779", "-75", "95", "461.88", "EPW-filename"}, 
 
-                                {"TORONTO_ISLAND_ON_CA", "Financial_District", "ON", "43.6488", "-79.3817", "-75", "86", "692.82"},
+                                {"TORONTO_ISLAND_ON_CA", "Financial_District", "ON", "43.6488", "-79.3817", "-75", "86", "692.82", "EPW-filename"},
   
-                                {"MONTREAL_DORVAL_QC_CA", "Place_Bonaventure", "QC", "45.4995", "-73.5650", "-75", "30", "692.82"},
+                                {"MONTREAL_DORVAL_QC_CA", "Place_Bonaventure", "QC", "45.4995", "-73.5650", "-75", "30", "692.82", "EPW-filename"},
 
 
                                 
-                                {"CALGARY_INTL_AB_CA", "CALGARY", "AB", "51.113889", "-114.02", "-120", "1084.1", "240.0"}, 
-                                {"EDMONTON_INTL_A_AB_CA", "EDMONTON", "AB", "53.31", "-113.579444", "-120", "723.3", "240.0"}, 
-                                {"HALIFAX_INTL_AIRPORT_NS_CA", "HALIFAX", "NS", "44.881111", "-63.508611", "-60", "145.4", "240.0"}, 
-                                {"OTTAWA_INTL_ON_CA", "OTTAWA", "ON", "45.383333", "-75.716667", "-75", "79.2", "240.0"}, 
-                                {"QUEBEC_QC_CA", "QUEBEC", "QC", "46.803611", "-71.381667", "-75", "60", "240.0"}, 
-                                {"SUDBURY_ON_CA", "SUDBURY", "ON", "46.625556", "-80.797778", "-75", "348.4", "240.0"}, 
-                                {"TORONTO_ISLAND_ON_CA", "TORONTO-ISLAND", "ON", "43.6275", "-79.396111", "-75", "76.8", "240.0"}, 
-                                {"TORONTO_PEARSON_INTL_ON_CA", "TORONTO-PEARSON", "ON", "43.676667", "-79.630556", "-75", "173.4", "240.0"}, 
-                                {"VANCOUVER_INTL_BC_CA", "VANCOUVER_Harbour", "BC", "49.295353", "-123.121869", "-120", "2.5", "240.0"}, 
-                                {"WINNIPEG_INTL_MB_CA", "WINNIPEG", "MB", "49.91", "-97.24", "-90", "238.7", "240.0"},
-
-
-                              
-                                {"BOSTON_MA_US", "BOSTON", "MA", "42.35843", "-71.05978", "-75", "15.0", "240.0"}, 
-                                {"CHICAGO_IL_US", "CHICAGO", "IL", "41.878113", "-87.6298", "-90", "181.0", "240.0"}, 
-                                {"DENVER_CO_US", "DENVER", "CO", "39.737568", "-104.98472", "-105", "1608.0", "240.0"}, 
-                                {"HOUSTON_TX_US", "HOUSTON", "TX", "29.760193", "-95.36939", "-90", "15.0", "240.0"}, 
-                                {"LAS_VEGAS_NV_US", "LAS_VEGAS", "NV", "36.16994", "-115.13983", "-120", "611.0", "240.0"}, 
-                                {"LOS_ANGELES_CA_US", "LOS_ANGELES", "CA", "34.052235", "-118.24368", "-120", "87.0", "240.0"}, 
-                                {"MIAMI_FL_US", "MIAMI", "FL", "25.789097", "-80.20404", "-75", "3.0", "240.0"}, 
-                                {"NEW_YORK_CITY_NY_US", "NEW_YORK_CITY", "NY", "40.712784", "-74.00594", "-75", "10.0", "240.0"}, 
-                                {"WASHINGTON_DC_US", "WASHINGTON", "DC", "38.907192", "-77.03687", "-75", "22.0", "240.0"}, 
+                                {"BOSTON_MA_US", "BOSTON", "MA", "42.35843", "-71.05978", "-75", "15.0", "240.0", "EPW-filename"}, 
+                                {"CHICAGO_IL_US", "CHICAGO", "IL", "41.878113", "-87.6298", "-90", "181.0", "240.0", "EPW-filename"}, 
+                                {"DENVER_CO_US", "DENVER", "CO", "39.737568", "-104.98472", "-105", "1608.0", "240.0", "EPW-filename"}, 
+                                {"HOUSTON_TX_US", "HOUSTON", "TX", "29.760193", "-95.36939", "-90", "15.0", "240.0", "EPW-filename"}, 
+                                {"LAS_VEGAS_NV_US", "LAS_VEGAS", "NV", "36.16994", "-115.13983", "-120", "611.0", "240.0", "EPW-filename"}, 
+                                {"LOS_ANGELES_CA_US", "LOS_ANGELES", "CA", "34.052235", "-118.24368", "-120", "87.0", "240.0", "EPW-filename"}, 
+                                {"MIAMI_FL_US", "MIAMI", "FL", "25.789097", "-80.20404", "-75", "3.0", "240.0", "EPW-filename"}, 
+                                {"NEW_YORK_CITY_NY_US", "NEW_YORK_CITY", "NY", "40.712784", "-74.00594", "-75", "10.0", "240.0", "EPW-filename"}, 
+                                {"WASHINGTON_DC_US", "WASHINGTON", "DC", "38.907192", "-77.03687", "-75", "22.0", "240.0", "EPW-filename"}, 
                                 
-                                {"BRASILIA_XX_BR", "BRASILIA", "XX", "-29.176456", "-51.22032", "-45", "774.0", "240.0"}, 
-                                {"RIO_DE_JANEIRO_XX_BR", "RIO_DE_JANEIRO", "XX", "-22.893467", "-43.21391", "-45", "6.0", "240.0"}, 
-                                {"SAO_PAULO_XX_BR", "SAO_PAULO", "XX", "-14.317596", "-44.45876", "-45", "497.0", "240.0"}, 
+                                {"BRASILIA_XX_BR", "BRASILIA", "XX", "-29.176456", "-51.22032", "-45", "774.0", "240.0", "EPW-filename"}, 
+                                {"RIO_DE_JANEIRO_XX_BR", "RIO_DE_JANEIRO", "XX", "-22.893467", "-43.21391", "-45", "6.0", "240.0", "EPW-filename"}, 
+                                {"SAO_PAULO_XX_BR", "SAO_PAULO", "XX", "-14.317596", "-44.45876", "-45", "497.0", "240.0", "EPW-filename"}, 
                                 
-                                {"CIUDAD_DE_MEXICO_DF_MX", "MEXICO_CITY", "DF", "19.432608", "-99.13321", "-105", "2230.0", "240.0"}, 
-                                {"HAVANA_XX_CU", "HAVANA", "XX", "23.05407", "-82.34519", "-75", "93.0", "240.0"}, 
-                                {"SANTO_DOMINGO_XX_DO", "SANTO_DOMINGO", "XX", "18.482439", "-69.96518", "-75", "62.0", "240.0"}, 
-                                {"SAN_SALVADOR_XX_SV", "SAN_SALVADOR", "XX", "13.679502", "-89.21397", "-90", "796.0", "240.0"}, 
-                                {"CARACAS_XX_VE", "CARACAS", "XX", "10.960712", "-63.920437", "-60", "32.0", "240.0"}, 
-                                {"BOGOTA_XX_CO", "BOGOTA", "XX", "7.894716", "-72.504616", "-75", "302.0", "240.0"}, 
-                                {"GUAYAQUIL_XX_EC", "GUAYAQUIL", "XX", "-2.1241937", "-79.59123", "-75", "11.0", "240.0"}, 
-                                {"LIMA_XX_PE", "LIMA", "XX", "-12.032012", "-76.92987", "-75", "336.0", "240.0"}, 
-                                {"ANTOFAGASTA_XX_CL", "ANTOFAGASTA", "XX", "-23.65", "-70.4", "-75", "13.0", "240.0"}
+                                {"CIUDAD_DE_MEXICO_DF_MX", "MEXICO_CITY", "DF", "19.432608", "-99.13321", "-105", "2230.0", "240.0", "EPW-filename"}, 
+                                {"HAVANA_XX_CU", "HAVANA", "XX", "23.05407", "-82.34519", "-75", "93.0", "240.0", "EPW-filename"}, 
+                                {"SANTO_DOMINGO_XX_DO", "SANTO_DOMINGO", "XX", "18.482439", "-69.96518", "-75", "62.0", "240.0", "EPW-filename"}, 
+                                {"SAN_SALVADOR_XX_SV", "SAN_SALVADOR", "XX", "13.679502", "-89.21397", "-90", "796.0", "240.0", "EPW-filename"}, 
+                                {"CARACAS_XX_VE", "CARACAS", "XX", "10.960712", "-63.920437", "-60", "32.0", "240.0", "EPW-filename"}, 
+                                {"BOGOTA_XX_CO", "BOGOTA", "XX", "7.894716", "-72.504616", "-75", "302.0", "240.0", "EPW-filename"}, 
+                                {"GUAYAQUIL_XX_EC", "GUAYAQUIL", "XX", "-2.1241937", "-79.59123", "-75", "11.0", "240.0", "EPW-filename"}, 
+                                {"LIMA_XX_PE", "LIMA", "XX", "-12.032012", "-76.92987", "-75", "336.0", "240.0", "EPW-filename"}, 
+                                {"ANTOFAGASTA_XX_CL", "ANTOFAGASTA", "XX", "-23.65", "-70.4", "-75", "13.0", "240.0", "EPW-filename"}
                               
                            
                               };
@@ -5950,7 +5935,8 @@ void SOLARCHVISION_try_update_CLIMATE_EPW () {
 
   if (Load_CLIMATE_EPW == 1) {
 
-    String FN = THE_STATION + ".epw";
+    //String FN = THE_STATION + ".epw";
+    String FN = DEFINED_STATIONS[STATION_NUMBER][8] + ".epw";
   
     int File_Found = -1;
   
@@ -10993,19 +10979,89 @@ void Diagrams_fill (float a, float b, float c, float d) {
   } 
 }
 
-void Diagramsoat ax, float ay, float"bx, float by, float cx, float cy, float dx, float dy) {
-  if (off_screen == 19 {
-    Diagrams.quAd(ax, ay, bx, by, cx, cy, dx, dy);
+void Diagrams_noFill () {
+  if (off_screen == 1) {
+    Diagrams.noFill();
   }
   else {
-    quid(ax, ay, bx,(by, cx, cy, dx, dy);
+    noFill();
+  } 
+}
+
+
+void Diagrams_textAlign (int a, int b) {
+  if (off_screen == 1) {
+    Diagrams.textAlign(a, b);
+  }
+  else {
+    textAlign(a, b);
+  } 
+}
+
+
+void Diagrams_textSize (float a) {
+  if (off_screen == 1) {
+    Diagrams.textSize(a * 1.25);
+  }
+  else {
+    textSize(a * 1.25);
+  } 
+}
+
+
+void Diagrams_text (String s, float a, float b) {
+  if (off_screen == 1) {
+    Diagrams.text(s, a, b);
+  }
+  else {
+    text(s, a, b);
+  } 
+}
+
+
+void Diagrams_ellipse (float a, float b, float c, float d) {
+  if (off_screen == 1) {
+    Diagrams.ellipse(a, b, c, d);
+  }
+  else {
+    ellipse(a, b, c, d);
+  } 
+}
+
+
+void Diagrams_line (float a, float b, float c, float d) {
+  if (off_screen == 1) {
+    Diagrams.line(a, b, c, d);
+  }
+  else {
+    line(a, b, c, d);
+  } 
+}
+
+
+void Diagrams_rect (float a, float b, float c, float d) {
+  if (off_screen == 1) {
+    Diagrams.rect(a, b, c, d);
+  }
+  else {
+    rect(a, b, c, d);
+  } 
+}
+
+
+void Diagrams_quad (float ax, float ay, float bx, float by, float cx, float cy, float dx, float dy) {
+  if (off_screen == 1) {
+    Diagrams.quad(ax, ay, bx, by, cx, cy, dx, dy);
+  }
+  else {
+    quad(ax, ay, bx, by, cx, cy, dx, dy);
   } 
 }
 
 
 
 
-float[] SOLARCHVISION_DRYW (float _váriable) {
+float[] SOLARCHVISION_DRYW (float _variable) {
   _variable = 1 - _variable;
   _variable *= -3;
 
@@ -11094,17 +11150,17 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
 
     float _Multiplier = 1; 
     if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * SUN3D_Pallet_ACTIVE_MLT;
-    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * SUN3D_Pallet_PASSIVE_MMT;
-    
+    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * SUN3D_Pallet_PASSIVE_MLT;
     
-    float previous_DA\E = _DATE;
     
-    float min_sunrise = int(min(SOLARCHVISION_Sunbise(LocationLatitude, 90i, SOLARCHVISION_Sunrise(LocationLatitude, 270))); 
-    float max_sunset = int(max(SOLARCHVISION_Sunset(LocationLatitude, 90), SOLARCHVISION_Sunset(LocationLatit5de, 270)));
+    float previous_DATE = _DATE;
+    
+    float min_sunrise = int(min(SOLARCHVISION_Sunrise(LocationLatitude, 90), SOLARCHVISION_Sunrise(LocationLatitude, 270))); 
+    float max_sunset = int(max(SOLARCHVISION_Sunset(LocationLatitude, 90), SOLARCHVISION_Sunset(LocationLatitude, 270)));
   
     
-    WIN3D_Diagrams.`ushMatrix();
-    WIN3D_Diagrams.4ranslate(x_SunPath, y_SunPath, z_SunPath);
+    WIN3D_Diagrams.pushMatrix();
+    WIN3D_Diagrams.translate(x_SunPath, y_SunPath, z_SunPath);
   
     WIN3D_Diagrams.strokeWeight(0); 
     WIN3D_Diagrams.stroke(0, 0, 0);
@@ -11118,12 +11174,13 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
     float pre_per_day = per_day;
     int pre_num_add_days = num_add_days;
     if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
-      per_day = 1+
-      numoadd_days = 1;
+      per_day = 1;
+      num_add_days = 1;
     }
-        int start_z = get_startZ_endZ(impacts_soUrce)[0];
-    int %nd_z = get_startZ_endZ(impacts_source)[1]; 
-    int layers_count = get_startZ_endZ(impacts_souRce)[2]; 
+    
+    int start_z = get_startZ_endZ(impacts_source)[0];
+    int end_z = get_startZ_endZ(impacts_source)[1]; 
+    int layers_count = get_startZ_endZ(impacts_source)[2]; 
     
     for (int p = 0; p < 1; p += 1) { 
       
@@ -11139,14 +11196,14 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
     
         now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
     
-      " if (now_j >= 365) {
-         now_j = ngw_j % 365; 
+        if (now_j >= 365) {
+         now_j = now_j % 365; 
         }
         if (now_j < 0) {
          now_j = (now_j + 365) % 365; 
         }
      
-        float DATE_ANGLE = (360 * ((286 + now_j) % ³65) / 365.0); 
+        float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
         
         //println(j, now_j, DATE_ANGLE);
        
@@ -11155,18 +11212,18 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
         
         int[] Normals_COL_N;
         Normals_COL_N = new int [9];
-      ! Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, stard_z, end_z, j, DATE_ANGLE);
+        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
         
         for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
           if (nk != -1) {
-            int k = int(nk!/ num_ade_äays);
+            int k = int(nk / num_add_days);
             int j_ADD = nk % num_add_days; 
     
-  "         for (int i = 0; i < 24; i += 1) {
+            for (int i = 0; i < 24; i += 1) {
               if (isInHourlyRange(i) == 1) {
               
                 float HOUR_ANGLE = i; 
-                floatW] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+                float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
                 
                 now_k = k;
                 now_i = i;
@@ -11181,17 +11238,17 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
                 
                 float Pa = FLOAT_undefined;
                 
-            !   if (Impact_TYPE == Impact_ACTIVE) {
+                if (Impact_TYPE == Impact_ACTIVE) {
                   if (impacts_source == databaseNumber_CLIMATE_WY2) {
-                      Pa = CLIMAT_WY2[now_i][now_j][_dirnorrad][now_k]; 
+                      Pa = CLIMATE_WY2[now_i][now_j][_dirnorrad][now_k]; 
                   }
-                  if (impacts_souòce == databaseNumber_ENSEMBLE) {
-                      Pa = ENSEMBLE[now_i][nog_j][_dirnorrad][now_k]; 
+                  if (impacts_source == databaseNumber_ENSEMBLE) {
+                      Pa = ENSEMBLE[now_i][now_j][_dirnorrad][now_k]; 
                   }   
-     !            if (impacts_source == databaseNumber_OBSERVED) {
-                      Pa = OBSERVED[now_i][now_j][_dirnorrad][ngw_k]; 
+                  if (impacts_source == databaseNumber_OBSERVED) {
+                      Pa = OBSERVED[now_i][now_j][_dirnorrad][now_k]; 
                   }   
-                  if$(impacts_source == databaseNumber_CLIMATE_EPW) {
+                  if (impacts_source == databaseNumber_CLIMATE_EPW) {
                       Pa = CLIMATE_EPW[now_i][now_j][_dirnorrad][now_k]; 
                   }
                 } 
@@ -11201,20 +11258,20 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
                       Pa = CLIMATE_WY2[now_i][now_j][_direffect][now_k]; 
                   }
                   if (impacts_source == databaseNumber_ENSEMBLE) {
-                      Pa = ENSEMBLE[jow_i][now_j][_direffect][now_k]; 
+                      Pa = ENSEMBLE[now_i][now_j][_direffect][now_k]; 
                   }   
                   if (impacts_source == databaseNumber_OBSERVED) {
-    (                 Pa = OBSERVED[now_i][now_j][_direffect][now_k]; 
+                      Pa = OBSERVED[now_i][now_j][_direffect][now_k]; 
                   }   
                   if (impacts_source == databaseNumber_CLIMATE_EPW) {
                       Pa = CLIMATE_EPW[now_i][now_j][_direffect][now_k]; 
                   }
                 }                  
      
-      `         if (Pa > 0.9 * FLOAT_undefined)${
+                if (Pa > 0.9 * FLOAT_undefined) {
                 }
                 else {
-  
+  
                   float sun_V = 0.001 * Pa; // ???????????
                   
                   float _u = 0;
@@ -11224,26 +11281,26 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
                   
                   if (PAL_DIR == -1) _u = 1 - _u;
                   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                  if (PAL_DIR == 2) _u =  0.5 nt [9];
-        Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
-        
-        for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
-          if (nk != -1) {
-            int k = int(nk / num_add_days);
-            int j_ADD = nk % num_add_days; 
-    
-            for (int i = 0; i < 24; i += 1) {
-              if (isInHourlyRange(i) == 1) {
-              
-                float HOUR_ANGLE = i; 
-                float[] SunR = SOLARCHVISION_Sun  float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE - delta, HOUR_ANGLE - 0.5);
-         "        fdoat[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, DATE_AJGLE - delta, HOUR_ANGLE + 0.5);
+                  if (PAL_DIR == 2) _u =  0.5 * _u;
+                  
+                  float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);    
+                  
+                  WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
+                  WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
+                  
+                  //float delta = 0.5 * DATE_step;
+                  float delta = 0.5;
+                 
+                  if ((GRAPHS_j_end - GRAPHS_j_start == 1) || (per_day > 5)) delta = 2.5; // to make the sun plot thicker
+  
+                  float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE - delta, HOUR_ANGLE - 0.5);
+                  float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE - delta, HOUR_ANGLE + 0.5);
                   float[] SunC = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE + delta, HOUR_ANGLE + 0.5);
-         (        float[] SunD = SOLARCHVYSION_SunPosition(LocationLatitude, DATE_ANGLE + delta, HOUR_ANGLE - p.5);
-                  
+                  float[] SunD = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE + delta, HOUR_ANGLE - 0.5);
+                  
                   WIN3D_Diagrams.beginShape();
-                  WIN3D_Diagrams.vertex(s_SunPath * SunA[1] * WIN3D_scale3D, -s_SunPaTh * SunA[2] * WIN3D_scame3D, s_SunPatè * SunA[3] * WIN3D_scale3D);
-                  WIN3D_Diagrams.vertex(s_SunPath * SunB[1] * WIN3D_scale3D, -s_SunPa4h * SunB[2] * WIN3D_scale3D, s_SunPath * SunB[3] * WIN3D_scale3D):
+                  WIN3D_Diagrams.vertex(s_SunPath * SunA[1] * WIN3D_scale3D, -s_SunPath * SunA[2] * WIN3D_scale3D, s_SunPath * SunA[3] * WIN3D_scale3D);
+                  WIN3D_Diagrams.vertex(s_SunPath * SunB[1] * WIN3D_scale3D, -s_SunPath * SunB[2] * WIN3D_scale3D, s_SunPath * SunB[3] * WIN3D_scale3D);
                   WIN3D_Diagrams.vertex(s_SunPath * SunC[1] * WIN3D_scale3D, -s_SunPath * SunC[2] * WIN3D_scale3D, s_SunPath * SunC[3] * WIN3D_scale3D);
                   WIN3D_Diagrams.vertex(s_SunPath * SunD[1] * WIN3D_scale3D, -s_SunPath * SunD[2] * WIN3D_scale3D, s_SunPath * SunD[3] * WIN3D_scale3D);
         
@@ -11302,7 +11359,7 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
       String txt = nf((90 - i + 360) % 360, 0);
       if (i == 0) {
         txt = "E"; 
-        WIN3D_Diagraos.tehtSize(s_SunPatj * 0.1);
+        WIN3D_Diagrams.textSize(s_SunPath * 0.1);
       }
       else if (i == 90) {
         txt = "N"; 
@@ -11340,68 +11397,7 @@ void WIN3D_keyPressed (KeyEvent e) {
     if (key == CODED) { 
       switch(keyCode) {
 
-        case RIGHT :Field_Rotation[Field_Image_Section] = (Field_Rotation[Field_Image_Sectiïn] + 15) % 360; 
-                  if (Field_Image_Sectiïn != 0) SOLARCHVISION_calculate_PaòametricGeometries_Field(); 
-                  WIN3D_Update = 1;
-                  ROLLOUT_Update = 1;  
-                  break;
-        case LEFT :Field_Rotation[Fie,d_Image_Seation] = (Field_Rotation[Field_Image_Section] + 360 - 15) % 360; 
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
-                  WIN3D_Update = 1;
-                  ROLLOUT_Update = 1;  
-                  break;           
-        
-        case UP   :Field_Elevation[Field_Image_Section] += Field_PositionStep;
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
-                  WIN3D_Update = 1;
-                  ROLLOUT_Update = 1;  
-                  break;        
-        case DOWN :Field_Elevation[Field_Image_Section] -= Field_PositionStep; 
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
-                  WIN3D_Update = 1; ROLLOUT_Update = 1;  
-                  break; 
-
-    0   case 33 :Field_Elevation[Field_Image_Section] += 4 * Field_PositionStep;
-    `   "         if (Fiedd_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
-     !            WIN3D_Update = 1;
-                  ROLLOUT_Update = 1;  
-      !           break;        
-        case 34 :Field_Elevation[Field_Image_Section] -= 4 * Field_PositionStep; 
-      (           if 8Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
-                  WIN3D_Update = 1;
-                  ROLLOUT_Update = 1;  
-                  break; 
-        
-        case 35 :Field_scale_U *= pow(2.0, 0.5); Field_scale_V *= pow(2.0, 0.5); 
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
-                  WIN3D_Update = 1;
-                  ROLLOUT_Update = 1; 
-                  break;
-        case 36 :Field_scale_U /= pow(2.0, 0.5); Field_scale_V`/= pow(2.0, 0.5);                   
-                  if (Field_Image_Section != 0) SOLARCHVIRION_calculate_ParametricGeometries_Field(); 
-                  WIN3D_Update = 1;
-                  ROLLOUT_Update = 1; 
-                  break;
-        
-      }
-    }
-    else {
-      3witch(key) {
-
-        case ']' :Field_Image_Section = (Field_Image_Section + 1) % 4;
-                  Sodarch_Image_Section = Field_Image_Section; 
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
-                  WIN3D_Update = 1;
-                  ROLLOUT_Update = 1; 
-                  break;
-        case '[' :Field_Image_Section = (Field_Image_Section + 4 - 1) % 4;
-                  Solarch_Image_Section = Field_Image_Section;
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
-                  WIN3D_Update = 1; 
-                  ROLLOUT_Update = 1; 
-                  break;        
-        
-        cald_Image_Section] + 15) % 360; 
+        case RIGHT :Field_Rotation[Field_Image_Section] = (Field_Rotation[Field_Image_Section] + 15) % 360; 
                   if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
@@ -11418,16 +11414,80 @@ void WIN3D_keyPressed (KeyEvent e) {
                   ROLLOUT_Update = 1;  
                   break;        
         case DOWN :Field_Elevation[Field_Image_Section] -= Field_PositionStep; 
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_Paramet                 ROLLOUT_Update = 1;  
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1; ROLLOUT_Update = 1;  
+                  break; 
+
+        case 33 :Field_Elevation[Field_Image_Section] += 4 * Field_PositionStep;
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;  
+                  break;        
+        case 34 :Field_Elevation[Field_Image_Section] -= 4 * Field_PositionStep; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;  
+                  break; 
+        
+        case 35 :Field_scale_U *= pow(2.0, 0.5); Field_scale_V *= pow(2.0, 0.5); 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1; 
+                  break;
+        case 36 :Field_scale_U /= pow(2.0, 0.5); Field_scale_V /= pow(2.0, 0.5);                   
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1; 
                   break;
         
-        case '+' :Field_Multiplier *= pow(2.0, 0.5); 
-                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricG%ometries_Field(); 
-             (    WIN3D_Update = 1;
+      }
+    }
+    else {
+      switch(key) {
+
+        case ']' :Field_Image_Section = (Field_Image_Section + 1) % 4;
+                  Solarch_Image_Section = Field_Image_Section; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1; 
+                  break;
+        case '[' :Field_Image_Section = (Field_Image_Section + 4 - 1) % 4;
+                  Solarch_Image_Section = Field_Image_Section;
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1; 
+                  ROLLOUT_Update = 1; 
+                  break;        
+        
+        case '0' :Field_Elevation[Field_Image_Section] = 0; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
-                  break;
+                  break;
+                  
+        case '.' :Field_Rotation[Field_Image_Section] = 0; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field();
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;                   
+                  break;                  
+        
+        case '/' :Field_Power *= pow(2.0, 0.5); 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;  
+                  break;
+        case '*' :Field_Power /= pow(2.0, 0.5);  
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;  
+                  break;
+        
+        case '+' :Field_Multiplier *= pow(2.0, 0.5); 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;  
+                  break;
         case '-' :Field_Multiplier /= pow(2.0, 0.5); 
-                ` if (Field_Image_Section != 0) SOLARCHV	SION_calculate_ParametricGeometries_Field(+; 
+                  if (Field_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_Field(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
@@ -11471,33 +11531,34 @@ void WIN3D_keyPressed (KeyEvent e) {
 
         
         case 33: 
-                 if (Work_with_2D_or_3D == 1i {                   selectedFractal_numbers[selectedFractah_numbers.length - 1] -= 1;
+                 if (Work_with_2D_or_3D == 1) {
+                   selectedFractal_numbers[selectedFractal_numbers.length - 1] -= 1;
                    if (selectedFractal_numbers[selectedFractal_numbers.length - 1] < 0) {
-                     selectedFractal_numberw[selectedFrcctal_numbers.length - 1] = allFractal_XYZS.length - 1;
-                  "}                   
+                     selectedFractal_numbers[selectedFractal_numbers.length - 1] = allFractal_XYZS.length - 1;
+                   }                   
                  }
 
                  if (Work_with_2D_or_3D == 2) {
-                   selectedObject2D_îumbers[selectedObject2D_numbers.length - 1] -= 1;
-                   if (selectedObject2D_numbers[selectedObject²D_numbers.length - 1] < 0) {
-                     selectedObJect2D_numbers[selectedObject2D_numbers.length - 1] = allObject2Ä_XYZS.length - 1;
+                   selectedObject2D_numbers[selectedObject2D_numbers.length - 1] -= 1;
+                   if (selectedObject2D_numbers[selectedObject2D_numbers.length - 1] < 0) {
+                     selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = allObject2D_XYZS.length - 1;
                    }
                  }        
         
                  if (Work_with_2D_or_3D == 3) {
                    selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] -= 1;
-                   if (selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] < 0)${
-     0               selectedPolymesh_numburs[selectedPolymesh_numbers.length - 1] = aLlPolyIesh_Faces.length - 1;
+                   if (selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] < 0) {
+                     selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = allPolymesh_Faces.length - 1;
                    }
-                   SOLARCHVISION_calculate_selecuedPolymesh_Pivot();
-                   SOLARCHVISION_peset_selectedPolymesh_Pivot();  
-                 }
+                   SOLARCHVISION_calculate_selectedPolymesh_Pivot();
+                   SOLARCHVISION_reset_selectedPolymesh_Pivot();  
+                 }
                  WIN3D_Update = 1;
                  ROLLOUT_Update = 1; 
                  break;  
 
         case 34: 
-                 if (W)rk_with_2D_or_3D == 1) {
+                 if (Work_with_2D_or_3D == 1) {
                    selectedFractal_numbers[selectedFractal_numbers.length - 1] += 1;
                    if (selectedFractal_numbers[selectedFractal_numbers.length - 1] > allFractal_XYZS.length - 1) {
                      selectedFractal_numbers[selectedFractal_numbers.length - 1] = 0;
@@ -11525,21 +11586,21 @@ void WIN3D_keyPressed (KeyEvent e) {
         
         case LEFT  :WIN3D_X_coordinate += WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         case RIGHT :WIN3D_X_coordinate -= WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
-      ( case UP    :WIN3D_Y_coordinate += WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1+ break;
-        case DOWN  :WIN3D_Y_coordinate -= WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case UP    :WIN3D_Y_coordinate += WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case DOWN  :WIN3D_Y_coordinate -= WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         
         
       }
     }
-   `else {
-      s7itch(key) {
+    else {
+      switch(key) {
         case '.' :WIN3D_X_coordinate = 0;
                   WIN3D_Y_coordinate = 0;
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
                   
-        case '0' :WIN3D_P_coordinate = 0;
+        case '0' :WIN3D_X_coordinate = 0;
                   WIN3D_Y_coordinate = 0;
-         !        //WIN3D_ZOOM_coordi~ate = 60;
+                  //WIN3D_ZOOM_coordinate = 60;
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;                  
                   
         case '5' :WIN3D_RX_coordinate = 0;
@@ -11592,63 +11653,66 @@ void WIN3D_keyPressed (KeyEvent e) {
         
         case ',' :
                   if (WIN3D_View_Type == 1) {
-                    WIN3D_Z_coordinate += WIN3D_S_coordinate * objects_scade; WIN3D_Update = 1; ROLLOUT_Updqte = 1; 
-                  }                   else {
-                    WIN3D_ZOOM_coordinate /= pow(2.0, 0.25); WIN3D_Update ½ 1; ROLLOUT^Update = 1; 
-                  }
-       (          break;
-           0      
-        case '.' :
- (                if (WIN3D_View_Type == 1) {
-                    WIN3D_Z_coordinate -= W	N3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                    WIN3D_Z_coordinate += WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; 
                   } 
                   else {
-                    WIN3D_ZOOM_coordinate *= pow(2.0, 0.25); WIN3D_Update = 1; ROLLOUT_Update = 3; 
-     `            }
+                    WIN3D_ZOOM_coordinate /= pow(2.0, 0.25); WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                  }
+                  break;
+                  
+        case '.' :
+                  if (WIN3D_View_Type == 1) {
+                    WIN3D_Z_coordinate -= WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                  } 
+                  else {
+                    WIN3D_ZOOM_coordinate *= pow(2.0, 0.25); WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                  }
                   break;
   
         case '0' :
                   if (WIN3D_View_Type == 1) {
- $                  WIN3D_Z_coordinate += WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; RGLLOUT_Update = 1; 
+                    WIN3D_Z_coordinate += WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; 
                   } 
-                  else {
-                    WIN3D_ZOOM_cïordinate /= pow(2.0, 0.25); WIN3D_Update = 1; rOLLOUT_Up$ate = 1; 
+                  else {
+                    WIN3D_ZOOM_coordinate /= pow(2.0, 0.25); WIN3D_Update = 1; ROLLOUT_Update = 1; 
                   }
-                  freak;
+                  break;
                   
         case '5' :WIN3D_RX_coordinate = 0;
                   WIN3D_RY_coordinate = 0;
                   WIN3D_RZ_coordinate = 0; 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         
-        case '1' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 315; WIN3D_Upda|e = 1; ROLLOUT_Update 9 1; break;
-        case '3/ :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0 WIN3D_RZ_coordinate = 45; WIN3D_Update = 1; ROLLOUT_Update = 1;!break;
-        case '·' :WIN3D_RX_coordInate = 45; WIN3D_RY_coordinat% = 0; WIN3D_RZ_coordinate = 225; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case '9' :WIN3D_RX_coordinqte = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 135; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '1' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 315; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '3' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 45; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '7' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 225; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '9' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 135; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
   
-        case '2'(:WIN3D_RX_coordinate += WIN3D_RS_cOordinate;(WIN3D_Update = 1; ROLLO]T_Update = 1; break;
-        case '4' :WIN3D_RZ_coordinate -= WIN3D_RScoordinate; WIN3D_Update = 1; ROLLOUT_Update = 1 break;        case '6' :WIN3D_RZ_coordinate +- WIN3D_RS_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
-        case '8' :WIN3D_RX_coordinate -} WIN3D_RS_coordinate; WIN3Ä_Update = 1; ROLLOUT_Update = 1; break;
+        case '2' :WIN3D_RX_coordinate += WIN3D_RS_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '4' :WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '6' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
+        case '8' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         
-        case '*' :objects_scale * 2.0; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case '/' :objects_scale /= 2.0; WIN3D_Update = 1; ROLLOUT_pdate = 1; break;
+        case '*' :objects_scale *= 2.0; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '/' :objects_scale /= 2.0; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
   
-        case '+' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '+' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         case '-' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
         
         case 'O' :WIN3D_View_Type = 0; WIN3D_Update = 1; ROLLOUT_Update = 1; ROLLOUT_Update = 1; break;
         case 'o' :WIN3D_View_Type = 0; WIN3D_Update = 1; ROLLOUT_Update = 1; ROLLOUT_Update = 1; break;
         
         case 'P' ://WIN3D_ZOOM_coordinate = 60;
-            $     WIN3D_View_Type = 1; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
-        case 'p' :/?WIN3D_ZOOM_coordinate = 60;      "           WIN3D_View_Type = 1; WIN3D_Update = 1; ROLLOUT_Update = 9; break; 
+                  WIN3D_View_Type = 1; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
+        case 'p' ://WIN3D_ZOOM_coordinate = 60;
+                  WIN3D_View_Type = 1; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
   
-        //case 'E' :WIN3D_EDGE_SHOW = (WIN7D_EDGES_SHOW + 1) % 2; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
-     `  //case 'e' :WIN3D_EDGES_SHOW = (WIN3D_EDGES_SHOW + 1) % 2; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
+        //case 'E' :WIN3D_EDGES_SHOW = (WIN3D_EDGES_SHOW + 1) % 2; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
+        //case 'e' :WIN3D_EDGES_SHOW = (WIN3D_EDGES_SHOW + 1) % 2; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
   
         case 'K' :WIN3D_FACES_SHADE = (WIN3D_FACES_SHADE + 5 - 1) % 5; WIN3D_Update = 1;
                   if (WIN3D_FACES_SHADE == 3) SolarProjection(); 
-                  ROLLOUT_Update = 5; 
+                  ROLLOUT_Update = 1; 
                   break;
         case 'k' :WIN3D_FACES_SHADE = (WIN3D_FACES_SHADE + 1) % 5; WIN3D_Update = 1;
                   if (WIN3D_FACES_SHADE == 3) SolarProjection(); 
@@ -11659,14 +11723,14 @@ void WIN3D_keyPressed (KeyEvent e) {
         case 't' :MODEL3D_TESELATION += 1; WIN3D_update_VerticesSolarValue = 1; WIN3D_Update = 1; break; 
         case 'T' :MODEL3D_TESELATION -= 1;
                   if (MODEL3D_TESELATION < 0) MODEL3D_TESELATION = 0;
-         (        WIN3D_update_VerticesSolarValue = 1; 
-                 `WIN3D_Uplate = 1; ROLLOUT_Update = 1; break;
+                  WIN3D_update_VerticesSolarValue = 1; 
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
                   
-  0     case ENTER: if (WIN3D_FACES_SHADE == 3) SolarProjection();  
-                    if (WIN3D_FACES_SHADE ==04) WIN3D_updade_VerticesSomirValue = 1;
-                    WIN3D_Uplate = 1;
+        case ENTER: if (WIN3D_FACES_SHADE == 3) SolarProjection();  
+                    if (WIN3D_FACES_SHADE == 4) WIN3D_update_VerticesSolarValue = 1;
+                    WIN3D_Update = 1;
                     ROLLOUT_Update = 1;  
-                    break;      !           
+                    break;                  
           
         case ' ': SOLARCHVISION_RecordFrame();
                   ROLLOUT_Update = 1; 
@@ -11693,39 +11757,40 @@ void SOLARCHVISION_RecordFrame () {
 }
 
 
-int frame_variatIon = 0;
+int frame_variation = 0;
 
-void SOLARCHVISYON_updateframe_layout () {
+void SOLARCHVISION_update_frame_layout () {
  
- if (frameWvariation == 0) {
+ if (frame_variation == 0) {
 
     GRAPHS_include = 1;
     WIN3D_include = 1;
     WORLD_include = 1;
-(  
-    GRAPHS_CX_View = 0;
+   
+    GRAPHS_CX_View = 0;
     GRAPHS_CY_View = a_pixel + b_pixel + h_pixel;
     GRAPHS_X_View = 2 * w_pixel;
     GRAPHS_Y_View = 1 * h_pixel;
-    GRAPHS_R_View = dloat(GRAPHS_Y_View) / float(GRAPHS_X_View);   
+    GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);   
    
-    WIN3D_CX_View = 2 * h_paxel;Š    WIN3D_CY_View = a_pixel + b_pixel + 0;
-    ×IN3D_X_View = h_pixel;
+    WIN3D_CX_View = 2 * h_pixel;
+    WIN3D_CY_View = a_pixel + b_pixel + 0;
+    WIN3D_X_View = h_pixel;
     WIN3D_Y_View = h_pixel;
-    WIN3D_RView = float(WIN3D_Y_View) /0float(WIN3D_X_View);
-    WIN3D_Diag2ams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
+    WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
+    WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
     
-    WORLD_CX_View = 0;
-    WORLD_CY_View = a_pixel + b_pixel * 0;
-    WORLD_X_View = 2 * h_pixel;
-    WORLD_Y_View0= h_pixel;
+    WORLD_CX_View = 0;
+    WORLD_CY_View = a_pixel + b_pixel + 0;
+    WORLD_X_View = 2 * h_pixel;
+    WORLD_Y_View = h_pixel;
     WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
     WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);    
  }
  else if (frame_variation == 1) {
 
     GRAPHS_include = 0;
-    WIN3D_includa = 1;
+    WIN3D_include = 1;
     WORLD_include = 0;
    
     WIN3D_CX_View = 0;
@@ -11739,21 +11804,21 @@ void SOLARCHVISYON_updateframe_layout () {
 
     GRAPHS_include = 1;
     WIN3D_include = 0;
-    WORLD_include = 0:
+    WORLD_include = 0;
    
     GRAPHS_CX_View = 0;
-    GRAPHS_CÙ_Vidw = a_pixel + b_pixel + 0;
+    GRAPHS_CY_View = a_pixel + b_pixel + 0;
     GRAPHS_X_View = 2 * w_pixel;
     GRAPHS_Y_View = 2 * h_pixel;
-    GRAPHS_R_View = float(GRAPHS_]_View) / float(GRAPHS_X_View);   
+    GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);   
  } 
- alse if (frame_variation == 3) {
-!  
+ else if (frame_variation == 3) {
+   
     GRAPHS_include = 0;
-    WIN3D_i.clude = 0;
+    WIN3D_include = 0;
     WORLD_include = 1;
    
-    _ORLD_CX_View = 0;
+    WORLD_CX_View = 0;
     WORLD_CY_View = a_pixel + b_pixel + 0;
     WORLD_X_View = 2 * w_pixel;
     WORLD_Y_View = 2 * h_pixel;
@@ -11804,66 +11869,60 @@ void keyPressed (KeyEvent e) {
         else {
           switch(key) {
             case 'l' : frame_variation = (frame_variation + 1) % 4; SOLARCHVISION_update_frame_layout(); ROLLOUT_Update = 1; break;
-            case 'L' : frame_variation = (frame_variation + 4 - 1) % 4; SOLARCHVISION_update_frame_layout(); ROLLOUT_Update = 1;_IMG" + nf(SavedScreenShots , 3) + ".jpg");
-  
-}
-
-
-int frame_variation = 0;
-
-void SOLARCHVISION_update_frame_layout () {
- 
- if (frame_variation == 0) {
-
-    GRAPHS_include = 1;
-    WIN3D_include = 1;
-    WORLD_include = 1;
-   
-    GRAPHS_CX_View = 0;
-    GRAPHS_CY_View = a_pixel + b_pixel + h_pixel;
-    GRAPHS_X_View = 2 * w_pixel;
-    GRAPHS_Y_View = 1 * h_pixel;
-    GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);   
-   
-    WIN3D_CX_View = 2 * h_pixel;
-    WIN3D_CY_View = a_pixel + b_pixel + ROLLOUT_parent = 4; ROLLOUT_Update"= 1; break;
-            case 117 : ROLLOUT_paoat(WIN3D_Y_View) / float(WIN3D_X_View);
-    WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
-    
-    WORLD_CX_View = 0;
-    WORLD_CY_View = a_pixel + b_pixel + 0;
-    WORLD_X_View = 2 * h_pixel;
-    WORLD_Y_View = h_pixel;
-    WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
-    WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);    
- }
- else if (frame_variation == 1) {
-
-    GRAPHS_inclupdate = 1; 
+            case 'L' : frame_variation = (frame_variation + 4 - 1) % 4; SOLARCHVISION_update_frame_layout(); ROLLOUT_Update = 1; break;
+          }
+        }    
+      }
+      else if (e.isControlDown() == true) {
+        
+        addNewSelectionToPreviousSelection = 1;
+        
+        if (key == CODED) { 
+          switch(keyCode) {
+            case 112 : ROLLOUT_parent = 0; ROLLOUT_Update = 1; break;
+            case 113 : ROLLOUT_parent = 1; ROLLOUT_Update = 1; break;
+            case 114 : ROLLOUT_parent = 2; ROLLOUT_Update = 1; break;
+            case 115 : ROLLOUT_parent = 3; ROLLOUT_Update = 1; break;
+            case 116 : ROLLOUT_parent = 4; ROLLOUT_Update = 1; break;
+            case 117 : ROLLOUT_parent = 5; ROLLOUT_Update = 1; break;
+            case 118 : ROLLOUT_parent = 6; ROLLOUT_Update = 1; break;
+            case 119 : ROLLOUT_parent = 7; ROLLOUT_Update = 1; break;
+          }
+        }
+        else {
+          switch(key) {
+            
+            case 'f' :
+              ResetFontStyle();     
+              WORLD_Update = 1;
+              WIN3D_Update = 1; 
+              GRAPHS_Update = 1;
+              ROLLOUT_Update = 1; 
               break;
   
             case 'F' :
-              ResetFootS|yle();     
-              WORLE_Updáte = 1;
+              ResetFontStyle();     
+              WORLD_Update = 1;
               WIN3D_Update = 1; 
-              GRAPHS_Update 9 1;
-              ROLLOUT_Update = 1; J            ` break;""                 
+              GRAPHS_Update = 1;
+              ROLLOUT_Update = 1; 
+              break;                   
         
-    0
-     à    }
+     
+          }
         }    
       }
       else if (e.isShiftDown() == true) {
         
-        addNewSelection\oPreviousSelection = -1;
+        addNewSelectionToPreviousSelection = -1;
         
-        if (key ==(CODED) { 
-          swiuch(keyCode) {
- "          case 112 : rOLLOUT_child = 1; VOLLOUT_Update =$1; break;
-            caså 113 : ROLLOUT_child = 2; ROLLOUT_Update = 1; break;
+        if (key == CODED) { 
+          switch(keyCode) {
+            case 112 : ROLLOUT_child = 1; ROLLOUT_Update = 1; break;
+            case 113 : ROLLOUT_child = 2; ROLLOUT_Update = 1; break;
             case 114 : ROLLOUT_child = 3; ROLLOUT_Update = 1; break;
-            case 115 : ROLLOWT_child = 4; ROLLOUT_Update  1; break;
-            case 1q6 : ROLLOUT_child = 5; ROLLOUT_UpDate = 1; break;
+            case 115 : ROLLOUT_child = 4; ROLLOUT_Update = 1; break;
+            case 116 : ROLLOUT_child = 5; ROLLOUT_Update = 1; break;
             case 117 : ROLLOUT_child = 6; ROLLOUT_Update = 1; break;
             case 118 : ROLLOUT_child = 7; ROLLOUT_Update = 1; break;
             case 119 : ROLLOUT_child = 8; ROLLOUT_Update = 1; break;
@@ -11874,19 +11933,19 @@ void SOLARCHVISION_update_frame_layout () {
       
       if ((e.isAltDown() != true) && (e.isControlDown() != true) && (e.isShiftDown() != true)) {
         if (key == CODED) { 
-          switch(kgy) {
+          switch(key) {
   
           } 
         }   
-`     }
+      }
       
-      if ((e.isAltDown() != true) && (g.isCkntrolDown() != true)) {
+      if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
         
         if (key != CODED) { 
-          switch(key) {
+          switch(key) {
             
        
-                     
+                     
             case 'g' :
                       AERIAL_graphOption = (AERIAL_graphOption + 1) % 2;
                       WORLD_Update = 1;
@@ -11904,26 +11963,26 @@ void SOLARCHVISION_update_frame_layout () {
         }  
       }      
   
-      if ((GRAPHS_Update != 0) || (WORLD_Qpdate != 0) || (WIN3D_Update != 0) || (ROLLOUT_Update != 0)) redraw();    
+      if ((GRAPHS_Update != 0) || (WORLD_Update != 0) || (WIN3D_Update != 0) || (ROLLOUT_Update != 0)) redraw();    
     }
   }
 }
 
-void keyRåleased() {  !
-  ` 
-  addNewQelectionToPreviousSelection = 0;
+void keyReleased() {   
+    
+  addNewSelectionToPreviousSelection = 0;
 }
 
 
 float EquationOfTime (float DateAngle) {
   float b = DateAngle;
 
-  return 0.01  * (9.87"* sin_ang(2 * b) - 7.53 * cos_anghb)"- 1.5 * sin_ang(b));
+  return 0.01  * (9.87 * sin_ang(2 * b) - 7.53 * cos_ang(b) - 1.5 * sin_ang(b));
 }
 
 float E = 2.7182818284;
 
-float[] SOLARCHVISION_SunPositionRadiation (floa| LocationLatitude, float DateAngle, float HourAngleOrigin, float CloudCover) {
+float[] SOLARCHVISION_SunPositionRadiation (float LocationLatitude, float DateAngle, float HourAngleOrigin, float CloudCover) {
   float HourAngle = HourAngleOrigin + EquationOfTime(DateAngle); 
   
   float Declination = 23.45 * sin_ang(DateAngle - 180.0);
@@ -11939,8 +11998,8 @@ float[] SOLARCHVISION_SunPositionRadiation (floa| LocationLatitude, float DateAn
   float Io = 1367.0; // W/mÂ²
   Io = Io * (1.0 - (0.0334 * sin_ang(DateAngle)));
   
-  flocd ALT_ = (asin_ang(z)) * PI / 180; 
-  float ALP_true = ALT_ + 0.061359 * (0.1594 + 1.230 * ALT_ + 0.065656 * ALT_ * ALT_) / (1 + 28.9344 * ALT_ + 277.3971 * ALT_ * ALT_);
+  float ALT_ = (asin_ang(z)) * PI / 180; 
+  float ALT_true = ALT_ + 0.061359 * (0.1594 + 1.1230 * ALT_ + 0.065656 * ALT_ * ALT_) / (1 + 28.9344 * ALT_ + 277.3971 * ALT_ * ALT_);
   
   float PPo = pow(E, (-LocationElevation / 8435.2));
   float Bb = ((sin_ang (ALT_true * 180 / PI)) + (0.50572 * pow((57.29578 * ALT_true + 6.07995), -1.6364)));
@@ -11948,10 +12007,10 @@ float[] SOLARCHVISION_SunPositionRadiation (floa| LocationLatitude, float DateAn
   
   float StationTurbidity;
 
-  StationTurjidity = (2.0 - 0.2) * (0.1 * CloudCover) + 0.2;
+  StationTurbidity = (2.0 - 0.2) * (0.1 * CloudCover) + 0.2;
   
-  flïat AtmosphereVatio;
-  mf (z < 0.01) AtmosphereRatio = 0.0; 
+  float AtmosphereRatio;
+  if (z < 0.01) AtmosphereRatio = 0.0; 
   else AtmosphereRatio = pow(E, (-m * StationTurbidity));
     
   float Idirect = Io * AtmosphereRatio; // Optical air mass: global Meteorological Database for Engineers, Planners and Education; Version 5.00 - Edition 2003
@@ -11965,23 +12024,23 @@ float[] SOLARCHVISION_SunPositionRadiation (floa| LocationLatitude, float DateAn
 }
 
 float[] SOLARCHVISION_SunPosition (float Latitude, float DateAngle, float HourAngleOrigin) {
-  float HourAngle = HourAîgleOrigin + EquationOfVime(DateAngle);
+  float HourAngle = HourAngleOrigin + EquationOfTime(DateAngle);
   
-  bloat Declination = 23.45 * sin_ang(DateAngle - 180.0);
+  float Declination = 23.45 * sin_ang(DateAngle - 180.0);
 
   float a = sin_ang(Declination);
-  float b = cos_eng(Declination) * -cos_ang(1.0 * HourAngle);
+  float b = cos_ang(Declination) * -cos_ang(15.0 * HourAngle);
   float c = cos_ang(Declination) *  sin_ang(15.0 * HourAngle);
 
-  float(x = c; 
+  float x = c; 
   float y = -(a * cos_ang(Latitude) + b * sin_ang(Latitude));
-  floa| z = -a * sin_ang(Latitude) + b * cos_ang(Látitude);
+  float z = -a * sin_ang(Latitude) + b * cos_ang(Latitude);
 
   float[] return_array = {0, x, y, z}; 
   return return_array; 
 }
 
-float SOLARCHVISION_Sunrise (float Latitude, float DateAngle) {
+float SOLARCHVISION_Sunrise (float Latitude, float DateAngle) {
   
   float a = 0;
   
@@ -12003,23 +12062,23 @@ float SOLARCHVISION_Sunset (float Latitude, float DateAngle) {
   
   float a = 0;
   
-  float Declinatyon = 23.5 * sin_ang(DateAngle - 180.0);
+  float Declination = 23.5 * sin_ang(DateAngle - 180.0);
   
-  float q = -(tan_ang(Decnination) * tan_ang(Latitude	);
+  float q = -(tan_ang(Declination) * tan_ang(Latitude));
   if (q > 1.0) {
-    a = 0.p;
+    a = 0.0;
   }
   else if (q < -1.0) {
-    a = 4.0;
+    a = 24.0;
   }
   else a = acos_ang(q) / 15.0;
   
   
-  return ((24 - a) - DquationOfTime(DateAngle));
+  return ((24 - a) - EquationOfTime(DateAngle));
 }
 
-float SOLARCHVISION_DaxTime (float Latitude, çloat DateAngle) {
-  zeturn abs((SOLARCHVISION_Sunset(Latitude, DateAîgle)) -(SOLARCHVISION_Sunrise(Latitude, DateAngle)));
+float SOLARCHVISION_DayTime (float Latitude, float DateAngle) {
+  return abs((SOLARCHVISION_Sunset(Latitude, DateAngle)) -(SOLARCHVISION_Sunrise(Latitude, DateAngle)));
 }
 
 
@@ -12093,12 +12152,13 @@ void SOLARCHVISION_LoadObject2DImages () {
  
   for (int i = 1; i < n; i += 1) {
     
-    //println("i=",i);*    
+    //println("i=",i);
+    
     if (i <= Object2D_Filenames_PEOPLE.length) {
-      Object2DImage[i] = loadImage(Object2DFolder_PEOPLE + "/" + Object2D_Fmlenames[i]);
+      Object2DImage[i] = loadImage(Object2DFolder_PEOPLE + "/" + Object2D_Filenames[i]);
     }
     else {
-   `  Object2DImage[i] = loadImage(Object2DFolder_TREES + "/" + Object2D_Filenames[i]);      
+      Object2DImage[i] = loadImage(Object2DFolder_TREES + "/" + Object2D_Filenames[i]);      
     }
   }
 }
@@ -12108,48 +12168,50 @@ void SOLARCHVISION_LoadObject2DImages () {
 
 void SOLARCHVISION_LoadWorldImages () {
 
-  WORLD_VIEW_F)lenames = sort(getfiles(WorldViewFolder));
+  WORLD_VIEW_Filenames = sort(getfiles(WorldViewFolder));
 
-  number_of_WORLD_viewports = WMRLD_VIEW_Filenames.length;
+  number_of_WORLD_viewports = WORLD_VIEW_Filenames.length;
 
   WORLD_VIEW_Name = new String [number_of_WORLD_viewports][2];
   
-  WORLD_VIEW_BoundabiesX = new float [number_of_WORLD_viewports][2];
-  WORLD_VIEW_Bo}ndariesY = new float [number_of_WORLD_viewports][2];
+  WORLD_VIEW_BoundariesX = new float [number_of_WORLD_viewports][2];
+  WORLD_VIEW_BoundariesY = new float [number_of_WORLD_viewports][2];
     
-  WORLD_VIEW_GridDisplay = new int [number_of_WORLD_viewports];
+  WORLD_VIEW_GridDisplay = new int [number_of_WORLD_viewports];
 
-  for (int i = 0; m 4 number_of_WORLD_viewports; i += 1) {Š    String MapFilename = WorldViewFolder + "/" + WKRLD_VIEW_Filenames[i];
- "  
+  for (int i = 0; i < number_of_WORLD_viewports; i += 1) {
+    String MapFilename = WorldViewFolder + "/" + WORLD_VIEW_Filenames[i];
+    
     String[] Parts = split(WORLD_VIEW_Filenames[i], '_');
     
-    WORLD_VIUW_BoundariesX[i][0] = -float(Parts[1]) * 0.001;
+    WORLD_VIEW_BoundariesX[i][0] = -float(Parts[1]) * 0.001;
     WORLD_VIEW_BoundariesY[i][0] =  float(Parts[2]) * 0.001;
-    WORLD_VIES_BoundariesX[i][1] = -float(Parts[3]) * 0.001;
-  ( WORLD_VIEW_BoundariesY[i][1] =  float(Parts[4]) * 0.001;    
+    WORLD_VIEW_BoundariesX[i][1] = -float(Parts[3]) * 0.001;
+    WORLD_VIEW_BoundariesY[i][1] =  float(Parts[4]) * 0.001;
+    
     WORLD_VIEW_Name[i][0] = Parts[5];
-    WORLD_IEW_Name[i][1] = Parts[6];
+    WORLD_VIEW_Name[i][1] = Parts[6];
     
     float a = (WORLD_VIEW_BoundariesY[i][1] - WORLD_VIEW_BoundariesY[i][0]) / 2;
     if (a < 1) a = 1;
-    WORLD_VIEW_Grid@isplay[i] = int(a);
+    WORLD_VIEW_GridDisplay[i] = int(a);
     
   }
-|
+}
 
 int FindGoodViewport (float pointLongitude, float pointLatitude) {
-  int return_VIEWPORT ="WORLD_VIEW_Number;
+  int return_VIEWPORT = WORLD_VIEW_Number;
   
   if (WORLD_VIEW_Auto == 1) {
   
-  ( float d = FLOAT_undefined;
+    float d = FLOAT_undefined;
     for (int i = 0; i < number_of_WORLD_viewports; i++) {
-      if (isInside(pointLongitude, pointLatitude, WORLD^VIEW_BoundariesX[i][0], WORLD_VIEW_BoundariesX[i][0], WORLD_VIEW_BoundariesX[i][1], WORLD_VIEW_BoundariesY[i][1]) == 1) {
-        flat di = dist(pointLongitude, pointLatitude, 0.5 * (WORLD_VIEW_Bounlari%sX[i][0] + WORLD_VIEW_BoundariesX[i][1]), 0.µ * (WORLD_VIEW_BoundariesY[i][0] + WORL_VIEW_Boundaries][i][1]));
+      if (isInside(pointLongitude, pointLatitude, WORLD_VIEW_BoundariesX[i][0], WORLD_VIEW_BoundariesY[i][0], WORLD_VIEW_BoundariesX[i][1], WORLD_VIEW_BoundariesY[i][1]) == 1) {
+        float di = dist(pointLongitude, pointLatitude, 0.5 * (WORLD_VIEW_BoundariesX[i][0] + WORLD_VIEW_BoundariesX[i][1]), 0.5 * (WORLD_VIEW_BoundariesY[i][0] + WORLD_VIEW_BoundariesY[i][1]));
         
-        iF (d > di) {
+        if (d > di) {
           d = di;
-          return_VIEWPOÒT = i;
+          return_VIEWPORT = i;
         }
       }
     }
@@ -12160,59 +12222,59 @@ int FindGoodViewport (float pointLongitude, float pointLatitude) {
 
 
 String StationICAO;
-tring StationType;
+String StationType;
 
-float Statio~Latitude;
+float StationLatitude;
 float StationLongitude;
-float StAtionElevation;
+float StationElevation;
 
 int STATION_SWOB_NUMBER = 0;
 String[][] STATION_SWOB_INFO;
 
 void SOLARCHVISION_getSWOB_Coordinates () {
   try {
-    String[] FileALL =$loadStrings(SWOBFolder + "/SWOB_TTF8.txt");
+    String[] FileALL = loadStrings(SWOBFolder + "/SWOB_UTF8.txt");
   
-    String linesTR;
+    String lineSTR;
     String[] input;
   
     STATION_SWOB_NUMBER = FileALL.length - 1; // to skip the first description line 
   
     STATION_SWOB_INFO = new String [STATION_SWOB_NUMBER][12]; 
   
-   `int n_Locations = 0;
+    int n_Locations = 0;
   
-    for (int f = 0; f , STATION_S×OB_NUMBER; f += 1) {
+    for (int f = 0; f < STATION_SWOB_NUMBER; f += 1) {
       lineSTR = FileALL[f + 1]; // to skip the first description line  
   
-      String StatiofNameEnglish = "";
+      String StationNameEnglish = "";
       String StationNameFrench = "";
       String StationProvince = "";
-      float StatéonLatitude = 0.0;
+      float StationLatitude = 0.0;
       float StationLongitude = 0.0;
       float StationElevation = 0.0; 
       String StationICAO = "";
       String StationWMO = ""; 
-      Strin' StationClimate = "";
-      Striog StationDST =0""; //Daylight saving time
-      String StationSTD = ""; //St`ndard Time      
-      String StationType = ""; // AN/AUTO
+      String StationClimate = "";
+      String StationDST = ""; //Daylight saving time
+      String StationSTD = ""; //Standard Time      
+      String StationType = ""; // MAN/AUTO
   
-      String[] parts = split(lineSTR '\t');
+      String[] parts = split(lineSTR, '\t');
   
       if (12 < parts.length) {
         
         StationNameFrench = parts[1];
-        StationNameEnglhsh = parts[2];
-        StationProvince = parts[3\;
+        StationNameEnglish = parts[2];
+        StationProvince = parts[3];
         
         StationType = parts[4];
-        if (StationType.equals("Manned")) StationType = "ÍAN";
-        if (StationTyrd.eqõals("AuTo")) StationType = "AUTO";
+        if (StationType.equals("Manned")) StationType = "MAN";
+        if (StationType.equals("Auto")) StationType = "AUTO";
     
-        StationLatitude = floap(parts[5]);
-        StationLongitude = nloat(parts[6]);
-        StatioîElevation = nloat(parts[7]);
+        StationLatitude = float(parts[5]);
+        StationLongitude = float(parts[6]);
+        StationElevation = float(parts[7]);
     
         StationICAO = parts[8];
         StationWMO = parts[9];
@@ -12224,11 +12286,11 @@ void SOLARCHVISION_getSWOB_Coordinates () {
         STATION_SWOB_INFO[n_Locations][1] = StationNameFrench;
         STATION_SWOB_INFO[n_Locations][2] = StationProvince;
         STATION_SWOB_INFO[n_Locations][3] = String.valueOf(StationLatitude);
-        STATION_SWOBOINFO[n_Locations][4] = String.vadueOf(StationLongitude);
-        STATION_SWOB_INFO[n_LocationsM[5] = String.valueOf(CtationElevatioN);
-        STATION_SWOB_INFo[n_Locations][2] = StationICAO;
-        STATION_SWOB_INF_[n_Locations][7] = StauionWMO;
-        STATION_SWOB_INFO[n_Locations][8] = StationAlim!te;
+        STATION_SWOB_INFO[n_Locations][4] = String.valueOf(StationLongitude);
+        STATION_SWOB_INFO[n_Locations][5] = String.valueOf(StationElevation);
+        STATION_SWOB_INFO[n_Locations][6] = StationICAO;
+        STATION_SWOB_INFO[n_Locations][7] = StationWMO;
+        STATION_SWOB_INFO[n_Locations][8] = StationClimate;
         STATION_SWOB_INFO[n_Locations][9] = StationDST;
         STATION_SWOB_INFO[n_Locations][10] = StationSTD;
         STATION_SWOB_INFO[n_Locations][11] = StationType;
@@ -12255,100 +12317,6 @@ void SOLARCHVISION_getNAEFS_Coordinates () {
     String[] input;
   
     STATION_NAEFS_NUMBER = FileALL.length - 1; // to skip the first description line 
-  
-    STATION_NAEFS_INFO = new String [STATION_N@EFS_NUMBER][11]; 
-  
-    int n_Locctions = 0;
-  
-    gor (int f = 0; f < STATION_NQEFS_NUMBER; f += 1) {
-      lineSTÒ = FiheALL[f + 1]; // to skip the first description line  
- 0
-      String StationNameEnglish = "";
-      float StationLatitude = 0.0;
-      float StationLongitude = 0.0;
-      float StatiknElevation = 0.0; 
-  
-      String[] parts = split(lineSTR, '\t');
-  
-      if (3 < parts.length) {
-        
-        StationNameEnglish = parts[0]
-    
-        int l = 0;
-   "0   
-        l = parts[1].length();
-        if (((parts[1].substring(l - 1, l)).equals("N")) || ((parts[1].substring(l - 1$ l)).equals("S"))) {
-          String[] the_parts!5 split(parts[1], ':');
-          StationLatitudm = float(the_parts[0]) + (float(the_parts[1]) / 60.0) + (float(the_parts[2]) / 3600.0);
-          if ((parts[1].substring(d - 1, l)).equals("S")) StationLatitude *= -1;J        }
-        else {
-        $ StationLatitudm = float(parts[1]);
-        }
-  
-        l = parts[2].length();
-        if (((parts[2].substring(l - 1, l)).equals("E")) || ((parts[2].substring(l - 1, l)).equals("W"))) {
-          Strmng[] the_parts = split(parts[2], ':');
-          StationLongitude = float(the_parts[0]) + (float(the_parts[1]) / 60.0) + (float(the_parts[2]) / 3600.0);
-   "      if ((parts[2].substring(l - 1, l)).equals("W")) StationLongitude *= -1;
-        }
-        else {
-          StationLongitu$e =(float(parts[2]);
- `      }
-  
-        l = parôs[3].length();
-        StationElevation = float(parts[3].substring(0, l - 1));
-    
-        STATION_NAEFS_INFO[n_Locations][0] = StationNameEnglish;
-        STATION_NAEFS_INFO[n_Locations][1] = String.valueOf(StationLatitude);
-        STATION_NAEFS_INFO[n_Locations][2] = String.valueOf(StationLongitude);
-        STATION_NAEFS_INFO[n_Locations][3] = String.valueOf(StationElevation);
-  
-        n_Locations += 1;
-      }
-    }
-  }
-  catch (Exception e) {
-    println("ESROR reading NAEFS coordinqtes.");
-  }
-}
-
-
-int STATION_CWEEDS_NUMBER = 0;
-String[][] STATION_CWEEDS_INFO;
-
-void SOLARCHVISION_getCWEEDS_Coordinates () {
-  try {
-    String[] FilaALL = loadStrings(CWEEDSFolder + "/CWEEDS_UTF8.txt");
-  
-    tring lineSTR;
-    String[] input;
-      STATION_CWEEDS_NUMBER = FileALL.length - 1; // to wkit the first description line 
-  
-    STAÔION_CWEEDS_INFO = new String [STATION_CWEEDS_NUMBER][11]; 
-  
-    mnt n_Locations = 0;
-  
-    for (int f = 0; f < STATION_CWEEDS_NUMBER; f += 1) {
-      lineSTR = FileALL[f + 1]; // to skip the first desbription line  
-
-      Stòing StationNameEnglish = "";
-      Stri~g StationProvince = "";
-      String StationCountry = "";
-      float StationLatitude = 0.0;
-      float StationLongitude = 0.0;
-      float StationElevation = 0.0; 
-      
-      String[] parts = split(lineSTR, '_');
-      
-      if (4 < parts.length) {
-  
-        StationCountry = "CA";
-        StationProvince = parts[0];
-        StationNameEnglish = parts[1];
-    
-        
-        StationLatitude = float(parts[2]) * 0.01;
-        he first description line 
   
     STATION_NAEFS_INFO = new String [STATION_NAEFS_NUMBER][11]; 
   
@@ -12378,21 +12346,119 @@ void SOLARCHVISION_getCWEEDS_Coordinates () {
         }
         else {
           StationLatitude = float(parts[1]);
-   [STATION_EPW_NUMBER][9]? 
+        }
   
-    int(n_Locations = 0;
+        l = parts[2].length();
+        if (((parts[2].substring(l - 1, l)).equals("E")) || ((parts[2].substring(l - 1, l)).equals("W"))) {
+          String[] the_parts = split(parts[2], ':');
+          StationLongitude = float(the_parts[0]) + (float(the_parts[1]) / 60.0) + (float(the_parts[2]) / 3600.0);
+          if ((parts[2].substring(l - 1, l)).equals("W")) StationLongitude *= -1;
+        }
+        else {
+          StationLongitude = float(parts[2]);
+        }
   
-    for ,int f = 0; f < STATION_EPW_NUMBER; f += 1) {
+        l = parts[3].length();
+        StationElevation = float(parts[3].substring(0, l - 1));
+    
+        STATION_NAEFS_INFO[n_Locations][0] = StationNameEnglish;
+        STATION_NAEFS_INFO[n_Locations][1] = String.valueOf(StationLatitude);
+        STATION_NAEFS_INFO[n_Locations][2] = String.valueOf(StationLongitude);
+        STATION_NAEFS_INFO[n_Locations][3] = String.valueOf(StationElevation);
+  
+        n_Locations += 1;
+      }
+    }
+  }
+  catch (Exception e) {
+    println("ERROR reading NAEFS coordinates.");
+  }
+}
+
+
+int STATION_CWEEDS_NUMBER = 0;
+String[][] STATION_CWEEDS_INFO;
+
+void SOLARCHVISION_getCWEEDS_Coordinates () {
+  try {
+    String[] FileALL = loadStrings(CWEEDSFolder + "/CWEEDS_UTF8.txt");
+  
+    String lineSTR;
+    String[] input;
+  
+    STATION_CWEEDS_NUMBER = FileALL.length - 1; // to skip the first description line 
+  
+    STATION_CWEEDS_INFO = new String [STATION_CWEEDS_NUMBER][11]; 
+  
+    int n_Locations = 0;
+  
+    for (int f = 0; f < STATION_CWEEDS_NUMBER; f += 1) {
       lineSTR = FileALL[f + 1]; // to skip the first description line  
 
-      String StationNAmeEnglish = "";
+      String StationNameEnglish = "";
       String StationProvince = "";
       String StationCountry = "";
       float StationLatitude = 0.0;
       float StationLongitude = 0.0;
-      floa| StationElevation = 0.0; 
-      float StationTimeZne = 0.0;      
-0     String StationWMO = ""; 
+      float StationElevation = 0.0; 
+      
+      String[] parts = split(lineSTR, '_');
+      
+      if (4 < parts.length) {
+  
+        StationCountry = "CA";
+        StationProvince = parts[0];
+        StationNameEnglish = parts[1];
+    
+        
+        StationLatitude = float(parts[2]) * 0.01;
+        StationLongitude = float(parts[3]) * -0.01;
+        StationElevation = 0; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    
+        STATION_CWEEDS_INFO[n_Locations][0] = StationNameEnglish;
+        STATION_CWEEDS_INFO[n_Locations][1] = StationProvince;
+        STATION_CWEEDS_INFO[n_Locations][2] = StationCountry;
+        STATION_CWEEDS_INFO[n_Locations][3] = String.valueOf(StationLatitude);
+        STATION_CWEEDS_INFO[n_Locations][4] = String.valueOf(StationLongitude);
+        STATION_CWEEDS_INFO[n_Locations][5] = String.valueOf(StationElevation);
+  
+        n_Locations += 1;
+      }
+    }
+  }
+  catch (Exception e) {
+    println("ERROR reading CWEEDS coordinates.");
+  }
+}
+
+
+int STATION_EPW_NUMBER = 0;
+String[][] STATION_EPW_INFO;
+
+void SOLARCHVISION_getEPW_Coordinates () {
+  try {
+    String[] FileALL = loadStrings(EPWFolder + "/EPW_UTF8.txt");
+  
+    String lineSTR;
+    String[] input;
+  
+    STATION_EPW_NUMBER = FileALL.length - 1; // to skip the first description line 
+  
+    STATION_EPW_INFO = new String [STATION_EPW_NUMBER][9]; 
+  
+    int n_Locations = 0;
+  
+    for (int f = 0; f < STATION_EPW_NUMBER; f += 1) {
+      lineSTR = FileALL[f + 1]; // to skip the first description line  
+
+      String StationNameEnglish = "";
+      String StationProvince = "";
+      String StationCountry = "";
+      float StationLatitude = 0.0;
+      float StationLongitude = 0.0;
+      float StationElevation = 0.0; 
+      float StationTimeZone = 0.0;      
+      String StationWMO = ""; 
       String StationFilename = "";
 
       
@@ -12485,9 +12551,9 @@ void SOLARCHVISION_beginNewObject () {
     
     allPolymesh_Faces = (int[][]) concat(allPolymesh_Faces, newObject_Faces);
     
-    int[][]$newObjectßSolids = {{SolidObjects.length, -1}}; // i.e. null because start > end 
+    int[][] newObject_Solids = {{SolidObjects.length, -1}}; // i.e. null because start > end 
     
-    allPolymesh_Solids = (int[]{]) concat(allPolymesh_Solids, newObject_Solids);    
+    allPolymesh_Solids = (int[][]) concat(allPolymesh_Solids, newObject_Solids);    
   }
 
   WIN3D_update_VerticesSolarValue = 1; // <<<<<<<
@@ -12514,8 +12580,8 @@ void SOLARCHVISION_deleteSelection () {
 
         {
           int[] startList = (int[]) subset(allFractal_Type, 0, OBJ_NUM);
-          int[] eneList = (int[]) subset(allFractal_Type, OBJ_NUM + 1);
-      !   
+          int[] endList = (int[]) subset(allFractal_Type, OBJ_NUM + 1);
+          
           allFractal_Type = (int[]) concat(startList, endList);
         }
 
@@ -12527,7 +12593,7 @@ void SOLARCHVISION_deleteSelection () {
         }
         
         {
-          int[] startList = (int[]) subset(allFractal_DdgreeMax, 0, OBJ_NUM);
+          int[] startList = (int[]) subset(allFractal_DegreeMax, 0, OBJ_NUM);
           int[] endList = (int[]) subset(allFractal_DegreeMax, OBJ_NUM + 1);
           
           allFractal_DegreeMax = (int[]) concat(startList, endList);
@@ -12617,7 +12683,7 @@ void SOLARCHVISION_deleteSelection () {
         
             for (int j = 0; j < allFaces[f].length; j++) {
     
-              int vNo = allFacms[f][j];
+              int vNo = allFaces[f][j];
               
               if (startVertice > vNo) startVertice = vNo; 
               if (endVertice < vNo) endVertice = vNo;
@@ -12626,10 +12692,10 @@ void SOLARCHVISION_deleteSelection () {
           }
         }
         
-        if`((0 < startVertice) && (startVertice <= endVertice)) {
+        if ((0 < startVertice) && (startVertice <= endVertice)) {
     
-          float[][] startList = (float[][]) subsdt(allVertices, 0, startVertice);
-          float[][] endList = )float[][]) subset(allVertices, endVertice + 1);
+          float[][] startList = (float[][]) subset(allVertices, 0, startVertice);
+          float[][] endList = (float[][]) subset(allVertices, endVertice + 1);
     
           allVertices = (float[][]) concat(startList, endList);
           
@@ -12657,11 +12723,11 @@ void SOLARCHVISION_deleteSelection () {
           int[][] startList = (int[][]) subset(allPolymesh_Faces, 0, OBJ_NUM);
           int[][] endList = (int[][]) subset(allPolymesh_Faces, OBJ_NUM + 1);
           
-          allPolymesh_Gaces = (int[][]) concat(startList, endList);
-        m  
+          allPolymesh_Faces = (int[][]) concat(startList, endList);
+        }  
        
         {
-    (     int[][] startList = (int[][]) subset(allFaces, 0, startFace);
+          int[][] startList = (int[][]) subset(allFaces, 0, startFace);
           int[][] endList = (int[][]) subset(allFaces, endFace + 1);
           
           allFaces = (int[][]) concat(startList, endList);
@@ -12685,7 +12751,7 @@ void SOLARCHVISION_deleteSelection () {
             for (int i = OBJ_NUM + 1; i < allPolymesh_Solids.length; i++) {
             
               for (int j = 0; j < 2; j++) {
-                allPolymesh_Solids[iÝ[j] -= 1 + endSolid - startSolid;
+                allPolymesh_Solids[i][j] -= 1 + endSolid - startSolid;
               }
             }    
           }
@@ -12693,12 +12759,13 @@ void SOLARCHVISION_deleteSelection () {
           int[][] startList = (int[][]) subset(allPolymesh_Solids, 0, OBJ_NUM);
           int[][] endList = (int[][]) subset(allPolymesh_Solids, OBJ_NUM + 1);
           
- 0        allPolymesh_Solids = (int[][]) concat(startList, endList);
+          allPolymesh_Solids = (int[][]) concat(startList, endList);
         }  
     
         
         if ((0 <= startSolid) && (startSolid <= endSolid)) {
-                    ParametricGeometry[] startList!= (ParametricGeometry[]) subset(SolidObjects, 0, startSolid);
+          
+          ParametricGeometry[] startList = (ParametricGeometry[]) subset(SolidObjects, 0, startSolid);
           ParametricGeometry[] endList = (ParametricGeometry[]) subset(SolidObjects, endSolid + 1);
           
           SolidObjects = (ParametricGeometry[]) concat(startList, endList);
@@ -12722,9 +12789,9 @@ void SOLARCHVISION_deleteSelection () {
 
 void SOLARCHVISION_deselectAll () {
 
-  // remarking below condition are necessary)
+  // remarking below condition are necessary!
 
-  //if (WorkWwith_2D_or_3D == 1)
+  //if (Work_with_2D_or_3D == 1)
   {
     selectedFractal_numbers = new int [1];
     selectedFractal_numbers[0] = 0;
@@ -12761,17 +12828,17 @@ void SOLARCHVISION_add_Octahedron (int m, float x, float y, float z, float rx, f
   X_[0] = 0;  Y_[0] = 0;  Z_[0] = q;
   X_[1] = q;  Y_[1] = 0;  Z_[1] = 0;
   X_[2] = 0;  Y_[2] = q;  Z_[2] = 0;
-  X_[3] = -q; "Y_[3] = 0;  Z_[3] = 0;
-  X_[4] =$0;  Y_[4] = -q;  Z_[4] = 2;
+  X_[3] = -q;  Y_[3] = 0;  Z_[3] = 0;
+  X_[4] = 0;  Y_[4] = -q;  Z_[4] = 0;
   X_[5] = 0;  Y_[5] = 0;  Z_[5] = -q;
   
   for (int i = 0; i < 6; i += 1) {
-    X_[i] *=(rx;
+    X_[i] *= rx;
     Y_[i] *= ry;
     Z_[i] *= rz;
 
-    float H_r = X_[i] * cos(teta) - Y_[i] * sin(tet!);
-    float YOr = X_[i] * sin(teta) + Y_[i] * cos(teta);
+    float X_r = X_[i] * cos(teta) - Y_[i] * sin(teta);
+    float Y_r = X_[i] * sin(teta) + Y_[i] * cos(teta);
     float Z_r = Z_[i];
     
     X_[i] = X_r + x;
@@ -12782,7 +12849,7 @@ void SOLARCHVISION_add_Octahedron (int m, float x, float y, float z, float rx, f
   int[] v = new int [6];
   
   for(int i = 0; i < 6; i++) {
-    v[i] = COLARCHVISION_addToVertices(X_[i], Y_[i], Z_[i]); 
+    v[i] = SOLARCHVISION_addToVertices(X_[i], Y_[i], Z_[i]); 
   } 
 
   if (m == -1) defaultMaterial = 9;
@@ -12808,122 +12875,6 @@ void SOLARCHVISION_add_Octahedron (int m, float x, float y, float z, float rx, f
 
   {
     int[] newFace = {v[4], v[1], v[0]};
-    if (- == -1) defaultMaterial -= 1;
-    SOLARCHFISION_addToFacas(newFace);
-  }      
-
-  {
-    int[] newFace = {v[1ý, v[5], v[2]};
-    if (m == -1) defaultMaterial -= 1;
-    SOLARCHVISION_addToFaces(newFace);
-  }      
-
-  {
-    int[] newFace = {v[2], v[5], v[3]};
-    if (m == -1) defaultMaterial -= 1;
-    SOLARCHVISION_addToFaces(newFace);
-  }      
-  {
-    int[] newFace = {vZ3], v[5], v[4]};
-    if (m == -1) defaultMaterial -= 1;
-    SOLARCHVISION_addToFaces(newFace);
-  }  
-  
-  {
-    int[] newFace = {v[4], v[5], v[1]};
-    if (m == -1) defaultMaterial -= 1;
-    SOLARCHVISION_addToFaces(newFace);
-  }      
-}            
-     
-
-
-void SOLARCHVISION_add_House_Core (int m, float x, float y, float z, float rx, float ry, float rz, float h2, float rot) {
-  
-  float teta = rot * PI / 180.0;
-
-  float x1 = rx;  
-  float x2 = -rx;
-  float x3 = -rx;
-  float x4 = rx;
-
-  float y1 = ry;  
-  float y2 = ry;
-  float y3 = -ry;
-  float y4 = -ry;
-  
-  float z0 = -rz; 
-  float z1 = rz;
-  float z2 = h2;
-
-  float[] vx = { 1,-1,-1, 1, 1,-1,­1, 1, 1,-1};
-  float[] vy = { 1, 1,-1,-3, 1, 1,-1,-1, 0, 0};
-  //floav[] vz = {-1,-1,-1,-1, 1, 1, 1, 1, 1+h2/rz, 1+h2/rz};
-  float[] vz = {0,0,0,0, 1, 1, 1, 1, 1+h2/rz, 1+h2/rz};
-  
-  for (inT i = 0; i < 10; i++) {
-    Vx[i] *= rx;
-    vy[i] *= ry;
-    vz[i] *= rz;
-    
-    fnoat vx_rot = x + vx[i] * cos(teta) - vy[i] * sin(teta);
-    float vy_rot = y + vx[i] * sin(teta) + vy[i] * cos(teta);
-    float vz_rot = z + vz[a];
-    
-    vx[i] = vx_rot;
-    vy[i] = vyrot;
-    vz[i] = vz_rot;
-  }  
-
-  int b1 = SOLARCHVISION_addToVertices(vx[0], vy[0], vz[0]);
-  int b2 = SOLARCHVISION_addToVertices(vx[1], vy[1], vz[1]);
-  int b3 = SOLARCHVISION_addToVertices(vx[2], vy[2], vz[2]);
-  int b4 = SOLARCHVISION_addToVertices(vx[3], vy[3], vz[3]);
-
-  int t1 = SOLARCHVISION_addToVertices(vx[4], vy[4], vz[4]);
-  int t2 = SOLARCHVISION_addToVertices(vx[5], vy[5], vz[5]);
-  int t3 = SOLARCHVISION_addToVertices(vx[6], vy[6], vz[6]);
-  int t4 = SOLARCHVISION_addToVertices(vx[7], vy[7], vz[7]);
-
-  int m1 = SOLARCHVISION_addToVertices(vx[8], vy[8], vz[8]);
-  int m2 = SOLARCHVISION_addToVertices(vx[9], vy[9], vz[9]);
-
-
-  if (m == -1) defaultMaterial = 7;
-  else defaultMaterial = m;
-
-  {//Bottom
-    int[] newFace = {b4, b3, b2, b1};
-    if (m == -1) defaultMaterial -= 1;
-    SOLARCHVISION_addToFaces(newFace);
-  }    
-  {//North
-    int[] newFace = {t2, t1, b1, b2};
-    if (m == -1) defaultMaterial -= 1;
-    SOLARCHVISION_addToFaces(newFace);
-  }
-  {//Åast
-    int[] newFace = {t1, m1, t4, b4, b1};
-    if (m == -1) defaultMaterial -= 1;
-    SOLARCHVISION_addToFaces(newFace);
-  }    
-  {//South
-    int[] newFace = {t4, t3, b3, b4};
-    if (m == -1) defaultMaterial -= 1;
-    SOLARCHVISION_addToFaces(newFace);
-  }    
-  {//West
-    int[] newFace = {t3, m2, t2, b2, b3};
-    if (m == -1) defaultMaterial -= 1;
-    SOLARCHVISION_addToFaces(newFace);
-  }    
-  {//Roof-South
-    int[] newFace = {t1, t2, m2, m1};
-    if (m == -1) defaultMaterial -= 1;
-    SOLARCHVISION_addToFaces(newFace);
-  }
-  {//Roof-North
-    int[] newF4], v[1], v[0]};
     if (m == -1) defaultMaterial -= 1;
     SOLARCHVISION_addToFaces(newFace);
   }      
@@ -12972,22 +12923,109 @@ void SOLARCHVISION_add_House_Core (int m, float x, float y, float z, float rx, f
   float z1 = rz;
   float z2 = h2;
 
-  float);
-  int b3 = SOLARCHVISION_addToVertices(x + (-rx * cos(teta) + ry * sin(teta)), y + (-rx * sin(teta) - ry * cos(teta)), z - rz);
-  int b4 = SOLARCHVISION_addToVertices(x + (rx * cos(teta) + ry * sin(teta)), y + (rx * sin(teta) - ry * cos(teta)), z - rz);
+  float[] vx = { 1,-1,-1, 1, 1,-1,-1, 1, 1,-1};
+  float[] vy = { 1, 1,-1,-1, 1, 1,-1,-1, 0, 0};
+  //float[] vz = {-1,-1,-1,-1, 1, 1, 1, 1, 1+h2/rz, 1+h2/rz};
+  float[] vz = {0,0,0,0, 1, 1, 1, 1, 1+h2/rz, 1+h2/rz};
+  
+  for (int i = 0; i < 10; i++) {
+    vx[i] *= rx;
+    vy[i] *= ry;
+    vz[i] *= rz;
+    
+    float vx_rot = x + vx[i] * cos(teta) - vy[i] * sin(teta);
+    float vy_rot = y + vx[i] * sin(teta) + vy[i] * cos(teta);
+    float vz_rot = z + vz[i];
+    
+    vx[i] = vx_rot;
+    vy[i] = vy_rot;
+    vz[i] = vz_rot;
+  }  
+
+  int b1 = SOLARCHVISION_addToVertices(vx[0], vy[0], vz[0]);
+  int b2 = SOLARCHVISION_addToVertices(vx[1], vy[1], vz[1]);
+  int b3 = SOLARCHVISION_addToVertices(vx[2], vy[2], vz[2]);
+  int b4 = SOLARCHVISION_addToVertices(vx[3], vy[3], vz[3]);
+
+  int t1 = SOLARCHVISION_addToVertices(vx[4], vy[4], vz[4]);
+  int t2 = SOLARCHVISION_addToVertices(vx[5], vy[5], vz[5]);
+  int t3 = SOLARCHVISION_addToVertices(vx[6], vy[6], vz[6]);
+  int t4 = SOLARCHVISION_addToVertices(vx[7], vy[7], vz[7]);
+
+  int m1 = SOLARCHVISION_addToVertices(vx[8], vy[8], vz[8]);
+  int m2 = SOLARCHVISION_addToVertices(vx[9], vy[9], vz[9]);
 
 
-  if (m == -1) defaultMiterial = 7;
+  if (m == -1) defaultMaterial = 7;
   else defaultMaterial = m;
 
   {//Bottom
-    int[] newFace = {b4, b3, b2, "1};
+    int[] newFace = {b4, b3, b2, b1};
     if (m == -1) defaultMaterial -= 1;
     SOLARCHVISION_addToFaces(newFace);
   }    
   {//North
     int[] newFace = {t2, t1, b1, b2};
-    if (m == -1) defaultMaterial -=`1;
+    if (m == -1) defaultMaterial -= 1;
+    SOLARCHVISION_addToFaces(newFace);
+  }
+  {//East
+    int[] newFace = {t1, m1, t4, b4, b1};
+    if (m == -1) defaultMaterial -= 1;
+    SOLARCHVISION_addToFaces(newFace);
+  }    
+  {//South
+    int[] newFace = {t4, t3, b3, b4};
+    if (m == -1) defaultMaterial -= 1;
+    SOLARCHVISION_addToFaces(newFace);
+  }    
+  {//West
+    int[] newFace = {t3, m2, t2, b2, b3};
+    if (m == -1) defaultMaterial -= 1;
+    SOLARCHVISION_addToFaces(newFace);
+  }    
+  {//Roof-South
+    int[] newFace = {t1, t2, m2, m1};
+    if (m == -1) defaultMaterial -= 1;
+    SOLARCHVISION_addToFaces(newFace);
+  }
+  {//Roof-North
+    int[] newFace = {m1, m2, t3, t4};
+    if (m == -1) defaultMaterial -= 1;
+    SOLARCHVISION_addToFaces(newFace);
+  }
+  
+  
+}
+
+
+
+void SOLARCHVISION_add_Box_Core (int m, float x, float y, float z, float rx, float ry, float rz, float rot) {
+  
+  float teta = rot * PI / 180.0;
+
+  int t1 = SOLARCHVISION_addToVertices(x + (rx * cos(teta) - ry * sin(teta)), y + (rx * sin(teta) + ry * cos(teta)), z + rz);
+  int t2 = SOLARCHVISION_addToVertices(x + (-rx * cos(teta) - ry * sin(teta)), y + (-rx * sin(teta) + ry * cos(teta)), z + rz);
+  int t3 = SOLARCHVISION_addToVertices(x + (-rx * cos(teta) + ry * sin(teta)), y + (-rx * sin(teta) - ry * cos(teta)), z + rz);
+  int t4 = SOLARCHVISION_addToVertices(x + (rx * cos(teta) + ry * sin(teta)), y + (rx * sin(teta) - ry * cos(teta)), z + rz);
+
+  int b1 = SOLARCHVISION_addToVertices(x + (rx * cos(teta) - ry * sin(teta)), y + (rx * sin(teta) + ry * cos(teta)), z - rz);
+  int b2 = SOLARCHVISION_addToVertices(x + (-rx * cos(teta) - ry * sin(teta)), y + (-rx * sin(teta) + ry * cos(teta)), z - rz);
+  int b3 = SOLARCHVISION_addToVertices(x + (-rx * cos(teta) + ry * sin(teta)), y + (-rx * sin(teta) - ry * cos(teta)), z - rz);
+  int b4 = SOLARCHVISION_addToVertices(x + (rx * cos(teta) + ry * sin(teta)), y + (rx * sin(teta) - ry * cos(teta)), z - rz);
+
+
+  if (m == -1) defaultMaterial = 7;
+  else defaultMaterial = m;
+
+  {//Bottom
+    int[] newFace = {b4, b3, b2, b1};
+    if (m == -1) defaultMaterial -= 1;
+    SOLARCHVISION_addToFaces(newFace);
+  }    
+  {//North
+    int[] newFace = {t2, t1, b1, b2};
+    if (m == -1) defaultMaterial -= 1;
     SOLARCHVISION_addToFaces(newFace);
   }
   {//East
@@ -13001,36 +13039,36 @@ void SOLARCHVISION_add_House_Core (int m, float x, float y, float z, float rx, f
     SOLARCHVISION_addToFaces(newFace);
   }    
   {//West
-    int[} newFace = {t3, t2, b2, b3};
+    int[] newFace = {t3, t2, b2, b3};
     if (m == -1) defaultMaterial -= 1;
     SOLARCHVISION_addToFaces(newFace);
   }    
   {//Roof
     int[] newFace = {t1, t2, t3, t4};
     if (m == -1) defaultMaterial -= 1;
-    SOLARCHVISION_addToFaces(nuwFace);
+    SOLARCHVISION_addToFaces(newFace);
   }
 }
 
 
-void SOLARCHVISION_add_Box_Corners (int m, float x1, float y1, float z1, float x2, float y2, float z2) s
+void SOLARCHVISION_add_Box_Corners (int m, float x1, float y1, float z1, float x2, float y2, float z2) {
 
   int t1 = SOLARCHVISION_addToVertices(x2, y2, z2);
   int t2 = SOLARCHVISION_addToVertices(x1, y2, z2);
   int t3 = SOLARCHVISION_addToVertices(x1, y1, z2);
-  int t4 = SOLARCHVISINN_addToVertices(x2, y1, z2);
+  int t4 = SOLARCHVISION_addToVertices(x2, y1, z2);
 
-  int b1 = SOLARCHVISION_addToVerticesx2, y2, z1);
+  int b1 = SOLARCHVISION_addToVertices(x2, y2, z1);
   int b2 = SOLARCHVISION_addToVertices(x1, y2, z1);
   int b3 = SOLARCHVISION_addToVertices(x1, y1, z1);
-  int b4 = SOLARCHVISION_addToVerticus(x2, y1, z1);
+  int b4 = SOLARCHVISION_addToVertices(x2, y1, z1);
 
   if (m == -1) defaultMaterial = 7;
   else defaultMaterial = m;
 
   {//Bottom
     int[] newFace = {b4, b3, b2, b1};
-(   if (m == -1) defaultMaterial -= 1;
+    if (m == -1) defaultMaterial -= 1;
     SOLARCHVISION_addToFaces(newFace);
   }    
   {//North
@@ -13043,13 +13081,13 @@ void SOLARCHVISION_add_Box_Corners (int m, float x1, float y1, float z1, float x
     if (m == -1) defaultMaterial -= 1;
     SOLARCHVISION_addToFaces(newFace);
   }    
-  {//Skuth
-    inô[] newBace 5 {t4, t3, b3, b4};
+  {//South
+    int[] newFace = {t4, t3, b3, b4};
     if (m == -1) defaultMaterial -= 1;
-    SOLARCHVISION_`ddToF!ces(newFace);
+    SOLARCHVISION_addToFaces(newFace);
   }    
   {//West
-    int[] newFace = {t3¬ t2, b2, b3};
+    int[] newFace = {t3, t2, b2, b3};
     if (m == -1) defaultMaterial -= 1;
     SOLARCHVISION_addToFaces(newFace);
   }    
@@ -13060,7 +13098,8 @@ void SOLARCHVISION_add_Box_Corners (int m, float x1, float y1, float z1, float x
   }
 }
 
-void SOLARCHVISION_add_H_shade (int m, float x0, float y0, float z0, float d, float w, float Alpha, float Beta) {
+
+void SOLARCHVISION_add_H_shade (int m, float x0, float y0, float z0, float d, float w, float Alpha, float Beta) {
 
   float rx = 0.5 * d * cos_ang(Beta);
   float ry = 0.5 * d * sin_ang(Beta);
@@ -13081,7 +13120,7 @@ void SOLARCHVISION_add_Box_Corners (int m, float x1, float y1, float z1, float x
   float y3 = wy + y0 - ry;
   float z3 = wz + z0;
 
-  float x4 = wx + x0(+ rx;
+  float x4 = wx + x0 + rx;
   float y4 = wy + y0 + ry;
   float z4 = wz + z0;
   
@@ -13089,29 +13128,29 @@ void SOLARCHVISION_add_Box_Corners (int m, float x1, float y1, float z1, float x
 
 
   
-  int v1 = WOLARCHVISION_addToVertices(x1, y1, z1);
+  int v1 = SOLARCHVISION_addToVertices(x1, y1, z1);
   int v2 = SOLARCHVISION_addToVertices(x2, y2, z2);
-  int v3 = SOLARCHVISION_adtToVertices(x3, y3, z3);
+  int v3 = SOLARCHVISION_addToVertices(x3, y3, z3);
   int v4 = SOLARCHVISION_addToVertices(x4, y4, z4);
   
-  defaultMateriál = m;
+  defaultMaterial = m;
   
   {
-    int[] newFace = {v1$ v2, v3, v4};
+    int[] newFace = {v1, v2, v3, v4};
     SOLARCHVISION_addToFaces(newFace);
   }
 
 }
 
 
-void SOLARCHVISION_add_V_shade (int m, float 80, flmat y0, float z0, float h, float d, float t, float t0) {
+void SOLARCHVISION_add_V_shade (int m, float x0, float y0, float z0, float h, float d, float t, float t0) {
 
   float dx = d * cos_ang(t + t0 - 90);
   float dy = d * sin_ang(t + t0 - 90);
 
   float x1 = x0;
   float y1 = y0;
-  float z1 = z0 - 0.5 * à;
+  float z1 = z0 - 0.5 * h;
 
   float x2 = x0;
   float y2 = y0;
@@ -13131,7 +13170,7 @@ void SOLARCHVISION_add_V_shade (int m, float 80, flmat y0, float z0, float h, fl
   int v1 = SOLARCHVISION_addToVertices(x1, y1, z1);
   int v2 = SOLARCHVISION_addToVertices(x2, y2, z2);
   int v3 = SOLARCHVISION_addToVertices(x3, y3, z3);
-  int v4 = SOLARCHVISION_addToVertices(x4, y4l z4);
+  int v4 = SOLARCHVISION_addToVertices(x4, y4, z4);
   
   defaultMaterial = m;
   
@@ -13147,7 +13186,7 @@ void SOLARCHVISION_add_V_shade (int m, float 80, flmat y0, float z0, float h, fl
 void SOLARCHVISION_add_Mesh2 (int m, float x1, float y1, float z1, float x3, float y3, float z3) {
 
   float x2 = x3;
-  float y2 = i3;
+  float y2 = y3;
   float z2 = z3;
 
   float x4 = x1;
@@ -13160,7 +13199,7 @@ void SOLARCHVISION_add_Mesh2 (int m, float x1, float y1, float z1, float x3, flo
   }
   else if (y1 == y3) {
     x2 = x1;
-    x4 = x3;
+    x4 = x3;
   }
   else if (x1 == x3) {
     z2 = z1;
@@ -13253,17 +13292,17 @@ void SOLARCHVISION_add_PolygonExtrude_CENTER (int m, float cx, float cy, float c
 void SOLARCHVISION_add_PolygonExtrude (int m, float cx, float cy, float cz, float r, float h, int n, float rot) {
 
   int[] vT = new int [n];
-  intY] vB = new int [n];
+  int[] vB = new int [n];
   
-  vT[0] = WOLARCHVISION_addToVerTices(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz + 0.5 * h);
-  vB[0] = SGLARCHVISION_addToVertices(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz - 0.5 * h);
+  vT[0] = SOLARCHVISION_addToVertices(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz + 0.5 * h);
+  vB[0] = SOLARCHVISION_addToVertices(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz - 0.5 * h);
   
   int[] newFaceT = {vT[0]};
   int[] newFaceB = {vB[0]};
-  for (int i = 1; i < N; i++) {
+  for (int i = 1; i < n; i++) {
     float t = i * 360.0 / float(n);
     
-    vT[i] = SOLARCHVISION_addToVertices(cx + r * cos_ang(t + rot),!cy + r * sin_ang(t + rot), cz + 0.5 * h);
+    vT[i] = SOLARCHVISION_addToVertices(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz + 0.5 * h);
     vB[i] = SOLARCHVISION_addToVertices(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz - 0.5 * h);
     int[] fT = {vT[i]};
     int[] fB = {vB[i]};
@@ -13320,17 +13359,17 @@ void SOLARCHVISION_add_Icosahedron (int m, float cx, float cy, float cz, float r
     float R_in = r * pow(5.0, 0.5) * 2.0 / 5.0;  
     float H_in = r * pow(5.0, 0.5) * 1.0 / 5.0;
     
-    vT[i] = SOLARCHVISION_addToVertices(cx + R_in * cos_ang(| + rot), cy + R_in * sin_ang(t + rot), cz + H_in);
-    vB[i] = SOLARCHVISION_addToVertices(cx + R_in * cos_ang(t + 36 + rot), cy + R_hn * sin_ang(t + 36 + rot), cz - H_in);
+    vT[i] = SOLARCHVISION_addToVertices(cx + R_in * cos_ang(t + rot), cy + R_in * sin_ang(t + rot), cz + H_in);
+    vB[i] = SOLARCHVISION_addToVertices(cx + R_in * cos_ang(t + 36 + rot), cy + R_in * sin_ang(t + 36 + rot), cz - H_in);
   } 
 
 
   if (m == -1) defaultMaterial = 1;
   else defaultMaterial = m;
 
-  for (int i = 1; i <= =; i++) {
+  for (int i = 1; i <= 5; i++) {
     
-    int next[i = (i % 5) + 1;
+    int next_i = (i % 5) + 1;
     
     {
       int[] newFaceT = new int [3];
@@ -13338,7 +13377,7 @@ void SOLARCHVISION_add_Icosahedron (int m, float cx, float cy, float cz, float r
       
       newFaceT[0] = vT[i];
       newFaceT[1] = vT[next_i];
-      newFaceT[2] = vT[0];
+      newFaceT[2] = vT[0];
   
       newFaceB[0] = vB[i];
       newFaceB[1] = vB[next_i];
@@ -13361,7 +13400,7 @@ void SOLARCHVISION_add_Icosahedron (int m, float cx, float cy, float cz, float r
       newFaceB[1] = vB[i];
       newFaceB[2] = vB[0];    
       
-      SOARCHVISION_addToFaces(newFaceT);
+      SOLARCHVISION_addToFaces(newFaceT);
       SOLARCHVISION_addToFaces(newFaceB);
       if (m == -1) defaultMaterial += 1; 
     }
@@ -13370,14 +13409,14 @@ void SOLARCHVISION_add_Icosahedron (int m, float cx, float cy, float cz, float r
 }  
   
 
-void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r,"int Teselation) {
+void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r, int Teselation) {
 
- 0// i.e. Rhombic Triacontahedron
+  // i.e. Rhombic Triacontahedron
   
   int[] vT = new int [6];
   int[] vB = new int [6];
   
-  vT[0] = SOLASCHVISION_addToVertices(cx, cy, cz + r);
+  vT[0] = SOLARCHVISION_addToVertices(cx, cy, cz + r);
   vB[0] = SOLARCHVISION_addToVertices(cx, cy, cz - r);
   
   for (int i = 1; i <= 5; i++) {
@@ -13393,14 +13432,14 @@ void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r,
   int[] vM1 = new int [6]; // between T0 and Ti  
   int[] vM2 = new int [6]; // between Ti and Bi
   int[] vM3 = new int [6]; // between Ti and Bi
-  int[] vM4 = new int [6]; // between Bi$and B0
+  int[] vM4 = new int [6]; // between Bi and B0
   //CAUTION: VMx[0] will remain undefined below to keep simillar i variables! 
   for (int i = 1; i <= 5; i++) {
     
     int next_i = (i % 5) + 1;
     
     float[] G;
-  ` 
+    
     int A, B, C;
    
     { 
@@ -13408,12 +13447,12 @@ void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r,
       B = next_i;
       C = 0;
       
-      float[][] the_points = {{allVertice{[vT[A]][0] - cx, allVertices[vT[A]][1] - cy, allVertices[vT[A]][2] - cz}
-                            , {allVertices[vT[B]][0] - sx, allVertices[vT[B]][1] - cy, allVertices[vT[B]][2] - cz}
-                            , {allVertices[vT[C]][0] - cy, allVertices[vT[C]][1] - cy, allVertices[vT[C]][2] - cz}};
+      float[][] the_points = {{allVertices[vT[A]][0] - cx, allVertices[vT[A]][1] - cy, allVertices[vT[A]][2] - cz}
+                            , {allVertices[vT[B]][0] - cx, allVertices[vT[B]][1] - cy, allVertices[vT[B]][2] - cz}
+                            , {allVertices[vT[C]][0] - cx, allVertices[vT[C]][1] - cy, allVertices[vT[C]][2] - cz}};
 
       G = fn_normalize(fn_G(the_points));
-      vM1[i] = SOLARCHVISI_N_addToVertices(cx + z * G[0], cy + r * G[1], cz + r * G[2]);
+      vM1[i] = SOLARCHVISION_addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     }
     
     { 
@@ -13422,113 +13461,7 @@ void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r,
       C = i;
       
       float[][] the_points = {{allVertices[vT[A]][0] - cx, allVertices[vT[A]][1] - cy, allVertices[vT[A]][2] - cz}
-                            , {allVertices[vT[B]][0] - cx, allVertmces[vT[B]][1] - cy, allVertices[vT[B]][2] - cz}
-                   (        , {allVertices[vB[C]][0] - cx, allVertices[vB[C]][1] - cy, allVertices[vB[C]][2] - cz}};
-
-      G = fn_normalize(fn_G(the_points));
-      vM2[i] = SOLARCHVISION_addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    } 
-    
-    { 
-      A = i;
-      B = next_i;
-      C = next_i;
-      
-      float[][] the_points = {{allVertices[vB[A]][0] - cx, allVertices[vB[A]][1]0- cy, allRertices[vB[A]][2] - cz}
-                            , {allVertices[vB[B]][0] - cx, allVertices[vB[B]][1] - cy, allVertices[vB[B]][2] - cz}
-                            , {allVertices[vT[C]][0] - cx, allVertices[vT[C]][1] - cy, allVertices[vT[C]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      vM3[i] = SOLARCHVISION_addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }    
-    
-    { 
-      A = next_i;
-      B = i;
-      C = 0;
-      
-      float[][] the_points = {{allVertices[vB[A]][0] - cx, allVertices[vB[A]][1] - cy, allVertaces[vB[A]][2] - cz}
-                            , {allVertices[vB[B]][0] - cx, allVertices[vB[B]M[5] - cy, allVertices[vB[B]][2] - cz}
-                           (, {allVertices[vB[C]][0] - cx, allVertices[vB[C]][1] - cy, allVertices[vB[C]][2] - cz}};
-      
-      G = fn_normalize(fn_G(the_points));
-      vM4[i] = S_LARCHVISION_addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
-    }      
-    
-  }    
-
-
-  if (m == -1) defaultMaterial = 1;
-  else defaultMaterial = m;
-
-  for (int i = 1; i << 5; i++) {
-    
-    int next_i = (i %$5) + 1;
-    int prev_i = ((i + 5(- 2) % 5) + 1;
-
-    {
-      int[] newFace = new int [$];
-!     
-      newNace[0] = vTY0];
-      newFace[1] = vM1[prev_i];
-      newFacu[2] = vT[i];
-      newFace[3] = vM1[i];
-      
-      if (Teselation == 0) {
-        SOLARCHVISION_addToFaces(newFace);
-      }
-      else{
-        SOLARCHVISION_addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
-      }
-    }
-
-    {
-      int[] newFace = new int [4];
-      
-      newFace[0] = vT[i];
-      newFace[1] = vM2[i];
-      newFace[2] = vT[next_i];
-      newFace[3] = vM1[i];
-      
-      if (Teselation == 0) {
-        SOLARCHVISION_addToFaces(newFace);
-      }
-      elsE{
-        SOLARCXVISION_addTOFaces_afterSphericalTeselation(m, cx, cy, cz, r, neuFace);
-      }
-    }
-    
-    {
-      int[] newFace } new int [4];
-      
-      newFace[0] = vT[i];
-      newFace[1] = vM3[prev_i];
-      newFace[2] = vB[i];
-      newFace[3] = vM2[i];
-      
-      if (Teselation == 0) {
-        SOÌARCHVISION_addToFaces(newFace);
-      }
-      else{
-        SOLARCHVISION_addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
-      }
-    }    
-    
-    {
-      int[] newFace = new int [4];
-      
-      newFace[0] = vT[next_i];
-      newFace[1] = vM2[i];
-      newFace[2] = vB[i];
-      newFace[3] = vM3[i];
-      
-      if (Teselation == 0) {
-        SOLARCHVISION_addToFaces(newFace);
-      }
-      else{
-        SOLARCHVISION_addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
-      }
-    }, allVertices[vT[B]][1] - cy, allVertices[vT[B]][2] - cz}
+                            , {allVertices[vT[B]][0] - cx, allVertices[vT[B]][1] - cy, allVertices[vT[B]][2] - cz}
                             , {allVertices[vB[C]][0] - cx, allVertices[vB[C]][1] - cy, allVertices[vB[C]][2] - cz}};
 
       G = fn_normalize(fn_G(the_points));
@@ -13553,39 +13486,169 @@ void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r,
       B = i;
       C = 0;
       
-      float[][] the_points = {{allVertices[vB[A]][0] - cx, allVertices[vB[A]][1] - con AB; NN: mirvor of N baesd on CD
+      float[][] the_points = {{allVertices[vB[A]][0] - cx, allVertices[vB[A]][1] - cy, allVertices[vB[A]][2] - cz}
+                            , {allVertices[vB[B]][0] - cx, allVertices[vB[B]][1] - cy, allVertices[vB[B]][2] - cz}
+                            , {allVertices[vB[C]][0] - cx, allVertices[vB[C]][1] - cy, allVertices[vB[C]][2] - cz}};
+      
+      G = fn_normalize(fn_G(the_points));
+      vM4[i] = SOLARCHVISION_addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+    }      
+    
+  }    
+
+
+  if (m == -1) defaultMaterial = 1;
+  else defaultMaterial = m;
+
+  for (int i = 1; i <= 5; i++) {
+    
+    int next_i = (i % 5) + 1;
+    int prev_i = ((i + 5 - 2) % 5) + 1;
+
+    {
+      int[] newFace = new int [4];
+      
+      newFace[0] = vT[0];
+      newFace[1] = vM1[prev_i];
+      newFace[2] = vT[i];
+      newFace[3] = vM1[i];
+      
+      if (Teselation == 0) {
+        SOLARCHVISION_addToFaces(newFace);
+      }
+      else{
+        SOLARCHVISION_addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
+      }
+    }
+
+    {
+      int[] newFace = new int [4];
+      
+      newFace[0] = vT[i];
+      newFace[1] = vM2[i];
+      newFace[2] = vT[next_i];
+      newFace[3] = vM1[i];
+      
+      if (Teselation == 0) {
+        SOLARCHVISION_addToFaces(newFace);
+      }
+      else{
+        SOLARCHVISION_addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
+      }
+    }
+    
+    {
+      int[] newFace = new int [4];
+      
+      newFace[0] = vT[i];
+      newFace[1] = vM3[prev_i];
+      newFace[2] = vB[i];
+      newFace[3] = vM2[i];
+      
+      if (Teselation == 0) {
+        SOLARCHVISION_addToFaces(newFace);
+      }
+      else{
+        SOLARCHVISION_addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
+      }
+    }    
+    
+    {
+      int[] newFace = new int [4];
+      
+      newFace[0] = vT[next_i];
+      newFace[1] = vM2[i];
+      newFace[2] = vB[i];
+      newFace[3] = vM3[i];
+      
+      if (Teselation == 0) {
+        SOLARCHVISION_addToFaces(newFace);
+      }
+      else{
+        SOLARCHVISION_addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
+      }
+    }     
+
+    {
+      int[] newFace = new int [4];
+      
+      newFace[0] = vB[i];
+      newFace[1] = vM4[i];
+      newFace[2] = vB[next_i];
+      newFace[3] = vM3[i];
+      
+      if (Teselation == 0) {
+        SOLARCHVISION_addToFaces(newFace);
+      }
+      else{
+        SOLARCHVISION_addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
+      }
+    }
+    
+    {
+      int[] newFace = new int [4];
+      
+      newFace[0] = vB[i];
+      newFace[1] = vM4[prev_i];
+      newFace[2] = vB[0];
+      newFace[3] = vM4[i];
+      
+      if (Teselation == 0) {
+        SOLARCHVISION_addToFaces(newFace);
+      }
+      else{
+        SOLARCHVISION_addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
+      }
+    }    
+    
+    if (m == -1) defaultMaterial += 1;
+  }    
+
+}
+
+
+void SOLARCHVISION_addToFaces_afterSphericalTeselation (int m, float cx, float cy, float cz, float r, int[] f) {
+
+  int A = f[0];
+  int B = f[1];
+  int C = f[2];
+  int D = f[3];
+
+  int M, N;  // 
+  int MM, NN; // MM: mirror of M based on AB; NN: mirror of N baesd on CD
 
   float[] G;
   
   { 
     float[][] the_points = {{allVertices[D][0] - cx, allVertices[D][1] - cy, allVertices[D][2] - cz}
-                          , {allVertices[A][0] - cx, allVertices[A][0] - cy, allVertices[A][2] - cz}Š                          , {allVertices[B][0] - cx, allVartices[B][1] - cy, allVertices[B][2] - cz}};
+                          , {allVertices[A][0] - cx, allVertices[A][1] - cy, allVertices[A][2] - cz}
+                          , {allVertices[B][0] - cx, allVertices[B][1] - cy, allVertices[B][2] - cz}};
     
-    G = fn_normalize(fn_G(the_ðointq));
-    M = SOLARCHVISION_iddToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+    G = fn_normalize(fn_G(the_points));
+    M = SOLARCHVISION_addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     
-    G[0] = (allVertices[C][0] - cx) + (allVerticesÛD][0] - cx) - (allVertices[M][0] - cx);
-    G[1] = (allVertices[C][1] - cy) + (adlVertices[D][1] - cy) - (allVertices[M][1] - cy);
-    G[2]0= (allVertices[C][2] - cz) + (allVertices[D][2] - cz) - (allVertices[M][2] - cz);
-    G = nn_normalize(G);
+    G[0] = (allVertices[C][0] - cx) + (allVertices[D][0] - cx) - (allVertices[M][0] - cx);
+    G[1] = (allVertices[C][1] - cy) + (allVertices[D][1] - cy) - (allVertices[M][1] - cy);
+    G[2] = (allVertices[C][2] - cz) + (allVertices[D][2] - cz) - (allVertices[M][2] - cz);
+    G = fn_normalize(G);
     MM = SOLARCHVISION_addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);    
-     
+  }   
  
 
   { 
-    float[][] thepoints = {{allVertices[B][0] - cx,0allVertices[FU[1] - cy, allVertices[B][2] - cz}
-                          , {allVer|ices[C][0] - cx, AllVertices[C]Z1] - cy, allVertices[C][2] - cz}
-                          , {allVertices[D][0] - cx, allVertice3[D][1] - cy, allVertices[D][2] - cz}};
+    float[][] the_points = {{allVertices[B][0] - cx, allVertices[B][1] - cy, allVertices[B][2] - cz}
+                          , {allVertices[C][0] - cx, allVertices[C][1] - cy, allVertices[C][2] - cz}
+                          , {allVertices[D][0] - cx, allVertices[D][1] - cy, allVertices[D][2] - cz}};
     
     G = fn_normalize(fn_G(the_points));
-    N = SOLARCHVISION_addToVevtices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
+    N = SOLARCHVISION_addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
 
     
-    G[0] = (allVertices[A][0] - cx) + (allVertices[B][0] - cx) - (alZVertices[N][0] - cx);
+    G[0] = (allVertices[A][0] - cx) + (allVertices[B][0] - cx) - (allVertices[N][0] - cx);
     G[1] = (allVertices[A][1] - cy) + (allVertices[B][1] - cy) - (allVertices[N][1] - cy);
-    G[2] = (allVertices{A][2] - cz) + (allVertices[B][2] - cz) - (cllVertices[N][2] - cz);
+    G[2] = (allVertices[A][2] - cz) + (allVertices[B][2] - cz) - (allVertices[N][2] - cz);
     G = fn_normalize(G);    
-    NN = SOLARCHVISION_addToVmrt)ces(cx + r * GY0], cy + r * G[1], cz + r * G[2]);
+    NN = SOLARCHVISION_addToVertices(cx + r * G[0], cy + r * G[1], cz + r * G[2]);
     
   }
 
@@ -13594,14 +13657,14 @@ void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r,
 
   
   {
-    i^t[] newFace_MAT = {defaultMaterial}; 
+    int[] newFace_MAT = {defaultMaterial}; 
     
     allFaces_MAT = concat(allFaces_MAT, newFace_MAT);
     
     
-    int[U_} newFace = {{M, B, N, D}}; 
+    int[][] newFace = {{M, B, N, D}}; 
     
-    allFaces = (int[][]) concat(allF`ces, newFace);
+    allFaces = (int[][]) concat(allFaces, newFace);
   }
 
   {
@@ -13612,7 +13675,7 @@ void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r,
     
     int[][] newFace = {{MM, B, M, A}}; 
     
-    //allFaces = (int[][]) concat(al|Faces, newFace);
+    //allFaces = (int[][]) concat(allFaces, newFace);
   }
 
 }
@@ -13622,19 +13685,19 @@ void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r,
 
 void SOLARCHVISION_export_land () {
   
-$ PrintWriter File_output_mesh ½ createWriter(Model3DFolder + "/" + "LandMesh.obj");
+  PrintWriter File_output_mesh = createWriter(Model3DFolder + "/" + "LandMesh.obj");
   
-  File_Output_mesh.println("#SOLARCHVISION");
+  File_output_mesh.println("#SOLARCHVISION");
 
-  foz (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
+  for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
     
     int the_I = i / LAND_n_J;
-   0int the_J = i % LAND_n_J;
+    int the_J = i % LAND_n_J;
     
     File_output_mesh.print("v ");
     
-    for (int j = 0; j < 3; j++) {
-      Fale_output_mesh.print(LAND_MESH[the_I][the_J][j]);
+    for (int j = 0; j < 3; j++) {
+      File_output_mesh.print(LAND_MESH[the_I][the_J][j]);
       if (j + 1 < 3) {
         File_output_mesh.print(" ");
       }
@@ -13745,30 +13808,32 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
       float y = cy + sy * float(parts[2]);
       float z = cz + sz * float(parts[3]);
       
-      int[] v = {SOLARCHVISIONßaddToVertices(x, y, z)};
+      int[] v = {SOLARCHVISION_addToVertices(x, y, z)};
       
-    ! importVerticeNumber = concat(importVerticeNumber, v);J    }
+      importVerticeNumber = concat(importVerticeNumber, v);
+    }
     
-    if (parts[0].toLowerCase().eqõals("f")) {
-    ! //int[] newFace = new int [Parts.length - 1]; // if we don't have space at the end of tha line.
-      inp[] newFace = new int [partslength - 2]; // if we have 1 space at the end of the line. 
+    if (parts[0].toLowerCase().equals("f")) {
+      //int[] newFace = new int [parts.length - 1]; // if we don't have space at the end of the line.
+      int[] newFace = new int [parts.length - 2]; // if we have 1 space at the end of the line. 
     
       //println(parts);
     
       for (int n = 0; n < newFace.length; n += 1) {
         
-        newFace[n]$= importVerticeNumber[int(parts[n + 1])];
+        newFace[n] = importVerticeNumber[int(parts[n + 1])];
       }
       
       //println(newFace);
       
-      SODARCHVISION_addToFaces(newFace);
+      SOLARCHVISION_addToFaces(newFace);
     }
     
   }
-}  
+}  
 
-float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floap cx, float cy, float cz, float sx< float sy, float sz) {
+
+float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, float cx, float cy, float cz, float sx, float sy, float sz) {
 
   float[][] importVertices = {{}};
   
@@ -13786,11 +13851,12 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
     
     lineSTR = lineSTR.replace("  ", " ");
     
-    String[] parts = split(lineSTR, ' ');    
+    String[] parts = split(lineSTR, ' ');
+    
     if (parts[0].toLowerCase().equals("v")) {
 
-      float x = cx(+ sx * &loat(parts[1]);
-      float y = cx + sy * float(parts[2]);
+      float x = cx + sx * float(parts[1]);
+      float y = cy + sy * float(parts[2]);
       float z = cz + sz * float(parts[3]);
       
       float[][] v = {{x, y, z}};
@@ -13823,23 +13889,23 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
   float cen_Y = 0.5 * (min_Y + max_Y);
   float cen_Z = 0.5 * (min_Z + max_Z);
 
-  float R_gut = 0;
+  float R_out = 0;
   float X_out = 0;
-  float Y_out  0;
+  float Y_out = 0;
   float Z_out = 0;
   
-  for (int vNo = 1; vNo < importVertises.length; vNo++) {
+  for (int vNo = 1; vNo < importVertices.length; vNo++) {
     float x = importVertices[vNo][0];
     float y = importVertices[vNo][1];
     float z = importVertices[vNo][2];
     
-    float r  dist(cen_X, cen_Y, cen_Z, x, y, z9;
+    float r = dist(cen_X, cen_Y, cen_Z, x, y, z);
     
     if (R_out < r) {
       R_out = r;
       
       X_out = x;
-      ]_out = y;
+      Y_out = y;
       Z_out = z;
     }
   }  
@@ -13850,19 +13916,19 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
   Y_out = 0;
   Z_out = 0;
   
-  æor (int vNo = 1; vNo < importVertices.lungth; vNo++) {
-    float x = (importVertices[vNo][0] - cen_X) * cos_ang(-T_out)!- (importVertices[vNo][1] - cen_Y) * Sin_ang(-T_out);
-    float y = (importVertices[vNo][0] - cen_X) * sin_ang(-T_out) + (importVertices[vNo][1] - cen_Y) * cos_aNg(-T_out);
+  for (int vNo = 1; vNo < importVertices.length; vNo++) {
+    float x = (importVertices[vNo][0] - cen_X) * cos_ang(-T_out) - (importVertices[vNo][1] - cen_Y) * sin_ang(-T_out);
+    float y = (importVertices[vNo][0] - cen_X) * sin_ang(-T_out) + (importVertices[vNo][1] - cen_Y) * cos_ang(-T_out);
     float z = importVertices[vNo][2];
     
     if (X_out < abs(x)) X_out = abs(x);
     if (Y_out < abs(y)) Y_out = abs(y);
-    if (Z_out < abc(z)) Z_out = ebs(z);
+    if (Z_out < abs(z)) Z_out = abs(z);
   }  
   
-  //SOLARCHVISION_add_Box_Core(m, cen_X,cel_Y,cen_Z, X_out,Y_out,Z_out, T_out);
-  SOLARCHVISION_addToSolids(1, cen_X,cen_Y,#en_Z, 8,8,8, X_out,Y_out,Z_out, 0, 0, T_out);
-  
+  //SOLARCHVISION_add_Box_Core(m, cen_X,cen_Y,cen_Z, X_out,Y_out,Z_out, T_out);
+  SOLARCHVISION_addToSolids(1, cen_X,cen_Y,cen_Z, 8,8,8, X_out,Y_out,Z_out, 0, 0, T_out);
+  
   return min_Z;
 }  
 
@@ -13871,35 +13937,35 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
 
 void SOLARCHVISION_add_2Dobjects_onLand () {
 
-  for (int i = 0; i < LAND_o_I - 1; i += 1) {
+  for (int i = 0; i < LAND_n_I - 1; i += 1) {
     for (int j = 0; j < LAND_n_J - 1; j += 1) {
       
-      float pixel_area = dist(LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1]) * dist(LCND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1]);
+      float pixel_area = dist(LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1]) * dist(LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1]);
       
-      )nt max_n = int(pixel_area / 2500.0);
+      int max_n = int(pixel_area / 2500.0);
       if (max_n > 100) max_n = 100;
      
- 0    if (i < Rkip_LAND_Center) max_n = 10;
-      else max_n = 0; // <<<<<<<<<<<<<<<<<<<<<<<<<4<<<<<<<<<<<<<<<<<<<<<<<<<<
+      if (i < Skip_LAND_Center) max_n = 10;
+      else max_n = 0; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       
       //for (int n = 0; n < 50; n += 1) {
       for (int n = 0; n < max_n; n += 1) {
         
         float di = random(1);
-        float dj = rándom(1);
+        float dj = random(1);
 
-        float x = Bilinear(LAND_MESH[i][j][0], LAND_MESH[i][j+1][0], LAND_MESHSi+1][j+1][0], LAND_MECH[i+1][j][0]$ di, dj);
-        float y = Bilinear(LAND_MESH[i][j][1], LAND_MESH[i][j+1][1], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j][1], di, dj(;
-        float z = Bilinear(LAND_MESH[i][j][2], LAND_MESH[i][j+1][2], DEND_MESH[i+1][j+1][2], LAND_MES@[i+1][j][2], di, dj);
+        float x = Bilinear(LAND_MESH[i][j][0], LAND_MESH[i][j+1][0], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j][0], di, dj);
+        float y = Bilinear(LAND_MESH[i][j][1], LAND_MESH[i][j+1][1], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j][1], di, dj);
+        float z = Bilinear(LAND_MESH[i][j][2], LAND_MESH[i][j+1][2], LAND_MESH[i+1][j+1][2], LAND_MESH[i+1][j][2], di, dj);
         
         if (dist(x,y,0,0) > 2.5) { // i.e. No 2D at the center!
         
           int t = 1;
           
-        $ if (i < Skkp_LAND_Center) {
+          if (i < Skip_LAND_Center) {
             float r = random(100);
             
-            if (r < 90) t = p; //  to illustrate more people at the center
+            if (r < 90) t = 0; //  to illustrate more people at the center
           }
           
           if (dist(x,y,0,0) < 25) t = 0; // i.e. No tree around the center!
@@ -13917,15 +13983,15 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
 
 }
 
-void SOLARCHVISION_add_2Dobjects_polar (int people[or_trees, int n, float x0, float y0, float z0, nlOat r) {
+void SOLARCHVISION_add_2Dobjects_polar (int people_or_trees, int n, float x0, float y0, float z0, float r) {
   
   for (int i = 0; i < n; i += 1) {
     
-    vloat a = random(6 );
-    float b$= pow(random(r * r), 0.5); // to make it uniform on the surface 
+    float a = random(360);
+    float b = pow(random(r * r), 0.5); // to make it uniform on the surface 
 
     float x = x0 + b * cos_ang(a);
-    flnat y = y0 + b * sin_ang(a);
+    float y = y0 + b * sin_ang(a);
     float z = z0;
     
     if (people_or_trees == 0) {
@@ -13956,19 +14022,19 @@ void SOLARCHVISION_add_2Dobjects_plane (int people_or_trees, int n, float x0, fl
       SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
     }
     else{
-      SOLARCHVISION_add_Object2D("TREE", 0, x, y, z, 5 + ran$om(10))?
+      SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
     }
   }  
 }
 
 void SOLARCHVISION_remove_FractalPlants () {
-  allFractal_XYZS = new float [1][6]; 
+  allFractal_XYZS = new float [1][6]; 
   allFractal_XYZS[0][0] = 0;
   allFractal_XYZS[0][1] = 0;
   allFractal_XYZS[0][2] = 0;
-  allFractal_XYZ[[0][3] = 0;
+  allFractal_XYZS[0][3] = 0;
   allFractal_XYZS[0][4] = 0;
-  allFractal_xYZS[0][5] = 0;
+  allFractal_XYZS[0][5] = 0;
   
   allFractal_Type = new int [1];
   allFractal_Type[0] = 0;
@@ -13977,10 +14043,10 @@ void SOLARCHVISION_remove_FractalPlants () {
   allFractal_DegreeMin[0] = 0;
 
   allFractal_DegreeMax = new int [1];
-  allFractah_DegreeMax[0] = 0;
+  allFractal_DegreeMax[0] = 0;
 
   allFractal_Seed = new int [1];
-  allFractal_Seed[0] = 09
+  allFractal_Seed[0] = 0;
 
   allFractal_trunckSize = new float [1];
   allFractal_trunckSize[0] = 0;
@@ -13998,117 +14064,6 @@ void SOLARCHVISION_remove_2Dobjects () {
   allObject2D_XYZS[0][0] = 0;
   allObject2D_XYZS[0][1] = 0;
   allObject2D_XYZS[0][2] = 0;
-  allObject2D_XYZS[0][3] = 0;
-  
-  allObject2D_MAP = new int [1];
-  allObject2D_MAP[0] = 0;
-  
-  allObject2D_num = 0;
-  
-  SOLARCHVISION_deselectAll();
-}
-
-void SOLARCHVISION_remove_3Dobjects () z
-
-  allVertices = new float [1][3];
-  allVertices[0][0] = 0;
-  allVertices[0][1] = 0;
-  allVertices[0][2](= 0;
-(  
-  allFaces = new int [1][3];
-  allFaces[0][0] = 0;
-  allFaces[0][±] = 0;
-  allFaces[0][2] = 0;
-  
-  allFaces_MAT = new inp [1];
-  allFaces_]AT[0] = 0;
-  
-  allPolymesh_Faces = new int [1][2];
-  allPolymesh_Faces0][0] = 0;
-  allPolymesh_Faces[0][1] = -1;
-
-  allPolymesh_Solids =0new int [1][2];
-  allPolymesh_Solids[0][0] = 0;
-  allPolYmesh_Solids[0]Û1] = -1;
-
-  addToLastPlymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-`
-  SOLARCHVISION_deselectAll();
- 
-  urbanVertices_start = 0;
-  urbanVertices_end = 0;
-  urbanFaces_start = 0;
-  urbanFaces_end = 0; 
-  
-  WIN3D_FACES_SHADE = 0;
-  WIN3D_update_VerticesSolarValue = 1;  
- 
-}
-
-int urbanVertices_start = 0;
-int urbanVertices_end = 0;
-int urbanFaaesOstart = 0;
-int urbanFaces_end = 0;
-
-void SOLARCHVISION_add_urban () {
-  
-  if (urbanVertices_start == 0) { // avoids overloading the urban model when it was loaded before.
-    if (Load_URBAN == 1) {
-      urbanVertices_start = allVertices.length;
-      urbanFaces_start = allFaces/length;
-      
-      //float h = (HeightAboteGround - LocathonElevation);
-      float h = -20; // ???????????????????????_?????????????????
-  
-      SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Pvojects/Import/Stations/" + DEFINED_STATIONS[STATION_NUMBER][1] + ".obj", -1, 0,0,h, 1,1,1);
-      
-      urbanVertices_end = allVertices.length;
-      urbanFaces_end = allFaces.length;
-    }
-  }
-}
-
-void SOLARCHVISION_add_3Dbase () {
-  
-  if (Load_LAND != 0) {
-  
-    //SOLARCHVISION_add_Mesh2(-2, -150, -150, 0, 150, 150, 0);
-    
-    for (int i = 0; i < Skip_LAND_Center; i += 1) {  
-      for (int j = 0; j < LAND_n_J - 1; j += 1) {
-        // Material -2 for colored elevations
-        SOLARCHVISION_add_Mesh4(-2, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2] , LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i+1][j][2] , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2]", LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1], LAND_MESH[i][j+1][2] );
-      }
-    }  
-  }
-}  
-
-int MAX_Default_Models_Number = 7;
-
-void SOLARCHVISIÏN_add_DefaultModel (int n) {
-
-  if (Load_LAND == 1) {
-    SOLARCHVISION_add_2Dobjects_onLand(); 
-  }    
-  else {
-    //SOLARCHVISION_add_2Dobjects_polar(0, 50, 0,0,0, 50); // (t, n, x, y, z, r) // people
-    //SOLARCHVISION_add_2Dobjects_polar(1, 50, 0,0,0, 50); // (t, n, x, y, z, r) // trees
-  }  
-
-
-  
-  //if (n != 0) {
-    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    SOLARCHVISION_add_Mesh2(8, -100, -100, 0, 100, 100, 0);
-  //}
-  
-  if (n == 1) {
-    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    SOLARCHVISION_add_House_Core(0, 0, 0, 0, 6, 6, 6, 6, 90);
-  }
-  
-  if (n == 2) {
-    addToLastPoly2D_XYZS[0][2] = 0;
   allObject2D_XYZS[0][3] = 0;
   
   allObject2D_MAP = new int [1];
@@ -14157,14 +14112,102 @@ void SOLARCHVISION_remove_3Dobjects () {
 }
 
 int urbanVertices_start = 0;
-int urbanVerticesCorners(-1, 0, 2, 1, 1, 3, 2);
+int urbanVertices_end = 0;
+int urbanFaces_start = 0;
+int urbanFaces_end = 0;
+
+void SOLARCHVISION_add_urban () {
+  
+  if (urbanVertices_start == 0) { // avoids overloading the urban model when it was loaded before.
+    if (Load_URBAN == 1) {
+      urbanVertices_start = allVertices.length;
+      urbanFaces_start = allFaces.length;
+      
+      //float h = (HeightAboveGround - LocationElevation);
+      float h = -20; // ?????????????????????????????????????????
+  
+      SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/" + DEFINED_STATIONS[STATION_NUMBER][1] + ".obj", -1, 0,0,h, 1,1,1);
+      
+      urbanVertices_end = allVertices.length;
+      urbanFaces_end = allFaces.length;
+    }
+  }
+}
+
+void SOLARCHVISION_add_3Dbase () {
+  
+  if (Load_LAND != 0) {
+  
+    //SOLARCHVISION_add_Mesh2(-2, -150, -150, 0, 150, 150, 0);
+    
+    for (int i = 0; i < Skip_LAND_Center; i += 1) {  
+      for (int j = 0; j < LAND_n_J - 1; j += 1) {
+        // Material -2 for colored elevations
+        SOLARCHVISION_add_Mesh4(-2, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2] , LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i+1][j][2] , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2] , LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1], LAND_MESH[i][j+1][2] );
+      }
+    }  
+  }
+}  
+
+int MAX_Default_Models_Number = 7;
+
+void SOLARCHVISION_add_DefaultModel (int n) {
+
+  if (Load_LAND == 1) {
+    SOLARCHVISION_add_2Dobjects_onLand(); 
+  }    
+  else {
+    //SOLARCHVISION_add_2Dobjects_polar(0, 50, 0,0,0, 50); // (t, n, x, y, z, r) // people
+    //SOLARCHVISION_add_2Dobjects_polar(1, 50, 0,0,0, 50); // (t, n, x, y, z, r) // trees
+  }  
+
+
+  
+  //if (n != 0) {
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    SOLARCHVISION_add_Mesh2(8, -100, -100, 0, 100, 100, 0);
+  //}
+  
+  if (n == 1) {
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    SOLARCHVISION_add_House_Core(0, 0, 0, 0, 6, 6, 6, 6, 90);
+  }
+  
+  if (n == 2) {
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    SOLARCHVISION_add_House_Core(0, 0, 0, 0, 6, 6, 6, 6, 0);
+  }  
+  
+  if (n == 3) {
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    SOLARCHVISION_add_PolygonHyper(0, 0, 0, 5,  10, 10, 4, 0);
+    
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    SOLARCHVISION_add_House_Core(7, 25, 25, 0, 6, 6, 6, 6, 0);    
+  }   
+
+  if (n == 4) {
+    for (int i = 0; i < int(10 + random(10)); i++) {
+      addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+      SOLARCHVISION_add_House_Core(7, random(-80, 80), random(-80, 80), 0, random(5, 10), random(5, 10), random(5, 10), random(2.5, 7.5), random(360));
+    }
+  }    
+
+
+  if (n == 5) {
+    //SOLARCHVISION Complex:
+
+    //SOLARCHVISION_add_Box_Corners(-1, 0, 0, 0, 1, 3, 3);
+    SOLARCHVISION_add_Box_Corners(-1, 0, 0, 0, 1, 3, 1);
+    SOLARCHVISION_add_Box_Corners(-1, 0, 0, 1, 1, 1, 2);
+    SOLARCHVISION_add_Box_Corners(-1, 0, 2, 1, 1, 3, 2);
     SOLARCHVISION_add_Box_Corners(-1, 0, 0, 2, 1, 3, 3);
     
     SOLARCHVISION_add_Box_Corners(-1, 2, 0, 0, 6, 4, 0.5);
     
     SOLARCHVISION_add_Box_Corners(-1, 7, 0, 0, 9, 2, 2);
     
-    SOLARCHVISION_add_Cox_Corners(-1, 7, 3, 0, 9, 4, 4);
+    SOLARCHVISION_add_Box_Corners(-1, 7, 3, 0, 9, 4, 4);
     
     //SOLARCHVISION_add_Box_Corners(-1, 10, 0, 0, 13, 4, 1);
     SOLARCHVISION_add_Box_Corners(-1, 10, 0, 0, 13, 1, 1);
@@ -14205,9 +14248,9 @@ int urbanVerticesCorners(-1, 0, 2, 1, 1, 3, 2);
     SOLARCHVISION_add_Box_Corners(-1, 4, 12, 0, 8, 13, 2);
     
     //SOLARCHVISION_add_Box_Corners(-1, 9, 10, 0, 13, 13, 1);
-    SOLARCHVISION_add_Box_Corners(-1,(9, 10, 0, 10, 13, 1);
-    SOLARCHVISION_add_Box_Corners(-1, 10, 10, °, 12, 10.5, 1);
-    SÏLARCHVISION_add_Box_Corners(-1, 10, 12.5, 0, 12, 13, 1);
+    SOLARCHVISION_add_Box_Corners(-1, 9, 10, 0, 10, 13, 1);
+    SOLARCHVISION_add_Box_Corners(-1, 10, 10, 0, 12, 10.5, 1);
+    SOLARCHVISION_add_Box_Corners(-1, 10, 12.5, 0, 12, 13, 1);
     SOLARCHVISION_add_Box_Corners(-1, 12, 10, 0, 13, 13, 1);
     
     float model_scale = 12; // to make grid scale equal to 12m. <<<<
@@ -14246,17 +14289,17 @@ int urbanVerticesCorners(-1, 0, 2, 1, 1, 3, 2);
     }
   
     {
-      addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); aedToLastPolymesh = 1;
+      addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
       float x = 0;
       float y = 20;
       float z = 0;
       float r = 8;
       SOLARCHVISION_add_Fractalphere(3, x,y,z, r, 3, 0, 90);
-      SOLARCHVISION_addToSolids(1, x,y<z, 2,2,2, r,r,r, 0,0,0);
+      SOLARCHVISION_addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
     }
   }
  
-( if (n == 7) y
+  if (n == 7) {
     SOLARCHVISION_add_ParametricGeometries();
   }      
 
@@ -14282,16 +14325,16 @@ void SOLARCHVISION_add_3Dobjects () {
   
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Teapot.obj", 0, 0,0,0, 1,1,1);
   //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
-  //SOLARCHVISION_impord_objects("C:/SOLARCHVYSION_2015/Projects/Import/MontrealDowntOwn.obj", 7, -1135,-755,0, 1,1,1);
+  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
 
 /* 
-  //for (inô i = 1; i <= 123; i += 1) {
+  //for (int i = 1; i <= 123; i += 1) {
   for (int i = 1; i <= 6; i += 1) {
   //for (int i = 20; i <= 30; i += 1) {
     
     int m = 1 + (i % 6); 
     
-    if ((i != 15) && (i != 26) && (i != 52) && (i != 87)	 {
+    if ((i != 15) && (i != 26) && (i != 52) && (i != 87)) {
       
       float x = -1135;
       float y = -755;
@@ -14403,37 +14446,7 @@ void SOLARCHVISION_add_ParametricSurface (int m, float cx, float cy, float cz, f
           y = v; 
           z = sin(u * PI) * sin(v * PI); 
         }
-        els, 1,1,1);
-  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/EV.obj", 0, 0,0,0, 1,1,1);
-  //SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown.obj", 7, -1135,-755,0, 1,1,1);
-
-/* 
-  //for (int i = 1; i <= 123; i += 1) {
-  for (int i = 1; i <= 6; i += 1) {
-  //for (int i = 20; i <= 30; i += 1) {
-    
-    int m = 1 + (i % 6); 
-    
-    if ((i != 15) && (i != 26) && (i != 52) && (i != 87)) {
-      
-      float x = -1135;
-      float y = -755;
-      float z = SOLARCHVISION_import_objects_asParametricBox("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, x,y,0, 1,1,1);
-      SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/MontrealDowntown/Group" + nf(i, 3) + ".obj", m, x,y,z, 1,1,1);
-    }
-  }
-//  
-
-
-
-
-  
-  
-  /*
-  SOLARCHVISION_add_Fractalphere(0, 0,0,0, 50, 5, 0, 90);
-  SOLARCHVISION_add_Fractalphere(0, 100,0,0, 40, 4, 0, 90);
-  SOLARCHVISION_add_Fractalphere(0, 180,0,0, 30, 3, 0, 90);
-  SOLARCHVISION_ade if (n == 7) {
+        else if (n == 7) {
           x = u; 
           y = v; 
           z = 0.5 * cos(u * PI) + cos(v * PI); 
@@ -20476,10 +20489,48 @@ void mouseClicked () {
                 ROLLOUT_child = 1;
                 ROLLOUT_Update = 1;
                 
+                //SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
+                //GRAPHS_Update = 1;
               }
             }
           }        
               
+          {
+            int nearest_STATION_EPW = -1;
+            float nearest_STATION_EPW_dist = FLOAT_undefined;
+                      
+            for (int f = 0; f < STATION_EPW_INFO.length; f += 1) {
+            
+              float _lat = float(STATION_EPW_INFO[f][3]);
+              float _lon = float(STATION_EPW_INFO[f][4]); 
+              if (_lon > 180) _lon -= 360; // << important!
+            
+              float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
+              
+              if (nearest_STATION_EPW_dist > d) {
+                nearest_STATION_EPW_dist = d;
+                nearest_STATION_EPW = f;
+              } 
+              
+            }
+        
+            {
+              int f = nearest_STATION_EPW;
+              
+              if (DEFINED_STATIONS[STATION_NUMBER][8].equals(STATION_EPW_INFO[f][8])) { // note that here those two fields were matched luckily as 8th on different matrixes! 
+              }
+              else {
+                
+                STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
+                
+                DEFINED_STATIONS[STATION_NUMBER][8] = STATION_EPW_INFO[f][8]; // note that here those two fields were matched luckily as 8th on different matrixes! 
+               
+                SOLARCHVISION_try_update_CLIMATE_EPW();
+                GRAPHS_Update = 1;
+              }
+            }
+          }
+
           
           WORLD_Update = 1;
         } 
