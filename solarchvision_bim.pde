@@ -12139,7 +12139,7 @@ int FindGoodViewport (float pointLongitude, float pointLatitude) {
     float d = FLOAT_undefined;
     for (int i = 0; i < number_of_WORLD_viewports; i++) {
       if (isInside(pointLongitude, pointLatitude, WORLD_VIEW_BoundariesX[i][0], WORLD_VIEW_BoundariesY[i][0], WORLD_VIEW_BoundariesX[i][1], WORLD_VIEW_BoundariesY[i][1]) == 1) {
-        float di = dist(WORLD_VIEW_BoundariesX[i][0], WORLD_VIEW_BoundariesY[i][0], WORLD_VIEW_BoundariesX[i][1], WORLD_VIEW_BoundariesY[i][1]);
+        float di = dist(pointLongitude, pointLatitude, 0.5 * (WORLD_VIEW_BoundariesX[i][0] + WORLD_VIEW_BoundariesX[i][1]), 0.5 * (WORLD_VIEW_BoundariesY[i][0] + WORLD_VIEW_BoundariesY[i][1]));
         
         if (d > di) {
           d = di;
