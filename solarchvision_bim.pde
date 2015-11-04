@@ -1460,6 +1460,8 @@ void setup () {
 
   size(2 * w_pixel + ROLLOUT_X_View, a_pixel + b_pixel + 2 * h_pixel, P2D);
 
+  SOLARCHVISION_draw_frame_icon();
+
   _DATE = (286 + Convert2Date(_MONTH, _DAY)) % 365; // 0 presents March 21, 286 presents Jan.01, 345 presents March.01
   //if (_HOUR >= 12) _DATE += 0.5;   
 
@@ -1475,12 +1477,37 @@ void setup () {
 
   WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
 
-
   frameRate(24);
 
   loop();
 }
 
+void SOLARCHVISION_draw_frame_icon () {
+  int frame_icon_size = 64;
+  
+  PGraphics frame_icon = createGraphics(frame_icon_size, frame_icon_size);  
+  
+  frame_icon.beginDraw();
+  
+  //frame_icon.image(loadImage("C:/SOLARCHVISION_2015/Input/BackgroundImages/Standard/Maps/Icon/s-icon.png"), 0, 0 );
+  
+  frame_icon.background(0);
+  //frame_icon.background(63,63,255,255);
+  
+  //frame_icon.fill(255,127);
+  frame_icon.fill(255,255,0, 127);
+  
+  frame_icon.textAlign(CENTER, CENTER);
+  frame_icon.textSize(1.0 * frame_icon_size);
+  frame_icon.text("S", 0.20 * frame_icon_size, 0.4 * frame_icon_size);
+  frame_icon.text("A", 0.50 * frame_icon_size, 0.4 * frame_icon_size);
+  frame_icon.text("V", 0.80 * frame_icon_size, 0.4 * frame_icon_size);
+  
+  frame_icon.endDraw();
+  frame.setIconImage(frame_icon.image);  
+  
+  frame.setTitle("SOLARCHVISION-2015");
+}
 
 
 
@@ -19804,7 +19831,7 @@ void mouseClicked () {
             WIN3D_Update = 1;  
             ROLLOUT_Update = 1;
           }    
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 3-D Bounding Box")) {
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 3-D Box")) {
             selectedPolymesh_displayBox = (selectedPolymesh_displayBox  + 1) % 2;
             
             WIN3D_Update = 1;  
@@ -25263,7 +25290,7 @@ String[][] BAR_a_Items = {
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
                         {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Orbit", "OrbitXY", "OrbitZ", "Pan", "Look at origin", "TruckX", "TruckY", "TruckZ", "Walk", "3DModelSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
-                        {"Display", "Display/Hide Vertices", "Display/Hide Edges", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Land", "Display/Hide Sky", "Display/Hide Sun", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Bounding Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest"},
+                        {"Display", "Display/Hide Vertices", "Display/Hide Edges", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Land", "Display/Hide Sky", "Display/Hide Sun", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest"},
                         {"Shade", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial"},
                         {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
