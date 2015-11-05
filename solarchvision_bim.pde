@@ -1410,6 +1410,7 @@ String[] Object2D_Filenames_PEOPLE;
 String[] Object2D_Filenames_TREES;
 
 int number_of_WORLD_viewports;
+int WORLD_viewport_ZOOM = 1; //1:A 2:B 3:C 4:D 5:E and 6:L <<<
 
 
 int GRAPHS_CX_View = 0;
@@ -12205,13 +12206,41 @@ int FindGoodViewport (float pointLongitude, float pointLatitude) {
   if (WORLD_VIEW_Auto == 1) {
   
     float d = FLOAT_undefined;
+    
     for (int i = 0; i < number_of_WORLD_viewports; i++) {
-      if (isInside(pointLongitude, pointLatitude, WORLD_VIEW_BoundariesX[i][0], WORLD_VIEW_BoundariesY[i][0], WORLD_VIEW_BoundariesX[i][1], WORLD_VIEW_BoundariesY[i][1]) == 1) {
-        float di = dist(pointLongitude, pointLatitude, 0.5 * (WORLD_VIEW_BoundariesX[i][0] + WORLD_VIEW_BoundariesX[i][1]), 0.5 * (WORLD_VIEW_BoundariesY[i][0] + WORLD_VIEW_BoundariesY[i][1]));
-        
-        if (d > di) {
-          d = di;
-          return_VIEWPORT = i;
+
+      int check_it = 0; 
+
+      String started_with = WORLD_VIEW_Filenames[i].substring(0, 1);
+      
+      if (WORLD_viewport_ZOOM == 1) {
+        if (started_with.equals("A")) check_it = 1;
+      }
+      else if (WORLD_viewport_ZOOM == 2) {
+        if (started_with.equals("B")) check_it = 1;
+      }
+      else if (WORLD_viewport_ZOOM == 3) {
+        if (started_with.equals("C")) check_it = 1;
+      }
+      else if (WORLD_viewport_ZOOM == 4) {
+        if (started_with.equals("D")) check_it = 1;
+      }
+      else if (WORLD_viewport_ZOOM == 5) {
+        if (started_with.equals("E")) check_it = 1;
+      }
+      else {
+        check_it = 1;
+      }
+
+      if (check_it == 1) {  
+      
+        if (isInside(pointLongitude, pointLatitude, WORLD_VIEW_BoundariesX[i][0], WORLD_VIEW_BoundariesY[i][0], WORLD_VIEW_BoundariesX[i][1], WORLD_VIEW_BoundariesY[i][1]) == 1) {
+          float di = dist(pointLongitude, pointLatitude, 0.5 * (WORLD_VIEW_BoundariesX[i][0] + WORLD_VIEW_BoundariesX[i][1]), 0.5 * (WORLD_VIEW_BoundariesY[i][0] + WORLD_VIEW_BoundariesY[i][1]));
+          
+          if (d > di) {
+            d = di;
+            return_VIEWPORT = i;
+          }
         }
       }
     }
@@ -19057,6 +19086,25 @@ void mouseWheel(MouseEvent event) {
   if (automated == 0) {
     X_clicked = mouseX;
     Y_clicked = mouseY;
+    
+    if (WORLD_include == 1) {
+      if (isInside(X_clicked, Y_clicked, WORLD_CX_View, WORLD_CY_View, WORLD_CX_View + WORLD_X_View, WORLD_CY_View + WORLD_Y_View) == 1) {
+        
+        int pre_WORLD_viewport_ZOOM = WORLD_viewport_ZOOM;
+        
+        if (Wheel_Value > 0) WORLD_viewport_ZOOM += 1;
+        if (Wheel_Value < 0) WORLD_viewport_ZOOM -= 1;
+        
+        if (WORLD_viewport_ZOOM < 1) WORLD_viewport_ZOOM = 1;
+        if (WORLD_viewport_ZOOM > 6) WORLD_viewport_ZOOM = 6;
+        
+        if (pre_WORLD_viewport_ZOOM != WORLD_viewport_ZOOM) {
+          WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
+ 
+          WORLD_Update = 1;   
+        }
+      }
+    }    
     
     if (WIN3D_include == 1) {
       if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
@@ -26237,7 +26285,6 @@ void set_to_View_3DViewSpace (int n) {
 
   frame_variation = n;
   SOLARCHVISION_update_frame_layout();
-  
 
   ROLLOUT_Update = 1;
 }
@@ -26305,16 +26352,16 @@ void set_to_View_3DViewPoint (int n) {
     WIN3D_RX_coordinate = 45;
     WIN3D_RY_coordinate = 0;
     WIN3D_RZ_coordinate = 135; 
-  }     
+  }
 
   if (n == 9) {
   
     WIN3D_RX_coordinate = 45;
     WIN3D_RY_coordinate = 0;
     WIN3D_RZ_coordinate = -135; 
-  }               
+  }
   WIN3D_Update = 1;   
-  ROLLOUT_Update = 1;   
+  //ROLLOUT_Update = 1;   
 } 
 
 void set_to_World_MapZoom (int n) {
@@ -26328,7 +26375,7 @@ void set_to_World_MapZoom (int n) {
   }
   
   WORLD_Update = 1;   
-  ROLLOUT_Update = 1;     
+  //ROLLOUT_Update = 1;     
 }
  
  
