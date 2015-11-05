@@ -21347,13 +21347,13 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
 
     if (ROLLOUT_child == 1) { // Point
-      Selected_STATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,1, "Selected:" + DEFINED_STATIONS[Selected_STATION][1], Selected_STATION, 0, DEFINED_STATIONS.length - 1, 1), 1));
-      LOAD_STATION = int(roundTo(MySpinner.update(X_control, Y_control, 1,1,1, "LOAD_STATION", LOAD_STATION, 0, 1, 1), 1));
-      STATION_NUMBER = int(roundTo(MySpinner.update(X_control, Y_control, 1,1,1, "Loaded:" + DEFINED_STATIONS[STATION_NUMBER][1], STATION_NUMBER, 0, DEFINED_STATIONS.length - 1, 1), 1));
+      //Selected_STATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,1, "Selected:" + DEFINED_STATIONS[Selected_STATION][1], Selected_STATION, 0, DEFINED_STATIONS.length - 1, 1), 1));
+      //LOAD_STATION = int(roundTo(MySpinner.update(X_control, Y_control, 1,1,1, "LOAD_STATION", LOAD_STATION, 0, 1, 1), 1));
+      //STATION_NUMBER = int(roundTo(MySpinner.update(X_control, Y_control, 1,1,1, "Loaded:" + DEFINED_STATIONS[STATION_NUMBER][1], STATION_NUMBER, 0, DEFINED_STATIONS.length - 1, 1), 1));
   
 
-      WORLD_VIEW_Auto = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,1, "Map Auto Fit", WORLD_VIEW_Auto, 0, 1, 1), 1));
-      WORLD_VIEW_Number = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,1, "Map Viewport", WORLD_VIEW_Number, 0, number_of_WORLD_viewports - 1, 1), 1));
+      //WORLD_VIEW_Auto = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,1, "Map Auto Fit", WORLD_VIEW_Auto, 0, 1, 1), 1));
+      //WORLD_VIEW_Number = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,1, "Map Viewport", WORLD_VIEW_Number, 0, number_of_WORLD_viewports - 1, 1), 1));
 
       LocationLatitude = MySpinner.update(X_control, Y_control, 0,0,1, "Latitude", LocationLatitude, -85, 85, LocationLatitude_step);
       LocationLongitude = MySpinner.update(X_control, Y_control, 0,0,1, "Longitude", LocationLongitude, -180, 180, LocationLongitude_step);
@@ -25617,7 +25617,7 @@ int BAR_b_Update = 1;
 float BAR_b_tab = b_pixel;
 
 String[][] BAR_b_Items = {
-                          
+                          {"2", "Map Zoom In", "Map Zoom Out", "WorldMapZoom", "3"},
                           {"2", "AllViewsports", "Expand3DView", "3DViewSpace", "3"},
                           {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "3DViewPoint", "1.5"},
                           {"2", "P<>", "P><", "ProjectionType", "1.0"},
@@ -25802,6 +25802,10 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("ClickSelect")) set_to_View_ClickSelect(j - 1);
         if (Bar_Switch.equals("WindowSelect")) set_to_View_WindowSelect(j - 1);
 
+        if (Bar_Switch.equals("PivotX")) set_to_View_PivotX(j - 2);
+        if (Bar_Switch.equals("PivotY")) set_to_View_PivotY(j - 2);
+        if (Bar_Switch.equals("PivotZ")) set_to_View_PivotZ(j - 2);
+
         if (Bar_Switch.equals("Orbit")) set_to_View_Orbit(j - 1);
 
         if (Bar_Switch.equals("Pan")) {
@@ -25826,11 +25830,11 @@ void SOLARCHVISION_draw_window_BAR_b () {
 
         if (Bar_Switch.equals("3DViewPoint")) set_to_View_3DViewPoint(j - 1);
 
+        if (Bar_Switch.equals("WorldMapZoom")) set_to_World_MapZoom(j - 1);
 
 
-        if (Bar_Switch.equals("PivotX")) set_to_View_PivotX(j - 2);
-        if (Bar_Switch.equals("PivotY")) set_to_View_PivotY(j - 2);
-        if (Bar_Switch.equals("PivotZ")) set_to_View_PivotZ(j - 2);
+
+
 
 
         
@@ -26122,6 +26126,30 @@ void set_to_View_WindowSelect (int n) {
   ROLLOUT_Update = 1;          
 }    
 
+void set_to_View_PivotX (int n) {
+
+  selectedPolymesh_alignX = n;
+  
+  WIN3D_Update = 1; 
+  ROLLOUT_Update = 1;          
+}
+
+void set_to_View_PivotY (int n) {
+
+  selectedPolymesh_alignY = n;
+  
+  WIN3D_Update = 1; 
+  ROLLOUT_Update = 1;          
+}
+
+void set_to_View_PivotZ (int n) {
+
+  selectedPolymesh_alignZ = n;
+  
+  WIN3D_Update = 1; 
+  ROLLOUT_Update = 1;          
+}      
+
 
 void set_to_View_Truck (int n) {
 
@@ -26289,28 +26317,18 @@ void set_to_View_3DViewPoint (int n) {
   ROLLOUT_Update = 1;   
 } 
 
-
-void set_to_View_PivotX (int n) {
-
-  selectedPolymesh_alignX = n;
+void set_to_World_MapZoom (int n) {
   
-  WIN3D_Update = 1; 
-  ROLLOUT_Update = 1;          
+  if (n == 0) {
+    WORLD_VIEW_Number = 0;
+  }
+
+  if (n == 1) {
+    WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
+  }
+  
+  WORLD_Update = 1;   
+  ROLLOUT_Update = 1;     
 }
-
-void set_to_View_PivotY (int n) {
-
-  selectedPolymesh_alignY = n;
-  
-  WIN3D_Update = 1; 
-  ROLLOUT_Update = 1;          
-}
-
-void set_to_View_PivotZ (int n) {
-
-  selectedPolymesh_alignZ = n;
-  
-  WIN3D_Update = 1; 
-  ROLLOUT_Update = 1;          
-}        
+ 
  
