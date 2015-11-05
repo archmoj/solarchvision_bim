@@ -20530,35 +20530,38 @@ void mouseClicked () {
               if (DEFINED_STATIONS[STATION_NUMBER][0].equals(STATION_NAEFS_INFO[f][0])) {
               }
               else {
+                
+                if (impacts_source == 1) { 
         
-                STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
-                
-                DEFINED_STATIONS[STATION_NUMBER][0] = STATION_NAEFS_INFO[f][0];
+                  STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
+                  
+                  DEFINED_STATIONS[STATION_NUMBER][0] = STATION_NAEFS_INFO[f][0];
+      
+                  String[] parts = split(STATION_NAEFS_INFO[f][0], '_');
+                  DEFINED_STATIONS[STATION_NUMBER][1] = parts[0];
+                  for (int i = 1; i < parts.length - 2; i += 1) {
+                    DEFINED_STATIONS[STATION_NUMBER][1] += "_" + parts[i];
+                  }
+                  
+                  DEFINED_STATIONS[STATION_NUMBER][2] = parts[parts.length - 2];
+      
+                  DEFINED_STATIONS[STATION_NUMBER][3] = STATION_NAEFS_INFO[f][3];
+                  DEFINED_STATIONS[STATION_NUMBER][4] = STATION_NAEFS_INFO[f][4];
+                  DEFINED_STATIONS[STATION_NUMBER][5] = nf(roundTo(float(STATION_NAEFS_INFO[f][2]), 15), 0, 0);       
     
-                String[] parts = split(STATION_NAEFS_INFO[f][0], '_');
-                DEFINED_STATIONS[STATION_NUMBER][1] = parts[0];
-                for (int i = 1; i < parts.length - 2; i += 1) {
-                  DEFINED_STATIONS[STATION_NUMBER][1] += "_" + parts[i];
+                  Selected_STATION = STATION_NUMBER;
+                  
+   
+                  BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][1]; // <<<<<<<<
+               
+                  
+                  ROLLOUT_parent = 0;
+                  ROLLOUT_child = 1;
+                  ROLLOUT_Update = 1;
+                  
+                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
+                  GRAPHS_Update = 1;
                 }
-                
-                DEFINED_STATIONS[STATION_NUMBER][2] = parts[parts.length - 2];
-    
-                DEFINED_STATIONS[STATION_NUMBER][3] = STATION_NAEFS_INFO[f][1];
-                DEFINED_STATIONS[STATION_NUMBER][4] = STATION_NAEFS_INFO[f][2];
-                DEFINED_STATIONS[STATION_NUMBER][5] = nf(roundTo(float(STATION_NAEFS_INFO[f][2]), 15), 0, 0);              
-  
-                Selected_STATION = STATION_NUMBER;
-                
- 
-                BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][1]; // <<<<<<<<
-             
-                
-                ROLLOUT_parent = 0;
-                ROLLOUT_child = 1;
-                ROLLOUT_Update = 1;
-                
-                //SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
-                //GRAPHS_Update = 1;
               }
             }
           }        
@@ -20589,12 +20592,35 @@ void mouseClicked () {
               }
               else {
                 
-                STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
+                if (impacts_source == 3) { 
+                  
+                  STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
+                  
+                  DEFINED_STATIONS[STATION_NUMBER][0] = STATION_EPW_INFO[f][0] + STATION_EPW_INFO[f][1] + STATION_EPW_INFO[f][2];
+                  DEFINED_STATIONS[STATION_NUMBER][1] = STATION_EPW_INFO[f][0];
+                                    
+                  DEFINED_STATIONS[STATION_NUMBER][2] = STATION_EPW_INFO[f][1];
+      
+                  DEFINED_STATIONS[STATION_NUMBER][3] = STATION_EPW_INFO[f][3];
+                  DEFINED_STATIONS[STATION_NUMBER][4] = STATION_EPW_INFO[f][4];
+                  DEFINED_STATIONS[STATION_NUMBER][5] = STATION_EPW_INFO[f][6]; 
+                  DEFINED_STATIONS[STATION_NUMBER][6] = STATION_EPW_INFO[f][5];              
+       
+    
+                  Selected_STATION = STATION_NUMBER;
+   
+                  BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][1]; // <<<<<<<<
+                  
+                  ROLLOUT_parent = 0;
+                  ROLLOUT_child = 1;
+                  ROLLOUT_Update = 1;
                 
-                DEFINED_STATIONS[STATION_NUMBER][8] = STATION_EPW_INFO[f][8]; // note that here those two fields were matched luckily as 8th on different matrixes! 
-               
-                SOLARCHVISION_try_update_CLIMATE_EPW();
-                GRAPHS_Update = 1;
+                
+                  DEFINED_STATIONS[STATION_NUMBER][8] = STATION_EPW_INFO[f][8]; // note that here those two fields were matched luckily as 8th on different matrixes! 
+                 
+                  SOLARCHVISION_try_update_CLIMATE_EPW();
+                  GRAPHS_Update = 1;
+                }
               }
             }
           }
@@ -25685,7 +25711,7 @@ int BAR_b_Update = 1;
 float BAR_b_tab = b_pixel;
 
 String[][] BAR_b_Items = {
-                          {"2", "Map Zoom In", "Map Zoom Out", "WorldMapZoom", "3"},
+                          
                           {"2", "AllViewsports", "Expand3DView", "3DViewSpace", "3"},
                           {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "3DViewPoint", "1.5"},
                           {"2", "P<>", "P><", "ProjectionType", "1.0"},
@@ -25898,7 +25924,6 @@ void SOLARCHVISION_draw_window_BAR_b () {
 
         if (Bar_Switch.equals("3DViewPoint")) set_to_View_3DViewPoint(j - 1);
 
-        if (Bar_Switch.equals("WorldMapZoom")) set_to_World_MapZoom(j - 1);
 
 
 
@@ -26384,18 +26409,5 @@ void set_to_View_3DViewPoint (int n) {
   //ROLLOUT_Update = 1;   
 } 
 
-void set_to_World_MapZoom (int n) {
-  
-  if (n == 0) {
-    WORLD_VIEW_Number = 0;
-  }
-
-  if (n == 1) {
-    WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
-  }
-  
-  WORLD_Update = 1;   
-  //ROLLOUT_Update = 1;     
-}
  
  
