@@ -367,12 +367,12 @@ float[][][][] OBSERVED;
 int[][][][] OBSERVED_Flag;
 
 
-int Load_CLIMATE_EPW = 1;
+int Load_CLIMATE_EPW = 0;
 int Load_CLIMATE_WY2 = 0;
-int Load_ENSEMBLE = 0;
+int Load_ENSEMBLE = 1;
 int Load_OBSERVED = 0;
 int Download_OBSERVED = 0;
-int Download_ENSEMBLE = 0;
+int Download_ENSEMBLE = 1;
 
 int Download_AERIAL = 0;
 
@@ -1014,7 +1014,7 @@ int databaseNumber_ENSEMBLE = 1;
 int databaseNumber_CLIMATE_WY2 = 2;
 int databaseNumber_CLIMATE_EPW = 3;
 
-int impacts_source = databaseNumber_CLIMATE_EPW; 
+int impacts_source = databaseNumber_ENSEMBLE; 
 
 String[] databaseString = {"SWOB", "NAEFS", "CWEEDS", "TMY"};
 
@@ -4647,11 +4647,8 @@ void SOLARCHVISION_update_date () {
 
 void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY, int THE_HOUR) {
   
-  //------------------------------------------------
-  ENSEMBLE_XML_Files = getfiles(ENSEMBLE_directory); // if we could solve unzip bz2 files then we can remove this line!
-  //------------------------------------------------
+  ENSEMBLE_XML_Files = getfiles(ENSEMBLE_directory); // slow <<<<<<<<<<<< this line didn't work well below... but it is rather slow here! 
   
-
   ENSEMBLE = new float [24][365][num_layers][(1 + ENSEMBLE_end - ENSEMBLE_start)];
   ENSEMBLE_Flag = new int [24][365][num_layers][(1 + ENSEMBLE_end - ENSEMBLE_start)]; // -1: undefined, 0: interpolated, 1: data
 
@@ -4667,6 +4664,8 @@ void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY
   }
 
   if (Load_ENSEMBLE == 1) {
+    
+    int any_file_downloaded = 0;
   
     for (int f = 0; f < num_layers; f++) {
       if (LAYERS_ENSEMBLE[f].equals("")) {
@@ -4699,43 +4698,15 @@ void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY
             try{
               saveBytes(the_target, loadBytes(the_link));
               
+              any_file_downloaded = 1;
+              
               /*
-              open("C:\\SOLARCHVISION_2015\\BatchFiles\\unzipNAEFS.bat");
+              String[] new_file = {FN};
+              ENSEMBLE_XML_Files = concat(ENSEMBLE_XML_Files, new_file); // fast
+              //ENSEMBLE_XML_Files = getfiles(ENSEMBLE_directory); //slow! 
               
-              int _stay = 1;
-            
-              while ((_stay != 0) && (_stay < 25)) {
-            
-                println(_stay);
-            
-                _stay += 1;
-            
-                String[] filenames = getfiles(ENSEMBLE_directory);
-            
-                if (filenames != null) {
-                  for (int i = filenames.length - 1; i >= 0 ; i--) { //faster
-                    //println(filenames[i]);
-            
-                    if (filenames[i].equals(FN)) {
-                      //println("The xml is extracted:", FN);
-            
-                    }
-                  }
-                }
-              }
-              
-          
-              if (_stay != 0) {
-                println("The xml is not ready:", FN);
-              } else {
-
-                String[] new_file = {FN};
-                ENSEMBLE_XML_Files = concat(ENSEMBLE_XML_Files, new_file); // fast
-                //ENSEMBLE_XML_Files = getfiles(ENSEMBLE_directory); //slow! 
-                
-                File_Found = ENSEMBLE_XML_Files.length - 1;
-                //println("Added:", File_Found);    
-              }
+              File_Found = ENSEMBLE_XML_Files.length - 1;
+              //println("Added:", File_Found);    
               */
             } 
             catch (Exception e) {
@@ -4743,20 +4714,57 @@ void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY
             }              
           } 
         }
+      }
+    }
 
-        if (File_Found != -1) SOLARCHVISION_LoadENSEMBLE((ENSEMBLE_directory + "/" + FN), f);
+
+    if (any_file_downloaded != 0) {
+      open("C:\\SOLARCHVISION_2015\\BatchFiles\\unzipNAEFS.bat");
+      //ENSEMBLE_XML_Files = getfiles(ENSEMBLE_directory); // slow
+    }
+        
+        
+    for (int f = 0; f < num_layers; f++) {
+      if (LAYERS_ENSEMBLE[f].equals("")) {
+      }
+      else {
+        String FN = nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + nf(THE_HOUR, 2) + "_GEPS-NAEFS-RAW_" + DEFINED_STATIONS[STATION_NUMBER][8] + "_" + LAYERS_ENSEMBLE[f] + "_000-384.xml";
+
+        int File_Found = -1;
+
+        //println (FN);
+        for (int i = ENSEMBLE_XML_Files.length - 1; i >= 0; i--) { // reverse search is faster 
+          //println(ENSEMBLE_XML_Files[i]); 
+            
+          if (ENSEMBLE_XML_Files[i].equals(FN)) {
+            //println ("FILE FOUND:", FN);
+            File_Found = i;
+            
+            break; // <<<<<<<<<<
+          }
+        }        
+        
+        
+
+        if (File_Found != -1) {
+          println(FN);
+          SOLARCHVISION_LoadENSEMBLE((ENSEMBLE_directory + "/" + FN), f);
+          println(FN,"loaded");
+        }
+        
         else println ("FILE NOT FOUND:", FN);
       }
     }
     
+
+    
     println("End of initializing xml files.");
     
     SOLARCHVISION_postProcess_ENSEMBLE();
+    
+    println("End of loading ensmble data"); 
   }
-  
-  //--------------------------------------------------------
-  open("C:\\SOLARCHVISION_2015\\BatchFiles\\unzipNAEFS.bat");
-  //--------------------------------------------------------
+    
 }
 
 void SOLARCHVISION_postProcess_ENSEMBLE () {
@@ -5167,54 +5175,67 @@ void SOLARCHVISION_LoadENSEMBLE (String FileName, int Load_Layer) {
   String lineSTR;
   String[] input;
   
-  XML FileALL = loadXML(FileName);
+  int continue_process = 1;
   
-  //println (_YEAR, _MONTH, _DAY, _HOUR);
- 
-  XML[] children0 = FileALL.getChildren("forecast");
- 
-  for (int Li = 0; Li < children0.length; Li++) {
+  XML FileALL = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
+  
+  try {
+    FileALL = loadXML(FileName);
+  }
+  catch (Exception e) {
+    println("Can't read:", FileName);
+    continue_process = 0;
+  }
+  
+  if (continue_process == 1) { 
+  
+    //println (_YEAR, _MONTH, _DAY, _HOUR);
+   
+    XML[] children0 = FileALL.getChildren("forecast");
+   
+    for (int Li = 0; Li < children0.length; Li++) {
+        
+      int _a1 = children0[Li].getInt("forecast_hour");
+      String _a2 = children0[Li].getString("valid_time");
+  
+      //println("Li=", Li, "hour =", _a1, "date:", _a2);
       
-    int _a1 = children0[Li].getInt("forecast_hour");
-    String _a2 = children0[Li].getString("valid_time");
-
-    //println("Li=", Li, "hour =", _a1, "date:", _a2);
-    
-    if (Li >= 0) {
+      if (Li >= 0) {
+        
+        int THE_YEAR = int(_a2.substring(0, 4));
+        int THE_MONTH = int(_a2.substring(4, 6));
+        int THE_DAY = int(_a2.substring(6, 8));
+        int THE_HOUR = int(_a2.substring(8));
+        
+        //println (THE_YEAR, THE_MONTH, THE_DAY, THE_HOUR);
+  
+        int now_i = int(THE_HOUR);
+        int now_j = Convert2Date(THE_MONTH, THE_DAY);
+        
+        //println (now_i, now_j);
+        
+        now_i -= int(-LocationTimeZone / 15);
+        if (now_i < 0) {
+          now_i += 24;
+          now_j -= 1;
+          if (now_j < 0) {
+            now_j += 365;
+          } 
+        }
+        
+        //println (now_i, now_j);
+        //println ("-------------");
+        
+        XML[] _c = children0[Li].getChildren("model");
+        //println("number of members:", _c.length);
       
-      int THE_YEAR = int(_a2.substring(0, 4));
-      int THE_MONTH = int(_a2.substring(4, 6));
-      int THE_DAY = int(_a2.substring(6, 8));
-      int THE_HOUR = int(_a2.substring(8));
-      
-      //println (THE_YEAR, THE_MONTH, THE_DAY, THE_HOUR);
-
-      int now_i = int(THE_HOUR);
-      int now_j = Convert2Date(THE_MONTH, THE_DAY);
-      
-      //println (now_i, now_j);
-      
-      now_i -= int(-LocationTimeZone / 15);
-      if (now_i < 0) {
-        now_i += 24;
-        now_j -= 1;
-        if (now_j < 0) {
-          now_j += 365;
-        } 
-      }
-      
-      //println (now_i, now_j);
-      //println ("-------------");
-      
-      XML[] _c = children0[Li].getChildren("model");
-      //println("number of members:", _c.length);
-    
-      for (int Lk = 0; Lk < _c.length; Lk++) {
-        int k = _c[Lk].getInt("id") - 1;
-       
-        if (k < (1 + ENSEMBLE_end - ENSEMBLE_start)) {
-
-          ENSEMBLE[now_i][now_j][Load_Layer][k] = Float.valueOf(_c[Lk].getContent());
+        for (int Lk = 0; Lk < _c.length; Lk++) {
+          int k = _c[Lk].getInt("id") - 1;
+         
+          if (k < (1 + ENSEMBLE_end - ENSEMBLE_start)) {
+  
+            ENSEMBLE[now_i][now_j][Load_Layer][k] = Float.valueOf(_c[Lk].getContent());
+          }
         }
       }
     }
