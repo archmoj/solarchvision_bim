@@ -378,8 +378,8 @@ float[][][][] OBSERVED;
 int[][][][] OBSERVED_Flag;
 
 
-int Load_CLIMATE_EPW = 0;
-int Load_CLIMATE_WY2 = 1;
+int Load_CLIMATE_EPW = 1;
+int Load_CLIMATE_WY2 = 0;
 int Load_ENSEMBLE = 0;
 int Load_OBSERVED = 0;
 int Download_OBSERVED = 0;
@@ -1025,7 +1025,7 @@ int databaseNumber_ENSEMBLE = 1;
 int databaseNumber_CLIMATE_WY2 = 2;
 int databaseNumber_CLIMATE_EPW = 3;
 
-int impacts_source = databaseNumber_CLIMATE_WY2; 
+int impacts_source = databaseNumber_CLIMATE_EPW; 
 
 String[] databaseString = {"SWOB", "NAEFS", "CWEEDS", "TMY"};
 
@@ -20552,24 +20552,26 @@ void mouseClicked () {
               }
               else {
                 
-                if (impacts_source == databaseNumber_ENSEMBLE) { 
-        
-                  STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
-                  
+                STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
+
+                DEFINED_STATIONS[STATION_NUMBER][3] = nf(mouse_lat, 0, 0);                
+                DEFINED_STATIONS[STATION_NUMBER][4] = nf(mouse_lon, 0, 0); 
+                
+                DEFINED_STATIONS[STATION_NUMBER][8] = STATION_NAEFS_INFO[f][6]; // naefs filename
+     
+                println("nearest naefs filename:", STATION_NAEFS_INFO[f][6]);    
+  
+                Selected_STATION = STATION_NUMBER;
+
+                if (impacts_source == databaseNumber_ENSEMBLE) {
                   DEFINED_STATIONS[STATION_NUMBER][0] = STATION_NAEFS_INFO[f][0];
                   DEFINED_STATIONS[STATION_NUMBER][1] = STATION_NAEFS_INFO[f][1];
                   DEFINED_STATIONS[STATION_NUMBER][2] = STATION_NAEFS_INFO[f][2];
       
-                  DEFINED_STATIONS[STATION_NUMBER][3] = STATION_NAEFS_INFO[f][3];
-                  DEFINED_STATIONS[STATION_NUMBER][4] = STATION_NAEFS_INFO[f][4];
-                  DEFINED_STATIONS[STATION_NUMBER][5] = nf(roundTo(float(STATION_NAEFS_INFO[f][2]), 15), 0, 0);       
-
-                  DEFINED_STATIONS[STATION_NUMBER][8] = STATION_NAEFS_INFO[f][6]; // naefs filename
-       
-                  println("nearest naefs filename:", STATION_NAEFS_INFO[f][6]);    
-    
-                  Selected_STATION = STATION_NUMBER;
-
+                  //DEFINED_STATIONS[STATION_NUMBER][3] = STATION_NAEFS_INFO[f][3];
+                  //DEFINED_STATIONS[STATION_NUMBER][4] = STATION_NAEFS_INFO[f][4];
+                  DEFINED_STATIONS[STATION_NUMBER][5] = nf(roundTo(float(STATION_NAEFS_INFO[f][2]), 15), 0, 0);                      
+                  
                   BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][1]; // <<<<<<<<
 
                   ROLLOUT_parent = 0;
@@ -20612,24 +20614,27 @@ void mouseClicked () {
               }
               else {
                 
+                STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
+
+                DEFINED_STATIONS[STATION_NUMBER][3] = nf(mouse_lat, 0, 0);                
+                DEFINED_STATIONS[STATION_NUMBER][4] = nf(mouse_lon, 0, 0); 
+                
+                DEFINED_STATIONS[STATION_NUMBER][9] = STATION_CWEEDS_INFO[f][6]; // CWEEDS filename
+     
+                println("nearest CWEEDS filename:", STATION_CWEEDS_INFO[f][6]);       
+     
+                Selected_STATION = STATION_NUMBER;
+                
                 if (impacts_source == databaseNumber_CLIMATE_WY2) { 
-                  
-                  STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
-                  
+
                   DEFINED_STATIONS[STATION_NUMBER][0] = STATION_CWEEDS_INFO[f][0];
                   DEFINED_STATIONS[STATION_NUMBER][1] = STATION_CWEEDS_INFO[f][1];
                   DEFINED_STATIONS[STATION_NUMBER][2] = STATION_CWEEDS_INFO[f][2]; 
       
-                  DEFINED_STATIONS[STATION_NUMBER][3] = STATION_CWEEDS_INFO[f][3];
-                  DEFINED_STATIONS[STATION_NUMBER][4] = STATION_CWEEDS_INFO[f][4];
+                  //DEFINED_STATIONS[STATION_NUMBER][3] = STATION_CWEEDS_INFO[f][3];
+                  //DEFINED_STATIONS[STATION_NUMBER][4] = STATION_CWEEDS_INFO[f][4];
                   DEFINED_STATIONS[STATION_NUMBER][5] = STATION_CWEEDS_INFO[f][6]; 
-                  DEFINED_STATIONS[STATION_NUMBER][6] = STATION_CWEEDS_INFO[f][5];    
-        
-                  DEFINED_STATIONS[STATION_NUMBER][9] = STATION_CWEEDS_INFO[f][6]; // CWEEDS filename
-       
-                  println("nearest CWEEDS filename:", STATION_CWEEDS_INFO[f][6]);       
-       
-                  Selected_STATION = STATION_NUMBER;
+                  DEFINED_STATIONS[STATION_NUMBER][6] = STATION_CWEEDS_INFO[f][5];   
    
                   BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][1]; // <<<<<<<<
                   
@@ -20670,26 +20675,28 @@ void mouseClicked () {
               if (DEFINED_STATIONS[STATION_NUMBER][10].equals(STATION_EPW_INFO[f][8])) {  
               }
               else {
+
+                STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
+
+                DEFINED_STATIONS[STATION_NUMBER][3] = nf(mouse_lat, 0, 0);                
+                DEFINED_STATIONS[STATION_NUMBER][4] = nf(mouse_lon, 0, 0); 
                 
-                if (impacts_source == databaseNumber_CLIMATE_EPW) { 
+                DEFINED_STATIONS[STATION_NUMBER][10] = STATION_EPW_INFO[f][8]; // epw filename
+     
+                println("nearest epw filename:", STATION_EPW_INFO[f][8]);       
+
+                Selected_STATION = STATION_NUMBER;
                   
-                  STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
-                  
+                if (impacts_source == databaseNumber_CLIMATE_EPW) {     
                   DEFINED_STATIONS[STATION_NUMBER][0] = STATION_EPW_INFO[f][0];
                   DEFINED_STATIONS[STATION_NUMBER][1] = STATION_EPW_INFO[f][1];
                   DEFINED_STATIONS[STATION_NUMBER][2] = STATION_EPW_INFO[f][2]; 
       
-                  DEFINED_STATIONS[STATION_NUMBER][3] = STATION_EPW_INFO[f][3];
-                  DEFINED_STATIONS[STATION_NUMBER][4] = STATION_EPW_INFO[f][4];
+                  //DEFINED_STATIONS[STATION_NUMBER][3] = STATION_EPW_INFO[f][3];
+                  //DEFINED_STATIONS[STATION_NUMBER][4] = STATION_EPW_INFO[f][4];
                   DEFINED_STATIONS[STATION_NUMBER][5] = STATION_EPW_INFO[f][6]; 
                   DEFINED_STATIONS[STATION_NUMBER][6] = STATION_EPW_INFO[f][5];    
         
-                  DEFINED_STATIONS[STATION_NUMBER][10] = STATION_EPW_INFO[f][8]; // epw filename
-       
-                  println("nearest epw filename:", STATION_EPW_INFO[f][8]);       
-
-                  Selected_STATION = STATION_NUMBER;
-   
                   BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][1]; // <<<<<<<<
                   
                   ROLLOUT_parent = 0;
