@@ -304,7 +304,7 @@ String MAKE_Filenames () {
 
 float HeightAboveGround = 0; //2.5; // <<<<<<<<<
 
-String THE_STATION;
+
 String LocationName;
 String LocationProvince;
 float LocationLatitude;
@@ -1509,9 +1509,8 @@ void SOLARCHVISION_update_station (int Step) {
     WIN3D_Update = 1; 
     GRAPHS_Update = 1;    
     
-    THE_STATION = DEFINED_STATIONS[STATION_NUMBER][0];
-    LocationName = DEFINED_STATIONS[STATION_NUMBER][1];
-    LocationProvince = DEFINED_STATIONS[STATION_NUMBER][2];
+    LocationName = DEFINED_STATIONS[STATION_NUMBER][0];
+    LocationProvince = DEFINED_STATIONS[STATION_NUMBER][1];
     
     LocationLatitude = float(DEFINED_STATIONS[STATION_NUMBER][3]);
     LocationLongitude = float(DEFINED_STATIONS[STATION_NUMBER][4]);
@@ -20572,7 +20571,7 @@ void mouseClicked () {
                   //DEFINED_STATIONS[STATION_NUMBER][4] = STATION_NAEFS_INFO[f][4];
                   DEFINED_STATIONS[STATION_NUMBER][5] = nf(roundTo(float(STATION_NAEFS_INFO[f][2]), 15), 0, 0);                      
                   
-                  BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][1]; // <<<<<<<<
+                  BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][0]; // <<<<<<<<
 
                   ROLLOUT_parent = 0;
                   ROLLOUT_child = 1;
@@ -20636,7 +20635,7 @@ void mouseClicked () {
                   DEFINED_STATIONS[STATION_NUMBER][5] = STATION_CWEEDS_INFO[f][6]; 
                   DEFINED_STATIONS[STATION_NUMBER][6] = STATION_CWEEDS_INFO[f][5];   
    
-                  BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][1]; // <<<<<<<<
+                  BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][0]; // <<<<<<<<
                   
                   ROLLOUT_parent = 0;
                   ROLLOUT_child = 1;
@@ -20697,7 +20696,7 @@ void mouseClicked () {
                   DEFINED_STATIONS[STATION_NUMBER][5] = STATION_EPW_INFO[f][6]; 
                   DEFINED_STATIONS[STATION_NUMBER][6] = STATION_EPW_INFO[f][5];    
         
-                  BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][1]; // <<<<<<<<
+                  BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][0]; // <<<<<<<<
                   
                   ROLLOUT_parent = 0;
                   ROLLOUT_child = 1;
