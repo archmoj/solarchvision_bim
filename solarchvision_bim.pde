@@ -7,7 +7,7 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 0;
+int STATION_NUMBER = 5;
 
 String[][] DEFINED_STATIONS = {
   
@@ -16,6 +16,17 @@ String[][] DEFINED_STATIONS = {
                                 {"Place_Bonaventure", "QC", "CA", "45.4995", "-73.5650", "-75", "30", "692.82", "MONTREAL_DORVAL_QC_CA", "WY2-filename", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"},
                                 {"Ryerson_University", "ON", "CA", "43.6593", "-79.3779", "-75", "95", "461.88", "TORONTO_ISLAND_ON_CA", "WY2-filename", "CAN_ON_Toronto.716240_CWEC"}, 
                                 {"Financial_District", "ON", "CA", "43.6488", "-79.3817", "-75", "86", "692.82", "TORONTO_ISLAND_ON_CA", "WY2-filename", "CAN_ON_Toronto.716240_CWEC"},
+
+                                {"CALGARY", "AB", "CA", "51.113889", "-114.02", "-120", "1084.1", "240.0", "CALGARY_INTL_AB_CA", "WY2-filename", "CAN_AB_Calgary.718770_CWEC"}, 
+                                {"EDMONTON", "AB", "CA", "53.31", "-113.579444", "-120", "723.3", "240.0", "EDMONTON_INTL_A_AB_CA", "WY2-filename", "CAN_AB_Edmonton.711230_CWEC"},  
+                                {"HALIFAX", "NS", "CA", "44.881111", "-63.508611", "-60", "145.4", "240.0", "HALIFAX_INTL_AIRPORT_NS_CA", "WY2-filename", "CAN_NS_Shearwater.716010_CWEC"},  
+                                {"OTTAWA", "ON", "CA", "45.383333", "-75.716667", "-75", "79.2", "240.0", "OTTAWA_INTL_ON_CA", "WY2-filename", "CAN_ON_Ottawa.716280_CWEC"}, 
+                                {"QUEBEC", "QC", "CA", "46.803611", "-71.381667", "-75", "60", "240.0", "QUEBEC_QC_CA", "WY2-filename", "CAN_PQ_Quebec.717140_CWEC"}, 
+                                {"SUDBURY", "ON", "CA", "46.625556", "-80.797778", "-75", "348.4", "240.0", "SUDBURY_ON_CA", "WY2-filename", "CAN_ON_North.Bay.717310_CWEC"}, 
+                                {"TORONTO-ISLAND", "ON", "CA", "43.6275", "-79.396111", "-75", "76.8", "240.0", "TORONTO_ISLAND_ON_CA", "WY2-filename", "CAN_ON_Toronto.716240_CWEC"}, 
+                                {"TORONTO-PEARSON", "ON", "CA", "43.676667", "-79.630556", "-75", "173.4", "240.0", "TORONTO_PEARSON_INTL_ON_CA", "WY2-filename", "CAN_ON_Toronto.716240_CWEC"}, 
+                                {"VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "240.0", "VANCOUVER_INTL_BC_CA", "WY2-filename", "CAN_BC_Vancouver.718920_CWEC"}, 
+                                {"WINNIPEG", "MB", "CA", "49.91", "-97.24", "-90", "238.7", "240.0", "WINNIPEG_INTL_MB_CA", "WY2-filename", "CAN_MB_Winnipeg.718520_CWEC"}, 
                                 
                                 {"BOSTON", "MA", "US", "42.35843", "-71.05978", "-75", "15.0", "240.0", "BOSTON_MA_US", "WY2-filename", "USA_MA_Boston-Logan.Intl.AP.725090_TMY3"}, 
                                 {"CHICAGO", "IL", "US", "41.878113", "-87.6298", "-90", "181.0", "240.0", "CHICAGO_IL_US", "WY2-filename", "USA_IL_Chicago-Midway.AP.725340_TMY3"}, 
@@ -367,9 +378,9 @@ float[][][][] OBSERVED;
 int[][][][] OBSERVED_Flag;
 
 
-int Load_CLIMATE_EPW = 0;
+int Load_CLIMATE_EPW = 1;
 int Load_CLIMATE_WY2 = 0;
-int Load_ENSEMBLE = 1;
+int Load_ENSEMBLE = 0;
 int Load_OBSERVED = 0;
 int Download_OBSERVED = 0;
 int Download_ENSEMBLE = 1;
@@ -1014,7 +1025,7 @@ int databaseNumber_ENSEMBLE = 1;
 int databaseNumber_CLIMATE_WY2 = 2;
 int databaseNumber_CLIMATE_EPW = 3;
 
-int impacts_source = databaseNumber_ENSEMBLE; 
+int impacts_source = databaseNumber_CLIMATE_EPW; 
 
 String[] databaseString = {"SWOB", "NAEFS", "CWEEDS", "TMY"};
 
