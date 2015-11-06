@@ -223,7 +223,7 @@ float GlobeRES = 2.5; //1, 2.5, 5
 
 
 int Climatic_solar_forecast = 0; //                                   Used for solar radiation only
-int Climatic_weather_forecast = 1; // 0:linear 1:average 2:sky-based. Used for some parameters namely: air temperature, humidity
+int Climatic_weather_forecast = 0; // 0:linear 1:average 2:sky-based. Used for some parameters namely: air temperature, humidity
 
 int automated = 0; //0: User interface, 1: Automatic
 
@@ -4743,26 +4743,17 @@ void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY
             break; // <<<<<<<<<<
           }
         }        
-        
-        
 
-        if (File_Found != -1) {
-          println(FN);
-          SOLARCHVISION_LoadENSEMBLE((ENSEMBLE_directory + "/" + FN), f);
-          println(FN,"loaded");
-        }
-        
+
+        if (File_Found != -1) SOLARCHVISION_LoadENSEMBLE((ENSEMBLE_directory + "/" + FN), f);
         else println ("FILE NOT FOUND:", FN);
       }
     }
     
 
     
-    println("End of initializing xml files.");
-    
     SOLARCHVISION_postProcess_ENSEMBLE();
-    
-    println("End of loading ensmble data"); 
+
   }
     
 }
@@ -4779,7 +4770,6 @@ void SOLARCHVISION_postProcess_ENSEMBLE () {
       }
       else 
       {
-    
         //////////////////////////////////////  PASS 1  //////////////////////////////////////  
         
         for (int k = 0; k < (1 + ENSEMBLE_end - ENSEMBLE_start); k += 1) {
@@ -4848,7 +4838,7 @@ void SOLARCHVISION_postProcess_ENSEMBLE () {
             }
           }
         }
-        
+
         //////////////////////////////////////  PASS 2  //////////////////////////////////////      
         
         if (Climatic_weather_forecast != 0) {
