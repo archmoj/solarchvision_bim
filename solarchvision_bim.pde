@@ -234,7 +234,8 @@ String CLIMATE_EPW_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMA
 //String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED_90s"; 
 String CLIMATE_WY2_directory = "C:/SOLARCHVISION_2015/Input/WeatherClimate/CLIMATE_CWEED";
 
-String ENSEMBLE_directory = "C:/SOLARCHVISION_2015/Input/WeatherForecast/FORECAST_NAEFS";
+//String ENSEMBLE_directory = "C:/SOLARCHVISION_2015/Input/WeatherForecast/FORECAST_NAEFS";
+String ENSEMBLE_directory = "C:/SOLARCHVISION_2015/Input/WeatherForecast/FORECAST_NAEFS_Download";
 
 String OBSERVED_directory = "C:/SOLARCHVISION_2015/Input/WeatherRealTime/OBSERVATION_SWOB_EMPTY";
 //String OBSERVED_directory = "C:/SOLARCHVISION_2015/Input/WeatherRealTime/OBSERVATION_SWOB";
@@ -20520,7 +20521,7 @@ void mouseClicked () {
         
             {
               int f = nearest_STATION_NAEFS;
-              
+
               if (DEFINED_STATIONS[STATION_NUMBER][8].equals(STATION_NAEFS_INFO[f][6])) {
               }
               else {
@@ -20539,7 +20540,7 @@ void mouseClicked () {
 
                   DEFINED_STATIONS[STATION_NUMBER][8] = STATION_NAEFS_INFO[f][6]; // naefs filename
        
-                  println("nearest naefs filename:", STATION_NAEFS_INFO[f][8]);    
+                  println("nearest naefs filename:", STATION_NAEFS_INFO[f][6]);    
     
                   Selected_STATION = STATION_NUMBER;
                   
@@ -20551,8 +20552,10 @@ void mouseClicked () {
                   ROLLOUT_child = 1;
                   ROLLOUT_Update = 1;
                   
+                                
                   SOLARCHVISION_update_station(1);
-                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);                  
+                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
+                  
                 }
               }
             }
@@ -20619,6 +20622,9 @@ void mouseClicked () {
               }
             }
           }
+          
+
+                        
 
           
           WORLD_Update = 1;
