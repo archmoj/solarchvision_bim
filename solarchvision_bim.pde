@@ -262,7 +262,7 @@ String MAKE_mainname () {
   
   String s = "";
 
-  if (impacts_source == 1) s = nf(_YEAR, 2) + nf(_MONTH, 2) + nf(_DAY, 2) + "_" + nf(GRAPHS_j_end, 0) + "dayFORECAST_";
+  if (impacts_source == databaseNumber_ENSEMBLE) s = nf(_YEAR, 2) + nf(_MONTH, 2) + nf(_DAY, 2) + "_" + nf(GRAPHS_j_end, 0) + "dayFORECAST_";
   
   return s;
 
@@ -1031,7 +1031,8 @@ int databaseNumber_CLIMATE_WY2 = 0;
 int databaseNumber_ENSEMBLE = 1;
 int databaseNumber_OBSERVED = 2;
 int databaseNumber_CLIMATE_EPW = 3;
-int impacts_source = 3; // 0 = Climate WY2, 1 = Forecast-NAEFS, 2 = Observation, 3 = Climate EPW
+
+int impacts_source = databaseNumber_CLIMATE_EPW; // 0 = Climate WY2, 1 = Forecast-NAEFS, 2 = Observation, 3 = Climate EPW
 
 String[] databaseString = {"CWEEDS", "NAEFS", "SWOB", "TMY"};
 
@@ -19870,7 +19871,7 @@ void mouseClicked () {
 
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Typical Year (TMY)")) {
-            impacts_source = 3;
+            impacts_source = databaseNumber_CLIMATE_EPW;
             
             if (Load_CLIMATE_EPW == 0) {
               Load_CLIMATE_EPW = 1;
@@ -19883,7 +19884,7 @@ void mouseClicked () {
             ROLLOUT_Update = 1;
           } 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Long-term (CWEEDS)")) {
-            impacts_source = 0;
+            impacts_source = databaseNumber_CLIMATE_WY2;
             
             if (Load_CLIMATE_WY2 == 0) {
               Load_CLIMATE_WY2 = 1;
@@ -19896,7 +19897,7 @@ void mouseClicked () {
             ROLLOUT_Update = 1;
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Weather Forecast (NAEFS)")) {
-            impacts_source = 1;
+            impacts_source = databaseNumber_ENSEMBLE;
             
             if (Load_ENSEMBLE == 0) {
               Load_ENSEMBLE = 1;
@@ -19909,7 +19910,7 @@ void mouseClicked () {
             ROLLOUT_Update = 1;
           } 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Real-time Observed (SWOB)")) {
-            impacts_source = 2;
+            impacts_source = databaseNumber_OBSERVED;
             
             if (Load_OBSERVED == 0) {
               Load_OBSERVED = 1;
@@ -20538,7 +20539,7 @@ void mouseClicked () {
               }
               else {
                 
-                if (impacts_source == 1) { 
+                if (impacts_source == databaseNumber_ENSEMBLE) { 
         
                   STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
                   
@@ -20593,7 +20594,7 @@ void mouseClicked () {
               }
               else {
                 
-                if (impacts_source == 3) { 
+                if (impacts_source == databaseNumber_CLIMATE_EPW) { 
                   
                   STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
                   
