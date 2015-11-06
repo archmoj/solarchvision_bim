@@ -7,26 +7,26 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 5;
+int STATION_NUMBER = 1;
 
 String[][] DEFINED_STATIONS = {
   
-                                {"Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "WY2-filename", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
-                                {"Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "WY2-filename", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
-                                {"Place_Bonaventure", "QC", "CA", "45.4995", "-73.5650", "-75", "30", "692.82", "MONTREAL_DORVAL_QC_CA", "WY2-filename", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"},
-                                {"Ryerson_University", "ON", "CA", "43.6593", "-79.3779", "-75", "95", "461.88", "TORONTO_ISLAND_ON_CA", "WY2-filename", "CAN_ON_Toronto.716240_CWEC"}, 
-                                {"Financial_District", "ON", "CA", "43.6488", "-79.3817", "-75", "86", "692.82", "TORONTO_ISLAND_ON_CA", "WY2-filename", "CAN_ON_Toronto.716240_CWEC"},
+                                {"Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
+                                {"Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
+                                {"Place_Bonaventure", "QC", "CA", "45.4995", "-73.5650", "-75", "30", "692.82", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"},
+                                {"Ryerson_University", "ON", "CA", "43.6593", "-79.3779", "-75", "95", "461.88", "TORONTO_ISLAND_ON_CA", "ON_TORONTO_4367_7937_7500", "CAN_ON_Toronto.716240_CWEC"}, 
+                                {"Financial_District", "ON", "CA", "43.6488", "-79.3817", "-75", "86", "692.82", "TORONTO_ISLAND_ON_CA", "ON_TORONTO-ISLAND-A_4363_7940_7500", "CAN_ON_Toronto.716240_CWEC"},
 
-                                {"CALGARY", "AB", "CA", "51.113889", "-114.02", "-120", "1084.1", "240.0", "CALGARY_INTL_AB_CA", "WY2-filename", "CAN_AB_Calgary.718770_CWEC"}, 
-                                {"EDMONTON", "AB", "CA", "53.31", "-113.579444", "-120", "723.3", "240.0", "EDMONTON_INTL_A_AB_CA", "WY2-filename", "CAN_AB_Edmonton.711230_CWEC"},  
-                                {"HALIFAX", "NS", "CA", "44.881111", "-63.508611", "-60", "145.4", "240.0", "HALIFAX_INTL_AIRPORT_NS_CA", "WY2-filename", "CAN_NS_Shearwater.716010_CWEC"},  
-                                {"OTTAWA", "ON", "CA", "45.383333", "-75.716667", "-75", "79.2", "240.0", "OTTAWA_INTL_ON_CA", "WY2-filename", "CAN_ON_Ottawa.716280_CWEC"}, 
-                                {"QUEBEC", "QC", "CA", "46.803611", "-71.381667", "-75", "60", "240.0", "QUEBEC_QC_CA", "WY2-filename", "CAN_PQ_Quebec.717140_CWEC"}, 
-                                {"SUDBURY", "ON", "CA", "46.625556", "-80.797778", "-75", "348.4", "240.0", "SUDBURY_ON_CA", "WY2-filename", "CAN_ON_North.Bay.717310_CWEC"}, 
-                                {"TORONTO-ISLAND", "ON", "CA", "43.6275", "-79.396111", "-75", "76.8", "240.0", "TORONTO_ISLAND_ON_CA", "WY2-filename", "CAN_ON_Toronto.716240_CWEC"}, 
-                                {"TORONTO-PEARSON", "ON", "CA", "43.676667", "-79.630556", "-75", "173.4", "240.0", "TORONTO_PEARSON_INTL_ON_CA", "WY2-filename", "CAN_ON_Toronto.716240_CWEC"}, 
-                                {"VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "240.0", "VANCOUVER_INTL_BC_CA", "WY2-filename", "CAN_BC_Vancouver.718920_CWEC"}, 
-                                {"WINNIPEG", "MB", "CA", "49.91", "-97.24", "-90", "238.7", "240.0", "WINNIPEG_INTL_MB_CA", "WY2-filename", "CAN_MB_Winnipeg.718520_CWEC"}, 
+                                {"CALGARY", "AB", "CA", "51.113889", "-114.02", "-120", "1084.1", "240.0", "CALGARY_INTL_AB_CA", "AB_CALGARY-INT'L-A_5110_11402_10500", "CAN_AB_Calgary.718770_CWEC"}, 
+                                {"EDMONTON", "AB", "CA", "53.31", "-113.579444", "-120", "723.3", "240.0", "EDMONTON_INTL_A_AB_CA", "AB_EDMONTON-INT'L-A_5332_11358_10500", "CAN_AB_Edmonton.711230_CWEC"},  
+                                {"HALIFAX", "NS", "CA", "44.881111", "-63.508611", "-60", "145.4", "240.0", "HALIFAX_INTL_AIRPORT_NS_CA", "NS_HALIFAX-INT'L-A_4488_6352_6000", "CAN_NS_Shearwater.716010_CWEC"},  
+                                {"OTTAWA", "ON", "CA", "45.383333", "-75.716667", "-75", "79.2", "240.0", "OTTAWA_INTL_ON_CA", "ON_OTTAWA-CDA_4538_7572_7500", "CAN_ON_Ottawa.716280_CWEC"}, 
+                                {"QUEBEC", "QC", "CA", "46.803611", "-71.381667", "-75", "60", "240.0", "QUEBEC_QC_CA", "QC_QUEBEC-A_4680_7137_7500", "CAN_PQ_Quebec.717140_CWEC"}, 
+                                {"SUDBURY", "ON", "CA", "46.625556", "-80.797778", "-75", "348.4", "240.0", "SUDBURY_ON_CA", "ON_SUDBURY-A_4662_8080_7500", "CAN_ON_North.Bay.717310_CWEC"}, 
+                                {"TORONTO-ISLAND", "ON", "CA", "43.6275", "-79.396111", "-75", "76.8", "240.0", "TORONTO_ISLAND_ON_CA", "ON_TORONTO-ISLAND-A_4363_7940_7500", "CAN_ON_Toronto.716240_CWEC"}, 
+                                {"TORONTO-PEARSON", "ON", "CA", "43.676667", "-79.630556", "-75", "173.4", "240.0", "TORONTO_PEARSON_INTL_ON_CA", "ON_TORONTO-PEARSON-INT'L_4367_7962_7500", "CAN_ON_Toronto.716240_CWEC"}, 
+                                {"VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"}, 
+                                {"WINNIPEG", "MB", "CA", "49.91", "-97.24", "-90", "238.7", "240.0", "WINNIPEG_INTL_MB_CA", "MB_WINNIPEG-INT'L-A_4990_9723_9000", "CAN_MB_Winnipeg.718520_CWEC"}, 
                                 
                                 {"BOSTON", "MA", "US", "42.35843", "-71.05978", "-75", "15.0", "240.0", "BOSTON_MA_US", "WY2-filename", "USA_MA_Boston-Logan.Intl.AP.725090_TMY3"}, 
                                 {"CHICAGO", "IL", "US", "41.878113", "-87.6298", "-90", "181.0", "240.0", "CHICAGO_IL_US", "WY2-filename", "USA_IL_Chicago-Midway.AP.725340_TMY3"}, 
@@ -378,8 +378,8 @@ float[][][][] OBSERVED;
 int[][][][] OBSERVED_Flag;
 
 
-int Load_CLIMATE_EPW = 1;
-int Load_CLIMATE_WY2 = 0;
+int Load_CLIMATE_EPW = 0;
+int Load_CLIMATE_WY2 = 1;
 int Load_ENSEMBLE = 0;
 int Load_OBSERVED = 0;
 int Download_OBSERVED = 0;
@@ -1025,7 +1025,7 @@ int databaseNumber_ENSEMBLE = 1;
 int databaseNumber_CLIMATE_WY2 = 2;
 int databaseNumber_CLIMATE_EPW = 3;
 
-int impacts_source = databaseNumber_CLIMATE_EPW; 
+int impacts_source = databaseNumber_CLIMATE_WY2; 
 
 String[] databaseString = {"SWOB", "NAEFS", "CWEEDS", "TMY"};
 
@@ -12437,7 +12437,7 @@ void SOLARCHVISION_getCWEEDS_Coordinates () {
   
     STATION_CWEEDS_NUMBER = FileALL.length - 1; // to skip the first description line 
   
-    STATION_CWEEDS_INFO = new String [STATION_CWEEDS_NUMBER][11]; 
+    STATION_CWEEDS_INFO = new String [STATION_CWEEDS_NUMBER][7]; 
   
     int n_Locations = 0;
   
@@ -12450,10 +12450,13 @@ void SOLARCHVISION_getCWEEDS_Coordinates () {
       float StationLatitude = 0.0;
       float StationLongitude = 0.0;
       float StationElevation = 0.0; 
+      String StationFilename = "";
       
       String[] parts = split(lineSTR, '_');
       
       if (4 < parts.length) {
+        
+        StationFilename = lineSTR; 
   
         StationCountry = "CA";
         StationProvince = parts[0];
@@ -12470,6 +12473,7 @@ void SOLARCHVISION_getCWEEDS_Coordinates () {
         STATION_CWEEDS_INFO[n_Locations][3] = String.valueOf(StationLatitude);
         STATION_CWEEDS_INFO[n_Locations][4] = String.valueOf(StationLongitude);
         STATION_CWEEDS_INFO[n_Locations][5] = String.valueOf(StationElevation);
+        STATION_CWEEDS_INFO[n_Locations][6] = StationFilename;
   
         n_Locations += 1;
       }
@@ -20565,11 +20569,9 @@ void mouseClicked () {
                   println("nearest naefs filename:", STATION_NAEFS_INFO[f][6]);    
     
                   Selected_STATION = STATION_NUMBER;
-                  
-   
+
                   BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][1]; // <<<<<<<<
-               
-                  
+
                   ROLLOUT_parent = 0;
                   ROLLOUT_child = 1;
                   ROLLOUT_Update = 1;
@@ -20582,7 +20584,67 @@ void mouseClicked () {
               }
             }
           }        
+          
+
+          {
+            int nearest_STATION_CWEEDS = -1;
+            float nearest_STATION_CWEEDS_dist = FLOAT_undefined;
+                      
+            for (int f = 0; f < STATION_CWEEDS_INFO.length; f += 1) {
+            
+              float _lat = float(STATION_CWEEDS_INFO[f][3]);
+              float _lon = float(STATION_CWEEDS_INFO[f][4]); 
+              if (_lon > 180) _lon -= 360; // << important!
+            
+              float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
               
+              if (nearest_STATION_CWEEDS_dist > d) {
+                nearest_STATION_CWEEDS_dist = d;
+                nearest_STATION_CWEEDS = f;
+              } 
+              
+            }
+
+            {
+              int f = nearest_STATION_CWEEDS;
+              
+              if (DEFINED_STATIONS[STATION_NUMBER][9].equals(STATION_CWEEDS_INFO[f][6])) {  
+              }
+              else {
+                
+                if (impacts_source == databaseNumber_CLIMATE_WY2) { 
+                  
+                  STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
+                  
+                  DEFINED_STATIONS[STATION_NUMBER][0] = STATION_CWEEDS_INFO[f][0];
+                  DEFINED_STATIONS[STATION_NUMBER][1] = STATION_CWEEDS_INFO[f][1];
+                  DEFINED_STATIONS[STATION_NUMBER][2] = STATION_CWEEDS_INFO[f][2]; 
+      
+                  DEFINED_STATIONS[STATION_NUMBER][3] = STATION_CWEEDS_INFO[f][3];
+                  DEFINED_STATIONS[STATION_NUMBER][4] = STATION_CWEEDS_INFO[f][4];
+                  DEFINED_STATIONS[STATION_NUMBER][5] = STATION_CWEEDS_INFO[f][6]; 
+                  DEFINED_STATIONS[STATION_NUMBER][6] = STATION_CWEEDS_INFO[f][5];    
+        
+                  DEFINED_STATIONS[STATION_NUMBER][9] = STATION_CWEEDS_INFO[f][6]; // CWEEDS filename
+       
+                  println("nearest CWEEDS filename:", STATION_CWEEDS_INFO[f][6]);       
+       
+                  Selected_STATION = STATION_NUMBER;
+   
+                  BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][1]; // <<<<<<<<
+                  
+                  ROLLOUT_parent = 0;
+                  ROLLOUT_child = 1;
+                  ROLLOUT_Update = 1;
+                
+                  SOLARCHVISION_update_station(1);
+                  SOLARCHVISION_try_update_CLIMATE_WY2();
+                }
+              }
+            }
+          }          
+
+
           {
             int nearest_STATION_EPW = -1;
             float nearest_STATION_EPW_dist = FLOAT_undefined;
@@ -20601,7 +20663,7 @@ void mouseClicked () {
               } 
               
             }
-        
+
             {
               int f = nearest_STATION_EPW;
               
@@ -20625,8 +20687,7 @@ void mouseClicked () {
                   DEFINED_STATIONS[STATION_NUMBER][10] = STATION_EPW_INFO[f][8]; // epw filename
        
                   println("nearest epw filename:", STATION_EPW_INFO[f][8]);       
-       
-    
+
                   Selected_STATION = STATION_NUMBER;
    
                   BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][1]; // <<<<<<<<
@@ -20634,17 +20695,13 @@ void mouseClicked () {
                   ROLLOUT_parent = 0;
                   ROLLOUT_child = 1;
                   ROLLOUT_Update = 1;
-                
-                
-                  
-                 
+
                   SOLARCHVISION_update_station(1);
                   SOLARCHVISION_try_update_CLIMATE_EPW();
                 }
               }
             }
-          }
-          
+          }          
 
                         
 
