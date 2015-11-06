@@ -1515,9 +1515,10 @@ void SOLARCHVISION_update_station (int Step) {
     WIN3D_Update = 1; 
     GRAPHS_Update = 1;    
     
-    THE_STATION = DEFINED_STATIONS[STATION_NUMBER][0];
-    LocationName = DEFINED_STATIONS[STATION_NUMBER][1];
-    LocationProvince = DEFINED_STATIONS[STATION_NUMBER][2];
+    THE_STATION = DEFINED_STATIONS[STATION_NUMBER][0] + "_" + DEFINED_STATIONS[STATION_NUMBER][1] + "_" + DEFINED_STATIONS[STATION_NUMBER][2];
+    LocationName = DEFINED_STATIONS[STATION_NUMBER][0];
+    LocationProvince = DEFINED_STATIONS[STATION_NUMBER][1];
+    
     LocationLatitude = float(DEFINED_STATIONS[STATION_NUMBER][3]);
     LocationLongitude = float(DEFINED_STATIONS[STATION_NUMBER][4]);
     LocationTimeZone = float(DEFINED_STATIONS[STATION_NUMBER][5]);
@@ -2873,8 +2874,8 @@ void SOLARCHVISION_draw_WORLD () {
   
     if (Display_NAEFS_points != 0) draw_info = 1;
   
-    float _lat = float(STATION_NAEFS_INFO[f][1]);
-    float _lon = float(STATION_NAEFS_INFO[f][2]); 
+    float _lat = float(STATION_NAEFS_INFO[f][3]);
+    float _lon = float(STATION_NAEFS_INFO[f][4]); 
     if (_lon > 180) _lon -= 360; // << important!
   
     if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
@@ -2916,8 +2917,8 @@ void SOLARCHVISION_draw_WORLD () {
   if (Display_NAEFS_nearest == 1) {   
     int f = nearest_STATION_NAEFS;
   
-    float _lat = float(STATION_NAEFS_INFO[f][1]);
-    float _lon = float(STATION_NAEFS_INFO[f][2]); 
+    float _lat = float(STATION_NAEFS_INFO[f][3]);
+    float _lon = float(STATION_NAEFS_INFO[f][4]); 
     if (_lon > 180) _lon -= 360; // << important!      
     
     float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
@@ -12361,6 +12362,8 @@ void SOLARCHVISION_getNAEFS_Coordinates () {
       lineSTR = FileALL[f + 1]; // to skip the first description line  
   
       String StationNameEnglish = "";
+      String StationProvince = "";
+      String StationCountry = "";      
       float StationLatitude = 0.0;
       float StationLongitude = 0.0;
       float StationElevation = 0.0; 
@@ -12370,6 +12373,8 @@ void SOLARCHVISION_getNAEFS_Coordinates () {
       if (3 < parts.length) {
         
         StationNameEnglish = parts[0];
+        StationProvince = parts[1];
+        StationCountry = parts[2];
     
         int l = 0;
         
@@ -12397,9 +12402,11 @@ void SOLARCHVISION_getNAEFS_Coordinates () {
         StationElevation = float(parts[3].substring(0, l - 1));
     
         STATION_NAEFS_INFO[n_Locations][0] = StationNameEnglish;
-        STATION_NAEFS_INFO[n_Locations][1] = String.valueOf(StationLatitude);
-        STATION_NAEFS_INFO[n_Locations][2] = String.valueOf(StationLongitude);
-        STATION_NAEFS_INFO[n_Locations][3] = String.valueOf(StationElevation);
+        STATION_NAEFS_INFO[n_Locations][1] = StationProvince;
+        STATION_NAEFS_INFO[n_Locations][2] = StationCountry;        
+        STATION_NAEFS_INFO[n_Locations][3] = String.valueOf(StationLatitude);
+        STATION_NAEFS_INFO[n_Locations][4] = String.valueOf(StationLongitude);
+        STATION_NAEFS_INFO[n_Locations][5] = String.valueOf(StationElevation);
   
         n_Locations += 1;
       }
@@ -20511,8 +20518,8 @@ void mouseClicked () {
                       
             for (int f = 0; f < STATION_NAEFS_INFO.length; f += 1) {
             
-              float _lat = float(STATION_NAEFS_INFO[f][1]);
-              float _lon = float(STATION_NAEFS_INFO[f][2]); 
+              float _lat = float(STATION_NAEFS_INFO[f][3]);
+              float _lon = float(STATION_NAEFS_INFO[f][4]); 
               if (_lon > 180) _lon -= 360; // << important!
             
               float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
@@ -20536,14 +20543,8 @@ void mouseClicked () {
                   STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
                   
                   DEFINED_STATIONS[STATION_NUMBER][0] = STATION_NAEFS_INFO[f][0];
-      
-                  String[] parts = split(STATION_NAEFS_INFO[f][0], '_');
-                  DEFINED_STATIONS[STATION_NUMBER][1] = parts[0];
-                  for (int i = 1; i < parts.length - 2; i += 1) {
-                    DEFINED_STATIONS[STATION_NUMBER][1] += "_" + parts[i];
-                  }
-                  
-                  DEFINED_STATIONS[STATION_NUMBER][2] = parts[parts.length - 2];
+                  DEFINED_STATIONS[STATION_NUMBER][1] = STATION_NAEFS_INFO[f][1];
+                  DEFINED_STATIONS[STATION_NUMBER][2] = STATION_NAEFS_INFO[f][2];
       
                   DEFINED_STATIONS[STATION_NUMBER][3] = STATION_NAEFS_INFO[f][3];
                   DEFINED_STATIONS[STATION_NUMBER][4] = STATION_NAEFS_INFO[f][4];
@@ -20559,8 +20560,8 @@ void mouseClicked () {
                   ROLLOUT_child = 1;
                   ROLLOUT_Update = 1;
                   
-                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
-                  GRAPHS_Update = 1;
+                  SOLARCHVISION_update_station(1);
+                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);                  
                 }
               }
             }
@@ -20596,10 +20597,9 @@ void mouseClicked () {
                   
                   STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
                   
-                  DEFINED_STATIONS[STATION_NUMBER][0] = STATION_EPW_INFO[f][0] + STATION_EPW_INFO[f][1] + STATION_EPW_INFO[f][2];
-                  DEFINED_STATIONS[STATION_NUMBER][1] = STATION_EPW_INFO[f][0];
-                                    
-                  DEFINED_STATIONS[STATION_NUMBER][2] = STATION_EPW_INFO[f][1];
+                  DEFINED_STATIONS[STATION_NUMBER][0] = STATION_EPW_INFO[f][0];
+                  DEFINED_STATIONS[STATION_NUMBER][1] = STATION_EPW_INFO[f][1];
+                  DEFINED_STATIONS[STATION_NUMBER][2] = STATION_EPW_INFO[f][2];
       
                   DEFINED_STATIONS[STATION_NUMBER][3] = STATION_EPW_INFO[f][3];
                   DEFINED_STATIONS[STATION_NUMBER][4] = STATION_EPW_INFO[f][4];
@@ -20618,8 +20618,8 @@ void mouseClicked () {
                 
                   DEFINED_STATIONS[STATION_NUMBER][8] = STATION_EPW_INFO[f][8]; // note that here those two fields were matched luckily as 8th on different matrixes! 
                  
+                  SOLARCHVISION_update_station(1);
                   SOLARCHVISION_try_update_CLIMATE_EPW();
-                  GRAPHS_Update = 1;
                 }
               }
             }
