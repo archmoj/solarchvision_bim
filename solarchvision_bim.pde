@@ -10759,317 +10759,6 @@ void GRAPHS_keyPressed (KeyEvent e) {
 }
 
 
-
-
-
-
-
-
-
-void GRAPHS_Diagrams_beginDraw () {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.beginDraw();
-  }
-  else {
-    
-  } 
-}
-
-
-void GRAPHS_Diagrams_endDraw () {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.endDraw();
-  }
-  else {
-    
-  } 
-}
-
-
-void GRAPHS_Diagrams_save (String a) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.save(a);
-  }
-  else {
-    save(a);
-  } 
-}
-
-
-void GRAPHS_Diagrams_copy (PGraphics src, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
-  }
-  else {
-    copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
-  } 
-}
-
-
-void GRAPHS_Diagrams_imageMode (int a) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.imageMode(a);
-  }
-  else {
-    imageMode(a);
-  } 
-}
-
-
-void GRAPHS_Diagrams_image (PImage img, float a, float b) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.image(img, a, b);
-  }
-  else {
-    image(img, a, b);
-  } 
-}
-
-
-void GRAPHS_Diagrams_image (PImage img, float a, float b, float c, float d) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.image(img, a, b, c, d);
-  }
-  else {
-    image(img, a, b, c, d);
-  } 
-}
-
-
-void GRAPHS_Diagrams_translate (float a, float b) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.translate(a, b);
-  }
-  else {
-    translate(a, b);
-  } 
-}
-
-
-void GRAPHS_Diagrams_pushMatrix () {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.pushMatrix();
-  }
-  else {
-    pushMatrix();
-  } 
-}
-
-
-void GRAPHS_Diagrams_popMatrix () {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.popMatrix();
-  }
-  else {
-    popMatrix();
-  } 
-}
-
-
-void GRAPHS_Diagrams_background (float a) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.background(a);
-  }
-  else {
-    //background(a); // we need to remark this to avoid CLS!
-  } 
-}
-
-
-void GRAPHS_Diagrams_blendMode (int a) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.blendMode(a);
-  }
-  else {
-    blendMode(a);
-  } 
-}
-
-
-void GRAPHS_Diagrams_strokeJoin (int a) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.strokeJoin(a);
-  }
-  else {
-    strokeJoin(a);
-  } 
-}
-
-
-void GRAPHS_Diagrams_textFont (PFont a) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.textFont(a);
-  }
-  else {
-    textFont(a);
-  } 
-}
-
-
-void GRAPHS_Diagrams_strokeWeight (float a) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.strokeWeight(a);
-  }
-  else {
-    strokeWeight(a);
-  } 
-}
-
-
-void GRAPHS_Diagrams_stroke (float a) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.stroke(a);
-  }
-  else {
-    stroke(a);
-  } 
-}
-
-void GRAPHS_Diagrams_stroke (float a, float b) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.stroke(a, b);
-  }
-  else {
-    stroke(a, b);
-  } 
-}
-
-void GRAPHS_Diagrams_stroke (float a, float b, float c) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.stroke(a, b, c);
-  }
-  else {
-    stroke(a, b, c);
-  } 
-}
-
-void GRAPHS_Diagrams_stroke (float a, float b, float c, float d) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.stroke(a, b, c, d);
-  }
-  else {
-    stroke(a, b, c, d);
-  } 
-}
-
-void GRAPHS_Diagrams_fill (float a) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.fill(a);
-  }
-  else {
-    fill(a);
-  } 
-}
-
-void GRAPHS_Diagrams_fill (float a, float b) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.fill(a, b);
-  }
-  else {
-    fill(a, b);
-  } 
-}
-
-void GRAPHS_Diagrams_fill (float a, float b, float c) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.fill(a, b, c);
-  }
-  else {
-    fill(a, b, c);
-  } 
-}
-
-void GRAPHS_Diagrams_fill (float a, float b, float c, float d) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.fill(a, b, c, d);
-  }
-  else {
-    fill(a, b, c, d);
-  } 
-}
-
-void GRAPHS_Diagrams_noFill () {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.noFill();
-  }
-  else {
-    noFill();
-  } 
-}
-
-
-void GRAPHS_Diagrams_textAlign (int a, int b) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.textAlign(a, b);
-  }
-  else {
-    textAlign(a, b);
-  } 
-}
-
-
-void GRAPHS_Diagrams_textSize (float a) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.textSize(a * 1.25);
-  }
-  else {
-    textSize(a * 1.25);
-  } 
-}
-
-
-void GRAPHS_Diagrams_text (String s, float a, float b) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.text(s, a, b);
-  }
-  else {
-    text(s, a, b);
-  } 
-}
-
-
-void GRAPHS_Diagrams_ellipse (float a, float b, float c, float d) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.ellipse(a, b, c, d);
-  }
-  else {
-    ellipse(a, b, c, d);
-  } 
-}
-
-
-void GRAPHS_Diagrams_line (float a, float b, float c, float d) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.line(a, b, c, d);
-  }
-  else {
-    line(a, b, c, d);
-  } 
-}
-
-
-void GRAPHS_Diagrams_rect (float a, float b, float c, float d) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.rect(a, b, c, d);
-  }
-  else {
-    rect(a, b, c, d);
-  } 
-}
-
-
-void GRAPHS_Diagrams_quad (float ax, float ay, float bx, float by, float cx, float cy, float dx, float dy) {
-  if (off_screen == 1) {
-    GRAPHS_Diagrams.quad(ax, ay, bx, by, cx, cy, dx, dy);
-  }
-  else {
-    quad(ax, ay, bx, by, cx, cy, dx, dy);
-  } 
-}
-
-
-
-
 float[] SOLARCHVISION_DRYW (float _variable) {
   _variable = 1 - _variable;
   _variable *= -3;
@@ -26550,4 +26239,309 @@ void set_to_View_3DViewPoint (int n) {
 } 
 
  
- 
+
+
+
+
+
+void GRAPHS_Diagrams_beginDraw () {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.beginDraw();
+  }
+  else {
+    
+  } 
+}
+
+
+void GRAPHS_Diagrams_endDraw () {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.endDraw();
+  }
+  else {
+    
+  } 
+}
+
+
+void GRAPHS_Diagrams_save (String a) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.save(a);
+  }
+  else {
+    save(a);
+  } 
+}
+
+
+void GRAPHS_Diagrams_copy (PGraphics src, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
+  }
+  else {
+    copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
+  } 
+}
+
+
+void GRAPHS_Diagrams_imageMode (int a) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.imageMode(a);
+  }
+  else {
+    imageMode(a);
+  } 
+}
+
+
+void GRAPHS_Diagrams_image (PImage img, float a, float b) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.image(img, a, b);
+  }
+  else {
+    image(img, a, b);
+  } 
+}
+
+
+void GRAPHS_Diagrams_image (PImage img, float a, float b, float c, float d) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.image(img, a, b, c, d);
+  }
+  else {
+    image(img, a, b, c, d);
+  } 
+}
+
+
+void GRAPHS_Diagrams_translate (float a, float b) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.translate(a, b);
+  }
+  else {
+    translate(a, b);
+  } 
+}
+
+
+void GRAPHS_Diagrams_pushMatrix () {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.pushMatrix();
+  }
+  else {
+    pushMatrix();
+  } 
+}
+
+
+void GRAPHS_Diagrams_popMatrix () {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.popMatrix();
+  }
+  else {
+    popMatrix();
+  } 
+}
+
+
+void GRAPHS_Diagrams_background (float a) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.background(a);
+  }
+  else {
+    //background(a); // we need to remark this to avoid CLS!
+  } 
+}
+
+
+void GRAPHS_Diagrams_blendMode (int a) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.blendMode(a);
+  }
+  else {
+    blendMode(a);
+  } 
+}
+
+
+void GRAPHS_Diagrams_strokeJoin (int a) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.strokeJoin(a);
+  }
+  else {
+    strokeJoin(a);
+  } 
+}
+
+
+void GRAPHS_Diagrams_textFont (PFont a) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.textFont(a);
+  }
+  else {
+    textFont(a);
+  } 
+}
+
+
+void GRAPHS_Diagrams_strokeWeight (float a) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.strokeWeight(a);
+  }
+  else {
+    strokeWeight(a);
+  } 
+}
+
+
+void GRAPHS_Diagrams_stroke (float a) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.stroke(a);
+  }
+  else {
+    stroke(a);
+  } 
+}
+
+void GRAPHS_Diagrams_stroke (float a, float b) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.stroke(a, b);
+  }
+  else {
+    stroke(a, b);
+  } 
+}
+
+void GRAPHS_Diagrams_stroke (float a, float b, float c) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.stroke(a, b, c);
+  }
+  else {
+    stroke(a, b, c);
+  } 
+}
+
+void GRAPHS_Diagrams_stroke (float a, float b, float c, float d) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.stroke(a, b, c, d);
+  }
+  else {
+    stroke(a, b, c, d);
+  } 
+}
+
+void GRAPHS_Diagrams_fill (float a) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.fill(a);
+  }
+  else {
+    fill(a);
+  } 
+}
+
+void GRAPHS_Diagrams_fill (float a, float b) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.fill(a, b);
+  }
+  else {
+    fill(a, b);
+  } 
+}
+
+void GRAPHS_Diagrams_fill (float a, float b, float c) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.fill(a, b, c);
+  }
+  else {
+    fill(a, b, c);
+  } 
+}
+
+void GRAPHS_Diagrams_fill (float a, float b, float c, float d) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.fill(a, b, c, d);
+  }
+  else {
+    fill(a, b, c, d);
+  } 
+}
+
+void GRAPHS_Diagrams_noFill () {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.noFill();
+  }
+  else {
+    noFill();
+  } 
+}
+
+
+void GRAPHS_Diagrams_textAlign (int a, int b) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.textAlign(a, b);
+  }
+  else {
+    textAlign(a, b);
+  } 
+}
+
+
+void GRAPHS_Diagrams_textSize (float a) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.textSize(a * 1.25);
+  }
+  else {
+    textSize(a * 1.25);
+  } 
+}
+
+
+void GRAPHS_Diagrams_text (String s, float a, float b) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.text(s, a, b);
+  }
+  else {
+    text(s, a, b);
+  } 
+}
+
+
+void GRAPHS_Diagrams_ellipse (float a, float b, float c, float d) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.ellipse(a, b, c, d);
+  }
+  else {
+    ellipse(a, b, c, d);
+  } 
+}
+
+
+void GRAPHS_Diagrams_line (float a, float b, float c, float d) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.line(a, b, c, d);
+  }
+  else {
+    line(a, b, c, d);
+  } 
+}
+
+
+void GRAPHS_Diagrams_rect (float a, float b, float c, float d) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.rect(a, b, c, d);
+  }
+  else {
+    rect(a, b, c, d);
+  } 
+}
+
+
+void GRAPHS_Diagrams_quad (float ax, float ay, float bx, float by, float cx, float cy, float dx, float dy) {
+  if (off_screen == 1) {
+    GRAPHS_Diagrams.quad(ax, ay, bx, by, cx, cy, dx, dy);
+  }
+  else {
+    quad(ax, ay, bx, by, cx, cy, dx, dy);
+  } 
+}
+
