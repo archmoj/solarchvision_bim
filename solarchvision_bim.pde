@@ -323,12 +323,15 @@ int frame_index_number = 0;
 
 int GRAPHS_record_JPG = 0;
 int GRAPHS_record_PDF = 0;
+int GRAPHS_record_AUTO = 0;
 
 int WORLD_record_JPG = 0;
 int WORLD_record_PDF = 0;
+int WORLD_record_AUTO = 0;
 
 int WIN3D_record_JPG = 0;
 int WIN3D_record_PDF = 0;
+int WIN3D_record_AUTO = 0;
 
 int GRAPHS_i_start = 0;
 int GRAPHS_i_end = 23;
@@ -1007,17 +1010,13 @@ String CalendarMM[][];
 String CalendarDD[][];
 int CalendarDate[][];
 
-
-int WORLD_record_AUTO = 0;
-
-
 float GRAPHS_X_coordinate = 0;
 float GRAPHS_Y_coordinate = 0;
 
 float GRAPHS_O_scale = 50.0;
 float GRAPHS_W_scale = 3.0;
 
-int GRAPHS_record_AUTO = 0;
+
 
 float X_control, Y_control;
 
@@ -1373,7 +1372,7 @@ float WIN3D_ZOOM_coordinate = 60; // / (h_pixel / 300.0);
 
 int WIN3D_View_Type = 1; // 0: Ortho 1: Perspective
 
-PGraphics WIN3D_Diagrams;
+
 
 int WIN3D_Update = 1;
 int WIN3D_include = 1;
@@ -1467,8 +1466,6 @@ void setup () {
   WIN3D_VerticesSolarEffect = new float [1];
   WIN3D_VerticesSolarEnergy[0] = FLOAT_undefined;
   WIN3D_VerticesSolarEffect[0] = FLOAT_undefined;
-
-  WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D); 
 
   frameRate(24);
 
@@ -2409,13 +2406,22 @@ void draw () {
 
 float refScale = 250;
 
+PGraphics WIN3D_Diagrams;
+
 void SOLARCHVISION_draw_WIN3D () {
+
+  WIN3D_Diagrams = createGraphics(int(WIN3D_X_View), int(WIN3D_Y_View), P3D);
+  WIN3D_Diagrams.beginDraw();  
   
+  if (WIN3D_record_PDF == 1) {
+    println("PDF:begin");
+    WIN3D_Diagrams.beginRaw(PDF, MAKE_Filenames() + ".pdf");
+    //beginRaw(PDF, MAKE_Filenames() + ".pdf");
+  }
+
   
   WIN3D_scale3D = WIN3D_Y_View / refScale; // fits field of view to window's height
-  
-  WIN3D_Diagrams.beginDraw();
-  
+
   WIN3D_Diagrams.background(233);
 
   WIN3D_Diagrams.fill(127);
@@ -2571,24 +2577,37 @@ void SOLARCHVISION_draw_WIN3D () {
     }
   }   
   
-
-
-
-
-
-
-
-
-
-
-
-
   
 
-  WIN3D_Diagrams.endDraw();
+ 
 
-  imageMode(CORNER);    
+  if (WIN3D_record_PDF == 1) {
+    WIN3D_Diagrams.endRaw();
+    //endRaw();
+    println("PDF:end");
+    
+    WIN3D_record_PDF = 0;
+
+    
+  }
+
+  WIN3D_Diagrams.endDraw();
+  
+  if ((WIN3D_record_JPG == 1) || (WIN3D_record_AUTO == 1)) {
+    WIN3D_Diagrams.save(MAKE_Filenames() + ".jpg");
+    println("Image created");
+  }
+  
+  
+  imageMode(CORNER);
   image(WIN3D_Diagrams, WIN3D_CX_View, WIN3D_CY_View, WIN3D_X_View, WIN3D_Y_View);
+ 
+
+  
+  WIN3D_Update = 0;
+   
+  if ((WIN3D_record_JPG == 1) || (WIN3D_record_AUTO == 0)) WIN3D_record_JPG = 0;  
+
 
 
   SOLARCHVISION_draw_Perspective_Internally(); 
@@ -2603,9 +2622,6 @@ void SOLARCHVISION_draw_WORLD () {
   else if (WORLD_record_JPG == 1) WORLD_Image_Scale = 3;
   else WORLD_Image_Scale = 1;
   
-  draw_frame += 1;
-  println("frame:", draw_frame);
-
   if (WORLD_record_PDF == 1) {
     println("PDF:begin");
     WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, PDF, MAKE_Filenames() + ".pdf");
@@ -3098,7 +3114,7 @@ void SOLARCHVISION_draw_WORLD () {
     
     WORLD_record_PDF = 0;
 
-    //resetMatrix();
+    
     
     stroke(0); 
     fill(0);
@@ -3118,7 +3134,7 @@ void SOLARCHVISION_draw_WORLD () {
       println("Image created");
     }
     
-    //resetMatrix();
+    
     
     stroke(0); 
     fill(0);
@@ -3144,7 +3160,7 @@ void SOLARCHVISION_draw_GRAPHS () {
 
   cursor(WAIT);
   
-  //resetMatrix();
+  
 
   pushMatrix();
   translate(GRAPHS_CX_View, GRAPHS_CY_View);
@@ -3165,6 +3181,9 @@ void SOLARCHVISION_draw_GRAPHS () {
   
   if (GRAPHS_Update != 0) {
 
+    draw_frame += 1;
+    println("frame:", draw_frame);    
+    
     //if (update_DevelopDATA == 1) {
       if (GRAPHS_drw_Layer == _developed) {
         SOLARCHVISION_DevelopDATA(impacts_source);
@@ -3179,9 +3198,6 @@ void SOLARCHVISION_draw_GRAPHS () {
     else if (GRAPHS_record_JPG == 1) GRAPHS_Image_Scale = 3;
     else GRAPHS_Image_Scale = 1;
     
-    draw_frame += 1;
-    println("frame:", draw_frame);
-  
     GRAPHS_X_coordinate = -0.333 * GRAPHS_X_View * GRAPHS_Image_Scale;      
     
     GRAPHS_Y_coordinate = 1.0 * GRAPHS_Y_View * GRAPHS_Image_Scale;
@@ -3252,7 +3268,7 @@ void SOLARCHVISION_draw_GRAPHS () {
       
       GRAPHS_record_PDF = 0;
 
-      //resetMatrix();
+      
       
       stroke(0); 
       fill(0);
@@ -3272,7 +3288,7 @@ void SOLARCHVISION_draw_GRAPHS () {
         println("Image created");
       }
       
-      //resetMatrix();
+      
       
       stroke(0); 
       fill(0);
@@ -3288,7 +3304,7 @@ void SOLARCHVISION_draw_GRAPHS () {
     }
   }
   else {
-    //resetMatrix();
+    
     
     stroke(0); 
     fill(0);
@@ -3688,7 +3704,7 @@ void Plot_Setup () {
       SOLARCHVISION_PlotIMPACT(0, -200 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[GRAPHS_drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
     }
     else if (GRAPHS_record_PDF == 0) {
-      //resetMatrix();
+      
       
       stroke(0); 
       fill(0);
@@ -3723,7 +3739,7 @@ void Plot_Setup () {
       SOLARCHVISION_PlotIMPACT(0, -200 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[GRAPHS_drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
     }
     else if (GRAPHS_record_PDF == 0) {  
-      //resetMatrix();
+      
       
       stroke(0); 
       fill(0);
@@ -11500,7 +11516,6 @@ void SOLARCHVISION_update_frame_layout () {
     WIN3D_X_View = h_pixel;
     WIN3D_Y_View = h_pixel;
     WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
-    WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
     
     WORLD_CX_View = 0;
     WORLD_CY_View = a_pixel + b_pixel + 0;
@@ -11519,7 +11534,6 @@ void SOLARCHVISION_update_frame_layout () {
     WIN3D_X_View = 3 * h_pixel;
     WIN3D_Y_View = 2 * h_pixel;
     WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
-    WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
  }  
  else if (frame_variation == 2) {
 
