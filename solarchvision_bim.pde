@@ -2411,7 +2411,7 @@ PGraphics WIN3D_Diagrams;
 
 void SOLARCHVISION_draw_WIN3D () {
 
-  if (WIN3D_record_JPG == 1) WIN3D_Image_Scale = 3;
+  if (WIN3D_record_JPG == 1) WIN3D_Image_Scale = 2; //3;
   else WIN3D_Image_Scale = 1;
 
   //////////////////////////////////
