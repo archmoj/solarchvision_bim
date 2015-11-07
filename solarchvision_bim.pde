@@ -1101,14 +1101,16 @@ float _pix = 0;
 
 color color_data_lines = color(0, 0, 0);
 
+float WIN3D_Image_Scale = 1.0;
+
 float WORLD_Image_Scale = 1.0;
 float pre_WORLD_Image_Scale = WORLD_Image_Scale; 
 PGraphics pre_WORLD_Diagrams;
 
 float GRAPHS_Image_Scale = 1.0;
 float pre_GRAPHS_Image_Scale = GRAPHS_Image_Scale; 
-
 PGraphics pre_GRAPHS_Diagrams;
+
 int pre_GRAPHS_setup;
 int pre_impacts_source;
 int pre_STATION_NUMBER;
@@ -2409,9 +2411,17 @@ PGraphics WIN3D_Diagrams;
 
 void SOLARCHVISION_draw_WIN3D () {
 
+  if (WIN3D_record_JPG == 1) WIN3D_Image_Scale = 3;
+  else WIN3D_Image_Scale = 1;
+
+  //////////////////////////////////
+  WIN3D_X_View *= WIN3D_Image_Scale;
+  WIN3D_Y_View *= WIN3D_Image_Scale;
+  //////////////////////////////////
+
   WIN3D_Diagrams = createGraphics(int(WIN3D_X_View), int(WIN3D_Y_View), P3D);
   WIN3D_Diagrams.beginDraw();  
-  
+
   WIN3D_scale3D = WIN3D_Y_View / refScale; // fits field of view to window's height
 
   WIN3D_Diagrams.background(233);
@@ -2570,7 +2580,13 @@ void SOLARCHVISION_draw_WIN3D () {
   }   
   
 
+  
   WIN3D_Diagrams.endDraw();
+  
+  //////////////////////////////////
+  WIN3D_X_View /= WIN3D_Image_Scale;
+  WIN3D_Y_View /= WIN3D_Image_Scale;  
+  //////////////////////////////////
   
   if ((WIN3D_record_JPG == 1) || (WIN3D_record_AUTO == 1)) {
     WIN3D_Diagrams.save(MAKE_Filenames() + ".jpg");
@@ -2584,8 +2600,14 @@ void SOLARCHVISION_draw_WIN3D () {
    
   if ((WIN3D_record_JPG == 1) || (WIN3D_record_AUTO == 0)) WIN3D_record_JPG = 0;  
 
+
+
   SOLARCHVISION_draw_Perspective_Internally(); 
 }
+
+
+
+
 
 
 void SOLARCHVISION_draw_WORLD () {
