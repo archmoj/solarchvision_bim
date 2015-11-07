@@ -1104,7 +1104,7 @@ int off_screen = 1; // 1: off 0: on
 float Image_Scale = 1.0;
 float pre_Image_Scale = Image_Scale; 
 
-PGraphics pre_Diagrams;
+PGraphics pre_GRAPHS_Diagrams;
 int pre_GRAPHS_setup;
 int pre_impacts_source;
 int pre_STATION_NUMBER;
@@ -3201,7 +3201,7 @@ void SOLARCHVISION_draw_GRAPHS () {
         blendMode(REPLACE);
         
         imageMode(CORNER);
-        image(pre_Diagrams, 0, 0, GRAPHS_X_View, GRAPHS_Y_View);
+        image(pre_GRAPHS_Diagrams, 0, 0, GRAPHS_X_View, GRAPHS_Y_View);
       }
     }
     else if (off_screen != 0) {
@@ -3223,17 +3223,17 @@ void SOLARCHVISION_draw_GRAPHS () {
 
       imageMode(CORNER);
       image(GRAPHS_Diagrams, 0, 0, GRAPHS_X_View, GRAPHS_Y_View);
-      pre_Diagrams = GRAPHS_Diagrams;
+      pre_GRAPHS_Diagrams = GRAPHS_Diagrams;
       pre_Image_Scale = Image_Scale;
  
     }
     else {
       PImage get_screen;
       get_screen = get(0, 0, GRAPHS_X_View, GRAPHS_Y_View);
-      pre_Diagrams = createGraphics(GRAPHS_X_View, GRAPHS_Y_View, P2D);
-      pre_Diagrams.beginDraw();
-      pre_Diagrams.image(get_screen, 0, 0, GRAPHS_X_View, GRAPHS_Y_View);
-      pre_Diagrams.endDraw();
+      pre_GRAPHS_Diagrams = createGraphics(GRAPHS_X_View, GRAPHS_Y_View, P2D);
+      pre_GRAPHS_Diagrams.beginDraw();
+      pre_GRAPHS_Diagrams.image(get_screen, 0, 0, GRAPHS_X_View, GRAPHS_Y_View);
+      pre_GRAPHS_Diagrams.endDraw();
       pre_Image_Scale = 1;
     }
   }
@@ -3247,7 +3247,7 @@ void SOLARCHVISION_draw_GRAPHS () {
     blendMode(REPLACE);
     
     imageMode(CORNER);
-    image(pre_Diagrams, 0, 0, GRAPHS_X_View, GRAPHS_Y_View);
+    image(pre_GRAPHS_Diagrams, 0, 0, GRAPHS_X_View, GRAPHS_Y_View);
   }
 
   Export_GRAPHS_info_node = 0;
@@ -3659,7 +3659,7 @@ void Plot_Setup () {
       rect(0, 0, GRAPHS_Y_View, GRAPHS_Y_View / 2);
       blendMode(REPLACE);
       
-      GRAPHS_Diagrams_copy(pre_Diagrams, 0, 0, int(pre_Image_Scale * GRAPHS_Y_View), int(pre_Image_Scale * GRAPHS_Y_View / 2), 0, 0, int(Image_Scale * GRAPHS_Y_View), int(Image_Scale * GRAPHS_Y_View / 2));
+      GRAPHS_Diagrams_copy(pre_GRAPHS_Diagrams, 0, 0, int(pre_Image_Scale * GRAPHS_Y_View), int(pre_Image_Scale * GRAPHS_Y_View / 2), 0, 0, int(Image_Scale * GRAPHS_Y_View), int(Image_Scale * GRAPHS_Y_View / 2));
     }
     
     plot_impacts = pre_plot_impacts; 
@@ -3697,7 +3697,7 @@ void Plot_Setup () {
       rect(0, 0, GRAPHS_Y_View, GRAPHS_Y_View / 2);
       blendMode(REPLACE);
   
-      GRAPHS_Diagrams_copy(pre_Diagrams, 0, 0, int(pre_Image_Scale * GRAPHS_Y_View), int(pre_Image_Scale * GRAPHS_Y_View / 2), 0, 0, int(Image_Scale * GRAPHS_Y_View), int(Image_Scale * GRAPHS_Y_View / 2));
+      GRAPHS_Diagrams_copy(pre_GRAPHS_Diagrams, 0, 0, int(pre_Image_Scale * GRAPHS_Y_View), int(pre_Image_Scale * GRAPHS_Y_View / 2), 0, 0, int(Image_Scale * GRAPHS_Y_View), int(Image_Scale * GRAPHS_Y_View / 2));
     }
     
     plot_impacts = pre_plot_impacts;
@@ -19127,8 +19127,8 @@ void mouseWheel(MouseEvent event) {
           
           int pre_WORLD_viewport_ZOOM = WORLD_viewport_ZOOM;
           
-          if (Wheel_Value > 0) WORLD_viewport_ZOOM += 1;
-          if (Wheel_Value < 0) WORLD_viewport_ZOOM -= 1;
+          if (Wheel_Value < 0) WORLD_viewport_ZOOM += 1;
+          if (Wheel_Value > 0) WORLD_viewport_ZOOM -= 1;
           
           if (WORLD_viewport_ZOOM < 1) WORLD_viewport_ZOOM = 1;
           if (WORLD_viewport_ZOOM > 6) WORLD_viewport_ZOOM = 6;
