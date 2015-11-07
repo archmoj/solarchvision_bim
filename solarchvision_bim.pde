@@ -330,7 +330,6 @@ int WORLD_record_PDF = 0;
 int WORLD_record_AUTO = 0;
 
 int WIN3D_record_JPG = 0;
-int WIN3D_record_PDF = 0;
 int WIN3D_record_AUTO = 0;
 
 int GRAPHS_i_start = 0;
@@ -2413,13 +2412,6 @@ void SOLARCHVISION_draw_WIN3D () {
   WIN3D_Diagrams = createGraphics(int(WIN3D_X_View), int(WIN3D_Y_View), P3D);
   WIN3D_Diagrams.beginDraw();  
   
-  if (WIN3D_record_PDF == 1) {
-    println("PDF:begin");
-    WIN3D_Diagrams.beginRaw(PDF, MAKE_Filenames() + ".pdf");
-    //beginRaw(PDF, MAKE_Filenames() + ".pdf");
-  }
-
-  
   WIN3D_scale3D = WIN3D_Y_View / refScale; // fits field of view to window's height
 
   WIN3D_Diagrams.background(233);
@@ -2577,19 +2569,6 @@ void SOLARCHVISION_draw_WIN3D () {
     }
   }   
   
-  
-
- 
-
-  if (WIN3D_record_PDF == 1) {
-    WIN3D_Diagrams.endRaw();
-    //endRaw();
-    println("PDF:end");
-    
-    WIN3D_record_PDF = 0;
-
-    
-  }
 
   WIN3D_Diagrams.endDraw();
   
@@ -2598,17 +2577,12 @@ void SOLARCHVISION_draw_WIN3D () {
     println("Image created");
   }
   
-  
   imageMode(CORNER);
   image(WIN3D_Diagrams, WIN3D_CX_View, WIN3D_CY_View, WIN3D_X_View, WIN3D_Y_View);
- 
-
   
   WIN3D_Update = 0;
    
   if ((WIN3D_record_JPG == 1) || (WIN3D_record_AUTO == 0)) WIN3D_record_JPG = 0;  
-
-
 
   SOLARCHVISION_draw_Perspective_Internally(); 
 }
@@ -19635,11 +19609,6 @@ void mouseClicked () {
             WIN3D_Update = 1;
           } 
           
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PDF Spatial Graph")) { 
-            WIN3D_record_PDF = 1;
-            WIN3D_Update = 1;
-          }               
-    
           if (BAR_a_Items[BAR_a_selected_parent][0].equals("Site")) {
             if (BAR_a_selected_child > 0) {
               if (STATION_NUMBER != BAR_a_selected_child - 1) {
@@ -21681,7 +21650,6 @@ void SOLARCHVISION_draw_ROLLOUT () {
       WORLD_record_PDF = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Record WORLD in PDF", WORLD_record_PDF, 0, 1, 1), 1));
       WORLD_record_JPG = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Record WORLD in JPG", WORLD_record_JPG, 0, 1, 1), 1));
 
-      WIN3D_record_PDF = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Record WIN3D in PDF", WIN3D_record_PDF, 0, 1, 1), 1));
       WIN3D_record_JPG = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Record WIN3D in JPG", WIN3D_record_JPG, 0, 1, 1), 1));
       
       Field_record_JPG = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Record field in JPG", Field_record_JPG, 0, 1, 1), 1));
@@ -25442,7 +25410,7 @@ String[][] BAR_a_Items = {
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
                         {"Select", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
                         {"Modify", "Seed", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum"},
-                        {"IMG/PDF", "PDF Time Graph", "JPG Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "PDF Spatial Graph"}
+                        {"IMG/PDF", "PDF Time Graph", "JPG Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph"}
 
                       };
 
