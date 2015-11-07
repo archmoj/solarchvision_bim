@@ -3111,8 +3111,7 @@ void SOLARCHVISION_draw_WORLD () {
     stroke(0); 
     fill(0);
     strokeWeight(0);
-    //rect(0, 0, WORLD_Y_View, WORLD_Y_View);
-    rect(0, 0, WORLD_X_View, WORLD_Y_View);
+    rect(WORLD_CX_View, WORLD_CY_View, WORLD_X_View, WORLD_Y_View);
     blendMode(REPLACE);
     
     imageMode(CORNER);
@@ -3132,8 +3131,7 @@ void SOLARCHVISION_draw_WORLD () {
     stroke(0); 
     fill(0);
     strokeWeight(0);
-    //rect(0, 0, WORLD_Y_View, WORLD_Y_View);
-    rect(0, 0, WORLD_X_View, WORLD_Y_View);
+    rect(WORLD_CX_View, WORLD_CY_View, WORLD_X_View, WORLD_Y_View);
     blendMode(REPLACE);
 
     imageMode(CORNER);
@@ -3142,6 +3140,10 @@ void SOLARCHVISION_draw_WORLD () {
     pre_WORLD_Image_Scale = WORLD_Image_Scale;
  
   }
+  
+  WORLD_Update = 0;
+   
+  if ((WORLD_record_JPG == 1) || (WORLD_record_AUTO == 0)) WORLD_record_JPG = 0;  
   
 }
 
@@ -3264,7 +3266,6 @@ void SOLARCHVISION_draw_GRAPHS () {
       stroke(0); 
       fill(0);
       strokeWeight(0);
-      //rect(0, 0, GRAPHS_Y_View, GRAPHS_Y_View);
       rect(0, 0, GRAPHS_X_View, GRAPHS_Y_View);
       blendMode(REPLACE);
       
@@ -3285,7 +3286,6 @@ void SOLARCHVISION_draw_GRAPHS () {
       stroke(0); 
       fill(0);
       strokeWeight(0);
-      //rect(0, 0, GRAPHS_Y_View, GRAPHS_Y_View);
       rect(0, 0, GRAPHS_X_View, GRAPHS_Y_View);
       blendMode(REPLACE);
 
@@ -3309,19 +3309,17 @@ void SOLARCHVISION_draw_GRAPHS () {
     image(pre_GRAPHS_Diagrams, 0, 0, GRAPHS_X_View, GRAPHS_Y_View);
   }
 
-  Export_GRAPHS_info_node = 0;
-  Export_GRAPHS_info_norm = 0;
-  Export_GRAPHS_info_prob = 0;
+  popMatrix();
 
   GRAPHS_Update = 0;
    
   if ((GRAPHS_record_JPG == 1) || (GRAPHS_record_AUTO == 0)) GRAPHS_record_JPG = 0;
 
-  popMatrix();
+  Export_GRAPHS_info_node = 0;
+  Export_GRAPHS_info_norm = 0;
+  Export_GRAPHS_info_prob = 0;
 
   cursor(ARROW);
-
-  GRAPHS_Update = 0;
   
 } 
 
@@ -18834,274 +18832,277 @@ int mouseWheelConsume = 0;
 
 void mouseWheel(MouseEvent event) {
   
-  mouseWheelConsume += 1;
-  if (mouseWheelConsume % 2 == 0) {
-    mouseWheelConsume = 0;
+  if (BAR_a_selected_child <= 0) {
   
-    float Wheel_Value = event.getCount(); 
+    mouseWheelConsume += 1;
+    if (mouseWheelConsume % 2 == 0) {
+      mouseWheelConsume = 0;
     
-    if (automated == 0) {
-      X_clicked = mouseX;
-      Y_clicked = mouseY;
+      float Wheel_Value = event.getCount(); 
       
-      if (WORLD_include == 1) {
-        if (isInside(X_clicked, Y_clicked, WORLD_CX_View, WORLD_CY_View, WORLD_CX_View + WORLD_X_View, WORLD_CY_View + WORLD_Y_View) == 1) {
-          
-          int pre_WORLD_viewport_ZOOM = WORLD_viewport_ZOOM;
-          
-          if (Wheel_Value < 0) WORLD_viewport_ZOOM += 1;
-          if (Wheel_Value > 0) WORLD_viewport_ZOOM -= 1;
-          
-          if (WORLD_viewport_ZOOM < 1) WORLD_viewport_ZOOM = 1;
-          if (WORLD_viewport_ZOOM > 6) WORLD_viewport_ZOOM = 6;
-          
-          if (pre_WORLD_viewport_ZOOM != WORLD_viewport_ZOOM) {
-            WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
-   
-            WORLD_Update = 1;   
-          }
-        }
-      }    
-      
-      if (WIN3D_include == 1) {
-        if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
-          
-          float x0 = 0;
-          float y0 = 0;
-          float z0 = 0;
-  
-          if (Work_with_2D_or_3D == 1) {
+      if (automated == 0) {
+        X_clicked = mouseX;
+        Y_clicked = mouseY;
+        
+        if (WORLD_include == 1) {
+          if (isInside(X_clicked, Y_clicked, WORLD_CX_View, WORLD_CY_View, WORLD_CX_View + WORLD_X_View, WORLD_CY_View + WORLD_Y_View) == 1) {
             
-            // it is not perfect. only picks the pivot of the last object added to the list
-  
-            x0 = allFractal_XYZS[selectedFractal_numbers[selectedFractal_numbers.length - 1]][0];
-            y0 = allFractal_XYZS[selectedFractal_numbers[selectedFractal_numbers.length - 1]][1]; 
-            z0 = allFractal_XYZS[selectedFractal_numbers[selectedFractal_numbers.length - 1]][2];
-          }   
-          
-          if (Work_with_2D_or_3D == 2) {
+            int pre_WORLD_viewport_ZOOM = WORLD_viewport_ZOOM;
             
-            // it is not perfect. only picks the pivot of the last object added to the list
-  
-            x0 = allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][0];
-            y0 = allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][1]; 
-            z0 = allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][2];
-          }     
+            if (Wheel_Value < 0) WORLD_viewport_ZOOM += 1;
+            if (Wheel_Value > 0) WORLD_viewport_ZOOM -= 1;
+            
+            if (WORLD_viewport_ZOOM < 1) WORLD_viewport_ZOOM = 1;
+            if (WORLD_viewport_ZOOM > 6) WORLD_viewport_ZOOM = 6;
+            
+            if (pre_WORLD_viewport_ZOOM != WORLD_viewport_ZOOM) {
+              WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
      
-          if (Work_with_2D_or_3D == 3) {
-  
-            x0 = selectedPolymesh_Pivot_XYZ[0];
-            y0 = selectedPolymesh_Pivot_XYZ[1];
-            z0 = selectedPolymesh_Pivot_XYZ[2];
-          }        
-  
-          if (View_Select_Create_Modify == 4) { // properties
-  
-            int p = int(Wheel_Value);
+              WORLD_Update = 1;   
+            }
+          }
+        }    
+        
+        if (WIN3D_include == 1) {
+          if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
             
-            SOLARCHVISION_seed_Selection(p);
-            
-            WIN3D_Update = 1;
-            
-          }   
-          
-          if (View_Select_Create_Modify == 3) { // rotate
-  
-            float r = (15 * Wheel_Value) * PI / 180.0;
-            
-            int the_Vector = selectedPolymesh_rotVector;
-            
-            SOLARCHVISION_rotate_Selection(x0, y0, z0, r, the_Vector);
-            
-            WIN3D_Update = 1;
-            
-          }   
-          
-          if (View_Select_Create_Modify == 2) { // scale
-  
-            float s = pow(pow(2.0, 0.25), Wheel_Value);
-            
-            float sx = s;
-            float sy = s;
-            float sz = s;
-            
-            int the_Vector = selectedPolymesh_scaleVector;
-          
-            if (the_Vector == 0) {sy = 1; sz = 1;}  
-            if (the_Vector == 1) {sz = 1; sx = 1;}  
-            if (the_Vector == 2) {sx = 1; sy = 1;}                    
-            
-            SOLARCHVISION_scale_Selection(x0, y0, z0, sx, sy, sz);
-            
-            WIN3D_Update = 1;
-  
-          }          
-  
-          if (View_Select_Create_Modify == 1) { // move
-          
-            float d = Wheel_Value;
-  
-            float dx = d;
-            float dy = d;
-            float dz = d;
-            
-            int the_Vector = selectedPolymesh_posVector;
-          
-            if (the_Vector == 0) {dy = 0; dz = 0;}  
-            if (the_Vector == 1) {dz = 0; dx = 0;}  
-            if (the_Vector == 2) {dx = 0; dy = 0;}  
-  
-            SOLARCHVISION_move_Selection(dx, dy, dz);
-            
-            WIN3D_Update = 1;
-            
-          }   
-         
-          if (View_Select_Create_Modify == -1) { // PickSelect
-  
+            float x0 = 0;
+            float y0 = 0;
+            float z0 = 0;
+    
             if (Work_with_2D_or_3D == 1) {
-  
-              if (allFractal_num > 0) {
-                
-                selectedFractal_numbers[selectedFractal_numbers.length - 1] += int(Wheel_Value);
-                
-  
-                if (selectedFractal_numbers[selectedFractal_numbers.length - 1] < 0) {
-                  selectedFractal_numbers[selectedFractal_numbers.length - 1] = allFractal_num - 1;
-                }
-    
-                if (selectedFractal_numbers[selectedFractal_numbers.length - 1] > allFractal_num - 1) {
-                  selectedFractal_numbers[selectedFractal_numbers.length - 1] = 0;
-                }
-              }
               
-              WIN3D_Update = 1;
-            }
-          
+              // it is not perfect. only picks the pivot of the last object added to the list
+    
+              x0 = allFractal_XYZS[selectedFractal_numbers[selectedFractal_numbers.length - 1]][0];
+              y0 = allFractal_XYZS[selectedFractal_numbers[selectedFractal_numbers.length - 1]][1]; 
+              z0 = allFractal_XYZS[selectedFractal_numbers[selectedFractal_numbers.length - 1]][2];
+            }   
+            
             if (Work_with_2D_or_3D == 2) {
-  
-              if (allObject2D_num > 0) {
+              
+              // it is not perfect. only picks the pivot of the last object added to the list
+    
+              x0 = allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][0];
+              y0 = allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][1]; 
+              z0 = allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][2];
+            }     
+       
+            if (Work_with_2D_or_3D == 3) {
+    
+              x0 = selectedPolymesh_Pivot_XYZ[0];
+              y0 = selectedPolymesh_Pivot_XYZ[1];
+              z0 = selectedPolymesh_Pivot_XYZ[2];
+            }        
+    
+            if (View_Select_Create_Modify == 4) { // properties
+    
+              int p = int(Wheel_Value);
+              
+              SOLARCHVISION_seed_Selection(p);
+              
+              WIN3D_Update = 1;
+              
+            }   
+            
+            if (View_Select_Create_Modify == 3) { // rotate
+    
+              float r = (15 * Wheel_Value) * PI / 180.0;
+              
+              int the_Vector = selectedPolymesh_rotVector;
+              
+              SOLARCHVISION_rotate_Selection(x0, y0, z0, r, the_Vector);
+              
+              WIN3D_Update = 1;
+              
+            }   
+            
+            if (View_Select_Create_Modify == 2) { // scale
+    
+              float s = pow(pow(2.0, 0.25), Wheel_Value);
+              
+              float sx = s;
+              float sy = s;
+              float sz = s;
+              
+              int the_Vector = selectedPolymesh_scaleVector;
+            
+              if (the_Vector == 0) {sy = 1; sz = 1;}  
+              if (the_Vector == 1) {sz = 1; sx = 1;}  
+              if (the_Vector == 2) {sx = 1; sy = 1;}                    
+              
+              SOLARCHVISION_scale_Selection(x0, y0, z0, sx, sy, sz);
+              
+              WIN3D_Update = 1;
+    
+            }          
+    
+            if (View_Select_Create_Modify == 1) { // move
+            
+              float d = Wheel_Value;
+    
+              float dx = d;
+              float dy = d;
+              float dz = d;
+              
+              int the_Vector = selectedPolymesh_posVector;
+            
+              if (the_Vector == 0) {dy = 0; dz = 0;}  
+              if (the_Vector == 1) {dz = 0; dx = 0;}  
+              if (the_Vector == 2) {dx = 0; dy = 0;}  
+    
+              SOLARCHVISION_move_Selection(dx, dy, dz);
+              
+              WIN3D_Update = 1;
+              
+            }   
+           
+            if (View_Select_Create_Modify == -1) { // PickSelect
+    
+              if (Work_with_2D_or_3D == 1) {
+    
+                if (allFractal_num > 0) {
+                  
+                  selectedFractal_numbers[selectedFractal_numbers.length - 1] += int(Wheel_Value);
+                  
+    
+                  if (selectedFractal_numbers[selectedFractal_numbers.length - 1] < 0) {
+                    selectedFractal_numbers[selectedFractal_numbers.length - 1] = allFractal_num - 1;
+                  }
+      
+                  if (selectedFractal_numbers[selectedFractal_numbers.length - 1] > allFractal_num - 1) {
+                    selectedFractal_numbers[selectedFractal_numbers.length - 1] = 0;
+                  }
+                }
                 
-                selectedObject2D_numbers[selectedObject2D_numbers.length - 1] += int(Wheel_Value);
+                WIN3D_Update = 1;
+              }
+            
+              if (Work_with_2D_or_3D == 2) {
+    
+                if (allObject2D_num > 0) {
+                  
+                  selectedObject2D_numbers[selectedObject2D_numbers.length - 1] += int(Wheel_Value);
+                  
+    
+                  if (selectedObject2D_numbers[selectedObject2D_numbers.length - 1] < 0) {
+                    selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = allObject2D_num - 1;
+                  }
+      
+                  if (selectedObject2D_numbers[selectedObject2D_numbers.length - 1] > allObject2D_num - 1) {
+                    selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = 0;
+                  }
+                }
                 
-  
-                if (selectedObject2D_numbers[selectedObject2D_numbers.length - 1] < 0) {
-                  selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = allObject2D_num - 1;
+                WIN3D_Update = 1;
+              }
+              
+              if (Work_with_2D_or_3D == 3) {
+    
+                selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] += int(Wheel_Value);
+                
+                if (selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] < 0) {
+                  selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = allPolymesh_Faces.length - 1;
                 }
     
-                if (selectedObject2D_numbers[selectedObject2D_numbers.length - 1] > allObject2D_num - 1) {
-                  selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = 0;
+                if (selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] > allPolymesh_Faces.length - 1) {
+                  selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = 0;
                 }
+            
+                if (pre_selectedPolymesh_numbers_lastItem != selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1]) SOLARCHVISION_calculate_selectedPolymesh_Pivot();
+    
+                WIN3D_Update = 1;            
+              }
+    
+    
+            }
+            
+            if (View_Select_Create_Modify == -3) { // viewport:zoom
+    
+              if (WIN3D_View_Type == 1) {
+                WIN3D_Z_coordinate += Wheel_Value * WIN3D_S_coordinate * objects_scale; 
+              } 
+              else {
+                WIN3D_ZOOM_coordinate /= pow(2.0, Wheel_Value);
               }
               
               WIN3D_Update = 1;
-            }
-            
-            if (Work_with_2D_or_3D == 3) {
-  
-              selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] += int(Wheel_Value);
-              
-              if (selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] < 0) {
-                selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = allPolymesh_Faces.length - 1;
-              }
-  
-              if (selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] > allPolymesh_Faces.length - 1) {
-                selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = 0;
-              }
-          
-              if (pre_selectedPolymesh_numbers_lastItem != selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1]) SOLARCHVISION_calculate_selectedPolymesh_Pivot();
-  
-              WIN3D_Update = 1;            
-            }
-  
-  
-          }
-          
-          if (View_Select_Create_Modify == -3) { // viewport:zoom
-  
-            if (WIN3D_View_Type == 1) {
-              WIN3D_Z_coordinate += Wheel_Value * WIN3D_S_coordinate * objects_scale; 
-            } 
-            else {
-              WIN3D_ZOOM_coordinate /= pow(2.0, Wheel_Value);
-            }
-            
-            WIN3D_Update = 1;
-  
-          }
-          
-          if (View_Select_Create_Modify == -4) { // viewport:elevation
-            
-            if (Wheel_Value > 0) WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); 
-            if (Wheel_Value < 0) WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate));
-  
-            WIN3D_Update = 1; 
-  
-          }  
-          
-          if (View_Select_Create_Modify == -5) { // viewport:modelSize
-            
-            if (Wheel_Value > 0) objects_scale *= pow(2.0, 0.25);
-            if (Wheel_Value < 0) objects_scale /= pow(2.0, 0.25);
-  
-            WIN3D_Update = 1; 
-  
-          }          
-  
-          if (View_Select_Create_Modify == -6) { // viewport:different functions with wheel
-  
-            if (Modify_Object_Parameters == 0) { // Truck
-  
-              if (View_XYZ_ChangeOption == 0) {
-  
-                WIN3D_X_coordinate += Wheel_Value * WIN3D_S_coordinate * objects_scale;
-                
-                WIN3D_Update = 1;
-                
-              }
-  
-              if (View_XYZ_ChangeOption == 1) {
-  
-                WIN3D_Y_coordinate += Wheel_Value * WIN3D_S_coordinate * objects_scale;
-                
-                WIN3D_Update = 1;
-                
-              }            
-           
-            }
-            
-            
-            if (Modify_Object_Parameters == 1) {  // Orbit
-  
-              if (View_XYZ_ChangeOption == 0) {
-  
-                WIN3D_RX_coordinate += Wheel_Value * WIN3D_RS_coordinate;
-                
-                WIN3D_Update = 1;
-                
-              }
-  
-              if (View_XYZ_ChangeOption == 1) {
-  
-                WIN3D_RZ_coordinate += Wheel_Value * WIN3D_RS_coordinate;
-                
-                WIN3D_Update = 1;
-                
-              }            
-           
-            }
-            
-            
-            WIN3D_Update = 1; 
-  
-          }  
-  
-  
-          
-        }
-      }   
-    }
     
+            }
+            
+            if (View_Select_Create_Modify == -4) { // viewport:elevation
+              
+              if (Wheel_Value > 0) WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); 
+              if (Wheel_Value < 0) WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate));
+    
+              WIN3D_Update = 1; 
+    
+            }  
+            
+            if (View_Select_Create_Modify == -5) { // viewport:modelSize
+              
+              if (Wheel_Value > 0) objects_scale *= pow(2.0, 0.25);
+              if (Wheel_Value < 0) objects_scale /= pow(2.0, 0.25);
+    
+              WIN3D_Update = 1; 
+    
+            }          
+    
+            if (View_Select_Create_Modify == -6) { // viewport:different functions with wheel
+    
+              if (Modify_Object_Parameters == 0) { // Truck
+    
+                if (View_XYZ_ChangeOption == 0) {
+    
+                  WIN3D_X_coordinate += Wheel_Value * WIN3D_S_coordinate * objects_scale;
+                  
+                  WIN3D_Update = 1;
+                  
+                }
+    
+                if (View_XYZ_ChangeOption == 1) {
+    
+                  WIN3D_Y_coordinate += Wheel_Value * WIN3D_S_coordinate * objects_scale;
+                  
+                  WIN3D_Update = 1;
+                  
+                }            
+             
+              }
+              
+              
+              if (Modify_Object_Parameters == 1) {  // Orbit
+    
+                if (View_XYZ_ChangeOption == 0) {
+    
+                  WIN3D_RX_coordinate += Wheel_Value * WIN3D_RS_coordinate;
+                  
+                  WIN3D_Update = 1;
+                  
+                }
+    
+                if (View_XYZ_ChangeOption == 1) {
+    
+                  WIN3D_RZ_coordinate += Wheel_Value * WIN3D_RS_coordinate;
+                  
+                  WIN3D_Update = 1;
+                  
+                }            
+             
+              }
+              
+              
+              WIN3D_Update = 1; 
+    
+            }  
+    
+    
+            
+          }
+        }   
+      }
+      
+    }
   }
 }
 
