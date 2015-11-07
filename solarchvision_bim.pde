@@ -1099,8 +1099,6 @@ float _pix = 0;
 
 color color_data_lines = color(0, 0, 0);
 
-int off_screen = 1; // 1: off 0: on
-
 float Image_Scale = 1.0;
 float pre_Image_Scale = Image_Scale; 
 
@@ -1391,8 +1389,6 @@ int WORLD_X_View = 2 * h_pixel;
 int WORLD_Y_View = h_pixel;
 float WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
 
-PGraphics WORLD_Diagrams;
-
 int WORLD_Update = 1;
 int WORLD_include = 1;
 
@@ -1465,8 +1461,6 @@ void setup () {
   WIN3D_VerticesSolarEffect[0] = FLOAT_undefined;
 
   WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D); 
-
-  WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
 
   frameRate(24);
 
@@ -2594,6 +2588,8 @@ void SOLARCHVISION_draw_WIN3D () {
 
 
 void SOLARCHVISION_draw_WORLD () {
+  
+  PGraphics WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D); 
     
   WORLD_Diagrams.beginDraw();
   
@@ -3091,13 +3087,7 @@ void SOLARCHVISION_draw_GRAPHS () {
   GRAPHS_U_scale = 18.0 / float(GRAPHS_j_end - GRAPHS_j_start);
   
   if ((GRAPHS_record_JPG == 1) || (GRAPHS_record_AUTO == 1)) {
-    if (off_screen == 0) {
-      off_screen = 1;
-      GRAPHS_Update = 1; 
-    }
-  }
-  else {
-    //off_screen = 0; // to avoid overlaying other windows <<<<<<<<<<<<<<<
+    GRAPHS_Update = 1; 
   }
   
   if (GRAPHS_Update != 0) {
@@ -3114,8 +3104,7 @@ void SOLARCHVISION_draw_GRAPHS () {
     
     if (GRAPHS_record_PDF == 1) Image_Scale = 1;
     else {
-      if (off_screen == 0) Image_Scale = 1; 
-      else Image_Scale = 3; //1; //1.5; //2;
+      Image_Scale = 3; //1; //1.5; //2;
     }
     
     draw_frame += 1;
@@ -3190,21 +3179,21 @@ void SOLARCHVISION_draw_GRAPHS () {
       println("PDF:end");
       
       GRAPHS_record_PDF = 0;
-      if (off_screen != 0) {
-        //resetMatrix();
-        
-        stroke(0); 
-        fill(0);
-        strokeWeight(0);
-        //rect(0, 0, GRAPHS_Y_View, GRAPHS_Y_View);
-        rect(0, 0, GRAPHS_X_View, GRAPHS_Y_View);
-        blendMode(REPLACE);
-        
-        imageMode(CORNER);
-        image(pre_GRAPHS_Diagrams, 0, 0, GRAPHS_X_View, GRAPHS_Y_View);
-      }
+
+      //resetMatrix();
+      
+      stroke(0); 
+      fill(0);
+      strokeWeight(0);
+      //rect(0, 0, GRAPHS_Y_View, GRAPHS_Y_View);
+      rect(0, 0, GRAPHS_X_View, GRAPHS_Y_View);
+      blendMode(REPLACE);
+      
+      imageMode(CORNER);
+      image(pre_GRAPHS_Diagrams, 0, 0, GRAPHS_X_View, GRAPHS_Y_View);
+
     }
-    else if (off_screen != 0) {
+    else {
       GRAPHS_Diagrams.endDraw();
       
       if ((GRAPHS_record_JPG == 1) || (GRAPHS_record_AUTO == 1)) {
@@ -3226,15 +3215,6 @@ void SOLARCHVISION_draw_GRAPHS () {
       pre_GRAPHS_Diagrams = GRAPHS_Diagrams;
       pre_Image_Scale = Image_Scale;
  
-    }
-    else {
-      PImage get_screen;
-      get_screen = get(0, 0, GRAPHS_X_View, GRAPHS_Y_View);
-      pre_GRAPHS_Diagrams = createGraphics(GRAPHS_X_View, GRAPHS_Y_View, P2D);
-      pre_GRAPHS_Diagrams.beginDraw();
-      pre_GRAPHS_Diagrams.image(get_screen, 0, 0, GRAPHS_X_View, GRAPHS_Y_View);
-      pre_GRAPHS_Diagrams.endDraw();
-      pre_Image_Scale = 1;
     }
   }
   else {
@@ -3332,8 +3312,7 @@ void Plot_Setup () {
   if (GRAPHS_setup == 14) {
 
     if (frame_variation == 2) {
-      
-      
+
       for (int p = 0; p < 3; p += 1) { 
         impact_layer = 3 * int(pre_impact_layer / 3) + p;
 
@@ -3471,8 +3450,6 @@ void Plot_Setup () {
 
   if (GRAPHS_setup == 1) {
     
-    
-    
     develop_Layer = GRAPHS_drw_Layer;
     GRAPHS_drw_Layer = _developed; 
     
@@ -3525,7 +3502,6 @@ void Plot_Setup () {
   
   if (GRAPHS_setup == 3) {
     
-    
     GRAPHS_drw_Layer = _windspd200hPa;
     SOLARCHVISION_PlotHOURLY(0, -525 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[GRAPHS_drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
 
@@ -3543,8 +3519,7 @@ void Plot_Setup () {
   
   
   if (GRAPHS_setup == 4) {
-    
-    
+        
     GRAPHS_drw_Layer = _windspd;
     SOLARCHVISION_PlotHOURLY(0, -525 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[GRAPHS_drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
 
@@ -3562,8 +3537,6 @@ void Plot_Setup () {
   
   
   if (GRAPHS_setup == 5) {
-    
-    
     
     GRAPHS_drw_Layer = _dirnorrad;
     SOLARCHVISION_PlotHOURLY(0, -525 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[GRAPHS_drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
@@ -3588,7 +3561,6 @@ void Plot_Setup () {
   
   if (GRAPHS_setup == 6) {
     
-    
     sky_scenario = 4;
     SOLARCHVISION_PlotHOURLY(0, -525 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[GRAPHS_drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
 
@@ -3606,7 +3578,6 @@ void Plot_Setup () {
   
   
   if (GRAPHS_setup == 7) {
-    
     
     draw_sorted = 0;
     draw_normals = 0;
@@ -3630,9 +3601,7 @@ void Plot_Setup () {
   }
   
 
-  if (GRAPHS_setup == 8) {
-    
-    
+  if (GRAPHS_setup == 8) {    
     
     draw_sorted = 0;
     draw_normals = 0;
@@ -3669,9 +3638,6 @@ void Plot_Setup () {
 
   if (GRAPHS_setup == 9) {
     
-    
-
-    
     draw_sorted = 0;
     draw_normals = 0;
     draw_data_lines = 1;
@@ -3705,10 +3671,7 @@ void Plot_Setup () {
   }
 
   if (GRAPHS_setup == 10) {
-    
-    
 
-    
     draw_sorted = 0;
     draw_normals = 0;
     draw_data_lines = 1;
@@ -3729,9 +3692,7 @@ void Plot_Setup () {
   }
   
   if (GRAPHS_setup == 11) {
-    
-    
-    
+
     draw_sorted = 0;
     draw_normals = 0;
     draw_data_lines = 1;
@@ -3752,9 +3713,7 @@ void Plot_Setup () {
   }  
 
   if (GRAPHS_setup == 12) {
-    
-    
-    
+
     if (automated != 0) {
       draw_sorted = 0;
       draw_normals = 1;
@@ -3788,8 +3747,6 @@ void Plot_Setup () {
   }
 
   if (GRAPHS_setup == 13) {
-    
-    
 
     if (automated != 0) {
       draw_sorted = 1;
@@ -3797,7 +3754,6 @@ void Plot_Setup () {
       draw_data_lines = 0;
       draw_probs = 0;
     }
-    
 
     GRAPHS_drw_Layer = GRAPHS_drw_Layer = _dirnorrad; 
     SOLARCHVISION_PlotHOURLY(0, 175 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[GRAPHS_drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View); 
@@ -11483,7 +11439,6 @@ void SOLARCHVISION_update_frame_layout () {
     WORLD_X_View = 2 * h_pixel;
     WORLD_Y_View = h_pixel;
     WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
-    WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);    
  }
  else if (frame_variation == 1) {
 
@@ -11521,7 +11476,6 @@ void SOLARCHVISION_update_frame_layout () {
     WORLD_X_View = 2 * w_pixel;
     WORLD_Y_View = 2 * h_pixel;
     WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
-    WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);    
  } 
 
   WORLD_Update = 1;
