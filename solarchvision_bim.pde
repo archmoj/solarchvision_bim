@@ -1007,6 +1007,13 @@ String CalendarMM[][];
 String CalendarDD[][];
 int CalendarDate[][];
 
+
+float WORLD_S_View = 1;
+float WORLD_T_scale = 1;
+
+int WORLD_record_AUTO = 0;
+
+
 float GRAPHS_X_coordinate = 0;
 float GRAPHS_Y_coordinate = 0;
 
@@ -1099,8 +1106,12 @@ float _pix = 0;
 
 color color_data_lines = color(0, 0, 0);
 
-float Image_Scale = 1.0;
-float pre_Image_Scale = Image_Scale; 
+float WORLD_Image_Scale = 1.0;
+float pre_WORLD_Image_Scale = WORLD_Image_Scale; 
+PGraphics pre_WORLD_Diagrams;
+
+float GRAPHS_Image_Scale = 1.0;
+float pre_GRAPHS_Image_Scale = GRAPHS_Image_Scale; 
 
 PGraphics pre_GRAPHS_Diagrams;
 int pre_GRAPHS_setup;
@@ -2589,7 +2600,30 @@ void SOLARCHVISION_draw_WIN3D () {
 
 void SOLARCHVISION_draw_WORLD () {
   
-  PGraphics WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D); 
+  PGraphics WORLD_Diagrams;
+  
+  if (WORLD_record_PDF == 1) WORLD_Image_Scale = 1;
+  else {
+    WORLD_Image_Scale = 1; //1; //1.5; //2;
+  }
+  
+  draw_frame += 1;
+  println("frame:", draw_frame);
+
+  
+  WORLD_S_View *= 0.575 * WORLD_Image_Scale; 
+  WORLD_T_scale = 0.5 * WORLD_Image_Scale;  
+
+  if (WORLD_record_PDF == 1) {
+    println("PDF:begin");
+    WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, PDF, MAKE_Filenames() + ".pdf");
+    beginRecord(WORLD_Diagrams);
+  }
+  else {
+    WORLD_Diagrams = createGraphics(int(WORLD_X_View * WORLD_Image_Scale), int(WORLD_Y_View * WORLD_Image_Scale), P2D);
+    WORLD_Diagrams.beginDraw();
+  }  
+   
     
   WORLD_Diagrams.beginDraw();
   
@@ -3061,9 +3095,54 @@ void SOLARCHVISION_draw_WORLD () {
   WORLD_Diagrams.strokeWeight(0);
   
   WORLD_Diagrams.endDraw();
+  
+  
+  
 
-  imageMode(CORNER);    
-  image(WORLD_Diagrams, WORLD_CX_View, WORLD_CY_View, WORLD_X_View, WORLD_Y_View); 
+  
+  if (WORLD_record_PDF == 1) {
+    endRecord();
+    println("PDF:end");
+    
+    WORLD_record_PDF = 0;
+
+    //resetMatrix();
+    
+    stroke(0); 
+    fill(0);
+    strokeWeight(0);
+    //rect(0, 0, WORLD_Y_View, WORLD_Y_View);
+    rect(0, 0, WORLD_X_View, WORLD_Y_View);
+    blendMode(REPLACE);
+    
+    imageMode(CORNER);
+    image(pre_WORLD_Diagrams, WORLD_CX_View, WORLD_CY_View, WORLD_X_View, WORLD_Y_View);
+
+  }
+  else {
+    WORLD_Diagrams.endDraw();
+    
+    if ((WORLD_record_JPG == 1) || (WORLD_record_AUTO == 1)) {
+      WORLD_Diagrams.save(MAKE_Filenames() + ".jpg");
+      println("Image created");
+    }
+    
+    //resetMatrix();
+    
+    stroke(0); 
+    fill(0);
+    strokeWeight(0);
+    //rect(0, 0, WORLD_Y_View, WORLD_Y_View);
+    rect(0, 0, WORLD_X_View, WORLD_Y_View);
+    blendMode(REPLACE);
+
+    imageMode(CORNER);
+    image(WORLD_Diagrams, WORLD_CX_View, WORLD_CY_View, WORLD_X_View, WORLD_Y_View);
+    pre_WORLD_Diagrams = WORLD_Diagrams;
+    pre_WORLD_Image_Scale = WORLD_Image_Scale;
+ 
+  }
+  
 }
 
 
@@ -3102,20 +3181,20 @@ void SOLARCHVISION_draw_GRAPHS () {
       }
     //}     
     
-    if (GRAPHS_record_PDF == 1) Image_Scale = 1;
+    if (GRAPHS_record_PDF == 1) GRAPHS_Image_Scale = 1;
     else {
-      Image_Scale = 3; //1; //1.5; //2;
+      GRAPHS_Image_Scale = 3; //1; //1.5; //2;
     }
     
     draw_frame += 1;
     println("frame:", draw_frame);
   
-    GRAPHS_X_coordinate = -0.333 * GRAPHS_X_View * Image_Scale;      
+    GRAPHS_X_coordinate = -0.333 * GRAPHS_X_View * GRAPHS_Image_Scale;      
     
-    GRAPHS_Y_coordinate = 1.0 * GRAPHS_Y_View * Image_Scale;
+    GRAPHS_Y_coordinate = 1.0 * GRAPHS_Y_View * GRAPHS_Image_Scale;
     
-    GRAPHS_S_View *= 0.575 * Image_Scale; 
-    GRAPHS_T_scale = 0.5 * Image_Scale;  
+    GRAPHS_S_View *= 0.575 * GRAPHS_Image_Scale; 
+    GRAPHS_T_scale = 0.5 * GRAPHS_Image_Scale;  
   
     if (GRAPHS_record_PDF == 1) {
       println("PDF:begin");
@@ -3123,7 +3202,7 @@ void SOLARCHVISION_draw_GRAPHS () {
       beginRecord(GRAPHS_Diagrams);
     }
     else {
-      GRAPHS_Diagrams = createGraphics(int(GRAPHS_X_View * Image_Scale), int(GRAPHS_Y_View * Image_Scale), P2D);
+      GRAPHS_Diagrams = createGraphics(int(GRAPHS_X_View * GRAPHS_Image_Scale), int(GRAPHS_Y_View * GRAPHS_Image_Scale), P2D);
       GRAPHS_Diagrams.beginDraw();
     }
   
@@ -3166,10 +3245,10 @@ void SOLARCHVISION_draw_GRAPHS () {
       my_text(_text, GRAPHS_X_View * 0.55, GRAPHS_Y_View * -0.4925, 0);
     }
     else {
-      if (Image_Scale == 1) GRAPHS_Diagrams.textSize(GRAPHS_X_View * 0.01 * Image_Scale);
-      else GRAPHS_Diagrams.textSize(GRAPHS_X_View * 0.01 * Image_Scale * 2.0 / 3.0);
+      if (GRAPHS_Image_Scale == 1) GRAPHS_Diagrams.textSize(GRAPHS_X_View * 0.01 * GRAPHS_Image_Scale);
+      else GRAPHS_Diagrams.textSize(GRAPHS_X_View * 0.01 * GRAPHS_Image_Scale * 2.0 / 3.0);
       
-      my_text(_text, GRAPHS_X_View * 0.55 * Image_Scale, GRAPHS_Y_View * -0.4925 * Image_Scale, 0);
+      my_text(_text, GRAPHS_X_View * 0.55 * GRAPHS_Image_Scale, GRAPHS_Y_View * -0.4925 * GRAPHS_Image_Scale, 0);
     }
 
    
@@ -3213,7 +3292,7 @@ void SOLARCHVISION_draw_GRAPHS () {
       imageMode(CORNER);
       image(GRAPHS_Diagrams, 0, 0, GRAPHS_X_View, GRAPHS_Y_View);
       pre_GRAPHS_Diagrams = GRAPHS_Diagrams;
-      pre_Image_Scale = Image_Scale;
+      pre_GRAPHS_Image_Scale = GRAPHS_Image_Scale;
  
     }
   }
@@ -3628,7 +3707,7 @@ void Plot_Setup () {
       rect(0, 0, GRAPHS_Y_View, GRAPHS_Y_View / 2);
       blendMode(REPLACE);
       
-      GRAPHS_Diagrams.copy(pre_GRAPHS_Diagrams, 0, 0, int(pre_Image_Scale * GRAPHS_Y_View), int(pre_Image_Scale * GRAPHS_Y_View / 2), 0, 0, int(Image_Scale * GRAPHS_Y_View), int(Image_Scale * GRAPHS_Y_View / 2));
+      GRAPHS_Diagrams.copy(pre_GRAPHS_Diagrams, 0, 0, int(pre_GRAPHS_Image_Scale * GRAPHS_Y_View), int(pre_GRAPHS_Image_Scale * GRAPHS_Y_View / 2), 0, 0, int(GRAPHS_Image_Scale * GRAPHS_Y_View), int(GRAPHS_Image_Scale * GRAPHS_Y_View / 2));
     }
     
     plot_impacts = pre_plot_impacts; 
@@ -3663,7 +3742,7 @@ void Plot_Setup () {
       rect(0, 0, GRAPHS_Y_View, GRAPHS_Y_View / 2);
       blendMode(REPLACE);
   
-      GRAPHS_Diagrams.copy(pre_GRAPHS_Diagrams, 0, 0, int(pre_Image_Scale * GRAPHS_Y_View), int(pre_Image_Scale * GRAPHS_Y_View / 2), 0, 0, int(Image_Scale * GRAPHS_Y_View), int(Image_Scale * GRAPHS_Y_View / 2));
+      GRAPHS_Diagrams.copy(pre_GRAPHS_Diagrams, 0, 0, int(pre_GRAPHS_Image_Scale * GRAPHS_Y_View), int(pre_GRAPHS_Image_Scale * GRAPHS_Y_View / 2), 0, 0, int(GRAPHS_Image_Scale * GRAPHS_Y_View), int(GRAPHS_Image_Scale * GRAPHS_Y_View / 2));
     }
     
     plot_impacts = pre_plot_impacts;
