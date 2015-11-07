@@ -322,8 +322,13 @@ int save_frame_number = 0;
 int frame_index_number = 0;
 
 int GRAPHS_record_JPG = 0;
-
 int GRAPHS_record_PDF = 0;
+
+int WORLD_record_JPG = 0;
+int WORLD_record_PDF = 0;
+
+int WIN3D_record_JPG = 0;
+int WIN3D_record_PDF = 0;
 
 int GRAPHS_i_start = 0;
 int GRAPHS_i_end = 23;
@@ -19855,6 +19860,14 @@ void mouseClicked () {
         if (BAR_a_selected_child != 0) {
   
           // should call the functions here!
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Mojtaba Samimi")) { 
+            link("http://solarchvision.com/?page_id=102");
+          }     
+         
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("www.solarchvision.com")) { 
+            link("http://solarchvision.com/");
+          }     
           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Open...")) { 
             selectInput("Select a file to open:", "fileSelected");
@@ -19866,6 +19879,38 @@ void mouseClicked () {
             exit();
           }      
 
+
+
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PDF Time Graph")) { 
+            GRAPHS_record_PDF = 1;
+            GRAPHS_Update = 1;
+          }   
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("JPG Time Graph")) { 
+            GRAPHS_record_JPG = 1;
+            GRAPHS_Update = 1;
+          }   
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("JPG Location Graph")) { 
+            WORLD_record_JPG = 1;
+            WORLD_Update = 1;
+          } 
+          
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PDF Location Graph")) { 
+            WORLD_record_PDF = 1;
+            WORLD_Update = 1;
+          }   
+  
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("JPG Spatial Graph")) { 
+            WIN3D_record_JPG = 1;
+            WIN3D_Update = 1;
+          } 
+          
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PDF Spatial Graph")) { 
+            WIN3D_record_PDF = 1;
+            WIN3D_Update = 1;
+          }               
     
           if (BAR_a_Items[BAR_a_selected_parent][0].equals("Site")) {
             if (BAR_a_selected_child > 0) {
@@ -21899,13 +21944,21 @@ void SOLARCHVISION_draw_ROLLOUT () {
     }  
   
     if (ROLLOUT_child == 2) { // Media
+
+      FRAME_record_JPG = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Record screen in JPG", FRAME_record_JPG, 0, 1, 1), 1));
       
       GRAPHS_record_PDF = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Record graphs in PDF", GRAPHS_record_PDF, 0, 1, 1), 1));
       GRAPHS_record_JPG = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Record graphs in JPG", GRAPHS_record_JPG, 0, 1, 1), 1));
-      FRAME_record_JPG = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Record screen in JPG", FRAME_record_JPG, 0, 1, 1), 1));
+
+      WORLD_record_PDF = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Record WORLD in PDF", WORLD_record_PDF, 0, 1, 1), 1));
+      WORLD_record_JPG = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Record WORLD in JPG", WORLD_record_JPG, 0, 1, 1), 1));
+
+      WIN3D_record_PDF = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Record WIN3D in PDF", WIN3D_record_PDF, 0, 1, 1), 1));
+      WIN3D_record_JPG = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Record WIN3D in JPG", WIN3D_record_JPG, 0, 1, 1), 1));
       
-      Field_record_PDF = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Record field in PDF", Field_record_PDF, 0, 1, 1), 1));
       Field_record_JPG = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Record field in JPG", Field_record_JPG, 0, 1, 1), 1));
+      Field_record_PDF = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Record field in PDF", Field_record_PDF, 0, 1, 1), 1));
+      
       Solarch_record_JPG = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Record solar analysis JPG", Solarch_record_JPG, 0, 1, 1), 1));
     }
     
@@ -25650,7 +25703,7 @@ int BAR_a_selected_parent = -1;
 int BAR_a_selected_child = 0;
 
 String[][] BAR_a_Items = {
-                        {"SOLARCHVISION-2015", "Designed & Developed", "by Mojtaba Samimi", "www.solarchvision.com"},  
+                        {"SOLARCHVISION-2015", "Designed & developed by", "Mojtaba Samimi", "www.solarchvision.com"},  
                         {"Project", "New", "Open...", "Save", "Save As...", "Import...", "Export...", "Preferences", "Quit"},
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
@@ -25661,6 +25714,7 @@ String[][] BAR_a_Items = {
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
                         {"Select", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
                         {"Modify", "Seed", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum"},
+                        {"IMG/PDF", "PDF Time Graph", "JPG Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "PDF Spatial Graph"}
 
                       };
 
