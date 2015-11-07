@@ -1008,9 +1008,6 @@ String CalendarDD[][];
 int CalendarDate[][];
 
 
-float WORLD_S_View = 1;
-float WORLD_T_scale = 1;
-
 int WORLD_record_AUTO = 0;
 
 
@@ -2603,16 +2600,11 @@ void SOLARCHVISION_draw_WORLD () {
   PGraphics WORLD_Diagrams;
   
   if (WORLD_record_PDF == 1) WORLD_Image_Scale = 1;
-  else {
-    WORLD_Image_Scale = 1; //1; //1.5; //2;
-  }
+  else if (WORLD_record_JPG == 1) WORLD_Image_Scale = 3;
+  else WORLD_Image_Scale = 1;
   
   draw_frame += 1;
   println("frame:", draw_frame);
-
-  
-  WORLD_S_View *= 0.575 * WORLD_Image_Scale; 
-  WORLD_T_scale = 0.5 * WORLD_Image_Scale;  
 
   if (WORLD_record_PDF == 1) {
     println("PDF:begin");
@@ -2631,7 +2623,7 @@ void SOLARCHVISION_draw_WORLD () {
   
   PImage WORLDViewImage = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filenames[WORLD_VIEW_Number]);
 
-  WORLD_Diagrams.image(WORLDViewImage, 0, 0, WORLD_X_View, WORLD_Y_View);
+  WORLD_Diagrams.image(WORLDViewImage, 0, 0, WORLD_X_View * WORLD_Image_Scale, WORLD_Y_View * WORLD_Image_Scale);
 
   float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
   float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
@@ -2649,7 +2641,7 @@ void SOLARCHVISION_draw_WORLD () {
   int x_point2 = int(WORLD_X_View * (( 1 * (_lon2 - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX);
   int y_point2 = int(WORLD_Y_View * ((-1 * (_lat2 - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY); 
 
-  float R_station = 2;
+  float R_station = 2 * WORLD_Image_Scale;
   if (WORLD_VIEW_GridDisplay[WORLD_VIEW_Number] == 1) R_station = 5; 
 
   WORLD_Diagrams.ellipseMode(CENTER);
@@ -2664,8 +2656,8 @@ void SOLARCHVISION_draw_WORLD () {
         float _lon = AERIAL_Locations[n][0]; 
         if (_lon > 180) _lon -= 360; // << important!
   
-        float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-        float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
+        float x_point = WORLD_X_View * WORLD_Image_Scale * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+        float y_point = WORLD_Y_View * WORLD_Image_Scale * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
 
         WORLD_Diagrams.pushMatrix();
         WORLD_Diagrams.translate(x_point, y_point);
@@ -2700,7 +2692,7 @@ void SOLARCHVISION_draw_WORLD () {
                 }
                 
                 if (_turn == 2) {
-                  WORLD_Diagrams.textSize(MESSAGE_S_View);
+                  WORLD_Diagrams.textSize(MESSAGE_S_View * WORLD_Image_Scale);
                   WORLD_Diagrams.textAlign(CENTER, CENTER);
     
                   _u = 0.5 + 0.5 * (_Multiplier * _val);
@@ -2713,7 +2705,7 @@ void SOLARCHVISION_draw_WORLD () {
                   else{
                     WORLD_Diagrams.stroke(255);
                     WORLD_Diagrams.fill(255);
-                    WORLD_Diagrams.strokeWeight(2);
+                    WORLD_Diagrams.strokeWeight(2 * WORLD_Image_Scale);
                   }              
                   if (_val < 0.9 * FLOAT_undefined) WORLD_Diagrams.text(nf(int(roundTo(_val, 1)), 0), 0,0);
                 }
@@ -2743,22 +2735,22 @@ void SOLARCHVISION_draw_WORLD () {
                 float R = 0.25 * R_station * AERIAL[GRIB2_Hour][_windspd][n][o];
                 
                 float R_in = 0.0 * R; 
-                float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta)));
-                float y1 = (R_in * -sin_ang(90 - (teta - 0.5 * D_teta)));
-                float x2 = (R_in * cos_ang(90 - (teta + 0.5 * D_teta)));
-                float y2 = (R_in * -sin_ang(90 - (teta + 0.5 * D_teta)));                      
+                float x1 = (R_in * cos_ang(90 - (teta - 0.5 * D_teta))) * WORLD_Image_Scale;
+                float y1 = (R_in * -sin_ang(90 - (teta - 0.5 * D_teta))) * WORLD_Image_Scale;
+                float x2 = (R_in * cos_ang(90 - (teta + 0.5 * D_teta))) * WORLD_Image_Scale;
+                float y2 = (R_in * -sin_ang(90 - (teta + 0.5 * D_teta))) * WORLD_Image_Scale;                      
                  
-                float x4 = (R * cos_ang(90 - (teta - 0.5 * D_teta)));
-                float y4 = (R * -sin_ang(90 - (teta - 0.5 * D_teta)));
-                float x3 = (R * cos_ang(90 - (teta + 0.5 * D_teta)));
-                float y3 = (R * -sin_ang(90 - (teta + 0.5 * D_teta)));          
+                float x4 = (R * cos_ang(90 - (teta - 0.5 * D_teta))) * WORLD_Image_Scale;
+                float y4 = (R * -sin_ang(90 - (teta - 0.5 * D_teta))) * WORLD_Image_Scale;
+                float x3 = (R * cos_ang(90 - (teta + 0.5 * D_teta))) * WORLD_Image_Scale;
+                float y3 = (R * -sin_ang(90 - (teta + 0.5 * D_teta))) * WORLD_Image_Scale;          
                 
-                //float ox = -0.5 * (R * cos_ang(90 - teta));
-                //float oy = -0.5 * (R * -sin_ang(90 - teta));
-                //float ox = -1 * (R * cos_ang(90 - teta));
-                //float oy = -1 * (R * -sin_ang(90 - teta));
-                float ox = -2 * (R * cos_ang(90 - teta)) / 3.0;
-                float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0;            
+                //float ox = -0.5 * (R * cos_ang(90 - teta)) * WORLD_Image_Scale;
+                //float oy = -0.5 * (R * -sin_ang(90 - teta)) * WORLD_Image_Scale;
+                //float ox = -1 * (R * cos_ang(90 - teta)) * WORLD_Image_Scale;
+                //float oy = -1 * (R * -sin_ang(90 - teta)) * WORLD_Image_Scale;
+                float ox = -2 * (R * cos_ang(90 - teta)) / 3.0 * WORLD_Image_Scale;
+                float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0 * WORLD_Image_Scale;            
     
                 float _u = 0.5 + 0.5 * (_Multiplier * _val);
                 if (PAL_DIR == -1) _u = 1 - _u;
@@ -2777,7 +2769,7 @@ void SOLARCHVISION_draw_WORLD () {
                 }
                 
                 if (_turn == 2) {
-                  WORLD_Diagrams.textSize(MESSAGE_S_View);
+                  WORLD_Diagrams.textSize(MESSAGE_S_View * WORLD_Image_Scale);
                   WORLD_Diagrams.textAlign(CENTER, CENTER);
     
                   _u = 0.5 + 0.5 * (_Multiplier * _val);
@@ -2790,7 +2782,7 @@ void SOLARCHVISION_draw_WORLD () {
                   else{
                     WORLD_Diagrams.stroke(255);
                     WORLD_Diagrams.fill(255);
-                    WORLD_Diagrams.strokeWeight(2);
+                    WORLD_Diagrams.strokeWeight(2 * WORLD_Image_Scale);
                   }              
                   if (_val < 0.9 * FLOAT_undefined) WORLD_Diagrams.text(nf(int(roundTo(_val, 1)), 0), 0,0);
                 }
@@ -2816,10 +2808,10 @@ void SOLARCHVISION_draw_WORLD () {
     float _lon = LocationLongitude; 
     if (_lon > 180) _lon -= 360; // << important!
   
-    float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-    float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
+    float x_point = WORLD_X_View * WORLD_Image_Scale * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+    float y_point = WORLD_Y_View * WORLD_Image_Scale * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
 
-    WORLD_Diagrams.strokeWeight(3);
+    WORLD_Diagrams.strokeWeight(3 * WORLD_Image_Scale);
     WORLD_Diagrams.stroke(0, 0, 127, 255);
     WORLD_Diagrams.noFill();
 
@@ -2845,8 +2837,8 @@ void SOLARCHVISION_draw_WORLD () {
   
     if (draw_info == 1) {
 
-      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+      float x_point = WORLD_X_View * WORLD_Image_Scale * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+      float y_point = WORLD_Y_View * WORLD_Image_Scale * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
 
       WORLD_Diagrams.strokeWeight(0);
       WORLD_Diagrams.stroke(191, 0, 0, 191);
@@ -2858,7 +2850,7 @@ void SOLARCHVISION_draw_WORLD () {
         WORLD_Diagrams.stroke(0);
         WORLD_Diagrams.fill(0);      
         WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-        WORLD_Diagrams.textSize(MESSAGE_S_View);
+        WORLD_Diagrams.textSize(MESSAGE_S_View * WORLD_Image_Scale);
         WORLD_Diagrams.text(STATION_SWOB_INFO[f][6], x_point, y_point);
       }
     
@@ -2879,14 +2871,14 @@ void SOLARCHVISION_draw_WORLD () {
     float _lon = float(STATION_SWOB_INFO[f][4]); 
     if (_lon > 180) _lon -= 360; // << important!
     
-    float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-    float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+    float x_point = WORLD_X_View * WORLD_Image_Scale * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+    float y_point = WORLD_Y_View * WORLD_Image_Scale * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
     
     WORLD_Diagrams.strokeWeight(0);
     WORLD_Diagrams.stroke(0);
     WORLD_Diagrams.fill(0);      
     WORLD_Diagrams.textAlign(RIGHT, CENTER);
-    WORLD_Diagrams.textSize(MESSAGE_S_View);
+    WORLD_Diagrams.textSize(MESSAGE_S_View * WORLD_Image_Scale);
     WORLD_Diagrams.text(STATION_SWOB_INFO[f][6], x_point, y_point);
     //println(STATION_SWOB_INFO[f][6]);
   }  
@@ -2912,8 +2904,8 @@ void SOLARCHVISION_draw_WORLD () {
   
     if (draw_info == 1) {
 
-      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+      float x_point = WORLD_X_View * WORLD_Image_Scale * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+      float y_point = WORLD_Y_View * WORLD_Image_Scale * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
 
       WORLD_Diagrams.strokeWeight(0);
       WORLD_Diagrams.stroke(0, 63, 0, 127);
@@ -2926,7 +2918,7 @@ void SOLARCHVISION_draw_WORLD () {
         WORLD_Diagrams.stroke(0);
         WORLD_Diagrams.fill(0);      
         WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-        WORLD_Diagrams.textSize(MESSAGE_S_View);
+        WORLD_Diagrams.textSize(MESSAGE_S_View * WORLD_Image_Scale);
         WORLD_Diagrams.text(STATION_NAEFS_INFO[f][0], x_point, y_point);
       }
 
@@ -2948,14 +2940,14 @@ void SOLARCHVISION_draw_WORLD () {
     float _lon = float(STATION_NAEFS_INFO[f][4]); 
     if (_lon > 180) _lon -= 360; // << important!      
     
-    float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-    float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+    float x_point = WORLD_X_View * WORLD_Image_Scale * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+    float y_point = WORLD_Y_View * WORLD_Image_Scale * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
     
     WORLD_Diagrams.strokeWeight(0);
     WORLD_Diagrams.stroke(0);
     WORLD_Diagrams.fill(0);      
     WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-    WORLD_Diagrams.textSize(MESSAGE_S_View);
+    WORLD_Diagrams.textSize(MESSAGE_S_View * WORLD_Image_Scale);
     WORLD_Diagrams.text(STATION_NAEFS_INFO[f][0], x_point, y_point);
     //println(STATION_NAEFS_INFO[f][0]);
   }
@@ -2980,10 +2972,10 @@ void SOLARCHVISION_draw_WORLD () {
   
     if (draw_info == 1) {
 
-      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+      float x_point = WORLD_X_View * WORLD_Image_Scale * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+      float y_point = WORLD_Y_View * WORLD_Image_Scale * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
 
-      WORLD_Diagrams.strokeWeight(2);
+      WORLD_Diagrams.strokeWeight(2 * WORLD_Image_Scale);
       WORLD_Diagrams.stroke(0, 0, 0, 191);
       WORLD_Diagrams.noFill();
       WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
@@ -2993,7 +2985,7 @@ void SOLARCHVISION_draw_WORLD () {
         WORLD_Diagrams.stroke(0);
         WORLD_Diagrams.fill(0);      
         WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-        WORLD_Diagrams.textSize(MESSAGE_S_View);
+        WORLD_Diagrams.textSize(MESSAGE_S_View * WORLD_Image_Scale);
         WORLD_Diagrams.text(STATION_CWEEDS_INFO[f][0], x_point, y_point);
       } 
     }
@@ -3013,14 +3005,14 @@ void SOLARCHVISION_draw_WORLD () {
     float _lon = float(STATION_CWEEDS_INFO[f][4]);  
     if (_lon > 180) _lon -= 360; // << important!      
     
-    float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-    float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+    float x_point = WORLD_X_View * WORLD_Image_Scale * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+    float y_point = WORLD_Y_View * WORLD_Image_Scale * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
     
     WORLD_Diagrams.strokeWeight(0);
     WORLD_Diagrams.stroke(0);
     WORLD_Diagrams.fill(0);      
     WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-    WORLD_Diagrams.textSize(MESSAGE_S_View);
+    WORLD_Diagrams.textSize(MESSAGE_S_View * WORLD_Image_Scale);
     WORLD_Diagrams.text(STATION_CWEEDS_INFO[f][0], x_point, y_point);
     //println(STATION_CWEEDS_INFO[f][0]);
   }
@@ -3045,10 +3037,10 @@ void SOLARCHVISION_draw_WORLD () {
   
     if (draw_info == 1) {
 
-      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+      float x_point = WORLD_X_View * WORLD_Image_Scale * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+      float y_point = WORLD_Y_View * WORLD_Image_Scale * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
 
-      WORLD_Diagrams.strokeWeight(2);
+      WORLD_Diagrams.strokeWeight(2 * WORLD_Image_Scale);
       WORLD_Diagrams.stroke(255, 0, 0, 127);
       WORLD_Diagrams.noFill();
       WORLD_Diagrams.ellipse(x_point, y_point, 3 * R_station, 3 * R_station);
@@ -3058,7 +3050,7 @@ void SOLARCHVISION_draw_WORLD () {
         WORLD_Diagrams.stroke(0);
         WORLD_Diagrams.fill(0);      
         WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-        WORLD_Diagrams.textSize(MESSAGE_S_View);
+        WORLD_Diagrams.textSize(MESSAGE_S_View * WORLD_Image_Scale);
         WORLD_Diagrams.text(STATION_EPW_INFO[f][0], x_point, y_point);
       } 
     }
@@ -3078,14 +3070,14 @@ void SOLARCHVISION_draw_WORLD () {
     float _lon = float(STATION_EPW_INFO[f][4]);  
     if (_lon > 180) _lon -= 360; // << important!      
     
-    float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-    float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+    float x_point = WORLD_X_View * WORLD_Image_Scale * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+    float y_point = WORLD_Y_View * WORLD_Image_Scale * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
     
     WORLD_Diagrams.strokeWeight(0);
     WORLD_Diagrams.stroke(0);
     WORLD_Diagrams.fill(0);      
     WORLD_Diagrams.textAlign(RIGHT, CENTER); 
-    WORLD_Diagrams.textSize(MESSAGE_S_View);
+    WORLD_Diagrams.textSize(MESSAGE_S_View * WORLD_Image_Scale);
     WORLD_Diagrams.text(STATION_EPW_INFO[f][0], x_point, y_point);
     //println(STATION_EPW_INFO[f][0]);
   }
@@ -3184,9 +3176,8 @@ void SOLARCHVISION_draw_GRAPHS () {
     //}     
     
     if (GRAPHS_record_PDF == 1) GRAPHS_Image_Scale = 1;
-    else {
-      GRAPHS_Image_Scale = 3; //1; //1.5; //2;
-    }
+    else if (GRAPHS_record_JPG == 1) GRAPHS_Image_Scale = 3;
+    else GRAPHS_Image_Scale = 1;
     
     draw_frame += 1;
     println("frame:", draw_frame);
@@ -18832,7 +18823,7 @@ int mouseWheelConsume = 0;
 
 void mouseWheel(MouseEvent event) {
   
-  if (BAR_a_selected_child <= 0) {
+  if (BAR_a_selected_parent == -1) {
   
     mouseWheelConsume += 1;
     if (mouseWheelConsume % 2 == 0) {
