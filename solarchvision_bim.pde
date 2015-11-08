@@ -2420,6 +2420,10 @@ void SOLARCHVISION_draw_WIN3D () {
   WIN3D_X_View *= WIN3D_Image_Scale;
   WIN3D_Y_View *= WIN3D_Image_Scale;
   //////////////////////////////////
+  
+  if (WIN3D_Image_Scale != 1) {
+    WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);    
+  }  
 
   WIN3D_Diagrams.beginDraw();  
 
@@ -2584,10 +2588,7 @@ void SOLARCHVISION_draw_WIN3D () {
   
   WIN3D_Diagrams.endDraw();
   
-  //////////////////////////////////
-  WIN3D_X_View /= WIN3D_Image_Scale;
-  WIN3D_Y_View /= WIN3D_Image_Scale;  
-  //////////////////////////////////
+
   
   if ((WIN3D_record_JPG == 1) || (WIN3D_record_AUTO == 1)) {
     WIN3D_Diagrams.save(MAKE_Filenames() + ".jpg");
@@ -2595,15 +2596,24 @@ void SOLARCHVISION_draw_WIN3D () {
   }
   
   imageMode(CORNER);
-  image(WIN3D_Diagrams, WIN3D_CX_View, WIN3D_CY_View, WIN3D_X_View, WIN3D_Y_View);
+  image(WIN3D_Diagrams, WIN3D_CX_View, WIN3D_CY_View, WIN3D_X_View / WIN3D_Image_Scale, WIN3D_Y_View / WIN3D_Image_Scale);
   
   WIN3D_Update = 0;
    
   if ((WIN3D_record_JPG == 1) || (WIN3D_record_AUTO == 0)) WIN3D_record_JPG = 0;  
 
 
+  SOLARCHVISION_draw_Perspective_Internally();
+ 
+ 
+  //////////////////////////////////
+  WIN3D_X_View /= WIN3D_Image_Scale;
+  WIN3D_Y_View /= WIN3D_Image_Scale;  
+  //////////////////////////////////
 
-  SOLARCHVISION_draw_Perspective_Internally(); 
+  if (WIN3D_Image_Scale != 1) {
+    WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);    
+  }   
 }
 
 
