@@ -588,7 +588,7 @@ int develop_Layer = GRAPHS_drw_Layer;
 
 int GRAPHS_print_title = 1;
 
-float GRAPHS_T_scale = 0;
+float GRAPHS_T_scale = 0.5;
 float GRAPHS_U_scale = 18.0 / float(GRAPHS_j_end - GRAPHS_j_start);
 
 float[] GRAPHS_V_scale;
@@ -3172,8 +3172,7 @@ void SOLARCHVISION_draw_GRAPHS () {
   
   
 
-  GRAPHS_S_View = (GRAPHS_X_View / 2200.0);
-  GRAPHS_U_scale = 18.0 / float(GRAPHS_j_end - GRAPHS_j_start);
+
   
   
   if (GRAPHS_Update == 1) {
@@ -3185,6 +3184,7 @@ void SOLARCHVISION_draw_GRAPHS () {
     //////////////////////////////////
     GRAPHS_X_View *= GRAPHS_Image_Scale;
     GRAPHS_Y_View *= GRAPHS_Image_Scale;  
+    GRAPHS_T_scale *= GRAPHS_Image_Scale;
     //////////////////////////////////  
     
     if (GRAPHS_record_PDF == 1) {
@@ -3214,11 +3214,14 @@ void SOLARCHVISION_draw_GRAPHS () {
       }
     //}     
     
+     
+    GRAPHS_S_View = (GRAPHS_X_View / 2200.0);
+    GRAPHS_U_scale = 18.0 / float(GRAPHS_j_end - GRAPHS_j_start);
    
     
-    GRAPHS_X_coordinate = -0.333 * GRAPHS_X_View * GRAPHS_Image_Scale;      
+    GRAPHS_X_coordinate = -0.333 * GRAPHS_X_View;      
     
-    GRAPHS_Y_coordinate = 1.0 * GRAPHS_Y_View * GRAPHS_Image_Scale;
+    GRAPHS_Y_coordinate = 1.0 * GRAPHS_Y_View;
     
 
     GRAPHS_Diagrams.background(255);
@@ -3254,16 +3257,8 @@ void SOLARCHVISION_draw_GRAPHS () {
     
     //_text += ", www.solarchvision.com";
 
-    if (GRAPHS_record_PDF == 1) {
-      GRAPHS_Diagrams.textSize(GRAPHS_X_View * 0.01 * 2.0 / 3.0);
-      my_text(_text, GRAPHS_X_View * 0.55, GRAPHS_Y_View * -0.4925, 0);
-    }
-    else {
-      if (GRAPHS_Image_Scale == 1) GRAPHS_Diagrams.textSize(GRAPHS_X_View * 0.01 * GRAPHS_Image_Scale);
-      else GRAPHS_Diagrams.textSize(GRAPHS_X_View * 0.01 * GRAPHS_Image_Scale * 2.0 / 3.0);
-      
-      my_text(_text, GRAPHS_X_View * 0.55 * GRAPHS_Image_Scale, GRAPHS_Y_View * -0.4925 * GRAPHS_Image_Scale, 0);
-    }
+    GRAPHS_Diagrams.textSize(GRAPHS_X_View * 0.01);
+    my_text(_text, GRAPHS_X_View * 0.55, GRAPHS_Y_View * -0.4925, 0);
 
    
 
@@ -3289,7 +3284,8 @@ void SOLARCHVISION_draw_GRAPHS () {
 
     //////////////////////////////////
     GRAPHS_X_View /= GRAPHS_Image_Scale;
-    GRAPHS_Y_View /= GRAPHS_Image_Scale;  
+    GRAPHS_Y_View /= GRAPHS_Image_Scale;
+    GRAPHS_T_scale /= GRAPHS_Image_Scale;
     //////////////////////////////////
   
     if ((GRAPHS_Image_Scale != 1) || (GRAPHS_record_PDF == 1)) {
