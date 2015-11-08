@@ -2648,9 +2648,6 @@ void SOLARCHVISION_draw_WORLD () {
   else {
     WORLD_Diagrams.beginDraw();
   }
-   
-    
-  WORLD_Diagrams.beginDraw();
   
   WORLD_Diagrams.background(0, 0, 0);
   
@@ -3140,10 +3137,6 @@ void SOLARCHVISION_draw_WORLD () {
   }
 
 
-
-
-  
-
   //////////////////////////////////
   WORLD_X_View /= WORLD_Image_Scale;
   WORLD_Y_View /= WORLD_Image_Scale;  
@@ -3155,8 +3148,6 @@ void SOLARCHVISION_draw_WORLD () {
   }   
   else {
     WORLD_Update = 0;
-    
-    SOLARCHVISION_draw_Perspective_Internally();
   }
   
   
@@ -3164,6 +3155,9 @@ void SOLARCHVISION_draw_WORLD () {
 
   WORLD_record_PDF = 0;
 }
+
+
+
 
 
 void SOLARCHVISION_draw_GRAPHS () {
