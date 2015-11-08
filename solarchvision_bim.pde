@@ -25494,7 +25494,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
           }  
           else {
             
-            fill(127, 127);
+            fill(0, 223);
             noStroke();
             rect(cx, cy - cr + j * a_pixel, BAR_a_width_child, a_pixel);          
           }
