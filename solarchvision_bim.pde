@@ -2364,7 +2364,6 @@ void draw () {
         
       }
     }
-    WORLD_Update = 0;
     
     if (WIN3D_include == 1) {
       if (WIN3D_Update == 1) {
@@ -2373,7 +2372,6 @@ void draw () {
      
       }
     }
-    WIN3D_Update = 0;
     
 
 
@@ -2598,22 +2596,27 @@ void SOLARCHVISION_draw_WIN3D () {
   imageMode(CORNER);
   image(WIN3D_Diagrams, WIN3D_CX_View, WIN3D_CY_View, WIN3D_X_View / WIN3D_Image_Scale, WIN3D_Y_View / WIN3D_Image_Scale);
   
-  WIN3D_Update = 0;
+  
    
   if ((WIN3D_record_JPG == 1) || (WIN3D_record_AUTO == 0)) WIN3D_record_JPG = 0;  
 
 
-  SOLARCHVISION_draw_Perspective_Internally();
- 
- 
   //////////////////////////////////
   WIN3D_X_View /= WIN3D_Image_Scale;
   WIN3D_Y_View /= WIN3D_Image_Scale;  
   //////////////////////////////////
 
   if (WIN3D_Image_Scale != 1) {
-    WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);    
+    WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
+    WIN3D_Update = 1;    
   }   
+  else {
+    WIN3D_Update = 0;
+    
+    SOLARCHVISION_draw_Perspective_Internally();
+  }
+  
+
 }
 
 
@@ -2626,7 +2629,7 @@ void SOLARCHVISION_draw_WORLD () {
   PGraphics WORLD_Diagrams;
   
   if (WORLD_record_PDF == 1) WORLD_Image_Scale = 1;
-  else if (WORLD_record_JPG == 1) WORLD_Image_Scale = 3;
+  else if (WORLD_record_JPG == 1) WORLD_Image_Scale = 2;
   else WORLD_Image_Scale = 1;
   
   if (WORLD_record_PDF == 1) {
@@ -3155,11 +3158,10 @@ void SOLARCHVISION_draw_WORLD () {
     pre_WORLD_Image_Scale = WORLD_Image_Scale;
  
   }
-  
-  WORLD_Update = 0;
-   
+
   if ((WORLD_record_JPG == 1) || (WORLD_record_AUTO == 0)) WORLD_record_JPG = 0;  
   
+  WORLD_Update = 0;
 }
 
 
@@ -3209,7 +3211,7 @@ void SOLARCHVISION_draw_GRAPHS () {
     
     GRAPHS_Y_coordinate = 1.0 * GRAPHS_Y_View * GRAPHS_Image_Scale;
     
-    GRAPHS_S_View *= 0.575 * GRAPHS_Image_Scale; 
+    GRAPHS_S_View *= 0.5 * GRAPHS_Image_Scale; 
     GRAPHS_T_scale = 0.5 * GRAPHS_Image_Scale;  
   
     if (GRAPHS_record_PDF == 1) {
@@ -3325,9 +3327,11 @@ void SOLARCHVISION_draw_GRAPHS () {
 
   popMatrix();
 
-  GRAPHS_Update = 0;
-   
+  
   if ((GRAPHS_record_JPG == 1) || (GRAPHS_record_AUTO == 0)) GRAPHS_record_JPG = 0;
+  
+  GRAPHS_Update = 0;
+     
 
   Export_GRAPHS_info_node = 0;
   Export_GRAPHS_info_norm = 0;
