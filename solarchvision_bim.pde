@@ -2653,7 +2653,7 @@ void SOLARCHVISION_draw_WORLD () {
   
   PImage WORLDViewImage = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filenames[WORLD_VIEW_Number]);
 
-  WORLD_Diagrams.image(WORLDViewImage, 0, 0, WORLD_X_View * WORLD_Image_Scale, WORLD_Y_View * WORLD_Image_Scale);
+  WORLD_Diagrams.image(WORLDViewImage, 0, 0, WORLD_X_View, WORLD_Y_View);
 
   float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
   float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
@@ -2686,8 +2686,8 @@ void SOLARCHVISION_draw_WORLD () {
         float _lon = AERIAL_Locations[n][0]; 
         if (_lon > 180) _lon -= 360; // << important!
   
-        float x_point = WORLD_X_View * WORLD_Image_Scale * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-        float y_point = WORLD_Y_View * WORLD_Image_Scale * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
+        float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+        float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
 
         WORLD_Diagrams.pushMatrix();
         WORLD_Diagrams.translate(x_point, y_point);
@@ -2838,8 +2838,8 @@ void SOLARCHVISION_draw_WORLD () {
     float _lon = LocationLongitude; 
     if (_lon > 180) _lon -= 360; // << important!
   
-    float x_point = WORLD_X_View * WORLD_Image_Scale * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-    float y_point = WORLD_Y_View * WORLD_Image_Scale * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
+    float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+    float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY; 
 
     WORLD_Diagrams.strokeWeight(3 * WORLD_Image_Scale);
     WORLD_Diagrams.stroke(0, 0, 127, 255);
@@ -2867,8 +2867,8 @@ void SOLARCHVISION_draw_WORLD () {
   
     if (draw_info == 1) {
 
-      float x_point = WORLD_X_View * WORLD_Image_Scale * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-      float y_point = WORLD_Y_View * WORLD_Image_Scale * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
 
       WORLD_Diagrams.strokeWeight(0);
       WORLD_Diagrams.stroke(191, 0, 0, 191);
@@ -2901,8 +2901,8 @@ void SOLARCHVISION_draw_WORLD () {
     float _lon = float(STATION_SWOB_INFO[f][4]); 
     if (_lon > 180) _lon -= 360; // << important!
     
-    float x_point = WORLD_X_View * WORLD_Image_Scale * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-    float y_point = WORLD_Y_View * WORLD_Image_Scale * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+    float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+    float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
     
     WORLD_Diagrams.strokeWeight(0);
     WORLD_Diagrams.stroke(0);
@@ -2934,8 +2934,8 @@ void SOLARCHVISION_draw_WORLD () {
   
     if (draw_info == 1) {
 
-      float x_point = WORLD_X_View * WORLD_Image_Scale * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-      float y_point = WORLD_Y_View * WORLD_Image_Scale * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
 
       WORLD_Diagrams.strokeWeight(0);
       WORLD_Diagrams.stroke(0, 63, 0, 127);
@@ -2970,8 +2970,8 @@ void SOLARCHVISION_draw_WORLD () {
     float _lon = float(STATION_NAEFS_INFO[f][4]); 
     if (_lon > 180) _lon -= 360; // << important!      
     
-    float x_point = WORLD_X_View * WORLD_Image_Scale * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-    float y_point = WORLD_Y_View * WORLD_Image_Scale * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+    float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+    float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
     
     WORLD_Diagrams.strokeWeight(0);
     WORLD_Diagrams.stroke(0);
@@ -3002,8 +3002,8 @@ void SOLARCHVISION_draw_WORLD () {
   
     if (draw_info == 1) {
 
-      float x_point = WORLD_X_View * WORLD_Image_Scale * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-      float y_point = WORLD_Y_View * WORLD_Image_Scale * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
 
       WORLD_Diagrams.strokeWeight(2 * WORLD_Image_Scale);
       WORLD_Diagrams.stroke(0, 0, 0, 191);
@@ -3035,8 +3035,8 @@ void SOLARCHVISION_draw_WORLD () {
     float _lon = float(STATION_CWEEDS_INFO[f][4]);  
     if (_lon > 180) _lon -= 360; // << important!      
     
-    float x_point = WORLD_X_View * WORLD_Image_Scale * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-    float y_point = WORLD_Y_View * WORLD_Image_Scale * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+    float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+    float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
     
     WORLD_Diagrams.strokeWeight(0);
     WORLD_Diagrams.stroke(0);
@@ -3067,8 +3067,8 @@ void SOLARCHVISION_draw_WORLD () {
   
     if (draw_info == 1) {
 
-      float x_point = WORLD_X_View * WORLD_Image_Scale * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-      float y_point = WORLD_Y_View * WORLD_Image_Scale * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+      float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+      float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
 
       WORLD_Diagrams.strokeWeight(2 * WORLD_Image_Scale);
       WORLD_Diagrams.stroke(255, 0, 0, 127);
@@ -3100,8 +3100,8 @@ void SOLARCHVISION_draw_WORLD () {
     float _lon = float(STATION_EPW_INFO[f][4]);  
     if (_lon > 180) _lon -= 360; // << important!      
     
-    float x_point = WORLD_X_View * WORLD_Image_Scale * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
-    float y_point = WORLD_Y_View * WORLD_Image_Scale * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
+    float x_point = WORLD_X_View * (( 1 * (_lon - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX;
+    float y_point = WORLD_Y_View * ((-1 * (_lat - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY;
     
     WORLD_Diagrams.strokeWeight(0);
     WORLD_Diagrams.stroke(0);
