@@ -2600,7 +2600,6 @@ void SOLARCHVISION_draw_WIN3D () {
    
   if ((WIN3D_record_JPG == 1) || (WIN3D_record_AUTO == 0)) WIN3D_record_JPG = 0;  
 
-
   //////////////////////////////////
   WIN3D_X_View /= WIN3D_Image_Scale;
   WIN3D_Y_View /= WIN3D_Image_Scale;  
