@@ -1106,8 +1106,7 @@ float WIN3D_Image_Scale = 1.0;
 float WORLD_Image_Scale = 1.0;
 
 float GRAPHS_Image_Scale = 1.0;
-float pre_GRAPHS_Image_Scale = GRAPHS_Image_Scale; 
-PGraphics pre_GRAPHS_Diagrams;
+
 
 int pre_GRAPHS_setup;
 int pre_impacts_source;
@@ -1469,6 +1468,8 @@ void setup () {
   WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
 
   WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);  
+  
+  GRAPHS_Diagrams = createGraphics(GRAPHS_X_View, GRAPHS_Y_View, P2D);  
 
   frameRate(24);
 
@@ -3171,24 +3172,35 @@ void SOLARCHVISION_draw_GRAPHS () {
   
   
 
-  pushMatrix();
-  translate(GRAPHS_CX_View, GRAPHS_CY_View);
-
-  stroke(255); 
-  fill(255);
-  strokeWeight(0);
-  rect(0, 0, GRAPHS_X_View, GRAPHS_Y_View);
-
-
   GRAPHS_S_View = (GRAPHS_X_View / 2200.0);
   GRAPHS_U_scale = 18.0 / float(GRAPHS_j_end - GRAPHS_j_start);
   
-  if ((GRAPHS_record_JPG == 1) || (GRAPHS_record_AUTO == 1)) {
-    GRAPHS_Update = 1; 
-  }
   
-  if (GRAPHS_Update != 0) {
-
+  if (GRAPHS_Update == 1) {
+  
+    if (GRAPHS_record_PDF == 1) GRAPHS_Image_Scale = 1;
+    else if (GRAPHS_record_JPG == 1) GRAPHS_Image_Scale = 2;
+    else GRAPHS_Image_Scale = 1;
+    
+    //////////////////////////////////
+    GRAPHS_X_View *= GRAPHS_Image_Scale;
+    GRAPHS_Y_View *= GRAPHS_Image_Scale;  
+    //////////////////////////////////  
+    
+    if (GRAPHS_record_PDF == 1) {
+      println("PDF:begin");
+      GRAPHS_Diagrams = createGraphics(GRAPHS_X_View, GRAPHS_Y_View, PDF, MAKE_Filenames() + ".pdf");
+      beginRecord(GRAPHS_Diagrams);
+    }
+    else if (GRAPHS_Image_Scale != 1) {
+      println("IMG:high-res");
+      GRAPHS_Diagrams = createGraphics(GRAPHS_X_View, GRAPHS_Y_View, P2D);
+      GRAPHS_Diagrams.beginDraw();
+    }  
+    else {
+      GRAPHS_Diagrams.beginDraw();
+    }  
+  
     draw_frame += 1;
     println("frame:", draw_frame);    
     
@@ -3202,36 +3214,13 @@ void SOLARCHVISION_draw_GRAPHS () {
       }
     //}     
     
-    if (GRAPHS_record_PDF == 1) GRAPHS_Image_Scale = 1;
-    else if (GRAPHS_record_JPG == 1) GRAPHS_Image_Scale = 3;
-    else GRAPHS_Image_Scale = 1;
-    
-    
-    if (GRAPHS_Image_Scale != 1) {
-      /////////////////////////////////////
-      GRAPHS_S_View *= GRAPHS_Image_Scale; 
-      GRAPHS_T_scale *= GRAPHS_Image_Scale;
-      /////////////////////////////////////
-    }  
-    
-    
+   
     
     GRAPHS_X_coordinate = -0.333 * GRAPHS_X_View * GRAPHS_Image_Scale;      
     
     GRAPHS_Y_coordinate = 1.0 * GRAPHS_Y_View * GRAPHS_Image_Scale;
     
-  
-    if (GRAPHS_record_PDF == 1) {
-      println("PDF:begin");
-      GRAPHS_Diagrams = createGraphics(GRAPHS_X_View, GRAPHS_Y_View, PDF, MAKE_Filenames() + ".pdf");
-      beginRecord(GRAPHS_Diagrams);
-    }
-    else {
-      GRAPHS_Diagrams = createGraphics(int(GRAPHS_X_View * GRAPHS_Image_Scale), int(GRAPHS_Y_View * GRAPHS_Image_Scale), P2D);
-      GRAPHS_Diagrams.beginDraw();
-    }
-  
-    
+
     GRAPHS_Diagrams.background(255);
     
     GRAPHS_Diagrams.blendMode(BLEND);
@@ -3283,18 +3272,7 @@ void SOLARCHVISION_draw_GRAPHS () {
       println("PDF:end");
       
       GRAPHS_record_PDF = 0;
-
-      
-      
-      stroke(0); 
-      fill(0);
-      strokeWeight(0);
-      rect(0, 0, GRAPHS_X_View, GRAPHS_Y_View);
-      blendMode(REPLACE);
-      
-      imageMode(CORNER);
-      image(pre_GRAPHS_Diagrams, 0, 0, GRAPHS_X_View, GRAPHS_Y_View);
-
+  
     }
     else {
       GRAPHS_Diagrams.endDraw();
@@ -3304,49 +3282,29 @@ void SOLARCHVISION_draw_GRAPHS () {
         println("Image created");
       }
       
-      if (GRAPHS_Image_Scale != 1) {
-        /////////////////////////////////////
-        GRAPHS_S_View /= GRAPHS_Image_Scale; 
-        GRAPHS_T_scale /= GRAPHS_Image_Scale;
-        /////////////////////////////////////
-        GRAPHS_Image_Scale = 1; //<<<<<<<<<<<<<<<<<<<<
-      }
-      
-      stroke(0); 
-      fill(0);
-      strokeWeight(0);
-      rect(0, 0, GRAPHS_X_View, GRAPHS_Y_View);
-      blendMode(REPLACE);
-
       imageMode(CORNER);
-      image(GRAPHS_Diagrams, 0, 0, GRAPHS_X_View, GRAPHS_Y_View);
-      pre_GRAPHS_Diagrams = GRAPHS_Diagrams;
-      pre_GRAPHS_Image_Scale = GRAPHS_Image_Scale;
- 
+      image(GRAPHS_Diagrams, GRAPHS_CX_View, GRAPHS_CY_View, GRAPHS_X_View / GRAPHS_Image_Scale, GRAPHS_Y_View / GRAPHS_Image_Scale);
+   
     }
+
+    //////////////////////////////////
+    GRAPHS_X_View /= GRAPHS_Image_Scale;
+    GRAPHS_Y_View /= GRAPHS_Image_Scale;  
+    //////////////////////////////////
+  
+    if ((GRAPHS_Image_Scale != 1) || (GRAPHS_record_PDF == 1)) {
+      GRAPHS_Diagrams = createGraphics(GRAPHS_X_View, GRAPHS_Y_View, P2D);
+      GRAPHS_Update = 1;    
+    }   
+    else {
+      GRAPHS_Update = 0;
+    }
+    
+    
+    if ((GRAPHS_record_JPG == 1) || (GRAPHS_record_AUTO == 0)) GRAPHS_record_JPG = 0;  
+  
+    GRAPHS_record_PDF = 0;
   }
-  else {
-    
-    
-    stroke(0); 
-    fill(0);
-    strokeWeight(0);
-    rect(0, 0, GRAPHS_X_View, GRAPHS_Y_View);
-    blendMode(REPLACE);
-    
-    imageMode(CORNER);
-    image(pre_GRAPHS_Diagrams, 0, 0, GRAPHS_X_View, GRAPHS_Y_View);
-  }
-
-  popMatrix();
-  
-
-
-  
-  if ((GRAPHS_record_JPG == 1) || (GRAPHS_record_AUTO == 0)) GRAPHS_record_JPG = 0;
-  
-  GRAPHS_Update = 0;
-     
 
   Export_GRAPHS_info_node = 0;
   Export_GRAPHS_info_norm = 0;
@@ -3725,21 +3683,8 @@ void Plot_Setup () {
     draw_probs = 0; 
     SOLARCHVISION_PlotHOURLY(0, 175 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[GRAPHS_drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
 
-    if (update_impacts == 1) {    
-      plot_impacts = 3;
-      SOLARCHVISION_PlotIMPACT(0, -200 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[GRAPHS_drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
-    }
-    else if (GRAPHS_record_PDF == 0) {
-      
-      
-      stroke(0); 
-      fill(0);
-      strokeWeight(0);
-      rect(0, 0, GRAPHS_Y_View, GRAPHS_Y_View / 2);
-      blendMode(REPLACE);
-      
-      GRAPHS_Diagrams.copy(pre_GRAPHS_Diagrams, 0, 0, int(pre_GRAPHS_Image_Scale * GRAPHS_Y_View), int(pre_GRAPHS_Image_Scale * GRAPHS_Y_View / 2), 0, 0, int(GRAPHS_Image_Scale * GRAPHS_Y_View), int(GRAPHS_Image_Scale * GRAPHS_Y_View / 2));
-    }
+    plot_impacts = 3;
+    SOLARCHVISION_PlotIMPACT(0, -200 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[GRAPHS_drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
     
     plot_impacts = pre_plot_impacts; 
     impact_layer = pre_impact_layer;
@@ -3760,21 +3705,8 @@ void Plot_Setup () {
     draw_probs = 0; 
     SOLARCHVISION_PlotHOURLY(0, 175 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[GRAPHS_drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
     
-    if (update_impacts == 1) {    
-      plot_impacts = 2;
-      SOLARCHVISION_PlotIMPACT(0, -200 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[GRAPHS_drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
-    }
-    else if (GRAPHS_record_PDF == 0) {  
-      
-      
-      stroke(0); 
-      fill(0);
-      strokeWeight(0);
-      rect(0, 0, GRAPHS_Y_View, GRAPHS_Y_View / 2);
-      blendMode(REPLACE);
-  
-      GRAPHS_Diagrams.copy(pre_GRAPHS_Diagrams, 0, 0, int(pre_GRAPHS_Image_Scale * GRAPHS_Y_View), int(pre_GRAPHS_Image_Scale * GRAPHS_Y_View / 2), 0, 0, int(GRAPHS_Image_Scale * GRAPHS_Y_View), int(GRAPHS_Image_Scale * GRAPHS_Y_View / 2));
-    }
+    plot_impacts = 2;
+    SOLARCHVISION_PlotIMPACT(0, -200 * GRAPHS_S_View, 0, (100.0 * GRAPHS_U_scale * GRAPHS_S_View), (-1.0 * GRAPHS_V_scale[GRAPHS_drw_Layer] * GRAPHS_S_View), 1.0 * GRAPHS_S_View);
     
     plot_impacts = pre_plot_impacts;
     impact_layer = pre_impact_layer;
@@ -11536,6 +11468,7 @@ void SOLARCHVISION_update_frame_layout () {
     GRAPHS_X_View = 2 * w_pixel;
     GRAPHS_Y_View = 1 * h_pixel;
     GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);   
+    GRAPHS_Diagrams = createGraphics(GRAPHS_X_View, GRAPHS_Y_View, P2D);  
 
     WORLD_CX_View = 0;
     WORLD_CY_View = a_pixel + b_pixel + 0;
@@ -11575,6 +11508,7 @@ void SOLARCHVISION_update_frame_layout () {
     GRAPHS_X_View = 2 * w_pixel;
     GRAPHS_Y_View = 2 * h_pixel;
     GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);   
+    GRAPHS_Diagrams = createGraphics(GRAPHS_X_View, GRAPHS_Y_View, P2D);  
  } 
  else if (frame_variation == 3) {
    
@@ -25466,7 +25400,7 @@ String[][] BAR_a_Items = {
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
                         {"Select", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
                         {"Modify", "Seed", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum"},
-                        {"IMG/PDF", "PDF Time Graph", "JPG Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph"}
+                        {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph"}
 
                       };
 
