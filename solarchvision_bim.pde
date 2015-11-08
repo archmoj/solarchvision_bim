@@ -1467,6 +1467,8 @@ void setup () {
   WIN3D_VerticesSolarEffect = new float [1];
   WIN3D_VerticesSolarEnergy[0] = FLOAT_undefined;
   WIN3D_VerticesSolarEffect[0] = FLOAT_undefined;
+  
+  WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);  
 
   frameRate(24);
 
@@ -2419,7 +2421,6 @@ void SOLARCHVISION_draw_WIN3D () {
   WIN3D_Y_View *= WIN3D_Image_Scale;
   //////////////////////////////////
 
-  WIN3D_Diagrams = createGraphics(int(WIN3D_X_View), int(WIN3D_Y_View), P3D);
   WIN3D_Diagrams.beginDraw();  
 
   WIN3D_scale3D = WIN3D_Y_View / refScale; // fits field of view to window's height
@@ -11506,18 +11507,19 @@ void SOLARCHVISION_update_frame_layout () {
     GRAPHS_X_View = 2 * w_pixel;
     GRAPHS_Y_View = 1 * h_pixel;
     GRAPHS_R_View = float(GRAPHS_Y_View) / float(GRAPHS_X_View);   
+
+    WORLD_CX_View = 0;
+    WORLD_CY_View = a_pixel + b_pixel + 0;
+    WORLD_X_View = 2 * h_pixel;
+    WORLD_Y_View = h_pixel;
+    WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
    
     WIN3D_CX_View = 2 * h_pixel;
     WIN3D_CY_View = a_pixel + b_pixel + 0;
     WIN3D_X_View = h_pixel;
     WIN3D_Y_View = h_pixel;
     WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
-    
-    WORLD_CX_View = 0;
-    WORLD_CY_View = a_pixel + b_pixel + 0;
-    WORLD_X_View = 2 * h_pixel;
-    WORLD_Y_View = h_pixel;
-    WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
+    WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
  }
  else if (frame_variation == 1) {
 
@@ -11530,6 +11532,7 @@ void SOLARCHVISION_update_frame_layout () {
     WIN3D_X_View = 3 * h_pixel;
     WIN3D_Y_View = 2 * h_pixel;
     WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
+    WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
  }  
  else if (frame_variation == 2) {
 
