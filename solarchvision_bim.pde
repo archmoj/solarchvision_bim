@@ -2593,7 +2593,7 @@ void SOLARCHVISION_draw_WIN3D () {
   
     
     if ((WIN3D_record_JPG == 1) || (WIN3D_record_AUTO == 1)) {
-      WIN3D_Diagrams.save(MAKE_Filenames() + ".jpg");
+      WIN3D_Diagrams.save("WIN3D_" + MAKE_Filenames() + ".jpg");
       println("Image created");
     }
     
@@ -2611,7 +2611,7 @@ void SOLARCHVISION_draw_WIN3D () {
   
     if (WIN3D_Image_Scale != 1) {
       WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
-      WIN3D_Update = 1;    
+      WIN3D_Update = 0; //1;    
     }   
     else {
       WIN3D_Update = 0;
@@ -3132,7 +3132,7 @@ void SOLARCHVISION_draw_WORLD () {
       WORLD_Diagrams.endDraw();
       
       if ((WORLD_record_JPG == 1) || (WORLD_record_AUTO == 1)) {
-        WORLD_Diagrams.save(MAKE_Filenames() + ".jpg");
+        WORLD_Diagrams.save("WORLD_" + MAKE_Filenames() + ".jpg");
         println("Image created");
       }
       
@@ -3149,7 +3149,7 @@ void SOLARCHVISION_draw_WORLD () {
   
     if ((WORLD_Image_Scale != 1) || (WORLD_record_PDF == 1)) {
       WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
-      WORLD_Update = 1;    
+      WORLD_Update = 0; //1;    
     }   
     else {
       WORLD_Update = 0;
@@ -3273,7 +3273,7 @@ void SOLARCHVISION_draw_GRAPHS () {
       GRAPHS_Diagrams.endDraw();
       
       if ((GRAPHS_record_JPG == 1) || (GRAPHS_record_AUTO == 1)) {
-        GRAPHS_Diagrams.save(MAKE_Filenames() + ".jpg");
+        GRAPHS_Diagrams.save("GRAPHS_" + MAKE_Filenames() + ".jpg");
         println("Image created");
       }
       
@@ -3290,7 +3290,7 @@ void SOLARCHVISION_draw_GRAPHS () {
   
     if ((GRAPHS_Image_Scale != 1) || (GRAPHS_record_PDF == 1)) {
       GRAPHS_Diagrams = createGraphics(GRAPHS_X_View, GRAPHS_Y_View, P2D);
-      GRAPHS_Update = 1;    
+      GRAPHS_Update = 0; //1;    
     }   
     else {
       GRAPHS_Update = 0;
