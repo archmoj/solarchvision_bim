@@ -3181,7 +3181,7 @@ void SOLARCHVISION_draw_GRAPHS () {
   rect(0, 0, GRAPHS_X_View, GRAPHS_Y_View);
 
 
-  GRAPHS_S_View = (GRAPHS_X_View / 1200.0);
+  GRAPHS_S_View = (GRAPHS_X_View / 2200.0);
   GRAPHS_U_scale = 18.0 / float(GRAPHS_j_end - GRAPHS_j_start);
   
   if ((GRAPHS_record_JPG == 1) || (GRAPHS_record_AUTO == 1)) {
