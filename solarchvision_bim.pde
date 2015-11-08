@@ -3207,12 +3207,20 @@ void SOLARCHVISION_draw_GRAPHS () {
     else if (GRAPHS_record_JPG == 1) GRAPHS_Image_Scale = 3;
     else GRAPHS_Image_Scale = 1;
     
+    
+    if (GRAPHS_Image_Scale != 1) {
+      /////////////////////////////////////
+      GRAPHS_S_View *= GRAPHS_Image_Scale; 
+      GRAPHS_T_scale *= GRAPHS_Image_Scale;
+      /////////////////////////////////////
+    }  
+    
+    
+    
     GRAPHS_X_coordinate = -0.333 * GRAPHS_X_View * GRAPHS_Image_Scale;      
     
     GRAPHS_Y_coordinate = 1.0 * GRAPHS_Y_View * GRAPHS_Image_Scale;
     
-    GRAPHS_S_View *= 0.5 * GRAPHS_Image_Scale; 
-    GRAPHS_T_scale = 0.5 * GRAPHS_Image_Scale;  
   
     if (GRAPHS_record_PDF == 1) {
       println("PDF:begin");
@@ -3297,7 +3305,13 @@ void SOLARCHVISION_draw_GRAPHS () {
         println("Image created");
       }
       
-      
+      if (GRAPHS_Image_Scale != 1) {
+        /////////////////////////////////////
+        GRAPHS_S_View /= GRAPHS_Image_Scale; 
+        GRAPHS_T_scale /= GRAPHS_Image_Scale;
+        /////////////////////////////////////
+        GRAPHS_Image_Scale = 1; //<<<<<<<<<<<<<<<<<<<<
+      }
       
       stroke(0); 
       fill(0);
@@ -3326,6 +3340,8 @@ void SOLARCHVISION_draw_GRAPHS () {
   }
 
   popMatrix();
+  
+
 
   
   if ((GRAPHS_record_JPG == 1) || (GRAPHS_record_AUTO == 0)) GRAPHS_record_JPG = 0;
