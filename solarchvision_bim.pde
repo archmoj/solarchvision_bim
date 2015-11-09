@@ -18666,45 +18666,43 @@ void SolarProjection () {
   
   
 
-  for (int j = 0; j < LocationExposure.length; j += 1) {
-    
-    for (int a = 0; a <= int(180 / stp_slp); a += 1) { 
-      float Alpha = a * stp_slp - 90;
-      for (int b = 0; b < int(360 / stp_dir); b += 1) {
-        float Beta = b * stp_dir;
-  
-        if (TOTAL_valuesNUM[a][b] != 0) {
-          TOTAL_valuesSUM_RAD[a][b] /= 1.0 * TOTAL_valuesNUM[a][b];
-          TOTAL_valuesSUM_EFF_P[a][b] /= 1.0 * TOTAL_valuesNUM[a][b];
-          TOTAL_valuesSUM_EFF_N[a][b] /= 1.0 * TOTAL_valuesNUM[a][b];
-        }
-        else {
-          TOTAL_valuesSUM_RAD[a][b] = FLOAT_undefined;
-          TOTAL_valuesSUM_EFF_P[a][b] = FLOAT_undefined;
-          TOTAL_valuesSUM_EFF_N[a][b] = FLOAT_undefined;
-        }
-  
-  
-        float AVERAGE, PERCENTAGE, COMPARISON;
+  for (int a = 0; a <= int(180 / stp_slp); a += 1) { 
+    float Alpha = a * stp_slp - 90;
+    for (int b = 0; b < int(360 / stp_dir); b += 1) {
+      float Beta = b * stp_dir;
+
+      if (TOTAL_valuesNUM[a][b] != 0) {
+        TOTAL_valuesSUM_RAD[a][b] /= 1.0 * TOTAL_valuesNUM[a][b];
+        TOTAL_valuesSUM_EFF_P[a][b] /= 1.0 * TOTAL_valuesNUM[a][b];
+        TOTAL_valuesSUM_EFF_N[a][b] /= 1.0 * TOTAL_valuesNUM[a][b];
+      }
+      else {
+        TOTAL_valuesSUM_RAD[a][b] = FLOAT_undefined;
+        TOTAL_valuesSUM_EFF_P[a][b] = FLOAT_undefined;
+        TOTAL_valuesSUM_EFF_N[a][b] = FLOAT_undefined;
+      }
+
+
+      float AVERAGE, PERCENTAGE, COMPARISON;
+      
+      AVERAGE = (TOTAL_valuesSUM_EFF_P[a][b] - TOTAL_valuesSUM_EFF_N[a][b]);
+      if ((TOTAL_valuesSUM_EFF_P[a][b] + TOTAL_valuesSUM_EFF_N[a][b]) > 0.00001) PERCENTAGE = (TOTAL_valuesSUM_EFF_P[a][b] - TOTAL_valuesSUM_EFF_N[a][b]) / (1.0 * (TOTAL_valuesSUM_EFF_P[a][b] + TOTAL_valuesSUM_EFF_N[a][b])); 
+      else PERCENTAGE = 0.0;
+      COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+
+
+      float _valuesSUM = FLOAT_undefined;
+      if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = TOTAL_valuesSUM_RAD[a][b];
+      if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = COMPARISON; 
+
+      if (_valuesSUM < 0.9 * FLOAT_undefined) {
         
-        AVERAGE = (TOTAL_valuesSUM_EFF_P[a][b] - TOTAL_valuesSUM_EFF_N[a][b]);
-        if ((TOTAL_valuesSUM_EFF_P[a][b] + TOTAL_valuesSUM_EFF_N[a][b]) > 0.00001) PERCENTAGE = (TOTAL_valuesSUM_EFF_P[a][b] - TOTAL_valuesSUM_EFF_N[a][b]) / (1.0 * (TOTAL_valuesSUM_EFF_P[a][b] + TOTAL_valuesSUM_EFF_N[a][b])); 
-        else PERCENTAGE = 0.0;
-        COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
-  
-  
-        float _valuesSUM = FLOAT_undefined;
-        if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = TOTAL_valuesSUM_RAD[a][b];
-        if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = COMPARISON; 
-  
-        if (_valuesSUM < 0.9 * FLOAT_undefined) {
-          
-          int Solarch_Image_j = 0;
-          LocationExposure[Solarch_Image_j][a][b] = _valuesSUM;
-        }
+        int Solarch_Image_j = 0;
+        LocationExposure[Solarch_Image_j][a][b] = _valuesSUM;
       }
     }
   }
+
 
   pre_per_day = per_day;
   num_add_days = pre_num_add_days;
