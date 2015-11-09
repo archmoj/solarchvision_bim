@@ -8803,7 +8803,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     
     if (update_impacts == 1) {
     
-      Solarch_Image = new PImage [1][STUDY_j_end + 1];
+      Solarch_Image = new PImage [(1 + STUDY_j_end - STUDY_j_start)];
   
       if (plot_impacts == 0) Impact_TYPE = Impact_ACTIVE; 
       if (plot_impacts == 1) Impact_TYPE = Impact_PASSIVE;
@@ -9158,12 +9158,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               Image_RGBA.updatePixels(); 
               
               if (camera_variation == 0) {
-                
-                int Solarch_Image_i = p;
+
                 int Solarch_Image_j = j + 1;
                 
-                Solarch_Image[Solarch_Image_i][Solarch_Image_j] = Image_RGBA;           
-                if (Solarch_record_JPG == 1) Solarch_Image[Solarch_Image_i][Solarch_Image_j].save(get_Field_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(Solarch_Image_i, 0) + "X" + nf(Solarch_Image_j, 0) + ".jpg");
+                Solarch_Image[Solarch_Image_j] = Image_RGBA;           
+                if (Solarch_record_JPG == 1) Solarch_Image[Solarch_Image_j].save(get_Field_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(Solarch_Image_j, 0) + ".jpg");
               }            
              
               STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
@@ -9252,11 +9251,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           
           if (camera_variation == 0) {
             
-            int Solarch_Image_i = p;
             int Solarch_Image_j = 0;
             
-            Solarch_Image[Solarch_Image_i][Solarch_Image_j] = total_Image_RGBA;           
-            if (Solarch_record_JPG == 1) Solarch_Image[Solarch_Image_i][Solarch_Image_j].save(get_Field_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(Solarch_Image_i, 0) + "X" + nf(Solarch_Image_j, 0) + ".jpg");
+            Solarch_Image[Solarch_Image_j] = total_Image_RGBA;           
+            if (Solarch_record_JPG == 1) Solarch_Image[Solarch_Image_j].save(get_Field_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(Solarch_Image_j, 0) + ".jpg");
           }      
   
           STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
@@ -14437,7 +14435,7 @@ void SOLARCHVISION_draw_SKY3D () {
               if (a > int(180 / stp_slp)) a -= int(180 / stp_slp);
               if (b > int(360 / stp_dir)) b -= int(360 / stp_dir);
               
-              float _valuesSUM = LocationExposure[Solarch_Image_i][Solarch_Image_j][a][b];
+              float _valuesSUM = LocationExposure[display_Solarch_j][a][b];
               
               if (_valuesSUM < 0.9 * FLOAT_undefined) {
               
@@ -15045,7 +15043,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                 if (a > int(180 / stp_slp)) a -= int(180 / stp_slp);
                 if (b > int(360 / stp_dir)) b -= int(360 / stp_dir);
                 
-                float _valuesSUM = LocationExposure[Solarch_Image_i][Solarch_Image_j][a][b];
+                float _valuesSUM = LocationExposure[display_Solarch_j][a][b];
                 
                 if (_valuesSUM < 0.9 * FLOAT_undefined) {
                 
@@ -16896,8 +16894,7 @@ int Solarch_RES2 = 200;
 
 float Solarch_Elevation;
 
-PImage[][] Solarch_Image;
-int display_Solarch_i = 0; // 0:row-1 1:row-2 ...
+PImage[] Solarch_Image;
 int display_Solarch_j = 0; // 0:total 1:day-1 2:day-2, 
 int display_Solarch_Image = 0; // 0:talse 1:true
 int Solarch_Image_Section = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
@@ -18407,7 +18404,7 @@ float stp_dir;
 int n_slp;  
 int n_dir;
 
-float[][][][]LocationExposure;
+float[][][]LocationExposure;
 
 void SOLARCHVISION_build_SolarProjection_array () {
   
@@ -18416,16 +18413,15 @@ void SOLARCHVISION_build_SolarProjection_array () {
   n_slp = int(roundTo(180.0 / (1.0 * stp_slp), 1)) + 1;  
   n_dir = int(roundTo(360.0 / (1.0 * stp_dir), 1));
 
-  LocationExposure = new float [1][STUDY_j_start + 1][n_slp][n_dir];
+  LocationExposure = new float [(1 + STUDY_j_end - STUDY_j_start)][n_slp][n_dir];
 
-  for (int i = 0; i < LocationExposure.length; i += 1) {
-    for (int j = 0; j < LocationExposure[i].length; j += 1) {
-      for (int a = 0; a < n_slp; a += 1) {
-        for (int b = 0; b < n_dir; b += 1) {  
-          LocationExposure[Solarch_Image_i][Solarch_Image_j][a][b] = FLOAT_undefined;
-        }
-      } 
-    }
+  for (int j = 0; j < LocationExposure.length; j += 1) {
+    
+    for (int a = 0; a < n_slp; a += 1) {
+      for (int b = 0; b < n_dir; b += 1) {  
+        LocationExposure[j][a][b] = FLOAT_undefined;
+      }
+    } 
   }
 }
 
@@ -18643,8 +18639,8 @@ void SolarProjection () {
               _valuesSUM_EFF_P = FLOAT_undefined;
               _valuesSUM_EFF_N = FLOAT_undefined;
             }
-            /*
-
+            
+            
             float AVERAGE, PERCENTAGE, COMPARISON;
             
             AVERAGE = (_valuesSUM_EFF_P - _valuesSUM_EFF_N);
@@ -18658,9 +18654,10 @@ void SolarProjection () {
 
             if (_valuesSUM < 0.9 * FLOAT_undefined) {
             
-              
+              int Solarch_Image_j = j + 1;      
+              LocationExposure[Solarch_Image_j][a][b] = _valuesSUM;        
             }
-            */
+
           }
         }
       }
@@ -18668,45 +18665,42 @@ void SolarProjection () {
   }
   
   
-  for (int i = 0; i < LocationExposure.length; i += 1) {
-    for (int j = 0; j < LocationExposure[i].length; j += 1) {
-      
-      int Solarch_Image_i = i;
-      int Solarch_Image_j = j;
+
+  for (int j = 0; j < LocationExposure.length; j += 1) {
     
-      for (int a = 0; a <= int(180 / stp_slp); a += 1) { 
-        float Alpha = a * stp_slp - 90;
-        for (int b = 0; b < int(360 / stp_dir); b += 1) {
-          float Beta = b * stp_dir;
-    
-          if (TOTAL_valuesNUM[a][b] != 0) {
-            TOTAL_valuesSUM_RAD[a][b] /= 1.0 * TOTAL_valuesNUM[a][b];
-            TOTAL_valuesSUM_EFF_P[a][b] /= 1.0 * TOTAL_valuesNUM[a][b];
-            TOTAL_valuesSUM_EFF_N[a][b] /= 1.0 * TOTAL_valuesNUM[a][b];
-          }
-          else {
-            TOTAL_valuesSUM_RAD[a][b] = FLOAT_undefined;
-            TOTAL_valuesSUM_EFF_P[a][b] = FLOAT_undefined;
-            TOTAL_valuesSUM_EFF_N[a][b] = FLOAT_undefined;
-          }
-    
-    
-          float AVERAGE, PERCENTAGE, COMPARISON;
+    for (int a = 0; a <= int(180 / stp_slp); a += 1) { 
+      float Alpha = a * stp_slp - 90;
+      for (int b = 0; b < int(360 / stp_dir); b += 1) {
+        float Beta = b * stp_dir;
+  
+        if (TOTAL_valuesNUM[a][b] != 0) {
+          TOTAL_valuesSUM_RAD[a][b] /= 1.0 * TOTAL_valuesNUM[a][b];
+          TOTAL_valuesSUM_EFF_P[a][b] /= 1.0 * TOTAL_valuesNUM[a][b];
+          TOTAL_valuesSUM_EFF_N[a][b] /= 1.0 * TOTAL_valuesNUM[a][b];
+        }
+        else {
+          TOTAL_valuesSUM_RAD[a][b] = FLOAT_undefined;
+          TOTAL_valuesSUM_EFF_P[a][b] = FLOAT_undefined;
+          TOTAL_valuesSUM_EFF_N[a][b] = FLOAT_undefined;
+        }
+  
+  
+        float AVERAGE, PERCENTAGE, COMPARISON;
+        
+        AVERAGE = (TOTAL_valuesSUM_EFF_P[a][b] - TOTAL_valuesSUM_EFF_N[a][b]);
+        if ((TOTAL_valuesSUM_EFF_P[a][b] + TOTAL_valuesSUM_EFF_N[a][b]) > 0.00001) PERCENTAGE = (TOTAL_valuesSUM_EFF_P[a][b] - TOTAL_valuesSUM_EFF_N[a][b]) / (1.0 * (TOTAL_valuesSUM_EFF_P[a][b] + TOTAL_valuesSUM_EFF_N[a][b])); 
+        else PERCENTAGE = 0.0;
+        COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+  
+  
+        float _valuesSUM = FLOAT_undefined;
+        if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = TOTAL_valuesSUM_RAD[a][b];
+        if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = COMPARISON; 
+  
+        if (_valuesSUM < 0.9 * FLOAT_undefined) {
           
-          AVERAGE = (TOTAL_valuesSUM_EFF_P[a][b] - TOTAL_valuesSUM_EFF_N[a][b]);
-          if ((TOTAL_valuesSUM_EFF_P[a][b] + TOTAL_valuesSUM_EFF_N[a][b]) > 0.00001) PERCENTAGE = (TOTAL_valuesSUM_EFF_P[a][b] - TOTAL_valuesSUM_EFF_N[a][b]) / (1.0 * (TOTAL_valuesSUM_EFF_P[a][b] + TOTAL_valuesSUM_EFF_N[a][b])); 
-          else PERCENTAGE = 0.0;
-          COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
-    
-    
-          float _valuesSUM = FLOAT_undefined;
-          if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = TOTAL_valuesSUM_RAD[a][b];
-          if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = COMPARISON; 
-    
-          if (_valuesSUM < 0.9 * FLOAT_undefined) {
-            
-            LocationExposure[Solarch_Image_i[Solarch_Image_j][a][b] = _valuesSUM;
-          }
+          int Solarch_Image_j = 0;
+          LocationExposure[Solarch_Image_j][a][b] = _valuesSUM;
         }
       }
     }
@@ -21346,8 +21340,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       display_Field_Image = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "display_Field_Image" , display_Field_Image, 0, 1, 1), 1));
       display_Solarch_Image = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "display_Solarch_Image" , display_Solarch_Image, 0, 1, 1), 1));
-      display_Solarch_i = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "display_Solarch_i" , display_Solarch_i, 0, Solarch_Image.length - 1, 1), 1));
-      display_Solarch_j = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "display_Solarch_j" , display_Solarch_j, 0, Solarch_Image[0].length - 1, 1), 1));
+      display_Solarch_j = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "display_Solarch_j" , display_Solarch_j, 0, STUDY_j_end - STUDY_j_start, 1), 1));
       
 
       Solarch_Image_Section = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Solarch_Image_Section" , Solarch_Image_Section, 0, 3, 1), 1));      
@@ -23841,7 +23834,7 @@ void SOLARCHVISION_draw_solarch_image () {
           
             display_solarch_texture = 1;
             
-            //WIN3D_Diagrams.texture(Solarch_Image[display_Solarch_i][display_Solarch_j]); // ????????????
+            //WIN3D_Diagrams.texture(Solarch_Image[display_Solarch_j]); // ????????????
           
           }
         } 
@@ -23861,7 +23854,7 @@ void SOLARCHVISION_draw_solarch_image () {
       if (Solarch_Image_Section != 0) {
         WIN3D_Diagrams.beginShape();
     
-        WIN3D_Diagrams.texture(Solarch_Image[display_Solarch_i][display_Solarch_j]);  
+        WIN3D_Diagrams.texture(Solarch_Image[display_Solarch_j]);  
         WIN3D_Diagrams.stroke(255, 255, 255, 0);
         WIN3D_Diagrams.fill(255, 255, 255, 0);  
         
