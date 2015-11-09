@@ -8853,7 +8853,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         
       //for (int p = 0; p < 1; p += 1) { 
         //int l = 3 * int(impact_layer / 3) + 1; //impact_layer;      
-  
         
         PImage total_Image_RGBA = createImage(RES1, RES2, RGB);
         
@@ -8871,8 +8870,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         }
   
         for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
-        //for (int j = STUDY_j_start; j <= STUDY_j_start; j += 1) {
-  
+ 
           now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
       
           if (now_j >= 365) {
@@ -9162,9 +9160,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               if (camera_variation == 0) {
                 
                 int Solarch_Image_i = p;
-                int Solarch_Image_j = STUDY_j_start + 1;
+                int Solarch_Image_j = j + 1;
                 
-                Solarch_Image[Solarch_Image_i][Solarch_Image_j] = total_Image_RGBA;           
+                Solarch_Image[Solarch_Image_i][Solarch_Image_j] = Image_RGBA;           
                 if (Solarch_record_JPG == 1) Solarch_Image[Solarch_Image_i][Solarch_Image_j].save(get_Field_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(Solarch_Image_i, 0) + "X" + nf(Solarch_Image_j, 0) + ".jpg");
               }            
              
@@ -9172,17 +9170,14 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               STUDY_Diagrams.stroke(223);
               STUDY_Diagrams.fill(223); 
               STUDY_Diagrams.rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / STUDY_U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
-  
             
               STUDY_Diagrams.strokeWeight(STUDY_T_scale * 2);
               STUDY_Diagrams.stroke(255);
               STUDY_Diagrams.noFill(); 
               STUDY_Diagrams.rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / STUDY_U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
         
-        
               STUDY_Diagrams.imageMode(CENTER); 
               STUDY_Diagrams.image(Image_RGBA, (j + 100 * obj_scale) * sx_Plot, - (1 * p * sx_Plot / STUDY_U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
-              
     
               STUDY_Diagrams.stroke(0);
               STUDY_Diagrams.fill(0);
@@ -9267,26 +9262,21 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
           STUDY_Diagrams.stroke(223);
           STUDY_Diagrams.fill(223); 
-          STUDY_Diagrams.rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / STUDY_U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
-          
+          //STUDY_Diagrams.rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / STUDY_U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
           
           STUDY_Diagrams.strokeWeight(STUDY_T_scale * 2);
           STUDY_Diagrams.stroke(0);
           STUDY_Diagrams.noFill(); 
           //STUDY_Diagrams.rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / STUDY_U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
           
-          
           STUDY_Diagrams.imageMode(CENTER); 
           //STUDY_Diagrams.image(total_Image_RGBA, (j + 100 * obj_scale) * sx_Plot, - (1 * p * sx_Plot / STUDY_U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
-          
           
           STUDY_Diagrams.stroke(0);
           STUDY_Diagrams.fill(0);
           STUDY_Diagrams.textAlign(CENTER, CENTER); 
           STUDY_Diagrams.textSize(sx_Plot * 0.15 / STUDY_U_scale);
         }
-  
-  
         
         String scenario_text = "";
         //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
@@ -9312,9 +9302,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           my_text(N_Title[reverse_N[l]], 0, - (1 * p * sx_Plot / STUDY_U_scale), 0);
         }            
         //?? French
-  
-      }      
-  
+      }
+
       float pal_length = 400;
       for (int q = 0; q < 11; q += 1) {
         float _u = 0;
@@ -21345,8 +21334,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       display_Field_Image = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "display_Field_Image" , display_Field_Image, 0, 1, 1), 1));
       display_Solarch_Image = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "display_Solarch_Image" , display_Solarch_Image, 0, 1, 1), 1));
-      display_Solarch_i = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "display_Solarch_i" , display_Solarch_i, 0, Solarch_Image.length, 1), 1));
-      display_Solarch_j = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "display_Solarch_j" , display_Solarch_j, 0, Solarch_Image[0].length, 1), 1));
+      display_Solarch_i = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "display_Solarch_i" , display_Solarch_i, 0, Solarch_Image.length - 1, 1), 1));
+      display_Solarch_j = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "display_Solarch_j" , display_Solarch_j, 0, Solarch_Image[0].length - 1, 1), 1));
       
 
       Solarch_Image_Section = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Solarch_Image_Section" , Solarch_Image_Section, 0, 3, 1), 1));      
