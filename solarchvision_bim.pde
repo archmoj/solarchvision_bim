@@ -10880,8 +10880,16 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
       int l = impact_layer;
     
       int DATE_step = 1;
+      
+      int J_START = STUDY_j_start;
+      int J_END = STUDY_j_end;
+      
+      if (display_Solarch_j > 0) {
+        J_START = display_Solarch_j - 1;
+        J_END = display_Solarch_j;
+      }
     
-      for (int j = STUDY_j_start; j < STUDY_j_end; j += DATE_step) {
+      for (int j = J_START; j < J_END; j += DATE_step) {
         
         int now_i;
         int now_j;
