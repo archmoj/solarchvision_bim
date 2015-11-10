@@ -8536,6 +8536,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
   if ((plot_impacts == -2) || (plot_impacts == -1)) {
+    
+    Windrose_Image = new PImage [(1 + STUDY_j_end - STUDY_j_start)];
+    
     if (plot_impacts == -2) Impact_TYPE = Impact_SPD_DIR; 
     if (plot_impacts == -1) Impact_TYPE = Impact_SPD_DIR_TMP;
     
@@ -10886,9 +10889,9 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
       int J_START = STUDY_j_start;
       int J_END = STUDY_j_end;
       
-      if (display_Solarch_j > 0) {
-        J_START = display_Solarch_j - 1;
-        J_END = display_Solarch_j;
+      if (Day_of_Impact_to_Display > 0) {
+        J_START = Day_of_Impact_to_Display - 1;
+        J_END = Day_of_Impact_to_Display;
       }
     
       for (int j = J_START; j < J_END; j += DATE_step) {
@@ -11442,13 +11445,13 @@ void WIN3D_keyPressed (KeyEvent e) {
                   WIN3D_update_VerticesSolarValue = 1; 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
 
-        case '}' :display_Solarch_j += 1;
-                  if (display_Solarch_j > STUDY_j_end) display_Solarch_j = 0;
+        case '}' :Day_of_Impact_to_Display += 1;
+                  if (Day_of_Impact_to_Display > STUDY_j_end) Day_of_Impact_to_Display = 0;
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
                   break; 
-        case '{' :display_Solarch_j -= 1;
-                  if (display_Solarch_j < 0) display_Solarch_j = STUDY_j_end;
+        case '{' :Day_of_Impact_to_Display -= 1;
+                  if (Day_of_Impact_to_Display < 0) Day_of_Impact_to_Display = STUDY_j_end;
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
                   break; 
@@ -11463,13 +11466,8 @@ void WIN3D_keyPressed (KeyEvent e) {
                   ROLLOUT_Update = 1; 
                   break;              
 
-
-
         case 'x' :SOLARCHVISION_export_objects(); ROLLOUT_Update = 1; break;
         case 'X' :SOLARCHVISION_export_land(); ROLLOUT_Update = 1; break;
-        
-
-                      
         
       }
     }
@@ -14472,7 +14470,7 @@ void SOLARCHVISION_draw_SKY3D () {
               if (a > int(180 / stp_slp)) a -= int(180 / stp_slp);
               if (b > int(360 / stp_dir)) b -= int(360 / stp_dir);
               
-              float _valuesSUM = LocationExposure[display_Solarch_j][a][b];
+              float _valuesSUM = LocationExposure[Day_of_Impact_to_Display][a][b];
               
               if (_valuesSUM < 0.9 * FLOAT_undefined) {
               
@@ -15082,7 +15080,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                 if (a > int(180 / stp_slp)) a -= int(180 / stp_slp);
                 if (b > int(360 / stp_dir)) b -= int(360 / stp_dir);
                 
-                float _valuesSUM = LocationExposure[display_Solarch_j][a][b];
+                float _valuesSUM = LocationExposure[Day_of_Impact_to_Display][a][b];
                 
                 if (_valuesSUM < 0.9 * FLOAT_undefined) {
                 
@@ -16922,6 +16920,19 @@ void SOLARCHVISION_add_ParametricGeometries () {
 
 }
 
+int Day_of_Impact_to_Display = 0; // 0:total 1:day-1 2:day-2 etc.
+
+
+int display_Windrose_Image = 0; // 0:talse 1:true
+
+PImage[] Windrose_Image;
+
+PImage[] Solarch_Image;
+
+
+
+int display_Solarch_Image = 0; // 0:talse 1:true
+int Solarch_Image_Section = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
 
 float Solarch_Rotation = 0; // North is up by default
 
@@ -16932,12 +16943,6 @@ int Solarch_RES1 = 200;
 int Solarch_RES2 = 200;
 
 float Solarch_Elevation;
-
-PImage[] Solarch_Image;
-int display_Solarch_j = 0; // 0:total 1:day-1 2:day-2, 
-int display_Solarch_Image = 0; // 0:talse 1:true
-int Solarch_Image_Section = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
-
 
 
 int Field_Color = 3; // 0-3 
@@ -21387,7 +21392,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       display_Field_Image = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "display_Field_Image" , display_Field_Image, 0, 1, 1), 1));
       display_Solarch_Image = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "display_Solarch_Image" , display_Solarch_Image, 0, 1, 1), 1));
-      display_Solarch_j = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "display_Solarch_j" , display_Solarch_j, 0, STUDY_j_end - STUDY_j_start, 1), 1));
+      Day_of_Impact_to_Display = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Day_of_Impact_to_Display" , Day_of_Impact_to_Display, 0, STUDY_j_end - STUDY_j_start, 1), 1));
       
 
       Solarch_Image_Section = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Solarch_Image_Section" , Solarch_Image_Section, 0, 3, 1), 1));      
@@ -23881,7 +23886,7 @@ void SOLARCHVISION_draw_solarch_image () {
           
             display_solarch_texture = 1;
             
-            //WIN3D_Diagrams.texture(Solarch_Image[display_Solarch_j]); // ????????????
+            //WIN3D_Diagrams.texture(Solarch_Image[Day_of_Impact_to_Display]); // ????????????
           
           }
         } 
@@ -23901,7 +23906,7 @@ void SOLARCHVISION_draw_solarch_image () {
       if (Solarch_Image_Section != 0) {
         WIN3D_Diagrams.beginShape();
     
-        WIN3D_Diagrams.texture(Solarch_Image[display_Solarch_j]);  
+        WIN3D_Diagrams.texture(Solarch_Image[Day_of_Impact_to_Display]);  
         WIN3D_Diagrams.stroke(255, 255, 255, 0);
         WIN3D_Diagrams.fill(255, 255, 255, 0);  
         
