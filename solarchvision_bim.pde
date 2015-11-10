@@ -10626,14 +10626,6 @@ void STUDY_keyPressed (KeyEvent e) {
                   rebuild_SolarProjection_array = 1;
                   STUDY_Update = 1; ROLLOUT_Update = 1; break;
 
-        case '}' :join_hour_numbers += 1;
-                  if (join_hour_numbers > 240) join_hour_numbers = 240;
-                  update_DevelopDATA = 1;
-                  STUDY_Update = 1; ROLLOUT_Update = 1; break; 
-        case '{' :join_hour_numbers -= 1;
-                  if (join_hour_numbers < 1) join_hour_numbers = 1;
-                  update_DevelopDATA = 1;
-                  STUDY_Update = 1; ROLLOUT_Update = 1; break; 
         /*      
         case '*' :join_type *= -1;
                   update_DevelopDATA = 1;
@@ -11332,7 +11324,20 @@ void WIN3D_keyPressed (KeyEvent e) {
           
 
  
-        case ENTER :RenderShadowsOnUrbanPlane(); update_impacts = 1; display_Solarch_Image = 1; ROLLOUT_Update = 1; break;
+        case ENTER :RenderShadowsOnUrbanPlane(); 
+                    
+                    if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 0)) || (plot_impacts == 1)) plot_impacts = 1;
+                    else plot_impacts = 0;
+                   
+                    update_impacts = 1;
+                    
+                    display_Solarch_Image = 1;
+                    display_Field_Image = 0;
+                    
+                    STUDY_Update = 1;                   
+                    WIN3D_Update = 1;
+                    ROLLOUT_Update = 1; 
+                    break;
         
       }
     }    
@@ -11436,6 +11441,17 @@ void WIN3D_keyPressed (KeyEvent e) {
                   if (MODEL3D_TESELATION < 0) MODEL3D_TESELATION = 0;
                   WIN3D_update_VerticesSolarValue = 1; 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+
+        case '}' :display_Solarch_j += 1;
+                  if (display_Solarch_j > STUDY_j_end) display_Solarch_j = 0;
+                  WIN3D_Update = 1; 
+                  ROLLOUT_Update = 1; 
+                  break; 
+        case '{' :display_Solarch_j -= 1;
+                  if (display_Solarch_j < 0) display_Solarch_j = STUDY_j_end;
+                  WIN3D_Update = 1; 
+                  ROLLOUT_Update = 1; 
+                  break; 
                   
         case ENTER: if (WIN3D_FACES_SHADE == 3) SolarProjection();  
                     if (WIN3D_FACES_SHADE == 4) WIN3D_update_VerticesSolarValue = 1;
