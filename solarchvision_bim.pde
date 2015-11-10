@@ -1071,6 +1071,8 @@ int MODEL3D_TESELATION = 4;
 int SKY3D_TESELATION = 3;
 float SKY3D_scale = 10000 ; //1000; 
 
+float WindRose3D_scale = 400;
+
 int Display_SUN3D = 1;
 int Display_SKY3D = 1;
 
@@ -21550,19 +21552,22 @@ void SOLARCHVISION_draw_ROLLOUT () {
       
       Display_SUN3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SUN3D" , Display_SUN3D, 0, 1, 1), 1));
       Display_SKY3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SKY3D" , Display_SKY3D, 0, 1, 1), 1));
-                  
+      
+      SKY3D_TESELATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_TESELATION" , SKY3D_TESELATION, 0, 5, 1), 1));            
       SKY3D_scale = MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_scale" , SKY3D_scale, 100, 10000, -2);
-      SKY3D_TESELATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_TESELATION" , SKY3D_TESELATION, 0, 5, 1), 1));
 
+      WindRose3D_scale = MySpinner.update(X_control, Y_control, 0,1,0, "WindRose3D_scale" , WindRose3D_scale, 50, 3200, -2);
+      WindRose_RES = MySpinner.update(X_control, Y_control, 0,1,0, "WindRose3D_resolution" , WindRose_RES, 200, 600, 100);
       
-      
-      Day_of_Impact_to_Display = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Day_of_Impact_to_Display" , Day_of_Impact_to_Display, 0, STUDY_j_end - STUDY_j_start, 1), 1));
       display_WindRose_Image = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "display_WindRose_Image" , display_WindRose_Image, 0, 1, 1), 1));
+      
       display_SolarImpact_Image = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "display_SolarImpact_Image" , display_SolarImpact_Image, 0, 1, 1), 1));
       display_SpatialImpact_Image = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "display_SpatialImpact_Image" , display_SpatialImpact_Image, 0, 1, 1), 1));
       
       SolarImpact_Image_Section = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SolarImpact_Image_Section" , SolarImpact_Image_Section, 0, 3, 1), 1));      
       SpatialImpact_Image_Section = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Image_Section" , SpatialImpact_Image_Section, 0, 3, 1), 1));
+
+      Day_of_Impact_to_Display = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Day_of_Impact_to_Display" , Day_of_Impact_to_Display, 0, STUDY_j_end - STUDY_j_start, 1), 1));
       
     }
     
@@ -24140,10 +24145,9 @@ void SOLARCHVISION_draw_WindRose_Image () {
 
     WIN3D_Diagrams.beginShape();
     
-    float WindRose_Rotation = 0;
     float WindRose_Elevation = 0.0 + SpatialImpact_Elevation[1];
-    float WindRose_scale_U = SpatialImpact_scale_U; 
-    float WindRose_scale_V = SpatialImpact_scale_V;
+    float WindRose_scale_U = WindRose3D_scale; 
+    float WindRose_scale_V = WindRose3D_scale;
     
     float minU = 0.5 * WindRose_RES - (0.5 * WindRose_RES);
     float maxU = 0.5 * WindRose_RES + (0.5 * WindRose_RES);
@@ -24173,18 +24177,14 @@ void SOLARCHVISION_draw_WindRose_Image () {
       
       float x = 0, y = 0, z = 0;
 
-      x = a * cos_ang(WindRose_Rotation) - b * sin_ang(WindRose_Rotation);
-      y = a * sin_ang(WindRose_Rotation) + b * cos_ang(WindRose_Rotation);
+      x = a;
+      y = b;
       z = c;         
- 
 
       WIN3D_Diagrams.vertex(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D, u, v);
-
     }   
-
     
     WIN3D_Diagrams.endShape(CLOSE);
-
   }
 }
 
