@@ -21557,7 +21557,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       SKY3D_scale = MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_scale" , SKY3D_scale, 100, 10000, -2);
 
       WindRose3D_scale = MySpinner.update(X_control, Y_control, 0,1,0, "WindRose3D_scale" , WindRose3D_scale, 50, 3200, -2);
-      WindRose_RES = MySpinner.update(X_control, Y_control, 0,1,0, "WindRose3D_resolution" , WindRose_RES, 200, 600, 100);
+      WindRose_RES = int(MySpinner.update(X_control, Y_control, 0,1,0, "WindRose3D_resolution" , WindRose_RES, 200, 600, 100));
       
       display_WindRose_Image = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "display_WindRose_Image" , display_WindRose_Image, 0, 1, 1), 1));
       
@@ -24156,6 +24156,8 @@ void SOLARCHVISION_draw_WindRose_Image () {
 
     //float c = HeightAboveGround * objects_scale; // <<< or zero i.e. height of the plane in 3D  // ?????????
     float c = WindRose_Elevation * objects_scale; 
+    
+    c += 1; // put WindRose_Image it at level 1m. // <<<<<<<<<<<
 
     WIN3D_Diagrams.beginShape();
 
