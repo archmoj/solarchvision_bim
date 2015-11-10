@@ -8541,7 +8541,16 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
   if ((plot_impacts == -2) || (plot_impacts == -1)) {
     
-    WindRose_Image = new PImage [(1 + STUDY_j_end - STUDY_j_start)];
+    WindRose_Image = new PGraphics [(1 + STUDY_j_end - STUDY_j_start)];
+    
+    int RES = WindRose_RES;
+    
+    for (int j = STUDY_j_start - 1; j < STUDY_j_end; j += 1) { 
+      WindRose_Image[j + 1] = createGraphics(RES, RES, P2D); 
+      WindRose_Image[j + 1].translate(0.5 * RES, 0.5 * RES);
+      WindRose_Image[j + 1].background(255);
+      WindRose_Image[j + 1].ellipse(0,0,50,100);
+    }   
     
     if (plot_impacts == -2) Impact_TYPE = Impact_SPD_DIR; 
     if (plot_impacts == -1) Impact_TYPE = Impact_SPD_DIR_TMP;
@@ -8580,6 +8589,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
     for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {
       for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) { 
+        
         for (int i = 0; i < 24; i += 1) {
           if (isInHourlyRange(i) == 1) {
           
@@ -8650,21 +8660,20 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                     float T = _values_w_tmp[k];
                     float teta = _values_w_dir[k];
                     float D_teta = 15; 
-                    float R = STUDY_V_scale[_windspd] * _values_w_spd[k] * 45 / 50.0;
+                    float R = (10) * STUDY_V_scale[_windspd] * _values_w_spd[k] * 45 / 50.0;
                     
-                    float R_in = 0.75 * R; 
-                    float x1 = (j + obj_offset_x + obj_scale * R_in * cos_ang(90 - (teta - 0.5 * D_teta))) * sx_Plot;
-                    float y1 = (                   obj_scale * R_in * -sin_ang(90 - (teta - 0.5 * D_teta))) * sx_Plot;
-                    float x2 = (j + obj_offset_x + obj_scale * R_in * cos_ang(90 - (teta + 0.5 * D_teta))) * sx_Plot;
-                    float y2 = (                   obj_scale * R_in * -sin_ang(90 - (teta + 0.5 * D_teta))) * sx_Plot; 
+                    float R_in = 0; //0.75 * R; 
+                    float x1 = (obj_scale * R_in * cos_ang(90 - (teta - 0.5 * D_teta))) * sx_Plot;
+                    float y1 = (obj_scale * R_in * -sin_ang(90 - (teta - 0.5 * D_teta))) * sx_Plot;
+                    float x2 = (obj_scale * R_in * cos_ang(90 - (teta + 0.5 * D_teta))) * sx_Plot;
+                    float y2 = (obj_scale * R_in * -sin_ang(90 - (teta + 0.5 * D_teta))) * sx_Plot; 
                
-                    float x4 = (j + obj_offset_x + obj_scale * R * cos_ang(90 - (teta - 0.5 * D_teta))) * sx_Plot;
-                    float y4 = (                   obj_scale * R * -sin_ang(90 - (teta - 0.5 * D_teta))) * sx_Plot;
-                    float x3 = (j + obj_offset_x + obj_scale * R * cos_ang(90 - (teta + 0.5 * D_teta))) * sx_Plot;
-                    float y3 = (                   obj_scale * R * -sin_ang(90 - (teta + 0.5 * D_teta))) * sx_Plot;
+                    float x4 = (obj_scale * R * cos_ang(90 - (teta - 0.5 * D_teta))) * sx_Plot;
+                    float y4 = (obj_scale * R * -sin_ang(90 - (teta - 0.5 * D_teta))) * sx_Plot;
+                    float x3 = (obj_scale * R * cos_ang(90 - (teta + 0.5 * D_teta))) * sx_Plot;
+                    float y3 = (obj_scale * R * -sin_ang(90 - (teta + 0.5 * D_teta))) * sx_Plot;
          
                     float _u = 0;
-                     
          
                     if (Impact_TYPE == Impact_SPD_DIR) {
   
@@ -8676,10 +8685,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       
                       if (_s < 10) _s = 10;
                       
-                      STUDY_Diagrams.stroke(0, _s);
-                      STUDY_Diagrams.fill(0, _s); 
+                      WindRose_Image[j + 1].stroke(0, _s);
+                      WindRose_Image[j + 1].fill(0, _s); 
   
-                      STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
+                      WindRose_Image[j + 1].strokeWeight(STUDY_T_scale * 0);
                     }
                     if (Impact_TYPE == Impact_SPD_DIR_TMP) {
                       _u = 0.5 + 0.5 * (_Multiplier * T);
@@ -8690,11 +8699,12 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       
                       SET_COLOR_STYLE(PAL_TYPE, _u);
                       
-                      STUDY_Diagrams.strokeWeight(STUDY_T_scale * 1);
-                      STUDY_Diagrams.noFill(); 
+                      WindRose_Image[j + 1].strokeWeight(STUDY_T_scale * 1);
+                      WindRose_Image[j + 1].noFill(); 
                     }
                     
-                    STUDY_Diagrams.quad(x1, y1, x2, y2, x3, y3, x4, y4);
+                    WindRose_Image[j + 1].quad(x1, y1, x2, y2, x3, y3, x4, y4);
+                    println(x1, y1, x2, y2, x3, y3, x4, y4);
                     
                     if (draw_impact_summary == 1) { 
                       
@@ -8708,18 +8718,13 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                         
                         if (_s < 10) _s = 10;
                         
-                        STUDY_Diagrams.stroke(0, _s);
-                        STUDY_Diagrams.fill(0, _s); 
+                        WindRose_Image[0].stroke(0, _s);
+                        WindRose_Image[0].fill(0, _s); 
     
-                        STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
+                        WindRose_Image[0].strokeWeight(STUDY_T_scale * 0);
                       }
                       
-                      x1 -= (j + 1) * sx_Plot;
-                      x2 -= (j + 1) * sx_Plot;
-                      x3 -= (j + 1) * sx_Plot;
-                      x4 -= (j + 1) * sx_Plot;
-                      
-                      STUDY_Diagrams.quad(x1, y1, x2, y2, x3, y3, x4, y4);
+                      WindRose_Image[0].quad(x1, y1, x2, y2, x3, y3, x4, y4);
                       
                     }
                   }
@@ -8730,6 +8735,28 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         }
       }
     }
+
+    for (int j = STUDY_j_start - 1; j < STUDY_j_end; j += 1) { 
+      STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
+      STUDY_Diagrams.stroke(223);
+      STUDY_Diagrams.fill(223); 
+      STUDY_Diagrams.rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
+    
+      STUDY_Diagrams.strokeWeight(STUDY_T_scale * 2);
+      STUDY_Diagrams.stroke(255);
+      STUDY_Diagrams.noFill(); 
+      STUDY_Diagrams.rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
+
+      STUDY_Diagrams.imageMode(CENTER); 
+      STUDY_Diagrams.image(WindRose_Image[j + 1], (j + 100 * obj_scale) * sx_Plot, 0, int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
+
+      STUDY_Diagrams.stroke(0);
+      STUDY_Diagrams.fill(0);
+      STUDY_Diagrams.textAlign(CENTER, CENTER); 
+      STUDY_Diagrams.textSize(sx_Plot * 0.15 / STUDY_U_scale);          
+    }   
+    
+
     
     SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
     
@@ -8819,13 +8846,13 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     if (update_impacts == 1) {
     
       SolarImpact_Image = new PImage [(1 + STUDY_j_end - STUDY_j_start)];
-  
-      if (plot_impacts == 0) Impact_TYPE = Impact_ACTIVE; 
-      if (plot_impacts == 1) Impact_TYPE = Impact_PASSIVE;
-      
+
       int RES1 = SolarImpact_RES1;
       int RES2 = SolarImpact_RES2;
   
+      if (plot_impacts == 0) Impact_TYPE = Impact_ACTIVE; 
+      if (plot_impacts == 1) Impact_TYPE = Impact_PASSIVE;
+
       float Pa = FLOAT_undefined;
       float Pb = FLOAT_undefined;
       float Pc = FLOAT_undefined;
@@ -8857,17 +8884,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1 * STUDY_Pallet_ACTIVE_MLT; 
       if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02 * STUDY_Pallet_PASSIVE_MLT; 
   
-      //for (int p = 0; p < 3; p += 1) { 
-        //int l = 3 * int(impact_layer / 3) + p;
-  
-      //for (int p = 0; p < 3; p += 2) { 
-        //int l = 3 * int(impact_layer / 3) + p;
-        
       for (int p = 0; p < 1; p += 1) { 
         int l = impact_layer;
-        
-      //for (int p = 0; p < 1; p += 1) { 
-        //int l = 3 * int(impact_layer / 3) + 1; //impact_layer;      
         
         PImage total_Image_RGBA = createImage(RES1, RES2, RGB);
         
@@ -9173,11 +9191,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               Image_RGBA.updatePixels(); 
               
               if (camera_variation == 0) {
-
-                int SolarImpact_Image_j = j + 1;
-                
-                SolarImpact_Image[SolarImpact_Image_j] = Image_RGBA;           
-                if (SolarImpact_record_JPG == 1) SolarImpact_Image[SolarImpact_Image_j].save(get_SpatialImpact_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(SolarImpact_Image_j, 0) + ".jpg");
+                SolarImpact_Image[j + 1] = Image_RGBA;           
+                if (SolarImpact_record_JPG == 1) SolarImpact_Image[j + 1].save(get_SpatialImpact_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(j + 1, 0) + ".jpg");
               }            
              
               STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
@@ -9265,11 +9280,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           total_Image_RGBA.updatePixels(); 
           
           if (camera_variation == 0) {
-            
-            int SolarImpact_Image_j = 0;
-            
-            SolarImpact_Image[SolarImpact_Image_j] = total_Image_RGBA;           
-            if (SolarImpact_record_JPG == 1) SolarImpact_Image[SolarImpact_Image_j].save(get_SpatialImpact_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(SolarImpact_Image_j, 0) + ".jpg");
+            SolarImpact_Image[0] = total_Image_RGBA;           
+            if (SolarImpact_record_JPG == 1) SolarImpact_Image[0].save(get_SpatialImpact_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(0, 0) + ".jpg");
           }      
   
           STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
@@ -16935,12 +16947,11 @@ void SOLARCHVISION_add_ParametricGeometries () {
 
 int Day_of_Impact_to_Display = 0; // 0:total 1:day-1 2:day-2 etc.
 
-PImage[] WindRose_Image;
+PGraphics[] WindRose_Image;
 
 int display_WindRose_Image = 0; // 0:talse 1:true
 
-int WindRose_RES1 = 200;
-int WindRose_RES2 = 200;
+int WindRose_RES = 200;
 
 
 PImage[] SolarImpact_Image;
@@ -18721,9 +18732,7 @@ void SolarProjection () {
             if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = COMPARISON; 
 
             if (_valuesSUM < 0.9 * FLOAT_undefined) {
-            
-              int SolarImpact_Image_j = j + 1;      
-              LocationExposure[SolarImpact_Image_j][a][b] = _valuesSUM;        
+              LocationExposure[j + 1][a][b] = _valuesSUM;        
             }
 
           }
@@ -18764,9 +18773,7 @@ void SolarProjection () {
       if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = COMPARISON; 
 
       if (_valuesSUM < 0.9 * FLOAT_undefined) {
-        
-        int SolarImpact_Image_j = 0;
-        LocationExposure[SolarImpact_Image_j][a][b] = _valuesSUM;
+        LocationExposure[0][a][b] = _valuesSUM;
       }
     }
   }
@@ -23986,10 +23993,10 @@ void SOLARCHVISION_draw_WindRose_Image () {
     float WindRose_scale_V = SpatialImpact_scale_V;    
 
     
-    float minU = 0.5 * WindRose_RES1 - (0.5 * WindRose_RES1);
-    float maxU = 0.5 * WindRose_RES1 + (0.5 * WindRose_RES1);
-    float minV = 0.5 * WindRose_RES2 - (0.5 * WindRose_RES2);
-    float maxV = 0.5 * WindRose_RES2 + (0.5 * WindRose_RES2);
+    float minU = 0.5 * WindRose_RES - (0.5 * WindRose_RES);
+    float maxU = 0.5 * WindRose_RES + (0.5 * WindRose_RES);
+    float minV = 0.5 * WindRose_RES - (0.5 * WindRose_RES);
+    float maxV = 0.5 * WindRose_RES + (0.5 * WindRose_RES);
 
     //float c = HeightAboveGround * objects_scale; // <<< or zero i.e. height of the plane in 3D  // ?????????
     float c = WindRose_Elevation * objects_scale; 
