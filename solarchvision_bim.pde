@@ -2405,7 +2405,11 @@ void draw () {
      
     }
     
-    
+    if (BAR_d_Update == 1) {
+        
+      SOLARCHVISION_draw_window_BAR_d();
+     
+    }    
 
 
     if (FRAME_record_JPG == 1) {
@@ -3193,10 +3197,6 @@ void SOLARCHVISION_draw_WORLD () {
 void SOLARCHVISION_draw_STUDY () {
 
   cursor(WAIT);
-  
-  
-
-
   
   
   if (STUDY_Update == 1) {
@@ -26079,13 +26079,6 @@ void SOLARCHVISION_draw_window_BAR_b () {
 
         if (Bar_Switch.equals("3DViewPoint")) set_to_View_3DViewPoint(j - 1);
 
-
-
-
-
-
-
-        
       }
 
     
@@ -26565,3 +26558,139 @@ void set_to_View_3DViewPoint (int n) {
 } 
 
 
+
+
+int BAR_d_Update = 1;
+
+float BAR_d_tab = d_pixel;
+
+String[][] BAR_d_Items = {
+                          
+                          {"1", "Winter", "Summer", "Time", "3"},
+                             
+                        };         
+
+
+
+int BAR_d_Selection = -1;                        
+
+
+int BAR_d_Display_Text = 0; 
+
+
+void SOLARCHVISION_draw_window_BAR_d () {
+  
+  if (BAR_d_Update == 1) {
+  
+    BAR_d_Update = 0;
+    
+    fill(0,191,0);
+    noStroke();
+    rect(0, a_pixel + b_pixel + 2 * h_pixel, width, d_pixel);
+    
+    X_control = 0; //0.25 * MESSAGE_S_View;
+    Y_control = a_pixel + b_pixel + 2 * h_pixel + 0.5 * d_pixel;
+  
+    float cx = X_control;
+    float cy = Y_control;
+    float cr = 0.5 * d_pixel;   
+    
+    for (int i = 0; i < BAR_d_Items.length; i++) {
+      
+      int j = int(BAR_d_Items[i][0]);; 
+      
+      float Item_width = BAR_d_tab * float(BAR_d_Items[i][BAR_d_Items[i].length - 1]);
+  
+      noFill();
+      stroke(255);
+      strokeWeight(1);
+      rect(cx, cy - cr, Item_width, d_pixel);
+      strokeWeight(0);
+      
+      if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + Item_width, cy + cr) == 1) {
+
+        if (mouseButton == RIGHT) {       
+          
+          if (BAR_d_Selection != i) {
+            BAR_d_Selection = i;
+          }
+          else {
+            
+            int n = int(BAR_d_Items[i][0]);
+            
+            n -= 1;
+            
+            if (n <= 0) n = BAR_d_Items[i].length - 3;
+            
+            BAR_d_Items[i][0] = nf(n, 0);
+            
+            j = n;
+          }
+        }
+        
+        if (mouseButton == LEFT) {
+
+          if (BAR_d_Selection != i) {
+            BAR_d_Selection = i;
+          }
+          else {
+              
+            int n = int(BAR_d_Items[i][0]);
+            
+            n += 1;
+            
+            if (n >= BAR_d_Items[i].length - 2) n = 1;
+            
+            BAR_d_Items[i][0] = nf(n, 0);
+            
+            j = n;
+          }
+        }               
+
+        
+        fill(255,127,0);
+        noStroke();
+        rect(cx, cy - cr, Item_width, d_pixel);     
+       
+        String Bar_Switch = BAR_d_Items[i][BAR_d_Items[i].length - 2];
+
+
+        if (Bar_Switch.equals("Time")) {
+          
+          
+          ROLLOUT_Update = 1; 
+        }
+        
+      
+      }
+
+      BAR_d_Display_Text = 1;  
+
+      { // drawing the icons where available
+        
+        String Bar_Switch = BAR_d_Items[i][BAR_d_Items[i].length - 2];
+
+        if (Bar_Switch.equals("???")) {
+
+        }
+      }
+  
+      if (BAR_d_Display_Text == 1) { // writing titles where the icon is not available
+  
+        textAlign(CENTER, CENTER);   
+        stroke(255); 
+        fill(255);
+        textSize(1.25 * MESSAGE_S_View);
+                
+        text(BAR_d_Items[i][j], cx + 0.5 * Item_width, cy - 0.2 * MESSAGE_S_View);
+      }
+      
+  
+      cx += Item_width;    
+    }
+      
+    
+    X_clicked = -1;
+    Y_clicked = -1;
+  }  
+}   
