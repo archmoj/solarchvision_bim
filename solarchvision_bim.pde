@@ -1107,7 +1107,7 @@ float WORLD_Image_Scale = 1.0;
 
 float STUDY_Image_Scale = 1.0;
 
-
+int pre_STUDY_j_end;
 int pre_STUDY_setup;
 int pre_impacts_source;
 int pre_STATION_NUMBER;
@@ -1339,14 +1339,17 @@ void empty_Materials_DiffuseArea () {
 
 
                   
-int h_pixel = 325; //340; 
+int h_pixel = 300; //325; //340; 
 int w_pixel = int(h_pixel * 1.5); 
 
 float MESSAGE_S_View = w_pixel / 40.0;
 
 
 int a_pixel = int(1.5 * MESSAGE_S_View); // menu bar
-int b_pixel = int(3 * MESSAGE_S_View); // tool bar
+int b_pixel = int(3 * MESSAGE_S_View); // 3D tool bar
+
+int d_pixel = int(4.5 * MESSAGE_S_View); // time bar
+
 
 float WIN3D_scale3D; 
 
@@ -1428,7 +1431,7 @@ int ROLLOUT_CY_View = a_pixel + b_pixel + 0;
 int ROLLOUT_X_View = 1 * h_pixel;
 int ROLLOUT_Y_View = 2 * h_pixel;
 float ROLLOUT_R_View = float(ROLLOUT_Y_View) / float(ROLLOUT_X_View);
-float ROLLOUT_S_View = 1; //0.75; // ?????
+float ROLLOUT_S_View = h_pixel / 325.0; //1; //0.75; // ?????
 
 int ROLLOUT_Update = 1;
 int ROLLOUT_include = 1;
@@ -1450,7 +1453,7 @@ float CAM_fov;
 
 void setup () {
 
-  size(2 * w_pixel + ROLLOUT_X_View, a_pixel + b_pixel + 2 * h_pixel, P2D);
+  size(2 * w_pixel + ROLLOUT_X_View, a_pixel + b_pixel + 2 * h_pixel + d_pixel, P2D);
 
   SOLARCHVISION_draw_frame_icon();
 
@@ -1509,9 +1512,9 @@ void SOLARCHVISION_update_station (int Step) {
   
   if ((Step == 0) || (Step == 1)) {
     
-    WIN3D_FACES_SHADE = 0;
-    WIN3D_update_VerticesSolarValue = 1;
+    rebuild_SolarProjection_array = 1;
     
+    WIN3D_update_VerticesSolarValue = 1;
     
     WORLD_Update = 1;
     WIN3D_Update = 1; 
@@ -1929,7 +1932,8 @@ void draw () {
     if (ROLLOUT_include == 1) {
       if (ROLLOUT_Update == 1) {
         ROLLOUT_Update = 0;
-      
+        
+        pre_STUDY_j_end = STUDY_j_end;
         pre_STUDY_setup = STUDY_setup;
         pre_impacts_source = impacts_source;
         pre_STATION_NUMBER = STATION_NUMBER;
@@ -2022,6 +2026,10 @@ void draw () {
         pre_plot_impacts = plot_impacts;
         
         SOLARCHVISION_draw_ROLLOUT();
+        
+        if (pre_STUDY_j_end != STUDY_j_end) {
+          rebuild_SolarProjection_array = 1;
+        }
         
         if (pre_DATE != _DATE) {
           SOLARCHVISION_update_date();
@@ -3214,7 +3222,7 @@ void SOLARCHVISION_draw_STUDY () {
     //}     
     
      
-    STUDY_S_View = (STUDY_X_View / 2200.0);
+    STUDY_S_View = (STUDY_X_View / 2100.0);
     STUDY_U_scale = 18.0 / float(STUDY_j_end - STUDY_j_start);
    
     
@@ -8721,13 +8729,13 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     if (draw_impact_summary == 1) {
       int j = -1; // << to put the summary graph before the daily graphs
       
-      int pre_STUDY_j_start = STUDY_j_start;
-      int pre_STUDY_j_end = STUDY_j_end;
+      int keep_STUDY_j_start = STUDY_j_start;
+      int keep_STUDY_j_end = STUDY_j_end;
       STUDY_j_start = j;
       STUDY_j_end = j + 1;
       SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
-      STUDY_j_start = pre_STUDY_j_start;
-      STUDY_j_end = pre_STUDY_j_end;
+      STUDY_j_start = keep_STUDY_j_start;
+      STUDY_j_end = keep_STUDY_j_end;
 
       STUDY_Diagrams.strokeWeight(STUDY_T_scale * 2);
       STUDY_Diagrams.stroke(0);
@@ -9759,13 +9767,13 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
         my_text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95 * sx_Plot / STUDY_U_scale, 0);
 
-        int pre_STUDY_j_start = STUDY_j_start;
-        int pre_STUDY_j_end = STUDY_j_end;
+        int keep_STUDY_j_start = STUDY_j_start;
+        int keep_STUDY_j_end = STUDY_j_end;
         STUDY_j_start = j;
         STUDY_j_end = j + 1;
         SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
-        STUDY_j_start = pre_STUDY_j_start;
-        STUDY_j_end = pre_STUDY_j_end;
+        STUDY_j_start = keep_STUDY_j_start;
+        STUDY_j_end = keep_STUDY_j_end;
       }
 
 
@@ -10601,6 +10609,7 @@ void STUDY_keyPressed (KeyEvent e) {
                   }
                   */
                   update_DevelopDATA = 1;
+                  rebuild_SolarProjection_array = 1;
                   STUDY_Update = 1; ROLLOUT_Update = 1; break; 
         case '[' :STUDY_j_end -= 1; 
                   if (STUDY_j_end <= STUDY_j_start) STUDY_j_end += 1;
@@ -10614,6 +10623,7 @@ void STUDY_keyPressed (KeyEvent e) {
                   }                  
                   */
                   update_DevelopDATA = 1;
+                  rebuild_SolarProjection_array = 1;
                   STUDY_Update = 1; ROLLOUT_Update = 1; break;
 
         case '}' :join_hour_numbers += 1;
@@ -13857,7 +13867,8 @@ void SOLARCHVISION_remove_3Dobjects () {
   urbanFaces_start = 0;
   urbanFaces_end = 0; 
   
-  WIN3D_FACES_SHADE = 0;
+  rebuild_SolarProjection_array = 1;
+  
   WIN3D_update_VerticesSolarValue = 1;  
  
 }
@@ -14373,6 +14384,8 @@ void SOLARCHVISION_draw_SKY3D () {
       }
 
       else if (WIN3D_FACES_SHADE == 3) {
+        
+        if (rebuild_SolarProjection_array != 0) SolarProjection();
           
         int PAL_TYPE = 0; 
         int PAL_DIR = 1;
@@ -14990,6 +15003,8 @@ void SOLARCHVISION_draw_3Dobjects () {
           }        
           
           else if (WIN3D_FACES_SHADE == 3) {
+            
+            if (rebuild_SolarProjection_array != 0) SolarProjection();
             
             int PAL_TYPE = 0; 
             int PAL_DIR = 1;
@@ -18407,12 +18422,15 @@ float SolarAtSurface (float SunR1, float SunR2, float SunR3, float SunR4, float 
 
 
 
+
 float stp_slp;
 float stp_dir;
 int n_slp;  
 int n_dir;
 
 float[][][]LocationExposure;
+
+
 
 void SOLARCHVISION_build_SolarProjection_array () {
   
@@ -18431,12 +18449,19 @@ void SOLARCHVISION_build_SolarProjection_array () {
       }
     } 
   }
+  
+  rebuild_SolarProjection_array = 0;
 }
 
+int rebuild_SolarProjection_array = 1;
 
 void SolarProjection () {
   
   cursor(WAIT);
+  
+  if (rebuild_SolarProjection_array != 0) {
+    SOLARCHVISION_build_SolarProjection_array();
+  }
   
   float pre_per_day = per_day;
   int pre_num_add_days = num_add_days;
