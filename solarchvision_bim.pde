@@ -1515,6 +1515,8 @@ void SOLARCHVISION_update_station (int Step) {
   if ((Step == 0) || (Step == 1)) {
     
     rebuild_SolarProjection_array = 1;
+    rebuild_SolarImpact_Image_array = 1;
+    rebuild_WindRose_Image_array = 1;    
     
     WIN3D_update_VerticesSolarValue = 1;
     
@@ -2031,6 +2033,8 @@ void draw () {
         
         if (pre_STUDY_j_end != STUDY_j_end) {
           rebuild_SolarProjection_array = 1;
+          rebuild_SolarImpact_Image_array = 1;
+          rebuild_WindRose_Image_array = 1;          
         }
         
         if (pre_DATE != _DATE) {
@@ -8541,7 +8545,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
   if ((plot_impacts == -2) || (plot_impacts == -1)) {
     
-    WindRose_Image = new PImage [(1 + STUDY_j_end - STUDY_j_start)];
+    SOLARCHVISION_build_WindRose_Image_array(); 
     
     int RES = WindRose_RES;
     
@@ -8940,6 +8944,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         //?? French
       }           
     }
+    
+    if (display_WindRose_Image != 0) WIN3D_Update = 1;
   } 
 
 
@@ -8950,7 +8956,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     
     if (update_impacts == 1) {
     
-      SolarImpact_Image = new PImage [(1 + STUDY_j_end - STUDY_j_start)];
+      SOLARCHVISION_build_SolarImpact_Image_array();
 
       int RES1 = SolarImpact_RES1;
       int RES2 = SolarImpact_RES2;
@@ -9512,6 +9518,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     
     }
 
+    if (display_SolarImpact_Image != 0) WIN3D_Update = 1;
   }
 
 
@@ -10734,6 +10741,8 @@ void STUDY_keyPressed (KeyEvent e) {
                   */
                   update_DevelopDATA = 1;
                   rebuild_SolarProjection_array = 1;
+                  rebuild_SolarImpact_Image_array = 1;
+                  rebuild_WindRose_Image_array = 1;
                   STUDY_Update = 1; ROLLOUT_Update = 1; break; 
         case '[' :STUDY_j_end -= 1; 
                   if (STUDY_j_end <= STUDY_j_start) STUDY_j_end += 1;
@@ -10748,6 +10757,8 @@ void STUDY_keyPressed (KeyEvent e) {
                   */
                   update_DevelopDATA = 1;
                   rebuild_SolarProjection_array = 1;
+                  rebuild_SolarImpact_Image_array = 1;
+                  rebuild_WindRose_Image_array = 1;                  
                   STUDY_Update = 1; ROLLOUT_Update = 1; break;
 
         /*      
@@ -14008,7 +14019,9 @@ void SOLARCHVISION_remove_3Dobjects () {
   urbanFaces_start = 0;
   urbanFaces_end = 0; 
   
-  rebuild_SolarProjection_array = 1;
+  //rebuild_SolarProjection_array = 1;
+  //rebuild_SolarImpact_Image_array = 1;
+  //rebuild_WindRose_Image_array = 1;  
   
   WIN3D_update_VerticesSolarValue = 1;  
  
@@ -17050,6 +17063,29 @@ void SOLARCHVISION_add_ParametricGeometries () {
 
 }
 
+
+void SOLARCHVISION_build_SolarImpact_Image_array () {
+
+  SolarImpact_Image = new PImage [(1 + STUDY_j_end - STUDY_j_start)];
+  
+  for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) { 
+    
+    SolarImpact_Image[j + 1] = createImage(2,2,RGB); // empty and small
+    
+  }  
+}
+
+void SOLARCHVISION_build_WindRose_Image_array () {
+  
+  WindRose_Image = new PImage [(1 + STUDY_j_end - STUDY_j_start)];
+  
+  for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) { 
+    
+    WindRose_Image[j + 1] = createImage(2,2,RGB); // empty and small
+    
+  }  
+}
+
 int Day_of_Impact_to_Display = 0; // 0:total 1:day-1 2:day-2 etc.
 
 PImage[] WindRose_Image;
@@ -18605,6 +18641,8 @@ void SOLARCHVISION_build_SolarProjection_array () {
 }
 
 int rebuild_SolarProjection_array = 1;
+int rebuild_SolarImpact_Image_array = 1;
+int rebuild_WindRose_Image_array = 1; 
 
 void SolarProjection () {
   
@@ -23991,9 +24029,14 @@ void RenderShadowsOnUrbanPlane() {
 
 
 void SOLARCHVISION_draw_SolarImpact_Image () {
-
+  
   if (display_SolarImpact_Image != 0) {
-    if (SolarImpact_Image_Section != 0) {  
+    if (SolarImpact_Image_Section != 0) {
+    
+      if (rebuild_SolarImpact_Image_array != 0) {
+        SOLARCHVISION_build_SolarImpact_Image_array();
+        rebuild_SolarImpact_Image_array = 0;
+      }      
   
       WIN3D_Diagrams.stroke(0);
       WIN3D_Diagrams.fill(127,127,127);    
@@ -24084,8 +24127,13 @@ void SOLARCHVISION_draw_SolarImpact_Image () {
 
 
 void SOLARCHVISION_draw_WindRose_Image () {
-
+  
   if (display_WindRose_Image != 0) {
+    
+    if (rebuild_WindRose_Image_array != 0) {
+      SOLARCHVISION_build_WindRose_Image_array();
+      rebuild_WindRose_Image_array = 0;
+    }    
   
     WIN3D_Diagrams.stroke(0);
     WIN3D_Diagrams.fill(127,127,127);    
