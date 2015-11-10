@@ -8580,11 +8580,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     if (Impact_TYPE == Impact_SPD_DIR) _Multiplier = 1.0;
     if (Impact_TYPE == Impact_SPD_DIR_TMP) _Multiplier = 1.0 / 30.0;
 
-    PGraphics total_WIND_Diagrams = createGraphics(RES, RES); 
-    total_WIND_Diagrams.beginDraw();
-    total_WIND_Diagrams.background(255);
-    total_WIND_Diagrams.translate(0.5 * RES, 0.5 * RES);
-    
     for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) { 
       
       PGraphics WIND_Diagrams = createGraphics(RES, RES); 
@@ -8706,10 +8701,114 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                     
                     WIND_Diagrams.quad(x1, y1, x2, y2, x3, y3, x4, y4);
                     
-                    if (draw_impact_summary == 1) { 
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      WIND_Diagrams.endDraw();
+      WindRose_Image[j + 1] = WIND_Diagrams;      
+    }
+
+    
+ 
+
+    PGraphics total_WIND_Diagrams = createGraphics(RES, RES); 
+    total_WIND_Diagrams.beginDraw();
+    total_WIND_Diagrams.background(255);
+    total_WIND_Diagrams.translate(0.5 * RES, 0.5 * RES);
+    
+    if (draw_impact_summary == 1) {
+      
+      for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) { 
+        for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {    
+          for (int i = 0; i < 24; i += 1) {
+            if (isInHourlyRange(i) == 1) {
+            
+              for (int k = (start_z - 1); k <= (end_z - 1); k += 1) {
+      
+                _values_w_dir[k] = FLOAT_undefined;
+                _values_w_spd[k] = FLOAT_undefined;
+                _values_w_tmp[k] = FLOAT_undefined;
+               
+                int _plot = 1;
+                
+                if (_plot == 1) {
+                  
+                  int now_k = k;
+                  int now_i = i;
+                  int now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+      
+                  if (now_j >= 365) {
+                   now_j = now_j % 365; 
+                  }
+                  if (now_j < 0) {
+                   now_j = (now_j + 365) % 365; 
+                  }
+    
+                  if (impacts_source == databaseNumber_CLIMATE_WY2) {
+                      Pa = CLIMATE_WY2[now_i][now_j][_winddir][now_k]; 
+                      Pb = CLIMATE_WY2[now_i][now_j][_windspd][now_k]; 
+                      Pc = CLIMATE_WY2[now_i][now_j][_drybulb][now_k];
+                  }
+                  if (impacts_source == databaseNumber_ENSEMBLE) {
+                      Pa = ENSEMBLE[now_i][now_j][_winddir][now_k]; 
+                      Pb = ENSEMBLE[now_i][now_j][_windspd][now_k]; 
+                      Pc = ENSEMBLE[now_i][now_j][_drybulb][now_k];
+                  }            
+                  if (impacts_source == databaseNumber_OBSERVED) {
+                      Pa = OBSERVED[now_i][now_j][_winddir][now_k]; 
+                      Pb = OBSERVED[now_i][now_j][_windspd][now_k]; 
+                      Pc = OBSERVED[now_i][now_j][_drybulb][now_k];
+                  }   
+                  if (impacts_source == databaseNumber_CLIMATE_EPW) {
+                      Pa = CLIMATE_EPW[now_i][now_j][_winddir][now_k]; 
+                      Pb = CLIMATE_EPW[now_i][now_j][_windspd][now_k]; 
+                      Pc = CLIMATE_EPW[now_i][now_j][_drybulb][now_k];
+                  }   
+                  
+                  if (Pa > 0.9 * FLOAT_undefined || Pb > 0.9 * FLOAT_undefined || Pc > 0.9 * FLOAT_undefined) {
+                    _values_w_dir[k] = FLOAT_undefined;
+                    _values_w_spd[k] = FLOAT_undefined;
+                    _values_w_tmp[k] = FLOAT_undefined;
+                  }
+                  else {
+                    int drw_count = 0;
+                    if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                    if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                    if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                    if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                        
+                    if ((impacts_source == databaseNumber_ENSEMBLE) && (ENSEMBLE_Flag[now_i][now_j][_winddir][now_k] != 1)) drw_count = 0;
                       
+                    if (drw_count == 1) {
+    
+                      _values_w_dir[k] = Pa;
+                      _values_w_spd[k] = Pb;
+                      _values_w_tmp[k] = Pc;
+                
+                      float T = _values_w_tmp[k];
+                      float teta = _values_w_dir[k];
+                      float D_teta = 15; 
+                      float R = STUDY_V_scale[_windspd] * _values_w_spd[k] * 45 / 50.0;
+                      
+                      float R_in = 0; //0.75 * R; 
+                      float x1 = (obj_scale * R_in * cos_ang(90 - (teta - 0.5 * D_teta))) * sx_Plot;
+                      float y1 = (obj_scale * R_in * -sin_ang(90 - (teta - 0.5 * D_teta))) * sx_Plot;
+                      float x2 = (obj_scale * R_in * cos_ang(90 - (teta + 0.5 * D_teta))) * sx_Plot;
+                      float y2 = (obj_scale * R_in * -sin_ang(90 - (teta + 0.5 * D_teta))) * sx_Plot; 
+                 
+                      float x4 = (obj_scale * R * cos_ang(90 - (teta - 0.5 * D_teta))) * sx_Plot;
+                      float y4 = (obj_scale * R * -sin_ang(90 - (teta - 0.5 * D_teta))) * sx_Plot;
+                      float x3 = (obj_scale * R * cos_ang(90 - (teta + 0.5 * D_teta))) * sx_Plot;
+                      float y3 = (obj_scale * R * -sin_ang(90 - (teta + 0.5 * D_teta))) * sx_Plot;
+           
+                      float _u = 0;
+           
                       if (Impact_TYPE == Impact_SPD_DIR) {
-  
+    
                         float _s = (STUDY_O_scale / 100) * 255 / (0.333 * layers_count) / (STUDY_j_end - STUDY_j_start);
     
                         if (sky_scenario > 1) _s *= 3; // to improve visibility of those cases.
@@ -8723,9 +8822,21 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     
                         total_WIND_Diagrams.strokeWeight(STUDY_T_scale * 0);
                       }
+                      if (Impact_TYPE == Impact_SPD_DIR_TMP) {
+                        _u = 0.5 + 0.5 * (_Multiplier * T);
+                        
+                        if (PAL_DIR == -1) _u = 1 - _u;
+                        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                        if (PAL_DIR == 2) _u =  0.5 * _u;
+                        
+                        SET_COLOR_STYLE(PAL_TYPE, _u);
+                        
+                        total_WIND_Diagrams.strokeWeight(STUDY_T_scale * 1);
+                        total_WIND_Diagrams.noFill(); 
+                      }
                       
                       total_WIND_Diagrams.quad(x1, y1, x2, y2, x3, y3, x4, y4);
-                      
+  
                     }
                   }
                 }
@@ -8734,12 +8845,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           }
         }
       }
-      WIND_Diagrams.endDraw();
-      WindRose_Image[j + 1] = WIND_Diagrams;      
     }
     total_WIND_Diagrams.endDraw();
     WindRose_Image[0] = total_WIND_Diagrams;          
-    
 
     for (int j = STUDY_j_start - 1; j < STUDY_j_end; j += 1) {
       
@@ -8758,7 +8866,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   
     }   
     
-
     SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
     
     if (draw_impact_summary == 1) {
