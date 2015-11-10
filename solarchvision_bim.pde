@@ -1073,6 +1073,7 @@ float SKY3D_scale = 10000 ; //1000;
 
 float WindRose3D_scale = 400;
 
+
 int Display_SUN3D = 1;
 int Display_SKY3D = 1;
 
@@ -8550,6 +8551,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     SOLARCHVISION_build_WindRose_Image_array(); 
     
     int RES = WindRose_RES;
+    
+    Rendered_WindRose_RES = RES;
     
     if (plot_impacts == -2) Impact_TYPE = Impact_SPD_DIR; 
     if (plot_impacts == -1) Impact_TYPE = Impact_SPD_DIR_TMP;
@@ -17075,6 +17078,8 @@ void SOLARCHVISION_build_SolarImpact_Image_array () {
     SolarImpact_Image[j + 1] = createImage(2,2,RGB); // empty and small
     
   }  
+  
+  rebuild_SolarImpact_Image_array = 0;
 }
 
 void SOLARCHVISION_build_WindRose_Image_array () {
@@ -17086,6 +17091,8 @@ void SOLARCHVISION_build_WindRose_Image_array () {
     WindRose_Image[j + 1] = createImage(2,2,RGB); // empty and small
     
   }  
+  
+  rebuild_WindRose_Image_array = 0;
 }
 
 int Day_of_Impact_to_Display = 0; // 0:total 1:day-1 2:day-2 etc.
@@ -17094,7 +17101,9 @@ PImage[] WindRose_Image;
 
 int display_WindRose_Image = 0; // 0:talse 1:true
 
-int WindRose_RES = 200;
+int WindRose_RES = 400;
+
+int Rendered_WindRose_RES = WindRose_RES;
 
 
 PImage[] SolarImpact_Image;
@@ -24040,7 +24049,6 @@ void SOLARCHVISION_draw_SolarImpact_Image () {
     
       if (rebuild_SolarImpact_Image_array != 0) {
         SOLARCHVISION_build_SolarImpact_Image_array();
-        rebuild_SolarImpact_Image_array = 0;
       }      
   
       WIN3D_Diagrams.stroke(0);
@@ -24137,7 +24145,6 @@ void SOLARCHVISION_draw_WindRose_Image () {
     
     if (rebuild_WindRose_Image_array != 0) {
       SOLARCHVISION_build_WindRose_Image_array();
-      rebuild_WindRose_Image_array = 0;
     }    
   
     WIN3D_Diagrams.stroke(0);
@@ -24149,10 +24156,10 @@ void SOLARCHVISION_draw_WindRose_Image () {
     float WindRose_scale_U = WindRose3D_scale; 
     float WindRose_scale_V = WindRose3D_scale;
     
-    float minU = 0.5 * WindRose_RES - (0.5 * WindRose_RES);
-    float maxU = 0.5 * WindRose_RES + (0.5 * WindRose_RES);
-    float minV = 0.5 * WindRose_RES - (0.5 * WindRose_RES);
-    float maxV = 0.5 * WindRose_RES + (0.5 * WindRose_RES);
+    float minU = 0;
+    float maxU = Rendered_WindRose_RES;
+    float minV = 0;
+    float maxV = Rendered_WindRose_RES;
 
     //float c = HeightAboveGround * objects_scale; // <<< or zero i.e. height of the plane in 3D  // ?????????
     float c = WindRose_Elevation * objects_scale; 
