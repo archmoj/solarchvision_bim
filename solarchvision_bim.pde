@@ -11332,7 +11332,7 @@ void WIN3D_keyPressed (KeyEvent e) {
           
 
  
-        case ENTER :RenderShadowsOnUrbanPlane(); display_Solarch_Image = 1; ROLLOUT_Update = 1; break;
+        case ENTER :RenderShadowsOnUrbanPlane(); update_impacts = 1; display_Solarch_Image = 1; ROLLOUT_Update = 1; break;
         
       }
     }    
