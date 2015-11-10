@@ -8580,6 +8580,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     if (Impact_TYPE == Impact_SPD_DIR) _Multiplier = 1.0;
     if (Impact_TYPE == Impact_SPD_DIR_TMP) _Multiplier = 1.0 / 30.0;
 
+    PGraphics total_WIND_Diagrams = createGraphics(RES, RES); 
+    total_WIND_Diagrams.beginDraw();
+    total_WIND_Diagrams.background(255);
+    total_WIND_Diagrams.translate(0.5 * RES, 0.5 * RES);
     
     for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) { 
       
@@ -8612,8 +8616,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 if (now_j < 0) {
                  now_j = (now_j + 365) % 365; 
                 }
-  
-  
   
                 if (impacts_source == databaseNumber_CLIMATE_WY2) {
                     Pa = CLIMATE_WY2[now_i][now_j][_winddir][now_k]; 
@@ -8716,13 +8718,13 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                         
                         if (_s < 10) _s = 10;
                         
-                        //WindRose_Image[0].stroke(0, _s);
-                        //WindRose_Image[0].fill(0, _s); 
+                        total_WIND_Diagrams.stroke(0, _s);
+                        total_WIND_Diagrams.fill(0, _s); 
     
-                        //WindRose_Image[0].strokeWeight(STUDY_T_scale * 0);
+                        total_WIND_Diagrams.strokeWeight(STUDY_T_scale * 0);
                       }
                       
-                      //WindRose_Image[0].quad(x1, y1, x2, y2, x3, y3, x4, y4);
+                      total_WIND_Diagrams.quad(x1, y1, x2, y2, x3, y3, x4, y4);
                       
                     }
                   }
@@ -8733,15 +8735,13 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         }
       }
       WIND_Diagrams.endDraw();
-      
       WindRose_Image[j + 1] = WIND_Diagrams;      
     }
+    total_WIND_Diagrams.endDraw();
+    WindRose_Image[0] = total_WIND_Diagrams;          
     
-    //WindRose_Image[0].endDraw();
 
-    //for (int j = STUDY_j_start - 1; j < STUDY_j_end; j += 1) {
-    for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) { 
-      
+    for (int j = STUDY_j_start - 1; j < STUDY_j_end; j += 1) {
       
       STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
       STUDY_Diagrams.stroke(223);
@@ -8755,13 +8755,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
       STUDY_Diagrams.imageMode(CENTER); 
       STUDY_Diagrams.image(WindRose_Image[j + 1], (j + 100 * obj_scale) * sx_Plot, 0, int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
-      
-      
   
     }   
     
 
-/*    
     SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
     
     if (draw_impact_summary == 1) {
@@ -8780,7 +8777,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       STUDY_Diagrams.noFill(); 
       STUDY_Diagrams.rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);      
     }
-*/
 
     if (Impact_TYPE != Impact_SPD_DIR) { 
       
