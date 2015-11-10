@@ -272,7 +272,7 @@ String MAKE_mainname () {
 
 }
 
-String MAKE_Filenames () {
+String MAKE_Filenames (String beginName) {
   String My_Filenames = "";
   String Main_name = MAKE_mainname();
   
@@ -280,7 +280,7 @@ String MAKE_Filenames () {
   My_Filenames += nf(_YEAR, 2) + "-" + nf(_MONTH, 2) + "-" + nf(_DAY, 2) + "/";
   My_Filenames += databaseString[impacts_source] + "/";  
 
-  //My_Filenames += "SOLARCHVISION_";
+  My_Filenames += beginName;
   My_Filenames += DEFINED_STATIONS[STATION_NUMBER][0] + "_";
   
   My_Filenames += LAYERS_Title[STUDY_drw_Layer][_EN] + "_" ;
@@ -2611,8 +2611,10 @@ void SOLARCHVISION_draw_WIN3D () {
   
     
     if ((WIN3D_record_JPG == 1) || (WIN3D_record_AUTO == 1)) {
-      WIN3D_Diagrams.save("WIN3D_" + MAKE_Filenames() + ".jpg");
-      println("Image created");
+      String myFile = MAKE_Filenames("WIN3D_") + ".jpg";
+      WIN3D_Diagrams.save(myFile);
+      open("explorer /select," + myFile.replace("/", "\\"));
+      println("Image created:" + myFile);       
     }
     
     imageMode(CORNER);
@@ -2660,7 +2662,7 @@ void SOLARCHVISION_draw_WORLD () {
     
     if (WORLD_record_PDF == 1) {
       println("PDF:begin");
-      WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, PDF, MAKE_Filenames() + ".pdf");
+      WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, PDF, MAKE_Filenames("WORLD_") + ".pdf");
       beginRecord(WORLD_Diagrams);
     }
     else if (WORLD_Image_Scale != 1) {
@@ -3141,17 +3143,21 @@ void SOLARCHVISION_draw_WORLD () {
     
     if (WORLD_record_PDF == 1) {
       endRecord();
-      println("PDF:end");
+      
+      String myFile = MAKE_Filenames("WORLD_") + ".pdf";
+      open("explorer /select," + myFile.replace("/", "\\"));
+      println("Image created:" + myFile);      
       
       WORLD_record_PDF = 0;
-  
     }
     else {
       WORLD_Diagrams.endDraw();
       
       if ((WORLD_record_JPG == 1) || (WORLD_record_AUTO == 1)) {
-        WORLD_Diagrams.save("WORLD_" + MAKE_Filenames() + ".jpg");
-        println("Image created");
+        String myFile = MAKE_Filenames("WORLD_") + ".jpg";
+        WORLD_Diagrams.save(myFile);
+        open("explorer /select," + myFile.replace("/", "\\"));
+        println("Image created:" + myFile);
       }
       
       imageMode(CORNER);
@@ -3207,7 +3213,7 @@ void SOLARCHVISION_draw_STUDY () {
     
     if (STUDY_record_PDF == 1) {
       println("PDF:begin");
-      STUDY_Diagrams = createGraphics(STUDY_X_View, STUDY_Y_View, PDF, MAKE_Filenames() + ".pdf");
+      STUDY_Diagrams = createGraphics(STUDY_X_View, STUDY_Y_View, PDF, MAKE_Filenames("STUDY_") + ".pdf");
       beginRecord(STUDY_Diagrams);
     }
     else if (STUDY_Image_Scale != 1) {
@@ -3282,17 +3288,21 @@ void SOLARCHVISION_draw_STUDY () {
 
     if (STUDY_record_PDF == 1) {
       endRecord();
-      println("PDF:end");
+      
+      String myFile = MAKE_Filenames("STUDY_") + ".pdf";
+      open("explorer /select," + myFile.replace("/", "\\"));
+      println("Image created:" + myFile);             
       
       STUDY_record_PDF = 0;
-  
     }
     else {
       STUDY_Diagrams.endDraw();
       
       if ((STUDY_record_JPG == 1) || (STUDY_record_AUTO == 1)) {
-        STUDY_Diagrams.save("STUDY_" + MAKE_Filenames() + ".jpg");
-        println("Image created");
+        String myFile = MAKE_Filenames("STUDY_") + ".jpg";
+        STUDY_Diagrams.save(myFile);
+        open("explorer /select," + myFile.replace("/", "\\"));
+        println("Image created:" + myFile);        
       }
       
       imageMode(CORNER);
@@ -9308,7 +9318,12 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               
               if (camera_variation == 0) {
                 SolarImpact_Image[j + 1] = Image_RGBA;           
-                if (SolarImpact_record_JPG == 1) SolarImpact_Image[j + 1].save(get_SpatialImpact_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(j + 1, 0) + ".jpg");
+                if (SolarImpact_record_JPG == 1) {
+                  String myFile = get_SpatialImpact_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(j + 1, 0) + ".jpg";
+                  SolarImpact_Image[j + 1].save(myFile);
+                  open("explorer /select," + myFile.replace("/", "\\"));
+                  println("Image created:" + myFile);                  
+                }
               }            
              
               STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
@@ -9397,7 +9412,12 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           
           if (camera_variation == 0) {
             SolarImpact_Image[0] = total_Image_RGBA;           
-            if (SolarImpact_record_JPG == 1) SolarImpact_Image[0].save(get_SpatialImpact_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(0, 0) + ".jpg");
+            if (SolarImpact_record_JPG == 1) {
+              String myFile = get_SpatialImpact_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(0, 0) + ".jpg";
+              SolarImpact_Image[0].save(myFile);
+              open("explorer /select," + myFile.replace("/", "\\"));
+              println("Image created:" + myFile);                
+            }
           }      
   
           STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
@@ -17641,7 +17661,12 @@ void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
  
   SpatialImpact_Image.updatePixels();
   
-  if (SpatialImpact_record_JPG == 1) SpatialImpact_Image.save(get_SpatialImpact_Filename() + ".jpg");            
+  if (SpatialImpact_record_JPG == 1) {
+    String myFile = get_SpatialImpact_Filename() + ".jpg";
+    SpatialImpact_Image.save(myFile);
+    open("explorer /select," + myFile.replace("/", "\\"));
+    println("Image created:" + myFile);        
+  }    
 
 
 
