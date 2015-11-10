@@ -11,7 +11,7 @@ int STATION_NUMBER = 0;
 
 String[][] DEFINED_STATIONS = {
   
-                                {"Villa-Matina", "XX", "GR", "36.644", "22.383", "15", "0", "240.0", "", "", "GRC_Andravida.166820_IWEC"},
+                                //{"Villa-Matina", "XX", "GR", "36.644", "22.383", "15", "0", "240.0", "", "", "GRC_Andravida.166820_IWEC"},
   
                                 {"Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
                                 {"Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
@@ -1075,8 +1075,8 @@ int Display_SUN3D = 1;
 int Display_SKY3D = 1;
 
 int Download_LAND = 0;
-int Load_LAND = 1; // 1;
-int Display_LAND = 1; // 1;
+int Load_LAND = 0; // 1;
+int Display_LAND = 0; // 1;
 int Skip_LAND_Center = 0; //5;
 
 int Load_URBAN = 0;
@@ -1550,7 +1550,7 @@ void SOLARCHVISION_update_station (int Step) {
   
   //if ((Step == 0) || (Step == 8)) SOLARCHVISION_remove_2Dobjects();
   
-  if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_2Dobjects_onLand();
+  //if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_2Dobjects_onLand();
 
 }
 
@@ -1559,7 +1559,7 @@ void SOLARCHVISION_update_models (int Step) {
    if ((Step == 0) || (Step == 1)) SOLARCHVISION_remove_3Dobjects();
    //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
    if ((Step == 0) || (Step == 3)) SOLARCHVISION_remove_ParametricGeometries();
-   //if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
+   if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
    if ((Step == 0) || (Step == 5)) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
 
 }
