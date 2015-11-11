@@ -26677,6 +26677,17 @@ void SOLARCHVISION_draw_window_BAR_d () {
           rect(x1, y1, x_end - x1, y2 - y1);
           rect(x_start, y1, x2 - x_start, y2 - y1);
         }
+
+        textAlign(CENTER, CENTER);   
+        stroke(0); 
+        fill(0);
+        textSize(1.25 * MESSAGE_S_View);
+        
+        for (int j = 1; j < 24; j += 1) {
+          float _posX = x1 + (x2 - x1) * (j - 0.5) / (24.0 - 1);  
+         
+          text(nf(j, 0), _posX, Y_control - 0.2 * MESSAGE_S_View);
+        }        
       }
       
       if (BAR_d_Items[i][0].equals("Year")) {
@@ -26756,7 +26767,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
           fill(0);
           textSize(1.25 * MESSAGE_S_View);
           
-          text(nf(j, 0), _posX, Y_control - 0.2 * MESSAGE_S_View);
+          text(nf(j + 1, 0), _posX, Y_control - 0.2 * MESSAGE_S_View);
         }
         
         per_day = keep_per_day;
