@@ -26684,14 +26684,27 @@ void SOLARCHVISION_draw_window_BAR_d () {
         if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2) == 1) {
   
           if (mouseButton == LEFT) {
-            //STUDY_i_start = int(roundTo((24.0  - 1) * (X_clicked - x1) / (x2 - x1), 1));
+            float keep_DATE = _DATE;
             
+            println("_DATE before:", _DATE);
+            _DATE = (int(roundTo((365.0  - 1) * (X_clicked - x1) / (x2 - x1), 1)) + 286) % 365;
+            println("_DATE after:", _DATE);
+            
+            SOLARCHVISION_update_date(); 
+            
+            println("BEGIN_DAY before:", BEGIN_DAY);
+            BEGIN_DAY = int(BEGIN_DAY + (_DATE - keep_DATE) + 365) % 365;
+            println("BEGIN_DAY after:", BEGIN_DAY);
+            
+            SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
+            update_DevelopDATA = 1;
+          
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
           }
           
           if (mouseButton == RIGHT) {
-            //STUDY_i_end = int(roundTo((24.0  - 1) * (X_clicked - x1) / (x2 - x1), 1));
+            //STUDY_i_end = int(roundTo((365.0  - 1) * (X_clicked - x1) / (x2 - x1), 1));
             
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
@@ -26706,6 +26719,9 @@ void SOLARCHVISION_draw_window_BAR_d () {
         }
 
         for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) { 
+          
+          float _posX = 0;
+          
           for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {    
             
             int now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
@@ -26717,7 +26733,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
              now_j = (now_j + 365) % 365; 
             }
         
-            float x_start = x1 + (x2 - x1) * (now_j) / (365.0 - 1);  
+            float x_start = x1 + (x2 - x1) * ((now_j) % 365) / (365.0 - 1);  
             float x_end = x1 + (x2 - x1) * ((now_j + 1) % 365) / (365.0 - 1);
         
             fill(127,0,0,127);
@@ -26726,8 +26742,21 @@ void SOLARCHVISION_draw_window_BAR_d () {
             if (x_start <= x_end) { 
               rect(x_start, y1, x_end - x_start, y2 - y1);
             }
+            else {
+              rect(x1, y1, x_end - x1, y2 - y1);
+              rect(x_start, y1, x2 - x_start, y2 - y1);
+            }            
+            
+            if (j_ADD == 0) _posX = 0.5 * (x_start + x_end);
 
           }
+          
+          textAlign(CENTER, CENTER);   
+          stroke(0); 
+          fill(0);
+          textSize(1.25 * MESSAGE_S_View);
+          
+          text(nf(j, 0), _posX, Y_control - 0.2 * MESSAGE_S_View);
         }
         
         per_day = keep_per_day;
@@ -26735,16 +26764,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
         
       }
             
-/*            
-                  if (int(_DATE) == 365) _DATE -= 365;
-                  if (int(_DATE) == 286) _YEAR += 1;
-                  SOLARCHVISION_update_date(); 
-                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
-                  update_DevelopDATA = 1;
-                  STUDY_Update = 1; ROLLOUT_Update = 1; break;            
-*/            
-
-      
+    
       
       Y_control += BAR_d_tab;
     }
