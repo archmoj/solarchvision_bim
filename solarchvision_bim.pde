@@ -26562,20 +26562,16 @@ void set_to_View_3DViewPoint (int n) {
 
 int BAR_d_Update = 1;
 
-float BAR_d_tab = d_pixel;
+float BAR_d_tab;
 
 String[][] BAR_d_Items = {
                           
-                          {"1", "Winter", "Summer", "Time", "3"},
+                          {"Day", "1", "24"},
+                          {"Year", "1", "364"},
+                          {"Decade", "1950", "2050"}
                              
                         };         
 
-
-
-int BAR_d_Selection = -1;                        
-
-
-int BAR_d_Display_Text = 0; 
 
 
 void SOLARCHVISION_draw_window_BAR_d () {
@@ -26584,10 +26580,36 @@ void SOLARCHVISION_draw_window_BAR_d () {
   
     BAR_d_Update = 0;
     
-    fill(0,191,0);
+    BAR_d_tab = d_pixel / float(BAR_d_Items.length);
+    
+    fill(191);
     noStroke();
     rect(0, a_pixel + b_pixel + 2 * h_pixel, width, d_pixel);
+
+
+
+    float displayBarHeight = 0.9 * MESSAGE_S_View;
+    float displayBarWidth = 2 * w_pixel; 
+    float displayBarRatio = 0.9; // 0 - 1 
+
+    X_control = 0.5 * displayBarWidth;
+    Y_control = a_pixel + b_pixel + 2 * h_pixel + 0.5 * BAR_d_tab;
     
+    for (int i = 0; i < BAR_d_Items.length; i++) {
+      
+      fill(127);
+      noStroke();
+      float x1 = X_control - 0.5 * displayBarRatio * displayBarWidth;
+      float x2 = X_control + 0.5 * displayBarRatio * displayBarWidth;
+      float y1 = Y_control - 0.5 * displayBarHeight;
+      float y2 = Y_control + 0.5 * displayBarHeight;
+      
+      rect(x1, y1, x2 - x1, y2 - y1);      
+      
+      Y_control += BAR_d_tab;
+    }
+
+/*    
     X_control = 0; //0.25 * MESSAGE_S_View;
     Y_control = a_pixel + b_pixel + 2 * h_pixel + 0.5 * d_pixel;
   
@@ -26688,7 +26710,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
   
       cx += Item_width;    
     }
-      
+*/      
     
     X_clicked = -1;
     Y_clicked = -1;
