@@ -10883,7 +10883,7 @@ void STUDY_keyPressed (KeyEvent e) {
         case 'v' :draw_data_lines = int((draw_data_lines + 1) % 2); STUDY_Update = 1; ROLLOUT_Update = 1; break;
   
         case '`' :num_add_days += 2;
-                  if (num_add_days > 61) num_add_days = 61;
+                  if (num_add_days > 64) num_add_days = 64;
                   update_DevelopDATA = 1; 
                   BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         case '~' :num_add_days -= 2;
@@ -26698,18 +26698,11 @@ void SOLARCHVISION_draw_window_BAR_d () {
   
           if (mouseButton == LEFT) {
             float keep_DATE = _DATE;
-            
-            println("_DATE before:", _DATE);
             _DATE = (int(roundTo(365.0 * (X_clicked - x1) / (x2 - x1), 1)) + 286) % 365;
-            println("_DATE after:", _DATE);
-            
             SOLARCHVISION_update_date(); 
-            
-            println("BEGIN_DAY before:", BEGIN_DAY);
             BEGIN_DAY = int(BEGIN_DAY + (_DATE - keep_DATE) + 365) % 365;
-            println("BEGIN_DAY after:", BEGIN_DAY);
-            
             SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
+            
             update_DevelopDATA = 1;
           
             ROLLOUT_Update = 1;
@@ -26717,8 +26710,14 @@ void SOLARCHVISION_draw_window_BAR_d () {
           }
           
           if (mouseButton == RIGHT) {
-            //STUDY_i_end = int(roundTo(365.0 * (X_clicked - x1) / (x2 - x1), 1));
+            num_add_days = 2 * int(abs(_DATE  - ((int(roundTo(365.0 * (X_clicked - x1) / (x2 - x1), 1)) + 286) % 365)) % (365 / float(STUDY_j_end - STUDY_j_start)));
+            if (num_add_days > 64) num_add_days = 64;
+            if (num_add_days < 1) num_add_days = 1;
             
+            println("num_add_days:", num_add_days); 
+            
+            update_DevelopDATA = 1;
+          
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
           }        
