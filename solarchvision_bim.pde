@@ -1112,6 +1112,8 @@ float WORLD_Image_Scale = 1.0;
 
 float STUDY_Image_Scale = 1.0;
 
+int pre_STUDY_i_start;
+int pre_STUDY_i_end;
 int pre_STUDY_j_end;
 int pre_STUDY_setup;
 int pre_impacts_source;
@@ -1940,6 +1942,8 @@ void draw () {
       if (ROLLOUT_Update == 1) {
         ROLLOUT_Update = 0;
         
+        pre_STUDY_i_start = STUDY_i_start;
+        pre_STUDY_i_end = STUDY_i_end;        
         pre_STUDY_j_end = STUDY_j_end;
         pre_STUDY_setup = STUDY_setup;
         pre_impacts_source = impacts_source;
@@ -2033,19 +2037,33 @@ void draw () {
         pre_plot_impacts = plot_impacts;
         
         SOLARCHVISION_draw_ROLLOUT();
+
+        if (pre_STUDY_i_start != STUDY_i_start) {
+          BAR_d_Update = 1;
+        }      
+
+        
+        if (pre_STUDY_i_end != STUDY_i_end) {
+          BAR_d_Update = 1;
+        }      
         
         if (pre_STUDY_j_end != STUDY_j_end) {
+          BAR_d_Update = 1;
+          
           rebuild_SolarProjection_array = 1;
           rebuild_SolarImpact_Image_array = 1;
           rebuild_WindRose_Image_array = 1;          
         }
         
         if (pre_DATE != _DATE) {
+          BAR_d_Update = 1;
+          
           SOLARCHVISION_update_date();
           SOLARCHVISION_draw_ROLLOUT();
         }
         
         if ((pre_YEAR != _YEAR) || (pre_MONTH != _MONTH) || (pre_DAY != _DAY) || (pre_HOUR != _HOUR) || (pre_Climatic_solar_forecast != Climatic_solar_forecast) || (pre_Climatic_weather_forecast != Climatic_weather_forecast)) {
+          BAR_d_Update = 1;
           
           BEGIN_DAY = Convert2Date(_MONTH, _DAY);
           _HOUR = int(24 * (_DATE - int(_DATE)));
@@ -8241,9 +8259,16 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
 
 }
 
-int isInHourlyRange(int i) {
-  int q = 0;
-  if ((STUDY_i_start <= i) && (i <= (STUDY_i_end + 24) % 24)) q = 1;
+int isInHourlyRange (int i) {
+  int q = -1;
+  if (STUDY_i_start <= STUDY_i_end) {
+    q = 0;
+    if ((STUDY_i_start <= i) && (i <= (STUDY_i_end + 24) % 24)) q = 1;
+  }
+  else {
+    q = 1;
+    if ((STUDY_i_start > i) && (i > (STUDY_i_end + 24) % 24)) q = 0;
+  }
   return q;
 }
 
@@ -10680,7 +10705,7 @@ void STUDY_keyPressed (KeyEvent e) {
                   SOLARCHVISION_update_date(); 
                   SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
                   update_DevelopDATA = 1;
-                  STUDY_Update = 1; ROLLOUT_Update = 1; break;
+                  BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
                   
         case 36  :_DATE -= 1;
                   if (int(_DATE) < 0) _DATE += 365;
@@ -10688,7 +10713,7 @@ void STUDY_keyPressed (KeyEvent e) {
                   SOLARCHVISION_update_date(); 
                   SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
                   update_DevelopDATA = 1;
-                  STUDY_Update = 1; ROLLOUT_Update = 1; break;
+                  BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
      
         case 33:_DATE += 1; 
                   if (_DATE >= 365) _DATE -= 365;
@@ -10697,7 +10722,7 @@ void STUDY_keyPressed (KeyEvent e) {
                   BEGIN_DAY = int(BEGIN_DAY + 1) % 365; 
                   SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
                   update_DevelopDATA = 1;
-                  STUDY_Update = 1; ROLLOUT_Update = 1; break; 
+                  BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break; 
                   
         case 34 :_DATE -= 1; 
                   if (_DATE < 0) _DATE += 365;
@@ -10706,10 +10731,10 @@ void STUDY_keyPressed (KeyEvent e) {
                   BEGIN_DAY = int(365 + BEGIN_DAY - 1) % 365;
                   SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
                   update_DevelopDATA = 1;
-                  STUDY_Update = 1; ROLLOUT_Update = 1; break; 
+                  BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break; 
                  
-        case LEFT  :BEGIN_DAY = (365 + BEGIN_DAY - 1) % 365; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case RIGHT :BEGIN_DAY = (BEGIN_DAY + 1) % 365; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case LEFT  :BEGIN_DAY = (365 + BEGIN_DAY - 1) % 365; update_DevelopDATA = 1; BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case RIGHT :BEGIN_DAY = (BEGIN_DAY + 1) % 365; update_DevelopDATA = 1; BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
               
         case UP   :STUDY_drw_Layer = (STUDY_drw_Layer + 1) % num_layers; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         case DOWN :STUDY_drw_Layer = (STUDY_drw_Layer + num_layers - 1) % num_layers; STUDY_Update = 1; ROLLOUT_Update = 1; break; 
@@ -10751,7 +10776,7 @@ void STUDY_keyPressed (KeyEvent e) {
                     }
                   }                     
                   update_DevelopDATA = 1;
-                  STUDY_Update = 1; ROLLOUT_Update = 1; break;
+                  BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
                 
         case ']' :STUDY_j_end += 1; 
                   if (STUDY_j_end > STUDY_j_start + 61) STUDY_j_end -= 1;
@@ -10768,7 +10793,8 @@ void STUDY_keyPressed (KeyEvent e) {
                   rebuild_SolarProjection_array = 1;
                   rebuild_SolarImpact_Image_array = 1;
                   rebuild_WindRose_Image_array = 1;
-                  STUDY_Update = 1; ROLLOUT_Update = 1; break; 
+                  BAR_d_Update = 1;STUDY_Update = 1; ROLLOUT_Update = 1; break;
+                  
         case '[' :STUDY_j_end -= 1; 
                   if (STUDY_j_end <= STUDY_j_start) STUDY_j_end += 1;
                   STUDY_U_scale = 18.0 / float(STUDY_j_end - STUDY_j_start);
@@ -10784,12 +10810,12 @@ void STUDY_keyPressed (KeyEvent e) {
                   rebuild_SolarProjection_array = 1;
                   rebuild_SolarImpact_Image_array = 1;
                   rebuild_WindRose_Image_array = 1;                  
-                  STUDY_Update = 1; ROLLOUT_Update = 1; break;
+                  BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
 
         /*      
         case '*' :join_type *= -1;
                   update_DevelopDATA = 1;
-                  STUDY_Update = 1; ROLLOUT_Update = 1; break; 
+                  BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break; 
         */
 
     
@@ -10859,11 +10885,11 @@ void STUDY_keyPressed (KeyEvent e) {
         case '`' :num_add_days += 2;
                   if (num_add_days > 61) num_add_days = 61;
                   update_DevelopDATA = 1; 
-                  STUDY_Update = 1; ROLLOUT_Update = 1; break;
+                  BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         case '~' :num_add_days -= 2;
                   if (num_add_days < 1) num_add_days = 1;
                   update_DevelopDATA = 1; 
-                  STUDY_Update = 1; ROLLOUT_Update = 1; break;
+                  BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
                   
         case 'l' :Materials_Selection += 1;
                   Materials_Selection %= Materials_Number; 
@@ -20482,7 +20508,10 @@ void mouseClicked () {
       if (isInside(X_clicked, Y_clicked, 0, a_pixel, width, a_pixel + b_pixel) == 1) {
         BAR_b_Update = 1; 
       }
-  
+
+      if (isInside(X_clicked, Y_clicked, 0, a_pixel + b_pixel + 2 * h_pixel, width, a_pixel + b_pixel + 2 * h_pixel + d_pixel) == 1) {
+        BAR_d_Update = 1; 
+      }  
       
       if (WORLD_include == 1) {
         if (isInside(X_clicked, Y_clicked, WORLD_CX_View, WORLD_CY_View, WORLD_CX_View + WORLD_X_View, WORLD_CY_View + WORLD_Y_View) == 1) {
@@ -26588,130 +26617,112 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
 
 
-    float displayBarHeight = 0.9 * MESSAGE_S_View;
+    float displayBarHeight = MESSAGE_S_View;
     float displayBarWidth = 2 * w_pixel; 
-    float displayBarRatio = 0.9; // 0 - 1 
 
     X_control = 0.5 * displayBarWidth;
     Y_control = a_pixel + b_pixel + 2 * h_pixel + 0.5 * BAR_d_tab;
     
     for (int i = 0; i < BAR_d_Items.length; i++) {
       
-      fill(127);
-      noStroke();
-      float x1 = X_control - 0.5 * displayBarRatio * displayBarWidth;
-      float x2 = X_control + 0.5 * displayBarRatio * displayBarWidth;
-      float y1 = Y_control - 0.5 * displayBarHeight;
-      float y2 = Y_control + 0.5 * displayBarHeight;
+      float x1 = X_control - 0.366 * displayBarWidth;
+      float x2 = X_control + 0.5 * displayBarWidth;
+      float y1 = Y_control - 0.45 * displayBarHeight;
+      float y2 = Y_control + 0.45 * displayBarHeight;
       
+      fill(127);
+      noStroke();      
       rect(x1, y1, x2 - x1, y2 - y1);      
+      
+      textAlign(RIGHT, CENTER);   
+      stroke(0); 
+      fill(0);
+      textSize(1.25 * MESSAGE_S_View);
+              
+      text(BAR_d_Items[i][0] + ": ", x1, Y_control - 0.2 * MESSAGE_S_View);
+
+      if (BAR_d_Items[i][0].equals("Day")) {
+
+        if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2) == 1) {
+  
+          if (mouseButton == LEFT) {
+            STUDY_i_start = int(roundTo((24.0  - 1) * (X_clicked - x1) / (x2 - x1), 1));
+            
+            ROLLOUT_Update = 1;
+            STUDY_Update = 1;
+          }
+          
+          if (mouseButton == RIGHT) {
+            STUDY_i_end = int(roundTo((24.0  - 1) * (X_clicked - x1) / (x2 - x1), 1));
+            
+            ROLLOUT_Update = 1;
+            STUDY_Update = 1;
+          }        
+        }        
+        
+        float x_start = x1 + (x2 - x1) * (STUDY_i_start) / (24.0 - 1);  
+        float x_end = x1 + (x2 - x1) * (STUDY_i_end) / (24.0 - 1);
+        
+        fill(127,0,0);
+        noStroke();
+        
+        if (STUDY_i_start <= STUDY_i_end) { 
+          rect(x_start, y1, x_end - x_start, y2 - y1);
+        }
+        else {
+          rect(x1, y1, x_end - x1, y2 - y1);
+          rect(x_start, y1, x2 - x_start, y2 - y1);
+        }
+      }
+      
+      if (BAR_d_Items[i][0].equals("Year")) {
+
+        if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2) == 1) {
+  
+          if (mouseButton == LEFT) {
+            //STUDY_i_start = int(roundTo((24.0  - 1) * (X_clicked - x1) / (x2 - x1), 1));
+            
+            ROLLOUT_Update = 1;
+            STUDY_Update = 1;
+          }
+          
+          if (mouseButton == RIGHT) {
+            //STUDY_i_end = int(roundTo((24.0  - 1) * (X_clicked - x1) / (x2 - x1), 1));
+            
+            ROLLOUT_Update = 1;
+            STUDY_Update = 1;
+          }        
+        }        
+        
+        float x_start = x1 + (x2 - x1) * (_DATE) / (365.0 - 1);  
+        float x_end = x1 + (x2 - x1) * ((_DATE + STUDY_j_end) % 365) / (365.0 - 1);
+        
+        fill(127,0,0);
+        noStroke();
+        
+        if (STUDY_i_start <= STUDY_i_end) { 
+          rect(x_start, y1, x_end - x_start, y2 - y1);
+        }
+        else {
+          rect(x1, y1, x_end - x1, y2 - y1);
+          rect(x_start, y1, x2 - x_start, y2 - y1);
+        }
+      }
+            
+/*            
+                  if (int(_DATE) == 365) _DATE -= 365;
+                  if (int(_DATE) == 286) _YEAR += 1;
+                  SOLARCHVISION_update_date(); 
+                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
+                  update_DevelopDATA = 1;
+                  STUDY_Update = 1; ROLLOUT_Update = 1; break;            
+*/            
+
+      
       
       Y_control += BAR_d_tab;
     }
 
-/*    
-    X_control = 0; //0.25 * MESSAGE_S_View;
-    Y_control = a_pixel + b_pixel + 2 * h_pixel + 0.5 * d_pixel;
-  
-    float cx = X_control;
-    float cy = Y_control;
-    float cr = 0.5 * d_pixel;   
-    
-    for (int i = 0; i < BAR_d_Items.length; i++) {
-      
-      int j = int(BAR_d_Items[i][0]);; 
-      
-      float Item_width = BAR_d_tab * float(BAR_d_Items[i][BAR_d_Items[i].length - 1]);
-  
-      noFill();
-      stroke(255);
-      strokeWeight(1);
-      rect(cx, cy - cr, Item_width, d_pixel);
-      strokeWeight(0);
-      
-      if (isInside(X_clicked, Y_clicked, cx, cy - cr, cx + Item_width, cy + cr) == 1) {
-
-        if (mouseButton == RIGHT) {       
-          
-          if (BAR_d_Selection != i) {
-            BAR_d_Selection = i;
-          }
-          else {
-            
-            int n = int(BAR_d_Items[i][0]);
-            
-            n -= 1;
-            
-            if (n <= 0) n = BAR_d_Items[i].length - 3;
-            
-            BAR_d_Items[i][0] = nf(n, 0);
-            
-            j = n;
-          }
-        }
-        
-        if (mouseButton == LEFT) {
-
-          if (BAR_d_Selection != i) {
-            BAR_d_Selection = i;
-          }
-          else {
-              
-            int n = int(BAR_d_Items[i][0]);
-            
-            n += 1;
-            
-            if (n >= BAR_d_Items[i].length - 2) n = 1;
-            
-            BAR_d_Items[i][0] = nf(n, 0);
-            
-            j = n;
-          }
-        }               
-
-        
-        fill(255,127,0);
-        noStroke();
-        rect(cx, cy - cr, Item_width, d_pixel);     
-       
-        String Bar_Switch = BAR_d_Items[i][BAR_d_Items[i].length - 2];
-
-
-        if (Bar_Switch.equals("Time")) {
-          
-          
-          ROLLOUT_Update = 1; 
-        }
-        
-      
-      }
-
-      BAR_d_Display_Text = 1;  
-
-      { // drawing the icons where available
-        
-        String Bar_Switch = BAR_d_Items[i][BAR_d_Items[i].length - 2];
-
-        if (Bar_Switch.equals("???")) {
-
-        }
-      }
-  
-      if (BAR_d_Display_Text == 1) { // writing titles where the icon is not available
-  
-        textAlign(CENTER, CENTER);   
-        stroke(255); 
-        fill(255);
-        textSize(1.25 * MESSAGE_S_View);
-                
-        text(BAR_d_Items[i][j], cx + 0.5 * Item_width, cy - 0.2 * MESSAGE_S_View);
-      }
-      
-  
-      cx += Item_width;    
-    }
-*/      
-    
     X_clicked = -1;
     Y_clicked = -1;
   }  
