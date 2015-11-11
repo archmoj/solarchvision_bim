@@ -19907,6 +19907,7 @@ void mouseClicked () {
             WIN3D_Update = 1;  
             STUDY_Update = 1;
             ROLLOUT_Update = 1;
+            BAR_d_Update = 1;
           } 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Long-term (CWEEDS)")) {
             impacts_source = databaseNumber_CLIMATE_WY2;
@@ -19920,6 +19921,7 @@ void mouseClicked () {
             WIN3D_Update = 1;  
             STUDY_Update = 1;
             ROLLOUT_Update = 1;
+            BAR_d_Update = 1;
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Weather Forecast (NAEFS)")) {
             impacts_source = databaseNumber_ENSEMBLE;
@@ -19933,6 +19935,7 @@ void mouseClicked () {
             WIN3D_Update = 1;  
             STUDY_Update = 1;
             ROLLOUT_Update = 1;
+            BAR_d_Update = 1;
           } 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Real-time Observed (SWOB)")) {
             impacts_source = databaseNumber_OBSERVED;
@@ -19946,6 +19949,7 @@ void mouseClicked () {
             WIN3D_Update = 1;  
             STUDY_Update = 1;
             ROLLOUT_Update = 1;
+            BAR_d_Update = 1;
           }           
           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Surface White")) {
@@ -26663,10 +26667,10 @@ void SOLARCHVISION_draw_window_BAR_d () {
         float x_start = x1 + (x2 - x1) * (STUDY_i_start) / (24.0 - 1);  
         float x_end = x1 + (x2 - x1) * (STUDY_i_end) / (24.0 - 1);
         
-        fill(127,0,0);
+        fill(127,0,0,127);
         noStroke();
         
-        if (STUDY_i_start <= STUDY_i_end) { 
+        if (x_start <= x_end) { 
           rect(x_start, y1, x_end - x_start, y2 - y1);
         }
         else {
@@ -26693,20 +26697,42 @@ void SOLARCHVISION_draw_window_BAR_d () {
             STUDY_Update = 1;
           }        
         }        
-        
-        float x_start = x1 + (x2 - x1) * (_DATE) / (365.0 - 1);  
-        float x_end = x1 + (x2 - x1) * ((_DATE + STUDY_j_end) % 365) / (365.0 - 1);
-        
-        fill(127,0,0);
-        noStroke();
-        
-        if (STUDY_i_start <= STUDY_i_end) { 
-          rect(x_start, y1, x_end - x_start, y2 - y1);
+
+        float pre_per_day = per_day;
+        int pre_num_add_days = num_add_days;
+        if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
+          per_day = 1;
+          num_add_days = 1;
         }
-        else {
-          rect(x1, y1, x_end - x1, y2 - y1);
-          rect(x_start, y1, x2 - x_start, y2 - y1);
+
+        for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) { 
+          for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {    
+            
+            int now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+
+            if (now_j >= 365) {
+             now_j = now_j % 365; 
+            }
+            if (now_j < 0) {
+             now_j = (now_j + 365) % 365; 
+            }
+        
+            float x_start = x1 + (x2 - x1) * (now_j) / (365.0 - 1);  
+            float x_end = x1 + (x2 - x1) * ((now_j + 1) % 365) / (365.0 - 1);
+        
+            fill(127,0,0,127);
+            noStroke();
+            
+            if (x_start <= x_end) { 
+              rect(x_start, y1, x_end - x_start, y2 - y1);
+            }
+
+          }
         }
+        
+        per_day = pre_per_day;
+        num_add_days = pre_num_add_days;
+        
       }
             
 /*            
