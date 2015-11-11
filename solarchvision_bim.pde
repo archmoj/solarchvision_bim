@@ -26650,10 +26650,12 @@ void SOLARCHVISION_draw_window_BAR_d () {
         if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2) == 1) {
   
           if (mouseButton == LEFT) {
-            STUDY_i_start = int(roundTo((24.0  - 1) * (X_clicked - x1) / (x2 - x1), 1));
+            STUDY_i_start = 1 + int(roundTo((24.0  - 1) * (X_clicked - x1) / (x2 - x1), 1));
             
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
+            
+            println("STUDY_i_start", STUDY_i_start);
           }
           
           if (mouseButton == RIGHT) {
@@ -26661,16 +26663,18 @@ void SOLARCHVISION_draw_window_BAR_d () {
             
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
+            
+            println("STUDY_i_end", STUDY_i_end);
           }        
         }        
         
-        float x_start = x1 + (x2 - x1) * (STUDY_i_start) / (24.0 - 1);  
+        float x_start = x1 + (x2 - x1) * (STUDY_i_start - 1) / (24.0 - 1);  
         float x_end = x1 + (x2 - x1) * (STUDY_i_end) / (24.0 - 1);
         
         fill(127,0,0,127);
         noStroke();
         
-        if (x_start <= x_end) { 
+        if (STUDY_i_start <= STUDY_i_end) { 
           rect(x_start, y1, x_end - x_start, y2 - y1);
         }
         else {
