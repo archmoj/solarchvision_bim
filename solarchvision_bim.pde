@@ -26688,9 +26688,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
         textSize(1.25 * MESSAGE_S_View);
         
         for (int j = 0; j < 24; j += 1) {
-          float _posX = x1 + (x2 - x1) * (j + 0.5) / 24.0;  
-         
-          text(nf(j, 0), _posX, Y_control - 0.2 * MESSAGE_S_View);
+          text(nf(j, 0), x1 + (x2 - x1) * (j + 0.5) / 24.0, Y_control - 0.2 * MESSAGE_S_View);
         }        
       }
       
@@ -26735,8 +26733,6 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
         for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) { 
           
-          float _posX = 0;
-          
           for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {    
             
             int now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
@@ -26762,16 +26758,18 @@ void SOLARCHVISION_draw_window_BAR_d () {
               rect(x_start, y1, x2 - x_start, y2 - y1);
             }            
             
-            if (j_ADD == 0) _posX = 0.5 * (x_start + x_end);
-
           }
           
-          textAlign(CENTER, CENTER);   
-          stroke(0); 
-          fill(0);
-          textSize(1.25 * MESSAGE_S_View);
+          {
+            int now_j = int(j * per_day + BEGIN_DAY + 365) % 365;
           
-          text(nf(j + 1, 0), _posX, Y_control - 0.2 * MESSAGE_S_View);
+            textAlign(CENTER, CENTER);   
+            stroke(0); 
+            fill(0);
+            textSize(1.25 * MESSAGE_S_View);
+            
+            text(nf(j + 1, 0), x1 + (x2 - x1) * (now_j) / 365.0, Y_control - 0.2 * MESSAGE_S_View);
+          }
         }
         
         per_day = keep_per_day;
