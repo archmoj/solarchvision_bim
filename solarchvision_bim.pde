@@ -1443,7 +1443,7 @@ int ROLLOUT_include = 1;
 
 
 int MESSAGE_CX_View = 0;
-int MESSAGE_CY_View = int(1 * h_pixel - 0.75 * MESSAGE_S_View + 0.5 * (a_pixel + b_pixel));
+int MESSAGE_CY_View = int(1 * h_pixel - 0.75 * MESSAGE_S_View + 0.5 * (a_pixel + b_pixel + d_pixel));
 int MESSAGE_X_View = 2 * w_pixel + ROLLOUT_X_View;
 int MESSAGE_Y_View = int(1.5 * MESSAGE_S_View);
 
