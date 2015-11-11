@@ -3390,10 +3390,10 @@ void SOLARCHVISION_PlotHOURLY (float x, float y, float z, float sx, float sy, fl
   }
   if (draw_observed == 1) {
 
-    int pre_draw_data_lines = draw_data_lines;
-    int pre_draw_sorted = draw_sorted;
-    int pre_draw_normals = draw_normals;
-    int pre_draw_probs = draw_probs;
+    int keep_draw_data_lines = draw_data_lines;
+    int keep_draw_sorted = draw_sorted;
+    int keep_draw_normals = draw_normals;
+    int keep_draw_probs = draw_probs;
     
     draw_data_lines = 1;
     draw_sorted = 0;
@@ -3403,10 +3403,10 @@ void SOLARCHVISION_PlotHOURLY (float x, float y, float z, float sx, float sy, fl
     now_drawing = databaseNumber_OBSERVED;
     SOLARCHVISION_PlotOBSERVED(x, y, z, sx, sy, sz);
     
-    draw_data_lines = pre_draw_data_lines;
-    draw_sorted = pre_draw_sorted;
-    draw_normals = pre_draw_normals;
-    draw_probs = pre_draw_probs; 
+    draw_data_lines = keep_draw_data_lines;
+    draw_sorted = keep_draw_sorted;
+    draw_normals = keep_draw_normals;
+    draw_probs = keep_draw_probs; 
   }
   
   now_drawing = -1;
@@ -3449,7 +3449,7 @@ void Plot_Setup () {
   if (STUDY_setup == -2) {
     if (impacts_source == databaseNumber_ENSEMBLE) {
       pre_DATE = _DATE;
-      int pre_BEGIN_DAY = BEGIN_DAY;
+      int keep_BEGIN_DAY = BEGIN_DAY;
       int delta = 4;
       
       SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
@@ -3479,7 +3479,7 @@ void Plot_Setup () {
       SOLARCHVISION_update_date();
       BEGIN_DAY = Convert2Date(_MONTH, _DAY);
       SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
-      BEGIN_DAY = pre_BEGIN_DAY;
+      BEGIN_DAY = keep_BEGIN_DAY;
     }
   }
   
@@ -4898,7 +4898,7 @@ void SOLARCHVISION_postProcess_ENSEMBLE () {
         
         if (Climatic_weather_forecast != 0) {
         
-          int pre_num_add_days = num_add_days;
+          int keep_num_add_days = num_add_days;
           
           num_add_days = 7; // 1; for faster results      
         
@@ -4980,7 +4980,7 @@ void SOLARCHVISION_postProcess_ENSEMBLE () {
             }
           }
     
-          num_add_days = pre_num_add_days;
+          num_add_days = keep_num_add_days;
           
     
     
@@ -7648,8 +7648,8 @@ int[] get_startZ_endZ (int data_source) {
 
 void SOLARCHVISION_DevelopDATA (int data_source) {
 
-  float pre_per_day = per_day;
-  int pre_num_add_days = num_add_days;
+  float keep_per_day = per_day;
+  int keep_num_add_days = num_add_days;
   if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
     per_day = 1;
     num_add_days = 1;
@@ -8253,8 +8253,8 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
     } 
   }
   
-  per_day = pre_per_day;
-  num_add_days = pre_num_add_days;
+  per_day = keep_per_day;
+  num_add_days = keep_num_add_days;
   
 
 }
@@ -8569,8 +8569,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   STUDY_Diagrams.pushMatrix();
   STUDY_Diagrams.translate(x_Plot, y_Plot);
 
-  float pre_per_day = per_day;
-  int pre_num_add_days = num_add_days;
+  float keep_per_day = per_day;
+  int keep_num_add_days = num_add_days;
   if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
     per_day = 1;
     num_add_days = 1;
@@ -10565,8 +10565,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
   SOLARCHVISION_draw_Grid_DAILY(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot);
 
-  pre_per_day = per_day;
-  num_add_days = pre_num_add_days;
+  keep_per_day = per_day;
+  num_add_days = keep_num_add_days;
 
   STUDY_Diagrams.popMatrix();
 } 
@@ -11052,8 +11052,8 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
   
     WIN3D_Diagrams.stroke(255, 255, 0);
     
-    float pre_per_day = per_day;
-    int pre_num_add_days = num_add_days;
+    float keep_per_day = per_day;
+    int keep_num_add_days = num_add_days;
     if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
       per_day = 1;
       num_add_days = 1;
@@ -11270,8 +11270,8 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
     
     */
   
-    per_day = pre_per_day;
-    num_add_days = pre_num_add_days; 
+    per_day = keep_per_day;
+    num_add_days = keep_num_add_days; 
     _DATE = previous_DATE;
     SOLARCHVISION_update_date();
   
@@ -15395,8 +15395,8 @@ void SOLARCHVISION_draw_3Dobjects () {
         WIN3D_VerticesSolarEnergy[0] = FLOAT_undefined; 
         WIN3D_VerticesSolarEffect[0] = FLOAT_undefined; 
         
-        float pre_per_day = per_day;
-        int pre_num_add_days = num_add_days;
+        float keep_per_day = per_day;
+        int keep_num_add_days = num_add_days;
         if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
           per_day = 1;
           num_add_days = 1;
@@ -18714,8 +18714,8 @@ void SolarProjection () {
     SOLARCHVISION_build_SolarProjection_array();
   }
   
-  float pre_per_day = per_day;
-  int pre_num_add_days = num_add_days;
+  float keep_per_day = per_day;
+  int keep_num_add_days = num_add_days;
   if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
     per_day = 1;
     num_add_days = 1;
@@ -18984,8 +18984,8 @@ void SolarProjection () {
   }
 
 
-  pre_per_day = per_day;
-  num_add_days = pre_num_add_days;
+  keep_per_day = per_day;
+  num_add_days = keep_num_add_days;
   
   cursor(ARROW);
 }
@@ -19100,7 +19100,7 @@ void mouseWheel(MouseEvent event) {
         if (WORLD_include == 1) {
           if (isInside(X_clicked, Y_clicked, WORLD_CX_View, WORLD_CY_View, WORLD_CX_View + WORLD_X_View, WORLD_CY_View + WORLD_Y_View) == 1) {
             
-            int pre_WORLD_viewport_ZOOM = WORLD_viewport_ZOOM;
+            int keep_WORLD_viewport_ZOOM = WORLD_viewport_ZOOM;
             
             if (Wheel_Value < 0) WORLD_viewport_ZOOM += 1;
             if (Wheel_Value > 0) WORLD_viewport_ZOOM -= 1;
@@ -19108,7 +19108,7 @@ void mouseWheel(MouseEvent event) {
             if (WORLD_viewport_ZOOM < 1) WORLD_viewport_ZOOM = 1;
             if (WORLD_viewport_ZOOM > 6) WORLD_viewport_ZOOM = 6;
             
-            if (pre_WORLD_viewport_ZOOM != WORLD_viewport_ZOOM) {
+            if (keep_WORLD_viewport_ZOOM != WORLD_viewport_ZOOM) {
               WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
      
               WORLD_Update = 1;   
@@ -21055,9 +21055,9 @@ void mouseClicked () {
             
             if (View_Select_Create_Modify == 0) { // create
   
-              int pre_number_of_Polymeshes = allPolymesh_Faces.length;
-              int pre_number_of_2DObjects = allObject2D_XYZS.length;
-              int pre_number_of_Fractals = allFractal_XYZS.length;
+              int keep_number_of_Polymeshes = allPolymesh_Faces.length;
+              int keep_number_of_2DObjects = allObject2D_XYZS.length;
+              int keep_number_of_Fractals = allFractal_XYZS.length;
               
               float x = RxP[0]; 
               float y = RxP[1]; 
@@ -21220,19 +21220,19 @@ void mouseClicked () {
               
               
   
-              if (pre_number_of_Polymeshes != allPolymesh_Faces.length) { // if any 3D-mesh created during the process
+              if (keep_number_of_Polymeshes != allPolymesh_Faces.length) { // if any 3D-mesh created during the process
                 
                 selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = allPolymesh_Faces.length - 1;
                 
                 SOLARCHVISION_calculate_selectedPolymesh_Pivot();
               }
               
-              if (pre_number_of_2DObjects != allObject2D_XYZS.length) { // if any 2D-mesh created during the process
+              if (keep_number_of_2DObjects != allObject2D_XYZS.length) { // if any 2D-mesh created during the process
                 
                 selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = allObject2D_XYZS.length - 1;
               }            
   
-              if (pre_number_of_Fractals != allFractal_XYZS.length) { // if any Fractal created during the process
+              if (keep_number_of_Fractals != allFractal_XYZS.length) { // if any Fractal created during the process
                 
                 selectedFractal_numbers[selectedFractal_numbers.length - 1] = allFractal_XYZS.length - 1;
               } 
@@ -23194,8 +23194,8 @@ void RenderShadowsOnUrbanPlane() {
   
   PGraphics TREES_Diagrams = createGraphics(RES1, RES2, P2D);
   
-  int pre_SolarImpact_Image_Section = SolarImpact_Image_Section;
-  float pre_SolarImpact_Rotation = SolarImpact_Rotation;
+  int keep_SolarImpact_Image_Section = SolarImpact_Image_Section;
+  float keep_SolarImpact_Rotation = SolarImpact_Rotation;
   
   if (SolarImpact_Image_Section == 3) {
     SolarImpact_Image_Section = 2;
@@ -24089,8 +24089,8 @@ void RenderShadowsOnUrbanPlane() {
     }
   }
   
-  SolarImpact_Image_Section = pre_SolarImpact_Image_Section;
-  SolarImpact_Rotation = pre_SolarImpact_Rotation;  
+  SolarImpact_Image_Section = keep_SolarImpact_Image_Section;
+  SolarImpact_Rotation = keep_SolarImpact_Rotation;  
   
   cursor(ARROW);
  
@@ -26698,8 +26698,8 @@ void SOLARCHVISION_draw_window_BAR_d () {
           }        
         }        
 
-        float pre_per_day = per_day;
-        int pre_num_add_days = num_add_days;
+        float keep_per_day = per_day;
+        int keep_num_add_days = num_add_days;
         if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
           per_day = 1;
           num_add_days = 1;
@@ -26730,8 +26730,8 @@ void SOLARCHVISION_draw_window_BAR_d () {
           }
         }
         
-        per_day = pre_per_day;
-        num_add_days = pre_num_add_days;
+        per_day = keep_per_day;
+        num_add_days = keep_num_add_days;
         
       }
             
