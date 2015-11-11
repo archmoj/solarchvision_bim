@@ -4919,7 +4919,7 @@ void SOLARCHVISION_postProcess_ENSEMBLE () {
                 
                 for (int j = 0; j < STUDY_max_j_end_parameters; j += 1) {
                   
-                  int now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+                  int now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
     
                   if (now_j >= 365) {
                     now_j = now_j % 365; 
@@ -5827,7 +5827,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
             
             int now_k = k;
             int now_i = i;
-            int now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+            int now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
             
             
             if (now_j >= 365) {
@@ -6224,7 +6224,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
             
             int now_k = k;
             int now_i = i;
-            int now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+            int now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
             
             
             if (now_j >= 365) {
@@ -7680,7 +7680,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
   
           int now_k = k;
           int now_i = i;
-          int now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+          int now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
           
           if (now_j >= 365) {
            now_j = now_j % 365; 
@@ -8492,7 +8492,7 @@ int[] SOLARCHVISION_PROCESS_DAILY_SCENARIOS (int layers_count, int start_z, int 
         
         int now_k = k;
         int now_i = i;
-        int now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+        int now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
 
         if (now_j >= 365) {
          now_j = now_j % 365; 
@@ -8647,7 +8647,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 
                 int now_k = k;
                 int now_i = i;
-                int now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+                int now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
     
                 if (now_j >= 365) {
                  now_j = now_j % 365; 
@@ -8781,7 +8781,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 
                 int now_k = k;
                 int now_i = i;
-                int now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+                int now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
     
                 if (now_j >= 365) {
                  now_j = now_j % 365; 
@@ -9110,7 +9110,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     
                   now_k = k;
                   now_i = i;
-                  now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+                  now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
       
                   if (now_j >= 365) {
                    now_j = now_j % 365; 
@@ -9683,7 +9683,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     
                       now_k = k;
                       now_i = i;
-                      now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+                      now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
     
                       if (now_j >= 365) {
                        now_j = now_j % 365; 
@@ -10132,7 +10132,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   
                   now_k = k;
                   now_i = i;
-                  now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+                  now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
       
                   if (now_j >= 365) {
                    now_j = now_j % 365; 
@@ -11116,7 +11116,7 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
                 
                 now_k = k;
                 now_i = i;
-                now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+                now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
       
                 if (now_j >= 365) {
                  now_j = now_j % 365; 
@@ -15542,7 +15542,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                 
                           now_k = k;
                           now_i = i;
-                          now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+                          now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
                     
                           if (now_j >= 365) {
                            now_j = now_j % 365; 
@@ -18807,7 +18807,7 @@ void SolarProjection () {
   
                   now_k = k;
                   now_i = i;
-                  now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+                  now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
   
                   if (now_j >= 365) {
                    now_j = now_j % 365; 
@@ -26734,7 +26734,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
           
           for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {    
             
-            int now_j = int(j * per_day + (j_ADD - int(0.5 * num_add_days)) + BEGIN_DAY + 365) % 365;
+            int now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
 
             if (now_j >= 365) {
              now_j = now_j % 365; 
