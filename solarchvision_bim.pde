@@ -8316,6 +8316,9 @@ int[] reverse_N;
 }
 
 float[] SOLARCHVISION_NORMAL (float[] _values) {
+  
+  println("SOLARCHVISION_NORMAL");
+  
   float[] weight_array = {0, 0, 0, 0, 0, 0, 0, 0, 0};
   float[] return_array = {0, 0, 0, 0, 0, 0, 0, 0, 0};
   
@@ -8347,6 +8350,8 @@ float[] SOLARCHVISION_NORMAL (float[] _values) {
         return_array[N_MidLow] += _values[i] * _weight; 
       }
     }
+    
+    println("HERE-1");
 
     return_array[N_Ave] /= weight_array[N_Ave];
     return_array[N_Middle] /= weight_array[N_Middle];
@@ -8356,13 +8361,24 @@ float[] SOLARCHVISION_NORMAL (float[] _values) {
     return_array[N_Max] = _values[(NV - 1)];
     return_array[N_Min] = _values[0];
 
+    println("HERE-2");
+
     if ((NV % 2) == 1) {
+
       return_array[N_M50] = _values[(NV / 2)];
+      
+      println("HERE-3");
     }
     else {
-      return_array[N_M50] = 0.5 * (_values[(int(NV / 2))] + _values[(1 + int(NV / 2))]);
+      
+      println("NV/2", NV/2, floor(NV/2));
+      
+      return_array[N_M50] = 0.5 * (_values[(floor(NV / 2))] + _values[(floor(NV / 2) - 1)]);
+      
+      println("HERE-4");
     }
     
+    println("HERE-5");
     
     int q;
     
@@ -8379,6 +8395,8 @@ float[] SOLARCHVISION_NORMAL (float[] _values) {
       return_array[i] = FLOAT_undefined;
     }
   }
+  
+  println("SOLARCHVISION_NORMAL_OuT");
   
   return return_array; 
 }
