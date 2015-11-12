@@ -7573,78 +7573,7 @@ void SOLARCHVISION_draw_normals (int i, int j, float[] _valuesA, float[] _values
 }  
 
 
-int[] get_startZ_endZ (int data_source) {
-  int[] a = new int [3];
 
-  int start_z = -1;
-  int end_z = -1; 
-  int layers_count = -1;
-
-  if (data_source == databaseNumber_CLIMATE_WY2) {
-
-    start_z = CLIMATE_WY2_start;
-    end_z = CLIMATE_WY2_end; 
-    
-    switch(H_layer_option) {
-      case 1 : start_z = 1953; end_z = 1959; break;
-      case 2 : start_z = 1960; end_z = 1969; break;
-      case 3 : start_z = 1970; end_z = 1979; break;
-      case 4 : start_z = 1980; end_z = 1989; break;
-      case 5 : start_z = 1990; end_z = 1999; break;
-      case 6 : start_z = 2000; end_z = 2005; break;
-      case 7: start_z = Sample_Year; end_z = Sample_Year; break;
-    }
-    
-    start_z -= CLIMATE_WY2_start - 1;
-    end_z -= CLIMATE_WY2_start - 1;
-  }
-  if (data_source == databaseNumber_ENSEMBLE) {
-
-    start_z = ENSEMBLE_start;
-    end_z = ENSEMBLE_end;
-    
-    switch(F_layer_option) {
-      case 1 : start_z = 23; end_z = 43; break; //xml: US
-      case 2 : start_z = 1; end_z = 22; break; //xml: GEPS + GDPS
-      case 3: start_z = 44; end_z = end_z; break; // additional GRIB2 domains
-      case 4: start_z = 1; end_z = 43; break; //xml: NAEFS
-      case 5: start_z = Sample_Member; end_z = Sample_Member; break;
-      
-      
-    }
-
-  }    
-  if (data_source == databaseNumber_OBSERVED) {
-
-    start_z = OBSERVED_start;
-    end_z = OBSERVED_end;
-    
-    switch(O_layer_option) {
-      case 1 : start_z = 1; end_z = 1; break;
-      case 2 : start_z = Sample_Station; end_z = Sample_Station; break;
-    }
-
-  }   
-  if (data_source == databaseNumber_CLIMATE_EPW) {
-
-    start_z = 1;
-    end_z = 1;
-    
-  }   
-
-
-
-  if (impacts_source == databaseNumber_CLIMATE_WY2) layers_count = (1 + CLIMATE_WY2_end - CLIMATE_WY2_start);
-  if (impacts_source == databaseNumber_ENSEMBLE) layers_count = (1 + ENSEMBLE_end - ENSEMBLE_start); 
-  if (impacts_source == databaseNumber_OBSERVED) layers_count = (1 + OBSERVED_end - OBSERVED_start);
-  if (impacts_source == databaseNumber_CLIMATE_EPW) layers_count = 1;
-  
-  a[0] = start_z;
-  a[1] = end_z;
-  a[2] = layers_count;
-  
-  return  a;
-}
 
 void SOLARCHVISION_DevelopDATA (int data_source) {
 
@@ -8259,18 +8188,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
 
 }
 
-int isInHourlyRange (int i) {
-  int q = -1;
-  if (STUDY_i_start <= STUDY_i_end) {
-    q = 0;
-    if ((STUDY_i_start <= i) && (i <= (STUDY_i_end + 24) % 24)) q = 1;
-  }
-  else {
-    q = 1;
-    if ((STUDY_i_start > i) && (i > (STUDY_i_end + 24) % 24)) q = 0;
-  }
-  return q;
-}
+
 
 
 
@@ -26658,7 +26576,7 @@ float BAR_d_tab;
 String[][] BAR_d_Items = {
                           
                           {"Day", "1", "24"},
-                          {"Year", "1", "364"},
+                          {"Year", "1", "365"},
                           {"Decade", "1950", "2050"}
                              
                         };         
@@ -26844,6 +26762,10 @@ void SOLARCHVISION_draw_window_BAR_d () {
   }  
 }   
 
+
+
+
+
 void SOALRCHVISION_refreshDateTabs () {
   if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
     if (per_day == 1) { 
@@ -26865,4 +26787,92 @@ void SOALRCHVISION_refreshDateTabs () {
     }
   }
 }  
+
+
+int isInHourlyRange (int i) {
+  int q = -1;
+  if (STUDY_i_start <= STUDY_i_end) {
+    q = 0;
+    if ((STUDY_i_start <= i) && (i <= (STUDY_i_end + 24) % 24)) q = 1;
+  }
+  else {
+    q = 1;
+    if ((STUDY_i_start > i) && (i > (STUDY_i_end + 24) % 24)) q = 0;
+  }
+  return q;
+}
+
+
+int[] get_startZ_endZ (int data_source) {
+  int[] a = new int [3];
+
+  int start_z = -1;
+  int end_z = -1; 
+  int layers_count = -1;
+
+  if (data_source == databaseNumber_CLIMATE_WY2) {
+
+    start_z = CLIMATE_WY2_start;
+    end_z = CLIMATE_WY2_end; 
+    
+    switch(H_layer_option) {
+      case 1 : start_z = 1953; end_z = 1959; break;
+      case 2 : start_z = 1960; end_z = 1969; break;
+      case 3 : start_z = 1970; end_z = 1979; break;
+      case 4 : start_z = 1980; end_z = 1989; break;
+      case 5 : start_z = 1990; end_z = 1999; break;
+      case 6 : start_z = 2000; end_z = 2005; break;
+      case 7: start_z = Sample_Year; end_z = Sample_Year; break;
+    }
+    
+    start_z -= CLIMATE_WY2_start - 1;
+    end_z -= CLIMATE_WY2_start - 1;
+  }
+  if (data_source == databaseNumber_ENSEMBLE) {
+
+    start_z = ENSEMBLE_start;
+    end_z = ENSEMBLE_end;
+    
+    switch(F_layer_option) {
+      case 1 : start_z = 23; end_z = 43; break; //xml: US
+      case 2 : start_z = 1; end_z = 22; break; //xml: GEPS + GDPS
+      case 3: start_z = 44; end_z = end_z; break; // additional GRIB2 domains
+      case 4: start_z = 1; end_z = 43; break; //xml: NAEFS
+      case 5: start_z = Sample_Member; end_z = Sample_Member; break;
+      
+      
+    }
+
+  }    
+  if (data_source == databaseNumber_OBSERVED) {
+
+    start_z = OBSERVED_start;
+    end_z = OBSERVED_end;
+    
+    switch(O_layer_option) {
+      case 1 : start_z = 1; end_z = 1; break;
+      case 2 : start_z = Sample_Station; end_z = Sample_Station; break;
+    }
+
+  }   
+  if (data_source == databaseNumber_CLIMATE_EPW) {
+
+    start_z = 1;
+    end_z = 1;
+    
+  }   
+
+
+
+  if (impacts_source == databaseNumber_CLIMATE_WY2) layers_count = (1 + CLIMATE_WY2_end - CLIMATE_WY2_start);
+  if (impacts_source == databaseNumber_ENSEMBLE) layers_count = (1 + ENSEMBLE_end - ENSEMBLE_start); 
+  if (impacts_source == databaseNumber_OBSERVED) layers_count = (1 + OBSERVED_end - OBSERVED_start);
+  if (impacts_source == databaseNumber_CLIMATE_EPW) layers_count = 1;
+  
+  a[0] = start_z;
+  a[1] = end_z;
+  a[2] = layers_count;
+  
+  return  a;
+}
 
