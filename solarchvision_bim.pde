@@ -372,9 +372,14 @@ float[] nearest_Station_OBSERVED_dist = new float [numberOfNearestStations_OBSER
 
 
 
-int Sample_Year = 2005; // 2003 as a year with extreme condition
-int Sample_Member = 22; // deterministic
-int Sample_Station = 1; 
+int Sample_Year_start = 1996; 
+int Sample_Year_end = 2005; 
+
+int Sample_Member_start = 22; // deterministic
+int Sample_Member_end = 22; // deterministic
+
+int Sample_Station_start = 1; 
+int Sample_Station_end = 1;
 
 float[][][][] CLIMATE_EPW;
 
@@ -468,9 +473,9 @@ PrintWriter[] File_output_node;
 PrintWriter[] File_output_norm;
 PrintWriter[] File_output_prob;
 
-int H_layer_option = 0; //6;
-int F_layer_option = 0; //1;
-int O_layer_option = 0; //1;
+int H_layer_option = -1; 
+int F_layer_option = -1;
+int O_layer_option = -1;
 
 int develop_option = 11; //10; //2; // between 0 - 12....
 int develop_per_day = 1;
@@ -10765,14 +10770,10 @@ void STUDY_keyPressed (KeyEvent e) {
                   ROLLOUT_Update = 1; 
                   break;
 
-        case 'y' :Sample_Year += 1; if (Sample_Year > CLIMATE_WY2_end) Sample_Year = CLIMATE_WY2_start; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break; 
-        case 'Y' :Sample_Year -= 1; if (Sample_Year < CLIMATE_WY2_start) Sample_Year = CLIMATE_WY2_end; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         case 'h' :H_layer_option = (H_layer_option + 1) % 8; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         case 'H' :H_layer_option = (H_layer_option + 8 - 1) % 8; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         case 'f' :F_layer_option = (F_layer_option + 1) % 6; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         case 'F' :F_layer_option = (F_layer_option + 6 - 1) % 6; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 'e' :Sample_Member += 1; if (Sample_Member > ENSEMBLE_end) Sample_Member = ENSEMBLE_start; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break; 
-        case 'E' :Sample_Member -= 1; if (Sample_Member < ENSEMBLE_start) Sample_Member = ENSEMBLE_end; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
   
         //case 'g' :filter_type = (filter_type + 1) % 2; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         //case 'G' :filter_type = (filter_type + 2 - 1) % 2; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
@@ -21777,12 +21778,20 @@ void SOLARCHVISION_draw_ROLLOUT () {
     if (ROLLOUT_child == 3) { // Filters
       sky_scenario = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Sky status", sky_scenario, 1, 4, 1), 1));
       filter_type = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Hourly/daily filter", filter_type, 0, 1, 1), 1));
+
+      H_layer_option = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Climate filter option" , H_layer_option, -1, 6, 1), 1));
+      Sample_Year_start = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Start year" , Sample_Year_start, CLIMATE_WY2_start, CLIMATE_WY2_end, 1), 1));
+      Sample_Year_end = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "End" , Sample_Year_end, CLIMATE_WY2_start, CLIMATE_WY2_end, 1), 1));
     
-      F_layer_option = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Forecast filter option" , F_layer_option, 0, 5, 1), 1));
-      Sample_Member = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Single member" , Sample_Member, ENSEMBLE_end, ENSEMBLE_end, 1), 1));  
+      F_layer_option = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Forecast filter option" , F_layer_option, -1, 4, 1), 1));
+      Sample_Member_start = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Start member" , Sample_Member_start, ENSEMBLE_end, ENSEMBLE_end, 1), 1));  
+      Sample_Member_end = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "End member" , Sample_Member_end, ENSEMBLE_end, ENSEMBLE_end, 1), 1));
+      
+      O_layer_option = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Observation filter option" , O_layer_option, -1, 1, 1), 1));
+      Sample_Station_start = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Start station" , Sample_Station_start, ENSEMBLE_end, ENSEMBLE_end, 1), 1));  
+      Sample_Station_end = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "End station" , Sample_Station_end, ENSEMBLE_end, ENSEMBLE_end, 1), 1));      
     
-      H_layer_option = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Climate filter option" , H_layer_option, 0, 7, 1), 1));
-      Sample_Year = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Single year" , Sample_Year, CLIMATE_WY2_start, CLIMATE_WY2_end, 1), 1));
+
     }
     
   }  
@@ -26752,6 +26761,68 @@ void SOLARCHVISION_draw_window_BAR_d () {
         
       }
 
+        
+      if (BAR_d_Items[i][0].equals("Decade")) {
+        
+        int n1 = int(BAR_d_Items[i][1]);
+        int n2 = int(BAR_d_Items[i][2]);
+
+        if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2) == 1) {
+  
+          if (mouseButton == LEFT) {
+            Sample_Year_start = n1 + int(roundTo((n2 - n1 + 1) * (X_clicked - x1) / (x2 - x1) - 0.5, 1));
+            
+            println("Sample_Year_start", Sample_Year_start);
+            
+            H_layer_option = -1; 
+            
+            ROLLOUT_Update = 1;
+            STUDY_Update = 1;
+          }
+          
+          if (mouseButton == RIGHT) {
+            Sample_Year_end = n1 + int(roundTo((n2 - n1 + 1) * (X_clicked - x1) / (x2 - x1) - 0.5, 1));
+            
+            println("Sample_Year_end", Sample_Year_end);
+            
+            H_layer_option = -1; 
+            
+            ROLLOUT_Update = 1;
+            STUDY_Update = 1;
+          }        
+        }        
+        
+        
+        
+        float x_start = x1 + (x2 - x1) * (Sample_Year_start - n1) / float(n2 - n1 + 1);  
+        float x_end = x1 + (x2 - x1) * (Sample_Year_end - n1 + 1) / float(n2 - n1 + 1);
+        
+        fill(0,191,0,191);
+        noStroke();
+        
+        if (Sample_Year_start <= Sample_Year_end) { 
+          rect(x_start, y1, x_end - x_start, y2 - y1);
+        }
+
+        textAlign(CENTER, CENTER);   
+        stroke(0); 
+        fill(0);
+        textSize(1.25 * MESSAGE_S_View);
+        
+        for (int j = 0; j < n2 - n1 + 1; j += 1) {
+          
+          String txt = ".";
+          if ((j % 10 == 5)) {
+            txt = nf(j - 5 + n1, 0) + "s";
+          }  
+          else if (j % 5 == 0) {
+            txt = "|"; 
+          }
+          text(txt, x1 + (x2 - x1) * (j + 0.5) / float(n2 - n1 + 1), Y_control - 0.2 * MESSAGE_S_View);
+          
+        }        
+      }        
+
 
       
       Y_control += BAR_d_tab;
@@ -26811,34 +26882,36 @@ int[] get_startZ_endZ (int data_source) {
   int layers_count = -1;
 
   if (data_source == databaseNumber_CLIMATE_WY2) {
-
-    start_z = CLIMATE_WY2_start;
-    end_z = CLIMATE_WY2_end; 
+    
+    // case -1 :
+    start_z = Sample_Year_start;
+    end_z = Sample_Year_end; 
     
     switch(H_layer_option) {
+      case 0 : start_z = CLIMATE_WY2_start; end_z = CLIMATE_WY2_end; break;
       case 1 : start_z = 1953; end_z = 1959; break;
       case 2 : start_z = 1960; end_z = 1969; break;
       case 3 : start_z = 1970; end_z = 1979; break;
       case 4 : start_z = 1980; end_z = 1989; break;
       case 5 : start_z = 1990; end_z = 1999; break;
       case 6 : start_z = 2000; end_z = 2005; break;
-      case 7: start_z = Sample_Year; end_z = Sample_Year; break;
     }
-    
+
     start_z -= CLIMATE_WY2_start - 1;
     end_z -= CLIMATE_WY2_start - 1;
   }
   if (data_source == databaseNumber_ENSEMBLE) {
 
-    start_z = ENSEMBLE_start;
-    end_z = ENSEMBLE_end;
+    // case -1 :
+    start_z = Sample_Member_start;
+    end_z = Sample_Member_end;
     
     switch(F_layer_option) {
+      case 0 : start_z = ENSEMBLE_start; end_z = ENSEMBLE_end; break; //ALL: xml + grib2
       case 1 : start_z = 23; end_z = 43; break; //xml: US
       case 2 : start_z = 1; end_z = 22; break; //xml: GEPS + GDPS
       case 3: start_z = 44; end_z = end_z; break; // additional GRIB2 domains
       case 4: start_z = 1; end_z = 43; break; //xml: NAEFS
-      case 5: start_z = Sample_Member; end_z = Sample_Member; break;
       
       
     }
@@ -26846,12 +26919,13 @@ int[] get_startZ_endZ (int data_source) {
   }    
   if (data_source == databaseNumber_OBSERVED) {
 
-    start_z = OBSERVED_start;
-    end_z = OBSERVED_end;
+    // case -1 :
+    start_z =  Sample_Station_start;
+    end_z =  Sample_Station_end;
     
     switch(O_layer_option) {
+      case 0 : start_z = OBSERVED_start; end_z = OBSERVED_end; break;
       case 1 : start_z = 1; end_z = 1; break;
-      case 2 : start_z = Sample_Station; end_z = Sample_Station; break;
     }
 
   }   
