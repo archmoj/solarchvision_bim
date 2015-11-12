@@ -10760,25 +10760,7 @@ void STUDY_keyPressed (KeyEvent e) {
         case ';': draw_impact_summary = (draw_impact_summary + 1) % 2;
                   STUDY_Update = 1; ROLLOUT_Update = 1; break;
 
-        case TAB :if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
-                    if (per_day == 1) { 
-                      per_day = int(365 / float(STUDY_j_end - STUDY_j_start));
-                    }
-                    else {
-                      per_day = 1;
-                    }
-                  } 
-                  if (impacts_source == databaseNumber_ENSEMBLE) {
-                    per_day = 1;
-                  }           
-                  if (impacts_source == databaseNumber_OBSERVED) {
-                    if (per_day == 1) { 
-                      per_day = int(STUDY_max_j_end_observations / float(STUDY_j_end - STUDY_j_start));
-                    }
-                    else {
-                      per_day = 1;
-                    }
-                  }                     
+        case TAB :SOALRCHVISION_refreshDateTabs();                   
                   update_DevelopDATA = 1;
                   BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
                 
@@ -19101,6 +19083,55 @@ void mouseWheel(MouseEvent event) {
         X_clicked = mouseX;
         Y_clicked = mouseY;
         
+        {
+          float displayBarHeight = MESSAGE_S_View;
+          float displayBarWidth = 2 * w_pixel; 
+      
+          X_control = 0.5 * displayBarWidth;
+          Y_control = a_pixel + b_pixel + 2 * h_pixel + 0.5 * BAR_d_tab;
+          
+          for (int i = 0; i < BAR_d_Items.length; i++) {
+            
+            float x1 = X_control - 0.366 * displayBarWidth;
+            float x2 = X_control + 0.5 * displayBarWidth;
+            float y1 = Y_control - 0.45 * displayBarHeight;
+            float y2 = Y_control + 0.45 * displayBarHeight;
+            
+            if (BAR_d_Items[i][0].equals("Day")) {
+      
+              if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2) == 1) {
+        
+              }
+              
+            }
+            
+            if (BAR_d_Items[i][0].equals("Year")) {
+      
+              if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2) == 1) {
+                
+                int keep_num_add_days = num_add_days;
+                
+                if (Wheel_Value < 0) num_add_days += 2;
+                if (Wheel_Value > 0) num_add_days -= 2;
+                
+                if (num_add_days > 64) num_add_days = 64;
+                if (num_add_days < 1) num_add_days = 1;
+                
+                if (keep_num_add_days != num_add_days) {
+                  update_DevelopDATA = 1;
+                
+                  ROLLOUT_Update = 1;
+                  STUDY_Update = 1;
+                  BAR_d_Update = 1;
+                }        
+              }        
+            }
+            
+            Y_control += BAR_d_tab;
+          }
+        }
+        
+        
         if (WORLD_include == 1) {
           if (isInside(X_clicked, Y_clicked, WORLD_CX_View, WORLD_CY_View, WORLD_CX_View + WORLD_X_View, WORLD_CY_View + WORLD_Y_View) == 1) {
             
@@ -26714,16 +26745,11 @@ void SOLARCHVISION_draw_window_BAR_d () {
           }
           
           if (mouseButton == RIGHT) {
-            num_add_days = 2 * int(abs(_DATE  - ((int(roundTo(365.0 * (X_clicked - x1) / (x2 - x1), 1)) + 286) % 365)) % (365 / float(STUDY_j_end - STUDY_j_start)));
-            if (num_add_days > 64) num_add_days = 64;
-            if (num_add_days < 1) num_add_days = 1;
-            
-            println("num_add_days:", num_add_days); 
-            
+            SOALRCHVISION_refreshDateTabs();                   
             update_DevelopDATA = 1;
-          
+            
+            STUDY_Update = 1; 
             ROLLOUT_Update = 1;
-            STUDY_Update = 1;
           }        
         }        
 
@@ -26762,7 +26788,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
             }            
             
           }
-          
+          /*
           {
             int now_j = int(j * per_day + BEGIN_DAY + 365) % 365;
           
@@ -26772,17 +26798,29 @@ void SOLARCHVISION_draw_window_BAR_d () {
             textSize(1.25 * MESSAGE_S_View);
             
             //text(nf(j + 1, 0), x1 + (x2 - x1) * (now_j) / 365.0, Y_control - 0.2 * MESSAGE_S_View);
-            
+
             text(CalendarDay[int((now_j + 286) % 365)][_LAN], x1 + (x2 - x1) * (now_j) / 365.0, Y_control - 0.2 * MESSAGE_S_View);
           }
+          */
         }
+        
+        {
+          textAlign(CENTER, CENTER);   
+          stroke(0); 
+          fill(0);
+          textSize(1.25 * MESSAGE_S_View);
+          
+          for (int j = 0; j < 12; j += 1) {
+            text(CalendarMonth[j][_LAN], x1 + (x2 - x1) * (j + 0.5) / 12.0, Y_control - 0.2 * MESSAGE_S_View);
+          }                  
+        }        
         
         per_day = keep_per_day;
         num_add_days = keep_num_add_days;
         
       }
-            
-    
+
+
       
       Y_control += BAR_d_tab;
     }
@@ -26791,3 +26829,26 @@ void SOLARCHVISION_draw_window_BAR_d () {
     Y_clicked = -1;
   }  
 }   
+
+void SOALRCHVISION_refreshDateTabs () {
+  if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
+    if (per_day == 1) { 
+      per_day = int(365 / float(STUDY_j_end - STUDY_j_start));
+    }
+    else {
+      per_day = 1;
+    }
+    } 
+    if (impacts_source == databaseNumber_ENSEMBLE) {
+    per_day = 1;
+    }           
+    if (impacts_source == databaseNumber_OBSERVED) {
+    if (per_day == 1) { 
+      per_day = int(STUDY_max_j_end_observations / float(STUDY_j_end - STUDY_j_start));
+    }
+    else {
+      per_day = 1;
+    }
+  }
+}  
+
