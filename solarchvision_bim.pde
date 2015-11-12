@@ -1117,6 +1117,13 @@ float WORLD_Image_Scale = 1.0;
 
 float STUDY_Image_Scale = 1.0;
 
+int pre_Sample_Year_start; 
+int pre_Sample_Year_end; 
+int pre_Sample_Member_start;
+int pre_Sample_Member_end;
+int pre_Sample_Station_start; 
+int pre_Sample_Station_end;
+int pre_num_add_days;
 int pre_STUDY_i_start;
 int pre_STUDY_i_end;
 int pre_STUDY_j_end;
@@ -1946,7 +1953,14 @@ void draw () {
     if (ROLLOUT_include == 1) {
       if (ROLLOUT_Update == 1) {
         ROLLOUT_Update = 0;
-        
+
+        pre_Sample_Year_start = Sample_Year_start;
+        pre_Sample_Year_end = Sample_Year_end;
+        pre_Sample_Member_start = Sample_Member_start;
+        pre_Sample_Member_end = Sample_Member_end;
+        pre_Sample_Station_start = Sample_Station_start; 
+        pre_Sample_Station_end = Sample_Station_end;
+        pre_num_add_days = num_add_days;
         pre_STUDY_i_start = STUDY_i_start;
         pre_STUDY_i_end = STUDY_i_end;        
         pre_STUDY_j_end = STUDY_j_end;
@@ -2042,11 +2056,37 @@ void draw () {
         pre_plot_impacts = plot_impacts;
         
         SOLARCHVISION_draw_ROLLOUT();
+        
+        if (pre_Sample_Year_start != Sample_Year_start) {
+          BAR_d_Update = 1;
+        }            
+        if (pre_Sample_Year_end != Sample_Year_end) {
+          BAR_d_Update = 1;
+        }            
+          
+        if (pre_Sample_Member_start != Sample_Member_start) {
+          BAR_d_Update = 1;
+        }  
+        
+        if (pre_Sample_Member_end != Sample_Member_end) {
+          BAR_d_Update = 1;
+        }  
+        
+        if (pre_Sample_Station_start != Sample_Station_start) {
+          BAR_d_Update = 1;
+        }  
+        
+        if (pre_Sample_Station_end != Sample_Station_end) {
+          BAR_d_Update = 1;
+        }  
+        
+        if (pre_num_add_days != num_add_days) {
+          BAR_d_Update = 1;
+        }            
 
         if (pre_STUDY_i_start != STUDY_i_start) {
           BAR_d_Update = 1;
         }      
-
         
         if (pre_STUDY_i_end != STUDY_i_end) {
           BAR_d_Update = 1;
@@ -26757,7 +26797,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
             float x_start = x1 + (x2 - x1) * ((now_j) % 365) / 365.0;  
             float x_end = x1 + (x2 - x1) * ((now_j + 1) % 365) / 365.0;
             
-            fill(127,0,0,191);
+            fill(191,0,0,191);
             noStroke();
             
             if (x_start <= x_end) { 
@@ -26836,7 +26876,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
         float x_start = x1 + (x2 - x1) * (Sample_Year_start - n1) / float(n2 - n1 + 1);  
         float x_end = x1 + (x2 - x1) * (Sample_Year_end - n1 + 1) / float(n2 - n1 + 1);
         
-        fill(0,191,0,191);
+        fill(0,0,191,191);
         noStroke();
         
         if (Sample_Year_start <= Sample_Year_end) { 
