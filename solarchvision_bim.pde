@@ -19100,7 +19100,30 @@ void mouseWheel(MouseEvent event) {
             if (BAR_d_Items[i][0].equals("Day")) {
       
               if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2) == 1) {
-        
+                
+                int keep_STUDY_i_start = STUDY_i_start;
+                int keep_STUDY_i_end = STUDY_i_end;
+                
+                if (Wheel_Value > 0) {
+                  STUDY_i_start += 1; 
+                  STUDY_i_end += 1;
+                } 
+                if (Wheel_Value < 0) {
+                  STUDY_i_start -= 1; 
+                  STUDY_i_end -= 1;
+                } 
+                
+                if (STUDY_i_start < 0) STUDY_i_start = 23;
+                if (STUDY_i_start > 23) STUDY_i_start = 0;
+                if (STUDY_i_end < 0) STUDY_i_end = 23;
+                if (STUDY_i_end > 23) STUDY_i_end = 0;
+                
+                if ((keep_STUDY_i_start != STUDY_i_start) || (keep_STUDY_i_end != STUDY_i_end)) {
+                  ROLLOUT_Update = 1;
+                  STUDY_Update = 1;
+                  BAR_d_Update = 1;
+                }
+                
               }
               
             }
@@ -19111,8 +19134,8 @@ void mouseWheel(MouseEvent event) {
                 
                 int keep_num_add_days = num_add_days;
                 
-                if (Wheel_Value < 0) num_add_days += 2;
-                if (Wheel_Value > 0) num_add_days -= 2;
+                if (Wheel_Value > 0) num_add_days += 2;
+                if (Wheel_Value < 0) num_add_days -= 2;
                 
                 if (num_add_days > 64) num_add_days = 64;
                 if (num_add_days < 1) num_add_days = 1;
@@ -26689,8 +26712,6 @@ void SOLARCHVISION_draw_window_BAR_d () {
             
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
-            
-            println("STUDY_i_start", STUDY_i_start);
           }
           
           if (mouseButton == RIGHT) {
@@ -26698,15 +26719,13 @@ void SOLARCHVISION_draw_window_BAR_d () {
             
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
-            
-            println("STUDY_i_end", STUDY_i_end);
           }        
         }        
         
         float x_start = x1 + (x2 - x1) * (STUDY_i_start) / 24.0;  
         float x_end = x1 + (x2 - x1) * (STUDY_i_end + 1) / 24.0;
         
-        fill(127,0,0,127);
+        fill(0,191,0,191);
         noStroke();
         
         if (STUDY_i_start <= STUDY_i_end) { 
@@ -26745,7 +26764,15 @@ void SOLARCHVISION_draw_window_BAR_d () {
           }
           
           if (mouseButton == RIGHT) {
-            SOALRCHVISION_refreshDateTabs();                   
+            
+            float _DATE2 = (int(roundTo(365.0 * (X_clicked - x1) / (x2 - x1), 1)) + 286) % 365;
+
+            if (_DATE > _DATE2) _DATE2 += 365;
+            
+            per_day = int(roundTo((_DATE2 - _DATE) / float(STUDY_j_end - STUDY_j_start - 1), 1));
+            
+            if (per_day < 0) per_day = 1;
+            
             update_DevelopDATA = 1;
             
             STUDY_Update = 1; 
@@ -26776,7 +26803,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
             float x_start = x1 + (x2 - x1) * ((now_j) % 365) / 365.0;  
             float x_end = x1 + (x2 - x1) * ((now_j + 1) % 365) / 365.0;
             
-            fill(127,0,0,127);
+            fill(127,0,0,191);
             noStroke();
             
             if (x_start <= x_end) { 
@@ -26788,20 +26815,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
             }            
             
           }
-          /*
-          {
-            int now_j = int(j * per_day + BEGIN_DAY + 365) % 365;
-          
-            textAlign(LEFT, CENTER);   
-            stroke(0); 
-            fill(0);
-            textSize(1.25 * MESSAGE_S_View);
-            
-            //text(nf(j + 1, 0), x1 + (x2 - x1) * (now_j) / 365.0, Y_control - 0.2 * MESSAGE_S_View);
 
-            text(CalendarDay[int((now_j + 286) % 365)][_LAN], x1 + (x2 - x1) * (now_j) / 365.0, Y_control - 0.2 * MESSAGE_S_View);
-          }
-          */
         }
         
         {
