@@ -344,7 +344,7 @@ int STUDY_max_j_end_parameters = 16; // Constant
 int STUDY_max_j_end_observations = 0; // Variable
 
 float per_day = 61; //1; //45; //61; //30.5;
-int num_add_days = 2; //30;//per_day; // it should be set up to 1 in order to plot only one day  
+int num_add_days = 1; //30;//per_day; // it should be set up to 1 in order to plot only one day  
 
 int CLIMATE_EPW_start = 1; 
 int CLIMATE_EPW_end = 1;
@@ -8316,9 +8316,7 @@ int[] reverse_N;
 }
 
 float[] SOLARCHVISION_NORMAL (float[] _values) {
-  
-  println("SOLARCHVISION_NORMAL");
-  
+
   float[] weight_array = {0, 0, 0, 0, 0, 0, 0, 0, 0};
   float[] return_array = {0, 0, 0, 0, 0, 0, 0, 0, 0};
   
@@ -8350,8 +8348,6 @@ float[] SOLARCHVISION_NORMAL (float[] _values) {
         return_array[N_MidLow] += _values[i] * _weight; 
       }
     }
-    
-    println("HERE-1");
 
     return_array[N_Ave] /= weight_array[N_Ave];
     return_array[N_Middle] /= weight_array[N_Middle];
@@ -8361,24 +8357,15 @@ float[] SOLARCHVISION_NORMAL (float[] _values) {
     return_array[N_Max] = _values[(NV - 1)];
     return_array[N_Min] = _values[0];
 
-    println("HERE-2");
-
     if ((NV % 2) == 1) {
 
-      return_array[N_M50] = _values[(NV / 2)];
-      
-      println("HERE-3");
+      return_array[N_M50] = _values[(floor(NV / 2))];
     }
     else {
       
-      println("NV/2", NV/2, floor(NV/2));
-      
       return_array[N_M50] = 0.5 * (_values[(floor(NV / 2))] + _values[(floor(NV / 2) - 1)]);
-      
-      println("HERE-4");
+
     }
-    
-    println("HERE-5");
     
     int q;
     
@@ -8395,8 +8382,6 @@ float[] SOLARCHVISION_NORMAL (float[] _values) {
       return_array[i] = FLOAT_undefined;
     }
   }
-  
-  println("SOLARCHVISION_NORMAL_OuT");
   
   return return_array; 
 }
