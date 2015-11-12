@@ -26766,12 +26766,14 @@ void SOLARCHVISION_draw_window_BAR_d () {
           {
             int now_j = int(j * per_day + BEGIN_DAY + 365) % 365;
           
-            textAlign(CENTER, CENTER);   
+            textAlign(LEFT, CENTER);   
             stroke(0); 
             fill(0);
             textSize(1.25 * MESSAGE_S_View);
             
-            text(nf(j + 1, 0), x1 + (x2 - x1) * (now_j) / 365.0, Y_control - 0.2 * MESSAGE_S_View);
+            //text(nf(j + 1, 0), x1 + (x2 - x1) * (now_j) / 365.0, Y_control - 0.2 * MESSAGE_S_View);
+            
+            text(CalendarDay[int((now_j + 286) % 365)][_LAN], x1 + (x2 - x1) * (now_j) / 365.0, Y_control - 0.2 * MESSAGE_S_View);
           }
         }
         
