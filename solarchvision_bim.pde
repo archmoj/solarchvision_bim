@@ -19068,6 +19068,33 @@ void mouseWheel(MouseEvent event) {
                 }        
               }        
             }
+
+            if (BAR_d_Items[i][0].equals("Decade")) {
+      
+              if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2) == 1) {
+                
+                int keep_Sample_Year_start = Sample_Year_start;
+                int keep_Sample_Year_end = Sample_Year_end;
+                
+                if (Wheel_Value > 0) {Sample_Year_start += 1; Sample_Year_end += 1;}
+                if (Wheel_Value < 0) {Sample_Year_start -= 1; Sample_Year_end -= 1;}
+                
+                if (Sample_Year_start < int(BAR_d_Items[i][1])) Sample_Year_start = int(BAR_d_Items[i][1]);
+                if (Sample_Year_end > int(BAR_d_Items[i][2])) Sample_Year_end = int(BAR_d_Items[i][2]);
+                
+                if ((keep_Sample_Year_start != Sample_Year_start) || (keep_Sample_Year_end != Sample_Year_end)) {
+                  
+                  H_layer_option = -1; 
+                  
+                  update_DevelopDATA = 1;
+                
+                  ROLLOUT_Update = 1;
+                  STUDY_Update = 1;
+                  BAR_d_Update = 1;
+                }        
+              }        
+            }            
+        
             
             Y_control += BAR_d_tab;
           }
@@ -21784,12 +21811,12 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Sample_Year_end = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "End" , Sample_Year_end, CLIMATE_WY2_start, CLIMATE_WY2_end, 1), 1));
     
       F_layer_option = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Forecast filter option" , F_layer_option, -1, 4, 1), 1));
-      Sample_Member_start = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Start member" , Sample_Member_start, ENSEMBLE_end, ENSEMBLE_end, 1), 1));  
-      Sample_Member_end = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "End member" , Sample_Member_end, ENSEMBLE_end, ENSEMBLE_end, 1), 1));
+      Sample_Member_start = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Start member" , Sample_Member_start, ENSEMBLE_start, ENSEMBLE_end, 1), 1));  
+      Sample_Member_end = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "End member" , Sample_Member_end, ENSEMBLE_start, ENSEMBLE_end, 1), 1));
       
       O_layer_option = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Observation filter option" , O_layer_option, -1, 1, 1), 1));
-      Sample_Station_start = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Start station" , Sample_Station_start, ENSEMBLE_end, ENSEMBLE_end, 1), 1));  
-      Sample_Station_end = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "End station" , Sample_Station_end, ENSEMBLE_end, ENSEMBLE_end, 1), 1));      
+      Sample_Station_start = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Start station" , Sample_Station_start, OBSERVED_start, OBSERVED_end, 1), 1));  
+      Sample_Station_end = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "End station" , Sample_Station_end, OBSERVED_start, OBSERVED_end, 1), 1));      
     
 
     }
@@ -26772,9 +26799,15 @@ void SOLARCHVISION_draw_window_BAR_d () {
           if (mouseButton == LEFT) {
             Sample_Year_start = n1 + int(roundTo((n2 - n1 + 1) * (X_clicked - x1) / (x2 - x1) - 0.5, 1));
             
-            println("Sample_Year_start", Sample_Year_start);
+            if (Sample_Year_start > Sample_Year_end) {
+              int swap_tmp = Sample_Year_start;
+              Sample_Year_start = Sample_Year_end;
+              Sample_Year_end = swap_tmp;
+            }
             
             H_layer_option = -1; 
+            
+            update_DevelopDATA = 1;
             
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
@@ -26782,10 +26815,16 @@ void SOLARCHVISION_draw_window_BAR_d () {
           
           if (mouseButton == RIGHT) {
             Sample_Year_end = n1 + int(roundTo((n2 - n1 + 1) * (X_clicked - x1) / (x2 - x1) - 0.5, 1));
-            
-            println("Sample_Year_end", Sample_Year_end);
+
+            if (Sample_Year_start > Sample_Year_end) {
+              int swap_tmp = Sample_Year_start;
+              Sample_Year_start = Sample_Year_end;
+              Sample_Year_end = swap_tmp;
+            }
             
             H_layer_option = -1; 
+            
+            update_DevelopDATA = 1;
             
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
@@ -26896,6 +26935,9 @@ int[] get_startZ_endZ (int data_source) {
       case 5 : start_z = 1990; end_z = 1999; break;
       case 6 : start_z = 2000; end_z = 2005; break;
     }
+    
+    if (start_z < CLIMATE_WY2_start) start_z = CLIMATE_WY2_start;
+    if (end_z > CLIMATE_WY2_end) end_z = CLIMATE_WY2_end;
 
     start_z -= CLIMATE_WY2_start - 1;
     end_z -= CLIMATE_WY2_start - 1;
