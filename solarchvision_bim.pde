@@ -344,7 +344,7 @@ int STUDY_max_j_end_parameters = 16; // Constant
 int STUDY_max_j_end_observations = 0; // Variable
 
 float per_day = 61; //1; //45; //61; //30.5;
-int num_add_days = 1; //30;//per_day; // it should be set up to 1 in order to plot only one day  
+int num_add_days = 2; //30;//per_day; // it should be set up to 1 in order to plot only one day  
 
 int CLIMATE_EPW_start = 1; 
 int CLIMATE_EPW_end = 1;
@@ -5363,13 +5363,13 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
       
       my_text(CalendarDay[int((365 + j + 286 + BEGIN_DAY) % 365)][_LAN], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / STUDY_U_scale, 0);
       if (num_add_days > 1) {
-        //my_text(("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot, 0);
+        //my_text(("±" + int(roundTo(0.5 * num_add_days, 1)) + _WORDS[2][_LAN] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot, 0);
       }
     }
     
     String _FilenamesAdd = "";
     if (num_add_days > 1) {
-        //_FilenamesAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
+        //_FilenamesAdd = ("±" + int(roundTo(0.5 * num_add_days, 1)) + _WORDS[2][_LAN] + "s");
     }
     if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) {
       File_output_node[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/FORECAST_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
@@ -5769,13 +5769,13 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
       
       my_text(CalendarDay[int((365 + j * per_day + 286 + BEGIN_DAY) % 365)][_LAN], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / STUDY_U_scale, 0);
       if (num_add_days > 1) {
-        //my_text(("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot, 0);
+        //my_text(("±" + int(roundTo(0.5 * num_add_days, 1)) + _WORDS[2][_LAN] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot, 0);
       }
     }    
     
     String _FilenamesAdd = "";
     if (num_add_days > 1) {
-        _FilenamesAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
+        _FilenamesAdd = ("±" + int(roundTo(0.5 * num_add_days, 1)) + _WORDS[2][_LAN] + "s");
     }
     if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) {
       File_output_node[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_from_" + String.valueOf(start_z + CLIMATE_WY2_start) + "_to_" + String.valueOf(end_z + CLIMATE_WY2_start) + "_" + LAYERS_Title[STUDY_drw_Layer][_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
@@ -6166,13 +6166,13 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
       
       my_text(CalendarDay[int((365 + j * per_day + 286 + BEGIN_DAY) % 365)][_LAN], (j - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / STUDY_U_scale, 0);
       if (num_add_days > 1) {
-        //my_text(("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot, 0);
+        //my_text(("±" + int(roundTo(0.5 * num_add_days, 1)) + _WORDS[2][_LAN] + "s"), (0 + j - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot, 0);
       }
     }    
     
     String _FilenamesAdd = "";
     if (num_add_days > 1) {
-        _FilenamesAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
+        _FilenamesAdd = ("±" + int(roundTo(0.5 * num_add_days, 1)) + _WORDS[2][_LAN] + "s");
     }
     if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) {
       File_output_node[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/Climate_node_" + LocationName + "_" + LAYERS_Title[STUDY_drw_Layer][_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
@@ -6768,7 +6768,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
   for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) { 
     String _FilenamesAdd = "";
     if (num_add_days > 1) {
-        //_FilenamesAdd = ("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s");
+        //_FilenamesAdd = ("±" + int(roundTo(0.5 * num_add_days, 1)) + _WORDS[2][_LAN] + "s");
     }
     if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) {
       File_output_node[(j - STUDY_j_start)] = createWriter("/" + Main_name + "/OBSERVATION_node_" + LocationName + "_from_" + String.valueOf(start_z) + "_to_" + String.valueOf(end_z) + "_" + LAYERS_Title[STUDY_drw_Layer][_EN] + "_" + sky_scenario_file[sky_scenario] + "_" + CalendarDay[((365 + j + 286 + BEGIN_DAY) % 365)][_LAN] + _FilenamesAdd + ".txt");
@@ -7118,7 +7118,7 @@ void SOLARCHVISION_draw_Grid_DAILY (float x_Plot, float y_Plot, float z_Plot, fl
       
       my_text(CalendarDay[int((365 + i * per_day + 286 + BEGIN_DAY) % 365)][_LAN], (i - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / STUDY_U_scale, 0);
       if (num_add_days > 1) {
-        my_text(("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s"), (0 + i - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot, 0);
+        my_text(("±" + int(roundTo(0.5 * num_add_days, 1)) + _WORDS[2][_LAN] + "s"), (0 + i - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot, 0);
       }
     }
   }
