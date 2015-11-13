@@ -19136,6 +19136,8 @@ void mouseWheel(MouseEvent event) {
                   if (Sample_Year_start > Sample_Year_end) Sample_Year_start = Sample_Year_end;
                   
                   if (Sample_Year_start < CLIMATE_WY2_start) Sample_Year_start = CLIMATE_WY2_start;
+                  if (Sample_Year_start > CLIMATE_WY2_end) Sample_Year_start = CLIMATE_WY2_end;
+                  if (Sample_Year_end < CLIMATE_WY2_start) Sample_Year_end = CLIMATE_WY2_start;
                   if (Sample_Year_end > CLIMATE_WY2_end) Sample_Year_end = CLIMATE_WY2_end;
 
                   if ((keep_Sample_Year_start != Sample_Year_start) || (keep_Sample_Year_end != Sample_Year_end)) {
@@ -19161,6 +19163,8 @@ void mouseWheel(MouseEvent event) {
                   if (Sample_Member_start > Sample_Member_end) Sample_Member_start = Sample_Member_end; 
                   
                   if (Sample_Member_start < ENSEMBLE_start) Sample_Member_start = ENSEMBLE_start;
+                  if (Sample_Member_start > ENSEMBLE_end) Sample_Member_start = ENSEMBLE_end;
+                  if (Sample_Member_end < ENSEMBLE_start) Sample_Member_end = ENSEMBLE_start;
                   if (Sample_Member_end > ENSEMBLE_end) Sample_Member_end = ENSEMBLE_end;
 
                   if ((keep_Sample_Member_start != Sample_Member_start) || (keep_Sample_Member_end != Sample_Member_end)) {
@@ -21890,7 +21894,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       H_layer_option = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Climate filter option" , H_layer_option, -1, 6, 1), 1));
       Sample_Year_start = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Start year" , Sample_Year_start, CLIMATE_WY2_start, CLIMATE_WY2_end, 1), 1));
-      Sample_Year_end = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "End" , Sample_Year_end, CLIMATE_WY2_start, CLIMATE_WY2_end, 1), 1));
+      Sample_Year_end = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "End year" , Sample_Year_end, CLIMATE_WY2_start, CLIMATE_WY2_end, 1), 1));
     
       F_layer_option = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Forecast filter option" , F_layer_option, -1, 4, 1), 1));
       Sample_Member_start = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Start member" , Sample_Member_start, ENSEMBLE_start, ENSEMBLE_end, 1), 1));  
@@ -26982,13 +26986,9 @@ void SOLARCHVISION_draw_window_BAR_d () {
         fill(0,0,191,191);
         noStroke();
         
-        if (x_start < x_end) { 
+        if (x_start <= x_end) { 
           rect(x_start, y1, x_end - x_start, y2 - y1);
         }
-        else if (x_start == x_end) {
-          ellipse(x_start, 0.5 * (y1 + y2), y2 - y1, y2 - y1);
-        }
-        
 
         textAlign(CENTER, CENTER);   
         stroke(0); 
