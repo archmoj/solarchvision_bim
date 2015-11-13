@@ -1073,14 +1073,14 @@ int MODEL3D_ERASE = 0;
 
 int MODEL3D_TESELATION = 4;
 
-int SKY3D_TESELATION = 3;
+int SKY3D_TESELATION = 4;
 float SKY3D_scale = 10000 ; //1000; 
 
 float WindRose3D_scale = 400;
 
 
 int Display_SUN3D = 1;
-int Display_SKY3D = 1;
+int Display_SKY3D = 0;
 
 int Download_LAND = 0;
 int Load_LAND = 0; // 1;
@@ -1374,16 +1374,16 @@ float WIN3D_scale3D;
 
 int WIN3D_CX_View = 0;
 int WIN3D_CY_View = a_pixel + b_pixel + 0;
-int WIN3D_X_View = w_pixel;
+int WIN3D_X_View = int(1.25 * h_pixel);
 int WIN3D_Y_View = h_pixel;
 float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
 
 float WIN3D_X_coordinate = 0;
-float WIN3D_Y_coordinate = 0;
+float WIN3D_Y_coordinate = 10;
 float WIN3D_Z_coordinate = 0; 
 float WIN3D_S_coordinate = 5.0;
 
-float WIN3D_RX_coordinate = 75; //45;
+float WIN3D_RX_coordinate = 90; //75; 
 float WIN3D_RY_coordinate = 0;
 float WIN3D_RZ_coordinate = 0; //180; //135;
 float WIN3D_RS_coordinate = 5.0;
@@ -1410,9 +1410,9 @@ int WIN3D_update_VerticesSolarValue = 1;
 
 
 
-int WORLD_CX_View = w_pixel;
+int WORLD_CX_View = int(1.25 * h_pixel);
 int WORLD_CY_View = a_pixel + b_pixel + 0;
-int WORLD_X_View = w_pixel;
+int WORLD_X_View = int(1.75 * h_pixel);
 int WORLD_Y_View = h_pixel;
 float WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
 
@@ -11628,27 +11628,28 @@ void SOLARCHVISION_update_frame_layout () {
     STUDY_include = 1;
     WIN3D_include = 1;
     WORLD_include = 1;
-   
+
+    WIN3D_CX_View = 0;
+    WIN3D_CY_View = a_pixel + b_pixel + 0;
+    WIN3D_X_View = int(1.25 * h_pixel);
+    WIN3D_Y_View = h_pixel;
+    WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
+    WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
+
+    WORLD_CX_View = int(1.25 * h_pixel);
+    WORLD_CY_View = a_pixel + b_pixel + 0;
+    WORLD_X_View = int(1.75 * h_pixel);
+    WORLD_Y_View = h_pixel;
+    WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
+    WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
+
     STUDY_CX_View = 0;
     STUDY_CY_View = a_pixel + b_pixel + h_pixel;
     STUDY_X_View = 2 * w_pixel;
     STUDY_Y_View = 1 * h_pixel;
     STUDY_R_View = float(STUDY_Y_View) / float(STUDY_X_View);   
-    STUDY_Diagrams = createGraphics(STUDY_X_View, STUDY_Y_View, P2D);  
+    STUDY_Diagrams = createGraphics(STUDY_X_View, STUDY_Y_View, P2D);     
 
-    WORLD_CX_View = w_pixel;
-    WORLD_CY_View = a_pixel + b_pixel + 0;
-    WORLD_X_View = w_pixel;
-    WORLD_Y_View = h_pixel;
-    WORLD_R_View = float(WORLD_Y_View) / float(WORLD_X_View);
-    WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);
-   
-    WIN3D_CX_View = 0;
-    WIN3D_CY_View = a_pixel + b_pixel + 0;
-    WIN3D_X_View = w_pixel;
-    WIN3D_Y_View = h_pixel;
-    WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
-    WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
  }
  else if (frame_variation == 1) {
 
