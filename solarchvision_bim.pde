@@ -2387,8 +2387,15 @@ void draw () {
         }
 
             
-        if (STUDY_setup != pre_STUDY_setup) update_impacts = 1;
-        if (impacts_source != pre_impacts_source) update_impacts = 1; 
+        if (STUDY_setup != pre_STUDY_setup) {
+          update_impacts = 1;
+          BAR_d_Update = 0;
+        }
+        
+        if (impacts_source != pre_impacts_source) {
+          update_impacts = 1;
+          BAR_d_Update = 0;
+        } 
 
       }
     }
@@ -8704,9 +8711,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                       if (PAL_DIR == 2) _u =  0.5 * _u;
                       
-                      SET_COLOR_STYLE(PAL_TYPE, _u);
+                      float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);
+                      WIND_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
                       
-                      WIND_Diagrams.strokeWeight(STUDY_T_scale * 1);
+                      WIND_Diagrams.strokeWeight(STUDY_T_scale * 2);
                       WIND_Diagrams.noFill(); 
                     }
                     
@@ -8838,9 +8846,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                       if (PAL_DIR == 2) _u =  0.5 * _u;
                       
-                      SET_COLOR_STYLE(PAL_TYPE, _u);
+                      float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);
+                      total_WIND_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
                       
-                      total_WIND_Diagrams.strokeWeight(STUDY_T_scale * 1);
+                      total_WIND_Diagrams.strokeWeight(STUDY_T_scale * 2);
                       total_WIND_Diagrams.noFill(); 
                     }
                     
@@ -19060,6 +19069,7 @@ void mouseWheel(MouseEvent event) {
       
               if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2) == 1) {
                 
+                
                 int keep_STUDY_i_start = STUDY_i_start;
                 int keep_STUDY_i_end = STUDY_i_end;
                 
@@ -19082,7 +19092,7 @@ void mouseWheel(MouseEvent event) {
                   STUDY_Update = 1;
                   BAR_d_Update = 1;
                 }
-                
+               
               }
               
             }
@@ -19109,29 +19119,31 @@ void mouseWheel(MouseEvent event) {
               }        
             }
 
-            if (BAR_d_Items[i][0].equals("Decade")) {
+            if (BAR_d_Items[i][0].equals("Scenario")) {
       
               if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2) == 1) {
-                
-                int keep_Sample_Year_start = Sample_Year_start;
-                int keep_Sample_Year_end = Sample_Year_end;
-                
-                if (Wheel_Value > 0) {Sample_Year_start += 1; Sample_Year_end += 1;}
-                if (Wheel_Value < 0) {Sample_Year_start -= 1; Sample_Year_end -= 1;}
-                
-                if (Sample_Year_start < int(BAR_d_Items[i][1])) Sample_Year_start = int(BAR_d_Items[i][1]);
-                if (Sample_Year_end > int(BAR_d_Items[i][2])) Sample_Year_end = int(BAR_d_Items[i][2]);
-                
-                if ((keep_Sample_Year_start != Sample_Year_start) || (keep_Sample_Year_end != Sample_Year_end)) {
+
+                if (impacts_source == databaseNumber_CLIMATE_WY2) {
+                  int keep_Sample_Year_start = Sample_Year_start;
+                  int keep_Sample_Year_end = Sample_Year_end;
                   
-                  H_layer_option = -1; 
+                  if (Wheel_Value > 0) {Sample_Year_start += 1; Sample_Year_end += 1;}
+                  if (Wheel_Value < 0) {Sample_Year_start -= 1; Sample_Year_end -= 1;}
                   
-                  update_DevelopDATA = 1;
-                
-                  ROLLOUT_Update = 1;
-                  STUDY_Update = 1;
-                  BAR_d_Update = 1;
-                }        
+                  if (Sample_Year_start < CLIMATE_WY2_start) Sample_Year_start = CLIMATE_WY2_start;
+                  if (Sample_Year_end > CLIMATE_WY2_end) Sample_Year_end = CLIMATE_WY2_end;
+                  
+                  if ((keep_Sample_Year_start != Sample_Year_start) || (keep_Sample_Year_end != Sample_Year_end)) {
+                    
+                    H_layer_option = -1; 
+                    
+                    update_DevelopDATA = 1;
+                  
+                    ROLLOUT_Update = 1;
+                    STUDY_Update = 1;
+                    BAR_d_Update = 1;
+                  }     
+                }   
               }        
             }            
         
@@ -26651,9 +26663,9 @@ float BAR_d_tab;
 
 String[][] BAR_d_Items = {
                           
-                          {"Day", "1", "24"},
-                          {"Year", "1", "365"},
-                          {"Decade", "1950", "2050"}
+                          {"Day"},
+                          {"Year"},
+                          {"Scenario"}
                              
                         };         
 
@@ -26829,23 +26841,43 @@ void SOLARCHVISION_draw_window_BAR_d () {
       }
 
         
-      if (BAR_d_Items[i][0].equals("Decade")) {
+      if (BAR_d_Items[i][0].equals("Scenario")) {
         
-        int n1 = int(BAR_d_Items[i][1]);
-        int n2 = int(BAR_d_Items[i][2]);
+        int n1 = 0;
+        int n2 = 1;
+
+        if (impacts_source == databaseNumber_CLIMATE_WY2) {
+          n1 = 1950;
+          n2 = 2050;
+        }
+        if (impacts_source == databaseNumber_CLIMATE_EPW) {
+          n1 = 1950;
+          n2 = 2050;
+        }        
+        if (impacts_source == databaseNumber_ENSEMBLE) {
+          n1 = ENSEMBLE_start;
+          n2 = ENSEMBLE_end;
+        }        
+        if (impacts_source == databaseNumber_OBSERVED) {
+          n1 = OBSERVED_start;
+          n2 = OBSERVED_end;
+        }  
 
         if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2) == 1) {
   
           if (mouseButton == LEFT) {
-            Sample_Year_start = n1 + int(roundTo((n2 - n1 + 1) * (X_clicked - x1) / (x2 - x1) - 0.5, 1));
             
-            if (Sample_Year_start > Sample_Year_end) {
-              int swap_tmp = Sample_Year_start;
-              Sample_Year_start = Sample_Year_end;
-              Sample_Year_end = swap_tmp;
+            if (impacts_source == databaseNumber_CLIMATE_WY2) {
+              Sample_Year_start = n1 + int(roundTo((n2 - n1 + 1) * (X_clicked - x1) / (x2 - x1) - 0.5, 1));
+              
+              if (Sample_Year_start > Sample_Year_end) {
+                int swap_tmp = Sample_Year_start;
+                Sample_Year_start = Sample_Year_end;
+                Sample_Year_end = swap_tmp;
+              }
+              
+              H_layer_option = -1; 
             }
-            
-            H_layer_option = -1; 
             
             update_DevelopDATA = 1;
             
@@ -26854,15 +26886,18 @@ void SOLARCHVISION_draw_window_BAR_d () {
           }
           
           if (mouseButton == RIGHT) {
-            Sample_Year_end = n1 + int(roundTo((n2 - n1 + 1) * (X_clicked - x1) / (x2 - x1) - 0.5, 1));
-
-            if (Sample_Year_start > Sample_Year_end) {
-              int swap_tmp = Sample_Year_start;
-              Sample_Year_start = Sample_Year_end;
-              Sample_Year_end = swap_tmp;
-            }
             
-            H_layer_option = -1; 
+            if (impacts_source == databaseNumber_CLIMATE_WY2) {
+              Sample_Year_end = n1 + int(roundTo((n2 - n1 + 1) * (X_clicked - x1) / (x2 - x1) - 0.5, 1));
+  
+              if (Sample_Year_start > Sample_Year_end) {
+                int swap_tmp = Sample_Year_start;
+                Sample_Year_start = Sample_Year_end;
+                Sample_Year_end = swap_tmp;
+              }
+              
+              H_layer_option = -1; 
+            }
             
             update_DevelopDATA = 1;
             
@@ -26871,16 +26906,21 @@ void SOLARCHVISION_draw_window_BAR_d () {
           }        
         }        
         
+        float x_start = 0;  
+        float x_end = 0;        
         
-        
-        float x_start = x1 + (x2 - x1) * (Sample_Year_start - n1) / float(n2 - n1 + 1);  
-        float x_end = x1 + (x2 - x1) * (Sample_Year_end - n1 + 1) / float(n2 - n1 + 1);
+        if (impacts_source == databaseNumber_CLIMATE_WY2) {
+          x_start = x1 + (x2 - x1) * (Sample_Year_start - n1) / float(n2 - n1 + 1);  
+          x_end = x1 + (x2 - x1) * (Sample_Year_end - n1 + 1) / float(n2 - n1 + 1);
+        }
         
         fill(0,0,191,191);
         noStroke();
         
-        if (Sample_Year_start <= Sample_Year_end) { 
-          rect(x_start, y1, x_end - x_start, y2 - y1);
+        if (impacts_source == databaseNumber_CLIMATE_WY2) {
+          if (Sample_Year_start <= Sample_Year_end) { 
+            rect(x_start, y1, x_end - x_start, y2 - y1);
+          }
         }
 
         textAlign(CENTER, CENTER);   
@@ -26992,7 +27032,7 @@ int[] get_startZ_endZ (int data_source) {
       case 0 : start_z = ENSEMBLE_start; end_z = ENSEMBLE_end; break; //ALL: xml + grib2
       case 1 : start_z = 23; end_z = 43; break; //xml: US
       case 2 : start_z = 1; end_z = 22; break; //xml: GEPS + GDPS
-      case 3: start_z = 44; end_z = end_z; break; // additional GRIB2 domains
+      case 3: start_z = 44; end_z = ENSEMBLE_end; break; // additional GRIB2 domains
       case 4: start_z = 1; end_z = 43; break; //xml: NAEFS
       
       
