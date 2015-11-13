@@ -375,8 +375,8 @@ float[] nearest_Station_OBSERVED_dist = new float [numberOfNearestStations_OBSER
 int Sample_Year_start = 1996; 
 int Sample_Year_end = 2005; 
 
-int Sample_Member_start = 22; // deterministic
-int Sample_Member_end = 22; // deterministic
+int Sample_Member_start = 1;
+int Sample_Member_end = 43;
 
 int Sample_Station_start = 1; 
 int Sample_Station_end = 1;
@@ -19088,6 +19088,8 @@ void mouseWheel(MouseEvent event) {
                 if (STUDY_i_end > 23) STUDY_i_end = 0;
                 
                 if ((keep_STUDY_i_start != STUDY_i_start) || (keep_STUDY_i_end != STUDY_i_end)) {
+                  //update_DevelopDATA = 1;
+                  
                   ROLLOUT_Update = 1;
                   STUDY_Update = 1;
                   BAR_d_Update = 1;
@@ -19110,7 +19112,7 @@ void mouseWheel(MouseEvent event) {
                 if (num_add_days < 1) num_add_days = 1;
                 
                 if (keep_num_add_days != num_add_days) {
-                  update_DevelopDATA = 1;
+                  //update_DevelopDATA = 1;
                 
                   ROLLOUT_Update = 1;
                   STUDY_Update = 1;
@@ -19137,12 +19139,34 @@ void mouseWheel(MouseEvent event) {
                     
                     H_layer_option = -1; 
                     
-                    update_DevelopDATA = 1;
+                    //update_DevelopDATA = 1;
                   
                     ROLLOUT_Update = 1;
                     STUDY_Update = 1;
                     BAR_d_Update = 1;
                   }     
+                }
+
+                if (impacts_source == databaseNumber_ENSEMBLE) {
+                  int keep_Sample_Member_start = Sample_Member_start;
+                  int keep_Sample_Member_end = Sample_Member_end;
+                  
+                  if (Wheel_Value > 0) {Sample_Member_start += 1; Sample_Member_end += 1;}
+                  if (Wheel_Value < 0) {Sample_Member_start -= 1; Sample_Member_end -= 1;}
+                  
+                  if (Sample_Member_start < ENSEMBLE_start) Sample_Member_start = ENSEMBLE_start;
+                  if (Sample_Member_end > ENSEMBLE_end) Sample_Member_end = ENSEMBLE_end;
+                  
+                  if ((keep_Sample_Member_start != Sample_Member_start) || (keep_Sample_Member_end != Sample_Member_end)) {
+                    
+                    F_layer_option = -1; 
+                    
+                    //update_DevelopDATA = 1;
+                  
+                    ROLLOUT_Update = 1;
+                    STUDY_Update = 1;
+                    BAR_d_Update = 1;
+                  }                      
                 }   
               }        
             }            
@@ -26867,8 +26891,10 @@ void SOLARCHVISION_draw_window_BAR_d () {
   
           if (mouseButton == LEFT) {
             
+            int V_selection = n1 + int(roundTo((n2 - n1 + 1) * (X_clicked - x1) / (x2 - x1) - 0.5, 1));
+            
             if (impacts_source == databaseNumber_CLIMATE_WY2) {
-              Sample_Year_start = n1 + int(roundTo((n2 - n1 + 1) * (X_clicked - x1) / (x2 - x1) - 0.5, 1));
+              Sample_Year_start = V_selection;
               
               if (Sample_Year_start > Sample_Year_end) {
                 int swap_tmp = Sample_Year_start;
@@ -26879,7 +26905,19 @@ void SOLARCHVISION_draw_window_BAR_d () {
               H_layer_option = -1; 
             }
             
-            update_DevelopDATA = 1;
+            if (impacts_source == databaseNumber_ENSEMBLE) {
+              Sample_Member_start = V_selection;
+              
+              if (Sample_Member_start > Sample_Member_end) {
+                int swap_tmp = Sample_Member_start;
+                Sample_Member_start = Sample_Member_end;
+                Sample_Member_end = swap_tmp;
+              }
+              
+              F_layer_option = -1; 
+            }            
+            
+            //update_DevelopDATA = 1;
             
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
@@ -26887,8 +26925,10 @@ void SOLARCHVISION_draw_window_BAR_d () {
           
           if (mouseButton == RIGHT) {
             
+            int V_selection = n1 + int(roundTo((n2 - n1 + 1) * (X_clicked - x1) / (x2 - x1) - 0.5, 1));
+            
             if (impacts_source == databaseNumber_CLIMATE_WY2) {
-              Sample_Year_end = n1 + int(roundTo((n2 - n1 + 1) * (X_clicked - x1) / (x2 - x1) - 0.5, 1));
+              Sample_Year_end = V_selection;
   
               if (Sample_Year_start > Sample_Year_end) {
                 int swap_tmp = Sample_Year_start;
@@ -26898,30 +26938,45 @@ void SOLARCHVISION_draw_window_BAR_d () {
               
               H_layer_option = -1; 
             }
+
+            if (impacts_source == databaseNumber_ENSEMBLE) {
+              Sample_Member_start = V_selection;
+              
+              if (Sample_Member_start > Sample_Member_end) {
+                int swap_tmp = Sample_Member_start;
+                Sample_Member_start = Sample_Member_end;
+                Sample_Member_end = swap_tmp;
+              }
+              
+              F_layer_option = -1; 
+            }
             
-            update_DevelopDATA = 1;
+            //update_DevelopDATA = 1;
             
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
           }        
         }        
         
-        float x_start = 0;  
-        float x_end = 0;        
+        float V_start = 0;  
+        float V_end = 0;        
         
         if (impacts_source == databaseNumber_CLIMATE_WY2) {
-          x_start = x1 + (x2 - x1) * (Sample_Year_start - n1) / float(n2 - n1 + 1);  
-          x_end = x1 + (x2 - x1) * (Sample_Year_end - n1 + 1) / float(n2 - n1 + 1);
+          V_start = Sample_Year_start;
+          V_end = Sample_Year_end;
+        }
+        if (impacts_source == databaseNumber_ENSEMBLE) {
+          V_start = Sample_Member_start;
+          V_end = Sample_Member_end;
         }
         
         fill(0,0,191,191);
         noStroke();
         
-        if (impacts_source == databaseNumber_CLIMATE_WY2) {
-          if (Sample_Year_start <= Sample_Year_end) { 
-            rect(x_start, y1, x_end - x_start, y2 - y1);
-          }
+        if (V_start <= V_end) { 
+          rect(x_start, y1, x_end - x_start, y2 - y1);
         }
+        
 
         textAlign(CENTER, CENTER);   
         stroke(0); 
