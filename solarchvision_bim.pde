@@ -19131,10 +19131,13 @@ void mouseWheel(MouseEvent event) {
                   
                   if (Wheel_Value > 0) {Sample_Year_start += 1; Sample_Year_end += 1;}
                   if (Wheel_Value < 0) {Sample_Year_start -= 1; Sample_Year_end -= 1;}
+
+                  if (Sample_Year_end < Sample_Year_start) Sample_Year_end = Sample_Year_start;
+                  if (Sample_Year_start > Sample_Year_end) Sample_Year_start = Sample_Year_end;
                   
                   if (Sample_Year_start < CLIMATE_WY2_start) Sample_Year_start = CLIMATE_WY2_start;
                   if (Sample_Year_end > CLIMATE_WY2_end) Sample_Year_end = CLIMATE_WY2_end;
-                  
+
                   if ((keep_Sample_Year_start != Sample_Year_start) || (keep_Sample_Year_end != Sample_Year_end)) {
                     
                     H_layer_option = -1; 
@@ -19153,10 +19156,13 @@ void mouseWheel(MouseEvent event) {
                   
                   if (Wheel_Value > 0) {Sample_Member_start += 1; Sample_Member_end += 1;}
                   if (Wheel_Value < 0) {Sample_Member_start -= 1; Sample_Member_end -= 1;}
+
+                  if (Sample_Member_end < Sample_Member_start) Sample_Member_end = Sample_Member_start;
+                  if (Sample_Member_start > Sample_Member_end) Sample_Member_start = Sample_Member_end; 
                   
                   if (Sample_Member_start < ENSEMBLE_start) Sample_Member_start = ENSEMBLE_start;
                   if (Sample_Member_end > ENSEMBLE_end) Sample_Member_end = ENSEMBLE_end;
-                  
+
                   if ((keep_Sample_Member_start != Sample_Member_start) || (keep_Sample_Member_end != Sample_Member_end)) {
                     
                     F_layer_option = -1; 
@@ -26940,7 +26946,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
             }
 
             if (impacts_source == databaseNumber_ENSEMBLE) {
-              Sample_Member_start = V_selection;
+              Sample_Member_end = V_selection;
               
               if (Sample_Member_start > Sample_Member_end) {
                 int swap_tmp = Sample_Member_start;
@@ -26970,11 +26976,17 @@ void SOLARCHVISION_draw_window_BAR_d () {
           V_end = Sample_Member_end;
         }
         
+        float x_start = x1 + (x2 - x1) * (V_start - n1) / float(n2 - n1 + 1);  
+        float x_end = x1 + (x2 - x1) * (V_end - n1 + 1) / float(n2 - n1 + 1);
+        
         fill(0,0,191,191);
         noStroke();
         
-        if (V_start <= V_end) { 
+        if (x_start < x_end) { 
           rect(x_start, y1, x_end - x_start, y2 - y1);
+        }
+        else if (x_start == x_end) {
+          ellipse(x_start, 0.5 * (y1 + y2), y2 - y1, y2 - y1);
         }
         
 
