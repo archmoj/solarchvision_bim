@@ -18341,22 +18341,27 @@ void SOLARCHVISION_add_SuperCylinder (int m, float cx, float cy, float cz, float
     newFaceB = concat(newFaceB, fB);
   } 
 
-  if (m == -1) defaultMaterial = 1;
-  else defaultMaterial = m;
-println("Hello2");
-  //SOLARCHVISION_addToTempObjectFaces(newFaceT);
-println("Hello3");  
-  //SOLARCHVISION_addToTempObjectFaces(newFaceB);
+
+  
+  
  
   for (int i = 0; i < n; i++) {
     int next_i = (i + 1) % n;
 
     int[] newFace = {vT[i], vB[i], vB[next_i], vT[next_i]};
     if (m == -1) defaultMaterial += 1; 
-    SOLARCHVISION_addToTempObjectFaces(newFace);
+    SOLARCHVISION_addToTempObjectFaces(newFace, 0); // 0:check_duplicates
   }  
   
+  if (m == -1) defaultMaterial = 1;
+  else defaultMaterial = m;
 
+  //SOLARCHVISION_addToTempObjectFaces(newFaceT, 0); // 0:check_duplicates
+
+  if (m == -1) defaultMaterial = 1;
+  else defaultMaterial = m;
+  
+  SOLARCHVISION_addToTempObjectFaces(newFaceB, 0); // 0:check_duplicates
 
   float value, posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotZ; 
   value = 1;
@@ -18434,55 +18439,64 @@ int SOLARCHVISION_addToTempObjectVertices (float x, float y, float z) {
   return(vertice_existed);
 }
 
-int SOLARCHVISION_addToTempObjectFaces (int[] f) {
+int SOLARCHVISION_addToTempObjectFaces (int[] f, int check_duplicates) {
 
   int face_existed = 0;
   
-  for (int i = 1; i < POINTER_TempObjectFaces; i++) {
-    if (f.length == TempObjectFaces[i].length) {
-
-      for (int k = 0; k < f.length; k++) { // "k" introduces different variations that two faces could match
-
-        for (int dir = -1; dir <= 1; dir += 2) { // "dir" introduces different diretions that two faces could match
-
-          //println("\ndir=", dir);
-          
-          float total_distances = 0; 
-          
-          for (int j = 0; j < f.length; j++) {
-
-            int q = (j * dir + k + f.length) % f.length;
-
-            //print("q=", q, "; k=" );
-          
-            total_distances += fn_dist(TempObjectVertices[f[q]], TempObjectVertices[TempObjectFaces[i][j]]);
+  if (check_duplicates == 1) {
+  
+    for (int i = 1; i < POINTER_TempObjectFaces; i++) {
+      if (f.length == TempObjectFaces[i].length) {
+  
+        for (int k = 0; k < f.length; k++) { // "k" introduces different variations that two faces could match
+  
+          for (int dir = -1; dir <= 1; dir += 2) { // "dir" introduces different diretions that two faces could match
+  
+            //println("\ndir=", dir);
+            
+            float total_distances = 0; 
+            
+            for (int j = 0; j < f.length; j++) {
+  
+              int q = (j * dir + k + f.length) % f.length;
+  
+              //print("q=", q, "; k=" );
+            
+              total_distances += fn_dist(TempObjectVertices[f[q]], TempObjectVertices[TempObjectFaces[i][j]]);
+    
+            }
+  
+            if (total_distances < 0.0001) { // avoid creating duplicate faces
+              //println("A duplicate face detected :", i);
+            
+              face_existed = i;
+              break;
+            }   
   
           }
-
-          if (total_distances < 0.0001) { // avoid creating duplicate faces
-            //println("A duplicate face detected :", i);
-          
-            face_existed = i;
-            break;
-          }   
-
+  
         }
-
+        
       }
-      
+      if (face_existed != 0) break; 
     }
-    if (face_existed != 0) break; 
   }
   
   if (face_existed == 0) { 
   
+    println("Hello1");
+    
     if (POINTER_TempObjectFaces >= TempObjectFaces.length) {
       int[][] newFace = {f}; 
-    
+    println("Hello2");
       TempObjectFaces = (int[][]) concat(TempObjectFaces, newFace);
     }
     else{
+      println("Hello3");
       for (int i = 0; i < f.length; i++) {
+        println("POINTER_TempObjectFaces:", POINTER_TempObjectFaces);
+        println("i:", i);
+        println("f[i]:", f[i]);
         TempObjectFaces[POINTER_TempObjectFaces][i] = f[i];
       }
     }
@@ -18546,7 +18560,7 @@ void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, floa
       newPoly[3] = SOLARCHVISION_addToTempObjectVertices(x4,y4,z4);
       
       if (BuildFaces != 0) {
-        SOLARCHVISION_addToTempObjectFaces(newPoly);
+        SOLARCHVISION_addToTempObjectFaces(newPoly, 1); // 1:check_duplicates
       }
       
       {
