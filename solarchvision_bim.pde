@@ -18321,7 +18321,7 @@ void SOLARCHVISION_add_SuperSphere (int m, float cx, float cy, float cz, float p
 }  
 
 
-void SOLARCHVISION_add_SuperCylinder (int m, float cx, float cy, float cz, float px, float py, float pz, float sx, float sy, float sz, int n, float t) {
+void SOLARCHVISION_add_SuperCylinder (int m, float cx, float cy, float cz, float sx, float sy, float sz, int n, float t) {
 
   int[] vT = new int [n];
   int[] vB = new int [n];
@@ -18366,9 +18366,6 @@ void SOLARCHVISION_add_SuperCylinder (int m, float cx, float cy, float cz, float
   posX = 0;
   posY = 0; 
   posZ = 0;    
-  powX = px;
-  powY = py;
-  powZ = pz;    
   scaleX = 1;
   scaleY = 1; 
   scaleZ = 1;    
@@ -18379,11 +18376,10 @@ void SOLARCHVISION_add_SuperCylinder (int m, float cx, float cy, float cz, float
     float y = TempObjectVertices[i][1];
     float z = TempObjectVertices[i][2];
 
-    float the_dist = (pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value);
+    float the_dist = (pow((pow(abs(x - posX) / scaleX, 2) + pow(abs(y - posY) / scaleY, 2)), 0.5) / value);
     if (the_dist != 0) {
       x /= the_dist;
       y /= the_dist;
-      z /= the_dist;
     }
 
     TempObjectVertices[i][0] = x;
@@ -21323,7 +21319,7 @@ void mouseClicked () {
                 else if ((px == 2) && (py == 2) && (pz == 8)) {
                   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
                   
-                  SOLARCHVISION_add_SuperCylinder(Create_Default_Material, x, y, z, pz,py,pz, rx,ry,rz, 24, rot);
+                  SOLARCHVISION_add_SuperCylinder(Create_Default_Material, x, y, z, rx,ry,rz, 24, rot);
                 }                
     
                 else if ((px == 8) && (py == 8) && (pz == 8)) {
