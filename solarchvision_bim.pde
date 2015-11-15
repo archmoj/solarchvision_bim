@@ -12779,48 +12779,48 @@ void SOLARCHVISION_add_Octahedron (int m, float x, float y, float z, float rx, f
   
   {
     int[] newFace = {v[1], v[2], v[0]};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }      
 
   {
     int[] newFace = {v[2], v[3], v[0]};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }      
 
   {
     int[] newFace = {v[3], v[4], v[0]};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }      
 
   {
     int[] newFace = {v[4], v[1], v[0]};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }      
 
   {
     int[] newFace = {v[1], v[5], v[2]};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }      
 
   {
     int[] newFace = {v[2], v[5], v[3]};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }      
   {
     int[] newFace = {v[3], v[5], v[4]};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }  
   
   {
     int[] newFace = {v[4], v[5], v[1]};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }      
 }            
@@ -12885,37 +12885,37 @@ void SOLARCHVISION_add_House_Core (int m, float x, float y, float z, float rx, f
 
   {//Roof-North
     int[] newFace = {m1, m2, t3, t4};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }
   {//Roof-South
     int[] newFace = {t1, t2, m2, m1};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }  
   {//West
     int[] newFace = {t3, m2, t2, b2, b3};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }    
   {//South
     int[] newFace = {t4, t3, b3, b4};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }  
   {//East
     int[] newFace = {t1, m1, t4, b4, b1};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }    
   {//North
     int[] newFace = {t2, t1, b1, b2};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }  
   {//Bottom
     int[] newFace = {b4, b3, b2, b1};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }    
 
@@ -12943,32 +12943,32 @@ void SOLARCHVISION_add_Box_Core (int m, float x, float y, float z, float rx, flo
 
   {//Roof
     int[] newFace = {t1, t2, t3, t4};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }
   {//West
     int[] newFace = {t3, t2, b2, b3};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }   
   {//South
     int[] newFace = {t4, t3, b3, b4};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }    
   {//East
     int[] newFace = {t1, t4, b4, b1};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }     
   {//North
     int[] newFace = {t2, t1, b1, b2};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }
   {//Bottom
     int[] newFace = {b4, b3, b2, b1};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }   
 }
@@ -12992,32 +12992,32 @@ void SOLARCHVISION_add_Box_Corners (int m, float x1, float y1, float z1, float x
 
   {//Roof
     int[] newFace = {t1, t2, t3, t4};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }
   {//West
     int[] newFace = {t3, t2, b2, b3};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }    
   {//South
     int[] newFace = {t4, t3, b3, b4};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }    
   {//East
     int[] newFace = {t1, t4, b4, b1};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }    
   {//North
     int[] newFace = {t2, t1, b1, b2};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }
   {//Bottom
     int[] newFace = {b4, b3, b2, b1};
-    if (m == -1) defaultMaterial += 1;
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }    
 }
@@ -13229,14 +13229,14 @@ void SOLARCHVISION_add_PolygonExtrude (int m, float cx, float cy, float cz, floa
 
   SOLARCHVISION_addToFaces(newFaceT);
   
-  if (m == -1) defaultMaterial += 1; 
+  if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1)); 
   SOLARCHVISION_addToFaces(newFaceB);
   
   for (int i = 0; i < n; i++) {
     int next_i = (i + 1) % n;
    
     int[] newFace = {vT[i], vB[i], vB[next_i], vT[next_i]};
-    if (m == -1) defaultMaterial += 1; 
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1)); 
     SOLARCHVISION_addToFaces(newFace);
   }
 
@@ -13298,7 +13298,7 @@ void SOLARCHVISION_add_Icosahedron (int m, float cx, float cy, float cz, float r
       newFaceB[1] = vB[next_i];
       newFaceB[2] = vT[next_i]; 
       
-      if (m == -1) defaultMaterial += 1;      
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));   
       SOLARCHVISION_addToFaces(newFaceT);
       SOLARCHVISION_addToFaces(newFaceB);
       
@@ -13316,7 +13316,7 @@ void SOLARCHVISION_add_Icosahedron (int m, float cx, float cy, float cz, float r
       newFaceB[1] = vB[i];
       newFaceB[2] = vB[0];    
       
-      if (m == -1) defaultMaterial += 1;
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
       SOLARCHVISION_addToFaces(newFaceT);
       SOLARCHVISION_addToFaces(newFaceB);
        
@@ -13430,7 +13430,7 @@ void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r,
       newFace[2] = vT[i];
       newFace[3] = vM1[i];
       
-      if (m == -1) defaultMaterial += 1;
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
       
       if (Teselation == 0) {
         SOLARCHVISION_addToFaces(newFace);
@@ -13448,7 +13448,7 @@ void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r,
       newFace[2] = vT[next_i];
       newFace[3] = vM1[i];
       
-      if (m == -1) defaultMaterial += 1;
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
       
       if (Teselation == 0) {
         SOLARCHVISION_addToFaces(newFace);
@@ -13466,7 +13466,7 @@ void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r,
       newFace[2] = vB[i];
       newFace[3] = vM2[i];
       
-      if (m == -1) defaultMaterial += 1;
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
       
       if (Teselation == 0) {
         SOLARCHVISION_addToFaces(newFace);
@@ -13484,7 +13484,7 @@ void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r,
       newFace[2] = vB[i];
       newFace[3] = vM3[i];
       
-      if (m == -1) defaultMaterial += 1;
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
       
       if (Teselation == 0) {
         SOLARCHVISION_addToFaces(newFace);
@@ -13502,7 +13502,7 @@ void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r,
       newFace[2] = vB[next_i];
       newFace[3] = vM3[i];
       
-      if (m == -1) defaultMaterial += 1;
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
       
       if (Teselation == 0) {
         SOLARCHVISION_addToFaces(newFace);
@@ -13520,7 +13520,7 @@ void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r,
       newFace[2] = vB[0];
       newFace[3] = vM4[i];
       
-      if (m == -1) defaultMaterial += 1;
+      if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));
       
       if (Teselation == 0) {
         SOLARCHVISION_addToFaces(newFace);
@@ -18535,7 +18535,7 @@ void SOLARCHVISION_addTempObjectToScene (int m, float cx, float cy, float cz, fl
       new_vert_numbers[j] = SOLARCHVISION_addToVertices(x + cx, y + cy, z + cz);
     }
     
-    if (m == -1) defaultMaterial += 1;     
+    if (m == -1) defaultMaterial = 1 + (defaultMaterial % ( Materials_Number - 1));  
     SOLARCHVISION_addToFaces(new_vert_numbers);    
   }
 
