@@ -13886,7 +13886,7 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
         float y = Bilinear(LAND_MESH[i][j][1], LAND_MESH[i][j+1][1], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j][1], di, dj);
         float z = Bilinear(LAND_MESH[i][j][2], LAND_MESH[i][j+1][2], LAND_MESH[i+1][j+1][2], LAND_MESH[i+1][j][2], di, dj);
         
-        if (z > 0) {
+        if (z + LocationElevation > 0) { // i.e. above sea level 
         
           if (dist(x,y,0,0) > 2.5) { // i.e. No 2D at the center!
           
@@ -14317,8 +14317,16 @@ void SOLARCHVISION_add_ParametricSurface (int m, float cx, float cy, float cz, f
   float stp_u = 0.1; //0.05;
   float stp_v = 0.1; //0.05;
   
-  for (float a = -1; a < 1; a += stp_u) {
-    for (float b = -1; b < 1; b += stp_v) {
+  float start_u = -1;
+  float start_v = -1;
+  float end_u = 1;
+  float end_v = 1;
+  
+  if (n == 1) {start_u = 0;}
+  if (n == 2) {start_u = 0;}
+
+  for (float a = start_u; a < end_u; a += stp_u) {
+    for (float b = start_v; b < end_v; b += stp_v) {
 
       int[] newFace = {};
       
@@ -14699,7 +14707,9 @@ void SOLARCHVISION_draw_land () {
           float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.01 * z);
           WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
           
-          if (z < 0) {z = 0; WIN3D_Diagrams.fill(127, 127, 255);} // i.e. water
+          if (z + LocationElevation < 0) { // i.e. water
+            WIN3D_Diagrams.fill(127, 127, 255);
+          } 
           
           WIN3D_Diagrams.stroke(0);
         
