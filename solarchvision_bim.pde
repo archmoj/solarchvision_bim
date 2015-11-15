@@ -1071,9 +1071,9 @@ int MODEL1D_ERASE = 0;
 int MODEL2D_ERASE = 0;
 int MODEL3D_ERASE = 0;
 
-int MODEL3D_TESELATION = 4;
+int MODEL3D_TESELATION = 2;
 
-int SKY3D_TESELATION = 4;
+int SKY3D_TESELATION = 3;
 float SKY3D_scale = 10000 ; //1000; 
 
 float WindRose3D_scale = 400;
@@ -13224,6 +13224,8 @@ void SOLARCHVISION_add_PolygonExtrude (int m, float cx, float cy, float cz, floa
   else defaultMaterial = m;
 
   SOLARCHVISION_addToFaces(newFaceT);
+  
+  if (m == -1) defaultMaterial += 1; 
   SOLARCHVISION_addToFaces(newFaceB);
   
   for (int i = 0; i < n; i++) {
@@ -18340,29 +18342,25 @@ void SOLARCHVISION_add_SuperCylinder (int m, float cx, float cy, float cz, float
     newFaceT = concat(newFaceT, fT);
     newFaceB = concat(newFaceB, fB);
   } 
-
-
   
-  
+  if (m == -1) defaultMaterial = 1;
+  else defaultMaterial = m;
+
+  SOLARCHVISION_addToTempObjectFaces(newFaceT, 0); // 0:check_duplicates
+
+  if (m == -1) defaultMaterial += 1; 
  
+  SOLARCHVISION_addToTempObjectFaces(newFaceB, 0); // 0:check_duplicates  
+
+  if (m == -1) defaultMaterial += 1; 
   for (int i = 0; i < n; i++) {
     int next_i = (i + 1) % n;
 
     int[] newFace = {vT[i], vB[i], vB[next_i], vT[next_i]};
-    if (m == -1) defaultMaterial += 1; 
+    
     SOLARCHVISION_addToTempObjectFaces(newFace, 0); // 0:check_duplicates
   }  
   
-  if (m == -1) defaultMaterial = 1;
-  else defaultMaterial = m;
-
-  //SOLARCHVISION_addToTempObjectFaces(newFaceT, 0); // 0:check_duplicates
-
-  if (m == -1) defaultMaterial = 1;
-  else defaultMaterial = m;
-  
-  SOLARCHVISION_addToTempObjectFaces(newFaceB, 0); // 0:check_duplicates
-
   float value, posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotZ; 
   value = 1;
   posX = 0;
@@ -18425,6 +18423,8 @@ int SOLARCHVISION_addToTempObjectVertices (float x, float y, float z) {
       TempObjectVertices = (float[][]) concat(TempObjectVertices, newVertice);
     }
     else{
+      //TempObjectVertices[POINTER_TempObjectVertices] = new int[3];
+      
       TempObjectVertices[POINTER_TempObjectVertices][0] = x;
       TempObjectVertices[POINTER_TempObjectVertices][1] = y;
       TempObjectVertices[POINTER_TempObjectVertices][2] = z;
@@ -18483,20 +18483,15 @@ int SOLARCHVISION_addToTempObjectFaces (int[] f, int check_duplicates) {
   }
   
   if (face_existed == 0) { 
-  
-    println("Hello1");
     
     if (POINTER_TempObjectFaces >= TempObjectFaces.length) {
       int[][] newFace = {f}; 
-    println("Hello2");
       TempObjectFaces = (int[][]) concat(TempObjectFaces, newFace);
     }
     else{
-      println("Hello3");
+      TempObjectFaces[POINTER_TempObjectFaces] = new int[f.length];
+      
       for (int i = 0; i < f.length; i++) {
-        println("POINTER_TempObjectFaces:", POINTER_TempObjectFaces);
-        println("i:", i);
-        println("f[i]:", f[i]);
         TempObjectFaces[POINTER_TempObjectFaces][i] = f[i];
       }
     }
