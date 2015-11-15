@@ -1270,7 +1270,7 @@ void SOLARCHVISION_update_folders () {
 
 }
 
-int Materials_Number = 256; // 0, 1, 2, ... , 10
+int Materials_Number = 11; //256; // 0, 1, 2, ... , 10
 
 int Materials_Selection = 1; //2; // yellow
 
