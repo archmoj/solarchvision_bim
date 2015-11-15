@@ -7,7 +7,7 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 0;
+int STATION_NUMBER = 2;
 
 String[][] DEFINED_STATIONS = {
   
@@ -81,7 +81,7 @@ int selectedPolymesh_alignY = 0;
 int selectedPolymesh_alignZ = 0;
 
 int selectedPolymesh_displayPivot = 1;
-int selectedPolymesh_displayEdges = 1;
+int selectedPolymesh_displayEdges = 0;
 int selectedPolymesh_displayBox = 1;
 
 int selectedObject2D_displayEdges = 1;
@@ -16535,6 +16535,222 @@ float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
 
 
+float[] SOLARCHVISION_0Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
+
+  float[] ray_normal = fn_normalize(ray_dir);   
+
+  float[][] hitPoint = new float[(LAND_n_I - 1) * (LAND_n_J - 1) + 1][4];
+
+  for (int f = 1; f < (LAND_n_I - 1) * (LAND_n_J - 1) + 1; f++) {
+    hitPoint[f][0] = FLOAT_undefined;
+    hitPoint[f][1] = FLOAT_undefined;
+    hitPoint[f][2] = FLOAT_undefined;
+    hitPoint[f][3] = FLOAT_undefined;
+  }
+  
+  float[] pre_angle_to_allFaces = new float[(LAND_n_I - 1) * (LAND_n_J - 1) + 1];
+  
+  for (int f = 1; f < (LAND_n_I - 1) * (LAND_n_J - 1) + 1; f++) {
+    pre_angle_to_allFaces[f] = FLOAT_undefined;
+  }
+  
+  for (int f = 1; f < (LAND_n_I - 1) * (LAND_n_J - 1) + 1; f++) {
+    
+    int LAND_i = (f - 1) / (LAND_n_J - 1);
+    int LAND_j = (f - 1) % (LAND_n_J - 1);
+    
+    println(LAND_i, LAND_j); 
+
+    float backAngles = FLOAT_undefined;  
+    float foreAngles = FLOAT_undefined;
+
+    float delta = 0.5; 
+    float delta_step = 0.5;
+    
+    float delta_dir = -1;
+    
+    float[] x = {FLOAT_undefined, FLOAT_undefined};
+    float[] y = {FLOAT_undefined, FLOAT_undefined};
+    float[] z = {FLOAT_undefined, FLOAT_undefined};
+    
+    float[] AnglesAll = {0, 0};   
+    
+    float MAX_AnglesAll = 0;
+    int MAX_o = -1;
+
+    //for (int q = 0; q < 16; q++) {
+    for (int q = 0; q < 32; q++) {
+    
+      for (int o = 0; o < 2; o++) {
+
+        float delta_test = delta;
+        
+        if (o == 0) delta_test -= delta_step;
+        else delta_test += delta_step;
+        
+        x[o] = ray_pnt[0] + delta_test * ray_normal[0] * max_distance; 
+        y[o] = ray_pnt[1] + delta_test * ray_normal[1] * max_distance; 
+        z[o] = ray_pnt[2] + delta_test * ray_normal[2] * max_distance; 
+        
+        AnglesAll[o] = 0;      
+      
+        for (int i = 0; i < 4; i++) {
+          
+          float xA = FLOAT_undefined;
+          float yA = FLOAT_undefined;
+          float zA = FLOAT_undefined;
+          
+          float xB = FLOAT_undefined;
+          float yB = FLOAT_undefined;
+          float zB = FLOAT_undefined;
+
+          if (i == 0) {
+            xA = LAND_MESH[LAND_i][LAND_j][0];
+            yA = LAND_MESH[LAND_i][LAND_j][1];
+            zA = LAND_MESH[LAND_i][LAND_j][2];
+            
+            xB = LAND_MESH[LAND_i][LAND_j + 1][0];
+            yB = LAND_MESH[LAND_i][LAND_j + 1][1];
+            zB = LAND_MESH[LAND_i][LAND_j + 1][2];            
+          }
+          else if (i == 1) {
+            xA = LAND_MESH[LAND_i][LAND_j + 1][0];
+            yA = LAND_MESH[LAND_i][LAND_j + 1][1];
+            zA = LAND_MESH[LAND_i][LAND_j + 1][2];
+            
+            xB = LAND_MESH[LAND_i + 1][LAND_j + 1][0];
+            yB = LAND_MESH[LAND_i + 1][LAND_j + 1][1];
+            zB = LAND_MESH[LAND_i + 1][LAND_j + 1][2];            
+          }   
+          else if (i == 2) {
+            xA = LAND_MESH[LAND_i + 1][LAND_j + 1][0];
+            yA = LAND_MESH[LAND_i + 1][LAND_j + 1][1];
+            zA = LAND_MESH[LAND_i + 1][LAND_j + 1][2];
+            
+            xB = LAND_MESH[LAND_i + 1][LAND_j][0];
+            yB = LAND_MESH[LAND_i + 1][LAND_j][1];
+            zB = LAND_MESH[LAND_i + 1][LAND_j][2];            
+          }              
+          else if (i == 3) {
+            xA = LAND_MESH[LAND_i + 1][LAND_j][0];
+            yA = LAND_MESH[LAND_i + 1][LAND_j][1];
+            zA = LAND_MESH[LAND_i + 1][LAND_j][2];
+            
+            xB = LAND_MESH[LAND_i][LAND_j][0];
+            yB = LAND_MESH[LAND_i][LAND_j][1];
+            zB = LAND_MESH[LAND_i][LAND_j][2];            
+          }      
+          
+          float[] vectA = {xA - x[o], yA - y[o], zA - z[o]}; 
+          float[] vectB = {xB - x[o], yB - y[o], zB - z[o]};
+          
+          float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
+          
+          AnglesAll[o] += t;
+  
+        }
+      }
+
+
+      if (q == 0) {
+        foreAngles = AnglesAll[0];
+        backAngles = AnglesAll[1];
+        
+        //if (AnglesAll[0] < AnglesAll[1]) {
+          MAX_o = 1;
+          delta = 1;
+        //}
+        //else{
+        //  MAX_o = 0;
+        //  delta = 0;       
+        //}
+      } 
+      else {
+        
+        if (AnglesAll[0] < AnglesAll[1]) {
+          MAX_o = 1;          
+          MAX_AnglesAll = AnglesAll[1];
+          
+          backAngles = AnglesAll[1]; 
+          
+          delta += delta_step;   
+        }
+        else {
+          MAX_o = 0;
+          MAX_AnglesAll = AnglesAll[0];
+          
+          foreAngles = AnglesAll[0];
+          
+          delta -= delta_step;
+        } 
+        
+        //delta_step *= 0.666; // 0.5; <<<<<<<<<<<<<<<          
+        delta_step *= 0.75; 
+
+      }
+
+      //println(delta, delta_step);
+         
+
+      //if (MAX_AnglesAll > 359) {
+      if (MAX_AnglesAll > 357) { // <<<<<<<<<<<<<<<<<<<<<<<<<
+        if (pre_angle_to_allFaces[f] < MAX_AnglesAll) {
+          pre_angle_to_allFaces[f] = MAX_AnglesAll;
+          
+          hitPoint[f][0] = x[MAX_o];
+          hitPoint[f][1] = y[MAX_o];
+          hitPoint[f][2] = z[MAX_o];
+          hitPoint[f][3] = delta;
+        }        
+      }
+      
+      if (pre_angle_to_allFaces[f] > 0.9 * FLOAT_undefined) {
+        pre_angle_to_allFaces[f] = MAX_AnglesAll;
+      }       
+
+      
+    }
+
+  }
+
+  float[] return_point = {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, -1};
+  
+  float pre_dist = FLOAT_undefined;
+  
+  for (int f = 1; f < (LAND_n_I - 1) * (LAND_n_J - 1) + 1; f++) {
+    
+    float hx = hitPoint[f][0];
+    float hy = hitPoint[f][1];
+    float hz = hitPoint[f][2];
+    float h_delta = hitPoint[f][3];
+
+    //if ((hx < 0.9 * FLOAT_undefined) && (hy < 0.9 * FLOAT_undefined) && (hz < 0.9 * FLOAT_undefined)) {
+    
+      float hd = dist(hx, hy, hz, ray_pnt[0], ray_pnt[1], ray_pnt[2]);
+      
+      //if (hd < pre_dist) {
+      //if ((hd < pre_dist) && (hd > 0.02)) {
+      if ((hd < pre_dist) && (h_delta > 0.005)) {
+        
+        pre_dist = hd;
+        
+        return_point[0] = hx;
+        return_point[1] = hy;
+        return_point[2] = hz;
+        return_point[3] = hd;
+        return_point[4] = f;
+      }
+    
+    //}
+  }
+ 
+  return return_point;
+  
+}
+
+
+
+
 float[][] getSubFace (float[][] base_Vertices, int Teselation, int n) {
 
   float[][] return_vertices = {};
@@ -21003,15 +21219,20 @@ void mouseClicked () {
           
           
           float[] RxP = new float [5];
-  
-          if ((Work_with_2D_or_3D == 1) && (View_Select_Create_Modify == -1))  { // only if the user wants to select a Fractal-Tree 
-            RxP = SOLARCHVISION_1Dintersect(ray_start, ray_direction, max_dist);
-          }        
-          else if ((Work_with_2D_or_3D == 2) && (View_Select_Create_Modify == -1))  { // only if the user wants to select a 2D-object 
-            RxP = SOLARCHVISION_2Dintersect(ray_start, ray_direction, max_dist);
+          
+          if (mouseButton == RIGHT) {
+            RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
           }
-          else {
-            RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
+          else if (mouseButton == LEFT) {
+            if ((Work_with_2D_or_3D == 1) && (View_Select_Create_Modify == -1))  { // only if the user wants to select a Fractal-Tree 
+              RxP = SOLARCHVISION_1Dintersect(ray_start, ray_direction, max_dist);
+            }        
+            else if ((Work_with_2D_or_3D == 2) && (View_Select_Create_Modify == -1))  { // only if the user wants to select a 2D-object 
+              RxP = SOLARCHVISION_2Dintersect(ray_start, ray_direction, max_dist);
+            }
+            else {
+              RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
+            }
           }
           
           
