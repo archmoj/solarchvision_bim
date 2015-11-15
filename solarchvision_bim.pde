@@ -1270,7 +1270,7 @@ void SOLARCHVISION_update_folders () {
 
 }
 
-int Materials_Number = 11; // 0, 1, 2, ... , 10
+int Materials_Number = 256; // 0, 1, 2, ... , 10
 
 int Materials_Selection = 1; //2; // yellow
 
@@ -1326,6 +1326,13 @@ int[][] Materials_Color = new int [Materials_Number][4]; // ARGB
     int[] COL = {255, 191, 191, 191};    
     Materials_Color[10] = COL;
   }
+  
+  {
+    for (int i = 11; i < Materials_Number; i++) {
+      int[] COL = {255, int(random(256)), int(random(256)), int(random(256))};
+      Materials_Color[i] = COL;
+    }
+  }  
 }
 
 void empty_Materials_DirectArea () {
@@ -18236,7 +18243,7 @@ void SOLARCHVISION_add_FractalSphere (int m, float cx, float cy, float cz, float
   println("Faces:", POINTER_TempObjectFaces);
 
   if (isSky == 0) {
-    SOLARCHVISION_addTempObjectToScene(cx,cy,cz,r,r,r,t);
+    SOLARCHVISION_addTempObjectToScene(m,cx,cy,cz,r,r,r,t);
   }
   else if (isSky == 1) {
     
@@ -18317,7 +18324,7 @@ void SOLARCHVISION_add_SuperSphere (int m, float cx, float cy, float cz, float p
     
   }
   
-  SOLARCHVISION_addTempObjectToScene(cx,cy,cz,sx,sy,sz,t);
+  SOLARCHVISION_addTempObjectToScene(m,cx,cy,cz,sx,sy,sz,t);
 }  
 
 
@@ -18343,16 +18350,9 @@ void SOLARCHVISION_add_SuperCylinder (int m, float cx, float cy, float cz, float
     newFaceB = concat(newFaceB, fB);
   } 
   
-  if (m == -1) defaultMaterial = 1;
-  else defaultMaterial = m;
-
   SOLARCHVISION_addToTempObjectFaces(newFaceT, 0); // 0:check_duplicates
-
-  if (m == -1) defaultMaterial += 1; 
- 
   SOLARCHVISION_addToTempObjectFaces(newFaceB, 0); // 0:check_duplicates  
 
-  if (m == -1) defaultMaterial += 1; 
   for (int i = 0; i < n; i++) {
     int next_i = (i + 1) % n;
 
@@ -18388,7 +18388,7 @@ void SOLARCHVISION_add_SuperCylinder (int m, float cx, float cy, float cz, float
     
   }
  
-  SOLARCHVISION_addTempObjectToScene(cx,cy,cz,sx,sy,sz,t);  
+  SOLARCHVISION_addTempObjectToScene(m,cx,cy,cz,sx,sy,sz,t);  
 }
 
 
@@ -18502,7 +18502,10 @@ int SOLARCHVISION_addToTempObjectFaces (int[] f, int check_duplicates) {
   
 }
 
-void SOLARCHVISION_addTempObjectToScene (float cx, float cy, float cz, float sx, float sy, float sz, float t) {
+void SOLARCHVISION_addTempObjectToScene (int m, float cx, float cy, float cz, float sx, float sy, float sz, float t) {
+
+  if (m == -1) defaultMaterial = 1;
+  else defaultMaterial = m;
   
   for (int i = 1; i < POINTER_TempObjectFaces; i++) {
     
@@ -18520,6 +18523,8 @@ void SOLARCHVISION_addTempObjectToScene (float cx, float cy, float cz, float sx,
       
       new_vert_numbers[j] = SOLARCHVISION_addToVertices(x + cx, y + cy, z + cz);
     }
+    
+    if (m == -1) defaultMaterial += 1;     
     SOLARCHVISION_addToFaces(new_vert_numbers);    
   }
 
