@@ -7,11 +7,15 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 2;
+int STATION_NUMBER = 0;
 
 String[][] DEFINED_STATIONS = {
   
+                                {"Berlin_Museum_of_the_20th_Century", "BB", "DE", "52.5080", "13.3685", "15", "36.7", "240.0", "", "", "DEU_Berlin.103840_IWEC"},
+  
                                 //{"Villa-Matina", "XX", "GR", "36.644", "22.383", "15", "0", "240.0", "", "", "GRC_Andravida.166820_IWEC"},
+                                
+                                
   
                                 {"Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
                                 {"Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
@@ -13623,7 +13627,7 @@ void SOLARCHVISION_export_land () {
     File_output_mesh.print("v ");
     
     for (int j = 0; j < 3; j++) {
-      File_output_mesh.print(LAND_MESH[the_I][the_J][j]);
+      File_output_mesh.print(nf(LAND_MESH[the_I][the_J][j], 0, 6));
       if (j + 1 < 3) {
         File_output_mesh.print(" ");
       }
@@ -13670,7 +13674,15 @@ void SOLARCHVISION_export_objects () {
   for (int i = 1; i < allVertices.length; i++) {
     File_output_mesh.print("v ");
     for (int j = 0; j < 3; j++) {
-      File_output_mesh.print(allVertices[i][j]);
+      
+      //File_output_mesh.print(nf(allVertices[i][j], 0, 6));
+      {
+        float v = allVertices[i][j];
+        if (j == 2) v += 20;
+        File_output_mesh.print(nf(v * 1000000, 0, 6));
+      }
+      
+      
       if (j + 1 < 3) {
         File_output_mesh.print(" ");
       }
@@ -16559,8 +16571,6 @@ float[] SOLARCHVISION_0Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
     int LAND_i = (f - 1) / (LAND_n_J - 1);
     int LAND_j = (f - 1) % (LAND_n_J - 1);
     
-    println(LAND_i, LAND_j); 
-
     float backAngles = FLOAT_undefined;  
     float foreAngles = FLOAT_undefined;
 
