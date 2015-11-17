@@ -1087,11 +1087,11 @@ int Display_SUN3D = 1;
 int Display_SKY3D = 0;
 
 int Download_LAND = 0;
-int Load_LAND = 0; // 1;
-int Display_LAND = 0; // 1;
+int Load_LAND = 1; // 1;
+int Display_LAND = 1; // 1;
 int Skip_LAND_Center = 0; //5;
 
-int Load_URBAN = 0;
+int Load_URBAN = 1;
 int Display_URBAN = 1;
 
 int display_SpatialImpact_Points = 0;
@@ -1582,7 +1582,7 @@ void SOLARCHVISION_update_station (int Step) {
   
   //if ((Step == 0) || (Step == 8)) SOLARCHVISION_remove_2Dobjects();
   
-  //if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_2Dobjects_onLand();
+  if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_2Dobjects_onLand();
 
 }
 
@@ -1591,7 +1591,7 @@ void SOLARCHVISION_update_models (int Step) {
    if ((Step == 0) || (Step == 1)) SOLARCHVISION_remove_3Dobjects();
    //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
    if ((Step == 0) || (Step == 3)) SOLARCHVISION_remove_ParametricGeometries();
-   if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
+   //if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
    if ((Step == 0) || (Step == 5)) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
 
 }
@@ -11616,8 +11616,9 @@ void WIN3D_keyPressed (KeyEvent e) {
                   ROLLOUT_Update = 1; 
                   break;              
 
-        case 'x' :SOLARCHVISION_export_objects(); ROLLOUT_Update = 1; break;
         case 'X' :SOLARCHVISION_export_land(); ROLLOUT_Update = 1; break;
+        case 'x' :SOLARCHVISION_export_objects(); ROLLOUT_Update = 1; break;
+        case 'y' :SOLARCHVISION_export_objects_script(); ROLLOUT_Update = 1; break;
         
       }
     }
@@ -13675,13 +13676,14 @@ void SOLARCHVISION_export_objects () {
     File_output_mesh.print("v ");
     for (int j = 0; j < 3; j++) {
       
-      //File_output_mesh.print(nf(allVertices[i][j], 0, 6));
+      File_output_mesh.print(nf(allVertices[i][j], 0, 6));
+      /*
       {
         float v = allVertices[i][j];
         if (j == 2) v += 20;
         File_output_mesh.print(nf(v * 1000000, 0, 6));
       }
-      
+      */
       
       if (j + 1 < 3) {
         File_output_mesh.print(" ");
@@ -13703,6 +13705,44 @@ void SOLARCHVISION_export_objects () {
         File_output_mesh.println();
       }          
     }    
+  }
+  
+  File_output_mesh.flush(); 
+  File_output_mesh.close();   
+  
+  println("End of exporting the mesh."); 
+ 
+}
+
+
+void SOLARCHVISION_export_objects_script () {
+
+  PrintWriter File_output_mesh = createWriter(Model3DFolder + "/" + "ObjectsMesh.scr");
+  
+  for (int f = 1; f < allFaces.length; f++) {
+    
+    if ((allFaces[f].length == 3) || (allFaces[f].length == 4)) {
+      
+      File_output_mesh.println("3dface");
+      
+      for (int j = 0; j < allFaces[f].length; j++) {
+        
+        float x = allVertices[allFaces[f][j]][0];
+        float y = allVertices[allFaces[f][j]][1];
+        float z = allVertices[allFaces[f][j]][2];
+        
+        { 
+          z += 20;
+          x *= 1000000;
+          y *= 1000000;
+          z *= 1000000;
+        }
+        
+        File_output_mesh.println(x + "," + y + "," + z);
+      }
+      File_output_mesh.println();
+      File_output_mesh.println();
+    }
   }
   
   File_output_mesh.flush(); 
@@ -13880,7 +13920,7 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
       
       float pixel_area = dist(LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1]) * dist(LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1]);
       
-      int max_n = int(pixel_area / 2500.0);
+      int max_n = int(pixel_area / 500.0);
       if (max_n > 100) max_n = 100;
      
       if (i > 8) max_n = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
@@ -13903,12 +13943,11 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
           if (dist(x,y,0,0) > 2.5) { // i.e. No 2D at the center!
           
             int t = 1;
+
+            float r = random(i + 1); //  to illustrate more people at the center
             
-            if (i < Skip_LAND_Center) {
-              float r = random(100);
-              
-              if (r < 90) t = 0; //  to illustrate more people at the center
-            }
+            if (r < 1) t = 0; 
+
             
             if (dist(x,y,0,0) < 25) t = 0; // i.e. No tree around the center!
             
@@ -14071,7 +14110,7 @@ void SOLARCHVISION_add_urban () {
       urbanFaces_start = allFaces.length;
       
       //float h = (HeightAboveGround - LocationElevation);
-      float h = -20; // ?????????????????????????????????????????
+      float h = 0; //-20; // ?????????????????????????????????????????
   
       SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Projects/Import/Stations/" + DEFINED_STATIONS[STATION_NUMBER][0] + ".obj", -1, 0,0,h, 1,1,1);
       
