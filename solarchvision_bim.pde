@@ -2747,6 +2747,9 @@ void SOLARCHVISION_draw_WIN3D () {
 
 void SOLARCHVISION_draw_pallet_on_WIN3D () {
 
+  
+  
+  
   float the_scale = 0.1;
 
   if (WIN3D_View_Type == 1) {
@@ -2764,6 +2767,32 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
   //WIN3D_Diagrams.translate(0,0,1 * the_scale);
   //WIN3D_Diagrams.translate(0,0,-CAM_z * the_scale);
   //WIN3D_Diagrams.translate(0,0,tan(0.5 * CAM_fov));
+
+
+  CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
+
+  float CAM_dist = (0.5 * refScale) / tan(0.5 * CAM_fov);
+
+  if (WIN3D_View_Type == 1) {
+
+    float aspect = 1.0 / WIN3D_R_View;
+    
+    float zFar = CAM_dist * 1000;
+    float zNear = CAM_dist * 0.001;
+    
+    WIN3D_Diagrams.perspective(CAM_fov, aspect, zNear, zFar);
+
+    //WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
+    WIN3D_Diagrams.translate(0, 0.5 * WIN3D_Y_View, -5 * WIN3D_scale3D * refScale); // << IMPORTANT!
+  }
+  else {
+
+    float ZOOM = Orthographic_Zoom();
+    
+    WIN3D_Diagrams.ortho(ZOOM * WIN3D_X_View * -1, ZOOM * WIN3D_X_View * 1, ZOOM  * WIN3D_Y_View * -1, ZOOM  * WIN3D_Y_View * 1, 0.00001, 100000);
+    
+    WIN3D_Diagrams.translate(0, 1.0 * WIN3D_Y_View, 0); // << IMPORTANT! 
+  }
   
 
   
