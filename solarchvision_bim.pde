@@ -1410,10 +1410,17 @@ int WIN3D_View_Type = 1; // 0: Ortho 1: Perspective
 int WIN3D_Update = 1;
 int WIN3D_include = 1;
 
-int WIN3D_VERTS_SHOW = 0;
-int WIN3D_EDGES_SHOW = 1;
-int WIN3D_FACES_SHADE = 0; // <<<<<
+int WIN3D_FACES_SHADE_0 = 0;
+int WIN3D_FACES_SHADE_1 = 1;
+int WIN3D_FACES_SHADE_2 = 2;
+int WIN3D_FACES_SHADE_3 = 3;
+int WIN3D_FACES_SHADE_4 = 4;
+int WIN3D_FACES_SHADE_5 = 5;
+int WIN3D_FACES_SHADE_6 = 6;
 
+int WIN3D_FACES_SHADE = WIN3D_FACES_SHADE_1; // <<<<<
+int WIN3D_EDGES_SHOW = 1;
+int WIN3D_VERTS_SHOW = 0;
 
 
 float[] WIN3D_VerticesSolarEnergy;
@@ -2292,7 +2299,7 @@ void draw () {
           
         if (pre_WIN3D_FACES_SHADE != WIN3D_FACES_SHADE) {
           
-          if (WIN3D_FACES_SHADE == 3) SolarProjection(); 
+          if (WIN3D_FACES_SHADE == WIN3D_FACES_SHADE_4) SolarProjection(); 
           
           WIN3D_Update = 1;
         }             
@@ -11580,11 +11587,11 @@ void WIN3D_keyPressed (KeyEvent e) {
         //case 'e' :WIN3D_EDGES_SHOW = (WIN3D_EDGES_SHOW + 1) % 2; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
   
         case 'K' :WIN3D_FACES_SHADE = (WIN3D_FACES_SHADE + 5 - 1) % 5; WIN3D_Update = 1;
-                  if (WIN3D_FACES_SHADE == 3) SolarProjection(); 
+                  if (WIN3D_FACES_SHADE == WIN3D_FACES_SHADE_4) SolarProjection(); 
                   ROLLOUT_Update = 1; 
                   break;
         case 'k' :WIN3D_FACES_SHADE = (WIN3D_FACES_SHADE + 1) % 5; WIN3D_Update = 1;
-                  if (WIN3D_FACES_SHADE == 3) SolarProjection(); 
+                  if (WIN3D_FACES_SHADE == WIN3D_FACES_SHADE_4) SolarProjection(); 
                   ROLLOUT_Update = 1; 
                   break; 
          
@@ -11606,8 +11613,8 @@ void WIN3D_keyPressed (KeyEvent e) {
                   ROLLOUT_Update = 1; 
                   break; 
                   
-        case ENTER: if (WIN3D_FACES_SHADE == 3) SolarProjection();  
-                    if (WIN3D_FACES_SHADE == 4) WIN3D_update_VerticesSolarValue = 1;
+        case ENTER: if (WIN3D_FACES_SHADE == WIN3D_FACES_SHADE_4) SolarProjection();  
+                    if (WIN3D_FACES_SHADE == WIN3D_FACES_SHADE_5) WIN3D_update_VerticesSolarValue = 1;
                     WIN3D_Update = 1;
                     ROLLOUT_Update = 1;  
                     break;                  
@@ -14590,7 +14597,7 @@ void SOLARCHVISION_draw_SKY3D () {
   
     for (int f = 1; f < skyFaces.length; f++) {
       
-      if (WIN3D_FACES_SHADE != 3) {
+      if (WIN3D_FACES_SHADE != WIN3D_FACES_SHADE_4) {
       
         color c = color(191, 191, 255);
     
@@ -14601,7 +14608,7 @@ void SOLARCHVISION_draw_SKY3D () {
           WIN3D_Diagrams.stroke(c);
         }
     
-        if (WIN3D_FACES_SHADE == 1) {
+        if (WIN3D_FACES_SHADE == WIN3D_FACES_SHADE_2) {
           //WIN3D_Diagrams.fill(255, 255, 255);
           WIN3D_Diagrams.noFill();
         }
@@ -14619,7 +14626,7 @@ void SOLARCHVISION_draw_SKY3D () {
         WIN3D_Diagrams.endShape(CLOSE);
       }
 
-      else if (WIN3D_FACES_SHADE == 3) {
+      else if (WIN3D_FACES_SHADE == WIN3D_FACES_SHADE_4) {
         
         if (rebuild_SolarProjection_array != 0) SolarProjection();
           
@@ -15066,7 +15073,7 @@ void SOLARCHVISION_draw_3Dobjects () {
 
   if (Display_Building_Model != 0) {
   
-    if (WIN3D_FACES_SHADE < 4) {
+    if (WIN3D_FACES_SHADE != WIN3D_FACES_SHADE_5) {
       for (int f = 1; f < allFaces.length; f++) {
     
         if (((Load_URBAN == 0) || (Display_URBAN == 0)) && (urbanFaces_start <= f) && (urbanFaces_end >= f)) {
@@ -15095,7 +15102,7 @@ void SOLARCHVISION_draw_3Dobjects () {
             }          
           }
       
-          if (WIN3D_FACES_SHADE <= 0) {
+          if ((WIN3D_FACES_SHADE == WIN3D_FACES_SHADE_0) || (WIN3D_FACES_SHADE == WIN3D_FACES_SHADE_1)) {
             WIN3D_Diagrams.fill(255, 255, 255);
             //WIN3D_Diagrams.noFill();
           }
@@ -15105,7 +15112,7 @@ void SOLARCHVISION_draw_3Dobjects () {
           
           
       
-          if (WIN3D_FACES_SHADE == -1) {
+          if (WIN3D_FACES_SHADE == WIN3D_FACES_SHADE_0) {
             
             WIN3D_Diagrams.beginShape();
             
@@ -15117,7 +15124,7 @@ void SOLARCHVISION_draw_3Dobjects () {
             WIN3D_Diagrams.endShape(CLOSE);
             
           }
-          else if (WIN3D_FACES_SHADE == 0) {          
+          else if (WIN3D_FACES_SHADE == WIN3D_FACES_SHADE_1) {          
             int Teselation = 0;
             
             int TotalSubNo = 1;  
@@ -15147,7 +15154,7 @@ void SOLARCHVISION_draw_3Dobjects () {
               WIN3D_Diagrams.endShape(CLOSE);
             }       
           }
-          else if (WIN3D_FACES_SHADE == 1) {
+          else if (WIN3D_FACES_SHADE == WIN3D_FACES_SHADE_2) {
             int Teselation = 0;
             
             int TotalSubNo = 1;  
@@ -15188,7 +15195,7 @@ void SOLARCHVISION_draw_3Dobjects () {
               WIN3D_Diagrams.endShape(CLOSE);
             }
           }
-          else if (WIN3D_FACES_SHADE == 2) {
+          else if (WIN3D_FACES_SHADE == WIN3D_FACES_SHADE_3) {
             
             int Teselation = 0;
             
@@ -15243,7 +15250,7 @@ void SOLARCHVISION_draw_3Dobjects () {
             }
           }        
           
-          else if (WIN3D_FACES_SHADE == 3) {
+          else if (WIN3D_FACES_SHADE == WIN3D_FACES_SHADE_4) {
             
             if (rebuild_SolarProjection_array != 0) SolarProjection();
             
@@ -15338,7 +15345,7 @@ void SOLARCHVISION_draw_3Dobjects () {
         }
       }
     }
-    else if (WIN3D_FACES_SHADE == 4) {
+    else if (WIN3D_FACES_SHADE == WIN3D_FACES_SHADE_5) {
       if (WIN3D_update_VerticesSolarValue == 0) {
         try {
           int PAL_TYPE = 0; 
@@ -20438,25 +20445,25 @@ void mouseClicked () {
           }           
           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Surface White")) {
-            WIN3D_FACES_SHADE = 0;
+            WIN3D_FACES_SHADE = WIN3D_FACES_SHADE_1;
             
             WIN3D_Update = 1;  
             ROLLOUT_Update = 1;
           } 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Surface Materials")) {
-            WIN3D_FACES_SHADE = 1;
+            WIN3D_FACES_SHADE = WIN3D_FACES_SHADE_2;
             
             WIN3D_Update = 1;  
             ROLLOUT_Update = 1;
           } 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Vertex Spatial")) {
-            WIN3D_FACES_SHADE = 2;
+            WIN3D_FACES_SHADE = WIN3D_FACES_SHADE_3;
             
             WIN3D_Update = 1;  
             ROLLOUT_Update = 1;
           } 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Global Solar")) {
-            WIN3D_FACES_SHADE = 3;
+            WIN3D_FACES_SHADE = WIN3D_FACES_SHADE_4;
             
             SolarProjection(); // <<<<<<<<<<
             
@@ -20464,7 +20471,7 @@ void mouseClicked () {
             ROLLOUT_Update = 1;
           } 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Vertex Solar")) {
-            WIN3D_FACES_SHADE = 4;
+            WIN3D_FACES_SHADE = WIN3D_FACES_SHADE_5;
             
             WIN3D_Update = 1;  
             ROLLOUT_Update = 1;
@@ -22330,7 +22337,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       level_pix = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Probabilities range", level_pix, 2, 32, -2), 1));    
       
       
-      WIN3D_FACES_SHADE = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "WIN3D_FACES_SHADE", WIN3D_FACES_SHADE, 0, 4, 1), 1));
+      WIN3D_FACES_SHADE = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "WIN3D_FACES_SHADE", WIN3D_FACES_SHADE, 0, 5, 1), 1));
       WIN3D_VERTS_SHOW = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "WIN3D_VERTS_SHOW", WIN3D_VERTS_SHOW, 0, 1, 1), 1));
       WIN3D_EDGES_SHOW = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "WIN3D_EDGES_SHOW", WIN3D_EDGES_SHOW, 0, 1, 1), 1));  
       display_MODEL3D_EDGES = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "display_MODEL3D_EDGES" , display_MODEL3D_EDGES, 0, 1, 1), 1));
