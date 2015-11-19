@@ -7,7 +7,7 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 0;
+int STATION_NUMBER = 1;
 
 String[][] DEFINED_STATIONS = {
   
@@ -2785,27 +2785,24 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
     
     WIN3D_Diagrams.translate(0, 1.0 * WIN3D_Y_View, 0); // << IMPORTANT!
   }
-  
 
-  
-  float _Multiplier = 1; 
-  
+
+
   int PAL_TYPE = 0; 
   int PAL_DIR = 1;
   
   if (Impact_TYPE == Impact_ACTIVE) {
-    PAL_TYPE = STUDY_Pallet_ACTIVE; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;  
-    //PAL_TYPE = 15; PAL_DIR = 1;
-    
+    PAL_TYPE = OBJECTS_Pallet_ACTIVE; 
+    PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR; 
   }
   if (Impact_TYPE == Impact_PASSIVE) {  
-    PAL_TYPE = STUDY_Pallet_PASSIVE; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
+    PAL_TYPE = OBJECTS_Pallet_PASSIVE; 
+    PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
   }   
   
-
-
-
-  
+  float _Multiplier = 1; 
+  if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1 * OBJECTS_Pallet_ACTIVE_MLT; 
+  if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02 * OBJECTS_Pallet_PASSIVE_MLT;  
   
   
   float pal_length = 1 * h_pixel * WIN3D_Image_Scale / the_scale;
@@ -9145,8 +9142,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
       if (Impact_TYPE == Impact_ACTIVE) {
         PAL_TYPE = STUDY_Pallet_ACTIVE; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;  
-        //PAL_TYPE = 15; PAL_DIR = 1;
-        
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
         PAL_TYPE = STUDY_Pallet_PASSIVE; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
