@@ -2835,7 +2835,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
     float x1 = 0.5 * WIN3D_X_View - 0.5 * pal_length + q * (pal_length / 11.0); 
     float x2 = x1 + (pal_length / 11.0);
     float y1 = -0.2 * (x2 - x1);
-    float y2 = 0.2 * (x2 - x1);
+    float y2 = y1 + 0.4 * (x2 - x1);
     
     WIN3D_Diagrams.beginShape();
     WIN3D_Diagrams.vertex(x1, y1, 0);
