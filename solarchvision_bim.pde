@@ -2808,7 +2808,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
   
   
   
-  float pal_length = 1 * h_pixel / the_scale;
+  float pal_length = 1 * h_pixel * WIN3D_Image_Scale / the_scale;
   
   for (int q = 0; q < 11; q += 1) {
     float _u = 0;
@@ -2832,7 +2832,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
     
     float x1 = -0.5 * pal_length + q * (pal_length / 11.0); 
     float x2 = x1 + (pal_length / 11.0);
-    float y1 = -0.2 * (x2 - x1);
+    float y1 = -0.2 * (x2 - x1) + (0.4 * WIN3D_Y_View / the_scale);
     float y2 = y1 + 0.4 * (x2 - x1);
     
     WIN3D_Diagrams.beginShape();
