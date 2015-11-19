@@ -2777,15 +2777,13 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
     float zFar = CAM_dist * 1000;
     float zNear = CAM_dist * 0.001;
 
-    //WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0);
-    WIN3D_Diagrams.translate(0, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
+    WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
   }
   else {
 
     float ZOOM = Orthographic_Zoom();
     
-    //WIN3D_Diagrams.translate(0, 1.0 * WIN3D_Y_View, 0); 
-    WIN3D_Diagrams.translate(-0.5 * WIN3D_X_View, 1.0 * WIN3D_Y_View, 0); // << IMPORTANT!
+    WIN3D_Diagrams.translate(0, 1.0 * WIN3D_Y_View, 0); // << IMPORTANT!
   }
   
 
@@ -2832,7 +2830,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
     
     WIN3D_Diagrams.strokeWeight(0);
     
-    float x1 = 0.5 * WIN3D_X_View - 0.5 * pal_length + q * (pal_length / 11.0); 
+    float x1 = -0.5 * pal_length + q * (pal_length / 11.0); 
     float x2 = x1 + (pal_length / 11.0);
     float y1 = -0.2 * (x2 - x1);
     float y2 = y1 + 0.4 * (x2 - x1);
