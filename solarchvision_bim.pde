@@ -2481,8 +2481,6 @@ void draw () {
         
         SOLARCHVISION_draw_WIN3D();
         
-        SOLARCHVISION_draw_pallet_on_WIN3D();
-     
       }
     }
     
@@ -2551,7 +2549,8 @@ void SOLARCHVISION_draw_WIN3D () {
   
     WIN3D_Diagrams.fill(127);
     WIN3D_Diagrams.strokeWeight(0);
-    
+
+    WIN3D_Diagrams.pushMatrix();
   
     WIN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
     
@@ -2703,13 +2702,17 @@ void SOLARCHVISION_draw_WIN3D () {
         }
       }
     }   
+
+
     
-  
+    WIN3D_Diagrams.popMatrix();
+    
+    WIN3D_Diagrams.hint(DISABLE_DEPTH_TEST);
+    
+    SOLARCHVISION_draw_pallet_on_WIN3D();  
     
     WIN3D_Diagrams.endDraw();
-    
   
-    
     if ((WIN3D_record_JPG == 1) || (WIN3D_record_AUTO == 1)) {
       String myFile = MAKE_Filenames("WIN3D_") + ".jpg";
       WIN3D_Diagrams.save(myFile);
@@ -2744,6 +2747,10 @@ void SOLARCHVISION_draw_WIN3D () {
 
 void SOLARCHVISION_draw_pallet_on_WIN3D () {
 
+  WIN3D_Diagrams.pushMatrix();
+  WIN3D_Diagrams.translate(0,0,-10);
+  
+  WIN3D_Diagrams.popMatrix();
   
   float _Multiplier = 1; 
   
@@ -2779,35 +2786,42 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
     
     float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u); 
     
-    stroke(_COL[1], _COL[2], _COL[3], _COL[0]);
-    fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+    WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);
+    WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
     
-    strokeWeight(0);
+    WIN3D_Diagrams.strokeWeight(0);
     
-    float x1 = WIN3D_CX_View + 0.5 * WIN3D_X_View - 0.5 * pal_length + q * (pal_length / 11.0); 
-    float y1 = WIN3D_CY_View + 0.9 * WIN3D_Y_View;
+    float x1 = 0.5 * WIN3D_X_View - 0.5 * pal_length + q * (pal_length / 11.0); 
+    float y1 = 0; //0.9 * WIN3D_Y_View;
     float x2 = x1 + (pal_length / 11.0);
     float y2 = y1 + 0.4 * (pal_length / 11.0);
     
-    rect(x1, y1, x2 - x1, y2 - y1);
+    WIN3D_Diagrams.rect(x1, y1, x2 - x1, y2 - y1);
+    
+    WIN3D_Diagrams.beginShape();
+    WIN3D_Diagrams.vertex(x1, y1, 0);
+    WIN3D_Diagrams.vertex(x1, y2, 0);
+    WIN3D_Diagrams.vertex(x2, y2, 0);
+    WIN3D_Diagrams.vertex(x2, y1, 0);
+    WIN3D_Diagrams.endShape(CLOSE);    
 
     if (_COL[1] + _COL[2] + _COL[3] > 1.75 * 255) {
-      stroke(127);
-      fill(127);
-      strokeWeight(0);
+      WIN3D_Diagrams.stroke(127);
+      WIN3D_Diagrams.fill(127);
+      WIN3D_Diagrams.strokeWeight(0);
     }
     else{
-      stroke(255);
-      fill(255);
-      strokeWeight(2);
+      WIN3D_Diagrams.stroke(255);
+      WIN3D_Diagrams.fill(255);
+      WIN3D_Diagrams.strokeWeight(2);
     }  
     
     float txtSize = y2 - y1;
                 
-    textSize(txtSize);
-    textAlign(CENTER, CENTER);
-    if (Impact_TYPE == Impact_ACTIVE) text(nf((roundTo(0.1 * q / _Multiplier, 0.1)), 1, 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize);
-    if (Impact_TYPE == Impact_PASSIVE) text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize);
+    WIN3D_Diagrams.textSize(txtSize);
+    WIN3D_Diagrams.textAlign(CENTER, CENTER);
+    if (Impact_TYPE == Impact_ACTIVE) WIN3D_Diagrams.text(nf((roundTo(0.1 * q / _Multiplier, 0.1)), 1, 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+    if (Impact_TYPE == Impact_PASSIVE) WIN3D_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
   }
 
   
