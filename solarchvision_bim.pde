@@ -1415,11 +1415,12 @@ int WIN3D_include = 1;
 int Shade_Surface_Base = 0;
 int Shade_Surface_White = 1;
 int Shade_Surface_Materials = 2;
-int Shade_Vertex_Spatial = 3;
-int Shade_Global_Solar = 4;
-int Shade_Vertex_Solar = 5;
+int Shade_Global_Solar = 3;
+int Shade_Vertex_Solar = 4;
+int Shade_Vertex_Spatial = 5;
+int Shade_Vertex_Elevation = 6;
 
-int number_of_shading_options = 6;
+int number_of_shading_options = 7;
 
 int WIN3D_FACES_SHADE = Shade_Surface_White; // <<<<<
 int WIN3D_EDGES_SHOW = 1;
@@ -15252,7 +15253,48 @@ void SOLARCHVISION_draw_3Dobjects () {
               WIN3D_Diagrams.endShape(CLOSE);
             }
           }        
-          
+          else if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
+            
+            int Teselation = 0;
+            
+            int TotalSubNo = 1;  
+            if (allFaces_MAT[f] == 0) {
+              Teselation = MODEL3D_TESELATION;
+              if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+            }
+        
+            for (int n = 0; n < TotalSubNo; n++) {
+              
+              float[][] base_Vertices = new float [allFaces[f].length][3];
+              for (int j = 0; j < allFaces[f].length; j++) {
+                int vNo = allFaces[f][j];
+                base_Vertices[j][0] = allVertices[vNo][0];
+                base_Vertices[j][1] = allVertices[vNo][1];
+                base_Vertices[j][2] = allVertices[vNo][2];
+              }
+              
+              float[][] subFace = getSubFace(base_Vertices, Teselation, n);
+           
+              WIN3D_Diagrams.beginShape();
+              
+              for (int s = 0; s < subFace.length; s++) {
+                
+                float x = subFace[s][0];
+                float y = subFace[s][1];
+                float z = subFace[s][2];
+                
+                int PAL_TYPE = 1; 
+                //float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.0025 * z);
+                float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.01 * z);
+                WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
+                
+                WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -(subFace[s][1] * objects_scale * WIN3D_scale3D), subFace[s][2] * objects_scale * WIN3D_scale3D);
+        
+              }
+              
+              WIN3D_Diagrams.endShape(CLOSE);
+            }
+          }                  
           else if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
             
             if (rebuild_SolarProjection_array != 0) SolarProjection();
@@ -20465,12 +20507,6 @@ void mouseClicked () {
             WIN3D_Update = 1;  
             ROLLOUT_Update = 1;
           } 
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Vertex Spatial")) {
-            WIN3D_FACES_SHADE = Shade_Vertex_Spatial;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          } 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Global Solar")) {
             WIN3D_FACES_SHADE = Shade_Global_Solar;
             
@@ -20485,6 +20521,19 @@ void mouseClicked () {
             WIN3D_Update = 1;  
             ROLLOUT_Update = 1;
           }           
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Vertex Spatial")) {
+            WIN3D_FACES_SHADE = Shade_Vertex_Spatial;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          }           
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Vertex Elevation")) {
+            WIN3D_FACES_SHADE = Shade_Vertex_Elevation;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          }           
+          
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Vertices")) {
             WIN3D_VERTS_SHOW = (WIN3D_VERTS_SHOW  + 1) % 2;
             
@@ -26271,7 +26320,7 @@ String[][] BAR_a_Items = {
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
                         {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Orbit", "OrbitXY", "OrbitZ", "Pan", "Look at origin", "TruckX", "TruckY", "TruckZ", "Walk", "3DModelSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
                         {"Display", "Display/Hide Vertices", "Display/Hide Edges", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Land", "Display/Hide Sky", "Display/Hide Sun", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
-                        {"Shade", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial"},
+                        {"Shade", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
                         {"Select", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
