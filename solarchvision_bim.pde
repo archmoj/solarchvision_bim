@@ -2747,10 +2747,25 @@ void SOLARCHVISION_draw_WIN3D () {
 
 void SOLARCHVISION_draw_pallet_on_WIN3D () {
 
-  WIN3D_Diagrams.pushMatrix();
-  WIN3D_Diagrams.translate(0,0,-10);
+  float the_scale = 0.1;
+
+  if (WIN3D_View_Type == 1) {
+    
+    //the_scale *= (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
+    the_scale *= (1.0 / tan(0.5 * CAM_fov));
+  }
+  else {
+    float ZOOM = Orthographic_Zoom();
+
+    the_scale *= (1.0 / ZOOM) * (0.5 * WIN3D_scale3D);
+  }  
   
-  WIN3D_Diagrams.popMatrix();
+  WIN3D_Diagrams.pushMatrix();
+  //WIN3D_Diagrams.translate(0,0,1 * the_scale);
+  //WIN3D_Diagrams.translate(0,0,-CAM_z * the_scale);
+  //WIN3D_Diagrams.translate(0,0,tan(0.5 * CAM_fov));
+  
+
   
   float _Multiplier = 1; 
   
@@ -2766,10 +2781,13 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
     PAL_TYPE = STUDY_Pallet_PASSIVE; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
   }   
   
+
+
+
   
   
   
-  float pal_length = 1 * h_pixel;
+  float pal_length = 1 * h_pixel / the_scale;
   
   for (int q = 0; q < 11; q += 1) {
     float _u = 0;
@@ -2792,11 +2810,9 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
     WIN3D_Diagrams.strokeWeight(0);
     
     float x1 = 0.5 * WIN3D_X_View - 0.5 * pal_length + q * (pal_length / 11.0); 
-    float y1 = 0; //0.9 * WIN3D_Y_View;
     float x2 = x1 + (pal_length / 11.0);
-    float y2 = y1 + 0.4 * (pal_length / 11.0);
-    
-    WIN3D_Diagrams.rect(x1, y1, x2 - x1, y2 - y1);
+    float y1 = -0.2 * (x2 - x1);
+    float y2 = 0.2 * (x2 - x1);
     
     WIN3D_Diagrams.beginShape();
     WIN3D_Diagrams.vertex(x1, y1, 0);
@@ -2825,6 +2841,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
   }
 
   
+  WIN3D_Diagrams.popMatrix();  
 }
 
 
