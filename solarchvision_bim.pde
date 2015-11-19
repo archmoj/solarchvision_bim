@@ -2762,7 +2762,8 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
   
   
   
-  float pal_length = 0.9 * WIN3D_X_View;
+  float pal_length = 1 * h_pixel;
+  
   for (int q = 0; q < 11; q += 1) {
     float _u = 0;
     
@@ -2783,10 +2784,10 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
     
     strokeWeight(0);
     
-    float x1 = WIN3D_CX_View + 0.05 * WIN3D_X_View + q * (pal_length / 11.0); 
+    float x1 = WIN3D_CX_View + 0.5 * WIN3D_X_View - 0.5 * pal_length + q * (pal_length / 11.0); 
     float y1 = WIN3D_CY_View + 0.9 * WIN3D_Y_View;
     float x2 = x1 + (pal_length / 11.0);
-    float y2 = y1 + 0.05 * WIN3D_Y_View;
+    float y2 = y1 + 0.4 * (pal_length / 11.0);
     
     rect(x1, y1, x2 - x1, y2 - y1);
 
