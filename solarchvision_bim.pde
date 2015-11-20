@@ -7,7 +7,7 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 1;
+int STATION_NUMBER = 14;
 
 String[][] DEFINED_STATIONS = {
   
@@ -963,6 +963,10 @@ float SKY3D_Pallet_ACTIVE_MLT = 0.5;
 int SKY3D_Pallet_PASSIVE = 18; 
 int SKY3D_Pallet_PASSIVE_DIR = -1;  
 float SKY3D_Pallet_PASSIVE_MLT = 2; //1;
+
+int LAND_Pallet_ELEVATION = 1; 
+int LAND_Pallet_ELEVATION_DIR = -1; 
+float LAND_Pallet_ELEVATION_MLT = 0.1; 
 
 int OBJECTS_Pallet_ACTIVE = 19; //15; //14;
 int OBJECTS_Pallet_ACTIVE_DIR = 1;
@@ -2769,6 +2773,15 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
     draw_pal = 1;
   }
 
+  if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
+
+    PAL_TYPE = LAND_Pallet_ELEVATION; 
+    PAL_DIR = LAND_Pallet_ELEVATION_DIR; 
+    _Multiplier = LAND_Pallet_ELEVATION_MLT; 
+          
+    draw_pal = 1;      
+  }
+
   if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
     
     if (SpatialImpact_Color == 0) {
@@ -2794,9 +2807,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
   }          
 
 
-
-//int Shade_Surface_Materials = 2;
-//int Shade_Vertex_Elevation = 6;      
+     
   
   if (draw_pal != 0) {
     
@@ -2847,14 +2858,17 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
     float pal_length = 1 * h_pixel * WIN3D_Image_Scale / the_scale;
     
     for (int q = 0; q < 11; q += 1) {
-      float _u = 0;
       
-      if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
-      if (Impact_TYPE == Impact_PASSIVE) {
-        _u = 0.2 * q - 0.5;
-        _u = (_u - 0.5) * 0.75 + 0.5;
-      }        
+      float _u = 0.1 * q;
       
+      if ((WIN3D_FACES_SHADE == Shade_Vertex_Solar) || (WIN3D_FACES_SHADE == Shade_Global_Solar)) {
+        if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
+        if (Impact_TYPE == Impact_PASSIVE) {
+          _u = 0.2 * q - 0.5;
+          _u = (_u - 0.5) * 0.75 + 0.5;
+        }        
+      }
+        
       if (PAL_DIR == -1) _u = 1 - _u;
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
@@ -2897,6 +2911,10 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
       if ((WIN3D_FACES_SHADE == Shade_Vertex_Solar) || (WIN3D_FACES_SHADE == Shade_Global_Solar)) {
         if (Impact_TYPE == Impact_ACTIVE) WIN3D_Diagrams.text(nf((roundTo(0.1 * q / _Multiplier, 0.1)), 1, 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
         if (Impact_TYPE == Impact_PASSIVE) WIN3D_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+      }
+
+      if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
+        WIN3D_Diagrams.text(nf(int(roundTo(1.0 * (q - 5) / _Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
       }
       
       if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
@@ -14929,13 +14947,22 @@ void SOLARCHVISION_draw_land () {
           float z = LAND_MESH[i + plus_i][j + plus_j][2];
           
   
-          int PAL_TYPE = 1; 
-          //float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.0025 * z);
-          float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.01 * z);
+          int PAL_TYPE = LAND_Pallet_ELEVATION; 
+          int PAL_DIR = LAND_Pallet_ELEVATION_DIR; 
+          float _Multiplier = LAND_Pallet_ELEVATION_MLT;   
+          
+          float _u = _Multiplier * 0.1 * z + 0.5;
+           
+          if (PAL_DIR == -1) _u = 1 - _u;
+          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+          if (PAL_DIR == 2) _u =  0.5 * _u;
+          
+          float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);           
+          
           WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
           
           if (z + LocationElevation < 0) { // i.e. water
-            WIN3D_Diagrams.fill(127, 127, 255);
+            //WIN3D_Diagrams.fill(127, 127, 255);
           } 
           
           WIN3D_Diagrams.stroke(0);
