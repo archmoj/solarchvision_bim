@@ -2747,119 +2747,168 @@ void SOLARCHVISION_draw_WIN3D () {
 
 void SOLARCHVISION_draw_pallet_on_WIN3D () {
 
-  
-  
-  
-  float the_scale = 1;
-
-  if (WIN3D_View_Type == 1) {
-    
-    //the_scale *= (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
-    the_scale *= (0.5 / tan(0.5 * CAM_fov));
-  }
-  else {
-    float ZOOM = Orthographic_Zoom();
-
-    //the_scale *= (1.0 / ZOOM) * (0.5 * WIN3D_scale3D);
-    the_scale *= (0.5 / ZOOM);
-  }  
-  
-  WIN3D_Diagrams.pushMatrix();
-
-  CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
-
-  float CAM_dist = (0.5 * refScale) / tan(0.5 * CAM_fov);
-
-  if (WIN3D_View_Type == 1) {
-
-    float aspect = 1.0 / WIN3D_R_View;
-    
-    float zFar = CAM_dist * 1000;
-    float zNear = CAM_dist * 0.001;
-
-    WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
-  }
-  else {
-
-    float ZOOM = Orthographic_Zoom();
-    
-    WIN3D_Diagrams.translate(0, 1.0 * WIN3D_Y_View, 0); // << IMPORTANT!
-  }
-
-
+  int draw_pal = 0;
 
   int PAL_TYPE = 0; 
   int PAL_DIR = 1;
-  
-  if (Impact_TYPE == Impact_ACTIVE) {
-    PAL_TYPE = OBJECTS_Pallet_ACTIVE; 
-    PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR; 
-  }
-  if (Impact_TYPE == Impact_PASSIVE) {  
-    PAL_TYPE = OBJECTS_Pallet_PASSIVE; 
-    PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
-  }   
-  
   float _Multiplier = 1; 
-  if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1 * OBJECTS_Pallet_ACTIVE_MLT; 
-  if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02 * OBJECTS_Pallet_PASSIVE_MLT;  
-  
-  
-  float pal_length = 1 * h_pixel * WIN3D_Image_Scale / the_scale;
-  
-  for (int q = 0; q < 11; q += 1) {
-    float _u = 0;
-    
-    if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
-    if (Impact_TYPE == Impact_PASSIVE) {
-      _u = 0.2 * q - 0.5;
-      _u = (_u - 0.5) * 0.75 + 0.5;
-    }        
-    
-    if (PAL_DIR == -1) _u = 1 - _u;
-    if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-    if (PAL_DIR == 2) _u =  0.5 * _u;
-    
-    float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u); 
-    
-    WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);
-    WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
-    
-    WIN3D_Diagrams.strokeWeight(0);
-    
-    float x1 = -0.5 * pal_length + q * (pal_length / 11.0); 
-    float x2 = x1 + (pal_length / 11.0);
-    float y1 = -0.2 * (x2 - x1) + (0.4 * WIN3D_Y_View / the_scale);
-    float y2 = y1 + 0.4 * (x2 - x1);
-    
-    WIN3D_Diagrams.beginShape();
-    WIN3D_Diagrams.vertex(x1, y1, 0);
-    WIN3D_Diagrams.vertex(x1, y2, 0);
-    WIN3D_Diagrams.vertex(x2, y2, 0);
-    WIN3D_Diagrams.vertex(x2, y1, 0);
-    WIN3D_Diagrams.endShape(CLOSE);    
 
-    if (_COL[1] + _COL[2] + _COL[3] > 1.75 * 255) {
-      WIN3D_Diagrams.stroke(127);
-      WIN3D_Diagrams.fill(127);
-      WIN3D_Diagrams.strokeWeight(0);
+  if ((WIN3D_FACES_SHADE == Shade_Vertex_Solar) || (WIN3D_FACES_SHADE == Shade_Global_Solar)) {
+    
+    if (Impact_TYPE == Impact_ACTIVE) {
+      PAL_TYPE = OBJECTS_Pallet_ACTIVE; 
+      PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR; 
+      _Multiplier = 0.1 * OBJECTS_Pallet_ACTIVE_MLT; 
     }
-    else{
-      WIN3D_Diagrams.stroke(255);
-      WIN3D_Diagrams.fill(255);
-      WIN3D_Diagrams.strokeWeight(2);
+    if (Impact_TYPE == Impact_PASSIVE) {  
+      PAL_TYPE = OBJECTS_Pallet_PASSIVE; 
+      PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+      _Multiplier = 0.02 * OBJECTS_Pallet_PASSIVE_MLT;  
+    }   
+    
+    draw_pal = 1;
+  }
+
+  if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
+    
+    if (SpatialImpact_Color == 0) {
+      PAL_TYPE = 1; 
+      PAL_DIR = -1;
+    }
+    else if (SpatialImpact_Color == 1) {
+      PAL_TYPE = 1; 
+      PAL_DIR = 1;
+    } 
+    else if (SpatialImpact_Color == 2) {
+      PAL_TYPE = -1; 
+      PAL_DIR = 1;
+    } 
+    else if (SpatialImpact_Color == 3) {
+      PAL_TYPE = -1; 
+      PAL_DIR = -1;
+    }
+
+    _Multiplier = 0.5;
+          
+    draw_pal = 1;      
+  }          
+
+
+
+//int Shade_Surface_Materials = 2;
+//int Shade_Vertex_Elevation = 6;      
+  
+  if (draw_pal != 0) {
+    
+    float the_scale = 1;
+  
+    if (WIN3D_View_Type == 1) {
+      
+      //the_scale *= (0.5 * WIN3D_scale3D / tan(0.5 * CAM_fov)) * refScale;
+      the_scale *= (0.5 / tan(0.5 * CAM_fov));
+    }
+    else {
+      float ZOOM = Orthographic_Zoom();
+  
+      //the_scale *= (1.0 / ZOOM) * (0.5 * WIN3D_scale3D);
+      the_scale *= (0.5 / ZOOM);
     }  
     
-    float txtSize = y2 - y1;
-                
-    WIN3D_Diagrams.textSize(txtSize);
-    WIN3D_Diagrams.textAlign(CENTER, CENTER);
-    if (Impact_TYPE == Impact_ACTIVE) WIN3D_Diagrams.text(nf((roundTo(0.1 * q / _Multiplier, 0.1)), 1, 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
-    if (Impact_TYPE == Impact_PASSIVE) WIN3D_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
-  }
+    WIN3D_Diagrams.pushMatrix();
+  
+    CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
+  
+    float CAM_dist = (0.5 * refScale) / tan(0.5 * CAM_fov);
+  
+    if (WIN3D_View_Type == 1) {
+  
+      float aspect = 1.0 / WIN3D_R_View;
+      
+      float zFar = CAM_dist * 1000;
+      float zNear = CAM_dist * 0.001;
+  
+      WIN3D_Diagrams.translate(0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View, 0); // << IMPORTANT!
+    }
+    else {
+  
+      float ZOOM = Orthographic_Zoom();
+      
+      WIN3D_Diagrams.translate(0, 1.0 * WIN3D_Y_View, 0); // << IMPORTANT!
+    }
+  
+
+
+    
+
 
   
-  WIN3D_Diagrams.popMatrix();  
+  
+  
+    float pal_length = 1 * h_pixel * WIN3D_Image_Scale / the_scale;
+    
+    for (int q = 0; q < 11; q += 1) {
+      float _u = 0;
+      
+      if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
+      if (Impact_TYPE == Impact_PASSIVE) {
+        _u = 0.2 * q - 0.5;
+        _u = (_u - 0.5) * 0.75 + 0.5;
+      }        
+      
+      if (PAL_DIR == -1) _u = 1 - _u;
+      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+      if (PAL_DIR == 2) _u =  0.5 * _u;
+      
+      float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u); 
+      
+      WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);
+      WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+      
+      WIN3D_Diagrams.strokeWeight(0);
+      
+      float x1 = -0.5 * pal_length + q * (pal_length / 11.0); 
+      float x2 = x1 + (pal_length / 11.0);
+      float y1 = -0.2 * (x2 - x1) + (0.4 * WIN3D_Y_View / the_scale);
+      float y2 = y1 + 0.4 * (x2 - x1);
+      
+      WIN3D_Diagrams.beginShape();
+      WIN3D_Diagrams.vertex(x1, y1, 0);
+      WIN3D_Diagrams.vertex(x1, y2, 0);
+      WIN3D_Diagrams.vertex(x2, y2, 0);
+      WIN3D_Diagrams.vertex(x2, y1, 0);
+      WIN3D_Diagrams.endShape(CLOSE);    
+  
+      if (_COL[1] + _COL[2] + _COL[3] > 1.75 * 255) {
+        WIN3D_Diagrams.stroke(127);
+        WIN3D_Diagrams.fill(127);
+        WIN3D_Diagrams.strokeWeight(0);
+      }
+      else{
+        WIN3D_Diagrams.stroke(255);
+        WIN3D_Diagrams.fill(255);
+        WIN3D_Diagrams.strokeWeight(2);
+      }  
+      
+      float txtSize = y2 - y1;
+                  
+      WIN3D_Diagrams.textSize(txtSize);
+      WIN3D_Diagrams.textAlign(CENTER, CENTER);
+      
+      if ((WIN3D_FACES_SHADE == Shade_Vertex_Solar) || (WIN3D_FACES_SHADE == Shade_Global_Solar)) {
+        if (Impact_TYPE == Impact_ACTIVE) WIN3D_Diagrams.text(nf((roundTo(0.1 * q / _Multiplier, 0.1)), 1, 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+        if (Impact_TYPE == Impact_PASSIVE) WIN3D_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+      }
+      
+      if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
+        WIN3D_Diagrams.text(nf(int(roundTo(1.0 * (q - 5) / _Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+      }
+    }
+    
+      
+    WIN3D_Diagrams.popMatrix();  
+  }
+
+
 }
 
 
