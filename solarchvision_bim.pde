@@ -22170,7 +22170,7 @@ String[][] ROLLOUTS = {
                         {"Location & Data", "Point", "Weather", "Environment"}, 
                         {"Geometries & Space", "General", "Meshes", "Solids", "Fractals", "Modify"},
                         {"Time & Scenarios", "Period", "Ranges", "Filters"}, 
-                        {"Illustration Options", "Layout", "Layers", "Colors"},
+                        {"Illustration Options", "Layers", "Colors 2D", "Colors 3D"},
                         {"Post-Processing", "Interpolation", "Developed", "Impacts"}, 
                         {"Export Products", "Data", "Media", "Launch"}
                       };
@@ -22567,7 +22567,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
   }  
   else if (ROLLOUT_parent == 3) { // Illustration Options
 
-    if (ROLLOUT_child == 1) { // Layout
+    if (ROLLOUT_child == 1) { // Layers
       
       frame_variation = int(roundTo(MySpinner.update(X_control, Y_control, 1,1,1, "Frame layout variation", frame_variation, 0, 3, 1), 1));
     
@@ -22577,35 +22577,34 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
       STUDY_drw_Layer = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Layer", STUDY_drw_Layer, 0, (num_layers - 1), 1), 1));
       STUDY_V_scale[STUDY_drw_Layer] = MySpinner.update(X_control, Y_control, 1,0,0, "V_scale[" + nf(STUDY_drw_Layer, 2) + "]", STUDY_V_scale[STUDY_drw_Layer], 0.0001, 10000, -pow(2.0, (1.0 / 2.0)));      
-    } 
-    if (ROLLOUT_child == 2) { // Layers
+
       draw_data_lines = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Draw data", draw_data_lines, 0, 1, 1), 1));
       draw_sorted = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Draw sorted", draw_sorted, 0, 1, 1), 1));
       draw_normals = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Draw statistics", draw_normals, 0, 1, 1), 1));
       draw_probs = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Draw probabilities", draw_probs, 0, 1, 1), 1));
       sum_interval = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Probabilities interval", sum_interval, 1, 24, 1), 1));
       level_pix = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Probabilities range", level_pix, 2, 32, -2), 1));    
-      
-      
+
       //WIN3D_FACES_SHADE = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "WIN3D_FACES_SHADE", WIN3D_FACES_SHADE, 0, number_of_shading_options - 1, 1), 1));
       WIN3D_VERTS_SHOW = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "WIN3D_VERTS_SHOW", WIN3D_VERTS_SHOW, 0, 1, 1), 1));
       WIN3D_EDGES_SHOW = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "WIN3D_EDGES_SHOW", WIN3D_EDGES_SHOW, 0, 1, 1), 1));  
       display_MODEL3D_EDGES = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "display_MODEL3D_EDGES" , display_MODEL3D_EDGES, 0, 1, 1), 1));
 
     }
-    if (ROLLOUT_child == 3) { // Colors
+    
+    if (ROLLOUT_child == 2) { // Colors 2D
     
       //COLOR_STYLE = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Hourly color scheme", COLOR_STYLE, -1, (n_COLOR_STYLE - 1), 1), 1));
    
       STUDY_O_scale = MySpinner.update(X_control, Y_control, 1,0,0, "Windose opacity scale", STUDY_O_scale, 1, 100, -pow(2.0, (1.0 / 4.0))); 
 
-      //STUDY_Pallet_SORT = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_SORT", STUDY_Pallet_SORT, -1, (n_COLOR_STYLE - 1), 1), 1));
-      //STUDY_Pallet_SORT_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_SORT_DIR", STUDY_Pallet_SORT_DIR, -1, 1, 2), 1));
-      //STUDY_Pallet_SORT_MLT = MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_SORT_MLT", STUDY_Pallet_SORT_MLT, 0.25, 4, -2);
+      STUDY_Pallet_SORT = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_SORT", STUDY_Pallet_SORT, -1, (n_COLOR_STYLE - 1), 1), 1));
+      STUDY_Pallet_SORT_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_SORT_DIR", STUDY_Pallet_SORT_DIR, -1, 1, 2), 1));
+      STUDY_Pallet_SORT_MLT = MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_SORT_MLT", STUDY_Pallet_SORT_MLT, 0.25, 4, -2);
 
-      //STUDY_Pallet_PROB = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PROB", STUDY_Pallet_PROB, -1, (n_COLOR_STYLE - 1), 1), 1));
-      //STUDY_Pallet_PROB_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PROB_DIR", STUDY_Pallet_PROB_DIR, -1, 1, 2), 1));
-      //STUDY_Pallet_PROB_MLT = MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PROB_MLT", STUDY_Pallet_PROB_MLT, 0.25, 4, -2);
+      STUDY_Pallet_PROB = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PROB", STUDY_Pallet_PROB, -1, (n_COLOR_STYLE - 1), 1), 1));
+      STUDY_Pallet_PROB_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PROB_DIR", STUDY_Pallet_PROB_DIR, -1, 1, 2), 1));
+      STUDY_Pallet_PROB_MLT = MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PROB_MLT", STUDY_Pallet_PROB_MLT, 0.25, 4, -2);
       
       STUDY_Pallet_ACTIVE = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_ACTIVE", STUDY_Pallet_ACTIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
       STUDY_Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_ACTIVE_DIR", STUDY_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
@@ -22614,6 +22613,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
       STUDY_Pallet_PASSIVE = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PASSIVE", STUDY_Pallet_PASSIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
       STUDY_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PASSIVE_DIR", STUDY_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
       STUDY_Pallet_PASSIVE_MLT = MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PASSIVE_MLT", STUDY_Pallet_PASSIVE_MLT, 0.25, 4, -2);
+    }
+    
+    if (ROLLOUT_child == 3) { // Colors 3D
       
       OBJECTS_Pallet_ACTIVE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_Pallet_ACTIVE", OBJECTS_Pallet_ACTIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
       OBJECTS_Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_Pallet_ACTIVE_DIR", OBJECTS_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
@@ -22637,7 +22639,11 @@ void SOLARCHVISION_draw_ROLLOUT () {
       
       SUN3D_Pallet_PASSIVE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SUN3D_Pallet_PASSIVE", SUN3D_Pallet_PASSIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
       SUN3D_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SUN3D_Pallet_PASSIVE_DIR", SUN3D_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
-      SUN3D_Pallet_PASSIVE_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SUN3D_Pallet_PASSIVE_MLT", SUN3D_Pallet_PASSIVE_MLT, 0.25, 4, -2);          
+      SUN3D_Pallet_PASSIVE_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SUN3D_Pallet_PASSIVE_MLT", SUN3D_Pallet_PASSIVE_MLT, 0.25, 4, -2);
+
+      LAND_Pallet_ELEVATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "LAND_Pallet_ELEVATION", LAND_Pallet_ELEVATION, -1, (n_COLOR_STYLE - 1), 1), 1));
+      LAND_Pallet_ELEVATION_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "LAND_Pallet_ELEVATION_DIR", LAND_Pallet_ELEVATION_DIR, -1, 1, 2), 1));
+      LAND_Pallet_ELEVATION_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "LAND_Pallet_ELEVATION_MLT", LAND_Pallet_ELEVATION_MLT, 0.01, 1.0, -2);      
     }      
   
   }
