@@ -940,47 +940,47 @@ int Export_STUDY_info_node = 0;
 int Export_STUDY_info_norm = 0;
 int Export_STUDY_info_prob = 0;
 
-int STUDY_Pallet_SORT = -1;
+int STUDY_Pallet_SORT_CLR = -1;
 int STUDY_Pallet_SORT_DIR = -1;
 float STUDY_Pallet_SORT_MLT = 2;
 
-int STUDY_Pallet_PROB = -1;
+int STUDY_Pallet_PROB_CLR = -1;
 int STUDY_Pallet_PROB_DIR = 1;
 float STUDY_Pallet_PROB_MLT = 0.5;
 
-int SUN3D_Pallet_ACTIVE = 15;
+int SUN3D_Pallet_ACTIVE_CLR = 15;
 int SUN3D_Pallet_ACTIVE_DIR = 1;
 float SUN3D_Pallet_ACTIVE_MLT = 1;
 
-int SUN3D_Pallet_PASSIVE = 18; 
+int SUN3D_Pallet_PASSIVE_CLR = 18; 
 int SUN3D_Pallet_PASSIVE_DIR = -1;  
 float SUN3D_Pallet_PASSIVE_MLT = 1; //2;
 
-int SKY3D_Pallet_ACTIVE = -1; //7; //8;
+int SKY3D_Pallet_ACTIVE_CLR = -1; //7; //8;
 int SKY3D_Pallet_ACTIVE_DIR = -1;
 float SKY3D_Pallet_ACTIVE_MLT = 0.5;
 
-int SKY3D_Pallet_PASSIVE = 18; 
+int SKY3D_Pallet_PASSIVE_CLR = 18; 
 int SKY3D_Pallet_PASSIVE_DIR = -1;  
 float SKY3D_Pallet_PASSIVE_MLT = 2; //1;
 
-int LAND_Pallet_ELEVATION = 1; 
+int LAND_Pallet_ELEVATION_CLR = 1; 
 int LAND_Pallet_ELEVATION_DIR = -1; 
 float LAND_Pallet_ELEVATION_MLT = 0.1; 
 
-int OBJECTS_Pallet_ACTIVE = 19; //15; //14;
+int OBJECTS_Pallet_ACTIVE_CLR = 19; //15; //14;
 int OBJECTS_Pallet_ACTIVE_DIR = 1;
 float OBJECTS_Pallet_ACTIVE_MLT = 1; //2; 
 
-int OBJECTS_Pallet_PASSIVE = 1; 
+int OBJECTS_Pallet_PASSIVE_CLR = 1; 
 int OBJECTS_Pallet_PASSIVE_DIR = 1;  
 float OBJECTS_Pallet_PASSIVE_MLT = 2; 
 
-int STUDY_Pallet_ACTIVE = 19; //15; //14; 
+int STUDY_Pallet_ACTIVE_CLR = 19; //15; //14; 
 int STUDY_Pallet_ACTIVE_DIR = 1;
 float STUDY_Pallet_ACTIVE_MLT = 1; //2;
 
-int STUDY_Pallet_PASSIVE = 1; 
+int STUDY_Pallet_PASSIVE_CLR = 1; 
 int STUDY_Pallet_PASSIVE_DIR = 1;
 float STUDY_Pallet_PASSIVE_MLT = 2; 
 
@@ -2762,12 +2762,12 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
   if ((WIN3D_FACES_SHADE == Shade_Vertex_Solar) || (WIN3D_FACES_SHADE == Shade_Global_Solar)) {
     
     if (Impact_TYPE == Impact_ACTIVE) {
-      PAL_TYPE = OBJECTS_Pallet_ACTIVE; 
+      PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; 
       PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR; 
       _Multiplier = 0.1 * OBJECTS_Pallet_ACTIVE_MLT; 
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = OBJECTS_Pallet_PASSIVE; 
+      PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; 
       PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
       _Multiplier = 0.02 * OBJECTS_Pallet_PASSIVE_MLT;  
     }   
@@ -2777,7 +2777,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
 
   if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
 
-    PAL_TYPE = LAND_Pallet_ELEVATION; 
+    PAL_TYPE = LAND_Pallet_ELEVATION_CLR; 
     PAL_DIR = LAND_Pallet_ELEVATION_DIR; 
     _Multiplier = LAND_Pallet_ELEVATION_MLT; 
           
@@ -7433,7 +7433,7 @@ void SOLARCHVISION_draw_data_lines (float[] Ax_LINES, float[] Ay_LINES, float[] 
 
 void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, float[] _valuesSUM, float[] _valuesNUM, float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
 
-  int PAL_TYPE = STUDY_Pallet_PROB; 
+  int PAL_TYPE = STUDY_Pallet_PROB_CLR; 
   int PAL_DIR = STUDY_Pallet_PROB_DIR;  
   float _Multiplier = STUDY_Pallet_PROB_MLT;
   
@@ -7563,7 +7563,7 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
 
 void SOLARCHVISION_draw_sorted (int i, int j, float[] _valuesA, float[] _valuesB, float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot) {
 
-  int PAL_TYPE = STUDY_Pallet_SORT; 
+  int PAL_TYPE = STUDY_Pallet_SORT_CLR; 
   int PAL_DIR = STUDY_Pallet_SORT_DIR;  
   float _Multiplier = STUDY_Pallet_SORT_MLT;
 
@@ -8798,10 +8798,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     int PAL_DIR = 1;
     
     if (Impact_TYPE == Impact_SPD_DIR) {  
-      PAL_TYPE = STUDY_Pallet_ACTIVE; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;
+      PAL_TYPE = STUDY_Pallet_ACTIVE_CLR; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;
     }
     if (Impact_TYPE == Impact_SPD_DIR_TMP) {  
-      //PAL_TYPE = STUDY_Pallet_ACTIVE; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;
+      //PAL_TYPE = STUDY_Pallet_ACTIVE_CLR; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;
       PAL_TYPE = 12; PAL_DIR = -1;
     }             
 
@@ -9210,10 +9210,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       int PAL_DIR = 1;
       
       if (Impact_TYPE == Impact_ACTIVE) {
-        PAL_TYPE = STUDY_Pallet_ACTIVE; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;  
+        PAL_TYPE = STUDY_Pallet_ACTIVE_CLR; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;  
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        PAL_TYPE = STUDY_Pallet_PASSIVE; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
+        PAL_TYPE = STUDY_Pallet_PASSIVE_CLR; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
       }             
       
       float _Multiplier = 1; 
@@ -9740,13 +9740,13 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       }
   
       if (Impact_TYPE == Impact_ACTIVE) {
-        OBJECTS_Pallet_ACTIVE = STUDY_Pallet_ACTIVE;
+        OBJECTS_Pallet_ACTIVE_CLR = STUDY_Pallet_ACTIVE_CLR;
         OBJECTS_Pallet_ACTIVE_DIR = STUDY_Pallet_ACTIVE_DIR;
         OBJECTS_Pallet_ACTIVE_MLT = STUDY_Pallet_ACTIVE_MLT;
       } 
   
       if (Impact_TYPE == Impact_PASSIVE) {
-        OBJECTS_Pallet_PASSIVE = STUDY_Pallet_PASSIVE;
+        OBJECTS_Pallet_PASSIVE_CLR = STUDY_Pallet_PASSIVE_CLR;
         OBJECTS_Pallet_PASSIVE_DIR = STUDY_Pallet_PASSIVE_DIR;
         OBJECTS_Pallet_PASSIVE_MLT = STUDY_Pallet_PASSIVE_MLT;
       } 
@@ -9782,10 +9782,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     int PAL_DIR = 1;
     
     if (Impact_TYPE == Impact_ACTIVE) {  
-      PAL_TYPE = STUDY_Pallet_ACTIVE; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;
+      PAL_TYPE = STUDY_Pallet_ACTIVE_CLR; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = STUDY_Pallet_PASSIVE; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
+      PAL_TYPE = STUDY_Pallet_PASSIVE_CLR; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
     }             
     
     float _Multiplier = 1; 
@@ -10245,10 +10245,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     int PAL_DIR = 1;
     
     if (Impact_TYPE == Impact_ACTIVE) {  
-      PAL_TYPE = STUDY_Pallet_ACTIVE; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;
+      PAL_TYPE = STUDY_Pallet_ACTIVE_CLR; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = STUDY_Pallet_PASSIVE; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
+      PAL_TYPE = STUDY_Pallet_PASSIVE_CLR; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
     }             
 
     float _Multiplier = 1; 
@@ -10538,10 +10538,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     int PAL_DIR = 1;
     
     if (Impact_TYPE == Impact_ACTIVE) {  
-      PAL_TYPE = STUDY_Pallet_ACTIVE; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;
+      PAL_TYPE = STUDY_Pallet_ACTIVE_CLR; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = STUDY_Pallet_PASSIVE; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
+      PAL_TYPE = STUDY_Pallet_PASSIVE_CLR; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
     }             
 
     float _Multiplier = 1; 
@@ -11177,10 +11177,10 @@ void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath
     int PAL_DIR = 1;
     
     if (Impact_TYPE == Impact_ACTIVE) {  
-      PAL_TYPE = SUN3D_Pallet_ACTIVE; PAL_DIR = SUN3D_Pallet_ACTIVE_DIR;
+      PAL_TYPE = SUN3D_Pallet_ACTIVE_CLR; PAL_DIR = SUN3D_Pallet_ACTIVE_DIR;
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = SUN3D_Pallet_PASSIVE; PAL_DIR = SUN3D_Pallet_PASSIVE_DIR;
+      PAL_TYPE = SUN3D_Pallet_PASSIVE_CLR; PAL_DIR = SUN3D_Pallet_PASSIVE_DIR;
     }             
 
     float _Multiplier = 1; 
@@ -14814,10 +14814,10 @@ void SOLARCHVISION_draw_SKY3D () {
         int PAL_DIR = 1;
         
         if (Impact_TYPE == Impact_ACTIVE) {
-          PAL_TYPE = SKY3D_Pallet_ACTIVE; PAL_DIR = SKY3D_Pallet_ACTIVE_DIR;  
+          PAL_TYPE = SKY3D_Pallet_ACTIVE_CLR; PAL_DIR = SKY3D_Pallet_ACTIVE_DIR;  
         }
         if (Impact_TYPE == Impact_PASSIVE) {
-          PAL_TYPE = SKY3D_Pallet_PASSIVE; PAL_DIR = SKY3D_Pallet_PASSIVE_DIR;  
+          PAL_TYPE = SKY3D_Pallet_PASSIVE_CLR; PAL_DIR = SKY3D_Pallet_PASSIVE_DIR;  
         }             
         
         float _Multiplier = 1; 
@@ -15265,10 +15265,10 @@ void SOLARCHVISION_draw_land () {
               int PAL_DIR = 1;
               
               if (Impact_TYPE == Impact_ACTIVE) {
-                PAL_TYPE = OBJECTS_Pallet_ACTIVE; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
+                PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
               }
               if (Impact_TYPE == Impact_PASSIVE) {  
-                PAL_TYPE = OBJECTS_Pallet_PASSIVE; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+                PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
               }             
               
               float _Multiplier = 1; 
@@ -15321,7 +15321,7 @@ void SOLARCHVISION_draw_land () {
             }       
             
             else if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
-              int PAL_TYPE = LAND_Pallet_ELEVATION; 
+              int PAL_TYPE = LAND_Pallet_ELEVATION_CLR; 
               int PAL_DIR = LAND_Pallet_ELEVATION_DIR; 
               float _Multiplier = LAND_Pallet_ELEVATION_MLT;   
               
@@ -15559,7 +15559,7 @@ void SOLARCHVISION_draw_3Dobjects () {
           }        
           else if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
 
-            int PAL_TYPE = LAND_Pallet_ELEVATION; 
+            int PAL_TYPE = LAND_Pallet_ELEVATION_CLR; 
             int PAL_DIR = LAND_Pallet_ELEVATION_DIR; 
             float _Multiplier = LAND_Pallet_ELEVATION_MLT;   
             
@@ -15616,10 +15616,10 @@ void SOLARCHVISION_draw_3Dobjects () {
             int PAL_DIR = 1;
             
             if (Impact_TYPE == Impact_ACTIVE) {
-              PAL_TYPE = OBJECTS_Pallet_ACTIVE; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
+              PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
             }
             if (Impact_TYPE == Impact_PASSIVE) {  
-              PAL_TYPE = OBJECTS_Pallet_PASSIVE; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+              PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
             }             
             
             float _Multiplier = 1; 
@@ -15708,10 +15708,10 @@ void SOLARCHVISION_draw_3Dobjects () {
           int PAL_DIR = 1;
     
           if (Impact_TYPE == Impact_ACTIVE) {
-            PAL_TYPE = OBJECTS_Pallet_ACTIVE; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
+            PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
           }
           if (Impact_TYPE == Impact_PASSIVE) {  
-            PAL_TYPE = OBJECTS_Pallet_PASSIVE; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+            PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
           }             
           
           float _Multiplier = 1; 
@@ -15821,10 +15821,10 @@ void SOLARCHVISION_draw_3Dobjects () {
         int PAL_DIR = 1;
   
         if (Impact_TYPE == Impact_ACTIVE) {
-          PAL_TYPE = OBJECTS_Pallet_ACTIVE; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
+          PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
         }
         if (Impact_TYPE == Impact_PASSIVE) {  
-          PAL_TYPE = OBJECTS_Pallet_PASSIVE; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+          PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
         }             
         
         float _Multiplier = 1; 
@@ -22717,50 +22717,50 @@ void SOLARCHVISION_draw_ROLLOUT () {
    
       STUDY_O_scale = MySpinner.update(X_control, Y_control, 1,0,0, "Windose opacity scale", STUDY_O_scale, 1, 100, -pow(2.0, (1.0 / 4.0))); 
 
-      STUDY_Pallet_SORT = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_SORT", STUDY_Pallet_SORT, -1, (n_COLOR_STYLE - 1), 1), 1));
+      STUDY_Pallet_SORT_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_SORT_CLR", STUDY_Pallet_SORT_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
       STUDY_Pallet_SORT_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_SORT_DIR", STUDY_Pallet_SORT_DIR, -1, 1, 2), 1));
       STUDY_Pallet_SORT_MLT = MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_SORT_MLT", STUDY_Pallet_SORT_MLT, 0.25, 4, -2);
 
-      STUDY_Pallet_PROB = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PROB", STUDY_Pallet_PROB, -1, (n_COLOR_STYLE - 1), 1), 1));
+      STUDY_Pallet_PROB_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PROB_CLR", STUDY_Pallet_PROB_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
       STUDY_Pallet_PROB_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PROB_DIR", STUDY_Pallet_PROB_DIR, -1, 1, 2), 1));
       STUDY_Pallet_PROB_MLT = MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PROB_MLT", STUDY_Pallet_PROB_MLT, 0.25, 4, -2);
       
-      STUDY_Pallet_ACTIVE = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_ACTIVE", STUDY_Pallet_ACTIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      STUDY_Pallet_ACTIVE_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_ACTIVE_CLR", STUDY_Pallet_ACTIVE_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
       STUDY_Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_ACTIVE_DIR", STUDY_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
       STUDY_Pallet_ACTIVE_MLT = MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_ACTIVE_MLT", STUDY_Pallet_ACTIVE_MLT, 0.25, 4, -2);
       
-      STUDY_Pallet_PASSIVE = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PASSIVE", STUDY_Pallet_PASSIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      STUDY_Pallet_PASSIVE_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PASSIVE_CLR", STUDY_Pallet_PASSIVE_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
       STUDY_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PASSIVE_DIR", STUDY_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
       STUDY_Pallet_PASSIVE_MLT = MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PASSIVE_MLT", STUDY_Pallet_PASSIVE_MLT, 0.25, 4, -2);
     }
     
     if (ROLLOUT_child == 3) { // Colors 3D
       
-      OBJECTS_Pallet_ACTIVE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_Pallet_ACTIVE", OBJECTS_Pallet_ACTIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      OBJECTS_Pallet_ACTIVE_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_Pallet_ACTIVE_CLR", OBJECTS_Pallet_ACTIVE_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
       OBJECTS_Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_Pallet_ACTIVE_DIR", OBJECTS_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
       OBJECTS_Pallet_ACTIVE_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_Pallet_ACTIVE_MLT", OBJECTS_Pallet_ACTIVE_MLT, 0.25, 4, -2);
       
-      OBJECTS_Pallet_PASSIVE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_Pallet_PASSIVE", OBJECTS_Pallet_PASSIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      OBJECTS_Pallet_PASSIVE_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_Pallet_PASSIVE_CLR", OBJECTS_Pallet_PASSIVE_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
       OBJECTS_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_Pallet_PASSIVE_DIR", OBJECTS_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
       OBJECTS_Pallet_PASSIVE_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_Pallet_PASSIVE_MLT", OBJECTS_Pallet_PASSIVE_MLT, 0.25, 4, -2);
 
-      SKY3D_Pallet_ACTIVE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_Pallet_ACTIVE", SKY3D_Pallet_ACTIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      SKY3D_Pallet_ACTIVE_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_Pallet_ACTIVE_CLR", SKY3D_Pallet_ACTIVE_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
       SKY3D_Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_Pallet_ACTIVE_DIR", SKY3D_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
       SKY3D_Pallet_ACTIVE_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_Pallet_ACTIVE_MLT", SKY3D_Pallet_ACTIVE_MLT, 0.25, 4, -2);
       
-      SKY3D_Pallet_PASSIVE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_Pallet_PASSIVE", SKY3D_Pallet_PASSIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      SKY3D_Pallet_PASSIVE_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_Pallet_PASSIVE_CLR", SKY3D_Pallet_PASSIVE_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
       SKY3D_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_Pallet_PASSIVE_DIR", SKY3D_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
       SKY3D_Pallet_PASSIVE_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_Pallet_PASSIVE_MLT", SKY3D_Pallet_PASSIVE_MLT, 0.25, 4, -2);
   
-      SUN3D_Pallet_ACTIVE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SUN3D_Pallet_ACTIVE", SUN3D_Pallet_ACTIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      SUN3D_Pallet_ACTIVE_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SUN3D_Pallet_ACTIVE_CLR", SUN3D_Pallet_ACTIVE_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
       SUN3D_Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SUN3D_Pallet_ACTIVE_DIR", SUN3D_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
       SUN3D_Pallet_ACTIVE_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SUN3D_Pallet_ACTIVE_MLT", SUN3D_Pallet_ACTIVE_MLT, 0.25, 4, -2);
       
-      SUN3D_Pallet_PASSIVE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SUN3D_Pallet_PASSIVE", SUN3D_Pallet_PASSIVE, -1, (n_COLOR_STYLE - 1), 1), 1));
+      SUN3D_Pallet_PASSIVE_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SUN3D_Pallet_PASSIVE_CLR", SUN3D_Pallet_PASSIVE_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
       SUN3D_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SUN3D_Pallet_PASSIVE_DIR", SUN3D_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
       SUN3D_Pallet_PASSIVE_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SUN3D_Pallet_PASSIVE_MLT", SUN3D_Pallet_PASSIVE_MLT, 0.25, 4, -2);
 
-      LAND_Pallet_ELEVATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "LAND_Pallet_ELEVATION", LAND_Pallet_ELEVATION, -1, (n_COLOR_STYLE - 1), 1), 1));
+      LAND_Pallet_ELEVATION_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "LAND_Pallet_ELEVATION_CLR", LAND_Pallet_ELEVATION_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
       LAND_Pallet_ELEVATION_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "LAND_Pallet_ELEVATION_DIR", LAND_Pallet_ELEVATION_DIR, -1, 1, 2), 1));
       LAND_Pallet_ELEVATION_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "LAND_Pallet_ELEVATION_MLT", LAND_Pallet_ELEVATION_MLT, 0.01, 1.0, -2);      
     }      
