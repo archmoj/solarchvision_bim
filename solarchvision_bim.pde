@@ -13,9 +13,7 @@ String[][] DEFINED_STATIONS = {
   
                                 {"Berlin_Museum_of_the_20th_Century", "BB", "DE", "52.5080", "13.3685", "15", "36.7", "240.0", "", "", "DEU_Berlin.103840_IWEC"},
   
-                                //{"Villa-Matina", "XX", "GR", "36.644", "22.383", "15", "0", "240.0", "", "", "GRC_Andravida.166820_IWEC"},
-                                
-                                
+                                //{"Villa-Matina", "XX", "GR", "36.644", "22.383", "15", "0", "240.0", "", "", "GRC_Andravida.166820_IWEC"},                              
   
                                 {"Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
                                 {"Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
@@ -14921,62 +14919,6 @@ void SOLARCHVISION_draw_SKY3D () {
   }
 }
 
-void SOLARCHVISION_draw_land () {
-  
-  WIN3D_Diagrams.strokeWeight(1);
-
-  if ((Display_LAND == 1) && (Load_LAND == 1)) {
-
-    for (int i = Skip_LAND_Center; i < LAND_n_I - 1; i += 1) {
-      for (int j = 0; j < LAND_n_J - 1; j += 1) {
-        
-        WIN3D_Diagrams.beginShape();
-        
-        for (int vNo = 0; vNo < 4; vNo += 1) {
-          int plus_i = 0; 
-          int plus_j = 0;
-          if ((vNo == 1) || (vNo == 2)) {
-            plus_i = 1;
-          }
-          if ((vNo == 2) || (vNo == 3)) {
-            plus_j = 1;
-          }
-          
-          float x = LAND_MESH[i + plus_i][j + plus_j][0];
-          float y = LAND_MESH[i + plus_i][j + plus_j][1];
-          float z = LAND_MESH[i + plus_i][j + plus_j][2];
-          
-  
-          int PAL_TYPE = LAND_Pallet_ELEVATION; 
-          int PAL_DIR = LAND_Pallet_ELEVATION_DIR; 
-          float _Multiplier = LAND_Pallet_ELEVATION_MLT;   
-          
-          float _u = _Multiplier * 0.1 * z + 0.5;
-           
-          if (PAL_DIR == -1) _u = 1 - _u;
-          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-          if (PAL_DIR == 2) _u =  0.5 * _u;
-          
-          float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);           
-          
-          WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
-          
-          if (z + LocationElevation < 0) { // i.e. water
-            //WIN3D_Diagrams.fill(127, 127, 255);
-          } 
-          
-          WIN3D_Diagrams.stroke(0);
-        
-          WIN3D_Diagrams.vertex(x * objects_scale * WIN3D_scale3D, -y * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
-        }
-        
-        WIN3D_Diagrams.endShape(CLOSE);
-      }
-    }
-    
-  }
-
-}
 
 
 
@@ -15265,6 +15207,97 @@ void SOLARCHVISION_draw_windFlow () {
 }
 
 
+void SOLARCHVISION_draw_land () {
+
+  if ((Display_LAND == 1) && (Load_LAND == 1)) {
+    
+    WIN3D_Diagrams.strokeWeight(1);
+
+    for (int i = Skip_LAND_Center; i < LAND_n_I - 1; i += 1) {
+      for (int j = 0; j < LAND_n_J - 1; j += 1) {
+        
+        WIN3D_Diagrams.beginShape();
+        
+        for (int vNo = 0; vNo < 4; vNo += 1) {
+          int plus_i = 0; 
+          int plus_j = 0;
+          if ((vNo == 1) || (vNo == 2)) {
+            plus_i = 1;
+          }
+          if ((vNo == 2) || (vNo == 3)) {
+            plus_j = 1;
+          }
+          
+          float x = LAND_MESH[i + plus_i][j + plus_j][0];
+          float y = LAND_MESH[i + plus_i][j + plus_j][1];
+          float z = LAND_MESH[i + plus_i][j + plus_j][2];
+          
+  
+
+          
+          float[] _COL = {255,0,0,0};
+          
+          
+          if ((WIN3D_FACES_SHADE == Shade_Surface_Base) || (WIN3D_FACES_SHADE == Shade_Surface_White)) {
+            _COL[1] = 255;
+            _COL[2] = 255;
+            _COL[3] = 255;
+          }
+          else if (WIN3D_FACES_SHADE == Shade_Surface_Materials) {
+            _COL[1] = 191;
+            _COL[2] = 255;
+            _COL[3] = 127;
+          }
+          else if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
+            int PAL_TYPE = LAND_Pallet_ELEVATION; 
+            int PAL_DIR = LAND_Pallet_ELEVATION_DIR; 
+            float _Multiplier = LAND_Pallet_ELEVATION_MLT;   
+            
+            float _u = _Multiplier * 0.1 * z + 0.5;
+             
+            if (PAL_DIR == -1) _u = 1 - _u;
+            if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+            if (PAL_DIR == 2) _u =  0.5 * _u;
+      
+            _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
+          }
+ 
+ 
+          
+          WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
+          if (z + LocationElevation < 0) { // i.e. water
+            //WIN3D_Diagrams.fill(127, 127, 255);
+          } 
+ 
+          
+
+          if (display_MODEL3D_EDGES == 0) {
+            WIN3D_Diagrams.noStroke();
+          }
+          else {
+            if (WIN3D_EDGES_SHOW == 1) {
+              WIN3D_Diagrams.stroke(0, 0, 0);
+            }          
+            else {
+              WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
+            }
+          }   
+          
+          
+        
+          WIN3D_Diagrams.vertex(x * objects_scale * WIN3D_scale3D, -y * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+        }
+        
+        WIN3D_Diagrams.endShape(CLOSE);
+      }
+    }
+    
+  }
+
+}
+
+
+
 void SOLARCHVISION_draw_3Dobjects () {
 
   if (Display_Building_Model != 0) {
@@ -15300,7 +15333,6 @@ void SOLARCHVISION_draw_3Dobjects () {
       
           if ((WIN3D_FACES_SHADE == Shade_Surface_Base) || (WIN3D_FACES_SHADE == Shade_Surface_White)) {
             WIN3D_Diagrams.fill(255, 255, 255);
-            //WIN3D_Diagrams.noFill();
           }
           else {
             WIN3D_Diagrams.fill(c);
@@ -15446,6 +15478,10 @@ void SOLARCHVISION_draw_3Dobjects () {
             }
           }        
           else if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
+
+            int PAL_TYPE = LAND_Pallet_ELEVATION; 
+            int PAL_DIR = LAND_Pallet_ELEVATION_DIR; 
+            float _Multiplier = LAND_Pallet_ELEVATION_MLT;   
             
             int Teselation = 0;
             
@@ -15474,10 +15510,15 @@ void SOLARCHVISION_draw_3Dobjects () {
                 float x = subFace[s][0];
                 float y = subFace[s][1];
                 float z = subFace[s][2];
+
+                float _u = _Multiplier * 0.1 * z + 0.5;
+                 
+                if (PAL_DIR == -1) _u = 1 - _u;
+                if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                if (PAL_DIR == 2) _u =  0.5 * _u;
+          
+                float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
                 
-                int PAL_TYPE = 1; 
-                //float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.0025 * z);
-                float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.01 * z);
                 WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
                 
                 WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -(subFace[s][1] * objects_scale * WIN3D_scale3D), subFace[s][2] * objects_scale * WIN3D_scale3D);
