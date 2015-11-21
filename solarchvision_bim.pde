@@ -149,7 +149,9 @@ float Create_Input_powZ = 8;
 float Create_Input_powAll = 8;
 int Create_Input_powRnd = 0;
 
-int SolidSurface_TESELATION = 2; //4;
+int Create_Sphere_Degree = 2; //4;
+
+int Create_Cylinder_Degree = 24; 
 
 
 
@@ -1076,6 +1078,8 @@ String[] OBSERVED_XML_Files = getfiles(OBSERVED_directory);
 int MODEL1D_ERASE = 0;
 int MODEL2D_ERASE = 0;
 int MODEL3D_ERASE = 0;
+
+int LAND_TESELATION = 2;
 
 int MODEL3D_TESELATION = 2;
 
@@ -21914,7 +21918,7 @@ void mouseClicked () {
                 else if ((px == 2) && (py == 2) && (pz == 8)) {
                   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
                   
-                  SOLARCHVISION_add_SuperCylinder(Create_Default_Material, x, y, z, rx,ry,rz, 24, rot);
+                  SOLARCHVISION_add_SuperCylinder(Create_Default_Material, x, y, z, rx,ry,rz, Create_Cylinder_Degree, rot);
                 }                
     
                 else if ((px == 8) && (py == 8) && (pz == 8)) {
@@ -21932,7 +21936,7 @@ void mouseClicked () {
                 else {
                   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
                   
-                  SOLARCHVISION_add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, SolidSurface_TESELATION, rot);
+                  SOLARCHVISION_add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, Create_Sphere_Degree, rot);
                 }
                 
                 
@@ -22459,13 +22463,22 @@ void SOLARCHVISION_draw_ROLLOUT () {
       
       MODEL3D_TESELATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL3D_TESELATION" , MODEL3D_TESELATION, 0, 5, 1), 1));
       
+      LAND_TESELATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "LAND_TESELATION" , LAND_TESELATION, 0, 5, 1), 1));
+      
+
+      
+      
       Load_Default_Models = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Load_Default_Models" , Load_Default_Models, 0, MAX_Default_Models_Number, 1), 1));
     }
     
 
     if (ROLLOUT_child == 2) { // Meshes
 
-      Create_Poly_Degree = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Poly_Degree" , Create_Poly_Degree, 3, 24, 1), 1));
+      Create_Sphere_Degree = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Sphere_Degree" , Create_Sphere_Degree, 0, 5, 1), 1));      
+      
+      Create_Cylinder_Degree = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Cylinder_Degree" , Create_Cylinder_Degree, 3, 36, 1), 1));    
+
+      Create_Poly_Degree = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Poly_Degree" , Create_Poly_Degree, 3, 36, 1), 1));
       Create_Mesh_Poly = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Poly" , Create_Mesh_Poly, 0, 1, 1), 1));
       Create_Mesh_Extrude = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Extrude" , Create_Mesh_Extrude, 0, 1, 1), 1));
       Create_Mesh_Tri = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Tri" , Create_Mesh_Tri, 0, 1, 1), 1));
@@ -22491,11 +22504,6 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Input_powX = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powX" , Create_Input_powX, 0.5, 8, -2); 
       Create_Input_powY = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powY" , Create_Input_powY, 0.5, 8, -2); 
       Create_Input_powZ = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powZ" , Create_Input_powZ, 0.5, 8, -2);
-
-
-
-      SolidSurface_TESELATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "SolidSurface_TESELATION" , SolidSurface_TESELATION, 0, 5, 1), 1));
-
 
       SpatialImpact_Color = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Color" , SpatialImpact_Color, 0, 3, 1), 1)); 
       SpatialImpact_Multiplier = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Multiplier" , SpatialImpact_Multiplier, 1.0 / 64.0, 64.0, -2);
