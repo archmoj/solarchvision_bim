@@ -15245,7 +15245,7 @@ void SOLARCHVISION_draw_land () {
           for (int s = 0; s < subFace.length; s++) {
             
        
-            float[] _COL = {255,0,0,0};
+            float[] _COL = {255,223,223,223};
             
             
             if ((WIN3D_FACES_SHADE == Shade_Surface_Base) || (WIN3D_FACES_SHADE == Shade_Surface_White)) {
