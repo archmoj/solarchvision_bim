@@ -15510,7 +15510,7 @@ void SOLARCHVISION_draw_3Dobjects () {
               
               for (int s = 0; s < subFace.length; s++) {
                 
-                float val = ParametricGeometries_SpatialImpact_atXYZ(subFace[s][0], subFace[s][1], subFace[s][2]);
+                float val = ParametricGeometries_SpatialImpact_atXYZ_simple(subFace[s][0], subFace[s][1], subFace[s][2]);
                 
                 float g = _Multiplier * val;
 
@@ -17806,7 +17806,8 @@ float[] ParametricGeometries_SpatialImpact_atIJ_simple (float i, float j){
     } 
   }  
   
-  float[] return_array = {x, y, z, val - 1};
+  //float[] return_array = {x, y, z, val - 1};
+  float[] return_array = {x, y, z, val};
   
   return return_array;
 }
@@ -17824,16 +17825,14 @@ float ParametricGeometries_SpatialImpact_atXYZ_simple (float x, float y, float z
     
   }
   
-  return val - 1;
+  //return val - 1;
+  return val;
 }
 
 float[] ParametricGeometries_SpatialImpact_atIJ (float i, float j){
 
   float deltaX = SpatialImpact_Wspd * cos_ang(SpatialImpact_Wdir);
   float deltaY = SpatialImpact_Wspd * sin_ang(SpatialImpact_Wdir);
-
-
-
   
   float x = 0;
   float y = 0;
@@ -17887,8 +17886,7 @@ float[] ParametricGeometries_SpatialImpact_atIJ (float i, float j){
     
     if (totalP != 0) val[o] /= 0.5 * totalP; 
   
-    //val[o] = 1 - val[o];
-    val[o] = val[o] - 1;
+    //val[o] = val[o] - 1;
   }
   
   float[] return_array = {x, y, z, val[0]};
@@ -17933,8 +17931,7 @@ float ParametricGeometries_SpatialImpact_atXYZ (float x, float y, float z) {
     
     if (totalP != 0) val[o] /= 0.5 * totalP;
   
-    //val[o] = 1 - val[o];
-    val[o] = val[o] - 1;
+    //val[o] = val[o] - 1;
   }
   
   
@@ -18211,7 +18208,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
   for (int i = 0; i < SpatialImpact_RES1; i++) {
     for (int j = 0; j < SpatialImpact_RES2; j++) {
 
-      float[] SpatialImpactPoint = ParametricGeometries_SpatialImpact_atIJ(i, j);
+      float[] SpatialImpactPoint = ParametricGeometries_SpatialImpact_atIJ_simple(i, j);
       
       float x = SpatialImpactPoint[0];
       float y = SpatialImpactPoint[1];
