@@ -7,7 +7,7 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 0; //14;
+int STATION_NUMBER = 14;
 
 String[][] DEFINED_STATIONS = {
   
@@ -987,7 +987,7 @@ int ELEVATION_Pallet_CLR = 1;
 int ELEVATION_Pallet_DIR = -1; 
 float ELEVATION_Pallet_MLT = 0.1; 
 
-int SPATIAL_Pallet_CLR = -1; 
+int SPATIAL_Pallet_CLR = 1; 
 int SPATIAL_Pallet_DIR = -1; 
 float SPATIAL_Pallet_MLT = 1; 
 
@@ -1621,7 +1621,7 @@ void SOLARCHVISION_update_models (int Step) {
    if ((Step == 0) || (Step == 1)) SOLARCHVISION_remove_3Dobjects();
    //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
    if ((Step == 0) || (Step == 3)) SOLARCHVISION_remove_ParametricGeometries();
-   //if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
+   if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
    if ((Step == 0) || (Step == 5)) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
 
 }
@@ -15555,7 +15555,8 @@ void SOLARCHVISION_draw_3Dobjects () {
                 
                 float val = ParametricGeometries_SpatialImpact_atXYZ_simple(subFace[s][0], subFace[s][1], subFace[s][2]);
 
-                float _u = _Multiplier * val;
+                float _u = _Multiplier * val + 0.5;
+                
                 if (PAL_DIR == -1) _u = 1 - _u;
                 if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                 if (PAL_DIR == 2) _u =  0.5 * _u;
@@ -18256,7 +18257,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
       float g =      roundTo(SpatialImpact_Multiplier * val, deltaSpatialImpact) - 0.5 * deltaSpatialImpact;
       float g_line = roundTo(SpatialImpact_Multiplier * val, deltaSpatialImpactLines);
       
-      float _u = _Multiplier * val;
+      float _u = _Multiplier * val + 0.5;
+      
       if (PAL_DIR == -1) _u = 1 - _u;
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
