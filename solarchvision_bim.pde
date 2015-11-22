@@ -1106,7 +1106,7 @@ int Load_LAND = 1; // 1;
 int Display_LAND = 1; // 1;
 int Skip_LAND_Center = 0; //5;
 
-int Load_URBAN = 1;
+int Load_URBAN = 0;
 int Display_URBAN = 1;
 
 int display_SpatialImpact_Points = 0;
@@ -13880,17 +13880,26 @@ void SOLARCHVISION_export_objects () {
     }    
   }
 
-  for (int f = 1; f < allFaces.length; f++) {
-    File_output_mesh.print("f ");
-    for (int j = 0; j < allFaces[f].length; j++) {
-      File_output_mesh.print(allFaces[f][j]);
-      if (j + 1 < allFaces[f].length) {
-        File_output_mesh.print(" ");
+  for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
+    
+    if (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1]) {
+      
+      File_output_mesh.println("g Object" + nf(OBJ_NUM, 4));
+
+      for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
+
+        File_output_mesh.print("f ");
+        for (int j = 0; j < allFaces[f].length; j++) {
+          File_output_mesh.print(allFaces[f][j]);
+          if (j + 1 < allFaces[f].length) {
+            File_output_mesh.print(" ");
+          }
+          else {
+            File_output_mesh.println();
+          }          
+        }    
       }
-      else {
-        File_output_mesh.println();
-      }          
-    }    
+    }
   }
   
   File_output_mesh.flush(); 
