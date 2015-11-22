@@ -13983,6 +13983,8 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
 
     if (parts[0].toLowerCase().equals("g")) {
       if (m == -1) defaultMaterial = 1 + (defaultMaterial % 8);
+      
+      addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     }
     
     if (parts[0].toLowerCase().equals("v")) {
