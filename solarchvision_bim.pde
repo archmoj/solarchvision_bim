@@ -7,7 +7,7 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 14;
+int STATION_NUMBER = 0; //14;
 
 String[][] DEFINED_STATIONS = {
   
@@ -122,6 +122,8 @@ float[] allFractal_trunckSize = {0};
 float[] allFractal_leafSize = {0};
 int allFractal_num = 0; 
 
+
+int Display_Output_in_Explorer = 1;
 
 int Display_Building_Model = 1;
 int Display_Trees_People = 1;
@@ -1619,7 +1621,7 @@ void SOLARCHVISION_update_models (int Step) {
    if ((Step == 0) || (Step == 1)) SOLARCHVISION_remove_3Dobjects();
    //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
    if ((Step == 0) || (Step == 3)) SOLARCHVISION_remove_ParametricGeometries();
-   if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
+   //if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
    if ((Step == 0) || (Step == 5)) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
 
 }
@@ -2739,7 +2741,7 @@ void SOLARCHVISION_draw_WIN3D () {
     if ((WIN3D_record_JPG == 1) || (WIN3D_record_AUTO == 1)) {
       String myFile = MAKE_Filenames("WIN3D_") + ".jpg";
       WIN3D_Diagrams.save(myFile);
-      open("explorer /select," + myFile.replace("/", "\\"));
+      SOLARCHVISION_explore_output(myFile);
       println("Image created:" + myFile);       
     }
     
@@ -3436,7 +3438,7 @@ void SOLARCHVISION_draw_WORLD () {
       endRecord();
       
       String myFile = MAKE_Filenames("WORLD_") + ".pdf";
-      open("explorer /select," + myFile.replace("/", "\\"));
+      SOLARCHVISION_explore_output(myFile);
       println("Image created:" + myFile);      
       
       WORLD_record_PDF = 0;
@@ -3447,7 +3449,7 @@ void SOLARCHVISION_draw_WORLD () {
       if ((WORLD_record_JPG == 1) || (WORLD_record_AUTO == 1)) {
         String myFile = MAKE_Filenames("WORLD_") + ".jpg";
         WORLD_Diagrams.save(myFile);
-        open("explorer /select," + myFile.replace("/", "\\"));
+        SOLARCHVISION_explore_output(myFile);
         println("Image created:" + myFile);
       }
       
@@ -3577,7 +3579,7 @@ void SOLARCHVISION_draw_STUDY () {
       endRecord();
       
       String myFile = MAKE_Filenames("STUDY_") + ".pdf";
-      open("explorer /select," + myFile.replace("/", "\\"));
+      SOLARCHVISION_explore_output(myFile);
       println("Image created:" + myFile);             
       
       STUDY_record_PDF = 0;
@@ -3588,7 +3590,7 @@ void SOLARCHVISION_draw_STUDY () {
       if ((STUDY_record_JPG == 1) || (STUDY_record_AUTO == 1)) {
         String myFile = MAKE_Filenames("STUDY_") + ".jpg";
         STUDY_Diagrams.save(myFile);
-        open("explorer /select," + myFile.replace("/", "\\"));
+        SOLARCHVISION_explore_output(myFile);
         println("Image created:" + myFile);        
       }
       
@@ -9533,7 +9535,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 if (SolarImpact_record_JPG == 1) {
                   String myFile = get_SpatialImpact_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(j + 1, 0) + ".jpg";
                   SolarImpact_Image[j + 1].save(myFile);
-                  open("explorer /select," + myFile.replace("/", "\\"));
+                  SOLARCHVISION_explore_output(myFile);
                   println("Image created:" + myFile);                  
                 }
               }            
@@ -9627,7 +9629,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             if (SolarImpact_record_JPG == 1) {
               String myFile = get_SpatialImpact_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(0, 0) + ".jpg";
               SolarImpact_Image[0].save(myFile);
-              open("explorer /select," + myFile.replace("/", "\\"));
+              SOLARCHVISION_explore_output(myFile);
               println("Image created:" + myFile);                
             }
           }      
@@ -13795,7 +13797,9 @@ void SOLARCHVISION_addToFaces_afterSphericalTeselation (int m, float cx, float c
 
 void SOLARCHVISION_export_land () {
   
-  PrintWriter File_output_mesh = createWriter(Model3DFolder + "/" + "LandMesh.obj");
+  String myFile = Model3DFolder + "/" + "LandMesh.obj";
+  
+  PrintWriter File_output_mesh = createWriter(myFile);
   
   File_output_mesh.println("#SOLARCHVISION");
 
@@ -13842,12 +13846,15 @@ void SOLARCHVISION_export_land () {
   
   println("End of exporting the mesh.");
 
+  SOLARCHVISION_explore_output(myFile);
 }
 
 
 void SOLARCHVISION_export_objects () {
 
-  PrintWriter File_output_mesh = createWriter(Model3DFolder + "/" + "ObjectsMesh.obj");
+  String myFile = Model3DFolder + "/" + "ObjectsMesh.obj";
+  
+  PrintWriter File_output_mesh = createWriter(myFile);
   
   File_output_mesh.println("#SOLARCHVISION");
 
@@ -13891,12 +13898,17 @@ void SOLARCHVISION_export_objects () {
   
   println("End of exporting the mesh."); 
  
+  SOLARCHVISION_explore_output(myFile);
 }
 
 
 void SOLARCHVISION_export_objects_script () {
+  
+  String myFile = Model3DFolder + "/" + "ObjectsMesh.scr";
 
-  PrintWriter File_output_mesh = createWriter(Model3DFolder + "/" + "ObjectsMesh.scr");
+  PrintWriter File_output_mesh = createWriter(myFile);
+  
+  File_output_mesh.println("-osnap off");
   
   for (int f = 1; f < allFaces.length; f++) {
     
@@ -13910,12 +13922,14 @@ void SOLARCHVISION_export_objects_script () {
         float y = allVertices[allFaces[f][j]][1];
         float z = allVertices[allFaces[f][j]][2];
         
+        /*
         { 
           z += 20;
           x *= 1000000;
           y *= 1000000;
           z *= 1000000;
         }
+        */
         
         File_output_mesh.println(x + "," + y + "," + z);
       }
@@ -13924,11 +13938,14 @@ void SOLARCHVISION_export_objects_script () {
     }
   }
   
+  File_output_mesh.println("zoom e");
+  
   File_output_mesh.flush(); 
   File_output_mesh.close();   
   
-  println("End of exporting the mesh."); 
- 
+  println("End of scripting the mesh."); 
+  
+  SOLARCHVISION_explore_output(myFile);
 }
     
   
@@ -18271,7 +18288,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
   if (SpatialImpact_record_JPG == 1) {
     String myFile = get_SpatialImpact_Filename() + ".jpg";
     SpatialImpact_Image.save(myFile);
-    open("explorer /select," + myFile.replace("/", "\\"));
+    SOLARCHVISION_explore_output(myFile);
     println("Image created:" + myFile);        
   }    
 
@@ -22782,6 +22799,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Export_solids = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Export_solids", Export_solids, 0, 1, 1), 1));
       Export_meshing = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Export_meshing", Export_meshing, 0, 1, 1), 1));
       
+      Display_Output_in_Explorer = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Display_Output_in_Explorer", Display_Output_in_Explorer, 0, 1, 1), 1));
     }  
   
     if (ROLLOUT_child == 2) { // Media
@@ -27880,5 +27898,15 @@ int[] get_startZ_endZ (int data_source) {
   a[2] = layers_count;
   
   return  a;
+}
+
+
+
+void SOLARCHVISION_explore_output(String outputFile) {
+  
+  if (Display_Output_in_Explorer == 1) {
+    open("explorer /select," + outputFile.replace("/", "\\"));
+  }
+  
 }
 
