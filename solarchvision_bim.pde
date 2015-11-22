@@ -15511,11 +15511,8 @@ void SOLARCHVISION_draw_3Dobjects () {
               for (int s = 0; s < subFace.length; s++) {
                 
                 float val = ParametricGeometries_SpatialImpact_atXYZ_simple(subFace[s][0], subFace[s][1], subFace[s][2]);
-                
-                float g = _Multiplier * val;
 
-
-                float _u = g;
+                float _u = _Multiplier * val;
                 if (PAL_DIR == -1) _u = 1 - _u;
                 if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                 if (PAL_DIR == 2) _u =  0.5 * _u;
@@ -18218,7 +18215,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
       float g =      roundTo(_Multiplier * val, deltaSpatialImpact) - 0.5 * deltaSpatialImpact;
       float g_line = roundTo(_Multiplier * val, deltaSpatialImpactLines);
       
-      float _u = g;
+      float _u = _Multiplier * val;
       if (PAL_DIR == -1) _u = 1 - _u;
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
