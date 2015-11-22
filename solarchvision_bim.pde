@@ -985,8 +985,8 @@ int ELEVATION_Pallet_CLR = 1;
 int ELEVATION_Pallet_DIR = -1; 
 float ELEVATION_Pallet_MLT = 0.1; 
 
-int SPATIAL_Pallet_CLR = 1; 
-int SPATIAL_Pallet_DIR = 1; 
+int SPATIAL_Pallet_CLR = -1; 
+int SPATIAL_Pallet_DIR = -1; 
 float SPATIAL_Pallet_MLT = 1; 
 
 
@@ -15515,7 +15515,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                 float g = _Multiplier * val;
 
 
-                float _u = g;
+                float _u = g + 1; // ???
                 if (PAL_DIR == -1) _u = 1 - _u;
                 if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                 if (PAL_DIR == 2) _u =  0.5 * _u;
@@ -18221,7 +18221,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
       float g =      roundTo(_Multiplier * val, deltaSpatialImpact) - 0.5 * deltaSpatialImpact;
       float g_line = roundTo(_Multiplier * val, deltaSpatialImpactLines);
       
-      float _u = g;
+      float _u = g + 1; // ???
       if (PAL_DIR == -1) _u = 1 - _u;
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
@@ -18254,7 +18254,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
         }
       }
 
-      SpatialImpact_Image.pixels[i + j * SpatialImpact_RES1] = color(_COL[1], _COL[2], _COL[3]);;
+      SpatialImpact_Image.pixels[i + j * SpatialImpact_RES1] = color(_COL[1], _COL[2], _COL[3], _COL[0]);;
       
     }
   }
