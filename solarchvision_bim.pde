@@ -17803,9 +17803,8 @@ float[] ParametricGeometries_SpatialImpact_atIJ_simple (float i, float j){
     } 
   }  
   
-  //float[] return_array = {x, y, z, val - 1};
-  float[] return_array = {x, y, z, val};
-  
+  float[] return_array = {x, y, z, val - 1};
+
   return return_array;
 }
 
@@ -17822,8 +17821,7 @@ float ParametricGeometries_SpatialImpact_atXYZ_simple (float x, float y, float z
     
   }
   
-  //return val - 1;
-  return val;
+  return val - 1;
 }
 
 float[] ParametricGeometries_SpatialImpact_atIJ (float i, float j){
@@ -17883,7 +17881,7 @@ float[] ParametricGeometries_SpatialImpact_atIJ (float i, float j){
     
     if (totalP != 0) val[o] /= 0.5 * totalP; 
   
-    //val[o] = val[o] - 1;
+    val[o] = val[o] - 1;
   }
   
   float[] return_array = {x, y, z, val[0]};
@@ -17928,7 +17926,7 @@ float ParametricGeometries_SpatialImpact_atXYZ (float x, float y, float z) {
     
     if (totalP != 0) val[o] /= 0.5 * totalP;
   
-    //val[o] = val[o] - 1;
+    val[o] = val[o] - 1;
   }
   
   
