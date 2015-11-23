@@ -16093,7 +16093,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                   }
                   
                   /*
-
+ zzzzzzzzzzzzzzzz
                   float _valuesMUL = 0;
                   
                   if (_valuesNUM != 0) {
@@ -16110,7 +16110,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                     _valuesSUM_EFF_P = 0; //FLOAT_undefined;
                     _valuesSUM_EFF_N = 0; //FLOAT_undefined;
                   }    
- 
+
                   */                 
                   
                 }    
@@ -16142,8 +16142,8 @@ void SOLARCHVISION_draw_3Dobjects () {
                 
                   float _u = 0;
                   
-                  if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
-                  if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
+                  if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 * (0.1 * _Multiplier * _valuesSUM);
+                  if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
                   
                   if (PAL_DIR == -1) _u = 1 - _u;
                   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
