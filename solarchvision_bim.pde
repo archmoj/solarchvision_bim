@@ -982,9 +982,9 @@ int SUN3D_Pallet_PASSIVE_CLR = 18;
 int SUN3D_Pallet_PASSIVE_DIR = -1;  
 float SUN3D_Pallet_PASSIVE_MLT = 2; //1;
 
-int SKY3D_Pallet_ACTIVE_CLR = -1; //7; //8;
-int SKY3D_Pallet_ACTIVE_DIR = -1;
-float SKY3D_Pallet_ACTIVE_MLT = 0.25; //1;
+int SKY3D_Pallet_ACTIVE_CLR = 18; //-1; //7; //8;
+int SKY3D_Pallet_ACTIVE_DIR = 1; //-1;
+float SKY3D_Pallet_ACTIVE_MLT = 0.5; //0.25; //1;
 
 int SKY3D_Pallet_PASSIVE_CLR = 18; 
 int SKY3D_Pallet_PASSIVE_DIR = -1;  
