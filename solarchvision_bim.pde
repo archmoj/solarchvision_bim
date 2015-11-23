@@ -19600,16 +19600,6 @@ void SolarProjection () {
               //float _valuesMUL = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / (1.0 * _valuesNUM);  
               //float _valuesMUL = int(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE)) / (1.0 * _valuesNUM);
               float _valuesMUL = roundTo(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE), 1) / (1.0 * _valuesNUM);
-
-              int STUDY_i_number = 0;
-              for (int i = 0; i < 24; i += 1) {
-                if (isInHourlyRange(i) == 1) {
-                  
-                  STUDY_i_number += 1;
-                }
-              }                
-              _valuesMUL *= float(STUDY_i_number) / 24.0;
-
                                  
               _valuesSUM_RAD *= _valuesMUL;
               _valuesSUM_EFF_P *= _valuesMUL;
