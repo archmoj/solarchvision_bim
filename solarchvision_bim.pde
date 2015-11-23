@@ -1615,7 +1615,7 @@ void SOLARCHVISION_update_station (int Step) {
   
   if ((Step == 0) || (Step == 5)) SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
 
-  if ((Step == 0) || (Step == 6)) SOLARCHVISION_LoadLAND(LocationName);
+  if ((Step == 0) || (Step == 6)) SOLARCHVISION_LoadLAND_MESH(LocationName);
   
   //if ((Step == 0) || (Step == 7)) SOLARCHVISION_remove_FractalPlants();
   
@@ -1865,7 +1865,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_LoadLAND", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_LoadLAND_MESH", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 16) {
     SOLARCHVISION_update_station(6);
@@ -2203,13 +2203,13 @@ void draw () {
         
        
         if (Download_LAND != 0) {
-          SOLARCHVISION_DownloadLAND();
+          SOLARCHVISION_DownloadLAND_MESH();
           WIN3D_Update = 1;
           ROLLOUT_Update = 1;
         }
        
         if (pre_Load_LAND != Load_LAND) {
-          SOLARCHVISION_LoadLAND(LocationName);
+          SOLARCHVISION_LoadLAND_MESH(LocationName);
           WIN3D_Update = 1;
         }
         
@@ -17303,7 +17303,21 @@ float Bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y
 // ---------------------------------------------------------
 
 
+PImage LAND_TEXTURE = createImage(2,2, RGB);
 
+void SOLARCHVISION_LoadLAND_TEXTURE (String ProjectSite) {
+
+  try {
+    LAND_TEXTURE = loadImage(LandFolder + "/" + ProjectSite + "/"  + ProjectSite + "/MAP.jpg"); 
+  }
+  
+  catch (Exception e) {
+    
+    println("ERROR loading LAND_TEXTURE!");
+  
+    LAND_TEXTURE = createImage(2,2, RGB);  
+  }
+}
    
 
 //Cartesian
@@ -17326,7 +17340,7 @@ double LAND_mid_lon;
 
 float[][][] LAND_MESH;
 
-void SOLARCHVISION_LoadLAND (String ProjectSite) {
+void SOLARCHVISION_LoadLAND_MESH (String ProjectSite) {
 
   
   LAND_mid_lat = LocationLatitude;
@@ -17398,13 +17412,15 @@ void SOLARCHVISION_LoadLAND (String ProjectSite) {
   }
   
   catch (Exception e) {
-    println("ERROR loading LAND!");  
+    println("ERROR loading LAND_MESH!");  
   }
+
+  SOLARCHVISION_LoadLAND_TEXTURE(ProjectSite);
 
 }
 
 
-void SOLARCHVISION_DownloadLAND() {
+void SOLARCHVISION_DownloadLAND_MESH() {
 
   LAND_mid_lat = LocationLatitude;
   LAND_mid_lon = LocationLongitude;
