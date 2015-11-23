@@ -9536,7 +9536,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
                   
                   _valuesSUM = COMPARISON;
-                  _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
+                  
+                  //_u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
+                  _u = 0.5 + 0.5 * 0.75 * (0.2 * _Multiplier * _valuesSUM);
                 }
                 
                 
@@ -9636,7 +9638,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               
               //_valuesSUM *= ParametricGeometries_SpatialImpact_atIJ(Image_X, Image_Y); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
               
-              _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
+              //_u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
+              _u = 0.5 + 0.5 * 0.75 * (0.2 * _Multiplier * _valuesSUM);
             }
             
             if (PAL_DIR == -1) _u = 1 - _u;
