@@ -9523,7 +9523,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   _valuesSUM = Image_G;
                   
                   //_u = 0.5 * (0.1 * _Multiplier * _valuesSUM);
-                  _u = (0.1 * _Multiplier * _valuesSUM);
+                  //_u = (0.1 * _Multiplier * _valuesSUM);
+                  _u = (0.2 * _Multiplier * _valuesSUM);
                 }
              
                 if (Impact_TYPE == Impact_PASSIVE) {
@@ -9622,7 +9623,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               _valuesSUM = Image_G;
               
               //_u = 0.5 * (0.1 * _Multiplier * _valuesSUM);
-              _u = (0.1 * _Multiplier * _valuesSUM);
+              //_u = (0.1 * _Multiplier * _valuesSUM);
+              _u = (0.2 * _Multiplier * _valuesSUM);
             }
            
             if (Impact_TYPE == Impact_PASSIVE) {
