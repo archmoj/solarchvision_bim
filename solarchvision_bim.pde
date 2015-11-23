@@ -981,11 +981,11 @@ float SUN3D_Pallet_ACTIVE_MLT = 1;
 
 int SUN3D_Pallet_PASSIVE_CLR = 18; 
 int SUN3D_Pallet_PASSIVE_DIR = -1;  
-float SUN3D_Pallet_PASSIVE_MLT = 1; //2;
+float SUN3D_Pallet_PASSIVE_MLT = 2; //1;
 
 int SKY3D_Pallet_ACTIVE_CLR = -1; //7; //8;
 int SKY3D_Pallet_ACTIVE_DIR = -1;
-float SKY3D_Pallet_ACTIVE_MLT = 0.5;
+float SKY3D_Pallet_ACTIVE_MLT = 1;
 
 int SKY3D_Pallet_PASSIVE_CLR = 18; 
 int SKY3D_Pallet_PASSIVE_DIR = -1;  
@@ -2791,12 +2791,12 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
     if (Impact_TYPE == Impact_ACTIVE) {
       PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; 
       PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR; 
-      _Multiplier = 0.1 * OBJECTS_Pallet_ACTIVE_MLT; 
+      _Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
       PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; 
       PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
-      _Multiplier = 0.02 * OBJECTS_Pallet_PASSIVE_MLT;  
+      _Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;  
     }   
     
     draw_pal = 1;
@@ -10958,7 +10958,7 @@ void STUDY_keyPressed (KeyEvent e) {
                   update_DevelopDATA = 1;
                   BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
                 
-        case ']' :STUDY_j_end += 1; 
+        case '}' :STUDY_j_end += 1; 
                   if (STUDY_j_end > STUDY_j_start + 61) STUDY_j_end -= 1;
                   STUDY_U_scale = 18.0 / float(STUDY_j_end - STUDY_j_start);
                   /*
@@ -10975,7 +10975,7 @@ void STUDY_keyPressed (KeyEvent e) {
                   rebuild_WindRose_Image_array = 1;
                   BAR_d_Update = 1;STUDY_Update = 1; ROLLOUT_Update = 1; break;
                   
-        case '[' :STUDY_j_end -= 1; 
+        case '{' :STUDY_j_end -= 1; 
                   if (STUDY_j_end <= STUDY_j_start) STUDY_j_end += 1;
                   STUDY_U_scale = 18.0 / float(STUDY_j_end - STUDY_j_start);
                   /*
@@ -11794,12 +11794,12 @@ void WIN3D_keyPressed (KeyEvent e) {
                   WIN3D_update_VerticesSolarValue = 1; 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
 
-        case '}' :Day_of_Impact_to_Display += 1;
+        case ']' :Day_of_Impact_to_Display += 1;
                   if (Day_of_Impact_to_Display > STUDY_j_end) Day_of_Impact_to_Display = 0;
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
                   break; 
-        case '{' :Day_of_Impact_to_Display -= 1;
+        case '[' :Day_of_Impact_to_Display -= 1;
                   if (Day_of_Impact_to_Display < 0) Day_of_Impact_to_Display = STUDY_j_end;
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
@@ -14859,8 +14859,8 @@ void SOLARCHVISION_draw_SKY3D () {
         }             
         
         float _Multiplier = 1; 
-        if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1 * SKY3D_Pallet_ACTIVE_MLT; //_Multiplier = 0.1; // <<<<<<<<<<< 
-        if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02 * SKY3D_Pallet_PASSIVE_MLT;             
+        if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * SKY3D_Pallet_ACTIVE_MLT;  
+        if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * SKY3D_Pallet_PASSIVE_MLT;             
   
         int Teselation = 0;
         
@@ -14919,8 +14919,8 @@ void SOLARCHVISION_draw_SKY3D () {
               
                 float _u = 0;
                 
-                if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
-                if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
+                if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 * (0.1 * _Multiplier * _valuesSUM);
+                if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
                 
                 if (PAL_DIR == -1) _u = 1 - _u;
                 if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -15310,8 +15310,8 @@ void SOLARCHVISION_draw_land () {
               }             
               
               float _Multiplier = 1; 
-              if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1 * OBJECTS_Pallet_ACTIVE_MLT; 
-              if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02 * OBJECTS_Pallet_PASSIVE_MLT;     
+              if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
+              if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;     
 
               int s_next = (s + 1) % subFace.length;
               int s_prev = (s + subFace.length - 1) % subFace.length;
@@ -15339,8 +15339,8 @@ void SOLARCHVISION_draw_land () {
               
                 float _u = 0;
                 
-                if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
-                if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
+                if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 * (0.1 * _Multiplier * _valuesSUM);
+                if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
                 
                 if (PAL_DIR == -1) _u = 1 - _u;
                 if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -15657,8 +15657,8 @@ void SOLARCHVISION_draw_3Dobjects () {
             }             
             
             float _Multiplier = 1; 
-            if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1 * OBJECTS_Pallet_ACTIVE_MLT; 
-            if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02 * OBJECTS_Pallet_PASSIVE_MLT;            
+            if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
+            if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;            
       
             int Teselation = 0;
             
@@ -15710,8 +15710,8 @@ void SOLARCHVISION_draw_3Dobjects () {
                 
                   float _u = 0;
                   
-                  if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
-                  if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
+                  if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 * (0.1 * _Multiplier * _valuesSUM);
+                  if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
                   
                   if (PAL_DIR == -1) _u = 1 - _u;
                   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
