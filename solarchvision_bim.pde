@@ -974,7 +974,6 @@ int OBJECTS_Pallet_PASSIVE_CLR = 1;
 int OBJECTS_Pallet_PASSIVE_DIR = 1;  
 float OBJECTS_Pallet_PASSIVE_MLT = 2; 
 
-
 int SUN3D_Pallet_ACTIVE_CLR = 15;
 int SUN3D_Pallet_ACTIVE_DIR = 1;
 float SUN3D_Pallet_ACTIVE_MLT = 1;
@@ -15749,8 +15748,8 @@ void SOLARCHVISION_draw_3Dobjects () {
           }             
           
           float _Multiplier = 1; 
-          if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1 * OBJECTS_Pallet_ACTIVE_MLT; 
-          if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02 * OBJECTS_Pallet_PASSIVE_MLT;     
+          if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
+          if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;     
     
           int N_baked = 0;
           
@@ -15794,8 +15793,8 @@ void SOLARCHVISION_draw_3Dobjects () {
                     
                     float _u = 0;
                   
-                    if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
-                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
+                    if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 * (0.1 * _Multiplier * _valuesSUM);
+                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
                     
                     if (PAL_DIR == -1) _u = 1 - _u;
                     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -15862,8 +15861,8 @@ void SOLARCHVISION_draw_3Dobjects () {
         }             
         
         float _Multiplier = 1; 
-        if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 0.1 * OBJECTS_Pallet_ACTIVE_MLT; 
-        if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.02 * OBJECTS_Pallet_PASSIVE_MLT;     
+        if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
+        if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;     
   
         int[][] PROCESSED_DAILY_SCENARIOS = {{}};  
     
@@ -16092,31 +16091,32 @@ void SOLARCHVISION_draw_3Dobjects () {
                       }
                     }
                   }
+                  
+                  /*
+
+                  float _valuesMUL = 0;
+                  
+                  if (_valuesNUM != 0) {
+                    //_valuesMUL = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / (1.0 * _valuesNUM);  
+                    //_valuesMUL = int(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE)) / (1.0 * _valuesNUM);
+                    _valuesMUL = roundTo(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE), 1) / (1.0 * _valuesNUM);
+                    
+                    _valuesSUM_RAD *= _valuesMUL;
+                    _valuesSUM_EFF_P *= _valuesMUL;
+                    _valuesSUM_EFF_N *= _valuesMUL;
+                  }    
+                  else {
+                    _valuesSUM_RAD = 0; //FLOAT_undefined;
+                    _valuesSUM_EFF_P = 0; //FLOAT_undefined;
+                    _valuesSUM_EFF_N = 0; //FLOAT_undefined;
+                  }    
+ 
+                  */                 
+                  
                 }    
-                if (_valuesNUM != 0) {
-                  
-                  float _valuesMUL = 1.0 / float(STUDY_j_end - STUDY_j_start);                
-                  
-                  int STUDY_i_number = 0;
-                  for (int i = 0; i < 24; i += 1) {
-                    if (isInHourlyRange(i) == 1) {
-                      
-                      STUDY_i_number += 1;
-                    }
-                  }                
-                  _valuesMUL *= float(STUDY_i_number) / 24.0;
-                                     
-                  _valuesSUM_RAD *= _valuesMUL;
-                  _valuesSUM_EFF_P *= _valuesMUL;
-                  _valuesSUM_EFF_N *= _valuesMUL;
-                }
-                else {
-                  _valuesSUM_RAD = 0; //FLOAT_undefined;
-                  _valuesSUM_EFF_P = 0; //FLOAT_undefined;
-                  _valuesSUM_EFF_N = 0; //FLOAT_undefined;
-                }
-    
-    
+                
+             
+           
                 float AVERAGE, PERCENTAGE, COMPARISON;
                 
                 AVERAGE = (_valuesSUM_EFF_P - _valuesSUM_EFF_N);
