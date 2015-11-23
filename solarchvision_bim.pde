@@ -16028,6 +16028,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                                 _valuesNUM = 0; 
                               }                             
                               else {
+                               
                                 float[] VECT = {0, 0, 0}; 
                                 
                                 if (abs(Alpha) > 89.99) {
@@ -16091,29 +16092,23 @@ void SOLARCHVISION_draw_3Dobjects () {
                       }
                     }
                   }
-                  
-                  /*
- zzzzzzzzzzzzzzzz
-                  float _valuesMUL = 0;
-                  
-                  if (_valuesNUM != 0) {
-                    //_valuesMUL = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / (1.0 * _valuesNUM);  
-                    //_valuesMUL = int(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE)) / (1.0 * _valuesNUM);
-                    _valuesMUL = roundTo(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE), 1) / (1.0 * _valuesNUM);
-                    
-                    _valuesSUM_RAD *= _valuesMUL;
-                    _valuesSUM_EFF_P *= _valuesMUL;
-                    _valuesSUM_EFF_N *= _valuesMUL;
-                  }    
-                  else {
-                    _valuesSUM_RAD = 0; //FLOAT_undefined;
-                    _valuesSUM_EFF_P = 0; //FLOAT_undefined;
-                    _valuesSUM_EFF_N = 0; //FLOAT_undefined;
-                  }    
 
-                  */                 
-                  
                 }    
+                
+                float _valuesMUL = 0;
+                
+                if (_valuesNUM != 0) {
+                  _valuesMUL = 12.0 / (1.0 * _valuesNUM); // this might be approximate!
+                  
+                  _valuesSUM_RAD *= _valuesMUL;
+                  _valuesSUM_EFF_P *= _valuesMUL;
+                  _valuesSUM_EFF_N *= _valuesMUL;
+                }    
+                else {
+                  _valuesSUM_RAD = 0; //FLOAT_undefined;
+                  _valuesSUM_EFF_P = 0; //FLOAT_undefined;
+                  _valuesSUM_EFF_N = 0; //FLOAT_undefined;
+                }                   
                 
              
            
