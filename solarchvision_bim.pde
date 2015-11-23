@@ -1110,13 +1110,14 @@ float WindRose3D_scale = 400;
 int Display_SUN3D = 1;
 int Display_SKY3D = 0;
 
-int Download_LAND = 0;
-int Load_LAND = 1; // 1;
-int Display_LAND = 1; // 1;
-int Skip_LAND_Center = 0; //5;
+int Download_LAND_MESH = 0;
+int Load_LAND_MESH = 1; // 1;
+int Display_LAND_MESH = 1; // 1;
+int Display_LAND_TEXTURE = 1;
+int Skip_LAND_MESH_Center = 0; //5;
 
-int Load_URBAN = 0;
-int Display_URBAN = 1;
+int Load_URBAN_MESH = 0;
+int Display_URBAN_MESH = 1;
 
 int display_SpatialImpact_Points = 0;
 int display_SpatialImpact_Lines = 1;
@@ -1174,8 +1175,8 @@ int pre_Load_OBSERVED;
 float pre_LocationLatitude;
 float pre_LocationLongitude;
 int pre_WORLD_VIEW_Auto;
-int pre_Load_LAND;
-int pre_Load_URBAN;
+int pre_Load_LAND_MESH;
+int pre_Load_URBAN_MESH;
 
 int pre_SPATIAL_Pallet_CLR;
 int pre_SPATIAL_Pallet_DIR; 
@@ -2038,8 +2039,8 @@ void draw () {
         
         pre_WORLD_VIEW_Auto = WORLD_VIEW_Auto;
         
-        pre_Load_LAND = Load_LAND;
-        pre_Load_URBAN = Load_URBAN;
+        pre_Load_LAND_MESH = Load_LAND_MESH;
+        pre_Load_URBAN_MESH = Load_URBAN_MESH;
         
         pre_SPATIAL_Pallet_CLR = SPATIAL_Pallet_CLR;
         pre_SPATIAL_Pallet_DIR = SPATIAL_Pallet_DIR; 
@@ -2202,19 +2203,19 @@ void draw () {
         }
         
        
-        if (Download_LAND != 0) {
+        if (Download_LAND_MESH != 0) {
           SOLARCHVISION_DownloadLAND_MESH();
           WIN3D_Update = 1;
           ROLLOUT_Update = 1;
         }
        
-        if (pre_Load_LAND != Load_LAND) {
+        if (pre_Load_LAND_MESH != Load_LAND_MESH) {
           SOLARCHVISION_LoadLAND_MESH(LocationName);
           WIN3D_Update = 1;
         }
         
         
-        if (pre_Load_URBAN != Load_URBAN) {
+        if (pre_Load_URBAN_MESH != Load_URBAN_MESH) {
           SOLARCHVISION_add_urban();
           
           WIN3D_Update = 1;
@@ -14153,7 +14154,7 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
      
       if (i > 8) max_n = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
      
-      //if (i < Skip_LAND_Center) max_n = 10;
+      //if (i < Skip_LAND_MESH_Center) max_n = 10;
       //else max_n = 0; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       
       //for (int n = 0; n < 10; n += 1) {
@@ -14333,7 +14334,7 @@ int urbanFaces_end = 0;
 void SOLARCHVISION_add_urban () {
   
   if (urbanVertices_start == 0) { // avoids overloading the urban model when it was loaded before.
-    if (Load_URBAN == 1) {
+    if (Load_URBAN_MESH == 1) {
       urbanVertices_start = allVertices.length;
       urbanFaces_start = allFaces.length;
       
@@ -14350,11 +14351,11 @@ void SOLARCHVISION_add_urban () {
 
 void SOLARCHVISION_add_3Dbase () {
   
-  if (Load_LAND != 0) {
+  if (Load_LAND_MESH != 0) {
   
     //SOLARCHVISION_add_Mesh2(-2, -150, -150, 0, 150, 150, 0);
     
-    for (int i = 0; i < Skip_LAND_Center; i += 1) {  
+    for (int i = 0; i < Skip_LAND_MESH_Center; i += 1) {  
       for (int j = 0; j < LAND_n_J - 1; j += 1) {
         // Material -2 for colored elevations
         SOLARCHVISION_add_Mesh4(-2, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2] , LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i+1][j][2] , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2] , LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1], LAND_MESH[i][j+1][2] );
@@ -14367,7 +14368,7 @@ int MAX_Default_Models_Number = 7;
 
 void SOLARCHVISION_add_DefaultModel (int n) {
 
-  if (Load_LAND == 1) {
+  if (Load_LAND_MESH == 1) {
     SOLARCHVISION_add_2Dobjects_onLand(); 
   }    
   else {
@@ -15241,7 +15242,7 @@ void SOLARCHVISION_draw_windFlow () {
 
 void SOLARCHVISION_draw_land () {
 
-  if ((Display_LAND == 1) && (Load_LAND == 1)) {
+  if ((Display_LAND_MESH == 1) && (Load_LAND_MESH == 1)) {
     
     WIN3D_Diagrams.strokeWeight(1);
 
@@ -15254,7 +15255,7 @@ void SOLARCHVISION_draw_land () {
     if (Teselation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Teselation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
     
 
-    for (int i = Skip_LAND_Center; i < LAND_n_I - 1; i += 1) {
+    for (int i = Skip_LAND_MESH_Center; i < LAND_n_I - 1; i += 1) {
       for (int j = 0; j < LAND_n_J - 1; j += 1) {
         
         
@@ -15283,8 +15284,12 @@ void SOLARCHVISION_draw_land () {
           
           WIN3D_Diagrams.beginShape();
           
+          if (Display_LAND_TEXTURE != 0) {
+            WIN3D_Diagrams.texture(LAND_TEXTURE);
+          }
+
           for (int s = 0; s < subFace.length; s++) {
-            
+           
        
             float[] _COL = {255,223,223,223};
             
@@ -15399,9 +15404,21 @@ void SOLARCHVISION_draw_land () {
             }   
             
   
-      
+            if (Display_LAND_TEXTURE != 0) {
+              
+              float u = (subFace[s][0] / LAND_TEXTURE_scale_U + 0.5) * LAND_TEXTURE.width;
+              float v = (-subFace[s][1] / LAND_TEXTURE_scale_V + 0.5) * LAND_TEXTURE.height;
+
+              WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D, u, v);  
+            }
+            else {
           
-            WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D);
+              WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D);
+            }
+            
+
+        
+            
           }
           
           WIN3D_Diagrams.endShape(CLOSE);
@@ -15426,7 +15443,7 @@ void SOLARCHVISION_draw_3Dobjects () {
     if (WIN3D_FACES_SHADE != Shade_Vertex_Solar) {
       for (int f = 1; f < allFaces.length; f++) {
     
-        if (((Load_URBAN == 0) || (Display_URBAN == 0)) && (urbanFaces_start <= f) && (urbanFaces_end >= f)) {
+        if (((Load_URBAN_MESH == 0) || (Display_URBAN_MESH == 0)) && (urbanFaces_start <= f) && (urbanFaces_end >= f)) {
         }
         else{
         
@@ -15759,7 +15776,7 @@ void SOLARCHVISION_draw_3Dobjects () {
           
           for (int f = 1; f < allFaces.length; f++) {
             
-            if (((Load_URBAN == 0) || (Display_URBAN == 0)) && (urbanFaces_start <= f) && (urbanFaces_end >= f)) {
+            if (((Load_URBAN_MESH == 0) || (Display_URBAN_MESH == 0)) && (urbanFaces_start <= f) && (urbanFaces_end >= f)) {
             }
             else{
     
@@ -15874,7 +15891,7 @@ void SOLARCHVISION_draw_3Dobjects () {
   
           println("calculating %", nf(100.0 * f / (1.0 * allFaces.length), 0,2)); 
           
-          if (((Load_URBAN == 0) || (Display_URBAN == 0)) && (urbanFaces_start <= f) && (urbanFaces_end >= f)) {
+          if (((Load_URBAN_MESH == 0) || (Display_URBAN_MESH == 0)) && (urbanFaces_start <= f) && (urbanFaces_end >= f)) {
           }
           else{    
           
@@ -17308,7 +17325,7 @@ PImage LAND_TEXTURE = createImage(2,2, RGB);
 void SOLARCHVISION_LoadLAND_TEXTURE (String ProjectSite) {
 
   try {
-    LAND_TEXTURE = loadImage(LandFolder + "/" + ProjectSite + "/"  + ProjectSite + "/MAP.jpg"); 
+    LAND_TEXTURE = loadImage(LandFolder + "/" + ProjectSite + "/"  + ProjectSite + "/MAP_13000_7500.jpg"); 
   }
   
   catch (Exception e) {
@@ -17318,6 +17335,9 @@ void SOLARCHVISION_LoadLAND_TEXTURE (String ProjectSite) {
     LAND_TEXTURE = createImage(2,2, RGB);  
   }
 }
+   
+float LAND_TEXTURE_scale_U = 13000; 
+float LAND_TEXTURE_scale_V = 7500;    
    
 
 //Cartesian
@@ -17358,7 +17378,7 @@ void SOLARCHVISION_LoadLAND_MESH (String ProjectSite) {
 
   try { 
   
-    if (Load_LAND == 1) {
+    if (Load_LAND_MESH == 1) {
   
       for (int i = 0; i < LAND_n_I; i += 1) {
     
@@ -17527,7 +17547,7 @@ void SOLARCHVISION_DownloadLAND_MESH() {
     }
   }
 
-  Download_LAND = 0;
+  Download_LAND_MESH = 0;
 
 }
 
@@ -20913,7 +20933,7 @@ void mouseClicked () {
             ROLLOUT_Update = 1;
           }           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Urban")) {
-            Display_URBAN = (Display_URBAN + 1) % 2;
+            Display_URBAN_MESH = (Display_URBAN_MESH + 1) % 2;
             
             WIN3D_Update = 1;  
             ROLLOUT_Update = 1;
@@ -22504,18 +22524,19 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
     if (ROLLOUT_child == 3) { // Environment
    
-      Download_LAND = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Download_LAND" , Download_LAND, 0, 1, 1), 1));
-      Load_LAND = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Load_LAND" , Load_LAND, 0, 1, 1), 1));
-      Display_LAND = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_LAND" , Display_LAND, 0, 1, 1), 1));
-      Skip_LAND_Center = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Skip_LAND_Center" , Skip_LAND_Center, 0, LAND_n_I - 1, 1), 1));     
+      Download_LAND_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Download_LAND_MESH" , Download_LAND_MESH, 0, 1, 1), 1));
+      Load_LAND_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Load_LAND_MESH" , Load_LAND_MESH, 0, 1, 1), 1));
+      Skip_LAND_MESH_Center = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Skip_LAND_MESH_Center" , Skip_LAND_MESH_Center, 0, LAND_n_I - 1, 1), 1));
+      Display_LAND_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_LAND_MESH" , Display_LAND_MESH, 0, 1, 1), 1));
+      Display_LAND_TEXTURE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_LAND_TEXTURE" , Display_LAND_TEXTURE, 0, 1, 1), 1));     
 
       Display_Trees_People = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_Trees_People" , Display_Trees_People, 0, 1, 1), 1));
       Display_FractalPlant = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_FractalPlant" , Display_FractalPlant, 0, 1, 1), 1));
       Display_Leaves = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_Leaves" , Display_Leaves, 0, 1, 1), 1));
       Display_Building_Model = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_Building_Model" , Display_Building_Model, 0, 1, 1), 1));
       
-      Load_URBAN = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Load_URBAN" , Load_URBAN, 0, 1, 1), 1));
-      Display_URBAN = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_URBAN" , Display_URBAN, 0, 1, 1), 1));
+      Load_URBAN_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Load_URBAN_MESH" , Load_URBAN_MESH, 0, 1, 1), 1));
+      Display_URBAN_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_URBAN_MESH" , Display_URBAN_MESH, 0, 1, 1), 1));
       
       Display_SUN3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SUN3D" , Display_SUN3D, 0, 1, 1), 1));
       Display_SKY3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SKY3D" , Display_SKY3D, 0, 1, 1), 1));
