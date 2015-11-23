@@ -984,11 +984,11 @@ float SUN3D_Pallet_PASSIVE_MLT = 2; //1;
 
 int SKY3D_Pallet_ACTIVE_CLR = -1; //7; //8;
 int SKY3D_Pallet_ACTIVE_DIR = -1;
-float SKY3D_Pallet_ACTIVE_MLT = 1;
+float SKY3D_Pallet_ACTIVE_MLT = 0.25; //1;
 
 int SKY3D_Pallet_PASSIVE_CLR = 18; 
 int SKY3D_Pallet_PASSIVE_DIR = -1;  
-float SKY3D_Pallet_PASSIVE_MLT = 2; //1;
+float SKY3D_Pallet_PASSIVE_MLT = 1; //2;
 
 int ELEVATION_Pallet_CLR = 1; 
 int ELEVATION_Pallet_DIR = -1; 
@@ -10023,7 +10023,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 
                   float _u = 0;
                   
-                  if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 * (0.1 * _Multiplier * _valuesSUM);
+                  if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
                   if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
                   
                   if (PAL_DIR == -1) _u = 1 - _u;
@@ -10105,7 +10105,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             
               float _u = 0;
 
-              if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 * (0.1 * _Multiplier * _valuesSUM);
+              if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
               if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
               
               if (PAL_DIR == -1) _u = 1 - _u;
@@ -14918,7 +14918,7 @@ void SOLARCHVISION_draw_SKY3D () {
               
                 float _u = 0;
                 
-                if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 * (0.1 * _Multiplier * _valuesSUM);
+                if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
                 if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
                 
                 if (PAL_DIR == -1) _u = 1 - _u;
@@ -15338,7 +15338,7 @@ void SOLARCHVISION_draw_land () {
               
                 float _u = 0;
                 
-                if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 * (0.1 * _Multiplier * _valuesSUM);
+                if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
                 if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
                 
                 if (PAL_DIR == -1) _u = 1 - _u;
@@ -15709,7 +15709,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                 
                   float _u = 0;
                   
-                  if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 * (0.1 * _Multiplier * _valuesSUM);
+                  if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
                   if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
                   
                   if (PAL_DIR == -1) _u = 1 - _u;
@@ -15793,7 +15793,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                     
                     float _u = 0;
                   
-                    if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 * (0.1 * _Multiplier * _valuesSUM);
+                    if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
                     if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
                     
                     if (PAL_DIR == -1) _u = 1 - _u;
@@ -16142,7 +16142,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                 
                   float _u = 0;
                   
-                  if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 * (0.1 * _Multiplier * _valuesSUM);
+                  if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
                   if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
                   
                   if (PAL_DIR == -1) _u = 1 - _u;
