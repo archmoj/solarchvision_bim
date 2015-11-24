@@ -13830,34 +13830,70 @@ void SOLARCHVISION_export_land () {
     int the_I = i / LAND_n_J;
     int the_J = i % LAND_n_J;
     
-    File_output_mesh.print("v ");
+    float x = LAND_MESH[the_I][the_J][0];
+    float y = LAND_MESH[the_I][the_J][1];
+    float z = LAND_MESH[the_I][the_J][2];
     
-    for (int j = 0; j < 3; j++) {
-      File_output_mesh.print(nf(LAND_MESH[the_I][the_J][j], 0, 6));
-      if (j + 1 < 3) {
-        File_output_mesh.print(" ");
-      }
-      else {
-        File_output_mesh.println();
-      }          
-    }    
+    File_output_mesh.println("v " + nf(x, 0, 6) + nf(y, 0, 6) + nf(z, 0, 6));
+    
+    if (Display_LAND_TEXTURE != 0) {
+      float u = (x / LAND_TEXTURE_scale_U + 0.5) * LAND_TEXTURE.width;
+      float v = (-y / LAND_TEXTURE_scale_V + 0.5) * LAND_TEXTURE.height;
+      float w = 0;
+      
+      File_output_mesh.println("vt " + nf(u, 0, 3) + nf(v, 0, 3) + nf(w, 0, 3));
+    }
   }
+  
+ 
 
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
     for (int j = 0; j < LAND_n_J - 1; j += 1) {
       
       File_output_mesh.print("f ");
-
-      File_output_mesh.print(i * LAND_n_J + j + 1);
+      
+      {
+        int vNo = i * LAND_n_J + j + 1;
+      
+        File_output_mesh.print(vNo);
+        if (Display_LAND_TEXTURE != 0) {
+          File_output_mesh.print("/" + nf(vNo, 0));
+        }
+      }
+      
+      File_output_mesh.print(" ");
+      
+      {
+        int vNo = (i + 1) * LAND_n_J + j + 1;
+      
+        File_output_mesh.print(vNo);
+        if (Display_LAND_TEXTURE != 0) {
+          File_output_mesh.print("/" + nf(vNo, 0));
+        }
+      }
+      
       File_output_mesh.print(" ");
 
-      File_output_mesh.print((i + 1) * LAND_n_J + j + 1);
-      File_output_mesh.print(" ");      
+      {
+        int vNo = (i + 1) * LAND_n_J + j + 2;
+      
+        File_output_mesh.print(vNo);
+        if (Display_LAND_TEXTURE != 0) {
+          File_output_mesh.print("/" + nf(vNo, 0));
+        }
+      }
+      
+      File_output_mesh.print(" ");
 
-      File_output_mesh.print((i + 1) * LAND_n_J + j + 2);
-      File_output_mesh.print(" ");  
+      {
+        int vNo = i * LAND_n_J + j + 2;
+      
+        File_output_mesh.print(vNo);
+        if (Display_LAND_TEXTURE != 0) {
+          File_output_mesh.print("/" + nf(vNo, 0));
+        }
+      }      
 
-      File_output_mesh.print(i * LAND_n_J + j + 2);
       File_output_mesh.println();
 
     }
