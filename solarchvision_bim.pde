@@ -13834,18 +13834,29 @@ void SOLARCHVISION_export_land () {
     float y = LAND_MESH[the_I][the_J][1];
     float z = LAND_MESH[the_I][the_J][2];
     
-    File_output_mesh.println("v " + nf(x, 0, 6) + nf(y, 0, 6) + nf(z, 0, 6));
+    File_output_mesh.println("v " + nf(x, 0, 6) + " " + nf(y, 0, 6) + " " + nf(z, 0, 6));
     
-    if (Display_LAND_TEXTURE != 0) {
-      float u = (x / LAND_TEXTURE_scale_U + 0.5) * LAND_TEXTURE.width;
-      float v = (-y / LAND_TEXTURE_scale_V + 0.5) * LAND_TEXTURE.height;
-      float w = 0;
-      
-      File_output_mesh.println("vt " + nf(u, 0, 3) + nf(v, 0, 3) + nf(w, 0, 3));
-    }
   }
+
+  if (Display_LAND_TEXTURE != 0) {
+
+  for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
+    
+    int the_I = i / LAND_n_J;
+    int the_J = i % LAND_n_J;
+    
+    float x = LAND_MESH[the_I][the_J][0];
+    float y = LAND_MESH[the_I][the_J][1];
+    float z = LAND_MESH[the_I][the_J][2];
+
+    float u = x / LAND_TEXTURE_scale_U + 0.5;
+    float v = y / LAND_TEXTURE_scale_V + 0.5;
+    float w = 0;
   
- 
+    File_output_mesh.println("vt " + nf(u, 0, 3) + " " + nf(v, 0, 3) + " " + nf(w, 0, 3));
+      
+    }  
+  }
 
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
     for (int j = 0; j < LAND_n_J - 1; j += 1) {
