@@ -17345,14 +17345,17 @@ void SOLARCHVISION_LoadLAND_TEXTURE (String LandDirectory) {
         
         String[] Parts = split(filenames[i], '_');
         
-        LAND_TEXTURE_scale_U = float(Parts[1]); 
-        LAND_TEXTURE_scale_V = float(Parts[2]);
-
-        LAND_TEXTURE = loadImage(LandDirectory + "/" + filenames[i]);
+        if (Parts[0].toUpperCase().equals("USE")) {
         
-        Display_LAND_TEXTURE = 1;
-       
-        break; 
+          LAND_TEXTURE_scale_U = float(Parts[1]); 
+          LAND_TEXTURE_scale_V = float(Parts[2]);
+  
+          LAND_TEXTURE = loadImage(LandDirectory + "/" + filenames[i]);
+          
+          Display_LAND_TEXTURE = 1;
+         
+          break; 
+        }
       }
     }
   }
