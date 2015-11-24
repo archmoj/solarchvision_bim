@@ -17346,15 +17346,18 @@ void SOLARCHVISION_LoadLAND_TEXTURE (String LandDirectory) {
         String[] Parts = split(filenames[i], '_');
         
         if (Parts[0].toUpperCase().equals("USE")) {
-        
-          LAND_TEXTURE_scale_U = float(Parts[1]); 
-          LAND_TEXTURE_scale_V = float(Parts[2]);
-  
-          LAND_TEXTURE = loadImage(LandDirectory + "/" + filenames[i]);
           
-          Display_LAND_TEXTURE = 1;
-         
-          break; 
+          if (Parts.length > 2) {
+        
+            LAND_TEXTURE_scale_U = float(Parts[1]); 
+            LAND_TEXTURE_scale_V = float(Parts[2]);
+    
+            LAND_TEXTURE = loadImage(LandDirectory + "/" + filenames[i]);
+            
+            Display_LAND_TEXTURE = 1;
+           
+            break;
+          } 
         }
       }
     }
@@ -20923,6 +20926,18 @@ void mouseClicked () {
             ROLLOUT_Update = 1;
           }           
           
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Land Mesh")) {
+            Display_LAND_MESH = (Display_LAND_MESH + 1) % 2;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          }             
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Land Texture")) {
+            Display_LAND_TEXTURE = (Display_LAND_TEXTURE + 1) % 2;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          }              
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Vertices")) {
             WIN3D_VERTS_SHOW = (WIN3D_VERTS_SHOW  + 1) % 2;
             
@@ -26667,7 +26682,7 @@ String[][] BAR_a_Items = {
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
                         {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Orbit", "OrbitXY", "OrbitZ", "Pan", "Look at origin", "TruckX", "TruckY", "TruckZ", "Walk", "3DModelSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
-                        {"Display", "Display/Hide Vertices", "Display/Hide Edges", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Land", "Display/Hide Sky", "Display/Hide Sun", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
+                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Edges", "Display/Hide Vertices", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sky", "Display/Hide Sun", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
