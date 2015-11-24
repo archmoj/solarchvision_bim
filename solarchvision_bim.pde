@@ -14144,52 +14144,100 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
 
 void SOLARCHVISION_add_2Dobjects_onLand () {
   
-  for (int i = 0; i < LAND_n_I - 1; i += 1) {
-    for (int j = 0; j < LAND_n_J - 1; j += 1) {
-      
-      float pixel_area = dist(LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1]) * dist(LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1]);
-      
-      int max_n = int(pixel_area / 500.0);
-      if (max_n > 100) max_n = 100;
-     
-      if (i > 8) max_n = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
-     
-      //if (i < Skip_LAND_MESH_Center) max_n = 10;
-      //else max_n = 0; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-      
-      //for (int n = 0; n < 10; n += 1) {
-      for (int n = 0; n < max_n; n += 1) {
-        
-        float di = random(1);
-        float dj = random(1);
-
-        float x = Bilinear(LAND_MESH[i][j][0], LAND_MESH[i][j+1][0], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j][0], di, dj);
-        float y = Bilinear(LAND_MESH[i][j][1], LAND_MESH[i][j+1][1], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j][1], di, dj);
-        float z = Bilinear(LAND_MESH[i][j][2], LAND_MESH[i][j+1][2], LAND_MESH[i+1][j+1][2], LAND_MESH[i+1][j][2], di, dj);
-        
-        if (z + LocationElevation > 0) { // i.e. above sea level 
-        
-          if (dist(x,y,0,0) > 2.5) { // i.e. No 2D at the center!
-          
-            int t = 1;
-
-            float r = random(i + 1); //  to illustrate more people at the center
-            
-            if (r < 1) t = 0; 
-
-            
-            if (dist(x,y,0,0) < 25) t = 0; // i.e. No tree around the center!
-            
-            if (t == 0) {
-              SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
-            }
-            else{
-              SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
-            }
+  if (Display_LAND_TEXTURE != 0) {
   
+    for (int i = 0; i < LAND_n_I - 1; i += 1) {
+      for (int j = 0; j < LAND_n_J - 1; j += 1) {
+        
+        float pixel_area = dist(LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1]) * dist(LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1]);
+        
+        int max_n = int(pixel_area / 200.0);
+        //int max_n = int(pixel_area / 50.0);
+
+        
+        if (max_n > 100) max_n = 100;
+       
+        //if (i > 8) max_n = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+       
+        for (int n = 0; n < max_n; n += 1) {
+          
+          float di = random(1);
+          float dj = random(1);
+  
+          float x = Bilinear(LAND_MESH[i][j][0], LAND_MESH[i][j+1][0], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j][0], di, dj);
+          float y = Bilinear(LAND_MESH[i][j][1], LAND_MESH[i][j+1][1], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j][1], di, dj);
+          float z = Bilinear(LAND_MESH[i][j][2], LAND_MESH[i][j+1][2], LAND_MESH[i+1][j+1][2], LAND_MESH[i+1][j][2], di, dj);
+          
+          float u = (x / LAND_TEXTURE_scale_U + 0.5) * LAND_TEXTURE.width;
+          float v = (-y / LAND_TEXTURE_scale_V + 0.5) * LAND_TEXTURE.height;          
+          
+          color COL = LAND_TEXTURE.get(int(u), int(v));
+          //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+          float r = COL >> 16 & 0xFF; 
+          float g = COL >> 8 & 0xFF;
+          float b = COL & 0xFF;
+                                        
+          if ((g > r + 5) && (g > b + 5)) {
+            
+            //float s = 5 + random(10); 
+            float s = 10 + random(20); // bigger trees
+
+            SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, s);
           }
-        }
-      }  
+
+        }  
+      }
+    }    
+  }
+  else {
+  
+    for (int i = 0; i < LAND_n_I - 1; i += 1) {
+      for (int j = 0; j < LAND_n_J - 1; j += 1) {
+        
+        float pixel_area = dist(LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1]) * dist(LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1]);
+        
+        int max_n = int(pixel_area / 500.0);
+        if (max_n > 100) max_n = 100;
+       
+        if (i > 8) max_n = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+       
+        //if (i < Skip_LAND_MESH_Center) max_n = 10;
+        //else max_n = 0; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        
+        //for (int n = 0; n < 10; n += 1) {
+        for (int n = 0; n < max_n; n += 1) {
+          
+          float di = random(1);
+          float dj = random(1);
+  
+          float x = Bilinear(LAND_MESH[i][j][0], LAND_MESH[i][j+1][0], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j][0], di, dj);
+          float y = Bilinear(LAND_MESH[i][j][1], LAND_MESH[i][j+1][1], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j][1], di, dj);
+          float z = Bilinear(LAND_MESH[i][j][2], LAND_MESH[i][j+1][2], LAND_MESH[i+1][j+1][2], LAND_MESH[i+1][j][2], di, dj);
+          
+          if (z + LocationElevation > 0) { // i.e. above sea level 
+          
+            if (dist(x,y,0,0) > 2.5) { // i.e. No 2D at the center!
+            
+              int t = 1;
+  
+              float r = random(i + 1); //  to illustrate more people at the center
+              
+              if (r < 1) t = 0; 
+  
+              
+              if (dist(x,y,0,0) < 25) t = 0; // i.e. No tree around the center!
+              
+              if (t == 0) {
+                SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
+              }
+              else{
+                SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
+              }
+    
+            }
+          }
+        }  
+      }
     }
   }
 
