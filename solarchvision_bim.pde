@@ -17319,25 +17319,45 @@ float Bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y
   
 // ---------------------------------------------------------
 
-
+   
+float LAND_TEXTURE_scale_U = 1000; // 1km
+float LAND_TEXTURE_scale_V = 1000; // 1km
 PImage LAND_TEXTURE = createImage(2,2, RGB);
 
-void SOLARCHVISION_LoadLAND_TEXTURE (String ProjectSite) {
+void SOLARCHVISION_LoadLAND_TEXTURE (String LandDirectory) {
 
-  try {
-    LAND_TEXTURE = loadImage(LandFolder + "/" + ProjectSite + "/"  + ProjectSite + "/MAP_13000_7500.jpg"); 
-  }
+  LAND_TEXTURE_scale_U = 1000; // 1km
+  LAND_TEXTURE_scale_V = 1000; // 1km  
+  LAND_TEXTURE = createImage(2,2, RGB);
   
-  catch (Exception e) {
-    
-    println("ERROR loading LAND_TEXTURE!");
-  
-    LAND_TEXTURE = createImage(2,2, RGB);  
+  Display_LAND_TEXTURE = 0;
+
+  String[] filenames = getfiles(LandDirectory);
+
+  if (filenames != null) {
+    for (int i = 0; i < filenames.length; i++) {
+      //println(filenames[i]);
+
+      int _L = filenames[i].length();
+      String _Extention = filenames[i].substring(_L - 4,_L);
+      //println(_Extention);
+      if (_Extention.toLowerCase().equals(".jpg")) {
+        
+        String[] Parts = split(filenames[i], '_');
+        
+        LAND_TEXTURE_scale_U = float(Parts[1]); 
+        LAND_TEXTURE_scale_V = float(Parts[2]);
+
+        LAND_TEXTURE = loadImage(LandDirectory + "/" + filenames[i]);
+        
+        Display_LAND_TEXTURE = 1;
+       
+        break; 
+      }
+    }
   }
 }
-   
-float LAND_TEXTURE_scale_U = 13000; 
-float LAND_TEXTURE_scale_V = 7500;    
+
    
 
 //Cartesian
@@ -17362,6 +17382,7 @@ float[][][] LAND_MESH;
 
 void SOLARCHVISION_LoadLAND_MESH (String ProjectSite) {
 
+  String LandDirectory = LandFolder + "/" + ProjectSite + "/"  + ProjectSite;
   
   LAND_mid_lat = LocationLatitude;
   LAND_mid_lon = LocationLongitude;
@@ -17382,7 +17403,7 @@ void SOLARCHVISION_LoadLAND_MESH (String ProjectSite) {
   
       for (int i = 0; i < LAND_n_I; i += 1) {
     
-        XML FileALL = loadXML(LandFolder + "/" + ProjectSite + "/"  + ProjectSite + "/" + nf(i - LAND_n_I_base, 0) + ".xml");
+        XML FileALL = loadXML(LandDirectory + "/" + nf(i - LAND_n_I_base, 0) + ".xml");
   
         XML[] children0 = FileALL.getChildren("result");
         
@@ -17435,7 +17456,7 @@ void SOLARCHVISION_LoadLAND_MESH (String ProjectSite) {
     println("ERROR loading LAND_MESH!");  
   }
 
-  SOLARCHVISION_LoadLAND_TEXTURE(ProjectSite);
+  SOLARCHVISION_LoadLAND_TEXTURE(LandDirectory);
 
 }
 
