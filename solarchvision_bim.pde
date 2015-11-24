@@ -7,7 +7,7 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 2;
+int STATION_NUMBER = 13;
 
 String[][] DEFINED_STATIONS = {
   
@@ -14223,12 +14223,16 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
           float g = COL >> 8 & 0xFF;
           float b = COL & 0xFF;
                                         
-          if ((g > r + 5) && (g > b + 5)) {
-            
-            //float s = 5 + random(10); 
-            float s = 10 + random(20); // bigger trees
-
-            SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, s);
+          if ((g > r + 5) && (g > b + 5)) { // looks more green
+            if (g < 127) { // not on grass (light green)
+              if (z + LocationElevation > 0) { // not in water (below see level)
+              
+                //float s = 5 + random(10); 
+                float s = 10 + random(20); // bigger trees
+    
+                SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, s);
+              }
+            }
           }
 
         }  
