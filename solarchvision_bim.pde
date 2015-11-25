@@ -7,15 +7,15 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 13;
+int STATION_NUMBER = 2;
 
 String[][] DEFINED_STATIONS = {
   
                                 {"Hamedan_Site", "XX", "IR", "34.807", "48.455", "50", "1988.5", "240.0", "", "", "IRN_HAMEDAN_XX_IR"},
   
-                                //{"Berlin_Museum_of_the_20th_Century", "BB", "DE", "52.5080", "13.3685", "15", "36.7", "240.0", "", "", "DEU_Berlin.103840_IWEC"},
+                                {"Berlin_Museum_of_the_20th_Century", "BB", "DE", "52.5080", "13.3685", "15", "36.7", "240.0", "", "", "DEU_Berlin.103840_IWEC"},
   
-                                //{"Villa-Matina", "XX", "GR", "36.644", "22.383", "15", "0", "240.0", "", "", "GRC_Andravida.166820_IWEC"},                              
+                                {"Villa-Matina", "XX", "GR", "36.644", "22.383", "15", "0", "240.0", "", "", "GRC_Andravida.166820_IWEC"},                              
 
                                 {"Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
                                 {"Place_Bonaventure", "QC", "CA", "45.4995", "-73.5650", "-75", "30", "692.82", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"},
@@ -45,7 +45,7 @@ String[][] DEFINED_STATIONS = {
                                 
                                 {"BRASILIA", "XX", "BR", "-29.176456", "-51.22032", "-45", "774.0", "240.0", "BRASILIA_XX_BR", "WY2-filename", "BRA_Santa.Maria.839360_SWERA"}, 
                                 {"RIO_DE_JANEIRO", "XX", "BR", "-22.893467", "-43.21391", "-45", "6.0", "240.0", "RIO_DE_JANEIRO_XX_BR", "WY2-filename", "BRA_Rio.de.Janeiro-Santos.Dumont.837550_SWERA"}, 
-                                {"SAO_PAULO", "XX", "BR", "-14.317596", "-44.45876", "-45", "497.0", "240.0", "SAO_PAULO_XX_BR", "WY2-filename", "BRA_Bom.Jesus.da.Lapa.832880_SWERA"}, 
+                                {"SAO_PAULO", "XX", "BR", "-23.5500", "-46.6333", "-45", "768.0", "240.0", "SAO_PAULO_XX_BR", "WY2-filename", "BRA_Bom.Jesus.da.Lapa.832880_SWERA"}, 
                                 
                                 {"MEXICO_CITY", "DF", "MX", "19.432608", "-99.13321", "-105", "2230.0", "240.0", "CIUDAD_DE_MEXICO_DF_MX", "WY2-filename", "MEX_Mexico.City.766790_IWEC"}, 
                                 {"HAVANA", "XX", "CU", "23.05407", "-82.34519", "-75", "93.0", "240.0", "HAVANA_XX_CU", "WY2-filename", "CUB_Havana-Jose.Marti.782240_SWERA"}, 
@@ -1619,7 +1619,7 @@ void SOLARCHVISION_update_station (int Step) {
   
   //if ((Step == 0) || (Step == 7)) SOLARCHVISION_remove_FractalPlants();
   
-  //if ((Step == 0) || (Step == 8)) SOLARCHVISION_remove_2Dobjects();
+  if ((Step == 0) || (Step == 8)) SOLARCHVISION_remove_2Dobjects();
   
   if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_2Dobjects_onLand();
 
