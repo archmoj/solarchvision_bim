@@ -15355,8 +15355,6 @@ void SOLARCHVISION_draw_land () {
 
     for (int i = Skip_LAND_MESH_Center; i < LAND_n_I - 1; i += 1) {
       for (int j = 0; j < LAND_n_J - 1; j += 1) {
-        
-        
 
         for (int n = 0; n < TotalSubNo; n++) {
           
@@ -15380,6 +15378,9 @@ void SOLARCHVISION_draw_land () {
 
           float[][] subFace = getSubFace(base_Vertices, Teselation, n);
           
+          /*
+          
+          
           WIN3D_Diagrams.beginShape();
           
           if (Display_LAND_TEXTURE != 0) {
@@ -15387,10 +15388,8 @@ void SOLARCHVISION_draw_land () {
           }
 
           for (int s = 0; s < subFace.length; s++) {
-           
        
             float[] _COL = {255,223,223,223};
-            
             
             if ((WIN3D_FACES_SHADE == Shade_Surface_Base) || (WIN3D_FACES_SHADE == Shade_Surface_White)) {
               _COL[1] = 255;
@@ -15481,12 +15480,8 @@ void SOLARCHVISION_draw_land () {
    
             
             WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
-            /*
-            if (subFace[s][2] + LocationElevation < 0) { // i.e. water
-              WIN3D_Diagrams.fill(127, 127, 255);
-            } 
-            */
-   
+            //if (subFace[s][2] + LocationElevation < 0) WIN3D_Diagrams.fill(127, 127, 255); // i.e. water
+
             
   
             if (display_MODEL3D_EDGES == 0) {
@@ -15514,12 +15509,65 @@ void SOLARCHVISION_draw_land () {
               WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D);
             }
             
-
-        
-            
           }
           
           WIN3D_Diagrams.endShape(CLOSE);
+          
+          */
+
+
+
+          for (int s = 0; s < subFace.length; s++) {
+
+            int s_next = (s + 1) % subFace.length;
+            int s_prev = (s + subFace.length - 1) % subFace.length;
+  
+            if (Display_LAND_TEXTURE != 0) {
+              
+              float Z_BASE = -1000; // 1km thickness of the land
+              
+              float u = (subFace[s][0] / LAND_TEXTURE_scale_U + 0.5) * LAND_TEXTURE.width;
+              float v = (-subFace[s][1] / LAND_TEXTURE_scale_V + 0.5) * LAND_TEXTURE.height;
+
+              WIN3D_Diagrams.beginShape();
+
+              WIN3D_Diagrams.fill(223, 223, 223);
+              WIN3D_Diagrams.noStroke();
+          
+              WIN3D_Diagrams.texture(LAND_TEXTURE);
+
+
+              float u_next = (subFace[s_next][0] / LAND_TEXTURE_scale_U + 0.5) * LAND_TEXTURE.width;
+              float v_next = (-subFace[s_next][1] / LAND_TEXTURE_scale_V + 0.5) * LAND_TEXTURE.height;
+              
+              WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D, u, v);
+              WIN3D_Diagrams.vertex(subFace[s_next][0] * objects_scale * WIN3D_scale3D, -subFace[s_next][1] * objects_scale * WIN3D_scale3D, subFace[s_next][2] * objects_scale * WIN3D_scale3D, u_next, v_next);
+              WIN3D_Diagrams.vertex(subFace[s_next][0] * objects_scale * WIN3D_scale3D, -subFace[s_next][1] * objects_scale * WIN3D_scale3D, Z_BASE * objects_scale * WIN3D_scale3D, u_next, v_next);
+              WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, Z_BASE * objects_scale * WIN3D_scale3D, u, v);
+
+              WIN3D_Diagrams.endShape(CLOSE);
+/*              
+              WIN3D_Diagrams.beginShape();
+
+              float u_prev = (subFace[s_prev][0] / LAND_TEXTURE_scale_U + 0.5) * LAND_TEXTURE.width;
+              float v_prev = (-subFace[s_prev][1] / LAND_TEXTURE_scale_V + 0.5) * LAND_TEXTURE.height;
+              
+              WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D, u, v);
+              WIN3D_Diagrams.vertex(subFace[s_prev][0] * objects_scale * WIN3D_scale3D, -subFace[s_prev][1] * objects_scale * WIN3D_scale3D, subFace[s_prev][2] * objects_scale * WIN3D_scale3D, u_prev, v_prev);
+              WIN3D_Diagrams.vertex(subFace[s_prev][0] * objects_scale * WIN3D_scale3D, -subFace[s_prev][1] * objects_scale * WIN3D_scale3D, Z_BASE * objects_scale * WIN3D_scale3D, u_prev, v_prev);
+              WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, Z_BASE * objects_scale * WIN3D_scale3D, u, v);
+              
+              WIN3D_Diagrams.endShape(CLOSE);
+*/          
+            }
+            else {
+          
+              //WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D);
+            }
+            
+          }
+          
+          
           
         }
 
