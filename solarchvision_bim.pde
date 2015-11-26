@@ -20787,7 +20787,7 @@ void mouseDragged () {
           float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
           float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
          
-          if (View_Select_Create_Modify == -3) { // viewport
+          if ((View_Select_Create_Modify == -3) || (View_Select_Create_Modify == -7) || (View_Select_Create_Modify == -8)) { // viewport
           
             if (mouseButton == LEFT) { // orbit
     
