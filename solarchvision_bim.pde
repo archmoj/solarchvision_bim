@@ -20529,9 +20529,16 @@ void mouseReleased () {
                     
                     if (break_loops == 1) break;
                   }
+                  else {
+                    if (mouseButton == LEFT) {
+                      include_OBJ_in_newSelection = 0;
+                      break_loops = 1;
+                    }                          
+                  }                  
                   
                   if (break_loops == 1) break;                  
                 }
+
                 
                 if (include_OBJ_in_newSelection == 1) {
 
@@ -20614,6 +20621,12 @@ void mouseReleased () {
                     }
                     
                     if (break_loops == 1) break;
+                  }
+                  else {
+                    if (mouseButton == LEFT) {
+                      include_OBJ_in_newSelection = 0;
+                      break_loops = 1;
+                    }                       
                   }
                   
                   if (break_loops == 1) break;              
@@ -20701,6 +20714,12 @@ void mouseReleased () {
                             }                          
                           }
                         }
+                        else {
+                          if (mouseButton == LEFT) {
+                            include_OBJ_in_newSelection = 0;
+                            break_loops = 1;
+                          }                          
+                        }                        
                         
                         if (break_loops == 1) break;
                       }
