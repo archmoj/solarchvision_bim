@@ -26305,12 +26305,37 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
       int OBJ_NUM = selectedFractal_numbers[o];
       
       if (OBJ_NUM != 0) {      
-        
-        if (View_Select_Create_Modify == 4) allFractal_Seed[OBJ_NUM] += p; 
-        if (View_Select_Create_Modify == 5) allFractal_DegreeMin[OBJ_NUM] += p;
-        if (View_Select_Create_Modify == 6) allFractal_DegreeMax[OBJ_NUM] += p;
-        if (View_Select_Create_Modify == 7) allFractal_TrunckSize[OBJ_NUM] += 0.25 * p;
-        if (View_Select_Create_Modify == 8) allFractal_LeafSize[OBJ_NUM] += 0.25 * p;
+
+        if (View_Select_Create_Modify == 4) {
+          allFractal_Seed[OBJ_NUM] += p;
+          
+          //Create_Fractal_Plant_Seed = allFractal_Seed[OBJ_NUM];
+          //ROLLOUT_Update = 1;
+        } 
+        if (View_Select_Create_Modify == 5) {
+          allFractal_DegreeMin[OBJ_NUM] += p;
+
+          Create_Fractal_Plant_DegreeMin = allFractal_DegreeMin[OBJ_NUM];
+          ROLLOUT_Update = 1;          
+        }
+        if (View_Select_Create_Modify == 6) {
+          allFractal_DegreeMax[OBJ_NUM] += p;
+
+          Create_Fractal_Plant_DegreeMax = allFractal_DegreeMax[OBJ_NUM];
+          ROLLOUT_Update = 1;
+        }
+        if (View_Select_Create_Modify == 7) {
+          allFractal_TrunckSize[OBJ_NUM] += 0.25 * p;
+          
+          Create_Fractal_Plant_TrunckSize = allFractal_TrunckSize[OBJ_NUM];
+          ROLLOUT_Update = 1;
+        }
+        if (View_Select_Create_Modify == 8) {
+          allFractal_LeafSize[OBJ_NUM] += 0.25 * p;
+
+          Create_Fractal_Plant_LeafSize = allFractal_LeafSize[OBJ_NUM];
+          ROLLOUT_Update = 1;
+        }
 
       }
     }    
