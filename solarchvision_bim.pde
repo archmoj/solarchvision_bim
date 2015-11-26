@@ -20443,16 +20443,13 @@ void mouseWheel(MouseEvent event) {
                 
                 WIN3D_RZ_coordinate += q;
 
-                //float r = pow(pow(CAM_x - WIN3D_X_coordinate, 2) + pow(CAM_y - WIN3D_Y_coordinate, 2), 0.5);
                 float r = pow(pow(CAM_x - WIN3D_X_coordinate, 2) + pow(CAM_y - WIN3D_Z_coordinate, 2), 0.5);
-                //float r = pow(pow(CAM_x - WIN3D_X_coordinate, 2) + pow(CAM_z - WIN3D_Z_coordinate, 2), 0.5);
                 
                 float d = r * 2 * sin_ang(0.5 * q);
                
                 println(CAM_x, CAM_y, CAM_z, WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate, r, d);
 
                 WIN3D_X_coordinate += cos_ang(0.5 * q) * d;
-                //WIN3D_Y_coordinate += sin_ang(0.5 * q) * d;
                 WIN3D_Z_coordinate += sin_ang(0.5 * q) * d;
                 
                 
