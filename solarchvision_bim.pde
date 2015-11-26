@@ -185,7 +185,7 @@ int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:4D
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
-int View_Select_Create_Modify = 4; // -7:SkydomeSize -6:Truck/Orbit -5:ModelSize/Pan/Orbit -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Properties
+int View_Select_Create_Modify = 4; // -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:ModelSize/Pan/Orbit -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Properties
 int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. fractal trees
 
@@ -20403,10 +20403,26 @@ void mouseWheel(MouseEvent event) {
                 WIN3D_Update = 1;
 
               }
-              
             }
 
+            if (View_Select_Create_Modify == -8) { // viewport:different functions with wheel
     
+              if (Modify_Object_Parameters == 0) { // AllModelSize
+              
+                if (Wheel_Value > 0) {
+                  objects_scale *= pow(2.0, 0.25);
+                  SKY3D_scale *= pow(2.0, 0.25);
+                }              
+
+                if (Wheel_Value < 0) {
+                  objects_scale /= pow(2.0, 0.25);
+                  SKY3D_scale /= pow(2.0, 0.25);
+                }      
+                  
+                WIN3D_Update = 1;
+
+              }
+            }    
             
           }
         }   
@@ -21462,7 +21478,13 @@ void mouseClicked () {
             set_to_View_SkydomeSize();
             SOLARCHVISION_highlight_in_BAR_b("±SK");
             BAR_b_Update = 1;  
-          }          
+          }       
+       
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("AllModelSize")) {
+            set_to_View_AllModelSize();
+            SOLARCHVISION_highlight_in_BAR_b("±SA");
+            BAR_b_Update = 1;  
+          }     
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shrink 3DViewSpace")) {
             set_to_View_3DViewSpace(0);
@@ -22741,7 +22763,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
       //Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 4, 1), 1));
     
-      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -7, 5, 1), 1));
+      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -8, 5, 1), 1));
       //View_XYZ_ChangeOption = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_ChangeOption" , View_XYZ_ChangeOption, 0, 6, 1), 1));
       //Modify_Object_Parameters = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Object_Parameters" , Modify_Object_Parameters, 0, 9, 1), 1));
 
@@ -26633,7 +26655,6 @@ void dessin_Zoom (int _type, float x, float y, float r) {
   
   pushMatrix();
   translate(x, y);
-
   
   {
     pushMatrix();
@@ -26664,33 +26685,67 @@ void dessin_Zoom (int _type, float x, float y, float r) {
   BAR_b_Display_Text = 0;
 }
 
+void dessin_AllModelSize (int _type, float x, float y, float r) {
+
+  pushMatrix();
+  translate(x, y);
+
+  strokeWeight(1);
+  stroke(255); 
+  noFill();  
+  ellipse(0,0, r,r); 
+  
+  line(-0.75 * r, 0, -0.5 * r, 0);
+  line(0, -0.75 * r, 0, -0.5 * r);
+  line(0.75 * r, 0, 0.5 * r, 0);
+  line(0, 0.75 * r, 0, 0.5 * r);
+
+
+  strokeWeight(2);
+  stroke(255,255,0);
+  line(-0.2 * r, 0, 0.2 * r, 0);
+  line(0, -0.2 * r, 0, 0.2 * r); 
+
+  strokeWeight(0);
+  
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
 
 void dessin_SkydomeSize (int _type, float x, float y, float r) {
 
   pushMatrix();
   translate(x, y);
 
-  float d = 1.0 * r;
+  {
+    pushMatrix();
+    translate(0, 0.125 * r);
 
-  strokeWeight(1);
-  stroke(255); 
-  noFill();  
-  arc(0,0, d,d, PI, 2 * PI); 
-  arc(0,0, d,0.333 * d, 0, PI);
+    float d = 1.0 * r;
   
-  d = 1.5 * r;
-  
-  strokeWeight(2);
-  stroke(255); 
-  noFill();  
-  arc(0,0, d,d, PI, 2 * PI);
-  arc(0,0, d,0.333 * d, 0, PI);
+    strokeWeight(1);
+    stroke(255); 
+    noFill();  
+    arc(0,0, d,d, PI, 2 * PI); 
+    arc(0,0, d,0.333 * d, 0, PI);
+    
+    d = 1.5 * r;
+    
+    strokeWeight(2);
+    stroke(255); 
+    noFill();  
+    arc(0,0, d,d, PI, 2 * PI);
+    arc(0,0, d,0.333 * d, 0, PI);
+    
+    popMatrix();
+  }
 
   strokeWeight(2);
   stroke(255,255,0);
-  line(-0.2 * r, -0.1 * r, 0.2 * r, -0.1 * r);
-  line(0, -0.3 * r, 0, 0.1 * r); 
-
+  line(-0.2 * r, 0, 0.2 * r, 0);
+  line(0, -0.2 * r, 0, 0.2 * r); 
   
   strokeWeight(0);
   
@@ -27000,9 +27055,11 @@ String[][] BAR_b_Items = {
                           {"3", "DIz", "DIx", "DIy", "Truck", "1.0"},
                           {"1", "Walk", "DistZ", "1.0"},
                           {"1", "Pan", "Cen", "Pan", "1.0"},
-                          {"1", "±ZM", "0ZM", "Zoom", "1.0"},
                           {"1", "±SZ", "3DModelSize", "1.0"},                          
+                          {"1", "±ZM", "0ZM", "Zoom", "1.0"},
+                          {"1", "±SA", "AllModelSize", "1.0"},                          
                           {"1", "±SK", "SkydomeSize", "1.0"},
+                          
                          
                           {"2", "Fractal", "Tree", "Person", "LivingType", "1.5"},
                           {"1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "BuildingType", "2.0"},
@@ -27203,6 +27260,8 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("3DModelSize")) set_to_View_3DModelSize();
         
         if (Bar_Switch.equals("SkydomeSize")) set_to_View_SkydomeSize();
+        
+        if (Bar_Switch.equals("AllModelSize")) set_to_View_AllModelSize();
       
         if (Bar_Switch.equals("3DViewSpace")) set_to_View_3DViewSpace(j - 1);
 
@@ -27257,9 +27316,11 @@ void SOLARCHVISION_draw_window_BAR_b () {
           dessin_3DModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }      
         if (Bar_Switch.equals("SkydomeSize")) {
-            dessin_SkydomeSize(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_SkydomeSize(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }
-      
+        if (Bar_Switch.equals("AllModelSize")) {
+          dessin_AllModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }      
       }
   
       if (BAR_b_Display_Text == 1) { // writing titles where the icon is not available
@@ -27613,6 +27674,16 @@ void set_to_View_SkydomeSize () {
     
   ROLLOUT_Update = 1;          
 }   
+
+void set_to_View_AllModelSize () {
+
+  View_Select_Create_Modify = -8;
+  
+  WIN3D_Update = 1;  
+    
+  ROLLOUT_Update = 1;          
+}   
+
 
 void set_to_View_3DViewSpace (int n) {
 
