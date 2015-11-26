@@ -193,14 +193,14 @@ int Modify_Object_Parameters = 0; //to modify objects with several parameters e.
 
 
 
-int Display_SWOB_points = 1; // 0-2
-int Display_SWOB_nearest = 1;
+int Display_SWOB_points = 0; // 0-2
+int Display_SWOB_nearest = 0;
 
-int Display_NAEFS_points = 1; // 0-2
-int Display_NAEFS_nearest = 1;
+int Display_NAEFS_points = 0; // 0-2
+int Display_NAEFS_nearest = 0;
 
-int Display_CWEEDS_points = 1; // 0-2
-int Display_CWEEDS_nearest = 1;
+int Display_CWEEDS_points = 0; // 0-2
+int Display_CWEEDS_nearest = 0;
 
 int Display_EPW_points = 1; // 0-2
 int Display_EPW_nearest = 1;
@@ -21181,37 +21181,37 @@ void mouseClicked () {
             ROLLOUT_Update = 1;
           } 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Wind Flow")) {
-            display_windFlow = (display_windFlow  + 1) % 2;
+            display_windFlow = (display_windFlow + 1) % 2;
             
             WIN3D_Update = 1;  
             ROLLOUT_Update = 1;
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 3-D Pivot")) {
-            selectedPolymesh_displayPivot = (selectedPolymesh_displayPivot  + 1) % 2;
+            selectedPolymesh_displayPivot = (selectedPolymesh_displayPivot + 1) % 2;
             
             WIN3D_Update = 1;  
             ROLLOUT_Update = 1;
           }          
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 3-D Edges")) {
-            selectedPolymesh_displayEdges = (selectedPolymesh_displayEdges  + 1) % 2;
+            selectedPolymesh_displayEdges = (selectedPolymesh_displayEdges + 1) % 2;
             
             WIN3D_Update = 1;  
             ROLLOUT_Update = 1;
           }    
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 3-D Box")) {
-            selectedPolymesh_displayBox = (selectedPolymesh_displayBox  + 1) % 2;
+            selectedPolymesh_displayBox = (selectedPolymesh_displayBox + 1) % 2;
             
             WIN3D_Update = 1;  
             ROLLOUT_Update = 1;
           }    
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 2½D Edges")) {
-            selectedObject2D_displayEdges = (selectedObject2D_displayEdges  + 1) % 2;
+            selectedObject2D_displayEdges = (selectedObject2D_displayEdges + 1) % 2;
             
             WIN3D_Update = 1;  
             ROLLOUT_Update = 1;
           }    
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected ∞-D Edges")) {
-            selectedFractal_displayEdges = (selectedFractal_displayEdges  + 1) % 2;
+            selectedFractal_displayEdges = (selectedFractal_displayEdges + 1) % 2;
             
             WIN3D_Update = 1;  
             ROLLOUT_Update = 1;
@@ -21224,13 +21224,13 @@ void mouseClicked () {
             ROLLOUT_Update = 1;
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide SWOB nearest")) {
-            Display_SWOB_nearest = (Display_SWOB_nearest  + 1) % 2;
+            Display_SWOB_nearest = (Display_SWOB_nearest + 1) % 2;
             
             WORLD_Update = 1;  
             ROLLOUT_Update = 1;
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide NAEFS points")) {
-            Display_NAEFS_points = (Display_NAEFS_points  + 1) % 2;
+            Display_NAEFS_points = (Display_NAEFS_points + 1) % 2;
             
             WORLD_Update = 1;  
             ROLLOUT_Update = 1;
@@ -21242,25 +21242,25 @@ void mouseClicked () {
             ROLLOUT_Update = 1;
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide CWEEDS points")) {
-            Display_CWEEDS_points = (Display_CWEEDS_points  + 1) % 2;
+            Display_CWEEDS_points = (Display_CWEEDS_points + 1) % 2;
             
             WORLD_Update = 1;  
             ROLLOUT_Update = 1;
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide CWEEDS nearest")) {
-            Display_CWEEDS_nearest = (Display_CWEEDS_nearest  + 1) % 2;
+            Display_CWEEDS_nearest = (Display_CWEEDS_nearest + 1) % 2;
             
             WORLD_Update = 1;  
             ROLLOUT_Update = 1;
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide EPW points")) {
-            Display_EPW_points = (Display_EPW_points  + 1) % 2;
+            Display_EPW_points = (Display_EPW_points + 1) % 2;
             
             WORLD_Update = 1;  
             ROLLOUT_Update = 1;
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide EPW nearest")) {
-            Display_EPW_nearest = (Display_EPW_nearest  + 1) % 2;
+            Display_EPW_nearest = (Display_EPW_nearest + 1) % 2;
             
             WORLD_Update = 1;  
             ROLLOUT_Update = 1;
@@ -27114,6 +27114,94 @@ void SOLARCHVISION_draw_window_BAR_a () {
           else{
             stroke(255); 
             fill(255);
+            
+            if (BAR_a_Items[i][0].equals("Display")) {
+              if (BAR_a_Items[i][j].equals("Display/Hide Land Mesh")) {
+                if (Display_LAND_MESH == 0) {stroke(127); fill(127);}
+              }       
+              if (BAR_a_Items[i][j].equals("Display/Hide Land Texture")) {
+                if (Display_LAND_TEXTURE == 0) {stroke(127); fill(127);}
+              }           
+              if (BAR_a_Items[i][j].equals("Display/Hide Land Depth")) {
+                if (Display_LAND_DEPTH == 0) {stroke(127); fill(127);}
+              }          
+              if (BAR_a_Items[i][j].equals("Display/Hide Vertices")) {
+                if (WIN3D_VERTS_SHOW == 0) {stroke(127); fill(127);}
+              }            
+              if (BAR_a_Items[i][j].equals("Display/Hide Edges")) {
+                if (WIN3D_EDGES_SHOW == 0) {stroke(127); fill(127);}
+              } 
+              if (BAR_a_Items[i][j].equals("Display/Hide Leaves")) {
+                if (Display_Leaves == 0) {stroke(127); fill(127);}
+              }                
+              if (BAR_a_Items[i][j].equals("Display/Hide Living Objects")) {
+                if (Display_Trees_People == 0) {stroke(127); fill(127);}
+                //if (Display_FractalPlant == 0) {stroke(127); fill(127);}
+                //if (Display_Leaves == 0) {stroke(127); fill(127);}
+              } 
+              if (BAR_a_Items[i][j].equals("Display/Hide Building Objects")) {
+                if (Display_Building_Model == 0) {stroke(127); fill(127);}
+              }           
+              if (BAR_a_Items[i][j].equals("Display/Hide Urban")) {
+                if (Display_URBAN_MESH == 0) {stroke(127); fill(127);}
+              } 
+              if (BAR_a_Items[i][j].equals("Display/Hide Sky")) {
+                if (Display_SKY3D == 0) {stroke(127); fill(127);}
+              }
+              if (BAR_a_Items[i][j].equals("Display/Hide Sun")) {
+                if (Display_SUN3D == 0) {stroke(127); fill(127);}
+              }           
+              if (BAR_a_Items[i][j].equals("Display/Hide Shading Section")) {
+                if (display_SolarImpact_Image == 0) {stroke(127); fill(127);}
+              }  
+              if (BAR_a_Items[i][j].equals("Display/Hide Spatial Section")) {
+                if (display_SpatialImpact_Image == 0) {stroke(127); fill(127);}
+              } 
+              if (BAR_a_Items[i][j].equals("Display/Hide Wind Flow")) {
+                if (display_windFlow == 0) {stroke(127); fill(127);}
+              }
+              if (BAR_a_Items[i][j].equals("Display/Hide Selected 3-D Pivot")) {
+                if (selectedPolymesh_displayPivot == 0) {stroke(127); fill(127);}
+              }          
+              if (BAR_a_Items[i][j].equals("Display/Hide Selected 3-D Edges")) {
+                if (selectedPolymesh_displayEdges == 0) {stroke(127); fill(127);}
+              }    
+              if (BAR_a_Items[i][j].equals("Display/Hide Selected 3-D Box")) {
+                if (selectedPolymesh_displayBox == 0) {stroke(127); fill(127);}
+              }    
+              if (BAR_a_Items[i][j].equals("Display/Hide Selected 2½D Edges")) {
+                if (selectedObject2D_displayEdges == 0) {stroke(127); fill(127);}
+              }    
+              if (BAR_a_Items[i][j].equals("Display/Hide Selected ∞-D Edges")) {
+                if (selectedFractal_displayEdges == 0) {stroke(127); fill(127);}
+              }              
+              if (BAR_a_Items[i][j].equals("Display/Hide SWOB points")) {
+                if (Display_SWOB_points == 0) {stroke(127); fill(127);}
+              }
+              if (BAR_a_Items[i][j].equals("Display/Hide SWOB nearest")) {
+                if (Display_SWOB_nearest == 0) {stroke(127); fill(127);}
+              }
+              if (BAR_a_Items[i][j].equals("Display/Hide NAEFS points")) {
+                if (Display_NAEFS_points == 0) {stroke(127); fill(127);}
+              }
+              if (BAR_a_Items[i][j].equals("Display/Hide NAEFS nearest")) {
+                if (Display_NAEFS_nearest == 0) {stroke(127); fill(127);}
+              }
+              if (BAR_a_Items[i][j].equals("Display/Hide CWEEDS points")) {
+                if (Display_CWEEDS_points == 0) {stroke(127); fill(127);}
+              }
+              if (BAR_a_Items[i][j].equals("Display/Hide CWEEDS nearest")) {
+                if (Display_CWEEDS_nearest == 0) {stroke(127); fill(127);}
+              }
+              if (BAR_a_Items[i][j].equals("Display/Hide EPW points")) {
+                if (Display_EPW_points == 0) {stroke(127); fill(127);}
+              }
+              if (BAR_a_Items[i][j].equals("Display/Hide EPW nearest")) {
+                if (Display_EPW_nearest == 0) {stroke(127); fill(127);}
+              }          
+              
+            }
+                    
             textSize(1.25 * MESSAGE_S_View);
           }
   
