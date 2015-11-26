@@ -11607,8 +11607,10 @@ void WIN3D_keyPressed (KeyEvent e) {
                      selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = allPolymesh_Faces.length - 1;
                    }
                    SOLARCHVISION_calculate_selectedPolymesh_Pivot();
-                   SOLARCHVISION_reset_selectedPolymesh_Pivot();  
                  }
+                 
+                 SOLARCHVISION_reset_selectedRefValues();  
+                 
                  WIN3D_Update = 1;
                  ROLLOUT_Update = 1; 
                  break;  
@@ -11634,8 +11636,10 @@ void WIN3D_keyPressed (KeyEvent e) {
                      selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = 0;
                    }
                    SOLARCHVISION_calculate_selectedPolymesh_Pivot();
-                   SOLARCHVISION_reset_selectedPolymesh_Pivot();
                  }  
+                 
+                 SOLARCHVISION_reset_selectedRefValues();  
+                 
                  WIN3D_Update = 1;
                  ROLLOUT_Update = 1; 
                  break;          
@@ -20751,8 +20755,9 @@ void mouseReleased () {
   
               SOLARCHVISION_calculate_selectedPolymesh_Pivot();
       
-              SOLARCHVISION_reset_selectedPolymesh_Pivot();
             }
+            
+            SOLARCHVISION_reset_selectedRefValues();  
             
 
 
@@ -22073,7 +22078,6 @@ void mouseClicked () {
                 
                 if (pre_selectedPolymesh_numbers_lastItem != selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1]) SOLARCHVISION_calculate_selectedPolymesh_Pivot();
         
-                if (mouseButton == LEFT) SOLARCHVISION_reset_selectedPolymesh_Pivot();
               }
   
               if (Work_with_2D_or_3D == 2) {
@@ -22165,7 +22169,9 @@ void mouseClicked () {
                 
                 WIN3D_Update = 1;
               }
-                          
+              
+              
+              if (mouseButton == LEFT) SOLARCHVISION_reset_selectedRefValues();            
             }      
        
             
@@ -25903,7 +25909,7 @@ void SOLARCHVISION_calculate_selectedPolymesh_Pivot () {
   
 }
 
-void SOLARCHVISION_reset_selectedPolymesh_Pivot () {
+void SOLARCHVISION_reset_selectedRefValues () {
   
   selected_posValue = 0;  
   selected_rotValue = 0;  
