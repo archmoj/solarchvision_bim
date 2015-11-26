@@ -1462,6 +1462,8 @@ int WIN3D_update_VerticesSolarValue = 1;
 
 
 
+
+
 int WORLD_CX_View = int(1.25 * h_pixel);
 int WORLD_CY_View = a_pixel + b_pixel + 0;
 int WORLD_X_View = int(1.75 * h_pixel);
@@ -1983,7 +1985,7 @@ void draw () {
     text("SOLARCHVISION_build_SolarProjection_array", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 26) {  
-    SOLARCHVISION_build_SolarProjection_array();
+    //SOLARCHVISION_build_SolarProjection_array();
      
     stroke(0);
     fill(0);
@@ -2111,6 +2113,10 @@ void draw () {
         pre_plot_impacts = plot_impacts;
         
         SOLARCHVISION_draw_ROLLOUT();
+        
+        if (abs(pre_plot_impacts) % 2 != abs(plot_impacts) % 2) {
+          rebuild_SolarProjection_array = 1;
+        }
         
         if (pre_Sample_Year_start != Sample_Year_start) {
           BAR_d_Update = 1;
@@ -2333,9 +2339,6 @@ void draw () {
         }             
           
         if (pre_WIN3D_FACES_SHADE != WIN3D_FACES_SHADE) {
-          
-          if (WIN3D_FACES_SHADE == Shade_Global_Solar) SOLARCHVISION_SolarProjection(); 
-          
           WIN3D_Update = 1;
         }             
         
@@ -2561,6 +2564,12 @@ PGraphics WIN3D_Diagrams;
 void SOLARCHVISION_draw_WIN3D () {
   
   if (WIN3D_Update == 1) {
+    
+    if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
+      if (rebuild_SolarProjection_array != 0) {
+        SOLARCHVISION_SolarProjection();
+      }
+    }     
 
     if (WIN3D_record_JPG == 1) WIN3D_Image_Scale = 2; //3;
     else WIN3D_Image_Scale = 1;
@@ -10898,7 +10907,7 @@ void STUDY_keyPressed (KeyEvent e) {
         case 119 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != -2)) || (plot_impacts == -1)) plot_impacts = -2;
                    else plot_impacts = -1; 
                    STUDY_Update = 1; ROLLOUT_Update = 1; break;
-                   
+
         
         case 35  :_DATE += 1;
                   if (int(_DATE) == 365) _DATE -= 365;
@@ -11782,14 +11791,11 @@ void WIN3D_keyPressed (KeyEvent e) {
         //case 'e' :WIN3D_EDGES_SHOW = (WIN3D_EDGES_SHOW + 1) % 2; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
   
         case 'K' :WIN3D_FACES_SHADE = (WIN3D_FACES_SHADE + 5 - 1) % 5; WIN3D_Update = 1;
-                  if (WIN3D_FACES_SHADE == Shade_Global_Solar) SOLARCHVISION_SolarProjection(); 
                   ROLLOUT_Update = 1; 
                   break;
         case 'k' :WIN3D_FACES_SHADE = (WIN3D_FACES_SHADE + 1) % 5; WIN3D_Update = 1;
-                  if (WIN3D_FACES_SHADE == Shade_Global_Solar) SOLARCHVISION_SolarProjection(); 
                   ROLLOUT_Update = 1; 
                   break; 
-         
         
         case 't' :MODEL3D_TESELATION += 1; WIN3D_update_VerticesSolarValue = 1; WIN3D_Update = 1; break; 
         case 'T' :MODEL3D_TESELATION -= 1;
@@ -11808,7 +11814,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                   ROLLOUT_Update = 1; 
                   break; 
                   
-        case ENTER: if (WIN3D_FACES_SHADE == Shade_Global_Solar) SOLARCHVISION_SolarProjection();  
+        case ENTER: if (WIN3D_FACES_SHADE == Shade_Global_Solar) rebuild_SolarProjection_array = 1;   
                     if (WIN3D_FACES_SHADE == Shade_Vertex_Solar) WIN3D_update_VerticesSolarValue = 1;
                     WIN3D_Update = 1;
                     ROLLOUT_Update = 1;  
@@ -14947,9 +14953,7 @@ void SOLARCHVISION_draw_SKY3D () {
       }
 
       else if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
-        
-        if (rebuild_SolarProjection_array != 0) SOLARCHVISION_SolarProjection();
-          
+
         int PAL_TYPE = 0; 
         int PAL_DIR = 1;
         
@@ -15401,7 +15405,6 @@ void SOLARCHVISION_draw_land () {
               _COL[3] = 127;
             }
             else if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
-              if (rebuild_SolarProjection_array != 0) SOLARCHVISION_SolarProjection();
               
               int PAL_TYPE = 0; 
               int PAL_DIR = 1;
@@ -15793,8 +15796,6 @@ void SOLARCHVISION_draw_3Dobjects () {
             }
           }                  
           else if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
-            
-            if (rebuild_SolarProjection_array != 0) SOLARCHVISION_SolarProjection();
             
             int PAL_TYPE = 0; 
             int PAL_DIR = 1;
@@ -19877,6 +19878,7 @@ void SOLARCHVISION_SolarProjection () {
   num_add_days = keep_num_add_days;
   
   cursor(ARROW);
+
 }
 
 
@@ -21031,8 +21033,6 @@ void mouseClicked () {
           } 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Global Solar")) {
             WIN3D_FACES_SHADE = Shade_Global_Solar;
-            
-            SOLARCHVISION_SolarProjection(); // <<<<<<<<<<
             
             WIN3D_Update = 1;  
             ROLLOUT_Update = 1;
