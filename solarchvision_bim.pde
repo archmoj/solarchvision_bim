@@ -20449,12 +20449,8 @@ void mouseWheel(MouseEvent event) {
                 float dxy = pow(pow(CAM_x - WIN3D_X_coordinate, 2) + pow(CAM_y - WIN3D_Y_coordinate, 2), 0.5) * 2 * sin_ang(0.5 * q);
                
                 println(CAM_x, CAM_y, CAM_z, WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate, dxy);
-               
-                //WIN3D_X_coordinate += cos_ang(0.5 * q) * dxy;
-                 
+
                 WIN3D_X_coordinate += cos_ang(0.5 * q) * dxy;
-                //WIN3D_Y_coordinate += sin_ang(0.5 * q) * dxy;
-                //WIN3D_Z_coordinate += sin_ang(0.5 * q) * dxy;
                 
               } 
               else {
