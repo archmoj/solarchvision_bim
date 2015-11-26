@@ -21301,7 +21301,8 @@ void mouseClicked () {
           }
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Move")) {
-            set_to_Modify_Move(selectedPolymesh_posVector);
+            //set_to_Modify_Move(selectedPolymesh_posVector);
+            set_to_Modify_Move(3);
             SOLARCHVISION_highlight_in_BAR_b("MV³");
             BAR_b_Update = 1;  
           }
@@ -21321,7 +21322,8 @@ void mouseClicked () {
             BAR_b_Update = 1;  
           }              
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Scale")) {
-            set_to_Modify_Scale(selectedPolymesh_scaleVector);
+            //set_to_Modify_Scale(selectedPolymesh_scaleVector);
+            set_to_Modify_Scale(3);
             SOLARCHVISION_highlight_in_BAR_b("SC³");
             BAR_b_Update = 1;  
           }
@@ -21341,7 +21343,8 @@ void mouseClicked () {
             BAR_b_Update = 1;  
           }                
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Rotate")) {
-            set_to_Modify_Rotate(selectedPolymesh_rotVector);
+            //set_to_Modify_Rotate(selectedPolymesh_rotVector);
+            set_to_Modify_Rotate(2); // <<<<<<
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("RotateX")) {
