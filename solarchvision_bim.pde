@@ -7,7 +7,7 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 2;
+int STATION_NUMBER = 3;
 
 String[][] DEFINED_STATIONS = {
   
@@ -20443,12 +20443,19 @@ void mouseWheel(MouseEvent event) {
                 
                 WIN3D_RZ_coordinate += q;
                 
-                println(CAM_x, CAM_y, CAM_z);
                 
-                WIN3D_X_coordinate += sin_ang(q) * pow(CAM_x * CAM_x + CAM_y * CAM_y, 0.5);
                 
-                //WIN3D_X_coordinate += sin_ang(q) * CAM_z * objects_scale;
-                //WIN3D_Z_coordinate += cos_ang(q) * CAM_z * objects_scale;
+                //float dxy = pow(CAM_x * CAM_x + CAM_y * CAM_y, 0.5) * 2 * sin_ang(0.5 * q);
+                float dxy = pow(pow(CAM_x - WIN3D_X_coordinate, 2) + pow(CAM_y - WIN3D_Y_coordinate, 2), 0.5) * 2 * sin_ang(0.5 * q);
+               
+                println(CAM_x, CAM_y, CAM_z, WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate, dxy);
+               
+                //WIN3D_X_coordinate += cos_ang(0.5 * q) * dxy;
+                 
+                WIN3D_X_coordinate += cos_ang(0.5 * q) * dxy;
+                //WIN3D_Y_coordinate += sin_ang(0.5 * q) * dxy;
+                //WIN3D_Z_coordinate += sin_ang(0.5 * q) * dxy;
+                
               } 
               else {
 
