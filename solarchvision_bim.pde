@@ -2265,7 +2265,7 @@ void draw () {
           if (the_Vector == 1) {dz = 0; dx = 0;}  
           if (the_Vector == 2) {dx = 0; dy = 0;}            
           
-          SOLARCHVISION_move_selectedPolymesh(dx, dy, dz);
+          SOLARCHVISION_move_Selection(dx, dy, dz);
           WIN3D_Update = 1;
         }
         if (pre_selected_rotValue != selected_rotValue) {
@@ -2278,7 +2278,7 @@ void draw () {
           
           int the_Vector = selected_rotVector;
           
-          SOLARCHVISION_rotate_selectedPolymesh(x0, y0, z0, r, the_Vector);
+          SOLARCHVISION_rotate_Selection(x0, y0, z0, r, the_Vector);
           WIN3D_Update = 1;
         }
         if (pre_selected_scaleValue != selected_scaleValue) {
@@ -2299,7 +2299,7 @@ void draw () {
           if (the_Vector == 1) {sz = 1; sx = 1;}  
           if (the_Vector == 2) {sx = 1; sy = 1;}           
           
-          SOLARCHVISION_scale_selectedPolymesh(x0, y0, z0, sx, sy, sz);
+          SOLARCHVISION_scale_Selection(x0, y0, z0, sx, sy, sz);
           WIN3D_Update = 1;
         }        
 
