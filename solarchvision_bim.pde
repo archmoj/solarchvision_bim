@@ -1116,6 +1116,7 @@ int Download_LAND_MESH = 0;
 int Load_LAND_MESH = 1; // 1;
 int Display_LAND_MESH = 1; // 1;
 int Display_LAND_TEXTURE = 1;
+int Display_LAND_DEPTH = 0;
 int Skip_LAND_MESH_Center = 0; //5;
 
 int Load_URBAN_MESH = 0;
@@ -15514,32 +15515,35 @@ void SOLARCHVISION_draw_land () {
 
           if (Display_LAND_TEXTURE != 0) {
             
-            WIN3D_Diagrams.fill(223, 223, 223);
-            WIN3D_Diagrams.noStroke();
-
-            float CrustDepth = 100; // The crust ranges from 5–70 km
-  
-            for (int s = 0; s < subFace.length; s++) {
-  
-              int s_next = (s + 1) % subFace.length;
+            if (Display_LAND_DEPTH != 0) {
             
-              float u = (subFace[s][0] / LAND_TEXTURE_scale_U + 0.5) * LAND_TEXTURE.width;
-              float v = (-subFace[s][1] / LAND_TEXTURE_scale_V + 0.5) * LAND_TEXTURE.height;
+              WIN3D_Diagrams.fill(223, 223, 223);
+              WIN3D_Diagrams.noStroke();
   
-              float u_next = (subFace[s_next][0] / LAND_TEXTURE_scale_U + 0.5) * LAND_TEXTURE.width;
-              float v_next = (-subFace[s_next][1] / LAND_TEXTURE_scale_V + 0.5) * LAND_TEXTURE.height;
+              float CrustDepth = 100; // The crust ranges from 5–70 km
+    
+              for (int s = 0; s < subFace.length; s++) {
+    
+                int s_next = (s + 1) % subFace.length;
               
-              WIN3D_Diagrams.beginShape();
-              
-              WIN3D_Diagrams.texture(LAND_TEXTURE);                  
-              
-              WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D, u, v);
-              WIN3D_Diagrams.vertex(subFace[s_next][0] * objects_scale * WIN3D_scale3D, -subFace[s_next][1] * objects_scale * WIN3D_scale3D, subFace[s_next][2] * objects_scale * WIN3D_scale3D, u_next, v_next);
-              WIN3D_Diagrams.vertex(subFace[s_next][0] * objects_scale * WIN3D_scale3D, -subFace[s_next][1] * objects_scale * WIN3D_scale3D, (subFace[s_next][2] - CrustDepth) * objects_scale * WIN3D_scale3D, u_next, v_next);
-              WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, (subFace[s][2] - CrustDepth) * objects_scale * WIN3D_scale3D, u, v);
-  
-              WIN3D_Diagrams.endShape(CLOSE);
-  
+                float u = (subFace[s][0] / LAND_TEXTURE_scale_U + 0.5) * LAND_TEXTURE.width;
+                float v = (-subFace[s][1] / LAND_TEXTURE_scale_V + 0.5) * LAND_TEXTURE.height;
+    
+                float u_next = (subFace[s_next][0] / LAND_TEXTURE_scale_U + 0.5) * LAND_TEXTURE.width;
+                float v_next = (-subFace[s_next][1] / LAND_TEXTURE_scale_V + 0.5) * LAND_TEXTURE.height;
+                
+                WIN3D_Diagrams.beginShape();
+                
+                WIN3D_Diagrams.texture(LAND_TEXTURE);                  
+                
+                WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D, u, v);
+                WIN3D_Diagrams.vertex(subFace[s_next][0] * objects_scale * WIN3D_scale3D, -subFace[s_next][1] * objects_scale * WIN3D_scale3D, subFace[s_next][2] * objects_scale * WIN3D_scale3D, u_next, v_next);
+                WIN3D_Diagrams.vertex(subFace[s_next][0] * objects_scale * WIN3D_scale3D, -subFace[s_next][1] * objects_scale * WIN3D_scale3D, (subFace[s_next][2] - CrustDepth) * objects_scale * WIN3D_scale3D, u_next, v_next);
+                WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, (subFace[s][2] - CrustDepth) * objects_scale * WIN3D_scale3D, u, v);
+    
+                WIN3D_Diagrams.endShape(CLOSE);
+    
+              }
             }
           }
           
@@ -21106,7 +21110,13 @@ void mouseClicked () {
             
             WIN3D_Update = 1;  
             ROLLOUT_Update = 1;
-          }              
+          }           
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Land Depth")) {
+            Display_LAND_DEPTH = (Display_LAND_DEPTH + 1) % 2;
+            
+            WIN3D_Update = 1;  
+            ROLLOUT_Update = 1;
+          }          
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Vertices")) {
             WIN3D_VERTS_SHOW = (WIN3D_VERTS_SHOW  + 1) % 2;
             
@@ -22727,6 +22737,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Skip_LAND_MESH_Center = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Skip_LAND_MESH_Center" , Skip_LAND_MESH_Center, 0, LAND_n_I - 1, 1), 1));
       Display_LAND_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_LAND_MESH" , Display_LAND_MESH, 0, 1, 1), 1));
       Display_LAND_TEXTURE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_LAND_TEXTURE" , Display_LAND_TEXTURE, 0, 1, 1), 1));     
+      Display_LAND_DEPTH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_LAND_DEPTH" , Display_LAND_DEPTH, 0, 1, 1), 1));
 
       Display_Trees_People = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_Trees_People" , Display_Trees_People, 0, 1, 1), 1));
       Display_FractalPlant = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_FractalPlant" , Display_FractalPlant, 0, 1, 1), 1));
@@ -26983,7 +26994,7 @@ String[][] BAR_a_Items = {
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
                         {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Orbit", "OrbitXY", "OrbitZ", "Pan", "Look at origin", "TruckX", "TruckY", "TruckZ", "Walk", "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
-                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Edges", "Display/Hide Vertices", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sky", "Display/Hide Sun", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
+                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Vertices", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sky", "Display/Hide Sun", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
