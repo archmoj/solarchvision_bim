@@ -1979,17 +1979,6 @@ void draw () {
     stroke(0);
     fill(0);
     rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
-    
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_build_SolarProjection_array", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
-  }
-  else if (frameCount == 26) {  
-    //SOLARCHVISION_build_SolarProjection_array();
-     
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
    
     stroke(255);
     fill(255);
@@ -14229,9 +14218,9 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
           float g = COL >> 8 & 0xFF;
           float b = COL & 0xFF;
                                         
-          if ((g > r + 5) && (g > b + 5)) { // looks more green
+          if ((g > r + 10) && (g > b + 10)) { // looks more green
             if (g < 127) { // not on grass (light green)
-              if (z + LocationElevation > 0) { // not in water (below see level)
+              if (z + LocationElevation > 5) { // not in water (below see level)
               
                 //float s = 5 + random(10); 
                 float s = 10 + random(20); // bigger trees
@@ -15514,44 +15503,37 @@ void SOLARCHVISION_draw_land () {
           }
           
           WIN3D_Diagrams.endShape(CLOSE);
-          
 
 
-          float CrustDepth = 100; // The crust ranges from 5–70 km
-
-          for (int s = 0; s < subFace.length; s++) {
-
-            int s_next = (s + 1) % subFace.length;
-
-            WIN3D_Diagrams.beginShape();
-
+          if (Display_LAND_TEXTURE != 0) {
+            
             WIN3D_Diagrams.fill(223, 223, 223);
             WIN3D_Diagrams.noStroke();
-            
-            if (Display_LAND_TEXTURE != 0) {
-              
-              WIN3D_Diagrams.texture(LAND_TEXTURE);
+
+            float CrustDepth = 100; // The crust ranges from 5–70 km
+  
+            for (int s = 0; s < subFace.length; s++) {
+  
+              int s_next = (s + 1) % subFace.length;
             
               float u = (subFace[s][0] / LAND_TEXTURE_scale_U + 0.5) * LAND_TEXTURE.width;
               float v = (-subFace[s][1] / LAND_TEXTURE_scale_V + 0.5) * LAND_TEXTURE.height;
-
+  
               float u_next = (subFace[s_next][0] / LAND_TEXTURE_scale_U + 0.5) * LAND_TEXTURE.width;
               float v_next = (-subFace[s_next][1] / LAND_TEXTURE_scale_V + 0.5) * LAND_TEXTURE.height;
+              
+              WIN3D_Diagrams.beginShape();
+              
+              WIN3D_Diagrams.texture(LAND_TEXTURE);                  
               
               WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D, u, v);
               WIN3D_Diagrams.vertex(subFace[s_next][0] * objects_scale * WIN3D_scale3D, -subFace[s_next][1] * objects_scale * WIN3D_scale3D, subFace[s_next][2] * objects_scale * WIN3D_scale3D, u_next, v_next);
               WIN3D_Diagrams.vertex(subFace[s_next][0] * objects_scale * WIN3D_scale3D, -subFace[s_next][1] * objects_scale * WIN3D_scale3D, (subFace[s_next][2] - CrustDepth) * objects_scale * WIN3D_scale3D, u_next, v_next);
               WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, (subFace[s][2] - CrustDepth) * objects_scale * WIN3D_scale3D, u, v);
+  
+              WIN3D_Diagrams.endShape(CLOSE);
+  
             }
-            else {
-              WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D);
-              WIN3D_Diagrams.vertex(subFace[s_next][0] * objects_scale * WIN3D_scale3D, -subFace[s_next][1] * objects_scale * WIN3D_scale3D, subFace[s_next][2] * objects_scale * WIN3D_scale3D);
-              WIN3D_Diagrams.vertex(subFace[s_next][0] * objects_scale * WIN3D_scale3D, -subFace[s_next][1] * objects_scale * WIN3D_scale3D, (subFace[s_next][2] - CrustDepth) * objects_scale * WIN3D_scale3D);
-              WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, (subFace[s][2] - CrustDepth) * objects_scale * WIN3D_scale3D);
-            }            
-            
-            WIN3D_Diagrams.endShape(CLOSE);
-
           }
           
           
@@ -17988,7 +17970,7 @@ int Rendered_WindRose_RES = WindRose_RES;
 PImage[] SolarImpact_Image;
 
 int display_SolarImpact_Image = 0; // 0:talse 1:true
-int SolarImpact_Image_Section = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
+int SolarImpact_Image_Section = 0; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
 
 float SolarImpact_Rotation = 0; // North is up by default
 
@@ -18014,7 +17996,7 @@ PImage SpatialImpact_Image = createImage(SpatialImpact_RES1, SpatialImpact_RES2,
 float SpatialImpact_Grade = 1.0; //0.1; //10.0; 
 
 int display_SpatialImpact_Image = 1; // 0:false, 1:true
-int SpatialImpact_Image_Section = 1; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
+int SpatialImpact_Image_Section = 0; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
 
 float[] SpatialImpact_Elevation = {0, 0.1, 0, 0}; // <<<
 float[] SpatialImpact_Rotation = {0, 0, 0, 0};
