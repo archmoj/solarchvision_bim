@@ -16322,6 +16322,52 @@ float Orthographic_Zoom () {
 }
 
 
+void SOLARCHVISION_reverseTransform_Camera () {
+
+  float px, py, pz;
+  
+  px = CAM_x;
+  py = CAM_y;
+  pz = CAM_z;  
+
+  float CAM_x1, CAM_y1, CAM_z1;
+  
+  CAM_z1 = pz;
+  CAM_x1 = px * cos_ang(-WIN3D_RZ_coordinate) - py * sin_ang(-WIN3D_RZ_coordinate);
+  CAM_y1 = px * sin_ang(-WIN3D_RZ_coordinate) + py * cos_ang(-WIN3D_RZ_coordinate);  
+  
+  px = CAM_x1;
+  py = CAM_y1;
+  pz = CAM_z1;  
+
+  CAM_x1 = px;
+  CAM_y1 = py * cos_ang(-WIN3D_RX_coordinate) - pz * sin_ang(-WIN3D_RX_coordinate);
+  CAM_z1 = py * sin_ang(-WIN3D_RX_coordinate) + pz * cos_ang(-WIN3D_RX_coordinate);    
+
+
+  float CAM_x2, CAM_y2, CAM_z2;
+
+  CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
+
+  CAM_dist = (0.5 * refScale) / tan(0.5 * CAM_fov);
+  
+  CAM_x2 = 0;
+  CAM_y2 = 0;
+  CAM_z2 = CAM_dist;
+  
+  CAM_x2 *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
+  CAM_y2 *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);
+  CAM_z2 *= tan(0.5 * CAM_fov) / tan(0.5 * PI / 3.0);  
+
+
+  WIN3D_X_coordinate = CAM_x2 - CAM_x1; 
+  WIN3D_Y_coordinate = -(CAM_y2 - CAM_y1); 
+  WIN3D_Z_coordinate = CAM_z2 - CAM_z1;   
+
+
+}
+
+
 void SOLARCHVISION_transform_Camera () {
   
   CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
@@ -20461,10 +20507,15 @@ void mouseWheel(MouseEvent event) {
                 float yB = yO + dx * sin_ang(t) + dy * cos_ang(t);
                 float zB = zA;
                 
-                WIN3D_X_coordinate += xB - xA;
-                WIN3D_Z_coordinate += yB - yA;
-
                 WIN3D_RZ_coordinate -= t;
+
+                //WIN3D_X_coordinate += xB - xA;
+                //WIN3D_Z_coordinate += yB - yA;
+                
+                println(WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
+                SOLARCHVISION_reverseTransform_Camera();
+                println(WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
+                println("______________________________________");
                 
               } 
               else {
