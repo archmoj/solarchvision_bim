@@ -20438,15 +20438,15 @@ void mouseWheel(MouseEvent event) {
               }
             }    
             
-                println(CAM_x, CAM_y, CAM_z);
-                println(WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
-                println("_____________________________________________");
+                //println(CAM_x, CAM_y, CAM_z);
+                //println(WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
+                //println("_____________________________________________");
 
             if (View_Select_Create_Modify == -9) { // viewport:roll
     
               if (WIN3D_View_Type == 1) {
 
-                float[] ray_direction = new float[3];
+                
         
                 float[] ray_start = {CAM_x, CAM_y, CAM_z};
         
@@ -20459,30 +20459,41 @@ void mouseWheel(MouseEvent event) {
                 ray_end[0] /= objects_scale;
                 ray_end[1] /= objects_scale;
                 ray_end[2] /= objects_scale;
-        
+                
+                println(ray_start[0], ray_start[1], ray_start[2]);
+                println(ray_end[0], ray_end[1], ray_end[2]);
+                println("_____________________________________________");
+                
+                
+                float t = Wheel_Value * WIN3D_RS_coordinate;
+                
+                
+                
+                float r = pow(pow(ray_start[0], 2) + pow(ray_start[1], 2), 0.5);
+                
+                WIN3D_X_coordinate += r * (sin_ang(WIN3D_RZ_coordinate + t) - sin_ang(WIN3D_RZ_coordinate));
+                WIN3D_Z_coordinate -= r * (cos_ang(WIN3D_RZ_coordinate + t) - cos_ang(WIN3D_RZ_coordinate));
+
+
+                WIN3D_RZ_coordinate += t;
+                
+                /*
+                float[] ray_direction = new float[3];
+                
                 ray_direction[0] = ray_end[0] - ray_start[0];
                 ray_direction[1] = ray_end[1] - ray_start[1];
                 ray_direction[2] = ray_end[2] - ray_start[2];
-                
-                
-                
-                float pre_CAM_x = CAM_x;
-                float pre_CAM_y = CAM_y;
-                float pre_CAM_z = CAM_z;
-                
-                WIN3D_RZ_coordinate += Wheel_Value * WIN3D_RS_coordinate;
-                
-                SOLARCHVISION_transform_Camera();
-                
-                
-                //println(pre_CAM_x, pre_CAM_y, pre_CAM_z);
 
+                float[] ray_normal = fn_normalize(ray_direction);                   
+
+                float Alpha = asin_ang(ray_normal[2]);
+                float Beta = atan2_ang(ray_normal[1], ray_normal[0]) + 90;              
+              
+                println(Alpha, Beta);  
+                */
                 
-                
-                
-                WIN3D_X_coordinate += CAM_x - pre_CAM_x;
-                //WIN3D_Z_coordinate += CAM_y - pre_CAM_y;
-                //WIN3D_Y_coordinate += CAM_z - pre_CAM_z;
+
+
                 
                 
                 
