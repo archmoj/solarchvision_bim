@@ -1527,6 +1527,7 @@ int MESSAGE_Y_View = int(1.5 * MESSAGE_S_View);
 
 float CAM_x, CAM_y, CAM_z;
 float CAM_fov;
+float CAM_dist;
 
 void setup () {
 
@@ -2591,6 +2592,8 @@ void SOLARCHVISION_draw_WIN3D () {
     WIN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
     
     SOLARCHVISION_transform_Camera();
+    
+    SOLARCHVISION_put_Camera();
   
     SOLARCHVISION_draw_SUN3D(0, 0, 0, 0.9 * SKY3D_scale, LocationLatitude);
     
@@ -2846,7 +2849,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
   
     CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
   
-    float CAM_dist = (0.5 * refScale) / tan(0.5 * CAM_fov);
+    CAM_dist = (0.5 * refScale) / tan(0.5 * CAM_fov);
   
     if (WIN3D_View_Type == 1) {
   
@@ -14814,7 +14817,7 @@ void SOLARCHVISION_build_SkySphere (int Teselation) {
 
 
 
-float objects_scale = 2.0; // 1.0; // <<<<<<<<< 
+float objects_scale = 1.0; 
 
 
 
@@ -16321,11 +16324,9 @@ float Orthographic_Zoom () {
 
 void SOLARCHVISION_transform_Camera () {
   
- 
-
   CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
 
-  float CAM_dist = (0.5 * refScale) / tan(0.5 * CAM_fov);
+  CAM_dist = (0.5 * refScale) / tan(0.5 * CAM_fov);
   
   CAM_x = 0;
   CAM_y = 0;
@@ -16359,7 +16360,10 @@ void SOLARCHVISION_transform_Camera () {
   CAM_z = pz;   
   
   //println("Camera:", nf(CAM_x,0,4), nf(CAM_y,0,4), nf(CAM_z,0,4));
-  
+
+}
+
+void SOLARCHVISION_put_Camera () {  
   
   if (WIN3D_View_Type == 1) {
 
@@ -16385,9 +16389,6 @@ void SOLARCHVISION_transform_Camera () {
   
   WIN3D_Diagrams.rotateX(WIN3D_RX_coordinate * PI / 180); 
   WIN3D_Diagrams.rotateZ(WIN3D_RZ_coordinate * PI / 180); 
-
-
-  
 
 }
   
@@ -20441,23 +20442,19 @@ void mouseWheel(MouseEvent event) {
     
               if (WIN3D_View_Type == 1) {
                 
-                float q = Wheel_Value * WIN3D_RS_coordinate;
-
-                //float r = pow(pow(CAM_x - WIN3D_X_coordinate, 2) + pow(CAM_y - WIN3D_Z_coordinate, 2), 0.5);
-                float r = pow(pow(CAM_x, 2) + pow(CAM_y, 2), 0.5);
+                float pre_CAM_x = CAM_x;
+                float pre_CAM_y = CAM_y;
+                float pre_CAM_z = CAM_z;
                 
-                float x1 = r * sin_ang(WIN3D_RZ_coordinate);
-                float x2 = r * sin_ang(WIN3D_RZ_coordinate + q);
-
-                float y1 = r * cos_ang(WIN3D_RZ_coordinate);
-                float y2 = r * cos_ang(WIN3D_RZ_coordinate + q);
+                WIN3D_RZ_coordinate += Wheel_Value * WIN3D_RS_coordinate;
                 
-                println(x2 - x1, -(y2 - y1), r);
-
-                WIN3D_X_coordinate += x2 - x1;
-                WIN3D_Z_coordinate -= y2 - y1;
+                SOLARCHVISION_transform_Camera();
                 
-                WIN3D_RZ_coordinate += q;
+                WIN3D_X_coordinate += CAM_x - pre_CAM_x;
+                //WIN3D_Z_coordinate += CAM_y - pre_CAM_y;
+                //WIN3D_Y_coordinate += CAM_z - pre_CAM_z;
+                
+                
                 
               } 
               else {
