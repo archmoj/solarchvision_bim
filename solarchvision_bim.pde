@@ -20445,6 +20445,26 @@ void mouseWheel(MouseEvent event) {
             if (View_Select_Create_Modify == -9) { // viewport:roll
     
               if (WIN3D_View_Type == 1) {
+
+                float[] ray_direction = new float[3];
+        
+                float[] ray_start = {CAM_x, CAM_y, CAM_z};
+        
+                float[] ray_end = SOLARCHVISION_calculate_Click3D(0, 0);
+                
+                ray_start[0] /= objects_scale;
+                ray_start[1] /= objects_scale;
+                ray_start[2] /= objects_scale;          
+                
+                ray_end[0] /= objects_scale;
+                ray_end[1] /= objects_scale;
+                ray_end[2] /= objects_scale;
+        
+                ray_direction[0] = ray_end[0] - ray_start[0];
+                ray_direction[1] = ray_end[1] - ray_start[1];
+                ray_direction[2] = ray_end[2] - ray_start[2];
+                
+                
                 
                 float pre_CAM_x = CAM_x;
                 float pre_CAM_y = CAM_y;
