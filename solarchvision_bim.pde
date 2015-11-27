@@ -20455,7 +20455,11 @@ void mouseWheel(MouseEvent event) {
                 ray_end[2] /= objects_scale;
                 
                 float t = Wheel_Value * WIN3D_RS_coordinate;
+                //float r = pow(pow(ray_start[0] - ray_end[0], 2) + pow(ray_start[1] - ray_end[2], 2), 0.5);
                 float r = pow(pow(ray_start[0], 2) + pow(ray_start[1], 2), 0.5);
+                
+                
+                println(ray_start[0], ray_start[1], ray_start[2]);
                 
                 WIN3D_X_coordinate += r * (sin_ang(WIN3D_RZ_coordinate + t) - sin_ang(WIN3D_RZ_coordinate));
                 WIN3D_Z_coordinate -= r * (cos_ang(WIN3D_RZ_coordinate + t) - cos_ang(WIN3D_RZ_coordinate));
