@@ -20437,6 +20437,10 @@ void mouseWheel(MouseEvent event) {
 
               }
             }    
+            
+                println(CAM_x, CAM_y, CAM_z);
+                println(WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
+                println("_____________________________________________");
 
             if (View_Select_Create_Modify == -9) { // viewport:roll
     
@@ -20449,6 +20453,12 @@ void mouseWheel(MouseEvent event) {
                 WIN3D_RZ_coordinate += Wheel_Value * WIN3D_RS_coordinate;
                 
                 SOLARCHVISION_transform_Camera();
+                
+                
+                //println(pre_CAM_x, pre_CAM_y, pre_CAM_z);
+
+                
+                
                 
                 WIN3D_X_coordinate += CAM_x - pre_CAM_x;
                 //WIN3D_Z_coordinate += CAM_y - pre_CAM_y;
