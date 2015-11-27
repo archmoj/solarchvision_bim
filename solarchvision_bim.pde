@@ -185,7 +185,7 @@ int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:4D
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
-int View_Select_Create_Modify = 4; // -10:RollXY/Pan -9:RollX/RollY -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:ModelSize/Pan/Orbit -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed 5:DegreeMax 6:DegreeDif 7:DegreeMin 8:TrunckSize 9:LeafSize
+int View_Select_Create_Modify = 4; // -11: -10:TargetRollXY/Pan -9:RollX/RollY -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:ModelSize/Pan/Orbit -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed 5:DegreeMax 6:DegreeDif 7:DegreeMin 8:TrunckSize 9:LeafSize
 int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. fractal trees
 
@@ -20885,7 +20885,7 @@ void mouseDragged () {
 
           if (View_Select_Create_Modify == -10) { // viewport
           
-            if (mouseButton == LEFT) { // rollXY
+            if (mouseButton == LEFT) { // TargetRollXY
 
               WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
               WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
@@ -20907,7 +20907,7 @@ void mouseDragged () {
           
           if (View_Select_Create_Modify == -9) { // viewport
           
-            if (mouseButton == LEFT) { // rollX
+            if (mouseButton == LEFT) { // TargetRollX
 
               WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
               
@@ -20916,7 +20916,7 @@ void mouseDragged () {
               WIN3D_Update = 1;
             }
             
-            if (mouseButton == RIGHT) { // rollY
+            if (mouseButton == RIGHT) { // TargetRollY
 
               WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
               
@@ -21571,18 +21571,18 @@ void mouseClicked () {
             BAR_b_Update = 1;  
           }
 
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Roll")) {
-            set_to_View_Roll(0);
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TargetRoll")) {
+            set_to_View_TargetRoll(0);
             SOLARCHVISION_highlight_in_BAR_b("RL");
             BAR_b_Update = 1;  
           }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("RollXY")) {
-            set_to_View_Roll(1);
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TargetRollXY")) {
+            set_to_View_TargetRoll(1);
             SOLARCHVISION_highlight_in_BAR_b("RLxy");
             BAR_b_Update = 1;  
           }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("RollZ")) {
-            set_to_View_Roll(2);
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TargetRollZ")) {
+            set_to_View_TargetRoll(2);
             SOLARCHVISION_highlight_in_BAR_b("RLz");
             BAR_b_Update = 1;  
           }          
@@ -26995,7 +26995,7 @@ void dessin_Orbit (int _type, float x, float y, float r) {
 }
 
 
-void dessin_Roll (int _type, float x, float y, float r) {
+void dessin_TargetRoll (int _type, float x, float y, float r) {
 
   pushMatrix();
   translate(x, y);
@@ -27144,7 +27144,7 @@ String[][] BAR_a_Items = {
                         {"Project", "New", "Open...", "Save", "Save As...", "Import...", "Export...", "Preferences", "Quit"},
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
-                        {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Roll", "RollXY", "RollZ", "Orbit", "OrbitXY", "OrbitZ", "Pan", "Look at origin", "TruckX", "TruckY", "TruckZ", "Walk", "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
+                        {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "TargetRoll", "TargetRollXY", "TargetRollZ", "Orbit", "OrbitXY", "OrbitZ", "Pan", "Look at origin", "TruckX", "TruckY", "TruckZ", "Walk", "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
                         {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Vertices", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sky", "Display/Hide Sun", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
@@ -27570,7 +27570,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("PivotZ")) set_to_View_PivotZ(j - 2);
 
         if (Bar_Switch.equals("Orbit")) set_to_View_Orbit(j - 1);
-        if (Bar_Switch.equals("Roll")) set_to_View_Roll(j - 1);
+        if (Bar_Switch.equals("Roll")) set_to_View_TargetRoll(j - 1);
 
         if (Bar_Switch.equals("Pan")) {
           
@@ -27635,7 +27635,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
           dessin_Orbit(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }     
         if (Bar_Switch.equals("Roll")) {
-          dessin_Roll(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+          dessin_TargetRoll(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }          
         if (Bar_Switch.equals("Pan")) {
           dessin_Pan(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
@@ -27972,7 +27972,7 @@ void set_to_View_Truck (int n) {
 }  
 
 
-void set_to_View_Roll (int n) {
+void set_to_View_TargetRoll (int n) {
 
   if (n == 0) {
     View_Select_Create_Modify = -10;
