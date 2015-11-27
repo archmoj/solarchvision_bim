@@ -185,7 +185,7 @@ int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:4D
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
-int View_Select_Create_Modify = 4; // -9:Rool -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:ModelSize/Pan/Orbit -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed 5:DegreeMax 6:DegreeDif 7:DegreeMin 8:TrunckSize 9:LeafSize
+int View_Select_Create_Modify = 4; // -10:RollXY/Pan -9:RollX/RollY -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:ModelSize/Pan/Orbit -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed 5:DegreeMax 6:DegreeDif 7:DegreeMin 8:TrunckSize 9:LeafSize
 int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. fractal trees
 
@@ -20373,7 +20373,7 @@ void mouseWheel(MouseEvent event) {
     
             }
             
-            if (View_Select_Create_Modify == -3) { // viewport:zoom
+            if ((View_Select_Create_Modify == -3) || (View_Select_Create_Modify == -10)) { // viewport:zoom
     
               if (WIN3D_View_Type == 1) {
                 WIN3D_Z_coordinate += Wheel_Value * WIN3D_S_coordinate * objects_scale; 
@@ -20484,23 +20484,22 @@ void mouseWheel(MouseEvent event) {
               }
             }    
             
-            if (View_Select_Create_Modify == -9) { // viewport:roll
-    
-              if (WIN3D_View_Type == 1) {
-        
-                WIN3D_RZ_coordinate += Wheel_Value * WIN3D_RS_coordinate;
+            if (View_Select_Create_Modify == -9) { // viewport:rollX/roolY
 
-                SOLARCHVISION_reverseTransform_Camera();
-
-              } 
-              else {
-
+              if (View_XYZ_ChangeOption == 0) {   
+                WIN3D_RX_coordinate += Wheel_Value * WIN3D_RS_coordinate;
               }
               
+              if (View_XYZ_ChangeOption == 1) {   
+                WIN3D_RZ_coordinate += Wheel_Value * WIN3D_RS_coordinate;
+              }              
+              
+              SOLARCHVISION_reverseTransform_Camera(); // computing WIN3D_X_coordinate, WIN3D_Y_coordinate and WIN3D_Z_coordinate
+
               WIN3D_Update = 1;
     
             }
-            
+
           }
         }   
       }
@@ -20883,6 +20882,48 @@ void mouseDragged () {
     
           float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
           float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
+
+          if (View_Select_Create_Modify == -10) { // viewport
+          
+            if (mouseButton == LEFT) { // rollXY
+
+              WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
+              WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
+              
+              SOLARCHVISION_reverseTransform_Camera(); // computing WIN3D_X_coordinate, WIN3D_Y_coordinate and WIN3D_Z_coordinate
+              
+              WIN3D_Update = 1;
+            }
+            
+            if (mouseButton == RIGHT) { // pan
+
+              WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
+              WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
+              
+              WIN3D_Update = 1;
+            }          
+  
+          }  
+          
+          if (View_Select_Create_Modify == -9) { // viewport
+          
+            if (mouseButton == LEFT) { // rollX
+
+              WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
+              
+              SOLARCHVISION_reverseTransform_Camera(); // computing WIN3D_X_coordinate, WIN3D_Y_coordinate and WIN3D_Z_coordinate
+              
+              WIN3D_Update = 1;
+            }
+            
+            if (mouseButton == RIGHT) { // rollY
+
+              WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
+              
+              WIN3D_Update = 1;
+            }          
+  
+          }            
          
           if ((View_Select_Create_Modify == -3) || (View_Select_Create_Modify == -7) || (View_Select_Create_Modify == -8)) { // viewport
           
@@ -22860,7 +22901,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
       //Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 4, 1), 1));
     
-      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -9, 8, 1), 1));
+      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -10, 8, 1), 1));
       //View_XYZ_ChangeOption = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_ChangeOption" , View_XYZ_ChangeOption, 0, 6, 1), 1));
       //Modify_Object_Parameters = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Object_Parameters" , Modify_Object_Parameters, 0, 9, 1), 1));
 
@@ -27934,18 +27975,18 @@ void set_to_View_Truck (int n) {
 void set_to_View_Roll (int n) {
 
   if (n == 0) {
-    View_Select_Create_Modify = -9;
+    View_Select_Create_Modify = -10;
   }
 
   if (n == 1) {
     View_Select_Create_Modify = -9;
-    Modify_Object_Parameters = 1;            
+    Modify_Object_Parameters = 0;            
     View_XYZ_ChangeOption = 0;  
   } 
 
   if (n == 2) {
     View_Select_Create_Modify = -9;
-    Modify_Object_Parameters = 1;            
+    Modify_Object_Parameters = 0;            
     View_XYZ_ChangeOption = 1;  
   }           
   
