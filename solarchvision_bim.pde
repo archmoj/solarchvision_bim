@@ -20442,16 +20442,17 @@ void mouseWheel(MouseEvent event) {
               if (WIN3D_View_Type == 1) {
                 
                 float q = Wheel_Value * WIN3D_RS_coordinate;
-                
-                
 
-                float r = pow(pow(CAM_x - WIN3D_X_coordinate, 2) + pow(CAM_y - WIN3D_Z_coordinate, 2), 0.5);
+                //float r = pow(pow(CAM_x - WIN3D_X_coordinate, 2) + pow(CAM_y - WIN3D_Z_coordinate, 2), 0.5);
+                float r = pow(pow(CAM_x, 2) + pow(CAM_y, 2), 0.5);
                 
                 float x1 = r * sin_ang(WIN3D_RZ_coordinate);
                 float x2 = r * sin_ang(WIN3D_RZ_coordinate + q);
 
                 float y1 = r * cos_ang(WIN3D_RZ_coordinate);
                 float y2 = r * cos_ang(WIN3D_RZ_coordinate + q);
+                
+                println(x2 - x1, -(y2 - y1), r);
 
                 WIN3D_X_coordinate += x2 - x1;
                 WIN3D_Z_coordinate -= y2 - y1;
