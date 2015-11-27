@@ -1636,7 +1636,7 @@ void SOLARCHVISION_update_models (int Step) {
    if ((Step == 0) || (Step == 1)) SOLARCHVISION_remove_3Dobjects();
    //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
    if ((Step == 0) || (Step == 3)) SOLARCHVISION_remove_ParametricGeometries();
-   //if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
+   if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
    if ((Step == 0) || (Step == 5)) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
 
 }
@@ -18411,327 +18411,329 @@ float deltaSpatialImpactLines = 0.1 * deltaSpatialImpact;
 
 
 void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
+
+  if (SpatialImpact_Image_Section != 0) {
+
+    cursor(WAIT);
   
-  cursor(WAIT);
-
-  SpatialImpact_Contours_U1Vertices = new float [1][4];
-  SpatialImpact_Contours_U1Vertices[0][0] = 0; 
-  SpatialImpact_Contours_U1Vertices[0][1] = 0; 
-  SpatialImpact_Contours_U1Vertices[0][2] = 0; 
-  SpatialImpact_Contours_U1Vertices[0][3] = 0;   
+    SpatialImpact_Contours_U1Vertices = new float [1][4];
+    SpatialImpact_Contours_U1Vertices[0][0] = 0; 
+    SpatialImpact_Contours_U1Vertices[0][1] = 0; 
+    SpatialImpact_Contours_U1Vertices[0][2] = 0; 
+    SpatialImpact_Contours_U1Vertices[0][3] = 0;   
+    
+    SpatialImpact_Contours_V1Vertices = new float [1][4];
+    SpatialImpact_Contours_V1Vertices[0][0] = 0; 
+    SpatialImpact_Contours_V1Vertices[0][1] = 0; 
+    SpatialImpact_Contours_V1Vertices[0][2] = 0; 
+    SpatialImpact_Contours_V1Vertices[0][3] = 0;
   
-  SpatialImpact_Contours_V1Vertices = new float [1][4];
-  SpatialImpact_Contours_V1Vertices[0][0] = 0; 
-  SpatialImpact_Contours_V1Vertices[0][1] = 0; 
-  SpatialImpact_Contours_V1Vertices[0][2] = 0; 
-  SpatialImpact_Contours_V1Vertices[0][3] = 0;
-
-  SpatialImpact_Contours_V2Vertices = new float [1][4];
-  SpatialImpact_Contours_V2Vertices[0][0] = 0; 
-  SpatialImpact_Contours_V2Vertices[0][1] = 0; 
-  SpatialImpact_Contours_V2Vertices[0][2] = 0; 
-  SpatialImpact_Contours_V2Vertices[0][3] = 0;
-
-  SpatialImpact_Contours_U1Lines = new int [1][2];
-  SpatialImpact_Contours_U1Lines[0][0] = 0;
-  SpatialImpact_Contours_U1Lines[0][1] = 0;
-
-  SpatialImpact_Contours_V1Lines = new int [1][2];
-  SpatialImpact_Contours_V1Lines[0][0] = 0;
-  SpatialImpact_Contours_V1Lines[0][1] = 0;
-
-  SpatialImpact_Contours_V2Lines = new int [1][2];
-  SpatialImpact_Contours_V2Lines[0][0] = 0;
-  SpatialImpact_Contours_V2Lines[0][1] = 0;  
-
-
-  int PAL_TYPE = SPATIAL_Pallet_CLR; 
-  int PAL_DIR = SPATIAL_Pallet_DIR;
-  float _Multiplier = SPATIAL_Pallet_MLT;     
+    SpatialImpact_Contours_V2Vertices = new float [1][4];
+    SpatialImpact_Contours_V2Vertices[0][0] = 0; 
+    SpatialImpact_Contours_V2Vertices[0][1] = 0; 
+    SpatialImpact_Contours_V2Vertices[0][2] = 0; 
+    SpatialImpact_Contours_V2Vertices[0][3] = 0;
   
-  SpatialImpact_Image.loadPixels();
+    SpatialImpact_Contours_U1Lines = new int [1][2];
+    SpatialImpact_Contours_U1Lines[0][0] = 0;
+    SpatialImpact_Contours_U1Lines[0][1] = 0;
   
-  for (int i = 0; i < SpatialImpact_RES1; i++) {
-    for (int j = 0; j < SpatialImpact_RES2; j++) {
-
-      //float[] SpatialImpactPoint = ParametricGeometries_SpatialImpact_atIJ_simple(i, j);
-      float[] SpatialImpactPoint = ParametricGeometries_SpatialImpact_atIJ(i, j);
-      
-      float x = SpatialImpactPoint[0];
-      float y = SpatialImpactPoint[1];
-      float z = SpatialImpactPoint[2];
-      float val = SpatialImpactPoint[3];
-      
-      float g =      roundTo(SpatialImpact_Grade * val, deltaSpatialImpact) - 0.5 * deltaSpatialImpact;
-      float g_line = roundTo(SpatialImpact_Grade * val, deltaSpatialImpactLines);
-      
-      float _u = _Multiplier * val + 0.5;
-      
-      if (PAL_DIR == -1) _u = 1 - _u;
-      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-      if (PAL_DIR == 2) _u =  0.5 * _u;
-      
-      float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);     
+    SpatialImpact_Contours_V1Lines = new int [1][2];
+    SpatialImpact_Contours_V1Lines[0][0] = 0;
+    SpatialImpact_Contours_V1Lines[0][1] = 0;
   
-      if ((PROCESS_subdivisions == 1) || (PROCESS_subdivisions == 2)) {
-        //if ((g == g_line) && (g != 0)) {
-        if ((abs(g - g_line) < 0.001) && (g != 0)) {      
-          _COL[0] = 0;    
-          _COL[1] = 255;
-          _COL[2] = 255;
-          _COL[3] = 255;
+    SpatialImpact_Contours_V2Lines = new int [1][2];
+    SpatialImpact_Contours_V2Lines[0][0] = 0;
+    SpatialImpact_Contours_V2Lines[0][1] = 0;  
+  
+  
+    int PAL_TYPE = SPATIAL_Pallet_CLR; 
+    int PAL_DIR = SPATIAL_Pallet_DIR;
+    float _Multiplier = SPATIAL_Pallet_MLT;     
+    
+    SpatialImpact_Image.loadPixels();
+    
+    for (int i = 0; i < SpatialImpact_RES1; i++) {
+      for (int j = 0; j < SpatialImpact_RES2; j++) {
+  
+        //float[] SpatialImpactPoint = ParametricGeometries_SpatialImpact_atIJ_simple(i, j);
+        float[] SpatialImpactPoint = ParametricGeometries_SpatialImpact_atIJ(i, j);
+        
+        float x = SpatialImpactPoint[0];
+        float y = SpatialImpactPoint[1];
+        float z = SpatialImpactPoint[2];
+        float val = SpatialImpactPoint[3];
+        
+        float g =      roundTo(SpatialImpact_Grade * val, deltaSpatialImpact) - 0.5 * deltaSpatialImpact;
+        float g_line = roundTo(SpatialImpact_Grade * val, deltaSpatialImpactLines);
+        
+        float _u = _Multiplier * val + 0.5;
+        
+        if (PAL_DIR == -1) _u = 1 - _u;
+        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+        if (PAL_DIR == 2) _u =  0.5 * _u;
+        
+        float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);     
+    
+        if ((PROCESS_subdivisions == 1) || (PROCESS_subdivisions == 2)) {
+          //if ((g == g_line) && (g != 0)) {
+          if ((abs(g - g_line) < 0.001) && (g != 0)) {      
+            _COL[0] = 0;    
+            _COL[1] = 255;
+            _COL[2] = 255;
+            _COL[3] = 255;
+          }
+        } 
+        
+        if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
+   
+          if ((abs(g - g_line) < 0.0001) && (g != 0) && (g_line <= 1)) {
+          //if ((g_line > 1 - deltaSpatialImpactLines) && (g_line <= 1)) { // not sure!
+  
+            float dx = 1;
+            float dy = 0;
+            float dz = 0;             
+            
+            float[] test_point_dir = {x, y, z, dx, dy, dz};
+  
+            SOLARCHVISION_trace_U1Line(test_point_dir, g_line, 100);
+            
+          }
         }
-      } 
-      
-      if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
- 
-        if ((abs(g - g_line) < 0.0001) && (g != 0) && (g_line <= 1)) {
-        //if ((g_line > 1 - deltaSpatialImpactLines) && (g_line <= 1)) { // not sure!
-
-          float dx = 1;
-          float dy = 0;
-          float dz = 0;             
-          
-          float[] test_point_dir = {x, y, z, dx, dy, dz};
-
-          SOLARCHVISION_trace_U1Line(test_point_dir, g_line, 100);
-          
-        }
+  
+        SpatialImpact_Image.pixels[i + j * SpatialImpact_RES1] = color(_COL[1], _COL[2], _COL[3], _COL[0]);;
+        
       }
-
-      SpatialImpact_Image.pixels[i + j * SpatialImpact_RES1] = color(_COL[1], _COL[2], _COL[3], _COL[0]);;
-      
     }
-  }
- 
-  SpatialImpact_Image.updatePixels();
+   
+    SpatialImpact_Image.updatePixels();
+    
+    if (SpatialImpact_record_JPG == 1) {
+      String myFile = get_SpatialImpact_Filename() + ".jpg";
+      SpatialImpact_Image.save(myFile);
+      SOLARCHVISION_explore_output(myFile);
+      println("File created:" + myFile);        
+    }    
   
-  if (SpatialImpact_record_JPG == 1) {
-    String myFile = get_SpatialImpact_Filename() + ".jpg";
-    SpatialImpact_Image.save(myFile);
-    SOLARCHVISION_explore_output(myFile);
-    println("File created:" + myFile);        
-  }    
-
-
-
-  if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
-/*    
-    for (int k = 1; k < SpatialImpact_Contours_U1Vertices.length; k++) {  
-
-      float x = SpatialImpact_Contours_U1Vertices[k][0];
-      float y = SpatialImpact_Contours_U1Vertices[k][1];
-      float z = SpatialImpact_Contours_U1Vertices[k][2];
-      
-      float val = SpatialImpact_Contours_U1Vertices[k][3]; //ParametricGeometries_SpatialImpact_atXYZ(x, y, z);
-      
-      float g =      roundTo(SpatialImpact_Grade * val, deltaSpatialImpact) - 0.5 * deltaSpatialImpact;
-      float g_line = roundTo(SpatialImpact_Grade * val, deltaSpatialImpactLines);
-
-      float dx = 1;
-      float dy = 0;
-      float dz = 0;   
-
-      float[] test_point_dir = {x, y, z, dx, dy, dz}; 
-
-      // making the first VVertice on the UVertice
-      {
-        float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SpatialImpact_Grade}};
-        SpatialImpact_Contours_V1Vertices = (float[][]) concat(SpatialImpact_Contours_V1Vertices, newVertice);
-      }      
-      
-      // making the first WVertice on the UVertice
-      {
-        float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SpatialImpact_Grade}};
-        SpatialImpact_Contours_V2Vertices = (float[][]) concat(SpatialImpact_Contours_V2Vertices, newVertice);
-      }      
-      
-
-      SOLARCHVISION_trace_V1Line(test_point_dir, g_line, 100);
-    }
-*/
-
-
-  }
-
-  if (SpatialImpact_record_PDF == 1) {
-    
-    String myFile = get_SpatialImpact_Filename() + ".pdf";
-    
-    PGraphics SpatialImpact_PDF = createGraphics(SpatialImpact_RES1, SpatialImpact_RES2, PDF, myFile);
-    
-    SpatialImpact_PDF.beginDraw();
-    
-    SpatialImpact_PDF.image(SpatialImpact_Image, 0, 0, SpatialImpact_RES1, SpatialImpact_RES2);
-
+  
+  
     if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
-      if (display_SpatialImpact_Lines != 0) {
-        
-        for (int U_or_V_or_W = 0; U_or_V_or_W < 3; U_or_V_or_W++) {
-    
-          if (U_or_V_or_W == 0) {
-            SpatialImpact_PDF.strokeWeight(0.25);
-            SpatialImpact_PDF.stroke(255, 0, 0);
-            SpatialImpact_PDF.fill(255, 0, 0);  
-            } 
-          if (U_or_V_or_W == 1) {
-            SpatialImpact_PDF.strokeWeight(0.25);
-            SpatialImpact_PDF.stroke(0, 255, 0);
-            SpatialImpact_PDF.fill(0, 255, 0);  
-          }
-          if (U_or_V_or_W == 2) {
-            SpatialImpact_PDF.strokeWeight(0.25);
-            SpatialImpact_PDF.stroke(0, 0, 255);
-            SpatialImpact_PDF.fill(0, 0, 255);  
-          }
-          
-          int q_num = 0;
-          if (U_or_V_or_W == 0) {
-            q_num = SpatialImpact_Contours_U1Lines.length;
-          } 
-          if (U_or_V_or_W == 1) {
-            q_num = SpatialImpact_Contours_V1Lines.length;
-          }
-          if (U_or_V_or_W == 2) {
-            q_num = SpatialImpact_Contours_V2Lines.length;
-          }
-          
-          for (int q = 1; q < q_num; q++) {
-            
-            float[] i = {0,0};
-            float[] j = {0,0};
-            
-            for (int p = 0; p < 2; p++) {
-            
-              int n = 0;
-              float x0 = 0, y0 = 0, z0 = 0;
-              
-              if (U_or_V_or_W == 0) {
-                n = SpatialImpact_Contours_U1Lines[q][p];
-                x0 = SpatialImpact_Contours_U1Vertices[n][0];
-                y0 = SpatialImpact_Contours_U1Vertices[n][1];
-                z0 = SpatialImpact_Contours_U1Vertices[n][2];                
-              }
-              if (U_or_V_or_W == 1) {
-                n = SpatialImpact_Contours_V1Lines[q][p];        
-                x0 = SpatialImpact_Contours_V1Vertices[n][0];
-                y0 = SpatialImpact_Contours_V1Vertices[n][1];
-                z0 = SpatialImpact_Contours_V1Vertices[n][2];
-              }
-              if (U_or_V_or_W == 2) {
-                n = SpatialImpact_Contours_V2Lines[q][p];        
-                x0 = SpatialImpact_Contours_V2Vertices[n][0];
-                y0 = SpatialImpact_Contours_V2Vertices[n][1];
-                z0 = SpatialImpact_Contours_V2Vertices[n][2];
-              }
-              
-              float r = 0;
-              
-              if (SpatialImpact_Image_Section == 1) {
-                r = -SpatialImpact_Rotation[SpatialImpact_Image_Section];
-              }
-              else if (SpatialImpact_Image_Section == 2) {
-                r = SpatialImpact_Rotation[SpatialImpact_Image_Section];
-              }
-              else if (SpatialImpact_Image_Section == 3) {
-                r = -SpatialImpact_Rotation[SpatialImpact_Image_Section];              
-              }     
-              
-              float x = x0 * cos_ang(r) - y0 * sin_ang(r);
-              float y = x0 * sin_ang(r) + y0 * cos_ang(r);
-              float z = z0;
-          
-              float a = 0;
-              float b = 0;
-              
-              if (SpatialImpact_Image_Section == 1) {
-                a = x;
-                b = -y;
-              }
-              else if (SpatialImpact_Image_Section == 2) {
-                a = x;
-                b = -z;
-              }
-              else if (SpatialImpact_Image_Section == 3) {
-                a = -y;
-                b = -z;
-              }
-             
-              i[p] = a * (SpatialImpact_RES1 / SpatialImpact_scale_U) + 0.5 * SpatialImpact_RES1;
-              j[p] = b * (SpatialImpact_RES2 / SpatialImpact_scale_V) + 0.5 * SpatialImpact_RES2;
-            }   
-                
-            SpatialImpact_PDF.line(i[0], j[0], i[1], j[1]);
-          }
-        }
-      }
-      
-      if (display_SpatialImpact_Points != 0) {
-        SpatialImpact_PDF.strokeWeight(0.5);
-        SpatialImpact_PDF.stroke(255, 127, 0);
-        SpatialImpact_PDF.noFill();  
-        SpatialImpact_PDF.ellipseMode(CENTER);
-        
-        for (int n = 1; n < SpatialImpact_Contours_U1Vertices.length; n++) {
-          
-          float x0 = SpatialImpact_Contours_U1Vertices[n][0];
-          float y0 = SpatialImpact_Contours_U1Vertices[n][1];
-          float z0 = SpatialImpact_Contours_U1Vertices[n][2];
-
-          float r = 0;
-          
-          if (SpatialImpact_Image_Section == 1) {
-            r = -SpatialImpact_Rotation[SpatialImpact_Image_Section];
-          }
-          else if (SpatialImpact_Image_Section == 2) {
-            r = SpatialImpact_Rotation[SpatialImpact_Image_Section];
-          }
-          else if (SpatialImpact_Image_Section == 3) {
-            r = -SpatialImpact_Rotation[SpatialImpact_Image_Section];              
-          }     
-          
-          float x = x0 * cos_ang(r) - y0 * sin_ang(r);
-          float y = x0 * sin_ang(r) + y0 * cos_ang(r);
-          float z = z0;
-      
-          float a = 0;
-          float b = 0;
-          
-          if (SpatialImpact_Image_Section == 1) {
-            a = x;
-            b = -y;
-          }
-          else if (SpatialImpact_Image_Section == 2) {
-            a = x;
-            b = -z;
-          }
-          else if (SpatialImpact_Image_Section == 3) {
-            a = -y;
-            b = -z;
-          }
-
-          float i = a * (SpatialImpact_RES1 / SpatialImpact_scale_U) + 0.5 * SpatialImpact_RES1;
-          float j = b * (SpatialImpact_RES2 / SpatialImpact_scale_V) + 0.5 * SpatialImpact_RES2;
-         
-          SpatialImpact_PDF.ellipse(i, j, 1, 1);
-        }
-    
-        SpatialImpact_PDF.strokeWeight(0);
-    
-      }
-    }
-
+  /*    
+      for (int k = 1; k < SpatialImpact_Contours_U1Vertices.length; k++) {  
   
-    SpatialImpact_PDF.dispose();
+        float x = SpatialImpact_Contours_U1Vertices[k][0];
+        float y = SpatialImpact_Contours_U1Vertices[k][1];
+        float z = SpatialImpact_Contours_U1Vertices[k][2];
+        
+        float val = SpatialImpact_Contours_U1Vertices[k][3]; //ParametricGeometries_SpatialImpact_atXYZ(x, y, z);
+        
+        float g =      roundTo(SpatialImpact_Grade * val, deltaSpatialImpact) - 0.5 * deltaSpatialImpact;
+        float g_line = roundTo(SpatialImpact_Grade * val, deltaSpatialImpactLines);
+  
+        float dx = 1;
+        float dy = 0;
+        float dz = 0;   
+  
+        float[] test_point_dir = {x, y, z, dx, dy, dz}; 
+  
+        // making the first VVertice on the UVertice
+        {
+          float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SpatialImpact_Grade}};
+          SpatialImpact_Contours_V1Vertices = (float[][]) concat(SpatialImpact_Contours_V1Vertices, newVertice);
+        }      
+        
+        // making the first WVertice on the UVertice
+        {
+          float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SpatialImpact_Grade}};
+          SpatialImpact_Contours_V2Vertices = (float[][]) concat(SpatialImpact_Contours_V2Vertices, newVertice);
+        }      
+        
+  
+        SOLARCHVISION_trace_V1Line(test_point_dir, g_line, 100);
+      }
+  */
+  
+  
+    }
+  
+    if (SpatialImpact_record_PDF == 1) {
+      
+      String myFile = get_SpatialImpact_Filename() + ".pdf";
+      
+      PGraphics SpatialImpact_PDF = createGraphics(SpatialImpact_RES1, SpatialImpact_RES2, PDF, myFile);
+      
+      SpatialImpact_PDF.beginDraw();
+      
+      SpatialImpact_PDF.image(SpatialImpact_Image, 0, 0, SpatialImpact_RES1, SpatialImpact_RES2);
+  
+      if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
+        if (display_SpatialImpact_Lines != 0) {
+          
+          for (int U_or_V_or_W = 0; U_or_V_or_W < 3; U_or_V_or_W++) {
+      
+            if (U_or_V_or_W == 0) {
+              SpatialImpact_PDF.strokeWeight(0.25);
+              SpatialImpact_PDF.stroke(255, 0, 0);
+              SpatialImpact_PDF.fill(255, 0, 0);  
+              } 
+            if (U_or_V_or_W == 1) {
+              SpatialImpact_PDF.strokeWeight(0.25);
+              SpatialImpact_PDF.stroke(0, 255, 0);
+              SpatialImpact_PDF.fill(0, 255, 0);  
+            }
+            if (U_or_V_or_W == 2) {
+              SpatialImpact_PDF.strokeWeight(0.25);
+              SpatialImpact_PDF.stroke(0, 0, 255);
+              SpatialImpact_PDF.fill(0, 0, 255);  
+            }
+            
+            int q_num = 0;
+            if (U_or_V_or_W == 0) {
+              q_num = SpatialImpact_Contours_U1Lines.length;
+            } 
+            if (U_or_V_or_W == 1) {
+              q_num = SpatialImpact_Contours_V1Lines.length;
+            }
+            if (U_or_V_or_W == 2) {
+              q_num = SpatialImpact_Contours_V2Lines.length;
+            }
+            
+            for (int q = 1; q < q_num; q++) {
+              
+              float[] i = {0,0};
+              float[] j = {0,0};
+              
+              for (int p = 0; p < 2; p++) {
+              
+                int n = 0;
+                float x0 = 0, y0 = 0, z0 = 0;
+                
+                if (U_or_V_or_W == 0) {
+                  n = SpatialImpact_Contours_U1Lines[q][p];
+                  x0 = SpatialImpact_Contours_U1Vertices[n][0];
+                  y0 = SpatialImpact_Contours_U1Vertices[n][1];
+                  z0 = SpatialImpact_Contours_U1Vertices[n][2];                
+                }
+                if (U_or_V_or_W == 1) {
+                  n = SpatialImpact_Contours_V1Lines[q][p];        
+                  x0 = SpatialImpact_Contours_V1Vertices[n][0];
+                  y0 = SpatialImpact_Contours_V1Vertices[n][1];
+                  z0 = SpatialImpact_Contours_V1Vertices[n][2];
+                }
+                if (U_or_V_or_W == 2) {
+                  n = SpatialImpact_Contours_V2Lines[q][p];        
+                  x0 = SpatialImpact_Contours_V2Vertices[n][0];
+                  y0 = SpatialImpact_Contours_V2Vertices[n][1];
+                  z0 = SpatialImpact_Contours_V2Vertices[n][2];
+                }
+                
+                float r = 0;
+                
+                if (SpatialImpact_Image_Section == 1) {
+                  r = -SpatialImpact_Rotation[SpatialImpact_Image_Section];
+                }
+                else if (SpatialImpact_Image_Section == 2) {
+                  r = SpatialImpact_Rotation[SpatialImpact_Image_Section];
+                }
+                else if (SpatialImpact_Image_Section == 3) {
+                  r = -SpatialImpact_Rotation[SpatialImpact_Image_Section];              
+                }     
+                
+                float x = x0 * cos_ang(r) - y0 * sin_ang(r);
+                float y = x0 * sin_ang(r) + y0 * cos_ang(r);
+                float z = z0;
+            
+                float a = 0;
+                float b = 0;
+                
+                if (SpatialImpact_Image_Section == 1) {
+                  a = x;
+                  b = -y;
+                }
+                else if (SpatialImpact_Image_Section == 2) {
+                  a = x;
+                  b = -z;
+                }
+                else if (SpatialImpact_Image_Section == 3) {
+                  a = -y;
+                  b = -z;
+                }
+               
+                i[p] = a * (SpatialImpact_RES1 / SpatialImpact_scale_U) + 0.5 * SpatialImpact_RES1;
+                j[p] = b * (SpatialImpact_RES2 / SpatialImpact_scale_V) + 0.5 * SpatialImpact_RES2;
+              }   
+                  
+              SpatialImpact_PDF.line(i[0], j[0], i[1], j[1]);
+            }
+          }
+        }
+        
+        if (display_SpatialImpact_Points != 0) {
+          SpatialImpact_PDF.strokeWeight(0.5);
+          SpatialImpact_PDF.stroke(255, 127, 0);
+          SpatialImpact_PDF.noFill();  
+          SpatialImpact_PDF.ellipseMode(CENTER);
+          
+          for (int n = 1; n < SpatialImpact_Contours_U1Vertices.length; n++) {
+            
+            float x0 = SpatialImpact_Contours_U1Vertices[n][0];
+            float y0 = SpatialImpact_Contours_U1Vertices[n][1];
+            float z0 = SpatialImpact_Contours_U1Vertices[n][2];
+  
+            float r = 0;
+            
+            if (SpatialImpact_Image_Section == 1) {
+              r = -SpatialImpact_Rotation[SpatialImpact_Image_Section];
+            }
+            else if (SpatialImpact_Image_Section == 2) {
+              r = SpatialImpact_Rotation[SpatialImpact_Image_Section];
+            }
+            else if (SpatialImpact_Image_Section == 3) {
+              r = -SpatialImpact_Rotation[SpatialImpact_Image_Section];              
+            }     
+            
+            float x = x0 * cos_ang(r) - y0 * sin_ang(r);
+            float y = x0 * sin_ang(r) + y0 * cos_ang(r);
+            float z = z0;
+        
+            float a = 0;
+            float b = 0;
+            
+            if (SpatialImpact_Image_Section == 1) {
+              a = x;
+              b = -y;
+            }
+            else if (SpatialImpact_Image_Section == 2) {
+              a = x;
+              b = -z;
+            }
+            else if (SpatialImpact_Image_Section == 3) {
+              a = -y;
+              b = -z;
+            }
+  
+            float i = a * (SpatialImpact_RES1 / SpatialImpact_scale_U) + 0.5 * SpatialImpact_RES1;
+            float j = b * (SpatialImpact_RES2 / SpatialImpact_scale_V) + 0.5 * SpatialImpact_RES2;
+           
+            SpatialImpact_PDF.ellipse(i, j, 1, 1);
+          }
+      
+          SpatialImpact_PDF.strokeWeight(0);
+      
+        }
+      }
+  
     
-    SpatialImpact_PDF.endDraw();
-    
-    SOLARCHVISION_explore_output(myFile);
-    println("File created:" + myFile);       
+      SpatialImpact_PDF.dispose();
+      
+      SpatialImpact_PDF.endDraw();
+      
+      SOLARCHVISION_explore_output(myFile);
+      println("File created:" + myFile);       
+    }
+  
+    cursor(ARROW);
   }
-
-  cursor(ARROW);
-
 }
 
 
