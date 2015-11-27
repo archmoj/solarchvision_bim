@@ -20488,35 +20488,10 @@ void mouseWheel(MouseEvent event) {
     
               if (WIN3D_View_Type == 1) {
         
-                float xO = CAM_x / objects_scale;
-                float yO = CAM_y / objects_scale;
-                float zO = CAM_z / objects_scale;
-        
-                float[] ray_end = SOLARCHVISION_calculate_Click3D(0, 0);
-                
-                float xA = ray_end[0] / objects_scale;
-                float yA = ray_end[1] / objects_scale;
-                float zA = ray_end[2] / objects_scale;
-                
-                float t = Wheel_Value * WIN3D_RS_coordinate;
-                
-                float dx = (xA - xO);
-                float dy = (yA - yO);
+                WIN3D_RZ_coordinate += Wheel_Value * WIN3D_RS_coordinate;
 
-                float xB = xO + dx * cos_ang(t) - dy * sin_ang(t); 
-                float yB = yO + dx * sin_ang(t) + dy * cos_ang(t);
-                float zB = zA;
-                
-                WIN3D_RZ_coordinate -= t;
-
-                //WIN3D_X_coordinate += xB - xA;
-                //WIN3D_Z_coordinate += yB - yA;
-                
-                println(WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
                 SOLARCHVISION_reverseTransform_Camera();
-                println(WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
-                println("______________________________________");
-                
+
               } 
               else {
 
