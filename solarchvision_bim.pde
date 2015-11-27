@@ -20442,29 +20442,29 @@ void mouseWheel(MouseEvent event) {
     
               if (WIN3D_View_Type == 1) {
         
-                float[] ray_start = {CAM_x, CAM_y, CAM_z};
+                float xO = CAM_x / objects_scale;
+                float yO = CAM_y / objects_scale;
+                float zO = CAM_z / objects_scale;
         
                 float[] ray_end = SOLARCHVISION_calculate_Click3D(0, 0);
                 
-                ray_start[0] /= objects_scale;
-                ray_start[1] /= objects_scale;
-                ray_start[2] /= objects_scale;          
-                
-                ray_end[0] /= objects_scale;
-                ray_end[1] /= objects_scale;
-                ray_end[2] /= objects_scale;
+                float xA = ray_end[0] / objects_scale;
+                float yA = ray_end[1] / objects_scale;
+                float zA = ray_end[2] / objects_scale;
                 
                 float t = Wheel_Value * WIN3D_RS_coordinate;
-                //float r = pow(pow(ray_start[0] - ray_end[0], 2) + pow(ray_start[1] - ray_end[2], 2), 0.5);
-                float r = pow(pow(ray_start[0], 2) + pow(ray_start[1], 2), 0.5);
                 
-                
-                println(ray_start[0], ray_start[1], ray_start[2]);
-                
-                WIN3D_X_coordinate += r * (sin_ang(WIN3D_RZ_coordinate + t) - sin_ang(WIN3D_RZ_coordinate));
-                WIN3D_Z_coordinate -= r * (cos_ang(WIN3D_RZ_coordinate + t) - cos_ang(WIN3D_RZ_coordinate));
+                float rx = (xA - xO);
+                float ry = (yA - yO);
 
-                WIN3D_RZ_coordinate += t;
+                float xB = xO + rx * cos_ang(t) - ry * sin_ang(t); 
+                float yB = yO + rx * sin_ang(t) + ry * cos_ang(t);
+                float zB = zA;
+                
+                WIN3D_X_coordinate += xB - xA;
+                WIN3D_Z_coordinate += yB - yA;
+
+                WIN3D_RZ_coordinate -= t;
                 
               } 
               else {
