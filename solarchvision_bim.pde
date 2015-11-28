@@ -14258,7 +14258,7 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
         int max_n = int(pixel_area / 500.0);
         if (max_n > 100) max_n = 100;
        
-        if (i > 8) max_n = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+        if (i > 2) max_n = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
        
         //if (i < Skip_LAND_MESH_Center) max_n = 10;
         //else max_n = 0; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -14820,7 +14820,7 @@ void SOLARCHVISION_build_SkySphere (int Teselation) {
 
 
 
-float objects_scale = 1.0; 
+float objects_scale = 2.0; //1.0; // <<<<<<<<<<<<<<<<<<<<< 
 
 
 
