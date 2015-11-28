@@ -20513,7 +20513,19 @@ void mouseWheel(MouseEvent event) {
               float t = Wheel_Value * WIN3D_RS_coordinate;
 
               if (View_XYZ_ChangeOption == 0) {   
+
+                WIN3D_RX_coordinate += Wheel_Value * WIN3D_RS_coordinate;
                 
+                float dy = (yA - yO);
+                float dz = (zA - zO);
+  
+                float yB = yO + dy * cos_ang(t) - dz * sin_ang(t); 
+                float zB = zO + dy * sin_ang(t) + dz * cos_ang(t);
+                float xB = xA;
+  
+                CAM_x = xB * objects_scale;           
+                CAM_y = yB * objects_scale;
+                CAM_z = zB * objects_scale; 
               }
               
               if (View_XYZ_ChangeOption == 1) {   
