@@ -185,7 +185,7 @@ int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:4D
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
-int View_Select_Create_Modify = 4; // -11: -10:TargetRollXY/Pan -9:RollX/RollY -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:ModelSize/Pan/Orbit -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed 5:DegreeMax 6:DegreeDif 7:DegreeMin 8:TrunckSize 9:LeafSize
+int View_Select_Create_Modify = 4; // -12:TargetRollXY/Pan -11:TargetRollX/TargetRollY -10:TargetRollXY/Pan -9:TargetRollX/TargetRollY -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:ModelSize/Pan/Orbit -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed 5:DegreeMax 6:DegreeDif 7:DegreeMin 8:TrunckSize 9:LeafSize
 int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. fractal trees
 
@@ -20484,7 +20484,7 @@ void mouseWheel(MouseEvent event) {
               }
             }    
             
-            if (View_Select_Create_Modify == -9) { // viewport:rollX/roolY
+            if (View_Select_Create_Modify == -9) { // viewport:TargetRollX/TargetRoolY
 
               if (View_XYZ_ChangeOption == 0) {   
                 WIN3D_RX_coordinate += Wheel_Value * WIN3D_RS_coordinate;
@@ -20499,6 +20499,46 @@ void mouseWheel(MouseEvent event) {
               WIN3D_Update = 1;
     
             }
+            
+            if (View_Select_Create_Modify == -11) { // viewport:CameraRollX/CameraRoolY
+
+              float xA = CAM_x / objects_scale;
+              float yA = CAM_y / objects_scale;
+              float zA = CAM_z / objects_scale;
+      
+              float[] ray_end = SOLARCHVISION_calculate_Click3D(0, 0);
+              
+              float xO = ray_end[0] / objects_scale;
+              float yO = ray_end[1] / objects_scale;
+              float zO = ray_end[2] / objects_scale;
+              
+              float t = Wheel_Value * WIN3D_RS_coordinate;
+
+              if (View_XYZ_ChangeOption == 0) {   
+                
+              }
+              
+              if (View_XYZ_ChangeOption == 1) {   
+                
+                WIN3D_RZ_coordinate += Wheel_Value * WIN3D_RS_coordinate;
+                
+                float dx = (xA - xO);
+                float dy = (yA - yO);
+  
+                float xB = xO + dx * cos_ang(t) - dy * sin_ang(t); 
+                float yB = yO + dx * sin_ang(t) + dy * cos_ang(t);
+                float zB = zA;
+  
+                CAM_x = xB * objects_scale;           
+                CAM_y = yB * objects_scale;
+                CAM_z = zB * objects_scale;                
+              }    
+
+              SOLARCHVISION_reverseTransform_Camera(); // computing WIN3D_X_coordinate, WIN3D_Y_coordinate and WIN3D_Z_coordinate
+
+              WIN3D_Update = 1;
+    
+            }            
 
           }
         }   
@@ -21571,21 +21611,37 @@ void mouseClicked () {
             BAR_b_Update = 1;  
           }
 
+
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TargetRoll")) {
             set_to_View_TargetRoll(0);
-            SOLARCHVISION_highlight_in_BAR_b("RL");
+            SOLARCHVISION_highlight_in_BAR_b("TRL");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TargetRollXY")) {
             set_to_View_TargetRoll(1);
-            SOLARCHVISION_highlight_in_BAR_b("RLxy");
+            SOLARCHVISION_highlight_in_BAR_b("TRLxy");
             BAR_b_Update = 1;  
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TargetRollZ")) {
             set_to_View_TargetRoll(2);
-            SOLARCHVISION_highlight_in_BAR_b("RLz");
+            SOLARCHVISION_highlight_in_BAR_b("TRLz");
             BAR_b_Update = 1;  
           }          
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("CameraRoll")) {
+            set_to_View_CameraRoll(0);
+            SOLARCHVISION_highlight_in_BAR_b("CRL");
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("CameraRollXY")) {
+            set_to_View_CameraRoll(1);
+            SOLARCHVISION_highlight_in_BAR_b("CRLxy");
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("CameraRollZ")) {
+            set_to_View_CameraRoll(2);
+            SOLARCHVISION_highlight_in_BAR_b("CRLz");
+            BAR_b_Update = 1;  
+          }                    
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Orbit")) {
             set_to_View_Orbit(0);
             SOLARCHVISION_highlight_in_BAR_b("OR");
@@ -22901,7 +22957,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
       //Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 4, 1), 1));
     
-      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -10, 8, 1), 1));
+      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -12, 8, 1), 1));
       //View_XYZ_ChangeOption = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_ChangeOption" , View_XYZ_ChangeOption, 0, 6, 1), 1));
       //Modify_Object_Parameters = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Object_Parameters" , Modify_Object_Parameters, 0, 9, 1), 1));
 
@@ -26995,6 +27051,35 @@ void dessin_Orbit (int _type, float x, float y, float r) {
 }
 
 
+void dessin_CameraRoll (int _type, float x, float y, float r) {
+
+  pushMatrix();
+  translate(x, y);
+
+  float d = 1.5 * r;
+  
+  strokeWeight(1);
+  stroke(255); 
+  noFill();  
+  rect(-d/2,-d/2, d,d);   
+
+  strokeWeight(2);
+  stroke(255); 
+  noFill();  
+  
+  if (_type == 3) arc(0,0, d,0.333 * d, 0, PI); 
+  if (_type == 2) arc(0,0, 0.333 * d,d, 0.5 * PI, 1.5 * PI); 
+  if (_type == 1) {arc(0,0, 0.333 * d,d, 0.5 * PI, 1.5 * PI); arc(0,0, d,0.333 * d, 0, PI);}
+  
+  strokeWeight(0);
+  
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+
+
 void dessin_TargetRoll (int _type, float x, float y, float r) {
 
   pushMatrix();
@@ -27144,7 +27229,7 @@ String[][] BAR_a_Items = {
                         {"Project", "New", "Open...", "Save", "Save As...", "Import...", "Export...", "Preferences", "Quit"},
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
-                        {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "TargetRoll", "TargetRollXY", "TargetRollZ", "Orbit", "OrbitXY", "OrbitZ", "Pan", "Look at origin", "TruckX", "TruckY", "TruckZ", "Walk", "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
+                        {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Pan", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "Walk", "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
                         {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Vertices", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sky", "Display/Hide Sun", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
@@ -27380,7 +27465,8 @@ String[][] BAR_b_Items = {
                           {"2", "AllViewsports", "Expand3DView", "3DViewSpace", "3"},
                           {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "3DViewPoint", "1.5"},
                           {"2", "P<>", "P><", "ProjectionType", "1.0"},
-                          {"1", "RL", "RLxy", "RLz", "Roll", "1.0"},
+                          {"1", "TRL", "TRLxy", "TRLz", "TargetRoll", "1.0"},
+                          {"1", "CRL", "CRLxy", "CRLz", "CameraRoll", "1.0"},
                           {"1", "OR", "ORxy", "ORz", "Orbit", "1.0"},
                           {"3", "DIz", "DIx", "DIy", "Truck", "1.0"},
                           {"1", "Walk", "DistZ", "1.0"},
@@ -27570,7 +27656,8 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("PivotZ")) set_to_View_PivotZ(j - 2);
 
         if (Bar_Switch.equals("Orbit")) set_to_View_Orbit(j - 1);
-        if (Bar_Switch.equals("Roll")) set_to_View_TargetRoll(j - 1);
+        if (Bar_Switch.equals("CameraRoll")) set_to_View_CameraRoll(j - 1);
+        if (Bar_Switch.equals("TargetRoll")) set_to_View_TargetRoll(j - 1);
 
         if (Bar_Switch.equals("Pan")) {
           
@@ -27634,7 +27721,10 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("Orbit")) {
           dessin_Orbit(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }     
-        if (Bar_Switch.equals("Roll")) {
+        if (Bar_Switch.equals("CameraRoll")) {
+          dessin_CameraRoll(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }             
+        if (Bar_Switch.equals("TargetRoll")) {
           dessin_TargetRoll(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }          
         if (Bar_Switch.equals("Pan")) {
@@ -27970,6 +28060,29 @@ void set_to_View_Truck (int n) {
   
   ROLLOUT_Update = 1;          
 }  
+
+
+void set_to_View_CameraRoll (int n) {
+
+  if (n == 0) {
+    View_Select_Create_Modify = -12;
+  }
+
+  if (n == 1) {
+    View_Select_Create_Modify = -11;
+    Modify_Object_Parameters = 0;            
+    View_XYZ_ChangeOption = 0;  
+  } 
+
+  if (n == 2) {
+    View_Select_Create_Modify = -11;
+    Modify_Object_Parameters = 0;            
+    View_XYZ_ChangeOption = 1;  
+  }           
+  
+  ROLLOUT_Update = 1;          
+}  
+
 
 
 void set_to_View_TargetRoll (int n) {
