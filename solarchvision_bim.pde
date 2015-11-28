@@ -20389,7 +20389,9 @@ void mouseWheel(MouseEvent event) {
                   }
                 }
                 
-                if (pre_selectedFractal_numbers_lastItem != selectedFractal_numbers[selectedFractal_numbers.length - 1]) SOLARCHVISION_calculate_selection_Pivot();
+                //if (pre_selectedFractal_numbers_lastItem != selectedFractal_numbers[selectedFractal_numbers.length - 1]) { 
+                  SOLARCHVISION_calculate_selection_Pivot();
+                //}
                 
                 WIN3D_Update = 1;
               }
@@ -20410,7 +20412,9 @@ void mouseWheel(MouseEvent event) {
                   }
                 }
                 
-                if (pre_selectedObject2D_numbers_lastItem != selectedObject2D_numbers[selectedObject2D_numbers.length - 1]) SOLARCHVISION_calculate_selection_Pivot();
+                //if (pre_selectedObject2D_numbers_lastItem != selectedObject2D_numbers[selectedObject2D_numbers.length - 1]) { 
+                  SOLARCHVISION_calculate_selection_Pivot();
+                //}
                 
                 WIN3D_Update = 1;
               }
@@ -20427,7 +20431,9 @@ void mouseWheel(MouseEvent event) {
                   selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = 0;
                 }
             
-                if (pre_selectedPolymesh_numbers_lastItem != selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1]) SOLARCHVISION_calculate_selection_Pivot();
+                //if (pre_selectedPolymesh_numbers_lastItem != selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1]) { 
+                  SOLARCHVISION_calculate_selection_Pivot();
+                //}
     
                 WIN3D_Update = 1;            
               }
@@ -22341,7 +22347,9 @@ void mouseClicked () {
                 }
                 
                 
-                if (pre_selectedPolymesh_numbers_lastItem != selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1]) SOLARCHVISION_calculate_selection_Pivot();
+                //if (pre_selectedPolymesh_numbers_lastItem != selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1]) {
+                  SOLARCHVISION_calculate_selection_Pivot();
+                //}
         
               }
   
@@ -22389,7 +22397,9 @@ void mouseClicked () {
   
                 WIN3D_Update = 1;
                 
-                if (pre_selectedObject2D_numbers_lastItem != selectedObject2D_numbers[selectedObject2D_numbers.length - 1]) SOLARCHVISION_calculate_selection_Pivot();
+                //if (pre_selectedObject2D_numbers_lastItem != selectedObject2D_numbers[selectedObject2D_numbers.length - 1]) {
+                  SOLARCHVISION_calculate_selection_Pivot();
+                //}
               }
   
               if (Work_with_2D_or_3D == 1) {
@@ -22438,7 +22448,9 @@ void mouseClicked () {
               }
               
               
-              if (pre_selectedFractal_numbers_lastItem != selectedFractal_numbers[selectedFractal_numbers.length - 1]) SOLARCHVISION_calculate_selection_Pivot();
+              //if (pre_selectedFractal_numbers_lastItem != selectedFractal_numbers[selectedFractal_numbers.length - 1]) {
+                SOLARCHVISION_calculate_selection_Pivot();
+              //}
               
               if (mouseButton == LEFT) SOLARCHVISION_reset_selectedRefValues();
             }      
@@ -28936,3 +28948,12 @@ void SOLARCHVISION_check_for_WIN3D_update () {
     WIN3D_Update = 1;
   }      
 }  
+
+
+
+/* bugs:
+
+delete because scrolling selection+ could add duplicate of the same objects to the list!
+
+*/
+
