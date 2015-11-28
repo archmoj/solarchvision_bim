@@ -16340,10 +16340,11 @@ void SOLARCHVISION_move_Camera_towards_Selection (float t) {
   
   float dx = xA - xO;
   float dy = yA - yO;
+  float dz = zA - zO;
   
   float xB = xO + t * dx; 
   float yB = yO + t * dy;
-  float zB = zA;
+  float zB = zO + t * dz;
   
   CAM_x = xB * objects_scale;           
   CAM_y = yB * objects_scale;
@@ -20614,7 +20615,7 @@ void mouseWheel(MouseEvent event) {
             if (View_Select_Create_Modify == -13) { // viewport:CameraDistance
 
               //SOLARCHVISION_move_Camera_towards_Selection(Wheel_Value * WIN3D_S_coordinate * objects_scale);
-              SOLARCHVISION_move_Camera_towards_Selection(Wheel_Value * 0.5);
+              SOLARCHVISION_move_Camera_towards_Selection(pow(2, -0.5 * Wheel_Value));
 
               WIN3D_Update = 1;
     
@@ -21003,7 +21004,7 @@ void mouseDragged () {
           float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
           float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
           
-          if (View_Select_Create_Modify == -12) { // viewport
+          if ((View_Select_Create_Modify == -12) || (View_Select_Create_Modify == -13)) { // viewport
           
             if (mouseButton == LEFT) { // CameraRoll
 
