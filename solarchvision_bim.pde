@@ -20506,6 +20506,8 @@ void mouseWheel(MouseEvent event) {
               float yA = CAM_y / objects_scale;
               float zA = CAM_z / objects_scale;
               
+              println("A:", xA, yA, zA);
+              
               float xO = selectedPolymesh_Pivot_XYZ[0];
               float yO = selectedPolymesh_Pivot_XYZ[1];
               float zO = selectedPolymesh_Pivot_XYZ[2];
@@ -20514,33 +20516,43 @@ void mouseWheel(MouseEvent event) {
 
               if (View_XYZ_ChangeOption == 0) {   
 
-                WIN3D_RX_coordinate += Wheel_Value * WIN3D_RS_coordinate;
+                WIN3D_RX_coordinate += t;
                 
                 float xB = xA - xO;
                 float yB = yA - yO;
                 float zB = zA - zO;
                 
+                println("B:", xB, yB, zB);
+                
                 // rotate to make it on zx plane
                 
-                float xC = xB * cos_ang(-WIN3D_RZ_coordinate) - yB * sin_ang(-WIN3D_RZ_coordinate); 
-                float yC = xB * sin_ang(-WIN3D_RZ_coordinate) + yB * cos_ang(-WIN3D_RZ_coordinate);
+                float xC = xB * cos_ang(-WIN3D_RZ_coordinate-90) - yB * sin_ang(-WIN3D_RZ_coordinate-90); 
+                float yC = xB * sin_ang(-WIN3D_RZ_coordinate-90) + yB * cos_ang(-WIN3D_RZ_coordinate-90);
                 float zC = zB;
+                
+                println("C:", xC, yC, zC);
                 
                 // rotate it on zx plane
    
                 float xD = xC * cos_ang(t) - zC * sin_ang(t);
                 float yD = yC;
                 float zD = xC * sin_ang(t) + zC * cos_ang(t);
+
+                println("D:", xD, yD, zD);
                 
                 // rotate to back from zx plane
                 
-                float xE = xD * cos_ang(WIN3D_RZ_coordinate) - yD * sin_ang(WIN3D_RZ_coordinate); 
-                float yE = xD * sin_ang(WIN3D_RZ_coordinate) + yD * cos_ang(WIN3D_RZ_coordinate);
+                float xE = xD * cos_ang(WIN3D_RZ_coordinate+90) - yD * sin_ang(WIN3D_RZ_coordinate+90); 
+                float yE = xD * sin_ang(WIN3D_RZ_coordinate+90) + yD * cos_ang(WIN3D_RZ_coordinate+90);
                 float zE = zD;
+                
+                println("E:", xE, yE, zE);
                 
                 float xF = xE + xO;
                 float yF = yE + yO;
                 float zF = zE + zO;
+                
+                println("F:", xF, yF, zF);
                 
                 CAM_x = xF * objects_scale;           
                 CAM_y = yF * objects_scale;
@@ -20549,7 +20561,7 @@ void mouseWheel(MouseEvent event) {
               
               if (View_XYZ_ChangeOption == 1) {   
                 
-                WIN3D_RZ_coordinate += Wheel_Value * WIN3D_RS_coordinate;
+                WIN3D_RZ_coordinate += t;
                 
                 float dx = (xA - xO);
                 float dy = (yA - yO);
