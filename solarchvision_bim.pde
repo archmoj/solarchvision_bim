@@ -20518,10 +20518,13 @@ void mouseWheel(MouseEvent event) {
                 
                 float dxy = pow(pow(xA - xO, 2) + pow(yA - yO, 2), 0.5);
                 float dz = (zA - zO);
-
+                
                 float zB = zO + dxy * sin_ang(t) + dz * cos_ang(t);
-                float yB = yO + (dxy * cos_ang(t) - dz * sin_ang(t)) * sin_ang(WIN3D_RZ_coordinate);
-                float xB = xO + (dxy * cos_ang(t) - dz * sin_ang(t)) * cos_ang(WIN3D_RZ_coordinate);
+                
+                //float xB = xO + (dxy * cos_ang(t) - dz * sin_ang(t)) * cos_ang(WIN3D_RZ_coordinate);
+                //float yB = yO + (dxy * cos_ang(t) - dz * sin_ang(t)) * sin_ang(WIN3D_RZ_coordinate);
+                float xB = xA;
+                float yB = yA;               
   
                 CAM_x = xB * objects_scale;           
                 CAM_y = yB * objects_scale;
