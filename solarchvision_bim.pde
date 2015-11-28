@@ -20505,9 +20505,7 @@ void mouseWheel(MouseEvent event) {
               float xA = CAM_x / objects_scale;
               float yA = CAM_y / objects_scale;
               float zA = CAM_z / objects_scale;
-              
-              println("A:", xA, yA, zA);
-              
+
               float xO = selectedPolymesh_Pivot_XYZ[0];
               float yO = selectedPolymesh_Pivot_XYZ[1];
               float zO = selectedPolymesh_Pivot_XYZ[2];
@@ -20521,24 +20519,18 @@ void mouseWheel(MouseEvent event) {
                 float xB = xA - xO;
                 float yB = yA - yO;
                 float zB = zA - zO;
-                
-                println("B:", xB, yB, zB);
-                
+
                 // rotate to make it on yz plane
                 
                 float xC = xB * cos_ang(-WIN3D_RZ_coordinate) - yB * sin_ang(-WIN3D_RZ_coordinate); 
                 float yC = xB * sin_ang(-WIN3D_RZ_coordinate) + yB * cos_ang(-WIN3D_RZ_coordinate);
                 float zC = zB;
-                
-                println("C:", xC, yC, zC);
-                
+
                 // rotate it on yz plane
    
                 float xD = xC;
                 float yD = yC * cos_ang(t) - zC * sin_ang(t);
                 float zD = yC * sin_ang(t) + zC * cos_ang(t);
-
-                println("D:", xD, yD, zD);
                 
                 // rotate to back from yz plane
                 
@@ -20546,13 +20538,9 @@ void mouseWheel(MouseEvent event) {
                 float yE = xD * sin_ang(WIN3D_RZ_coordinate) + yD * cos_ang(WIN3D_RZ_coordinate);
                 float zE = zD;
                 
-                println("E:", xE, yE, zE);
-                
                 float xF = xE + xO;
                 float yF = yE + yO;
                 float zF = zE + zO;
-                
-                println("F:", xF, yF, zF);
                 
                 CAM_x = xF * objects_scale;           
                 CAM_y = yF * objects_scale;
