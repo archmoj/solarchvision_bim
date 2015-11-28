@@ -20524,26 +20524,26 @@ void mouseWheel(MouseEvent event) {
                 
                 println("B:", xB, yB, zB);
                 
-                // rotate to make it on zx plane
+                // rotate to make it on yz plane
                 
-                float xC = xB * cos_ang(-WIN3D_RZ_coordinate-90) - yB * sin_ang(-WIN3D_RZ_coordinate-90); 
-                float yC = xB * sin_ang(-WIN3D_RZ_coordinate-90) + yB * cos_ang(-WIN3D_RZ_coordinate-90);
+                float xC = xB * cos_ang(-WIN3D_RZ_coordinate) - yB * sin_ang(-WIN3D_RZ_coordinate); 
+                float yC = xB * sin_ang(-WIN3D_RZ_coordinate) + yB * cos_ang(-WIN3D_RZ_coordinate);
                 float zC = zB;
                 
                 println("C:", xC, yC, zC);
                 
-                // rotate it on zx plane
+                // rotate it on yz plane
    
-                float xD = xC * cos_ang(t) - zC * sin_ang(t);
-                float yD = yC;
-                float zD = xC * sin_ang(t) + zC * cos_ang(t);
+                float xD = xC;
+                float yD = yC * cos_ang(t) - zC * sin_ang(t);
+                float zD = yC * sin_ang(t) + zC * cos_ang(t);
 
                 println("D:", xD, yD, zD);
                 
-                // rotate to back from zx plane
+                // rotate to back from yz plane
                 
-                float xE = xD * cos_ang(WIN3D_RZ_coordinate+90) - yD * sin_ang(WIN3D_RZ_coordinate+90); 
-                float yE = xD * sin_ang(WIN3D_RZ_coordinate+90) + yD * cos_ang(WIN3D_RZ_coordinate+90);
+                float xE = xD * cos_ang(WIN3D_RZ_coordinate) - yD * sin_ang(WIN3D_RZ_coordinate); 
+                float yE = xD * sin_ang(WIN3D_RZ_coordinate) + yD * cos_ang(WIN3D_RZ_coordinate);
                 float zE = zD;
                 
                 println("E:", xE, yE, zE);
