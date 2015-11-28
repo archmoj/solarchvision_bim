@@ -1529,6 +1529,9 @@ float CAM_x, CAM_y, CAM_z;
 float CAM_fov;
 float CAM_dist;
 
+float CAM_clipNear = 0.001;
+float CAM_clipFar = 1000.0;
+
 void setup () {
 
   size(2 * w_pixel + ROLLOUT_X_View, a_pixel + b_pixel + 2 * h_pixel + d_pixel, P2D);
@@ -16409,14 +16412,16 @@ void SOLARCHVISION_transform_Camera () {
 
 }
 
+ 
+
 void SOLARCHVISION_put_Camera () {  
   
   if (WIN3D_View_Type == 1) {
 
     float aspect = 1.0 / WIN3D_R_View;
     
-    float zFar = CAM_dist * 1000;
-    float zNear = CAM_dist * 0.001;
+    float zFar = CAM_dist * CAM_clipFar;
+    float zNear = CAM_dist * CAM_clipNear;
     
     WIN3D_Diagrams.perspective(CAM_fov, aspect, zNear, zFar);
 
@@ -23178,10 +23183,13 @@ void SOLARCHVISION_draw_ROLLOUT () {
       sum_interval = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Probabilities interval", sum_interval, 1, 24, 1), 1));
       level_pix = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Probabilities range", level_pix, 2, 32, -2), 1));    
 
-      //WIN3D_FACES_SHADE = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "WIN3D_FACES_SHADE", WIN3D_FACES_SHADE, 0, number_of_shading_options - 1, 1), 1));
-      WIN3D_VERTS_SHOW = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "WIN3D_VERTS_SHOW", WIN3D_VERTS_SHOW, 0, 1, 1), 1));
-      WIN3D_EDGES_SHOW = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "WIN3D_EDGES_SHOW", WIN3D_EDGES_SHOW, 0, 1, 1), 1));  
-      display_MODEL3D_EDGES = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "display_MODEL3D_EDGES" , display_MODEL3D_EDGES, 0, 1, 1), 1));
+      //WIN3D_FACES_SHADE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "WIN3D_FACES_SHADE", WIN3D_FACES_SHADE, 0, number_of_shading_options - 1, 1), 1));
+      WIN3D_VERTS_SHOW = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "WIN3D_VERTS_SHOW", WIN3D_VERTS_SHOW, 0, 1, 1), 1));
+      WIN3D_EDGES_SHOW = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "WIN3D_EDGES_SHOW", WIN3D_EDGES_SHOW, 0, 1, 1), 1));  
+      display_MODEL3D_EDGES = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "display_MODEL3D_EDGES" , display_MODEL3D_EDGES, 0, 1, 1), 1));
+      
+      CAM_clipNear = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipNear" , CAM_clipNear, 0.0000001, 1000000, -2);
+      CAM_clipFar = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipFar" , CAM_clipFar, 0.0000001, 1000000, -2);
 
     }
     
