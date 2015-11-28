@@ -21715,14 +21715,14 @@ void mouseClicked () {
             SOLARCHVISION_highlight_in_BAR_b("TRL");
             BAR_b_Update = 1;  
           }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TargetRollXY")) {
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TargetRollZ")) {
             set_to_View_TargetRoll(1);
-            SOLARCHVISION_highlight_in_BAR_b("TRLxy");
+            SOLARCHVISION_highlight_in_BAR_b("TRLz");
             BAR_b_Update = 1;  
           }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TargetRollZ")) {
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TargetRollXY")) {
             set_to_View_TargetRoll(2);
-            SOLARCHVISION_highlight_in_BAR_b("TRLz");
+            SOLARCHVISION_highlight_in_BAR_b("TRLxy");
             BAR_b_Update = 1;  
           }          
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("CameraRoll")) {
@@ -21730,32 +21730,33 @@ void mouseClicked () {
             SOLARCHVISION_highlight_in_BAR_b("CRL");
             BAR_b_Update = 1;  
           }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("CameraRollXY")) {
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("CameraRollZ")) {
             set_to_View_CameraRoll(1);
+            SOLARCHVISION_highlight_in_BAR_b("CRLz");
+            BAR_b_Update = 1;  
+          }                
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("CameraRollXY")) {
+            set_to_View_CameraRoll(2);
             SOLARCHVISION_highlight_in_BAR_b("CRLxy");
             BAR_b_Update = 1;  
           }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("CameraRollZ")) {
-            set_to_View_CameraRoll(2);
-            SOLARCHVISION_highlight_in_BAR_b("CRLz");
-            BAR_b_Update = 1;  
-          }                    
+              
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Orbit")) {
             set_to_View_Orbit(0);
             SOLARCHVISION_highlight_in_BAR_b("OR");
             BAR_b_Update = 1;  
           }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("OrbitXY")) {
-            set_to_View_Orbit(1);
-            SOLARCHVISION_highlight_in_BAR_b("ORxy");
-            BAR_b_Update = 1;  
-          }   
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("OrbitZ")) {
-            set_to_View_Orbit(2);
+            set_to_View_Orbit(1);
             SOLARCHVISION_highlight_in_BAR_b("ORz");
             BAR_b_Update = 1;  
           }           
-
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("OrbitXY")) {
+            set_to_View_Orbit(2);
+            SOLARCHVISION_highlight_in_BAR_b("ORxy");
+            BAR_b_Update = 1;  
+          }   
+          
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pan")) {
             set_to_View_Pan(0);
             SOLARCHVISION_highlight_in_BAR_b("Pan");
