@@ -26177,8 +26177,16 @@ void SOLARCHVISION_calculate_selectedPolymesh_BoundingBox () {
 }
 
 void SOLARCHVISION_calculate_selection_Pivot () {
-  
-  SOLARCHVISION_calculate_selectedPolymesh_BoundingBox();
+
+  if (Work_with_2D_or_3D == 1) {
+    SOLARCHVISION_calculate_selectedFractal_BoundingBox();
+  }
+  if (Work_with_2D_or_3D == 2) {
+    SOLARCHVISION_calculate_selectedObject2D_BoundingBox();
+  }
+  if (Work_with_2D_or_3D == 3) {
+    SOLARCHVISION_calculate_selectedPolymesh_BoundingBox();
+  }
 
   selected_Pivot_XYZ[0] = selectedPolymesh_BoundingBox[1 + selectedPolymesh_alignX][0];
   selected_Pivot_XYZ[1] = selectedPolymesh_BoundingBox[1 + selectedPolymesh_alignY][1];
