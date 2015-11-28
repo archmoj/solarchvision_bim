@@ -16325,7 +16325,78 @@ float Orthographic_Zoom () {
 }
 
 
-void SOLARCHVISION_reverseTransform_Camera () {
+void SOLARCHVISION_rotateZ_Camera_around_Selection (float t) {
+  
+  WIN3D_RX_coordinate += t;
+
+  float xA = CAM_x / objects_scale;
+  float yA = CAM_y / objects_scale;
+  float zA = CAM_z / objects_scale;
+
+  float xO = selectedPolymesh_Pivot_XYZ[0];
+  float yO = selectedPolymesh_Pivot_XYZ[1];
+  float zO = selectedPolymesh_Pivot_XYZ[2];                
+
+  float xB = xA - xO;
+  float yB = yA - yO;
+  float zB = zA - zO;
+
+  // rotate to make it on yz plane
+  
+  float xC = xB * cos_ang(-WIN3D_RZ_coordinate) - yB * sin_ang(-WIN3D_RZ_coordinate); 
+  float yC = xB * sin_ang(-WIN3D_RZ_coordinate) + yB * cos_ang(-WIN3D_RZ_coordinate);
+  float zC = zB;
+
+  // rotate it on yz plane
+ 
+  float xD = xC;
+  float yD = yC * cos_ang(t) - zC * sin_ang(t);
+  float zD = yC * sin_ang(t) + zC * cos_ang(t);
+  
+  // rotate to back from yz plane
+  
+  float xE = xD * cos_ang(WIN3D_RZ_coordinate) - yD * sin_ang(WIN3D_RZ_coordinate); 
+  float yE = xD * sin_ang(WIN3D_RZ_coordinate) + yD * cos_ang(WIN3D_RZ_coordinate);
+  float zE = zD;
+  
+  float xF = xE + xO;
+  float yF = yE + yO;
+  float zF = zE + zO;
+  
+  CAM_x = xF * objects_scale;           
+  CAM_y = yF * objects_scale;
+  CAM_z = zF * objects_scale; 
+  
+}
+
+
+void SOLARCHVISION_rotateXY_Camera_around_Selection (float t) {
+  
+  WIN3D_RZ_coordinate += t;
+
+  float xA = CAM_x / objects_scale;
+  float yA = CAM_y / objects_scale;
+  float zA = CAM_z / objects_scale;
+  
+  float xO = selectedPolymesh_Pivot_XYZ[0];
+  float yO = selectedPolymesh_Pivot_XYZ[1];
+  float zO = selectedPolymesh_Pivot_XYZ[2];                
+  
+  float dx = (xA - xO);
+  float dy = (yA - yO);
+  
+  float xB = xO + dx * cos_ang(t) - dy * sin_ang(t); 
+  float yB = yO + dx * sin_ang(t) + dy * cos_ang(t);
+  float zB = zA;
+  
+  CAM_x = xB * objects_scale;           
+  CAM_y = yB * objects_scale;
+  CAM_z = zB * objects_scale;   
+  
+}
+
+
+void SOLARCHVISION_reverseTransform_Camera () { // computing WIN3D_X_coordinate, WIN3D_Y_coordinate and WIN3D_Z_coordinate from new set of camera start and end points.
 
   float px, py, pz;
   
@@ -20493,82 +20564,32 @@ void mouseWheel(MouseEvent event) {
 
               if (View_XYZ_ChangeOption == 0) {   
                 WIN3D_RX_coordinate += Wheel_Value * WIN3D_RS_coordinate;
+                
+                SOLARCHVISION_reverseTransform_Camera(); 
               }
               
               if (View_XYZ_ChangeOption == 1) {   
                 WIN3D_RZ_coordinate += Wheel_Value * WIN3D_RS_coordinate;
+                
+                SOLARCHVISION_reverseTransform_Camera(); 
               }              
-              
-              SOLARCHVISION_reverseTransform_Camera(); // computing WIN3D_X_coordinate, WIN3D_Y_coordinate and WIN3D_Z_coordinate
 
               WIN3D_Update = 1;
-    
             }
             
             if (View_Select_Create_Modify == -11) { // viewport:CameraRollX/CameraRoolY
 
-              float xA = CAM_x / objects_scale;
-              float yA = CAM_y / objects_scale;
-              float zA = CAM_z / objects_scale;
-
-              float xO = selectedPolymesh_Pivot_XYZ[0];
-              float yO = selectedPolymesh_Pivot_XYZ[1];
-              float zO = selectedPolymesh_Pivot_XYZ[2];
-              
-              float t = Wheel_Value * WIN3D_RS_coordinate;
-
               if (View_XYZ_ChangeOption == 0) {   
 
-                WIN3D_RX_coordinate += t;
-                
-                float xB = xA - xO;
-                float yB = yA - yO;
-                float zB = zA - zO;
-
-                // rotate to make it on yz plane
-                
-                float xC = xB * cos_ang(-WIN3D_RZ_coordinate) - yB * sin_ang(-WIN3D_RZ_coordinate); 
-                float yC = xB * sin_ang(-WIN3D_RZ_coordinate) + yB * cos_ang(-WIN3D_RZ_coordinate);
-                float zC = zB;
-
-                // rotate it on yz plane
-   
-                float xD = xC;
-                float yD = yC * cos_ang(t) - zC * sin_ang(t);
-                float zD = yC * sin_ang(t) + zC * cos_ang(t);
-                
-                // rotate to back from yz plane
-                
-                float xE = xD * cos_ang(WIN3D_RZ_coordinate) - yD * sin_ang(WIN3D_RZ_coordinate); 
-                float yE = xD * sin_ang(WIN3D_RZ_coordinate) + yD * cos_ang(WIN3D_RZ_coordinate);
-                float zE = zD;
-                
-                float xF = xE + xO;
-                float yF = yE + yO;
-                float zF = zE + zO;
-                
-                CAM_x = xF * objects_scale;           
-                CAM_y = yF * objects_scale;
-                CAM_z = zF * objects_scale; 
+                SOLARCHVISION_rotateZ_Camera_around_Selection(Wheel_Value * WIN3D_RS_coordinate);
+                SOLARCHVISION_reverseTransform_Camera(); 
               }
               
               if (View_XYZ_ChangeOption == 1) {   
-                
-                WIN3D_RZ_coordinate += t;
-                
-                float dx = (xA - xO);
-                float dy = (yA - yO);
-  
-                float xB = xO + dx * cos_ang(t) - dy * sin_ang(t); 
-                float yB = yO + dx * sin_ang(t) + dy * cos_ang(t);
-                float zB = zA;
-  
-                CAM_x = xB * objects_scale;           
-                CAM_y = yB * objects_scale;
-                CAM_z = zB * objects_scale;                
-              }    
 
-              SOLARCHVISION_reverseTransform_Camera(); // computing WIN3D_X_coordinate, WIN3D_Y_coordinate and WIN3D_Z_coordinate
+                SOLARCHVISION_rotateXY_Camera_around_Selection(Wheel_Value * WIN3D_RS_coordinate);
+                SOLARCHVISION_reverseTransform_Camera(); 
+              }    
 
               WIN3D_Update = 1;
     
@@ -20956,6 +20977,26 @@ void mouseDragged () {
     
           float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
           float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
+          
+          if (View_Select_Create_Modify == -11) { // viewport
+          
+            if (mouseButton == LEFT) { // CameraRollX
+              
+              SOLARCHVISION_rotateXY_Camera_around_Selection(10 * dx * WIN3D_RS_coordinate);
+              SOLARCHVISION_reverseTransform_Camera(); 
+              
+              WIN3D_Update = 1;
+            }
+            
+            if (mouseButton == RIGHT) { // CameraRollY
+              
+              SOLARCHVISION_rotateZ_Camera_around_Selection(10 * dx * WIN3D_RS_coordinate);
+              SOLARCHVISION_reverseTransform_Camera(); 
+              
+              WIN3D_Update = 1;
+            }          
+
+          }            
 
           if (View_Select_Create_Modify == -10) { // viewport
           
@@ -20964,7 +21005,7 @@ void mouseDragged () {
               WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
               WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
               
-              SOLARCHVISION_reverseTransform_Camera(); // computing WIN3D_X_coordinate, WIN3D_Y_coordinate and WIN3D_Z_coordinate
+              SOLARCHVISION_reverseTransform_Camera(); 
               
               WIN3D_Update = 1;
             }
@@ -20985,7 +21026,7 @@ void mouseDragged () {
 
               WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
               
-              SOLARCHVISION_reverseTransform_Camera(); // computing WIN3D_X_coordinate, WIN3D_Y_coordinate and WIN3D_Z_coordinate
+              SOLARCHVISION_reverseTransform_Camera(); 
               
               WIN3D_Update = 1;
             }
@@ -20993,6 +21034,8 @@ void mouseDragged () {
             if (mouseButton == RIGHT) { // TargetRollY
 
               WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
+              
+              SOLARCHVISION_reverseTransform_Camera(); 
               
               WIN3D_Update = 1;
             }          
