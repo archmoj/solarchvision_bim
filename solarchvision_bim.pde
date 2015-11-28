@@ -20449,7 +20449,7 @@ void mouseWheel(MouseEvent event) {
     
             }
             
-            if ((View_Select_Create_Modify == -3) || (View_Select_Create_Modify == -10)) { // viewport:zoom
+            if ((View_Select_Create_Modify == -3) || (View_Select_Create_Modify == -10) || (View_Select_Create_Modify == -12)) { // viewport:zoom
     
               if (WIN3D_View_Type == 1) {
                 WIN3D_Z_coordinate += Wheel_Value * WIN3D_S_coordinate * objects_scale; 
@@ -20977,6 +20977,29 @@ void mouseDragged () {
     
           float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
           float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
+          
+          if (View_Select_Create_Modify == -12) { // viewport
+          
+            if (mouseButton == LEFT) { // CameraRoll
+
+              SOLARCHVISION_rotateXY_Camera_around_Selection(10 * dx * WIN3D_RS_coordinate);
+              //SOLARCHVISION_reverseTransform_Camera(); 
+              
+              SOLARCHVISION_rotateZ_Camera_around_Selection(10 * dy * WIN3D_RS_coordinate);
+              SOLARCHVISION_reverseTransform_Camera();               
+              
+              WIN3D_Update = 1;
+            }
+            
+            if (mouseButton == RIGHT) { // pan
+
+              WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
+              WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
+              
+              WIN3D_Update = 1;
+            }          
+  
+          }  
           
           if (View_Select_Create_Modify == -11) { // viewport
           
