@@ -20516,12 +20516,12 @@ void mouseWheel(MouseEvent event) {
 
                 WIN3D_RX_coordinate += Wheel_Value * WIN3D_RS_coordinate;
                 
-                float dy = (yA - yO);
+                float dxy = pow(pow(xA - xO, 2) + pow(yA - yO, 2), 0.5);
                 float dz = (zA - zO);
-  
-                float yB = yO + dy * cos_ang(t) - dz * sin_ang(t); 
-                float zB = zO + dy * sin_ang(t) + dz * cos_ang(t);
-                float xB = xA;
+
+                float zB = zO + dxy * sin_ang(t) + dz * cos_ang(t);
+                float yB = yO + (dxy * cos_ang(t) - dz * sin_ang(t)) * sin_ang(WIN3D_RZ_coordinate);
+                float xB = xO + (dxy * cos_ang(t) - dz * sin_ang(t)) * cos_ang(WIN3D_RZ_coordinate);
   
                 CAM_x = xB * objects_scale;           
                 CAM_y = yB * objects_scale;
