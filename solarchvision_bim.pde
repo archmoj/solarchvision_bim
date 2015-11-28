@@ -185,7 +185,7 @@ int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:4D
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
-int View_Select_Create_Modify = 4; // -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:ModelSize/Pan/Orbit -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed 5:DegreeMax 6:DegreeDif 7:DegreeMin 8:TrunckSize 9:LeafSize
+int View_Select_Create_Modify = 4; // -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:ModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed 5:DegreeMax 6:DegreeDif 7:DegreeMin 8:TrunckSize 9:LeafSize
 int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. fractal trees
 
@@ -21067,22 +21067,22 @@ void mouseDragged () {
               WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
               
               WIN3D_Update = 1;
-            }          
+            }       
   
           }  
           
           if (View_Select_Create_Modify == -4) { 
-  
-            if (mouseButton == RIGHT) { // move X
-  
-              WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
-              
-              WIN3D_Update = 1;    
-            }    
-            
+
             if (mouseButton == LEFT) { // move Y
   
               WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale; 
+              
+              WIN3D_Update = 1;    
+            }              
+            
+            if (mouseButton == RIGHT) { // move X
+  
+              WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
               
               WIN3D_Update = 1;    
             }    
@@ -21090,22 +21090,24 @@ void mouseDragged () {
           }
 
           if (View_Select_Create_Modify == -5) { // viewport
-          
-            if (mouseButton == RIGHT) { // Orbit
-          
-              WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate; 
-              WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
-              
-              WIN3D_Update = 1;
-            }
-            
+
             if (mouseButton == LEFT) { // pan
           
               WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
               WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
               
               WIN3D_Update = 1;
-            }          
+            }   
+          
+            if (mouseButton == RIGHT) { // TargetRoll
+
+              WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
+              WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
+              
+              SOLARCHVISION_reverseTransform_Camera(); 
+              
+              WIN3D_Update = 1;
+            }
   
           }
 
