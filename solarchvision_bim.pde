@@ -20516,19 +20516,35 @@ void mouseWheel(MouseEvent event) {
 
                 WIN3D_RX_coordinate += Wheel_Value * WIN3D_RS_coordinate;
                 
-                float dxy = pow(pow(xA - xO, 2) + pow(yA - yO, 2), 0.5);
-                float dz = (zA - zO);
+                float xB = xA - xO;
+                float yB = yA - yO;
+                float zB = zA - zO;
                 
-                float zB = zO + dxy * sin_ang(t) + dz * cos_ang(t);
+                // rotate to make it on zx plane
                 
-                //float xB = xO + (dxy * cos_ang(t) - dz * sin_ang(t)) * cos_ang(WIN3D_RZ_coordinate);
-                //float yB = yO + (dxy * cos_ang(t) - dz * sin_ang(t)) * sin_ang(WIN3D_RZ_coordinate);
-                float xB = xA;
-                float yB = yA;               
-  
-                CAM_x = xB * objects_scale;           
-                CAM_y = yB * objects_scale;
-                CAM_z = zB * objects_scale; 
+                float xC = xB * cos_ang(-WIN3D_RZ_coordinate) - yB * sin_ang(-WIN3D_RZ_coordinate); 
+                float yC = xB * sin_ang(-WIN3D_RZ_coordinate) + yB * cos_ang(-WIN3D_RZ_coordinate);
+                float zC = zB;
+                
+                // rotate it on zx plane
+   
+                float xD = xC * cos_ang(t) - zC * sin_ang(t);
+                float yD = yC;
+                float zD = xC * sin_ang(t) + zC * cos_ang(t);
+                
+                // rotate to back from zx plane
+                
+                float xE = xD * cos_ang(WIN3D_RZ_coordinate) - yD * sin_ang(WIN3D_RZ_coordinate); 
+                float yE = xD * sin_ang(WIN3D_RZ_coordinate) + yD * cos_ang(WIN3D_RZ_coordinate);
+                float zE = zD;
+                
+                float xF = xE + xO;
+                float yF = yE + yO;
+                float zF = zE + zO;
+                
+                CAM_x = xF * objects_scale;           
+                CAM_y = yF * objects_scale;
+                CAM_z = zF * objects_scale; 
               }
               
               if (View_XYZ_ChangeOption == 1) {   
