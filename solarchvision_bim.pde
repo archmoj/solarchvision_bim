@@ -79,9 +79,9 @@ float selected_posValue = 0;
 float selected_rotValue = 0;  
 float selected_scaleValue = 0; 
 
-int selectedPolymesh_alignX = 0;
-int selectedPolymesh_alignY = 0;
-int selectedPolymesh_alignZ = 0;
+int selection_alignX = 0;
+int selection_alignY = 0;
+int selection_alignZ = 0;
 
 int selectedPolymesh_displayPivot = 1;
 int selectedPolymesh_displayEdges = 0;
@@ -1220,9 +1220,9 @@ float pre_selected_posValue;
 float pre_selected_rotValue;
 float pre_selected_scaleValue;
 
-int pre_selectedPolymesh_alignX;
-int pre_selectedPolymesh_alignY;
-int pre_selectedPolymesh_alignZ;
+int pre_selection_alignX;
+int pre_selection_alignY;
+int pre_selection_alignZ;
       
 int pre_selectedPolymesh_displayPivot;
 int pre_selectedPolymesh_displayEdges;
@@ -2078,9 +2078,9 @@ void draw () {
         pre_selected_rotValue = selected_rotValue;
         pre_selected_scaleValue = selected_scaleValue;        
         
-        pre_selectedPolymesh_alignX = selectedPolymesh_alignX;
-        pre_selectedPolymesh_alignY = selectedPolymesh_alignY;
-        pre_selectedPolymesh_alignZ = selectedPolymesh_alignZ;
+        pre_selection_alignX = selection_alignX;
+        pre_selection_alignY = selection_alignY;
+        pre_selection_alignZ = selection_alignZ;
         
         pre_selectedPolymesh_displayPivot = selectedPolymesh_displayPivot;
         pre_selectedPolymesh_displayEdges = selectedPolymesh_displayEdges;
@@ -2246,17 +2246,17 @@ void draw () {
           WIN3D_Update = 1;
         }
         
-        if (pre_selectedPolymesh_alignX != selectedPolymesh_alignX) {        
+        if (pre_selection_alignX != selection_alignX) {        
           SOLARCHVISION_calculate_selection_Pivot();
           WIN3D_Update = 1;
         }        
         
-        if (pre_selectedPolymesh_alignY != selectedPolymesh_alignY) {        
+        if (pre_selection_alignY != selection_alignY) {        
           SOLARCHVISION_calculate_selection_Pivot();
           WIN3D_Update = 1;
         }      
         
-        if (pre_selectedPolymesh_alignZ != selectedPolymesh_alignZ) {        
+        if (pre_selection_alignZ != selection_alignZ) {        
           SOLARCHVISION_calculate_selection_Pivot();
           WIN3D_Update = 1;
         }      
@@ -22500,9 +22500,9 @@ void mouseClicked () {
                 //---------------------------------------------------
               }
 
-              x += rx * selectedPolymesh_alignX;
-              y += ry * selectedPolymesh_alignY;
-              z += rz * selectedPolymesh_alignZ;
+              x += rx * selection_alignX;
+              y += ry * selection_alignY;
+              z += rz * selection_alignZ;
               
               int SOLID_created = 0;
               
@@ -23153,9 +23153,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
       selected_rotValue = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selected_rotValue" , selected_rotValue, -180, 180, 5), 5)); 
       selected_scaleValue = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selected_scaleValue" , selected_scaleValue, -8, 8, 0.5), 0.5)); 
   
-      selectedPolymesh_alignX = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_alignX" , selectedPolymesh_alignX, -1, 1, 1), 1));
-      selectedPolymesh_alignY = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_alignY" , selectedPolymesh_alignY, -1, 1, 1), 1));
-      selectedPolymesh_alignZ = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_alignZ" , selectedPolymesh_alignZ, -1, 1, 1), 1));
+      selection_alignX = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selection_alignX" , selection_alignX, -1, 1, 1), 1));
+      selection_alignY = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selection_alignY" , selection_alignY, -1, 1, 1), 1));
+      selection_alignZ = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selection_alignZ" , selection_alignZ, -1, 1, 1), 1));
   
       selectedPolymesh_displayPivot = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displayPivot" , selectedPolymesh_displayPivot, 0, 1, 1), 1));
       selectedPolymesh_displayBox = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displayBox" , selectedPolymesh_displayBox, 0, 1, 1), 1));
@@ -24386,13 +24386,13 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       stroke(0,127,0,127);
       strokeWeight(2);
       
-      float min_X = selectedPolymesh_BoundingBox[0][0];
-      float min_Y = selectedPolymesh_BoundingBox[0][1];
-      float min_Z = selectedPolymesh_BoundingBox[0][2];
+      float min_X = selection_BoundingBox[0][0];
+      float min_Y = selection_BoundingBox[0][1];
+      float min_Z = selection_BoundingBox[0][2];
   
-      float max_X = selectedPolymesh_BoundingBox[2][0];
-      float max_Y = selectedPolymesh_BoundingBox[2][1];
-      float max_Z = selectedPolymesh_BoundingBox[2][2];
+      float max_X = selection_BoundingBox[2][0];
+      float max_Y = selection_BoundingBox[2][1];
+      float max_Z = selection_BoundingBox[2][2];
       
       float[][] BoundingBox_Vertices = {{min_X, min_Y, min_Z},
                                         {max_X, min_Y, min_Z}, 
@@ -24442,9 +24442,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       
       strokeWeight(2);
       
-      float Pivot_X = selectedPolymesh_BoundingBox[1 + selectedPolymesh_alignX][0];
-      float Pivot_Y = selectedPolymesh_BoundingBox[1 + selectedPolymesh_alignY][1];
-      float Pivot_Z = selectedPolymesh_BoundingBox[1 + selectedPolymesh_alignZ][2];
+      float Pivot_X = selection_BoundingBox[1 + selection_alignX][0];
+      float Pivot_Y = selection_BoundingBox[1 + selection_alignY][1];
+      float Pivot_Z = selection_BoundingBox[1 + selection_alignZ][2];
       
       float[][] BoundingBox_Vertices = {{Pivot_X, Pivot_Y, Pivot_Z},
                                         {Pivot_X + 10, Pivot_Y, Pivot_Z},
@@ -26149,19 +26149,29 @@ int[] SOLARCHVISION_get_selectedPolymesh_Vertices () {
   return PolymeshVertices;
 } 
 
-float[][] selectedPolymesh_BoundingBox = {{0,0,0}, {0,0,0}, {0,0,0}}; // [min|mid|max]
+float[][] selection_BoundingBox = {{0,0,0}, {0,0,0}, {0,0,0}}; // [min|mid|max]
 
-void SOLARCHVISION_calculate_selectedPolymesh_BoundingBox () {
-
-  int[] PolymeshVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
+void SOLARCHVISION_calculate_selection_BoundingBox () {
+  
+  int[] theVertices = {};
+  
+  if (Work_with_2D_or_3D == 3) {
+    theVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
+  }
+  if (Work_with_2D_or_3D == 2) {
+    //theVertices = SOLARCHVISION_get_selectedObject2D_Vertices();
+  }  
+  if (Work_with_2D_or_3D == 1) {
+    //theVertices = SOLARCHVISION_get_selectedFractal_Vertices();
+  }  
   
   for (int j = 0; j < 3; j++) {
     
     float POS_min = FLOAT_undefined;
     float POS_max = -FLOAT_undefined;
 
-    for (int q = 1; q < PolymeshVertices.length; q++) {
-      int n = PolymeshVertices[q];
+    for (int q = 1; q < theVertices.length; q++) {
+      int n = theVertices[q];
       
       float POS_now = allVertices[n][j];
      
@@ -26171,26 +26181,21 @@ void SOLARCHVISION_calculate_selectedPolymesh_BoundingBox () {
     
     for (int i = 0; i < 3; i++) {
       float ratio = 0.5 * i;
-      selectedPolymesh_BoundingBox[i][j] = (1 - ratio) * POS_min + ratio * POS_max;
+      selection_BoundingBox[i][j] = (1 - ratio) * POS_min + ratio * POS_max;
     } 
   }
+  
+
+  
 }
 
 void SOLARCHVISION_calculate_selection_Pivot () {
 
-  if (Work_with_2D_or_3D == 1) {
-    SOLARCHVISION_calculate_selectedFractal_BoundingBox();
-  }
-  if (Work_with_2D_or_3D == 2) {
-    SOLARCHVISION_calculate_selectedObject2D_BoundingBox();
-  }
-  if (Work_with_2D_or_3D == 3) {
-    SOLARCHVISION_calculate_selectedPolymesh_BoundingBox();
-  }
+  SOLARCHVISION_calculate_selection_BoundingBox();
 
-  selected_Pivot_XYZ[0] = selectedPolymesh_BoundingBox[1 + selectedPolymesh_alignX][0];
-  selected_Pivot_XYZ[1] = selectedPolymesh_BoundingBox[1 + selectedPolymesh_alignY][1];
-  selected_Pivot_XYZ[2] = selectedPolymesh_BoundingBox[1 + selectedPolymesh_alignZ][2];
+  selected_Pivot_XYZ[0] = selection_BoundingBox[1 + selection_alignX][0];
+  selected_Pivot_XYZ[1] = selection_BoundingBox[1 + selection_alignY][1];
+  selected_Pivot_XYZ[2] = selection_BoundingBox[1 + selection_alignZ][2];
   
 }
 
@@ -28148,7 +28153,7 @@ void set_to_View_WindowSelect (int n) {
 
 void set_to_View_PivotX (int n) {
 
-  selectedPolymesh_alignX = n;
+  selection_alignX = n;
   
   WIN3D_Update = 1; 
   ROLLOUT_Update = 1;          
@@ -28156,7 +28161,7 @@ void set_to_View_PivotX (int n) {
 
 void set_to_View_PivotY (int n) {
 
-  selectedPolymesh_alignY = n;
+  selection_alignY = n;
   
   WIN3D_Update = 1; 
   ROLLOUT_Update = 1;          
@@ -28164,7 +28169,7 @@ void set_to_View_PivotY (int n) {
 
 void set_to_View_PivotZ (int n) {
 
-  selectedPolymesh_alignZ = n;
+  selection_alignZ = n;
   
   WIN3D_Update = 1; 
   ROLLOUT_Update = 1;          
