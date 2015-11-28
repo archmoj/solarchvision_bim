@@ -27065,21 +27065,52 @@ void dessin_CameraRoll (int _type, float x, float y, float r) {
 
   pushMatrix();
   translate(x, y);
-
-  float d = 1.5 * r;
   
   strokeWeight(1);
-  stroke(255); 
-  noFill();  
-  rect(-d/2,-d/2, d,d);   
-
-  strokeWeight(2);
-  stroke(255); 
-  noFill();  
+  stroke(255);
+  fill(127,63,0); 
+  {
+    //float d = 0.625 * r;
+    float d = 0.5 * r;
+    
+    beginShape();
+    vertex(0, 0);
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, -d);
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    endShape(CLOSE);
   
-  if (_type == 3) arc(0,0, d,0.333 * d, 0, PI); 
-  if (_type == 2) arc(0,0, 0.333 * d,d, 0.5 * PI, 1.5 * PI); 
-  if (_type == 1) {arc(0,0, 0.333 * d,d, 0.5 * PI, 1.5 * PI); arc(0,0, d,0.333 * d, 0, PI);}
+    beginShape();
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0,d);
+    vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    endShape(CLOSE);
+  
+    beginShape();
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0,d);
+    vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    endShape(CLOSE);
+  }  
+  
+  {
+    float d = 1.5 * r;
+    
+    strokeWeight(1);
+    stroke(255); 
+    noFill();  
+    ellipse(0,0, d,d); 
+  
+    strokeWeight(2);
+    stroke(255); 
+    noFill();  
+    
+    if (_type == 3) arc(0,0, d,0.333 * d, 0, PI); 
+    if (_type == 2) arc(0,0, 0.333 * d,d, 0.5 * PI, 1.5 * PI); 
+    if (_type == 1) {arc(0,0, 0.333 * d,d, 0.5 * PI, 1.5 * PI); arc(0,0, d,0.333 * d, 0, PI);}
+  }  
   
   strokeWeight(0);
   
@@ -27475,11 +27506,11 @@ String[][] BAR_b_Items = {
                           {"2", "AllViewsports", "Expand3DView", "3DViewSpace", "3"},
                           {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "3DViewPoint", "1.5"},
                           {"2", "P<>", "P><", "ProjectionType", "1.0"},
-                          {"1", "TRL", "TRLxy", "TRLz", "TargetRoll", "1.0"},
-                          {"1", "CRL", "CRLxy", "CRLz", "CameraRoll", "1.0"},
-                          {"1", "OR", "ORxy", "ORz", "Orbit", "1.0"},
-                          {"3", "DIz", "DIx", "DIy", "Truck", "1.0"},
                           {"1", "Walk", "DistZ", "1.0"},
+                          {"3", "DIz", "DIx", "DIy", "Truck", "1.0"},
+                          {"1", "OR", "ORxy", "ORz", "Orbit", "1.0"},                          
+                          {"3", "CRL", "CRLz", "CRLxy", "CameraRoll", "1.0"},
+                          {"1", "TRL", "TRLz", "TRLxy", "TargetRoll", "1.0"},
                           {"1", "Pan", "Cen", "Pan", "1.0"},
                           {"1", "±SZ", "3DModelSize", "1.0"},                          
                           {"1", "±ZM", "0ZM", "Zoom", "1.0"},
