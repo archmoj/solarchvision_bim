@@ -26171,10 +26171,10 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     theVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
   }
   if (Work_with_2D_or_3D == 2) {
-    //theVertices = SOLARCHVISION_get_selectedObject2D_Vertices();
-  }  
+    theVertices = selectedObject2D_numbers;
+  }
   if (Work_with_2D_or_3D == 1) {
-    //theVertices = SOLARCHVISION_get_selectedFractal_Vertices();
+    theVertices = selectedFractal_numbers;
   }  
   
   for (int j = 0; j < 3; j++) {
@@ -26183,9 +26183,24 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     float POS_max = -FLOAT_undefined;
 
     for (int q = 1; q < theVertices.length; q++) {
-      int n = theVertices[q];
       
-      float POS_now = allVertices[n][j];
+      float POS_now = 0;
+      
+      if (Work_with_2D_or_3D == 3) {
+        int n = theVertices[q];
+        
+        POS_now = allVertices[n][j];
+      }
+      if (Work_with_2D_or_3D == 2) {
+        int n = theVertices[q];
+        
+        POS_now = allObject2D_XYZS[n][j];
+      }     
+      if (Work_with_2D_or_3D == 1) {
+        int n = theVertices[q];
+        
+        POS_now = allFractal_XYZS[n][j];
+      }        
      
       if (POS_min > POS_now) POS_min = POS_now;   
       if (POS_max < POS_now) POS_max = POS_now;   
@@ -26196,8 +26211,6 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
       selection_BoundingBox[i][j] = (1 - ratio) * POS_min + ratio * POS_max;
     } 
   }
-  
-
   
 }
 
