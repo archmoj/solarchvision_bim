@@ -20505,12 +20505,10 @@ void mouseWheel(MouseEvent event) {
               float xA = CAM_x / objects_scale;
               float yA = CAM_y / objects_scale;
               float zA = CAM_z / objects_scale;
-      
-              float[] ray_end = SOLARCHVISION_calculate_Click3D(0, 0);
               
-              float xO = ray_end[0] / objects_scale;
-              float yO = ray_end[1] / objects_scale;
-              float zO = ray_end[2] / objects_scale;
+              float xO = selectedPolymesh_Pivot_XYZ[0];
+              float yO = selectedPolymesh_Pivot_XYZ[1];
+              float zO = selectedPolymesh_Pivot_XYZ[2];
               
               float t = Wheel_Value * WIN3D_RS_coordinate;
 
