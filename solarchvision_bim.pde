@@ -185,7 +185,7 @@ int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:4D
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
-int View_Select_Create_Modify = 4; // -12:TargetRollXY/Pan -11:TargetRollX/TargetRollY -10:TargetRollXY/Pan -9:TargetRollX/TargetRollY -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:ModelSize/Pan/Orbit -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed 5:DegreeMax 6:DegreeDif 7:DegreeMin 8:TrunckSize 9:LeafSize
+int View_Select_Create_Modify = 4; // -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:ModelSize/Pan/Orbit -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed 5:DegreeMax 6:DegreeDif 7:DegreeMin 8:TrunckSize 9:LeafSize
 int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. fractal trees
 
@@ -20560,7 +20560,7 @@ void mouseWheel(MouseEvent event) {
               }
             }    
             
-            if (View_Select_Create_Modify == -9) { // viewport:TargetRollX/TargetRoolY
+            if (View_Select_Create_Modify == -9) { // viewport:TargetRollXY/TargetRoolZ
 
               if (View_XYZ_ChangeOption == 0) {   
                 WIN3D_RX_coordinate += Wheel_Value * WIN3D_RS_coordinate;
@@ -20577,7 +20577,7 @@ void mouseWheel(MouseEvent event) {
               WIN3D_Update = 1;
             }
             
-            if (View_Select_Create_Modify == -11) { // viewport:CameraRollX/CameraRoolY
+            if (View_Select_Create_Modify == -11) { // viewport:CameraRollXY/CameraRoolZ
 
               if (View_XYZ_ChangeOption == 0) {   
 
@@ -20980,7 +20980,7 @@ void mouseDragged () {
           
           if (View_Select_Create_Modify == -11) { // viewport
           
-            if (mouseButton == LEFT) { // CameraRollX
+            if (mouseButton == LEFT) { // CameraRollXY
               
               SOLARCHVISION_rotateXY_Camera_around_Selection(10 * dx * WIN3D_RS_coordinate);
               SOLARCHVISION_reverseTransform_Camera(); 
@@ -20988,9 +20988,9 @@ void mouseDragged () {
               WIN3D_Update = 1;
             }
             
-            if (mouseButton == RIGHT) { // CameraRollY
+            if (mouseButton == RIGHT) { // CameraRollZ
               
-              SOLARCHVISION_rotateZ_Camera_around_Selection(10 * dx * WIN3D_RS_coordinate);
+              SOLARCHVISION_rotateZ_Camera_around_Selection(10 * dy * WIN3D_RS_coordinate);
               SOLARCHVISION_reverseTransform_Camera(); 
               
               WIN3D_Update = 1;
@@ -21000,7 +21000,7 @@ void mouseDragged () {
 
           if (View_Select_Create_Modify == -10) { // viewport
           
-            if (mouseButton == LEFT) { // TargetRollXY
+            if (mouseButton == LEFT) { // TargetRoll
 
               WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
               WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
@@ -21022,7 +21022,7 @@ void mouseDragged () {
           
           if (View_Select_Create_Modify == -9) { // viewport
           
-            if (mouseButton == LEFT) { // TargetRollX
+            if (mouseButton == LEFT) { // TargetRollXY
 
               WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
               
@@ -21031,7 +21031,7 @@ void mouseDragged () {
               WIN3D_Update = 1;
             }
             
-            if (mouseButton == RIGHT) { // TargetRollY
+            if (mouseButton == RIGHT) { // TargetRollZ
 
               WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
               
