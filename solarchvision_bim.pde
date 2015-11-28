@@ -16367,6 +16367,8 @@ void SOLARCHVISION_rotateZ_Camera_around_Selection (float t) {
   CAM_y = yF * objects_scale;
   CAM_z = zF * objects_scale; 
   
+  SOLARCHVISION_reverseTransform_Camera();
+  
 }
 
 
@@ -16392,6 +16394,8 @@ void SOLARCHVISION_rotateXY_Camera_around_Selection (float t) {
   CAM_x = xB * objects_scale;           
   CAM_y = yB * objects_scale;
   CAM_z = zB * objects_scale;   
+  
+  SOLARCHVISION_reverseTransform_Camera();
   
 }
 
@@ -20582,13 +20586,11 @@ void mouseWheel(MouseEvent event) {
               if (View_XYZ_ChangeOption == 0) {   
 
                 SOLARCHVISION_rotateZ_Camera_around_Selection(Wheel_Value * WIN3D_RS_coordinate);
-                SOLARCHVISION_reverseTransform_Camera(); 
               }
               
               if (View_XYZ_ChangeOption == 1) {   
 
                 SOLARCHVISION_rotateXY_Camera_around_Selection(Wheel_Value * WIN3D_RS_coordinate);
-                SOLARCHVISION_reverseTransform_Camera(); 
               }    
 
               WIN3D_Update = 1;
@@ -20983,10 +20985,8 @@ void mouseDragged () {
             if (mouseButton == LEFT) { // CameraRoll
 
               SOLARCHVISION_rotateXY_Camera_around_Selection(10 * dx * WIN3D_RS_coordinate);
-              //SOLARCHVISION_reverseTransform_Camera(); 
               
               SOLARCHVISION_rotateZ_Camera_around_Selection(10 * dy * WIN3D_RS_coordinate);
-              SOLARCHVISION_reverseTransform_Camera();               
               
               WIN3D_Update = 1;
             }
@@ -21006,7 +21006,6 @@ void mouseDragged () {
             if (mouseButton == LEFT) { // CameraRollXY
               
               SOLARCHVISION_rotateXY_Camera_around_Selection(10 * dx * WIN3D_RS_coordinate);
-              SOLARCHVISION_reverseTransform_Camera(); 
               
               WIN3D_Update = 1;
             }
@@ -21014,7 +21013,6 @@ void mouseDragged () {
             if (mouseButton == RIGHT) { // CameraRollZ
               
               SOLARCHVISION_rotateZ_Camera_around_Selection(10 * dy * WIN3D_RS_coordinate);
-              SOLARCHVISION_reverseTransform_Camera(); 
               
               WIN3D_Update = 1;
             }          
