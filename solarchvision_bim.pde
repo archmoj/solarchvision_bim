@@ -185,7 +185,7 @@ int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:4D
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
-int View_Select_Create_Modify = 4; // -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed 5:DegreeMax 6:DegreeDif 7:DegreeMin 8:TrunckSize 9:LeafSize
+int View_Select_Create_Modify = 4; // -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed 5:DegreeMax 6:DegreeDif 7:DegreeMin 8:TrunckSize 9:LeafSize
 int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. fractal trees
 
@@ -20660,8 +20660,23 @@ void mouseWheel(MouseEvent event) {
 
               WIN3D_Update = 1;
     
-            }                  
+            }              
+        
+            if (View_Select_Create_Modify == -15) { // viewport:PanX
+            
+              WIN3D_X_coordinate += Wheel_Value * WIN3D_S_coordinate * objects_scale;
 
+              WIN3D_Update = 1;
+    
+            }         
+        
+            if (View_Select_Create_Modify == -16) { // viewport:PanY
+            
+              WIN3D_Y_coordinate += Wheel_Value * WIN3D_S_coordinate * objects_scale;
+
+              WIN3D_Update = 1;
+    
+            }      
           }
         }   
       }
@@ -21044,6 +21059,23 @@ void mouseDragged () {
     
           float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
           float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
+
+          if (View_Select_Create_Modify == -15) { // viewport
+
+            if (mouseButton == LEFT) { // CameraRollXY
+              
+              SOLARCHVISION_rotateXY_Camera_around_Selection(10 * dx * WIN3D_RS_coordinate);
+              
+              WIN3D_Update = 1;
+            }
+            
+            if (mouseButton == RIGHT) { // CameraRollZ
+              
+              SOLARCHVISION_rotateZ_Camera_around_Selection(10 * dy * WIN3D_RS_coordinate);
+              
+              WIN3D_Update = 1;
+            }     
+          } 
           
           if (View_Select_Create_Modify == -14) { // viewport
 
@@ -21851,7 +21883,16 @@ void mouseClicked () {
             SOLARCHVISION_highlight_in_BAR_b("Pan");
             BAR_b_Update = 1;  
           }
-
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PanX")) {
+            set_to_View_Pan(1);
+            SOLARCHVISION_highlight_in_BAR_b("PanX");
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PanY")) {
+            set_to_View_Pan(2);
+            SOLARCHVISION_highlight_in_BAR_b("PanY");
+            BAR_b_Update = 1;  
+          }          
           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Zoom")) {
             set_to_View_Zoom(0);
@@ -23171,7 +23212,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
       //Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 4, 1), 1));
     
-      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -14, 8, 1), 1));
+      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -16, 8, 1), 1));
       //View_XYZ_ChangeOption = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_ChangeOption" , View_XYZ_ChangeOption, 0, 6, 1), 1));
       //Modify_Object_Parameters = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Object_Parameters" , Modify_Object_Parameters, 0, 9, 1), 1));
 
@@ -27507,21 +27548,39 @@ void dessin_Pan (int _type, float x, float y, float r) {
 
   pushMatrix();
   translate(x, y);
-
-  float d = 1.0 * r;
-
-  strokeWeight(1);
-  stroke(255); 
-  noFill();  
-  arc(0,0, d,d, 0,PI); 
-
-  stroke(255); 
-  noFill();  
   
-  for (float i = -1.5; i <= 1.5; i++) { 
-    line(i * 0.25 * d - 0.125 * d, -0.5 * d, i * 0.25 * d + 0.125 * d, 0);
+  {
+    float d = 1.0 * r;
+  
+    strokeWeight(1);
+    stroke(255); 
+    noFill();  
+    arc(0,0, d,d, 0,PI); 
+  
+    stroke(255); 
+    noFill();  
     
-    if (i < 1.5) arc(i * 0.25 * d,-0.5 * d, 0.25 * d, 0.25 * d, PI,2*PI); 
+    for (float i = -1.5; i <= 1.5; i++) { 
+      line(i * 0.25 * d - 0.125 * d, -0.5 * d, i * 0.25 * d + 0.125 * d, 0);
+      
+      if (i < 1.5) arc(i * 0.25 * d,-0.5 * d, 0.25 * d, 0.25 * d, PI,2*PI); 
+    }
+  }
+
+  strokeWeight(2);
+  stroke(255); 
+  noFill();  
+  {
+    float d = 0.75 * r;
+
+    if (_type == 2) {
+      line(-1 * d, 0, -0.5 * d, 0);
+      line(1 * d, 0, 0.5 * d, 0);      
+    }
+    if (_type == 3) {
+      line(0, -1 * d, 0, -0.5 * d);
+      line(0, 1 * d, 0, 0.5 * d);
+    }
   }
   
   strokeWeight(0);
@@ -27625,7 +27684,7 @@ String[][] BAR_a_Items = {
                         {"Project", "New", "Open...", "Save", "Save As...", "Import...", "Export...", "Preferences", "Quit"},
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
-                        {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
+                        {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
                         {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Vertices", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sky", "Display/Hide Sun", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
@@ -27871,7 +27930,7 @@ String[][] BAR_b_Items = {
                           {"3", "CRL", "CRLz", "CRLxy", "CameraRoll", "1.0"},
                           {"1", "TRL", "TRLz", "TRLxy", "TargetRoll", "1.0"},
                           
-                          {"1", "Pan", "Pan", "1.0"},
+                          {"1", "Pan", "PanX", "PanY", "Pan", "1.0"},
                           {"1", "±ZM", "0ZM", "Zoom", "1.0"},
                           {"1", "±SA", "AllModelSize", "1.0"},
                           {"1", "±SZ", "3DModelSize", "1.0"},                          
@@ -28591,7 +28650,18 @@ void set_to_View_LookAtOrigin (int n) {
 
 void set_to_View_Pan (int n) {
 
-  View_Select_Create_Modify = -14;
+  if (n == 0) {
+    View_Select_Create_Modify = -14;
+  }
+
+  if (n == 1) {
+    View_Select_Create_Modify = -15;
+  }
+
+  if (n == 2) {
+    View_Select_Create_Modify = -16;
+  }
+
   
   ROLLOUT_Update = 1;    
 }  
