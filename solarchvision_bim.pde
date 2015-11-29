@@ -21829,16 +21829,7 @@ void mouseClicked () {
             SOLARCHVISION_highlight_in_BAR_b("Pan");
             BAR_b_Update = 1;  
           }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Look at origin")) {
-            set_to_View_Pan(1);
-            SOLARCHVISION_highlight_in_BAR_b("LAO");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Look at selection")) {
-            set_to_View_Pan(1);
-            SOLARCHVISION_highlight_in_BAR_b("LAS");
-            BAR_b_Update = 1;  
-          }
+
           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Zoom")) {
             set_to_View_Zoom(0);
@@ -21877,6 +21868,17 @@ void mouseClicked () {
             SOLARCHVISION_highlight_in_BAR_b("±CDS");
             BAR_b_Update = 1;  
           }   
+          
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Look at origin")) {
+            set_to_View_LookAtOrigin(0);
+            SOLARCHVISION_highlight_in_BAR_b("LAO");
+            BAR_b_Update = 1;  
+          }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Look at selection")) {
+            set_to_View_LookAtSelection(0);
+            SOLARCHVISION_highlight_in_BAR_b("LAS");
+            BAR_b_Update = 1;  
+          }          
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("3DModelSize")) {
             set_to_View_3DModelSize();
@@ -28534,6 +28536,12 @@ void set_to_View_LookAtSelection (int n) {
   SOLARCHVISION_lookXY_Camera_towards_Selection();
   SOLARCHVISION_lookZ_Camera_towards_Selection();
   
+  { // automatically set another choice of ineterest
+    set_to_View_CameraDistance(0);
+    SOLARCHVISION_highlight_in_BAR_b("±CDS");
+    BAR_b_Update = 1;    
+  }
+  
   WIN3D_Update = 1;
  
   ROLLOUT_Update = 1;    
@@ -28546,6 +28554,14 @@ void set_to_View_LookAtOrigin (int n) {
   WIN3D_Y_coordinate = 0;
   WIN3D_Z_coordinate = 0; 
   
+  {
+    // automatically set another choice of ineterest
+    
+    set_to_View_Truck(0);
+    SOLARCHVISION_highlight_in_BAR_b("±CDZ");
+    BAR_b_Update = 1;    
+  }
+
   WIN3D_Update = 1;
  
   ROLLOUT_Update = 1;    
