@@ -185,7 +185,7 @@ int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:4D
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
-int View_Select_Create_Modify = 4; // -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed 5:DegreeMax 6:DegreeDif 7:DegreeMin 8:TrunckSize 9:LeafSize
+int View_Select_Create_Modify = 4; // -17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed 5:DegreeMax 6:DegreeDif 7:DegreeMin 8:TrunckSize 9:LeafSize
 int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. fractal trees
 
@@ -16379,6 +16379,36 @@ void SOLARCHVISION_lookZ_Camera_towards_Selection () {
 
 }
 
+void SOLARCHVISION_move_Camera_towards_Mouse (float t) {
+  
+  float xA = CAM_x / objects_scale;
+  float yA = CAM_y / objects_scale;
+  float zA = CAM_z / objects_scale;
+  
+  float Image_X = mouseX - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
+  float Image_Y = mouseY - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
+  
+  float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);  
+  float xO = ray_end[0] / objects_scale;
+  float yO = ray_end[1] / objects_scale;
+  float zO = ray_end[2] / objects_scale;
+  
+  float dx = xA - xO;
+  float dy = yA - yO;
+  float dz = zA - zO;
+
+  float xB = xO + t * dx; 
+  float yB = yO + t * dy;
+  float zB = zO + t * dz;
+  
+  CAM_x = xB * objects_scale;           
+  CAM_y = yB * objects_scale;
+  CAM_z = zB * objects_scale;     
+  
+  SOLARCHVISION_reverseTransform_Camera();
+
+}
+
 void SOLARCHVISION_move_Camera_towards_Selection (float t) {
 
   SOLARCHVISION_calculate_selection_Pivot();  // this help during the process of modifying position/roatation/scale of selected objects
@@ -20691,6 +20721,14 @@ void mouseWheel(MouseEvent event) {
               WIN3D_Update = 1;
     
             }      
+            
+            if (View_Select_Create_Modify == -17) { // viewport:DistMouseXY
+            
+              SOLARCHVISION_move_Camera_towards_Mouse(pow(2, -0.5 * Wheel_Value));
+
+              WIN3D_Update = 1;
+    
+            }                
           }
         }   
       }
@@ -21074,7 +21112,7 @@ void mouseDragged () {
           float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
           float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
 
-          if (View_Select_Create_Modify == -15) { // viewport
+          if ((View_Select_Create_Modify == -15) || (View_Select_Create_Modify == -16)) { // viewport
 
             if (mouseButton == LEFT) { // CameraRollXY
               
@@ -21091,7 +21129,7 @@ void mouseDragged () {
             }     
           } 
           
-          if (View_Select_Create_Modify == -14) { // viewport
+          if ((View_Select_Create_Modify == -14) || (View_Select_Create_Modify == -17)) { // viewport
 
             if (mouseButton == LEFT) { // pan
 
@@ -21945,6 +21983,11 @@ void mouseClicked () {
             SOLARCHVISION_highlight_in_BAR_b("±CDS");
             BAR_b_Update = 1;  
           }   
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DistMouseXY")) {
+            set_to_View_DistMouseXY(0);
+            SOLARCHVISION_highlight_in_BAR_b("±CDM");
+            BAR_b_Update = 1;  
+          }  
           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Look at origin")) {
             set_to_View_LookAtOrigin(0);
@@ -27606,8 +27649,7 @@ void dessin_Pan (int _type, float x, float y, float r) {
 
 
 
-
-void dessin_CameraDistance (int _type, float x, float y, float r) {
+void dessin_DistMouseXY (int _type, float x, float y, float r) {
 
   pushMatrix();
   translate(x, y);
@@ -27628,6 +27670,60 @@ void dessin_CameraDistance (int _type, float x, float y, float r) {
 
   BAR_b_Display_Text = 0;
 }
+
+
+
+void dessin_CameraDistance (int _type, float x, float y, float r) {
+
+  pushMatrix();
+  translate(x, y);
+
+  strokeWeight(1);
+  stroke(255); 
+  line(-r, -0.5 * r, r, -0.5 * r);
+  strokeWeight(2);
+  line(0, -0.5 * r, r, 0);
+  line(0, -0.5 * r, -r, 0);
+  strokeWeight(2);
+  line(0, -0.5 * r, 0, r);
+  
+  strokeWeight(1);
+  stroke(255);
+  fill(127,63,0); 
+  {
+    //float d = 0.625 * r;
+    float d = 0.5 * r;
+    
+    beginShape();
+    vertex(0, 0);
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, -d);
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    endShape(CLOSE);
+  
+    beginShape();
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0,d);
+    vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    endShape(CLOSE);
+  
+    beginShape();
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0,d);
+    vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    endShape(CLOSE);
+  }  
+    
+  
+  strokeWeight(0);
+  
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
 
 
 void dessin_DistZ (int _type, float x, float y, float r) {
@@ -27698,7 +27794,7 @@ String[][] BAR_a_Items = {
                         {"Project", "New", "Open...", "Save", "Save As...", "Import...", "Export...", "Preferences", "Quit"},
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
-                        {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
+                        {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
                         {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Vertices", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sky", "Display/Hide Sun", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
@@ -27938,6 +28034,7 @@ String[][] BAR_b_Items = {
                           {"1", "LAS", "LookAtSelection", "1.0"},
                           
                           {"1", "±CDS", "CameraDistance", "1.0"},
+                          {"1", "±CDM", "DistMouseXY", "1.0"},
                           {"1", "±CDZ", "DistZ", "1.0"},
                           {"3", "DIz", "DIx", "DIy", "Truck", "1.0"},
                           {"1", "OR", "ORxy", "ORz", "Orbit", "1.0"},                          
@@ -28149,6 +28246,8 @@ void SOLARCHVISION_draw_window_BAR_b () {
         
         if (Bar_Switch.equals("CameraDistance")) set_to_View_CameraDistance(0);
 
+        if (Bar_Switch.equals("DistMouseXY")) set_to_View_DistMouseXY(0);
+
         if (Bar_Switch.equals("DistZ")) set_to_View_Truck(0);
         if (Bar_Switch.equals("Truck")) set_to_View_Truck(j - 1);
         
@@ -28216,6 +28315,9 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("Pan")) {
           dessin_Pan(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }
+        if (Bar_Switch.equals("DistMouseXY")) {
+          dessin_DistMouseXY(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }          
         if (Bar_Switch.equals("DistZ")) {
           dessin_DistZ(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }        
@@ -28546,6 +28648,17 @@ void set_to_View_Truck (int n) {
   
   ROLLOUT_Update = 1;          
 }  
+
+
+void set_to_View_DistMouseXY (int n) {
+
+  if (n == 0) {
+    View_Select_Create_Modify = -17;
+  }
+
+  ROLLOUT_Update = 1;          
+}  
+
 
 
 void set_to_View_CameraDistance (int n) {
