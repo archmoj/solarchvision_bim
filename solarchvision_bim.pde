@@ -22759,7 +22759,7 @@ void mouseClicked () {
               }
   
               if (Create_Fractal_Plant != 0) {
-                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
+                //addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
                 
                 float as_Solid = 1;
                 SOLARCHVISION_add_FractalPlant(Create_Fractal_Plant_Type, x, y, z, 2 * rz, rot, Create_Fractal_Plant_DegreeMin, Create_Fractal_Plant_DegreeMax, Create_Fractal_Plant_Seed, Create_Fractal_Plant_TrunckSize, Create_Fractal_Plant_LeafSize, as_Solid);
