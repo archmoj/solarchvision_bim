@@ -14093,8 +14093,8 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
     }
     
     if (parts[0].toLowerCase().equals("f")) {
-      //int[] newFace = new int [parts.length - 1]; // if we don't have space at the end of the line.
-      int[] newFace = new int [parts.length - 2]; // if we have 1 space at the end of the line. 
+      int[] newFace = new int [parts.length - 1]; // if we don't have space at the end of the line.
+      //int[] newFace = new int [parts.length - 2]; // if we have 1 space at the end of the line. 
     
       //println(parts);
     
@@ -21357,18 +21357,35 @@ void mouseDragged () {
 }
 
 
-String USER_Filename = "";
+void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
 
-void SOLARCHVISION_SelectFile (File selectedFile) {
-
-  USER_Filename = "";
+  String Filename = "";
   
   if (selectedFile == null) {
   } 
   else {
-    USER_Filename = selectedFile.getAbsolutePath();
+    Filename = selectedFile.getAbsolutePath().replace("\\", "/");
+    
+    println(Filename);
+    
+    int NUM_allPolymesh_Faces_Before = allPolymesh_Faces.length;
+    
+    SOLARCHVISION_import_objects(Filename, -1, 0,0,0, 1,1,1);
+    
+    int NUM_allPolymesh_Faces_After = allPolymesh_Faces.length;
+    
+    selectedPolymesh_numbers = new int [1 + NUM_allPolymesh_Faces_After - NUM_allPolymesh_Faces_Before];
+    selectedPolymesh_numbers[0] = 0;
+    for (int i = 1; i < selectedPolymesh_numbers.length - 1; i++) { 
+      selectedPolymesh_numbers[i] = i + NUM_allPolymesh_Faces_Before;
+      println(selectedPolymesh_numbers[i]);
+    }
+
+    Work_with_2D_or_3D = 3;
+
+    WIN3D_Update = 1;
   }
-  
+
 }     
 
 void mouseClicked () {
@@ -21396,9 +21413,9 @@ void mouseClicked () {
             //selectOutput("Select a file to write to:", "SOLARCHVISION_fileSelected");
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Import 3D-Model...")) { 
-            selectInput("Select OBJ file to import:", "SOLARCHVISION_SelectFile");
+            selectInput("Select OBJ file to import:", "SOLARCHVISION_SelectFile_Import_3DModel");
             
-            println(USER_Filename);
+            
           }          
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Export 3D-Model")) {
             SOLARCHVISION_export_objects(); 
