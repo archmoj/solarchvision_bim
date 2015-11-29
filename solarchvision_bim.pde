@@ -28845,76 +28845,60 @@ void set_to_View_3DViewSpace (int n) {
 
 void set_to_View_3DViewPoint (int n) {
   
-  if (n == 0) {
   
-    WIN3D_RX_coordinate = 0;
-    WIN3D_RY_coordinate = 0;
-    WIN3D_RZ_coordinate = 0; 
+  
+  if (n == 0) {
+    SOLARCHVISION_rotateZ_Camera_around_Selection(0 - WIN3D_RX_coordinate);
+    SOLARCHVISION_rotateXY_Camera_around_Selection(0 - WIN3D_RZ_coordinate);  
   }
   
   if (n == 1) {
-  
-    WIN3D_RX_coordinate = 90;
-    WIN3D_RY_coordinate = 0;
-    WIN3D_RZ_coordinate = 0; 
+    SOLARCHVISION_rotateZ_Camera_around_Selection(90 - WIN3D_RX_coordinate); 
+    SOLARCHVISION_rotateXY_Camera_around_Selection(0 - WIN3D_RZ_coordinate); 
   }          
 
   if (n == 2) {
-  
-    WIN3D_RX_coordinate = 90;
-    WIN3D_RY_coordinate = 0;
-    WIN3D_RZ_coordinate = -90; 
+    SOLARCHVISION_rotateZ_Camera_around_Selection(90 - WIN3D_RX_coordinate); 
+    SOLARCHVISION_rotateXY_Camera_around_Selection(-90 - WIN3D_RZ_coordinate); 
   }    
 
   if (n == 3) {
-  
-    WIN3D_RX_coordinate = 90;
-    WIN3D_RY_coordinate = 0;
-    WIN3D_RZ_coordinate = 180; 
+    SOLARCHVISION_rotateZ_Camera_around_Selection(90 - WIN3D_RX_coordinate); 
+    SOLARCHVISION_rotateXY_Camera_around_Selection(180 - WIN3D_RZ_coordinate); 
   }   
 
   if (n == 4) {
-  
-    WIN3D_RX_coordinate = 90;
-    WIN3D_RY_coordinate = 0;
-    WIN3D_RZ_coordinate = 90; 
+    SOLARCHVISION_rotateZ_Camera_around_Selection(90 - WIN3D_RX_coordinate); 
+    SOLARCHVISION_rotateXY_Camera_around_Selection(90 - WIN3D_RZ_coordinate); 
   }  
  
   if (n == 5) {
-  
-    WIN3D_RX_coordinate = 180;
-    WIN3D_RY_coordinate = 0;
-    WIN3D_RZ_coordinate = 0; 
+    SOLARCHVISION_rotateZ_Camera_around_Selection(180 - WIN3D_RX_coordinate);
+    SOLARCHVISION_rotateXY_Camera_around_Selection(0 - WIN3D_RZ_coordinate);  
   }             
 
   if (n == 6) {
-  
-    WIN3D_RX_coordinate = 45;
-    WIN3D_RY_coordinate = 0;
-    WIN3D_RZ_coordinate = -45; 
+    SOLARCHVISION_rotateZ_Camera_around_Selection(90 - WIN3D_RX_coordinate); 
+    SOLARCHVISION_rotateXY_Camera_around_Selection(-45 - WIN3D_RZ_coordinate); 
   }             
   
   if (n == 7) {
-  
-    WIN3D_RX_coordinate = 45;
-    WIN3D_RY_coordinate = 0;
-    WIN3D_RZ_coordinate = 45; 
+    SOLARCHVISION_rotateZ_Camera_around_Selection(90 - WIN3D_RX_coordinate); 
+    SOLARCHVISION_rotateXY_Camera_around_Selection(45 - WIN3D_RZ_coordinate); 
   }     
 
   if (n == 8) {
-  
-    WIN3D_RX_coordinate = 45;
-    WIN3D_RY_coordinate = 0;
-    WIN3D_RZ_coordinate = 135; 
+    SOLARCHVISION_rotateZ_Camera_around_Selection(90 - WIN3D_RX_coordinate); 
+    SOLARCHVISION_rotateXY_Camera_around_Selection(135 - WIN3D_RZ_coordinate); 
   }
 
   if (n == 9) {
-  
-    WIN3D_RX_coordinate = 45;
-    WIN3D_RY_coordinate = 0;
-    WIN3D_RZ_coordinate = -135; 
+    SOLARCHVISION_rotateZ_Camera_around_Selection(90 - WIN3D_RX_coordinate); 
+    SOLARCHVISION_rotateXY_Camera_around_Selection(-135 - WIN3D_RZ_coordinate); 
   }
+  
   WIN3D_Update = 1;   
+  
   //ROLLOUT_Update = 1;   
 } 
 
