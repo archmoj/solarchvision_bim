@@ -16328,7 +16328,7 @@ float Orthographic_Zoom () {
 }
 
 
-void SOLARCHVISION_look_Camera_towards_Selection () {
+void SOLARCHVISION_lookXY_Camera_towards_Selection () {
 
   float xO = CAM_x / objects_scale;
   float yO = CAM_y / objects_scale;
@@ -16341,14 +16341,35 @@ void SOLARCHVISION_look_Camera_towards_Selection () {
   
   float xB = selected_Pivot_XYZ[0];
   float yB = selected_Pivot_XYZ[1];
-  float zB = selected_Pivot_XYZ[2];                
-  
+  float zB = selected_Pivot_XYZ[2];     
+
   WIN3D_RZ_coordinate += atan2_ang((yB - yO), (xB - xO)) - atan2_ang((yA - yO), (xA - xO));
   
   SOLARCHVISION_reverseTransform_Camera();
 
 }
 
+
+void SOLARCHVISION_lookZ_Camera_towards_Selection () {
+
+  float xO = CAM_x / objects_scale;
+  float yO = CAM_y / objects_scale;
+  float zO = CAM_z / objects_scale;
+  
+  float[] ray_end = SOLARCHVISION_calculate_Click3D(0, 0);  
+  float xA = ray_end[0] / objects_scale;
+  float yA = ray_end[1] / objects_scale;
+  float zA = ray_end[2] / objects_scale;
+  
+  float xB = selected_Pivot_XYZ[0];
+  float yB = selected_Pivot_XYZ[1];
+  float zB = selected_Pivot_XYZ[2];          
+
+  WIN3D_RX_coordinate += atan2_ang((zB - zO), pow(pow(yB - yO, 2) + pow(xB - xO, 2), 0.5)) - atan2_ang((zA - zO), pow(pow(yA - yO, 2) + pow(xA - xO, 2), 0.5));
+  
+  SOLARCHVISION_reverseTransform_Camera();
+
+}
 
 void SOLARCHVISION_move_Camera_towards_Selection (float t) {
 
@@ -28510,7 +28531,8 @@ void set_to_View_Orbit (int n) {
 
 void set_to_View_LookAtSelection (int n) {
 
-  SOLARCHVISION_look_Camera_towards_Selection();
+  SOLARCHVISION_lookXY_Camera_towards_Selection();
+  SOLARCHVISION_lookZ_Camera_towards_Selection();
   
   WIN3D_Update = 1;
  
