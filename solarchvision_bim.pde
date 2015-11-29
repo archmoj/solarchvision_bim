@@ -84,7 +84,7 @@ int selection_alignY = 0;
 int selection_alignZ = 0;
 
 int selectedPolymesh_displayPivot = 1;
-int selectedPolymesh_displayEdges = 0;
+int selectedPolymesh_displayEdges = 1; //0;
 int selectedPolymesh_displayBox = 1;
 
 int selectedObject2D_displayEdges = 1;
@@ -14093,10 +14093,16 @@ void SOLARCHVISION_import_objects (String FileName, int m, float cx, float cy, f
     }
     
     if (parts[0].toLowerCase().equals("f")) {
-      int[] newFace = new int [parts.length - 1]; // if we don't have space at the end of the line.
-      //int[] newFace = new int [parts.length - 2]; // if we have 1 space at the end of the line. 
-    
+      
       //println(parts);
+      
+      int FaceDegree = parts.length - 1; // if we don't have space at the end of the line.
+      
+      if (parts[FaceDegree].equals("")) {  // if we have 1 space at the end of the line.
+        FaceDegree -= 1;
+      }
+      
+      int[] newFace = new int [FaceDegree]; 
     
       for (int n = 0; n < newFace.length; n += 1) {
         
@@ -21382,6 +21388,8 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
     }
 
     Work_with_2D_or_3D = 3;
+    
+    SOLARCHVISION_calculate_selection_Pivot();
 
     WIN3D_Update = 1;
   }
