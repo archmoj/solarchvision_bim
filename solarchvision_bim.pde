@@ -16328,6 +16328,14 @@ float Orthographic_Zoom () {
 }
 
 
+void SOLARCHVISION_look_Camera_towards_Selection () {
+  
+  SOLARCHVISION_calculate_selection_Pivot();  // this help during the process of modifying position/roatation/scale of selected objects
+  
+  SOLARCHVISION_lookXY_Camera_towards_Selection();
+  SOLARCHVISION_lookZ_Camera_towards_Selection();
+}
+
 void SOLARCHVISION_lookXY_Camera_towards_Selection () {
 
   float xO = CAM_x / objects_scale;
@@ -16373,6 +16381,8 @@ void SOLARCHVISION_lookZ_Camera_towards_Selection () {
 
 void SOLARCHVISION_move_Camera_towards_Selection (float t) {
 
+  SOLARCHVISION_calculate_selection_Pivot();  // this help during the process of modifying position/roatation/scale of selected objects
+  
   float xA = CAM_x / objects_scale;
   float yA = CAM_y / objects_scale;
   float zA = CAM_z / objects_scale;
@@ -16398,6 +16408,8 @@ void SOLARCHVISION_move_Camera_towards_Selection (float t) {
 }
 
 void SOLARCHVISION_rotateZ_Camera_around_Selection (float t) {
+  
+  SOLARCHVISION_calculate_selection_Pivot();  // this help during the process of modifying position/roatation/scale of selected objects
   
   WIN3D_RX_coordinate += t;
 
@@ -16445,6 +16457,8 @@ void SOLARCHVISION_rotateZ_Camera_around_Selection (float t) {
 
 
 void SOLARCHVISION_rotateXY_Camera_around_Selection (float t) {
+  
+  SOLARCHVISION_calculate_selection_Pivot();  // this help during the process of modifying position/roatation/scale of selected objects
   
   WIN3D_RZ_coordinate += t;
 
@@ -22759,7 +22773,7 @@ void mouseClicked () {
               }
   
               if (Create_Fractal_Plant != 0) {
-                //addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
+                //addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; // maybe requiered if passing as solid! 
                 
                 float as_Solid = 1;
                 SOLARCHVISION_add_FractalPlant(Create_Fractal_Plant_Type, x, y, z, 2 * rz, rot, Create_Fractal_Plant_DegreeMin, Create_Fractal_Plant_DegreeMax, Create_Fractal_Plant_Seed, Create_Fractal_Plant_TrunckSize, Create_Fractal_Plant_LeafSize, as_Solid);
@@ -28612,10 +28626,11 @@ void set_to_View_Orbit (int n) {
 }  
 
 
+
+
 void set_to_View_LookAtSelection (int n) {
 
-  SOLARCHVISION_lookXY_Camera_towards_Selection();
-  SOLARCHVISION_lookZ_Camera_towards_Selection();
+  SOLARCHVISION_look_Camera_towards_Selection();
   
   { // automatically set another choice of ineterest
     set_to_View_CameraDistance(0);
