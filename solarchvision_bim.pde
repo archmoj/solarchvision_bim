@@ -1270,6 +1270,7 @@ String LandFolder;
 String Object2DFolder_PEOPLE;
 String Object2DFolder_TREES;
 String ExportFolder;
+String ProjectsFolder;
 String DiagramsFolder;
 String ScreenShotFolder;
 String Model3DFolder;
@@ -1290,6 +1291,7 @@ void SOLARCHVISION_update_folders () {
   Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_SEL";
   Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_ALL";
   ExportFolder          = BaseFolder + "/Export";
+  ProjectsFolder        = ExportFolder + "/Projects";  
   DiagramsFolder        = ExportFolder + "/Diagrams";  
   ScreenShotFolder      = ExportFolder + "/ScreenShots" + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
   Model3DFolder         = ExportFolder + "/Model_3D" + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
@@ -21363,6 +21365,41 @@ void mouseDragged () {
 }
 
 
+
+
+void SOLARCHVISION_save_project (String myFile) {
+
+  PrintWriter File_output_mesh = createWriter(myFile);
+  
+  File_output_mesh.println("#SOLARCHVISION");
+
+  File_output_mesh.flush(); 
+  File_output_mesh.close();   
+  
+  println("End of saving project.");
+
+  SOLARCHVISION_explore_output(myFile);
+}
+
+
+
+void SOLARCHVISION_fileSelected_SaveAs (File selectedFile) {
+
+  String Filename = "";
+  
+  if (selectedFile == null) {
+  } 
+  else {
+    Filename = selectedFile.getAbsolutePath().replace("\\", "/");
+    
+    println("Saving to:", Filename);
+    
+  }
+
+}     
+
+
+
 void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
 
   String Filename = "";
@@ -21372,7 +21409,7 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
   else {
     Filename = selectedFile.getAbsolutePath().replace("\\", "/");
     
-    println(Filename);
+    println("Loading:", Filename);
     
     int NUM_allPolymesh_Faces_Before = allPolymesh_Faces.length;
     
@@ -21414,22 +21451,29 @@ void mouseClicked () {
           }     
           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Open...")) { 
-            //selectInput("Select a file to open:", "SOLARCHVISION_fileSelected");
+            //selectInput("Select a file to open:", "SOLARCHVISION_fileSelected_Open");
           }          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Save As...")) { 
-            //selectOutput("Select a file to write to:", "SOLARCHVISION_fileSelected");
+
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Save")) { 
+            SOLARCHVISION_save_project(ProjectsFolder + "/" + "Project.xml");   
           }
+          
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Save As...")) { 
+            selectOutput("Select a file to write to:", "SOLARCHVISION_fileSelected_SaveAs");
+          }
+          
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Import 3D-Model...")) { 
             selectInput("Select OBJ file to import:", "SOLARCHVISION_SelectFile_Import_3DModel");
-            
-            
-          }          
+          }   
+          
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Export 3D-Model")) {
             SOLARCHVISION_export_objects(); 
-          }      
+          }    
+          
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Export Land-Model")) {
             SOLARCHVISION_export_land(); 
-          }            
+          }     
+          
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Quit")) { 
             exit();
           }      
