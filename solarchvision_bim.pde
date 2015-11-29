@@ -16330,20 +16330,20 @@ float Orthographic_Zoom () {
 
 void SOLARCHVISION_look_Camera_towards_Selection () {
 
-  float xA = CAM_x / objects_scale;
-  float yA = CAM_y / objects_scale;
-  float zA = CAM_z / objects_scale;
+  float xO = CAM_x / objects_scale;
+  float yO = CAM_y / objects_scale;
+  float zO = CAM_z / objects_scale;
   
-  float xO = selected_Pivot_XYZ[0];
-  float yO = selected_Pivot_XYZ[1];
-  float zO = selected_Pivot_XYZ[2];                
+  float[] ray_end = SOLARCHVISION_calculate_Click3D(0, 0);  
+  float xA = ray_end[0] / objects_scale;
+  float yA = ray_end[1] / objects_scale;
+  float zA = ray_end[2] / objects_scale;
   
-  float dx = xA - xO;
-  float dy = yA - yO;
-  float dz = zA - zO;
+  float xB = selected_Pivot_XYZ[0];
+  float yB = selected_Pivot_XYZ[1];
+  float zB = selected_Pivot_XYZ[2];                
   
-  
-  WIN3D_RZ_coordinate = -atan2_ang(dy, dx);
+  WIN3D_RZ_coordinate += atan2_ang((yB - yO), (xB - xO)) - atan2_ang((yA - yO), (xA - xO));
   
   SOLARCHVISION_reverseTransform_Camera();
 
