@@ -21367,19 +21367,7 @@ void mouseDragged () {
 
 
 
-void SOLARCHVISION_save_project (String myFile) {
 
-  PrintWriter File_output_mesh = createWriter(myFile);
-  
-  File_output_mesh.println("#SOLARCHVISION");
-
-  File_output_mesh.flush(); 
-  File_output_mesh.close();   
-  
-  println("End of saving project.");
-
-  SOLARCHVISION_explore_output(myFile);
-}
 
 
 
@@ -29566,6 +29554,56 @@ void SOLARCHVISION_check_for_WIN3D_update () {
     WIN3D_Update = 1;
   }      
 }  
+
+
+
+void SOLARCHVISION_save_project (String myFile) {
+ 
+  XML my_xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
+  XML newChild1 = null;
+  XML newChild2 = null;
+  XML newChild3 = null;
+  
+  
+  my_xml.setName("SOLARCHVISION_2015_project");
+  
+  newChild1 = my_xml.addChild("header");
+  
+  newChild1.setString("LocationName", LocationName);
+  newChild1.setString("LocationProvince", LocationProvince);
+  newChild1.setString("LocationLatitude", nf(LocationLatitude, 0, 5).replace(",", "."));
+  newChild1.setString("LocationLongitude", nf(LocationLongitude, 0, 5).replace(",", "."));
+  newChild1.setString("LocationElevation", nf(LocationElevation, 0, 2).replace(",", "."));
+  newChild1.setString("LocationTimeZone", nf(LocationTimeZone, 0, 1).replace(",", "."));
+  newChild1.setString("Delta_NOON", nf(Delta_NOON, 0, 2).replace(",", "."));
+  
+  
+  
+  /*
+  newChild2 = newChild1.addChild("Domain");
+  newChild2.setContent(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0]);
+  
+  newChild2 = newChild1.addChild("valid-begin-time");
+  newChild2.setContent(nf(GRIB2_YEAR, 4) + "-" + nf(GRIB2_MONTH, 2) + "-" + nf(GRIB2_DAY, 2) + "T" + nf(GRIB2_RUN, 2) + "00:00Z");
+
+  newChild2 = newChild1.addChild("model_description");
+  newChild3 = newChild2.addChild("model");
+  //newChild3.setInt("id", 44);  // ???????????????????????????????????????????????
+  newChild3.setString("model", GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0]); 
+  newChild3.setString("member", nf(Scenarios_max, 0)); 
+  newChild3.setString("center", "CMC"); 
+  newChild3.setString("domain", GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2]);
+  newChild3.setString("data_type", "RAW"); 
+  newChild3.setString("source", the_link);
+  */
+  
+
+  saveXML(my_xml, myFile);    
+
+  println("End of saving project.");
+
+  SOLARCHVISION_explore_output(myFile);
+}
 
 
 
