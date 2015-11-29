@@ -21790,10 +21790,15 @@ void mouseClicked () {
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Look at origin")) {
             set_to_View_Pan(1);
-            SOLARCHVISION_highlight_in_BAR_b("Cen");
+            SOLARCHVISION_highlight_in_BAR_b("LAO");
             BAR_b_Update = 1;  
           }
-
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Look at selection")) {
+            set_to_View_Pan(1);
+            SOLARCHVISION_highlight_in_BAR_b("LAS");
+            BAR_b_Update = 1;  
+          }
+          
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Zoom")) {
             set_to_View_Zoom(0);
             SOLARCHVISION_highlight_in_BAR_b("±ZM");
@@ -27266,6 +27271,82 @@ void dessin_Orbit (int _type, float x, float y, float r) {
 }
 
 
+void dessin_LookAtOrigin (int _type, float x, float y, float r) {
+
+  pushMatrix();
+  translate(x, y);
+  
+  strokeWeight(2);
+  stroke(255);
+  fill(127,63,0); 
+
+  {
+    float d = 0.8 * r;
+  
+    line(0, 0, cos_ang(90) * d, -sin_ang(90) * d);
+    line(0, 0, cos_ang(210) * d, -sin_ang(210) * d);
+    line(0, 0, cos_ang(330) * d, -sin_ang(330) * d);
+  }
+  
+  strokeWeight(0);
+  
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+
+void dessin_LookAtSelection (int _type, float x, float y, float r) {
+
+  pushMatrix();
+  translate(x, y);
+  
+  strokeWeight(2);
+  stroke(255);
+  fill(127,63,0); 
+  
+  {
+    float d = 0.8 * r;
+  
+    line(0, 0, cos_ang(90) * d, -sin_ang(90) * d);
+    line(0, 0, cos_ang(210) * d, -sin_ang(210) * d);
+    line(0, 0, cos_ang(330) * d, -sin_ang(330) * d);
+  }
+  
+  {
+    //float d = 0.625 * r;
+    float d = 0.5 * r;
+    
+    beginShape();
+    vertex(0, 0);
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, -d);
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    endShape(CLOSE);
+  
+    beginShape();
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0,d);
+    vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    endShape(CLOSE);
+  
+    beginShape();
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0,d);
+    vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    endShape(CLOSE);
+  }    
+  
+  strokeWeight(0);
+  
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+
 void dessin_CameraRoll (int _type, float x, float y, float r) {
 
   pushMatrix();
@@ -27331,21 +27412,24 @@ void dessin_TargetRoll (int _type, float x, float y, float r) {
   pushMatrix();
   translate(x, y);
 
-  float d = 1.5 * r;
+  {  
   
-  strokeWeight(1);
-  stroke(255); 
-  noFill();  
-  rect(-d/2,-d/2, d,d);   
+    float d = 1.5 * r;
+    
+    strokeWeight(1);
+    stroke(255); 
+    noFill();  
+    rect(-d/2,-d/2, d,d);   
+  
+    strokeWeight(2);
+    stroke(255); 
+    noFill();  
+    
+    if (_type == 3) arc(0,0, d,0.333 * d, PI, 2 * PI); 
+    if (_type == 2) arc(0,0, 0.333 * d,d, -0.5 * PI, 0.5 * PI); 
+    if (_type == 1) {arc(0,0, 0.333 * d,d, -0.5 * PI, 0.5 * PI); arc(0,0, d,0.333 * d, PI, 2 * PI);}
+  }
 
-  strokeWeight(2);
-  stroke(255); 
-  noFill();  
-  
-  if (_type == 3) arc(0,0, d,0.333 * d, PI, 2 * PI); 
-  if (_type == 2) arc(0,0, 0.333 * d,d, -0.5 * PI, 0.5 * PI); 
-  if (_type == 1) {arc(0,0, 0.333 * d,d, -0.5 * PI, 0.5 * PI); arc(0,0, d,0.333 * d, PI, 2 * PI);}
-  
   strokeWeight(0);
   
   popMatrix();
@@ -27476,7 +27560,7 @@ String[][] BAR_a_Items = {
                         {"Project", "New", "Open...", "Save", "Save As...", "Import...", "Export...", "Preferences", "Quit"},
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
-                        {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Pan", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
+                        {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
                         {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Vertices", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sky", "Display/Hide Sun", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
@@ -27712,13 +27796,17 @@ String[][] BAR_b_Items = {
                           {"2", "AllViewsports", "Expand3DView", "3DViewSpace", "3"},
                           {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "3DViewPoint", "1.5"},
                           {"2", "P<>", "P><", "ProjectionType", "1.0"},
+                          {"1", "LAO", "LookAtOrigin", "1.0"},
+                          {"1", "LAS", "LookAtSelection", "1.0"},
+                          
                           {"1", "±CDS", "CameraDistance", "1.0"},
                           {"1", "±CDZ", "DistZ", "1.0"},
                           {"3", "DIz", "DIx", "DIy", "Truck", "1.0"},
                           {"1", "OR", "ORxy", "ORz", "Orbit", "1.0"},                          
                           {"3", "CRL", "CRLz", "CRLxy", "CameraRoll", "1.0"},
                           {"1", "TRL", "TRLz", "TRLxy", "TargetRoll", "1.0"},
-                          {"1", "Pan", "Cen", "Pan", "1.0"},
+                          
+                          {"1", "Pan", "Pan", "1.0"},
                           {"1", "±ZM", "0ZM", "Zoom", "1.0"},
                           {"1", "±SA", "AllModelSize", "1.0"},
                           {"1", "±SZ", "3DModelSize", "1.0"},                          
@@ -27906,12 +27994,13 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("Orbit")) set_to_View_Orbit(j - 1);
         if (Bar_Switch.equals("CameraRoll")) set_to_View_CameraRoll(j - 1);
         if (Bar_Switch.equals("TargetRoll")) set_to_View_TargetRoll(j - 1);
+        
+        if (Bar_Switch.equals("LookAtOrigin")) set_to_View_LookAtOrigin(j - 1);
+        if (Bar_Switch.equals("LookAtSelection")) set_to_View_LookAtSelection(j - 1);
 
         if (Bar_Switch.equals("Pan")) {
           
           set_to_View_Pan(j - 1);
-
-          BAR_b_Items[i][0] = "1"; // << set it to default choice next time
         }  
 
         if (Bar_Switch.equals("Zoom")) {
@@ -27979,7 +28068,13 @@ void SOLARCHVISION_draw_window_BAR_b () {
         }      
         if (Bar_Switch.equals("CameraDistance")) {
           dessin_CameraDistance(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
-        }               
+        }           
+        if (Bar_Switch.equals("LookAtOrigin")) {
+          dessin_LookAtOrigin(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }        
+        if (Bar_Switch.equals("LookAtSelection")) {
+          dessin_LookAtSelection(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }                
         if (Bar_Switch.equals("Pan")) {
           dessin_Pan(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }
@@ -28392,21 +28487,36 @@ void set_to_View_Orbit (int n) {
   ROLLOUT_Update = 1;          
 }  
 
-void set_to_View_Pan (int n) {
 
-  View_Select_Create_Modify = -5;
+void set_to_View_LookAtSelection (int n) {
+
+  WIN3D_X_coordinate = 0;
+  WIN3D_Y_coordinate = 0;
+  WIN3D_Z_coordinate = 0; 
   
-  if (n == 1) {
-    WIN3D_X_coordinate = 0;
-    WIN3D_Y_coordinate = 0;
-    WIN3D_Z_coordinate = 0; 
-    
-    WIN3D_Update = 1;
-  }           
+  WIN3D_Update = 1;
  
   ROLLOUT_Update = 1;    
 }  
 
+
+void set_to_View_LookAtOrigin (int n) {
+
+  WIN3D_X_coordinate = 0;
+  WIN3D_Y_coordinate = 0;
+  WIN3D_Z_coordinate = 0; 
+  
+  WIN3D_Update = 1;
+ 
+  ROLLOUT_Update = 1;    
+}  
+
+void set_to_View_Pan (int n) {
+
+  View_Select_Create_Modify = -5;
+  
+  ROLLOUT_Update = 1;    
+}  
 
 void set_to_View_Zoom (int n) {
   View_Select_Create_Modify = -4;
