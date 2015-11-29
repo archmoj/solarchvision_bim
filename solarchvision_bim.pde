@@ -16328,7 +16328,7 @@ float Orthographic_Zoom () {
 }
 
 
-void SOLARCHVISION_move_Camera_towards_Selection (float t) {
+void SOLARCHVISION_look_Camera_towards_Selection () {
 
   float xA = CAM_x / objects_scale;
   float yA = CAM_y / objects_scale;
@@ -16342,17 +16342,38 @@ void SOLARCHVISION_move_Camera_towards_Selection (float t) {
   float dy = yA - yO;
   float dz = zA - zO;
   
+  
+  WIN3D_RZ_coordinate = -atan2_ang(dy, dx);
+  
+  SOLARCHVISION_reverseTransform_Camera();
+
+}
+
+
+void SOLARCHVISION_move_Camera_towards_Selection (float t) {
+
+  float xA = CAM_x / objects_scale;
+  float yA = CAM_y / objects_scale;
+  float zA = CAM_z / objects_scale;
+  
+  float xO = selected_Pivot_XYZ[0];
+  float yO = selected_Pivot_XYZ[1];
+  float zO = selected_Pivot_XYZ[2];                
+  
+  float dx = xA - xO;
+  float dy = yA - yO;
+  float dz = zA - zO;
+
   float xB = xO + t * dx; 
   float yB = yO + t * dy;
   float zB = zO + t * dz;
   
   CAM_x = xB * objects_scale;           
   CAM_y = yB * objects_scale;
-  CAM_z = zB * objects_scale;   
+  CAM_z = zB * objects_scale;     
   
   SOLARCHVISION_reverseTransform_Camera();
-  
-  
+
 }
 
 void SOLARCHVISION_rotateZ_Camera_around_Selection (float t) {
@@ -20614,7 +20635,6 @@ void mouseWheel(MouseEvent event) {
             
             if (View_Select_Create_Modify == -13) { // viewport:CameraDistance
 
-              //SOLARCHVISION_move_Camera_towards_Selection(Wheel_Value * WIN3D_S_coordinate * objects_scale);
               SOLARCHVISION_move_Camera_towards_Selection(pow(2, -0.5 * Wheel_Value));
 
               WIN3D_Update = 1;
@@ -28490,9 +28510,7 @@ void set_to_View_Orbit (int n) {
 
 void set_to_View_LookAtSelection (int n) {
 
-  WIN3D_X_coordinate = 0;
-  WIN3D_Y_coordinate = 0;
-  WIN3D_Z_coordinate = 0; 
+  SOLARCHVISION_look_Camera_towards_Selection();
   
   WIN3D_Update = 1;
  
