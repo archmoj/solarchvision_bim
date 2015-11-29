@@ -12931,26 +12931,40 @@ void SOLARCHVISION_deleteSelection () {
 
 void SOLARCHVISION_deselectAll () {
 
-  // remarking below condition are necessary!
+  selectedFractal_numbers = new int [1];
+  selectedFractal_numbers[0] = 0;
 
-  //if (Work_with_2D_or_3D == 1)
-  {
-    selectedFractal_numbers = new int [1];
-    selectedFractal_numbers[0] = 0;
+  selectedObject2D_numbers = new int [1];
+  selectedObject2D_numbers[0] = 0;
+
+  selectedPolymesh_numbers = new int [1];
+  selectedPolymesh_numbers[0] = 0;
+
+  SOLARCHVISION_calculate_selection_Pivot();
+}
+
+void SOLARCHVISION_selectAll () {
+
+  if (Work_with_2D_or_3D == 1) {
+    selectedFractal_numbers = new int [allFractal_XYZS.length];
+    for (int i = 0; i < selectedFractal_numbers.length; i++) { 
+      selectedFractal_numbers[i] = i;
+    }
   }
 
-  //if (Work_with_2D_or_3D == 2)
-  {
-    selectedObject2D_numbers = new int [1];
-    selectedObject2D_numbers[0] = 0;
+  if (Work_with_2D_or_3D == 2) {
+    selectedObject2D_numbers = new int [allObject2D_XYZS.length];
+    for (int i = 0; i < selectedObject2D_numbers.length; i++) { 
+      selectedObject2D_numbers[i] = i;
+    }
   }
   
-  //if (Work_with_2D_or_3D == 3)
-  {
-    selectedPolymesh_numbers = new int [1];
-    selectedPolymesh_numbers[0] = 0;
+  if (Work_with_2D_or_3D == 3) {
+    selectedPolymesh_numbers = new int [allPolymesh_Faces.length];
+    for (int i = 0; i < selectedPolymesh_numbers.length; i++) { 
+      selectedPolymesh_numbers[i] = i;
+    }
   }
-
   
   SOLARCHVISION_calculate_selection_Pivot();
 }
@@ -18039,7 +18053,7 @@ ParametricGeometry[] SolidObjects = {};
 
 void SOLARCHVISION_add_ParametricGeometries () {
 
-  
+
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float dx = 10;
@@ -18049,7 +18063,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 10.1;
     float z = 0;
     float rot = 0;
-    //SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot); // facades
+    SOLARCHVISION_add_Box_Core(8, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
 
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
@@ -18072,7 +18086,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 10.1;
     float z = 0;
     float rot = 0;
-    //SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot); // facades
+    SOLARCHVISION_add_Box_Core(8, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
 
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
@@ -18085,7 +18099,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
       SOLARCHVISION_add_2Dobjects_plane(0, 10, x,y,i, dx, dy); // people  
     }   
   }    
-  
+
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float dx = 10;
@@ -18095,7 +18109,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 10.1;
     float z = 0;
     float rot = 0;
-    //SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot); // facades
+    SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
 
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
@@ -21849,6 +21863,31 @@ void mouseClicked () {
             SOLARCHVISION_highlight_in_BAR_b("P><");
             BAR_b_Update = 1;  
           }   
+          
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Deselect All")) {
+            SOLARCHVISION_deselectAll();
+            WIN3D_Update = 1;
+          } 
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select All")) {
+            SOLARCHVISION_selectAll();
+            WIN3D_Update = 1;
+          }           
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select Fractal")) {
+            Work_with_2D_or_3D = 1;
+            WIN3D_Update = 1;
+            BAR_b_Update = 1;  
+          }  
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select Object2D")) {
+            Work_with_2D_or_3D = 2;
+            WIN3D_Update = 1;
+            BAR_b_Update = 1;  
+          } 
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select Polymesh")) {
+            Work_with_2D_or_3D = 3;
+            WIN3D_Update = 1;
+            BAR_b_Update = 1;  
+          } 
+
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Click Select")) {
             set_to_View_ClickSelect(0);
@@ -27799,7 +27838,7 @@ String[][] BAR_a_Items = {
                         {"Shade", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
-                        {"Select", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
+                        {"Select", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Seed", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph"}
 
