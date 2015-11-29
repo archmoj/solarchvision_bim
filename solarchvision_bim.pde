@@ -22680,9 +22680,9 @@ void mouseClicked () {
                 //---------------------------------------------------
               }
 
-              x += rx * selection_alignX;
-              y += ry * selection_alignY;
-              z += rz * selection_alignZ;
+              x -= rx * selection_alignX;
+              y -= ry * selection_alignY;
+              z -= rz * selection_alignZ;
               
               int SOLID_created = 0;
               
