@@ -12208,7 +12208,7 @@ void SOLARCHVISION_add_Object2D (String t, int m, float x, float y, float z, flo
     else if (t.equals("TREES")) n = int(random(1 + Object2D_Filenames_PEOPLE.length, 1 + Object2D_Filenames_PEOPLE.length + Object2D_Filenames_TREES.length));
   }
 
-  //println(t, n);
+  println(t, n);
   
   int d = 1; 
   int r = int(random(2));
@@ -18109,7 +18109,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 10.1;
     float z = 0;
     float rot = 0;
-    SOLARCHVISION_add_Box_Core(0, x,y,z, dx, dy, dz, rot); // facades
+    SOLARCHVISION_add_Box_Core(8, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
 
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
@@ -22858,16 +22858,22 @@ void mouseClicked () {
                 //addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; // maybe requiered if passing as solid! 
                 
                 float as_Solid = 1;
+                
+                randomSeed(millis());
                 SOLARCHVISION_add_FractalPlant(Create_Fractal_Plant_Type, x, y, z, 2 * rz, rot, Create_Fractal_Plant_DegreeMin, Create_Fractal_Plant_DegreeMax, Create_Fractal_Plant_Seed, Create_Fractal_Plant_TrunckSize, Create_Fractal_Plant_LeafSize, as_Solid);
               }      
 
               if (Create_Mesh_Plant != 0) {
                 int n = 0;
-                if (Create_Mesh_Plant_Type > 0) n = Create_Mesh_Plant_Type + Object2D_Filenames_PEOPLE.length;              
+                if (Create_Mesh_Plant_Type > 0) n = Create_Mesh_Plant_Type + Object2D_Filenames_PEOPLE.length;
+  
+                randomSeed(millis());
                 SOLARCHVISION_add_Object2D("TREES", n, x, y, z, 2 * rz);
               }    
   
               if (Create_Mesh_Person != 0) {
+                
+                randomSeed(millis());
                 SOLARCHVISION_add_Object2D("PEOPLE", Create_Mesh_Person_Type, x, y, z, 2.5);
               }
               
