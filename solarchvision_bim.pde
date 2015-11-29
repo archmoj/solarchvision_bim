@@ -21381,8 +21381,7 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
     int NUM_allPolymesh_Faces_After = allPolymesh_Faces.length;
     
     selectedPolymesh_numbers = new int [1 + NUM_allPolymesh_Faces_After - NUM_allPolymesh_Faces_Before];
-    selectedPolymesh_numbers[0] = 0;
-    for (int i = 1; i < selectedPolymesh_numbers.length - 1; i++) { 
+    for (int i = 0; i < selectedPolymesh_numbers.length - 1; i++) { 
       selectedPolymesh_numbers[i] = i + NUM_allPolymesh_Faces_Before;
       println(selectedPolymesh_numbers[i]);
     }
