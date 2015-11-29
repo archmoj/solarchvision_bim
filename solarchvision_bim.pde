@@ -27126,20 +27126,62 @@ void dessin_Zoom (int _type, float x, float y, float r) {
   BAR_b_Display_Text = 0;
 }
 
-void dessin_AllModelSize (int _type, float x, float y, float r) {
+
+
+void dessin_3DModelSize (int _type, float x, float y, float r) {
 
   pushMatrix();
   translate(x, y);
 
-  strokeWeight(1);
   stroke(255); 
   noFill();  
-  ellipse(0,0, r,r); 
+  strokeWeight(2);
+  ellipse(0,0, r,r);
+  strokeWeight(1);
+  ellipse(0,0, 1.5 * r, 1.5 * r); 
   
+  strokeWeight(1);
   line(-0.75 * r, 0, -0.5 * r, 0);
   line(0, -0.75 * r, 0, -0.5 * r);
   line(0.75 * r, 0, 0.5 * r, 0);
   line(0, 0.75 * r, 0, 0.5 * r);
+
+
+  strokeWeight(2);
+  stroke(255,255,0);
+  line(-0.2 * r, 0, 0.2 * r, 0);
+  line(0, -0.2 * r, 0, 0.2 * r); 
+
+  strokeWeight(0);
+  
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+
+
+
+
+void dessin_AllModelSize (int _type, float x, float y, float r) {
+
+  pushMatrix();
+  translate(x, y);
+  
+  float d = 0.75 * r;
+
+  stroke(255); 
+  noFill();  
+  strokeWeight(1);
+  ellipse(0,0, d,d);
+  strokeWeight(1);
+  ellipse(0,0, 2 * d, 2 * d); 
+  
+  strokeWeight(1);
+  line(-1 * d, 0, -0.5 * d, 0);
+  line(0, -1 * d, 0, -0.5 * d);
+  line(1 * d, 0, 0.5 * d, 0);
+  line(0, 1 * d, 0, 0.5 * d);
 
 
   strokeWeight(2);
@@ -27341,28 +27383,6 @@ void dessin_Pan (int _type, float x, float y, float r) {
 }
 
 
-
-void dessin_3DModelSize (int _type, float x, float y, float r) {
-
-  pushMatrix();
-  translate(x, y);
-
-  strokeWeight(1);
-  stroke(255); 
-  line(-r, -0.5 * r, r, -0.5 * r);
-  strokeWeight(2);
-  line(-0.5 * r, -0.5 * r, r, 0);
-  line(-0.5 * r, -0.5 * r, -r, 0);
-  strokeWeight(2);
-  line(-0.5 * r, -0.5 * r, 0, r);
-
-  
-  strokeWeight(0);
-  
-  popMatrix();
-
-  BAR_b_Display_Text = 0;
-}
 
 
 void dessin_CameraDistance (int _type, float x, float y, float r) {
@@ -27699,9 +27719,9 @@ String[][] BAR_b_Items = {
                           {"3", "CRL", "CRLz", "CRLxy", "CameraRoll", "1.0"},
                           {"1", "TRL", "TRLz", "TRLxy", "TargetRoll", "1.0"},
                           {"1", "Pan", "Cen", "Pan", "1.0"},
-                          {"1", "±SZ", "3DModelSize", "1.0"},                          
                           {"1", "±ZM", "0ZM", "Zoom", "1.0"},
-                          {"1", "±SA", "AllModelSize", "1.0"},                          
+                          {"1", "±SA", "AllModelSize", "1.0"},
+                          {"1", "±SZ", "3DModelSize", "1.0"},                          
                           {"1", "±SK", "SkydomeSize", "1.0"},
                           
                          
