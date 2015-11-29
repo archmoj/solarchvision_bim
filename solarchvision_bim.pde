@@ -12208,7 +12208,7 @@ void SOLARCHVISION_add_Object2D (String t, int m, float x, float y, float z, flo
     else if (t.equals("TREES")) n = int(random(1 + Object2D_Filenames_PEOPLE.length, 1 + Object2D_Filenames_PEOPLE.length + Object2D_Filenames_TREES.length));
   }
 
-  println(t, n);
+  //println(t, n);
   
   int d = 1; 
   int r = int(random(2));
@@ -14215,6 +14215,8 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
 
 
 void SOLARCHVISION_add_2Dobjects_onLand () {
+  
+  randomSeed(0);
   
   if (Display_LAND_TEXTURE != 0) {
   
