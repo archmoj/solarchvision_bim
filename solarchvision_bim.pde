@@ -13945,7 +13945,7 @@ void SOLARCHVISION_export_land () {
 
 
 void SOLARCHVISION_export_objects () {
-
+  
   String myFile = Model3DFolder + "/" + "ObjectsMesh.obj";
   
   PrintWriter File_output_mesh = createWriter(myFile);
@@ -21357,12 +21357,18 @@ void mouseDragged () {
 }
 
 
-void fileSelected(File selection) {
-  if (selection == null) {
-    println("Window was closed or the user hit cancel.");
-  } else {
-    println("User selected " + selection.getAbsolutePath());
+void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
+
+  String Filename = "";
+  
+  if (selectedFile == null) {
+  } 
+  else {
+    Filename = selectedFile.getAbsolutePath();
+    
+    println(Filename);
   }
+
 }     
 
 void mouseClicked () {
@@ -21384,11 +21390,22 @@ void mouseClicked () {
           }     
           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Open...")) { 
-            selectInput("Select a file to open:", "fileSelected");
+            //selectInput("Select a file to open:", "SOLARCHVISION_fileSelected");
           }          
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Save As...")) { 
-            selectOutput("Select a file to write to:", "fileSelected");
+            //selectOutput("Select a file to write to:", "SOLARCHVISION_fileSelected");
           }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Import 3D-Model...")) { 
+            selectOutput("Select OBJ file to import:", "SOLARCHVISION_SelectFile_Import_3DModel");
+            
+            
+          }          
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Export 3D-Model")) {
+            SOLARCHVISION_export_objects(); 
+          }      
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Export Land-Model")) {
+            SOLARCHVISION_export_land(); 
+          }            
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Quit")) { 
             exit();
           }      
@@ -27838,7 +27855,7 @@ int BAR_a_selected_child = 0;
 
 String[][] BAR_a_Items = {
                         {"SOLARCHVISION-2015", "Designed & developed by", "Mojtaba Samimi", "www.solarchvision.com"},  
-                        {"Project", "New", "Open...", "Save", "Save As...", "Import...", "Export...", "Preferences", "Quit"},
+                        {"Project", "New", "Open...", "Save", "Save As...", "Import 3D-Model...", "Export 3D-Model", "Export Land-Model", "Preferences", "Quit"},
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
                         {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
