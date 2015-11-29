@@ -21357,18 +21357,18 @@ void mouseDragged () {
 }
 
 
-void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
+String USER_Filename = "";
 
-  String Filename = "";
+void SOLARCHVISION_SelectFile (File selectedFile) {
+
+  USER_Filename = "";
   
   if (selectedFile == null) {
   } 
   else {
-    Filename = selectedFile.getAbsolutePath();
-    
-    println(Filename);
+    USER_Filename = selectedFile.getAbsolutePath();
   }
-
+  
 }     
 
 void mouseClicked () {
@@ -21396,9 +21396,9 @@ void mouseClicked () {
             //selectOutput("Select a file to write to:", "SOLARCHVISION_fileSelected");
           }
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Import 3D-Model...")) { 
-            selectOutput("Select OBJ file to import:", "SOLARCHVISION_SelectFile_Import_3DModel");
+            selectInput("Select OBJ file to import:", "SOLARCHVISION_SelectFile");
             
-            
+            println(USER_Filename);
           }          
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Export 3D-Model")) {
             SOLARCHVISION_export_objects(); 
