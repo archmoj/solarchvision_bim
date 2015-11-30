@@ -1,3 +1,5 @@
+int defaultTeselation = 0;
+
 import processing.pdf.*;
 
 String _undefined = "N/A";
@@ -103,7 +105,7 @@ int[][] allPolymesh_Solids = {{0,0}}; // start solid - end solid
 
 float[][] allVertices = {{0,0,0}};
 int[][] allFaces = {{0,0,0}};
-int[] allFaces_MAT = {0};
+int[][] allFaces_MAT = {{0,0}};
 
 
 
@@ -12659,9 +12661,9 @@ int SOLARCHVISION_addToVertices (float x, float y, float z) {
 
 int SOLARCHVISION_addToFaces (int[] f) {
 
-  int[] newFace_MAT = {defaultMaterial}; 
+  int[][] newFace_MAT = {{defaultMaterial, defaultTeselation}}; 
   
-  allFaces_MAT = concat(allFaces_MAT, newFace_MAT);
+  allFaces_MAT =  (int[][]) concat(allFaces_MAT, newFace_MAT);
   
   int[][] newFace = {f}; 
   
@@ -12883,10 +12885,10 @@ void SOLARCHVISION_deleteSelection () {
         }
         
         {
-          int[] startList = (int[]) subset(allFaces_MAT, 0, startFace);
-          int[] endList = (int[]) subset(allFaces_MAT, endFace + 1);
+          int[][] startList = (int[][]) subset(allFaces_MAT, 0, startFace);
+          int[][] endList = (int[][]) subset(allFaces_MAT, endFace + 1);
           
-          allFaces_MAT = (int[]) concat(startList, endList);
+          allFaces_MAT = (int[][]) concat(startList, endList);          
         }
         
         
@@ -13823,9 +13825,9 @@ void SOLARCHVISION_addToFaces_afterSphericalTeselation (int m, float cx, float c
 
   
   {
-    int[] newFace_MAT = {defaultMaterial}; 
+    int[][] newFace_MAT = {{defaultMaterial, defaultTeselation}}; 
     
-    allFaces_MAT = concat(allFaces_MAT, newFace_MAT);
+    allFaces_MAT = (int[][]) concat(allFaces_MAT, newFace_MAT);
     
     
     int[][] newFace = {{M, B, N, D}}; 
@@ -13834,9 +13836,9 @@ void SOLARCHVISION_addToFaces_afterSphericalTeselation (int m, float cx, float c
   }
 
   {
-    int[] newFace_MAT = {defaultMaterial}; 
+    int[][] newFace_MAT = {{defaultMaterial, defaultTeselation}}; 
     
-    allFaces_MAT = concat(allFaces_MAT, newFace_MAT);
+    //allFaces_MAT = (int[][]) concat(allFaces_MAT, newFace_MAT);
     
     
     int[][] newFace = {{MM, B, M, A}}; 
@@ -14437,8 +14439,9 @@ void SOLARCHVISION_remove_3Dobjects () {
   allFaces[0][1] = 0;
   allFaces[0][2] = 0;
   
-  allFaces_MAT = new int [1];
-  allFaces_MAT[0] = 0;
+  allFaces_MAT = new int [1][2];
+  allFaces_MAT[0][0] = 0;
+  allFaces_MAT[0][1] = 0;
   
   allPolymesh_Faces = new int [1][2];
   allPolymesh_Faces[0][0] = 0;
