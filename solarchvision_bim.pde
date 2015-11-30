@@ -21440,6 +21440,7 @@ void mouseClicked () {
           
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Open...")) { 
             //selectInput("Select a file to open:", "SOLARCHVISION_fileSelected_Open");
+            SOLARCHVISION_load_project(ProjectsFolder + "/" + "Project.xml");
           }          
 
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Save")) { 
@@ -29556,6 +29557,44 @@ void SOLARCHVISION_check_for_WIN3D_update () {
 }  
 
 
+void SOLARCHVISION_load_project (String myFile) {
+
+  int continue_process = 1;
+  
+  XML FileAll = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
+  
+  try {
+    FileAll = loadXML(myFile);
+  }
+  catch (Exception e) {
+    println("Can't read:", myFile);
+    continue_process = 0;
+  }
+  
+  if (continue_process == 1) { 
+  
+    XML[] children0 = FileAll.getChildren("header");
+
+    for (int Li = 0; Li < children0.length; Li++) {
+
+      LocationName = children0[Li].getString("LocationName");
+      LocationProvince = children0[Li].getString("LocationProvince");     
+      LocationLatitude = children0[Li].getFloat("LocationLatitude");
+      LocationLongitude = children0[Li].getFloat("LocationLongitude");
+      LocationElevation = children0[Li].getFloat("LocationElevation");
+      LocationTimeZone = children0[Li].getFloat("LocationTimeZone");
+      Delta_NOON = children0[Li].getFloat("Delta_NOON");
+    }
+    
+//     = children0[Li].getFloat("");
+//     = children0[Li].getInt("");
+//     = children0[Li].getString("");
+    
+  }
+  
+  
+  println("End of loading project.");
+}
 
 void SOLARCHVISION_save_project (String myFile) {
  
@@ -29569,33 +29608,16 @@ void SOLARCHVISION_save_project (String myFile) {
   
   newChild1 = my_xml.addChild("header");
   
+  //newChild1.setContent("Test");
+  
   newChild1.setString("LocationName", LocationName);
   newChild1.setString("LocationProvince", LocationProvince);
-  newChild1.setString("LocationLatitude", nf(LocationLatitude, 0, 5).replace(",", "."));
-  newChild1.setString("LocationLongitude", nf(LocationLongitude, 0, 5).replace(",", "."));
-  newChild1.setString("LocationElevation", nf(LocationElevation, 0, 2).replace(",", "."));
-  newChild1.setString("LocationTimeZone", nf(LocationTimeZone, 0, 1).replace(",", "."));
-  newChild1.setString("Delta_NOON", nf(Delta_NOON, 0, 2).replace(",", "."));
-  
-  
-  
-  /*
-  newChild2 = newChild1.addChild("Domain");
-  newChild2.setContent(GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0]);
-  
-  newChild2 = newChild1.addChild("valid-begin-time");
-  newChild2.setContent(nf(GRIB2_YEAR, 4) + "-" + nf(GRIB2_MONTH, 2) + "-" + nf(GRIB2_DAY, 2) + "T" + nf(GRIB2_RUN, 2) + "00:00Z");
+  newChild1.setFloat("LocationLatitude", LocationLatitude);
+  newChild1.setFloat("LocationLongitude", LocationLongitude);
+  newChild1.setFloat("LocationElevation", LocationElevation);
+  newChild1.setFloat("LocationTimeZone", LocationTimeZone);
+  newChild1.setFloat("Delta_NOON", Delta_NOON);
 
-  newChild2 = newChild1.addChild("model_description");
-  newChild3 = newChild2.addChild("model");
-  //newChild3.setInt("id", 44);  // ???????????????????????????????????????????????
-  newChild3.setString("model", GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][0]); 
-  newChild3.setString("member", nf(Scenarios_max, 0)); 
-  newChild3.setString("center", "CMC"); 
-  newChild3.setString("domain", GRIB2_DOMAINS[GRIB2_DOMAIN_SELECTION][2]);
-  newChild3.setString("data_type", "RAW"); 
-  newChild3.setString("source", the_link);
-  */
   
 
   saveXML(my_xml, myFile);    
