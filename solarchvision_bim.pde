@@ -29875,7 +29875,57 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setFloat("CAM_dist", CAM_dist);
   newChild1.setFloat("CAM_clipNear", CAM_clipNear);
   newChild1.setFloat("CAM_clipFar", CAM_clipFar);
-
+  newChild1.setFloat("objects_scale", objects_scale);
+  newChild1.setFloat("refScale", refScale);
+  newChild1.setFloat("WIN3D_Y_coordinate", WIN3D_Y_coordinate);
+  newChild1.setFloat("WIN3D_Z_coordinate", WIN3D_Z_coordinate);
+  newChild1.setFloat("WIN3D_S_coordinate", WIN3D_S_coordinate);
+  newChild1.setFloat("WIN3D_RX_coordinate", WIN3D_RX_coordinate);
+  newChild1.setFloat("WIN3D_RY_coordinate", WIN3D_RY_coordinate);
+  newChild1.setFloat("WIN3D_RZ_coordinate", WIN3D_RZ_coordinate);
+  newChild1.setFloat("WIN3D_RS_coordinate", WIN3D_RS_coordinate);
+  newChild1.setFloat("WIN3D_ZOOM_coordinate", WIN3D_ZOOM_coordinate);
+  newChild1.setInt("WIN3D_View_Type", WIN3D_View_Type);  
+  newChild1.setInt("frame_variation", frame_variation);
+  newChild1.setInt("_LAN", _LAN);
+  newChild1.setString("Default_Font", Default_Font);
+  newChild1.setFloat("windFlow_Multiplier", windFlow_Multiplier);
+  newChild1.setInt("windFlow_Color", windFlow_Color);
+  newChild1.setFloat("LAND_TEXTURE_scale_U", LAND_TEXTURE_scale_U);
+  newChild1.setFloat("LAND_TEXTURE_scale_V", LAND_TEXTURE_scale_V);
+  newChild1.setInt("LAND_n_I_base", LAND_n_I_base);
+  newChild1.setInt("LAND_n_J_base", LAND_n_J_base);
+  newChild1.setInt("LAND_n_I", LAND_n_I);
+  newChild1.setInt("LAND_n_J", LAND_n_J);
+  newChild1.setInt("Day_of_Impact_to_Display", Day_of_Impact_to_Display);
+  newChild1.setInt("display_WindRose_Image", display_WindRose_Image);
+  newChild1.setInt("WindRose_RES", WindRose_RES);
+  newChild1.setInt("Rendered_WindRose_RES", Rendered_WindRose_RES);
+  newChild1.setInt("display_SolarImpact_Image", display_SolarImpact_Image);
+  newChild1.setInt("SolarImpact_Image_Section", SolarImpact_Image_Section);
+  newChild1.setFloat("SolarImpact_Rotation", SolarImpact_Rotation);
+  newChild1.setFloat("SolarImpact_scale_U", SolarImpact_scale_U);
+  newChild1.setFloat("SolarImpact_scale_V", SolarImpact_scale_V);
+  newChild1.setInt("SolarImpact_RES1", SolarImpact_RES1);
+  newChild1.setInt("SolarImpact_RES2", SolarImpact_RES2);
+  newChild1.setFloat("SolarImpact_Elevation", SolarImpact_Elevation);
+  newChild1.setFloat("SpatialImpact_scale_U", SpatialImpact_scale_U);
+  newChild1.setFloat("SpatialImpact_scale_V", SpatialImpact_scale_V);
+  newChild1.setInt("SpatialImpact_RES1", SpatialImpact_RES1);
+  newChild1.setInt("SpatialImpact_RES2", SpatialImpact_RES2);
+  newChild1.setFloat("SpatialImpact_Grade", SpatialImpact_Grade);
+  newChild1.setInt("display_SpatialImpact_Image", display_SpatialImpact_Image);
+  newChild1.setInt("SpatialImpact_Image_Section", SpatialImpact_Image_Section);
+  newChild1.setFloat("SpatialImpact_PositionStep", SpatialImpact_PositionStep);
+  newChild1.setInt("PROCESS_subdivisions", PROCESS_subdivisions);
+  newChild1.setFloat("deltaSpatialImpact", deltaSpatialImpact);
+  newChild1.setFloat("deltaSpatialImpactLines", deltaSpatialImpactLines);
+  newChild1.setFloat("MinimumDistance_traceU", MinimumDistance_traceU);
+  newChild1.setFloat("MinimumDistance_traceV", MinimumDistance_traceV);
+  newChild1.setFloat("stp_slp", stp_slp);
+  newChild1.setFloat("stp_dir", stp_dir);
+  newChild1.setInt("n_slp", n_slp);
+  newChild1.setInt("n_dir", n_dir);
    
 
   saveXML(my_xml, myFile);    
@@ -30203,6 +30253,57 @@ void SOLARCHVISION_load_project (String myFile) {
       CAM_dist = children0[Li].getFloat("CAM_dist");
       CAM_clipNear = children0[Li].getFloat("CAM_clipNear");
       CAM_clipFar = children0[Li].getFloat("CAM_clipFar");
+      objects_scale = children0[Li].getFloat("objects_scale");
+      refScale = children0[Li].getFloat("refScale");
+      WIN3D_Y_coordinate = children0[Li].getFloat("WIN3D_Y_coordinate");
+      WIN3D_Z_coordinate = children0[Li].getFloat("WIN3D_Z_coordinate");
+      WIN3D_S_coordinate = children0[Li].getFloat("WIN3D_S_coordinate");
+      WIN3D_RX_coordinate = children0[Li].getFloat("WIN3D_RX_coordinate");
+      WIN3D_RY_coordinate = children0[Li].getFloat("WIN3D_RY_coordinate");
+      WIN3D_RZ_coordinate = children0[Li].getFloat("WIN3D_RZ_coordinate");
+      WIN3D_RS_coordinate = children0[Li].getFloat("WIN3D_RS_coordinate");
+      WIN3D_ZOOM_coordinate = children0[Li].getFloat("WIN3D_ZOOM_coordinate");
+      WIN3D_View_Type = children0[Li].getInt("WIN3D_View_Type");      
+      frame_variation = children0[Li].getInt("frame_variation");
+      _LAN = children0[Li].getInt("_LAN");
+      Default_Font = children0[Li].getString("Default_Font");
+      windFlow_Multiplier = children0[Li].getFloat("windFlow_Multiplier");
+      windFlow_Color = children0[Li].getInt("windFlow_Color");
+      LAND_TEXTURE_scale_U = children0[Li].getFloat("LAND_TEXTURE_scale_U");
+      LAND_TEXTURE_scale_V = children0[Li].getFloat("LAND_TEXTURE_scale_V");
+      LAND_n_I_base = children0[Li].getInt("LAND_n_I_base");
+      LAND_n_J_base = children0[Li].getInt("LAND_n_J_base");
+      LAND_n_I = children0[Li].getInt("LAND_n_I");
+      LAND_n_J = children0[Li].getInt("LAND_n_J");
+      Day_of_Impact_to_Display = children0[Li].getInt("Day_of_Impact_to_Display");
+      display_WindRose_Image = children0[Li].getInt("display_WindRose_Image");
+      WindRose_RES = children0[Li].getInt("WindRose_RES");
+      Rendered_WindRose_RES = children0[Li].getInt("Rendered_WindRose_RES");
+      display_SolarImpact_Image = children0[Li].getInt("display_SolarImpact_Image");
+      SolarImpact_Image_Section = children0[Li].getInt("SolarImpact_Image_Section");
+      SolarImpact_Rotation = children0[Li].getFloat("SolarImpact_Rotation");
+      SolarImpact_scale_U = children0[Li].getFloat("SolarImpact_scale_U");
+      SolarImpact_scale_V = children0[Li].getFloat("SolarImpact_scale_V");
+      SolarImpact_RES1 = children0[Li].getInt("SolarImpact_RES1");
+      SolarImpact_RES2 = children0[Li].getInt("SolarImpact_RES2");
+      SolarImpact_Elevation = children0[Li].getFloat("SolarImpact_Elevation");
+      SpatialImpact_scale_U = children0[Li].getFloat("SpatialImpact_scale_U");
+      SpatialImpact_scale_V = children0[Li].getFloat("SpatialImpact_scale_V");
+      SpatialImpact_RES1 = children0[Li].getInt("SpatialImpact_RES1");
+      SpatialImpact_RES2 = children0[Li].getInt("SpatialImpact_RES2");
+      SpatialImpact_Grade = children0[Li].getFloat("SpatialImpact_Grade");
+      display_SpatialImpact_Image = children0[Li].getInt("display_SpatialImpact_Image");
+      SpatialImpact_Image_Section = children0[Li].getInt("SpatialImpact_Image_Section");
+      SpatialImpact_PositionStep = children0[Li].getFloat("SpatialImpact_PositionStep");
+      PROCESS_subdivisions = children0[Li].getInt("PROCESS_subdivisions");
+      deltaSpatialImpact = children0[Li].getFloat("deltaSpatialImpact");
+      deltaSpatialImpactLines = children0[Li].getFloat("deltaSpatialImpactLines");
+      MinimumDistance_traceU = children0[Li].getFloat("MinimumDistance_traceU");
+      MinimumDistance_traceV = children0[Li].getFloat("MinimumDistance_traceV");
+      stp_slp = children0[Li].getFloat("stp_slp");
+      stp_dir = children0[Li].getFloat("stp_dir");
+      n_slp = children0[Li].getInt("n_slp");
+      n_dir = children0[Li].getInt("n_dir");
 
       
     }
@@ -30220,14 +30321,26 @@ void SOLARCHVISION_load_project (String myFile) {
   
   println("End of loading project.");
   
+  SOLARCHVISION_deselectAll();
+  SOLARCHVISION_update_frame_layout();
+  
+  ROLLOUT_Update = 1;
   WORLD_Update = 1;
   WIN3D_Update = 1; 
   STUDY_Update = 1;     
-  ROLLOUT_Update = 1;
   BAR_a_Update = 1; 
   BAR_b_Update = 1;
   BAR_d_Update = 1;
   
+  rebuild_SolarProjection_array = 1;
+  rebuild_SolarImpact_Image_array = 1;
+  rebuild_WindRose_Image_array = 1; 
+  
+  Rendered_SolarImpact_Type = -1;
+  Rendered_SolarImpact_scale_U = FLOAT_undefined;
+  Rendered_SolarImpact_scale_V = FLOAT_undefined;
+  Rendered_SolarImpact_Elevation = FLOAT_undefined;
+  Rendered_SolarImpact_Rotation = FLOAT_undefined;    
 }
 
 
