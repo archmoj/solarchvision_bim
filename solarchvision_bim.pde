@@ -238,8 +238,6 @@ float MAX_SHADING_DIST = 250; // the biggest object should be 250
 
 int SavedScreenShots = 0;
 
-int MODEL_RUN = 0; //12; 
-
 float interpolation_weight = 0.5;// 0 = linear distance interpolation, 1 = square distance interpolation, 5 = nearest
 
 float GlobeRES = 2.5; //1, 2.5, 5
@@ -263,7 +261,7 @@ String ENSEMBLE_directory = "C:/SOLARCHVISION_2015/Input/WeatherForecast/FORECAS
 String OBSERVED_directory = "C:/SOLARCHVISION_2015/Input/WeatherRealTime/OBSERVATION_SWOB_EMPTY";
 //String OBSERVED_directory = "C:/SOLARCHVISION_2015/Input/WeatherRealTime/OBSERVATION_SWOB";
 
-
+int MODEL_RUN = 0; //12; 
 
 int _YEAR = year(); 
 int _MONTH = month();
@@ -271,6 +269,8 @@ int _DAY = day();
 int _HOUR = MODEL_RUN; //hour(); 
 int BEGIN_DAY;
 float _DATE;
+
+
 
 String MAKE_mainname () {
   
@@ -29626,6 +29626,47 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setInt("View_XYZ_ChangeOption", View_XYZ_ChangeOption);
   newChild1.setInt("Modify_Object_Parameters", Modify_Object_Parameters);  
 
+  newChild1.setInt("Display_SWOB_points", Display_SWOB_points);
+  newChild1.setInt("Display_SWOB_nearest", Display_SWOB_nearest);
+  newChild1.setInt("Display_NAEFS_points", Display_NAEFS_points);
+  newChild1.setInt("Display_NAEFS_nearest", Display_NAEFS_nearest);
+  newChild1.setInt("Display_CWEEDS_points", Display_CWEEDS_points);
+  newChild1.setInt("Display_CWEEDS_nearest", Display_CWEEDS_nearest);
+  newChild1.setInt("Display_EPW_points", Display_EPW_points);
+  newChild1.setInt("Display_EPW_nearest", Display_EPW_nearest);
+  newChild1.setInt("FRAME_record_JPG", FRAME_record_JPG);
+  newChild1.setInt("SpatialImpact_record_PDF", SpatialImpact_record_PDF);
+  newChild1.setInt("SpatialImpact_record_JPG", SpatialImpact_record_JPG);
+  newChild1.setInt("SolarImpact_record_JPG", SolarImpact_record_JPG);
+  newChild1.setInt("Export_3Dmodel", Export_3Dmodel);
+  newChild1.setInt("Export_solids", Export_solids);
+  newChild1.setInt("Export_meshing", Export_meshing);
+  newChild1.setInt("Ensemble_Audio_Output", Ensemble_Audio_Output);
+  newChild1.setInt("Launch_External_Simulation", Launch_External_Simulation);
+  newChild1.setInt("Launch_External_Hardware", Launch_External_Hardware);
+
+  newChild1.setFloat("SpatialImpact_Wspd", SpatialImpact_Wspd); 
+  newChild1.setFloat("SpatialImpact_Wdir", SpatialImpact_Wdir);
+  newChild1.setFloat("SpatialImpact_Wdie", SpatialImpact_Wdie);
+  newChild1.setInt("WindSamples", WindSamples);
+  newChild1.setFloat("SpatialImpact_Power", SpatialImpact_Power);
+  newChild1.setFloat("GlobalAlbedo", GlobalAlbedo);
+  newChild1.setFloat("MAX_SHADING_DIST", MAX_SHADING_DIST);
+  newChild1.setFloat("interpolation_weight", interpolation_weight);
+  newChild1.setFloat("GlobeRES", GlobeRES);
+  newChild1.setInt("Climatic_solar_forecast", Climatic_solar_forecast);
+  newChild1.setInt("Climatic_weather_forecast", Climatic_weather_forecast);
+  newChild1.setInt("automated", automated);
+  
+  newChild1.setInt("MODEL_RUN", MODEL_RUN);
+  newChild1.setInt("_YEAR", _YEAR);
+  newChild1.setInt("_MONTH", _MONTH);
+  newChild1.setInt("_DAY", _DAY); 
+  newChild1.setInt("_HOUR", _HOUR); 
+  newChild1.setInt("BEGIN_DAY", BEGIN_DAY);
+  newChild1.setFloat("_DATE", _DATE);
+   
+
   saveXML(my_xml, myFile);    
 
   println("End of saving project.");
@@ -29706,6 +29747,48 @@ void SOLARCHVISION_load_project (String myFile) {
       View_Select_Create_Modify = children0[Li].getInt("View_Select_Create_Modify");
       View_XYZ_ChangeOption = children0[Li].getInt("View_XYZ_ChangeOption");
       Modify_Object_Parameters = children0[Li].getInt("Modify_Object_Parameters");      
+
+      Display_SWOB_points = children0[Li].getInt("Display_SWOB_points");
+      Display_SWOB_nearest = children0[Li].getInt("Display_SWOB_nearest");
+      Display_NAEFS_points = children0[Li].getInt("Display_NAEFS_points");
+      Display_NAEFS_nearest = children0[Li].getInt("Display_NAEFS_nearest");
+      Display_CWEEDS_points = children0[Li].getInt("Display_CWEEDS_points");
+      Display_CWEEDS_nearest = children0[Li].getInt("Display_CWEEDS_nearest");
+      Display_EPW_points = children0[Li].getInt("Display_EPW_points");
+      Display_EPW_nearest = children0[Li].getInt("Display_EPW_nearest");
+      FRAME_record_JPG = children0[Li].getInt("FRAME_record_JPG");
+      SpatialImpact_record_PDF = children0[Li].getInt("SpatialImpact_record_PDF");
+      SpatialImpact_record_JPG = children0[Li].getInt("SpatialImpact_record_JPG");
+      SolarImpact_record_JPG = children0[Li].getInt("SolarImpact_record_JPG");
+      Export_3Dmodel = children0[Li].getInt("Export_3Dmodel");
+      Export_solids = children0[Li].getInt("Export_solids");
+      Export_meshing = children0[Li].getInt("Export_meshing");
+      Ensemble_Audio_Output = children0[Li].getInt("Ensemble_Audio_Output");
+      Launch_External_Simulation = children0[Li].getInt("Launch_External_Simulation");
+      Launch_External_Hardware = children0[Li].getInt("Launch_External_Hardware");
+
+      SpatialImpact_Wspd = children0[Li].getFloat("SpatialImpact_Wspd"); 
+      SpatialImpact_Wdir = children0[Li].getFloat("SpatialImpact_Wdir");
+      SpatialImpact_Wdie = children0[Li].getFloat("SpatialImpact_Wdie");
+      WindSamples = children0[Li].getInt("WindSamples");
+      SpatialImpact_Power = children0[Li].getFloat("SpatialImpact_Power");
+      GlobalAlbedo = children0[Li].getFloat("GlobalAlbedo");
+      MAX_SHADING_DIST = children0[Li].getFloat("MAX_SHADING_DIST");
+      interpolation_weight = children0[Li].getFloat("interpolation_weight");
+      GlobeRES = children0[Li].getFloat("GlobeRES");
+      Climatic_solar_forecast = children0[Li].getInt("Climatic_solar_forecast");
+      Climatic_weather_forecast = children0[Li].getInt("Climatic_weather_forecast");
+      automated = children0[Li].getInt("automated");
+      
+      MODEL_RUN = children0[Li].getInt("MODEL_RUN"); 
+      _YEAR = children0[Li].getInt("_YEAR");
+      _MONTH = children0[Li].getInt("_MONTH");
+      _DAY = children0[Li].getInt("_DAY"); 
+      _HOUR = children0[Li].getInt("_HOUR"); 
+      BEGIN_DAY = children0[Li].getInt("BEGIN_DAY");
+      _DATE = children0[Li].getFloat("_DATE");
+      
+
       
     }
     
