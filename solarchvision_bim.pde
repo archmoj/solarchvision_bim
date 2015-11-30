@@ -29885,7 +29885,24 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setFloat("WIN3D_RZ_coordinate", WIN3D_RZ_coordinate);
   newChild1.setFloat("WIN3D_RS_coordinate", WIN3D_RS_coordinate);
   newChild1.setFloat("WIN3D_ZOOM_coordinate", WIN3D_ZOOM_coordinate);
-  newChild1.setInt("WIN3D_View_Type", WIN3D_View_Type);  
+  newChild1.setInt("WIN3D_View_Type", WIN3D_View_Type);
+  newChild1.setInt("WIN3D_FACES_SHADE", WIN3D_FACES_SHADE);
+  newChild1.setInt("WIN3D_EDGES_SHOW", WIN3D_EDGES_SHOW);
+  newChild1.setInt("WIN3D_VERTS_SHOW", WIN3D_VERTS_SHOW);
+  newChild1.setInt("selected_posVector", selected_posVector);
+  newChild1.setInt("selected_rotVector", selected_rotVector);
+  newChild1.setInt("selected_scaleVector", selected_scaleVector);
+  newChild1.setFloat("selected_posValue", selected_posValue);
+  newChild1.setFloat("selected_rotValue", selected_rotValue);
+  newChild1.setFloat("selected_scaleValue", selected_scaleValue);
+  newChild1.setInt("selection_alignX", selection_alignX);
+  newChild1.setInt("selection_alignY", selection_alignY);
+  newChild1.setInt("selection_alignZ", selection_alignZ);
+  newChild1.setInt("selectedPolymesh_displayPivot", selectedPolymesh_displayPivot);
+  newChild1.setInt("selectedPolymesh_displayEdges", selectedPolymesh_displayEdges);
+  newChild1.setInt("selectedPolymesh_displayBox", selectedPolymesh_displayBox);
+  newChild1.setInt("selectedObject2D_displayEdges", selectedObject2D_displayEdges);
+  newChild1.setInt("selectedFractal_displayEdges", selectedFractal_displayEdges);        
   newChild1.setInt("frame_variation", frame_variation);
   newChild1.setInt("_LAN", _LAN);
   newChild1.setString("Default_Font", Default_Font);
@@ -30263,7 +30280,24 @@ void SOLARCHVISION_load_project (String myFile) {
       WIN3D_RZ_coordinate = children0[Li].getFloat("WIN3D_RZ_coordinate");
       WIN3D_RS_coordinate = children0[Li].getFloat("WIN3D_RS_coordinate");
       WIN3D_ZOOM_coordinate = children0[Li].getFloat("WIN3D_ZOOM_coordinate");
-      WIN3D_View_Type = children0[Li].getInt("WIN3D_View_Type");      
+      WIN3D_View_Type = children0[Li].getInt("WIN3D_View_Type");
+      WIN3D_FACES_SHADE = children0[Li].getInt("WIN3D_FACES_SHADE");
+      WIN3D_EDGES_SHOW = children0[Li].getInt("WIN3D_EDGES_SHOW");
+      WIN3D_VERTS_SHOW = children0[Li].getInt("WIN3D_VERTS_SHOW");
+      selected_posVector = children0[Li].getInt("selected_posVector");
+      selected_rotVector = children0[Li].getInt("selected_rotVector");
+      selected_scaleVector = children0[Li].getInt("selected_scaleVector");
+      selected_posValue = children0[Li].getFloat("selected_posValue");
+      selected_rotValue = children0[Li].getFloat("selected_rotValue");
+      selected_scaleValue = children0[Li].getFloat("selected_scaleValue");
+      selection_alignX = children0[Li].getInt("selection_alignX");
+      selection_alignY = children0[Li].getInt("selection_alignY");
+      selection_alignZ = children0[Li].getInt("selection_alignZ");
+      selectedPolymesh_displayPivot = children0[Li].getInt("selectedPolymesh_displayPivot");
+      selectedPolymesh_displayEdges = children0[Li].getInt("selectedPolymesh_displayEdges");
+      selectedPolymesh_displayBox = children0[Li].getInt("selectedPolymesh_displayBox");
+      selectedObject2D_displayEdges = children0[Li].getInt("selectedObject2D_displayEdges");
+      selectedFractal_displayEdges = children0[Li].getInt("selectedFractal_displayEdges");
       frame_variation = children0[Li].getInt("frame_variation");
       _LAN = children0[Li].getInt("_LAN");
       Default_Font = children0[Li].getString("Default_Font");
@@ -30320,6 +30354,8 @@ void SOLARCHVISION_load_project (String myFile) {
   
   
   println("End of loading project.");
+  
+  addNewSelectionToPreviousSelection = 0;
   
   SOLARCHVISION_deselectAll();
   SOLARCHVISION_update_frame_layout();
