@@ -322,9 +322,6 @@ String get_SolarImpact_Filename () {
 }
 
 
-float HeightAboveGround = 0; //2.5; // <<<<<<<<<
-
-
 String LocationName;
 String LocationProvince;
 float LocationLatitude;
@@ -332,6 +329,9 @@ float LocationLongitude;
 float LocationTimeZone;
 float LocationElevation;
 float Delta_NOON;
+
+float HeightAboveGround = 0; //2.5; // <<<<<<<<<
+
 
 
 float LocationLatitude_step = 0.1;
@@ -29665,6 +29665,52 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setInt("_HOUR", _HOUR); 
   newChild1.setInt("BEGIN_DAY", BEGIN_DAY);
   newChild1.setFloat("_DATE", _DATE);
+  
+  newChild1.setFloat("LocationLatitude_step", LocationLatitude_step);
+  newChild1.setFloat("LocationLongitude_step", LocationLongitude_step);
+  newChild1.setFloat("LocationElevation_step", LocationElevation_step);
+  newChild1.setInt("save_frame_number", save_frame_number);
+  newChild1.setInt("frame_index_number", frame_index_number);
+  newChild1.setInt("STUDY_record_JPG", STUDY_record_JPG);
+  newChild1.setInt("STUDY_record_PDF", STUDY_record_PDF);
+  newChild1.setInt("STUDY_record_AUTO", STUDY_record_AUTO);
+  newChild1.setInt("WORLD_record_JPG", WORLD_record_JPG);
+  newChild1.setInt("WORLD_record_PDF", WORLD_record_PDF);
+  newChild1.setInt("WORLD_record_AUTO", WORLD_record_AUTO);
+  newChild1.setInt("WIN3D_record_JPG", WIN3D_record_JPG);
+  newChild1.setInt("WIN3D_record_AUTO", WIN3D_record_AUTO);
+  newChild1.setInt("STUDY_i_start", STUDY_i_start);
+  newChild1.setInt("STUDY_i_end", STUDY_i_end);
+  newChild1.setInt("STUDY_j_start", STUDY_j_start);
+  newChild1.setInt("STUDY_j_end", STUDY_j_end);
+  newChild1.setInt("STUDY_max_j_end_parameters", STUDY_max_j_end_parameters);
+  newChild1.setInt("STUDY_max_j_end_observations", STUDY_max_j_end_observations);
+  newChild1.setFloat("per_day", per_day);
+  newChild1.setInt("num_add_days", num_add_days);
+  newChild1.setInt("CLIMATE_EPW_start", CLIMATE_EPW_start);
+  newChild1.setInt("CLIMATE_EPW_end", CLIMATE_EPW_end);
+  newChild1.setInt("CLIMATE_WY2_start", CLIMATE_WY2_start);
+  newChild1.setInt("CLIMATE_WY2_end", CLIMATE_WY2_end);
+  newChild1.setInt("ENSEMBLE_start", ENSEMBLE_start);
+  newChild1.setInt("ENSEMBLE_end", ENSEMBLE_end);
+  newChild1.setInt("numberOfNearestStations_ENSEMBLE", numberOfNearestStations_ENSEMBLE);
+  newChild1.setInt("numberOfNearestStations_OBSERVED", numberOfNearestStations_OBSERVED);
+  newChild1.setInt("OBSERVED_start", OBSERVED_start);
+  newChild1.setInt("OBSERVED_end", OBSERVED_end);
+  newChild1.setInt("Sample_Year_start", Sample_Year_start);
+  newChild1.setInt("Sample_Year_end", Sample_Year_end);
+  newChild1.setInt("Sample_Member_start", Sample_Member_start);
+  newChild1.setInt("Sample_Member_end", Sample_Member_end);
+  newChild1.setInt("Sample_Station_start", Sample_Station_start);
+  newChild1.setInt("Sample_Station_end", Sample_Station_end);
+  newChild1.setInt("Load_CLIMATE_EPW", Load_CLIMATE_EPW);
+  newChild1.setInt("Load_CLIMATE_WY2", Load_CLIMATE_WY2);
+  newChild1.setInt("Load_ENSEMBLE", Load_ENSEMBLE);
+  newChild1.setInt("Load_OBSERVED", Load_OBSERVED);
+  newChild1.setInt("Download_OBSERVED", Download_OBSERVED);
+  newChild1.setInt("Download_ENSEMBLE", Download_ENSEMBLE);
+  newChild1.setInt("Download_AERIAL", Download_AERIAL);
+    
    
 
   saveXML(my_xml, myFile);    
@@ -29788,6 +29834,50 @@ void SOLARCHVISION_load_project (String myFile) {
       BEGIN_DAY = children0[Li].getInt("BEGIN_DAY");
       _DATE = children0[Li].getFloat("_DATE");
       
+      LocationLatitude_step = children0[Li].getFloat("LocationLatitude_step");
+      LocationLongitude_step = children0[Li].getFloat("LocationLongitude_step");
+      LocationElevation_step = children0[Li].getFloat("LocationElevation_step");
+      save_frame_number = children0[Li].getInt("save_frame_number");
+      frame_index_number = children0[Li].getInt("frame_index_number");
+      STUDY_record_JPG = children0[Li].getInt("STUDY_record_JPG");
+      STUDY_record_PDF = children0[Li].getInt("STUDY_record_PDF");
+      STUDY_record_AUTO = children0[Li].getInt("STUDY_record_AUTO");
+      WORLD_record_JPG = children0[Li].getInt("WORLD_record_JPG");
+      WORLD_record_PDF = children0[Li].getInt("WORLD_record_PDF");
+      WORLD_record_AUTO = children0[Li].getInt("WORLD_record_AUTO");
+      WIN3D_record_JPG = children0[Li].getInt("WIN3D_record_JPG");
+      WIN3D_record_AUTO = children0[Li].getInt("WIN3D_record_AUTO");
+      STUDY_i_start = children0[Li].getInt("STUDY_i_start");
+      STUDY_i_end = children0[Li].getInt("STUDY_i_end");
+      STUDY_j_start = children0[Li].getInt("STUDY_j_start");
+      STUDY_j_end = children0[Li].getInt("STUDY_j_end");
+      STUDY_max_j_end_parameters = children0[Li].getInt("STUDY_max_j_end_parameters");
+      STUDY_max_j_end_observations = children0[Li].getInt("STUDY_max_j_end_observations");
+      per_day = children0[Li].getFloat("per_day");
+      num_add_days = children0[Li].getInt("num_add_days");
+      CLIMATE_EPW_start = children0[Li].getInt("CLIMATE_EPW_start");
+      CLIMATE_EPW_end = children0[Li].getInt("CLIMATE_EPW_end");
+      CLIMATE_WY2_start = children0[Li].getInt("CLIMATE_WY2_start");
+      CLIMATE_WY2_end = children0[Li].getInt("CLIMATE_WY2_end");
+      ENSEMBLE_start = children0[Li].getInt("ENSEMBLE_start");
+      ENSEMBLE_end = children0[Li].getInt("ENSEMBLE_end");
+      numberOfNearestStations_ENSEMBLE = children0[Li].getInt("numberOfNearestStations_ENSEMBLE");
+      numberOfNearestStations_OBSERVED = children0[Li].getInt("numberOfNearestStations_OBSERVED");
+      OBSERVED_start = children0[Li].getInt("OBSERVED_start");
+      OBSERVED_end = children0[Li].getInt("OBSERVED_end");
+      Sample_Year_start = children0[Li].getInt("Sample_Year_start");
+      Sample_Year_end = children0[Li].getInt("Sample_Year_end");
+      Sample_Member_start = children0[Li].getInt("Sample_Member_start");
+      Sample_Member_end = children0[Li].getInt("Sample_Member_end");
+      Sample_Station_start = children0[Li].getInt("Sample_Station_start");
+      Sample_Station_end = children0[Li].getInt("Sample_Station_end");
+      Load_CLIMATE_EPW = children0[Li].getInt("Load_CLIMATE_EPW");
+      Load_CLIMATE_WY2 = children0[Li].getInt("Load_CLIMATE_WY2");
+      Load_ENSEMBLE = children0[Li].getInt("Load_ENSEMBLE");
+      Load_OBSERVED = children0[Li].getInt("Load_OBSERVED");
+      Download_OBSERVED = children0[Li].getInt("Download_OBSERVED");
+      Download_ENSEMBLE = children0[Li].getInt("Download_ENSEMBLE");
+      Download_AERIAL = children0[Li].getInt("Download_AERIAL");
 
       
     }
