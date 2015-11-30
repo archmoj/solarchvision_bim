@@ -29941,6 +29941,28 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setFloat("stp_dir", stp_dir);
   newChild1.setInt("n_slp", n_slp);
   newChild1.setInt("n_dir", n_dir);
+
+  newChild1 = my_xml.addChild("allPolymesh_Faces");
+  newChild1.setContent(nf(allPolymesh_Faces.length, 0));
+  
+  for (int i = 0; i < allPolymesh_Faces.length; i++) {
+    
+    newChild2 = newChild1.addChild("i" + nf(i, 0));
+    newChild2.setContent(nf(allPolymesh_Faces[i].length, 0));
+    
+    for (int j = 0; j < allPolymesh_Faces[i].length; j++) {
+      newChild3 = newChild2.addChild("j" + nf(i, 0));
+      newChild3.setContent(nf(allPolymesh_Faces[i][j], 0));
+    }
+    
+  } 
+  
+//int[][] allPolymesh_Faces = {{0,0}}; // start face - end face
+//int[][] allPolymesh_Solids = {{0,0}}; // start solid - end solid
+
+//float[][] allVertices = {{0,0,0}};
+//int[][] allFaces = {{0,0,0}};
+//int[] allFaces_MAT = {0};
    
 
   saveXML(my_xml, myFile);    
