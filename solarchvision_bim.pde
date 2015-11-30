@@ -1,5 +1,3 @@
-int defaultTeselation = 0;
-
 import processing.pdf.*;
 
 String _undefined = "N/A";
@@ -134,8 +132,10 @@ int Display_FractalPlant = 1;
 int Display_Leaves = 1;
 
 int defaultMaterial = 7;
+int defaultTeselation = 0;
 
 int Create_Default_Material = 7; //0;
+int Create_Default_Teselation = 0;
 
 float Create_Input_Length = 10;
 float Create_Input_Width = 10;
@@ -14896,24 +14896,24 @@ PGraphics ViewFromTheSky (int SKY2D_X_View, int SKY2D_Y_View, float SKY2D_ZOOM_c
     
     color c = color(0, 0, 0);
 
-    if (allFaces_MAT[f] == -2) {
+    if (allFaces_MAT[f][0] == -2) {
       c = color(127, 255, 127);
     }
     else{
-      int mt = allFaces_MAT[f];
+      int mt = allFaces_MAT[f][0];
       c = color(Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3], Materials_Color[mt][0]);
     }
     
     SKY2D_Diagrams.stroke(c);
     SKY2D_Diagrams.fill(c);
 
-    int Teselation = 0;
+    int Teselation = allFaces_MAT[f][1];
     
     int TotalSubNo = 1;  
-    if (allFaces_MAT[f] == 0) {
-      Teselation = MODEL3D_TESELATION;
-      if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+    if (allFaces_MAT[f][0] == 0) {
+      Teselation += MODEL3D_TESELATION;
     }
+    if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
 
     for (int n = 0; n < TotalSubNo; n++) {
       
@@ -14931,7 +14931,7 @@ PGraphics ViewFromTheSky (int SKY2D_X_View, int SKY2D_Y_View, float SKY2D_ZOOM_c
       
       for (int s = 0; s < subFace.length; s++) {
   
-        if (allFaces_MAT[f] == -2) {
+        if (allFaces_MAT[f][0] == -2) {
           
           int PAL_TYPE = 1; 
          
@@ -15616,11 +15616,11 @@ void SOLARCHVISION_draw_3Dobjects () {
         
           color c = color(0, 0, 0);
       
-          if (allFaces_MAT[f] == -2) {
+          if (allFaces_MAT[f][0] == -2) {
             c = color(127, 255, 127);
           }
           else{
-            int mt = allFaces_MAT[f];
+            int mt = allFaces_MAT[f][0];
             c = color(Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3], Materials_Color[mt][0]);
           }
           
@@ -15658,13 +15658,13 @@ void SOLARCHVISION_draw_3Dobjects () {
             
           }
           else if (WIN3D_FACES_SHADE == Shade_Surface_White) {          
-            int Teselation = 0;
+            int Teselation = allFaces_MAT[f][1];
             
             int TotalSubNo = 1;  
-            if (allFaces_MAT[f] == 0) {
-              Teselation = MODEL3D_TESELATION;
-              if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+            if (allFaces_MAT[f][0] == 0) {
+              Teselation += MODEL3D_TESELATION;
             }
+            if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
       
             for (int n = 0; n < TotalSubNo; n++) {
               
@@ -15688,13 +15688,13 @@ void SOLARCHVISION_draw_3Dobjects () {
             }       
           }
           else if (WIN3D_FACES_SHADE == Shade_Surface_Materials) {
-            int Teselation = 0;
+            int Teselation = allFaces_MAT[f][1];
             
             int TotalSubNo = 1;  
-            if (allFaces_MAT[f] == 0) {
-              Teselation = MODEL3D_TESELATION;
-              if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+            if (allFaces_MAT[f][0] == 0) {
+              Teselation += MODEL3D_TESELATION;
             }
+            if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
       
             for (int n = 0; n < TotalSubNo; n++) {
               
@@ -15712,7 +15712,7 @@ void SOLARCHVISION_draw_3Dobjects () {
               
               for (int s = 0; s < subFace.length; s++) {
           
-                if (allFaces_MAT[f] == -2) {
+                if (allFaces_MAT[f][0] == -2) {
                   
                   int PAL_TYPE = 1; 
                  
@@ -15734,13 +15734,13 @@ void SOLARCHVISION_draw_3Dobjects () {
             int PAL_DIR = SPATIAL_Pallet_DIR;
             float _Multiplier = SPATIAL_Pallet_MLT;
             
-            int Teselation = 0;
+            int Teselation = allFaces_MAT[f][1];
             
             int TotalSubNo = 1;  
-            if (allFaces_MAT[f] == 0) {
-              Teselation = MODEL3D_TESELATION;
-              if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+            if (allFaces_MAT[f][0] == 0) {
+              Teselation += MODEL3D_TESELATION;
             }
+            if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
         
             for (int n = 0; n < TotalSubNo; n++) {
               
@@ -15784,13 +15784,13 @@ void SOLARCHVISION_draw_3Dobjects () {
             int PAL_DIR = ELEVATION_Pallet_DIR; 
             float _Multiplier = ELEVATION_Pallet_MLT;   
             
-            int Teselation = 0;
+            int Teselation = allFaces_MAT[f][1];
             
             int TotalSubNo = 1;  
-            if (allFaces_MAT[f] == 0) {
-              Teselation = MODEL3D_TESELATION;
-              if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+            if (allFaces_MAT[f][0] == 0) {
+              Teselation += MODEL3D_TESELATION;
             }
+            if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
         
             for (int n = 0; n < TotalSubNo; n++) {
               
@@ -15845,13 +15845,13 @@ void SOLARCHVISION_draw_3Dobjects () {
             if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
             if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;            
       
-            int Teselation = 0;
+            int Teselation = allFaces_MAT[f][1];
             
             int TotalSubNo = 1;  
-            if (allFaces_MAT[f] == 0) {
-              Teselation = MODEL3D_TESELATION;
-              if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+            if (allFaces_MAT[f][0] == 0) {
+              Teselation += MODEL3D_TESELATION;
             }
+            if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
         
             for (int n = 0; n < TotalSubNo; n++) {
               
@@ -15945,13 +15945,13 @@ void SOLARCHVISION_draw_3Dobjects () {
             }
             else{
     
-              int Teselation = 0;
+              int Teselation = allFaces_MAT[f][1];
               
               int TotalSubNo = 1;  
-              if (allFaces_MAT[f] == 0) {
-                Teselation = MODEL3D_TESELATION;
-                if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+              if (allFaces_MAT[f][0] == 0) {
+                Teselation += MODEL3D_TESELATION;
               }
+              if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
               
               for (int n = 0; n < TotalSubNo; n++) {
                 
@@ -16060,13 +16060,13 @@ void SOLARCHVISION_draw_3Dobjects () {
           }
           else{    
           
-            int Teselation = 0;
+            int Teselation = allFaces_MAT[f][1];
             
             int TotalSubNo = 1;  
-            if (allFaces_MAT[f] == 0) {
-              Teselation = MODEL3D_TESELATION;
-              if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+            if (allFaces_MAT[f][0] == 0) {
+              Teselation += MODEL3D_TESELATION;
             }
+            if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
                     
             for (int n = 0; n < TotalSubNo; n++) {
   
@@ -21915,11 +21915,16 @@ void mouseClicked () {
             SOLARCHVISION_highlight_in_BAR_b("RTz");
             BAR_b_Update = 1;  
           }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Seed")) {
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Seed/Material")) {
             set_to_Modify_Seed();
             SOLARCHVISION_highlight_in_BAR_b("SD");
             BAR_b_Update = 1;  
           }
+          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Teselation")) {
+            set_to_Modify_Teselation();
+            SOLARCHVISION_highlight_in_BAR_b("Tes");
+            BAR_b_Update = 1;  
+          }          
           if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DegreeMax")) {
             set_to_Modify_DegreeMax();
           }    
@@ -23403,6 +23408,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       //Modify_Object_Parameters = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Object_Parameters" , Modify_Object_Parameters, 0, 9, 1), 1));
 
       Create_Default_Material = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Material" , Create_Default_Material, -1, 8, 1), 1));
+      Create_Default_Teselation = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Teselation" , Create_Default_Teselation, 0, 4, 1), 1));
   
       Create_Input_Orientation = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Orientation" , Create_Input_Orientation, 0, 360, 15);
       
@@ -23418,7 +23424,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       
       MODEL3D_ERASE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL3D_ERASE" , MODEL3D_ERASE, 0, 1, 1), 1));
       
-      MODEL3D_TESELATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL3D_TESELATION" , MODEL3D_TESELATION, 0, 5, 1), 1));
+      MODEL3D_TESELATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL3D_TESELATION" , MODEL3D_TESELATION, 0, 4, 1), 1));
       
       LAND_TESELATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "LAND_TESELATION" , LAND_TESELATION, 0, 5, 1), 1));
       
@@ -24679,13 +24685,13 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
             if ((0 < f) && (f < allFaces.length)) { 
         
-              int Teselation = 0;
+              int Teselation = allFaces_MAT[f][1];
               
               int TotalSubNo = 1;  
-              if (allFaces_MAT[f] == 0) {
-                Teselation = MODEL3D_TESELATION;
-                if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+              if (allFaces_MAT[f][0] == 0) {
+                Teselation += MODEL3D_TESELATION;
               }
+              if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
           
               for (int n = 0; n < TotalSubNo; n++) {
                 
@@ -25247,13 +25253,13 @@ void RenderShadowsOnUrbanPlane() {
             
             for (int f = 1; f < allFaces.length; f++) {
             
-              int Teselation = 0;
+              int Teselation = allFaces_MAT[f][1];
               
               int TotalSubNo = 1;  
-              if (allFaces_MAT[f] == 0) {
-                Teselation = MODEL3D_TESELATION;
-                if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+              if (allFaces_MAT[f][0] == 0) {
+                Teselation += MODEL3D_TESELATION;
               }
+              if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
             
               for (int n = 0; n < TotalSubNo; n++) {
                 
@@ -25694,13 +25700,13 @@ void RenderShadowsOnUrbanPlane() {
           
           for (int f = 1; f < allFaces.length; f++) {
             
-            int Teselation = 0;
+            int Teselation = allFaces_MAT[f][1];
             
             int TotalSubNo = 1;  
-            if (allFaces_MAT[f] == 0) {
-              Teselation = MODEL3D_TESELATION;
-              if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+            if (allFaces_MAT[f][0] == 0) {
+              Teselation += MODEL3D_TESELATION;
             }
+            if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
           
             for (int n = 0; n < TotalSubNo; n++) {
               
@@ -26864,14 +26870,21 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
           if ((0 < f) && (f < allFaces.length)) {
         
-            int n = allFaces_MAT[f];
+            if (View_Select_Create_Modify == 4) {
+              int n = allFaces_MAT[f][0];
+              n += p;
+              if (n > 8) n = 0;
+              if (n < 0) n = 8;
+              allFaces_MAT[f][0] = n;
+            }
             
-            n += p;
-            
-            if (n > 8) n = 0;
-            if (n < 0) n = 8;
-            
-            allFaces_MAT[f] = n;
+            if (View_Select_Create_Modify == 5) {
+              int n = allFaces_MAT[f][1];
+              n += p;
+              if (n > 4) n = 0;
+              if (n < 0) n = 4;
+              allFaces_MAT[f][1] = n;              
+            }            
           }
         }
       }
@@ -26885,35 +26898,38 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
       int OBJ_NUM = selectedObject2D_numbers[o];
       
       if (OBJ_NUM != 0) {      
+        
+        if (View_Select_Create_Modify == 4) {
          
-        int n = allObject2D_MAP[OBJ_NUM];
-        int sign_n = 1;
-        if (n < 0) sign_n = -1;
-        
-        n = abs(n);
-        
-        int n1 = Object2D_Filenames_PEOPLE.length;
-        int n2 = Object2D_Filenames_PEOPLE.length + Object2D_Filenames_TREES.length;
-        
-        
-        if (n <= n1) {  // case: people 
-
-          n += p;
+          int n = allObject2D_MAP[OBJ_NUM];
+          int sign_n = 1;
+          if (n < 0) sign_n = -1;
           
-          if (n > n1) {n = 1; sign_n *= -1;}
-          if (n < 1) {n = n1; sign_n *= -1;}  
-        }
-        else { // case: trees
-
-          n += p;
+          n = abs(n);
           
-          if (n > n2) {n = n1 + 1; sign_n *= -1;}
-          if (n < n1 + 1) {n = n2; sign_n *= -1;}            
-        }
-        
-        n *= sign_n;
-        
-        allObject2D_MAP[OBJ_NUM] = n; 
+          int n1 = Object2D_Filenames_PEOPLE.length;
+          int n2 = Object2D_Filenames_PEOPLE.length + Object2D_Filenames_TREES.length;
+          
+          
+          if (n <= n1) {  // case: people 
+  
+            n += p;
+            
+            if (n > n1) {n = 1; sign_n *= -1;}
+            if (n < 1) {n = n1; sign_n *= -1;}  
+          }
+          else { // case: trees
+  
+            n += p;
+            
+            if (n > n2) {n = n1 + 1; sign_n *= -1;}
+            if (n < n1 + 1) {n = n2; sign_n *= -1;}            
+          }
+          
+          n *= sign_n;
+          
+          allObject2D_MAP[OBJ_NUM] = n;
+        } 
       }
     }    
   }
@@ -26931,7 +26947,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           allFractal_Seed[OBJ_NUM] += p;
           
         } 
-        if (View_Select_Create_Modify == 5) {
+        if (View_Select_Create_Modify == 6) {
           int q = allFractal_DegreeMax[OBJ_NUM];
           
           q += p;
@@ -26943,7 +26959,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           Create_Fractal_Plant_DegreeMax = q;
           ROLLOUT_Update = 1;
         }
-        if (View_Select_Create_Modify == 6) {
+        if (View_Select_Create_Modify == 7) {
           int q1 = allFractal_DegreeMin[OBJ_NUM];
           int q2 = allFractal_DegreeMax[OBJ_NUM];
           q1 += p;
@@ -26965,7 +26981,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
             ROLLOUT_Update = 1;
           }
         }
-        if (View_Select_Create_Modify == 7) {
+        if (View_Select_Create_Modify == 8) {
           int q = allFractal_DegreeMin[OBJ_NUM];
           
           q += p;
@@ -26977,7 +26993,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           Create_Fractal_Plant_DegreeMin = q;
           ROLLOUT_Update = 1;
         }        
-        if (View_Select_Create_Modify == 8) {
+        if (View_Select_Create_Modify == 9) {
           float q = allFractal_TrunckSize[OBJ_NUM];
           
           q += 0.25 * p;
@@ -26989,7 +27005,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           Create_Fractal_Plant_TrunckSize = q;
           ROLLOUT_Update = 1;
         }
-        if (View_Select_Create_Modify == 9) {
+        if (View_Select_Create_Modify == 10) {
           float q = allFractal_LeafSize[OBJ_NUM];
           
           q += 0.25 * p;
@@ -27167,6 +27183,36 @@ void dessin_Seed (int _type, float x, float y, float r) {
   BAR_b_Display_Text = 0;
 }
 
+
+void dessin_Teselation (int _type, float x, float y, float r) {
+  
+  pushMatrix();
+  translate(x, y);
+
+  float d = 1.25 * r;
+
+  strokeWeight(2);
+  stroke(255); 
+  fill(63);  
+  rect(-0.5 * d, -0.5 * d, d, d);
+
+  strokeWeight(1);
+  stroke(191); 
+  fill(191);  
+
+  for (int i = 1; i < 4; i++) {
+    float w = (0.25 * i - 0.5) * d;
+    line(-0.5 * d, w, 0.5 * d, w);  
+    line(w, -0.5 * d, w, 0.5 * d);
+  }
+  
+  strokeWeight(0);
+
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
 void dessin_ClickSelect (int _type, float x, float y, float r) {
   
   pushMatrix();
@@ -27182,7 +27228,7 @@ void dessin_ClickSelect (int _type, float x, float y, float r) {
   strokeWeight(5);
   line(0,0, d,d);
 
-  stroke(255,0,0);
+  stroke(0,0,255);
   strokeWeight(3);
   if (_type == 2) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);} 
   if (_type == 3) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r);}
@@ -27215,7 +27261,7 @@ void dessin_WindowSelect (int _type, float x, float y, float r) {
   strokeWeight(5);
   line(0,0, d,d);
 
-  stroke(255,0,0);
+  stroke(0,0,255);
   strokeWeight(3);
   if (_type == 2) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);} 
   if (_type == 3) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r);}
@@ -27929,7 +27975,7 @@ String[][] BAR_a_Items = {
                         {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
                         {"Select", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
-                        {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Seed", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize"},
+                        {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Seed/Material", "Teselation", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph"}
 
                       };
@@ -28156,7 +28202,7 @@ float BAR_b_tab = b_pixel;
 
 String[][] BAR_b_Items = {
                           
-                          {"2", "AllViewsports", "Expand3DView", "3DViewSpace", "3"},
+                          {"2", "AllViewsports", "Expand3DView", "3DViewSpace", "3.33"},
                           {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "3DViewPoint", "1.5"},
                           {"2", "P<>", "P><", "ProjectionType", "1.0"},
                           {"1", "LAO", "LookAtOrigin", "1.0"},
@@ -28187,7 +28233,8 @@ String[][] BAR_b_Items = {
                           {"3", "MVx", "MVy", "MVz", "MV³", "Move", "1.0"},
                           {"3", "SCx", "SCy", "SCz", "SC³", "Scale", "1.0"}, 
                           {"3", "RTx", "RTy", "RTz", "Rotate", "1.0"}, 
-                          {"1", "SD", "Seed", "1.0"},                             
+                          {"1", "SD", "Seed/Material", "1.0"},
+                          {"1", "Tes", "Teselation", "1.0"},                          
                         };         
 
 
@@ -28338,7 +28385,9 @@ void SOLARCHVISION_draw_window_BAR_b () {
           else if ((BAR_b_Items[i][j]).equals("Cushion")) set_to_Create_Cushion();
         }
 
-        if (Bar_Switch.equals("Seed")) set_to_Modify_Seed();
+        if (Bar_Switch.equals("Seed/Material")) set_to_Modify_Seed();
+        if (Bar_Switch.equals("Teselation")) set_to_Modify_Teselation();
+        
         if (Bar_Switch.equals("Rotate")) set_to_Modify_Rotate(j - 1);
         if (Bar_Switch.equals("Scale")) set_to_Modify_Scale(j - 1);
         if (Bar_Switch.equals("Move")) set_to_Modify_Move(j - 1);
@@ -28405,9 +28454,12 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("Rotate")) {
           dessin_Rotate(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }    
-        if (Bar_Switch.equals("Seed")) {
+        if (Bar_Switch.equals("Seed/Material")) {
           dessin_Seed(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
-        }    
+        }
+        if (Bar_Switch.equals("Teselation")) {
+          dessin_Teselation(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }            
         if (Bar_Switch.equals("ClickSelect")) {
           dessin_ClickSelect(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }       
@@ -28637,32 +28689,38 @@ void set_to_Modify_Seed () {
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Modify_DegreeMax () {
+void set_to_Modify_Teselation () {
   View_Select_Create_Modify = 5;
 
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Modify_DegreeDif () {
+void set_to_Modify_DegreeMax () {
   View_Select_Create_Modify = 6;
 
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Modify_DegreeMin () {
+void set_to_Modify_DegreeDif () {
   View_Select_Create_Modify = 7;
 
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Modify_TrunckSize () {
+void set_to_Modify_DegreeMin () {
   View_Select_Create_Modify = 8;
 
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Modify_LeafSize () {
+void set_to_Modify_TrunckSize () {
   View_Select_Create_Modify = 9;
+
+  ROLLOUT_Update = 1; 
+}
+
+void set_to_Modify_LeafSize () {
+  View_Select_Create_Modify = 10;
 
   ROLLOUT_Update = 1; 
 }
@@ -29593,7 +29651,9 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setInt("Display_Leaves", Display_Leaves);
 
   newChild1.setInt("defaultMaterial", defaultMaterial);
-  newChild1.setInt("Create_Default_Material", Create_Default_Material);
+  newChild1.setInt("defaultTeselation", defaultTeselation);
+  newChild1.setInt("Create_Default_Material", Create_Default_Material);  
+  newChild1.setInt("Create_Default_Teselation", Create_Default_Teselation);
   newChild1.setFloat("Create_Input_Length", Create_Input_Length);
   newChild1.setFloat("Create_Input_Width", Create_Input_Width);
   newChild1.setFloat("Create_Input_Height", Create_Input_Height);
@@ -29978,7 +30038,12 @@ void SOLARCHVISION_save_project (String myFile) {
   for (int i = 0; i < allFaces_MAT.length; i++) {
     newChild2 = newChild1.addChild("Face_MAT");
     newChild2.setInt("id", i);
-    String lineSTR = nf(allFaces_MAT[i], 0);
+    String lineSTR = "";
+    //for (int j = 0; j < allFaces_MAT[i].length; j++) {
+    for (int j = 0; j < 2; j++) { // material, teselation
+      lineSTR += nf(allFaces_MAT[i][j], 0);
+      if (j < allFaces_MAT[i].length - 1) lineSTR += ",";
+    }
     newChild2.setContent(lineSTR);
   }   
   
@@ -30091,7 +30156,9 @@ void SOLARCHVISION_load_project (String myFile) {
       Display_Leaves = children0[L].getInt("Display_Leaves");
       
       defaultMaterial = children0[L].getInt("defaultMaterial");
+      defaultTeselation = children0[L].getInt("defaultTeselation");
       Create_Default_Material = children0[L].getInt("Create_Default_Material");
+      Create_Default_Teselation = children0[L].getInt("Create_Default_Teselation");
       Create_Input_Length = children0[L].getFloat("Create_Input_Length");
       Create_Input_Width = children0[L].getFloat("Create_Input_Width");
       Create_Input_Height = children0[L].getFloat("Create_Input_Height");
@@ -30477,10 +30544,14 @@ void SOLARCHVISION_load_project (String myFile) {
     children0 = FileAll.getChildren("allFaces_MAT");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      allFaces_MAT = new int[ni];
+      allFaces_MAT = new int[ni][2];
       XML[] children1 = children0[L].getChildren("Face_MAT"); 
       for (int i = 0; i < ni; i++) {
-        allFaces_MAT[i] = int(children1[i].getContent()); 
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < parts.length; j++) {
+          allFaces_MAT[i][j] = int(parts[j]); 
+        }
       }
     }       
     
