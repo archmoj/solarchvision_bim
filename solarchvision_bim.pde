@@ -29942,28 +29942,67 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setInt("n_slp", n_slp);
   newChild1.setInt("n_dir", n_dir);
 
-  newChild1 = my_xml.addChild("allPolymesh_Faces");
-  newChild1.setContent(nf(allPolymesh_Faces.length, 0));
-  
-  for (int i = 0; i < allPolymesh_Faces.length; i++) {
-    
-    newChild2 = newChild1.addChild("i" + nf(i, 0));
-    newChild2.setContent(nf(allPolymesh_Faces[i].length, 0));
-    
-    for (int j = 0; j < allPolymesh_Faces[i].length; j++) {
-      newChild3 = newChild2.addChild("j" + nf(i, 0));
-      newChild3.setContent(nf(allPolymesh_Faces[i][j], 0));
+  newChild1 = my_xml.addChild("allPolymesh_Solids");
+  newChild1.setContent(nf(allPolymesh_Solids.length, 0));
+  for (int i = 0; i < allPolymesh_Solids.length; i++) {
+    newChild2 = newChild1.addChild("Solids");
+    newChild2.setInt("id", i);
+    String lineSTR = "";
+    for (int j = 0; j < allPolymesh_Solids[i].length; j++) {
+      lineSTR += nf(allPolymesh_Solids[i][j], 0);
+      if (j < allPolymesh_Solids[i].length - 1) lineSTR += ",";
     }
-    
+    newChild2.setContent(lineSTR);
+  }   
+
+  newChild1 = my_xml.addChild("allPolymeshes");
+  newChild1.setContent(nf(allPolymesh_Faces.length, 0));
+  for (int i = 0; i < allPolymesh_Faces.length; i++) {
+    newChild2 = newChild1.addChild("Faces");
+    newChild2.setInt("id", i);
+    String lineSTR = "";
+    for (int j = 0; j < allPolymesh_Faces[i].length; j++) {
+      lineSTR += nf(allPolymesh_Faces[i][j], 0);
+      if (j < allPolymesh_Faces[i].length - 1) lineSTR += ",";
+    }
+    newChild2.setContent(lineSTR);
   } 
   
-//int[][] allPolymesh_Faces = {{0,0}}; // start face - end face
-//int[][] allPolymesh_Solids = {{0,0}}; // start solid - end solid
-
-//float[][] allVertices = {{0,0,0}};
-//int[][] allFaces = {{0,0,0}};
-//int[] allFaces_MAT = {0};
-   
+  newChild1 = my_xml.addChild("allFaces_MAT");
+  newChild1.setContent(nf(allFaces_MAT .length, 0));
+  for (int i = 0; i < allFaces_MAT .length; i++) {
+    newChild2 = newChild1.addChild("Face_MAT");
+    newChild2.setInt("id", i);
+    String lineSTR = nf(allFaces_MAT[i], 0);
+    newChild2.setContent(lineSTR);
+  }   
+  
+  newChild1 = my_xml.addChild("allFaces");
+  newChild1.setContent(nf(allFaces.length, 0));
+  for (int i = 0; i < allFaces.length; i++) {
+    newChild2 = newChild1.addChild("Face");
+    newChild2.setInt("id", i);
+    String lineSTR = "";
+    for (int j = 0; j < allFaces[i].length; j++) {
+      lineSTR += nf(allFaces[i][j], 0);
+      if (j < allFaces[i].length - 1) lineSTR += ",";
+    }
+    newChild2.setContent(lineSTR);
+  } 
+  
+  newChild1 = my_xml.addChild("allVertices");
+  newChild1.setContent(nf(allVertices.length, 0));
+  for (int i = 0; i < allVertices.length; i++) {
+    newChild2 = newChild1.addChild("Vertice");
+    newChild2.setInt("id", i);
+    String lineSTR = "";
+    for (int j = 0; j < allVertices[i].length; j++) {
+      lineSTR += nf(allVertices[i][j], 0, 3)(",", "."); // <<<<<<<<<<<<<<<
+      if (j < allVertices[i].length - 1) lineSTR += ",";
+    }
+    newChild2.setContent(lineSTR);
+  } 
+    
 
   saveXML(my_xml, myFile);    
 
