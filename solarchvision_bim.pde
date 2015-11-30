@@ -29943,7 +29943,7 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setInt("n_dir", n_dir);
 
   newChild1 = my_xml.addChild("allPolymesh_Solids");
-  newChild1.setContent(nf(allPolymesh_Solids.length, 0));
+  newChild1.setInt("ni", allPolymesh_Solids.length);
   for (int i = 0; i < allPolymesh_Solids.length; i++) {
     newChild2 = newChild1.addChild("Solids");
     newChild2.setInt("id", i);
@@ -29957,7 +29957,7 @@ void SOLARCHVISION_save_project (String myFile) {
   }   
 
   newChild1 = my_xml.addChild("allPolymeshes");
-  newChild1.setContent(nf(allPolymesh_Faces.length, 0));
+  newChild1.setInt("ni", allPolymesh_Faces.length);
   for (int i = 0; i < allPolymesh_Faces.length; i++) {
     newChild2 = newChild1.addChild("Faces");
     newChild2.setInt("id", i);
@@ -29971,7 +29971,7 @@ void SOLARCHVISION_save_project (String myFile) {
   } 
   
   newChild1 = my_xml.addChild("allFaces_MAT");
-  newChild1.setContent(nf(allFaces_MAT.length, 0));
+  newChild1.setInt("ni", allFaces_MAT.length);
   for (int i = 0; i < allFaces_MAT.length; i++) {
     newChild2 = newChild1.addChild("Face_MAT");
     newChild2.setInt("id", i);
@@ -29980,7 +29980,7 @@ void SOLARCHVISION_save_project (String myFile) {
   }   
   
   newChild1 = my_xml.addChild("allFaces");
-  newChild1.setContent(nf(allFaces.length, 0));
+  newChild1.setInt("ni", allFaces.length);
   for (int i = 0; i < allFaces.length; i++) {
     newChild2 = newChild1.addChild("Face");
     newChild2.setInt("id", i);
@@ -29993,7 +29993,7 @@ void SOLARCHVISION_save_project (String myFile) {
   } 
   
   newChild1 = my_xml.addChild("allVertices");
-  newChild1.setContent(nf(allVertices.length, 0));
+  newChild1.setInt("ni", allVertices.length);
   for (int i = 0; i < allVertices.length; i++) {
     newChild2 = newChild1.addChild("Vertice");
     newChild2.setInt("id", i);
@@ -30007,7 +30007,7 @@ void SOLARCHVISION_save_project (String myFile) {
   } 
 
   newChild1 = my_xml.addChild("SolidObjects");
-  newChild1.setContent(nf(SolidObjects.length, 0));
+  newChild1.setInt("ni", SolidObjects.length);
   for (int i = 0; i < SolidObjects.length; i++) {
     newChild2 = newChild1.addChild("Solid");
     newChild2.setInt("id", i);
@@ -30073,7 +30073,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
     for (int L = 0; L < children0.length; L++) {
 
-LocationName = children0[L].getString("LocationName");
+      LocationName = children0[L].getString("LocationName");
       LocationProvince = children0[L].getString("LocationProvince");     
       LocationLatitude = children0[L].getFloat("LocationLatitude");
       LocationLongitude = children0[L].getFloat("LocationLongitude");
@@ -30444,33 +30444,101 @@ LocationName = children0[L].getString("LocationName");
     }
    
     children0 = FileAll.getChildren("allPolymesh_Solids");
-
     for (int L = 0; L < children0.length; L++) {
-
-      println("L:", L);
-      
-      String lineSTR = children0[L].getContent();
-      
-      println(lineSTR);
-/*
-      allPolymesh_Solids = new int[ni][2]; 
-
+      int ni = children0[L].getInt("ni");
+      allPolymesh_Solids = new int[ni][2];
+      XML[] children1 = children0[L].getChildren("Solids");         
       for (int i = 0; i < ni; i++) {
-        
-        println("i:", i);
-
-        XML[] children1 = children0[L].getChildren("Solids");        
-        
-        children1[0].getInt("id", i);
-      
-        String lineSTR = children1[0].getContent();
-        
-        println(lineSTR);
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < parts.length; j++) {
+          allPolymesh_Solids[i][j] = int(parts[j]); 
+        }
       }
-      */
-      
     } 
- 
+    
+    children0 = FileAll.getChildren("allPolymesh_Faces");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      allPolymesh_Faces = new int[ni][2];
+      XML[] children1 = children0[L].getChildren("Faces");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < parts.length; j++) {
+          allPolymesh_Faces[i][j] = int(parts[j]); 
+        }
+      }
+    }     
+    
+    children0 = FileAll.getChildren("allFaces_MAT");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      allFaces_MAT = new int[ni];
+      XML[] children1 = children0[L].getChildren("Face_MAT"); 
+      for (int i = 0; i < ni; i++) {
+        allFaces_MAT[i] = int(children1[i].getContent()); 
+      }
+    }       
+    
+    children0 = FileAll.getChildren("allFaces");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      allFaces = new int[0][0];
+      XML[] children1 = children0[L].getChildren("Face");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        int nj = parts.length;
+        int[][] newFace = new int [1][nj];
+        for (int j = 0; j < nj; j++) {
+          newFace[0][j] = int(parts[j]); 
+        }
+        allFaces = (int[][]) concat(allFaces, newFace);
+      }
+    }   
+
+    children0 = FileAll.getChildren("allVertices");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      allVertices = new float[ni][3];
+      XML[] children1 = children0[L].getChildren("Vertice");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < parts.length; j++) {
+          allVertices[i][j] = float(parts[j]); 
+        }
+      }
+    }    
+    
+    children0 = FileAll.getChildren("SolidObjects");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      SOLARCHVISION_remove_ParametricGeometries();
+      XML[] children1 = children0[L].getChildren("Solid");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        float v = float(parts[0]);
+        float x = float(parts[1]);
+        float y = float(parts[2]);
+        float z = float(parts[3]);
+        float px = float(parts[4]);
+        float py = float(parts[5]);
+        float pz = float(parts[6]);
+        float sx = float(parts[7]);
+        float sy = float(parts[8]);
+        float sz = float(parts[9]);
+        float tx = float(parts[10]);
+        float ty = float(parts[11]);
+        float tz = float(parts[12]);
+        ParametricGeometry[] newSolidObject = {new ParametricGeometry(v, x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz)};         
+        SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);          
+      }
+    }    
+
+    
   }
   
   
