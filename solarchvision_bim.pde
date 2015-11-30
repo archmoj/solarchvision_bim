@@ -29557,6 +29557,83 @@ void SOLARCHVISION_check_for_WIN3D_update () {
 }  
 
 
+
+
+void SOLARCHVISION_save_project (String myFile) {
+ 
+  XML my_xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
+  XML newChild1 = null;
+  XML newChild2 = null;
+  XML newChild3 = null;
+  
+  
+  my_xml.setName("SOLARCHVISION_2015_project");
+  
+  newChild1 = my_xml.addChild("header");
+  
+  //newChild1.setContent("Test");
+  
+  newChild1.setString("LocationName", LocationName);
+  newChild1.setString("LocationProvince", LocationProvince);
+  newChild1.setFloat("LocationLatitude", LocationLatitude);
+  newChild1.setFloat("LocationLongitude", LocationLongitude);
+  newChild1.setFloat("LocationElevation", LocationElevation);
+  newChild1.setFloat("LocationTimeZone", LocationTimeZone);
+  newChild1.setFloat("Delta_NOON", Delta_NOON);
+
+  newChild1.setInt("Display_Output_in_Explorer", Display_Output_in_Explorer);
+  newChild1.setInt("Display_Building_Model", Display_Building_Model);
+  newChild1.setInt("Display_Trees_People", Display_Trees_People);
+  newChild1.setInt("Display_FractalPlant", Display_FractalPlant);
+  newChild1.setInt("Display_Leaves", Display_Leaves);
+
+  newChild1.setInt("defaultMaterial", defaultMaterial);
+  newChild1.setInt("Create_Default_Material", Create_Default_Material);
+  newChild1.setFloat("Create_Input_Length", Create_Input_Length);
+  newChild1.setFloat("Create_Input_Width", Create_Input_Width);
+  newChild1.setFloat("Create_Input_Height", Create_Input_Height);
+  newChild1.setFloat("Create_Input_Volume", Create_Input_Volume);
+  newChild1.setFloat("Create_Input_Orientation", Create_Input_Orientation);
+  newChild1.setFloat("Create_Input_powX", Create_Input_powX);
+  newChild1.setFloat("Create_Input_powY", Create_Input_powY);
+  newChild1.setFloat("Create_Input_powZ", Create_Input_powZ);
+  newChild1.setFloat("Create_Input_powAll", Create_Input_powAll);
+  newChild1.setInt("Create_Input_powRnd", Create_Input_powRnd);
+  newChild1.setInt("Create_Sphere_Degree", Create_Sphere_Degree);
+  newChild1.setInt("Create_Cylinder_Degree", Create_Cylinder_Degree);
+  newChild1.setInt("Create_Poly_Degree", Create_Poly_Degree);
+  newChild1.setInt("Create_Mesh_Poly", Create_Mesh_Poly);
+  newChild1.setInt("Create_Mesh_Extrude", Create_Mesh_Extrude);
+  newChild1.setInt("Create_Mesh_Tri", Create_Mesh_Tri);
+  newChild1.setInt("Create_Mesh_Quad", Create_Mesh_Quad);
+  newChild1.setInt("Create_Mesh_House", Create_Mesh_House);
+  newChild1.setInt("Create_Mesh_Parametric", Create_Mesh_Parametric);
+  newChild1.setInt("Create_Mesh_SuperOBJ", Create_Mesh_SuperOBJ);
+  newChild1.setInt("Create_Mesh_Person", Create_Mesh_Person);
+  newChild1.setInt("Create_Mesh_Plant", Create_Mesh_Plant);
+  newChild1.setInt("Create_Fractal_Plant", Create_Fractal_Plant);
+  newChild1.setInt("Create_Mesh_Person_Type", Create_Mesh_Person_Type);
+  newChild1.setInt("Create_Mesh_Plant_Type", Create_Mesh_Plant_Type);
+  newChild1.setInt("Create_Fractal_Plant_Type", Create_Fractal_Plant_Type);
+  newChild1.setInt("Create_Fractal_Plant_DegreeMin", Create_Fractal_Plant_DegreeMin);
+  newChild1.setInt("Create_Fractal_Plant_DegreeMax", Create_Fractal_Plant_DegreeMax);
+  newChild1.setInt("Create_Fractal_Plant_Seed", Create_Fractal_Plant_Seed);
+  newChild1.setFloat("Create_Fractal_Plant_TrunckSize", Create_Fractal_Plant_TrunckSize);
+  newChild1.setFloat("Create_Fractal_Plant_LeafSize", Create_Fractal_Plant_LeafSize);
+  newChild1.setInt("Work_with_2D_or_3D", Work_with_2D_or_3D);
+  newChild1.setInt("Create_Mesh_or_Solid", Create_Mesh_or_Solid);
+  newChild1.setInt("View_Select_Create_Modify", View_Select_Create_Modify);
+  newChild1.setInt("View_XYZ_ChangeOption", View_XYZ_ChangeOption);
+  newChild1.setInt("Modify_Object_Parameters", Modify_Object_Parameters);  
+
+  saveXML(my_xml, myFile);    
+
+  println("End of saving project.");
+
+  SOLARCHVISION_explore_output(myFile);
+}
+
+
 void SOLARCHVISION_load_project (String myFile) {
 
   int continue_process = 1;
@@ -29584,7 +29661,57 @@ void SOLARCHVISION_load_project (String myFile) {
       LocationElevation = children0[Li].getFloat("LocationElevation");
       LocationTimeZone = children0[Li].getFloat("LocationTimeZone");
       Delta_NOON = children0[Li].getFloat("Delta_NOON");
+      
+      Display_Output_in_Explorer = children0[Li].getInt("Display_Output_in_Explorer");
+      Display_Building_Model = children0[Li].getInt("Display_Building_Model");
+      Display_Trees_People = children0[Li].getInt("Display_Trees_People");
+      Display_FractalPlant = children0[Li].getInt("Display_FractalPlant");
+      Display_Leaves = children0[Li].getInt("Display_Leaves");
+      
+      defaultMaterial = children0[Li].getInt("defaultMaterial");
+      Create_Default_Material = children0[Li].getInt("Create_Default_Material");
+      Create_Input_Length = children0[Li].getFloat("Create_Input_Length");
+      Create_Input_Width = children0[Li].getFloat("Create_Input_Width");
+      Create_Input_Height = children0[Li].getFloat("Create_Input_Height");
+      Create_Input_Volume = children0[Li].getFloat("Create_Input_Volume");
+      Create_Input_Orientation = children0[Li].getFloat("Create_Input_Orientation");
+      Create_Input_powX = children0[Li].getFloat("Create_Input_powX");
+      Create_Input_powY = children0[Li].getFloat("Create_Input_powY");
+      Create_Input_powZ = children0[Li].getFloat("Create_Input_powZ");
+      Create_Input_powAll = children0[Li].getFloat("Create_Input_powAll");
+      Create_Input_powRnd = children0[Li].getInt("Create_Input_powRnd");
+      Create_Sphere_Degree = children0[Li].getInt("Create_Sphere_Degree");
+      Create_Cylinder_Degree = children0[Li].getInt("Create_Cylinder_Degree");
+      Create_Poly_Degree = children0[Li].getInt("Create_Poly_Degree");
+      Create_Mesh_Poly = children0[Li].getInt("Create_Mesh_Poly");
+      Create_Mesh_Extrude = children0[Li].getInt("Create_Mesh_Extrude");
+      Create_Mesh_Tri = children0[Li].getInt("Create_Mesh_Tri");
+      Create_Mesh_Quad = children0[Li].getInt("Create_Mesh_Quad");
+      Create_Mesh_House = children0[Li].getInt("Create_Mesh_House");
+      Create_Mesh_Parametric = children0[Li].getInt("Create_Mesh_Parametric");
+      Create_Mesh_SuperOBJ = children0[Li].getInt("Create_Mesh_SuperOBJ");
+      Create_Mesh_Person = children0[Li].getInt("Create_Mesh_Person");
+      Create_Mesh_Plant = children0[Li].getInt("Create_Mesh_Plant");
+      Create_Fractal_Plant = children0[Li].getInt("Create_Fractal_Plant");
+      Create_Mesh_Person_Type = children0[Li].getInt("Create_Mesh_Person_Type");
+      Create_Mesh_Plant_Type = children0[Li].getInt("Create_Mesh_Plant_Type");
+      Create_Fractal_Plant_Type = children0[Li].getInt("Create_Fractal_Plant_Type");
+      Create_Fractal_Plant_DegreeMin = children0[Li].getInt("Create_Fractal_Plant_DegreeMin");
+      Create_Fractal_Plant_DegreeMax = children0[Li].getInt("Create_Fractal_Plant_DegreeMax");
+      Create_Fractal_Plant_Seed = children0[Li].getInt("Create_Fractal_Plant_Seed");
+      Create_Fractal_Plant_TrunckSize = children0[Li].getFloat("Create_Fractal_Plant_TrunckSize");
+      Create_Fractal_Plant_LeafSize = children0[Li].getFloat("Create_Fractal_Plant_LeafSize");
+      Work_with_2D_or_3D = children0[Li].getInt("Work_with_2D_or_3D");
+      Create_Mesh_or_Solid = children0[Li].getInt("Create_Mesh_or_Solid");
+      View_Select_Create_Modify = children0[Li].getInt("View_Select_Create_Modify");
+      View_XYZ_ChangeOption = children0[Li].getInt("View_XYZ_ChangeOption");
+      Modify_Object_Parameters = children0[Li].getInt("Modify_Object_Parameters");      
+      
     }
+    
+
+
+
     
 //     = children0[Li].getFloat("");
 //     = children0[Li].getInt("");
@@ -29594,42 +29721,21 @@ void SOLARCHVISION_load_project (String myFile) {
   
   
   println("End of loading project.");
+  
+  WORLD_Update = 1;
+  WIN3D_Update = 1; 
+  STUDY_Update = 1;     
+  ROLLOUT_Update = 1;
+  BAR_a_Update = 1; 
+  BAR_b_Update = 1;
+  BAR_d_Update = 1;
+  
 }
-
-void SOLARCHVISION_save_project (String myFile) {
- 
-  XML my_xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
-  XML newChild1 = null;
-  XML newChild2 = null;
-  XML newChild3 = null;
-  
-  
-  my_xml.setName("SOLARCHVISION_2015_project");
-  
-  newChild1 = my_xml.addChild("header");
-  
-  //newChild1.setContent("Test");
-  
-  newChild1.setString("LocationName", LocationName);
-  newChild1.setString("LocationProvince", LocationProvince);
-  newChild1.setFloat("LocationLatitude", LocationLatitude);
-  newChild1.setFloat("LocationLongitude", LocationLongitude);
-  newChild1.setFloat("LocationElevation", LocationElevation);
-  newChild1.setFloat("LocationTimeZone", LocationTimeZone);
-  newChild1.setFloat("Delta_NOON", Delta_NOON);
-
-  
-
-  saveXML(my_xml, myFile);    
-
-  println("End of saving project.");
-
-  SOLARCHVISION_explore_output(myFile);
-}
-
 
 
 /* bugs:
+
+rollout_a returns previous clicked item (redo previous function) when closing the menu second time.
 
 delete because scrolling selection+ could add duplicate of the same objects to the list!
 
