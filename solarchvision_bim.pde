@@ -29948,7 +29948,8 @@ void SOLARCHVISION_save_project (String myFile) {
     newChild2 = newChild1.addChild("Solids");
     newChild2.setInt("id", i);
     String lineSTR = "";
-    for (int j = 0; j < allPolymesh_Solids[i].length; j++) {
+    //for (int j = 0; j < allPolymesh_Solids[i].length; j++) {
+    for (int j = 0; j < 2; j++) { // start, end
       lineSTR += nf(allPolymesh_Solids[i][j], 0);
       if (j < allPolymesh_Solids[i].length - 1) lineSTR += ",";
     }
@@ -29961,7 +29962,8 @@ void SOLARCHVISION_save_project (String myFile) {
     newChild2 = newChild1.addChild("Faces");
     newChild2.setInt("id", i);
     String lineSTR = "";
-    for (int j = 0; j < allPolymesh_Faces[i].length; j++) {
+    //for (int j = 0; j < allPolymesh_Faces[i].length; j++) {
+    for (int j = 0; j < 2; j++) { // start, end
       lineSTR += nf(allPolymesh_Faces[i][j], 0);
       if (j < allPolymesh_Faces[i].length - 1) lineSTR += ",";
     }
@@ -29969,8 +29971,8 @@ void SOLARCHVISION_save_project (String myFile) {
   } 
   
   newChild1 = my_xml.addChild("allFaces_MAT");
-  newChild1.setContent(nf(allFaces_MAT .length, 0));
-  for (int i = 0; i < allFaces_MAT .length; i++) {
+  newChild1.setContent(nf(allFaces_MAT.length, 0));
+  for (int i = 0; i < allFaces_MAT.length; i++) {
     newChild2 = newChild1.addChild("Face_MAT");
     newChild2.setInt("id", i);
     String lineSTR = nf(allFaces_MAT[i], 0);
@@ -29996,12 +29998,51 @@ void SOLARCHVISION_save_project (String myFile) {
     newChild2 = newChild1.addChild("Vertice");
     newChild2.setInt("id", i);
     String lineSTR = "";
-    for (int j = 0; j < allVertices[i].length; j++) {
-      lineSTR += nf(allVertices[i][j], 0, 3)(",", "."); // <<<<<<<<<<<<<<<
+    //for (int j = 0; j < allVertices[i].length; j++) {
+    for (int j = 0; j < 3; j++) { // x, y, z 
+      lineSTR += nf(allVertices[i][j], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
       if (j < allVertices[i].length - 1) lineSTR += ",";
     }
     newChild2.setContent(lineSTR);
   } 
+
+  newChild1 = my_xml.addChild("SolidObjects");
+  newChild1.setContent(nf(SolidObjects.length, 0));
+  for (int i = 0; i < SolidObjects.length; i++) {
+    newChild2 = newChild1.addChild("Solid");
+    newChild2.setInt("id", i);
+    String lineSTR = "";
+    lineSTR += nf(SolidObjects[i].value, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += ",";
+    lineSTR += nf(SolidObjects[i].posX, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += ",";
+    lineSTR += nf(SolidObjects[i].posY, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += ",";
+    lineSTR += nf(SolidObjects[i].posZ, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += ",";
+    lineSTR += nf(SolidObjects[i].powX, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += ",";
+    lineSTR += nf(SolidObjects[i].powY, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += ",";
+    lineSTR += nf(SolidObjects[i].powZ, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += ",";
+    lineSTR += nf(SolidObjects[i].scaleX, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += ",";
+    lineSTR += nf(SolidObjects[i].scaleY, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += ",";
+    lineSTR += nf(SolidObjects[i].scaleZ, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += ",";
+    lineSTR += nf(SolidObjects[i].rotX, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += ",";
+    lineSTR += nf(SolidObjects[i].rotY, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += ",";
+    lineSTR += nf(SolidObjects[i].rotZ, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+
+    newChild2.setContent(lineSTR);
+  } 
+
+
+
     
 
   saveXML(my_xml, myFile);    
