@@ -28158,21 +28158,18 @@ String[][] BAR_b_Items = {
                           {"2", "P<>", "P><", "ProjectionType", "1.0"},
                           {"1", "LAO", "LookAtOrigin", "1.0"},
                           {"1", "LAS", "LookAtSelection", "1.0"},
-                          
+                          {"3", "CRL", "CRLz", "CRLxy", "CameraRoll", "1.0"},
                           {"1", "±CDS", "CameraDistance", "1.0"},
-                          {"1", "±CDM", "DistMouseXY", "1.0"},
                           {"1", "±CDZ", "DistZ", "1.0"},
+                          {"1", "±CDM", "DistMouseXY", "1.0"},
                           {"3", "DIz", "DIx", "DIy", "Truck", "1.0"},
                           {"1", "OR", "ORxy", "ORz", "Orbit", "1.0"},                          
-                          {"3", "CRL", "CRLz", "CRLxy", "CameraRoll", "1.0"},
                           {"1", "TRL", "TRLz", "TRLxy", "TargetRoll", "1.0"},
-                          
                           {"1", "Pan", "PanX", "PanY", "Pan", "1.0"},
                           {"1", "±ZM", "0ZM", "Zoom", "1.0"},
                           {"1", "±SA", "AllModelSize", "1.0"},
                           {"1", "±SZ", "3DModelSize", "1.0"},                          
                           {"1", "±SK", "SkydomeSize", "1.0"},
-                          
                          
                           {"2", "Fractal", "Tree", "Person", "LivingType", "1.5"},
                           {"1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "BuildingType", "2.0"},
@@ -29902,7 +29899,8 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setInt("selectedPolymesh_displayEdges", selectedPolymesh_displayEdges);
   newChild1.setInt("selectedPolymesh_displayBox", selectedPolymesh_displayBox);
   newChild1.setInt("selectedObject2D_displayEdges", selectedObject2D_displayEdges);
-  newChild1.setInt("selectedFractal_displayEdges", selectedFractal_displayEdges);        
+  newChild1.setInt("selectedFractal_displayEdges", selectedFractal_displayEdges);
+  newChild1.setInt("WORLD_viewport_ZOOM", WORLD_viewport_ZOOM);
   newChild1.setInt("frame_variation", frame_variation);
   newChild1.setInt("_LAN", _LAN);
   newChild1.setString("Default_Font", Default_Font);
@@ -30298,6 +30296,7 @@ void SOLARCHVISION_load_project (String myFile) {
       selectedPolymesh_displayBox = children0[Li].getInt("selectedPolymesh_displayBox");
       selectedObject2D_displayEdges = children0[Li].getInt("selectedObject2D_displayEdges");
       selectedFractal_displayEdges = children0[Li].getInt("selectedFractal_displayEdges");
+      WORLD_viewport_ZOOM = children0[Li].getInt("WORLD_viewport_ZOOM");
       frame_variation = children0[Li].getInt("frame_variation");
       _LAN = children0[Li].getInt("_LAN");
       Default_Font = children0[Li].getString("Default_Font");
@@ -30355,9 +30354,20 @@ void SOLARCHVISION_load_project (String myFile) {
   
   println("End of loading project.");
   
-  addNewSelectionToPreviousSelection = 0;
+  
   
   SOLARCHVISION_deselectAll();
+  
+  addNewSelectionToPreviousSelection = 0;
+  
+  addToLastPolymesh = 0;
+  
+  set_to_Create_Nothing();
+  
+  WORLD_VIEW_Auto = 1;
+  
+  WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
+  
   SOLARCHVISION_update_frame_layout();
   
   ROLLOUT_Update = 1;
