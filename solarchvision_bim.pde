@@ -30015,6 +30015,14 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setFloat("stp_dir", stp_dir);
   newChild1.setInt("n_slp", n_slp);
   newChild1.setInt("n_dir", n_dir);
+  newChild1.setInt("LAND_n_I_base", LAND_n_I_base);
+  newChild1.setInt("LAND_n_J_base", LAND_n_J_base);
+  newChild1.setInt("LAND_n_I", LAND_n_I);
+  newChild1.setInt("LAND_n_J", LAND_n_J);
+  newChild1.setString("R_earth", Double.toString(R_earth));
+  newChild1.setString("LAND_mid_lat", Double.toString(LAND_mid_lat));
+  newChild1.setString("LAND_mid_lon", Double.toString(LAND_mid_lon));
+
 
   newChild1 = my_xml.addChild("DEFINED_STATION");
   newChild1.setInt("ni", DEFINED_STATIONS[STATION_NUMBER].length);
@@ -30575,6 +30583,13 @@ void SOLARCHVISION_load_project (String myFile) {
       stp_dir = children0[L].getFloat("stp_dir");
       n_slp = children0[L].getInt("n_slp");
       n_dir = children0[L].getInt("n_dir");
+      LAND_n_I_base = children0[L].getInt("LAND_n_I_base");
+      LAND_n_J_base = children0[L].getInt("LAND_n_J_base");
+      LAND_n_I = children0[L].getInt("LAND_n_I");
+      LAND_n_J = children0[L].getInt("LAND_n_J");
+      R_earth = Double.parseDouble(children0[L].getString("R_earth"));
+      LAND_mid_lat = Double.parseDouble(children0[L].getString("LAND_mid_lat"));
+      LAND_mid_lon = Double.parseDouble(children0[L].getString("LAND_mid_lon"));
 
       
     }
