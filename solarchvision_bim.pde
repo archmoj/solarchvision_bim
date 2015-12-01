@@ -30016,6 +30016,14 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setInt("n_slp", n_slp);
   newChild1.setInt("n_dir", n_dir);
 
+  newChild1 = my_xml.addChild("DEFINED_STATION0");
+  newChild1.setInt("ni", DEFINED_STATIONS[0].length);
+  for (int i = 0; i < DEFINED_STATIONS[0].length; i++) {
+    newChild2 = newChild1.addChild("Station");
+    newChild2.setInt("id", i);
+    newChild2.setContent(DEFINED_STATIONS[0][i]);
+  } 
+
   newChild1 = my_xml.addChild("allPolymesh_Solids");
   newChild1.setInt("ni", allPolymesh_Solids.length);
   for (int i = 0; i < allPolymesh_Solids.length; i++) {
