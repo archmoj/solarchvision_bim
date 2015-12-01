@@ -30129,8 +30129,27 @@ void SOLARCHVISION_save_project (String myFile) {
   } 
 
 
-
+  newChild1 = my_xml.addChild("allObject2D");
+  newChild1.setInt("ni", allObject2D_XYZS.length);
+  for (int i = 0; i < allObject2D_XYZS.length; i++) {
+    newChild2 = newChild1.addChild("XYZS");
+    newChild2.setInt("id", i);
+    String lineSTR = "";
+    //for (int j = 0; j < allObject2D_XYZS[i].length; j++) {
+    for (int j = 0; j < 4; j++) { // x, y, z, s 
+      lineSTR += nf(allObject2D_XYZS[i][j], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+      lineSTR += ",";
+    }
+    lineSTR += allObject2D_MAP[i];
     
+    newChild2.setContent(lineSTR);
+  } 
+
+/*
+float[][] allObject2D_XYZS = {{0,0,0,0}};
+int[] allObject2D_MAP = {0};
+int allObject2D_num = 0; 
+*/    
 
   saveXML(my_xml, myFile);    
 
@@ -30660,9 +30679,12 @@ void SOLARCHVISION_load_project (String myFile) {
   println("End of loading project.");
  
   
- 
-  SOLARCHVISION_update_station(0); 
-  
+  // loading only weather data // 
+  SOLARCHVISION_update_station(2); 
+  SOLARCHVISION_update_station(3);
+  SOLARCHVISION_update_station(4);
+  SOLARCHVISION_update_station(5);
+  ///////////////////////////////
   
   SOLARCHVISION_deselectAll();
   
