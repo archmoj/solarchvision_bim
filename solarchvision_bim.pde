@@ -634,15 +634,15 @@ int[] GRIB2_TGL_Selected = {1,0,0,0}; // for levels above ground level
 int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
 
 {
-  STUDY_V_scale = new float[num_layers];
-  STUDY_V_offset = new float[num_layers];
-  STUDY_V_belowLine = new float[num_layers];
-  LAYERS_Unit = new String[num_layers];  
-  LAYERS_Title = new String[num_layers][2];
-  LAYERS_ENSEMBLE = new String[num_layers];
-  LAYERS_GRIB2 = new String[num_layers][GRIB2_TGL_number]; 
-  LAYERS_GRIB2_MUL = new float[num_layers];
-  LAYERS_GRIB2_ADD = new float[num_layers];
+  STUDY_V_scale = new float [num_layers];
+  STUDY_V_offset = new float [num_layers];
+  STUDY_V_belowLine = new float [num_layers];
+  LAYERS_Unit = new String [num_layers];  
+  LAYERS_Title = new String [num_layers][2];
+  LAYERS_ENSEMBLE = new String [num_layers];
+  LAYERS_GRIB2 = new String [num_layers][GRIB2_TGL_number]; 
+  LAYERS_GRIB2_MUL = new float [num_layers];
+  LAYERS_GRIB2_ADD = new float [num_layers];
   
   int i = -1;
 
@@ -16905,7 +16905,7 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
   float[] ray_normal = fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float[allFaces.length][4];
+  float[][] hitPoint = new float [allFaces.length][4];
 
   for (int f = 1; f < allFaces.length; f++) {
     hitPoint[f][0] = FLOAT_undefined;
@@ -16914,7 +16914,7 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
     hitPoint[f][3] = FLOAT_undefined;
   }
   
-  float[] pre_angle_to_allFaces = new float[allFaces.length];
+  float[] pre_angle_to_allFaces = new float [allFaces.length];
   
   for (int f = 1; f < allFaces.length; f++) {
     pre_angle_to_allFaces[f] = FLOAT_undefined;
@@ -17071,7 +17071,7 @@ float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
   float[] ray_normal = fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float[allObject2D_Faces.length][4];
+  float[][] hitPoint = new float [allObject2D_Faces.length][4];
 
   for (int f = 1; f < allObject2D_Faces.length; f++) {
     hitPoint[f][0] = FLOAT_undefined;
@@ -17080,7 +17080,7 @@ float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
     hitPoint[f][3] = FLOAT_undefined;
   }
   
-  float[] pre_angle_to_allObject2D_Faces = new float[allObject2D_Faces.length];
+  float[] pre_angle_to_allObject2D_Faces = new float [allObject2D_Faces.length];
   
   for (int f = 1; f < allObject2D_Faces.length; f++) {
     pre_angle_to_allObject2D_Faces[f] = FLOAT_undefined;
@@ -17236,7 +17236,7 @@ float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
   float[] ray_normal = fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float[allFractal_Faces.length][4];
+  float[][] hitPoint = new float [allFractal_Faces.length][4];
 
   for (int f = 1; f < allFractal_Faces.length; f++) {
     hitPoint[f][0] = FLOAT_undefined;
@@ -17245,7 +17245,7 @@ float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
     hitPoint[f][3] = FLOAT_undefined;
   }
   
-  float[] pre_angle_to_allFractal_Faces = new float[allFractal_Faces.length];
+  float[] pre_angle_to_allFractal_Faces = new float [allFractal_Faces.length];
   
   for (int f = 1; f < allFractal_Faces.length; f++) {
     pre_angle_to_allFractal_Faces[f] = FLOAT_undefined;
@@ -17402,7 +17402,7 @@ float[] SOLARCHVISION_0Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
   float[] ray_normal = fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float[(LAND_n_I - 1) * (LAND_n_J - 1) + 1][4];
+  float[][] hitPoint = new float [(LAND_n_I - 1) * (LAND_n_J - 1) + 1][4];
 
   for (int f = 1; f < (LAND_n_I - 1) * (LAND_n_J - 1) + 1; f++) {
     hitPoint[f][0] = FLOAT_undefined;
@@ -17411,7 +17411,7 @@ float[] SOLARCHVISION_0Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
     hitPoint[f][3] = FLOAT_undefined;
   }
   
-  float[] pre_angle_to_allFaces = new float[(LAND_n_I - 1) * (LAND_n_J - 1) + 1];
+  float[] pre_angle_to_allFaces = new float [(LAND_n_I - 1) * (LAND_n_J - 1) + 1];
   
   for (int f = 1; f < (LAND_n_I - 1) * (LAND_n_J - 1) + 1; f++) {
     pre_angle_to_allFaces[f] = FLOAT_undefined;
@@ -19558,7 +19558,7 @@ int SOLARCHVISION_addToTempObjectVertices (float x, float y, float z) {
       TempObjectVertices = (float[][]) concat(TempObjectVertices, newVertice);
     }
     else{
-      //TempObjectVertices[POINTER_TempObjectVertices] = new int[3];
+      //TempObjectVertices[POINTER_TempObjectVertices] = new int [3];
       
       TempObjectVertices[POINTER_TempObjectVertices][0] = x;
       TempObjectVertices[POINTER_TempObjectVertices][1] = y;
@@ -19624,7 +19624,7 @@ int SOLARCHVISION_addToTempObjectFaces (int[] f, int check_duplicates) {
       TempObjectFaces = (int[][]) concat(TempObjectFaces, newFace);
     }
     else{
-      TempObjectFaces[POINTER_TempObjectFaces] = new int[f.length];
+      TempObjectFaces[POINTER_TempObjectFaces] = new int [f.length];
       
       for (int i = 0; i < f.length; i++) {
         TempObjectFaces[POINTER_TempObjectFaces][i] = f[i];
@@ -22526,7 +22526,7 @@ void mouseClicked () {
             Image_X = X_clicked - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
             Image_Y = Y_clicked - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
     
-            float[] ray_direction = new float[3];
+            float[] ray_direction = new float [3];
     
             float[] ray_start = {CAM_x, CAM_y, CAM_z};
     
@@ -23779,9 +23779,9 @@ void SOLARCHVISION_try_update_AERIAL (int begin_YEAR, int begin_MONTH, int begin
   
 
   
-  AERIAL = new float[49][num_layers][AERIAL_num][Scenarios_max];
-  AERIAL_Flag = new int[49][num_layers][AERIAL_num][Scenarios_max];
-  AERIAL_Locations = new float[AERIAL_num][3]; // lon, lat, tgl
+  AERIAL = new float [49][num_layers][AERIAL_num][Scenarios_max];
+  AERIAL_Flag = new int [49][num_layers][AERIAL_num][Scenarios_max];
+  AERIAL_Locations = new float [AERIAL_num][3]; // lon, lat, tgl
   AERIAL_Center_Longitude = LocationLongitude;
   AERIAL_Center_Latitude = LocationLatitude;
 
@@ -24225,7 +24225,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
   
   // note: the first point is null
   
-  float[][] theValues = new float[Points.length][Scenarios_max];
+  float[][] theValues = new float [Points.length][Scenarios_max];
   
   for (int n = 0; n < Points.length; n += 1) {
     for (int o = 0; o < Scenarios_max; o += 1){
@@ -24315,7 +24315,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
   String[] file_lines = {};
 
   int NUM_ValueFiles = 1 + int((Points.length - 1) / MAX_GRIB2_PASS);
-  String[] ValueFiles = new String[NUM_ValueFiles];
+  String[] ValueFiles = new String [NUM_ValueFiles];
 
   for (int p = 0; p < NUM_ValueFiles; p += 1){ 
 
@@ -30130,9 +30130,10 @@ void SOLARCHVISION_save_project (String myFile) {
 
 
   newChild1 = my_xml.addChild("allObject2D");
-  newChild1.setInt("ni", allObject2D_XYZS.length);
-  for (int i = 0; i < allObject2D_XYZS.length; i++) {
-    newChild2 = newChild1.addChild("XYZS");
+  int ni = 1 + allObject2D_num;
+  newChild1.setInt("ni", ni);
+  for (int i = 0; i < ni; i++) {
+    newChild2 = newChild1.addChild("Object2D");
     newChild2.setInt("id", i);
     String lineSTR = "";
     //for (int j = 0; j < allObject2D_XYZS[i].length; j++) {
@@ -30145,11 +30146,6 @@ void SOLARCHVISION_save_project (String myFile) {
     newChild2.setContent(lineSTR);
   } 
 
-/*
-float[][] allObject2D_XYZS = {{0,0,0,0}};
-int[] allObject2D_MAP = {0};
-int allObject2D_num = 0; 
-*/    
 
   saveXML(my_xml, myFile);    
 
@@ -30572,7 +30568,7 @@ void SOLARCHVISION_load_project (String myFile) {
     children0 = FileAll.getChildren("allPolymesh_Solids");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      allPolymesh_Solids = new int[ni][2];
+      allPolymesh_Solids = new int [ni][2];
       XML[] children1 = children0[L].getChildren("Solids");         
       for (int i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
@@ -30586,7 +30582,7 @@ void SOLARCHVISION_load_project (String myFile) {
     children0 = FileAll.getChildren("allPolymesh_Faces");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      allPolymesh_Faces = new int[ni][2];
+      allPolymesh_Faces = new int [ni][2];
       XML[] children1 = children0[L].getChildren("Faces");         
       for (int i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
@@ -30600,7 +30596,7 @@ void SOLARCHVISION_load_project (String myFile) {
     children0 = FileAll.getChildren("allFaces_MAT");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      allFaces_MAT = new int[ni][2];
+      allFaces_MAT = new int [ni][2];
       XML[] children1 = children0[L].getChildren("Face_MAT"); 
       for (int i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
@@ -30614,7 +30610,7 @@ void SOLARCHVISION_load_project (String myFile) {
     children0 = FileAll.getChildren("allFaces");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      allFaces = new int[0][0];
+      allFaces = new int [0][0];
       XML[] children1 = children0[L].getChildren("Face");         
       for (int i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
@@ -30631,7 +30627,7 @@ void SOLARCHVISION_load_project (String myFile) {
     children0 = FileAll.getChildren("allVertices");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      allVertices = new float[ni][3];
+      allVertices = new float [ni][3];
       XML[] children1 = children0[L].getChildren("Vertice");         
       for (int i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
@@ -30668,7 +30664,24 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     }    
 
-    
+    children0 = FileAll.getChildren("allObject2D");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      
+      allObject2D_XYZS = new float [ni][4];
+      allObject2D_MAP = new int [ni];
+      allObject2D_num = ni - 1;
+      
+      XML[] children1 = children0[L].getChildren("Object2D");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < 4; j++) {
+          allObject2D_XYZS[i][j] = float(parts[j]);
+        }
+        allObject2D_MAP[i] = int(parts[4]);
+      }
+    }        
 
 
     
