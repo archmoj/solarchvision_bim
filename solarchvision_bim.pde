@@ -30023,39 +30023,48 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setString("LAND_mid_lat", Double.toString(LAND_mid_lat));
   newChild1.setString("LAND_mid_lon", Double.toString(LAND_mid_lon));
 
+  {
+    newChild1 = my_xml.addChild("LAND_MESH");
+    int vNo = 0;
+    for (int i = 0; i < LAND_MESH.length; i++) {
+      for (int j = 0; j < LAND_MESH[i].length; j++) {
+        newChild2 = newChild1.addChild("Vertice");
+        newChild2.setInt("id", vNo);
+        String lineSTR = "";
+        //for (int k = 0; k < LAND_MESH[i][j].length; k++) {
+        for (int k = 0; k < 3; k++) { // x, y, z 
+          lineSTR += nf(LAND_MESH[i][j][k], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+          if (k < LAND_MESH[i][j].length - 1) lineSTR += ",";
+        }
+        newChild2.setContent(lineSTR);
+        vNo += 1;
+      }
+    } 
+  }
 
-  newChild1 = my_xml.addChild("DEFINED_STATION");
-  newChild1.setInt("ni", DEFINED_STATIONS[STATION_NUMBER].length);
-  for (int i = 0; i < DEFINED_STATIONS[STATION_NUMBER].length; i++) {
-    newChild2 = newChild1.addChild("Property");
-    newChild2.setInt("id", i);
-    newChild2.setContent(DEFINED_STATIONS[STATION_NUMBER][i]);
-  } 
-
-  newChild1 = my_xml.addChild("allPolymesh_Solids");
-  newChild1.setInt("ni", allPolymesh_Solids.length);
-  for (int i = 0; i < allPolymesh_Solids.length; i++) {
-    newChild2 = newChild1.addChild("Solids");
+  newChild1 = my_xml.addChild("allVertices");
+  newChild1.setInt("ni", allVertices.length);
+  for (int i = 0; i < allVertices.length; i++) {
+    newChild2 = newChild1.addChild("Vertice");
     newChild2.setInt("id", i);
     String lineSTR = "";
-    //for (int j = 0; j < allPolymesh_Solids[i].length; j++) {
-    for (int j = 0; j < 2; j++) { // start, end
-      lineSTR += nf(allPolymesh_Solids[i][j], 0);
-      if (j < allPolymesh_Solids[i].length - 1) lineSTR += ",";
+    //for (int j = 0; j < allVertices[i].length; j++) {
+    for (int j = 0; j < 3; j++) { // x, y, z 
+      lineSTR += nf(allVertices[i][j], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+      if (j < allVertices[i].length - 1) lineSTR += ",";
     }
     newChild2.setContent(lineSTR);
-  }   
+  } 
 
-  newChild1 = my_xml.addChild("allPolymeshes");
-  newChild1.setInt("ni", allPolymesh_Faces.length);
-  for (int i = 0; i < allPolymesh_Faces.length; i++) {
-    newChild2 = newChild1.addChild("Faces");
+  newChild1 = my_xml.addChild("allFaces");
+  newChild1.setInt("ni", allFaces.length);
+  for (int i = 0; i < allFaces.length; i++) {
+    newChild2 = newChild1.addChild("Face");
     newChild2.setInt("id", i);
     String lineSTR = "";
-    //for (int j = 0; j < allPolymesh_Faces[i].length; j++) {
-    for (int j = 0; j < 2; j++) { // start, end
-      lineSTR += nf(allPolymesh_Faces[i][j], 0);
-      if (j < allPolymesh_Faces[i].length - 1) lineSTR += ",";
+    for (int j = 0; j < allFaces[i].length; j++) {
+      lineSTR += nf(allFaces[i][j], 0);
+      if (j < allFaces[i].length - 1) lineSTR += ",";
     }
     newChild2.setContent(lineSTR);
   } 
@@ -30073,33 +30082,34 @@ void SOLARCHVISION_save_project (String myFile) {
     }
     newChild2.setContent(lineSTR);
   }   
-  
-  newChild1 = my_xml.addChild("allFaces");
-  newChild1.setInt("ni", allFaces.length);
-  for (int i = 0; i < allFaces.length; i++) {
-    newChild2 = newChild1.addChild("Face");
+
+  newChild1 = my_xml.addChild("allPolymeshes");
+  newChild1.setInt("ni", allPolymesh_Faces.length);
+  for (int i = 0; i < allPolymesh_Faces.length; i++) {
+    newChild2 = newChild1.addChild("Faces");
     newChild2.setInt("id", i);
     String lineSTR = "";
-    for (int j = 0; j < allFaces[i].length; j++) {
-      lineSTR += nf(allFaces[i][j], 0);
-      if (j < allFaces[i].length - 1) lineSTR += ",";
+    //for (int j = 0; j < allPolymesh_Faces[i].length; j++) {
+    for (int j = 0; j < 2; j++) { // start, end
+      lineSTR += nf(allPolymesh_Faces[i][j], 0);
+      if (j < allPolymesh_Faces[i].length - 1) lineSTR += ",";
     }
     newChild2.setContent(lineSTR);
   } 
-  
-  newChild1 = my_xml.addChild("allVertices");
-  newChild1.setInt("ni", allVertices.length);
-  for (int i = 0; i < allVertices.length; i++) {
-    newChild2 = newChild1.addChild("Vertice");
+    
+  newChild1 = my_xml.addChild("allPolymesh_Solids");
+  newChild1.setInt("ni", allPolymesh_Solids.length);
+  for (int i = 0; i < allPolymesh_Solids.length; i++) {
+    newChild2 = newChild1.addChild("Solids");
     newChild2.setInt("id", i);
     String lineSTR = "";
-    //for (int j = 0; j < allVertices[i].length; j++) {
-    for (int j = 0; j < 3; j++) { // x, y, z 
-      lineSTR += nf(allVertices[i][j], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
-      if (j < allVertices[i].length - 1) lineSTR += ",";
+    //for (int j = 0; j < allPolymesh_Solids[i].length; j++) {
+    for (int j = 0; j < 2; j++) { // start, end
+      lineSTR += nf(allPolymesh_Solids[i][j], 0);
+      if (j < allPolymesh_Solids[i].length - 1) lineSTR += ",";
     }
     newChild2.setContent(lineSTR);
-  } 
+  }   
 
   newChild1 = my_xml.addChild("SolidObjects");
   newChild1.setInt("ni", SolidObjects.length);
@@ -30184,7 +30194,13 @@ void SOLARCHVISION_save_project (String myFile) {
     } 
   }
 
-
+  newChild1 = my_xml.addChild("DEFINED_STATION");
+  newChild1.setInt("ni", DEFINED_STATIONS[STATION_NUMBER].length);
+  for (int i = 0; i < DEFINED_STATIONS[STATION_NUMBER].length; i++) {
+    newChild2 = newChild1.addChild("Property");
+    newChild2.setInt("id", i);
+    newChild2.setContent(DEFINED_STATIONS[STATION_NUMBER][i]);
+  } 
 
 
   saveXML(my_xml, myFile);    
@@ -30593,66 +30609,20 @@ void SOLARCHVISION_load_project (String myFile) {
 
       
     }
-    
-    children0 = FileAll.getChildren("DEFINED_STATION");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
 
-      XML[] children1 = children0[L].getChildren("Property");         
-      
-      STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
-      
-      for (int i = 0; i < ni; i++) {
-        String lineSTR = children1[i].getContent();
-        
-        DEFINED_STATIONS[STATION_NUMBER][i] = lineSTR;  
-      }
-      
-      BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][0]; // <<<<<<<<      
-    }     
-    
-   
-    children0 = FileAll.getChildren("allPolymesh_Solids");
+    children0 = FileAll.getChildren("allVertices");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      allPolymesh_Solids = new int [ni][2];
-      XML[] children1 = children0[L].getChildren("Solids");         
+      allVertices = new float [ni][3];
+      XML[] children1 = children0[L].getChildren("Vertice");         
       for (int i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < parts.length; j++) {
-          allPolymesh_Solids[i][j] = int(parts[j]); 
+          allVertices[i][j] = float(parts[j]); 
         }
       }
-    } 
-    
-    children0 = FileAll.getChildren("allPolymesh_Faces");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      allPolymesh_Faces = new int [ni][2];
-      XML[] children1 = children0[L].getChildren("Faces");         
-      for (int i = 0; i < ni; i++) {
-        String lineSTR = children1[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < parts.length; j++) {
-          allPolymesh_Faces[i][j] = int(parts[j]); 
-        }
-      }
-    }     
-    
-    children0 = FileAll.getChildren("allFaces_MAT");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      allFaces_MAT = new int [ni][2];
-      XML[] children1 = children0[L].getChildren("Face_MAT"); 
-      for (int i = 0; i < ni; i++) {
-        String lineSTR = children1[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < parts.length; j++) {
-          allFaces_MAT[i][j] = int(parts[j]); 
-        }
-      }
-    }       
+    }  
     
     children0 = FileAll.getChildren("allFaces");
     for (int L = 0; L < children0.length; L++) {
@@ -30671,19 +30641,47 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     }   
 
-    children0 = FileAll.getChildren("allVertices");
+    children0 = FileAll.getChildren("allFaces_MAT");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      allVertices = new float [ni][3];
-      XML[] children1 = children0[L].getChildren("Vertice");         
+      allFaces_MAT = new int [ni][2];
+      XML[] children1 = children0[L].getChildren("Face_MAT"); 
       for (int i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < parts.length; j++) {
-          allVertices[i][j] = float(parts[j]); 
+          allFaces_MAT[i][j] = int(parts[j]); 
         }
       }
     }    
+    
+    children0 = FileAll.getChildren("allPolymesh_Faces");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      allPolymesh_Faces = new int [ni][2];
+      XML[] children1 = children0[L].getChildren("Faces");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < parts.length; j++) {
+          allPolymesh_Faces[i][j] = int(parts[j]); 
+        }
+      }
+    }     
+
+    children0 = FileAll.getChildren("allPolymesh_Solids");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      allPolymesh_Solids = new int [ni][2];
+      XML[] children1 = children0[L].getChildren("Solids");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < parts.length; j++) {
+          allPolymesh_Solids[i][j] = int(parts[j]); 
+        }
+      }
+    } 
     
     children0 = FileAll.getChildren("SolidObjects");
     for (int L = 0; L < children0.length; L++) {
@@ -30762,6 +30760,23 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     }        
 
+    children0 = FileAll.getChildren("DEFINED_STATION");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+
+      XML[] children1 = children0[L].getChildren("Property");         
+      
+      STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
+      
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children1[i].getContent();
+        
+        DEFINED_STATIONS[STATION_NUMBER][i] = lineSTR;  
+      }
+      
+      BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][0]; // <<<<<<<<      
+    }     
+    
   }
   
   
