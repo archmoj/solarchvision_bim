@@ -30635,12 +30635,14 @@ void SOLARCHVISION_load_project (String myFile) {
     children0 = FileAll.getChildren("LAND_MESH");
     for (int L = 0; L < children0.length; L++) {
       XML[] children1 = children0[L].getChildren("Vertice");         
-      for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
-        String lineSTR = children1[i].getContent();
-        println(lineSTR);
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < parts.length; j++) {
-          LAND_MESH[(i % LAND_n_J)][(i / LAND_n_J)][j] = float(parts[j]); 
+      for (int i = 0; i < LAND_n_I; i++) {
+        for (int j = 0; j < LAND_n_J; j++) {
+          String lineSTR = children1[i].getContent();
+          println(lineSTR);
+          String[] parts = split(lineSTR, ',');
+          for (int k = 0; k < parts.length; k++) {
+            LAND_MESH[i][j][k] = float(parts[k]); 
+          }
         }
       }
     }
