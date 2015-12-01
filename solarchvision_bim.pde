@@ -30715,9 +30715,36 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     }        
 
+    children0 = FileAll.getChildren("allFractal");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      
+      allFractal_XYZS = new float [ni][4];
+      allFractal_Type = new int [ni];
+      allFractal_DegreeMin = new int [ni];
+      allFractal_DegreeMax = new int [ni];
+      allFractal_Seed = new int [ni];
+      allFractal_TrunckSize = new float [ni];
+      allFractal_LeafSize = new float [ni];
+      allFractal_num = ni - 1;
+      
+      XML[] children1 = children0[L].getChildren("Fractal");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < 4; j++) {
+          allFractal_XYZS[i][j] = float(parts[j]);
+        }
+        allFractal_Type[i] = int(parts[4]);
+        allFractal_DegreeMin[i] = int(parts[5]);
+        allFractal_DegreeMax[i] = int(parts[6]);
+        allFractal_Seed[i] = int(parts[7]);
+        allFractal_TrunckSize[i] = float(parts[8]);
+        allFractal_LeafSize[i] = float(parts[9]);
+      }
+    }        
 
-    
-    
+
   }
   
   
