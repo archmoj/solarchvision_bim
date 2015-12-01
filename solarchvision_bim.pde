@@ -1654,7 +1654,8 @@ void SOLARCHVISION_update_models (int Step) {
 
 
 
-int last_initializationStep = 0;
+int initializationStep = 0;
+int Last_initializationStep = 1000;
 
 void draw () {
   
@@ -2004,7 +2005,8 @@ void draw () {
     X_clicked = -1;
     Y_clicked = -1;
 
-    last_initializationStep = frameCount; 
+    initializationStep = frameCount; 
+    Last_initializationStep = frameCount;
   }
   else {
     
@@ -10834,8 +10836,8 @@ void STUDY_keyPressed (KeyEvent e) {
                   STUDY_Update = 1;
                   ROLLOUT_Update = 1;
 
-                  last_initializationStep = 8; 
-                  frameCount = last_initializationStep; 
+                  initializationStep = 8; 
+                  frameCount = initializationStep; 
                   textAlign(CENTER, CENTER); 
                   textSize(MESSAGE_S_View);                    
                   loop(); 
@@ -10847,8 +10849,8 @@ void STUDY_keyPressed (KeyEvent e) {
                   STUDY_Update = 1;
                   ROLLOUT_Update = 1;
                   
-                  last_initializationStep = 8; 
-                  frameCount = last_initializationStep; 
+                  initializationStep = 8; 
+                  frameCount = initializationStep; 
                   textAlign(CENTER, CENTER); 
                   textSize(MESSAGE_S_View);                    
                   loop(); 
@@ -11937,25 +11939,27 @@ void SOLARCHVISION_update_frame_layout () {
 
 void keyPressed (KeyEvent e) {
 
-  if (automated == 0) {
-    X_clicked = -1;
-    Y_clicked = -1;
-
-    if ((BAR_a_selected_parent != -1) || (BAR_a_selected_child != 0)) {
-    
-      BAR_a_selected_parent = -1;
-      BAR_a_selected_child = 0;
+  if (frameCount > Last_initializationStep) {
   
-      image(pre_screen, 0, a_pixel);
-    }
-    
-    addNewSelectionToPreviousSelection = 0;
+    if (automated == 0) {
+      X_clicked = -1;
+      Y_clicked = -1;
   
-    //println("key: " + key);
-    //println("keyCode: " + keyCode);
+      if ((BAR_a_selected_parent != -1) || (BAR_a_selected_child != 0)) {
+      
+        BAR_a_selected_parent = -1;
+        BAR_a_selected_child = 0;
     
-    if (frameCount > last_initializationStep) {  
-  
+        image(pre_screen, 0, a_pixel);
+      }
+      
+      addNewSelectionToPreviousSelection = 0;
+    
+      //println("key: " + key);
+      //println("keyCode: " + keyCode);
+      
+      
+    
       STUDY_keyPressed(e);
     
       WIN3D_keyPressed(e);
@@ -21127,248 +21131,251 @@ void mouseReleased () {
 
 void mouseDragged () {
   
-  if (automated == 0) {
-    
-    if (WIN3D_include == 1) {
-      if (isInside(pmouseX, pmouseY, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
-        if (isInside(mouseX, mouseY, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
-
-          if (dragging_started == 0) {
-            
-            X_click1 = pmouseX;
-            Y_click1 = pmouseY;
-    
-            dragging_started = 1;
-          }
-    
-          float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
-          float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
-
-          if ((View_Select_Create_Modify == -15) || (View_Select_Create_Modify == -16)) { // viewport
-
-            if (mouseButton == LEFT) { // CameraRollXY
-              
-              SOLARCHVISION_rotateXY_Camera_around_Selection(10 * dx * WIN3D_RS_coordinate);
-              
-              WIN3D_Update = 1;
-            }
-            
-            if (mouseButton == RIGHT) { // CameraRollZ
-              
-              SOLARCHVISION_rotateZ_Camera_around_Selection(10 * dy * WIN3D_RS_coordinate);
-              
-              WIN3D_Update = 1;
-            }     
-          } 
-          
-          if ((View_Select_Create_Modify == -14) || (View_Select_Create_Modify == -17)) { // viewport
-
-            if (mouseButton == LEFT) { // pan
-
-              WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
-              WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
-              
-              WIN3D_Update = 1;
-            }      
-          
-            if (mouseButton == RIGHT) { // TargetRoll
-
-              WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
-              WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
-              
-              SOLARCHVISION_reverseTransform_Camera(); 
-              
-              WIN3D_Update = 1;
-            }
-
-          }            
-          
-          if ((View_Select_Create_Modify == -12) || (View_Select_Create_Modify == -13)) { // viewport
-          
-            if (mouseButton == LEFT) { // CameraRoll
-
-              SOLARCHVISION_rotateXY_Camera_around_Selection(10 * dx * WIN3D_RS_coordinate);
-              
-              SOLARCHVISION_rotateZ_Camera_around_Selection(10 * dy * WIN3D_RS_coordinate);
-              
-              WIN3D_Update = 1;
-            }
-            
-            if (mouseButton == RIGHT) { // pan
-
-              WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
-              WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
-              
-              WIN3D_Update = 1;
-            }          
+  if (frameCount > Last_initializationStep) {
   
-          }  
-          
-          if (View_Select_Create_Modify == -11) { // viewport
-          
-            if (mouseButton == LEFT) { // CameraRollXY
+    if (automated == 0) {
+      
+      if (WIN3D_include == 1) {
+        if (isInside(pmouseX, pmouseY, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
+          if (isInside(mouseX, mouseY, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
+  
+            if (dragging_started == 0) {
               
-              SOLARCHVISION_rotateXY_Camera_around_Selection(10 * dx * WIN3D_RS_coordinate);
-              
-              WIN3D_Update = 1;
+              X_click1 = pmouseX;
+              Y_click1 = pmouseY;
+      
+              dragging_started = 1;
             }
-            
-            if (mouseButton == RIGHT) { // CameraRollZ
-              
-              SOLARCHVISION_rotateZ_Camera_around_Selection(10 * dy * WIN3D_RS_coordinate);
-              
-              WIN3D_Update = 1;
-            }          
-
-          }            
-
-          if (View_Select_Create_Modify == -10) { // viewport
-          
-            if (mouseButton == LEFT) { // TargetRoll
-
-              WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
-              WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
-              
-              SOLARCHVISION_reverseTransform_Camera(); 
-              
-              WIN3D_Update = 1;
-            }
-            
-            if (mouseButton == RIGHT) { // pan
-
-              WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
-              WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
-              
-              WIN3D_Update = 1;
-            }          
+      
+            float dx = (mouseX - pmouseX) / float(WIN3D_X_View);
+            float dy = (mouseY - pmouseY) / float(WIN3D_Y_View);
   
-          }  
-          
-          if (View_Select_Create_Modify == -9) { // viewport
-          
-            if (mouseButton == LEFT) { // TargetRollXY
-
-              WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
-              
-              SOLARCHVISION_reverseTransform_Camera(); 
-              
-              WIN3D_Update = 1;
-            }
-            
-            if (mouseButton == RIGHT) { // TargetRollZ
-
-              WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
-              
-              SOLARCHVISION_reverseTransform_Camera(); 
-              
-              WIN3D_Update = 1;
-            }          
+            if ((View_Select_Create_Modify == -15) || (View_Select_Create_Modify == -16)) { // viewport
   
-          }            
-         
-          if ((View_Select_Create_Modify == -3) || (View_Select_Create_Modify == -7) || (View_Select_Create_Modify == -8)) { // viewport
-          
-            if (mouseButton == LEFT) { // orbit
-    
-              WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate; 
-              WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
-              
-              WIN3D_Update = 1;
-            }
-            
-            if (mouseButton == RIGHT) { // pan
-
-              WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
-              WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
-              
-              WIN3D_Update = 1;
-            }       
-  
-          }  
-          
-          if (View_Select_Create_Modify == -4) { 
-
-            if (mouseButton == LEFT) { // move Y
-  
-              WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale; 
-              
-              WIN3D_Update = 1;    
-            }              
-            
-            if (mouseButton == RIGHT) { // move X
-  
-              WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
-              
-              WIN3D_Update = 1;    
-            }    
-
-          }
-
-          if (View_Select_Create_Modify == -5) { // viewport
-
-            if (mouseButton == LEFT) { // pan
-          
-              WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
-              WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
-              
-              WIN3D_Update = 1;
-            }   
-          
-            if (mouseButton == RIGHT) { // TargetRoll
-
-              WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
-              WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
-              
-              SOLARCHVISION_reverseTransform_Camera(); 
-              
-              WIN3D_Update = 1;
-            }
-  
-          }
-
-          if (View_Select_Create_Modify == -6) { // viewport:different functions
-  
-            if (Modify_Object_Parameters == 0) { // Truck
-
-              if (View_XYZ_ChangeOption == 0) {
-                if (mouseButton == LEFT) WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
-                if (mouseButton == RIGHT) WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
-                WIN3D_Update = 1;  
+              if (mouseButton == LEFT) { // CameraRollXY
+                
+                SOLARCHVISION_rotateXY_Camera_around_Selection(10 * dx * WIN3D_RS_coordinate);
+                
+                WIN3D_Update = 1;
               }
-  
-              if (View_XYZ_ChangeOption == 1) {
-                if (mouseButton == RIGHT) WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
-                if (mouseButton == LEFT) WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
-                WIN3D_Update = 1; 
-              }            
-           
-            }
+              
+              if (mouseButton == RIGHT) { // CameraRollZ
+                
+                SOLARCHVISION_rotateZ_Camera_around_Selection(10 * dy * WIN3D_RS_coordinate);
+                
+                WIN3D_Update = 1;
+              }     
+            } 
             
-            
-            if (Modify_Object_Parameters == 1) {  // Orbit
+            if ((View_Select_Create_Modify == -14) || (View_Select_Create_Modify == -17)) { // viewport
   
-              if (View_XYZ_ChangeOption == 0) {
-                if (mouseButton == LEFT) WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
-                if (mouseButton == RIGHT) WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate;
+              if (mouseButton == LEFT) { // pan
+  
+                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
+                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
+                
+                WIN3D_Update = 1;
+              }      
+            
+              if (mouseButton == RIGHT) { // TargetRoll
+  
+                WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
+                WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
+                
+                SOLARCHVISION_reverseTransform_Camera(); 
+                
                 WIN3D_Update = 1;
               }
   
-              if (View_XYZ_ChangeOption == 1) {
-                if (mouseButton == RIGHT) WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
-                if (mouseButton == LEFT) WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate;
-                WIN3D_Update = 1;
-
-              }            
-           
-            }
+            }            
             
+            if ((View_Select_Create_Modify == -12) || (View_Select_Create_Modify == -13)) { // viewport
             
-            WIN3D_Update = 1; 
+              if (mouseButton == LEFT) { // CameraRoll
   
-          }  
+                SOLARCHVISION_rotateXY_Camera_around_Selection(10 * dx * WIN3D_RS_coordinate);
+                
+                SOLARCHVISION_rotateZ_Camera_around_Selection(10 * dy * WIN3D_RS_coordinate);
+                
+                WIN3D_Update = 1;
+              }
+              
+              if (mouseButton == RIGHT) { // pan
+  
+                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
+                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
+                
+                WIN3D_Update = 1;
+              }          
+    
+            }  
+            
+            if (View_Select_Create_Modify == -11) { // viewport
+            
+              if (mouseButton == LEFT) { // CameraRollXY
+                
+                SOLARCHVISION_rotateXY_Camera_around_Selection(10 * dx * WIN3D_RS_coordinate);
+                
+                WIN3D_Update = 1;
+              }
+              
+              if (mouseButton == RIGHT) { // CameraRollZ
+                
+                SOLARCHVISION_rotateZ_Camera_around_Selection(10 * dy * WIN3D_RS_coordinate);
+                
+                WIN3D_Update = 1;
+              }          
+  
+            }            
+  
+            if (View_Select_Create_Modify == -10) { // viewport
+            
+              if (mouseButton == LEFT) { // TargetRoll
+  
+                WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
+                WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
+                
+                SOLARCHVISION_reverseTransform_Camera(); 
+                
+                WIN3D_Update = 1;
+              }
+              
+              if (mouseButton == RIGHT) { // pan
+  
+                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
+                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
+                
+                WIN3D_Update = 1;
+              }          
+    
+            }  
+            
+            if (View_Select_Create_Modify == -9) { // viewport
+            
+              if (mouseButton == LEFT) { // TargetRollXY
+  
+                WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
+                
+                SOLARCHVISION_reverseTransform_Camera(); 
+                
+                WIN3D_Update = 1;
+              }
+              
+              if (mouseButton == RIGHT) { // TargetRollZ
+  
+                WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
+                
+                SOLARCHVISION_reverseTransform_Camera(); 
+                
+                WIN3D_Update = 1;
+              }          
+    
+            }            
+           
+            if ((View_Select_Create_Modify == -3) || (View_Select_Create_Modify == -7) || (View_Select_Create_Modify == -8)) { // viewport
+            
+              if (mouseButton == LEFT) { // orbit
+      
+                WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate; 
+                WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
+                
+                WIN3D_Update = 1;
+              }
+              
+              if (mouseButton == RIGHT) { // pan
+  
+                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
+                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
+                
+                WIN3D_Update = 1;
+              }       
+    
+            }  
+            
+            if (View_Select_Create_Modify == -4) { 
+  
+              if (mouseButton == LEFT) { // move Y
+    
+                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale; 
+                
+                WIN3D_Update = 1;    
+              }              
+              
+              if (mouseButton == RIGHT) { // move X
+    
+                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
+                
+                WIN3D_Update = 1;    
+              }    
+  
+            }
+  
+            if (View_Select_Create_Modify == -5) { // viewport
+  
+              if (mouseButton == LEFT) { // pan
+            
+                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
+                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
+                
+                WIN3D_Update = 1;
+              }   
+            
+              if (mouseButton == RIGHT) { // TargetRoll
+  
+                WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
+                WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
+                
+                SOLARCHVISION_reverseTransform_Camera(); 
+                
+                WIN3D_Update = 1;
+              }
+    
+            }
+  
+            if (View_Select_Create_Modify == -6) { // viewport:different functions
+    
+              if (Modify_Object_Parameters == 0) { // Truck
+  
+                if (View_XYZ_ChangeOption == 0) {
+                  if (mouseButton == LEFT) WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
+                  if (mouseButton == RIGHT) WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
+                  WIN3D_Update = 1;  
+                }
+    
+                if (View_XYZ_ChangeOption == 1) {
+                  if (mouseButton == RIGHT) WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
+                  if (mouseButton == LEFT) WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
+                  WIN3D_Update = 1; 
+                }            
+             
+              }
+              
+              
+              if (Modify_Object_Parameters == 1) {  // Orbit
+    
+                if (View_XYZ_ChangeOption == 0) {
+                  if (mouseButton == LEFT) WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
+                  if (mouseButton == RIGHT) WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate;
+                  WIN3D_Update = 1;
+                }
+    
+                if (View_XYZ_ChangeOption == 1) {
+                  if (mouseButton == RIGHT) WIN3D_RX_coordinate -= 10 * dy * WIN3D_RS_coordinate;
+                  if (mouseButton == LEFT) WIN3D_RZ_coordinate -= 10 * dx * WIN3D_RS_coordinate;
+                  WIN3D_Update = 1;
+  
+                }            
+             
+              }
+              
+              
+              WIN3D_Update = 1; 
+    
+            }  
+          }
         }
-      }
-    }   
+      }  
+    } 
   }     
 }
 
@@ -21429,1224 +21436,1277 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
 }     
 
 void mouseClicked () {
-  if (automated == 0) {
-
-    if (BAR_a_selected_parent != -1) {
-      
-      if (mouseButton == LEFT) {
-        if (BAR_a_selected_child != 0) {
   
-          // should call the functions here!
-
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Mojtaba Samimi")) { 
-            link("http://solarchvision.com/?page_id=102");
-          }     
-         
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("www.solarchvision.com")) { 
-            link("http://solarchvision.com/");
-          }     
-          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Open...")) { 
-            //selectInput("Select a file to open:", "SOLARCHVISION_fileSelected_Open");
-            SOLARCHVISION_load_project(ProjectsFolder + "/" + "Project.xml");
-          }          
-
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Save")) { 
-            SOLARCHVISION_save_project(ProjectsFolder + "/" + "Project.xml");   
-          }
-          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Save As...")) { 
-            selectOutput("Select a file to write to:", "SOLARCHVISION_fileSelected_SaveAs");
-          }
-          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Import 3D-Model...")) { 
-            selectInput("Select OBJ file to import:", "SOLARCHVISION_SelectFile_Import_3DModel");
-          }   
-          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Export 3D-Model")) {
-            SOLARCHVISION_export_objects(); 
-          }    
-          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Export Land-Model")) {
-            SOLARCHVISION_export_land(); 
-          }     
-          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Quit")) { 
-            exit();
-          }      
-
-
-
-
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PDF Time Graph")) { 
-            STUDY_record_PDF = 1;
-            STUDY_Update = 1;
-          }   
-
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("JPG Time Graph")) { 
-            STUDY_record_JPG = 1;
-            STUDY_Update = 1;
-          }   
-
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("JPG Location Graph")) { 
-            WORLD_record_JPG = 1;
-            WORLD_Update = 1;
-          } 
-          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PDF Location Graph")) { 
-            WORLD_record_PDF = 1;
-            WORLD_Update = 1;
-          }   
+  if (frameCount > Last_initializationStep) {
   
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("JPG Spatial Graph")) { 
-            WIN3D_record_JPG = 1;
-            WIN3D_Update = 1;
-          } 
-          
-          if (BAR_a_Items[BAR_a_selected_parent][0].equals("Site")) {
-            if (BAR_a_selected_child > 0) {
-              if (STATION_NUMBER != BAR_a_selected_child - 1) {
-                
-                STATION_NUMBER = BAR_a_selected_child - 1;
-                
-                SOLARCHVISION_update_station(0);
-              }
-            } 
-          }
+    if (automated == 0) {
 
-
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Typical Year (TMY)")) {
-            impacts_source = databaseNumber_CLIMATE_EPW;
-            
-            if (Load_CLIMATE_EPW == 0) {
-              Load_CLIMATE_EPW = 1;
-              SOLARCHVISION_try_update_CLIMATE_EPW();
-            }
-           
-            WORLD_Update = 1;
-            WIN3D_Update = 1;  
-            STUDY_Update = 1;
-            ROLLOUT_Update = 1;
-            BAR_d_Update = 1;
-          } 
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Long-term (CWEEDS)")) {
-            impacts_source = databaseNumber_CLIMATE_WY2;
-            
-            if (Load_CLIMATE_WY2 == 0) {
-              Load_CLIMATE_WY2 = 1;
-              SOLARCHVISION_try_update_CLIMATE_WY2();
-            }
-           
-            WORLD_Update = 1;
-            WIN3D_Update = 1;  
-            STUDY_Update = 1;
-            ROLLOUT_Update = 1;
-            BAR_d_Update = 1;
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Weather Forecast (NAEFS)")) {
-            impacts_source = databaseNumber_ENSEMBLE;
-            
-            if (Load_ENSEMBLE == 0) {
-              Load_ENSEMBLE = 1;
-              SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
-            }
-           
-            WORLD_Update = 1;
-            WIN3D_Update = 1;  
-            STUDY_Update = 1;
-            ROLLOUT_Update = 1;
-            BAR_d_Update = 1;
-          } 
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Real-time Observed (SWOB)")) {
-            impacts_source = databaseNumber_OBSERVED;
-            
-            if (Load_OBSERVED == 0) {
-              Load_OBSERVED = 1;
-              SOLARCHVISION_try_update_OBSERVED();
-            }
-            
-            WORLD_Update = 1;
-            WIN3D_Update = 1;  
-            STUDY_Update = 1;
-            ROLLOUT_Update = 1;
-            BAR_d_Update = 1;
-          }           
-
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Surface Base")) {
-            WIN3D_FACES_SHADE = Shade_Surface_Base;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          }           
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Surface White")) {
-            WIN3D_FACES_SHADE = Shade_Surface_White;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          } 
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Surface Materials")) {
-            WIN3D_FACES_SHADE = Shade_Surface_Materials;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          } 
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Global Solar")) {
-            WIN3D_FACES_SHADE = Shade_Global_Solar;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          } 
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Vertex Solar")) {
-            WIN3D_FACES_SHADE = Shade_Vertex_Solar;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          }           
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Vertex Spatial")) {
-            WIN3D_FACES_SHADE = Shade_Vertex_Spatial;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          }           
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Vertex Elevation")) {
-            WIN3D_FACES_SHADE = Shade_Vertex_Elevation;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          }           
-          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Land Mesh")) {
-            Display_LAND_MESH = (Display_LAND_MESH + 1) % 2;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          }             
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Land Texture")) {
-            Display_LAND_TEXTURE = (Display_LAND_TEXTURE + 1) % 2;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          }           
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Land Depth")) {
-            Display_LAND_DEPTH = (Display_LAND_DEPTH + 1) % 2;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          }          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Vertices")) {
-            WIN3D_VERTS_SHOW = (WIN3D_VERTS_SHOW  + 1) % 2;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          }            
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Edges")) {
-            WIN3D_EDGES_SHOW = (WIN3D_EDGES_SHOW  + 1) % 2;
-            display_MODEL3D_EDGES = WIN3D_EDGES_SHOW; // <<<<<<<<<
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          } 
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Leaves")) {
-            Display_Leaves = (Display_Leaves + 1) % 2;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          }                
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Living Objects")) {
-            Display_Trees_People = (Display_Trees_People + 1) % 2;
-            Display_FractalPlant = Display_Trees_People; // <<<<<<<
-            Display_Leaves = Display_FractalPlant; // <<<<<<
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          } 
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Building Objects")) {
-            Display_Building_Model = (Display_Building_Model + 1) % 2;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          }           
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Urban")) {
-            Display_URBAN_MESH = (Display_URBAN_MESH + 1) % 2;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          } 
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Sky")) {
-            Display_SKY3D = (Display_SKY3D + 1) % 2;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Sun")) {
-            Display_SUN3D = (Display_SUN3D + 1) % 2;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          }           
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Shading Section")) {
-            display_SolarImpact_Image = (display_SolarImpact_Image + 1) % 2;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          }  
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Spatial Section")) {
-            display_SpatialImpact_Image = (display_SpatialImpact_Image + 1) % 2;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          } 
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Wind Flow")) {
-            display_windFlow = (display_windFlow + 1) % 2;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 3-D Pivot")) {
-            selectedPolymesh_displayPivot = (selectedPolymesh_displayPivot + 1) % 2;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          }          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 3-D Edges")) {
-            selectedPolymesh_displayEdges = (selectedPolymesh_displayEdges + 1) % 2;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          }    
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 3-D Box")) {
-            selectedPolymesh_displayBox = (selectedPolymesh_displayBox + 1) % 2;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          }    
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 2½D Edges")) {
-            selectedObject2D_displayEdges = (selectedObject2D_displayEdges + 1) % 2;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          }    
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected ∞-D Edges")) {
-            selectedFractal_displayEdges = (selectedFractal_displayEdges + 1) % 2;
-            
-            WIN3D_Update = 1;  
-            ROLLOUT_Update = 1;
-          }              
-
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide SWOB points")) {
-            Display_SWOB_points = (Display_SWOB_points  + 1) % 2;
-            
-            WORLD_Update = 1;  
-            ROLLOUT_Update = 1;
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide SWOB nearest")) {
-            Display_SWOB_nearest = (Display_SWOB_nearest + 1) % 2;
-            
-            WORLD_Update = 1;  
-            ROLLOUT_Update = 1;
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide NAEFS points")) {
-            Display_NAEFS_points = (Display_NAEFS_points + 1) % 2;
-            
-            WORLD_Update = 1;  
-            ROLLOUT_Update = 1;
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide NAEFS nearest")) {
-            Display_NAEFS_nearest = (Display_NAEFS_nearest  + 1) % 2;
-            
-            WORLD_Update = 1;  
-            ROLLOUT_Update = 1;
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide CWEEDS points")) {
-            Display_CWEEDS_points = (Display_CWEEDS_points + 1) % 2;
-            
-            WORLD_Update = 1;  
-            ROLLOUT_Update = 1;
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide CWEEDS nearest")) {
-            Display_CWEEDS_nearest = (Display_CWEEDS_nearest + 1) % 2;
-            
-            WORLD_Update = 1;  
-            ROLLOUT_Update = 1;
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide EPW points")) {
-            Display_EPW_points = (Display_EPW_points + 1) % 2;
-            
-            WORLD_Update = 1;  
-            ROLLOUT_Update = 1;
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide EPW nearest")) {
-            Display_EPW_nearest = (Display_EPW_nearest + 1) % 2;
-            
-            WORLD_Update = 1;  
-            ROLLOUT_Update = 1;
-          }
-          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Fractal")) {
-            set_to_Create_Fractal();
-            SOLARCHVISION_highlight_in_BAR_b("Fractal");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Tree")) {
-            set_to_Create_Tree();
-            SOLARCHVISION_highlight_in_BAR_b("Tree");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Person")) {
-            set_to_Create_Person();
-            SOLARCHVISION_highlight_in_BAR_b("Person");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Parametric")) {
-            set_to_Create_Parametric();
-            SOLARCHVISION_highlight_in_BAR_b("Parametric");      
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Tri")) {
-            set_to_Create_Tri();
-            SOLARCHVISION_highlight_in_BAR_b("Tri");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Poly")) {
-            set_to_Create_Poly();
-            SOLARCHVISION_highlight_in_BAR_b("Poly");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Extrude")) {
-            set_to_Create_Extrude();
-            SOLARCHVISION_highlight_in_BAR_b("Extrude");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Hyper")) {
-            set_to_Create_Hyper();
-            SOLARCHVISION_highlight_in_BAR_b("Hyper");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("House")) {
-            set_to_Create_House();
-            SOLARCHVISION_highlight_in_BAR_b("House");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Box")) {
-            set_to_Create_Box();
-            SOLARCHVISION_highlight_in_BAR_b("Box");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Octahedron")) {
-            set_to_Create_Octahedron();
-            SOLARCHVISION_highlight_in_BAR_b("Octahedron");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Sphere")) {
-            set_to_Create_Sphere();
-            SOLARCHVISION_highlight_in_BAR_b("Sphere");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Cylinder")) {
-            set_to_Create_Cylinder();
-            SOLARCHVISION_highlight_in_BAR_b("Cylinder");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Cushion")) {
-            set_to_Create_Cushion();
-            SOLARCHVISION_highlight_in_BAR_b("Cushion");
-            BAR_b_Update = 1;  
-          }
-
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Move")) {
-            //set_to_Modify_Move(selected_posVector);
-            set_to_Modify_Move(3);
-            SOLARCHVISION_highlight_in_BAR_b("MV³");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("MoveX")) {
-            set_to_Modify_Move(0);
-            SOLARCHVISION_highlight_in_BAR_b("MVx");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("MoveY")) {
-            set_to_Modify_Move(1);
-            SOLARCHVISION_highlight_in_BAR_b("MVy");
-            BAR_b_Update = 1;  
-          }              
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("MoveZ")) {
-            set_to_Modify_Move(2);
-            SOLARCHVISION_highlight_in_BAR_b("MVz");
-            BAR_b_Update = 1;  
-          }              
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Scale")) {
-            //set_to_Modify_Scale(selected_scaleVector);
-            set_to_Modify_Scale(3);
-            SOLARCHVISION_highlight_in_BAR_b("SC³");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("ScaleX")) {
-            set_to_Modify_Scale(0);
-            SOLARCHVISION_highlight_in_BAR_b("SCx");
-            BAR_b_Update = 1;  
-          }          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("ScaleY")) {
-            set_to_Modify_Scale(1);
-            SOLARCHVISION_highlight_in_BAR_b("SCy");
-            BAR_b_Update = 1;  
-          }      
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("ScaleZ")) {
-            set_to_Modify_Scale(2);
-            SOLARCHVISION_highlight_in_BAR_b("SCz");
-            BAR_b_Update = 1;  
-          }                
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Rotate")) {
-            //set_to_Modify_Rotate(selected_rotVector);
-            set_to_Modify_Rotate(2); // <<<<<<
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("RotateX")) {
-            set_to_Modify_Rotate(0);
-            SOLARCHVISION_highlight_in_BAR_b("RTx");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("RotateY")) {
-            set_to_Modify_Rotate(1);
-            SOLARCHVISION_highlight_in_BAR_b("RTy");
-            BAR_b_Update = 1;  
-          } 
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("RotateZ")) {
-            set_to_Modify_Rotate(2);
-            SOLARCHVISION_highlight_in_BAR_b("RTz");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Seed/Material")) {
-            set_to_Modify_Seed();
-            SOLARCHVISION_highlight_in_BAR_b("SD");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Teselation")) {
-            set_to_Modify_Teselation();
-            SOLARCHVISION_highlight_in_BAR_b("Tes");
-            BAR_b_Update = 1;  
-          }          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DegreeMax")) {
-            set_to_Modify_DegreeMax();
-          }    
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DegreeDif")) {
-            set_to_Modify_DegreeDif();
-          }    
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DegreeMin")) {
-            set_to_Modify_DegreeMin();
-          }     
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TrunckSize")) {
-            set_to_Modify_TrunckSize();
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("LeafSize")) {
-            set_to_Modify_LeafSize();
-          }           
-
-
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Orthographic")) {
-            set_to_View_ProjectionType(0);
-            SOLARCHVISION_highlight_in_BAR_b("P<>");
-            BAR_b_Update = 1;  
-          }           
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Perspective")) {
-            set_to_View_ProjectionType(1);
-            SOLARCHVISION_highlight_in_BAR_b("P><");
-            BAR_b_Update = 1;  
-          }   
-          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Deselect All")) {
-            SOLARCHVISION_deselectAll();
-            WIN3D_Update = 1;
-          } 
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select All")) {
-            SOLARCHVISION_selectAll();
-            WIN3D_Update = 1;
-          }           
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select Fractal")) {
-            Work_with_2D_or_3D = 1;
-            WIN3D_Update = 1;
-            BAR_b_Update = 1;  
-          }  
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select Object2D")) {
-            Work_with_2D_or_3D = 2;
-            WIN3D_Update = 1;
-            BAR_b_Update = 1;  
-          } 
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select Polymesh")) {
-            Work_with_2D_or_3D = 3;
-            WIN3D_Update = 1;
-            BAR_b_Update = 1;  
-          } 
-
-
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Click Select")) {
-            set_to_View_ClickSelect(0);
-            SOLARCHVISION_highlight_in_BAR_b("±CS");
-            BAR_b_Update = 1;  
-          } 
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Click Select+")) {
-            set_to_View_ClickSelect(1);
-            SOLARCHVISION_highlight_in_BAR_b("+CS");
-            BAR_b_Update = 1;  
-          } 
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Click Select-")) {
-            set_to_View_ClickSelect(2);
-            SOLARCHVISION_highlight_in_BAR_b("-CS");
-            BAR_b_Update = 1;  
-          }           
-
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Window Select")) {
-            set_to_View_WindowSelect(0);
-            SOLARCHVISION_highlight_in_BAR_b("±WS");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Window Select+")) {
-            set_to_View_WindowSelect(1);
-            SOLARCHVISION_highlight_in_BAR_b("+WS");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Window Select-")) {
-            set_to_View_WindowSelect(2);
-            SOLARCHVISION_highlight_in_BAR_b("-WS");
-            BAR_b_Update = 1;  
-          }
-
-
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TargetRoll")) {
-            set_to_View_TargetRoll(0);
-            SOLARCHVISION_highlight_in_BAR_b("TRL");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TargetRollZ")) {
-            set_to_View_TargetRoll(1);
-            SOLARCHVISION_highlight_in_BAR_b("TRLz");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TargetRollXY")) {
-            set_to_View_TargetRoll(2);
-            SOLARCHVISION_highlight_in_BAR_b("TRLxy");
-            BAR_b_Update = 1;  
-          }          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("CameraRoll")) {
-            set_to_View_CameraRoll(0);
-            SOLARCHVISION_highlight_in_BAR_b("CRL");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("CameraRollZ")) {
-            set_to_View_CameraRoll(1);
-            SOLARCHVISION_highlight_in_BAR_b("CRLz");
-            BAR_b_Update = 1;  
-          }                
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("CameraRollXY")) {
-            set_to_View_CameraRoll(2);
-            SOLARCHVISION_highlight_in_BAR_b("CRLxy");
-            BAR_b_Update = 1;  
-          }
-              
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Orbit")) {
-            set_to_View_Orbit(0);
-            SOLARCHVISION_highlight_in_BAR_b("OR");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("OrbitZ")) {
-            set_to_View_Orbit(1);
-            SOLARCHVISION_highlight_in_BAR_b("ORz");
-            BAR_b_Update = 1;  
-          }           
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("OrbitXY")) {
-            set_to_View_Orbit(2);
-            SOLARCHVISION_highlight_in_BAR_b("ORxy");
-            BAR_b_Update = 1;  
-          }   
-          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pan")) {
-            set_to_View_Pan(0);
-            SOLARCHVISION_highlight_in_BAR_b("Pan");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PanX")) {
-            set_to_View_Pan(1);
-            SOLARCHVISION_highlight_in_BAR_b("PanX");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PanY")) {
-            set_to_View_Pan(2);
-            SOLARCHVISION_highlight_in_BAR_b("PanY");
-            BAR_b_Update = 1;  
-          }          
-          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Zoom")) {
-            set_to_View_Zoom(0);
-            SOLARCHVISION_highlight_in_BAR_b("±ZM");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Zoom as default")) {
-            set_to_View_Zoom(1);
-            SOLARCHVISION_highlight_in_BAR_b("0ZM");
-            BAR_b_Update = 1;  
-          }
-
-
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TruckX")) {
-            set_to_View_Truck(1);
-            SOLARCHVISION_highlight_in_BAR_b("DIx");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TruckY")) {
-            set_to_View_Truck(2);
-            SOLARCHVISION_highlight_in_BAR_b("DIy");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TruckZ")) {
-            set_to_View_Truck(0);
-            SOLARCHVISION_highlight_in_BAR_b("DIz");
-            BAR_b_Update = 1;  
-          }          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DistZ")) {
-            set_to_View_Truck(0);
-            SOLARCHVISION_highlight_in_BAR_b("±CDZ");
-            BAR_b_Update = 1;  
-          }     
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("CameraDistance")) {
-            set_to_View_CameraDistance(0);
-            SOLARCHVISION_highlight_in_BAR_b("±CDS");
-            BAR_b_Update = 1;  
-          }   
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DistMouseXY")) {
-            set_to_View_DistMouseXY(0);
-            SOLARCHVISION_highlight_in_BAR_b("±CDM");
-            BAR_b_Update = 1;  
-          }  
-          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Look at origin")) {
-            set_to_View_LookAtOrigin(0);
-            SOLARCHVISION_highlight_in_BAR_b("LAO");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Look at selection")) {
-            set_to_View_LookAtSelection(0);
-            SOLARCHVISION_highlight_in_BAR_b("LAS");
-            BAR_b_Update = 1;  
-          }          
-
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("3DModelSize")) {
-            set_to_View_3DModelSize();
-            SOLARCHVISION_highlight_in_BAR_b("±SZ");
-            BAR_b_Update = 1;  
-          }          
-          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("SkydomeSize")) {
-            set_to_View_SkydomeSize();
-            SOLARCHVISION_highlight_in_BAR_b("±SK");
-            BAR_b_Update = 1;  
-          }       
-       
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("AllModelSize")) {
-            set_to_View_AllModelSize();
-            SOLARCHVISION_highlight_in_BAR_b("±SA");
-            BAR_b_Update = 1;  
-          }     
-
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shrink 3DViewSpace")) {
-            set_to_View_3DViewSpace(0);
-            SOLARCHVISION_highlight_in_BAR_b("AllViewsports");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Enlarge 3DViewSpace")) {
-            set_to_View_3DViewSpace(1);
-            SOLARCHVISION_highlight_in_BAR_b("Expand3DView");
-            BAR_b_Update = 1;  
-          } 
-
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Top")) {
-            set_to_View_3DViewPoint(0);
-            SOLARCHVISION_highlight_in_BAR_b("Top");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Front")) {
-            set_to_View_3DViewPoint(1);
-            SOLARCHVISION_highlight_in_BAR_b("Front");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Left")) {
-            set_to_View_3DViewPoint(2);
-            SOLARCHVISION_highlight_in_BAR_b("Left");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Back")) {
-            set_to_View_3DViewPoint(3);
-            SOLARCHVISION_highlight_in_BAR_b("Back");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Right")) {
-            set_to_View_3DViewPoint(4);
-            SOLARCHVISION_highlight_in_BAR_b("Right");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Bottom")) {
-            set_to_View_3DViewPoint(5);
-            SOLARCHVISION_highlight_in_BAR_b("Bottom");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("S.W.")) {
-            set_to_View_3DViewPoint(6);
-            SOLARCHVISION_highlight_in_BAR_b("S.W.");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("S.E.")) {
-            set_to_View_3DViewPoint(7);
-            SOLARCHVISION_highlight_in_BAR_b("S.E.");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("N.E.")) {
-            set_to_View_3DViewPoint(8);
-            SOLARCHVISION_highlight_in_BAR_b("N.E.");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("N.W.")) {
-            set_to_View_3DViewPoint(9);
-            SOLARCHVISION_highlight_in_BAR_b("N.W.");
-            BAR_b_Update = 1;  
-          }
-          
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotX:Minimum")) {
-            set_to_View_PivotX(-1);
-            SOLARCHVISION_highlight_in_BAR_b("X<");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotX:Center")) {
-            set_to_View_PivotX(0);
-            SOLARCHVISION_highlight_in_BAR_b("X|");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotX:Maximum")) {
-            set_to_View_PivotX(1);
-            SOLARCHVISION_highlight_in_BAR_b("X>");
-            BAR_b_Update = 1;  
-          }
-
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotY:Minimum")) {
-            set_to_View_PivotY(-1);
-            SOLARCHVISION_highlight_in_BAR_b("Y<");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotY:Center")) {
-            set_to_View_PivotY(0);
-            SOLARCHVISION_highlight_in_BAR_b("Y|");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotY:Maximum")) {
-            set_to_View_PivotY(1);
-            SOLARCHVISION_highlight_in_BAR_b("Y>");
-            BAR_b_Update = 1;  
-          }
-
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotZ:Minimum")) {
-            set_to_View_PivotZ(-1);
-            SOLARCHVISION_highlight_in_BAR_b("Z<");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotZ:Center")) {
-            set_to_View_PivotZ(0);
-            SOLARCHVISION_highlight_in_BAR_b("Z|");
-            BAR_b_Update = 1;  
-          }
-          if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotZ:Maximum")) {
-            set_to_View_PivotZ(1);
-            SOLARCHVISION_highlight_in_BAR_b("Z>");
-            BAR_b_Update = 1;  
-          }
-
-
-        }
-      }
-      
-      BAR_a_selected_parent = -1;
-      BAR_a_selected_child = 0;
-  
-      image(pre_screen, 0, a_pixel);
-      
-      X_clicked = -1;
-      Y_clicked = -1;      
-    }   
-    else {    
-      
-      X_clicked = mouseX;
-      Y_clicked = mouseY;
-
-      if (isInside(X_clicked, Y_clicked, 0, 0, width, a_pixel) == 1) {
-        BAR_a_Update = 1;
-      }
-  
-      if (isInside(X_clicked, Y_clicked, 0, a_pixel, width, a_pixel + b_pixel) == 1) {
-        BAR_b_Update = 1; 
-      }
-
-      if (isInside(X_clicked, Y_clicked, 0, a_pixel + b_pixel + 2 * h_pixel, width, a_pixel + b_pixel + 2 * h_pixel + d_pixel) == 1) {
-        BAR_d_Update = 1; 
-      }  
-      
-      if (WORLD_include == 1) {
-        if (isInside(X_clicked, Y_clicked, WORLD_CX_View, WORLD_CY_View, WORLD_CX_View + WORLD_X_View, WORLD_CY_View + WORLD_Y_View) == 1) {
-    
-          float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
-          float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
-    
-          float WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
-          float WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;
-    
-          float mouse_lon = 360.0 * ((mouseX - WORLD_CX_View) * WORLD_VIEW_ScaleX / WORLD_X_View - 0.5) + WORLD_VIEW_OffsetX;
-          float mouse_lat = -180.0 * ((mouseY - WORLD_CY_View) * WORLD_VIEW_ScaleY / WORLD_Y_View - 0.5) + WORLD_VIEW_OffsetY;
-          //float mouse_lon = LocationLongitude;
-          //float mouse_lat = LocationLatitude;
-
-          
-          pre_LocationLatitude = LocationLatitude;
-          pre_LocationLongitude = LocationLongitude;
-          
-          LocationLatitude = mouse_lat;
-          LocationLongitude = mouse_lon;
-          
-          if (mouseButton == LEFT) {
-            WORLD_viewport_ZOOM = 6;
-          }
-          
-          if ((pre_LocationLatitude != LocationLatitude) || (pre_LocationLongitude != LocationLongitude)) {
-            WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
-          } 
-          
-          
-          
-          {
-            int nearest_STATION_NAEFS = -1;
-            float nearest_STATION_NAEFS_dist = FLOAT_undefined;
-                      
-            for (int f = 0; f < STATION_NAEFS_INFO.length; f += 1) {
-            
-              float _lat = float(STATION_NAEFS_INFO[f][3]);
-              float _lon = float(STATION_NAEFS_INFO[f][4]); 
-              if (_lon > 180) _lon -= 360; // << important!
-            
-              float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
-              
-              if (nearest_STATION_NAEFS_dist > d) {
-                nearest_STATION_NAEFS_dist = d;
-                nearest_STATION_NAEFS = f;
-              } 
-              
-            }
+      if (BAR_a_selected_parent != -1) {
         
-            {
-              int f = nearest_STATION_NAEFS;
-
-              if (DEFINED_STATIONS[STATION_NUMBER][8].equals(STATION_NAEFS_INFO[f][6])) {
-              }
-              else {
-                
-                STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
-
-                DEFINED_STATIONS[STATION_NUMBER][3] = nf(mouse_lat, 0, 0);                
-                DEFINED_STATIONS[STATION_NUMBER][4] = nf(mouse_lon, 0, 0); 
-                
-                DEFINED_STATIONS[STATION_NUMBER][8] = STATION_NAEFS_INFO[f][6]; // naefs filename
-     
-                println("nearest naefs filename:", STATION_NAEFS_INFO[f][6]);    
-  
-                Selected_STATION = STATION_NUMBER;
-
-                if (impacts_source == databaseNumber_ENSEMBLE) {
-                  DEFINED_STATIONS[STATION_NUMBER][0] = STATION_NAEFS_INFO[f][0];
-                  DEFINED_STATIONS[STATION_NUMBER][1] = STATION_NAEFS_INFO[f][1];
-                  DEFINED_STATIONS[STATION_NUMBER][2] = STATION_NAEFS_INFO[f][2];
-      
-                  //DEFINED_STATIONS[STATION_NUMBER][3] = STATION_NAEFS_INFO[f][3];
-                  //DEFINED_STATIONS[STATION_NUMBER][4] = STATION_NAEFS_INFO[f][4];
-                  DEFINED_STATIONS[STATION_NUMBER][5] = nf(roundTo(float(STATION_NAEFS_INFO[f][2]), 15), 0, 0);                      
-                  
-                  BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][0]; // <<<<<<<<
-
-                  ROLLOUT_parent = 0;
-                  ROLLOUT_child = 1;
-                  ROLLOUT_Update = 1;
-                  
-                                
-                  SOLARCHVISION_update_station(1);
-                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
-                  
-                }
-              }
-            }
-          }        
-          
-
-          {
-            int nearest_STATION_CWEEDS = -1;
-            float nearest_STATION_CWEEDS_dist = FLOAT_undefined;
-                      
-            for (int f = 0; f < STATION_CWEEDS_INFO.length; f += 1) {
-            
-              float _lat = float(STATION_CWEEDS_INFO[f][3]);
-              float _lon = float(STATION_CWEEDS_INFO[f][4]); 
-              if (_lon > 180) _lon -= 360; // << important!
-            
-              float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
-              
-              if (nearest_STATION_CWEEDS_dist > d) {
-                nearest_STATION_CWEEDS_dist = d;
-                nearest_STATION_CWEEDS = f;
-              } 
-              
-            }
-
-            {
-              int f = nearest_STATION_CWEEDS;
-              
-              if (DEFINED_STATIONS[STATION_NUMBER][9].equals(STATION_CWEEDS_INFO[f][6])) {  
-              }
-              else {
-                
-                STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
-
-                DEFINED_STATIONS[STATION_NUMBER][3] = nf(mouse_lat, 0, 0);                
-                DEFINED_STATIONS[STATION_NUMBER][4] = nf(mouse_lon, 0, 0); 
-                
-                DEFINED_STATIONS[STATION_NUMBER][9] = STATION_CWEEDS_INFO[f][6]; // CWEEDS filename
-     
-                println("nearest CWEEDS filename:", STATION_CWEEDS_INFO[f][6]);       
-     
-                Selected_STATION = STATION_NUMBER;
-                
-                if (impacts_source == databaseNumber_CLIMATE_WY2) { 
-
-                  DEFINED_STATIONS[STATION_NUMBER][0] = STATION_CWEEDS_INFO[f][0];
-                  DEFINED_STATIONS[STATION_NUMBER][1] = STATION_CWEEDS_INFO[f][1];
-                  DEFINED_STATIONS[STATION_NUMBER][2] = STATION_CWEEDS_INFO[f][2]; 
-      
-                  //DEFINED_STATIONS[STATION_NUMBER][3] = STATION_CWEEDS_INFO[f][3];
-                  //DEFINED_STATIONS[STATION_NUMBER][4] = STATION_CWEEDS_INFO[f][4];
-                  DEFINED_STATIONS[STATION_NUMBER][5] = STATION_CWEEDS_INFO[f][6]; 
-                  DEFINED_STATIONS[STATION_NUMBER][6] = STATION_CWEEDS_INFO[f][5];   
-   
-                  BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][0]; // <<<<<<<<
-                  
-                  ROLLOUT_parent = 0;
-                  ROLLOUT_child = 1;
-                  ROLLOUT_Update = 1;
-                
-                  SOLARCHVISION_update_station(1);
-                  SOLARCHVISION_try_update_CLIMATE_WY2();
-                }
-              }
-            }
-          }          
-
-
-          {
-            int nearest_STATION_EPW = -1;
-            float nearest_STATION_EPW_dist = FLOAT_undefined;
-                      
-            for (int f = 0; f < STATION_EPW_INFO.length; f += 1) {
-            
-              float _lat = float(STATION_EPW_INFO[f][3]);
-              float _lon = float(STATION_EPW_INFO[f][4]); 
-              if (_lon > 180) _lon -= 360; // << important!
-            
-              float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
-              
-              if (nearest_STATION_EPW_dist > d) {
-                nearest_STATION_EPW_dist = d;
-                nearest_STATION_EPW = f;
-              } 
-              
-            }
-
-            {
-              int f = nearest_STATION_EPW;
-              
-              if (DEFINED_STATIONS[STATION_NUMBER][10].equals(STATION_EPW_INFO[f][8])) {  
-              }
-              else {
-
-                STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
-
-                DEFINED_STATIONS[STATION_NUMBER][3] = nf(mouse_lat, 0, 0);                
-                DEFINED_STATIONS[STATION_NUMBER][4] = nf(mouse_lon, 0, 0); 
-                
-                DEFINED_STATIONS[STATION_NUMBER][10] = STATION_EPW_INFO[f][8]; // epw filename
-     
-                println("nearest epw filename:", STATION_EPW_INFO[f][8]);       
-
-                Selected_STATION = STATION_NUMBER;
-                  
-                if (impacts_source == databaseNumber_CLIMATE_EPW) {     
-                  DEFINED_STATIONS[STATION_NUMBER][0] = STATION_EPW_INFO[f][0];
-                  DEFINED_STATIONS[STATION_NUMBER][1] = STATION_EPW_INFO[f][1];
-                  DEFINED_STATIONS[STATION_NUMBER][2] = STATION_EPW_INFO[f][2]; 
-      
-                  //DEFINED_STATIONS[STATION_NUMBER][3] = STATION_EPW_INFO[f][3];
-                  //DEFINED_STATIONS[STATION_NUMBER][4] = STATION_EPW_INFO[f][4];
-                  DEFINED_STATIONS[STATION_NUMBER][5] = STATION_EPW_INFO[f][6]; 
-                  DEFINED_STATIONS[STATION_NUMBER][6] = STATION_EPW_INFO[f][5];    
-        
-                  BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][0]; // <<<<<<<<
-                  
-                  ROLLOUT_parent = 0;
-                  ROLLOUT_child = 1;
-                  ROLLOUT_Update = 1;
-
-                  SOLARCHVISION_update_station(1);
-                  SOLARCHVISION_try_update_CLIMATE_EPW();
-                }
-              }
-            }
-          }          
-
-                        
-
-          
-          WORLD_Update = 1;
-        } 
-      }
-      
-      if (WIN3D_include == 1) {
-        if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
+        if (mouseButton == LEFT) {
+          if (BAR_a_selected_child != 0) {
     
-          float Image_X = 0;
-          float Image_Y = 0;
+            // should call the functions here!
   
-          Image_X = X_clicked - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
-          Image_Y = Y_clicked - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
-  
-          float[] ray_direction = new float[3];
-  
-          float[] ray_start = {CAM_x, CAM_y, CAM_z};
-  
-          float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);
-          
-          ray_start[0] /= objects_scale;
-          ray_start[1] /= objects_scale;
-          ray_start[2] /= objects_scale;          
-          
-          ray_end[0] /= objects_scale;
-          ray_end[1] /= objects_scale;
-          ray_end[2] /= objects_scale;
-  
-          if (WIN3D_View_Type == 0) {
-            float[] ray_center = SOLARCHVISION_calculate_Click3D(0, 0);
-  
-            ray_center[0] /= objects_scale;
-            ray_center[1] /= objects_scale;
-            ray_center[2] /= objects_scale;
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Mojtaba Samimi")) { 
+              link("http://solarchvision.com/?page_id=102");
+            }     
+           
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("www.solarchvision.com")) { 
+              link("http://solarchvision.com/");
+            }     
             
-            ray_start[0] += ray_end[0] - ray_center[0];
-            ray_start[1] += ray_end[1] - ray_center[1];
-            ray_start[2] += ray_end[2] - ray_center[2];
-          }
-          
-          ray_direction[0] = ray_end[0] - ray_start[0];
-          ray_direction[1] = ray_end[1] - ray_start[1];
-          ray_direction[2] = ray_end[2] - ray_start[2];
-          
-          float max_dist = 2 * dist(ray_start[0], ray_start[1], ray_start[2], ray_end[0], ray_end[1], ray_end[2]);
-          
-          
-          
-          float[] RxP = new float [5];
-          
-          if (mouseButton == RIGHT) {
-            RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
-          }
-          else if (mouseButton == LEFT) {
-            if ((Work_with_2D_or_3D == 1) && (View_Select_Create_Modify == -1))  { // only if the user wants to select a Fractal-Tree 
-              RxP = SOLARCHVISION_1Dintersect(ray_start, ray_direction, max_dist);
-            }        
-            else if ((Work_with_2D_or_3D == 2) && (View_Select_Create_Modify == -1))  { // only if the user wants to select a 2D-object 
-              RxP = SOLARCHVISION_2Dintersect(ray_start, ray_direction, max_dist);
-            }
-            else {
-              RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
-            }
-          }
-          
-          
-          //println(ray_start[0], ray_start[1], ray_start[2], ">>", ray_end[0], ray_end[1], ray_end[2], ">>", RxP[0], RxP[1], RxP[2], RxP[3], RxP[4]);
-          
-          if (RxP[4] > 0) {
-                         
-            if (View_Select_Create_Modify == 1) { // move
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Open...")) { 
+              //selectInput("Select a file to open:", "SOLARCHVISION_fileSelected_Open");
+              SOLARCHVISION_load_project(ProjectsFolder + "/" + "Project.xml");
+            }          
   
-              float x0 = RxP[0];
-              float y0 = RxP[1];
-              float z0 = RxP[2];
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Save")) { 
+              SOLARCHVISION_save_project(ProjectsFolder + "/" + "Project.xml");   
+            }
             
-              if (Work_with_2D_or_3D == 3) {
-  
-                float dx = x0 - selected_Pivot_XYZ[0]; 
-                float dy = y0 - selected_Pivot_XYZ[1]; 
-                float dz = z0 - selected_Pivot_XYZ[2];
-
-                int the_Vector = selected_posVector;
-              
-                if (the_Vector == 0) {dy = 0; dz = 0;}  
-                if (the_Vector == 1) {dz = 0; dx = 0;}  
-                if (the_Vector == 2) {dx = 0; dy = 0;} 
-  
-                SOLARCHVISION_move_Selection(dx, dy, dz);
-              }
-  
-              if (Work_with_2D_or_3D == 2) {
-  
-                float dx = x0 - allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][0]; 
-                float dy = y0 - allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][1]; 
-                float dz = z0 - allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][2];              
-
-                int the_Vector = selected_posVector;
-              
-                if (the_Vector == 0) {dy = 0; dz = 0;}  
-                if (the_Vector == 1) {dz = 0; dx = 0;}  
-                if (the_Vector == 2) {dx = 0; dy = 0;} 
-  
-                SOLARCHVISION_move_Selection(dx, dy, dz);
-              }
-  
-              if (Work_with_2D_or_3D == 1) {
-  
-                float dx = x0 - allFractal_XYZS[selectedFractal_numbers[selectedFractal_numbers.length - 1]][0]; 
-                float dy = y0 - allFractal_XYZS[selectedFractal_numbers[selectedFractal_numbers.length - 1]][1]; 
-                float dz = z0 - allFractal_XYZS[selectedFractal_numbers[selectedFractal_numbers.length - 1]][2];              
-
-                int the_Vector = selected_posVector;
-              
-                if (the_Vector == 0) {dy = 0; dz = 0;}  
-                if (the_Vector == 1) {dz = 0; dx = 0;}  
-                if (the_Vector == 2) {dx = 0; dy = 0;} 
-  
-                SOLARCHVISION_move_Selection(dx, dy, dz);
-              }
-              
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Save As...")) { 
+              selectOutput("Select a file to write to:", "SOLARCHVISION_fileSelected_SaveAs");
+            }
+            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Import 3D-Model...")) { 
+              selectInput("Select OBJ file to import:", "SOLARCHVISION_SelectFile_Import_3DModel");
             }   
             
-            if (View_Select_Create_Modify == -1) { // PickSelect
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Export 3D-Model")) {
+              SOLARCHVISION_export_objects(); 
+            }    
             
-              if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselectAll();
-              
-              if (Work_with_2D_or_3D == 3) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Export Land-Model")) {
+              SOLARCHVISION_export_land(); 
+            }     
+            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Quit")) { 
+              exit();
+            }      
   
-                int f = int(RxP[4]);
+  
+  
+  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PDF Time Graph")) { 
+              STUDY_record_PDF = 1;
+              STUDY_Update = 1;
+            }   
+  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("JPG Time Graph")) { 
+              STUDY_record_JPG = 1;
+              STUDY_Update = 1;
+            }   
+  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("JPG Location Graph")) { 
+              WORLD_record_JPG = 1;
+              WORLD_Update = 1;
+            } 
+            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PDF Location Graph")) { 
+              WORLD_record_PDF = 1;
+              WORLD_Update = 1;
+            }   
+    
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("JPG Spatial Graph")) { 
+              WIN3D_record_JPG = 1;
+              WIN3D_Update = 1;
+            } 
+            
+            if (BAR_a_Items[BAR_a_selected_parent][0].equals("Site")) {
+              if (BAR_a_selected_child > 0) {
+                if (STATION_NUMBER != BAR_a_selected_child - 1) {
+                  
+                  STATION_NUMBER = BAR_a_selected_child - 1;
+                  
+                  SOLARCHVISION_update_station(0);
+                }
+              } 
+            }
+  
+  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Typical Year (TMY)")) {
+              impacts_source = databaseNumber_CLIMATE_EPW;
+              
+              if (Load_CLIMATE_EPW == 0) {
+                Load_CLIMATE_EPW = 1;
+                SOLARCHVISION_try_update_CLIMATE_EPW();
+              }
+             
+              WORLD_Update = 1;
+              WIN3D_Update = 1;  
+              STUDY_Update = 1;
+              ROLLOUT_Update = 1;
+              BAR_d_Update = 1;
+            } 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Long-term (CWEEDS)")) {
+              impacts_source = databaseNumber_CLIMATE_WY2;
+              
+              if (Load_CLIMATE_WY2 == 0) {
+                Load_CLIMATE_WY2 = 1;
+                SOLARCHVISION_try_update_CLIMATE_WY2();
+              }
+             
+              WORLD_Update = 1;
+              WIN3D_Update = 1;  
+              STUDY_Update = 1;
+              ROLLOUT_Update = 1;
+              BAR_d_Update = 1;
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Weather Forecast (NAEFS)")) {
+              impacts_source = databaseNumber_ENSEMBLE;
+              
+              if (Load_ENSEMBLE == 0) {
+                Load_ENSEMBLE = 1;
+                SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
+              }
+             
+              WORLD_Update = 1;
+              WIN3D_Update = 1;  
+              STUDY_Update = 1;
+              ROLLOUT_Update = 1;
+              BAR_d_Update = 1;
+            } 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Real-time Observed (SWOB)")) {
+              impacts_source = databaseNumber_OBSERVED;
+              
+              if (Load_OBSERVED == 0) {
+                Load_OBSERVED = 1;
+                SOLARCHVISION_try_update_OBSERVED();
+              }
+              
+              WORLD_Update = 1;
+              WIN3D_Update = 1;  
+              STUDY_Update = 1;
+              ROLLOUT_Update = 1;
+              BAR_d_Update = 1;
+            }           
+  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Surface Base")) {
+              WIN3D_FACES_SHADE = Shade_Surface_Base;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }           
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Surface White")) {
+              WIN3D_FACES_SHADE = Shade_Surface_White;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            } 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Surface Materials")) {
+              WIN3D_FACES_SHADE = Shade_Surface_Materials;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            } 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Global Solar")) {
+              WIN3D_FACES_SHADE = Shade_Global_Solar;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            } 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Vertex Solar")) {
+              WIN3D_FACES_SHADE = Shade_Vertex_Solar;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }           
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Vertex Spatial")) {
+              WIN3D_FACES_SHADE = Shade_Vertex_Spatial;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }           
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Vertex Elevation")) {
+              WIN3D_FACES_SHADE = Shade_Vertex_Elevation;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }           
+            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Land Mesh")) {
+              Display_LAND_MESH = (Display_LAND_MESH + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }             
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Land Texture")) {
+              Display_LAND_TEXTURE = (Display_LAND_TEXTURE + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }           
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Land Depth")) {
+              Display_LAND_DEPTH = (Display_LAND_DEPTH + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }          
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Vertices")) {
+              WIN3D_VERTS_SHOW = (WIN3D_VERTS_SHOW  + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Edges")) {
+              WIN3D_EDGES_SHOW = (WIN3D_EDGES_SHOW  + 1) % 2;
+              display_MODEL3D_EDGES = WIN3D_EDGES_SHOW; // <<<<<<<<<
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            } 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Leaves")) {
+              Display_Leaves = (Display_Leaves + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }                
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Living Objects")) {
+              Display_Trees_People = (Display_Trees_People + 1) % 2;
+              Display_FractalPlant = Display_Trees_People; // <<<<<<<
+              Display_Leaves = Display_FractalPlant; // <<<<<<
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            } 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Building Objects")) {
+              Display_Building_Model = (Display_Building_Model + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }           
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Urban")) {
+              Display_URBAN_MESH = (Display_URBAN_MESH + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            } 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Sky")) {
+              Display_SKY3D = (Display_SKY3D + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Sun")) {
+              Display_SUN3D = (Display_SUN3D + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }           
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Shading Section")) {
+              display_SolarImpact_Image = (display_SolarImpact_Image + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Spatial Section")) {
+              display_SpatialImpact_Image = (display_SpatialImpact_Image + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            } 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Wind Flow")) {
+              display_windFlow = (display_windFlow + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 3-D Pivot")) {
+              selectedPolymesh_displayPivot = (selectedPolymesh_displayPivot + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }          
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 3-D Edges")) {
+              selectedPolymesh_displayEdges = (selectedPolymesh_displayEdges + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }    
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 3-D Box")) {
+              selectedPolymesh_displayBox = (selectedPolymesh_displayBox + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }    
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 2½D Edges")) {
+              selectedObject2D_displayEdges = (selectedObject2D_displayEdges + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }    
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected ∞-D Edges")) {
+              selectedFractal_displayEdges = (selectedFractal_displayEdges + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }              
+  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide SWOB points")) {
+              Display_SWOB_points = (Display_SWOB_points  + 1) % 2;
+              
+              WORLD_Update = 1;  
+              ROLLOUT_Update = 1;
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide SWOB nearest")) {
+              Display_SWOB_nearest = (Display_SWOB_nearest + 1) % 2;
+              
+              WORLD_Update = 1;  
+              ROLLOUT_Update = 1;
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide NAEFS points")) {
+              Display_NAEFS_points = (Display_NAEFS_points + 1) % 2;
+              
+              WORLD_Update = 1;  
+              ROLLOUT_Update = 1;
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide NAEFS nearest")) {
+              Display_NAEFS_nearest = (Display_NAEFS_nearest  + 1) % 2;
+              
+              WORLD_Update = 1;  
+              ROLLOUT_Update = 1;
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide CWEEDS points")) {
+              Display_CWEEDS_points = (Display_CWEEDS_points + 1) % 2;
+              
+              WORLD_Update = 1;  
+              ROLLOUT_Update = 1;
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide CWEEDS nearest")) {
+              Display_CWEEDS_nearest = (Display_CWEEDS_nearest + 1) % 2;
+              
+              WORLD_Update = 1;  
+              ROLLOUT_Update = 1;
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide EPW points")) {
+              Display_EPW_points = (Display_EPW_points + 1) % 2;
+              
+              WORLD_Update = 1;  
+              ROLLOUT_Update = 1;
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide EPW nearest")) {
+              Display_EPW_nearest = (Display_EPW_nearest + 1) % 2;
+              
+              WORLD_Update = 1;  
+              ROLLOUT_Update = 1;
+            }
+            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Fractal")) {
+              set_to_Create_Fractal();
+              SOLARCHVISION_highlight_in_BAR_b("Fractal");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Tree")) {
+              set_to_Create_Tree();
+              SOLARCHVISION_highlight_in_BAR_b("Tree");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Person")) {
+              set_to_Create_Person();
+              SOLARCHVISION_highlight_in_BAR_b("Person");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Parametric")) {
+              set_to_Create_Parametric();
+              SOLARCHVISION_highlight_in_BAR_b("Parametric");      
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Tri")) {
+              set_to_Create_Tri();
+              SOLARCHVISION_highlight_in_BAR_b("Tri");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Poly")) {
+              set_to_Create_Poly();
+              SOLARCHVISION_highlight_in_BAR_b("Poly");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Extrude")) {
+              set_to_Create_Extrude();
+              SOLARCHVISION_highlight_in_BAR_b("Extrude");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Hyper")) {
+              set_to_Create_Hyper();
+              SOLARCHVISION_highlight_in_BAR_b("Hyper");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("House")) {
+              set_to_Create_House();
+              SOLARCHVISION_highlight_in_BAR_b("House");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Box")) {
+              set_to_Create_Box();
+              SOLARCHVISION_highlight_in_BAR_b("Box");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Octahedron")) {
+              set_to_Create_Octahedron();
+              SOLARCHVISION_highlight_in_BAR_b("Octahedron");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Sphere")) {
+              set_to_Create_Sphere();
+              SOLARCHVISION_highlight_in_BAR_b("Sphere");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Cylinder")) {
+              set_to_Create_Cylinder();
+              SOLARCHVISION_highlight_in_BAR_b("Cylinder");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Cushion")) {
+              set_to_Create_Cushion();
+              SOLARCHVISION_highlight_in_BAR_b("Cushion");
+              BAR_b_Update = 1;  
+            }
+  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Move")) {
+              //set_to_Modify_Move(selected_posVector);
+              set_to_Modify_Move(3);
+              SOLARCHVISION_highlight_in_BAR_b("MV³");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("MoveX")) {
+              set_to_Modify_Move(0);
+              SOLARCHVISION_highlight_in_BAR_b("MVx");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("MoveY")) {
+              set_to_Modify_Move(1);
+              SOLARCHVISION_highlight_in_BAR_b("MVy");
+              BAR_b_Update = 1;  
+            }              
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("MoveZ")) {
+              set_to_Modify_Move(2);
+              SOLARCHVISION_highlight_in_BAR_b("MVz");
+              BAR_b_Update = 1;  
+            }              
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Scale")) {
+              //set_to_Modify_Scale(selected_scaleVector);
+              set_to_Modify_Scale(3);
+              SOLARCHVISION_highlight_in_BAR_b("SC³");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("ScaleX")) {
+              set_to_Modify_Scale(0);
+              SOLARCHVISION_highlight_in_BAR_b("SCx");
+              BAR_b_Update = 1;  
+            }          
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("ScaleY")) {
+              set_to_Modify_Scale(1);
+              SOLARCHVISION_highlight_in_BAR_b("SCy");
+              BAR_b_Update = 1;  
+            }      
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("ScaleZ")) {
+              set_to_Modify_Scale(2);
+              SOLARCHVISION_highlight_in_BAR_b("SCz");
+              BAR_b_Update = 1;  
+            }                
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Rotate")) {
+              //set_to_Modify_Rotate(selected_rotVector);
+              set_to_Modify_Rotate(2); // <<<<<<
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("RotateX")) {
+              set_to_Modify_Rotate(0);
+              SOLARCHVISION_highlight_in_BAR_b("RTx");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("RotateY")) {
+              set_to_Modify_Rotate(1);
+              SOLARCHVISION_highlight_in_BAR_b("RTy");
+              BAR_b_Update = 1;  
+            } 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("RotateZ")) {
+              set_to_Modify_Rotate(2);
+              SOLARCHVISION_highlight_in_BAR_b("RTz");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Seed/Material")) {
+              set_to_Modify_Seed();
+              SOLARCHVISION_highlight_in_BAR_b("SD");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Teselation")) {
+              set_to_Modify_Teselation();
+              SOLARCHVISION_highlight_in_BAR_b("Tes");
+              BAR_b_Update = 1;  
+            }          
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DegreeMax")) {
+              set_to_Modify_DegreeMax();
+            }    
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DegreeDif")) {
+              set_to_Modify_DegreeDif();
+            }    
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DegreeMin")) {
+              set_to_Modify_DegreeMin();
+            }     
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TrunckSize")) {
+              set_to_Modify_TrunckSize();
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("LeafSize")) {
+              set_to_Modify_LeafSize();
+            }           
+  
+  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Orthographic")) {
+              set_to_View_ProjectionType(0);
+              SOLARCHVISION_highlight_in_BAR_b("P<>");
+              BAR_b_Update = 1;  
+            }           
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Perspective")) {
+              set_to_View_ProjectionType(1);
+              SOLARCHVISION_highlight_in_BAR_b("P><");
+              BAR_b_Update = 1;  
+            }   
+            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Deselect All")) {
+              SOLARCHVISION_deselectAll();
+              WIN3D_Update = 1;
+            } 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select All")) {
+              SOLARCHVISION_selectAll();
+              WIN3D_Update = 1;
+            }           
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select Fractal")) {
+              Work_with_2D_or_3D = 1;
+              WIN3D_Update = 1;
+              BAR_b_Update = 1;  
+            }  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select Object2D")) {
+              Work_with_2D_or_3D = 2;
+              WIN3D_Update = 1;
+              BAR_b_Update = 1;  
+            } 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select Polymesh")) {
+              Work_with_2D_or_3D = 3;
+              WIN3D_Update = 1;
+              BAR_b_Update = 1;  
+            } 
+  
+  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Click Select")) {
+              set_to_View_ClickSelect(0);
+              SOLARCHVISION_highlight_in_BAR_b("±CS");
+              BAR_b_Update = 1;  
+            } 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Click Select+")) {
+              set_to_View_ClickSelect(1);
+              SOLARCHVISION_highlight_in_BAR_b("+CS");
+              BAR_b_Update = 1;  
+            } 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Click Select-")) {
+              set_to_View_ClickSelect(2);
+              SOLARCHVISION_highlight_in_BAR_b("-CS");
+              BAR_b_Update = 1;  
+            }           
+  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Window Select")) {
+              set_to_View_WindowSelect(0);
+              SOLARCHVISION_highlight_in_BAR_b("±WS");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Window Select+")) {
+              set_to_View_WindowSelect(1);
+              SOLARCHVISION_highlight_in_BAR_b("+WS");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Window Select-")) {
+              set_to_View_WindowSelect(2);
+              SOLARCHVISION_highlight_in_BAR_b("-WS");
+              BAR_b_Update = 1;  
+            }
+  
+  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TargetRoll")) {
+              set_to_View_TargetRoll(0);
+              SOLARCHVISION_highlight_in_BAR_b("TRL");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TargetRollZ")) {
+              set_to_View_TargetRoll(1);
+              SOLARCHVISION_highlight_in_BAR_b("TRLz");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TargetRollXY")) {
+              set_to_View_TargetRoll(2);
+              SOLARCHVISION_highlight_in_BAR_b("TRLxy");
+              BAR_b_Update = 1;  
+            }          
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("CameraRoll")) {
+              set_to_View_CameraRoll(0);
+              SOLARCHVISION_highlight_in_BAR_b("CRL");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("CameraRollZ")) {
+              set_to_View_CameraRoll(1);
+              SOLARCHVISION_highlight_in_BAR_b("CRLz");
+              BAR_b_Update = 1;  
+            }                
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("CameraRollXY")) {
+              set_to_View_CameraRoll(2);
+              SOLARCHVISION_highlight_in_BAR_b("CRLxy");
+              BAR_b_Update = 1;  
+            }
                 
-                int OBJ_NUM = 0;
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Orbit")) {
+              set_to_View_Orbit(0);
+              SOLARCHVISION_highlight_in_BAR_b("OR");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("OrbitZ")) {
+              set_to_View_Orbit(1);
+              SOLARCHVISION_highlight_in_BAR_b("ORz");
+              BAR_b_Update = 1;  
+            }           
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("OrbitXY")) {
+              set_to_View_Orbit(2);
+              SOLARCHVISION_highlight_in_BAR_b("ORxy");
+              BAR_b_Update = 1;  
+            }   
+            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pan")) {
+              set_to_View_Pan(0);
+              SOLARCHVISION_highlight_in_BAR_b("Pan");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PanX")) {
+              set_to_View_Pan(1);
+              SOLARCHVISION_highlight_in_BAR_b("PanX");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PanY")) {
+              set_to_View_Pan(2);
+              SOLARCHVISION_highlight_in_BAR_b("PanY");
+              BAR_b_Update = 1;  
+            }          
+            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Zoom")) {
+              set_to_View_Zoom(0);
+              SOLARCHVISION_highlight_in_BAR_b("±ZM");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Zoom as default")) {
+              set_to_View_Zoom(1);
+              SOLARCHVISION_highlight_in_BAR_b("0ZM");
+              BAR_b_Update = 1;  
+            }
+  
+  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TruckX")) {
+              set_to_View_Truck(1);
+              SOLARCHVISION_highlight_in_BAR_b("DIx");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TruckY")) {
+              set_to_View_Truck(2);
+              SOLARCHVISION_highlight_in_BAR_b("DIy");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TruckZ")) {
+              set_to_View_Truck(0);
+              SOLARCHVISION_highlight_in_BAR_b("DIz");
+              BAR_b_Update = 1;  
+            }          
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DistZ")) {
+              set_to_View_Truck(0);
+              SOLARCHVISION_highlight_in_BAR_b("±CDZ");
+              BAR_b_Update = 1;  
+            }     
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("CameraDistance")) {
+              set_to_View_CameraDistance(0);
+              SOLARCHVISION_highlight_in_BAR_b("±CDS");
+              BAR_b_Update = 1;  
+            }   
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DistMouseXY")) {
+              set_to_View_DistMouseXY(0);
+              SOLARCHVISION_highlight_in_BAR_b("±CDM");
+              BAR_b_Update = 1;  
+            }  
+            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Look at origin")) {
+              set_to_View_LookAtOrigin(0);
+              SOLARCHVISION_highlight_in_BAR_b("LAO");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Look at selection")) {
+              set_to_View_LookAtSelection(0);
+              SOLARCHVISION_highlight_in_BAR_b("LAS");
+              BAR_b_Update = 1;  
+            }          
+  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("3DModelSize")) {
+              set_to_View_3DModelSize();
+              SOLARCHVISION_highlight_in_BAR_b("±SZ");
+              BAR_b_Update = 1;  
+            }          
+            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("SkydomeSize")) {
+              set_to_View_SkydomeSize();
+              SOLARCHVISION_highlight_in_BAR_b("±SK");
+              BAR_b_Update = 1;  
+            }       
+         
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("AllModelSize")) {
+              set_to_View_AllModelSize();
+              SOLARCHVISION_highlight_in_BAR_b("±SA");
+              BAR_b_Update = 1;  
+            }     
+  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shrink 3DViewSpace")) {
+              set_to_View_3DViewSpace(0);
+              SOLARCHVISION_highlight_in_BAR_b("AllViewsports");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Enlarge 3DViewSpace")) {
+              set_to_View_3DViewSpace(1);
+              SOLARCHVISION_highlight_in_BAR_b("Expand3DView");
+              BAR_b_Update = 1;  
+            } 
+  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Top")) {
+              set_to_View_3DViewPoint(0);
+              SOLARCHVISION_highlight_in_BAR_b("Top");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Front")) {
+              set_to_View_3DViewPoint(1);
+              SOLARCHVISION_highlight_in_BAR_b("Front");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Left")) {
+              set_to_View_3DViewPoint(2);
+              SOLARCHVISION_highlight_in_BAR_b("Left");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Back")) {
+              set_to_View_3DViewPoint(3);
+              SOLARCHVISION_highlight_in_BAR_b("Back");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Right")) {
+              set_to_View_3DViewPoint(4);
+              SOLARCHVISION_highlight_in_BAR_b("Right");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Bottom")) {
+              set_to_View_3DViewPoint(5);
+              SOLARCHVISION_highlight_in_BAR_b("Bottom");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("S.W.")) {
+              set_to_View_3DViewPoint(6);
+              SOLARCHVISION_highlight_in_BAR_b("S.W.");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("S.E.")) {
+              set_to_View_3DViewPoint(7);
+              SOLARCHVISION_highlight_in_BAR_b("S.E.");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("N.E.")) {
+              set_to_View_3DViewPoint(8);
+              SOLARCHVISION_highlight_in_BAR_b("N.E.");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("N.W.")) {
+              set_to_View_3DViewPoint(9);
+              SOLARCHVISION_highlight_in_BAR_b("N.W.");
+              BAR_b_Update = 1;  
+            }
+            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotX:Minimum")) {
+              set_to_View_PivotX(-1);
+              SOLARCHVISION_highlight_in_BAR_b("X<");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotX:Center")) {
+              set_to_View_PivotX(0);
+              SOLARCHVISION_highlight_in_BAR_b("X|");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotX:Maximum")) {
+              set_to_View_PivotX(1);
+              SOLARCHVISION_highlight_in_BAR_b("X>");
+              BAR_b_Update = 1;  
+            }
+  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotY:Minimum")) {
+              set_to_View_PivotY(-1);
+              SOLARCHVISION_highlight_in_BAR_b("Y<");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotY:Center")) {
+              set_to_View_PivotY(0);
+              SOLARCHVISION_highlight_in_BAR_b("Y|");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotY:Maximum")) {
+              set_to_View_PivotY(1);
+              SOLARCHVISION_highlight_in_BAR_b("Y>");
+              BAR_b_Update = 1;  
+            }
+  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotZ:Minimum")) {
+              set_to_View_PivotZ(-1);
+              SOLARCHVISION_highlight_in_BAR_b("Z<");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotZ:Center")) {
+              set_to_View_PivotZ(0);
+              SOLARCHVISION_highlight_in_BAR_b("Z|");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PivotZ:Maximum")) {
+              set_to_View_PivotZ(1);
+              SOLARCHVISION_highlight_in_BAR_b("Z>");
+              BAR_b_Update = 1;  
+            }
+  
+  
+          }
+        }
+        
+        BAR_a_selected_parent = -1;
+        BAR_a_selected_child = 0;
+    
+        image(pre_screen, 0, a_pixel);
+        
+        X_clicked = -1;
+        Y_clicked = -1;      
+      }   
+      else {    
+        
+        X_clicked = mouseX;
+        Y_clicked = mouseY;
+  
+        if (isInside(X_clicked, Y_clicked, 0, 0, width, a_pixel) == 1) {
+          BAR_a_Update = 1;
+        }
+    
+        if (isInside(X_clicked, Y_clicked, 0, a_pixel, width, a_pixel + b_pixel) == 1) {
+          BAR_b_Update = 1; 
+        }
+  
+        if (isInside(X_clicked, Y_clicked, 0, a_pixel + b_pixel + 2 * h_pixel, width, a_pixel + b_pixel + 2 * h_pixel + d_pixel) == 1) {
+          BAR_d_Update = 1; 
+        }  
+        
+        if (WORLD_include == 1) {
+          if (isInside(X_clicked, Y_clicked, WORLD_CX_View, WORLD_CY_View, WORLD_CX_View + WORLD_X_View, WORLD_CY_View + WORLD_Y_View) == 1) {
+      
+            float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
+            float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
+      
+            float WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
+            float WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;
+      
+            float mouse_lon = 360.0 * ((mouseX - WORLD_CX_View) * WORLD_VIEW_ScaleX / WORLD_X_View - 0.5) + WORLD_VIEW_OffsetX;
+            float mouse_lat = -180.0 * ((mouseY - WORLD_CY_View) * WORLD_VIEW_ScaleY / WORLD_Y_View - 0.5) + WORLD_VIEW_OffsetY;
+            //float mouse_lon = LocationLongitude;
+            //float mouse_lat = LocationLatitude;
+  
+            
+            pre_LocationLatitude = LocationLatitude;
+            pre_LocationLongitude = LocationLongitude;
+            
+            LocationLatitude = mouse_lat;
+            LocationLongitude = mouse_lon;
+            
+            if (mouseButton == LEFT) {
+              WORLD_viewport_ZOOM = 6;
+            }
+            
+            if ((pre_LocationLatitude != LocationLatitude) || (pre_LocationLongitude != LocationLongitude)) {
+              WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
+            } 
+            
+            
+            
+            {
+              int nearest_STATION_NAEFS = -1;
+              float nearest_STATION_NAEFS_dist = FLOAT_undefined;
+                        
+              for (int f = 0; f < STATION_NAEFS_INFO.length; f += 1) {
+              
+                float _lat = float(STATION_NAEFS_INFO[f][3]);
+                float _lon = float(STATION_NAEFS_INFO[f][4]); 
+                if (_lon > 180) _lon -= 360; // << important!
+              
+                float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
                 
-                for (int i = 0; i < allPolymesh_Faces.length; i++) {
-                  if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
+                if (nearest_STATION_NAEFS_dist > d) {
+                  nearest_STATION_NAEFS_dist = d;
+                  nearest_STATION_NAEFS = f;
+                } 
+                
+              }
+          
+              {
+                int f = nearest_STATION_NAEFS;
+  
+                if (DEFINED_STATIONS[STATION_NUMBER][8].equals(STATION_NAEFS_INFO[f][6])) {
+                }
+                else {
+                  
+                  STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
+  
+                  DEFINED_STATIONS[STATION_NUMBER][3] = nf(mouse_lat, 0, 0);                
+                  DEFINED_STATIONS[STATION_NUMBER][4] = nf(mouse_lon, 0, 0); 
+                  
+                  DEFINED_STATIONS[STATION_NUMBER][8] = STATION_NAEFS_INFO[f][6]; // naefs filename
+       
+                  println("nearest naefs filename:", STATION_NAEFS_INFO[f][6]);    
+    
+                  Selected_STATION = STATION_NUMBER;
+  
+                  if (impacts_source == databaseNumber_ENSEMBLE) {
+                    DEFINED_STATIONS[STATION_NUMBER][0] = STATION_NAEFS_INFO[f][0];
+                    DEFINED_STATIONS[STATION_NUMBER][1] = STATION_NAEFS_INFO[f][1];
+                    DEFINED_STATIONS[STATION_NUMBER][2] = STATION_NAEFS_INFO[f][2];
+        
+                    //DEFINED_STATIONS[STATION_NUMBER][3] = STATION_NAEFS_INFO[f][3];
+                    //DEFINED_STATIONS[STATION_NUMBER][4] = STATION_NAEFS_INFO[f][4];
+                    DEFINED_STATIONS[STATION_NUMBER][5] = nf(roundTo(float(STATION_NAEFS_INFO[f][2]), 15), 0, 0);                      
                     
-                    OBJ_NUM = i;
+                    BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][0]; // <<<<<<<<
+  
+                    ROLLOUT_parent = 0;
+                    ROLLOUT_child = 1;
+                    ROLLOUT_Update = 1;
                     
-                    WIN3D_Update = 1;
-                    break;
+                                  
+                    SOLARCHVISION_update_station(1);
+                    SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
+                    
                   }
                 }
+              }
+            }        
+            
+  
+            {
+              int nearest_STATION_CWEEDS = -1;
+              float nearest_STATION_CWEEDS_dist = FLOAT_undefined;
+                        
+              for (int f = 0; f < STATION_CWEEDS_INFO.length; f += 1) {
+              
+                float _lat = float(STATION_CWEEDS_INFO[f][3]);
+                float _lon = float(STATION_CWEEDS_INFO[f][4]); 
+                if (_lon > 180) _lon -= 360; // << important!
+              
+                float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
                 
-                if (OBJ_NUM > 0) {
+                if (nearest_STATION_CWEEDS_dist > d) {
+                  nearest_STATION_CWEEDS_dist = d;
+                  nearest_STATION_CWEEDS = f;
+                } 
                 
+              }
+  
+              {
+                int f = nearest_STATION_CWEEDS;
+                
+                if (DEFINED_STATIONS[STATION_NUMBER][9].equals(STATION_CWEEDS_INFO[f][6])) {  
+                }
+                else {
+                  
+                  STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
+  
+                  DEFINED_STATIONS[STATION_NUMBER][3] = nf(mouse_lat, 0, 0);                
+                  DEFINED_STATIONS[STATION_NUMBER][4] = nf(mouse_lon, 0, 0); 
+                  
+                  DEFINED_STATIONS[STATION_NUMBER][9] = STATION_CWEEDS_INFO[f][6]; // CWEEDS filename
+       
+                  println("nearest CWEEDS filename:", STATION_CWEEDS_INFO[f][6]);       
+       
+                  Selected_STATION = STATION_NUMBER;
+                  
+                  if (impacts_source == databaseNumber_CLIMATE_WY2) { 
+  
+                    DEFINED_STATIONS[STATION_NUMBER][0] = STATION_CWEEDS_INFO[f][0];
+                    DEFINED_STATIONS[STATION_NUMBER][1] = STATION_CWEEDS_INFO[f][1];
+                    DEFINED_STATIONS[STATION_NUMBER][2] = STATION_CWEEDS_INFO[f][2]; 
+        
+                    //DEFINED_STATIONS[STATION_NUMBER][3] = STATION_CWEEDS_INFO[f][3];
+                    //DEFINED_STATIONS[STATION_NUMBER][4] = STATION_CWEEDS_INFO[f][4];
+                    DEFINED_STATIONS[STATION_NUMBER][5] = STATION_CWEEDS_INFO[f][6]; 
+                    DEFINED_STATIONS[STATION_NUMBER][6] = STATION_CWEEDS_INFO[f][5];   
+     
+                    BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][0]; // <<<<<<<<
+                    
+                    ROLLOUT_parent = 0;
+                    ROLLOUT_child = 1;
+                    ROLLOUT_Update = 1;
+                  
+                    SOLARCHVISION_update_station(1);
+                    SOLARCHVISION_try_update_CLIMATE_WY2();
+                  }
+                }
+              }
+            }          
+  
+  
+            {
+              int nearest_STATION_EPW = -1;
+              float nearest_STATION_EPW_dist = FLOAT_undefined;
+                        
+              for (int f = 0; f < STATION_EPW_INFO.length; f += 1) {
+              
+                float _lat = float(STATION_EPW_INFO[f][3]);
+                float _lon = float(STATION_EPW_INFO[f][4]); 
+                if (_lon > 180) _lon -= 360; // << important!
+              
+                float d = dist_lon_lat(_lon, _lat,  LocationLongitude, LocationLatitude);
+                
+                if (nearest_STATION_EPW_dist > d) {
+                  nearest_STATION_EPW_dist = d;
+                  nearest_STATION_EPW = f;
+                } 
+                
+              }
+  
+              {
+                int f = nearest_STATION_EPW;
+                
+                if (DEFINED_STATIONS[STATION_NUMBER][10].equals(STATION_EPW_INFO[f][8])) {  
+                }
+                else {
+  
+                  STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
+  
+                  DEFINED_STATIONS[STATION_NUMBER][3] = nf(mouse_lat, 0, 0);                
+                  DEFINED_STATIONS[STATION_NUMBER][4] = nf(mouse_lon, 0, 0); 
+                  
+                  DEFINED_STATIONS[STATION_NUMBER][10] = STATION_EPW_INFO[f][8]; // epw filename
+       
+                  println("nearest epw filename:", STATION_EPW_INFO[f][8]);       
+  
+                  Selected_STATION = STATION_NUMBER;
+                    
+                  if (impacts_source == databaseNumber_CLIMATE_EPW) {     
+                    DEFINED_STATIONS[STATION_NUMBER][0] = STATION_EPW_INFO[f][0];
+                    DEFINED_STATIONS[STATION_NUMBER][1] = STATION_EPW_INFO[f][1];
+                    DEFINED_STATIONS[STATION_NUMBER][2] = STATION_EPW_INFO[f][2]; 
+        
+                    //DEFINED_STATIONS[STATION_NUMBER][3] = STATION_EPW_INFO[f][3];
+                    //DEFINED_STATIONS[STATION_NUMBER][4] = STATION_EPW_INFO[f][4];
+                    DEFINED_STATIONS[STATION_NUMBER][5] = STATION_EPW_INFO[f][6]; 
+                    DEFINED_STATIONS[STATION_NUMBER][6] = STATION_EPW_INFO[f][5];    
+          
+                    BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][0]; // <<<<<<<<
+                    
+                    ROLLOUT_parent = 0;
+                    ROLLOUT_child = 1;
+                    ROLLOUT_Update = 1;
+  
+                    SOLARCHVISION_update_station(1);
+                    SOLARCHVISION_try_update_CLIMATE_EPW();
+                  }
+                }
+              }
+            }          
+  
+                          
+  
+            
+            WORLD_Update = 1;
+          } 
+        }
+        
+        if (WIN3D_include == 1) {
+          if (isInside(X_clicked, Y_clicked, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
+      
+            float Image_X = 0;
+            float Image_Y = 0;
+    
+            Image_X = X_clicked - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
+            Image_Y = Y_clicked - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
+    
+            float[] ray_direction = new float[3];
+    
+            float[] ray_start = {CAM_x, CAM_y, CAM_z};
+    
+            float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);
+            
+            ray_start[0] /= objects_scale;
+            ray_start[1] /= objects_scale;
+            ray_start[2] /= objects_scale;          
+            
+            ray_end[0] /= objects_scale;
+            ray_end[1] /= objects_scale;
+            ray_end[2] /= objects_scale;
+    
+            if (WIN3D_View_Type == 0) {
+              float[] ray_center = SOLARCHVISION_calculate_Click3D(0, 0);
+    
+              ray_center[0] /= objects_scale;
+              ray_center[1] /= objects_scale;
+              ray_center[2] /= objects_scale;
+              
+              ray_start[0] += ray_end[0] - ray_center[0];
+              ray_start[1] += ray_end[1] - ray_center[1];
+              ray_start[2] += ray_end[2] - ray_center[2];
+            }
+            
+            ray_direction[0] = ray_end[0] - ray_start[0];
+            ray_direction[1] = ray_end[1] - ray_start[1];
+            ray_direction[2] = ray_end[2] - ray_start[2];
+            
+            float max_dist = 2 * dist(ray_start[0], ray_start[1], ray_start[2], ray_end[0], ray_end[1], ray_end[2]);
+            
+            
+            
+            float[] RxP = new float [5];
+            
+            if (mouseButton == RIGHT) {
+              RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
+            }
+            else if (mouseButton == LEFT) {
+              if ((Work_with_2D_or_3D == 1) && (View_Select_Create_Modify == -1))  { // only if the user wants to select a Fractal-Tree 
+                RxP = SOLARCHVISION_1Dintersect(ray_start, ray_direction, max_dist);
+              }        
+              else if ((Work_with_2D_or_3D == 2) && (View_Select_Create_Modify == -1))  { // only if the user wants to select a 2D-object 
+                RxP = SOLARCHVISION_2Dintersect(ray_start, ray_direction, max_dist);
+              }
+              else {
+                RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
+              }
+            }
+            
+            
+            //println(ray_start[0], ray_start[1], ray_start[2], ">>", ray_end[0], ray_end[1], ray_end[2], ">>", RxP[0], RxP[1], RxP[2], RxP[3], RxP[4]);
+            
+            if (RxP[4] > 0) {
+                           
+              if (View_Select_Create_Modify == 1) { // move
+    
+                float x0 = RxP[0];
+                float y0 = RxP[1];
+                float z0 = RxP[2];
+              
+                if (Work_with_2D_or_3D == 3) {
+    
+                  float dx = x0 - selected_Pivot_XYZ[0]; 
+                  float dy = y0 - selected_Pivot_XYZ[1]; 
+                  float dz = z0 - selected_Pivot_XYZ[2];
+  
+                  int the_Vector = selected_posVector;
+                
+                  if (the_Vector == 0) {dy = 0; dz = 0;}  
+                  if (the_Vector == 1) {dz = 0; dx = 0;}  
+                  if (the_Vector == 2) {dx = 0; dy = 0;} 
+    
+                  SOLARCHVISION_move_Selection(dx, dy, dz);
+                }
+    
+                if (Work_with_2D_or_3D == 2) {
+    
+                  float dx = x0 - allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][0]; 
+                  float dy = y0 - allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][1]; 
+                  float dz = z0 - allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][2];              
+  
+                  int the_Vector = selected_posVector;
+                
+                  if (the_Vector == 0) {dy = 0; dz = 0;}  
+                  if (the_Vector == 1) {dz = 0; dx = 0;}  
+                  if (the_Vector == 2) {dx = 0; dy = 0;} 
+    
+                  SOLARCHVISION_move_Selection(dx, dy, dz);
+                }
+    
+                if (Work_with_2D_or_3D == 1) {
+    
+                  float dx = x0 - allFractal_XYZS[selectedFractal_numbers[selectedFractal_numbers.length - 1]][0]; 
+                  float dy = y0 - allFractal_XYZS[selectedFractal_numbers[selectedFractal_numbers.length - 1]][1]; 
+                  float dz = z0 - allFractal_XYZS[selectedFractal_numbers[selectedFractal_numbers.length - 1]][2];              
+  
+                  int the_Vector = selected_posVector;
+                
+                  if (the_Vector == 0) {dy = 0; dz = 0;}  
+                  if (the_Vector == 1) {dz = 0; dx = 0;}  
+                  if (the_Vector == 2) {dx = 0; dy = 0;} 
+    
+                  SOLARCHVISION_move_Selection(dx, dy, dz);
+                }
+                
+              }   
+              
+              if (View_Select_Create_Modify == -1) { // PickSelect
+              
+                if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselectAll();
+                
+                if (Work_with_2D_or_3D == 3) {
+    
+                  int f = int(RxP[4]);
+                  
+                  int OBJ_NUM = 0;
+                  
+                  for (int i = 0; i < allPolymesh_Faces.length; i++) {
+                    if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
+                      
+                      OBJ_NUM = i;
+                      
+                      WIN3D_Update = 1;
+                      break;
+                    }
+                  }
+                  
+                  if (OBJ_NUM > 0) {
+                  
+                    int found_at = -1;
+                    
+                    int use_it = 0; // 0:nothing 1:add -1:subtract
+                    
+                    if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+                    if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+                    if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+                    
+                    if (addNewSelectionToPreviousSelection != 0) {
+      
+                      for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
+                        if (selectedPolymesh_numbers[o] == OBJ_NUM) {
+                          found_at = o;
+                          if (addNewSelectionToPreviousSelection == 1) {
+                            use_it = 0;
+                          }
+                          if (addNewSelectionToPreviousSelection == -1) {
+                            use_it = -1; 
+                          }
+                          break;
+                        } 
+                      }
+                    }
+                    
+                    if (use_it == -1) {
+                      int[] startList = (int[]) subset(selectedPolymesh_numbers, 0, found_at);
+                      int[] endList = (int[]) subset(selectedPolymesh_numbers, found_at + 1);
+                      
+                      selectedPolymesh_numbers = (int[]) concat(startList, endList);
+                    }
+                    
+                    if (use_it == 1) {
+                      int[] new_OBJ_number = {OBJ_NUM};
+                      
+                      selectedPolymesh_numbers = (int[]) concat(selectedPolymesh_numbers, new_OBJ_number);
+                    }
+                  }
+                  
+                  
+                  //if (pre_selectedPolymesh_numbers_lastItem != selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1]) {
+                    SOLARCHVISION_calculate_selection_Pivot();
+                  //}
+          
+                }
+    
+                if (Work_with_2D_or_3D == 2) {
+    
+                  int OBJ_NUM = int(RxP[4]);
+                  
+    
                   int found_at = -1;
                   
                   int use_it = 0; // 0:nothing 1:add -1:subtract
@@ -22657,8 +22717,8 @@ void mouseClicked () {
                   
                   if (addNewSelectionToPreviousSelection != 0) {
     
-                    for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
-                      if (selectedPolymesh_numbers[o] == OBJ_NUM) {
+                    for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
+                      if (selectedObject2D_numbers[o] == OBJ_NUM) {
                         found_at = o;
                         if (addNewSelectionToPreviousSelection == 1) {
                           use_it = 0;
@@ -22672,337 +22732,288 @@ void mouseClicked () {
                   }
                   
                   if (use_it == -1) {
-                    int[] startList = (int[]) subset(selectedPolymesh_numbers, 0, found_at);
-                    int[] endList = (int[]) subset(selectedPolymesh_numbers, found_at + 1);
+                    int[] startList = (int[]) subset(selectedObject2D_numbers, 0, found_at);
+                    int[] endList = (int[]) subset(selectedObject2D_numbers, found_at + 1);
                     
-                    selectedPolymesh_numbers = (int[]) concat(startList, endList);
+                    selectedObject2D_numbers = (int[]) concat(startList, endList);
                   }
                   
                   if (use_it == 1) {
                     int[] new_OBJ_number = {OBJ_NUM};
                     
-                    selectedPolymesh_numbers = (int[]) concat(selectedPolymesh_numbers, new_OBJ_number);
+                    selectedObject2D_numbers = (int[]) concat(selectedObject2D_numbers, new_OBJ_number);
                   }
+    
+                  WIN3D_Update = 1;
+                  
+                  //if (pre_selectedObject2D_numbers_lastItem != selectedObject2D_numbers[selectedObject2D_numbers.length - 1]) {
+                    SOLARCHVISION_calculate_selection_Pivot();
+                  //}
+                }
+    
+                if (Work_with_2D_or_3D == 1) {
+                  
+                  int OBJ_NUM = int(RxP[4]);
+                  
+    
+                  int found_at = -1;
+                  
+                  int use_it = 0; // 0:nothing 1:add -1:subtract
+                  
+                  if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+                  if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+                  if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+                  
+                  if (addNewSelectionToPreviousSelection != 0) {
+    
+                    for (int o = selectedFractal_numbers.length - 1; o >= 0; o--) {
+                      if (selectedFractal_numbers[o] == OBJ_NUM) {
+                        found_at = o;
+                        if (addNewSelectionToPreviousSelection == 1) {
+                          use_it = 0;
+                        }
+                        if (addNewSelectionToPreviousSelection == -1) {
+                          use_it = -1; 
+                        }
+                        break;
+                      } 
+                    }
+                  }
+                  
+                  if (use_it == -1) {
+                    int[] startList = (int[]) subset(selectedFractal_numbers, 0, found_at);
+                    int[] endList = (int[]) subset(selectedFractal_numbers, found_at + 1);
+                    
+                    selectedFractal_numbers = (int[]) concat(startList, endList);
+                  }
+                  
+                  if (use_it == 1) {
+                    int[] new_OBJ_number = {OBJ_NUM};
+                    
+                    selectedFractal_numbers = (int[]) concat(selectedFractal_numbers, new_OBJ_number);
+                  }
+                  
+                  WIN3D_Update = 1;
                 }
                 
                 
-                //if (pre_selectedPolymesh_numbers_lastItem != selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1]) {
+                //if (pre_selectedFractal_numbers_lastItem != selectedFractal_numbers[selectedFractal_numbers.length - 1]) {
                   SOLARCHVISION_calculate_selection_Pivot();
                 //}
-        
-              }
-  
-              if (Work_with_2D_or_3D == 2) {
-  
-                int OBJ_NUM = int(RxP[4]);
                 
-  
-                int found_at = -1;
-                
-                int use_it = 0; // 0:nothing 1:add -1:subtract
-                
-                if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-                if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-                if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-                
-                if (addNewSelectionToPreviousSelection != 0) {
-  
-                  for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
-                    if (selectedObject2D_numbers[o] == OBJ_NUM) {
-                      found_at = o;
-                      if (addNewSelectionToPreviousSelection == 1) {
-                        use_it = 0;
-                      }
-                      if (addNewSelectionToPreviousSelection == -1) {
-                        use_it = -1; 
-                      }
-                      break;
-                    } 
-                  }
-                }
-                
-                if (use_it == -1) {
-                  int[] startList = (int[]) subset(selectedObject2D_numbers, 0, found_at);
-                  int[] endList = (int[]) subset(selectedObject2D_numbers, found_at + 1);
-                  
-                  selectedObject2D_numbers = (int[]) concat(startList, endList);
-                }
-                
-                if (use_it == 1) {
-                  int[] new_OBJ_number = {OBJ_NUM};
-                  
-                  selectedObject2D_numbers = (int[]) concat(selectedObject2D_numbers, new_OBJ_number);
-                }
-  
-                WIN3D_Update = 1;
-                
-                //if (pre_selectedObject2D_numbers_lastItem != selectedObject2D_numbers[selectedObject2D_numbers.length - 1]) {
-                  SOLARCHVISION_calculate_selection_Pivot();
-                //}
-              }
-  
-              if (Work_with_2D_or_3D == 1) {
-                
-                int OBJ_NUM = int(RxP[4]);
-                
-  
-                int found_at = -1;
-                
-                int use_it = 0; // 0:nothing 1:add -1:subtract
-                
-                if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-                if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-                if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-                
-                if (addNewSelectionToPreviousSelection != 0) {
-  
-                  for (int o = selectedFractal_numbers.length - 1; o >= 0; o--) {
-                    if (selectedFractal_numbers[o] == OBJ_NUM) {
-                      found_at = o;
-                      if (addNewSelectionToPreviousSelection == 1) {
-                        use_it = 0;
-                      }
-                      if (addNewSelectionToPreviousSelection == -1) {
-                        use_it = -1; 
-                      }
-                      break;
-                    } 
-                  }
-                }
-                
-                if (use_it == -1) {
-                  int[] startList = (int[]) subset(selectedFractal_numbers, 0, found_at);
-                  int[] endList = (int[]) subset(selectedFractal_numbers, found_at + 1);
-                  
-                  selectedFractal_numbers = (int[]) concat(startList, endList);
-                }
-                
-                if (use_it == 1) {
-                  int[] new_OBJ_number = {OBJ_NUM};
-                  
-                  selectedFractal_numbers = (int[]) concat(selectedFractal_numbers, new_OBJ_number);
-                }
-                
-                WIN3D_Update = 1;
-              }
-              
-              
-              //if (pre_selectedFractal_numbers_lastItem != selectedFractal_numbers[selectedFractal_numbers.length - 1]) {
-                SOLARCHVISION_calculate_selection_Pivot();
-              //}
-              
-              if (mouseButton == LEFT) SOLARCHVISION_reset_selectedRefValues();
-            }      
-       
-            
-            if (View_Select_Create_Modify == 0) { // create
-  
-              int keep_number_of_Polymeshes = allPolymesh_Faces.length;
-              int keep_number_of_2DObjects = allObject2D_XYZS.length;
-              int keep_number_of_Fractals = allFractal_XYZS.length;
-              
-              float x = RxP[0]; 
-              float y = RxP[1]; 
-              float z = RxP[2];             
-
-              float rot = Create_Input_Orientation;
-              if (rot == 360) rot = 15 * (int(random(24)));
-    
-              float rx = 0.5 * Create_Input_Length;
-              if (rx < 0) rx = random(0.25 * abs(rx), abs(rx));
-    
-              float ry = 0.5 * Create_Input_Width;
-              if (ry < 0) ry = random(0.25 * abs(ry), abs(ry));
-    
-              float rz = 0.5 * Create_Input_Height;
-              if (rz < 0) rz = random(0.25 * abs(rz), abs(rz));
-    
-              
-                
-              float px = Create_Input_powX; 
-              float py = Create_Input_powY;
-              float pz = Create_Input_powZ;
-              
-              if (Create_Input_powRnd == 1) {
-                px = pow(2, int(random(5)) - 1);
-                py = px;
-                pz = px;
-              }
-                
-              if (Create_Input_Volume != 0) {
-                          
-                if ((rx != 0) && (ry != 0)) {
-                  rz = Create_Input_Volume / (8 * rx * ry);
-                }
-                
-                //---------------------------------------------------
-                float A = 1; 
-                // cube volume: 8*r^3, sphere volume: 4*r^3, so maybe:
-                if (pz == 8) A = 1;
-                else if (pz == 4) A = 0.75;
-                else if (pz == 2) A = 0.5;
-                else if (pz == 1) A = 0.25;
-                else if (pz == 0.5) A = 0.125;
-                else if (pz == 0.25) A = 0.0625;
-                
-                rx /= pow(A, (1.0 / 3.0));
-                ry /= pow(A, (1.0 / 3.0));
-                rz /= pow(A, (1.0 / 3.0));
-                //---------------------------------------------------
-              }
-
-              x -= rx * selection_alignX;
-              y -= ry * selection_alignY;
-              z -= rz * selection_alignZ;
-              
-              int SOLID_created = 0;
-              
-              if (Create_Mesh_SuperOBJ == 1) {
-  
-                if ((px == 8) && (py == 8) && (pz == 2)) {
-                  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-                  
-                  SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, 2, rot);
-                }
-                
-                else if ((px == 2) && (py == 2) && (pz == 8)) {
-                  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-                  
-                  SOLARCHVISION_add_SuperCylinder(Create_Default_Material, x, y, z, rx,ry,rz, Create_Cylinder_Degree, rot);
-                }                
-    
-                else if ((px == 8) && (py == 8) && (pz == 8)) {
-                  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-                  
-                  SOLARCHVISION_add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, rot);
-                }
-                
-                else if ((px == 1) && (py == 1) && (pz == 1)) {
-                  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-                  
-                  SOLARCHVISION_add_Octahedron(Create_Default_Material, x,y,z, rx,ry,rz, rot);
-                }
-                
-                else {
-                  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-                  
-                  SOLARCHVISION_add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, Create_Sphere_Degree, rot);
-                }
-                
-                
-                
-                
-                if (Create_Mesh_or_Solid == 2) {
-                  SOLARCHVISION_addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, 0,0,rot);
-                  
-                  SOLID_created = 1;
-                }                
-              }
-              
-               
-              
-              
-
-                
-              if (Create_Mesh_Tri == 1) {
-                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
-                
-                SOLARCHVISION_add_Mesh3(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
-                SOLARCHVISION_add_Mesh3(Create_Default_Material, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
-                SOLARCHVISION_add_Mesh3(Create_Default_Material, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
-                SOLARCHVISION_add_Mesh3(Create_Default_Material, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
-              }
-              
-              if (Create_Mesh_Quad == 1) {
-                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
-                
-                SOLARCHVISION_add_Mesh4(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
-              }
-              
-              if (Create_Mesh_Poly == 1) {
-                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
-                
-                SOLARCHVISION_add_PolygonHyper(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
-              }
-  
-              if (Create_Mesh_Extrude == 1) {       
-                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-                
-                SOLARCHVISION_add_PolygonExtrude(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
-              }
-  
-              if (Create_Mesh_House == 1) {   
-                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
-     
-                SOLARCHVISION_add_House_Core(Create_Default_Material, x, y, z, rx, ry, rz, ry, rot);
-              }
-  
-              if (Create_Mesh_Parametric != 0) {
-                addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
-                
-                SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, Create_Mesh_Parametric, rot);
-              }
-  
-              if (Create_Fractal_Plant != 0) {
-                //addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; // maybe requiered if passing as solid! 
-                
-                float as_Solid = 1;
-                
-                randomSeed(millis());
-                SOLARCHVISION_add_FractalPlant(Create_Fractal_Plant_Type, x, y, z, 2 * rz, rot, Create_Fractal_Plant_DegreeMin, Create_Fractal_Plant_DegreeMax, Create_Fractal_Plant_Seed, Create_Fractal_Plant_TrunckSize, Create_Fractal_Plant_LeafSize, as_Solid);
+                if (mouseButton == LEFT) SOLARCHVISION_reset_selectedRefValues();
               }      
-
-              if (Create_Mesh_Plant != 0) {
-                int n = 0;
-                if (Create_Mesh_Plant_Type > 0) n = Create_Mesh_Plant_Type + Object2D_Filenames_PEOPLE.length;
-  
-                randomSeed(millis());
-                SOLARCHVISION_add_Object2D("TREES", n, x, y, z, 2 * rz);
-              }    
-  
-              if (Create_Mesh_Person != 0) {
+         
+              
+              if (View_Select_Create_Modify == 0) { // create
+    
+                int keep_number_of_Polymeshes = allPolymesh_Faces.length;
+                int keep_number_of_2DObjects = allObject2D_XYZS.length;
+                int keep_number_of_Fractals = allFractal_XYZS.length;
                 
-                randomSeed(millis());
-                SOLARCHVISION_add_Object2D("PEOPLE", Create_Mesh_Person_Type, x, y, z, 2.5);
+                float x = RxP[0]; 
+                float y = RxP[1]; 
+                float z = RxP[2];             
+  
+                float rot = Create_Input_Orientation;
+                if (rot == 360) rot = 15 * (int(random(24)));
+      
+                float rx = 0.5 * Create_Input_Length;
+                if (rx < 0) rx = random(0.25 * abs(rx), abs(rx));
+      
+                float ry = 0.5 * Create_Input_Width;
+                if (ry < 0) ry = random(0.25 * abs(ry), abs(ry));
+      
+                float rz = 0.5 * Create_Input_Height;
+                if (rz < 0) rz = random(0.25 * abs(rz), abs(rz));
+      
+                
+                  
+                float px = Create_Input_powX; 
+                float py = Create_Input_powY;
+                float pz = Create_Input_powZ;
+                
+                if (Create_Input_powRnd == 1) {
+                  px = pow(2, int(random(5)) - 1);
+                  py = px;
+                  pz = px;
+                }
+                  
+                if (Create_Input_Volume != 0) {
+                            
+                  if ((rx != 0) && (ry != 0)) {
+                    rz = Create_Input_Volume / (8 * rx * ry);
+                  }
+                  
+                  //---------------------------------------------------
+                  float A = 1; 
+                  // cube volume: 8*r^3, sphere volume: 4*r^3, so maybe:
+                  if (pz == 8) A = 1;
+                  else if (pz == 4) A = 0.75;
+                  else if (pz == 2) A = 0.5;
+                  else if (pz == 1) A = 0.25;
+                  else if (pz == 0.5) A = 0.125;
+                  else if (pz == 0.25) A = 0.0625;
+                  
+                  rx /= pow(A, (1.0 / 3.0));
+                  ry /= pow(A, (1.0 / 3.0));
+                  rz /= pow(A, (1.0 / 3.0));
+                  //---------------------------------------------------
+                }
+  
+                x -= rx * selection_alignX;
+                y -= ry * selection_alignY;
+                z -= rz * selection_alignZ;
+                
+                int SOLID_created = 0;
+                
+                if (Create_Mesh_SuperOBJ == 1) {
+    
+                  if ((px == 8) && (py == 8) && (pz == 2)) {
+                    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+                    
+                    SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, 2, rot);
+                  }
+                  
+                  else if ((px == 2) && (py == 2) && (pz == 8)) {
+                    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+                    
+                    SOLARCHVISION_add_SuperCylinder(Create_Default_Material, x, y, z, rx,ry,rz, Create_Cylinder_Degree, rot);
+                  }                
+      
+                  else if ((px == 8) && (py == 8) && (pz == 8)) {
+                    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+                    
+                    SOLARCHVISION_add_Box_Core(Create_Default_Material, x,y,z, rx,ry,rz, rot);
+                  }
+                  
+                  else if ((px == 1) && (py == 1) && (pz == 1)) {
+                    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+                    
+                    SOLARCHVISION_add_Octahedron(Create_Default_Material, x,y,z, rx,ry,rz, rot);
+                  }
+                  
+                  else {
+                    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+                    
+                    SOLARCHVISION_add_SuperSphere(Create_Default_Material, x,y,z, pz,py,pz, rx,ry,rz, Create_Sphere_Degree, rot);
+                  }
+                  
+                  
+                  
+                  
+                  if (Create_Mesh_or_Solid == 2) {
+                    SOLARCHVISION_addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, 0,0,rot);
+                    
+                    SOLID_created = 1;
+                  }                
+                }
+                
+                 
+                
+                
+  
+                  
+                if (Create_Mesh_Tri == 1) {
+                  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
+                  
+                  SOLARCHVISION_add_Mesh3(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
+                  SOLARCHVISION_add_Mesh3(Create_Default_Material, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
+                  SOLARCHVISION_add_Mesh3(Create_Default_Material, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
+                  SOLARCHVISION_add_Mesh3(Create_Default_Material, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
+                }
+                
+                if (Create_Mesh_Quad == 1) {
+                  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
+                  
+                  SOLARCHVISION_add_Mesh4(Create_Default_Material, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
+                }
+                
+                if (Create_Mesh_Poly == 1) {
+                  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
+                  
+                  SOLARCHVISION_add_PolygonHyper(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
+                }
+    
+                if (Create_Mesh_Extrude == 1) {       
+                  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+                  
+                  SOLARCHVISION_add_PolygonExtrude(Create_Default_Material, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
+                }
+    
+                if (Create_Mesh_House == 1) {   
+                  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
+       
+                  SOLARCHVISION_add_House_Core(Create_Default_Material, x, y, z, rx, ry, rz, ry, rot);
+                }
+    
+                if (Create_Mesh_Parametric != 0) {
+                  addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
+                  
+                  SOLARCHVISION_add_ParametricSurface(Create_Default_Material, x, y, z, rx, ry, rz, Create_Mesh_Parametric, rot);
+                }
+    
+                if (Create_Fractal_Plant != 0) {
+                  //addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; // maybe requiered if passing as solid! 
+                  
+                  float as_Solid = 1;
+                  
+                  randomSeed(millis());
+                  SOLARCHVISION_add_FractalPlant(Create_Fractal_Plant_Type, x, y, z, 2 * rz, rot, Create_Fractal_Plant_DegreeMin, Create_Fractal_Plant_DegreeMax, Create_Fractal_Plant_Seed, Create_Fractal_Plant_TrunckSize, Create_Fractal_Plant_LeafSize, as_Solid);
+                }      
+  
+                if (Create_Mesh_Plant != 0) {
+                  int n = 0;
+                  if (Create_Mesh_Plant_Type > 0) n = Create_Mesh_Plant_Type + Object2D_Filenames_PEOPLE.length;
+    
+                  randomSeed(millis());
+                  SOLARCHVISION_add_Object2D("TREES", n, x, y, z, 2 * rz);
+                }    
+    
+                if (Create_Mesh_Person != 0) {
+                  
+                  randomSeed(millis());
+                  SOLARCHVISION_add_Object2D("PEOPLE", Create_Mesh_Person_Type, x, y, z, 2.5);
+                }
+                
+                
+    
+                if (keep_number_of_Polymeshes != allPolymesh_Faces.length) { // if any 3D-mesh created during the process
+                  
+                  selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = allPolymesh_Faces.length - 1;
+                  
+                  SOLARCHVISION_calculate_selection_Pivot();
+                }
+                
+                if (keep_number_of_2DObjects != allObject2D_XYZS.length) { // if any 2D-mesh created during the process
+                  
+                  selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = allObject2D_XYZS.length - 1;
+                  
+                  SOLARCHVISION_calculate_selection_Pivot();
+                }            
+    
+                if (keep_number_of_Fractals != allFractal_XYZS.length) { // if any Fractal created during the process
+                  
+                  selectedFractal_numbers[selectedFractal_numbers.length - 1] = allFractal_XYZS.length - 1;
+                  
+                  SOLARCHVISION_calculate_selection_Pivot();
+                } 
+                
+                if (SOLID_created != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+              
               }
               
-              
-  
-              if (keep_number_of_Polymeshes != allPolymesh_Faces.length) { // if any 3D-mesh created during the process
-                
-                selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = allPolymesh_Faces.length - 1;
-                
-                SOLARCHVISION_calculate_selection_Pivot();
-              }
-              
-              if (keep_number_of_2DObjects != allObject2D_XYZS.length) { // if any 2D-mesh created during the process
-                
-                selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = allObject2D_XYZS.length - 1;
-                
-                SOLARCHVISION_calculate_selection_Pivot();
-              }            
-  
-              if (keep_number_of_Fractals != allFractal_XYZS.length) { // if any Fractal created during the process
-                
-                selectedFractal_numbers[selectedFractal_numbers.length - 1] = allFractal_XYZS.length - 1;
-                
-                SOLARCHVISION_calculate_selection_Pivot();
-              } 
-              
-              if (SOLID_created != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            }          
             
-            }
-            
-          }          
-          
-          WIN3D_Update = 1;
-  
-        }       
+            WIN3D_Update = 1;
+    
+          }       
+        }
+        
+        ROLLOUT_Update = 1;
+        
+        redraw();
       }
-      
-      ROLLOUT_Update = 1;
-      
-      redraw();
     }
   }
 }
@@ -27855,12 +27866,12 @@ void dessin_CameraDistance (int _type, float x, float y, float r) {
 
   strokeWeight(1);
   stroke(255); 
-  line(-r, -0.5 * r, r, -0.5 * r);
+  line(-r, 0, r, 0);
   strokeWeight(2);
-  line(0, -0.5 * r, r, 0);
-  line(0, -0.5 * r, -r, 0);
+  line(0, 0, r, 0.5 * r);
+  line(0, 0, -r, 0.5 * r);
   strokeWeight(2);
-  line(0, -0.5 * r, 0, r);
+  line(0, 0, 0, r);
   
   strokeWeight(1);
   stroke(255);
@@ -28209,8 +28220,8 @@ String[][] BAR_b_Items = {
                           {"1", "LAS", "LookAtSelection", "1.0"},
                           {"3", "CRL", "CRLz", "CRLxy", "CameraRoll", "1.0"},
                           {"1", "±CDS", "CameraDistance", "1.0"},
-                          {"1", "±CDZ", "DistZ", "1.0"},
                           {"1", "±CDM", "DistMouseXY", "1.0"},
+                          {"1", "±CDZ", "DistZ", "1.0"},
                           {"3", "DIz", "DIx", "DIy", "Truck", "1.0"},
                           {"1", "OR", "ORxy", "ORz", "Orbit", "1.0"},                          
                           {"1", "TRL", "TRLz", "TRLxy", "TargetRoll", "1.0"},
