@@ -30128,23 +30128,55 @@ void SOLARCHVISION_save_project (String myFile) {
     newChild2.setContent(lineSTR);
   } 
 
+  {
+    newChild1 = my_xml.addChild("allObject2D");
+    int ni = 1 + allObject2D_num;
+    newChild1.setInt("ni", ni);
+    for (int i = 0; i < ni; i++) {
+      newChild2 = newChild1.addChild("Object2D");
+      newChild2.setInt("id", i);
+      String lineSTR = "";
+      //for (int j = 0; j < allObject2D_XYZS[i].length; j++) {
+      for (int j = 0; j < 4; j++) { // x, y, z, s 
+        lineSTR += nf(allObject2D_XYZS[i][j], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+        lineSTR += ",";
+      }
+      lineSTR += allObject2D_MAP[i];
+      
+      newChild2.setContent(lineSTR);
+    } 
+  }
 
-  newChild1 = my_xml.addChild("allObject2D");
-  int ni = 1 + allObject2D_num;
-  newChild1.setInt("ni", ni);
-  for (int i = 0; i < ni; i++) {
-    newChild2 = newChild1.addChild("Object2D");
-    newChild2.setInt("id", i);
-    String lineSTR = "";
-    //for (int j = 0; j < allObject2D_XYZS[i].length; j++) {
-    for (int j = 0; j < 4; j++) { // x, y, z, s 
-      lineSTR += nf(allObject2D_XYZS[i][j], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+  {
+    newChild1 = my_xml.addChild("allFractal");
+    int ni = 1 + allFractal_num;
+    newChild1.setInt("ni", ni);
+    for (int i = 0; i < ni; i++) {
+      newChild2 = newChild1.addChild("Fractal");
+      newChild2.setInt("id", i);
+      String lineSTR = "";
+      //for (int j = 0; j < allFractal_XYZS[i].length; j++) {
+      for (int j = 0; j < 4; j++) { // x, y, z, s 
+        lineSTR += nf(allFractal_XYZS[i][j], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+        lineSTR += ",";
+      }
+      lineSTR += nf(allFractal_Type[i], 0);
       lineSTR += ",";
-    }
-    lineSTR += allObject2D_MAP[i];
-    
-    newChild2.setContent(lineSTR);
-  } 
+      lineSTR += nf(allFractal_DegreeMin[i], 0);
+      lineSTR += ",";
+      lineSTR += nf(allFractal_DegreeMax[i], 0);
+      lineSTR += ",";
+      lineSTR += nf(allFractal_Seed[i], 0);
+      lineSTR += ",";
+      lineSTR += nf(allFractal_TrunckSize[i], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+      lineSTR += ",";
+      lineSTR += nf(allFractal_LeafSize[i], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+      
+      newChild2.setContent(lineSTR);
+    } 
+  }
+
+
 
 
   saveXML(my_xml, myFile);    
