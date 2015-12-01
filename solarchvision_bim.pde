@@ -21441,8 +21441,8 @@ void mouseClicked () {
   
     if (automated == 0) {
 
-      if (BAR_a_selected_parent != -1) {
-        
+      if ((BAR_a_selected_parent != -1) && (isInside(mouseX, mouseY, 0, 0, width, a_pixel) == 0)) {
+         
         if (mouseButton == LEFT) {
           if (BAR_a_selected_child != 0) {
     
@@ -22279,10 +22279,10 @@ void mouseClicked () {
         Y_clicked = -1;      
       }   
       else {    
-        
+
         X_clicked = mouseX;
         Y_clicked = mouseY;
-  
+
         if (isInside(X_clicked, Y_clicked, 0, 0, width, a_pixel) == 1) {
           BAR_a_Update = 1;
         }
@@ -30666,8 +30666,6 @@ void SOLARCHVISION_load_project (String myFile) {
 
 
 /* bugs:
-
-rollout_a returns previous clicked item (redo previous function) when closing the menu second time.
 
 delete because scrolling selection+ could add duplicate of the same objects to the list!
 
