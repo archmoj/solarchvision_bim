@@ -30023,6 +30023,63 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setString("LAND_mid_lat", Double.toString(LAND_mid_lat));
   newChild1.setString("LAND_mid_lon", Double.toString(LAND_mid_lon));
 
+  newChild1 = my_xml.addChild("DEFINED_STATION");
+  newChild1.setInt("ni", DEFINED_STATIONS[STATION_NUMBER].length);
+  for (int i = 0; i < DEFINED_STATIONS[STATION_NUMBER].length; i++) {
+    newChild2 = newChild1.addChild("Property");
+    newChild2.setInt("id", i);
+    newChild2.setContent(DEFINED_STATIONS[STATION_NUMBER][i]);
+  } 
+
+  {
+    newChild1 = my_xml.addChild("allFractal");
+    int ni = 1 + allFractal_num;
+    newChild1.setInt("ni", ni);
+    for (int i = 0; i < ni; i++) {
+      newChild2 = newChild1.addChild("Fractal");
+      newChild2.setInt("id", i);
+      String lineSTR = "";
+      //for (int j = 0; j < Fractal_XYZSRA[i].length; j++) {
+      for (int j = 0; j < 6; j++) { // x, y, z, s, rot, as_mesh/as_solid 
+        lineSTR += nf(Fractal_XYZSRA[i][j], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+        lineSTR += ",";
+      }
+      lineSTR += nf(allFractal_Type[i], 0);
+      lineSTR += ",";
+      lineSTR += nf(allFractal_DegreeMin[i], 0);
+      lineSTR += ",";
+      lineSTR += nf(allFractal_DegreeMax[i], 0);
+      lineSTR += ",";
+      lineSTR += nf(allFractal_Seed[i], 0);
+      lineSTR += ",";
+      lineSTR += nf(allFractal_TrunckSize[i], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+      lineSTR += ",";
+      lineSTR += nf(allFractal_LeafSize[i], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+      
+      newChild2.setContent(lineSTR);
+    } 
+  }
+  
+  {
+    newChild1 = my_xml.addChild("allObject2D");
+    int ni = 1 + allObject2D_num;
+    newChild1.setInt("ni", ni);
+    for (int i = 0; i < ni; i++) {
+      newChild2 = newChild1.addChild("Object2D");
+      newChild2.setInt("id", i);
+      String lineSTR = "";
+      //for (int j = 0; j < allObject2D_XYZS[i].length; j++) {
+      for (int j = 0; j < 4; j++) { // x, y, z, s 
+        lineSTR += nf(allObject2D_XYZS[i][j], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+        lineSTR += ",";
+      }
+      lineSTR += allObject2D_MAP[i];
+      
+      newChild2.setContent(lineSTR);
+    } 
+  }
+
+
   {
     newChild1 = my_xml.addChild("LAND_MESH");
     int vNo = 0;
@@ -30146,61 +30203,8 @@ void SOLARCHVISION_save_project (String myFile) {
     newChild2.setContent(lineSTR);
   } 
 
-  {
-    newChild1 = my_xml.addChild("allObject2D");
-    int ni = 1 + allObject2D_num;
-    newChild1.setInt("ni", ni);
-    for (int i = 0; i < ni; i++) {
-      newChild2 = newChild1.addChild("Object2D");
-      newChild2.setInt("id", i);
-      String lineSTR = "";
-      //for (int j = 0; j < allObject2D_XYZS[i].length; j++) {
-      for (int j = 0; j < 4; j++) { // x, y, z, s 
-        lineSTR += nf(allObject2D_XYZS[i][j], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
-        lineSTR += ",";
-      }
-      lineSTR += allObject2D_MAP[i];
-      
-      newChild2.setContent(lineSTR);
-    } 
-  }
 
-  {
-    newChild1 = my_xml.addChild("allFractal");
-    int ni = 1 + allFractal_num;
-    newChild1.setInt("ni", ni);
-    for (int i = 0; i < ni; i++) {
-      newChild2 = newChild1.addChild("Fractal");
-      newChild2.setInt("id", i);
-      String lineSTR = "";
-      //for (int j = 0; j < Fractal_XYZSRA[i].length; j++) {
-      for (int j = 0; j < 6; j++) { // x, y, z, s, rot, as_mesh/as_solid 
-        lineSTR += nf(Fractal_XYZSRA[i][j], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
-        lineSTR += ",";
-      }
-      lineSTR += nf(allFractal_Type[i], 0);
-      lineSTR += ",";
-      lineSTR += nf(allFractal_DegreeMin[i], 0);
-      lineSTR += ",";
-      lineSTR += nf(allFractal_DegreeMax[i], 0);
-      lineSTR += ",";
-      lineSTR += nf(allFractal_Seed[i], 0);
-      lineSTR += ",";
-      lineSTR += nf(allFractal_TrunckSize[i], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
-      lineSTR += ",";
-      lineSTR += nf(allFractal_LeafSize[i], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
-      
-      newChild2.setContent(lineSTR);
-    } 
-  }
 
-  newChild1 = my_xml.addChild("DEFINED_STATION");
-  newChild1.setInt("ni", DEFINED_STATIONS[STATION_NUMBER].length);
-  for (int i = 0; i < DEFINED_STATIONS[STATION_NUMBER].length; i++) {
-    newChild2 = newChild1.addChild("Property");
-    newChild2.setInt("id", i);
-    newChild2.setContent(DEFINED_STATIONS[STATION_NUMBER][i]);
-  } 
 
 
   saveXML(my_xml, myFile);    
@@ -30609,7 +30613,74 @@ void SOLARCHVISION_load_project (String myFile) {
 
       
     }
+    
+    children0 = FileAll.getChildren("DEFINED_STATION");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
 
+      XML[] children1 = children0[L].getChildren("Property");         
+      
+      STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
+      
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children1[i].getContent();
+        
+        DEFINED_STATIONS[STATION_NUMBER][i] = lineSTR;  
+      }
+      
+      BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][0]; // <<<<<<<<      
+    }         
+    
+    children0 = FileAll.getChildren("allFractal");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      
+      Fractal_XYZSRA = new float [ni][6];
+      allFractal_Type = new int [ni];
+      allFractal_DegreeMin = new int [ni];
+      allFractal_DegreeMax = new int [ni];
+      allFractal_Seed = new int [ni];
+      allFractal_TrunckSize = new float [ni];
+      allFractal_LeafSize = new float [ni];
+      allFractal_num = ni - 1;
+      
+      XML[] children1 = children0[L].getChildren("Fractal");         
+      for (int i = 0; i < ni; i++) {
+
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < 6; j++) {
+          Fractal_XYZSRA[i][j] = float(parts[j]);
+        }
+
+        allFractal_Type[i] = int(parts[6]);
+        allFractal_DegreeMin[i] = int(parts[7]);
+        allFractal_DegreeMax[i] = int(parts[8]);
+        allFractal_Seed[i] = int(parts[9]);
+        allFractal_TrunckSize[i] = float(parts[10]);
+        allFractal_LeafSize[i] = float(parts[11]);
+      }
+    }       
+
+    children0 = FileAll.getChildren("allObject2D");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      
+      allObject2D_XYZS = new float [ni][4];
+      allObject2D_MAP = new int [ni];
+      allObject2D_num = ni - 1;
+      
+      XML[] children1 = children0[L].getChildren("Object2D");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < 4; j++) {
+          allObject2D_XYZS[i][j] = float(parts[j]);
+        }
+        allObject2D_MAP[i] = int(parts[4]);
+      }
+    }        
+    
     children0 = FileAll.getChildren("allVertices");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
@@ -30707,75 +30778,11 @@ void SOLARCHVISION_load_project (String myFile) {
         ParametricGeometry[] newSolidObject = {new ParametricGeometry(v, x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz)};         
         SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);          
       }
-    }    
+    }  
 
-    children0 = FileAll.getChildren("allObject2D");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      
-      allObject2D_XYZS = new float [ni][4];
-      allObject2D_MAP = new int [ni];
-      allObject2D_num = ni - 1;
-      
-      XML[] children1 = children0[L].getChildren("Object2D");         
-      for (int i = 0; i < ni; i++) {
-        String lineSTR = children1[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < 4; j++) {
-          allObject2D_XYZS[i][j] = float(parts[j]);
-        }
-        allObject2D_MAP[i] = int(parts[4]);
-      }
-    }        
 
-    children0 = FileAll.getChildren("allFractal");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      
-      Fractal_XYZSRA = new float [ni][6];
-      allFractal_Type = new int [ni];
-      allFractal_DegreeMin = new int [ni];
-      allFractal_DegreeMax = new int [ni];
-      allFractal_Seed = new int [ni];
-      allFractal_TrunckSize = new float [ni];
-      allFractal_LeafSize = new float [ni];
-      allFractal_num = ni - 1;
-      
-      XML[] children1 = children0[L].getChildren("Fractal");         
-      for (int i = 0; i < ni; i++) {
 
-        String lineSTR = children1[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < 6; j++) {
-          Fractal_XYZSRA[i][j] = float(parts[j]);
-        }
 
-        allFractal_Type[i] = int(parts[6]);
-        allFractal_DegreeMin[i] = int(parts[7]);
-        allFractal_DegreeMax[i] = int(parts[8]);
-        allFractal_Seed[i] = int(parts[9]);
-        allFractal_TrunckSize[i] = float(parts[10]);
-        allFractal_LeafSize[i] = float(parts[11]);
-
-      }
-    }        
-
-    children0 = FileAll.getChildren("DEFINED_STATION");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-
-      XML[] children1 = children0[L].getChildren("Property");         
-      
-      STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
-      
-      for (int i = 0; i < ni; i++) {
-        String lineSTR = children1[i].getContent();
-        
-        DEFINED_STATIONS[STATION_NUMBER][i] = lineSTR;  
-      }
-      
-      BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][0]; // <<<<<<<<      
-    }     
     
   }
   
