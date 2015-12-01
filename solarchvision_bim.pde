@@ -30016,12 +30016,12 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setInt("n_slp", n_slp);
   newChild1.setInt("n_dir", n_dir);
 
-  newChild1 = my_xml.addChild("DEFINED_STATION0");
-  newChild1.setInt("ni", DEFINED_STATIONS[0].length);
-  for (int i = 0; i < DEFINED_STATIONS[0].length; i++) {
-    newChild2 = newChild1.addChild("Station");
+  newChild1 = my_xml.addChild("DEFINED_STATION");
+  newChild1.setInt("ni", DEFINED_STATIONS[STATION_NUMBER].length);
+  for (int i = 0; i < DEFINED_STATIONS[STATION_NUMBER].length; i++) {
+    newChild2 = newChild1.addChild("Property");
     newChild2.setInt("id", i);
-    newChild2.setContent(DEFINED_STATIONS[0][i]);
+    newChild2.setContent(DEFINED_STATIONS[STATION_NUMBER][i]);
   } 
 
   newChild1 = my_xml.addChild("allPolymesh_Solids");
@@ -30531,6 +30531,24 @@ void SOLARCHVISION_load_project (String myFile) {
 
       
     }
+    
+    children0 = FileAll.getChildren("DEFINED_STATION");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+
+      XML[] children1 = children0[L].getChildren("Property");         
+      
+      STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
+      
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children1[i].getContent();
+        
+        DEFINED_STATIONS[STATION_NUMBER][i] = lineSTR;  
+      }
+      
+      BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][0]; // <<<<<<<<      
+    }     
+    
    
     children0 = FileAll.getChildren("allPolymesh_Solids");
     for (int L = 0; L < children0.length; L++) {
@@ -30632,11 +30650,18 @@ void SOLARCHVISION_load_project (String myFile) {
     }    
 
     
+
+
+    
+    
   }
   
   
   println("End of loading project.");
+ 
   
+ 
+  SOLARCHVISION_update_station(0); 
   
   
   SOLARCHVISION_deselectAll();
