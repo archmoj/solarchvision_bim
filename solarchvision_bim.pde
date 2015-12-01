@@ -1118,7 +1118,7 @@ int Display_SKY3D = 0;
 int Download_LAND_MESH = 0;
 int Load_LAND_MESH = 1; // 1;
 int Display_LAND_MESH = 1; // 1;
-int Display_LAND_TEXTURE = 1;
+int Display_LAND_TEXTURE = 0;
 int Display_LAND_DEPTH = 0;
 int Skip_LAND_MESH_Center = 0; //5;
 
@@ -2931,7 +2931,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
         WIN3D_Diagrams.fill(127);
         WIN3D_Diagrams.strokeWeight(0);
       }
-      else{
+      else {
         WIN3D_Diagrams.stroke(255);
         WIN3D_Diagrams.fill(255);
         WIN3D_Diagrams.strokeWeight(2);
@@ -3078,7 +3078,7 @@ void SOLARCHVISION_draw_WORLD () {
                       WORLD_Diagrams.fill(127);
                       WORLD_Diagrams.strokeWeight(0);
                     }
-                    else{
+                    else {
                       WORLD_Diagrams.stroke(255);
                       WORLD_Diagrams.fill(255);
                       WORLD_Diagrams.strokeWeight(2 * WORLD_Image_Scale);
@@ -3155,7 +3155,7 @@ void SOLARCHVISION_draw_WORLD () {
                       WORLD_Diagrams.fill(127);
                       WORLD_Diagrams.strokeWeight(0);
                     }
-                    else{
+                    else {
                       WORLD_Diagrams.stroke(255);
                       WORLD_Diagrams.fill(255);
                       WORLD_Diagrams.strokeWeight(2 * WORLD_Image_Scale);
@@ -4545,7 +4545,7 @@ float[] SOLARCHVISION_DWYR (float _variable) {
     COL[2] = 0;
     COL[3] = 0;
   }  
-  else{
+  else {
     COL[1] = 127;
     COL[2] = 0;
     COL[3] = 0;
@@ -7536,7 +7536,7 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
             STUDY_Diagrams.fill(127);
             STUDY_Diagrams.strokeWeight(0);
           }
-          else{
+          else {
             STUDY_Diagrams.stroke(255);
             STUDY_Diagrams.fill(255);
             STUDY_Diagrams.strokeWeight(2);
@@ -7579,7 +7579,7 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
       STUDY_Diagrams.fill(127);
       STUDY_Diagrams.strokeWeight(0);
     }
-    else{
+    else {
       STUDY_Diagrams.stroke(255);
       STUDY_Diagrams.fill(255);
       STUDY_Diagrams.strokeWeight(2);
@@ -7677,7 +7677,7 @@ void SOLARCHVISION_draw_sorted (int i, int j, float[] _valuesA, float[] _valuesB
       STUDY_Diagrams.fill(127);
       STUDY_Diagrams.strokeWeight(0);
     }
-    else{
+    else {
       STUDY_Diagrams.stroke(255);
       STUDY_Diagrams.fill(255);
       STUDY_Diagrams.strokeWeight(2);
@@ -9167,7 +9167,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           STUDY_Diagrams.fill(127);
           STUDY_Diagrams.strokeWeight(0);
         }
-        else{
+        else {
           STUDY_Diagrams.stroke(255);
           STUDY_Diagrams.fill(255);
           STUDY_Diagrams.strokeWeight(2);
@@ -9756,7 +9756,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           STUDY_Diagrams.fill(127);
           STUDY_Diagrams.strokeWeight(0);
         }
-        else{
+        else {
           STUDY_Diagrams.stroke(255);
           STUDY_Diagrams.fill(255);
           STUDY_Diagrams.strokeWeight(2);
@@ -10225,7 +10225,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         STUDY_Diagrams.fill(127);
         STUDY_Diagrams.strokeWeight(0);
       }
-      else{
+      else {
         STUDY_Diagrams.stroke(255);
         STUDY_Diagrams.fill(255);
         STUDY_Diagrams.strokeWeight(2);
@@ -10447,7 +10447,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       STUDY_Diagrams.fill(127);
                       STUDY_Diagrams.strokeWeight(0);
                     }
-                    else{
+                    else {
                       STUDY_Diagrams.stroke(255);
                       STUDY_Diagrams.fill(255);
                       STUDY_Diagrams.strokeWeight(2);
@@ -10521,7 +10521,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         STUDY_Diagrams.fill(127);
         STUDY_Diagrams.strokeWeight(0);
       }
-      else{
+      else {
         STUDY_Diagrams.stroke(255);
         STUDY_Diagrams.fill(255);
         STUDY_Diagrams.strokeWeight(2);
@@ -13678,7 +13678,7 @@ void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r,
       if (Teselation == 0) {
         SOLARCHVISION_addToFaces(newFace);
       }
-      else{
+      else {
         SOLARCHVISION_addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
       }
     }
@@ -13696,7 +13696,7 @@ void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r,
       if (Teselation == 0) {
         SOLARCHVISION_addToFaces(newFace);
       }
-      else{
+      else {
         SOLARCHVISION_addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
       }
     }
@@ -13714,7 +13714,7 @@ void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r,
       if (Teselation == 0) {
         SOLARCHVISION_addToFaces(newFace);
       }
-      else{
+      else {
         SOLARCHVISION_addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
       }
     }    
@@ -13732,7 +13732,7 @@ void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r,
       if (Teselation == 0) {
         SOLARCHVISION_addToFaces(newFace);
       }
-      else{
+      else {
         SOLARCHVISION_addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
       }
     }     
@@ -13750,7 +13750,7 @@ void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r,
       if (Teselation == 0) {
         SOLARCHVISION_addToFaces(newFace);
       }
-      else{
+      else {
         SOLARCHVISION_addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
       }
     }
@@ -13768,7 +13768,7 @@ void SOLARCHVISION_add_QuadSphere (int m, float cx, float cy, float cz, float r,
       if (Teselation == 0) {
         SOLARCHVISION_addToFaces(newFace);
       }
-      else{
+      else {
         SOLARCHVISION_addToFaces_afterSphericalTeselation(m, cx, cy, cz, r, newFace);
       }
     }    
@@ -14327,7 +14327,7 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
               if (t == 0) {
                 SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
               }
-              else{
+              else {
                 SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
               }
     
@@ -14354,7 +14354,7 @@ void SOLARCHVISION_add_2Dobjects_polar (int people_or_trees, int n, float x0, fl
     if (people_or_trees == 0) {
       SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
     }
-    else{
+    else {
       SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
     }
   }  
@@ -14378,7 +14378,7 @@ void SOLARCHVISION_add_2Dobjects_plane (int people_or_trees, int n, float x0, fl
     if (people_or_trees == 0) {
       SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
     }
-    else{
+    else {
       SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
     }
   }  
@@ -14903,7 +14903,7 @@ PGraphics ViewFromTheSky (int SKY2D_X_View, int SKY2D_Y_View, float SKY2D_ZOOM_c
     if (allFaces_MAT[f][0] == -2) {
       c = color(127, 255, 127);
     }
-    else{
+    else {
       int mt = allFaces_MAT[f][0];
       c = color(Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3], Materials_Color[mt][0]);
     }
@@ -15616,14 +15616,14 @@ void SOLARCHVISION_draw_3Dobjects () {
     
         if (((Load_URBAN_MESH == 0) || (Display_URBAN_MESH == 0)) && (urbanFaces_start <= f) && (urbanFaces_end >= f)) {
         }
-        else{
+        else {
         
           color c = color(0, 0, 0);
       
           if (allFaces_MAT[f][0] == -2) {
             c = color(127, 255, 127);
           }
-          else{
+          else {
             int mt = allFaces_MAT[f][0];
             c = color(Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3], Materials_Color[mt][0]);
           }
@@ -15947,7 +15947,7 @@ void SOLARCHVISION_draw_3Dobjects () {
             
             if (((Load_URBAN_MESH == 0) || (Display_URBAN_MESH == 0)) && (urbanFaces_start <= f) && (urbanFaces_end >= f)) {
             }
-            else{
+            else {
     
               int Teselation = allFaces_MAT[f][1];
               
@@ -16062,7 +16062,7 @@ void SOLARCHVISION_draw_3Dobjects () {
           
           if (((Load_URBAN_MESH == 0) || (Display_URBAN_MESH == 0)) && (urbanFaces_start <= f) && (urbanFaces_end >= f)) {
           }
-          else{    
+          else {    
           
             int Teselation = allFaces_MAT[f][1];
             
@@ -16130,7 +16130,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                   if (PROCESSED_DAILY_SCENARIOS.length > STUDY_j_end - STUDY_j_start) {
                     Normals_COL_N = PROCESSED_DAILY_SCENARIOS[STUDY_j_end - STUDY_j_start];
                   }
-                  else{
+                  else {
                     Normals_COL_N = new int [9];
                     Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
                     
@@ -16261,7 +16261,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                                     
                                     _valuesSUM_RAD += (_values_R_dif * SkyMask); // only approximate diffuse radiation!
                                   }
-                                  else{ 
+                                  else { 
                                     if (_values_E_dir < 0) {
                                       _valuesSUM_EFF_N += -((_values_E_dir * SunMask) + (_values_E_dif * SkyMask)); 
                                     }
@@ -16977,7 +16977,7 @@ float[] SOLARCHVISION_3Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
           MAX_o = 1;
           delta = 1;
         //}
-        //else{
+        //else {
         //  MAX_o = 0;
         //  delta = 0;       
         //}
@@ -17143,7 +17143,7 @@ float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
           MAX_o = 1;
           delta = 1;
         //}
-        //else{
+        //else {
         //  MAX_o = 0;
         //  delta = 0;       
         //}
@@ -17308,7 +17308,7 @@ float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
           MAX_o = 1;
           delta = 1;
         //}
-        //else{
+        //else {
         //  MAX_o = 0;
         //  delta = 0;       
         //}
@@ -17521,7 +17521,7 @@ float[] SOLARCHVISION_0Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
           MAX_o = 1;
           delta = 1;
         //}
-        //else{
+        //else {
         //  MAX_o = 0;
         //  delta = 0;       
         //}
@@ -17626,7 +17626,7 @@ float[][] getSubFace (float[][] base_Vertices, int Teselation, int n) {
       return_vertices[j] = base_Vertices[j];
     }
   }
-  else{
+  else {
     return_vertices = new float [4][3];
       
     int div = base_Vertices.length;
@@ -17727,6 +17727,8 @@ float LAND_TEXTURE_scale_U = 1000; // 1km
 float LAND_TEXTURE_scale_V = 1000; // 1km
 PImage LAND_TEXTURE = createImage(2,2, RGB);
 
+String LAND_TEXTURE_ImagePath = "";
+
 void SOLARCHVISION_LoadLAND_TEXTURE (String LandDirectory) {
 
   LAND_TEXTURE_scale_U = 1000; // 1km
@@ -17734,33 +17736,38 @@ void SOLARCHVISION_LoadLAND_TEXTURE (String LandDirectory) {
   LAND_TEXTURE = createImage(2,2, RGB);
   
   Display_LAND_TEXTURE = 0;
-
-  String[] filenames = getfiles(LandDirectory);
-
-  if (filenames != null) {
-    for (int i = 0; i < filenames.length; i++) {
-      //println(filenames[i]);
-
-      int _L = filenames[i].length();
-      String _Extention = filenames[i].substring(_L - 4,_L);
-      //println(_Extention);
-      if (_Extention.toLowerCase().equals(".jpg")) {
-        
-        String[] Parts = split(filenames[i], '_');
-        
-        if (Parts[0].toUpperCase().equals("USE")) {
+  
+  if (LAND_TEXTURE_ImagePath.equals("")) {
+  
+    String[] filenames = getfiles(LandDirectory);
+  
+    if (filenames != null) {
+      for (int i = 0; i < filenames.length; i++) {
+        //println(filenames[i]);
+  
+        int _L = filenames[i].length();
+        String _Extention = filenames[i].substring(_L - 4,_L);
+        //println(_Extention);
+        if (_Extention.toLowerCase().equals(".jpg")) {
           
-          if (Parts.length > 2) {
-        
-            LAND_TEXTURE_scale_U = float(Parts[1]); 
-            LAND_TEXTURE_scale_V = float(Parts[2]);
-    
-            LAND_TEXTURE = loadImage(LandDirectory + "/" + filenames[i]);
+          String[] Parts = split(filenames[i], '_');
+          
+          if (Parts[0].toUpperCase().equals("USE")) {
             
-            Display_LAND_TEXTURE = 1;
-           
-            break;
-          } 
+            if (Parts.length > 2) {
+          
+              LAND_TEXTURE_scale_U = float(Parts[1]); 
+              LAND_TEXTURE_scale_V = float(Parts[2]);
+              
+              LAND_TEXTURE_ImagePath = LandDirectory + "/" + filenames[i];
+      
+              LAND_TEXTURE = loadImage(LAND_TEXTURE_ImagePath);
+              
+              Display_LAND_TEXTURE = 1;
+             
+              break;
+            } 
+          }
         }
       }
     }
@@ -17865,6 +17872,8 @@ void SOLARCHVISION_LoadLAND_MESH (String ProjectSite) {
     println("ERROR loading LAND_MESH!");  
   }
 
+  LAND_TEXTURE_ImagePath = "";
+  
   SOLARCHVISION_LoadLAND_TEXTURE(LandDirectory);
 
 }
@@ -19557,7 +19566,7 @@ int SOLARCHVISION_addToTempObjectVertices (float x, float y, float z) {
     if (POINTER_TempObjectVertices >= TempObjectVertices.length) {
       TempObjectVertices = (float[][]) concat(TempObjectVertices, newVertice);
     }
-    else{
+    else {
       //TempObjectVertices[POINTER_TempObjectVertices] = new int [3];
       
       TempObjectVertices[POINTER_TempObjectVertices][0] = x;
@@ -19623,7 +19632,7 @@ int SOLARCHVISION_addToTempObjectFaces (int[] f, int check_duplicates) {
       int[][] newFace = {f}; 
       TempObjectFaces = (int[][]) concat(TempObjectFaces, newFace);
     }
-    else{
+    else {
       TempObjectFaces[POINTER_TempObjectFaces] = new int [f.length];
       
       for (int i = 0; i < f.length; i++) {
@@ -20236,7 +20245,7 @@ void SOLARCHVISION_draw_logo (float cx, float cy, float cz, float cr, int the_vi
         triangle(x1,y1, x2,y2, x3,y3);
         triangle(x3,y3, x4,y4, x1,y1);
       }
-      else{
+      else {
         triangle(x4,y4, x1,y1, x2,y2);
         triangle(x2,y2, x3,y3, x4,y4);
       }
@@ -23249,7 +23258,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
         fill(0);
         textSize(15 * ROLLOUT_S_View);
       }
-      else{
+      else {
         stroke(127); 
         fill(127);
         textSize(15 * ROLLOUT_S_View);
@@ -23287,7 +23296,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
         fill(255,127,0);
         textSize(15 * ROLLOUT_S_View);
       }
-      else{
+      else {
         stroke(255); 
         fill(255);
         textSize(12.5 * ROLLOUT_S_View);
@@ -24363,7 +24372,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
           String[] _add = {"-print", ("station=" + ""), "-lon", nf(360 + _lon, 0,4).replace(",", "."), nf(_lat, 0,4).replace(",", ".")};
           CommandArguments = concat(CommandArguments , _add);
         //}
-        //else{
+        //else {
           //String[] _add = {"-print", ("station=" + ""), "-ijlat", String.valueOf(StationI), String.valueOf(StationJ)};
           //CommandArguments = concat(CommandArguments , _add);
         //}
@@ -24461,7 +24470,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
               println(uX, uY, _lon, _lat);
               println("----------------------------------------");
             }
-            else{
+            else {
               if (_posZ > 0) {
                 v = Float.valueOf(my_lines[q].substring(_posZ + 4));
                
@@ -28057,7 +28066,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
         fill(0);
         textSize(1.25 * MESSAGE_S_View);
       }
-      else{
+      else {
         stroke(255); 
         fill(255);
         textSize(1.25 * MESSAGE_S_View);
@@ -28098,7 +28107,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
             fill(0);
             textSize(1.25 * MESSAGE_S_View);
           }
-          else{
+          else {
             stroke(255); 
             fill(255);
             
@@ -29644,9 +29653,7 @@ void SOLARCHVISION_save_project (String myFile) {
   my_xml.setName("SOLARCHVISION_2015_project");
   
   newChild1 = my_xml.addChild("SOLARCHVISION_variables");
-  
-  //newChild1.setContent("Test");
-  
+
   newChild1.setString("LocationName", LocationName);
   newChild1.setString("LocationProvince", LocationProvince);
   newChild1.setFloat("LocationLatitude", LocationLatitude);
@@ -30022,6 +30029,37 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setString("R_earth", Double.toString(R_earth));
   newChild1.setString("LAND_mid_lat", Double.toString(LAND_mid_lat));
   newChild1.setString("LAND_mid_lon", Double.toString(LAND_mid_lon));
+  
+  {
+    int TEXTURE_copied = 0;
+    
+    String new_LAND_TEXTURE_ImagePath = myFile.substring(0,myFile.length() - 4) + ".jpg";
+    
+    println("pre_LAND_TEXTURE_ImagePath", LAND_TEXTURE_ImagePath);
+    println("new_LAND_TEXTURE_ImagePath", new_LAND_TEXTURE_ImagePath);
+
+    if (LAND_TEXTURE_ImagePath.toUpperCase().equals(new_LAND_TEXTURE_ImagePath.toUpperCase())) {
+      TEXTURE_copied = -1;
+    }
+    else {
+      if (LAND_TEXTURE_ImagePath.equals("")) {
+      }  
+      else {
+        println("Copying texture:", LAND_TEXTURE_ImagePath, ">", new_LAND_TEXTURE_ImagePath);
+        saveBytes(new_LAND_TEXTURE_ImagePath, loadBytes(LAND_TEXTURE_ImagePath));
+        LAND_TEXTURE_ImagePath = new_LAND_TEXTURE_ImagePath;
+        
+        TEXTURE_copied = 1;
+      }      
+    }
+    
+    if (TEXTURE_copied == 0) {
+      println("Saving texture from the scene.");
+      LAND_TEXTURE.save(new_LAND_TEXTURE_ImagePath);
+    }    
+    
+    newChild1.setString("LAND_TEXTURE_ImagePath", LAND_TEXTURE_ImagePath);    
+  }
 
   newChild1 = my_xml.addChild("DEFINED_STATION");
   newChild1.setInt("ni", DEFINED_STATIONS[STATION_NUMBER].length);
@@ -30201,10 +30239,6 @@ void SOLARCHVISION_save_project (String myFile) {
 
     newChild2.setContent(lineSTR);
   } 
-
-
-
-
 
   saveXML(my_xml, myFile);    
 
@@ -30609,7 +30643,23 @@ void SOLARCHVISION_load_project (String myFile) {
       R_earth = Double.parseDouble(children0[L].getString("R_earth"));
       LAND_mid_lat = Double.parseDouble(children0[L].getString("LAND_mid_lat"));
       LAND_mid_lon = Double.parseDouble(children0[L].getString("LAND_mid_lon"));
-
+      {
+        String new_LAND_TEXTURE_ImagePath = children0[L].getString("LAND_TEXTURE_ImagePath");
+        if (LAND_TEXTURE_ImagePath.toUpperCase().equals(new_LAND_TEXTURE_ImagePath.toUpperCase())) {
+        }
+        else {
+          LAND_TEXTURE_ImagePath = new_LAND_TEXTURE_ImagePath;
+          LAND_TEXTURE = createImage(2,2, RGB);
+          if (LAND_TEXTURE_ImagePath.equals("")) {
+          }
+          else {
+            println("Loading texture:", LAND_TEXTURE_ImagePath);
+            LAND_TEXTURE = loadImage(LAND_TEXTURE_ImagePath);
+          }
+                    
+        }
+      }
+      
       
     }
     
@@ -30637,7 +30687,6 @@ void SOLARCHVISION_load_project (String myFile) {
       XML[] children1 = children0[L].getChildren("Vertice");         
       for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
         String lineSTR = children1[i].getContent();
-        println(lineSTR);
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < parts.length; j++) {
           LAND_MESH[(i / LAND_n_J)][(i % LAND_n_J)][j] = float(parts[j]); 
@@ -30803,6 +30852,8 @@ void SOLARCHVISION_load_project (String myFile) {
   
   
   println("End of loading project.");
+  
+
  
   
   // loading only weather data // 
