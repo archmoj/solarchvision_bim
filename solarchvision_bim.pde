@@ -2534,25 +2534,31 @@ void draw () {
             
           }
         }
-      }
   
-      if (BAR_a_Update == 1) {
-        SOLARCHVISION_draw_window_BAR_a();
+        if (BAR_a_Update == 1) {
+          SOLARCHVISION_draw_window_BAR_a();
+        }
+    
+        if (BAR_b_Update == 1) {
+          SOLARCHVISION_draw_window_BAR_b();
+        }
+        
+        if (BAR_d_Update == 1) {
+          SOLARCHVISION_draw_window_BAR_d();
+        }    
+    
+        if (FRAME_record_JPG == 1) {
+          SOLARCHVISION_RecordFrame();
+          FRAME_record_JPG = 0;
+        }
       }
-  
-      if (BAR_b_Update == 1) {
-        SOLARCHVISION_draw_window_BAR_b();
-      }
-      
-      if (BAR_d_Update == 1) {
-        SOLARCHVISION_draw_window_BAR_d();
-      }    
-  
-      if (FRAME_record_JPG == 1) {
-        SOLARCHVISION_RecordFrame();
-        FRAME_record_JPG = 0;
+      else {
+        WORLD_record_PDF = 0; 
       }
     
+    }
+    else {
+      STUDY_record_PDF = 0; 
     }
 
 
@@ -3465,8 +3471,6 @@ void SOLARCHVISION_draw_WORLD () {
       String myFile = MAKE_Filenames("WORLD_") + ".pdf";
       SOLARCHVISION_explore_output(myFile);
       println("File created:" + myFile);      
-      
-      WORLD_record_PDF = 0;
     }
     else {
       WORLD_Diagrams.endDraw();
@@ -3499,8 +3503,6 @@ void SOLARCHVISION_draw_WORLD () {
     
     
     if ((WORLD_record_JPG == 1) || (WORLD_record_AUTO == 0)) WORLD_record_JPG = 0;  
-  
-    WORLD_record_PDF = 0;
   }
 }
 
@@ -3605,8 +3607,6 @@ void SOLARCHVISION_draw_STUDY () {
       String myFile = MAKE_Filenames("STUDY_") + ".pdf";
       SOLARCHVISION_explore_output(myFile);
       println("File created:" + myFile);             
-      
-      STUDY_record_PDF = 0;
     }
     else {
       STUDY_Diagrams.endDraw();
@@ -3640,7 +3640,6 @@ void SOLARCHVISION_draw_STUDY () {
     
     if ((STUDY_record_JPG == 1) || (STUDY_record_AUTO == 0)) STUDY_record_JPG = 0;  
   
-    STUDY_record_PDF = 0;
   }
 
   Export_STUDY_info_node = 0;
