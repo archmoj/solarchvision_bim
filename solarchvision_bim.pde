@@ -1624,7 +1624,7 @@ void SOLARCHVISION_update_station (int Step) {
     Delta_NOON = (LocationTimeZone - LocationLongitude) / 15.0;
     
     WORLD_VIEW_Number = FindGoodViewport(LocationLongitude, LocationLatitude);
-    
+
     BEGIN_DAY = Convert2Date(_MONTH, _DAY);
   }
   
@@ -1751,6 +1751,7 @@ void draw () {
   }
   else if (frameCount == 3) {
     SOLARCHVISION_LoadWorldImages();
+    Load_WORLDViewImage(); // to load the globe image into memory
 
     stroke(0);
     fill(0);
@@ -2616,6 +2617,8 @@ void SOLARCHVISION_draw_WIN3D () {
     
     SOLARCHVISION_draw_SKY3D();
     
+    SOLARCHVISION_draw_EARTH3D();
+    
     SOLARCHVISION_draw_land();
     
     SOLARCHVISION_draw_3Dobjects();
@@ -2968,6 +2971,39 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
 
 
 
+PImage WORLDViewImage;
+
+float WORLD_VIEW_OffsetX = 0;
+float WORLD_VIEW_OffsetY = 0;
+
+float WORLD_VIEW_ScaleX = 1;
+float WORLD_VIEW_ScaleY = 1;
+
+float _lon1 = -180;
+float _lon2 = 180;
+float _lat1 = -90;
+float _lat2 = 90;
+
+void Load_WORLDViewImage () {
+
+  println("Loading:", WorldViewFolder + "/" + WORLD_VIEW_Filenames[WORLD_VIEW_Number]);
+  
+  WORLDViewImage = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filenames[WORLD_VIEW_Number]);
+  
+  WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
+  WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
+  
+  WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
+  WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;
+  
+  _lon1 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0];
+  _lon2 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1];
+  _lat1 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0];
+  _lat2 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1];
+
+}
+
+
 
 PGraphics WORLD_Diagrams;
 
@@ -2999,22 +3035,9 @@ void SOLARCHVISION_draw_WORLD () {
     }
     
     WORLD_Diagrams.background(0, 0, 0);
-    
-    PImage WORLDViewImage = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filenames[WORLD_VIEW_Number]);
-  
+ 
     WORLD_Diagrams.image(WORLDViewImage, 0, 0, WORLD_X_View, WORLD_Y_View);
   
-    float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
-    float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
-  
-    float WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
-    float WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;
-    
-    float _lon1 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0];
-    float _lon2 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1];
-    float _lat1 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0];
-    float _lat2 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1];
-    
     int x_point1 = int(WORLD_X_View * (( 1 * (_lon1 - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX);
     int y_point1 = int(WORLD_Y_View * ((-1 * (_lat1 - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY);
     int x_point2 = int(WORLD_X_View * (( 1 * (_lon2 - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX);
@@ -11212,7 +11235,6 @@ float[] SOLARCHVISION_WYRD (float _variable) {
 }
 
 
- 
 void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float LocationLatitude) { 
 
   if (Display_SUN3D != 0) {
@@ -12281,7 +12303,6 @@ void SOLARCHVISION_LoadObject2DImages () {
 
 
 
-
 void SOLARCHVISION_LoadWorldImages () {
 
   WORLD_VIEW_Filenames = sort(getfiles(WorldViewFolder));
@@ -12314,6 +12335,10 @@ void SOLARCHVISION_LoadWorldImages () {
     
   }
 }
+
+
+
+
 
 int FindGoodViewport (float pointLongitude, float pointLatitude) {
   int return_VIEWPORT = WORLD_VIEW_Number;
@@ -12367,8 +12392,14 @@ int FindGoodViewport (float pointLongitude, float pointLatitude) {
     }
   }
   
+  if (return_VIEWPORT != WORLD_VIEW_Number) {
+    Load_WORLDViewImage();
+  }
+  
   return (return_VIEWPORT);
 }
+
+
 
 
 String StationICAO;
@@ -15391,6 +15422,35 @@ void SOLARCHVISION_draw_windFlow () {
   }
 
 }
+
+//---------------------------------------- should be added to I/O and GUI 
+int Display_EARTH3D = 1;
+
+void SOLARCHVISION_draw_EARTH3D () {
+  if (Display_EARTH3D != 0) {
+/*
+    WIN3D_Diagrams.strokeWeight(1);
+    
+    {
+
+      WIN3D_Diagrams.beginShape();
+            
+      WIN3D_Diagrams.texture(WORLDViewImage);
+              
+      WIN3D_Diagrams.stroke(0, 0, 0);
+  
+      float u = (subFace[s][0] / LAND_TEXTURE_scale_U + 0.5) * LAND_TEXTURE.width;
+      float v = (-subFace[s][1] / LAND_TEXTURE_scale_V + 0.5) * LAND_TEXTURE.height;
+  
+      WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D, u, v);  
+  
+      WIN3D_Diagrams.endShape(CLOSE);
+      
+    }
+*/    
+  }
+}
+//----------------------------------------
 
 
 void SOLARCHVISION_draw_land () {
@@ -20539,7 +20599,7 @@ void mouseWheel(MouseEvent event) {
                 WIN3D_Update = 1;
                 
               }   
-             
+              /*             
               if (View_Select_Create_Modify == -1) { // PickSelect 
       
                 if (Work_with_2D_or_3D == 1) {
@@ -20606,9 +20666,8 @@ void mouseWheel(MouseEvent event) {
       
                   WIN3D_Update = 1;            
                 }
-      
-      
               }
+              */
               
               if ((View_Select_Create_Modify == -3) || (View_Select_Create_Modify == -10) || (View_Select_Create_Modify == -12) || (View_Select_Create_Modify == -14)) { // viewport:zoom
       
@@ -22320,12 +22379,6 @@ void mouseClicked () {
         
         if (WORLD_include == 1) {
           if (isInside(X_clicked, Y_clicked, WORLD_CX_View, WORLD_CY_View, WORLD_CX_View + WORLD_X_View, WORLD_CY_View + WORLD_Y_View) == 1) {
-      
-            float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
-            float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
-      
-            float WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
-            float WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;
       
             float mouse_lon = 360.0 * ((mouseX - WORLD_CX_View) * WORLD_VIEW_ScaleX / WORLD_X_View - 0.5) + WORLD_VIEW_OffsetX;
             float mouse_lat = -180.0 * ((mouseY - WORLD_CY_View) * WORLD_VIEW_ScaleY / WORLD_Y_View - 0.5) + WORLD_VIEW_OffsetY;
@@ -31251,9 +31304,24 @@ void SOLARCHVISION_load_project (String myFile) {
 
 
 
-/* bugs:
+/* 
 
-delete because scrolling selection+ could add duplicate of the same objects to the list!
+bug: delete because scrolling selection+ could add duplicate of the same objects to the list!
+solution: I remarked wheel option for pickSelect for now.
+
+
+float WORLD_VIEW_OffsetX = 0;
+float WORLD_VIEW_OffsetY = 0;
+
+float WORLD_VIEW_ScaleX = 1;
+float WORLD_VIEW_ScaleY = 1;
+
+float _lon1 = -180;
+float _lon2 = 180;
+float _lat1 = -90;
+float _lat2 = 90;
+
+int Display_EARTH3D = 1;
 
 */
 
