@@ -30241,6 +30241,42 @@ void SOLARCHVISION_save_project (String myFile) {
   } 
 
   {
+    newChild1 = my_xml.addChild("selectedFractal_numbers");
+    int ni = selectedFractal_numbers.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += selectedFractal_numbers[i];
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }
+  
+  {
+    newChild1 = my_xml.addChild("selectedObject2D_numbers");
+    int ni = selectedObject2D_numbers.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += selectedObject2D_numbers[i];
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }
+
+  {
+    newChild1 = my_xml.addChild("selectedPolymesh_numbers");
+    int ni = selectedPolymesh_numbers.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += selectedPolymesh_numbers[i];
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }  
+
+  {
     newChild1 = my_xml.addChild("SpatialImpact_Elevation");
     int ni = SpatialImpact_Elevation.length;
     newChild1.setInt("ni", ni);
@@ -30263,6 +30299,8 @@ void SOLARCHVISION_save_project (String myFile) {
     }
     newChild1.setContent(lineSTR);
   }  
+
+
 
   saveXML(my_xml, myFile);    
 
@@ -30868,13 +30906,43 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     }  
 
+    children0 = FileAll.getChildren("selectedFractal_numbers");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      selectedFractal_numbers = new int [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        selectedFractal_numbers[i] = int(parts[i]);
+      }
+    } 
+
+    children0 = FileAll.getChildren("selectedObject2D_numbers");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      selectedObject2D_numbers = new int [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        selectedObject2D_numbers[i] = int(parts[i]);
+      }
+    } 
+
+    children0 = FileAll.getChildren("selectedPolymesh_numbers");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      selectedPolymesh_numbers = new int [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        selectedPolymesh_numbers[i] = int(parts[i]);
+      }
+    } 
 
     children0 = FileAll.getChildren("SpatialImpact_Elevation");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      
       SpatialImpact_Elevation = new float [ni];
-      
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
@@ -30885,23 +30953,19 @@ void SOLARCHVISION_load_project (String myFile) {
     children0 = FileAll.getChildren("SpatialImpact_Rotation");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      
       SpatialImpact_Rotation = new float [ni];
-      
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         SpatialImpact_Rotation[i] = float(parts[i]);
       }
     } 
+
+
     
   }
-  
-  
   println("End of loading project.");
   
-
- 
   
   // loading only weather data // 
   SOLARCHVISION_update_station(2); 
@@ -30910,7 +30974,7 @@ void SOLARCHVISION_load_project (String myFile) {
   SOLARCHVISION_update_station(5);
   ///////////////////////////////
   
-  SOLARCHVISION_deselectAll();
+  //SOLARCHVISION_deselectAll();
   
   addNewSelectionToPreviousSelection = 0;
   
