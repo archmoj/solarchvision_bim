@@ -2495,71 +2495,65 @@ void draw () {
         
       }
     }
-    STUDY_Update = 0;    
-
-    if (Illustrations_Animate != 0) {
-      GRIB2_Layer = GRIB2_Layer_Start;
-
-      GRIB2_Hour = GRIB2_Hour_Start;
+    STUDY_Update = 0;
+    
+    if (STUDY_record_PDF == 0) {
       
-      int d = (GRIB2_Hour_End - GRIB2_Hour_Start) / GRIB2_Hour_Step;      
-      
-      if (d > 1) {
+      if (Illustrations_Animate != 0) {
+        GRIB2_Layer = GRIB2_Layer_Start;
+  
+        GRIB2_Hour = GRIB2_Hour_Start;
         
-        GRIB2_Hour += GRIB2_Hour_Step * (frameCount % d);
-      
-        if (GRIB2_Hour > GRIB2_Hour_End) GRIB2_Hour = GRIB2_Hour_Start;
-      
-        WORLD_Update = 1;
-        WIN3D_Update = 1; // <<<<<<<<<<<
+        int d = (GRIB2_Hour_End - GRIB2_Hour_Start) / GRIB2_Hour_Step;      
+        
+        if (d > 1) {
+          
+          GRIB2_Hour += GRIB2_Hour_Step * (frameCount % d);
+        
+          if (GRIB2_Hour > GRIB2_Hour_End) GRIB2_Hour = GRIB2_Hour_Start;
+        
+          WORLD_Update = 1;
+          WIN3D_Update = 1; // <<<<<<<<<<<
+        }
       }
-    }
 
 
-    if (WORLD_include == 1) {
-      if (WORLD_Update == 1) {
-        
-        SOLARCHVISION_draw_WORLD();
-        
+      if (WORLD_include == 1) {
+        if (WORLD_Update == 1) {
+          
+          SOLARCHVISION_draw_WORLD();
+          
+        }
       }
-    }
-    
-    if (WIN3D_include == 1) {
-      if (WIN3D_Update == 1) {
-        
-        SOLARCHVISION_draw_WIN3D();
-        
+      
+      if (WORLD_record_PDF == 0) {      
+        if (WIN3D_include == 1) {
+          if (WIN3D_Update == 1) {
+            
+            SOLARCHVISION_draw_WIN3D();
+            
+          }
+        }
       }
-    }
+  
+      if (BAR_a_Update == 1) {
+        SOLARCHVISION_draw_window_BAR_a();
+      }
+  
+      if (BAR_b_Update == 1) {
+        SOLARCHVISION_draw_window_BAR_b();
+      }
+      
+      if (BAR_d_Update == 1) {
+        SOLARCHVISION_draw_window_BAR_d();
+      }    
+  
+      if (FRAME_record_JPG == 1) {
+        SOLARCHVISION_RecordFrame();
+        FRAME_record_JPG = 0;
+      }
     
-
-
-    if (BAR_a_Update == 1) {
-        
-      SOLARCHVISION_draw_window_BAR_a();
-     
     }
-
-
-    if (BAR_b_Update == 1) {
-        
-      SOLARCHVISION_draw_window_BAR_b();
-     
-    }
-    
-    if (BAR_d_Update == 1) {
-        
-      SOLARCHVISION_draw_window_BAR_d();
-     
-    }    
-
-
-    if (FRAME_record_JPG == 1) {
-      SOLARCHVISION_RecordFrame();
-      FRAME_record_JPG = 0;
-    }
-    
-    
 
 
     //noLoop(); // <<<<<<<<<<<<
@@ -3604,8 +3598,6 @@ void SOLARCHVISION_draw_STUDY () {
     STUDY_Diagrams.textSize(STUDY_X_View * 0.01);
     //STUDY_Diagrams.text(_text, STUDY_X_View * 0.55, STUDY_Y_View * -0.4925, 0);
     STUDY_Diagrams.text(_text, STUDY_X_View * 0.55, STUDY_Y_View * -0.175 / STUDY_R_View, 0);
-
-   
 
     if (STUDY_record_PDF == 1) {
       endRecord();
@@ -28077,6 +28069,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
       if (isInside(mouseX, mouseY, cx, cy - cr, cx + BAR_a_width_parent, cy + cr) == 1) {
   
         if (BAR_a_selected_parent == -1) {
+          
           pre_screen = get(0, a_pixel, width, height - a_pixel);
           
           //println("Screen GET!");
