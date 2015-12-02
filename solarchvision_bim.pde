@@ -30079,7 +30079,7 @@ void SOLARCHVISION_save_project (String myFile) {
         String lineSTR = "";
         //for (int k = 0; k < LAND_MESH[i][j].length; k++) {
         for (int k = 0; k < 3; k++) { // x, y, z 
-          lineSTR += nf(LAND_MESH[i][j][k], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+          lineSTR += nf(LAND_MESH[i][j][k], 0, 4).replace(",", "."); // <<<<
           if (k < LAND_MESH[i][j].length - 1) lineSTR += ",";
         }
         newChild2.setContent(lineSTR);
@@ -30098,7 +30098,7 @@ void SOLARCHVISION_save_project (String myFile) {
       String lineSTR = "";
       //for (int j = 0; j < Fractal_XYZSRA[i].length; j++) {
       for (int j = 0; j < 6; j++) { // x, y, z, s, rot, as_mesh/as_solid 
-        lineSTR += nf(Fractal_XYZSRA[i][j], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+        lineSTR += nf(Fractal_XYZSRA[i][j], 0, 4).replace(",", "."); // <<<<
         lineSTR += ",";
       }
       lineSTR += nf(allFractal_Type[i], 0);
@@ -30109,9 +30109,9 @@ void SOLARCHVISION_save_project (String myFile) {
       lineSTR += ",";
       lineSTR += nf(allFractal_Seed[i], 0);
       lineSTR += ",";
-      lineSTR += nf(allFractal_TrunckSize[i], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+      lineSTR += nf(allFractal_TrunckSize[i], 0, 4).replace(",", "."); // <<<<
       lineSTR += ",";
-      lineSTR += nf(allFractal_LeafSize[i], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+      lineSTR += nf(allFractal_LeafSize[i], 0, 4).replace(",", "."); // <<<<
       
       newChild2.setContent(lineSTR);
     } 
@@ -30127,7 +30127,7 @@ void SOLARCHVISION_save_project (String myFile) {
       String lineSTR = "";
       //for (int j = 0; j < allObject2D_XYZS[i].length; j++) {
       for (int j = 0; j < 4; j++) { // x, y, z, s 
-        lineSTR += nf(allObject2D_XYZS[i][j], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+        lineSTR += nf(allObject2D_XYZS[i][j], 0, 4).replace(",", "."); // <<<<
         lineSTR += ",";
       }
       lineSTR += allObject2D_MAP[i];
@@ -30144,7 +30144,7 @@ void SOLARCHVISION_save_project (String myFile) {
     String lineSTR = "";
     //for (int j = 0; j < allVertices[i].length; j++) {
     for (int j = 0; j < 3; j++) { // x, y, z 
-      lineSTR += nf(allVertices[i][j], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+      lineSTR += nf(allVertices[i][j], 0, 4).replace(",", "."); // <<<<
       if (j < allVertices[i].length - 1) lineSTR += ",";
     }
     newChild2.setContent(lineSTR);
@@ -30211,31 +30211,31 @@ void SOLARCHVISION_save_project (String myFile) {
     newChild2 = newChild1.addChild("Solid");
     newChild2.setInt("id", i);
     String lineSTR = "";
-    lineSTR += nf(SolidObjects[i].value, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += nf(SolidObjects[i].value, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].posX, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += nf(SolidObjects[i].posX, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].posY, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += nf(SolidObjects[i].posY, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].posZ, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += nf(SolidObjects[i].posZ, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].powX, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += nf(SolidObjects[i].powX, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].powY, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += nf(SolidObjects[i].powY, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].powZ, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += nf(SolidObjects[i].powZ, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].scaleX, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += nf(SolidObjects[i].scaleX, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].scaleY, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += nf(SolidObjects[i].scaleY, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].scaleZ, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += nf(SolidObjects[i].scaleZ, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].rotX, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += nf(SolidObjects[i].rotX, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].rotY, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += nf(SolidObjects[i].rotY, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].rotZ, 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+    lineSTR += nf(SolidObjects[i].rotZ, 0, 4).replace(",", "."); // <<<<
 
     newChild2.setContent(lineSTR);
   } 
@@ -30282,7 +30282,7 @@ void SOLARCHVISION_save_project (String myFile) {
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += nf(SpatialImpact_Elevation[i], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+      lineSTR += nf(SpatialImpact_Elevation[i], 0, 4).replace(",", "."); // <<<<
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
@@ -30294,11 +30294,48 @@ void SOLARCHVISION_save_project (String myFile) {
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += nf(SpatialImpact_Rotation[i], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+      lineSTR += nf(SpatialImpact_Rotation[i], 0, 4).replace(",", "."); // <<<<
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
   }  
+
+  {
+    newChild1 = my_xml.addChild("STUDY_V_scale");
+    int ni = STUDY_V_scale.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += nf(STUDY_V_scale[i], 0, 4).replace(",", "."); // <<<<
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }  
+  
+  {
+    newChild1 = my_xml.addChild("STUDY_V_offset");
+    int ni = STUDY_V_offset.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += nf(STUDY_V_offset[i], 0, 4).replace(",", "."); // <<<<
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }  
+
+  {
+    newChild1 = my_xml.addChild("STUDY_V_belowLine");
+    int ni = STUDY_V_belowLine.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += nf(STUDY_V_belowLine[i], 0, 4).replace(",", "."); // <<<<
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }  
+
 
 
 
@@ -30960,8 +30997,39 @@ void SOLARCHVISION_load_project (String myFile) {
         SpatialImpact_Rotation[i] = float(parts[i]);
       }
     } 
+    
+    children0 = FileAll.getChildren("STUDY_V_scale");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      STUDY_V_scale = new float [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        STUDY_V_scale[i] = float(parts[i]);
+      }
+    } 
 
+    children0 = FileAll.getChildren("STUDY_V_offset");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      STUDY_V_offset = new float [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        STUDY_V_offset[i] = float(parts[i]);
+      }
+    }     
 
+    children0 = FileAll.getChildren("STUDY_V_belowLine");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      STUDY_V_belowLine = new float [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        STUDY_V_belowLine[i] = float(parts[i]);
+      }
+    } 
     
   }
   println("End of loading project.");
@@ -30973,8 +31041,6 @@ void SOLARCHVISION_load_project (String myFile) {
   SOLARCHVISION_update_station(4);
   SOLARCHVISION_update_station(5);
   ///////////////////////////////
-  
-  //SOLARCHVISION_deselectAll();
   
   addNewSelectionToPreviousSelection = 0;
   
@@ -31012,9 +31078,32 @@ void SOLARCHVISION_load_project (String myFile) {
 }
 
 
+
+
+/*
+
+String[] LAYERS_Unit;
+String[][] LAYERS_Title;
+String[] LAYERS_ENSEMBLE; 
+String[][] LAYERS_GRIB2;
+float[] LAYERS_GRIB2_MUL;
+float[] LAYERS_GRIB2_ADD;
+
+
+int[] GRIB2_TGL_Selected = {1,0,0,0}; // for levels above ground level 
+int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
+*/
+
+
+
+
+
+
 /* bugs:
 
 delete because scrolling selection+ could add duplicate of the same objects to the list!
 
 */
+
+
 
