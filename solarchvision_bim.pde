@@ -20810,8 +20810,7 @@ void mouseReleased () {
         if (WIN3D_include == 1) {
           if (isInside(mouseX, mouseY, WIN3D_CX_View, WIN3D_CY_View, WIN3D_CX_View + WIN3D_X_View, WIN3D_CY_View + WIN3D_Y_View) == 1) {
     
-            //if ((View_Select_Create_Modify == -2) || (View_Select_Create_Modify > 1)) { // RectSelect also if scale, rotate, modify, etc. where selected          
-            if ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1)) { // RectSelect also if scale, rotate, modify, etc. where selected
+            if ((View_Select_Create_Modify == -2) || (View_Select_Create_Modify > 1)) { // RectSelect also if scale, rotate, modify, etc. where selected          
   
               X_click2 = mouseX;
               Y_click2 = mouseY;
