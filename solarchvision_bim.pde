@@ -3602,7 +3602,8 @@ void SOLARCHVISION_draw_STUDY () {
     //_text += ", www.solarchvision.com";
 
     STUDY_Diagrams.textSize(STUDY_X_View * 0.01);
-    STUDY_Diagrams.text(_text, STUDY_X_View * 0.55, STUDY_Y_View * -0.4925, 0);
+    //STUDY_Diagrams.text(_text, STUDY_X_View * 0.55, STUDY_Y_View * -0.4925, 0);
+    STUDY_Diagrams.text(_text, STUDY_X_View * 0.55, STUDY_Y_View * -0.175 / STUDY_R_View, 0);
 
    
 
@@ -9215,7 +9216,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
   
   if ((plot_impacts == 0) || (plot_impacts == 1)) {
-    
+
     if (update_impacts == 1) {
     
       SOLARCHVISION_build_SolarImpact_Image_array();
@@ -9257,7 +9258,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   
       for (int p = 0; p < 1; p += 1) { 
         int l = impact_layer;
-        
+
         PImage total_Image_RGBA = createImage(RES1, RES2, RGB);
         
         float[][][] total_Matrix_ARGB;
@@ -9821,6 +9822,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
   if ((plot_impacts == 2) || (plot_impacts == 3)) {
+    
+    if (rebuild_SolarProjection_array != 0) {
+      SOLARCHVISION_build_SolarProjection_array();
+    }
+    
     if (plot_impacts == 2) Impact_TYPE = Impact_ACTIVE; 
     if (plot_impacts == 3) Impact_TYPE = Impact_PASSIVE;
 
@@ -9860,7 +9866,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
     for (int p = 0; p < 1; p += 1) { 
       int l = impact_layer;
-      
+   
     //for (int p = 0; p < 1; p += 1) { 
       //int l = 3 * int(impact_layer / 3) + 1; //impact_layer;    
 
