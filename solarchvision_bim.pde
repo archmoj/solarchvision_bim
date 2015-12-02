@@ -15428,26 +15428,30 @@ int Display_EARTH3D = 1;
 
 void SOLARCHVISION_draw_EARTH3D () {
   if (Display_EARTH3D != 0) {
-/*
+
     WIN3D_Diagrams.strokeWeight(1);
     
-    {
+    for (float Alpha = 0; Alpha < 90; Alpha += 5;) {
+      for (float Beta = -180; Beta < 180; Beta += 5;) {
 
-      WIN3D_Diagrams.beginShape();
-            
-      WIN3D_Diagrams.texture(WORLDViewImage);
+        WIN3D_Diagrams.beginShape();
               
-      WIN3D_Diagrams.stroke(0, 0, 0);
-  
-      float u = (subFace[s][0] / LAND_TEXTURE_scale_U + 0.5) * LAND_TEXTURE.width;
-      float v = (-subFace[s][1] / LAND_TEXTURE_scale_V + 0.5) * LAND_TEXTURE.height;
-  
-      WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D, u, v);  
-  
-      WIN3D_Diagrams.endShape(CLOSE);
+        WIN3D_Diagrams.texture(WORLDViewImage);
+                
+        WIN3D_Diagrams.stroke(0, 0, 0);
+        
+        float x
+    
+        float u = (Beta / LAND_TEXTURE_scale_U + 0.5) * WORLDViewImage.width;
+        float v = (Alpha / LAND_TEXTURE_scale_V + 0.5) * WORLDViewImage.height;
+    
+        WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D, u, v);  
+    
+        WIN3D_Diagrams.endShape(CLOSE);
+      }
       
     }
-*/    
+   
   }
 }
 //----------------------------------------
