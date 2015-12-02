@@ -29808,6 +29808,7 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setInt("GRIB2_Hour", GRIB2_Hour);
   newChild1.setInt("GRIB2_Layer", GRIB2_Layer);
   newChild1.setInt("GRIB2_DOMAIN_SELECTION", GRIB2_DOMAIN_SELECTION);
+  newChild1.setInt("GRIB2_TGL_number", GRIB2_TGL_number);
   newChild1.setInt("AERIAL_graphOption", AERIAL_graphOption);
   newChild1.setInt("H_layer_option", H_layer_option);
   newChild1.setInt("F_layer_option", F_layer_option);
@@ -30337,6 +30338,73 @@ void SOLARCHVISION_save_project (String myFile) {
   }  
 
 
+  {
+    newChild1 = my_xml.addChild("LAYERS_Unit");
+    int ni = LAYERS_Unit.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += LAYERS_Unit[i];
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }
+
+
+  {
+    newChild1 = my_xml.addChild("LAYERS_ENSEMBLE");
+    int ni = LAYERS_ENSEMBLE.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += LAYERS_ENSEMBLE[i];
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }
+
+
+  {
+    newChild1 = my_xml.addChild("LAYERS_GRIB2_MUL");
+    int ni = LAYERS_GRIB2_MUL.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += nf(LAYERS_GRIB2_MUL[i], 0, 4).replace(",", "."); // <<<<
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }
+
+
+  {
+    newChild1 = my_xml.addChild("LAYERS_GRIB2_ADD");
+    int ni = LAYERS_GRIB2_ADD.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += nf(LAYERS_GRIB2_ADD[i], 0, 4).replace(",", "."); // <<<<
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }
+
+
+  {
+    newChild1 = my_xml.addChild("GRIB2_TGL_Selected");
+    int ni = GRIB2_TGL_Selected.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += GRIB2_TGL_Selected[i];
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }
+
+  
+
+
 
 
   saveXML(my_xml, myFile);    
@@ -30521,6 +30589,7 @@ void SOLARCHVISION_load_project (String myFile) {
       GRIB2_Hour = children0[L].getInt("GRIB2_Hour");
       GRIB2_Layer = children0[L].getInt("GRIB2_Layer");
       GRIB2_DOMAIN_SELECTION = children0[L].getInt("GRIB2_DOMAIN_SELECTION");
+      GRIB2_TGL_number = children0[L].getInt("GRIB2_TGL_number");
       AERIAL_graphOption = children0[L].getInt("AERIAL_graphOption");
       H_layer_option = children0[L].getInt("H_layer_option");
       F_layer_option = children0[L].getInt("F_layer_option");
@@ -31030,6 +31099,67 @@ void SOLARCHVISION_load_project (String myFile) {
         STUDY_V_belowLine[i] = float(parts[i]);
       }
     } 
+
+
+    children0 = FileAll.getChildren("LAYERS_Unit");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      LAYERS_Unit = new String [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        LAYERS_Unit[i] = parts[i];
+      }
+    }
+
+    children0 = FileAll.getChildren("LAYERS_ENSEMBLE");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      LAYERS_ENSEMBLE = new String [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        LAYERS_ENSEMBLE[i] = parts[i];
+      }
+    }
+
+    children0 = FileAll.getChildren("LAYERS_GRIB2_MUL");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      LAYERS_GRIB2_MUL = new float [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        LAYERS_GRIB2_MUL[i] = float(parts[i]);
+      }
+    }
+
+    children0 = FileAll.getChildren("LAYERS_GRIB2_ADD");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      LAYERS_GRIB2_ADD = new float [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        LAYERS_GRIB2_ADD[i] = float(parts[i]);
+      }
+    }
+
+    children0 = FileAll.getChildren("GRIB2_TGL_Selected");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      GRIB2_TGL_Selected = new int [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        GRIB2_TGL_Selected[i] = int(parts[i]);
+      }
+    }
+    
+    
+
+
+
     
   }
   println("End of loading project.");
@@ -31076,25 +31206,6 @@ void SOLARCHVISION_load_project (String myFile) {
   
 
 }
-
-
-
-
-/*
-
-String[] LAYERS_Unit;
-String[][] LAYERS_Title;
-String[] LAYERS_ENSEMBLE; 
-String[][] LAYERS_GRIB2;
-float[] LAYERS_GRIB2_MUL;
-float[] LAYERS_GRIB2_ADD;
-
-
-int[] GRIB2_TGL_Selected = {1,0,0,0}; // for levels above ground level 
-int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
-*/
-
-
 
 
 
