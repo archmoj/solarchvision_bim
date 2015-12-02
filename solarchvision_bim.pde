@@ -183,7 +183,7 @@ int Create_Fractal_Plant_Seed = -1; // -1:random, 0-99 choice
 float Create_Fractal_Plant_TrunckSize = 1; //0.5;
 float Create_Fractal_Plant_LeafSize = 1; //1; 
 
-int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:4D
+int Work_with_2D_or_3D = 2; // 1:Fractals 2:2D, 3:3D, 4:4D
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
@@ -28269,7 +28269,7 @@ String[][] BAR_b_Items = {
                           {"1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "BuildingType", "2.0"},
                           {"1", "as_Mesh", "as_Solid", "Mesh|Solid", "2.0"},  
                           
-                          {"3", "∞-D", "2½D", "3-D", "4-D", "LayerType", "1.0"},
+                          {"2", "∞-D", "2½D", "3-D", "4-D", "LayerType", "1.0"},
                           {"1", "±CS", "+CS", "-CS", "ClickSelect", "1.0"},
                           {"1", "±WS", "+WS", "-WS", "WindowSelect", "1.0"},                          
                           {"2", "X<", "X|", "X>", "PivotX", "1.0"},
@@ -28404,7 +28404,8 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("LayerType")) {
           Work_with_2D_or_3D = j;
           
-          ROLLOUT_Update = 1;          
+          ROLLOUT_Update = 1;   
+          WIN3D_Update = 1;     
         }
         
         if (Bar_Switch.equals("Mesh|Solid")) {
@@ -28973,7 +28974,7 @@ void set_to_View_Orbit (int n) {
 void set_to_View_LookAtSelection (int n) {
 
   SOLARCHVISION_look_Camera_towards_Selection();
-  
+
   { // automatically set another choice of ineterest
     set_to_View_CameraDistance(0);
     SOLARCHVISION_highlight_in_BAR_b("±CDS");
