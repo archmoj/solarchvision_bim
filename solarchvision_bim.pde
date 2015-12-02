@@ -1555,12 +1555,16 @@ void setup () {
   WIN3D_VerticesSolarEffect = new float [1];
   WIN3D_VerticesSolarEnergy[0] = FLOAT_undefined;
   WIN3D_VerticesSolarEffect[0] = FLOAT_undefined;
+
+  
   
   WIN3D_Diagrams = createGraphics(WIN3D_X_View, WIN3D_Y_View, P3D);
 
   WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, P2D);  
   
-  STUDY_Diagrams = createGraphics(STUDY_X_View, STUDY_Y_View, P2D);  
+  STUDY_Diagrams = createGraphics(STUDY_X_View, STUDY_Y_View, P2D);
+
+  LoadDefaultFontStyle();  
 
   frameRate(24);
 
@@ -1668,7 +1672,6 @@ void draw () {
     background(223);
 
     SOLARCHVISION_update_folders();
-    ResetFontStyle();
 
     float cr;
 
@@ -3571,7 +3574,7 @@ void SOLARCHVISION_draw_STUDY () {
   
     STUDY_Diagrams.strokeJoin(ROUND); 
     
-    STUDY_Diagrams.textFont(SOLARCHVISION_font1);
+    STUDY_Diagrams.textFont(SOLARCHVISION_font);
     
     STUDY_Diagrams.strokeWeight(0);
     
@@ -12202,15 +12205,24 @@ String Default_Font = "MS Sans Serif";
 "BankGothic Md BT"
 */
 
-PFont SOLARCHVISION_font1 = createFont(Default_Font, 36, true);
+PFont SOLARCHVISION_font;
 
+void LoadDefaultFontStyle () {
+  
+  println("Loading font:", Default_Font);
+  
+  SOLARCHVISION_font = createFont(Default_Font, 36, true);
+  
+  ResetFontStyle();
+}
 
 void ResetFontStyle () {
   
-  textFont(SOLARCHVISION_font1);
-
+                 textFont(SOLARCHVISION_font);
+  WORLD_Diagrams.textFont(SOLARCHVISION_font);
+  WIN3D_Diagrams.textFont(SOLARCHVISION_font);
+  STUDY_Diagrams.textFont(SOLARCHVISION_font);
 }
-
 
 void SOLARCHVISION_add_Object2D (String t, int m, float x, float y, float z, float s) {
 
@@ -29985,7 +29997,6 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setInt("WORLD_viewport_ZOOM", WORLD_viewport_ZOOM);
   newChild1.setInt("frame_variation", frame_variation);
   newChild1.setInt("_LAN", _LAN);
-  newChild1.setString("Default_Font", Default_Font);
   newChild1.setFloat("windFlow_Multiplier", windFlow_Multiplier);
   newChild1.setInt("windFlow_Color", windFlow_Color);
   newChild1.setFloat("LAND_TEXTURE_scale_U", LAND_TEXTURE_scale_U);
@@ -30030,6 +30041,7 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setString("R_earth", Double.toString(R_earth));
   newChild1.setString("LAND_mid_lat", Double.toString(LAND_mid_lat));
   newChild1.setString("LAND_mid_lon", Double.toString(LAND_mid_lon));
+  newChild1.setString("Default_Font", Default_Font);
   
   {
     int TEXTURE_copied = 0;
@@ -30061,6 +30073,11 @@ void SOLARCHVISION_save_project (String myFile) {
     
     newChild1.setString("LAND_TEXTURE_ImagePath", LAND_TEXTURE_ImagePath);    
   }
+  
+  
+  
+  
+  
 
   newChild1 = my_xml.addChild("DEFINED_STATION");
   newChild1.setInt("ni", DEFINED_STATIONS[STATION_NUMBER].length);
@@ -30766,7 +30783,6 @@ void SOLARCHVISION_load_project (String myFile) {
       WORLD_viewport_ZOOM = children0[L].getInt("WORLD_viewport_ZOOM");
       frame_variation = children0[L].getInt("frame_variation");
       _LAN = children0[L].getInt("_LAN");
-      Default_Font = children0[L].getString("Default_Font");
       windFlow_Multiplier = children0[L].getFloat("windFlow_Multiplier");
       windFlow_Color = children0[L].getInt("windFlow_Color");
       LAND_TEXTURE_scale_U = children0[L].getFloat("LAND_TEXTURE_scale_U");
@@ -30811,6 +30827,17 @@ void SOLARCHVISION_load_project (String myFile) {
       R_earth = Double.parseDouble(children0[L].getString("R_earth"));
       LAND_mid_lat = Double.parseDouble(children0[L].getString("LAND_mid_lat"));
       LAND_mid_lon = Double.parseDouble(children0[L].getString("LAND_mid_lon"));
+      
+      {
+        String new_Default_Font = children0[L].getString("Default_Font");
+        if (Default_Font.equals(new_Default_Font)) {
+        }
+        else {
+          Default_Font = new_Default_Font;        
+          LoadDefaultFontStyle();
+        }
+      } 
+      
       {
         String new_LAND_TEXTURE_ImagePath = children0[L].getString("LAND_TEXTURE_ImagePath");
         if (LAND_TEXTURE_ImagePath.toUpperCase().equals(new_LAND_TEXTURE_ImagePath.toUpperCase())) {
@@ -30827,6 +30854,8 @@ void SOLARCHVISION_load_project (String myFile) {
                     
         }
       }
+      
+     
       
       
     }
