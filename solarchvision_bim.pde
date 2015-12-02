@@ -38,7 +38,7 @@ String[][] DEFINED_STATIONS = {
                                 {"DENVER", "CO", "US", "39.737568", "-104.98472", "-105", "1608.0", "240.0", "DENVER_CO_US", "WY2-filename", "USA_CO_Golden-NREL.724666_TMY3"}, 
                                 {"HOUSTON", "TX", "US", "29.760193", "-95.36939", "-90", "15.0", "240.0", "HOUSTON_TX_US", "WY2-filename", "USA_TX_Houston-William.P.Hobby.AP.722435_TMY3"}, 
                                 {"LAS_VEGAS", "NV", "US", "36.16994", "-115.13983", "-120", "611.0", "240.0", "LAS_VEGAS_NV_US", "WY2-filename", "USA_NV_Las.Vegas-McCarran.Intl.AP.723860_TMY3"}, 
-                                {"LOS_ANGELES", "CA", "US", "34.052235", "-118.24368", "-120", "87.0", "240.0", "LOS_ANGELES_CA_US", "WY2-filename", "USA_CA_Hawthorne-Jack.Northrop.SpatialImpact.722956_TMY3"}, 
+                                {"LOS_ANGELES", "CA", "US", "34.052235", "-118.24368", "-120", "87.0", "240.0", "LOS_ANGELES_CA_US", "WY2-filename", "USA_CA_Hawthorne-Jack.Northrop.Field.722956_TMY3"}, 
                                 {"MIAMI", "FL", "US", "25.789097", "-80.20404", "-75", "3.0", "240.0", "MIAMI_FL_US", "WY2-filename", "USA_FL_Miami.Intl.AP.722020_TMY3"}, 
                                 {"NEW_YORK_CITY", "NY", "US", "40.712784", "-74.00594", "-75", "10.0", "240.0", "NEW_YORK_CITY_NY_US", "WY2-filename", "USA_NY_New.York-Central.Park.725033_TMY3"}, 
                                 {"WASHINGTON", "DC", "US", "38.907192", "-77.03687", "-75", "22.0", "240.0", "WASHINGTON_DC_US", "WY2-filename", "USA_VA_Arlington-Ronald.Reagan.Washington.Natl.AP.724050_TMY3"}, 
@@ -30240,6 +30240,30 @@ void SOLARCHVISION_save_project (String myFile) {
     newChild2.setContent(lineSTR);
   } 
 
+  {
+    newChild1 = my_xml.addChild("SpatialImpact_Elevation");
+    int ni = SpatialImpact_Elevation.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += nf(SpatialImpact_Elevation[i], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }
+  
+  {
+    newChild1 = my_xml.addChild("SpatialImpact_Rotation");
+    int ni = SpatialImpact_Rotation.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += nf(SpatialImpact_Rotation[i], 0, 4).replace(",", "."); // <<<<<<<<<<<<<<<
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }  
+
   saveXML(my_xml, myFile);    
 
   println("End of saving project.");
@@ -30845,8 +30869,31 @@ void SOLARCHVISION_load_project (String myFile) {
     }  
 
 
+    children0 = FileAll.getChildren("SpatialImpact_Elevation");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      
+      SpatialImpact_Elevation = new float [ni];
+      
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        SpatialImpact_Elevation[i] = float(parts[i]);
+      }
+    } 
 
-
+    children0 = FileAll.getChildren("SpatialImpact_Rotation");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      
+      SpatialImpact_Rotation = new float [ni];
+      
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        SpatialImpact_Rotation[i] = float(parts[i]);
+      }
+    } 
     
   }
   
@@ -30893,7 +30940,11 @@ void SOLARCHVISION_load_project (String myFile) {
   Rendered_SolarImpact_scale_U = FLOAT_undefined;
   Rendered_SolarImpact_scale_V = FLOAT_undefined;
   Rendered_SolarImpact_Elevation = FLOAT_undefined;
-  Rendered_SolarImpact_Rotation = FLOAT_undefined;    
+  Rendered_SolarImpact_Rotation = FLOAT_undefined;      
+  
+  SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
+  
+
 }
 
 
