@@ -23709,8 +23709,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
     } 
     if (ROLLOUT_child == 2) { // Developed
-      develop_option = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Develop layer" , develop_option, 0, 10, 1), 1));
-      develop_per_day = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Dev. per day option" , develop_per_day, 0, 3, 1), 1));
+      develop_option = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "develop_option" , develop_option, 0, 10, 1), 1));
+      develop_per_day = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "develop_per_day" , develop_per_day, 0, 3, 1), 1));
     
       join_hour_numbers = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Trend period hours", join_hour_numbers, 1, 24 * 16, 1), 1));
       join_type = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Weighted/equal trend", join_type, -1, 1, 2), 1));
