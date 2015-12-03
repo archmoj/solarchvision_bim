@@ -1540,7 +1540,7 @@ float CAM_fov;
 float CAM_dist;
 
 float CAM_clipNear = 0.001;
-float CAM_clipFar = 1000.0;
+float CAM_clipFar = 1000000000.0;
 
 void setup () {
 
@@ -2623,6 +2623,9 @@ void SOLARCHVISION_draw_WIN3D () {
     SOLARCHVISION_draw_SKY3D();
   
     SOLARCHVISION_draw_SunPath3D(0, 0, 0, 0.9 * SKY3D_scale, LocationLatitude);
+    
+    //SOLARCHVISION_draw_SunRotation(0, 0, 0, (150000 * 1000000) * OBJECTS_scale, LocationLatitude);
+    SOLARCHVISION_draw_SunRotation(0, 0, 0, (150000 * 1000) * OBJECTS_scale, LocationLatitude);
     
     SOLARCHVISION_draw_STAR3D();
     
@@ -11485,6 +11488,45 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
     _DATE = previous_DATE;
     SOLARCHVISION_update_date();
   
+  }
+} 
+
+
+int Display_SunRotation = 1;
+
+void SOLARCHVISION_draw_SunRotation (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float LocationLatitude) { 
+
+  if (Display_SunRotation != 0) {
+
+    WIN3D_Diagrams.pushMatrix();
+    WIN3D_Diagrams.translate(x_SunPath, y_SunPath, z_SunPath);
+  
+    WIN3D_Diagrams.strokeWeight(1);
+    WIN3D_Diagrams.stroke(0);
+    
+    for (int j = 90; j <= 270; j += 30) {
+      float HOUR_step = (SOLARCHVISION_DayTime(LocationLatitude, j) / 12.0);
+      for (float HOUR = SOLARCHVISION_Sunrise(LocationLatitude, j); HOUR <(SOLARCHVISION_Sunset(LocationLatitude, j) + .01 - HOUR_step); HOUR += HOUR_step) {
+        float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, j, HOUR);
+        float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, j, (HOUR + HOUR_step));
+        WIN3D_Diagrams.line(s_SunPath * SunA[1] * WIN3D_scale3D, -s_SunPath * SunA[2] * WIN3D_scale3D, s_SunPath * SunA[3] * WIN3D_scale3D, s_SunPath * SunB[1] * WIN3D_scale3D, -s_SunPath * SunB[2] * WIN3D_scale3D, s_SunPath * SunB[3] * WIN3D_scale3D);
+      }
+    }
+    
+    for (int HOUR = 0; HOUR <= 24; HOUR += 1) {
+      float DATE_step = 1;
+      for (int j = 0; j <= 360; j += DATE_step) {
+        float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, j, HOUR);
+        float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, (j + DATE_step), HOUR);
+        if (SunA[3] >= 0 && SunB[3] >= 0) {
+          WIN3D_Diagrams.line(s_SunPath * SunA[1] * WIN3D_scale3D, -s_SunPath * SunA[2] * WIN3D_scale3D, s_SunPath * SunA[3] * WIN3D_scale3D, s_SunPath * SunB[1] * WIN3D_scale3D, -s_SunPath * SunB[2] * WIN3D_scale3D, s_SunPath * SunB[3] * WIN3D_scale3D);
+        }
+      }
+    }
+    
+    WIN3D_Diagrams.popMatrix();
+    
+
   }
 } 
 
@@ -24002,8 +24044,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       WIN3D_EDGES_SHOW = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "WIN3D_EDGES_SHOW", WIN3D_EDGES_SHOW, 0, 1, 1), 1));  
       display_MODEL3D_EDGES = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "display_MODEL3D_EDGES" , display_MODEL3D_EDGES, 0, 1, 1), 1));
       
-      CAM_clipNear = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipNear" , CAM_clipNear, 0.0000001, 1000000, -2);
-      CAM_clipFar = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipFar" , CAM_clipFar, 0.0000001, 1000000, -2);
+      CAM_clipNear = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipNear" , CAM_clipNear, 0.0001, 1000000000, -2);
+      CAM_clipFar = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipFar" , CAM_clipFar, 0.0001, 1000000000, -2);
 
     }
     
@@ -31630,6 +31672,12 @@ int Display_EARTH3D_TEXTURE = 1;
 
 int Display_MOON3D = 1;
 int Display_MOON3D_TEXTURE = 1;
+
+int Display_STAR3D = 1;
+int Display_STAR3D_TEXTURE = 1;
+
+
+int Display_SunRotation = 1;
 
 */
 
