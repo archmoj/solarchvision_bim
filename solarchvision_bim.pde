@@ -15431,7 +15431,11 @@ void SOLARCHVISION_draw_EARTH3D () {
     float WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
     float WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;
 
-    println(WORLD_VIEW_OffsetX, WORLD_VIEW_OffsetY);    
+
+    float CEN_lon = 0.5 * (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]);
+    float CEN_lat = 0.5 * (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0] + WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]);
+
+    println("CEN_lon, CEN_lat:", CEN_lon, CEN_lat);
     
     float delta_Alpha = -5.0;
     float delta_Beta = -5.0;
@@ -15461,9 +15465,15 @@ void SOLARCHVISION_draw_EARTH3D () {
           subFace[s][2] = r * sin_ang(a);
           
           
-          float _lon = b + WORLD_VIEW_OffsetX ;
-          float _lat = a - WORLD_VIEW_OffsetY;
-
+          float _lon = b - CEN_lon;
+          float _lat = a - CEN_lat;
+/*          
+          if (_lon > 180) _lon -= 180;
+          if (_lon < -180) _lon += 180;
+          
+          if (_lat > 90) _lat -= 90;
+          if (_lat < -90) _lat += 90;
+*/
           //if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) _lat = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1];
           //if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) _lat = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0];
           
