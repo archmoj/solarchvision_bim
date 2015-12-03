@@ -1751,7 +1751,7 @@ void draw () {
   }
   else if (frameCount == 3) {
     SOLARCHVISION_LoadWorldImages();
-    Load_WORLDViewImage(); // to load the globe image into memory
+    Load_WORLDViewImage(WORLD_VIEW_Number); // to load the globe image into memory
 
     stroke(0);
     fill(0);
@@ -12367,9 +12367,9 @@ int FindGoodViewport (float pointLongitude, float pointLatitude) {
   }
   
   if (return_VIEWPORT != WORLD_VIEW_Number) {
-    Load_WORLDViewImage();
+    Load_WORLDViewImage(return_VIEWPORT);
   }
-  
+
   return (return_VIEWPORT);
 }
 
@@ -12382,17 +12382,17 @@ float WORLD_VIEW_OffsetY = 0;
 float WORLD_VIEW_ScaleX = 1;
 float WORLD_VIEW_ScaleY = 1;
 
-void Load_WORLDViewImage () {
+void Load_WORLDViewImage (int n) {
 
-  println("Loading:", WorldViewFolder + "/" + WORLD_VIEW_Filenames[WORLD_VIEW_Number]);
+  println("Loading:", WorldViewFolder + "/" + WORLD_VIEW_Filenames[n]);
   
-  WORLDViewImage = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filenames[WORLD_VIEW_Number]);
+  WORLDViewImage = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filenames[n]);
   
-  WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
-  WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
+  WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[n][0] + 180;
+  WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[n][1] - 90;
   
-  WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
-  WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;
+  WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[n][1] - WORLD_VIEW_BoundariesX[n][0]) / 360.0;
+  WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[n][1] - WORLD_VIEW_BoundariesY[n][0]) / 180.0;
 
 }
 
