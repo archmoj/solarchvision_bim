@@ -11505,8 +11505,8 @@ void SOLARCHVISION_draw_SunRotation (float x_SunPath, float y_SunPath, float z_S
     WIN3D_Diagrams.stroke(0);
     
     for (int j = 90; j <= 270; j += 30) {
-      float HOUR_step = (SOLARCHVISION_DayTime(LocationLatitude, j) / 12.0);
-      for (float HOUR = SOLARCHVISION_Sunrise(LocationLatitude, j); HOUR <(SOLARCHVISION_Sunset(LocationLatitude, j) + .01 - HOUR_step); HOUR += HOUR_step) {
+      float HOUR_step = 1;
+      for (float HOUR = 0; HOUR <= 24; HOUR += HOUR_step) {
         float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, j, HOUR);
         float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, j, (HOUR + HOUR_step));
         WIN3D_Diagrams.line(s_SunPath * SunA[1] * WIN3D_scale3D, -s_SunPath * SunA[2] * WIN3D_scale3D, s_SunPath * SunA[3] * WIN3D_scale3D, s_SunPath * SunB[1] * WIN3D_scale3D, -s_SunPath * SunB[2] * WIN3D_scale3D, s_SunPath * SunB[3] * WIN3D_scale3D);
@@ -11518,9 +11518,7 @@ void SOLARCHVISION_draw_SunRotation (float x_SunPath, float y_SunPath, float z_S
       for (int j = 0; j <= 360; j += DATE_step) {
         float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, j, HOUR);
         float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, (j + DATE_step), HOUR);
-        if (SunA[3] >= 0 && SunB[3] >= 0) {
-          WIN3D_Diagrams.line(s_SunPath * SunA[1] * WIN3D_scale3D, -s_SunPath * SunA[2] * WIN3D_scale3D, s_SunPath * SunA[3] * WIN3D_scale3D, s_SunPath * SunB[1] * WIN3D_scale3D, -s_SunPath * SunB[2] * WIN3D_scale3D, s_SunPath * SunB[3] * WIN3D_scale3D);
-        }
+        WIN3D_Diagrams.line(s_SunPath * SunA[1] * WIN3D_scale3D, -s_SunPath * SunA[2] * WIN3D_scale3D, s_SunPath * SunA[3] * WIN3D_scale3D, s_SunPath * SunB[1] * WIN3D_scale3D, -s_SunPath * SunB[2] * WIN3D_scale3D, s_SunPath * SunB[3] * WIN3D_scale3D);
       }
     }
     
