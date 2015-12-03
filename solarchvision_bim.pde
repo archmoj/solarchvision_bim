@@ -3006,6 +3006,12 @@ void SOLARCHVISION_draw_WORLD () {
     WORLD_Diagrams.background(0, 0, 0);
  
     WORLD_Diagrams.image(WORLDViewImage, 0, 0, WORLD_X_View, WORLD_Y_View);
+    
+    float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
+    float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
+      
+    float WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
+    float WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;    
 
     float _lon1 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0];
     float _lon2 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1];
@@ -12376,23 +12382,13 @@ int FindGoodViewport (float pointLongitude, float pointLatitude) {
 
 PImage WORLDViewImage;
 
-float WORLD_VIEW_OffsetX = 0;
-float WORLD_VIEW_OffsetY = 0;
-
-float WORLD_VIEW_ScaleX = 1;
-float WORLD_VIEW_ScaleY = 1;
-
 void Load_WORLDViewImage (int n) {
 
   println("Loading:", WorldViewFolder + "/" + WORLD_VIEW_Filenames[n]);
   
   WORLDViewImage = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filenames[n]);
   
-  WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[n][0] + 180;
-  WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[n][1] - 90;
-  
-  WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[n][1] - WORLD_VIEW_BoundariesX[n][0]) / 360.0;
-  WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[n][1] - WORLD_VIEW_BoundariesY[n][0]) / 180.0;
+
 
 }
 
@@ -15427,7 +15423,13 @@ int Display_EARTH3D_TEXTURE = 1;
 void SOLARCHVISION_draw_EARTH3D () {
   if (Display_EARTH3D != 0) {
 
-    WIN3D_Diagrams.strokeWeight(1);
+    //WIN3D_Diagrams.strokeWeight(1);
+
+    float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
+    float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
+      
+    float WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
+    float WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;    
     
     float delta_Alpha = -5.0;
     float delta_Beta = -5.0;
@@ -22415,7 +22417,13 @@ void mouseClicked () {
         
         if (WORLD_include == 1) {
           if (isInside(X_clicked, Y_clicked, WORLD_CX_View, WORLD_CY_View, WORLD_CX_View + WORLD_X_View, WORLD_CY_View + WORLD_Y_View) == 1) {
-      
+
+          float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
+          float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
+            
+          float WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
+          float WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;    
+            
             float mouse_lon = 360.0 * ((mouseX - WORLD_CX_View) * WORLD_VIEW_ScaleX / WORLD_X_View - 0.5) + WORLD_VIEW_OffsetX;
             float mouse_lat = -180.0 * ((mouseY - WORLD_CY_View) * WORLD_VIEW_ScaleY / WORLD_Y_View - 0.5) + WORLD_VIEW_OffsetY;
             //float mouse_lon = LocationLongitude;
