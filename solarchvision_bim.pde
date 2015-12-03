@@ -15608,8 +15608,8 @@ void SOLARCHVISION_draw_MOON3D () {
     float delta_Alpha = -5;
     float delta_Beta = -10;
     
-    float r = 1737000 * OBJECTS_scale;
-    float d = 30000000 * OBJECTS_scale; //38440000 - r - FLOAT_R_earth
+    float r = 1737000;
+    float d = 30000000; //38440000 - r - FLOAT_R_earth;
     
     for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
       for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
@@ -15675,7 +15675,7 @@ void SOLARCHVISION_draw_MOON3D () {
 
         for (int s = 0; s < subFace.length; s++) {
       
-          WIN3D_Diagrams.vertex(subFace[s][0] * WIN3D_scale3D, -subFace[s][1] * WIN3D_scale3D, subFace[s][2] * WIN3D_scale3D, subFace[s][3], subFace[s][4]);  
+          WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, subFace[s][3], subFace[s][4]);  
         }
         
         WIN3D_Diagrams.endShape(CLOSE);        
@@ -15708,8 +15708,8 @@ void SOLARCHVISION_draw_STAR3D () {
     float delta_Alpha = -5;
     float delta_Beta = -10;
     
-    float r = 696.0 * 1000000 * OBJECTS_scale;
-    float d = (150000.0 * 1000000) * OBJECTS_scale;  
+    float r = 10.0 * 696.0; // * 1000000; // multiply this later
+    float d = 1.0 * 150000.0; // * 1000000; // multiply this later 
     
     for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
       for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
@@ -15732,7 +15732,10 @@ void SOLARCHVISION_draw_STAR3D () {
           float x0 = r * cos_ang(b - 90) * cos_ang(a); 
           float y0 = r * sin_ang(b - 90) * cos_ang(a);
           float z0 = r * sin_ang(a);
-
+          
+          println("______________");
+          println(dist(0,0,0, x0,y0,z0));
+          
           float _lon = b - CEN_lon;
           float _lat = a - CEN_lat;
           
@@ -15749,14 +15752,25 @@ void SOLARCHVISION_draw_STAR3D () {
           float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
           float z1 = z0;
           
+          println(dist(0,0,0, x1,y1,z1));
+          
           float ta = -90 - LocationLatitude;
           float x2 = x1;
           float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
           float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
-
+          
+          println(dist(0,0,0, x2,y2,z2));
+          
+          // scale it here!
+          x2 *= 1000000.0;
+          y2 *= 1000000.0;
+          z2 *= 1000000.0;
+          
+          println(dist(0,0,0, x2,y2,z2));
+          
           // move it to scale here!
-          y2 += d * sin_ang(-LocationLatitude);      
-          z2 += d * cos_ang(-LocationLatitude);
+          y2 += 1000000.0 * d * sin_ang(-LocationLatitude);      
+          z2 += 1000000.0 * d * cos_ang(-LocationLatitude);
 
           subFace[s][0] = x2;
           subFace[s][1] = y2;
@@ -15774,7 +15788,7 @@ void SOLARCHVISION_draw_STAR3D () {
 
         for (int s = 0; s < subFace.length; s++) {
       
-          WIN3D_Diagrams.vertex(subFace[s][0] * WIN3D_scale3D, -subFace[s][1] * WIN3D_scale3D, subFace[s][2] * WIN3D_scale3D, subFace[s][3], subFace[s][4]);  
+          WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, subFace[s][3], subFace[s][4]);  
         }
         
         WIN3D_Diagrams.endShape(CLOSE);        
