@@ -2971,28 +2971,6 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
 
 
 
-PImage WORLDViewImage;
-
-float WORLD_VIEW_OffsetX = 0;
-float WORLD_VIEW_OffsetY = 0;
-
-float WORLD_VIEW_ScaleX = 1;
-float WORLD_VIEW_ScaleY = 1;
-
-
-void Load_WORLDViewImage () {
-
-  println("Loading:", WorldViewFolder + "/" + WORLD_VIEW_Filenames[WORLD_VIEW_Number]);
-  
-  WORLDViewImage = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filenames[WORLD_VIEW_Number]);
-  
-  WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
-  WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
-  
-  WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
-  WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;
-
-}
 
 
 
@@ -3199,8 +3177,7 @@ void SOLARCHVISION_draw_WORLD () {
     
         
   
-  
-  
+
     {
       float _lat = LocationLatitude;
       float _lon = LocationLongitude; 
@@ -3227,7 +3204,7 @@ void SOLARCHVISION_draw_WORLD () {
       float _lat = float(STATION_SWOB_INFO[f][3]);
       float _lon = float(STATION_SWOB_INFO[f][4]); 
       if (_lon > 180) _lon -= 360; // << important!
-    
+ 
       if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) draw_info = 0;
       if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) draw_info = 0;
       if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) draw_info = 0;
@@ -12394,6 +12371,29 @@ int FindGoodViewport (float pointLongitude, float pointLatitude) {
   }
   
   return (return_VIEWPORT);
+}
+
+
+PImage WORLDViewImage;
+
+float WORLD_VIEW_OffsetX = 0;
+float WORLD_VIEW_OffsetY = 0;
+
+float WORLD_VIEW_ScaleX = 1;
+float WORLD_VIEW_ScaleY = 1;
+
+void Load_WORLDViewImage () {
+
+  println("Loading:", WorldViewFolder + "/" + WORLD_VIEW_Filenames[WORLD_VIEW_Number]);
+  
+  WORLDViewImage = loadImage(WorldViewFolder + "/" + WORLD_VIEW_Filenames[WORLD_VIEW_Number]);
+  
+  WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
+  WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
+  
+  WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
+  WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;
+
 }
 
 
