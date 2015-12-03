@@ -2624,10 +2624,7 @@ void SOLARCHVISION_draw_WIN3D () {
   
     SOLARCHVISION_draw_SunPath3D(0, 0, 0, 0.9 * SKY3D_scale, LocationLatitude);
     
-    //SOLARCHVISION_draw_SunRotation(0, 0, 0, (50) * OBJECTS_scale, LocationLatitude);
-    //SOLARCHVISION_draw_SunRotation(0, 0, 0, (150000 * 1000000) * OBJECTS_scale, LocationLatitude);
-    SOLARCHVISION_draw_SunRotation(0, 0, 0, (0.1 * 150000 * 1000000) * OBJECTS_scale, LocationLatitude);
-    
+    SOLARCHVISION_draw_SunRotation(0, 0, 0, (150000.0 * 1000000) * OBJECTS_scale, LocationLatitude);
     
     SOLARCHVISION_draw_STAR3D();
     
@@ -15711,8 +15708,10 @@ void SOLARCHVISION_draw_STAR3D () {
     float delta_Alpha = -5;
     float delta_Beta = -10;
     
-    float r =       696000 * 1000;
-    float d = 0.1 * 150000 * 1000000; // why we need to multiply by 0.1
+    float r = 696.0 * 1000.0; // * 1000; // multiply this later
+    float d = 150000.0 * 1000.0; // * 1000; // multiply this later 
+    
+    println("r=",r);
     
     for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
       for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
@@ -15736,6 +15735,9 @@ void SOLARCHVISION_draw_STAR3D () {
           float y0 = r * sin_ang(b - 90) * cos_ang(a);
           float z0 = r * sin_ang(a);
           
+          println("______________");
+          println(dist(0,0,0, x0,y0,z0));
+          
           float _lon = b - CEN_lon;
           float _lat = a - CEN_lat;
           
@@ -15752,15 +15754,26 @@ void SOLARCHVISION_draw_STAR3D () {
           float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
           float z1 = z0;
           
-          float ta = -90;
+          println(dist(0,0,0, x1,y1,z1));
+          
+          float ta = 0;// -90;
           float x2 = x1;
           float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
           float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
           
-          // move it up here!
-          y2 += d * sin_ang(-LocationLatitude);      
-          z2 += d * cos_ang(-LocationLatitude);
+          println(dist(0,0,0, x2,y2,z2));
           
+          // scale it here!
+          x2 *= 1000.0;
+          y2 *= 1000.0;
+          z2 *= 1000.0;
+          
+          println(dist(0,0,0, x2,y2,z2));
+          
+          // move it to scale here!
+          y2 += 1000.0 * d * sin_ang(-LocationLatitude);      
+          z2 += 1000.0 * d * cos_ang(-LocationLatitude);
+
           subFace[s][0] = x2;
           subFace[s][1] = y2;
           subFace[s][2] = z2;
