@@ -15423,7 +15423,7 @@ int Display_EARTH3D_TEXTURE = 1;
 void SOLARCHVISION_draw_EARTH3D () {
   if (Display_EARTH3D != 0) {
 
-    //WIN3D_Diagrams.strokeWeight(1);
+    WIN3D_Diagrams.strokeWeight(1);
 
     float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
     float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
@@ -15454,14 +15454,24 @@ void SOLARCHVISION_draw_EARTH3D () {
             b += delta_Beta;
           }
 
-          subFace[s][0] = r * cos_ang(b) * cos_ang(a); 
-          subFace[s][1] = r * sin_ang(b) * cos_ang(a);
+          subFace[s][0] = r * cos_ang(b - 90) * cos_ang(a); 
+          subFace[s][1] = r * sin_ang(b - 90) * cos_ang(a);
           subFace[s][2] = r * sin_ang(a);
           
-              
           
-          subFace[s][3] = (b / WORLD_VIEW_ScaleX / 360.0 + 0.5) * WORLDViewImage.width;;
-          subFace[s][4] = (-a / WORLD_VIEW_ScaleY / 180.0 + 0.5) * WORLDViewImage.height; 
+          float a2 = a;
+          float b2 = b;
+
+          if (a2 > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) a2 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1];
+          if (a2 < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) a2 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0];
+          
+          if (b2 > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) b2 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1];
+          if (b2 < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) b2 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0];
+          
+          //println(a, a2, b, b2);
+
+          subFace[s][3] = (b2 / WORLD_VIEW_ScaleX / 360.0 + 0.5) * WORLDViewImage.width;;
+          subFace[s][4] = (-a2 / WORLD_VIEW_ScaleY / 180.0 + 0.5) * WORLDViewImage.height; 
 
         }
         
