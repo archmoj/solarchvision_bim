@@ -2691,12 +2691,12 @@ void SOLARCHVISION_draw_WIN3D () {
               /*         
               WIN3D_Diagrams.beginShape();
               for (float teta = 0; teta < 360; teta += 360.0 / 6.0) {
-                WIN3D_Diagrams.vertex((x + R * cos_ang(teta)) * objects_scale * WIN3D_scale3D, (y + R * sin_ang(teta)) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+                WIN3D_Diagrams.vertex((x + R * cos_ang(teta)) * OBJECTS_scale * WIN3D_scale3D, (y + R * sin_ang(teta)) * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
               }
               WIN3D_Diagrams.endShape(CLOSE);
               */
               WIN3D_Diagrams.pushMatrix();
-              WIN3D_Diagrams.translate(x * objects_scale * WIN3D_scale3D, y * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+              WIN3D_Diagrams.translate(x * OBJECTS_scale * WIN3D_scale3D, y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
               WIN3D_Diagrams.sphere(R);
               WIN3D_Diagrams.popMatrix();
             }        
@@ -2754,10 +2754,10 @@ void SOLARCHVISION_draw_WIN3D () {
               WIN3D_Diagrams.strokeWeight(2); // 0; <<<<<<<<<
              
               WIN3D_Diagrams.beginShape();
-              WIN3D_Diagrams.vertex((x + x1 + ox) * objects_scale * WIN3D_scale3D, (y + y1 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
-              WIN3D_Diagrams.vertex((x + x2 + ox) * objects_scale * WIN3D_scale3D, (y + y2 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
-              WIN3D_Diagrams.vertex((x + x3 + ox) * objects_scale * WIN3D_scale3D, (y + y3 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
-              WIN3D_Diagrams.vertex((x + x4 + ox) * objects_scale * WIN3D_scale3D, (y + y4 + oy) * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+              WIN3D_Diagrams.vertex((x + x1 + ox) * OBJECTS_scale * WIN3D_scale3D, (y + y1 + oy) * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
+              WIN3D_Diagrams.vertex((x + x2 + ox) * OBJECTS_scale * WIN3D_scale3D, (y + y2 + oy) * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
+              WIN3D_Diagrams.vertex((x + x3 + ox) * OBJECTS_scale * WIN3D_scale3D, (y + y3 + oy) * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
+              WIN3D_Diagrams.vertex((x + x4 + ox) * OBJECTS_scale * WIN3D_scale3D, (y + y4 + oy) * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
               WIN3D_Diagrams.endShape(CLOSE);
             }        
           }
@@ -11671,10 +11671,10 @@ void WIN3D_keyPressed (KeyEvent e) {
                  ROLLOUT_Update = 1; 
                  break;          
         
-        case LEFT  :WIN3D_X_coordinate += WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case RIGHT :WIN3D_X_coordinate -= WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
-        case UP    :WIN3D_Y_coordinate += WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case DOWN  :WIN3D_Y_coordinate -= WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case LEFT  :WIN3D_X_coordinate += WIN3D_S_coordinate * OBJECTS_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case RIGHT :WIN3D_X_coordinate -= WIN3D_S_coordinate * OBJECTS_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
+        case UP    :WIN3D_Y_coordinate += WIN3D_S_coordinate * OBJECTS_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case DOWN  :WIN3D_Y_coordinate -= WIN3D_S_coordinate * OBJECTS_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         
         
       }
@@ -11753,7 +11753,7 @@ void WIN3D_keyPressed (KeyEvent e) {
         
         case ',' :
                   if (WIN3D_View_Type == 1) {
-                    WIN3D_Z_coordinate += WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                    WIN3D_Z_coordinate += WIN3D_S_coordinate * OBJECTS_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; 
                   } 
                   else {
                     WIN3D_ZOOM_coordinate /= pow(2.0, 0.25); WIN3D_Update = 1; ROLLOUT_Update = 1; 
@@ -11762,7 +11762,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                   
         case '.' :
                   if (WIN3D_View_Type == 1) {
-                    WIN3D_Z_coordinate -= WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                    WIN3D_Z_coordinate -= WIN3D_S_coordinate * OBJECTS_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; 
                   } 
                   else {
                     WIN3D_ZOOM_coordinate *= pow(2.0, 0.25); WIN3D_Update = 1; ROLLOUT_Update = 1; 
@@ -11771,7 +11771,7 @@ void WIN3D_keyPressed (KeyEvent e) {
   
         case '0' :
                   if (WIN3D_View_Type == 1) {
-                    WIN3D_Z_coordinate += WIN3D_S_coordinate * objects_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                    WIN3D_Z_coordinate += WIN3D_S_coordinate * OBJECTS_scale; WIN3D_Update = 1; ROLLOUT_Update = 1;
                   } 
                   else {
                     WIN3D_ZOOM_coordinate /= pow(2.0, 0.25); WIN3D_Update = 1; ROLLOUT_Update = 1; 
@@ -11793,8 +11793,8 @@ void WIN3D_keyPressed (KeyEvent e) {
         case '6' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
         case '8' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         
-        case '*' :objects_scale *= 2.0; SKY3D_scale *= 2.0; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case '/' :objects_scale /= 2.0; SKY3D_scale /= 2.0; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '*' :OBJECTS_scale *= 2.0; SKY3D_scale *= 2.0; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '/' :OBJECTS_scale /= 2.0; SKY3D_scale /= 2.0; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
   
         case '+' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         case '-' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
@@ -14897,7 +14897,7 @@ void SOLARCHVISION_build_SkySphere (int Teselation) {
 
 
 
-float objects_scale = 1.0;  
+float OBJECTS_scale = 1.0;  
 
 
 
@@ -15152,7 +15152,7 @@ void SOLARCHVISION_draw_SpatialImpact_Image () {
       WIN3D_Diagrams.stroke(255, 255, 255, 0);
       WIN3D_Diagrams.fill(255, 255, 255, 0);
       
-      float c = SpatialImpact_Elevation[SpatialImpact_Image_Section] * objects_scale;
+      float c = SpatialImpact_Elevation[SpatialImpact_Image_Section] * OBJECTS_scale;
       
       for (int q = 0; q < 4; q++) {
         
@@ -15163,8 +15163,8 @@ void SOLARCHVISION_draw_SpatialImpact_Image () {
         else if (q == 2) {qx = 1; qy = 1; u = SpatialImpact_RES1; v = 0;}
         else if (q == 3) {qx = -1; qy = 1; u = 0; v = 0;}    
         
-        float a = qx * 0.5 * SpatialImpact_scale_U * objects_scale;
-        float b = qy * 0.5 * SpatialImpact_scale_V * objects_scale;    
+        float a = qx * 0.5 * SpatialImpact_scale_U * OBJECTS_scale;
+        float b = qy * 0.5 * SpatialImpact_scale_V * OBJECTS_scale;    
         
         float x = 0, y = 0, z = 0;
         
@@ -15407,11 +15407,11 @@ void SOLARCHVISION_draw_windFlow () {
       
       WIN3D_Diagrams.strokeWeight(1);
       
-      WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
+      WIN3D_Diagrams.line(x1 * OBJECTS_scale * WIN3D_scale3D, -y1 * OBJECTS_scale * WIN3D_scale3D, z1 * OBJECTS_scale * WIN3D_scale3D, x2 * OBJECTS_scale * WIN3D_scale3D, -y2 * OBJECTS_scale * WIN3D_scale3D, z2 * OBJECTS_scale * WIN3D_scale3D);
       
       WIN3D_Diagrams.strokeWeight(4);      
       
-      WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, 0.5 * (x2 + x1) * objects_scale * WIN3D_scale3D, -0.5 * (y2 + y1) * objects_scale * WIN3D_scale3D, 0.5 * (z2 + z1) * objects_scale * WIN3D_scale3D);
+      WIN3D_Diagrams.line(x1 * OBJECTS_scale * WIN3D_scale3D, -y1 * OBJECTS_scale * WIN3D_scale3D, z1 * OBJECTS_scale * WIN3D_scale3D, 0.5 * (x2 + x1) * OBJECTS_scale * WIN3D_scale3D, -0.5 * (y2 + y1) * OBJECTS_scale * WIN3D_scale3D, 0.5 * (z2 + z1) * OBJECTS_scale * WIN3D_scale3D);
     }
 
 
@@ -15508,7 +15508,7 @@ void SOLARCHVISION_draw_EARTH3D () {
 
         for (int s = 0; s < subFace.length; s++) {
       
-          WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D, subFace[s][3], subFace[s][4]);  
+          WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, subFace[s][3], subFace[s][4]);  
       
           WIN3D_Diagrams.endShape(CLOSE);
         }
@@ -15681,7 +15681,7 @@ void SOLARCHVISION_draw_land () {
               
             
 
-               WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D);
+               WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D);
             }              
             else {              
               WIN3D_Diagrams.noStroke(); // <<<<<<<<<<
@@ -15689,7 +15689,7 @@ void SOLARCHVISION_draw_land () {
               float u = (subFace[s][0] / LAND_TEXTURE_scale_U + 0.5) * LAND_TEXTURE.width;
               float v = (-subFace[s][1] / LAND_TEXTURE_scale_V + 0.5) * LAND_TEXTURE.height;
 
-              WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D, u, v);  
+              WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, u, v);  
             }
             
               
@@ -15723,10 +15723,10 @@ void SOLARCHVISION_draw_land () {
                 
                 WIN3D_Diagrams.texture(LAND_TEXTURE);                  
                 
-                WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D, u, v);
-                WIN3D_Diagrams.vertex(subFace[s_next][0] * objects_scale * WIN3D_scale3D, -subFace[s_next][1] * objects_scale * WIN3D_scale3D, subFace[s_next][2] * objects_scale * WIN3D_scale3D, u_next, v_next);
-                WIN3D_Diagrams.vertex(subFace[s_next][0] * objects_scale * WIN3D_scale3D, -subFace[s_next][1] * objects_scale * WIN3D_scale3D, (subFace[s_next][2] - CrustDepth) * objects_scale * WIN3D_scale3D, u_next, v_next);
-                WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, (subFace[s][2] - CrustDepth) * objects_scale * WIN3D_scale3D, u, v);
+                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, u, v);
+                WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s_next][2] * OBJECTS_scale * WIN3D_scale3D, u_next, v_next);
+                WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_scale3D, (subFace[s_next][2] - CrustDepth) * OBJECTS_scale * WIN3D_scale3D, u_next, v_next);
+                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, (subFace[s][2] - CrustDepth) * OBJECTS_scale * WIN3D_scale3D, u, v);
     
                 WIN3D_Diagrams.endShape(CLOSE);
     
@@ -15797,7 +15797,7 @@ void SOLARCHVISION_draw_3Dobjects () {
             
             for (int j = 0; j < allFaces[f].length; j++) {
               int vNo = allFaces[f][j];
-              WIN3D_Diagrams.vertex(allVertices[vNo][0] * objects_scale * WIN3D_scale3D, -(allVertices[vNo][1] * objects_scale * WIN3D_scale3D), allVertices[vNo][2] * objects_scale * WIN3D_scale3D);
+              WIN3D_Diagrams.vertex(allVertices[vNo][0] * OBJECTS_scale * WIN3D_scale3D, -(allVertices[vNo][1] * OBJECTS_scale * WIN3D_scale3D), allVertices[vNo][2] * OBJECTS_scale * WIN3D_scale3D);
             }    
             
             WIN3D_Diagrams.endShape(CLOSE);
@@ -15827,7 +15827,7 @@ void SOLARCHVISION_draw_3Dobjects () {
               WIN3D_Diagrams.beginShape();
               
               for (int s = 0; s < subFace.length; s++) {
-                WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -(subFace[s][1] * objects_scale * WIN3D_scale3D), subFace[s][2] * objects_scale * WIN3D_scale3D);
+                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -(subFace[s][1] * OBJECTS_scale * WIN3D_scale3D), subFace[s][2] * OBJECTS_scale * WIN3D_scale3D);
               }
               
               WIN3D_Diagrams.endShape(CLOSE);
@@ -15868,7 +15868,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                 }
                 //else WIN3D_Diagrams.fill(255, 127, 0);
         
-                WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -(subFace[s][1] * objects_scale * WIN3D_scale3D), subFace[s][2] * objects_scale * WIN3D_scale3D);
+                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -(subFace[s][1] * OBJECTS_scale * WIN3D_scale3D), subFace[s][2] * OBJECTS_scale * WIN3D_scale3D);
               }
               
               WIN3D_Diagrams.endShape(CLOSE);
@@ -15917,7 +15917,7 @@ void SOLARCHVISION_draw_3Dobjects () {
           
                 WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
   
-                WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -(subFace[s][1] * objects_scale * WIN3D_scale3D), subFace[s][2] * objects_scale * WIN3D_scale3D);
+                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -(subFace[s][1] * OBJECTS_scale * WIN3D_scale3D), subFace[s][2] * OBJECTS_scale * WIN3D_scale3D);
         
               }
               
@@ -15968,7 +15968,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                 
                 WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
                 
-                WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -(subFace[s][1] * objects_scale * WIN3D_scale3D), subFace[s][2] * objects_scale * WIN3D_scale3D);
+                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -(subFace[s][1] * OBJECTS_scale * WIN3D_scale3D), subFace[s][2] * OBJECTS_scale * WIN3D_scale3D);
         
               }
               
@@ -16056,7 +16056,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                   WIN3D_Diagrams.fill(223); 
                 }
                 
-                WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -(subFace[s][1] * objects_scale * WIN3D_scale3D), subFace[s][2] * objects_scale * WIN3D_scale3D);
+                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -(subFace[s][1] * OBJECTS_scale * WIN3D_scale3D), subFace[s][2] * OBJECTS_scale * WIN3D_scale3D);
         
               }
               
@@ -16136,7 +16136,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                     
                     WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);          
             
-                    WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -(subFace[s][1] * objects_scale * WIN3D_scale3D), subFace[s][2] * objects_scale * WIN3D_scale3D);
+                    WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -(subFace[s][1] * OBJECTS_scale * WIN3D_scale3D), subFace[s][2] * OBJECTS_scale * WIN3D_scale3D);
                   }
                 }
                 
@@ -16480,7 +16480,7 @@ void SOLARCHVISION_draw_3Dobjects () {
         
                   WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
           
-                  WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -(subFace[s][1] * objects_scale * WIN3D_scale3D), subFace[s][2] * objects_scale * WIN3D_scale3D);
+                  WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -(subFace[s][1] * OBJECTS_scale * WIN3D_scale3D), subFace[s][2] * OBJECTS_scale * WIN3D_scale3D);
                 }
               }
               WIN3D_Diagrams.endShape(CLOSE);
@@ -16516,14 +16516,14 @@ void SOLARCHVISION_look_Camera_towards_Selection () {
 
 void SOLARCHVISION_lookXY_Camera_towards_Selection () {
 
-  float xO = CAM_x / objects_scale;
-  float yO = CAM_y / objects_scale;
-  float zO = CAM_z / objects_scale;
+  float xO = CAM_x / OBJECTS_scale;
+  float yO = CAM_y / OBJECTS_scale;
+  float zO = CAM_z / OBJECTS_scale;
   
   float[] ray_end = SOLARCHVISION_calculate_Click3D(0, 0);  
-  float xA = ray_end[0] / objects_scale;
-  float yA = ray_end[1] / objects_scale;
-  float zA = ray_end[2] / objects_scale;
+  float xA = ray_end[0] / OBJECTS_scale;
+  float yA = ray_end[1] / OBJECTS_scale;
+  float zA = ray_end[2] / OBJECTS_scale;
   
   float xB = selected_Pivot_XYZ[0];
   float yB = selected_Pivot_XYZ[1];
@@ -16538,14 +16538,14 @@ void SOLARCHVISION_lookXY_Camera_towards_Selection () {
 
 void SOLARCHVISION_lookZ_Camera_towards_Selection () {
 
-  float xO = CAM_x / objects_scale;
-  float yO = CAM_y / objects_scale;
-  float zO = CAM_z / objects_scale;
+  float xO = CAM_x / OBJECTS_scale;
+  float yO = CAM_y / OBJECTS_scale;
+  float zO = CAM_z / OBJECTS_scale;
   
   float[] ray_end = SOLARCHVISION_calculate_Click3D(0, 0);  
-  float xA = ray_end[0] / objects_scale;
-  float yA = ray_end[1] / objects_scale;
-  float zA = ray_end[2] / objects_scale;
+  float xA = ray_end[0] / OBJECTS_scale;
+  float yA = ray_end[1] / OBJECTS_scale;
+  float zA = ray_end[2] / OBJECTS_scale;
   
   float xB = selected_Pivot_XYZ[0];
   float yB = selected_Pivot_XYZ[1];
@@ -16559,17 +16559,17 @@ void SOLARCHVISION_lookZ_Camera_towards_Selection () {
 
 void SOLARCHVISION_move_Camera_towards_Mouse (float t) {
   
-  float xA = CAM_x / objects_scale;
-  float yA = CAM_y / objects_scale;
-  float zA = CAM_z / objects_scale;
+  float xA = CAM_x / OBJECTS_scale;
+  float yA = CAM_y / OBJECTS_scale;
+  float zA = CAM_z / OBJECTS_scale;
   
   float Image_X = mouseX - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
   float Image_Y = mouseY - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
   
   float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);  
-  float xO = ray_end[0] / objects_scale;
-  float yO = ray_end[1] / objects_scale;
-  float zO = ray_end[2] / objects_scale;
+  float xO = ray_end[0] / OBJECTS_scale;
+  float yO = ray_end[1] / OBJECTS_scale;
+  float zO = ray_end[2] / OBJECTS_scale;
   
   float dx = xA - xO;
   float dy = yA - yO;
@@ -16579,9 +16579,9 @@ void SOLARCHVISION_move_Camera_towards_Mouse (float t) {
   float yB = yO + t * dy;
   float zB = zO + t * dz;
   
-  CAM_x = xB * objects_scale;           
-  CAM_y = yB * objects_scale;
-  CAM_z = zB * objects_scale;     
+  CAM_x = xB * OBJECTS_scale;           
+  CAM_y = yB * OBJECTS_scale;
+  CAM_z = zB * OBJECTS_scale;     
   
   SOLARCHVISION_reverseTransform_Camera();
 
@@ -16591,9 +16591,9 @@ void SOLARCHVISION_move_Camera_towards_Selection (float t) {
 
   SOLARCHVISION_calculate_selection_Pivot();  // this help during the process of modifying position/roatation/scale of selected objects
   
-  float xA = CAM_x / objects_scale;
-  float yA = CAM_y / objects_scale;
-  float zA = CAM_z / objects_scale;
+  float xA = CAM_x / OBJECTS_scale;
+  float yA = CAM_y / OBJECTS_scale;
+  float zA = CAM_z / OBJECTS_scale;
   
   float xO = selected_Pivot_XYZ[0];
   float yO = selected_Pivot_XYZ[1];
@@ -16607,9 +16607,9 @@ void SOLARCHVISION_move_Camera_towards_Selection (float t) {
   float yB = yO + t * dy;
   float zB = zO + t * dz;
   
-  CAM_x = xB * objects_scale;           
-  CAM_y = yB * objects_scale;
-  CAM_z = zB * objects_scale;     
+  CAM_x = xB * OBJECTS_scale;           
+  CAM_y = yB * OBJECTS_scale;
+  CAM_z = zB * OBJECTS_scale;     
   
   SOLARCHVISION_reverseTransform_Camera();
 
@@ -16621,9 +16621,9 @@ void SOLARCHVISION_rotateZ_Camera_around_Selection (float t) {
   
   WIN3D_RX_coordinate += t;
 
-  float xA = CAM_x / objects_scale;
-  float yA = CAM_y / objects_scale;
-  float zA = CAM_z / objects_scale;
+  float xA = CAM_x / OBJECTS_scale;
+  float yA = CAM_y / OBJECTS_scale;
+  float zA = CAM_z / OBJECTS_scale;
 
   float xO = selected_Pivot_XYZ[0];
   float yO = selected_Pivot_XYZ[1];
@@ -16655,9 +16655,9 @@ void SOLARCHVISION_rotateZ_Camera_around_Selection (float t) {
   float yF = yE + yO;
   float zF = zE + zO;
   
-  CAM_x = xF * objects_scale;           
-  CAM_y = yF * objects_scale;
-  CAM_z = zF * objects_scale; 
+  CAM_x = xF * OBJECTS_scale;           
+  CAM_y = yF * OBJECTS_scale;
+  CAM_z = zF * OBJECTS_scale; 
   
   SOLARCHVISION_reverseTransform_Camera();
   
@@ -16670,9 +16670,9 @@ void SOLARCHVISION_rotateXY_Camera_around_Selection (float t) {
   
   WIN3D_RZ_coordinate += t;
 
-  float xA = CAM_x / objects_scale;
-  float yA = CAM_y / objects_scale;
-  float zA = CAM_z / objects_scale;
+  float xA = CAM_x / OBJECTS_scale;
+  float yA = CAM_y / OBJECTS_scale;
+  float zA = CAM_z / OBJECTS_scale;
   
   float xO = selected_Pivot_XYZ[0];
   float yO = selected_Pivot_XYZ[1];
@@ -16685,9 +16685,9 @@ void SOLARCHVISION_rotateXY_Camera_around_Selection (float t) {
   float yB = yO + dx * sin_ang(t) + dy * cos_ang(t);
   float zB = zA;
   
-  CAM_x = xB * objects_scale;           
-  CAM_y = yB * objects_scale;
-  CAM_z = zB * objects_scale;   
+  CAM_x = xB * OBJECTS_scale;           
+  CAM_y = yB * OBJECTS_scale;
+  CAM_z = zB * OBJECTS_scale;   
   
   SOLARCHVISION_reverseTransform_Camera();
   
@@ -16833,9 +16833,9 @@ void SOLARCHVISION_draw_2Dobjects () {
     float[] DistZ = new float [1 + allObject2D_num];
    
     for (int f = 1; f <= allObject2D_num; f++) {
-      float x = allObject2D_XYZS[f][0] * objects_scale;
-      float y = allObject2D_XYZS[f][1] * objects_scale;
-      float z = allObject2D_XYZS[f][2] * objects_scale;
+      float x = allObject2D_XYZS[f][0] * OBJECTS_scale;
+      float y = allObject2D_XYZS[f][1] * OBJECTS_scale;
+      float z = allObject2D_XYZS[f][2] * OBJECTS_scale;
       
       DistZ[f] = dist(x, y, z, CAM_x, CAM_y, CAM_z);
     }
@@ -16861,11 +16861,11 @@ void SOLARCHVISION_draw_2Dobjects () {
         int w = Object2DImage[n].width; 
         int h = Object2DImage[n].height;
                 
-        float x = allObject2D_XYZS[f][0] * objects_scale;
-        float y = allObject2D_XYZS[f][1] * objects_scale;
-        float z = allObject2D_XYZS[f][2] * objects_scale;
+        float x = allObject2D_XYZS[f][0] * OBJECTS_scale;
+        float y = allObject2D_XYZS[f][1] * OBJECTS_scale;
+        float z = allObject2D_XYZS[f][2] * OBJECTS_scale;
         
-        float r = allObject2D_XYZS[f][3] * 0.5 * objects_scale;
+        float r = allObject2D_XYZS[f][3] * 0.5 * OBJECTS_scale;
         
         float t = WIN3D_RZ_coordinate * PI / 180.0;
         if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
@@ -16886,21 +16886,21 @@ void SOLARCHVISION_draw_2Dobjects () {
         WIN3D_Diagrams.endShape(CLOSE);
         
         {
-          allObject2D_Vertices[f * 4 - 3][0] = (x - r * cos(t)) / objects_scale;
-          allObject2D_Vertices[f * 4 - 3][1] = (y - r * sin(t)) / objects_scale;
-          allObject2D_Vertices[f * 4 - 3][2] = (z) / objects_scale;
+          allObject2D_Vertices[f * 4 - 3][0] = (x - r * cos(t)) / OBJECTS_scale;
+          allObject2D_Vertices[f * 4 - 3][1] = (y - r * sin(t)) / OBJECTS_scale;
+          allObject2D_Vertices[f * 4 - 3][2] = (z) / OBJECTS_scale;
 
-          allObject2D_Vertices[f * 4 - 2][0] = (x + r * cos(t)) / objects_scale;
-          allObject2D_Vertices[f * 4 - 2][1] = (y + r * sin(t)) / objects_scale;
-          allObject2D_Vertices[f * 4 - 2][2] = (z) / objects_scale;
+          allObject2D_Vertices[f * 4 - 2][0] = (x + r * cos(t)) / OBJECTS_scale;
+          allObject2D_Vertices[f * 4 - 2][1] = (y + r * sin(t)) / OBJECTS_scale;
+          allObject2D_Vertices[f * 4 - 2][2] = (z) / OBJECTS_scale;
 
-          allObject2D_Vertices[f * 4 - 1][0] = (x + r * cos(t)) / objects_scale;
-          allObject2D_Vertices[f * 4 - 1][1] = (y + r * sin(t)) / objects_scale;
-          allObject2D_Vertices[f * 4 - 1][2] = (z + 2 * r) / objects_scale;
+          allObject2D_Vertices[f * 4 - 1][0] = (x + r * cos(t)) / OBJECTS_scale;
+          allObject2D_Vertices[f * 4 - 1][1] = (y + r * sin(t)) / OBJECTS_scale;
+          allObject2D_Vertices[f * 4 - 1][2] = (z + 2 * r) / OBJECTS_scale;
 
-          allObject2D_Vertices[f * 4 - 0][0] = (x - r * cos(t)) / objects_scale;
-          allObject2D_Vertices[f * 4 - 0][1] = (y - r * sin(t)) / objects_scale;
-          allObject2D_Vertices[f * 4 - 0][2] = (z + 2 * r) / objects_scale;
+          allObject2D_Vertices[f * 4 - 0][0] = (x - r * cos(t)) / OBJECTS_scale;
+          allObject2D_Vertices[f * 4 - 0][1] = (y - r * sin(t)) / OBJECTS_scale;
+          allObject2D_Vertices[f * 4 - 0][2] = (z + 2 * r) / OBJECTS_scale;
 
           allObject2D_Faces[f][0] = f * 4 - 3;
           allObject2D_Faces[f][1] = f * 4 - 2;
@@ -16910,7 +16910,7 @@ void SOLARCHVISION_draw_2Dobjects () {
         
 
         
-        if (r / objects_scale > 2.5) { // to select only trees!   
+        if (r / OBJECTS_scale > 2.5) { // to select only trees!   
         
           float ratio = 0.5;
         
@@ -19189,7 +19189,7 @@ void SOLARCHVISION_draw_SpatialImpact_lines () {
       float y2 = SpatialImpact_Contours_U1Vertices[n2][1];
       float z2 = SpatialImpact_Contours_U1Vertices[n2][2];
       
-      WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
+      WIN3D_Diagrams.line(x1 * OBJECTS_scale * WIN3D_scale3D, -y1 * OBJECTS_scale * WIN3D_scale3D, z1 * OBJECTS_scale * WIN3D_scale3D, x2 * OBJECTS_scale * WIN3D_scale3D, -y2 * OBJECTS_scale * WIN3D_scale3D, z2 * OBJECTS_scale * WIN3D_scale3D);
     }
 
     WIN3D_Diagrams.strokeWeight(1);
@@ -19209,7 +19209,7 @@ void SOLARCHVISION_draw_SpatialImpact_lines () {
       float y2 = SpatialImpact_Contours_V1Vertices[n2][1];
       float z2 = SpatialImpact_Contours_V1Vertices[n2][2];
       
-      WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
+      WIN3D_Diagrams.line(x1 * OBJECTS_scale * WIN3D_scale3D, -y1 * OBJECTS_scale * WIN3D_scale3D, z1 * OBJECTS_scale * WIN3D_scale3D, x2 * OBJECTS_scale * WIN3D_scale3D, -y2 * OBJECTS_scale * WIN3D_scale3D, z2 * OBJECTS_scale * WIN3D_scale3D);
     }
 
     WIN3D_Diagrams.strokeWeight(1);
@@ -19229,7 +19229,7 @@ void SOLARCHVISION_draw_SpatialImpact_lines () {
       float y2 = SpatialImpact_Contours_V2Vertices[n2][1];
       float z2 = SpatialImpact_Contours_V2Vertices[n2][2];
       
-      WIN3D_Diagrams.line(x1 * objects_scale * WIN3D_scale3D, -y1 * objects_scale * WIN3D_scale3D, z1 * objects_scale * WIN3D_scale3D, x2 * objects_scale * WIN3D_scale3D, -y2 * objects_scale * WIN3D_scale3D, z2 * objects_scale * WIN3D_scale3D);
+      WIN3D_Diagrams.line(x1 * OBJECTS_scale * WIN3D_scale3D, -y1 * OBJECTS_scale * WIN3D_scale3D, z1 * OBJECTS_scale * WIN3D_scale3D, x2 * OBJECTS_scale * WIN3D_scale3D, -y2 * OBJECTS_scale * WIN3D_scale3D, z2 * OBJECTS_scale * WIN3D_scale3D);
     }
 
     WIN3D_Diagrams.strokeWeight(0);
@@ -19254,7 +19254,7 @@ void SOLARCHVISION_draw_SpatialImpact_points () {
       float z = SpatialImpact_Contours_U1Vertices[n][2];
       
       WIN3D_Diagrams.pushMatrix();
-      WIN3D_Diagrams.translate(x * objects_scale * WIN3D_scale3D, -y * objects_scale * WIN3D_scale3D, z * objects_scale * WIN3D_scale3D);
+      WIN3D_Diagrams.translate(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
       WIN3D_Diagrams.sphere(R);
       WIN3D_Diagrams.popMatrix();
     }
@@ -20745,7 +20745,7 @@ void mouseWheel(MouseEvent event) {
               if ((View_Select_Create_Modify == -3) || (View_Select_Create_Modify == -10) || (View_Select_Create_Modify == -12) || (View_Select_Create_Modify == -14)) { // viewport:zoom
       
                 if (WIN3D_View_Type == 1) {
-                  WIN3D_Z_coordinate += Wheel_Value * WIN3D_S_coordinate * objects_scale; 
+                  WIN3D_Z_coordinate += Wheel_Value * WIN3D_S_coordinate * OBJECTS_scale; 
                 } 
                 else {
                   WIN3D_ZOOM_coordinate /= pow(2.0, Wheel_Value);
@@ -20766,8 +20766,8 @@ void mouseWheel(MouseEvent event) {
               
               if (View_Select_Create_Modify == -5) { // viewport:3DModelSize
                 
-                if (Wheel_Value > 0) objects_scale *= pow(2.0, 0.25);
-                if (Wheel_Value < 0) objects_scale /= pow(2.0, 0.25);
+                if (Wheel_Value > 0) OBJECTS_scale *= pow(2.0, 0.25);
+                if (Wheel_Value < 0) OBJECTS_scale /= pow(2.0, 0.25);
       
                 WIN3D_Update = 1; 
       
@@ -20779,7 +20779,7 @@ void mouseWheel(MouseEvent event) {
       
                   if (View_XYZ_ChangeOption == 0) {
       
-                    WIN3D_X_coordinate += Wheel_Value * WIN3D_S_coordinate * objects_scale;
+                    WIN3D_X_coordinate += Wheel_Value * WIN3D_S_coordinate * OBJECTS_scale;
                     
                     WIN3D_Update = 1;
                     
@@ -20787,7 +20787,7 @@ void mouseWheel(MouseEvent event) {
       
                   if (View_XYZ_ChangeOption == 1) {
       
-                    WIN3D_Y_coordinate += Wheel_Value * WIN3D_S_coordinate * objects_scale;
+                    WIN3D_Y_coordinate += Wheel_Value * WIN3D_S_coordinate * OBJECTS_scale;
                     
                     WIN3D_Update = 1;
                     
@@ -20839,12 +20839,12 @@ void mouseWheel(MouseEvent event) {
                 if (Modify_Object_Parameters == 0) { // AllModelSize
                 
                   if (Wheel_Value > 0) {
-                    objects_scale *= pow(2.0, 0.25);
+                    OBJECTS_scale *= pow(2.0, 0.25);
                     SKY3D_scale *= pow(2.0, 0.25);
                   }              
   
                   if (Wheel_Value < 0) {
-                    objects_scale /= pow(2.0, 0.25);
+                    OBJECTS_scale /= pow(2.0, 0.25);
                     SKY3D_scale /= pow(2.0, 0.25);
                   }      
                     
@@ -20896,7 +20896,7 @@ void mouseWheel(MouseEvent event) {
           
               if (View_Select_Create_Modify == -15) { // viewport:PanX
               
-                WIN3D_X_coordinate += Wheel_Value * WIN3D_S_coordinate * objects_scale;
+                WIN3D_X_coordinate += Wheel_Value * WIN3D_S_coordinate * OBJECTS_scale;
   
                 WIN3D_Update = 1;
       
@@ -20904,7 +20904,7 @@ void mouseWheel(MouseEvent event) {
           
               if (View_Select_Create_Modify == -16) { // viewport:PanY
               
-                WIN3D_Y_coordinate += Wheel_Value * WIN3D_S_coordinate * objects_scale;
+                WIN3D_Y_coordinate += Wheel_Value * WIN3D_S_coordinate * OBJECTS_scale;
   
                 WIN3D_Update = 1;
       
@@ -20998,9 +20998,9 @@ void mouseReleased () {
                     
                     int vNo = allFractal_Faces[f][j];
                     
-                    float x = allFractal_Vertices[vNo][0] * objects_scale;
-                    float y = allFractal_Vertices[vNo][1] * objects_scale;
-                    float z = -allFractal_Vertices[vNo][2] * objects_scale;
+                    float x = allFractal_Vertices[vNo][0] * OBJECTS_scale;
+                    float y = allFractal_Vertices[vNo][1] * OBJECTS_scale;
+                    float z = -allFractal_Vertices[vNo][2] * OBJECTS_scale;
                     
                     float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
   
@@ -21091,9 +21091,9 @@ void mouseReleased () {
                     
                     int vNo = allObject2D_Faces[f][j];
                     
-                    float x = allObject2D_Vertices[vNo][0] * objects_scale;
-                    float y = allObject2D_Vertices[vNo][1] * objects_scale;
-                    float z = -allObject2D_Vertices[vNo][2] * objects_scale;
+                    float x = allObject2D_Vertices[vNo][0] * OBJECTS_scale;
+                    float y = allObject2D_Vertices[vNo][1] * OBJECTS_scale;
+                    float z = -allObject2D_Vertices[vNo][2] * OBJECTS_scale;
                     
                     float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
   
@@ -21185,9 +21185,9 @@ void mouseReleased () {
                         for (int j = 0; j < allFaces[f].length; j++) {
                           int vNo = allFaces[f][j];
               
-                          float x = allVertices[vNo][0] * objects_scale;
-                          float y = allVertices[vNo][1] * objects_scale;            
-                          float z = -allVertices[vNo][2] * objects_scale;
+                          float x = allVertices[vNo][0] * OBJECTS_scale;
+                          float y = allVertices[vNo][1] * OBJECTS_scale;            
+                          float z = -allVertices[vNo][2] * OBJECTS_scale;
                           
                           float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
     
@@ -21326,8 +21326,8 @@ void mouseDragged () {
   
               if (mouseButton == LEFT) { // pan
   
-                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
-                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
+                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * OBJECTS_scale; 
+                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * OBJECTS_scale;
                 
                 WIN3D_Update = 1;
               }      
@@ -21357,8 +21357,8 @@ void mouseDragged () {
               
               if (mouseButton == RIGHT) { // pan
   
-                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
-                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
+                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * OBJECTS_scale; 
+                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * OBJECTS_scale;
                 
                 WIN3D_Update = 1;
               }          
@@ -21397,8 +21397,8 @@ void mouseDragged () {
               
               if (mouseButton == RIGHT) { // pan
   
-                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
-                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
+                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * OBJECTS_scale; 
+                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * OBJECTS_scale;
                 
                 WIN3D_Update = 1;
               }          
@@ -21439,8 +21439,8 @@ void mouseDragged () {
               
               if (mouseButton == RIGHT) { // pan
   
-                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
-                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
+                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * OBJECTS_scale; 
+                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * OBJECTS_scale;
                 
                 WIN3D_Update = 1;
               }       
@@ -21451,14 +21451,14 @@ void mouseDragged () {
   
               if (mouseButton == LEFT) { // move Y
     
-                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale; 
+                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * OBJECTS_scale; 
                 
                 WIN3D_Update = 1;    
               }              
               
               if (mouseButton == RIGHT) { // move X
     
-                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
+                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * OBJECTS_scale; 
                 
                 WIN3D_Update = 1;    
               }    
@@ -21469,8 +21469,8 @@ void mouseDragged () {
   
               if (mouseButton == LEFT) { // pan
             
-                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
-                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
+                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * OBJECTS_scale; 
+                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * OBJECTS_scale;
                 
                 WIN3D_Update = 1;
               }   
@@ -21492,14 +21492,14 @@ void mouseDragged () {
               if (Modify_Object_Parameters == 0) { // Truck
   
                 if (View_XYZ_ChangeOption == 0) {
-                  if (mouseButton == LEFT) WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
-                  if (mouseButton == RIGHT) WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
+                  if (mouseButton == LEFT) WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * OBJECTS_scale; 
+                  if (mouseButton == RIGHT) WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * OBJECTS_scale;
                   WIN3D_Update = 1;  
                 }
     
                 if (View_XYZ_ChangeOption == 1) {
-                  if (mouseButton == RIGHT) WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * objects_scale; 
-                  if (mouseButton == LEFT) WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * objects_scale;
+                  if (mouseButton == RIGHT) WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * OBJECTS_scale; 
+                  if (mouseButton == LEFT) WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * OBJECTS_scale;
                   WIN3D_Update = 1; 
                 }            
              
@@ -22687,20 +22687,20 @@ void mouseClicked () {
     
             float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);
             
-            ray_start[0] /= objects_scale;
-            ray_start[1] /= objects_scale;
-            ray_start[2] /= objects_scale;          
+            ray_start[0] /= OBJECTS_scale;
+            ray_start[1] /= OBJECTS_scale;
+            ray_start[2] /= OBJECTS_scale;          
             
-            ray_end[0] /= objects_scale;
-            ray_end[1] /= objects_scale;
-            ray_end[2] /= objects_scale;
+            ray_end[0] /= OBJECTS_scale;
+            ray_end[1] /= OBJECTS_scale;
+            ray_end[2] /= OBJECTS_scale;
     
             if (WIN3D_View_Type == 0) {
               float[] ray_center = SOLARCHVISION_calculate_Click3D(0, 0);
     
-              ray_center[0] /= objects_scale;
-              ray_center[1] /= objects_scale;
-              ray_center[2] /= objects_scale;
+              ray_center[0] /= OBJECTS_scale;
+              ray_center[1] /= OBJECTS_scale;
+              ray_center[2] /= OBJECTS_scale;
               
               ray_start[0] += ray_end[0] - ray_center[0];
               ray_start[1] += ray_end[1] - ray_center[1];
@@ -23542,13 +23542,14 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Load_URBAN_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Load_URBAN_MESH" , Load_URBAN_MESH, 0, 1, 1), 1));
       Display_URBAN_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_URBAN_MESH" , Display_URBAN_MESH, 0, 1, 1), 1));
       
+      
+      
       Display_SUN3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SUN3D" , Display_SUN3D, 0, 1, 1), 1));
       Display_SKY3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SKY3D" , Display_SKY3D, 0, 1, 1), 1));
 
-      objects_scale = MySpinner.update(X_control, Y_control, 0,1,0, "objects_scale" , objects_scale, 0.00001, 100000, -2);
-      
-      SKY3D_TESELATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_TESELATION" , SKY3D_TESELATION, 0, 5, 1), 1));            
+      OBJECTS_scale = MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_scale" , OBJECTS_scale, 0.00001, 100000, -2);
       SKY3D_scale = MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_scale" , SKY3D_scale, 1, 100000, -2);
+      SKY3D_TESELATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_TESELATION" , SKY3D_TESELATION, 0, 5, 1), 1));            
 
       WindRose3D_scale = MySpinner.update(X_control, Y_control, 0,1,0, "WindRose3D_scale" , WindRose3D_scale, 50, 3200, -2);
       WindRose_RES = int(MySpinner.update(X_control, Y_control, 0,1,0, "WindRose3D_resolution" , WindRose_RES, 200, 600, 100));
@@ -24753,9 +24754,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
                 
                 int vNo = allFractal_Faces[f][j];
                 
-                float x = allFractal_Vertices[vNo][0] * objects_scale;
-                float y = allFractal_Vertices[vNo][1] * objects_scale;
-                float z = -allFractal_Vertices[vNo][2] * objects_scale;
+                float x = allFractal_Vertices[vNo][0] * OBJECTS_scale;
+                float y = allFractal_Vertices[vNo][1] * OBJECTS_scale;
+                float z = -allFractal_Vertices[vNo][2] * OBJECTS_scale;
                 
                 float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
                 
@@ -24808,9 +24809,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
                 
                 int vNo = allObject2D_Faces[f][j];
                 
-                float x = allObject2D_Vertices[vNo][0] * objects_scale;
-                float y = allObject2D_Vertices[vNo][1] * objects_scale;
-                float z = -allObject2D_Vertices[vNo][2] * objects_scale;
+                float x = allObject2D_Vertices[vNo][0] * OBJECTS_scale;
+                float y = allObject2D_Vertices[vNo][1] * OBJECTS_scale;
+                float z = -allObject2D_Vertices[vNo][2] * OBJECTS_scale;
                 
                 float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
                 
@@ -24882,9 +24883,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
                 
                 for (int s = 0; s < subFace.length; s++) {
       
-                  float x = subFace[s][0] * objects_scale;
-                  float y = subFace[s][1] * objects_scale;            
-                  float z = -subFace[s][2] * objects_scale;
+                  float x = subFace[s][0] * OBJECTS_scale;
+                  float y = subFace[s][1] * OBJECTS_scale;            
+                  float z = -subFace[s][2] * OBJECTS_scale;
                   
                   float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
                   
@@ -24944,9 +24945,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     
           int vNo = BoundingBox_Faces[f][g];
     
-          float x = BoundingBox_Vertices[vNo][0] * objects_scale;
-          float y = BoundingBox_Vertices[vNo][1] * objects_scale;            
-          float z = -BoundingBox_Vertices[vNo][2] * objects_scale;
+          float x = BoundingBox_Vertices[vNo][0] * OBJECTS_scale;
+          float y = BoundingBox_Vertices[vNo][1] * OBJECTS_scale;            
+          float z = -BoundingBox_Vertices[vNo][2] * OBJECTS_scale;
           
           float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
           
@@ -24993,13 +24994,13 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         int a = BoundingBox_Lines[f][0];
         int b = BoundingBox_Lines[f][1];
   
-        float x1 = BoundingBox_Vertices[a][0] * objects_scale;
-        float y1 = BoundingBox_Vertices[a][1] * objects_scale;            
-        float z1 = -BoundingBox_Vertices[a][2] * objects_scale;
+        float x1 = BoundingBox_Vertices[a][0] * OBJECTS_scale;
+        float y1 = BoundingBox_Vertices[a][1] * OBJECTS_scale;            
+        float z1 = -BoundingBox_Vertices[a][2] * OBJECTS_scale;
   
-        float x2 = BoundingBox_Vertices[b][0] * objects_scale;
-        float y2 = BoundingBox_Vertices[b][1] * objects_scale;            
-        float z2 = -BoundingBox_Vertices[b][2] * objects_scale;
+        float x2 = BoundingBox_Vertices[b][0] * OBJECTS_scale;
+        float y2 = BoundingBox_Vertices[b][1] * OBJECTS_scale;            
+        float z2 = -BoundingBox_Vertices[b][2] * OBJECTS_scale;
         
         float[] Image_XYZa = SOLARCHVISION_calculate_Perspective_Internally(x1,y1,z1);            
         float[] Image_XYZb = SOLARCHVISION_calculate_Perspective_Internally(x2,y2,z2);
@@ -25036,9 +25037,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       
       for (int vNo = 1; vNo < allVertices.length; vNo++) {
   
-        float x = allVertices[vNo][0] * objects_scale;
-        float y = allVertices[vNo][1] * objects_scale;
-        float z = -allVertices[vNo][2] * objects_scale;
+        float x = allVertices[vNo][0] * OBJECTS_scale;
+        float y = allVertices[vNo][1] * OBJECTS_scale;
+        float z = -allVertices[vNo][2] * OBJECTS_scale;
   
         float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
         
@@ -26097,8 +26098,8 @@ void SOLARCHVISION_draw_SolarImpact_Image () {
       float minV = 0.5 * SolarImpact_RES2 - (0.5 * SolarImpact_RES2 * dV);
       float maxV = 0.5 * SolarImpact_RES2 + (0.5 * SolarImpact_RES2 * dV);
   
-      //float c = HeightAboveGround * objects_scale; // <<< or zero i.e. height of the plane in 3D  // ?????????
-      float c = SolarImpact_Elevation * objects_scale; 
+      //float c = HeightAboveGround * OBJECTS_scale; // <<< or zero i.e. height of the plane in 3D  // ?????????
+      float c = SolarImpact_Elevation * OBJECTS_scale; 
   
       if (SolarImpact_Image_Section != 0) {
         WIN3D_Diagrams.beginShape();
@@ -26116,8 +26117,8 @@ void SOLARCHVISION_draw_SolarImpact_Image () {
           else if (q == 2) {qx = 1; qy = 1; u = maxU; v = minV;}
           else if (q == 3) {qx = -1; qy = 1; u = minU; v = minV;}    
           
-          float a = qx * 0.5 * SolarImpact_scale_U * objects_scale;
-          float b = qy * 0.5 * SolarImpact_scale_V * objects_scale;    
+          float a = qx * 0.5 * SolarImpact_scale_U * OBJECTS_scale;
+          float b = qy * 0.5 * SolarImpact_scale_V * OBJECTS_scale;    
           
           float x = 0, y = 0, z = 0;
           
@@ -26174,8 +26175,8 @@ void SOLARCHVISION_draw_WindRose_Image () {
     float minV = 0;
     float maxV = Rendered_WindRose_RES;
 
-    //float c = HeightAboveGround * objects_scale; // <<< or zero i.e. height of the plane in 3D  // ?????????
-    float c = WindRose_Elevation * objects_scale; 
+    //float c = HeightAboveGround * OBJECTS_scale; // <<< or zero i.e. height of the plane in 3D  // ?????????
+    float c = WindRose_Elevation * OBJECTS_scale; 
     
     c += 1; // put WindRose_Image it at level 1m. // <<<<<<<<<<<
 
@@ -26194,8 +26195,8 @@ void SOLARCHVISION_draw_WindRose_Image () {
       else if (q == 2) {qx = 1; qy = 1; u = maxU; v = minV;}
       else if (q == 3) {qx = -1; qy = 1; u = minU; v = minV;}    
       
-      float a = qx * 0.5 * WindRose_scale_U * objects_scale;
-      float b = qy * 0.5 * WindRose_scale_V * objects_scale;    
+      float a = qx * 0.5 * WindRose_scale_U * OBJECTS_scale;
+      float b = qy * 0.5 * WindRose_scale_V * OBJECTS_scale;    
       
       float x = 0, y = 0, z = 0;
 
@@ -26293,31 +26294,31 @@ void SOLARCHVISION_draw_FractalPlants () {
         
         
         // ----------------
-        x *= objects_scale;
-        y *= objects_scale;
-        z *= objects_scale;
-        r *= objects_scale;
+        x *= OBJECTS_scale;
+        y *= OBJECTS_scale;
+        z *= OBJECTS_scale;
+        r *= OBJECTS_scale;
         // ----------------        
        
         float t = WIN3D_RZ_coordinate * PI / 180.0;
         if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
 
         {
-          allFractal_Vertices[f * 4 - 3][0] = (x - r * cos(t)) / objects_scale;
-          allFractal_Vertices[f * 4 - 3][1] = (y - r * sin(t)) / objects_scale;
-          allFractal_Vertices[f * 4 - 3][2] = (z) / objects_scale;
+          allFractal_Vertices[f * 4 - 3][0] = (x - r * cos(t)) / OBJECTS_scale;
+          allFractal_Vertices[f * 4 - 3][1] = (y - r * sin(t)) / OBJECTS_scale;
+          allFractal_Vertices[f * 4 - 3][2] = (z) / OBJECTS_scale;
 
-          allFractal_Vertices[f * 4 - 2][0] = (x + r * cos(t)) / objects_scale;
-          allFractal_Vertices[f * 4 - 2][1] = (y + r * sin(t)) / objects_scale;
-          allFractal_Vertices[f * 4 - 2][2] = (z) / objects_scale;
+          allFractal_Vertices[f * 4 - 2][0] = (x + r * cos(t)) / OBJECTS_scale;
+          allFractal_Vertices[f * 4 - 2][1] = (y + r * sin(t)) / OBJECTS_scale;
+          allFractal_Vertices[f * 4 - 2][2] = (z) / OBJECTS_scale;
 
-          allFractal_Vertices[f * 4 - 1][0] = (x + r * cos(t)) / objects_scale;
-          allFractal_Vertices[f * 4 - 1][1] = (y + r * sin(t)) / objects_scale;
-          allFractal_Vertices[f * 4 - 1][2] = (z + 2 * r) / objects_scale;
+          allFractal_Vertices[f * 4 - 1][0] = (x + r * cos(t)) / OBJECTS_scale;
+          allFractal_Vertices[f * 4 - 1][1] = (y + r * sin(t)) / OBJECTS_scale;
+          allFractal_Vertices[f * 4 - 1][2] = (z + 2 * r) / OBJECTS_scale;
 
-          allFractal_Vertices[f * 4 - 0][0] = (x - r * cos(t)) / objects_scale;
-          allFractal_Vertices[f * 4 - 0][1] = (y - r * sin(t)) / objects_scale;
-          allFractal_Vertices[f * 4 - 0][2] = (z + 2 * r) / objects_scale;
+          allFractal_Vertices[f * 4 - 0][0] = (x - r * cos(t)) / OBJECTS_scale;
+          allFractal_Vertices[f * 4 - 0][1] = (y - r * sin(t)) / OBJECTS_scale;
+          allFractal_Vertices[f * 4 - 0][2] = (z + 2 * r) / OBJECTS_scale;
 
           allFractal_Faces[f][0] = f * 4 - 3;
           allFractal_Faces[f][1] = f * 4 - 2;
@@ -26402,7 +26403,7 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
             float Trunk_y_new = y0 + Trunk_x_rot * sin(rotXY) + Trunk_y_rot * cos(rotXY);
             float Trunk_z_new = z0 + Trunk_z_rot; 
     
-            WIN3D_Diagrams.vertex(Trunk_x_new * objects_scale * WIN3D_scale3D, -Trunk_y_new * objects_scale * WIN3D_scale3D, Trunk_z_new * objects_scale * WIN3D_scale3D);
+            WIN3D_Diagrams.vertex(Trunk_x_new * OBJECTS_scale * WIN3D_scale3D, -Trunk_y_new * OBJECTS_scale * WIN3D_scale3D, Trunk_z_new * OBJECTS_scale * WIN3D_scale3D);
           }
           WIN3D_Diagrams.endShape(CLOSE);
         }
@@ -26425,8 +26426,8 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
       WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
   
       WIN3D_Diagrams.pushMatrix(); 
-      WIN3D_Diagrams.translate(x0 * objects_scale * WIN3D_scale3D, -y0 * objects_scale * WIN3D_scale3D, z0 * objects_scale * WIN3D_scale3D);
-      WIN3D_Diagrams.sphere(0.5 * LeafSize * objects_scale * WIN3D_scale3D);
+      WIN3D_Diagrams.translate(x0 * OBJECTS_scale * WIN3D_scale3D, -y0 * OBJECTS_scale * WIN3D_scale3D, z0 * OBJECTS_scale * WIN3D_scale3D);
+      WIN3D_Diagrams.sphere(0.5 * LeafSize * OBJECTS_scale * WIN3D_scale3D);
       WIN3D_Diagrams.popMatrix();
    
       if (as_Solid != 0) {
@@ -30112,7 +30113,7 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setFloat("CAM_dist", CAM_dist);
   newChild1.setFloat("CAM_clipNear", CAM_clipNear);
   newChild1.setFloat("CAM_clipFar", CAM_clipFar);
-  newChild1.setFloat("objects_scale", objects_scale);
+  newChild1.setFloat("OBJECTS_scale", OBJECTS_scale);
   newChild1.setFloat("refScale", refScale);
   newChild1.setFloat("WIN3D_Y_coordinate", WIN3D_Y_coordinate);
   newChild1.setFloat("WIN3D_Z_coordinate", WIN3D_Z_coordinate);
@@ -30897,7 +30898,7 @@ void SOLARCHVISION_load_project (String myFile) {
       CAM_dist = children0[L].getFloat("CAM_dist");
       CAM_clipNear = children0[L].getFloat("CAM_clipNear");
       CAM_clipFar = children0[L].getFloat("CAM_clipFar");
-      objects_scale = children0[L].getFloat("objects_scale");
+      OBJECTS_scale = children0[L].getFloat("OBJECTS_scale");
       refScale = children0[L].getFloat("refScale");
       WIN3D_Y_coordinate = children0[L].getFloat("WIN3D_Y_coordinate");
       WIN3D_Z_coordinate = children0[L].getFloat("WIN3D_Z_coordinate");
