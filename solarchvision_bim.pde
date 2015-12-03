@@ -15429,7 +15429,9 @@ void SOLARCHVISION_draw_EARTH3D () {
     float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
       
     float WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
-    float WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;    
+    float WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;
+
+    println(WORLD_VIEW_OffsetX, WORLD_VIEW_OffsetY);    
     
     float delta_Alpha = -5.0;
     float delta_Beta = -5.0;
@@ -15459,19 +15461,19 @@ void SOLARCHVISION_draw_EARTH3D () {
           subFace[s][2] = r * sin_ang(a);
           
           
-          float a2 = a;
-          float b2 = b;
+          float _lon = b + WORLD_VIEW_OffsetX ;
+          float _lat = a - WORLD_VIEW_OffsetY;
 
-          if (a2 > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) a2 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1];
-          if (a2 < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) a2 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0];
+          //if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) _lat = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1];
+          //if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) _lat = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0];
           
-          if (b2 > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) b2 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1];
-          if (b2 < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) b2 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0];
-          
-          //println(a, a2, b, b2);
+          //if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) _lon = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1];
+          //if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) _lon = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0];
 
-          subFace[s][3] = (b2 / WORLD_VIEW_ScaleX / 360.0 + 0.5) * WORLDViewImage.width;;
-          subFace[s][4] = (-a2 / WORLD_VIEW_ScaleY / 180.0 + 0.5) * WORLDViewImage.height; 
+
+
+          subFace[s][3] = (_lon / WORLD_VIEW_ScaleX / 360.0 + 0.5) * WORLDViewImage.width;;
+          subFace[s][4] = (-_lat / WORLD_VIEW_ScaleY / 180.0 + 0.5) * WORLDViewImage.height; 
 
         }
         
