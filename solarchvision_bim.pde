@@ -3,7 +3,7 @@ import processing.pdf.*;
 String _undefined = "N/A";
 float FLOAT_undefined = 1000000000; // it must be a positive big number that is not included in any data
 
-double R_earth = 6373 * 1000;
+double R_earth = 6373000;
 float FLOAT_R_earth = (float) R_earth;
 
 int _EN = 0;
@@ -1568,7 +1568,7 @@ void setup () {
   STUDY_Diagrams = createGraphics(STUDY_X_View, STUDY_Y_View, P2D);
 
 
-  Load_EARTH_IMAGE(); // <<<<<<<<<<<< should move it below
+  Load_EARTH_IMAGES(); // <<<<<<<<<<<< should move it below
   
 
   LoadDefaultFontStyle();  
@@ -15431,38 +15431,52 @@ void SOLARCHVISION_draw_windFlow () {
 int Display_EARTH3D = 1;
 int Display_EARTH3D_TEXTURE = 1;
 
-PImage EARTH_IMAGE;
+PImage[] EARTH_IMAGES;
 
-String EARTH_IMAGE_Path = "C:/SOLARCHVISION_2015/Output/2015-12-03/GDPS_00/World/Atmospheric_circulation";
+String EARTH_IMAGES_Path = "C:/SOLARCHVISION_2015/Output/2015-12-03/GDPS_00/World/Atmospheric_circulation";
 
-void Load_EARTH_IMAGE () {
-  EARTH_IMAGE = loadImage(EARTH_IMAGE_Path + "/" + (sort(getfiles(EARTH_IMAGE_Path))[0]));
-} 
+void Load_EARTH_IMAGES () {
+  
+  String[] EARTH_IMAGES_Filenames = sort(getfiles(EARTH_IMAGES_Path));
+  
+  EARTH_IMAGES = new PImage [EARTH_IMAGES_Filenames.length];
+  
+  for (int i = 0; i < EARTH_IMAGES_Filenames.length; i++) {
+   
+    println("Loading:", EARTH_IMAGES_Path + "/" + EARTH_IMAGES_Filenames[i]);
+    
+    EARTH_IMAGES[i] = loadImage(EARTH_IMAGES_Path + "/" + EARTH_IMAGES_Filenames[i]);
+  }
+}
+
 
 void SOLARCHVISION_draw_EARTH3D () {
   if (Display_EARTH3D != 0) {
 
     WIN3D_Diagrams.strokeWeight(1);
-
-    float EARTH_IMAGE_OffsetX = 0; //EARTH_IMAGE_BoundariesX[EARTH_IMAGE_Number][0] + 180;
-    float EARTH_IMAGE_OffsetY = 0; //EARTH_IMAGE_BoundariesY[EARTH_IMAGE_Number][1] - 90;
     
-    float EARTH_IMAGE_ScaleX = 1; //(EARTH_IMAGE_BoundariesX[EARTH_IMAGE_Number][1] - EARTH_IMAGE_BoundariesX[EARTH_IMAGE_Number][0]) / 360.0;
-    float EARTH_IMAGE_ScaleY = 1; //(EARTH_IMAGE_BoundariesY[EARTH_IMAGE_Number][1] - EARTH_IMAGE_BoundariesY[EARTH_IMAGE_Number][0]) / 180.0;
+    int n = 0;
+    if (Day_of_Impact_to_Display < EARTH_IMAGES.length) n = Day_of_Impact_to_Display;
 
-    float CEN_lon = 0; //0.5 * (EARTH_IMAGE_BoundariesX[EARTH_IMAGE_Number][0] + EARTH_IMAGE_BoundariesX[EARTH_IMAGE_Number][1]);
-    float CEN_lat = 0; //0.5 * (EARTH_IMAGE_BoundariesY[EARTH_IMAGE_Number][0] + EARTH_IMAGE_BoundariesY[EARTH_IMAGE_Number][1]);
+    float EARTH_IMAGES_OffsetX = 0; //EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0] + 180;
+    float EARTH_IMAGES_OffsetY = 0; //EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1] - 90;
+    
+    float EARTH_IMAGES_ScaleX = 1; //(EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][1] - EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0]) / 360.0;
+    float EARTH_IMAGES_ScaleY = 1; //(EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1] - EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][0]) / 180.0;
+
+    float CEN_lon = 0; //0.5 * (EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0] + EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][1]);
+    float CEN_lat = 0; //0.5 * (EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][0] + EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1]);
     
     float delta_Alpha = -2.5;
     float delta_Beta = -2.5;
+    
+    float r = FLOAT_R_earth;
     
     for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
       for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
 
         float[][] subFace = new float [4][5];
 
-        float r = FLOAT_R_earth;
-        
         for (int s = 0; s < 4; s += 1) {
           
           float a = Alpha;
@@ -15483,9 +15497,11 @@ void SOLARCHVISION_draw_EARTH3D () {
           float _lon = b - CEN_lon;
           float _lat = a - CEN_lat;
           
-          // calculating u and v
-          subFace[s][3] = (_lon / EARTH_IMAGE_ScaleX / 360.0 + 0.5) * EARTH_IMAGE.width; 
-          subFace[s][4] = (-_lat / EARTH_IMAGE_ScaleY / 180.0 + 0.5) * EARTH_IMAGE.height;         
+          if (Display_EARTH3D_TEXTURE != 0) {
+            // calculating u and v
+            subFace[s][3] = (_lon / EARTH_IMAGES_ScaleX / 360.0 + 0.5) * EARTH_IMAGES[n].width; 
+            subFace[s][4] = (-_lat / EARTH_IMAGES_ScaleY / 180.0 + 0.5) * EARTH_IMAGES[n].height;
+          }         
           
           // rotating to location coordinates 
           float tb = -LocationLongitude;
@@ -15501,11 +15517,9 @@ void SOLARCHVISION_draw_EARTH3D () {
           // move it down!
           z2 -= r;
 
-
           subFace[s][0] = x2;
           subFace[s][1] = y2;
           subFace[s][2] = z2;
-
 
         }
         
@@ -15514,50 +15528,55 @@ void SOLARCHVISION_draw_EARTH3D () {
         WIN3D_Diagrams.noStroke();
         
         if (Display_EARTH3D_TEXTURE != 0) {
-          WIN3D_Diagrams.texture(EARTH_IMAGE);
+
+          WIN3D_Diagrams.texture(EARTH_IMAGES[n]);
         }
 
         for (int s = 0; s < subFace.length; s++) {
       
           WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, subFace[s][3], subFace[s][4]);  
-      
-          WIN3D_Diagrams.endShape(CLOSE);
         }
+        
+        WIN3D_Diagrams.endShape(CLOSE);        
       }
-      
     }
- 
   }
 }
 
 int Display_MOON3D = 1;
 int Display_MOON3D_TEXTURE = 1;
 
+
+
+String MOON_IMAGE_Filename = "C:/SOLARCHVISION_2015/Input/BackgroundImages/Standard/Maps/Moon/Moon.jpg";
+
+PImage MOON_IMAGE = loadImage(MOON_IMAGE_Filename);
+
+
 void SOLARCHVISION_draw_MOON3D () {
   if (Display_MOON3D != 0) {
-/*
+
     WIN3D_Diagrams.strokeWeight(1);
 
-    float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
-    float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
-      
-    float WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
-    float WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;
-
-
-    float CEN_lon = 0.5 * (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]);
-    float CEN_lat = 0.5 * (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0] + WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]);
-
+    float MOON_IMAGE_OffsetX = 0; 
+    float MOON_IMAGE_OffsetY = 0; 
     
-    float delta_Alpha = -5.0;
-    float delta_Beta = -10.0;
+    float MOON_IMAGE_ScaleX = 1; 
+    float MOON_IMAGE_ScaleY = 1; 
+
+    float CEN_lon = 0; 
+    float CEN_lat = 0; 
+    
+    float delta_Alpha = -5;
+    float delta_Beta = -10;
+    
+    float r = 1737000;
+    float d = 30000000; //38440000 - r - FLOAT_R_earth;
     
     for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
       for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
 
         float[][] subFace = new float [4][5];
-
-        float r = FLOAT_R_MOON;
         
         for (int s = 0; s < 4; s += 1) {
           
@@ -15579,21 +15598,29 @@ void SOLARCHVISION_draw_MOON3D () {
           float _lon = b - CEN_lon;
           float _lat = a - CEN_lat;
           
-          // calculating u and v
-          subFace[s][3] = (_lon / WORLD_VIEW_ScaleX / 360.0 + 0.5) * WORLDViewImage.width; 
-          subFace[s][4] = (-_lat / WORLD_VIEW_ScaleY / 180.0 + 0.5) * WORLDViewImage.height;         
+          if (Display_MOON3D_TEXTURE != 0) {
+            // calculating u and v
+            subFace[s][3] = (_lon / MOON_IMAGE_ScaleX / 360.0 + 0.5) * MOON_IMAGE.width; 
+            subFace[s][4] = (-_lat / MOON_IMAGE_ScaleY / 180.0 + 0.5) * MOON_IMAGE.height;
+          }         
+         
+          // rotating to location coordinates
+         
           
-          // rotating to location coordinates 
-          float tb = 0; // <<<<<<<<<<
+          float tb = 0;
           float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
           float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
           float z1 = z0;
           
-          float ta = 0; // <<<<<<<<<<
+          float ta = -90;
           float x2 = x1;
           float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
           float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
-
+          
+          // move it up here!
+          y2 += d * sin_ang(-LocationLatitude);      
+          z2 += d * cos_ang(-LocationLatitude);
+          
           subFace[s][0] = x2;
           subFace[s][1] = y2;
           subFace[s][2] = z2;
@@ -15604,21 +15631,21 @@ void SOLARCHVISION_draw_MOON3D () {
         WIN3D_Diagrams.noStroke();
         
         if (Display_MOON3D_TEXTURE != 0) {
-          WIN3D_Diagrams.texture(WORLDViewImage);
+
+          WIN3D_Diagrams.texture(MOON_IMAGE);
         }
 
         for (int s = 0; s < subFace.length; s++) {
       
           WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, subFace[s][3], subFace[s][4]);  
-      
-          WIN3D_Diagrams.endShape(CLOSE);
         }
+        
+        WIN3D_Diagrams.endShape(CLOSE);        
       }
-      
     }
-*/ 
   }
 }
+
 //----------------------------------------
 
 
