@@ -2979,10 +2979,6 @@ float WORLD_VIEW_OffsetY = 0;
 float WORLD_VIEW_ScaleX = 1;
 float WORLD_VIEW_ScaleY = 1;
 
-float _lon1 = -180;
-float _lon2 = 180;
-float _lat1 = -90;
-float _lat2 = 90;
 
 void Load_WORLDViewImage () {
 
@@ -2995,11 +2991,6 @@ void Load_WORLDViewImage () {
   
   WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
   WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;
-  
-  _lon1 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0];
-  _lon2 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1];
-  _lat1 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0];
-  _lat2 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1];
 
 }
 
@@ -3037,6 +3028,11 @@ void SOLARCHVISION_draw_WORLD () {
     WORLD_Diagrams.background(0, 0, 0);
  
     WORLD_Diagrams.image(WORLDViewImage, 0, 0, WORLD_X_View, WORLD_Y_View);
+
+    float _lon1 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0];
+    float _lon2 = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1];
+    float _lat1 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0];
+    float _lat2 = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1];
   
     int x_point1 = int(WORLD_X_View * (( 1 * (_lon1 - WORLD_VIEW_OffsetX) / 360.0) + 0.5) / WORLD_VIEW_ScaleX);
     int y_point1 = int(WORLD_Y_View * ((-1 * (_lat1 - WORLD_VIEW_OffsetY) / 180.0) + 0.5) / WORLD_VIEW_ScaleY);
@@ -12341,6 +12337,7 @@ void SOLARCHVISION_LoadWorldImages () {
 
 
 int FindGoodViewport (float pointLongitude, float pointLatitude) {
+  
   int return_VIEWPORT = WORLD_VIEW_Number;
   
   if (WORLD_VIEW_Auto == 1) {
@@ -15428,7 +15425,7 @@ int Display_EARTH3D = 1;
 
 void SOLARCHVISION_draw_EARTH3D () {
   if (Display_EARTH3D != 0) {
-
+/*
     WIN3D_Diagrams.strokeWeight(1);
     
     for (float Alpha = 0; Alpha < 90; Alpha += 5;) {
@@ -15451,7 +15448,7 @@ void SOLARCHVISION_draw_EARTH3D () {
       }
       
     }
-   
+*/   
   }
 }
 //----------------------------------------
