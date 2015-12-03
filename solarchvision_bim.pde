@@ -11793,8 +11793,8 @@ void WIN3D_keyPressed (KeyEvent e) {
         case '6' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
         case '8' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         
-        case '*' :objects_scale *= 2.0; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case '/' :objects_scale /= 2.0; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '*' :objects_scale *= 2.0; SKY3D_scale *= 2.0; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '/' :objects_scale /= 2.0; SKY3D_scale /= 2.0; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
   
         case '+' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         case '-' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
@@ -15442,15 +15442,15 @@ void SOLARCHVISION_draw_EARTH3D () {
 
     println("CEN_lon, CEN_lat:", CEN_lon, CEN_lat);
     
-    float delta_Alpha = -5.0;
-    float delta_Beta = -5.0;
+    float delta_Alpha = -2.0;
+    float delta_Beta = -2.0;
     
     for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
       for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
 
         float[][] subFace = new float [4][5];
 
-        float r = 1000; 
+        float r = FLOAT_R_earth;
         
         for (int s = 0; s < 4; s += 1) {
           
@@ -15567,6 +15567,8 @@ void SOLARCHVISION_draw_land () {
           
           if (Display_LAND_TEXTURE != 0) {
             WIN3D_Diagrams.texture(LAND_TEXTURE);
+            
+            WIN3D_Diagrams.noStroke(); // <<<<<<<<<<
           }
 
           for (int s = 0; s < subFace.length; s++) {
@@ -30177,7 +30179,6 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setInt("LAND_n_J_base", LAND_n_J_base);
   newChild1.setInt("LAND_n_I", LAND_n_I);
   newChild1.setInt("LAND_n_J", LAND_n_J);
-  newChild1.setString("R_earth", Double.toString(R_earth));
   newChild1.setString("LAND_mid_lat", Double.toString(LAND_mid_lat));
   newChild1.setString("LAND_mid_lon", Double.toString(LAND_mid_lon));
   newChild1.setString("Default_Font", Default_Font);
@@ -30963,7 +30964,6 @@ void SOLARCHVISION_load_project (String myFile) {
       LAND_n_J_base = children0[L].getInt("LAND_n_J_base");
       LAND_n_I = children0[L].getInt("LAND_n_I");
       LAND_n_J = children0[L].getInt("LAND_n_J");
-      R_earth = Double.parseDouble(children0[L].getString("R_earth"));
       LAND_mid_lat = Double.parseDouble(children0[L].getString("LAND_mid_lat"));
       LAND_mid_lon = Double.parseDouble(children0[L].getString("LAND_mid_lon"));
       
