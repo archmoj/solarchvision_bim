@@ -15708,10 +15708,8 @@ void SOLARCHVISION_draw_STAR3D () {
     float delta_Alpha = -5;
     float delta_Beta = -10;
     
-    float r = 696.0 * 1000.0; // * 1000; // multiply this later
-    float d = 150000.0 * 1000.0; // * 1000; // multiply this later 
-    
-    println("r=",r);
+    float r = 10.0 * 696.0; // * 1000000; // multiply this later
+    float d = 1.0 * 150000.0; // * 1000000; // multiply this later 
     
     for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
       for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
@@ -15756,7 +15754,7 @@ void SOLARCHVISION_draw_STAR3D () {
           
           println(dist(0,0,0, x1,y1,z1));
           
-          float ta = 0;// -90;
+          float ta = -90 - LocationLatitude;
           float x2 = x1;
           float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
           float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
@@ -15764,15 +15762,15 @@ void SOLARCHVISION_draw_STAR3D () {
           println(dist(0,0,0, x2,y2,z2));
           
           // scale it here!
-          x2 *= 1000.0;
-          y2 *= 1000.0;
-          z2 *= 1000.0;
+          x2 *= 1000000.0;
+          y2 *= 1000000.0;
+          z2 *= 1000000.0;
           
           println(dist(0,0,0, x2,y2,z2));
           
           // move it to scale here!
-          y2 += 1000.0 * d * sin_ang(-LocationLatitude);      
-          z2 += 1000.0 * d * cos_ang(-LocationLatitude);
+          y2 += 1000000.0 * d * sin_ang(-LocationLatitude);      
+          z2 += 1000000.0 * d * cos_ang(-LocationLatitude);
 
           subFace[s][0] = x2;
           subFace[s][1] = y2;
