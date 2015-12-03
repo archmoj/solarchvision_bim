@@ -15422,33 +15422,68 @@ void SOLARCHVISION_draw_windFlow () {
 
 //---------------------------------------- should be added to I/O and GUI 
 int Display_EARTH3D = 1;
+int Display_EARTH3D_TEXTURE = 1;
 
 void SOLARCHVISION_draw_EARTH3D () {
   if (Display_EARTH3D != 0) {
-/*
+
     WIN3D_Diagrams.strokeWeight(1);
     
-    for (float Alpha = 0; Alpha < 90; Alpha += 5;) {
-      for (float Beta = -180; Beta < 180; Beta += 5;) {
+    float delta_Alpha = -5.0;
+    float delta_Beta = -5.0;
+    
+    for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
+      for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
 
-        WIN3D_Diagrams.beginShape();
-              
-        WIN3D_Diagrams.texture(WORLDViewImage);
-                
-        WIN3D_Diagrams.stroke(0, 0, 0);
+        float[][] subFace = new float [4][5];
+
+        float r = 100; 
         
-        float x
+        for (int s = 0; s < 4; s += 1) {
+          
+          float a = Alpha;
+          float b = Beta;
+          
+          if ((s == 1) || (s == 2)) {
+            a += delta_Alpha;
+          }
+
+          if ((s == 2) || (s == 3)) {
+            b += delta_Beta;
+          }
+
+          subFace[s][0] = r * cos_ang(b) * cos_ang(a); 
+          subFace[s][1] = r * sin_ang(b) * cos_ang(a);
+          subFace[s][2] = r * sin_ang(a);
+          
+              
+          
+          subFace[s][3] = (b / WORLD_VIEW_ScaleX / 360.0 + 0.5) * WORLDViewImage.width;;
+          subFace[s][4] = (-a / WORLD_VIEW_ScaleY / 180.0 + 0.5) * WORLDViewImage.height; 
+
+        }
+        
+        WIN3D_Diagrams.beginShape();
+        
+        WIN3D_Diagrams.noStroke();
+        
+        if (Display_EARTH3D_TEXTURE != 0) {
+          WIN3D_Diagrams.texture(WORLDViewImage);
+        }
+
+        for (int s = 0; s < subFace.length; s++) {
     
-        float u = (Beta / LAND_TEXTURE_scale_U + 0.5) * WORLDViewImage.width;
-        float v = (Alpha / LAND_TEXTURE_scale_V + 0.5) * WORLDViewImage.height;
-    
-        WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D, u, v);  
-    
-        WIN3D_Diagrams.endShape(CLOSE);
+          float u = subFace[s][3];
+          float v = subFace[s][4];
+      
+          WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D, u, v);  
+      
+          WIN3D_Diagrams.endShape(CLOSE);
+        }
       }
       
     }
-*/   
+ 
   }
 }
 //----------------------------------------
@@ -31323,6 +31358,7 @@ float _lat1 = -90;
 float _lat2 = 90;
 
 int Display_EARTH3D = 1;
+int Display_EARTH3D_TEXTURE = 1;
 
 */
 
