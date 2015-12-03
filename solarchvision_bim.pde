@@ -3,6 +3,9 @@ import processing.pdf.*;
 String _undefined = "N/A";
 float FLOAT_undefined = 1000000000; // it must be a positive big number that is not included in any data
 
+double R_earth = 6373 * 1000;
+float FLOAT_R_earth = (float) R_earth;
+
 int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
@@ -12374,6 +12377,8 @@ int FindGoodViewport (float pointLongitude, float pointLatitude) {
   
   if (return_VIEWPORT != WORLD_VIEW_Number) {
     Load_WORLDViewImage(return_VIEWPORT);
+    
+    if (Display_EARTH3D != 0) WIN3D_Update = 1;    
   }
 
   return (return_VIEWPORT);
@@ -15445,7 +15450,7 @@ void SOLARCHVISION_draw_EARTH3D () {
 
         float[][] subFace = new float [4][5];
 
-        float r = 100; 
+        float r = 1000; 
         
         for (int s = 0; s < 4; s += 1) {
           
@@ -15460,30 +15465,36 @@ void SOLARCHVISION_draw_EARTH3D () {
             b += delta_Beta;
           }
 
-          subFace[s][0] = r * cos_ang(b - 90) * cos_ang(a); 
-          subFace[s][1] = r * sin_ang(b - 90) * cos_ang(a);
-          subFace[s][2] = r * sin_ang(a);
-          
+          float x0 = r * cos_ang(b - 90) * cos_ang(a); 
+          float y0 = r * sin_ang(b - 90) * cos_ang(a);
+          float z0 = r * sin_ang(a);
           
           float _lon = b - CEN_lon;
           float _lat = a - CEN_lat;
-/*          
-          if (_lon > 180) _lon -= 180;
-          if (_lon < -180) _lon += 180;
           
-          if (_lat > 90) _lat -= 90;
-          if (_lat < -90) _lat += 90;
-*/
-          //if (_lat > WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]) _lat = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1];
-          //if (_lat < WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) _lat = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0];
+          // calculating u and v
+          subFace[s][3] = (_lon / WORLD_VIEW_ScaleX / 360.0 + 0.5) * WORLDViewImage.width; 
+          subFace[s][4] = (-_lat / WORLD_VIEW_ScaleY / 180.0 + 0.5) * WORLDViewImage.height;         
           
-          //if (_lon > WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]) _lon = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1];
-          //if (_lon < WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) _lon = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0];
+          // rotating to location coordinates 
+          float tb = -LocationLongitude;
+          float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
+          float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
+          float z1 = z0;
+          
+          float ta = 90 - LocationLatitude;
+          float x2 = x1;
+          float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
+          float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
+
+          // move it down!
+          z2 -= r;
 
 
+          subFace[s][0] = x2;
+          subFace[s][1] = y2;
+          subFace[s][2] = z2;
 
-          subFace[s][3] = (_lon / WORLD_VIEW_ScaleX / 360.0 + 0.5) * WORLDViewImage.width;;
-          subFace[s][4] = (-_lat / WORLD_VIEW_ScaleY / 180.0 + 0.5) * WORLDViewImage.height; 
 
         }
         
@@ -15496,11 +15507,8 @@ void SOLARCHVISION_draw_EARTH3D () {
         }
 
         for (int s = 0; s < subFace.length; s++) {
-    
-          float u = subFace[s][3];
-          float v = subFace[s][4];
       
-          WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D, u, v);  
+          WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D, subFace[s][3], subFace[s][4]);  
       
           WIN3D_Diagrams.endShape(CLOSE);
         }
@@ -17917,7 +17925,7 @@ int LAND_n_J_base = 0;
 int LAND_n_I = 13 + 1; //16 + 1; //8 + 1;
 int LAND_n_J = 24 + 1;     
 
-double R_earth = 6373 * 1000;
+
 
 
 double LAND_mid_lat;
@@ -18918,7 +18926,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
           }
         }
   
-        SpatialImpact_Image.pixels[i + j * SpatialImpact_RES1] = color(_COL[1], _COL[2], _COL[3], _COL[0]);;
+        SpatialImpact_Image.pixels[i + j * SpatialImpact_RES1] = color(_COL[1], _COL[2], _COL[3], _COL[0]);
         
       }
     }
