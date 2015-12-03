@@ -2624,11 +2624,12 @@ void SOLARCHVISION_draw_WIN3D () {
   
     SOLARCHVISION_draw_SunPath3D(0, 0, 0, 0.9 * SKY3D_scale, LocationLatitude);
     
-    //SOLARCHVISION_draw_SunRotation(0, 0, 0, (100) * OBJECTS_scale, LocationLatitude);
+    //SOLARCHVISION_draw_SunRotation(0, 0, 0, (50) * OBJECTS_scale, LocationLatitude);
     //SOLARCHVISION_draw_SunRotation(0, 0, 0, (150000 * 1000000) * OBJECTS_scale, LocationLatitude);
-    //SOLARCHVISION_draw_SunRotation(0, 0, 0, (150000 * 1000) * OBJECTS_scale, LocationLatitude);
+    SOLARCHVISION_draw_SunRotation(0, 0, 0, (0.1 * 150000 * 1000000) * OBJECTS_scale, LocationLatitude);
     
-    //SOLARCHVISION_draw_STAR3D();
+    
+    SOLARCHVISION_draw_STAR3D();
     
     SOLARCHVISION_draw_MOON3D();
     
@@ -15710,8 +15711,8 @@ void SOLARCHVISION_draw_STAR3D () {
     float delta_Alpha = -5;
     float delta_Beta = -10;
     
-    float r = 10 * 696000; // * 1000;
-    float d = 150000000; // * 1000;
+    float r =       696000 * 1000;
+    float d = 0.1 * 150000 * 1000000; // why we need to multiply by 0.1
     
     for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
       for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
