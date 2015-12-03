@@ -2620,6 +2620,8 @@ void SOLARCHVISION_draw_WIN3D () {
     
     SOLARCHVISION_draw_SKY3D();
     
+    SOLARCHVISION_draw_MOON3D();
+    
     SOLARCHVISION_draw_EARTH3D();
     
     SOLARCHVISION_draw_land();
@@ -15432,18 +15434,21 @@ void SOLARCHVISION_draw_EARTH3D () {
 
     float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
     float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
+    
+    println(WORLD_VIEW_OffsetX, WORLD_VIEW_OffsetY);
       
     float WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
     float WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;
 
 
+    println(WORLD_VIEW_ScaleX, WORLD_VIEW_ScaleY);
+
     float CEN_lon = 0.5 * (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]);
     float CEN_lat = 0.5 * (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0] + WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]);
 
-    println("CEN_lon, CEN_lat:", CEN_lon, CEN_lat);
     
-    float delta_Alpha = -2.0;
-    float delta_Beta = -2.0;
+    float delta_Alpha = -2.5;
+    float delta_Beta = -2.5;
     
     for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
       for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
@@ -15516,6 +15521,96 @@ void SOLARCHVISION_draw_EARTH3D () {
       
     }
  
+  }
+}
+
+int Display_MOON3D = 1;
+int Display_MOON3D_TEXTURE = 1;
+
+void SOLARCHVISION_draw_MOON3D () {
+  if (Display_MOON3D != 0) {
+/*
+    WIN3D_Diagrams.strokeWeight(1);
+
+    float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
+    float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
+      
+    float WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
+    float WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;
+
+
+    float CEN_lon = 0.5 * (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]);
+    float CEN_lat = 0.5 * (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0] + WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]);
+
+    
+    float delta_Alpha = -5.0;
+    float delta_Beta = -10.0;
+    
+    for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
+      for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
+
+        float[][] subFace = new float [4][5];
+
+        float r = FLOAT_R_MOON;
+        
+        for (int s = 0; s < 4; s += 1) {
+          
+          float a = Alpha;
+          float b = Beta;
+          
+          if ((s == 1) || (s == 2)) {
+            a += delta_Alpha;
+          }
+
+          if ((s == 2) || (s == 3)) {
+            b += delta_Beta;
+          }
+
+          float x0 = r * cos_ang(b - 90) * cos_ang(a); 
+          float y0 = r * sin_ang(b - 90) * cos_ang(a);
+          float z0 = r * sin_ang(a);
+          
+          float _lon = b - CEN_lon;
+          float _lat = a - CEN_lat;
+          
+          // calculating u and v
+          subFace[s][3] = (_lon / WORLD_VIEW_ScaleX / 360.0 + 0.5) * WORLDViewImage.width; 
+          subFace[s][4] = (-_lat / WORLD_VIEW_ScaleY / 180.0 + 0.5) * WORLDViewImage.height;         
+          
+          // rotating to location coordinates 
+          float tb = 0; // <<<<<<<<<<
+          float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
+          float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
+          float z1 = z0;
+          
+          float ta = 0; // <<<<<<<<<<
+          float x2 = x1;
+          float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
+          float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
+
+          subFace[s][0] = x2;
+          subFace[s][1] = y2;
+          subFace[s][2] = z2;
+        }
+        
+        WIN3D_Diagrams.beginShape();
+        
+        WIN3D_Diagrams.noStroke();
+        
+        if (Display_MOON3D_TEXTURE != 0) {
+          WIN3D_Diagrams.texture(WORLDViewImage);
+        }
+
+        for (int s = 0; s < subFace.length; s++) {
+      
+          WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, subFace[s][3], subFace[s][4]);  
+      
+          WIN3D_Diagrams.endShape(CLOSE);
+        }
+      }
+      
+    }
+*/ 
   }
 }
 //----------------------------------------
@@ -31390,19 +31485,11 @@ bug: delete because scrolling selection+ could add duplicate of the same objects
 solution: I remarked wheel option for pickSelect for now.
 
 
-float WORLD_VIEW_OffsetX = 0;
-float WORLD_VIEW_OffsetY = 0;
-
-float WORLD_VIEW_ScaleX = 1;
-float WORLD_VIEW_ScaleY = 1;
-
-float _lon1 = -180;
-float _lon2 = 180;
-float _lat1 = -90;
-float _lat2 = 90;
-
 int Display_EARTH3D = 1;
 int Display_EARTH3D_TEXTURE = 1;
+
+int Display_MOON3D = 1;
+int Display_MOON3D_TEXTURE = 1;
 
 */
 
