@@ -30205,6 +30205,10 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setFloat("WindRose3D_scale", WindRose3D_scale);
   newChild1.setInt("Display_SUN3D", Display_SUN3D);
   newChild1.setInt("Display_SKY3D", Display_SKY3D);
+  newChild1.setInt("Display_MOON3D", Display_MOON3D);
+  newChild1.setInt("Display_MOON3D_TEXTURE", Display_MOON3D_TEXTURE);
+  newChild1.setInt("Display_EARTH3D", Display_EARTH3D);
+  newChild1.setInt("Display_EARTH3D_TEXTURE", Display_EARTH3D_TEXTURE);
   newChild1.setInt("Download_LAND_MESH", Download_LAND_MESH);
   newChild1.setInt("Load_LAND_MESH", Load_LAND_MESH);
   newChild1.setInt("Display_LAND_MESH", Display_LAND_MESH);
@@ -30990,6 +30994,10 @@ void SOLARCHVISION_load_project (String myFile) {
       WindRose3D_scale = children0[L].getFloat("WindRose3D_scale");
       Display_SUN3D = children0[L].getInt("Display_SUN3D");
       Display_SKY3D = children0[L].getInt("Display_SKY3D");
+      Display_MOON3D = children0[L].getInt("Display_MOON3D");
+      Display_MOON3D_TEXTURE = children0[L].getInt("Display_MOON3D_TEXTURE");      
+      Display_EARTH3D = children0[L].getInt("Display_EARTH3D");
+      Display_EARTH3D_TEXTURE = children0[L].getInt("Display_EARTH3D_TEXTURE");
       Download_LAND_MESH = children0[L].getInt("Download_LAND_MESH");
       Load_LAND_MESH = children0[L].getInt("Load_LAND_MESH");
       Display_LAND_MESH = children0[L].getInt("Display_LAND_MESH");
