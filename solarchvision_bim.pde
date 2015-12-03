@@ -983,13 +983,13 @@ int OBJECTS_Pallet_PASSIVE_CLR = 1;
 int OBJECTS_Pallet_PASSIVE_DIR = 1;  
 float OBJECTS_Pallet_PASSIVE_MLT = 2; 
 
-int SUN3D_Pallet_ACTIVE_CLR = 15;
-int SUN3D_Pallet_ACTIVE_DIR = 1;
-float SUN3D_Pallet_ACTIVE_MLT = 1;
+int SunPath3D_Pallet_ACTIVE_CLR = 15;
+int SunPath3D_Pallet_ACTIVE_DIR = 1;
+float SunPath3D_Pallet_ACTIVE_MLT = 1;
 
-int SUN3D_Pallet_PASSIVE_CLR = 18; 
-int SUN3D_Pallet_PASSIVE_DIR = -1;  
-float SUN3D_Pallet_PASSIVE_MLT = 2; //1;
+int SunPath3D_Pallet_PASSIVE_CLR = 18; 
+int SunPath3D_Pallet_PASSIVE_DIR = -1;  
+float SunPath3D_Pallet_PASSIVE_MLT = 2; //1;
 
 int SKY3D_Pallet_ACTIVE_CLR = 18; //-1; //7; //8;
 int SKY3D_Pallet_ACTIVE_DIR = 1; //-1;
@@ -1115,7 +1115,7 @@ float SKY3D_scale = 10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line
 float WindRose3D_scale = 400;
 
 
-int Display_SUN3D = 1;
+int Display_SunPath3D = 1;
 int Display_SKY3D = 0;
 
 int Download_LAND_MESH = 0;
@@ -2619,10 +2619,12 @@ void SOLARCHVISION_draw_WIN3D () {
     SOLARCHVISION_transform_Camera();
     
     SOLARCHVISION_put_Camera();
-  
-    SOLARCHVISION_draw_SUN3D(0, 0, 0, 0.9 * SKY3D_scale, LocationLatitude);
     
     SOLARCHVISION_draw_SKY3D();
+  
+    SOLARCHVISION_draw_SunPath3D(0, 0, 0, 0.9 * SKY3D_scale, LocationLatitude);
+    
+    SOLARCHVISION_draw_STAR3D();
     
     SOLARCHVISION_draw_MOON3D();
     
@@ -11223,23 +11225,23 @@ float[] SOLARCHVISION_WYRD (float _variable) {
 }
 
 
-void SOLARCHVISION_draw_SUN3D (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float LocationLatitude) { 
+void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float LocationLatitude) { 
 
-  if (Display_SUN3D != 0) {
+  if (Display_SunPath3D != 0) {
 
     int PAL_TYPE = 0; 
     int PAL_DIR = 1;
     
     if (Impact_TYPE == Impact_ACTIVE) {  
-      PAL_TYPE = SUN3D_Pallet_ACTIVE_CLR; PAL_DIR = SUN3D_Pallet_ACTIVE_DIR;
+      PAL_TYPE = SunPath3D_Pallet_ACTIVE_CLR; PAL_DIR = SunPath3D_Pallet_ACTIVE_DIR;
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = SUN3D_Pallet_PASSIVE_CLR; PAL_DIR = SUN3D_Pallet_PASSIVE_DIR;
+      PAL_TYPE = SunPath3D_Pallet_PASSIVE_CLR; PAL_DIR = SunPath3D_Pallet_PASSIVE_DIR;
     }             
 
     float _Multiplier = 1; 
-    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * SUN3D_Pallet_ACTIVE_MLT;
-    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * SUN3D_Pallet_PASSIVE_MLT;
+    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * SunPath3D_Pallet_ACTIVE_MLT;
+    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * SunPath3D_Pallet_PASSIVE_MLT;
     
     
     float previous_DATE = _DATE;
@@ -15546,12 +15548,9 @@ void SOLARCHVISION_draw_EARTH3D () {
 int Display_MOON3D = 1;
 int Display_MOON3D_TEXTURE = 1;
 
-
-
 String MOON_IMAGE_Filename = "C:/SOLARCHVISION_2015/Input/BackgroundImages/Standard/Maps/Moon/Moon.jpg";
 
 PImage MOON_IMAGE = loadImage(MOON_IMAGE_Filename);
-
 
 void SOLARCHVISION_draw_MOON3D () {
   if (Display_MOON3D != 0) {
@@ -15645,6 +15644,106 @@ void SOLARCHVISION_draw_MOON3D () {
     }
   }
 }
+
+int Display_STAR3D = 1;
+int Display_STAR3D_TEXTURE = 1;
+
+String STAR_IMAGE_Filename = "C:/SOLARCHVISION_2015/Input/BackgroundImages/Standard/Maps/Sun/Sun.jpg";
+
+PImage STAR_IMAGE = loadImage(STAR_IMAGE_Filename);
+
+void SOLARCHVISION_draw_STAR3D () {
+  if (Display_STAR3D != 0) {
+
+    WIN3D_Diagrams.strokeWeight(1);
+
+    float STAR_IMAGE_OffsetX = 0; 
+    float STAR_IMAGE_OffsetY = 0; 
+    
+    float STAR_IMAGE_ScaleX = 1; 
+    float STAR_IMAGE_ScaleY = 1; 
+
+    float CEN_lon = 0; 
+    float CEN_lat = 0; 
+    
+    float delta_Alpha = -5;
+    float delta_Beta = -10;
+    
+    float r = 10 * 696000; // * 1000;
+    float d = 150000000; // * 1000;
+    
+    for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
+      for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
+
+        float[][] subFace = new float [4][5];
+        
+        for (int s = 0; s < 4; s += 1) {
+          
+          float a = Alpha;
+          float b = Beta;
+          
+          if ((s == 1) || (s == 2)) {
+            a += delta_Alpha;
+          }
+
+          if ((s == 2) || (s == 3)) {
+            b += delta_Beta;
+          }
+
+          float x0 = r * cos_ang(b - 90) * cos_ang(a); 
+          float y0 = r * sin_ang(b - 90) * cos_ang(a);
+          float z0 = r * sin_ang(a);
+          
+          float _lon = b - CEN_lon;
+          float _lat = a - CEN_lat;
+          
+          if (Display_STAR3D_TEXTURE != 0) {
+            // calculating u and v
+            subFace[s][3] = (_lon / STAR_IMAGE_ScaleX / 360.0 + 0.5) * STAR_IMAGE.width; 
+            subFace[s][4] = (-_lat / STAR_IMAGE_ScaleY / 180.0 + 0.5) * STAR_IMAGE.height;
+          }         
+         
+          // rotating to location coordinates
+          
+          float tb = 0;
+          float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
+          float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
+          float z1 = z0;
+          
+          float ta = -90;
+          float x2 = x1;
+          float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
+          float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
+          
+          // move it up here!
+          y2 += d * sin_ang(-LocationLatitude);      
+          z2 += d * cos_ang(-LocationLatitude);
+          
+          subFace[s][0] = x2;
+          subFace[s][1] = y2;
+          subFace[s][2] = z2;
+        }
+        
+        WIN3D_Diagrams.beginShape();
+        
+        WIN3D_Diagrams.noStroke();
+        
+        if (Display_STAR3D_TEXTURE != 0) {
+
+          WIN3D_Diagrams.texture(STAR_IMAGE);
+        }
+
+        for (int s = 0; s < subFace.length; s++) {
+      
+          WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, subFace[s][3], subFace[s][4]);  
+        }
+        
+        WIN3D_Diagrams.endShape(CLOSE);        
+      }
+    }
+  }
+}
+
 
 //----------------------------------------
 
@@ -21972,7 +22071,7 @@ void mouseClicked () {
               ROLLOUT_Update = 1;
             }
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Sun")) {
-              Display_SUN3D = (Display_SUN3D + 1) % 2;
+              Display_SunPath3D = (Display_SunPath3D + 1) % 2;
               
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
@@ -23672,7 +23771,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       
       
       
-      Display_SUN3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SUN3D" , Display_SUN3D, 0, 1, 1), 1));
+      Display_SunPath3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SunPath3D" , Display_SunPath3D, 0, 1, 1), 1));
       Display_SKY3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SKY3D" , Display_SKY3D, 0, 1, 1), 1));
 
       OBJECTS_scale = MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_scale" , OBJECTS_scale, 0.00001, 100000, -2);
@@ -23949,13 +24048,13 @@ void SOLARCHVISION_draw_ROLLOUT () {
       SKY3D_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_Pallet_PASSIVE_DIR", SKY3D_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
       SKY3D_Pallet_PASSIVE_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_Pallet_PASSIVE_MLT", SKY3D_Pallet_PASSIVE_MLT, 0.125, 8, -2);
   
-      SUN3D_Pallet_ACTIVE_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SUN3D_Pallet_ACTIVE_CLR", SUN3D_Pallet_ACTIVE_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
-      SUN3D_Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SUN3D_Pallet_ACTIVE_DIR", SUN3D_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
-      SUN3D_Pallet_ACTIVE_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SUN3D_Pallet_ACTIVE_MLT", SUN3D_Pallet_ACTIVE_MLT, 0.125, 8, -2);
+      SunPath3D_Pallet_ACTIVE_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SunPath3D_Pallet_ACTIVE_CLR", SunPath3D_Pallet_ACTIVE_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
+      SunPath3D_Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SunPath3D_Pallet_ACTIVE_DIR", SunPath3D_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
+      SunPath3D_Pallet_ACTIVE_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SunPath3D_Pallet_ACTIVE_MLT", SunPath3D_Pallet_ACTIVE_MLT, 0.125, 8, -2);
       
-      SUN3D_Pallet_PASSIVE_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SUN3D_Pallet_PASSIVE_CLR", SUN3D_Pallet_PASSIVE_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
-      SUN3D_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SUN3D_Pallet_PASSIVE_DIR", SUN3D_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
-      SUN3D_Pallet_PASSIVE_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SUN3D_Pallet_PASSIVE_MLT", SUN3D_Pallet_PASSIVE_MLT, 0.125, 8, -2);
+      SunPath3D_Pallet_PASSIVE_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SunPath3D_Pallet_PASSIVE_CLR", SunPath3D_Pallet_PASSIVE_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
+      SunPath3D_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SunPath3D_Pallet_PASSIVE_DIR", SunPath3D_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
+      SunPath3D_Pallet_PASSIVE_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SunPath3D_Pallet_PASSIVE_MLT", SunPath3D_Pallet_PASSIVE_MLT, 0.125, 8, -2);
 
       SPATIAL_Pallet_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SPATIAL_Pallet_CLR", SPATIAL_Pallet_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
       SPATIAL_Pallet_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SPATIAL_Pallet_DIR", SPATIAL_Pallet_DIR, -1, 1, 2), 1));
@@ -28431,7 +28530,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 if (Display_SKY3D == 0) {stroke(127); fill(127);}
               }
               if (BAR_a_Items[i][j].equals("Display/Hide Sun")) {
-                if (Display_SUN3D == 0) {stroke(127); fill(127);}
+                if (Display_SunPath3D == 0) {stroke(127); fill(127);}
               }           
               if (BAR_a_Items[i][j].equals("Display/Hide Shading Section")) {
                 if (display_SolarImpact_Image == 0) {stroke(127); fill(127);}
@@ -30156,12 +30255,12 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setInt("OBJECTS_Pallet_PASSIVE_CLR", OBJECTS_Pallet_PASSIVE_CLR);
   newChild1.setInt("OBJECTS_Pallet_PASSIVE_DIR", OBJECTS_Pallet_PASSIVE_DIR);
   newChild1.setFloat("OBJECTS_Pallet_PASSIVE_MLT", OBJECTS_Pallet_PASSIVE_MLT);
-  newChild1.setInt("SUN3D_Pallet_ACTIVE_CLR", SUN3D_Pallet_ACTIVE_CLR);
-  newChild1.setInt("SUN3D_Pallet_ACTIVE_DIR", SUN3D_Pallet_ACTIVE_DIR);
-  newChild1.setFloat("SUN3D_Pallet_ACTIVE_MLT", SUN3D_Pallet_ACTIVE_MLT);
-  newChild1.setInt("SUN3D_Pallet_PASSIVE_CLR", SUN3D_Pallet_PASSIVE_CLR);
-  newChild1.setInt("SUN3D_Pallet_PASSIVE_DIR", SUN3D_Pallet_PASSIVE_DIR);
-  newChild1.setFloat("SUN3D_Pallet_PASSIVE_MLT", SUN3D_Pallet_PASSIVE_MLT);
+  newChild1.setInt("SunPath3D_Pallet_ACTIVE_CLR", SunPath3D_Pallet_ACTIVE_CLR);
+  newChild1.setInt("SunPath3D_Pallet_ACTIVE_DIR", SunPath3D_Pallet_ACTIVE_DIR);
+  newChild1.setFloat("SunPath3D_Pallet_ACTIVE_MLT", SunPath3D_Pallet_ACTIVE_MLT);
+  newChild1.setInt("SunPath3D_Pallet_PASSIVE_CLR", SunPath3D_Pallet_PASSIVE_CLR);
+  newChild1.setInt("SunPath3D_Pallet_PASSIVE_DIR", SunPath3D_Pallet_PASSIVE_DIR);
+  newChild1.setFloat("SunPath3D_Pallet_PASSIVE_MLT", SunPath3D_Pallet_PASSIVE_MLT);
   newChild1.setInt("SKY3D_Pallet_ACTIVE_CLR", SKY3D_Pallet_ACTIVE_CLR);
   newChild1.setInt("SKY3D_Pallet_ACTIVE_DIR", SKY3D_Pallet_ACTIVE_DIR);
   newChild1.setFloat("SKY3D_Pallet_ACTIVE_MLT", SKY3D_Pallet_ACTIVE_MLT);
@@ -30203,7 +30302,7 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setInt("SKY3D_TESELATION", SKY3D_TESELATION);
   newChild1.setFloat("SKY3D_scale", SKY3D_scale);
   newChild1.setFloat("WindRose3D_scale", WindRose3D_scale);
-  newChild1.setInt("Display_SUN3D", Display_SUN3D);
+  newChild1.setInt("Display_SunPath3D", Display_SunPath3D);
   newChild1.setInt("Display_SKY3D", Display_SKY3D);
   newChild1.setInt("Display_MOON3D", Display_MOON3D);
   newChild1.setInt("Display_MOON3D_TEXTURE", Display_MOON3D_TEXTURE);
@@ -30945,12 +31044,12 @@ void SOLARCHVISION_load_project (String myFile) {
       OBJECTS_Pallet_PASSIVE_CLR = children0[L].getInt("OBJECTS_Pallet_PASSIVE_CLR");
       OBJECTS_Pallet_PASSIVE_DIR = children0[L].getInt("OBJECTS_Pallet_PASSIVE_DIR");
       OBJECTS_Pallet_PASSIVE_MLT = children0[L].getFloat("OBJECTS_Pallet_PASSIVE_MLT");
-      SUN3D_Pallet_ACTIVE_CLR = children0[L].getInt("SUN3D_Pallet_ACTIVE_CLR");
-      SUN3D_Pallet_ACTIVE_DIR = children0[L].getInt("SUN3D_Pallet_ACTIVE_DIR");
-      SUN3D_Pallet_ACTIVE_MLT = children0[L].getFloat("SUN3D_Pallet_ACTIVE_MLT");
-      SUN3D_Pallet_PASSIVE_CLR = children0[L].getInt("SUN3D_Pallet_PASSIVE_CLR");
-      SUN3D_Pallet_PASSIVE_DIR = children0[L].getInt("SUN3D_Pallet_PASSIVE_DIR");
-      SUN3D_Pallet_PASSIVE_MLT = children0[L].getFloat("SUN3D_Pallet_PASSIVE_MLT");
+      SunPath3D_Pallet_ACTIVE_CLR = children0[L].getInt("SunPath3D_Pallet_ACTIVE_CLR");
+      SunPath3D_Pallet_ACTIVE_DIR = children0[L].getInt("SunPath3D_Pallet_ACTIVE_DIR");
+      SunPath3D_Pallet_ACTIVE_MLT = children0[L].getFloat("SunPath3D_Pallet_ACTIVE_MLT");
+      SunPath3D_Pallet_PASSIVE_CLR = children0[L].getInt("SunPath3D_Pallet_PASSIVE_CLR");
+      SunPath3D_Pallet_PASSIVE_DIR = children0[L].getInt("SunPath3D_Pallet_PASSIVE_DIR");
+      SunPath3D_Pallet_PASSIVE_MLT = children0[L].getFloat("SunPath3D_Pallet_PASSIVE_MLT");
       SKY3D_Pallet_ACTIVE_CLR = children0[L].getInt("SKY3D_Pallet_ACTIVE_CLR");
       SKY3D_Pallet_ACTIVE_DIR = children0[L].getInt("SKY3D_Pallet_ACTIVE_DIR");
       SKY3D_Pallet_ACTIVE_MLT = children0[L].getFloat("SKY3D_Pallet_ACTIVE_MLT");
@@ -30992,7 +31091,7 @@ void SOLARCHVISION_load_project (String myFile) {
       SKY3D_TESELATION = children0[L].getInt("SKY3D_TESELATION");
       SKY3D_scale = children0[L].getFloat("SKY3D_scale");
       WindRose3D_scale = children0[L].getFloat("WindRose3D_scale");
-      Display_SUN3D = children0[L].getInt("Display_SUN3D");
+      Display_SunPath3D = children0[L].getInt("Display_SunPath3D");
       Display_SKY3D = children0[L].getInt("Display_SKY3D");
       Display_MOON3D = children0[L].getInt("Display_MOON3D");
       Display_MOON3D_TEXTURE = children0[L].getInt("Display_MOON3D_TEXTURE");      
