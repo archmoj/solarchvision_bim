@@ -1567,6 +1567,10 @@ void setup () {
   
   STUDY_Diagrams = createGraphics(STUDY_X_View, STUDY_Y_View, P2D);
 
+
+  Load_EARTH_IMAGE(); // <<<<<<<<<<<< should move it below
+  
+
   LoadDefaultFontStyle();  
 
   frameRate(24);
@@ -15427,25 +15431,27 @@ void SOLARCHVISION_draw_windFlow () {
 int Display_EARTH3D = 1;
 int Display_EARTH3D_TEXTURE = 1;
 
+PImage EARTH_IMAGE;
+
+String EARTH_IMAGE_Path = "C:/SOLARCHVISION_2015/Output/2015-12-03/GDPS_00/World/Atmospheric_circulation";
+
+void Load_EARTH_IMAGE () {
+  EARTH_IMAGE = loadImage(EARTH_IMAGE_Path + "/" + (sort(getfiles(EARTH_IMAGE_Path))[0]));
+} 
+
 void SOLARCHVISION_draw_EARTH3D () {
   if (Display_EARTH3D != 0) {
 
     WIN3D_Diagrams.strokeWeight(1);
 
-    float WORLD_VIEW_OffsetX = WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + 180;
-    float WORLD_VIEW_OffsetY = WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - 90;
+    float EARTH_IMAGE_OffsetX = 0; //EARTH_IMAGE_BoundariesX[EARTH_IMAGE_Number][0] + 180;
+    float EARTH_IMAGE_OffsetY = 0; //EARTH_IMAGE_BoundariesY[EARTH_IMAGE_Number][1] - 90;
     
-    println(WORLD_VIEW_OffsetX, WORLD_VIEW_OffsetY);
-      
-    float WORLD_VIEW_ScaleX = (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0]) / 360.0;
-    float WORLD_VIEW_ScaleY = (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1] - WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0]) / 180.0;
+    float EARTH_IMAGE_ScaleX = 1; //(EARTH_IMAGE_BoundariesX[EARTH_IMAGE_Number][1] - EARTH_IMAGE_BoundariesX[EARTH_IMAGE_Number][0]) / 360.0;
+    float EARTH_IMAGE_ScaleY = 1; //(EARTH_IMAGE_BoundariesY[EARTH_IMAGE_Number][1] - EARTH_IMAGE_BoundariesY[EARTH_IMAGE_Number][0]) / 180.0;
 
-
-    println(WORLD_VIEW_ScaleX, WORLD_VIEW_ScaleY);
-
-    float CEN_lon = 0.5 * (WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][0] + WORLD_VIEW_BoundariesX[WORLD_VIEW_Number][1]);
-    float CEN_lat = 0.5 * (WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][0] + WORLD_VIEW_BoundariesY[WORLD_VIEW_Number][1]);
-
+    float CEN_lon = 0; //0.5 * (EARTH_IMAGE_BoundariesX[EARTH_IMAGE_Number][0] + EARTH_IMAGE_BoundariesX[EARTH_IMAGE_Number][1]);
+    float CEN_lat = 0; //0.5 * (EARTH_IMAGE_BoundariesY[EARTH_IMAGE_Number][0] + EARTH_IMAGE_BoundariesY[EARTH_IMAGE_Number][1]);
     
     float delta_Alpha = -2.5;
     float delta_Beta = -2.5;
@@ -15478,8 +15484,8 @@ void SOLARCHVISION_draw_EARTH3D () {
           float _lat = a - CEN_lat;
           
           // calculating u and v
-          subFace[s][3] = (_lon / WORLD_VIEW_ScaleX / 360.0 + 0.5) * WORLDViewImage.width; 
-          subFace[s][4] = (-_lat / WORLD_VIEW_ScaleY / 180.0 + 0.5) * WORLDViewImage.height;         
+          subFace[s][3] = (_lon / EARTH_IMAGE_ScaleX / 360.0 + 0.5) * EARTH_IMAGE.width; 
+          subFace[s][4] = (-_lat / EARTH_IMAGE_ScaleY / 180.0 + 0.5) * EARTH_IMAGE.height;         
           
           // rotating to location coordinates 
           float tb = -LocationLongitude;
@@ -15508,7 +15514,7 @@ void SOLARCHVISION_draw_EARTH3D () {
         WIN3D_Diagrams.noStroke();
         
         if (Display_EARTH3D_TEXTURE != 0) {
-          WIN3D_Diagrams.texture(WORLDViewImage);
+          WIN3D_Diagrams.texture(EARTH_IMAGE);
         }
 
         for (int s = 0; s < subFace.length; s++) {
