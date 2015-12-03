@@ -1110,7 +1110,7 @@ int LAND_TESELATION = 2;
 int MODEL3D_TESELATION = 2;
 
 int SKY3D_TESELATION = 3;
-float SKY3D_scale = 10000 ; //1000; 
+float SKY3D_scale = 10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
 
 float WindRose3D_scale = 400;
 
@@ -14897,7 +14897,7 @@ void SOLARCHVISION_build_SkySphere (int Teselation) {
 
 
 
-float objects_scale = 2.0; //1.0; // <<<<<<<<<<<<<<<<<<<<< 
+float objects_scale = 1.0;  
 
 
 
@@ -15567,130 +15567,133 @@ void SOLARCHVISION_draw_land () {
           
           if (Display_LAND_TEXTURE != 0) {
             WIN3D_Diagrams.texture(LAND_TEXTURE);
-            
-            WIN3D_Diagrams.noStroke(); // <<<<<<<<<<
           }
-
+          
           for (int s = 0; s < subFace.length; s++) {
-       
-            float[] _COL = {255,223,223,223};
             
-            if ((WIN3D_FACES_SHADE == Shade_Surface_Base) || (WIN3D_FACES_SHADE == Shade_Surface_White)) {
-              _COL[1] = 255;
-              _COL[2] = 255;
-              _COL[3] = 255;
-            }
-            else if (WIN3D_FACES_SHADE == Shade_Surface_Materials) {
-              _COL[1] = 191;
-              _COL[2] = 255;
-              _COL[3] = 127;
-            }
-            else if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
+            if (Display_LAND_TEXTURE == 0) {
+       
+              float[] _COL = {255,223,223,223};
               
-              int PAL_TYPE = 0; 
-              int PAL_DIR = 1;
-              
-              if (Impact_TYPE == Impact_ACTIVE) {
-                PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
+              if ((WIN3D_FACES_SHADE == Shade_Surface_Base) || (WIN3D_FACES_SHADE == Shade_Surface_White)) {
+                _COL[1] = 255;
+                _COL[2] = 255;
+                _COL[3] = 255;
               }
-              if (Impact_TYPE == Impact_PASSIVE) {  
-                PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
-              }             
-              
-              float _Multiplier = 1; 
-              if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
-              if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;     
-
-              int s_next = (s + 1) % subFace.length;
-              int s_prev = (s + subFace.length - 1) % subFace.length;
-              
-              PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
-              PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
-              PVector UV = U.cross(V);
-              float[] W = {UV.x, UV.y, UV.z};
-              W = fn_normalize(W);
-              
-              float Alpha = asin_ang(W[2]);
-              float Beta = atan2_ang(W[1], W[0]) + 90;       
-              
-              int a = int((Alpha + 90) / stp_slp);
-              int b = int(Beta / stp_dir);
-              
-              if (a < 0) a += int(180 / stp_slp);
-              if (b < 0) b += int(360 / stp_dir);
-              if (a > int(180 / stp_slp)) a -= int(180 / stp_slp);
-              if (b > int(360 / stp_dir)) b -= int(360 / stp_dir);
-              
-              float _valuesSUM = LocationExposure[Day_of_Impact_to_Display][a][b];
-              
-              if (_valuesSUM < 0.9 * FLOAT_undefined) {
-              
-                float _u = 0;
+              else if (WIN3D_FACES_SHADE == Shade_Surface_Materials) {
+                _COL[1] = 191;
+                _COL[2] = 255;
+                _COL[3] = 127;
+              }
+              else if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
                 
-                if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
-                if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
+                int PAL_TYPE = 0; 
+                int PAL_DIR = 1;
                 
+                if (Impact_TYPE == Impact_ACTIVE) {
+                  PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
+                }
+                if (Impact_TYPE == Impact_PASSIVE) {  
+                  PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+                }             
+                
+                float _Multiplier = 1; 
+                if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
+                if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;     
+  
+                int s_next = (s + 1) % subFace.length;
+                int s_prev = (s + subFace.length - 1) % subFace.length;
+                
+                PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
+                PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
+                PVector UV = U.cross(V);
+                float[] W = {UV.x, UV.y, UV.z};
+                W = fn_normalize(W);
+                
+                float Alpha = asin_ang(W[2]);
+                float Beta = atan2_ang(W[1], W[0]) + 90;       
+                
+                int a = int((Alpha + 90) / stp_slp);
+                int b = int(Beta / stp_dir);
+                
+                if (a < 0) a += int(180 / stp_slp);
+                if (b < 0) b += int(360 / stp_dir);
+                if (a > int(180 / stp_slp)) a -= int(180 / stp_slp);
+                if (b > int(360 / stp_dir)) b -= int(360 / stp_dir);
+                
+                float _valuesSUM = LocationExposure[Day_of_Impact_to_Display][a][b];
+                
+                if (_valuesSUM < 0.9 * FLOAT_undefined) {
+                
+                  float _u = 0;
+                  
+                  if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
+                  if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
+                  
+                  if (PAL_DIR == -1) _u = 1 - _u;
+                  if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                  if (PAL_DIR == 2) _u =  0.5 * _u;
+        
+                  _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+  
+                }
+                else {
+                  _COL[1] = 223;
+                  _COL[2] = 223;
+                  _COL[3] = 223;
+                }
+                
+                
+              }       
+              
+              else if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
+                int PAL_TYPE = ELEVATION_Pallet_CLR; 
+                int PAL_DIR = ELEVATION_Pallet_DIR; 
+                float _Multiplier = ELEVATION_Pallet_MLT;   
+                
+                float _u = _Multiplier * 0.1 * subFace[s][2] + 0.5;
+                 
                 if (PAL_DIR == -1) _u = 1 - _u;
                 if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                 if (PAL_DIR == 2) _u =  0.5 * _u;
-      
-                _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
-
+          
+                _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
+              }
+     
+     
+              
+              WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
+              //if (subFace[s][2] + LocationElevation < 0) WIN3D_Diagrams.fill(127, 127, 255); // i.e. water
+  
+              
+    
+              if (display_MODEL3D_EDGES == 0) {
+                WIN3D_Diagrams.noStroke();
               }
               else {
-                _COL[1] = 223;
-                _COL[2] = 223;
-                _COL[3] = 223;
-              }
+                if (WIN3D_EDGES_SHOW == 1) {
+                  WIN3D_Diagrams.stroke(0, 0, 0);
+                }          
+                else {
+                  WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
+                }
+              }   
               
-              
-            }       
             
-            else if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
-              int PAL_TYPE = ELEVATION_Pallet_CLR; 
-              int PAL_DIR = ELEVATION_Pallet_DIR; 
-              float _Multiplier = ELEVATION_Pallet_MLT;   
-              
-              float _u = _Multiplier * 0.1 * subFace[s][2] + 0.5;
-               
-              if (PAL_DIR == -1) _u = 1 - _u;
-              if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-              if (PAL_DIR == 2) _u =  0.5 * _u;
-        
-              _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
-            }
-   
-   
-            
-            WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
-            //if (subFace[s][2] + LocationElevation < 0) WIN3D_Diagrams.fill(127, 127, 255); // i.e. water
 
-            
-  
-            if (display_MODEL3D_EDGES == 0) {
-              WIN3D_Diagrams.noStroke();
-            }
-            else {
-              if (WIN3D_EDGES_SHOW == 1) {
-                WIN3D_Diagrams.stroke(0, 0, 0);
-              }          
-              else {
-                WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
-              }
-            }   
-            
-  
-            if (Display_LAND_TEXTURE != 0) {
+               WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D);
+            }              
+            else {              
+              WIN3D_Diagrams.noStroke(); // <<<<<<<<<<
               
               float u = (subFace[s][0] / LAND_TEXTURE_scale_U + 0.5) * LAND_TEXTURE.width;
               float v = (-subFace[s][1] / LAND_TEXTURE_scale_V + 0.5) * LAND_TEXTURE.height;
 
               WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D, u, v);  
             }
-            else {
-          
-              WIN3D_Diagrams.vertex(subFace[s][0] * objects_scale * WIN3D_scale3D, -subFace[s][1] * objects_scale * WIN3D_scale3D, subFace[s][2] * objects_scale * WIN3D_scale3D);
-            }
+            
+              
+           
             
           }
           
@@ -23541,9 +23544,11 @@ void SOLARCHVISION_draw_ROLLOUT () {
       
       Display_SUN3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SUN3D" , Display_SUN3D, 0, 1, 1), 1));
       Display_SKY3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SKY3D" , Display_SKY3D, 0, 1, 1), 1));
+
+      objects_scale = MySpinner.update(X_control, Y_control, 0,1,0, "objects_scale" , objects_scale, 0.00001, 100000, -2);
       
       SKY3D_TESELATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_TESELATION" , SKY3D_TESELATION, 0, 5, 1), 1));            
-      SKY3D_scale = MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_scale" , SKY3D_scale, 1, 1000000, -2);
+      SKY3D_scale = MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_scale" , SKY3D_scale, 1, 100000, -2);
 
       WindRose3D_scale = MySpinner.update(X_control, Y_control, 0,1,0, "WindRose3D_scale" , WindRose3D_scale, 50, 3200, -2);
       WindRose_RES = int(MySpinner.update(X_control, Y_control, 0,1,0, "WindRose3D_resolution" , WindRose_RES, 200, 600, 100));
