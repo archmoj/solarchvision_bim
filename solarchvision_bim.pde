@@ -1,5 +1,7 @@
 import processing.pdf.*;
 
+float planetary_magnification = 2.5; // <<<<<<<<<<
+
 String _undefined = "N/A";
 float FLOAT_undefined = 1000000000; // it must be a positive big number that is not included in any data
 
@@ -11491,7 +11493,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
 } 
 
 
-int Display_SunRotation = 1;
+int Display_SunRotation = 0;
 
 void SOLARCHVISION_draw_SunRotation (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float LocationLatitude) { 
 
@@ -15608,7 +15610,7 @@ void SOLARCHVISION_draw_MOON3D () {
     float delta_Alpha = -5;
     float delta_Beta = -10;
     
-    float r = 1737000.0;
+    float r = 1737000.0 * planetary_magnification;
     float d = 384400000.0 - FLOAT_R_earth;
 
     for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
@@ -15708,7 +15710,7 @@ void SOLARCHVISION_draw_STAR3D () {
     float delta_Alpha = -5;
     float delta_Beta = -10;
     
-    float r = 696.0; // * 1000000; // multiply this later
+    float r = 696.0 * planetary_magnification; // * 1000000; // multiply this later
     float d = 150000.0; // * 1000000; // multiply this later 
     
     for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
@@ -15788,8 +15790,6 @@ void SOLARCHVISION_draw_STAR3D () {
   }
 }
 
-
-//----------------------------------------
 
 
 void SOLARCHVISION_draw_land () {
@@ -22114,12 +22114,30 @@ void mouseClicked () {
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
             }
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Sun")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide SunPath")) {
               Display_SunPath3D = (Display_SunPath3D + 1) % 2;
               
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
-            }           
+            }   
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Star")) {
+              Display_STAR3D = (Display_STAR3D + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Moon")) {
+              Display_MOON3D = (Display_MOON3D + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Earth")) {
+              Display_EARTH3D = (Display_EARTH3D + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }            
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Shading Section")) {
               display_SolarImpact_Image = (display_SolarImpact_Image + 1) % 2;
               
@@ -23813,10 +23831,19 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Load_URBAN_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Load_URBAN_MESH" , Load_URBAN_MESH, 0, 1, 1), 1));
       Display_URBAN_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_URBAN_MESH" , Display_URBAN_MESH, 0, 1, 1), 1));
       
-      
-      
       Display_SunPath3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SunPath3D" , Display_SunPath3D, 0, 1, 1), 1));
       Display_SKY3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SKY3D" , Display_SKY3D, 0, 1, 1), 1));
+
+      planetary_magnification = MySpinner.update(X_control, Y_control, 0,1,0, "planetary_magnification" , planetary_magnification, 1, 100, 1.0);
+
+      Display_STAR3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_STAR3D" , Display_STAR3D, 0, 1, 1), 1));
+      Display_STAR3D_TEXTURE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_STAR3D_TEXTURE" , Display_STAR3D_TEXTURE, 0, 1, 1), 1));
+
+      Display_MOON3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MOON3D" , Display_MOON3D, 0, 1, 1), 1));
+      Display_MOON3D_TEXTURE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MOON3D_TEXTURE" , Display_MOON3D_TEXTURE, 0, 1, 1), 1));
+
+      Display_EARTH3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_EARTH3D" , Display_EARTH3D, 0, 1, 1), 1));
+      Display_EARTH3D_TEXTURE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_EARTH3D_TEXTURE" , Display_EARTH3D_TEXTURE, 0, 1, 1), 1));
 
       OBJECTS_scale = MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_scale" , OBJECTS_scale, 0.00001, 100000, -2);
       SKY3D_scale = MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_scale" , SKY3D_scale, 1, 100000, -2);
@@ -23834,6 +23861,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       SpatialImpact_Image_Section = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Image_Section" , SpatialImpact_Image_Section, 0, 3, 1), 1));
 
       Day_of_Impact_to_Display = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Day_of_Impact_to_Display" , Day_of_Impact_to_Display, 0, STUDY_j_end - STUDY_j_start, 1), 1));
+
+      
       
     }
     
@@ -28418,7 +28447,7 @@ String[][] BAR_a_Items = {
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
                         {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
-                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Vertices", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sky", "Display/Hide Sun", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
+                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Vertices", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sky", "Display/Hide SunPath", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
@@ -28573,9 +28602,18 @@ void SOLARCHVISION_draw_window_BAR_a () {
               if (BAR_a_Items[i][j].equals("Display/Hide Sky")) {
                 if (Display_SKY3D == 0) {stroke(127); fill(127);}
               }
-              if (BAR_a_Items[i][j].equals("Display/Hide Sun")) {
+              if (BAR_a_Items[i][j].equals("Display/Hide SunPath")) {
                 if (Display_SunPath3D == 0) {stroke(127); fill(127);}
-              }           
+              }
+              if (BAR_a_Items[i][j].equals("Display/Hide Star")) {
+                if (Display_STAR3D == 0) {stroke(127); fill(127);}
+              }
+              if (BAR_a_Items[i][j].equals("Display/Hide Moon")) {
+                if (Display_MOON3D == 0) {stroke(127); fill(127);}
+              }
+              if (BAR_a_Items[i][j].equals("Display/Hide Earth")) {
+                if (Display_EARTH3D == 0) {stroke(127); fill(127);}
+              }              
               if (BAR_a_Items[i][j].equals("Display/Hide Shading Section")) {
                 if (display_SolarImpact_Image == 0) {stroke(127); fill(127);}
               }  
@@ -30346,8 +30384,13 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setInt("SKY3D_TESELATION", SKY3D_TESELATION);
   newChild1.setFloat("SKY3D_scale", SKY3D_scale);
   newChild1.setFloat("WindRose3D_scale", WindRose3D_scale);
+
+  newChild1.setFloat("planetary_magnification", planetary_magnification);
+  newChild1.setInt("Display_SunRotation", Display_SunRotation);
   newChild1.setInt("Display_SunPath3D", Display_SunPath3D);
   newChild1.setInt("Display_SKY3D", Display_SKY3D);
+  newChild1.setInt("Display_STAR3D", Display_STAR3D);
+  newChild1.setInt("Display_STAR3D_TEXTURE", Display_STAR3D_TEXTURE);
   newChild1.setInt("Display_MOON3D", Display_MOON3D);
   newChild1.setInt("Display_MOON3D_TEXTURE", Display_MOON3D_TEXTURE);
   newChild1.setInt("Display_EARTH3D", Display_EARTH3D);
@@ -31135,8 +31178,13 @@ void SOLARCHVISION_load_project (String myFile) {
       SKY3D_TESELATION = children0[L].getInt("SKY3D_TESELATION");
       SKY3D_scale = children0[L].getFloat("SKY3D_scale");
       WindRose3D_scale = children0[L].getFloat("WindRose3D_scale");
+
+      planetary_magnification = children0[L].getFloat("planetary_magnification");
+      Display_SunRotation = children0[L].getInt("Display_SunRotation");      
       Display_SunPath3D = children0[L].getInt("Display_SunPath3D");
       Display_SKY3D = children0[L].getInt("Display_SKY3D");
+      Display_STAR3D = children0[L].getInt("Display_STAR3D");
+      Display_STAR3D_TEXTURE = children0[L].getInt("Display_STAR3D_TEXTURE");            
       Display_MOON3D = children0[L].getInt("Display_MOON3D");
       Display_MOON3D_TEXTURE = children0[L].getInt("Display_MOON3D_TEXTURE");      
       Display_EARTH3D = children0[L].getInt("Display_EARTH3D");
@@ -31251,6 +31299,7 @@ void SOLARCHVISION_load_project (String myFile) {
       LAND_n_J = children0[L].getInt("LAND_n_J");
       LAND_mid_lat = Double.parseDouble(children0[L].getString("LAND_mid_lat"));
       LAND_mid_lon = Double.parseDouble(children0[L].getString("LAND_mid_lon"));
+      
       
       {
         String new_Default_Font = children0[L].getString("Default_Font");
@@ -31669,17 +31718,8 @@ bug: delete because scrolling selection+ could add duplicate of the same objects
 solution: I remarked wheel option for pickSelect for now.
 
 
-int Display_EARTH3D = 1;
-int Display_EARTH3D_TEXTURE = 1;
-
-int Display_MOON3D = 1;
-int Display_MOON3D_TEXTURE = 1;
-
-int Display_STAR3D = 1;
-int Display_STAR3D_TEXTURE = 1;
 
 
-int Display_SunRotation = 1;
 
 */
 
