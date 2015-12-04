@@ -1283,7 +1283,7 @@ String DiagramsFolder;
 String ScreenShotFolder;
 String Model3DFolder;
 
-String ProjectName = "untitled_" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
+String ProjectName = "Revision_" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
 
 
 void SOLARCHVISION_update_folders () {
@@ -1301,10 +1301,11 @@ void SOLARCHVISION_update_folders () {
   Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_SEL";
   Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_ALL";
   ExportFolder          = BaseFolder + "/Export";
-  ProjectsFolder        = ExportFolder + "/Projects";  
+  ProjectsFolder        = ExportFolder + "/Projects/Project_A01";  
   DiagramsFolder        = ExportFolder + "/Diagrams";  
+  Model3DFolder         = ExportFolder + "/Model_3D" + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);  
   ScreenShotFolder      = ExportFolder + "/ScreenShots" + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
-  Model3DFolder         = ExportFolder + "/Model_3D" + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
+
 
 
   //try {
@@ -13948,7 +13949,7 @@ void SOLARCHVISION_addToFaces_afterSphericalTeselation (int m, float cx, float c
 
 void SOLARCHVISION_export_land () {
   
-  String myFile = Model3DFolder + "/" + "LandMesh.obj";
+  String myFile = Model3DFolder + "/" + ProjectName + "_LandMesh.obj";
   
   PrintWriter File_output_mesh = createWriter(myFile);
   
@@ -14050,7 +14051,7 @@ void SOLARCHVISION_export_land () {
 
 void SOLARCHVISION_export_objects () {
   
-  String myFile = Model3DFolder + "/" + "ObjectsMesh.obj";
+  String myFile = Model3DFolder + "/" + ProjectName + "_ObjectsMesh.obj";
   
   PrintWriter File_output_mesh = createWriter(myFile);
   
@@ -14111,7 +14112,7 @@ void SOLARCHVISION_export_objects () {
 
 void SOLARCHVISION_export_objects_script () {
   
-  String myFile = Model3DFolder + "/" + "ObjectsMesh.scr";
+  String myFile = Model3DFolder + "/" + ProjectName + "_ObjectsMesh.scr";
 
   PrintWriter File_output_mesh = createWriter(myFile);
   
