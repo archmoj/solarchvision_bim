@@ -3,7 +3,7 @@ import processing.pdf.*;
 String _undefined = "N/A";
 float FLOAT_undefined = 1000000000; // it must be a positive big number that is not included in any data
 
-double R_earth = 6373000;
+double R_earth = 6373000.0;
 float FLOAT_R_earth = (float) R_earth;
 
 int _EN = 0;
@@ -15608,9 +15608,9 @@ void SOLARCHVISION_draw_MOON3D () {
     float delta_Alpha = -5;
     float delta_Beta = -10;
     
-    float r = 1737000;
-    float d = 30000000; //38440000 - r - FLOAT_R_earth;
-    
+    float r = 1737000.0;
+    float d = 384400000.0 - FLOAT_R_earth;
+
     for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
       for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
 
@@ -15708,8 +15708,8 @@ void SOLARCHVISION_draw_STAR3D () {
     float delta_Alpha = -5;
     float delta_Beta = -10;
     
-    float r = 10.0 * 696.0; // * 1000000; // multiply this later
-    float d = 1.0 * 150000.0; // * 1000000; // multiply this later 
+    float r = 696.0; // * 1000000; // multiply this later
+    float d = 150000.0; // * 1000000; // multiply this later 
     
     for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
       for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
@@ -15733,9 +15733,6 @@ void SOLARCHVISION_draw_STAR3D () {
           float y0 = r * sin_ang(b - 90) * cos_ang(a);
           float z0 = r * sin_ang(a);
           
-          println("______________");
-          println(dist(0,0,0, x0,y0,z0));
-          
           float _lon = b - CEN_lon;
           float _lat = a - CEN_lat;
           
@@ -15752,21 +15749,15 @@ void SOLARCHVISION_draw_STAR3D () {
           float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
           float z1 = z0;
           
-          println(dist(0,0,0, x1,y1,z1));
-          
           float ta = -90 - LocationLatitude;
           float x2 = x1;
           float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
           float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
           
-          println(dist(0,0,0, x2,y2,z2));
-          
           // scale it here!
           x2 *= 1000000.0;
           y2 *= 1000000.0;
           z2 *= 1000000.0;
-          
-          println(dist(0,0,0, x2,y2,z2));
           
           // move it to scale here!
           y2 += 1000000.0 * d * sin_ang(-LocationLatitude);      
