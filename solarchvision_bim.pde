@@ -22257,7 +22257,13 @@ void mouseClicked () {
               
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
-            }            
+            }   
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Troposphere")) {
+              Display_TROPO3D = (Display_TROPO3D + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }              
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Shading Section")) {
               display_SolarImpact_Image = (display_SolarImpact_Image + 1) % 2;
               
@@ -23961,6 +23967,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       Display_MOON3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MOON3D" , Display_MOON3D, 0, 1, 1), 1));
       Display_MOON3D_TEXTURE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MOON3D_TEXTURE" , Display_MOON3D_TEXTURE, 0, 1, 1), 1));
+
+      Display_TROPO3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_TROPO3D" , Display_TROPO3D, 0, 1, 1), 1));
+      //Display_TROPO3D_TEXTURE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_TROPO3D_TEXTURE" , Display_TROPO3D_TEXTURE, 0, 1, 1), 1));
 
       Display_EARTH3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_EARTH3D" , Display_EARTH3D, 0, 1, 1), 1));
       Display_EARTH3D_TEXTURE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_EARTH3D_TEXTURE" , Display_EARTH3D_TEXTURE, 0, 1, 1), 1));
@@ -28567,7 +28576,7 @@ String[][] BAR_a_Items = {
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
                         {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
-                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Vertices", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sky", "Display/Hide SunPath", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
+                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Vertices", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sky", "Display/Hide SunPath", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Analysis", "Wind", "Solar active-performance", "Solar passive-performance"},
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
@@ -28733,7 +28742,10 @@ void SOLARCHVISION_draw_window_BAR_a () {
               }
               if (BAR_a_Items[i][j].equals("Display/Hide Earth")) {
                 if (Display_EARTH3D == 0) {stroke(127); fill(127);}
-              }              
+              }    
+              if (BAR_a_Items[i][j].equals("Display/Hide Troposphere")) {
+                if (Display_TROPO3D == 0) {stroke(127); fill(127);}
+              }  
               if (BAR_a_Items[i][j].equals("Display/Hide Shading Section")) {
                 if (display_SolarImpact_Image == 0) {stroke(127); fill(127);}
               }  
@@ -30513,6 +30525,8 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setInt("Display_STAR3D_TEXTURE", Display_STAR3D_TEXTURE);
   newChild1.setInt("Display_MOON3D", Display_MOON3D);
   newChild1.setInt("Display_MOON3D_TEXTURE", Display_MOON3D_TEXTURE);
+  newChild1.setInt("Display_TROPO3D", Display_TROPO3D);
+  newChild1.setInt("Display_TROPO3D_TEXTURE", Display_TROPO3D_TEXTURE);
   newChild1.setInt("Display_EARTH3D", Display_EARTH3D);
   newChild1.setInt("Display_EARTH3D_TEXTURE", Display_EARTH3D_TEXTURE);
   newChild1.setInt("Download_LAND_MESH", Download_LAND_MESH);
@@ -31306,7 +31320,9 @@ void SOLARCHVISION_load_project (String myFile) {
       Display_STAR3D = children0[L].getInt("Display_STAR3D");
       Display_STAR3D_TEXTURE = children0[L].getInt("Display_STAR3D_TEXTURE");            
       Display_MOON3D = children0[L].getInt("Display_MOON3D");
-      Display_MOON3D_TEXTURE = children0[L].getInt("Display_MOON3D_TEXTURE");      
+      Display_MOON3D_TEXTURE = children0[L].getInt("Display_MOON3D_TEXTURE");
+      Display_TROPO3D = children0[L].getInt("Display_TROPO3D");
+      Display_TROPO3D_TEXTURE = children0[L].getInt("Display_TROPO3D_TEXTURE");
       Display_EARTH3D = children0[L].getInt("Display_EARTH3D");
       Display_EARTH3D_TEXTURE = children0[L].getInt("Display_EARTH3D_TEXTURE");
       Download_LAND_MESH = children0[L].getInt("Download_LAND_MESH");
