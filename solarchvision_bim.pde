@@ -1283,6 +1283,8 @@ String DiagramsFolder;
 String ScreenShotFolder;
 String Model3DFolder;
 
+String ProjectName = "untitled_" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
+
 
 void SOLARCHVISION_update_folders () {
 
@@ -21926,10 +21928,49 @@ void mouseDragged () {
 }
 
 
+void SOLARCHVISION_update_Project_info (File selectedFile) {
 
+  ProjectName = selectedFile.getName().replace(".xml", "").replace(".XML", "").replace(".Xml", ""); // should work most of the times!
+  ProjectsFolder =  selectedFile.getAbsolutePath().replace("\\", "/").replace("/" + selectedFile.getName(), "");
+  
+  println("New ProjectName:", ProjectName);
+  println("New ProjectsFolder:", ProjectsFolder);
+ 
+}
 
+void SOLARCHVISION_fileSelected_New (File selectedFile) {
 
+  String Filename = "";
+  
+  if (selectedFile == null) {
+  } 
+  else {
+    Filename = selectedFile.getAbsolutePath().replace("\\", "/");
+    
+    println("New project:", Filename);
+    
+    SOLARCHVISION_update_Project_info(selectedFile);
+  }
+  
+}
 
+void SOLARCHVISION_fileSelected_Open (File selectedFile) {
+
+  String Filename = "";
+  
+  if (selectedFile == null) {
+  } 
+  else {
+    Filename = selectedFile.getAbsolutePath().replace("\\", "/");
+    
+    println("Loading:", Filename);
+    
+    SOLARCHVISION_load_project(Filename);
+    
+    SOLARCHVISION_update_Project_info(selectedFile);
+  }
+  
+} 
 
 
 void SOLARCHVISION_fileSelected_SaveAs (File selectedFile) {
@@ -21943,8 +21984,11 @@ void SOLARCHVISION_fileSelected_SaveAs (File selectedFile) {
     
     println("Saving to:", Filename);
     
+    SOLARCHVISION_save_project(Filename);
+ 
+    SOLARCHVISION_update_Project_info(selectedFile);   
   }
-
+  
 }     
 
 
@@ -21958,7 +22002,7 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
   else {
     Filename = selectedFile.getAbsolutePath().replace("\\", "/");
     
-    println("Loading:", Filename);
+    println("Importing:", Filename);
     
     int NUM_allPolymesh_Faces_Before = allPolymesh_Faces.length;
     
@@ -21969,7 +22013,7 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
     selectedPolymesh_numbers = new int [1 + NUM_allPolymesh_Faces_After - NUM_allPolymesh_Faces_Before];
     for (int i = 0; i < selectedPolymesh_numbers.length - 1; i++) { 
       selectedPolymesh_numbers[i] = i + NUM_allPolymesh_Faces_Before;
-      println(selectedPolymesh_numbers[i]);
+      //println(selectedPolymesh_numbers[i]);
     }
 
     Work_with_2D_or_3D = 3;
@@ -21980,6 +22024,8 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
   }
 
 }     
+
+
 
 void mouseClicked () {
   
@@ -22001,14 +22047,17 @@ void mouseClicked () {
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("www.solarchvision.com")) { 
               link("http://solarchvision.com/");
             }     
+
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("New")) { 
+              selectInput("Specify project name:", "SOLARCHVISION_fileSelected_New");
+            }  
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Open...")) { 
-              //selectInput("Select a file to open:", "SOLARCHVISION_fileSelected_Open");
-              SOLARCHVISION_load_project(ProjectsFolder + "/" + "Project.xml");
+              selectInput("Select a file to open:", "SOLARCHVISION_fileSelected_Open");
             }          
   
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Save")) { 
-              SOLARCHVISION_save_project(ProjectsFolder + "/" + "Project.xml");   
+              SOLARCHVISION_save_project(ProjectsFolder + "/" + ProjectName + ".xml");   
             }
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Save As...")) { 
@@ -31841,7 +31890,6 @@ void SOLARCHVISION_load_project (String myFile) {
   Rendered_SolarImpact_Rotation = FLOAT_undefined;      
   
   SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
-  
 
 }
 
