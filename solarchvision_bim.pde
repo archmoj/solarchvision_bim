@@ -1571,7 +1571,7 @@ void setup () {
 
 
   Load_EARTH_IMAGES(); // <<<<<<<<<<<< should move it below
-  
+  Load_TROPO_IMAGES(); // <<<<<<<<<<<< should move it below
 
   LoadDefaultFontStyle();  
 
@@ -2633,6 +2633,8 @@ void SOLARCHVISION_draw_WIN3D () {
     SOLARCHVISION_draw_MOON3D();
     
     SOLARCHVISION_draw_EARTH3D();
+    
+    SOLARCHVISION_draw_TROPO3D();
     
     SOLARCHVISION_draw_land();
     
@@ -15471,12 +15473,130 @@ void SOLARCHVISION_draw_windFlow () {
 }
 
 //---------------------------------------- should be added to I/O and GUI 
+
+int Display_TROPO3D = 1;
+int Display_TROPO3D_TEXTURE = 1;
+
+PImage[] TROPO_IMAGES;
+
+String TROPO_IMAGES_Path = "C:/SOLARCHVISION_2015/Output/2015-12-04/GDPS_00/World/Winds";
+
+
+void Load_TROPO_IMAGES () {
+  
+  String[] TROPO_IMAGES_Filenames = sort(getfiles(TROPO_IMAGES_Path));
+  
+  TROPO_IMAGES = new PImage [TROPO_IMAGES_Filenames.length];
+  
+  for (int i = 0; i < TROPO_IMAGES_Filenames.length; i++) {
+   
+    println("Loading:", TROPO_IMAGES_Path + "/" + TROPO_IMAGES_Filenames[i]);
+    
+    TROPO_IMAGES[i] = loadImage(TROPO_IMAGES_Path + "/" + TROPO_IMAGES_Filenames[i]);
+  }
+}
+
+
+void SOLARCHVISION_draw_TROPO3D () {
+  if (Display_TROPO3D != 0) {
+
+    WIN3D_Diagrams.strokeWeight(1);
+    
+    for (int n = 0; n < TROPO_IMAGES.length; n++) {
+    
+      float TROPO_IMAGES_OffsetX = 0; //TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0] + 180;
+      float TROPO_IMAGES_OffsetY = 0; //TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1] - 90;
+      
+      float TROPO_IMAGES_ScaleX = 1; //(TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][1] - TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0]) / 360.0;
+      float TROPO_IMAGES_ScaleY = 1; //(TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1] - TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][0]) / 180.0;
+  
+      float CEN_lon = 0; //0.5 * (TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][1]);
+      float CEN_lat = 0; //0.5 * (TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1]);
+      
+      float delta_Alpha = -2.5;
+      float delta_Beta = -2.5;
+      
+      float r = FLOAT_R_earth + (TROPO_IMAGES.length - n) * 17000;
+      
+      for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
+        for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
+  
+          float[][] subFace = new float [4][5];
+  
+          for (int s = 0; s < 4; s += 1) {
+            
+            float a = Alpha;
+            float b = Beta;
+            
+            if ((s == 1) || (s == 2)) {
+              a += delta_Alpha;
+            }
+  
+            if ((s == 2) || (s == 3)) {
+              b += delta_Beta;
+            }
+  
+            float x0 = r * cos_ang(b - 90) * cos_ang(a); 
+            float y0 = r * sin_ang(b - 90) * cos_ang(a);
+            float z0 = r * sin_ang(a);
+            
+            float _lon = b - CEN_lon;
+            float _lat = a - CEN_lat;
+            
+            if (Display_TROPO3D_TEXTURE != 0) {
+              // calculating u and v
+              subFace[s][3] = (_lon / TROPO_IMAGES_ScaleX / 360.0 + 0.5) * TROPO_IMAGES[n].width; 
+              subFace[s][4] = (-_lat / TROPO_IMAGES_ScaleY / 180.0 + 0.5) * TROPO_IMAGES[n].height;
+            }         
+            
+            // rotating to location coordinates 
+            float tb = -LocationLongitude;
+            float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
+            float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
+            float z1 = z0;
+            
+            float ta = 90 - LocationLatitude;
+            float x2 = x1;
+            float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
+            float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
+  
+            // move it down!
+            z2 -= FLOAT_R_earth;
+  
+            subFace[s][0] = x2;
+            subFace[s][1] = y2;
+            subFace[s][2] = z2;
+  
+          }
+          
+          WIN3D_Diagrams.beginShape();
+          
+          WIN3D_Diagrams.noStroke();
+          
+          if (Display_TROPO3D_TEXTURE != 0) {
+  
+            WIN3D_Diagrams.texture(TROPO_IMAGES[n]);
+          }
+  
+          for (int s = 0; s < subFace.length; s++) {
+        
+            WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, subFace[s][3], subFace[s][4]);  
+          }
+          
+          WIN3D_Diagrams.endShape(CLOSE);        
+        }
+      }
+    }
+  }
+}
+
+
 int Display_EARTH3D = 1;
 int Display_EARTH3D_TEXTURE = 1;
 
 PImage[] EARTH_IMAGES;
 
-String EARTH_IMAGES_Path = "C:/SOLARCHVISION_2015/Output/2015-12-03/GDPS_00/World/Atmospheric_circulation";
+String EARTH_IMAGES_Path = "C:/SOLARCHVISION_2015/Input/BackgroundImages/Standard/Maps/EarthSurface";
 
 void Load_EARTH_IMAGES () {
   
@@ -15558,7 +15678,7 @@ void SOLARCHVISION_draw_EARTH3D () {
           float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
 
           // move it down!
-          z2 -= r;
+          z2 -= FLOAT_R_earth;
 
           subFace[s][0] = x2;
           subFace[s][1] = y2;
