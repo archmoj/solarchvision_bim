@@ -2626,7 +2626,7 @@ void SOLARCHVISION_draw_WIN3D () {
   
     SOLARCHVISION_draw_SunPath3D(0, 0, 0, 0.9 * SKY3D_scale, LocationLatitude);
     
-    SOLARCHVISION_draw_SunRotation(0, 0, 0, (150000.0 * 1000000) * OBJECTS_scale, LocationLatitude);
+    SOLARCHVISION_draw_SolarRotation(0, 0, 0, (150000.0 * 1000000) * OBJECTS_scale, LocationLatitude);
     
     SOLARCHVISION_draw_STAR3D();
     
@@ -11493,11 +11493,11 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
 } 
 
 
-int Display_SunRotation = 0;
+int Display_SolarRotation = 0;
 
-void SOLARCHVISION_draw_SunRotation (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float LocationLatitude) { 
+void SOLARCHVISION_draw_SolarRotation (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float LocationLatitude) { 
 
-  if (Display_SunRotation != 0) {
+  if (Display_SolarRotation != 0) {
 
     WIN3D_Diagrams.pushMatrix();
     WIN3D_Diagrams.translate(x_SunPath, y_SunPath, z_SunPath);
@@ -30386,7 +30386,7 @@ void SOLARCHVISION_save_project (String myFile) {
   newChild1.setFloat("WindRose3D_scale", WindRose3D_scale);
 
   newChild1.setFloat("planetary_magnification", planetary_magnification);
-  newChild1.setInt("Display_SunRotation", Display_SunRotation);
+  newChild1.setInt("Display_SolarRotation", Display_SolarRotation);
   newChild1.setInt("Display_SunPath3D", Display_SunPath3D);
   newChild1.setInt("Display_SKY3D", Display_SKY3D);
   newChild1.setInt("Display_STAR3D", Display_STAR3D);
@@ -31180,7 +31180,7 @@ void SOLARCHVISION_load_project (String myFile) {
       WindRose3D_scale = children0[L].getFloat("WindRose3D_scale");
 
       planetary_magnification = children0[L].getFloat("planetary_magnification");
-      Display_SunRotation = children0[L].getInt("Display_SunRotation");      
+      Display_SolarRotation = children0[L].getInt("Display_SolarRotation");      
       Display_SunPath3D = children0[L].getInt("Display_SunPath3D");
       Display_SKY3D = children0[L].getInt("Display_SKY3D");
       Display_STAR3D = children0[L].getInt("Display_STAR3D");
