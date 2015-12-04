@@ -21967,7 +21967,8 @@ void SOLARCHVISION_fileSelected_Open (File selectedFile) {
     
     SOLARCHVISION_load_project(Filename);
     
-    SOLARCHVISION_update_Project_info(selectedFile);
+    SOLARCHVISION_update_Project_info(selectedFile);   
+
   }
   
 } 
@@ -21985,8 +21986,9 @@ void SOLARCHVISION_fileSelected_SaveAs (File selectedFile) {
     println("Saving to:", Filename);
     
     SOLARCHVISION_save_project(Filename);
- 
+    
     SOLARCHVISION_update_Project_info(selectedFile);   
+ 
   }
   
 }     
@@ -31067,14 +31069,10 @@ void SOLARCHVISION_save_project (String myFile) {
   }
 
   
-
-
-
-
   saveXML(my_xml, myFile);    
 
   println("End of saving project.");
-
+  
   SOLARCHVISION_explore_output(myFile);
 }
 
