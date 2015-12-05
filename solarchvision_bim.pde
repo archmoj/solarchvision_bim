@@ -30715,25 +30715,26 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setString("LAND_mid_lat", Double.toString(LAND_mid_lat));
   newChild1.setString("LAND_mid_lon", Double.toString(LAND_mid_lon));
   newChild1.setString("Default_Font", Default_Font);
-  
+  newChild1.setInt("Object2D_PEOPLE_Files_Num", Object2D_PEOPLE_Files_Num);
+  newChild1.setInt("Object2D_TREES_Files_Num", Object2D_TREES_Files_Num);  
   {
     int TEXTURE_copied = 0;
     
-    String new_LAND_TEXTURE_ImagePath = myFile.substring(0,myFile.length() - 4) + ".jpg";
+    String new_TEXTURE_path = myFile.substring(0,myFile.length() - 4) + ".jpg";
     
-    println("pre_LAND_TEXTURE_ImagePath", LAND_TEXTURE_ImagePath);
-    println("new_LAND_TEXTURE_ImagePath", new_LAND_TEXTURE_ImagePath);
+    //println("pre_LAND_TEXTURE_ImagePath", LAND_TEXTURE_ImagePath);
+    //println("new_TEXTURE_path", new_TEXTURE_path);
 
-    if (LAND_TEXTURE_ImagePath.toUpperCase().equals(new_LAND_TEXTURE_ImagePath.toUpperCase())) {
+    if (LAND_TEXTURE_ImagePath.toUpperCase().equals(new_TEXTURE_path.toUpperCase())) {
       TEXTURE_copied = -1;
     }
     else {
       if (LAND_TEXTURE_ImagePath.equals("")) {
       }  
       else {
-        println("Copying texture:", LAND_TEXTURE_ImagePath, ">", new_LAND_TEXTURE_ImagePath);
-        saveBytes(new_LAND_TEXTURE_ImagePath, loadBytes(LAND_TEXTURE_ImagePath));
-        LAND_TEXTURE_ImagePath = new_LAND_TEXTURE_ImagePath;
+        println("Copying texture:", LAND_TEXTURE_ImagePath, ">", new_TEXTURE_path);
+        saveBytes(new_TEXTURE_path, loadBytes(LAND_TEXTURE_ImagePath));
+        LAND_TEXTURE_ImagePath = new_TEXTURE_path;
         
         TEXTURE_copied = 1;
       }      
@@ -30741,24 +30742,50 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     
     if (TEXTURE_copied == 0) {
       println("Saving texture from the scene.");
-      LAND_TEXTURE.save(new_LAND_TEXTURE_ImagePath);
+      LAND_TEXTURE.save(new_TEXTURE_path);
     }    
     
     newChild1.setString("LAND_TEXTURE_ImagePath", LAND_TEXTURE_ImagePath);    
   }
-  
-  
 
   {
     newChild1 = my_xml.addChild("Object2D_ImagePath");
     int ni = Object2D_ImagePath.length;
     newChild1.setInt("ni", ni);
-    String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += Object2D_ImagePath[i];
-      if (i < ni - 1) lineSTR += ",";
+
+      int TEXTURE_copied = 0;
+      
+      String new_TEXTURE_path = myFile.substring(0,myObject2D_ImagePath[i].length() - 4) + ".png";
+      
+      //println("pre_Object2D_ImagePath", Object2D_ImagePath[i]);
+      //println("new_Object2D_ImagePath", new_Object2D_ImagePath[i]);
+        
+      if (Object2D_ImagePath[i].toUpperCase().equals(new_TEXTURE_path.toUpperCase())) {
+        TEXTURE_copied = -1;
+      }
+      else {
+        if (Object2D_ImagePath[i].equals("")) {
+        }  
+        else {
+          println("Copying texture:", Object2D_ImagePath[i], ">", new_TEXTURE_path);
+          saveBytes(new_TEXTURE_path, loadBytes(Object2D_ImagePath[i]));
+          Object2D_ImagePath[i] = new_TEXTURE_path;
+          
+          TEXTURE_copied = 1;
+        }      
+      }
+
+      if (TEXTURE_copied == 0) {
+        println("Saving texture from the scene.");
+        Object2DImage[i].save(new_TEXTURE_path);
+      }    
+
+      newChild2 = newChild1.addChild("Path");
+      newChild2.setInt("id", i); 
+      newChild2.setContent(Object2D_ImagePath[i]);
+      
     }
-    newChild1.setContent(lineSTR);
   }
 
 
@@ -31520,7 +31547,9 @@ void SOLARCHVISION_load_project (String myFile) {
       LAND_n_J = children0[L].getInt("LAND_n_J");
       LAND_mid_lat = Double.parseDouble(children0[L].getString("LAND_mid_lat"));
       LAND_mid_lon = Double.parseDouble(children0[L].getString("LAND_mid_lon"));
-      
+      Object2D_PEOPLE_Files_Num = children0[L].getInt("Object2D_PEOPLE_Files_Num");
+      Object2D_TREES_Files_Num = children0[L].getInt("Object2D_TREES_Files_Num");
+        
       
       {
         String new_Default_Font = children0[L].getString("Default_Font");
@@ -31938,9 +31967,6 @@ bug: delete because scrolling selection+ could add duplicate of the same objects
 solution: I remarked wheel option for pickSelect for now.
 
 
-
-int Object2D_PEOPLE_Files_Num;
-int Object2D_TREES_Files_Num;
 
 
 */
