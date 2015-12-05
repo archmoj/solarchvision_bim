@@ -31581,11 +31581,11 @@ void SOLARCHVISION_load_project (String myFile) {
       } 
       
       {
-        String new_LAND_TEXTURE_ImagePath = children0[L].getString("LAND_TEXTURE_ImagePath");
-        if (LAND_TEXTURE_ImagePath.toUpperCase().equals(new_LAND_TEXTURE_ImagePath.toUpperCase())) {
+        String new_TEXTURE_path = children0[L].getString("LAND_TEXTURE_ImagePath");
+        if (LAND_TEXTURE_ImagePath.toUpperCase().equals(new_TEXTURE_path.toUpperCase())) {
         }
         else {
-          LAND_TEXTURE_ImagePath = new_LAND_TEXTURE_ImagePath;
+          LAND_TEXTURE_ImagePath = new_TEXTURE_path;
           LAND_TEXTURE = createImage(2,2, RGB);
           if (LAND_TEXTURE_ImagePath.equals("")) {
           }
@@ -31596,11 +31596,42 @@ void SOLARCHVISION_load_project (String myFile) {
                     
         }
       }
-      
-     
-      
-      
+
     }
+
+/*
+    children0 = FileAll.getChildren("Object2D_ImagePath");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      
+      int reload_All_textures = 0;
+      
+      if (Object2D_ImagePath.length != ni) {
+        Object2DImage = new PImage [ni];
+        
+        reload_All_textures = 1;
+      }
+      
+      XML[] children1 = children0[L].getChildren("Path");         
+      for (int i = 1; i < ni; i++) { // leaving [0] null          
+    
+        String new_TEXTURE_path = children1[i].getContent();
+        if ((reload_All_textures == 0) && (Object2D_ImagePath[i].toUpperCase().equals(new_TEXTURE_path.toUpperCase()))) {
+        }
+        else {
+          Object2D_ImagePath[i] = new_TEXTURE_path;
+          Object2DImage[i] = createImage(2,2, RGB);
+          if (Object2D_ImagePath[i].equals("")) {
+          }
+          else {
+            println("Loading texture:", Object2D_ImagePath[i]);
+            Object2DImage[i] = loadImage(Object2D_ImagePath[i]);
+            println("loaded!");
+          }
+        }
+      }
+    }
+*/
     
     children0 = FileAll.getChildren("DEFINED_STATION");
     for (int L = 0; L < children0.length; L++) {
