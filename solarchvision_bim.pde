@@ -30318,6 +30318,8 @@ void SOLARCHVISION_check_for_WIN3D_update () {
 
 
 void SOLARCHVISION_save_project (String myFile, int explore_output) {
+  
+  myFile = myFile.replace("\\", "/");
  
   XML my_xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
   XML newChild1 = null;
@@ -30719,8 +30721,17 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Object2D_TREES_Files_Num", Object2D_TREES_Files_Num);  
   {
     int TEXTURE_copied = 0;
-    
-    String new_TEXTURE_path = myFile.substring(0, myFile.length() - 4) + ".jpg";
+
+    String the_dir = myFile.substring(0, myFile.lastIndexOf("/")); // project folder
+  
+    String the_filename = "";
+    if (LAND_TEXTURE_ImagePath.equals("")) {
+    }  
+    else {
+      LAND_TEXTURE_ImagePath.substring(LAND_TEXTURE_ImagePath.lastIndexOf("/") + 1); // image name
+    }
+  
+    String new_TEXTURE_path = the_dir + "/Textures/" +  the_filename;
     
     //println("pre_LAND_TEXTURE_ImagePath", LAND_TEXTURE_ImagePath);
     //println("new_TEXTURE_path", new_TEXTURE_path);
@@ -30740,10 +30751,10 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       }      
     }
     
-    if (TEXTURE_copied == 0) {
-      println("Saving texture from the scene.");
-      LAND_TEXTURE.save(new_TEXTURE_path);
-    }    
+    //if (TEXTURE_copied == 0) {
+    //  println("Saving texture from the scene.");
+    //  LAND_TEXTURE.save(new_TEXTURE_path);
+    //}    
     
     newChild1.setString("LAND_TEXTURE_ImagePath", LAND_TEXTURE_ImagePath);    
   }
@@ -30755,15 +30766,12 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     for (int i = 1; i < ni; i++) { // skip [0] because it is null!
       
       int TEXTURE_copied = 0;
-      File f1 = new File(myFile + "_tmp"); // risky?
-      String the_dir = f1.getPath().replace("\\", "/"); // project folder
       
-      File f2 = new File(Object2D_ImagePath[i] + "_tmp"); // riky? 
-      String the_filename = f2.getName().toString(); // image name
-      the_filename = the_filename.substring(0, the_filename.length() - 4); // removing "_tmp" from the end
-     
+      String the_dir = myFile.substring(0, myFile.lastIndexOf("/")); // project folder
       
-      String new_TEXTURE_path = the_dir + "/" + the_filename;
+      String the_filename = Object2D_ImagePath[i].substring(Object2D_ImagePath[i].lastIndexOf("/") + 1); // image name
+      
+      String new_TEXTURE_path = the_dir + "/Textures/" + the_filename;
       
       //println("pre_Object2D_ImagePath", Object2D_ImagePath[i]);
       //println("new_Object2D_ImagePath", new_Object2D_ImagePath[i]);
@@ -30783,10 +30791,10 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
         }      
       }
 
-      if (TEXTURE_copied == 0) {
-        println("Saving texture from the scene.");
-        Object2DImage[i].save(new_TEXTURE_path);
-      }    
+      //if (TEXTURE_copied == 0) {
+      //  println("Saving texture from the scene.");
+      //  Object2DImage[i].save(new_TEXTURE_path);
+      //}    
 
       newChild2 = newChild1.addChild("Path");
       newChild2.setInt("id", i); 
@@ -31150,6 +31158,9 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
 
 void SOLARCHVISION_load_project (String myFile) {
+  
+  myFile = myFile.replace("\\", "/");
+  
 
   int continue_process = 1;
   
