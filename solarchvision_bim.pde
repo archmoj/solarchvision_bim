@@ -1368,15 +1368,18 @@ int[][] Materials_Color = new int [Materials_Number][4]; // ARGB
     Materials_Color[7] = COL;
   }
   {
-    int[] COL = {255, 63, 63, 63};    
+    //int[] COL = {255, 63, 63, 63};    
+    int[] COL = {63, 63, 63, 63};
     Materials_Color[8] = COL;
   }
   {
-    int[] COL = {255, 127, 127, 127};    
+    //int[] COL = {255, 127, 127, 127};    
+    int[] COL = {127, 127, 127, 127};
     Materials_Color[9] = COL;
   }
   {
-    int[] COL = {255, 191, 191, 191};    
+    //int[] COL = {255, 191, 191, 191};    
+    int[] COL = {191, 191, 191, 191};
     Materials_Color[10] = COL;
   }
   
@@ -15001,13 +15004,8 @@ PGraphics ViewFromTheSky (int SKY2D_X_View, int SKY2D_Y_View, float SKY2D_ZOOM_c
     
     color c = color(0, 0, 0);
 
-    if (allFaces_MAT[f][0] == -2) {
-      c = color(127, 255, 127);
-    }
-    else {
-      int mt = allFaces_MAT[f][0];
-      c = color(Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3], Materials_Color[mt][0]);
-    }
+    int mt = allFaces_MAT[f][0];
+    c = color(Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3], Materials_Color[mt][0]);
     
     SKY2D_Diagrams.stroke(c);
     SKY2D_Diagrams.fill(c);
@@ -15036,16 +15034,6 @@ PGraphics ViewFromTheSky (int SKY2D_X_View, int SKY2D_Y_View, float SKY2D_ZOOM_c
       
       for (int s = 0; s < subFace.length; s++) {
   
-        if (allFaces_MAT[f][0] == -2) {
-          
-          int PAL_TYPE = 1; 
-         
-          float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.0025 * subFace[s][2]);
-          
-          SKY2D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
-        }
-        //else SKY2D_Diagrams.fill(255, 127, 0);
-
         SKY2D_Diagrams.vertex(subFace[s][0] * WIN3D_scale3D, -subFace[s][1] * WIN3D_scale3D, subFace[s][2] * WIN3D_scale3D);
       }
       
@@ -16166,13 +16154,8 @@ void SOLARCHVISION_draw_3Dobjects () {
         
           color c = color(0, 0, 0);
       
-          if (allFaces_MAT[f][0] == -2) {
-            c = color(127, 255, 127);
-          }
-          else {
-            int mt = allFaces_MAT[f][0];
-            c = color(Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3], Materials_Color[mt][0]);
-          }
+          int mt = allFaces_MAT[f][0];
+          c = color(Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3], Materials_Color[mt][0]);
           
           if (display_MODEL3D_EDGES == 0) {
             WIN3D_Diagrams.noStroke();
@@ -16262,17 +16245,6 @@ void SOLARCHVISION_draw_3Dobjects () {
               
               for (int s = 0; s < subFace.length; s++) {
           
-                if (allFaces_MAT[f][0] == -2) {
-                  
-                  int PAL_TYPE = 1; 
-                 
-                  float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.0025 * subFace[s][2]);
-                  
-                  WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
-
-                }
-                //else WIN3D_Diagrams.fill(255, 127, 0);
-        
                 WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -(subFace[s][1] * OBJECTS_scale * WIN3D_scale3D), subFace[s][2] * OBJECTS_scale * WIN3D_scale3D);
               }
               
@@ -25930,116 +25902,120 @@ void RenderShadowsOnUrbanPlane() {
   
             SHADOW_Diagrams.pushMatrix();
             SHADOW_Diagrams.translate(SolarImpact_RES1 / 2, SolarImpact_RES2 / 2);            
-            
+
             SHADOW_Diagrams.stroke(0); 
-            SHADOW_Diagrams.fill(0);             
+            SHADOW_Diagrams.fill(0);              
             
             for (int f = 1; f < allFaces.length; f++) {
-            
-              int Teselation = allFaces_MAT[f][1];
               
-              int TotalSubNo = 1;  
-              if (allFaces_MAT[f][0] == 0) {
-                Teselation += MODEL3D_TESELATION;
-              }
-              if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
-            
-              for (int n = 0; n < TotalSubNo; n++) {
+              int  mt = allFaces_MAT[f][0];
+              if (Materials_Color[mt][0] > 127) {
+              
+                int Teselation = allFaces_MAT[f][1];
                 
-                float[][] base_Vertices = new float [allFaces[f].length][3];
-                for (int g = 0; g < allFaces[f].length; g++) {
-                  int vNo = allFaces[f][g];
-                  base_Vertices[g][0] = allVertices[vNo][0];
-                  base_Vertices[g][1] = allVertices[vNo][1];
-                  base_Vertices[g][2] = allVertices[vNo][2];
+                int TotalSubNo = 1;  
+                if (allFaces_MAT[f][0] == 0) {
+                  Teselation += MODEL3D_TESELATION;
                 }
-                
-                float[][] subFace = getSubFace(base_Vertices, Teselation, n);
-                float[][] subFace_Rotated = subFace;
-                
-                for (int s = 0; s < subFace_Rotated.length; s++) {
-                  if (SolarImpact_Image_Section == 2) {
-                    float a = subFace_Rotated[s][0];
-                    float b = -subFace_Rotated[s][1];
-                    float c = subFace_Rotated[s][2];
-      
-                    subFace_Rotated[s][0] = a * cos_ang(-SolarImpact_Rotation) - b * sin_ang(-SolarImpact_Rotation);     
-                    subFace_Rotated[s][1] = c;    
-                    subFace_Rotated[s][2] = a * sin_ang(-SolarImpact_Rotation) + b * cos_ang(-SolarImpact_Rotation);      
-                  }
-                  else if (SolarImpact_Image_Section == 3) {}
-
-                }  
-             
-                SHADOW_Diagrams.beginShape();
-                
-                for (int s = 0; s < subFace_Rotated.length; s++) {
+                if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+              
+                for (int n = 0; n < TotalSubNo; n++) {
                   
-                  float z = subFace_Rotated[s][2] - SolarImpact_Elevation;
-                  float x = subFace_Rotated[s][0] - z * SunR_Rotated[1] / SunR_Rotated[3];
-                  float y = subFace_Rotated[s][1] - z * SunR_Rotated[2] / SunR_Rotated[3];
-
-                  if (z >= 0) {
-                    
-                    if (SolarImpact_Image_Section == 1) {                    
-                      float px = x;
-                      float py = y;
-                    
-                      x = px * cos_ang(-SolarImpact_Rotation) - py * sin_ang(-SolarImpact_Rotation); 
-                      y = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
-                    } 
-                    
-                    SHADOW_Diagrams.vertex(x * Shades_scaleX, -y * Shades_scaleY);
+                  float[][] base_Vertices = new float [allFaces[f].length][3];
+                  for (int g = 0; g < allFaces[f].length; g++) {
+                    int vNo = allFaces[f][g];
+                    base_Vertices[g][0] = allVertices[vNo][0];
+                    base_Vertices[g][1] = allVertices[vNo][1];
+                    base_Vertices[g][2] = allVertices[vNo][2];
                   }
-                  else {
-                    int s_next = (s + 1) % subFace_Rotated.length;
-                    int s_prev = (s + subFace_Rotated.length - 1) % subFace_Rotated.length;         
-
-                    float z_prev = subFace_Rotated[s_prev][2] - SolarImpact_Elevation;
-                    float x_prev = subFace_Rotated[s_prev][0] - z_prev * SunR_Rotated[1] / SunR_Rotated[3];
-                    float y_prev = subFace_Rotated[s_prev][1] - z_prev * SunR_Rotated[2] / SunR_Rotated[3];
-                    
-                    if (z_prev > 0) { 
-                      float ratio = z_prev / (z_prev - z);
-                      
-                      float x_trim = x_prev * (1 - ratio) + x * ratio;
-                      float y_trim = y_prev * (1 - ratio) + y * ratio;
-                      
-                      if (SolarImpact_Image_Section == 1) {
-                        float px = x_trim;
-                        float py = y_trim;
-                      
-                        x_trim = px * cos_ang(-SolarImpact_Rotation) - py * sin_ang(-SolarImpact_Rotation); 
-                        y_trim = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
-                      } 
-                      
-                      SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
+                  
+                  float[][] subFace = getSubFace(base_Vertices, Teselation, n);
+                  float[][] subFace_Rotated = subFace;
+                  
+                  for (int s = 0; s < subFace_Rotated.length; s++) {
+                    if (SolarImpact_Image_Section == 2) {
+                      float a = subFace_Rotated[s][0];
+                      float b = -subFace_Rotated[s][1];
+                      float c = subFace_Rotated[s][2];
+        
+                      subFace_Rotated[s][0] = a * cos_ang(-SolarImpact_Rotation) - b * sin_ang(-SolarImpact_Rotation);     
+                      subFace_Rotated[s][1] = c;    
+                      subFace_Rotated[s][2] = a * sin_ang(-SolarImpact_Rotation) + b * cos_ang(-SolarImpact_Rotation);      
                     }
-
-                    float z_next = subFace_Rotated[s_next][2] - SolarImpact_Elevation;
-                    float x_next = subFace_Rotated[s_next][0] - z_next * SunR_Rotated[1] / SunR_Rotated[3];
-                    float y_next = subFace_Rotated[s_next][1] - z_next * SunR_Rotated[2] / SunR_Rotated[3];
-
-                    if (z_next > 0) { 
-                      float ratio = z_next / (z_next - z);
+                    else if (SolarImpact_Image_Section == 3) {}
+  
+                  }  
+               
+                  SHADOW_Diagrams.beginShape();
+                  
+                  for (int s = 0; s < subFace_Rotated.length; s++) {
+                    
+                    float z = subFace_Rotated[s][2] - SolarImpact_Elevation;
+                    float x = subFace_Rotated[s][0] - z * SunR_Rotated[1] / SunR_Rotated[3];
+                    float y = subFace_Rotated[s][1] - z * SunR_Rotated[2] / SunR_Rotated[3];
+  
+                    if (z >= 0) {
                       
-                      float x_trim = x_next * (1 - ratio) + x * ratio;
-                      float y_trim = y_next * (1 - ratio) + y * ratio;
+                      if (SolarImpact_Image_Section == 1) {                    
+                        float px = x;
+                        float py = y;
                       
-                      if (SolarImpact_Image_Section == 1) {
-                        float px = x_trim;
-                        float py = y_trim;
-                      
-                        x_trim = px * cos_ang(-SolarImpact_Rotation) - py * sin_ang(-SolarImpact_Rotation); 
-                        y_trim = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
+                        x = px * cos_ang(-SolarImpact_Rotation) - py * sin_ang(-SolarImpact_Rotation); 
+                        y = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
                       } 
                       
-                      SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
-                    }                    
+                      SHADOW_Diagrams.vertex(x * Shades_scaleX, -y * Shades_scaleY);
+                    }
+                    else {
+                      int s_next = (s + 1) % subFace_Rotated.length;
+                      int s_prev = (s + subFace_Rotated.length - 1) % subFace_Rotated.length;         
+  
+                      float z_prev = subFace_Rotated[s_prev][2] - SolarImpact_Elevation;
+                      float x_prev = subFace_Rotated[s_prev][0] - z_prev * SunR_Rotated[1] / SunR_Rotated[3];
+                      float y_prev = subFace_Rotated[s_prev][1] - z_prev * SunR_Rotated[2] / SunR_Rotated[3];
+                      
+                      if (z_prev > 0) { 
+                        float ratio = z_prev / (z_prev - z);
+                        
+                        float x_trim = x_prev * (1 - ratio) + x * ratio;
+                        float y_trim = y_prev * (1 - ratio) + y * ratio;
+                        
+                        if (SolarImpact_Image_Section == 1) {
+                          float px = x_trim;
+                          float py = y_trim;
+                        
+                          x_trim = px * cos_ang(-SolarImpact_Rotation) - py * sin_ang(-SolarImpact_Rotation); 
+                          y_trim = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
+                        } 
+                        
+                        SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
+                      }
+  
+                      float z_next = subFace_Rotated[s_next][2] - SolarImpact_Elevation;
+                      float x_next = subFace_Rotated[s_next][0] - z_next * SunR_Rotated[1] / SunR_Rotated[3];
+                      float y_next = subFace_Rotated[s_next][1] - z_next * SunR_Rotated[2] / SunR_Rotated[3];
+  
+                      if (z_next > 0) { 
+                        float ratio = z_next / (z_next - z);
+                        
+                        float x_trim = x_next * (1 - ratio) + x * ratio;
+                        float y_trim = y_next * (1 - ratio) + y * ratio;
+                        
+                        if (SolarImpact_Image_Section == 1) {
+                          float px = x_trim;
+                          float py = y_trim;
+                        
+                          x_trim = px * cos_ang(-SolarImpact_Rotation) - py * sin_ang(-SolarImpact_Rotation); 
+                          y_trim = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
+                        } 
+                        
+                        SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
+                      }                    
+                    }
                   }
+                  
+                  SHADOW_Diagrams.endShape(CLOSE);
                 }
-                
-                SHADOW_Diagrams.endShape(CLOSE);
               }
             }
             
@@ -26377,116 +26353,120 @@ void RenderShadowsOnUrbanPlane() {
 
           SHADOW_Diagrams.pushMatrix();
           SHADOW_Diagrams.translate(SolarImpact_RES1 / 2, SolarImpact_RES2 / 2);            
-          
+
           SHADOW_Diagrams.stroke(0); 
           SHADOW_Diagrams.fill(0);
           
           for (int f = 1; f < allFaces.length; f++) {
-            
-            int Teselation = allFaces_MAT[f][1];
-            
-            int TotalSubNo = 1;  
-            if (allFaces_MAT[f][0] == 0) {
-              Teselation += MODEL3D_TESELATION;
-            }
-            if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
-          
-            for (int n = 0; n < TotalSubNo; n++) {
-              
-              float[][] base_Vertices = new float [allFaces[f].length][3];
-              for (int g = 0; g < allFaces[f].length; g++) {
-                int vNo = allFaces[f][g];
-                base_Vertices[g][0] = allVertices[vNo][0];
-                base_Vertices[g][1] = allVertices[vNo][1];
-                base_Vertices[g][2] = allVertices[vNo][2];
-              }
-              
-              float[][] subFace = getSubFace(base_Vertices, Teselation, n);
-              float[][] subFace_Rotated = subFace;
-              
-              for (int s = 0; s < subFace_Rotated.length; s++) {
-                if (SolarImpact_Image_Section == 2) {
-                  float a = subFace_Rotated[s][0];
-                  float b = -subFace_Rotated[s][1];
-                  float c = subFace_Rotated[s][2];
-                  
-                  subFace_Rotated[s][0] = a * cos_ang(-SolarImpact_Rotation) - b * sin_ang(-SolarImpact_Rotation);     
-                  subFace_Rotated[s][1] = c;      
-                  subFace_Rotated[s][2] = a * sin_ang(-SolarImpact_Rotation) + b * cos_ang(-SolarImpact_Rotation);      
-                }
-                else if (SolarImpact_Image_Section == 3) {}
 
-              }                
-           
-              SHADOW_Diagrams.beginShape();
+            int  mt = allFaces_MAT[f][0];            
+            if (Materials_Color[mt][0] > 127) {
+            
+              int Teselation = allFaces_MAT[f][1];
               
-              for (int s = 0; s < subFace_Rotated.length; s++) {
+              int TotalSubNo = 1;  
+              if (allFaces_MAT[f][0] == 0) {
+                Teselation += MODEL3D_TESELATION;
+              }
+              if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+            
+              for (int n = 0; n < TotalSubNo; n++) {
                 
-                float z = subFace_Rotated[s][2] - SolarImpact_Elevation;
-                float x = subFace_Rotated[s][0] - z * SunR_Rotated[1] / SunR_Rotated[3];
-                float y = subFace_Rotated[s][1] - z * SunR_Rotated[2] / SunR_Rotated[3];
-                  
-                if (z >= 0) {
-                  
-                  if (SolarImpact_Image_Section == 1) {
-                    float px = x;
-                    float py = y;
-                  
-                    x = px * cos_ang(-SolarImpact_Rotation) - py * sin_ang(-SolarImpact_Rotation); 
-                    y = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
-                  }                   
-                  
-                  SHADOW_Diagrams.vertex(x * Shades_scaleX, -y * Shades_scaleY);
+                float[][] base_Vertices = new float [allFaces[f].length][3];
+                for (int g = 0; g < allFaces[f].length; g++) {
+                  int vNo = allFaces[f][g];
+                  base_Vertices[g][0] = allVertices[vNo][0];
+                  base_Vertices[g][1] = allVertices[vNo][1];
+                  base_Vertices[g][2] = allVertices[vNo][2];
                 }
-                else {
-                  int s_next = (s + 1) % subFace_Rotated.length;
-                  int s_prev = (s + subFace_Rotated.length - 1) % subFace_Rotated.length;         
-                  
-                  float z_prev = subFace_Rotated[s_prev][2] - SolarImpact_Elevation;
-                  float x_prev = subFace_Rotated[s_prev][0] - z_prev * SunR_Rotated[1] / SunR_Rotated[3];
-                  float y_prev = subFace_Rotated[s_prev][1] - z_prev * SunR_Rotated[2] / SunR_Rotated[3];       
-                  
-                  if (z_prev > 0) { 
-                    float ratio = z_prev / (z_prev - z);
+                
+                float[][] subFace = getSubFace(base_Vertices, Teselation, n);
+                float[][] subFace_Rotated = subFace;
+                
+                for (int s = 0; s < subFace_Rotated.length; s++) {
+                  if (SolarImpact_Image_Section == 2) {
+                    float a = subFace_Rotated[s][0];
+                    float b = -subFace_Rotated[s][1];
+                    float c = subFace_Rotated[s][2];
                     
-                    float x_trim = x_prev * (1 - ratio) + x * ratio;
-                    float y_trim = y_prev * (1 - ratio) + y * ratio;
-                    
-                    if (SolarImpact_Image_Section == 1) {
-                      float px = x_trim;
-                      float py = y_trim;
-                    
-                      x_trim = px * cos_ang(-SolarImpact_Rotation) - py * sin_ang(-SolarImpact_Rotation); 
-                      y_trim = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
-                    }                     
-                    
-                    SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
+                    subFace_Rotated[s][0] = a * cos_ang(-SolarImpact_Rotation) - b * sin_ang(-SolarImpact_Rotation);     
+                    subFace_Rotated[s][1] = c;      
+                    subFace_Rotated[s][2] = a * sin_ang(-SolarImpact_Rotation) + b * cos_ang(-SolarImpact_Rotation);      
                   }
-
-                  float z_next = subFace_Rotated[s_next][2] - SolarImpact_Elevation;
-                  float x_next = subFace_Rotated[s_next][0] - z_next * SunR_Rotated[1] / SunR_Rotated[3];
-                  float y_next = subFace_Rotated[s_next][1] - z_next * SunR_Rotated[2] / SunR_Rotated[3];
+                  else if (SolarImpact_Image_Section == 3) {}
+  
+                }                
+             
+                SHADOW_Diagrams.beginShape();
+                
+                for (int s = 0; s < subFace_Rotated.length; s++) {
                   
-                  if (z_next > 0) { 
-                    float ratio = z_next / (z_next - z);
+                  float z = subFace_Rotated[s][2] - SolarImpact_Elevation;
+                  float x = subFace_Rotated[s][0] - z * SunR_Rotated[1] / SunR_Rotated[3];
+                  float y = subFace_Rotated[s][1] - z * SunR_Rotated[2] / SunR_Rotated[3];
                     
-                    float x_trim = x_next * (1 - ratio) + x * ratio;
-                    float y_trim = y_next * (1 - ratio) + y * ratio;
+                  if (z >= 0) {
                     
                     if (SolarImpact_Image_Section == 1) {
-                      float px = x_trim;
-                      float py = y_trim;
+                      float px = x;
+                      float py = y;
                     
-                      x_trim = px * cos_ang(-SolarImpact_Rotation) - py * sin_ang(-SolarImpact_Rotation); 
-                      y_trim = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
-                    }                     
+                      x = px * cos_ang(-SolarImpact_Rotation) - py * sin_ang(-SolarImpact_Rotation); 
+                      y = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
+                    }                   
                     
-                    SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
-                  }                    
+                    SHADOW_Diagrams.vertex(x * Shades_scaleX, -y * Shades_scaleY);
+                  }
+                  else {
+                    int s_next = (s + 1) % subFace_Rotated.length;
+                    int s_prev = (s + subFace_Rotated.length - 1) % subFace_Rotated.length;         
+                    
+                    float z_prev = subFace_Rotated[s_prev][2] - SolarImpact_Elevation;
+                    float x_prev = subFace_Rotated[s_prev][0] - z_prev * SunR_Rotated[1] / SunR_Rotated[3];
+                    float y_prev = subFace_Rotated[s_prev][1] - z_prev * SunR_Rotated[2] / SunR_Rotated[3];       
+                    
+                    if (z_prev > 0) { 
+                      float ratio = z_prev / (z_prev - z);
+                      
+                      float x_trim = x_prev * (1 - ratio) + x * ratio;
+                      float y_trim = y_prev * (1 - ratio) + y * ratio;
+                      
+                      if (SolarImpact_Image_Section == 1) {
+                        float px = x_trim;
+                        float py = y_trim;
+                      
+                        x_trim = px * cos_ang(-SolarImpact_Rotation) - py * sin_ang(-SolarImpact_Rotation); 
+                        y_trim = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
+                      }                     
+                      
+                      SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
+                    }
+  
+                    float z_next = subFace_Rotated[s_next][2] - SolarImpact_Elevation;
+                    float x_next = subFace_Rotated[s_next][0] - z_next * SunR_Rotated[1] / SunR_Rotated[3];
+                    float y_next = subFace_Rotated[s_next][1] - z_next * SunR_Rotated[2] / SunR_Rotated[3];
+                    
+                    if (z_next > 0) { 
+                      float ratio = z_next / (z_next - z);
+                      
+                      float x_trim = x_next * (1 - ratio) + x * ratio;
+                      float y_trim = y_next * (1 - ratio) + y * ratio;
+                      
+                      if (SolarImpact_Image_Section == 1) {
+                        float px = x_trim;
+                        float py = y_trim;
+                      
+                        x_trim = px * cos_ang(-SolarImpact_Rotation) - py * sin_ang(-SolarImpact_Rotation); 
+                        y_trim = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
+                      }                     
+                      
+                      SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
+                    }                    
+                  }
                 }
+                
+                SHADOW_Diagrams.endShape(CLOSE);
               }
-              
-              SHADOW_Diagrams.endShape(CLOSE);
             }
           }
           
