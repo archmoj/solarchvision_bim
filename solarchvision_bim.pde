@@ -1499,8 +1499,8 @@ float[][] WORLD_VIEW_BoundariesY;
 int[] WORLD_VIEW_GridDisplay;
 String[] WORLD_VIEW_Filenames;
 String[] Object2D_ImagePath;
-String[] Object2D_Filenames_PEOPLE;
-String[] Object2D_Filenames_TREES;
+int Object2D_PEOPLE_Files_Num = 0;
+int Object2D_TREES_Files_Num = 0;
 
 int number_of_WORLD_viewports;
 int WORLD_viewport_ZOOM = 1; //1:A 2:B 3:C 4:D 5:E and 6:L <<<
@@ -12284,8 +12284,8 @@ void SOLARCHVISION_add_Object2D (String t, int m, float x, float y, float z, flo
   int n = m;
   
   if (n == 0) {
-    if (t.equals("PEOPLE")) n = int(random(1, 1 + Object2D_Filenames_PEOPLE.length));
-    else if (t.equals("TREES")) n = int(random(1 + Object2D_Filenames_PEOPLE.length, 1 + Object2D_Filenames_PEOPLE.length + Object2D_Filenames_TREES.length));
+    if (t.equals("PEOPLE")) n = int(random(1, 1 + Object2D_PEOPLE_Files_Num));
+    else if (t.equals("TREES")) n = int(random(1 + Object2D_PEOPLE_Files_Num, 1 + Object2D_PEOPLE_Files_Num + Object2D_TREES_Files_Num));
   }
 
   //println(t, n);
@@ -12314,19 +12314,23 @@ void SOLARCHVISION_LoadObject2DImages () {
   Object2D_ImagePath = new String [1];
   Object2D_ImagePath[0] = "";
   
-  Object2D_Filenames_PEOPLE = sort(getfiles(Object2DFolder_PEOPLE));
-  Object2D_Filenames_TREES = sort(getfiles(Object2DFolder_TREES));  
+  String[] Object2D_Filenames_PEOPLE = sort(getfiles(Object2DFolder_PEOPLE));
+  String[] Object2D_Filenames_TREES = sort(getfiles(Object2DFolder_TREES));  
 
   Object2D_ImagePath = concat(Object2D_ImagePath, Object2D_Filenames_PEOPLE);
   Object2D_ImagePath = concat(Object2D_ImagePath, Object2D_Filenames_TREES);
+  
+  Object2D_PEOPLE_Files_Num = Object2D_Filenames_PEOPLE.length;
+  Object2D_TREES_Files_Num = Object2D_Filenames_TREES.length;
+
   
   int n = Object2D_ImagePath.length;
   
   Object2DImage = new PImage [n + 1];
  
-  for (int i = 1; i < n; i += 1) {
+  for (int i = 1; i < n; i += 1) { // leaving [0] null  
 
-    if (i <= Object2D_Filenames_PEOPLE.length) {
+    if (i <= Object2D_PEOPLE_Files_Num) {
       Object2D_ImagePath[i] = Object2DFolder_PEOPLE + "/" + Object2D_ImagePath[i];
     }
     else {
@@ -12335,7 +12339,7 @@ void SOLARCHVISION_LoadObject2DImages () {
   }
   
   for (int i = 1; i < n; i += 1) {
-    
+    println(Object2D_ImagePath[i]);
     Object2DImage[i] = loadImage(Object2D_ImagePath[i]);
   }  
 }
@@ -23610,7 +23614,7 @@ void mouseClicked () {
   
                 if (Create_Mesh_Plant != 0) {
                   int n = 0;
-                  if (Create_Mesh_Plant_Type > 0) n = Create_Mesh_Plant_Type + Object2D_Filenames_PEOPLE.length;
+                  if (Create_Mesh_Plant_Type > 0) n = Create_Mesh_Plant_Type + Object2D_PEOPLE_Files_Num;
     
                   randomSeed(millis());
                   SOLARCHVISION_add_Object2D("TREES", n, x, y, z, 2 * rz);
@@ -24126,9 +24130,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Mesh_Parametric = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Parametric" , Create_Mesh_Parametric, 0, 7, 1), 1));
       
       Create_Mesh_Person = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Person" , Create_Mesh_Person, 0, 1, 1), 1));
-      Create_Mesh_Person_Type = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Person_Type" , Create_Mesh_Person_Type, 0, Object2D_Filenames_PEOPLE.length, 1), 1));
+      Create_Mesh_Person_Type = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Person_Type" , Create_Mesh_Person_Type, 0, Object2D_PEOPLE_Files_Num, 1), 1));
       Create_Mesh_Plant = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Plant" , Create_Mesh_Plant, 0, 1, 1), 1));
-      Create_Mesh_Plant_Type = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Plant_Type" , Create_Mesh_Plant_Type, 0, Object2D_Filenames_TREES.length, 1), 1));
+      Create_Mesh_Plant_Type = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Plant_Type" , Create_Mesh_Plant_Type, 0, Object2D_TREES_Files_Num, 1), 1));
 
     }
     
@@ -27416,7 +27420,7 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
 
   if (Work_with_2D_or_3D == 2) {
 
-    int n1 = Object2D_Filenames_PEOPLE.length;    
+    int n1 = Object2D_PEOPLE_Files_Num;    
     
     for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
       
@@ -27581,8 +27585,8 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           
           n = abs(n);
           
-          int n1 = Object2D_Filenames_PEOPLE.length;
-          int n2 = Object2D_Filenames_PEOPLE.length + Object2D_Filenames_TREES.length;
+          int n1 = Object2D_PEOPLE_Files_Num;
+          int n2 = Object2D_PEOPLE_Files_Num + Object2D_TREES_Files_Num;
           
           
           if (n <= n1) {  // case: people 
@@ -30758,31 +30762,6 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   }
 
 
-  {
-    newChild1 = my_xml.addChild("Object2D_Filenames_PEOPLE");
-    int ni = Object2D_Filenames_PEOPLE.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += Object2D_Filenames_PEOPLE[i];
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }
-
-
-  {
-    newChild1 = my_xml.addChild("Object2D_Filenames_TREES");
-    int ni = Object2D_Filenames_TREES.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += Object2D_Filenames_TREES[i];
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }
-
   
   
   
@@ -31960,6 +31939,8 @@ solution: I remarked wheel option for pickSelect for now.
 
 
 
+int Object2D_PEOPLE_Files_Num;
+int Object2D_TREES_Files_Num;
 
 
 */
