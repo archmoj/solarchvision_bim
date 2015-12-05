@@ -12315,7 +12315,14 @@ void SOLARCHVISION_LoadObject2DImages () {
   Object2D_Filenames[0] = "";
   
   Object2D_Filenames_PEOPLE = sort(getfiles(Object2DFolder_PEOPLE));
+  for (int i = 0; i < Object2D_Filenames_PEOPLE.length; i += 1) {
+    Object2D_Filenames_PEOPLE[i] = Object2DFolder_PEOPLE + "/" + Object2D_Filenames_PEOPLE[i];
+  }
+  
   Object2D_Filenames_TREES = sort(getfiles(Object2DFolder_TREES));
+  for (int i = 0; i < Object2D_Filenames_TREES.length; i += 1) {
+    Object2D_Filenames_TREES[i] = Object2DFolder_TREES + "/" + Object2D_Filenames_TREES[i];
+  }
   
   Object2D_Filenames = concat(Object2D_Filenames, Object2D_Filenames_PEOPLE);
   Object2D_Filenames = concat(Object2D_Filenames, Object2D_Filenames_TREES);
@@ -12329,10 +12336,10 @@ void SOLARCHVISION_LoadObject2DImages () {
     //println("i=",i);
     
     if (i <= Object2D_Filenames_PEOPLE.length) {
-      Object2DImage[i] = loadImage(Object2DFolder_PEOPLE + "/" + Object2D_Filenames[i]);
+      Object2DImage[i] = loadImage(Object2D_Filenames[i]);
     }
     else {
-      Object2DImage[i] = loadImage(Object2DFolder_TREES + "/" + Object2D_Filenames[i]);      
+      Object2DImage[i] = loadImage(Object2D_Filenames[i]);      
     }
   }
 }
@@ -30741,6 +30748,45 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   }
   
   
+
+  {
+    newChild1 = my_xml.addChild("Object2D_Filenames");
+    int ni = Object2D_Filenames.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += Object2D_Filenames[i];
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }
+
+
+  {
+    newChild1 = my_xml.addChild("Object2D_Filenames_PEOPLE");
+    int ni = Object2D_Filenames_PEOPLE.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += Object2D_Filenames_PEOPLE[i];
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }
+
+
+  {
+    newChild1 = my_xml.addChild("Object2D_Filenames_TREES");
+    int ni = Object2D_Filenames_TREES.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += Object2D_Filenames_TREES[i];
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }
+
   
   
   
