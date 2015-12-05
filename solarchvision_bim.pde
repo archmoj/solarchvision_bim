@@ -1299,7 +1299,9 @@ void SOLARCHVISION_update_folders () {
   EPWFolder             = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   LandFolder            = BaseFolder + "/Input/CoordinateFiles/Land";
   Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_SEL";
-  Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_ALL";
+  //Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_ALL";
+  Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_SEL";
+  //Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_ALL";
   ExportFolder          = BaseFolder + "/Export";
   ProjectsFolder        = ExportFolder + "/Projects/Project_A01";  
   DiagramsFolder        = ExportFolder + "/Diagrams";  
@@ -12339,7 +12341,7 @@ void SOLARCHVISION_LoadObject2DImages () {
   }
   
   for (int i = 1; i < n; i += 1) {
-    println(Object2D_ImagePath[i]);
+    //println(Object2D_ImagePath[i]);
     Object2DImage[i] = loadImage(Object2D_ImagePath[i]);
   }  
 }
@@ -15484,12 +15486,13 @@ void SOLARCHVISION_draw_windFlow () {
 
 //---------------------------------------- should be added to I/O and GUI 
 
-int Display_TROPO3D = 1;
+int Display_TROPO3D = 0;
 int Display_TROPO3D_TEXTURE = 1;
 
 PImage[] TROPO_IMAGES;
 
-String TROPO_IMAGES_Path = "C:/SOLARCHVISION_2015/Output/2015-12-04/GDPS_00/World/Winds";
+//String TROPO_IMAGES_Path = "C:/SOLARCHVISION_2015/Output/2015-12-04/GDPS_00/World/Winds";
+String TROPO_IMAGES_Path = "C:/SOLARCHVISION_2015/Output/2015-12-04/GDPS_00/World/Winds_less";
 
 
 void Load_TROPO_IMAGES () {
