@@ -30720,7 +30720,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   {
     int TEXTURE_copied = 0;
     
-    String new_TEXTURE_path = myFile.substring(0,myFile.length() - 4) + ".jpg";
+    String new_TEXTURE_path = myFile.substring(0, myFile.length() - 4) + ".jpg";
     
     //println("pre_LAND_TEXTURE_ImagePath", LAND_TEXTURE_ImagePath);
     //println("new_TEXTURE_path", new_TEXTURE_path);
@@ -30752,11 +30752,18 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     newChild1 = my_xml.addChild("Object2D_ImagePath");
     int ni = Object2D_ImagePath.length;
     newChild1.setInt("ni", ni);
-    for (int i = 0; i < ni; i++) {
-
-      int TEXTURE_copied = 0;
+    for (int i = 1; i < ni; i++) { // skip [0] because it is null!
       
-      String new_TEXTURE_path = myFile.substring(0,myObject2D_ImagePath[i].length() - 4) + ".png";
+      int TEXTURE_copied = 0;
+      File f1 = new File(myFile + "_tmp"); // risky?
+      String the_dir = f1.getPath().replace("\\", "/"); // project folder
+      
+      File f2 = new File(Object2D_ImagePath[i] + "_tmp"); // riky? 
+      String the_filename = f2.getName().toString(); // image name
+      the_filename = the_filename.substring(0, the_filename.length() - 4); // removing "_tmp" from the end
+     
+      
+      String new_TEXTURE_path = the_dir + "/" + the_filename;
       
       //println("pre_Object2D_ImagePath", Object2D_ImagePath[i]);
       //println("new_Object2D_ImagePath", new_Object2D_ImagePath[i]);
