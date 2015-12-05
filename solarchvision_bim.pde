@@ -30729,8 +30729,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     }  
     else {
       the_filename = LAND_TEXTURE_ImagePath.substring(LAND_TEXTURE_ImagePath.lastIndexOf("/") + 1); // image name
-  
-    
+
       String new_TEXTURE_path = the_dir + "/Textures/" +  the_filename;
       
       //println("pre_LAND_TEXTURE_ImagePath", LAND_TEXTURE_ImagePath);
@@ -30764,38 +30763,44 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     newChild1 = my_xml.addChild("Object2D_ImagePath");
     int ni = Object2D_ImagePath.length;
     newChild1.setInt("ni", ni);
-    for (int i = 1; i < ni; i++) { // skip [0] because it is null!
+    for (int i = 0; i < ni; i++) {
       
       int TEXTURE_copied = 0;
       
       String the_dir = myFile.substring(0, myFile.lastIndexOf("/")); // project folder
-      
-      String the_filename = Object2D_ImagePath[i].substring(Object2D_ImagePath[i].lastIndexOf("/") + 1); // image name
-      
-      String new_TEXTURE_path = the_dir + "/Textures/" + the_filename;
-      
-      //println("pre_Object2D_ImagePath", Object2D_ImagePath[i]);
-      //println("new_Object2D_ImagePath", new_Object2D_ImagePath[i]);
-        
-      if (Object2D_ImagePath[i].toUpperCase().equals(new_TEXTURE_path.toUpperCase())) {
-        TEXTURE_copied = -1;
-      }
-      else {
-        if (Object2D_ImagePath[i].equals("")) {
-        }  
-        else {
-          println("Copying texture:", Object2D_ImagePath[i], ">", new_TEXTURE_path);
-          saveBytes(new_TEXTURE_path, loadBytes(Object2D_ImagePath[i]));
-          Object2D_ImagePath[i] = new_TEXTURE_path;
-          
-          TEXTURE_copied = 1;
-        }      
-      }
 
-      //if (TEXTURE_copied == 0) {
-      //  println("Saving texture from the scene.");
-      //  Object2DImage[i].save(new_TEXTURE_path);
-      //}    
+      String the_filename = "";
+      if (Object2D_ImagePath[i].equals("")) {
+      }  
+      else {
+        the_filename = Object2D_ImagePath[i].substring(Object2D_ImagePath[i].lastIndexOf("/") + 1); // image name
+
+      
+        String new_TEXTURE_path = the_dir + "/Textures/" + the_filename;
+        
+        //println("pre_Object2D_ImagePath", Object2D_ImagePath[i]);
+        //println("new_Object2D_ImagePath", new_Object2D_ImagePath[i]);
+          
+        if (Object2D_ImagePath[i].toUpperCase().equals(new_TEXTURE_path.toUpperCase())) {
+          TEXTURE_copied = -1;
+        }
+        else {
+          if (Object2D_ImagePath[i].equals("")) {
+          }  
+          else {
+            println("Copying texture:", Object2D_ImagePath[i], ">", new_TEXTURE_path);
+            saveBytes(new_TEXTURE_path, loadBytes(Object2D_ImagePath[i]));
+            Object2D_ImagePath[i] = new_TEXTURE_path;
+            
+            TEXTURE_copied = 1;
+          }      
+        }
+  
+        //if (TEXTURE_copied == 0) {
+        //  println("Saving texture from the scene.");
+        //  Object2DImage[i].save(new_TEXTURE_path);
+        //}    
+      }
 
       newChild2 = newChild1.addChild("Path");
       newChild2.setInt("id", i); 
@@ -31596,42 +31601,46 @@ void SOLARCHVISION_load_project (String myFile) {
                     
         }
       }
+      
+      
+      
+      
 
     }
 
-/*
-    children0 = FileAll.getChildren("Object2D_ImagePath");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      
-      int reload_All_textures = 0;
-      
-      if (Object2D_ImagePath.length != ni) {
-        Object2DImage = new PImage [ni];
+    {
+      children0 = FileAll.getChildren("Object2D_ImagePath");
+      for (int L = 0; L < children0.length; L++) {
+        int ni = children0[L].getInt("ni");
         
-        reload_All_textures = 1;
-      }
-      
-      XML[] children1 = children0[L].getChildren("Path");         
-      for (int i = 1; i < ni; i++) { // leaving [0] null          
-    
-        String new_TEXTURE_path = children1[i].getContent();
-        if ((reload_All_textures == 0) && (Object2D_ImagePath[i].toUpperCase().equals(new_TEXTURE_path.toUpperCase()))) {
+        int reload_All_textures = 0;
+        
+        if (Object2D_ImagePath.length != ni) {
+          Object2DImage = new PImage [ni];
+          
+          reload_All_textures = 1;
         }
-        else {
-          Object2D_ImagePath[i] = new_TEXTURE_path;
-          Object2DImage[i] = createImage(2,2, RGB);
-          if (Object2D_ImagePath[i].equals("")) {
+        
+        XML[] children1 = children0[L].getChildren("Path");         
+        for (int i = 0; i < ni; i++) {      
+      
+          String new_TEXTURE_path = children1[i].getContent();
+          if ((reload_All_textures == 0) && (Object2D_ImagePath[i].toUpperCase().equals(new_TEXTURE_path.toUpperCase()))) {
           }
           else {
-            println("Loading texture:", Object2D_ImagePath[i]);
-            Object2DImage[i] = loadImage(Object2D_ImagePath[i]);
-            println("loaded!");
+            Object2D_ImagePath[i] = new_TEXTURE_path;
+            Object2DImage[i] = createImage(2,2, RGB);
+            if (Object2D_ImagePath[i].equals("")) {
+            }
+            else {
+              println("Loading texture(", i + "):", Object2D_ImagePath[i]);
+              Object2DImage[i] = loadImage(Object2D_ImagePath[i]);
+              println("loaded!");
+            }
           }
         }
       }
     }
-*/
     
     children0 = FileAll.getChildren("DEFINED_STATION");
     for (int L = 0; L < children0.length; L++) {
