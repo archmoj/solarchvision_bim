@@ -1498,7 +1498,7 @@ float[][] WORLD_VIEW_BoundariesX;
 float[][] WORLD_VIEW_BoundariesY; 
 int[] WORLD_VIEW_GridDisplay;
 String[] WORLD_VIEW_Filenames;
-String[] Object2D_Filenames;
+String[] Object2D_ImagePath;
 String[] Object2D_Filenames_PEOPLE;
 String[] Object2D_Filenames_TREES;
 
@@ -12311,37 +12311,33 @@ PImage[] Object2DImage;
 
 void SOLARCHVISION_LoadObject2DImages () {
 
-  Object2D_Filenames = new String [1];
-  Object2D_Filenames[0] = "";
+  Object2D_ImagePath = new String [1];
+  Object2D_ImagePath[0] = "";
   
   Object2D_Filenames_PEOPLE = sort(getfiles(Object2DFolder_PEOPLE));
-  for (int i = 0; i < Object2D_Filenames_PEOPLE.length; i += 1) {
-    Object2D_Filenames_PEOPLE[i] = Object2DFolder_PEOPLE + "/" + Object2D_Filenames_PEOPLE[i];
-  }
+  Object2D_Filenames_TREES = sort(getfiles(Object2DFolder_TREES));  
+
+  Object2D_ImagePath = concat(Object2D_ImagePath, Object2D_Filenames_PEOPLE);
+  Object2D_ImagePath = concat(Object2D_ImagePath, Object2D_Filenames_TREES);
   
-  Object2D_Filenames_TREES = sort(getfiles(Object2DFolder_TREES));
-  for (int i = 0; i < Object2D_Filenames_TREES.length; i += 1) {
-    Object2D_Filenames_TREES[i] = Object2DFolder_TREES + "/" + Object2D_Filenames_TREES[i];
-  }
-  
-  Object2D_Filenames = concat(Object2D_Filenames, Object2D_Filenames_PEOPLE);
-  Object2D_Filenames = concat(Object2D_Filenames, Object2D_Filenames_TREES);
-  
-  int n = Object2D_Filenames.length;
+  int n = Object2D_ImagePath.length;
   
   Object2DImage = new PImage [n + 1];
  
   for (int i = 1; i < n; i += 1) {
-    
-    //println("i=",i);
-    
+
     if (i <= Object2D_Filenames_PEOPLE.length) {
-      Object2DImage[i] = loadImage(Object2D_Filenames[i]);
+      Object2D_ImagePath[i] = Object2DFolder_PEOPLE + "/" + Object2D_ImagePath[i];
     }
     else {
-      Object2DImage[i] = loadImage(Object2D_Filenames[i]);      
+      Object2D_ImagePath[i] = Object2DFolder_TREES + "/" + Object2D_ImagePath[i];
     }
   }
+  
+  for (int i = 1; i < n; i += 1) {
+    
+    Object2DImage[i] = loadImage(Object2D_ImagePath[i]);
+  }  
 }
 
 
@@ -30750,12 +30746,12 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   
 
   {
-    newChild1 = my_xml.addChild("Object2D_Filenames");
-    int ni = Object2D_Filenames.length;
+    newChild1 = my_xml.addChild("Object2D_ImagePath");
+    int ni = Object2D_ImagePath.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += Object2D_Filenames[i];
+      lineSTR += Object2D_ImagePath[i];
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
