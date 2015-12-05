@@ -1284,7 +1284,7 @@ String ScreenShotFolder;
 String Model3DFolder;
 
 String ProjectName = "Revision_" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
-
+String HoldStamp = ""; 
 
 void SOLARCHVISION_update_folders () {
 
@@ -21986,7 +21986,7 @@ void SOLARCHVISION_fileSelected_SaveAs (File selectedFile) {
     
     println("Saving to:", Filename);
     
-    SOLARCHVISION_save_project(Filename);
+    SOLARCHVISION_save_project(Filename, Display_Output_in_Explorer);
     
     SOLARCHVISION_update_Project_info(selectedFile);   
  
@@ -22054,15 +22054,31 @@ void mouseClicked () {
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("New")) { 
               selectInput("Specify project name:", "SOLARCHVISION_fileSelected_New");
             }  
+
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Save")) { 
+              SOLARCHVISION_save_project(ProjectsFolder + "/" + ProjectName + ".xml", 0);   
+            }
+            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Hold")) {
+              HoldStamp = nf(millis(), 0);
+              int pre_Display_Output_in_Explorer = Display_Output_in_Explorer;
+              
+              SOLARCHVISION_save_project(ProjectsFolder + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml", 0);
+            }            
+
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Fetch")) {
+              try {
+                SOLARCHVISION_load_project(ProjectsFolder + "/Temp/" + ProjectName + "_tmp" + HoldStamp + ".xml");
+              }
+              catch (Exception e) {
+                println("Cannot find hold file!");
+              }
+            } 
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Open...")) { 
               selectInput("Select a file to open:", "SOLARCHVISION_fileSelected_Open");
             }          
-  
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Save")) { 
-              SOLARCHVISION_save_project(ProjectsFolder + "/" + ProjectName + ".xml");   
-            }
-            
+
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Save As...")) { 
               selectOutput("Select a file to write to:", "SOLARCHVISION_fileSelected_SaveAs");
             }
@@ -28624,7 +28640,7 @@ int BAR_a_selected_child = 0;
 
 String[][] BAR_a_Items = {
                         {"SOLARCHVISION-2015", "Designed & developed by", "Mojtaba Samimi", "www.solarchvision.com"},  
-                        {"Project", "New", "Open...", "Save", "Save As...", "Import 3D-Model...", "Export 3D-Model", "Export Land-Model", "Preferences", "Quit"},
+                        {"Project", "New", "Save", "Hold", "Fetch", "Open...", "Save As...", "Export Land-Model", "Export 3D-Model", "Import 3D-Model...", "Preferences", "Quit"},
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
                         {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
@@ -30267,7 +30283,7 @@ int[] get_startZ_endZ (int data_source) {
 
 
 
-void SOLARCHVISION_explore_output(String outputFile) {
+void SOLARCHVISION_explore_output (String outputFile) {
   
   if (Display_Output_in_Explorer == 1) {
     open("explorer /select," + outputFile.replace("/", "\\"));
@@ -30294,7 +30310,7 @@ void SOLARCHVISION_check_for_WIN3D_update () {
 
 
 
-void SOLARCHVISION_save_project (String myFile) {
+void SOLARCHVISION_save_project (String myFile, int explore_output) {
  
   XML my_xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
   XML newChild1 = null;
@@ -31074,7 +31090,7 @@ void SOLARCHVISION_save_project (String myFile) {
 
   println("End of saving project.");
   
-  SOLARCHVISION_explore_output(myFile);
+  if (explore_output != 0) SOLARCHVISION_explore_output(myFile);
 }
 
 
