@@ -16269,6 +16269,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                   float[] _COL = GET_COLOR_STYLE(PAL_TYPE, 0.5 - 0.0025 * subFace[s][2]);
                   
                   WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
+
                 }
                 //else WIN3D_Diagrams.fill(255, 127, 0);
         
@@ -22019,7 +22020,8 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
     
     int NUM_allPolymesh_Faces_Before = allPolymesh_Faces.length;
     
-    SOLARCHVISION_import_objects(Filename, -1, 0,0,0, 1,1,1);
+    //SOLARCHVISION_import_objects(Filename, -1, 0,0,0, 1,1,1); // different objects: different materials
+    SOLARCHVISION_import_objects(Filename, Create_Default_Material, 0,0,0, 1,1,1); // apply default material
     
     int NUM_allPolymesh_Faces_After = allPolymesh_Faces.length;
     
