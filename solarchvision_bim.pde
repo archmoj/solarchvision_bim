@@ -30728,33 +30728,34 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     if (LAND_TEXTURE_ImagePath.equals("")) {
     }  
     else {
-      LAND_TEXTURE_ImagePath.substring(LAND_TEXTURE_ImagePath.lastIndexOf("/") + 1); // image name
-    }
+      the_filename = LAND_TEXTURE_ImagePath.substring(LAND_TEXTURE_ImagePath.lastIndexOf("/") + 1); // image name
   
-    String new_TEXTURE_path = the_dir + "/Textures/" +  the_filename;
     
-    //println("pre_LAND_TEXTURE_ImagePath", LAND_TEXTURE_ImagePath);
-    //println("new_TEXTURE_path", new_TEXTURE_path);
-
-    if (LAND_TEXTURE_ImagePath.toUpperCase().equals(new_TEXTURE_path.toUpperCase())) {
-      TEXTURE_copied = -1;
-    }
-    else {
-      if (LAND_TEXTURE_ImagePath.equals("")) {
-      }  
+      String new_TEXTURE_path = the_dir + "/Textures/" +  the_filename;
+      
+      //println("pre_LAND_TEXTURE_ImagePath", LAND_TEXTURE_ImagePath);
+      //println("new_TEXTURE_path", new_TEXTURE_path);
+  
+      if (LAND_TEXTURE_ImagePath.toUpperCase().equals(new_TEXTURE_path.toUpperCase())) {
+        TEXTURE_copied = -1;
+      }
       else {
-        println("Copying texture:", LAND_TEXTURE_ImagePath, ">", new_TEXTURE_path);
-        saveBytes(new_TEXTURE_path, loadBytes(LAND_TEXTURE_ImagePath));
-        LAND_TEXTURE_ImagePath = new_TEXTURE_path;
-        
-        TEXTURE_copied = 1;
-      }      
+        if (LAND_TEXTURE_ImagePath.equals("")) {
+        }  
+        else {
+          println("Copying texture:", LAND_TEXTURE_ImagePath, ">", new_TEXTURE_path);
+          saveBytes(new_TEXTURE_path, loadBytes(LAND_TEXTURE_ImagePath));
+          LAND_TEXTURE_ImagePath = new_TEXTURE_path;
+          
+          TEXTURE_copied = 1;
+        }      
+      }
+      
+      //if (TEXTURE_copied == 0) {
+      //  println("Saving texture from the scene.");
+      //  LAND_TEXTURE.save(new_TEXTURE_path);
+      //}    
     }
-    
-    //if (TEXTURE_copied == 0) {
-    //  println("Saving texture from the scene.");
-    //  LAND_TEXTURE.save(new_TEXTURE_path);
-    //}    
     
     newChild1.setString("LAND_TEXTURE_ImagePath", LAND_TEXTURE_ImagePath);    
   }
