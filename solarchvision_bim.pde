@@ -10715,6 +10715,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             }
           }
         }
+        
+        /*
 
         { // Diffuse
           int RES1 = 25; // 100; 
@@ -10790,6 +10792,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             //---------------------------------------------                          
           }
         }
+        
+        */
         
       }
     }
@@ -22378,55 +22382,78 @@ void mouseClicked () {
             }      
   
   
-
-
+     
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Wind pattern (active)")) {
               plot_impacts = -2;
               STUDY_Update = 1;
+              display_WindRose_Image = 1;
+              ROLLOUT_Update = 1;               
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Wind pattern (passive)")) {
               plot_impacts = -1;
               STUDY_Update = 1;
+              display_WindRose_Image = 1;
+              ROLLOUT_Update = 1;               
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Urban solar potential (active)")) {
               plot_impacts = 0;
               STUDY_Update = 1;
+              display_WindRose_Image = 0;
+              ROLLOUT_Update = 1;              
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Urban solar potential (passive)")) {
               plot_impacts = 1;
               STUDY_Update = 1;
+              display_WindRose_Image = 0;
+              ROLLOUT_Update = 1;                            
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Orientation potential (active)")) {
               plot_impacts = 2;
               STUDY_Update = 1;
+              display_WindRose_Image = 0;
+              ROLLOUT_Update = 1;                            
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Orientation potential (passive)")) {
               plot_impacts = 3;
               STUDY_Update = 1;
+              display_WindRose_Image = 0;
+              ROLLOUT_Update = 1;                            
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Hourly sun position (active)")) {
               plot_impacts = 4;
               STUDY_Update = 1;
+              display_WindRose_Image = 0;
+              ROLLOUT_Update = 1;                            
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Hourly sun position (passive)")) {
               plot_impacts = 5;
               STUDY_Update = 1;
+              display_WindRose_Image = 0;
+              ROLLOUT_Update = 1;                            
             }  
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Hourly sun perspective (active)")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("View from sun & sky (active)")) {
               plot_impacts = 6;
               STUDY_Update = 1;
+              display_WindRose_Image = 0;
+              ROLLOUT_Update = 1;                            
             }  
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Hourly sun perspective (passive)")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("View from sun & sky (passive)")) {
               plot_impacts = 7;
               STUDY_Update = 1;
+              display_WindRose_Image = 0;
+              ROLLOUT_Update = 1;                            
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Annual cycle sun path (active)")) {
               plot_impacts = 8;
               STUDY_Update = 1;
+              display_WindRose_Image = 0;
+              ROLLOUT_Update = 1;                            
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Annual cycle sun path (passive)")) {
               plot_impacts = 9;
               STUDY_Update = 1;
+              display_WindRose_Image = 0;
+              ROLLOUT_Update = 1;                            
             }  
             
 // "Run solar 3D-model", "Run wind 3D-model", "Run spatial 3D-model"},            
@@ -28989,7 +29016,7 @@ String[][] BAR_a_Items = {
                         {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
                         {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Vertices", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sky", "Display/Hide SunPath", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
-                        {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "Hourly sun perspective (active)", "Hourly sun perspective (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Run solar 3D-model", "Run wind 3D-model", "Run spatial 3D-model"},
+                        {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Run solar 3D-model", "Run wind 3D-model", "Run spatial 3D-model"},
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
                         {"Select", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Seed/Material", "Teselation", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize"},
