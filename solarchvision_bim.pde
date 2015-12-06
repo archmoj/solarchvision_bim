@@ -742,8 +742,8 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY_V_offset[i] = 0;
     STUDY_V_belowLine[i] = 0;
     LAYERS_Unit[i] = "W/m²";
-    LAYERS_Title[i][_EN] = "direct normal radiation";
-    LAYERS_Title[i][_FR] = "rayonnement direct normal";
+    LAYERS_Title[i][_EN] = "Direct normal radiation";
+    LAYERS_Title[i][_FR] = "Rayonnement direct normal";
     LAYERS_ENSEMBLE[i] = "";
     LAYERS_GRIB2[i][0] = "";
     LAYERS_GRIB2[i][1] = "";
@@ -759,8 +759,8 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY_V_offset[i] = 0;
     STUDY_V_belowLine[i] = 0;
     LAYERS_Unit[i] = "W/m²";
-    LAYERS_Title[i][_EN] = "diffuse horizontal radiation";
-    LAYERS_Title[i][_FR] = "diffus rayonnement horizontal";
+    LAYERS_Title[i][_EN] = "Diffuse horizontal radiation";
+    LAYERS_Title[i][_FR] = "Diffus rayonnement horizontal";
     LAYERS_ENSEMBLE[i] = "";
     LAYERS_GRIB2[i][0] = "";
     LAYERS_GRIB2[i][1] = "";
@@ -776,8 +776,8 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY_V_offset[i] = 0;
     STUDY_V_belowLine[i] = 0;
     LAYERS_Unit[i] = "W/m²";
-    LAYERS_Title[i][_EN] = "global horizontal radiation";
-    LAYERS_Title[i][_FR] = "rayonnement global horizontal";
+    LAYERS_Title[i][_EN] = "Global horizontal radiation";
+    LAYERS_Title[i][_FR] = "Rayonnement global horizontal";
     LAYERS_ENSEMBLE[i] = "";
     LAYERS_GRIB2[i][0] = "";
     LAYERS_GRIB2[i][1] = "";
@@ -810,8 +810,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY_V_offset[_direffect] = 0;
     STUDY_V_belowLine[_direffect] = 1;
     LAYERS_Unit[i] = "W°C/m²";
-    LAYERS_Title[i][_EN] = "direct normal effect (based on 18°C)";
-    LAYERS_Title[i][_FR] = "effet direct normal (basé sur 18°C)";
+    //LAYERS_Title[i][_EN] = "Direct normal effect (based on 18°C)";
+    LAYERS_Title[i][_EN] = "Direct normal effect <18°C<";
+    //LAYERS_Title[i][_FR] = "Effet direct normal (basé sur 18°C)";
+    LAYERS_Title[i][_FR] = "Effet direct normal <18°C<";
     LAYERS_ENSEMBLE[i] = "";
     LAYERS_GRIB2[i][0] = "";
     LAYERS_GRIB2[i][1] = "";
@@ -827,8 +829,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY_V_offset[i] = 0;
     STUDY_V_belowLine[i] = 1;
     LAYERS_Unit[i] = "W°C/m²";
-    LAYERS_Title[i][_EN] = "diffuse normal effect (based on 18°C)";
-    LAYERS_Title[i][_FR] = "effet diffus normal (basé sur 18°C)";
+    //LAYERS_Title[i][_EN] = "Diffuse normal effect (based on 18°C)";
+    LAYERS_Title[i][_EN] = "Diffuse normal effect <18°C<";
+    //LAYERS_Title[i][_FR] = "Effet diffus normal (basé sur 18°C)";
+    LAYERS_Title[i][_FR] = "Effet diffus normal <18°C<";
     LAYERS_ENSEMBLE[i] = "";
     LAYERS_GRIB2[i][0] = "";
     LAYERS_GRIB2[i][1] = "";
@@ -861,8 +865,8 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY_V_offset[i] = 0;
     STUDY_V_belowLine[i] = 0;
     LAYERS_Unit[i] = "m";
-    LAYERS_Title[i][_EN] = "ceiling height";
-    LAYERS_Title[i][_FR] = "hauteur sous plafond";  
+    LAYERS_Title[i][_EN] = "Ceiling height";
+    LAYERS_Title[i][_FR] = "Hauteur sous plafond";  
     LAYERS_ENSEMBLE[i] = "";
     LAYERS_GRIB2[i][0] = "";
     LAYERS_GRIB2[i][1] = "";
@@ -912,8 +916,10 @@ int GRIB2_TGL_number = GRIB2_TGL_Selected.length;
     STUDY_V_offset[i] = -500;
     STUDY_V_belowLine[i] = 1;
     LAYERS_Unit[i] = "dam";
-    LAYERS_Title[i][_EN] = "Thicknesses (Geopotentiel Difference) between 1000 and 500 hPa";
-    LAYERS_Title[i][_FR] = "Épaisseurs (différence de géopotentiel entre 1000 et 500 hPa";
+    //LAYERS_Title[i][_EN] = "Thicknesses (Geopotentiel Difference) between 1000 and 500 hPa";
+    LAYERS_Title[i][_EN] = "Geopotentiel Difference";
+    //LAYERS_Title[i][_FR] = "Épaisseurs (différence de géopotentiel) entre 1000 et 500 hPa";
+    LAYERS_Title[i][_FR] = "Différence de géopotentiel";
     LAYERS_ENSEMBLE[i] = "LAYER-1000-500HPA";
     LAYERS_GRIB2[i][0] = "";
     LAYERS_GRIB2[i][1] = "";
@@ -22598,6 +22604,35 @@ void mouseClicked () {
                 }
               } 
             }
+            
+            if (BAR_a_Items[BAR_a_selected_parent][0].equals("Layer")) {
+              if (BAR_a_selected_child > 0) {
+                if (STUDY_drw_Layer != BAR_a_selected_child - 1) {
+                  
+                  if (BAR_a_selected_child < num_layers) {
+                  
+                    STUDY_drw_Layer = BAR_a_selected_child - 1;
+
+                  }
+                  else {
+                    if (STUDY_drw_Layer < num_layers) { // assigns the last selected layer as the input
+                      develop_Layer = STUDY_drw_Layer;
+                    }
+                    
+                    STUDY_drw_Layer = _developed; 
+    
+                    develop_option = BAR_a_selected_child - num_layers;
+                    
+                    println("develop_option", develop_option);
+                    
+                    SOLARCHVISION_DevelopDATA(impacts_source);                    
+                  }
+                
+
+                  STUDY_Update = 1;                  
+                }
+              } 
+            }            
   
   
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Typical Year (TMY)")) {
@@ -29122,6 +29157,7 @@ String[][] BAR_a_Items = {
                         {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Vertices", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sky", "Display/Hide SunPath", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Run solar 3D-model", "Run wind 3D-model", "Run spatial 3D-model"},
+                        {"Layer"}, // Parameters 
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
                         {"Select", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Seed/Material", "Teselation", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize"},
@@ -29145,7 +29181,32 @@ int N_Site_in_Bar_a = 2;
   }
 } 
 
-
+int N_Layer_in_Bar_a = 8; 
+{
+  
+  BAR_a_Items[N_Layer_in_Bar_a] = new String [num_layers + 12];
+  
+  BAR_a_Items[N_Layer_in_Bar_a][0] = "Layer";
+  
+  for (int i = 1; i < num_layers; i++) {
+  
+    BAR_a_Items[N_Layer_in_Bar_a][i] = LAYERS_Title[i - 1][_EN];
+  }
+ 
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 0] = "Radiation on surface material";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 1] = "Radiation on surface inclination";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 2] = "Accumulated radiation on surface";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 3] = "Radiation on solar tracker";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 4] = "Accumulated radiation on tracker";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 5] = "Accumulated degree day <18°C<";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 6] = "Passive trend of parameter";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 7] = "Normal trend of parameter";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 8] = "Active trend of parameter";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 9] = "12h accumulated Precipitation";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 10] = "Hourly precipitation";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 11] = "Wind power";
+  
+}
 
 
 void SOLARCHVISION_draw_window_BAR_a () {
