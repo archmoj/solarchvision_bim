@@ -515,12 +515,7 @@ int DEV_OP_9 = 5;
 int DEV_OP_10 = 4;
 int DEV_OP_11 = 3;
 
-
-
-
-
-
-int develop_option = DEV_OP_11; //10; //2; // between 0 - 11...
+int develop_option = DEV_OP_6; //between 0 - 11...
 int develop_per_day = 1;
 
 int update_DevelopDATA = 1;
@@ -22631,29 +22626,37 @@ void mouseClicked () {
                   if (BAR_a_selected_child < num_layers) {
                   
                     STUDY_drw_Layer = BAR_a_selected_child - 1;
-                      
+                    
+                    develop_Layer = STUDY_drw_Layer;
+                    
+                    STUDY_Update = 1;  
+                    
                   }
                   else {
+
+                    if (STUDY_drw_Layer == develop_Layer) {
                     
-                    if (STUDY_drw_Layer != develop_Layer) {
-                    
-                      if ((develop_option == DEV_OP_6) || (develop_option == DEV_OP_7) || (develop_option == DEV_OP_8)) {
-                        // to avoid repeating previous trend values as the input to new one!
-                      }
-                      else {
-                        develop_Layer = STUDY_drw_Layer;
-                      }
-                      
                       STUDY_drw_Layer = _developed; 
                       
                       develop_option = BAR_a_selected_child - num_layers;
                       
-                      SOLARCHVISION_DevelopDATA(impacts_source);
-          
-                    }              
+                      SOLARCHVISION_DevelopDATA(impacts_source);   
+ 
+                      STUDY_Update = 1;                       
+                    }
+                    
+                    if ((develop_option == DEV_OP_6) || (develop_option == DEV_OP_7) || (develop_option == DEV_OP_8)) {
+                      
+                      println("develop_option", develop_option);
+                      
+                      develop_option = BAR_a_selected_child - num_layers;
+                      
+                      SOLARCHVISION_DevelopDATA(impacts_source);   
+ 
+                      STUDY_Update = 1;    
+                    }                     
+                    
                   }
-
-                  STUDY_Update = 1;                                  
                 }
               } 
             }            
