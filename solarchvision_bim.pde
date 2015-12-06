@@ -502,18 +502,22 @@ int H_layer_option = -1;
 int F_layer_option = -1;
 int O_layer_option = -1;
 
-int DEV_OP_0 = 11;
-int DEV_OP_1 = 9;
-int DEV_OP_2 = 8;
-int DEV_OP_3 = 10;
-int DEV_OP_4 = 7;
-int DEV_OP_5 = 6;
-int DEV_OP_6 = 1;
-int DEV_OP_7 = 0;
-int DEV_OP_8 = 2;
-int DEV_OP_9 = 5;
-int DEV_OP_10 = 4;
-int DEV_OP_11 = 3; // 0;
+int DEV_OP_0 = 8;
+int DEV_OP_1 = 6;
+int DEV_OP_2 = 5;
+int DEV_OP_3 = 7;
+int DEV_OP_4 = 4;
+int DEV_OP_5 = 3;
+int DEV_OP_6 = 10;
+int DEV_OP_7 = 9;
+int DEV_OP_8 = 11;
+int DEV_OP_9 = 0;
+int DEV_OP_10 = 1;
+int DEV_OP_11 = 2;
+
+
+
+
 
 int develop_option = DEV_OP_6; //between 0 - 11...
 int develop_per_day = 0; //0:accumulative 1:daily(24h) 2:per12h 3:per6h <should be zero to work well with current menues> 
@@ -29224,18 +29228,19 @@ int N_Layer_in_Bar_a = 8;
     BAR_a_Items[N_Layer_in_Bar_a][i] = LAYERS_Title[i - 1][_EN];
   }
  
-  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 0] = "Normal trend of parameter";
-  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 1] = "Passive trend of parameter";
-  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 2] = "Active trend of parameter";
-  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 3] = "Wind power";  
-  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 4] = "Hourly precipitation";
-  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 5] = "12h accumulated Precipitation";
-  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 6] = "Accumulated degree day <18°C<";
-  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 7] = "Accumulated radiation on tracker";
-  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 8] = "Accumulated radiation on surface";
-  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 9] = "Radiation on surface inclination";
-  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 10] = "Radiation on solar tracker";
-  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 11] = "Radiation on surface material";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 0] = "12h accumulated Precipitation";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 1] = "Hourly precipitation";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 2] = "Wind power";  
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 3] = "Accumulated degree day <18°C<";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 4] = "Accumulated radiation on tracker";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 5] = "Accumulated radiation on surface";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 6] = "Radiation on surface inclination";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 7] = "Radiation on solar tracker";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 8] = "Radiation on surface material";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 9] = "Normal trend of parameter";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 10] = "Passive trend of parameter";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 11] = "Active trend of parameter";
+    
    
 }
 
