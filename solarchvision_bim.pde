@@ -516,7 +516,7 @@ int DEV_OP_10 = 10;
 int DEV_OP_11 = 11;
 
 
-int develop_option = 11; //10; //2; // between 0 - 11...
+int develop_option = DEV_OP_11; //10; //2; // between 0 - 11...
 int develop_per_day = 1;
 
 int update_DevelopDATA = 1;
@@ -3904,19 +3904,19 @@ void Plot_Setup () {
     develop_Layer = STUDY_drw_Layer;
     STUDY_drw_Layer = _developed; 
     
-    develop_option = 1;
+    develop_option = DEV_OP_1;
     SOLARCHVISION_DevelopDATA(impacts_source);
     SOLARCHVISION_PlotHOURLY(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
-    develop_option = 2;
+    develop_option = DEV_OP_2;
     SOLARCHVISION_DevelopDATA(impacts_source);
     SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
-    develop_option = 3;
+    develop_option = DEV_OP_3;
     SOLARCHVISION_DevelopDATA(impacts_source);
     SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
-    develop_option = 4;
+    develop_option = DEV_OP_4;
     SOLARCHVISION_DevelopDATA(impacts_source);
     SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
@@ -3934,15 +3934,15 @@ void Plot_Setup () {
       develop_Layer = STUDY_drw_Layer;
       STUDY_drw_Layer = _developed;
   
-      develop_option = 6; 
+      develop_option = DEV_OP_6; 
       SOLARCHVISION_DevelopDATA(impacts_source);
       SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
   
-      develop_option = 7; 
+      develop_option = DEV_OP_7; 
       SOLARCHVISION_DevelopDATA(impacts_source);
       SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
   
-      develop_option = 8; 
+      develop_option = DEV_OP_8; 
       SOLARCHVISION_DevelopDATA(impacts_source);
       SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
       
@@ -3996,12 +3996,12 @@ void Plot_Setup () {
     SOLARCHVISION_PlotHOURLY(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     STUDY_drw_Layer = _developed;
-    develop_option = 1; 
+    develop_option = DEV_OP_1; 
     SOLARCHVISION_DevelopDATA(impacts_source);
     SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     STUDY_drw_Layer = _developed;
-    develop_option = 3; 
+    develop_option = DEV_OP_3; 
     SOLARCHVISION_DevelopDATA(impacts_source);
     SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
@@ -4152,7 +4152,7 @@ void Plot_Setup () {
     STUDY_drw_Layer = A_precipitation ; 
     develop_Layer = STUDY_drw_Layer;
     STUDY_drw_Layer = _developed; 
-    develop_option = 9;
+    develop_option = DEV_OP_9;
     SOLARCHVISION_DevelopDATA(impacts_source); 
     SOLARCHVISION_PlotHOURLY(0, 325 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
@@ -8062,7 +8062,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
   
   
   
-          if (develop_option == 0) {  
+          if (develop_option == DEV_OP_0) {  
             
             if ((R_dir < 0.9 * FLOAT_undefined) && (R_dif < 0.9 * FLOAT_undefined)) { 
              
@@ -8089,7 +8089,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           }         
   
    
-          if (develop_option == 1) {
+          if (develop_option == DEV_OP_1) {
             float Alpha = Angle_inclination;
             float Beta = Angle_orientation;
             
@@ -8112,7 +8112,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
             LAYERS_Title[_developed][_FR] = LAYERS_Title[_developed][_EN]; // ??         
           } 
           
-          if (develop_option == 2) {
+          if (develop_option == DEV_OP_2) {
             float Alpha = Angle_inclination;
             float Beta = Angle_orientation;
             
@@ -8134,7 +8134,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
             LAYERS_Title[_developed][_FR] = LAYERS_Title[_developed][_EN]; // ?? 
           } 
           
-          if (develop_option == 3) {
+          if (develop_option == DEV_OP_3) {
             float Alpha = asin_ang(SunR[3]);
             float Beta = atan2_ang(SunR[2], SunR[1]) + 90;
             
@@ -8155,7 +8155,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
             LAYERS_Title[_developed][_FR] = LAYERS_Title[_developed][_EN]; // ?? 
           }         
           
-          if (develop_option == 4) {
+          if (develop_option == DEV_OP_4) {
             float Alpha = asin_ang(SunR[3]);
             float Beta = atan2_ang(SunR[2], SunR[1]) + 90;
             
@@ -8177,7 +8177,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           } 
           
           
-          if (develop_option == 5) {
+          if (develop_option == DEV_OP_5) {
             
             if (T < 0.9 * FLOAT_undefined) { 
               _valuesSUM[now_k] += (18 - T) / 24;
@@ -8195,7 +8195,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
             LAYERS_Title[_developed][_FR] = LAYERS_Title[_developed][_EN]; // ??         
           } 
           
-          if (develop_option == 6) {
+          if (develop_option == DEV_OP_6) {
             
             _valuesSUM[now_k] = 0;
             float sum_count = 0;
@@ -8264,7 +8264,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           }     
       
       
-          if (develop_option == 7) {
+          if (develop_option == DEV_OP_7) {
             
             _valuesSUM[now_k] = 0;
             float sum_count = 0;
@@ -8336,7 +8336,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
   
           }           
           
-          if (develop_option == 8) {
+          if (develop_option == DEV_OP_8) {
             
             _valuesSUM[now_k] = 0;
             float sum_count = 0;
@@ -8406,7 +8406,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           } 
           
   
-          if (develop_option == 9) {
+          if (develop_option == DEV_OP_9) {
             
             if (RAIN < 0.9 * FLOAT_undefined) { 
               _valuesSUM[now_k] = RAIN;
@@ -8424,7 +8424,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
             LAYERS_Title[_developed][_FR] = LAYERS_Title[_developed][_EN]; // ??         
           } 
   
-          if (develop_option == 10) {
+          if (develop_option == DEV_OP_10) {
             
             if (RAIN < 0.9 * FLOAT_undefined) { 
               _valuesSUM[now_k] = RAIN;
@@ -8443,7 +8443,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           } 
           
           
-          if (develop_option == 11) {
+          if (develop_option == DEV_OP_11) {
            
             if (WS < 0.9 * FLOAT_undefined) { 
              
@@ -8467,7 +8467,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           
           
          
-          if ((develop_option == 2) || (develop_option == 4)) {
+          if ((develop_option == DEV_OP_2) || (develop_option == DEV_OP_4)) {
            
             if ((i == 23) && (develop_per_day == 1)) {
               for (int l = i + 1 - 24; l <= i ; l += 1) {
@@ -11307,18 +11307,17 @@ void STUDY_keyPressed (KeyEvent e) {
     if (key == CODED) { 
       switch(keyCode) {
         /*
-        case 112 : develop_option = 1; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 113 : develop_option = 2; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 114 : develop_option = 3; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 115 : develop_option = 4; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 116 : develop_option = 5; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 117 : develop_option = 6; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 118 : develop_option = 7; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 119 : develop_option = 8; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 120 : develop_option = 9; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 121 : develop_option = 10; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 122 : develop_option = 11; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 123 : develop_option = 12; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 112 : develop_option = DEV_OP_1; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 113 : develop_option = DEV_OP_2; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 114 : develop_option = DEV_OP_3; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 115 : develop_option = DEV_OP_4; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 116 : develop_option = DEV_OP_5; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 117 : develop_option = DEV_OP_6; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 118 : develop_option = DEV_OP_7; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 119 : develop_option = DEV_OP_8; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 120 : develop_option = DEV_OP_9; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 121 : develop_option = DEV_OP_10; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case 122 : develop_option = DEV_OP_11; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         */
 
         case 112 : impacts_source = databaseNumber_ENSEMBLE; STUDY_Update = 1; ROLLOUT_Update = 1; break;
@@ -24863,7 +24862,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
     } 
     if (ROLLOUT_child == 2) { // Developed
-      develop_option = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "develop_option" , develop_option, 0, 10, 1), 1));
+      develop_option = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "develop_option" , develop_option, 0, 11, 1), 1));
       develop_per_day = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "develop_per_day" , develop_per_day, 0, 3, 1), 1));
     
       join_hour_numbers = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Trend period hours", join_hour_numbers, 1, 24 * 16, 1), 1));
