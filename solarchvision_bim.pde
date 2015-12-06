@@ -8810,7 +8810,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
   float keep_per_day = per_day;
   int keep_num_add_days = num_add_days;
-  int keep_BEGIN_DAY = BEGIN_DAY;   
   
   if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
     per_day = 1;
@@ -10815,7 +10814,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
   if ((plot_impacts == 8) || (plot_impacts == 9)) {
-    
+
     if (plot_impacts == 8) Impact_TYPE = Impact_ACTIVE; 
     if (plot_impacts == 9) Impact_TYPE = Impact_PASSIVE;
 
@@ -10847,11 +10846,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * STUDY_Pallet_ACTIVE_MLT;
     if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * STUDY_Pallet_PASSIVE_MLT;
 
-    //--------------------------------------------
-    num_add_days = 5; // <<<< normalized for 5 day
-    per_day = 183;
-    BEGIN_DAY = 93;
-    //--------------------------------------------
+    SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
 
     //for (int p = 0; p < 3; p += 1) { 
       //int l = 3 * int(impact_layer / 3) + p;
@@ -10865,7 +10860,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     //for (int p = 0; p < 1; p += 1) { 
       //int l = 3 * int(impact_layer / 3) + 1; //impact_layer;    
  
-      for (int j = 0; j < 2; j += 1) {
+      for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
 
         now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
     
@@ -11108,6 +11103,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         //?? French
       }  
     }   
+
   } 
 
 
@@ -11123,7 +11119,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
   keep_per_day = per_day;
   num_add_days = keep_num_add_days;
-  BEGIN_DAY = keep_BEGIN_DAY;
+
 
   STUDY_Diagrams.popMatrix();
 } 
@@ -22457,15 +22453,43 @@ void mouseClicked () {
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Annual cycle sun path (active)")) {
               plot_impacts = 8;
-              STUDY_Update = 1;
+
               display_WindRose_Image = 0;
-              ROLLOUT_Update = 1;                            
+
+              if ((impacts_source != databaseNumber_ENSEMBLE) && (impacts_source != databaseNumber_OBSERVED)) {
+                per_day = 5; // <<<< normalized for 5 day
+              }    
+              per_day = 183;
+              BEGIN_DAY = 93;
+
+              STUDY_j_end = 2;
+              STUDY_U_scale = 18.0 / float(STUDY_j_end - STUDY_j_start);
+              
+              update_DevelopDATA = 1;
+              rebuild_SolarProjection_array = 1;
+              rebuild_SolarImpact_Image_array = 1;
+              rebuild_WindRose_Image_array = 1;
+              BAR_d_Update = 1;STUDY_Update = 1; ROLLOUT_Update = 1;               
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Annual cycle sun path (passive)")) {
               plot_impacts = 9;
-              STUDY_Update = 1;
+              
               display_WindRose_Image = 0;
-              ROLLOUT_Update = 1;                            
+
+              if ((impacts_source != databaseNumber_ENSEMBLE) && (impacts_source != databaseNumber_OBSERVED)) {
+                per_day = 5; // <<<< normalized for 5 day
+              }    
+              per_day = 183;
+              BEGIN_DAY = 93;
+
+              STUDY_j_end = 2;
+              STUDY_U_scale = 18.0 / float(STUDY_j_end - STUDY_j_start);
+              
+              update_DevelopDATA = 1;
+              rebuild_SolarProjection_array = 1;
+              rebuild_SolarImpact_Image_array = 1;
+              rebuild_WindRose_Image_array = 1;
+              BAR_d_Update = 1;STUDY_Update = 1; ROLLOUT_Update = 1;                               
             }  
             
 // "Run solar 3D-model", "Run wind 3D-model", "Run spatial 3D-model"},            
