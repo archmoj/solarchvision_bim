@@ -10862,11 +10862,13 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
       
       
-      float[][][] SunPathMesh = new float [STUDY_j_end][int(per_day / num_add_days)][4];      
+          
  
-      for (int more_J = 0; more_J < per_day; more_J += num_add_days) {
+      for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
+        
+        float[][][] SunPathMesh = new float [24][1 + int(per_day / num_add_days)][4];        
  
-        for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
+        for (int more_J = 0; more_J < per_day; more_J += num_add_days) {
           
           now_j = (more_J + j * int(per_day) + BEGIN_DAY + 365) % 365;
       
@@ -10978,10 +10980,14 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = _valuesSUM_RAD;
                   if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = _valuesSUM_EFF; 
                   
-                  SunPathMesh[i][more_J][0] = SunR[0];
-                  SunPathMesh[i][more_J][1] = SunR[1];
-                  SunPathMesh[i][more_J][2] = SunR[2];
-                  SunPathMesh[i][more_J][3] = _valuesSUM;
+
+                  
+                  int row_J = more_J / num_add_days;
+               
+                  SunPathMesh[i][row_J][0] = SunR[0];
+                  SunPathMesh[i][row_J][1] = SunR[1];
+                  SunPathMesh[i][row_J][2] = SunR[2];
+                  SunPathMesh[i][row_J][3] = _valuesSUM;
      
                 }
               }
@@ -10999,18 +11005,13 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               
             }
           }
-          
-          
         }
-      }
+
+        int Teselation = 0; // 2; // <<<<<<
 
 
-      int Teselation = 0; // 2; // <<<<<<
+        for (int more_J = 0; more_J < per_day - num_add_days; more_J += num_add_days) { //count one less!
 
-      for (int more_J = 0; more_J < per_day - num_add_days; more_J += num_add_days) { //count one less!
- 
-        for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
-          
           //for (int i = 0; i < 24; i += 1) {
           for (int i = 12; i < 18; i += 1) {
 
@@ -11022,7 +11023,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             for (int s = 0; s < 4; s += 1) {
               
               int a = i;
-              int b = more_J;
+              int b = more_J / num_add_days;
               
               if ((s == 1) || (s == 2)) {
                 a += 1;
@@ -11051,14 +11052,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               
               for (int s = 0; s < subFace.length; s++) {
   
-                float[] SunR = new float [3]; 
-                
-                SunR[0] = subFace[s][0];
-                SunR[1] = subFace[s][1];
-                SunR[2] = subFace[s][2];
-    
-                float Alpha = 90 - acos_ang(SunR[3]);
-                float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
+                float Alpha = 90 - acos_ang(subFace[s][2]);
+                float Beta = 180 - atan2_ang(subFace[s][0], subFace[s][1]);
                 
                 float _valuesSUM = subFace[s][3];
     
