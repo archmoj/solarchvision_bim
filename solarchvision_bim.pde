@@ -509,11 +509,11 @@ int DEV_OP_3 = 10;
 int DEV_OP_4 = 7;
 int DEV_OP_5 = 6;
 int DEV_OP_6 = 1;
-int DEV_OP_7 = 0;
+int DEV_OP_7 = 3; // 0;
 int DEV_OP_8 = 2;
 int DEV_OP_9 = 5;
 int DEV_OP_10 = 4;
-int DEV_OP_11 = 3;
+int DEV_OP_11 = 0; // 3;
 
 int develop_option = DEV_OP_6; //between 0 - 11...
 int develop_per_day = 1;
@@ -22634,7 +22634,22 @@ void mouseClicked () {
                   }
                   else {
 
-                    if (STUDY_drw_Layer == develop_Layer) {
+                    if ((develop_option == DEV_OP_6) || (develop_option == DEV_OP_7) || (develop_option == DEV_OP_8)) {
+                      
+                      if (STUDY_drw_Layer == develop_Layer) {
+                    
+                        STUDY_drw_Layer = _developed; 
+                      }
+                      
+                      develop_option = BAR_a_selected_child - num_layers;
+                      
+                      SOLARCHVISION_DevelopDATA(impacts_source);   
+ 
+                      STUDY_Update = 1;                          
+                    }   
+                    else {
+                      
+                      develop_Layer = STUDY_drw_Layer;
                     
                       STUDY_drw_Layer = _developed; 
                       
@@ -22643,18 +22658,7 @@ void mouseClicked () {
                       SOLARCHVISION_DevelopDATA(impacts_source);   
  
                       STUDY_Update = 1;                       
-                    }
-                    
-                    if ((develop_option == DEV_OP_6) || (develop_option == DEV_OP_7) || (develop_option == DEV_OP_8)) {
-                      
-                      println("develop_option", develop_option);
-                      
-                      develop_option = BAR_a_selected_child - num_layers;
-                      
-                      SOLARCHVISION_DevelopDATA(impacts_source);   
- 
-                      STUDY_Update = 1;    
-                    }                     
+                    }                    
                     
                   }
                 }
@@ -29220,10 +29224,11 @@ int N_Layer_in_Bar_a = 8;
     BAR_a_Items[N_Layer_in_Bar_a][i] = LAYERS_Title[i - 1][_EN];
   }
  
-  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 0] = "Normal trend of parameter";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 0] = "Wind power";
   BAR_a_Items[N_Layer_in_Bar_a][num_layers + 1] = "Passive trend of parameter";
   BAR_a_Items[N_Layer_in_Bar_a][num_layers + 2] = "Active trend of parameter";
-  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 3] = "Wind power";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 3] = "Normal trend of parameter";
+  
   BAR_a_Items[N_Layer_in_Bar_a][num_layers + 4] = "Hourly precipitation";
   BAR_a_Items[N_Layer_in_Bar_a][num_layers + 5] = "12h accumulated Precipitation";
   BAR_a_Items[N_Layer_in_Bar_a][num_layers + 6] = "Accumulated degree day <18°C<";
