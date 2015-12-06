@@ -22473,22 +22473,11 @@ void mouseClicked () {
       if (FRAME_click_JPG == 1) {
 
         SOLARCHVISION_RecordFrame();
-        
-        strokeWeight(2);
-        if (mouseButton == RIGHT) {
-          noStroke();
-          fill(127,127);
-        }          
-        else{
-          stroke(255,0,0);
-          noFill();
-        }          
-        
-        ellipse(mouseX, mouseY, 20, 20);
-        strokeWeight(0);
-        
+
+        dessin_Mouse(1, mouseX, mouseY, 2 * MESSAGE_S_View);        
+
         SOLARCHVISION_RecordFrame();
-        
+/*        
         WORLD_Update = 1;
         WIN3D_Update = 1;  
         STUDY_Update = 1;
@@ -22498,8 +22487,11 @@ void mouseClicked () {
         BAR_d_Update = 1;          
         
         FRAME_click_JPG = 0;
+*/        
       }    
-      else if ((BAR_a_selected_parent != -1) && (isInside(mouseX, mouseY, 0, 0, width, a_pixel) == 0)) {
+      
+      
+      if ((BAR_a_selected_parent != -1) && (isInside(mouseX, mouseY, 0, 0, width, a_pixel) == 0)) {
          
         if (mouseButton == LEFT) {
           if (BAR_a_selected_child != 0) {
@@ -28337,6 +28329,115 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
 
 
 
+void dessin_Mouse (int _type, float x, float y, float r) {
+
+  float d = 0.4 * r;
+
+  for (int i = 0; i < 3; i++) { 
+
+    float dx = 0;
+    float dy = 0;
+    
+    if (i == 0) {
+      dx = 0.5 * d;
+      dy = 0.5 * d;
+      strokeWeight(1);
+      stroke(63); 
+      fill(63); 
+    }
+    else if (i == 1) {
+      strokeWeight(3);
+      stroke(0); 
+      fill(0);
+    }   
+    else {
+      strokeWeight(1);;
+      stroke(1);
+      stroke(255); 
+      fill(255);
+    }          
+    
+    pushMatrix();
+    translate(x + d + dx, y + d + dy);
+
+    triangle(-d,-d, -d,d, d,-d); 
+
+    if (i == 1) {
+      strokeWeight(2 + d);
+    }
+    else { 
+      strokeWeight(d);
+    }
+  
+    line(0,0, d,d);
+    
+    popMatrix();
+  
+  }
+  
+  strokeWeight(0);  
+}
+
+void dessin_ClickSelect (int _type, float x, float y, float r) {
+  
+  pushMatrix();
+  translate(x, y);
+
+  strokeWeight(1);
+  stroke(255); 
+  fill(255);  
+  
+  float d = 0.3 * r;
+  triangle(-d,-d, -d,d, d,-d); 
+
+  strokeWeight(5);
+  line(0,0, d,d);
+
+  stroke(0,0,255);
+  strokeWeight(3);
+  if (_type == 2) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);} 
+  if (_type == 3) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r);}
+
+  strokeWeight(0);
+
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+
+void dessin_WindowSelect (int _type, float x, float y, float r) {
+  
+  pushMatrix();
+  translate(x, y);
+
+  strokeWeight(1);
+  stroke(255); 
+  fill(63);  
+  rect(-0.5 * r, -0.5 * r, 1.25 * r, 1.25 * r);
+
+  strokeWeight(1);
+  stroke(255); 
+  fill(255);  
+  
+  float d = 0.3 * r;
+  triangle(-d,-d, -d,d, d,-d); 
+
+  strokeWeight(5);
+  line(0,0, d,d);
+
+  stroke(0,0,255);
+  strokeWeight(3);
+  if (_type == 2) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);} 
+  if (_type == 3) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r);}
+
+  strokeWeight(0);
+
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
 
 void dessin_Move (int _type, float x, float y, float r) {
   
@@ -28521,67 +28622,6 @@ void dessin_Teselation (int _type, float x, float y, float r) {
 
   BAR_b_Display_Text = 0;
 }
-
-void dessin_ClickSelect (int _type, float x, float y, float r) {
-  
-  pushMatrix();
-  translate(x, y);
-
-  strokeWeight(1);
-  stroke(255); 
-  fill(255);  
-  
-  float d = 0.3 * r;
-  triangle(-d,-d, -d,d, d,-d); 
-
-  strokeWeight(5);
-  line(0,0, d,d);
-
-  stroke(0,0,255);
-  strokeWeight(3);
-  if (_type == 2) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);} 
-  if (_type == 3) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r);}
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  BAR_b_Display_Text = 0;
-}
-
-
-void dessin_WindowSelect (int _type, float x, float y, float r) {
-  
-  pushMatrix();
-  translate(x, y);
-
-  strokeWeight(1);
-  stroke(255); 
-  fill(63);  
-  rect(-0.5 * r, -0.5 * r, 1.25 * r, 1.25 * r);
-
-  strokeWeight(1);
-  stroke(255); 
-  fill(255);  
-  
-  float d = 0.3 * r;
-  triangle(-d,-d, -d,d, d,-d); 
-
-  strokeWeight(5);
-  line(0,0, d,d);
-
-  stroke(0,0,255);
-  strokeWeight(3);
-  if (_type == 2) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);} 
-  if (_type == 3) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r);}
-
-  strokeWeight(0);
-
-  popMatrix();
-
-  BAR_b_Display_Text = 0;
-}
-
 
 
 
