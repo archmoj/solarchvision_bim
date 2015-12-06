@@ -12322,7 +12322,8 @@ void WIN3D_keyPressed (KeyEvent e) {
 void SOLARCHVISION_RecordFrame () {
   
   SavedScreenShots += 1; 
-  saveFrame(ScreenShotFolder + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + nf(hour(), 2) + "_IMG" + nf(SavedScreenShots , 3) + ".jpg");
+  //saveFrame(ScreenShotFolder + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + nf(hour(), 2) + "_IMG" + nf(SavedScreenShots , 3) + ".jpg");
+  saveFrame(ScreenShotFolder + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + nf(hour(), 2) + "_IMG" + nf(SavedScreenShots , 3) + ".tif");
 }
 
 
@@ -21740,15 +21741,28 @@ void mouseReleased () {
   
           SOLARCHVISION_RecordFrame();
           
-          println("Drag to highlight");
+          strokeWeight(2);
+          if (mouseButton == RIGHT) {
+            noStroke();
+            fill(127,127);
+          }          
+          else{
+            stroke(255,0,0);
+            noFill();
+          }          
           
-          noStroke();
-          fill(127,127);          
           rect(X_click1, Y_click1, X_click2 - X_click1, Y_click2 - Y_click1);
-          
-          println(X_click1, Y_click1, X_click2 - X_click1, Y_click2 - Y_click1);
+          strokeWeight(0);
           
           SOLARCHVISION_RecordFrame();
+          
+          WORLD_Update = 1;
+          WIN3D_Update = 1;  
+          STUDY_Update = 1;
+          ROLLOUT_Update = 1;
+          BAR_a_Update = 1;
+          BAR_b_Update = 1;
+          BAR_d_Update = 1;          
           
           FRAME_drag_JPG = 0;
           
@@ -21767,7 +21781,6 @@ void mouseReleased () {
       
                 float corner2x = X_click2 - 0.5 * WIN3D_X_View - WIN3D_CX_View;
                 float corner2y = Y_click2 - 0.5 * WIN3D_Y_View - WIN3D_CY_View;
-                
                 
                 pushMatrix();
               
@@ -22456,8 +22469,37 @@ void mouseClicked () {
   if (frameCount > Last_initializationStep) {
   
     if (automated == 0) {
-      
-      if ((BAR_a_selected_parent != -1) && (isInside(mouseX, mouseY, 0, 0, width, a_pixel) == 0)) {
+
+      if (FRAME_click_JPG == 1) {
+
+        SOLARCHVISION_RecordFrame();
+        
+        strokeWeight(2);
+        if (mouseButton == RIGHT) {
+          noStroke();
+          fill(127,127);
+        }          
+        else{
+          stroke(255,0,0);
+          noFill();
+        }          
+        
+        ellipse(mouseX, mouseY, 20, 20);
+        strokeWeight(0);
+        
+        SOLARCHVISION_RecordFrame();
+        
+        WORLD_Update = 1;
+        WIN3D_Update = 1;  
+        STUDY_Update = 1;
+        ROLLOUT_Update = 1;
+        BAR_a_Update = 1;
+        BAR_b_Update = 1;
+        BAR_d_Update = 1;          
+        
+        FRAME_click_JPG = 0;
+      }    
+      else if ((BAR_a_selected_parent != -1) && (isInside(mouseX, mouseY, 0, 0, width, a_pixel) == 0)) {
          
         if (mouseButton == LEFT) {
           if (BAR_a_selected_child != 0) {
@@ -31011,6 +31053,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Display_EPW_points", Display_EPW_points);
   newChild1.setInt("Display_EPW_nearest", Display_EPW_nearest);
   newChild1.setInt("FRAME_record_JPG", FRAME_record_JPG);
+  newChild1.setInt("FRAME_click_JPG", FRAME_click_JPG);
+  newChild1.setInt("FRAME_drag_JPG", FRAME_drag_JPG);
   newChild1.setInt("SpatialImpact_record_PDF", SpatialImpact_record_PDF);
   newChild1.setInt("SpatialImpact_record_JPG", SpatialImpact_record_JPG);
   newChild1.setInt("SolarImpact_record_JPG", SolarImpact_record_JPG);
@@ -31866,6 +31910,8 @@ void SOLARCHVISION_load_project (String myFile) {
       Display_EPW_points = children0[L].getInt("Display_EPW_points");
       Display_EPW_nearest = children0[L].getInt("Display_EPW_nearest");
       FRAME_record_JPG = children0[L].getInt("FRAME_record_JPG");
+      FRAME_click_JPG = children0[L].getInt("FRAME_click_JPG");
+      FRAME_drag_JPG = children0[L].getInt("FRAME_drag_JPG");
       SpatialImpact_record_PDF = children0[L].getInt("SpatialImpact_record_PDF");
       SpatialImpact_record_JPG = children0[L].getInt("SpatialImpact_record_JPG");
       SolarImpact_record_JPG = children0[L].getInt("SolarImpact_record_JPG");
@@ -32641,8 +32687,7 @@ void SOLARCHVISION_load_project (String myFile) {
 bug: delete because scrolling selection+ could add duplicate of the same objects to the list!
 solution: I remarked wheel option for pickSelect for now.
 
-int FRAME_click_JPG = 0;
-int FRAME_drag_JPG = 0;
+
 
 
 */
