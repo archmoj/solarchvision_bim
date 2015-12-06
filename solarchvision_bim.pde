@@ -22627,7 +22627,6 @@ void mouseClicked () {
                     
                     SOLARCHVISION_DevelopDATA(impacts_source);                    
                   }
-                
 
                   STUDY_Update = 1;                  
                 }
