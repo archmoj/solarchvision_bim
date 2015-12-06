@@ -2524,12 +2524,23 @@ void draw () {
 //-------------------------------
 
 
+    if (FRAME_record_AUTO == 1) {
+      if (STUDY_Update == 1) FRAME_record_JPG = 1;
+      if (WIN3D_Update == 1) FRAME_record_JPG = 1;
+      if (WORLD_Update == 1) FRAME_record_JPG = 1;
+      //if (BAR_a_Update == 1) FRAME_record_JPG = 1;
+      //if (BAR_b_Update == 1) FRAME_record_JPG = 1;
+      //if (BAR_d_Update == 1) FRAME_record_JPG = 1;
+    }
+
+
+
 
     int Illustrations_Animate = 0;
 
     //if ((STUDY_Update == 0) && (WIN3D_Update == 0)) {
     if (STUDY_Update == 0) {
-      Illustrations_Animate = 1;
+      //Illustrations_Animate = 1;
     }
 
     if (STUDY_include == 1) {
@@ -2590,10 +2601,10 @@ void draw () {
         if (BAR_d_Update == 1) {
           SOLARCHVISION_draw_window_BAR_d();
         }    
-    
+
         if (FRAME_record_JPG == 1) {
           SOLARCHVISION_RecordFrame();
-          FRAME_record_JPG = 0;
+          FRAME_record_JPG = 0;  
         }
         
       }
@@ -29413,7 +29424,7 @@ String[][] BAR_a_Items = {
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
                         {"Select", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Seed/Material", "Teselation", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize"},
-                        {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Time Graph", "Stop REC."}
+                        {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
 
                       };
 
@@ -31073,8 +31084,8 @@ int[] get_startZ_endZ (int data_source) {
 
 
 void SOLARCHVISION_explore_output (String outputFile) {
-  
-  if (Display_Output_in_Explorer == 1) {
+
+  if ((Display_Output_in_Explorer == 1)  && (STUDY_record_AUTO == 0) && (WORLD_record_AUTO == 0) && (WIN3D_record_AUTO == 0) && (FRAME_record_AUTO == 0)) {
     open("explorer /select," + outputFile.replace("/", "\\"));
   }
   
