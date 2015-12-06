@@ -212,6 +212,7 @@ int Display_CWEEDS_nearest = 0;
 int Display_EPW_points = 1; // 0-2
 int Display_EPW_nearest = 1;
 
+int FRAME_record_AUTO = 0;
 int FRAME_record_JPG = 0;
 int FRAME_click_JPG = 0;
 int FRAME_drag_JPG = 0;
@@ -22654,6 +22655,92 @@ void mouseClicked () {
             }  
             
 // "Run solar 3D-model", "Run wind 3D-model", "Run spatial 3D-model"},            
+
+
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Stop REC.")) { 
+              STUDY_record_AUTO = 0;
+              STUDY_record_JPG = 0;
+              STUDY_record_PDF = 0;
+              WORLD_record_AUTO = 0;
+              WORLD_record_JPG = 0;
+              WORLD_record_PDF = 0;
+              WIN3D_record_AUTO = 0;
+              WIN3D_record_JPG = 0;
+              FRAME_record_AUTO = 0;
+              FRAME_record_JPG = 0;
+              FRAME_click_JPG = 0;
+              FRAME_drag_JPG = 0;   
+              
+              ROLLOUT_Update = 1;            
+            }
+
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("REC. Time Graph")) { 
+              STUDY_record_AUTO = 1;
+              STUDY_record_JPG = 0;
+              STUDY_record_PDF = 0;
+              WORLD_record_AUTO = 0;
+              WORLD_record_JPG = 0;
+              WORLD_record_PDF = 0;
+              WIN3D_record_AUTO = 0;
+              WIN3D_record_JPG = 0;
+              FRAME_record_AUTO = 0;
+              FRAME_record_JPG = 0;
+              FRAME_click_JPG = 0;
+              FRAME_drag_JPG = 0;   
+              
+              ROLLOUT_Update = 1;  
+            } 
+
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("REC. Location Graph")) { 
+              STUDY_record_AUTO = 0;
+              STUDY_record_JPG = 0;
+              STUDY_record_PDF = 0;
+              WORLD_record_AUTO = 1;
+              WORLD_record_JPG = 0;
+              WORLD_record_PDF = 0;
+              WIN3D_record_AUTO = 0;
+              WIN3D_record_JPG = 0;
+              FRAME_record_AUTO = 0;
+              FRAME_record_JPG = 0;
+              FRAME_click_JPG = 0;
+              FRAME_drag_JPG = 0;   
+              
+              ROLLOUT_Update = 1;  
+            } 
+
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("REC. Spatial Graph")) { 
+              STUDY_record_AUTO = 0;
+              STUDY_record_JPG = 0;
+              STUDY_record_PDF = 0;
+              WORLD_record_AUTO = 0;
+              WORLD_record_JPG = 0;
+              WORLD_record_PDF = 0;
+              WIN3D_record_AUTO = 1;
+              WIN3D_record_JPG = 0;
+              FRAME_record_AUTO = 0;
+              FRAME_record_JPG = 0;
+              FRAME_click_JPG = 0;
+              FRAME_drag_JPG = 0;   
+              
+              ROLLOUT_Update = 1;  
+            } 
+            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("REC. Screenshot")) { 
+              STUDY_record_AUTO = 0;
+              STUDY_record_JPG = 0;
+              STUDY_record_PDF = 0;
+              WORLD_record_AUTO = 0;
+              WORLD_record_JPG = 0;
+              WORLD_record_PDF = 0;
+              WIN3D_record_AUTO = 0;
+              WIN3D_record_JPG = 0;
+              FRAME_record_AUTO = 1;
+              FRAME_record_JPG = 0;
+              FRAME_click_JPG = 0;
+              FRAME_drag_JPG = 0;   
+              
+              ROLLOUT_Update = 1;  
+            }             
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("PDF Time Graph")) { 
               STUDY_record_PDF = 1;
@@ -22682,17 +22769,14 @@ void mouseClicked () {
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Screenshot")) { 
               FRAME_record_JPG = 1;
-              WIN3D_Update = 1;
             }             
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Screenshot+Click")) { 
               FRAME_click_JPG = 1;
-              WIN3D_Update = 1;
             }           
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Screenshot+Drag")) { 
               FRAME_drag_JPG = 1;
-              WIN3D_Update = 1;
             }                
             
             if (BAR_a_Items[BAR_a_selected_parent][0].equals("Site")) {
@@ -29329,7 +29413,7 @@ String[][] BAR_a_Items = {
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
                         {"Select", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Seed/Material", "Teselation", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize"},
-                        {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag"}
+                        {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Time Graph", "Stop REC."}
 
                       };
 
@@ -31092,6 +31176,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Display_CWEEDS_nearest", Display_CWEEDS_nearest);
   newChild1.setInt("Display_EPW_points", Display_EPW_points);
   newChild1.setInt("Display_EPW_nearest", Display_EPW_nearest);
+  newChild1.setInt("FRAME_record_AUTO", FRAME_record_AUTO);
   newChild1.setInt("FRAME_record_JPG", FRAME_record_JPG);
   newChild1.setInt("FRAME_click_JPG", FRAME_click_JPG);
   newChild1.setInt("FRAME_drag_JPG", FRAME_drag_JPG);
@@ -31949,6 +32034,7 @@ void SOLARCHVISION_load_project (String myFile) {
       Display_CWEEDS_nearest = children0[L].getInt("Display_CWEEDS_nearest");
       Display_EPW_points = children0[L].getInt("Display_EPW_points");
       Display_EPW_nearest = children0[L].getInt("Display_EPW_nearest");
+      FRAME_record_AUTO = children0[L].getInt("FRAME_record_AUTO");
       FRAME_record_JPG = children0[L].getInt("FRAME_record_JPG");
       FRAME_click_JPG = children0[L].getInt("FRAME_click_JPG");
       FRAME_drag_JPG = children0[L].getInt("FRAME_drag_JPG");
