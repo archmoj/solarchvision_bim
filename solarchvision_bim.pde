@@ -10861,7 +10861,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       //int l = 3 * int(impact_layer / 3) + 1; //impact_layer;    
  
  
-      for (int more_J = 0; more_J < per_day; more_J += 1) {
+      for (int more_J = 0; more_J < per_day; more_J += num_add_days) {
  
         for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
   
