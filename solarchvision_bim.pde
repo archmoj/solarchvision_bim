@@ -509,14 +509,14 @@ int DEV_OP_3 = 10;
 int DEV_OP_4 = 7;
 int DEV_OP_5 = 6;
 int DEV_OP_6 = 1;
-int DEV_OP_7 = 3; // 0;
+int DEV_OP_7 = 0;
 int DEV_OP_8 = 2;
 int DEV_OP_9 = 5;
 int DEV_OP_10 = 4;
-int DEV_OP_11 = 0; // 3;
+int DEV_OP_11 = 3; // 0;
 
 int develop_option = DEV_OP_6; //between 0 - 11...
-int develop_per_day = 1;
+int develop_per_day = 0; //0:accumulative 1:daily(24h) 2:per12h 3:per6h <should be zero to work well with current menues> 
 
 int update_DevelopDATA = 1;
 
@@ -8181,7 +8181,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
           if (develop_option == DEV_OP_5) {
             
             if (T < 0.9 * FLOAT_undefined) { 
-              _valuesSUM[now_k] += (18 - T) / 24;
+              _valuesSUM[now_k] += (T - 18) / 24;
               
               if (data_source == databaseNumber_CLIMATE_EPW) CLIMATE_EPW[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
               if (data_source == databaseNumber_CLIMATE_WY2) CLIMATE_WY2[now_i][now_j][_developed][now_k] = _valuesSUM[now_k];
@@ -8190,7 +8190,7 @@ void SOLARCHVISION_DevelopDATA (int data_source) {
               
             STUDY_V_scale[_developed] = 1.0;
             STUDY_V_offset[_developed] = 0;
-            STUDY_V_belowLine[_developed] = 0;
+            STUDY_V_belowLine[_developed] = -1;
             LAYERS_Unit[_developed] = "°C";
             LAYERS_Title[_developed][_EN] = "Accumulated degree day (based on 18°C)";
             LAYERS_Title[_developed][_FR] = LAYERS_Title[_developed][_EN]; // ??         
@@ -29224,11 +29224,10 @@ int N_Layer_in_Bar_a = 8;
     BAR_a_Items[N_Layer_in_Bar_a][i] = LAYERS_Title[i - 1][_EN];
   }
  
-  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 0] = "Wind power";
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 0] = "Normal trend of parameter";
   BAR_a_Items[N_Layer_in_Bar_a][num_layers + 1] = "Passive trend of parameter";
   BAR_a_Items[N_Layer_in_Bar_a][num_layers + 2] = "Active trend of parameter";
-  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 3] = "Normal trend of parameter";
-  
+  BAR_a_Items[N_Layer_in_Bar_a][num_layers + 3] = "Wind power";  
   BAR_a_Items[N_Layer_in_Bar_a][num_layers + 4] = "Hourly precipitation";
   BAR_a_Items[N_Layer_in_Bar_a][num_layers + 5] = "12h accumulated Precipitation";
   BAR_a_Items[N_Layer_in_Bar_a][num_layers + 6] = "Accumulated degree day <18°C<";
