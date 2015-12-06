@@ -502,7 +502,21 @@ int H_layer_option = -1;
 int F_layer_option = -1;
 int O_layer_option = -1;
 
-int develop_option = 11; //10; //2; // between 0 - 12....
+int DEV_OP_0 = 0;
+int DEV_OP_1 = 1;
+int DEV_OP_2 = 2;
+int DEV_OP_3 = 3;
+int DEV_OP_4 = 4;
+int DEV_OP_5 = 5;
+int DEV_OP_6 = 6;
+int DEV_OP_7 = 7;
+int DEV_OP_8 = 8;
+int DEV_OP_9 = 9;
+int DEV_OP_10 = 10;
+int DEV_OP_11 = 11;
+
+
+int develop_option = 11; //10; //2; // between 0 - 11...
 int develop_per_day = 1;
 
 int update_DevelopDATA = 1;
