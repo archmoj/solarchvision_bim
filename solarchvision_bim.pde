@@ -10904,6 +10904,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 
                 float Alpha = 90 - acos_ang(SunR[3]);
                 float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
+                
 
                 now_k = k;
                 now_i = i;
@@ -10978,18 +10979,14 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 if (Impact_TYPE == Impact_ACTIVE) _valuesSUM = _valuesSUM_RAD;
                 if (Impact_TYPE == Impact_PASSIVE) _valuesSUM = _valuesSUM_EFF; 
                 
-
-                
                 int row_J = more_J / num_add_days;
              
-                SunPathMesh[i][row_J][0] = _valuesSUM;
-                SunPathMesh[i][row_J][1] = SunR[1];
-                SunPathMesh[i][row_J][2] = SunR[2];
-                SunPathMesh[i][row_J][3] = SunR[3];
+                SunPathMesh[i][row_J][0] = Alpha;
+                SunPathMesh[i][row_J][1] = Beta;
+                SunPathMesh[i][row_J][2] = _valuesSUM;
 
               }
 
-              
               STUDY_Diagrams.stroke(0);
               STUDY_Diagrams.fill(0);
               STUDY_Diagrams.textAlign(CENTER, CENTER); 
@@ -11004,81 +11001,81 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           }
         }
 
-        int Teselation = 0; // 2; // <<<<<<
+        int Teselation = 1; // 0; //2; // <<<<<<
 
+        int TotalSubNo = 1;  
+        if (Teselation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Teselation - 1), 1)); // = 4 * ... because in SunPathMesh the cell has 4 points.     
 
         for (int more_J = 0; more_J < per_day - num_add_days; more_J += num_add_days) { //count one less!
 
           for (int i = 0; i < 24; i += 1) {
+            if (isInHourlyRange(i) == 1) {
 
-            int TotalSubNo = 1;  
-            if (Teselation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Teselation - 1), 1)); // = 4 * ... because in SunPathMesh the cell has 4 points.            
-            
-            float[][] base_Vertices = new float [4][5];
-        
-            for (int s = 0; s < 4; s += 1) {
-              
-              int a = i;
-              int b = more_J / num_add_days;
-              
-              if ((s == 1) || (s == 2)) {
-                a += 1;
-              }
-    
-              if ((s == 2) || (s == 3)) {
-                b += 1;
-              }
-              
-              if (a > 23) a %= 24;
-              
-              base_Vertices[s][0] = SunPathMesh[a][b][0];
-              base_Vertices[s][1] = SunPathMesh[a][b][1];
-              base_Vertices[s][2] = SunPathMesh[a][b][2];
-              base_Vertices[s][3] = SunPathMesh[a][b][3];
-              
-            }
-            
-            for (int n = 0; n < TotalSubNo; n++) {
-            
-              float[][] subFace = getSubFace(base_Vertices, Teselation, n);
-              
-              STUDY_Diagrams.beginShape();
-              
-              STUDY_Diagrams.noStroke();
-              
-              for (int s = 0; s < subFace.length; s++) {
-  
-                float Alpha = 90 - acos_ang(subFace[s][3]);
-                float Beta = 180 - atan2_ang(subFace[s][1], subFace[s][2]);
+              float[][] base_Vertices = new float [4][3];
+          
+              for (int s = 0; s < 4; s += 1) {
                 
-                if (Alpha >= 0) {
+                int a = i;
+                int b = more_J / num_add_days;
                 
-                  float _valuesSUM = subFace[s][0];
+                if ((s == 1) || (s == 2)) {
+                  a += 1;
+                }
       
-                  if (_valuesSUM < 0.9 * FLOAT_undefined) {
+                if ((s == 2) || (s == 3)) {
+                  b += 1;
+                }
+                
+                if (a > 23) a = a % 24;
+                
+                base_Vertices[s][0] = SunPathMesh[a][b][0];
+                base_Vertices[s][1] = SunPathMesh[a][b][1];
+                base_Vertices[s][2] = SunPathMesh[a][b][2];
+                
+              }
+              
+              for (int n = 0; n < TotalSubNo; n++) {
+                
+                float[][] subFace = getSubFace(base_Vertices, Teselation, n);
+                
+                STUDY_Diagrams.beginShape();
+                
+                STUDY_Diagrams.noStroke();
+                
+                for (int s = 0; s < subFace.length; s++) {
+    
+                  float Alpha = subFace[s][0];
+                  float Beta = subFace[s][1];
                   
-                    float _u = 0;
+                  if (Alpha > 0) {
+                  
+                    float _valuesSUM = subFace[s][2];
+        
+                    if (_valuesSUM < 0.9 * FLOAT_undefined) {
                     
-                    if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
-                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
-                    
-                    if (PAL_DIR == -1) _u = 1 - _u;
-                    if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                    if (PAL_DIR == 2) _u =  0.5 * _u;
-                    
-                    float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);
-    
-                    STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
-    
-                    float x = (j + obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))) * sx_Plot;
-                    float y = -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot;
-                    
-                    STUDY_Diagrams.vertex(x, y);  
+                      float _u = 0;
+                      
+                      if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
+                      if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
+                      
+                      if (PAL_DIR == -1) _u = 1 - _u;
+                      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                      if (PAL_DIR == 2) _u =  0.5 * _u;
+                      
+                      float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);
+      
+                      STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+      
+                      float x = (j + obj_offset_x + (90 - Alpha) * obj_scale * (cos_ang(Beta - 90))) * sx_Plot;
+                      float y = -((90 - Alpha) * obj_scale * (sin_ang(Beta - 90))) * sx_Plot;
+                      
+                      STUDY_Diagrams.vertex(x, y);
+                    }
                   }
                 }
+                
+                STUDY_Diagrams.endShape(CLOSE);                    
               }
-              
-              STUDY_Diagrams.endShape(CLOSE);                    
             }
           }
         }
@@ -22516,9 +22513,9 @@ void mouseClicked () {
 
               display_WindRose_Image = 0;
 
-              per_day = 183;
-              num_add_days = 5;
+              //num_add_days = 5;
               BEGIN_DAY = 0;
+              per_day = 183;
 
               STUDY_j_end = 2;
               STUDY_U_scale = 18.0 / float(STUDY_j_end - STUDY_j_start);
@@ -22534,9 +22531,9 @@ void mouseClicked () {
               
               display_WindRose_Image = 0;
 
-              per_day = 183;
-              num_add_days = 5;
+              //num_add_days = 5;
               BEGIN_DAY = 0;
+              per_day = 183;
 
               STUDY_j_end = 2;
               STUDY_U_scale = 18.0 / float(STUDY_j_end - STUDY_j_start);
