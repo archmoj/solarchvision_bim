@@ -280,17 +280,32 @@ int _HOUR = MODEL_RUN; //hour();
 int BEGIN_DAY;
 float _DATE;
 
-
-
-String MAKE_mainname () {
+void SOLARCHVISION_RecordFrame () {
   
-  String s = "";
-
-  if (impacts_source == databaseNumber_ENSEMBLE) s = nf(_YEAR, 2) + nf(_MONTH, 2) + nf(_DAY, 2) + "_" + nf(STUDY_j_end, 0) + "dayFORECAST_";
-  
-  return s;
-
+  saveFrame(ScreenShotFolder + "/" + CreateStamp(1) + "Screen.tif");
 }
+
+String CreateStamp (int _add) {
+  
+  SavedScreenShots += _add; 
+  
+  return nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + nf(hour(), 2) + "_IMG" + nf(SavedScreenShots , 4);
+}
+
+
+
+
+
+
+
+String MAKE_Filenames (String beginName) {
+
+  String My_Filenames = ScreenShotFolder + "/" + beginName;  
+  
+  return My_Filenames;
+}
+
+/*
 
 String MAKE_Filenames (String beginName) {
   String My_Filenames = "";
@@ -321,6 +336,18 @@ String MAKE_Filenames (String beginName) {
 }
 
 
+*/
+
+String MAKE_mainname () {
+  
+  String s = "";
+
+  if (impacts_source == databaseNumber_ENSEMBLE) s = nf(_YEAR, 2) + nf(_MONTH, 2) + nf(_DAY, 2) + "_" + nf(STUDY_j_end, 0) + "dayFORECAST_";
+  
+  return s;
+
+}
+
 String get_SpatialImpact_Filename () {
   
   return DiagramsFolder + "/" + nf(_YEAR, 2) + "-" + nf(_MONTH, 2) + "-" + nf(_DAY, 2) + "/" + databaseString[impacts_source] + "/Impacts/SpatialImpact" + nf(SpatialImpact_Image_Section, 0) + "h" + nf(int(roundTo(SpatialImpact_Elevation[SpatialImpact_Image_Section], 1)), 4) + "r" + nf(int(roundTo(SpatialImpact_Rotation[SpatialImpact_Image_Section], 1)), 3) + "p" + nf(SpatialImpact_Power, 2, 2).replace(".", "_") + "m" + nf(SpatialImpact_Grade, 2, 2).replace(".", "_");
@@ -330,6 +357,8 @@ String get_SolarImpact_Filename () {
   
   return DiagramsFolder + "/" + nf(_YEAR, 2) + "-" + nf(_MONTH, 2) + "-" + nf(_DAY, 2) + "/" + databaseString[impacts_source] + "/Impacts/SolarImpact" + nf(SpatialImpact_Image_Section, 0) + "h" + nf(int(roundTo(SpatialImpact_Elevation[SpatialImpact_Image_Section], 1)), 4) + "r" + nf(int(roundTo(SpatialImpact_Rotation[SpatialImpact_Image_Section], 1)), 3);
 }
+
+
 
 
 String LocationName;
@@ -2836,7 +2865,7 @@ void SOLARCHVISION_draw_WIN3D () {
     WIN3D_Diagrams.endDraw();
   
     if ((WIN3D_record_JPG == 1) || (WIN3D_record_AUTO == 1)) {
-      String myFile = MAKE_Filenames("WIN3D_") + ".jpg";
+      String myFile = MAKE_Filenames(CreateStamp(1) + "WIN3D_") + ".jpg";
       WIN3D_Diagrams.save(myFile);
       SOLARCHVISION_explore_output(myFile);
       println("File created:" + myFile);       
@@ -3054,7 +3083,7 @@ void SOLARCHVISION_draw_WORLD () {
     
     if (WORLD_record_PDF == 1) {
       println("PDF:begin");
-      WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, PDF, MAKE_Filenames("WORLD_") + ".pdf");
+      WORLD_Diagrams = createGraphics(WORLD_X_View, WORLD_Y_View, PDF, MAKE_Filenames(CreateStamp(1) + "WORLD_") + ".pdf");
       beginRecord(WORLD_Diagrams);
     }
     else if (WORLD_Image_Scale != 1) {
@@ -3533,7 +3562,7 @@ void SOLARCHVISION_draw_WORLD () {
     if (WORLD_record_PDF == 1) {
       endRecord();
       
-      String myFile = MAKE_Filenames("WORLD_") + ".pdf";
+      String myFile = MAKE_Filenames(CreateStamp(0) + "WORLD_") + ".pdf";
       SOLARCHVISION_explore_output(myFile);
       println("File created:" + myFile);      
     }
@@ -3541,7 +3570,7 @@ void SOLARCHVISION_draw_WORLD () {
       WORLD_Diagrams.endDraw();
       
       if ((WORLD_record_JPG == 1) || (WORLD_record_AUTO == 1)) {
-        String myFile = MAKE_Filenames("WORLD_") + ".jpg";
+        String myFile = MAKE_Filenames(CreateStamp(1) + "WORLD_") + ".jpg";
         WORLD_Diagrams.save(myFile);
         SOLARCHVISION_explore_output(myFile);
         println("File created:" + myFile);
@@ -3594,7 +3623,7 @@ void SOLARCHVISION_draw_STUDY () {
     
     if (STUDY_record_PDF == 1) {
       println("PDF:begin");
-      STUDY_Diagrams = createGraphics(STUDY_X_View, STUDY_Y_View, PDF, MAKE_Filenames("STUDY_") + ".pdf");
+      STUDY_Diagrams = createGraphics(STUDY_X_View, STUDY_Y_View, PDF, MAKE_Filenames(CreateStamp(1) + "STUDY_") + ".pdf");
       beginRecord(STUDY_Diagrams);
     }
     else if (STUDY_Image_Scale != 1) {
@@ -3668,7 +3697,7 @@ void SOLARCHVISION_draw_STUDY () {
     if (STUDY_record_PDF == 1) {
       endRecord();
       
-      String myFile = MAKE_Filenames("STUDY_") + ".pdf";
+      String myFile = MAKE_Filenames(CreateStamp(0) + "STUDY_") + ".pdf";
       SOLARCHVISION_explore_output(myFile);
       println("File created:" + myFile);             
     }
@@ -3676,7 +3705,7 @@ void SOLARCHVISION_draw_STUDY () {
       STUDY_Diagrams.endDraw();
       
       if ((STUDY_record_JPG == 1) || (STUDY_record_AUTO == 1)) {
-        String myFile = MAKE_Filenames("STUDY_") + ".jpg";
+        String myFile = MAKE_Filenames(CreateStamp(1) + "STUDY_") + ".jpg";
         STUDY_Diagrams.save(myFile);
         SOLARCHVISION_explore_output(myFile);
         println("File created:" + myFile);        
@@ -12367,12 +12396,7 @@ void WIN3D_keyPressed (KeyEvent e) {
 }
 
 
-void SOLARCHVISION_RecordFrame () {
-  
-  SavedScreenShots += 1; 
-  //saveFrame(ScreenShotFolder + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + nf(hour(), 2) + "_IMG" + nf(SavedScreenShots , 3) + ".jpg");
-  saveFrame(ScreenShotFolder + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + nf(hour(), 2) + "_IMG" + nf(SavedScreenShots , 3) + ".tif");
-}
+
 
 
 int frame_variation = 0;
@@ -31216,7 +31240,7 @@ int[] get_startZ_endZ (int data_source) {
 void SOLARCHVISION_explore_output (String outputFile) {
 
   if ((Display_Output_in_Explorer == 1)  && (STUDY_record_AUTO == 0) && (WORLD_record_AUTO == 0) && (WIN3D_record_AUTO == 0) && (FRAME_record_AUTO == 0)) {
-    open("explorer /select," + outputFile.replace("/", "\\"));
+    //open("explorer /select," + outputFile.replace("/", "\\"));
   }
   
 }
