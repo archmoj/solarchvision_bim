@@ -10925,7 +10925,15 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   
           int[] Normals_COL_N;
           Normals_COL_N = new int [9];
-          Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
+          { 
+            float temp_keep_per_day = per_day;
+            int temp_num_add_days = num_add_days;
+            per_day = 1; 
+            num_add_days = 1;
+            Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
+            per_day = temp_keep_per_day;
+            num_add_days = temp_num_add_days;
+          }//zzzzzzzzzzzzzzzzzzzz
   
           for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
             if (nk != -1) {
@@ -10943,7 +10951,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 
                 float Alpha = 90 - acos_ang(SunR[3]);
                 float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
-                
 
                 now_k = k;
                 now_i = i;
@@ -11528,7 +11535,7 @@ void STUDY_keyPressed (KeyEvent e) {
         case 'v' :draw_data_lines = int((draw_data_lines + 1) % 2); STUDY_Update = 1; ROLLOUT_Update = 1; break;
   
         case '`' :num_add_days += 2;
-                  if (num_add_days > 64) num_add_days = 64;
+                  if (num_add_days > 365) num_add_days = 365;
                   update_DevelopDATA = 1; 
                   BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         case '~' :num_add_days -= 2;
@@ -21269,7 +21276,7 @@ void mouseWheel(MouseEvent event) {
                   if (Wheel_Value > 0) num_add_days += 2;
                   if (Wheel_Value < 0) num_add_days -= 2;
                   
-                  if (num_add_days > 64) num_add_days = 64;
+                  if (num_add_days > 365 / STUDY_j_end) num_add_days = 365 / STUDY_j_end;
                   if (num_add_days < 1) num_add_days = 1;
                   
                   if (keep_num_add_days != num_add_days) {
