@@ -282,7 +282,7 @@ float _DATE;
 
 void SOLARCHVISION_RecordFrame () {
   
-  saveFrame(ScreenShotFolder + "/" + CreateStamp(1) + "Screen.tif");
+  saveFrame(ScreenShotFolder + "/" + CreateStamp(1) + "Screen.jpg");
 }
 
 String CreateStamp (int _add) {
@@ -378,7 +378,6 @@ float LocationLongitude_step = 0.1;
 float LocationElevation_step = 1.0;
 
 int save_frame_number = 0;
-int frame_index_number = 0;
 
 int STUDY_record_JPG = 0;
 int STUDY_record_PDF = 0;
@@ -1361,7 +1360,9 @@ void SOLARCHVISION_update_folders () {
   ProjectsFolder        = BaseFolder + "/Projects/Project_A01";  
   DiagramsFolder        = ExportFolder + "/Diagrams";  
   Model3DFolder         = ExportFolder + "/Model_3D" + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);  
-  ScreenShotFolder      = ExportFolder + "/ScreenShots" + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
+  
+  //ScreenShotFolder      = ExportFolder + "/ScreenShots" + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
+  ScreenShotFolder      = ExportFolder + "/ScreenShots" + "/20151209_Presentation";
 
 
 
@@ -2582,7 +2583,7 @@ void draw () {
     STUDY_Update = 0;
     
     if (STUDY_record_PDF == 0) {
-      
+/*      
       if (Illustrations_Animate != 0) {
         GRIB2_Layer = GRIB2_Layer_Start;
   
@@ -2600,7 +2601,7 @@ void draw () {
           WIN3D_Update = 1; // <<<<<<<<<<<
         }
       }
-
+*/
 
       if (WORLD_include == 1) {
         if (WORLD_Update == 1) {
@@ -2647,8 +2648,13 @@ void draw () {
     }
 
 
+    WIN3D_Update = 0;
+    WORLD_Update = 0;
+    STUDY_Update = 0;
+
     //noLoop(); // <<<<<<<<<<<<
   }
+
 
 
 } 
@@ -31379,8 +31385,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setFloat("LocationLatitude_step", LocationLatitude_step);
   newChild1.setFloat("LocationLongitude_step", LocationLongitude_step);
   newChild1.setFloat("LocationElevation_step", LocationElevation_step);
-  newChild1.setInt("save_frame_number", save_frame_number);
-  newChild1.setInt("frame_index_number", frame_index_number);
+  
+  
   newChild1.setInt("STUDY_record_JPG", STUDY_record_JPG);
   newChild1.setInt("STUDY_record_PDF", STUDY_record_PDF);
   newChild1.setInt("STUDY_record_AUTO", STUDY_record_AUTO);
@@ -32237,8 +32243,8 @@ void SOLARCHVISION_load_project (String myFile) {
       LocationLatitude_step = children0[L].getFloat("LocationLatitude_step");
       LocationLongitude_step = children0[L].getFloat("LocationLongitude_step");
       LocationElevation_step = children0[L].getFloat("LocationElevation_step");
-      save_frame_number = children0[L].getInt("save_frame_number");
-      frame_index_number = children0[L].getInt("frame_index_number");
+      
+      
       STUDY_record_JPG = children0[L].getInt("STUDY_record_JPG");
       STUDY_record_PDF = children0[L].getInt("STUDY_record_PDF");
       STUDY_record_AUTO = children0[L].getInt("STUDY_record_AUTO");
