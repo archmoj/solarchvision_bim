@@ -3796,7 +3796,22 @@ void Plot_Setup () {
 
       if ((plot_impacts == 8) || (plot_impacts == 9)) {
         
+        int keep_BEGIN_DAY = BEGIN_DAY;
+        float keep_per_day = per_day;
+        int keep_STUDY_j_end = STUDY_j_end;
+        float keep_STUDY_U_scale = STUDY_U_scale;
+        
+        BEGIN_DAY = 183; //0; // 183: to put the summer diagram on the left similar to the YC book
+        per_day = 183;
+        STUDY_j_end = 2;
+        STUDY_U_scale = 18.0 / float(STUDY_j_end - STUDY_j_start);
+        
         SOLARCHVISION_PlotIMPACT(0, 0 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+        
+        BEGIN_DAY = keep_BEGIN_DAY;
+        per_day = keep_per_day;
+        STUDY_j_end = keep_STUDY_j_end;
+        STUDY_U_scale = keep_STUDY_U_scale;
       }
       else{
         SOLARCHVISION_PlotIMPACT(0, -175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
@@ -11170,6 +11185,12 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     }
     
     float pal_length = 400;
+
+    float pal_offsetY = 175;    
+    if (STUDY_j_end == 2) {
+      pal_offsetY = 325;
+    }
+    
     for (int q = 0; q < 11; q += 1) {
       float _u = 0;
       
@@ -11186,7 +11207,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u); 
       
       STUDY_Diagrams.strokeWeight(0);
-      STUDY_Diagrams.rect((700 + q * (pal_length / 11.0)) * STUDY_S_View, -325 * STUDY_S_View, (pal_length / 11.0) * STUDY_S_View, 20 * STUDY_S_View);
+      STUDY_Diagrams.rect((700 + q * (pal_length / 11.0)) * STUDY_S_View, -pal_offsetY * STUDY_S_View, (pal_length / 11.0) * STUDY_S_View, 20 * STUDY_S_View);
 
       if (_COL[1] + _COL[2] + _COL[3] > 1.75 * 255) {
         STUDY_Diagrams.stroke(127);
@@ -11201,8 +11222,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   
       STUDY_Diagrams.textSize(15.0 * STUDY_S_View);
       STUDY_Diagrams.textAlign(CENTER, CENTER);
-      if (Impact_TYPE == Impact_ACTIVE) STUDY_Diagrams.text(nf(0.1 * q / _Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 325 - 0.05 * 20) * STUDY_S_View);
-      if (Impact_TYPE == Impact_PASSIVE) STUDY_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 325 - 0.05 * 20) * STUDY_S_View);
+      if (Impact_TYPE == Impact_ACTIVE) STUDY_Diagrams.text(nf(0.1 * q / _Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - pal_offsetY - 0.05 * 20) * STUDY_S_View);
+      if (Impact_TYPE == Impact_PASSIVE) STUDY_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - pal_offsetY - 0.05 * 20) * STUDY_S_View);
     } 
     
     
@@ -11220,11 +11241,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
       STUDY_Diagrams.textAlign(CENTER, TOP); 
       if (Impact_TYPE == Impact_ACTIVE) {  
-        STUDY_Diagrams.text(("Direct solar radiation (kWh/m²)"), (700 + 5 * (pal_length / 11.0)) * STUDY_S_View + (pal_length / 11.0) * STUDY_S_View, -325 * STUDY_S_View + 20 * STUDY_S_View);
+        STUDY_Diagrams.text(("Direct solar radiation (kWh/m²)"), (700 + 5 * (pal_length / 11.0)) * STUDY_S_View + (pal_length / 11.0) * STUDY_S_View, -pal_offsetY * STUDY_S_View + 20 * STUDY_S_View);
         //?? French
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        STUDY_Diagrams.text(("Direct solar effects (kWh°C/m²)"), (700 + 5 * (pal_length / 11.0)) * STUDY_S_View + (pal_length / 11.0) * STUDY_S_View, -325 * STUDY_S_View + 20 * STUDY_S_View);
+        STUDY_Diagrams.text(("Direct solar effects (kWh°C/m²)"), (700 + 5 * (pal_length / 11.0)) * STUDY_S_View + (pal_length / 11.0) * STUDY_S_View, -pal_offsetY * STUDY_S_View + 20 * STUDY_S_View);
         //?? French
       }  
     }   
@@ -22643,39 +22664,15 @@ void mouseClicked () {
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Annual cycle sun path (active)")) {
               plot_impacts = 8;
-
+              STUDY_Update = 1;
               display_WindRose_Image = 0;
-
-              //num_add_days = 5;
-              BEGIN_DAY = 0;
-              per_day = 183;
-
-              STUDY_j_end = 2;
-              STUDY_U_scale = 18.0 / float(STUDY_j_end - STUDY_j_start);
-              
-              update_DevelopDATA = 1;
-              rebuild_SolarProjection_array = 1;
-              rebuild_SolarImpact_Image_array = 1;
-              rebuild_WindRose_Image_array = 1;
-              BAR_d_Update = 1;STUDY_Update = 1; ROLLOUT_Update = 1;               
+              ROLLOUT_Update = 1;        
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Annual cycle sun path (passive)")) {
               plot_impacts = 9;
-              
+              STUDY_Update = 1;
               display_WindRose_Image = 0;
-
-              //num_add_days = 5;
-              BEGIN_DAY = 0;
-              per_day = 183;
-
-              STUDY_j_end = 2;
-              STUDY_U_scale = 18.0 / float(STUDY_j_end - STUDY_j_start);
-              
-              update_DevelopDATA = 1;
-              rebuild_SolarProjection_array = 1;
-              rebuild_SolarImpact_Image_array = 1;
-              rebuild_WindRose_Image_array = 1;
-              BAR_d_Update = 1;STUDY_Update = 1; ROLLOUT_Update = 1;                               
+              ROLLOUT_Update = 1;                                        
             }  
             
 // "Run solar 3D-model", "Run wind 3D-model", "Run spatial 3D-model"},            
