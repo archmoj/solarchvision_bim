@@ -4187,24 +4187,21 @@ void Plot_Setup () {
     STUDY_drw_Layer = _windspd; 
     SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
-    STUDY_drw_Layer = A_precipitation ; 
-    develop_Layer = STUDY_drw_Layer;
-    STUDY_drw_Layer = _developed; 
-    develop_option = DEV_OP_9;
-    SOLARCHVISION_DevelopDATA(impacts_source); 
-    SOLARCHVISION_PlotHOURLY(0, 325 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    //STUDY_drw_Layer = A_precipitation ; 
+    //develop_Layer = STUDY_drw_Layer;
+    //STUDY_drw_Layer = _developed; 
+    //develop_option = DEV_OP_9;
+    //SOLARCHVISION_DevelopDATA(impacts_source); 
+    //SOLARCHVISION_PlotHOURLY(0, 325 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     STUDY_drw_Layer = _drybulb; 
     SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     plot_impacts = 1;
-    //camera_variation = 2;
-    //SOLARCHVISION_PlotIMPACT(0, -625 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
-    //camera_variation = 1;
-    SOLARCHVISION_PlotIMPACT(0, -425 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    SOLARCHVISION_PlotIMPACT(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     plot_impacts = -2;
-    SOLARCHVISION_PlotIMPACT(0, -150 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    SOLARCHVISION_PlotIMPACT(0, -200 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
 
   }
@@ -4221,20 +4218,17 @@ void Plot_Setup () {
     STUDY_drw_Layer = STUDY_drw_Layer = _dirnorrad; 
     SOLARCHVISION_PlotHOURLY(0, 175 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View); 
 
-    STUDY_drw_Layer = _glohorrad; //_difhorrad; // <<<<<<<<<<<<<< 
-    SOLARCHVISION_PlotHOURLY(0, 325 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    //STUDY_drw_Layer = _glohorrad; //_difhorrad; // <<<<<<<<<<<<<< 
+    //SOLARCHVISION_PlotHOURLY(0, 325 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     STUDY_drw_Layer = _cloudcover;
     SOLARCHVISION_PlotHOURLY(0, 525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     plot_impacts = 0;
-    //camera_variation = 2;
-    //SOLARCHVISION_PlotIMPACT(0, -625 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
-    //camera_variation = 1;
-    SOLARCHVISION_PlotIMPACT(0, -425 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    SOLARCHVISION_PlotIMPACT(0, -525 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
     plot_impacts = 2; //4;
-    SOLARCHVISION_PlotIMPACT(0, -150 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
+    SOLARCHVISION_PlotIMPACT(0, -200 * STUDY_S_View, 0, (100.0 * STUDY_U_scale * STUDY_S_View), (-1.0 * STUDY_V_scale[STUDY_drw_Layer] * STUDY_S_View), 1.0 * STUDY_S_View);
 
 
     plot_impacts = pre_plot_impacts; 
