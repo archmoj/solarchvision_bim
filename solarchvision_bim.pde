@@ -3664,7 +3664,8 @@ void SOLARCHVISION_draw_STUDY () {
 
     STUDY_Diagrams.textSize(STUDY_X_View * 0.01);
     //STUDY_Diagrams.text(_text, STUDY_X_View * 0.55, STUDY_Y_View * -0.4925, 0);
-    STUDY_Diagrams.text(_text, STUDY_X_View * 0.55, STUDY_Y_View * -0.175 / STUDY_R_View, 0);
+    //STUDY_Diagrams.text(_text, STUDY_X_View * 0.55, STUDY_Y_View * -0.175 / STUDY_R_View, 0);
+    STUDY_Diagrams.text(_text, STUDY_X_View * 0.55, STUDY_Y_View * -0.1666 / STUDY_R_View, 0);
 
     if (STUDY_record_PDF == 1) {
       endRecord();
@@ -7487,7 +7488,7 @@ void SOLARCHVISION_print_other_info (float sx_Plot, float the_STUDY_V_belowLine)
   STUDY_Diagrams.stroke(0);
   STUDY_Diagrams.fill(0);
   STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
-  STUDY_Diagrams.textAlign(LEFT, CENTER);
+  STUDY_Diagrams.textAlign(LEFT, TOP);
 
   if (impacts_source == databaseNumber_CLIMATE_EPW) STUDY_Diagrams.text((_WORDS[0][_LAN] + ":" + LocationName + "\n"), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
   if (impacts_source == databaseNumber_CLIMATE_WY2) STUDY_Diagrams.text((_WORDS[0][_LAN] + ":" + LocationName + "\n("), -1.5 * sx_Plot / STUDY_U_scale, (1.0 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
@@ -7501,7 +7502,7 @@ void SOLARCHVISION_print_other_info (float sx_Plot, float the_STUDY_V_belowLine)
     case 4 : STUDY_Diagrams.stroke(255, 0, 0); STUDY_Diagrams.fill(255, 0, 0); break;
   }
   
-  STUDY_Diagrams.textAlign(RIGHT, CENTER);
+  STUDY_Diagrams.textAlign(RIGHT, TOP);
 
   STUDY_Diagrams.text(sky_scenario_text[sky_scenario], (STUDY_j_end - STUDY_j_start - 0.05) * sx_Plot, (0.3 + the_STUDY_V_belowLine) * sx_Plot / STUDY_U_scale);
 }  
@@ -9251,18 +9252,18 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
       
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
-      STUDY_Diagrams.textAlign(RIGHT, CENTER); 
-      //if (impacts_source == databaseNumber_CLIMATE_WY2) STUDY_Diagrams.text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3 * sx_Plot / STUDY_U_scale);
-      //if (impacts_source == databaseNumber_ENSEMBLE) //STUDY_Diagrams.text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / STUDY_U_scale);
+      STUDY_Diagrams.textAlign(RIGHT, TOP); 
+      //if (impacts_source == databaseNumber_CLIMATE_WY2) STUDY_Diagrams.text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
+      //if (impacts_source == databaseNumber_ENSEMBLE) //STUDY_Diagrams.text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
       
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
-      STUDY_Diagrams.textAlign(LEFT, CENTER); 
+      STUDY_Diagrams.textAlign(LEFT, TOP); 
       if (Impact_TYPE == Impact_SPD_DIR) {  
-        STUDY_Diagrams.text(("Wind direction and speed"), 0, 1.3 * sx_Plot / STUDY_U_scale);
+        STUDY_Diagrams.text(("Wind direction and speed"), 0, 1.4 * sx_Plot / STUDY_U_scale);
         //?? French
       }
       if (Impact_TYPE == Impact_SPD_DIR_TMP) {  
-        STUDY_Diagrams.text(("Wind direction and speed with air temperature"), 0, 1.3 * sx_Plot / STUDY_U_scale);
+        STUDY_Diagrams.text(("Wind direction and speed with air temperature"), 0, 1.4 * sx_Plot / STUDY_U_scale);
         //?? French
       }           
     }
@@ -9838,9 +9839,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
         
         STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
-        STUDY_Diagrams.textAlign(RIGHT, CENTER); 
-        //if (impacts_source == databaseNumber_CLIMATE_WY2) STUDY_Diagrams.text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3 * sx_Plot / STUDY_U_scale);
-        //if (impacts_source == databaseNumber_ENSEMBLE) //STUDY_Diagrams.text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / STUDY_U_scale);
+        STUDY_Diagrams.textAlign(RIGHT, TOP); 
+        //if (impacts_source == databaseNumber_CLIMATE_WY2) STUDY_Diagrams.text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
+        //if (impacts_source == databaseNumber_ENSEMBLE) //STUDY_Diagrams.text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
   
         String Model_Description = "";
         //if (camera_variation == 1) Model_Description = "TR: Place-des-Arts";
@@ -9849,11 +9850,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
         STUDY_Diagrams.textAlign(LEFT, TOP); 
         if (Impact_TYPE == Impact_ACTIVE) {  
-          STUDY_Diagrams.text((Model_Description + "Analysis of Active Potentials (kW/m²)"), 0, 2.5 * sx_Plot / STUDY_U_scale);
+          STUDY_Diagrams.text((Model_Description + "Analysis of Active Potentials (kW/m²)"), 0, 1.4 * sx_Plot / STUDY_U_scale);
           //?? French
         }
         if (Impact_TYPE == Impact_PASSIVE) {  
-          STUDY_Diagrams.text((Model_Description + "Analysis of Passive Potentials (%kW°C/m²)"), 0, 2.5 * sx_Plot / STUDY_U_scale);
+          STUDY_Diagrams.text((Model_Description + "Analysis of Passive Potentials (%kW°C/m²)"), 0, 1.4 * sx_Plot / STUDY_U_scale);
           //?? French
         }    
   
@@ -10313,18 +10314,18 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
       
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
-      STUDY_Diagrams.textAlign(RIGHT, CENTER); 
-      //if (impacts_source == databaseNumber_CLIMATE_WY2) STUDY_Diagrams.text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3 * sx_Plot / STUDY_U_scale);
-      //if (impacts_source == databaseNumber_ENSEMBLE) STUDY_Diagrams.text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / STUDY_U_scale);
+      STUDY_Diagrams.textAlign(RIGHT, TOP); 
+      //if (impacts_source == databaseNumber_CLIMATE_WY2) STUDY_Diagrams.text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
+      //if (impacts_source == databaseNumber_ENSEMBLE) STUDY_Diagrams.text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
       
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
       STUDY_Diagrams.textAlign(LEFT, TOP); 
       if (Impact_TYPE == Impact_ACTIVE) {  
-        STUDY_Diagrams.text(("Solar radiation on hemisphere (kW/m²)"), 0, 2.5 * sx_Plot / STUDY_U_scale);
+        STUDY_Diagrams.text(("Solar radiation on hemisphere (kW/m²)"), 0, 1.4 * sx_Plot / STUDY_U_scale);
         //?? French
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        STUDY_Diagrams.text(("Solar effects on hemisphere (%kW°C/m²)"), 0, 2.5 * sx_Plot / STUDY_U_scale);
+        STUDY_Diagrams.text(("Solar effects on hemisphere (%kW°C/m²)"), 0, 1.4 * sx_Plot / STUDY_U_scale);
         //?? French
       }  
 
@@ -10609,18 +10610,18 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
       
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
-      STUDY_Diagrams.textAlign(RIGHT, CENTER); 
-      //if (impacts_source == databaseNumber_CLIMATE_WY2) STUDY_Diagrams.text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3 * sx_Plot / STUDY_U_scale);
-      //if (impacts_source == databaseNumber_ENSEMBLE) //STUDY_Diagrams.text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / STUDY_U_scale);
+      STUDY_Diagrams.textAlign(RIGHT, TOP); 
+      //if (impacts_source == databaseNumber_CLIMATE_WY2) STUDY_Diagrams.text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
+      //if (impacts_source == databaseNumber_ENSEMBLE) //STUDY_Diagrams.text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
       
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
-      STUDY_Diagrams.textAlign(LEFT, CENTER); 
+      STUDY_Diagrams.textAlign(LEFT, TOP); 
       if (Impact_TYPE == Impact_ACTIVE) {  
-        STUDY_Diagrams.text(("Direct solar radiation (kWh/m²)"), 0, 1.3 * sx_Plot / STUDY_U_scale);
+        STUDY_Diagrams.text(("Direct solar radiation (kWh/m²)"), 0, 1.4 * sx_Plot / STUDY_U_scale);
         //?? French
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        STUDY_Diagrams.text(("Direct solar effects (kWh°C/m²)"), 0, 1.3 * sx_Plot / STUDY_U_scale);
+        STUDY_Diagrams.text(("Direct solar effects (kWh°C/m²)"), 0, 1.4 * sx_Plot / STUDY_U_scale);
         //?? French
       }  
     }   
@@ -10846,9 +10847,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
       
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
-      STUDY_Diagrams.textAlign(LEFT, CENTER); 
+      STUDY_Diagrams.textAlign(LEFT, TOP); 
   
-      STUDY_Diagrams.text(("Solar perspectives"), 0, 1.3 * sx_Plot / STUDY_U_scale);
+      STUDY_Diagrams.text(("Solar perspectives"), 0, 1.4 * sx_Plot / STUDY_U_scale);
     }   
   } 
 
@@ -11201,18 +11202,18 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
       
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
-      STUDY_Diagrams.textAlign(RIGHT, CENTER); 
-      //if (impacts_source == databaseNumber_CLIMATE_WY2) STUDY_Diagrams.text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.3 * sx_Plot / STUDY_U_scale);
-      //if (impacts_source == databaseNumber_ENSEMBLE) //STUDY_Diagrams.text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.3 * sx_Plot / STUDY_U_scale);
+      STUDY_Diagrams.textAlign(RIGHT, TOP); 
+      //if (impacts_source == databaseNumber_CLIMATE_WY2) STUDY_Diagrams.text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
+      //if (impacts_source == databaseNumber_ENSEMBLE) //STUDY_Diagrams.text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
       
       STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
-      STUDY_Diagrams.textAlign(LEFT, CENTER); 
+      STUDY_Diagrams.textAlign(LEFT, TOP); 
       if (Impact_TYPE == Impact_ACTIVE) {  
-        STUDY_Diagrams.text(("Direct solar radiation (kWh/m²)"), 0, 1.3 * sx_Plot / STUDY_U_scale);
+        STUDY_Diagrams.text(("Direct solar radiation (kWh/m²)"), 0, 1.4 * sx_Plot / STUDY_U_scale);
         //?? French
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        STUDY_Diagrams.text(("Direct solar effects (kWh°C/m²)"), 0, 1.3 * sx_Plot / STUDY_U_scale);
+        STUDY_Diagrams.text(("Direct solar effects (kWh°C/m²)"), 0, 1.4 * sx_Plot / STUDY_U_scale);
         //?? French
       }  
     }   
