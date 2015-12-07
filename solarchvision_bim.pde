@@ -30969,9 +30969,34 @@ void SOLARCHVISION_draw_window_BAR_d () {
 
     displayBarWidth = ROLLOUT_X_View; // <<<<<<<<<
     displayBarHeight = 4.5 * MESSAGE_S_View;
+
+    float temp_offsetX = ROLLOUT_CX_View + 0.5 * displayBarWidth;
+    float temp_offsetY = a_pixel + b_pixel + 2 * h_pixel + 0.5 * displayBarHeight;
     
-    pushMatrix();
-    translate(ROLLOUT_CX_View + 0.5 * displayBarWidth, a_pixel + b_pixel + 2 * h_pixel + 0.5 * displayBarHeight);
+    for (int n = 0; n < 9; n++) {
+      
+      int i = 2 - n / 3;
+      int j = 2 - n % 3;
+      
+      float rx = (i + 0.5) / 3.0 - 0.5;
+      float ry = (j + 0.5) / 3.0 - 0.5;
+      
+      float x1 = temp_offsetX + (rx - 0.16) * displayBarWidth;
+      float x2 = temp_offsetX + (rx + 0.16) * displayBarWidth;
+      float y1 = temp_offsetY + (ry - 0.15) * displayBarHeight;
+      float y2 = temp_offsetY + (ry + 0.15) * displayBarHeight;
+
+      if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2) == 1) {
+
+        impact_layer = n;
+
+        ROLLOUT_Update = 1;
+        STUDY_Update = 1;
+        
+        SOLARCHVISION_check_for_WIN3D_update();
+
+      }
+    }
    
     for (int n = 0; n < 9; n++) {
       
@@ -30981,11 +31006,11 @@ void SOLARCHVISION_draw_window_BAR_d () {
       float rx = (i + 0.5) / 3.0 - 0.5;
       float ry = (j + 0.5) / 3.0 - 0.5;
 
-      float x1 = (rx - 0.16) * displayBarWidth;
-      float x2 = (rx + 0.16) * displayBarWidth;
-      float y1 = (ry - 0.15) * displayBarHeight;
-      float y2 = (ry + 0.15) * displayBarHeight;
-      
+      float x1 = temp_offsetX + (rx - 0.16) * displayBarWidth;
+      float x2 = temp_offsetX + (rx + 0.16) * displayBarWidth;
+      float y1 = temp_offsetY + (ry - 0.15) * displayBarHeight;
+      float y2 = temp_offsetY + (ry + 0.15) * displayBarHeight;
+
       if (n == impact_layer) { 
         fill(255,127,0);
         noStroke();
@@ -31023,8 +31048,6 @@ void SOLARCHVISION_draw_window_BAR_d () {
               
       text(N_Title[n], 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.2 * MESSAGE_S_View);
     }    
-    
-    popMatrix();
 
     X_clicked = -1;
     Y_clicked = -1;
