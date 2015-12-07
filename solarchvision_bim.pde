@@ -10925,7 +10925,14 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   
           int[] Normals_COL_N;
           Normals_COL_N = new int [9];
-          Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, more_J + j, DATE_ANGLE);
+          {
+            int keep_filter_type = filter_type;
+            filter_type = _hourly;
+            
+            Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, more_J + j, DATE_ANGLE);
+            
+            filter_type = keep_filter_type;
+          }
   
           for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
             if (nk != -1) {
@@ -11024,18 +11031,23 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 SunPathMesh[i][row_J][2] = _valuesSUM;
 
               }
-
-              STUDY_Diagrams.stroke(0);
-              STUDY_Diagrams.fill(0);
-              STUDY_Diagrams.textAlign(CENTER, CENTER); 
-              STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
-              
-              String scenario_text = "";
-              //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
-              //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
-              STUDY_Diagrams.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, 0.95  * sx_Plot / STUDY_U_scale);
-              
             }
+            else {
+              for (int i = 0; i < 24; i += 1) {
+                  
+                float HOUR_ANGLE = i; 
+                float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+                
+                float Alpha = 90 - acos_ang(SunR[3]);
+                float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
+                
+                int row_J = more_J / num_add_days;
+
+                SunPathMesh[i][row_J][0] = (90 - Alpha) * (cos_ang(Beta - 90));
+                SunPathMesh[i][row_J][1] = (90 - Alpha) * (sin_ang(Beta - 90));
+                SunPathMesh[i][row_J][2] = FLOAT_undefined;            
+              }
+            }            
           }
         }
 
