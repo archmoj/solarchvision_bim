@@ -30623,8 +30623,8 @@ void SOLARCHVISION_draw_window_BAR_d () {
     
     for (int i = 0; i < BAR_d_Items.length; i++) {
       
-      float x1 = X_control - 0.366 * displayBarWidth;
-      float x2 = X_control + 0.5 * displayBarWidth;
+      float x1 = X_control - 0.3666 * displayBarWidth;
+      float x2 = X_control + 0.4875 * displayBarWidth;
       float y1 = Y_control - 0.45 * displayBarHeight;
       float y2 = Y_control + 0.45 * displayBarHeight;
       
@@ -30961,49 +30961,70 @@ void SOLARCHVISION_draw_window_BAR_d () {
       }        
 
 
+
       
       Y_control += BAR_d_tab;
     }
 
 
-    displayBarWidth = ROLLOUT_X_View;
-   
-    X_control = ROLLOUT_CX_View + 0.5 * displayBarWidth;
-    Y_control = a_pixel + b_pixel + 2 * h_pixel + 0.5 * BAR_d_tab;
+    displayBarWidth = ROLLOUT_X_View; // <<<<<<<<<
+    displayBarHeight = 4.5 * MESSAGE_S_View;
     
+    pushMatrix();
+    translate(ROLLOUT_CX_View + 0.5 * displayBarWidth, a_pixel + b_pixel + 2 * h_pixel + 0.5 * displayBarHeight);
+   
     for (int n = 0; n < 9; n++) {
       
-      int i = n % 3;
-      int j = i / 3;
+      int i = 2 - n / 3;
+      int j = 2 - n % 3;
       
       float rx = (i + 0.5) / 3.0 - 0.5;
       float ry = (j + 0.5) / 3.0 - 0.5;
+
+      float x1 = (rx - 0.16) * displayBarWidth;
+      float x2 = (rx + 0.16) * displayBarWidth;
+      float y1 = (ry - 0.15) * displayBarHeight;
+      float y2 = (ry + 0.15) * displayBarHeight;
       
-      float dx = displayBarWidth / 3.0;
-      float dy = displayBarHeight / 3.0;
-      
-      println("n", n, rx, ry, dx, dy);
-      
-      float x1 = X_control - rx * dx;
-      float x2 = X_control + rx * dx;
-      float y1 = Y_control - ry * dy;
-      float y2 = Y_control + ry * dy;
-      
-      fill(127);
-      noStroke();      
+      if (n == impact_layer) { 
+        fill(255,127,0);
+        noStroke();
+      }
+      else if (n / 3 == impact_layer / 3) {
+        fill(127,63,0);
+        noStroke();        
+      }
+      else {
+        fill(127);
+        noStroke();        
+      }  
       rect(x1, y1, x2 - x1, y2 - y1);      
       
       textAlign(CENTER, CENTER);   
-      stroke(0); 
-      fill(0);
-      textSize(1.25 * MESSAGE_S_View);
+      if (n == impact_layer) { 
+        stroke(0); 
+        fill(0); 
+      }
+      else if (n / 3 == impact_layer / 3) {
+        stroke(191); 
+        fill(191);        
+      }      
+      else {
+        stroke(255); 
+        fill(255); 
+      }        
+
+      if (n == impact_layer) { 
+        textSize(1.25 * MESSAGE_S_View);
+      }
+      else {
+        textSize(1.125 * MESSAGE_S_View);
+      }
               
-      text(nf(n, 0), 0.5 + (x1 + x2), 0.5 * (y1 + y2) - 0.2 * MESSAGE_S_View);
-      
-      Y_control += BAR_d_tab;
+      text(N_Title[n], 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.2 * MESSAGE_S_View);
     }    
     
-    
+    popMatrix();
 
     X_clicked = -1;
     Y_clicked = -1;
