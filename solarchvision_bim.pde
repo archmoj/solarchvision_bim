@@ -7848,7 +7848,8 @@ void SOLARCHVISION_draw_normals (int i, int j, float[] _valuesA, float[] _values
 
   //for (int p = 0; p < 1; p += 1) { 
     //int l = impact_layer;
-    
+
+
     if (l == N_Middle) {
       STUDY_Diagrams.strokeWeight(STUDY_T_scale * 4);
       STUDY_Diagrams.stroke(0, 191, 0, _OPACITY);
@@ -7896,6 +7897,13 @@ void SOLARCHVISION_draw_normals (int i, int j, float[] _valuesA, float[] _values
     }
 
 
+/*
+    if (l == impact_layer) {
+      STUDY_Diagrams.strokeWeight(STUDY_T_scale * 4);
+      STUDY_Diagrams.stroke(0, 191, 0, _OPACITY);
+      STUDY_Diagrams.fill(0, 191, 0, _OPACITY);
+    }
+*/
 
 /////////////////////////////// 
 /*
