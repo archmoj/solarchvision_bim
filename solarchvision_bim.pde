@@ -10925,15 +10925,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   
           int[] Normals_COL_N;
           Normals_COL_N = new int [9];
-          { 
-            float temp_keep_per_day = per_day;
-            int temp_num_add_days = num_add_days;
-            per_day = 1; 
-            num_add_days = 1;
-            Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
-            per_day = temp_keep_per_day;
-            num_add_days = temp_num_add_days;
-          }//zzzzzzzzzzzzzzzzzzzz
+          Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, more_J + j, DATE_ANGLE);
   
           for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
             if (nk != -1) {
