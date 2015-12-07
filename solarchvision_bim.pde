@@ -12,10 +12,12 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 3;
+int STATION_NUMBER = 1;
 
 String[][] DEFINED_STATIONS = {
   
+                                {"Hamedan_Site", "XX", "IR", "34.807", "48.455", "50", "1988.5", "240.0", "", "", "IRN_HAMEDAN_XX_IR"},
+                                
                                 {"Hamedan_Site", "XX", "IR", "34.807", "48.455", "50", "1988.5", "240.0", "", "", "IRN_HAMEDAN_XX_IR"},
   
                                 {"Berlin_Museum_of_the_20th_Century", "BB", "DE", "52.5080", "13.3685", "15", "36.7", "240.0", "", "", "DEU_Berlin.103840_IWEC"},
@@ -1724,7 +1726,7 @@ void SOLARCHVISION_update_models (int Step) {
    if ((Step == 0) || (Step == 1)) SOLARCHVISION_remove_3Dobjects();
    //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
    if ((Step == 0) || (Step == 3)) SOLARCHVISION_remove_ParametricGeometries();
-   if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
+   //if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
    if ((Step == 0) || (Step == 5)) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
 
 }
@@ -12331,10 +12333,10 @@ void WIN3D_keyPressed (KeyEvent e) {
                   WIN3D_RZ_coordinate = 0; 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         
-        case '1' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 315; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case '3' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 45; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case '7' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 225; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case '9' :WIN3D_RX_coordinate = 45; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 135; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '1' :WIN3D_RZ_coordinate = 315; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '3' :WIN3D_RZ_coordinate = 45; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '7' :WIN3D_RZ_coordinate = 225; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '9' :WIN3D_RZ_coordinate = 135; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
   
         case '2' :WIN3D_RX_coordinate += WIN3D_RS_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         case '4' :WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
