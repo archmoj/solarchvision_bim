@@ -22612,78 +22612,111 @@ void mouseClicked () {
      
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Wind pattern (active)")) {
               plot_impacts = -2;
+              STUDY_setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               display_WindRose_Image = 1;
               ROLLOUT_Update = 1;               
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Wind pattern (passive)")) {
               plot_impacts = -1;
+              STUDY_setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               display_WindRose_Image = 1;
               ROLLOUT_Update = 1;               
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Urban solar potential (active)")) {
               plot_impacts = 0;
+              STUDY_setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               display_WindRose_Image = 0;
               ROLLOUT_Update = 1;              
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Urban solar potential (passive)")) {
               plot_impacts = 1;
+              STUDY_setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               display_WindRose_Image = 0;
               ROLLOUT_Update = 1;                            
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Orientation potential (active)")) {
               plot_impacts = 2;
+              STUDY_setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               display_WindRose_Image = 0;
               ROLLOUT_Update = 1;                            
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Orientation potential (passive)")) {
               plot_impacts = 3;
+              STUDY_setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               display_WindRose_Image = 0;
               ROLLOUT_Update = 1;                            
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Hourly sun position (active)")) {
               plot_impacts = 4;
+              STUDY_setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               display_WindRose_Image = 0;
               ROLLOUT_Update = 1;                            
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Hourly sun position (passive)")) {
               plot_impacts = 5;
+              STUDY_setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               display_WindRose_Image = 0;
               ROLLOUT_Update = 1;                            
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("View from sun & sky (active)")) {
               plot_impacts = 6;
+              STUDY_setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               display_WindRose_Image = 0;
               ROLLOUT_Update = 1;                            
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("View from sun & sky (passive)")) {
               plot_impacts = 7;
+              STUDY_setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               display_WindRose_Image = 0;
               ROLLOUT_Update = 1;                            
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Annual cycle sun path (active)")) {
               plot_impacts = 8;
+              STUDY_setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               display_WindRose_Image = 0;
               ROLLOUT_Update = 1;        
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Annual cycle sun path (passive)")) {
               plot_impacts = 9;
+              STUDY_setup = 14; // <<<<<<<<
               STUDY_Update = 1;
               display_WindRose_Image = 0;
               ROLLOUT_Update = 1;                                        
             }  
             
 // "Run solar 3D-model", "Run wind 3D-model", "Run spatial 3D-model"},            
+
+
+            for (int n = -2; n <= 14; n++) { 
+              if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Layout " + nf(n, 0))) {
+                
+                STUDY_setup = n;
+                STUDY_Update = 1;
+                
+                if (STUDY_setup == 14) {
+                }
+                else {  
+                  
+                  if (frame_variation != 2) {
+                    frame_variation = 2;
+                    SOLARCHVISION_update_frame_layout();
+                  }
+                }
+              }
+            }
+       
+            
 
 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Stop REC.")) { 
@@ -29439,6 +29472,7 @@ String[][] BAR_a_Items = {
                         {"Shade", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Run solar 3D-model", "Run wind 3D-model", "Run spatial 3D-model"},
                         {"Layer"}, // Parameters 
+                        {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
                         {"Select", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Seed/Material", "Teselation", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize"},
