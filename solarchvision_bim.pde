@@ -1363,8 +1363,8 @@ void SOLARCHVISION_update_folders () {
   DiagramsFolder        = ExportFolder + "/Diagrams";  
   Model3DFolder         = ExportFolder + "/Model_3D" + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);  
   
-  //ScreenShotFolder      = ExportFolder + "/ScreenShots" + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
-  ScreenShotFolder      = ExportFolder + "/ScreenShots" + "/20151209_Presentation";
+  ScreenShotFolder      = ExportFolder + "/ScreenShots" + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);
+  //ScreenShotFolder      = ExportFolder + "/ScreenShots" + "/Next_Presentation";
 
 
 
@@ -2650,9 +2650,9 @@ void draw () {
     }
 
 
-    WIN3D_Update = 0;
-    WORLD_Update = 0;
-    STUDY_Update = 0;
+    //WIN3D_Update = 0;
+    //WORLD_Update = 0;
+    //STUDY_Update = 0;
 
     //noLoop(); // <<<<<<<<<<<<
   }
@@ -11728,6 +11728,9 @@ float[] SOLARCHVISION_WYRD (float _variable) {
 
   return COL;
 }
+
+
+
 
 
 void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float LocationLatitude) { 
@@ -30713,7 +30716,7 @@ void SOLARCHVISION_draw_window_BAR_d () {
   
           if (mouseButton == LEFT) {
             STUDY_i_start = int(roundTo(24.0 * (X_clicked - x1) / (x2 - x1) - 0.5, 1));
-            
+
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
             
@@ -31265,6 +31268,11 @@ void SOLARCHVISION_check_for_WIN3D_update () {
   }     
   if (display_WindRose_Image != 0) {
     rebuild_WindRose_Image_array = 1;
+    WIN3D_Update = 1;
+  }      
+ 
+
+  if (Display_SunPath3D != 0) {
     WIN3D_Update = 1;
   }      
 }  
