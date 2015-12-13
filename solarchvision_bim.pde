@@ -11054,7 +11054,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
 
-void SOLARCHVISION_draw_SunPathHalfCycle(float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot, int l, int target_window) {
+void SOLARCHVISION_draw_SunPathHalfCycle (float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot, int l, int target_window) {
 
   // target_window1: 1:STUDY, 2:WORLD, 3:WIN3D
   
@@ -11092,13 +11092,25 @@ void SOLARCHVISION_draw_SunPathHalfCycle(float x_Plot, float y_Plot, float z_Plo
 
   int PAL_TYPE = 0; 
   int PAL_DIR = 1;
-  
-  if (Impact_TYPE == Impact_ACTIVE) {  
-    PAL_TYPE = STUDY_Pallet_ACTIVE_CLR; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;
+
+  if (target_window == 3) {
+    
+    if (Impact_TYPE == Impact_ACTIVE) {  
+      PAL_TYPE = SunPath3D_Pallet_ACTIVE_CLR; PAL_DIR = SunPath3D_Pallet_ACTIVE_DIR;
+    }
+    if (Impact_TYPE == Impact_PASSIVE) {  
+      PAL_TYPE = SunPath3D_Pallet_PASSIVE_CLR; PAL_DIR = SunPath3D_Pallet_PASSIVE_DIR;
+    }
   }
-  if (Impact_TYPE == Impact_PASSIVE) {  
-    PAL_TYPE = STUDY_Pallet_PASSIVE_CLR; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
-  }             
+  else {
+    
+    if (Impact_TYPE == Impact_ACTIVE) {  
+      PAL_TYPE = STUDY_Pallet_ACTIVE_CLR; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;
+    }
+    if (Impact_TYPE == Impact_PASSIVE) {  
+      PAL_TYPE = STUDY_Pallet_PASSIVE_CLR; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
+    }
+  }  
 
   float _Multiplier = 1; 
   if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * STUDY_Pallet_ACTIVE_MLT;
@@ -11346,21 +11358,9 @@ void SOLARCHVISION_draw_SunPathHalfCycle(float x_Plot, float y_Plot, float z_Plo
                   if (PAL_DIR == 2) _u =  0.5 * _u;
                   
                   float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);
-  
-                  if (target_window == 1) {
-    
-                    STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
-                    
-                    float x = (90 - Alpha) * (cos_ang(Beta - 90)) * obj_scale;
-                    float y = (90 - Alpha) * (sin_ang(Beta - 90)) * obj_scale;
-                    
-                    STUDY_Diagrams.vertex((j + obj_offset_x + x) * sx_Plot, -y * sx_Plot);
-                  }
-                  else if (target_window == 2) {
-                    // ??????????????????????????
-                  }
-                  else if (target_window == 3) {
-                    WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+
+                  if (target_window == 3) {
+                    WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], 127);
                     
                     float x = cos_ang(Alpha) * (cos_ang(Beta - 90)) * WIN3D_scale3D;
                     float y = cos_ang(Alpha) * (sin_ang(Beta - 90)) * WIN3D_scale3D;
@@ -11369,7 +11369,19 @@ void SOLARCHVISION_draw_SunPathHalfCycle(float x_Plot, float y_Plot, float z_Plo
                     WIN3D_Diagrams.vertex(x * sx_Plot, -y * sx_Plot, z * sz_Plot);
                     
                   }
-                  
+                  else if (target_window == 2) {
+                    // ??????????????????????????
+                  }                  
+                  else if (target_window == 1) {
+    
+                    STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+                    
+                    float x = (90 - Alpha) * (cos_ang(Beta - 90)) * obj_scale;
+                    float y = (90 - Alpha) * (sin_ang(Beta - 90)) * obj_scale;
+                    
+                    STUDY_Diagrams.vertex((j + obj_offset_x + x) * sx_Plot, -y * sx_Plot);
+                  }
+
                 }
               }
             }
@@ -11812,11 +11824,18 @@ float[] SOLARCHVISION_WYRD (float _variable) {
 
 
 
-
-
 void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float LocationLatitude) { 
 
   if (Display_SunPath3D != 0) {
+    
+    SOLARCHVISION_draw_SunPathHalfCycle(x_SunPath, x_SunPath,x_SunPath, s_SunPath, s_SunPath, s_SunPath, impact_layer, 3);
+  }
+}
+
+void SOLARCHVISION_draw_SunPath3D_OLD (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float LocationLatitude) { 
+
+  if (Display_SunPath3D != 0) {
+    
 
     int PAL_TYPE = 0; 
     int PAL_DIR = 1;
