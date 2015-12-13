@@ -10967,7 +10967,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
       for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
         
-        float[][][] SunPathMesh = new float [24 * TES_hour][1 + int(per_day / num_add_days)][4];        
+        float[][][] SunPathMesh = new float [24 * TES_hour][1 + int(per_day / num_add_days)][3];        
  
         for (int more_J = 0; more_J < per_day; more_J += num_add_days) {
           
@@ -11113,8 +11113,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 
                 int row_J = more_J / num_add_days;
 
-                SunPathMesh[int(i * TES_hour)][row_J][0] = (90 - Alpha) * (cos_ang(Beta - 90));
-                SunPathMesh[int(i * TES_hour)][row_J][1] = (90 - Alpha) * (sin_ang(Beta - 90));
+                SunPathMesh[int(i * TES_hour)][row_J][0] = Alpha;
+                SunPathMesh[int(i * TES_hour)][row_J][1] = Beta;
                 SunPathMesh[int(i * TES_hour)][row_J][2] = _valuesSUM;
 
               }
@@ -11130,8 +11130,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 
                 int row_J = more_J / num_add_days;
 
-                SunPathMesh[int(i * TES_hour)][row_J][0] = (90 - Alpha) * (cos_ang(Beta - 90));
-                SunPathMesh[int(i * TES_hour)][row_J][1] = (90 - Alpha) * (sin_ang(Beta - 90));
+                SunPathMesh[int(i * TES_hour)][row_J][0] = Alpha;
+                SunPathMesh[int(i * TES_hour)][row_J][1] = Beta;
                 SunPathMesh[int(i * TES_hour)][row_J][2] = FLOAT_undefined;            
               }
             }            
@@ -11187,10 +11187,12 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 STUDY_Diagrams.noStroke();
                 
                 for (int s = 0; s < base_Vertices.length; s++) {
-    
-                  if (dist(base_Vertices[s][0], base_Vertices[s][1], 0, 0) <= 90) {
                   
-                    float _valuesSUM = base_Vertices[s][2];
+                  float Alpha = base_Vertices[s][0];
+                  float Beta = base_Vertices[s][1];
+                  float _valuesSUM = base_Vertices[s][2];
+    
+                  if (Alpha >= 0) {
         
                     if (_valuesSUM < 0.9 * FLOAT_undefined) {
                     
@@ -11207,8 +11209,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
                       STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
                       
-                      float x = base_Vertices[s][0] * obj_scale;
-                      float y = base_Vertices[s][1] * obj_scale;
+                      float x = (90 - Alpha) * (cos_ang(Beta - 90)) * obj_scale;
+                      float y = (90 - Alpha) * (sin_ang(Beta - 90)) * obj_scale;
                       
                       STUDY_Diagrams.vertex((j + obj_offset_x + x) * sx_Plot, -y * sx_Plot);
                     }
