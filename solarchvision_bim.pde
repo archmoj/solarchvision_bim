@@ -11158,9 +11158,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           for (float i = 0; i < 24; i += 1.0 / float(TES_hour)) {  
             if (isInHourlyRange(i) == 1) {
               if ((i > _sunrise - 1) && (i < _sunset + 1)) {              
-              
-                float[][] base_Vertices = new float [4][3];
-            
+
+                STUDY_Diagrams.beginShape();
+                
+                STUDY_Diagrams.noStroke();
+                
                 for (int s = 0; s < 4; s += 1) {
                   
                   int a = int(i * TES_hour);
@@ -11175,22 +11177,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   }
                   
                   if (a > (24 * TES_hour - 1)) a = a % (24 * TES_hour);
-                  
-                  base_Vertices[s][0] = SunPathMesh[a][b][0];
-                  base_Vertices[s][1] = SunPathMesh[a][b][1];
-                  base_Vertices[s][2] = SunPathMesh[a][b][2];
-                  
-                }
-                
-                STUDY_Diagrams.beginShape();
-                
-                STUDY_Diagrams.noStroke();
-                
-                for (int s = 0; s < base_Vertices.length; s++) {
-                  
-                  float Alpha = base_Vertices[s][0];
-                  float Beta = base_Vertices[s][1];
-                  float _valuesSUM = base_Vertices[s][2];
+
+                  float Alpha = SunPathMesh[a][b][0];
+                  float Beta = SunPathMesh[a][b][1];
+                  float _valuesSUM = SunPathMesh[a][b][2];
     
                   if (Alpha >= 0) {
         
