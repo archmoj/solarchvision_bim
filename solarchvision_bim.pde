@@ -10913,14 +10913,21 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
   if ((plot_impacts == 8) || (plot_impacts == 9)) {
+    
+    int TES_hour = 4; // 1 = every 1 hour, 4 = every 15 minutes
 
     if (plot_impacts == 8) Impact_TYPE = Impact_ACTIVE; 
     if (plot_impacts == 9) Impact_TYPE = Impact_PASSIVE;
 
-    float Pa = FLOAT_undefined;
-    float Pb = FLOAT_undefined;
-    float Pc = FLOAT_undefined;
-    float Pd = FLOAT_undefined;
+    float Pa1 = FLOAT_undefined;
+    float Pb1 = FLOAT_undefined;
+    float Pc1 = FLOAT_undefined;
+    float Pd1 = FLOAT_undefined;
+
+    float Pa2 = FLOAT_undefined;
+    float Pb2 = FLOAT_undefined;
+    float Pc2 = FLOAT_undefined;
+    float Pd2 = FLOAT_undefined;
 
     float _values_R_dir;
     float _values_R_dif;
@@ -10928,7 +10935,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     float _values_E_dif;
    
     int now_k = 0;
-    int now_i = 0;
+    int now_i1 = 0;
+    int now_i2 = 0;
     int now_j = 0;
 
     int PAL_TYPE = 0; 
@@ -10959,7 +10967,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
       for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
         
-        float[][][] SunPathMesh = new float [24][1 + int(per_day / num_add_days)][4];        
+        float[][][] SunPathMesh = new float [24 * TES_hour][1 + int(per_day / num_add_days)][4];        
  
         for (int more_J = 0; more_J < per_day; more_J += num_add_days) {
           
@@ -10997,7 +11005,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               float _valuesSUM_EFF = 0;
               int _valuesNUM = 0; 
   
-              for (int i = 0; i < 24; i += 1) {
+              for (float i = 0; i < 24; i += 1.0 / float(TES_hour)) {
                   
                 float HOUR_ANGLE = i; 
                 float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
@@ -11006,7 +11014,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
 
                 now_k = k;
-                now_i = i;
+                
+                now_i1 = floor(i);
+                now_i2 = (1 + now_i1) % 24;
+                float i_ratio = i - now_i1; 
+                
                 now_j = int(more_J + j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
     
                 if (now_j >= 365) {
@@ -11017,31 +11029,52 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 }
 
                 if (impacts_source == databaseNumber_CLIMATE_WY2) {
-                    Pa = CLIMATE_WY2[now_i][now_j][_dirnorrad][now_k]; 
-                    Pb = CLIMATE_WY2[now_i][now_j][_difhorrad][now_k]; 
-                    Pc = CLIMATE_WY2[now_i][now_j][_direffect][now_k]; 
-                    Pd = CLIMATE_WY2[now_i][now_j][_difeffect][now_k]; 
+                    Pa1 = CLIMATE_WY2[now_i1][now_j][_dirnorrad][now_k]; 
+                    Pb1 = CLIMATE_WY2[now_i1][now_j][_difhorrad][now_k]; 
+                    Pc1 = CLIMATE_WY2[now_i1][now_j][_direffect][now_k]; 
+                    Pd1 = CLIMATE_WY2[now_i1][now_j][_difeffect][now_k]; 
+                    
+                    Pa2 = CLIMATE_WY2[now_i2][now_j][_dirnorrad][now_k]; 
+                    Pb2 = CLIMATE_WY2[now_i2][now_j][_difhorrad][now_k]; 
+                    Pc2 = CLIMATE_WY2[now_i2][now_j][_direffect][now_k]; 
+                    Pd2 = CLIMATE_WY2[now_i2][now_j][_difeffect][now_k];                     
                 }
                 if (impacts_source == databaseNumber_ENSEMBLE) {
-                    Pa = ENSEMBLE[now_i][now_j][_dirnorrad][now_k]; 
-                    Pb = ENSEMBLE[now_i][now_j][_difhorrad][now_k]; 
-                    Pc = ENSEMBLE[now_i][now_j][_direffect][now_k]; 
-                    Pd = ENSEMBLE[now_i][now_j][_difeffect][now_k]; 
+                    Pa1 = ENSEMBLE[now_i1][now_j][_dirnorrad][now_k]; 
+                    Pb1 = ENSEMBLE[now_i1][now_j][_difhorrad][now_k]; 
+                    Pc1 = ENSEMBLE[now_i1][now_j][_direffect][now_k]; 
+                    Pd1 = ENSEMBLE[now_i1][now_j][_difeffect][now_k]; 
+                    
+                    Pa2 = ENSEMBLE[now_i2][now_j][_dirnorrad][now_k]; 
+                    Pb2 = ENSEMBLE[now_i2][now_j][_difhorrad][now_k]; 
+                    Pc2 = ENSEMBLE[now_i2][now_j][_direffect][now_k]; 
+                    Pd2 = ENSEMBLE[now_i2][now_j][_difeffect][now_k];                     
                 }            
                 if (impacts_source == databaseNumber_OBSERVED) {
-                    Pa = OBSERVED[now_i][now_j][_dirnorrad][now_k]; 
-                    Pb = OBSERVED[now_i][now_j][_difhorrad][now_k]; 
-                    Pc = OBSERVED[now_i][now_j][_direffect][now_k]; 
-                    Pd = OBSERVED[now_i][now_j][_difeffect][now_k]; 
+                    Pa1 = OBSERVED[now_i1][now_j][_dirnorrad][now_k]; 
+                    Pb1 = OBSERVED[now_i1][now_j][_difhorrad][now_k]; 
+                    Pc1 = OBSERVED[now_i1][now_j][_direffect][now_k]; 
+                    Pd1 = OBSERVED[now_i1][now_j][_difeffect][now_k]; 
+                    
+                    Pa2 = OBSERVED[now_i2][now_j][_dirnorrad][now_k]; 
+                    Pb2 = OBSERVED[now_i2][now_j][_difhorrad][now_k]; 
+                    Pc2 = OBSERVED[now_i2][now_j][_direffect][now_k]; 
+                    Pd2 = OBSERVED[now_i2][now_j][_difeffect][now_k];                     
                 }   
                 if (impacts_source == databaseNumber_CLIMATE_EPW) {
-                    Pa = CLIMATE_EPW[now_i][now_j][_dirnorrad][now_k]; 
-                    Pb = CLIMATE_EPW[now_i][now_j][_difhorrad][now_k]; 
-                    Pc = CLIMATE_EPW[now_i][now_j][_direffect][now_k]; 
-                    Pd = CLIMATE_EPW[now_i][now_j][_difeffect][now_k]; 
+                    Pa1 = CLIMATE_EPW[now_i1][now_j][_dirnorrad][now_k]; 
+                    Pb1 = CLIMATE_EPW[now_i1][now_j][_difhorrad][now_k]; 
+                    Pc1 = CLIMATE_EPW[now_i1][now_j][_direffect][now_k]; 
+                    Pd1 = CLIMATE_EPW[now_i1][now_j][_difeffect][now_k]; 
+                    
+                    Pa2 = CLIMATE_EPW[now_i2][now_j][_dirnorrad][now_k]; 
+                    Pb2 = CLIMATE_EPW[now_i2][now_j][_difhorrad][now_k]; 
+                    Pc2 = CLIMATE_EPW[now_i2][now_j][_direffect][now_k]; 
+                    Pd2 = CLIMATE_EPW[now_i2][now_j][_difeffect][now_k];                     
                 }          
     
-                if ((Pa > 0.9 * FLOAT_undefined) || (Pb > 0.9 * FLOAT_undefined) || (Pc > 0.9 * FLOAT_undefined) || (Pd > 0.9 * FLOAT_undefined)) {
+                if ((Pa1 > 0.9 * FLOAT_undefined) || (Pb1 > 0.9 * FLOAT_undefined) || (Pc1 > 0.9 * FLOAT_undefined) || (Pd1 > 0.9 * FLOAT_undefined)
+                 || (Pa2 > 0.9 * FLOAT_undefined) || (Pb2 > 0.9 * FLOAT_undefined) || (Pc2 > 0.9 * FLOAT_undefined) || (Pd2 > 0.9 * FLOAT_undefined)) {
                   _values_R_dir = FLOAT_undefined;
                   _values_R_dif = FLOAT_undefined;
                   _values_E_dir = FLOAT_undefined;
@@ -11050,16 +11083,16 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 else {
 
                   int drw_count = 0;
-                  if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
-                  if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
-                  if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
-                  if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                  if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW", _cloudcover, filter_type, sky_scenario, now_i1, now_j, now_k);
+                  if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2", _cloudcover, filter_type, sky_scenario, now_i1, now_j, now_k);
+                  if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE", _cloudcover, filter_type, sky_scenario, now_i1, now_j, now_k);
+                  if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i1, now_j, now_k);
                     
                   if (drw_count == 1) {
-                    _values_R_dir = 0.001 * Pa;
-                    _values_R_dif = 0.001 * Pb;
-                    _values_E_dir = 0.001 * Pc;
-                    _values_E_dif = 0.001 * Pd;
+                    _values_R_dir = 0.001 * (Pa1 * (1 - i_ratio) + Pa2 * i_ratio);
+                    _values_R_dif = 0.001 * (Pb1 * (1 - i_ratio) + Pb2 * i_ratio);
+                    _values_E_dir = 0.001 * (Pc1 * (1 - i_ratio) + Pc2 * i_ratio);
+                    _values_E_dif = 0.001 * (Pd1 * (1 - i_ratio) + Pd2 * i_ratio);
                     
                     if (_valuesSUM_RAD > 0.9 * FLOAT_undefined) {
                       _valuesSUM_RAD = 0;
@@ -11080,14 +11113,14 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 
                 int row_J = more_J / num_add_days;
 
-                SunPathMesh[i][row_J][0] = (90 - Alpha) * (cos_ang(Beta - 90));
-                SunPathMesh[i][row_J][1] = (90 - Alpha) * (sin_ang(Beta - 90));
-                SunPathMesh[i][row_J][2] = _valuesSUM;
+                SunPathMesh[int(i * TES_hour)][row_J][0] = (90 - Alpha) * (cos_ang(Beta - 90));
+                SunPathMesh[int(i * TES_hour)][row_J][1] = (90 - Alpha) * (sin_ang(Beta - 90));
+                SunPathMesh[int(i * TES_hour)][row_J][2] = _valuesSUM;
 
               }
             }
             else {
-              for (int i = 0; i < 24; i += 1) {
+              for (float i = 0; i < 24; i += 1.0 / float(TES_hour)) {
                   
                 float HOUR_ANGLE = i; 
                 float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
@@ -11097,9 +11130,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 
                 int row_J = more_J / num_add_days;
 
-                SunPathMesh[i][row_J][0] = (90 - Alpha) * (cos_ang(Beta - 90));
-                SunPathMesh[i][row_J][1] = (90 - Alpha) * (sin_ang(Beta - 90));
-                SunPathMesh[i][row_J][2] = FLOAT_undefined;            
+                SunPathMesh[int(i * TES_hour)][row_J][0] = (90 - Alpha) * (cos_ang(Beta - 90));
+                SunPathMesh[int(i * TES_hour)][row_J][1] = (90 - Alpha) * (sin_ang(Beta - 90));
+                SunPathMesh[int(i * TES_hour)][row_J][2] = FLOAT_undefined;            
               }
             }            
           }
@@ -11108,7 +11141,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
 
-        int Teselation = 2; // 0; //2; // <<<<<<
+        int Teselation = 0; // 0; //2; // <<<<<<
 
         int TotalSubNo = 1;  
         if (Teselation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Teselation - 1), 1)); // = 4 * ... because in SunPathMesh the cell has 4 points.     
@@ -11129,7 +11162,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
           float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
 
-          for (int i = 0; i < 24; i += 1) {
+          for (float i = 0; i < 24; i += 1.0 / float(TES_hour)) {  
             if (isInHourlyRange(i) == 1) {
               if ((i > _sunrise - 1) && (i < _sunset + 1)) {              
               
@@ -11137,7 +11170,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             
                 for (int s = 0; s < 4; s += 1) {
                   
-                  int a = i;
+                  int a = int(i * TES_hour);
                   int b = more_J / num_add_days;
                   
                   if ((s == 1) || (s == 2)) {
@@ -11148,7 +11181,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                     b += 1;
                   }
                   
-                  if (a > 23) a = a % 24;
+                  if (a > (24 * TES_hour - 1)) a = a % (24 * TES_hour);
                   
                   base_Vertices[s][0] = SunPathMesh[a][b][0];
                   base_Vertices[s][1] = SunPathMesh[a][b][1];
@@ -11187,7 +11220,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                         
                         float x = subFace[s][0] * obj_scale;
                         float y = subFace[s][1] * obj_scale;
-  
+                        
                         STUDY_Diagrams.vertex((j + obj_offset_x + x) * sx_Plot, -y * sx_Plot);
                       }
                     }
@@ -31153,7 +31186,7 @@ void SOALRCHVISION_refreshDateTabs () {
 
 
 
-int isInHourlyRange (int i) {
+int isInHourlyRange (float i) {
   int q = -1;
   if (STUDY_i_start <= STUDY_i_end) {
     q = 0;
