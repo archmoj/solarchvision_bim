@@ -11139,13 +11139,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         }
 
 
-
-
-        int Teselation = 0; // 0; //2; // <<<<<<
-
-        int TotalSubNo = 1;  
-        if (Teselation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Teselation - 1), 1)); // = 4 * ... because in SunPathMesh the cell has 4 points.     
-
         for (int more_J = 0; more_J < per_day - num_add_days; more_J += num_add_days) { //count one less!
 
           now_j = (more_J + j * int(per_day) + BEGIN_DAY + 365) % 365;
@@ -11166,7 +11159,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             if (isInHourlyRange(i) == 1) {
               if ((i > _sunrise - 1) && (i < _sunset + 1)) {              
               
-                float[][] base_Vertices = new float [4][3];
+                float[][] subFace = new float [4][3];
             
                 for (int s = 0; s < 4; s += 1) {
                   
@@ -11183,51 +11176,46 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   
                   if (a > (24 * TES_hour - 1)) a = a % (24 * TES_hour);
                   
-                  base_Vertices[s][0] = SunPathMesh[a][b][0];
-                  base_Vertices[s][1] = SunPathMesh[a][b][1];
-                  base_Vertices[s][2] = SunPathMesh[a][b][2];
+                  subFace[s][0] = SunPathMesh[a][b][0];
+                  subFace[s][1] = SunPathMesh[a][b][1];
+                  subFace[s][2] = SunPathMesh[a][b][2];
                   
                 }
                 
-                for (int n = 0; n < TotalSubNo; n++) {
+                STUDY_Diagrams.beginShape();
+                
+                STUDY_Diagrams.noStroke();
+                
+                for (int s = 0; s < subFace.length; s++) {
+    
+                  if (dist(subFace[s][0], subFace[s][1], 0, 0) <= 90) {
                   
-                  float[][] subFace = getSubFace(base_Vertices, Teselation, n);
-                  
-                  STUDY_Diagrams.beginShape();
-                  
-                  STUDY_Diagrams.noStroke();
-                  
-                  for (int s = 0; s < subFace.length; s++) {
-      
-                    if (dist(subFace[s][0], subFace[s][1], 0, 0) <= 90) {
-                    
-                      float _valuesSUM = subFace[s][2];
-          
-                      if (_valuesSUM < 0.9 * FLOAT_undefined) {
-                      
-                        float _u = 0;
-                        
-                        if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
-                        if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
-                        
-                        if (PAL_DIR == -1) _u = 1 - _u;
-                        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                        if (PAL_DIR == 2) _u =  0.5 * _u;
-                        
-                        float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);
+                    float _valuesSUM = subFace[s][2];
         
-                        STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
-                        
-                        float x = subFace[s][0] * obj_scale;
-                        float y = subFace[s][1] * obj_scale;
-                        
-                        STUDY_Diagrams.vertex((j + obj_offset_x + x) * sx_Plot, -y * sx_Plot);
-                      }
+                    if (_valuesSUM < 0.9 * FLOAT_undefined) {
+                    
+                      float _u = 0;
+                      
+                      if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
+                      if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
+                      
+                      if (PAL_DIR == -1) _u = 1 - _u;
+                      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                      if (PAL_DIR == 2) _u =  0.5 * _u;
+                      
+                      float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);
+      
+                      STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+                      
+                      float x = subFace[s][0] * obj_scale;
+                      float y = subFace[s][1] * obj_scale;
+                      
+                      STUDY_Diagrams.vertex((j + obj_offset_x + x) * sx_Plot, -y * sx_Plot);
                     }
                   }
-                  
-                  STUDY_Diagrams.endShape(CLOSE);                    
                 }
+                
+                STUDY_Diagrams.endShape(CLOSE);                    
               }
             }
           }
