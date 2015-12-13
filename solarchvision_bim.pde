@@ -11159,7 +11159,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             if (isInHourlyRange(i) == 1) {
               if ((i > _sunrise - 1) && (i < _sunset + 1)) {              
               
-                float[][] subFace = new float [4][3];
+                float[][] base_Vertices = new float [4][3];
             
                 for (int s = 0; s < 4; s += 1) {
                   
@@ -11176,9 +11176,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   
                   if (a > (24 * TES_hour - 1)) a = a % (24 * TES_hour);
                   
-                  subFace[s][0] = SunPathMesh[a][b][0];
-                  subFace[s][1] = SunPathMesh[a][b][1];
-                  subFace[s][2] = SunPathMesh[a][b][2];
+                  base_Vertices[s][0] = SunPathMesh[a][b][0];
+                  base_Vertices[s][1] = SunPathMesh[a][b][1];
+                  base_Vertices[s][2] = SunPathMesh[a][b][2];
                   
                 }
                 
@@ -11186,11 +11186,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 
                 STUDY_Diagrams.noStroke();
                 
-                for (int s = 0; s < subFace.length; s++) {
+                for (int s = 0; s < base_Vertices.length; s++) {
     
-                  if (dist(subFace[s][0], subFace[s][1], 0, 0) <= 90) {
+                  if (dist(base_Vertices[s][0], base_Vertices[s][1], 0, 0) <= 90) {
                   
-                    float _valuesSUM = subFace[s][2];
+                    float _valuesSUM = base_Vertices[s][2];
         
                     if (_valuesSUM < 0.9 * FLOAT_undefined) {
                     
@@ -11207,8 +11207,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       
                       STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
                       
-                      float x = subFace[s][0] * obj_scale;
-                      float y = subFace[s][1] * obj_scale;
+                      float x = base_Vertices[s][0] * obj_scale;
+                      float y = base_Vertices[s][1] * obj_scale;
                       
                       STUDY_Diagrams.vertex((j + obj_offset_x + x) * sx_Plot, -y * sx_Plot);
                     }
