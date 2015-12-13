@@ -10926,7 +10926,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
     //for (int p = 0; p < 1; p += 1) { 
       //int l = 3 * int(impact_layer / 3) + 1; //impact_layer;    
     
-      SOLARCHVISION_draw_SunPathHalfCycle(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, l, 1);
+      int target_window = 1;
+      SOLARCHVISION_draw_SunPathHalfCycle(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, l, target_window);
       
       SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
       
@@ -11299,9 +11300,18 @@ void SOLARCHVISION_draw_SunPathHalfCycle(float x_Plot, float y_Plot, float z_Plo
         if (isInHourlyRange(i) == 1) {
           if ((i > _sunrise - 1) && (i < _sunset + 1)) {              
 
-            STUDY_Diagrams.beginShape();
-            
-            STUDY_Diagrams.noStroke();
+            if (target_window == 1) {
+              STUDY_Diagrams.beginShape();
+              STUDY_Diagrams.noStroke();
+            }  
+            else if (target_window == 2) {
+              WORLD_Diagrams.beginShape();
+              WORLD_Diagrams.noStroke();
+            }
+            else if (target_window == 3) {
+              WIN3D_Diagrams.beginShape();
+              WIN3D_Diagrams.noStroke();
+            }               
             
             for (int s = 0; s < 4; s += 1) {
               
@@ -11337,17 +11347,43 @@ void SOLARCHVISION_draw_SunPathHalfCycle(float x_Plot, float y_Plot, float z_Plo
                   
                   float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);
   
-                  STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+                  if (target_window == 1) {
+    
+                    STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+                    
+                    float x = (90 - Alpha) * (cos_ang(Beta - 90)) * obj_scale;
+                    float y = (90 - Alpha) * (sin_ang(Beta - 90)) * obj_scale;
+                    
+                    STUDY_Diagrams.vertex((j + obj_offset_x + x) * sx_Plot, -y * sx_Plot);
+                  }
+                  else if (target_window == 2) {
+                    // ??????????????????????????
+                  }
+                  else if (target_window == 3) {
+                    WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+                    
+                    float x = cos_ang(Alpha) * (cos_ang(Beta - 90)) * WIN3D_scale3D;
+                    float y = cos_ang(Alpha) * (sin_ang(Beta - 90)) * WIN3D_scale3D;
+                    float z = sin_ang(Alpha) * WIN3D_scale3D;
+                    
+                    WIN3D_Diagrams.vertex(x * sx_Plot, -y * sx_Plot, z * sz_Plot);
+                    
+                  }
                   
-                  float x = (90 - Alpha) * (cos_ang(Beta - 90)) * obj_scale;
-                  float y = (90 - Alpha) * (sin_ang(Beta - 90)) * obj_scale;
-                  
-                  STUDY_Diagrams.vertex((j + obj_offset_x + x) * sx_Plot, -y * sx_Plot);
                 }
               }
             }
             
-            STUDY_Diagrams.endShape(CLOSE);                    
+            if (target_window == 1) {
+              STUDY_Diagrams.endShape(CLOSE);
+            }  
+            else if (target_window == 2) {
+              WORLD_Diagrams.endShape(CLOSE);
+  
+            }
+            else if (target_window == 3) {
+              WIN3D_Diagrams.endShape(CLOSE);
+            }            
           }
         }
       }
