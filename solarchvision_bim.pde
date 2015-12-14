@@ -21813,7 +21813,7 @@ void mouseWheel(MouseEvent event) {
               float y0 = selected_Pivot_XYZ[1];
               float z0 = selected_Pivot_XYZ[2];
               
-              if (Modify_Object_Parameters == 1) {
+              if (Modify_Object_Parameters == 0) {
                 if (View_Select_Create_Modify >= 4) { // other properties
         
                   int p = int(Wheel_Value);
@@ -23690,39 +23690,39 @@ void mouseClicked () {
               BAR_b_Update = 1;  
             }
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Seed/Material")) {
-              set_to_Modify_Seed();
+              set_to_Modify_Seed(0);
               SOLARCHVISION_highlight_in_BAR_b("Mat");
               BAR_b_Update = 1;  
             }
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Teselation")) {
-              set_to_Modify_Teselation();
+              set_to_Modify_Teselation(0);
               SOLARCHVISION_highlight_in_BAR_b("Tes");
               BAR_b_Update = 1;  
             }
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pick Seed/Material")) {
-              set_to_Pick_Seed();
+              set_to_Modify_Seed(1);
               SOLARCHVISION_highlight_in_BAR_b("PkMat");
               BAR_b_Update = 1;
             }
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pick Teselation")) {
-              set_to_Pick_Teselation();
+              set_to_Modify_Teselation(1);
               SOLARCHVISION_highlight_in_BAR_b("PkTes");
               BAR_b_Update = 1;  
             }                 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DegreeMax")) {
-              set_to_Modify_DegreeMax();
+              set_to_Modify_DegreeMax(0);
             }    
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DegreeDif")) {
-              set_to_Modify_DegreeDif();
+              set_to_Modify_DegreeDif(0);
             }    
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DegreeMin")) {
-              set_to_Modify_DegreeMin();
+              set_to_Modify_DegreeMin(0);
             }     
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TrunckSize")) {
-              set_to_Modify_TrunckSize();
+              set_to_Modify_TrunckSize(0);
             }
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("LeafSize")) {
-              set_to_Modify_LeafSize();
+              set_to_Modify_LeafSize(0);
             }           
   
   
@@ -30445,11 +30445,11 @@ void SOLARCHVISION_draw_window_BAR_b () {
           else if ((BAR_b_Items[i][j]).equals("Cushion")) set_to_Create_Cushion();
         }
 
-        if (Bar_Switch.equals("Seed/Material")) set_to_Modify_Seed();
-        if (Bar_Switch.equals("Teselation")) set_to_Modify_Teselation();
+        if (Bar_Switch.equals("Seed/Material")) set_to_Modify_Seed(0);
+        if (Bar_Switch.equals("Teselation")) set_to_Modify_Teselation(0);
         
-        if (Bar_Switch.equals("Pick Seed/Material")) set_to_Pick_Seed();
-        if (Bar_Switch.equals("Pick Teselation")) set_to_Pick_Teselation();
+        if (Bar_Switch.equals("Pick Seed/Material")) set_to_Modify_Seed(1);
+        if (Bar_Switch.equals("Pick Teselation")) set_to_Modify_Teselation(1);
         
         if (Bar_Switch.equals("Rotate")) set_to_Modify_Rotate(j - 1);
         if (Bar_Switch.equals("Scale")) set_to_Modify_Scale(j - 1);
@@ -30750,102 +30750,57 @@ void set_to_Create_Cushion () {
 }
 
 
-void set_to_Pick_Seed () {
+
+
+
+
+
+
+void set_to_Modify_Seed (int n) {
   View_Select_Create_Modify = 4;
-  Modify_Object_Parameters = 1;
+  Modify_Object_Parameters = n;
 
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Pick_Teselation () {
+void set_to_Modify_Teselation (int n) {
   View_Select_Create_Modify = 5;
-  Modify_Object_Parameters = 1;
+  Modify_Object_Parameters = n;
 
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Pick_DegreeMax () {
+void set_to_Modify_DegreeMax (int n) {
   View_Select_Create_Modify = 6;
-  Modify_Object_Parameters = 1;
+  Modify_Object_Parameters = n;
 
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Pick_DegreeDif () {
+void set_to_Modify_DegreeDif (int n) {
   View_Select_Create_Modify = 7;
-  Modify_Object_Parameters = 1;
+  Modify_Object_Parameters = n;
 
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Pick_DegreeMin () {
+void set_to_Modify_DegreeMin (int n) {
   View_Select_Create_Modify = 8;
-  Modify_Object_Parameters = 1;
+  Modify_Object_Parameters = n;
 
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Pick_TrunckSize () {
+void set_to_Modify_TrunckSize (int n) {
   View_Select_Create_Modify = 9;
-  Modify_Object_Parameters = 1;
+  Modify_Object_Parameters = n;
 
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Pick_LeafSize () {
+void set_to_Modify_LeafSize (int n) {
   View_Select_Create_Modify = 10;
-  Modify_Object_Parameters = 1;
-
-  ROLLOUT_Update = 1; 
-}
-
-
-
-void set_to_Modify_Seed () {
-  View_Select_Create_Modify = 4;
-  Modify_Object_Parameters = 0;
-
-  ROLLOUT_Update = 1; 
-}
-
-void set_to_Modify_Teselation () {
-  View_Select_Create_Modify = 5;
-  Modify_Object_Parameters = 0;
-
-  ROLLOUT_Update = 1; 
-}
-
-void set_to_Modify_DegreeMax () {
-  View_Select_Create_Modify = 6;
-  Modify_Object_Parameters = 0;
-
-  ROLLOUT_Update = 1; 
-}
-
-void set_to_Modify_DegreeDif () {
-  View_Select_Create_Modify = 7;
-  Modify_Object_Parameters = 0;
-
-  ROLLOUT_Update = 1; 
-}
-
-void set_to_Modify_DegreeMin () {
-  View_Select_Create_Modify = 8;
-  Modify_Object_Parameters = 0;
-
-  ROLLOUT_Update = 1; 
-}
-
-void set_to_Modify_TrunckSize () {
-  View_Select_Create_Modify = 9;
-  Modify_Object_Parameters = 0;
-
-  ROLLOUT_Update = 1; 
-}
-
-void set_to_Modify_LeafSize () {
-  View_Select_Create_Modify = 10;
-  Modify_Object_Parameters = 0;
+  Modify_Object_Parameters = n;
 
   ROLLOUT_Update = 1; 
 }
