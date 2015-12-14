@@ -1506,7 +1506,7 @@ float WIN3D_S_coordinate = 5.0;
 
 float WIN3D_RX_coordinate = 90; //75; 
 float WIN3D_RY_coordinate = 0;
-float WIN3D_RZ_coordinate = 0; //180; //135;
+float WIN3D_RZ_coordinate = 180; //0; //180; //135;
 float WIN3D_RS_coordinate = 5.0;
 
 float WIN3D_ZOOM_coordinate = 60; // / (h_pixel / 300.0);
@@ -11405,8 +11405,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
     
                     STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
                     
-                    float x = (90 - Alpha) * (cos_ang(Beta - 90)) * obj_scale * r + x_Plot;
-                    float y = (90 - Alpha) * (sin_ang(Beta - 90)) * obj_scale * r + y_Plot;
+                    float x = (90 - Alpha) * (cos_ang(Beta - 90)) * obj_scale * r + x_Plot * obj_scale;
+                    float y = (90 - Alpha) * (sin_ang(Beta - 90)) * obj_scale * r + y_Plot * obj_scale;
                     
                     float ox = (j + obj_offset_x) * sx_Plot;
                     
@@ -11486,11 +11486,11 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
               float Alpha2 = asin_ang(SunB[3]);
               float Beta2 = atan2_ang(SunB[2], SunB[1]) + 90;          
               
-              float x1 = (90 - Alpha1) * (cos_ang(Beta1 - 90)) * obj_scale * r + x_Plot;
-              float y1 = (90 - Alpha1) * (sin_ang(Beta1 - 90)) * obj_scale * r + y_Plot;
+              float x1 = (90 - Alpha1) * (cos_ang(Beta1 - 90)) * obj_scale * r + x_Plot * obj_scale;
+              float y1 = (90 - Alpha1) * (sin_ang(Beta1 - 90)) * obj_scale * r + y_Plot * obj_scale;
     
-              float x2 = (90 - Alpha2) * (cos_ang(Beta2 - 90)) * obj_scale * r + x_Plot;
-              float y2 = (90 - Alpha2) * (sin_ang(Beta2 - 90)) * obj_scale * r + y_Plot;
+              float x2 = (90 - Alpha2) * (cos_ang(Beta2 - 90)) * obj_scale * r + x_Plot * obj_scale;
+              float y2 = (90 - Alpha2) * (sin_ang(Beta2 - 90)) * obj_scale * r + y_Plot * obj_scale;
               
               float ox = (j + obj_offset_x) * sx_Plot;
       
@@ -11552,11 +11552,11 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
               float Alpha2 = asin_ang(SunB[3]);
               float Beta2 = atan2_ang(SunB[2], SunB[1]) + 90;          
               
-              float x1 = (90 - Alpha1) * (cos_ang(Beta1 - 90)) * obj_scale * r + x_Plot;
-              float y1 = (90 - Alpha1) * (sin_ang(Beta1 - 90)) * obj_scale * r + y_Plot;
+              float x1 = (90 - Alpha1) * (cos_ang(Beta1 - 90)) * obj_scale * r + x_Plot * obj_scale;
+              float y1 = (90 - Alpha1) * (sin_ang(Beta1 - 90)) * obj_scale * r + y_Plot * obj_scale;
     
-              float x2 = (90 - Alpha2) * (cos_ang(Beta2 - 90)) * obj_scale * r + x_Plot;
-              float y2 = (90 - Alpha2) * (sin_ang(Beta2 - 90)) * obj_scale * r + y_Plot;
+              float x2 = (90 - Alpha2) * (cos_ang(Beta2 - 90)) * obj_scale * r + x_Plot * obj_scale;
+              float y2 = (90 - Alpha2) * (sin_ang(Beta2 - 90)) * obj_scale * r + y_Plot * obj_scale;
               
               float ox = (j + obj_offset_x) * sx_Plot;
               
@@ -12055,7 +12055,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
 
 
     
-    if (WIN3D_FACES_SHADE == Shade_Surface_White) {
+    if (WIN3D_FACES_SHADE == Shade_Surface_Base) {
       SOLARCHVISION_draw_SunPathCycles(x_SunPath, x_SunPath,x_SunPath, s_SunPath, s_SunPath, s_SunPath, impact_layer, 3);
     }
     else {
