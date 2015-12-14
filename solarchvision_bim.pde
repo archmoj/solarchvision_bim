@@ -11406,7 +11406,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
                     float x = (90 - Alpha) * (cos_ang(Beta - 90)) * obj_scale;
                     float y = (90 - Alpha) * (sin_ang(Beta - 90)) * obj_scale;
                     
-                    STUDY_Diagrams.vertex((j + obj_offset_x + x) * sx_Plot, -y * sx_Plot);
+                    STUDY_Diagrams.vertex((j + obj_offset_x + x) * sx_Plot, -y * sy_Plot);
                   }
 
                 }
@@ -11426,6 +11426,89 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
           }
         }
       }
+    
+    if (target_window == 3) {
+      WIN3D_Diagrams.pushMatrix();
+      WIN3D_Diagrams.translate(x_Plot, y_Plot, z_Plot);    
+    
+      WIN3D_Diagrams.strokeWeight(1);
+      WIN3D_Diagrams.stroke(0);
+    }
+    
+    for (int myDATE = 90; myDATE <= 270; myDATE += 30) {
+      float myHOUR_step = (SOLARCHVISION_DayTime(LocationLatitude, myDATE) / 12.0);
+      for (float myHOUR = SOLARCHVISION_Sunrise(LocationLatitude, myDATE); myHOUR <(SOLARCHVISION_Sunset(LocationLatitude, myDATE) + .01 - myHOUR_step); myHOUR += myHOUR_step) {
+        float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, myHOUR);
+        float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, (myHOUR + myHOUR_step));
+        
+        if (target_window == 3) {
+          WIN3D_Diagrams.line(sx_Plot * SunA[1] * WIN3D_scale3D, -sy_Plot * SunA[2] * WIN3D_scale3D, sz_Plot * SunA[3] * WIN3D_scale3D, sx_Plot * SunB[1] * WIN3D_scale3D, -sy_Plot * SunB[2] * WIN3D_scale3D, sz_Plot * SunB[3] * WIN3D_scale3D);
+        }
+      }
+    }
+    
+    for (float myHOUR = 0; myHOUR < 24; myHOUR += 1) {
+      float DATE_step = 1;
+      for (int myDATE = 0; myDATE <= 360; myDATE += DATE_step) {
+        float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, myHOUR);
+        float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, (myDATE + DATE_step), myHOUR);
+        if (SunA[3] >= 0 && SunB[3] >= 0) {
+          
+          if (target_window == 3) {
+            WIN3D_Diagrams.line(sx_Plot * SunA[1] * WIN3D_scale3D, -sy_Plot * SunA[2] * WIN3D_scale3D, sz_Plot * SunA[3] * WIN3D_scale3D, sx_Plot * SunB[1] * WIN3D_scale3D, -sy_Plot * SunB[2] * WIN3D_scale3D, sz_Plot * SunB[3] * WIN3D_scale3D);
+          }
+        }
+      }
+    }
+    
+    if (target_window == 3) {
+      WIN3D_Diagrams.popMatrix();
+    }
+    
+    /*
+    
+    WIN3D_Diagrams.stroke(0);
+    for (int i = 0; i < 360; i += 5) {
+      WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180) * WIN3D_scale3D, -s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0, s_SunPath * cos((i + 5) * PI / 180) * WIN3D_scale3D, -s_SunPath * sin((i + 5) * PI / 180) * WIN3D_scale3D, 0); 
+      
+      WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180) * WIN3D_scale3D, -s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0, 1.05 * s_SunPath * cos((i) * PI / 180) * WIN3D_scale3D, -1.05 * s_SunPath * sin((i) * PI / 180) * WIN3D_scale3D, 0);
+    }
+    
+    for (int i = 0; i < 360; i += 15) {
+      WIN3D_Diagrams.pushMatrix();
+      WIN3D_Diagrams.translate(1.15 * s_SunPath * cos(i * PI / 180) * WIN3D_scale3D, -1.15 * s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0);
+      
+      WIN3D_Diagrams.fill(0);
+      WIN3D_Diagrams.textSize(s_SunPath * 0.05);
+      WIN3D_Diagrams.textAlign(CENTER, CENTER);
+      
+      String txt = nf((90 - i + 360) % 360, 0);
+      if (i == 0) {
+        txt = "E"; 
+        WIN3D_Diagrams.textSize(s_SunPath * 0.1);
+      }
+      else if (i == 90) {
+        txt = "N"; 
+        WIN3D_Diagrams.textSize(s_SunPath * 0.1);
+      }
+      else if (i == 180) {
+        txt = "W"; 
+        WIN3D_Diagrams.textSize(s_SunPath * 0.1);
+      }
+      else if (i == 270) {
+        txt = "S"; 
+        WIN3D_Diagrams.textSize(s_SunPath * 0.1);
+      }
+      
+      WIN3D_Diagrams.text(txt, 0, 0, 0);
+      
+      WIN3D_Diagrams.popMatrix();
+    }   
+    
+    */
+
+  
+
     }
   }
 
@@ -11866,8 +11949,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
     
     float previous_DATE = _DATE;
     
-    float min_sunrise = int(min(SOLARCHVISION_Sunrise(LocationLatitude, 90), SOLARCHVISION_Sunrise(LocationLatitude, 270))); 
-    float max_sunset = int(max(SOLARCHVISION_Sunset(LocationLatitude, 90), SOLARCHVISION_Sunset(LocationLatitude, 270)));
+
 
 
 
@@ -11890,8 +11972,6 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
       float _Multiplier = 1; 
       if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * SunPath3D_Pallet_ACTIVE_MLT;
       if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * SunPath3D_Pallet_PASSIVE_MLT;
-      
-      
 
     
       
@@ -12056,75 +12136,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
       WIN3D_Diagrams.popMatrix();
     }
     
-    WIN3D_Diagrams.pushMatrix();
-    WIN3D_Diagrams.translate(x_SunPath, y_SunPath, z_SunPath);    
-  
-    WIN3D_Diagrams.strokeWeight(1);
-    WIN3D_Diagrams.stroke(0);
-    
-    for (int j = 90; j <= 270; j += 30) {
-      float HOUR_step = (SOLARCHVISION_DayTime(LocationLatitude, j) / 12.0);
-      for (float HOUR = SOLARCHVISION_Sunrise(LocationLatitude, j); HOUR <(SOLARCHVISION_Sunset(LocationLatitude, j) + .01 - HOUR_step); HOUR += HOUR_step) {
-        float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, j, HOUR);
-        float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, j, (HOUR + HOUR_step));
-        WIN3D_Diagrams.line(s_SunPath * SunA[1] * WIN3D_scale3D, -s_SunPath * SunA[2] * WIN3D_scale3D, s_SunPath * SunA[3] * WIN3D_scale3D, s_SunPath * SunB[1] * WIN3D_scale3D, -s_SunPath * SunB[2] * WIN3D_scale3D, s_SunPath * SunB[3] * WIN3D_scale3D);
-      }
-    }
-    
-    for (float HOUR = min_sunrise; HOUR < max_sunset + .01; HOUR += 1) {
-      float DATE_step = 1;
-      for (int j = 0; j <= 360; j += DATE_step) {
-        float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, j, HOUR);
-        float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, (j + DATE_step), HOUR);
-        if (SunA[3] >= 0 && SunB[3] >= 0) {
-          WIN3D_Diagrams.line(s_SunPath * SunA[1] * WIN3D_scale3D, -s_SunPath * SunA[2] * WIN3D_scale3D, s_SunPath * SunA[3] * WIN3D_scale3D, s_SunPath * SunB[1] * WIN3D_scale3D, -s_SunPath * SunB[2] * WIN3D_scale3D, s_SunPath * SunB[3] * WIN3D_scale3D);
-        }
-      }
-    }
-    
-    WIN3D_Diagrams.popMatrix();
-    
-    /*
-    
-    WIN3D_Diagrams.stroke(0);
-    for (int i = 0; i < 360; i += 5) {
-      WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180) * WIN3D_scale3D, -s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0, s_SunPath * cos((i + 5) * PI / 180) * WIN3D_scale3D, -s_SunPath * sin((i + 5) * PI / 180) * WIN3D_scale3D, 0); 
-      
-      WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180) * WIN3D_scale3D, -s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0, 1.05 * s_SunPath * cos((i) * PI / 180) * WIN3D_scale3D, -1.05 * s_SunPath * sin((i) * PI / 180) * WIN3D_scale3D, 0);
-    }
-    
-    for (int i = 0; i < 360; i += 15) {
-      WIN3D_Diagrams.pushMatrix();
-      WIN3D_Diagrams.translate(1.15 * s_SunPath * cos(i * PI / 180) * WIN3D_scale3D, -1.15 * s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0);
-      
-      WIN3D_Diagrams.fill(0);
-      WIN3D_Diagrams.textSize(s_SunPath * 0.05);
-      WIN3D_Diagrams.textAlign(CENTER, CENTER);
-      
-      String txt = nf((90 - i + 360) % 360, 0);
-      if (i == 0) {
-        txt = "E"; 
-        WIN3D_Diagrams.textSize(s_SunPath * 0.1);
-      }
-      else if (i == 90) {
-        txt = "N"; 
-        WIN3D_Diagrams.textSize(s_SunPath * 0.1);
-      }
-      else if (i == 180) {
-        txt = "W"; 
-        WIN3D_Diagrams.textSize(s_SunPath * 0.1);
-      }
-      else if (i == 270) {
-        txt = "S"; 
-        WIN3D_Diagrams.textSize(s_SunPath * 0.1);
-      }
-      
-      WIN3D_Diagrams.text(txt, 0, 0, 0);
-      
-      WIN3D_Diagrams.popMatrix();
-    }   
-    
-    */
+
   
     per_day = keep_per_day;
     num_add_days = keep_num_add_days; 
