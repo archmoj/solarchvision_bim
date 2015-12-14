@@ -12,11 +12,11 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 1;
+int STATION_NUMBER = 0;
 
 String[][] DEFINED_STATIONS = {
   
-                                {"Hamedan_Site", "XX", "IR", "34.807", "48.455", "50", "1988.5", "240.0", "", "", "IRN_HAMEDAN_XX_IR"},
+                                {"Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
                                 
                                 {"Hamedan_Site", "XX", "IR", "34.807", "48.455", "50", "1988.5", "240.0", "", "", "IRN_HAMEDAN_XX_IR"},
   
@@ -194,7 +194,7 @@ int Work_with_2D_or_3D = 2; // 1:Fractals 2:2D, 3:3D, 4:4D
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
-int View_Select_Create_Modify = 4; // -17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed 5:DegreeMax 6:DegreeDif 7:DegreeMin 8:TrunckSize 9:LeafSize
+int View_Select_Create_Modify = 4; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed 5:DegreeMax 6:DegreeDif 7:DegreeMin 8:TrunckSize 9:LeafSize
 int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. fractal trees
 
@@ -1486,7 +1486,7 @@ float MESSAGE_S_View = w_pixel / 40.0;
 
 
 int a_pixel = int(1.5 * MESSAGE_S_View); // menu bar
-int b_pixel = int(3 * MESSAGE_S_View); // 3D tool bar
+int b_pixel = int(2.75 * MESSAGE_S_View); // 3D tool bar
 
 int d_pixel = int(4.5 * MESSAGE_S_View); // time bar
 
@@ -1530,7 +1530,7 @@ int Shade_Vertex_Elevation = 6;
 
 int number_of_shading_options = 7;
 
-int WIN3D_FACES_SHADE = Shade_Surface_White; // <<<<<
+int WIN3D_FACES_SHADE = Shade_Surface_Materials; //Shade_Surface_White; // <<<<<
 int WIN3D_EDGES_SHOW = 1;
 int WIN3D_VERTS_SHOW = 0;
 
@@ -1726,7 +1726,7 @@ void SOLARCHVISION_update_models (int Step) {
    if ((Step == 0) || (Step == 1)) SOLARCHVISION_remove_3Dobjects();
    //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
    if ((Step == 0) || (Step == 3)) SOLARCHVISION_remove_ParametricGeometries();
-   //if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
+   if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
    if ((Step == 0) || (Step == 5)) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
 
 }
@@ -21812,16 +21812,18 @@ void mouseWheel(MouseEvent event) {
               float x0 = selected_Pivot_XYZ[0];
               float y0 = selected_Pivot_XYZ[1];
               float z0 = selected_Pivot_XYZ[2];
-  
-              if (View_Select_Create_Modify >= 4) { // other properties
-      
-                int p = int(Wheel_Value);
-                
-                SOLARCHVISION_changeProperties_Selection(p);
-                
-                WIN3D_Update = 1;
-                
-              }   
+              
+              if (Modify_Object_Parameters == 1) {
+                if (View_Select_Create_Modify >= 4) { // other properties
+        
+                  int p = int(Wheel_Value);
+                  
+                  SOLARCHVISION_changeProperties_Selection(p);
+                  
+                  WIN3D_Update = 1;
+                  
+                }   
+              }
               
               if (View_Select_Create_Modify == 3) { // rotate
       
@@ -23689,14 +23691,24 @@ void mouseClicked () {
             }
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Seed/Material")) {
               set_to_Modify_Seed();
-              SOLARCHVISION_highlight_in_BAR_b("SD");
+              SOLARCHVISION_highlight_in_BAR_b("Mat");
               BAR_b_Update = 1;  
             }
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Teselation")) {
               set_to_Modify_Teselation();
               SOLARCHVISION_highlight_in_BAR_b("Tes");
               BAR_b_Update = 1;  
-            }          
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pick Seed/Material")) {
+              set_to_Pick_Seed();
+              SOLARCHVISION_highlight_in_BAR_b("PkMat");
+              BAR_b_Update = 1;
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pick Teselation")) {
+              set_to_Pick_Teselation();
+              SOLARCHVISION_highlight_in_BAR_b("PkTes");
+              BAR_b_Update = 1;  
+            }                 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DegreeMax")) {
               set_to_Modify_DegreeMax();
             }    
@@ -25188,7 +25200,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
       //Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 4, 1), 1));
     
-      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -16, 8, 1), 1));
+      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -17, 8, 1), 1));
       //View_XYZ_ChangeOption = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_ChangeOption" , View_XYZ_ChangeOption, 0, 6, 1), 1));
       //Modify_Object_Parameters = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Object_Parameters" , Modify_Object_Parameters, 0, 9, 1), 1));
 
@@ -29069,6 +29081,64 @@ void dessin_Rotate (int _type, float x, float y, float r) {
 }
 
 
+void dessin_PickSeed (int _type, float x, float y, float r) {
+  
+  pushMatrix();
+  translate(x, y);
+
+  {
+    strokeWeight(1);
+    stroke(255); 
+    noFill();  
+    
+    line(0, 0, 0.8 * r, 0); 
+    line(0, 0, 0, -0.8 * r); 
+    line(0, 0, -0.4 * r, 0.4 * r); 
+  
+    strokeWeight(1);
+    stroke(255); 
+    noFill();  
+    
+    line(-0.8 * r, 0, 0.8 * r, 0);
+    line(0, 0.8 * r, 0, -0.8 * r);
+    line(0.4 * r, -0.4 * r, -0.4 * r, 0.4 * r);
+    
+    strokeWeight(1);
+    stroke(255,255,0); 
+    noFill();  
+  
+    for (int i = 0; i < 360; i += 30) {
+      float d = random(0.25,0.75);
+      
+      line(0, 0, 0.8 * r * d * cos(i), 0.8 * r * d * sin(i));
+    }  
+  }
+  
+  {
+    float d = 0.3 * r;
+
+    pushMatrix();
+    translate(d, d);
+  
+    strokeWeight(1);
+    stroke(255); 
+    fill(255);  
+   
+    triangle(-d,-d, -d,d, d,-d); 
+  
+    strokeWeight(5);
+    line(0,0, d,d);  
+    popMatrix();
+  }
+
+  strokeWeight(0);
+
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+
 void dessin_Seed (int _type, float x, float y, float r) {
   
   pushMatrix();
@@ -29108,6 +29178,56 @@ void dessin_Seed (int _type, float x, float y, float r) {
 }
 
 
+void dessin_PickTeselation (int _type, float x, float y, float r) {
+  
+  pushMatrix();
+  translate(x, y);
+
+  {
+    float d = 1.25 * r;
+  
+    strokeWeight(2);
+    stroke(255); 
+    fill(63);  
+    rect(-0.5 * d, -0.5 * d, d, d);
+  
+    strokeWeight(1);
+    stroke(191); 
+    fill(191);  
+  
+    for (int i = 1; i < 4; i++) {
+      float w = (0.25 * i - 0.5) * d;
+      line(-0.5 * d, w, 0.5 * d, w);  
+      line(w, -0.5 * d, w, 0.5 * d);
+    }
+  }
+
+  {  
+    float d = 0.3 * r;
+    
+    pushMatrix();
+    translate(d, d);    
+    
+    strokeWeight(1);
+    stroke(255); 
+    fill(255);
+    
+    triangle(-d,-d, -d,d, d,-d); 
+  
+    strokeWeight(5);
+    line(0,0, d,d);    
+    
+    popMatrix();
+  }
+  
+  strokeWeight(0);
+
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+
 void dessin_Teselation (int _type, float x, float y, float r) {
   
   pushMatrix();
@@ -29136,6 +29256,9 @@ void dessin_Teselation (int _type, float x, float y, float r) {
 
   BAR_b_Display_Text = 0;
 }
+
+
+
 
 
 
@@ -29843,7 +29966,7 @@ String[][] BAR_a_Items = {
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
                         {"Select", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
-                        {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Seed/Material", "Teselation", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize"},
+                        {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Pick Teselation", "Pick Seed/Material", "Seed/Material", "Teselation", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
 
                       };
@@ -30140,8 +30263,12 @@ String[][] BAR_b_Items = {
                           {"3", "MVx", "MVy", "MVz", "MV³", "Move", "1.0"},
                           {"3", "SCx", "SCy", "SCz", "SC³", "Scale", "1.0"}, 
                           {"3", "RTx", "RTy", "RTz", "Rotate", "1.0"}, 
-                          {"1", "SD", "Seed/Material", "1.0"},
-                          {"1", "Tes", "Teselation", "1.0"},                          
+                          {"1", "Mat", "Seed/Material", "1.0"},
+                          {"1", "Tes", "Teselation", "1.0"},
+                          {"1", "PkMat", "Pick Seed/Material", "1.0"},
+                          {"1", "PkTes", "Pick Teselation", "1.0"},
+                          {"1", "SbMat", "Sub-Seed/Material", "1.0"},
+                          {"1", "SbTes", "Sub-Teselation", "1.0"},
                         };         
 
 
@@ -30296,6 +30423,9 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("Seed/Material")) set_to_Modify_Seed();
         if (Bar_Switch.equals("Teselation")) set_to_Modify_Teselation();
         
+        if (Bar_Switch.equals("Pick Seed/Material")) set_to_Pick_Seed();
+        if (Bar_Switch.equals("Pick Teselation")) set_to_Pick_Teselation();
+        
         if (Bar_Switch.equals("Rotate")) set_to_Modify_Rotate(j - 1);
         if (Bar_Switch.equals("Scale")) set_to_Modify_Scale(j - 1);
         if (Bar_Switch.equals("Move")) set_to_Modify_Move(j - 1);
@@ -30367,7 +30497,13 @@ void SOLARCHVISION_draw_window_BAR_b () {
         }
         if (Bar_Switch.equals("Teselation")) {
           dessin_Teselation(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
-        }            
+        }        
+        if (Bar_Switch.equals("Pick Seed/Material")) {
+          dessin_PickSeed(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }
+        if (Bar_Switch.equals("Pick Teselation")) {
+          dessin_PickTeselation(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }          
         if (Bar_Switch.equals("ClickSelect")) {
           dessin_ClickSelect(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }       
@@ -30426,7 +30562,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
         textAlign(CENTER, CENTER);   
         stroke(255); 
         fill(255);
-        textSize(1.25 * MESSAGE_S_View);
+        textSize(0.45 * b_pixel);
                 
         text(BAR_b_Items[i][j], cx + 0.5 * Item_width, cy - 0.2 * MESSAGE_S_View);
       }
@@ -30589,46 +30725,102 @@ void set_to_Create_Cushion () {
 }
 
 
+void set_to_Pick_Seed () {
+  View_Select_Create_Modify = 4;
+  Modify_Object_Parameters = 0;
+
+  ROLLOUT_Update = 1; 
+}
+
+void set_to_Pick_Teselation () {
+  View_Select_Create_Modify = 5;
+  Modify_Object_Parameters = 0;
+
+  ROLLOUT_Update = 1; 
+}
+
+void set_to_Pick_DegreeMax () {
+  View_Select_Create_Modify = 6;
+  Modify_Object_Parameters = 0;
+
+  ROLLOUT_Update = 1; 
+}
+
+void set_to_Pick_DegreeDif () {
+  View_Select_Create_Modify = 7;
+  Modify_Object_Parameters = 0;
+
+  ROLLOUT_Update = 1; 
+}
+
+void set_to_Pick_DegreeMin () {
+  View_Select_Create_Modify = 8;
+  Modify_Object_Parameters = 0;
+
+  ROLLOUT_Update = 1; 
+}
+
+void set_to_Pick_TrunckSize () {
+  View_Select_Create_Modify = 9;
+  Modify_Object_Parameters = 0;
+
+  ROLLOUT_Update = 1; 
+}
+
+void set_to_Pick_LeafSize () {
+  View_Select_Create_Modify = 10;
+  Modify_Object_Parameters = 0;
+
+  ROLLOUT_Update = 1; 
+}
+
 
 
 void set_to_Modify_Seed () {
   View_Select_Create_Modify = 4;
+  Modify_Object_Parameters = 1;
 
   ROLLOUT_Update = 1; 
 }
 
 void set_to_Modify_Teselation () {
   View_Select_Create_Modify = 5;
+  Modify_Object_Parameters = 1;
 
   ROLLOUT_Update = 1; 
 }
 
 void set_to_Modify_DegreeMax () {
   View_Select_Create_Modify = 6;
+  Modify_Object_Parameters = 1;
 
   ROLLOUT_Update = 1; 
 }
 
 void set_to_Modify_DegreeDif () {
   View_Select_Create_Modify = 7;
+  Modify_Object_Parameters = 1;
 
   ROLLOUT_Update = 1; 
 }
 
 void set_to_Modify_DegreeMin () {
   View_Select_Create_Modify = 8;
+  Modify_Object_Parameters = 1;
 
   ROLLOUT_Update = 1; 
 }
 
 void set_to_Modify_TrunckSize () {
   View_Select_Create_Modify = 9;
+  Modify_Object_Parameters = 1;
 
   ROLLOUT_Update = 1; 
 }
 
 void set_to_Modify_LeafSize () {
   View_Select_Create_Modify = 10;
+  Modify_Object_Parameters = 1;
 
   ROLLOUT_Update = 1; 
 }
