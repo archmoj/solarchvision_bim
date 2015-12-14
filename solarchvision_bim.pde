@@ -10952,7 +10952,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       //int l = 3 * int(impact_layer / 3) + 1; //impact_layer;    
     
       int target_window = 1;
-      SOLARCHVISION_draw_SunPathCycles(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, l, target_window);
+      SOLARCHVISION_draw_SunPathCycles(x_Plot, y_Plot - (1 * p * sx_Plot / STUDY_U_scale), z_Plot, sx_Plot, sy_Plot, sz_Plot, l, target_window);
       
       SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
       
@@ -11092,7 +11092,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
   
   
-  int TES_hour = 1; //4; // 1 = every 1 hour, 4 = every 15 minutes
+  int TES_hour = 4; //4; // 1 = every 1 hour, 4 = every 15 minutes
 
   if (plot_impacts == 8) Impact_TYPE = Impact_ACTIVE; 
   if (plot_impacts == 9) Impact_TYPE = Impact_PASSIVE;
@@ -11444,163 +11444,172 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
       STUDY_Diagrams.strokeWeight(1);
       STUDY_Diagrams.stroke(127);
     }  
-            
-    for (int myDATE = 90; myDATE <= 270; myDATE += 30) {
-      float myHOUR_step = (SOLARCHVISION_DayTime(LocationLatitude, myDATE) / 12.0);
-      
-      
-      
-      for (float myHOUR = SOLARCHVISION_Sunrise(LocationLatitude, myDATE); myHOUR <(SOLARCHVISION_Sunset(LocationLatitude, myDATE) + .01 - myHOUR_step); myHOUR += myHOUR_step) {
-        float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, myHOUR);
-        float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, (myHOUR + myHOUR_step));
-        
-        float r = sx_Plot;
-        
-        if (target_window == 3) {
-        
-          float x1 = SunA[1] * WIN3D_scale3D * r + x_Plot;
-          float y1 = SunA[2] * WIN3D_scale3D * r + y_Plot;
-          float z1 = SunA[3] * WIN3D_scale3D * r + z_Plot;
-  
-          float x2 = SunB[1] * WIN3D_scale3D * r + x_Plot;
-          float y2 = SunB[2] * WIN3D_scale3D * r + y_Plot;
-          float z2 = SunB[3] * WIN3D_scale3D * r + z_Plot;
-        
-          WIN3D_Diagrams.line(x1, -y1, z1, x2, -y2, z2);
-        }
-        else if (target_window == 2) {
-          // ??????????????????????????
-        }                  
-        else if (target_window == 1) {
-          
-          float Alpha1 = asin_ang(SunA[3]);
-          float Beta1 = atan2_ang(SunA[2], SunA[1]) + 90;          
-
-          float Alpha2 = asin_ang(SunB[3]);
-          float Beta2 = atan2_ang(SunB[2], SunB[1]) + 90;          
-          
-          float x1 = (90 - Alpha1) * (cos_ang(Beta1 - 90)) * obj_scale * r + x_Plot;
-          float y1 = (90 - Alpha1) * (sin_ang(Beta1 - 90)) * obj_scale * r + y_Plot;
-
-          float x2 = (90 - Alpha2) * (cos_ang(Beta2 - 90)) * obj_scale * r + x_Plot;
-          float y2 = (90 - Alpha2) * (sin_ang(Beta2 - 90)) * obj_scale * r + y_Plot;
-          
-          float ox = (j + obj_offset_x) * sx_Plot;
-  
-          STUDY_Diagrams.line(ox + x1, -y1, ox + x2, -y2);
-        }        
-      }
+    
+    int max_j_to_draw_grid = STUDY_j_end;
+    if (target_window == 3) {
+      max_j_to_draw_grid = 1; // draw it just once!
     }
+    if (j < max_j_to_draw_grid) {
     
-    for (float myHOUR = 0; myHOUR < 24; myHOUR += 1) {
-      
-      int myDATE_step = 1;
-
-      int myDATE_start = 0;
-      int myDATE_end = 360; 
-
-      if (target_window != 3) {
-        if (STUDY_j_end == 2) {
-          if (j == 0) {
-            myDATE_start = 90;
-            myDATE_end = 270;
-          }
-          if (j == 1) {
-            myDATE_start = 270;
-            myDATE_end = 450;
-          }     
-        } 
-      }
-      
-      for (int myDATE = myDATE_start; myDATE <= myDATE_end; myDATE += myDATE_step) {
-        float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, myHOUR);
-        float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, (myDATE + myDATE_step), myHOUR);
-        if (SunA[3] >= 0 && SunB[3] >= 0) {
-
-          float r = sx_Plot;
+      for (int myDATE = 90; myDATE <= 270; myDATE += 30) {
+        float myHOUR_step = 1.0 / float(TES_hour);
+        
+        for (float myHOUR = 0; myHOUR < 24; myHOUR += myHOUR_step) {
           
-          if (target_window == 3) {        
-
-            float x1 = SunA[1] * WIN3D_scale3D * r + x_Plot;
-            float y1 = SunA[2] * WIN3D_scale3D * r + y_Plot;
-            float z1 = SunA[3] * WIN3D_scale3D * r + z_Plot;
+          float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, myHOUR);
+          float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, (myHOUR + myHOUR_step));
+          
+          if ((SunA[3] >= 0) && (SunB[3] >= 0)) {
+          
+            float r = sx_Plot;
+            
+            if (target_window == 3) {
+            
+              float x1 = SunA[1] * WIN3D_scale3D * r + x_Plot;
+              float y1 = SunA[2] * WIN3D_scale3D * r + y_Plot;
+              float z1 = SunA[3] * WIN3D_scale3D * r + z_Plot;
+      
+              float x2 = SunB[1] * WIN3D_scale3D * r + x_Plot;
+              float y2 = SunB[2] * WIN3D_scale3D * r + y_Plot;
+              float z2 = SunB[3] * WIN3D_scale3D * r + z_Plot;
+            
+              WIN3D_Diagrams.line(x1, -y1, z1, x2, -y2, z2);
+            }
+            else if (target_window == 2) {
+              // ??????????????????????????
+            }                  
+            else if (target_window == 1) {
+              
+              float Alpha1 = asin_ang(SunA[3]);
+              float Beta1 = atan2_ang(SunA[2], SunA[1]) + 90;          
     
-            float x2 = SunB[1] * WIN3D_scale3D * r + x_Plot;
-            float y2 = SunB[2] * WIN3D_scale3D * r + y_Plot;
-            float z2 = SunB[3] * WIN3D_scale3D * r + z_Plot;
-            
-            float ox = (j + obj_offset_x) * sx_Plot;
-          
-            WIN3D_Diagrams.line(ox + x1, -y1, z1, ox + x2, -y2, z2);
+              float Alpha2 = asin_ang(SunB[3]);
+              float Beta2 = atan2_ang(SunB[2], SunB[1]) + 90;          
+              
+              float x1 = (90 - Alpha1) * (cos_ang(Beta1 - 90)) * obj_scale * r + x_Plot;
+              float y1 = (90 - Alpha1) * (sin_ang(Beta1 - 90)) * obj_scale * r + y_Plot;
+    
+              float x2 = (90 - Alpha2) * (cos_ang(Beta2 - 90)) * obj_scale * r + x_Plot;
+              float y2 = (90 - Alpha2) * (sin_ang(Beta2 - 90)) * obj_scale * r + y_Plot;
+              
+              float ox = (j + obj_offset_x) * sx_Plot;
+      
+              STUDY_Diagrams.line(ox + x1, -y1, ox + x2, -y2);
+            }        
           }
-          else if (target_window == 2) {
-            // ??????????????????????????
-          }                  
-          else if (target_window == 1) {
-            
-            float Alpha1 = asin_ang(SunA[3]);
-            float Beta1 = atan2_ang(SunA[2], SunA[1]) + 90;          
-  
-            float Alpha2 = asin_ang(SunB[3]);
-            float Beta2 = atan2_ang(SunB[2], SunB[1]) + 90;          
-            
-            float x1 = (90 - Alpha1) * (cos_ang(Beta1 - 90)) * obj_scale * r + x_Plot;
-            float y1 = (90 - Alpha1) * (sin_ang(Beta1 - 90)) * obj_scale * r + y_Plot;
-  
-            float x2 = (90 - Alpha2) * (cos_ang(Beta2 - 90)) * obj_scale * r + x_Plot;
-            float y2 = (90 - Alpha2) * (sin_ang(Beta2 - 90)) * obj_scale * r + y_Plot;
-            
-            float ox = (j + obj_offset_x) * sx_Plot;
-            
-            STUDY_Diagrams.line(ox + x1, -y1, ox + x2, -y2);
-          }                 
         }
       }
+      
+      for (float myHOUR = 0; myHOUR < 24; myHOUR += 1) {
+        
+        int myDATE_step = num_add_days;
+  
+        int myDATE_start = 0;
+        int myDATE_end = 360; 
+  
+        if (target_window != 3) {
+          if (STUDY_j_end == 2) {
+            if (j == 0) {
+              myDATE_start = 90;
+              myDATE_end = 270;
+            }
+            if (j == 1) {
+              myDATE_start = 270;
+              myDATE_end = 450;
+            }     
+          } 
+        }
+        
+        for (int myDATE = myDATE_start; myDATE <= myDATE_end; myDATE += myDATE_step) {
+          float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, myHOUR);
+          float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, (myDATE + myDATE_step), myHOUR);
+          if ((SunA[3] >= 0) && (SunB[3] >= 0)) {
+  
+            float r = sx_Plot;
+            
+            if (target_window == 3) {        
+  
+              float x1 = SunA[1] * WIN3D_scale3D * r + x_Plot;
+              float y1 = SunA[2] * WIN3D_scale3D * r + y_Plot;
+              float z1 = SunA[3] * WIN3D_scale3D * r + z_Plot;
+      
+              float x2 = SunB[1] * WIN3D_scale3D * r + x_Plot;
+              float y2 = SunB[2] * WIN3D_scale3D * r + y_Plot;
+              float z2 = SunB[3] * WIN3D_scale3D * r + z_Plot;
+              
+              float ox = (j + obj_offset_x) * sx_Plot;
+            
+              WIN3D_Diagrams.line(x1, -y1, z1, x2, -y2, z2);
+            }
+            else if (target_window == 2) {
+              // ??????????????????????????
+            }                  
+            else if (target_window == 1) {
+              
+              float Alpha1 = asin_ang(SunA[3]);
+              float Beta1 = atan2_ang(SunA[2], SunA[1]) + 90;          
+    
+              float Alpha2 = asin_ang(SunB[3]);
+              float Beta2 = atan2_ang(SunB[2], SunB[1]) + 90;          
+              
+              float x1 = (90 - Alpha1) * (cos_ang(Beta1 - 90)) * obj_scale * r + x_Plot;
+              float y1 = (90 - Alpha1) * (sin_ang(Beta1 - 90)) * obj_scale * r + y_Plot;
+    
+              float x2 = (90 - Alpha2) * (cos_ang(Beta2 - 90)) * obj_scale * r + x_Plot;
+              float y2 = (90 - Alpha2) * (sin_ang(Beta2 - 90)) * obj_scale * r + y_Plot;
+              
+              float ox = (j + obj_offset_x) * sx_Plot;
+              
+              STUDY_Diagrams.line(ox + x1, -y1, ox + x2, -y2);
+            }                 
+          }
+        }
+      }
+      
+  
+      
+      /*
+      
+      WIN3D_Diagrams.stroke(0);
+      for (int i = 0; i < 360; i += 5) {
+        WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180) * WIN3D_scale3D, -s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0, s_SunPath * cos((i + 5) * PI / 180) * WIN3D_scale3D, -s_SunPath * sin((i + 5) * PI / 180) * WIN3D_scale3D, 0); 
+        
+        WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180) * WIN3D_scale3D, -s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0, 1.05 * s_SunPath * cos((i) * PI / 180) * WIN3D_scale3D, -1.05 * s_SunPath * sin((i) * PI / 180) * WIN3D_scale3D, 0);
+      }
+      
+      for (int i = 0; i < 360; i += 15) {
+        WIN3D_Diagrams.pushMatrix();
+        WIN3D_Diagrams.translate(1.15 * s_SunPath * cos(i * PI / 180) * WIN3D_scale3D, -1.15 * s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0);
+        
+        WIN3D_Diagrams.fill(0);
+        WIN3D_Diagrams.textSize(s_SunPath * 0.05);
+        WIN3D_Diagrams.textAlign(CENTER, CENTER);
+        
+        String txt = nf((90 - i + 360) % 360, 0);
+        if (i == 0) {
+          txt = "E"; 
+          WIN3D_Diagrams.textSize(s_SunPath * 0.1);
+        }
+        else if (i == 90) {
+          txt = "N"; 
+          WIN3D_Diagrams.textSize(s_SunPath * 0.1);
+        }
+        else if (i == 180) {
+          txt = "W"; 
+          WIN3D_Diagrams.textSize(s_SunPath * 0.1);
+        }
+        else if (i == 270) {
+          txt = "S"; 
+          WIN3D_Diagrams.textSize(s_SunPath * 0.1);
+        }
+        
+        WIN3D_Diagrams.text(txt, 0, 0, 0);
+        
+        WIN3D_Diagrams.popMatrix();
+      }   
+      
+      */
     }
-    
-
-    
-    /*
-    
-    WIN3D_Diagrams.stroke(0);
-    for (int i = 0; i < 360; i += 5) {
-      WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180) * WIN3D_scale3D, -s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0, s_SunPath * cos((i + 5) * PI / 180) * WIN3D_scale3D, -s_SunPath * sin((i + 5) * PI / 180) * WIN3D_scale3D, 0); 
-      
-      WIN3D_Diagrams.line(s_SunPath * cos(i * PI / 180) * WIN3D_scale3D, -s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0, 1.05 * s_SunPath * cos((i) * PI / 180) * WIN3D_scale3D, -1.05 * s_SunPath * sin((i) * PI / 180) * WIN3D_scale3D, 0);
-    }
-    
-    for (int i = 0; i < 360; i += 15) {
-      WIN3D_Diagrams.pushMatrix();
-      WIN3D_Diagrams.translate(1.15 * s_SunPath * cos(i * PI / 180) * WIN3D_scale3D, -1.15 * s_SunPath * sin(i * PI / 180) * WIN3D_scale3D, 0);
-      
-      WIN3D_Diagrams.fill(0);
-      WIN3D_Diagrams.textSize(s_SunPath * 0.05);
-      WIN3D_Diagrams.textAlign(CENTER, CENTER);
-      
-      String txt = nf((90 - i + 360) % 360, 0);
-      if (i == 0) {
-        txt = "E"; 
-        WIN3D_Diagrams.textSize(s_SunPath * 0.1);
-      }
-      else if (i == 90) {
-        txt = "N"; 
-        WIN3D_Diagrams.textSize(s_SunPath * 0.1);
-      }
-      else if (i == 180) {
-        txt = "W"; 
-        WIN3D_Diagrams.textSize(s_SunPath * 0.1);
-      }
-      else if (i == 270) {
-        txt = "S"; 
-        WIN3D_Diagrams.textSize(s_SunPath * 0.1);
-      }
-      
-      WIN3D_Diagrams.text(txt, 0, 0, 0);
-      
-      WIN3D_Diagrams.popMatrix();
-    }   
-    
-    */
 
   }
 
