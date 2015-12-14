@@ -24411,8 +24411,33 @@ void mouseClicked () {
                 
               }   
               
-              //if ((View_Select_Create_Modify == -1) || (View_Select_Create_Modify > 1)) { // PickSelect also if scale, rotate, modify, etc. where selected
-              if ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1)) { // PickSelect also if scale, rotate, modify, etc. where selected
+              
+              if ((Modify_Object_Parameters == 1) && (View_Select_Create_Modify >= 4)) { // Pick properties
+                
+                
+                if (Work_with_2D_or_3D == 3) {
+    
+                  if (View_Select_Create_Modify == 4) {
+                    
+                    int f = int(RxP[4]);
+                    
+                    Create_Default_Material = allFaces_MAT[f][0];        
+            
+                    ROLLOUT_Update = 1;
+                  }
+
+                  if (View_Select_Create_Modify == 5) {
+                    
+                    int f = int(RxP[4]);
+                    
+                    Create_Default_Teselation = allFaces_MAT[f][1];        
+            
+                    ROLLOUT_Update = 1;        
+                  }                  
+                }
+                
+              } 
+              else if ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1)) { // PickSelect also if scale, rotate, modify, etc. where selected
               
                 if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselectAll();
                 
@@ -30727,49 +30752,49 @@ void set_to_Create_Cushion () {
 
 void set_to_Pick_Seed () {
   View_Select_Create_Modify = 4;
-  Modify_Object_Parameters = 0;
+  Modify_Object_Parameters = 1;
 
   ROLLOUT_Update = 1; 
 }
 
 void set_to_Pick_Teselation () {
   View_Select_Create_Modify = 5;
-  Modify_Object_Parameters = 0;
+  Modify_Object_Parameters = 1;
 
   ROLLOUT_Update = 1; 
 }
 
 void set_to_Pick_DegreeMax () {
   View_Select_Create_Modify = 6;
-  Modify_Object_Parameters = 0;
+  Modify_Object_Parameters = 1;
 
   ROLLOUT_Update = 1; 
 }
 
 void set_to_Pick_DegreeDif () {
   View_Select_Create_Modify = 7;
-  Modify_Object_Parameters = 0;
+  Modify_Object_Parameters = 1;
 
   ROLLOUT_Update = 1; 
 }
 
 void set_to_Pick_DegreeMin () {
   View_Select_Create_Modify = 8;
-  Modify_Object_Parameters = 0;
+  Modify_Object_Parameters = 1;
 
   ROLLOUT_Update = 1; 
 }
 
 void set_to_Pick_TrunckSize () {
   View_Select_Create_Modify = 9;
-  Modify_Object_Parameters = 0;
+  Modify_Object_Parameters = 1;
 
   ROLLOUT_Update = 1; 
 }
 
 void set_to_Pick_LeafSize () {
   View_Select_Create_Modify = 10;
-  Modify_Object_Parameters = 0;
+  Modify_Object_Parameters = 1;
 
   ROLLOUT_Update = 1; 
 }
@@ -30778,49 +30803,49 @@ void set_to_Pick_LeafSize () {
 
 void set_to_Modify_Seed () {
   View_Select_Create_Modify = 4;
-  Modify_Object_Parameters = 1;
+  Modify_Object_Parameters = 0;
 
   ROLLOUT_Update = 1; 
 }
 
 void set_to_Modify_Teselation () {
   View_Select_Create_Modify = 5;
-  Modify_Object_Parameters = 1;
+  Modify_Object_Parameters = 0;
 
   ROLLOUT_Update = 1; 
 }
 
 void set_to_Modify_DegreeMax () {
   View_Select_Create_Modify = 6;
-  Modify_Object_Parameters = 1;
+  Modify_Object_Parameters = 0;
 
   ROLLOUT_Update = 1; 
 }
 
 void set_to_Modify_DegreeDif () {
   View_Select_Create_Modify = 7;
-  Modify_Object_Parameters = 1;
+  Modify_Object_Parameters = 0;
 
   ROLLOUT_Update = 1; 
 }
 
 void set_to_Modify_DegreeMin () {
   View_Select_Create_Modify = 8;
-  Modify_Object_Parameters = 1;
+  Modify_Object_Parameters = 0;
 
   ROLLOUT_Update = 1; 
 }
 
 void set_to_Modify_TrunckSize () {
   View_Select_Create_Modify = 9;
-  Modify_Object_Parameters = 1;
+  Modify_Object_Parameters = 0;
 
   ROLLOUT_Update = 1; 
 }
 
 void set_to_Modify_LeafSize () {
   View_Select_Create_Modify = 10;
-  Modify_Object_Parameters = 1;
+  Modify_Object_Parameters = 0;
 
   ROLLOUT_Update = 1; 
 }
