@@ -10927,7 +10927,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       //int l = 3 * int(impact_layer / 3) + 1; //impact_layer;    
     
       int target_window = 1;
-      SOLARCHVISION_draw_SunPathHalfCycle(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, l, target_window);
+      SOLARCHVISION_draw_SunPathCycles(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, l, target_window);
       
       SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
       
@@ -11054,7 +11054,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 
 
-void SOLARCHVISION_draw_SunPathHalfCycle (float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot, int l, int target_window) {
+void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot, int l, int target_window) {
 
   // target_window1: 1:STUDY, 2:WORLD, 3:WIN3D
   
@@ -11846,7 +11846,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
 
     
     if (WIN3D_FACES_SHADE == Shade_Surface_White) {
-      SOLARCHVISION_draw_SunPathHalfCycle(x_SunPath, x_SunPath,x_SunPath, s_SunPath, s_SunPath, s_SunPath, impact_layer, 3);
+      SOLARCHVISION_draw_SunPathCycles(x_SunPath, x_SunPath,x_SunPath, s_SunPath, s_SunPath, s_SunPath, impact_layer, 3);
     }
     else {
 
