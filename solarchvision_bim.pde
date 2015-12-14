@@ -5040,15 +5040,6 @@ float[] GET_COLOR_STYLE (int COLOR_STYLE, float j) {
 }
 
 
-float[] SET_COLOR_STYLE (int COLOR_STYLE, float j) {
-  float[] _COL = GET_COLOR_STYLE(COLOR_STYLE, j);
-
-  STUDY_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);
-  STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
-  
-  return _COL;
-}
-
 void SOLARCHVISION_Calendar () {
   CalendarMM = new String [365][2];
   CalendarDD = new String [365][2];
@@ -5820,7 +5811,10 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
           STUDY_Diagrams.strokeWeight(STUDY_T_scale * 6);
         }
         else {
-          SET_COLOR_STYLE(COLOR_STYLE, (1.0 * k / (1 + ENSEMBLE_end - ENSEMBLE_start)));
+          float[] _COL = GET_COLOR_STYLE(COLOR_STYLE, (1.0 * k / (1 + ENSEMBLE_end - ENSEMBLE_start)));
+          STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+          STUDY_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]); 
+          
           STUDY_Diagrams.strokeWeight(STUDY_T_scale * 1);
         }
         
@@ -6221,7 +6215,9 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
           _valuesA[(k * num_add_days + j_ADD)] = FLOAT_undefined;
           _valuesB[(k * num_add_days + j_ADD)] = FLOAT_undefined;
        
-          SET_COLOR_STYLE(COLOR_STYLE, (1.0 * k / (1 + CLIMATE_WY2_end - CLIMATE_WY2_start)));
+          float[] _COL = GET_COLOR_STYLE(COLOR_STYLE, (1.0 * k / (1 + CLIMATE_WY2_end - CLIMATE_WY2_start)));
+          STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+          STUDY_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]); 
 
           int _plot = 0;
           
@@ -6618,7 +6614,9 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
           _valuesA[(k * num_add_days + j_ADD)] = FLOAT_undefined;
           _valuesB[(k * num_add_days + j_ADD)] = FLOAT_undefined;
        
-          SET_COLOR_STYLE(COLOR_STYLE, (1.0 * k / (1 + CLIMATE_EPW_end - CLIMATE_EPW_start)));
+          float[] _COL = GET_COLOR_STYLE(COLOR_STYLE, (1.0 * k / (1 + CLIMATE_EPW_end - CLIMATE_EPW_start)));
+          STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+          STUDY_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]); 
 
           int _plot = 0;
 
@@ -7219,7 +7217,10 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
           STUDY_Diagrams.strokeWeight(STUDY_T_scale * 6);
         }
         else {
-          SET_COLOR_STYLE(COLOR_STYLE, (1.0 * k / (1 + OBSERVED_end - OBSERVED_start)));
+          float[] _COL = GET_COLOR_STYLE(COLOR_STYLE, (1.0 * k / (1 + OBSERVED_end - OBSERVED_start)));
+          STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+          STUDY_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]); 
+          
           STUDY_Diagrams.strokeWeight(STUDY_T_scale * 1);
         }
         
@@ -7637,7 +7638,9 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
           if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
           if (PAL_DIR == 2) _u =  0.5 * _u;
           
-          float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);   
+          float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+          STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+          STUDY_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]); 
 
           STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0); 
           STUDY_Diagrams.rect((j + ((i + 1) / 24.0)) * sx_Plot, -((min_v + n) * _pix) - 0.5 * _pix, -(sum_interval * STUDY_S_View * 100 / 24.0) * STUDY_U_scale, _pix); 
@@ -7676,7 +7679,9 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
     if (PAL_DIR == 2) _u =  0.5 * _u;
     
-    float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);       
+    float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
+    STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+    STUDY_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);     
     
     STUDY_Diagrams.strokeWeight(0); 
     
@@ -7739,7 +7744,9 @@ void SOLARCHVISION_draw_sorted (int i, int j, float[] _valuesA, float[] _valuesB
     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
     if (PAL_DIR == 2) _u =  0.5 * _u;
     
-    float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);   
+    float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+    STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+    STUDY_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);    
     
     STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0.0); 
     //STUDY_Diagrams.rect((j + ((i + 1) / 24.0)) * sx_Plot, sorted_valuesA[l] * sy_Plot, -(1 * 100 / 24.0) * STUDY_U_scale, (sorted_valuesA[(l + 1)] - sorted_valuesA[l]) * sy_Plot);
@@ -7774,7 +7781,9 @@ void SOLARCHVISION_draw_sorted (int i, int j, float[] _valuesA, float[] _valuesB
     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
     if (PAL_DIR == 2) _u =  0.5 * _u;
     
-    float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);       
+    float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+    STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+    STUDY_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);     
      
     float Y_OFFSET = (0.25 + STUDY_V_belowLine[STUDY_drw_Layer]) * sx_Plot / STUDY_U_scale;
 
@@ -9076,7 +9085,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                       if (PAL_DIR == 2) _u =  0.5 * _u;
                       
-                      float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);
+                      float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+                      
                       WIND_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
                       
                       WIND_Diagrams.strokeWeight(STUDY_T_scale * 2);
@@ -9211,7 +9221,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                       if (PAL_DIR == 2) _u =  0.5 * _u;
                       
-                      float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);
+                      float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
                       total_WIND_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
                       
                       total_WIND_Diagrams.strokeWeight(STUDY_T_scale * 2);
@@ -9279,7 +9289,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
         if (PAL_DIR == 2) _u =  0.5 * _u;
         
-        float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);
+        float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+        STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+        STUDY_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);         
         
         STUDY_Diagrams.strokeWeight(0);
         STUDY_Diagrams.rect((700 + q * (pal_length / 11.0)) * STUDY_S_View, -175 * STUDY_S_View, (pal_length / 11.0) * STUDY_S_View, 20 * STUDY_S_View); 
@@ -9868,7 +9880,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
         if (PAL_DIR == 2) _u =  0.5 * _u;
         
-        float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u); 
+        float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+        STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+        STUDY_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);         
         
         STUDY_Diagrams.strokeWeight(0);
         STUDY_Diagrams.rect((700 + q * (pal_length / 11.0)) * STUDY_S_View, -175 * STUDY_S_View, (pal_length / 11.0) * STUDY_S_View, 20 * STUDY_S_View); 
@@ -10180,8 +10194,11 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                   if (PAL_DIR == 2) _u =  0.5 * _u;
                   
-                  //SET_COLOR_STYLE(PAL_TYPE, _u);
-                  SET_COLOR_STYLE(PAL_TYPE, roundTo(_u, 0.1));
+                  //float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+                  float[] _COL = GET_COLOR_STYLE(PAL_TYPE, roundTo(_u, 0.1));
+                  STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+                  STUDY_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]); 
+                  
                   
                   STUDY_Diagrams.strokeWeight(0);
                   
@@ -10262,8 +10279,10 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
               if (PAL_DIR == 2) _u =  0.5 * _u;
               
-              //SET_COLOR_STYLE(PAL_TYPE, _u);
-              SET_COLOR_STYLE(PAL_TYPE, roundTo(_u, 0.1));
+              //float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+              float[] _COL = GET_COLOR_STYLE(PAL_TYPE, roundTo(_u, 0.1));
+              STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+              STUDY_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);               
               
               STUDY_Diagrams.strokeWeight(0);
               
@@ -10342,7 +10361,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
       
-      float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);
+      float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+      STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+      STUDY_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);       
       
       STUDY_Diagrams.strokeWeight(0);
       STUDY_Diagrams.rect((700 + q * (pal_length / 11.0)) * STUDY_S_View, -175 * STUDY_S_View, (pal_length / 11.0) * STUDY_S_View, 20 * STUDY_S_View); 
@@ -10563,7 +10584,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                     if (PAL_DIR == 2) _u =  0.5 * _u;
                     
-                    float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);
+                    float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+                    STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+                    STUDY_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);                     
                     
                     STUDY_Diagrams.strokeWeight(0);
                     
@@ -10638,7 +10661,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
       
-      float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u); 
+      float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+      STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+      STUDY_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);       
       
       STUDY_Diagrams.strokeWeight(0);
       STUDY_Diagrams.rect((700 + q * (pal_length / 11.0)) * STUDY_S_View, -175 * STUDY_S_View, (pal_length / 11.0) * STUDY_S_View, 20 * STUDY_S_View); 
@@ -10985,7 +11010,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
       
-      float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u); 
+      float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+      STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+      STUDY_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);       
       
       STUDY_Diagrams.strokeWeight(0);
       STUDY_Diagrams.rect((700 + q * (pal_length / 11.0)) * STUDY_S_View, -pal_offsetY * STUDY_S_View, (pal_length / 11.0) * STUDY_S_View, 20 * STUDY_S_View);
@@ -11357,7 +11384,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
                   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                   if (PAL_DIR == 2) _u =  0.5 * _u;
                   
-                  float[] _COL = SET_COLOR_STYLE(PAL_TYPE, _u);
+                  float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
 
                   if (target_window == 3) {
                     WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], 127);
