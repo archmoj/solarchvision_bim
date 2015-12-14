@@ -11389,11 +11389,11 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
                   if (target_window == 3) {
                     WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], 127);
                     
-                    float x = cos_ang(Alpha) * (cos_ang(Beta - 90)) * WIN3D_scale3D;
-                    float y = cos_ang(Alpha) * (sin_ang(Beta - 90)) * WIN3D_scale3D;
-                    float z = sin_ang(Alpha) * WIN3D_scale3D;
+                    float x = cos_ang(Alpha) * (cos_ang(Beta - 90)) * WIN3D_scale3D * sx_Plot;
+                    float y = cos_ang(Alpha) * (sin_ang(Beta - 90)) * WIN3D_scale3D * sy_Plot;
+                    float z = sin_ang(Alpha) * WIN3D_scale3D * sz_Plot;
                     
-                    WIN3D_Diagrams.vertex(x * sx_Plot, -y * sx_Plot, z * sz_Plot);
+                    WIN3D_Diagrams.vertex(x, -y, z);
                     
                   }
                   else if (target_window == 2) {
@@ -11403,10 +11403,10 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
     
                     STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
                     
-                    float x = (90 - Alpha) * (cos_ang(Beta - 90)) * obj_scale;
-                    float y = (90 - Alpha) * (sin_ang(Beta - 90)) * obj_scale;
+                    float x = (90 - Alpha) * (cos_ang(Beta - 90)) * obj_scale * sx_Plot;
+                    float y = (90 - Alpha) * (sin_ang(Beta - 90)) * obj_scale * sy_Plot;
                     
-                    STUDY_Diagrams.vertex((j + obj_offset_x + x) * sx_Plot, -y * sy_Plot);
+                    STUDY_Diagrams.vertex(x + (j + obj_offset_x) * sx_Plot, -y);
                   }
 
                 }
@@ -11426,11 +11426,10 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
           }
         }
       }
+
+    }
     
     if (target_window == 3) {
-      WIN3D_Diagrams.pushMatrix();
-      WIN3D_Diagrams.translate(x_Plot, y_Plot, z_Plot);    
-    
       WIN3D_Diagrams.strokeWeight(1);
       WIN3D_Diagrams.stroke(0);
     }
@@ -11441,8 +11440,16 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
         float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, myHOUR);
         float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, (myHOUR + myHOUR_step));
         
+        float x1 = SunA[1] * WIN3D_scale3D * sx_Plot + x_Plot;
+        float y1 = SunA[2] * WIN3D_scale3D * sy_Plot + y_Plot;
+        float z1 = SunA[3] * WIN3D_scale3D * sz_Plot + z_Plot;
+
+        float x2 = SunB[1] * WIN3D_scale3D * sx_Plot + x_Plot;
+        float y2 = SunB[2] * WIN3D_scale3D * sy_Plot + y_Plot;
+        float z2 = SunB[3] * WIN3D_scale3D * sz_Plot + z_Plot;
+        
         if (target_window == 3) {
-          WIN3D_Diagrams.line(sx_Plot * SunA[1] * WIN3D_scale3D, -sy_Plot * SunA[2] * WIN3D_scale3D, sz_Plot * SunA[3] * WIN3D_scale3D, sx_Plot * SunB[1] * WIN3D_scale3D, -sy_Plot * SunB[2] * WIN3D_scale3D, sz_Plot * SunB[3] * WIN3D_scale3D);
+          WIN3D_Diagrams.line(x1, -y1, z1, x2, -y2, z2);
         }
       }
     }
@@ -11453,17 +11460,24 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
         float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, myHOUR);
         float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, (myDATE + DATE_step), myHOUR);
         if (SunA[3] >= 0 && SunB[3] >= 0) {
+
+          float x1 = SunA[1] * WIN3D_scale3D * sx_Plot + x_Plot;
+          float y1 = SunA[2] * WIN3D_scale3D * sy_Plot + y_Plot;
+          float z1 = SunA[3] * WIN3D_scale3D * sz_Plot + z_Plot;
+  
+          float x2 = SunB[1] * WIN3D_scale3D * sx_Plot + x_Plot;
+          float y2 = SunB[2] * WIN3D_scale3D * sy_Plot + y_Plot;
+          float z2 = SunB[3] * WIN3D_scale3D * sz_Plot + z_Plot;
+        
           
           if (target_window == 3) {
-            WIN3D_Diagrams.line(sx_Plot * SunA[1] * WIN3D_scale3D, -sy_Plot * SunA[2] * WIN3D_scale3D, sz_Plot * SunA[3] * WIN3D_scale3D, sx_Plot * SunB[1] * WIN3D_scale3D, -sy_Plot * SunB[2] * WIN3D_scale3D, sz_Plot * SunB[3] * WIN3D_scale3D);
+            WIN3D_Diagrams.line(x1, -y1, z1, x2, -y2, z2);
           }
         }
       }
     }
     
-    if (target_window == 3) {
-      WIN3D_Diagrams.popMatrix();
-    }
+
     
     /*
     
@@ -11507,9 +11521,6 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
     
     */
 
-  
-
-    }
   }
 
   
