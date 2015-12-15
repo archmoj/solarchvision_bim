@@ -108,8 +108,8 @@ int[] selectedPolymesh_numbers = {0};
 int[][] allPolymesh_Faces = {{0,0}}; // start face - end face
 int[][] allPolymesh_Solids = {{0,0}}; // start solid - end solid
 
-float[][] allPolymesh_PivotXYZ = {{0,0,0}}; 
-int[][] allPolymesh_PivotSUN = {{0}}; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
+float[][] allPolymesh_SolarPivotXYZ = {{0,0,0}}; 
+int[][] allPolymesh_SolarPivotType = {{0}}; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
 
 
 float[][] allVertices = {{0,0,0}};
@@ -144,11 +144,11 @@ int Display_Leaves = 1;
 
 int defaultMaterial = 7;
 int defaultTeselation = 0;
-int defaultPivotSUN = 0;
+int defaultSolarPivotType = 0;
 
 int Create_Default_Material = 7; //0;
 int Create_Default_Teselation = 0;
-int Create_Default_PivotSUN = 0;
+int Create_Default_SolarPivotType = 0;
 
 float Create_Input_Length = 10;
 float Create_Input_Width = 10;
@@ -13647,11 +13647,11 @@ void SOLARCHVISION_beginNewObject () {
     
     float[][] newObject_PivotXYZ = {{0,0,0}}; 
     
-    allPolymesh_PivotXYZ = (float[][]) concat(allPolymesh_PivotXYZ, newObject_PivotXYZ);
+    allPolymesh_SolarPivotXYZ = (float[][]) concat(allPolymesh_SolarPivotXYZ, newObject_PivotXYZ);
 
-    int[][] newObject_PivotSUN = {{defaultPivotSUN}};
+    int[][] newObject_Pivot = {{defaultSolarPivotType}};
 
-    allPolymesh_PivotSUN = (int[][]) concat(allPolymesh_PivotSUN, newObject_PivotSUN);        
+    allPolymesh_SolarPivotType = (int[][]) concat(allPolymesh_SolarPivotType, newObject_Pivot);        
   }
 
   WIN3D_update_VerticesSolarValue = 1; // <<<<<<<
@@ -13807,17 +13807,17 @@ void SOLARCHVISION_deleteSelection () {
     
 
         {
-          float[][] startList = (float[][]) subset(allPolymesh_PivotXYZ, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allPolymesh_PivotXYZ, OBJ_NUM + 1);
+          float[][] startList = (float[][]) subset(allPolymesh_SolarPivotXYZ, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allPolymesh_SolarPivotXYZ, OBJ_NUM + 1);
           
-          allPolymesh_PivotXYZ = (float[][]) concat(startList, endList);
+          allPolymesh_SolarPivotXYZ = (float[][]) concat(startList, endList);
         } 
 
         {
-          int[][] startList = (int[][]) subset(allPolymesh_PivotSUN, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(allPolymesh_PivotSUN, OBJ_NUM + 1);
+          int[][] startList = (int[][]) subset(allPolymesh_SolarPivotType, 0, OBJ_NUM);
+          int[][] endList = (int[][]) subset(allPolymesh_SolarPivotType, OBJ_NUM + 1);
           
-          allPolymesh_PivotSUN = (int[][]) concat(startList, endList);
+          allPolymesh_SolarPivotType = (int[][]) concat(startList, endList);
         } 
 
           
@@ -15393,7 +15393,7 @@ void SOLARCHVISION_remove_3Dobjects () {
   
   defaultMaterial = 7;
   defaultTeselation = 0;
-  defaultPivotSUN = 0;
+  defaultSolarPivotType = 0;
 
   allVertices = new float [1][3];
   allVertices[0][0] = 0;
@@ -15409,13 +15409,13 @@ void SOLARCHVISION_remove_3Dobjects () {
   allFaces_MAT[0][0] = 0;
   allFaces_MAT[0][1] = 0;
 
-  allPolymesh_PivotXYZ = new float [1][3];
-  allPolymesh_PivotXYZ[0][0] = 0;
-  allPolymesh_PivotXYZ[0][1] = 0;
-  allPolymesh_PivotXYZ[0][2] = 0;
+  allPolymesh_SolarPivotXYZ = new float [1][3];
+  allPolymesh_SolarPivotXYZ[0][0] = 0;
+  allPolymesh_SolarPivotXYZ[0][1] = 0;
+  allPolymesh_SolarPivotXYZ[0][2] = 0;
   
-  allPolymesh_PivotSUN = new int [1][1];
-  allPolymesh_PivotSUN[0][0] = 0;
+  allPolymesh_SolarPivotType = new int [1][1];
+  allPolymesh_SolarPivotType[0][0] = 0;
   
   allPolymesh_Faces = new int [1][2];
   allPolymesh_Faces[0][0] = 0;
@@ -33654,9 +33654,9 @@ void SOLARCHVISION_load_project (String myFile) {
 bug: delete because scrolling selection+ could add duplicate of the same objects to the list!
 solution: I remarked wheel option for pickSelect for now.
 
-float[][] allPolymesh_PivotXYZ = {{0,0,0}}; 
-int[][] allPolymesh_PivotSUN = {{0}}; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
-int Create_Default_PivotSUN = 0;
+float[][] allPolymesh_SolarPivotXYZ = {{0,0,0}}; 
+int[][] allPolymesh_SolarPivotType = {{0}}; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
+int Create_Default_SolarPivotType = 0;
 
 */
 
