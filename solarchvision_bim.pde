@@ -108,6 +108,10 @@ int[] selectedPolymesh_numbers = {0};
 int[][] allPolymesh_Faces = {{0,0}}; // start face - end face
 int[][] allPolymesh_Solids = {{0,0}}; // start solid - end solid
 
+float[][] allPolymesh_PivotXYZ = {{0,0,0}}; 
+int[][] allPolymesh_PivotSUN = {{0}}; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
+
+
 float[][] allVertices = {{0,0,0}};
 int[][] allFaces = {{0,0,0}};
 int[][] allFaces_MAT = {{0,0}};
@@ -140,9 +144,11 @@ int Display_Leaves = 1;
 
 int defaultMaterial = 7;
 int defaultTeselation = 0;
+int defaultPivotSUN = 0;
 
 int Create_Default_Material = 7; //0;
 int Create_Default_Teselation = 0;
+int Create_Default_PivotSUN = 0;
 
 float Create_Input_Length = 10;
 float Create_Input_Width = 10;
@@ -13630,14 +13636,22 @@ int SOLARCHVISION_addToSolids (float v, float x, float y, float z, float px, flo
 void SOLARCHVISION_beginNewObject () {
   
   if (addToLastPolymesh == 0) { 
-  
+
+    int[][] newObject_Solids = {{SolidObjects.length, -1}}; // i.e. null because start > end 
+    
+    allPolymesh_Solids = (int[][]) concat(allPolymesh_Solids, newObject_Solids);      
+    
     int[][] newObject_Faces = {{allFaces.length, 0}}; // i.e. null because start > end   
     
     allPolymesh_Faces = (int[][]) concat(allPolymesh_Faces, newObject_Faces);
     
-    int[][] newObject_Solids = {{SolidObjects.length, -1}}; // i.e. null because start > end 
+    float[][] newObject_PivotXYZ = {{0,0,0}}; 
     
-    allPolymesh_Solids = (int[][]) concat(allPolymesh_Solids, newObject_Solids);    
+    allPolymesh_PivotXYZ = (float[][]) concat(allPolymesh_PivotXYZ, newObject_PivotXYZ);
+
+    int[][] newObject_PivotSUN = {{defaultPivotSUN}};
+
+    allPolymesh_PivotSUN = (int[][]) concat(allPolymesh_PivotSUN, newObject_PivotSUN);        
   }
 
   WIN3D_update_VerticesSolarValue = 1; // <<<<<<<
@@ -13791,6 +13805,20 @@ void SOLARCHVISION_deleteSelection () {
           }      
         }
     
+
+        {
+          float[][] startList = (float[][]) subset(allPolymesh_PivotXYZ, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allPolymesh_PivotXYZ, OBJ_NUM + 1);
+          
+          allPolymesh_PivotXYZ = (float[][]) concat(startList, endList);
+        } 
+
+        {
+          int[][] startList = (int[][]) subset(allPolymesh_PivotSUN, 0, OBJ_NUM);
+          int[][] endList = (int[][]) subset(allPolymesh_PivotSUN, OBJ_NUM + 1);
+          
+          allPolymesh_PivotSUN = (int[][]) concat(startList, endList);
+        } 
 
           
         {
@@ -15362,6 +15390,10 @@ void SOLARCHVISION_remove_2Dobjects () {
 }
 
 void SOLARCHVISION_remove_3Dobjects () {
+  
+  defaultMaterial = 7;
+  defaultTeselation = 0;
+  defaultPivotSUN = 0;
 
   allVertices = new float [1][3];
   allVertices[0][0] = 0;
@@ -15376,6 +15408,14 @@ void SOLARCHVISION_remove_3Dobjects () {
   allFaces_MAT = new int [1][2];
   allFaces_MAT[0][0] = 0;
   allFaces_MAT[0][1] = 0;
+
+  allPolymesh_PivotXYZ = new float [1][3];
+  allPolymesh_PivotXYZ[0][0] = 0;
+  allPolymesh_PivotXYZ[0][1] = 0;
+  allPolymesh_PivotXYZ[0][2] = 0;
+  
+  allPolymesh_PivotSUN = new int [1][1];
+  allPolymesh_PivotSUN[0][0] = 0;
   
   allPolymesh_Faces = new int [1][2];
   allPolymesh_Faces[0][0] = 0;
@@ -31932,8 +31972,6 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Display_FractalPlant", Display_FractalPlant);
   newChild1.setInt("Display_Leaves", Display_Leaves);
 
-  newChild1.setInt("defaultMaterial", defaultMaterial);
-  newChild1.setInt("defaultTeselation", defaultTeselation);
   newChild1.setInt("Create_Default_Material", Create_Default_Material);  
   newChild1.setInt("Create_Default_Teselation", Create_Default_Teselation);
   newChild1.setFloat("Create_Input_Length", Create_Input_Length);
@@ -32790,8 +32828,6 @@ void SOLARCHVISION_load_project (String myFile) {
       Display_FractalPlant = children0[L].getInt("Display_FractalPlant");
       Display_Leaves = children0[L].getInt("Display_Leaves");
       
-      defaultMaterial = children0[L].getInt("defaultMaterial");
-      defaultTeselation = children0[L].getInt("defaultTeselation");
       Create_Default_Material = children0[L].getInt("Create_Default_Material");
       Create_Default_Teselation = children0[L].getInt("Create_Default_Teselation");
       Create_Input_Length = children0[L].getFloat("Create_Input_Length");
@@ -33618,8 +33654,9 @@ void SOLARCHVISION_load_project (String myFile) {
 bug: delete because scrolling selection+ could add duplicate of the same objects to the list!
 solution: I remarked wheel option for pickSelect for now.
 
-
-
+float[][] allPolymesh_PivotXYZ = {{0,0,0}}; 
+int[][] allPolymesh_PivotSUN = {{0}}; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
+int Create_Default_PivotSUN = 0;
 
 */
 
