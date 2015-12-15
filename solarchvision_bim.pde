@@ -28797,7 +28797,13 @@ void SOLARCHVISION_move_selectedPolymesh (float dx, float dy, float dz) {
     int OBJ_NUM = selectedPolymesh_numbers[o];
     
     if (OBJ_NUM != 0) {  
-  
+      
+      {
+        allPolymesh_SolarPivotXYZ[OBJ_NUM][0] += dx;
+        allPolymesh_SolarPivotXYZ[OBJ_NUM][1] += dy;
+        allPolymesh_SolarPivotXYZ[OBJ_NUM][2] += dz;
+      }
+      
       for (int g = allPolymesh_Solids[OBJ_NUM][0]; g <= allPolymesh_Solids[OBJ_NUM][1]; g++) {
         if ((0 <= g) && (g < SolidObjects.length)) {
           SolidObjects[g].updatePosition(SolidObjects[g].posX + dx, SolidObjects[g].posY + dy, SolidObjects[g].posZ + dz);
@@ -28851,7 +28857,29 @@ void SOLARCHVISION_rotate_selectedPolymesh (float x0, float y0, float z0, float 
     int OBJ_NUM = selectedPolymesh_numbers[o];
     
     if (OBJ_NUM != 0) {  
-  
+      
+      { 
+        float x = allPolymesh_SolarPivotXYZ[OBJ_NUM][0] - x0; 
+        float y = allPolymesh_SolarPivotXYZ[OBJ_NUM][1] - y0; 
+        float z = allPolymesh_SolarPivotXYZ[OBJ_NUM][2] - z0;
+        
+        if (the_Vector == 2) {
+          allPolymesh_SolarPivotXYZ[OBJ_NUM][0] = x0 + (x * cos(r) - y * sin(r)); 
+          allPolymesh_SolarPivotXYZ[OBJ_NUM][1] = y0 + (x * sin(r) + y * cos(r));
+          allPolymesh_SolarPivotXYZ[OBJ_NUM][2] = z0 + (z);
+        }
+        else if (the_Vector == 1) {
+          allPolymesh_SolarPivotXYZ[OBJ_NUM][0] = x0 + (z * sin(r) + x * cos(r)); 
+          allPolymesh_SolarPivotXYZ[OBJ_NUM][1] = y0 + (y);
+          allPolymesh_SolarPivotXYZ[OBJ_NUM][2] = z0 + (z * cos(r) - x * sin(r));
+        }    
+        else if (the_Vector == 0) {
+          allPolymesh_SolarPivotXYZ[OBJ_NUM][0] = x0 + (x); 
+          allPolymesh_SolarPivotXYZ[OBJ_NUM][1] = y0 + (y * cos(r) - z * sin(r));
+          allPolymesh_SolarPivotXYZ[OBJ_NUM][2] = z0 + (y * sin(r) + z * cos(r));
+        }          
+      }    
+      
       for (int g = allPolymesh_Solids[OBJ_NUM][0]; g <= allPolymesh_Solids[OBJ_NUM][1]; g++) {
         if ((0 <= g) && (g < SolidObjects.length)) {
           
@@ -28911,6 +28939,12 @@ void SOLARCHVISION_scale_selectedPolymesh (float x0, float y0, float z0, float s
     int OBJ_NUM = selectedPolymesh_numbers[o];
     
     if (OBJ_NUM != 0) {
+      
+      {
+        allPolymesh_SolarPivotXYZ[OBJ_NUM][0] = x0 + sx * (allPolymesh_SolarPivotXYZ[OBJ_NUM][0] - x0);
+        allPolymesh_SolarPivotXYZ[OBJ_NUM][1] = y0 + sy * (allPolymesh_SolarPivotXYZ[OBJ_NUM][1] - y0);
+        allPolymesh_SolarPivotXYZ[OBJ_NUM][2] = z0 + sz * (allPolymesh_SolarPivotXYZ[OBJ_NUM][2] - z0);
+      }
       
       for (int g = allPolymesh_Solids[OBJ_NUM][0]; g <= allPolymesh_Solids[OBJ_NUM][1]; g++) {
         if ((0 <= g) && (g < SolidObjects.length)) {
