@@ -15266,6 +15266,7 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
       }
     }
   }
+  
 
 }
 
@@ -24426,15 +24427,13 @@ void mouseClicked () {
                 
               }   
               
+              if (mouseButton == LEFT) { // modify should work only with left click because the right click returns the land info, not objects info
               
-              if ((Modify_Object_Parameters != 0) && (View_Select_Create_Modify >= 4)) { // Pick/Assign properties
-                
-                
-                if (Work_with_2D_or_3D == 3) {
-    
-                  int f = int(RxP[4]);
+                if ((Modify_Object_Parameters != 0) && (View_Select_Create_Modify >= 4)) { // Pick/Assign properties 
                   
-                  if (f > 0) {
+                  if (Work_with_2D_or_3D == 3) {
+      
+                    int f = int(RxP[4]);
                   
                     if ((View_Select_Create_Modify == 4) || (View_Select_Create_Modify == 5)) {
                       
@@ -24455,7 +24454,7 @@ void mouseClicked () {
                             break;
                           }
                         }
-                        if (OBJ_NUM > 0) {
+                        if (OBJ_NUM != 0) {
                           for (int q = allPolymesh_Faces[OBJ_NUM][0]; q <= allPolymesh_Faces[OBJ_NUM][1]; q++) {                    
                             if (View_Select_Create_Modify == 4) allFaces_MAT[q][0] = Create_Default_Material;
                             if (View_Select_Create_Modify == 5) allFaces_MAT[q][1] = Create_Default_Teselation;
@@ -24466,16 +24465,13 @@ void mouseClicked () {
                     }
   
                     ROLLOUT_Update = 1;     
-                  }            
-                }
-                
-                
-                if (Work_with_2D_or_3D == 2) {
-    
-                  int OBJ_NUM = int(RxP[4]);
+                  }
                   
-                  if (OBJ_NUM > 0) {
                   
+                  if (Work_with_2D_or_3D == 2) {
+      
+                    int OBJ_NUM = int(RxP[4]);
+                    
                     int n = allObject2D_MAP[OBJ_NUM];
                     int sign_n = 1;
                     if (n < 0) sign_n = -1;
@@ -24490,34 +24486,32 @@ void mouseClicked () {
                           Create_Mesh_Person_Type = n;
                         }
                         else { // case: trees
-                          Create_Mesh_Plant_Type = n;
+                          Create_Mesh_Plant_Type = n - n1;
                         }
                       } 
-                      else { //Assign
+                      if ((Modify_Object_Parameters == 2) || (Modify_Object_Parameters == 3)) { //Assign
                         if (n <= n1) { // case: people 
                           allObject2D_MAP[OBJ_NUM] = sign_n * Create_Mesh_Person_Type;
                         }
                         else { // case: trees
-                          allObject2D_MAP[OBJ_NUM] = sign_n * Create_Mesh_Plant_Type;
+                          allObject2D_MAP[OBJ_NUM] = sign_n * (Create_Mesh_Plant_Type + n1);
                         }
                       }
                     }
   
                     ROLLOUT_Update = 1;
-                  }                 
-                }                
-                
-              } 
-              else if ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1)) { // PickSelect also if scale, rotate, modify, etc. where selected
-              
-                if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselectAll();
-                
-                if (Work_with_2D_or_3D == 3) {
-    
-                  int f = int(RxP[4]);
+                  }      
+               
                   
-                  if (f > 0) {
+                } 
+                else if ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1)) { // PickSelect also if scale, rotate, modify, etc. where selected
+                
+                  if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselectAll();
                   
+                  if (Work_with_2D_or_3D == 3) {
+      
+                    int f = int(RxP[4]);
+                    
                     int OBJ_NUM = 0;
                     
                     for (int i = 0; i < allPolymesh_Faces.length; i++) {
@@ -24530,7 +24524,7 @@ void mouseClicked () {
                       }
                     }
                     
-                    if (OBJ_NUM > 0) {
+                    if (OBJ_NUM != 0) {
                     
                       int found_at = -1;
                       
@@ -24575,14 +24569,11 @@ void mouseClicked () {
                       SOLARCHVISION_calculate_selection_Pivot();
                     //}
                   }
-                }
-    
-                if (Work_with_2D_or_3D == 2) {
-    
-                  int OBJ_NUM = int(RxP[4]);
-                  
-                  if (OBJ_NUM > 0) {
-    
+      
+                  if (Work_with_2D_or_3D == 2) {
+      
+                    int OBJ_NUM = int(RxP[4]);
+      
                     int found_at = -1;
                     
                     int use_it = 0; // 0:nothing 1:add -1:subtract
@@ -24626,14 +24617,11 @@ void mouseClicked () {
                       SOLARCHVISION_calculate_selection_Pivot();
                     //}
                   }
-                }
-    
-                if (Work_with_2D_or_3D == 1) {
-                  
-                  int OBJ_NUM = int(RxP[4]);
-                  
-                   if (OBJ_NUM > 0) {
-    
+      
+                  if (Work_with_2D_or_3D == 1) {
+                    
+                    int OBJ_NUM = int(RxP[4]);
+  
                     int found_at = -1;
                     
                     int use_it = 0; // 0:nothing 1:add -1:subtract
@@ -24678,12 +24666,9 @@ void mouseClicked () {
                   //if (pre_selectedFractal_numbers_lastItem != selectedFractal_numbers[selectedFractal_numbers.length - 1]) {
                     SOLARCHVISION_calculate_selection_Pivot();
                   //}
-                  
-                }
-                
-                if (mouseButton == LEFT) SOLARCHVISION_reset_selectedRefValues();
-              }      
-         
+                    
+                }      
+              }
               
               if (View_Select_Create_Modify == 0) { // create
     
