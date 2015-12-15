@@ -24434,39 +24434,78 @@ void mouseClicked () {
     
                   int f = int(RxP[4]);
                   
-                  if ((View_Select_Create_Modify == 4) || (View_Select_Create_Modify == 5)) {
-                    
-                    if (Modify_Object_Parameters == 1) { // Pick 
-                      if (View_Select_Create_Modify == 4) Create_Default_Material = allFaces_MAT[f][0];
-                      if (View_Select_Create_Modify == 5) Create_Default_Teselation = allFaces_MAT[f][1];
-                    } 
-                    if (Modify_Object_Parameters == 2) { //Assign(sub) 
-                      if (View_Select_Create_Modify == 4) allFaces_MAT[f][0] = Create_Default_Material;
-                      if (View_Select_Create_Modify == 5) allFaces_MAT[f][1] = Create_Default_Teselation;
+                  if (f > 0) {
+                  
+                    if ((View_Select_Create_Modify == 4) || (View_Select_Create_Modify == 5)) {
+                      
+                      if (Modify_Object_Parameters == 1) { // Pick 
+                        if (View_Select_Create_Modify == 4) Create_Default_Material = allFaces_MAT[f][0];
+                        if (View_Select_Create_Modify == 5) Create_Default_Teselation = allFaces_MAT[f][1];
+                      } 
+                      if (Modify_Object_Parameters == 2) { //Assign(sub) 
+                        if (View_Select_Create_Modify == 4) allFaces_MAT[f][0] = Create_Default_Material;
+                        if (View_Select_Create_Modify == 5) allFaces_MAT[f][1] = Create_Default_Teselation;
+                      }
+                      if (Modify_Object_Parameters == 3) { //Assign(all) 
+                        int OBJ_NUM = 0;
+                        for (int i = 0; i < allPolymesh_Faces.length; i++) {
+                          if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
+                            OBJ_NUM = i;
+                            WIN3D_Update = 1;
+                            break;
+                          }
+                        }
+                        if (OBJ_NUM > 0) {
+                          for (int q = allPolymesh_Faces[OBJ_NUM][0]; q <= allPolymesh_Faces[OBJ_NUM][1]; q++) {                    
+                            if (View_Select_Create_Modify == 4) allFaces_MAT[q][0] = Create_Default_Material;
+                            if (View_Select_Create_Modify == 5) allFaces_MAT[q][1] = Create_Default_Teselation;
+                          }
+                        }
+                      }    
+                      
                     }
-                    if (Modify_Object_Parameters == 3) { //Assign(all) 
-                      int OBJ_NUM = 0;
-                      for (int i = 0; i < allPolymesh_Faces.length; i++) {
-                        if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
-                          OBJ_NUM = i;
-                          WIN3D_Update = 1;
-                          break;
-                        }
-                      }
-                      if (OBJ_NUM > 0) {
-                        for (int q = allPolymesh_Faces[OBJ_NUM][0]; q <= allPolymesh_Faces[OBJ_NUM][1]; q++) {                    
-                          if (View_Select_Create_Modify == 4) allFaces_MAT[q][0] = Create_Default_Material;
-                          if (View_Select_Create_Modify == 5) allFaces_MAT[q][1] = Create_Default_Teselation;
-                        }
-                      }
-                    }    
-                    
-                  }
-
-                  ROLLOUT_Update = 1;                 
+  
+                    ROLLOUT_Update = 1;     
+                  }            
                 }
                 
                 
+                if (Work_with_2D_or_3D == 2) {
+    
+                  int OBJ_NUM = int(RxP[4]);
+                  
+                  if (OBJ_NUM > 0) {
+                  
+                    int n = allObject2D_MAP[OBJ_NUM];
+                    int sign_n = 1;
+                    if (n < 0) sign_n = -1;
+                    n = abs(n);
+                    int n1 = Object2D_PEOPLE_Files_Num;
+                    int n2 = Object2D_PEOPLE_Files_Num + Object2D_TREES_Files_Num;
+            
+                    if (View_Select_Create_Modify == 4) {
+                      
+                      if (Modify_Object_Parameters == 1) { // Pick 
+                        if (n <= n1) { // case: people 
+                          Create_Mesh_Person_Type = n;
+                        }
+                        else { // case: trees
+                          Create_Mesh_Plant_Type = n;
+                        }
+                      } 
+                      else { //Assign
+                        if (n <= n1) { // case: people 
+                          allObject2D_MAP[OBJ_NUM] = sign_n * Create_Mesh_Person_Type;
+                        }
+                        else { // case: trees
+                          allObject2D_MAP[OBJ_NUM] = sign_n * Create_Mesh_Plant_Type;
+                        }
+                      }
+                    }
+  
+                    ROLLOUT_Update = 1;
+                  }                 
+                }                
                 
               } 
               else if ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1)) { // PickSelect also if scale, rotate, modify, etc. where selected
@@ -28792,7 +28831,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           int n2 = Object2D_PEOPLE_Files_Num + Object2D_TREES_Files_Num;
           
           
-          if (n <= n1) {  // case: people 
+          if (n <= n1) { // case: people 
   
             n += p;
             
