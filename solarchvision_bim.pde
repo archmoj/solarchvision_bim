@@ -24516,20 +24516,73 @@ void mouseClicked () {
     
                   int f = int(RxP[4]);
                   
-                  int OBJ_NUM = 0;
+                  if (f > 0) {
                   
-                  for (int i = 0; i < allPolymesh_Faces.length; i++) {
-                    if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
-                      
-                      OBJ_NUM = i;
-                      
-                      WIN3D_Update = 1;
-                      break;
+                    int OBJ_NUM = 0;
+                    
+                    for (int i = 0; i < allPolymesh_Faces.length; i++) {
+                      if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
+                        
+                        OBJ_NUM = i;
+                        
+                        WIN3D_Update = 1;
+                        break;
+                      }
                     }
+                    
+                    if (OBJ_NUM > 0) {
+                    
+                      int found_at = -1;
+                      
+                      int use_it = 0; // 0:nothing 1:add -1:subtract
+                      
+                      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+                      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+                      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+                      
+                      if (addNewSelectionToPreviousSelection != 0) {
+        
+                        for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
+                          if (selectedPolymesh_numbers[o] == OBJ_NUM) {
+                            found_at = o;
+                            if (addNewSelectionToPreviousSelection == 1) {
+                              use_it = 0;
+                            }
+                            if (addNewSelectionToPreviousSelection == -1) {
+                              use_it = -1; 
+                            }
+                            break;
+                          } 
+                        }
+                      }
+                      
+                      if (use_it == -1) {
+                        int[] startList = (int[]) subset(selectedPolymesh_numbers, 0, found_at);
+                        int[] endList = (int[]) subset(selectedPolymesh_numbers, found_at + 1);
+                        
+                        selectedPolymesh_numbers = (int[]) concat(startList, endList);
+                      }
+                      
+                      if (use_it == 1) {
+                        int[] new_OBJ_number = {OBJ_NUM};
+                        
+                        selectedPolymesh_numbers = (int[]) concat(selectedPolymesh_numbers, new_OBJ_number);
+                      }
+                    }
+                    
+                    
+                    //if (pre_selectedPolymesh_numbers_lastItem != selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1]) {
+                      SOLARCHVISION_calculate_selection_Pivot();
+                    //}
                   }
+                }
+    
+                if (Work_with_2D_or_3D == 2) {
+    
+                  int OBJ_NUM = int(RxP[4]);
                   
                   if (OBJ_NUM > 0) {
-                  
+    
                     int found_at = -1;
                     
                     int use_it = 0; // 0:nothing 1:add -1:subtract
@@ -24540,8 +24593,8 @@ void mouseClicked () {
                     
                     if (addNewSelectionToPreviousSelection != 0) {
       
-                      for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
-                        if (selectedPolymesh_numbers[o] == OBJ_NUM) {
+                      for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
+                        if (selectedObject2D_numbers[o] == OBJ_NUM) {
                           found_at = o;
                           if (addNewSelectionToPreviousSelection == 1) {
                             use_it = 0;
@@ -24555,123 +24608,78 @@ void mouseClicked () {
                     }
                     
                     if (use_it == -1) {
-                      int[] startList = (int[]) subset(selectedPolymesh_numbers, 0, found_at);
-                      int[] endList = (int[]) subset(selectedPolymesh_numbers, found_at + 1);
+                      int[] startList = (int[]) subset(selectedObject2D_numbers, 0, found_at);
+                      int[] endList = (int[]) subset(selectedObject2D_numbers, found_at + 1);
                       
-                      selectedPolymesh_numbers = (int[]) concat(startList, endList);
+                      selectedObject2D_numbers = (int[]) concat(startList, endList);
                     }
                     
                     if (use_it == 1) {
                       int[] new_OBJ_number = {OBJ_NUM};
                       
-                      selectedPolymesh_numbers = (int[]) concat(selectedPolymesh_numbers, new_OBJ_number);
+                      selectedObject2D_numbers = (int[]) concat(selectedObject2D_numbers, new_OBJ_number);
                     }
-                  }
-                  
-                  
-                  //if (pre_selectedPolymesh_numbers_lastItem != selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1]) {
-                    SOLARCHVISION_calculate_selection_Pivot();
-                  //}
-          
-                }
-    
-                if (Work_with_2D_or_3D == 2) {
-    
-                  int OBJ_NUM = int(RxP[4]);
-    
-                  int found_at = -1;
-                  
-                  int use_it = 0; // 0:nothing 1:add -1:subtract
-                  
-                  if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-                  if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-                  if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-                  
-                  if (addNewSelectionToPreviousSelection != 0) {
-    
-                    for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
-                      if (selectedObject2D_numbers[o] == OBJ_NUM) {
-                        found_at = o;
-                        if (addNewSelectionToPreviousSelection == 1) {
-                          use_it = 0;
-                        }
-                        if (addNewSelectionToPreviousSelection == -1) {
-                          use_it = -1; 
-                        }
-                        break;
-                      } 
-                    }
-                  }
-                  
-                  if (use_it == -1) {
-                    int[] startList = (int[]) subset(selectedObject2D_numbers, 0, found_at);
-                    int[] endList = (int[]) subset(selectedObject2D_numbers, found_at + 1);
+      
+                    WIN3D_Update = 1;
                     
-                    selectedObject2D_numbers = (int[]) concat(startList, endList);
+                    //if (pre_selectedObject2D_numbers_lastItem != selectedObject2D_numbers[selectedObject2D_numbers.length - 1]) {
+                      SOLARCHVISION_calculate_selection_Pivot();
+                    //}
                   }
-                  
-                  if (use_it == 1) {
-                    int[] new_OBJ_number = {OBJ_NUM};
-                    
-                    selectedObject2D_numbers = (int[]) concat(selectedObject2D_numbers, new_OBJ_number);
-                  }
-    
-                  WIN3D_Update = 1;
-                  
-                  //if (pre_selectedObject2D_numbers_lastItem != selectedObject2D_numbers[selectedObject2D_numbers.length - 1]) {
-                    SOLARCHVISION_calculate_selection_Pivot();
-                  //}
                 }
     
                 if (Work_with_2D_or_3D == 1) {
                   
                   int OBJ_NUM = int(RxP[4]);
                   
+                   if (OBJ_NUM > 0) {
     
-                  int found_at = -1;
-                  
-                  int use_it = 0; // 0:nothing 1:add -1:subtract
-                  
-                  if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-                  if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-                  if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-                  
-                  if (addNewSelectionToPreviousSelection != 0) {
-    
-                    for (int o = selectedFractal_numbers.length - 1; o >= 0; o--) {
-                      if (selectedFractal_numbers[o] == OBJ_NUM) {
-                        found_at = o;
-                        if (addNewSelectionToPreviousSelection == 1) {
-                          use_it = 0;
-                        }
-                        if (addNewSelectionToPreviousSelection == -1) {
-                          use_it = -1; 
-                        }
-                        break;
-                      } 
+                    int found_at = -1;
+                    
+                    int use_it = 0; // 0:nothing 1:add -1:subtract
+                    
+                    if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+                    if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+                    if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+                    
+                    if (addNewSelectionToPreviousSelection != 0) {
+      
+                      for (int o = selectedFractal_numbers.length - 1; o >= 0; o--) {
+                        if (selectedFractal_numbers[o] == OBJ_NUM) {
+                          found_at = o;
+                          if (addNewSelectionToPreviousSelection == 1) {
+                            use_it = 0;
+                          }
+                          if (addNewSelectionToPreviousSelection == -1) {
+                            use_it = -1; 
+                          }
+                          break;
+                        } 
+                      }
                     }
-                  }
-                  
-                  if (use_it == -1) {
-                    int[] startList = (int[]) subset(selectedFractal_numbers, 0, found_at);
-                    int[] endList = (int[]) subset(selectedFractal_numbers, found_at + 1);
                     
-                    selectedFractal_numbers = (int[]) concat(startList, endList);
-                  }
-                  
-                  if (use_it == 1) {
-                    int[] new_OBJ_number = {OBJ_NUM};
+                    if (use_it == -1) {
+                      int[] startList = (int[]) subset(selectedFractal_numbers, 0, found_at);
+                      int[] endList = (int[]) subset(selectedFractal_numbers, found_at + 1);
+                      
+                      selectedFractal_numbers = (int[]) concat(startList, endList);
+                    }
                     
-                    selectedFractal_numbers = (int[]) concat(selectedFractal_numbers, new_OBJ_number);
+                    if (use_it == 1) {
+                      int[] new_OBJ_number = {OBJ_NUM};
+                      
+                      selectedFractal_numbers = (int[]) concat(selectedFractal_numbers, new_OBJ_number);
+                    }
+                    
+                    WIN3D_Update = 1;
                   }
                   
-                  WIN3D_Update = 1;
+                  
+                  //if (pre_selectedFractal_numbers_lastItem != selectedFractal_numbers[selectedFractal_numbers.length - 1]) {
+                    SOLARCHVISION_calculate_selection_Pivot();
+                  //}
+                  
                 }
-                
-                
-                //if (pre_selectedFractal_numbers_lastItem != selectedFractal_numbers[selectedFractal_numbers.length - 1]) {
-                  SOLARCHVISION_calculate_selection_Pivot();
-                //}
                 
                 if (mouseButton == LEFT) SOLARCHVISION_reset_selectedRefValues();
               }      
