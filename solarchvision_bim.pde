@@ -1486,7 +1486,7 @@ float MESSAGE_S_View = w_pixel / 40.0;
 
 
 int a_pixel = int(1.5 * MESSAGE_S_View); // menu bar
-int b_pixel = int(2.75 * MESSAGE_S_View); // 3D tool bar
+int b_pixel = int(3.0 * MESSAGE_S_View); // 3D tool bar
 
 int d_pixel = int(4.5 * MESSAGE_S_View); // time bar
 
@@ -24434,29 +24434,39 @@ void mouseClicked () {
     
                   int f = int(RxP[4]);
                   
-                  if (View_Select_Create_Modify == 4) {
+                  if ((View_Select_Create_Modify == 4) || (View_Select_Create_Modify == 5)) {
                     
-                    if (Modify_Object_Parameters == 1) { // Pick
-                      Create_Default_Material = allFaces_MAT[f][0];
+                    if (Modify_Object_Parameters == 1) { // Pick 
+                      if (View_Select_Create_Modify == 4) Create_Default_Material = allFaces_MAT[f][0];
+                      if (View_Select_Create_Modify == 5) Create_Default_Teselation = allFaces_MAT[f][1];
                     } 
-                    if (Modify_Object_Parameters == 2) { //Assign
-                      allFaces_MAT[f][0] = Create_Default_Material;
+                    if (Modify_Object_Parameters == 2) { //Assign(sub) 
+                      if (View_Select_Create_Modify == 4) allFaces_MAT[f][0] = Create_Default_Material;
+                      if (View_Select_Create_Modify == 5) allFaces_MAT[f][1] = Create_Default_Teselation;
                     }
-
+                    if (Modify_Object_Parameters == 3) { //Assign(all) 
+                      int OBJ_NUM = 0;
+                      for (int i = 0; i < allPolymesh_Faces.length; i++) {
+                        if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
+                          OBJ_NUM = i;
+                          WIN3D_Update = 1;
+                          break;
+                        }
+                      }
+                      if (OBJ_NUM > 0) {
+                        for (int q = allPolymesh_Faces[OBJ_NUM][0]; q <= allPolymesh_Faces[OBJ_NUM][1]; q++) {                    
+                          if (View_Select_Create_Modify == 4) allFaces_MAT[q][0] = Create_Default_Material;
+                          if (View_Select_Create_Modify == 5) allFaces_MAT[q][1] = Create_Default_Teselation;
+                        }
+                      }
+                    }    
+                    
                   }
 
-                  if (View_Select_Create_Modify == 5) {
-                    
-                    if (Modify_Object_Parameters == 1) { // Pick
-                      Create_Default_Teselation = allFaces_MAT[f][1];
-                    } 
-                    if (Modify_Object_Parameters == 2) { //Assign
-                      allFaces_MAT[f][1] = Create_Default_Teselation;
-                    }    
-                  } 
-                  
                   ROLLOUT_Update = 1;                 
                 }
+                
+                
                 
               } 
               else if ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1)) { // PickSelect also if scale, rotate, modify, etc. where selected
@@ -24529,9 +24539,6 @@ void mouseClicked () {
                 if (Work_with_2D_or_3D == 2) {
     
                   int OBJ_NUM = int(RxP[4]);
-                  
-                  println("OBJ_NUM", OBJ_NUM);
-                  
     
                   int found_at = -1;
                   
@@ -29162,6 +29169,12 @@ void dessin_Seed (int _type, float x, float y, float r) {
     line(0, 0, 0.8 * r * d * cos(i), 0.8 * r * d * sin(i));
   }  
 
+  stroke(0,0,255);
+  strokeWeight(3);
+  if (_type == 2) {line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r);}
+  if (_type == 3) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);} 
+  if (_type == 4) {line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r); line(-0.7 * r, -0.3 * r, -0.3 * r, -0.7 * r);}
+
   strokeWeight(0);
 
   popMatrix();
@@ -29192,6 +29205,12 @@ void dessin_Teselation (int _type, float x, float y, float r) {
     line(-0.5 * d, w, 0.5 * d, w);  
     line(w, -0.5 * d, w, 0.5 * d);
   }
+
+  stroke(0,0,255);
+  strokeWeight(3);
+  if (_type == 2) {line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r);}
+  if (_type == 3) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);} 
+  if (_type == 4) {line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r); line(-0.7 * r, -0.3 * r, -0.3 * r, -0.7 * r);}
   
   strokeWeight(0);
 
