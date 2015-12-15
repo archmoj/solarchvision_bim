@@ -117,11 +117,6 @@ int[][] allPolymesh_Solids = {{0,0}}; // start solid - end solid
 float[][] allPolymesh_SolarPivotXYZ = {{0,0,0}}; 
 int[][] allPolymesh_SolarPivotType = {{0}}; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
 
-float[] temp_SolarPivotXYZ = {0,0,0};
-int[] temp_SolarPivotType = {0}; 
-
-
-
 
 
 
@@ -24625,27 +24620,7 @@ void mouseClicked () {
                     
                     if (View_Select_Create_Modify == 12) {
                       if (Modify_Object_Parameters == 1) { // Pick 
-                        int OBJ_NUM = 0;
-                        for (int i = 0; i < allPolymesh_Faces.length; i++) {
-                          if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
-                            OBJ_NUM = i;
-                            WIN3D_Update = 1;
-                            break;
-                          }
-                        }
-                        
-                        SOLARCHVISION_deselectAll();
-                        
-                        selectedPolymesh_numbers = new int [1];
-                        selectedPolymesh_numbers[0] = OBJ_NUM;
-                        
-                        SOLARCHVISION_calculate_selection_Pivot();
-                        
-                        temp_SolarPivotXYZ[0] = selection_BoundingBox[1 + selection_alignX][0];
-                        temp_SolarPivotXYZ[1] = selection_BoundingBox[1 + selection_alignY][1];
-                        temp_SolarPivotXYZ[2] = selection_BoundingBox[1 + selection_alignZ][2];
-                        
-                        temp_SolarPivotType[0] = allPolymesh_SolarPivotType[OBJ_NUM][0];
+                        //?????????????????????????????????????????????????
                       }     
                       if (Modify_Object_Parameters == 2) { // Assign
                         int OBJ_NUM = 0;
@@ -24657,16 +24632,15 @@ void mouseClicked () {
                           }
                         }
                         if (OBJ_NUM != 0) {
-                          allPolymesh_SolarPivotXYZ[OBJ_NUM][0] = temp_SolarPivotXYZ[0];
-                          allPolymesh_SolarPivotXYZ[OBJ_NUM][1] = temp_SolarPivotXYZ[1];
-                          allPolymesh_SolarPivotXYZ[OBJ_NUM][2] = temp_SolarPivotXYZ[2];
-                          
-                          allPolymesh_SolarPivotType[OBJ_NUM][0] = temp_SolarPivotType[0];
+                          allPolymesh_SolarPivotXYZ[OBJ_NUM][0] = selection_BoundingBox[1 + selection_alignX][0];
+                          allPolymesh_SolarPivotXYZ[OBJ_NUM][1] = selection_BoundingBox[1 + selection_alignY][1];
+                          allPolymesh_SolarPivotXYZ[OBJ_NUM][2] = selection_BoundingBox[1 + selection_alignZ][2];
                         }
                       }                   
                     }
   
-                    ROLLOUT_Update = 1;     
+                    ROLLOUT_Update = 1;
+                    WIN3D_Update = 1; // ???????????????????????     
                   }
                   
                   
