@@ -107,16 +107,20 @@ int[] selectedObject2D_numbers = {0};
 int[] selectedPolymesh_numbers = {0};
 
 
+float[][] allVertices = {{0,0,0}};
+int[][] allFaces = {{0,0,0}};
+int[][] allFaces_MAT = {{0,0}};
+
 int[][] allPolymesh_Faces = {{0,0}}; // start face - end face
 int[][] allPolymesh_Solids = {{0,0}}; // start solid - end solid
 
 float[][] allPolymesh_SolarPivotXYZ = {{0,0,0}}; 
 int[][] allPolymesh_SolarPivotType = {{0}}; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
 
+float[] temp_SolarPivotXYZ = {0,0,0};
+int[] temp_SolarPivotType = {0}; 
 
-float[][] allVertices = {{0,0,0}};
-int[][] allFaces = {{0,0,0}};
-int[][] allFaces_MAT = {{0,0}};
+
 
 
 
@@ -143,6 +147,8 @@ int Display_Building_Model = 1;
 int Display_Trees_People = 1;
 int Display_FractalPlant = 1;
 int Display_Leaves = 1;
+
+
 
 int defaultMaterial = 7;
 int defaultTeselation = 0;
@@ -202,7 +208,7 @@ int Work_with_2D_or_3D = 2; // 1:Fractals 2:2D, 3:3D, 4:4D
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
-int View_Select_Create_Modify = 4; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Teselation 6:DegreeMax 7:DegreeDif 8:DegreeMin 9:TrunckSize 10:LeafSize 11:AllFractalProps
+int View_Select_Create_Modify = 4; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Teselation 6:DegreeMax 7:DegreeDif 8:DegreeMin 9:TrunckSize 10:LeafSize 11:AllFractalProps 12:SolarPivot
 int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. fractal trees
 
@@ -23732,6 +23738,24 @@ void mouseClicked () {
               SOLARCHVISION_highlight_in_BAR_b("RTz");
               BAR_b_Update = 1;  
             }
+            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("SolarPivot")) {
+              set_to_Modify_SolarPivot(0);
+              SOLARCHVISION_highlight_in_BAR_b("SPvt0");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pick SolarPivot")) {
+              set_to_Modify_SolarPivot(1);
+              SOLARCHVISION_highlight_in_BAR_b("SPvt1");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Assign SolarPivot")) {
+              set_to_Modify_SolarPivot(2);
+              SOLARCHVISION_highlight_in_BAR_b("Spvt2");
+              BAR_b_Update = 1;  
+            }
+
+            
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Seed/Material")) {
               set_to_Modify_Seed(0);
               SOLARCHVISION_highlight_in_BAR_b("Mat0");
@@ -24576,11 +24600,11 @@ void mouseClicked () {
                         if (View_Select_Create_Modify == 4) Create_Default_Material = allFaces_MAT[f][0];
                         if (View_Select_Create_Modify == 5) Create_Default_Teselation = allFaces_MAT[f][1];
                       } 
-                      if (Modify_Object_Parameters == 2) { //Assign(sub) 
+                      if (Modify_Object_Parameters == 2) { // Assign(sub) 
                         if (View_Select_Create_Modify == 4) allFaces_MAT[f][0] = Create_Default_Material;
                         if (View_Select_Create_Modify == 5) allFaces_MAT[f][1] = Create_Default_Teselation;
                       }
-                      if (Modify_Object_Parameters == 3) { //Assign(all) 
+                      if (Modify_Object_Parameters == 3) { // Assign(all) 
                         int OBJ_NUM = 0;
                         for (int i = 0; i < allPolymesh_Faces.length; i++) {
                           if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
@@ -24597,6 +24621,49 @@ void mouseClicked () {
                         }
                       }    
                       
+                    }
+                    
+                    if (View_Select_Create_Modify == 12) {
+                      if (Modify_Object_Parameters == 1) { // Pick 
+                        int OBJ_NUM = 0;
+                        for (int i = 0; i < allPolymesh_Faces.length; i++) {
+                          if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
+                            OBJ_NUM = i;
+                            WIN3D_Update = 1;
+                            break;
+                          }
+                        }
+                        
+                        SOLARCHVISION_deselectAll();
+                        
+                        selectedPolymesh_numbers = new int [1];
+                        selectedPolymesh_numbers[0] = OBJ_NUM;
+                        
+                        SOLARCHVISION_calculate_selection_Pivot();
+                        
+                        temp_SolarPivotXYZ[0] = selection_BoundingBox[1 + selection_alignX][0];
+                        temp_SolarPivotXYZ[1] = selection_BoundingBox[1 + selection_alignY][1];
+                        temp_SolarPivotXYZ[2] = selection_BoundingBox[1 + selection_alignZ][2];
+                        
+                        temp_SolarPivotType[0] = allPolymesh_SolarPivotType[OBJ_NUM][0];
+                      }     
+                      if (Modify_Object_Parameters == 2) { // Assign
+                        int OBJ_NUM = 0;
+                        for (int i = 0; i < allPolymesh_Faces.length; i++) {
+                          if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
+                            OBJ_NUM = i;
+                            WIN3D_Update = 1;
+                            break;
+                          }
+                        }
+                        if (OBJ_NUM != 0) {
+                          allPolymesh_SolarPivotXYZ[OBJ_NUM][0] = temp_SolarPivotXYZ[0];
+                          allPolymesh_SolarPivotXYZ[OBJ_NUM][1] = temp_SolarPivotXYZ[1];
+                          allPolymesh_SolarPivotXYZ[OBJ_NUM][2] = temp_SolarPivotXYZ[2];
+                          
+                          allPolymesh_SolarPivotType[OBJ_NUM][0] = temp_SolarPivotType[0];
+                        }
+                      }                   
                     }
   
                     ROLLOUT_Update = 1;     
@@ -24624,7 +24691,7 @@ void mouseClicked () {
                           Create_Mesh_Plant_Type = n - n1;
                         }
                       } 
-                      if ((Modify_Object_Parameters == 2) || (Modify_Object_Parameters == 3)) { //Assign
+                      if ((Modify_Object_Parameters == 2) || (Modify_Object_Parameters == 3)) { // Assign
                         if (n <= n1) { // case: people 
                           allObject2D_MAP[OBJ_NUM] = sign_n * Create_Mesh_Person_Type;
                         }
@@ -25456,7 +25523,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
       Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 4, 1), 1));
     
-      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -17, 11, 1), 1));
+      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -17, 12, 1), 1));
       //View_XYZ_ChangeOption = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_ChangeOption" , View_XYZ_ChangeOption, 0, 6, 1), 1));
       //Modify_Object_Parameters = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Object_Parameters" , Modify_Object_Parameters, 0, 9, 1), 1));
 
@@ -30205,7 +30272,7 @@ String[][] BAR_a_Items = {
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
                         {"Select", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Seed/Material", "Teselation", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize"},
-                        {"Match", "Pick Seed/Material", "Pick Teselation", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Teselation", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps"},
+                        {"Match", "Pick SolarPivot", "Pick Seed/Material", "Pick Teselation", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign SolarPivot", "Assign Seed/Material", "Assign Teselation", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
 
                       };
@@ -30504,6 +30571,8 @@ String[][] BAR_b_Items = {
                           {"3", "RTx", "RTy", "RTz", "Rotate", "1.0"}, 
                           {"1", "Mat0", "Mat1", "Mat2", "Mat3", "Seed/Material", "1.0"},
                           {"1", "Tes0", "Tes1", "Tes2", "Tes3", "Teselation", "1.0"},
+                          
+                          //{"1", "SPvt0", "SPvt1", "SPvt2", "SolarPivot", "1.0"},
                           
                           //{"1", "dgMax0", "dgMax1", "dgMax2", "DegreeMax", "1.0"},
                           //{"1", "dgDif0", "dgDif1", "dgDif2", "DegreeDif", "1.0"},
@@ -31030,6 +31099,13 @@ void set_to_Modify_LeafSize (int n) {
 
 void set_to_Modify_AllFractalProps (int n) {
   View_Select_Create_Modify = 11;
+  Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
+
+  ROLLOUT_Update = 1; 
+}
+
+void set_to_Modify_SolarPivot (int n) {
+  View_Select_Create_Modify = 12;
   Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1; 
