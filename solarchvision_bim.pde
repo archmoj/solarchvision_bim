@@ -90,6 +90,8 @@ int selection_alignX = 0;
 int selection_alignY = 0;
 int selection_alignZ = 0;
 
+
+int selectedPolymesh_displaySolarPivot = 1;
 int selectedPolymesh_displayPivot = 1;
 int selectedPolymesh_displayEdges = 1; //0;
 int selectedPolymesh_displayBox = 1;
@@ -25450,9 +25452,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
     if (ROLLOUT_child == 1) { // General
 
-      //Create_Mesh_or_Solid = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_or_Solid" , Create_Mesh_or_Solid, 1, 2, 1), 1));
+      Create_Mesh_or_Solid = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_or_Solid" , Create_Mesh_or_Solid, 1, 2, 1), 1));
     
-      //Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 4, 1), 1));
+      Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 4, 1), 1));
     
       //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -17, 11, 1), 1));
       //View_XYZ_ChangeOption = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_ChangeOption" , View_XYZ_ChangeOption, 0, 6, 1), 1));
@@ -25460,6 +25462,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       Create_Default_Material = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Material" , Create_Default_Material, -1, 8, 1), 1));
       Create_Default_Teselation = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Teselation" , Create_Default_Teselation, 0, 4, 1), 1));
+      Create_Default_SolarPivotType = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_SolarPivotType" , Create_Default_SolarPivotType, 0, 4, 1), 1));
   
       Create_Input_Orientation = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Orientation" , Create_Input_Orientation, 0, 360, 15);
       
@@ -25552,6 +25555,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       selection_alignY = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selection_alignY" , selection_alignY, -1, 1, 1), 1));
       selection_alignZ = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selection_alignZ" , selection_alignZ, -1, 1, 1), 1));
   
+      selectedPolymesh_displaySolarPivot = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displaySolarPivot" , selectedPolymesh_displaySolarPivot, 0, 1, 1), 1));
       selectedPolymesh_displayPivot = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displayPivot" , selectedPolymesh_displayPivot, 0, 1, 1), 1));
       selectedPolymesh_displayBox = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displayBox" , selectedPolymesh_displayBox, 0, 1, 1), 1));
       selectedPolymesh_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displayEdges" , selectedPolymesh_displayEdges, 0, 1, 1), 1));
@@ -25611,7 +25615,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       BEGIN_DAY = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Plot start date" , BEGIN_DAY, 0, 364, 1), 1));
     
       //_DATE = MySpinner.update(X_control, Y_control, 1,0,0, "Solar date", _DATE, 0, 364.5, 0.5);
-      _DATE = MySpinner.update(X_control, Y_control, 1,0,0, "Solar date", _DATE, 0, 364, 1);
+      _DATE = int(MySpinner.update(X_control, Y_control, 1,0,0, "Solar date", _DATE, 0, 364, 1));
       
       _DAY = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Forecast day" , _DAY, 1, 31, 1), 1));
       _MONTH = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Forecast month", _MONTH, 1, 12, 1), 1));
@@ -26862,6 +26866,43 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     
       popMatrix();
     }  
+
+  
+    if (WIN3D_VERTS_SHOW != 0) {
+  
+      pushMatrix();
+    
+      translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+      
+      noFill();
+      
+      stroke(255,255,0);
+      
+      strokeWeight(2);
+      
+      ellipseMode(CENTER);
+      
+      float R = 5;
+      
+      for (int vNo = 1; vNo < allVertices.length; vNo++) {
+  
+        float x = allVertices[vNo][0] * OBJECTS_scale;
+        float y = allVertices[vNo][1] * OBJECTS_scale;
+        float z = -allVertices[vNo][2] * OBJECTS_scale;
+  
+        float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+        
+        if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+          if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View + R, -0.5 * WIN3D_Y_View + R, 0.5 * WIN3D_X_View - R, 0.5 * WIN3D_Y_View - R) == 1) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
+        }
+  
+      }    
+      
+      strokeWeight(0);   
+    
+      popMatrix();    
+    }
+
     
     if (selectedPolymesh_displayPivot != 0) {
       
@@ -26917,41 +26958,76 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     
       popMatrix();
     }
-  
-    if (WIN3D_VERTS_SHOW != 0) {
-  
+    
+    
+    if (selectedPolymesh_displaySolarPivot != 0) {
+      
       pushMatrix();
     
       translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
-      
+
       noFill();
       
-      stroke(255,255,0);
+      strokeWeight(5);
+
+      for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
       
-      strokeWeight(2);
-      
-      ellipseMode(CENTER);
-      
-      float R = 5;
-      
-      for (int vNo = 1; vNo < allVertices.length; vNo++) {
-  
-        float x = allVertices[vNo][0] * OBJECTS_scale;
-        float y = allVertices[vNo][1] * OBJECTS_scale;
-        float z = -allVertices[vNo][2] * OBJECTS_scale;
-  
-        float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+        int OBJ_NUM = selectedPolymesh_numbers[o];
         
-        if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View + R, -0.5 * WIN3D_Y_View + R, 0.5 * WIN3D_X_View - R, 0.5 * WIN3D_Y_View - R) == 1) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
+        if (OBJ_NUM != 0) {
+
+      
+          float Pivot_X = allPolymesh_SolarPivotXYZ[OBJ_NUM][0];
+          float Pivot_Y = allPolymesh_SolarPivotXYZ[OBJ_NUM][1];
+          float Pivot_Z = allPolymesh_SolarPivotXYZ[OBJ_NUM][2];
+          
+          float[][] BoundingBox_Vertices = {{Pivot_X, Pivot_Y, Pivot_Z},
+                                            {Pivot_X + 100, Pivot_Y, Pivot_Z},
+                                            {Pivot_X, Pivot_Y + 100, Pivot_Z},
+                                            {Pivot_X, Pivot_Y, Pivot_Z + 100}}; 
+          
+          int[][] BoundingBox_Lines = {{0,1}, {0,2}, {0,3}};
+          
+          int f_start = 0;
+          int f_end = BoundingBox_Lines.length - 1;
+          
+          if (allPolymesh_SolarPivotType[OBJ_NUM][0] == 1) {f_start = 0; f_end = f_start;}
+          if (allPolymesh_SolarPivotType[OBJ_NUM][0] == 2) {f_start = 1; f_end = f_start;}
+          if (allPolymesh_SolarPivotType[OBJ_NUM][0] == 3) {f_start = 2; f_end = f_start;}
+      
+          for (int f = f_start; f <= f_end; f++) {
+            
+            stroke(255,127,0);
+            
+            int a = BoundingBox_Lines[f][0];
+            int b = BoundingBox_Lines[f][1];
+      
+            float x1 = BoundingBox_Vertices[a][0] * OBJECTS_scale;
+            float y1 = BoundingBox_Vertices[a][1] * OBJECTS_scale;            
+            float z1 = -BoundingBox_Vertices[a][2] * OBJECTS_scale;
+      
+            float x2 = BoundingBox_Vertices[b][0] * OBJECTS_scale;
+            float y2 = BoundingBox_Vertices[b][1] * OBJECTS_scale;            
+            float z2 = -BoundingBox_Vertices[b][2] * OBJECTS_scale;
+            
+            float[] Image_XYZa = SOLARCHVISION_calculate_Perspective_Internally(x1,y1,z1);            
+            float[] Image_XYZb = SOLARCHVISION_calculate_Perspective_Internally(x2,y2,z2);
+            
+            if ((Image_XYZa[2] > 0) && (Image_XYZb[2] > 0)) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+              if (isInside(Image_XYZa[0], Image_XYZa[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) {
+                if (isInside(Image_XYZb[0], Image_XYZb[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) {
+                  line(Image_XYZa[0], Image_XYZa[1], Image_XYZb[0], Image_XYZb[1]);
+                }
+              }
+            }
+          }
         }
-  
-      }    
+      }
       
       strokeWeight(0);   
     
-      popMatrix();    
-    }
+      popMatrix();
+    }    
   }
 }
 
@@ -33657,7 +33733,7 @@ solution: I remarked wheel option for pickSelect for now.
 float[][] allPolymesh_SolarPivotXYZ = {{0,0,0}}; 
 int[][] allPolymesh_SolarPivotType = {{0}}; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
 int Create_Default_SolarPivotType = 0;
-
+int selectedPolymesh_displaySolarPivot = 1;
 */
 
 
