@@ -199,7 +199,7 @@ int Create_Fractal_Plant_Seed = -1; // -1:random, 0-99 choice
 float Create_Fractal_Plant_TrunckSize = 1; //0.5;
 float Create_Fractal_Plant_LeafSize = 1; //1; 
 
-int Work_with_2D_or_3D = 2; // 1:Fractals 2:2D, 3:3D, 4:4D
+int Work_with_2D_or_3D = 2; // 1:Fractals 2:2D, 3:3D, 4:Face, 5:Vertex, 6:Solid
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
@@ -25563,7 +25563,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       Create_Mesh_or_Solid = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_or_Solid" , Create_Mesh_or_Solid, 1, 2, 1), 1));
     
-      Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 4, 1), 1));
+      Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 6, 1), 1));
     
       //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -17, 12, 1), 1));
       //View_XYZ_ChangeOption = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_ChangeOption" , View_XYZ_ChangeOption, 0, 6, 1), 1));
@@ -29641,7 +29641,34 @@ void dessin_Teselation (int _type, float x, float y, float r) {
 
 
 
+void dessin_3DViewSpace (int _type, float x, float y, float r) {
+  
+  pushMatrix();
+  translate(x, y);
 
+  strokeWeight(2);
+  stroke(255); 
+  noFill();
+
+  strokeWeight(1);
+  stroke(255); 
+  if (_type == 1) fill(63);  
+  if (_type == 2) fill(191);
+  rect(-0.75 * r, -0.75 * r, 1.5 * r, 1.5 * r);
+
+  if (_type == 1) fill(191);  
+  if (_type == 2) fill(63);
+  rect(-0.75 * r, -0.75 * r, 0.75 * r, 0.75 * r);
+  
+  strokeWeight(2);
+  line(0, 0, 0.75 * r, 0.75 * r);
+
+  strokeWeight(0);
+
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
 
 void dessin_ProjectionType (int _type, float x, float y, float r) {
   
@@ -30613,9 +30640,9 @@ int BAR_b_Update = 1;
 float BAR_b_tab = b_pixel;
 
 String[][] BAR_b_Items = {
+                          {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "3DViewPoint", "1.75"},
+                          {"2", "AllViewsports", "Expand3DView", "3DViewSpace", "1"},
                           
-                          {"2", "AllViewsports", "Expand3DView", "3DViewSpace", "3.33"},
-                          {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "3DViewPoint", "1.5"},
                           {"2", "P<>", "P><", "ProjectionType", "1.0"},
                           {"1", "LAO", "LookAtOrigin", "1.0"},
                           {"1", "LAS", "LookAtSelection", "1.0"},
@@ -30636,7 +30663,7 @@ String[][] BAR_b_Items = {
                           {"1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "BuildingType", "2.0"},
                           {"1", "as_Mesh", "as_Solid", "Mesh|Solid", "2.0"},  
                           
-                          {"2", "∞-D", "2½D", "3-D", "4-D", "LayerType", "1.0"},
+                          {"2", "∞-D", "2½D", "3-D", "Face", "Vertex", "Solid", "LayerType", "2.0"},
                           {"1", "±CS", "+CS", "-CS", "ClickSelect", "1.0"},
                           {"1", "±WS", "+WS", "-WS", "WindowSelect", "1.0"},                          
                           {"2", "X<", "X|", "X>", "PivotX", "1.0"},
@@ -30945,7 +30972,13 @@ void SOLARCHVISION_draw_window_BAR_b () {
         }
         if (Bar_Switch.equals("AllModelSize")) {
           dessin_AllModelSize(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
-        }      
+        }  
+
+        if (Bar_Switch.equals("3DViewSpace")) {
+          dessin_3DViewSpace(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }  
+    
+        
       }
   
       if (BAR_b_Display_Text == 1) { // writing titles where the icon is not available
