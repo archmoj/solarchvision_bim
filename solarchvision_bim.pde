@@ -105,6 +105,8 @@ int addNewSelectionToPreviousSelection = 0;
 int[] selectedFractal_numbers = {0};
 int[] selectedObject2D_numbers = {0};
 int[] selectedPolymesh_numbers = {0};
+int[] selectedFace_numbers = {0};
+int[] selectedVertex_numbers = {0};
 
 
 float[][] allVertices = {{0,0,0}};
@@ -1282,6 +1284,8 @@ int pre_Display_windFlow;
 int pre_selectedFractal_numbers_lastItem;
 int pre_selectedObject2D_numbers_lastItem;
 int pre_selectedPolymesh_numbers_lastItem;
+int pre_selectedFace_numbers_lastItem;
+int pre_selectedVertex_numbers_lastItem;
 
 int pre_selectedFractal_displayEdges;
 int pre_selectedObject2D_displayEdges;
@@ -2165,6 +2169,8 @@ void draw () {
         pre_selectedFractal_numbers_lastItem = selectedFractal_numbers[selectedFractal_numbers.length - 1];
         pre_selectedObject2D_numbers_lastItem = selectedObject2D_numbers[selectedObject2D_numbers.length - 1];
         pre_selectedPolymesh_numbers_lastItem = selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1];
+        pre_selectedFace_numbers_lastItem = selectedFace_numbers[selectedFace_numbers.length - 1];
+        pre_selectedVertex_numbers_lastItem = selectedVertex_numbers[selectedVertex_numbers.length - 1];
         
         pre_selectedFractal_displayEdges = selectedFractal_displayEdges;
         pre_selectedObject2D_displayEdges = selectedObject2D_displayEdges;
@@ -2342,6 +2348,16 @@ void draw () {
           SOLARCHVISION_calculate_selection_Pivot();
           WIN3D_Update = 1;
         }
+
+        if (pre_selectedFace_numbers_lastItem != selectedFace_numbers[selectedFace_numbers.length - 1]) {
+          SOLARCHVISION_calculate_selection_Pivot();
+          WIN3D_Update = 1;
+        }
+        
+        if (pre_selectedVertex_numbers_lastItem != selectedVertex_numbers[selectedVertex_numbers.length - 1]) {
+          SOLARCHVISION_calculate_selection_Pivot();
+          WIN3D_Update = 1;
+        }        
         
         if (pre_selection_alignX != selection_alignX) {        
           SOLARCHVISION_calculate_selection_Pivot();
@@ -12529,6 +12545,20 @@ void WIN3D_keyPressed (KeyEvent e) {
                      selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = allPolymesh_Faces.length - 1;
                    }
                  }
+
+                 if (Work_with_2D_or_3D == 4) {
+                   selectedFace_numbers[selectedFace_numbers.length - 1] -= 1;
+                   if (selectedFace_numbers[selectedFace_numbers.length - 1] < 0) {
+                     selectedFace_numbers[selectedFace_numbers.length - 1] = allFaces.length - 1;
+                   }
+                 }
+                 
+                 if (Work_with_2D_or_3D == 5) {
+                   selectedVertex_numbers[selectedVertex_numbers.length - 1] -= 1;
+                   if (selectedVertex_numbers[selectedVertex_numbers.length - 1] < 0) {
+                     selectedVertex_numbers[selectedVertex_numbers.length - 1] = allVertices.length - 1;
+                   }
+                 }
                  
                  SOLARCHVISION_calculate_selection_Pivot();
                  
@@ -12557,6 +12587,20 @@ void WIN3D_keyPressed (KeyEvent e) {
                    selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] += 1;
                    if (selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] > allPolymesh_Faces.length - 1) {
                      selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = 0;
+                   }
+                 }  
+
+                 if (Work_with_2D_or_3D == 4) {
+                   selectedFace_numbers[selectedFace_numbers.length - 1] += 1;
+                   if (selectedFace_numbers[selectedFace_numbers.length - 1] > allFaces.length - 1) {
+                     selectedFace_numbers[selectedFace_numbers.length - 1] = 0;
+                   }
+                 }  
+
+                 if (Work_with_2D_or_3D == 5) {
+                   selectedVertex_numbers[selectedVertex_numbers.length - 1] += 1;
+                   if (selectedVertex_numbers[selectedVertex_numbers.length - 1] > allVertices.length - 1) {
+                     selectedVertex_numbers[selectedVertex_numbers.length - 1] = 0;
                    }
                  }  
                  
@@ -13898,7 +13942,14 @@ void SOLARCHVISION_deleteSelection () {
 
   }
 
-
+  if (Work_with_2D_or_3D == 4) {
+    
+  }
+  
+  if (Work_with_2D_or_3D == 5) {
+    
+  }
+  
   SOLARCHVISION_deselectAll();
 }
 
@@ -13912,6 +13963,12 @@ void SOLARCHVISION_deselectAll () {
 
   selectedPolymesh_numbers = new int [1];
   selectedPolymesh_numbers[0] = 0;
+  
+  selectedFace_numbers = new int [1];
+  selectedFace_numbers[0] = 0;
+
+  selectedVertex_numbers = new int [1];
+  selectedVertex_numbers[0] = 0;  
 
   SOLARCHVISION_calculate_selection_Pivot();
 }
@@ -13936,6 +13993,20 @@ void SOLARCHVISION_selectAll () {
     selectedPolymesh_numbers = new int [allPolymesh_Faces.length];
     for (int i = 0; i < selectedPolymesh_numbers.length; i++) { 
       selectedPolymesh_numbers[i] = i;
+    }
+  }
+
+  if (Work_with_2D_or_3D == 4) {
+    selectedFace_numbers = new int [allFaces.length];
+    for (int i = 0; i < selectedFace_numbers.length; i++) { 
+      selectedFace_numbers[i] = i;
+    }
+  }
+
+  if (Work_with_2D_or_3D == 5) {
+    selectedVertex_numbers = new int [allVertices.length];
+    for (int i = 0; i < selectedVertex_numbers.length; i++) { 
+      selectedVertex_numbers[i] = i;
     }
   }
   
@@ -22055,6 +22126,45 @@ void mouseWheel(MouseEvent event) {
       
                   WIN3D_Update = 1;            
                 }
+                
+                if (Work_with_2D_or_3D == 4) {
+      
+                  selectedFace_numbers[selectedFace_numbers.length - 1] += int(Wheel_Value);
+                  
+                  if (selectedFace_numbers[selectedFace_numbers.length - 1] < 0) {
+                    selectedFace_numbers[selectedFace_numbers.length - 1] = allFaces.length - 1;
+                  }
+      
+                  if (selectedFace_numbers[selectedFace_numbers.length - 1] > allFaces.length - 1) {
+                    selectedFace_numbers[selectedFace_numbers.length - 1] = 0;
+                  }
+              
+                  //if (pre_selectedFace_numbers_lastItem != selectedFace_numbers[selectedFace_numbers.length - 1]) { 
+                    SOLARCHVISION_calculate_selection_Pivot();
+                  //}
+      
+                  WIN3D_Update = 1;            
+                }
+
+                if (Work_with_2D_or_3D == 5) {
+      
+                  selectedVertex_numbers[selectedVertex_numbers.length - 1] += int(Wheel_Value);
+                  
+                  if (selectedVertex_numbers[selectedVertex_numbers.length - 1] < 0) {
+                    selectedVertex_numbers[selectedVertex_numbers.length - 1] = allVertices.length - 1;
+                  }
+      
+                  if (selectedVertex_numbers[selectedVertex_numbers.length - 1] > allVertices.length - 1) {
+                    selectedVertex_numbers[selectedVertex_numbers.length - 1] = 0;
+                  }
+              
+                  //if (pre_selectedVertex_numbers_lastItem != selectedVertex_numbers[selectedVertex_numbers.length - 1]) { 
+                    SOLARCHVISION_calculate_selection_Pivot();
+                  //}
+      
+                  WIN3D_Update = 1;            
+                }
+                                
               }
               */
               
@@ -22514,7 +22624,7 @@ void mouseReleased () {
                     }                
                   }
                 }    
-                
+                //zzzzzzzzzzzzzzzzzzzzzzzz
                 if (Work_with_2D_or_3D == 3) {
                   
                   for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
@@ -33919,6 +34029,11 @@ float[][] allPolymesh_SolarPivotXYZ = {{0,0,0}};
 int[][] allPolymesh_SolarPivotType = {{0}}; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
 int Create_Default_SolarPivotType = 0;
 int selectedPolymesh_displaySolarPivot = 1;
+
+
+int[] selectedFace_numbers = {0};
+int[] selectedVertex_numbers = {0};
+
 */
 
 
