@@ -13638,9 +13638,9 @@ void SOLARCHVISION_getEPW_Coordinates () {
 
 int SOLARCHVISION_addToVertices (float x, float y, float z) {
   
-  float[][] newVertice = {{x, y, z}}; 
+  float[][] newVertex = {{x, y, z}}; 
   
-  allVertices = (float[][]) concat(allVertices, newVertice);
+  allVertices = (float[][]) concat(allVertices, newVertex);
   
   return(allVertices.length - 1);
 }
@@ -13820,8 +13820,8 @@ void SOLARCHVISION_deleteSelection () {
         int startFace = allPolymesh_Faces[OBJ_NUM][0];
         int endFace = allPolymesh_Faces[OBJ_NUM][1];
     
-        int startVertice = allVertices.length;
-        int endVertice = 0;
+        int startVertex = allVertices.length;
+        int endVertex = 0;
         
         for (int f = startFace; f <= endFace; f++) {
           if ((0 < f) && (f < allFaces.length)) { 
@@ -13830,24 +13830,24 @@ void SOLARCHVISION_deleteSelection () {
     
               int vNo = allFaces[f][j];
               
-              if (startVertice > vNo) startVertice = vNo; 
-              if (endVertice < vNo) endVertice = vNo;
+              if (startVertex > vNo) startVertex = vNo; 
+              if (endVertex < vNo) endVertex = vNo;
     
             }
           }
         }
         
-        if ((0 < startVertice) && (startVertice <= endVertice)) {
+        if ((0 < startVertex) && (startVertex <= endVertex)) {
     
-          float[][] startList = (float[][]) subset(allVertices, 0, startVertice);
-          float[][] endList = (float[][]) subset(allVertices, endVertice + 1);
+          float[][] startList = (float[][]) subset(allVertices, 0, startVertex);
+          float[][] endList = (float[][]) subset(allVertices, endVertex + 1);
     
           allVertices = (float[][]) concat(startList, endList);
           
           for (int f = 1; f < allFaces.length; f++) {
             for (int j = 0; j < allFaces[f].length; j++) {
     
-              if (startVertice <= allFaces[f][j]) allFaces[f][j] -= 1 + endVertice - startVertice; 
+              if (startVertex <= allFaces[f][j]) allFaces[f][j] -= 1 + endVertex - startVertex; 
             }
           }      
         }
@@ -16298,16 +16298,16 @@ void SOLARCHVISION_calculate_windFlow () {
             int point_next = 0;
             
             {
-              float[][] newVertice = {{x1, y1, z1, AB}};
-              windFlow_Vertices = (float[][]) concat(windFlow_Vertices, newVertice);
+              float[][] newVertex = {{x1, y1, z1, AB}};
+              windFlow_Vertices = (float[][]) concat(windFlow_Vertices, newVertex);
               
               point_prev = windFlow_Vertices.length - 1;
             }      
         
   
             {
-              float[][] newVertice = {{x2, y2, z2, AB}};
-              windFlow_Vertices = (float[][]) concat(windFlow_Vertices, newVertice);
+              float[][] newVertex = {{x2, y2, z2, AB}};
+              windFlow_Vertices = (float[][]) concat(windFlow_Vertices, newVertex);
               
               point_next = windFlow_Vertices.length - 1;
             }      
@@ -20337,16 +20337,16 @@ void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
   
         float[] test_point_dir = {x, y, z, dx, dy, dz}; 
   
-        // making the first VVertice on the UVertice
+        // making the first VVertex on the UVertice
         {
-          float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SpatialImpact_Grade}};
-          SpatialImpact_Contours_V1Vertices = (float[][]) concat(SpatialImpact_Contours_V1Vertices, newVertice);
+          float[][] newVertex = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SpatialImpact_Grade}};
+          SpatialImpact_Contours_V1Vertices = (float[][]) concat(SpatialImpact_Contours_V1Vertices, newVertex);
         }      
         
-        // making the first WVertice on the UVertice
+        // making the first WVertex on the UVertice
         {
-          float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SpatialImpact_Grade}};
-          SpatialImpact_Contours_V2Vertices = (float[][]) concat(SpatialImpact_Contours_V2Vertices, newVertice);
+          float[][] newVertex = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SpatialImpact_Grade}};
+          SpatialImpact_Contours_V2Vertices = (float[][]) concat(SpatialImpact_Contours_V2Vertices, newVertex);
         }      
         
   
@@ -20643,17 +20643,17 @@ void SOLARCHVISION_trace_U1Line (float[] test_point_dir, float g_line, int n_Tri
   
   for (int n = 0; n < n_Tries; n++) {
 
-    float[][] preVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SpatialImpact_Grade}};
+    float[][] preVertex = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SpatialImpact_Grade}};
     
     if (point_prev == 0) {
       float nearestPointDist = FLOAT_undefined;
       int nearestPointNum = 0;
       
       for (int q = 1; q < SpatialImpact_Contours_U1Vertices.length; q++) {
-        //if (preVertice[0][3] == SpatialImpact_Contours_U1Vertices[q][3]) {
-        if (preVertice[0][3] - SpatialImpact_Contours_U1Vertices[q][3] < 0.0001) {
+        //if (preVertex[0][3] == SpatialImpact_Contours_U1Vertices[q][3]) {
+        if (preVertex[0][3] - SpatialImpact_Contours_U1Vertices[q][3] < 0.0001) {
           
-          float d = dist(preVertice[0][0], preVertice[0][1], preVertice[0][2], SpatialImpact_Contours_U1Vertices[q][0], SpatialImpact_Contours_U1Vertices[q][1], SpatialImpact_Contours_U1Vertices[q][2]);
+          float d = dist(preVertex[0][0], preVertex[0][1], preVertex[0][2], SpatialImpact_Contours_U1Vertices[q][0], SpatialImpact_Contours_U1Vertices[q][1], SpatialImpact_Contours_U1Vertices[q][2]);
           
           if (nearestPointDist > d)  {
             nearestPointDist = d;
@@ -20675,7 +20675,7 @@ void SOLARCHVISION_trace_U1Line (float[] test_point_dir, float g_line, int n_Tri
     test_point_dir = SOLARCHVISION_2DtraceContour(0, MinimumDistance_traceU, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / SpatialImpact_Grade);
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SpatialImpact_Grade}};
+    float[][] newVertex = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SpatialImpact_Grade}};
     point_next = 0; 
 
     float nearestPointDist = FLOAT_undefined;
@@ -20684,10 +20684,10 @@ void SOLARCHVISION_trace_U1Line (float[] test_point_dir, float g_line, int n_Tri
     int next_point_existed = 0;
     
     for (int q = 1; q < SpatialImpact_Contours_U1Vertices.length; q++) {
-      //if (newVertice[0][3] == SpatialImpact_Contours_U1Vertices[q][3]) {
-      if (abs(newVertice[0][3] - SpatialImpact_Contours_U1Vertices[q][3]) < 0.0001) {
+      //if (newVertex[0][3] == SpatialImpact_Contours_U1Vertices[q][3]) {
+      if (abs(newVertex[0][3] - SpatialImpact_Contours_U1Vertices[q][3]) < 0.0001) {
         
-        float d = dist(newVertice[0][0], newVertice[0][1], newVertice[0][2], SpatialImpact_Contours_U1Vertices[q][0], SpatialImpact_Contours_U1Vertices[q][1], SpatialImpact_Contours_U1Vertices[q][2]);
+        float d = dist(newVertex[0][0], newVertex[0][1], newVertex[0][2], SpatialImpact_Contours_U1Vertices[q][0], SpatialImpact_Contours_U1Vertices[q][1], SpatialImpact_Contours_U1Vertices[q][2]);
 
         if ((nearestPointDist > d) && (point_prev != q)) { 
           nearestPointDist = d;
@@ -20709,7 +20709,7 @@ void SOLARCHVISION_trace_U1Line (float[] test_point_dir, float g_line, int n_Tri
     
     if (point_next == 0) {
       
-      SpatialImpact_Contours_U1Vertices = (float[][]) concat(SpatialImpact_Contours_U1Vertices, newVertice);              
+      SpatialImpact_Contours_U1Vertices = (float[][]) concat(SpatialImpact_Contours_U1Vertices, newVertex);              
       point_next = SpatialImpact_Contours_U1Vertices.length - 1;
     } 
         
@@ -20738,12 +20738,12 @@ void SOLARCHVISION_trace_V1Line (float[] test_point_dir, float g_line, int n_Tri
     test_point_dir = SOLARCHVISION_2DtraceContour(-1, MinimumDistance_traceV, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / SpatialImpact_Grade);
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     
-    float[][] newVertice = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SpatialImpact_Grade}};
+    float[][] newVertex = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SpatialImpact_Grade}};
 
     point_next = 0;
     
     {
-      SpatialImpact_Contours_V1Vertices = (float[][]) concat(SpatialImpact_Contours_V1Vertices, newVertice);              
+      SpatialImpact_Contours_V1Vertices = (float[][]) concat(SpatialImpact_Contours_V1Vertices, newVertex);              
       point_next = SpatialImpact_Contours_V1Vertices.length - 1;
     }
     
@@ -20780,8 +20780,8 @@ void SOLARCHVISION_trace_V1Line (float[] test_point_dir, float g_line, int n_Tri
           
           int q = nearestPointNum;
           
-          float[][] endVertice = {{SpatialImpact_Contours_U1Vertices[q][0], SpatialImpact_Contours_U1Vertices[q][1], SpatialImpact_Contours_U1Vertices[q][2], SpatialImpact_Contours_U1Vertices[q][3]}};
-          SpatialImpact_Contours_V2Vertices = (float[][]) concat(SpatialImpact_Contours_V2Vertices, endVertice);
+          float[][] endVertex = {{SpatialImpact_Contours_U1Vertices[q][0], SpatialImpact_Contours_U1Vertices[q][1], SpatialImpact_Contours_U1Vertices[q][2], SpatialImpact_Contours_U1Vertices[q][3]}};
+          SpatialImpact_Contours_V2Vertices = (float[][]) concat(SpatialImpact_Contours_V2Vertices, endVertex);
   
           int[][] newV2Line = {{SpatialImpact_Contours_V2Vertices.length - 2, SpatialImpact_Contours_V2Vertices.length - 1}}; // last two WVertices
           SpatialImpact_Contours_V2Lines = (int[][]) concat(SpatialImpact_Contours_V2Lines, newV2Line);      
@@ -20925,9 +20925,9 @@ void SOLARCHVISION_add_FractalSphere (int m, int tes, int spv, float cx, float c
       float y = TempObjectVertices[i][1];
       float z = TempObjectVertices[i][2];
       
-      float[][] newVertice = {{x, y, z}}; 
+      float[][] newVertex = {{x, y, z}}; 
 
-      skyVertices = (float[][]) concat(skyVertices, newVertice);
+      skyVertices = (float[][]) concat(skyVertices, newVertex);
 
     }
     
@@ -21065,7 +21065,7 @@ void SOLARCHVISION_add_SuperCylinder (int m, int tes, int spv, float cx, float c
 
 int SOLARCHVISION_addToTempObjectVertices (float x, float y, float z) {
 
-  float[][] newVertice = {{x, y, z}}; 
+  float[][] newVertex = {{x, y, z}}; 
   
   int vertice_existed = 0;
 
@@ -21073,7 +21073,7 @@ int SOLARCHVISION_addToTempObjectVertices (float x, float y, float z) {
 
   for (int i = 1; i < POINTER_TempObjectVertices; i++) {
 
-    float the_dist = fn_dist(newVertice[0], TempObjectVertices[i]);
+    float the_dist = fn_dist(newVertex[0], TempObjectVertices[i]);
     
     if (the_dist < 0.1) { // avoid creating duplicate vertices - WELD is necessary for Fractal spheres!
 
@@ -21087,7 +21087,7 @@ int SOLARCHVISION_addToTempObjectVertices (float x, float y, float z) {
   if (vertice_existed == 0) { 
 
     if (POINTER_TempObjectVertices >= TempObjectVertices.length) {
-      TempObjectVertices = (float[][]) concat(TempObjectVertices, newVertice);
+      TempObjectVertices = (float[][]) concat(TempObjectVertices, newVertex);
     }
     else {
       //TempObjectVertices[POINTER_TempObjectVertices] = new int [3];
