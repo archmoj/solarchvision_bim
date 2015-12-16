@@ -1545,7 +1545,7 @@ int number_of_shading_options = 7;
 
 int WIN3D_FACES_SHADE = Shade_Surface_Materials; //Shade_Surface_White; // <<<<<
 int WIN3D_EDGES_SHOW = 1;
-int WIN3D_VERTS_SHOW = 0;
+int WIN3D_VERTS_SHOW = 1;
 
 
 float[] WIN3D_VerticesSolarEnergy;
@@ -25063,6 +25063,124 @@ void mouseClicked () {
                 else if ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1)) { // PickSelect also if scale, rotate, modify, etc. where selected
                 
                   if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselectAll();
+
+                  if (Work_with_2D_or_3D == 5) {
+      
+                    int f = int(RxP[4]);
+                    
+                    int OBJ_NUM = 0;
+                    float min_dist = FLOAT_undefined;  
+                    
+                    for (int j = 0; j < allFaces[f].length; j++) {
+                      int vNo = allFaces[f][j];
+          
+                      float x = allVertices[vNo][0];
+                      float y = allVertices[vNo][1];          
+                      float z = allVertices[vNo][2];
+                      
+                      float now_dist = dist(x,y,z, RxP[0],RxP[1], RxP[2]);
+                      
+                      if (min_dist < now_dist) {
+                        min_dist = now_dist;
+                        OBJ_NUM = j;
+                      } 
+                    }
+                    
+                    if (OBJ_NUM != 0) {
+                    
+                      int found_at = -1;
+                      
+                      int use_it = 0; // 0:nothing 1:add -1:subtract
+                      
+                      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+                      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+                      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+                      
+                      if (addNewSelectionToPreviousSelection != 0) {
+        
+                        for (int o = selectedVertex_numbers.length - 1; o >= 0; o--) {
+                          if (selectedVertex_numbers[o] == OBJ_NUM) {
+                            found_at = o;
+                            if (addNewSelectionToPreviousSelection == 1) {
+                              use_it = 0;
+                            }
+                            if (addNewSelectionToPreviousSelection == -1) {
+                              use_it = -1; 
+                            }
+                            break;
+                          } 
+                        }
+                      }
+                      
+                      if (use_it == -1) {
+                        int[] startList = (int[]) subset(selectedVertex_numbers, 0, found_at);
+                        int[] endList = (int[]) subset(selectedVertex_numbers, found_at + 1);
+                        
+                        selectedVertex_numbers = (int[]) concat(startList, endList);
+                      }
+                      
+                      if (use_it == 1) {
+                        int[] new_OBJ_number = {OBJ_NUM};
+                        
+                        selectedVertex_numbers = (int[]) concat(selectedVertex_numbers, new_OBJ_number);
+                      }
+                    }
+                    
+                    
+                    //if (pre_selectedVertex_numbers_lastItem != selectedVertex_numbers[selectedVertex_numbers.length - 1]) {
+                      SOLARCHVISION_calculate_selection_Pivot();
+                    //}
+                  }
+
+                  if (Work_with_2D_or_3D == 4) {
+      
+                    int OBJ_NUM = int(RxP[4]);
+                    
+                    if (OBJ_NUM != 0) {
+                    
+                      int found_at = -1;
+                      
+                      int use_it = 0; // 0:nothing 1:add -1:subtract
+                      
+                      if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+                      if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+                      if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+                      
+                      if (addNewSelectionToPreviousSelection != 0) {
+        
+                        for (int o = selectedFace_numbers.length - 1; o >= 0; o--) {
+                          if (selectedFace_numbers[o] == OBJ_NUM) {
+                            found_at = o;
+                            if (addNewSelectionToPreviousSelection == 1) {
+                              use_it = 0;
+                            }
+                            if (addNewSelectionToPreviousSelection == -1) {
+                              use_it = -1; 
+                            }
+                            break;
+                          } 
+                        }
+                      }
+                      
+                      if (use_it == -1) {
+                        int[] startList = (int[]) subset(selectedFace_numbers, 0, found_at);
+                        int[] endList = (int[]) subset(selectedFace_numbers, found_at + 1);
+                        
+                        selectedFace_numbers = (int[]) concat(startList, endList);
+                      }
+                      
+                      if (use_it == 1) {
+                        int[] new_OBJ_number = {OBJ_NUM};
+                        
+                        selectedFace_numbers = (int[]) concat(selectedFace_numbers, new_OBJ_number);
+                      }
+                    }
+                    
+                    
+                    //if (pre_selectedFace_numbers_lastItem != selectedFace_numbers[selectedFace_numbers.length - 1]) {
+                      SOLARCHVISION_calculate_selection_Pivot();
+                    //}
+                  }
                   
                   if (Work_with_2D_or_3D == 3) {
       
@@ -27253,43 +27371,6 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       popMatrix();
     }  
 
-  
-    if (WIN3D_VERTS_SHOW != 0) {
-  
-      pushMatrix();
-    
-      translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
-      
-      noFill();
-      
-      stroke(255,255,0);
-      
-      strokeWeight(2);
-      
-      ellipseMode(CENTER);
-      
-      float R = 5;
-      
-      for (int vNo = 1; vNo < allVertices.length; vNo++) {
-  
-        float x = allVertices[vNo][0] * OBJECTS_scale;
-        float y = allVertices[vNo][1] * OBJECTS_scale;
-        float z = -allVertices[vNo][2] * OBJECTS_scale;
-  
-        float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
-        
-        if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View + R, -0.5 * WIN3D_Y_View + R, 0.5 * WIN3D_X_View - R, 0.5 * WIN3D_Y_View - R) == 1) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
-        }
-  
-      }    
-      
-      strokeWeight(0);   
-    
-      popMatrix();    
-    }
-
-    
     if (selectedPolymesh_displayPivot != 0) {
       
       pushMatrix();
@@ -27415,6 +27496,49 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       popMatrix();
     }    
   }
+  
+  if (Work_with_2D_or_3D == 5) {    
+    
+    if (WIN3D_VERTS_SHOW != 0) {
+  
+      pushMatrix();
+    
+      translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+      
+      noFill();
+      
+      stroke(255,255,0);
+      
+      strokeWeight(2);
+      
+      ellipseMode(CENTER);
+      
+      float R = 5;
+      
+      for (int o = selectedVertex_numbers.length - 1; o >= 0; o--) {
+        
+        int vNo = selectedVertex_numbers[o];
+        
+        if (vNo != 0) {        
+    
+          float x = allVertices[vNo][0] * OBJECTS_scale;
+          float y = allVertices[vNo][1] * OBJECTS_scale;
+          float z = -allVertices[vNo][2] * OBJECTS_scale;
+    
+          float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+          
+          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+            if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View + R, -0.5 * WIN3D_Y_View + R, 0.5 * WIN3D_X_View - R, 0.5 * WIN3D_Y_View - R) == 1) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
+          }
+    
+        }    
+      }
+      
+      strokeWeight(0);   
+    
+      popMatrix();    
+    }
+  }  
 }
 
 
