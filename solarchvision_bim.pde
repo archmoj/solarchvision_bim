@@ -13945,6 +13945,10 @@ void SOLARCHVISION_selectAll () {
             
 void SOLARCHVISION_add_Octahedron (int m, int tes, int spv, float x, float y, float z, float rx, float ry, float rz, float rot) {
 
+  defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;
+  
   float teta = rot * PI / 180.0;
   
   float[] X_ = new float [6];
@@ -14034,6 +14038,10 @@ void SOLARCHVISION_add_Octahedron (int m, int tes, int spv, float x, float y, fl
 
 
 void SOLARCHVISION_add_House_Core (int m, int tes, int spv, float x, float y, float z, float rx, float ry, float rz, float h2, float rot) {
+
+  defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;
   
   float teta = rot * PI / 180.0;
 
@@ -14128,6 +14136,10 @@ void SOLARCHVISION_add_House_Core (int m, int tes, int spv, float x, float y, fl
 
 
 void SOLARCHVISION_add_Box_Core (int m, int tes, int spv, float x, float y, float z, float rx, float ry, float rz, float rot) {
+
+  defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;
   
   float teta = rot * PI / 180.0;
 
@@ -14179,6 +14191,10 @@ void SOLARCHVISION_add_Box_Core (int m, int tes, int spv, float x, float y, floa
 
 void SOLARCHVISION_add_Box_Corners (int m, int tes, int spv, float x1, float y1, float z1, float x2, float y2, float z2) {
 
+  defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;  
+  
   int t1 = SOLARCHVISION_addToVertices(x2, y2, z2);
   int t2 = SOLARCHVISION_addToVertices(x1, y2, z2);
   int t3 = SOLARCHVISION_addToVertices(x1, y1, z2);
@@ -14228,6 +14244,10 @@ void SOLARCHVISION_add_Box_Corners (int m, int tes, int spv, float x1, float y1,
 
 void SOLARCHVISION_add_H_shade (int m, int tes, int spv, float x0, float y0, float z0, float d, float w, float Alpha, float Beta) {
 
+  defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;  
+  
   float rx = 0.5 * d * cos_ang(Beta);
   float ry = 0.5 * d * sin_ang(Beta);
   
@@ -14256,8 +14276,6 @@ void SOLARCHVISION_add_H_shade (int m, int tes, int spv, float x0, float y0, flo
   int v3 = SOLARCHVISION_addToVertices(x3, y3, z3);
   int v4 = SOLARCHVISION_addToVertices(x4, y4, z4);
   
-  defaultMaterial = m;
-  
   {
     int[] newFace = {v1, v2, v3, v4};
     SOLARCHVISION_addToFaces(newFace);
@@ -14268,6 +14286,10 @@ void SOLARCHVISION_add_H_shade (int m, int tes, int spv, float x0, float y0, flo
 
 void SOLARCHVISION_add_V_shade (int m, int tes, int spv, float x0, float y0, float z0, float h, float d, float t, float t0) {
 
+  defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;  
+  
   float dx = d * cos_ang(t + t0 - 90);
   float dy = d * sin_ang(t + t0 - 90);
 
@@ -14292,8 +14314,6 @@ void SOLARCHVISION_add_V_shade (int m, int tes, int spv, float x0, float y0, flo
   int v3 = SOLARCHVISION_addToVertices(x3, y3, z3);
   int v4 = SOLARCHVISION_addToVertices(x4, y4, z4);
   
-  defaultMaterial = m;
-  
   {
     int[] newFace = {v1, v2, v3, v4};
     SOLARCHVISION_addToFaces(newFace);
@@ -14305,6 +14325,10 @@ void SOLARCHVISION_add_V_shade (int m, int tes, int spv, float x0, float y0, flo
 
 void SOLARCHVISION_add_Mesh2 (int m, int tes, int spv, float x1, float y1, float z1, float x3, float y3, float z3) {
 
+  defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;  
+  
   float x2 = x3;
   float y2 = y3;
   float z2 = z3;
@@ -14330,8 +14354,7 @@ void SOLARCHVISION_add_Mesh2 (int m, int tes, int spv, float x1, float y1, float
   int v2 = SOLARCHVISION_addToVertices(x2, y2, z2);
   int v3 = SOLARCHVISION_addToVertices(x3, y3, z3);
   int v4 = SOLARCHVISION_addToVertices(x4, y4, z4);
-  
-  defaultMaterial = m;
+
   
   {
     int[] newFace = {v1, v2, v3, v4};
@@ -14342,12 +14365,14 @@ void SOLARCHVISION_add_Mesh2 (int m, int tes, int spv, float x1, float y1, float
 
 void SOLARCHVISION_add_Mesh4 (int m, int tes, int spv, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4) {
 
+  defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;  
+  
   int v1 = SOLARCHVISION_addToVertices(x1, y1, z1);
   int v2 = SOLARCHVISION_addToVertices(x2, y2, z2);
   int v3 = SOLARCHVISION_addToVertices(x3, y3, z3);
   int v4 = SOLARCHVISION_addToVertices(x4, y4, z4);
-
-  defaultMaterial = m;
   
   {
     int[] newFace = {v1, v2, v3, v4};
@@ -14358,11 +14383,13 @@ void SOLARCHVISION_add_Mesh4 (int m, int tes, int spv, float x1, float y1, float
 
 void SOLARCHVISION_add_Mesh3 (int m, int tes, int spv, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) {
 
+  defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;  
+  
   int v1 = SOLARCHVISION_addToVertices(x1, y1, z1);
   int v2 = SOLARCHVISION_addToVertices(x2, y2, z2);
   int v3 = SOLARCHVISION_addToVertices(x3, y3, z3);
-
-  defaultMaterial = m;
 
   {
     int[] newFace = {v1, v2, v3};
@@ -14373,13 +14400,15 @@ void SOLARCHVISION_add_Mesh3 (int m, int tes, int spv, float x1, float y1, float
 
 void SOLARCHVISION_add_Mesh5 (int m, int tes, int spv, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float x5, float y5, float z5) {
 
+  defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;  
+  
   int v1 = SOLARCHVISION_addToVertices(x1, y1, z1);
   int v2 = SOLARCHVISION_addToVertices(x2, y2, z2);
   int v3 = SOLARCHVISION_addToVertices(x3, y3, z3);
   int v4 = SOLARCHVISION_addToVertices(x4, y4, z4);
   int v5 = SOLARCHVISION_addToVertices(x5, y5, z5);
-
-  defaultMaterial = m;
   
   {
     int[] newFace = {v1, v2, v3, v4, v5};
@@ -14390,14 +14419,16 @@ void SOLARCHVISION_add_Mesh5 (int m, int tes, int spv, float x1, float y1, float
 
 void SOLARCHVISION_add_Polygon (int m, int tes, int spv, float cx, float cy, float cz, float r, int n, float rot) {
 
+  defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;  
+  
   int[] newFace = {SOLARCHVISION_addToVertices(cx + r * cos_ang(0), cy + r * sin_ang(0), cz)};
   for (int i = 1; i < n; i++) {
     float t = i * 360.0 / float(n) + rot;
     int[] f = {SOLARCHVISION_addToVertices(cx + r * cos_ang(t), cy + r * sin_ang(t), cz)};
     newFace = concat(newFace, f);
   } 
- 
-  defaultMaterial = m;
 
   SOLARCHVISION_addToFaces(newFace);
 
@@ -14407,6 +14438,10 @@ void SOLARCHVISION_add_Polygon (int m, int tes, int spv, float cx, float cy, flo
 
 void SOLARCHVISION_add_PolygonExtrude (int m, int tes, int spv, float cx, float cy, float cz, float r, float h, int n, float rot) {
 
+  defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;  
+  
   int[] vT = new int [n];
   int[] vB = new int [n];
   
@@ -14448,14 +14483,16 @@ void SOLARCHVISION_add_PolygonExtrude (int m, int tes, int spv, float cx, float 
 
 void SOLARCHVISION_add_PolygonHyper (int m, int tes, int spv, float cx, float cy, float cz, float r, float h, int n, float rot) {
 
+  defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;  
+  
   int[] newFace = {SOLARCHVISION_addToVertices(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz - 0.5 * h)};
   for (int i = 1; i < n; i++) {
     float t = i * 360.0 / float(n);
     int[] f = {SOLARCHVISION_addToVertices(cx + r * cos_ang(t + rot), cy + r * sin_ang(t + rot), cz + (2 * (i % 2) - 1) * 0.5 * h)};
     newFace = concat(newFace, f);
   } 
- 
-  defaultMaterial = m;
 
   SOLARCHVISION_addToFaces(newFace);
 
@@ -14465,6 +14502,10 @@ void SOLARCHVISION_add_PolygonHyper (int m, int tes, int spv, float cx, float cy
 
 void SOLARCHVISION_add_Icosahedron (int m, int tes, int spv, float cx, float cy, float cz, float r, float rot) {
 
+  defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;  
+  
   int[] vT = new int [6];
   int[] vB = new int [6];
   
@@ -14531,6 +14572,10 @@ void SOLARCHVISION_add_Icosahedron (int m, int tes, int spv, float cx, float cy,
 
 void SOLARCHVISION_add_QuadSphere (int m, int tes, int spv, float cx, float cy, float cz, float r, int Teselation) {
 
+  defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;  
+  
   // i.e. Rhombic Triacontahedron
   
   int[] vT = new int [6];
@@ -14741,6 +14786,10 @@ void SOLARCHVISION_add_QuadSphere (int m, int tes, int spv, float cx, float cy, 
 
 void SOLARCHVISION_addToFaces_afterSphericalTeselation (int m, int tes, int spv, float cx, float cy, float cz, float r, int[] f) {
 
+  defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;  
+  
   int A = f[0];
   int B = f[1];
   int C = f[2];
@@ -15652,6 +15701,10 @@ void SOLARCHVISION_add_3Dobjects () {
 
 void SOLARCHVISION_add_ParametricSurface (int m, int tes, int spv, float cx, float cy, float cz, float rx, float ry, float rz, int n, float rot) {
 
+  defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;  
+  
   if (m == -1) defaultMaterial = 0;
   else defaultMaterial = m;  
   
@@ -20635,6 +20688,8 @@ int POINTER_TempObjectFaces = 1;
 void SOLARCHVISION_add_FractalSphere (int m, int tes, int spv, float cx, float cy, float cz, float r, int Teselation, int isSky, float t) {
 
   defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;
   
   int[] vT = new int [6];
   int[] vB = new int [6];
@@ -20771,6 +20826,10 @@ void SOLARCHVISION_add_FractalSphere (int m, int tes, int spv, float cx, float c
 
 void SOLARCHVISION_add_SuperSphere (int m, int tes, int spv, float cx, float cy, float cz, float px, float py, float pz, float sx, float sy, float sz, int Teselation, float t) {
 
+  defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;  
+  
   SOLARCHVISION_add_FractalSphere(m, tes, spv, cx, cy, cz, 1, Teselation, -1, 90); // passing with isSky:-1
 
   float value, posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotZ; 
@@ -20810,6 +20869,10 @@ void SOLARCHVISION_add_SuperSphere (int m, int tes, int spv, float cx, float cy,
 
 void SOLARCHVISION_add_SuperCylinder (int m, int tes, int spv, float cx, float cy, float cz, float sx, float sy, float sz, int n, float t) {
 
+  defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;  
+  
   int[] vT = new int [n];
   int[] vB = new int [n];
 
@@ -20984,6 +21047,10 @@ int SOLARCHVISION_addToTempObjectFaces (int[] f, int check_duplicates) {
 
 void SOLARCHVISION_addTempObjectToScene (int m, int tes, int spv, float cx, float cy, float cz, float sx, float sy, float sz, float t) {
 
+  defaultMaterial = m;
+  defaultTeselation = tes;
+  defaultSolarPivotType = spv;  
+  
   if (m == -1) defaultMaterial = 0;
   else defaultMaterial = m;
   
