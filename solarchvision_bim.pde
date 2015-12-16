@@ -1515,7 +1515,7 @@ float WIN3D_S_coordinate = 5.0;
 
 float WIN3D_RX_coordinate = 90; //75; 
 float WIN3D_RY_coordinate = 0;
-float WIN3D_RZ_coordinate = 180; //0; //180; //135;
+float WIN3D_RZ_coordinate = 0; //0; //180; //135;
 float WIN3D_RS_coordinate = 5.0;
 
 float WIN3D_ZOOM_coordinate = 60; // / (h_pixel / 300.0);
@@ -19538,10 +19538,29 @@ void SOLARCHVISION_add_ParametricGeometries () {
       SOLARCHVISION_add_2Dobjects_plane(0, 10, x,y,i, dx, dy); // people  
     }    
   }    
- 
+
+
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    
+    float d = 1.0;
+    for (float i = 0; i < 45; i += d) {
+      SOLARCHVISION_add_H_shade(1,0,0, 30,0,i, 20,d, 90-4*i,0); // south
+    }
+  }
+  
+  {
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    float d = 1.0;
+    for (float i = -10; i <= 10; i += d) {
+      SOLARCHVISION_add_V_shade(6,0,0, i-30,0,22.5, 45,d, 4.5*i,0); // south
+    }    
+  }
+  
+ 
+  /* 
+  {
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+       
     float d = 1.0;
     
     for (float i = 0; i < 45; i += d) {
@@ -19550,8 +19569,6 @@ void SOLARCHVISION_add_ParametricGeometries () {
       //SOLARCHVISION_add_H_shade(2,0,0, 10,10,i, 20,d, 90-4*i,90); // east
       //SOLARCHVISION_add_H_shade(3,0,0, -10,10,i, 20,d, 90-4*i,270); // west
 
-      SOLARCHVISION_add_H_shade(1,0,0, 30,0,i, 20,d, 90-4*i,0); // south
-
     }
     
     for (float i = -10; i <= 10; i += d) {
@@ -19559,10 +19576,50 @@ void SOLARCHVISION_add_ParametricGeometries () {
       //SOLARCHVISION_add_V_shade(4,0,0, i,20,22.5, 45,d, 4.5*i,180); // north
       
       SOLARCHVISION_add_V_shade(6,0,0, i,0,22.5, 45,d, 4.5*i,0); // south
-      SOLARCHVISION_add_V_shade(6,0,0, i-30,0,22.5, 45,d, 4.5*i,0); // south
     }    
   }
+  */
  
+ //zzzzzzzzzzzzzzzzzzzz
+  
+  {
+    float d = 1.0;
+    for (float i = 0; i < 45; i += d) {
+      addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+      
+      float x = 0;
+      float y = 0;
+      float z = i;
+      int spv = 1; // X-axis
+      
+      SOLARCHVISION_add_H_shade(1,0,spv, x,y,z, 20,d, 0,0); // south
+      
+      int n = allPolymesh_SolarPivotXYZ.length - 1;
+      
+      allPolymesh_SolarPivotXYZ[n][0] = x;
+      allPolymesh_SolarPivotXYZ[n][1] = y;
+      allPolymesh_SolarPivotXYZ[n][2] = z;
+    }
+    
+    for (float i = -10; i <= 10; i += d) {
+      addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+      
+      float x = i;
+      float y = 0;
+      float z = 22.5;
+      int spv = 3; // Z-axis
+      
+      SOLARCHVISION_add_V_shade(3,0,spv, x,y,z, 45,d, 0,0); // south
+      
+      int n = allPolymesh_SolarPivotXYZ.length - 1;
+      
+      allPolymesh_SolarPivotXYZ[n][0] = x;
+      allPolymesh_SolarPivotXYZ[n][1] = y;
+      allPolymesh_SolarPivotXYZ[n][2] = z;
+    }    
+  }  
+
+
   
   SOLARCHVISION_add_2Dobjects_plane(0, 100, 0,0,0, 50,50); // people
   SOLARCHVISION_add_2Dobjects_plane(1, 25, 0,40,0, 50,10); // trees back
@@ -27020,6 +27077,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       noFill();
       
+      stroke(255,127,0,127); 
+      
       strokeWeight(5);
 
       for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
@@ -27034,9 +27093,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           float Pivot_Z = allPolymesh_SolarPivotXYZ[OBJ_NUM][2];
           
           float[][] BoundingBox_Vertices = {{Pivot_X, Pivot_Y, Pivot_Z},
-                                            {Pivot_X + 100, Pivot_Y, Pivot_Z},
-                                            {Pivot_X, Pivot_Y + 100, Pivot_Z},
-                                            {Pivot_X, Pivot_Y, Pivot_Z + 100}}; 
+                                            {Pivot_X + 20, Pivot_Y, Pivot_Z},
+                                            {Pivot_X, Pivot_Y + 20, Pivot_Z},
+                                            {Pivot_X, Pivot_Y, Pivot_Z + 20}}; 
           
           int[][] BoundingBox_Lines = {{0,1}, {0,2}, {0,3}};
           
@@ -27048,8 +27107,6 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           if (allPolymesh_SolarPivotType[OBJ_NUM][0] == 3) {f_start = 2; f_end = f_start;}
       
           for (int f = f_start; f <= f_end; f++) {
-            
-            stroke(255,127,0);
             
             int a = BoundingBox_Lines[f][0];
             int b = BoundingBox_Lines[f][1];
