@@ -21067,7 +21067,7 @@ int SOLARCHVISION_addToTempObjectVertices (float x, float y, float z) {
 
   float[][] newVertex = {{x, y, z}}; 
   
-  int vertice_existed = 0;
+  int vertex_existed = 0;
 
   float min_dist = FLOAT_undefined;
 
@@ -21079,12 +21079,12 @@ int SOLARCHVISION_addToTempObjectVertices (float x, float y, float z) {
 
       if (min_dist > the_dist) {
         min_dist = the_dist;
-        vertice_existed = i;
+        vertex_existed = i;
       }
     }
   }
 
-  if (vertice_existed == 0) { 
+  if (vertex_existed == 0) { 
 
     if (POINTER_TempObjectVertices >= TempObjectVertices.length) {
       TempObjectVertices = (float[][]) concat(TempObjectVertices, newVertex);
@@ -21097,13 +21097,13 @@ int SOLARCHVISION_addToTempObjectVertices (float x, float y, float z) {
       TempObjectVertices[POINTER_TempObjectVertices][2] = z;
     }
 
-    vertice_existed = POINTER_TempObjectVertices;
+    vertex_existed = POINTER_TempObjectVertices;
 
     POINTER_TempObjectVertices += 1;
 
   }
 
-  return(vertice_existed);
+  return(vertex_existed);
 }
 
 int SOLARCHVISION_addToTempObjectFaces (int[] f, int check_duplicates) {
