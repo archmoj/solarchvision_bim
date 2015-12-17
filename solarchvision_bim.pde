@@ -91,7 +91,7 @@ int selection_alignY = 0;
 int selection_alignZ = 0;
 
 
-int selectedPolymesh_displaySolarPivot = 1;
+int selectedPolymesh_displaySolarPivots = 1;
 int selectedPolymesh_displayPivot = 1;
 int selectedPolymesh_displayEdges = 1; //0;
 int selectedPolymesh_displayBox = 1;
@@ -23859,6 +23859,24 @@ void mouseClicked () {
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
             }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected Faces")) {
+              selectedFace_displayEdges = (selectedFace_displayEdges + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }   
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected Vertices")) {
+              selectedVertex_displayVertices = (selectedVertex_displayVertices + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }   
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected Solar Pivots")) {
+              selectedPolymesh_displaySolarPivots = (selectedPolymesh_displaySolarPivots + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }               
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 3-D Pivot")) {
               selectedPolymesh_displayPivot = (selectedPolymesh_displayPivot + 1) % 2;
               
@@ -26053,10 +26071,13 @@ void SOLARCHVISION_draw_ROLLOUT () {
       selection_alignY = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selection_alignY" , selection_alignY, -1, 1, 1), 1));
       selection_alignZ = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selection_alignZ" , selection_alignZ, -1, 1, 1), 1));
   
-      selectedPolymesh_displaySolarPivot = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displaySolarPivot" , selectedPolymesh_displaySolarPivot, 0, 1, 1), 1));
+      selectedPolymesh_displaySolarPivots = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displaySolarPivots" , selectedPolymesh_displaySolarPivots, 0, 1, 1), 1));
       selectedPolymesh_displayPivot = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displayPivot" , selectedPolymesh_displayPivot, 0, 1, 1), 1));
       selectedPolymesh_displayBox = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displayBox" , selectedPolymesh_displayBox, 0, 1, 1), 1));
       selectedPolymesh_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displayEdges" , selectedPolymesh_displayEdges, 0, 1, 1), 1));
+      
+      selectedFace_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedFace_displayEdges" , selectedFace_displayEdges, 0, 1, 1), 1));
+      selectedVertex_displayVertices = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedVertex_displayVertices" , selectedVertex_displayVertices, 0, 1, 1), 1));
       
       selectedObject2D_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedObject2D_displayEdges" , selectedObject2D_displayEdges, 0, 1, 1), 1));
       selectedFractal_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedFractal_displayEdges" , selectedFractal_displayEdges, 0, 1, 1), 1));
@@ -27421,7 +27442,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     }
     
     
-    if (selectedPolymesh_displaySolarPivot != 0) {
+    if (selectedPolymesh_displaySolarPivots != 0) {
       
       pushMatrix();
     
@@ -30843,7 +30864,7 @@ String[][] BAR_a_Items = {
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
                         {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
-                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sky", "Display/Hide SunPath", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
+                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sky", "Display/Hide SunPath", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected Faces", "Display/Hide Selected Vertices", "Display/Hide Selected Solar Pivots", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Run solar 3D-model", "Run wind 3D-model", "Run spatial 3D-model"},
                         {"Layer"}, // Parameters 
@@ -31048,6 +31069,15 @@ void SOLARCHVISION_draw_window_BAR_a () {
               if (BAR_a_Items[i][j].equals("Display/Hide Wind Flow")) {
                 if (Display_windFlow == 0) {stroke(127); fill(127);}
               }
+              if (BAR_a_Items[i][j].equals("Display/Hide Selected Faces")) {
+                if (selectedPolymesh_displayPivot == 0) {stroke(127); fill(127);}
+              }      
+              if (BAR_a_Items[i][j].equals("Display/Hide Selected Vertices")) {
+                if (selectedPolymesh_displayPivot == 0) {stroke(127); fill(127);}
+              }      
+              if (BAR_a_Items[i][j].equals("Display/Hide Selected Solar Pivots")) {
+                if (selectedPolymesh_displayPivot == 0) {stroke(127); fill(127);}
+              }                    
               if (BAR_a_Items[i][j].equals("Display/Hide Selected 3-D Pivot")) {
                 if (selectedPolymesh_displayPivot == 0) {stroke(127); fill(127);}
               }          
@@ -34390,15 +34420,15 @@ solution: I remarked wheel option for pickSelect for now.
 float[][] allPolymesh_SolarPivotXYZ = {{0,0,0}}; 
 int[][] allPolymesh_SolarPivotType = {{0}}; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
 int Create_Default_SolarPivotType = 0;
-int selectedPolymesh_displaySolarPivot = 1;
-
+int selectedPolymesh_displaySolarPivots = 1;
+int selectedFace_displayEdges = 1;
+int selectedVertex_displayVertices = 1;
 
 int[] selectedFace_numbers = {0};
 int[] selectedVertex_numbers = {0};
 
 
-int selectedFace_displayEdges = 1;
-int selectedVertex_displayVertices = 1;
+
 
 */
 
