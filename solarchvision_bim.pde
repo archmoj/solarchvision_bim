@@ -96,6 +96,10 @@ int selectedPolymesh_displayPivot = 1;
 int selectedPolymesh_displayEdges = 1; //0;
 int selectedPolymesh_displayBox = 1;
 
+int selectedFace_displayEdges = 1;
+int selectedVertex_displayVertices = 1;
+ 
+
 int selectedObject2D_displayEdges = 1;
 int selectedFractal_displayEdges = 1;
 
@@ -1545,7 +1549,7 @@ int number_of_shading_options = 7;
 
 int WIN3D_FACES_SHADE = Shade_Surface_Materials; //Shade_Surface_White; // <<<<<
 int WIN3D_EDGES_SHOW = 1;
-int WIN3D_VERTS_SHOW = 1;
+int WIN3D_VERTS_SHOW = 0;
 
 
 float[] WIN3D_VerticesSolarEnergy;
@@ -27495,11 +27499,51 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     
       popMatrix();
     }    
+    
+    if (WIN3D_VERTS_SHOW != 0) {
+  
+      pushMatrix();
+    
+      translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+      
+      noFill();
+      
+      stroke(0);
+      
+      strokeWeight(2);
+      
+      ellipseMode(CENTER);
+      
+      float R = 2;
+      
+      for (int o = selectedVertex_numbers.length - 1; o >= 0; o--) {
+        
+        int vNo = selectedVertex_numbers[o];
+        
+        if (vNo != 0) {        
+    
+          float x = allVertices[vNo][0] * OBJECTS_scale;
+          float y = allVertices[vNo][1] * OBJECTS_scale;
+          float z = -allVertices[vNo][2] * OBJECTS_scale;
+    
+          float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+          
+          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+            if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View + R, -0.5 * WIN3D_Y_View + R, 0.5 * WIN3D_X_View - R, 0.5 * WIN3D_Y_View - R) == 1) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
+          }
+    
+        }    
+      }
+      
+      strokeWeight(0);   
+    
+      popMatrix();    
+    }    
   }
   
   if (Work_with_2D_or_3D == 5) {    
     
-    if (WIN3D_VERTS_SHOW != 0) {
+    if (selectedVertex_displayVertices != 0) {
   
       pushMatrix();
     
@@ -34404,6 +34448,10 @@ int selectedPolymesh_displaySolarPivot = 1;
 
 int[] selectedFace_numbers = {0};
 int[] selectedVertex_numbers = {0};
+
+
+int selectedFace_displayEdges = 1;
+int selectedVertex_displayVertices = 1;
 
 */
 
