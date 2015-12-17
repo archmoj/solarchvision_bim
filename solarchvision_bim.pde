@@ -29221,7 +29221,43 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
 }
 
 
-float[] selected_Pivot_XYZ = {0,0,0};
+
+
+int[] SOLARCHVISION_get_selectedFace_Vertices () {
+
+  int[] FaceVertices = {0};
+  
+  for (int o = selectedFace_numbers.length - 1; o >= 0; o--) {
+  
+    int OBJ_NUM = selectedFace_numbers[o];
+    
+    if (OBJ_NUM != 0) {
+      
+      int f = OBJ_NUM;
+  
+      for (int j = 0; j < allFaces[f].length; j++) {
+        int vNo = allFaces[f][j];
+        
+        int vertex_listed = 0;
+        
+        for (int q = 1; q < FaceVertices.length; q++) {
+          if (vNo == FaceVertices[q]) {
+            vertex_listed = 1;
+            break;                      
+          }
+        }         
+       
+        if (vertex_listed == 0) {
+          int[] newVertexListed = {vNo};
+          FaceVertices = concat(FaceVertices, newVertexListed);  
+        } 
+      }
+    }
+  }
+  
+  return FaceVertices;
+} 
+
 
 
 int[] SOLARCHVISION_get_selectedPolymesh_Vertices () {
@@ -29260,6 +29296,9 @@ int[] SOLARCHVISION_get_selectedPolymesh_Vertices () {
   
   return PolymeshVertices;
 } 
+
+
+float[] selected_Pivot_XYZ = {0,0,0};
 
 float[][] selection_BoundingBox = {{0,0,0}, {0,0,0}, {0,0,0}}; // [min|mid|max]
 
@@ -29519,6 +29558,79 @@ void SOLARCHVISION_scale_selectedPolymesh (float x0, float y0, float z0, float s
 }
 
 
+
+void SOLARCHVISION_move_selectedFace (float dx, float dy, float dz) {
+
+  int[] FaceVertices = SOLARCHVISION_get_selectedFace_Vertices();
+  
+  for (int q = 1; q < FaceVertices.length; q++) {
+    
+    int n = FaceVertices[q];
+  
+    allVertices[n][0] += dx; 
+    allVertices[n][1] += dy;
+    allVertices[n][2] += dz;
+  }
+  
+  SOLARCHVISION_calculate_selection_Pivot();   
+  
+}
+
+void SOLARCHVISION_rotate_selectedFace (float x0, float y0, float z0, float r, int the_Vector) {
+
+  int[] FaceVertices = SOLARCHVISION_get_selectedFace_Vertices();
+  
+  for (int q = 1; q < FaceVertices.length; q++) {
+    
+    int n = FaceVertices[q];
+
+    float x = allVertices[n][0] - x0; 
+    float y = allVertices[n][1] - y0; 
+    float z = allVertices[n][2] - z0;
+    
+    if (the_Vector == 2) {
+      allVertices[n][0] = x0 + (x * cos(r) - y * sin(r)); 
+      allVertices[n][1] = y0 + (x * sin(r) + y * cos(r));
+      allVertices[n][2] = z0 + (z);
+    }
+    else if (the_Vector == 1) {
+      allVertices[n][0] = x0 + (z * sin(r) + x * cos(r)); 
+      allVertices[n][1] = y0 + (y);
+      allVertices[n][2] = z0 + (z * cos(r) - x * sin(r));
+    }    
+    else if (the_Vector == 0) {
+      allVertices[n][0] = x0 + (x); 
+      allVertices[n][1] = y0 + (y * cos(r) - z * sin(r));
+      allVertices[n][2] = z0 + (y * sin(r) + z * cos(r));
+    }    
+  }
+  
+  SOLARCHVISION_calculate_selection_Pivot(); 
+  
+}
+
+void SOLARCHVISION_scale_selectedFace (float x0, float y0, float z0, float sx, float sy, float sz) {
+
+  int[] FaceVertices = SOLARCHVISION_get_selectedFace_Vertices();
+  
+  for (int q = 1; q < FaceVertices.length; q++) {
+    
+    int n = FaceVertices[q];
+
+    float x = allVertices[n][0] - x0; 
+    float y = allVertices[n][1] - y0; 
+    float z = allVertices[n][2] - z0;
+   
+    allVertices[n][0] = x0 + sx * x; 
+    allVertices[n][1] = y0 + sy * y;
+    allVertices[n][2] = z0 + sz * z;
+  }
+  
+  SOLARCHVISION_calculate_selection_Pivot(); 
+  
+}
+
+
 void SOLARCHVISION_move_selectedVertex (float dx, float dy, float dz) {
 
   for (int q = 1; q < selectedVertex_numbers.length; q++) {
@@ -29593,6 +29705,11 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
     SOLARCHVISION_scale_selectedVertex(x0, y0, z0, sx, sy, sz);
   }  
   
+  if (Work_with_2D_or_3D == 4) {
+    
+    SOLARCHVISION_scale_selectedFace(x0, y0, z0, sx, sy, sz);
+  }  
+  
   if (Work_with_2D_or_3D == 3) {
     
     SOLARCHVISION_scale_selectedPolymesh(x0, y0, z0, sx, sy, sz);
@@ -29655,6 +29772,11 @@ void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int 
     
     SOLARCHVISION_rotate_selectedVertex(x0, y0, z0, r, the_Vector);
   }  
+
+  if (Work_with_2D_or_3D == 4) {
+    
+    SOLARCHVISION_rotate_selectedFace(x0, y0, z0, r, the_Vector);
+  }  
   
   if (Work_with_2D_or_3D == 3) {
     
@@ -29686,6 +29808,11 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
   if (Work_with_2D_or_3D == 5) {
     
     SOLARCHVISION_move_selectedVertex(dx, dy, dz);
+  }  
+
+  if (Work_with_2D_or_3D == 4) {
+    
+    SOLARCHVISION_move_selectedFace(dx, dy, dz);
   }  
   
   if (Work_with_2D_or_3D == 3) {
