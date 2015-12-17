@@ -33895,6 +33895,8 @@ void SOLARCHVISION_load_project (String myFile) {
       
       Create_Default_Material = children0[L].getInt("Create_Default_Material");
       Create_Default_Teselation = children0[L].getInt("Create_Default_Teselation");
+      Create_Default_SolarPivotType = children0[L].getInt("Create_Default_SolarPivotType");
+      
       Create_Input_Length = children0[L].getFloat("Create_Input_Length");
       Create_Input_Width = children0[L].getFloat("Create_Input_Width");
       Create_Input_Height = children0[L].getFloat("Create_Input_Height");
@@ -34214,9 +34216,13 @@ void SOLARCHVISION_load_project (String myFile) {
       selection_alignX = children0[L].getInt("selection_alignX");
       selection_alignY = children0[L].getInt("selection_alignY");
       selection_alignZ = children0[L].getInt("selection_alignZ");
+
+      selectedPolymesh_displaySolarPivots = children0[L].getInt("selectedPolymesh_displaySolarPivots");
       selectedPolymesh_displayPivot = children0[L].getInt("selectedPolymesh_displayPivot");
       selectedPolymesh_displayEdges = children0[L].getInt("selectedPolymesh_displayEdges");
       selectedPolymesh_displayBox = children0[L].getInt("selectedPolymesh_displayBox");
+      selectedFace_displayEdges = children0[L].getInt("selectedFace_displayEdges");
+      selectedVertex_displayVertices = children0[L].getInt("selectedVertex_displayVertices");      
       selectedObject2D_displayEdges = children0[L].getInt("selectedObject2D_displayEdges");
       selectedFractal_displayEdges = children0[L].getInt("selectedFractal_displayEdges");
       WORLD_viewport_ZOOM = children0[L].getInt("WORLD_viewport_ZOOM");
@@ -34295,10 +34301,6 @@ void SOLARCHVISION_load_project (String myFile) {
                     
         }
       }
-      
-      
-      
-      
 
     }
 
@@ -34417,9 +34419,10 @@ void SOLARCHVISION_load_project (String myFile) {
         allObject2D_MAP[i] = int(parts[4]);
       }
     }      
-/*  
+
     children0 = FileAll.getChildren("allPolymesh_SolarPivotXYZ");
     for (int L = 0; L < children0.length; L++) {
+      
       int ni = children0[L].getInt("ni");
       
       allPolymesh_SolarPivotXYZ = new float [ni][3];
@@ -34428,11 +34431,11 @@ void SOLARCHVISION_load_project (String myFile) {
       for (int i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < 4; j++) {
+        for (int j = 0; j < 3; j++) {
           allPolymesh_SolarPivotXYZ[i][j] = float(parts[j]);
         }
       }
-    }    
+    }  
 
     children0 = FileAll.getChildren("allPolymesh_SolarPivotType");
     for (int L = 0; L < children0.length; L++) {
@@ -34445,11 +34448,11 @@ void SOLARCHVISION_load_project (String myFile) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < 1; j++) {
-          allPolymesh_SolarPivotType[i][j] = float(parts[j]);
+          allPolymesh_SolarPivotType[i][j] = int(parts[j]);
         }
       }
     }          
-*/    
+ 
     children0 = FileAll.getChildren("allVertices");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
@@ -34570,6 +34573,28 @@ void SOLARCHVISION_load_project (String myFile) {
         selectedObject2D_numbers[i] = int(parts[i]);
       }
     } 
+
+    children0 = FileAll.getChildren("selectedVertex_numbers");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      selectedVertex_numbers = new int [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        selectedVertex_numbers[i] = int(parts[i]);
+      }
+    }
+    
+    children0 = FileAll.getChildren("selectedFace_numbers");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      selectedFace_numbers = new int [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        selectedFace_numbers[i] = int(parts[i]);
+      }
+    }
 
     children0 = FileAll.getChildren("selectedPolymesh_numbers");
     for (int L = 0; L < children0.length; L++) {
