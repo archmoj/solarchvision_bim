@@ -25090,11 +25090,11 @@ void mouseClicked () {
                       float y = allVertices[vNo][1];          
                       float z = allVertices[vNo][2];
                       
-                      float now_dist = dist(x,y,z, RxP[0],RxP[1], RxP[2]);
+                      float now_dist = dist(x, y, z, RxP[0], RxP[1], RxP[2]);
                       
-                      if (min_dist < now_dist) {
+                      if (min_dist > now_dist) {
                         min_dist = now_dist;
-                        OBJ_NUM = j;
+                        OBJ_NUM = vNo;
                       } 
                     }
                     
