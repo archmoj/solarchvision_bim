@@ -24942,7 +24942,7 @@ void mouseClicked () {
               
                 if ((Modify_Object_Parameters != 0) && (View_Select_Create_Modify >= 4)) { // Pick/Assign properties 
                   
-                  if (Work_with_2D_or_3D == 3) {
+                  if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4)) {
       
                     int f = int(RxP[4]);
                   
@@ -27525,7 +27525,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       
       noFill();
       
-      stroke(127); 
+      stroke(127,0,255); 
       strokeWeight(2);
       
       for (int o = selectedFace_numbers.length - 1; o >= 0; o--) {
@@ -27594,7 +27594,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       
       noFill();
       
-      stroke(255,255,0);
+      stroke(255,0,127);
       
       strokeWeight(2);
       
@@ -29861,6 +29861,36 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
 
 void SOLARCHVISION_changeProperties_Selection (int p) {
 
+  if (Work_with_2D_or_3D == 4) {
+
+    for (int o = selectedFace_numbers.length - 1; o >= 0; o--) {
+      
+      int OBJ_NUM = selectedFace_numbers[o];
+      
+      if (OBJ_NUM != 0) {      
+        
+        int f = OBJ_NUM;
+      
+        if (View_Select_Create_Modify == 4) {
+          int n = allFaces_MAT[f][0];
+          n += p;
+          if (n > 8) n = 0;
+          if (n < 0) n = 8;
+          allFaces_MAT[f][0] = n;
+        }
+        
+        if (View_Select_Create_Modify == 5) {
+          int n = allFaces_MAT[f][1];
+          n += p;
+          if (n > 4) n = 0;
+          if (n < 0) n = 4;
+          allFaces_MAT[f][1] = n;              
+        }            
+      }
+    } 
+    
+  }  
+  
   if (Work_with_2D_or_3D == 3) {
 
     for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
@@ -32943,6 +32973,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
   newChild1.setInt("Create_Default_Material", Create_Default_Material);  
   newChild1.setInt("Create_Default_Teselation", Create_Default_Teselation);
+  newChild1.setInt("Create_Default_SolarPivotType", Create_Default_SolarPivotType);
+  
   newChild1.setFloat("Create_Input_Length", Create_Input_Length);
   newChild1.setFloat("Create_Input_Width", Create_Input_Width);
   newChild1.setFloat("Create_Input_Height", Create_Input_Height);
@@ -33261,6 +33293,10 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("selection_alignX", selection_alignX);
   newChild1.setInt("selection_alignY", selection_alignY);
   newChild1.setInt("selection_alignZ", selection_alignZ);
+
+  newChild1.setInt("selectedFace_displayEdges", selectedFace_displayEdges);
+  newChild1.setInt("selectedVertex_displayVertices", selectedVertex_displayVertices);
+  newChild1.setInt("selectedPolymesh_displaySolarPivots", selectedPolymesh_displaySolarPivots);  
   newChild1.setInt("selectedPolymesh_displayPivot", selectedPolymesh_displayPivot);
   newChild1.setInt("selectedPolymesh_displayEdges", selectedPolymesh_displayEdges);
   newChild1.setInt("selectedPolymesh_displayBox", selectedPolymesh_displayBox);
@@ -33484,6 +33520,40 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       newChild2.setContent(lineSTR);
     } 
   }
+  
+  
+  {
+    newChild1 = my_xml.addChild("allPolymesh_SolarPivotXYZ");
+    int ni = allPolymesh_SolarPivotXYZ.length;
+    newChild1.setInt("ni", ni);
+    for (int i = 0; i < ni; i++) {
+      newChild2 = newChild1.addChild("SolarPivotXYZ");
+      newChild2.setInt("id", i);
+      String lineSTR = "";
+      for (int j = 0; j < allPolymesh_SolarPivotXYZ[i].length; j++) {
+        lineSTR += nf(allPolymesh_SolarPivotXYZ[i][j], 0, 4).replace(",", "."); // <<<<
+        if (j + 1 < allPolymesh_SolarPivotXYZ[i].length) lineSTR += ",";
+      }
+      newChild2.setContent(lineSTR);
+    } 
+  }  
+
+  {
+    newChild1 = my_xml.addChild("allPolymesh_SolarPivotType");
+    int ni = allPolymesh_SolarPivotType.length;
+    newChild1.setInt("ni", ni);
+    for (int i = 0; i < ni; i++) {
+      newChild2 = newChild1.addChild("SolarPivotType");
+      newChild2.setInt("id", i);
+      String lineSTR = "";
+      for (int j = 0; j < allPolymesh_SolarPivotType[i].length; j++) {
+        lineSTR += nf(allPolymesh_SolarPivotType[i][j], 0, 4).replace(",", "."); // <<<<
+        if (j + 1 < allPolymesh_SolarPivotType[i].length) lineSTR += ",";
+      }
+      newChild2.setContent(lineSTR);
+    } 
+  }    
+  
 
   newChild1 = my_xml.addChild("allVertices");
   newChild1.setInt("ni", allVertices.length);
@@ -33624,6 +33694,33 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     }
     newChild1.setContent(lineSTR);
   }  
+
+  {
+    newChild1 = my_xml.addChild("selectedFace_numbers");
+    int ni = selectedFace_numbers.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += selectedFace_numbers[i];
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }
+
+
+  {
+    newChild1 = my_xml.addChild("selectedVertex_numbers");
+    int ni = selectedVertex_numbers.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += selectedVertex_numbers[i];
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }
+
+
 
   {
     newChild1 = my_xml.addChild("SpatialImpact_Elevation");
@@ -34319,8 +34416,40 @@ void SOLARCHVISION_load_project (String myFile) {
         }
         allObject2D_MAP[i] = int(parts[4]);
       }
-    }        
-    
+    }      
+/*  
+    children0 = FileAll.getChildren("allPolymesh_SolarPivotXYZ");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      
+      allPolymesh_SolarPivotXYZ = new float [ni][3];
+      
+      XML[] children1 = children0[L].getChildren("SolarPivotXYZ");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < 4; j++) {
+          allPolymesh_SolarPivotXYZ[i][j] = float(parts[j]);
+        }
+      }
+    }    
+
+    children0 = FileAll.getChildren("allPolymesh_SolarPivotType");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      
+      allPolymesh_SolarPivotType = new int [ni][1];
+      
+      XML[] children1 = children0[L].getChildren("SolarPivotType");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < 1; j++) {
+          allPolymesh_SolarPivotType[i][j] = float(parts[j]);
+        }
+      }
+    }          
+*/    
     children0 = FileAll.getChildren("allVertices");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
@@ -34624,16 +34753,6 @@ solution: I remarked wheel option for pickSelect for now.
 
 float[][] allPolymesh_SolarPivotXYZ = {{0,0,0}}; 
 int[][] allPolymesh_SolarPivotType = {{0}}; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
-int Create_Default_SolarPivotType = 0;
-int selectedPolymesh_displaySolarPivots = 1;
-int selectedFace_displayEdges = 1;
-int selectedVertex_displayVertices = 1;
-
-int[] selectedFace_numbers = {0};
-int[] selectedVertex_numbers = {0};
-
-
-
 
 */
 
