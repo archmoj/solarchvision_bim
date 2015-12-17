@@ -29305,7 +29305,13 @@ float[][] selection_BoundingBox = {{0,0,0}, {0,0,0}, {0,0,0}}; // [min|mid|max]
 void SOLARCHVISION_calculate_selection_BoundingBox () {
   
   int[] theVertices = {};
-  
+
+  if (Work_with_2D_or_3D == 5) {
+    theVertices = selectedVertex_numbers;
+  }
+  if (Work_with_2D_or_3D == 4) {
+    theVertices = SOLARCHVISION_get_selectedFace_Vertices();
+  }  
   if (Work_with_2D_or_3D == 3) {
     theVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
   }
@@ -29322,10 +29328,10 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     float POS_max = -FLOAT_undefined;
 
     for (int q = 1; q < theVertices.length; q++) {
-      
+   
       float POS_now = 0;
       
-      if (Work_with_2D_or_3D == 3) {
+      if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4) || (Work_with_2D_or_3D == 5)) {
         int n = theVertices[q];
         
         POS_now = allVertices[n][j];
@@ -29343,6 +29349,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
      
       if (POS_min > POS_now) POS_min = POS_now;   
       if (POS_max < POS_now) POS_max = POS_now;   
+
     }
     
     for (int i = 0; i < 3; i++) {
