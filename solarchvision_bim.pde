@@ -27512,6 +27512,77 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     }    
     
   }
+
+
+
+  if (Work_with_2D_or_3D == 4) {    
+    
+    if (selectedFace_displayEdges != 0) {
+      
+      pushMatrix();
+    
+      translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+      
+      noFill();
+      
+      stroke(127); 
+      strokeWeight(2);
+      
+      for (int o = selectedFace_numbers.length - 1; o >= 0; o--) {
+        
+        int OBJ_NUM = selectedFace_numbers[o];
+        
+        if (OBJ_NUM != 0) {
+          
+          int f = OBJ_NUM;
+       
+          int Teselation = allFaces_MAT[f][1];
+          
+          int TotalSubNo = 1;  
+          if (allFaces_MAT[f][0] == 0) {
+            Teselation += MODEL3D_TESELATION;
+          }
+          if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
+      
+          for (int n = 0; n < TotalSubNo; n++) {
+            
+            float[][] base_Vertices = new float [allFaces[f].length][3];
+            for (int j = 0; j < allFaces[f].length; j++) {
+              int vNo = allFaces[f][j];
+              base_Vertices[j][0] = allVertices[vNo][0];
+              base_Vertices[j][1] = allVertices[vNo][1];
+              base_Vertices[j][2] = allVertices[vNo][2];
+            }
+            
+            float[][] subFace = getSubFace(base_Vertices, Teselation, n);
+         
+            beginShape();
+            
+            for (int s = 0; s < subFace.length; s++) {
+  
+              float x = subFace[s][0] * OBJECTS_scale;
+              float y = subFace[s][1] * OBJECTS_scale;            
+              float z = -subFace[s][2] * OBJECTS_scale;
+              
+              float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+              
+              if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+                if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+              }
+              
+            }
+            
+            endShape(CLOSE);
+          }
+        }
+      }
+      
+      strokeWeight(0);   
+    
+      popMatrix();
+    }
+  }
+
   
   if (Work_with_2D_or_3D == 5) {    
     
