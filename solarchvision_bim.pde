@@ -24142,19 +24142,19 @@ void mouseClicked () {
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Flip FaceNormal")) {
               set_to_Modify_FaceNormal(0);
-              SOLARCHVISION_highlight_in_BAR_b("FNorm0");
+              SOLARCHVISION_highlight_in_BAR_b("FNorm1");
               BAR_b_Update = 1;  
             }                
 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Set-Out FaceNormal")) {
               set_to_Modify_FaceNormal(1);
-              SOLARCHVISION_highlight_in_BAR_b("FNorm1");
+              SOLARCHVISION_highlight_in_BAR_b("FNorm2");
               BAR_b_Update = 1;  
             }   
 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Set-In FaceNormal")) {
               set_to_Modify_FaceNormal(2);
-              SOLARCHVISION_highlight_in_BAR_b("FNorm2");
+              SOLARCHVISION_highlight_in_BAR_b("FNorm3");
               BAR_b_Update = 1;  
             }   
 
@@ -25013,9 +25013,23 @@ void mouseClicked () {
                         }
                       }                   
                     }
+                    
+                    if (View_Select_Create_Modify == 13) { //FaceNormal
+                    
+                      if (Modify_Object_Parameters == 1) { // flip
+                        int[] tmpFace = allFaces[f];
+                        int n = tmpFace.length;
+                        for (int i = 0; i < n; i++) {
+                          allFaces[f][i] = tmpFace[n - i - 1];
+                        }
+                        WIN3D_Update = 1;
+                      }     
+                      if (Modify_Object_Parameters == 2) { // set-out from pivot
+
+                      }                   
+                    }                    
   
                     ROLLOUT_Update = 1;
-                    WIN3D_Update = 1; // ???????????????????????     
                   }
                   
                   
@@ -30394,8 +30408,6 @@ void dessin_FaceNormal (int _type, float x, float y, float r) {
   pushMatrix();
   translate(x, y);
 
-
-
   float d = 0.8 * r;
 
   strokeWeight(2);
@@ -31480,7 +31492,7 @@ String[][] BAR_b_Items = {
                           {"3", "RTx", "RTy", "RTz", "Rotate", "1.0"}, 
                           {"1", "Mat0", "Mat1", "Mat2", "Mat3", "Seed/Material", "1.0"},
                           {"1", "Tes0", "Tes1", "Tes2", "Tes3", "Teselation", "1.0"},
-                          {"1", "FNorm0", "FNorm1", "FNorm2", "FaceNormal", "1.0"},
+                          {"1", "FNorm1", "FNorm2", "FNorm3", "FaceNormal", "1.0"},
                           
                           //{"1", "SPvt0", "SPvt1", "SPvt2", "SolarPivot", "1.0"},
                           
@@ -31656,7 +31668,11 @@ void SOLARCHVISION_draw_window_BAR_b () {
           if ((BAR_b_Items[i][j]).equals("Tes3")) set_to_Modify_Teselation(3);
         }
         
-        if (Bar_Switch.equals("FaceNormal")) set_to_Modify_FaceNormal(0);
+        if (Bar_Switch.equals("FaceNormal")) {
+          if ((BAR_b_Items[i][j]).equals("FNorm1")) set_to_Modify_FaceNormal(1);
+          if ((BAR_b_Items[i][j]).equals("FNorm2")) set_to_Modify_FaceNormal(2);
+          if ((BAR_b_Items[i][j]).equals("FNorm3")) set_to_Modify_FaceNormal(3);
+        }
         
         if (Bar_Switch.equals("Rotate")) set_to_Modify_Rotate(j - 1);
         if (Bar_Switch.equals("Scale")) set_to_Modify_Scale(j - 1);
@@ -32032,7 +32048,7 @@ void set_to_Modify_SolarPivot (int n) {
 
 void set_to_Modify_FaceNormal (int n) {
   View_Select_Create_Modify = 13;
-  Modify_Object_Parameters = n; // 0:flip normal 1:set out from pivot 2:set in from pivot    
+  Modify_Object_Parameters = n; // 1:flip normal, 2:set out from pivot, 3:set in from pivot    
 
   ROLLOUT_Update = 1; 
 }
