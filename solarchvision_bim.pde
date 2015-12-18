@@ -1503,7 +1503,7 @@ float MESSAGE_S_View = w_pixel / 40.0;
 
 
 int a_pixel = int(1.5 * MESSAGE_S_View); // menu bar
-int b_pixel = int(3.0 * MESSAGE_S_View); // 3D tool bar
+int b_pixel = int(2.75 * MESSAGE_S_View); // 3D tool bar
 
 int d_pixel = int(4.5 * MESSAGE_S_View); // time bar
 
@@ -13704,6 +13704,56 @@ void SOLARCHVISION_beginNewObject () {
   WIN3D_update_VerticesSolarValue = 1; // <<<<<<<
 }
 
+
+       
+void SOLARCHVISION_duplicateSelection () {
+
+  if (Work_with_2D_or_3D == 1) {
+
+    for (int o = 0; o < selectedFractal_numbers.length; o++) {
+
+      int OBJ_NUM = selectedObject2D_numbers[o];
+
+      if (OBJ_NUM != 0) {    
+        
+        float x = allFractal_XYZS[OBJ_NUM][0];
+        float y = allFractal_XYZS[OBJ_NUM][1];
+        float z = allFractal_XYZS[OBJ_NUM][2];
+        float s = allFractal_XYZS[OBJ_NUM][3];
+
+        SOLARCHVISION_add_Object2D("PEOPLE", n, x, y, z, s);
+      }
+    }
+  }  
+
+  if (Work_with_2D_or_3D == 2) {
+
+    int n1 = Object2D_PEOPLE_Files_Num; 
+
+    for (int o = 0; o < selectedObject2D_numbers.length; o++) {
+
+      int OBJ_NUM = selectedObject2D_numbers[o];
+
+      if (OBJ_NUM != 0) {    
+        
+        float x = allObject2D_XYZS[OBJ_NUM][0];
+        float y = allObject2D_XYZS[OBJ_NUM][1];
+        float z = allObject2D_XYZS[OBJ_NUM][2];
+        float s = allObject2D_XYZS[OBJ_NUM][3];
+        
+        int n = allObject2D_MAP[OBJ_NUM];
+        
+        if (abs(n) > n1) SOLARCHVISION_add_Object2D("TREES", n, x, y, z, s);
+        else SOLARCHVISION_add_Object2D("PEOPLE", n, x, y, z, s);
+      }
+    }
+  }
+  
+}
+       
+
+
+
 void SOLARCHVISION_deleteSelection () {
 
   if (Work_with_2D_or_3D == 1) {
@@ -14012,7 +14062,9 @@ void SOLARCHVISION_selectAll () {
   
   SOLARCHVISION_calculate_selection_Pivot();
 }
-            
+       
+
+
             
 void SOLARCHVISION_add_Octahedron (int m, int tes, int spv, float x, float y, float z, float rx, float ry, float rz, float rot) {
 
@@ -24321,7 +24373,7 @@ void mouseClicked () {
               set_to_View_ClickSelect(2);
               SOLARCHVISION_highlight_in_BAR_b("-CS");
               BAR_b_Update = 1;  
-            }           
+            }            
   
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Window Select")) {
               set_to_View_WindowSelect(0);
@@ -31551,10 +31603,10 @@ String[][] BAR_b_Items = {
                           {"1", "±SK", "SkydomeSize", "1.0"},
                          
                           {"2", "Fractal", "Tree", "Person", "LivingType", "1.5"},
-                          {"1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "BuildingType", "2.0"},
+                          {"1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "BuildingType", "2.5"},
                           {"1", "as_Mesh", "as_Solid", "Mesh|Solid", "2.0"},  
                           
-                          {"2", "∞-D", "2½D", "3-D", "Face", "Vertex", "Solid", "LayerType", "2.0"},
+                          {"2", "∞-D", "2½D", "3-D", "Face", "Vertex", "Solid", "LayerType", "1.5"},
                           {"1", "±CS", "+CS", "-CS", "ClickSelect", "1.0"},
                           {"1", "±WS", "+WS", "-WS", "WindowSelect", "1.0"},                          
                           {"2", "X<", "X|", "X>", "PivotX", "1.0"},
@@ -31575,6 +31627,8 @@ String[][] BAR_b_Items = {
                           //{"1", "tsSz0", "trSz1", "trSz2", "TrunckSize", "1.0"},
                           //{"1", "lfSz0", "lfSz1", "lfSz2", "LeafSize", "1.0"},
                           //{"1", "allFP0", "allFP1", "allFP2", "AllFractalProps", "1.0"},
+                          
+                          {"1", "Modify", "Duplicated", "Modify|Copy", "2.0"},
                           
                         };         
 
@@ -31794,6 +31848,16 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("3DViewSpace")) set_to_View_3DViewSpace(j - 1);
 
         if (Bar_Switch.equals("3DViewPoint")) set_to_View_3DViewPoint(j - 1);
+        
+        if (Bar_Switch.equals("Modify|Copy")) {
+          
+          if ((BAR_b_Items[i][j]).equals("Duplicated")) {
+            SOLARCHVISION_duplicateSelection();
+          }
+          
+          
+        }
+        
 
       }
 
@@ -34935,6 +34999,7 @@ void SOLARCHVISION_load_project (String myFile) {
   SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
 
 }
+
 
 
 
