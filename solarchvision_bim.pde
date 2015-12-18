@@ -13762,9 +13762,6 @@ void SOLARCHVISION_duplicateSelection () {
 
   if (Work_with_2D_or_3D == 3) {
     
-    int[] PolymeshVertices_OLD = {0}; // keeps the list of exiting vertex numbers
-    int[] PolymeshVertices_NEW = {0}; // keeps the list of new vertex numbers
-    
     for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
     
       int OBJ_NUM = selectedPolymesh_numbers[o];
@@ -13780,6 +13777,9 @@ void SOLARCHVISION_duplicateSelection () {
         println("number_of_vertices_before", number_of_vertices_before);
         println("number_of_faces_before", number_of_faces_before);
         println("number_of_solids_before", number_of_solids_before);
+
+        int[] PolymeshVertices_OLD = {0}; // keeps the list of exiting vertex numbers
+        int[] PolymeshVertices_NEW = {0}; // keeps the list of new vertex numbers
     
         for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
 
