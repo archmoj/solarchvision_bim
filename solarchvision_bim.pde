@@ -13776,6 +13776,10 @@ void SOLARCHVISION_duplicateSelection () {
         int number_of_vertices_before = allVertices.length;
         int number_of_faces_before = allFaces.length;
         int number_of_solids_before = 0; // <<<<<<<<<<<<<<<<<<< it does not copy solids now! <<<<<<<<<<<<<<   
+        
+        println("number_of_vertices_before", number_of_vertices_before);
+        println("number_of_faces_before", number_of_faces_before);
+        println("number_of_solids_before", number_of_solids_before);
     
         for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
 
