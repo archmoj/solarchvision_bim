@@ -24979,7 +24979,6 @@ void mouseClicked () {
                         for (int i = 0; i < allPolymesh_Faces.length; i++) {
                           if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
                             OBJ_NUM = i;
-                            WIN3D_Update = 1;
                             break;
                           }
                         }
@@ -24990,7 +24989,6 @@ void mouseClicked () {
                           }
                         }
                       }    
-                      
                     }
                     
                     if (View_Select_Create_Modify == 12) {
@@ -25002,7 +25000,6 @@ void mouseClicked () {
                         for (int i = 0; i < allPolymesh_Faces.length; i++) {
                           if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
                             OBJ_NUM = i;
-                            WIN3D_Update = 1;
                             break;
                           }
                         }
@@ -25033,7 +25030,6 @@ void mouseClicked () {
                           for (int i = 0; i < allPolymesh_Faces.length; i++) {
                             if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
                               OBJ_NUM = i;
-                              WIN3D_Update = 1;
                               break;
                             }
                           }
@@ -25049,18 +25045,46 @@ void mouseClicked () {
                                 allFaces[q][j] = tmpFace[n - j - 1];
                               }
                             }
-    
                           }               
                         }
-                        
-                        WIN3D_Update = 1;
-                      }     
+                      } 
+                      
                       if (Modify_Object_Parameters == 2) { // set-out from pivot
+                        if (Work_with_2D_or_3D == 4) {
+                          int n = allFaces[f].length;
+                          int[] tmpFace = new int[n];
+                          for (int j = 0; j < n; j++) {
+                            tmpFace[j] = allFaces[f][j];
+                          }                        
+                          for (int j = 0; j < n; j++) {
+                            allFaces[f][j] = tmpFace[n - j - 1];
+                          }
+                        }
+                        
+                        if (Work_with_2D_or_3D == 3) {
+                          int OBJ_NUM = 0;
+                          for (int i = 0; i < allPolymesh_Faces.length; i++) {
+                            if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
+                              OBJ_NUM = i;
+                              break;
+                            }
+                          }
+                          if (OBJ_NUM != 0) {         
+                            for (int q = allPolymesh_Faces[OBJ_NUM][0]; q <= allPolymesh_Faces[OBJ_NUM][1]; q++) {                    
 
-                      }                   
-                    }                    
-  
-                    ROLLOUT_Update = 1;
+                              int n = allFaces[q].length;
+                              int[] tmpFace = new int[n];
+                              for (int j = 0; j < n; j++) {
+                                tmpFace[j] = allFaces[q][j];
+                              }                        
+                              for (int j = 0; j < n; j++) {
+                                allFaces[q][j] = tmpFace[n - j - 1];
+                              }
+                            }
+                          }               
+                        }
+                      }                  
+                    }   
                   }
                   
                   
@@ -25094,8 +25118,6 @@ void mouseClicked () {
                         }
                       }
                     }
-  
-                    ROLLOUT_Update = 1;
                   }      
                   
                   
@@ -25129,11 +25151,10 @@ void mouseClicked () {
                         allFractal_LeafSize[OBJ_NUM] = Create_Fractal_Plant_LeafSize;                    
                       }                      
                     }
-  
-                    ROLLOUT_Update = 1;
                   }                        
                
-                  
+                  WIN3D_Update = 1;                 
+                  ROLLOUT_Update = 1;                  
                 } 
                 else if ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1)) { // PickSelect also if scale, rotate, modify, etc. where selected
                 
