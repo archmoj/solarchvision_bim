@@ -13762,6 +13762,8 @@ void SOLARCHVISION_duplicateSelection () {
 
   if (Work_with_2D_or_3D == 3) {
     
+    println("number_of_polymeshes_before", allPolymesh_Faces.length);
+    
     for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
     
       int OBJ_NUM = selectedPolymesh_numbers[o];
@@ -13785,7 +13787,7 @@ void SOLARCHVISION_duplicateSelection () {
 
           if ((0 < f) && (f < allFaces.length)) {
          
-            int[] newFace = new int[0];
+            int[] newFace = {};
             
             
             for (int j = 0; j < allFaces[f].length; j++) {
@@ -13814,7 +13816,7 @@ void SOLARCHVISION_duplicateSelection () {
                 vertex_listed = PolymeshVertices_OLD.length - 1;
               } 
               
-              println("number_of_vertices_before + vertex_listed", number_of_vertices_before + vertex_listed);
+              println("number_of_vertices_before + vertex_listed - 1", number_of_vertices_before + vertex_listed - 1);
               
               int[] new_vertexItem = {number_of_vertices_before + vertex_listed - 1};
               
@@ -13829,7 +13831,7 @@ void SOLARCHVISION_duplicateSelection () {
 
           }
         }
-        
+/*        
         println("Hello1");
 
         float[][] newPolymesh_SolarPivotXY = {{allPolymesh_SolarPivotXYZ[OBJ_NUM][0], allPolymesh_SolarPivotXYZ[OBJ_NUM][1], allPolymesh_SolarPivotXYZ[OBJ_NUM][2]}};
@@ -13844,7 +13846,7 @@ void SOLARCHVISION_duplicateSelection () {
 
         int[][] newPolymesh_Solids = {{number_of_solids_before + 1, -1}}; // <<<<<<<<<<<<<<<<<<< it does not copy solids now! <<<<<<<<<<<<<<   
         allPolymesh_Solids = (int[][]) concat(allPolymesh_Solids, newPolymesh_Solids);
-        
+*/        
       }
     }    
     
