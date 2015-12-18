@@ -25017,11 +25017,42 @@ void mouseClicked () {
                     if (View_Select_Create_Modify == 13) { //FaceNormal
                     
                       if (Modify_Object_Parameters == 1) { // flip
-                        int[] tmpFace = allFaces[f];
-                        int n = tmpFace.length;
-                        for (int i = 0; i < n; i++) {
-                          allFaces[f][i] = tmpFace[n - i - 1];
+                        if (Work_with_2D_or_3D == 4) {
+                          int n = allFaces[f].length;
+                          int[] tmpFace = new int[n];
+                          for (int j = 0; j < n; j++) {
+                            tmpFace[j] = allFaces[f][j];
+                          }                        
+                          for (int j = 0; j < n; j++) {
+                            allFaces[f][j] = tmpFace[n - j - 1];
+                          }
                         }
+                        
+                        if (Work_with_2D_or_3D == 3) {
+                          int OBJ_NUM = 0;
+                          for (int i = 0; i < allPolymesh_Faces.length; i++) {
+                            if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
+                              OBJ_NUM = i;
+                              WIN3D_Update = 1;
+                              break;
+                            }
+                          }
+                          if (OBJ_NUM != 0) {         
+                            for (int q = allPolymesh_Faces[OBJ_NUM][0]; q <= allPolymesh_Faces[OBJ_NUM][1]; q++) {                    
+
+                              int n = allFaces[q].length;
+                              int[] tmpFace = new int[n];
+                              for (int j = 0; j < n; j++) {
+                                tmpFace[j] = allFaces[q][j];
+                              }                        
+                              for (int j = 0; j < n; j++) {
+                                allFaces[q][j] = tmpFace[n - j - 1];
+                              }
+                            }
+    
+                          }               
+                        }
+                        
                         WIN3D_Update = 1;
                       }     
                       if (Modify_Object_Parameters == 2) { // set-out from pivot
