@@ -24141,19 +24141,19 @@ void mouseClicked () {
             }
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Flip FaceNormal")) {
-              set_to_Modify_FaceNormal(0);
+              set_to_Modify_FaceNormal(1);
               SOLARCHVISION_highlight_in_BAR_b("FNorm1");
               BAR_b_Update = 1;  
             }                
 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Set-Out FaceNormal")) {
-              set_to_Modify_FaceNormal(1);
+              set_to_Modify_FaceNormal(2);
               SOLARCHVISION_highlight_in_BAR_b("FNorm2");
               BAR_b_Update = 1;  
             }   
 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Set-In FaceNormal")) {
-              set_to_Modify_FaceNormal(2);
+              set_to_Modify_FaceNormal(3);
               SOLARCHVISION_highlight_in_BAR_b("FNorm3");
               BAR_b_Update = 1;  
             }   
