@@ -25013,77 +25013,98 @@ void mouseClicked () {
                     
                     if (View_Select_Create_Modify == 13) { //FaceNormal
                     
-                      if (Modify_Object_Parameters == 1) { // flip
-                        if (Work_with_2D_or_3D == 4) {
-                          int n = allFaces[f].length;
+                      if (Work_with_2D_or_3D == 4) {
+                        int n = allFaces[f].length;
+                        
+                        if (n > 2) {
                           int[] tmpFace = new int[n];
+                          float[] G = {0,0,0}; 
                           for (int j = 0; j < n; j++) {
                             tmpFace[j] = allFaces[f][j];
-                          }                        
-                          for (int j = 0; j < n; j++) {
-                            allFaces[f][j] = tmpFace[n - j - 1];
-                          }
-                        }
-                        
-                        if (Work_with_2D_or_3D == 3) {
-                          int OBJ_NUM = 0;
-                          for (int i = 0; i < allPolymesh_Faces.length; i++) {
-                            if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
-                              OBJ_NUM = i;
-                              break;
+                            G[0] += allVertices[tmpFace[j]][0] / float(n); 
+                            G[1] += allVertices[tmpFace[j]][1] / float(n);
+                            G[2] += allVertices[tmpFace[j]][2] / float(n);
+                          }  
+                          
+                          int flip_face = 0;
+                          if (Modify_Object_Parameters == 1) flip_face = 1;
+                          else {
+                            PVector AG = new PVector(allVertices[tmpFace[0]][0] - G[0], allVertices[tmpFace[0]][1] - G[1], allVertices[tmpFace[0]][2] - G[2]);                       
+                            PVector BG = new PVector(allVertices[tmpFace[1]][0] - G[0], allVertices[tmpFace[1]][1] - G[1], allVertices[tmpFace[1]][2] - G[2]);
+                            
+                            PVector GAxGB = AG.cross(BG);
+                           
+                            PVector PG = new PVector(selected_Pivot_XYZ[0] - G[0], selected_Pivot_XYZ[1] - G[1], selected_Pivot_XYZ[2] - G[2]);
+                           
+                            float V = PG.dot(GAxGB); 
+                            
+                            if (Modify_Object_Parameters == 2) {
+                              if (V > 0) flip_face = 1;
+                            }
+                            if (Modify_Object_Parameters == 3) {
+                              if (V < 0) flip_face = 1;
                             }
                           }
-                          if (OBJ_NUM != 0) {         
-                            for (int q = allPolymesh_Faces[OBJ_NUM][0]; q <= allPolymesh_Faces[OBJ_NUM][1]; q++) {                    
 
-                              int n = allFaces[q].length;
-                              int[] tmpFace = new int[n];
-                              for (int j = 0; j < n; j++) {
-                                tmpFace[j] = allFaces[q][j];
-                              }                        
-                              for (int j = 0; j < n; j++) {
-                                allFaces[q][j] = tmpFace[n - j - 1];
-                              }
+                          if (flip_face == 1) {
+                            for (int j = 0; j < n; j++) {
+                              allFaces[f][j] = tmpFace[n - j - 1];
                             }
-                          }               
+                          }
                         }
-                      } 
+                      }
                       
-                      if (Modify_Object_Parameters == 2) { // set-out from pivot
-                        if (Work_with_2D_or_3D == 4) {
-                          int n = allFaces[f].length;
-                          int[] tmpFace = new int[n];
-                          for (int j = 0; j < n; j++) {
-                            tmpFace[j] = allFaces[f][j];
-                          }                        
-                          for (int j = 0; j < n; j++) {
-                            allFaces[f][j] = tmpFace[n - j - 1];
+                      if (Work_with_2D_or_3D == 3) {
+                        int OBJ_NUM = 0;
+                        for (int i = 0; i < allPolymesh_Faces.length; i++) {
+                          if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
+                            OBJ_NUM = i;
+                            break;
                           }
                         }
-                        
-                        if (Work_with_2D_or_3D == 3) {
-                          int OBJ_NUM = 0;
-                          for (int i = 0; i < allPolymesh_Faces.length; i++) {
-                            if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
-                              OBJ_NUM = i;
-                              break;
-                            }
-                          }
-                          if (OBJ_NUM != 0) {         
-                            for (int q = allPolymesh_Faces[OBJ_NUM][0]; q <= allPolymesh_Faces[OBJ_NUM][1]; q++) {                    
-
-                              int n = allFaces[q].length;
+                        if (OBJ_NUM != 0) {         
+                          for (int q = allPolymesh_Faces[OBJ_NUM][0]; q <= allPolymesh_Faces[OBJ_NUM][1]; q++) {                    
+                            int n = allFaces[q].length;
+                            
+                            if (n > 2) {
                               int[] tmpFace = new int[n];
+                              float[] G = {0,0,0}; 
                               for (int j = 0; j < n; j++) {
                                 tmpFace[j] = allFaces[q][j];
-                              }                        
-                              for (int j = 0; j < n; j++) {
-                                allFaces[q][j] = tmpFace[n - j - 1];
+                                G[0] += allVertices[tmpFace[j]][0] / float(n); 
+                                G[1] += allVertices[tmpFace[j]][1] / float(n);
+                                G[2] += allVertices[tmpFace[j]][2] / float(n);
+                              }  
+                              
+                              int flip_face = 0;
+                              if (Modify_Object_Parameters == 1) flip_face = 1;
+                              else {
+                                PVector AG = new PVector(allVertices[tmpFace[0]][0] - G[0], allVertices[tmpFace[0]][1] - G[1], allVertices[tmpFace[0]][2] - G[2]);                       
+                                PVector BG = new PVector(allVertices[tmpFace[1]][0] - G[0], allVertices[tmpFace[1]][1] - G[1], allVertices[tmpFace[1]][2] - G[2]);
+                                
+                                PVector GAxGB = AG.cross(BG);
+                               
+                                PVector PG = new PVector(selected_Pivot_XYZ[0] - G[0], selected_Pivot_XYZ[1] - G[1], selected_Pivot_XYZ[2] - G[2]);
+                               
+                                float V = PG.dot(GAxGB); 
+                                
+                                if (Modify_Object_Parameters == 2) {
+                                  if (V > 0) flip_face = 1;
+                                }
+                                if (Modify_Object_Parameters == 3) {
+                                  if (V < 0) flip_face = 1;
+                                }
+                              }
+    
+                              if (flip_face == 1) {
+                                for (int j = 0; j < n; j++) {
+                                  allFaces[q][j] = tmpFace[n - j - 1];
+                                }
                               }
                             }
-                          }               
-                        }
-                      }                  
+                          }
+                        }               
+                      }
                     }   
                   }
                   
