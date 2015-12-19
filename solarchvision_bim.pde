@@ -15,10 +15,11 @@ int _LAN = _EN;
 int STATION_NUMBER = 0;
 
 String[][] DEFINED_STATIONS = {
+                                {"Tehran_11x12", "XX", "IR", "35.6789", "51.413063", "52.5", "1500", "240.0", "", "", "IRN_TEHRAN_XX_IR"},
   
                                 {"Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
                                 
-                                {"Hamedan_Site", "XX", "IR", "34.807", "48.455", "50", "1988.5", "240.0", "", "", "IRN_HAMEDAN_XX_IR"},
+                                {"Hamedan_Site", "XX", "IR", "34.807", "48.455", "52.5", "1988.5", "240.0", "", "", "IRN_HAMEDAN_XX_IR"},
   
                                 {"Berlin_Museum_of_the_20th_Century", "BB", "DE", "52.5080", "13.3685", "15", "36.7", "240.0", "", "", "DEU_Berlin.103840_IWEC"},
   
@@ -19408,7 +19409,7 @@ void SOLARCHVISION_LoadLAND_TEXTURE (String LandDirectory) {
 //Polar
 int LAND_n_I_base = 0;
 int LAND_n_J_base = 0;
-int LAND_n_I = 13 + 1; //16 + 1; //8 + 1;
+int LAND_n_I = 13 + 1; //16 + 1; //13 + 1; // 24 + 1;
 int LAND_n_J = 24 + 1;     
 
 
@@ -19514,7 +19515,9 @@ void SOLARCHVISION_DownloadLAND_MESH() {
 
     String the_link = "";
 
-    double stp_lat = 1.0 / 2224.5968; // equals to 50m <<<<<<<<
+    //double stp_lat = 1.0 / 2224.5968; // equals to 50m <<<<<<<< Note: for many locations this one is applied
+    double stp_lat = 40.0 / 2224.5968; // equals to 2km 
+    
     double stp_lon = stp_lat / cos_ang((float) LAND_mid_lat); 
 
     for (int j = 0; j < LAND_n_J; j += 1) {
@@ -19522,8 +19525,10 @@ void SOLARCHVISION_DownloadLAND_MESH() {
       float t = j * 360.0 / (LAND_n_J - 1);
       
       //float q = 2;
-      float q = pow(2, 0.5);
+      //float q = pow(2, 0.5); // <<<<<<<< Note: for many locations this one is applied
       //float q = 1.25;
+      float q = 1.125;
+
       
       float r = 0;
       if (i > 0) r = pow(q, i - 1);
