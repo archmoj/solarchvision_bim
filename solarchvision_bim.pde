@@ -12,7 +12,7 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 0;
+int STATION_NUMBER = 1;
 
 String[][] DEFINED_STATIONS = {
                                 {"Tehran_11x12", "XX", "IR", "35.6789", "51.413063", "52.5", "1500", "240.0", "", "", "IRN_TEHRAN_XX_IR"},
@@ -2924,7 +2924,7 @@ void SOLARCHVISION_draw_WIN3D () {
     else {
       WIN3D_Update = 0;
       
-      SOLARCHVISION_draw_Perspective_Internally();
+      //SOLARCHVISION_draw_Perspective_Internally();
     }
   }
 
@@ -31703,7 +31703,7 @@ int BAR_b_Update = 1;
 float BAR_b_tab = b_pixel;
 
 String[][] BAR_b_Items = {
-                          {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "3DViewPoint", "1.75"},
+                          {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "3DViewPoint", "2.0"},
                           {"2", "AllViewsports", "Expand3DView", "3DViewSpace", "1"},
                           
                           {"2", "P<>", "P><", "ProjectionType", "1.0"},
@@ -31748,7 +31748,7 @@ String[][] BAR_b_Items = {
                           //{"1", "lfSz0", "lfSz1", "lfSz2", "LeafSize", "1.0"},
                           //{"1", "allFP0", "allFP1", "allFP2", "AllFractalProps", "1.0"},
                           
-                          {"1", "Modify", "Duplicated", "Modify|Copy", "2.0"},
+                          {"1", "Modify", "Duplicated", "Modify|Copy", "2.5"},
                           
                         };         
 
