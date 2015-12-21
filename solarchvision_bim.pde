@@ -13710,6 +13710,8 @@ void SOLARCHVISION_beginNewObject () {
 void SOLARCHVISION_duplicateSelection () {
 
   if (Work_with_2D_or_3D == 1) {
+    
+    int number_of_Fractal_before = allFractal_XYZSRA.length; 
 
     for (int o = 0; o < selectedFractal_numbers.length; o++) {
 
@@ -13735,11 +13737,25 @@ void SOLARCHVISION_duplicateSelection () {
         SOLARCHVISION_add_FractalPlant(n, x, y, z, d, rot, dMin, dMax, s, TrunckSize, LeafSize, as_Solid);        
       }
     }
+    
+    // selecting new objetcs
+    
+    selectedFractal_numbers = new int [1];
+    selectedFractal_numbers[0] = 0;
+    
+    for (int o = number_of_Fractal_before; o < allFractal_XYZSRA.length; o++) {
+      
+      int[] newlyAddedFractal = {o};
+      
+      selectedFractal_numbers = concat(selectedFractal_numbers, newlyAddedFractal);
+    }     
   }  
 
   if (Work_with_2D_or_3D == 2) {
 
-    int n1 = Object2D_PEOPLE_Files_Num; 
+    int n1 = Object2D_PEOPLE_Files_Num;
+   
+    int number_of_Object2D_before = allObject2D_XYZS.length; 
 
     for (int o = 0; o < selectedObject2D_numbers.length; o++) {
 
@@ -13758,6 +13774,18 @@ void SOLARCHVISION_duplicateSelection () {
         else SOLARCHVISION_add_Object2D("PEOPLE", n, x, y, z, s);
       }
     }
+    
+    // selecting new objetcs
+    
+    selectedObject2D_numbers = new int [1];
+    selectedObject2D_numbers[0] = 0;
+    
+    for (int o = number_of_Object2D_before; o < allObject2D_XYZS.length; o++) {
+      
+      int[] newlyAddedObject2D = {o};
+      
+      selectedObject2D_numbers = concat(selectedObject2D_numbers, newlyAddedObject2D);
+    }       
   }
 
 
@@ -13765,7 +13793,7 @@ void SOLARCHVISION_duplicateSelection () {
     
     int SOLID_added = 0;
     
-    int number_of_polymeshes_before = allPolymesh_Faces.length;
+    int number_of_Polymeshes_before = allPolymesh_Faces.length;
     
     for (int o = 0; o < selectedPolymesh_numbers.length; o++) {
     
@@ -13775,7 +13803,7 @@ void SOLARCHVISION_duplicateSelection () {
         
         if ((0 < allPolymesh_Faces[OBJ_NUM][0]) && (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1])) { 
 
-          int number_of_vertices_before = allVertices.length;
+          int number_of_Vertices_before = allVertices.length;
           
           addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
           
@@ -13832,9 +13860,9 @@ void SOLARCHVISION_duplicateSelection () {
                   vertex_listed = PolymeshVertices_OLD.length - 1;
                 } 
                 
-                println("number_of_vertices_before + vertex_listed - 1", number_of_vertices_before + vertex_listed - 1);
+                println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
                 
-                int[] new_vertexItem = {number_of_vertices_before + vertex_listed - 1};
+                int[] new_vertexItem = {number_of_Vertices_before + vertex_listed - 1};
                 
                 newFace = concat(newFace, new_vertexItem); 
               }
@@ -13858,7 +13886,7 @@ void SOLARCHVISION_duplicateSelection () {
     selectedPolymesh_numbers = new int [1];
     selectedPolymesh_numbers[0] = 0;
     
-    for (int o = number_of_polymeshes_before; o < allPolymesh_Faces.length; o++) {
+    for (int o = number_of_Polymeshes_before; o < allPolymesh_Faces.length; o++) {
       
       int[] newlyAddedPolymesh = {o};
       
@@ -13874,7 +13902,7 @@ void SOLARCHVISION_duplicateSelection () {
 
   if (Work_with_2D_or_3D == 4) {
     
-    int number_of_faces_before = allFaces.length;
+    int number_of_Faces_before = allFaces.length;
     
     for (int o = 0; o < selectedFace_numbers.length; o++) {
       
@@ -13882,7 +13910,7 @@ void SOLARCHVISION_duplicateSelection () {
 
       addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
 
-      int number_of_vertices_before = allVertices.length;
+      int number_of_Vertices_before = allVertices.length;
       
       int[] PolymeshVertices_OLD = {0}; // keeps the list of exiting vertex numbers
       int[] PolymeshVertices_NEW = {0}; // keeps the list of new vertex numbers
@@ -13918,9 +13946,9 @@ void SOLARCHVISION_duplicateSelection () {
             vertex_listed = PolymeshVertices_OLD.length - 1;
           } 
           
-          println("number_of_vertices_before + vertex_listed - 1", number_of_vertices_before + vertex_listed - 1);
+          println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
           
-          int[] new_vertexItem = {number_of_vertices_before + vertex_listed - 1};
+          int[] new_vertexItem = {number_of_Vertices_before + vertex_listed - 1};
           
           newFace = concat(newFace, new_vertexItem); 
         }
@@ -13941,7 +13969,7 @@ void SOLARCHVISION_duplicateSelection () {
     selectedFace_numbers = new int [1];
     selectedFace_numbers[0] = 0;
     
-    for (int o = number_of_faces_before; o < allFaces.length; o++) {
+    for (int o = number_of_Faces_before; o < allFaces.length; o++) {
       
       int[] newlyAddedFace = {o};
       
