@@ -13773,6 +13773,8 @@ void SOLARCHVISION_duplicateSelection () {
         
         if ((0 < allPolymesh_Faces[OBJ_NUM][0]) && (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1])) { 
         
+          defaultSolarPivotType = allPolymesh_SolarPivotType[OBJ_NUM][0];
+          
           addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
       
           int number_of_vertices_before = allVertices.length;
@@ -13826,9 +13828,9 @@ void SOLARCHVISION_duplicateSelection () {
                 newFace = concat(newFace, new_vertexItem); 
               }
               
-              //defaultMaterial = allFaces_MAT[f][0];
-              //defaultTeselation = allFaces_MAT[f][1];
-              //defaultSolarPivotType = allPolymesh_SolarPivotType[f][0];
+              defaultMaterial = allFaces_MAT[f][0];
+              defaultTeselation = allFaces_MAT[f][1];
+              
               SOLARCHVISION_addToFaces(newFace);
               
   
