@@ -13982,9 +13982,104 @@ void SOLARCHVISION_duplicateSelection () {
     
   }
 
-  
 }
        
+
+
+void SOLARCHVISION_developSubSelection () {
+
+  if (Work_with_2D_or_3D == 1) {
+    
+  }  
+
+  if (Work_with_2D_or_3D == 2) {
+   
+  }
+
+  if (Work_with_2D_or_3D == 3) {
+
+  }
+
+  if (Work_with_2D_or_3D == 4) {
+    
+    int number_of_Faces_before = allFaces.length;
+    
+    for (int o = 0; o < selectedFace_numbers.length; o++) {
+      
+      int f = selectedFace_numbers[o];        
+
+      addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+
+      int number_of_Vertices_before = allVertices.length;
+      
+      int[] PolymeshVertices_OLD = {0}; // keeps the list of exiting vertex numbers
+      int[] PolymeshVertices_NEW = {0}; // keeps the list of new vertex numbers
+  
+      if ((0 < f) && (f < allFaces.length)) {
+     
+        int[] newFace = {};
+        
+        
+        for (int j = 0; j < allFaces[f].length; j++) {
+          int vNo = allFaces[f][j];
+          
+          int vertex_listed = 0;
+          
+          for (int q = 1; q < PolymeshVertices_OLD.length; q++) {
+            if (vNo == PolymeshVertices_OLD[q]) {
+              vertex_listed = q;
+              break;                      
+            }
+          }         
+         
+          if (vertex_listed == 0) {
+            int[] newVertexListed = {vNo};
+            PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
+          
+            float x = allVertices[vNo][0];
+            float y = allVertices[vNo][1];
+            float z = allVertices[vNo][2];
+
+            int[] newVertexAdded = {SOLARCHVISION_addToVertices(x, y, z)};
+            PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
+            
+            vertex_listed = PolymeshVertices_OLD.length - 1;
+          } 
+          
+          println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
+          
+          int[] new_vertexItem = {number_of_Vertices_before + vertex_listed - 1};
+          
+          newFace = concat(newFace, new_vertexItem); 
+        }
+        
+        defaultMaterial = allFaces_MAT[f][0];
+        defaultTeselation = allFaces_MAT[f][1];
+        
+        SOLARCHVISION_addToFaces(newFace);
+
+      }
+
+    }
+    
+    
+    // selecting new objetcs
+    
+    selectedFace_numbers = new int [1];
+    selectedFace_numbers[0] = 0;
+    
+    for (int o = number_of_Faces_before; o < allFaces.length; o++) {
+      
+      int[] newlyAddedFace = {o};
+      
+      selectedFace_numbers = concat(selectedFace_numbers, newlyAddedFace);
+    }      
+  }    
+
+  if (Work_with_2D_or_3D == 5) {
+    
+  }
+}
 
 
 
@@ -31867,6 +31962,9 @@ String[][] BAR_b_Items = {
                           //{"1", "allFP0", "allFP1", "allFP2", "AllFractalProps", "1.0"},
                           
                           {"1", "Modify", "Duplicated", "Modify|Copy", "2.5"},
+                          {"1", "Modify", "Developed", "OpenningInFaces", "2.5"},
+                          
+                          
                           
                         };         
 
@@ -32088,16 +32186,19 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("3DViewPoint")) set_to_View_3DViewPoint(j - 1);
         
         if (Bar_Switch.equals("Modify|Copy")) {
-          
           if ((BAR_b_Items[i][j]).equals("Duplicated")) {
             SOLARCHVISION_duplicateSelection();
             
             WIN3D_Update = 1;
           }
-          
-          
         }
-        
+        if (Bar_Switch.equals("OpenningInFaces")) {
+          if ((BAR_b_Items[i][j]).equals("Developed")) {
+            SOLARCHVISION_developSubSelection();
+            
+            WIN3D_Update = 1;
+          }
+        }        
 
       }
 
