@@ -2924,7 +2924,7 @@ void SOLARCHVISION_draw_WIN3D () {
     else {
       WIN3D_Update = 0;
       
-      //SOLARCHVISION_draw_Perspective_Internally();
+      SOLARCHVISION_draw_Perspective_Internally();
     }
   }
 
@@ -13771,65 +13771,68 @@ void SOLARCHVISION_duplicateSelection () {
       
       if (OBJ_NUM != 0) {
         
-        addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    
-        int number_of_vertices_before = allVertices.length;
-        int number_of_faces_before = allFaces.length;
-        int number_of_solids_before = 0; // <<<<<<<<<<<<<<<<<<< it does not copy solids now! <<<<<<<<<<<<<<   
+        if ((0 < allPolymesh_Faces[OBJ_NUM][0]) && (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1])) { 
         
-        println("number_of_vertices_before", number_of_vertices_before);
-        println("number_of_faces_before", number_of_faces_before);
-        println("number_of_solids_before", number_of_solids_before);
-
-        int[] PolymeshVertices_OLD = {0}; // keeps the list of exiting vertex numbers
-        int[] PolymeshVertices_NEW = {0}; // keeps the list of new vertex numbers
-    
-        for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
-
-          if ((0 < f) && (f < allFaces.length)) {
-         
-            int[] newFace = {};
-            
-            
-            for (int j = 0; j < allFaces[f].length; j++) {
-              int vNo = allFaces[f][j];
+          addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+      
+          int number_of_vertices_before = allVertices.length;
+          int number_of_faces_before = allFaces.length;
+          int number_of_solids_before = 0; // <<<<<<<<<<<<<<<<<<< it does not copy solids now! <<<<<<<<<<<<<<   
+          
+          println("number_of_vertices_before", number_of_vertices_before);
+          println("number_of_faces_before", number_of_faces_before);
+          println("number_of_solids_before", number_of_solids_before);
+  
+          int[] PolymeshVertices_OLD = {0}; // keeps the list of exiting vertex numbers
+          int[] PolymeshVertices_NEW = {0}; // keeps the list of new vertex numbers
+      
+          for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
+  
+            if ((0 < f) && (f < allFaces.length)) {
+           
+              int[] newFace = {};
               
-              int vertex_listed = 0;
               
-              for (int q = 1; q < PolymeshVertices_OLD.length; q++) {
-                if (vNo == PolymeshVertices_OLD[q]) {
-                  vertex_listed = q;
-                  break;                      
-                }
-              }         
-             
-              if (vertex_listed == 0) {
-                int[] newVertexListed = {vNo};
-                PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
-              
-                float x = allVertices[vNo][0];
-                float y = allVertices[vNo][1];
-                float z = allVertices[vNo][2];
-
-                int[] newVertexAdded = {SOLARCHVISION_addToVertices(x, y, z)};
-                PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
+              for (int j = 0; j < allFaces[f].length; j++) {
+                int vNo = allFaces[f][j];
                 
-                vertex_listed = PolymeshVertices_OLD.length - 1;
-              } 
+                int vertex_listed = 0;
+                
+                for (int q = 1; q < PolymeshVertices_OLD.length; q++) {
+                  if (vNo == PolymeshVertices_OLD[q]) {
+                    vertex_listed = q;
+                    break;                      
+                  }
+                }         
+               
+                if (vertex_listed == 0) {
+                  int[] newVertexListed = {vNo};
+                  PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
+                
+                  float x = allVertices[vNo][0];
+                  float y = allVertices[vNo][1];
+                  float z = allVertices[vNo][2];
+  
+                  int[] newVertexAdded = {SOLARCHVISION_addToVertices(x, y, z)};
+                  PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
+                  
+                  vertex_listed = PolymeshVertices_OLD.length - 1;
+                } 
+                
+                println("number_of_vertices_before + vertex_listed - 1", number_of_vertices_before + vertex_listed - 1);
+                
+                int[] new_vertexItem = {number_of_vertices_before + vertex_listed - 1};
+                
+                newFace = concat(newFace, new_vertexItem); 
+              }
               
-              println("number_of_vertices_before + vertex_listed - 1", number_of_vertices_before + vertex_listed - 1);
+              //defaultMaterial = allFaces_MAT[f][0];
+              //defaultTeselation = allFaces_MAT[f][1];
+              //defaultSolarPivotType = allPolymesh_SolarPivotType[f][0];
+              SOLARCHVISION_addToFaces(newFace);
               
-              int[] new_vertexItem = {number_of_vertices_before + vertex_listed - 1};
-              
-              newFace = concat(newFace, new_vertexItem); 
+  
             }
-            
-            //defaultMaterial = allFaces_MAT[f][0];
-            //defaultTeselation = allFaces_MAT[f][1];
-            //defaultSolarPivotType = allPolymesh_SolarPivotType[f][0];
-            SOLARCHVISION_addToFaces(newFace);
-            
-
           }
         }
 /*        
