@@ -14542,8 +14542,40 @@ void SOLARCHVISION_reverseSelection () {
 }  
 
 
+
+
+
 void SOLARCHVISION_convertFace2Polymesh () {
- 
+  
+  selectedPolymesh_numbers = new int [1];
+  selectedPolymesh_numbers[0] = 0; 
+  
+  for (int i = 1; i < selectedFace_numbers.length; i++) {
+    
+    int f = selectedFace_numbers[i];
+    
+    for (int j = 0; j < allFaces[f].length; j++) {
+      
+      for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
+      
+        if ((allPolymesh_Faces[OBJ_NUM][0] <= f) && (f <= allPolymesh_Faces[OBJ_NUM][1])) { 
+        
+          int previously_added = 0;
+          for (int q = 0; q < selectedPolymesh_numbers.length; q++) {
+            if (selectedPolymesh_numbers[q] == OBJ_NUM) {
+              previously_added = 1;
+              break;
+            }
+          }
+          if (previously_added == 0) {
+            int[] new_Item = {OBJ_NUM};
+            selectedPolymesh_numbers = concat(selectedPolymesh_numbers, new_Item);
+          }
+        }
+      }
+    }
+  }  
+
   SOLARCHVISION_calculate_selection_Pivot();
 }
 
