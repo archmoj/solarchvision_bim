@@ -13986,7 +13986,7 @@ void SOLARCHVISION_duplicateSelection () {
        
 
 
-void SOLARCHVISION_developSubSelection () {
+void SOLARCHVISION_developSelection () {
 
   if (Work_with_2D_or_3D == 1) {
     
@@ -24723,7 +24723,19 @@ void mouseClicked () {
               SOLARCHVISION_highlight_in_BAR_b("-WS");
               BAR_b_Update = 1;  
             }
-  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Delete Selection")) {
+              SOLARCHVISION_deleteSelection();
+              WIN3D_Update = 1;              
+            }      
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Duplicate Selection")) {
+              SOLARCHVISION_duplicateSelection();
+              WIN3D_Update = 1;              
+            }      
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Make Opennings in Selection")) {
+              SOLARCHVISION_developSelection();
+              WIN3D_Update = 1;              
+            }             
+
   
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TargetRoll")) {
               set_to_View_TargetRoll(0);
@@ -31643,7 +31655,7 @@ String[][] BAR_a_Items = {
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
-                        {"Select", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
+                        {"Select", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Delete Selection", "Duplicate Selection", "Make Opennings in Selection"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Seed/Material", "Teselation", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize"},
                         {"Match", "Pick Seed/Material", "Pick Teselation", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Teselation", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
@@ -31961,10 +31973,6 @@ String[][] BAR_b_Items = {
                           //{"1", "lfSz0", "lfSz1", "lfSz2", "LeafSize", "1.0"},
                           //{"1", "allFP0", "allFP1", "allFP2", "AllFractalProps", "1.0"},
                           
-                          {"1", "Modify", "Duplicated", "Modify|Copy", "2.5"},
-                          {"1", "Modify", "Developed", "OpenningInFaces", "2.5"},
-                          
-                          
                           
                         };         
 
@@ -32184,21 +32192,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("3DViewSpace")) set_to_View_3DViewSpace(j - 1);
 
         if (Bar_Switch.equals("3DViewPoint")) set_to_View_3DViewPoint(j - 1);
-        
-        if (Bar_Switch.equals("Modify|Copy")) {
-          if ((BAR_b_Items[i][j]).equals("Duplicated")) {
-            SOLARCHVISION_duplicateSelection();
-            
-            WIN3D_Update = 1;
-          }
-        }
-        if (Bar_Switch.equals("OpenningInFaces")) {
-          if ((BAR_b_Items[i][j]).equals("Developed")) {
-            SOLARCHVISION_developSubSelection();
-            
-            WIN3D_Update = 1;
-          }
-        }        
+
 
       }
 
