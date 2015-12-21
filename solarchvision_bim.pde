@@ -14563,7 +14563,32 @@ void SOLARCHVISION_convertPolymesh2Vertex () {
 }
 
 void SOLARCHVISION_convertFace2Vertex () {
- 
+
+  selectedVertex_numbers = new int [1];
+  selectedVertex_numbers[0] = 0; 
+  
+  for (int i = 1; i < selectedFace_numbers.length; i++) {
+    
+    int f = selectedFace_numbers[i];
+    
+    for (int j = 0; j < allFaces[f].length; j++) {
+      
+      int k = allFaces[f][j];
+      
+      int previously_added = 0;
+      for (int q = 0; q < selectedVertex_numbers.length; q++) {
+        if (selectedVertex_numbers[q] == k) {
+          previously_added = 1;
+          break;
+        }
+      }
+      if (previously_added == 0) {
+        int[] new_Item = {k};
+        selectedVertex_numbers = concat(selectedVertex_numbers, new_Item);
+      }
+    }
+  }
+  
   SOLARCHVISION_calculate_selection_Pivot();
 }
 
