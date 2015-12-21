@@ -13836,23 +13836,24 @@ void SOLARCHVISION_duplicateSelection () {
   
             }
           }
+
+
+          println("Hello1");
+  
+          float[][] newPolymesh_SolarPivotXY = {{allPolymesh_SolarPivotXYZ[OBJ_NUM][0], allPolymesh_SolarPivotXYZ[OBJ_NUM][1], allPolymesh_SolarPivotXYZ[OBJ_NUM][2]}};
+          allPolymesh_SolarPivotXYZ = (float[][]) concat(allPolymesh_SolarPivotXYZ, newPolymesh_SolarPivotXY);
+  /*        
+          println("Hello2");
+         
+          int[][] newPolymesh_Faces = {{number_of_faces_before + 1, allFaces.length - 1}};  
+          allPolymesh_Faces = (int[][]) concat(allPolymesh_Faces, newPolymesh_Faces);
+          
+          println("Hello3");
+  
+          int[][] newPolymesh_Solids = {{number_of_solids_before + 1, -1}}; // <<<<<<<<<<<<<<<<<<< it does not copy solids now! <<<<<<<<<<<<<<   
+          allPolymesh_Solids = (int[][]) concat(allPolymesh_Solids, newPolymesh_Solids);
+  */        
         }
-/*        
-        println("Hello1");
-
-        float[][] newPolymesh_SolarPivotXY = {{allPolymesh_SolarPivotXYZ[OBJ_NUM][0], allPolymesh_SolarPivotXYZ[OBJ_NUM][1], allPolymesh_SolarPivotXYZ[OBJ_NUM][2]}};
-        allPolymesh_SolarPivotXYZ = (float[][]) concat(allPolymesh_SolarPivotXYZ, newPolymesh_SolarPivotXY);
-        
-        println("Hello2");
-       
-        int[][] newPolymesh_Faces = {{number_of_faces_before + 1, allFaces.length - 1}};  
-        allPolymesh_Faces = (int[][]) concat(allPolymesh_Faces, newPolymesh_Faces);
-        
-        println("Hello3");
-
-        int[][] newPolymesh_Solids = {{number_of_solids_before + 1, -1}}; // <<<<<<<<<<<<<<<<<<< it does not copy solids now! <<<<<<<<<<<<<<   
-        allPolymesh_Solids = (int[][]) concat(allPolymesh_Solids, newPolymesh_Solids);
-*/        
       }
     }    
     
