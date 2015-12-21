@@ -13763,7 +13763,7 @@ void SOLARCHVISION_duplicateSelection () {
 
   if (Work_with_2D_or_3D == 3) {
     
-    println("number_of_polymeshes_before", allPolymesh_Faces.length);
+    int SOLID_added = 0;
     
     for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
     
@@ -13774,10 +13774,6 @@ void SOLARCHVISION_duplicateSelection () {
         if ((0 < allPolymesh_Faces[OBJ_NUM][0]) && (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1])) { 
 
           int number_of_vertices_before = allVertices.length;
-          int number_of_faces_before = allFaces.length;
-          int number_of_solids_before = allPolymesh_Solids.length; 
-          
-          
           
           addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
           
@@ -13792,6 +13788,8 @@ void SOLARCHVISION_duplicateSelection () {
           if ((0 <= allPolymesh_Solids[OBJ_NUM][1]) && (allPolymesh_Solids[OBJ_NUM][0] <= allPolymesh_Solids[OBJ_NUM][1])) { 
             for (int s = allPolymesh_Solids[OBJ_NUM][0]; s <= allPolymesh_Solids[OBJ_NUM][1]; s++) {
               SOLARCHVISION_addToSolids(SolidObjects[s].value, SolidObjects[s].posX, SolidObjects[s].posY, SolidObjects[s].posZ, SolidObjects[s].powX, SolidObjects[s].powY, SolidObjects[s].powZ, SolidObjects[s].scaleX, SolidObjects[s].scaleY, SolidObjects[s].scaleZ, -SolidObjects[s].rotX, -SolidObjects[s].rotY, -SolidObjects[s].rotZ);
+              
+              SOLID_added += 1;
             }
           }
 
@@ -13852,6 +13850,8 @@ void SOLARCHVISION_duplicateSelection () {
       }
     }    
     
+    
+    if (SOLID_added != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
   }
 
 
@@ -31974,6 +31974,8 @@ void SOLARCHVISION_draw_window_BAR_b () {
           
           if ((BAR_b_Items[i][j]).equals("Duplicated")) {
             SOLARCHVISION_duplicateSelection();
+            
+            WIN3D_Update = 1;
           }
           
           
