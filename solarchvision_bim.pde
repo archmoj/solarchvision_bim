@@ -13833,7 +13833,6 @@ void SOLARCHVISION_duplicateSelection () {
            
               int[] newFace = {};
               
-              
               for (int j = 0; j < allFaces[f].length; j++) {
                 int vNo = allFaces[f][j];
                 
@@ -13918,7 +13917,6 @@ void SOLARCHVISION_duplicateSelection () {
       if ((0 < f) && (f < allFaces.length)) {
      
         int[] newFace = {};
-        
         
         for (int j = 0; j < allFaces[f].length; j++) {
           int vNo = allFaces[f][j];
@@ -14018,7 +14016,6 @@ void SOLARCHVISION_developSelection () {
       if ((0 < f) && (f < allFaces.length)) {
      
         int[] newFace = {};
-        
         
         for (int j = 0; j < allFaces[f].length; j++) {
           int vNo = allFaces[f][j];
@@ -14543,6 +14540,38 @@ void SOLARCHVISION_reverseSelection () {
   
   SOLARCHVISION_calculate_selection_Pivot();
 }  
+
+
+void SOLARCHVISION_convertVertex2Polymesh () {
+ 
+  SOLARCHVISION_calculate_selection_Pivot();
+}
+
+void SOLARCHVISION_convertFace2Polymesh () {
+ 
+  SOLARCHVISION_calculate_selection_Pivot();
+}
+
+void SOLARCHVISION_convertPolymesh2Face () {
+ 
+  SOLARCHVISION_calculate_selection_Pivot();
+}
+
+void SOLARCHVISION_convertPolymesh2Vertex () {
+ 
+  SOLARCHVISION_calculate_selection_Pivot();
+}
+
+void SOLARCHVISION_convertFace2Vertex () {
+ 
+  SOLARCHVISION_calculate_selection_Pivot();
+}
+
+void SOLARCHVISION_convertVertex2Face () {
+ 
+  SOLARCHVISION_calculate_selection_Pivot();
+}
+
 
 
             
@@ -24845,8 +24874,53 @@ void mouseClicked () {
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
             } 
-  
-  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select Face")) {
+              Work_with_2D_or_3D = 4;
+              WIN3D_Update = 1;
+              BAR_b_Update = 1;  
+            } 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select Vertex")) {
+              Work_with_2D_or_3D = 5;
+              WIN3D_Update = 1;
+              BAR_b_Update = 1;  
+            } 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Vertex >> Polymesh")) {
+              SOLARCHVISION_convertVertex2Polymesh();
+              Work_with_2D_or_3D = 3;
+              WIN3D_Update = 1;
+              BAR_b_Update = 1;  
+            }             
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Face >> Polymesh")) {
+              SOLARCHVISION_convertFace2Polymesh();
+              Work_with_2D_or_3D = 3;
+              WIN3D_Update = 1;
+              BAR_b_Update = 1;  
+            }             
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Polymesh >> Face")) {
+              SOLARCHVISION_convertPolymesh2Face();
+              Work_with_2D_or_3D = 4;
+              WIN3D_Update = 1;
+              BAR_b_Update = 1;  
+            }              
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Polymesh >> Vertex")) {
+              SOLARCHVISION_convertPolymesh2Vertex();
+              Work_with_2D_or_3D = 5;
+              WIN3D_Update = 1;
+              BAR_b_Update = 1;  
+            }  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Face >> Vertex")) {
+              SOLARCHVISION_convertFace2Vertex();
+              Work_with_2D_or_3D = 5;
+              WIN3D_Update = 1;
+              BAR_b_Update = 1;  
+            } 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Vertex >> Face")) {
+              SOLARCHVISION_convertVertex2Face();
+              Work_with_2D_or_3D = 4;
+              WIN3D_Update = 1;
+              BAR_b_Update = 1;  
+            }            
+            
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Click Select")) {
               set_to_View_ClickSelect(0);
               SOLARCHVISION_highlight_in_BAR_b("±CS");
@@ -31810,13 +31884,16 @@ String[][] BAR_a_Items = {
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
-                        {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Delete Selection", "Duplicate Selection", "Make Opennings in Selection"},
+                        {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Delete Selection", "Duplicate Selection", "Make Opennings in Selection"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Seed/Material", "Teselation", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize"},
                         {"Match", "Pick Seed/Material", "Pick Teselation", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Teselation", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
 
                       };
 
+
+
+ 
 
 
 int N_Site_in_Bar_a = 2; 
