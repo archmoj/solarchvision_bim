@@ -14549,7 +14549,42 @@ void SOLARCHVISION_convertFace2Polymesh () {
 
 
 void SOLARCHVISION_convertVertex2Polymesh () {
- 
+
+  selectedPolymesh_numbers = new int [1];
+  selectedPolymesh_numbers[0] = 0; 
+  
+  for (int i = 1; i < selectedVertex_numbers.length; i++) {
+    
+    int vNo = selectedVertex_numbers[i];
+    
+    for (int f = 1; f < allFaces.length; f++) {
+      
+      for (int j = 0; j < allFaces[f].length; j++) {
+        
+        if (allFaces[f][j] == vNo) { 
+        
+          for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
+          
+            if ((allPolymesh_Faces[OBJ_NUM][0] <= f) && (f <= allPolymesh_Faces[OBJ_NUM][1])) { 
+            
+              int previously_added = 0;
+              for (int q = 0; q < selectedPolymesh_numbers.length; q++) {
+                if (selectedPolymesh_numbers[q] == OBJ_NUM) {
+                  previously_added = 1;
+                  break;
+                }
+              }
+              if (previously_added == 0) {
+                int[] new_Item = {OBJ_NUM};
+                selectedPolymesh_numbers = concat(selectedPolymesh_numbers, new_Item);
+              }
+            }
+          }
+        }
+      }
+    }  
+  } 
+  
   SOLARCHVISION_calculate_selection_Pivot();
 }
 
@@ -14559,30 +14594,30 @@ void SOLARCHVISION_convertVertex2Face () {
   selectedFace_numbers = new int [1];
   selectedFace_numbers[0] = 0; 
   
-  for (int f = 1; f < allFaces.length; f++) {
-    int vertex_found = 0; 
-    for (int j = 0; j < allFaces[f].length; j++) {
-      for (int i = 1; i < selectedVertex_numbers.length; i++) {
-        if (selectedVertex_numbers[i] == allFaces[f][j]) {
-          vertex_found = 1;
-          break;
+  for (int i = 1; i < selectedVertex_numbers.length; i++) {
+    
+    int vNo = selectedVertex_numbers[i];
+
+    for (int f = 1; f < allFaces.length; f++) {
+      
+      for (int j = 0; j < allFaces[f].length; j++) {
+        
+        if (allFaces[f][j] == vNo) { 
+        
+          int previously_added = 0;
+          for (int q = 0; q < selectedFace_numbers.length; q++) {
+            if (selectedFace_numbers[q] == f) {
+              previously_added = 1;
+              break;
+            }
+          }
+          if (previously_added == 0) {
+            int[] new_Item = {f};
+            selectedFace_numbers = concat(selectedFace_numbers, new_Item);
+          }
         }
       }
-      if (vertex_found != 0) break;
-    }
-    if (vertex_found != 0) {
-      int previously_added = 0;
-      for (int q = 0; q < selectedFace_numbers.length; q++) {
-        if (selectedFace_numbers[q] == f) {
-          previously_added = 1;
-          break;
-        }
-      }
-      if (previously_added == 0) {
-        int[] new_Item = {f};
-        selectedFace_numbers = concat(selectedFace_numbers, new_Item);
-      }
-    }
+    }  
   }
   
   SOLARCHVISION_calculate_selection_Pivot();
@@ -14602,7 +14637,7 @@ void SOLARCHVISION_convertPolymesh2Face () {
     for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) { 
       
       int previously_added = 0;
-      for (int q = 0; q < selectedVertex_numbers.length; q++) {
+      for (int q = 0; q < selectedFace_numbers.length; q++) {
         if (selectedFace_numbers[q] == f) {
           previously_added = 1;
           break;
