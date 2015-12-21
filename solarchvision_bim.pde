@@ -14569,12 +14569,12 @@ void SOLARCHVISION_convertFace2Vertex () {
 
 void SOLARCHVISION_convertVertex2Face () {
 
-  int[] selectedFace_numbers = new int [1];
+  selectedFace_numbers = new int [1];
   selectedFace_numbers[0] = 0; 
   
   for (int i = 1; i < allFaces.length; i++) {
     int vertex_found = 0; 
-    for (int j = 1; j < allFaces[i].length; j++) {
+    for (int j = 0; j < allFaces[i].length; j++) {
       for (int k = 1; k < selectedVertex_numbers.length; k++) {
         if (selectedVertex_numbers[k] == allFaces[i][j]) {
           vertex_found = 1;
@@ -14597,8 +14597,6 @@ void SOLARCHVISION_convertVertex2Face () {
       }
     }
   }
-  
-  println(selectedFace_numbers);
   
   SOLARCHVISION_calculate_selection_Pivot();
 }
