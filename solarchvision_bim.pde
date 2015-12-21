@@ -14391,7 +14391,158 @@ void SOLARCHVISION_selectAll () {
   
   SOLARCHVISION_calculate_selection_Pivot();
 }
-       
+
+
+void SOLARCHVISION_reverseSelection () {
+
+  if (Work_with_2D_or_3D == 1) {
+    int[] pre_selectedFractal_numbers = sort(selectedFractal_numbers);
+    selectedFractal_numbers[0] = 0; 
+    
+    selectedFractal_numbers = new int [1];
+    selectedFractal_numbers[0] = 0;
+    
+    for (int i = 1; i < allFractal_XYZSRA.length; i++) {
+      int found = 0; 
+      
+      for (int j = 1; j < pre_selectedFractal_numbers.length; j++) {
+        
+        if (pre_selectedFractal_numbers[j] == i) {
+          found = 1;
+          break;
+        }
+        else if (pre_selectedFractal_numbers[j] > i) {
+          break; 
+        }
+      }
+      
+      if (found == 0) {
+        int[] new_Item = {i};
+        
+        selectedFractal_numbers = concat(selectedFractal_numbers, new_Item);
+      }
+    }
+  }    
+  
+  if (Work_with_2D_or_3D == 2) {
+    int[] pre_selectedObject2D_numbers = sort(selectedObject2D_numbers);
+    selectedObject2D_numbers[0] = 0; 
+    
+    selectedObject2D_numbers = new int [1];
+    selectedObject2D_numbers[0] = 0;
+    
+    for (int i = 1; i < allObject2D_XYZS.length; i++) {
+      int found = 0; 
+      
+      for (int j = 1; j < pre_selectedObject2D_numbers.length; j++) {
+        
+        if (pre_selectedObject2D_numbers[j] == i) {
+          found = 1;
+          break;
+        }
+        else if (pre_selectedObject2D_numbers[j] > i) {
+          break; 
+        }
+      }
+      
+      if (found == 0) {
+        int[] new_Item = {i};
+        
+        selectedObject2D_numbers = concat(selectedObject2D_numbers, new_Item);
+      }
+    }
+  }  
+
+  if (Work_with_2D_or_3D == 3) {
+    int[] pre_selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
+    selectedPolymesh_numbers[0] = 0; 
+    
+    selectedPolymesh_numbers = new int [1];
+    selectedPolymesh_numbers[0] = 0;
+    
+    for (int i = 1; i < allPolymesh_Faces.length; i++) {
+      int found = 0; 
+      
+      for (int j = 1; j < pre_selectedPolymesh_numbers.length; j++) {
+        
+        if (pre_selectedPolymesh_numbers[j] == i) {
+          found = 1;
+          break;
+        }
+        else if (pre_selectedPolymesh_numbers[j] > i) {
+          break; 
+        }
+      }
+      
+      if (found == 0) {
+        int[] new_Item = {i};
+        
+        selectedPolymesh_numbers = concat(selectedPolymesh_numbers, new_Item);
+      }
+    }
+  }  
+
+  if (Work_with_2D_or_3D == 4) {
+    int[] pre_selectedFace_numbers = sort(selectedFace_numbers);
+    selectedFace_numbers[0] = 0; 
+    
+    selectedFace_numbers = new int [1];
+    selectedFace_numbers[0] = 0;
+    
+    for (int i = 1; i < allFaces.length; i++) {
+      int found = 0; 
+      
+      for (int j = 1; j < pre_selectedFace_numbers.length; j++) {
+        
+        if (pre_selectedFace_numbers[j] == i) {
+          found = 1;
+          break;
+        }
+        else if (pre_selectedFace_numbers[j] > i) {
+          break; 
+        }
+      }
+      
+      if (found == 0) {
+        int[] new_Item = {i};
+        
+        selectedFace_numbers = concat(selectedFace_numbers, new_Item);
+      }
+    }
+  }  
+  
+  if (Work_with_2D_or_3D == 5) {
+    int[] pre_selectedVertex_numbers = sort(selectedVertex_numbers);
+    selectedVertex_numbers[0] = 0; 
+    
+    selectedVertex_numbers = new int [1];
+    selectedVertex_numbers[0] = 0;
+    
+    for (int i = 1; i < allVertices.length; i++) {
+      int found = 0; 
+      
+      for (int j = 1; j < pre_selectedVertex_numbers.length; j++) {
+        
+        if (pre_selectedVertex_numbers[j] == i) {
+          found = 1;
+          break;
+        }
+        else if (pre_selectedVertex_numbers[j] > i) {
+          break; 
+        }
+      }
+      
+      if (found == 0) {
+        int[] new_Item = {i};
+        
+        selectedVertex_numbers = concat(selectedVertex_numbers, new_Item);
+      }
+    }
+  }  
+
+  
+  SOLARCHVISION_calculate_selection_Pivot();
+}  
 
 
             
@@ -24666,7 +24817,11 @@ void mouseClicked () {
               SOLARCHVISION_highlight_in_BAR_b("P><");
               BAR_b_Update = 1;  
             }   
-            
+
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Reverse Selection")) {
+              SOLARCHVISION_reverseSelection();
+              WIN3D_Update = 1;
+            }             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Deselect All")) {
               SOLARCHVISION_deselectAll();
               WIN3D_Update = 1;
@@ -31655,7 +31810,7 @@ String[][] BAR_a_Items = {
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
-                        {"Select", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Delete Selection", "Duplicate Selection", "Make Opennings in Selection"},
+                        {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Delete Selection", "Duplicate Selection", "Make Opennings in Selection"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Seed/Material", "Teselation", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize"},
                         {"Match", "Pick Seed/Material", "Pick Teselation", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Teselation", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
