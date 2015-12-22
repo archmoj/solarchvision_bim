@@ -14086,7 +14086,7 @@ void SOLARCHVISION_deleteSelection () {
     
     selectedFractal_numbers = sort(selectedFractal_numbers);
     
-    for (int o = selectedFractal_numbers.length - 1; o >= 0; o--) {
+    for (int o = selectedFractal_numbers.length - 1; o > 0; o--) { // the first node is null 
       
       int OBJ_NUM = selectedFractal_numbers[o];
       
@@ -14153,7 +14153,7 @@ void SOLARCHVISION_deleteSelection () {
     
     selectedObject2D_numbers = sort(selectedObject2D_numbers);
     
-    for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
+    for (int o = selectedObject2D_numbers.length - 1; o > 0; o--) { // the first node is null 
       
       int OBJ_NUM = selectedObject2D_numbers[o];
       
@@ -14187,7 +14187,7 @@ void SOLARCHVISION_deleteSelection () {
     
     int Solids_updated = 0;  
 
-    for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
+    for (int o = selectedPolymesh_numbers.length - 1; o > 0; o--) { // the first node is null 
       
       int OBJ_NUM = selectedPolymesh_numbers[o];
       
@@ -14326,7 +14326,7 @@ void SOLARCHVISION_deleteSelection () {
 
     selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
 
-    for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
+    for (int o = selectedPolymesh_numbers.length - 1; o > 0; o--) { // the first node is null 
       
       int OBJ_NUM = selectedPolymesh_numbers[o];
       
@@ -14335,7 +14335,7 @@ void SOLARCHVISION_deleteSelection () {
         int startFace = allPolymesh_Faces[OBJ_NUM][0];
         int endFace = allPolymesh_Faces[OBJ_NUM][1];
 
-        for (int q = selectedFace_numbers.length - 1; q >= 0; q--) {
+        for (int q = selectedFace_numbers.length - 1; q > 0; q--) { // the first node is null
           
           int f = selectedFace_numbers[q];
           
@@ -14347,7 +14347,7 @@ void SOLARCHVISION_deleteSelection () {
               }
             }  
           }  
-          
+
           {
             int[][] startList = (int[][]) subset(allFaces, 0, f);
             int[][] endList = (int[][]) subset(allFaces, f + 1);
@@ -14360,11 +14360,21 @@ void SOLARCHVISION_deleteSelection () {
             int[][] endList = (int[][]) subset(allFaces_MAT, f + 1);
             
             allFaces_MAT = (int[][]) concat(startList, endList);          
-          }          
+          }      
+
+          { // to avoid deleting the faces twice they should be deleted from the list.
+            int[] startList = (int[]) subset(selectedFace_numbers, 0, q);
+            int[] endList = (int[]) subset(selectedFace_numbers, q + 1);
+            
+            selectedFace_numbers = (int[]) concat(startList, endList);         
+          } 
+  
         }
 
       }
     }
+    
+    println("end");
 
     WIN3D_update_VerticesSolarValue = 1;
     
