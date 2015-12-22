@@ -14331,43 +14331,49 @@ void SOLARCHVISION_deleteSelection () {
       int OBJ_NUM = selectedPolymesh_numbers[o];
       
       if (OBJ_NUM != 0) {
-      
-        int startFace = allPolymesh_Faces[OBJ_NUM][0];
-        int endFace = allPolymesh_Faces[OBJ_NUM][1];
 
         for (int q = selectedFace_numbers.length - 1; q > 0; q--) { // the first node is null
-          
+
           int f = selectedFace_numbers[q];
           
-          if ((startFace <= f) && (f <= endFace)) {
+          int startFace = allPolymesh_Faces[OBJ_NUM][0];
+          int endFace = allPolymesh_Faces[OBJ_NUM][1];          
           
+          if ((startFace <= f) && (f <= endFace)) {
+            
             for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
               for (int j = 0; j < 2; j++) {
                 allPolymesh_Faces[i][j] -= 1;
               }
             }  
-          }  
+            allPolymesh_Faces[OBJ_NUM][1] -= 1; // because deleting a face also changes the end pointer of the same object 
 
-          {
-            int[][] startList = (int[][]) subset(allFaces, 0, f);
-            int[][] endList = (int[][]) subset(allFaces, f + 1);
+            {
+              int[][] startList = (int[][]) subset(allFaces, 0, f);
+              int[][] endList = (int[][]) subset(allFaces, f + 1);
+              
+              allFaces = (int[][]) concat(startList, endList);
+            }
+              
+            {
+              int[][] startList = (int[][]) subset(allFaces_MAT, 0, f);
+              int[][] endList = (int[][]) subset(allFaces_MAT, f + 1);
+              
+              allFaces_MAT = (int[][]) concat(startList, endList);          
+            }      
+
+            { // to avoid deleting the faces twice they should be deleted from the list.
+              for (int i = q + 1; i < selectedFace_numbers.length; i++) {
+                selectedFace_numbers[i] -= 1;
+              }              
             
-            allFaces = (int[][]) concat(startList, endList);
+              int[] startList = (int[]) subset(selectedFace_numbers, 0, q);
+              int[] endList = (int[]) subset(selectedFace_numbers, q + 1);
+              
+              selectedFace_numbers = (int[]) concat(startList, endList);         
+            }
+ 
           }
-            
-          {
-            int[][] startList = (int[][]) subset(allFaces_MAT, 0, f);
-            int[][] endList = (int[][]) subset(allFaces_MAT, f + 1);
-            
-            allFaces_MAT = (int[][]) concat(startList, endList);          
-          }      
-
-          { // to avoid deleting the faces twice they should be deleted from the list.
-            int[] startList = (int[]) subset(selectedFace_numbers, 0, q);
-            int[] endList = (int[]) subset(selectedFace_numbers, q + 1);
-            
-            selectedFace_numbers = (int[]) concat(startList, endList);         
-          } 
   
         }
 
