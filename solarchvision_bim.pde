@@ -14320,6 +14320,54 @@ void SOLARCHVISION_deleteSelection () {
 
   if (Work_with_2D_or_3D == 4) {
     
+    selectedFace_numbers = sort(selectedFace_numbers);
+
+    SOLARCHVISION_convertFace2Polymesh();    
+
+    selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
+
+    for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
+      
+      int OBJ_NUM = selectedPolymesh_numbers[o];
+      
+      if (OBJ_NUM != 0) {
+      
+        int startFace = allPolymesh_Faces[OBJ_NUM][0];
+        int endFace = allPolymesh_Faces[OBJ_NUM][1];
+
+        for (int q = selectedFace_numbers.length - 1; q >= 0; q--) {
+          
+          int f = selectedFace_numbers[q];
+          
+          if ((startFace <= f) && (f <= endFace)) {
+          
+            for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
+              for (int j = 0; j < 2; j++) {
+                allPolymesh_Faces[i][j] -= 1;
+              }
+            }  
+          }  
+          
+          {
+            int[][] startList = (int[][]) subset(allFaces, 0, f);
+            int[][] endList = (int[][]) subset(allFaces, f + 1);
+            
+            allFaces = (int[][]) concat(startList, endList);
+          }
+            
+          {
+            int[][] startList = (int[][]) subset(allFaces_MAT, 0, f);
+            int[][] endList = (int[][]) subset(allFaces_MAT, f + 1);
+            
+            allFaces_MAT = (int[][]) concat(startList, endList);          
+          }          
+        }
+
+      }
+    }
+
+    WIN3D_update_VerticesSolarValue = 1;
+    
   }
   
   if (Work_with_2D_or_3D == 5) {
