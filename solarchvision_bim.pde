@@ -14380,8 +14380,6 @@ void SOLARCHVISION_deleteSelection () {
       }
     }
     
-    println("end");
-
     WIN3D_update_VerticesSolarValue = 1;
     
   }
@@ -16269,6 +16267,18 @@ void SOLARCHVISION_add_2Dobjects_plane (int people_or_trees, int n, float x0, fl
   }  
 }
 
+
+              
+void SOLARCHVISION_remove_All () {
+  
+  SOLARCHVISION_remove_FractalPlants();
+  SOLARCHVISION_remove_2Dobjects();
+  SOLARCHVISION_remove_3Dobjects();
+  
+  WIN3D_Update = 1;
+}
+
+
 void SOLARCHVISION_remove_FractalPlants () {
   allFractal_XYZSRA = new float [1][6]; 
   allFractal_XYZSRA[0][0] = 0;
@@ -16351,6 +16361,8 @@ void SOLARCHVISION_remove_3Dobjects () {
   allPolymesh_Solids = new int [1][2];
   allPolymesh_Solids[0][0] = 0;
   allPolymesh_Solids[0][1] = -1;
+  
+  SOLARCHVISION_remove_ParametricGeometries();
 
   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
  
@@ -24125,6 +24137,12 @@ void mouseClicked () {
 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("New")) { 
               selectInput("Specify project name:", "SOLARCHVISION_fileSelected_New");
+
+              SOLARCHVISION_remove_All();
+
+
+              //SOLARCHVISION_update_station(0);
+
             }  
 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Save")) { 
