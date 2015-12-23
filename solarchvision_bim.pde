@@ -14408,30 +14408,15 @@ void SOLARCHVISION_deleteSelection () {
       }
       
       for (int i = 1; i < allFaces.length; i++) { // the first node is null
-        for (int j = 0; j < allFaces[f].length; j++) {
+        for (int j = 0; j < allFaces[i].length; j++) {
           if (allFaces[i][j] > vNo) {
             
-            int f = allFaces[i][j];
-            
             allFaces[i][j] -= 1;
-
-            for (int OBJ_NUM = allPolymesh_Faces.length - 1; OBJ_NUM > 0; OBJ_NUM--) { // the first node is null
-              if (f <= allPolymesh_Faces[OBJ_NUM][0]) {
-                allPolymesh_Faces[OBJ_NUM][0] -= 1;
-                allPolymesh_Faces[OBJ_NUM][1] -= 1;
-              }
-              else if ((allPolymesh_Faces[OBJ_NUM][0] < f) && (f <= allPolymesh_Faces[OBJ_NUM][1])) { 
-                allPolymesh_Faces[OBJ_NUM][1] -= 1;
-              } 
-            }             
           }
         }
       }
       
-
-
     } 
-
   }
 
 
