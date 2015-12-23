@@ -14318,7 +14318,15 @@ void SOLARCHVISION_deleteSelection () {
 
   }
 
-  if (Work_with_2D_or_3D == 4) {
+  if ((Work_with_2D_or_3D == 4) || (Work_with_2D_or_3D == 5)) { // note that for deleting vertices we should first delete the faces that have those vertices...
+    
+    if (Work_with_2D_or_3D == 5) { 
+      
+      selectedFace_numbers = sort(selectedFace_numbers);
+      
+      SOLARCHVISION_convertVertex2Face(); 
+      
+    }
     
     selectedFace_numbers = sort(selectedFace_numbers);
 
@@ -14384,9 +14392,49 @@ void SOLARCHVISION_deleteSelection () {
     
   }
   
-  if (Work_with_2D_or_3D == 5) {
+  if (Work_with_2D_or_3D == 5) { // note that for deleting vertices we first deleted the faces that have those vertices above 
     
+    selectedVertex_numbers = sort(selectedVertex_numbers);
+
+    for (int q = selectedVertex_numbers.length - 1; q > 0; q--) { // the first node is null
+
+      int vNo = selectedVertex_numbers[q];
+      
+      {
+        float[][] startList = (float[][]) subset(allVertices, 0, vNo);
+        float[][] endList = (float[][]) subset(allVertices, vNo + 1);
+        
+        allVertices = (float[][]) concat(startList, endList);
+      }
+      
+      for (int i = 1; i < allFaces.length; i++) { // the first node is null
+        for (int j = 0; j < allFaces[f].length; j++) {
+          if (allFaces[i][j] > vNo) {
+            
+            int f = allFaces[i][j];
+            
+            allFaces[i][j] -= 1;
+
+            for (int OBJ_NUM = allPolymesh_Faces.length - 1; OBJ_NUM > 0; OBJ_NUM--) { // the first node is null
+              if (f <= allPolymesh_Faces[OBJ_NUM][0]) {
+                allPolymesh_Faces[OBJ_NUM][0] -= 1;
+                allPolymesh_Faces[OBJ_NUM][1] -= 1;
+              }
+              else if ((allPolymesh_Faces[OBJ_NUM][0] < f) && (f <= allPolymesh_Faces[OBJ_NUM][1])) { 
+                allPolymesh_Faces[OBJ_NUM][1] -= 1;
+              } 
+            }             
+          }
+        }
+      }
+      
+
+
+    } 
+
   }
+
+
   
   SOLARCHVISION_deselectAll();
 }
