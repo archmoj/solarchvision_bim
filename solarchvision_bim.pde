@@ -34656,7 +34656,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     newChild2.setContent(lineSTR);
   }   
 
-  newChild1 = my_xml.addChild("allPolymeshes");
+  newChild1 = my_xml.addChild("allPolymesh_Faces");
   newChild1.setInt("ni", allPolymesh_Faces.length);
   for (int i = 0; i < allPolymesh_Faces.length; i++) {
     newChild2 = newChild1.addChild("Faces");
