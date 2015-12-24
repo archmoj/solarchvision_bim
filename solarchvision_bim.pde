@@ -14424,9 +14424,50 @@ void SOLARCHVISION_deleteSelection () {
   }
 
 
-  
   SOLARCHVISION_deselectAll();
 }
+
+void SOLARCHVISION_deleteIsolatedVertices () {
+
+  for (int vNo = allVertices.length - 1; vNo > 0; vNo--) { // the first node is null
+  
+    int found = 0;
+  
+    for (int i = 1; i < allFaces.length; i++) { // the first node is null
+      for (int j = 0; j < allFaces[i].length; j++) {
+        if (allFaces[i][j] == vNo) {
+          found = 1;
+        }
+      }
+    }
+    
+    if (found == 0) {
+      {
+        float[][] startList = (float[][]) subset(allVertices, 0, vNo);
+        float[][] endList = (float[][]) subset(allVertices, vNo + 1);
+        
+        allVertices = (float[][]) concat(startList, endList);
+      }
+      
+      for (int i = 1; i < allFaces.length; i++) { // the first node is null
+        for (int j = 0; j < allFaces[i].length; j++) {
+          if (allFaces[i][j] > vNo) {
+            
+            allFaces[i][j] -= 1;
+          }
+        }
+      }
+    }
+    
+  } 
+
+  selectedVertex_numbers = new int [1];
+  selectedVertex_numbers[0] = 0;  
+
+  SOLARCHVISION_calculate_selection_Pivot();
+  
+}
+
 
 void SOLARCHVISION_deselectAll () {
 
@@ -24969,7 +25010,8 @@ void mouseClicked () {
               SOLARCHVISION_highlight_in_BAR_b("Cushion");
               BAR_b_Update = 1;  
             }
-  
+            
+            
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Move")) {
               //set_to_Modify_Move(selected_posVector);
               set_to_Modify_Move(3);
@@ -25329,6 +25371,10 @@ void mouseClicked () {
               SOLARCHVISION_highlight_in_BAR_b("-WS");
               BAR_b_Update = 1;  
             }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Delete Isolated Vertices")) {
+              SOLARCHVISION_deleteIsolatedVertices();
+              WIN3D_Update = 1;  
+            }            
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Delete Selection")) {
               SOLARCHVISION_deleteSelection();
               WIN3D_Update = 1;              
@@ -32267,7 +32313,7 @@ String[][] BAR_a_Items = {
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
-                        {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Delete Selection", "Duplicate Selection", "Make Opennings in Selection"},
+                        {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Delete Isolated Vertices", "Delete Selection", "Duplicate Selection", "Make Opennings in Selection"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Seed/Material", "Teselation", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize"},
                         {"Match", "Pick Seed/Material", "Pick Teselation", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Teselation", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
