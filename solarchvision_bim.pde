@@ -17939,58 +17939,47 @@ void SOLARCHVISION_draw_3Dobjects () {
       
       
       for (int f = 1; f < allFaces.length; f++) {
-        int Teselation = allFaces_MAT[f][1];
-        
-        int TotalSubNo = 1;  
-        if (allFaces_MAT[f][0] == 0) {
-          Teselation += MODEL3D_TESELATION;
+          
+        float[][] base_Vertices = new float [allFaces[f].length][3];
+        for (int j = 0; j < allFaces[f].length; j++) {
+          int vNo = allFaces[f][j];
+          base_Vertices[j][0] = allVertices[vNo][0];
+          base_Vertices[j][1] = allVertices[vNo][1];
+          base_Vertices[j][2] = allVertices[vNo][2];
         }
-        if (Teselation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Teselation - 1), 1));
-    
-        for (int n = 0; n < TotalSubNo; n++) {
           
-          float[][] base_Vertices = new float [allFaces[f].length][3];
-          for (int j = 0; j < allFaces[f].length; j++) {
-            int vNo = allFaces[f][j];
-            base_Vertices[j][0] = allVertices[vNo][0];
-            base_Vertices[j][1] = allVertices[vNo][1];
-            base_Vertices[j][2] = allVertices[vNo][2];
-          }
+        for (int s = 0; s < base_Vertices.length; s++) {
+  
+          int s_next = (s + 1) % base_Vertices.length;
+          int s_prev = (s + base_Vertices.length - 1) % base_Vertices.length;
           
-          float[][] subFace = getSubFace(base_Vertices, Teselation, n);
+          PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]);
+          PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]);
+          PVector UV = U.cross(V);
+          float[] W = {UV.x, UV.y, UV.z};
+          W = fn_normalize(W);
           
-          for (int s = 0; s < subFace.length; s++) {
-    
-            int s_next = (s + 1) % subFace.length;
-            int s_prev = (s + subFace.length - 1) % subFace.length;
-            
-            PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
-            PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
-            PVector UV = U.cross(V);
-            float[] W = {UV.x, UV.y, UV.z};
-            W = fn_normalize(W);
-            
-            float x0 = subFace[s][0] * OBJECTS_scale * WIN3D_scale3D;
-            float y0 = subFace[s][1] * OBJECTS_scale * WIN3D_scale3D;
-            float z0 = subFace[s][2] * OBJECTS_scale * WIN3D_scale3D;
+          float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D_scale3D;
+          float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D_scale3D;
+          float z0 = base_Vertices[s][2] * OBJECTS_scale * WIN3D_scale3D;
 
-            float x1 = (subFace[s][0] + W[0]) * OBJECTS_scale * WIN3D_scale3D;
-            float y1 = (subFace[s][1] + W[1]) * OBJECTS_scale * WIN3D_scale3D;
-            float z1 = (subFace[s][2] + W[2]) * OBJECTS_scale * WIN3D_scale3D;
+          float x1 = (base_Vertices[s][0] + W[0]) * OBJECTS_scale * WIN3D_scale3D;
+          float y1 = (base_Vertices[s][1] + W[1]) * OBJECTS_scale * WIN3D_scale3D;
+          float z1 = (base_Vertices[s][2] + W[2]) * OBJECTS_scale * WIN3D_scale3D;
 
-            float x2 = (subFace[s][0] - W[0]) * OBJECTS_scale * WIN3D_scale3D;
-            float y2 = (subFace[s][1] - W[1]) * OBJECTS_scale * WIN3D_scale3D;
-            float z2 = (subFace[s][2] - W[2]) * OBJECTS_scale * WIN3D_scale3D;
-            
-            WIN3D_Diagrams.strokeWeight(1);
-            WIN3D_Diagrams.stroke(255, 127, 63);
-            WIN3D_Diagrams.line(x0, -y0, z0, x1, -y1, z1);
-            
-            WIN3D_Diagrams.strokeWeight(3);
-            WIN3D_Diagrams.stroke(63, 127, 255);
-            WIN3D_Diagrams.line(x0, -y0, z0, x2, -y2, z2);
-          }
-        }   
+          float x2 = (base_Vertices[s][0] - W[0]) * OBJECTS_scale * WIN3D_scale3D;
+          float y2 = (base_Vertices[s][1] - W[1]) * OBJECTS_scale * WIN3D_scale3D;
+          float z2 = (base_Vertices[s][2] - W[2]) * OBJECTS_scale * WIN3D_scale3D;
+          
+          WIN3D_Diagrams.strokeWeight(1);
+          WIN3D_Diagrams.stroke(255, 127, 63);
+          WIN3D_Diagrams.line(x0, -y0, z0, x1, -y1, z1);
+          
+          WIN3D_Diagrams.strokeWeight(3);
+          WIN3D_Diagrams.stroke(63, 127, 255);
+          WIN3D_Diagrams.line(x0, -y0, z0, x2, -y2, z2);
+        }
+
       }
       
       WIN3D_Diagrams.strokeWeight(0);
