@@ -14423,6 +14423,16 @@ void SOLARCHVISION_insertFaceOpenningSelection () {
             }  
             allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
 
+
+            int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
+            int[][] midList_Faces = (int[][]) subset(allFaces, f, 1);
+            int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
+            
+            
+            int[][] startList_Faces_MAT = (int[][]) subset(allFaces_MAT, 0, f);
+            int[][] midList_Faces_MAT = (int[][]) subset(allFaces_MAT, f, 1);
+            int[][] endList_Faces_MAT = (int[][]) subset(allFaces_MAT, f + 1);
+
             { 
               float[][] base_Vertices = new float [allFaces[f].length][3];
 
@@ -14462,16 +14472,12 @@ void SOLARCHVISION_insertFaceOpenningSelection () {
               for(int s = 0; s < allFaces[f].length; s++) { 
                 
                 int s_next = (s + 1) % allFaces[f].length;
-                
-                // adding new faces to the scene without making new polymesh object
-                
-                int[][] newFace_MAT = {{defaultMaterial, defaultTeselation}}; 
-              
-                allFaces_MAT =  (int[][]) concat(allFaces_MAT, newFace_MAT);
               
                 int[][] newFace = {{allFaces[f][s], new_Vertex_numbers[s], new_Vertex_numbers[s_next], allFaces[f][s_next]}}; 
+                int[][] newFace_MAT = {{defaultMaterial, defaultTeselation}}; 
               
-                allFaces = (int[][]) concat(allFaces, newFace);
+                midList_Faces = (int[][]) concat(midList_Faces, newFace);
+                midList_Faces_MAT = (int[][]) concat(midList_Faces_MAT, newFace_MAT);           
               }
     
                        
@@ -14485,7 +14491,11 @@ void SOLARCHVISION_insertFaceOpenningSelection () {
               
             }
            
-              
+            startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
+            startList_Faces_MAT = (int[][]) concat(startList_Faces_MAT, midList_Faces_MAT);  
+
+            allFaces = (int[][]) concat(startList_Faces, endList_Faces);
+            allFaces_MAT = (int[][]) concat(startList_Faces_MAT, endList_Faces_MAT);                      
   
 
             { // to avoid processing the faces twice they should be deleted from the list.
