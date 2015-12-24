@@ -1206,7 +1206,7 @@ int Display_SpatialImpact_Points = 0;
 int Display_SpatialImpact_Lines = 1;
 
 int Display_MODEL3D_EDGES = 1;
-int Display_MODEL3D_NORMALS = 1;
+int Display_MODEL3D_NORMALS = 0;
 
 int Display_windFlow = 0;
 
@@ -17992,6 +17992,8 @@ void SOLARCHVISION_draw_3Dobjects () {
           }
         }   
       }
+      
+      WIN3D_Diagrams.strokeWeight(0);
     }
     
   
