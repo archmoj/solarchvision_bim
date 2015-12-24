@@ -14460,9 +14460,9 @@ void SOLARCHVISION_insertFaceOpenningSelection () {
               
               int[] new_Vertex_numbers = new int [allFaces[f].length];
               
-              for(int i = 0; i < allFaces[f].length; i++) {
+              for(int s = 0; s < allFaces[f].length; s++) {
                 
-                new_Vertex_numbers[i] = SOLARCHVISION_addToVertices(new_Vertices[i][0], new_Vertices[i][1], new_Vertices[i][2]); 
+                new_Vertex_numbers[s] = SOLARCHVISION_addToVertices(new_Vertices[s][0], new_Vertices[s][1], new_Vertices[s][2]); 
               } 
             
               defaultMaterial = allFaces_MAT[f][0];
@@ -14486,7 +14486,9 @@ void SOLARCHVISION_insertFaceOpenningSelection () {
                 allFaces_MAT[f][0] = 5; //8; // glass!
                 allFaces_MAT[f][1] = defaultTeselation;
               
-                allFaces[f] = new_Vertex_numbers;
+                for(int s = 0; s < allFaces[f].length; s++) {
+                  allFaces[f][s] = new_Vertex_numbers[s];
+                }
               } 
               
             }
