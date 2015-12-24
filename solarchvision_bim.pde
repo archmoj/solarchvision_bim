@@ -14477,7 +14477,7 @@ void SOLARCHVISION_insertFaceOpenningSelection () {
                        
               { // modifying the base face to shape the openning  
               
-                allFaces_MAT[f][0] = 8; // glass!
+                allFaces_MAT[f][0] = 5; //8; // glass!
                 allFaces_MAT[f][1] = defaultTeselation;
               
                 allFaces[f] = new_Vertex_numbers;
@@ -14488,7 +14488,7 @@ void SOLARCHVISION_insertFaceOpenningSelection () {
               
   
 
-            { // to avoid deleting the faces twice they should be deleted from the list.
+            { // to avoid processing the faces twice they should be deleted from the list.
               for (int i = q + 1; i < selectedFace_numbers.length; i++) {
                 selectedFace_numbers[i] -= 1;
               }              
