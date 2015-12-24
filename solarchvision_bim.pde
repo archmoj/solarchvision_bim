@@ -17947,6 +17947,16 @@ void SOLARCHVISION_draw_3Dobjects () {
           base_Vertices[j][1] = allVertices[vNo][1];
           base_Vertices[j][2] = allVertices[vNo][2];
         }
+        
+        float G_x0 = 0;
+        float G_y0 = 0;
+        float G_z0 = 0;
+        
+        float G_x1 = 0;
+        float G_y1 = 0;
+        float G_z1 = 0;
+        
+        float n = float(base_Vertices.length);
           
         for (int s = 0; s < base_Vertices.length; s++) {
   
@@ -17966,24 +17976,36 @@ void SOLARCHVISION_draw_3Dobjects () {
           float x1 = (base_Vertices[s][0] + W[0]) * OBJECTS_scale * WIN3D_scale3D;
           float y1 = (base_Vertices[s][1] + W[1]) * OBJECTS_scale * WIN3D_scale3D;
           float z1 = (base_Vertices[s][2] + W[2]) * OBJECTS_scale * WIN3D_scale3D;
+          
+          G_x0 += x0 / n;
+          G_y0 += y0 / n;
+          G_z0 += z0 / n;
+          
+          G_x1 += x1 / n;
+          G_y1 += y1 / n;
+          G_z1 += z1 / n;
+        }
+        
+        WIN3D_Diagrams.strokeWeight(3);
+        WIN3D_Diagrams.stroke(127, 255, 127);
+        WIN3D_Diagrams.line(G_x0, -G_y0, G_z0, G_x1, -G_y1, G_z1);        
+        
+        WIN3D_Diagrams.strokeWeight(1);
+        WIN3D_Diagrams.stroke(0, 127, 0);
+        
+        for (int s = 0; s < base_Vertices.length; s++) {
+          
+          float x0 = base_Vertices[s][0] * OBJECTS_scale * WIN3D_scale3D;
+          float y0 = base_Vertices[s][1] * OBJECTS_scale * WIN3D_scale3D;
+          float z0 = base_Vertices[s][2] * OBJECTS_scale * WIN3D_scale3D;
 
-          float x2 = (base_Vertices[s][0] - W[0]) * OBJECTS_scale * WIN3D_scale3D;
-          float y2 = (base_Vertices[s][1] - W[1]) * OBJECTS_scale * WIN3D_scale3D;
-          float z2 = (base_Vertices[s][2] - W[2]) * OBJECTS_scale * WIN3D_scale3D;
-          
-          WIN3D_Diagrams.strokeWeight(1);
-          WIN3D_Diagrams.stroke(255, 127, 63);
-          WIN3D_Diagrams.line(x0, -y0, z0, x1, -y1, z1);
-          
-          WIN3D_Diagrams.strokeWeight(3);
-          WIN3D_Diagrams.stroke(63, 127, 255);
-          WIN3D_Diagrams.line(x0, -y0, z0, x2, -y2, z2);
+          WIN3D_Diagrams.line(x0, -y0, z0, G_x1, -G_y1, G_z1);   
         }
 
       }
-      
-      WIN3D_Diagrams.strokeWeight(0);
     }
+    
+    WIN3D_Diagrams.strokeWeight(1);
     
   
     if (WIN3D_FACES_SHADE != Shade_Vertex_Solar) {
