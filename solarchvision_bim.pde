@@ -160,9 +160,15 @@ int Create_Default_Material = 7; //0;
 int Create_Default_Teselation = 0;
 int Create_Default_SolarPivotType = 0;
 
+float Create_Input_OpenningDepth = 1; // 1 = 1m 
+float Create_Input_OpenningArea = 0.25; //0-1, 0.25: 25% of the face area (i.e. for parallel openings) 
+float Create_Input_OpenningDeviation = 0.5; //0-1, 0.5: middle of the face edge (could be applied in rotated openning)
+
+
 float Create_Input_Length = 10;
 float Create_Input_Width = 10;
 float Create_Input_Height = 10;
+
 
 float Create_Input_Volume = 0; //3000;
 
@@ -14462,7 +14468,8 @@ void SOLARCHVISION_inserParallelOpenningsSelection () {
             
               for(int i = 0; i < allFaces[f].length; i++) {
                 for (int j = 0; j < 3; j++) {
-                  new_Vertices[i][j] = 0.5 * base_Vertices[i][j] + 0.5 * G_face[j];
+                  
+                  new_Vertices[i][j] = pow(Create_Input_OpenningArea, 0.5) * base_Vertices[i][j] + (1 - pow(Create_Input_OpenningArea, 0.5)) * G_face[j];
                 }
               }
               
@@ -14625,8 +14632,9 @@ void SOLARCHVISION_insertRotatedOpenningsSelection () {
                 
                 for (int j = 0; j < 3; j++) {
                   
-                  new_EdgeVertices[s][j] = 0.5 * base_Vertices[s][j] + 0.5 * base_Vertices[s_prev][j];
-                  new_CenterVertices[s][j] = 0.5 * new_EdgeVertices[s][j] + 0.5 * G_face[j];
+                  new_EdgeVertices[s][j] = Create_Input_OpenningDeviation * base_Vertices[s][j] + (1 - Create_Input_OpenningDeviation) * base_Vertices[s_prev][j];
+                  
+                  new_CenterVertices[s][j] = pow(Create_Input_OpenningArea, 0.5) * new_EdgeVertices[s][j] + (1 - pow(Create_Input_OpenningArea, 0.5)) * G_face[j];
                 }
               }
               
@@ -14940,9 +14948,9 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
               float[] W = {UV.x, UV.y, UV.z};
               W = fn_normalize(W);
     
-              top_Vertices[s][0] += W[0];
-              top_Vertices[s][1] += W[1];
-              top_Vertices[s][2] += W[2];
+              top_Vertices[s][0] += W[0] * Create_Input_OpenningDepth;
+              top_Vertices[s][1] += W[1] * Create_Input_OpenningDepth;
+              top_Vertices[s][2] += W[2] * Create_Input_OpenningDepth;
             }  
             
             int[] base_Vertex_numbers = new int [allFaces[f].length];
@@ -14957,9 +14965,15 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
             for(int s = 0; s < allFaces[f].length; s++) {
               
               int s_next = (s + 1) % allFaces[f].length;
-     
-              int[][] newFace = {{base_Vertex_numbers[s], base_Vertex_numbers[s_next], top_Vertex_numbers[s_next], top_Vertex_numbers[s]}};  
-              allFaces = (int[][]) concat(allFaces, newFace);            
+
+              if (Create_Input_OpenningDepth < 0) { // reverse direction for negative extrude heights
+                int[][] newFace = {{base_Vertex_numbers[s], top_Vertex_numbers[s], top_Vertex_numbers[s_next], base_Vertex_numbers[s_next]}};  
+                allFaces = (int[][]) concat(allFaces, newFace);
+              }
+              else {
+                int[][] newFace = {{base_Vertex_numbers[s], base_Vertex_numbers[s_next], top_Vertex_numbers[s_next], top_Vertex_numbers[s]}};  
+                allFaces = (int[][]) concat(allFaces, newFace);         
+              }       
               
               int[][] newFace_MAT = {{allFaces_MAT[f][0], allFaces_MAT[f][1]}}; 
               allFaces_MAT =  (int[][]) concat(allFaces_MAT, newFace_MAT);
@@ -27697,8 +27711,12 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Input_Length = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Length" , Create_Input_Length, -100, 100, 1); 
       Create_Input_Width = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Width" , Create_Input_Width, -100, 100, 1);
       Create_Input_Height = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Height" , Create_Input_Height, -100, 100, 1);    
-  
+      
       Create_Input_Volume = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);
+      
+      Create_Input_OpenningDepth = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_OpenningDepth" , Create_Input_OpenningDepth, -10, 10, 0.1);
+      Create_Input_OpenningArea = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_OpenningArea" , Create_Input_OpenningArea, 0, 1, 0.05);
+      Create_Input_OpenningDeviation = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_OpenningDeviation" , Create_Input_OpenningDeviation, 0, 1, 0.05);
  
       MODEL3D_TESELATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL3D_TESELATION" , MODEL3D_TESELATION, 0, 4, 1), 1));
       
@@ -34764,6 +34782,9 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Create_Default_Teselation", Create_Default_Teselation);
   newChild1.setInt("Create_Default_SolarPivotType", Create_Default_SolarPivotType);
   
+  newChild1.setFloat("Create_Input_OpenningDepth", Create_Input_OpenningDepth);
+  newChild1.setFloat("Create_Input_OpenningArea", Create_Input_OpenningArea);
+  newChild1.setFloat("Create_Input_OpenningDeviation", Create_Input_OpenningDeviation);
   newChild1.setFloat("Create_Input_Length", Create_Input_Length);
   newChild1.setFloat("Create_Input_Width", Create_Input_Width);
   newChild1.setFloat("Create_Input_Height", Create_Input_Height);
@@ -35687,6 +35708,9 @@ void SOLARCHVISION_load_project (String myFile) {
       Create_Default_Teselation = children0[L].getInt("Create_Default_Teselation");
       Create_Default_SolarPivotType = children0[L].getInt("Create_Default_SolarPivotType");
       
+      Create_Input_OpenningDepth = children0[L].getFloat("Create_Input_OpenningDepth");
+      Create_Input_OpenningArea = children0[L].getFloat("Create_Input_OpenningArea");
+      Create_Input_OpenningDeviation = children0[L].getFloat("Create_Input_OpenningDeviation");
       Create_Input_Length = children0[L].getFloat("Create_Input_Length");
       Create_Input_Width = children0[L].getFloat("Create_Input_Width");
       Create_Input_Height = children0[L].getFloat("Create_Input_Height");
