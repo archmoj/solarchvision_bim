@@ -14472,8 +14472,8 @@ void SOLARCHVISION_insertFaceOpenningSelection () {
               for(int s = 0; s < allFaces[f].length; s++) { 
                 
                 int s_next = (s + 1) % allFaces[f].length;
-              
-                int[][] newFace = {{allFaces[f][s], new_Vertex_numbers[s], new_Vertex_numbers[s_next], allFaces[f][s_next]}}; 
+
+                int[][] newFace = {{new_Vertex_numbers[s], allFaces[f][s], allFaces[f][s_next], new_Vertex_numbers[s_next]}};
                 int[][] newFace_MAT = {{defaultMaterial, defaultTeselation}}; 
               
                 midList_Faces = (int[][]) concat(midList_Faces, newFace);
@@ -14483,7 +14483,7 @@ void SOLARCHVISION_insertFaceOpenningSelection () {
                        
               { // modifying the base face to shape the openning  
               
-                allFaces_MAT[f][0] = 5; //8; // glass!
+                allFaces_MAT[f][0] = 8; // glass!
                 allFaces_MAT[f][1] = defaultTeselation;
               
                 for(int s = 0; s < allFaces[f].length; s++) {
@@ -25014,11 +25014,43 @@ void mouseClicked () {
               SOLARCHVISION_highlight_in_BAR_b("Person");
               BAR_b_Update = 1;  
             }
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Parametric")) {
-              set_to_Create_Parametric();
+            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Parametric 1")) {
+              set_to_Create_Parametric(1);
+              SOLARCHVISION_highlight_in_BAR_b("Parametric");      
+              BAR_b_Update = 1;  
+            }            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Parametric 2")) {
+              set_to_Create_Parametric(2);
               SOLARCHVISION_highlight_in_BAR_b("Parametric");      
               BAR_b_Update = 1;  
             }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Parametric 3")) {
+              set_to_Create_Parametric(3);
+              SOLARCHVISION_highlight_in_BAR_b("Parametric");      
+              BAR_b_Update = 1;  
+            }            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Parametric 4")) {
+              set_to_Create_Parametric(4);
+              SOLARCHVISION_highlight_in_BAR_b("Parametric");      
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Parametric 5")) {
+              set_to_Create_Parametric(5);
+              SOLARCHVISION_highlight_in_BAR_b("Parametric");      
+              BAR_b_Update = 1;  
+            }            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Parametric 6")) {
+              set_to_Create_Parametric(6);
+              SOLARCHVISION_highlight_in_BAR_b("Parametric");      
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Parametric 7")) {
+              set_to_Create_Parametric(7);
+              SOLARCHVISION_highlight_in_BAR_b("Parametric");      
+              BAR_b_Update = 1;  
+            }            
+
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Tri")) {
               set_to_Create_Tri();
               SOLARCHVISION_highlight_in_BAR_b("Tri");
@@ -32371,7 +32403,7 @@ String[][] BAR_a_Items = {
                         {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Run solar 3D-model", "Run wind 3D-model", "Run spatial 3D-model"},
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
-                        {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric"}, 
+                        {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Delete Isolated Vertices", "Delete Selection", "Duplicate Selection", "Make Opennings in Selection"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Seed/Material", "Teselation", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize"},
                         {"Match", "Pick Seed/Material", "Pick Teselation", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Teselation", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
@@ -32835,7 +32867,6 @@ void SOLARCHVISION_draw_window_BAR_b () {
           if ((BAR_b_Items[i][j]).equals("Fractal")) set_to_Create_Fractal();
           else if ((BAR_b_Items[i][j]).equals("Tree")) set_to_Create_Tree();
           else if ((BAR_b_Items[i][j]).equals("Person")) set_to_Create_Person();
-          else if ((BAR_b_Items[i][j]).equals("Parametric")) set_to_Create_Parametric();
           else if ((BAR_b_Items[i][j]).equals("Tri")) set_to_Create_Tri();
           else if ((BAR_b_Items[i][j]).equals("Poly")) set_to_Create_Poly();
           else if ((BAR_b_Items[i][j]).equals("Extrude")) set_to_Create_Extrude();
@@ -32846,6 +32877,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
           else if ((BAR_b_Items[i][j]).equals("Sphere")) set_to_Create_Sphere();
           else if ((BAR_b_Items[i][j]).equals("Cylinder")) set_to_Create_Cylinder();
           else if ((BAR_b_Items[i][j]).equals("Cushion")) set_to_Create_Cushion();
+          else if ((BAR_b_Items[i][j]).equals("Parametric")) set_to_Create_Parametric(Create_Mesh_Parametric);          
         }
 
         if (Bar_Switch.equals("Seed/Material")) {
@@ -33069,10 +33101,10 @@ void set_to_Create_Person () {
   Work_with_2D_or_3D = 2;  
 }
 
-void set_to_Create_Parametric () {
+void set_to_Create_Parametric (int n) {
   set_to_Create_Nothing();
   
-  Create_Mesh_Parametric = 1;
+  Create_Mesh_Parametric = n;
   Work_with_2D_or_3D = 3;  
 }
 
