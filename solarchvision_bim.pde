@@ -14401,6 +14401,8 @@ void SOLARCHVISION_insertFaceOpenningSelection () {
       
     }
     
+    int[] new_selectedFace_numbers = selectedFace_numbers;
+    
     for (int o = selectedPolymesh_numbers.length - 1; o > 0; o--) { // the first node is null 
       
       int OBJ_NUM = selectedPolymesh_numbers[o];
@@ -14422,6 +14424,12 @@ void SOLARCHVISION_insertFaceOpenningSelection () {
               }
             }  
             allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
+
+            for (int p = new_selectedFace_numbers.length - 1; p > 0; p--) { // the first node is null
+              if (new_selectedFace_numbers[p] > f) {  
+                new_selectedFace_numbers[p] += allFaces[f].length;
+              }
+            }              
 
 
             int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
@@ -14483,7 +14491,7 @@ void SOLARCHVISION_insertFaceOpenningSelection () {
                        
               { // modifying the base face to shape the openning  
               
-                allFaces_MAT[f][0] = 8; // glass!
+                allFaces_MAT[f][0] = defaultMaterial; //8; // glass!
                 allFaces_MAT[f][1] = defaultTeselation;
               
                 for(int s = 0; s < allFaces[f].length; s++) {
@@ -14499,7 +14507,6 @@ void SOLARCHVISION_insertFaceOpenningSelection () {
             allFaces = (int[][]) concat(startList_Faces, endList_Faces);
             allFaces_MAT = (int[][]) concat(startList_Faces_MAT, endList_Faces_MAT);                      
   
-
             { // to avoid processing the faces twice they should be deleted from the list.
               for (int i = q + 1; i < selectedFace_numbers.length; i++) {
                 selectedFace_numbers[i] -= 1;
@@ -14510,6 +14517,7 @@ void SOLARCHVISION_insertFaceOpenningSelection () {
               
               selectedFace_numbers = (int[]) concat(startList, endList);         
             }
+
  
           }
   
@@ -14518,12 +14526,20 @@ void SOLARCHVISION_insertFaceOpenningSelection () {
       }
     }
     
-    WIN3D_update_VerticesSolarValue = 1;
     
+    
+    selectedFace_numbers = new_selectedFace_numbers;
+    
+    Work_with_2D_or_3D = 4; 
+    BAR_b_Update = 1;
+    SOLARCHVISION_calculate_selection_Pivot();
+    
+    WIN3D_update_VerticesSolarValue = 1;
   }  
   
 
-  SOLARCHVISION_deselectAll();
+
+  //SOLARCHVISION_deselectAll();
 }
 
 
