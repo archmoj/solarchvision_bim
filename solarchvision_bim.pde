@@ -160,11 +160,11 @@ int Create_Default_Material = 7; //0;
 int Create_Default_Teselation = 0;
 int Create_Default_SolarPivotType = 0;
 
-float Create_Input_WeldTreshold = 0.1; 
+float Modify_Input_WeldTreshold = 0.1; 
 
-float Create_Input_OpenningDepth = 1; // 1 = 1m 
-float Create_Input_OpenningArea = 0.25; //0-1, 0.25: 25% of the face area (i.e. for parallel openings) 
-float Create_Input_OpenningDeviation = 0.5; //0-1, 0.5: middle of the face edge (could be applied in rotated openning)
+float Modify_Input_OpenningDepth = 1; // 1 = 1m 
+float Modify_Input_OpenningArea = 0.25; //0-1, 0.25: 25% of the face area (i.e. for parallel openings) 
+float Modify_Input_OpenningDeviation = 0.5; //0-1, 0.5: middle of the face edge (could be applied in rotated openning)
 
 
 float Create_Input_Length = 10;
@@ -14418,7 +14418,7 @@ void SOLARCHVISION_weldVerticesSelection () {
           
             float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
             
-            if (d <= Create_Input_WeldTreshold) { 
+            if (d <= Modify_Input_WeldTreshold) { 
             
               allFaces[i][j] = vNo;
             
@@ -14590,7 +14590,7 @@ void SOLARCHVISION_inserParallelOpenningsSelection () {
               for(int i = 0; i < allFaces[f].length; i++) {
                 for (int j = 0; j < 3; j++) {
                   
-                  new_Vertices[i][j] = pow(Create_Input_OpenningArea, 0.5) * base_Vertices[i][j] + (1 - pow(Create_Input_OpenningArea, 0.5)) * G_face[j];
+                  new_Vertices[i][j] = pow(Modify_Input_OpenningArea, 0.5) * base_Vertices[i][j] + (1 - pow(Modify_Input_OpenningArea, 0.5)) * G_face[j];
                 }
               }
               
@@ -14753,9 +14753,9 @@ void SOLARCHVISION_insertRotatedOpenningsSelection () {
                 
                 for (int j = 0; j < 3; j++) {
                   
-                  new_EdgeVertices[s][j] = Create_Input_OpenningDeviation * base_Vertices[s][j] + (1 - Create_Input_OpenningDeviation) * base_Vertices[s_prev][j];
+                  new_EdgeVertices[s][j] = Modify_Input_OpenningDeviation * base_Vertices[s][j] + (1 - Modify_Input_OpenningDeviation) * base_Vertices[s_prev][j];
                   
-                  new_CenterVertices[s][j] = pow(Create_Input_OpenningArea, 0.5) * new_EdgeVertices[s][j] + (1 - pow(Create_Input_OpenningArea, 0.5)) * G_face[j];
+                  new_CenterVertices[s][j] = pow(Modify_Input_OpenningArea, 0.5) * new_EdgeVertices[s][j] + (1 - pow(Modify_Input_OpenningArea, 0.5)) * G_face[j];
                 }
               }
               
@@ -15069,9 +15069,9 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
               float[] W = {UV.x, UV.y, UV.z};
               W = fn_normalize(W);
     
-              top_Vertices[s][0] += W[0] * Create_Input_OpenningDepth;
-              top_Vertices[s][1] += W[1] * Create_Input_OpenningDepth;
-              top_Vertices[s][2] += W[2] * Create_Input_OpenningDepth;
+              top_Vertices[s][0] += W[0] * Modify_Input_OpenningDepth;
+              top_Vertices[s][1] += W[1] * Modify_Input_OpenningDepth;
+              top_Vertices[s][2] += W[2] * Modify_Input_OpenningDepth;
             }  
             
             int[] base_Vertex_numbers = new int [allFaces[f].length];
@@ -15087,7 +15087,7 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
               
               int s_next = (s + 1) % allFaces[f].length;
 
-              if (Create_Input_OpenningDepth < 0) { // reverse direction for negative extrude heights
+              if (Modify_Input_OpenningDepth < 0) { // reverse direction for negative extrude heights
                 int[][] newFace = {{base_Vertex_numbers[s], top_Vertex_numbers[s], top_Vertex_numbers[s_next], base_Vertex_numbers[s_next]}};  
                 allFaces = (int[][]) concat(allFaces, newFace);
               }
@@ -27844,11 +27844,11 @@ void SOLARCHVISION_draw_ROLLOUT () {
       
       Create_Input_Volume = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);
       
-      Create_Input_OpenningDepth = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_OpenningDepth" , Create_Input_OpenningDepth, -10, 10, 0.1);
-      Create_Input_OpenningArea = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_OpenningArea" , Create_Input_OpenningArea, 0, 1, 0.05);
-      Create_Input_OpenningDeviation = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_OpenningDeviation" , Create_Input_OpenningDeviation, 0, 1, 0.05);
+      Modify_Input_OpenningDepth = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_OpenningDepth" , Modify_Input_OpenningDepth, -10, 10, 0.1);
+      Modify_Input_OpenningArea = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_OpenningArea" , Modify_Input_OpenningArea, 0, 1, 0.05);
+      Modify_Input_OpenningDeviation = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_OpenningDeviation" , Modify_Input_OpenningDeviation, 0, 1, 0.05);
  
-      Create_Input_WeldTreshold = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_WeldTreshold" , Create_Input_WeldTreshold, 0, 1, 0.001);
+      Modify_Input_WeldTreshold = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_WeldTreshold" , Modify_Input_WeldTreshold, 0, 1, 0.001);
  
       MODEL3D_TESELATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL3D_TESELATION" , MODEL3D_TESELATION, 0, 4, 1), 1));
       
@@ -33020,9 +33020,9 @@ String[][] BAR_a_Items = {
                         {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Run solar 3D-model", "Run wind 3D-model", "Run spatial 3D-model"},
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
-                        {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Weld Vertices Selection", "Separate Vertices Selection", "Delete Isolated Vertices", "Delete Selection", "Duplicate Selection", "Teselate Faces in Selection", "Insert Parallel Opennings", "Insert Rotated Opennings", "Extrude Face Edges"}, 
+                        {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
-                        {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Seed/Material", "Teselation", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize"},
+                        {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Seed/Material", "Teselation", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize", "Weld Vertices Selection", "Separate Vertices Selection", "Delete Isolated Vertices", "Delete Selection", "Duplicate Selection", "Teselate Faces in Selection", "Insert Parallel Opennings", "Insert Rotated Opennings", "Extrude Face Edges"},
                         {"Match", "Pick Seed/Material", "Pick Teselation", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Teselation", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
 
@@ -34914,11 +34914,11 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Create_Default_Teselation", Create_Default_Teselation);
   newChild1.setInt("Create_Default_SolarPivotType", Create_Default_SolarPivotType);
   
-  newChild1.setFloat("Create_Input_WeldTreshold", Create_Input_WeldTreshold);
+  newChild1.setFloat("Modify_Input_WeldTreshold", Modify_Input_WeldTreshold);
   
-  newChild1.setFloat("Create_Input_OpenningDepth", Create_Input_OpenningDepth);
-  newChild1.setFloat("Create_Input_OpenningArea", Create_Input_OpenningArea);
-  newChild1.setFloat("Create_Input_OpenningDeviation", Create_Input_OpenningDeviation);
+  newChild1.setFloat("Modify_Input_OpenningDepth", Modify_Input_OpenningDepth);
+  newChild1.setFloat("Modify_Input_OpenningArea", Modify_Input_OpenningArea);
+  newChild1.setFloat("Modify_Input_OpenningDeviation", Modify_Input_OpenningDeviation);
   newChild1.setFloat("Create_Input_Length", Create_Input_Length);
   newChild1.setFloat("Create_Input_Width", Create_Input_Width);
   newChild1.setFloat("Create_Input_Height", Create_Input_Height);
@@ -35842,11 +35842,11 @@ void SOLARCHVISION_load_project (String myFile) {
       Create_Default_Teselation = children0[L].getInt("Create_Default_Teselation");
       Create_Default_SolarPivotType = children0[L].getInt("Create_Default_SolarPivotType");
       
-      Create_Input_WeldTreshold = children0[L].getFloat("Create_Input_WeldTreshold");
+      Modify_Input_WeldTreshold = children0[L].getFloat("Modify_Input_WeldTreshold");
       
-      Create_Input_OpenningDepth = children0[L].getFloat("Create_Input_OpenningDepth");
-      Create_Input_OpenningArea = children0[L].getFloat("Create_Input_OpenningArea");
-      Create_Input_OpenningDeviation = children0[L].getFloat("Create_Input_OpenningDeviation");
+      Modify_Input_OpenningDepth = children0[L].getFloat("Modify_Input_OpenningDepth");
+      Modify_Input_OpenningArea = children0[L].getFloat("Modify_Input_OpenningArea");
+      Modify_Input_OpenningDeviation = children0[L].getFloat("Modify_Input_OpenningDeviation");
       Create_Input_Length = children0[L].getFloat("Create_Input_Length");
       Create_Input_Width = children0[L].getFloat("Create_Input_Width");
       Create_Input_Height = children0[L].getFloat("Create_Input_Height");
