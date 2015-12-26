@@ -14345,7 +14345,7 @@ void SOLARCHVISION_deleteIsolatedVertices () {
 
   for (int vNo = allVertices.length - 1; vNo > 0; vNo--) { // the first node is null
   
-    int found = 0;
+    int found = -1;
   
     for (int i = 1; i < allFaces.length; i++) { // the first node is null
       for (int j = 0; j < allFaces[i].length; j++) {
@@ -14355,7 +14355,7 @@ void SOLARCHVISION_deleteIsolatedVertices () {
       }
     }
     
-    if (found == 0) {
+    if (found == -1) {
       {
         float[][] startList = (float[][]) subset(allVertices, 0, vNo);
         float[][] endList = (float[][]) subset(allVertices, vNo + 1);
@@ -14380,6 +14380,81 @@ void SOLARCHVISION_deleteIsolatedVertices () {
 
   SOLARCHVISION_calculate_selection_Pivot();
   
+}
+
+
+void SOLARCHVISION_weldVerticesSelection () {
+
+  if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4) || (Work_with_2D_or_3D == 5)) { 
+
+    if (Work_with_2D_or_3D == 3) { 
+
+      SOLARCHVISION_convertPolymesh2Vertex();    
+      
+    }
+    
+    if (Work_with_2D_or_3D == 4) { 
+      
+      SOLARCHVISION_convertFace2Vertex(); 
+      
+    }
+    
+    selectedVertex_numbers = sort(selectedVertex_numbers);
+  
+    for (int o = selectedVertex_numbers.length - 1; o > 0; o--) { // the first node is null 
+  
+      int vNo = selectedVertex_numbers[o];
+    
+      int found = -1;
+    
+      for (int i = 1; i < allFaces.length; i++) { // the first node is null
+        for (int j = 0; j < allFaces[i].length; j++) {
+          
+          int q = allFaces[i][j];
+          
+          if (q > vNo) { // it is faster than (q != vNo)
+          
+            float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
+            
+            if (d < 0.1) { // <<<<<<<<<<<<<<< should be replaced by weld distance option
+            
+              allFaces[i][j] = vNo;
+            
+            
+              found = q;
+            }
+          }
+        }
+      }
+      
+      if (found != -1) {
+        
+        int q = found;
+
+        {
+          float[][] startList = (float[][]) subset(allVertices, 0, q);
+          float[][] endList = (float[][]) subset(allVertices, q + 1);
+          
+          allVertices = (float[][]) concat(startList, endList);
+        }
+        
+        for (int i = 1; i < allFaces.length; i++) { // the first node is null
+          for (int j = 0; j < allFaces[i].length; j++) {
+            if (allFaces[i][j] > q) {
+              
+              allFaces[i][j] -= 1;
+            }
+          }
+        }
+      }
+      
+    } 
+  
+    selectedVertex_numbers = new int [1];
+    selectedVertex_numbers[0] = 0;  
+  
+    SOLARCHVISION_calculate_selection_Pivot();
+  }
 }
 
 
@@ -15069,7 +15144,7 @@ void SOLARCHVISION_reverseSelection () {
     selectedFractal_numbers[0] = 0;
     
     for (int i = 1; i < allFractal_XYZSRA.length; i++) {
-      int found = 0; 
+      int found = -1; 
       
       for (int j = 1; j < pre_selectedFractal_numbers.length; j++) {
         
@@ -15082,7 +15157,7 @@ void SOLARCHVISION_reverseSelection () {
         }
       }
       
-      if (found == 0) {
+      if (found == -1) {
         int[] new_Item = {i};
         
         selectedFractal_numbers = concat(selectedFractal_numbers, new_Item);
@@ -15098,7 +15173,7 @@ void SOLARCHVISION_reverseSelection () {
     selectedObject2D_numbers[0] = 0;
     
     for (int i = 1; i < allObject2D_XYZS.length; i++) {
-      int found = 0; 
+      int found = -1; 
       
       for (int j = 1; j < pre_selectedObject2D_numbers.length; j++) {
         
@@ -15111,7 +15186,7 @@ void SOLARCHVISION_reverseSelection () {
         }
       }
       
-      if (found == 0) {
+      if (found == -1) {
         int[] new_Item = {i};
         
         selectedObject2D_numbers = concat(selectedObject2D_numbers, new_Item);
@@ -15127,7 +15202,7 @@ void SOLARCHVISION_reverseSelection () {
     selectedPolymesh_numbers[0] = 0;
     
     for (int i = 1; i < allPolymesh_Faces.length; i++) {
-      int found = 0; 
+      int found = -1; 
       
       for (int j = 1; j < pre_selectedPolymesh_numbers.length; j++) {
         
@@ -15140,7 +15215,7 @@ void SOLARCHVISION_reverseSelection () {
         }
       }
       
-      if (found == 0) {
+      if (found == -1) {
         int[] new_Item = {i};
         
         selectedPolymesh_numbers = concat(selectedPolymesh_numbers, new_Item);
@@ -15156,7 +15231,7 @@ void SOLARCHVISION_reverseSelection () {
     selectedFace_numbers[0] = 0;
     
     for (int i = 1; i < allFaces.length; i++) {
-      int found = 0; 
+      int found = -1; 
       
       for (int j = 1; j < pre_selectedFace_numbers.length; j++) {
         
@@ -15169,7 +15244,7 @@ void SOLARCHVISION_reverseSelection () {
         }
       }
       
-      if (found == 0) {
+      if (found == -1) {
         int[] new_Item = {i};
         
         selectedFace_numbers = concat(selectedFace_numbers, new_Item);
@@ -15185,7 +15260,7 @@ void SOLARCHVISION_reverseSelection () {
     selectedVertex_numbers[0] = 0;
     
     for (int i = 1; i < allVertices.length; i++) {
-      int found = 0; 
+      int found = -1; 
       
       for (int j = 1; j < pre_selectedVertex_numbers.length; j++) {
         
@@ -15198,7 +15273,7 @@ void SOLARCHVISION_reverseSelection () {
         }
       }
       
-      if (found == 0) {
+      if (found == -1) {
         int[] new_Item = {i};
         
         selectedVertex_numbers = concat(selectedVertex_numbers, new_Item);
@@ -25932,6 +26007,11 @@ void mouseClicked () {
               SOLARCHVISION_highlight_in_BAR_b("-WS");
               BAR_b_Update = 1;  
             }
+            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Weld Vertices Selection")) {
+              SOLARCHVISION_weldVerticesSelection();
+              WIN3D_Update = 1;  
+            }                 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Delete Isolated Vertices")) {
               SOLARCHVISION_deleteIsolatedVertices();
               WIN3D_Update = 1;  
@@ -32888,8 +32968,8 @@ String[][] BAR_a_Items = {
                         {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Run solar 3D-model", "Run wind 3D-model", "Run spatial 3D-model"},
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
-                        {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
-                        {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Delete Isolated Vertices", "Delete Selection", "Duplicate Selection", "Teselate Faces in Selection", "Insert Parallel Opennings", "Insert Rotated Opennings", "Extrude Face Edges"},
+                        {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Weld Vertices Selection", "Delete Isolated Vertices", "Delete Selection", "Duplicate Selection", "Teselate Faces in Selection", "Insert Parallel Opennings", "Insert Rotated Opennings", "Extrude Face Edges"}, 
+                        {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Seed/Material", "Teselation", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize"},
                         {"Match", "Pick Seed/Material", "Pick Teselation", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Teselation", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
