@@ -15002,7 +15002,7 @@ void SOLARCHVISION_teselateFaceSelection () {
 
 void SOLARCHVISION_extrudeFaceEdgesSelection () {
 
-    if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4)) { 
+  if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4)) { 
 
     if (Work_with_2D_or_3D == 3) { 
       
@@ -15129,6 +15129,76 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
 }
 
 
+
+void SOLARCHVISION_offsetVerticesSelection () {
+
+  if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4) || (Work_with_2D_or_3D == 5)) { 
+
+    if (Work_with_2D_or_3D == 3) { 
+
+      SOLARCHVISION_convertPolymesh2Vertex();    
+      
+    }
+    
+    if (Work_with_2D_or_3D == 4) { 
+      
+      SOLARCHVISION_convertFace2Vertex(); 
+      
+    }
+    
+    selectedVertex_numbers = sort(selectedVertex_numbers);
+  
+    for (int o = selectedVertex_numbers.length - 1; o > 0; o--) { // the first node is null 
+  
+      int vNo = selectedVertex_numbers[o];
+    
+      float[] sum_W = {0,0,0};
+      int num_W = 0;
+    
+      for (int f = 1; f < allFaces.length; f++) { // the first node is null
+        for (int s = 0; s < allFaces[f].length; s++) {
+          
+          if (allFaces[f][s] == vNo) { 
+
+            int s_next = (s + 1) % allFaces[f].length;
+            int s_prev = (s + allFaces[f].length - 1) % allFaces[f].length;
+            
+            int V_here = allFaces[f][s];
+            int V_next = allFaces[f][s_next];
+            int V_prev = allFaces[f][s_prev];
+
+            PVector U = new PVector(allVertices[V_next][0] - allVertices[V_here][0], allVertices[V_next][1] - allVertices[V_here][1], allVertices[V_next][2] - allVertices[V_here][2]); 
+            PVector V = new PVector(allVertices[V_prev][0] - allVertices[V_here][0], allVertices[V_prev][1] - allVertices[V_here][1], allVertices[V_prev][2] - allVertices[V_here][2]);
+            PVector UV = U.cross(V);
+            float[] W = {UV.x, UV.y, UV.z};
+            W = fn_normalize(W);
+            
+            sum_W[0] += W[0];
+            sum_W[1] += W[1];
+            sum_W[2] += W[2];
+            
+            num_W += 1;
+                      
+          }
+        }
+      }
+      
+      if (num_W != 0) {
+        sum_W[0] /= float(num_W);
+        sum_W[1] /= float(num_W);
+        sum_W[2] /= float(num_W);
+        
+        allVertices[vNo][0] += sum_W[0];
+        allVertices[vNo][1] += sum_W[1];
+        allVertices[vNo][2] += sum_W[2];
+      }
+      
+    } 
+
+    
+    WIN3D_update_VerticesSolarValue = 1;
+  }    
+}
 
 
 
@@ -26103,7 +26173,11 @@ void mouseClicked () {
               SOLARCHVISION_extrudeFaceEdgesSelection();
               WIN3D_Update = 1;              
             }               
-  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Offset Vertices")) {
+              SOLARCHVISION_offsetVerticesSelection();
+              WIN3D_Update = 1;              
+            }  
+            
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TargetRoll")) {
               set_to_View_TargetRoll(0);
               SOLARCHVISION_highlight_in_BAR_b("TRL");
@@ -33035,7 +33109,7 @@ String[][] BAR_a_Items = {
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
-                        {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Change Seed/Material", "Change Teselation", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunckSize", "Change LeafSize", "Weld Vertices Selection", "Separate Vertices Selection", "Delete Isolated Vertices", "Delete Selection", "Duplicate Selection", "Teselate Faces in Selection", "Insert Parallel Opennings", "Insert Rotated Opennings", "Extrude Face Edges"},
+                        {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Change Seed/Material", "Change Teselation", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunckSize", "Change LeafSize", "Weld Vertices Selection", "Separate Vertices Selection", "Delete Isolated Vertices", "Delete Selection", "Duplicate Selection", "Teselate Faces in Selection", "Insert Parallel Opennings", "Insert Rotated Opennings", "Extrude Face Edges", "Offset Vertices"},
                         {"Match", "Pick Seed/Material", "Pick Teselation", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Teselation", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
 
