@@ -14458,6 +14458,50 @@ void SOLARCHVISION_weldVerticesSelection () {
 }
 
 
+
+void SOLARCHVISION_separateVerticesSelection () {
+
+  if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4) || (Work_with_2D_or_3D == 5)) { 
+
+    if (Work_with_2D_or_3D == 3) { 
+
+      SOLARCHVISION_convertPolymesh2Vertex();    
+      
+    }
+    
+    if (Work_with_2D_or_3D == 4) { 
+      
+      SOLARCHVISION_convertFace2Vertex(); 
+      
+    }
+    
+    selectedVertex_numbers = sort(selectedVertex_numbers);
+  
+    for (int o = selectedVertex_numbers.length - 1; o > 0; o--) { // the first node is null 
+  
+      int vNo = selectedVertex_numbers[o];
+    
+      for (int i = 1; i < allFaces.length; i++) { // the first node is null
+        for (int j = 0; j < allFaces[i].length; j++) {
+          
+          if (allFaces[i][j] == vNo) { 
+          
+            allFaces[i][j] = SOLARCHVISION_addToVertices(allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]); 
+          
+          }
+        }
+      }
+    } 
+  
+    selectedVertex_numbers = new int [1];
+    selectedVertex_numbers[0] = 0;  
+  
+    SOLARCHVISION_calculate_selection_Pivot();
+  }
+}
+
+
+
 void SOLARCHVISION_inserParallelOpenningsSelection () {
 
   if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4)) { 
@@ -26011,7 +26055,11 @@ void mouseClicked () {
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Weld Vertices Selection")) {
               SOLARCHVISION_weldVerticesSelection();
               WIN3D_Update = 1;  
-            }                 
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Separate Vertices Selection")) {
+              SOLARCHVISION_separateVerticesSelection();
+              WIN3D_Update = 1;  
+            }              
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Delete Isolated Vertices")) {
               SOLARCHVISION_deleteIsolatedVertices();
               WIN3D_Update = 1;  
@@ -32968,7 +33016,7 @@ String[][] BAR_a_Items = {
                         {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Run solar 3D-model", "Run wind 3D-model", "Run spatial 3D-model"},
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
-                        {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Weld Vertices Selection", "Delete Isolated Vertices", "Delete Selection", "Duplicate Selection", "Teselate Faces in Selection", "Insert Parallel Opennings", "Insert Rotated Opennings", "Extrude Face Edges"}, 
+                        {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Weld Vertices Selection", "Separate Vertices Selection", "Delete Isolated Vertices", "Delete Selection", "Duplicate Selection", "Teselate Faces in Selection", "Insert Parallel Opennings", "Insert Rotated Opennings", "Extrude Face Edges"}, 
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Seed/Material", "Teselation", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize"},
                         {"Match", "Pick Seed/Material", "Pick Teselation", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Teselation", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
