@@ -15024,7 +15024,7 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
       
     }
     
-    int[] new_selectedFace_numbers = selectedFace_numbers;
+    int[] new_selectedFace_numbers = {0};
     
     for (int o = selectedPolymesh_numbers.length - 1; o > 0; o--) { // the first node is null 
       
@@ -15100,6 +15100,19 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
               allFaces_MAT =  (int[][]) concat(allFaces_MAT, newFace_MAT);
             }  
             
+            { // adding the cap
+              int[][] newFace = {top_Vertex_numbers};  
+              allFaces = (int[][]) concat(allFaces, newFace);         
+     
+              int[][] newFace_MAT = {{allFaces_MAT[f][0], allFaces_MAT[f][1]}}; 
+              allFaces_MAT =  (int[][]) concat(allFaces_MAT, newFace_MAT);  
+              
+              int[] lastFace = {allFaces.length - 1};
+  
+              new_selectedFace_numbers = (int[]) concat(new_selectedFace_numbers, lastFace);       
+            }
+            
+            
             allPolymesh_Faces[allPolymesh_Faces.length - 1][1] = allFaces.length - 1;
 
           }
@@ -15107,9 +15120,9 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
 
       }
     }
+    
+    selectedFace_numbers = new_selectedFace_numbers;
 
-
-    SOLARCHVISION_deselectAll();
     
     WIN3D_update_VerticesSolarValue = 1;
   }    
