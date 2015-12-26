@@ -160,6 +160,8 @@ int Create_Default_Material = 7; //0;
 int Create_Default_Teselation = 0;
 int Create_Default_SolarPivotType = 0;
 
+float Create_Input_WeldTreshold = 0.1; 
+
 float Create_Input_OpenningDepth = 1; // 1 = 1m 
 float Create_Input_OpenningArea = 0.25; //0-1, 0.25: 25% of the face area (i.e. for parallel openings) 
 float Create_Input_OpenningDeviation = 0.5; //0-1, 0.5: middle of the face edge (could be applied in rotated openning)
@@ -14416,7 +14418,7 @@ void SOLARCHVISION_weldVerticesSelection () {
           
             float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
             
-            if (d < 0.1) { // <<<<<<<<<<<<<<< should be replaced by weld distance option
+            if (d <= Create_Input_WeldTreshold) { 
             
               allFaces[i][j] = vNo;
             
@@ -27846,6 +27848,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Input_OpenningArea = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_OpenningArea" , Create_Input_OpenningArea, 0, 1, 0.05);
       Create_Input_OpenningDeviation = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_OpenningDeviation" , Create_Input_OpenningDeviation, 0, 1, 0.05);
  
+      Create_Input_WeldTreshold = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_WeldTreshold" , Create_Input_WeldTreshold, 0, 1, 0.001);
+ 
       MODEL3D_TESELATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL3D_TESELATION" , MODEL3D_TESELATION, 0, 4, 1), 1));
       
       LAND_TESELATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "LAND_TESELATION" , LAND_TESELATION, 0, 5, 1), 1));
@@ -34910,6 +34914,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Create_Default_Teselation", Create_Default_Teselation);
   newChild1.setInt("Create_Default_SolarPivotType", Create_Default_SolarPivotType);
   
+  newChild1.setFloat("Create_Input_WeldTreshold", Create_Input_WeldTreshold);
+  
   newChild1.setFloat("Create_Input_OpenningDepth", Create_Input_OpenningDepth);
   newChild1.setFloat("Create_Input_OpenningArea", Create_Input_OpenningArea);
   newChild1.setFloat("Create_Input_OpenningDeviation", Create_Input_OpenningDeviation);
@@ -35835,6 +35841,8 @@ void SOLARCHVISION_load_project (String myFile) {
       Create_Default_Material = children0[L].getInt("Create_Default_Material");
       Create_Default_Teselation = children0[L].getInt("Create_Default_Teselation");
       Create_Default_SolarPivotType = children0[L].getInt("Create_Default_SolarPivotType");
+      
+      Create_Input_WeldTreshold = children0[L].getFloat("Create_Input_WeldTreshold");
       
       Create_Input_OpenningDepth = children0[L].getFloat("Create_Input_OpenningDepth");
       Create_Input_OpenningArea = children0[L].getFloat("Create_Input_OpenningArea");
