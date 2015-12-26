@@ -25774,7 +25774,7 @@ void mouseClicked () {
             }
 
             
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Seed/Material")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change Seed/Material")) {
               set_to_Modify_Seed(0);
               SOLARCHVISION_highlight_in_BAR_b("Mat0");
               BAR_b_Update = 1;  
@@ -25790,7 +25790,7 @@ void mouseClicked () {
               BAR_b_Update = 1;  
             }
             
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Teselation")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change Teselation")) {
               set_to_Modify_Teselation(0);
               SOLARCHVISION_highlight_in_BAR_b("Tes0");
               BAR_b_Update = 1;  
@@ -25824,7 +25824,7 @@ void mouseClicked () {
               BAR_b_Update = 1;  
             }   
 
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DegreeMax")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change DegreeMax")) {
               set_to_Modify_DegreeMax(0);
               SOLARCHVISION_highlight_in_BAR_b("dgMax0");
               BAR_b_Update = 1;  
@@ -25840,7 +25840,7 @@ void mouseClicked () {
               BAR_b_Update = 1;  
             }
 
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DegreeDif")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change DegreeDif")) {
               set_to_Modify_DegreeDif(0);
               SOLARCHVISION_highlight_in_BAR_b("dgDif0");
               BAR_b_Update = 1;  
@@ -25856,7 +25856,7 @@ void mouseClicked () {
               BAR_b_Update = 1;  
             }                 
 
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DegreeMin")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change DegreeMin")) {
               set_to_Modify_DegreeMin(0);
               SOLARCHVISION_highlight_in_BAR_b("dgMin0");
               BAR_b_Update = 1;  
@@ -25872,7 +25872,7 @@ void mouseClicked () {
               BAR_b_Update = 1;  
             }     
 
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TrunckSize")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change TrunckSize")) {
               set_to_Modify_TrunckSize(0);
               SOLARCHVISION_highlight_in_BAR_b("trSz0");
               BAR_b_Update = 1;  
@@ -25888,7 +25888,7 @@ void mouseClicked () {
               BAR_b_Update = 1;  
             }     
      
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("LeafSize")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change LeafSize")) {
               set_to_Modify_LeafSize(0);
               SOLARCHVISION_highlight_in_BAR_b("lfSz0");
               BAR_b_Update = 1;  
@@ -25920,19 +25920,19 @@ void mouseClicked () {
               BAR_b_Update = 1;  
             }                 
  
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DegreeMax")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change DegreeMax")) {
               set_to_Modify_DegreeMax(0);
             }    
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DegreeDif")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change DegreeDif")) {
               set_to_Modify_DegreeDif(0);
             }    
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("DegreeMin")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change DegreeMin")) {
               set_to_Modify_DegreeMin(0);
             }     
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TrunckSize")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change TrunckSize")) {
               set_to_Modify_TrunckSize(0);
             }
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("LeafSize")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change LeafSize")) {
               set_to_Modify_LeafSize(0);
             }           
   
@@ -33022,7 +33022,7 @@ String[][] BAR_a_Items = {
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
-                        {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Seed/Material", "Teselation", "DegreeMax", "DegreeDif", "DegreeMin", "TrunckSize", "LeafSize", "Weld Vertices Selection", "Separate Vertices Selection", "Delete Isolated Vertices", "Delete Selection", "Duplicate Selection", "Teselate Faces in Selection", "Insert Parallel Opennings", "Insert Rotated Opennings", "Extrude Face Edges"},
+                        {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Change Seed/Material", "Change Teselation", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunckSize", "Change LeafSize", "Weld Vertices Selection", "Separate Vertices Selection", "Delete Isolated Vertices", "Delete Selection", "Duplicate Selection", "Teselate Faces in Selection", "Insert Parallel Opennings", "Insert Rotated Opennings", "Extrude Face Edges"},
                         {"Match", "Pick Seed/Material", "Pick Teselation", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Teselation", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
 
@@ -33332,17 +33332,17 @@ String[][] BAR_b_Items = {
                           {"3", "MVx", "MVy", "MVz", "MV³", "Move", "1.0"},
                           {"3", "SCx", "SCy", "SCz", "SC³", "Scale", "1.0"}, 
                           {"3", "RTx", "RTy", "RTz", "Rotate", "1.0"}, 
-                          {"1", "Mat0", "Mat1", "Mat2", "Mat3", "Seed/Material", "1.0"},
-                          {"1", "Tes0", "Tes1", "Tes2", "Tes3", "Teselation", "1.0"},
+                          {"1", "Mat0", "Mat1", "Mat2", "Mat3", "Change Seed/Material", "1.0"},
+                          {"1", "Tes0", "Tes1", "Tes2", "Tes3", "Change Teselation", "1.0"},
                           {"1", "FNorm1", "FNorm2", "FNorm3", "FaceNormal", "1.0"},
                           
                           //{"1", "SPvt0", "SPvt1", "SPvt2", "SolarPivot", "1.0"},
                           
-                          //{"1", "dgMax0", "dgMax1", "dgMax2", "DegreeMax", "1.0"},
-                          //{"1", "dgDif0", "dgDif1", "dgDif2", "DegreeDif", "1.0"},
-                          //{"1", "dgMin0", "dgMin1", "dgMin2", "DegreeMin", "1.0"},
-                          //{"1", "tsSz0", "trSz1", "trSz2", "TrunckSize", "1.0"},
-                          //{"1", "lfSz0", "lfSz1", "lfSz2", "LeafSize", "1.0"},
+                          //{"1", "dgMax0", "dgMax1", "dgMax2", "Change DegreeMax", "1.0"},
+                          //{"1", "dgDif0", "dgDif1", "dgDif2", "Change DegreeDif", "1.0"},
+                          //{"1", "dgMin0", "dgMin1", "dgMin2", "Change DegreeMin", "1.0"},
+                          //{"1", "tsSz0", "trSz1", "trSz2", "Change TrunckSize", "1.0"},
+                          //{"1", "lfSz0", "lfSz1", "lfSz2", "Change LeafSize", "1.0"},
                           //{"1", "allFP0", "allFP1", "allFP2", "AllFractalProps", "1.0"},
                           
                           
@@ -33497,14 +33497,14 @@ void SOLARCHVISION_draw_window_BAR_b () {
           else if ((BAR_b_Items[i][j]).equals("Parametric")) set_to_Create_Parametric(Create_Mesh_Parametric);          
         }
 
-        if (Bar_Switch.equals("Seed/Material")) {
+        if (Bar_Switch.equals("Change Seed/Material")) {
           if ((BAR_b_Items[i][j]).equals("Mat0")) set_to_Modify_Seed(0);
           if ((BAR_b_Items[i][j]).equals("Mat1")) set_to_Modify_Seed(1);
           if ((BAR_b_Items[i][j]).equals("Mat2")) set_to_Modify_Seed(2);
           if ((BAR_b_Items[i][j]).equals("Mat3")) set_to_Modify_Seed(3);
         }
 
-        if (Bar_Switch.equals("Teselation")) {
+        if (Bar_Switch.equals("Change Teselation")) {
           if ((BAR_b_Items[i][j]).equals("Tes0")) set_to_Modify_Teselation(0);
           if ((BAR_b_Items[i][j]).equals("Tes1")) set_to_Modify_Teselation(1);
           if ((BAR_b_Items[i][j]).equals("Tes2")) set_to_Modify_Teselation(2);
@@ -33584,10 +33584,10 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("Rotate")) {
           dessin_Rotate(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }    
-        if (Bar_Switch.equals("Seed/Material")) {
+        if (Bar_Switch.equals("Change Seed/Material")) {
           dessin_Seed(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }
-        if (Bar_Switch.equals("Teselation")) {
+        if (Bar_Switch.equals("Change Teselation")) {
           dessin_Teselation(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }
         if (Bar_Switch.equals("FaceNormal")) {
