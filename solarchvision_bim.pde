@@ -15495,6 +15495,14 @@ void SOLARCHVISION_offsetVerticesSelection () {
       
     }
     
+    float[][] selectedVertex_offsetValues = new float [selectedVertex_numbers.length][3];
+    
+    for (int o = selectedVertex_numbers.length - 1; o >= 0; o--) { 
+      selectedVertex_offsetValues[o][0] = 0;
+      selectedVertex_offsetValues[o][1] = 0;
+      selectedVertex_offsetValues[o][2] = 0;
+    }
+    
     selectedVertex_numbers = sort(selectedVertex_numbers);
   
     for (int o = selectedVertex_numbers.length - 1; o > 0; o--) { // the first node is null 
@@ -15505,28 +15513,36 @@ void SOLARCHVISION_offsetVerticesSelection () {
       int num_W = 0;
     
       for (int f = 1; f < allFaces.length; f++) { // the first node is null
-        for (int s = 0; s < allFaces[f].length; s++) {
+        for (int j = 0; j < allFaces[f].length; j++) {
           
-          if (allFaces[f][s] == vNo) { 
+          if (allFaces[f][j] == vNo) { 
+            
+            float[][] base_Vertices = new float [allFaces[f].length][3];
+            
+            for (int s = 0; s < allFaces[f].length; s++) {
 
-            int s_next = (s + 1) % allFaces[f].length;
-            int s_prev = (s + allFaces[f].length - 1) % allFaces[f].length;
+              base_Vertices[s][0] = allVertices[allFaces[f][s]][0];
+              base_Vertices[s][1] = allVertices[allFaces[f][s]][1];
+              base_Vertices[s][2] = allVertices[allFaces[f][s]][2];
+            }
             
-            int V_here = allFaces[f][s];
-            int V_next = allFaces[f][s_next];
-            int V_prev = allFaces[f][s_prev];
-
-            PVector U = new PVector(allVertices[V_next][0] - allVertices[V_here][0], allVertices[V_next][1] - allVertices[V_here][1], allVertices[V_next][2] - allVertices[V_here][2]); 
-            PVector V = new PVector(allVertices[V_prev][0] - allVertices[V_here][0], allVertices[V_prev][1] - allVertices[V_here][1], allVertices[V_prev][2] - allVertices[V_here][2]);
-            PVector UV = U.cross(V);
-            float[] W = {UV.x, UV.y, UV.z};
-            W = fn_normalize(W);
-            
-            sum_W[0] += W[0];
-            sum_W[1] += W[1];
-            sum_W[2] += W[2];
-            
-            num_W += 1;
+            for(int s = 0; s < base_Vertices.length; s++) {
+              
+              int s_next = (s + 1) % base_Vertices.length;
+              int s_prev = (s + base_Vertices.length - 1) % base_Vertices.length;
+  
+              PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]); 
+              PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]); 
+              PVector UV = U.cross(V);
+              float[] W = {UV.x, UV.y, UV.z};
+              W = fn_normalize(W);
+              
+              sum_W[0] += W[0];
+              sum_W[1] += W[1];
+              sum_W[2] += W[2];
+              
+              num_W += 1;
+            }
                       
           }
         }
@@ -15537,13 +15553,23 @@ void SOLARCHVISION_offsetVerticesSelection () {
         sum_W[1] /= float(num_W);
         sum_W[2] /= float(num_W);
         
-        allVertices[vNo][0] += sum_W[0];
-        allVertices[vNo][1] += sum_W[1];
-        allVertices[vNo][2] += sum_W[2];
+        selectedVertex_offsetValues[o][0] += sum_W[0];
+        selectedVertex_offsetValues[o][1] += sum_W[1];
+        selectedVertex_offsetValues[o][2] += sum_W[2];
+        
       }
       
     } 
 
+
+    for (int o = selectedVertex_numbers.length - 1; o > 0; o--) { // the first node is null 
+  
+      int vNo = selectedVertex_numbers[o];
+    
+      allVertices[vNo][0] += selectedVertex_offsetValues[o][0];
+      allVertices[vNo][1] += selectedVertex_offsetValues[o][1];
+      allVertices[vNo][2] += selectedVertex_offsetValues[o][2];
+    } 
     
     WIN3D_update_VerticesSolarValue = 1;
   }    
