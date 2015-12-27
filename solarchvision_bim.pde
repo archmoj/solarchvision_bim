@@ -14504,7 +14504,7 @@ void SOLARCHVISION_separateVerticesSelection () {
 
 
 
-void SOLARCHVISION_inserParallelOpenningsSelection () {
+void SOLARCHVISION_inserCornerOpenningsSelection () {
 
   if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4)) { 
 
@@ -14661,6 +14661,166 @@ void SOLARCHVISION_inserParallelOpenningsSelection () {
   }  
   
 }
+
+
+void SOLARCHVISION_inserParallelOpenningsSelection () {
+
+  if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4)) { 
+
+    if (Work_with_2D_or_3D == 3) { 
+      
+      selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
+
+      SOLARCHVISION_convertPolymesh2Face();    
+  
+      selectedFace_numbers = sort(selectedFace_numbers);
+      
+    }
+    
+    if (Work_with_2D_or_3D == 4) { 
+      
+      selectedFace_numbers = sort(selectedFace_numbers);
+
+      SOLARCHVISION_convertFace2Polymesh();    
+  
+      selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
+      
+    }
+    
+    int[] new_selectedFace_numbers = selectedFace_numbers;
+    
+    for (int o = selectedPolymesh_numbers.length - 1; o > 0; o--) { // the first node is null 
+      
+      int OBJ_NUM = selectedPolymesh_numbers[o];
+      
+      if (OBJ_NUM != 0) {
+
+        for (int q = selectedFace_numbers.length - 1; q > 0; q--) { // the first node is null
+
+          int f = selectedFace_numbers[q];
+          
+          int startFace = allPolymesh_Faces[OBJ_NUM][0];
+          int endFace = allPolymesh_Faces[OBJ_NUM][1];          
+          
+          if ((startFace <= f) && (f <= endFace)) {
+            
+            for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
+              for (int j = 0; j < 2; j++) {
+                allPolymesh_Faces[i][j] += allFaces[f].length;
+              }
+            }  
+            allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
+
+            for (int p = new_selectedFace_numbers.length - 1; p > 0; p--) { // the first node is null
+              if (new_selectedFace_numbers[p] > f) {  
+                new_selectedFace_numbers[p] += allFaces[f].length;
+              }
+            }              
+
+
+            int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
+            int[][] midList_Faces = (int[][]) subset(allFaces, f, 1);
+            int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
+            
+            
+            int[][] startList_Faces_MAT = (int[][]) subset(allFaces_MAT, 0, f);
+            int[][] midList_Faces_MAT = (int[][]) subset(allFaces_MAT, f, 1);
+            int[][] endList_Faces_MAT = (int[][]) subset(allFaces_MAT, f + 1);
+
+            { 
+              float[][] base_Vertices = new float [allFaces[f].length][3];
+
+              for(int i = 0; i < allFaces[f].length; i++) {
+                for (int j = 0; j < 3; j++) {
+                  base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+                }
+              }
+              
+              float[] G_face = {0,0,0};  
+              
+              for(int i = 0; i < allFaces[f].length; i++) {
+                for (int j = 0; j < 3; j++) {
+                  G_face[j] += base_Vertices[i][j] / float(allFaces[f].length);
+                }
+              }
+              
+              float[][] new_CenterVertices = new float [allFaces[f].length][3];
+            
+              for(int i = 0; i < allFaces[f].length; i++) {
+                for (int j = 0; j < 3; j++) {
+                  
+                  new_CenterVertices[i][j] = pow(Modify_Input_OpenningArea, 0.5) * base_Vertices[i][j] + (1 - pow(Modify_Input_OpenningArea, 0.5)) * G_face[j];
+                }
+              }
+              
+              int[] new_CenterVertex_numbers = new int [allFaces[f].length];
+              
+              for(int s = 0; s < allFaces[f].length; s++) {
+                
+                new_CenterVertex_numbers[s] = SOLARCHVISION_addToVertices(new_CenterVertices[s][0], new_CenterVertices[s][1], new_CenterVertices[s][2]); 
+              } 
+            
+              defaultMaterial = allFaces_MAT[f][0];
+              defaultTeselation = allFaces_MAT[f][1];
+            
+              for(int s = 0; s < allFaces[f].length; s++) { 
+                
+                int s_next = (s + 1) % allFaces[f].length;
+
+                int[][] newFace = {{new_CenterVertex_numbers[s], allFaces[f][s], allFaces[f][s_next], new_CenterVertex_numbers[s_next]}};
+                int[][] newFace_MAT = {{defaultMaterial, defaultTeselation}}; 
+              
+                midList_Faces = (int[][]) concat(midList_Faces, newFace);
+                midList_Faces_MAT = (int[][]) concat(midList_Faces_MAT, newFace_MAT);           
+              }
+    
+                       
+              { // modifying the base face to shape the openning  
+                for(int s = 0; s < allFaces[f].length; s++) {
+                  allFaces[f][s] = new_CenterVertex_numbers[s];
+                }
+              } 
+              
+            }
+           
+            startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
+            startList_Faces_MAT = (int[][]) concat(startList_Faces_MAT, midList_Faces_MAT);  
+
+            allFaces = (int[][]) concat(startList_Faces, endList_Faces);
+            allFaces_MAT = (int[][]) concat(startList_Faces_MAT, endList_Faces_MAT);                      
+  
+            { // to avoid processing the faces twice they should be deleted from the list.
+              for (int i = q + 1; i < selectedFace_numbers.length; i++) {
+                selectedFace_numbers[i] -= 1;
+              }              
+            
+              int[] startList = (int[]) subset(selectedFace_numbers, 0, q);
+              int[] endList = (int[]) subset(selectedFace_numbers, q + 1);
+              
+              selectedFace_numbers = (int[]) concat(startList, endList);         
+            }
+
+ 
+          }
+  
+        }
+
+      }
+    }
+    
+    
+    
+    selectedFace_numbers = new_selectedFace_numbers;
+    
+    Work_with_2D_or_3D = 4; 
+    BAR_b_Update = 1;
+    SOLARCHVISION_calculate_selection_Pivot();
+    
+    WIN3D_update_VerticesSolarValue = 1;
+  }  
+  
+}
+
 
 
 void SOLARCHVISION_insertRotatedOpenningsSelection () {
@@ -26157,8 +26317,12 @@ void mouseClicked () {
               SOLARCHVISION_duplicateSelection();
               WIN3D_Update = 1;              
             }      
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Insert Parallel Opennings")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Insert Corner Opennings")) {
               SOLARCHVISION_inserParallelOpenningsSelection();
+              WIN3D_Update = 1;              
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Insert Parallel Opennings")) {
+              SOLARCHVISION_inserCornerOpenningsSelection();
               WIN3D_Update = 1;              
             }     
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Insert Rotated Opennings")) {
@@ -33109,7 +33273,8 @@ String[][] BAR_a_Items = {
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
-                        {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Change Seed/Material", "Change Teselation", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunckSize", "Change LeafSize", "Weld Vertices Selection", "Separate Vertices Selection", "Delete Isolated Vertices", "Delete Selection", "Duplicate Selection", "Teselate Faces in Selection", "Insert Parallel Opennings", "Insert Rotated Opennings", "Extrude Face Edges", "Offset Vertices"},
+                        {"Modify", "Weld Vertices Selection", "Separate Vertices Selection", "Delete Isolated Vertices", "Delete Selection", "Duplicate Selection", "Teselate Faces in Selection", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Extrude Face Edges", "Offset Vertices"},
+                        {"Edit", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Change Seed/Material", "Change Teselation", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunckSize", "Change LeafSize"},
                         {"Match", "Pick Seed/Material", "Pick Teselation", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Teselation", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
 
