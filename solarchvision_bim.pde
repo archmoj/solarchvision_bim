@@ -14706,14 +14706,14 @@ void SOLARCHVISION_inserParallelOpenningsSelection () {
             
             for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
               for (int j = 0; j < 2; j++) {
-                allPolymesh_Faces[i][j] += allFaces[f].length;
+                allPolymesh_Faces[i][j] += 2 * allFaces[f].length;
               }
             }  
             allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
 
             for (int p = new_selectedFace_numbers.length - 1; p > 0; p--) { // the first node is null
               if (new_selectedFace_numbers[p] > f) {  
-                new_selectedFace_numbers[p] += allFaces[f].length;
+                new_selectedFace_numbers[p] += 2 * allFaces[f].length;
               }
             }              
 
@@ -14744,21 +14744,37 @@ void SOLARCHVISION_inserParallelOpenningsSelection () {
                 }
               }
               
+              
+              float[][] new_A_EdgeVertices = new float [allFaces[f].length][3];
+              float[][] new_B_EdgeVertices = new float [allFaces[f].length][3];
               float[][] new_CenterVertices = new float [allFaces[f].length][3];
             
-              for(int i = 0; i < allFaces[f].length; i++) {
+              for(int s = 0; s < allFaces[f].length; s++) {
+
+                int s_prev = (s + allFaces[f].length - 1) % allFaces[f].length;
+                int s_next = (s + 1) % allFaces[f].length;
+                
                 for (int j = 0; j < 3; j++) {
                   
-                  new_CenterVertices[i][j] = pow(Modify_Input_OpenningArea, 0.5) * base_Vertices[i][j] + (1 - pow(Modify_Input_OpenningArea, 0.5)) * G_face[j];
+                  new_A_EdgeVertices[s][j] = Modify_Input_OpenningDeviation * base_Vertices[s][j] + (1 - Modify_Input_OpenningDeviation) * 0.5 * (base_Vertices[s_prev][j] + base_Vertices[s][j]);
+                  new_B_EdgeVertices[s][j] = Modify_Input_OpenningDeviation * base_Vertices[s][j] + (1 - Modify_Input_OpenningDeviation) * 0.5 * (base_Vertices[s_next][j] + base_Vertices[s][j]);
+                  
+                  new_CenterVertices[s][j] = pow(Modify_Input_OpenningArea, 0.5) * base_Vertices[s][j] + (1 - pow(Modify_Input_OpenningArea, 0.5)) * G_face[j];
                 }
               }
               
-              int[] new_CenterVertex_numbers = new int [allFaces[f].length];
+              int[] new_A_EdgeVertex_numbers = new int [allFaces[f].length]; // on the edge (1/3)
+              int[] new_B_EdgeVertex_numbers = new int [allFaces[f].length]; // on the other edge (2/3)
+              int[] new_CenterVertex_numbers = new int [allFaces[f].length]; // in the center
               
               for(int s = 0; s < allFaces[f].length; s++) {
                 
-                new_CenterVertex_numbers[s] = SOLARCHVISION_addToVertices(new_CenterVertices[s][0], new_CenterVertices[s][1], new_CenterVertices[s][2]); 
-              } 
+                new_A_EdgeVertex_numbers[s] = SOLARCHVISION_addToVertices(new_A_EdgeVertices[s][0], new_A_EdgeVertices[s][1], new_A_EdgeVertices[s][2]); 
+                new_B_EdgeVertex_numbers[s] = SOLARCHVISION_addToVertices(new_B_EdgeVertices[s][0], new_B_EdgeVertices[s][1], new_B_EdgeVertices[s][2]);
+                new_CenterVertex_numbers[s] = SOLARCHVISION_addToVertices(new_CenterVertices[s][0], new_CenterVertices[s][1], new_CenterVertices[s][2]);
+              }               
+              
+
             
               defaultMaterial = allFaces_MAT[f][0];
               defaultTeselation = allFaces_MAT[f][1];
@@ -14766,12 +14782,22 @@ void SOLARCHVISION_inserParallelOpenningsSelection () {
               for(int s = 0; s < allFaces[f].length; s++) { 
                 
                 int s_next = (s + 1) % allFaces[f].length;
-
-                int[][] newFace = {{new_CenterVertex_numbers[s], allFaces[f][s], allFaces[f][s_next], new_CenterVertex_numbers[s_next]}};
-                int[][] newFace_MAT = {{defaultMaterial, defaultTeselation}}; 
+                
+                {
+                  int[][] newFace = {{allFaces[f][s], new_B_EdgeVertex_numbers[s], new_CenterVertex_numbers[s], new_A_EdgeVertex_numbers[s]}};
+                  int[][] newFace_MAT = {{defaultMaterial, defaultTeselation}}; 
               
-                midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                midList_Faces_MAT = (int[][]) concat(midList_Faces_MAT, newFace_MAT);           
+                  midList_Faces = (int[][]) concat(midList_Faces, newFace);
+                  midList_Faces_MAT = (int[][]) concat(midList_Faces_MAT, newFace_MAT);
+                }   
+        
+                {
+                  int[][] newFace = {{new_B_EdgeVertex_numbers[s], new_A_EdgeVertex_numbers[s_next], new_CenterVertex_numbers[s_next], new_CenterVertex_numbers[s]}};
+                  int[][] newFace_MAT = {{defaultMaterial, defaultTeselation}}; 
+              
+                  midList_Faces = (int[][]) concat(midList_Faces, newFace);
+                  midList_Faces_MAT = (int[][]) concat(midList_Faces_MAT, newFace_MAT);
+                }                 
               }
     
                        
@@ -14807,7 +14833,6 @@ void SOLARCHVISION_inserParallelOpenningsSelection () {
 
       }
     }
-    
     
     
     selectedFace_numbers = new_selectedFace_numbers;
@@ -14920,7 +14945,7 @@ void SOLARCHVISION_insertRotatedOpenningsSelection () {
               }
               
               int[] new_EdgeVertex_numbers = new int [allFaces[f].length]; // on the edge
-              int[] new_CenterVertex_numbers = new int [allFaces[f].length]; // int the center
+              int[] new_CenterVertex_numbers = new int [allFaces[f].length]; // in the center
               
               for(int s = 0; s < allFaces[f].length; s++) {
                 
@@ -26318,11 +26343,11 @@ void mouseClicked () {
               WIN3D_Update = 1;              
             }      
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Insert Corner Opennings")) {
-              SOLARCHVISION_inserParallelOpenningsSelection();
+              SOLARCHVISION_inserCornerOpenningsSelection();
               WIN3D_Update = 1;              
             }
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Insert Parallel Opennings")) {
-              SOLARCHVISION_inserCornerOpenningsSelection();
+              SOLARCHVISION_inserParallelOpenningsSelection();              
               WIN3D_Update = 1;              
             }     
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Insert Rotated Opennings")) {
