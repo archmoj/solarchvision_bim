@@ -28521,7 +28521,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
  
       Modify_Input_OffsetAmount = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_OffsetAmount" , Modify_Input_OffsetAmount, 0, 25, 0.001);
       
-      Modify_Input_WeldTreshold = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_WeldTreshold" , Modify_Input_WeldTreshold, 0, 1, 0.001);
+      Modify_Input_WeldTreshold = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_WeldTreshold" , Modify_Input_WeldTreshold, 0, 10, 0.001);
  
       MODEL3D_TESELLATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL3D_TESELLATION" , MODEL3D_TESELLATION, 0, 4, 1), 1));
       
