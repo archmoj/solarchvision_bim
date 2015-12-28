@@ -15632,11 +15632,14 @@ void SOLARCHVISION_offsetVerticesSelection (int _type, float _amount) {
     }
     
     float[][] selectedVertex_offsetValues = new float [selectedVertex_numbers.length][3];
+    int[] selectedVertex_offsetNum = new int [selectedVertex_numbers.length];
     
     for (int o = selectedVertex_numbers.length - 1; o >= 0; o--) { 
       selectedVertex_offsetValues[o][0] = 0;
       selectedVertex_offsetValues[o][1] = 0;
       selectedVertex_offsetValues[o][2] = 0;
+      
+      selectedVertex_offsetNum[o] = 0;
     }
     
     selectedVertex_numbers = sort(selectedVertex_numbers);
@@ -15644,9 +15647,6 @@ void SOLARCHVISION_offsetVerticesSelection (int _type, float _amount) {
     for (int o = selectedVertex_numbers.length - 1; o > 0; o--) { // the first node is null 
   
       int vNo = selectedVertex_numbers[o];
-    
-      float[] sum_W = {0,0,0};
-      int num_W = 0;
     
       for (int f = 1; f < allFaces.length; f++) { // the first node is null
         for (int j = 0; j < allFaces[f].length; j++) {
@@ -15677,25 +15677,21 @@ void SOLARCHVISION_offsetVerticesSelection (int _type, float _amount) {
               float[] W = {UV.x, UV.y, UV.z};
               W = fn_normalize(W);
               
-              sum_W[0] += W[0] * _amount;
-              sum_W[1] += W[1] * _amount;
-              sum_W[2] += W[2] * _amount;
+              selectedVertex_offsetValues[o][0] += W[0] * _amount;
+              selectedVertex_offsetValues[o][1] += W[1] * _amount;
+              selectedVertex_offsetValues[o][2] += W[2] * _amount;
               
-              num_W += 1;
+              selectedVertex_offsetNum[o] += 1;
             }
                       
           }
         }
       }
       
-      if (num_W != 0) {
-        sum_W[0] /= float(num_W);
-        sum_W[1] /= float(num_W);
-        sum_W[2] /= float(num_W);
-        
-        selectedVertex_offsetValues[o][0] += sum_W[0];
-        selectedVertex_offsetValues[o][1] += sum_W[1];
-        selectedVertex_offsetValues[o][2] += sum_W[2];
+      if (selectedVertex_offsetNum[o] != 0) {
+        selectedVertex_offsetValues[o][0] /= float(selectedVertex_offsetNum[o]);
+        selectedVertex_offsetValues[o][1] /= float(selectedVertex_offsetNum[o]);
+        selectedVertex_offsetValues[o][2] /= float(selectedVertex_offsetNum[o]);
         
       }
       
