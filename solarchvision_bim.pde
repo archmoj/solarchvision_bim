@@ -14424,7 +14424,10 @@ void SOLARCHVISION_selectIsolatedVertices () {
 }
 
 
-void SOLARCHVISION_weldVerticesSelection () {
+
+
+
+void SOLARCHVISION_weldSceneVerticesSelection () {
 
   if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4) || (Work_with_2D_or_3D == 5)) { 
 
@@ -14460,10 +14463,93 @@ void SOLARCHVISION_weldVerticesSelection () {
             if (d <= Modify_Input_WeldTreshold) { 
             
               allFaces[i][j] = vNo;
-            
-            
+
               found = q;
             }
+          }
+        }
+      }
+      
+      if (found != -1) {
+        
+        int q = found;
+
+        {
+          float[][] startList = (float[][]) subset(allVertices, 0, q);
+          float[][] endList = (float[][]) subset(allVertices, q + 1);
+          
+          allVertices = (float[][]) concat(startList, endList);
+        }
+        
+        for (int i = 1; i < allFaces.length; i++) { // the first node is null
+          for (int j = 0; j < allFaces[i].length; j++) {
+            if (allFaces[i][j] > q) {
+              
+              allFaces[i][j] -= 1;
+            }
+          }
+        }
+      }
+      
+    } 
+  
+    selectedVertex_numbers = new int [1];
+    selectedVertex_numbers[0] = 0;  
+  
+    SOLARCHVISION_calculate_selection_Pivot();
+  }
+}
+
+
+
+void SOLARCHVISION_weldObjectsVerticesSelection () {
+
+  if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4) || (Work_with_2D_or_3D == 5)) { 
+
+    if (Work_with_2D_or_3D == 3) { 
+
+      SOLARCHVISION_convertPolymesh2Vertex();    
+      
+    }
+    
+    if (Work_with_2D_or_3D == 4) { 
+      
+      SOLARCHVISION_convertFace2Vertex(); 
+      
+    }
+    
+    SOLARCHVISION_convertVertex2Face();
+    
+    selectedVertex_numbers = sort(selectedVertex_numbers);
+    
+    for (int o = 1 ; o < selectedVertex_numbers.length; o++) { // the first node is null 
+  
+      int vNo = selectedVertex_numbers[o];
+    
+      int found = -1;
+    
+      for (int m = 1 ; m < selectedVertex_numbers.length; m++) { // the first node is null 
+          
+        int q = selectedVertex_numbers[m];
+        
+        if (q != vNo) { 
+        
+          float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
+          
+          if (d <= Modify_Input_WeldTreshold) { 
+            
+            for (int i = 1; i < selectedFace_numbers.length; i++) { // the first node is null
+             int f = selectedFace_numbers[i];
+            
+              for (int j = 0; j < allFaces[i].length; j++) {
+                if (allFaces[f][j] == q) {
+                  
+                  allFaces[f][j] = vNo;
+                }
+              }
+            }
+
+            found = q;
           }
         }
       }
@@ -26684,9 +26770,13 @@ void mouseClicked () {
               SOLARCHVISION_highlight_in_BAR_b("-WS");
               BAR_b_Update = 1;  
             }
-            
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Weld Vertices Selection")) {
-              SOLARCHVISION_weldVerticesSelection();
+
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Weld Objects Vertices Selection")) {
+              SOLARCHVISION_weldObjectsVerticesSelection();
+              WIN3D_Update = 1;  
+            }            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Weld Scene Vertices Selection")) {
+              SOLARCHVISION_weldSceneVerticesSelection();
               WIN3D_Update = 1;  
             }
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Separate Vertices Selection")) {
@@ -33695,7 +33785,7 @@ String[][] BAR_a_Items = {
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Isolated Vertices"},
-                        {"Modify", "Duplicate Selection", "Delete Selection", "Delete Isolated Vertices", "Separate Vertices Selection", "Weld Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellate Rectangular", "Tessellation Triangular", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings"},
+                        {"Modify", "Duplicate Selection", "Delete Selection", "Delete Isolated Vertices", "Separate Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellate Rectangular", "Tessellation Triangular", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings"},
                         {"Edit", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Change Seed/Material", "Change Tesellation", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunckSize", "Change LeafSize"},
                         {"Match", "Pick Seed/Material", "Pick Tesellation", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tesellation", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
