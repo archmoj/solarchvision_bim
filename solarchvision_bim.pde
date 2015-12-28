@@ -15180,7 +15180,7 @@ void SOLARCHVISION_insertEdgeOpenningsSelection () {
 }
 
 
-void SOLARCHVISION_rectangularTesellateFaceSelection () {
+void SOLARCHVISION_tesellateRectangularFaceSelection () {
 
   if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4)) { 
 
@@ -15341,7 +15341,7 @@ void SOLARCHVISION_rectangularTesellateFaceSelection () {
 
 
 
-void SOLARCHVISION_triangularTesellateFaceSelection () {
+void SOLARCHVISION_tesellateTriangularFaceSelection () {
 
   if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4)) { 
 
@@ -15422,23 +15422,6 @@ void SOLARCHVISION_triangularTesellateFaceSelection () {
                 }
               }
               
-              float[][] new_EdgeVertices = new float [allFaces[f].length][3];
-            
-              for(int s = 0; s < allFaces[f].length; s++) {
-
-                int s_prev = (s + allFaces[f].length - 1) % allFaces[f].length;
-                
-                for (int j = 0; j < 3; j++) {
-                  new_EdgeVertices[s][j] = 0.5 * base_Vertices[s][j] + 0.5 * base_Vertices[s_prev][j];
-                }
-              }
-              
-              int[] new_EdgeVertex_numbers = new int [allFaces[f].length]; // on the edge
-              
-              for(int s = 0; s < allFaces[f].length; s++) {
-                
-                new_EdgeVertex_numbers[s] = SOLARCHVISION_addToVertices(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]); 
-              } 
               
               int new_CenterVertex_number = 0; // at the center
               new_CenterVertex_number = SOLARCHVISION_addToVertices(G_face[0], G_face[1], G_face[2]); 
@@ -15451,7 +15434,7 @@ void SOLARCHVISION_triangularTesellateFaceSelection () {
                 
                 int s_next = (s + 1) % allFaces[f].length;
 
-                int[][] newFace = {{new_EdgeVertex_numbers[s], allFaces[f][s], new_EdgeVertex_numbers[s_next], new_CenterVertex_number}};
+                int[][] newFace = {{allFaces[f][s], allFaces[f][s_next], new_CenterVertex_number}};
                 int[][] newFace_MAT = {{defaultMaterial, defaultTesellation}}; 
               
                 midList_Faces = (int[][]) concat(midList_Faces, newFace);
@@ -26700,12 +26683,12 @@ void mouseClicked () {
               WIN3D_Update = 1;              
             } 
             
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Rectangular Tessellation")) {
-              SOLARCHVISION_rectangularTesellateFaceSelection();
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Tessellate Rectangular")) {
+              SOLARCHVISION_tesellateRectangularFaceSelection();
               WIN3D_Update = 1;              
             }
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Triangular Tessellation")) {
-              SOLARCHVISION_triangularTesellateFaceSelection();
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Tessellation Triangular")) {
+              SOLARCHVISION_tesellateTriangularFaceSelection();
               WIN3D_Update = 1;              
             }            
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Extrude Face Edges")) {
@@ -33648,7 +33631,7 @@ String[][] BAR_a_Items = {
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
-                        {"Modify", "Duplicate Selection", "Delete Selection", "Delete Isolated Vertices", "Separate Vertices Selection", "Weld Vertices Selection", "Offset Vertices", "Extrude Face Edges", "Rectangular Tessellation", "Triangular Tessellation", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings"},
+                        {"Modify", "Duplicate Selection", "Delete Selection", "Delete Isolated Vertices", "Separate Vertices Selection", "Weld Vertices Selection", "Offset Vertices", "Extrude Face Edges", "Tessellate Rectangular", "Tessellation Triangular", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings"},
                         {"Edit", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Change Seed/Material", "Change Tesellation", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunckSize", "Change LeafSize"},
                         {"Match", "Pick Seed/Material", "Pick Tesellation", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tesellation", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
