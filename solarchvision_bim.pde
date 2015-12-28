@@ -162,6 +162,8 @@ int Create_Default_SolarPivotType = 0;
 
 float Modify_Input_WeldTreshold = 0.1; 
 
+float Modify_Input_OffsetAmount = 1; 
+
 float Modify_Input_OpenningDepth = 1; // 1 = 1m 
 float Modify_Input_OpenningArea = 0.25; //0-1, 0.25: 25% of the face area (i.e. for parallel openings) 
 float Modify_Input_OpenningDeviation = 0.5; //0-1, 0.5: middle of the face edge (could be applied in rotated openning)
@@ -15613,7 +15615,7 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
 
 
 
-void SOLARCHVISION_offsetVerticesSelection () {
+void SOLARCHVISION_offsetVerticesSelection (int _type, float _amount) {
 
   if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4) || (Work_with_2D_or_3D == 5)) { 
 
@@ -15667,13 +15669,17 @@ void SOLARCHVISION_offsetVerticesSelection () {
   
               PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]); 
               PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]); 
-              PVector UV = U.cross(V);
+              PVector UV = new PVector(0,0,0);
+              
+              if (_type == 0) UV = U.cross(V);
+              if (_type == 1) UV = PVector.add(U, V);
+              
               float[] W = {UV.x, UV.y, UV.z};
               W = fn_normalize(W);
               
-              sum_W[0] += W[0];
-              sum_W[1] += W[1];
-              sum_W[2] += W[2];
+              sum_W[0] += W[0] * _amount;
+              sum_W[1] += W[1] * _amount;
+              sum_W[2] += W[2] * _amount;
               
               num_W += 1;
             }
@@ -26694,11 +26700,24 @@ void mouseClicked () {
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Extrude Face Edges")) {
               SOLARCHVISION_extrudeFaceEdgesSelection();
               WIN3D_Update = 1;              
-            }               
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Offset Vertices")) {
-              SOLARCHVISION_offsetVerticesSelection();
+            }    
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Offset(above) Vertices")) {
+              SOLARCHVISION_offsetVerticesSelection(0, abs(Modify_Input_OffsetAmount));
               WIN3D_Update = 1;              
             }  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Offset(below) Vertices")) {
+              SOLARCHVISION_offsetVerticesSelection(0, -abs(Modify_Input_OffsetAmount));
+              WIN3D_Update = 1;              
+            }             
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Offset(expand) Vertices")) {
+              SOLARCHVISION_offsetVerticesSelection(1, -abs(Modify_Input_OffsetAmount));
+              WIN3D_Update = 1;              
+            }   
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Offset(shrink) Vertices")) {
+              SOLARCHVISION_offsetVerticesSelection(1, abs(Modify_Input_OffsetAmount));
+              WIN3D_Update = 1;              
+            }               
+             
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TargetRoll")) {
               set_to_View_TargetRoll(0);
@@ -28457,6 +28476,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Modify_Input_OpenningArea = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_OpenningArea" , Modify_Input_OpenningArea, 0, 1, 0.05);
       Modify_Input_OpenningDeviation = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_OpenningDeviation" , Modify_Input_OpenningDeviation, 0, 1, 0.05);
  
+      Modify_Input_OffsetAmount = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_OffsetAmount" , Modify_Input_OffsetAmount, 0, 25, 0.001);
+      
       Modify_Input_WeldTreshold = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_WeldTreshold" , Modify_Input_WeldTreshold, 0, 1, 0.001);
  
       MODEL3D_TESELLATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL3D_TESELLATION" , MODEL3D_TESELLATION, 0, 4, 1), 1));
@@ -33631,7 +33652,7 @@ String[][] BAR_a_Items = {
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-"},
-                        {"Modify", "Duplicate Selection", "Delete Selection", "Delete Isolated Vertices", "Separate Vertices Selection", "Weld Vertices Selection", "Offset Vertices", "Extrude Face Edges", "Tessellate Rectangular", "Tessellation Triangular", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings"},
+                        {"Modify", "Duplicate Selection", "Delete Selection", "Delete Isolated Vertices", "Separate Vertices Selection", "Weld Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellate Rectangular", "Tessellation Triangular", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings"},
                         {"Edit", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Change Seed/Material", "Change Tesellation", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunckSize", "Change LeafSize"},
                         {"Match", "Pick Seed/Material", "Pick Tesellation", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tesellation", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
@@ -35526,6 +35547,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   
   newChild1.setFloat("Modify_Input_WeldTreshold", Modify_Input_WeldTreshold);
   
+  newChild1.setFloat("Modify_Input_OffsetAmount", Modify_Input_OffsetAmount);
+  
   newChild1.setFloat("Modify_Input_OpenningDepth", Modify_Input_OpenningDepth);
   newChild1.setFloat("Modify_Input_OpenningArea", Modify_Input_OpenningArea);
   newChild1.setFloat("Modify_Input_OpenningDeviation", Modify_Input_OpenningDeviation);
@@ -36453,6 +36476,8 @@ void SOLARCHVISION_load_project (String myFile) {
       Create_Default_SolarPivotType = children0[L].getInt("Create_Default_SolarPivotType");
       
       Modify_Input_WeldTreshold = children0[L].getFloat("Modify_Input_WeldTreshold");
+      
+      Modify_Input_OffsetAmount = children0[L].getFloat("Modify_Input_OffsetAmount");
       
       Modify_Input_OpenningDepth = children0[L].getFloat("Modify_Input_OpenningDepth");
       Modify_Input_OpenningArea = children0[L].getFloat("Modify_Input_OpenningArea");
