@@ -14532,7 +14532,7 @@ void SOLARCHVISION_weldObjectsVerticesSelection () {
           
         int q = selectedVertex_numbers[m];
         
-        //if (q > vNo) {
+        if (q > vNo) {
         
           float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
           
@@ -14551,7 +14551,7 @@ void SOLARCHVISION_weldObjectsVerticesSelection () {
 
             found = q;
           }
-        //}
+        }
       }
       
       if (found != -1) {
