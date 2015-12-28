@@ -162,6 +162,9 @@ int Create_Default_SolarPivotType = 0;
 
 float Modify_Input_WeldTreshold = 0.1; 
 
+int Modify_Input_TessellateRows = 5;
+int Modify_Input_TessellateColumns = 3;
+
 float Modify_Input_OffsetAmount = 1.0; // 1 = 1m
 
 float Modify_Input_OpenningDepth = 1; // 1 = 1m 
@@ -15323,6 +15326,197 @@ void SOLARCHVISION_insertEdgeOpenningsSelection () {
 }
 
 
+void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
+
+  if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4)) { 
+
+    if (Work_with_2D_or_3D == 3) { 
+      
+      selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
+
+      SOLARCHVISION_convertPolymesh2Face();    
+  
+      selectedFace_numbers = sort(selectedFace_numbers);
+      
+    }
+    
+    if (Work_with_2D_or_3D == 4) { 
+      
+      selectedFace_numbers = sort(selectedFace_numbers);
+
+      SOLARCHVISION_convertFace2Polymesh();    
+  
+      selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
+      
+    }
+    
+    int[] new_selectedFace_numbers = selectedFace_numbers;
+    
+    for (int o = selectedPolymesh_numbers.length - 1; o > 0; o--) { // the first node is null 
+      
+      int OBJ_NUM = selectedPolymesh_numbers[o];
+      
+      if (OBJ_NUM != 0) {
+
+        for (int q = selectedFace_numbers.length - 1; q > 0; q--) { // the first node is null
+
+          int f = selectedFace_numbers[q];
+          
+          int startFace = allPolymesh_Faces[OBJ_NUM][0];
+          int endFace = allPolymesh_Faces[OBJ_NUM][1];          
+          
+          if ((startFace <= f) && (f <= endFace)) {
+            
+            if (allFaces[f].length == 4) {
+            
+              for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
+                for (int j = 0; j < 2; j++) {
+                  allPolymesh_Faces[i][j] += Modify_Input_TessellateRows * Modify_Input_TessellateColumns - 1;
+                }
+              }  
+              allPolymesh_Faces[OBJ_NUM][1] += Modify_Input_TessellateRows * Modify_Input_TessellateColumns - 1; // because adding the faces also changes the end pointer of the same object 
+  
+              for (int p = new_selectedFace_numbers.length - 1; p > 0; p--) { // the first node is null
+                if (new_selectedFace_numbers[p] > f) {  
+                  new_selectedFace_numbers[p] += Modify_Input_TessellateRows * Modify_Input_TessellateColumns - 1;
+                }
+              }             
+  
+  
+              int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
+              int[][] midList_Faces = new int [0][0];
+              int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
+              
+              
+              int[][] startList_Faces_MAT = (int[][]) subset(allFaces_MAT, 0, f);
+              int[][] midList_Faces_MAT = new int [0][0];
+              int[][] endList_Faces_MAT = (int[][]) subset(allFaces_MAT, f + 1);
+  
+              { 
+                float[][] base_Vertices = new float [allFaces[f].length][3];
+  
+                for(int i = 0; i < allFaces[f].length; i++) {
+                  for (int j = 0; j < 3; j++) {
+                    base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+                  }
+                }
+                
+    
+                
+                float[][] new_EdgeVertices = new float [(Modify_Input_TessellateRows + 1) * (Modify_Input_TessellateColumns + 1)][3];
+              
+                for (int i = 0; i <= Modify_Input_TessellateRows; i++) {
+                  
+                  for (int j = 0; j <= Modify_Input_TessellateColumns; j++) {
+                    
+                    int s = i * (Modify_Input_TessellateColumns + 1) + j;
+
+                    for (int k = 0; k < 3; k++) {
+                      
+                      float u = i / float(Modify_Input_TessellateRows);
+                      float v = j / float(Modify_Input_TessellateColumns);
+                      
+                      new_EdgeVertices[s][k] = Bilinear(base_Vertices[0][k], base_Vertices[1][k], base_Vertices[2][k], base_Vertices[3][k], u, v);
+  
+                    }
+                  }
+                }
+                
+                int[] new_EdgeVertex_numbers = new int [(Modify_Input_TessellateRows + 1) * (Modify_Input_TessellateColumns + 1)]; // on the edge
+                
+                for (int i = 0; i <= Modify_Input_TessellateRows; i++) {
+                  
+                  for (int j = 0; j <= Modify_Input_TessellateColumns; j++) {
+                    
+                    int s = i * (Modify_Input_TessellateColumns + 1) + j;
+                  
+                    if ((i == 0) && (j == 0)) {
+                      new_EdgeVertex_numbers[s] = allFaces[f][0];
+                    }
+                    else if ((i == Modify_Input_TessellateRows) && (j == 0)) {
+                      new_EdgeVertex_numbers[s] = allFaces[f][1];
+                    }
+                    else if ((i == Modify_Input_TessellateRows) && (j == Modify_Input_TessellateColumns)) {
+                      new_EdgeVertex_numbers[s] = allFaces[f][2];
+                    }
+                    else if ((i == 0) && (j == Modify_Input_TessellateColumns)) {
+                      new_EdgeVertex_numbers[s] = allFaces[f][3];
+                    }                    
+                    else {
+                      new_EdgeVertex_numbers[s] = SOLARCHVISION_addToVertices(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
+                    } 
+                  } 
+                }
+                          
+  
+                defaultMaterial = allFaces_MAT[f][0];
+                defaultTessellation = allFaces_MAT[f][1];
+              
+                for (int i = 0; i < Modify_Input_TessellateRows; i++) {
+                  
+                  for (int j = 0; j < Modify_Input_TessellateColumns; j++) {
+                    
+                    int s = i * Modify_Input_TessellateColumns + j;  // number of face
+                    
+                    // number of vertices
+                    int s00 = i * (Modify_Input_TessellateColumns + 1) + j; 
+                    int s01 = s00 + 1;
+                    int s10 = s00 + (Modify_Input_TessellateColumns + 1);
+                    int s11 = s00 + (Modify_Input_TessellateColumns + 1) + 1;
+    
+                    int[][] newFace = {{new_EdgeVertex_numbers[s00], new_EdgeVertex_numbers[s10], new_EdgeVertex_numbers[s11], new_EdgeVertex_numbers[s01]}};
+                    int[][] newFace_MAT = {{defaultMaterial, defaultTessellation}}; 
+                  
+                    midList_Faces = (int[][]) concat(midList_Faces, newFace);
+                    midList_Faces_MAT = (int[][]) concat(midList_Faces_MAT, newFace_MAT); 
+          
+                    if (s > 0) { // the first teselated face was replaced by the base face... so only add other items
+                      int[] newFace_number = {f + s}; 
+                      new_selectedFace_numbers = (int[]) concat(new_selectedFace_numbers, newFace_number);  
+                    }        
+                  }
+                }
+  
+              }
+             
+              startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
+              startList_Faces_MAT = (int[][]) concat(startList_Faces_MAT, midList_Faces_MAT);  
+  
+              allFaces = (int[][]) concat(startList_Faces, endList_Faces);
+              allFaces_MAT = (int[][]) concat(startList_Faces_MAT, endList_Faces_MAT);                      
+    
+              { // to avoid processing the faces twice they should be deleted from the list.
+                for (int i = q + 1; i < selectedFace_numbers.length; i++) {
+                  selectedFace_numbers[i] -= 1;
+                }              
+              
+                int[] startList = (int[]) subset(selectedFace_numbers, 0, q);
+                int[] endList = (int[]) subset(selectedFace_numbers, q + 1);
+                
+                selectedFace_numbers = (int[]) concat(startList, endList);         
+              }
+            }
+
+ 
+          }
+  
+        }
+
+      }
+    }
+    
+    selectedFace_numbers = new_selectedFace_numbers;
+
+    Work_with_2D_or_3D = 4; 
+    BAR_b_Update = 1;
+    SOLARCHVISION_calculate_selection_Pivot();
+    
+    WIN3D_update_VerticesSolarValue = 1;
+  }  
+}
+
+
+
 void SOLARCHVISION_tessellateRectangularFaceSelection () {
 
   if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4)) { 
@@ -26838,6 +27032,10 @@ void mouseClicked () {
               WIN3D_Update = 1;              
             } 
             
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Tessellate Rows & Columns")) {
+              SOLARCHVISION_tessellateRowsColumnsFaceSelection();
+              WIN3D_Update = 1;              
+            }
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Tessellate Rectangular")) {
               SOLARCHVISION_tessellateRectangularFaceSelection();
               WIN3D_Update = 1;              
@@ -28631,6 +28829,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Modify_Input_OpenningArea = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_OpenningArea" , Modify_Input_OpenningArea, 0, 1, 0.05);
       Modify_Input_OpenningDeviation = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_OpenningDeviation" , Modify_Input_OpenningDeviation, 0, 1, 0.05);
  
+      Modify_Input_TessellateRows = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_TessellateRows" , Modify_Input_TessellateRows, 1, 100, 1), 1));
+      Modify_Input_TessellateColumns = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_TessellateColumns" , Modify_Input_TessellateColumns, 1, 100, 1), 1));
+      
       Modify_Input_OffsetAmount = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_OffsetAmount" , Modify_Input_OffsetAmount, 0, 25, 0.001);
       
       Modify_Input_WeldTreshold = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_WeldTreshold" , Modify_Input_WeldTreshold, 0, 10, 0.001);
@@ -33807,7 +34008,7 @@ String[][] BAR_a_Items = {
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Isolated Vertices"},
-                        {"Modify", "Duplicate Selection", "Delete Selection", "Delete Isolated Vertices", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellate Rectangular", "Tessellation Triangular", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings"},
+                        {"Modify", "Duplicate Selection", "Delete Selection", "Delete Isolated Vertices", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings"},
                         {"Edit", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Change Seed/Material", "Change Tessellation", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunckSize", "Change LeafSize"},
                         {"Match", "Pick Seed/Material", "Pick Tessellation", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
@@ -35704,6 +35905,9 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   
   newChild1.setFloat("Modify_Input_OffsetAmount", Modify_Input_OffsetAmount);
   
+  newChild1.setInt("Modify_Input_TessellateRows", Modify_Input_TessellateRows);
+  newChild1.setInt("Modify_Input_TessellateColumns", Modify_Input_TessellateColumns);
+  
   newChild1.setFloat("Modify_Input_OpenningDepth", Modify_Input_OpenningDepth);
   newChild1.setFloat("Modify_Input_OpenningArea", Modify_Input_OpenningArea);
   newChild1.setFloat("Modify_Input_OpenningDeviation", Modify_Input_OpenningDeviation);
@@ -36633,6 +36837,9 @@ void SOLARCHVISION_load_project (String myFile) {
       Modify_Input_WeldTreshold = children0[L].getFloat("Modify_Input_WeldTreshold");
       
       Modify_Input_OffsetAmount = children0[L].getFloat("Modify_Input_OffsetAmount");
+      
+      Modify_Input_TessellateRows = children0[L].getInt("Modify_Input_TessellateRows");
+      Modify_Input_TessellateColumns = children0[L].getInt("Modify_Input_TessellateColumns");
       
       Modify_Input_OpenningDepth = children0[L].getFloat("Modify_Input_OpenningDepth");
       Modify_Input_OpenningArea = children0[L].getFloat("Modify_Input_OpenningArea");
