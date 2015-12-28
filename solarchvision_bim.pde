@@ -28015,21 +28015,27 @@ void mouseClicked () {
     
                 if (keep_number_of_Polymeshes != allPolymesh_Faces.length) { // if any 3D-mesh created during the process
                   
-                  selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = allPolymesh_Faces.length - 1;
+                  selectedPolymesh_numbers = new int [2];
+                  selectedPolymesh_numbers[0] = 0;
+                  selectedPolymesh_numbers[1] = allPolymesh_Faces.length - 1;
                   
                   SOLARCHVISION_calculate_selection_Pivot();
                 }
                 
                 if (keep_number_of_2DObjects != allObject2D_XYZS.length) { // if any 2D-mesh created during the process
-                  
-                  selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = allObject2D_XYZS.length - 1;
+
+                  selectedObject2D_numbers = new int [2];
+                  selectedObject2D_numbers[0] = 0;
+                  selectedObject2D_numbers[1] = allObject2D_XYZS.length - 1;
                   
                   SOLARCHVISION_calculate_selection_Pivot();
                 }            
     
                 if (keep_number_of_Fractals != allFractal_XYZSRA.length) { // if any Fractal created during the process
-                  
-                  selectedFractal_numbers[selectedFractal_numbers.length - 1] = allFractal_XYZSRA.length - 1;
+
+                  selectedFractal_numbers = new int [2];
+                  selectedFractal_numbers[0] = 0;
+                  selectedFractal_numbers[1] = allFractal_XYZSRA.length - 1;
                   
                   SOLARCHVISION_calculate_selection_Pivot();
                 } 
