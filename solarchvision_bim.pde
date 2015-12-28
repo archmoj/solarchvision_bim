@@ -162,7 +162,7 @@ int Create_Default_SolarPivotType = 0;
 
 float Modify_Input_WeldTreshold = 0.1; 
 
-float Modify_Input_OffsetAmount = 1; 
+float Modify_Input_OffsetAmount = 1.0; // 1 = 1m
 
 float Modify_Input_OpenningDepth = 1; // 1 = 1m 
 float Modify_Input_OpenningArea = 0.25; //0-1, 0.25: 25% of the face area (i.e. for parallel openings) 
