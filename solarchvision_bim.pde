@@ -14525,6 +14525,8 @@ void SOLARCHVISION_weldObjectsVerticesSelection () {
     for (int o = selectedVertex_numbers.length - 1; o > 0; o--) { // the first node is null 
   
       int vNo = selectedVertex_numbers[o];
+      
+      int found = -1;
     
       for (int m = o - 1; m > 0; m--) { // the first node is null 
           
@@ -14541,11 +14543,34 @@ void SOLARCHVISION_weldObjectsVerticesSelection () {
               if (allFaces[f][j] == q) {
                 
                 allFaces[f][j] = vNo;
+                
+                found = q;
               }
             }
           }
         }
       }
+      
+      if (found != -1) {
+        
+        int q = found;
+
+        {
+          float[][] startList = (float[][]) subset(allVertices, 0, q);
+          float[][] endList = (float[][]) subset(allVertices, q + 1);
+          
+          allVertices = (float[][]) concat(startList, endList);
+        }
+        
+        for (int i = 1; i < allFaces.length; i++) { // the first node is null
+          for (int j = 0; j < allFaces[i].length; j++) {
+            if (allFaces[i][j] > q) {
+              
+              allFaces[i][j] -= 1;
+            }
+          }
+        }
+      }      
     } 
   
     selectedVertex_numbers = new int [1];
