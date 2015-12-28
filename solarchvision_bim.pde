@@ -15204,9 +15204,7 @@ void SOLARCHVISION_rectangularTesellateFaceSelection () {
       
     }
     
-    int lastFace_numberBefore = allFaces.length - 1; 
-    
-    int[] pre_selectedFace_numbers = selectedFace_numbers;
+    int[] new_selectedFace_numbers = selectedFace_numbers;
     
     for (int o = selectedPolymesh_numbers.length - 1; o > 0; o--) { // the first node is null 
       
@@ -15225,25 +15223,25 @@ void SOLARCHVISION_rectangularTesellateFaceSelection () {
             
             for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
               for (int j = 0; j < 2; j++) {
-                allPolymesh_Faces[i][j] += allFaces[f].length;
+                allPolymesh_Faces[i][j] += allFaces[f].length - 1;
               }
             }  
-            allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
+            allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length - 1; // because adding the faces also changes the end pointer of the same object 
 
-            for (int p = pre_selectedFace_numbers.length - 1; p > 0; p--) { // the first node is null
-              if (pre_selectedFace_numbers[p] > f) {  
-                pre_selectedFace_numbers[p] += allFaces[f].length;
+            for (int p = new_selectedFace_numbers.length - 1; p > 0; p--) { // the first node is null
+              if (new_selectedFace_numbers[p] > f) {  
+                new_selectedFace_numbers[p] += allFaces[f].length - 1;
               }
             }             
 
 
             int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
-            int[][] midList_Faces = (int[][]) subset(allFaces, f, 1);
+            int[][] midList_Faces = new int [0][0];
             int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
             
             
             int[][] startList_Faces_MAT = (int[][]) subset(allFaces_MAT, 0, f);
-            int[][] midList_Faces_MAT = (int[][]) subset(allFaces_MAT, f, 1);
+            int[][] midList_Faces_MAT = new int [0][0];
             int[][] endList_Faces_MAT = (int[][]) subset(allFaces_MAT, f + 1);
 
             { 
@@ -15284,9 +15282,7 @@ void SOLARCHVISION_rectangularTesellateFaceSelection () {
               int new_CenterVertex_number = 0; // at the center
               new_CenterVertex_number = SOLARCHVISION_addToVertices(G_face[0], G_face[1], G_face[2]); 
                         
-              
-              
-            
+
               defaultMaterial = allFaces_MAT[f][0];
               defaultTesellation = allFaces_MAT[f][1];
             
@@ -15298,10 +15294,14 @@ void SOLARCHVISION_rectangularTesellateFaceSelection () {
                 int[][] newFace_MAT = {{defaultMaterial, defaultTesellation}}; 
               
                 midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                midList_Faces_MAT = (int[][]) concat(midList_Faces_MAT, newFace_MAT);           
+                midList_Faces_MAT = (int[][]) concat(midList_Faces_MAT, newFace_MAT); 
+      
+                if (s > 0) { // the first teselated face was replaced by the base face... so only add other items
+                  int[] newFace_number = {f + s}; 
+                  new_selectedFace_numbers = (int[]) concat(new_selectedFace_numbers, newFace_number);  
+                }        
               }
-    
-                       
+
             }
            
             startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
@@ -15329,30 +15329,9 @@ void SOLARCHVISION_rectangularTesellateFaceSelection () {
       }
     }
     
-    int lastFace_numberAfter = allFaces.length - 1;
-    
-    
-    Work_with_2D_or_3D = 4; 
-    
-    selectedFace_numbers = pre_selectedFace_numbers;
-    
-    SOLARCHVISION_deleteSelection(); // this could delete the base faces
-    
-    selectedFace_numbers = new int[1 + lastFace_numberAfter - lastFace_numberBefore];
-    selectedFace_numbers[0] = 0;
+    selectedFace_numbers = new_selectedFace_numbers;
 
-    println("lastFace_numberBefore", lastFace_numberBefore);
-    println("lastFace_numberAfter", lastFace_numberAfter);
-    
-    
-    for (int i = 1; i < selectedFace_numbers.length; i++) { 
-      selectedFace_numbers[i] = allFaces.length - i; // selecting the last faces added to the scene
-      
-    }  
-    
-    println(selectedFace_numbers);
-    
-    
+    Work_with_2D_or_3D = 4; 
     BAR_b_Update = 1;
     SOLARCHVISION_calculate_selection_Pivot();
     
@@ -15405,25 +15384,25 @@ void SOLARCHVISION_triangularTesellateFaceSelection () {
             
             for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
               for (int j = 0; j < 2; j++) {
-                allPolymesh_Faces[i][j] += allFaces[f].length;
+                allPolymesh_Faces[i][j] += allFaces[f].length - 1;
               }
             }  
-            allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
+            allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length - 1; // because adding the faces also changes the end pointer of the same object 
 
             for (int p = new_selectedFace_numbers.length - 1; p > 0; p--) { // the first node is null
               if (new_selectedFace_numbers[p] > f) {  
-                new_selectedFace_numbers[p] += allFaces[f].length;
+                new_selectedFace_numbers[p] += allFaces[f].length - 1;
               }
-            }              
+            }             
 
 
             int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
-            int[][] midList_Faces = (int[][]) subset(allFaces, f, 1);
+            int[][] midList_Faces = new int [0][0];
             int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
             
             
             int[][] startList_Faces_MAT = (int[][]) subset(allFaces_MAT, 0, f);
-            int[][] midList_Faces_MAT = (int[][]) subset(allFaces_MAT, f, 1);
+            int[][] midList_Faces_MAT = new int [0][0];
             int[][] endList_Faces_MAT = (int[][]) subset(allFaces_MAT, f + 1);
 
             { 
@@ -15464,9 +15443,7 @@ void SOLARCHVISION_triangularTesellateFaceSelection () {
               int new_CenterVertex_number = 0; // at the center
               new_CenterVertex_number = SOLARCHVISION_addToVertices(G_face[0], G_face[1], G_face[2]); 
                         
-              
-              
-            
+
               defaultMaterial = allFaces_MAT[f][0];
               defaultTesellation = allFaces_MAT[f][1];
             
@@ -15478,16 +15455,14 @@ void SOLARCHVISION_triangularTesellateFaceSelection () {
                 int[][] newFace_MAT = {{defaultMaterial, defaultTesellation}}; 
               
                 midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                midList_Faces_MAT = (int[][]) concat(midList_Faces_MAT, newFace_MAT);           
+                midList_Faces_MAT = (int[][]) concat(midList_Faces_MAT, newFace_MAT); 
+      
+                if (s > 0) { // the first teselated face was replaced by the base face... so only add other items
+                  int[] newFace_number = {f + s}; 
+                  new_selectedFace_numbers = (int[]) concat(new_selectedFace_numbers, newFace_number);  
+                }        
               }
-    
-                       
-              { // modifying the base face to a null face at G_Face
-                for(int s = 0; s < allFaces[f].length; s++) {
-                  allFaces[f][s] = new_CenterVertex_number;
-                }
-              } 
-              
+
             }
            
             startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
@@ -15515,19 +15490,14 @@ void SOLARCHVISION_triangularTesellateFaceSelection () {
       }
     }
     
-    
-    
     selectedFace_numbers = new_selectedFace_numbers;
-    
+
     Work_with_2D_or_3D = 4; 
-    
-    SOLARCHVISION_deleteSelection(); // this could delete the base faces
-    
     BAR_b_Update = 1;
     SOLARCHVISION_calculate_selection_Pivot();
     
     WIN3D_update_VerticesSolarValue = 1;
-  }  
+  }
 }
 
 void SOLARCHVISION_extrudeFaceEdgesSelection () {
