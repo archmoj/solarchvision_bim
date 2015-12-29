@@ -219,7 +219,7 @@ int Create_Fractal_Plant_Seed = -1; // -1:random, 0-99 choice
 float Create_Fractal_Plant_TrunckSize = 1; //0.5;
 float Create_Fractal_Plant_LeafSize = 1; //1; 
 
-int Work_with_2D_or_3D = 2; // 1:Fractals 2:2D, 3:3D, 4:Face, 5:Vertex, 6:Solid
+int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:Face, 5:Vertex, 6:Solid
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
@@ -22090,7 +22090,7 @@ ParametricGeometry[] SolidObjects = {};
 
 void SOLARCHVISION_add_ParametricGeometries () {
 
-
+/*
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float dx = 10;
@@ -22177,31 +22177,6 @@ void SOLARCHVISION_add_ParametricGeometries () {
     }    
   }
   
- 
-  /* 
-  {
-    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-       
-    float d = 1.0;
-    
-    for (float i = 0; i < 45; i += d) {
-       
-      SOLARCHVISION_add_H_shade(1,0,0, 0,0,i, 20,d, 90-4*i,0); // south
-      //SOLARCHVISION_add_H_shade(2,0,0, 10,10,i, 20,d, 90-4*i,90); // east
-      //SOLARCHVISION_add_H_shade(3,0,0, -10,10,i, 20,d, 90-4*i,270); // west
-
-    }
-    
-    for (float i = -10; i <= 10; i += d) {
-       
-      //SOLARCHVISION_add_V_shade(4,0,0, i,20,22.5, 45,d, 4.5*i,180); // north
-      
-      SOLARCHVISION_add_V_shade(6,0,0, i,0,22.5, 45,d, 4.5*i,0); // south
-    }    
-  }
-  */
- 
- 
   
   {
     float d = 1.0;
@@ -22238,13 +22213,41 @@ void SOLARCHVISION_add_ParametricGeometries () {
       allPolymesh_SolarPivotXYZ[n][1] = y;
       allPolymesh_SolarPivotXYZ[n][2] = z;
     }    
-  }  
+  }    
+*/  
+ 
+  /* 
+  {
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+       
+    float d = 1.0;
+    
+    for (float i = 0; i < 45; i += d) {
+       
+      SOLARCHVISION_add_H_shade(1,0,0, 0,0,i, 20,d, 90-4*i,0); // south
+      //SOLARCHVISION_add_H_shade(2,0,0, 10,10,i, 20,d, 90-4*i,90); // east
+      //SOLARCHVISION_add_H_shade(3,0,0, -10,10,i, 20,d, 90-4*i,270); // west
+
+    }
+    
+    for (float i = -10; i <= 10; i += d) {
+       
+      //SOLARCHVISION_add_V_shade(4,0,0, i,20,22.5, 45,d, 4.5*i,180); // north
+      
+      SOLARCHVISION_add_V_shade(6,0,0, i,0,22.5, 45,d, 4.5*i,0); // south
+    }    
+  }
+  */
+ 
+ 
+  
+
 
 
   
-  SOLARCHVISION_add_2Dobjects_plane(0, 100, 0,0,0, 50,50); // people
-  SOLARCHVISION_add_2Dobjects_plane(1, 25, 0,40,0, 50,10); // trees back
-  SOLARCHVISION_add_2Dobjects_plane(1, 25, 0,-30,0, 50,20); // trees front
+  //SOLARCHVISION_add_2Dobjects_plane(0, 100, 0,0,0, 50,50); // people
+  //SOLARCHVISION_add_2Dobjects_plane(1, 25, 0,40,0, 50,10); // trees back
+  //SOLARCHVISION_add_2Dobjects_plane(1, 25, 0,-30,0, 50,20); // trees front
 
   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
   SOLARCHVISION_add_PolygonHyper(0,0,0, 30,-30,4.5, 9, 9, 6, 0);  // hyper
@@ -22275,7 +22278,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     SOLARCHVISION_addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
   }    
   
-
+/*
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float dx = 100;
@@ -22288,7 +22291,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     SOLARCHVISION_add_Box_Core(7,0,0, x,y,z, dx, dy, dz, rot);
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
   }  
-
+*/
 }
 
 
