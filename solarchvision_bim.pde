@@ -14007,11 +14007,7 @@ void SOLARCHVISION_duplicateSelection () {
 
 void SOLARCHVISION_deleteSelection () {
   
-
-              SOLARCHVISION_save_project(ProjectsFolder + "/Temp/" + ProjectName + "_before.xml", 0);  
-
-  println("delete:IN");
-  
+ 
   if (Work_with_2D_or_3D == 1) {
     
     selectedFractal_numbers = sort(selectedFractal_numbers);
@@ -14317,10 +14313,6 @@ void SOLARCHVISION_deleteSelection () {
       
     } 
   }
-
-  println("delete:OUT");
-
-              SOLARCHVISION_save_project(ProjectsFolder + "/Temp/" + ProjectName + "_after.xml", 0);
 
 
   SOLARCHVISION_deselectAll();
@@ -19608,13 +19600,7 @@ void SOLARCHVISION_draw_3Dobjects () {
   
     if (WIN3D_FACES_SHADE != Shade_Vertex_Solar) {
       for (int f = 1; f < allFaces.length; f++) {
-/*        
-        println("f", f);
-        for (int j = 0; j < allFaces[f].length; j++) {
-          int vNo = allFaces[f][j];
-          println("vNo", vNo);
-        }
-*/
+
         if (((Load_URBAN_MESH == 0) || (Display_URBAN_MESH == 0)) && (urbanFaces_start <= f) && (urbanFaces_end >= f)) {
         }
         else {
@@ -22074,7 +22060,7 @@ ParametricGeometry[] SolidObjects = {};
 
 void SOLARCHVISION_add_ParametricGeometries () {
 
-/*
+
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float dx = 10;
@@ -22198,7 +22184,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
       allPolymesh_SolarPivotXYZ[n][2] = z;
     }    
   }    
-*/  
+  
  
   /* 
   {
