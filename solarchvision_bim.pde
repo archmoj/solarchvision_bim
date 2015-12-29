@@ -14126,6 +14126,41 @@ void SOLARCHVISION_deleteSelection () {
         int startFace = allPolymesh_Faces[OBJ_NUM][0];
         int endFace = allPolymesh_Faces[OBJ_NUM][1];
         
+        
+        /*
+        int startVertex = allVertices.length;
+        int endVertex = 0;
+        
+        for (int f = startFace; f <= endFace; f++) {
+          if ((0 < f) && (f < allFaces.length)) { 
+        
+            for (int j = 0; j < allFaces[f].length; j++) {
+    
+              int vNo = allFaces[f][j];
+              
+              if (startVertex > vNo) startVertex = vNo; 
+              if (endVertex < vNo) endVertex = vNo;
+    
+            }
+          }
+        }
+        
+        if ((0 < startVertex) && (startVertex <= endVertex)) {
+    
+          float[][] startList = (float[][]) subset(allVertices, 0, startVertex);
+          float[][] endList = (float[][]) subset(allVertices, endVertex + 1);
+    
+          allVertices = (float[][]) concat(startList, endList);
+          
+          for (int f = 1; f < allFaces.length; f++) {
+            for (int j = 0; j < allFaces[f].length; j++) {
+    
+              if (startVertex <= allFaces[f][j]) allFaces[f][j] -= 1 + endVertex - startVertex; 
+            }
+          }      
+        }
+        */    
+
         {
           float[][] startList = (float[][]) subset(allPolymesh_SolarPivotXYZ, 0, OBJ_NUM);
           float[][] endList = (float[][]) subset(allPolymesh_SolarPivotXYZ, OBJ_NUM + 1);
@@ -14208,8 +14243,6 @@ void SOLARCHVISION_deleteSelection () {
 
       }
     }
-    
-    SOLARCHVISION_deleteIsolatedVertices(); // <<<<<<<<<<<
     
     if (Solids_updated != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
     
@@ -22074,7 +22107,7 @@ ParametricGeometry[] SolidObjects = {};
 
 void SOLARCHVISION_add_ParametricGeometries () {
 
-/*
+
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float dx = 10;
@@ -22198,7 +22231,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
       allPolymesh_SolarPivotXYZ[n][2] = z;
     }    
   }    
-*/  
+  
  
   /* 
   {
