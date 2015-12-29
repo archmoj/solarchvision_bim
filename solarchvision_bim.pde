@@ -14125,7 +14125,9 @@ void SOLARCHVISION_deleteSelection () {
       
         int startFace = allPolymesh_Faces[OBJ_NUM][0];
         int endFace = allPolymesh_Faces[OBJ_NUM][1];
-    
+        
+        
+        /*
         int startVertex = allVertices.length;
         int endVertex = 0;
         
@@ -14157,7 +14159,7 @@ void SOLARCHVISION_deleteSelection () {
             }
           }      
         }
-    
+        */    
 
         {
           float[][] startList = (float[][]) subset(allPolymesh_SolarPivotXYZ, 0, OBJ_NUM);
