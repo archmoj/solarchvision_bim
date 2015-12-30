@@ -162,7 +162,7 @@ int defaultSolarPivotType = 0;
 int Create_Default_Material = 7; //0;
 int Create_Default_Tessellation = 0;
 int Create_Default_Layer = 0;
-int Create_Default_Visibility = 1;
+int Create_Default_Visibility = 1; // 1: view 0: hide -1:freeze 
 
 int Create_Default_SolarPivotType = 0;
 
@@ -18232,7 +18232,7 @@ void SOLARCHVISION_add_urban () {
       //float h = (HeightAboveGround - LocationElevation);
       float h = 0; //-20; // ?????????????????????????????????????????
   
-      SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Import/Stations/" + DEFINED_STATIONS[STATION_NUMBER][0] + ".obj", -1,0,0,1,0, 0,0,h, 1,1,1);
+      SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Import/Stations/" + DEFINED_STATIONS[STATION_NUMBER][0] + ".obj", -1,0,0,1,1, 0,0,h, 1,1,1);
       
       urbanVertices_end = allVertices.length;
       urbanFaces_end = allFaces.length;
@@ -18271,31 +18271,31 @@ void SOLARCHVISION_add_DefaultModel (int n) {
   
   //if (n != 0) {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    SOLARCHVISION_add_Mesh2(8,0,0,1,0, -100, -100, 0, 100, 100, 0);
+    SOLARCHVISION_add_Mesh2(8,0,0,1,1, -100, -100, 0, 100, 100, 0);
   //}
   
   if (n == 1) {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    SOLARCHVISION_add_House_Core(0,0,0,1,0, 0, 0, 0, 6, 6, 6, 6, 90);
+    SOLARCHVISION_add_House_Core(0,0,0,1,1, 0, 0, 0, 6, 6, 6, 6, 90);
   }
   
   if (n == 2) {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    SOLARCHVISION_add_House_Core(0,0,0,1,0, 0, 0, 0, 6, 6, 6, 6, 0);
+    SOLARCHVISION_add_House_Core(0,0,0,1,1, 0, 0, 0, 6, 6, 6, 6, 0);
   }  
   
   if (n == 3) {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    SOLARCHVISION_add_PolygonHyper(0,0,0,1,0, 0, 0, 5,  10, 10, 4, 0);
+    SOLARCHVISION_add_PolygonHyper(0,0,0,1,1, 0, 0, 5,  10, 10, 4, 0);
     
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    SOLARCHVISION_add_House_Core(7,0,0,1,0, 25, 25, 0, 6, 6, 6, 6, 0);    
+    SOLARCHVISION_add_House_Core(7,0,0,1,1, 25, 25, 0, 6, 6, 6, 6, 0);    
   }   
 
   if (n == 4) {
     for (int i = 0; i < int(10 + random(10)); i++) {
       addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-      SOLARCHVISION_add_House_Core(7,0,0,1,0, random(-80, 80), random(-80, 80), 0, random(5, 10), random(5, 10), random(5, 10), random(2.5, 7.5), random(360));
+      SOLARCHVISION_add_House_Core(7,0,0,1,1, random(-80, 80), random(-80, 80), 0, random(5, 10), random(5, 10), random(5, 10), random(2.5, 7.5), random(360));
     }
   }    
 
@@ -18303,61 +18303,61 @@ void SOLARCHVISION_add_DefaultModel (int n) {
   if (n == 5) {
     //SOLARCHVISION Complex:
 
-    //SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 0, 0, 1, 3, 3);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 0, 0, 1, 3, 1);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 0, 1, 1, 1, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 2, 1, 1, 3, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 0, 2, 1, 3, 3);
+    //SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 0, 0, 0, 1, 3, 3);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 0, 0, 0, 1, 3, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 0, 0, 1, 1, 1, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 0, 2, 1, 1, 3, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 0, 0, 2, 1, 3, 3);
     
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 2, 0, 0, 6, 4, 0.5);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 2, 0, 0, 6, 4, 0.5);
     
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 7, 0, 0, 9, 2, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 7, 0, 0, 9, 2, 2);
     
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 7, 3, 0, 9, 4, 4);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 7, 3, 0, 9, 4, 4);
     
-    //SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 10, 0, 0, 13, 4, 1);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 10, 0, 0, 13, 1, 1);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 10, 1, 0, 10.5, 3, 1);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 12.5, 1, 0, 13, 3, 1);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 10, 3, 0, 13, 4, 1);
+    //SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 10, 0, 0, 13, 4, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 10, 0, 0, 13, 1, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 10, 1, 0, 10.5, 3, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 12.5, 1, 0, 13, 3, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 10, 3, 0, 13, 4, 1);
     
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 4, 0, 1, 8, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 0, 4, 0, 1, 8, 2);
     
-    //SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 2, 5, 0, 4, 8, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 2, 5, 0, 4, 5.5, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 2, 5.5, 0, 2.5, 7.5, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 3.5, 5.5, 0, 4, 7.5, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 2, 7.5, 0, 4, 8, 2);
+    //SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 2, 5, 0, 4, 8, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 2, 5, 0, 4, 5.5, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 2, 5.5, 0, 2.5, 7.5, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 3.5, 5.5, 0, 4, 7.5, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 2, 7.5, 0, 4, 8, 2);
     
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 5, 5, 0, 8, 8, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 5, 5, 0, 8, 8, 1);
     
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 9, 5, 0, 11, 9, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 9, 5, 0, 11, 9, 1);
     
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 12, 5, 0, 13, 7, 4);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 12, 5, 0, 13, 7, 4);
     
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 12, 8, 0, 13, 9, 8);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 12, 8, 0, 13, 9, 8);
     
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 9, 0, 4, 11, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 0, 9, 0, 4, 11, 1);
     
-    //SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 5, 9, 0, 8, 11, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 5, 9, 0, 5.5, 11, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 5.5, 9, 0, 7.5, 9.5, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 5.5, 10.5, 0, 7.5, 11, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 7.5, 9, 0, 8, 11, 2);
+    //SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 5, 9, 0, 8, 11, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 5, 9, 0, 5.5, 11, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 5.5, 9, 0, 7.5, 9.5, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 5.5, 10.5, 0, 7.5, 11, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 7.5, 9, 0, 8, 11, 2);
     
-    //SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 12, 0, 3, 13, 3);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 12, 0, 3, 13, 1);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 12, 1, 1, 13, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 2, 12, 1, 3, 13, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 12, 2, 3, 13, 3);
+    //SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 0, 12, 0, 3, 13, 3);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 0, 12, 0, 3, 13, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 0, 12, 1, 1, 13, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 2, 12, 1, 3, 13, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 0, 12, 2, 3, 13, 3);
     
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 4, 12, 0, 8, 13, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 4, 12, 0, 8, 13, 2);
     
-    //SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 9, 10, 0, 13, 13, 1);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 9, 10, 0, 10, 13, 1);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 10, 10, 0, 12, 10.5, 1);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 10, 12.5, 0, 12, 13, 1);
-    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 12, 10, 0, 13, 13, 1);
+    //SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 9, 10, 0, 13, 13, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 9, 10, 0, 10, 13, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 10, 10, 0, 12, 10.5, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 10, 12.5, 0, 12, 13, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,1, 12, 10, 0, 13, 13, 1);
     
     float model_scale = 12; // to make grid scale equal to 12m. <<<<
 
@@ -18380,7 +18380,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float y = 0;
       float z = 0;
       float r = 10;
-      SOLARCHVISION_add_FractalSphere(1,0,0,1,0, x,y,z, r, 5, 0, 90);
+      SOLARCHVISION_add_FractalSphere(1,0,0,1,1, x,y,z, r, 5, 0, 90);
       SOLARCHVISION_addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
     }
   
@@ -18390,7 +18390,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float y = 0;
       float z = 0;
       float r = 8;
-      SOLARCHVISION_add_FractalSphere(2,0,0,1,0, x,y,z, r, 4, 0, 90);
+      SOLARCHVISION_add_FractalSphere(2,0,0,1,1, x,y,z, r, 4, 0, 90);
       SOLARCHVISION_addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
     }
   
@@ -18400,7 +18400,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float y = 20;
       float z = 0;
       float r = 8;
-      SOLARCHVISION_add_FractalSphere(3,0,0,1,0, x,y,z, r, 3, 0, 90);
+      SOLARCHVISION_add_FractalSphere(3,0,0,1,1, x,y,z, r, 3, 0, 90);
       SOLARCHVISION_addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
     }
   }
@@ -18548,7 +18548,7 @@ void SOLARCHVISION_add_ParametricSurface (int m, int tes, int lyr, int vsb, int 
 
 void SOLARCHVISION_build_SkySphere (int Tessellation) {
   
-  SOLARCHVISION_add_FractalSphere(0,0,0,1,0, 0,0,0, 1, Tessellation, 1, 90); // SKY
+  SOLARCHVISION_add_FractalSphere(0,0,0,1,1, 0,0,0, 1, Tessellation, 1, 90); // SKY
   
 }
 
@@ -22287,15 +22287,15 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 10.1;
     float z = 0;
     float rot = 0;
-    SOLARCHVISION_add_Box_Core(8,0,0,1,0, x,y,z, dx, dy, dz, rot); // facades
+    SOLARCHVISION_add_Box_Core(8,0,0,1,1, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
 
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    SOLARCHVISION_add_Box_Core(5,0,0,1,0, x,y,z, dx/3, dy/3, dz, rot); // building core
+    SOLARCHVISION_add_Box_Core(5,0,0,1,1, x,y,z, dx/3, dy/3, dz, rot); // building core
     
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     for (float i = 0; i < 45; i += 3) {
-      SOLARCHVISION_add_Mesh2(2,0,0,1,0, x-dx,y-dy,i, x+dx,y+dy,i); // floors
+      SOLARCHVISION_add_Mesh2(2,0,0,1,1, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
       SOLARCHVISION_add_2Dobjects_plane(0, 10, x,y,i, dx, dy); // people  
     }   
@@ -22310,15 +22310,15 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 10.1;
     float z = 0;
     float rot = 0;
-    SOLARCHVISION_add_Box_Core(8,0,0,1,0, x,y,z, dx, dy, dz, rot); // facades
+    SOLARCHVISION_add_Box_Core(8,0,0,1,1, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
 
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    SOLARCHVISION_add_Box_Core(5,0,0,1,0, x,y,z, dx/3, dy/3, dz, rot); // building core
+    SOLARCHVISION_add_Box_Core(5,0,0,1,1, x,y,z, dx/3, dy/3, dz, rot); // building core
     
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     for (float i = 0; i < 45; i += 3) {
-      SOLARCHVISION_add_Mesh2(2,0,0,1,0, x-dx,y-dy,i, x+dx,y+dy,i); // floors
+      SOLARCHVISION_add_Mesh2(2,0,0,1,1, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
       SOLARCHVISION_add_2Dobjects_plane(0, 10, x,y,i, dx, dy); // people  
     }   
@@ -22333,15 +22333,15 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 10.1;
     float z = 0;
     float rot = 0;
-    SOLARCHVISION_add_Box_Core(8,0,0,1,0, x,y,z, dx, dy, dz, rot); // facades
+    SOLARCHVISION_add_Box_Core(8,0,0,1,1, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
 
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    SOLARCHVISION_add_Box_Core(5,0,0,1,0, x,y,z, dx/3, dy/3, dz, rot); // building core
+    SOLARCHVISION_add_Box_Core(5,0,0,1,1, x,y,z, dx/3, dy/3, dz, rot); // building core
     
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     for (float i = 0; i < 45; i += 3) {
-      SOLARCHVISION_add_Mesh2(2,0,0,1,0, x-dx,y-dy,i, x+dx,y+dy,i); // floors
+      SOLARCHVISION_add_Mesh2(2,0,0,1,1, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
       SOLARCHVISION_add_2Dobjects_plane(0, 10, x,y,i, dx, dy); // people  
     }    
@@ -22352,7 +22352,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float d = 1.0;
     for (float i = 0; i < 45; i += d) {
-      SOLARCHVISION_add_H_shade(1,0,0,1,0, 30,0,i, 20,d, 90-4*i,0); // south
+      SOLARCHVISION_add_H_shade(1,0,0,1,1, 30,0,i, 20,d, 90-4*i,0); // south
     }
   }
   
@@ -22360,7 +22360,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float d = 1.0;
     for (float i = -10; i <= 10; i += d) {
-      SOLARCHVISION_add_V_shade(6,0,0,1,0, i-30,0,22.5, 45,d, 4.5*i,0); // south
+      SOLARCHVISION_add_V_shade(6,0,0,1,1, i-30,0,22.5, 45,d, 4.5*i,0); // south
     }    
   }
   
@@ -22375,7 +22375,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
       float z = i;
       int spv = 1; // X-axis
       
-      SOLARCHVISION_add_H_shade(1,0,spv,1,0, x,y,z, 20,d, 0,0); // south
+      SOLARCHVISION_add_H_shade(1,0,spv,1,1, x,y,z, 20,d, 0,0); // south
       
       int n = allPolymesh_SolarPivotXYZ.length - 1;
       
@@ -22392,7 +22392,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
       float z = 22.5;
       int spv = 3; // Z-axis
       
-      SOLARCHVISION_add_V_shade(3,0,spv,1,0, x,y,z, 45,d, 0,0); // south
+      SOLARCHVISION_add_V_shade(3,0,spv,1,1, x,y,z, 45,d, 0,0); // south
       
       int n = allPolymesh_SolarPivotXYZ.length - 1;
       
@@ -22411,17 +22411,17 @@ void SOLARCHVISION_add_ParametricGeometries () {
     
     for (float i = 0; i < 45; i += d) {
        
-      SOLARCHVISION_add_H_shade(1,0,0,1,0, 0,0,i, 20,d, 90-4*i,0); // south
-      //SOLARCHVISION_add_H_shade(2,0,0,1,0, 10,10,i, 20,d, 90-4*i,90); // east
-      //SOLARCHVISION_add_H_shade(3,0,0,1,0, -10,10,i, 20,d, 90-4*i,270); // west
+      SOLARCHVISION_add_H_shade(1,0,0,1,1, 0,0,i, 20,d, 90-4*i,0); // south
+      //SOLARCHVISION_add_H_shade(2,0,0,1,1, 10,10,i, 20,d, 90-4*i,90); // east
+      //SOLARCHVISION_add_H_shade(3,0,0,1,1, -10,10,i, 20,d, 90-4*i,270); // west
 
     }
     
     for (float i = -10; i <= 10; i += d) {
        
-      //SOLARCHVISION_add_V_shade(4,0,0,1,0, i,20,22.5, 45,d, 4.5*i,180); // north
+      //SOLARCHVISION_add_V_shade(4,0,0,1,1, i,20,22.5, 45,d, 4.5*i,180); // north
       
-      SOLARCHVISION_add_V_shade(6,0,0,1,0, i,0,22.5, 45,d, 4.5*i,0); // south
+      SOLARCHVISION_add_V_shade(6,0,0,1,1, i,0,22.5, 45,d, 4.5*i,0); // south
     }    
   }
   */
@@ -22437,7 +22437,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
   //SOLARCHVISION_add_2Dobjects_plane(1, 25, 0,-30,0, 50,20); // trees front
 
   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-  SOLARCHVISION_add_PolygonHyper(0,0,0,1,0, 30,-30,4.5, 9, 9, 6, 0);  // hyper
+  SOLARCHVISION_add_PolygonHyper(0,0,0,1,1, 30,-30,4.5, 9, 9, 6, 0);  // hyper
   
 
   {  
@@ -22449,7 +22449,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = -30;
     float z = 0;
     float rot = 0;
-    SOLARCHVISION_add_House_Core(7,0,0,1,0, x,y,z, dx,dy,dz, dz, rot); // house 
+    SOLARCHVISION_add_House_Core(7,0,0,1,1, x,y,z, dx,dy,dz, dz, rot); // house 
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
    } 
 
@@ -22460,8 +22460,8 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float x = 0;
     float y = -30;
     float z = r;
-    SOLARCHVISION_add_FractalSphere(1,0,0,1,0, x,y,z, r, 2, 0, 0);
-    //SOLARCHVISION_add_FractalSphere(2,0,0,1,0, x,y,z, r, 4, 0, 0);
+    SOLARCHVISION_add_FractalSphere(1,0,0,1,1, x,y,z, r, 2, 0, 0);
+    //SOLARCHVISION_add_FractalSphere(2,0,0,1,1, x,y,z, r, 4, 0, 0);
     SOLARCHVISION_addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
   }    
   
@@ -22475,7 +22475,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 0;
     float z = -dz;    
     float rot = 0;
-    SOLARCHVISION_add_Box_Core(7,0,0,1,0, x,y,z, dx, dy, dz, rot);
+    SOLARCHVISION_add_Box_Core(7,0,0,1,1, x,y,z, dx, dy, dz, rot);
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
   }  
 */
@@ -25999,7 +25999,7 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
     
     int NUM_allPolymesh_Faces_Before = allPolymesh_Faces.length;
     
-    //SOLARCHVISION_import_objects(Filename, -1,0,0,1,0, 0,0,0, 1,1,1); // different objects: different materials
+    //SOLARCHVISION_import_objects(Filename, -1,0,0,1,1, 0,0,0, 1,1,1); // different objects: different materials
     SOLARCHVISION_import_objects(Filename, Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, 0,0,0, 1,1,1); // apply default material
     
     int NUM_allPolymesh_Faces_After = allPolymesh_Faces.length;
@@ -26938,6 +26938,38 @@ void mouseClicked () {
               SOLARCHVISION_highlight_in_BAR_b("Tes2");
               BAR_b_Update = 1;  
             }
+
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change Layer")) {
+              set_to_Modify_Layer(0);
+              SOLARCHVISION_highlight_in_BAR_b("Lyr0");
+              BAR_b_Update = 1;  
+            }            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pick Layer")) {
+              set_to_Modify_Layer(1);
+              SOLARCHVISION_highlight_in_BAR_b("Lyr1");
+              BAR_b_Update = 1;  
+            }            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Assign Layer")) {
+              set_to_Modify_Layer(2);
+              SOLARCHVISION_highlight_in_BAR_b("Lyr2");
+              BAR_b_Update = 1;  
+            }
+            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change Visibility")) {
+              set_to_Modify_Visibility(0);
+              SOLARCHVISION_highlight_in_BAR_b("Vsb0");
+              BAR_b_Update = 1;  
+            }            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pick Visibility")) {
+              set_to_Modify_Visibility(1);
+              SOLARCHVISION_highlight_in_BAR_b("Vsb1");
+              BAR_b_Update = 1;  
+            }            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Assign Visibility")) {
+              set_to_Modify_Visibility(2);
+              SOLARCHVISION_highlight_in_BAR_b("Vsb2");
+              BAR_b_Update = 1;  
+            }            
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Flip FaceNormal")) {
               set_to_Modify_FaceNormal(1);
@@ -29090,6 +29122,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       Create_Default_Material = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Material" , Create_Default_Material, -1, 8, 1), 1));
       Create_Default_Tessellation = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Tessellation" , Create_Default_Tessellation, 0, 4, 1), 1));
+      Create_Default_Layer = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Layer" , Create_Default_Layer, 0, 16, 1), 1));
+      Create_Default_Visibility = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Visibility" , Create_Default_Visibility, 0, 4, 1), 1));
       Create_Default_SolarPivotType = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_SolarPivotType" , Create_Default_SolarPivotType, 0, 4, 1), 1));
   
       Create_Input_Orientation = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Orientation" , Create_Input_Orientation, 0, 360, 15);
@@ -33331,7 +33365,7 @@ void dessin_ClickSelect (int _type, float x, float y, float r) {
   strokeWeight(5);
   line(0,0, d,d);
 
-  stroke(0,0,255);
+  stroke(0,127,255);
   strokeWeight(3);
   if (_type == 2) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);} 
   if (_type == 3) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r);}
@@ -33364,7 +33398,7 @@ void dessin_WindowSelect (int _type, float x, float y, float r) {
   strokeWeight(5);
   line(0,0, d,d);
 
-  stroke(0,0,255);
+  stroke(0,127,255);
   strokeWeight(3);
   if (_type == 2) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);} 
   if (_type == 3) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r);}
@@ -33477,7 +33511,7 @@ void dessin_Rotate (int _type, float x, float y, float r) {
   if (_type == 3) line(0, 0.8 * r, 0, -0.8 * r);
  
   strokeWeight(2);
-  stroke(0,0,255);
+  stroke(0,127,255);
   noFill();
   float d = 0.85 * r;
   if (_type == 1) {arc(0, 0, d, d, 0.25 * PI, 1.75 * PI);}
@@ -33527,7 +33561,7 @@ void dessin_Seed (int _type, float x, float y, float r) {
     line(0, 0, 0.8 * r * d * cos(i), 0.8 * r * d * sin(i));
   }  
 
-  stroke(0,0,255);
+  stroke(0,127,255);
   strokeWeight(3);
   if (_type == 2) {line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r);}
   if (_type == 3) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);} 
@@ -33564,7 +33598,93 @@ void dessin_Tessellation (int _type, float x, float y, float r) {
     line(w, -0.5 * d, w, 0.5 * d);
   }
 
-  stroke(0,0,255);
+  stroke(0,127,255);
+  strokeWeight(3);
+  if (_type == 2) {line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r);}
+  if (_type == 3) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);} 
+  if (_type == 4) {line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r); line(-0.7 * r, -0.3 * r, -0.3 * r, -0.7 * r);}
+  
+  strokeWeight(0);
+
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+
+void dessin_Layer (int _type, float x, float y, float r) {
+  
+  pushMatrix();
+  translate(x, y);
+
+  float d = 0.8 * r;
+
+  strokeWeight(1);
+  stroke(255); 
+  fill(0);
+
+  beginShape();
+  vertex(0, d);
+  vertex(cos_ang(30) * d, 0.5 * d);
+  vertex(0, 0);
+  vertex(-cos_ang(30) * d, 0.5 * d);
+  endShape(CLOSE); 
+
+  strokeWeight(2);
+  stroke(255); 
+  fill(0,127,255);
+
+  beginShape();
+  vertex(0, 0.5 * d);
+  vertex(cos_ang(30) * d, 0);
+  vertex(0, -0.5 * d);
+  vertex(-cos_ang(30) * d, 0);
+  endShape(CLOSE);
+ 
+  stroke(0,127,255);
+  strokeWeight(3);
+  if (_type == 2) {line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r);}
+  if (_type == 3) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);} 
+  if (_type == 4) {line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r); line(-0.7 * r, -0.3 * r, -0.3 * r, -0.7 * r);}
+  
+  strokeWeight(0);
+
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+
+void dessin_Visibility (int _type, float x, float y, float r) {
+  
+  pushMatrix();
+  translate(x, y);
+
+  float d = 0.8 * r;
+
+  strokeWeight(1);
+  stroke(255); 
+  fill(0);
+
+  beginShape();
+  vertex(0, d);
+  vertex(cos_ang(30) * d, 0.5 * d);
+  vertex(0, 0);
+  vertex(-cos_ang(30) * d, 0.5 * d);
+  endShape(CLOSE); 
+
+  strokeWeight(0);
+  stroke(255); 
+  fill(127,127);
+
+  beginShape();
+  vertex(0, 0.5 * d);
+  vertex(cos_ang(30) * d, 0);
+  vertex(0, -0.5 * d);
+  vertex(-cos_ang(30) * d, 0);
+  endShape(CLOSE);
+ 
+  stroke(0,127,255);
   strokeWeight(3);
   if (_type == 2) {line(-0.7 * r, -0.7 * r, -0.3 * r, -0.3 * r);}
   if (_type == 3) {line(-0.75 * r, -0.5 * r, -0.25 * r, -0.5 * r); line(-0.5 * r, -0.75 * r, -0.5 * r, -0.25 * r);} 
@@ -33587,7 +33707,7 @@ void dessin_FaceNormal (int _type, float x, float y, float r) {
 
   strokeWeight(2);
   stroke(255); 
-  noFill();
+  fill(0);
 
   beginShape();
   vertex(0, 0.5 * d);
@@ -33637,7 +33757,7 @@ void dessin_FaceFirstVertex (int _type, float x, float y, float r) {
 
   strokeWeight(2);
   stroke(255); 
-  noFill();
+  fill(0);
 
   beginShape();
   vertex(0, d);
@@ -33699,7 +33819,7 @@ void dessin_ProjectionType (int _type, float x, float y, float r) {
 
   strokeWeight(2);
   stroke(255); 
-  noFill();
+  fill(0);
 
     
   float d = 0.8 * r;
@@ -33770,7 +33890,7 @@ void dessin_Truck (int _type, float x, float y, float r) {
 
   
   stroke(255); 
-  noFill();
+  fill(0);
 
   float d = 0.625 * r;
   
@@ -33862,7 +33982,7 @@ void dessin_Zoom (int _type, float x, float y, float r) {
   
     stroke(255); 
     
-    noFill(); //fill(127);  
+    fill(0);
     strokeWeight(1);
     ellipse(-0.4 * r, -0.4 * r, 0.8 * r, 0.8 * r); 
   
@@ -33893,9 +34013,10 @@ void dessin_3DModelSize (int _type, float x, float y, float r) {
   translate(x, y);
 
   stroke(255); 
-  noFill();  
+  fill(0);
   strokeWeight(2);
   ellipse(0,0, r,r);
+  noFill();
   strokeWeight(1);
   ellipse(0,0, 1.5 * r, 1.5 * r); 
   
@@ -33930,9 +34051,10 @@ void dessin_AllModelSize (int _type, float x, float y, float r) {
   float d = 0.75 * r;
 
   stroke(255); 
-  noFill();  
+  fill(0); 
   strokeWeight(1);
   ellipse(0,0, d,d);
+  noFill();
   strokeWeight(1);
   ellipse(0,0, 2 * d, 2 * d); 
   
@@ -33969,7 +34091,7 @@ void dessin_SkydomeSize (int _type, float x, float y, float r) {
   
     strokeWeight(1);
     stroke(255); 
-    noFill();  
+    fill(0);
     arc(0,0, d,d, PI, 2 * PI); 
     arc(0,0, d,0.333 * d, 0, PI);
     
@@ -34006,7 +34128,7 @@ void dessin_Orbit (int _type, float x, float y, float r) {
 
   strokeWeight(1);
   stroke(255); 
-  noFill();  
+  fill(0); 
   ellipse(0,0, d,d); 
   
   strokeWeight(2);
@@ -34105,6 +34227,16 @@ void dessin_CameraRoll (int _type, float x, float y, float r) {
 
   pushMatrix();
   translate(x, y);
+
+  {
+    float d = 1.5 * r;
+    
+    strokeWeight(1);
+    stroke(255); 
+    fill(0);
+    ellipse(0,0, d,d); 
+  }
+
   
   strokeWeight(1);
   stroke(255);
@@ -34135,14 +34267,11 @@ void dessin_CameraRoll (int _type, float x, float y, float r) {
     endShape(CLOSE);
   }  
   
+
+  
   {
     float d = 1.5 * r;
     
-    strokeWeight(1);
-    stroke(255); 
-    noFill();  
-    ellipse(0,0, d,d); 
-  
     strokeWeight(2);
     stroke(255); 
     noFill();  
@@ -34172,7 +34301,7 @@ void dessin_TargetRoll (int _type, float x, float y, float r) {
     
     strokeWeight(1);
     stroke(255); 
-    noFill();  
+    fill(0);  
     rect(-d/2,-d/2, d,d);   
   
     strokeWeight(2);
@@ -34397,8 +34526,8 @@ String[][] BAR_a_Items = {
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
                         {"Edit", "Duplicate Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings"},
-                        {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunckSize", "Change LeafSize"},
-                        {"Match", "Pick Seed/Material", "Pick Tessellation", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
+                        {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Vsibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunckSize", "Change LeafSize"},
+                        {"Match", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
 
                       };
@@ -34712,6 +34841,8 @@ String[][] BAR_b_Items = {
                           {"3", "RTx", "RTy", "RTz", "Rotate", "1.0"}, 
                           {"1", "Mat0", "Mat1", "Mat2", "Mat3", "Change Seed/Material", "1.0"},
                           {"1", "Tes0", "Tes1", "Tes2", "Tes3", "Change Tessellation", "1.0"},
+                          {"1", "Lyr0", "Lyr1", "Lyr2", "Lyr3", "Change Layer", "1.0"},
+                          {"1", "Vsb0", "Vsb1", "Vsb2", "Vsb3", "Change Visibility", "1.0"},
                           {"1", "FNorm1", "FNorm2", "FNorm3", "FaceNormal", "1.0"},
                           {"1", "F1stV", "FaceFirstVertex", "1.0"},
                           
@@ -34891,6 +35022,20 @@ void SOLARCHVISION_draw_window_BAR_b () {
           if ((BAR_b_Items[i][j]).equals("Tes3")) set_to_Modify_Tessellation(3);
         }
         
+        if (Bar_Switch.equals("Change Layer")) {
+          if ((BAR_b_Items[i][j]).equals("Lyr0")) set_to_Modify_Layer(0);
+          if ((BAR_b_Items[i][j]).equals("Lyr1")) set_to_Modify_Layer(1);
+          if ((BAR_b_Items[i][j]).equals("Lyr2")) set_to_Modify_Layer(2);
+          if ((BAR_b_Items[i][j]).equals("Lyr3")) set_to_Modify_Layer(3);
+        }
+
+        if (Bar_Switch.equals("Change Visibility")) {
+          if ((BAR_b_Items[i][j]).equals("Vsb0")) set_to_Modify_Visibility(0);
+          if ((BAR_b_Items[i][j]).equals("Vsb1")) set_to_Modify_Visibility(1);
+          if ((BAR_b_Items[i][j]).equals("Vsb2")) set_to_Modify_Visibility(2);
+          if ((BAR_b_Items[i][j]).equals("Vsb3")) set_to_Modify_Visibility(3);
+        }        
+        
         if (Bar_Switch.equals("FaceNormal")) {
           if ((BAR_b_Items[i][j]).equals("FNorm1")) set_to_Modify_FaceNormal(1);
           if ((BAR_b_Items[i][j]).equals("FNorm2")) set_to_Modify_FaceNormal(2);
@@ -34974,6 +35119,12 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("Change Tessellation")) {
           dessin_Tessellation(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }
+        if (Bar_Switch.equals("Change Layer")) {
+          dessin_Layer(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }
+        if (Bar_Switch.equals("Change Visibility")) {
+          dessin_Visibility(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }        
         if (Bar_Switch.equals("FaceNormal")) {
           dessin_FaceNormal(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }           
@@ -35227,6 +35378,22 @@ void set_to_Modify_Tessellation (int n) {
 
   ROLLOUT_Update = 1; 
 }
+
+void set_to_Modify_Layer (int n) {
+  View_Select_Create_Modify = 6;
+  Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
+
+  ROLLOUT_Update = 1; 
+}
+
+void set_to_Modify_Visibility (int n) {
+  View_Select_Create_Modify = 7;
+  Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
+
+  ROLLOUT_Update = 1; 
+}
+ 
+// the same messages of View_Select_Create_Modify=6/7 for both Layer/Visibility of polymeshes and DegreeMax/DegreeDif is not good!
 
 void set_to_Modify_DegreeMax (int n) {
   View_Select_Create_Modify = 6;
@@ -36310,6 +36477,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
   newChild1.setInt("Create_Default_Material", Create_Default_Material);  
   newChild1.setInt("Create_Default_Tessellation", Create_Default_Tessellation);
+  newChild1.setInt("Create_Default_Layer", Create_Default_Layer);
+  newChild1.setInt("Create_Default_Visibility", Create_Default_Visibility);
   newChild1.setInt("Create_Default_SolarPivotType", Create_Default_SolarPivotType);
   
   newChild1.setFloat("Modify_Input_WeldTreshold", Modify_Input_WeldTreshold);
@@ -37243,6 +37412,8 @@ void SOLARCHVISION_load_project (String myFile) {
       
       Create_Default_Material = children0[L].getInt("Create_Default_Material");
       Create_Default_Tessellation = children0[L].getInt("Create_Default_Tessellation");
+      Create_Default_Layer = children0[L].getInt("Create_Default_Layer");
+      Create_Default_Visibility = children0[L].getInt("Create_Default_Visibility");
       Create_Default_SolarPivotType = children0[L].getInt("Create_Default_SolarPivotType");
       
       Modify_Input_WeldTreshold = children0[L].getFloat("Modify_Input_WeldTreshold");
@@ -38137,10 +38308,7 @@ void SOLARCHVISION_load_project (String myFile) {
 bug: delete because scrolling selection+ could add duplicate of the same objects to the list!
 solution: I remarked wheel option for pickSelect for now.
 
-
-int defaultLayer = 0;
-int defaultVisibility = 1;
-
+// the same messages of View_Select_Create_Modify=6/7 for both Layer/Visibility of polymeshes and DegreeMax/DegreeDif is not good!
 */
 
 
