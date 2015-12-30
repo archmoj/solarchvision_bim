@@ -14109,9 +14109,13 @@ void SOLARCHVISION_deleteSelection () {
     }
     
   }
-    
-  
+
+
+  int[] keep_selectedVertex_numbers = {0};
   if (Work_with_2D_or_3D == 3) {
+
+    SOLARCHVISION_convertPolymesh2Vertex(); // finding & then keeping objects vertices so that we could delete the isolated ones later  
+    keep_selectedVertex_numbers = selectedVertex_numbers;
 
     selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
     
@@ -14319,7 +14323,12 @@ void SOLARCHVISION_deleteSelection () {
 
   SOLARCHVISION_deselectAll();
   
-  if (Work_with_2D_or_3D == 3) SOLARCHVISION_deleteIsolatedVertices(); // <<<<<<  
+  if (Work_with_2D_or_3D == 3) {
+    
+    selectedVertex_numbers = keep_selectedVertex_numbers;
+    
+    SOLARCHVISION_deleteIsolatedVerticesSelection(); // <<<<<<
+  }  
 
 
 
@@ -14329,7 +14338,55 @@ void SOLARCHVISION_deleteSelection () {
  
 }
 
-void SOLARCHVISION_deleteIsolatedVertices () {
+void SOLARCHVISION_deleteIsolatedVerticesSelection () {
+
+  selectedVertex_numbers = sort(selectedVertex_numbers);
+  
+  for (int q = selectedVertex_numbers.length - 1; q > 0; q--) { // the first node is null
+  
+    int vNo = selectedVertex_numbers[q];
+  
+    int found = -1;
+  
+    for (int i = 1; i < allFaces.length; i++) { // the first node is null
+      for (int j = 0; j < allFaces[i].length; j++) {
+        if (allFaces[i][j] == vNo) {
+          found = 1;
+        }
+      }
+    }
+    
+    if (found == -1) {
+      {
+        float[][] startList = (float[][]) subset(allVertices, 0, vNo);
+        float[][] endList = (float[][]) subset(allVertices, vNo + 1);
+        
+        allVertices = (float[][]) concat(startList, endList);
+      }
+      
+      for (int i = 1; i < allFaces.length; i++) { // the first node is null
+        for (int j = 0; j < allFaces[i].length; j++) {
+          if (allFaces[i][j] > vNo) {
+            
+            allFaces[i][j] -= 1;
+
+          }
+        }
+      }
+    }
+    
+    
+    WIN3D_update_VerticesSolarValue = 1;  
+  } 
+
+  selectedVertex_numbers = new int [1];
+  selectedVertex_numbers[0] = 0;  
+  
+  SOLARCHVISION_calculate_selection_Pivot();
+
+}
+
+void SOLARCHVISION_deleteIsolatedVerticesScene () {
 
   for (int vNo = allVertices.length - 1; vNo > 0; vNo--) { // the first node is null
   
@@ -26994,7 +27051,7 @@ void mouseClicked () {
               WIN3D_Update = 1;  
             }             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Delete Isolated Vertices")) {
-              SOLARCHVISION_deleteIsolatedVertices();
+              SOLARCHVISION_deleteIsolatedVerticesScene();
               WIN3D_Update = 1;  
             }            
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Delete Selection")) {
