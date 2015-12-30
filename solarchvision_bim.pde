@@ -117,7 +117,7 @@ int[] selectedVertex_numbers = {0};
 
 float[][] allVertices = {{0,0,0}};
 int[][] allFaces = {{0,0,0}};
-int[][] allFaces_MAT = {{0,0}};
+int[][] allFaces_MTLV = {{0,0,0,0}}; // 0:material, 1:teselation, 2:layer, 3:visibility
 
 int[][] allPolymesh_Faces = {{0,0}}; // start face - end face
 int[][] allPolymesh_Solids = {{0,0}}; // start solid - end solid
@@ -155,10 +155,15 @@ int Display_Leaves = 1;
 
 int defaultMaterial = 7;
 int defaultTessellation = 0;
+int defaultLayer = 0;
+int defaultVisibility = 1;
 int defaultSolarPivotType = 0;
 
 int Create_Default_Material = 7; //0;
 int Create_Default_Tessellation = 0;
+int Create_Default_Layer = 0;
+int Create_Default_Visibility = 1;
+
 int Create_Default_SolarPivotType = 0;
 
 float Modify_Input_WeldTreshold = 0.1; 
@@ -2530,7 +2535,7 @@ void draw () {
           
           SOLARCHVISION_remove_ParametricGeometries();
           
-          SOLARCHVISION_add_3Dbase(-2, 0, 0);
+          SOLARCHVISION_add_3Dbase(-2, 0, 0, 1, 0);
           
           SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
 
@@ -2551,7 +2556,7 @@ void draw () {
           
           SOLARCHVISION_remove_ParametricGeometries();
           
-          SOLARCHVISION_add_3Dbase(-2, 0, 0);
+          SOLARCHVISION_add_3Dbase(-2, 0, 0, 1, 0);
 
           SOLARCHVISION_add_DefaultModel(Load_Default_Models);
           
@@ -13693,9 +13698,9 @@ int SOLARCHVISION_addToVertices (float x, float y, float z) {
 
 int SOLARCHVISION_addToFaces (int[] f) {
 
-  int[][] newFace_MAT = {{defaultMaterial, defaultTessellation}}; 
+  int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
   
-  allFaces_MAT =  (int[][]) concat(allFaces_MAT, newFace_MAT);
+  allFaces_MTLV =  (int[][]) concat(allFaces_MTLV, newFace_MTLV);
   
   int[][] newFace = {f}; 
   
@@ -13911,8 +13916,10 @@ void SOLARCHVISION_duplicateSelection () {
                 newFace = concat(newFace, new_vertexItem); 
               }
               
-              defaultMaterial = allFaces_MAT[f][0];
-              defaultTessellation = allFaces_MAT[f][1];
+              defaultMaterial = allFaces_MTLV[f][0];
+              defaultTessellation = allFaces_MTLV[f][1];
+              defaultLayer = allFaces_MTLV[f][2];
+              defaultVisibility = allFaces_MTLV[f][3];
               
               SOLARCHVISION_addToFaces(newFace);
               
@@ -13996,8 +14003,10 @@ void SOLARCHVISION_duplicateSelection () {
           newFace = concat(newFace, new_vertexItem); 
         }
         
-        defaultMaterial = allFaces_MAT[f][0];
-        defaultTessellation = allFaces_MAT[f][1];
+        defaultMaterial = allFaces_MTLV[f][0];
+        defaultTessellation = allFaces_MTLV[f][1];
+        defaultLayer = allFaces_MTLV[f][2];
+        defaultVisibility = allFaces_MTLV[f][3];        
         
         SOLARCHVISION_addToFaces(newFace);
         
@@ -14193,10 +14202,10 @@ void SOLARCHVISION_deleteSelection () {
         }
         
         {
-          int[][] startList = (int[][]) subset(allFaces_MAT, 0, startFace);
-          int[][] endList = (int[][]) subset(allFaces_MAT, endFace + 1);
+          int[][] startList = (int[][]) subset(allFaces_MTLV, 0, startFace);
+          int[][] endList = (int[][]) subset(allFaces_MTLV, endFace + 1);
           
-          allFaces_MAT = (int[][]) concat(startList, endList);          
+          allFaces_MTLV = (int[][]) concat(startList, endList);          
         }
         
         
@@ -14288,10 +14297,10 @@ void SOLARCHVISION_deleteSelection () {
             }
               
             {
-              int[][] startList = (int[][]) subset(allFaces_MAT, 0, f);
-              int[][] endList = (int[][]) subset(allFaces_MAT, f + 1);
+              int[][] startList = (int[][]) subset(allFaces_MTLV, 0, f);
+              int[][] endList = (int[][]) subset(allFaces_MTLV, f + 1);
               
-              allFaces_MAT = (int[][]) concat(startList, endList);          
+              allFaces_MTLV = (int[][]) concat(startList, endList);          
             }      
 
             { // to avoid deleting the faces twice they should be deleted from the list.
@@ -14832,9 +14841,9 @@ void SOLARCHVISION_inserCornerOpenningsSelection () {
             int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
             
             
-            int[][] startList_Faces_MAT = (int[][]) subset(allFaces_MAT, 0, f);
-            int[][] midList_Faces_MAT = (int[][]) subset(allFaces_MAT, f, 1);
-            int[][] endList_Faces_MAT = (int[][]) subset(allFaces_MAT, f + 1);
+            int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
+            int[][] midList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f, 1);
+            int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
 
             { 
               float[][] base_Vertices = new float [allFaces[f].length][3];
@@ -14869,18 +14878,20 @@ void SOLARCHVISION_inserCornerOpenningsSelection () {
                 new_Vertex_numbers[s] = SOLARCHVISION_addToVertices(new_Vertices[s][0], new_Vertices[s][1], new_Vertices[s][2]); 
               } 
             
-              defaultMaterial = allFaces_MAT[f][0];
-              defaultTessellation = allFaces_MAT[f][1];
+              defaultMaterial = allFaces_MTLV[f][0];
+              defaultTessellation = allFaces_MTLV[f][1];
+              defaultLayer = allFaces_MTLV[f][2];
+              defaultVisibility = allFaces_MTLV[f][3];              
             
               for(int s = 0; s < allFaces[f].length; s++) { 
                 
                 int s_next = (s + 1) % allFaces[f].length;
 
                 int[][] newFace = {{new_Vertex_numbers[s], allFaces[f][s], allFaces[f][s_next], new_Vertex_numbers[s_next]}};
-                int[][] newFace_MAT = {{defaultMaterial, defaultTessellation}}; 
+                int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
               
                 midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                midList_Faces_MAT = (int[][]) concat(midList_Faces_MAT, newFace_MAT);           
+                midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV);           
               }
     
                        
@@ -14893,10 +14904,10 @@ void SOLARCHVISION_inserCornerOpenningsSelection () {
             }
            
             startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-            startList_Faces_MAT = (int[][]) concat(startList_Faces_MAT, midList_Faces_MAT);  
+            startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
 
             allFaces = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces_MAT = (int[][]) concat(startList_Faces_MAT, endList_Faces_MAT);                      
+            allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
   
             { // to avoid processing the faces twice they should be deleted from the list.
               for (int i = q + 1; i < selectedFace_numbers.length; i++) {
@@ -14991,9 +15002,9 @@ void SOLARCHVISION_inserParallelOpenningsSelection () {
             int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
             
             
-            int[][] startList_Faces_MAT = (int[][]) subset(allFaces_MAT, 0, f);
-            int[][] midList_Faces_MAT = (int[][]) subset(allFaces_MAT, f, 1);
-            int[][] endList_Faces_MAT = (int[][]) subset(allFaces_MAT, f + 1);
+            int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
+            int[][] midList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f, 1);
+            int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
 
             { 
               float[][] base_Vertices = new float [allFaces[f].length][3];
@@ -15044,8 +15055,10 @@ void SOLARCHVISION_inserParallelOpenningsSelection () {
               
 
             
-              defaultMaterial = allFaces_MAT[f][0];
-              defaultTessellation = allFaces_MAT[f][1];
+              defaultMaterial = allFaces_MTLV[f][0];
+              defaultTessellation = allFaces_MTLV[f][1];
+              defaultLayer = allFaces_MTLV[f][2];
+              defaultVisibility = allFaces_MTLV[f][3];
             
               for(int s = 0; s < allFaces[f].length; s++) { 
                 
@@ -15053,18 +15066,18 @@ void SOLARCHVISION_inserParallelOpenningsSelection () {
                 
                 {
                   int[][] newFace = {{allFaces[f][s], new_B_EdgeVertex_numbers[s], new_CenterVertex_numbers[s], new_A_EdgeVertex_numbers[s]}};
-                  int[][] newFace_MAT = {{defaultMaterial, defaultTessellation}}; 
+                  int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
               
                   midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                  midList_Faces_MAT = (int[][]) concat(midList_Faces_MAT, newFace_MAT);
+                  midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV);
                 }   
         
                 {
                   int[][] newFace = {{new_B_EdgeVertex_numbers[s], new_A_EdgeVertex_numbers[s_next], new_CenterVertex_numbers[s_next], new_CenterVertex_numbers[s]}};
-                  int[][] newFace_MAT = {{defaultMaterial, defaultTessellation}}; 
+                  int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
               
                   midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                  midList_Faces_MAT = (int[][]) concat(midList_Faces_MAT, newFace_MAT);
+                  midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV);
                 }                 
               }
     
@@ -15078,10 +15091,10 @@ void SOLARCHVISION_inserParallelOpenningsSelection () {
             }
            
             startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-            startList_Faces_MAT = (int[][]) concat(startList_Faces_MAT, midList_Faces_MAT);  
+            startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
 
             allFaces = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces_MAT = (int[][]) concat(startList_Faces_MAT, endList_Faces_MAT);                      
+            allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
   
             { // to avoid processing the faces twice they should be deleted from the list.
               for (int i = q + 1; i < selectedFace_numbers.length; i++) {
@@ -15176,9 +15189,9 @@ void SOLARCHVISION_insertRotatedOpenningsSelection () {
             int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
             
             
-            int[][] startList_Faces_MAT = (int[][]) subset(allFaces_MAT, 0, f);
-            int[][] midList_Faces_MAT = (int[][]) subset(allFaces_MAT, f, 1);
-            int[][] endList_Faces_MAT = (int[][]) subset(allFaces_MAT, f + 1);
+            int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
+            int[][] midList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f, 1);
+            int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
 
             { 
               float[][] base_Vertices = new float [allFaces[f].length][3];
@@ -15223,18 +15236,20 @@ void SOLARCHVISION_insertRotatedOpenningsSelection () {
               
               
             
-              defaultMaterial = allFaces_MAT[f][0];
-              defaultTessellation = allFaces_MAT[f][1];
-            
+              defaultMaterial = allFaces_MTLV[f][0];
+              defaultTessellation = allFaces_MTLV[f][1];
+              defaultLayer = allFaces_MTLV[f][2];
+              defaultVisibility = allFaces_MTLV[f][3];
+              
               for(int s = 0; s < allFaces[f].length; s++) { 
                 
                 int s_next = (s + 1) % allFaces[f].length;
 
                 int[][] newFace = {{new_EdgeVertex_numbers[s], allFaces[f][s], new_EdgeVertex_numbers[s_next], new_CenterVertex_numbers[s_next], new_CenterVertex_numbers[s]}};
-                int[][] newFace_MAT = {{defaultMaterial, defaultTessellation}}; 
+                int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
               
                 midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                midList_Faces_MAT = (int[][]) concat(midList_Faces_MAT, newFace_MAT);           
+                midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV);           
               }
     
                        
@@ -15247,10 +15262,10 @@ void SOLARCHVISION_insertRotatedOpenningsSelection () {
             }
            
             startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-            startList_Faces_MAT = (int[][]) concat(startList_Faces_MAT, midList_Faces_MAT);  
+            startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
 
             allFaces = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces_MAT = (int[][]) concat(startList_Faces_MAT, endList_Faces_MAT);                      
+            allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
   
             { // to avoid processing the faces twice they should be deleted from the list.
               for (int i = q + 1; i < selectedFace_numbers.length; i++) {
@@ -15344,9 +15359,9 @@ void SOLARCHVISION_insertEdgeOpenningsSelection () {
             int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
             
             
-            int[][] startList_Faces_MAT = (int[][]) subset(allFaces_MAT, 0, f);
-            int[][] midList_Faces_MAT = (int[][]) subset(allFaces_MAT, f, 1);
-            int[][] endList_Faces_MAT = (int[][]) subset(allFaces_MAT, f + 1);
+            int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
+            int[][] midList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f, 1);
+            int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
 
             { 
               float[][] base_Vertices = new float [allFaces[f].length][3];
@@ -15387,18 +15402,20 @@ void SOLARCHVISION_insertEdgeOpenningsSelection () {
               
               
             
-              defaultMaterial = allFaces_MAT[f][0];
-              defaultTessellation = allFaces_MAT[f][1];
+              defaultMaterial = allFaces_MTLV[f][0];
+              defaultTessellation = allFaces_MTLV[f][1];
+              defaultLayer = allFaces_MTLV[f][2];
+              defaultVisibility = allFaces_MTLV[f][3];
             
               for(int s = 0; s < allFaces[f].length; s++) { 
                 
                 int s_next = (s + 1) % allFaces[f].length;
 
                 int[][] newFace = {{new_EdgeVertex_numbers[s], allFaces[f][s], new_EdgeVertex_numbers[s_next]}};
-                int[][] newFace_MAT = {{defaultMaterial, defaultTessellation}}; 
+                int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
               
                 midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                midList_Faces_MAT = (int[][]) concat(midList_Faces_MAT, newFace_MAT);           
+                midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV);           
               }
     
                        
@@ -15411,10 +15428,10 @@ void SOLARCHVISION_insertEdgeOpenningsSelection () {
             }
            
             startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-            startList_Faces_MAT = (int[][]) concat(startList_Faces_MAT, midList_Faces_MAT);  
+            startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
 
             allFaces = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces_MAT = (int[][]) concat(startList_Faces_MAT, endList_Faces_MAT);                      
+            allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
   
             { // to avoid processing the faces twice they should be deleted from the list.
               for (int i = q + 1; i < selectedFace_numbers.length; i++) {
@@ -15510,9 +15527,9 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
               int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
               
               
-              int[][] startList_Faces_MAT = (int[][]) subset(allFaces_MAT, 0, f);
-              int[][] midList_Faces_MAT = new int [0][0];
-              int[][] endList_Faces_MAT = (int[][]) subset(allFaces_MAT, f + 1);
+              int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
+              int[][] midList_Faces_MTLV = new int [0][0];
+              int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
   
               { 
                 float[][] base_Vertices = new float [allFaces[f].length][3];
@@ -15571,9 +15588,11 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
                 }
                           
   
-                defaultMaterial = allFaces_MAT[f][0];
-                defaultTessellation = allFaces_MAT[f][1];
-              
+                defaultMaterial = allFaces_MTLV[f][0];
+                defaultTessellation = allFaces_MTLV[f][1];
+                defaultLayer = allFaces_MTLV[f][2];
+                defaultVisibility = allFaces_MTLV[f][3];
+             
                 for (int i = 0; i < Modify_Input_TessellateRows; i++) {
                   
                   for (int j = 0; j < Modify_Input_TessellateColumns; j++) {
@@ -15587,11 +15606,11 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
                     int s11 = s00 + (Modify_Input_TessellateColumns + 1) + 1;
     
                     int[][] newFace = {{new_EdgeVertex_numbers[s00], new_EdgeVertex_numbers[s10], new_EdgeVertex_numbers[s11], new_EdgeVertex_numbers[s01]}};
-                    int[][] newFace_MAT = {{defaultMaterial, defaultTessellation}}; 
+                    int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
                   
                     midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                    midList_Faces_MAT = (int[][]) concat(midList_Faces_MAT, newFace_MAT); 
-          
+                    midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV); 
+       
                     if (s > 0) { // the first teselated face was replaced by the base face... so only add other items
                       int[] newFace_number = {f + s}; 
                       new_selectedFace_numbers = (int[]) concat(new_selectedFace_numbers, newFace_number);  
@@ -15602,10 +15621,10 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
               }
              
               startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-              startList_Faces_MAT = (int[][]) concat(startList_Faces_MAT, midList_Faces_MAT);  
+              startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
   
               allFaces = (int[][]) concat(startList_Faces, endList_Faces);
-              allFaces_MAT = (int[][]) concat(startList_Faces_MAT, endList_Faces_MAT);                      
+              allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
     
               { // to avoid processing the faces twice they should be deleted from the list.
                 for (int i = q + 1; i < selectedFace_numbers.length; i++) {
@@ -15699,9 +15718,9 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
             int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
             
             
-            int[][] startList_Faces_MAT = (int[][]) subset(allFaces_MAT, 0, f);
-            int[][] midList_Faces_MAT = new int [0][0];
-            int[][] endList_Faces_MAT = (int[][]) subset(allFaces_MAT, f + 1);
+            int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
+            int[][] midList_Faces_MTLV = new int [0][0];
+            int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
 
             { 
               float[][] base_Vertices = new float [allFaces[f].length][3];
@@ -15742,18 +15761,20 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
               new_CenterVertex_number = SOLARCHVISION_addToVertices(G_face[0], G_face[1], G_face[2]); 
                         
 
-              defaultMaterial = allFaces_MAT[f][0];
-              defaultTessellation = allFaces_MAT[f][1];
+              defaultMaterial = allFaces_MTLV[f][0];
+              defaultTessellation = allFaces_MTLV[f][1];
+              defaultLayer = allFaces_MTLV[f][2];
+              defaultVisibility = allFaces_MTLV[f][3];              
             
               for(int s = 0; s < allFaces[f].length; s++) { 
                 
                 int s_next = (s + 1) % allFaces[f].length;
 
                 int[][] newFace = {{new_EdgeVertex_numbers[s], allFaces[f][s], new_EdgeVertex_numbers[s_next], new_CenterVertex_number}};
-                int[][] newFace_MAT = {{defaultMaterial, defaultTessellation}}; 
+                int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
               
                 midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                midList_Faces_MAT = (int[][]) concat(midList_Faces_MAT, newFace_MAT); 
+                midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV); 
       
                 if (s > 0) { // the first teselated face was replaced by the base face... so only add other items
                   int[] newFace_number = {f + s}; 
@@ -15764,10 +15785,10 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
             }
            
             startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-            startList_Faces_MAT = (int[][]) concat(startList_Faces_MAT, midList_Faces_MAT);  
+            startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
 
             allFaces = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces_MAT = (int[][]) concat(startList_Faces_MAT, endList_Faces_MAT);                      
+            allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
   
             { // to avoid processing the faces twice they should be deleted from the list.
               for (int i = q + 1; i < selectedFace_numbers.length; i++) {
@@ -15860,9 +15881,9 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
             int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
             
             
-            int[][] startList_Faces_MAT = (int[][]) subset(allFaces_MAT, 0, f);
-            int[][] midList_Faces_MAT = new int [0][0];
-            int[][] endList_Faces_MAT = (int[][]) subset(allFaces_MAT, f + 1);
+            int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
+            int[][] midList_Faces_MTLV = new int [0][0];
+            int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
 
             { 
               float[][] base_Vertices = new float [allFaces[f].length][3];
@@ -15886,18 +15907,20 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
               new_CenterVertex_number = SOLARCHVISION_addToVertices(G_face[0], G_face[1], G_face[2]); 
                         
 
-              defaultMaterial = allFaces_MAT[f][0];
-              defaultTessellation = allFaces_MAT[f][1];
+              defaultMaterial = allFaces_MTLV[f][0];
+              defaultTessellation = allFaces_MTLV[f][1];
+              defaultLayer = allFaces_MTLV[f][2];
+              defaultVisibility = allFaces_MTLV[f][3];                
             
               for(int s = 0; s < allFaces[f].length; s++) { 
                 
                 int s_next = (s + 1) % allFaces[f].length;
 
                 int[][] newFace = {{allFaces[f][s], allFaces[f][s_next], new_CenterVertex_number}};
-                int[][] newFace_MAT = {{defaultMaterial, defaultTessellation}}; 
+                int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
               
                 midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                midList_Faces_MAT = (int[][]) concat(midList_Faces_MAT, newFace_MAT); 
+                midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV); 
       
                 if (s > 0) { // the first teselated face was replaced by the base face... so only add other items
                   int[] newFace_number = {f + s}; 
@@ -15908,10 +15931,10 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
             }
            
             startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-            startList_Faces_MAT = (int[][]) concat(startList_Faces_MAT, midList_Faces_MAT);  
+            startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
 
             allFaces = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces_MAT = (int[][]) concat(startList_Faces_MAT, endList_Faces_MAT);                      
+            allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
   
             { // to avoid processing the faces twice they should be deleted from the list.
               for (int i = q + 1; i < selectedFace_numbers.length; i++) {
@@ -16038,16 +16061,16 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
                 allFaces = (int[][]) concat(allFaces, newFace);         
               }       
               
-              int[][] newFace_MAT = {{allFaces_MAT[f][0], allFaces_MAT[f][1]}}; 
-              allFaces_MAT =  (int[][]) concat(allFaces_MAT, newFace_MAT);
+              int[][] newFace_MTLV = {{allFaces_MTLV[f][0], allFaces_MTLV[f][1], allFaces_MTLV[f][2], allFaces_MTLV[f][3]}}; 
+              allFaces_MTLV =  (int[][]) concat(allFaces_MTLV, newFace_MTLV);
             }  
             
             { // adding the cap
               int[][] newFace = {top_Vertex_numbers};  
               allFaces = (int[][]) concat(allFaces, newFace);         
      
-              int[][] newFace_MAT = {{allFaces_MAT[f][0], allFaces_MAT[f][1]}}; 
-              allFaces_MAT =  (int[][]) concat(allFaces_MAT, newFace_MAT);  
+              int[][] newFace_MTLV = {{allFaces_MTLV[f][0], allFaces_MTLV[f][1], allFaces_MTLV[f][2], allFaces_MTLV[f][3]}}; 
+              allFaces_MTLV =  (int[][]) concat(allFaces_MTLV, newFace_MTLV);  
               
               int[] lastFace = {allFaces.length - 1};
   
@@ -16595,10 +16618,12 @@ void SOLARCHVISION_convertFace2Vertex () {
 
 
             
-void SOLARCHVISION_add_Octahedron (int m, int tes, int spv, float x, float y, float z, float rx, float ry, float rz, float rot) {
+void SOLARCHVISION_add_Octahedron (int m, int tes, int lyr, int vsb, int spv, float x, float y, float z, float rx, float ry, float rz, float rot) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
   defaultSolarPivotType = spv;
   
   float teta = rot * PI / 180.0;
@@ -16689,10 +16714,12 @@ void SOLARCHVISION_add_Octahedron (int m, int tes, int spv, float x, float y, fl
      
 
 
-void SOLARCHVISION_add_House_Core (int m, int tes, int spv, float x, float y, float z, float rx, float ry, float rz, float h2, float rot) {
+void SOLARCHVISION_add_House_Core (int m, int tes, int lyr, int vsb, int spv, float x, float y, float z, float rx, float ry, float rz, float h2, float rot) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
   defaultSolarPivotType = spv;
   
   float teta = rot * PI / 180.0;
@@ -16787,10 +16814,12 @@ void SOLARCHVISION_add_House_Core (int m, int tes, int spv, float x, float y, fl
 
 
 
-void SOLARCHVISION_add_Box_Core (int m, int tes, int spv, float x, float y, float z, float rx, float ry, float rz, float rot) {
+void SOLARCHVISION_add_Box_Core (int m, int tes, int lyr, int vsb, int spv, float x, float y, float z, float rx, float ry, float rz, float rot) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
   defaultSolarPivotType = spv;
   
   float teta = rot * PI / 180.0;
@@ -16841,11 +16870,13 @@ void SOLARCHVISION_add_Box_Core (int m, int tes, int spv, float x, float y, floa
 }
 
 
-void SOLARCHVISION_add_Box_Corners (int m, int tes, int spv, float x1, float y1, float z1, float x2, float y2, float z2) {
+void SOLARCHVISION_add_Box_Corners (int m, int tes, int lyr, int vsb, int spv, float x1, float y1, float z1, float x2, float y2, float z2) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
-  defaultSolarPivotType = spv;  
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultSolarPivotType = spv;
   
   int t1 = SOLARCHVISION_addToVertices(x2, y2, z2);
   int t2 = SOLARCHVISION_addToVertices(x1, y2, z2);
@@ -16894,11 +16925,13 @@ void SOLARCHVISION_add_Box_Corners (int m, int tes, int spv, float x1, float y1,
 }
 
 
-void SOLARCHVISION_add_H_shade (int m, int tes, int spv, float x0, float y0, float z0, float d, float w, float Alpha, float Beta) {
+void SOLARCHVISION_add_H_shade (int m, int tes, int lyr, int vsb, int spv, float x0, float y0, float z0, float d, float w, float Alpha, float Beta) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
-  defaultSolarPivotType = spv;  
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultSolarPivotType = spv;
   
   float rx = 0.5 * d * cos_ang(Beta);
   float ry = 0.5 * d * sin_ang(Beta);
@@ -16936,11 +16969,13 @@ void SOLARCHVISION_add_H_shade (int m, int tes, int spv, float x0, float y0, flo
 }
 
 
-void SOLARCHVISION_add_V_shade (int m, int tes, int spv, float x0, float y0, float z0, float h, float d, float t, float t0) {
+void SOLARCHVISION_add_V_shade (int m, int tes, int lyr, int vsb, int spv, float x0, float y0, float z0, float h, float d, float t, float t0) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
-  defaultSolarPivotType = spv;  
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultSolarPivotType = spv;
   
   float dx = d * cos_ang(t + t0 - 90);
   float dy = d * sin_ang(t + t0 - 90);
@@ -16975,11 +17010,13 @@ void SOLARCHVISION_add_V_shade (int m, int tes, int spv, float x0, float y0, flo
 
 
 
-void SOLARCHVISION_add_Mesh2 (int m, int tes, int spv, float x1, float y1, float z1, float x3, float y3, float z3) {
+void SOLARCHVISION_add_Mesh2 (int m, int tes, int lyr, int vsb, int spv, float x1, float y1, float z1, float x3, float y3, float z3) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
-  defaultSolarPivotType = spv;  
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultSolarPivotType = spv; 
   
   float x2 = x3;
   float y2 = y3;
@@ -17015,10 +17052,12 @@ void SOLARCHVISION_add_Mesh2 (int m, int tes, int spv, float x1, float y1, float
 
 }
 
-void SOLARCHVISION_add_Mesh4 (int m, int tes, int spv, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4) {
+void SOLARCHVISION_add_Mesh4 (int m, int tes, int lyr, int vsb, int spv, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
   defaultSolarPivotType = spv;  
   
   int v1 = SOLARCHVISION_addToVertices(x1, y1, z1);
@@ -17033,11 +17072,13 @@ void SOLARCHVISION_add_Mesh4 (int m, int tes, int spv, float x1, float y1, float
 
 }
 
-void SOLARCHVISION_add_Mesh3 (int m, int tes, int spv, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) {
+void SOLARCHVISION_add_Mesh3 (int m, int tes, int lyr, int vsb, int spv, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
-  defaultSolarPivotType = spv;  
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultSolarPivotType = spv;
   
   int v1 = SOLARCHVISION_addToVertices(x1, y1, z1);
   int v2 = SOLARCHVISION_addToVertices(x2, y2, z2);
@@ -17050,11 +17091,13 @@ void SOLARCHVISION_add_Mesh3 (int m, int tes, int spv, float x1, float y1, float
 
 }
 
-void SOLARCHVISION_add_Mesh5 (int m, int tes, int spv, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float x5, float y5, float z5) {
+void SOLARCHVISION_add_Mesh5 (int m, int tes, int lyr, int vsb, int spv, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float x5, float y5, float z5) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
-  defaultSolarPivotType = spv;  
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultSolarPivotType = spv;
   
   int v1 = SOLARCHVISION_addToVertices(x1, y1, z1);
   int v2 = SOLARCHVISION_addToVertices(x2, y2, z2);
@@ -17069,11 +17112,13 @@ void SOLARCHVISION_add_Mesh5 (int m, int tes, int spv, float x1, float y1, float
 
 }
 
-void SOLARCHVISION_add_Polygon (int m, int tes, int spv, float cx, float cy, float cz, float r, int n, float rot) {
+void SOLARCHVISION_add_Polygon (int m, int tes, int lyr, int vsb, int spv, float cx, float cy, float cz, float r, int n, float rot) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
-  defaultSolarPivotType = spv;  
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultSolarPivotType = spv;
   
   int[] newFace = {SOLARCHVISION_addToVertices(cx + r * cos_ang(0), cy + r * sin_ang(0), cz)};
   for (int i = 1; i < n; i++) {
@@ -17088,11 +17133,13 @@ void SOLARCHVISION_add_Polygon (int m, int tes, int spv, float cx, float cy, flo
 
 
 
-void SOLARCHVISION_add_PolygonExtrude (int m, int tes, int spv, float cx, float cy, float cz, float r, float h, int n, float rot) {
+void SOLARCHVISION_add_PolygonExtrude (int m, int tes, int lyr, int vsb, int spv, float cx, float cy, float cz, float r, float h, int n, float rot) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
-  defaultSolarPivotType = spv;  
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultSolarPivotType = spv;
   
   int[] vT = new int [n];
   int[] vB = new int [n];
@@ -17133,11 +17180,13 @@ void SOLARCHVISION_add_PolygonExtrude (int m, int tes, int spv, float cx, float 
 }
 
 
-void SOLARCHVISION_add_PolygonHyper (int m, int tes, int spv, float cx, float cy, float cz, float r, float h, int n, float rot) {
+void SOLARCHVISION_add_PolygonHyper (int m, int tes, int lyr, int vsb, int spv, float cx, float cy, float cz, float r, float h, int n, float rot) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
-  defaultSolarPivotType = spv;  
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultSolarPivotType = spv;
   
   int[] newFace = {SOLARCHVISION_addToVertices(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz - 0.5 * h)};
   for (int i = 1; i < n; i++) {
@@ -17152,11 +17201,13 @@ void SOLARCHVISION_add_PolygonHyper (int m, int tes, int spv, float cx, float cy
 
 
 
-void SOLARCHVISION_add_Icosahedron (int m, int tes, int spv, float cx, float cy, float cz, float r, float rot) {
+void SOLARCHVISION_add_Icosahedron (int m, int tes, int lyr, int vsb, int spv, float cx, float cy, float cz, float r, float rot) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
-  defaultSolarPivotType = spv;  
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultSolarPivotType = spv;
   
   int[] vT = new int [6];
   int[] vB = new int [6];
@@ -17222,11 +17273,13 @@ void SOLARCHVISION_add_Icosahedron (int m, int tes, int spv, float cx, float cy,
 }  
   
 
-void SOLARCHVISION_add_QuadSphere (int m, int tes, int spv, float cx, float cy, float cz, float r, int Tessellation) {
+void SOLARCHVISION_add_QuadSphere (int m, int tes, int lyr, int vsb, int spv, float cx, float cy, float cz, float r, int Tessellation) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
-  defaultSolarPivotType = spv;  
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultSolarPivotType = spv; 
   
   // i.e. Rhombic Triacontahedron
   
@@ -17336,7 +17389,7 @@ void SOLARCHVISION_add_QuadSphere (int m, int tes, int spv, float cx, float cy, 
         SOLARCHVISION_addToFaces(newFace);
       }
       else {
-        SOLARCHVISION_addToFaces_afterSphericalTessellation(m, tes, spv, cx, cy, cz, r, newFace);
+        SOLARCHVISION_addToFaces_afterSphericalTessellation(m, tes, lyr, vsb, spv, cx, cy, cz, r, newFace);
       }
     }
 
@@ -17354,7 +17407,7 @@ void SOLARCHVISION_add_QuadSphere (int m, int tes, int spv, float cx, float cy, 
         SOLARCHVISION_addToFaces(newFace);
       }
       else {
-        SOLARCHVISION_addToFaces_afterSphericalTessellation(m, tes, spv, cx, cy, cz, r, newFace);
+        SOLARCHVISION_addToFaces_afterSphericalTessellation(m, tes, lyr, vsb, spv, cx, cy, cz, r, newFace);
       }
     }
     
@@ -17372,7 +17425,7 @@ void SOLARCHVISION_add_QuadSphere (int m, int tes, int spv, float cx, float cy, 
         SOLARCHVISION_addToFaces(newFace);
       }
       else {
-        SOLARCHVISION_addToFaces_afterSphericalTessellation(m, tes, spv, cx, cy, cz, r, newFace);
+        SOLARCHVISION_addToFaces_afterSphericalTessellation(m, tes, lyr, vsb, spv, cx, cy, cz, r, newFace);
       }
     }    
     
@@ -17390,7 +17443,7 @@ void SOLARCHVISION_add_QuadSphere (int m, int tes, int spv, float cx, float cy, 
         SOLARCHVISION_addToFaces(newFace);
       }
       else {
-        SOLARCHVISION_addToFaces_afterSphericalTessellation(m, tes, spv, cx, cy, cz, r, newFace);
+        SOLARCHVISION_addToFaces_afterSphericalTessellation(m, tes, lyr, vsb, spv, cx, cy, cz, r, newFace);
       }
     }     
 
@@ -17408,7 +17461,7 @@ void SOLARCHVISION_add_QuadSphere (int m, int tes, int spv, float cx, float cy, 
         SOLARCHVISION_addToFaces(newFace);
       }
       else {
-        SOLARCHVISION_addToFaces_afterSphericalTessellation(m, tes, spv, cx, cy, cz, r, newFace);
+        SOLARCHVISION_addToFaces_afterSphericalTessellation(m, tes, lyr, vsb, spv, cx, cy, cz, r, newFace);
       }
     }
     
@@ -17426,7 +17479,7 @@ void SOLARCHVISION_add_QuadSphere (int m, int tes, int spv, float cx, float cy, 
         SOLARCHVISION_addToFaces(newFace);
       }
       else {
-        SOLARCHVISION_addToFaces_afterSphericalTessellation(m, tes, spv, cx, cy, cz, r, newFace);
+        SOLARCHVISION_addToFaces_afterSphericalTessellation(m, tes, lyr, vsb, spv, cx, cy, cz, r, newFace);
       }
     }    
     
@@ -17436,11 +17489,13 @@ void SOLARCHVISION_add_QuadSphere (int m, int tes, int spv, float cx, float cy, 
 }
 
 
-void SOLARCHVISION_addToFaces_afterSphericalTessellation (int m, int tes, int spv, float cx, float cy, float cz, float r, int[] f) {
+void SOLARCHVISION_addToFaces_afterSphericalTessellation (int m, int tes, int lyr, int vsb, int spv, float cx, float cy, float cz, float r, int[] f) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
-  defaultSolarPivotType = spv;  
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultSolarPivotType = spv;
   
   int A = f[0];
   int B = f[1];
@@ -17490,9 +17545,9 @@ void SOLARCHVISION_addToFaces_afterSphericalTessellation (int m, int tes, int sp
 
   
   {
-    int[][] newFace_MAT = {{defaultMaterial, defaultTessellation}}; 
+    int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
     
-    allFaces_MAT = (int[][]) concat(allFaces_MAT, newFace_MAT);
+    allFaces_MTLV = (int[][]) concat(allFaces_MTLV, newFace_MTLV);
     
     
     int[][] newFace = {{M, B, N, D}}; 
@@ -17501,9 +17556,9 @@ void SOLARCHVISION_addToFaces_afterSphericalTessellation (int m, int tes, int sp
   }
 
   {
-    int[][] newFace_MAT = {{defaultMaterial, defaultTessellation}}; 
+    int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
     
-    //allFaces_MAT = (int[][]) concat(allFaces_MAT, newFace_MAT);
+    //allFaces_MTLV = (int[][]) concat(allFaces_MTLV, newFace_MTLV);
     
     
     int[][] newFace = {{MM, B, M, A}}; 
@@ -17726,7 +17781,7 @@ void SOLARCHVISION_export_objects_script () {
 }
     
   
-void SOLARCHVISION_import_objects (String FileName, int m, int tes, int spv, float cx, float cy, float cz, float sx, float sy, float sz) {
+void SOLARCHVISION_import_objects (String FileName, int m, int tes, int lyr, int vsb, int spv, float cx, float cy, float cz, float sx, float sy, float sz) {
   
   if (m == -1) defaultMaterial = 0;
   else defaultMaterial = m;
@@ -18121,9 +18176,11 @@ void SOLARCHVISION_remove_3Dobjects () {
   allFaces[0][1] = 0;
   allFaces[0][2] = 0;
   
-  allFaces_MAT = new int [1][2];
-  allFaces_MAT[0][0] = 0;
-  allFaces_MAT[0][1] = 0;
+  allFaces_MTLV = new int [1][4];
+  allFaces_MTLV[0][0] = 0;
+  allFaces_MTLV[0][1] = 0;
+  allFaces_MTLV[0][2] = 0;
+  allFaces_MTLV[0][3] = 0;
 
   allPolymesh_SolarPivotXYZ = new float [1][3];
   allPolymesh_SolarPivotXYZ[0][0] = 0;
@@ -18175,7 +18232,7 @@ void SOLARCHVISION_add_urban () {
       //float h = (HeightAboveGround - LocationElevation);
       float h = 0; //-20; // ?????????????????????????????????????????
   
-      SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Import/Stations/" + DEFINED_STATIONS[STATION_NUMBER][0] + ".obj", -1,0,0, 0,0,h, 1,1,1);
+      SOLARCHVISION_import_objects("C:/SOLARCHVISION_2015/Import/Stations/" + DEFINED_STATIONS[STATION_NUMBER][0] + ".obj", -1,0,0,1,0, 0,0,h, 1,1,1);
       
       urbanVertices_end = allVertices.length;
       urbanFaces_end = allFaces.length;
@@ -18183,7 +18240,7 @@ void SOLARCHVISION_add_urban () {
   }
 }
 
-void SOLARCHVISION_add_3Dbase (int m, int tes, int spv) {
+void SOLARCHVISION_add_3Dbase (int m, int tes, int lyr, int vsb, int spv) {
   
   if (Load_LAND_MESH != 0) {
   
@@ -18192,7 +18249,7 @@ void SOLARCHVISION_add_3Dbase (int m, int tes, int spv) {
     for (int i = 0; i < Skip_LAND_MESH_Center; i += 1) {  
       for (int j = 0; j < LAND_n_J - 1; j += 1) {
         // Material -2 for colored elevations
-        SOLARCHVISION_add_Mesh4(m, tes, spv, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2] , LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i+1][j][2] , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2] , LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1], LAND_MESH[i][j+1][2] );
+        SOLARCHVISION_add_Mesh4(m, tes, lyr, vsb, spv, LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i][j][2] , LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i+1][j][2] , LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j+1][2] , LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1], LAND_MESH[i][j+1][2]);
       }
     }  
   }
@@ -18214,31 +18271,31 @@ void SOLARCHVISION_add_DefaultModel (int n) {
   
   //if (n != 0) {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    SOLARCHVISION_add_Mesh2(8,0,0, -100, -100, 0, 100, 100, 0);
+    SOLARCHVISION_add_Mesh2(8,0,0,1,0, -100, -100, 0, 100, 100, 0);
   //}
   
   if (n == 1) {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    SOLARCHVISION_add_House_Core(0,0,0, 0, 0, 0, 6, 6, 6, 6, 90);
+    SOLARCHVISION_add_House_Core(0,0,0,1,0, 0, 0, 0, 6, 6, 6, 6, 90);
   }
   
   if (n == 2) {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    SOLARCHVISION_add_House_Core(0,0,0, 0, 0, 0, 6, 6, 6, 6, 0);
+    SOLARCHVISION_add_House_Core(0,0,0,1,0, 0, 0, 0, 6, 6, 6, 6, 0);
   }  
   
   if (n == 3) {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    SOLARCHVISION_add_PolygonHyper(0,0,0, 0, 0, 5,  10, 10, 4, 0);
+    SOLARCHVISION_add_PolygonHyper(0,0,0,1,0, 0, 0, 5,  10, 10, 4, 0);
     
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    SOLARCHVISION_add_House_Core(7,0,0, 25, 25, 0, 6, 6, 6, 6, 0);    
+    SOLARCHVISION_add_House_Core(7,0,0,1,0, 25, 25, 0, 6, 6, 6, 6, 0);    
   }   
 
   if (n == 4) {
     for (int i = 0; i < int(10 + random(10)); i++) {
       addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-      SOLARCHVISION_add_House_Core(7,0,0, random(-80, 80), random(-80, 80), 0, random(5, 10), random(5, 10), random(5, 10), random(2.5, 7.5), random(360));
+      SOLARCHVISION_add_House_Core(7,0,0,1,0, random(-80, 80), random(-80, 80), 0, random(5, 10), random(5, 10), random(5, 10), random(2.5, 7.5), random(360));
     }
   }    
 
@@ -18246,61 +18303,61 @@ void SOLARCHVISION_add_DefaultModel (int n) {
   if (n == 5) {
     //SOLARCHVISION Complex:
 
-    //SOLARCHVISION_add_Box_Corners(-1,0,0, 0, 0, 0, 1, 3, 3);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 0, 0, 0, 1, 3, 1);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 0, 0, 1, 1, 1, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 0, 2, 1, 1, 3, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 0, 0, 2, 1, 3, 3);
+    //SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 0, 0, 1, 3, 3);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 0, 0, 1, 3, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 0, 1, 1, 1, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 2, 1, 1, 3, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 0, 2, 1, 3, 3);
     
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 2, 0, 0, 6, 4, 0.5);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 2, 0, 0, 6, 4, 0.5);
     
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 7, 0, 0, 9, 2, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 7, 0, 0, 9, 2, 2);
     
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 7, 3, 0, 9, 4, 4);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 7, 3, 0, 9, 4, 4);
     
-    //SOLARCHVISION_add_Box_Corners(-1,0,0, 10, 0, 0, 13, 4, 1);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 10, 0, 0, 13, 1, 1);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 10, 1, 0, 10.5, 3, 1);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 12.5, 1, 0, 13, 3, 1);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 10, 3, 0, 13, 4, 1);
+    //SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 10, 0, 0, 13, 4, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 10, 0, 0, 13, 1, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 10, 1, 0, 10.5, 3, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 12.5, 1, 0, 13, 3, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 10, 3, 0, 13, 4, 1);
     
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 0, 4, 0, 1, 8, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 4, 0, 1, 8, 2);
     
-    //SOLARCHVISION_add_Box_Corners(-1,0,0, 2, 5, 0, 4, 8, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 2, 5, 0, 4, 5.5, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 2, 5.5, 0, 2.5, 7.5, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 3.5, 5.5, 0, 4, 7.5, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 2, 7.5, 0, 4, 8, 2);
+    //SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 2, 5, 0, 4, 8, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 2, 5, 0, 4, 5.5, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 2, 5.5, 0, 2.5, 7.5, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 3.5, 5.5, 0, 4, 7.5, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 2, 7.5, 0, 4, 8, 2);
     
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 5, 5, 0, 8, 8, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 5, 5, 0, 8, 8, 1);
     
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 9, 5, 0, 11, 9, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 9, 5, 0, 11, 9, 1);
     
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 12, 5, 0, 13, 7, 4);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 12, 5, 0, 13, 7, 4);
     
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 12, 8, 0, 13, 9, 8);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 12, 8, 0, 13, 9, 8);
     
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 0, 9, 0, 4, 11, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 9, 0, 4, 11, 1);
     
-    //SOLARCHVISION_add_Box_Corners(-1,0,0, 5, 9, 0, 8, 11, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 5, 9, 0, 5.5, 11, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 5.5, 9, 0, 7.5, 9.5, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 5.5, 10.5, 0, 7.5, 11, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 7.5, 9, 0, 8, 11, 2);
+    //SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 5, 9, 0, 8, 11, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 5, 9, 0, 5.5, 11, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 5.5, 9, 0, 7.5, 9.5, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 5.5, 10.5, 0, 7.5, 11, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 7.5, 9, 0, 8, 11, 2);
     
-    //SOLARCHVISION_add_Box_Corners(-1,0,0, 0, 12, 0, 3, 13, 3);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 0, 12, 0, 3, 13, 1);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 0, 12, 1, 1, 13, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 2, 12, 1, 3, 13, 2);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 0, 12, 2, 3, 13, 3);
+    //SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 12, 0, 3, 13, 3);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 12, 0, 3, 13, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 12, 1, 1, 13, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 2, 12, 1, 3, 13, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 0, 12, 2, 3, 13, 3);
     
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 4, 12, 0, 8, 13, 2);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 4, 12, 0, 8, 13, 2);
     
-    //SOLARCHVISION_add_Box_Corners(-1,0,0, 9, 10, 0, 13, 13, 1);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 9, 10, 0, 10, 13, 1);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 10, 10, 0, 12, 10.5, 1);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 10, 12.5, 0, 12, 13, 1);
-    SOLARCHVISION_add_Box_Corners(-1,0,0, 12, 10, 0, 13, 13, 1);
+    //SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 9, 10, 0, 13, 13, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 9, 10, 0, 10, 13, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 10, 10, 0, 12, 10.5, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 10, 12.5, 0, 12, 13, 1);
+    SOLARCHVISION_add_Box_Corners(-1,0,0,1,0, 12, 10, 0, 13, 13, 1);
     
     float model_scale = 12; // to make grid scale equal to 12m. <<<<
 
@@ -18323,7 +18380,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float y = 0;
       float z = 0;
       float r = 10;
-      SOLARCHVISION_add_FractalSphere(1,0,0, x,y,z, r, 5, 0, 90);
+      SOLARCHVISION_add_FractalSphere(1,0,0,1,0, x,y,z, r, 5, 0, 90);
       SOLARCHVISION_addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
     }
   
@@ -18333,7 +18390,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float y = 0;
       float z = 0;
       float r = 8;
-      SOLARCHVISION_add_FractalSphere(2,0,0, x,y,z, r, 4, 0, 90);
+      SOLARCHVISION_add_FractalSphere(2,0,0,1,0, x,y,z, r, 4, 0, 90);
       SOLARCHVISION_addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
     }
   
@@ -18343,7 +18400,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float y = 20;
       float z = 0;
       float r = 8;
-      SOLARCHVISION_add_FractalSphere(3,0,0, x,y,z, r, 3, 0, 90);
+      SOLARCHVISION_add_FractalSphere(3,0,0,1,0, x,y,z, r, 3, 0, 90);
       SOLARCHVISION_addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
     }
   }
@@ -18357,7 +18414,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
 
 void SOLARCHVISION_add_3Dobjects () {
   
-  SOLARCHVISION_add_3Dbase(-2, 0, 0);
+  SOLARCHVISION_add_3Dbase(-2, 0, 0, 1, 0);
   
   SOLARCHVISION_add_DefaultModel(Load_Default_Models);
   
@@ -18365,11 +18422,13 @@ void SOLARCHVISION_add_3Dobjects () {
 
 
 
-void SOLARCHVISION_add_ParametricSurface (int m, int tes, int spv, float cx, float cy, float cz, float rx, float ry, float rz, int n, float rot) {
+void SOLARCHVISION_add_ParametricSurface (int m, int tes, int lyr, int vsb, int spv, float cx, float cy, float cz, float rx, float ry, float rz, int n, float rot) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
-  defaultSolarPivotType = spv;  
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultSolarPivotType = spv; 
   
   if (m == -1) defaultMaterial = 0;
   else defaultMaterial = m;  
@@ -18489,7 +18548,7 @@ void SOLARCHVISION_add_ParametricSurface (int m, int tes, int spv, float cx, flo
 
 void SOLARCHVISION_build_SkySphere (int Tessellation) {
   
-  SOLARCHVISION_add_FractalSphere(0,0,0, 0,0,0, 1, Tessellation, 1, 90); // SKY
+  SOLARCHVISION_add_FractalSphere(0,0,0,1,0, 0,0,0, 1, Tessellation, 1, 90); // SKY
   
 }
 
@@ -18536,16 +18595,16 @@ PGraphics ViewFromTheSky (int SKY2D_X_View, int SKY2D_Y_View, float SKY2D_ZOOM_c
     
     color c = color(0, 0, 0);
 
-    int mt = allFaces_MAT[f][0];
+    int mt = allFaces_MTLV[f][0];
     c = color(Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3], Materials_Color[mt][0]);
     
     SKY2D_Diagrams.stroke(c);
     SKY2D_Diagrams.fill(c);
 
-    int Tessellation = allFaces_MAT[f][1];
+    int Tessellation = allFaces_MTLV[f][1];
     
     int TotalSubNo = 1;  
-    if (allFaces_MAT[f][0] == 0) {
+    if (allFaces_MTLV[f][0] == 0) {
       Tessellation += MODEL3D_TESSELLATION;
     }
     if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -18634,7 +18693,7 @@ void SOLARCHVISION_draw_SKY3D () {
         int Tessellation = 0;
         
         int TotalSubNo = 1;  
-        //if (skyFaces_MAT[f] == 0) {
+        //if (skyFaces_MTLV[f] == 0) {
           Tessellation = SKY3D_TESSELLATION;
           if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
         //}
@@ -19765,7 +19824,7 @@ void SOLARCHVISION_draw_3Dobjects () {
         
           color c = color(0, 0, 0);
       
-          int mt = allFaces_MAT[f][0];
+          int mt = allFaces_MTLV[f][0];
           c = color(Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3], Materials_Color[mt][0]);
           
           if (Display_MODEL3D_EDGES == 0) {
@@ -19802,10 +19861,10 @@ void SOLARCHVISION_draw_3Dobjects () {
             
           }
           else if (WIN3D_FACES_SHADE == Shade_Surface_White) {          
-            int Tessellation = allFaces_MAT[f][1];
+            int Tessellation = allFaces_MTLV[f][1];
             
             int TotalSubNo = 1;  
-            if (allFaces_MAT[f][0] == 0) {
+            if (allFaces_MTLV[f][0] == 0) {
               Tessellation += MODEL3D_TESSELLATION;
             }
             if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -19832,10 +19891,10 @@ void SOLARCHVISION_draw_3Dobjects () {
             }       
           }
           else if (WIN3D_FACES_SHADE == Shade_Surface_Materials) {
-            int Tessellation = allFaces_MAT[f][1];
+            int Tessellation = allFaces_MTLV[f][1];
             
             int TotalSubNo = 1;  
-            if (allFaces_MAT[f][0] == 0) {
+            if (allFaces_MTLV[f][0] == 0) {
               Tessellation += MODEL3D_TESSELLATION;
             }
             if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -19868,10 +19927,10 @@ void SOLARCHVISION_draw_3Dobjects () {
             int PAL_DIR = SPATIAL_Pallet_DIR;
             float _Multiplier = SPATIAL_Pallet_MLT;
             
-            int Tessellation = allFaces_MAT[f][1];
+            int Tessellation = allFaces_MTLV[f][1];
             
             int TotalSubNo = 1;  
-            if (allFaces_MAT[f][0] == 0) {
+            if (allFaces_MTLV[f][0] == 0) {
               Tessellation += MODEL3D_TESSELLATION;
             }
             if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -19918,10 +19977,10 @@ void SOLARCHVISION_draw_3Dobjects () {
             int PAL_DIR = ELEVATION_Pallet_DIR; 
             float _Multiplier = ELEVATION_Pallet_MLT;   
             
-            int Tessellation = allFaces_MAT[f][1];
+            int Tessellation = allFaces_MTLV[f][1];
             
             int TotalSubNo = 1;  
-            if (allFaces_MAT[f][0] == 0) {
+            if (allFaces_MTLV[f][0] == 0) {
               Tessellation += MODEL3D_TESSELLATION;
             }
             if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -19979,10 +20038,10 @@ void SOLARCHVISION_draw_3Dobjects () {
             if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
             if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;            
       
-            int Tessellation = allFaces_MAT[f][1];
+            int Tessellation = allFaces_MTLV[f][1];
             
             int TotalSubNo = 1;  
-            if (allFaces_MAT[f][0] == 0) {
+            if (allFaces_MTLV[f][0] == 0) {
               Tessellation += MODEL3D_TESSELLATION;
             }
             if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -20079,10 +20138,10 @@ void SOLARCHVISION_draw_3Dobjects () {
             }
             else {
     
-              int Tessellation = allFaces_MAT[f][1];
+              int Tessellation = allFaces_MTLV[f][1];
               
               int TotalSubNo = 1;  
-              if (allFaces_MAT[f][0] == 0) {
+              if (allFaces_MTLV[f][0] == 0) {
                 Tessellation += MODEL3D_TESSELLATION;
               }
               if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -20194,10 +20253,10 @@ void SOLARCHVISION_draw_3Dobjects () {
           }
           else {    
           
-            int Tessellation = allFaces_MAT[f][1];
+            int Tessellation = allFaces_MTLV[f][1];
             
             int TotalSubNo = 1;  
-            if (allFaces_MAT[f][0] == 0) {
+            if (allFaces_MTLV[f][0] == 0) {
               Tessellation += MODEL3D_TESSELLATION;
             }
             if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -22228,15 +22287,15 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 10.1;
     float z = 0;
     float rot = 0;
-    SOLARCHVISION_add_Box_Core(8,0,0, x,y,z, dx, dy, dz, rot); // facades
+    SOLARCHVISION_add_Box_Core(8,0,0,1,0, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
 
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    SOLARCHVISION_add_Box_Core(5,0,0, x,y,z, dx/3, dy/3, dz, rot); // building core
+    SOLARCHVISION_add_Box_Core(5,0,0,1,0, x,y,z, dx/3, dy/3, dz, rot); // building core
     
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     for (float i = 0; i < 45; i += 3) {
-      SOLARCHVISION_add_Mesh2(2,0,0, x-dx,y-dy,i, x+dx,y+dy,i); // floors
+      SOLARCHVISION_add_Mesh2(2,0,0,1,0, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
       SOLARCHVISION_add_2Dobjects_plane(0, 10, x,y,i, dx, dy); // people  
     }   
@@ -22251,15 +22310,15 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 10.1;
     float z = 0;
     float rot = 0;
-    SOLARCHVISION_add_Box_Core(8,0,0, x,y,z, dx, dy, dz, rot); // facades
+    SOLARCHVISION_add_Box_Core(8,0,0,1,0, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
 
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    SOLARCHVISION_add_Box_Core(5,0,0, x,y,z, dx/3, dy/3, dz, rot); // building core
+    SOLARCHVISION_add_Box_Core(5,0,0,1,0, x,y,z, dx/3, dy/3, dz, rot); // building core
     
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     for (float i = 0; i < 45; i += 3) {
-      SOLARCHVISION_add_Mesh2(2,0,0, x-dx,y-dy,i, x+dx,y+dy,i); // floors
+      SOLARCHVISION_add_Mesh2(2,0,0,1,0, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
       SOLARCHVISION_add_2Dobjects_plane(0, 10, x,y,i, dx, dy); // people  
     }   
@@ -22274,15 +22333,15 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 10.1;
     float z = 0;
     float rot = 0;
-    SOLARCHVISION_add_Box_Core(8,0,0, x,y,z, dx, dy, dz, rot); // facades
+    SOLARCHVISION_add_Box_Core(8,0,0,1,0, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
 
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    SOLARCHVISION_add_Box_Core(5,0,0, x,y,z, dx/3, dy/3, dz, rot); // building core
+    SOLARCHVISION_add_Box_Core(5,0,0,1,0, x,y,z, dx/3, dy/3, dz, rot); // building core
     
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     for (float i = 0; i < 45; i += 3) {
-      SOLARCHVISION_add_Mesh2(2,0,0, x-dx,y-dy,i, x+dx,y+dy,i); // floors
+      SOLARCHVISION_add_Mesh2(2,0,0,1,0, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
       SOLARCHVISION_add_2Dobjects_plane(0, 10, x,y,i, dx, dy); // people  
     }    
@@ -22293,7 +22352,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float d = 1.0;
     for (float i = 0; i < 45; i += d) {
-      SOLARCHVISION_add_H_shade(1,0,0, 30,0,i, 20,d, 90-4*i,0); // south
+      SOLARCHVISION_add_H_shade(1,0,0,1,0, 30,0,i, 20,d, 90-4*i,0); // south
     }
   }
   
@@ -22301,7 +22360,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float d = 1.0;
     for (float i = -10; i <= 10; i += d) {
-      SOLARCHVISION_add_V_shade(6,0,0, i-30,0,22.5, 45,d, 4.5*i,0); // south
+      SOLARCHVISION_add_V_shade(6,0,0,1,0, i-30,0,22.5, 45,d, 4.5*i,0); // south
     }    
   }
   
@@ -22316,7 +22375,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
       float z = i;
       int spv = 1; // X-axis
       
-      SOLARCHVISION_add_H_shade(1,0,spv, x,y,z, 20,d, 0,0); // south
+      SOLARCHVISION_add_H_shade(1,0,spv,1,0, x,y,z, 20,d, 0,0); // south
       
       int n = allPolymesh_SolarPivotXYZ.length - 1;
       
@@ -22333,7 +22392,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
       float z = 22.5;
       int spv = 3; // Z-axis
       
-      SOLARCHVISION_add_V_shade(3,0,spv, x,y,z, 45,d, 0,0); // south
+      SOLARCHVISION_add_V_shade(3,0,spv,1,0, x,y,z, 45,d, 0,0); // south
       
       int n = allPolymesh_SolarPivotXYZ.length - 1;
       
@@ -22352,17 +22411,17 @@ void SOLARCHVISION_add_ParametricGeometries () {
     
     for (float i = 0; i < 45; i += d) {
        
-      SOLARCHVISION_add_H_shade(1,0,0, 0,0,i, 20,d, 90-4*i,0); // south
-      //SOLARCHVISION_add_H_shade(2,0,0, 10,10,i, 20,d, 90-4*i,90); // east
-      //SOLARCHVISION_add_H_shade(3,0,0, -10,10,i, 20,d, 90-4*i,270); // west
+      SOLARCHVISION_add_H_shade(1,0,0,1,0, 0,0,i, 20,d, 90-4*i,0); // south
+      //SOLARCHVISION_add_H_shade(2,0,0,1,0, 10,10,i, 20,d, 90-4*i,90); // east
+      //SOLARCHVISION_add_H_shade(3,0,0,1,0, -10,10,i, 20,d, 90-4*i,270); // west
 
     }
     
     for (float i = -10; i <= 10; i += d) {
        
-      //SOLARCHVISION_add_V_shade(4,0,0, i,20,22.5, 45,d, 4.5*i,180); // north
+      //SOLARCHVISION_add_V_shade(4,0,0,1,0, i,20,22.5, 45,d, 4.5*i,180); // north
       
-      SOLARCHVISION_add_V_shade(6,0,0, i,0,22.5, 45,d, 4.5*i,0); // south
+      SOLARCHVISION_add_V_shade(6,0,0,1,0, i,0,22.5, 45,d, 4.5*i,0); // south
     }    
   }
   */
@@ -22378,7 +22437,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
   //SOLARCHVISION_add_2Dobjects_plane(1, 25, 0,-30,0, 50,20); // trees front
 
   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-  SOLARCHVISION_add_PolygonHyper(0,0,0, 30,-30,4.5, 9, 9, 6, 0);  // hyper
+  SOLARCHVISION_add_PolygonHyper(0,0,0,1,0, 30,-30,4.5, 9, 9, 6, 0);  // hyper
   
 
   {  
@@ -22390,7 +22449,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = -30;
     float z = 0;
     float rot = 0;
-    SOLARCHVISION_add_House_Core(7,0,0, x,y,z, dx,dy,dz, dz, rot); // house 
+    SOLARCHVISION_add_House_Core(7,0,0,1,0, x,y,z, dx,dy,dz, dz, rot); // house 
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
    } 
 
@@ -22401,8 +22460,8 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float x = 0;
     float y = -30;
     float z = r;
-    SOLARCHVISION_add_FractalSphere(1,0,0, x,y,z, r, 2, 0, 0);
-    //SOLARCHVISION_add_FractalSphere(2,0,0, x,y,z, r, 4, 0, 0);
+    SOLARCHVISION_add_FractalSphere(1,0,0,1,0, x,y,z, r, 2, 0, 0);
+    //SOLARCHVISION_add_FractalSphere(2,0,0,1,0, x,y,z, r, 4, 0, 0);
     SOLARCHVISION_addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
   }    
   
@@ -22416,7 +22475,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float y = 0;
     float z = -dz;    
     float rot = 0;
-    SOLARCHVISION_add_Box_Core(7,0,0, x,y,z, dx, dy, dz, rot);
+    SOLARCHVISION_add_Box_Core(7,0,0,1,0, x,y,z, dx, dy, dz, rot);
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
   }  
 */
@@ -23494,10 +23553,12 @@ int[][] TempObjectFaces = {{0}};
 int POINTER_TempObjectVertices = 1;
 int POINTER_TempObjectFaces = 1;
 
-void SOLARCHVISION_add_FractalSphere (int m, int tes, int spv, float cx, float cy, float cz, float r, int Tessellation, int isSky, float t) {
+void SOLARCHVISION_add_FractalSphere (int m, int tes, int lyr, int vsb, int spv, float cx, float cy, float cz, float r, int Tessellation, int isSky, float t) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
   defaultSolarPivotType = spv;
   
   int[] vT = new int [6];
@@ -23587,7 +23648,7 @@ void SOLARCHVISION_add_FractalSphere (int m, int tes, int spv, float cx, float c
   println("Faces:", POINTER_TempObjectFaces);
 
   if (isSky == 0) {
-    SOLARCHVISION_addTempObjectToScene(m,tes,spv,cx,cy,cz,r,r,r,t);
+    SOLARCHVISION_addTempObjectToScene(m,tes,lyr,vsb,spv,cx,cy,cz,r,r,r,t);
   }
   else if (isSky == 1) {
     
@@ -23633,13 +23694,15 @@ void SOLARCHVISION_add_FractalSphere (int m, int tes, int spv, float cx, float c
 
 
 
-void SOLARCHVISION_add_SuperSphere (int m, int tes, int spv, float cx, float cy, float cz, float px, float py, float pz, float sx, float sy, float sz, int Tessellation, float t) {
+void SOLARCHVISION_add_SuperSphere (int m, int tes, int lyr, int vsb, int spv, float cx, float cy, float cz, float px, float py, float pz, float sx, float sy, float sz, int Tessellation, float t) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
-  defaultSolarPivotType = spv;  
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultSolarPivotType = spv; 
   
-  SOLARCHVISION_add_FractalSphere(m, tes, spv, cx, cy, cz, 1, Tessellation, -1, 90); // passing with isSky:-1
+  SOLARCHVISION_add_FractalSphere(m, tes, lyr, vsb, spv, cx, cy, cz, 1, Tessellation, -1, 90); // passing with isSky:-1
 
   float value, posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotZ; 
   value = 1;
@@ -23672,15 +23735,17 @@ void SOLARCHVISION_add_SuperSphere (int m, int tes, int spv, float cx, float cy,
     
   }
   
-  SOLARCHVISION_addTempObjectToScene(m,tes,spv,cx,cy,cz,sx,sy,sz,t);
+  SOLARCHVISION_addTempObjectToScene(m,tes,lyr,vsb,spv,cx,cy,cz,sx,sy,sz,t);
 }  
 
 
-void SOLARCHVISION_add_SuperCylinder (int m, int tes, int spv, float cx, float cy, float cz, float sx, float sy, float sz, int n, float t) {
+void SOLARCHVISION_add_SuperCylinder (int m, int tes, int lyr, int vsb, int spv, float cx, float cy, float cz, float sx, float sy, float sz, int n, float t) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
-  defaultSolarPivotType = spv;  
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultSolarPivotType = spv; 
   
   int[] vT = new int [n];
   int[] vB = new int [n];
@@ -23740,7 +23805,7 @@ void SOLARCHVISION_add_SuperCylinder (int m, int tes, int spv, float cx, float c
     
   }
  
-  SOLARCHVISION_addTempObjectToScene(m,tes,spv,cx,cy,cz,sx,sy,sz,t);  
+  SOLARCHVISION_addTempObjectToScene(m,tes,lyr,vsb,spv,cx,cy,cz,sx,sy,sz,t);  
 }
 
 
@@ -23854,11 +23919,13 @@ int SOLARCHVISION_addToTempObjectFaces (int[] f, int check_duplicates) {
   
 }
 
-void SOLARCHVISION_addTempObjectToScene (int m, int tes, int spv, float cx, float cy, float cz, float sx, float sy, float sz, float t) {
+void SOLARCHVISION_addTempObjectToScene (int m, int tes, int lyr, int vsb, int spv, float cx, float cy, float cz, float sx, float sy, float sz, float t) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
-  defaultSolarPivotType = spv;  
+  defaultLayer = lyr;
+  defaultVisibility = vsb;
+  defaultSolarPivotType = spv;
   
   if (m == -1) defaultMaterial = 0;
   else defaultMaterial = m;
@@ -25932,8 +25999,8 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
     
     int NUM_allPolymesh_Faces_Before = allPolymesh_Faces.length;
     
-    //SOLARCHVISION_import_objects(Filename, -1,0,0, 0,0,0, 1,1,1); // different objects: different materials
-    SOLARCHVISION_import_objects(Filename, Create_Default_Material, Create_Default_Tessellation, Create_Default_SolarPivotType, 0,0,0, 1,1,1); // apply default material
+    //SOLARCHVISION_import_objects(Filename, -1,0,0,1,0, 0,0,0, 1,1,1); // different objects: different materials
+    SOLARCHVISION_import_objects(Filename, Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, 0,0,0, 1,1,1); // apply default material
     
     int NUM_allPolymesh_Faces_After = allPolymesh_Faces.length;
     
@@ -27845,12 +27912,16 @@ void mouseClicked () {
                     if ((View_Select_Create_Modify == 4) || (View_Select_Create_Modify == 5)) {
                       
                       if (Modify_Object_Parameters == 1) { // Pick 
-                        if (View_Select_Create_Modify == 4) Create_Default_Material = allFaces_MAT[f][0];
-                        if (View_Select_Create_Modify == 5) Create_Default_Tessellation = allFaces_MAT[f][1];
+                        if (View_Select_Create_Modify == 4) Create_Default_Material = allFaces_MTLV[f][0];
+                        if (View_Select_Create_Modify == 5) Create_Default_Tessellation = allFaces_MTLV[f][1];
+                        if (View_Select_Create_Modify == 6) Create_Default_Layer = allFaces_MTLV[f][2];
+                        if (View_Select_Create_Modify == 7) Create_Default_Visibility = allFaces_MTLV[f][3];
                       } 
                       if (Modify_Object_Parameters == 2) { // Assign(sub) 
-                        if (View_Select_Create_Modify == 4) allFaces_MAT[f][0] = Create_Default_Material;
-                        if (View_Select_Create_Modify == 5) allFaces_MAT[f][1] = Create_Default_Tessellation;
+                        if (View_Select_Create_Modify == 4) allFaces_MTLV[f][0] = Create_Default_Material;
+                        if (View_Select_Create_Modify == 5) allFaces_MTLV[f][1] = Create_Default_Tessellation;
+                        if (View_Select_Create_Modify == 6) allFaces_MTLV[f][2] = Create_Default_Layer;
+                        if (View_Select_Create_Modify == 7) allFaces_MTLV[f][3] = Create_Default_Visibility; 
                       }
                       if (Modify_Object_Parameters == 3) { // Assign(all) 
                         int OBJ_NUM = 0;
@@ -27862,8 +27933,10 @@ void mouseClicked () {
                         }
                         if (OBJ_NUM != 0) {
                           for (int q = allPolymesh_Faces[OBJ_NUM][0]; q <= allPolymesh_Faces[OBJ_NUM][1]; q++) {                    
-                            if (View_Select_Create_Modify == 4) allFaces_MAT[q][0] = Create_Default_Material;
-                            if (View_Select_Create_Modify == 5) allFaces_MAT[q][1] = Create_Default_Tessellation;
+                            if (View_Select_Create_Modify == 4) allFaces_MTLV[q][0] = Create_Default_Material;
+                            if (View_Select_Create_Modify == 5) allFaces_MTLV[q][1] = Create_Default_Tessellation;
+                            if (View_Select_Create_Modify == 6) allFaces_MTLV[q][2] = Create_Default_Layer;
+                            if (View_Select_Create_Modify == 7) allFaces_MTLV[q][3] = Create_Default_Visibility;
                           }
                         }
                       }    
@@ -28456,31 +28529,31 @@ void mouseClicked () {
                   if ((px == 8) && (py == 8) && (pz == 2)) {
                     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
                     
-                    SOLARCHVISION_add_ParametricSurface(Create_Default_Material, Create_Default_Tessellation, Create_Default_SolarPivotType, x, y, z, rx, ry, rz, 2, rot);
+                    SOLARCHVISION_add_ParametricSurface(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x, y, z, rx, ry, rz, 2, rot);
                   }
                   
                   else if ((px == 2) && (py == 2) && (pz == 8)) {
                     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
                     
-                    SOLARCHVISION_add_SuperCylinder(Create_Default_Material, Create_Default_Tessellation, Create_Default_SolarPivotType, x, y, z, rx,ry,rz, Create_Cylinder_Degree, rot);
+                    SOLARCHVISION_add_SuperCylinder(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x, y, z, rx,ry,rz, Create_Cylinder_Degree, rot);
                   }                
       
                   else if ((px == 8) && (py == 8) && (pz == 8)) {
                     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
                     
-                    SOLARCHVISION_add_Box_Core(Create_Default_Material, Create_Default_Tessellation, Create_Default_SolarPivotType, x,y,z, rx,ry,rz, rot);
+                    SOLARCHVISION_add_Box_Core(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x,y,z, rx,ry,rz, rot);
                   }
                   
                   else if ((px == 1) && (py == 1) && (pz == 1)) {
                     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
                     
-                    SOLARCHVISION_add_Octahedron(Create_Default_Material, Create_Default_Tessellation, Create_Default_SolarPivotType, x,y,z, rx,ry,rz, rot);
+                    SOLARCHVISION_add_Octahedron(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x,y,z, rx,ry,rz, rot);
                   }
                   
                   else {
                     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
                     
-                    SOLARCHVISION_add_SuperSphere(Create_Default_Material, Create_Default_Tessellation, Create_Default_SolarPivotType, x,y,z, pz,py,pz, rx,ry,rz, Create_Sphere_Degree, rot);
+                    SOLARCHVISION_add_SuperSphere(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x,y,z, pz,py,pz, rx,ry,rz, Create_Sphere_Degree, rot);
                   }
                   
                   
@@ -28501,40 +28574,40 @@ void mouseClicked () {
                 if (Create_Mesh_Tri == 1) {
                   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
                   
-                  SOLARCHVISION_add_Mesh3(Create_Default_Material, Create_Default_Tessellation, Create_Default_SolarPivotType, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
-                  SOLARCHVISION_add_Mesh3(Create_Default_Material, Create_Default_Tessellation, Create_Default_SolarPivotType, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
-                  SOLARCHVISION_add_Mesh3(Create_Default_Material, Create_Default_Tessellation, Create_Default_SolarPivotType, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
-                  SOLARCHVISION_add_Mesh3(Create_Default_Material, Create_Default_Tessellation, Create_Default_SolarPivotType, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
+                  SOLARCHVISION_add_Mesh3(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
+                  SOLARCHVISION_add_Mesh3(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
+                  SOLARCHVISION_add_Mesh3(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
+                  SOLARCHVISION_add_Mesh3(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x-rx, y+ry, z-rz, x-rx, y-ry, z-rz, x, y, z+rz);
                 }
                 
                 if (Create_Mesh_Quad == 1) {
                   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
                   
-                  SOLARCHVISION_add_Mesh4(Create_Default_Material, Create_Default_Tessellation, Create_Default_SolarPivotType, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
+                  SOLARCHVISION_add_Mesh4(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
                 }
                 
                 if (Create_Mesh_Poly == 1) {
                   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
                   
-                  SOLARCHVISION_add_PolygonHyper(Create_Default_Material, Create_Default_Tessellation, Create_Default_SolarPivotType, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
+                  SOLARCHVISION_add_PolygonHyper(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
                 }
     
                 if (Create_Mesh_Extrude == 1) {       
                   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
                   
-                  SOLARCHVISION_add_PolygonExtrude(Create_Default_Material, Create_Default_Tessellation, Create_Default_SolarPivotType, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
+                  SOLARCHVISION_add_PolygonExtrude(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
                 }
     
                 if (Create_Mesh_House == 1) {   
                   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
        
-                  SOLARCHVISION_add_House_Core(Create_Default_Material, Create_Default_Tessellation, Create_Default_SolarPivotType, x, y, z, rx, ry, rz, ry, rot);
+                  SOLARCHVISION_add_House_Core(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x, y, z, rx, ry, rz, ry, rot);
                 }
     
                 if (Create_Mesh_Parametric != 0) {
                   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
                   
-                  SOLARCHVISION_add_ParametricSurface(Create_Default_Material, Create_Default_Tessellation, Create_Default_SolarPivotType, x, y, z, rx, ry, rz, Create_Mesh_Parametric, rot);
+                  SOLARCHVISION_add_ParametricSurface(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x, y, z, rx, ry, rz, Create_Mesh_Parametric, rot);
                 }
     
                 if (Create_Fractal_Plant != 0) {
@@ -30333,10 +30406,10 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
             if ((0 < f) && (f < allFaces.length)) { 
         
-              int Tessellation = allFaces_MAT[f][1];
+              int Tessellation = allFaces_MTLV[f][1];
               
               int TotalSubNo = 1;  
-              if (allFaces_MAT[f][0] == 0) {
+              if (allFaces_MTLV[f][0] == 0) {
                 Tessellation += MODEL3D_TESSELLATION;
               }
               if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -30586,10 +30659,10 @@ if (selectedFace_displayEdges != 0) {
         
         if (f != 0) {
 
-          int Tessellation = allFaces_MAT[f][1];
+          int Tessellation = allFaces_MTLV[f][1];
           
           int TotalSubNo = 1;  
-          if (allFaces_MAT[f][0] == 0) {
+          if (allFaces_MTLV[f][0] == 0) {
             Tessellation += MODEL3D_TESSELLATION;
           }
           if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -31094,13 +31167,13 @@ void RenderShadowsOnUrbanPlane() {
             
             for (int f = 1; f < allFaces.length; f++) {
               
-              int  mt = allFaces_MAT[f][0];
+              int  mt = allFaces_MTLV[f][0];
               if (Materials_Color[mt][0] > 127) {
               
-                int Tessellation = allFaces_MAT[f][1];
+                int Tessellation = allFaces_MTLV[f][1];
                 
                 int TotalSubNo = 1;  
-                if (allFaces_MAT[f][0] == 0) {
+                if (allFaces_MTLV[f][0] == 0) {
                   Tessellation += MODEL3D_TESSELLATION;
                 }
                 if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -31545,13 +31618,13 @@ void RenderShadowsOnUrbanPlane() {
           
           for (int f = 1; f < allFaces.length; f++) {
 
-            int  mt = allFaces_MAT[f][0];            
+            int  mt = allFaces_MTLV[f][0];            
             if (Materials_Color[mt][0] > 127) {
             
-              int Tessellation = allFaces_MAT[f][1];
+              int Tessellation = allFaces_MTLV[f][1];
               
               int TotalSubNo = 1;  
-              if (allFaces_MAT[f][0] == 0) {
+              if (allFaces_MTLV[f][0] == 0) {
                 Tessellation += MODEL3D_TESSELLATION;
               }
               if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -32974,20 +33047,36 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         int f = OBJ_NUM;
       
         if (View_Select_Create_Modify == 4) {
-          int n = allFaces_MAT[f][0];
+          int n = allFaces_MTLV[f][0];
           n += p;
           if (n > 8) n = 0;
           if (n < 0) n = 8;
-          allFaces_MAT[f][0] = n;
+          allFaces_MTLV[f][0] = n;
         }
         
         if (View_Select_Create_Modify == 5) {
-          int n = allFaces_MAT[f][1];
+          int n = allFaces_MTLV[f][1];
           n += p;
           if (n > 4) n = 0;
           if (n < 0) n = 4;
-          allFaces_MAT[f][1] = n;              
-        }            
+          allFaces_MTLV[f][1] = n;              
+        }   
+
+        if (View_Select_Create_Modify == 6) {
+          int n = allFaces_MTLV[f][2];
+          n += p;
+          if (n > 16) n = 0;
+          if (n < 0) n = 16;
+          allFaces_MTLV[f][2] = n;              
+        }  
+
+        if (View_Select_Create_Modify == 7) {
+          int n = allFaces_MTLV[f][3];
+          n += p;
+          if (n > 2) n = 0;
+          if (n < 0) n = 2;
+          allFaces_MTLV[f][3] = n;              
+        }          
       }
     } 
     
@@ -33005,20 +33094,36 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           if ((0 < f) && (f < allFaces.length)) {
         
             if (View_Select_Create_Modify == 4) {
-              int n = allFaces_MAT[f][0];
+              int n = allFaces_MTLV[f][0];
               n += p;
               if (n > 8) n = 0;
               if (n < 0) n = 8;
-              allFaces_MAT[f][0] = n;
+              allFaces_MTLV[f][0] = n;
             }
             
             if (View_Select_Create_Modify == 5) {
-              int n = allFaces_MAT[f][1];
+              int n = allFaces_MTLV[f][1];
               n += p;
               if (n > 4) n = 0;
               if (n < 0) n = 4;
-              allFaces_MAT[f][1] = n;              
-            }            
+              allFaces_MTLV[f][1] = n;              
+            }      
+      
+            if (View_Select_Create_Modify == 6) {
+              int n = allFaces_MTLV[f][2];
+              n += p;
+              if (n > 16) n = 0;
+              if (n < 0) n = 16;
+              allFaces_MTLV[f][2] = n;              
+            }  
+
+            if (View_Select_Create_Modify == 7) {
+              int n = allFaces_MTLV[f][3];
+              n += p;
+              if (n > 2) n = 0;
+              if (n < 0) n = 2;
+              allFaces_MTLV[f][3] = n;              
+            }              
           }
         }
       }
@@ -36826,16 +36931,15 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     newChild2.setContent(lineSTR);
   } 
   
-  newChild1 = my_xml.addChild("allFaces_MAT");
-  newChild1.setInt("ni", allFaces_MAT.length);
-  for (int i = 0; i < allFaces_MAT.length; i++) {
-    newChild2 = newChild1.addChild("Face_MAT");
+  newChild1 = my_xml.addChild("allFaces_MTLV");
+  newChild1.setInt("ni", allFaces_MTLV.length);
+  for (int i = 0; i < allFaces_MTLV.length; i++) {
+    newChild2 = newChild1.addChild("Face_MTLV");
     newChild2.setInt("id", i);
     String lineSTR = "";
-    //for (int j = 0; j < allFaces_MAT[i].length; j++) {
-    for (int j = 0; j < 2; j++) { // material, tessellation
-      lineSTR += nf(allFaces_MAT[i][j], 0);
-      if (j < allFaces_MAT[i].length - 1) lineSTR += ",";
+    for (int j = 0; j < allFaces_MTLV[i].length; j++) {
+      lineSTR += nf(allFaces_MTLV[i][j], 0);
+      if (j < allFaces_MTLV[i].length - 1) lineSTR += ",";
     }
     newChild2.setContent(lineSTR);
   }   
@@ -37740,16 +37844,16 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     }   
 
-    children0 = FileAll.getChildren("allFaces_MAT");
+    children0 = FileAll.getChildren("allFaces_MTLV");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      allFaces_MAT = new int [ni][2];
-      XML[] children1 = children0[L].getChildren("Face_MAT"); 
+      allFaces_MTLV = new int [ni][4];
+      XML[] children1 = children0[L].getChildren("Face_MTLV"); 
       for (int i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < parts.length; j++) {
-          allFaces_MAT[i][j] = int(parts[j]); 
+          allFaces_MTLV[i][j] = int(parts[j]); 
         }
       }
     }    
@@ -38032,6 +38136,10 @@ void SOLARCHVISION_load_project (String myFile) {
 
 bug: delete because scrolling selection+ could add duplicate of the same objects to the list!
 solution: I remarked wheel option for pickSelect for now.
+
+
+int defaultLayer = 0;
+int defaultVisibility = 1;
 
 */
 
