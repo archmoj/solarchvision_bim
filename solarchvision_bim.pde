@@ -33535,13 +33535,19 @@ void dessin_FaceFirstVertex (int _type, float x, float y, float r) {
   noFill();
 
   beginShape();
-  vertex(0, 0.5 * d);
-  vertex(cos_ang(30) * d, 0);
-  vertex(0, -0.5 * d);
-  vertex(-cos_ang(30) * d, 0);
+  vertex(0, d);
+  vertex(cos_ang(30) * d, 0.5 * d);
+  vertex(0, 0);
+  vertex(-cos_ang(30) * d, 0.5 * d);
   endShape(CLOSE);
   
-  ellipse(0, -0.5 * d, 0.25 * d, 0.25 * d);
+  stroke(255,0,0);
+  ellipse(0, 0, 0.25 * d, 0.25 * d);
+  
+  fill(255);
+  textSize(d);
+  textAlign(CENTER, BOTTOM);
+  text("1st", 0, 0);
 
   strokeWeight(0);
 
