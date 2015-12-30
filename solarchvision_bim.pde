@@ -224,7 +224,7 @@ int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:Face, 5:Vertex, 6:Solid
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
-int View_Select_Create_Modify = 4; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:DegreeMax 7:DegreeDif 8:DegreeMin 9:TrunckSize 10:LeafSize 11:AllFractalProps 12:SolarPivot 13:FaceNormal
+int View_Select_Create_Modify = 4; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:DegreeMax 7:DegreeDif 8:DegreeMin 9:TrunckSize 10:LeafSize 11:AllFractalProps 12:SolarPivot 13:FaceNormal 14:FaceFirstVertex
 int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. fractal trees
 
@@ -26890,6 +26890,12 @@ void mouseClicked () {
               BAR_b_Update = 1;  
             }   
 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Get FaceFirstVertex")) {
+              set_to_Modify_FaceFirstVertex(1);
+              SOLARCHVISION_highlight_in_BAR_b("F1stV");
+              BAR_b_Update = 1;  
+            }     
+
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change DegreeMax")) {
               set_to_Modify_DegreeMax(0);
               SOLARCHVISION_highlight_in_BAR_b("dgMax0");
@@ -27886,6 +27892,13 @@ void mouseClicked () {
                     if (View_Select_Create_Modify == 13) { //FaceNormal
                     
                       if (Work_with_2D_or_3D == 4) {
+                        
+                        selectedFace_numbers = new int [2];
+                        selectedFace_numbers[0] = 0;
+                        selectedFace_numbers[1] = f;       
+                        
+                        selectedFace_displayVertexCount = 1;                 
+                        
                         int n = allFaces[f].length;
                         
                         if (n > 2) {
@@ -27978,6 +27991,49 @@ void mouseClicked () {
                         }               
                       }
                     }   
+                    
+                    
+                    if (View_Select_Create_Modify == 14) { //FaceFirstVertex
+                    
+                      if (Work_with_2D_or_3D == 4) {
+                        
+                        selectedFace_numbers = new int [2];
+                        selectedFace_numbers[0] = 0;
+                        selectedFace_numbers[1] = f;
+                        
+                        selectedFace_displayVertexCount = 1;
+
+                        int n = allFaces[f].length;
+                        
+                        if (n > 2) {
+                            
+                          int min_num = 0;
+                          float min_dist = FLOAT_undefined;
+                          
+                          for (int j = 0; j < n; j++) {
+                            int vNo = allFaces[f][j];
+                            
+                            float d = dist(RxP[0], RxP[1], RxP[2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
+                            
+                            if (min_dist > d) {
+                              min_dist = d;
+                              min_num = j;
+                            }
+                          }
+                          
+                          int[] tmpFace = new int[n];
+                          for (int j = 0; j < n; j++) {
+                            tmpFace[j] = allFaces[f][j];
+                          }  
+                          
+                          for (int j = 0; j < n; j++) {
+                            allFaces[f][j] = tmpFace[(j + min_num + n) % n];
+                          }
+
+                        }
+                      }
+                    }                    
+                    
                   }
                   
                   
@@ -28955,7 +29011,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
       Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 6, 1), 1));
     
-      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -17, 13, 1), 1));
+      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -17, 14, 1), 1));
       //View_XYZ_ChangeOption = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_ChangeOption" , View_XYZ_ChangeOption, 0, 6, 1), 1));
       //Modify_Object_Parameters = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Object_Parameters" , Modify_Object_Parameters, 0, 9, 1), 1));
 
@@ -30588,7 +30644,7 @@ if (selectedFace_displayEdges != 0) {
       stroke(0); 
       strokeWeight(0);
 
-      textSize(MESSAGE_S_View);
+      textSize(1.5 * MESSAGE_S_View);
       textAlign(CENTER, BOTTOM);
       
       for (int o = selectedFace_numbers.length - 1; o >= 0; o--) {
@@ -33467,6 +33523,35 @@ void dessin_FaceNormal (int _type, float x, float y, float r) {
 }
 
 
+void dessin_FaceFirstVertex (int _type, float x, float y, float r) {
+  
+  pushMatrix();
+  translate(x, y);
+
+  float d = 0.8 * r;
+
+  strokeWeight(2);
+  stroke(255); 
+  noFill();
+
+  beginShape();
+  vertex(0, 0.5 * d);
+  vertex(cos_ang(30) * d, 0);
+  vertex(0, -0.5 * d);
+  vertex(-cos_ang(30) * d, 0);
+  endShape(CLOSE);
+  
+  ellipse(0, -0.5 * d, 0.25 * d, 0.25 * d);
+
+  strokeWeight(0);
+
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+
+
 void dessin_3DViewSpace (int _type, float x, float y, float r) {
   
   pushMatrix();
@@ -34201,7 +34286,7 @@ String[][] BAR_a_Items = {
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
                         {"Edit", "Duplicate Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings"},
-                        {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Change Seed/Material", "Change Tessellation", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunckSize", "Change LeafSize"},
+                        {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunckSize", "Change LeafSize"},
                         {"Match", "Pick Seed/Material", "Pick Tessellation", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
 
@@ -34517,6 +34602,8 @@ String[][] BAR_b_Items = {
                           {"1", "Mat0", "Mat1", "Mat2", "Mat3", "Change Seed/Material", "1.0"},
                           {"1", "Tes0", "Tes1", "Tes2", "Tes3", "Change Tessellation", "1.0"},
                           {"1", "FNorm1", "FNorm2", "FNorm3", "FaceNormal", "1.0"},
+                          {"1", "F1stV", "FaceFirstVertex", "1.0"},
+                          
                           
                           //{"1", "SPvt0", "SPvt1", "SPvt2", "SolarPivot", "1.0"},
                           
@@ -34699,6 +34786,10 @@ void SOLARCHVISION_draw_window_BAR_b () {
           if ((BAR_b_Items[i][j]).equals("FNorm3")) set_to_Modify_FaceNormal(3);
         }
         
+        if (Bar_Switch.equals("FaceFirstVertex")) {
+          if ((BAR_b_Items[i][j]).equals("F1stV")) set_to_Modify_FaceFirstVertex(1);
+        }        
+        
         if (Bar_Switch.equals("Rotate")) set_to_Modify_Rotate(j - 1);
         if (Bar_Switch.equals("Scale")) set_to_Modify_Scale(j - 1);
         if (Bar_Switch.equals("Move")) set_to_Modify_Move(j - 1);
@@ -34774,7 +34865,10 @@ void SOLARCHVISION_draw_window_BAR_b () {
         }
         if (Bar_Switch.equals("FaceNormal")) {
           dessin_FaceNormal(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
-        }                
+        }           
+        if (Bar_Switch.equals("FaceFirstVertex")) {
+          dessin_FaceFirstVertex(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }            
        
         if (Bar_Switch.equals("ClickSelect")) {
           dessin_ClickSelect(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
@@ -35071,6 +35165,17 @@ void set_to_Modify_SolarPivot (int n) {
 
   ROLLOUT_Update = 1; 
 }
+
+void set_to_Modify_FaceFirstVertex (int n) {
+  View_Select_Create_Modify = 14;
+  Modify_Object_Parameters = n; // 1:default
+  
+  Work_with_2D_or_3D = 4; // << because it only works with face sub-object
+  //BAR_b_Update = 1;
+
+  ROLLOUT_Update = 1; 
+}
+
 
 void set_to_Modify_FaceNormal (int n) {
   View_Select_Create_Modify = 13;
