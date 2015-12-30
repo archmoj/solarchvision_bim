@@ -98,6 +98,7 @@ int selectedPolymesh_displayEdges = 1; //0;
 int selectedPolymesh_displayBox = 1;
 
 int selectedFace_displayEdges = 1;
+int selectedFace_displayVertexCount = 1;
 int selectedVertex_displayVertices = 1;
  
 
@@ -1325,6 +1326,13 @@ int pre_selectedPolymesh_displayPivot;
 int pre_selectedPolymesh_displayEdges;
 int pre_selectedPolymesh_displayBox;      
 
+int pre_selectedPolymesh_displaySolarPivots;
+int pre_selectedFace_displayEdges;
+int pre_selectedFace_displayVertexCount;
+int pre_selectedVertex_displayVertices;
+ 
+
+
 
 int pre_WIN3D_EDGES_SHOW;
 int pre_WIN3D_FACES_SHADE;
@@ -2210,6 +2218,10 @@ void draw () {
         pre_selectedPolymesh_displayEdges = selectedPolymesh_displayEdges;
         pre_selectedPolymesh_displayBox = selectedPolymesh_displayBox;        
 
+        pre_selectedPolymesh_displaySolarPivots = selectedPolymesh_displaySolarPivots;
+        pre_selectedFace_displayEdges = selectedFace_displayEdges;
+        pre_selectedFace_displayVertexCount = selectedFace_displayVertexCount;
+        pre_selectedVertex_displayVertices = selectedVertex_displayVertices;
 
         pre_WIN3D_EDGES_SHOW = WIN3D_EDGES_SHOW;
         pre_WIN3D_FACES_SHADE = WIN3D_FACES_SHADE;
@@ -2456,10 +2468,26 @@ void draw () {
           WIN3D_Update = 1;          
         }
 
-        
         if (pre_selectedPolymesh_displayBox != selectedPolymesh_displayBox) {
           WIN3D_Update = 1;
         }     
+
+        if (pre_selectedPolymesh_displaySolarPivots != selectedPolymesh_displaySolarPivots) {
+          WIN3D_Update = 1;
+        }     
+
+        if (pre_selectedFace_displayEdges != selectedFace_displayEdges) {
+          WIN3D_Update = 1;
+        }     
+
+        if (pre_selectedFace_displayVertexCount != selectedFace_displayVertexCount) {
+          WIN3D_Update = 1;
+        }     
+
+        if (pre_selectedVertex_displayVertices != selectedVertex_displayVertices) {
+          WIN3D_Update = 1;
+        }     
+
 
         
         
@@ -26530,6 +26558,12 @@ void mouseClicked () {
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
             }   
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected Faces Vertex Count")) {
+              selectedFace_displayVertexCount = (selectedFace_displayVertexCount + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }               
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected Vertices")) {
               selectedVertex_displayVertices = (selectedVertex_displayVertices + 1) % 2;
               
@@ -29037,6 +29071,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       selectedPolymesh_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displayEdges" , selectedPolymesh_displayEdges, 0, 1, 1), 1));
       
       selectedFace_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedFace_displayEdges" , selectedFace_displayEdges, 0, 1, 1), 1));
+      selectedFace_displayVertexCount = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedFace_displayVertexCount" , selectedFace_displayVertexCount, 0, 1, 1), 1));
       selectedVertex_displayVertices = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedVertex_displayVertices" , selectedVertex_displayVertices, 0, 1, 1), 1));
       
       selectedObject2D_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedObject2D_displayEdges" , selectedObject2D_displayEdges, 0, 1, 1), 1));
@@ -30478,7 +30513,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
   if (Work_with_2D_or_3D == 4) {    
     
-    if (selectedFace_displayEdges != 0) {
+if (selectedFace_displayEdges != 0) {
       
       pushMatrix();
     
@@ -30491,12 +30526,10 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       
       for (int o = selectedFace_numbers.length - 1; o >= 0; o--) {
         
-        int OBJ_NUM = selectedFace_numbers[o];
+        int f = selectedFace_numbers[o];
         
-        if (OBJ_NUM != 0) {
-          
-          int f = OBJ_NUM;
-       
+        if (f != 0) {
+
           int Tessellation = allFaces_MAT[f][1];
           
           int TotalSubNo = 1;  
@@ -30542,6 +30575,51 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     
       popMatrix();
     }
+    
+    
+    if (selectedFace_displayVertexCount != 0) {
+      
+      pushMatrix();
+    
+      translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+
+      fill(0);
+      
+      stroke(0); 
+      strokeWeight(0);
+
+      textSize(MESSAGE_S_View);
+      textAlign(CENTER, BOTTOM);
+      
+      for (int o = selectedFace_numbers.length - 1; o >= 0; o--) {
+        
+        int f = selectedFace_numbers[o];
+        
+        if (f != 0) {
+
+          for (int j = 0; j < allFaces[f].length; j++) {
+            int vNo = allFaces[f][j];
+          
+            float x = allVertices[vNo][0] * OBJECTS_scale;
+            float y = allVertices[vNo][1] * OBJECTS_scale;            
+            float z = -allVertices[vNo][2] * OBJECTS_scale;
+            
+            float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+
+            if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) {
+                text(nf(j + 1, 0), Image_XYZ[0], Image_XYZ[1]);
+              }
+            }
+
+          }
+        }
+      }
+      
+      strokeWeight(0);   
+    
+      popMatrix();
+    }    
   }
 
   
@@ -30555,7 +30633,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       
       noFill();
       
-      stroke(255,0,127);
+      stroke(127,255,0,127);
       
       strokeWeight(2);
       
@@ -34115,7 +34193,7 @@ String[][] BAR_a_Items = {
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
                         {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
-                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sky", "Display/Hide SunPath", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected Faces", "Display/Hide Selected Vertices", "Display/Hide Selected Solar Pivots", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
+                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sky", "Display/Hide SunPath", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected Solar Pivots", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Run solar 3D-model", "Run wind 3D-model", "Run spatial 3D-model"},
                         {"Layer"}, // Parameters 
@@ -34330,6 +34408,9 @@ void SOLARCHVISION_draw_window_BAR_a () {
               if (BAR_a_Items[i][j].equals("Display/Hide Selected Faces")) {
                 if (selectedPolymesh_displayPivot == 0) {stroke(127); fill(127);}
               }      
+              if (BAR_a_Items[i][j].equals("Display/Hide Selected Faces Vertex Count")) {
+                if (selectedPolymesh_displayPivot == 0) {stroke(127); fill(127);}
+              }               
               if (BAR_a_Items[i][j].equals("Display/Hide Selected Vertices")) {
                 if (selectedPolymesh_displayPivot == 0) {stroke(127); fill(127);}
               }      
@@ -36346,6 +36427,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("selection_alignZ", selection_alignZ);
 
   newChild1.setInt("selectedFace_displayEdges", selectedFace_displayEdges);
+  newChild1.setInt("selectedFace_displayVertexCount", selectedFace_displayVertexCount);
   newChild1.setInt("selectedVertex_displayVertices", selectedVertex_displayVertices);
   newChild1.setInt("selectedPolymesh_displaySolarPivots", selectedPolymesh_displaySolarPivots);  
   newChild1.setInt("selectedPolymesh_displayPivot", selectedPolymesh_displayPivot);
@@ -37284,6 +37366,7 @@ void SOLARCHVISION_load_project (String myFile) {
       selectedPolymesh_displayEdges = children0[L].getInt("selectedPolymesh_displayEdges");
       selectedPolymesh_displayBox = children0[L].getInt("selectedPolymesh_displayBox");
       selectedFace_displayEdges = children0[L].getInt("selectedFace_displayEdges");
+      selectedFace_displayVertexCount = children0[L].getInt("selectedFace_displayVertexCount");
       selectedVertex_displayVertices = children0[L].getInt("selectedVertex_displayVertices");      
       selectedObject2D_displayEdges = children0[L].getInt("selectedObject2D_displayEdges");
       selectedFractal_displayEdges = children0[L].getInt("selectedFractal_displayEdges");
