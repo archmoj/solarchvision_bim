@@ -16197,23 +16197,27 @@ void SOLARCHVISION_offsetVerticesSelection (int _type, float _amount) {
 
 void SOLARCHVISION_changeVisibilityFacesSelection (int new_vsb) {
 
-  if (Work_with_2D_or_3D == 3) { 
-
-    SOLARCHVISION_convertPolymesh2Face();    
+  if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4) || (Work_with_2D_or_3D == 5)) { 
     
-  }
+    if (Work_with_2D_or_3D == 3) { 
   
-  if (Work_with_2D_or_3D == 5) { 
+      SOLARCHVISION_convertPolymesh2Face();    
+      
+    }
     
-    SOLARCHVISION_convertVertex2Face(); 
+    if (Work_with_2D_or_3D == 5) { 
+      
+      SOLARCHVISION_convertVertex2Face(); 
+      
+    }
     
-  }
-  
-  for (int o = selectedFace_numbers.length - 1; o > 0; o--) { // the first node is null
+    for (int o = selectedFace_numbers.length - 1; o > 0; o--) { // the first node is null
+      
+      int f = selectedFace_numbers[o];
     
-    int f = selectedFace_numbers[o];
-  
-    allFaces_MTLV[f][3] = new_vsb;
+      allFaces_MTLV[f][3] = new_vsb;
+    }
+    
   }
   
 }
@@ -16226,6 +16230,18 @@ void SOLARCHVISION_changeVisibilityFacesScene (int new_vsb) {
   }
   
 }
+
+
+void SOLARCHVISION_isolateSelection () {
+
+  if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4) || (Work_with_2D_or_3D == 5)) { 
+    
+    SOLARCHVISION_changeVisibilityFacesScene(0);
+    SOLARCHVISION_changeVisibilityFacesSelection(1);
+  }
+}
+
+
 
 
 void SOLARCHVISION_deselectAll () {
@@ -27395,8 +27411,12 @@ void mouseClicked () {
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Unhide Selected Faces")) {
               SOLARCHVISION_changeVisibilityFacesSelection(1);
               WIN3D_Update = 1;              
+            }     
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Isolate Selected Faces")) {
+              SOLARCHVISION_isolateSelection();
+              WIN3D_Update = 1;              
             }              
-
+               
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("TargetRoll")) {
               set_to_View_TargetRoll(0);
@@ -34606,7 +34626,7 @@ String[][] BAR_a_Items = {
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
-                        {"Edit", "Duplicate Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Hide All Faces", "Unhide All Faces", "Hide Selected Faces", "Unhide Selected Faces"},
+                        {"Edit", "Duplicate Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Hide All Faces", "Hide Selected Faces", "Unhide All Faces", "Unhide Selected Faces", "Isolate Selected Faces"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Vsibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunckSize", "Change LeafSize"},
                         {"Match", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
