@@ -12785,11 +12785,11 @@ void WIN3D_keyPressed (KeyEvent e) {
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         case '7' :
                   //WIN3D_RZ_coordinate = 225;
-                  WIN3D_RX_coordinate += WIN3D_RS_coordinate; SOLARCHVISION_reverseTransform_Camera(); 
+                  WIN3D_RX_coordinate -= WIN3D_RS_coordinate; SOLARCHVISION_reverseTransform_Camera(); 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         case '9' :
                   //WIN3D_RZ_coordinate = 135;
-                  WIN3D_RX_coordinate -= WIN3D_RS_coordinate; SOLARCHVISION_reverseTransform_Camera(); 
+                  WIN3D_RX_coordinate += WIN3D_RS_coordinate; SOLARCHVISION_reverseTransform_Camera(); 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
   
         case '2' :
@@ -29029,16 +29029,15 @@ class SOLARCHVISION_Spinner {
 
 String[][] ROLLOUTS = {
                         {"Location & Data", "Point", "Weather", "Environment"}, 
-                        {"Geometries & Space", "General", "Meshes", "Solids", "Fractals", "Modify", "Simulation"},
+                        {"Geometries & Space", "General", "Create", "Modify", "Solid", "Surface", "Living", "Simulation"},
                         {"Time & Scenarios", "Period", "Ranges", "Filters"}, 
-                        {"Illustration Options", "Layers", "Colors 2D", "Colors 3D"},
+                        {"Illustration Options", "Layers", "Colors 2D", "Colors 3D", "Selection"},
                         {"Post-Processing", "Interpolation", "Developed", "Impacts"}, 
                         {"Export Products", "Data", "Media", "Launch"}
                       };
 
 int ROLLOUT_parent = 0; // 0: Location, 1: Geometry, 2: Time, etc.
 int ROLLOUT_child = 1; // number of the category inside e.g. 1, 2, ...
-
 
 
 
@@ -29143,7 +29142,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       if (i % 3 == 0) Y_control += 15 * ROLLOUT_S_View;
     }
     
-    if (ROLLOUTS[ROLLOUT_parent].length % 3 == 0) Y_control += 15 * ROLLOUT_S_View;
+    if (ROLLOUTS[ROLLOUT_parent].length % 3 != 1) Y_control += 15 * ROLLOUT_S_View;
     
     Y_control += 15 * ROLLOUT_S_View;
     
@@ -29270,31 +29269,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       //View_XYZ_ChangeOption = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_ChangeOption" , View_XYZ_ChangeOption, 0, 6, 1), 1));
       //Modify_Object_Parameters = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Object_Parameters" , Modify_Object_Parameters, 0, 9, 1), 1));
 
-      Create_Default_Material = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Material" , Create_Default_Material, -1, 8, 1), 1));
-      Create_Default_Tessellation = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Tessellation" , Create_Default_Tessellation, 0, 4, 1), 1));
-      Create_Default_Layer = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Layer" , Create_Default_Layer, 0, 16, 1), 1));
-      Create_Default_Visibility = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Visibility" , Create_Default_Visibility, -1, 1, 1), 1));
-      Create_Default_SolarPivotType = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_SolarPivotType" , Create_Default_SolarPivotType, 0, 4, 1), 1));
-  
-      Create_Input_Orientation = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Orientation" , Create_Input_Orientation, 0, 360, 15);
+
       
-      Create_Input_Length = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Length" , Create_Input_Length, -100, 100, 1); 
-      Create_Input_Width = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Width" , Create_Input_Width, -100, 100, 1);
-      Create_Input_Height = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Height" , Create_Input_Height, -100, 100, 1);    
-      
-      Create_Input_Volume = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);
-      
-      Modify_Input_OpenningDepth = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_OpenningDepth" , Modify_Input_OpenningDepth, -10, 10, 0.1);
-      Modify_Input_OpenningArea = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_OpenningArea" , Modify_Input_OpenningArea, 0, 1, 0.05);
-      Modify_Input_OpenningDeviation = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_OpenningDeviation" , Modify_Input_OpenningDeviation, 0, 1, 0.05);
- 
-      Modify_Input_TessellateRows = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_TessellateRows" , Modify_Input_TessellateRows, 1, 100, 1), 1));
-      Modify_Input_TessellateColumns = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_TessellateColumns" , Modify_Input_TessellateColumns, 1, 100, 1), 1));
-      
-      Modify_Input_OffsetAmount = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_OffsetAmount" , Modify_Input_OffsetAmount, 0, 25, 0.001);
-      
-      Modify_Input_WeldTreshold = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_WeldTreshold" , Modify_Input_WeldTreshold, 0, 10, 0.001);
- 
       MODEL3D_TESSELLATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL3D_TESSELLATION" , MODEL3D_TESSELLATION, 0, 4, 1), 1));
       
       LAND_TESSELLATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "LAND_TESSELLATION" , LAND_TESSELLATION, 0, 5, 1), 1));
@@ -29316,7 +29292,68 @@ void SOLARCHVISION_draw_ROLLOUT () {
     }
     
 
-    if (ROLLOUT_child == 2) { // Meshes
+
+    if (ROLLOUT_child == 2) { // Create
+
+
+      Create_Default_Material = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Material" , Create_Default_Material, -1, 8, 1), 1));
+      Create_Default_Tessellation = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Tessellation" , Create_Default_Tessellation, 0, 4, 1), 1));
+      Create_Default_Layer = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Layer" , Create_Default_Layer, 0, 16, 1), 1));
+      Create_Default_Visibility = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Visibility" , Create_Default_Visibility, -1, 1, 1), 1));
+      Create_Default_SolarPivotType = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_SolarPivotType" , Create_Default_SolarPivotType, 0, 4, 1), 1));
+  
+      Create_Input_Orientation = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Orientation" , Create_Input_Orientation, 0, 360, 15);
+      
+      Create_Input_Length = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Length" , Create_Input_Length, -100, 100, 1); 
+      Create_Input_Width = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Width" , Create_Input_Width, -100, 100, 1);
+      Create_Input_Height = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Height" , Create_Input_Height, -100, 100, 1);    
+      
+      Create_Input_Volume = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_Volume" , Create_Input_Volume, 0, 25000, 1000);    
+  
+    }    
+    
+    if (ROLLOUT_child == 3) { // Modify
+    
+      Modify_Input_OpenningDepth = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_OpenningDepth" , Modify_Input_OpenningDepth, -10, 10, 0.1);
+      Modify_Input_OpenningArea = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_OpenningArea" , Modify_Input_OpenningArea, 0, 1, 0.05);
+      Modify_Input_OpenningDeviation = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_OpenningDeviation" , Modify_Input_OpenningDeviation, 0, 1, 0.05);
+ 
+      Modify_Input_TessellateRows = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_TessellateRows" , Modify_Input_TessellateRows, 1, 100, 1), 1));
+      Modify_Input_TessellateColumns = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_TessellateColumns" , Modify_Input_TessellateColumns, 1, 100, 1), 1));
+      
+      Modify_Input_OffsetAmount = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_OffsetAmount" , Modify_Input_OffsetAmount, 0, 25, 0.001);
+      
+      Modify_Input_WeldTreshold = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_WeldTreshold" , Modify_Input_WeldTreshold, 0, 10, 0.001);      
+    
+      selected_posVector = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selected_posVector" , selected_posVector, 0, 3, 1), 1));
+      selected_rotVector =  int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selected_rotVector" , selected_rotVector, 0, 2, 1), 1));
+      selected_scaleVector =  int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selected_scaleVector" , selected_scaleVector, 0, 3, 1), 1));
+    
+      selected_posValue = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selected_posValue" , selected_posValue, -50, 50, 1), 1));
+      selected_rotValue = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selected_rotValue" , selected_rotValue, -180, 180, 5), 5)); 
+      selected_scaleValue = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selected_scaleValue" , selected_scaleValue, -8, 8, 0.5), 0.5)); 
+  
+      selection_alignX = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selection_alignX" , selection_alignX, -1, 1, 1), 1));
+      selection_alignY = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selection_alignY" , selection_alignY, -1, 1, 1), 1));
+      selection_alignZ = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selection_alignZ" , selection_alignZ, -1, 1, 1), 1));
+  
+
+
+    }
+
+    if (ROLLOUT_child == 4) { // Solid
+    
+      Create_Mesh_SuperOBJ = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_SuperOBJ" , Create_Mesh_SuperOBJ, 0, 1, 1), 1));
+
+      //Create_Input_powRnd = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powRnd" , Create_Input_powRnd, 0, 1, 1), 1));    
+      Create_Input_powAll = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powAll" , Create_Input_powAll, 0.5, 8, -2);
+      Create_Input_powX = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powX" , Create_Input_powX, 0.5, 8, -2); 
+      Create_Input_powY = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powY" , Create_Input_powY, 0.5, 8, -2); 
+      Create_Input_powZ = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powZ" , Create_Input_powZ, 0.5, 8, -2);
+
+    }  
+
+    if (ROLLOUT_child == 5) { // Surface
 
       Create_Sphere_Degree = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Sphere_Degree" , Create_Sphere_Degree, 0, 5, 1), 1));      
       
@@ -29338,22 +29375,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Mesh_Plant_Type = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Plant_Type" , Create_Mesh_Plant_Type, 0, Object2D_TREES_Files_Num, 1), 1));
 
     }
-    
-    if (ROLLOUT_child == 3) { // Solids
-    
-      Create_Mesh_SuperOBJ = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_SuperOBJ" , Create_Mesh_SuperOBJ, 0, 1, 1), 1));
 
-      //Create_Input_powRnd = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powRnd" , Create_Input_powRnd, 0, 1, 1), 1));    
-      Create_Input_powAll = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powAll" , Create_Input_powAll, 0.5, 8, -2);
-      Create_Input_powX = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powX" , Create_Input_powX, 0.5, 8, -2); 
-      Create_Input_powY = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powY" , Create_Input_powY, 0.5, 8, -2); 
-      Create_Input_powZ = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powZ" , Create_Input_powZ, 0.5, 8, -2);
-
-
-
-    }
-    
-    if (ROLLOUT_child == 4) { // Fractals
+    if (ROLLOUT_child == 6) { // Living
 
       Create_Fractal_Plant = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_Plant" , Create_Fractal_Plant, 0, 1, 1), 1));
       Create_Fractal_Plant_Type = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_Plant_Type" , Create_Fractal_Plant_Type, 0, 0, 1), 1));
@@ -29362,38 +29385,11 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Fractal_Plant_Seed = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_Plant_Seed" , Create_Fractal_Plant_Seed, -1, 100, 1), 1));
       Create_Fractal_Plant_TrunckSize = roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_Plant_TrunckSize" , Create_Fractal_Plant_TrunckSize, 0, 10, 0.1), 0.1);
       Create_Fractal_Plant_LeafSize = roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_Plant_LeafSize" , Create_Fractal_Plant_LeafSize, 0, 10, 0.1), 0.1);    
-    }
+    }    
     
-    if (ROLLOUT_child == 5) { // Modify
-    
-      selected_posVector = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selected_posVector" , selected_posVector, 0, 3, 1), 1));
-      selected_rotVector =  int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selected_rotVector" , selected_rotVector, 0, 2, 1), 1));
-      selected_scaleVector =  int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selected_scaleVector" , selected_scaleVector, 0, 3, 1), 1));
-    
-      selected_posValue = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selected_posValue" , selected_posValue, -50, 50, 1), 1));
-      selected_rotValue = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selected_rotValue" , selected_rotValue, -180, 180, 5), 5)); 
-      selected_scaleValue = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selected_scaleValue" , selected_scaleValue, -8, 8, 0.5), 0.5)); 
   
-      selection_alignX = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selection_alignX" , selection_alignX, -1, 1, 1), 1));
-      selection_alignY = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selection_alignY" , selection_alignY, -1, 1, 1), 1));
-      selection_alignZ = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selection_alignZ" , selection_alignZ, -1, 1, 1), 1));
-  
-      selectedPolymesh_displaySolarPivots = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displaySolarPivots" , selectedPolymesh_displaySolarPivots, 0, 1, 1), 1));
-      selectedPolymesh_displayPivot = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displayPivot" , selectedPolymesh_displayPivot, 0, 1, 1), 1));
-      selectedPolymesh_displayBox = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displayBox" , selectedPolymesh_displayBox, 0, 1, 1), 1));
-      selectedPolymesh_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displayEdges" , selectedPolymesh_displayEdges, 0, 1, 1), 1));
-      
-      selectedFace_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedFace_displayEdges" , selectedFace_displayEdges, 0, 1, 1), 1));
-      selectedFace_displayVertexCount = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedFace_displayVertexCount" , selectedFace_displayVertexCount, 0, 1, 1), 1));
-      selectedVertex_displayVertices = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedVertex_displayVertices" , selectedVertex_displayVertices, 0, 1, 1), 1));
-      
-      selectedObject2D_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedObject2D_displayEdges" , selectedObject2D_displayEdges, 0, 1, 1), 1));
-      selectedFractal_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedFractal_displayEdges" , selectedFractal_displayEdges, 0, 1, 1), 1));
 
-    }
-    
-
-    if (ROLLOUT_child == 6) { // Simulation
+    if (ROLLOUT_child == 7) { // Simulation
 
       Day_of_Impact_to_Display = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Day_of_Impact_to_Display" , Day_of_Impact_to_Display, 0, STUDY_j_end - STUDY_j_start, 1), 1));
 
@@ -29478,7 +29474,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     }
     
   }  
-  else if (ROLLOUT_parent == 3) { // Illustration Options
+  else if (ROLLOUT_parent == 3) { // Display Options
 
     if (ROLLOUT_child == 1) { // Layers
       
@@ -29567,6 +29563,22 @@ void SOLARCHVISION_draw_ROLLOUT () {
       ELEVATION_Pallet_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "ELEVATION_Pallet_MLT", ELEVATION_Pallet_MLT, 0.01, 1.0, -2);   
    
    
+    }      
+    
+    
+    if (ROLLOUT_child == 4) { // Selection
+    
+      selectedPolymesh_displaySolarPivots = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displaySolarPivots" , selectedPolymesh_displaySolarPivots, 0, 1, 1), 1));
+      selectedPolymesh_displayPivot = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displayPivot" , selectedPolymesh_displayPivot, 0, 1, 1), 1));
+      selectedPolymesh_displayBox = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displayBox" , selectedPolymesh_displayBox, 0, 1, 1), 1));
+      selectedPolymesh_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displayEdges" , selectedPolymesh_displayEdges, 0, 1, 1), 1));
+      
+      selectedFace_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedFace_displayEdges" , selectedFace_displayEdges, 0, 1, 1), 1));
+      selectedFace_displayVertexCount = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedFace_displayVertexCount" , selectedFace_displayVertexCount, 0, 1, 1), 1));
+      selectedVertex_displayVertices = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedVertex_displayVertices" , selectedVertex_displayVertices, 0, 1, 1), 1));
+      
+      selectedObject2D_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedObject2D_displayEdges" , selectedObject2D_displayEdges, 0, 1, 1), 1));
+      selectedFractal_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedFractal_displayEdges" , selectedFractal_displayEdges, 0, 1, 1), 1));      
     }      
   
   }
