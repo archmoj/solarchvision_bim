@@ -12770,20 +12770,47 @@ void WIN3D_keyPressed (KeyEvent e) {
                   }
                   break;
                   
-        case '5' :WIN3D_RX_coordinate = 0;
-                  WIN3D_RY_coordinate = 0;
-                  WIN3D_RZ_coordinate = 0; 
+        case '5' :
+                  //WIN3D_RX_coordinate = 0; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 0;
+                  SOLARCHVISION_look_Camera_towards_Selection(); 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         
-        case '1' :WIN3D_RZ_coordinate = 315; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case '3' :WIN3D_RZ_coordinate = 45; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case '7' :WIN3D_RZ_coordinate = 225; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case '9' :WIN3D_RZ_coordinate = 135; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '1' :
+                  //WIN3D_RZ_coordinate = 315; 
+                  WIN3D_RZ_coordinate += WIN3D_RS_coordinate; SOLARCHVISION_reverseTransform_Camera(); 
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '3' :
+                  //WIN3D_RZ_coordinate = 45; 
+                  WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; SOLARCHVISION_reverseTransform_Camera();
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '7' :
+                  //WIN3D_RZ_coordinate = 225;
+                  WIN3D_RX_coordinate += WIN3D_RS_coordinate; SOLARCHVISION_reverseTransform_Camera(); 
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '9' :
+                  //WIN3D_RZ_coordinate = 135;
+                  WIN3D_RX_coordinate -= WIN3D_RS_coordinate; SOLARCHVISION_reverseTransform_Camera(); 
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
   
-        case '2' :WIN3D_RX_coordinate += WIN3D_RS_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case '4' :WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case '6' :WIN3D_RZ_coordinate += WIN3D_RS_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
-        case '8' :WIN3D_RX_coordinate -= WIN3D_RS_coordinate; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '2' :
+                  //WIN3D_RX_coordinate += WIN3D_RS_coordinate; 
+                  SOLARCHVISION_rotateZ_Camera_around_Selection(WIN3D_RS_coordinate);
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        
+        case '4' :
+                  //WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; 
+                  SOLARCHVISION_rotateXY_Camera_around_Selection(-WIN3D_RS_coordinate);
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+                  
+        case '6' :
+                  //WIN3D_RZ_coordinate += WIN3D_RS_coordinate; 
+                  SOLARCHVISION_rotateXY_Camera_around_Selection(WIN3D_RS_coordinate);
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
+                  
+        case '8' :
+                  //WIN3D_RX_coordinate -= WIN3D_RS_coordinate; 
+                  SOLARCHVISION_rotateZ_Camera_around_Selection(-WIN3D_RS_coordinate);
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         
         case '*' :OBJECTS_scale *= 2.0; SKY3D_scale *= 2.0; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         case '/' :OBJECTS_scale /= 2.0; SKY3D_scale /= 2.0; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
