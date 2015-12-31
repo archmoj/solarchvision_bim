@@ -1,12 +1,9 @@
 import processing.pdf.*;
 
-void launch (String s) {
-  open(s);
-}
+void launch (String s) {open(s);}
+void launch (String[] s) {open(s);}
+ 
 
-void launch (String[] s) {
-  open(s);
-}  
 
 float planetary_magnification = 2.5; // <<<<<<<<<<
 
@@ -1666,7 +1663,7 @@ float CAM_clipFar = 1000000000.0;
 
 
 
-void setup() {
+void setup () {
 
   size(1200, 696, P2D);
   //size(2 * w_pixel + ROLLOUT_X_View, a_pixel + b_pixel + 2 * h_pixel + d_pixel, P2D);
@@ -1696,6 +1693,9 @@ void setup() {
 
   Load_EARTH_IMAGES(); // <<<<<<<<<<<< should move it below
   Load_TROPO_IMAGES(); // <<<<<<<<<<<< should move it below
+
+  MOON_IMAGE = loadImage(MOON_IMAGE_Filename);
+  STAR_IMAGE = loadImage(STAR_IMAGE_Filename);
 
   LoadDefaultFontStyle();  
 
@@ -19416,7 +19416,7 @@ int Display_MOON3D_TEXTURE = 1;
 
 String MOON_IMAGE_Filename = "C:/SOLARCHVISION_2015/Input/BackgroundImages/Standard/Maps/Moon/Moon.jpg";
 
-PImage MOON_IMAGE = loadImage(MOON_IMAGE_Filename);
+PImage MOON_IMAGE; 
 
 void SOLARCHVISION_draw_MOON3D () {
   if (Display_MOON3D != 0) {
@@ -19516,7 +19516,7 @@ int Display_STAR3D_TEXTURE = 1;
 
 String STAR_IMAGE_Filename = "C:/SOLARCHVISION_2015/Input/BackgroundImages/Standard/Maps/Sun/Sun.jpg";
 
-PImage STAR_IMAGE = loadImage(STAR_IMAGE_Filename);
+PImage STAR_IMAGE;
 
 void SOLARCHVISION_draw_STAR3D () {
   if (Display_STAR3D != 0) {
