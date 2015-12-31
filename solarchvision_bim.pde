@@ -29027,11 +29027,13 @@ class SOLARCHVISION_Spinner {
   }
 }
 
+
+
 String[][] ROLLOUTS = {
                         {"Location & Data", "Point", "Weather", "Environment"}, 
                         {"Geometries & Space", "General", "Create", "Modify", "Solid", "Surface", "Living", "Simulation"},
                         {"Time & Scenarios", "Period", "Ranges", "Filters"}, 
-                        {"Illustration Options", "Layers", "Colors 2D", "Colors 3D", "Selection"},
+                        {"Illustration Options", "2D-Layers", "2D-Colors", "3D-Solar", "3D-Spatial", "Selection"},
                         {"Post-Processing", "Interpolation", "Developed", "Impacts"}, 
                         {"Export Products", "Data", "Media", "Launch"}
                       };
@@ -29396,9 +29398,6 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Display_SolarImpact_Image = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SolarImpact_Image" , Display_SolarImpact_Image, 0, 1, 1), 1));
       Display_SpatialImpact_Image = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SpatialImpact_Image" , Display_SpatialImpact_Image, 0, 1, 1), 1));
 
-
-      
-
       SolarImpact_Image_Section = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SolarImpact_Image_Section" , SolarImpact_Image_Section, 0, 3, 1), 1));      
       SpatialImpact_Image_Section = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Image_Section" , SpatialImpact_Image_Section, 0, 3, 1), 1));
 
@@ -29422,6 +29421,15 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Display_SpatialImpact_Lines = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Display_SpatialImpact_Lines" , Display_SpatialImpact_Lines, 0, 1, 1), 1));
 
       Display_windFlow = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Display_windFlow" , Display_windFlow, 0, 1, 1), 1));
+      
+      //WIN3D_FACES_SHADE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "WIN3D_FACES_SHADE", WIN3D_FACES_SHADE, 0, number_of_shading_options - 1, 1), 1));
+
+      WIN3D_EDGES_SHOW = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "WIN3D_EDGES_SHOW", WIN3D_EDGES_SHOW, 0, 1, 1), 1));  
+      Display_MODEL3D_EDGES = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MODEL3D_EDGES" , Display_MODEL3D_EDGES, 0, 1, 1), 1));
+      Display_MODEL3D_NORMALS = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MODEL3D_NORMALS" , Display_MODEL3D_NORMALS, 0, 1, 1), 1));
+      
+      CAM_clipNear = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipNear" , CAM_clipNear, 0.0001, 1000000000, -2);
+      CAM_clipFar = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipFar" , CAM_clipFar, 0.0001, 1000000000, -2);      
     }    
 
     
@@ -29476,7 +29484,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
   }  
   else if (ROLLOUT_parent == 3) { // Display Options
 
-    if (ROLLOUT_child == 1) { // Layers
+    if (ROLLOUT_child == 1) { // 2D-Layers
       
       frame_variation = int(roundTo(MySpinner.update(X_control, Y_control, 1,1,1, "Frame layout variation", frame_variation, 0, 3, 1), 1));
     
@@ -29494,18 +29502,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
       sum_interval = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Probabilities interval", sum_interval, 1, 24, 1), 1));
       level_pix = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Probabilities range", level_pix, 2, 32, -2), 1));    
 
-      //WIN3D_FACES_SHADE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "WIN3D_FACES_SHADE", WIN3D_FACES_SHADE, 0, number_of_shading_options - 1, 1), 1));
-
-      WIN3D_EDGES_SHOW = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "WIN3D_EDGES_SHOW", WIN3D_EDGES_SHOW, 0, 1, 1), 1));  
-      Display_MODEL3D_EDGES = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MODEL3D_EDGES" , Display_MODEL3D_EDGES, 0, 1, 1), 1));
-      Display_MODEL3D_NORMALS = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MODEL3D_NORMALS" , Display_MODEL3D_NORMALS, 0, 1, 1), 1));
-      
-      CAM_clipNear = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipNear" , CAM_clipNear, 0.0001, 1000000000, -2);
-      CAM_clipFar = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipFar" , CAM_clipFar, 0.0001, 1000000000, -2);
-
     }
     
-    if (ROLLOUT_child == 2) { // Colors 2D
+    if (ROLLOUT_child == 2) { // 2D-Colors
     
       //COLOR_STYLE = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Hourly color scheme", COLOR_STYLE, -1, (n_COLOR_STYLE - 1), 1), 1));
    
@@ -29528,7 +29527,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       STUDY_O_scale = MySpinner.update(X_control, Y_control, 1,0,0, "Windose opacity scale", STUDY_O_scale, 1, 100, -pow(2.0, (1.0 / 4.0)));
     }
     
-    if (ROLLOUT_child == 3) { // Colors 3D
+    if (ROLLOUT_child == 3) { // 3D-Solar 
       
       OBJECTS_Pallet_ACTIVE_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_Pallet_ACTIVE_CLR", OBJECTS_Pallet_ACTIVE_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
       OBJECTS_Pallet_ACTIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_Pallet_ACTIVE_DIR", OBJECTS_Pallet_ACTIVE_DIR, -2, 2, 1), 1));
@@ -29554,6 +29553,13 @@ void SOLARCHVISION_draw_ROLLOUT () {
       SunPath3D_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SunPath3D_Pallet_PASSIVE_DIR", SunPath3D_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
       SunPath3D_Pallet_PASSIVE_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SunPath3D_Pallet_PASSIVE_MLT", SunPath3D_Pallet_PASSIVE_MLT, 0.125, 8, -2);
 
+    }
+    
+    
+
+    
+    if (ROLLOUT_child == 4) { // 3D-Spatial   
+    
       SPATIAL_Pallet_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SPATIAL_Pallet_CLR", SPATIAL_Pallet_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
       SPATIAL_Pallet_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SPATIAL_Pallet_DIR", SPATIAL_Pallet_DIR, -1, 1, 2), 1));
       SPATIAL_Pallet_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SPATIAL_Pallet_MLT", SPATIAL_Pallet_MLT, 0.0001, 10, -2);      
@@ -29561,12 +29567,13 @@ void SOLARCHVISION_draw_ROLLOUT () {
       ELEVATION_Pallet_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ELEVATION_Pallet_CLR", ELEVATION_Pallet_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
       ELEVATION_Pallet_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ELEVATION_Pallet_DIR", ELEVATION_Pallet_DIR, -1, 1, 2), 1));
       ELEVATION_Pallet_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "ELEVATION_Pallet_MLT", ELEVATION_Pallet_MLT, 0.01, 1.0, -2);   
-   
-   
+
+
+
     }      
     
     
-    if (ROLLOUT_child == 4) { // Selection
+    if (ROLLOUT_child == 5) { // Selection
     
       selectedPolymesh_displaySolarPivots = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displaySolarPivots" , selectedPolymesh_displaySolarPivots, 0, 1, 1), 1));
       selectedPolymesh_displayPivot = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedPolymesh_displayPivot" , selectedPolymesh_displayPivot, 0, 1, 1), 1));
