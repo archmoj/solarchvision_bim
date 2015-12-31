@@ -1,5 +1,13 @@
 import processing.pdf.*;
 
+void launch (String s) {
+  open(s);
+}
+
+void launch (String[] s) {
+  open(s);
+}  
+
 float planetary_magnification = 2.5; // <<<<<<<<<<
 
 String _undefined = "N/A";
@@ -1656,9 +1664,13 @@ float CAM_dist;
 float CAM_clipNear = 0.001;
 float CAM_clipFar = 1000000000.0;
 
-void setup () {
 
-  size(2 * w_pixel + ROLLOUT_X_View, a_pixel + b_pixel + 2 * h_pixel + d_pixel, P2D);
+
+void setup() {
+
+  size(1200, 696, P2D);
+  //size(2 * w_pixel + ROLLOUT_X_View, a_pixel + b_pixel + 2 * h_pixel + d_pixel, P2D);
+  
 
   SOLARCHVISION_draw_frame_icon();
 
@@ -5247,7 +5259,7 @@ void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY
 
 
     if (any_file_downloaded != 0) {
-      open("C:\\SOLARCHVISION_2015\\BatchFiles\\unzipNAEFS.bat");
+      launch("C:/SOLARCHVISION_2015/BatchFiles/unzipNAEFS.bat".replace('/', char(92)));
       //ENSEMBLE_XML_Files = getfiles(ENSEMBLE_directory); // slow
     }
         
@@ -26046,7 +26058,7 @@ void mouseDragged () {
 void SOLARCHVISION_update_Project_info (File selectedFile) {
 
   ProjectName = selectedFile.getName().replace(".xml", "").replace(".XML", "").replace(".Xml", ""); // should work most of the times!
-  ProjectsFolder =  selectedFile.getAbsolutePath().replace("\\", "/").replace("/" + selectedFile.getName(), "");
+  ProjectsFolder =  selectedFile.getAbsolutePath().replace(char(92), '/').replace("/" + selectedFile.getName(), "");
   
   println("New ProjectName:", ProjectName);
   println("New ProjectsFolder:", ProjectsFolder);
@@ -26060,7 +26072,7 @@ void SOLARCHVISION_fileSelected_New (File selectedFile) {
   if (selectedFile == null) {
   } 
   else {
-    Filename = selectedFile.getAbsolutePath().replace("\\", "/");
+    Filename = selectedFile.getAbsolutePath().replace(char(92), '/');
     
     println("New project:", Filename);
     
@@ -26076,7 +26088,7 @@ void SOLARCHVISION_fileSelected_Open (File selectedFile) {
   if (selectedFile == null) {
   } 
   else {
-    Filename = selectedFile.getAbsolutePath().replace("\\", "/");
+    Filename = selectedFile.getAbsolutePath().replace(char(92), '/');
     
     println("Loading:", Filename);
     
@@ -26096,7 +26108,7 @@ void SOLARCHVISION_fileSelected_SaveAs (File selectedFile) {
   if (selectedFile == null) {
   } 
   else {
-    Filename = selectedFile.getAbsolutePath().replace("\\", "/");
+    Filename = selectedFile.getAbsolutePath().replace(char(92), '/');
     
     println("Saving to:", Filename);
     
@@ -26117,7 +26129,7 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
   if (selectedFile == null) {
   } 
   else {
-    Filename = selectedFile.getAbsolutePath().replace("\\", "/");
+    Filename = selectedFile.getAbsolutePath().replace(char(92), '/');
     
     println("Importing:", Filename);
     
@@ -30061,7 +30073,7 @@ float getGrib2Value (int k, int l, int h, float _lon, float _lat) {
     String Grib2File = getGrib2Folder(GRIB2_DOMAIN_SELECTION) + "/" + getGrib2Filename(k, l, h);
 
     String CommandArguments[] = {
-      "wgrib2", Grib2File.replace("/", "\\"), "-s", "-lon", String.valueOf(_lon), String.valueOf(_lat), ">", ValueFile
+      "wgrib2", Grib2File.replace('/', char(92)), "-s", "-lon", String.valueOf(_lon), String.valueOf(_lat), ">", ValueFile
     };
 
     String[] the_command = {
@@ -30069,7 +30081,7 @@ float getGrib2Value (int k, int l, int h, float _lon, float _lat) {
     };
 
     println(CommandArguments);
-    open(CommandArguments);
+    launch(CommandArguments);
   } 
 
   int _stay = 1;
@@ -30256,7 +30268,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
 
       String Grib2File = getGrib2Folder(GRIB2_DOMAIN_SELECTION) + "/" + getGrib2Filename(k, l, h);
     
-      String CommandArguments[] = {"wgrib2", Grib2File.replace("/", "\\"), "-s"};
+      String CommandArguments[] = {"wgrib2", Grib2File.replace('/', char(92)), "-s"};
       
       int q_max = MAX_GRIB2_PASS;
       if (p == NUM_ValueFiles - 1) {
@@ -30286,7 +30298,7 @@ float[][] getGrib2Value_MultiplePoints (int k, int l, int h, float[][] Points, S
       CommandArguments = concat(CommandArguments , _end);
       
       println(CommandArguments);
-      open(CommandArguments);
+      launch(CommandArguments);
       
     }
 
@@ -36597,7 +36609,7 @@ int[] get_startZ_endZ (int data_source) {
 void SOLARCHVISION_explore_output (String outputFile) {
 
   if ((Display_Output_in_Explorer == 1)  && (STUDY_record_AUTO == 0) && (WORLD_record_AUTO == 0) && (WIN3D_record_AUTO == 0) && (FRAME_record_AUTO == 0)) {
-    //open("explorer /select," + outputFile.replace("/", "\\"));
+    //launch("explorer /select," + outputFile.replace('/', char(92)));
   }
   
 }
@@ -36628,7 +36640,7 @@ void SOLARCHVISION_check_for_WIN3D_update () {
 
 void SOLARCHVISION_save_project (String myFile, int explore_output) {
   
-  myFile = myFile.replace("\\", "/");
+  myFile = myFile.replace(char(92), '/');
  
   XML my_xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
   XML newChild1 = null;
@@ -37554,7 +37566,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
 void SOLARCHVISION_load_project (String myFile) {
   
-  myFile = myFile.replace("\\", "/");
+  myFile = myFile.replace(char(92), '/');
   
 
   int continue_process = 1;
@@ -38489,6 +38501,3 @@ solution: I remarked wheel option for pickSelect for now.
 
 // the same messages of View_Select_Create_Modify=6/7 for both Layer/Visibility of polymeshes and DegreeMax/DegreeDif is not good!
 */
-
-
-
