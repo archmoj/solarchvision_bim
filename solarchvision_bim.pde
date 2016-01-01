@@ -30977,13 +30977,13 @@ if (selectedFace_displayEdges != 0) {
       
       noFill();
       
-      stroke(127,255,0,127);
+      stroke(255,0,255,127);
       
       strokeWeight(2);
       
       ellipseMode(CENTER);
       
-      float R = 5;
+      float R = 10;
       
       for (int o = selectedVertex_numbers.length - 1; o >= 0; o--) {
         
@@ -31009,6 +31009,88 @@ if (selectedFace_displayEdges != 0) {
       popMatrix();    
     }
   }  
+  
+  
+  if (Work_with_2D_or_3D == 6) {    
+    
+    if (selectedVertex_displayVertices != 0) {
+
+      int[] keep_selectedVertex_numbers = selectedVertex_numbers;
+      
+      SOLARCHVISION_convertVertex2Polymesh();
+      
+      SOLARCHVISION_convertPolymesh2Vertex();
+      
+      float[] selectedVertex_softSelectionValues = new float[selectedVertex_numbers.length];
+      
+      for (int q = 1; q < selectedVertex_numbers.length; q++) {
+        
+        int n = selectedVertex_numbers[q];
+        
+        float d_min = FLOAT_undefined;
+        
+        for (int p = 1; p < keep_selectedVertex_numbers.length; p++) {
+          
+          int m = keep_selectedVertex_numbers[p];
+          
+          float d = dist(allVertices[m][0], allVertices[m][1], allVertices[m][2], allVertices[n][0], allVertices[n][1], allVertices[n][2]);
+          
+          if (d_min > d) {
+            d_min = d; 
+          }
+        }
+        
+        selectedVertex_softSelectionValues[q] = SOLARCHVISION_softVertexSelectionFunction(d_min);
+      }
+      
+      pushMatrix();
+    
+      translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+      
+      strokeWeight(0);
+      
+      ellipseMode(CENTER);
+      
+      float R = 5;
+      
+      for (int o = selectedVertex_numbers.length - 1; o >= 0; o--) {
+        
+        int vNo = selectedVertex_numbers[o];
+        
+        if (vNo != 0) {        
+          
+          float x = allVertices[vNo][0] * OBJECTS_scale;
+          float y = allVertices[vNo][1] * OBJECTS_scale;
+          float z = -allVertices[vNo][2] * OBJECTS_scale;
+    
+          float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+          
+          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+            if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View + R, -0.5 * WIN3D_Y_View + R, 0.5 * WIN3D_X_View - R, 0.5 * WIN3D_Y_View - R) == 1) {
+              
+              float _u = selectedVertex_softSelectionValues[o];
+              
+              float[] _COL = GET_COLOR_STYLE(14, _u); // <<<<<<<<<<<<<<<<<
+              fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+              stroke(_COL[1], _COL[2], _COL[3], _COL[0]); 
+
+              ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
+            }
+          }
+    
+        }    
+      }
+      
+      strokeWeight(0);   
+    
+      popMatrix();    
+      
+      selectedVertex_numbers = keep_selectedVertex_numbers;   
+    }
+    
+     
+  }    
+  
 }
 
 
