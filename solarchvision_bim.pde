@@ -32706,7 +32706,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
   
   int[] theVertices = {};
 
-  if (Work_with_2D_or_3D == 5) {
+  if ((Work_with_2D_or_3D == 5) || (Work_with_2D_or_3D == 6))  {
     theVertices = selectedVertex_numbers;
   }
   if (Work_with_2D_or_3D == 4) {
@@ -33105,8 +33105,199 @@ void SOLARCHVISION_scale_selectedVertices (float x0, float y0, float z0, float s
 }
 
 
+float softSelection_Power = 1;
+float softSelection_Radius = 2; // 2 = 2m
+
+float SOLARCHVISION_softVertexSelectionFunction(float d_min) {
+  
+  float v = 0;
+  
+  if (d_min < softSelection_Radius) {
+    v = pow(cos_ang(90 * d_min / softSelection_Radius), softSelection_Power);
+  }
+  
+  return v;
+}
+
+void SOLARCHVISION_softMove_selectedVertices (float dx, float dy, float dz) {
+  
+  int[] keep_selectedVertex_numbers = selectedVertex_numbers;
+  
+  SOLARCHVISION_convertVertex2Polymesh();
+  
+  SOLARCHVISION_convertPolymesh2Vertex();
+  
+  float[] selectedVertex_softSelectionValues = new float[selectedVertex_numbers.length];
+  
+  for (int q = 1; q < selectedVertex_numbers.length; q++) {
+    
+    int n = selectedVertex_numbers[q];
+    
+    float d_min = FLOAT_undefined;
+    
+    for (int p = 1; p < keep_selectedVertex_numbers.length; p++) {
+      
+      int m = keep_selectedVertex_numbers[p];
+      
+      float d = dist(allVertices[m][0], allVertices[m][1], allVertices[m][2], allVertices[n][0], allVertices[n][1], allVertices[n][2]);
+      
+      if (d_min > d) {
+        d_min = d; 
+      }
+    }
+    
+    selectedVertex_softSelectionValues[q] = SOLARCHVISION_softVertexSelectionFunction(d_min);
+  }
+  
+  for (int q = 1; q < selectedVertex_numbers.length; q++) {
+    
+    int n = selectedVertex_numbers[q];
+    
+    float v = selectedVertex_softSelectionValues[q];
+  
+    allVertices[n][0] += dx * v; 
+    allVertices[n][1] += dy * v;
+    allVertices[n][2] += dz * v;
+  }
+  
+  selectedVertex_numbers = keep_selectedVertex_numbers;
+  
+  SOLARCHVISION_calculate_selection_Pivot();   
+  
+}
+
+
+void SOLARCHVISION_softRotate_selectedVertices (float x0, float y0, float z0, float r, int the_Vector) {
+  
+  int[] keep_selectedVertex_numbers = selectedVertex_numbers;
+  
+  SOLARCHVISION_convertVertex2Polymesh();
+  
+  SOLARCHVISION_convertPolymesh2Vertex();
+  
+  float[] selectedVertex_softSelectionValues = new float[selectedVertex_numbers.length];
+  
+  for (int q = 1; q < selectedVertex_numbers.length; q++) {
+    
+    int n = selectedVertex_numbers[q];
+    
+    float d_min = FLOAT_undefined;
+    
+    for (int p = 1; p < keep_selectedVertex_numbers.length; p++) {
+      
+      int m = keep_selectedVertex_numbers[p];
+      
+      float d = dist(allVertices[m][0], allVertices[m][1], allVertices[m][2], allVertices[n][0], allVertices[n][1], allVertices[n][2]);
+      
+      if (d_min > d) {
+        d_min = d; 
+      }
+    }
+    
+    selectedVertex_softSelectionValues[q] = SOLARCHVISION_softVertexSelectionFunction(d_min);
+  }
+  
+  for (int q = 1; q < selectedVertex_numbers.length; q++) {
+    
+    int n = selectedVertex_numbers[q];
+    
+    float v = selectedVertex_softSelectionValues[q];
+
+    float x = allVertices[n][0] - x0; 
+    float y = allVertices[n][1] - y0; 
+    float z = allVertices[n][2] - z0;
+    
+    if (the_Vector == 2) {
+      allVertices[n][0] = x0 + (x * cos(r * v) - y * sin(r * v)); 
+      allVertices[n][1] = y0 + (x * sin(r * v) + y * cos(r * v));
+      allVertices[n][2] = z0 + (z);
+    }
+    else if (the_Vector == 1) {
+      allVertices[n][0] = x0 + (z * sin(r * v) + x * cos(r * v)); 
+      allVertices[n][1] = y0 + (y);
+      allVertices[n][2] = z0 + (z * cos(r * v) - x * sin(r * v));
+    }    
+    else if (the_Vector == 0) {
+      allVertices[n][0] = x0 + (x); 
+      allVertices[n][1] = y0 + (y * cos(r * v) - z * sin(r * v));
+      allVertices[n][2] = z0 + (y * sin(r * v) + z * cos(r * v));
+    }    
+  }
+  
+  selectedVertex_numbers = keep_selectedVertex_numbers;
+  
+  SOLARCHVISION_calculate_selection_Pivot();   
+  
+}
+
+
+
+
+
+void SOLARCHVISION_softScale_selectedVertices (float x0, float y0, float z0, float sx, float sy, float sz) {
+  
+  int[] keep_selectedVertex_numbers = selectedVertex_numbers;
+  
+  SOLARCHVISION_convertVertex2Polymesh();
+  
+  SOLARCHVISION_convertPolymesh2Vertex();
+  
+  float[] selectedVertex_softSelectionValues = new float[selectedVertex_numbers.length];
+  
+  for (int q = 1; q < selectedVertex_numbers.length; q++) {
+    
+    int n = selectedVertex_numbers[q];
+    
+    float d_min = FLOAT_undefined;
+    
+    for (int p = 1; p < keep_selectedVertex_numbers.length; p++) {
+      
+      int m = keep_selectedVertex_numbers[p];
+      
+      float d = dist(allVertices[m][0], allVertices[m][1], allVertices[m][2], allVertices[n][0], allVertices[n][1], allVertices[n][2]);
+      
+      if (d_min > d) {
+        d_min = d; 
+      }
+    }
+    
+    selectedVertex_softSelectionValues[q] = SOLARCHVISION_softVertexSelectionFunction(d_min);
+  }
+  
+  for (int q = 1; q < selectedVertex_numbers.length; q++) {
+    
+    int n = selectedVertex_numbers[q];
+    
+    float v = selectedVertex_softSelectionValues[q];    
+
+    float x = allVertices[n][0] - x0; 
+    float y = allVertices[n][1] - y0; 
+    float z = allVertices[n][2] - z0;
+   
+    allVertices[n][0] = x0 + sx * x * v; 
+    allVertices[n][1] = y0 + sy * y * v;
+    allVertices[n][2] = z0 + sz * z * v;
+  }
+  
+  selectedVertex_numbers = keep_selectedVertex_numbers;
+  
+  SOLARCHVISION_calculate_selection_Pivot();   
+  
+}
+
+
+
+
+
+
+
 void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, float sy, float sz) {
 
+  if (Work_with_2D_or_3D == 6) {
+    
+    SOLARCHVISION_softScale_selectedVertices(x0, y0, z0, sx, sy, sz);
+  }    
+  
   if (Work_with_2D_or_3D == 5) {
     
     SOLARCHVISION_scale_selectedVertices(x0, y0, z0, sx, sy, sz);
@@ -33175,6 +33366,11 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
 
 void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int the_Vector) {
 
+  if (Work_with_2D_or_3D == 6) {
+    
+    SOLARCHVISION_softRotate_selectedVertices(x0, y0, z0, r, the_Vector);
+  }  
+  
   if (Work_with_2D_or_3D == 5) {
     
     SOLARCHVISION_rotate_selectedVertices(x0, y0, z0, r, the_Vector);
@@ -33214,7 +33410,7 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
 
   if (Work_with_2D_or_3D == 6) {
     
-    SOLARCHVISION_move_selectedVertices(dx, dy, dz);
+    SOLARCHVISION_softMove_selectedVertices(dx, dy, dz);
   }    
   
   if (Work_with_2D_or_3D == 5) {
