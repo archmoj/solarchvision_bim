@@ -230,7 +230,7 @@ int Create_Fractal_Plant_Seed = -1; // -1:random, 0-99 choice
 float Create_Fractal_Plant_TrunckSize = 1; //0.5;
 float Create_Fractal_Plant_LeafSize = 1; //1; 
 
-int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:Face, 5:Vertex, 6:Solid
+int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:Face, 5:Vertex, 6:Soft 7:Solid
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
@@ -29277,9 +29277,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       Create_Mesh_or_Solid = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_or_Solid" , Create_Mesh_or_Solid, 1, 2, 1), 1));
     
-      Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 6, 1), 1));
+      //Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 7, 1), 1));
     
-      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -17, 14, 1), 1));
+      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -17, 16, 1), 1));
       //View_XYZ_ChangeOption = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_ChangeOption" , View_XYZ_ChangeOption, 0, 6, 1), 1));
       //Modify_Object_Parameters = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Object_Parameters" , Modify_Object_Parameters, 0, 9, 1), 1));
 
@@ -33212,6 +33212,11 @@ void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int 
 
 void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
 
+  if (Work_with_2D_or_3D == 6) {
+    
+    SOLARCHVISION_move_selectedVertex(dx, dy, dz);
+  }    
+  
   if (Work_with_2D_or_3D == 5) {
     
     SOLARCHVISION_move_selectedVertex(dx, dy, dz);
@@ -35021,7 +35026,7 @@ String[][] BAR_b_Items = {
                           {"1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "BuildingType", "2.5"},
                           {"1", "as_Mesh", "as_Solid", "Mesh|Solid", "2.0"},  
                           
-                          {"2", "∞-D", "2½D", "3-D", "Face", "Vertex", "Solid", "LayerType", "1.5"},
+                          {"2", "∞-D", "2½D", "3-D", "Face", "Vertex", "Soft", "Solid", "LayerType", "1.5"},
                           {"1", "±CS", "+CS", "-CS", "ClickSelect", "1.0"},
                           {"1", "±WS", "+WS", "-WS", "WindowSelect", "1.0"},                          
                           {"2", "X<", "X|", "X>", "PivotX", "1.0"},
@@ -35553,9 +35558,31 @@ void set_to_Create_Cushion () {
 
 
 
+void set_to_Modify_Move (int n) {
+  View_Select_Create_Modify = 1;
+  
+  selected_posVector = n;
+  
+  ROLLOUT_Update = 1;
+}
+
+void set_to_Modify_Scale (int n) {
+  View_Select_Create_Modify = 2;
+  
+  selected_scaleVector = n;
+
+  ROLLOUT_Update = 1;
+}
 
 
+void set_to_Modify_Rotate (int n) {
+  View_Select_Create_Modify = 3;
+  
+  selected_rotVector = n;
 
+  ROLLOUT_Update = 1;
+}
+  
 void set_to_Modify_Seed (int n) {
   View_Select_Create_Modify = 4;
   Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
@@ -35635,6 +35662,13 @@ void set_to_Modify_SolarPivot (int n) {
   ROLLOUT_Update = 1; 
 }
 
+void set_to_Modify_FaceNormal (int n) {
+  View_Select_Create_Modify = 15;
+  Modify_Object_Parameters = n; // 1:flip normal, 2:set out from pivot, 3:set in from pivot    
+
+  ROLLOUT_Update = 1; 
+}
+
 void set_to_Modify_FaceFirstVertex (int n) {
   View_Select_Create_Modify = 16;
   Modify_Object_Parameters = n; // 1:default
@@ -35646,37 +35680,9 @@ void set_to_Modify_FaceFirstVertex (int n) {
 }
 
 
-void set_to_Modify_FaceNormal (int n) {
-  View_Select_Create_Modify = 15;
-  Modify_Object_Parameters = n; // 1:flip normal, 2:set out from pivot, 3:set in from pivot    
-
-  ROLLOUT_Update = 1; 
-}
 
 
-void set_to_Modify_Rotate (int n) {
-  View_Select_Create_Modify = 3;
-  
-  selected_rotVector = n;
 
-  ROLLOUT_Update = 1;
-}
-  
-void set_to_Modify_Scale (int n) {
-  View_Select_Create_Modify = 2;
-  
-  selected_scaleVector = n;
-
-  ROLLOUT_Update = 1;
-}
-
-void set_to_Modify_Move (int n) {
-  View_Select_Create_Modify = 1;
-  
-  selected_posVector = n;
-  
-  ROLLOUT_Update = 1;
-}
 
 void set_to_View_ProjectionType (int n) {
   WIN3D_View_Type = n;
