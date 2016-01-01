@@ -32777,7 +32777,7 @@ void SOLARCHVISION_reset_selectedRefValues () {
   selected_scaleValue = 0; 
 }
 
-void SOLARCHVISION_move_selectedPolymesh (float dx, float dy, float dz) {
+void SOLARCHVISION_move_selectedPolymeshes (float dx, float dy, float dz) {
 
   int[] PolymeshVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
   
@@ -32821,7 +32821,7 @@ void SOLARCHVISION_move_selectedPolymesh (float dx, float dy, float dz) {
   
 }
 
-void SOLARCHVISION_rotate_selectedPolymesh (float x0, float y0, float z0, float r, int the_Vector) {
+void SOLARCHVISION_rotate_selectedPolymeshes (float x0, float y0, float z0, float r, int the_Vector) {
 
   int[] PolymeshVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
   
@@ -32915,7 +32915,7 @@ void SOLARCHVISION_rotate_selectedPolymesh (float x0, float y0, float z0, float 
   
 }
 
-void SOLARCHVISION_scale_selectedPolymesh (float x0, float y0, float z0, float sx, float sy, float sz) {
+void SOLARCHVISION_scale_selectedPolymeshes (float x0, float y0, float z0, float sx, float sy, float sz) {
 
   int[] PolymeshVertices = SOLARCHVISION_get_selectedPolymesh_Vertices();
   
@@ -32966,7 +32966,7 @@ void SOLARCHVISION_scale_selectedPolymesh (float x0, float y0, float z0, float s
 
 
 
-void SOLARCHVISION_move_selectedFace (float dx, float dy, float dz) {
+void SOLARCHVISION_move_selectedFaces (float dx, float dy, float dz) {
 
   int[] FaceVertices = SOLARCHVISION_get_selectedFace_Vertices();
   
@@ -32983,7 +32983,7 @@ void SOLARCHVISION_move_selectedFace (float dx, float dy, float dz) {
   
 }
 
-void SOLARCHVISION_rotate_selectedFace (float x0, float y0, float z0, float r, int the_Vector) {
+void SOLARCHVISION_rotate_selectedFaces (float x0, float y0, float z0, float r, int the_Vector) {
 
   int[] FaceVertices = SOLARCHVISION_get_selectedFace_Vertices();
   
@@ -33016,7 +33016,7 @@ void SOLARCHVISION_rotate_selectedFace (float x0, float y0, float z0, float r, i
   
 }
 
-void SOLARCHVISION_scale_selectedFace (float x0, float y0, float z0, float sx, float sy, float sz) {
+void SOLARCHVISION_scale_selectedFaces (float x0, float y0, float z0, float sx, float sy, float sz) {
 
   int[] FaceVertices = SOLARCHVISION_get_selectedFace_Vertices();
   
@@ -33038,7 +33038,7 @@ void SOLARCHVISION_scale_selectedFace (float x0, float y0, float z0, float sx, f
 }
 
 
-void SOLARCHVISION_move_selectedVertex (float dx, float dy, float dz) {
+void SOLARCHVISION_move_selectedVertices (float dx, float dy, float dz) {
 
   for (int q = 1; q < selectedVertex_numbers.length; q++) {
     
@@ -33054,7 +33054,7 @@ void SOLARCHVISION_move_selectedVertex (float dx, float dy, float dz) {
 }
 
 
-void SOLARCHVISION_rotate_selectedVertex (float x0, float y0, float z0, float r, int the_Vector) {
+void SOLARCHVISION_rotate_selectedVertices (float x0, float y0, float z0, float r, int the_Vector) {
 
   for (int q = 1; q < selectedVertex_numbers.length; q++) {
     
@@ -33085,7 +33085,7 @@ void SOLARCHVISION_rotate_selectedVertex (float x0, float y0, float z0, float r,
 }
 
 
-void SOLARCHVISION_scale_selectedVertex (float x0, float y0, float z0, float sx, float sy, float sz) {
+void SOLARCHVISION_scale_selectedVertices (float x0, float y0, float z0, float sx, float sy, float sz) {
   
   for (int q = 1; q < selectedVertex_numbers.length; q++) {
     
@@ -33109,17 +33109,17 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
 
   if (Work_with_2D_or_3D == 5) {
     
-    SOLARCHVISION_scale_selectedVertex(x0, y0, z0, sx, sy, sz);
+    SOLARCHVISION_scale_selectedVertices(x0, y0, z0, sx, sy, sz);
   }  
   
   if (Work_with_2D_or_3D == 4) {
     
-    SOLARCHVISION_scale_selectedFace(x0, y0, z0, sx, sy, sz);
+    SOLARCHVISION_scale_selectedFaces(x0, y0, z0, sx, sy, sz);
   }  
   
   if (Work_with_2D_or_3D == 3) {
     
-    SOLARCHVISION_scale_selectedPolymesh(x0, y0, z0, sx, sy, sz);
+    SOLARCHVISION_scale_selectedPolymeshes(x0, y0, z0, sx, sy, sz);
   }
 
   if (Work_with_2D_or_3D == 2) {
@@ -33177,17 +33177,17 @@ void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int 
 
   if (Work_with_2D_or_3D == 5) {
     
-    SOLARCHVISION_rotate_selectedVertex(x0, y0, z0, r, the_Vector);
+    SOLARCHVISION_rotate_selectedVertices(x0, y0, z0, r, the_Vector);
   }  
 
   if (Work_with_2D_or_3D == 4) {
     
-    SOLARCHVISION_rotate_selectedFace(x0, y0, z0, r, the_Vector);
+    SOLARCHVISION_rotate_selectedFaces(x0, y0, z0, r, the_Vector);
   }  
   
   if (Work_with_2D_or_3D == 3) {
     
-    SOLARCHVISION_rotate_selectedPolymesh(x0, y0, z0, r, the_Vector);
+    SOLARCHVISION_rotate_selectedPolymeshes(x0, y0, z0, r, the_Vector);
   }
   
   if (Work_with_2D_or_3D == 2) {
@@ -33214,22 +33214,22 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
 
   if (Work_with_2D_or_3D == 6) {
     
-    SOLARCHVISION_move_selectedVertex(dx, dy, dz);
+    SOLARCHVISION_move_selectedVertices(dx, dy, dz);
   }    
   
   if (Work_with_2D_or_3D == 5) {
     
-    SOLARCHVISION_move_selectedVertex(dx, dy, dz);
+    SOLARCHVISION_move_selectedVertices(dx, dy, dz);
   }  
 
   if (Work_with_2D_or_3D == 4) {
     
-    SOLARCHVISION_move_selectedFace(dx, dy, dz);
+    SOLARCHVISION_move_selectedFaces(dx, dy, dz);
   }  
   
   if (Work_with_2D_or_3D == 3) {
     
-    SOLARCHVISION_move_selectedPolymesh(dx, dy, dz);
+    SOLARCHVISION_move_selectedPolymeshes(dx, dy, dz);
   }
 
   if (Work_with_2D_or_3D == 2) {
