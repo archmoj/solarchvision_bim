@@ -234,7 +234,7 @@ int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:Face, 5:Vertex, 6:Solid
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
-int View_Select_Create_Modify = 4; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:DegreeMax 7:DegreeDif 8:DegreeMin 9:TrunckSize 10:LeafSize 11:AllFractalProps 12:SolarPivot 13:FaceNormal 14:FaceFirstVertex
+int View_Select_Create_Modify = 4; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunckSize 12:LeafSize 13:AllFractalProps 14:SolarPivot 15:FaceNormal 16:FaceFirstVertex
 int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. fractal trees
 
@@ -28136,7 +28136,7 @@ void mouseClicked () {
                       }    
                     }
                     
-                    if (View_Select_Create_Modify == 12) {
+                    if (View_Select_Create_Modify == 14) {
                       if (Modify_Object_Parameters == 1) { // Pick 
                         //?????????????????????????????????????????????????
                       }     
@@ -28156,7 +28156,7 @@ void mouseClicked () {
                       }                   
                     }
                     
-                    if (View_Select_Create_Modify == 13) { //FaceNormal
+                    if (View_Select_Create_Modify == 15) { //FaceNormal
                     
                       if (Work_with_2D_or_3D == 4) {
                         
@@ -28260,7 +28260,7 @@ void mouseClicked () {
                     }   
                     
                     
-                    if (View_Select_Create_Modify == 14) { //FaceFirstVertex
+                    if (View_Select_Create_Modify == 16) { //FaceFirstVertex
                     
                       if (Work_with_2D_or_3D == 4) {
                         
@@ -28342,12 +28342,12 @@ void mouseClicked () {
                     int OBJ_NUM = int(RxP[4]);
                       
                     if (Modify_Object_Parameters == 1) { // Pick 
-                      if (View_Select_Create_Modify == 6) Create_Fractal_Plant_DegreeMax = allFractal_DegreeMax[OBJ_NUM];
-                      if (View_Select_Create_Modify == 7) {Create_Fractal_Plant_DegreeMax = allFractal_DegreeMax[OBJ_NUM]; Create_Fractal_Plant_DegreeMin = allFractal_DegreeMin[OBJ_NUM];}
-                      if (View_Select_Create_Modify == 8) Create_Fractal_Plant_DegreeMin = allFractal_DegreeMin[OBJ_NUM];
-                      if (View_Select_Create_Modify == 9) Create_Fractal_Plant_TrunckSize = allFractal_TrunckSize[OBJ_NUM];
-                      if (View_Select_Create_Modify == 10) Create_Fractal_Plant_LeafSize = allFractal_LeafSize[OBJ_NUM];
-                      if (View_Select_Create_Modify == 11) { // all properties
+                      if (View_Select_Create_Modify == 8) Create_Fractal_Plant_DegreeMax = allFractal_DegreeMax[OBJ_NUM];
+                      if (View_Select_Create_Modify == 9) {Create_Fractal_Plant_DegreeMax = allFractal_DegreeMax[OBJ_NUM]; Create_Fractal_Plant_DegreeMin = allFractal_DegreeMin[OBJ_NUM];}
+                      if (View_Select_Create_Modify == 10) Create_Fractal_Plant_DegreeMin = allFractal_DegreeMin[OBJ_NUM];
+                      if (View_Select_Create_Modify == 11) Create_Fractal_Plant_TrunckSize = allFractal_TrunckSize[OBJ_NUM];
+                      if (View_Select_Create_Modify == 12) Create_Fractal_Plant_LeafSize = allFractal_LeafSize[OBJ_NUM];
+                      if (View_Select_Create_Modify == 13) { // all properties
                         Create_Fractal_Plant_DegreeMax = allFractal_DegreeMax[OBJ_NUM];
                         Create_Fractal_Plant_DegreeMin = allFractal_DegreeMin[OBJ_NUM];
                         Create_Fractal_Plant_TrunckSize = allFractal_TrunckSize[OBJ_NUM];
@@ -28355,12 +28355,12 @@ void mouseClicked () {
                       }                      
                     } 
                     if (Modify_Object_Parameters == 2) { //Assign
-                      if (View_Select_Create_Modify == 6) allFractal_DegreeMax[OBJ_NUM] = Create_Fractal_Plant_DegreeMax;                    
-                      if (View_Select_Create_Modify == 7) {allFractal_DegreeMax[OBJ_NUM] = Create_Fractal_Plant_DegreeMax; allFractal_DegreeMin[OBJ_NUM] = Create_Fractal_Plant_DegreeMin;}                 
-                      if (View_Select_Create_Modify == 8) allFractal_DegreeMin[OBJ_NUM] = Create_Fractal_Plant_DegreeMin;                    
-                      if (View_Select_Create_Modify == 9) allFractal_TrunckSize[OBJ_NUM] = Create_Fractal_Plant_TrunckSize;                    
-                      if (View_Select_Create_Modify == 10) allFractal_LeafSize[OBJ_NUM] = Create_Fractal_Plant_LeafSize;
-                      if (View_Select_Create_Modify == 11) { // all properties
+                      if (View_Select_Create_Modify == 8) allFractal_DegreeMax[OBJ_NUM] = Create_Fractal_Plant_DegreeMax;                    
+                      if (View_Select_Create_Modify == 9) {allFractal_DegreeMax[OBJ_NUM] = Create_Fractal_Plant_DegreeMax; allFractal_DegreeMin[OBJ_NUM] = Create_Fractal_Plant_DegreeMin;}                 
+                      if (View_Select_Create_Modify == 10) allFractal_DegreeMin[OBJ_NUM] = Create_Fractal_Plant_DegreeMin;                    
+                      if (View_Select_Create_Modify == 11) allFractal_TrunckSize[OBJ_NUM] = Create_Fractal_Plant_TrunckSize;                    
+                      if (View_Select_Create_Modify == 12) allFractal_LeafSize[OBJ_NUM] = Create_Fractal_Plant_LeafSize;
+                      if (View_Select_Create_Modify == 13) { // all properties
                         allFractal_DegreeMax[OBJ_NUM] = Create_Fractal_Plant_DegreeMax;
                         allFractal_DegreeMin[OBJ_NUM] = Create_Fractal_Plant_DegreeMin;                    
                         allFractal_TrunckSize[OBJ_NUM] = Create_Fractal_Plant_TrunckSize;                    
@@ -33411,7 +33411,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           allFractal_Seed[OBJ_NUM] += p;
           
         } 
-        if (View_Select_Create_Modify == 6) {
+        if (View_Select_Create_Modify == 8) {
           int q = allFractal_DegreeMax[OBJ_NUM];
           
           q += p;
@@ -33423,7 +33423,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           Create_Fractal_Plant_DegreeMax = q;
           ROLLOUT_Update = 1;
         }
-        if (View_Select_Create_Modify == 7) {
+        if (View_Select_Create_Modify == 9) {
           int q1 = allFractal_DegreeMin[OBJ_NUM];
           int q2 = allFractal_DegreeMax[OBJ_NUM];
           q1 += p;
@@ -33445,7 +33445,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
             ROLLOUT_Update = 1;
           }
         }
-        if (View_Select_Create_Modify == 8) {
+        if (View_Select_Create_Modify == 10) {
           int q = allFractal_DegreeMin[OBJ_NUM];
           
           q += p;
@@ -33457,7 +33457,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           Create_Fractal_Plant_DegreeMin = q;
           ROLLOUT_Update = 1;
         }        
-        if (View_Select_Create_Modify == 9) {
+        if (View_Select_Create_Modify == 11) {
           float q = allFractal_TrunckSize[OBJ_NUM];
           
           q += 0.25 * p;
@@ -33469,7 +33469,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           Create_Fractal_Plant_TrunckSize = q;
           ROLLOUT_Update = 1;
         }
-        if (View_Select_Create_Modify == 10) {
+        if (View_Select_Create_Modify == 12) {
           float q = allFractal_LeafSize[OBJ_NUM];
           
           q += 0.25 * p;
@@ -35587,56 +35587,56 @@ void set_to_Modify_Visibility (int n) {
 // the same messages of View_Select_Create_Modify=6/7 for both Layer/Visibility of polymeshes and DegreeMax/DegreeDif is not good!
 
 void set_to_Modify_DegreeMax (int n) {
-  View_Select_Create_Modify = 6;
-  Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
-
-  ROLLOUT_Update = 1; 
-}
-
-void set_to_Modify_DegreeDif (int n) {
-  View_Select_Create_Modify = 7;
-  Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
-
-  ROLLOUT_Update = 1; 
-}
-
-void set_to_Modify_DegreeMin (int n) {
   View_Select_Create_Modify = 8;
   Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Modify_TrunckSize (int n) {
+void set_to_Modify_DegreeDif (int n) {
   View_Select_Create_Modify = 9;
   Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Modify_LeafSize (int n) {
+void set_to_Modify_DegreeMin (int n) {
   View_Select_Create_Modify = 10;
   Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Modify_AllFractalProps (int n) {
+void set_to_Modify_TrunckSize (int n) {
   View_Select_Create_Modify = 11;
   Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Modify_SolarPivot (int n) {
+void set_to_Modify_LeafSize (int n) {
   View_Select_Create_Modify = 12;
   Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
 
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Modify_FaceFirstVertex (int n) {
+void set_to_Modify_AllFractalProps (int n) {
+  View_Select_Create_Modify = 13;
+  Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
+
+  ROLLOUT_Update = 1; 
+}
+
+void set_to_Modify_SolarPivot (int n) {
   View_Select_Create_Modify = 14;
+  Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
+
+  ROLLOUT_Update = 1; 
+}
+
+void set_to_Modify_FaceFirstVertex (int n) {
+  View_Select_Create_Modify = 16;
   Modify_Object_Parameters = n; // 1:default
   
   Work_with_2D_or_3D = 4; // << because it only works with face sub-object
@@ -35647,7 +35647,7 @@ void set_to_Modify_FaceFirstVertex (int n) {
 
 
 void set_to_Modify_FaceNormal (int n) {
-  View_Select_Create_Modify = 13;
+  View_Select_Create_Modify = 15;
   Modify_Object_Parameters = n; // 1:flip normal, 2:set out from pivot, 3:set in from pivot    
 
   ROLLOUT_Update = 1; 
