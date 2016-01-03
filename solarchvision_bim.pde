@@ -29406,6 +29406,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Modify_Input_OffsetAmount = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_OffsetAmount" , Modify_Input_OffsetAmount, 0, 25, 0.001);
       
       Modify_Input_WeldTreshold = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_WeldTreshold" , Modify_Input_WeldTreshold, 0, 10, 0.001);      
+
+      softSelection_Power = MySpinner.update(X_control, Y_control, 0,0,0, "softSelection_Power" , softSelection_Power, 0, 8, 1);
+      softSelection_Radius = MySpinner.update(X_control, Y_control, 0,0,0, "softSelection_Radius" , softSelection_Radius, 0, 100, 1);
     
       selected_posVector = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selected_posVector" , selected_posVector, 0, 3, 1), 1));
       selected_rotVector =  int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selected_rotVector" , selected_rotVector, 0, 2, 1), 1));
@@ -29419,8 +29422,6 @@ void SOLARCHVISION_draw_ROLLOUT () {
       selection_alignY = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selection_alignY" , selection_alignY, -1, 1, 1), 1));
       selection_alignZ = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selection_alignZ" , selection_alignZ, -1, 1, 1), 1));
   
-
-
     }
 
     if (ROLLOUT_child == 4) { // Solid
@@ -29667,8 +29668,6 @@ void SOLARCHVISION_draw_ROLLOUT () {
       selectedObject2D_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedObject2D_displayEdges" , selectedObject2D_displayEdges, 0, 1, 1), 1));
       selectedFractal_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedFractal_displayEdges" , selectedFractal_displayEdges, 0, 1, 1), 1));
 
-      softSelection_Power = MySpinner.update(X_control, Y_control, 0,0,0, "softSelection_Power" , softSelection_Power, 0, 8, 1);
-      softSelection_Radius = MySpinner.update(X_control, Y_control, 0,0,0, "softSelection_Radius" , softSelection_Radius, 0, 100, 1);
     }      
   
   }
@@ -32855,7 +32854,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
    
       float POS_now = 0;
       
-      if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4) || (Work_with_2D_or_3D == 5)) {
+      if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4) || (Work_with_2D_or_3D == 5) || (Work_with_2D_or_3D == 6)) {
         int n = theVertices[q];
         
         POS_now = allVertices[n][j];
@@ -33305,9 +33304,9 @@ void SOLARCHVISION_softScale_selectedVertices (float x0, float y0, float z0, flo
     float y = allVertices[n][1] - y0; 
     float z = allVertices[n][2] - z0;
    
-    allVertices[n][0] = x0 + sx * x * v; 
-    allVertices[n][1] = y0 + sy * y * v;
-    allVertices[n][2] = z0 + sz * z * v;
+    allVertices[n][0] = (x0 + sx * x) * v + (x0 + x) * (1 - v); 
+    allVertices[n][1] = (y0 + sy * y) * v + (y0 + y) * (1 - v); 
+    allVertices[n][2] = (z0 + sz * z) * v + (z0 + z) * (1 - v); 
   }
   
 }
