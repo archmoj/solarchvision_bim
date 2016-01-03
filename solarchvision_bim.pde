@@ -219,12 +219,14 @@ int Create_Mesh_Extrude = 0;
 int Create_Mesh_Tri = 0;
 int Create_Mesh_Quad = 0;
 int Create_Mesh_House = 0; 
-int Create_Mesh_Parametric = 0;
 int Create_Mesh_SuperOBJ = 0;
+int Create_Mesh_Parametric = 0;
 int Create_Mesh_Person = 0;
 int Create_Mesh_Plant = 0;
 int Create_Fractal_Plant = 0;
 
+
+int Create_Mesh_Parametric_Type = 0;
 int Create_Mesh_Person_Type = 0;
 int Create_Mesh_Plant_Type = 0;
 int Create_Fractal_Plant_Type = 0;
@@ -28869,7 +28871,7 @@ void mouseClicked () {
                 if (Create_Mesh_Parametric != 0) {
                   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1; 
                   
-                  SOLARCHVISION_add_ParametricSurface(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x, y, z, rx, ry, rz, Create_Mesh_Parametric, rot);
+                  SOLARCHVISION_add_ParametricSurface(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x, y, z, rx, ry, rz, Create_Mesh_Parametric_Type, rot);
                 }
     
                 if (Create_Fractal_Plant != 0) {
@@ -29443,18 +29445,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Cylinder_Degree = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Cylinder_Degree" , Create_Cylinder_Degree, 3, 36, 1), 1));    
 
       Create_Poly_Degree = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Poly_Degree" , Create_Poly_Degree, 3, 36, 1), 1));
-      Create_Mesh_Poly = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Poly" , Create_Mesh_Poly, 0, 1, 1), 1));
-      Create_Mesh_Extrude = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Extrude" , Create_Mesh_Extrude, 0, 1, 1), 1));
-      Create_Mesh_Tri = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Tri" , Create_Mesh_Tri, 0, 1, 1), 1));
-      Create_Mesh_Quad = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Quad" , Create_Mesh_Quad, 0, 1, 1), 1));
-      
-      Create_Mesh_House = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_House" , Create_Mesh_House, 0, 1, 1), 1));
-      
-      Create_Mesh_Parametric = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Parametric" , Create_Mesh_Parametric, 0, 7, 1), 1));
-      
-      Create_Mesh_Person = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Person" , Create_Mesh_Person, 0, 1, 1), 1));
+
+      Create_Mesh_Parametric_Type = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Parametric_Type" , Create_Mesh_Parametric_Type, 0, 7, 1), 1));
       Create_Mesh_Person_Type = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Person_Type" , Create_Mesh_Person_Type, 0, Object2D_PEOPLE_Files_Num, 1), 1));
-      Create_Mesh_Plant = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Plant" , Create_Mesh_Plant, 0, 1, 1), 1));
       Create_Mesh_Plant_Type = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_Plant_Type" , Create_Mesh_Plant_Type, 0, Object2D_TREES_Files_Num, 1), 1));
 
     }
@@ -35429,7 +35422,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
           else if ((BAR_b_Items[i][j]).equals("Sphere")) set_to_Create_Sphere();
           else if ((BAR_b_Items[i][j]).equals("Cylinder")) set_to_Create_Cylinder();
           else if ((BAR_b_Items[i][j]).equals("Cushion")) set_to_Create_Cushion();
-          else if ((BAR_b_Items[i][j]).equals("Parametric")) set_to_Create_Parametric(Create_Mesh_Parametric);          
+          else if ((BAR_b_Items[i][j]).equals("Parametric")) set_to_Create_Parametric(Create_Mesh_Parametric_Type);          
         }
 
         if (Bar_Switch.equals("Change Seed/Material")) {
@@ -35683,7 +35676,9 @@ void set_to_Create_Person () {
 void set_to_Create_Parametric (int n) {
   set_to_Create_Nothing();
   
-  Create_Mesh_Parametric = n;
+  Create_Mesh_Parametric = 1;
+  Create_Mesh_Parametric_Type = n;
+  
   Work_with_2D_or_3D = 3;  
 }
 
@@ -36929,16 +36924,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Create_Sphere_Degree", Create_Sphere_Degree);
   newChild1.setInt("Create_Cylinder_Degree", Create_Cylinder_Degree);
   newChild1.setInt("Create_Poly_Degree", Create_Poly_Degree);
-  newChild1.setInt("Create_Mesh_Poly", Create_Mesh_Poly);
-  newChild1.setInt("Create_Mesh_Extrude", Create_Mesh_Extrude);
-  newChild1.setInt("Create_Mesh_Tri", Create_Mesh_Tri);
-  newChild1.setInt("Create_Mesh_Quad", Create_Mesh_Quad);
-  newChild1.setInt("Create_Mesh_House", Create_Mesh_House);
-  newChild1.setInt("Create_Mesh_Parametric", Create_Mesh_Parametric);
-  newChild1.setInt("Create_Mesh_SuperOBJ", Create_Mesh_SuperOBJ);
-  newChild1.setInt("Create_Mesh_Person", Create_Mesh_Person);
-  newChild1.setInt("Create_Mesh_Plant", Create_Mesh_Plant);
-  newChild1.setInt("Create_Fractal_Plant", Create_Fractal_Plant);
+  newChild1.setInt("Create_Mesh_Parametric_Type", Create_Mesh_Parametric_Type);
   newChild1.setInt("Create_Mesh_Person_Type", Create_Mesh_Person_Type);
   newChild1.setInt("Create_Mesh_Plant_Type", Create_Mesh_Plant_Type);
   newChild1.setInt("Create_Fractal_Plant_Type", Create_Fractal_Plant_Type);
@@ -37868,16 +37854,7 @@ void SOLARCHVISION_load_project (String myFile) {
       Create_Sphere_Degree = children0[L].getInt("Create_Sphere_Degree");
       Create_Cylinder_Degree = children0[L].getInt("Create_Cylinder_Degree");
       Create_Poly_Degree = children0[L].getInt("Create_Poly_Degree");
-      Create_Mesh_Poly = children0[L].getInt("Create_Mesh_Poly");
-      Create_Mesh_Extrude = children0[L].getInt("Create_Mesh_Extrude");
-      Create_Mesh_Tri = children0[L].getInt("Create_Mesh_Tri");
-      Create_Mesh_Quad = children0[L].getInt("Create_Mesh_Quad");
-      Create_Mesh_House = children0[L].getInt("Create_Mesh_House");
-      Create_Mesh_Parametric = children0[L].getInt("Create_Mesh_Parametric");
-      Create_Mesh_SuperOBJ = children0[L].getInt("Create_Mesh_SuperOBJ");
-      Create_Mesh_Person = children0[L].getInt("Create_Mesh_Person");
-      Create_Mesh_Plant = children0[L].getInt("Create_Mesh_Plant");
-      Create_Fractal_Plant = children0[L].getInt("Create_Fractal_Plant");
+      Create_Mesh_Parametric_Type = children0[L].getInt("Create_Mesh_Parametric_Type");
       Create_Mesh_Person_Type = children0[L].getInt("Create_Mesh_Person_Type");
       Create_Mesh_Plant_Type = children0[L].getInt("Create_Mesh_Plant_Type");
       Create_Fractal_Plant_Type = children0[L].getInt("Create_Fractal_Plant_Type");
