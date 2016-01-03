@@ -16746,9 +16746,43 @@ void SOLARCHVISION_convertFace2Vertex () {
 }
 
 
-
+int[] selectedVertex_softSelectionVertices = new int[0]; 
+float[] selectedVertex_softSelectionValues = new float[0]; 
 
 void SOLARCHVISION_convertVertex2softSelection () { 
+
+  int[] keep_selectedVertex_numbers = selectedVertex_numbers;
+  
+  SOLARCHVISION_convertVertex2Polymesh();
+  
+  SOLARCHVISION_convertPolymesh2Vertex();
+  
+  selectedVertex_softSelectionVertices = new int[selectedVertex_numbers.length]; 
+  selectedVertex_softSelectionValues = new float[selectedVertex_numbers.length];
+
+  for (int q = 1; q < selectedVertex_numbers.length; q++) {
+    
+    int n = selectedVertex_numbers[q];
+    
+    float d_min = FLOAT_undefined;
+    
+    for (int p = 1; p < keep_selectedVertex_numbers.length; p++) {
+      
+      int m = keep_selectedVertex_numbers[p];
+      
+      float d = dist(allVertices[m][0], allVertices[m][1], allVertices[m][2], allVertices[n][0], allVertices[n][1], allVertices[n][2]);
+      
+      if (d_min > d) {
+        d_min = d; 
+      }
+    }
+    
+    selectedVertex_softSelectionValues[q] = SOLARCHVISION_softVertexSelectionFunction(d_min);
+  }
+  
+  selectedVertex_softSelectionVertices = selectedVertex_numbers;
+  
+  selectedVertex_numbers = keep_selectedVertex_numbers;
   
 }
 
@@ -33240,37 +33274,14 @@ float SOLARCHVISION_softVertexSelectionFunction(float d_min) {
 
 void SOLARCHVISION_softMove_selectedVertices (float dx, float dy, float dz) {
   
-  int[] keep_selectedVertex_numbers = selectedVertex_numbers;
+  if (selectedVertex_softSelectionVertices.length != selectedVertex_numbers.length) {
   
-  SOLARCHVISION_convertVertex2Polymesh();
-  
-  SOLARCHVISION_convertPolymesh2Vertex();
-  
-  float[] selectedVertex_softSelectionValues = new float[selectedVertex_numbers.length];
-  
-  for (int q = 1; q < selectedVertex_numbers.length; q++) {
-    
-    int n = selectedVertex_numbers[q];
-    
-    float d_min = FLOAT_undefined;
-    
-    for (int p = 1; p < keep_selectedVertex_numbers.length; p++) {
-      
-      int m = keep_selectedVertex_numbers[p];
-      
-      float d = dist(allVertices[m][0], allVertices[m][1], allVertices[m][2], allVertices[n][0], allVertices[n][1], allVertices[n][2]);
-      
-      if (d_min > d) {
-        d_min = d; 
-      }
-    }
-    
-    selectedVertex_softSelectionValues[q] = SOLARCHVISION_softVertexSelectionFunction(d_min);
+    SOLARCHVISION_convertVertex2softSelection();
   }
   
-  for (int q = 1; q < selectedVertex_numbers.length; q++) {
+  for (int q = 1; q < selectedVertex_softSelectionVertices.length; q++) {
     
-    int n = selectedVertex_numbers[q];
+    int n = selectedVertex_softSelectionVertices[q];
     
     float v = selectedVertex_softSelectionValues[q];
   
@@ -33278,11 +33289,7 @@ void SOLARCHVISION_softMove_selectedVertices (float dx, float dy, float dz) {
     allVertices[n][1] += dy * v;
     allVertices[n][2] += dz * v;
   }
-  
-  selectedVertex_numbers = keep_selectedVertex_numbers;
-  
-  SOLARCHVISION_calculate_selection_Pivot();   
-  
+ 
 }
 
 
@@ -35035,7 +35042,7 @@ String[][] BAR_a_Items = {
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
-                        {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
+                        {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Soft Selection", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
                         {"Edit", "Duplicate Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Vsibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunckSize", "Change LeafSize"},
                         {"Match", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
@@ -35491,6 +35498,8 @@ void SOLARCHVISION_draw_window_BAR_b () {
 
         if (Bar_Switch.equals("LayerType")) {
           Work_with_2D_or_3D = j;
+          
+          if (Work_with_2D_or_3D == 6) SOLARCHVISION_convertVertex2softSelection();
           
           ROLLOUT_Update = 1;   
           WIN3D_Update = 1;     
