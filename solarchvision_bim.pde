@@ -27100,9 +27100,22 @@ void mouseClicked () {
             }
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Assign SolarPivot")) {
               set_to_Modify_SolarPivot(2);
-              SOLARCHVISION_highlight_in_BAR_b("Spvt2");
+              SOLARCHVISION_highlight_in_BAR_b("SPvt2");
               BAR_b_Update = 1;  
             }
+
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Get Selection Pivot")) {
+              SOLARCHVISION_save_selection_Pivot();
+              SOLARCHVISION_highlight_in_BAR_b("<pvt>");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Set Selection Pivot")) {
+              SOLARCHVISION_pick_saved_Pivot();
+              SOLARCHVISION_highlight_in_BAR_b(">pvt<");
+              BAR_b_Update = 1;  
+            }
+
+
 
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change Seed/Material")) {
@@ -32814,9 +32827,14 @@ int[] SOLARCHVISION_get_selectedPolymesh_Vertices () {
 } 
 
 
-float[] selected_Pivot_XYZ = {0,0,0};
+
+
 
 float[][] selection_BoundingBox = {{0,0,0}, {0,0,0}, {0,0,0}}; // [min|mid|max]
+
+float[] selected_Pivot_XYZ = {0,0,0};
+
+float[] saved_Pivot_XYZ = {0,0,0};
 
 void SOLARCHVISION_calculate_selection_BoundingBox () {
   
@@ -32889,6 +32907,25 @@ void SOLARCHVISION_calculate_selection_Pivot () {
     selected_Pivot_XYZ[2] = selection_BoundingBox[1 + selection_alignZ][2];
   }
 }
+
+
+void SOLARCHVISION_save_selection_Pivot () {
+  
+  saved_Pivot_XYZ[0] = selected_Pivot_XYZ[0];
+  saved_Pivot_XYZ[1] = selected_Pivot_XYZ[1];
+  saved_Pivot_XYZ[2] = selected_Pivot_XYZ[2];
+  
+}
+
+
+void SOLARCHVISION_pick_saved_Pivot () {
+  
+  selected_Pivot_XYZ[0] = saved_Pivot_XYZ[0];
+  selected_Pivot_XYZ[1] = saved_Pivot_XYZ[1];
+  selected_Pivot_XYZ[2] = saved_Pivot_XYZ[2];
+  
+}
+
 
 void SOLARCHVISION_reset_selectedRefValues () {
   
@@ -34944,7 +34981,7 @@ String[][] BAR_a_Items = {
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Soft Selection", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
                         {"Edit", "Duplicate Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Vsibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunckSize", "Change LeafSize"},
-                        {"Match", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
+                        {"Match", "Get Selection Pivot", "Set Selection Pivot", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
                         {"IMG/PDF", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
 
                       };
@@ -35263,6 +35300,7 @@ String[][] BAR_b_Items = {
                           {"1", "FNorm1", "FNorm2", "FNorm3", "FaceNormal", "1.0"},
                           {"1", "F1stV", "FaceFirstVertex", "1.0"},
                           
+                          //{"1", "<pvt>", ">pvt<", "Get/Set Pivot", "1.0"},
                           
                           //{"1", "SPvt0", "SPvt1", "SPvt2", "SolarPivot", "1.0"},
                           
