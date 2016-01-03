@@ -110,7 +110,7 @@ int selectedVertex_displayVertices = 1;
 int selectedObject2D_displayEdges = 1;
 int selectedFractal_displayEdges = 1;
 
-int addNewSelectionToPreviousSelection = 0;
+
 
 
 int[] selectedFractal_numbers = {0};
@@ -119,6 +119,11 @@ int[] selectedPolymesh_numbers = {0};
 int[] selectedFace_numbers = {0};
 int[] selectedVertex_numbers = {0};
 
+
+float softSelection_Power = 1;
+float softSelection_Radius = 2; // 2 = 2m
+
+int addNewSelectionToPreviousSelection = 0;
 
 float[][] allVertices = {{0,0,0}};
 int[][] allFaces = {{0,0,0}};
@@ -1323,6 +1328,8 @@ int pre_selectedObject2D_displayEdges;
 int pre_Display_MODEL3D_EDGES;
 int pre_Display_MODEL3D_NORMALS;
 
+float pre_softSelection_Power;
+float pre_softSelection_Radius;
 
 float pre_selected_posValue;
 float pre_selected_rotValue;
@@ -2222,6 +2229,9 @@ void draw () {
         pre_Display_MODEL3D_EDGES = Display_MODEL3D_EDGES;
         pre_Display_MODEL3D_NORMALS = Display_MODEL3D_NORMALS;
         
+        pre_softSelection_Power = softSelection_Power;
+        pre_softSelection_Radius = softSelection_Radius;
+        
         
         pre_selected_posValue = selected_posValue;
         pre_selected_rotValue = selected_rotValue;
@@ -2408,6 +2418,19 @@ void draw () {
           SOLARCHVISION_calculate_selection_Pivot();
           WIN3D_Update = 1;
         }        
+        
+        
+
+        if (pre_softSelection_Power != softSelection_Power) {        
+          SOLARCHVISION_convertVertex2softSelection();
+          WIN3D_Update = 1;
+        }  
+
+        if (pre_softSelection_Radius != softSelection_Radius) {        
+          SOLARCHVISION_convertVertex2softSelection();
+          WIN3D_Update = 1;
+        }  
+
         
         if (pre_selection_alignX != selection_alignX) {        
           SOLARCHVISION_calculate_selection_Pivot();
@@ -16725,6 +16748,11 @@ void SOLARCHVISION_convertFace2Vertex () {
 
 
 
+void SOLARCHVISION_convertVertex2softSelection () { 
+  
+}
+
+
             
 void SOLARCHVISION_add_Octahedron (int m, int tes, int lyr, int vsb, int spv, float x, float y, float z, float rx, float ry, float rz, float rot) {
 
@@ -27292,6 +27320,12 @@ void mouseClicked () {
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
             } 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Soft Selection")) {
+              SOLARCHVISION_convertVertex2softSelection();
+              Work_with_2D_or_3D = 6;
+              WIN3D_Update = 1;
+              BAR_b_Update = 1;  
+            }                 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Vertex >> Polymesh")) {
               SOLARCHVISION_convertVertex2Polymesh();
               Work_with_2D_or_3D = 3;
@@ -27327,7 +27361,8 @@ void mouseClicked () {
               Work_with_2D_or_3D = 4;
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
-            }            
+            }       
+         
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Click Select")) {
               set_to_View_ClickSelect(0);
@@ -29597,7 +29632,10 @@ void SOLARCHVISION_draw_ROLLOUT () {
       selectedVertex_displayVertices = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedVertex_displayVertices" , selectedVertex_displayVertices, 0, 1, 1), 1));
       
       selectedObject2D_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedObject2D_displayEdges" , selectedObject2D_displayEdges, 0, 1, 1), 1));
-      selectedFractal_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedFractal_displayEdges" , selectedFractal_displayEdges, 0, 1, 1), 1));      
+      selectedFractal_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedFractal_displayEdges" , selectedFractal_displayEdges, 0, 1, 1), 1));
+
+      softSelection_Power = MySpinner.update(X_control, Y_control, 0,0,0, "softSelection_Power" , softSelection_Power, 0, 8, 1);
+      softSelection_Radius = MySpinner.update(X_control, Y_control, 0,0,0, "softSelection_Radius" , softSelection_Radius, 0, 100, 1);
     }      
   
   }
@@ -33187,8 +33225,7 @@ void SOLARCHVISION_scale_selectedVertices (float x0, float y0, float z0, float s
 }
 
 
-float softSelection_Power = 1;
-float softSelection_Radius = 2; // 2 = 2m
+
 
 float SOLARCHVISION_softVertexSelectionFunction(float d_min) {
   
@@ -37295,6 +37332,10 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("selectedPolymesh_displayBox", selectedPolymesh_displayBox);
   newChild1.setInt("selectedObject2D_displayEdges", selectedObject2D_displayEdges);
   newChild1.setInt("selectedFractal_displayEdges", selectedFractal_displayEdges);
+  
+  newChild1.setFloat("softSelection_Power", softSelection_Power);
+  newChild1.setFloat("softSelection_Radius", softSelection_Radius);
+  
   newChild1.setInt("WORLD_viewport_ZOOM", WORLD_viewport_ZOOM);
   newChild1.setInt("frame_variation", frame_variation);
   newChild1.setInt("_LAN", _LAN);
@@ -38231,6 +38272,10 @@ void SOLARCHVISION_load_project (String myFile) {
       selectedVertex_displayVertices = children0[L].getInt("selectedVertex_displayVertices");      
       selectedObject2D_displayEdges = children0[L].getInt("selectedObject2D_displayEdges");
       selectedFractal_displayEdges = children0[L].getInt("selectedFractal_displayEdges");
+      
+      softSelection_Power = children0[L].getFloat("softSelection_Power");
+      softSelection_Radius = children0[L].getFloat("softSelection_Radius");
+      
       WORLD_viewport_ZOOM = children0[L].getInt("WORLD_viewport_ZOOM");
       frame_variation = children0[L].getInt("frame_variation");
       _LAN = children0[L].getInt("_LAN");
@@ -38784,4 +38829,7 @@ bug: delete because scrolling selection+ could add duplicate of the same objects
 solution: I remarked wheel option for pickSelect for now.
 
 // the same messages of View_Select_Create_Modify=6/7 for both Layer/Visibility of polymeshes and DegreeMax/DegreeDif is not good!
+
+float softSelection_Power = 1;
+float softSelection_Radius = 2; // 2 = 2m
 */
