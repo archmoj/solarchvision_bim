@@ -16612,8 +16612,6 @@ void SOLARCHVISION_convertFace2Polymesh () {
     }
   }  
 
-  //println("SOLARCHVISION_calculate_selection_Pivot 46");
-  //SOLARCHVISION_calculate_selection_Pivot();
 }
 
 
@@ -16654,8 +16652,6 @@ void SOLARCHVISION_convertVertex2Polymesh () {
     }  
   } 
   
-  //println("SOLARCHVISION_calculate_selection_Pivot 47");
-  //SOLARCHVISION_calculate_selection_Pivot();
 }
 
 
@@ -16690,8 +16686,6 @@ void SOLARCHVISION_convertVertex2Face () {
     }  
   }
   
-  //println("SOLARCHVISION_calculate_selection_Pivot 48");
-  //SOLARCHVISION_calculate_selection_Pivot();
 }
 
 
@@ -16720,9 +16714,7 @@ void SOLARCHVISION_convertPolymesh2Face () {
       }
     }  
   }
-  
-  //println("SOLARCHVISION_calculate_selection_Pivot 49");
-  //SOLARCHVISION_calculate_selection_Pivot();
+
 }
 
 
@@ -16755,9 +16747,7 @@ void SOLARCHVISION_convertPolymesh2Vertex () {
       }
     }  
   }
- 
-  //println("SOLARCHVISION_calculate_selection_Pivot 50");
-  //SOLARCHVISION_calculate_selection_Pivot();
+
 }
 
 
@@ -16787,9 +16777,7 @@ void SOLARCHVISION_convertFace2Vertex () {
       }
     }
   }
-  
-  //println("SOLARCHVISION_calculate_selection_Pivot 51");
-  //SOLARCHVISION_calculate_selection_Pivot();
+
 }
 
 
@@ -20789,9 +20777,6 @@ float Orthographic_Zoom () {
 
 void SOLARCHVISION_look_Camera_towards_Selection () {
   
-  //println("SOLARCHVISION_calculate_selection_Pivot 52");
-  //SOLARCHVISION_calculate_selection_Pivot();  // this help during the process of modifying position/roatation/scale of selected objects
-  
   SOLARCHVISION_lookXY_Camera_towards_Selection();
   SOLARCHVISION_lookZ_Camera_towards_Selection();
 }
@@ -20870,9 +20855,6 @@ void SOLARCHVISION_move_Camera_towards_Mouse (float t) {
 }
 
 void SOLARCHVISION_move_Camera_towards_Selection (float t) {
-
-  //println("SOLARCHVISION_calculate_selection_Pivot 53");
-  //SOLARCHVISION_calculate_selection_Pivot();  // this help during the process of modifying position/roatation/scale of selected objects
   
   float xA = CAM_x / OBJECTS_scale;
   float yA = CAM_y / OBJECTS_scale;
@@ -20899,9 +20881,6 @@ void SOLARCHVISION_move_Camera_towards_Selection (float t) {
 }
 
 void SOLARCHVISION_rotateZ_Camera_around_Selection (float t) {
-  
-  //println("SOLARCHVISION_calculate_selection_Pivot 54");
-  //SOLARCHVISION_calculate_selection_Pivot();  // this help during the process of modifying position/roatation/scale of selected objects
   
   WIN3D_RX_coordinate += t;
 
@@ -20949,9 +20928,6 @@ void SOLARCHVISION_rotateZ_Camera_around_Selection (float t) {
 
 
 void SOLARCHVISION_rotateXY_Camera_around_Selection (float t) {
-  
-  //println("SOLARCHVISION_calculate_selection_Pivot 55");
-  //SOLARCHVISION_calculate_selection_Pivot();  // this help during the process of modifying position/roatation/scale of selected objects
   
   WIN3D_RZ_coordinate += t;
 
@@ -29481,8 +29457,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       
       Modify_Input_WeldTreshold = MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Input_WeldTreshold" , Modify_Input_WeldTreshold, 0, 10, 0.001);      
 
-      softSelection_Power = MySpinner.update(X_control, Y_control, 0,0,0, "softSelection_Power" , softSelection_Power, 0, 8, 1);
-      softSelection_Radius = MySpinner.update(X_control, Y_control, 0,0,0, "softSelection_Radius" , softSelection_Radius, 0, 100, 1);
+      softSelection_Power = MySpinner.update(X_control, Y_control, 0,0,0, "softSelection_Power" , softSelection_Power, 0.125, 8, -2);
+      softSelection_Radius = MySpinner.update(X_control, Y_control, 0,0,0, "softSelection_Radius" , softSelection_Radius, 0.01, 100, -2);
     
       selected_posVector = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selected_posVector" , selected_posVector, 0, 3, 1), 1));
       selected_rotVector =  int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selected_rotVector" , selected_rotVector, 0, 2, 1), 1));
@@ -33202,9 +33178,6 @@ void SOLARCHVISION_move_selectedFaces (float dx, float dy, float dz) {
     allVertices[n][2] += dz;
   }
   
-  //println("SOLARCHVISION_calculate_selection_Pivot 13");
-  //SOLARCHVISION_calculate_selection_Pivot();   
-  
 }
 
 void SOLARCHVISION_rotate_selectedFaces (float x0, float y0, float z0, float r, int the_Vector) {
@@ -33236,9 +33209,6 @@ void SOLARCHVISION_rotate_selectedFaces (float x0, float y0, float z0, float r, 
     }    
   }
   
-  //println("SOLARCHVISION_calculate_selection_Pivot 14");
-  //SOLARCHVISION_calculate_selection_Pivot(); 
-  
 }
 
 void SOLARCHVISION_scale_selectedFaces (float x0, float y0, float z0, float sx, float sy, float sz) {
@@ -33257,10 +33227,7 @@ void SOLARCHVISION_scale_selectedFaces (float x0, float y0, float z0, float sx, 
     allVertices[n][1] = y0 + sy * y;
     allVertices[n][2] = z0 + sz * z;
   }
-  
-  //println("SOLARCHVISION_calculate_selection_Pivot 15");
-  //SOLARCHVISION_calculate_selection_Pivot(); 
-  
+
 }
 
 
@@ -33274,10 +33241,7 @@ void SOLARCHVISION_move_selectedVertices (float dx, float dy, float dz) {
     allVertices[n][1] += dy;
     allVertices[n][2] += dz;
   }
-  
-  //println("SOLARCHVISION_calculate_selection_Pivot 16");
-  //SOLARCHVISION_calculate_selection_Pivot();   
-  
+
 }
 
 
@@ -33307,9 +33271,7 @@ void SOLARCHVISION_rotate_selectedVertices (float x0, float y0, float z0, float 
       allVertices[n][2] = z0 + (y * sin(r) + z * cos(r));
     }    
   }
-  
-  //println("SOLARCHVISION_calculate_selection_Pivot 17");
-  //SOLARCHVISION_calculate_selection_Pivot(); 
+
 }
 
 
@@ -33327,9 +33289,6 @@ void SOLARCHVISION_scale_selectedVertices (float x0, float y0, float z0, float s
     allVertices[n][1] = y0 + sy * y;
     allVertices[n][2] = z0 + sz * z;
   }
-  
-  //println("SOLARCHVISION_calculate_selection_Pivot 18");
-  //SOLARCHVISION_calculate_selection_Pivot(); 
   
 }
 
