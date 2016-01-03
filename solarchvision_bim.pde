@@ -32901,7 +32901,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
 
 void SOLARCHVISION_calculate_selection_Pivot () {
   
-  if (Work_with_2D_or_3D == 6) {
+  if (Work_with_2D_or_3D == 6) { // why we need this ???
   }
   else {
 
