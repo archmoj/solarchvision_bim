@@ -20784,8 +20784,8 @@ float Orthographic_Zoom () {
 
 void SOLARCHVISION_look_Camera_towards_Selection () {
   
-  println("SOLARCHVISION_calculate_selection_Pivot 52");
-  SOLARCHVISION_calculate_selection_Pivot();  // this help during the process of modifying position/roatation/scale of selected objects
+  //println("SOLARCHVISION_calculate_selection_Pivot 52");
+  //SOLARCHVISION_calculate_selection_Pivot();  // this help during the process of modifying position/roatation/scale of selected objects
   
   SOLARCHVISION_lookXY_Camera_towards_Selection();
   SOLARCHVISION_lookZ_Camera_towards_Selection();
@@ -28780,13 +28780,12 @@ void mouseClicked () {
                     }
                     
                     WIN3D_Update = 1;
+
+                    //if (pre_selectedFractal_numbers_lastItem != selectedFractal_numbers[selectedFractal_numbers.length - 1]) {
+                      println("SOLARCHVISION_calculate_selection_Pivot 6");
+                      SOLARCHVISION_calculate_selection_Pivot();
+                    //}
                   }
-                  
-                  
-                  //if (pre_selectedFractal_numbers_lastItem != selectedFractal_numbers[selectedFractal_numbers.length - 1]) {
-                    println("SOLARCHVISION_calculate_selection_Pivot 6");
-                    SOLARCHVISION_calculate_selection_Pivot();
-                  //}
                     
                 }      
               }
@@ -33202,8 +33201,8 @@ void SOLARCHVISION_move_selectedFaces (float dx, float dy, float dz) {
     allVertices[n][2] += dz;
   }
   
-  println("SOLARCHVISION_calculate_selection_Pivot 13");
-  SOLARCHVISION_calculate_selection_Pivot();   
+  //println("SOLARCHVISION_calculate_selection_Pivot 13");
+  //SOLARCHVISION_calculate_selection_Pivot();   
   
 }
 
@@ -33236,8 +33235,8 @@ void SOLARCHVISION_rotate_selectedFaces (float x0, float y0, float z0, float r, 
     }    
   }
   
-  println("SOLARCHVISION_calculate_selection_Pivot 14");
-  SOLARCHVISION_calculate_selection_Pivot(); 
+  //println("SOLARCHVISION_calculate_selection_Pivot 14");
+  //SOLARCHVISION_calculate_selection_Pivot(); 
   
 }
 
@@ -33258,8 +33257,8 @@ void SOLARCHVISION_scale_selectedFaces (float x0, float y0, float z0, float sx, 
     allVertices[n][2] = z0 + sz * z;
   }
   
-  println("SOLARCHVISION_calculate_selection_Pivot 15");
-  SOLARCHVISION_calculate_selection_Pivot(); 
+  //println("SOLARCHVISION_calculate_selection_Pivot 15");
+  //SOLARCHVISION_calculate_selection_Pivot(); 
   
 }
 
@@ -33275,8 +33274,8 @@ void SOLARCHVISION_move_selectedVertices (float dx, float dy, float dz) {
     allVertices[n][2] += dz;
   }
   
-  println("SOLARCHVISION_calculate_selection_Pivot 16");
-  SOLARCHVISION_calculate_selection_Pivot();   
+  //println("SOLARCHVISION_calculate_selection_Pivot 16");
+  //SOLARCHVISION_calculate_selection_Pivot();   
   
 }
 
@@ -33308,8 +33307,8 @@ void SOLARCHVISION_rotate_selectedVertices (float x0, float y0, float z0, float 
     }    
   }
   
-  println("SOLARCHVISION_calculate_selection_Pivot 17");
-  SOLARCHVISION_calculate_selection_Pivot(); 
+  //println("SOLARCHVISION_calculate_selection_Pivot 17");
+  //SOLARCHVISION_calculate_selection_Pivot(); 
 }
 
 
@@ -33328,8 +33327,8 @@ void SOLARCHVISION_scale_selectedVertices (float x0, float y0, float z0, float s
     allVertices[n][2] = z0 + sz * z;
   }
   
-  println("SOLARCHVISION_calculate_selection_Pivot 18");
-  SOLARCHVISION_calculate_selection_Pivot(); 
+  //println("SOLARCHVISION_calculate_selection_Pivot 18");
+  //SOLARCHVISION_calculate_selection_Pivot(); 
   
 }
 
