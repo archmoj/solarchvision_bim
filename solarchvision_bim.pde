@@ -32877,6 +32877,8 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
 }
 
 void SOLARCHVISION_calculate_selection_Pivot () {
+  
+  println("SOLARCHVISION_calculate_selection_Pivot");
 
   SOLARCHVISION_calculate_selection_BoundingBox();
 
@@ -35395,6 +35397,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
           Work_with_2D_or_3D = j;
           
           if (Work_with_2D_or_3D == 6) {
+            println("SOLARCHVISION_convertVertex2softSelection");
             SOLARCHVISION_convertVertex2softSelection();
           }
           
