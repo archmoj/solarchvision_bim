@@ -16184,6 +16184,8 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
     
     selectedFace_numbers = new_selectedFace_numbers;
 
+    println("SOLARCHVISION_calculate_selection_Pivot 101");
+    SOLARCHVISION_calculate_selection_Pivot();
     
     WIN3D_update_VerticesSolarValue = 1;
   }    
@@ -16282,6 +16284,9 @@ void SOLARCHVISION_offsetVerticesSelection (int _type, float _amount) {
       allVertices[vNo][1] += selectedVertex_offsetValues[o][1];
       allVertices[vNo][2] += selectedVertex_offsetValues[o][2];
     } 
+
+    println("SOLARCHVISION_calculate_selection_Pivot 102");
+    SOLARCHVISION_calculate_selection_Pivot();
     
     WIN3D_update_VerticesSolarValue = 1;
   }    
@@ -16607,8 +16612,8 @@ void SOLARCHVISION_convertFace2Polymesh () {
     }
   }  
 
-  println("SOLARCHVISION_calculate_selection_Pivot 46");
-  SOLARCHVISION_calculate_selection_Pivot();
+  //println("SOLARCHVISION_calculate_selection_Pivot 46");
+  //SOLARCHVISION_calculate_selection_Pivot();
 }
 
 
@@ -16649,8 +16654,8 @@ void SOLARCHVISION_convertVertex2Polymesh () {
     }  
   } 
   
-  println("SOLARCHVISION_calculate_selection_Pivot 47");
-  SOLARCHVISION_calculate_selection_Pivot();
+  //println("SOLARCHVISION_calculate_selection_Pivot 47");
+  //SOLARCHVISION_calculate_selection_Pivot();
 }
 
 
@@ -16685,8 +16690,8 @@ void SOLARCHVISION_convertVertex2Face () {
     }  
   }
   
-  println("SOLARCHVISION_calculate_selection_Pivot 48");
-  SOLARCHVISION_calculate_selection_Pivot();
+  //println("SOLARCHVISION_calculate_selection_Pivot 48");
+  //SOLARCHVISION_calculate_selection_Pivot();
 }
 
 
@@ -16716,8 +16721,8 @@ void SOLARCHVISION_convertPolymesh2Face () {
     }  
   }
   
-  println("SOLARCHVISION_calculate_selection_Pivot 49");
-  SOLARCHVISION_calculate_selection_Pivot();
+  //println("SOLARCHVISION_calculate_selection_Pivot 49");
+  //SOLARCHVISION_calculate_selection_Pivot();
 }
 
 
@@ -16751,8 +16756,8 @@ void SOLARCHVISION_convertPolymesh2Vertex () {
     }  
   }
  
-  println("SOLARCHVISION_calculate_selection_Pivot 50");
-  SOLARCHVISION_calculate_selection_Pivot();
+  //println("SOLARCHVISION_calculate_selection_Pivot 50");
+  //SOLARCHVISION_calculate_selection_Pivot();
 }
 
 
@@ -16783,8 +16788,8 @@ void SOLARCHVISION_convertFace2Vertex () {
     }
   }
   
-  println("SOLARCHVISION_calculate_selection_Pivot 51");
-  SOLARCHVISION_calculate_selection_Pivot();
+  //println("SOLARCHVISION_calculate_selection_Pivot 51");
+  //SOLARCHVISION_calculate_selection_Pivot();
 }
 
 
@@ -20866,8 +20871,8 @@ void SOLARCHVISION_move_Camera_towards_Mouse (float t) {
 
 void SOLARCHVISION_move_Camera_towards_Selection (float t) {
 
-  println("SOLARCHVISION_calculate_selection_Pivot 53");
-  SOLARCHVISION_calculate_selection_Pivot();  // this help during the process of modifying position/roatation/scale of selected objects
+  //println("SOLARCHVISION_calculate_selection_Pivot 53");
+  //SOLARCHVISION_calculate_selection_Pivot();  // this help during the process of modifying position/roatation/scale of selected objects
   
   float xA = CAM_x / OBJECTS_scale;
   float yA = CAM_y / OBJECTS_scale;
@@ -20895,8 +20900,8 @@ void SOLARCHVISION_move_Camera_towards_Selection (float t) {
 
 void SOLARCHVISION_rotateZ_Camera_around_Selection (float t) {
   
-  println("SOLARCHVISION_calculate_selection_Pivot 54");
-  SOLARCHVISION_calculate_selection_Pivot();  // this help during the process of modifying position/roatation/scale of selected objects
+  //println("SOLARCHVISION_calculate_selection_Pivot 54");
+  //SOLARCHVISION_calculate_selection_Pivot();  // this help during the process of modifying position/roatation/scale of selected objects
   
   WIN3D_RX_coordinate += t;
 
@@ -20945,8 +20950,8 @@ void SOLARCHVISION_rotateZ_Camera_around_Selection (float t) {
 
 void SOLARCHVISION_rotateXY_Camera_around_Selection (float t) {
   
-  println("SOLARCHVISION_calculate_selection_Pivot 55");
-  SOLARCHVISION_calculate_selection_Pivot();  // this help during the process of modifying position/roatation/scale of selected objects
+  //println("SOLARCHVISION_calculate_selection_Pivot 55");
+  //SOLARCHVISION_calculate_selection_Pivot();  // this help during the process of modifying position/roatation/scale of selected objects
   
   WIN3D_RZ_coordinate += t;
 
@@ -32954,16 +32959,12 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
 
 void SOLARCHVISION_calculate_selection_Pivot () {
   
-  if (Work_with_2D_or_3D == 6) { // why we need this ???
-  }
-  else {
+  SOLARCHVISION_calculate_selection_BoundingBox();
 
-    SOLARCHVISION_calculate_selection_BoundingBox();
-  
-    selected_Pivot_XYZ[0] = selection_BoundingBox[1 + selection_alignX][0];
-    selected_Pivot_XYZ[1] = selection_BoundingBox[1 + selection_alignY][1];
-    selected_Pivot_XYZ[2] = selection_BoundingBox[1 + selection_alignZ][2];
-  }
+  selected_Pivot_XYZ[0] = selection_BoundingBox[1 + selection_alignX][0];
+  selected_Pivot_XYZ[1] = selection_BoundingBox[1 + selection_alignY][1];
+  selected_Pivot_XYZ[2] = selection_BoundingBox[1 + selection_alignZ][2];
+
 }
 
 
