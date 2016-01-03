@@ -32878,14 +32878,16 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
 
 void SOLARCHVISION_calculate_selection_Pivot () {
   
-  println("SOLARCHVISION_calculate_selection_Pivot");
+  if (Work_with_2D_or_3D == 6) {
+  }
+  else {
 
-  SOLARCHVISION_calculate_selection_BoundingBox();
-
-  selected_Pivot_XYZ[0] = selection_BoundingBox[1 + selection_alignX][0];
-  selected_Pivot_XYZ[1] = selection_BoundingBox[1 + selection_alignY][1];
-  selected_Pivot_XYZ[2] = selection_BoundingBox[1 + selection_alignZ][2];
+    SOLARCHVISION_calculate_selection_BoundingBox();
   
+    selected_Pivot_XYZ[0] = selection_BoundingBox[1 + selection_alignX][0];
+    selected_Pivot_XYZ[1] = selection_BoundingBox[1 + selection_alignY][1];
+    selected_Pivot_XYZ[2] = selection_BoundingBox[1 + selection_alignZ][2];
+  }
 }
 
 void SOLARCHVISION_reset_selectedRefValues () {
@@ -35397,7 +35399,6 @@ void SOLARCHVISION_draw_window_BAR_b () {
           Work_with_2D_or_3D = j;
           
           if (Work_with_2D_or_3D == 6) {
-            println("SOLARCHVISION_convertVertex2softSelection");
             SOLARCHVISION_convertVertex2softSelection();
           }
           
