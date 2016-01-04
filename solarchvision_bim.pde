@@ -4,10 +4,10 @@ void launch (String s) {open(s);}
 void launch (String[] s) {open(s);}
  
 
-int maximum_undo_number = 3;
+String[] redo_stack = new String [0];
 String[] undo_stack = new String [0];
 int undo_pointer = -1; // -1:current, 0: previous, 1, 2, 3, etc.
-
+int maximum_undo_number = 3;
 
 
 
@@ -26330,6 +26330,39 @@ void mouseClicked () {
                 println("Cannot find hold file!");
               }
             } 
+            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Undo")) {
+              
+              undo_pointer += 1;
+              
+              if (undo_pointer < undo_stack.length) {
+                
+                String undo_file = undo_stack[undo_pointer];
+                
+                {
+                  String[] new_item = {undo_file};
+                  
+                  redo_stack = (String[]) concat(new_item, redo_stack);
+                }
+                
+                {
+                  String[] startList = (String[]) subset(undo_stack, 0, undo_pointer);
+                  String[] endList = (String[]) subset(undo_stack, undo_pointer + 1);
+                  
+                  undo_stack = (String[]) concat(startList, endList);
+                }
+
+                try {
+                  SOLARCHVISION_load_project(undo_file);
+                }
+                catch (Exception e) {
+                  println("Cannot find undo file!");
+                }
+              }
+              else { 
+                undo_pointer = undo_stack.length - 1;
+              }
+            }             
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Open...")) { 
               selectInput("Select a file to open:", "SOLARCHVISION_fileSelected_Open");
