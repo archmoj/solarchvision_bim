@@ -32870,10 +32870,13 @@ int[] SOLARCHVISION_get_selectedPolymesh_Vertices () {
 
 
 float[][] selection_BoundingBox = {{0,0,0}, {0,0,0}, {0,0,0}}; // [min|mid|max]
-float[][] saved_BoundingBox = {{0,0,0}, {0,0,0}, {0,0,0}};
-
 float[] selected_Pivot_XYZ = {0,0,0};
+
+float[][] saved_BoundingBox = {{0,0,0}, {0,0,0}, {0,0,0}};
 float[] saved_Pivot_XYZ = {0,0,0};
+int saved_alignX = 0;
+int saved_alignY = 0;
+int saved_alignZ = 0;
 
 void SOLARCHVISION_calculate_selection_BoundingBox () {
   
@@ -32952,6 +32955,10 @@ void SOLARCHVISION_save_selection_Pivot () {
     }
     saved_Pivot_XYZ[i] = selected_Pivot_XYZ[i];
   } 
+  
+  saved_alignX = selection_alignX;
+  saved_alignY = selection_alignY;
+  saved_alignZ = selection_alignZ;
 }
 
 
@@ -32963,6 +32970,10 @@ void SOLARCHVISION_apply_saved_Pivot () {
     }
     selected_Pivot_XYZ[i] = saved_Pivot_XYZ[i];
   } 
+  
+  selection_alignX = saved_alignX;
+  selection_alignY = saved_alignY;
+  selection_alignZ = saved_alignZ;
 }
 
 
