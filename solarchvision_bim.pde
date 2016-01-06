@@ -17802,7 +17802,7 @@ void SOLARCHVISION_export_land () {
   
   String mapsSubfolder = "maps/";
 
-  String[] ObjectMaterialNames = {"", "LandMesh"};
+  String[] ObjectMaterialNames = {"LandMesh"};
   
   if ((Export_Material_Library != 0) && (Display_LAND_TEXTURE != 0)) {
     PrintWriter mtlOutput = createWriter(mtlFilename);
@@ -17810,7 +17810,7 @@ void SOLARCHVISION_export_land () {
     mtlOutput.println("#SOLARCHVISION");
 
     {
-      mtlOutput.println("newmtl " + ObjectMaterialNames[1]);
+      mtlOutput.println("newmtl " + ObjectMaterialNames[0]);
       mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
       mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
       mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
@@ -17892,7 +17892,7 @@ void SOLARCHVISION_export_land () {
   objOutput.println("g LandMesh");
   
   if ((Export_Material_Library != 0) && (Display_LAND_TEXTURE != 0)) {  
-    objOutput.println("usemtl " + ObjectMaterialNames[1]);
+    objOutput.println("usemtl " + ObjectMaterialNames[0]);
   }
 
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
@@ -17972,6 +17972,8 @@ void SOLARCHVISION_export_objects () {
   if ((Export_Material_Library != 0) && (Display_Trees_People != 0)) {
     PrintWriter mtlOutput = createWriter(mtlFilename);
     
+    mtlOutput.println("#SOLARCHVISION");
+    
     for (int i = 1; i < ObjectMaterialNames.length; i++) {
     
       String old_TEXTURE_path = ObjectMaterialNames[i];
@@ -17991,7 +17993,7 @@ void SOLARCHVISION_export_objects () {
         println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
         saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
         
-        mtlOutput.println("newmtl " + "Object2D_" + the_filename);
+        mtlOutput.println("newmtl " + "Object2D_" + the_filename.replace('.', '_'));
         mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
         mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
         mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
@@ -18016,6 +18018,10 @@ void SOLARCHVISION_export_objects () {
   PrintWriter objOutput = createWriter(objFilename);
   
   objOutput.println("#SOLARCHVISION");
+
+  if ((Export_Material_Library != 0) && (Display_Trees_People != 0)) {
+    objOutput.println("mtllib " + fileBasename + ".mtl");
+  }
 
 
   int obj_lastVertexNumber = 0; 
@@ -18076,40 +18082,38 @@ void SOLARCHVISION_export_objects () {
       int w = Object2DImage[n].width; 
       int h = Object2DImage[n].height;
               
-      float x = allObject2D_XYZS[f][0] * OBJECTS_scale;
-      float y = allObject2D_XYZS[f][1] * OBJECTS_scale;
-      float z = allObject2D_XYZS[f][2] * OBJECTS_scale;
+      float x = allObject2D_XYZS[f][0];
+      float y = allObject2D_XYZS[f][1];
+      float z = allObject2D_XYZS[f][2];
       
-      float r = allObject2D_XYZS[f][3] * 0.5 * OBJECTS_scale;
+      float r = allObject2D_XYZS[f][3] * 0.5;
       
       float t = WIN3D_RZ_coordinate * PI / 180.0;
       if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
       
       if (allObject2D_MAP[f] < 0) t += PI;      
    
-      objOutput.print("v ");   
-      
       float x1 = x - r * cos(t);
       float y1 = y - r * sin(t);
       float z1 = z;
       float u1 = 0;
-      float v1 = h;
+      float v1 = 1;
 
       float x2 = x + r * cos(t);
       float y2 = y + r * sin(t);
       float z2 = z;
-      float u2 = w;
-      float v2 = h;
+      float u2 = 1;
+      float v2 = 1;
 
       float x3 = x + r * cos(t);
       float y3 = y + r * sin(t);
-      float z3 = z;
-      float u3 = w;
+      float z3 = z + 2 * r;
+      float u3 = 1;
       float v3 = 0;
       
       float x4 = x - r * cos(t);
       float y4 = y - r * sin(t);
-      float z4 = z;
+      float z4 = z + 2 * r;
       float u4 = 0;
       float v4 = 0;      
     
@@ -18128,7 +18132,7 @@ void SOLARCHVISION_export_objects () {
       obj_lastVertexNumber += 4;
       
       objOutput.println("g Object2D_" + nf(f, 0));
-      objOutput.println("usemtl Object2D_" + ObjectMaterialNames[n].substring(ObjectMaterialNames[n].lastIndexOf("/") + 1));
+      objOutput.println("usemtl Object2D_" + ObjectMaterialNames[n].substring(ObjectMaterialNames[n].lastIndexOf("/") + 1).replace('.', '_'));
       objOutput.println("f " + nf(obj_lastVertexNumber - 3, 0) + " " + nf(obj_lastVertexNumber - 2, 0) + " " + nf(obj_lastVertexNumber - 1, 0) + " " + nf(obj_lastVertexNumber, 0));
     }    
     
