@@ -15,8 +15,6 @@ int maximum_undo_number = 3;
 
 
 
-
-
 float planetary_magnification = 2.5; // <<<<<<<<<<
 
 String _undefined = "N/A";
@@ -180,6 +178,9 @@ int defaultLayer = 0;
 int defaultVisibility = 1;
 int defaultSolarPivotType = 0;
 
+
+
+
 int Create_Default_Material = 7; //0;
 int Create_Default_Tessellation = 0;
 int Create_Default_Layer = 0;
@@ -281,6 +282,9 @@ int SpatialImpact_record_PDF = 0;
 int SpatialImpact_record_JPG = 0;
 
 int SolarImpact_record_JPG = 0;  
+
+
+int Export_Material_Library = 1; // 0-1
 
 int Export_3Dmodel = 0; // inactive
 int Export_solids = 0; // inactive
@@ -17787,14 +17791,13 @@ void SOLARCHVISION_addToFaces_afterSphericalTessellation (int m, int tes, int ly
 
 
 
-
 void SOLARCHVISION_export_land () {
   
-  String myFile = Model3DFolder + "/" + ProjectName + "_LandMesh.obj";
+  String objFilename = Model3DFolder + "/" + ProjectName + "_LandMesh.obj";
+
+  PrintWriter objOutput = createWriter(objFilename);
   
-  PrintWriter File_output_mesh = createWriter(myFile);
-  
-  File_output_mesh.println("#SOLARCHVISION");
+  objOutput.println("#SOLARCHVISION");
 
   for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
     
@@ -17805,7 +17808,7 @@ void SOLARCHVISION_export_land () {
     float y = LAND_MESH[the_I][the_J][1];
     float z = LAND_MESH[the_I][the_J][2];
     
-    File_output_mesh.println("v " + nf(x, 0, 6) + " " + nf(y, 0, 6) + " " + nf(z, 0, 6));
+    objOutput.println("v " + nf(x, 0, 6) + " " + nf(y, 0, 6) + " " + nf(z, 0, 6));
     
   }
 
@@ -17824,7 +17827,7 @@ void SOLARCHVISION_export_land () {
     float v = y / LAND_TEXTURE_scale_V + 0.5;
     float w = 0;
   
-    File_output_mesh.println("vt " + nf(u, 0, 3) + " " + nf(v, 0, 3) + " " + nf(w, 0, 3));
+    objOutput.println("vt " + nf(u, 0, 3) + " " + nf(v, 0, 3) + " " + nf(w, 0, 3));
       
     }  
   }
@@ -17832,90 +17835,90 @@ void SOLARCHVISION_export_land () {
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
     for (int j = 0; j < LAND_n_J - 1; j += 1) {
       
-      File_output_mesh.print("f ");
+      objOutput.print("f ");
       
       {
         int vNo = i * LAND_n_J + j + 1;
       
-        File_output_mesh.print(vNo);
+        objOutput.print(vNo);
         if (Display_LAND_TEXTURE != 0) {
-          File_output_mesh.print("/" + nf(vNo, 0));
+          objOutput.print("/" + nf(vNo, 0));
         }
       }
       
-      File_output_mesh.print(" ");
+      objOutput.print(" ");
       
       {
         int vNo = (i + 1) * LAND_n_J + j + 1;
       
-        File_output_mesh.print(vNo);
+        objOutput.print(vNo);
         if (Display_LAND_TEXTURE != 0) {
-          File_output_mesh.print("/" + nf(vNo, 0));
+          objOutput.print("/" + nf(vNo, 0));
         }
       }
       
-      File_output_mesh.print(" ");
+      objOutput.print(" ");
 
       {
         int vNo = (i + 1) * LAND_n_J + j + 2;
       
-        File_output_mesh.print(vNo);
+        objOutput.print(vNo);
         if (Display_LAND_TEXTURE != 0) {
-          File_output_mesh.print("/" + nf(vNo, 0));
+          objOutput.print("/" + nf(vNo, 0));
         }
       }
       
-      File_output_mesh.print(" ");
+      objOutput.print(" ");
 
       {
         int vNo = i * LAND_n_J + j + 2;
       
-        File_output_mesh.print(vNo);
+        objOutput.print(vNo);
         if (Display_LAND_TEXTURE != 0) {
-          File_output_mesh.print("/" + nf(vNo, 0));
+          objOutput.print("/" + nf(vNo, 0));
         }
       }      
 
-      File_output_mesh.println();
+      objOutput.println();
 
     }
   }
 
-  File_output_mesh.flush(); 
-  File_output_mesh.close();   
+  objOutput.flush(); 
+  objOutput.close();   
   
   println("End of exporting the mesh.");
 
-  SOLARCHVISION_explore_output(myFile);
+  SOLARCHVISION_explore_output(objFilename);
 }
 
 
 void SOLARCHVISION_export_objects () {
   
-  String myFile = Model3DFolder + "/" + ProjectName + "_ObjectsMesh.obj";
+  String objFilename = Model3DFolder + "/" + ProjectName + "_ObjectsMesh.obj";
   
-  PrintWriter File_output_mesh = createWriter(myFile);
+  PrintWriter objOutput = createWriter(objFilename);
   
-  File_output_mesh.println("#SOLARCHVISION");
+  objOutput.println("#SOLARCHVISION");
 
   for (int i = 1; i < allVertices.length; i++) {
-    File_output_mesh.print("v ");
+    objOutput.print("v ");
     for (int j = 0; j < 3; j++) {
       
-      File_output_mesh.print(nf(allVertices[i][j], 0, 6));
+      objOutput.print(nf(allVertices[i][j], 0, 6));
       /*
       {
         float v = allVertices[i][j];
         if (j == 2) v += 20;
-        File_output_mesh.print(nf(v * 1000000, 0, 6));
+        objOutput.print(nf(v * 1000000, 0, 6));
       }
       */
       
       if (j + 1 < 3) {
-        File_output_mesh.print(" ");
+        objOutput.print(" ");
       }
       else {
-        File_output_mesh.println();
+        objOutput.println();
       }          
     }    
   }
@@ -17924,46 +17927,47 @@ void SOLARCHVISION_export_objects () {
     
     if (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1]) {
       
-      File_output_mesh.println("g Object" + nf(OBJ_NUM, 4));
+      objOutput.println("g Object" + nf(OBJ_NUM, 4));
 
       for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
 
-        File_output_mesh.print("f ");
+        objOutput.print("f ");
         for (int j = 0; j < allFaces[f].length; j++) {
-          File_output_mesh.print(allFaces[f][j]);
+          objOutput.print(allFaces[f][j]);
           if (j + 1 < allFaces[f].length) {
-            File_output_mesh.print(" ");
+            objOutput.print(" ");
           }
           else {
-            File_output_mesh.println();
+            objOutput.println();
           }          
         }    
       }
     }
   }
   
-  File_output_mesh.flush(); 
-  File_output_mesh.close();   
+  objOutput.flush(); 
+  objOutput.close();   
   
   println("End of exporting the mesh."); 
  
-  SOLARCHVISION_explore_output(myFile);
+  SOLARCHVISION_explore_output(objFilename);
 }
+
 
 
 void SOLARCHVISION_export_objects_script () {
   
-  String myFile = Model3DFolder + "/" + ProjectName + "_ObjectsMesh.scr";
+  String scrFilename = Model3DFolder + "/" + ProjectName + "_ObjectsMesh.scr";
 
-  PrintWriter File_output_mesh = createWriter(myFile);
+  PrintWriter scrOutput = createWriter(scrFilename);
   
-  File_output_mesh.println("-osnap off");
+  scrOutput.println("-osnap off");
   
   for (int f = 1; f < allFaces.length; f++) {
     
     if ((allFaces[f].length == 3) || (allFaces[f].length == 4)) {
       
-      File_output_mesh.println("3dface");
+      scrOutput.println("3dface");
       
       for (int j = 0; j < allFaces[f].length; j++) {
         
@@ -17980,21 +17984,21 @@ void SOLARCHVISION_export_objects_script () {
         }
         */
         
-        File_output_mesh.println(x + "," + y + "," + z);
+        scrOutput.println(x + "," + y + "," + z);
       }
-      File_output_mesh.println();
-      File_output_mesh.println();
+      scrOutput.println();
+      scrOutput.println();
     }
   }
   
-  File_output_mesh.println("zoom e");
+  scrOutput.println("zoom e");
   
-  File_output_mesh.flush(); 
-  File_output_mesh.close();   
+  scrOutput.flush(); 
+  scrOutput.close();   
   
   println("End of scripting the mesh."); 
   
-  SOLARCHVISION_explore_output(myFile);
+  SOLARCHVISION_explore_output(scrFilename);
 }
     
   
@@ -29484,6 +29488,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
     if (ROLLOUT_child == 2) { // Create
 
 
+      
+
       Create_Default_Material = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Material" , Create_Default_Material, -1, 8, 1), 1));
       Create_Default_Tessellation = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Tessellation" , Create_Default_Tessellation, 0, 4, 1), 1));
       Create_Default_Layer = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Layer" , Create_Default_Layer, 0, 16, 1), 1));
@@ -29803,6 +29809,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Export_STUDY_info_node = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Export ASCII data", Export_STUDY_info_node, 0, 1, 1), 1));
       Export_STUDY_info_norm = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Export ASCII statistics", Export_STUDY_info_norm, 0, 1, 1), 1));
       Export_STUDY_info_prob = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Export ASCII probabilities", Export_STUDY_info_prob, 0, 1, 1), 1));
+
+      Export_Material_Library = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Export_Material_Library" , Export_Material_Library, 0, 1, 1), 1));  
       
       Export_3Dmodel = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Export_3Dmodel", Export_3Dmodel, 0, 1, 1), 1));
       Export_solids = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Export_solids", Export_solids, 0, 1, 1), 1));
