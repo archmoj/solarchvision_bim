@@ -18017,7 +18017,13 @@ void SOLARCHVISION_export_objects () {
   
   objOutput.println("#SOLARCHVISION");
 
+
+  int obj_lastVertexNumber = 0; 
+
   for (int i = 1; i < allVertices.length; i++) {
+    
+    obj_lastVertexNumber += 1;
+    
     objOutput.print("v ");
     for (int j = 0; j < 3; j++) {
       
@@ -18108,18 +18114,22 @@ void SOLARCHVISION_export_objects () {
       float v4 = 0;      
     
       objOutput.println("v " + nf(x1, 0, Precision) + " " + nf(y1, 0, Precision) + " " + nf(z1, 0, Precision));
-      objOutput.println("v " + nf(x2, 0, Precision) + " " + nf(y2, 0, Precision) + " " + nf(z2, 0, Precision));
-      objOutput.println("v " + nf(x3, 0, Precision) + " " + nf(y3, 0, Precision) + " " + nf(z3, 0, Precision));
-      objOutput.println("v " + nf(x4, 0, Precision) + " " + nf(y4, 0, Precision) + " " + nf(z4, 0, Precision));
-      
       objOutput.println("vt " + nf(u1, 0, 3) + " " + nf(v1, 0, 3) + " 0");
+      
+      objOutput.println("v " + nf(x2, 0, Precision) + " " + nf(y2, 0, Precision) + " " + nf(z2, 0, Precision));
       objOutput.println("vt " + nf(u2, 0, 3) + " " + nf(v2, 0, 3) + " 0");
+      
+      objOutput.println("v " + nf(x3, 0, Precision) + " " + nf(y3, 0, Precision) + " " + nf(z3, 0, Precision));
       objOutput.println("vt " + nf(u3, 0, 3) + " " + nf(v3, 0, 3) + " 0");
+      
+      objOutput.println("v " + nf(x4, 0, Precision) + " " + nf(y4, 0, Precision) + " " + nf(z4, 0, Precision));
       objOutput.println("vt " + nf(u4, 0, 3) + " " + nf(v4, 0, 3) + " 0");
+      
+      obj_lastVertexNumber += 4;
       
       objOutput.println("g Object2D_" + nf(f, 0));
       objOutput.println("usemtl Object2D_" + ObjectMaterialNames[n].substring(ObjectMaterialNames[n].lastIndexOf("/") + 1));
-      objOutput.println("f -4 -3 -2 -1");
+      objOutput.println("f " + nf(obj_lastVertexNumber - 3, 0) + " " + nf(obj_lastVertexNumber - 2, 0) + " " + nf(obj_lastVertexNumber - 1, 0) + " " + nf(obj_lastVertexNumber, 0));
     }    
     
   }
