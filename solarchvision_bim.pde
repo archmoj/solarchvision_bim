@@ -18133,7 +18133,13 @@ void SOLARCHVISION_export_objects () {
       
       objOutput.println("g Object2D_" + nf(f, 0));
       objOutput.println("usemtl Object2D_" + ObjectMaterialNames[n].substring(ObjectMaterialNames[n].lastIndexOf("/") + 1).replace('.', '_'));
-      objOutput.println("f " + nf(obj_lastVertexNumber - 3, 0) + " " + nf(obj_lastVertexNumber - 2, 0) + " " + nf(obj_lastVertexNumber - 1, 0) + " " + nf(obj_lastVertexNumber, 0));
+      
+      String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
+      String n2_txt = nf(obj_lastVertexNumber - 2, 0);
+      String n3_txt = nf(obj_lastVertexNumber - 1, 0);
+      String n4_txt = nf(obj_lastVertexNumber - 0, 0);
+      
+      objOutput.println("f " + n1_txt + "/" + n1_txt + " " + n2_txt + "/" + n2_txt + " " + n3_txt + "/" + n3_txt + " " + n4_txt + "/" + n4_txt);
     }    
     
   }
