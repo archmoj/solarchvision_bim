@@ -18088,8 +18088,8 @@ void SOLARCHVISION_export_objects () {
       
       float r = allObject2D_XYZS[f][3] * 0.5;
       
-      float t = WIN3D_RZ_coordinate * PI / 180.0;
-      if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
+      float t = 0; //WIN3D_RZ_coordinate * PI / 180.0;
+      //if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
       
       if (allObject2D_MAP[f] < 0) t += PI;      
    
@@ -18118,16 +18118,14 @@ void SOLARCHVISION_export_objects () {
       float v4 = 0;      
     
       objOutput.println("v " + nf(x1, 0, Precision) + " " + nf(y1, 0, Precision) + " " + nf(z1, 0, Precision));
-      objOutput.println("vt " + nf(u1, 0, 3) + " " + nf(v1, 0, 3) + " 0");
-      
       objOutput.println("v " + nf(x2, 0, Precision) + " " + nf(y2, 0, Precision) + " " + nf(z2, 0, Precision));
-      objOutput.println("vt " + nf(u2, 0, 3) + " " + nf(v2, 0, 3) + " 0");
-      
       objOutput.println("v " + nf(x3, 0, Precision) + " " + nf(y3, 0, Precision) + " " + nf(z3, 0, Precision));
-      objOutput.println("vt " + nf(u3, 0, 3) + " " + nf(v3, 0, 3) + " 0");
-      
       objOutput.println("v " + nf(x4, 0, Precision) + " " + nf(y4, 0, Precision) + " " + nf(z4, 0, Precision));
-      objOutput.println("vt " + nf(u4, 0, 3) + " " + nf(v4, 0, 3) + " 0");
+      
+      objOutput.println("vt " + nf(u1, 0, 3) + nf(v1, 0, 3) + " 0");
+      objOutput.println("vt " + nf(u2, 0, 3) + nf(v2, 0, 3) + " 0");
+      objOutput.println("vt " + nf(u3, 0, 3) + nf(v3, 0, 3) + " 0");      
+      objOutput.println("vt " + nf(u4, 0, 3) + nf(v4, 0, 3) + " 0");
       
       obj_lastVertexNumber += 4;
       
