@@ -17793,11 +17793,62 @@ void SOLARCHVISION_addToFaces_afterSphericalTessellation (int m, int tes, int ly
 
 void SOLARCHVISION_export_land () {
   
-  String objFilename = Model3DFolder + "/" + ProjectName + "_LandMesh.obj";
+  String fileBasename = ProjectName + "_LandMesh";
+  
+  String objFilename = Model3DFolder + "/" + fileBasename + ".obj";
+  String mtlFilename = Model3DFolder + "/" + fileBasename + ".mtl";
+  
+  String mapsSubfolder = "maps/";
 
   PrintWriter objOutput = createWriter(objFilename);
   
+  String[] ObjectMaterialNames = {"", "LandMesh"};
+  
+  if ((Export_Material_Library != 0) && (Display_LAND_TEXTURE != 0)) {
+    PrintWriter mtlOutput = createWriter(mtlFilename);
+    
+    mtlOutput.println("#SOLARCHVISION");
+
+    mtlOutput.println("newmtl " + ObjectMaterialNames[1]);
+    mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+    mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+    mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+    mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+    mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+    mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+
+    mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+    mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+    mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+    
+    String new_TEXTURE_path = "";
+    
+    String the_filename = "";
+    if (LAND_TEXTURE_ImagePath.equals("")) {
+    }  
+    else {
+      the_filename = LAND_TEXTURE_ImagePath.substring(LAND_TEXTURE_ImagePath.lastIndexOf("/") + 1); // image name
+
+      new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+
+      println("Copying texture:", LAND_TEXTURE_ImagePath, ">", new_TEXTURE_path);
+      saveBytes(new_TEXTURE_path, loadBytes(LAND_TEXTURE_ImagePath));
+      LAND_TEXTURE_ImagePath = new_TEXTURE_path;
+    }
+
+    mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+    mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map
+    
+    mtlOutput.flush(); 
+    mtlOutput.close();
+
+  }
+  
   objOutput.println("#SOLARCHVISION");
+  
+  if ((Export_Material_Library != 0) && (Display_LAND_TEXTURE != 0)) {
+    objOutput.println("mtllib " + fileBasename + ".mtl");
+  }
 
   for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
     
@@ -17812,24 +17863,30 @@ void SOLARCHVISION_export_land () {
     
   }
 
-  if (Display_LAND_TEXTURE != 0) {
+  if (Display_LAND_TEXTURE != 0) { 
 
-  for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
-    
-    int the_I = i / LAND_n_J;
-    int the_J = i % LAND_n_J;
-    
-    float x = LAND_MESH[the_I][the_J][0];
-    float y = LAND_MESH[the_I][the_J][1];
-    float z = LAND_MESH[the_I][the_J][2];
-
-    float u = x / LAND_TEXTURE_scale_U + 0.5;
-    float v = y / LAND_TEXTURE_scale_V + 0.5;
-    float w = 0;
-  
-    objOutput.println("vt " + nf(u, 0, 3) + " " + nf(v, 0, 3) + " " + nf(w, 0, 3));
+    for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
       
-    }  
+      int the_I = i / LAND_n_J;
+      int the_J = i % LAND_n_J;
+      
+      float x = LAND_MESH[the_I][the_J][0];
+      float y = LAND_MESH[the_I][the_J][1];
+      float z = LAND_MESH[the_I][the_J][2];
+  
+      float u = x / LAND_TEXTURE_scale_U + 0.5;
+      float v = y / LAND_TEXTURE_scale_V + 0.5;
+      float w = 0;
+    
+      objOutput.println("vt " + nf(u, 0, 3) + " " + nf(v, 0, 3) + " " + nf(w, 0, 3));
+  
+    }
+  }
+  
+  objOutput.println("g LandMesh");
+  
+  if ((Export_Material_Library != 0) && (Display_LAND_TEXTURE != 0)) {  
+    objOutput.println("usemtl " + ObjectMaterialNames[1]);
   }
 
   for (int i = 0; i < LAND_n_I - 1; i += 1) {
