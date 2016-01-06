@@ -18018,62 +18018,11 @@ void SOLARCHVISION_export_objects () {
   PrintWriter objOutput = createWriter(objFilename);
   
   objOutput.println("#SOLARCHVISION");
+  
+  int obj_lastVertexNumber = 0; 
 
   if ((Export_Material_Library != 0) && (Display_Trees_People != 0)) {
     objOutput.println("mtllib " + fileBasename + ".mtl");
-  }
-
-
-  int obj_lastVertexNumber = 0; 
-
-  for (int i = 1; i < allVertices.length; i++) {
-    
-    obj_lastVertexNumber += 1;
-    
-    objOutput.print("v ");
-    for (int j = 0; j < 3; j++) {
-      
-      objOutput.print(nf(allVertices[i][j], 0, Precision));
-      /*
-      {
-        float v = allVertices[i][j];
-        if (j == 2) v += 20;
-        objOutput.print(nf(v * 1000000, 0, Precision));
-      }
-      */
-      
-      if (j + 1 < 3) {
-        objOutput.print(" ");
-      }
-      else {
-        objOutput.println();
-      }          
-    }    
-  }
-
-  for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
-    
-    if (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1]) {
-      
-      objOutput.println("g Object" + nf(OBJ_NUM, 4));
-
-      for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
-
-        objOutput.print("f ");
-        for (int j = 0; j < allFaces[f].length; j++) {
-          objOutput.print(allFaces[f][j]);
-          if (j + 1 < allFaces[f].length) {
-            objOutput.print(" ");
-          }
-          else {
-            objOutput.println();
-          }          
-        }    
-      }
-    }
-  }
-  
-  if ((Export_Material_Library != 0) && (Display_Trees_People != 0)) {
 
     for (int f = 1; f <= allObject2D_num; f++) {
 
@@ -18088,8 +18037,8 @@ void SOLARCHVISION_export_objects () {
       
       float r = allObject2D_XYZS[f][3] * 0.5;
       
-      float t = 0; //WIN3D_RZ_coordinate * PI / 180.0;
-      //if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
+      float t = WIN3D_RZ_coordinate * PI / 180.0;
+      if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
       
       if (allObject2D_MAP[f] < 0) t += PI;      
    
@@ -18139,8 +18088,52 @@ void SOLARCHVISION_export_objects () {
       
       objOutput.println("f " + n1_txt + "/" + n1_txt + " " + n2_txt + "/" + n2_txt + " " + n3_txt + "/" + n3_txt + " " + n4_txt + "/" + n4_txt);
     }    
-    
+
   }
+
+
+  
+
+  for (int i = 1; i < allVertices.length; i++) {
+
+    objOutput.print("v ");
+    for (int j = 0; j < 3; j++) {
+      
+      objOutput.print(nf(allVertices[i][j], 0, Precision));
+      
+      if (j + 1 < 3) {
+        objOutput.print(" ");
+      }
+      else {
+        objOutput.println();
+      }          
+    }    
+  }
+
+  for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
+    
+    if (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1]) {
+      
+      objOutput.println("g Object" + nf(OBJ_NUM, 4));
+
+      for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
+
+        objOutput.print("f ");
+        for (int j = 0; j < allFaces[f].length; j++) {
+          objOutput.print(allFaces[f][j] + obj_lastVertexNumber);
+          
+          if (j + 1 < allFaces[f].length) {
+            objOutput.print(" ");
+          }
+          else {
+            objOutput.println();
+          }          
+        }    
+      }
+    }
+  }
+  
+  obj_lastVertexNumber += allVertices.length - 1;
   
   
   objOutput.flush(); 
