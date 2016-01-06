@@ -18097,35 +18097,35 @@ void SOLARCHVISION_export_objects () {
       float y1 = y - r * sin(t);
       float z1 = z;
       float u1 = 0;
-      float v1 = 1;
+      float v1 = 0;
 
       float x2 = x + r * cos(t);
       float y2 = y + r * sin(t);
       float z2 = z;
       float u2 = 1;
-      float v2 = 1;
+      float v2 = 0;
 
       float x3 = x + r * cos(t);
       float y3 = y + r * sin(t);
       float z3 = z + 2 * r;
       float u3 = 1;
-      float v3 = 0;
+      float v3 = 1;
       
       float x4 = x - r * cos(t);
       float y4 = y - r * sin(t);
       float z4 = z + 2 * r;
       float u4 = 0;
-      float v4 = 0;      
+      float v4 = 1;      
     
       objOutput.println("v " + nf(x1, 0, Precision) + " " + nf(y1, 0, Precision) + " " + nf(z1, 0, Precision));
       objOutput.println("v " + nf(x2, 0, Precision) + " " + nf(y2, 0, Precision) + " " + nf(z2, 0, Precision));
       objOutput.println("v " + nf(x3, 0, Precision) + " " + nf(y3, 0, Precision) + " " + nf(z3, 0, Precision));
       objOutput.println("v " + nf(x4, 0, Precision) + " " + nf(y4, 0, Precision) + " " + nf(z4, 0, Precision));
       
-      objOutput.println("vt " + nf(u1, 0, 3) + nf(v1, 0, 3) + " 0");
-      objOutput.println("vt " + nf(u2, 0, 3) + nf(v2, 0, 3) + " 0");
-      objOutput.println("vt " + nf(u3, 0, 3) + nf(v3, 0, 3) + " 0");      
-      objOutput.println("vt " + nf(u4, 0, 3) + nf(v4, 0, 3) + " 0");
+      objOutput.println("vt " + nf(u1, 0, 3) + " " + nf(v1, 0, 3) + " 0");
+      objOutput.println("vt " + nf(u2, 0, 3) + " " + nf(v2, 0, 3) + " 0");
+      objOutput.println("vt " + nf(u3, 0, 3) + " " + nf(v3, 0, 3) + " 0");      
+      objOutput.println("vt " + nf(u4, 0, 3) + " " + nf(v4, 0, 3) + " 0");
       
       obj_lastVertexNumber += 4;
       
