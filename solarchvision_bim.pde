@@ -18008,8 +18008,37 @@ void SOLARCHVISION_export_objects () {
         mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
         mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
       }
-      
     }
+    
+    if ((Export_Material_Library != 0) && (Display_SolarImpact_Image != 0)) {
+      if (SolarImpact_Image_Section != 0) {
+        for (int j = 0; j < SolarImpact_Image.length; j++) {
+        
+          String the_filename = "SolarImpact_day" + nf(j, 0) + ".jpg";
+
+          String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+    
+          println("Saving texture:", new_TEXTURE_path);
+          SolarImpact_Image[j].save(new_TEXTURE_path);
+
+          mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
+          mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+          mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+          mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+          mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+          mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+          mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+      
+          mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+          mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+          mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+  
+          mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+          mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
+        }      
+      }
+    }
+    
     
     mtlOutput.flush(); 
     mtlOutput.close();    
@@ -18092,7 +18121,80 @@ void SOLARCHVISION_export_objects () {
   }
 
 
+
+  if ((Export_Material_Library != 0) && (Display_SolarImpact_Image != 0)) {
+    if (SolarImpact_Image_Section != 0) {
+      
+      SolarImpact_Rotation = SpatialImpact_Rotation[SolarImpact_Image_Section];
+      SolarImpact_Elevation = 0.0 + SpatialImpact_Elevation[SolarImpact_Image_Section];
+      SolarImpact_scale_U = SpatialImpact_scale_U; 
+      SolarImpact_scale_V = SpatialImpact_scale_V;        
   
+      int Display_solarch_texture = 0;
+      
+      float dU = SolarImpact_scale_U / Rendered_SolarImpact_scale_U;
+      float dV = SolarImpact_scale_V / Rendered_SolarImpact_scale_V;
+      
+      float minU = 0.5 - (0.5 * dU);
+      float maxU = 0.5 + (0.5 * dU);
+      float minV = 0.5 - (0.5 * dV);
+      float maxV = 0.5 + (0.5 * dV);
+
+      float c = SolarImpact_Elevation * OBJECTS_scale; 
+  
+      if (SolarImpact_Image_Section != 0) {
+    
+        for (int q = 0; q < 4; q++) {
+          
+          float qx = 0, qy = 0, u = 0, v = 0;
+          
+          if (q == 0)      {qx = -1; qy = -1; u = minU; v = maxV;}
+          else if (q == 1) {qx = 1; qy = -1; u = maxU; v = maxV;}
+          else if (q == 2) {qx = 1; qy = 1; u = maxU; v = minV;}
+          else if (q == 3) {qx = -1; qy = 1; u = minU; v = minV;}    
+          
+          float a = qx * 0.5 * SolarImpact_scale_U * OBJECTS_scale;
+          float b = qy * 0.5 * SolarImpact_scale_V * OBJECTS_scale;    
+          
+          float x = 0, y = 0, z = 0;
+          
+          if (SolarImpact_Image_Section == 1) {
+            x = a * cos_ang(SolarImpact_Rotation) - b * sin_ang(SolarImpact_Rotation);
+            y = a * sin_ang(SolarImpact_Rotation) + b * cos_ang(SolarImpact_Rotation);
+            z = c;         
+          }
+          else if (SolarImpact_Image_Section == 2) {
+            x = a * cos_ang(SolarImpact_Rotation) - c * sin_ang(SolarImpact_Rotation);
+            y = -(a * sin_ang(SolarImpact_Rotation) + c * cos_ang(SolarImpact_Rotation));
+            z = b;       
+          }
+          else if (SolarImpact_Image_Section == 3) {
+            x = a * cos_ang(90 - SolarImpact_Rotation) - c * sin_ang(90 - SolarImpact_Rotation);
+            y = -(a * sin_ang(90 - SolarImpact_Rotation) + c * cos_ang(90 - SolarImpact_Rotation));
+            z = b;     
+          }      
+          
+          v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+      
+          objOutput.println("v " + nf(x, 0, Precision) + " " + nf(y, 0, Precision) + " " + nf(z, 0, Precision));
+          objOutput.println("vt " + nf(u, 0, 3) + " " + nf(v, 0, 3) + " 0");
+        }   
+        obj_lastVertexNumber += 4;
+        
+        objOutput.println("g SolarImpact");
+        objOutput.println(("usemtl SolarImpact_day" + nf(Day_of_Impact_to_Display, 0) + ".jpg").replace('.', '_'));
+        
+        String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
+        String n2_txt = nf(obj_lastVertexNumber - 2, 0);
+        String n3_txt = nf(obj_lastVertexNumber - 1, 0);
+        String n4_txt = nf(obj_lastVertexNumber - 0, 0);
+        
+        objOutput.println("f " + n1_txt + "/" + n1_txt + " " + n2_txt + "/" + n2_txt + " " + n3_txt + "/" + n3_txt + " " + n4_txt + "/" + n4_txt);        
+      }  
+
+    }
+  }
+
 
   for (int i = 1; i < allVertices.length; i++) {
 
