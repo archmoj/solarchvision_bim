@@ -18249,7 +18249,7 @@ void SOLARCHVISION_export_objects () {
       PGraphics Face_Texture = createGraphics(RES1, RES2, P2D);
 
       Face_Texture.beginDraw();
- 
+
       int PAL_TYPE = 0; 
       int PAL_DIR = 1;
       
@@ -18272,10 +18272,6 @@ void SOLARCHVISION_export_objects () {
         subFace[j][2] = allVertices[vNo][2];
       }
       
-      for (int j = 0; j < subFace.length; j++) {
-        subFace[j] = fn_normalize(subFace[j]);
-      }
-   
       Face_Texture.noStroke(); // <<<<<<<<<<<<
       Face_Texture.beginShape(QUADS);
       
@@ -23120,7 +23116,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
   //SOLARCHVISION_add_2Dobjects_plane(0, 100, 0,0,0, 50,50); // people
   //SOLARCHVISION_add_2Dobjects_plane(1, 25, 0,40,0, 50,10); // trees back
   //SOLARCHVISION_add_2Dobjects_plane(1, 25, 0,-30,0, 50,20); // trees front
-/*
+
   addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
   SOLARCHVISION_add_PolygonHyper(0,0,0,1,1, 30,-30,4.5, 9, 9, 6, 0);  // hyper
   
@@ -23137,7 +23133,6 @@ void SOLARCHVISION_add_ParametricGeometries () {
     SOLARCHVISION_add_House_Core(7,0,0,1,1, x,y,z, dx,dy,dz, dz, rot); // house 
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
    } 
-*/
 
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
