@@ -18334,12 +18334,14 @@ void SOLARCHVISION_export_objects () {
         }      
         
         if (Face_Teture_Created != 0) {
+          objOutput.println("g allFaces_" + nf(f, 0)); // <<<<< adding new object for each face may help other programs define sub-object levels well.  
+          
+          objOutput.println("usemtl " +  the_filename.replace('.', '_'));
+          
           objOutput.println("vt 0 0 0");
           objOutput.println("vt 1 0 0");
           objOutput.println("vt 1 1 0");
           objOutput.println("vt 0 1 0");
-          
-          objOutput.println("usemtl " +  the_filename.replace('.', '_'));
         }
       
         objOutput.print("f ");
@@ -23128,8 +23130,8 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float x = 0;
     float y = -30;
     float z = r;
-    SOLARCHVISION_add_FractalSphere(1,0,0,1,1, x,y,z, r, 2, 0, 0);
-    //SOLARCHVISION_add_FractalSphere(2,0,0,1,1, x,y,z, r, 4, 0, 0);
+    //SOLARCHVISION_add_FractalSphere(1,0,0,1,1, x,y,z, r, 2, 0, 0);
+    SOLARCHVISION_add_FractalSphere(1,0,0,1,1, x,y,z, r, 4, 0, 0);
     SOLARCHVISION_addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
   }    
   
