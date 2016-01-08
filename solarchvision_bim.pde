@@ -18413,10 +18413,10 @@ void SOLARCHVISION_export_objects () {
             objOutput.println("v " + nf(x3, 0, Precision) + " " +  nf(y3, 0, Precision) + " " +  nf(z3, 0, Precision));
             objOutput.println("v " + nf(x4, 0, Precision) + " " +  nf(y4, 0, Precision) + " " +  nf(z4, 0, Precision));
             
-            objOutput.println("vt 0 0 0");
-            objOutput.println("vt 1 0 0");
-            objOutput.println("vt 1 1 0");
             objOutput.println("vt 0 1 0");
+            objOutput.println("vt 1 1 0");
+            objOutput.println("vt 1 0 0");
+            objOutput.println("vt 0 0 0");
       
             obj_lastVertexNumber += 4;
             
