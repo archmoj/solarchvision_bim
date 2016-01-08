@@ -18208,9 +18208,13 @@ void SOLARCHVISION_export_objects () {
 
       for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
 
+        String the_filename = "Face_Texture" + nf(f, 0) + ".jpg";
+        
+        int Face_Teture_Created = 0;
+
         if ((Export_Material_Library != 0) && (WIN3D_FACES_SHADE == Shade_Global_Solar)) {
 
-          String the_filename = "Face_Texture" + nf(f, 0) + ".jpg";
+          Face_Teture_Created = 1;
   
           String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
     
@@ -18218,9 +18222,98 @@ void SOLARCHVISION_export_objects () {
     
           int RES1 = 64;
           int RES2 = RES1;
+  
+          PGraphics Face_Texture = createGraphics(RES1, RES2, P2D);
     
-          PGraphics Face_Texture = createGraphics(RES1, RES2);
+          Face_Texture.beginDraw();
+   
+          int PAL_TYPE = 0; 
+          int PAL_DIR = 1;
           
+          if (Impact_TYPE == Impact_ACTIVE) {
+            PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
+          }
+          if (Impact_TYPE == Impact_PASSIVE) {  
+            PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+          }             
+          
+          float _Multiplier = 1; 
+          if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
+          if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;        
+    
+          float[][] subFace = new float [allFaces[f].length][3];
+          for (int j = 0; j < allFaces[f].length; j++) {
+            int vNo = allFaces[f][j];
+            subFace[j][0] = allVertices[vNo][0];
+            subFace[j][1] = allVertices[vNo][1];
+            subFace[j][2] = allVertices[vNo][2];
+          }
+          
+          for (int j = 0; j < subFace.length; j++) {
+            subFace[j] = fn_normalize(subFace[j]);
+          }
+       
+          Face_Texture.noStroke(); // <<<<<<<<<<<<
+          Face_Texture.beginShape(QUADS);
+          
+          for (int s = 0; s < subFace.length; s++) {
+            
+            int s_next = (s + 1) % subFace.length;
+            int s_prev = (s + subFace.length - 1) % subFace.length;
+            
+            //if ((subFace[s][2] > -0.2) && (subFace[s_prev][2] > -0.2) && (subFace[s_next][2] > -0.2)) // to remove below 
+            {
+            
+              PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
+              PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
+              PVector UV = U.cross(V);
+              float[] W = {UV.x, UV.y, UV.z};
+              W = fn_normalize(W);
+              
+              float Alpha = asin_ang(W[2]);
+              float Beta = atan2_ang(W[1], W[0]) + 90;       
+              
+              int a = int((Alpha + 90) / stp_slp);
+              int b = int(Beta / stp_dir);
+              
+              if (a < 0) a += int(180 / stp_slp);
+              if (b < 0) b += int(360 / stp_dir);
+              if (a > int(180 / stp_slp)) a -= int(180 / stp_slp);
+              if (b > int(360 / stp_dir)) b -= int(360 / stp_dir);
+              
+              float _valuesSUM = LocationExposure[Day_of_Impact_to_Display][a][b];
+              
+              if (_valuesSUM < 0.9 * FLOAT_undefined) {
+              
+                float _u = 0;
+                
+                if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
+                if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
+                
+                if (PAL_DIR == -1) _u = 1 - _u;
+                if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                if (PAL_DIR == 2) _u =  0.5 * _u;
+      
+                float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+      
+                Face_Texture.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+              }
+              else {
+                Face_Texture.fill(223); 
+              }
+              
+              if (s == 0) Face_Texture.vertex(0, 0);
+              if (s == 1) Face_Texture.vertex(RES1, 0);
+              if (s == 2) Face_Texture.vertex(RES1, RES2);
+              if (s == 3) Face_Texture.vertex(0, RES2);
+              // only baking four vertices! <<<<<<<<<<<<<<<<<<<<
+            }
+          }
+          
+          //Face_Texture.endShape(CLOSE);
+          Face_Texture.endShape();
+ 
+          Face_Texture.endDraw();
           Face_Texture.save(new_TEXTURE_path);
   
           mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
@@ -18238,11 +18331,28 @@ void SOLARCHVISION_export_objects () {
           //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
           mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
 
-        }        
+        }      
         
+        if (Face_Teture_Created != 0) {
+          objOutput.println("vt 0 0 0");
+          objOutput.println("vt 1 0 0");
+          objOutput.println("vt 1 1 0");
+          objOutput.println("vt 0 1 0");
+          
+          objOutput.println("usemtl " +  the_filename.replace('.', '_'));
+        }
+      
         objOutput.print("f ");
         for (int j = 0; j < allFaces[f].length; j++) {
           objOutput.print(allFaces[f][j] + obj_lastVertexNumber);
+          
+          if (Face_Teture_Created != 0) {
+            
+            int vtNo = -1 * (j + 1); // applying negative texture vertices
+            if (vtNo < -4) vtNo = -4; // for polygons with more than 4 vertices 
+            
+            objOutput.print("/" + nf(vtNo, 0)); 
+          }
           
           if (j + 1 < allFaces[f].length) {
             objOutput.print(" ");
