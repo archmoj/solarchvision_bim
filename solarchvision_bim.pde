@@ -12875,8 +12875,12 @@ void WIN3D_keyPressed (KeyEvent e) {
                   SOLARCHVISION_rotateZ_Camera_around_Selection(-WIN3D_RS_coordinate);
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         
-        case '*' :OBJECTS_scale *= 2.0; SKY3D_scale *= 2.0; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case '/' :OBJECTS_scale /= 2.0; SKY3D_scale /= 2.0; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '*' ://OBJECTS_scale *= 2.0; SKY3D_scale *= 2.0;
+                  SOLARCHVISION_move_Camera_towards_Selection(0.5); 
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '/' ://OBJECTS_scale /= 2.0; SKY3D_scale /= 2.0; 
+                  SOLARCHVISION_move_Camera_towards_Selection(2.0);
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
   
         case '+' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         case '-' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
@@ -18013,6 +18017,7 @@ void SOLARCHVISION_export_objects () {
 
         //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
         mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
+        mtlOutput.println("\tmap_d " + mapsSubfolder + the_filename); // diffuse map
       }
     }    
     
