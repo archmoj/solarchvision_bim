@@ -18200,181 +18200,166 @@ void SOLARCHVISION_export_objects () {
     }    
   }
 
-  int Create_Face_Teture = 0;
-  
-  if ((Export_Material_Library != 0) && (WIN3D_FACES_SHADE == Shade_Global_Solar)) {
-    Create_Face_Teture = 1;
-  }
-  
-  if (Create_Face_Teture == 0) {
-  
-    for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
+  for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
+    
+    if (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1]) {
       
-      if (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1]) {
+      objOutput.println("g Object" + nf(OBJ_NUM, 4));
+
+      for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
+
+        String the_filename = "Face_Texture" + nf(f, 0) + ".jpg";
         
-        objOutput.println("g Object" + nf(OBJ_NUM, 4));
+        int Face_Teture_Created = 0;
+
+        if ((Export_Material_Library != 0) && (WIN3D_FACES_SHADE == Shade_Global_Solar)) {
+
+          Face_Teture_Created = 1;
   
-        for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
-        
-          objOutput.print("f ");
+          String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+    
+          println("Baking texture:", new_TEXTURE_path);
+    
+          int RES1 = 64;
+          int RES2 = RES1;
+  
+          PGraphics Face_Texture = createGraphics(RES1, RES2, P2D);
+    
+          Face_Texture.beginDraw();
+   
+          int PAL_TYPE = 0; 
+          int PAL_DIR = 1;
+          
+          if (Impact_TYPE == Impact_ACTIVE) {
+            PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
+          }
+          if (Impact_TYPE == Impact_PASSIVE) {  
+            PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+          }             
+          
+          float _Multiplier = 1; 
+          if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
+          if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;        
+    
+          float[][] subFace = new float [allFaces[f].length][3];
           for (int j = 0; j < allFaces[f].length; j++) {
-            objOutput.print(allFaces[f][j] + obj_lastVertexNumber);
+            int vNo = allFaces[f][j];
+            subFace[j][0] = allVertices[vNo][0];
+            subFace[j][1] = allVertices[vNo][1];
+            subFace[j][2] = allVertices[vNo][2];
+          }
+          
+          Face_Texture.noStroke(); // <<<<<<<<<<<<
+          Face_Texture.beginShape(QUADS);
+          
+          for (int s = 0; s < subFace.length; s++) {
             
-            if (j + 1 < allFaces[f].length) {
-              objOutput.print(" ");
+            int s_next = (s + 1) % subFace.length;
+            int s_prev = (s + subFace.length - 1) % subFace.length;
+            
+            //if ((subFace[s][2] > -0.2) && (subFace[s_prev][2] > -0.2) && (subFace[s_next][2] > -0.2)) // to remove below 
+            {
+            
+              PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
+              PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
+              PVector UV = U.cross(V);
+              float[] W = {UV.x, UV.y, UV.z};
+              W = fn_normalize(W);
+              
+              float Alpha = asin_ang(W[2]);
+              float Beta = atan2_ang(W[1], W[0]) + 90;       
+              
+              int a = int((Alpha + 90) / stp_slp);
+              int b = int(Beta / stp_dir);
+              
+              if (a < 0) a += int(180 / stp_slp);
+              if (b < 0) b += int(360 / stp_dir);
+              if (a > int(180 / stp_slp)) a -= int(180 / stp_slp);
+              if (b > int(360 / stp_dir)) b -= int(360 / stp_dir);
+              
+              float _valuesSUM = LocationExposure[Day_of_Impact_to_Display][a][b];
+              
+              if (_valuesSUM < 0.9 * FLOAT_undefined) {
+              
+                float _u = 0;
+                
+                if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
+                if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
+                
+                if (PAL_DIR == -1) _u = 1 - _u;
+                if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                if (PAL_DIR == 2) _u =  0.5 * _u;
+      
+                float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+      
+                Face_Texture.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+              }
+              else {
+                Face_Texture.fill(223); 
+              }
+              
+              if (s == 0) Face_Texture.vertex(0, 0);
+              if (s == 1) Face_Texture.vertex(RES1, 0);
+              if (s == 2) Face_Texture.vertex(RES1, RES2);
+              if (s == 3) Face_Texture.vertex(0, RES2);
+              // only baking four vertices! <<<<<<<<<<<<<<<<<<<<
             }
-            else {
-              objOutput.println();
-            }          
-          }    
+          }
+          
+          //Face_Texture.endShape(CLOSE);
+          Face_Texture.endShape();
+ 
+          Face_Texture.endDraw();
+          Face_Texture.save(new_TEXTURE_path);
+  
+          mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
+          mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+          mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+          mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+          mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+          mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+          mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+      
+          mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+          mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+          mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+  
+          //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+          mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
+
+        }      
+        
+        if (Face_Teture_Created != 0) {
+          objOutput.println("g allFaces_" + nf(f, 0)); // <<<<< adding new object for each face may help other programs define sub-object levels well.  
+          
+          objOutput.println("usemtl " +  the_filename.replace('.', '_'));
+          
+          objOutput.println("vt 0 0 0");
+          objOutput.println("vt 1 0 0");
+          objOutput.println("vt 1 1 0");
+          objOutput.println("vt 0 1 0");
         }
-      }
-    }
-  }
-  else {
-
-    for (int f = 1; f < allFaces.length; f++) {
-
-      String the_filename = "Face_Texture" + nf(f, 0) + ".jpg";
       
-      int Face_Teture_Created = 0;
-
-      String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
-
-      println("Baking texture:", new_TEXTURE_path);
-
-      int RES1 = 64;
-      int RES2 = RES1;
-
-      PGraphics Face_Texture = createGraphics(RES1, RES2, P2D);
-
-      Face_Texture.beginDraw();
-
-      int PAL_TYPE = 0; 
-      int PAL_DIR = 1;
-      
-      if (Impact_TYPE == Impact_ACTIVE) {
-        PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
-      }
-      if (Impact_TYPE == Impact_PASSIVE) {  
-        PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
-      }             
-      
-      float _Multiplier = 1; 
-      if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
-      if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;        
-
-      float[][] subFace = new float [allFaces[f].length][3];
-      for (int j = 0; j < allFaces[f].length; j++) {
-        int vNo = allFaces[f][j];
-        subFace[j][0] = allVertices[vNo][0];
-        subFace[j][1] = allVertices[vNo][1];
-        subFace[j][2] = allVertices[vNo][2];
-      }
-      
-      Face_Texture.noStroke(); // <<<<<<<<<<<<
-      Face_Texture.beginShape(QUADS);
-      
-      for (int s = 0; s < subFace.length; s++) {
-        
-        int s_next = (s + 1) % subFace.length;
-        int s_prev = (s + subFace.length - 1) % subFace.length;
-        
-        //if ((subFace[s][2] > -0.2) && (subFace[s_prev][2] > -0.2) && (subFace[s_next][2] > -0.2)) // to remove below 
-        {
-        
-          PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
-          PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
-          PVector UV = U.cross(V);
-          float[] W = {UV.x, UV.y, UV.z};
-          W = fn_normalize(W);
+        objOutput.print("f ");
+        for (int j = 0; j < allFaces[f].length; j++) {
+          objOutput.print(allFaces[f][j] + obj_lastVertexNumber);
           
-          float Alpha = asin_ang(W[2]);
-          float Beta = atan2_ang(W[1], W[0]) + 90;       
-          
-          int a = int((Alpha + 90) / stp_slp);
-          int b = int(Beta / stp_dir);
-          
-          if (a < 0) a += int(180 / stp_slp);
-          if (b < 0) b += int(360 / stp_dir);
-          if (a > int(180 / stp_slp)) a -= int(180 / stp_slp);
-          if (b > int(360 / stp_dir)) b -= int(360 / stp_dir);
-          
-          float _valuesSUM = LocationExposure[Day_of_Impact_to_Display][a][b];
-          
-          if (_valuesSUM < 0.9 * FLOAT_undefined) {
-          
-            float _u = 0;
+          if (Face_Teture_Created != 0) {
             
-            if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
-            if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
+            int vtNo = -1 * (j + 1); // applying negative texture vertices
+            if (vtNo < -4) vtNo = -4; // for polygons with more than 4 vertices 
             
-            if (PAL_DIR == -1) _u = 1 - _u;
-            if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-            if (PAL_DIR == 2) _u =  0.5 * _u;
-  
-            float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
-  
-            Face_Texture.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+            objOutput.print("/" + nf(vtNo, 0)); 
+          }
+          
+          if (j + 1 < allFaces[f].length) {
+            objOutput.print(" ");
           }
           else {
-            Face_Texture.fill(223); 
-          }
-          
-          if (s == 0) Face_Texture.vertex(0, 0);
-          if (s == 1) Face_Texture.vertex(RES1, 0);
-          if (s == 2) Face_Texture.vertex(RES1, RES2);
-          if (s == 3) Face_Texture.vertex(0, RES2);
-          // only baking four vertices! <<<<<<<<<<<<<<<<<<<<
-        }
+            objOutput.println();
+          }          
+        }    
       }
-      
-      //Face_Texture.endShape(CLOSE);
-      Face_Texture.endShape();
- 
-      Face_Texture.endDraw();
-      Face_Texture.save(new_TEXTURE_path);
-
-      mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
-      mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-      mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-      mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-      mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-      mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-      mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-  
-      mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-      mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-      mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-
-      //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-      mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
-
-
-      objOutput.println("g allFaces_" + nf(f, 0)); // <<<<< adding new object for each face may help other programs define sub-object levels well.  
-      
-      objOutput.println("usemtl " +  the_filename.replace('.', '_'));
-      
-      objOutput.println("vt 0 0 0");
-      objOutput.println("vt 1 0 0");
-      objOutput.println("vt 1 1 0");
-      objOutput.println("vt 0 1 0");
-
-      objOutput.print("f ");
-      for (int j = 0; j < allFaces[f].length; j++) {
-        objOutput.print(allFaces[f][j] + obj_lastVertexNumber);
-                  
-        int vtNo = -1 * (j + 1); // applying negative texture vertices
-        if (vtNo < -4) vtNo = -4; // for polygons with more than 4 vertices 
-        objOutput.print("/" + nf(vtNo, 0)); 
-
-        if (j + 1 < allFaces[f].length) {
-          objOutput.print(" ");
-        }
-        else {
-          objOutput.println();
-        }          
-      }    
     }
   }
   
@@ -23133,6 +23118,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     SOLARCHVISION_add_House_Core(7,0,0,1,1, x,y,z, dx,dy,dz, dz, rot); // house 
     SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
    } 
+
 
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
