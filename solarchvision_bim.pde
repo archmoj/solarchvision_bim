@@ -18237,36 +18237,21 @@ void SOLARCHVISION_export_objects () {
   }
   else {
 
+    int PAL_TYPE = 0; 
+    int PAL_DIR = 1;
+    
+    if (Impact_TYPE == Impact_ACTIVE) {
+    PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
+    }
+    if (Impact_TYPE == Impact_PASSIVE) {  
+    PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+    }             
+    
+    float _Multiplier = 1; 
+    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
+    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;     
+    
     for (int f = 1; f < allFaces.length; f++) {
-
-      String the_filename = "Face_Texture" + nf(f, 0) + ".jpg";
-      
-      int Face_Teture_Created = 0;
-
-      String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
-
-      println("Baking texture:", new_TEXTURE_path);
-
-      int RES1 = 64;
-      int RES2 = RES1;
-
-      PGraphics Face_Texture = createGraphics(RES1, RES2, P2D);
-
-      Face_Texture.beginDraw();
-
-      int PAL_TYPE = 0; 
-      int PAL_DIR = 1;
-      
-      if (Impact_TYPE == Impact_ACTIVE) {
-        PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
-      }
-      if (Impact_TYPE == Impact_PASSIVE) {  
-        PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
-      }             
-      
-      float _Multiplier = 1; 
-      if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
-      if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;        
 
       int Tessellation = allFaces_MTLV[f][1];
       
@@ -18275,7 +18260,9 @@ void SOLARCHVISION_export_objects () {
         Tessellation += MODEL3D_TESSELLATION;
       }
       
-      if ((allFaces_MTLV[f].length != 4) && (Tessellation == 0)) Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
+      if ((allFaces[f].length != 4) && (Tessellation == 0)) {
+        Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
+      }
       
       if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
 
@@ -18296,6 +18283,20 @@ void SOLARCHVISION_export_objects () {
       float z4 = 0;
 
       for (int n = 0; n < TotalSubNo; n++) {
+  
+        String the_filename = "Face_Texture" + nf(f, 0) + "_sub" + nf(n, 0) + ".jpg";
+        
+        String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+  
+        println("Baking texture:", new_TEXTURE_path);
+  
+        int RES1 = 64;
+        int RES2 = RES1;
+  
+        PGraphics Face_Texture = createGraphics(RES1, RES2, P2D);
+  
+        Face_Texture.beginDraw();
+
         
         float[][] base_Vertices = new float [allFaces[f].length][3];
         for (int j = 0; j < allFaces[f].length; j++) {
@@ -18378,52 +18379,51 @@ void SOLARCHVISION_export_objects () {
             z4 = subFace[s][2];
           }
         }
-      }
       
-      //Face_Texture.endShape(CLOSE);
-      Face_Texture.endShape();
- 
-      Face_Texture.endDraw();
-      Face_Texture.save(new_TEXTURE_path);
-
-      mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
-      mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-      mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-      mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-      mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-      mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-      mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+        //Face_Texture.endShape(CLOSE);
+        Face_Texture.endShape();
+   
+        Face_Texture.endDraw();
+        Face_Texture.save(new_TEXTURE_path);
   
-      mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-      mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-      mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-
-      //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-      mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
-
-      
-      objOutput.println("v " + nf(x1, 0, Precision) + " " +  nf(y1, 0, Precision) + " " +  nf(z1, 0, Precision));
-      objOutput.println("v " + nf(x2, 0, Precision) + " " +  nf(y2, 0, Precision) + " " +  nf(z2, 0, Precision));
-      objOutput.println("v " + nf(x3, 0, Precision) + " " +  nf(y3, 0, Precision) + " " +  nf(z3, 0, Precision));
-      objOutput.println("v " + nf(x4, 0, Precision) + " " +  nf(y4, 0, Precision) + " " +  nf(z4, 0, Precision));
-      
-      objOutput.println("vt 0 0 0");
-      objOutput.println("vt 1 0 0");
-      objOutput.println("vt 1 1 0");
-      objOutput.println("vt 0 1 0");
-
-      obj_lastVertexNumber += 4;
-      
-      objOutput.println("g allFaces_" + nf(f, 0)); // <<<<< adding new object for each face may help other programs define sub-object levels well.  
-      objOutput.println("usemtl " +  the_filename.replace('.', '_'));
-      
-      String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
-      String n2_txt = nf(obj_lastVertexNumber - 2, 0);
-      String n3_txt = nf(obj_lastVertexNumber - 1, 0);
-      String n4_txt = nf(obj_lastVertexNumber - 0, 0);
-      
-      objOutput.println("f " + n1_txt + "/" + n1_txt + " " + n2_txt + "/" + n2_txt + " " + n3_txt + "/" + n3_txt + " " + n4_txt + "/" + n4_txt);    
-
+        mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
+        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+        mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+        mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+    
+        mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+        mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+  
+        //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+        mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
+  
+        
+        objOutput.println("v " + nf(x1, 0, Precision) + " " +  nf(y1, 0, Precision) + " " +  nf(z1, 0, Precision));
+        objOutput.println("v " + nf(x2, 0, Precision) + " " +  nf(y2, 0, Precision) + " " +  nf(z2, 0, Precision));
+        objOutput.println("v " + nf(x3, 0, Precision) + " " +  nf(y3, 0, Precision) + " " +  nf(z3, 0, Precision));
+        objOutput.println("v " + nf(x4, 0, Precision) + " " +  nf(y4, 0, Precision) + " " +  nf(z4, 0, Precision));
+        
+        objOutput.println("vt 0 0 0");
+        objOutput.println("vt 1 0 0");
+        objOutput.println("vt 1 1 0");
+        objOutput.println("vt 0 1 0");
+  
+        obj_lastVertexNumber += 4;
+        
+        objOutput.println("g allFaces_" + nf(f, 0) + "_sub" + nf(n, 0)); // <<<<< adding new object for each face may help other programs define sub-object levels well.  
+        objOutput.println("usemtl " +  the_filename.replace('.', '_'));
+        
+        String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
+        String n2_txt = nf(obj_lastVertexNumber - 2, 0);
+        String n3_txt = nf(obj_lastVertexNumber - 1, 0);
+        String n4_txt = nf(obj_lastVertexNumber - 0, 0);
+        
+        objOutput.println("f " + n1_txt + "/" + n1_txt + " " + n2_txt + "/" + n2_txt + " " + n3_txt + "/" + n3_txt + " " + n4_txt + "/" + n4_txt);    
+      }
     }
   }
   
