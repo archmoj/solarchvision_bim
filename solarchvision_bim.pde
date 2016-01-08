@@ -17838,7 +17838,7 @@ void SOLARCHVISION_export_land () {
         saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
       }    
 
-      mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+      //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
       mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map
       
     }
@@ -17968,12 +17968,18 @@ void SOLARCHVISION_export_objects () {
   String mapsSubfolder = "maps/";
   
   String[] ObjectMaterialNames = Object2D_ImagePath;
+
+  PrintWriter mtlOutput = createWriter(mtlFilename);
+  mtlOutput.println("#SOLARCHVISION");
+
+  PrintWriter objOutput = createWriter(objFilename);
+  objOutput.println("#SOLARCHVISION");
+  objOutput.println("mtllib " + fileBasename + ".mtl");
   
+  int obj_lastVertexNumber = 0; 
+
   if ((Export_Material_Library != 0) && (Display_Trees_People != 0)) {
-    PrintWriter mtlOutput = createWriter(mtlFilename);
-    
-    mtlOutput.println("#SOLARCHVISION");
-    
+
     for (int i = 1; i < ObjectMaterialNames.length; i++) {
     
       String old_TEXTURE_path = ObjectMaterialNames[i];
@@ -18005,54 +18011,11 @@ void SOLARCHVISION_export_objects () {
         mtlOutput.println("\tTr 1.000"); //  0-1 transparency
         mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
 
-        mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+        //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
         mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
       }
-    }
+    }    
     
-    if ((Export_Material_Library != 0) && (Display_SolarImpact_Image != 0)) {
-      if (SolarImpact_Image_Section != 0) {
-        for (int j = 0; j < SolarImpact_Image.length; j++) {
-        
-          String the_filename = "SolarImpact_day" + nf(j, 0) + ".jpg";
-
-          String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
-    
-          println("Saving texture:", new_TEXTURE_path);
-          SolarImpact_Image[j].save(new_TEXTURE_path);
-
-          mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
-          mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-          mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-          mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-          mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-          mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-          mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-      
-          mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-          mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-          mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-  
-          mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-          mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
-        }      
-      }
-    }
-    
-    
-    mtlOutput.flush(); 
-    mtlOutput.close();    
-  }  
-  
-  PrintWriter objOutput = createWriter(objFilename);
-  
-  objOutput.println("#SOLARCHVISION");
-  
-  int obj_lastVertexNumber = 0; 
-
-  if ((Export_Material_Library != 0) && (Display_Trees_People != 0)) {
-    objOutput.println("mtllib " + fileBasename + ".mtl");
-
     for (int f = 1; f <= allObject2D_num; f++) {
 
       int n = abs(allObject2D_MAP[f]);
@@ -18124,6 +18087,31 @@ void SOLARCHVISION_export_objects () {
 
   if ((Export_Material_Library != 0) && (Display_SolarImpact_Image != 0)) {
     if (SolarImpact_Image_Section != 0) {
+
+      for (int j = 0; j < SolarImpact_Image.length; j++) {
+      
+        String the_filename = "SolarImpact_day" + nf(j, 0) + ".jpg";
+
+        String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+  
+        println("Saving texture:", new_TEXTURE_path);
+        SolarImpact_Image[j].save(new_TEXTURE_path);
+
+        mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
+        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+        mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+        mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+    
+        mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+        mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+
+        //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+        mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
+      }      
       
       SolarImpact_Rotation = SpatialImpact_Rotation[SolarImpact_Image_Section];
       SolarImpact_Elevation = 0.0 + SpatialImpact_Elevation[SolarImpact_Image_Section];
@@ -18220,6 +18208,38 @@ void SOLARCHVISION_export_objects () {
 
       for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
 
+        if ((Export_Material_Library != 0) && (WIN3D_FACES_SHADE == Shade_Global_Solar)) {
+
+          String the_filename = "Face_Texture" + nf(f, 0) + ".jpg";
+  
+          String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+    
+          println("Baking texture:", new_TEXTURE_path);
+    
+          int RES1 = 64;
+          int RES2 = RES1;
+    
+          PGraphics Face_Texture = createGraphics(RES1, RES2);
+          
+          Face_Texture.save(new_TEXTURE_path);
+  
+          mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
+          mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+          mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+          mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+          mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+          mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+          mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+      
+          mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+          mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+          mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+  
+          //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+          mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
+
+        }        
+        
         objOutput.print("f ");
         for (int j = 0; j < allFaces[f].length; j++) {
           objOutput.print(allFaces[f][j] + obj_lastVertexNumber);
@@ -18237,9 +18257,13 @@ void SOLARCHVISION_export_objects () {
   
   obj_lastVertexNumber += allVertices.length - 1;
   
+
   
   objOutput.flush(); 
   objOutput.close();   
+
+  mtlOutput.flush(); 
+  mtlOutput.close(); 
   
   println("End of exporting the mesh."); 
  
