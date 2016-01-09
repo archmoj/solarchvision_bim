@@ -18462,13 +18462,8 @@ void SOLARCHVISION_export_objects () {
               String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
               String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
               String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
-              
-              if (back_or_front == 1) {
-                objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-              }
-              if (back_or_front == 0) {
-                objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
-              }            
+
+              objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
               
             }
           }
