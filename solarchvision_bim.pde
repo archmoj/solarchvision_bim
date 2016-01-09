@@ -18311,9 +18311,9 @@ void SOLARCHVISION_export_objects () {
     
           for (int n = 0; n < TotalSubNo; n++) {
 
-           for (int front_or_back = 0; front_or_back <= Export_Back_Sides; front_or_back++) {
+           for (int back_or_front = 1 - Export_Back_Sides; back_or_front <= 1; back_or_front++) {
             
-              String the_filename = "Face_Texture" + "_side" + nf(front_or_back, 0) + "_no" + nf(f, 0) + "_sub" + nf(n, 0) + ".jpg";
+              String the_filename = "Face_Texture" + "_side" + nf(back_or_front, 0) + "_no" + nf(f, 0) + "_sub" + nf(n, 0) + ".jpg";
               
               String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
         
@@ -18344,7 +18344,7 @@ void SOLARCHVISION_export_objects () {
                 int s_next = (s + 1) % subFace.length;
                 int s_prev = (s + subFace.length - 1) % subFace.length;
                 
-                if (front_or_back == 1) {
+                if (back_or_front == 0) {
                   int s_temp = s_next;
                   s_next = s_prev;
                   s_prev = s_temp;
@@ -18435,7 +18435,7 @@ void SOLARCHVISION_export_objects () {
               //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
               mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
         
-              if (front_or_back == 0) {
+              if (back_or_front == 1 - Export_Back_Sides) { // creating the vertices only the first time
                 objOutput.println("v " + nf(x1, 0, Precision) + " " +  nf(y1, 0, Precision) + " " +  nf(z1, 0, Precision));
                 objOutput.println("v " + nf(x2, 0, Precision) + " " +  nf(y2, 0, Precision) + " " +  nf(z2, 0, Precision));
                 objOutput.println("v " + nf(x3, 0, Precision) + " " +  nf(y3, 0, Precision) + " " +  nf(z3, 0, Precision));
@@ -18450,7 +18450,7 @@ void SOLARCHVISION_export_objects () {
                 obj_lastVtextureNumber += 4;
               }
               
-              objOutput.println("g allFaces" + "_side" + nf(front_or_back, 0) + "_no" + nf(f, 0) + "_sub" + nf(n, 0)); // <<<<< adding new object for each face may help other programs define sub-object levels well.  
+              objOutput.println("g allFaces" + "_side" + nf(back_or_front, 0) + "_no" + nf(f, 0) + "_sub" + nf(n, 0)); // <<<<< adding new object for each face may help other programs define sub-object levels well.  
               objOutput.println("usemtl " +  the_filename.replace('.', '_'));
               
               String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
@@ -18463,10 +18463,10 @@ void SOLARCHVISION_export_objects () {
               String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
               String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
               
-              if (front_or_back == 0) {
+              if (back_or_front == 1) {
                 objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
               }
-              else {
+              if (back_or_front == 0) {
                 objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
               }            
               
