@@ -33708,8 +33708,21 @@ void SOLARCHVISION_move_selectedPolymeshes (float dx, float dy, float dz) {
     allVertices[n][2] += dz;
   }
   
+ 
+  
+  
   //println("SOLARCHVISION_calculate_selection_Pivot 10");
   //SOLARCHVISION_calculate_selection_Pivot();   
+  for (int i = 0; i < 3; i++) {
+    selection_BoundingBox[i][0] += dx;
+    selection_BoundingBox[i][1] += dy;
+    selection_BoundingBox[i][2] += dz;
+  }  
+  selected_Pivot_XYZ[0] += dx;
+  selected_Pivot_XYZ[1] += dy;
+  selected_Pivot_XYZ[2] += dz;
+
+  
   
   int Solids_updated = 0;
   
@@ -33852,8 +33865,22 @@ void SOLARCHVISION_scale_selectedPolymeshes (float x0, float y0, float z0, float
     allVertices[n][2] = z0 + sz * z;
   }
   
+  
+  
   //println("SOLARCHVISION_calculate_selection_Pivot 12");
-  //SOLARCHVISION_calculate_selection_Pivot(); 
+  //SOLARCHVISION_calculate_selection_Pivot();
+  for (int i = 0; i < 3; i++) {
+    float x = selection_BoundingBox[i][0] - x0; 
+    float y = selection_BoundingBox[i][1] - y0; 
+    float z = selection_BoundingBox[i][2] - z0;
+    
+    selection_BoundingBox[i][0] = x0 + sx * x; 
+    selection_BoundingBox[i][1] = y0 + sy * y;
+    selection_BoundingBox[i][2] = z0 + sz * z;
+  }  
+  
+  
+  
   
   int Solids_updated = 0;
 
