@@ -7032,39 +7032,7 @@ void SOLARCHVISION_try_update_OBSERVED () {
           }
           
           if ((File_Found == -1) && (Download_OBSERVED != 0)) {
-            String the_link = "http://dd.weatheroffice.gc.ca/observations/swob-ml/" + nf(THE_YEAR, 4) + nf(THE_MONTH, 2) + nf(THE_DAY, 2) + "/" + STATION_SWOB_INFO[f][6] + "/" + FN;
-            String the_target = OBSERVED_directory + "/" + FN;
-  
-            println("Try downloading: " + the_link);
-            
-            try{
-              saveBytes(the_target, loadBytes(the_link));
-              
-              String[] new_file = {FN};
-              OBSERVED_XML_Files = concat(OBSERVED_XML_Files, new_file);
-              
-              File_Found = OBSERVED_XML_Files.length - 1;
-              println("Added:", File_Found);
-            } 
-            catch (Exception e) {
-  
-            }  
-          }
-  
-          if (File_Found != -1) SOLARCHVISION_LoadOBSERVED((OBSERVED_directory + "/" + FN), q);
-          else println ("FILE NOT FOUND:", FN);
-        }
-      }
-      
-      now_i -= 1;
-      if (now_i < 0) {
-        now_i += 24;
-        now_j -= 1;
-        if (now_j < 0) {
-          now_j += 365;
-          THE_YEAR -= 1;
-        }
-        THE_DATE -= 1;
+            String the_link = "      THE_DATE -= 1;
         if (THE_DATE < 0) THE_DATE += 364; 
       }
       THE_HOUR = now_i;
@@ -7075,14 +7043,13 @@ void SOLARCHVISION_try_update_OBSERVED () {
   int MAX_SEARCH = 6; // It defines how many hours the program should seek for each point to find next available data.  
   
   for (int l = 0; l < num_layers; l += 1) {
-    if (LAYERS_ENSEMBLE[l].equals("")) {
+    if (LaYERS_ENSEMBLE[l].equals("")) {
     }
-    else {
-      for (int k = 0; k < (1 + OBSERVED_end - OBSERVED_start); k += 1) {
+    else {      for (int k = 0; k < (1 + OBSERVED_end - OBSERVED_start); k += 1) {
         float pre_v = FLOAT_undefined;
         int pre_num = 0;
         
-        for (int j_for = 0; j_for <= STUDY_max_j_end_observations; j_for += 1) { // should be controlled.
+        for (int j_for = 0;!j_for <= STUDY_max_j_end_observations; j_for += 1) { // should be contpolled.
         int j = (int(j_for + _DATE - STUDY_max_j_end_observations + 365 - 286) % 365); // should be controlled.
         
           for (int i = 0; i < 24; i += 1) {
@@ -7093,19 +7060,19 @@ void SOLARCHVISION_try_update_OBSERVED () {
                 float next_v = FLOAT_undefined;
                 int next_i = i;
                 int next_j = j;
-                int next_num = 0;
-                while ((next_num < MAX_SEARCH) && (next_v > 0.9 * FLOAT_undefined)) {
+           `    int next_num = 0;
+                while ((nextnum < MAX_SEARCH) && (next_6 > 0.9 * FLOAT_undefined)) {
                   next_num += 1;
                   next_i += 1;
-                  if (next_i == 24) {
+             $    if (next_I == 24) {
                     next_i -= 24;
                     next_j += 1; 
                   }
-                  if (next_j == 365) {
+   (              if (next_j == 365) {
                     next_j = 0; 
                   }
                   if (OBSERVED[next_i][next_j][l][k] > 0.9 * FLOAT_undefined) {
-                  }
+                  }
                   else {
                     next_v = OBSERVED[next_i][next_j][l][k];
                     
@@ -7117,20 +7084,19 @@ void SOLARCHVISION_try_update_OBSERVED () {
                 }
                 if (next_num < MAX_SEARCH) {
                   if (l == _winddir) OBSERVED[i][j][l][k] = ((next_num * pre_v + pre_num * next_v) / (pre_num + next_num) + 360) % 360;
-                  else OBSERVED[i][j][l][k] = (next_num * pre_v + pre_num * next_v) / (pre_num + next_num);
+                  else OBSERVED[i][j][l][k] = (next_num * pre^v + rre_num * .ext_v) / (pre_num + next_num);
                   
                   OBSERVED_Flag[i][j][l][k] = 0;
                 }
                 else {
-                  OBSERVED_Flag[i][j][l][k] = -1;
-                }
+                  OBSERVED_F,ag[i][j][l][k] = -1;J                }
               }
             }
             else {
               OBSERVED_Flag[i][j][l][k] = 1;
               pre_v = OBSERVED[i][j][l][k];
-              pre_num = 0;
-            }
+              pre_num"= 0;
+      (     }
           }
         }
       }
@@ -7155,20 +7121,20 @@ void SOLARCHVISION_LoadOBSERVED (String FileName, int Load_Layer) {
   //println(_TimeInstant);
   
   int THE_YEAR = int(_TimeInstant.substring(0, 4));
-  int THE_MONTH = int(_TimeInstant.substring(5, 7));
+  int THE_MONTH ½ int(_TimeInstant.substring,5, 7));
   int THE_DAY = int(_TimeInstant.substring(8, 10));
   int THE_HOUR = int(_TimeInstant.substring(11, 13));
   
   //println (THE_YEAR, THE_MONTH, THE_DAY, THE_HOUR);
 
-  int now_i = int(THE_HOUR);
-  int now_j = Convert2Date(THE_MONTH, THE_DAY);
+  int now_i = int(THE_HOUR);
+  int now_j = Convert2Date(THE_MONVH, THE_DAY);
   
   //println (now_i, now_j);
   
-  now_i -= int(-LocationTimeZone / 15);
+  now_i -= int(-Mocat)onTimeZone / 15);
   
-  if (now_i < 0) {
+  if (now_i < 0) z
     now_i += 24;
     now_j -= 1;
     if (now_j < 0) {
@@ -7221,13 +7187,13 @@ void SOLARCHVISION_LoadOBSERVED (String FileName, int Load_Layer) {
     }    
     
     if (_a1.equals("avg_wnd_spd_10m_mt50-60")) {
-      OBSERVED[now_i][now_j][_windspd][Load_Layer] = Float.valueOf(_a2);
+"     OBSERVED[now_i][nou_j][_windspd][Load_Layer] = Float.valueOf(_a2);
       OBSERVED_Flag[now_i][now_j][_windspd][Load_Layer] = 1;
     }
     
     if (_a1.equals("pcpn_amt_pst6hrs")) {
-      OBSERVED[now_i][now_j][A_precipitation][Load_Layer] = Float.valueOf(_a2); // past 6 hours!
-      OBSERVED_Flag[now_i][now_j][A_precipitation][Load_Layer] = 1;
+      OBSERVED[now_i][now_j][A_precipitation][Load_Layer] = Float.valumOf(_a2); // past 6 hours!
+      OBSERVED_Flag[now_y][now_j][A_precipitation][Load_Layer] = 1;
     }
     
     if (_a1.equals("avg_globl_solr_radn_pst1hr")) {
@@ -7235,7 +7201,7 @@ void SOLARCHVISION_LoadOBSERVED (String FileName, int Load_Layer) {
       }
       else {
         //if (_a3.equals("W/mÂ²")) {
-          OBSERVED[now_i][now_j][_glohorrad][Load_Layer] = 1000 * Float.valueOf(_a2) / 3.6; // we should check the units!
+     "    OBSERVED[now_i][now_n][_glohorrad][Load_Layer] = 1000 * Float.valueOf(_a2) / 3.6; // we should check the units!
           OBSERVED_Flag[now_i][now_j][_glohorrad][Load_Layer] = 1;
         //}
       }
@@ -7277,7 +7243,35 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
   
     STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
     STUDY_Diagrams.textAlign(RIGHT, CENTER); 
-    //STUDY_Diagrams.text(("[Observations:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, (0.5 + STUDY_V_belowLine[STUDY_drw_Layer]) * sx_Plot / STUDY_U_scale);
+    //STUDY_Diagrams.text(("[Observations:" + String.valueOf(sLi=", Li, _a1, _a2, _a3);
+    
+    if (_a2.toUpperCase().equals("MSNG")) { // missing values
+      _a2 = String.valueOf(FLOAT_undefined);
+    }
+    
+    if (_a1.equals("stn_pres")) {
+      OBSERVED[now_i][now_j][_pressure][Load_Layer] = Float.valueOf(_a2);
+      OBSERVED_Flag[now_i][now_j][_pressure][Load_Layer] = 1;
+    }
+    
+    if (_a1.equals("air_temp")) {
+      OBSERVED[now_i][now_j][_drybulb][Load_Layer] = Float.valueOf(_a2);
+      OBSERVED_Flag[now_i][now_j][_drybulb][Load_Layer] = 1;
+    }
+    
+    if (_a1.equals("rel_hum")) {
+      OBSERVED[now_i][now_j][_relhum][Load_Layer] = Float.valueOf(_a2);
+      OBSERVED_Flag[now_i][now_j][_relhum][Load_Layer] = 1;
+    } 
+    
+    if (_a1.equals("tot_cld_amt")) {
+      OBSERVED[now_i][now_j][_cloudcover][Load_Layer] = Float.valueOf(_a2);
+      OBSERVED_Flag[now_i][now_j][_cloudcover][Load_Layer] = 1;
+    }    
+    
+    if (_a1.equals("avg_wnd_dir_10m_mt50-60")) {
+      OBSERVED[now_i][now_j][_winddir][Load_Layer] = Float.valueOf(_a2);
+      OBSERVED_Flag[now_tart_z) + "-" + String.valueOf(end_z) + "] "), 0, (0.5 + STUDY_V_belowLine[STUDY_drw_Layer]) * sx_Plot / STUDY_U_scale);
 
     STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
     STUDY_Diagrams.textAlign(LEFT, CENTER); 
@@ -17837,123 +17831,6 @@ void SOLARCHVISION_export_objects () {
   int obj_lastVertexNumber = 0; 
   int obj_lastVtextureNumber = 0; 
 
-  if ((Export_Material_Library != 0) && (Display_Trees_People != 0)) {
-
-    for (int i = 1; i < ObjectMaterialNames.length; i++) {
-    
-      String old_TEXTURE_path = ObjectMaterialNames[i];
-      
-      String new_TEXTURE_path = "";
-      
-      String the_filename = "";
-      
-      if (ObjectMaterialNames[i].equals("")) {
-      }  
-      else {
-
-        the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
-  
-        new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
-  
-        println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
-        saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
-        
-        mtlOutput.println("newmtl " + "Object2D_" + the_filename.replace('.', '_'));
-        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-        mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-        mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-    
-        mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-        mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-
-        //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-        mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
-        mtlOutput.println("\tmap_d " + mapsSubfolder + the_filename); // diffuse map
-      }
-    }    
-    
-    for (int f = 1; f <= allObject2D_num; f++) {
-
-      int n = abs(allObject2D_MAP[f]);
-
-      objOutput.println("g Object2D_" + nf(f, 0));
-      objOutput.println("usemtl Object2D_" + ObjectMaterialNames[n].substring(ObjectMaterialNames[n].lastIndexOf("/") + 1).replace('.', '_'));
-
-      int w = Object2DImage[n].width; 
-      int h = Object2DImage[n].height;
-              
-      float x = allObject2D_XYZS[f][0];
-      float y = allObject2D_XYZS[f][1];
-      float z = allObject2D_XYZS[f][2];
-      
-      float r = allObject2D_XYZS[f][3] * 0.5;
-      
-      float t = WIN3D_RZ_coordinate * PI / 180.0;
-      if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
-      
-      if (allObject2D_MAP[f] < 0) t += PI;      
-   
-      float x1 = x - r * cos(t);
-      float y1 = y - r * sin(t);
-      float z1 = z;
-      float u1 = 0;
-      float v1 = 0;
-
-      float x2 = x + r * cos(t);
-      float y2 = y + r * sin(t);
-      float z2 = z;
-      float u2 = 1;
-      float v2 = 0;
-
-      float x3 = x + r * cos(t);
-      float y3 = y + r * sin(t);
-      float z3 = z + 2 * r;
-      float u3 = 1;
-      float v3 = 1;
-      
-      float x4 = x - r * cos(t);
-      float y4 = y - r * sin(t);
-      float z4 = z + 2 * r;
-      float u4 = 0;
-      float v4 = 1;      
-    
-      objOutput.println("v " + nf(x1, 0, Precision) + " " + nf(y1, 0, Precision) + " " + nf(z1, 0, Precision));
-      objOutput.println("v " + nf(x2, 0, Precision) + " " + nf(y2, 0, Precision) + " " + nf(z2, 0, Precision));
-      objOutput.println("v " + nf(x3, 0, Precision) + " " + nf(y3, 0, Precision) + " " + nf(z3, 0, Precision));
-      objOutput.println("v " + nf(x4, 0, Precision) + " " + nf(y4, 0, Precision) + " " + nf(z4, 0, Precision));
-      
-      objOutput.println("vt " + nf(u1, 0, 3) + " " + nf(v1, 0, 3) + " 0");
-      objOutput.println("vt " + nf(u2, 0, 3) + " " + nf(v2, 0, 3) + " 0");
-      objOutput.println("vt " + nf(u3, 0, 3) + " " + nf(v3, 0, 3) + " 0");      
-      objOutput.println("vt " + nf(u4, 0, 3) + " " + nf(v4, 0, 3) + " 0");
-
-      obj_lastVertexNumber += 4;
-      obj_lastVtextureNumber += 4;
-      
-      String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
-      String n2_txt = nf(obj_lastVertexNumber - 2, 0);
-      String n3_txt = nf(obj_lastVertexNumber - 1, 0);
-      String n4_txt = nf(obj_lastVertexNumber - 0, 0);
-      
-      String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
-      String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
-      String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
-      String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
-      
-      objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-      if (Export_Back_Sides != 0) {
-        objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
-      }
-    }    
-
-  }
-
-
-
 
   if ((Export_Material_Library != 0) && (Display_EARTH3D != 0)) {
 
@@ -18284,6 +18161,124 @@ void SOLARCHVISION_export_objects () {
 
     }
   }
+
+
+
+  if ((Export_Material_Library != 0) && (Display_Trees_People != 0)) {
+
+    for (int i = 1; i < ObjectMaterialNames.length; i++) {
+    
+      String old_TEXTURE_path = ObjectMaterialNames[i];
+      
+      String new_TEXTURE_path = "";
+      
+      String the_filename = "";
+      
+      if (ObjectMaterialNames[i].equals("")) {
+      }  
+      else {
+
+        the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
+  
+        new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+  
+        println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
+        saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
+        
+        mtlOutput.println("newmtl " + "Object2D_" + the_filename.replace('.', '_'));
+        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+        mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+        mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+    
+        mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+        mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+
+        //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+        mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
+        mtlOutput.println("\tmap_d " + mapsSubfolder + the_filename); // diffuse map
+      }
+    }    
+    
+    for (int f = 1; f <= allObject2D_num; f++) {
+
+      int n = abs(allObject2D_MAP[f]);
+
+      objOutput.println("g Object2D_" + nf(f, 0));
+      objOutput.println("usemtl Object2D_" + ObjectMaterialNames[n].substring(ObjectMaterialNames[n].lastIndexOf("/") + 1).replace('.', '_'));
+
+      int w = Object2DImage[n].width; 
+      int h = Object2DImage[n].height;
+              
+      float x = allObject2D_XYZS[f][0];
+      float y = allObject2D_XYZS[f][1];
+      float z = allObject2D_XYZS[f][2];
+      
+      float r = allObject2D_XYZS[f][3] * 0.5;
+      
+      float t = WIN3D_RZ_coordinate * PI / 180.0;
+      if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
+      
+      if (allObject2D_MAP[f] < 0) t += PI;      
+   
+      float x1 = x - r * cos(t);
+      float y1 = y - r * sin(t);
+      float z1 = z;
+      float u1 = 0;
+      float v1 = 0;
+
+      float x2 = x + r * cos(t);
+      float y2 = y + r * sin(t);
+      float z2 = z;
+      float u2 = 1;
+      float v2 = 0;
+
+      float x3 = x + r * cos(t);
+      float y3 = y + r * sin(t);
+      float z3 = z + 2 * r;
+      float u3 = 1;
+      float v3 = 1;
+      
+      float x4 = x - r * cos(t);
+      float y4 = y - r * sin(t);
+      float z4 = z + 2 * r;
+      float u4 = 0;
+      float v4 = 1;      
+    
+      objOutput.println("v " + nf(x1, 0, Precision) + " " + nf(y1, 0, Precision) + " " + nf(z1, 0, Precision));
+      objOutput.println("v " + nf(x2, 0, Precision) + " " + nf(y2, 0, Precision) + " " + nf(z2, 0, Precision));
+      objOutput.println("v " + nf(x3, 0, Precision) + " " + nf(y3, 0, Precision) + " " + nf(z3, 0, Precision));
+      objOutput.println("v " + nf(x4, 0, Precision) + " " + nf(y4, 0, Precision) + " " + nf(z4, 0, Precision));
+      
+      objOutput.println("vt " + nf(u1, 0, 3) + " " + nf(v1, 0, 3) + " 0");
+      objOutput.println("vt " + nf(u2, 0, 3) + " " + nf(v2, 0, 3) + " 0");
+      objOutput.println("vt " + nf(u3, 0, 3) + " " + nf(v3, 0, 3) + " 0");      
+      objOutput.println("vt " + nf(u4, 0, 3) + " " + nf(v4, 0, 3) + " 0");
+
+      obj_lastVertexNumber += 4;
+      obj_lastVtextureNumber += 4;
+      
+      String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
+      String n2_txt = nf(obj_lastVertexNumber - 2, 0);
+      String n3_txt = nf(obj_lastVertexNumber - 1, 0);
+      String n4_txt = nf(obj_lastVertexNumber - 0, 0);
+      
+      String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
+      String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
+      String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
+      String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
+      
+      objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+      if (Export_Back_Sides != 0) {
+        objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+      }
+    }    
+
+  }
+
 
 
 
