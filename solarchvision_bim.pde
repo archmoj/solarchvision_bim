@@ -283,7 +283,7 @@ int SpatialImpact_record_JPG = 0;
 
 int SolarImpact_record_JPG = 0;  
 
-int Export_Back_Sides = 1;
+int Export_Back_Sides = 0; // 0-1
 int Export_Material_Library = 1; // 0-1
 
 int Export_3Dmodel = 0; // inactive
@@ -18099,34 +18099,164 @@ void SOLARCHVISION_export_objects () {
   }
 
 
+  if ((Export_Material_Library != 0) && (Display_EARTH3D != 0)) {
+
+    int n = 0;
+    if (Day_of_Impact_to_Display < EARTH_IMAGES.length) n = Day_of_Impact_to_Display;
+    
+    
+    String old_TEXTURE_path = EARTH_IMAGES_Path + "/" + EARTH_IMAGES_Filenames[n];
+    
+    String the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
+
+    String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+
+    println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
+    saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
+    
+    mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
+    mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+    mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+    mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+    mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+    mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+    mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+
+    mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+    mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+    mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+
+    //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+    mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
+    mtlOutput.println("\tmap_d " + mapsSubfolder + the_filename); // diffuse map
+  
+  
+    objOutput.println("g EarthSphere"); 
+    objOutput.println("usemtl " + the_filename.replace('.', '_'));
+
+    float EARTH_IMAGES_OffsetX = 0; //EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0] + 180;
+    float EARTH_IMAGES_OffsetY = 0; //EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1] - 90;
+    
+    float EARTH_IMAGES_ScaleX = 1; //(EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][1] - EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0]) / 360.0;
+    float EARTH_IMAGES_ScaleY = 1; //(EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1] - EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][0]) / 180.0;
+
+    float CEN_lon = 0; //0.5 * (EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0] + EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][1]);
+    float CEN_lat = 0; //0.5 * (EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][0] + EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1]);
+    
+    float delta_Alpha = -2.5;
+    float delta_Beta = -2.5;
+    
+    float r = FLOAT_R_earth;
+    
+    for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
+      for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
+
+        float[][] subFace = new float [4][5];
+
+        for (int s = 0; s < 4; s += 1) {
+          
+          float a = Alpha;
+          float b = Beta;
+          
+          if ((s == 1) || (s == 2)) {
+            a += delta_Alpha;
+          }
+
+          if ((s == 2) || (s == 3)) {
+            b += delta_Beta;
+          }
+
+          float x0 = r * cos_ang(b - 90) * cos_ang(a); 
+          float y0 = r * sin_ang(b - 90) * cos_ang(a);
+          float z0 = r * sin_ang(a);
+          
+          float _lon = b - CEN_lon;
+          float _lat = a - CEN_lat;
+          
+          
+          // calculating u and v
+          subFace[s][3] = (_lon / EARTH_IMAGES_ScaleX / 360.0 + 0.5); 
+          subFace[s][4] = (-_lat / EARTH_IMAGES_ScaleY / 180.0 + 0.5);
+        
+          
+          // rotating to location coordinates 
+          float tb = -LocationLongitude;
+          float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
+          float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
+          float z1 = z0;
+          
+          float ta = 90 - LocationLatitude;
+          float x2 = x1;
+          float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
+          float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
+
+          // move it down!
+          z2 -= FLOAT_R_earth;
+
+          subFace[s][0] = x2;
+          subFace[s][1] = y2;
+          subFace[s][2] = z2;
+
+        }
+
+        for (int s = 0; s < subFace.length; s++) {
+          
+          float x = subFace[s][0];
+          float y = subFace[s][1];
+          float z = subFace[s][2];
+          float u = subFace[s][3];
+          float v = subFace[s][4];
+
+          v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+      
+          objOutput.println("v " + nf(x, 0, Precision) + " " + nf(y, 0, Precision) + " " + nf(z, 0, Precision));
+          objOutput.println("vt " + nf(u, 0, 3) + " " + nf(v, 0, 3) + " 0");
+
+          obj_lastVertexNumber += 1;
+          obj_lastVtextureNumber += 1;
+        }
+
+        String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
+        String n2_txt = nf(obj_lastVertexNumber - 2, 0);
+        String n3_txt = nf(obj_lastVertexNumber - 1, 0);
+        String n4_txt = nf(obj_lastVertexNumber - 0, 0);
+        
+        String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
+        String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
+        String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
+        String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
+        
+        objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);        
+      
+      }
+    }
+  }
+
 
   if ((Export_Material_Library != 0) && (Display_SolarImpact_Image != 0)) {
     if (SolarImpact_Image_Section != 0) {
-
-      for (int j = 0; j < SolarImpact_Image.length; j++) {
       
-        String the_filename = "SolarImpact_day" + nf(j, 0) + ".jpg";
+      String the_filename = "SolarImpact.jpg";
 
-        String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+      String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+
+      println("Saving texture:", new_TEXTURE_path);
+      SolarImpact_Image[Day_of_Impact_to_Display].save(new_TEXTURE_path);
+
+      mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
+      mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+      mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+      mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+      mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+      mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+      mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
   
-        println("Saving texture:", new_TEXTURE_path);
-        SolarImpact_Image[j].save(new_TEXTURE_path);
+      mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+      mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+      mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
 
-        mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
-        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-        mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-        mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-    
-        mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-        mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-
-        //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-        mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
-      }      
+      //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+      mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
       
       SolarImpact_Rotation = SpatialImpact_Rotation[SolarImpact_Image_Section];
       SolarImpact_Elevation = 0.0 + SpatialImpact_Elevation[SolarImpact_Image_Section];
@@ -18186,7 +18316,7 @@ void SOLARCHVISION_export_objects () {
         obj_lastVtextureNumber += 4;
         
         objOutput.println("g SolarImpact");
-        objOutput.println(("usemtl SolarImpact_day" + nf(Day_of_Impact_to_Display, 0) + ".jpg").replace('.', '_'));
+        objOutput.println("usemtl " + the_filename.replace('.', '_'));
         
         String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
         String n2_txt = nf(obj_lastVertexNumber - 2, 0);
@@ -19949,9 +20079,9 @@ PImage[] EARTH_IMAGES;
 
 String EARTH_IMAGES_Path = "C:/SOLARCHVISION_2015/Input/BackgroundImages/Standard/Maps/EarthSurface";
 
+String[] EARTH_IMAGES_Filenames = sort(getfiles(EARTH_IMAGES_Path));
+
 void Load_EARTH_IMAGES () {
-  
-  String[] EARTH_IMAGES_Filenames = sort(getfiles(EARTH_IMAGES_Path));
   
   EARTH_IMAGES = new PImage [EARTH_IMAGES_Filenames.length];
   
