@@ -13347,7 +13347,7 @@ void SOLARCHVISION_add_Object2D (String t, int m, float x, float y, float z, flo
 
 
 
-PImage[] Object2DImage;
+PImage[] Object2DImages;
 
 void SOLARCHVISION_LoadObject2DImages () {
 
@@ -13366,7 +13366,7 @@ void SOLARCHVISION_LoadObject2DImages () {
   
   int n = Object2D_ImagePath.length;
   
-  Object2DImage = new PImage [n + 1];
+  Object2DImages = new PImage [n + 1];
  
   for (int i = 1; i < n; i += 1) { // leaving [0] null  
 
@@ -13380,7 +13380,7 @@ void SOLARCHVISION_LoadObject2DImages () {
   
   for (int i = 1; i < n; i += 1) {
     //println(Object2D_ImagePath[i]);
-    Object2DImage[i] = loadImage(Object2D_ImagePath[i]);
+    Object2DImages[i] = loadImage(Object2D_ImagePath[i]);
   }  
 }
 
@@ -18176,6 +18176,8 @@ void SOLARCHVISION_export_objects () {
       
       String new_TEXTURE_path = "";
       
+      String inverted_TEXTURE_path = "";
+      
       String the_filename = "";
       
       if (Object2D_ImagePath[i].equals("")) {
@@ -18192,11 +18194,26 @@ void SOLARCHVISION_export_objects () {
         
         println("Making inverted texture:", new_TEXTURE_path);
         
-        PImage Inverted_Texture = Object2D_Image[i]
+        int RES1 = Object2DImages[i].width;
+        int RES2 = Object2DImages[i].height;
         
-        Inverted_Texture.beginDraw();
+        PImage Inverted_Texture = createImage(RES1, RES2, ARGB);
+
+        Inverted_Texture.loadPixels();
         
-        Inverted_Texture.endDraw();
+        for (int np = 0; np < (RES1 * RES2); np++) {
+          int Image_X = np % RES1;
+          int Image_Y = np / RES1;
+        
+          color COL = Object2DImages[i].get(Image_X, Image_Y);
+          //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+          
+          float COL_V = (COL >> 24 & 0xFF);
+          
+          Inverted_Texture.pixels[np] = color(COL_V, COL_V, COL_V, COL_V);        
+        }
+        
+        Inverted_Texture.updatePixels();
         
         Inverted_Texture.save(inverted_TEXTURE_path);
         
@@ -18226,8 +18243,8 @@ void SOLARCHVISION_export_objects () {
       objOutput.println("g Object2D_" + nf(f, 0));
       objOutput.println("usemtl Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1).replace('.', '_'));
 
-      int w = Object2DImage[n].width; 
-      int h = Object2DImage[n].height;
+      int w = Object2DImages[n].width; 
+      int h = Object2DImages[n].height;
               
       float x = allObject2D_XYZS[f][0];
       float y = allObject2D_XYZS[f][1];
@@ -21753,8 +21770,8 @@ void SOLARCHVISION_draw_2Dobjects () {
 
         int n = abs(allObject2D_MAP[f]);
         
-        int w = Object2DImage[n].width; 
-        int h = Object2DImage[n].height;
+        int w = Object2DImages[n].width; 
+        int h = Object2DImages[n].height;
                 
         float x = allObject2D_XYZS[f][0] * OBJECTS_scale;
         float y = allObject2D_XYZS[f][1] * OBJECTS_scale;
@@ -21769,7 +21786,7 @@ void SOLARCHVISION_draw_2Dobjects () {
         
         WIN3D_Diagrams.beginShape();
         
-        WIN3D_Diagrams.texture(Object2DImage[n]);    
+        WIN3D_Diagrams.texture(Object2DImages[n]);    
         WIN3D_Diagrams.stroke(255, 255, 255, 0);
         WIN3D_Diagrams.fill(255, 255, 255, 0);
         
@@ -21815,7 +21832,7 @@ void SOLARCHVISION_draw_2Dobjects () {
             
             WIN3D_Diagrams.beginShape();
             
-            WIN3D_Diagrams.texture(Object2DImage[n]);    
+            WIN3D_Diagrams.texture(Object2DImages[n]);    
             WIN3D_Diagrams.stroke(255, 255, 255, 0);
             WIN3D_Diagrams.fill(255, 255, 255, 0);
             
@@ -32026,8 +32043,8 @@ void RenderShadowsOnUrbanPlane () {
 
                 int n = abs(allObject2D_MAP[f]);
                 
-                int w = Object2DImage[n].width; 
-                int h = Object2DImage[n].height;
+                int w = Object2DImages[n].width; 
+                int h = Object2DImages[n].height;
 
                 float r = allObject2D_XYZS[f][3] * 0.5;
                 
@@ -32042,7 +32059,7 @@ void RenderShadowsOnUrbanPlane () {
                   { // Vertical mask
                     TREES_Diagrams.beginShape();
                     
-                    TREES_Diagrams.texture(Object2DImage[n]); 
+                    TREES_Diagrams.texture(Object2DImages[n]); 
 
                     x = allObject2D_XYZS[f][0];
                     y = allObject2D_XYZS[f][1];
@@ -32143,7 +32160,7 @@ void RenderShadowsOnUrbanPlane () {
                   
                       TREES_Diagrams.beginShape();
                       
-                      TREES_Diagrams.texture(Object2DImage[n]); 
+                      TREES_Diagrams.texture(Object2DImages[n]); 
                       
                       x = allObject2D_XYZS[f][0];
                       y = allObject2D_XYZS[f][1];
@@ -32484,8 +32501,8 @@ void RenderShadowsOnUrbanPlane () {
 
               int n = abs(allObject2D_MAP[f]);
               
-              int w = Object2DImage[n].width; 
-              int h = Object2DImage[n].height;
+              int w = Object2DImages[n].width; 
+              int h = Object2DImages[n].height;
 
               float r = allObject2D_XYZS[f][3] * 0.5;
               
@@ -32502,7 +32519,7 @@ void RenderShadowsOnUrbanPlane () {
                 { // Vertical mask
                   TREES_Diagrams.beginShape();
                   
-                  TREES_Diagrams.texture(Object2DImage[n]); 
+                  TREES_Diagrams.texture(Object2DImages[n]); 
 
                   x = allObject2D_XYZS[f][0];
                   y = allObject2D_XYZS[f][1];
@@ -32603,7 +32620,7 @@ void RenderShadowsOnUrbanPlane () {
                 
                     TREES_Diagrams.beginShape();
                     
-                    TREES_Diagrams.texture(Object2DImage[n]); 
+                    TREES_Diagrams.texture(Object2DImages[n]); 
 
                     float[] TX = {0,0,0,0};
                     float[] TY = {0,0,0,0};
@@ -38141,7 +38158,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   
         //if (TEXTURE_copied == 0) {
         //  println("Saving texture from the scene.");
-        //  Object2DImage[i].save(new_TEXTURE_path);
+        //  Object2DImages[i].save(new_TEXTURE_path);
         //}    
       }
 
@@ -39031,7 +39048,7 @@ void SOLARCHVISION_load_project (String myFile) {
         int reload_All_textures = 0;
         
         if (Object2D_ImagePath.length != ni) {
-          Object2DImage = new PImage [ni];
+          Object2DImages = new PImage [ni];
           
           reload_All_textures = 1;
         }
@@ -39044,12 +39061,12 @@ void SOLARCHVISION_load_project (String myFile) {
           }
           else {
             Object2D_ImagePath[i] = new_TEXTURE_path;
-            Object2DImage[i] = createImage(2,2, RGB);
+            Object2DImages[i] = createImage(2,2, RGB);
             if (Object2D_ImagePath[i].equals("")) {
             }
             else {
               println("Loading texture(", i + "):", Object2D_ImagePath[i]);
-              Object2DImage[i] = loadImage(Object2D_ImagePath[i]);
+              Object2DImages[i] = loadImage(Object2D_ImagePath[i]);
               println("loaded!");
             }
           }
