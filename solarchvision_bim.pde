@@ -15140,7 +15140,7 @@ void SOLARCHVISION_insertParallelOpenningsSelection () {
                 }
               }
               
-              
+              float[][] new_O_EdgeVertices = new float [allFaces[f].length][3];
               float[][] new_A_EdgeVertices = new float [allFaces[f].length][3];
               float[][] new_B_EdgeVertices = new float [allFaces[f].length][3];
               float[][] new_CenterVertices = new float [allFaces[f].length][3];
@@ -15152,6 +15152,8 @@ void SOLARCHVISION_insertParallelOpenningsSelection () {
                 
                 for (int j = 0; j < 3; j++) {
                   
+                  new_O_EdgeVertices[s][j] = base_Vertices[s][j];
+                  
                   new_A_EdgeVertices[s][j] = Modify_Input_OpenningDeviation * base_Vertices[s][j] + (1 - Modify_Input_OpenningDeviation) * 0.5 * (base_Vertices[s_prev][j] + base_Vertices[s][j]);
                   new_B_EdgeVertices[s][j] = Modify_Input_OpenningDeviation * base_Vertices[s][j] + (1 - Modify_Input_OpenningDeviation) * 0.5 * (base_Vertices[s_next][j] + base_Vertices[s][j]);
                   
@@ -15159,12 +15161,13 @@ void SOLARCHVISION_insertParallelOpenningsSelection () {
                 }
               }
               
+              int[] new_O_EdgeVertex_numbers = new int [allFaces[f].length]; // on the corner
               int[] new_A_EdgeVertex_numbers = new int [allFaces[f].length]; // on the edge (1/3)
               int[] new_B_EdgeVertex_numbers = new int [allFaces[f].length]; // on the other edge (2/3)
               int[] new_CenterVertex_numbers = new int [allFaces[f].length]; // in the center
               
               for(int s = 0; s < allFaces[f].length; s++) {
-                
+                new_O_EdgeVertex_numbers[s] = SOLARCHVISION_addToVertices(new_O_EdgeVertices[s][0], new_O_EdgeVertices[s][1], new_O_EdgeVertices[s][2]);
                 new_A_EdgeVertex_numbers[s] = SOLARCHVISION_addToVertices(new_A_EdgeVertices[s][0], new_A_EdgeVertices[s][1], new_A_EdgeVertices[s][2]); 
                 new_B_EdgeVertex_numbers[s] = SOLARCHVISION_addToVertices(new_B_EdgeVertices[s][0], new_B_EdgeVertices[s][1], new_B_EdgeVertices[s][2]);
                 new_CenterVertex_numbers[s] = SOLARCHVISION_addToVertices(new_CenterVertices[s][0], new_CenterVertices[s][1], new_CenterVertices[s][2]);
@@ -15182,7 +15185,7 @@ void SOLARCHVISION_insertParallelOpenningsSelection () {
                 int s_next = (s + 1) % allFaces[f].length;
                 
                 {
-                  int[][] newFace = {{allFaces[f][s], new_B_EdgeVertex_numbers[s], new_CenterVertex_numbers[s], new_A_EdgeVertex_numbers[s]}};
+                  int[][] newFace = {{new_O_EdgeVertex_numbers[s], new_B_EdgeVertex_numbers[s], new_CenterVertex_numbers[s], new_A_EdgeVertex_numbers[s]}};
                   int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
               
                   midList_Faces = (int[][]) concat(midList_Faces, newFace);
