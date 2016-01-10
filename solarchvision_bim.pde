@@ -15,13 +15,23 @@ int maximum_undo_number = 3;
 
 
 
-float planetary_magnification = 2.5; // <<<<<<<<<<
-
 String _undefined = "N/A";
 float FLOAT_undefined = 1000000000; // it must be a positive big number that is not included in any data
 
 double R_earth = 6373000.0;
 float FLOAT_R_earth = (float) R_earth;
+
+int Display_EARTH3D = 0;
+int Display_EARTH3D_TEXTURE = 1;
+
+int Display_STAR3D = 0;
+int Display_STAR3D_TEXTURE = 1;
+
+int Display_MOON3D = 0;
+int Display_MOON3D_TEXTURE = 1;
+
+float planetary_magnification = 2.5; // <<<<<<<<<<
+
 
 int _EN = 0;
 int _FR = 1;
@@ -18101,20 +18111,7 @@ void SOLARCHVISION_export_objects () {
 
   if ((Export_Material_Library != 0) && (Display_EARTH3D != 0)) {
 
-    int n = 0;
-    if (Day_of_Impact_to_Display < EARTH_IMAGES.length) n = Day_of_Impact_to_Display;
-    
-    
-    String old_TEXTURE_path = EARTH_IMAGES_Path + "/" + EARTH_IMAGES_Filenames[n];
-    
-    String the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
-
-    String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
-
-    println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
-    saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
-    
-    mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
+    mtlOutput.println("newmtl EarthSphere");
     mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
     mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
     mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
@@ -18126,10 +18123,24 @@ void SOLARCHVISION_export_objects () {
     mtlOutput.println("\tTr 1.000"); //  0-1 transparency
     mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
 
-    //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-    mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
-    mtlOutput.println("\tmap_d " + mapsSubfolder + the_filename); // diffuse map
+    if (Display_EARTH3D_TEXTURE != 0) {
+      
+      int n = 0;
+      if (Day_of_Impact_to_Display < EARTH_IMAGES.length) n = Day_of_Impact_to_Display;
+            
+      String old_TEXTURE_path = EARTH_IMAGES_Path + "/" + EARTH_IMAGES_Filenames[n];
+      
+      String the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
   
+      String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+  
+      println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
+      saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
+
+      //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+      mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
+      mtlOutput.println("\tmap_d " + mapsSubfolder + the_filename); // diffuse map
+    }
   
     objOutput.println("g EarthSphere"); 
     objOutput.println("usemtl " + the_filename.replace('.', '_'));
@@ -20072,8 +20083,7 @@ void SOLARCHVISION_draw_TROPO3D () {
 }
 
 
-int Display_EARTH3D = 1;
-int Display_EARTH3D_TEXTURE = 1;
+
 
 PImage[] EARTH_IMAGES;
 
@@ -20187,8 +20197,7 @@ void SOLARCHVISION_draw_EARTH3D () {
   }
 }
 
-int Display_MOON3D = 1;
-int Display_MOON3D_TEXTURE = 1;
+
 
 String MOON_IMAGE_Filename = "C:/SOLARCHVISION_2015/Input/BackgroundImages/Standard/Maps/Moon/Moon.jpg";
 
@@ -20287,8 +20296,6 @@ void SOLARCHVISION_draw_MOON3D () {
   }
 }
 
-int Display_STAR3D = 1;
-int Display_STAR3D_TEXTURE = 1;
 
 String STAR_IMAGE_Filename = "C:/SOLARCHVISION_2015/Input/BackgroundImages/Standard/Maps/Sun/Sun.jpg";
 
