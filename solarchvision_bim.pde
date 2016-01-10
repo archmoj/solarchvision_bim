@@ -17818,7 +17818,7 @@ void SOLARCHVISION_export_objects () {
   
   int Precision = 6; 
   
-  String fileBasename = ProjectName + "_ObjectsMesh";
+  String fileBasename = ProjectName;
   
   String objFilename = Model3DFolder + "/" + fileBasename + ".obj";
   String mtlFilename = Model3DFolder + "/" + fileBasename + ".mtl";
@@ -18176,7 +18176,7 @@ void SOLARCHVISION_export_objects () {
       
       String new_TEXTURE_path = "";
       
-      String inverted_TEXTURE_path = "";
+      String opacity_TEXTURE_path = "";
       
       String the_filename = "";
       
@@ -18187,7 +18187,7 @@ void SOLARCHVISION_export_objects () {
         the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
   
         new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
-        inverted_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + "inverted_" + the_filename;
+        opacity_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + "inverted_" + the_filename;
   
         println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
         saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
@@ -18197,9 +18197,9 @@ void SOLARCHVISION_export_objects () {
         int RES1 = Object2DImages[i].width;
         int RES2 = Object2DImages[i].height;
         
-        PImage Inverted_Texture = createImage(RES1, RES2, ARGB);
+        PImage Opacity_Texture = createImage(RES1, RES2, ARGB);
 
-        Inverted_Texture.loadPixels();
+        Opacity_Texture.loadPixels();
         
         for (int np = 0; np < (RES1 * RES2); np++) {
           int Image_X = np % RES1;
@@ -18210,12 +18210,12 @@ void SOLARCHVISION_export_objects () {
           
           float COL_V = (COL >> 24 & 0xFF);
           
-          Inverted_Texture.pixels[np] = color(COL_V, COL_V, COL_V, COL_V);        
+          Opacity_Texture.pixels[np] = color(COL_V, COL_V, COL_V, COL_V);        
         }
         
-        Inverted_Texture.updatePixels();
+        Opacity_Texture.updatePixels();
         
-        Inverted_Texture.save(inverted_TEXTURE_path);
+        Opacity_Texture.save(opacity_TEXTURE_path);
         
         
         mtlOutput.println("newmtl " + "Object2D_" + the_filename.replace('.', '_'));
@@ -18232,7 +18232,7 @@ void SOLARCHVISION_export_objects () {
 
         //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
         mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
-        mtlOutput.println("\tmap_d " + mapsSubfolder + "inverted_" + the_filename); // diffuse map
+        mtlOutput.println("\tmap_d " + mapsSubfolder + "opacity_" + the_filename); // diffuse map
       }
     }    
     
