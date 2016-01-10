@@ -24,6 +24,9 @@ float FLOAT_R_earth = (float) R_earth;
 int Display_EARTH3D = 0;
 int Display_EARTH3D_TEXTURE = 1;
 
+int Display_TROPO3D = 0;
+int Display_TROPO3D_TEXTURE = 1;
+
 int Display_STAR3D = 0;
 int Display_STAR3D_TEXTURE = 1;
 
@@ -19900,10 +19903,6 @@ void SOLARCHVISION_draw_windFlow () {
 
 }
 
-//---------------------------------------- should be added to I/O and GUI 
-
-int Display_TROPO3D = 0;
-int Display_TROPO3D_TEXTURE = 1;
 
 PImage[] TROPO_IMAGES;
 
