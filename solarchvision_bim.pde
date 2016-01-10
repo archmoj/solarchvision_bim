@@ -15059,7 +15059,7 @@ void SOLARCHVISION_inserCornerOpenningsSelection () {
 }
 
 
-void SOLARCHVISION_inserParallelOpenningsSelection () {
+void SOLARCHVISION_insertParallelOpenningsSelection () {
 
   if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4)) { 
 
@@ -28207,7 +28207,7 @@ void mouseClicked () {
               WIN3D_Update = 1;              
             }
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Insert Parallel Opennings")) {
-              SOLARCHVISION_inserParallelOpenningsSelection();              
+              SOLARCHVISION_insertParallelOpenningsSelection();              
               WIN3D_Update = 1;              
             }     
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Insert Rotated Opennings")) {
