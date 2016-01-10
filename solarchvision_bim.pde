@@ -18187,12 +18187,12 @@ void SOLARCHVISION_export_objects () {
         the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
   
         new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
-        opacity_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + "inverted_" + the_filename;
+        opacity_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + "opacity_" + the_filename;
   
         println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
         saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
         
-        println("Making inverted texture:", new_TEXTURE_path);
+        println("Making opacity texture:", new_TEXTURE_path);
         
         int RES1 = Object2DImages[i].width;
         int RES2 = Object2DImages[i].height;
