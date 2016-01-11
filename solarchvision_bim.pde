@@ -18655,7 +18655,7 @@ void SOLARCHVISION_export_objects () {
     mtlOutput.println("\tTr 1.000"); //  0-1 transparency
     mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
     
-    objOutput.println("g");
+    
     objOutput.println("usemtl FractalPlant");
     
     for (int f = 1; f <= allFractal_num; f++) {
@@ -18686,8 +18686,6 @@ void SOLARCHVISION_export_objects () {
     
         float Alpha = 0;
         float Beta = rot; 
-      
-        objOutput.println("g FractalPlant_" + nf(f, 0));
       
         SOLARCHVISION_Plant_branch_objExport(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunckSize, LeafSize, as_Solid);
         
@@ -33368,6 +33366,8 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
           String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
           String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
           
+          objOutput.println("g");   
+          objOutput.println("usemtl FractalTree_Trunck");
           objOutput.println("f " + n1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);        
 
         }
@@ -33380,10 +33380,67 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
     
     if (Display_Leaves != 0) {
 
-      int c = int(random(127)); // <<<<< Note: this is important to be here!
-  
-      //float[] COL = {127, 2 * c, 191 - c, 0};  // opaque!
+      float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
+      float rotXY = Beta + random(-PI, PI);
       
+      
+      float LeafVertices[][] = {{0,0,0}, {1,0,1}, {0,1,1}, {-1,0,1}, {0,-1,1}, {0,0,2}};
+      int LeafFaces[][] = {{0,1,2,5}, {0,2,3,5}, {0,3,4,5}, {0,4,1,5}};
+      
+      for (int i = 0; i < 4; i++) { // 4: LeafFaces.length
+        for (int j = 0; j < 4; j++) { // 4: LeafFaces[i].length
+  
+          float the_U = 0;
+          if ((j == 1) || (j == 2)) the_U = 1;
+  
+          float the_V = 0;
+          if ((j == 2) || (j == 3)) the_V = 1;
+
+
+          float Leaf_x_dif = LeafSize * LeafVertices[LeafFaces[i][j]][0];
+          float Leaf_y_dif = LeafSize * LeafVertices[LeafFaces[i][j]][1];
+          float Leaf_z_dif = LeafSize * LeafVertices[LeafFaces[i][j]][2];
+
+          float Leaf_x_rot = Leaf_z_dif * sin(rotZX) +  Leaf_x_dif * cos(rotZX);
+          float Leaf_y_rot = Leaf_y_dif;
+          float Leaf_z_rot = Leaf_z_dif * cos(rotZX) - Leaf_x_dif * sin(rotZX);
+          
+          float Leaf_x_new = x0 + Leaf_x_rot * cos(rotXY) - Leaf_y_rot * sin(rotXY);
+          float Leaf_y_new = y0 + Leaf_x_rot * sin(rotXY) + Leaf_y_rot * cos(rotXY);
+          float Leaf_z_new = z0 + Leaf_z_rot; 
+
+          float x = Leaf_x_new;
+          float y = Leaf_y_new;
+          float z = Leaf_z_new;
+          float u = the_U;
+          float v = the_V;
+          
+          v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+          
+          objOutput.println("v " + nf(x, 0, objExportPrecision) + " " + nf(y, 0, objExportPrecision) + " " + nf(z, 0, objExportPrecision));
+          objOutput.println("vt " + nf(u, 0, 3) + " " + nf(v, 0, 3) + " 0");
+          
+          obj_lastVertexNumber += 1;
+          obj_lastVtextureNumber += 1;
+        }
+  
+        String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
+        String n2_txt = nf(obj_lastVertexNumber - 2, 0);
+        String n3_txt = nf(obj_lastVertexNumber - 1, 0);
+        String n4_txt = nf(obj_lastVertexNumber - 0, 0);
+        
+        String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
+        String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
+        String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
+        String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
+  
+        objOutput.println("g");   
+        objOutput.println("usemtl FractalTree_TLeaf");
+        objOutput.println("f " + n1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
+        if (Export_Back_Sides != 0) {
+          //objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+        }      
+      }
     }
 
   }
