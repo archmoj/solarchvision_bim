@@ -18645,8 +18645,8 @@ void SOLARCHVISION_export_objects () {
 
     mtlOutput.println("newmtl " + "FractalPlant_Trunk");
     mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-    mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-    mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+    mtlOutput.println("\tKa 1.000 0.750 0.500"); // ambient
+    mtlOutput.println("\tKd 1.000 0.750 0.500"); // diffuse
     mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
     mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
     mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
@@ -18658,8 +18658,8 @@ void SOLARCHVISION_export_objects () {
 
     mtlOutput.println("newmtl " + "FractalPlant_Leaf");
     mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-    mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-    mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+    mtlOutput.println("\tKa 0.500 0.750 0.250"); // ambient
+    mtlOutput.println("\tKd 0.500 0.750 0.250"); // diffuse
     mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
     mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
     mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
@@ -33379,7 +33379,7 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
           String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
           
           objOutput.println("g");   
-          objOutput.println("usemtl FractalTree_Trunk");
+          objOutput.println("usemtl FractalPlant_Trunk");
           objOutput.println("f " + n1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);        
 
         }
@@ -33389,12 +33389,13 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
 
     }
   } else {
+
+    // must pass all the random values here.
+    float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
+    float rotXY = Beta + random(-PI, PI);
+    int c = int(random(127));  
     
     if (Display_Leaves != 0) {
-
-      float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
-      float rotXY = Beta + random(-PI, PI);
-      
       
       float LeafVertices[][] = {{0,0,0}, {1,0,1}, {0,1,1}, {-1,0,1}, {0,-1,1}, {0,0,2}};
       int LeafFaces[][] = {{0,1,2,5}, {0,2,3,5}, {0,3,4,5}, {0,4,1,5}};
@@ -33409,9 +33410,9 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
           if ((j == 2) || (j == 3)) the_V = 1;
 
 
-          float Leaf_x_dif = LeafSize * LeafVertices[LeafFaces[i][j]][0];
-          float Leaf_y_dif = LeafSize * LeafVertices[LeafFaces[i][j]][1];
-          float Leaf_z_dif = LeafSize * LeafVertices[LeafFaces[i][j]][2];
+          float Leaf_x_dif = 0.5 * LeafSize * LeafVertices[LeafFaces[i][j]][0];
+          float Leaf_y_dif = 0.5 * LeafSize * LeafVertices[LeafFaces[i][j]][1];
+          float Leaf_z_dif = 0.5 * LeafSize * LeafVertices[LeafFaces[i][j]][2];
 
           float Leaf_x_rot = Leaf_z_dif * sin(rotZX) +  Leaf_x_dif * cos(rotZX);
           float Leaf_y_rot = Leaf_y_dif;
@@ -33447,7 +33448,7 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
         String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
   
         objOutput.println("g");   
-        objOutput.println("usemtl FractalTree_Leaf");
+        objOutput.println("usemtl FractalPlant_Leaf");
         objOutput.println("f " + n1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
         if (Export_Back_Sides != 0) {
           //objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
@@ -33543,11 +33544,14 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
     }
   } else {
     
+    // must pass all the random values here.
+    float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
+    float rotXY = Beta + random(-PI, PI);
+    int c = int(random(127));  
+    
     if (Display_Leaves != 0) {
       
       WIN3D_Diagrams.strokeWeight(0);
-  
-      int c = int(random(127));    
   
       float[] COL = {127, 2 * c, 191 - c, 0};  // opaque!
       
@@ -33726,6 +33730,12 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
 
     }
   } else {
+    
+    // must pass all the random values here.
+    float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
+    float rotXY = Beta + random(-PI, PI);
+    int COL = int(random(127));      
+    
     if (Display_Leaves != 0) {
 
       float x0_Rotated = x0;
