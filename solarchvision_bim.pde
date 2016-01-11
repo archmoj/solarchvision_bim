@@ -173,7 +173,7 @@ int[] allFractal_Type = {0};
 int[] allFractal_DegreeMin = {0};
 int[] allFractal_DegreeMax = {0};
 int[] allFractal_Seed = {0};
-float[] allFractal_TrunckSize = {0};
+float[] allFractal_TrunkSize = {0};
 float[] allFractal_LeafSize = {0};
 int allFractal_num = 0; 
 
@@ -261,14 +261,14 @@ int Create_Fractal_Plant_Type = 0;
 int Create_Fractal_Plant_DegreeMin = 1; //2; 
 int Create_Fractal_Plant_DegreeMax = 5; //6; //8;
 int Create_Fractal_Plant_Seed = -1; // -1:random, 0-99 choice
-float Create_Fractal_Plant_TrunckSize = 1; //0.5;
+float Create_Fractal_Plant_TrunkSize = 1; //0.5;
 float Create_Fractal_Plant_LeafSize = 1; //1; 
 
 int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:Face, 5:Vertex, 6:Soft 7:Solid
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
-int View_Select_Create_Modify = 4; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunckSize 12:LeafSize 13:AllFractalProps 14:SolarPivot 15:FaceNormal 16:FaceFirstVertex
+int View_Select_Create_Modify = 4; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunkSize 12:LeafSize 13:AllFractalProps 14:SolarPivot 15:FaceNormal 16:FaceFirstVertex
 int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. fractal trees
 
@@ -13888,11 +13888,11 @@ void SOLARCHVISION_duplicateSelection () {
         int dMin = allFractal_DegreeMin[OBJ_NUM];
         int dMax = allFractal_DegreeMax[OBJ_NUM];
         int s = allFractal_Seed[OBJ_NUM];
-        float TrunckSize = allFractal_TrunckSize[OBJ_NUM];
+        float TrunkSize = allFractal_TrunkSize[OBJ_NUM];
         float LeafSize = allFractal_LeafSize[OBJ_NUM];
         
         randomSeed(millis());
-        SOLARCHVISION_add_FractalPlant(n, x, y, z, d, rot, dMin, dMax, s, TrunckSize, LeafSize, as_Solid);        
+        SOLARCHVISION_add_FractalPlant(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize, as_Solid);        
       }
     }
     
@@ -14198,10 +14198,10 @@ void SOLARCHVISION_deleteSelection () {
         }
 
         {
-          float[] startList = (float[]) subset(allFractal_TrunckSize, 0, OBJ_NUM);
-          float[] endList = (float[]) subset(allFractal_TrunckSize, OBJ_NUM + 1);
+          float[] startList = (float[]) subset(allFractal_TrunkSize, 0, OBJ_NUM);
+          float[] endList = (float[]) subset(allFractal_TrunkSize, OBJ_NUM + 1);
           
-          allFractal_TrunckSize = (float[]) concat(startList, endList);
+          allFractal_TrunkSize = (float[]) concat(startList, endList);
         }
 
         {
@@ -18643,7 +18643,20 @@ void SOLARCHVISION_export_objects () {
 
   if ((Export_Material_Library != 0) && (Display_FractalPlant != 0)) {
 
-    mtlOutput.println("newmtl " + "FractalPlant");
+    mtlOutput.println("newmtl " + "FractalPlant_Trunk");
+    mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+    mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+    mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+    mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+    mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+    mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+
+    mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+    mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+    mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+
+
+    mtlOutput.println("newmtl " + "FractalPlant_Leaf");
     mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
     mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
     mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
@@ -18655,8 +18668,7 @@ void SOLARCHVISION_export_objects () {
     mtlOutput.println("\tTr 1.000"); //  0-1 transparency
     mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
     
-    
-    objOutput.println("usemtl FractalPlant");
+
     
     for (int f = 1; f <= allFractal_num; f++) {
 
@@ -18676,7 +18688,7 @@ void SOLARCHVISION_export_objects () {
 
       int s = allFractal_Seed[f];
 
-      float TrunckSize = allFractal_TrunckSize[f];
+      float TrunkSize = allFractal_TrunkSize[f];
       
       float LeafSize = allFractal_LeafSize[f];
       
@@ -18687,7 +18699,7 @@ void SOLARCHVISION_export_objects () {
         float Alpha = 0;
         float Beta = rot; 
       
-        SOLARCHVISION_Plant_branch_objExport(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunckSize, LeafSize, as_Solid);
+        SOLARCHVISION_Plant_branch_objExport(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize, as_Solid);
         
       }
     }
@@ -19107,8 +19119,8 @@ void SOLARCHVISION_remove_FractalPlants () {
   allFractal_Seed = new int [1];
   allFractal_Seed[0] = 0;
 
-  allFractal_TrunckSize = new float [1];
-  allFractal_TrunckSize[0] = 0;
+  allFractal_TrunkSize = new float [1];
+  allFractal_TrunkSize[0] = 0;
 
   allFractal_LeafSize = new float [1];
   allFractal_LeafSize[0] = 0;
@@ -28083,18 +28095,18 @@ void mouseClicked () {
               BAR_b_Update = 1;  
             }     
 
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change TrunckSize")) {
-              set_to_Modify_TrunckSize(0);
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change TrunkSize")) {
+              set_to_Modify_TrunkSize(0);
               SOLARCHVISION_highlight_in_BAR_b("trSz0");
               BAR_b_Update = 1;  
             }
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pick TrunckSize")) {
-              set_to_Modify_TrunckSize(1);
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pick TrunkSize")) {
+              set_to_Modify_TrunkSize(1);
               SOLARCHVISION_highlight_in_BAR_b("trSz1");
               BAR_b_Update = 1;  
             }
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Assign TrunckSize")) {
-              set_to_Modify_TrunckSize(2);
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Assign TrunkSize")) {
+              set_to_Modify_TrunkSize(2);
               SOLARCHVISION_highlight_in_BAR_b("trSz2");
               BAR_b_Update = 1;  
             }     
@@ -28140,8 +28152,8 @@ void mouseClicked () {
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change DegreeMin")) {
               set_to_Modify_DegreeMin(0);
             }     
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change TrunckSize")) {
-              set_to_Modify_TrunckSize(0);
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change TrunkSize")) {
+              set_to_Modify_TrunkSize(0);
             }
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change LeafSize")) {
               set_to_Modify_LeafSize(0);
@@ -29257,12 +29269,12 @@ void mouseClicked () {
                       if (View_Select_Create_Modify == 8) Create_Fractal_Plant_DegreeMax = allFractal_DegreeMax[OBJ_NUM];
                       if (View_Select_Create_Modify == 9) {Create_Fractal_Plant_DegreeMax = allFractal_DegreeMax[OBJ_NUM]; Create_Fractal_Plant_DegreeMin = allFractal_DegreeMin[OBJ_NUM];}
                       if (View_Select_Create_Modify == 10) Create_Fractal_Plant_DegreeMin = allFractal_DegreeMin[OBJ_NUM];
-                      if (View_Select_Create_Modify == 11) Create_Fractal_Plant_TrunckSize = allFractal_TrunckSize[OBJ_NUM];
+                      if (View_Select_Create_Modify == 11) Create_Fractal_Plant_TrunkSize = allFractal_TrunkSize[OBJ_NUM];
                       if (View_Select_Create_Modify == 12) Create_Fractal_Plant_LeafSize = allFractal_LeafSize[OBJ_NUM];
                       if (View_Select_Create_Modify == 13) { // all properties
                         Create_Fractal_Plant_DegreeMax = allFractal_DegreeMax[OBJ_NUM];
                         Create_Fractal_Plant_DegreeMin = allFractal_DegreeMin[OBJ_NUM];
-                        Create_Fractal_Plant_TrunckSize = allFractal_TrunckSize[OBJ_NUM];
+                        Create_Fractal_Plant_TrunkSize = allFractal_TrunkSize[OBJ_NUM];
                         Create_Fractal_Plant_LeafSize = allFractal_LeafSize[OBJ_NUM];
                       }                      
                     } 
@@ -29270,12 +29282,12 @@ void mouseClicked () {
                       if (View_Select_Create_Modify == 8) allFractal_DegreeMax[OBJ_NUM] = Create_Fractal_Plant_DegreeMax;                    
                       if (View_Select_Create_Modify == 9) {allFractal_DegreeMax[OBJ_NUM] = Create_Fractal_Plant_DegreeMax; allFractal_DegreeMin[OBJ_NUM] = Create_Fractal_Plant_DegreeMin;}                 
                       if (View_Select_Create_Modify == 10) allFractal_DegreeMin[OBJ_NUM] = Create_Fractal_Plant_DegreeMin;                    
-                      if (View_Select_Create_Modify == 11) allFractal_TrunckSize[OBJ_NUM] = Create_Fractal_Plant_TrunckSize;                    
+                      if (View_Select_Create_Modify == 11) allFractal_TrunkSize[OBJ_NUM] = Create_Fractal_Plant_TrunkSize;                    
                       if (View_Select_Create_Modify == 12) allFractal_LeafSize[OBJ_NUM] = Create_Fractal_Plant_LeafSize;
                       if (View_Select_Create_Modify == 13) { // all properties
                         allFractal_DegreeMax[OBJ_NUM] = Create_Fractal_Plant_DegreeMax;
                         allFractal_DegreeMin[OBJ_NUM] = Create_Fractal_Plant_DegreeMin;                    
-                        allFractal_TrunckSize[OBJ_NUM] = Create_Fractal_Plant_TrunckSize;                    
+                        allFractal_TrunkSize[OBJ_NUM] = Create_Fractal_Plant_TrunkSize;                    
                         allFractal_LeafSize[OBJ_NUM] = Create_Fractal_Plant_LeafSize;                    
                       }                      
                     }
@@ -29726,7 +29738,7 @@ void mouseClicked () {
                   float as_Solid = 1;
                   
                   randomSeed(millis());
-                  SOLARCHVISION_add_FractalPlant(Create_Fractal_Plant_Type, x, y, z, 2 * rz, rot, Create_Fractal_Plant_DegreeMin, Create_Fractal_Plant_DegreeMax, Create_Fractal_Plant_Seed, Create_Fractal_Plant_TrunckSize, Create_Fractal_Plant_LeafSize, as_Solid);
+                  SOLARCHVISION_add_FractalPlant(Create_Fractal_Plant_Type, x, y, z, 2 * rz, rot, Create_Fractal_Plant_DegreeMin, Create_Fractal_Plant_DegreeMax, Create_Fractal_Plant_Seed, Create_Fractal_Plant_TrunkSize, Create_Fractal_Plant_LeafSize, as_Solid);
                 }      
   
                 if (Create_Mesh_Plant != 0) {
@@ -30310,7 +30322,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Fractal_Plant_DegreeMin = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_Plant_DegreeMin" , Create_Fractal_Plant_DegreeMin, 1, 9, 1), 1));
       Create_Fractal_Plant_DegreeMax = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_Plant_DegreeMax" , Create_Fractal_Plant_DegreeMax, 1, 9, 1), 1));
       Create_Fractal_Plant_Seed = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_Plant_Seed" , Create_Fractal_Plant_Seed, -1, 100, 1), 1));
-      Create_Fractal_Plant_TrunckSize = roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_Plant_TrunckSize" , Create_Fractal_Plant_TrunckSize, 0, 10, 0.1), 0.1);
+      Create_Fractal_Plant_TrunkSize = roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_Plant_TrunkSize" , Create_Fractal_Plant_TrunkSize, 0, 10, 0.1), 0.1);
       Create_Fractal_Plant_LeafSize = roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_Plant_LeafSize" , Create_Fractal_Plant_LeafSize, 0, 10, 0.1), 0.1);    
     }    
     
@@ -32492,7 +32504,7 @@ void RenderShadowsOnUrbanPlane () {
           
                 int s = allFractal_Seed[f];
                 
-                float TrunckSize = allFractal_TrunckSize[f];
+                float TrunkSize = allFractal_TrunkSize[f];
                 
                 float LeafSize = allFractal_LeafSize[f];
                 
@@ -32503,7 +32515,7 @@ void RenderShadowsOnUrbanPlane () {
                   float Alpha = 0;
                   float Beta = rot; 
                 
-                  SOLARCHVISION_Plant_branch_SHADOW(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunckSize, LeafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY);
+                  SOLARCHVISION_Plant_branch_SHADOW(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY);
                   
                 }
               }
@@ -33159,10 +33171,10 @@ void SOLARCHVISION_draw_WindRose_Image () {
 }
 
 
-void SOLARCHVISION_add_FractalPlant (int PlantType, float x, float y, float z, float s, float rot, int PlantDegreeMin, int PlantDegreeMax, int PlantSeed, float TrunckSize, float LeafSize, float as_Solid) {
+void SOLARCHVISION_add_FractalPlant (int PlantType, float x, float y, float z, float s, float rot, int PlantDegreeMin, int PlantDegreeMax, int PlantSeed, float TrunkSize, float LeafSize, float as_Solid) {
 
-  float[] TempFractal_TrunckSize = {TrunckSize}; 
-  allFractal_TrunckSize = concat(allFractal_TrunckSize, TempFractal_TrunckSize);  
+  float[] TempFractal_TrunkSize = {TrunkSize}; 
+  allFractal_TrunkSize = concat(allFractal_TrunkSize, TempFractal_TrunkSize);  
   
   float[] TempFractal_LeafSize = {LeafSize}; 
   allFractal_LeafSize = concat(allFractal_LeafSize, TempFractal_LeafSize);
@@ -33222,7 +33234,7 @@ void SOLARCHVISION_draw_FractalPlants () {
 
       int s = allFractal_Seed[f];
 
-      float TrunckSize = allFractal_TrunckSize[f];
+      float TrunkSize = allFractal_TrunkSize[f];
       
       float LeafSize = allFractal_LeafSize[f];
       
@@ -33233,7 +33245,7 @@ void SOLARCHVISION_draw_FractalPlants () {
         float Alpha = 0;
         float Beta = rot; 
       
-        SOLARCHVISION_Plant_branch(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunckSize, LeafSize, as_Solid);
+        SOLARCHVISION_Plant_branch(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize, as_Solid);
         
         if (as_Solid != 0) {
           allFractal_XYZSRA[f][5] = 0; 
@@ -33283,7 +33295,7 @@ void SOLARCHVISION_draw_FractalPlants () {
 
 
 
-void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunckSize, float LeafSize, float as_Solid) {
+void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize, float as_Solid) {
   
   h *= getRatio_Plant_branch(d);
 
@@ -33296,7 +33308,7 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
       float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
       float rotXY = Beta + random(-PI, PI);
              
-      float w = TrunckSize * 0.5 * pow(Plant_max_degree - d + 1, 1.25);
+      float w = TrunkSize * 0.5 * pow(Plant_max_degree - d + 1, 1.25);
       
       //float[] COL = {255, 100 - 6 * w, 50 - 3 * w, 0};
 
@@ -33325,7 +33337,7 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
             if ((j == 2) || (j == 3)) the_V = 1;
             
             float the_thickness = 0.025 * w * h;
-            if ((j == 2) || (j == 3)) the_thickness *= getRatio_Plant_branch(d + 1); // for conic truncks
+            if ((j == 2) || (j == 3)) the_thickness *= getRatio_Plant_branch(d + 1); // for conic trunks
             
             float Trunk_x_dif = the_thickness * cos((q + the_U) * TWO_PI / float(nSeg));
             float Trunk_y_dif = the_thickness * sin((q + the_U) * TWO_PI / float(nSeg));
@@ -33367,13 +33379,13 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
           String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
           
           objOutput.println("g");   
-          objOutput.println("usemtl FractalTree_Trunck");
+          objOutput.println("usemtl FractalTree_Trunk");
           objOutput.println("f " + n1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);        
 
         }
       }
 
-      SOLARCHVISION_Plant_branch_objExport(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunckSize, LeafSize, as_Solid);
+      SOLARCHVISION_Plant_branch_objExport(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize, as_Solid);
 
     }
   } else {
@@ -33435,7 +33447,7 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
         String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
   
         objOutput.println("g");   
-        objOutput.println("usemtl FractalTree_TLeaf");
+        objOutput.println("usemtl FractalTree_Leaf");
         objOutput.println("f " + n1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
         if (Export_Back_Sides != 0) {
           //objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
@@ -33453,7 +33465,7 @@ float getRatio_Plant_branch (float d) {
  return (0.75 / pow(d, 0.06125));
 }
 
-void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunckSize, float LeafSize, float as_Solid) {
+void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize, float as_Solid) {
   
   h *= getRatio_Plant_branch(d);
 
@@ -33466,7 +33478,7 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
       float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
       float rotXY = Beta + random(-PI, PI);
              
-      float w = TrunckSize * 0.5 * pow(Plant_max_degree - d + 1, 1.25);
+      float w = TrunkSize * 0.5 * pow(Plant_max_degree - d + 1, 1.25);
       
       float[] COL = {255, 100 - 6 * w, 50 - 3 * w, 0};
 
@@ -33506,7 +33518,7 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
             if ((j == 2) || (j == 3)) the_V = 1;
             
             float the_thickness = 0.025 * w * h;
-            if ((j == 2) || (j == 3)) the_thickness *= getRatio_Plant_branch(d + 1); // for conic truncks
+            if ((j == 2) || (j == 3)) the_thickness *= getRatio_Plant_branch(d + 1); // for conic trunks
             
             float Trunk_x_dif = the_thickness * cos((q + the_U) * TWO_PI / float(nSeg));
             float Trunk_y_dif = the_thickness * sin((q + the_U) * TWO_PI / float(nSeg));
@@ -33526,7 +33538,7 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
         }
       }
 
-      SOLARCHVISION_Plant_branch(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunckSize, LeafSize, as_Solid);
+      SOLARCHVISION_Plant_branch(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize, as_Solid);
 
     }
   } else {
@@ -33558,7 +33570,7 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
 }
 
 
-void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunckSize, float LeafSize, float[] SunR_Rotated, float Shades_scaleX, float Shades_scaleY) {
+void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize, float[] SunR_Rotated, float Shades_scaleX, float Shades_scaleY) {
   
   SHADOW_Diagrams.strokeWeight(0);
   
@@ -33576,7 +33588,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
       float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
       float rotXY = Beta + random(-PI, PI);
              
-      float w = TrunckSize * 0.5 * pow(Plant_max_degree - d + 1, 1.25);
+      float w = TrunkSize * 0.5 * pow(Plant_max_degree - d + 1, 1.25);
 
       float x_dif = 0;
       float y_dif = 0;
@@ -33603,7 +33615,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
             if ((j == 2) || (j == 3)) the_V = 1;
             
             float the_thickness = 0.025 * w * h;
-            if ((j == 2) || (j == 3)) the_thickness *= getRatio_Plant_branch(d + 1); // for conic truncks
+            if ((j == 2) || (j == 3)) the_thickness *= getRatio_Plant_branch(d + 1); // for conic trunks
             
             float Trunk_x_dif = the_thickness * cos((q + the_U) * TWO_PI / float(nSeg));
             float Trunk_y_dif = the_thickness * sin((q + the_U) * TWO_PI / float(nSeg));
@@ -33710,7 +33722,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
         SHADOW_Diagrams.endShape(CLOSE);      
       }
       
-      SOLARCHVISION_Plant_branch_SHADOW(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunckSize, LeafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY);
+      SOLARCHVISION_Plant_branch_SHADOW(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY);
 
     }
   } else {
@@ -34778,15 +34790,15 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           ROLLOUT_Update = 1;
         }        
         if (View_Select_Create_Modify == 11) {
-          float q = allFractal_TrunckSize[OBJ_NUM];
+          float q = allFractal_TrunkSize[OBJ_NUM];
           
           q += 0.25 * p;
           
           if (q < 0) q = 0;
           
-          allFractal_TrunckSize[OBJ_NUM] = q;
+          allFractal_TrunkSize[OBJ_NUM] = q;
           
-          Create_Fractal_Plant_TrunckSize = q;
+          Create_Fractal_Plant_TrunkSize = q;
           ROLLOUT_Update = 1;
         }
         if (View_Select_Create_Modify == 12) {
@@ -36037,8 +36049,8 @@ String[][] BAR_a_Items = {
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Soft Selection", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
                         {"Edit", "Duplicate Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces"},
-                        {"Modify", "Save Current Pivot", "Reset Saved Pivot", "Use Selection Pivot", "Use Origin Pivot", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Vsibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunckSize", "Change LeafSize"},
-                        {"Match", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunckSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunckSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
+                        {"Modify", "Save Current Pivot", "Reset Saved Pivot", "Use Selection Pivot", "Use Origin Pivot", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Vsibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
+                        {"Match", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunkSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunkSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
                         {"Action", "Undo", "Redo", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
 
                       };
@@ -36364,7 +36376,7 @@ String[][] BAR_b_Items = {
                           //{"1", "dgMax0", "dgMax1", "dgMax2", "Change DegreeMax", "1.0"},
                           //{"1", "dgDif0", "dgDif1", "dgDif2", "Change DegreeDif", "1.0"},
                           //{"1", "dgMin0", "dgMin1", "dgMin2", "Change DegreeMin", "1.0"},
-                          //{"1", "tsSz0", "trSz1", "trSz2", "Change TrunckSize", "1.0"},
+                          //{"1", "tsSz0", "trSz1", "trSz2", "Change TrunkSize", "1.0"},
                           //{"1", "lfSz0", "lfSz1", "lfSz2", "Change LeafSize", "1.0"},
                           //{"1", "allFP0", "allFP1", "allFP2", "AllFractalProps", "1.0"},
                           
@@ -36956,7 +36968,7 @@ void set_to_Modify_DegreeMin (int n) {
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Modify_TrunckSize (int n) {
+void set_to_Modify_TrunkSize (int n) {
   View_Select_Create_Modify = 11;
   Modify_Object_Parameters = n; // 0:change selection 1:pick from 2:assign to
 
@@ -38030,7 +38042,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Create_Fractal_Plant_DegreeMin", Create_Fractal_Plant_DegreeMin);
   newChild1.setInt("Create_Fractal_Plant_DegreeMax", Create_Fractal_Plant_DegreeMax);
   newChild1.setInt("Create_Fractal_Plant_Seed", Create_Fractal_Plant_Seed);
-  newChild1.setFloat("Create_Fractal_Plant_TrunckSize", Create_Fractal_Plant_TrunckSize);
+  newChild1.setFloat("Create_Fractal_Plant_TrunkSize", Create_Fractal_Plant_TrunkSize);
   newChild1.setFloat("Create_Fractal_Plant_LeafSize", Create_Fractal_Plant_LeafSize);
   newChild1.setInt("Work_with_2D_or_3D", Work_with_2D_or_3D);
   newChild1.setInt("Create_Mesh_or_Solid", Create_Mesh_or_Solid);
@@ -38526,7 +38538,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       lineSTR += ",";
       lineSTR += nf(allFractal_Seed[i], 0);
       lineSTR += ",";
-      lineSTR += nf(allFractal_TrunckSize[i], 0, 4).replace(",", "."); // <<<<
+      lineSTR += nf(allFractal_TrunkSize[i], 0, 4).replace(",", "."); // <<<<
       lineSTR += ",";
       lineSTR += nf(allFractal_LeafSize[i], 0, 4).replace(",", "."); // <<<<
       
@@ -38960,7 +38972,7 @@ void SOLARCHVISION_load_project (String myFile) {
       Create_Fractal_Plant_DegreeMin = children0[L].getInt("Create_Fractal_Plant_DegreeMin");
       Create_Fractal_Plant_DegreeMax = children0[L].getInt("Create_Fractal_Plant_DegreeMax");
       Create_Fractal_Plant_Seed = children0[L].getInt("Create_Fractal_Plant_Seed");
-      Create_Fractal_Plant_TrunckSize = children0[L].getFloat("Create_Fractal_Plant_TrunckSize");
+      Create_Fractal_Plant_TrunkSize = children0[L].getFloat("Create_Fractal_Plant_TrunkSize");
       Create_Fractal_Plant_LeafSize = children0[L].getFloat("Create_Fractal_Plant_LeafSize");
       Work_with_2D_or_3D = children0[L].getInt("Work_with_2D_or_3D");
       Create_Mesh_or_Solid = children0[L].getInt("Create_Mesh_or_Solid");
@@ -39419,7 +39431,7 @@ void SOLARCHVISION_load_project (String myFile) {
       allFractal_DegreeMin = new int [ni];
       allFractal_DegreeMax = new int [ni];
       allFractal_Seed = new int [ni];
-      allFractal_TrunckSize = new float [ni];
+      allFractal_TrunkSize = new float [ni];
       allFractal_LeafSize = new float [ni];
       allFractal_num = ni - 1;
       
@@ -39436,7 +39448,7 @@ void SOLARCHVISION_load_project (String myFile) {
         allFractal_DegreeMin[i] = int(parts[7]);
         allFractal_DegreeMax[i] = int(parts[8]);
         allFractal_Seed[i] = int(parts[9]);
-        allFractal_TrunckSize[i] = float(parts[10]);
+        allFractal_TrunkSize[i] = float(parts[10]);
         allFractal_LeafSize[i] = float(parts[11]);
       }
     }       
