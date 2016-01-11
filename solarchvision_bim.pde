@@ -18655,7 +18655,7 @@ void SOLARCHVISION_export_objects () {
     mtlOutput.println("\tTr 1.000"); //  0-1 transparency
     mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
     
-    
+    objOutput.println("g");
     objOutput.println("usemtl FractalPlant");
     
     for (int f = 1; f <= allFractal_num; f++) {
@@ -18686,6 +18686,8 @@ void SOLARCHVISION_export_objects () {
     
         float Alpha = 0;
         float Beta = rot; 
+      
+        objOutput.println("g FractalPlant_" + nf(f, 0));
       
         SOLARCHVISION_Plant_branch_objExport(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunckSize, LeafSize, as_Solid);
         
@@ -33366,7 +33368,6 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
           String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
           String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
           
-          objOutput.println("g");   
           objOutput.println("f " + n1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);        
 
         }
