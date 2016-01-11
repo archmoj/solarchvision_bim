@@ -296,7 +296,7 @@ int SpatialImpact_record_JPG = 0;
 
 int SolarImpact_record_JPG = 0;  
 
-int Export_Back_Sides = 0; // 0-1
+int Export_Back_Sides = 1; // 0-1
 int Export_Material_Library = 1; // 0-1
 
 int Export_3Dmodel = 0; // inactive
@@ -18256,58 +18256,108 @@ void SOLARCHVISION_export_objects () {
       if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
       
       if (allObject2D_MAP[f] < 0) t += PI;      
-   
-      float x1 = x - r * cos(t);
-      float y1 = y - r * sin(t);
-      float z1 = z;
-      float u1 = 0;
-      float v1 = 0;
+      
+      { 
+        float x1 = x - r * cos(t);
+        float y1 = y - r * sin(t);
+        float z1 = z;
+  
+        float x2 = x + r * cos(t);
+        float y2 = y + r * sin(t);
+        float z2 = z;
+  
+        float x3 = x + r * cos(t);
+        float y3 = y + r * sin(t);
+        float z3 = z + 2 * r;
 
-      float x2 = x + r * cos(t);
-      float y2 = y + r * sin(t);
-      float z2 = z;
-      float u2 = 1;
-      float v2 = 0;
-
-      float x3 = x + r * cos(t);
-      float y3 = y + r * sin(t);
-      float z3 = z + 2 * r;
-      float u3 = 1;
-      float v3 = 1;
+        float x4 = x - r * cos(t);
+        float y4 = y - r * sin(t);
+        float z4 = z + 2 * r;
       
-      float x4 = x - r * cos(t);
-      float y4 = y - r * sin(t);
-      float z4 = z + 2 * r;
-      float u4 = 0;
-      float v4 = 1;      
-    
-      objOutput.println("v " + nf(x1, 0, Precision) + " " + nf(y1, 0, Precision) + " " + nf(z1, 0, Precision));
-      objOutput.println("v " + nf(x2, 0, Precision) + " " + nf(y2, 0, Precision) + " " + nf(z2, 0, Precision));
-      objOutput.println("v " + nf(x3, 0, Precision) + " " + nf(y3, 0, Precision) + " " + nf(z3, 0, Precision));
-      objOutput.println("v " + nf(x4, 0, Precision) + " " + nf(y4, 0, Precision) + " " + nf(z4, 0, Precision));
-      
-      objOutput.println("vt " + nf(u1, 0, 3) + " " + nf(v1, 0, 3) + " 0");
-      objOutput.println("vt " + nf(u2, 0, 3) + " " + nf(v2, 0, 3) + " 0");
-      objOutput.println("vt " + nf(u3, 0, 3) + " " + nf(v3, 0, 3) + " 0");      
-      objOutput.println("vt " + nf(u4, 0, 3) + " " + nf(v4, 0, 3) + " 0");
-
-      obj_lastVertexNumber += 4;
-      obj_lastVtextureNumber += 4;
-      
-      String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
-      String n2_txt = nf(obj_lastVertexNumber - 2, 0);
-      String n3_txt = nf(obj_lastVertexNumber - 1, 0);
-      String n4_txt = nf(obj_lastVertexNumber - 0, 0);
-      
-      String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
-      String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
-      String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
-      String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
-      
-      objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-      if (Export_Back_Sides != 0) {
-        objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+        objOutput.println("v " + nf(x1, 0, Precision) + " " + nf(y1, 0, Precision) + " " + nf(z1, 0, Precision));
+        objOutput.println("v " + nf(x2, 0, Precision) + " " + nf(y2, 0, Precision) + " " + nf(z2, 0, Precision));
+        objOutput.println("v " + nf(x3, 0, Precision) + " " + nf(y3, 0, Precision) + " " + nf(z3, 0, Precision));
+        objOutput.println("v " + nf(x4, 0, Precision) + " " + nf(y4, 0, Precision) + " " + nf(z4, 0, Precision));
+        
+        objOutput.println("vt 0 0 0");
+        objOutput.println("vt 1 0 0");
+        objOutput.println("vt 1 1 0");      
+        objOutput.println("vt 0 1 0");
+  
+        obj_lastVertexNumber += 4;
+        obj_lastVtextureNumber += 4;
+        
+        String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
+        String n2_txt = nf(obj_lastVertexNumber - 2, 0);
+        String n3_txt = nf(obj_lastVertexNumber - 1, 0);
+        String n4_txt = nf(obj_lastVertexNumber - 0, 0);
+        
+        String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
+        String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
+        String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
+        String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
+        
+        objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+        if (Export_Back_Sides != 0) {
+          objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+        }
       }
+      
+      
+      if (n > Object2D_PEOPLE_Files_Num) { // case: trees    
+      
+        float ratio = 0.5;
+      
+        for (int back_front = -1; back_front <= 1; back_front += 2) {
+          
+          float rot = back_front * PI / 2 + t;
+          
+          float x1 = x - r * cos(t);
+          float y1 = y - r * sin(t);
+          float z1 = z + 2 * r * ratio;
+    
+          float x2 = x + r * cos(t);
+          float y2 = y + r * sin(t);
+          float z2 = z + 2 * r * ratio;
+    
+          float x3 = x + r * cos(t) + r * cos(rot);
+          float y3 = y + r * sin(t) + r * sin(rot);
+          float z3 = z + 2 * r * ratio;
+  
+          float x4 = x - r * cos(t) + r * cos(rot);
+          float y4 = y - r * sin(t) + r * sin(rot);
+          float z4 = z + 2 * r * ratio;
+        
+          objOutput.println("v " + nf(x1, 0, Precision) + " " + nf(y1, 0, Precision) + " " + nf(z1, 0, Precision));
+          objOutput.println("v " + nf(x2, 0, Precision) + " " + nf(y2, 0, Precision) + " " + nf(z2, 0, Precision));
+          objOutput.println("v " + nf(x3, 0, Precision) + " " + nf(y3, 0, Precision) + " " + nf(z3, 0, Precision));
+          objOutput.println("v " + nf(x4, 0, Precision) + " " + nf(y4, 0, Precision) + " " + nf(z4, 0, Precision));
+          
+          objOutput.println("vt 0 " + nf(ratio, 0, 3) + " 0");
+          objOutput.println("vt 1 " + nf(ratio, 0, 3) + " 0");
+          objOutput.println("vt 1 1 0");      
+          objOutput.println("vt 0 1 0");
+    
+          obj_lastVertexNumber += 4;
+          obj_lastVtextureNumber += 4;
+          
+          String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
+          String n2_txt = nf(obj_lastVertexNumber - 2, 0);
+          String n3_txt = nf(obj_lastVertexNumber - 1, 0);
+          String n4_txt = nf(obj_lastVertexNumber - 0, 0);
+          
+          String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
+          String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
+          String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
+          String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
+          
+          objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+          if (Export_Back_Sides != 0) {
+            objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+          }          
+        }    
+      }         
+      
     }    
 
   }
@@ -21766,10 +21816,12 @@ void SOLARCHVISION_draw_2Dobjects () {
       
       DistZ[f] = -1;
       
+      
+      
       if (f != 0) {
 
         int n = abs(allObject2D_MAP[f]);
-        
+      
         int w = Object2DImages[n].width; 
         int h = Object2DImages[n].height;
                 
@@ -21822,7 +21874,7 @@ void SOLARCHVISION_draw_2Dobjects () {
         
 
         
-        if (r / OBJECTS_scale > 2.5) { // to select only trees!   
+        if (n > Object2D_PEOPLE_Files_Num) { // case: trees   
         
           float ratio = 0.5;
         
