@@ -18240,9 +18240,6 @@ void SOLARCHVISION_export_objects () {
 
       int n = abs(allObject2D_MAP[f]);
 
-      objOutput.println("g Object2D_" + nf(f, 0));
-      objOutput.println("usemtl Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1).replace('.', '_'));
-
       int w = Object2DImages[n].width; 
       int h = Object2DImages[n].height;
               
@@ -18258,6 +18255,9 @@ void SOLARCHVISION_export_objects () {
       if (allObject2D_MAP[f] < 0) t += PI;      
       
       { 
+        objOutput.println("g Object2D_" + nf(f, 0));
+        objOutput.println("usemtl Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1).replace('.', '_'));        
+        
         float x1 = x - r * cos(t);
         float y1 = y - r * sin(t);
         float z1 = z;
@@ -18296,7 +18296,7 @@ void SOLARCHVISION_export_objects () {
         String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
         String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
         String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
-        
+
         objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
         if (Export_Back_Sides != 0) {
           objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
@@ -18309,6 +18309,9 @@ void SOLARCHVISION_export_objects () {
         float ratio = 0.5;
       
         for (int back_front = -1; back_front <= 1; back_front += 2) {
+
+          objOutput.println("g Object2D_" + nf(f, 0) + "_bf" + nf((back_front + 1) / 2, 0));
+          objOutput.println("usemtl Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1).replace('.', '_'));
           
           float rot = back_front * PI / 2 + t;
           
@@ -18333,8 +18336,8 @@ void SOLARCHVISION_export_objects () {
           objOutput.println("v " + nf(x3, 0, Precision) + " " + nf(y3, 0, Precision) + " " + nf(z3, 0, Precision));
           objOutput.println("v " + nf(x4, 0, Precision) + " " + nf(y4, 0, Precision) + " " + nf(z4, 0, Precision));
           
-          objOutput.println("vt 0 " + nf(ratio, 0, 3) + " 0");
-          objOutput.println("vt 1 " + nf(ratio, 0, 3) + " 0");
+          objOutput.println("vt 0 " + nf(1 - ratio, 0, 3) + " 0");
+          objOutput.println("vt 1 " + nf(1 - ratio, 0, 3) + " 0");
           objOutput.println("vt 1 1 0");      
           objOutput.println("vt 0 1 0");
     
