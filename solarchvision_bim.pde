@@ -33280,7 +33280,7 @@ void SOLARCHVISION_draw_FractalPlants () {
         float Alpha = 0;
         float Beta = rot; 
       
-        SOLARCHVISION_Plant_branch(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize, as_Solid);
+        SOLARCHVISION_Plant_branch(1, x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize, as_Solid);
         
         if (as_Solid != 0) {
           allFractal_XYZSRA[f][5] = 0; 
@@ -33502,27 +33502,48 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
 
 
 
+int Plant_max_age = 5; // <<<<<<<<<< still internal
+
 
 float getRatio_Plant_branch (float d) {
  return (0.75 / pow(d, 0.06125));
 }
 
-void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize, float as_Solid) {
+
+
+void SOLARCHVISION_Plant_branch (int isValid, float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize, float as_Solid) {
+
+  println("d=", d);
+  
+  // must pass all the random values here.
+  float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
+  float rotXY = Beta + random(-PI, PI);
+  int c_Leaf = int(random(127));    
   
   h *= getRatio_Plant_branch(d);
 
-  int birth = 1;
+  for (int i = 1; i <= Plant_max_age; i++) {  
 
-  if ((birth != 0) && (d < Plant_max_degree)) {
+    float w = TrunkSize * 0.5 * pow(Plant_max_degree - d + 1, 1.25);
+    
+    float[] COL = {255, 100 - 6 * w, 50 - 3 * w, 0};
 
-    for (int i = 1; i <= d; i++) {  
-      
-      float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
-      float rotXY = Beta + random(-PI, PI);
-             
-      float w = TrunkSize * 0.5 * pow(Plant_max_degree - d + 1, 1.25);
-      
-      float[] COL = {255, 100 - 6 * w, 50 - 3 * w, 0};
+    float x_dif = 0;
+    float y_dif = 0;
+    float z_dif = h;
+
+    float x_rot = z_dif * sin(rotZX) +  x_dif * cos(rotZX);
+    float y_rot = y_dif;
+    float z_rot = z_dif * cos(rotZX) - x_dif * sin(rotZX);
+    
+    float x_new = x0 + x_rot * cos(rotXY) - y_rot * sin(rotXY);
+    float y_new = y0 + x_rot * sin(rotXY) + y_rot * cos(rotXY);
+    float z_new = z0 + z_rot;     
+
+    
+    int isValid_new = 0; 
+    if (i < d - Plant_min_degree) { 
+      isValid_new = 1;
 
       WIN3D_Diagrams.strokeWeight(1);
       
@@ -33532,21 +33553,9 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
       else {
         WIN3D_Diagrams.stroke(0);
       }
-
+  
       WIN3D_Diagrams.fill(COL[1], COL[2], COL[3]);
-
-      float x_dif = 0;
-      float y_dif = 0;
-      float z_dif = h;
-
-      float x_rot = z_dif * sin(rotZX) +  x_dif * cos(rotZX);
-      float y_rot = y_dif;
-      float z_rot = z_dif * cos(rotZX) - x_dif * sin(rotZX);
-      
-      float x_new = x0 + x_rot * cos(rotXY) - y_rot * sin(rotXY);
-      float y_new = y0 + x_rot * sin(rotXY) + y_rot * cos(rotXY);
-      float z_new = z0 + z_rot; 
-
+  
       if (Display_FractalPlant != 0) {
         int nSeg = 6; 
         for (int q = 0; q < nSeg; q++) {
@@ -33579,22 +33588,20 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
           WIN3D_Diagrams.endShape(CLOSE);
         }
       }
-
-      SOLARCHVISION_Plant_branch(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize, as_Solid);
-
     }
-  } else {
     
-    // must pass all the random values here.
-    float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
-    float rotXY = Beta + random(-PI, PI);
-    int c = int(random(127));  
-    
+    if (i < Plant_min_degree + Plant_max_age) {
+      SOLARCHVISION_Plant_branch(isValid_new, x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize, as_Solid);
+    }
+
+  }
+
+  if (d == Plant_max_degree) {    
     if (Display_Leaves != 0) {
       
       WIN3D_Diagrams.strokeWeight(0);
   
-      float[] COL = {127, 2 * c, 191 - c, 0};  // opaque!
+      float[] COL = {127, 2 * c_Leaf, 191 - c_Leaf, 0};  // opaque!
       
       WIN3D_Diagrams.stroke(COL[1], COL[2], COL[3], COL[0]); 
       WIN3D_Diagrams.fill(COL[1], COL[2], COL[3], COL[0]);
@@ -33608,10 +33615,9 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
         float r0 = 0.5 * LeafSize;
         SOLARCHVISION_addToSolids(as_Solid, x0,y0,z0, 2,2,2, r0,r0,r0, 0,0,0);
       }
-  
     }
-
   }
+  
 }
 
 
@@ -39888,4 +39894,6 @@ float softSelection_Radius = 2; // 2 = 2m
 int[] selectedVertex_softSelectionVertices = new int[0]; 
 float[] selectedVertex_softSelectionValues = new float[0];
 
+
+int Plant_max_age = 8; // <<<<<<<<<< still internal
 */
