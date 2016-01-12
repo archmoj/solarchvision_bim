@@ -18504,8 +18504,8 @@ void SOLARCHVISION_export_objects () {
           
                 println("Baking texture:", new_TEXTURE_path);
         
-                int RES1 = 64;
-                int RES2 = RES1;
+                int RES1 = objExportBakingRES;
+                int RES2 = objExportBakingRES;
           
                 PGraphics Face_Texture = createGraphics(RES1, RES2, P2D);
           
