@@ -13,7 +13,10 @@ int maximum_undo_number = 3;
 
 
 
-int objExportPrecision = 6; // <<<<<<<<<<<<<<<< internal!, still no option to change it or record it!
+int objExportPrecision = 6; // <<<<<<<<<<<<<<<< internal!, still no option to record it!
+int objExportBakingRES = 16; // <<<<<<<<<<<<<<<< internal!, still no option to record it!
+int objExportIndividualFaces = 0; // <<<<<<<<<<<<<<<< internal!, still no option to record it!
+
 
 
 
@@ -1399,7 +1402,6 @@ int pre_develop_option;
 int pre_STUDY_drw_Layer;
 int pre_sky_scenario;
 int pre_plot_impacts;
-
 
 
 
@@ -17810,7 +17812,7 @@ void SOLARCHVISION_addToFaces_afterSphericalTessellation (int m, int tes, int ly
 
 
 
-
+ 
 
 
 PrintWriter mtlOutput;
@@ -18242,7 +18244,7 @@ void SOLARCHVISION_export_objects () {
     for (int f = 1; f <= allObject2D_num; f++) {
 
       int n = abs(allObject2D_MAP[f]);
-
+      
       int w = Object2DImages[n].width; 
       int h = Object2DImages[n].height;
               
@@ -18256,10 +18258,18 @@ void SOLARCHVISION_export_objects () {
       if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
       
       if (allObject2D_MAP[f] < 0) t += PI;      
+
+      if (objExportIndividualFaces == 0) {
+        objOutput.println("g Object2D_" + nf(f, 0) + "_type" + nf(n, 0));
+        objOutput.println("usemtl Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1).replace('.', '_'));
+      }  
       
       { 
-        objOutput.println("g Object2D_" + nf(f, 0));
-        objOutput.println("usemtl Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1).replace('.', '_'));        
+        
+        if (objExportIndividualFaces == 1) {
+          objOutput.println("g Object2D_" + nf(f, 0) + "_ver");
+          objOutput.println("usemtl Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1).replace('.', '_'));
+        }        
         
         float x1 = x - r * cos(t);
         float y1 = y - r * sin(t);
@@ -18312,9 +18322,11 @@ void SOLARCHVISION_export_objects () {
         float ratio = 0.5;
       
         for (int back_front = -1; back_front <= 1; back_front += 2) {
-
-          objOutput.println("g Object2D_" + nf(f, 0) + "_bf" + nf((back_front + 1) / 2, 0));
-          objOutput.println("usemtl Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1).replace('.', '_'));
+          
+          if (objExportIndividualFaces == 1) {
+            objOutput.println("g Object2D_" + nf(f, 0) + "_hor" + nf((back_front + 1) / 2, 0));
+            objOutput.println("usemtl Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1).replace('.', '_'));
+          }
           
           float rot = back_front * PI / 2 + t;
           
@@ -18399,10 +18411,16 @@ void SOLARCHVISION_export_objects () {
         
         if (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1]) {
           
-          objOutput.println("g Object3D_" + nf(OBJ_NUM, 0));
+          if (objExportIndividualFaces == 0) {
+            objOutput.println("g Object3D_" + nf(OBJ_NUM, 0));
+          }
     
           for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
-          
+
+            if (objExportIndividualFaces == 1) {
+              objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_face" + nf(f, 0));
+            }
+            
             objOutput.print("f ");
             for (int j = 0; j < allFaces[f].length; j++) {
               objOutput.print(allFaces[f][j] + obj_lastVertexNumber);
@@ -18441,7 +18459,9 @@ void SOLARCHVISION_export_objects () {
         
         if (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1]) {
           
-          //objOutput.println("g Object3D_" + nf(OBJ_NUM, 0));
+          if (objExportIndividualFaces == 0) {
+            objOutput.println("g Object3D_" + nf(OBJ_NUM, 0));
+          }          
     
           for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
   
@@ -18614,8 +18634,11 @@ void SOLARCHVISION_export_objects () {
                   obj_lastVertexNumber += 4;
                   obj_lastVtextureNumber += 4;
                 }
+
+                if (objExportIndividualFaces == 1) {
+                  objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_face" + nf(f, 0) + "_side" + nf(back_or_front, 0) + "_sub" + nf(n, 0));
+                }
                 
-                objOutput.println("g allFaces" + "_side" + nf(back_or_front, 0) + "_no" + nf(f, 0) + "_sub" + nf(n, 0)); // <<<<< adding new object for each face may help other programs define sub-object levels well.  
                 objOutput.println("usemtl " +  the_filename.replace('.', '_'));
                 
                 String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
@@ -18695,7 +18718,11 @@ void SOLARCHVISION_export_objects () {
       randomSeed(s);
 
       if (n == 0) {
-    
+
+        if (objExportIndividualFaces == 0) {
+          objOutput.println("g FractalPlant_" + nf(f, 0));
+        }    
+        
         float Alpha = 0;
         float Beta = rot; 
       
@@ -29974,7 +30001,7 @@ class SOLARCHVISION_Spinner {
 
 String[][] ROLLOUTS = {
                         {"Location & Data", "Point", "Weather", "Environment"}, 
-                        {"Geometries & Space", "General", "Create", "Modify", "Solid", "Surface", "Living", "Simulation"},
+                        {"Geometries & Space", "General", "Create", "Modify", "Solid", "Surface", "Living", "Viewport", "Simulation"},
                         {"Time & Scenarios", "Period", "Ranges", "Filters"}, 
                         {"Illustration Options", "2D-Layers", "2D-Colors", "3D-Solar", "3D-Spatial", "Selection"},
                         {"Post-Processing", "Interpolation", "Developed", "Impacts"}, 
@@ -30326,9 +30353,21 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Fractal_Plant_LeafSize = roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_Plant_LeafSize" , Create_Fractal_Plant_LeafSize, 0, 10, 0.1), 0.1);    
     }    
     
+
+    if (ROLLOUT_child == 7) { // Viewport
+    
+      //WIN3D_FACES_SHADE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "WIN3D_FACES_SHADE", WIN3D_FACES_SHADE, 0, number_of_shading_options - 1, 1), 1));
+
+      WIN3D_EDGES_SHOW = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "WIN3D_EDGES_SHOW", WIN3D_EDGES_SHOW, 0, 1, 1), 1));  
+      Display_MODEL3D_EDGES = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MODEL3D_EDGES" , Display_MODEL3D_EDGES, 0, 1, 1), 1));
+      Display_MODEL3D_NORMALS = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MODEL3D_NORMALS" , Display_MODEL3D_NORMALS, 0, 1, 1), 1));
+      
+      CAM_clipNear = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipNear" , CAM_clipNear, 0.0001, 1000000000, -2);
+      CAM_clipFar = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipFar" , CAM_clipFar, 0.0001, 1000000000, -2);
+    }    
   
 
-    if (ROLLOUT_child == 7) { // Simulation
+    if (ROLLOUT_child == 8) { // Simulation
 
       Day_of_Impact_to_Display = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Day_of_Impact_to_Display" , Day_of_Impact_to_Display, 0, STUDY_j_end - STUDY_j_start, 1), 1));
 
@@ -30359,17 +30398,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       Display_windFlow = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Display_windFlow" , Display_windFlow, 0, 1, 1), 1));
       
-      //WIN3D_FACES_SHADE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "WIN3D_FACES_SHADE", WIN3D_FACES_SHADE, 0, number_of_shading_options - 1, 1), 1));
-
-      WIN3D_EDGES_SHOW = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "WIN3D_EDGES_SHOW", WIN3D_EDGES_SHOW, 0, 1, 1), 1));  
-      Display_MODEL3D_EDGES = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MODEL3D_EDGES" , Display_MODEL3D_EDGES, 0, 1, 1), 1));
-      Display_MODEL3D_NORMALS = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MODEL3D_NORMALS" , Display_MODEL3D_NORMALS, 0, 1, 1), 1));
-      
-      CAM_clipNear = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipNear" , CAM_clipNear, 0.0001, 1000000000, -2);
-      CAM_clipFar = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipFar" , CAM_clipFar, 0.0001, 1000000000, -2);      
+  
     }    
 
-    
 
     
     
@@ -30562,6 +30593,10 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Export_STUDY_info_node = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Export ASCII data", Export_STUDY_info_node, 0, 1, 1), 1));
       Export_STUDY_info_norm = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Export ASCII statistics", Export_STUDY_info_norm, 0, 1, 1), 1));
       Export_STUDY_info_prob = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Export ASCII probabilities", Export_STUDY_info_prob, 0, 1, 1), 1));
+
+      objExportPrecision = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportPrecision" , objExportPrecision, 0, 8, 1), 1));
+      objExportBakingRES = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportBakingRES" , objExportBakingRES, 0, 8, 1), 1));
+      objExportIndividualFaces = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportIndividualFaces" , objExportIndividualFaces, 0, 1, 1), 1));
 
       Export_Material_Library = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Export_Material_Library" , Export_Material_Library, 0, 1, 1), 1));
       Export_Back_Sides = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Export_Back_Sides" , Export_Back_Sides, 0, 1, 1), 1));  
@@ -33378,7 +33413,10 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
           String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
           String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
           
-          objOutput.println("g");   
+          if (objExportIndividualFaces == 1) {
+            objOutput.println(("g FractalPlant_Trunk_n" + nf(q, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
+          }              
+          
           objOutput.println("usemtl FractalPlant_Trunk");
           objOutput.println("f " + n1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);        
 
@@ -33447,7 +33485,10 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
         String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
         String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
   
-        objOutput.println("g");   
+        if (objExportIndividualFaces == 1) {
+          objOutput.println(("g FractalPlant_Leaf_n" + nf(i, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
+        }
+        
         objOutput.println("usemtl FractalPlant_Leaf");
         objOutput.println("f " + n1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
         if (Export_Back_Sides != 0) {
