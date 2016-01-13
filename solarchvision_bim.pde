@@ -18483,7 +18483,7 @@ void SOLARCHVISION_export_objects () {
 
   if ((Export_Material_Library != 0) && (Display_Building_Model != 0)) {
 
-    int num_vertices_added = 0;
+    
     
     int Create_Face_Texture = 0;
     
@@ -18492,6 +18492,8 @@ void SOLARCHVISION_export_objects () {
     }
     
     if (Create_Face_Texture == 0) {
+      
+      int num_vertices_added = 0;
     
       for (int mt = 0; mt < Materials_Number; mt++) {
 
@@ -18525,6 +18527,7 @@ void SOLARCHVISION_export_objects () {
         if (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1]) {
           
           if (objExportIndividualFaces == 0) {
+            obj_lastGroupNumber += 1;
             objOutput.println("g Object3D_" + nf(OBJ_NUM, 0));
           }
     
@@ -18550,10 +18553,11 @@ void SOLARCHVISION_export_objects () {
                 objOutput.println();
               }          
             }    
-
           }
         }
       }
+    
+      obj_lastVertexNumber += num_vertices_added;
     
     }
     else {
@@ -18578,10 +18582,13 @@ void SOLARCHVISION_export_objects () {
         
         if (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1]) {
           
+          int num_vertices_added = 0;
+          
           for (float _turn = 1; _turn < 4; _turn += 1) {
             
             if (_turn == 3) {
               if (objExportIndividualFaces == 0) {
+                obj_lastGroupNumber += 1;
                 objOutput.println("g Object3D_" + nf(OBJ_NUM, 0));
               }          
             }
@@ -18749,8 +18756,6 @@ void SOLARCHVISION_export_objects () {
                       objOutput.println("v " + nf(x2, 0, objExportPrecision) + " " +  nf(y2, 0, objExportPrecision) + " " +  nf(z2, 0, objExportPrecision));
                       objOutput.println("v " + nf(x3, 0, objExportPrecision) + " " +  nf(y3, 0, objExportPrecision) + " " +  nf(z3, 0, objExportPrecision));
                       objOutput.println("v " + nf(x4, 0, objExportPrecision) + " " +  nf(y4, 0, objExportPrecision) + " " +  nf(z4, 0, objExportPrecision));
-                      
-                       num_vertices_added += 4;                      
                     }
                   }
                   
@@ -18765,23 +18770,29 @@ void SOLARCHVISION_export_objects () {
                   }
                   
                   if (_turn == 3) {
+                    
+                    if (back_or_front == 1 - Export_Back_Sides) { // creating the vertices only the first time
+                      num_vertices_added += 4;
+                    } 
   
                     if (objExportIndividualFaces == 1) {
+                      obj_lastGroupNumber += 1;
                       objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_face" + nf(f, 0) + "_side" + nf(back_or_front, 0) + "_sub" + nf(n, 0));
                     }
                     
                     objOutput.println("usemtl " +  the_filename.replace('.', '_'));
                     
-                    String n1_txt = nf(obj_lastVertexNumber - num_vertices_added + 1, 0); 
-                    String n2_txt = nf(obj_lastVertexNumber - num_vertices_added + 2, 0);
-                    String n3_txt = nf(obj_lastVertexNumber - num_vertices_added + 3, 0);
-                    String n4_txt = nf(obj_lastVertexNumber - num_vertices_added + 4, 0);
+                    String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0); 
+                    String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
+                    String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
+                    String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
                     
-                    String m1_txt = nf(obj_lastVtextureNumber - num_vertices_added + 1, 0); 
-                    String m2_txt = nf(obj_lastVtextureNumber - num_vertices_added + 2, 0);
-                    String m3_txt = nf(obj_lastVtextureNumber - num_vertices_added + 3, 0);
-                    String m4_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4, 0);          
-      
+                    String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0); 
+                    String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);
+                    String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);
+                    String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);          
+                    
+                    obj_lastFaceNumber += 1;
                     objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
                   }
                   
@@ -18789,11 +18800,13 @@ void SOLARCHVISION_export_objects () {
               }
             }
           }
+
+          obj_lastVertexNumber += num_vertices_added;
+          obj_lastVtextureNumber += num_vertices_added;              
+          
         }
       }
     }
-    
-    obj_lastVertexNumber += num_vertices_added;
   }
 
 
@@ -18855,6 +18868,7 @@ void SOLARCHVISION_export_objects () {
       if (n == 0) {
 
         if (objExportIndividualFaces == 0) {
+          obj_lastGroupNumber += 1;
           objOutput.println("g FractalPlant_" + nf(f, 0));
         }    
         
