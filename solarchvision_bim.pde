@@ -1534,9 +1534,9 @@ int[][] Materials_Color = new int [Materials_Number][4]; // ARGB
   }
   
   {
-    for (int i = 11; i < Materials_Number; i++) {
+    for (int mt = 11; mt < Materials_Number; mt++) {
       int[] COL = {255, int(random(256)), int(random(256)), int(random(256))};
-      Materials_Color[i] = COL;
+      Materials_Color[mt] = COL;
     }
   }  
 }
@@ -18492,6 +18492,26 @@ void SOLARCHVISION_export_objects () {
     }
     
     if (Create_Face_Texture == 0) {
+    
+      for (int mt = 0; mt < Materials_Number; mt++) {
+
+        float a = Materials_Color[mt][0] / 255.0; 
+        float r = Materials_Color[mt][1] / 255.0; 
+        float g = Materials_Color[mt][2] / 255.0; 
+        float b = Materials_Color[mt][3] / 255.0; 
+        
+        mtlOutput.println("newmtl SurfaceMaterial_" + nf(mt, 0));
+        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+        mtlOutput.println("\tKa " + nf(r, 0, 3) + " " + nf(g, 0, 3) + " " + nf(b, 0, 3)); // ambient
+        mtlOutput.println("\tKd " + nf(r, 0, 3) + " " + nf(g, 0, 3) + " " + nf(b, 0, 3)); // diffuse
+        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+    
+        mtlOutput.println("\td " + nf(a, 0, 3)); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+        mtlOutput.println("\tTr " + nf(a, 0, 3)); //  0-1 transparency
+        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter      
+      }
   
       for (int i = 1; i < allVertices.length; i++) {
 
@@ -18515,6 +18535,8 @@ void SOLARCHVISION_export_objects () {
               objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_face" + nf(f, 0));
             }
 
+            int mt = allFaces_MTLV[f][0];
+            objOutput.println("usemtl SurfaceMaterial_" + nf(mt, 0));
                      
             obj_lastFaceNumber += 1;   
             objOutput.print("f ");
