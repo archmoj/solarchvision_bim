@@ -15,7 +15,7 @@ int maximum_undo_number = 3;
 
 int objExportPrecision = 6; // <<<<<<<<<<<<<<<< internal!, still no option to record it!
 int objExportBakingRES = 16; // <<<<<<<<<<<<<<<< internal!, still no option to record it!
-int objExportIndividualFaces = 1; // <<<<<<<<<<<<<<<< internal!, still no option to record it!
+int objExportIndividualFaces = 0; // <<<<<<<<<<<<<<<< internal!, still no option to record it!
 
 
 
