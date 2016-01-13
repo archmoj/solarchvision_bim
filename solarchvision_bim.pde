@@ -18483,6 +18483,8 @@ void SOLARCHVISION_export_objects () {
 
   if ((Export_Material_Library != 0) && (Display_Building_Model != 0)) {
 
+    int num_vertices_added = 0;
+    
     int Create_Face_Texture = 0;
     
     if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
@@ -18492,21 +18494,12 @@ void SOLARCHVISION_export_objects () {
     if (Create_Face_Texture == 0) {
   
       for (int i = 1; i < allVertices.length; i++) {
-    
-        objOutput.print("v ");
-        for (int j = 0; j < 3; j++) {
-          
-          objOutput.print(nf(allVertices[i][j], 0, objExportPrecision));
-          
-          if (j + 1 < 3) {
-            objOutput.print(" ");
-          }
-          else {
-            objOutput.println();
-          }          
-        }    
+
+        objOutput.println("v " + nf(allVertices[i][0], 0, objExportPrecision) + " " + nf(allVertices[i][1], 0, objExportPrecision) + " " + nf(allVertices[i][2], 0, objExportPrecision));
+            
+        num_vertices_added += 1;
       }  
-      
+    
       for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
         
         if (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1]) {
@@ -18518,9 +18511,12 @@ void SOLARCHVISION_export_objects () {
           for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
 
             if (objExportIndividualFaces == 1) {
+              obj_lastGroupNumber += 1;
               objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_face" + nf(f, 0));
             }
-            
+
+                     
+            obj_lastFaceNumber += 1;   
             objOutput.print("f ");
             for (int j = 0; j < allFaces[f].length; j++) {
               objOutput.print(allFaces[f][j] + obj_lastVertexNumber);
@@ -18532,11 +18528,10 @@ void SOLARCHVISION_export_objects () {
                 objOutput.println();
               }          
             }    
+
           }
         }
       }
-      
-      obj_lastVertexNumber += allVertices.length - 1;
     
     }
     else {
@@ -18759,6 +18754,8 @@ void SOLARCHVISION_export_objects () {
         }
       }
     }
+    
+    obj_lastVertexNumber += num_vertices_added;
   }
 
 
