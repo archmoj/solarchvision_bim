@@ -13,10 +13,16 @@ int maximum_undo_number = 3;
 
 
 
-int objExportPrecisionVertex = 6; // <<<<<<<<<<<<<<<< internal!, still no option to record it!
-int objExportPrecisionVtexture = 3; // <<<<<<<<<<<<<<<< internal!, still no option to record it!
-int objExportBakingRES = 16; // <<<<<<<<<<<<<<<< internal!, still no option to record it!
-int objExportIndividualFaces = 0; // <<<<<<<<<<<<<<<< internal!, still no option to record it!
+int objExportPrecisionVertex = 6; 
+int objExportPrecisionVtexture = 3;
+int objExportIndividualFaces = 0;
+
+int objExportMaterialLibrary = 1; // 0-1
+int objExportBackSides = 1; // 0-1
+int objExportCombinedMaterial = 0; // 0-1
+int objExportBakingResolution = 16;
+
+
 
 
 
@@ -302,12 +308,6 @@ int SpatialImpact_record_JPG = 0;
 
 int SolarImpact_record_JPG = 0;  
 
-int Export_Back_Sides = 1; // 0-1
-int Export_Material_Library = 1; // 0-1
-
-int Export_3Dmodel = 0; // inactive
-int Export_solids = 0; // inactive
-int Export_meshing = 0; // inactive
 
 int Ensemble_Audio_Output = 0; // inactive
 int Launch_External_Simulation = 0; // inactive
@@ -17846,7 +17846,7 @@ void SOLARCHVISION_export_objects () {
   obj_lastFaceNumber = 0;
   obj_lastGroupNumber = 0;
 
-  if ((Export_Material_Library != 0) && (Display_EARTH3D != 0)) {
+  if ((objExportMaterialLibrary != 0) && (Display_EARTH3D != 0)) {
 
     mtlOutput.println("newmtl EarthSphere");
     mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
@@ -18010,7 +18010,7 @@ void SOLARCHVISION_export_objects () {
   }
 
 
-  if ((Export_Material_Library != 0) && (Display_LAND_MESH != 0)) {
+  if ((objExportMaterialLibrary != 0) && (Display_LAND_MESH != 0)) {
 
     mtlOutput.println("newmtl LandMesh");
     mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
@@ -18126,7 +18126,7 @@ void SOLARCHVISION_export_objects () {
   }
 
 
-  if ((Export_Material_Library != 0) && (Display_SolarImpact_Image != 0)) {
+  if ((objExportMaterialLibrary != 0) && (Display_SolarImpact_Image != 0)) {
     if (SolarImpact_Image_Section != 0) {
       
       String the_filename = "SolarImpact.jpg";
@@ -18245,7 +18245,7 @@ void SOLARCHVISION_export_objects () {
 
 
 
-  if ((Export_Material_Library != 0) && (Display_Trees_People != 0)) {
+  if ((objExportMaterialLibrary != 0) && (Display_Trees_People != 0)) {
 
     for (int i = 1; i < Object2D_ImagePath.length; i++) {
     
@@ -18398,7 +18398,7 @@ void SOLARCHVISION_export_objects () {
             
             obj_lastFaceNumber += 1;            
             objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-            if (Export_Back_Sides != 0) {
+            if (objExportBackSides != 0) {
               objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
             }
           }
@@ -18468,7 +18468,7 @@ void SOLARCHVISION_export_objects () {
               
               obj_lastFaceNumber += 1;            
               objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-              if (Export_Back_Sides != 0) {
+              if (objExportBackSides != 0) {
                 objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
               }
               
@@ -18482,7 +18482,7 @@ void SOLARCHVISION_export_objects () {
   }
 
 
-  if ((Export_Material_Library != 0) && (Display_Building_Model != 0)) {
+  if ((objExportMaterialLibrary != 0) && (Display_Building_Model != 0)) {
 
     
     
@@ -18627,7 +18627,7 @@ void SOLARCHVISION_export_objects () {
         
               for (int n = 0; n < TotalSubNo; n++) {
     
-               for (int back_or_front = 1 - Export_Back_Sides; back_or_front <= 1; back_or_front++) {
+               for (int back_or_front = 1 - objExportBackSides; back_or_front <= 1; back_or_front++) {
                  
                  String the_filename = "Face_Texture" + "_side" + nf(back_or_front, 0) + "_no" + nf(f, 0) + "_sub" + nf(n, 0) + ".jpg";
                  
@@ -18636,8 +18636,8 @@ void SOLARCHVISION_export_objects () {
               
                     println("Baking texture:", new_TEXTURE_path);
             
-                    int RES1 = objExportBakingRES;
-                    int RES2 = objExportBakingRES;
+                    int RES1 = objExportBakingResolution;
+                    int RES2 = objExportBakingResolution;
               
                     PGraphics Face_Texture = createGraphics(RES1, RES2, P2D);
               
@@ -18752,7 +18752,7 @@ void SOLARCHVISION_export_objects () {
                     //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
                     mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
             
-                    if (back_or_front == 1 - Export_Back_Sides) { // creating the vertices only the first time
+                    if (back_or_front == 1 - objExportBackSides) { // creating the vertices only the first time
                       objOutput.println("v " + nf(x1, 0, objExportPrecisionVertex) + " " +  nf(y1, 0, objExportPrecisionVertex) + " " +  nf(z1, 0, objExportPrecisionVertex));
                       objOutput.println("v " + nf(x2, 0, objExportPrecisionVertex) + " " +  nf(y2, 0, objExportPrecisionVertex) + " " +  nf(z2, 0, objExportPrecisionVertex));
                       objOutput.println("v " + nf(x3, 0, objExportPrecisionVertex) + " " +  nf(y3, 0, objExportPrecisionVertex) + " " +  nf(z3, 0, objExportPrecisionVertex));
@@ -18761,7 +18761,7 @@ void SOLARCHVISION_export_objects () {
                   }
                   
                   if (_turn == 2) {
-                    if (back_or_front == 1 - Export_Back_Sides) { // creating the vertices only the first time
+                    if (back_or_front == 1 - objExportBackSides) { // creating the vertices only the first time
 
                       objOutput.println("vt 0 1 0");
                       objOutput.println("vt 1 1 0");
@@ -18772,7 +18772,7 @@ void SOLARCHVISION_export_objects () {
                   
                   if (_turn == 3) {
                     
-                    if (back_or_front == 1 - Export_Back_Sides) { // creating the vertices only the first time
+                    if (back_or_front == 1 - objExportBackSides) { // creating the vertices only the first time
                       num_vertices_added += 4;
                     } 
   
@@ -18813,7 +18813,7 @@ void SOLARCHVISION_export_objects () {
 
 
 
-  if ((Export_Material_Library != 0) && (Display_FractalPlant != 0)) {
+  if ((objExportMaterialLibrary != 0) && (Display_FractalPlant != 0)) {
 
     mtlOutput.println("newmtl " + "FractalPlant_Trunk");
     mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
@@ -30744,17 +30744,16 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Export_STUDY_info_norm = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Export ASCII statistics", Export_STUDY_info_norm, 0, 1, 1), 1));
       Export_STUDY_info_prob = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Export ASCII probabilities", Export_STUDY_info_prob, 0, 1, 1), 1));
 
-      objExportPrecisionVertex = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportPrecisionVertex" , objExportPrecisionVertex, 0, 8, 1), 1));
-      objExportBakingRES = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportBakingRES" , objExportBakingRES, 0, 8, 1), 1));
+      objExportPrecisionVertex = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportPrecisionVertex" , objExportPrecisionVertex, 0, 1, 1), 1));
+      objExportPrecisionVtexture = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportPrecisionVtexture" , objExportPrecisionVtexture, 0, 1, 1), 1));
       objExportIndividualFaces = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportIndividualFaces" , objExportIndividualFaces, 0, 1, 1), 1));
+      
+      objExportMaterialLibrary = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportMaterialLibrary" , objExportMaterialLibrary, 0, 1, 1), 1));
+      objExportBackSides = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportBackSides" , objExportBackSides, 0, 1, 1), 1));
+      objExportCombinedMaterial = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportCombinedMaterial" , objExportCombinedMaterial, 0, 1, 1), 1));      
+      objExportBakingResolution = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportBakingResolution" , objExportBakingResolution, 0, 1, 1), 1));
+      
 
-      Export_Material_Library = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Export_Material_Library" , Export_Material_Library, 0, 1, 1), 1));
-      Export_Back_Sides = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Export_Back_Sides" , Export_Back_Sides, 0, 1, 1), 1));  
-      
-      Export_3Dmodel = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Export_3Dmodel", Export_3Dmodel, 0, 1, 1), 1));
-      Export_solids = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Export_solids", Export_solids, 0, 1, 1), 1));
-      Export_meshing = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Export_meshing", Export_meshing, 0, 1, 1), 1));
-      
       Display_Output_in_Explorer = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Display_Output_in_Explorer", Display_Output_in_Explorer, 0, 1, 1), 1));
     }  
   
@@ -33641,7 +33640,7 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
         
         objOutput.println("usemtl FractalPlant_Leaf");
         objOutput.println("f " + n1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
-        if (Export_Back_Sides != 0) {
+        if (objExportBackSides != 0) {
           //objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
         }      
       }
@@ -38266,9 +38265,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("SpatialImpact_record_PDF", SpatialImpact_record_PDF);
   newChild1.setInt("SpatialImpact_record_JPG", SpatialImpact_record_JPG);
   newChild1.setInt("SolarImpact_record_JPG", SolarImpact_record_JPG);
-  newChild1.setInt("Export_3Dmodel", Export_3Dmodel);
-  newChild1.setInt("Export_solids", Export_solids);
-  newChild1.setInt("Export_meshing", Export_meshing);
+
   newChild1.setInt("Ensemble_Audio_Output", Ensemble_Audio_Output);
   newChild1.setInt("Launch_External_Simulation", Launch_External_Simulation);
   newChild1.setInt("Launch_External_Hardware", Launch_External_Hardware);
@@ -38596,6 +38593,15 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setString("Default_Font", Default_Font);
   newChild1.setInt("Object2D_PEOPLE_Files_Num", Object2D_PEOPLE_Files_Num);
   newChild1.setInt("Object2D_TREES_Files_Num", Object2D_TREES_Files_Num);  
+  
+  newChild1.setInt("objExportPrecisionVertex", objExportPrecisionVertex);
+  newChild1.setInt("objExportPrecisionVtexture", objExportPrecisionVtexture);
+  newChild1.setInt("objExportIndividualFaces", objExportIndividualFaces);
+  newChild1.setInt("objExportMaterialLibrary", objExportMaterialLibrary);
+  newChild1.setInt("objExportBackSides", objExportBackSides);
+  newChild1.setInt("objExportCombinedMaterial", objExportCombinedMaterial);
+  newChild1.setInt("objExportBakingResolution", objExportBakingResolution);
+    
   {
     int TEXTURE_copied = 0;
 
@@ -39196,9 +39202,7 @@ void SOLARCHVISION_load_project (String myFile) {
       SpatialImpact_record_PDF = children0[L].getInt("SpatialImpact_record_PDF");
       SpatialImpact_record_JPG = children0[L].getInt("SpatialImpact_record_JPG");
       SolarImpact_record_JPG = children0[L].getInt("SolarImpact_record_JPG");
-      Export_3Dmodel = children0[L].getInt("Export_3Dmodel");
-      Export_solids = children0[L].getInt("Export_solids");
-      Export_meshing = children0[L].getInt("Export_meshing");
+
       Ensemble_Audio_Output = children0[L].getInt("Ensemble_Audio_Output");
       Launch_External_Simulation = children0[L].getInt("Launch_External_Simulation");
       Launch_External_Hardware = children0[L].getInt("Launch_External_Hardware");
@@ -39526,8 +39530,16 @@ void SOLARCHVISION_load_project (String myFile) {
       LAND_mid_lon = Double.parseDouble(children0[L].getString("LAND_mid_lon"));
       Object2D_PEOPLE_Files_Num = children0[L].getInt("Object2D_PEOPLE_Files_Num");
       Object2D_TREES_Files_Num = children0[L].getInt("Object2D_TREES_Files_Num");
-        
-      
+
+      objExportPrecisionVertex = children0[L].getInt("objExportPrecisionVertex");
+      objExportPrecisionVtexture = children0[L].getInt("objExportPrecisionVtexture");
+      objExportIndividualFaces = children0[L].getInt("objExportIndividualFaces");
+      objExportMaterialLibrary  = children0[L].getInt("objExportMaterialLibrary ");
+      objExportBackSides = children0[L].getInt("objExportBackSides");
+      objExportCombinedMaterial = children0[L].getInt("objExportCombinedMaterial");      
+      objExportBakingResolution = children0[L].getInt("objExportBakingResolution");
+
+
       {
         String new_Default_Font = children0[L].getString("Default_Font");
         if (Default_Font.equals(new_Default_Font)) {
