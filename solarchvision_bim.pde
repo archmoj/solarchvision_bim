@@ -13,7 +13,8 @@ int maximum_undo_number = 3;
 
 
 
-int objExportPrecision = 6; // <<<<<<<<<<<<<<<< internal!, still no option to record it!
+int objExportPrecisionVertex = 6; // <<<<<<<<<<<<<<<< internal!, still no option to record it!
+int objExportPrecisionVtexture = 3; // <<<<<<<<<<<<<<<< internal!, still no option to record it!
 int objExportBakingRES = 16; // <<<<<<<<<<<<<<<< internal!, still no option to record it!
 int objExportIndividualFaces = 0; // <<<<<<<<<<<<<<<< internal!, still no option to record it!
 
@@ -17968,11 +17969,11 @@ void SOLARCHVISION_export_objects () {
             v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
             
             if (_turn == 1) {
-              objOutput.println("v " + nf(x, 0, objExportPrecision) + " " + nf(y, 0, objExportPrecision) + " " + nf(z, 0, objExportPrecision));
+              objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z, 0, objExportPrecisionVertex));
             }
 
             if (_turn == 2) {
-              objOutput.println("vt " + nf(u, 0, 3) + " " + nf(v, 0, 3) + " 0");
+              objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
             }
             
             if (_turn == 3) {
@@ -18067,11 +18068,11 @@ void SOLARCHVISION_export_objects () {
         float v = y / LAND_TEXTURE_scale_V + 0.5;
         
         if (_turn == 1) {
-          objOutput.println("v " + nf(x, 0, objExportPrecision) + " " + nf(y, 0, objExportPrecision) + " " + nf(z, 0, objExportPrecision));
+          objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z, 0, objExportPrecisionVertex));
         }
         
         if (_turn == 2) {
-          objOutput.println("vt " + nf(u, 0, 3) + " " + nf(v, 0, 3) + " 0");
+          objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
         }
   
         if (_turn == 3) {
@@ -18210,11 +18211,11 @@ void SOLARCHVISION_export_objects () {
             v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
             
             if (_turn == 1) {
-              objOutput.println("v " + nf(x, 0, objExportPrecision) + " " + nf(y, 0, objExportPrecision) + " " + nf(z, 0, objExportPrecision));
+              objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z, 0, objExportPrecisionVertex));
             }
             
             if (_turn == 2) {
-              objOutput.println("vt " + nf(u, 0, 3) + " " + nf(v, 0, 3) + " 0");
+              objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
             }
             
             if (_turn == 3) {
@@ -18361,10 +18362,10 @@ void SOLARCHVISION_export_objects () {
             float y4 = y - r * sin(t);
             float z4 = z + 2 * r;
           
-            objOutput.println("v " + nf(x1, 0, objExportPrecision) + " " + nf(y1, 0, objExportPrecision) + " " + nf(z1, 0, objExportPrecision));
-            objOutput.println("v " + nf(x2, 0, objExportPrecision) + " " + nf(y2, 0, objExportPrecision) + " " + nf(z2, 0, objExportPrecision));
-            objOutput.println("v " + nf(x3, 0, objExportPrecision) + " " + nf(y3, 0, objExportPrecision) + " " + nf(z3, 0, objExportPrecision));
-            objOutput.println("v " + nf(x4, 0, objExportPrecision) + " " + nf(y4, 0, objExportPrecision) + " " + nf(z4, 0, objExportPrecision));
+            objOutput.println("v " + nf(x1, 0, objExportPrecisionVertex) + " " + nf(y1, 0, objExportPrecisionVertex) + " " + nf(z1, 0, objExportPrecisionVertex));
+            objOutput.println("v " + nf(x2, 0, objExportPrecisionVertex) + " " + nf(y2, 0, objExportPrecisionVertex) + " " + nf(z2, 0, objExportPrecisionVertex));
+            objOutput.println("v " + nf(x3, 0, objExportPrecisionVertex) + " " + nf(y3, 0, objExportPrecisionVertex) + " " + nf(z3, 0, objExportPrecisionVertex));
+            objOutput.println("v " + nf(x4, 0, objExportPrecisionVertex) + " " + nf(y4, 0, objExportPrecisionVertex) + " " + nf(z4, 0, objExportPrecisionVertex));
             
             num_vertices_added += 4;
           }
@@ -18431,17 +18432,17 @@ void SOLARCHVISION_export_objects () {
               float y4 = y - r * sin(t) + r * sin(rot);
               float z4 = z + 2 * r * ratio;
           
-              objOutput.println("v " + nf(x1, 0, objExportPrecision) + " " + nf(y1, 0, objExportPrecision) + " " + nf(z1, 0, objExportPrecision));
-              objOutput.println("v " + nf(x2, 0, objExportPrecision) + " " + nf(y2, 0, objExportPrecision) + " " + nf(z2, 0, objExportPrecision));
-              objOutput.println("v " + nf(x3, 0, objExportPrecision) + " " + nf(y3, 0, objExportPrecision) + " " + nf(z3, 0, objExportPrecision));
-              objOutput.println("v " + nf(x4, 0, objExportPrecision) + " " + nf(y4, 0, objExportPrecision) + " " + nf(z4, 0, objExportPrecision));
+              objOutput.println("v " + nf(x1, 0, objExportPrecisionVertex) + " " + nf(y1, 0, objExportPrecisionVertex) + " " + nf(z1, 0, objExportPrecisionVertex));
+              objOutput.println("v " + nf(x2, 0, objExportPrecisionVertex) + " " + nf(y2, 0, objExportPrecisionVertex) + " " + nf(z2, 0, objExportPrecisionVertex));
+              objOutput.println("v " + nf(x3, 0, objExportPrecisionVertex) + " " + nf(y3, 0, objExportPrecisionVertex) + " " + nf(z3, 0, objExportPrecisionVertex));
+              objOutput.println("v " + nf(x4, 0, objExportPrecisionVertex) + " " + nf(y4, 0, objExportPrecisionVertex) + " " + nf(z4, 0, objExportPrecisionVertex));
               
               num_vertices_added += 4;
             }
             
             if (_turn == 2) {
-              objOutput.println("vt 0 " + nf(1 - ratio, 0, 3) + " 0");
-              objOutput.println("vt 1 " + nf(1 - ratio, 0, 3) + " 0");
+              objOutput.println("vt 0 " + nf(1 - ratio, 0, objExportPrecisionVtexture) + " 0");
+              objOutput.println("vt 1 " + nf(1 - ratio, 0, objExportPrecisionVtexture) + " 0");
               objOutput.println("vt 1 1 0");      
               objOutput.println("vt 0 1 0");
             }
@@ -18517,7 +18518,7 @@ void SOLARCHVISION_export_objects () {
   
       for (int i = 1; i < allVertices.length; i++) {
 
-        objOutput.println("v " + nf(allVertices[i][0], 0, objExportPrecision) + " " + nf(allVertices[i][1], 0, objExportPrecision) + " " + nf(allVertices[i][2], 0, objExportPrecision));
+        objOutput.println("v " + nf(allVertices[i][0], 0, objExportPrecisionVertex) + " " + nf(allVertices[i][1], 0, objExportPrecisionVertex) + " " + nf(allVertices[i][2], 0, objExportPrecisionVertex));
             
         num_vertices_added += 1;
       }  
@@ -18752,10 +18753,10 @@ void SOLARCHVISION_export_objects () {
                     mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
             
                     if (back_or_front == 1 - Export_Back_Sides) { // creating the vertices only the first time
-                      objOutput.println("v " + nf(x1, 0, objExportPrecision) + " " +  nf(y1, 0, objExportPrecision) + " " +  nf(z1, 0, objExportPrecision));
-                      objOutput.println("v " + nf(x2, 0, objExportPrecision) + " " +  nf(y2, 0, objExportPrecision) + " " +  nf(z2, 0, objExportPrecision));
-                      objOutput.println("v " + nf(x3, 0, objExportPrecision) + " " +  nf(y3, 0, objExportPrecision) + " " +  nf(z3, 0, objExportPrecision));
-                      objOutput.println("v " + nf(x4, 0, objExportPrecision) + " " +  nf(y4, 0, objExportPrecision) + " " +  nf(z4, 0, objExportPrecision));
+                      objOutput.println("v " + nf(x1, 0, objExportPrecisionVertex) + " " +  nf(y1, 0, objExportPrecisionVertex) + " " +  nf(z1, 0, objExportPrecisionVertex));
+                      objOutput.println("v " + nf(x2, 0, objExportPrecisionVertex) + " " +  nf(y2, 0, objExportPrecisionVertex) + " " +  nf(z2, 0, objExportPrecisionVertex));
+                      objOutput.println("v " + nf(x3, 0, objExportPrecisionVertex) + " " +  nf(y3, 0, objExportPrecisionVertex) + " " +  nf(z3, 0, objExportPrecisionVertex));
+                      objOutput.println("v " + nf(x4, 0, objExportPrecisionVertex) + " " +  nf(y4, 0, objExportPrecisionVertex) + " " +  nf(z4, 0, objExportPrecisionVertex));
                     }
                   }
                   
@@ -23452,7 +23453,7 @@ ParametricGeometry[] SolidObjects = {};
 
 void SOLARCHVISION_add_ParametricGeometries () {
 
-
+/*
   {
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     float dx = 10;
@@ -23576,7 +23577,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
       allPolymesh_SolarPivotXYZ[n][2] = z;
     }    
   }    
-  
+*/  
  
   /* 
   {
@@ -30743,7 +30744,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Export_STUDY_info_norm = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Export ASCII statistics", Export_STUDY_info_norm, 0, 1, 1), 1));
       Export_STUDY_info_prob = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Export ASCII probabilities", Export_STUDY_info_prob, 0, 1, 1), 1));
 
-      objExportPrecision = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportPrecision" , objExportPrecision, 0, 8, 1), 1));
+      objExportPrecisionVertex = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportPrecisionVertex" , objExportPrecisionVertex, 0, 8, 1), 1));
       objExportBakingRES = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportBakingRES" , objExportBakingRES, 0, 8, 1), 1));
       objExportIndividualFaces = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportIndividualFaces" , objExportIndividualFaces, 0, 1, 1), 1));
 
@@ -33544,8 +33545,8 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
   
             v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
             
-            objOutput.println("v " + nf(x, 0, objExportPrecision) + " " + nf(y, 0, objExportPrecision) + " " + nf(z, 0, objExportPrecision));
-            objOutput.println("vt " + nf(u, 0, 3) + " " + nf(v, 0, 3) + " 0");
+            objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z, 0, objExportPrecisionVertex));
+            objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
   
             obj_lastVertexNumber += 1;
             obj_lastVtextureNumber += 1;
@@ -33617,8 +33618,8 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
           
           v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
           
-          objOutput.println("v " + nf(x, 0, objExportPrecision) + " " + nf(y, 0, objExportPrecision) + " " + nf(z, 0, objExportPrecision));
-          objOutput.println("vt " + nf(u, 0, 3) + " " + nf(v, 0, 3) + " 0");
+          objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z, 0, objExportPrecisionVertex));
+          objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
           
           obj_lastVertexNumber += 1;
           obj_lastVtextureNumber += 1;
