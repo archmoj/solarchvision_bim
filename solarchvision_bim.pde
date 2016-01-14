@@ -15,7 +15,7 @@ int maximum_undo_number = 3;
 
 int objExportPrecisionVertex = 6; 
 int objExportPrecisionVtexture = 3;
-int objExportIndividualFaces = 0;
+int objExportPolyToPoly = 1; // 0: Exports each polymesh to different individual faces, 1: Exports polymesh to polymesh 
 
 int objExportMaterialLibrary = 1; // 0-1
 int objExportBackSides = 1; // 0-1
@@ -17880,7 +17880,7 @@ void SOLARCHVISION_export_objects () {
     }
   
   
-    if (objExportIndividualFaces == 0) {
+    if (objExportPolyToPoly == 1) {
       obj_lastGroupNumber += 1;  
       objOutput.println("g EarthSphere"); 
     }
@@ -17992,7 +17992,7 @@ void SOLARCHVISION_export_objects () {
           String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
           String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
           
-          if (objExportIndividualFaces == 1) {
+          if (objExportPolyToPoly == 0) {
             if (_turn == 3) {
               obj_lastGroupNumber += 1;
               objOutput.println("g EarthSphere_" + nf(f, 0));
@@ -18043,7 +18043,7 @@ void SOLARCHVISION_export_objects () {
       mtlOutput.println("\tmap_d " + mapsSubfolder + the_filename); // diffuse map
     }
 
-    if (objExportIndividualFaces == 0) {
+    if (objExportPolyToPoly == 1) {
       obj_lastGroupNumber += 1;  
       objOutput.println("g LandMesh");
     }
@@ -18113,7 +18113,7 @@ void SOLARCHVISION_export_objects () {
         String m3_txt = nf(vtNo3, 0);
         String m4_txt = nf(vtNo4, 0);
         
-        if (objExportIndividualFaces == 1) {
+        if (objExportPolyToPoly == 0) {
           obj_lastGroupNumber += 1;
           objOutput.println("g LandMesh_" + nf(f, 0));
         } 
@@ -18170,7 +18170,7 @@ void SOLARCHVISION_export_objects () {
   
       if (SolarImpact_Image_Section != 0) {
 
-        if (objExportIndividualFaces == 0) {
+        if (objExportPolyToPoly == 1) {
           obj_lastGroupNumber += 1;  
           objOutput.println("g SolarImpact");
         }
@@ -18332,7 +18332,7 @@ void SOLARCHVISION_export_objects () {
       
       if (allObject2D_MAP[f] < 0) t += PI;            
       
-      if (objExportIndividualFaces == 0) {
+      if (objExportPolyToPoly == 1) {
         obj_lastGroupNumber += 1;  
         objOutput.println("g Object2D_" + nf(f, 0) + "_type" + nf(n, 0));
       }
@@ -18391,7 +18391,7 @@ void SOLARCHVISION_export_objects () {
             String m3_txt = nf(obj_lastVtextureNumber - num_vertices_added + 3, 0);
             String m4_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4, 0);      
     
-            if (objExportIndividualFaces == 1) {
+            if (objExportPolyToPoly == 0) {
               obj_lastGroupNumber += 1;
               objOutput.println("g Object2D_" + nf(f, 0) + "_ver");
             } 
@@ -18461,7 +18461,7 @@ void SOLARCHVISION_export_objects () {
               String m3_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4 * (q + 1) + 3, 0);
               String m4_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4 * (q + 1) + 4, 0);      
 
-              if (objExportIndividualFaces == 1) {
+              if (objExportPolyToPoly == 0) {
                 obj_lastGroupNumber += 1;
                 objOutput.println("g Object2D_" + nf(f, 0) + "_hor" + nf(q, 0));
               } 
@@ -18527,14 +18527,14 @@ void SOLARCHVISION_export_objects () {
         
         if (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1]) {
           
-          if (objExportIndividualFaces == 0) {
+          if (objExportPolyToPoly == 1) {
             obj_lastGroupNumber += 1;
             objOutput.println("g Object3D_" + nf(OBJ_NUM, 0));
           }
     
           for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
 
-            if (objExportIndividualFaces == 1) {
+            if (objExportPolyToPoly == 0) {
               obj_lastGroupNumber += 1;
               objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_face" + nf(f, 0));
             }
@@ -18588,7 +18588,7 @@ void SOLARCHVISION_export_objects () {
           for (float _turn = 1; _turn < 4; _turn += 1) {
             
             if (_turn == 3) {
-              if (objExportIndividualFaces == 0) {
+              if (objExportPolyToPoly == 1) {
                 obj_lastGroupNumber += 1;
                 objOutput.println("g Object3D_" + nf(OBJ_NUM, 0));
               }          
@@ -18776,7 +18776,7 @@ void SOLARCHVISION_export_objects () {
                       num_vertices_added += 4;
                     } 
   
-                    if (objExportIndividualFaces == 1) {
+                    if (objExportPolyToPoly == 0) {
                       obj_lastGroupNumber += 1;
                       objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_face" + nf(f, 0) + "_side" + nf(back_or_front, 0) + "_sub" + nf(n, 0));
                     }
@@ -18868,7 +18868,7 @@ void SOLARCHVISION_export_objects () {
 
       if (n == 0) {
 
-        if (objExportIndividualFaces == 0) {
+        if (objExportPolyToPoly == 1) {
           obj_lastGroupNumber += 1;
           objOutput.println("g FractalPlant_" + nf(f, 0));
         }    
@@ -30746,7 +30746,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       objExportPrecisionVertex = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportPrecisionVertex" , objExportPrecisionVertex, 0, 1, 1), 1));
       objExportPrecisionVtexture = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportPrecisionVtexture" , objExportPrecisionVtexture, 0, 1, 1), 1));
-      objExportIndividualFaces = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportIndividualFaces" , objExportIndividualFaces, 0, 1, 1), 1));
+      objExportPolyToPoly = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportPolyToPoly" , objExportPolyToPoly, 0, 1, 1), 1));
       
       objExportMaterialLibrary = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportMaterialLibrary" , objExportMaterialLibrary, 0, 1, 1), 1));
       objExportBackSides = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportBackSides" , objExportBackSides, 0, 1, 1), 1));
@@ -33562,7 +33562,7 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
           String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
           String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
           
-          if (objExportIndividualFaces == 1) {
+          if (objExportPolyToPoly == 0) {
             objOutput.println(("g FractalPlant_Trunk_n" + nf(q, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
           }              
           
@@ -33634,7 +33634,7 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
         String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
         String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
   
-        if (objExportIndividualFaces == 1) {
+        if (objExportPolyToPoly == 0) {
           objOutput.println(("g FractalPlant_Leaf_n" + nf(i, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
         }
         
@@ -38596,7 +38596,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   
   newChild1.setInt("objExportPrecisionVertex", objExportPrecisionVertex);
   newChild1.setInt("objExportPrecisionVtexture", objExportPrecisionVtexture);
-  newChild1.setInt("objExportIndividualFaces", objExportIndividualFaces);
+  newChild1.setInt("objExportPolyToPoly", objExportPolyToPoly);
   newChild1.setInt("objExportMaterialLibrary", objExportMaterialLibrary);
   newChild1.setInt("objExportBackSides", objExportBackSides);
   newChild1.setInt("objExportCombinedMaterial", objExportCombinedMaterial);
@@ -39533,7 +39533,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
       objExportPrecisionVertex = children0[L].getInt("objExportPrecisionVertex");
       objExportPrecisionVtexture = children0[L].getInt("objExportPrecisionVtexture");
-      objExportIndividualFaces = children0[L].getInt("objExportIndividualFaces");
+      objExportPolyToPoly = children0[L].getInt("objExportPolyToPoly");
       objExportMaterialLibrary  = children0[L].getInt("objExportMaterialLibrary ");
       objExportBackSides = children0[L].getInt("objExportBackSides");
       objExportCombinedMaterial = children0[L].getInt("objExportCombinedMaterial");      
