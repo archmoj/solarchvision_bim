@@ -18681,9 +18681,10 @@ void SOLARCHVISION_export_objects () {
                 //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
                 mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
                 
-                objOutput.println("usemtl " +  the_filename.replace('.', '_'));
               }
-            }          
+            }         
+           
+
             
             for (int _turn = 1; _turn < 4; _turn += 1) {
               
@@ -18694,6 +18695,12 @@ void SOLARCHVISION_export_objects () {
                   obj_lastGroupNumber += 1;
                   objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0));
                 }
+                
+                if (objExportMaterialLibrary != 0) {
+                  if (objExportCombinedMaterial == 1) { 
+                    objOutput.println("usemtl " +  the_filename.replace('.', '_'));
+                  }
+                }                 
               }  
   
               for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
