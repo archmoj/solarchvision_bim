@@ -18639,7 +18639,7 @@ void SOLARCHVISION_export_objects () {
               if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
         
               for (int n = 0; n < TotalSubNo; n++) {
-
+    
                 Number_Of_Face_Subdivisions += 1;
               }
             }
@@ -18647,111 +18647,111 @@ void SOLARCHVISION_export_objects () {
        
           println("Number_Of_Face_Subdivisions", Number_Of_Face_Subdivisions);   
               
+          for (int back_or_front = 1 - objExportBackSides; back_or_front <= 1; back_or_front++) {
           
+            String the_filename = "";
+            String new_TEXTURE_path = "";
+  
+  
+            PGraphics[] Face_Texture = new PGraphics [1 + Number_Of_Face_Subdivisions];
+            
+            num_vertices_added = 0;
+            
+            if (objExportMaterialLibrary != 0) {
+              if (objExportCombinedMaterial == 1) {            
+  
+                the_filename = "Combined_Texture" + "_obj" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0) + ".bmp";
+  
+                new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+        
+                println("Combined texture:", new_TEXTURE_path);
+                
+                mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
+                mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+                mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+                mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+                mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+                mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+                mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+            
+                mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+                mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+                mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
           
-          String the_filename = "";
-          String new_TEXTURE_path = "";
-
-
-          PGraphics[][] Face_Texture = new PGraphics [1 + Number_Of_Face_Subdivisions][1 + objExportBackSides];
-          
-          num_vertices_added = 0;
-          
-          if (objExportMaterialLibrary != 0) {
-            if (objExportCombinedMaterial == 1) {            
-
-              the_filename = "Combined_Texture" + "_obj" + nf(OBJ_NUM, 0) + ".bmp";
-
-              new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+                //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+                mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
+                
+                objOutput.println("usemtl " +  the_filename.replace('.', '_'));
+              }
+            }          
+            
+            for (int _turn = 1; _turn < 4; _turn += 1) {
+              
+              int CurrentFaceTextureNumber = -1;
+              
+              if (_turn == 3) {
+                if (objExportPolyToPoly == 1) {
+                  obj_lastGroupNumber += 1;
+                  objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0));
+                }
+              }  
+  
+              for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
       
-              println("Combined texture:", new_TEXTURE_path);
-              
-              mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
-              mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-              mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-              mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-              mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-              mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-              mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-          
-              mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-              mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-              mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-        
-              //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-              mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
-              
-              objOutput.println("usemtl " +  the_filename.replace('.', '_'));
-            }
-          }          
-          
-          for (int _turn = 1; _turn < 4; _turn += 1) {
-            
-            int CurrentFaceTextureNumber = -1;
-            
-            if (_turn == 3) {
-              if (objExportPolyToPoly == 1) {
-                obj_lastGroupNumber += 1;
-                objOutput.println("g Object3D_" + nf(OBJ_NUM, 0));
-              }
-            }  
-
-            for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
-    
-              int Tessellation = allFaces_MTLV[f][1];
-              
-              int TotalSubNo = 1;  
-              if (allFaces_MTLV[f][0] == 0) {
-                Tessellation += MODEL3D_TESSELLATION;
-              }
-              
-              if ((allFaces[f].length != 4) && (Tessellation == 0)) {
-                Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
-              }
-              
-              if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-        
-              float x1 = 0;
-              float y1 = 0;
-              float z1 = 0;
-        
-              float x2 = 0;
-              float y2 = 0;
-              float z2 = 0;
-        
-              float x3 = 0;
-              float y3 = 0;
-              float z3 = 0;
-        
-              float x4 = 0;
-              float y4 = 0;
-              float z4 = 0;
-
-              for (int n = 0; n < TotalSubNo; n++) {
-    
-               CurrentFaceTextureNumber += 1;
+                int Tessellation = allFaces_MTLV[f][1];
                 
-               for (int back_or_front = 1 - objExportBackSides; back_or_front <= 1; back_or_front++) {
+                int TotalSubNo = 1;  
+                if (allFaces_MTLV[f][0] == 0) {
+                  Tessellation += MODEL3D_TESSELLATION;
+                }
                 
+                if ((allFaces[f].length != 4) && (Tessellation == 0)) {
+                  Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
+                }
+                
+                if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+          
+                float x1 = 0;
+                float y1 = 0;
+                float z1 = 0;
+          
+                float x2 = 0;
+                float y2 = 0;
+                float z2 = 0;
+          
+                float x3 = 0;
+                float y3 = 0;
+                float z3 = 0;
+          
+                float x4 = 0;
+                float y4 = 0;
+                float z4 = 0;
+          
+                for (int n = 0; n < TotalSubNo; n++) {
+      
+                 
+  
+                 CurrentFaceTextureNumber += 1;
+                 
                  if (_turn == 1) {   
                    
                     if (objExportMaterialLibrary != 0) {
                       
                       if (objExportCombinedMaterial == 0) { 
-                        the_filename = "Face_Texture" + "_side" + nf(back_or_front, 0) + "_no" + nf(f, 0) + "_sub" + nf(n, 0) + ".jpg";
+                        the_filename = "Face_Texture" + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0) + ".jpg";
                         
                         new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
                 
                         println("Baking texture:", new_TEXTURE_path);
                       }
                    
-                   
+                      
                       int RES1 = objExportBakingResolution;
                       int RES2 = objExportBakingResolution;                      
                       
-                      Face_Texture[CurrentFaceTextureNumber][back_or_front] = createGraphics(RES1, RES2, P2D);
-
-                      Face_Texture[CurrentFaceTextureNumber][back_or_front].beginDraw();
+                      Face_Texture[CurrentFaceTextureNumber] = createGraphics(RES1, RES2, P2D);
+  
+                      Face_Texture[CurrentFaceTextureNumber].beginDraw();
                       
                       float[][] base_Vertices = new float [allFaces[f].length][3];
                       for (int j = 0; j < allFaces[f].length; j++) {
@@ -18763,8 +18763,8 @@ void SOLARCHVISION_export_objects () {
                       
                       float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
               
-                      Face_Texture[CurrentFaceTextureNumber][back_or_front].noStroke();
-                      Face_Texture[CurrentFaceTextureNumber][back_or_front].beginShape(QUADS);
+                      Face_Texture[CurrentFaceTextureNumber].noStroke();
+                      Face_Texture[CurrentFaceTextureNumber].beginShape(QUADS);
                       
                       for (int s = 0; s < subFace.length; s++) {
                         
@@ -18809,46 +18809,46 @@ void SOLARCHVISION_export_objects () {
                 
                           float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
                 
-                          Face_Texture[CurrentFaceTextureNumber][back_or_front].fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+                          Face_Texture[CurrentFaceTextureNumber].fill(_COL[1], _COL[2], _COL[3], _COL[0]);
                         }
                         else {
-                          Face_Texture[CurrentFaceTextureNumber][back_or_front].fill(223); 
+                          Face_Texture[CurrentFaceTextureNumber].fill(223); 
                         }
                         
                         if (s == 0) {
-                          Face_Texture[CurrentFaceTextureNumber][back_or_front].vertex(0, 0);
+                          Face_Texture[CurrentFaceTextureNumber].vertex(0, 0);
                           x1 = subFace[s][0];
                           y1 = subFace[s][1];
                           z1 = subFace[s][2];
                         }
                         if (s == 1) {
-                          Face_Texture[CurrentFaceTextureNumber][back_or_front].vertex(RES1, 0);
+                          Face_Texture[CurrentFaceTextureNumber].vertex(RES1, 0);
                           x2 = subFace[s][0];
                           y2 = subFace[s][1];
                           z2 = subFace[s][2];
                         }            
                         if (s == 2) { 
-                          Face_Texture[CurrentFaceTextureNumber][back_or_front].vertex(RES1, RES2);
+                          Face_Texture[CurrentFaceTextureNumber].vertex(RES1, RES2);
                           x3 = subFace[s][0];
                           y3 = subFace[s][1];
                           z3 = subFace[s][2];
                         }          
                         if (s == 3) {
-                          Face_Texture[CurrentFaceTextureNumber][back_or_front].vertex(0, RES2);
+                          Face_Texture[CurrentFaceTextureNumber].vertex(0, RES2);
                           x4 = subFace[s][0];
                           y4 = subFace[s][1];
                           z4 = subFace[s][2];
                         }
                       }
                     
-                      //Face_Texture[CurrentFaceTextureNumber][back_or_front].endShape(CLOSE);
-                      Face_Texture[CurrentFaceTextureNumber][back_or_front].endShape();
+                      //Face_Texture[CurrentFaceTextureNumber].endShape(CLOSE);
+                      Face_Texture[CurrentFaceTextureNumber].endShape();
                  
-                      Face_Texture[CurrentFaceTextureNumber][back_or_front].endDraw();
+                      Face_Texture[CurrentFaceTextureNumber].endDraw();
                       
                       if (objExportCombinedMaterial == 0) {
-                        Face_Texture[CurrentFaceTextureNumber][back_or_front].save(new_TEXTURE_path);
-
+                        Face_Texture[CurrentFaceTextureNumber].save(new_TEXTURE_path);
+  
                         mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
                         mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
                         mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
@@ -18865,64 +18865,59 @@ void SOLARCHVISION_export_objects () {
                         mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
                       }
                     }
-            
-                    if (back_or_front == 1 - objExportBackSides) { // creating the vertices only the first time
-                      objOutput.println("v " + nf(x1, 0, objExportPrecisionVertex) + " " +  nf(y1, 0, objExportPrecisionVertex) + " " +  nf(z1, 0, objExportPrecisionVertex));
-                      objOutput.println("v " + nf(x2, 0, objExportPrecisionVertex) + " " +  nf(y2, 0, objExportPrecisionVertex) + " " +  nf(z2, 0, objExportPrecisionVertex));
-                      objOutput.println("v " + nf(x3, 0, objExportPrecisionVertex) + " " +  nf(y3, 0, objExportPrecisionVertex) + " " +  nf(z3, 0, objExportPrecisionVertex));
-                      objOutput.println("v " + nf(x4, 0, objExportPrecisionVertex) + " " +  nf(y4, 0, objExportPrecisionVertex) + " " +  nf(z4, 0, objExportPrecisionVertex));
-                    }
+
+                    objOutput.println("v " + nf(x1, 0, objExportPrecisionVertex) + " " +  nf(y1, 0, objExportPrecisionVertex) + " " +  nf(z1, 0, objExportPrecisionVertex));
+                    objOutput.println("v " + nf(x2, 0, objExportPrecisionVertex) + " " +  nf(y2, 0, objExportPrecisionVertex) + " " +  nf(z2, 0, objExportPrecisionVertex));
+                    objOutput.println("v " + nf(x3, 0, objExportPrecisionVertex) + " " +  nf(y3, 0, objExportPrecisionVertex) + " " +  nf(z3, 0, objExportPrecisionVertex));
+                    objOutput.println("v " + nf(x4, 0, objExportPrecisionVertex) + " " +  nf(y4, 0, objExportPrecisionVertex) + " " +  nf(z4, 0, objExportPrecisionVertex));
                   }
                   
                   if (_turn == 2) {
-                    if (back_or_front == 1 - objExportBackSides) { // creating the vertices only the first time
+
+                    float u1 = 0;
+                    float v1 = 1;
+                    
+                    float u2 = 1;
+                    float v2 = 1;
+                    
+                    float u3 = 1;
+                    float v3 = 0;
+                    
+                    float u4 = 0;
+                    float v4 = 0;
+                    
+                    if (objExportCombinedMaterial == 1) {
                       
-                      float u1 = 0;
-                      float v1 = 1;
+                      // also considering two pixles added to the left and right
                       
-                      float u2 = 1;
-                      float v2 = 1;
+                      u1 = (CurrentFaceTextureNumber * (2 + objExportBakingResolution) + 1) / float(Number_Of_Face_Subdivisions * (2 + objExportBakingResolution));
+                      v1 = 1;
                       
-                      float u3 = 1;
-                      float v3 = 0;
+                      u2 = (CurrentFaceTextureNumber * (2 + objExportBakingResolution) + objExportBakingResolution + 1) / float(Number_Of_Face_Subdivisions * (2 + objExportBakingResolution));
+                      v2 = 1;
                       
-                      float u4 = 0;
-                      float v4 = 0;
+                      u3 = u2;
+                      v3 = 0;
                       
-                      if (objExportCombinedMaterial == 1) {
-                        
-                        // also considering two pixles added to the left and right
-                        
-                        u1 = (CurrentFaceTextureNumber * (2 + objExportBakingResolution) + 1) / float(Number_Of_Face_Subdivisions * (2 + objExportBakingResolution));
-                        v1 = (back_or_front * (2 + objExportBakingResolution) + 1) / float((1 + objExportBackSides) * (2 + objExportBakingResolution));
-                        
-                        u2 = (CurrentFaceTextureNumber * (2 + objExportBakingResolution) + objExportBakingResolution + 1) / float(Number_Of_Face_Subdivisions * (2 + objExportBakingResolution));
-                        v2 = v1;
-                        
-                        u3 = u2;
-                        v3 = (back_or_front * (2 + objExportBakingResolution) + objExportBakingResolution + 1) / float((1 + objExportBackSides) * (2 + objExportBakingResolution));
-                        
-                        u4 = u1;
-                        v4 = v3;
-                      
-                      }
-                      
-                      objOutput.println("vt " + nf(u1, 0, objExportPrecisionVtexture) + " " + nf(v1, 0, objExportPrecisionVtexture) + " 0");
-                      objOutput.println("vt " + nf(u2, 0, objExportPrecisionVtexture) + " " + nf(v2, 0, objExportPrecisionVtexture) + " 0");
-                      objOutput.println("vt " + nf(u3, 0, objExportPrecisionVtexture) + " " + nf(v3, 0, objExportPrecisionVtexture) + " 0");
-                      objOutput.println("vt " + nf(u4, 0, objExportPrecisionVtexture) + " " + nf(v4, 0, objExportPrecisionVtexture) + " 0");
-                    }                    
+                      u4 = u1;
+                      v4 = 0;
+                    
+                    }
+                    
+                    objOutput.println("vt " + nf(u1, 0, objExportPrecisionVtexture) + " " + nf(v1, 0, objExportPrecisionVtexture) + " 0");
+                    objOutput.println("vt " + nf(u2, 0, objExportPrecisionVtexture) + " " + nf(v2, 0, objExportPrecisionVtexture) + " 0");
+                    objOutput.println("vt " + nf(u3, 0, objExportPrecisionVtexture) + " " + nf(v3, 0, objExportPrecisionVtexture) + " 0");
+                    objOutput.println("vt " + nf(u4, 0, objExportPrecisionVtexture) + " " + nf(v4, 0, objExportPrecisionVtexture) + " 0");
+                  
                   }
                   
                   if (_turn == 3) {
-                    
-                    if (back_or_front == 1 - objExportBackSides) { // creating the vertices only the first time
-                      num_vertices_added += 4;
-                    } 
+
+                    num_vertices_added += 4;
   
                     if (objExportPolyToPoly == 0) {
                       obj_lastGroupNumber += 1;
-                      objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_face" + nf(f, 0) + "_side" + nf(back_or_front, 0) + "_sub" + nf(n, 0));
+                      objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0));
                     }
                     
                     if (objExportMaterialLibrary != 0) {
@@ -18942,50 +18937,49 @@ void SOLARCHVISION_export_objects () {
                     String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);          
                     
                     obj_lastFaceNumber += 1;
-                    objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-                    if (objExportBackSides != 0) {
-                      obj_lastFaceNumber += 1;
-                      objOutput.println("f " + n1_txt + " " + n1_txt + "/" + m4_txt + " " + n4_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
-                    }                       
+                    if (back_or_front == 1) {
+                      objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+                    }
+                    else {
+                      objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+                    }
                   }
                   
                 }
               }
             }
-          }
-
-
-          if (objExportMaterialLibrary != 0) {
-            if (objExportCombinedMaterial == 1) {            
-
-              int RES1 = (2 + objExportBakingResolution) * Number_Of_Face_Subdivisions; // adding two pixels to left and right as margin
-              int RES2 = (2 + objExportBakingResolution) * (1 + objExportBackSides);    // adding two pixels to up and down as margin
+  
+  
+            if (objExportMaterialLibrary != 0) {
+              if (objExportCombinedMaterial == 1) {            
+  
+                int RES1 = (2 + objExportBakingResolution) * Number_Of_Face_Subdivisions; // adding two pixels to left and right as margin
+                int RES2 = objExportBakingResolution;      
+            
+                PGraphics Combined_Texture = createGraphics(RES1, RES2, P2D);          
           
-              PGraphics Combined_Texture = createGraphics(RES1, RES2, P2D);          
-        
-              Combined_Texture.beginDraw();
-        
-              for (int i = 0; i < Number_Of_Face_Subdivisions; i++) {
-                for (int j = 0; j <= objExportBackSides; j++) {
-                
-                  int w = Face_Texture[i][j].width;
-                  int h = Face_Texture[i][j].height;
+                Combined_Texture.beginDraw();
+          
+                for (int i = 0; i < Number_Of_Face_Subdivisions; i++) {
                   
-                  Combined_Texture.image(Face_Texture[i][j], i * (2 + objExportBakingResolution), j * (2 + objExportBakingResolution), w + 2, h + 2); // first stretching the image by 2 pixel below!
-                  Combined_Texture.image(Face_Texture[i][j], i * (2 + objExportBakingResolution) + 1, j * (2 + objExportBakingResolution) + 1); // then adding the original on top.
+                  int w = Face_Texture[i].width;
+                  int h = Face_Texture[i].height;
+                  
+                  Combined_Texture.image(Face_Texture[i], i * (2 + objExportBakingResolution), 0, w + 2, h); // first stretching the image by 2 pixel below!
+                  Combined_Texture.image(Face_Texture[i], i * (2 + objExportBakingResolution) + 1, 0); // then adding the original on top.
+  
                 }
+                
+                Combined_Texture.endDraw();
+                
+                Combined_Texture.save(new_TEXTURE_path);
               }
-              
-              Combined_Texture.endDraw();
-              
-              Combined_Texture.save(new_TEXTURE_path);
-            }
+  
+            }            
 
-          }            
-
-          obj_lastVertexNumber += num_vertices_added;
-          obj_lastVtextureNumber += num_vertices_added;              
-          
+            obj_lastVertexNumber += num_vertices_added;
+            obj_lastVtextureNumber += num_vertices_added;              
+          }
         }
       }
     }
