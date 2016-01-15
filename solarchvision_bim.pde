@@ -17,7 +17,7 @@ int objExportPrecisionVertex = 6;
 int objExportPrecisionVtexture = 3;
 int objExportPolyToPoly = 1; // 0: Exports each polymesh to different individual faces, 1: Exports polymesh to polymesh 
 
-int objExportMaterialLibrary = 1; // 0-1
+int objExportMaterialLibrary = 0; // 0-1
 int objExportBackSides = 1; // 0-1
 int objExportCombinedMaterial = 0; // 0-1
 int objExportBakingResolution = 16;
@@ -17848,164 +17848,166 @@ void SOLARCHVISION_export_objects () {
   obj_lastFaceNumber = 0;
   obj_lastGroupNumber = 0;
 
-  if ((objExportMaterialLibrary != 0) && (Display_EARTH3D != 0)) {
-
-    mtlOutput.println("newmtl EarthSphere");
-    mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-    mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-    mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-    mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-    mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-    mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-
-    mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-    mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-    mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-
-    if (Display_EARTH3D_TEXTURE != 0) {
-      
-      int n = 0;
-      if (Day_of_Impact_to_Display < EARTH_IMAGES.length) n = Day_of_Impact_to_Display;
-            
-      String old_TEXTURE_path = EARTH_IMAGES_Path + "/" + EARTH_IMAGES_Filenames[n];
-      
-      String the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
+  if (Display_EARTH3D != 0) {
+    if (objExportMaterialLibrary != 0) {
   
-      String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+      mtlOutput.println("newmtl EarthSphere");
+      mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+      mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+      mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+      mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+      mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+      mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
   
-      println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
-      saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
-
-      //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-      mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
-      mtlOutput.println("\tmap_d " + mapsSubfolder + the_filename); // diffuse map
-    }
+      mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+      mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+      mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
   
-  
-    if (objExportPolyToPoly == 1) {
-      obj_lastGroupNumber += 1;  
-      objOutput.println("g EarthSphere"); 
-    }
-    
-    objOutput.println("usemtl EarthSphere");
-    
-
-    float EARTH_IMAGES_OffsetX = 0; //EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0] + 180;
-    float EARTH_IMAGES_OffsetY = 0; //EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1] - 90;
-    
-    float EARTH_IMAGES_ScaleX = 1; //(EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][1] - EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0]) / 360.0;
-    float EARTH_IMAGES_ScaleY = 1; //(EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1] - EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][0]) / 180.0;
-
-    float CEN_lon = 0; //0.5 * (EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0] + EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][1]);
-    float CEN_lat = 0; //0.5 * (EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][0] + EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1]);
-    
-    float delta_Alpha = -7.5; //-2.5;
-    float delta_Beta = -7.5; //-2.5;
-    
-    float r = FLOAT_R_earth;
-
-
-    for (int _turn = 1; _turn < 4; _turn += 1) {
-    
-      int f = 0;
-      for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
-        for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
-          f += 1;
-  
-          float[][] subFace = new float [4][5];
-  
-          for (int s = 0; s < 4; s += 1) {
-            
-            float a = Alpha;
-            float b = Beta;
-            
-            if ((s == 2) || (s == 3)) {
-              a += delta_Alpha;
-            }
-  
-            if ((s == 1) || (s == 2)) {
-              b += delta_Beta;
-            }
-  
-            float x0 = r * cos_ang(b - 90) * cos_ang(a); 
-            float y0 = r * sin_ang(b - 90) * cos_ang(a);
-            float z0 = r * sin_ang(a);
-            
-            float _lon = b - CEN_lon;
-            float _lat = a - CEN_lat;
-            
-            
-            // calculating u and v
-            subFace[s][3] = (_lon / EARTH_IMAGES_ScaleX / 360.0 + 0.5); 
-            subFace[s][4] = (-_lat / EARTH_IMAGES_ScaleY / 180.0 + 0.5);
-          
-            
-            // rotating to location coordinates 
-            float tb = -LocationLongitude;
-            float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
-            float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
-            float z1 = z0;
-            
-            float ta = 90 - LocationLatitude;
-            float x2 = x1;
-            float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
-            float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
-  
-            // move it down!
-            z2 -= FLOAT_R_earth;
-  
-            subFace[s][0] = x2;
-            subFace[s][1] = y2;
-            subFace[s][2] = z2;
-  
-          }
-  
-          for (int s = 0; s < subFace.length; s++) {
-            
-            float x = subFace[s][0];
-            float y = subFace[s][1];
-            float z = subFace[s][2];
-            float u = subFace[s][3];
-            float v = subFace[s][4];
-  
-            v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
-            
-            if (_turn == 1) {
-              objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z, 0, objExportPrecisionVertex));
-            }
-
-            if (_turn == 2) {
-              objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
-            }
-            
-            if (_turn == 3) {
-              obj_lastVertexNumber += 1;
-              obj_lastVtextureNumber += 1;
-            }
-          }
-  
-          String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
-          String n2_txt = nf(obj_lastVertexNumber - 2, 0);
-          String n3_txt = nf(obj_lastVertexNumber - 1, 0);
-          String n4_txt = nf(obj_lastVertexNumber - 0, 0);
-          
-          String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
-          String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
-          String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
-          String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
-          
-          if (objExportPolyToPoly == 0) {
-            if (_turn == 3) {
-              obj_lastGroupNumber += 1;
-              objOutput.println("g EarthSphere_" + nf(f, 0));
-            }
-          } 
-          
-          if (_turn == 3) {
-            obj_lastFaceNumber += 1;            
-            objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-          }        
+      if (Display_EARTH3D_TEXTURE != 0) {
         
+        int n = 0;
+        if (Day_of_Impact_to_Display < EARTH_IMAGES.length) n = Day_of_Impact_to_Display;
+              
+        String old_TEXTURE_path = EARTH_IMAGES_Path + "/" + EARTH_IMAGES_Filenames[n];
+        
+        String the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
+    
+        String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+    
+        println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
+        saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
+  
+        //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+        mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
+        mtlOutput.println("\tmap_d " + mapsSubfolder + the_filename); // diffuse map
+      }
+    
+    
+      if (objExportPolyToPoly == 1) {
+        obj_lastGroupNumber += 1;  
+        objOutput.println("g EarthSphere"); 
+      }
+      
+      objOutput.println("usemtl EarthSphere");
+      
+  
+      float EARTH_IMAGES_OffsetX = 0; //EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0] + 180;
+      float EARTH_IMAGES_OffsetY = 0; //EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1] - 90;
+      
+      float EARTH_IMAGES_ScaleX = 1; //(EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][1] - EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0]) / 360.0;
+      float EARTH_IMAGES_ScaleY = 1; //(EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1] - EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][0]) / 180.0;
+  
+      float CEN_lon = 0; //0.5 * (EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0] + EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][1]);
+      float CEN_lat = 0; //0.5 * (EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][0] + EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1]);
+      
+      float delta_Alpha = -7.5; //-2.5;
+      float delta_Beta = -7.5; //-2.5;
+      
+      float r = FLOAT_R_earth;
+  
+  
+      for (int _turn = 1; _turn < 4; _turn += 1) {
+      
+        int f = 0;
+        for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
+          for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
+            f += 1;
+    
+            float[][] subFace = new float [4][5];
+    
+            for (int s = 0; s < 4; s += 1) {
+              
+              float a = Alpha;
+              float b = Beta;
+              
+              if ((s == 2) || (s == 3)) {
+                a += delta_Alpha;
+              }
+    
+              if ((s == 1) || (s == 2)) {
+                b += delta_Beta;
+              }
+    
+              float x0 = r * cos_ang(b - 90) * cos_ang(a); 
+              float y0 = r * sin_ang(b - 90) * cos_ang(a);
+              float z0 = r * sin_ang(a);
+              
+              float _lon = b - CEN_lon;
+              float _lat = a - CEN_lat;
+              
+              
+              // calculating u and v
+              subFace[s][3] = (_lon / EARTH_IMAGES_ScaleX / 360.0 + 0.5); 
+              subFace[s][4] = (-_lat / EARTH_IMAGES_ScaleY / 180.0 + 0.5);
+            
+              
+              // rotating to location coordinates 
+              float tb = -LocationLongitude;
+              float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
+              float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
+              float z1 = z0;
+              
+              float ta = 90 - LocationLatitude;
+              float x2 = x1;
+              float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
+              float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
+    
+              // move it down!
+              z2 -= FLOAT_R_earth;
+    
+              subFace[s][0] = x2;
+              subFace[s][1] = y2;
+              subFace[s][2] = z2;
+    
+            }
+    
+            for (int s = 0; s < subFace.length; s++) {
+              
+              float x = subFace[s][0];
+              float y = subFace[s][1];
+              float z = subFace[s][2];
+              float u = subFace[s][3];
+              float v = subFace[s][4];
+    
+              v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+              
+              if (_turn == 1) {
+                objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z, 0, objExportPrecisionVertex));
+              }
+  
+              if (_turn == 2) {
+                objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
+              }
+              
+              if (_turn == 3) {
+                obj_lastVertexNumber += 1;
+                obj_lastVtextureNumber += 1;
+              }
+            }
+    
+            String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
+            String n2_txt = nf(obj_lastVertexNumber - 2, 0);
+            String n3_txt = nf(obj_lastVertexNumber - 1, 0);
+            String n4_txt = nf(obj_lastVertexNumber - 0, 0);
+            
+            String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
+            String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
+            String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
+            String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
+            
+            if (objExportPolyToPoly == 0) {
+              if (_turn == 3) {
+                obj_lastGroupNumber += 1;
+                objOutput.println("g EarthSphere_" + nf(f, 0));
+              }
+            } 
+            
+            if (_turn == 3) {
+              obj_lastFaceNumber += 1;            
+              objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+            }        
+          
+          }
         }
       }
     }
