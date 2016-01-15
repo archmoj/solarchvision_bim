@@ -14,12 +14,12 @@ int maximum_undo_number = 3;
 
 
 int objExportPrecisionVertex = 6; 
-int objExportPrecisionVtexture = 3;
+int objExportPrecisionVtexture = 4;
 int objExportPolyToPoly = 1; // 0: Exports each polymesh to different individual faces, 1: Exports polymesh to polymesh 
 
 int objExportMaterialLibrary = 1; // 0-1
 int objExportBackSides = 1; // 0-1
-int objExportCombinedMaterial = 0; // 0-1
+int objExportCombinedMaterial = 1; // 0-1
 int objExportBakingResolution = 16;
 
 
@@ -18657,8 +18657,6 @@ void SOLARCHVISION_export_objects () {
 
 
           PGraphics[] Face_Texture = new PGraphics [1 + Number_Of_Face_Subdivisions];
-          int CurrentFaceTextureNumber = -1;
-          
           
           num_vertices_added = 0;
           
@@ -18691,6 +18689,8 @@ void SOLARCHVISION_export_objects () {
           }          
           
           for (int _turn = 1; _turn < 4; _turn += 1) {
+            
+            int CurrentFaceTextureNumber = -1;
             
             if (_turn == 3) {
               if (objExportPolyToPoly == 1) {
@@ -18734,6 +18734,7 @@ void SOLARCHVISION_export_objects () {
     
                for (int back_or_front = 1 - objExportBackSides; back_or_front <= 1; back_or_front++) {
 
+                 CurrentFaceTextureNumber += 1;
                  
                  if (_turn == 1) {   
                    
@@ -18751,7 +18752,6 @@ void SOLARCHVISION_export_objects () {
                       int RES1 = objExportBakingResolution;
                       int RES2 = objExportBakingResolution;                      
                       
-                      CurrentFaceTextureNumber += 1;
                       Face_Texture[CurrentFaceTextureNumber] = createGraphics(RES1, RES2, P2D);
 
                       Face_Texture[CurrentFaceTextureNumber].beginDraw();
@@ -18893,6 +18893,7 @@ void SOLARCHVISION_export_objects () {
                       float v4 = 0;
                       
                       if (objExportCombinedMaterial == 1) {
+                        
                         u1 = (0 + CurrentFaceTextureNumber) / float(Number_Of_Face_Subdivisions);
                         v1 = 1;
                         
@@ -18957,7 +18958,15 @@ void SOLARCHVISION_export_objects () {
               int RES1 = objExportBakingResolution * Number_Of_Face_Subdivisions;
               int RES2 = objExportBakingResolution;      
           
-              PGraphics Combined_Texture = createGraphics(RES1, RES2, P2D);                
+              PGraphics Combined_Texture = createGraphics(RES1, RES2, P2D);          
+        
+              Combined_Texture.beginDraw();
+        
+              for (int i = 0; i < Number_Of_Face_Subdivisions; i++) {
+                Combined_Texture.image(Face_Texture[i], i * objExportBakingResolution, 0);
+              }
+              
+              Combined_Texture.endDraw();
               
               Combined_Texture.save(new_TEXTURE_path);
             }
