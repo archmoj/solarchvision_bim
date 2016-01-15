@@ -17836,12 +17836,16 @@ void SOLARCHVISION_export_objects () {
   
   String mapsSubfolder = "maps/";
 
-  mtlOutput = createWriter(mtlFilename);
-  mtlOutput.println("#SOLARCHVISION");
+  if (objExportMaterialLibrary != 0) {
+    mtlOutput = createWriter(mtlFilename);
+    mtlOutput.println("#SOLARCHVISION");
+  }
 
   objOutput = createWriter(objFilename);
   objOutput.println("#SOLARCHVISION");
-  objOutput.println("mtllib " + fileBasename + ".mtl");
+  if (objExportMaterialLibrary != 0) {
+    objOutput.println("mtllib " + fileBasename + ".mtl");
+  }
   
   obj_lastVertexNumber = 0; 
   obj_lastVtextureNumber = 0; 
@@ -17849,6 +17853,7 @@ void SOLARCHVISION_export_objects () {
   obj_lastGroupNumber = 0;
 
   if (Display_EARTH3D != 0) {
+    
     if (objExportMaterialLibrary != 0) {
   
       mtlOutput.println("newmtl EarthSphere");
@@ -17881,170 +17886,175 @@ void SOLARCHVISION_export_objects () {
         mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
         mtlOutput.println("\tmap_d " + mapsSubfolder + the_filename); // diffuse map
       }
+    }
     
     
-      if (objExportPolyToPoly == 1) {
-        obj_lastGroupNumber += 1;  
-        objOutput.println("g EarthSphere"); 
-      }
-      
+    if (objExportPolyToPoly == 1) {
+      obj_lastGroupNumber += 1;  
+      objOutput.println("g EarthSphere"); 
+    }
+    
+    if (objExportMaterialLibrary != 0) {
       objOutput.println("usemtl EarthSphere");
-      
-  
-      float EARTH_IMAGES_OffsetX = 0; //EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0] + 180;
-      float EARTH_IMAGES_OffsetY = 0; //EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1] - 90;
-      
-      float EARTH_IMAGES_ScaleX = 1; //(EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][1] - EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0]) / 360.0;
-      float EARTH_IMAGES_ScaleY = 1; //(EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1] - EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][0]) / 180.0;
-  
-      float CEN_lon = 0; //0.5 * (EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0] + EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][1]);
-      float CEN_lat = 0; //0.5 * (EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][0] + EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1]);
-      
-      float delta_Alpha = -7.5; //-2.5;
-      float delta_Beta = -7.5; //-2.5;
-      
-      float r = FLOAT_R_earth;
-  
-  
-      for (int _turn = 1; _turn < 4; _turn += 1) {
-      
-        int f = 0;
-        for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
-          for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
-            f += 1;
+    }
     
-            float[][] subFace = new float [4][5];
+
+    float EARTH_IMAGES_OffsetX = 0; //EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0] + 180;
+    float EARTH_IMAGES_OffsetY = 0; //EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1] - 90;
     
-            for (int s = 0; s < 4; s += 1) {
-              
-              float a = Alpha;
-              float b = Beta;
-              
-              if ((s == 2) || (s == 3)) {
-                a += delta_Alpha;
-              }
+    float EARTH_IMAGES_ScaleX = 1; //(EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][1] - EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0]) / 360.0;
+    float EARTH_IMAGES_ScaleY = 1; //(EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1] - EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][0]) / 180.0;
+
+    float CEN_lon = 0; //0.5 * (EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0] + EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][1]);
+    float CEN_lat = 0; //0.5 * (EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][0] + EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1]);
     
-              if ((s == 1) || (s == 2)) {
-                b += delta_Beta;
-              }
+    float delta_Alpha = -7.5; //-2.5;
+    float delta_Beta = -7.5; //-2.5;
     
-              float x0 = r * cos_ang(b - 90) * cos_ang(a); 
-              float y0 = r * sin_ang(b - 90) * cos_ang(a);
-              float z0 = r * sin_ang(a);
-              
-              float _lon = b - CEN_lon;
-              float _lat = a - CEN_lat;
-              
-              
-              // calculating u and v
-              subFace[s][3] = (_lon / EARTH_IMAGES_ScaleX / 360.0 + 0.5); 
-              subFace[s][4] = (-_lat / EARTH_IMAGES_ScaleY / 180.0 + 0.5);
+    float r = FLOAT_R_earth;
+
+
+    for (int _turn = 1; _turn < 4; _turn += 1) {
+    
+      int f = 0;
+      for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
+        for (float Beta = 180; Beta > -180; Beta += delta_Beta) {
+          f += 1;
+  
+          float[][] subFace = new float [4][5];
+  
+          for (int s = 0; s < 4; s += 1) {
             
-              
-              // rotating to location coordinates 
-              float tb = -LocationLongitude;
-              float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
-              float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
-              float z1 = z0;
-              
-              float ta = 90 - LocationLatitude;
-              float x2 = x1;
-              float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
-              float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
-    
-              // move it down!
-              z2 -= FLOAT_R_earth;
-    
-              subFace[s][0] = x2;
-              subFace[s][1] = y2;
-              subFace[s][2] = z2;
-    
+            float a = Alpha;
+            float b = Beta;
+            
+            if ((s == 2) || (s == 3)) {
+              a += delta_Alpha;
             }
-    
-            for (int s = 0; s < subFace.length; s++) {
-              
-              float x = subFace[s][0];
-              float y = subFace[s][1];
-              float z = subFace[s][2];
-              float u = subFace[s][3];
-              float v = subFace[s][4];
-    
-              v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
-              
-              if (_turn == 1) {
-                objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z, 0, objExportPrecisionVertex));
-              }
   
-              if (_turn == 2) {
-                objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
-              }
-              
-              if (_turn == 3) {
-                obj_lastVertexNumber += 1;
-                obj_lastVtextureNumber += 1;
-              }
+            if ((s == 1) || (s == 2)) {
+              b += delta_Beta;
             }
-    
-            String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
-            String n2_txt = nf(obj_lastVertexNumber - 2, 0);
-            String n3_txt = nf(obj_lastVertexNumber - 1, 0);
-            String n4_txt = nf(obj_lastVertexNumber - 0, 0);
+  
+            float x0 = r * cos_ang(b - 90) * cos_ang(a); 
+            float y0 = r * sin_ang(b - 90) * cos_ang(a);
+            float z0 = r * sin_ang(a);
             
-            String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
-            String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
-            String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
-            String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
+            float _lon = b - CEN_lon;
+            float _lat = a - CEN_lat;
             
-            if (objExportPolyToPoly == 0) {
-              if (_turn == 3) {
-                obj_lastGroupNumber += 1;
-                objOutput.println("g EarthSphere_" + nf(f, 0));
-              }
-            } 
+            
+            // calculating u and v
+            subFace[s][3] = (_lon / EARTH_IMAGES_ScaleX / 360.0 + 0.5); 
+            subFace[s][4] = (-_lat / EARTH_IMAGES_ScaleY / 180.0 + 0.5);
+          
+            
+            // rotating to location coordinates 
+            float tb = -LocationLongitude;
+            float x1 = x0 * cos_ang(tb) - y0 * sin_ang(tb);
+            float y1 = x0 * sin_ang(tb) + y0 * cos_ang(tb);
+            float z1 = z0;
+            
+            float ta = 90 - LocationLatitude;
+            float x2 = x1;
+            float y2 = z1 * sin_ang(ta) + y1 * cos_ang(ta);
+            float z2 = z1 * cos_ang(ta) - y1 * sin_ang(ta);
+  
+            // move it down!
+            z2 -= FLOAT_R_earth;
+  
+            subFace[s][0] = x2;
+            subFace[s][1] = y2;
+            subFace[s][2] = z2;
+  
+          }
+  
+          for (int s = 0; s < subFace.length; s++) {
+            
+            float x = subFace[s][0];
+            float y = subFace[s][1];
+            float z = subFace[s][2];
+            float u = subFace[s][3];
+            float v = subFace[s][4];
+  
+            v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+            
+            if (_turn == 1) {
+              objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z, 0, objExportPrecisionVertex));
+            }
+
+            if (_turn == 2) {
+              objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
+            }
             
             if (_turn == 3) {
-              obj_lastFaceNumber += 1;            
-              objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-            }        
-          
+              obj_lastVertexNumber += 1;
+              obj_lastVtextureNumber += 1;
+            }
           }
+  
+          String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
+          String n2_txt = nf(obj_lastVertexNumber - 2, 0);
+          String n3_txt = nf(obj_lastVertexNumber - 1, 0);
+          String n4_txt = nf(obj_lastVertexNumber - 0, 0);
+          
+          String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
+          String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
+          String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
+          String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
+          
+          if (objExportPolyToPoly == 0) {
+            if (_turn == 3) {
+              obj_lastGroupNumber += 1;
+              objOutput.println("g EarthSphere_" + nf(f, 0));
+            }
+          } 
+          
+          if (_turn == 3) {
+            obj_lastFaceNumber += 1;            
+            objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+          }        
+        
         }
       }
     }
   }
 
 
-  if ((objExportMaterialLibrary != 0) && (Display_LAND_MESH != 0)) {
+  if (Display_LAND_MESH != 0) {
+    
+    if (objExportMaterialLibrary != 0) {
 
-    mtlOutput.println("newmtl LandMesh");
-    mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-    mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-    mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-    mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-    mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-    mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-
-    mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-    mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-    mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-
-    if (Display_LAND_TEXTURE != 0) {
-      
-      int n = 0;
-      if (Day_of_Impact_to_Display < EARTH_IMAGES.length) n = Day_of_Impact_to_Display;
-            
-      String old_TEXTURE_path = LAND_TEXTURE_ImagePath;
-      
-      String the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
+      mtlOutput.println("newmtl LandMesh");
+      mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+      mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+      mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+      mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+      mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+      mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
   
-      String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+      mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+      mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+      mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
   
-      println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
-      saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
-
-      //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-      mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
-      mtlOutput.println("\tmap_d " + mapsSubfolder + the_filename); // diffuse map
+      if (Display_LAND_TEXTURE != 0) {
+        
+        int n = 0;
+        if (Day_of_Impact_to_Display < EARTH_IMAGES.length) n = Day_of_Impact_to_Display;
+              
+        String old_TEXTURE_path = LAND_TEXTURE_ImagePath;
+        
+        String the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
+    
+        String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+    
+        println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
+        saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
+  
+        //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+        mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
+        mtlOutput.println("\tmap_d " + mapsSubfolder + the_filename); // diffuse map
+      }
     }
 
     if (objExportPolyToPoly == 1) {
@@ -18052,7 +18062,9 @@ void SOLARCHVISION_export_objects () {
       objOutput.println("g LandMesh");
     }
 
-    objOutput.println("usemtl LandMesh");
+    if (objExportMaterialLibrary != 0) {
+      objOutput.println("usemtl LandMesh");
+    }
     
     int LAND_firstVertexNumber = obj_lastVertexNumber;
     int LAND_firstVtextureNumber = obj_lastVtextureNumber;
@@ -18130,30 +18142,34 @@ void SOLARCHVISION_export_objects () {
   }
 
 
-  if ((objExportMaterialLibrary != 0) && (Display_SolarImpact_Image != 0)) {
+  if (Display_SolarImpact_Image != 0) {
+    
     if (SolarImpact_Image_Section != 0) {
-      
+
       String the_filename = "SolarImpact.jpg";
-
-      String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
-
-      println("Saving texture:", new_TEXTURE_path);
-      SolarImpact_Image[Day_of_Impact_to_Display].save(new_TEXTURE_path);
-
-      mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
-      mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-      mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-      mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-      mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-      mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-      mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+      
+      if (objExportMaterialLibrary != 0) {
+      
+        String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
   
-      mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-      mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-      mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-
-      //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-      mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
+        println("Saving texture:", new_TEXTURE_path);
+        SolarImpact_Image[Day_of_Impact_to_Display].save(new_TEXTURE_path);
+  
+        mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
+        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+        mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+        mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+    
+        mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+        mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+  
+        //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+        mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
+      }
       
       SolarImpact_Rotation = SpatialImpact_Rotation[SolarImpact_Image_Section];
       SolarImpact_Elevation = 0.0 + SpatialImpact_Elevation[SolarImpact_Image_Section];
@@ -18179,7 +18195,9 @@ void SOLARCHVISION_export_objects () {
           objOutput.println("g SolarImpact");
         }
         
-        objOutput.println("usemtl " + the_filename.replace('.', '_'));
+        if (objExportMaterialLibrary != 0) {
+          objOutput.println("usemtl " + the_filename.replace('.', '_'));
+        }
         
         for (int _turn = 1; _turn < 4; _turn += 1) {
           for (int q = 0; q < 4; q++) {
@@ -18249,74 +18267,76 @@ void SOLARCHVISION_export_objects () {
 
 
 
-  if ((objExportMaterialLibrary != 0) && (Display_Trees_People != 0)) {
+  if (Display_Trees_People != 0) {
 
-    for (int i = 1; i < Object2D_ImagePath.length; i++) {
+    if (objExportMaterialLibrary != 0) {
     
-      String old_TEXTURE_path = Object2D_ImagePath[i];
+      for (int i = 1; i < Object2D_ImagePath.length; i++) {
       
-      String new_TEXTURE_path = "";
-      
-      String opacity_TEXTURE_path = "";
-      
-      String the_filename = "";
-      
-      if (Object2D_ImagePath[i].equals("")) {
-      }  
-      else {
-
-        the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
+        String old_TEXTURE_path = Object2D_ImagePath[i];
+        
+        String new_TEXTURE_path = "";
+        
+        String opacity_TEXTURE_path = "";
+        
+        String the_filename = "";
+        
+        if (Object2D_ImagePath[i].equals("")) {
+        }  
+        else {
   
-        new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
-        opacity_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + "opacity_" + the_filename;
+          the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
+    
+          new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+          opacity_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + "opacity_" + the_filename;
+    
+          println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
+          saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
+          
+          println("Making opacity texture:", new_TEXTURE_path);
+          
+          int RES1 = Object2DImages[i].width;
+          int RES2 = Object2DImages[i].height;
+          
+          PImage Opacity_Texture = createImage(RES1, RES2, ARGB);
   
-        println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
-        saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
-        
-        println("Making opacity texture:", new_TEXTURE_path);
-        
-        int RES1 = Object2DImages[i].width;
-        int RES2 = Object2DImages[i].height;
-        
-        PImage Opacity_Texture = createImage(RES1, RES2, ARGB);
-
-        Opacity_Texture.loadPixels();
-        
-        for (int np = 0; np < (RES1 * RES2); np++) {
-          int Image_X = np % RES1;
-          int Image_Y = np / RES1;
-        
-          color COL = Object2DImages[i].get(Image_X, Image_Y);
-          //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+          Opacity_Texture.loadPixels();
           
-          float COL_V = (COL >> 24 & 0xFF);
+          for (int np = 0; np < (RES1 * RES2); np++) {
+            int Image_X = np % RES1;
+            int Image_Y = np / RES1;
           
-          Opacity_Texture.pixels[np] = color(COL_V, COL_V, COL_V, COL_V);        
+            color COL = Object2DImages[i].get(Image_X, Image_Y);
+            //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+            
+            float COL_V = (COL >> 24 & 0xFF);
+            
+            Opacity_Texture.pixels[np] = color(COL_V, COL_V, COL_V, COL_V);        
+          }
+          
+          Opacity_Texture.updatePixels();
+          
+          Opacity_Texture.save(opacity_TEXTURE_path);
+          
+          
+          mtlOutput.println("newmtl " + "Object2D_" + the_filename.replace('.', '_'));
+          mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+          mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+          mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+          mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+          mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+          mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+      
+          mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+          mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+          mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+  
+          //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+          mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
+          mtlOutput.println("\tmap_d " + mapsSubfolder + "opacity_" + the_filename); // diffuse map
         }
-        
-        Opacity_Texture.updatePixels();
-        
-        Opacity_Texture.save(opacity_TEXTURE_path);
-        
-        
-        mtlOutput.println("newmtl " + "Object2D_" + the_filename.replace('.', '_'));
-        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-        mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-        mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-    
-        mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-        mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-
-        //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-        mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
-        mtlOutput.println("\tmap_d " + mapsSubfolder + "opacity_" + the_filename); // diffuse map
-      }
-    }    
-    
+      }    
+    }
     
     for (int f = 1; f <= allObject2D_num; f++) {
 
@@ -18341,7 +18361,9 @@ void SOLARCHVISION_export_objects () {
         objOutput.println("g Object2D_" + nf(f, 0) + "_type" + nf(n, 0));
       }
 
-      objOutput.println("usemtl Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1).replace('.', '_'));
+      if (objExportMaterialLibrary != 0) {
+        objOutput.println("usemtl Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1).replace('.', '_'));
+      }
       
       num_vertices_added = 0;
       
@@ -18488,7 +18510,7 @@ void SOLARCHVISION_export_objects () {
   }
 
 
-  if ((objExportMaterialLibrary != 0) && (Display_Building_Model != 0)) {
+  if (Display_Building_Model != 0) {
 
     
     
@@ -18499,28 +18521,31 @@ void SOLARCHVISION_export_objects () {
     }
     
     if (Create_Face_Texture == 0) {
+
+      if (objExportMaterialLibrary != 0) {
+    
+        for (int mt = 0; mt < Materials_Number; mt++) {
+  
+          float a = Materials_Color[mt][0] / 255.0; 
+          float r = Materials_Color[mt][1] / 255.0; 
+          float g = Materials_Color[mt][2] / 255.0; 
+          float b = Materials_Color[mt][3] / 255.0; 
+          
+          mtlOutput.println("newmtl SurfaceMaterial_" + nf(mt, 0));
+          mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+          mtlOutput.println("\tKa " + nf(r, 0, 3) + " " + nf(g, 0, 3) + " " + nf(b, 0, 3)); // ambient
+          mtlOutput.println("\tKd " + nf(r, 0, 3) + " " + nf(g, 0, 3) + " " + nf(b, 0, 3)); // diffuse
+          mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+          mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+          mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+      
+          mtlOutput.println("\td " + nf(a, 0, 3)); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+          mtlOutput.println("\tTr " + nf(a, 0, 3)); //  0-1 transparency
+          mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter      
+        }
+      }
       
       num_vertices_added = 0;
-    
-      for (int mt = 0; mt < Materials_Number; mt++) {
-
-        float a = Materials_Color[mt][0] / 255.0; 
-        float r = Materials_Color[mt][1] / 255.0; 
-        float g = Materials_Color[mt][2] / 255.0; 
-        float b = Materials_Color[mt][3] / 255.0; 
-        
-        mtlOutput.println("newmtl SurfaceMaterial_" + nf(mt, 0));
-        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-        mtlOutput.println("\tKa " + nf(r, 0, 3) + " " + nf(g, 0, 3) + " " + nf(b, 0, 3)); // ambient
-        mtlOutput.println("\tKd " + nf(r, 0, 3) + " " + nf(g, 0, 3) + " " + nf(b, 0, 3)); // diffuse
-        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-    
-        mtlOutput.println("\td " + nf(a, 0, 3)); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-        mtlOutput.println("\tTr " + nf(a, 0, 3)); //  0-1 transparency
-        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter      
-      }
   
       for (int i = 1; i < allVertices.length; i++) {
 
@@ -18545,8 +18570,10 @@ void SOLARCHVISION_export_objects () {
               objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_face" + nf(f, 0));
             }
 
-            int mt = allFaces_MTLV[f][0];
-            objOutput.println("usemtl SurfaceMaterial_" + nf(mt, 0));
+            if (objExportMaterialLibrary != 0) {
+              int mt = allFaces_MTLV[f][0];
+              objOutput.println("usemtl SurfaceMaterial_" + nf(mt, 0));
+            }
                      
             obj_lastFaceNumber += 1;   
             objOutput.print("f ");
@@ -18638,125 +18665,129 @@ void SOLARCHVISION_export_objects () {
                  String the_filename = "Face_Texture" + "_side" + nf(back_or_front, 0) + "_no" + nf(f, 0) + "_sub" + nf(n, 0) + ".jpg";
                  
                  if (_turn == 1) {   
-                    String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
-              
-                    println("Baking texture:", new_TEXTURE_path);
-            
-                    int RES1 = objExportBakingResolution;
-                    int RES2 = objExportBakingResolution;
-              
-                    PGraphics Face_Texture = createGraphics(RES1, RES2, P2D);
-              
-                    Face_Texture.beginDraw();
-                    
-                    float[][] base_Vertices = new float [allFaces[f].length][3];
-                    for (int j = 0; j < allFaces[f].length; j++) {
-                      int vNo = allFaces[f][j];
-                      base_Vertices[j][0] = allVertices[vNo][0];
-                      base_Vertices[j][1] = allVertices[vNo][1];
-                      base_Vertices[j][2] = allVertices[vNo][2];
-                    }
-                    
-                    float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-            
-                    Face_Texture.noStroke();
-                    Face_Texture.beginShape(QUADS);
-                    
-                    for (int s = 0; s < subFace.length; s++) {
-                      
-                      int s_next = (s + 1) % subFace.length;
-                      int s_prev = (s + subFace.length - 1) % subFace.length;
-                      
-                      if (back_or_front == 0) {
-                        int s_temp = s_next;
-                        s_next = s_prev;
-                        s_prev = s_temp;
-                      }
-                      
-                      PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
-                      PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
-                      PVector UV = U.cross(V);
-                      float[] W = {UV.x, UV.y, UV.z};
-                      W = fn_normalize(W);
-                      
-                      float Alpha = asin_ang(W[2]);
-                      float Beta = atan2_ang(W[1], W[0]) + 90;       
-                      
-                      int a = int((Alpha + 90) / stp_slp);
-                      int b = int(Beta / stp_dir);
-                      
-                      if (a < 0) a += int(180 / stp_slp);
-                      if (b < 0) b += int(360 / stp_dir);
-                      if (a > int(180 / stp_slp)) a -= int(180 / stp_slp);
-                      if (b > int(360 / stp_dir)) b -= int(360 / stp_dir);
-                      
-                      float _valuesSUM = LocationExposure[Day_of_Impact_to_Display][a][b];
-                      
-                      if (_valuesSUM < 0.9 * FLOAT_undefined) {
-                      
-                        float _u = 0;
-                        
-                        if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
-                        if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
-                        
-                        if (PAL_DIR == -1) _u = 1 - _u;
-                        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                        if (PAL_DIR == 2) _u =  0.5 * _u;
-              
-                        float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
-              
-                        Face_Texture.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
-                      }
-                      else {
-                        Face_Texture.fill(223); 
-                      }
-                      
-                      if (s == 0) {
-                        Face_Texture.vertex(0, 0);
-                        x1 = subFace[s][0];
-                        y1 = subFace[s][1];
-                        z1 = subFace[s][2];
-                      }
-                      if (s == 1) {
-                        Face_Texture.vertex(RES1, 0);
-                        x2 = subFace[s][0];
-                        y2 = subFace[s][1];
-                        z2 = subFace[s][2];
-                      }            
-                      if (s == 2) { 
-                        Face_Texture.vertex(RES1, RES2);
-                        x3 = subFace[s][0];
-                        y3 = subFace[s][1];
-                        z3 = subFace[s][2];
-                      }          
-                      if (s == 3) {
-                        Face_Texture.vertex(0, RES2);
-                        x4 = subFace[s][0];
-                        y4 = subFace[s][1];
-                        z4 = subFace[s][2];
-                      }
-                    }
-                  
-                    //Face_Texture.endShape(CLOSE);
-                    Face_Texture.endShape();
-               
-                    Face_Texture.endDraw();
-                    Face_Texture.save(new_TEXTURE_path);
-
-                    mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
-                    mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-                    mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-                    mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-                    mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-                    mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-                    mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+                   
+                    if (objExportMaterialLibrary != 0) {
+                   
+                      String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
                 
-                    mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-                    mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-                    mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+                      println("Baking texture:", new_TEXTURE_path);
               
-                    //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-                    mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
+                      int RES1 = objExportBakingResolution;
+                      int RES2 = objExportBakingResolution;
+                
+                      PGraphics Face_Texture = createGraphics(RES1, RES2, P2D);
+                
+                      Face_Texture.beginDraw();
+                      
+                      float[][] base_Vertices = new float [allFaces[f].length][3];
+                      for (int j = 0; j < allFaces[f].length; j++) {
+                        int vNo = allFaces[f][j];
+                        base_Vertices[j][0] = allVertices[vNo][0];
+                        base_Vertices[j][1] = allVertices[vNo][1];
+                        base_Vertices[j][2] = allVertices[vNo][2];
+                      }
+                      
+                      float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+              
+                      Face_Texture.noStroke();
+                      Face_Texture.beginShape(QUADS);
+                      
+                      for (int s = 0; s < subFace.length; s++) {
+                        
+                        int s_next = (s + 1) % subFace.length;
+                        int s_prev = (s + subFace.length - 1) % subFace.length;
+                        
+                        if (back_or_front == 0) {
+                          int s_temp = s_next;
+                          s_next = s_prev;
+                          s_prev = s_temp;
+                        }
+                        
+                        PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
+                        PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
+                        PVector UV = U.cross(V);
+                        float[] W = {UV.x, UV.y, UV.z};
+                        W = fn_normalize(W);
+                        
+                        float Alpha = asin_ang(W[2]);
+                        float Beta = atan2_ang(W[1], W[0]) + 90;       
+                        
+                        int a = int((Alpha + 90) / stp_slp);
+                        int b = int(Beta / stp_dir);
+                        
+                        if (a < 0) a += int(180 / stp_slp);
+                        if (b < 0) b += int(360 / stp_dir);
+                        if (a > int(180 / stp_slp)) a -= int(180 / stp_slp);
+                        if (b > int(360 / stp_dir)) b -= int(360 / stp_dir);
+                        
+                        float _valuesSUM = LocationExposure[Day_of_Impact_to_Display][a][b];
+                        
+                        if (_valuesSUM < 0.9 * FLOAT_undefined) {
+                        
+                          float _u = 0;
+                          
+                          if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
+                          if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
+                          
+                          if (PAL_DIR == -1) _u = 1 - _u;
+                          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                          if (PAL_DIR == 2) _u =  0.5 * _u;
+                
+                          float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+                
+                          Face_Texture.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+                        }
+                        else {
+                          Face_Texture.fill(223); 
+                        }
+                        
+                        if (s == 0) {
+                          Face_Texture.vertex(0, 0);
+                          x1 = subFace[s][0];
+                          y1 = subFace[s][1];
+                          z1 = subFace[s][2];
+                        }
+                        if (s == 1) {
+                          Face_Texture.vertex(RES1, 0);
+                          x2 = subFace[s][0];
+                          y2 = subFace[s][1];
+                          z2 = subFace[s][2];
+                        }            
+                        if (s == 2) { 
+                          Face_Texture.vertex(RES1, RES2);
+                          x3 = subFace[s][0];
+                          y3 = subFace[s][1];
+                          z3 = subFace[s][2];
+                        }          
+                        if (s == 3) {
+                          Face_Texture.vertex(0, RES2);
+                          x4 = subFace[s][0];
+                          y4 = subFace[s][1];
+                          z4 = subFace[s][2];
+                        }
+                      }
+                    
+                      //Face_Texture.endShape(CLOSE);
+                      Face_Texture.endShape();
+                 
+                      Face_Texture.endDraw();
+                      Face_Texture.save(new_TEXTURE_path);
+  
+                      mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
+                      mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+                      mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+                      mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+                      mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+                      mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+                      mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+                  
+                      mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+                      mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+                      mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+                
+                      //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+                      mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
+                    }
             
                     if (back_or_front == 1 - objExportBackSides) { // creating the vertices only the first time
                       objOutput.println("v " + nf(x1, 0, objExportPrecisionVertex) + " " +  nf(y1, 0, objExportPrecisionVertex) + " " +  nf(z1, 0, objExportPrecisionVertex));
@@ -18787,7 +18818,9 @@ void SOLARCHVISION_export_objects () {
                       objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_face" + nf(f, 0) + "_side" + nf(back_or_front, 0) + "_sub" + nf(n, 0));
                     }
                     
-                    objOutput.println("usemtl " +  the_filename.replace('.', '_'));
+                    if (objExportMaterialLibrary != 0) {
+                      objOutput.println("usemtl " +  the_filename.replace('.', '_'));
+                    }
                     
                     String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0); 
                     String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
@@ -18819,33 +18852,35 @@ void SOLARCHVISION_export_objects () {
 
 
 
-  if ((objExportMaterialLibrary != 0) && (Display_FractalPlant != 0)) {
+  if (Display_FractalPlant != 0) {
 
-    mtlOutput.println("newmtl " + "FractalPlant_Trunk");
-    mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-    mtlOutput.println("\tKa 1.000 0.750 0.500"); // ambient
-    mtlOutput.println("\tKd 1.000 0.750 0.500"); // diffuse
-    mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-    mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-    mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-
-    mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-    mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-    mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-
-
-    mtlOutput.println("newmtl " + "FractalPlant_Leaf");
-    mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-    mtlOutput.println("\tKa 0.500 0.750 0.250"); // ambient
-    mtlOutput.println("\tKd 0.500 0.750 0.250"); // diffuse
-    mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-    mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-    mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-
-    mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-    mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-    mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+    if (objExportMaterialLibrary != 0) {
     
+      mtlOutput.println("newmtl " + "FractalPlant_Trunk");
+      mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+      mtlOutput.println("\tKa 1.000 0.750 0.500"); // ambient
+      mtlOutput.println("\tKd 1.000 0.750 0.500"); // diffuse
+      mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+      mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+      mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+  
+      mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+      mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+      mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+  
+  
+      mtlOutput.println("newmtl " + "FractalPlant_Leaf");
+      mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+      mtlOutput.println("\tKa 0.500 0.750 0.250"); // ambient
+      mtlOutput.println("\tKd 0.500 0.750 0.250"); // diffuse
+      mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+      mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+      mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+  
+      mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+      mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+      mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+    }
 
     
     for (int f = 1; f <= allFractal_num; f++) {
@@ -18896,12 +18931,15 @@ void SOLARCHVISION_export_objects () {
     }
   }  
 
-  
+
+  if (objExportMaterialLibrary != 0) {
+    mtlOutput.flush(); 
+    mtlOutput.close();
+  }
+ 
   objOutput.flush(); 
   objOutput.close();   
-
-  mtlOutput.flush(); 
-  mtlOutput.close(); 
+ 
   
   println("End of exporting the mesh."); 
  
@@ -33587,7 +33625,9 @@ void SOLARCHVISION_Plant_branch_objExport (int _turn, float x0, float y0, float 
               objOutput.println(("g FractalPlant_Trunk_n" + nf(q, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
             }
           
-            objOutput.println("usemtl FractalPlant_Trunk");
+            if (objExportMaterialLibrary != 0) {
+              objOutput.println("usemtl FractalPlant_Trunk");
+            }
             
             obj_lastFaceNumber += 1;
             objOutput.println("f " + n1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
@@ -33671,7 +33711,9 @@ void SOLARCHVISION_Plant_branch_objExport (int _turn, float x0, float y0, float 
             objOutput.println(("g FractalPlant_Leaf_n" + nf(i, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
           }
           
-          objOutput.println("usemtl FractalPlant_Leaf");
+          if (objExportMaterialLibrary != 0) {
+            objOutput.println("usemtl FractalPlant_Leaf");
+          }
           
           obj_lastFaceNumber += 1;
           objOutput.println("f " + n1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
