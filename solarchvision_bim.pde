@@ -18663,7 +18663,7 @@ void SOLARCHVISION_export_objects () {
           if (objExportMaterialLibrary != 0) {
             if (objExportCombinedMaterial == 1) {            
 
-              the_filename = "Combined_Texture" + "_obj" + nf(OBJ_NUM, 0) + ".jpg";
+              the_filename = "Combined_Texture" + "_obj" + nf(OBJ_NUM, 0) + ".bmp";
 
               new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
       
@@ -18894,16 +18894,18 @@ void SOLARCHVISION_export_objects () {
                       
                       if (objExportCombinedMaterial == 1) {
                         
-                        u1 = (0 + CurrentFaceTextureNumber) / float(Number_Of_Face_Subdivisions);
+                        // also considering two pixles added to the left and right
+                        
+                        u1 = (CurrentFaceTextureNumber * (2 + objExportBakingResolution) + 1) / float(Number_Of_Face_Subdivisions * (2 + objExportBakingResolution));
                         v1 = 1;
                         
-                        u2 = (1 + CurrentFaceTextureNumber) / float(Number_Of_Face_Subdivisions);
+                        u2 = (CurrentFaceTextureNumber * (2 + objExportBakingResolution) + objExportBakingResolution + 1) / float(Number_Of_Face_Subdivisions * (2 + objExportBakingResolution));
                         v2 = 1;
                         
-                        u3 = (1 + CurrentFaceTextureNumber) / float(Number_Of_Face_Subdivisions);
+                        u3 = u2;
                         v3 = 0;
                         
-                        u4 = (0 + CurrentFaceTextureNumber) / float(Number_Of_Face_Subdivisions);
+                        u4 = u1;
                         v4 = 0;
                       
                       }
@@ -18955,7 +18957,7 @@ void SOLARCHVISION_export_objects () {
           if (objExportMaterialLibrary != 0) {
             if (objExportCombinedMaterial == 1) {            
 
-              int RES1 = objExportBakingResolution * Number_Of_Face_Subdivisions;
+              int RES1 = (2 + objExportBakingResolution) * Number_Of_Face_Subdivisions; // adding two pixels to left and right as margin
               int RES2 = objExportBakingResolution;      
           
               PGraphics Combined_Texture = createGraphics(RES1, RES2, P2D);          
@@ -18963,7 +18965,16 @@ void SOLARCHVISION_export_objects () {
               Combined_Texture.beginDraw();
         
               for (int i = 0; i < Number_Of_Face_Subdivisions; i++) {
-                Combined_Texture.image(Face_Texture[i], i * objExportBakingResolution, 0);
+                
+                int w = Face_Texture[i].width;
+                int h = Face_Texture[i].height;
+                
+                //PImage leftEdge = Face_Texture[i].get(0,0,1,h);
+                //PImage rightEdge = Face_Texture[i].get(w-1,0,1,h);
+                
+                //Combined_Texture.image(leftEdge,        i * (2 + objExportBakingResolution), 0);
+                Combined_Texture.image(Face_Texture[i], i * (2 + objExportBakingResolution) + 1, 0);
+                //Combined_Texture.image(rightEdge,       i * (2 + objExportBakingResolution) + w, 0);
               }
               
               Combined_Texture.endDraw();
