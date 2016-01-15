@@ -18969,12 +18969,9 @@ void SOLARCHVISION_export_objects () {
                 int w = Face_Texture[i].width;
                 int h = Face_Texture[i].height;
                 
-                //PImage leftEdge = Face_Texture[i].get(0,0,1,h);
-                //PImage rightEdge = Face_Texture[i].get(w-1,0,1,h);
-                
-                //Combined_Texture.image(leftEdge,        i * (2 + objExportBakingResolution), 0);
-                Combined_Texture.image(Face_Texture[i], i * (2 + objExportBakingResolution) + 1, 0);
-                //Combined_Texture.image(rightEdge,       i * (2 + objExportBakingResolution) + w, 0);
+                Combined_Texture.image(Face_Texture[i], i * (2 + objExportBakingResolution), 0, w + 2, h); // first stretching the image by 2 pixel below!
+                Combined_Texture.image(Face_Texture[i], i * (2 + objExportBakingResolution) + 1, 0); // then adding the original on top.
+
               }
               
               Combined_Texture.endDraw();
