@@ -17825,6 +17825,8 @@ int obj_lastFaceNumber;
 int obj_lastGroupNumber;
 
 
+int num_vertices_added = 0;
+
 void SOLARCHVISION_export_objects () {
   
   String fileBasename = ProjectName;
@@ -17903,7 +17905,7 @@ void SOLARCHVISION_export_objects () {
     float r = FLOAT_R_earth;
 
 
-    for (float _turn = 1; _turn < 4; _turn += 1) {
+    for (int _turn = 1; _turn < 4; _turn += 1) {
     
       int f = 0;
       for (float Alpha = 90; Alpha > -90; Alpha += delta_Alpha) {
@@ -18053,7 +18055,7 @@ void SOLARCHVISION_export_objects () {
     int LAND_firstVertexNumber = obj_lastVertexNumber;
     int LAND_firstVtextureNumber = obj_lastVtextureNumber;
     
-    for (float _turn = 1; _turn < 4; _turn += 1) {
+    for (int _turn = 1; _turn < 4; _turn += 1) {
     
       for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
         
@@ -18177,7 +18179,7 @@ void SOLARCHVISION_export_objects () {
         
         objOutput.println("usemtl " + the_filename.replace('.', '_'));
         
-        for (float _turn = 1; _turn < 4; _turn += 1) {
+        for (int _turn = 1; _turn < 4; _turn += 1) {
           for (int q = 0; q < 4; q++) {
             
             float qx = 0, qy = 0, u = 0, v = 0;
@@ -18339,9 +18341,9 @@ void SOLARCHVISION_export_objects () {
 
       objOutput.println("usemtl Object2D_" + Object2D_ImagePath[n].substring(Object2D_ImagePath[n].lastIndexOf("/") + 1).replace('.', '_'));
       
-      int num_vertices_added = 0;
+      num_vertices_added = 0;
       
-      for (float _turn = 1; _turn < 4; _turn += 1) {
+      for (int _turn = 1; _turn < 4; _turn += 1) {
   
         { 
           
@@ -18399,6 +18401,7 @@ void SOLARCHVISION_export_objects () {
             obj_lastFaceNumber += 1;            
             objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
             if (objExportBackSides != 0) {
+              obj_lastFaceNumber += 1;
               objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
             }
           }
@@ -18469,6 +18472,7 @@ void SOLARCHVISION_export_objects () {
               obj_lastFaceNumber += 1;            
               objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
               if (objExportBackSides != 0) {
+                obj_lastFaceNumber += 1;
                 objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
               }
               
@@ -18494,7 +18498,7 @@ void SOLARCHVISION_export_objects () {
     
     if (Create_Face_Texture == 0) {
       
-      int num_vertices_added = 0;
+      num_vertices_added = 0;
     
       for (int mt = 0; mt < Materials_Number; mt++) {
 
@@ -18583,9 +18587,9 @@ void SOLARCHVISION_export_objects () {
         
         if (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1]) {
           
-          int num_vertices_added = 0;
+          num_vertices_added = 0;
           
-          for (float _turn = 1; _turn < 4; _turn += 1) {
+          for (int _turn = 1; _turn < 4; _turn += 1) {
             
             if (_turn == 3) {
               if (objExportPolyToPoly == 1) {
@@ -18868,15 +18872,23 @@ void SOLARCHVISION_export_objects () {
 
       if (n == 0) {
 
+        num_vertices_added = 0;
+        
         if (objExportPolyToPoly == 1) {
           obj_lastGroupNumber += 1;
           objOutput.println("g FractalPlant_" + nf(f, 0));
+          
         }    
         
         float Alpha = 0;
         float Beta = rot; 
-      
-        SOLARCHVISION_Plant_branch_objExport(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize, as_Solid);
+        
+        for (int _turn = 1; _turn < 4; _turn += 1) {
+          SOLARCHVISION_Plant_branch_objExport(_turn, x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize, as_Solid);
+        }
+
+        obj_lastVertexNumber += num_vertices_added;
+        obj_lastVtextureNumber += num_vertices_added;                
         
       }
     }
@@ -30744,8 +30756,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Export_STUDY_info_norm = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Export ASCII statistics", Export_STUDY_info_norm, 0, 1, 1), 1));
       Export_STUDY_info_prob = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Export ASCII probabilities", Export_STUDY_info_prob, 0, 1, 1), 1));
 
-      objExportPrecisionVertex = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportPrecisionVertex" , objExportPrecisionVertex, 0, 1, 1), 1));
-      objExportPrecisionVtexture = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportPrecisionVtexture" , objExportPrecisionVtexture, 0, 1, 1), 1));
+      objExportPrecisionVertex = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportPrecisionVertex" , objExportPrecisionVertex, 0, 6, 1), 1));
+      objExportPrecisionVtexture = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportPrecisionVtexture" , objExportPrecisionVtexture, 0, 6, 1), 1));
       objExportPolyToPoly = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportPolyToPoly" , objExportPolyToPoly, 0, 1, 1), 1));
       
       objExportMaterialLibrary = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportMaterialLibrary" , objExportMaterialLibrary, 0, 1, 1), 1));
@@ -33479,7 +33491,7 @@ void SOLARCHVISION_draw_FractalPlants () {
 
 
 
-void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize, float as_Solid) {
+void SOLARCHVISION_Plant_branch_objExport (int _turn, float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize, float as_Solid) {
   
   h *= getRatio_Plant_branch(d);
 
@@ -33544,35 +33556,45 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
   
             v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
             
-            objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z, 0, objExportPrecisionVertex));
-            objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
-  
-            obj_lastVertexNumber += 1;
-            obj_lastVtextureNumber += 1;
+            if (_turn == 1) {
+              objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z, 0, objExportPrecisionVertex));
+            }
             
+            if (_turn == 2) {
+              objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
+            }
+  
           }
+
+          if (_turn == 3) {
+            
+            num_vertices_added += 4;
+            
+            String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0); 
+            String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
+            String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
+            String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
+            
+            String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0); 
+            String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);
+            String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);
+            String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);               
+            
+            if (objExportPolyToPoly == 0) {
+              obj_lastGroupNumber += 1;
+              objOutput.println(("g FractalPlant_Trunk_n" + nf(q, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
+            }
           
-          String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
-          String n2_txt = nf(obj_lastVertexNumber - 2, 0);
-          String n3_txt = nf(obj_lastVertexNumber - 1, 0);
-          String n4_txt = nf(obj_lastVertexNumber - 0, 0);
-          
-          String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
-          String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
-          String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
-          String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
-          
-          if (objExportPolyToPoly == 0) {
-            objOutput.println(("g FractalPlant_Trunk_n" + nf(q, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
-          }              
-          
-          objOutput.println("usemtl FractalPlant_Trunk");
-          objOutput.println("f " + n1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);        
+            objOutput.println("usemtl FractalPlant_Trunk");
+            
+            obj_lastFaceNumber += 1;
+            objOutput.println("f " + n1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
+          }     
 
         }
       }
 
-      SOLARCHVISION_Plant_branch_objExport(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize, as_Solid);
+      SOLARCHVISION_Plant_branch_objExport(_turn, x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize, as_Solid);
 
     }
   } else {
@@ -33616,33 +33638,46 @@ void SOLARCHVISION_Plant_branch_objExport (float x0, float y0, float z0, float A
           float v = the_V;
           
           v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+
+          if (_turn == 1) {
+            objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z, 0, objExportPrecisionVertex));
+          }
           
-          objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z, 0, objExportPrecisionVertex));
-          objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
+          if (_turn == 2) {
+            objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
+          }
+
+        }
+
+
+        if (_turn == 3) {  
           
-          obj_lastVertexNumber += 1;
-          obj_lastVtextureNumber += 1;
-        }
+          num_vertices_added += 4;
+          
+          String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0); 
+          String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
+          String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
+          String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
+          
+          String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0); 
+          String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);
+          String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);
+          String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);        
   
-        String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
-        String n2_txt = nf(obj_lastVertexNumber - 2, 0);
-        String n3_txt = nf(obj_lastVertexNumber - 1, 0);
-        String n4_txt = nf(obj_lastVertexNumber - 0, 0);
-        
-        String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
-        String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
-        String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
-        String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
-  
-        if (objExportPolyToPoly == 0) {
-          objOutput.println(("g FractalPlant_Leaf_n" + nf(i, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
-        }
-        
-        objOutput.println("usemtl FractalPlant_Leaf");
-        objOutput.println("f " + n1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
-        if (objExportBackSides != 0) {
-          //objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
-        }      
+          if (objExportPolyToPoly == 0) {
+            obj_lastGroupNumber += 1;
+            objOutput.println(("g FractalPlant_Leaf_n" + nf(i, 0) + "_x" + nf(x0, 0, 3) + "_y" + nf(y0, 0, 3) + "_z" + nf(z0, 0, 3)).replace('.', '_'));
+          }
+          
+          objOutput.println("usemtl FractalPlant_Leaf");
+          
+          obj_lastFaceNumber += 1;
+          objOutput.println("f " + n1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
+          if (objExportBackSides != 0) {
+            //obj_lastFaceNumber += 1;
+            //objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+          }    
+        }  
       }
     }
 
@@ -39530,7 +39565,7 @@ void SOLARCHVISION_load_project (String myFile) {
       LAND_mid_lon = Double.parseDouble(children0[L].getString("LAND_mid_lon"));
       Object2D_PEOPLE_Files_Num = children0[L].getInt("Object2D_PEOPLE_Files_Num");
       Object2D_TREES_Files_Num = children0[L].getInt("Object2D_TREES_Files_Num");
-
+      /*
       objExportPrecisionVertex = children0[L].getInt("objExportPrecisionVertex");
       objExportPrecisionVtexture = children0[L].getInt("objExportPrecisionVtexture");
       objExportPolyToPoly = children0[L].getInt("objExportPolyToPoly");
@@ -39538,7 +39573,7 @@ void SOLARCHVISION_load_project (String myFile) {
       objExportBackSides = children0[L].getInt("objExportBackSides");
       objExportCombinedMaterial = children0[L].getInt("objExportCombinedMaterial");      
       objExportBakingResolution = children0[L].getInt("objExportBakingResolution");
-
+      */
 
       {
         String new_Default_Font = children0[L].getString("Default_Font");
