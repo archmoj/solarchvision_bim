@@ -18612,56 +18612,51 @@ void SOLARCHVISION_export_objects () {
   
   
   
-      int Number_Of_Face_Subdivisions = 0;
-  
-      if (objExportMaterialLibrary != 0) {
-        if (objExportCombinedMaterial == 1) {       
-         
-          for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
-        
-            if (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1]) {
-            
-              for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
-    
-                int Tessellation = allFaces_MTLV[f][1];
-              
-                int TotalSubNo = 1;  
-                if (allFaces_MTLV[f][0] == 0) {
-                  Tessellation += MODEL3D_TESSELLATION;
-                }
-                
-                if ((allFaces[f].length != 4) && (Tessellation == 0)) {
-                  Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
-                }
-                
-                if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-          
-                for (int n = 0; n < TotalSubNo; n++) {
-      
-                  for (int back_or_front = 1 - objExportBackSides; back_or_front <= 1; back_or_front++) {
-  
-                    Number_Of_Face_Subdivisions += 1;
-                  }
-                }
-              }
-            }
-          } 
-        }
-      }
-      
-      pow(Number_Of_Face_Subdivisions, 0.5)
-      zzzzzzz
+
       
   
       for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
         
         if (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1]) {
           
+          int Number_Of_Face_Subdivisions = 0; // for combined materials we need to know this number before baking each object.
+      
+          if (objExportMaterialLibrary != 0) {
+                
+            for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
+  
+              int Tessellation = allFaces_MTLV[f][1];
+            
+              int TotalSubNo = 1;  
+              if (allFaces_MTLV[f][0] == 0) {
+                Tessellation += MODEL3D_TESSELLATION;
+              }
+              
+              if ((allFaces[f].length != 4) && (Tessellation == 0)) {
+                Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
+              }
+              
+              if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+        
+              for (int n = 0; n < TotalSubNo; n++) {
+    
+                for (int back_or_front = 1 - objExportBackSides; back_or_front <= 1; back_or_front++) {
+  
+                  Number_Of_Face_Subdivisions += 1;
+                }
+              }
+            }
+          }
+       
+          println("Number_Of_Face_Subdivisions", Number_Of_Face_Subdivisions);   
+              
+          
+          
           String the_filename = "";
           String new_TEXTURE_path = "";
 
 
-          PGraphics[] Face_Texture = new PGraphics [Number_Of_Face_Subdivisions];
+          PGraphics[] Face_Texture = new PGraphics [1 + Number_Of_Face_Subdivisions];
           int CurrentFaceTextureNumber = -1;
           
           
@@ -18757,7 +18752,7 @@ void SOLARCHVISION_export_objects () {
                       int RES2 = objExportBakingResolution;                      
                       
                       CurrentFaceTextureNumber += 1;
-                      Face_Texture[CurrentFaceTextureNumber] = createGraphics(RES1, RES2, P2D)};
+                      Face_Texture[CurrentFaceTextureNumber] = createGraphics(RES1, RES2, P2D);
 
                       Face_Texture[CurrentFaceTextureNumber].beginDraw();
                       
@@ -18898,7 +18893,18 @@ void SOLARCHVISION_export_objects () {
                       float v4 = 0;
                       
                       if (objExportCombinedMaterial == 1) {
-                        //zzzzzzzzzzzzzzz
+                        u1 = (0 + CurrentFaceTextureNumber) / float(Number_Of_Face_Subdivisions);
+                        v1 = 1;
+                        
+                        u2 = (1 + CurrentFaceTextureNumber) / float(Number_Of_Face_Subdivisions);
+                        v2 = 1;
+                        
+                        u3 = (1 + CurrentFaceTextureNumber) / float(Number_Of_Face_Subdivisions);
+                        v3 = 0;
+                        
+                        u4 = (0 + CurrentFaceTextureNumber) / float(Number_Of_Face_Subdivisions);
+                        v4 = 0;
+                      
                       }
                       
                       objOutput.println("vt " + nf(u1, 0, objExportPrecisionVtexture) + " " + nf(v1, 0, objExportPrecisionVtexture) + " 0");
@@ -18944,20 +18950,18 @@ void SOLARCHVISION_export_objects () {
             }
           }
 
-          if (_turn == 1) {     
-            if (objExportMaterialLibrary != 0) {
-              if (objExportCombinedMaterial == 1) {            
 
-                int RES1 = objExportBakingResolution;
-                int RES2 = objExportBakingResolution;      
-               
-                zzzzzzzzzzz 
-                 
-                PGraphics Combined_Texture = createGraphics(RES1, RES2, P2D)};                
-                
-                Combined_Texture.save(new_TEXTURE_path);
-              }
+          if (objExportMaterialLibrary != 0) {
+            if (objExportCombinedMaterial == 1) {            
+
+              int RES1 = objExportBakingResolution * Number_Of_Face_Subdivisions;
+              int RES2 = objExportBakingResolution;      
+          
+              PGraphics Combined_Texture = createGraphics(RES1, RES2, P2D);                
+              
+              Combined_Texture.save(new_TEXTURE_path);
             }
+
           }            
 
           obj_lastVertexNumber += num_vertices_added;
