@@ -18,7 +18,7 @@ int objExportPrecisionVtexture = 4;
 int objExportPolyToPoly = 1; // 0: Exports each polymesh to different individual faces, 1: Exports polymesh to polymesh 
 
 int objExportMaterialLibrary = 1; // 0-1
-int objExportBackSides = 1; // 0-1
+int objExportBackSides = 0; // 0-1
 int objExportCombinedMaterial = 1; // 0-1
 int objExportBakingResolution = 16;
 
