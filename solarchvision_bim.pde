@@ -21085,6 +21085,15 @@ void SOLARCHVISION_draw_land () {
 }
 
 
+
+float[] SOLARCHVISION_vertexRender_Shade_Surface_Materials (int mt) {  
+
+ float[] _COL = {Materials_Color[mt][0], Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3]};
+  
+ return _COL;  
+}
+
+
 float[] SOLARCHVISION_vertexRender_Shade_Vertex_Spatial (float[] VERTEX_now) {
   
   int PAL_TYPE = SPATIAL_Pallet_CLR; 
@@ -21269,6 +21278,8 @@ void SOLARCHVISION_draw_3Dobjects () {
     if (WIN3D_FACES_SHADE != Shade_Vertex_Solar) {
       for (int f = 1; f < allFaces.length; f++) {
 
+        int mt = allFaces_MTLV[f][0];
+        
         int vsb = allFaces_MTLV[f][3];
         
         if (vsb > 0) {        
@@ -21278,9 +21289,6 @@ void SOLARCHVISION_draw_3Dobjects () {
           else {
           
             color c = color(0, 0, 0);
-        
-            int mt = allFaces_MTLV[f][0];
-            c = color(Materials_Color[mt][1], Materials_Color[mt][2], Materials_Color[mt][3], Materials_Color[mt][0]);
             
             if (Display_MODEL3D_EDGES == 0) {
               WIN3D_Diagrams.noStroke();
@@ -21345,37 +21353,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                 WIN3D_Diagrams.endShape(CLOSE);
               }       
             }
-            else if (WIN3D_FACES_SHADE == Shade_Surface_Materials) {
-              int Tessellation = allFaces_MTLV[f][1];
-              
-              int TotalSubNo = 1;  
-              if (allFaces_MTLV[f][0] == 0) {
-                Tessellation += MODEL3D_TESSELLATION;
-              }
-              if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-        
-              for (int n = 0; n < TotalSubNo; n++) {
-                
-                float[][] base_Vertices = new float [allFaces[f].length][3];
-                for (int j = 0; j < allFaces[f].length; j++) {
-                  int vNo = allFaces[f][j];
-                  base_Vertices[j][0] = allVertices[vNo][0];
-                  base_Vertices[j][1] = allVertices[vNo][1];
-                  base_Vertices[j][2] = allVertices[vNo][2];
-                }
-                
-                float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-             
-                WIN3D_Diagrams.beginShape();
-                
-                for (int s = 0; s < subFace.length; s++) {
-            
-                  WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -(subFace[s][1] * OBJECTS_scale * WIN3D_scale3D), subFace[s][2] * OBJECTS_scale * WIN3D_scale3D);
-                }
-                
-                WIN3D_Diagrams.endShape(CLOSE);
-              }
-            }
+
 
             else {
               
@@ -21405,6 +21383,13 @@ void SOLARCHVISION_draw_3Dobjects () {
                   
                   float[] _COL = {255, 255, 255, 255};
                   
+                  if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
+                    int s_next = (s + 1) % subFace.length;
+                    int s_prev = (s + subFace.length - 1) % subFace.length;
+                    
+                    _COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next]);
+                  }                  
+                  
                   if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
                     
                     _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Spatial(subFace[s]);
@@ -21415,12 +21400,12 @@ void SOLARCHVISION_draw_3Dobjects () {
                     _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s]);
                   }
                   
-                  if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
-                    int s_next = (s + 1) % subFace.length;
-                    int s_prev = (s + subFace.length - 1) % subFace.length;
-                    
-                    _COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next]);
+                  if (WIN3D_FACES_SHADE == Shade_Surface_Materials) {
+                    _COL = SOLARCHVISION_vertexRender_Shade_Surface_Materials(mt);
                   }
+
+                  
+
 
                   WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
                   
