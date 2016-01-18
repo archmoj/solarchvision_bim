@@ -1387,7 +1387,6 @@ int pre_selectedVertex_displayVertices;
 
 
 
-int pre_WIN3D_EDGES_SHOW;
 int pre_WIN3D_FACES_SHADE;
 
 int pre_MODEL3D_TESSELLATION;
@@ -1624,7 +1623,7 @@ int Shade_Vertex_Elevation = 6;
 int number_of_shading_options = 7;
 
 int WIN3D_FACES_SHADE = Shade_Surface_Materials; //Shade_Surface_White; // <<<<<
-int WIN3D_EDGES_SHOW = 1;
+
 
 
 
@@ -2285,7 +2284,6 @@ void draw () {
         pre_selectedFace_displayVertexCount = selectedFace_displayVertexCount;
         pre_selectedVertex_displayVertices = selectedVertex_displayVertices;
 
-        pre_WIN3D_EDGES_SHOW = WIN3D_EDGES_SHOW;
         pre_WIN3D_FACES_SHADE = WIN3D_FACES_SHADE;
   
         pre_MODEL3D_TESSELLATION = MODEL3D_TESSELLATION;
@@ -2574,10 +2572,7 @@ void draw () {
 
         
         
-        if (pre_WIN3D_EDGES_SHOW != WIN3D_EDGES_SHOW) {
-          WIN3D_Update = 1;
-        }             
-          
+
         if (pre_WIN3D_FACES_SHADE != WIN3D_FACES_SHADE) {
           WIN3D_Update = 1;
         }             
@@ -12911,9 +12906,6 @@ void WIN3D_keyPressed (KeyEvent e) {
         case 'p' ://WIN3D_ZOOM_coordinate = 60;
                   WIN3D_View_Type = 1; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
   
-        //case 'E' :WIN3D_EDGES_SHOW = (WIN3D_EDGES_SHOW + 1) % 2; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
-        //case 'e' :WIN3D_EDGES_SHOW = (WIN3D_EDGES_SHOW + 1) % 2; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
-  
         case 'K' :WIN3D_FACES_SHADE = (WIN3D_FACES_SHADE + 5 - 1) % 5; WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;
@@ -20011,12 +20003,7 @@ void SOLARCHVISION_draw_SKY3D () {
       
         color c = color(191, 191, 255);
     
-        if (WIN3D_EDGES_SHOW == 1) {
-          WIN3D_Diagrams.stroke(255, 255, 255);
-        }
-        else {
-          WIN3D_Diagrams.stroke(c);
-        }
+        WIN3D_Diagrams.noStroke();
     
         if (WIN3D_FACES_SHADE == Shade_Surface_Materials) {
           //WIN3D_Diagrams.fill(255, 255, 255);
@@ -21008,12 +20995,7 @@ void SOLARCHVISION_draw_land () {
                 WIN3D_Diagrams.noStroke();
               }
               else {
-                if (WIN3D_EDGES_SHOW == 1) {
-                  WIN3D_Diagrams.stroke(0, 0, 0);
-                }          
-                else {
-                  WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
-                }
+                WIN3D_Diagrams.stroke(0, 0, 0);
               }   
               
             
@@ -21294,12 +21276,7 @@ void SOLARCHVISION_draw_3Dobjects () {
               WIN3D_Diagrams.noStroke();
             }
             else {
-              if (WIN3D_EDGES_SHOW == 1) {
-                WIN3D_Diagrams.stroke(0, 0, 0);
-              }
-              else {
-                WIN3D_Diagrams.stroke(c);
-              }          
+              WIN3D_Diagrams.stroke(0, 0, 0);
             }
         
             if ((WIN3D_FACES_SHADE == Shade_Surface_Base) || (WIN3D_FACES_SHADE == Shade_Surface_White)) {
@@ -27878,7 +27855,6 @@ void mouseClicked () {
             }          
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Edges")) {
               Display_MODEL3D_EDGES = (Display_MODEL3D_EDGES  + 1) % 2;
-              WIN3D_EDGES_SHOW = Display_MODEL3D_EDGES; // <<<<<<<<<<<<<<<<<<<
               
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
@@ -30653,7 +30629,6 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
       //WIN3D_FACES_SHADE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "WIN3D_FACES_SHADE", WIN3D_FACES_SHADE, 0, number_of_shading_options - 1, 1), 1));
 
-      WIN3D_EDGES_SHOW = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "WIN3D_EDGES_SHOW", WIN3D_EDGES_SHOW, 0, 1, 1), 1));  
       Display_MODEL3D_EDGES = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MODEL3D_EDGES" , Display_MODEL3D_EDGES, 0, 1, 1), 1));
       Display_MODEL3D_NORMALS = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MODEL3D_NORMALS" , Display_MODEL3D_NORMALS, 0, 1, 1), 1));
       
@@ -38692,7 +38667,6 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setFloat("WIN3D_ZOOM_coordinate", WIN3D_ZOOM_coordinate);
   newChild1.setInt("WIN3D_View_Type", WIN3D_View_Type);
   newChild1.setInt("WIN3D_FACES_SHADE", WIN3D_FACES_SHADE);
-  newChild1.setInt("WIN3D_EDGES_SHOW", WIN3D_EDGES_SHOW);
   newChild1.setInt("selected_posVector", selected_posVector);
   newChild1.setInt("selected_rotVector", selected_rotVector);
   newChild1.setInt("selected_scaleVector", selected_scaleVector);
@@ -39629,7 +39603,6 @@ void SOLARCHVISION_load_project (String myFile) {
       WIN3D_ZOOM_coordinate = children0[L].getFloat("WIN3D_ZOOM_coordinate");
       WIN3D_View_Type = children0[L].getInt("WIN3D_View_Type");
       WIN3D_FACES_SHADE = children0[L].getInt("WIN3D_FACES_SHADE");
-      WIN3D_EDGES_SHOW = children0[L].getInt("WIN3D_EDGES_SHOW");
 
       selected_posVector = children0[L].getInt("selected_posVector");
       selected_rotVector = children0[L].getInt("selected_rotVector");
