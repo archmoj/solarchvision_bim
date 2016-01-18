@@ -20023,7 +20023,7 @@ void SOLARCHVISION_draw_SKY3D () {
         WIN3D_Diagrams.endShape(CLOSE);
       }
 
-      else if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
+      else {
 
         int PAL_TYPE = 0; 
         int PAL_DIR = 1;
@@ -20076,6 +20076,8 @@ void SOLARCHVISION_draw_SKY3D () {
               float[] _COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
         
               WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+              
+              WIN3D_Diagrams.vertex(subFace[s][0] * SKY3D_scale * WIN3D_scale3D, -(subFace[s][1] * SKY3D_scale * WIN3D_scale3D), subFace[s][2] * SKY3D_scale * WIN3D_scale3D);
             }            
           }
           
