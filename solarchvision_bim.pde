@@ -2912,7 +2912,7 @@ void SOLARCHVISION_draw_WIN3D () {
           //-----------------------------
           int PAL_TYPE = 6; //12; 
           int PAL_DIR = -1;
-          float _Multiplier = 1.0 / 30.0;
+          float PAL_Multiplier = 1.0 / 30.0;
           //-----------------------------
     
           for (int o = 0; o < Scenarios_max; o += 1){
@@ -2921,7 +2921,7 @@ void SOLARCHVISION_draw_WIN3D () {
             
             if (_val < 0.9 * FLOAT_undefined) {
       
-              float _u = 0.5 + 0.5 * (_Multiplier * _val);
+              float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
               if (PAL_DIR == -1) _u = 1 - _u;
               if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
               if (PAL_DIR == 2) _u =  0.5 * _u;
@@ -2955,7 +2955,7 @@ void SOLARCHVISION_draw_WIN3D () {
           //-----------------------------
           int PAL_TYPE = 1;//12; 
           int PAL_DIR = 1;//-1;
-          float _Multiplier = 0.1;//1.0 / 30.0;
+          float PAL_Multiplier = 0.1;//1.0 / 30.0;
           //-----------------------------
     
           for (int o = 0; o < Scenarios_max; o += 1){
@@ -2987,7 +2987,7 @@ void SOLARCHVISION_draw_WIN3D () {
               float ox = -2 * (R * cos_ang(90 - teta)) / 3.0;
               float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0;            
       
-              float _u = 0.5 + 0.5 * (_Multiplier * _val);
+              float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
               if (PAL_DIR == -1) _u = 1 - _u;
               if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
               if (PAL_DIR == 2) _u =  0.5 * _u;
@@ -3060,19 +3060,19 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
 
   int PAL_TYPE = 0; 
   int PAL_DIR = 1;
-  float _Multiplier = 1; 
+  float PAL_Multiplier = 1; 
 
   if ((WIN3D_FACES_SHADE == Shade_Vertex_Solar) || (WIN3D_FACES_SHADE == Shade_Global_Solar)) {
     
     if (Impact_TYPE == Impact_ACTIVE) {
       PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; 
       PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR; 
-      _Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
+      PAL_Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
       PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; 
       PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
-      _Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;  
+      PAL_Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;  
     }   
     
     draw_pal = 1;
@@ -3082,7 +3082,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
 
     PAL_TYPE = ELEVATION_Pallet_CLR; 
     PAL_DIR = ELEVATION_Pallet_DIR; 
-    _Multiplier = ELEVATION_Pallet_MLT; 
+    PAL_Multiplier = ELEVATION_Pallet_MLT; 
           
     draw_pal = 1;      
   }
@@ -3091,7 +3091,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
 
     PAL_TYPE = SPATIAL_Pallet_CLR; 
     PAL_DIR = SPATIAL_Pallet_DIR;
-    _Multiplier = SPATIAL_Pallet_MLT;
+    PAL_Multiplier = SPATIAL_Pallet_MLT;
           
     draw_pal = 1;      
   }          
@@ -3199,16 +3199,16 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
       WIN3D_Diagrams.textAlign(CENTER, CENTER);
       
       if ((WIN3D_FACES_SHADE == Shade_Vertex_Solar) || (WIN3D_FACES_SHADE == Shade_Global_Solar)) {
-        if (Impact_TYPE == Impact_ACTIVE) WIN3D_Diagrams.text(nf((roundTo(0.1 * q / _Multiplier, 0.1)), 1, 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
-        if (Impact_TYPE == Impact_PASSIVE) WIN3D_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+        if (Impact_TYPE == Impact_ACTIVE) WIN3D_Diagrams.text(nf((roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+        if (Impact_TYPE == Impact_PASSIVE) WIN3D_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
       }
 
       if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
-        WIN3D_Diagrams.text(nf(int(roundTo(1.0 * (q - 5) / _Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+        WIN3D_Diagrams.text(nf(int(roundTo(1.0 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
       }
       
       if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
-        WIN3D_Diagrams.text(nf(int(roundTo(1.0 * (q - 5) / _Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+        WIN3D_Diagrams.text(nf(int(roundTo(1.0 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
       }
     }
     
@@ -3298,7 +3298,7 @@ void SOLARCHVISION_draw_WORLD () {
             //-----------------------------
             int PAL_TYPE = 6; //12; 
             int PAL_DIR = -1;
-            float _Multiplier = 1.0 / 30.0;
+            float PAL_Multiplier = 1.0 / 30.0;
             //-----------------------------
     
             for (int _turn = 1; _turn <= 2; _turn += 1){
@@ -3308,7 +3308,7 @@ void SOLARCHVISION_draw_WORLD () {
                 
                 if (_val < 0.9 * FLOAT_undefined) {
                 
-                  float _u = 0.5 + 0.5 * (_Multiplier * _val);
+                  float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
                   if (PAL_DIR == -1) _u = 1 - _u;
                   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                   if (PAL_DIR == 2) _u =  0.5 * _u;
@@ -3327,7 +3327,7 @@ void SOLARCHVISION_draw_WORLD () {
                     WORLD_Diagrams.textSize(MESSAGE_S_View * WORLD_Image_Scale);
                     WORLD_Diagrams.textAlign(CENTER, CENTER);
       
-                    _u = 0.5 + 0.5 * (_Multiplier * _val);
+                    _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
                     
                     if (_COL[1] + _COL[2] + _COL[3] > 1.75 * 255) {
                       WORLD_Diagrams.stroke(127);
@@ -3351,7 +3351,7 @@ void SOLARCHVISION_draw_WORLD () {
             //-----------------------------
             int PAL_TYPE = 1;//12; 
             int PAL_DIR = 1;//-1;
-            float _Multiplier = 0.1;//1.0 / 30.0;
+            float PAL_Multiplier = 0.1;//1.0 / 30.0;
             //-----------------------------
     
             for (int _turn = 1; _turn <= 2; _turn += 1){
@@ -3384,7 +3384,7 @@ void SOLARCHVISION_draw_WORLD () {
                   float ox = -2 * (R * cos_ang(90 - teta)) / 3.0 * WORLD_Image_Scale;
                   float oy = -2 * (R * -sin_ang(90 - teta)) / 3.0 * WORLD_Image_Scale;            
       
-                  float _u = 0.5 + 0.5 * (_Multiplier * _val);
+                  float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
                   if (PAL_DIR == -1) _u = 1 - _u;
                   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
                   if (PAL_DIR == 2) _u =  0.5 * _u;
@@ -3404,7 +3404,7 @@ void SOLARCHVISION_draw_WORLD () {
                     WORLD_Diagrams.textSize(MESSAGE_S_View * WORLD_Image_Scale);
                     WORLD_Diagrams.textAlign(CENTER, CENTER);
       
-                    _u = 0.5 + 0.5 * (_Multiplier * _val);
+                    _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
                     
                     if (_COL[1] + _COL[2] + _COL[3] > 1.75 * 255) {
                       WORLD_Diagrams.stroke(127);
@@ -7729,7 +7729,7 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
 
   int PAL_TYPE = STUDY_Pallet_PROB_CLR; 
   int PAL_DIR = STUDY_Pallet_PROB_DIR;  
-  float _Multiplier = STUDY_Pallet_PROB_MLT;
+  float PAL_Multiplier = STUDY_Pallet_PROB_MLT;
   
   float txt_max_width = (sum_interval * STUDY_S_View * 100 / 24.0) * STUDY_U_scale;
   float txt_max_height = _pix;
@@ -7782,7 +7782,7 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
         //if (int(roundTo(100 * prob_V, 1)) > 0) {
         if ((100 * prob_V) > 0) {
           
-          float _u = _Multiplier * prob_V;
+          float _u = PAL_Multiplier * prob_V;
           
           if (PAL_DIR == -1) _u = 1 - _u;
           if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -7823,7 +7823,7 @@ void SOLARCHVISION_draw_probabilities (int i, int j, int start_z, int end_z, flo
   for (int q = 0; q < 11; q += 1) {
     float prob_V = 10 * q / 100.0;
     
-    float _u = _Multiplier * prob_V;
+    float _u = PAL_Multiplier * prob_V;
     
     if (PAL_DIR == -1) _u = 1 - _u;
     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -7863,7 +7863,7 @@ void SOLARCHVISION_draw_sorted (int i, int j, float[] _valuesA, float[] _valuesB
 
   int PAL_TYPE = STUDY_Pallet_SORT_CLR; 
   int PAL_DIR = STUDY_Pallet_SORT_DIR;  
-  float _Multiplier = STUDY_Pallet_SORT_MLT;
+  float PAL_Multiplier = STUDY_Pallet_SORT_MLT;
 
   float[] sorted_valuesA = sort(_valuesA);
   int num_sorted_valuesA = 0;
@@ -7888,7 +7888,7 @@ void SOLARCHVISION_draw_sorted (int i, int j, float[] _valuesA, float[] _valuesB
   for (int l = 0; l < (num_sorted_valuesAB - 1); l += 1) {
     float sort_V = 1.1 * (0.5 - ((num_sorted_valuesAB - (l + 1)) / float(num_sorted_valuesAB)));
     
-    float _u = 0.5 + 0.5 * 0.75 * (_Multiplier * sort_V);
+    float _u = 0.5 + 0.5 * 0.75 * (PAL_Multiplier * sort_V);
     
     if (PAL_DIR == -1) _u = 1 - _u;
     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -7925,7 +7925,7 @@ void SOLARCHVISION_draw_sorted (int i, int j, float[] _valuesA, float[] _valuesB
   for (int q = 0; q < 9; q += 1) {
     float sort_V = 1.1 * (q - 4) / 8.0;
     
-    float _u = 0.5 + 0.5 * 0.75 * (_Multiplier * sort_V);
+    float _u = 0.5 + 0.5 * 0.75 * (PAL_Multiplier * sort_V);
     
     if (PAL_DIR == -1) _u = 1 - _u;
     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -9118,9 +9118,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       PAL_TYPE = 12; PAL_DIR = -1;
     }             
 
-    float _Multiplier = 1; 
-    if (Impact_TYPE == Impact_SPD_DIR) _Multiplier = 1.0;
-    if (Impact_TYPE == Impact_SPD_DIR_TMP) _Multiplier = 1.0 / 30.0;
+    float PAL_Multiplier = 1; 
+    if (Impact_TYPE == Impact_SPD_DIR) PAL_Multiplier = 1.0;
+    if (Impact_TYPE == Impact_SPD_DIR_TMP) PAL_Multiplier = 1.0 / 30.0;
 
     for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) { 
       
@@ -9229,7 +9229,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       WIND_Diagrams.strokeWeight(STUDY_T_scale * 0);
                     }
                     if (Impact_TYPE == Impact_SPD_DIR_TMP) {
-                      _u = 0.5 + 0.5 * (_Multiplier * T);
+                      _u = 0.5 + 0.5 * (PAL_Multiplier * T);
                       
                       if (PAL_DIR == -1) _u = 1 - _u;
                       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -9365,7 +9365,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       total_WIND_Diagrams.strokeWeight(STUDY_T_scale * 0);
                     }
                     if (Impact_TYPE == Impact_SPD_DIR_TMP) {
-                      _u = 0.5 + 0.5 * (_Multiplier * T);
+                      _u = 0.5 + 0.5 * (PAL_Multiplier * T);
                       
                       if (PAL_DIR == -1) _u = 1 - _u;
                       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -9460,7 +9460,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         STUDY_Diagrams.textSize(15.0 * STUDY_S_View);
         STUDY_Diagrams.textAlign(CENTER, CENTER);
 
-        if (Impact_TYPE == Impact_SPD_DIR_TMP) STUDY_Diagrams.text(nf(0.2 * (q - 5) / _Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
+        if (Impact_TYPE == Impact_SPD_DIR_TMP) STUDY_Diagrams.text(nf(0.2 * (q - 5) / PAL_Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
       }
     }         
 
@@ -9532,9 +9532,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         PAL_TYPE = STUDY_Pallet_PASSIVE_CLR; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
       }             
       
-      float _Multiplier = 1; 
-      if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * STUDY_Pallet_ACTIVE_MLT;
-      if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * STUDY_Pallet_PASSIVE_MLT; 
+      float PAL_Multiplier = 1; 
+      if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * STUDY_Pallet_ACTIVE_MLT;
+      if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * STUDY_Pallet_PASSIVE_MLT; 
   
       for (int p = 0; p < 1; p += 1) { 
         int l = impact_layer;
@@ -9827,9 +9827,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 if (Impact_TYPE == Impact_ACTIVE) {
                   _valuesSUM = Image_G;
                   
-                  //_u = 0.5 * (0.1 * _Multiplier * _valuesSUM);
-                  //_u = (0.1 * _Multiplier * _valuesSUM);
-                  _u = (0.2 * _Multiplier * _valuesSUM);
+                  //_u = 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
+                  //_u = (0.1 * PAL_Multiplier * _valuesSUM);
+                  _u = (0.2 * PAL_Multiplier * _valuesSUM);
                 }
              
                 if (Impact_TYPE == Impact_PASSIVE) {
@@ -9842,8 +9842,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   
                   _valuesSUM = COMPARISON;
                   
-                  //_u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
-                  _u = 0.5 + 0.5 * 0.75 * (0.2 * _Multiplier * _valuesSUM);
+                  //_u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
+                  _u = 0.5 + 0.5 * 0.75 * (0.2 * PAL_Multiplier * _valuesSUM);
                 }
                 
                 
@@ -9927,9 +9927,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             if (Impact_TYPE == Impact_ACTIVE) {
               _valuesSUM = Image_G;
               
-              //_u = 0.5 * (0.1 * _Multiplier * _valuesSUM);
-              //_u = (0.1 * _Multiplier * _valuesSUM);
-              _u = (0.2 * _Multiplier * _valuesSUM);
+              //_u = 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
+              //_u = (0.1 * PAL_Multiplier * _valuesSUM);
+              _u = (0.2 * PAL_Multiplier * _valuesSUM);
             }
            
             if (Impact_TYPE == Impact_PASSIVE) {
@@ -9944,8 +9944,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               
               //_valuesSUM *= ParametricGeometries_SpatialImpact_atIJ(Image_X, Image_Y); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
               
-              //_u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
-              _u = 0.5 + 0.5 * 0.75 * (0.2 * _Multiplier * _valuesSUM);
+              //_u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
+              _u = 0.5 + 0.5 * 0.75 * (0.2 * PAL_Multiplier * _valuesSUM);
             }
             
             if (PAL_DIR == -1) _u = 1 - _u;
@@ -10050,8 +10050,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                     
         STUDY_Diagrams.textSize(15.0 * STUDY_S_View);
         STUDY_Diagrams.textAlign(CENTER, CENTER);
-        if (Impact_TYPE == Impact_ACTIVE) STUDY_Diagrams.text(nf((roundTo(0.1 * q / _Multiplier, 0.1)), 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
-        if (Impact_TYPE == Impact_PASSIVE) STUDY_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
+        if (Impact_TYPE == Impact_ACTIVE) STUDY_Diagrams.text(nf((roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
+        if (Impact_TYPE == Impact_PASSIVE) STUDY_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
       }
   
       if (STUDY_print_title != 0) {
@@ -10136,9 +10136,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       PAL_TYPE = STUDY_Pallet_PASSIVE_CLR; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
     }             
     
-    float _Multiplier = 1; 
-    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * STUDY_Pallet_ACTIVE_MLT;
-    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * STUDY_Pallet_PASSIVE_MLT; 
+    float PAL_Multiplier = 1; 
+    if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * STUDY_Pallet_ACTIVE_MLT;
+    if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * STUDY_Pallet_PASSIVE_MLT; 
 
     //for (int p = 0; p < 3; p += 1) { 
       //int l = 3 * int(impact_layer / 3) + p;
@@ -10337,8 +10337,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                 
                   float _u = 0;
                   
-                  if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
-                  if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
+                  if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
+                  if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
                   
                   if (PAL_DIR == -1) _u = 1 - _u;
                   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -10422,8 +10422,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
             
               float _u = 0;
 
-              if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
-              if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
+              if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
+              if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
               
               if (PAL_DIR == -1) _u = 1 - _u;
               if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -10531,8 +10531,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   
       STUDY_Diagrams.textSize(15.0 * STUDY_S_View);
       STUDY_Diagrams.textAlign(CENTER, CENTER);
-      if (Impact_TYPE == Impact_ACTIVE) STUDY_Diagrams.text(nf((roundTo(0.1 * q / _Multiplier, 0.1)), 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
-      if (Impact_TYPE == Impact_PASSIVE) STUDY_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
+      if (Impact_TYPE == Impact_ACTIVE) STUDY_Diagrams.text(nf((roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
+      if (Impact_TYPE == Impact_PASSIVE) STUDY_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
     }
     
     
@@ -10593,9 +10593,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       PAL_TYPE = STUDY_Pallet_PASSIVE_CLR; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
     }             
 
-    float _Multiplier = 1; 
-    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * STUDY_Pallet_ACTIVE_MLT;
-    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * STUDY_Pallet_PASSIVE_MLT;
+    float PAL_Multiplier = 1; 
+    if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * STUDY_Pallet_ACTIVE_MLT;
+    if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * STUDY_Pallet_PASSIVE_MLT;
 
     SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
 
@@ -10727,8 +10727,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   
                     float _u = 0;
                     
-                    if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
-                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
+                    if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_Multiplier * _valuesSUM);
+                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (PAL_Multiplier * _valuesSUM);
                     
                     if (PAL_DIR == -1) _u = 1 - _u;
                     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -10831,8 +10831,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   
       STUDY_Diagrams.textSize(15.0 * STUDY_S_View);
       STUDY_Diagrams.textAlign(CENTER, CENTER);
-      if (Impact_TYPE == Impact_ACTIVE) STUDY_Diagrams.text(nf(0.1 * q / _Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
-      if (Impact_TYPE == Impact_PASSIVE) STUDY_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
+      if (Impact_TYPE == Impact_ACTIVE) STUDY_Diagrams.text(nf(0.1 * q / PAL_Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
+      if (Impact_TYPE == Impact_PASSIVE) STUDY_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
     } 
     
     
@@ -10890,9 +10890,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       PAL_TYPE = STUDY_Pallet_PASSIVE_CLR; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
     }             
 
-    float _Multiplier = 1; 
-    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * STUDY_Pallet_ACTIVE_MLT;
-    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * STUDY_Pallet_PASSIVE_MLT;
+    float PAL_Multiplier = 1; 
+    if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * STUDY_Pallet_ACTIVE_MLT;
+    if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * STUDY_Pallet_PASSIVE_MLT;
 
     SOLARCHVISION_draw_Grid_Spherical_POSITION(x_Plot, y_Plot, z_Plot, sx_Plot, sy_Plot, sz_Plot, 0);
 
@@ -11136,9 +11136,9 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       PAL_TYPE = STUDY_Pallet_PASSIVE_CLR; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
     }             
   
-    float _Multiplier = 1; 
-    if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * STUDY_Pallet_ACTIVE_MLT;
-    if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * STUDY_Pallet_PASSIVE_MLT;
+    float PAL_Multiplier = 1; 
+    if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * STUDY_Pallet_ACTIVE_MLT;
+    if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * STUDY_Pallet_PASSIVE_MLT;
     
     float pal_length = 400;
 
@@ -11180,8 +11180,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   
       STUDY_Diagrams.textSize(15.0 * STUDY_S_View);
       STUDY_Diagrams.textAlign(CENTER, CENTER);
-      if (Impact_TYPE == Impact_ACTIVE) STUDY_Diagrams.text(nf(0.1 * q / _Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - pal_offsetY - 0.05 * 20) * STUDY_S_View);
-      if (Impact_TYPE == Impact_PASSIVE) STUDY_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / _Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - pal_offsetY - 0.05 * 20) * STUDY_S_View);
+      if (Impact_TYPE == Impact_ACTIVE) STUDY_Diagrams.text(nf(0.1 * q / PAL_Multiplier, 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - pal_offsetY - 0.05 * 20) * STUDY_S_View);
+      if (Impact_TYPE == Impact_PASSIVE) STUDY_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - pal_offsetY - 0.05 * 20) * STUDY_S_View);
     } 
     
     
@@ -11289,9 +11289,9 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
     }
   }  
 
-  float _Multiplier = 1; 
-  if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * STUDY_Pallet_ACTIVE_MLT;
-  if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * STUDY_Pallet_PASSIVE_MLT;
+  float PAL_Multiplier = 1; 
+  if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * STUDY_Pallet_ACTIVE_MLT;
+  if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * STUDY_Pallet_PASSIVE_MLT;
 
 
 
@@ -11527,8 +11527,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
                 
                   float _u = 0;
                   
-                  if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * _valuesSUM);
-                  if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * _valuesSUM);
+                  if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_Multiplier * _valuesSUM);
+                  if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (PAL_Multiplier * _valuesSUM);
                   
                   if (PAL_DIR == -1) _u = 1 - _u;
                   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -12293,9 +12293,9 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
         PAL_TYPE = SunPath3D_Pallet_PASSIVE_CLR; PAL_DIR = SunPath3D_Pallet_PASSIVE_DIR;
       }             
   
-      float _Multiplier = 1; 
-      if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * SunPath3D_Pallet_ACTIVE_MLT;
-      if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * SunPath3D_Pallet_PASSIVE_MLT;
+      float PAL_Multiplier = 1; 
+      if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * SunPath3D_Pallet_ACTIVE_MLT;
+      if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * SunPath3D_Pallet_PASSIVE_MLT;
 
     
       
@@ -12433,8 +12433,8 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
                     
                     float _u = 0;
                     
-                    if (Impact_TYPE == Impact_ACTIVE) _u = (_Multiplier * sun_V);
-                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (_Multiplier * sun_V);
+                    if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_Multiplier * sun_V);
+                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (PAL_Multiplier * sun_V);
                     
                     if (PAL_DIR == -1) _u = 1 - _u;
                     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -18598,9 +18598,9 @@ void SOLARCHVISION_export_objects () {
       PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
       }             
       
-      float _Multiplier = 1; 
-      if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
-      if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;     
+      float PAL_Multiplier = 1; 
+      if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
+      if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;     
   
   
   
@@ -18799,8 +18799,8 @@ void SOLARCHVISION_export_objects () {
                         
                           float _u = 0;
                           
-                          if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
-                          if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
+                          if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
+                          if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
                           
                           if (PAL_DIR == -1) _u = 1 - _u;
                           if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -20027,25 +20027,26 @@ void SOLARCHVISION_draw_SKY3D () {
 
         int PAL_TYPE = 0; 
         int PAL_DIR = 1;
+        float PAL_Multiplier = 1; 
         
         if (Impact_TYPE == Impact_ACTIVE) {
-          PAL_TYPE = SKY3D_Pallet_ACTIVE_CLR; PAL_DIR = SKY3D_Pallet_ACTIVE_DIR;  
+          PAL_TYPE = SKY3D_Pallet_ACTIVE_CLR; 
+          PAL_DIR = SKY3D_Pallet_ACTIVE_DIR;  
+          PAL_Multiplier = 1.0 * SKY3D_Pallet_ACTIVE_MLT;  
         }
         if (Impact_TYPE == Impact_PASSIVE) {
-          PAL_TYPE = SKY3D_Pallet_PASSIVE_CLR; PAL_DIR = SKY3D_Pallet_PASSIVE_DIR;  
+          PAL_TYPE = SKY3D_Pallet_PASSIVE_CLR; 
+          PAL_DIR = SKY3D_Pallet_PASSIVE_DIR;  
+          PAL_Multiplier = 0.05 * SKY3D_Pallet_PASSIVE_MLT; 
         }             
         
-        float _Multiplier = 1; 
-        if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * SKY3D_Pallet_ACTIVE_MLT;  
-        if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * SKY3D_Pallet_PASSIVE_MLT;             
+         
   
         int Tessellation = 0;
         
         int TotalSubNo = 1;  
-        //if (skyFaces_MTLV[f] == 0) {
-          Tessellation = SKY3D_TESSELLATION;
-          if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-        //}
+        Tessellation = SKY3D_TESSELLATION;
+        if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
     
         for (int n = 0; n < TotalSubNo; n++) {
           
@@ -20070,51 +20071,12 @@ void SOLARCHVISION_draw_SKY3D () {
             int s_next = (s + 1) % subFace.length;
             int s_prev = (s + subFace.length - 1) % subFace.length;
             
-            //if ((subFace[s][2] > -0.2) && (subFace[s_prev][2] > -0.2) && (subFace[s_next][2] > -0.2)) // to remove below 
-            {
-            
-              PVector U = new PVector(subFace[s_next][0] - subFace[s][0], subFace[s_next][1] - subFace[s][1], subFace[s_next][2] - subFace[s][2]);
-              PVector V = new PVector(subFace[s_prev][0] - subFace[s][0], subFace[s_prev][1] - subFace[s][1], subFace[s_prev][2] - subFace[s][2]);
-              PVector UV = U.cross(V);
-              float[] W = {UV.x, UV.y, UV.z};
-              W = fn_normalize(W);
-              
-              float Alpha = asin_ang(W[2]);
-              float Beta = atan2_ang(W[1], W[0]) + 90;       
-              
-              int a = int((Alpha + 90) / stp_slp);
-              int b = int(Beta / stp_dir);
-              
-              if (a < 0) a += int(180 / stp_slp);
-              if (b < 0) b += int(360 / stp_dir);
-              if (a > int(180 / stp_slp)) a -= int(180 / stp_slp);
-              if (b > int(360 / stp_dir)) b -= int(360 / stp_dir);
-              
-              float _valuesSUM = LocationExposure[Day_of_Impact_to_Display][a][b];
-              
-              if (_valuesSUM < 0.9 * FLOAT_undefined) {
-              
-                float _u = 0;
-                
-                if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
-                if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
-                
-                if (PAL_DIR == -1) _u = 1 - _u;
-                if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                if (PAL_DIR == 2) _u =  0.5 * _u;
-      
-                float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
-      
-                WIN3D_Diagrams.noStroke(); // <<<<<<<<<<<<
-      
-                WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
-              }
-              else {
-                WIN3D_Diagrams.fill(223); 
-              }
-              
-              WIN3D_Diagrams.vertex(subFace[s][0] * SKY3D_scale * WIN3D_scale3D, -(subFace[s][1] * SKY3D_scale * WIN3D_scale3D), subFace[s][2] * SKY3D_scale * WIN3D_scale3D);
-            }
+            //if ((subFace[s][2] > -0.2) && (subFace[s_prev][2] > -0.2) && (subFace[s_next][2] > -0.2)) // to remove below
+            { 
+              float[] _COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+        
+              WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+            }            
           }
           
           WIN3D_Diagrams.endShape(CLOSE);
@@ -20854,6 +20816,10 @@ void SOLARCHVISION_draw_land () {
     if (Display_MODEL3D_EDGES == 0) WIN3D_Diagrams.noStroke();
     if (Display_LAND_TEXTURE == 1) WIN3D_Diagrams.noStroke();
 
+    int PAL_TYPE = SOLARCHVISION_getShader_PAL_TYPE(); 
+    int PAL_DIR = SOLARCHVISION_getShader_PAL_DIR();
+    float PAL_Multiplier = SOLARCHVISION_getShader_PAL_Multiplier(); 
+
 
     int Tessellation = LAND_TESSELLATION;
     if (WIN3D_FACES_SHADE == Shade_Surface_Base) {
@@ -20907,7 +20873,7 @@ void SOLARCHVISION_draw_land () {
                 int s_next = (s + 1) % subFace.length;
                 int s_prev = (s + subFace.length - 1) % subFace.length;
                 
-                _COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next]);
+                _COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
               }
 
               if (WIN3D_FACES_SHADE == Shade_Surface_White) {
@@ -20921,12 +20887,12 @@ void SOLARCHVISION_draw_land () {
     
               if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
                 
-                _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s]);
+                _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
               }              
               
               if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
                 
-                _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Spatial(subFace[s]);
+                _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Spatial(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
               }                  
 
 
@@ -21011,16 +20977,12 @@ float[] SOLARCHVISION_vertexRender_Shade_Surface_Materials (int mt) {
 }
 
 
-float[] SOLARCHVISION_vertexRender_Shade_Vertex_Spatial (float[] VERTEX_now) {
-  
-  int PAL_TYPE = SPATIAL_Pallet_CLR; 
-  int PAL_DIR = SPATIAL_Pallet_DIR;
-  float _Multiplier = SPATIAL_Pallet_MLT;
+float[] SOLARCHVISION_vertexRender_Shade_Vertex_Spatial (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
 
   //float val = ParametricGeometries_SpatialImpact_atXYZ_simple(VERTEX_now[0], VERTEX_now[1], VERTEX_now[2]);
   float val = ParametricGeometries_SpatialImpact_atXYZ(VERTEX_now[0], VERTEX_now[1], VERTEX_now[2]);
 
-  float _u = _Multiplier * val + 0.5;
+  float _u = PAL_Multiplier * val + 0.5;
   
   if (PAL_DIR == -1) _u = 1 - _u;
   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -21031,16 +20993,10 @@ float[] SOLARCHVISION_vertexRender_Shade_Vertex_Spatial (float[] VERTEX_now) {
   return _COL;  
 }
 
-float[] SOLARCHVISION_vertexRender_Shade_Vertex_Elevation (float[] VERTEX_now) {
+float[] SOLARCHVISION_vertexRender_Shade_Vertex_Elevation (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
 
-  int PAL_TYPE = ELEVATION_Pallet_CLR; 
-  int PAL_DIR = ELEVATION_Pallet_DIR; 
-  float _Multiplier = ELEVATION_Pallet_MLT;
+  float _u = PAL_Multiplier * 0.1 * VERTEX_now[2] + 0.5;
 
-  float _u = _Multiplier * 0.1 * VERTEX_now[2] + 0.5;
-  
-  
-   
   if (PAL_DIR == -1) _u = 1 - _u;
   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
   if (PAL_DIR == 2) _u =  0.5 * _u;
@@ -21051,23 +21007,7 @@ float[] SOLARCHVISION_vertexRender_Shade_Vertex_Elevation (float[] VERTEX_now) {
 }
 
 
-float[] SOLARCHVISION_vertexRender_Shade_Global_Solar (float[] VERTEX_now, float[] VERTEX_prev, float[] VERTEX_next) {
-
-  int PAL_TYPE = 0; 
-  int PAL_DIR = 1;
-  
-  if (Impact_TYPE == Impact_ACTIVE) {
-    PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
-  }
-  if (Impact_TYPE == Impact_PASSIVE) {  
-    PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
-  }             
-  
-  float _Multiplier = 1; 
-  if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
-  if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;
-
-  
+float[] SOLARCHVISION_vertexRender_Shade_Global_Solar (float[] VERTEX_now, float[] VERTEX_prev, float[] VERTEX_next, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
   
   PVector U = new PVector(VERTEX_next[0] - VERTEX_now[0], VERTEX_next[1] - VERTEX_now[1], VERTEX_next[2] - VERTEX_now[2]);
   PVector V = new PVector(VERTEX_prev[0] - VERTEX_now[0], VERTEX_prev[1] - VERTEX_now[1], VERTEX_prev[2] - VERTEX_now[2]);
@@ -21094,8 +21034,8 @@ float[] SOLARCHVISION_vertexRender_Shade_Global_Solar (float[] VERTEX_now, float
   
     float _u = 0;
     
-    if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
-    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
+    if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
+    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
     
     if (PAL_DIR == -1) _u = 1 - _u;
     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -21108,6 +21048,67 @@ float[] SOLARCHVISION_vertexRender_Shade_Global_Solar (float[] VERTEX_now, float
 }
 
 
+int SOLARCHVISION_getShader_PAL_TYPE () {
+  
+  int PAL_TYPE = 0; 
+
+  if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
+    if (Impact_TYPE == Impact_ACTIVE) PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR;
+    if (Impact_TYPE == Impact_PASSIVE) PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; 
+  }              
+
+  if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
+    PAL_TYPE = SPATIAL_Pallet_CLR; 
+  }                  
+  
+  if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
+    PAL_TYPE = ELEVATION_Pallet_CLR;
+  }  
+  
+  return PAL_TYPE;
+}
+
+
+int SOLARCHVISION_getShader_PAL_DIR () {
+
+  int PAL_DIR = 1;
+
+  if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
+    if (Impact_TYPE == Impact_ACTIVE) PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
+    if (Impact_TYPE == Impact_PASSIVE) PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+  }              
+
+  if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
+    PAL_DIR = SPATIAL_Pallet_DIR;
+  }                  
+  
+  if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
+    PAL_DIR = ELEVATION_Pallet_DIR;
+  }  
+  
+  return PAL_DIR;
+}
+
+
+float SOLARCHVISION_getShader_PAL_Multiplier () {
+
+  float PAL_Multiplier = 1; 
+
+  if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
+    if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
+    if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;    
+  }              
+  
+  if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
+    PAL_Multiplier = SPATIAL_Pallet_MLT;
+  }                  
+  
+  if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
+    PAL_Multiplier = ELEVATION_Pallet_MLT;
+  }
+
+  return PAL_Multiplier;
+}
 
 
 
@@ -21192,6 +21193,40 @@ void SOLARCHVISION_draw_3Dobjects () {
     WIN3D_Diagrams.strokeWeight(1);
     WIN3D_Diagrams.stroke(0, 0, 0);
     if (Display_MODEL3D_EDGES == 0) WIN3D_Diagrams.noStroke();
+
+    int PAL_TYPE = SOLARCHVISION_getShader_PAL_TYPE(); 
+    int PAL_DIR = SOLARCHVISION_getShader_PAL_DIR();
+    float PAL_Multiplier = SOLARCHVISION_getShader_PAL_Multiplier(); 
+  
+    if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
+      if (Impact_TYPE == Impact_ACTIVE) {
+        PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
+      }
+      if (Impact_TYPE == Impact_PASSIVE) {  
+        PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+      }             
+      
+      if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
+      if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;    
+    }              
+  
+    if (WIN3D_FACES_SHADE == Shade_Surface_Materials) {
+  
+    }              
+  
+    if (WIN3D_FACES_SHADE == Shade_Surface_White) {
+  
+    }     
+    
+    if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
+  
+    }                  
+    
+    if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
+  
+    }
+    
+
     
   
     if (WIN3D_FACES_SHADE != Shade_Vertex_Solar) {
@@ -21255,7 +21290,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                     int s_next = (s + 1) % subFace.length;
                     int s_prev = (s + subFace.length - 1) % subFace.length;
                     
-                    _COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next]);
+                    _COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                   }              
               
                   if (WIN3D_FACES_SHADE == Shade_Surface_Materials) {
@@ -21268,12 +21303,12 @@ void SOLARCHVISION_draw_3Dobjects () {
                   
                   if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
                     
-                    _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Spatial(subFace[s]);
+                    _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Spatial(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                   }                  
                   
                   if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
                     
-                    _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s]);
+                    _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                   }
 
                   WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
@@ -21292,19 +21327,6 @@ void SOLARCHVISION_draw_3Dobjects () {
     else if (WIN3D_FACES_SHADE == Shade_Vertex_Solar) {
       if (WIN3D_update_VerticesSolarValue == 0) {
         try {
-          int PAL_TYPE = 0; 
-          int PAL_DIR = 1;
-    
-          if (Impact_TYPE == Impact_ACTIVE) {
-            PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
-          }
-          if (Impact_TYPE == Impact_PASSIVE) {  
-            PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
-          }             
-          
-          float _Multiplier = 1; 
-          if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
-          if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;     
     
           int N_baked = 0;
           
@@ -21352,8 +21374,8 @@ void SOLARCHVISION_draw_3Dobjects () {
                       
                       float _u = 0;
                     
-                      if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
-                      if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
+                      if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
+                      if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
                       
                       if (PAL_DIR == -1) _u = 1 - _u;
                       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -21410,20 +21432,6 @@ void SOLARCHVISION_draw_3Dobjects () {
         int now_i = 0;
         int now_j = 0;
         
-        int PAL_TYPE = 0; 
-        int PAL_DIR = 1;
-  
-        if (Impact_TYPE == Impact_ACTIVE) {
-          PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;
-        }
-        if (Impact_TYPE == Impact_PASSIVE) {  
-          PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
-        }             
-        
-        float _Multiplier = 1; 
-        if (Impact_TYPE == Impact_ACTIVE) _Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT; 
-        if (Impact_TYPE == Impact_PASSIVE) _Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;     
-  
         int[][] PROCESSED_DAILY_SCENARIOS = {{}};  
     
         for (int f = 1; f < allFaces.length; f++) {
@@ -21701,8 +21709,8 @@ void SOLARCHVISION_draw_3Dobjects () {
                   
                     float _u = 0;
                     
-                    if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * _Multiplier * _valuesSUM);
-                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * _Multiplier * _valuesSUM);
+                    if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
+                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
                     
                     if (PAL_DIR == -1) _u = 1 - _u;
                     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -24179,7 +24187,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
   
     int PAL_TYPE = SPATIAL_Pallet_CLR; 
     int PAL_DIR = SPATIAL_Pallet_DIR;
-    float _Multiplier = SPATIAL_Pallet_MLT;     
+    float PAL_Multiplier = SPATIAL_Pallet_MLT;     
     
     SpatialImpact_Image.loadPixels();
     
@@ -24197,7 +24205,7 @@ void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
         float g =      roundTo(SpatialImpact_Grade * val, deltaSpatialImpact) - 0.5 * deltaSpatialImpact;
         float g_line = roundTo(SpatialImpact_Grade * val, deltaSpatialImpactLines);
         
-        float _u = _Multiplier * val + 0.5;
+        float _u = PAL_Multiplier * val + 0.5;
         
         if (PAL_DIR == -1) _u = 1 - _u;
         if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
