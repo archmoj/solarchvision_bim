@@ -1611,7 +1611,7 @@ int WIN3D_include = 1;
 
 
 
-
+int Shade_Surface_Wire = -1;
 int Shade_Surface_Base = 0;
 int Shade_Surface_White = 1;
 int Shade_Surface_Materials = 2;
@@ -20833,38 +20833,46 @@ void SOLARCHVISION_draw_land () {
           for (int s = 0; s < subFace.length; s++) {
             
             if (Display_LAND_TEXTURE == 0) {
-       
-              float[] _COL = {255, 255, 255, 255};
               
-              if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
-                int s_next = (s + 1) % subFace.length;
-                int s_prev = (s + subFace.length - 1) % subFace.length;
+              if (WIN3D_FACES_SHADE != Shade_Surface_Wire) {
                 
-                _COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                float[] _COL = {255, 255, 255, 255};
+                
+                if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
+                  int s_next = (s + 1) % subFace.length;
+                  int s_prev = (s + subFace.length - 1) % subFace.length;
+                  
+                  _COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                }
+                
+                
+  
+                if (WIN3D_FACES_SHADE == Shade_Surface_White) {
+                  _COL = SOLARCHVISION_vertexRender_Shade_Surface_White(255);
+                }                   
+            
+                if (WIN3D_FACES_SHADE == Shade_Surface_Materials) {
+                  //_COL = SOLARCHVISION_vertexRender_Shade_Surface_Materials(mt);
+                  _COL = SOLARCHVISION_vertexRender_Shade_Surface_White(223);
+                }    
+      
+                if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
+                  
+                  _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                }              
+                
+                if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
+                  
+                  _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Spatial(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                }                  
+  
+  
+                WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);              
+                //if (subFace[s][2] + LocationElevation < 0) WIN3D_Diagrams.fill(127, 127, 255); // i.e. water
               }
-
-              if (WIN3D_FACES_SHADE == Shade_Surface_White) {
-                _COL = SOLARCHVISION_vertexRender_Shade_Surface_White(255);
-              }                   
-          
-              if (WIN3D_FACES_SHADE == Shade_Surface_Materials) {
-                //_COL = SOLARCHVISION_vertexRender_Shade_Surface_Materials(mt);
-                _COL = SOLARCHVISION_vertexRender_Shade_Surface_White(223);
-              }    
-    
-              if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
-                
-                _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-              }              
-              
-              if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
-                
-                _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Spatial(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-              }                  
-
-
-              WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);              
-              //if (subFace[s][2] + LocationElevation < 0) WIN3D_Diagrams.fill(127, 127, 255); // i.e. water
+              else {
+                WIN3D_Diagrams.noFill();    
+              }
 
                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D);
             }              
@@ -21251,34 +21259,41 @@ void SOLARCHVISION_draw_3Dobjects () {
                 
                 for (int s = 0; s < subFace.length; s++) {
                   
-                  float[] _COL = {255, 255, 255, 255};
-                  
-                  if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
-                    int s_next = (s + 1) % subFace.length;
-                    int s_prev = (s + subFace.length - 1) % subFace.length;
+                  if (WIN3D_FACES_SHADE != Shade_Surface_Wire) {
                     
-                    _COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                  }              
-              
-                  if (WIN3D_FACES_SHADE == Shade_Surface_Materials) {
-                    _COL = SOLARCHVISION_vertexRender_Shade_Surface_Materials(mt);
-                  }              
-              
-                  if (WIN3D_FACES_SHADE == Shade_Surface_White) {
-                    _COL = SOLARCHVISION_vertexRender_Shade_Surface_White(255);
-                  }     
-                  
-                  if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
+                    float[] _COL = {255, 255, 255, 255};
                     
-                    _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Spatial(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                  }                  
-                  
-                  if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
+                    if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
+                      int s_next = (s + 1) % subFace.length;
+                      int s_prev = (s + subFace.length - 1) % subFace.length;
+                      
+                      _COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                    }              
+                
+                    if (WIN3D_FACES_SHADE == Shade_Surface_Materials) {
+                      _COL = SOLARCHVISION_vertexRender_Shade_Surface_Materials(mt);
+                    }              
+                
+                    if (WIN3D_FACES_SHADE == Shade_Surface_White) {
+                      _COL = SOLARCHVISION_vertexRender_Shade_Surface_White(255);
+                    }     
                     
-                    _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                    if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
+                      
+                      _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Spatial(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                    }                  
+                    
+                    if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
+                      
+                      _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                    }
+                    
+                    WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
                   }
-
-                  WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+                  else {
+                    WIN3D_Diagrams.noFill();
+                  }
+                  
                   
                   WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -(subFace[s][1] * OBJECTS_scale * WIN3D_scale3D), subFace[s][2] * OBJECTS_scale * WIN3D_scale3D);
           
@@ -27699,7 +27714,14 @@ void mouseClicked () {
               ROLLOUT_Update = 1;
               BAR_d_Update = 1;
             }           
-  
+
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Surface Wire")) {
+              WIN3D_FACES_SHADE = Shade_Surface_Wire;
+              Display_MODEL3D_EDGES = 1; //<<<<<<<<<<<<<<<
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }       
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Surface Base")) {
               WIN3D_FACES_SHADE = Shade_Surface_Base;
               
@@ -36297,7 +36319,7 @@ String[][] BAR_a_Items = {
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
                         {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
                         {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sky", "Display/Hide SunPath", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected Solar Pivots", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
-                        {"Shade", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
+                        {"Shade", "Shade Surface Wire", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Run solar 3D-model", "Run wind 3D-model", "Run spatial 3D-model"},
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
@@ -38549,6 +38571,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setFloat("_pix", _pix);
   newChild1.setInt("STUDY_setup", STUDY_setup);
   newChild1.setInt("Materials_Selection", Materials_Selection);
+  newChild1.setInt("Shade_Surface_Wire", Shade_Surface_Wire);
   newChild1.setInt("Shade_Surface_Base", Shade_Surface_Base);
   newChild1.setInt("Shade_Surface_White", Shade_Surface_White);
   newChild1.setInt("Shade_Surface_Materials", Shade_Surface_Materials);
@@ -39485,6 +39508,7 @@ void SOLARCHVISION_load_project (String myFile) {
       _pix = children0[L].getFloat("_pix");
       STUDY_setup = children0[L].getInt("STUDY_setup");
       Materials_Selection = children0[L].getInt("Materials_Selection");
+      Shade_Surface_Wire = children0[L].getInt("Shade_Surface_Wire");
       Shade_Surface_Base = children0[L].getInt("Shade_Surface_Base");
       Shade_Surface_White = children0[L].getInt("Shade_Surface_White");
       Shade_Surface_Materials = children0[L].getInt("Shade_Surface_Materials");
