@@ -32446,16 +32446,10 @@ void RenderShadowsOnUrbanPlane () {
   
   float Shades_scaleX = RES1 / SolarImpact_scale_U;
   float Shades_scaleY = RES2 / SolarImpact_scale_V;
+
+  float Shades_offsetX = SolarImpact_offset_U;
+  float Shades_offsetY = SolarImpact_offset_V; 
   
-  //zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz  
-  float Shades_offsetX = -SolarImpact_offset_U * Shades_scaleX;
-  float Shades_offsetY = -SolarImpact_offset_V * Shades_scaleY; 
-  //zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
-  
-  println("Shades_scaleX", Shades_scaleX);
-  println("Shades_scaleY", Shades_scaleY);
-  println("Shades_offsetX", Shades_offsetX);
-  println("Shades_offsetY", Shades_offsetY);
 
   SHADOW_Diagrams = createGraphics(RES1, RES2, P2D); 
   
@@ -32639,7 +32633,7 @@ void RenderShadowsOnUrbanPlane () {
                           TY[q] = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
                         }                          
       
-                        TREES_Diagrams.vertex(TX[q] * Shades_scaleX, -TY[q] * Shades_scaleY, TU[q], TV[q]);
+                        TREES_Diagrams.vertex((TX[q] - Shades_offsetX) * Shades_scaleX, -(TY[q] - Shades_offsetY) * Shades_scaleY, TU[q], TV[q]);
                       }
                       
                       
@@ -32697,7 +32691,7 @@ void RenderShadowsOnUrbanPlane () {
                               TY[q] = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
                             }                            
           
-                            TREES_Diagrams.vertex(TX[q] * Shades_scaleX, -TY[q] * Shades_scaleY, TU[q], TV[q]);
+                            TREES_Diagrams.vertex((TX[q] - Shades_offsetX) * Shades_scaleX, -(TY[q] - Shades_offsetY) * Shades_scaleY, TU[q], TV[q]);
                           }
                         }
                       }
@@ -32803,7 +32797,7 @@ void RenderShadowsOnUrbanPlane () {
                           y = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
                         } 
 
-                        SHADOW_Diagrams.vertex(x * Shades_scaleX + Shades_offsetX, -(y * Shades_scaleY + Shades_offsetY));
+                        SHADOW_Diagrams.vertex((x - Shades_offsetX) * Shades_scaleX, -((y - Shades_offsetY) * Shades_scaleY));
                       }
                       else {
                         int s_next = (s + 1) % subFace_Rotated.length;
@@ -32827,7 +32821,7 @@ void RenderShadowsOnUrbanPlane () {
                             y_trim = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
                           } 
                           
-                          SHADOW_Diagrams.vertex(x_trim * Shades_scaleX + Shades_offsetX, -(y_trim * Shades_scaleY + Shades_offsetY));
+                          SHADOW_Diagrams.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
                         }
     
                         float z_next = subFace_Rotated[s_next][2] - SolarImpact_Elevation;
@@ -32848,7 +32842,7 @@ void RenderShadowsOnUrbanPlane () {
                             y_trim = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
                           } 
                           
-                          SHADOW_Diagrams.vertex(x_trim * Shades_scaleX + Shades_offsetX, -(y_trim * Shades_scaleY + Shades_offsetY));
+                          SHADOW_Diagrams.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
                         }                    
                       }
                     }
@@ -32890,7 +32884,7 @@ void RenderShadowsOnUrbanPlane () {
                   float Alpha = 0;
                   float Beta = rot; 
                 
-                  SOLARCHVISION_Plant_branch_SHADOW(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY);
+                  SOLARCHVISION_Plant_branch_SHADOW(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY, Shades_offsetX, Shades_offsetY);
                   
                 }
               }
@@ -33104,7 +33098,7 @@ void RenderShadowsOnUrbanPlane () {
                         TY[q] = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
                       }                          
     
-                      TREES_Diagrams.vertex(TX[q] * Shades_scaleX, -TY[q] * Shades_scaleY, TU[q], TV[q]);
+                      TREES_Diagrams.vertex((TX[q] - Shades_offsetX) * Shades_scaleX, -(TY[q] - Shades_offsetY) * Shades_scaleY, TU[q], TV[q]);
                     }
                     
                     
@@ -33157,7 +33151,7 @@ void RenderShadowsOnUrbanPlane () {
                             TY[q] = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
                           }      
         
-                          TREES_Diagrams.vertex(TX[q] * Shades_scaleX, -TY[q] * Shades_scaleY, TU[q], TV[q]);
+                          TREES_Diagrams.vertex((TX[q] - Shades_offsetX) * Shades_scaleX, -(TY[q] - Shades_offsetY) * Shades_scaleY, TU[q], TV[q]);
                         }
                       }
                     }
@@ -33262,7 +33256,7 @@ void RenderShadowsOnUrbanPlane () {
                         y = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
                       }                   
                       
-                      SHADOW_Diagrams.vertex(x * Shades_scaleX + Shades_offsetX, -(y * Shades_scaleY + Shades_offsetY));
+                      SHADOW_Diagrams.vertex((x - Shades_offsetX) * Shades_scaleX, -((y - Shades_offsetY) * Shades_scaleY));
                     }
                     else {
                       int s_next = (s + 1) % subFace_Rotated.length;
@@ -33286,7 +33280,7 @@ void RenderShadowsOnUrbanPlane () {
                           y_trim = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
                         }                     
                         
-                        SHADOW_Diagrams.vertex(x_trim * Shades_scaleX + Shades_offsetX, -(y_trim * Shades_scaleY + Shades_offsetY));
+                        SHADOW_Diagrams.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
                       }
     
                       float z_next = subFace_Rotated[s_next][2] - SolarImpact_Elevation;
@@ -33307,7 +33301,7 @@ void RenderShadowsOnUrbanPlane () {
                           y_trim = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
                         }                     
                         
-                        SHADOW_Diagrams.vertex(x_trim * Shades_scaleX + Shades_offsetX, -(y_trim * Shades_scaleY + Shades_offsetY));
+                        SHADOW_Diagrams.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -((y_trim - Shades_offsetY) * Shades_scaleY));
                       }                    
                     }
                   }
@@ -33987,7 +33981,7 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
 }
 
 
-void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize, float[] SunR_Rotated, float Shades_scaleX, float Shades_scaleY) {
+void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize, float[] SunR_Rotated, float Shades_scaleX, float Shades_scaleY, float Shades_offsetX, float Shades_offsetY) {
   
   SHADOW_Diagrams.strokeWeight(0);
   
@@ -34139,7 +34133,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
         SHADOW_Diagrams.endShape(CLOSE);      
       }
       
-      SOLARCHVISION_Plant_branch_SHADOW(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY);
+      SOLARCHVISION_Plant_branch_SHADOW(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY, Shades_offsetY, Shades_offsetY);
 
     }
   } else {
@@ -34183,7 +34177,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
 
 
 
-        SHADOW_Diagrams.ellipse(x * Shades_scaleX, -y * Shades_scaleY, LeafSize * Shades_scaleX, LeafSize * Shades_scaleY);
+        SHADOW_Diagrams.ellipse((x - Shades_offsetX) * Shades_scaleX, -(y - Shades_offsetY) * Shades_scaleY, LeafSize * Shades_scaleX, LeafSize * Shades_scaleY);
       }
 
    
