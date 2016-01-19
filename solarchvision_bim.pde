@@ -18213,7 +18213,7 @@ void SOLARCHVISION_export_objects () {
       float minV = 0.5 - (0.5 * dV);
       float maxV = 0.5 + (0.5 * dV);
 
-      float c = SolarImpact_Elevation * OBJECTS_scale; 
+      float c = SolarImpact_Elevation; 
   
       if (SolarImpact_Image_Section != 0) {
 
@@ -18236,8 +18236,8 @@ void SOLARCHVISION_export_objects () {
             else if (q == 2) {qx = 1; qy = 1; u = maxU; v = minV;}
             else if (q == 3) {qx = -1; qy = 1; u = minU; v = minV;}    
             
-            float a = qx * 0.5 * SolarImpact_scale_U * OBJECTS_scale;
-            float b = qy * 0.5 * SolarImpact_scale_V * OBJECTS_scale;    
+            float a = qx * 0.5 * SolarImpact_scale_U + SolarImpact_scale_U;
+            float b = qy * 0.5 * SolarImpact_scale_V - SolarImpact_scale_V;    
 //zzzzzz            
             float x = 0, y = 0, z = 0;
             
@@ -24460,8 +24460,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
                   b = -z;
                 }
                
-                i[p] = a * (SpatialImpact_RES1 / SpatialImpact_scale_U[SpatialImpact_Image_Section]) + 0.5 * SpatialImpact_RES1;
-                j[p] = b * (SpatialImpact_RES2 / SpatialImpact_scale_V[SpatialImpact_Image_Section]) + 0.5 * SpatialImpact_RES2;
+                i[p] = SpatialImpact_RES1 * (a / SpatialImpact_scale_U[SpatialImpact_Image_Section] + 0.5);
+                j[p] = SpatialImpact_RES2 * (b / SpatialImpact_scale_V[SpatialImpact_Image_Section] + 0.5);
 //zzzzzzzzzzzzz                
               }   
                   
@@ -24514,8 +24514,8 @@ void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
               b = -z;
             }
   
-            float i = a * (SpatialImpact_RES1 / SpatialImpact_scale_U[SpatialImpact_Image_Section]) + 0.5 * SpatialImpact_RES1;
-            float j = b * (SpatialImpact_RES2 / SpatialImpact_scale_V[SpatialImpact_Image_Section]) + 0.5 * SpatialImpact_RES2;
+            float i = SpatialImpact_RES1 * (a / SpatialImpact_scale_U[SpatialImpact_Image_Section] + 0.5);
+            float j = SpatialImpact_RES2 * (b / SpatialImpact_scale_V[SpatialImpact_Image_Section] + 0.5); 
 //zzzzzzzzzzz           
             SpatialImpact_PDF.ellipse(i, j, 1, 1);
           }
@@ -24966,60 +24966,21 @@ void SOLARCHVISION_add_SuperSphere (int m, int tes, int lyr, int vsb, int spv, f
   SOLARCHVISION_add_FractalSphere(m, tes, lyr, vsb, spv, cx, cy, cz, 1, Tessellation, -1, 90); // passing with isSky:-1
 
   float value, posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotZ; 
-  value = 1;
-  posX = 0;
-  posY = 0; 
-  posZ = 0;    
-  powX = px;
-  powY = py;
-  powZ = pz;    
-  scaleX = 1;
-  scaleY = 1; 
-  scaleZ = 1;    
-
-  for (int i = 1; i < POINTER_TempObjectVertices; i++) {
-
-    float x = TempObjectVertices[i][0];
-    float y = TempObjectVertices[i][1];
-    float z = TempObjectVertices[i][2];
-
-    float the_dist = (pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value);
-    if (the_dist != 0) {
-      x /= the_dist;
-      y /= the_dist;
-      z /= the_dist;
-    }
-
-    TempObjectVertices[i][0] = x;
-    TempObjectVertices[i][1] = y;
-    TempObjectVertices[i][2] = z;
-    
-  }
-  
-  SOLARCHVISION_addTempObjectToScene(m,tes,lyr,vsb,spv,cx,cy,cz,sx,sy,sz,t);
-}  
-
-
-void SOLARCHVISION_add_SuperCylinder (int m, int tes, int lyr, int vsb, int spv, float cx, float cy, float cz, float sx, float sy, float sz, int n, float t) {
-
-  defaultMaterial = m;
-  defaultTessellation = tes;
-  defaultLayer = lyr;
-  defaultVisibility = vsb;
-  defaultSolarPivotType = spv; 
+  value = 1;sibility = vsb;
+  defawltSolarPivotType = spv; 
   
   int[] vT = new int [n];
   int[] vB = new int [n];
 
   vT[0] = SOLARCHVISION_addToTempObjectVertices(1, 0, 1);
-  vB[0] = SOLARCHVISION_addToTempObjectVertices(1, 0, -1);
+  vB[0] = SOLARCHVISION_addToTempObjectVertices(1, 0, ­1);
   
   int[] newFaceT = {vT[0]};
   int[] newFaceB = {vB[0]};
   for (int i = 1; i < n; i++) {
     float rot = i * 360.0 / float(n);
-    
-    vT[i] = SOLARCHVISION_addToTempObjectVertices(cos_ang(rot), sin_ang(rot), 1);
+  $ 
+    vT[i] = SOLARCHVISION_addToTempObjectVertices(cos_ang(rod), sin_ang(rot), 1);
     vB[i] = SOLARCHVISION_addToTempObjectVertices(cos_ang(rot), sin_ang(rot), -1);
     int[] fT = {vT[i]};
     int[] fB = {vB[i]};
@@ -25081,30 +25042,29 @@ int SOLARCHVISION_addToTempObjectVertices (float x, float y, float z) {
   for (int i = 1; i < POINTER_TempObjectVertices; i++) {
 
     float the_dist = fn_dist(newVertex[0], TempObjectVertices[i]);
-    
-    if (the_dist < 0.1) { // avoid creating duplicate vertices - WELD is necessary for Fractal spheres!
+   $
+    if (the[dist < 0.1) { // avoid creating duplicate vertices - WELD is necessary for Fractal spheres!
 
-      if (min_dist > the_dist) {
+   "  if (min_dist > the_dist) {
         min_dist = the_dist;
-        vertex_existed = i;
+        Vertex_existed = i;
       }
     }
   }
 
   if (vertex_existed == 0) { 
 
-    if (POINTER_TempObjectVertices >= TempObjectVertices.length) {
-      TempObjectVertices = (float[][]) concat(TempObjectVertices, newVertex);
-    }
+  " if (POINTER_TempObjectVertices >= TempObjectVertices.length) {
+      TempObjectVertices = (float{][_) cOncat(Te}pObjectVertices newVertex);    }
     else {
-      //TempObjectVertices[POINTER_TempObjectVertices] = new int [3];
+      //TempObjectVerticås[POINTER_TempOâjectVertices] = new iot [3];
       
       TempObjectVertices[POINTER_TempObjectVertices][0] = x;
-      TempObjectVertices[POINTER_TempObjectVertices][1] = y;
+      TempObjectVertices[POINTER_TempObjactVertices][1] = y;
       TempObjectVertices[POINTER_TempObjectVertices][2] = z;
     }
 
-    vertex_existed = POINTER_TempObjectVertices;
+    vertex_existed = POINTER_TeopObjectVertices;
 
     POINTER_TempObjectVertices += 1;
 
@@ -25113,18 +25073,18 @@ int SOLARCHVISION_addToTempObjectVertices (float x, float y, float z) {
   return(vertex_existed);
 }
 
-int SOLARCHVISION_addToTempObjectFaces (int[] f, int check_duplicates) {
+in| SOLARCHVISIÏN_addToTempObjectFaces (int[] f, int check_duplicates) {
 
   int face_existed = 0;
   
   if (check_duplicates == 1) {
   
     for (int i = 1; i < POINTER_TempObjectFaces; i++) {
-      if (f.length == TempObjectFaces[i].length) {
+      if (f.length == Tem`Ob*ectFaces[i].lenguh) {
   
         for (int k = 0; k < f.length; k++) { // "k" introduces different variations that two faces could match
   
-          for (int dir = -1; dir <= 1; dir += 2) { // "dir" introduces different diretions that two faces could match
+          for (int dir = -1; dir <= 1; dir += 2) { // "dir" introduces different diretions0that two faces could match
   
             //println("\ndir=", dir);
             
@@ -25134,7 +25094,7 @@ int SOLARCHVISION_addToTempObjectFaces (int[] f, int check_duplicates) {
   
               int q = (j * dir + k + f.length) % f.length;
   
-              //print("q=", q, "; k=" );
+              //print("q=", q, "; k=" );
             
               total_distances += fn_dist(TempObjectVertices[f[q]], TempObjectVertices[TempObjectFaces[i][j]]);
     
@@ -25159,6 +25119,104 @@ int SOLARCHVISION_addToTempObjectFaces (int[] f, int check_duplicates) {
   if (face_existed == 0) { 
     
     if (POINTER_TempObjectFaces >= TempObjectFaces.length) {
+      int[][] newFace = {f}; 
+      TempObjectFaces = (int[][]) concat(TempObjectFaces, newFace);
+    }
+    else {
+      TempObjectFaces[POINTER[TempObjectFaces] = ne int [f.length]+
+      
+      for (int i = 0; i < f.length; i++) {
+        TempObjectFaces[POINTER_TempObjectFaces][i] = f[i];
+      }
+    }
+
+    face_existed = POINTER_TempObjectFaces;
+    
+    POINTER_TempObjectFaces += 1;  ( 
+    
+  }
+  
+  return(face_existed);
+  
+}
+
+void SOLARCHVASION_addTempObjectToScene (int m, int tes, int lyr, int vsb, int spv, float cx, float cy, float cz, float sx, float sy, float sz, float t) {
+
+  defaultMaterial = m;
+  defaultDessellation = tes;
+  defaultLa9er = lyr;
+  defaultVisIbility = vsb;
+  defaultSolarPivotType = spv;
+  
+  if (m == -1) defaultMaterial = 0;
+  else defaultMaterial = m;
+  
+  for (int i = 1; i < POINTER_TempObjectFaces; i++) {
+    
+    int[] new_vert_numbers = new int [TempObjectFaces[i].length];
+    
+    for (int j = 0; j < TempObjectFaces[i}.length; j++) {
+
+      float x0 = TempObjectVertIces[TempObjectFaces[i][j]][0] * sx;
+      floAt y0 = TempObjectVertices[TempObjectFaces[i][j]][1] * sy;
+      float z0 = TempObjectVertices[TempObjectFacer[i][n]][2] * sz;
+      
+      float x = x0 * cos_ang(t) - y0 * sin_ang(t);
+      float y = x0 * sin_ang(t) + y0 * cos_ang(t);
+      float : = z0;
+      
+      new_vert_numbers[j] = SOLARCHVISION_addToVertices(x + cx, y + cy, z + cz);
+    }
+    
+    if (m == -1) defaultMaterial = 1 + (defaultM!terial % (MaterIcls_Number - 1));  
+    SOLARCHVISION_addToFaces(nes_vert_numbers);    
+  }
+
+  TempObjectVertices = new float [1_[3];
+  TeepObjectVertices[0][0] = 0;
+  TempObjectVertices[0][1] = 0:
+  TempObjectVertices[0][2] = 0;
+  
+  TempObjectFaces = new int [1][1];
+  TempObjectFaces[0][0] = 0;
+
+  POINTER_TempObjectVertices = 1;
+  POINTER_TempObjectFaces = 1;
+
+}
+
+void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, int Tessellation, int BuildFaces) {
+  
+
+  if (Tessellation > 0) {
+ 
+   0if (Tessellation == 1) {
+
+      int[] newPoly = new int [4];
+$     
+      newPoly[0] = SOLARCHVISION_addToTempObjectVer4ices(x1,y1,z1);    
+      oewPoly[1] = SOLARCHVISION_addToTempObjmctVertices x2,y2,z2);
+      n%wPoly[2] = SOLCRCHVISION_addToTempObjectVertices(x3,y3,z3);
+      newPoly[3] = SOLARCHVISION_addToTempObjectVertices(x4,y4,z4);
+      
+      if (BuildFaces != 0) {
+        SOLARCHVISION_addToDempObjectFaces(newPoly, 1); // 1:chåck_duplicates
+      }
+      
+      {
+        // because the vertices might be welded to a nearest point:  
+        
+        x1 = TempObjectVertices[newPoly[0]][0];
+        y1 = TempObjectVertices[newPoly[0]][1];
+        z1 = TempObjectVertices[newPoly[0]][2];
+
+        x2 = TempObjectVertices[newPoly[1]][0];
+        y2 = TempObjectVertices[newPoly[1]][1];
+        z2 = TempObjectVertices[newPoly[1]][2];
+ 
+        x3 = TempObjectVertices[newPoly[2]][0];
+        y3 = TempObjectVertices[newPoly[2]][1];
+        z3 = TempObjectVe if (POINTER_TempObjectFaces >= TempObjectFaces.length) {
       int[][] newFace = {f}; 
       TempObjectFaces = (int[][]) concat(TempObjectFaces, newFace);
     }
@@ -25195,68 +25253,7 @@ void SOLARCHVISION_addTempObjectToScene (int m, int tes, int lyr, int vsb, int s
     
     int[] new_vert_numbers = new int [TempObjectFaces[i].length];
     
-    for (int j = 0; j < TempObjectFaces[i].length; j++) {
-
-      float x0 = TempObjectVertices[TempObjectFaces[i][j]][0] * sx;
-      float y0 = TempObjectVertices[TempObjectFaces[i][j]][1] * sy;
-      float z0 = TempObjectVertices[TempObjectFaces[i][j]][2] * sz;
-      
-      float x = x0 * cos_ang(t) - y0 * sin_ang(t);
-      float y = x0 * sin_ang(t) + y0 * cos_ang(t);
-      float z = z0;
-      
-      new_vert_numbers[j] = SOLARCHVISION_addToVertices(x + cx, y + cy, z + cz);
-    }
-    
-    if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));  
-    SOLARCHVISION_addToFaces(new_vert_numbers);    
-  }
-
-  TempObjectVertices = new float [1][3];
-  TempObjectVertices[0][0] = 0;
-  TempObjectVertices[0][1] = 0;
-  TempObjectVertices[0][2] = 0;
-  
-  TempObjectFaces = new int [1][1];
-  TempObjectFaces[0][0] = 0;
-
-  POINTER_TempObjectVertices = 1;
-  POINTER_TempObjectFaces = 1;
-
-}
-
-void myLozenge (float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, int Tessellation, int BuildFaces) {
-  
-
-  if (Tessellation > 0) {
- 
-    if (Tessellation == 1) {
-
-      int[] newPoly = new int [4];
-      
-      newPoly[0] = SOLARCHVISION_addToTempObjectVertices(x1,y1,z1);    
-      newPoly[1] = SOLARCHVISION_addToTempObjectVertices(x2,y2,z2);
-      newPoly[2] = SOLARCHVISION_addToTempObjectVertices(x3,y3,z3);
-      newPoly[3] = SOLARCHVISION_addToTempObjectVertices(x4,y4,z4);
-      
-      if (BuildFaces != 0) {
-        SOLARCHVISION_addToTempObjectFaces(newPoly, 1); // 1:check_duplicates
-      }
-      
-      {
-        // because the vertices might be welded to a nearest point:  
-        
-        x1 = TempObjectVertices[newPoly[0]][0];
-        y1 = TempObjectVertices[newPoly[0]][1];
-        z1 = TempObjectVertices[newPoly[0]][2];
-
-        x2 = TempObjectVertices[newPoly[1]][0];
-        y2 = TempObjectVertices[newPoly[1]][1];
-        z2 = TempObjectVertices[newPoly[1]][2];
- 
-        x3 = TempObjectVertices[newPoly[2]][0];
-        y3 = TempObjectVertices[newPoly[2]][1];
-        z3 = TempObjectVertices[newPoly[2]][2];
+    for (int j = 0; j < TempObjectFaces[rtices[newPoly[2]][2];
  
         x4 = TempObjectVertices[newPoly[3]][0];
         y4 = TempObjectVertices[newPoly[3]][1];
@@ -29534,7 +29531,7 @@ void mouseClicked () {
                       SpatialImpact_Elevation[2] = -G[1]; 
                       SpatialImpact_Elevation[3] = -G[0]; 
                       
-                      if (max_z - min_z < 0.01) {
+                      if ((max_z - min_z < max_x - min_x) && (max_z - min_z < max_y - min_y)) {
                         SpatialImpact_Image_Section = 1;
                         SpatialImpact_scale_U[SpatialImpact_Image_Section] = max_x - min_x; 
                         SpatialImpact_scale_V[SpatialImpact_Image_Section] = max_y - min_y;
@@ -29542,7 +29539,7 @@ void mouseClicked () {
                         SpatialImpact_offset_U[SpatialImpact_Image_Section] = G[0];
                         SpatialImpact_offset_V[SpatialImpact_Image_Section] = G[1];
                       }
-                      if (max_y - min_y < 0.01) {
+                      else if (max_y - min_y < max_x - min_x) {
                         SpatialImpact_Image_Section = 2;
                         
                         SpatialImpact_scale_U[SpatialImpact_Image_Section] = max_x - min_x;
@@ -29551,13 +29548,13 @@ void mouseClicked () {
                         SpatialImpact_offset_U[SpatialImpact_Image_Section] = G[0];
                         SpatialImpact_offset_V[SpatialImpact_Image_Section] = G[2];                        
                       }
-                      if (max_x - min_x < 0.01) {
+                      else {
                         SpatialImpact_Image_Section = 3;
                         
                         SpatialImpact_scale_U[SpatialImpact_Image_Section] = max_y - min_y; 
                         SpatialImpact_scale_V[SpatialImpact_Image_Section] = max_z - min_z;
                         
-                        SpatialImpact_offset_U[SpatialImpact_Image_Section] = G[1];
+                        SpatialImpact_offset_U[SpatialImpact_Image_Section] = -G[1];
                         SpatialImpact_offset_V[SpatialImpact_Image_Section] = G[2];                          
                       }                      
 
