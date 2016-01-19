@@ -33312,6 +33312,43 @@ void RenderShadowsOnUrbanPlane () {
             }
           }
           
+          //now calculating Fractal plants
+          if (Display_FractalPlant != 0) {
+            
+            for (int f = 1; f <= allFractal_num; f++) {
+
+              float x = allFractal_XYZSRA[f][0];
+              float y = allFractal_XYZSRA[f][1];
+              float z = allFractal_XYZSRA[f][2];
+              
+              float r = allFractal_XYZSRA[f][3] * 0.5;
+              float rot = allFractal_XYZSRA[f][4];      
+        
+              int n = allFractal_Type[f];
+
+              int dMin = allFractal_DegreeMin[f];
+        
+              int dMax = allFractal_DegreeMax[f];
+        
+              int s = allFractal_Seed[f];
+              
+              float TrunkSize = allFractal_TrunkSize[f];
+              
+              float LeafSize = allFractal_LeafSize[f];
+              
+              randomSeed(s);
+        
+              if (n == 0) {
+                
+                float Alpha = 0;
+                float Beta = rot; 
+              
+                SOLARCHVISION_Plant_branch_SHADOW(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize, SunR_Rotated, Shades_scaleX, Shades_scaleY, Shades_offsetX, Shades_offsetY);
+                
+              }
+            }
+          }          
+          
           SHADOW_Diagrams.popMatrix();  
           
         }
@@ -34080,7 +34117,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
               y = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
             } 
             
-            SHADOW_Diagrams.vertex(x * Shades_scaleX, -y * Shades_scaleY);
+            SHADOW_Diagrams.vertex((x - Shades_offsetX) * Shades_scaleX, -(y - Shades_offsetY) * Shades_scaleY);
           }
           else {
             int s_next = (s + 1) % subFace_Rotated.length;
@@ -34104,7 +34141,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
                 y_trim = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
               } 
               
-              SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
+              SHADOW_Diagrams.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -(y_trim - Shades_offsetY) * Shades_scaleY);
             }
   
             float z_next = subFace_Rotated[s_next][2] - SolarImpact_Elevation;
@@ -34125,7 +34162,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
                 y_trim = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
               } 
               
-              SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
+              SHADOW_Diagrams.vertex((x_trim - Shades_offsetX) * Shades_scaleX, -(y_trim - Shades_offsetY) * Shades_scaleY);
             }                    
           }
         }
