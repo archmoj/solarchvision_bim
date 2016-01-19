@@ -32470,6 +32470,7 @@ void RenderShadowsOnUrbanPlane () {
         float HOUR_ANGLE = i; 
         float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
         float[] SunR_Rotated = SunR; 
+        int SunR_Rotated_check = 3;
         
         if (SolarImpact_Image_Section == 2) {
           float a = SunR_Rotated[1];
@@ -32479,6 +32480,8 @@ void RenderShadowsOnUrbanPlane () {
           SunR_Rotated[1] = a * cos_ang(-SolarImpact_Rotation) - b * sin_ang(-SolarImpact_Rotation);
           SunR_Rotated[2] = c;
           SunR_Rotated[3] = a * sin_ang(-SolarImpact_Rotation) + b * cos_ang(-SolarImpact_Rotation);
+          
+          SunR_Rotated_check = 2;
         }
         else if (SolarImpact_Image_Section == 3) {}
         
@@ -32511,7 +32514,7 @@ void RenderShadowsOnUrbanPlane () {
           TREES_Diagrams.rectMode(CORNER);
           TREES_Diagrams.rect(0, 0, RES1, RES2);
           
-          if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[3] > 0)) { // i.e. one-sided plane
+          if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[SunR_Rotated_check] > 0)) { // i.e. one-sided plane
   
             TREES_Diagrams.pushMatrix();
             TREES_Diagrams.translate(SolarImpact_RES1 / 2, SolarImpact_RES2 / 2);            
@@ -32718,7 +32721,7 @@ void RenderShadowsOnUrbanPlane () {
           SHADOW_Diagrams.rectMode(CORNER);
           SHADOW_Diagrams.rect(0, 0, RES1, RES2);
   
-          if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[3] > 0)) { // i.e. one-sided plane
+          if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[SunR_Rotated_check] > 0)) { // i.e. one-sided plane
   
             SHADOW_Diagrams.pushMatrix();
             SHADOW_Diagrams.translate(SolarImpact_RES1 / 2, SolarImpact_RES2 / 2);            
@@ -32945,6 +32948,7 @@ void RenderShadowsOnUrbanPlane () {
         }
         
         float[] SunR_Rotated = SunR; 
+        int SunR_Rotated_check = 3;
         
         if (SolarImpact_Image_Section == 2) {
           float a = SunR_Rotated[1];
@@ -32954,6 +32958,8 @@ void RenderShadowsOnUrbanPlane () {
           SunR_Rotated[1] = a * cos_ang(-SolarImpact_Rotation) - b * sin_ang(-SolarImpact_Rotation);
           SunR_Rotated[2] = c;
           SunR_Rotated[3] = a * sin_ang(-SolarImpact_Rotation) + b * cos_ang(-SolarImpact_Rotation);
+          
+          SunR_Rotated_check = 2;
         }
         else if (SolarImpact_Image_Section == 3) {}
 
@@ -32969,7 +32975,7 @@ void RenderShadowsOnUrbanPlane () {
         TREES_Diagrams.rectMode(CORNER);
         TREES_Diagrams.rect(0, 0, RES1, RES2);
         
-        if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[3] > 0)) { // i.e. one-sided plane
+        if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[SunR_Rotated_check] > 0)) { // i.e. one-sided plane
 
           TREES_Diagrams.pushMatrix();
           TREES_Diagrams.translate(SolarImpact_RES1 / 2, SolarImpact_RES2 / 2);            
@@ -33174,7 +33180,7 @@ void RenderShadowsOnUrbanPlane () {
         SHADOW_Diagrams.rectMode(CORNER);
         SHADOW_Diagrams.rect(0, 0, RES1, RES2);
 
-        if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[3] > 0)) { // i.e. one-sided plane
+        if ((SHD == 1) && (SunR[3] > 0) && (SunR_Rotated[SunR_Rotated_check] > 0)) { // i.e. one-sided plane
 
           SHADOW_Diagrams.pushMatrix();
           SHADOW_Diagrams.translate(SolarImpact_RES1 / 2, SolarImpact_RES2 / 2);            
