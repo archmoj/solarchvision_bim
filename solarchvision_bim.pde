@@ -18208,10 +18208,10 @@ void SOLARCHVISION_export_objects () {
       float dU = SolarImpact_scale_U / Rendered_SolarImpact_scale_U;
       float dV = SolarImpact_scale_V / Rendered_SolarImpact_scale_V;
 //zzzzzzzzzzzz      
-      float minU = 0.5 - (0.5 * dU);
-      float maxU = 0.5 + (0.5 * dU);
-      float minV = 0.5 - (0.5 * dV);
-      float maxV = 0.5 + (0.5 * dV);
+      float minU = 0.5 * (1 - dU);
+      float maxU = 0.5 * (1 + dU);
+      float minV = 0.5 * (1 - dV);
+      float maxV = 0.5 * (1 + dV);
 
       float c = SolarImpact_Elevation; 
   
@@ -18237,7 +18237,7 @@ void SOLARCHVISION_export_objects () {
             else if (q == 3) {qx = -1; qy = 1; u = minU; v = minV;}    
             
             float a = qx * 0.5 * SolarImpact_scale_U + SolarImpact_scale_U;
-            float b = qy * 0.5 * SolarImpact_scale_V - SolarImpact_scale_V;    
+            float b = qy * 0.5 * SolarImpact_scale_V + SolarImpact_scale_V;    
 //zzzzzz            
             float x = 0, y = 0, z = 0;
             
@@ -33419,11 +33419,11 @@ void SOLARCHVISION_draw_SolarImpact_Image () {
   
       float dU = SolarImpact_scale_U / Rendered_SolarImpact_scale_U;
       float dV = SolarImpact_scale_V / Rendered_SolarImpact_scale_V;
-//zzzzzzzzzzzz      
-      float minU = 0.5 * SolarImpact_RES1 - (0.5 * SolarImpact_RES1 * dU);
-      float maxU = 0.5 * SolarImpact_RES1 + (0.5 * SolarImpact_RES1 * dU);
-      float minV = 0.5 * SolarImpact_RES2 - (0.5 * SolarImpact_RES2 * dV);
-      float maxV = 0.5 * SolarImpact_RES2 + (0.5 * SolarImpact_RES2 * dV);
+   
+      float minU = 0.5 * SolarImpact_RES1 * (1 - dU);
+      float maxU = 0.5 * SolarImpact_RES1 * (1 + dU);
+      float minV = 0.5 * SolarImpact_RES2 * (1 - dV);
+      float maxV = 0.5 * SolarImpact_RES2 * (1 + dV);
   
       //float c = HeightAboveGround * OBJECTS_scale; // <<< or zero i.e. height of the plane in 3D  // ?????????
       float c = SolarImpact_Elevation * OBJECTS_scale; 
@@ -33444,9 +33444,9 @@ void SOLARCHVISION_draw_SolarImpact_Image () {
           else if (q == 2) {qx = 1; qy = 1; u = maxU; v = minV;}
           else if (q == 3) {qx = -1; qy = 1; u = minU; v = minV;}    
           
-          float a = qx * 0.5 * SolarImpact_scale_U;
-          float b = qy * 0.5 * SolarImpact_scale_V;    
-//zzzzzzzzzz          
+          float a = qx * 0.5 * SolarImpact_scale_U + SolarImpact_offset_U;
+          float b = qy * 0.5 * SolarImpact_scale_V + SolarImpact_offset_V;    
+          
           float x = 0, y = 0, z = 0;
           
           if (SolarImpact_Image_Section == 1) {
