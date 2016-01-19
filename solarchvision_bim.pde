@@ -32446,6 +32446,16 @@ void RenderShadowsOnUrbanPlane () {
   
   float Shades_scaleX = RES1 / SolarImpact_scale_U;
   float Shades_scaleY = RES2 / SolarImpact_scale_V;
+  
+  //zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz  
+  float Shades_offsetX = -SolarImpact_offset_U * Shades_scaleX;
+  float Shades_offsetY = -SolarImpact_offset_V * Shades_scaleY; 
+  //zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+  
+  println("Shades_scaleX", Shades_scaleX);
+  println("Shades_scaleY", Shades_scaleY);
+  println("Shades_offsetX", Shades_offsetX);
+  println("Shades_offsetY", Shades_offsetY);
 
   SHADOW_Diagrams = createGraphics(RES1, RES2, P2D); 
   
@@ -32780,6 +32790,8 @@ void RenderShadowsOnUrbanPlane () {
                       float z = subFace_Rotated[s][2] - SolarImpact_Elevation;
                       float x = subFace_Rotated[s][0] - z * SunR_Rotated[1] / SunR_Rotated[3];
                       float y = subFace_Rotated[s][1] - z * SunR_Rotated[2] / SunR_Rotated[3];
+
+
     
                       if (z >= 0) {
                         
@@ -32790,8 +32802,8 @@ void RenderShadowsOnUrbanPlane () {
                           x = px * cos_ang(-SolarImpact_Rotation) - py * sin_ang(-SolarImpact_Rotation); 
                           y = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
                         } 
-                        
-                        SHADOW_Diagrams.vertex(x * Shades_scaleX, -y * Shades_scaleY);
+
+                        SHADOW_Diagrams.vertex(x * Shades_scaleX + Shades_offsetX, -(y * Shades_scaleY + Shades_offsetY));
                       }
                       else {
                         int s_next = (s + 1) % subFace_Rotated.length;
@@ -32815,7 +32827,7 @@ void RenderShadowsOnUrbanPlane () {
                             y_trim = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
                           } 
                           
-                          SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
+                          SHADOW_Diagrams.vertex(x_trim * Shades_scaleX + Shades_offsetX, -(y_trim * Shades_scaleY + Shades_offsetY));
                         }
     
                         float z_next = subFace_Rotated[s_next][2] - SolarImpact_Elevation;
@@ -32836,7 +32848,7 @@ void RenderShadowsOnUrbanPlane () {
                             y_trim = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
                           } 
                           
-                          SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
+                          SHADOW_Diagrams.vertex(x_trim * Shades_scaleX + Shades_offsetX, -(y_trim * Shades_scaleY + Shades_offsetY));
                         }                    
                       }
                     }
@@ -33250,7 +33262,7 @@ void RenderShadowsOnUrbanPlane () {
                         y = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
                       }                   
                       
-                      SHADOW_Diagrams.vertex(x * Shades_scaleX, -y * Shades_scaleY);
+                      SHADOW_Diagrams.vertex(x * Shades_scaleX + Shades_offsetX, -(y * Shades_scaleY + Shades_offsetY));
                     }
                     else {
                       int s_next = (s + 1) % subFace_Rotated.length;
@@ -33274,7 +33286,7 @@ void RenderShadowsOnUrbanPlane () {
                           y_trim = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
                         }                     
                         
-                        SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
+                        SHADOW_Diagrams.vertex(x_trim * Shades_scaleX + Shades_offsetX, -(y_trim * Shades_scaleY + Shades_offsetY));
                       }
     
                       float z_next = subFace_Rotated[s_next][2] - SolarImpact_Elevation;
@@ -33295,7 +33307,7 @@ void RenderShadowsOnUrbanPlane () {
                           y_trim = px * sin_ang(-SolarImpact_Rotation) + py * cos_ang(-SolarImpact_Rotation);
                         }                     
                         
-                        SHADOW_Diagrams.vertex(x_trim * Shades_scaleX, -y_trim * Shades_scaleY);
+                        SHADOW_Diagrams.vertex(x_trim * Shades_scaleX + Shades_offsetX, -(y_trim * Shades_scaleY + Shades_offsetY));
                       }                    
                     }
                   }
