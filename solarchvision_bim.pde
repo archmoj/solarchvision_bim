@@ -24460,9 +24460,9 @@ void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
                   b = -z;
                 }
                
-                i[p] = SpatialImpact_RES1 * (a / SpatialImpact_scale_U[SpatialImpact_Image_Section] + 0.5);
-                j[p] = SpatialImpact_RES2 * (b / SpatialImpact_scale_V[SpatialImpact_Image_Section] + 0.5);
-//zzzzzzzzzzzzz                
+                i[p] = SpatialImpact_RES1 * ((a - SpatialImpact_offset_U[SpatialImpact_Image_Section]) / SpatialImpact_scale_U[SpatialImpact_Image_Section] + 0.5);
+                j[p] = SpatialImpact_RES2 * ((b + SpatialImpact_offset_V[SpatialImpact_Image_Section]) / SpatialImpact_scale_V[SpatialImpact_Image_Section] + 0.5); 
+            
               }   
                   
               SpatialImpact_PDF.line(i[0], j[0], i[1], j[1]);
@@ -24514,9 +24514,9 @@ void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
               b = -z;
             }
   
-            float i = SpatialImpact_RES1 * (a / SpatialImpact_scale_U[SpatialImpact_Image_Section] + 0.5);
-            float j = SpatialImpact_RES2 * (b / SpatialImpact_scale_V[SpatialImpact_Image_Section] + 0.5); 
-//zzzzzzzzzzz           
+            float i = SpatialImpact_RES1 * ((a - SpatialImpact_offset_U[SpatialImpact_Image_Section]) / SpatialImpact_scale_U[SpatialImpact_Image_Section] + 0.5);
+            float j = SpatialImpact_RES2 * ((b + SpatialImpact_offset_V[SpatialImpact_Image_Section]) / SpatialImpact_scale_V[SpatialImpact_Image_Section] + 0.5);
+          
             SpatialImpact_PDF.ellipse(i, j, 1, 1);
           }
       
@@ -30702,8 +30702,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       
       SpatialImpact_scale_U[SpatialImpact_Image_Section] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_scale_U[" + nf(SpatialImpact_Image_Section, 0) + "]" , SpatialImpact_scale_U[SpatialImpact_Image_Section], 50, 3200, -2);
       SpatialImpact_scale_V[SpatialImpact_Image_Section] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_scale_V[" + nf(SpatialImpact_Image_Section, 0) + "]" , SpatialImpact_scale_V[SpatialImpact_Image_Section], 50, 3200, -2);
-      SpatialImpact_offset_U[SpatialImpact_Image_Section] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_offset_U[" + nf(SpatialImpact_Image_Section, 0) + "]" , SpatialImpact_offset_U[SpatialImpact_Image_Section], 50, 3200, -2);
-      SpatialImpact_offset_V[SpatialImpact_Image_Section] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_offset_V[" + nf(SpatialImpact_Image_Section, 0) + "]" , SpatialImpact_offset_V[SpatialImpact_Image_Section], 50, 3200, -2);
+      SpatialImpact_offset_U[SpatialImpact_Image_Section] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_offset_U[" + nf(SpatialImpact_Image_Section, 0) + "]" , SpatialImpact_offset_U[SpatialImpact_Image_Section], -1000, 1000, -2);
+      SpatialImpact_offset_V[SpatialImpact_Image_Section] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_offset_V[" + nf(SpatialImpact_Image_Section, 0) + "]" , SpatialImpact_offset_V[SpatialImpact_Image_Section], -1000, 1000, -2);
       
     
       SpatialImpact_Wspd = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Wspd (m/s)" , SpatialImpact_Wspd, 1, 64, -2); 
