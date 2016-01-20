@@ -433,12 +433,12 @@ String MAKE_mainname () {
 
 String get_SpatialImpact_Filename () {
   
-  return DiagramsFolder + "/" + nf(_YEAR, 2) + "-" + nf(_MONTH, 2) + "-" + nf(_DAY, 2) + "/" + databaseString[impacts_source] + "/Impacts/SpatialImpact" + nf(SpatialImpact_Image_Section, 0) + "h" + nf(int(roundTo(SpatialImpact_Elevation[SpatialImpact_Image_Section], 1)), 4) + "r" + nf(int(roundTo(SpatialImpact_Rotation[SpatialImpact_Image_Section], 1)), 3) + "p" + nf(SpatialImpact_Power, 2, 2).replace(".", "_") + "m" + nf(SpatialImpact_Grade, 2, 2).replace(".", "_");
+  return DiagramsFolder + "/" + nf(_YEAR, 2) + "-" + nf(_MONTH, 2) + "-" + nf(_DAY, 2) + "/" + databaseString[impacts_source] + "/Impacts/SpatialImpact" + nf(SpatialImpact_sectionType, 0) + "h" + nf(int(roundTo(SpatialImpact_Elevation[SpatialImpact_sectionType], 1)), 4) + "r" + nf(int(roundTo(SpatialImpact_Rotation[SpatialImpact_sectionType], 1)), 3) + "p" + nf(SpatialImpact_Power, 2, 2).replace(".", "_") + "m" + nf(SpatialImpact_Grade, 2, 2).replace(".", "_");
 }
 
 String get_SolarImpact_Filename () {
   
-  return DiagramsFolder + "/" + nf(_YEAR, 2) + "-" + nf(_MONTH, 2) + "-" + nf(_DAY, 2) + "/" + databaseString[impacts_source] + "/Impacts/SolarImpact" + nf(SpatialImpact_Image_Section, 0) + "h" + nf(int(roundTo(SpatialImpact_Elevation[SpatialImpact_Image_Section], 1)), 4) + "r" + nf(int(roundTo(SpatialImpact_Rotation[SpatialImpact_Image_Section], 1)), 3);
+  return DiagramsFolder + "/" + nf(_YEAR, 2) + "-" + nf(_MONTH, 2) + "-" + nf(_DAY, 2) + "/" + databaseString[impacts_source] + "/Impacts/SolarImpact" + nf(SpatialImpact_sectionType, 0) + "h" + nf(int(roundTo(SpatialImpact_Elevation[SpatialImpact_sectionType], 1)), 4) + "r" + nf(int(roundTo(SpatialImpact_Rotation[SpatialImpact_sectionType], 1)), 3);
 }
 
 
@@ -2244,8 +2244,8 @@ void draw () {
         
         pre_SpatialImpact_Grade = SpatialImpact_Grade;
         pre_SpatialImpact_Power = SpatialImpact_Power;
-        pre_SpatialImpact_Rotation[SpatialImpact_Image_Section] = SpatialImpact_Rotation[SpatialImpact_Image_Section];
-        pre_SpatialImpact_Elevation[SpatialImpact_Image_Section] = SpatialImpact_Elevation[SpatialImpact_Image_Section];
+        pre_SpatialImpact_Rotation[SpatialImpact_sectionType] = SpatialImpact_Rotation[SpatialImpact_sectionType];
+        pre_SpatialImpact_Elevation[SpatialImpact_sectionType] = SpatialImpact_Elevation[SpatialImpact_sectionType];
         
         pre_SpatialImpact_Wspd = SpatialImpact_Wspd; 
         pre_SpatialImpact_Wdir = SpatialImpact_Wdir;
@@ -2662,14 +2662,14 @@ void draw () {
 
         if (pre_SpatialImpact_Grade != SpatialImpact_Grade) {SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); WIN3D_Update = 1;}
         if (pre_SpatialImpact_Power != SpatialImpact_Power) {SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); WIN3D_Update = 1;}
-        if (pre_SpatialImpact_Rotation[SpatialImpact_Image_Section] != SpatialImpact_Rotation[SpatialImpact_Image_Section]) {SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); WIN3D_Update = 1;}
-        if (pre_SpatialImpact_Elevation[SpatialImpact_Image_Section] != SpatialImpact_Elevation[SpatialImpact_Image_Section]) {SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); WIN3D_Update = 1;}
+        if (pre_SpatialImpact_Rotation[SpatialImpact_sectionType] != SpatialImpact_Rotation[SpatialImpact_sectionType]) {SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); WIN3D_Update = 1;}
+        if (pre_SpatialImpact_Elevation[SpatialImpact_sectionType] != SpatialImpact_Elevation[SpatialImpact_sectionType]) {SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); WIN3D_Update = 1;}
 
-        if (pre_SpatialImpact_scale_U[SpatialImpact_Image_Section] != SpatialImpact_scale_U[SpatialImpact_Image_Section]) {SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); WIN3D_Update = 1;}
-        if (pre_SpatialImpact_scale_V[SpatialImpact_Image_Section] != SpatialImpact_scale_V[SpatialImpact_Image_Section]) {SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); WIN3D_Update = 1;}
+        if (pre_SpatialImpact_scale_U[SpatialImpact_sectionType] != SpatialImpact_scale_U[SpatialImpact_sectionType]) {SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); WIN3D_Update = 1;}
+        if (pre_SpatialImpact_scale_V[SpatialImpact_sectionType] != SpatialImpact_scale_V[SpatialImpact_sectionType]) {SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); WIN3D_Update = 1;}
 
-        if (pre_SpatialImpact_offset_U[SpatialImpact_Image_Section] != SpatialImpact_offset_U[SpatialImpact_Image_Section]) {SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); WIN3D_Update = 1;}
-        if (pre_SpatialImpact_offset_V[SpatialImpact_Image_Section] != SpatialImpact_offset_V[SpatialImpact_Image_Section]) {SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); WIN3D_Update = 1;}
+        if (pre_SpatialImpact_offset_U[SpatialImpact_sectionType] != SpatialImpact_offset_U[SpatialImpact_sectionType]) {SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); WIN3D_Update = 1;}
+        if (pre_SpatialImpact_offset_V[SpatialImpact_sectionType] != SpatialImpact_offset_V[SpatialImpact_sectionType]) {SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); WIN3D_Update = 1;}
 
         
         
@@ -12532,45 +12532,45 @@ void WIN3D_keyPressed (KeyEvent e) {
     if (key == CODED) { 
       switch(keyCode) {
 
-        case RIGHT :SpatialImpact_Rotation[SpatialImpact_Image_Section] = (SpatialImpact_Rotation[SpatialImpact_Image_Section] + 15) % 360; 
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+        case RIGHT :SpatialImpact_Rotation[SpatialImpact_sectionType] = (SpatialImpact_Rotation[SpatialImpact_sectionType] + 15) % 360; 
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
-        case LEFT :SpatialImpact_Rotation[SpatialImpact_Image_Section] = (SpatialImpact_Rotation[SpatialImpact_Image_Section] + 360 - 15) % 360; 
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+        case LEFT :SpatialImpact_Rotation[SpatialImpact_sectionType] = (SpatialImpact_Rotation[SpatialImpact_sectionType] + 360 - 15) % 360; 
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;           
         
-        case UP   :SpatialImpact_Elevation[SpatialImpact_Image_Section] += SpatialImpact_PositionStep;
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+        case UP   :SpatialImpact_Elevation[SpatialImpact_sectionType] += SpatialImpact_positionStep;
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;        
-        case DOWN :SpatialImpact_Elevation[SpatialImpact_Image_Section] -= SpatialImpact_PositionStep; 
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+        case DOWN :SpatialImpact_Elevation[SpatialImpact_sectionType] -= SpatialImpact_positionStep; 
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1; ROLLOUT_Update = 1;  
                   break; 
 
-        case 33 :SpatialImpact_Elevation[SpatialImpact_Image_Section] += 4 * SpatialImpact_PositionStep;
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+        case 33 :SpatialImpact_Elevation[SpatialImpact_sectionType] += 4 * SpatialImpact_positionStep;
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;        
-        case 34 :SpatialImpact_Elevation[SpatialImpact_Image_Section] -= 4 * SpatialImpact_PositionStep; 
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+        case 34 :SpatialImpact_Elevation[SpatialImpact_sectionType] -= 4 * SpatialImpact_positionStep; 
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break; 
         
-        case 35 :SpatialImpact_scale_U[SpatialImpact_Image_Section] *= pow(2.0, 0.5); SpatialImpact_scale_V[SpatialImpact_Image_Section] *= pow(2.0, 0.5); 
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+        case 35 :SpatialImpact_scale_U[SpatialImpact_sectionType] *= pow(2.0, 0.5); SpatialImpact_scale_V[SpatialImpact_sectionType] *= pow(2.0, 0.5); 
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;
-        case 36 :SpatialImpact_scale_U[SpatialImpact_Image_Section] /= pow(2.0, 0.5); SpatialImpact_scale_V[SpatialImpact_Image_Section] /= pow(2.0, 0.5);                   
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+        case 36 :SpatialImpact_scale_U[SpatialImpact_sectionType] /= pow(2.0, 0.5); SpatialImpact_scale_V[SpatialImpact_sectionType] /= pow(2.0, 0.5);                   
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;
@@ -12580,83 +12580,83 @@ void WIN3D_keyPressed (KeyEvent e) {
     else {
       switch(key) {
         
-        case 'U' :SpatialImpact_offset_U[SpatialImpact_Image_Section] += SpatialImpact_PositionStep;
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+        case 'U' :SpatialImpact_offset_U[SpatialImpact_sectionType] += SpatialImpact_positionStep;
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;
-        case 'u' :SpatialImpact_offset_U[SpatialImpact_Image_Section] -= SpatialImpact_PositionStep;
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+        case 'u' :SpatialImpact_offset_U[SpatialImpact_sectionType] -= SpatialImpact_positionStep;
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;        
-        case 'V' :SpatialImpact_offset_V[SpatialImpact_Image_Section] += SpatialImpact_PositionStep;
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+        case 'V' :SpatialImpact_offset_V[SpatialImpact_sectionType] += SpatialImpact_positionStep;
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;
-        case 'v' :SpatialImpact_offset_V[SpatialImpact_Image_Section] -= SpatialImpact_PositionStep;
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+        case 'v' :SpatialImpact_offset_V[SpatialImpact_sectionType] -= SpatialImpact_positionStep;
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;  
                   
-        case ']' :SpatialImpact_Image_Section = (SpatialImpact_Image_Section + 1) % 4;
-                  SolarImpact_Image_Section = SpatialImpact_Image_Section; 
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+        case ']' :SpatialImpact_sectionType = (SpatialImpact_sectionType + 1) % 4;
+                  SolarImpact_sectionType = SpatialImpact_sectionType; 
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;
-        case '[' :SpatialImpact_Image_Section = (SpatialImpact_Image_Section + 4 - 1) % 4;
-                  SolarImpact_Image_Section = SpatialImpact_Image_Section;
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+        case '[' :SpatialImpact_sectionType = (SpatialImpact_sectionType + 4 - 1) % 4;
+                  SolarImpact_sectionType = SpatialImpact_sectionType;
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
                   break;        
         
-        case '0' :SpatialImpact_Elevation[SpatialImpact_Image_Section] = 0; 
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+        case '0' :SpatialImpact_Elevation[SpatialImpact_sectionType] = 0; 
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
                   
-        case '.' :SpatialImpact_Rotation[SpatialImpact_Image_Section] = 0; 
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
+        case '.' :SpatialImpact_Rotation[SpatialImpact_sectionType] = 0; 
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;                   
                   break;                  
         
         case '/' :SpatialImpact_Power *= pow(2.0, 0.5); 
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
         case '*' :SpatialImpact_Power /= pow(2.0, 0.5);  
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
         
         case '+' :SpatialImpact_Grade *= pow(2.0, 0.5); 
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
         case '-' :SpatialImpact_Grade /= pow(2.0, 0.5); 
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
 
         case '>' :SpatialImpact_Grade /= pow(2.0, 0.25); 
                   SpatialImpact_Power /= pow(2.0, 0.5); 
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
         case '<' :SpatialImpact_Grade *= pow(2.0, 0.25); 
                   SpatialImpact_Power *= pow(2.0, 0.5); 
-                  if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
@@ -18163,7 +18163,7 @@ void SOLARCHVISION_export_objects () {
 
   if (Display_SolarImpact_Image != 0) {
     
-    if (SolarImpact_Image_Section != 0) {
+    if (SolarImpact_sectionType != 0) {
 
       String the_filename = "SolarImpact.jpg";
       
@@ -18190,12 +18190,12 @@ void SOLARCHVISION_export_objects () {
         mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
       }
       
-      SolarImpact_Rotation = SpatialImpact_Rotation[SolarImpact_Image_Section];
-      SolarImpact_Elevation = 0.1 + SpatialImpact_Elevation[SolarImpact_Image_Section];
-      SolarImpact_scale_U = SpatialImpact_scale_U[SpatialImpact_Image_Section]; 
-      SolarImpact_scale_V = SpatialImpact_scale_V[SpatialImpact_Image_Section];        
-      SolarImpact_offset_U = SpatialImpact_offset_U[SpatialImpact_Image_Section]; 
-      SolarImpact_offset_V = SpatialImpact_offset_V[SpatialImpact_Image_Section];        
+      SolarImpact_Rotation = SpatialImpact_Rotation[SolarImpact_sectionType];
+      SolarImpact_Elevation = 0.1 + SpatialImpact_Elevation[SolarImpact_sectionType];
+      SolarImpact_scale_U = SpatialImpact_scale_U[SpatialImpact_sectionType]; 
+      SolarImpact_scale_V = SpatialImpact_scale_V[SpatialImpact_sectionType];        
+      SolarImpact_offset_U = SpatialImpact_offset_U[SpatialImpact_sectionType]; 
+      SolarImpact_offset_V = SpatialImpact_offset_V[SpatialImpact_sectionType];        
       
       int Display_solarch_texture = 0;
       
@@ -18209,7 +18209,7 @@ void SOLARCHVISION_export_objects () {
 
       float c = SolarImpact_Elevation; 
   
-      if (SolarImpact_Image_Section != 0) {
+      if (SolarImpact_sectionType != 0) {
 
         if (objExportPolyToPoly == 1) {
           obj_lastGroupNumber += 1;  
@@ -18235,17 +18235,17 @@ void SOLARCHVISION_export_objects () {
 //zzzzzz            
             float x = 0, y = 0, z = 0;
             
-            if (SolarImpact_Image_Section == 1) {
+            if (SolarImpact_sectionType == 1) {
               x = a * cos_ang(SolarImpact_Rotation) - b * sin_ang(SolarImpact_Rotation);
               y = a * sin_ang(SolarImpact_Rotation) + b * cos_ang(SolarImpact_Rotation);
               z = c;         
             }
-            else if (SolarImpact_Image_Section == 2) {
+            else if (SolarImpact_sectionType == 2) {
               x = a * cos_ang(SolarImpact_Rotation) - c * sin_ang(SolarImpact_Rotation);
               y = -(a * sin_ang(SolarImpact_Rotation) + c * cos_ang(SolarImpact_Rotation));
               z = b;       
             }
-            else if (SolarImpact_Image_Section == 3) {
+            else if (SolarImpact_sectionType == 3) {
               x = a * cos_ang(90 - SolarImpact_Rotation) - c * sin_ang(90 - SolarImpact_Rotation);
               y = -(a * sin_ang(90 - SolarImpact_Rotation) + c * cos_ang(90 - SolarImpact_Rotation));
               z = b;     
@@ -20090,7 +20090,7 @@ void SOLARCHVISION_draw_SKY3D () {
 void SOLARCHVISION_draw_SpatialImpact_Image () {
 
   if (Display_SpatialImpact_Image != 0) {
-    if (SpatialImpact_Image_Section != 0) {
+    if (SpatialImpact_sectionType != 0) {
   
       WIN3D_Diagrams.stroke(0);
       WIN3D_Diagrams.fill(127,255,127);  
@@ -20101,7 +20101,7 @@ void SOLARCHVISION_draw_SpatialImpact_Image () {
       WIN3D_Diagrams.stroke(255, 255, 255, 0);
       WIN3D_Diagrams.fill(255, 255, 255, 0);
       
-      float c = SpatialImpact_Elevation[SpatialImpact_Image_Section] * OBJECTS_scale;
+      float c = SpatialImpact_Elevation[SpatialImpact_sectionType] * OBJECTS_scale;
       
       for (int q = 0; q < 4; q++) {
         
@@ -20112,24 +20112,24 @@ void SOLARCHVISION_draw_SpatialImpact_Image () {
         else if (q == 2) {qx = 1; qy = 1; u = SpatialImpact_RES1; v = 0;}
         else if (q == 3) {qx = -1; qy = 1; u = 0; v = 0;}    
         
-        float a = qx * 0.5 * SpatialImpact_scale_U[SpatialImpact_Image_Section] + SpatialImpact_offset_U[SpatialImpact_Image_Section];
-        float b = qy * 0.5 * SpatialImpact_scale_V[SpatialImpact_Image_Section] + SpatialImpact_offset_V[SpatialImpact_Image_Section];    
+        float a = qx * 0.5 * SpatialImpact_scale_U[SpatialImpact_sectionType] + SpatialImpact_offset_U[SpatialImpact_sectionType];
+        float b = qy * 0.5 * SpatialImpact_scale_V[SpatialImpact_sectionType] + SpatialImpact_offset_V[SpatialImpact_sectionType];    
       
         float x = 0, y = 0, z = 0;
         
-        if (SpatialImpact_Image_Section == 1) {
-          x = a * cos_ang(-SpatialImpact_Rotation[SpatialImpact_Image_Section]) - -b * sin_ang(-SpatialImpact_Rotation[SpatialImpact_Image_Section]);
-          y = a * sin_ang(-SpatialImpact_Rotation[SpatialImpact_Image_Section]) + -b * cos_ang(-SpatialImpact_Rotation[SpatialImpact_Image_Section]);
+        if (SpatialImpact_sectionType == 1) {
+          x = a * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) - -b * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]);
+          y = a * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) + -b * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]);
           z = c;         
         }
-        else if (SpatialImpact_Image_Section == 2) {
-          x = a * cos_ang(SpatialImpact_Rotation[SpatialImpact_Image_Section]) - c * sin_ang(SpatialImpact_Rotation[SpatialImpact_Image_Section]);
-          y = a * sin_ang(SpatialImpact_Rotation[SpatialImpact_Image_Section]) + c * cos_ang(SpatialImpact_Rotation[SpatialImpact_Image_Section]);
+        else if (SpatialImpact_sectionType == 2) {
+          x = a * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]);
+          y = a * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]);
           z = b;        
         }
-        else if (SpatialImpact_Image_Section == 3) {
-          x = a * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_Image_Section]) - c * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_Image_Section]);
-          y = a * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_Image_Section]) + c * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_Image_Section]);
+        else if (SpatialImpact_sectionType == 3) {
+          x = a * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]);
+          y = a * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]);
           z = b;    
         }      
 
@@ -23770,7 +23770,7 @@ int Rendered_WindRose_RES = WindRose_RES;
 PImage[] SolarImpact_Image;
 
 int Display_SolarImpact_Image = 0; // 0:talse 1:true
-int SolarImpact_Image_Section = 0; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
+int SolarImpact_sectionType = 0; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
 
 float SolarImpact_Rotation = 0; // North is up by default
 
@@ -23802,12 +23802,12 @@ PImage SpatialImpact_Image = createImage(SpatialImpact_RES1, SpatialImpact_RES2,
 float SpatialImpact_Grade = 1.0; //0.1; //10.0; 
 
 int Display_SpatialImpact_Image = 1; // 0:false, 1:true
-int SpatialImpact_Image_Section = 0; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
+int SpatialImpact_sectionType = 0; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
 
 float[] SpatialImpact_Elevation = {0, 0.1, 0, 0}; // <<<
 float[] SpatialImpact_Rotation = {0, 0, 0, 0};
 
-float SpatialImpact_PositionStep = 1.25;
+float SpatialImpact_positionStep = 1.25;
 
 
 float[] ParametricGeometries_SpatialImpact_atIJ_simple (float i, float j){
@@ -23820,23 +23820,23 @@ float[] ParametricGeometries_SpatialImpact_atIJ_simple (float i, float j){
   
   for (int n = 0; n < SolidObjects.length; n++) {
 
-    float a = (i / SpatialImpact_RES1 - 0.5) * SpatialImpact_scale_U[SpatialImpact_Image_Section] + SpatialImpact_offset_U[SpatialImpact_Image_Section];
-    float b = (j / SpatialImpact_RES2 - 0.5) * SpatialImpact_scale_V[SpatialImpact_Image_Section] - SpatialImpact_offset_V[SpatialImpact_Image_Section];
+    float a = (i / SpatialImpact_RES1 - 0.5) * SpatialImpact_scale_U[SpatialImpact_sectionType] + SpatialImpact_offset_U[SpatialImpact_sectionType];
+    float b = (j / SpatialImpact_RES2 - 0.5) * SpatialImpact_scale_V[SpatialImpact_sectionType] - SpatialImpact_offset_V[SpatialImpact_sectionType];
     float c = SpatialImpact_Elevation[Display_SpatialImpact_Image];
     
-    if (SpatialImpact_Image_Section == 1) {
-      x = a * cos_ang(-SpatialImpact_Rotation[SpatialImpact_Image_Section]) - b * sin_ang(-SpatialImpact_Rotation[SpatialImpact_Image_Section]);
-      y = -(a * sin_ang(-SpatialImpact_Rotation[SpatialImpact_Image_Section]) + b * cos_ang(-SpatialImpact_Rotation[SpatialImpact_Image_Section]));
+    if (SpatialImpact_sectionType == 1) {
+      x = a * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) - b * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]);
+      y = -(a * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) + b * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]));
       z = c;
     }
-    else if (SpatialImpact_Image_Section == 2) {
-      x = a * cos_ang(SpatialImpact_Rotation[SpatialImpact_Image_Section]) - c * sin_ang(SpatialImpact_Rotation[SpatialImpact_Image_Section]);
-      y = -(a * sin_ang(SpatialImpact_Rotation[SpatialImpact_Image_Section]) + c * cos_ang(SpatialImpact_Rotation[SpatialImpact_Image_Section]));
+    else if (SpatialImpact_sectionType == 2) {
+      x = a * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]);
+      y = -(a * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]));
       z = -b; 
     }
-    else if (SpatialImpact_Image_Section == 3) {
-      x = a * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_Image_Section]) - c * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_Image_Section]);
-      y = -(a * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_Image_Section]) + c * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_Image_Section]));
+    else if (SpatialImpact_sectionType == 3) {
+      x = a * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]);
+      y = -(a * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]));
       z = -b; 
     }
       
@@ -23886,23 +23886,23 @@ float[] ParametricGeometries_SpatialImpact_atIJ (float i, float j){
     
     for (int n = 0; n < SolidObjects.length; n++) {
       
-      float a = (i / SpatialImpact_RES1 - 0.5) * SpatialImpact_scale_U[SpatialImpact_Image_Section] + SpatialImpact_offset_U[SpatialImpact_Image_Section];
-      float b = (j / SpatialImpact_RES2 - 0.5) * SpatialImpact_scale_V[SpatialImpact_Image_Section] - SpatialImpact_offset_V[SpatialImpact_Image_Section];
-      float c = SpatialImpact_Elevation[SpatialImpact_Image_Section];
+      float a = (i / SpatialImpact_RES1 - 0.5) * SpatialImpact_scale_U[SpatialImpact_sectionType] + SpatialImpact_offset_U[SpatialImpact_sectionType];
+      float b = (j / SpatialImpact_RES2 - 0.5) * SpatialImpact_scale_V[SpatialImpact_sectionType] - SpatialImpact_offset_V[SpatialImpact_sectionType];
+      float c = SpatialImpact_Elevation[SpatialImpact_sectionType];
      
-      if (SpatialImpact_Image_Section == 1) {
-        x = a * cos_ang(-SpatialImpact_Rotation[SpatialImpact_Image_Section]) - b * sin_ang(-SpatialImpact_Rotation[SpatialImpact_Image_Section]);
-        y = -(a * sin_ang(-SpatialImpact_Rotation[SpatialImpact_Image_Section]) + b * cos_ang(-SpatialImpact_Rotation[SpatialImpact_Image_Section]));
+      if (SpatialImpact_sectionType == 1) {
+        x = a * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) - b * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]);
+        y = -(a * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) + b * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]));
         z = c;
       }
-      else if (SpatialImpact_Image_Section == 2) {
-        x = a * cos_ang(SpatialImpact_Rotation[SpatialImpact_Image_Section]) - c * sin_ang(SpatialImpact_Rotation[SpatialImpact_Image_Section]);
-        y = -(a * sin_ang(SpatialImpact_Rotation[SpatialImpact_Image_Section]) + c * cos_ang(SpatialImpact_Rotation[SpatialImpact_Image_Section]));
+      else if (SpatialImpact_sectionType == 2) {
+        x = a * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]);
+        y = -(a * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]));
         z = -b; 
       }
-      else if (SpatialImpact_Image_Section == 3) {
-        x = a * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_Image_Section]) - c * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_Image_Section]);
-        y = -(a * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_Image_Section]) + c * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_Image_Section]));
+      else if (SpatialImpact_sectionType == 3) {
+        x = a * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]);
+        y = -(a * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]));
         z = -b; 
       }
       
@@ -24017,23 +24017,23 @@ float[] SOLARCHVISION_2DtraceContour (int traceType, float epsilon, float x, flo
     float b = r * sin_ang(t + test_t);
     float c = 0;
     
-    if (SpatialImpact_Image_Section == 1) {
-      float Qx = a * cos_ang(-SpatialImpact_Rotation[SpatialImpact_Image_Section]) - b * sin_ang(-SpatialImpact_Rotation[SpatialImpact_Image_Section]);
-      float Qy = -(a * sin_ang(-SpatialImpact_Rotation[SpatialImpact_Image_Section]) + b * cos_ang(-SpatialImpact_Rotation[SpatialImpact_Image_Section]));
+    if (SpatialImpact_sectionType == 1) {
+      float Qx = a * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) - b * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]);
+      float Qy = -(a * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) + b * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]));
       float Qz = c;
       
       a = Qx; b = Qy; c = Qz; 
     }
-    else if (SpatialImpact_Image_Section == 2) {
-      float Qx = a * cos_ang(SpatialImpact_Rotation[SpatialImpact_Image_Section]) - c * sin_ang(SpatialImpact_Rotation[SpatialImpact_Image_Section]);
-      float Qy = -(a * sin_ang(SpatialImpact_Rotation[SpatialImpact_Image_Section]) + c * cos_ang(SpatialImpact_Rotation[SpatialImpact_Image_Section]));
+    else if (SpatialImpact_sectionType == 2) {
+      float Qx = a * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]);
+      float Qy = -(a * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]));
       float Qz = -b; 
 
       a = Qx; b = Qy; c = Qz; 
     }
-    else if (SpatialImpact_Image_Section == 3) {
-      float Qx = a * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_Image_Section]) - c * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_Image_Section]);
-      float Qy = -(a * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_Image_Section]) + c * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_Image_Section]));
+    else if (SpatialImpact_sectionType == 3) {
+      float Qx = a * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]);
+      float Qy = -(a * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]));
       float Qz = -b; 
 
       a = Qx; b = Qy; c = Qz; 
@@ -24207,7 +24207,7 @@ float deltaSpatialImpactLines = 0.1 * deltaSpatialImpact;
 
 void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
 
-  if (SpatialImpact_Image_Section != 0) {
+  if (SpatialImpact_sectionType != 0) {
 
     cursor(WAIT);
   
@@ -24424,14 +24424,14 @@ void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
                 
                 float r = 0;
                 
-                if (SpatialImpact_Image_Section == 1) {
-                  r = -SpatialImpact_Rotation[SpatialImpact_Image_Section];
+                if (SpatialImpact_sectionType == 1) {
+                  r = -SpatialImpact_Rotation[SpatialImpact_sectionType];
                 }
-                else if (SpatialImpact_Image_Section == 2) {
-                  r = SpatialImpact_Rotation[SpatialImpact_Image_Section];
+                else if (SpatialImpact_sectionType == 2) {
+                  r = SpatialImpact_Rotation[SpatialImpact_sectionType];
                 }
-                else if (SpatialImpact_Image_Section == 3) {
-                  r = -SpatialImpact_Rotation[SpatialImpact_Image_Section];              
+                else if (SpatialImpact_sectionType == 3) {
+                  r = -SpatialImpact_Rotation[SpatialImpact_sectionType];              
                 }     
                 
                 float x = x0 * cos_ang(r) - y0 * sin_ang(r);
@@ -24441,21 +24441,21 @@ void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
                 float a = 0;
                 float b = 0;
                 
-                if (SpatialImpact_Image_Section == 1) {
+                if (SpatialImpact_sectionType == 1) {
                   a = x;
                   b = -y;
                 }
-                else if (SpatialImpact_Image_Section == 2) {
+                else if (SpatialImpact_sectionType == 2) {
                   a = x;
                   b = -z;
                 }
-                else if (SpatialImpact_Image_Section == 3) {
+                else if (SpatialImpact_sectionType == 3) {
                   a = -y;
                   b = -z;
                 }
                
-                i[p] = SpatialImpact_RES1 * ((a - SpatialImpact_offset_U[SpatialImpact_Image_Section]) / SpatialImpact_scale_U[SpatialImpact_Image_Section] + 0.5);
-                j[p] = SpatialImpact_RES2 * ((b + SpatialImpact_offset_V[SpatialImpact_Image_Section]) / SpatialImpact_scale_V[SpatialImpact_Image_Section] + 0.5); 
+                i[p] = SpatialImpact_RES1 * ((a - SpatialImpact_offset_U[SpatialImpact_sectionType]) / SpatialImpact_scale_U[SpatialImpact_sectionType] + 0.5);
+                j[p] = SpatialImpact_RES2 * ((b + SpatialImpact_offset_V[SpatialImpact_sectionType]) / SpatialImpact_scale_V[SpatialImpact_sectionType] + 0.5); 
             
               }   
                   
@@ -24478,14 +24478,14 @@ void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
   
             float r = 0;
             
-            if (SpatialImpact_Image_Section == 1) {
-              r = -SpatialImpact_Rotation[SpatialImpact_Image_Section];
+            if (SpatialImpact_sectionType == 1) {
+              r = -SpatialImpact_Rotation[SpatialImpact_sectionType];
             }
-            else if (SpatialImpact_Image_Section == 2) {
-              r = SpatialImpact_Rotation[SpatialImpact_Image_Section];
+            else if (SpatialImpact_sectionType == 2) {
+              r = SpatialImpact_Rotation[SpatialImpact_sectionType];
             }
-            else if (SpatialImpact_Image_Section == 3) {
-              r = -SpatialImpact_Rotation[SpatialImpact_Image_Section];              
+            else if (SpatialImpact_sectionType == 3) {
+              r = -SpatialImpact_Rotation[SpatialImpact_sectionType];              
             }     
             
             float x = x0 * cos_ang(r) - y0 * sin_ang(r);
@@ -24495,21 +24495,21 @@ void SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact () {
             float a = 0;
             float b = 0;
             
-            if (SpatialImpact_Image_Section == 1) {
+            if (SpatialImpact_sectionType == 1) {
               a = x;
               b = -y;
             }
-            else if (SpatialImpact_Image_Section == 2) {
+            else if (SpatialImpact_sectionType == 2) {
               a = x;
               b = -z;
             }
-            else if (SpatialImpact_Image_Section == 3) {
+            else if (SpatialImpact_sectionType == 3) {
               a = -y;
               b = -z;
             }
   
-            float i = SpatialImpact_RES1 * ((a - SpatialImpact_offset_U[SpatialImpact_Image_Section]) / SpatialImpact_scale_U[SpatialImpact_Image_Section] + 0.5);
-            float j = SpatialImpact_RES2 * ((b + SpatialImpact_offset_V[SpatialImpact_Image_Section]) / SpatialImpact_scale_V[SpatialImpact_Image_Section] + 0.5);
+            float i = SpatialImpact_RES1 * ((a - SpatialImpact_offset_U[SpatialImpact_sectionType]) / SpatialImpact_scale_U[SpatialImpact_sectionType] + 0.5);
+            float j = SpatialImpact_RES2 * ((b + SpatialImpact_offset_V[SpatialImpact_sectionType]) / SpatialImpact_scale_V[SpatialImpact_sectionType] + 0.5);
           
             SpatialImpact_PDF.ellipse(i, j, 1, 1);
           }
@@ -29529,34 +29529,34 @@ void mouseClicked () {
                       SpatialImpact_Elevation[3] = -G[0]; 
                       
                       if ((max_z - min_z < max_x - min_x) && (max_z - min_z < max_y - min_y)) {
-                        SpatialImpact_Image_Section = 1;
-                        SpatialImpact_scale_U[SpatialImpact_Image_Section] = max_x - min_x; 
-                        SpatialImpact_scale_V[SpatialImpact_Image_Section] = max_y - min_y;
+                        SpatialImpact_sectionType = 1;
+                        SpatialImpact_scale_U[SpatialImpact_sectionType] = max_x - min_x; 
+                        SpatialImpact_scale_V[SpatialImpact_sectionType] = max_y - min_y;
                         
-                        SpatialImpact_offset_U[SpatialImpact_Image_Section] = G[0];
-                        SpatialImpact_offset_V[SpatialImpact_Image_Section] = G[1];
+                        SpatialImpact_offset_U[SpatialImpact_sectionType] = G[0];
+                        SpatialImpact_offset_V[SpatialImpact_sectionType] = G[1];
                       }
                       else if (max_y - min_y < max_x - min_x) {
-                        SpatialImpact_Image_Section = 2;
+                        SpatialImpact_sectionType = 2;
                         
-                        SpatialImpact_scale_U[SpatialImpact_Image_Section] = max_x - min_x;
-                        SpatialImpact_scale_V[SpatialImpact_Image_Section] = max_z - min_z; 
+                        SpatialImpact_scale_U[SpatialImpact_sectionType] = max_x - min_x;
+                        SpatialImpact_scale_V[SpatialImpact_sectionType] = max_z - min_z; 
                         
-                        SpatialImpact_offset_U[SpatialImpact_Image_Section] = G[0];
-                        SpatialImpact_offset_V[SpatialImpact_Image_Section] = G[2];                        
+                        SpatialImpact_offset_U[SpatialImpact_sectionType] = G[0];
+                        SpatialImpact_offset_V[SpatialImpact_sectionType] = G[2];                        
                       }
                       else {
-                        SpatialImpact_Image_Section = 3;
+                        SpatialImpact_sectionType = 3;
                         
-                        SpatialImpact_scale_U[SpatialImpact_Image_Section] = max_y - min_y; 
-                        SpatialImpact_scale_V[SpatialImpact_Image_Section] = max_z - min_z;
+                        SpatialImpact_scale_U[SpatialImpact_sectionType] = max_y - min_y; 
+                        SpatialImpact_scale_V[SpatialImpact_sectionType] = max_z - min_z;
                         
-                        SpatialImpact_offset_U[SpatialImpact_Image_Section] = -G[1];
-                        SpatialImpact_offset_V[SpatialImpact_Image_Section] = G[2];                          
+                        SpatialImpact_offset_U[SpatialImpact_sectionType] = -G[1];
+                        SpatialImpact_offset_V[SpatialImpact_sectionType] = G[2];                          
                       }                      
 
                       
-                      if (SpatialImpact_Image_Section != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+                      if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                       WIN3D_Update = 1; 
                       ROLLOUT_Update = 1;  
                     }          
@@ -30684,20 +30684,20 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Display_SolarImpact_Image = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SolarImpact_Image" , Display_SolarImpact_Image, 0, 1, 1), 1));
       Display_SpatialImpact_Image = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SpatialImpact_Image" , Display_SpatialImpact_Image, 0, 1, 1), 1));
 
-      SolarImpact_Image_Section = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SolarImpact_Image_Section" , SolarImpact_Image_Section, 0, 3, 1), 1));      
-      SpatialImpact_Image_Section = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Image_Section" , SpatialImpact_Image_Section, 0, 3, 1), 1));
+      SolarImpact_sectionType = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SolarImpact_sectionType" , SolarImpact_sectionType, 0, 3, 1), 1));      
+      SpatialImpact_sectionType = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_sectionType" , SpatialImpact_sectionType, 0, 3, 1), 1));
 
 
       SpatialImpact_Grade = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Grade" , SpatialImpact_Grade, 1.0 / 64.0, 64.0, -2);
       SpatialImpact_Power = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Power" , SpatialImpact_Power, 1.0 / 64.0, 64.0, -2);      
-      SpatialImpact_Rotation[SpatialImpact_Image_Section] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Rotation[" + nf(SpatialImpact_Image_Section, 0) + "]" , SpatialImpact_Rotation[SpatialImpact_Image_Section], -1000, 1000, -2);
-      SpatialImpact_Elevation[SpatialImpact_Image_Section] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Elevation[" + nf(SpatialImpact_Image_Section, 0) + "]" , SpatialImpact_Elevation[SpatialImpact_Image_Section], -1000, 1000, -2);
-      SpatialImpact_PositionStep = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_PositionStep" , SpatialImpact_PositionStep, 1.25, 40, -2);
+      SpatialImpact_Rotation[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Rotation[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_Rotation[SpatialImpact_sectionType], -1000, 1000, -2);
+      SpatialImpact_Elevation[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Elevation[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_Elevation[SpatialImpact_sectionType], -1000, 1000, -2);
+      SpatialImpact_positionStep = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_positionStep" , SpatialImpact_positionStep, 1.25, 40, -2);
       
-      SpatialImpact_scale_U[SpatialImpact_Image_Section] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_scale_U[" + nf(SpatialImpact_Image_Section, 0) + "]" , SpatialImpact_scale_U[SpatialImpact_Image_Section], 50, 3200, -2);
-      SpatialImpact_scale_V[SpatialImpact_Image_Section] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_scale_V[" + nf(SpatialImpact_Image_Section, 0) + "]" , SpatialImpact_scale_V[SpatialImpact_Image_Section], 50, 3200, -2);
-      SpatialImpact_offset_U[SpatialImpact_Image_Section] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_offset_U[" + nf(SpatialImpact_Image_Section, 0) + "]" , SpatialImpact_offset_U[SpatialImpact_Image_Section], -1000, 1000, -2);
-      SpatialImpact_offset_V[SpatialImpact_Image_Section] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_offset_V[" + nf(SpatialImpact_Image_Section, 0) + "]" , SpatialImpact_offset_V[SpatialImpact_Image_Section], -1000, 1000, -2);
+      SpatialImpact_scale_U[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_scale_U[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_scale_U[SpatialImpact_sectionType], 50, 3200, -2);
+      SpatialImpact_scale_V[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_scale_V[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_scale_V[SpatialImpact_sectionType], 50, 3200, -2);
+      SpatialImpact_offset_U[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_offset_U[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_offset_U[SpatialImpact_sectionType], -1000, 1000, -2);
+      SpatialImpact_offset_V[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_offset_V[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_offset_V[SpatialImpact_sectionType], -1000, 1000, -2);
       
     
       SpatialImpact_Wspd = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Wspd (m/s)" , SpatialImpact_Wspd, 1, 64, -2); 
@@ -32399,7 +32399,7 @@ float[] SOLARCHVISION_calculate_Click3D (float Image_X, float Image_Y) {
   return return_array;
 }
 
-int Rendered_SolarImpact_Type = -1;
+int Rendered_SolarImpact_sectionType = -1;
 float Rendered_SolarImpact_scale_U = FLOAT_undefined;
 float Rendered_SolarImpact_scale_V = FLOAT_undefined;
 float Rendered_SolarImpact_offset_U = FLOAT_undefined;
@@ -32420,14 +32420,14 @@ void RenderShadowsOnUrbanPlane () {
 
   defaultSceneName = SceneName;
   
-  SolarImpact_Rotation =  SpatialImpact_Rotation[SpatialImpact_Image_Section];
-  SolarImpact_Elevation = 0.1 + SpatialImpact_Elevation[SpatialImpact_Image_Section];
-  SolarImpact_scale_U = SpatialImpact_scale_U[SpatialImpact_Image_Section]; 
-  SolarImpact_scale_V = SpatialImpact_scale_V[SpatialImpact_Image_Section];
-  SolarImpact_offset_U = SpatialImpact_offset_U[SpatialImpact_Image_Section]; 
-  SolarImpact_offset_V = SpatialImpact_offset_V[SpatialImpact_Image_Section];  
+  SolarImpact_Rotation =  SpatialImpact_Rotation[SpatialImpact_sectionType];
+  SolarImpact_Elevation = 0.1 + SpatialImpact_Elevation[SpatialImpact_sectionType];
+  SolarImpact_scale_U = SpatialImpact_scale_U[SpatialImpact_sectionType]; 
+  SolarImpact_scale_V = SpatialImpact_scale_V[SpatialImpact_sectionType];
+  SolarImpact_offset_U = SpatialImpact_offset_U[SpatialImpact_sectionType]; 
+  SolarImpact_offset_V = SpatialImpact_offset_V[SpatialImpact_sectionType];  
   
-  Rendered_SolarImpact_Type = SolarImpact_Image_Section;
+  Rendered_SolarImpact_sectionType = SolarImpact_sectionType;
   Rendered_SolarImpact_scale_U = SolarImpact_scale_U;
   Rendered_SolarImpact_scale_V = SolarImpact_scale_V;
   Rendered_SolarImpact_offset_U = SolarImpact_offset_U;
@@ -32449,11 +32449,11 @@ void RenderShadowsOnUrbanPlane () {
   
   PGraphics TREES_Diagrams = createGraphics(RES1, RES2, P2D);
   
-  int keep_SolarImpact_Image_Section = SolarImpact_Image_Section;
+  int keep_SolarImpact_sectionType = SolarImpact_sectionType;
   float keep_SolarImpact_Rotation = SolarImpact_Rotation;
   
-  if (SolarImpact_Image_Section == 3) {
-    SolarImpact_Image_Section = 2;
+  if (SolarImpact_sectionType == 3) {
+    SolarImpact_sectionType = 2;
     SolarImpact_Rotation = 90 - SolarImpact_Rotation;    
   }
 
@@ -32470,7 +32470,7 @@ void RenderShadowsOnUrbanPlane () {
         float[] SunR_Rotated = SunR; 
         int SunR_Rotated_check = 3;
         
-        if (SolarImpact_Image_Section == 2) {
+        if (SolarImpact_sectionType == 2) {
           float a = SunR_Rotated[1];
           float b = -SunR_Rotated[2];
           float c = SunR_Rotated[3];
@@ -32481,7 +32481,7 @@ void RenderShadowsOnUrbanPlane () {
           
           SunR_Rotated_check = 2;
         }
-        else if (SolarImpact_Image_Section == 3) {}
+        else if (SolarImpact_sectionType == 3) {}
         
         for (int SHD = 0; SHD <= 1; SHD += 1) {
   
@@ -32566,7 +32566,7 @@ void RenderShadowsOnUrbanPlane () {
                     TU[2] = w; TV[2] = 0;
                     TU[3] = 0; TV[3] = 0;   
                     
-                    if (SolarImpact_Image_Section == 2) {
+                    if (SolarImpact_sectionType == 2) {
                       {
                         for (int q = 0; q < 4; q++) {
                           float a = TX[q];
@@ -32588,7 +32588,7 @@ void RenderShadowsOnUrbanPlane () {
                           z = a * sin_ang(-SolarImpact_Rotation) + b * cos_ang(-SolarImpact_Rotation);
                       }                   
                     }
-                    else if (SolarImpact_Image_Section == 3) {}
+                    else if (SolarImpact_sectionType == 3) {}
                
                     if ((TZ[0] < SolarImpact_Elevation) && (SolarImpact_Elevation < TZ[2])) {
                       
@@ -32597,17 +32597,17 @@ void RenderShadowsOnUrbanPlane () {
                       TZ[0] = (TZ[0] * (1 - ratio) + TZ[2] * ratio);
                       TZ[1] = (TZ[1] * (1 - ratio) + TZ[3] * ratio);    
                       
-                      if (SolarImpact_Image_Section == 1) {
+                      if (SolarImpact_sectionType == 1) {
                         
                         TV[0] = (TV[0] * (1 - ratio) + TV[2] * ratio);
                         TV[1] = (TV[1] * (1 - ratio) + TV[3] * ratio);
                       }
-                      else if (SolarImpact_Image_Section == 2) {
+                      else if (SolarImpact_sectionType == 2) {
                         
                         TU[1] = (TU[1] * (1 - ratio) + TU[3] * ratio);
                         TU[2] = (TU[2] * (1 - ratio) + TU[0] * ratio);
                       }
-                      else if (SolarImpact_Image_Section == 3) {}
+                      else if (SolarImpact_sectionType == 3) {}
                       
                     }
                     
@@ -32619,7 +32619,7 @@ void RenderShadowsOnUrbanPlane () {
                         TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
                         TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);   
          
-                        if (SolarImpact_Image_Section == 1) {
+                        if (SolarImpact_sectionType == 1) {
                           float px = TX[q];
                           float py = TY[q];
 
@@ -32667,7 +32667,7 @@ void RenderShadowsOnUrbanPlane () {
                       TU[2] = w; TV[2] = 0;
                       TU[3] = 0; TV[3] = 0;   
 
-                      if (SolarImpact_Image_Section == 1) {
+                      if (SolarImpact_sectionType == 1) {
     
                         if (z + 2 * r * ratio > SolarImpact_Elevation) {
                         
@@ -32677,7 +32677,7 @@ void RenderShadowsOnUrbanPlane () {
                             TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
                             TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);  
             
-                            if (SolarImpact_Image_Section == 1) {
+                            if (SolarImpact_sectionType == 1) {
                               float px = TX[q];
                               float py = TY[q];
     
@@ -32758,7 +32758,7 @@ void RenderShadowsOnUrbanPlane () {
                     float[][] subFace_Rotated = subFace;
                     
                     for (int s = 0; s < subFace_Rotated.length; s++) {
-                      if (SolarImpact_Image_Section == 2) {
+                      if (SolarImpact_sectionType == 2) {
                         float a = subFace_Rotated[s][0];
                         float b = -subFace_Rotated[s][1];
                         float c = subFace_Rotated[s][2];
@@ -32767,7 +32767,7 @@ void RenderShadowsOnUrbanPlane () {
                         subFace_Rotated[s][1] = c;    
                         subFace_Rotated[s][2] = a * sin_ang(-SolarImpact_Rotation) + b * cos_ang(-SolarImpact_Rotation);      
                       }
-                      else if (SolarImpact_Image_Section == 3) {}
+                      else if (SolarImpact_sectionType == 3) {}
     
                     }  
                  
@@ -32783,7 +32783,7 @@ void RenderShadowsOnUrbanPlane () {
     
                       if (z >= 0) {
                         
-                        if (SolarImpact_Image_Section == 1) {                    
+                        if (SolarImpact_sectionType == 1) {                    
                           float px = x;
                           float py = y;
                         
@@ -32807,7 +32807,7 @@ void RenderShadowsOnUrbanPlane () {
                           float x_trim = x_prev * (1 - ratio) + x * ratio;
                           float y_trim = y_prev * (1 - ratio) + y * ratio;
                           
-                          if (SolarImpact_Image_Section == 1) {
+                          if (SolarImpact_sectionType == 1) {
                             float px = x_trim;
                             float py = y_trim;
                           
@@ -32828,7 +32828,7 @@ void RenderShadowsOnUrbanPlane () {
                           float x_trim = x_next * (1 - ratio) + x * ratio;
                           float y_trim = y_next * (1 - ratio) + y * ratio;
                           
-                          if (SolarImpact_Image_Section == 1) {
+                          if (SolarImpact_sectionType == 1) {
                             float px = x_trim;
                             float py = y_trim;
                           
@@ -32950,7 +32950,7 @@ void RenderShadowsOnUrbanPlane () {
         float[] SunR_Rotated = SunR; 
         int SunR_Rotated_check = 3;
         
-        if (SolarImpact_Image_Section == 2) {
+        if (SolarImpact_sectionType == 2) {
           float a = SunR_Rotated[1];
           float b = -SunR_Rotated[2];
           float c = SunR_Rotated[3];
@@ -32961,7 +32961,7 @@ void RenderShadowsOnUrbanPlane () {
           
           SunR_Rotated_check = 2;
         }
-        else if (SolarImpact_Image_Section == 3) {}
+        else if (SolarImpact_sectionType == 3) {}
 
 
 //------------------------------------ start of copy & paste from the direct version!
@@ -33031,7 +33031,7 @@ void RenderShadowsOnUrbanPlane () {
                   TU[2] = w; TV[2] = 0;
                   TU[3] = 0; TV[3] = 0;   
                   
-                  if (SolarImpact_Image_Section == 2) {
+                  if (SolarImpact_sectionType == 2) {
                     {
                       for (int q = 0; q < 4; q++) {
                         float a = TX[q];
@@ -33053,7 +33053,7 @@ void RenderShadowsOnUrbanPlane () {
                         z = a * sin_ang(-SolarImpact_Rotation) + b * cos_ang(-SolarImpact_Rotation);
                     }                   
                   }
-                  else if (SolarImpact_Image_Section == 3) {}
+                  else if (SolarImpact_sectionType == 3) {}
              
                   if ((TZ[0] < SolarImpact_Elevation) && (SolarImpact_Elevation < TZ[2])) {
                     
@@ -33062,17 +33062,17 @@ void RenderShadowsOnUrbanPlane () {
                     TZ[0] = (TZ[0] * (1 - ratio) + TZ[2] * ratio);
                     TZ[1] = (TZ[1] * (1 - ratio) + TZ[3] * ratio);    
                     
-                    if (SolarImpact_Image_Section == 1) {
+                    if (SolarImpact_sectionType == 1) {
                       
                       TV[0] = (TV[0] * (1 - ratio) + TV[2] * ratio);
                       TV[1] = (TV[1] * (1 - ratio) + TV[3] * ratio);
                     }
-                    else if (SolarImpact_Image_Section == 2) {
+                    else if (SolarImpact_sectionType == 2) {
                       
                       TU[1] = (TU[1] * (1 - ratio) + TU[3] * ratio);
                       TU[2] = (TU[2] * (1 - ratio) + TU[0] * ratio);
                     }
-                    else if (SolarImpact_Image_Section == 3) {}
+                    else if (SolarImpact_sectionType == 3) {}
                     
                   }
                   
@@ -33084,7 +33084,7 @@ void RenderShadowsOnUrbanPlane () {
                       TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
                       TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);   
        
-                      if (SolarImpact_Image_Section == 1) {
+                      if (SolarImpact_sectionType == 1) {
                         float px = TX[q];
                         float py = TY[q];
 
@@ -33128,7 +33128,7 @@ void RenderShadowsOnUrbanPlane () {
                     TU[2] = w; TV[2] = 0;
                     TU[3] = 0; TV[3] = 0;   
 
-                    if (SolarImpact_Image_Section == 1) {
+                    if (SolarImpact_sectionType == 1) {
                       if (z + 2 * r * ratio > SolarImpact_Elevation) {
                       
                         for (int q = 0; q < 4; q++) {
@@ -33137,7 +33137,7 @@ void RenderShadowsOnUrbanPlane () {
                           TX[q] = (TX[q] - TZ[q] * SunR_Rotated[1] / SunR_Rotated[3]);
                           TY[q] = (TY[q] - TZ[q] * SunR_Rotated[2] / SunR_Rotated[3]);                  
   
-                          if (SolarImpact_Image_Section == 1) {
+                          if (SolarImpact_sectionType == 1) {
                             float px = TX[q];
                             float py = TY[q];
   
@@ -33219,7 +33219,7 @@ void RenderShadowsOnUrbanPlane () {
                   float[][] subFace_Rotated = subFace;
                   
                   for (int s = 0; s < subFace_Rotated.length; s++) {
-                    if (SolarImpact_Image_Section == 2) {
+                    if (SolarImpact_sectionType == 2) {
                       float a = subFace_Rotated[s][0];
                       float b = -subFace_Rotated[s][1];
                       float c = subFace_Rotated[s][2];
@@ -33228,7 +33228,7 @@ void RenderShadowsOnUrbanPlane () {
                       subFace_Rotated[s][1] = c;      
                       subFace_Rotated[s][2] = a * sin_ang(-SolarImpact_Rotation) + b * cos_ang(-SolarImpact_Rotation);      
                     }
-                    else if (SolarImpact_Image_Section == 3) {}
+                    else if (SolarImpact_sectionType == 3) {}
     
                   }                
                
@@ -33242,7 +33242,7 @@ void RenderShadowsOnUrbanPlane () {
                       
                     if (z >= 0) {
                       
-                      if (SolarImpact_Image_Section == 1) {
+                      if (SolarImpact_sectionType == 1) {
                         float px = x;
                         float py = y;
                       
@@ -33266,7 +33266,7 @@ void RenderShadowsOnUrbanPlane () {
                         float x_trim = x_prev * (1 - ratio) + x * ratio;
                         float y_trim = y_prev * (1 - ratio) + y * ratio;
                         
-                        if (SolarImpact_Image_Section == 1) {
+                        if (SolarImpact_sectionType == 1) {
                           float px = x_trim;
                           float py = y_trim;
                         
@@ -33287,7 +33287,7 @@ void RenderShadowsOnUrbanPlane () {
                         float x_trim = x_next * (1 - ratio) + x * ratio;
                         float y_trim = y_next * (1 - ratio) + y * ratio;
                         
-                        if (SolarImpact_Image_Section == 1) {
+                        if (SolarImpact_sectionType == 1) {
                           float px = x_trim;
                           float py = y_trim;
                         
@@ -33407,7 +33407,7 @@ void RenderShadowsOnUrbanPlane () {
     }
   }
   
-  SolarImpact_Image_Section = keep_SolarImpact_Image_Section;
+  SolarImpact_sectionType = keep_SolarImpact_sectionType;
   SolarImpact_Rotation = keep_SolarImpact_Rotation;  
   
   cursor(ARROW);
@@ -33421,7 +33421,7 @@ void RenderShadowsOnUrbanPlane () {
 void SOLARCHVISION_draw_SolarImpact_Image () {
   
   if (Display_SolarImpact_Image != 0) {
-    if (SolarImpact_Image_Section != 0) {
+    if (SolarImpact_sectionType != 0) {
     
       if (rebuild_SolarImpact_Image_array != 0) {
         SOLARCHVISION_build_SolarImpact_Image_array();
@@ -33433,21 +33433,21 @@ void SOLARCHVISION_draw_SolarImpact_Image () {
   
       WIN3D_Diagrams.beginShape();
       
-      SolarImpact_Rotation = SpatialImpact_Rotation[SolarImpact_Image_Section];
-      SolarImpact_Elevation = 0.1 + SpatialImpact_Elevation[SolarImpact_Image_Section];
-      SolarImpact_scale_U = SpatialImpact_scale_U[SpatialImpact_Image_Section]; 
-      SolarImpact_scale_V = SpatialImpact_scale_V[SpatialImpact_Image_Section];     
-      SolarImpact_offset_U = SpatialImpact_offset_U[SpatialImpact_Image_Section]; 
-      SolarImpact_offset_V = SpatialImpact_offset_V[SpatialImpact_Image_Section];      
+      SolarImpact_Rotation = SpatialImpact_Rotation[SolarImpact_sectionType];
+      SolarImpact_Elevation = 0.1 + SpatialImpact_Elevation[SolarImpact_sectionType];
+      SolarImpact_scale_U = SpatialImpact_scale_U[SpatialImpact_sectionType]; 
+      SolarImpact_scale_V = SpatialImpact_scale_V[SpatialImpact_sectionType];     
+      SolarImpact_offset_U = SpatialImpact_offset_U[SpatialImpact_sectionType]; 
+      SolarImpact_offset_V = SpatialImpact_offset_V[SpatialImpact_sectionType];      
   
       int Display_solarch_texture = 0;
       
       if (Rendered_SolarImpact_offset_U == SolarImpact_offset_U) { // we may remove this condition later
         if (Rendered_SolarImpact_offset_V == SolarImpact_offset_V) { // we may remove this condition later
           
-          if (Rendered_SolarImpact_Type == SolarImpact_Image_Section) {
+          if (Rendered_SolarImpact_sectionType == SolarImpact_sectionType) {
             if (Rendered_SolarImpact_Rotation == SolarImpact_Rotation) {      
-              if (Rendered_SolarImpact_Elevation == 0.1 + SolarImpact_Elevation) {
+              if (Rendered_SolarImpact_Elevation == SolarImpact_Elevation) {
               
                 Display_solarch_texture = 1;
                 
@@ -33470,7 +33470,7 @@ void SOLARCHVISION_draw_SolarImpact_Image () {
       //float c = HeightAboveGround * OBJECTS_scale; // <<< or zero i.e. height of the plane in 3D  // ?????????
       float c = SolarImpact_Elevation * OBJECTS_scale; 
   
-      if (SolarImpact_Image_Section != 0) {
+      if (SolarImpact_sectionType != 0) {
         WIN3D_Diagrams.beginShape();
     
         WIN3D_Diagrams.texture(SolarImpact_Image[Day_of_Impact_to_Display]);  
@@ -33491,17 +33491,17 @@ void SOLARCHVISION_draw_SolarImpact_Image () {
           
           float x = 0, y = 0, z = 0;
           
-          if (SolarImpact_Image_Section == 1) {
+          if (SolarImpact_sectionType == 1) {
             x = a * cos_ang(SolarImpact_Rotation) - b * sin_ang(SolarImpact_Rotation);
             y = a * sin_ang(SolarImpact_Rotation) + b * cos_ang(SolarImpact_Rotation);
             z = c;         
           }
-          else if (SolarImpact_Image_Section == 2) {
+          else if (SolarImpact_sectionType == 2) {
             x = a * cos_ang(SolarImpact_Rotation) - c * sin_ang(SolarImpact_Rotation);
             y = -(a * sin_ang(SolarImpact_Rotation) + c * cos_ang(SolarImpact_Rotation));
             z = b;       
           }
-          else if (SolarImpact_Image_Section == 3) {
+          else if (SolarImpact_sectionType == 3) {
             x = a * cos_ang(90 - SolarImpact_Rotation) - c * sin_ang(90 - SolarImpact_Rotation);
             y = -(a * sin_ang(90 - SolarImpact_Rotation) + c * cos_ang(90 - SolarImpact_Rotation));
             z = b;     
@@ -34085,7 +34085,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
         float[][] subFace_Rotated = subFace;
   
         for (int s = 0; s < subFace_Rotated.length; s++) {
-          if (SolarImpact_Image_Section == 2) {
+          if (SolarImpact_sectionType == 2) {
             float a = subFace_Rotated[s][0];
             float b = -subFace_Rotated[s][1];
             float c = subFace_Rotated[s][2];
@@ -34094,7 +34094,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
             subFace_Rotated[s][1] = c;    
             subFace_Rotated[s][2] = a * sin_ang(-SolarImpact_Rotation) + b * cos_ang(-SolarImpact_Rotation);      
           }
-          else if (SolarImpact_Image_Section == 3) {}
+          else if (SolarImpact_sectionType == 3) {}
   
         }  
   
@@ -34108,7 +34108,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
   
           if (z >= 0) {
             
-            if (SolarImpact_Image_Section == 1) {                    
+            if (SolarImpact_sectionType == 1) {                    
               float px = x;
               float py = y;
             
@@ -34132,7 +34132,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
               float x_trim = x_prev * (1 - ratio) + x * ratio;
               float y_trim = y_prev * (1 - ratio) + y * ratio;
               
-              if (SolarImpact_Image_Section == 1) {
+              if (SolarImpact_sectionType == 1) {
                 float px = x_trim;
                 float py = y_trim;
               
@@ -34153,7 +34153,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
               float x_trim = x_next * (1 - ratio) + x * ratio;
               float y_trim = y_next * (1 - ratio) + y * ratio;
               
-              if (SolarImpact_Image_Section == 1) {
+              if (SolarImpact_sectionType == 1) {
                 float px = x_trim;
                 float py = y_trim;
               
@@ -34185,7 +34185,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
       float y0_Rotated = y0;
       float z0_Rotated = z0;
       
-      if (SolarImpact_Image_Section == 2) {
+      if (SolarImpact_sectionType == 2) {
         float a = x0;
         float b = -y0;
         float c = z0;
@@ -34194,7 +34194,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
         y0_Rotated = c;    
         z0_Rotated= a * sin_ang(-SolarImpact_Rotation) + b * cos_ang(-SolarImpact_Rotation);      
       }
-      else if (SolarImpact_Image_Section == 3) {}
+      else if (SolarImpact_sectionType == 3) {}
 
 
       float z = z0_Rotated - SolarImpact_Elevation;
@@ -34203,7 +34203,7 @@ void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alph
 
       if (z >= 0) {
         
-        if (SolarImpact_Image_Section == 1) {                    
+        if (SolarImpact_sectionType == 1) {                    
           float px = x;
           float py = y;
         
@@ -36502,7 +36502,7 @@ String[][] BAR_a_Items = {
                         {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Soft Selection", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
                         {"Edit", "Duplicate Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces"},
-                        {"Modify", "Save Current Pivot", "Reset Saved Pivot", "Use Selection Pivot", "Use Origin Pivot", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Vsibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
+                        {"Modify", "Save Current Pivot", "Reset Saved Pivot", "Use Selection Pivot", "Use Origin Pivot", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
                         {"Match", "Pick Study Plane", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunkSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunkSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
                         {"Action", "Undo", "Redo", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
 
@@ -38820,7 +38820,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("WindRose_RES", WindRose_RES);
   newChild1.setInt("Rendered_WindRose_RES", Rendered_WindRose_RES);
   newChild1.setInt("Display_SolarImpact_Image", Display_SolarImpact_Image);
-  newChild1.setInt("SolarImpact_Image_Section", SolarImpact_Image_Section);
+  newChild1.setInt("SolarImpact_sectionType", SolarImpact_sectionType);
   newChild1.setFloat("SolarImpact_Rotation", SolarImpact_Rotation);
   newChild1.setFloat("SolarImpact_scale_U", SolarImpact_scale_U);
   newChild1.setFloat("SolarImpact_scale_V", SolarImpact_scale_V);
@@ -38833,8 +38833,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("SpatialImpact_RES2", SpatialImpact_RES2);
   newChild1.setFloat("SpatialImpact_Grade", SpatialImpact_Grade);
   newChild1.setInt("Display_SpatialImpact_Image", Display_SpatialImpact_Image);
-  newChild1.setInt("SpatialImpact_Image_Section", SpatialImpact_Image_Section);
-  newChild1.setFloat("SpatialImpact_PositionStep", SpatialImpact_PositionStep);
+  newChild1.setInt("SpatialImpact_sectionType", SpatialImpact_sectionType);
+  newChild1.setFloat("SpatialImpact_positionStep", SpatialImpact_positionStep);
   newChild1.setInt("PROCESS_subdivisions", PROCESS_subdivisions);
   newChild1.setFloat("deltaSpatialImpact", deltaSpatialImpact);
   newChild1.setFloat("deltaSpatialImpactLines", deltaSpatialImpactLines);
@@ -39807,7 +39807,7 @@ void SOLARCHVISION_load_project (String myFile) {
       WindRose_RES = children0[L].getInt("WindRose_RES");
       Rendered_WindRose_RES = children0[L].getInt("Rendered_WindRose_RES");
       Display_SolarImpact_Image = children0[L].getInt("Display_SolarImpact_Image");
-      SolarImpact_Image_Section = children0[L].getInt("SolarImpact_Image_Section");
+      SolarImpact_sectionType = children0[L].getInt("SolarImpact_sectionType");
       SolarImpact_Rotation = children0[L].getFloat("SolarImpact_Rotation");
       SolarImpact_scale_U = children0[L].getFloat("SolarImpact_scale_U");
       SolarImpact_scale_V = children0[L].getFloat("SolarImpact_scale_V");
@@ -39820,8 +39820,8 @@ void SOLARCHVISION_load_project (String myFile) {
       SpatialImpact_RES2 = children0[L].getInt("SpatialImpact_RES2");
       SpatialImpact_Grade = children0[L].getFloat("SpatialImpact_Grade");
       Display_SpatialImpact_Image = children0[L].getInt("Display_SpatialImpact_Image");
-      SpatialImpact_Image_Section = children0[L].getInt("SpatialImpact_Image_Section");
-      SpatialImpact_PositionStep = children0[L].getFloat("SpatialImpact_PositionStep");
+      SpatialImpact_sectionType = children0[L].getInt("SpatialImpact_sectionType");
+      SpatialImpact_positionStep = children0[L].getFloat("SpatialImpact_positionStep");
       PROCESS_subdivisions = children0[L].getInt("PROCESS_subdivisions");
       deltaSpatialImpact = children0[L].getFloat("deltaSpatialImpact");
       deltaSpatialImpactLines = children0[L].getFloat("deltaSpatialImpactLines");
@@ -40376,7 +40376,7 @@ void SOLARCHVISION_load_project (String myFile) {
   rebuild_SolarImpact_Image_array = 1;
   rebuild_WindRose_Image_array = 1; 
   
-  Rendered_SolarImpact_Type = -1;
+  Rendered_SolarImpact_sectionType = -1;
   Rendered_SolarImpact_scale_U = FLOAT_undefined;
   Rendered_SolarImpact_scale_V = FLOAT_undefined;
   Rendered_SolarImpact_offset_U = FLOAT_undefined;
