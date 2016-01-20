@@ -29522,19 +29522,16 @@ void mouseClicked () {
                         if (max_z < z) max_z = z; 
                       }  
                       
-                      
-                      
-                      SpatialImpact_Elevation[1] = G[2]; 
-                      SpatialImpact_Elevation[2] = -G[1]; 
-                      SpatialImpact_Elevation[3] = -G[0]; 
-                      
                       if ((max_z - min_z < max_x - min_x) && (max_z - min_z < max_y - min_y)) {
                         SpatialImpact_sectionType = 1;
+
                         SpatialImpact_scale_U[SpatialImpact_sectionType] = max_x - min_x; 
                         SpatialImpact_scale_V[SpatialImpact_sectionType] = max_y - min_y;
                         
                         SpatialImpact_offset_U[SpatialImpact_sectionType] = G[0];
                         SpatialImpact_offset_V[SpatialImpact_sectionType] = G[1];
+                        
+                        SpatialImpact_Elevation[SpatialImpact_sectionType] = G[2];
                       }
                       else if (max_y - min_y < max_x - min_x) {
                         SpatialImpact_sectionType = 2;
@@ -29543,7 +29540,9 @@ void mouseClicked () {
                         SpatialImpact_scale_V[SpatialImpact_sectionType] = max_z - min_z; 
                         
                         SpatialImpact_offset_U[SpatialImpact_sectionType] = G[0];
-                        SpatialImpact_offset_V[SpatialImpact_sectionType] = G[2];                        
+                        SpatialImpact_offset_V[SpatialImpact_sectionType] = G[2];        
+                        
+                        SpatialImpact_Elevation[SpatialImpact_sectionType] = -G[1];                
                       }
                       else {
                         SpatialImpact_sectionType = 3;
@@ -29552,8 +29551,12 @@ void mouseClicked () {
                         SpatialImpact_scale_V[SpatialImpact_sectionType] = max_z - min_z;
                         
                         SpatialImpact_offset_U[SpatialImpact_sectionType] = -G[1];
-                        SpatialImpact_offset_V[SpatialImpact_sectionType] = G[2];                          
-                      }                      
+                        SpatialImpact_offset_V[SpatialImpact_sectionType] = G[2];     
+                        
+                        SpatialImpact_Elevation[SpatialImpact_sectionType] = -G[0];                          
+                      }          
+          
+                      SolarImpact_sectionType = SpatialImpact_sectionType;             
 
                       
                       if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
@@ -33441,7 +33444,7 @@ void SOLARCHVISION_draw_SolarImpact_Image () {
       SolarImpact_offset_V = SpatialImpact_offset_V[SpatialImpact_sectionType];      
   
       int Display_solarch_texture = 0;
-      
+
       if (Rendered_SolarImpact_offset_U == SolarImpact_offset_U) { // we may remove this condition later
         if (Rendered_SolarImpact_offset_V == SolarImpact_offset_V) { // we may remove this condition later
           
@@ -33450,8 +33453,6 @@ void SOLARCHVISION_draw_SolarImpact_Image () {
               if (Rendered_SolarImpact_Elevation == SolarImpact_Elevation) {
               
                 Display_solarch_texture = 1;
-                
-                //WIN3D_Diagrams.texture(SolarImpact_Image[Day_of_Impact_to_Display]); // ????????????
               
               }
             } 
@@ -33472,10 +33473,12 @@ void SOLARCHVISION_draw_SolarImpact_Image () {
   
       if (SolarImpact_sectionType != 0) {
         WIN3D_Diagrams.beginShape();
-    
-        WIN3D_Diagrams.texture(SolarImpact_Image[Day_of_Impact_to_Display]);  
-        WIN3D_Diagrams.stroke(255, 255, 255, 0);
-        WIN3D_Diagrams.fill(255, 255, 255, 0);  
+        
+        if (Display_solarch_texture == 1) {
+          WIN3D_Diagrams.texture(SolarImpact_Image[Day_of_Impact_to_Display]);
+        }  
+        WIN3D_Diagrams.stroke(127, 127, 255, 127);
+        WIN3D_Diagrams.fill(127, 127, 255, 127);  
         
         for (int q = 0; q < 4; q++) {
           
