@@ -2710,12 +2710,6 @@ void draw () {
     }
     
 
-//-------------------------------
-    if (STATION_NUMBER > 2) {
-      if (camera_variation > 2) camera_variation = 1;
-    }
-//-------------------------------
-
 
     if (FRAME_record_AUTO == 1) {
       if (STUDY_Update == 1) FRAME_record_JPG = 1;
@@ -18197,7 +18191,7 @@ void SOLARCHVISION_export_objects () {
       }
       
       SolarImpact_Rotation = SpatialImpact_Rotation[SolarImpact_Image_Section];
-      SolarImpact_Elevation = 0.1 +  SpatialImpact_Elevation[SolarImpact_Image_Section];
+      SolarImpact_Elevation = 0.1 + SpatialImpact_Elevation[SolarImpact_Image_Section];
       SolarImpact_scale_U = SpatialImpact_scale_U[SpatialImpact_Image_Section]; 
       SolarImpact_scale_V = SpatialImpact_scale_V[SpatialImpact_Image_Section];        
       SolarImpact_offset_U = SpatialImpact_offset_U[SpatialImpact_Image_Section]; 
@@ -32427,7 +32421,7 @@ void RenderShadowsOnUrbanPlane () {
   defaultSceneName = SceneName;
   
   SolarImpact_Rotation =  SpatialImpact_Rotation[SpatialImpact_Image_Section];
-  SolarImpact_Elevation = 0.1 +  SpatialImpact_Elevation[SpatialImpact_Image_Section];
+  SolarImpact_Elevation = 0.1 + SpatialImpact_Elevation[SpatialImpact_Image_Section];
   SolarImpact_scale_U = SpatialImpact_scale_U[SpatialImpact_Image_Section]; 
   SolarImpact_scale_V = SpatialImpact_scale_V[SpatialImpact_Image_Section];
   SolarImpact_offset_U = SpatialImpact_offset_U[SpatialImpact_Image_Section]; 
@@ -33440,7 +33434,7 @@ void SOLARCHVISION_draw_SolarImpact_Image () {
       WIN3D_Diagrams.beginShape();
       
       SolarImpact_Rotation = SpatialImpact_Rotation[SolarImpact_Image_Section];
-      SolarImpact_Elevation = 0.1 +  SpatialImpact_Elevation[SolarImpact_Image_Section];
+      SolarImpact_Elevation = 0.1 + SpatialImpact_Elevation[SolarImpact_Image_Section];
       SolarImpact_scale_U = SpatialImpact_scale_U[SpatialImpact_Image_Section]; 
       SolarImpact_scale_V = SpatialImpact_scale_V[SpatialImpact_Image_Section];     
       SolarImpact_offset_U = SpatialImpact_offset_U[SpatialImpact_Image_Section]; 
@@ -33448,17 +33442,22 @@ void SOLARCHVISION_draw_SolarImpact_Image () {
   
       int Display_solarch_texture = 0;
       
-      if (Rendered_SolarImpact_Type == SolarImpact_Image_Section) {
-        if (Rendered_SolarImpact_Rotation == SolarImpact_Rotation) {      
-          if (Rendered_SolarImpact_Elevation == SolarImpact_Elevation) {
+      if (Rendered_SolarImpact_offset_U == SolarImpact_offset_U) { // we may remove this condition later
+        if (Rendered_SolarImpact_offset_V == SolarImpact_offset_V) { // we may remove this condition later
           
-            Display_solarch_texture = 1;
-            
-            //WIN3D_Diagrams.texture(SolarImpact_Image[Day_of_Impact_to_Display]); // ????????????
-          
-          }
-        } 
-      }   
+          if (Rendered_SolarImpact_Type == SolarImpact_Image_Section) {
+            if (Rendered_SolarImpact_Rotation == SolarImpact_Rotation) {      
+              if (Rendered_SolarImpact_Elevation == 0.1 + SolarImpact_Elevation) {
+              
+                Display_solarch_texture = 1;
+                
+                //WIN3D_Diagrams.texture(SolarImpact_Image[Day_of_Impact_to_Display]); // ????????????
+              
+              }
+            } 
+          }   
+        }
+      }
   
       float dU = SolarImpact_scale_U / Rendered_SolarImpact_scale_U;
       float dV = SolarImpact_scale_V / Rendered_SolarImpact_scale_V;
