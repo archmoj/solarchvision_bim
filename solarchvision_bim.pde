@@ -20437,8 +20437,8 @@ void SOLARCHVISION_draw_TROPO3D () {
             
             if (Display_TROPO3D_TEXTURE != 0) {
               // calculating u and v
-              subFace[s][3] = (_lon / TROPO_IMAGES_ScaleX / 360.0 + 0.5) * TROPO_IMAGES[n].width; 
-              subFace[s][4] = (-_lat / TROPO_IMAGES_ScaleY / 180.0 + 0.5) * TROPO_IMAGES[n].height;
+              subFace[s][3] = (_lon / TROPO_IMAGES_ScaleX / 360.0 + 0.5); 
+              subFace[s][4] = (-_lat / TROPO_IMAGES_ScaleY / 180.0 + 0.5);
             }         
             
             // rotating to location coordinates 
@@ -20472,7 +20472,7 @@ void SOLARCHVISION_draw_TROPO3D () {
   
           for (int s = 0; s < subFace.length; s++) {
         
-            WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, subFace[s][3], subFace[s][4]);  
+            WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, subFace[s][3] * TROPO_IMAGES[n].width, subFace[s][4] * TROPO_IMAGES[n].height);  
           }
           
           WIN3D_Diagrams.endShape(CLOSE);        
@@ -20553,8 +20553,8 @@ void SOLARCHVISION_draw_EARTH3D () {
           
           if (Display_EARTH3D_TEXTURE != 0) {
             // calculating u and v
-            subFace[s][3] = (_lon / EARTH_IMAGES_ScaleX / 360.0 + 0.5) * EARTH_IMAGES[n].width; 
-            subFace[s][4] = (-_lat / EARTH_IMAGES_ScaleY / 180.0 + 0.5) * EARTH_IMAGES[n].height;
+            subFace[s][3] = (_lon / EARTH_IMAGES_ScaleX / 360.0 + 0.5); 
+            subFace[s][4] = (-_lat / EARTH_IMAGES_ScaleY / 180.0 + 0.5);
           }         
           
           // rotating to location coordinates 
@@ -20588,7 +20588,7 @@ void SOLARCHVISION_draw_EARTH3D () {
 
         for (int s = 0; s < subFace.length; s++) {
       
-          WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, subFace[s][3], subFace[s][4]);  
+          WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, subFace[s][3] * EARTH_IMAGES[n].width, subFace[s][4] * EARTH_IMAGES[n].height);  
         }
         
         WIN3D_Diagrams.endShape(CLOSE);        
@@ -20650,8 +20650,8 @@ void SOLARCHVISION_draw_MOON3D () {
           
           if (Display_MOON3D_TEXTURE != 0) {
             // calculating u and v
-            subFace[s][3] = (_lon / MOON_IMAGE_ScaleX / 360.0 + 0.5) * MOON_IMAGE.width; 
-            subFace[s][4] = (-_lat / MOON_IMAGE_ScaleY / 180.0 + 0.5) * MOON_IMAGE.height;
+            subFace[s][3] = (_lon / MOON_IMAGE_ScaleX / 360.0 + 0.5); 
+            subFace[s][4] = (-_lat / MOON_IMAGE_ScaleY / 180.0 + 0.5);
           }         
          
           // rotating to location coordinates
@@ -20687,7 +20687,7 @@ void SOLARCHVISION_draw_MOON3D () {
 
         for (int s = 0; s < subFace.length; s++) {
       
-          WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, subFace[s][3], subFace[s][4]);  
+          WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, subFace[s][3] * MOON_IMAGE.width, subFace[s][4] * MOON_IMAGE.height);  
         }
         
         WIN3D_Diagrams.endShape(CLOSE);        
@@ -20748,8 +20748,8 @@ void SOLARCHVISION_draw_STAR3D () {
           
           if (Display_STAR3D_TEXTURE != 0) {
             // calculating u and v
-            subFace[s][3] = (_lon / STAR_IMAGE_ScaleX / 360.0 + 0.5) * STAR_IMAGE.width; 
-            subFace[s][4] = (-_lat / STAR_IMAGE_ScaleY / 180.0 + 0.5) * STAR_IMAGE.height;
+            subFace[s][3] = (_lon / STAR_IMAGE_ScaleX / 360.0 + 0.5); 
+            subFace[s][4] = (-_lat / STAR_IMAGE_ScaleY / 180.0 + 0.5);
           }         
          
           // rotating to location coordinates
@@ -20789,7 +20789,7 @@ void SOLARCHVISION_draw_STAR3D () {
 
         for (int s = 0; s < subFace.length; s++) {
       
-          WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, subFace[s][3], subFace[s][4]);  
+          WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, subFace[s][3] * STAR_IMAGE.width, subFace[s][4] * STAR_IMAGE.height);  
         }
         
         WIN3D_Diagrams.endShape(CLOSE);        
