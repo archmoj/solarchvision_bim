@@ -29558,7 +29558,6 @@ void mouseClicked () {
                         }
                        
                         //println("min_Alpha", min_Alpha);
-                        println("min_Beta", min_Beta);                        
                         
                         float[][] tmpVertices = new float[n][3];
                         
@@ -29603,10 +29602,7 @@ void mouseClicked () {
                           if (min_z > z) min_z = z; 
                           if (max_z < z) max_z = z;
                         }
-  
 
-                        
-                        
                         if ((max_z - min_z < max_x - min_x) && (max_z - min_z < max_y - min_y)) {
                           SpatialImpact_sectionType = 1;
   
@@ -34964,12 +34960,57 @@ void SOLARCHVISION_softScale_selectedVertices (float x0, float y0, float z0, flo
 
 
 
+void SOLARCHVISION_move_selectedSections (float dx, float dy, float dz) {
+
+  SpatialImpact_offset_U[SpatialImpact_sectionType] += dx;
+  SpatialImpact_offset_V[SpatialImpact_sectionType] += dy;
+  SpatialImpact_Elevation[SpatialImpact_sectionType] += dz;
+  
+  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+  WIN3D_Update = 1;
+  ROLLOUT_Update = 1;    
+
+}
+
+
+void SOLARCHVISION_rotate_selectedSections (float x0, float y0, float z0, float r, int the_Vector) {
+  
+  SpatialImpact_Rotation[SpatialImpact_sectionType] += r;
+  
+  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+  WIN3D_Update = 1;
+  ROLLOUT_Update = 1;       
+
+}
+
+
+void SOLARCHVISION_scale_selectedSections (float x0, float y0, float z0, float sx, float sy, float sz) {
+  
+  SpatialImpact_scale_U[SpatialImpact_sectionType] *= sx;
+  SpatialImpact_scale_V[SpatialImpact_sectionType] *= sy;
+  
+  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+  WIN3D_Update = 1;
+  ROLLOUT_Update = 1;      
+  
+}
+
+
 
 
 
 
 void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, float sy, float sz) {
 
+  if (Work_with_2D_or_3D == 8) {
+
+    SOLARCHVISION_scale_selectedSections(x0, y0, z0, sx, sy, sz);
+  }   
+  
+  if (Work_with_2D_or_3D == 7) {
+
+  }       
+    
   if (Work_with_2D_or_3D == 6) {
     
     SOLARCHVISION_softScale_selectedVertices(x0, y0, z0, sx, sy, sz);
@@ -35043,6 +35084,15 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
 
 void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int the_Vector) {
 
+  if (Work_with_2D_or_3D == 8) {
+
+    SOLARCHVISION_rotate_selectedSections(x0, y0, z0, r, the_Vector);
+  }   
+  
+  if (Work_with_2D_or_3D == 7) {
+
+  }       
+  
   if (Work_with_2D_or_3D == 6) {
     
     SOLARCHVISION_softRotate_selectedVertices(x0, y0, z0, r, the_Vector);
@@ -35087,6 +35137,15 @@ void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int 
 
 void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
 
+  if (Work_with_2D_or_3D == 8) {
+
+    SOLARCHVISION_move_selectedSections(dx, dy, dz);
+  }   
+  
+  if (Work_with_2D_or_3D == 7) {
+
+  }      
+  
   if (Work_with_2D_or_3D == 6) {
 
     SOLARCHVISION_softMove_selectedVertices(dx, dy, dz);
