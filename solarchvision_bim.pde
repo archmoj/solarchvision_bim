@@ -12805,6 +12805,9 @@ void WIN3D_keyPressed (KeyEvent e) {
  
         case ENTER :RenderShadowsOnUrbanPlane(); 
                     
+                    frame_variation = 0; 
+                    SOLARCHVISION_update_frame_layout();
+                    
                     if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 0)) || (plot_impacts == 1)) plot_impacts = 1;
                     else plot_impacts = 0;
                    
@@ -23724,8 +23727,30 @@ void SOLARCHVISION_add_ParametricGeometries () {
     SOLARCHVISION_add_H_shade(1,0,0,1,1, -12,-24,18, 24,1, 0,0); // south
     SOLARCHVISION_add_H_shade(1,0,0,1,1, -24,-12,18, 24,1, 0,270); // west
   }
-  
-  
+
+  {
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    float r = 5;    
+    float x = -30;
+    float y = 10;
+    float z = r;
+    SOLARCHVISION_add_FractalSphere(2,0,0,1,1, x,y,z, r, 3, 0, 0);
+    SOLARCHVISION_addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
+  }      
+
+
+  {  
+    addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+    float dx = 6;
+    float dy = 6;
+    float dz = 6;
+    float x = -30;
+    float y = -15;
+    float z = 9;    
+    float rot = 30;
+    SOLARCHVISION_add_Box_Core(4,0,0,1,1, x,y,z, dx, dy, dz, rot);
+    SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
+  }   
 
 }
 
