@@ -274,7 +274,7 @@ int Create_Fractal_Plant_Seed = -1; // -1:random, 0-99 choice
 float Create_Fractal_Plant_TrunkSize = 1; //0.5;
 float Create_Fractal_Plant_LeafSize = 1; //1; 
 
-int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:Face, 5:Vertex, 6:Soft 7:Solid
+int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:Face, 5:Vertex, 6:Soft 7:Solid 8:Section
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
@@ -29517,6 +29517,16 @@ void mouseClicked () {
                       }
                     }  
                     
+                  } 
+                  
+                  
+                  
+                  
+
+                  if (Work_with_2D_or_3D == 8) { // working with sections              
+                    
+                    int f = int(RxP[4]);
+                    
                     if (View_Select_Create_Modify == 17) { //PickStudyPlane
 
                       int n = allFaces[f].length;
@@ -30631,7 +30641,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       Create_Mesh_or_Solid = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_or_Solid" , Create_Mesh_or_Solid, 1, 2, 1), 1));
     
-      //Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 7, 1), 1));
+      //Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 8, 1), 1));
     
       //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -17, 17, 1), 1));
       //View_XYZ_ChangeOption = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_ChangeOption" , View_XYZ_ChangeOption, 0, 6, 1), 1));
@@ -36891,7 +36901,7 @@ String[][] BAR_b_Items = {
                           {"1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "BuildingType", "2.5"},
                           {"1", "as_Mesh", "as_Solid", "Mesh|Solid", "2.0"},  
                           
-                          {"2", "∞-D", "2½D", "3-D", "Face", "Vertex", "Soft", "Solid", "LayerType", "1.5"},
+                          {"2", "∞-D", "2½D", "3-D", "Face", "Vertex", "Soft", "Solid", "Section", "LayerType", "2.0"},
                           {"1", "±CS", "+CS", "-CS", "ClickSelect", "1.0"},
                           {"1", "±WS", "+WS", "-WS", "WindowSelect", "1.0"},                          
                           {"2", "X<", "X|", "X>", "PivotX", "1.0"},
@@ -37556,7 +37566,10 @@ void set_to_Pick_Study_Plane () {
   Modify_Object_Parameters = 1;
   
   View_Select_Create_Modify = 17;
-
+  
+  Work_with_2D_or_3D = 8; // << because it only works with sections
+  //BAR_b_Update = 1;
+  
   ROLLOUT_Update = 1; 
 }
 
