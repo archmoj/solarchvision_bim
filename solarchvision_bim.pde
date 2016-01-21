@@ -29625,7 +29625,9 @@ void mouseClicked () {
                           SpatialImpact_offset_U[SpatialImpact_sectionType] = G[0];
                           SpatialImpact_offset_V[SpatialImpact_sectionType] = G[2];        
                           
-                          SpatialImpact_Elevation[SpatialImpact_sectionType] = -G[1];                
+                          SpatialImpact_Elevation[SpatialImpact_sectionType] = -G[1];
+          
+                          SpatialImpact_Rotation[SpatialImpact_sectionType] = min_Beta;                
                         }
                         else {
                           SpatialImpact_sectionType = 3;
@@ -29636,7 +29638,9 @@ void mouseClicked () {
                           SpatialImpact_offset_U[SpatialImpact_sectionType] = -G[1];
                           SpatialImpact_offset_V[SpatialImpact_sectionType] = G[2];     
                           
-                          SpatialImpact_Elevation[SpatialImpact_sectionType] = -G[0];                          
+                          SpatialImpact_Elevation[SpatialImpact_sectionType] = -G[0];        
+        
+                          SpatialImpact_Rotation[SpatialImpact_sectionType] = min_Beta;                   
                         }          
             
                         SolarImpact_sectionType = SpatialImpact_sectionType;             
