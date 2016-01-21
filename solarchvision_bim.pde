@@ -29558,7 +29558,9 @@ void mouseClicked () {
                           float x0 = allVertices[allFaces[f][j]][0];
                           float y0 = allVertices[allFaces[f][j]][1];
                           float z0 = allVertices[allFaces[f][j]][2];
-
+                          
+                          // still not sure which rotation to be first! <<<<<<<<<<<<<<<<<<<<
+                          
                           float x1 = x0 * cos_ang(-min_Beta) - y0 * sin_ang(-min_Beta);
                           float y1 = x0 * sin_ang(-min_Beta) + y0 * cos_ang(-min_Beta);
                           float z1 = z0;
