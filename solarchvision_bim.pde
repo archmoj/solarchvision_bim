@@ -29521,104 +29521,129 @@ void mouseClicked () {
 
                       int n = allFaces[f].length;
                       
-                      float[] G = {0,0,0};
-                      
-                      float min_x = FLOAT_undefined;
-                      float max_x = -FLOAT_undefined;
-                      float min_y = FLOAT_undefined;
-                      float max_y = -FLOAT_undefined;
-                      float min_z = FLOAT_undefined;
-                      float max_z = -FLOAT_undefined;
-                      
+                      if (n > 2) {
+                        
+                        float min_Alpha = 90;
+                        float min_Beta = 360;
+                        
+                        for (int j = 0; j < n; j++) {
+                          
+                          int j_next = (j + 1) % n;
+                          
+                          float x1 = allVertices[allFaces[f][j]][0];
+                          float y1 = allVertices[allFaces[f][j]][1];
+                          float z1 = allVertices[allFaces[f][j]][2];                        
+  
+                          float x2 = allVertices[allFaces[f][j_next]][0];
+                          float y2 = allVertices[allFaces[f][j_next]][1];
+                          float z2 = allVertices[allFaces[f][j_next]][2];                        
+  
+                          
+                          float Alpha = asin_ang(z2 - z1);
+                          float Beta = atan2_ang(y2 - y1, x2 - x1) + 90;
+  
+                          if (min_Alpha > Alpha) min_Alpha = Alpha;                      
+                          if (min_Beta > Beta) min_Beta = Beta;
+                          
+                        }
+                       
+                        println("min_Alpha", min_Alpha);
+                        println("min_Beta", min_Beta);                        
+                        
+                        float[][] tmpVertices = new float[n][3];
+                        
+                        
+                        for (int j = 0; j < n; j++) {
+                          
+                          float x0 = allVertices[allFaces[f][j]][0];
+                          float y0 = allVertices[allFaces[f][j]][1];
+                          float z0 = allVertices[allFaces[f][j]][2];
 
-                      for (int j = 0; j < n; j++) {
-                        float x = allVertices[allFaces[f][j]][0];
-                        float y = allVertices[allFaces[f][j]][1];
-                        float z = allVertices[allFaces[f][j]][2];
+                          float x1 = x0 * cos_ang(-min_Beta) - y0 * sin_ang(-min_Beta);
+                          float y1 = x0 * sin_ang(-min_Beta) + y0 * cos_ang(-min_Beta);
+                          float z1 = z0;
+
+                          float x2 = x1;
+                          float y2 = y1 * cos_ang(-min_Alpha) - z1 * sin_ang(-min_Alpha);
+                          float z2 = y1 * sin_ang(-min_Alpha) + z1 * cos_ang(-min_Alpha);
+                          
+                          tmpVertices[j][0] = x2;
+                          tmpVertices[j][1] = y2;
+                          tmpVertices[j][2] = z2;
+
+                        }    
+
+                        float min_x = FLOAT_undefined;
+                        float max_x = -FLOAT_undefined;
+                        float min_y = FLOAT_undefined;
+                        float max_y = -FLOAT_undefined;
+                        float min_z = FLOAT_undefined;
+                        float max_z = -FLOAT_undefined;
                         
-                        G[0] += x / float(n); 
-                        G[1] += y / float(n);
-                        G[2] += z / float(n);
+                        float[] G = {0,0,0}; 
+                        for (int j = 0; j < n; j++) {
+                          float x = tmpVertices[j][0];
+                          float y = tmpVertices[j][1];
+                          float z = tmpVertices[j][2];
+                          
+                          G[0] += x / float(n); 
+                          G[1] += y / float(n);
+                          G[2] += z / float(n);
+                          
+                          if (min_x > x) min_x = x; 
+                          if (max_x < x) max_x = x; 
+                          if (min_y > y) min_y = y; 
+                          if (max_y < y) max_y = y; 
+                          if (min_z > z) min_z = z; 
+                          if (max_z < z) max_z = z;
+                        }
+  
+
                         
-                        if (min_x > x) min_x = x; 
-                        if (max_x < x) max_x = x; 
-                        if (min_y > y) min_y = y; 
-                        if (max_y < y) max_y = y; 
-                        if (min_z > z) min_z = z; 
-                        if (max_z < z) max_z = z;
+                        
+                        if ((max_z - min_z < max_x - min_x) && (max_z - min_z < max_y - min_y)) {
+                          SpatialImpact_sectionType = 1;
+  
+                          SpatialImpact_scale_U[SpatialImpact_sectionType] = max_x - min_x; 
+                          SpatialImpact_scale_V[SpatialImpact_sectionType] = max_y - min_y;
+                          
+                          SpatialImpact_offset_U[SpatialImpact_sectionType] = G[0];
+                          SpatialImpact_offset_V[SpatialImpact_sectionType] = G[1];
+                          
+                          SpatialImpact_Elevation[SpatialImpact_sectionType] = G[2];
+                          
+                          SpatialImpact_Rotation[SpatialImpact_sectionType] = min_Beta;
+                        }
+                        else if (max_y - min_y < max_x - min_x) {
+                          SpatialImpact_sectionType = 2;
+                          
+                          SpatialImpact_scale_U[SpatialImpact_sectionType] = max_x - min_x;
+                          SpatialImpact_scale_V[SpatialImpact_sectionType] = max_z - min_z; 
+                          
+                          SpatialImpact_offset_U[SpatialImpact_sectionType] = G[0];
+                          SpatialImpact_offset_V[SpatialImpact_sectionType] = G[2];        
+                          
+                          SpatialImpact_Elevation[SpatialImpact_sectionType] = -G[1];                
+                        }
+                        else {
+                          SpatialImpact_sectionType = 3;
+                          
+                          SpatialImpact_scale_U[SpatialImpact_sectionType] = max_y - min_y; 
+                          SpatialImpact_scale_V[SpatialImpact_sectionType] = max_z - min_z;
+                          
+                          SpatialImpact_offset_U[SpatialImpact_sectionType] = -G[1];
+                          SpatialImpact_offset_V[SpatialImpact_sectionType] = G[2];     
+                          
+                          SpatialImpact_Elevation[SpatialImpact_sectionType] = -G[0];                          
+                        }          
+            
+                        SolarImpact_sectionType = SpatialImpact_sectionType;             
+  
+                        
+                        if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+                        WIN3D_Update = 1; 
+                        ROLLOUT_Update = 1;  
                       }
-
-                      
-                      float min_Alpha = 90;
-                      float min_Beta = 360;
-                      
-                      for (int j = 0; j < n; j++) {
-                        
-                        int j_next = (j + 1) % n;
-                        
-                        float x1 = allVertices[allFaces[f][j]][0];
-                        float y1 = allVertices[allFaces[f][j]][1];
-                        float z1 = allVertices[allFaces[f][j]][2];                        
-
-                        float x2 = allVertices[allFaces[f][j_next]][0];
-                        float y2 = allVertices[allFaces[f][j_next]][1];
-                        float z2 = allVertices[allFaces[f][j_next]][2];                        
-
-                        
-                        float Alpha = asin_ang(z2 - z1);
-                        float Beta = atan2_ang(y2 - y1, x2 - x1) + 90;
-
-                        if (min_Alpha > Alpha) min_Alpha = Alpha;                      
-                        if (min_Beta > Beta) min_Beta = Beta;
-                        
-                      }
-                     
-                      println("min_Alpha", min_Alpha);
-                      println("min_Beta", min_Beta);
-                      
-                      
-                      if ((max_z - min_z < max_x - min_x) && (max_z - min_z < max_y - min_y)) {
-                        SpatialImpact_sectionType = 1;
-
-                        SpatialImpact_scale_U[SpatialImpact_sectionType] = max_x - min_x; 
-                        SpatialImpact_scale_V[SpatialImpact_sectionType] = max_y - min_y;
-                        
-                        SpatialImpact_offset_U[SpatialImpact_sectionType] = G[0];
-                        SpatialImpact_offset_V[SpatialImpact_sectionType] = G[1];
-                        
-                        SpatialImpact_Elevation[SpatialImpact_sectionType] = G[2];
-                        
-                        SpatialImpact_Rotation[SpatialImpact_sectionType] = min_Beta;
-                      }
-                      else if (max_y - min_y < max_x - min_x) {
-                        SpatialImpact_sectionType = 2;
-                        
-                        SpatialImpact_scale_U[SpatialImpact_sectionType] = max_x - min_x;
-                        SpatialImpact_scale_V[SpatialImpact_sectionType] = max_z - min_z; 
-                        
-                        SpatialImpact_offset_U[SpatialImpact_sectionType] = G[0];
-                        SpatialImpact_offset_V[SpatialImpact_sectionType] = G[2];        
-                        
-                        SpatialImpact_Elevation[SpatialImpact_sectionType] = -G[1];                
-                      }
-                      else {
-                        SpatialImpact_sectionType = 3;
-                        
-                        SpatialImpact_scale_U[SpatialImpact_sectionType] = max_y - min_y; 
-                        SpatialImpact_scale_V[SpatialImpact_sectionType] = max_z - min_z;
-                        
-                        SpatialImpact_offset_U[SpatialImpact_sectionType] = -G[1];
-                        SpatialImpact_offset_V[SpatialImpact_sectionType] = G[2];     
-                        
-                        SpatialImpact_Elevation[SpatialImpact_sectionType] = -G[0];                          
-                      }          
-          
-                      SolarImpact_sectionType = SpatialImpact_sectionType;             
-
-                      
-                      if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
-                      WIN3D_Update = 1; 
-                      ROLLOUT_Update = 1;  
                     }          
                     
                   }
