@@ -23741,11 +23741,11 @@ void SOLARCHVISION_add_ParametricGeometries () {
 
   {  
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
-    float dx = 6;
-    float dy = 6;
+    float dx = 12;
+    float dy = 9;
     float dz = 6;
     float x = -30;
-    float y = -15;
+    float y = -30;
     float z = 9;    
     float rot = 30;
     SOLARCHVISION_add_Box_Core(4,0,0,1,1, x,y,z, dx, dy, dz, rot);
@@ -29529,6 +29529,7 @@ void mouseClicked () {
                       float max_y = -FLOAT_undefined;
                       float min_z = FLOAT_undefined;
                       float max_z = -FLOAT_undefined;
+                      
 
                       for (int j = 0; j < n; j++) {
                         float x = allVertices[allFaces[f][j]][0];
@@ -29544,8 +29545,37 @@ void mouseClicked () {
                         if (min_y > y) min_y = y; 
                         if (max_y < y) max_y = y; 
                         if (min_z > z) min_z = z; 
-                        if (max_z < z) max_z = z; 
-                      }  
+                        if (max_z < z) max_z = z;
+                      }
+
+                      
+                      float min_Alpha = 90;
+                      float min_Beta = 360;
+                      
+                      for (int j = 0; j < n; j++) {
+                        
+                        int j_next = (j + 1) % n;
+                        
+                        float x1 = allVertices[allFaces[f][j]][0];
+                        float y1 = allVertices[allFaces[f][j]][1];
+                        float z1 = allVertices[allFaces[f][j]][2];                        
+
+                        float x2 = allVertices[allFaces[f][j_next]][0];
+                        float y2 = allVertices[allFaces[f][j_next]][1];
+                        float z2 = allVertices[allFaces[f][j_next]][2];                        
+
+                        
+                        float Alpha = asin_ang(z2 - z1);
+                        float Beta = atan2_ang(y2 - y1, x2 - x1) + 90;
+
+                        if (min_Alpha > Alpha) min_Alpha = Alpha;                      
+                        if (min_Beta > Beta) min_Beta = Beta;
+                        
+                      }
+                     
+                      println("min_Alpha", min_Alpha);
+                      println("min_Beta", min_Beta);
+                      
                       
                       if ((max_z - min_z < max_x - min_x) && (max_z - min_z < max_y - min_y)) {
                         SpatialImpact_sectionType = 1;
@@ -29557,6 +29587,8 @@ void mouseClicked () {
                         SpatialImpact_offset_V[SpatialImpact_sectionType] = G[1];
                         
                         SpatialImpact_Elevation[SpatialImpact_sectionType] = G[2];
+                        
+                        SpatialImpact_Rotation[SpatialImpact_sectionType] = min_Beta;
                       }
                       else if (max_y - min_y < max_x - min_x) {
                         SpatialImpact_sectionType = 2;
