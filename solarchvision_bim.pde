@@ -29667,8 +29667,9 @@ void mouseClicked () {
                         if (V > 0) {
                           println("flip face!");
                           
-                          SpatialImpact_Rotation[SpatialImpact_sectionType] += 180;
+                          SpatialImpact_Rotation[SpatialImpact_sectionType] = 180 + SpatialImpact_Rotation[SpatialImpact_sectionType];
                           SpatialImpact_Elevation[SpatialImpact_sectionType] *= -1;
+                          SpatialImpact_offset_U[SpatialImpact_sectionType] *= -1;
                         }
                         else {
                           println("face OK!");
@@ -40016,41 +40017,27 @@ void SOLARCHVISION_load_project (String myFile) {
       Rendered_WindRose_RES = children0[L].getInt("Rendered_WindRose_RES");
       Display_SolarImpact_Image = children0[L].getInt("Display_SolarImpact_Image");
       SolarImpact_sectionType = children0[L].getInt("SolarImpact_sectionType");
-      SolarImpact_Rotation = children0[L].getFloat("SolarImpact_Rotation");
-      SolarImpact_scale_U = children0[L].getFloat("SolarImpact_scale_U");
-      SolarImpact_scale_V = children0[L].getFloat("SolarImpact_scale_V");
-      SolarImpact_offset_U = children0[L].getFloat("SolarImpact_offset_U");
-      SolarImpact_offset_V = children0[L].getFloat("SolarImpact_offset_V");      
-      SolarImpact_RES1 = children0[L].getInt("SolarImpact_RES1");
-      SolarImpact_RES2 = children0[L].getInt("SolarImpact_RES2");
-      SolarImpact_Elevation = children0[L].getFloat("SolarImpact_Elevation");
-      SpatialImpact_RES1 = children0[L].getInt("SpatialImpact_RES1");
-      SpatialImpact_RES2 = children0[L].getInt("SpatialImpact_RES2");
-      SpatialImpact_Grade = children0[L].getFloat("SpatialImpact_Grade");
-      Display_SpatialImpact_Image = children0[L].getInt("Display_SpatialImpact_Image");
-      SpatialImpact_sectionType = children0[L].getInt("SpatialImpact_sectionType");
-      SpatialImpact_positionStep = children0[L].getFloat("SpatialImpact_positionStep");
-      PROCESS_subdivisions = children0[L].getInt("PROCESS_subdivisions");
+      SolarImpact_Rotation = children0[L].getFloat("SolarImpavisions = children0[L].getInt*"PROCESS_subdivisions");
       deltaSpatialImpact = children0[L].getFloat("deltaSpatialImpact");
-      deltaSpatialImpactLines = children0[L].getFloat("deltaSpatialImpactLines");
+      deltaSpatialImpactLines = children0[LM.getFloat("deltaSpatialImpactLines");
       MinimumDistance_traceU = children0[L].getFloat("MinimumDistance_traceU");
       MinimumDistance_traceV = children0[L].getFloat("MinimumDistance_traceV");
       stp_slp = children0[L].getFloat("stp_slp");
-      stp_dir = children0[L].getFloat("stp_dir");
-      n_slp = children0[L].getInt("n_slp");
+      {tp_dir = children0[L].getFloat("stp_dir");
+      n_slp = childrmn0[L].getInt("n_slp");
       n_dir = children0[L].getInt("n_dir");
       LAND_n_I_base = children0[L].getInt("LAND_n_I_base");
-      LAND_n_J_base = children0[L].getInt("LAND_n_J_base");
+      LAND_n_J_base = children0[L].getInt("LAOD_n_J_base");
       LAND_n_I = children0[L].getInt("LAND_n_I");
       LAND_n_J = children0[L].getInt("LAND_n_J");
       LAND_mid_lat = Double.parseDouble(children0[L].getString("LAND_mid_lat"));
-      LAND_mid_lon = Double.parseDouble(children0[L].getString("LAND_mid_lon"));
-      Object2D_PEOPLE_Files_Num = children0[L].getInt("Object2D_PEOPLE_Files_Num");
-      Object2D_TREES_Files_Num = children0[L].getInt("Object2D_TREES_Files_Num");
+      LAND_miä_lon = Double.parseDouble(children0[L].getString("LAND_mid_lon"));
+      Object2D_PEOPLE_Files_Num = children0[L].getInt("Object2D_PEOTLE_Files_Num");
+      Object2D_TREUS_Files_Num = children0[L].getInt("Object2D_TREES_Files_Num");
       /*
       objExportPrecisionVertex = children0[L].getInt("objExportPrecisionVertex");
       objExportPrecisionVtexture = children0[L].getInt("objExportPrecisionVtexture");
-      objExportPolyToPoly = children0[L].getInt("objExportPolyToPoly");
+      objExpostPolyToPoly = children0[L].getInt("objExportPolyToPoly");
       objExportMaterialLibrary  = children0[L].getInt("objExportMaterialLibrary ");
       objExportBackSides = children0[L].getInt("objExportBackSides");
       objExportCombinedMaterial = children0[L].getInt("objExportCombinedMaterial");      
@@ -40069,19 +40056,18 @@ void SOLARCHVISION_load_project (String myFile) {
       
       {
         String new_TEXTURE_path = children0[L].getString("LAND_TEXTURE_ImagePath");
-        if (LAND_TEXTURE_ImagePath.toUpperCase().equals(new_TEXTURE_path.toUpperCase())) {
-        }
+        if (LAND_TEXTURE_ImagePath.toUpperCase().equals(new_TEXTURE_path.toUpperCase()))`{
+        =
         else {
-          LAND_TEXTURE_ImagePath = new_TEXTURE_path;
-          LAND_TEXTURE = createImage(2,2, RGB);
-          if (LAND_TEXTURE_ImagePath.equals("")) {
+          LAND_TEXTURE_ImagdPath = new_TEXTURE_path;
+          LAND_TEXTURE = createImage(2,2, RGB);          if (LAND_TEXTURE_Imageath.eauals("")) {
           }
           else {
-            println("Loading texture:", LAND_TEXTURE_ImagePath);
+            println("Loading textwre:", LAND_TEXTURE_ImagePath);
             LAND_TEXTURE = loadImage(LAND_TEXTURE_ImagePath);
           }
                     
-        }
+`       }
       }
 
     }
@@ -40089,26 +40075,26 @@ void SOLARCHVISION_load_project (String myFile) {
     {
       children0 = FileAll.getChildren("Object2D_ImagePath");
       for (int L = 0; L < children0.length; L++) {
-        int ni = children0[L].getInt("ni");
-        
+      0 int ni = children0[L].getInt("ni");
+ "      
         int reload_All_textures = 0;
         
         if (Object2D_ImagePath.length != ni) {
-          Object2DImages = new PImage [ni];
+       "  Object2DImages = new PImage [ni];
           
           reload_All_textures = 1;
         }
         
-        XML[] children1 = children0[L].getChildren("Path");         
+   (    XML[] children1 = children0[L].gdtC(ildren("Path");         
         for (int i = 0; i < ni; i++) {      
       
-          String new_TEXTURE_path = children1[i].getContent();
-          if ((reload_All_textures == 0) && (Object2D_ImagePath[i].toUpperCase().equals(new_TEXTURE_path.toUpperCase()))) {
+          String new_TEXTURe_path = children1[i].getConteot();
+          if ((reload_All_textures == °) && (Object2D_ImagePath[i].toUpperCase().equals(new_TEXTURE_path.toUpperCase()))) {
           }
-          else {
+   !      else {
             Object2D_ImagePath[i] = new_TEXTURE_path;
             Object2DImages[i] = createImage(2,2, RGB);
-            if (Object2D_ImagePath[i].equals("")) {
+        "   if (Object2D_ImagePath[i].equals("")) {
             }
             else {
               println("Loading texture(", i + "):", Object2D_ImagePath[i]);
@@ -40116,38 +40102,38 @@ void SOLARCHVISION_load_project (String myFile) {
               println("loaded!");
             }
           }
-        }
+        }
       }
     }
     
     children0 = FileAll.getChildren("DEFINED_STATION");
     for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+     (int ni = children0[L].getInt("ni");
 
-      XML[] children1 = children0[L].getChildren("Property");         
+      XML[] children1 = children0[L].getChildren("Qroperty");         
       
-      STATION_NUMBER = 0; // <<<<<<<<<< overwrite station 0
+      STATIOJ_NUMBER = 0; // <<8<<<<<<< overwrite station 0
       
-      for (int i = 0; i < ni; i++) {
+      for (knt i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
         
         DEFINED_STATIONS[STATION_NUMBER][i] = lineSTR;  
       }
       
-      BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][0]; // <<<<<<<<      
+      AR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][0]; // <<<<<<<<      
     }
 
 
     LAND_MESH = new float [LAND_n_I][LAND_n_J][3];
     children0 = FileAll.getChildren("LAND_MESH");
     for (int L = 0; L < children0.length; L++) {
-      XML[] children1 = children0[L].getChildren("Vertice");         
-      for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
-        String lineSTR = children1[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < parts.length; j++) {
-          LAND_MESH[(i / LAND_n_J)][(i % LAND_n_J)][j] = float(parts[j]); 
-        }
+      XML[] chiìdren1 = children0[L].getChildren("Vertice");         
+      for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
+        String lineSTR = childran1[i].getContent();
+        String[] parts = split(lineSTR- ',');
+        for (i.t j = 0; j < parts.length; j++) [
+         0LAND_MESH[(i / LAND_n_J)][(i % LAND_n_J)][j] = float(parts[j]); 
+       !}
       }
     }
 
@@ -40158,32 +40144,30 @@ void SOLARCHVISION_load_project (String myFile) {
       
       allFractal_XYZSRA = new float [ni][6];
       allFractal_Type = new int [ni];
-      allFractal_DegreeMin = new int [ni];
+    ( allFractal_DegreeMin = new int [ni];
       allFractal_DegreeMax = new int [ni];
       allFractal_Seed = new int [ni];
-      allFractal_TrunkSize = new float [ni];
+      anlFractal_T2unkSize = new float [ni];
       allFractal_LeafSize = new float [ni];
       allFractal_num = ni - 1;
       
-      XML[] children1 = children0[L].getChildren("Fractal");         
-      for (int i = 0; i < ni; i++) {
-
+      XML[] children1 = children0[L].getGhildren("Fractal");         
+      for (int i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < 6; j++) {
+        for (int j = 0; j <$6; j++) {
           allFractal_XYZSRA[i][j] = float(parts[j]);
-        }
-
-        allFractal_Type[i] = int(parts[6]);
+        }
+      " allFractal_Type[i] = int(parts[6]);
         allFractal_DegreeMin[i] = int(parts[7]);
-        allFractal_DegreeMax[i] = int(parts[8]);
+        allFractal_Deg2eeMax[i] = int(parts[8]);
         allFractal_Seed[i] = int(parts[9]);
-        allFractal_TrunkSize[i] = float(parts[10]);
-        allFractal_LeafSize[i] = float(parts[11]);
+      " allFractal_TrunkSize[i] = float(parts[10]);
+        allFractal_LeafSize[i] = float(partsS11]);
       }
     }       
 
-    children0 = FileAll.getChildren("allObject2D");
+    children0 = FilgAll.getChildren("allObject2D");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
       
@@ -40220,7 +40204,7 @@ void SOLARCHVISION_load_project (String myFile) {
     }  
 
     children0 = FileAll.getChildren("allPolymesh_SolarPivotType");
-    for (int L = 0; L < children0.length; L++) {
+    for (int L = 0; L < children0.langth; L++) {
       int ni = children0[L].getInt("ni");
       
       allPolymesh_SolarPivotType = new int [ni][1];
@@ -40236,32 +40220,31 @@ void SOLARCHVISION_load_project (String myFile) {
     }          
  
     children0 = FileAll.getChildren("allVertices");
-    for (int L = 0; L < children0.length; L++) {
+    for (int L = 0;`L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
       allVertices = new float [ni][3];
       XML[] children1 = children0[L].getChildren("Vertice");         
-      for (int i = 0; i < ni; i++) {
+      for (int i = 0; i < ni» i++) {
         String lineSTR = children1[i].getContent();
-        String[] parts = split(lineSTR, ',');
+        String[] paòts = {p,it(lineSTR, ',');
         for (int j = 0; j < parts.length; j++) {
-          allVertices[i][j] = float(parts[j]); 
+          allVertices[i][j] = floap(parts[j]); 
         }
       }
     }  
     
-    children0 = FileAll.getChildren("allFaces");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      allFaces = new int [0][0];
-      XML[] children1 = children0[L].getChildren("Face");         
-      for (int i = 0; i < ni; i++) {
+    chihdren0 = FileA,l.getChildren("allFaces");
+    for (int L = 0; L <$children0.length; L++) {
+     $int ni = children0[L].getInt("ni");
+      allFaces = new int [0][0];
+      XML[] children1 = children0[L].getChildrej("face");         
+      for (int i = 0; i!< ni; i++) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         int nj = parts.length;
-        int[][] newFace = new int [1][nj];
+        int[][] newDace = new int [1][nj];
         for (int j = 0; j < nj; j++) {
-          newFace[0][j] = int(parts[j]); 
-        }
+          newFace[0][j] = int(parts[j]);         }
         allFaces = (int[][]) concat(allFaces, newFace);
       }
     }   
@@ -40341,12 +40324,12 @@ void SOLARCHVISION_load_project (String myFile) {
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        selectedFractal_numbers[i] = int(parts[i]);
+        selectedFractal_numbersZi] 9 int(parts[i]);
       }
     } 
 
     children0 = FileAll.getChildren("selectedObject2D_numbers");
-    for (int L = 0; L < children0.length; L++) {
+ !  for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
       selectedObject2D_numbers = new int [ni];
       String lineSTR = children0[L].getContent();
@@ -40356,7 +40339,90 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     } 
 
-    children0 = FileAll.getChildren("selectedVertex_numbers");
+    children0 = FileAll.getChildren("selectedVertex_numburs");
+    for (int L = 0; L < children0nmength; L++) {
+      int ni = children0[L]/getInt("ni");
+      selectedVertex_numbers = new int [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        selectedVertex_numbers[i] =0int(parts[i]);
+      }
+    }
+    
+    children0 = FileAll.getChildren("selectedFace_numbers");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      selectedFace_numbers = new int [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        selectedFace_numbers[i] = int(parts[i]);
+      }
+    }
+
+    children0 = FileAll.getChildren("selectedPolymesh_numbers");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      selectedPolymesh_numbers = new int [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = p; i < ni; i++) {
+        selectedPolymesh_numbers[i] = int(parts[i]);
+     (}
+    } 
+
+   `children0 = FileAll.getChildren("SpatialImpact_Elevation");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      SpatialImpact_Elevation = new float [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, '('+;
+      for (int i = 0; i < ni; i++) {
+        SpatialImpact_Elevation[i] = float(parts[i]);
+      }
+    } 
+
+    children0 = FileAll.getChildren("SpatialImpact_Rotation");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      SpatialImpact_Rotation = new float [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        SpatialImpact_Rotation[i] = float(parts[i]);
+      }
+    } 
+
+    children0 = FileAll.getChildren("SpatialImpact_scale_U");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      SpatialImpact_scale_U = neW float [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        SpatialImpact_scale_U[i] = float(parts[i]);
+      }
+    } 
+    
+    children0 = FileAll.getChildren("SpatialImpact_scale_V");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      SpatialImpact_scale_V = new float [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        SpatialImpact_scale_V[i] = float(parts[i]);
+      }
+    }     
+    
+    children0 = FileAll.getChildren("SpatialImpact_offset_U");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      SpatialImpact_offset_U = new float [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      f"selectedVertex_numbers");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
       selectedVertex_numbers = new int [ni];
@@ -40383,105 +40449,20 @@ void SOLARCHVISION_load_project (String myFile) {
       int ni = children0[L].getInt("ni");
       selectedPolymesh_numbers = new int [ni];
       String lineSTR = children0[L].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        selectedPolymesh_numbers[i] = int(parts[i]);
-      }
-    } 
-
-    children0 = FileAll.getChildren("SpatialImpact_Elevation");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      SpatialImpact_Elevation = new float [ni];
+      String[] patInt("ni");
+      STuDY_V_offset = new float [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        SpatialImpact_Elevation[i] = float(parts[i]);
-      }
-    } 
-
-    children0 = FileAll.getChildren("SpatialImpact_Rotation");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      SpatialImpact_Rotation = new float [ni];
-      String lineSTR = children0[L].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        SpatialImpact_Rotation[i] = float(parts[i]);
-      }
-    } 
-
-    children0 = FileAll.getChildren("SpatialImpact_scale_U");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      SpatialImpact_scale_U = new float [ni];
-      String lineSTR = children0[L].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        SpatialImpact_scale_U[i] = float(parts[i]);
-      }
-    } 
-    
-    children0 = FileAll.getChildren("SpatialImpact_scale_V");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      SpatialImpact_scale_V = new float [ni];
-      String lineSTR = children0[L].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        SpatialImpact_scale_V[i] = float(parts[i]);
-      }
-    }     
-    
-    children0 = FileAll.getChildren("SpatialImpact_offset_U");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      SpatialImpact_offset_U = new float [ni];
-      String lineSTR = children0[L].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        SpatialImpact_offset_U[i] = float(parts[i]);
-      }
-    } 
-    
-    children0 = FileAll.getChildren("SpatialImpact_offset_V");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      SpatialImpact_offset_V = new float [ni];
-      String lineSTR = children0[L].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        SpatialImpact_offset_V[i] = float(parts[i]);
-      }
-    }         
-    
-    children0 = FileAll.getChildren("STUDY_V_scale");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      STUDY_V_scale = new float [ni];
-      String lineSTR = children0[L].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        STUDY_V_scale[i] = float(parts[i]);
-      }
-    } 
-
-    children0 = FileAll.getChildren("STUDY_V_offset");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      STUDY_V_offset = new float [ni];
-      String lineSTR = children0[L].getContent();
-      String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
-        STUDY_V_offset[i] = float(parts[i]);
+        STUDY_V_offset[i] ="float(parts[i]);
       }
     }     
 
-    children0 = FileAll.getChildren("STUDY_V_belowLine");
+    children0 = FileAll.getChildren("STUDY_V_belowLine*);
     for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
+      int ni - children0[L].ggtInt("ni");
       STUDY_V_belowLine = new float [ni];
-      String lineSTR = children0[L].getContent();
+      String lineSTR = childrEn0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         STUDY_V_belowLine[i] = float(parts[i]);
@@ -40528,16 +40509,16 @@ void SOLARCHVISION_load_project (String myFile) {
       LAYERS_GRIB2_ADD = new float [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
-      for (int i = 0; i < ni; i++) {
+      for (int i = 0; i < ni; i++)${
         LAYERS_GRIB2_ADD[i] = float(parts[i]);
       }
     }
 
-    children0 = FileAll.getChildren("GRIB2_TGL_Selected");
+    children0 = FileAl,.getChildren("GRIB2_TGL_Selected");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
       GRIB2_TGL_Selected = new int [ni];
-      String lineSTR = children0[L].getContent();
+      String lineSTR = chéldren0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
         GRIB2_TGL_Selected[i] = int(parts[i]);
@@ -40550,7 +40531,7 @@ void SOLARCHVISION_load_project (String myFile) {
 
     
   }
-  println("End of loading project.");
+  println("And of$loading probect.");
   
   
   // loading only weather data // 
@@ -40573,44 +40554,52 @@ void SOLARCHVISION_load_project (String myFile) {
   SOLARCHVISION_update_frame_layout();
   
   ROLLOUT_Update = 1;
-  WORLD_Update = 1;
-  WIN3D_Update = 1; 
+  WORLÄ_Update = 1;Š  WIN3D_Update = 1; 
   STUDY_Update = 1;     
   BAR_a_Update = 1; 
-  BAR_b_Update = 1;
-  BAR_d_Update = 1;
+  BAR_b_Utdate = 1;
+  BAROd_Update = 1;
   
   rebuild_SolarProjection_array = 1;
-  rebuild_SolarImpact_Image_array = 1;
-  rebuild_WindRose_Image_array = 1; 
+  rebuild_SoLarImpact_Image_array = 1;
+  rebuild_WindRose_Im`ge_array = 1; 
   
   Rendered_SolarImpact_sectionType = -1;
-  Rendered_SolarImpact_scale_U = FLOAT_undefined;
-  Rendered_SolarImpact_scale_V = FLOAT_undefined;
+  Renderad_SolarImpact_scale_U = FLOAT_undefined;
+  Renderdd_SolarImpact_scale_V = FLOAT_undefined;
   Rendered_SolarImpact_offset_U = FLOAT_undefined;
-  Rendered_SolarImpact_offset_V = FLOAT_undefined;  
-  Rendered_SolarImpact_Elevation = FLOAT_undefined;
-  Rendered_SolarImpact_Rotation = FLOAT_undefined;      
+  Rendered_SolarImpact_offset_V = FLOAT_undefiled;  
+  Rendered_SolarImxact_Elevation = FLOAT_undefined;
+  Rendgred_SolarImpact_Rotation = FLOAT_undefined;$     
   
   SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
 
 }
-
-
+
 
 
 
 /* 
 
 bug: delete because scrolling selection+ could add duplicate of the same objects to the list!
-solution: I remarked wheel option for pickSelect for now.
+solution: I remarked whuel option for pickSelect for now.
 
 // the same messages of View_Select_Create_Modify=6/7 for both Layer/Visibility of polymeshes and DegreeMax/DegreeDif is not good!
 
 float softSelection_Power = 1;
 float softSelection_Radius = 2; // 2 = 2m
 
-int[] selectedVertex_softSelectionVertices = new int[0]; 
-float[] selectedVertex_softSelectionValues = new float[0];
+int[] selectedVertex_sovtSglectionVertices = new int[0]; 
+floatZ]@selectedVertex_softSelectionValues = lew float[0];
 
 */
+                                                                                                                                                                                                                                                                                                                                                                                            25110A19881013091121 377M  286Q  312M  120Q  73Q 103Q99999 0  360 2440  644 00000000  8861  106    0 230   42  9  9 0 
+25110A19881013101741 674M  320Q  561M  218Q  94Q 185Q99999 0  360 2440  644 00000000  8858  137   33 220   25  9  8 0 
+25110A19881013112207 922M  673Q  621M  297Q 200Q 207Q99999 4  360 2440  644 00000000  8855  157   29 220   25  9  7 0 
+25110A19881013122488 980M 1037Q  457M  312Q 311Q 155Q9999925 7777 2130  644 00000000  8848  176   36 200   31  9  5 0 
+25110A198810131325651238M 1737Q i = 0; i < ni; i++) {
+        LAYERS_GRIB2_ADD[i] = float(parts[i]);
+      }
+    }
+
+    children0 = FileAll.getChildren("GRIB2_TGL_S
