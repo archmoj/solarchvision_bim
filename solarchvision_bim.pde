@@ -29641,7 +29641,38 @@ void mouseClicked () {
             
                         SolarImpact_sectionType = SpatialImpact_sectionType;             
   
-//zzzzzzzzzz
+                        PVector AG = new PVector(tmpVertices[0][0] - G[0], tmpVertices[0][1] - G[1], tmpVertices[0][2] - G[2]);                       
+                        PVector BG = new PVector(tmpVertices[1][0] - G[0], tmpVertices[1][1] - G[1], tmpVertices[1][2] - G[2]);
+                        
+                        PVector GAxGB = AG.cross(BG);
+                        
+                        float[] ImageVertex_A = SOLARCHVISION_getPoints_SpatialImpact_Image(0);
+                        float[] ImageVertex_B = SOLARCHVISION_getPoints_SpatialImpact_Image(1);
+                        float[] ImageVertex_C = SOLARCHVISION_getPoints_SpatialImpact_Image(2);
+                        float[] ImageVertex_D = SOLARCHVISION_getPoints_SpatialImpact_Image(3);
+                        
+                        float[] ImageCenter = {0,0,0};
+                        for (int j = 0; j < 3; j++) {
+                          ImageCenter[j] = 0.25 * (ImageVertex_A[j] + ImageVertex_B[j] + ImageVertex_C[j] + ImageVertex_D[j]);
+                        }  
+                        
+                        PVector A2G2 = new PVector(ImageVertex_A[0] - ImageCenter[0], ImageVertex_A[1] - ImageCenter[1], ImageVertex_A[2] - ImageCenter[2]);                       
+                        PVector B2G2 = new PVector(ImageVertex_B[0] - ImageCenter[0], ImageVertex_B[1] - ImageCenter[1], ImageVertex_B[2] - ImageCenter[2]);
+                        
+                        PVector G2A2xG2B2 = A2G2.cross(B2G2);                        
+
+                        
+                        float V = G2A2xG2B2.dot(GAxGB); 
+                        
+                        if (V > 0) {
+                          println("flip face!");
+                          
+                          SpatialImpact_Rotation[SpatialImpact_sectionType] += 180;
+                          SpatialImpact_Elevation[SpatialImpact_sectionType] *= -1;
+                        }
+                        else {
+                          println("face OK!");
+                        }
                         
                         if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                         WIN3D_Update = 1; 
