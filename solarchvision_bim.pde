@@ -20074,9 +20074,9 @@ float[] SOLARCHVISION_getPoints_SpatialImpact_Image (int q) {
     
   float qx = 0, qy = 0, u = 0, v = 0;
   
-  if (q == 0)      {qx = -1; qy = -1; u = 0; v = SpatialImpact_RES2;}
-  else if (q == 1) {qx = 1; qy = -1; u = SpatialImpact_RES1; v = SpatialImpact_RES2;}
-  else if (q == 2) {qx = 1; qy = 1; u = SpatialImpact_RES1; v = 0;}
+  if (q == 0)      {qx = -1; qy = -1; u = 0; v = 1;}
+  else if (q == 1) {qx = 1; qy = -1; u = 1; v = 1;}
+  else if (q == 2) {qx = 1; qy = 1; u = 1; v = 0;}
   else if (q == 3) {qx = -1; qy = 1; u = 0; v = 0;}    
   
   float a = qx * 0.5 * SpatialImpact_scale_U[SpatialImpact_sectionType] + SpatialImpact_offset_U[SpatialImpact_sectionType];
@@ -20131,7 +20131,7 @@ void SOLARCHVISION_draw_SpatialImpact_Image () {
         float u = ImageVertex[3];
         float v = ImageVertex[4];
 
-        WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D, u, v);
+        WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D, u * SpatialImpact_RES1, v * SpatialImpact_RES2);
       }
       
       WIN3D_Diagrams.endShape(CLOSE);
@@ -20903,10 +20903,10 @@ void SOLARCHVISION_draw_land () {
                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D);
             }              
             else {              
-              float u = (subFace[s][0] / LAND_TEXTURE_scale_U + 0.5) * LAND_TEXTURE.width;
-              float v = (-subFace[s][1] / LAND_TEXTURE_scale_V + 0.5) * LAND_TEXTURE.height;
+              float u = (subFace[s][0] / LAND_TEXTURE_scale_U + 0.5);
+              float v = (-subFace[s][1] / LAND_TEXTURE_scale_V + 0.5);
 
-              WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, u, v);  
+              WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, u * LAND_TEXTURE.width, v * LAND_TEXTURE.height);  
             }
 
           }
@@ -20927,20 +20927,20 @@ void SOLARCHVISION_draw_land () {
     
                 int s_next = (s + 1) % subFace.length;
               
-                float u = (subFace[s][0] / LAND_TEXTURE_scale_U + 0.5) * LAND_TEXTURE.width;
-                float v = (-subFace[s][1] / LAND_TEXTURE_scale_V + 0.5) * LAND_TEXTURE.height;
+                float u = (subFace[s][0] / LAND_TEXTURE_scale_U + 0.5);
+                float v = (-subFace[s][1] / LAND_TEXTURE_scale_V + 0.5);
     
-                float u_next = (subFace[s_next][0] / LAND_TEXTURE_scale_U + 0.5) * LAND_TEXTURE.width;
-                float v_next = (-subFace[s_next][1] / LAND_TEXTURE_scale_V + 0.5) * LAND_TEXTURE.height;
+                float u_next = (subFace[s_next][0] / LAND_TEXTURE_scale_U + 0.5);
+                float v_next = (-subFace[s_next][1] / LAND_TEXTURE_scale_V + 0.5);
                 
                 WIN3D_Diagrams.beginShape();
                 
                 WIN3D_Diagrams.texture(LAND_TEXTURE);                  
                 
-                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, u, v);
-                WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s_next][2] * OBJECTS_scale * WIN3D_scale3D, u_next, v_next);
-                WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_scale3D, (subFace[s_next][2] - CrustDepth) * OBJECTS_scale * WIN3D_scale3D, u_next, v_next);
-                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, (subFace[s][2] - CrustDepth) * OBJECTS_scale * WIN3D_scale3D, u, v);
+                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, u * LAND_TEXTURE.width, v * LAND_TEXTURE.height);
+                WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s_next][2] * OBJECTS_scale * WIN3D_scale3D, u_next * LAND_TEXTURE.width, v_next * LAND_TEXTURE.height);
+                WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_scale3D, (subFace[s_next][2] - CrustDepth) * OBJECTS_scale * WIN3D_scale3D, u_next * LAND_TEXTURE.width, v_next * LAND_TEXTURE.height);
+                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, (subFace[s][2] - CrustDepth) * OBJECTS_scale * WIN3D_scale3D, u * LAND_TEXTURE.width, v * LAND_TEXTURE.height);
     
                 WIN3D_Diagrams.endShape(CLOSE);
     
@@ -33509,10 +33509,10 @@ float[] SOLARCHVISION_getPoints_SolarImpact_Image (int q) {
   float dU = SolarImpact_scale_U / Rendered_SolarImpact_scale_U;
   float dV = SolarImpact_scale_V / Rendered_SolarImpact_scale_V;
  
-  float minU = 0.5 * SolarImpact_RES1 * (1 - dU);
-  float maxU = 0.5 * SolarImpact_RES1 * (1 + dU);
-  float minV = 0.5 * SolarImpact_RES2 * (1 - dV);
-  float maxV = 0.5 * SolarImpact_RES2 * (1 + dV);
+  float minU = 0.5 * (1 - dU);
+  float maxU = 0.5 * (1 + dU);
+  float minV = 0.5 * (1 - dV);
+  float maxV = 0.5 * (1 + dV);
 
   float c = SolarImpact_Elevation;
 
@@ -33619,7 +33619,7 @@ void SOLARCHVISION_draw_SolarImpact_Image () {
           float v = ImageVertex[4];
 
           if (Display_solarch_texture == 1) {
-            WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D, u, v);
+            WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D, u * SolarImpact_RES1, v * SolarImpact_RES2);
           }
           else {
             WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
@@ -33675,8 +33675,8 @@ void SOLARCHVISION_draw_WindRose_Image () {
       else if (q == 2) {qx = 1; qy = 1; u = maxU; v = minV;}
       else if (q == 3) {qx = -1; qy = 1; u = minU; v = minV;}    
       
-      float a = qx * 0.5 * WindRose_scale_U;
-      float b = qy * 0.5 * WindRose_scale_V;    
+      float a = qx * 0.5;
+      float b = qy * 0.5;    
       
       float x = 0, y = 0, z = 0;
 
@@ -33684,7 +33684,7 @@ void SOLARCHVISION_draw_WindRose_Image () {
       y = b;
       z = c;         
 
-      WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D, u, v);
+      WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D, u * WindRose_scale_U, v * WindRose_scale_V);
     }   
     
     WIN3D_Diagrams.endShape(CLOSE);
