@@ -29523,7 +29523,7 @@ void mouseClicked () {
                       
                       if (n > 2) {
                         
-                        float min_Alpha = 90;
+                        //float min_Alpha = 90;
                         float min_Beta = 360;
                         
                         for (int j = 0; j < n; j++) {
@@ -29539,15 +29539,15 @@ void mouseClicked () {
                           float z2 = allVertices[allFaces[f][j_next]][2];                        
   
                           
-                          float Alpha = asin_ang(z2 - z1);
+                          //float Alpha = asin_ang(z2 - z1);
                           float Beta = atan2_ang(y2 - y1, x2 - x1) + 90;
   
-                          if (min_Alpha > Alpha) min_Alpha = Alpha;                      
+                          //if (min_Alpha > Alpha) min_Alpha = Alpha;                      
                           if (min_Beta > Beta) min_Beta = Beta;
                           
                         }
                        
-                        println("min_Alpha", min_Alpha);
+                        //println("min_Alpha", min_Alpha);
                         println("min_Beta", min_Beta);                        
                         
                         float[][] tmpVertices = new float[n][3];
@@ -29555,21 +29555,13 @@ void mouseClicked () {
                         
                         for (int j = 0; j < n; j++) {
                           
-                          float x0 = allVertices[allFaces[f][j]][0];
-                          float y0 = allVertices[allFaces[f][j]][1];
-                          float z0 = allVertices[allFaces[f][j]][2];
-                          
-                          // still not sure which rotation to be first! <<<<<<<<<<<<<<<<<<<<
-                          
-                          float x1 = x0;
-                          float y1 = y0 * cos_ang(-min_Alpha) - z0 * sin_ang(-min_Alpha);
-                          float z1 = y0 * sin_ang(-min_Alpha) + z0 * cos_ang(-min_Alpha);                          
+                          float x1 = allVertices[allFaces[f][j]][0];
+                          float y1 = allVertices[allFaces[f][j]][1];
+                          float z1 = allVertices[allFaces[f][j]][2];
                           
                           float x2 = x1 * cos_ang(-min_Beta) - y1 * sin_ang(-min_Beta);
                           float y2 = x1 * sin_ang(-min_Beta) + y1 * cos_ang(-min_Beta);
                           float z2 = z1;
-
-                          
                           
                           tmpVertices[j][0] = x2;
                           tmpVertices[j][1] = y2;
