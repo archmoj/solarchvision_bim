@@ -29561,13 +29561,15 @@ void mouseClicked () {
                           
                           // still not sure which rotation to be first! <<<<<<<<<<<<<<<<<<<<
                           
-                          float x1 = x0 * cos_ang(-min_Beta) - y0 * sin_ang(-min_Beta);
-                          float y1 = x0 * sin_ang(-min_Beta) + y0 * cos_ang(-min_Beta);
-                          float z1 = z0;
+                          float x1 = x0;
+                          float y1 = y0 * cos_ang(-min_Alpha) - z0 * sin_ang(-min_Alpha);
+                          float z1 = y0 * sin_ang(-min_Alpha) + z0 * cos_ang(-min_Alpha);                          
+                          
+                          float x2 = x1 * cos_ang(-min_Beta) - y1 * sin_ang(-min_Beta);
+                          float y2 = x1 * sin_ang(-min_Beta) + y1 * cos_ang(-min_Beta);
+                          float z2 = z1;
 
-                          float x2 = x1;
-                          float y2 = y1 * cos_ang(-min_Alpha) - z1 * sin_ang(-min_Alpha);
-                          float z2 = y1 * sin_ang(-min_Alpha) + z1 * cos_ang(-min_Alpha);
+                          
                           
                           tmpVertices[j][0] = x2;
                           tmpVertices[j][1] = y2;
