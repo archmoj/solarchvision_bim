@@ -20088,6 +20088,44 @@ void SOLARCHVISION_draw_SKY3D () {
 
 
 
+float[] SOLARCHVISION_getPoints_SpatialImpact_Image (int q) {
+  
+  float c = SpatialImpact_Elevation[SpatialImpact_sectionType] * OBJECTS_scale;
+
+    
+  float qx = 0, qy = 0, u = 0, v = 0;
+  
+  if (q == 0)      {qx = -1; qy = -1; u = 0; v = SpatialImpact_RES2;}
+  else if (q == 1) {qx = 1; qy = -1; u = SpatialImpact_RES1; v = SpatialImpact_RES2;}
+  else if (q == 2) {qx = 1; qy = 1; u = SpatialImpact_RES1; v = 0;}
+  else if (q == 3) {qx = -1; qy = 1; u = 0; v = 0;}    
+  
+  float a = qx * 0.5 * SpatialImpact_scale_U[SpatialImpact_sectionType] + SpatialImpact_offset_U[SpatialImpact_sectionType];
+  float b = qy * 0.5 * SpatialImpact_scale_V[SpatialImpact_sectionType] + SpatialImpact_offset_V[SpatialImpact_sectionType];    
+
+  float x = 0, y = 0, z = 0;
+  
+  if (SpatialImpact_sectionType == 1) {
+    x = a * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) - -b * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]);
+    y = a * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) + -b * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]);
+    z = c;         
+  }
+  else if (SpatialImpact_sectionType == 2) {
+    x = a * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]);
+    y = a * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]);
+    z = b;        
+  }
+  else if (SpatialImpact_sectionType == 3) {
+    x = a * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]);
+    y = a * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]);
+    z = b;    
+  }      
+
+  float[] return_values = {x * OBJECTS_scale, y * OBJECTS_scale, z * OBJECTS_scale, u, v};
+  
+  return return_values;
+
+}
 
 
 void SOLARCHVISION_draw_SpatialImpact_Image () {
@@ -20108,35 +20146,15 @@ void SOLARCHVISION_draw_SpatialImpact_Image () {
       
       for (int q = 0; q < 4; q++) {
         
-        float qx = 0, qy = 0, u = 0, v = 0;
+        float[] return_values = SOLARCHVISION_getPoints_SpatialImpact_Image(q);
         
-        if (q == 0)      {qx = -1; qy = -1; u = 0; v = SpatialImpact_RES2;}
-        else if (q == 1) {qx = 1; qy = -1; u = SpatialImpact_RES1; v = SpatialImpact_RES2;}
-        else if (q == 2) {qx = 1; qy = 1; u = SpatialImpact_RES1; v = 0;}
-        else if (q == 3) {qx = -1; qy = 1; u = 0; v = 0;}    
-        
-        float a = qx * 0.5 * SpatialImpact_scale_U[SpatialImpact_sectionType] + SpatialImpact_offset_U[SpatialImpact_sectionType];
-        float b = qy * 0.5 * SpatialImpact_scale_V[SpatialImpact_sectionType] + SpatialImpact_offset_V[SpatialImpact_sectionType];    
-      
-        float x = 0, y = 0, z = 0;
-        
-        if (SpatialImpact_sectionType == 1) {
-          x = a * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) - -b * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]);
-          y = a * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) + -b * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]);
-          z = c;         
-        }
-        else if (SpatialImpact_sectionType == 2) {
-          x = a * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]);
-          y = a * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]);
-          z = b;        
-        }
-        else if (SpatialImpact_sectionType == 3) {
-          x = a * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]);
-          y = a * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]);
-          z = b;    
-        }      
+        float x = return_values[0];
+        float y = return_values[1];
+        float z = return_values[2];
+        float u = return_values[3];
+        float v = return_values[4];
 
-        WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D, u, v);
+        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, u, v);
       }
       
       WIN3D_Diagrams.endShape(CLOSE);
@@ -29646,7 +29664,7 @@ void mouseClicked () {
             
                         SolarImpact_sectionType = SpatialImpact_sectionType;             
   
-  
+//zzzzzzzzzz
                         
                         if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
                         WIN3D_Update = 1; 
