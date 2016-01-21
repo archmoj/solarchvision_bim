@@ -18209,8 +18209,6 @@ void SOLARCHVISION_export_objects () {
       float maxU = 0.5 * (1 + dU);
       float minV = 0.5 * (1 - dV);
       float maxV = 0.5 * (1 + dV);
-
-      float c = SolarImpact_Elevation; 
   
       if (SolarImpact_sectionType != 0) {
 
@@ -18225,34 +18223,15 @@ void SOLARCHVISION_export_objects () {
         
         for (int _turn = 1; _turn < 4; _turn += 1) {
           for (int q = 0; q < 4; q++) {
+              
+            float[] ImageVertex = SOLARCHVISION_getPoints_SolarImpact_Image(q);
             
-            float qx = 0, qy = 0, u = 0, v = 0;
-            
-            if (q == 0)      {qx = -1; qy = -1; u = minU; v = maxV;}
-            else if (q == 1) {qx = 1; qy = -1; u = maxU; v = maxV;}
-            else if (q == 2) {qx = 1; qy = 1; u = maxU; v = minV;}
-            else if (q == 3) {qx = -1; qy = 1; u = minU; v = minV;}    
-            
-            float a = qx * 0.5 * SolarImpact_scale_U + SolarImpact_scale_U;
-            float b = qy * 0.5 * SolarImpact_scale_V + SolarImpact_scale_V;    
-//zzzzzz            
-            float x = 0, y = 0, z = 0;
-            
-            if (SolarImpact_sectionType == 1) {
-              x = a * cos_ang(SolarImpact_Rotation) - b * sin_ang(SolarImpact_Rotation);
-              y = a * sin_ang(SolarImpact_Rotation) + b * cos_ang(SolarImpact_Rotation);
-              z = c;         
-            }
-            else if (SolarImpact_sectionType == 2) {
-              x = a * cos_ang(SolarImpact_Rotation) - c * sin_ang(SolarImpact_Rotation);
-              y = -(a * sin_ang(SolarImpact_Rotation) + c * cos_ang(SolarImpact_Rotation));
-              z = b;       
-            }
-            else if (SolarImpact_sectionType == 3) {
-              x = a * cos_ang(90 - SolarImpact_Rotation) - c * sin_ang(90 - SolarImpact_Rotation);
-              y = -(a * sin_ang(90 - SolarImpact_Rotation) + c * cos_ang(90 - SolarImpact_Rotation));
-              z = b;     
-            }      
+            float x = ImageVertex[0];
+            float y = ImageVertex[1];
+            float z = ImageVertex[2];
+            float u = ImageVertex[3];
+            float v = ImageVertex[4];
+
             
             v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
             
@@ -33526,7 +33505,15 @@ void RenderShadowsOnUrbanPlane () {
 
 
 float[] SOLARCHVISION_getPoints_SolarImpact_Image (int q) {
-  
+
+  float dU = SolarImpact_scale_U / Rendered_SolarImpact_scale_U;
+  float dV = SolarImpact_scale_V / Rendered_SolarImpact_scale_V;
+ 
+  float minU = 0.5 * SolarImpact_RES1 * (1 - dU);
+  float maxU = 0.5 * SolarImpact_RES1 * (1 + dU);
+  float minV = 0.5 * SolarImpact_RES2 * (1 - dV);
+  float maxV = 0.5 * SolarImpact_RES2 * (1 + dV);
+
   float c = SolarImpact_Elevation;
 
   
@@ -33609,13 +33596,7 @@ void SOLARCHVISION_draw_SolarImpact_Image () {
         }
       }
   
-      float dU = SolarImpact_scale_U / Rendered_SolarImpact_scale_U;
-      float dV = SolarImpact_scale_V / Rendered_SolarImpact_scale_V;
-   
-      float minU = 0.5 * SolarImpact_RES1 * (1 - dU);
-      float maxU = 0.5 * SolarImpact_RES1 * (1 + dU);
-      float minV = 0.5 * SolarImpact_RES2 * (1 - dV);
-      float maxV = 0.5 * SolarImpact_RES2 * (1 + dV);
+
   
   
       if (SolarImpact_sectionType != 0) {
