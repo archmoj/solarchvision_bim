@@ -20090,7 +20090,7 @@ void SOLARCHVISION_draw_SKY3D () {
 
 float[] SOLARCHVISION_getPoints_SpatialImpact_Image (int q) {
   
-  float c = SpatialImpact_Elevation[SpatialImpact_sectionType] * OBJECTS_scale;
+  float c = SpatialImpact_Elevation[SpatialImpact_sectionType];
 
     
   float qx = 0, qy = 0, u = 0, v = 0;
@@ -20121,7 +20121,7 @@ float[] SOLARCHVISION_getPoints_SpatialImpact_Image (int q) {
     z = b;    
   }      
 
-  float[] return_values = {x * OBJECTS_scale, y * OBJECTS_scale, z * OBJECTS_scale, u, v};
+  float[] return_values = {x, y, z, u, v};
   
   return return_values;
 
@@ -20141,9 +20141,7 @@ void SOLARCHVISION_draw_SpatialImpact_Image () {
       WIN3D_Diagrams.texture(SpatialImpact_Image);    
       WIN3D_Diagrams.stroke(255, 255, 255, 0);
       WIN3D_Diagrams.fill(255, 255, 255, 0);
-      
-      float c = SpatialImpact_Elevation[SpatialImpact_sectionType] * OBJECTS_scale;
-      
+
       for (int q = 0; q < 4; q++) {
         
         float[] return_values = SOLARCHVISION_getPoints_SpatialImpact_Image(q);
@@ -20154,7 +20152,7 @@ void SOLARCHVISION_draw_SpatialImpact_Image () {
         float u = return_values[3];
         float v = return_values[4];
 
-        WIN3D_Diagrams.vertex(x * WIN3D_scale3D, y * WIN3D_scale3D, z * WIN3D_scale3D, u, v);
+        WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D, u, v);
       }
       
       WIN3D_Diagrams.endShape(CLOSE);
