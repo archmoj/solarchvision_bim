@@ -1374,6 +1374,8 @@ int pre_selectedVertex_numbers_lastItem;
 int pre_selectedFractal_displayEdges;
 int pre_selectedObject2D_displayEdges;
 
+int pre_selectedSection_displayEdges;
+
 int pre_Display_MODEL3D_EDGES;
 int pre_Display_MODEL3D_NORMALS;
 
@@ -2274,6 +2276,8 @@ void draw () {
         pre_selectedFace_numbers_lastItem = selectedFace_numbers[selectedFace_numbers.length - 1];
         pre_selectedVertex_numbers_lastItem = selectedVertex_numbers[selectedVertex_numbers.length - 1];
         
+        pre_selectedSection_displayEdges = selectedSection_displayEdges;
+        
         pre_selectedFractal_displayEdges = selectedFractal_displayEdges;
         pre_selectedObject2D_displayEdges = selectedObject2D_displayEdges;
         pre_Display_MODEL3D_EDGES = Display_MODEL3D_EDGES;
@@ -2434,6 +2438,11 @@ void draw () {
           
           WIN3D_Update = 1;
         }
+        
+        if (pre_selectedSection_displayEdges != selectedSection_displayEdges) {
+          WIN3D_Update = 1;
+        }     
+        
 
         if (pre_selectedFractal_displayEdges != selectedFractal_displayEdges) {
           WIN3D_Update = 1;
@@ -2905,7 +2914,7 @@ void SOLARCHVISION_draw_WIN3D () {
   
     SOLARCHVISION_draw_SolarImpact_Image(); 
     
-    SOLARCHVISION_draw_SpatialImpact_Image();
+    SOLARCHVISION_draw_Sections();
   
     SOLARCHVISION_draw_SpatialImpact_lines();
     
@@ -14207,18 +14216,18 @@ void SOLARCHVISION_duplicateSelection () {
 
       if (OBJ_NUM != 0) {    
         
-        float u = allSection_UVERAB[OBJ_NUM][0];
-        float v = allSection_UVERAB[OBJ_NUM][1];
-        float elev = allSection_UVERAB[OBJ_NUM][2];
-        float rot = allSection_UVERAB[OBJ_NUM][3];
-        float dU = allSection_UVERAB[OBJ_NUM][4];
-        float dV = allSection_UVERAB[OBJ_NUM][5];
-
-        int n = allSection_Type[OBJ_NUM];
-        int RES1 = allSection_RES1[OBJ_NUM];
-        int RES2 = allSection_RES2[OBJ_NUM];
+        float Section_offset_U = allSection_UVERAB[OBJ_NUM][0];
+        float Section_offset_V = allSection_UVERAB[OBJ_NUM][1];
+        float Section_Elevation = allSection_UVERAB[OBJ_NUM][2];
+        float Section_Rotation = allSection_UVERAB[OBJ_NUM][3];
+        float Section_scale_U = allSection_UVERAB[OBJ_NUM][4];
+        float Section_scale_V = allSection_UVERAB[OBJ_NUM][5];
+  
+        int Section_Type = allSection_Type[OBJ_NUM];
+        int Section_RES1 = allSection_RES1[OBJ_NUM];
+        int Section_RES2 = allSection_RES2[OBJ_NUM];
         
-        SOLARCHVISION_add_Section(n, u, v, elev, rot, dU, dV, RES1, RES2);        
+        SOLARCHVISION_add_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);        
       }
     }
     
@@ -20241,89 +20250,16 @@ void SOLARCHVISION_draw_SKY3D () {
 
 
 
-float[] SOLARCHVISION_getPoints_SpatialImpact_Image (int q) {
-  
-  float c = SpatialImpact_Elevation[SpatialImpact_sectionType];
-
-    
-  float qx = 0, qy = 0, u = 0, v = 0;
-  
-  if (q == 0)      {qx = -1; qy = -1; u = 0; v = 1;}
-  else if (q == 1) {qx = 1; qy = -1; u = 1; v = 1;}
-  else if (q == 2) {qx = 1; qy = 1; u = 1; v = 0;}
-  else if (q == 3) {qx = -1; qy = 1; u = 0; v = 0;}    
-  
-  float a = qx * 0.5 * SpatialImpact_scale_U[SpatialImpact_sectionType] + SpatialImpact_offset_U[SpatialImpact_sectionType];
-  float b = qy * 0.5 * SpatialImpact_scale_V[SpatialImpact_sectionType] + SpatialImpact_offset_V[SpatialImpact_sectionType];    
-
-  float x = 0, y = 0, z = 0;
-  
-  if (SpatialImpact_sectionType == 1) {
-    x = a * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) - -b * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]);
-    y = a * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) + -b * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]);
-    z = c;         
-  }
-  else if (SpatialImpact_sectionType == 2) {
-    x = a * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]);
-    y = a * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]);
-    z = b;        
-  }
-  else if (SpatialImpact_sectionType == 3) {
-    x = a * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]);
-    y = a * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]);
-    z = b;    
-  }      
-
-  float[] ImageVertex = {x, y, z, u, v};
-  
-  return ImageVertex;
-
-}
 
 
-void SOLARCHVISION_draw_SpatialImpact_Image () {
 
-  if (Display_SpatialImpact_Image != 0) {
-    if (SpatialImpact_sectionType != 0) {
-  
-      WIN3D_Diagrams.stroke(0);
-      WIN3D_Diagrams.fill(127,255,127);  
-      
-      WIN3D_Diagrams.beginShape();
-      
-      WIN3D_Diagrams.texture(SpatialImpact_Image);    
-      WIN3D_Diagrams.stroke(255, 255, 255, 0);
-      WIN3D_Diagrams.fill(255, 255, 255, 0);
 
-      for (int q = 0; q < 4; q++) {
-        
-        float[] ImageVertex = SOLARCHVISION_getPoints_SpatialImpact_Image(q);
-        
-        float x = ImageVertex[0];
-        float y = ImageVertex[1];
-        float z = ImageVertex[2];
-        float u = ImageVertex[3];
-        float v = ImageVertex[4];
 
-        WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D, u * SpatialImpact_RES1, v * SpatialImpact_RES2);
-      }
-      
-      WIN3D_Diagrams.endShape(CLOSE);
-    }
-  }
-}
+
 
 
 float[][] windFlow_Vertices = {{0,0,0,0}}; // keeping values at the 4th member
 int[][] windFlow_Lines = {{0,0}};
-
-
-
-
-
-
-
-
 
 void SOLARCHVISION_calculate_windFlow () {
 
@@ -28111,6 +28047,12 @@ void mouseClicked () {
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
             } 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected Sections")) {
+              selectedSection_displayEdges = (selectedSection_displayEdges + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Wind Flow")) {
               Display_windFlow = (Display_windFlow + 1) % 2;
               
@@ -29785,58 +29727,71 @@ void mouseClicked () {
                           if (max_z < z) max_z = z;
                         }
                         
+                        float Section_offset_U = SpatialImpact_offset_U[SpatialImpact_sectionType];
+                        float Section_offset_V = SpatialImpact_offset_V[SpatialImpact_sectionType];
+                        float Section_Elevation = SpatialImpact_Elevation[SpatialImpact_sectionType];
+                        float Section_Rotation = SpatialImpact_Rotation[SpatialImpact_sectionType];
+                        float Section_scale_U = SpatialImpact_scale_U[SpatialImpact_sectionType];
+                        float Section_scale_V = SpatialImpact_scale_V[SpatialImpact_sectionType];
+                  
+                        int Section_Type = SpatialImpact_sectionType;
+                        int Section_RES1 = SpatialImpact_RES1;
+                        int Section_RES2 = SpatialImpact_RES2;                        
+                        
+
 
                         if ((max_z - min_z < max_x - min_x) && (max_z - min_z < max_y - min_y)) {
-                          SpatialImpact_sectionType = 1;
+                          Section_Type = 1;
   
-                          SpatialImpact_scale_U[SpatialImpact_sectionType] = max_x - min_x; 
-                          SpatialImpact_scale_V[SpatialImpact_sectionType] = max_y - min_y;
+                          Section_scale_U = max_x - min_x; 
+                          Section_scale_V = max_y - min_y;
                           
-                          SpatialImpact_offset_U[SpatialImpact_sectionType] = G[0];
-                          SpatialImpact_offset_V[SpatialImpact_sectionType] = G[1];
+                          Section_offset_U = G[0];
+                          Section_offset_V = G[1];
                           
-                          SpatialImpact_Elevation[SpatialImpact_sectionType] = G[2];
+                          Section_Elevation = G[2];
                           
-                          SpatialImpact_Rotation[SpatialImpact_sectionType] = min_Beta;
+                          Section_Rotation = min_Beta;
                         }
                         else if (max_y - min_y < max_x - min_x) {
-                          SpatialImpact_sectionType = 2;
+                          Section_Type = 2;
                           
-                          SpatialImpact_scale_U[SpatialImpact_sectionType] = max_x - min_x;
-                          SpatialImpact_scale_V[SpatialImpact_sectionType] = max_z - min_z; 
+                          Section_scale_U = max_x - min_x;
+                          Section_scale_V = max_z - min_z; 
                           
-                          SpatialImpact_offset_U[SpatialImpact_sectionType] = G[0];
-                          SpatialImpact_offset_V[SpatialImpact_sectionType] = G[2];        
+                          Section_offset_U = G[0];
+                          Section_offset_V = G[2];        
                           
-                          SpatialImpact_Elevation[SpatialImpact_sectionType] = -G[1];
+                          Section_Elevation = -G[1];
           
-                          SpatialImpact_Rotation[SpatialImpact_sectionType] = min_Beta;                
+                          Section_Rotation = min_Beta;                
                         }
                         else {
-                          SpatialImpact_sectionType = 3;
+                          Section_Type = 3;
                           
-                          SpatialImpact_scale_U[SpatialImpact_sectionType] = max_y - min_y; 
-                          SpatialImpact_scale_V[SpatialImpact_sectionType] = max_z - min_z;
+                          Section_scale_U = max_y - min_y; 
+                          Section_scale_V = max_z - min_z;
                           
-                          SpatialImpact_offset_U[SpatialImpact_sectionType] = -G[1];
-                          SpatialImpact_offset_V[SpatialImpact_sectionType] = G[2];     
+                          Section_offset_U = -G[1];
+                          Section_offset_V = G[2];     
                           
-                          SpatialImpact_Elevation[SpatialImpact_sectionType] = -G[0];        
+                          Section_Elevation = -G[0];        
         
-                          SpatialImpact_Rotation[SpatialImpact_sectionType] = min_Beta;                   
+                          Section_Rotation = min_Beta;                   
                         }          
             
-                        SolarImpact_sectionType = SpatialImpact_sectionType;             
+                        SolarImpact_sectionType = Section_Type;          
+
   
                         PVector AG = new PVector(tmpVertices[0][0] - G[0], tmpVertices[0][1] - G[1], tmpVertices[0][2] - G[2]);                       
                         PVector BG = new PVector(tmpVertices[1][0] - G[0], tmpVertices[1][1] - G[1], tmpVertices[1][2] - G[2]);
-                        
+                       
                         PVector GAxGB = AG.cross(BG);
                         
-                        float[] ImageVertex_A = SOLARCHVISION_getPoints_SpatialImpact_Image(0);
-                        float[] ImageVertex_B = SOLARCHVISION_getPoints_SpatialImpact_Image(1);
-                        float[] ImageVertex_C = SOLARCHVISION_getPoints_SpatialImpact_Image(2);
-                        float[] ImageVertex_D = SOLARCHVISION_getPoints_SpatialImpact_Image(3);
+                        float[] ImageVertex_A = SOLARCHVISION_getPoints_Section(0, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+                        float[] ImageVertex_B = SOLARCHVISION_getPoints_Section(1, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+                        float[] ImageVertex_C = SOLARCHVISION_getPoints_Section(2, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+                        float[] ImageVertex_D = SOLARCHVISION_getPoints_Section(3, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2); 
                         
                         float[] ImageCenter = {0,0,0};
                         for (int j = 0; j < 3; j++) {
@@ -29862,7 +29817,25 @@ void mouseClicked () {
                           println("face OK!");
                         }
                         
-                        if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); 
+                        
+                        SOLARCHVISION_add_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+                        
+                        println(allSection_UVERAB.length);
+                        
+                        /*
+                        SpatialImpact_offset_U[SpatialImpact_sectionType] = Section_offset_U;
+                        SpatialImpact_offset_V[SpatialImpact_sectionType] = Section_offset_V;
+                        SpatialImpact_Elevation[SpatialImpact_sectionType] = Section_Elevation;
+                        SpatialImpact_Rotation[SpatialImpact_sectionType]  Section_Rotation;
+                        SpatialImpact_scale_U[SpatialImpact_sectionType] = Section_scale_U;
+                        SpatialImpact_scale_V[SpatialImpact_sectionType] = Section_scale_V;
+                        
+                        SpatialImpact_sectionType = Section_Type;
+                        SpatialImpact_RES1 = Section_RES1;
+                        SpatialImpact_RES2 = Section_RES2;             
+        
+                        if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
+                        */
                         WIN3D_Update = 1; 
                         ROLLOUT_Update = 1;  
                       }
@@ -31190,6 +31163,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       
       selectedObject2D_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedObject2D_displayEdges" , selectedObject2D_displayEdges, 0, 1, 1), 1));
       selectedFractal_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedFractal_displayEdges" , selectedFractal_displayEdges, 0, 1, 1), 1));
+      
+      selectedSection_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedSection_displayEdges" , selectedSection_displayEdges, 0, 1, 1), 1));
 
     }      
   
@@ -32085,6 +32060,61 @@ float[] SOLARCHVISION_calculate_Perspective_Internally (float x, float y, float 
 
 void SOLARCHVISION_draw_Perspective_Internally () {
 
+   if (Work_with_2D_or_3D == 8) {
+
+    if (selectedSection_displayEdges != 0) {
+      
+      pushMatrix();
+    
+      translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+      
+      noFill();
+      
+      stroke(255,127,0); 
+      strokeWeight(2);
+    
+      {
+        for (int o = selectedSection_numbers.length - 1; o >= 0; o--) {
+          
+          int OBJ_NUM = selectedSection_numbers[o];
+          
+          if (OBJ_NUM != 0) {            
+            
+            int f = OBJ_NUM; 
+    
+            if ((0 < f) && (f < allSection_Faces.length)) { 
+                
+              beginShape();
+              
+              for (int j = 0; j < allSection_Faces[f].length; j++) {
+                
+                int vNo = allSection_Faces[f][j];
+                
+                float x = allSection_Vertices[vNo][0] * OBJECTS_scale;
+                float y = allSection_Vertices[vNo][1] * OBJECTS_scale;
+                float z = -allSection_Vertices[vNo][2] * OBJECTS_scale;
+                
+                float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+                
+                if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+                  if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+                }
+                
+              }
+              
+              endShape(CLOSE);
+            }
+          }
+        }
+      }
+          
+      strokeWeight(0);   
+    
+      popMatrix();
+    }  
+    
+  }  
+  
    if (Work_with_2D_or_3D == 1) {
 
     if (selectedFractal_displayEdges != 0) {
@@ -33949,7 +33979,7 @@ float[][] allSection_Vertices;
 int[][] allSection_Faces;
 
 
-void SOLARCHVISION_draw_SectionPlants () {
+void SOLARCHVISION_draw_Sections () {
 
   allSection_Faces = new int [1 + allSection_num][4];
     
@@ -33961,63 +33991,98 @@ void SOLARCHVISION_draw_SectionPlants () {
   if (Display_Sections != 0) {
 
     for (int f = 1; f <= allSection_num; f++) {
+      
+      float Section_offset_U = allSection_UVERAB[f][0];
+      float Section_offset_V = allSection_UVERAB[f][1];
+      float Section_Elevation = allSection_UVERAB[f][2];
+      float Section_Rotation = allSection_UVERAB[f][3];
+      float Section_scale_U = allSection_UVERAB[f][4];
+      float Section_scale_V = allSection_UVERAB[f][5];
 
-      float u = allSection_UVERAB[f][0];
-      float v = allSection_UVERAB[f][1];
-      float elev = allSection_UVERAB[f][2];
-      float rot = allSection_UVERAB[f][3];
-      float dU = allSection_UVERAB[f][4];
-      float dV = allSection_UVERAB[f][5];
+      int Section_Type = allSection_Type[f];
+      int Section_RES1 = allSection_RES1[f];
+      int Section_RES2 = allSection_RES2[f];
 
-      int n = allSection_Type[f];
-
-      int RES1 = allSection_RES1[f];
-
-      int RES2 = allSection_RES2[f];
-
-      if (n == 0) {
+      if (Section_Type != 0) {
         
-        // we should get the vertices from the function instead of this...
         
-        // ----------------
-        float x = 0;
-        float y = 0;
-        float z = 0;
-        float r = 0;
-        // ----------------        
-       
-        float t = WIN3D_RZ_coordinate * PI / 180.0;
-        if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
-
-        {
-          allSection_Vertices[f * 4 - 3][0] = (x - r * cos(t)) / OBJECTS_scale;
-          allSection_Vertices[f * 4 - 3][1] = (y - r * sin(t)) / OBJECTS_scale;
-          allSection_Vertices[f * 4 - 3][2] = (z) / OBJECTS_scale;
-
-          allSection_Vertices[f * 4 - 2][0] = (x + r * cos(t)) / OBJECTS_scale;
-          allSection_Vertices[f * 4 - 2][1] = (y + r * sin(t)) / OBJECTS_scale;
-          allSection_Vertices[f * 4 - 2][2] = (z) / OBJECTS_scale;
-
-          allSection_Vertices[f * 4 - 1][0] = (x + r * cos(t)) / OBJECTS_scale;
-          allSection_Vertices[f * 4 - 1][1] = (y + r * sin(t)) / OBJECTS_scale;
-          allSection_Vertices[f * 4 - 1][2] = (z + 2 * r) / OBJECTS_scale;
-
-          allSection_Vertices[f * 4 - 0][0] = (x - r * cos(t)) / OBJECTS_scale;
-          allSection_Vertices[f * 4 - 0][1] = (y - r * sin(t)) / OBJECTS_scale;
-          allSection_Vertices[f * 4 - 0][2] = (z + 2 * r) / OBJECTS_scale;
-
-          allSection_Faces[f][0] = f * 4 - 3;
-          allSection_Faces[f][1] = f * 4 - 2;
-          allSection_Faces[f][2] = f * 4 - 1;
-          allSection_Faces[f][3] = f * 4 - 0;
+        WIN3D_Diagrams.stroke(0);
+        WIN3D_Diagrams.fill(127,255,127);  
+        
+        WIN3D_Diagrams.beginShape();
+        
+        WIN3D_Diagrams.texture(SpatialImpact_Image);   // <<<<<<<<<<<<<<<< should change this later!!!!!!!!! 
+        WIN3D_Diagrams.stroke(255, 255, 255, 0);
+        WIN3D_Diagrams.fill(255, 255, 255, 0);
+  
+        for (int q = 0; q < 4; q++) {
+          
+          float[] ImageVertex = SOLARCHVISION_getPoints_Section(q, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+          
+          float x = ImageVertex[0];
+          float y = ImageVertex[1];
+          float z = ImageVertex[2];
+          float u = ImageVertex[3];
+          float v = ImageVertex[4];
+ 
+          WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D, u * Section_RES1, v * Section_RES2);
+          
+          allSection_Vertices[f * 4 - q][0] = x;
+          allSection_Vertices[f * 4 - q][1] = y;
+          allSection_Vertices[f * 4 - q][2] = z;
         }        
-                
+
+        WIN3D_Diagrams.endShape(CLOSE);    
+        
       }
               
     }
   }
 
 }
+
+
+float[] SOLARCHVISION_getPoints_Section (int q, int Section_Type, float Section_offset_U, float Section_offset_V, float Section_Elevation, float Section_Rotation, float Section_scale_U, float Section_scale_V, int Section_RES1, int Section_RES2) {
+  
+  float c = Section_Elevation;
+
+    
+  float qx = 0, qy = 0, u = 0, v = 0;
+  
+  if (q == 0)      {qx = -1; qy = -1; u = 0; v = 1;}
+  else if (q == 1) {qx = 1; qy = -1; u = 1; v = 1;}
+  else if (q == 2) {qx = 1; qy = 1; u = 1; v = 0;}
+  else if (q == 3) {qx = -1; qy = 1; u = 0; v = 0;}    
+  
+  float a = qx * 0.5 * Section_scale_U + Section_offset_U;
+  float b = qy * 0.5 * Section_scale_V + Section_offset_V;    
+
+  float x = 0, y = 0, z = 0;
+  
+  if (Section_Type == 1) {
+    x = a * cos_ang(-Section_Rotation) - -b * sin_ang(-Section_Rotation);
+    y = a * sin_ang(-Section_Rotation) + -b * cos_ang(-Section_Rotation);
+    z = c;         
+  }
+  else if (Section_Type == 2) {
+    x = a * cos_ang(Section_Rotation) - c * sin_ang(Section_Rotation);
+    y = a * sin_ang(Section_Rotation) + c * cos_ang(Section_Rotation);
+    z = b;        
+  }
+  else if (Section_Type == 3) {
+    x = a * cos_ang(90 - Section_Rotation) - c * sin_ang(90 - Section_Rotation);
+    y = a * sin_ang(90 - Section_Rotation) + c * cos_ang(90 - Section_Rotation);
+    z = b;    
+  }      
+
+  float[] ImageVertex = {x, y, z, u, v};
+  
+  return ImageVertex;
+
+}
+
+
+
 
 
 
@@ -34791,7 +34856,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
       if (Work_with_2D_or_3D == 8) {
         int n = theVertices[q];
         
-        POS_now = allSection_UVERAB[n][j];
+        POS_now = allSection_UVERAB[n][j]; // <<<<<<<<<<<not correct! should pass XYZ instead of UVW 
       }  
       
       if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4) || (Work_with_2D_or_3D == 5) || (Work_with_2D_or_3D == 6)) {
@@ -37008,16 +37073,16 @@ String[][] BAR_a_Items = {
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
                         {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
-                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sections", "Display/Hide Sky", "Display/Hide SunPath", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected Solar Pivots", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
+                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sections", "Display/Hide Sky", "Display/Hide SunPath", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected Sections", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected Solar Pivots", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Wire", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Run solar 3D-model", "Run wind 3D-model", "Run spatial 3D-model"},
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
-                        {"Create", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
+                        {"Create", "Pick Study Plane", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Soft Selection", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
                         {"Edit", "Duplicate Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces"},
                         {"Modify", "Save Current Pivot", "Reset Saved Pivot", "Use Selection Pivot", "Use Origin Pivot", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
-                        {"Match", "Pick Study Plane", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunkSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunkSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
+                        {"Match", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunkSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunkSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot"},
                         {"Action", "Undo", "Redo", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
 
                       };
@@ -37223,6 +37288,9 @@ void SOLARCHVISION_draw_window_BAR_a () {
               if (BAR_a_Items[i][j].equals("Display/Hide Wind Flow")) {
                 if (Display_windFlow == 0) {stroke(127); fill(127);}
               }
+              if (BAR_a_Items[i][j].equals("Display/Hide Selected Sections")) {
+                if (selectedSection_displayEdges == 0) {stroke(127); fill(127);}
+              }                
               if (BAR_a_Items[i][j].equals("Display/Hide Selected Faces")) {
                 if (selectedPolymesh_displayPivot == 0) {stroke(127); fill(127);}
               }      
