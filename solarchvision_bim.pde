@@ -188,6 +188,14 @@ float[] allFractal_LeafSize = {0};
 int allFractal_num = 0; 
 
 
+float[][] allSection_ABUVER = {{0,0,0,0,0,0}};
+int[] allSection_Type = {0};
+int[] allSection_RES1 = {0};
+int[] allSection_RES2 = {0};
+int allSection_num = 0; 
+
+
+
 int Display_Output_in_Explorer = 1;
 
 int Display_Building_Model = 1;
@@ -1339,8 +1347,8 @@ float pre_SpatialImpact_Grade;
 float pre_SpatialImpact_Power;
 float[] pre_SpatialImpact_Rotation = {0,0,0,0};
 float[] pre_SpatialImpact_Elevation = {0,0,0,0};
-float[] pre_SpatialImpact_scale_U;
-float[] pre_SpatialImpact_scale_V;
+float[] pre_SpatialImpact_scale_U = {0,0,0,0};
+float[] pre_SpatialImpact_scale_V = {0,0,0,0};
 float[] pre_SpatialImpact_offset_U = {0,0,0,0};
 float[] pre_SpatialImpact_offset_V = {0,0,0,0};
 
