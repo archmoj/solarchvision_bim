@@ -144,10 +144,9 @@ int selectedVertex_displayVertices = 1;
 
 int selectedObject2D_displayEdges = 1;
 int selectedFractal_displayEdges = 1;
+int selectedSection_displayEdges = 1;
 
-
-
-
+int[] selectedSection_numbers = {0};
 int[] selectedFractal_numbers = {0};
 int[] selectedObject2D_numbers = {0};
 int[] selectedPolymesh_numbers = {0};
@@ -188,7 +187,7 @@ float[] allFractal_LeafSize = {0};
 int allFractal_num = 0; 
 
 
-float[][] allSection_ABUVER = {{0,0,0,0,0,0}};
+float[][] allSection_UVERAB = {{0,0,0,0,0,0}};
 int[] allSection_Type = {0};
 int[] allSection_RES1 = {0};
 int[] allSection_RES2 = {0};
@@ -202,6 +201,8 @@ int Display_Building_Model = 1;
 int Display_Trees_People = 1;
 int Display_FractalPlant = 1;
 int Display_Leaves = 1;
+
+int Display_Sections = 1;
 
 
 
@@ -1251,6 +1252,7 @@ String[] OBSERVED_XML_Files = getfiles(OBSERVED_directory);
 int MODEL1D_ERASE = 0;
 int MODEL2D_ERASE = 0;
 int MODEL3D_ERASE = 0;
+int SECTION_ERASE = 0;
 
 int LAND_TESSELLATION = 2;
 
@@ -2632,6 +2634,16 @@ void draw () {
       
           MODEL3D_ERASE = 0;    
         }
+        
+        if (SECTION_ERASE == 1) {
+          SOLARCHVISION_remove_Sections();
+          
+          WIN3D_Update = 1;
+      
+          ROLLOUT_Update = 1;
+      
+          SECTION_ERASE = 0;    
+        }            
         
         if (pre_Load_Default_Models != Load_Default_Models) {
           
@@ -12720,6 +12732,13 @@ void WIN3D_keyPressed (KeyEvent e) {
                    }
                  }
                  
+                 if (Work_with_2D_or_3D == 8) {
+                   selectedSection_numbers[selectedSection_numbers.length - 1] -= 1;
+                   if (selectedSection_numbers[selectedSection_numbers.length - 1] < 0) {
+                     selectedSection_numbers[selectedSection_numbers.length - 1] = allSection_UVERAB.length - 1;
+                   }                   
+                 }                 
+                 
                  println("SOLARCHVISION_calculate_selection_Pivot 27");
                  SOLARCHVISION_calculate_selection_Pivot();
                  
@@ -12764,6 +12783,13 @@ void WIN3D_keyPressed (KeyEvent e) {
                      selectedVertex_numbers[selectedVertex_numbers.length - 1] = 0;
                    }
                  }  
+                 
+                 if (Work_with_2D_or_3D == 8) {
+                   selectedSection_numbers[selectedSection_numbers.length - 1] += 1;
+                   if (selectedSection_numbers[selectedSection_numbers.length - 1] > allSection_UVERAB.length - 1) {
+                     selectedSection_numbers[selectedSection_numbers.length - 1] = 0;
+                   }
+                 }                   
                  
                  println("SOLARCHVISION_calculate_selection_Pivot 28");
                  SOLARCHVISION_calculate_selection_Pivot();
@@ -14171,9 +14197,43 @@ void SOLARCHVISION_duplicateSelection () {
   }    
 
   
-  if (Work_with_2D_or_3D == 5) {
+  if (Work_with_2D_or_3D == 8) {
     
-  }
+    int number_of_Section_before = allSection_UVERAB.length; 
+
+    for (int o = 0; o < selectedSection_numbers.length; o++) {
+
+      int OBJ_NUM = selectedSection_numbers[o];
+
+      if (OBJ_NUM != 0) {    
+        
+        float u = allSection_UVERAB[OBJ_NUM][0];
+        float v = allSection_UVERAB[OBJ_NUM][1];
+        float elev = allSection_UVERAB[OBJ_NUM][2];
+        float rot = allSection_UVERAB[OBJ_NUM][3];
+        float dU = allSection_UVERAB[OBJ_NUM][4];
+        float dV = allSection_UVERAB[OBJ_NUM][5];
+
+        int n = allSection_Type[OBJ_NUM];
+        int RES1 = allSection_RES1[OBJ_NUM];
+        int RES2 = allSection_RES2[OBJ_NUM];
+        
+        SOLARCHVISION_add_Section(n, u, v, elev, rot, dU, dV, RES1, RES2);        
+      }
+    }
+    
+    // selecting new objetcs
+    
+    selectedSection_numbers = new int [1];
+    selectedSection_numbers[0] = 0;
+    
+    for (int o = number_of_Section_before; o < allSection_UVERAB.length; o++) {
+      
+      int[] newlyAddedSection = {o};
+      
+      selectedSection_numbers = concat(selectedSection_numbers, newlyAddedSection);
+    }     
+  }  
 
 }
        
@@ -14184,6 +14244,52 @@ void SOLARCHVISION_duplicateSelection () {
 
 
 void SOLARCHVISION_deleteSelection () {
+
+  if (Work_with_2D_or_3D == 8) {
+    
+    selectedSection_numbers = sort(selectedSection_numbers);
+    
+    for (int o = selectedSection_numbers.length - 1; o > 0; o--) { // the first node is null 
+      
+      int OBJ_NUM = selectedSection_numbers[o];
+      
+      if (OBJ_NUM != 0) {    
+
+        {
+          float[][] startList = (float[][]) subset(allSection_UVERAB, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allSection_UVERAB, OBJ_NUM + 1);
+          
+          allSection_UVERAB = (float[][]) concat(startList, endList);
+        }
+
+        {
+          int[] startList = (int[]) subset(allSection_Type, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(allSection_Type, OBJ_NUM + 1);
+          
+          allSection_Type = (int[]) concat(startList, endList);
+        }
+
+        {
+          int[] startList = (int[]) subset(allSection_RES1, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(allSection_RES1, OBJ_NUM + 1);
+          
+          allSection_RES1 = (int[]) concat(startList, endList);
+        }
+        
+        {
+          int[] startList = (int[]) subset(allSection_RES2, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(allSection_RES2, OBJ_NUM + 1);
+          
+          allSection_RES2 = (int[]) concat(startList, endList);
+        }
+    
+        allSection_num -= 1;
+      }
+
+    }
+    
+  }
+
   
   if (Work_with_2D_or_3D == 1) {
     
@@ -16489,6 +16595,13 @@ void SOLARCHVISION_selectAll () {
     }
   }
   
+  if (Work_with_2D_or_3D == 8) {
+    selectedSection_numbers = new int [allSection_UVERAB.length];
+    for (int i = 0; i < selectedSection_numbers.length; i++) { 
+      selectedSection_numbers[i] = i;
+    }
+  }  
+  
   println("SOLARCHVISION_calculate_selection_Pivot 44");
   SOLARCHVISION_calculate_selection_Pivot();
 }
@@ -16639,7 +16752,36 @@ void SOLARCHVISION_reverseSelection () {
         selectedVertex_numbers = concat(selectedVertex_numbers, new_Item);
       }
     }
-  }  
+  }
+
+  if (Work_with_2D_or_3D == 8) {
+    int[] pre_selectedSection_numbers = sort(selectedSection_numbers);
+    selectedSection_numbers[0] = 0; 
+    
+    selectedSection_numbers = new int [1];
+    selectedSection_numbers[0] = 0;
+    
+    for (int i = 1; i < allSection_UVERAB.length; i++) {
+      int found = -1; 
+      
+      for (int j = 1; j < pre_selectedSection_numbers.length; j++) {
+        
+        if (pre_selectedSection_numbers[j] == i) {
+          found = 1;
+          break;
+        }
+        else if (pre_selectedSection_numbers[j] > i) {
+          break; 
+        }
+      }
+      
+      if (found == -1) {
+        int[] new_Item = {i};
+        
+        selectedSection_numbers = concat(selectedSection_numbers, new_Item);
+      }
+    }
+  }    
 
   println("SOLARCHVISION_calculate_selection_Pivot 45");
   SOLARCHVISION_calculate_selection_Pivot();
@@ -19441,10 +19583,34 @@ void SOLARCHVISION_remove_All () {
   SOLARCHVISION_remove_FractalPlants();
   SOLARCHVISION_remove_2Dobjects();
   SOLARCHVISION_remove_3Dobjects();
+  SOLARCHVISION_remove_Sections();
   
   WIN3D_Update = 1;
 }
 
+
+void SOLARCHVISION_remove_Sections () {
+  allSection_UVERAB = new float [1][6]; 
+  allSection_UVERAB[0][0] = 0;
+  allSection_UVERAB[0][1] = 0;
+  allSection_UVERAB[0][2] = 0;
+  allSection_UVERAB[0][3] = 0;
+  allSection_UVERAB[0][4] = 0;
+  allSection_UVERAB[0][5] = 0;
+  
+  allSection_Type = new int [1];
+  allSection_Type[0] = 0;
+
+  allSection_RES1 = new int [1];
+  allSection_RES1[0] = 0;
+
+  allSection_RES2 = new int [1];
+  allSection_RES2[0] = 0;
+
+  allSection_num = 0;
+  
+  SOLARCHVISION_deselectAll();  
+}
 
 void SOLARCHVISION_remove_FractalPlants () {
   allFractal_XYZSRA = new float [1][6]; 
@@ -27891,6 +28057,12 @@ void mouseClicked () {
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
             } 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Sections")) {
+              Display_Sections = (Display_Sections + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }              
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Sky")) {
               Display_SKY3D = (Display_SKY3D + 1) % 2;
               
@@ -30062,6 +30234,7 @@ void mouseClicked () {
                 int keep_number_of_Polymeshes = allPolymesh_Faces.length;
                 int keep_number_of_2DObjects = allObject2D_XYZS.length;
                 int keep_number_of_Fractals = allFractal_XYZSRA.length;
+                int keep_number_of_Sections = allSection_UVERAB.length;
                 
                 float x = RxP[0]; 
                 float y = RxP[1]; 
@@ -30259,6 +30432,16 @@ void mouseClicked () {
                   println("SOLARCHVISION_calculate_selection_Pivot 9");
                   SOLARCHVISION_calculate_selection_Pivot();
                 } 
+                
+                if (keep_number_of_Sections != allSection_UVERAB.length) { // if any Fractal created during the process
+
+                  selectedSection_numbers = new int [2];
+                  selectedSection_numbers[0] = 0;
+                  selectedSection_numbers[1] = allSection_UVERAB.length - 1;
+                  
+                  println("SOLARCHVISION_calculate_selection_Pivot 9b");
+                  SOLARCHVISION_calculate_selection_Pivot();
+                }                 
                 
                 if (SOLID_created != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact(); //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
               
@@ -30642,6 +30825,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Display_Building_Model = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_Building_Model" , Display_Building_Model, 0, 1, 1), 1));
 
       Display_URBAN_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_URBAN_MESH" , Display_URBAN_MESH, 0, 1, 1), 1));
+      
+      Display_Sections = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_Sections" , Display_Sections, 0, 1, 1), 1));
 
 
 
@@ -30705,6 +30890,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       MODEL2D_ERASE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL2D_ERASE" , MODEL2D_ERASE, 0, 1, 1), 1));
       
       MODEL3D_ERASE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL3D_ERASE" , MODEL3D_ERASE, 0, 1, 1), 1));
+      
+      SECTION_ERASE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SECTION_ERASE" , SECTION_ERASE, 0, 1, 1), 1));
    
       Load_Default_Models = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Load_Default_Models" , Load_Default_Models, 0, MAX_Default_Models_Number, 1), 1));
     }
@@ -30825,14 +31012,14 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       SpatialImpact_Grade = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Grade" , SpatialImpact_Grade, 1.0 / 64.0, 64.0, -2);
       SpatialImpact_Power = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Power" , SpatialImpact_Power, 1.0 / 64.0, 64.0, -2);      
-      SpatialImpact_Rotation[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Rotation[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_Rotation[SpatialImpact_sectionType], -1000, 1000, -2);
+      SpatialImpact_Rotation[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Rotation[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_Rotation[SpatialImpact_sectionType], -360, 360, -2);
       SpatialImpact_Elevation[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Elevation[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_Elevation[SpatialImpact_sectionType], -1000, 1000, -2);
-      SpatialImpact_positionStep = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_positionStep" , SpatialImpact_positionStep, 1.25, 40, -2);
+      SpatialImpact_positionStep = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_positionStep" , SpatialImpact_positionStep, 5, 80, -2);
       
-      SpatialImpact_scale_U[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_scale_U[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_scale_U[SpatialImpact_sectionType], 50, 3200, -2);
-      SpatialImpact_scale_V[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_scale_V[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_scale_V[SpatialImpact_sectionType], 50, 3200, -2);
-      SpatialImpact_offset_U[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_offset_U[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_offset_U[SpatialImpact_sectionType], -1000, 1000, -2);
-      SpatialImpact_offset_V[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_offset_V[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_offset_V[SpatialImpact_sectionType], -1000, 1000, -2);
+      SpatialImpact_scale_U[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_scale_U[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_scale_U[SpatialImpact_sectionType], 0.125, 3200, -2);
+      SpatialImpact_scale_V[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_scale_V[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_scale_V[SpatialImpact_sectionType], 0.125, 3200, -2);
+      SpatialImpact_offset_U[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_offset_U[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_offset_U[SpatialImpact_sectionType], -10000, 10000, -2);
+      SpatialImpact_offset_V[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_offset_V[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_offset_V[SpatialImpact_sectionType], -10000, 10000, -2);
       
     
       SpatialImpact_Wspd = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Wspd (m/s)" , SpatialImpact_Wspd, 1, 64, -2); 
@@ -33739,6 +33926,102 @@ void SOLARCHVISION_draw_WindRose_Image () {
 }
 
 
+void SOLARCHVISION_add_Section (int n, float u, float v, float elev, float rot, float dU, float dV, int RES1, int RES2) {
+
+  int[] TempSection_Type = {n}; 
+  allSection_Type = concat(allSection_Type, TempSection_Type);
+
+  int[] TempSection_RES1 = {RES1}; 
+  allSection_RES1 = concat(allSection_RES1, TempSection_RES1);
+
+  int[] TempSection_RES2 = {RES2}; 
+  allSection_RES2 = concat(allSection_RES2, TempSection_RES2);
+
+  float[][] TempSection_UVERAB = {{u, v, elev, rot, dU, dV}};
+  allSection_UVERAB = (float[][]) concat(allSection_UVERAB, TempSection_UVERAB);
+
+  allSection_num += 1;
+
+}
+
+
+float[][] allSection_Vertices;
+int[][] allSection_Faces;
+
+
+void SOLARCHVISION_draw_SectionPlants () {
+
+  allSection_Faces = new int [1 + allSection_num][4];
+    
+  allSection_Vertices = new float [4 * allSection_num + 1][3];
+  allSection_Vertices[0][0] = 0;
+  allSection_Vertices[0][1] = 0;
+  allSection_Vertices[0][2] = 0;
+  
+  if (Display_Sections != 0) {
+
+    for (int f = 1; f <= allSection_num; f++) {
+
+      float u = allSection_UVERAB[f][0];
+      float v = allSection_UVERAB[f][1];
+      float elev = allSection_UVERAB[f][2];
+      float rot = allSection_UVERAB[f][3];
+      float dU = allSection_UVERAB[f][4];
+      float dV = allSection_UVERAB[f][5];
+
+      int n = allSection_Type[f];
+
+      int RES1 = allSection_RES1[f];
+
+      int RES2 = allSection_RES2[f];
+
+      if (n == 0) {
+        
+        // we should get the vertices from the function instead of this...
+        
+        // ----------------
+        float x = 0;
+        float y = 0;
+        float z = 0;
+        float r = 0;
+        // ----------------        
+       
+        float t = WIN3D_RZ_coordinate * PI / 180.0;
+        if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
+
+        {
+          allSection_Vertices[f * 4 - 3][0] = (x - r * cos(t)) / OBJECTS_scale;
+          allSection_Vertices[f * 4 - 3][1] = (y - r * sin(t)) / OBJECTS_scale;
+          allSection_Vertices[f * 4 - 3][2] = (z) / OBJECTS_scale;
+
+          allSection_Vertices[f * 4 - 2][0] = (x + r * cos(t)) / OBJECTS_scale;
+          allSection_Vertices[f * 4 - 2][1] = (y + r * sin(t)) / OBJECTS_scale;
+          allSection_Vertices[f * 4 - 2][2] = (z) / OBJECTS_scale;
+
+          allSection_Vertices[f * 4 - 1][0] = (x + r * cos(t)) / OBJECTS_scale;
+          allSection_Vertices[f * 4 - 1][1] = (y + r * sin(t)) / OBJECTS_scale;
+          allSection_Vertices[f * 4 - 1][2] = (z + 2 * r) / OBJECTS_scale;
+
+          allSection_Vertices[f * 4 - 0][0] = (x - r * cos(t)) / OBJECTS_scale;
+          allSection_Vertices[f * 4 - 0][1] = (y - r * sin(t)) / OBJECTS_scale;
+          allSection_Vertices[f * 4 - 0][2] = (z + 2 * r) / OBJECTS_scale;
+
+          allSection_Faces[f][0] = f * 4 - 3;
+          allSection_Faces[f][1] = f * 4 - 2;
+          allSection_Faces[f][2] = f * 4 - 1;
+          allSection_Faces[f][3] = f * 4 - 0;
+        }        
+                
+      }
+              
+    }
+  }
+
+}
+
+
+
+
 void SOLARCHVISION_add_FractalPlant (int PlantType, float x, float y, float z, float s, float rot, int PlantDegreeMin, int PlantDegreeMax, int PlantSeed, float TrunkSize, float LeafSize, float as_Solid) {
 
   float[] TempFractal_TrunkSize = {TrunkSize}; 
@@ -33762,8 +34045,8 @@ void SOLARCHVISION_add_FractalPlant (int PlantType, float x, float y, float z, f
   int[] TempFractal_Seed = {q}; 
   allFractal_Seed = concat(allFractal_Seed, TempFractal_Seed);
 
-  float[][] TempFractal_XYZSS = {{x, y, z, s, rot, as_Solid}};
-  allFractal_XYZSRA = (float[][]) concat(allFractal_XYZSRA, TempFractal_XYZSS);
+  float[][] TempFractal_XYZSRA = {{x, y, z, s, rot, as_Solid}};
+  allFractal_XYZSRA = (float[][]) concat(allFractal_XYZSRA, TempFractal_XYZSRA);
 
   allFractal_num += 1;
 
@@ -34475,6 +34758,10 @@ int saved_alignZ = 0;
 void SOLARCHVISION_calculate_selection_BoundingBox () {
   
   int[] theVertices = {};
+  
+  if (Work_with_2D_or_3D == 8) {
+    theVertices = selectedSection_numbers;
+  } 
 
   if ((Work_with_2D_or_3D == 5) || (Work_with_2D_or_3D == 6))  {
     theVertices = selectedVertex_numbers;
@@ -34500,6 +34787,12 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     for (int q = 1; q < theVertices.length; q++) {
    
       float POS_now = 0;
+      
+      if (Work_with_2D_or_3D == 8) {
+        int n = theVertices[q];
+        
+        POS_now = allSection_UVERAB[n][j];
+      }  
       
       if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4) || (Work_with_2D_or_3D == 5) || (Work_with_2D_or_3D == 6)) {
         int n = theVertices[q];
@@ -36715,7 +37008,7 @@ String[][] BAR_a_Items = {
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
                         {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
-                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sky", "Display/Hide SunPath", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected Solar Pivots", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
+                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sections", "Display/Hide Sky", "Display/Hide SunPath", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected Solar Pivots", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Wire", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Run solar 3D-model", "Run wind 3D-model", "Run spatial 3D-model"},
                         {"Layer"}, // Parameters 
@@ -36900,6 +37193,9 @@ void SOLARCHVISION_draw_window_BAR_a () {
               if (BAR_a_Items[i][j].equals("Display/Hide Urban")) {
                 if (Display_URBAN_MESH == 0) {stroke(127); fill(127);}
               } 
+              if (BAR_a_Items[i][j].equals("Display/Hide Sections")) {
+                if (Display_Sections == 0) {stroke(127); fill(127);}
+              }               
               if (BAR_a_Items[i][j].equals("Display/Hide Sky")) {
                 if (Display_SKY3D == 0) {stroke(127); fill(127);}
               }
@@ -38689,6 +38985,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Display_Trees_People", Display_Trees_People);
   newChild1.setInt("Display_FractalPlant", Display_FractalPlant);
   newChild1.setInt("Display_Leaves", Display_Leaves);
+  
+  newChild1.setInt("Display_Sections", Display_Sections);
 
   newChild1.setInt("Create_Default_Material", Create_Default_Material);  
   newChild1.setInt("Create_Default_Tessellation", Create_Default_Tessellation);
@@ -38937,6 +39235,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("MODEL1D_ERASE", MODEL1D_ERASE);
   newChild1.setInt("MODEL2D_ERASE", MODEL2D_ERASE);
   newChild1.setInt("MODEL3D_ERASE", MODEL3D_ERASE);
+  newChild1.setInt("SECTION_ERASE", SECTION_ERASE);
   newChild1.setInt("LAND_TESSELLATION", LAND_TESSELLATION);
   newChild1.setInt("MODEL3D_TESSELLATION", MODEL3D_TESSELLATION);
   newChild1.setInt("SKY3D_TESSELLATION", SKY3D_TESSELLATION);
@@ -39676,6 +39975,8 @@ void SOLARCHVISION_load_project (String myFile) {
       Display_FractalPlant = children0[L].getInt("Display_FractalPlant");
       Display_Leaves = children0[L].getInt("Display_Leaves");
       
+      Display_Sections = children0[L].getInt("Display_Sections");
+      
       Create_Default_Material = children0[L].getInt("Create_Default_Material");
       Create_Default_Tessellation = children0[L].getInt("Create_Default_Tessellation");
       Create_Default_Layer = children0[L].getInt("Create_Default_Layer");
@@ -39923,6 +40224,7 @@ void SOLARCHVISION_load_project (String myFile) {
       MODEL1D_ERASE = children0[L].getInt("MODEL1D_ERASE");
       MODEL2D_ERASE = children0[L].getInt("MODEL2D_ERASE");
       MODEL3D_ERASE = children0[L].getInt("MODEL3D_ERASE");
+      SECTION_ERASE = children0[L].getInt("SECTION_ERASE");
       LAND_TESSELLATION = children0[L].getInt("LAND_TESSELLATION");
       MODEL3D_TESSELLATION = children0[L].getInt("MODEL3D_TESSELLATION");
       SKY3D_TESSELLATION = children0[L].getInt("SKY3D_TESSELLATION");
@@ -40628,5 +40930,20 @@ float softSelection_Radius = 2; // 2 = 2m
 
 int[] selectedVertex_softSelectionVertices = new int[0]; 
 float[] selectedVertex_softSelectionValues = new float[0];
+
+
+
+
+
+
+float[][] allSection_UVERAB = {{0,0,0,0,0,0}};
+int[] allSection_Type = {0};
+int[] allSection_RES1 = {0};
+int[] allSection_RES2 = {0};
+int allSection_num = 0; 
+
+int selectedSection_displayEdges = 1;
+
+int[] selectedSection_numbers = {0};
 
 */
