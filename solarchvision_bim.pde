@@ -191,6 +191,7 @@ float[][] allSection_UVERAB = {{0,0,0,0,0,0}};
 int[] allSection_Type = {0};
 int[] allSection_RES1 = {0};
 int[] allSection_RES2 = {0};
+PImage[] allSection_SpatialImpact = {createImage(2,2, RGB)}; 
 int allSection_num = 0; 
 
 
@@ -14226,7 +14227,7 @@ void SOLARCHVISION_duplicateSelection () {
         int Section_Type = allSection_Type[OBJ_NUM];
         int Section_RES1 = allSection_RES1[OBJ_NUM];
         int Section_RES2 = allSection_RES2[OBJ_NUM];
-        
+
         SOLARCHVISION_add_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);        
       }
     }
@@ -14288,6 +14289,13 @@ void SOLARCHVISION_deleteSelection () {
           int[] endList = (int[]) subset(allSection_RES2, OBJ_NUM + 1);
           
           allSection_RES2 = (int[]) concat(startList, endList);
+        }
+
+        {
+          PImage[] startList = (PImage[]) subset(allSection_SpatialImpact, 0, OBJ_NUM);
+          PImage[] endList = (PImage[]) subset(allSection_SpatialImpact, OBJ_NUM + 1);
+          
+          allSection_SpatialImpact = (PImage[]) concat(startList, endList);
         }
     
         allSection_num -= 1;
@@ -19615,6 +19623,9 @@ void SOLARCHVISION_remove_Sections () {
 
   allSection_RES2 = new int [1];
   allSection_RES2[0] = 0;
+  
+  allSection_SpatialImpact = new PImage [1];
+  allSection_SpatialImpact[0] = createImage(2,2, RGB);
 
   allSection_num = 0;
   
@@ -29955,7 +29966,7 @@ void mouseClicked () {
                           Section_Rotation = min_Beta;                   
                         }          
             
-                        SolarImpact_sectionType = Section_Type;          
+                               
 
   
                         PVector AG = new PVector(tmpVertices[0][0] - G[0], tmpVertices[0][1] - G[1], tmpVertices[0][2] - G[2]);                       
@@ -30023,6 +30034,8 @@ void mouseClicked () {
                         SpatialImpact_RES2 = Section_RES2;             
         
                         if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
+                       
+                        SolarImpact_sectionType = Section_Type;                   
                        
                         WIN3D_Update = 1; 
                         ROLLOUT_Update = 1;  
@@ -34203,6 +34216,9 @@ void SOLARCHVISION_add_Section (int n, float u, float v, float elev, float rot, 
 
   int[] TempSection_RES2 = {RES2}; 
   allSection_RES2 = concat(allSection_RES2, TempSection_RES2);
+  
+  PImage[] TempSection_SpatialImpact = {createImage(RES1, RES2, RGB)}; 
+  allSection_SpatialImpact = (PImage[]) concat(allSection_SpatialImpact, TempSection_SpatialImpact);  
 
   float[][] TempSection_UVERAB = {{u, v, elev, rot, dU, dV}};
   allSection_UVERAB = (float[][]) concat(allSection_UVERAB, TempSection_UVERAB);
@@ -34239,6 +34255,8 @@ void SOLARCHVISION_draw_Sections () {
       int Section_Type = allSection_Type[f];
       int Section_RES1 = allSection_RES1[f];
       int Section_RES2 = allSection_RES2[f];
+      PImage Section_SpatialImpact = allSection_SpatialImpact[f];
+      
 
       if (Section_Type != 0) {
 
@@ -34247,7 +34265,7 @@ void SOLARCHVISION_draw_Sections () {
         
         WIN3D_Diagrams.beginShape();
         
-        WIN3D_Diagrams.texture(SpatialImpact_Image);   // <<<<<<<<<<<<<<<< should change this later!!!!!!!!! 
+        WIN3D_Diagrams.texture(Section_SpatialImpact);  
         WIN3D_Diagrams.stroke(255, 255, 255, 0);
         WIN3D_Diagrams.fill(255, 255, 255, 0);
   
