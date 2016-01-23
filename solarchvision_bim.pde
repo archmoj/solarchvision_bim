@@ -29819,8 +29819,7 @@ void mouseClicked () {
                         
                         
                         SOLARCHVISION_add_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
-                        
-                        println(allSection_UVERAB.length);
+
                         
                         /*
                         SpatialImpact_offset_U[SpatialImpact_sectionType] = Section_offset_U;
@@ -33991,7 +33990,7 @@ void SOLARCHVISION_draw_Sections () {
   if (Display_Sections != 0) {
 
     for (int f = 1; f <= allSection_num; f++) {
-      
+
       float Section_offset_U = allSection_UVERAB[f][0];
       float Section_offset_V = allSection_UVERAB[f][1];
       float Section_Elevation = allSection_UVERAB[f][2];
@@ -34004,16 +34003,15 @@ void SOLARCHVISION_draw_Sections () {
       int Section_RES2 = allSection_RES2[f];
 
       if (Section_Type != 0) {
-        
-        
+
         WIN3D_Diagrams.stroke(0);
         WIN3D_Diagrams.fill(127,255,127);  
         
         WIN3D_Diagrams.beginShape();
         
-        WIN3D_Diagrams.texture(SpatialImpact_Image);   // <<<<<<<<<<<<<<<< should change this later!!!!!!!!! 
-        WIN3D_Diagrams.stroke(255, 255, 255, 0);
-        WIN3D_Diagrams.fill(255, 255, 255, 0);
+        //WIN3D_Diagrams.texture(SpatialImpact_Image);   // <<<<<<<<<<<<<<<< should change this later!!!!!!!!! 
+        //WIN3D_Diagrams.stroke(255, 255, 255, 0);
+        //WIN3D_Diagrams.fill(255, 255, 255, 0);
   
         for (int q = 0; q < 4; q++) {
           
@@ -34025,19 +34023,26 @@ void SOLARCHVISION_draw_Sections () {
           float u = ImageVertex[3];
           float v = ImageVertex[4];
  
-          WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D, u * Section_RES1, v * Section_RES2);
+          WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D, u * Section_RES1, v * Section_RES2);
           
           allSection_Vertices[f * 4 - q][0] = x;
           allSection_Vertices[f * 4 - q][1] = y;
           allSection_Vertices[f * 4 - q][2] = z;
+          
         }        
 
-        WIN3D_Diagrams.endShape(CLOSE);    
-        
+        allSection_Faces[f][0] = f * 4 - 3;
+        allSection_Faces[f][1] = f * 4 - 2;
+        allSection_Faces[f][2] = f * 4 - 1;
+        allSection_Faces[f][3] = f * 4 - 0;  
+
+        WIN3D_Diagrams.endShape(CLOSE);
+
       }
               
     }
   }
+
 
 }
 
@@ -34075,7 +34080,7 @@ float[] SOLARCHVISION_getPoints_Section (int q, int Section_Type, float Section_
     z = b;    
   }      
 
-  float[] ImageVertex = {x, y, z, u, v};
+  float[] ImageVertex = {x, -y, z, u, v};
   
   return ImageVertex;
 
