@@ -12563,44 +12563,44 @@ void WIN3D_keyPressed (KeyEvent e) {
       switch(keyCode) {
 
         case RIGHT :SpatialImpact_Rotation[SpatialImpact_sectionType] = (SpatialImpact_Rotation[SpatialImpact_sectionType] + 15) % 360; 
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
         case LEFT :SpatialImpact_Rotation[SpatialImpact_sectionType] = (SpatialImpact_Rotation[SpatialImpact_sectionType] + 360 - 15) % 360; 
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;           
         
         case UP   :SpatialImpact_Elevation[SpatialImpact_sectionType] += SpatialImpact_positionStep;
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;        
         case DOWN :SpatialImpact_Elevation[SpatialImpact_sectionType] -= SpatialImpact_positionStep; 
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1; ROLLOUT_Update = 1;  
                   break; 
 
         case 33 :SpatialImpact_Elevation[SpatialImpact_sectionType] += 4 * SpatialImpact_positionStep;
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;        
         case 34 :SpatialImpact_Elevation[SpatialImpact_sectionType] -= 4 * SpatialImpact_positionStep; 
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break; 
         
         case 35 :SpatialImpact_scale_U[SpatialImpact_sectionType] *= pow(2.0, 0.5); SpatialImpact_scale_V[SpatialImpact_sectionType] *= pow(2.0, 0.5); 
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;
         case 36 :SpatialImpact_scale_U[SpatialImpact_sectionType] /= pow(2.0, 0.5); SpatialImpact_scale_V[SpatialImpact_sectionType] /= pow(2.0, 0.5);                   
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;
@@ -12611,82 +12611,82 @@ void WIN3D_keyPressed (KeyEvent e) {
       switch(key) {
         
         case 'U' :SpatialImpact_offset_U[SpatialImpact_sectionType] += SpatialImpact_positionStep;
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;
         case 'u' :SpatialImpact_offset_U[SpatialImpact_sectionType] -= SpatialImpact_positionStep;
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;        
         case 'V' :SpatialImpact_offset_V[SpatialImpact_sectionType] += SpatialImpact_positionStep;
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;
         case 'v' :SpatialImpact_offset_V[SpatialImpact_sectionType] -= SpatialImpact_positionStep;
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;  
                   
         case ']' :SpatialImpact_sectionType = (SpatialImpact_sectionType + 1) % 4;
                   SolarImpact_sectionType = SpatialImpact_sectionType; 
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;
         case '[' :SpatialImpact_sectionType = (SpatialImpact_sectionType + 4 - 1) % 4;
                   SolarImpact_sectionType = SpatialImpact_sectionType;
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
                   break;        
         
         case '0' :SpatialImpact_Elevation[SpatialImpact_sectionType] = 0; 
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
                   
         case '.' :SpatialImpact_Rotation[SpatialImpact_sectionType] = 0; 
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections();
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections();
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;                   
                   break;                  
         
         case '/' :SpatialImpact_Power *= pow(2.0, 0.5); 
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
         case '*' :SpatialImpact_Power /= pow(2.0, 0.5);  
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
         
         case '+' :SpatialImpact_Grade *= pow(2.0, 0.5); 
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
         case '-' :SpatialImpact_Grade /= pow(2.0, 0.5); 
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
 
         case '>' :SpatialImpact_Grade /= pow(2.0, 0.25); 
                   SpatialImpact_Power /= pow(2.0, 0.5); 
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
         case '<' :SpatialImpact_Grade *= pow(2.0, 0.25); 
                   SpatialImpact_Power *= pow(2.0, 0.5); 
-                  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
@@ -24527,7 +24527,7 @@ void SOLARCHVISION_calculate_SpatialImpact_selectedSections () {
         SpatialImpact_Image = createImage(SpatialImpact_RES1, SpatialImpact_RES2, ARGB);
       }
       SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
-      allSection_SpatialImpact[f] = SpatialImpact_Image; 
+      allSection_SpatialImpact[f].copy(SpatialImpact_Image, 0, 0, SpatialImpact_RES1, SpatialImpact_RES2, 0, 0, SpatialImpact_RES1, SpatialImpact_RES2); 
       
     }
   }
@@ -30049,7 +30049,7 @@ void mouseClicked () {
                           selectedSection_numbers = concat(selectedSection_numbers, newlyAddedSection);
                         }  
         
-                        if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections();
+                        SOLARCHVISION_calculate_SpatialImpact_selectedSections();
                        
                         SolarImpact_sectionType = Section_Type;                   
                        
@@ -35674,7 +35674,7 @@ void SOLARCHVISION_move_selectedSection (float dx, float dy, float dz) {
 
   }
 
-  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections();
+  SOLARCHVISION_calculate_SpatialImpact_selectedSections();
   
   WIN3D_Update = 1;
   ROLLOUT_Update = 1;    
@@ -35692,7 +35692,7 @@ void SOLARCHVISION_rotate_selectedSection (float r) {
     
   }
   
-  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
   
   WIN3D_Update = 1;
   ROLLOUT_Update = 1;       
@@ -35711,7 +35711,7 @@ void SOLARCHVISION_scale_selectedSection (float sx, float sy) {
     
   }
   
-  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
   
   WIN3D_Update = 1;
   ROLLOUT_Update = 1;      
