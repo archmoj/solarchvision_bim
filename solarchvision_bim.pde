@@ -24505,7 +24505,7 @@ float[][] SOLARCHVISION_3DtraceContour (float epsilon, float x, float y, float z
 
 
 void SOLARCHVISION_calculate_SpatialImpact_selectedSections () {
-
+  
   for (int o = selectedSection_numbers.length - 1; o >= 0; o--) {
     
     int f = selectedSection_numbers[o];
@@ -24514,7 +24514,7 @@ void SOLARCHVISION_calculate_SpatialImpact_selectedSections () {
       
       SpatialImpact_sectionType = allSection_Type[f];
       SpatialImpact_RES1 = allSection_RES1[f];
-      SpatialImpact_RES2 = allSection_RES1[f];     
+      SpatialImpact_RES2 = allSection_RES2[f];     
 
       SpatialImpact_offset_U[SpatialImpact_sectionType] = allSection_UVERAB[f][0];
       SpatialImpact_offset_V[SpatialImpact_sectionType] = allSection_UVERAB[f][1];
@@ -24523,7 +24523,7 @@ void SOLARCHVISION_calculate_SpatialImpact_selectedSections () {
       SpatialImpact_scale_U[SpatialImpact_sectionType] = allSection_UVERAB[f][4];
       SpatialImpact_scale_V[SpatialImpact_sectionType] = allSection_UVERAB[f][5];
 
-      if ((SpatialImpact_Image.width != SpatialImpact_RES1) && (SpatialImpact_Image.height != SpatialImpact_RES2)) {
+      if ((SpatialImpact_Image.width != SpatialImpact_RES1) || (SpatialImpact_Image.height != SpatialImpact_RES2)) {
         SpatialImpact_Image = createImage(SpatialImpact_RES1, SpatialImpact_RES2, ARGB);
       }
       SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
@@ -30048,10 +30048,6 @@ void mouseClicked () {
                           
                           selectedSection_numbers = concat(selectedSection_numbers, newlyAddedSection);
                         }  
-
-                        
-                        
-       
         
                         if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections();
                        
