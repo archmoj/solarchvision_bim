@@ -35666,36 +35666,57 @@ void SOLARCHVISION_softScale_selectedVertices (float x0, float y0, float z0, flo
 
 
 
-void SOLARCHVISION_move_currentSection (float dx, float dy, float dz) {
+void SOLARCHVISION_move_selectedSection (float dx, float dy, float dz) {
 
-  SpatialImpact_offset_U[SpatialImpact_sectionType] += dx;
-  SpatialImpact_offset_V[SpatialImpact_sectionType] += dy;
-  SpatialImpact_Elevation[SpatialImpact_sectionType] += dz;
+  for (int q = 1; q < selectedSection_numbers.length; q++) {
+    
+    int n = selectedSection_numbers[q];
+    
+    allSection_UVERAB[n][0] += dx;
+    allSection_UVERAB[n][1] += dy;
+    allSection_UVERAB[n][2] += dz;
+
+  }
+
+  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections();
   
-  if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
   WIN3D_Update = 1;
   ROLLOUT_Update = 1;    
 
 }
 
 
-void SOLARCHVISION_rotate_currentSection (float r) {
-  
-  float r0 = SpatialImpact_Rotation[SpatialImpact_sectionType] * PI / 180.0; 
+void SOLARCHVISION_rotate_selectedSection (float r) {
+
+  for (int q = 1; q < selectedSection_numbers.length; q++) {
+    
+    int n = selectedSection_numbers[q];
+    
+    allSection_UVERAB[n][3] += r * 180.0 / PI; 
+    
+  }
   
   if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+  
   WIN3D_Update = 1;
   ROLLOUT_Update = 1;       
 
 }
 
 
-void SOLARCHVISION_scale_currentSection (float sx, float sy) {
-  
-  SpatialImpact_scale_U[SpatialImpact_sectionType] *= sx;
-  SpatialImpact_scale_V[SpatialImpact_sectionType] *= sy;
+void SOLARCHVISION_scale_selectedSection (float sx, float sy) {
+
+  for (int q = 1; q < selectedSection_numbers.length; q++) {
+    
+    int n = selectedSection_numbers[q];
+    
+    allSection_UVERAB[n][4] *= sx;
+    allSection_UVERAB[n][5] *= sy;
+    
+  }
   
   if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+  
   WIN3D_Update = 1;
   ROLLOUT_Update = 1;      
   
@@ -35710,7 +35731,7 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
 
   if (Work_with_2D_or_3D == 8) {
 
-    SOLARCHVISION_scale_currentSection(sx, sy);
+    SOLARCHVISION_scale_selectedSection(sx, sy);
   }   
   
   if (Work_with_2D_or_3D == 7) {
@@ -35792,7 +35813,7 @@ void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int 
 
   if (Work_with_2D_or_3D == 8) {
 
-    SOLARCHVISION_rotate_currentSection(r);
+    SOLARCHVISION_rotate_selectedSection(r);
   }   
   
   if (Work_with_2D_or_3D == 7) {
@@ -35845,7 +35866,7 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
 
   if (Work_with_2D_or_3D == 8) {
 
-    SOLARCHVISION_move_currentSection(dx, dy, dz);
+    SOLARCHVISION_move_selectedSection(dx, dy, dz);
   }   
   
   if (Work_with_2D_or_3D == 7) {
