@@ -14250,8 +14250,6 @@ void SOLARCHVISION_duplicateSelection () {
 
 
 
-
-
 void SOLARCHVISION_deleteSelection () {
 
   if (Work_with_2D_or_3D == 8) {
@@ -14259,7 +14257,7 @@ void SOLARCHVISION_deleteSelection () {
     selectedSection_numbers = sort(selectedSection_numbers);
     
     for (int o = selectedSection_numbers.length - 1; o > 0; o--) { // the first node is null 
-      
+
       int OBJ_NUM = selectedSection_numbers[o];
       
       if (OBJ_NUM != 0) {    
@@ -14296,7 +14294,6 @@ void SOLARCHVISION_deleteSelection () {
       }
 
     }
-    
   }
 
   
@@ -22902,6 +22899,172 @@ float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 }
 
 
+float[] SOLARCHVISION_8Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
+
+  float[] ray_normal = fn_normalize(ray_dir);   
+
+  float[][] hitPoint = new float [allSection_Faces.length][4];
+
+  for (int f = 1; f < allSection_Faces.length; f++) {
+    hitPoint[f][0] = FLOAT_undefined;
+    hitPoint[f][1] = FLOAT_undefined;
+    hitPoint[f][2] = FLOAT_undefined;
+    hitPoint[f][3] = FLOAT_undefined;
+  }
+  
+  float[] pre_angle_to_allSection_Faces = new float [allSection_Faces.length];
+  
+  for (int f = 1; f < allSection_Faces.length; f++) {
+    pre_angle_to_allSection_Faces[f] = FLOAT_undefined;
+  }
+  
+  for (int f = 1; f < allSection_Faces.length; f++) {
+
+    float backAngles = FLOAT_undefined;  
+    float foreAngles = FLOAT_undefined;
+
+    float delta = 0.5; 
+    float delta_step = 0.5;
+    
+    float delta_dir = -1;
+    
+    float[] x = {FLOAT_undefined, FLOAT_undefined};
+    float[] y = {FLOAT_undefined, FLOAT_undefined};
+    float[] z = {FLOAT_undefined, FLOAT_undefined};
+    
+    float[] AnglesAll = {0, 0};   
+    
+    float MAX_AnglesAll = 0;
+    int MAX_o = -1;
+
+    //for (int q = 0; q < 16; q++) {
+    for (int q = 0; q < 32; q++) {
+    
+      for (int o = 0; o < 2; o++) {
+
+        float delta_test = delta;
+        
+        if (o == 0) delta_test -= delta_step;
+        else delta_test += delta_step;
+        
+        x[o] = ray_pnt[0] + delta_test * ray_normal[0] * max_distance; 
+        y[o] = ray_pnt[1] + delta_test * ray_normal[1] * max_distance; 
+        z[o] = ray_pnt[2] + delta_test * ray_normal[2] * max_distance; 
+        
+        AnglesAll[o] = 0;      
+      
+        for (int i = 0; i < allSection_Faces[f].length; i++) {
+          int next_i = (i + 1) % allSection_Faces[f].length;
+          
+          float[] vectA = {allSection_Vertices[allSection_Faces[f][i]][0] - x[o], allSection_Vertices[allSection_Faces[f][i]][1] - y[o], allSection_Vertices[allSection_Faces[f][i]][2] - z[o]}; 
+          float[] vectB = {allSection_Vertices[allSection_Faces[f][next_i]][0] - x[o], allSection_Vertices[allSection_Faces[f][next_i]][1] - y[o], allSection_Vertices[allSection_Faces[f][next_i]][2] - z[o]};
+          
+          float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
+          
+          AnglesAll[o] += t;
+  
+        }
+      }
+
+
+      if (q == 0) {
+        foreAngles = AnglesAll[0];
+        backAngles = AnglesAll[1];
+        
+        //if (AnglesAll[0] < AnglesAll[1]) {
+          MAX_o = 1;
+          delta = 1;
+        //}
+        //else {
+        //  MAX_o = 0;
+        //  delta = 0;       
+        //}
+      } 
+      else {
+        
+        if (AnglesAll[0] < AnglesAll[1]) {
+          MAX_o = 1;          
+          MAX_AnglesAll = AnglesAll[1];
+          
+          backAngles = AnglesAll[1]; 
+          
+          delta += delta_step;   
+        }
+        else {
+          MAX_o = 0;
+          MAX_AnglesAll = AnglesAll[0];
+          
+          foreAngles = AnglesAll[0];
+          
+          delta -= delta_step;
+        } 
+        
+        //delta_step *= 0.666; // 0.5; <<<<<<<<<<<<<<<          
+        delta_step *= 0.75; 
+
+      }
+
+      //println(delta, delta_step);
+         
+
+      //if (MAX_AnglesAll > 359) {
+      if (MAX_AnglesAll > 357) { // <<<<<<<<<<<<<<<<<<<<<<<<<
+        if (pre_angle_to_allSection_Faces[f] < MAX_AnglesAll) {
+          pre_angle_to_allSection_Faces[f] = MAX_AnglesAll;
+          
+          hitPoint[f][0] = x[MAX_o];
+          hitPoint[f][1] = y[MAX_o];
+          hitPoint[f][2] = z[MAX_o];
+          hitPoint[f][3] = delta;
+        }        
+      }
+      
+      if (pre_angle_to_allSection_Faces[f] > 0.9 * FLOAT_undefined) {
+        pre_angle_to_allSection_Faces[f] = MAX_AnglesAll;
+      }       
+
+      
+    }
+
+  }
+
+  float[] return_point = {FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, FLOAT_undefined, -1};
+  
+  float pre_dist = FLOAT_undefined;
+  
+  for (int f = 1; f < allSection_Faces.length; f++) {
+    
+    float hx = hitPoint[f][0];
+    float hy = hitPoint[f][1];
+    float hz = hitPoint[f][2];
+    float h_delta = hitPoint[f][3];
+
+    //if ((hx < 0.9 * FLOAT_undefined) && (hy < 0.9 * FLOAT_undefined) && (hz < 0.9 * FLOAT_undefined)) {
+    
+      float hd = dist(hx, hy, hz, ray_pnt[0], ray_pnt[1], ray_pnt[2]);
+      
+      //if (hd < pre_dist) {
+      //if ((hd < pre_dist) && (hd > 0.02)) {
+      if ((hd < pre_dist) && (h_delta > 0.005)) {
+        
+        pre_dist = hd;
+        
+        return_point[0] = hx;
+        return_point[1] = hy;
+        return_point[2] = hz;
+        return_point[3] = hd;
+        return_point[4] = f;
+      }
+    
+    //}
+  }
+ 
+  return return_point;
+  
+}
+
+
+
 
 float[] SOLARCHVISION_0Dintersect (float[] ray_pnt, float[] ray_dir, float max_distance) {
 
@@ -29364,8 +29527,12 @@ void mouseClicked () {
               RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
             }
             else if (mouseButton == LEFT) {
-              //if ((Work_with_2D_or_3D == 1) && ((View_Select_Create_Modify == -1) || (View_Select_Create_Modify > 1)))  { // only if the user wants to select a Fractal-Tree 
-              if ((Work_with_2D_or_3D == 1) && ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1)))  { // only if the user wants to select a Fractal-Tree
+              //if ((Work_with_2D_or_3D == 8) && ((View_Select_Create_Modify == -1) || (View_Select_Create_Modify > 1) && (View_Select_Create_Modify != 17)))  { // only if the user wants to select a Section
+              if ((Work_with_2D_or_3D == 8) && ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1) && (View_Select_Create_Modify != 17)))  { // only if the user wants to select a Section
+                RxP = SOLARCHVISION_8Dintersect(ray_start, ray_direction, max_dist);
+              }                      
+              //else if ((Work_with_2D_or_3D == 1) && ((View_Select_Create_Modify == -1) || (View_Select_Create_Modify > 1)))  { // only if the user wants to select a Fractal-Tree 
+              else if ((Work_with_2D_or_3D == 1) && ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1)))  { // only if the user wants to select a Fractal-Tree
                 RxP = SOLARCHVISION_1Dintersect(ray_start, ray_direction, max_dist);
               }        
               //else if ((Work_with_2D_or_3D == 2) && ((View_Select_Create_Modify == -1) || (View_Select_Create_Modify > 1)))  { // only if the user wants to select a 2D-object
@@ -29818,14 +29985,28 @@ void mouseClicked () {
                         }
                         
                         
+                        int number_of_Section_before = allSection_UVERAB.length; 
+                        
                         SOLARCHVISION_add_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
 
+                        // selecting new objetcs
                         
-                        /*
+                        selectedSection_numbers = new int [1];
+                        selectedSection_numbers[0] = 0;
+                        
+                        for (int o = number_of_Section_before; o < allSection_UVERAB.length; o++) {
+                          
+                          int[] newlyAddedSection = {o};
+                          
+                          selectedSection_numbers = concat(selectedSection_numbers, newlyAddedSection);
+                        }  
+
+                        
+                        
                         SpatialImpact_offset_U[SpatialImpact_sectionType] = Section_offset_U;
                         SpatialImpact_offset_V[SpatialImpact_sectionType] = Section_offset_V;
                         SpatialImpact_Elevation[SpatialImpact_sectionType] = Section_Elevation;
-                        SpatialImpact_Rotation[SpatialImpact_sectionType]  Section_Rotation;
+                        SpatialImpact_Rotation[SpatialImpact_sectionType] = Section_Rotation;
                         SpatialImpact_scale_U[SpatialImpact_sectionType] = Section_scale_U;
                         SpatialImpact_scale_V[SpatialImpact_sectionType] = Section_scale_V;
                         
@@ -29834,7 +30015,7 @@ void mouseClicked () {
                         SpatialImpact_RES2 = Section_RES2;             
         
                         if (SpatialImpact_sectionType != 0) SOLARCHVISION_calculate_ParametricGeometries_SpatialImpact();
-                        */
+                       
                         WIN3D_Update = 1; 
                         ROLLOUT_Update = 1;  
                       }
@@ -30194,6 +30375,55 @@ void mouseClicked () {
 
                     //if (pre_selectedFractal_numbers_lastItem != selectedFractal_numbers[selectedFractal_numbers.length - 1]) {
                       println("SOLARCHVISION_calculate_selection_Pivot 6");
+                      SOLARCHVISION_calculate_selection_Pivot();
+                    //}
+                  }
+
+                  if (Work_with_2D_or_3D == 8) {
+                    
+                    int OBJ_NUM = int(RxP[4]);
+  
+                    int found_at = -1;
+                    
+                    int use_it = 0; // 0:nothing 1:add -1:subtract
+                    
+                    if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+                    if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+                    if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+                    
+                    if (addNewSelectionToPreviousSelection != 0) {
+      
+                      for (int o = selectedSection_numbers.length - 1; o >= 0; o--) {
+                        if (selectedSection_numbers[o] == OBJ_NUM) {
+                          found_at = o;
+                          if (addNewSelectionToPreviousSelection == 1) {
+                            use_it = 0;
+                          }
+                          if (addNewSelectionToPreviousSelection == -1) {
+                            use_it = -1; 
+                          }
+                          break;
+                        } 
+                      }
+                    }
+                    
+                    if (use_it == -1) {
+                      int[] startList = (int[]) subset(selectedSection_numbers, 0, found_at);
+                      int[] endList = (int[]) subset(selectedSection_numbers, found_at + 1);
+                      
+                      selectedSection_numbers = (int[]) concat(startList, endList);
+                    }
+                    
+                    if (use_it == 1) {
+                      int[] new_OBJ_number = {OBJ_NUM};
+                      
+                      selectedSection_numbers = (int[]) concat(selectedSection_numbers, new_OBJ_number);
+                    }
+                    
+                    WIN3D_Update = 1;
+
+                    //if (pre_selectedSection_numbers_lastItem != selectedSection_numbers[selectedSection_numbers.length - 1]) {
+                      println("SOLARCHVISION_calculate_selection_Pivot 6b");
                       SOLARCHVISION_calculate_selection_Pivot();
                     //}
                   }
@@ -34009,9 +34239,9 @@ void SOLARCHVISION_draw_Sections () {
         
         WIN3D_Diagrams.beginShape();
         
-        //WIN3D_Diagrams.texture(SpatialImpact_Image);   // <<<<<<<<<<<<<<<< should change this later!!!!!!!!! 
-        //WIN3D_Diagrams.stroke(255, 255, 255, 0);
-        //WIN3D_Diagrams.fill(255, 255, 255, 0);
+        WIN3D_Diagrams.texture(SpatialImpact_Image);   // <<<<<<<<<<<<<<<< should change this later!!!!!!!!! 
+        WIN3D_Diagrams.stroke(255, 255, 255, 0);
+        WIN3D_Diagrams.fill(255, 255, 255, 0);
   
         for (int q = 0; q < 4; q++) {
           
