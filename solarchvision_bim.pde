@@ -12447,13 +12447,12 @@ void WIN3D_keyPressed (KeyEvent e) {
           
 
  
-        case ENTER :RenderShadowsOnUrbanPlane(); 
+        case ENTER :SOLARCHVISION_render_Shadows_selectedSections(); 
                     
                     frame_variation = 0; 
                     SOLARCHVISION_update_frame_layout();
                     
-                    if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 0)) || (plot_impacts == 1)) plot_impacts = 1;
-                    else plot_impacts = 0;
+                    plot_impacts = abs(plot_impacts) % 2;
                    
                     update_impacts = 1;
                     
@@ -24574,6 +24573,34 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
     
 
 
+void SOLARCHVISION_render_Shadows_selectedSections () {
+  
+  for (int o = selectedSection_numbers.length - 1; o >= 0; o--) {
+
+    int f = selectedSection_numbers[o];
+    
+    if (f != 0) {        
+      
+      SolarImpact_sectionType = allSection_Type[f];
+      SolarImpact_RES1 = allSection_RES1[f];
+      SolarImpact_RES2 = allSection_RES2[f];     
+
+      SolarImpact_offset_U = allSection_UVERAB[f][0];
+      SolarImpact_offset_V = allSection_UVERAB[f][1];
+      SolarImpact_Elevation = 0.1 + allSection_UVERAB[f][2];
+      SolarImpact_Rotation = allSection_UVERAB[f][3];
+      SolarImpact_scale_U = allSection_UVERAB[f][4];
+      SolarImpact_scale_V = allSection_UVERAB[f][5];
+      
+      SceneName = "temp_" + Section_Stamp();
+
+      SOLARCHVISION_render_Shadows_CurrentSection();
+
+    }
+  }
+
+}
+
 
 void SOLARCHVISION_calculate_SolarImpact_selectedSections () {
   
@@ -33266,21 +33293,10 @@ PGraphics SHADOW_Diagrams; // to be accessible to Fractal plants
 String defaultSceneName = "Complex";
 String SceneName = defaultSceneName;
                   
-void RenderShadowsOnUrbanPlane () {
+void SOLARCHVISION_render_Shadows_CurrentSection () {
 
   cursor(WAIT);  
   
-  SolarImpact_sectionType = SpatialImpact_sectionType;
-  SolarImpact_RES1 = SpatialImpact_RES1;
-  SolarImpact_RES2 = SpatialImpact_RES2;    
-
-  SolarImpact_Rotation = SpatialImpact_Rotation[SpatialImpact_sectionType];
-  SolarImpact_Elevation = 0.1 + SpatialImpact_Elevation[SpatialImpact_sectionType];
-  SolarImpact_scale_U = SpatialImpact_scale_U[SpatialImpact_sectionType]; 
-  SolarImpact_scale_V = SpatialImpact_scale_V[SpatialImpact_sectionType];
-  SolarImpact_offset_U = SpatialImpact_offset_U[SpatialImpact_sectionType]; 
-  SolarImpact_offset_V = SpatialImpact_offset_V[SpatialImpact_sectionType];  
-
   SceneName = "temp_" + Section_Stamp();
   
   
