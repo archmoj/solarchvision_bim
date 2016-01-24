@@ -191,8 +191,8 @@ float[][] allSection_UVERAB = {{0,0,0,0,0,0}};
 int[] allSection_Type = {0};
 int[] allSection_RES1 = {0};
 int[] allSection_RES2 = {0};
-PImage[] allSection_SpatialImpact = {createImage(2,2, RGB)};
-PImage[][] allSection_SolarImpact = {{createImage(2,2, RGB)}}; 
+PImage[] allSection_SpatialImpact = {createImage(2, 2, RGB)};
+PImage[][] allSection_SolarImpact = {{createImage(2, 2, RGB)}}; 
 int allSection_num = 0; 
 
 
@@ -9534,7 +9534,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
     if (update_impacts == 1)  {
 
-      SOLARCHVISION_calculate_CurrentSection_SolarImpact();
+      SOLARCHVISION_calculate_SolarImpact_CurrentSection();
       
       int RES1 = SolarImpact_RES1;
       int RES2 = SolarImpact_RES2;
@@ -12474,6 +12474,10 @@ void WIN3D_keyPressed (KeyEvent e) {
                     STUDY_Update = 1;                   
                     WIN3D_Update = 1;
                     ROLLOUT_Update = 1; 
+                    break;
+                    
+         case ' '  :SOLARCHVISION_calculate_SolarImpact_selectedSections();
+                    WIN3D_Update = 1;
                     break;
         
       }
@@ -19240,10 +19244,10 @@ void SOLARCHVISION_remove_Sections () {
   allSection_RES2[0] = 0;
   
   allSection_SpatialImpact = new PImage [1];
-  allSection_SpatialImpact[0] = createImage(2,2, RGB);
+  allSection_SpatialImpact[0] = createImage(2, 2, RGB);
 
   allSection_SolarImpact = new PImage [1][1];
-  allSection_SolarImpact[0][0] = createImage(2,2, RGB);
+  allSection_SolarImpact[0][0] = createImage(2, 2, RGB);
 
   allSection_num = 0;
   
@@ -23025,7 +23029,7 @@ float Bilinear (float f_00, float f_10, float f_11, float f_01, float x, float y
    
 float LAND_TEXTURE_scale_U = 1000; // 1km
 float LAND_TEXTURE_scale_V = 1000; // 1km
-PImage LAND_TEXTURE = createImage(2,2, RGB);
+PImage LAND_TEXTURE = createImage(2, 2, RGB);
 
 String LAND_TEXTURE_ImagePath = "";
 
@@ -23033,7 +23037,7 @@ void SOLARCHVISION_LoadLAND_TEXTURE (String LandDirectory) {
 
   LAND_TEXTURE_scale_U = 1000; // 1km
   LAND_TEXTURE_scale_V = 1000; // 1km  
-  LAND_TEXTURE = createImage(2,2, RGB);
+  LAND_TEXTURE = createImage(2, 2, RGB);
   
   Display_LAND_TEXTURE = 0;
   
@@ -23668,7 +23672,7 @@ void SOLARCHVISION_build_SolarImpact_Image_array () {
   
   for (int j = STUDY_j_start - 1; j < STUDY_j_end; j += 1) { // total image at j = -1 
     
-    SolarImpact_Image[j + 1] = createImage(2,2,RGB); // empty and small
+    SolarImpact_Image[j + 1] = createImage(2, 2, RGB); // empty and small
     
   }  
   
@@ -23681,7 +23685,7 @@ void SOLARCHVISION_build_WindRose_Image_array () {
   
   for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) { 
     
-    WindRose_Image[j + 1] = createImage(2,2,RGB); // empty and small
+    WindRose_Image[j + 1] = createImage(2, 2, RGB); // empty and small
     
   }  
   
@@ -24122,7 +24126,7 @@ float[][] SOLARCHVISION_3DtraceContour (float epsilon, float x, float y, float z
 
 
 
-void SOLARCHVISION_calculate_CurrentSection_SolarImpact () {
+void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
 
   SOLARCHVISION_build_SolarImpact_Image_array();
   
@@ -24587,8 +24591,10 @@ void SOLARCHVISION_calculate_CurrentSection_SolarImpact () {
 
 void SOLARCHVISION_calculate_SolarImpact_selectedSections () {
   
+  println("start");
+  
   for (int o = selectedSection_numbers.length - 1; o >= 0; o--) {
-    
+
     int f = selectedSection_numbers[o];
     
     if (f != 0) {        
@@ -24604,13 +24610,22 @@ void SOLARCHVISION_calculate_SolarImpact_selectedSections () {
       SolarImpact_scale_U = allSection_UVERAB[f][4];
       SolarImpact_scale_V = allSection_UVERAB[f][5];
 
-      SOLARCHVISION_calculate_CurrentSection_SolarImpact();
-      for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
+      SOLARCHVISION_calculate_SolarImpact_CurrentSection();
+      for (int j = STUDY_j_start - 1; j < STUDY_j_end; j += 1) {
+        
+        println("j", j);
+        
+        allSection_SolarImpact[f][j + 1] = createImage(SolarImpact_RES1, SolarImpact_RES2, RGB);
+        
         allSection_SolarImpact[f][j + 1].copy(SolarImpact_Image[j + 1], 0, 0, SolarImpact_RES1, SolarImpact_RES2, 0, 0, SolarImpact_RES1, SolarImpact_RES2);
+        
+        println("copied!");
       } 
 
     }
   }
+  
+  println("end");
 }
 
 
@@ -24639,7 +24654,7 @@ void SOLARCHVISION_calculate_SpatialImpact_selectedSections () {
         if ((SpatialImpact_Image.width != SpatialImpact_RES1) || (SpatialImpact_Image.height != SpatialImpact_RES2)) {
           SpatialImpact_Image = createImage(SpatialImpact_RES1, SpatialImpact_RES2, ARGB);
         }
-        SOLARCHVISION_calculate_CurrentSection_SpatialImpact();
+        SOLARCHVISION_calculate_SpatialImpact_CurrentSection();
         
         allSection_SpatialImpact[f].copy(SpatialImpact_Image, 0, 0, SpatialImpact_RES1, SpatialImpact_RES2, 0, 0, SpatialImpact_RES1, SpatialImpact_RES2); 
       }
@@ -24663,7 +24678,7 @@ float deltaSpatialImpact = 0.05;
 float deltaSpatialImpactLines = 0.1 * deltaSpatialImpact;
 
 
-void SOLARCHVISION_calculate_CurrentSection_SpatialImpact () {
+void SOLARCHVISION_calculate_SpatialImpact_CurrentSection () {
 
   if (SpatialImpact_sectionType != 0) {
 
@@ -34314,8 +34329,9 @@ void SOLARCHVISION_add_Section (int n, float u, float v, float elev, float rot, 
   
   PImage[] TempSection_SpatialImpact = {createImage(RES1, RES2, RGB)}; 
   allSection_SpatialImpact = (PImage[]) concat(allSection_SpatialImpact, TempSection_SpatialImpact);
-
-  PImage[][] TempSection_SolarImpact = new PImage[1][(1 + STUDY_j_end - STUDY_j_start)];
+  
+  // dirty way of doing it. Flexible day numbers. But limited number!  
+  PImage[][] TempSection_SolarImpact = {{createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB)}};
   allSection_SolarImpact = (PImage[][]) concat(allSection_SolarImpact, TempSection_SolarImpact);    
 
   float[][] TempSection_UVERAB = {{u, v, elev, rot, dU, dV}};
@@ -34342,7 +34358,7 @@ void SOLARCHVISION_draw_Sections () {
   if (Display_Sections != 0) {
 
     for (int f = 1; f <= allSection_num; f++) {
-
+      
       float Section_offset_U = allSection_UVERAB[f][0];
       float Section_offset_V = allSection_UVERAB[f][1];
       float Section_Elevation = allSection_UVERAB[f][2];
@@ -34408,10 +34424,6 @@ void SOLARCHVISION_draw_Sections () {
 
 
 }
-
-
-//yyyyyyyyyyy
-
 
 
 float[] SOLARCHVISION_getPoints_Section (int q, int Section_Type, float Section_offset_U, float Section_offset_V, float Section_Elevation, float Section_Rotation, float Section_scale_U, float Section_scale_V, int Section_RES1, int Section_RES2) {
@@ -40852,7 +40864,7 @@ void SOLARCHVISION_load_project (String myFile) {
         }
         else {
           LAND_TEXTURE_ImagePath = new_TEXTURE_path;
-          LAND_TEXTURE = createImage(2,2, RGB);
+          LAND_TEXTURE = createImage(2, 2, RGB);
           if (LAND_TEXTURE_ImagePath.equals("")) {
           }
           else {
@@ -40886,7 +40898,7 @@ void SOLARCHVISION_load_project (String myFile) {
           }
           else {
             Object2D_ImagePath[i] = new_TEXTURE_path;
-            Object2DImages[i] = createImage(2,2, RGB);
+            Object2DImages[i] = createImage(2, 2, RGB);
             if (Object2D_ImagePath[i].equals("")) {
             }
             else {
