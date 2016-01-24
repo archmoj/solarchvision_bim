@@ -9534,6 +9534,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
     if (update_impacts == 1)  {
 
+      SOLARCHVISION_calculate_CurrentSection_SolarImpact();
+      
       int RES1 = SolarImpact_RES1;
       int RES2 = SolarImpact_RES2;
   
@@ -9595,7 +9597,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           STUDY_Diagrams.rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / STUDY_U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
     
           STUDY_Diagrams.imageMode(CENTER); 
-          //STUDY_Diagrams.image(Image_RGBA, (j + 100 * obj_scale) * sx_Plot, - (1 * p * sx_Plot / STUDY_U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
+          STUDY_Diagrams.image(SolarImpact_Image[j + 1], (j + 100 * obj_scale) * sx_Plot, - (1 * p * sx_Plot / STUDY_U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
 
           STUDY_Diagrams.stroke(0);
           STUDY_Diagrams.fill(0);
@@ -9627,7 +9629,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
           //STUDY_Diagrams.rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / STUDY_U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
           
           STUDY_Diagrams.imageMode(CENTER); 
-          //STUDY_Diagrams.image(total_Image_RGBA, (j + 100 * obj_scale) * sx_Plot, - (1 * p * sx_Plot / STUDY_U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
+          //STUDY_Diagrams.image(SolarImpact_Image[j + 1], (j + 100 * obj_scale) * sx_Plot, - (1 * p * sx_Plot / STUDY_U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
           
           STUDY_Diagrams.stroke(0);
           STUDY_Diagrams.fill(0);
@@ -23664,7 +23666,7 @@ void SOLARCHVISION_build_SolarImpact_Image_array () {
 
   SolarImpact_Image = new PImage [(1 + STUDY_j_end - STUDY_j_start)];
   
-  for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) { 
+  for (int j = STUDY_j_start - 1; j < STUDY_j_end; j += 1) { // total image at j = -1 
     
     SolarImpact_Image[j + 1] = createImage(2,2,RGB); // empty and small
     
@@ -24122,14 +24124,11 @@ float[][] SOLARCHVISION_3DtraceContour (float epsilon, float x, float y, float z
 
 void SOLARCHVISION_calculate_CurrentSection_SolarImpact () {
 
+  SOLARCHVISION_build_SolarImpact_Image_array();
+  
   if (SolarImpact_sectionType != 0) {
 
     cursor(WAIT);
-    
-    
-
-    SOLARCHVISION_build_SolarImpact_Image_array();
-    
     
     int start_z = get_startZ_endZ(impacts_source)[0];
     int end_z = get_startZ_endZ(impacts_source)[1]; 
@@ -24605,14 +24604,8 @@ void SOLARCHVISION_calculate_SolarImpact_selectedSections () {
       SolarImpact_scale_U = allSection_UVERAB[f][4];
       SolarImpact_scale_V = allSection_UVERAB[f][5];
 
+      SOLARCHVISION_calculate_CurrentSection_SolarImpact();
       for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
-
-        if ((SolarImpact_Image[j + 1].width != SolarImpact_RES1) || (SolarImpact_Image[j + 1].height != SolarImpact_RES2)) {
-          SolarImpact_Image[j + 1] = createImage(SolarImpact_RES1, SolarImpact_RES2, ARGB);
-        }
-        
-        SOLARCHVISION_calculate_CurrentSection_SolarImpact();
-      
         allSection_SolarImpact[f][j + 1].copy(SolarImpact_Image[j + 1], 0, 0, SolarImpact_RES1, SolarImpact_RES2, 0, 0, SolarImpact_RES1, SolarImpact_RES2);
       } 
 
