@@ -449,7 +449,7 @@ String get_SpatialImpact_Filename () {
 
 String get_SolarImpact_Filename () {
   
-  return DiagramsFolder + "/" + nf(_YEAR, 2) + "-" + nf(_MONTH, 2) + "-" + nf(_DAY, 2) + "/" + databaseString[impacts_source] + "/Impacts/SolarImpact" + nf(SpatialImpact_sectionType, 0) + "h" + nf(int(roundTo(SpatialImpact_Elevation[SpatialImpact_sectionType], 1)), 4) + "r" + nf(int(roundTo(SpatialImpact_Rotation[SpatialImpact_sectionType], 1)), 3);
+  return DiagramsFolder + "/" + nf(_YEAR, 2) + "-" + nf(_MONTH, 2) + "-" + nf(_DAY, 2) + "/" + databaseString[impacts_source] + "/Impacts/SolarImpact" + nf(SolarImpact_sectionType, 0) + "h" + nf(int(roundTo(SolarImpact_Elevation, 1)), 4) + "r" + nf(int(roundTo(SolarImpact_Rotation, 1)), 3);
 }
 
 
@@ -9559,17 +9559,18 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   
       int PAL_TYPE = 0; 
       int PAL_DIR = 1;
+      float PAL_Multiplier = 1; 
       
       if (Impact_TYPE == Impact_ACTIVE) {
-        PAL_TYPE = STUDY_Pallet_ACTIVE_CLR; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;  
+        PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; 
+        PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;  
+        PAL_Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT;
       }
       if (Impact_TYPE == Impact_PASSIVE) {  
-        PAL_TYPE = STUDY_Pallet_PASSIVE_CLR; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
-      }             
-      
-      float PAL_Multiplier = 1; 
-      if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * STUDY_Pallet_ACTIVE_MLT;
-      if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * STUDY_Pallet_PASSIVE_MLT; 
+        PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; 
+        PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+        PAL_Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT; 
+      }        
   
       for (int p = 0; p < 1; p += 1) { 
         int l = impact_layer;
@@ -9728,19 +9729,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         }    
   
       }
-  
-      if (Impact_TYPE == Impact_ACTIVE) {
-        OBJECTS_Pallet_ACTIVE_CLR = STUDY_Pallet_ACTIVE_CLR;
-        OBJECTS_Pallet_ACTIVE_DIR = STUDY_Pallet_ACTIVE_DIR;
-        OBJECTS_Pallet_ACTIVE_MLT = STUDY_Pallet_ACTIVE_MLT;
-      } 
-  
-      if (Impact_TYPE == Impact_PASSIVE) {
-        OBJECTS_Pallet_PASSIVE_CLR = STUDY_Pallet_PASSIVE_CLR;
-        OBJECTS_Pallet_PASSIVE_DIR = STUDY_Pallet_PASSIVE_DIR;
-        OBJECTS_Pallet_PASSIVE_MLT = STUDY_Pallet_PASSIVE_MLT;
-      } 
-      
+
     }
 
     if (Display_SolarImpact_Image != 0) WIN3D_Update = 1;
@@ -24162,17 +24151,18 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
 
     int PAL_TYPE = 0; 
     int PAL_DIR = 1;
+    float PAL_Multiplier = 1; 
     
     if (Impact_TYPE == Impact_ACTIVE) {
-      PAL_TYPE = STUDY_Pallet_ACTIVE_CLR; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;  
+      PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; 
+      PAL_DIR = OBJECTS_Pallet_ACTIVE_DIR;  
+      PAL_Multiplier = 1.0 * OBJECTS_Pallet_ACTIVE_MLT;
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = STUDY_Pallet_PASSIVE_CLR; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
+      PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; 
+      PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
+      PAL_Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT; 
     }             
-    
-    float PAL_Multiplier = 1; 
-    if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * STUDY_Pallet_ACTIVE_MLT;
-    if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * STUDY_Pallet_PASSIVE_MLT; 
 
     for (int p = 0; p < 1; p += 1) { 
       int l = impact_layer;
@@ -24577,10 +24567,6 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
         }      
       }
     }
-
-
-
-  
     
     cursor(ARROW);
   }
@@ -24590,8 +24576,6 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
 
 
 void SOLARCHVISION_calculate_SolarImpact_selectedSections () {
-  
-  println("start");
   
   for (int o = selectedSection_numbers.length - 1; o >= 0; o--) {
 
@@ -24605,27 +24589,25 @@ void SOLARCHVISION_calculate_SolarImpact_selectedSections () {
 
       SolarImpact_offset_U = allSection_UVERAB[f][0];
       SolarImpact_offset_V = allSection_UVERAB[f][1];
-      SolarImpact_Elevation = allSection_UVERAB[f][2];
+      SolarImpact_Elevation = 0.1 + allSection_UVERAB[f][2];
       SolarImpact_Rotation = allSection_UVERAB[f][3];
       SolarImpact_scale_U = allSection_UVERAB[f][4];
       SolarImpact_scale_V = allSection_UVERAB[f][5];
+      
+      SceneName = "temp_" + Section_Stamp();
 
       SOLARCHVISION_calculate_SolarImpact_CurrentSection();
       for (int j = STUDY_j_start - 1; j < STUDY_j_end; j += 1) {
-        
-        println("j", j);
-        
+
         allSection_SolarImpact[f][j + 1] = createImage(SolarImpact_RES1, SolarImpact_RES2, RGB);
         
         allSection_SolarImpact[f][j + 1].copy(SolarImpact_Image[j + 1], 0, 0, SolarImpact_RES1, SolarImpact_RES2, 0, 0, SolarImpact_RES1, SolarImpact_RES2);
-        
-        println("copied!");
+
       } 
 
     }
   }
-  
-  println("end");
+
 }
 
 
@@ -33262,7 +33244,21 @@ String NearLatitude_Stamp () {
 
 
 
-
+String Section_Stamp () {
+  
+  String s = "";
+ 
+  s += "t" + nf(SpatialImpact_sectionType, 0);
+  s += "u" + nf(SolarImpact_offset_U, 0, 3);
+  s += "v" + nf(SolarImpact_offset_V, 0, 3);
+  s += "w" + nf(SolarImpact_Elevation, 0, 3);
+  s += "r" + nf(SolarImpact_Rotation, 0, 3);  
+  
+  s = s.replace('.', 'p');
+  s = s.replace('-', 'n');
+  
+  return s;
+}
 
 
 PGraphics SHADOW_Diagrams; // to be accessible to Fractal plants
@@ -33274,14 +33270,19 @@ void RenderShadowsOnUrbanPlane () {
 
   cursor(WAIT);  
   
-  SceneName = ProjectName;
-  
-  SolarImpact_Rotation =  SpatialImpact_Rotation[SpatialImpact_sectionType];
+  SolarImpact_sectionType = SpatialImpact_sectionType;
+  SolarImpact_RES1 = SpatialImpact_RES1;
+  SolarImpact_RES2 = SpatialImpact_RES2;    
+
+  SolarImpact_Rotation = SpatialImpact_Rotation[SpatialImpact_sectionType];
   SolarImpact_Elevation = 0.1 + SpatialImpact_Elevation[SpatialImpact_sectionType];
   SolarImpact_scale_U = SpatialImpact_scale_U[SpatialImpact_sectionType]; 
   SolarImpact_scale_V = SpatialImpact_scale_V[SpatialImpact_sectionType];
   SolarImpact_offset_U = SpatialImpact_offset_U[SpatialImpact_sectionType]; 
   SolarImpact_offset_V = SpatialImpact_offset_V[SpatialImpact_sectionType];  
+
+  SceneName = "temp_" + Section_Stamp();
+  
   
   int RES1 = SolarImpact_RES1;
   int RES2 = SolarImpact_RES2;
