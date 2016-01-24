@@ -191,7 +191,8 @@ float[][] allSection_UVERAB = {{0,0,0,0,0,0}};
 int[] allSection_Type = {0};
 int[] allSection_RES1 = {0};
 int[] allSection_RES2 = {0};
-PImage[] allSection_SpatialImpact = {createImage(2,2, RGB)}; 
+PImage[] allSection_SpatialImpact = {createImage(2,2, RGB)};
+PImage[][] allSection_SolarImpact = {{createImage(2,2, RGB)}}; 
 int allSection_num = 0; 
 
 
@@ -14297,6 +14298,13 @@ void SOLARCHVISION_deleteSelection () {
           
           allSection_SpatialImpact = (PImage[]) concat(startList, endList);
         }
+        
+        {
+          PImage[][] startList = (PImage[][]) subset(allSection_SolarImpact, 0, OBJ_NUM);
+          PImage[][] endList = (PImage[][]) subset(allSection_SolarImpact, OBJ_NUM + 1);
+          
+          allSection_SolarImpact = (PImage[][]) concat(startList, endList);
+        }        
     
         allSection_num -= 1;
       }
@@ -19627,6 +19635,9 @@ void SOLARCHVISION_remove_Sections () {
   allSection_SpatialImpact = new PImage [1];
   allSection_SpatialImpact[0] = createImage(2,2, RGB);
 
+  allSection_SolarImpact = new PImage [1][1];
+  allSection_SolarImpact[0][0] = createImage(2,2, RGB);
+
   allSection_num = 0;
   
   SOLARCHVISION_deselectAll();  
@@ -24501,6 +24512,55 @@ float[][] SOLARCHVISION_3DtraceContour (float epsilon, float x, float y, float z
   
   return return_array;
 }
+
+
+
+void SOLARCHVISION_calculate_ParametricGeometries_SolarImpact () {
+
+  if (SolarImpact_sectionType != 0) {
+
+    cursor(WAIT);
+    
+    
+    
+    
+    
+    cursor(ARROW);
+  }
+}
+    
+
+
+
+void SOLARCHVISION_calculate_SolarImpact_selectedSections () {
+  
+  for (int o = selectedSection_numbers.length - 1; o >= 0; o--) {
+    
+    int f = selectedSection_numbers[o];
+    
+    if (f != 0) {        
+      
+      SolarImpact_sectionType = allSection_Type[f];
+      SolarImpact_RES1 = allSection_RES1[f];
+      SolarImpact_RES2 = allSection_RES2[f];     
+
+      SolarImpact_offset_U = allSection_UVERAB[f][0];
+      SolarImpact_offset_V = allSection_UVERAB[f][1];
+      SolarImpact_Elevation = allSection_UVERAB[f][2];
+      SolarImpact_Rotation = allSection_UVERAB[f][3];
+      SolarImpact_scale_U = allSection_UVERAB[f][4];
+      SolarImpact_scale_V = allSection_UVERAB[f][5];
+      /*
+      if ((SolarImpact_Image.width != SolarImpact_RES1) || (SolarImpact_Image.height != SolarImpact_RES2)) {
+        SolarImpact_Image = createImage(SolarImpact_RES1, SolarImpact_RES2, ARGB);
+      }
+      SOLARCHVISION_calculate_ParametricGeometries_SolarImpact();
+      allSection_SolarImpact[f].copy(SolarImpact_Image, 0, 0, SolarImpact_RES1, SolarImpact_RES2, 0, 0, SolarImpact_RES1, SolarImpact_RES2); 
+      */
+    }
+  }
+}
+
 
 
 
@@ -34364,8 +34424,6 @@ void SOLARCHVISION_draw_Sections () {
       int Section_Type = allSection_Type[f];
       int Section_RES1 = allSection_RES1[f];
       int Section_RES2 = allSection_RES2[f];
-      PImage Section_SpatialImpact = allSection_SpatialImpact[f];
-      
 
       if (Section_Type != 0) {
 
@@ -34374,9 +34432,20 @@ void SOLARCHVISION_draw_Sections () {
         
         WIN3D_Diagrams.beginShape();
         
-        WIN3D_Diagrams.texture(Section_SpatialImpact);  
-        WIN3D_Diagrams.stroke(255, 255, 255, 0);
-        WIN3D_Diagrams.fill(255, 255, 255, 0);
+        if (Display_SolarImpact_Image != 0) { 
+          WIN3D_Diagrams.texture(allSection_SolarImpact[f][Day_of_Impact_to_Display]);
+          
+          WIN3D_Diagrams.noStroke();
+          WIN3D_Diagrams.noFill();
+        }
+        else if (Display_SpatialImpact_Image != 0){
+          WIN3D_Diagrams.texture(allSection_SpatialImpact[f]);
+          
+          WIN3D_Diagrams.noStroke();
+          WIN3D_Diagrams.noFill();
+        }  
+        
+
   
         for (int q = 0; q < 4; q++) {
           
@@ -34410,6 +34479,10 @@ void SOLARCHVISION_draw_Sections () {
 
 
 }
+
+
+yyyyyyyyyyyyyyyy
+
 
 
 float[] SOLARCHVISION_getPoints_Section (int q, int Section_Type, float Section_offset_U, float Section_offset_V, float Section_Elevation, float Section_Rotation, float Section_scale_U, float Section_scale_V, int Section_RES1, int Section_RES2) {
