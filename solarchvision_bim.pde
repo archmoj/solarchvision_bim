@@ -9532,8 +9532,8 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
   
   if ((plot_impacts == 0) || (plot_impacts == 1)) {
 
-    if (update_impacts == 1) {
-    
+    if (update_impacts == 1)  {
+      
       SOLARCHVISION_build_SolarImpact_Image_array();
 
       int RES1 = SolarImpact_RES1;
@@ -9574,21 +9574,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       for (int p = 0; p < 1; p += 1) { 
         int l = impact_layer;
 
-        PImage total_Image_RGBA = createImage(RES1, RES2, RGB);
-        
-        float[][][] total_Matrix_ARGB;
-        total_Matrix_ARGB = new float [4][RES1][RES2];
-  
-        for (int np = 0; np < (RES1 * RES2); np++) {
-          int Image_X = np % RES1;
-          int Image_Y = np / RES1;
-          
-          total_Matrix_ARGB[0][Image_X][Image_Y] = 0;
-          total_Matrix_ARGB[1][Image_X][Image_Y] = 0;
-          total_Matrix_ARGB[2][Image_X][Image_Y] = 0;
-          total_Matrix_ARGB[3][Image_X][Image_Y] = 0; 
-        }
-  
         for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
  
           now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
@@ -9600,330 +9585,30 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
            now_j = (now_j + 365) % 365; 
           }
    
-          float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
-  
-          int DATE_ANGLE_approximate = int((DATE_ANGLE + 15) / 30) * 30;
-          if (DATE_ANGLE_approximate == 360) DATE_ANGLE_approximate = 0;
-          
-          float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
-          float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
-          
-          //println(DATE_ANGLE, DATE_ANGLE_approximate);
-  
-          int[] Normals_COL_N;
-          Normals_COL_N = new int [9];
-          Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
-          
-          //println("j =", j);
-          //println(Normals_COL_N);
-          
-          for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
-            if (nk != -1) {
-              int k = int(nk / num_add_days);
-              int j_ADD = nk % num_add_days; 
-  
-              float[][][] Matrix_ARGB;
-              
-              Matrix_ARGB = new float [4][RES1][RES2];
-  
-              for (int np = 0; np < (RES1 * RES2); np++) {
-                int Image_X = np % RES1;
-                int Image_Y = np / RES1;
-                
-                Matrix_ARGB[0][Image_X][Image_Y] = FLOAT_undefined;
-                Matrix_ARGB[1][Image_X][Image_Y] = FLOAT_undefined;
-                Matrix_ARGB[2][Image_X][Image_Y] = FLOAT_undefined;
-                Matrix_ARGB[3][Image_X][Image_Y] = FLOAT_undefined;
-              }
-  
-              PImage Image_RGBA = createImage(RES1, RES2, RGB);
-  
-  
-
-                
-              int _valuesNUM = 0;  
-  
-              for (int i = 4; i <= 20; i += 1) { // to make it faster. Also the images are not available out of this period. 
-                if (isInHourlyRange(i) == 1) {
-  
-                  float HOUR_ANGLE = i; 
-                  float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
-  
-                  if (SunR[3] > 0) {
-    
-                    now_k = k;
-                    now_i = i;
-                    now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
-        
-                    if (now_j >= 365) {
-                     now_j = now_j % 365; 
-                    }
-                    if (now_j < 0) {
-                     now_j = (now_j + 365) % 365; 
-                    }
-      
-                    if (impacts_source == databaseNumber_CLIMATE_WY2) {
-                        Pa = CLIMATE_WY2[now_i][now_j][_dirnorrad][now_k]; 
-                        Pb = CLIMATE_WY2[now_i][now_j][_difhorrad][now_k]; 
-                        Pc = CLIMATE_WY2[now_i][now_j][_direffect][now_k]; 
-                        Pd = CLIMATE_WY2[now_i][now_j][_difeffect][now_k]; 
-                    }
-                    if (impacts_source == databaseNumber_ENSEMBLE) {
-                        Pa = ENSEMBLE[now_i][now_j][_dirnorrad][now_k]; 
-                        Pb = ENSEMBLE[now_i][now_j][_difhorrad][now_k]; 
-                        Pc = ENSEMBLE[now_i][now_j][_direffect][now_k]; 
-                        Pd = ENSEMBLE[now_i][now_j][_difeffect][now_k]; 
-                    }            
-                    if (impacts_source == databaseNumber_OBSERVED) {
-                        Pa = OBSERVED[now_i][now_j][_dirnorrad][now_k]; 
-                        Pb = OBSERVED[now_i][now_j][_difhorrad][now_k]; 
-                        Pc = OBSERVED[now_i][now_j][_direffect][now_k]; 
-                        Pd = OBSERVED[now_i][now_j][_difeffect][now_k]; 
-                    }   
-                    if (impacts_source == databaseNumber_CLIMATE_EPW) {
-                        Pa = CLIMATE_EPW[now_i][now_j][_dirnorrad][now_k]; 
-                        Pb = CLIMATE_EPW[now_i][now_j][_difhorrad][now_k]; 
-                        Pc = CLIMATE_EPW[now_i][now_j][_direffect][now_k]; 
-                        Pd = CLIMATE_EPW[now_i][now_j][_difeffect][now_k]; 
-                    }   
-      
-                    if ((Pa > 0.9 * FLOAT_undefined) || (Pb > 0.9 * FLOAT_undefined) || (Pc > 0.9 * FLOAT_undefined) || (Pd > 0.9 * FLOAT_undefined)) {
-                      _values_R_dir = FLOAT_undefined;
-                      _values_R_dif = FLOAT_undefined;
-                      _values_E_dir = FLOAT_undefined;
-                      _values_E_dif = FLOAT_undefined; 
-                    }
-                    else {
-        
-                      int drw_count = 0;
-                      if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
-                      if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
-                      if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
-                      if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
-                      
-                      if (drw_count == 1) {
-                        _values_R_dir = 0.001 * Pa;  
-                        _values_R_dif = 0.001 * Pb; 
-                        _values_E_dir = 0.001 * Pc;
-                        _values_E_dif = 0.001 * Pd;
-                        
-                        for (int RAD_TYPE = 0; RAD_TYPE <= 1; RAD_TYPE += 1) { 
-                          float RAD_VALUE = 0;
-                          float EFF_VALUE = 0;
-                          if (RAD_TYPE == 0) {
-                            RAD_VALUE = _values_R_dir; 
-                            EFF_VALUE = _values_E_dir;
-                          }
-                          else { 
-                            //float MULT_dif = 2.0;
-                            float MULT_dif = E; // 2.718
-                            
-                            RAD_VALUE = _values_R_dif * MULT_dif;
-                            EFF_VALUE = _values_E_dif * MULT_dif;
-                          }
-      
-                          PImage[] Shadings = new PImage[2];
-                          for (int SHD = 0; SHD <= 1; SHD += 1) {
-                            String[] STR_SHD = {"F" , "T"};
-                            String File_Name = "";
-      
-                            if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Financial_District")) { 
-                              File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + "Financial_District" + "/";
-                            }   
-                            else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Ryerson_University")) { 
-                              File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + "Ryerson_University" + "/";
-                            }   
-                            else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Place_Bonaventure")) { 
-                              File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + "Place_Bonaventure" + "/";
-                            }                      
-                            else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Montreal_Downtown")) { 
-                              if (camera_variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/MONTREAL_DOWNTOWN" + "/";
-                              if (camera_variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/EV_BUILDING" + "/";
-                            }
-                            else {
-                              File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
-                            }                          
-                            
-                            
-                            if (RAD_TYPE == 0) {
-                              File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
-                            }
-                            else {
-                              File_Name += "DIF_" + STR_SHD[SHD];
-                            }
-                            
-                            
-                            if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Financial_District")) { 
-                              File_Name += "_" + "Financial_District" + "_Camera" + nf(camera_variation, 2) + ".PNG";
-                            }    
-                            else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Ryerson_University")) { 
-                              File_Name += "_" + "Ryerson_University" + "_Camera" + nf(camera_variation, 2) + ".PNG";
-                            }    
-                            else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Place_Bonaventure")) { 
-                              File_Name += "_" + "Place_Bonaventure" + "_Camera" + nf(camera_variation, 2) + ".PNG";
-                            }                      
-                            else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Montreal_Downtown")) { 
-                              if (camera_variation == 1) File_Name += "_" + "Montreal_Downtown.PNG";
-                              if (camera_variation == 2) File_Name += "_" + "Montreal_EV_BUILDING_B.PNG";
-                            }
-                            else {
-                              File_Name += "_" + SceneName + "_" + NearLatitude_Stamp() + "_Camera" + nf(camera_variation, 2) + ".PNG";
-                            }
-      
-                            //println (File_Name);
-                            Shadings[SHD]  = loadImage(File_Name);
-                          }   
          
-                          for (int np = 0; np < (RES1 * RES2); np++) {
-                            int Image_X = np % RES1;
-                            int Image_Y = np / RES1;
-                            
-                            if (Matrix_ARGB[0][Image_X][Image_Y] > 0.9 * FLOAT_undefined) {
-                              Matrix_ARGB[0][Image_X][Image_Y] = 0;
-                              Matrix_ARGB[1][Image_X][Image_Y] = 0;
-                              Matrix_ARGB[2][Image_X][Image_Y] = 0;
-                              Matrix_ARGB[3][Image_X][Image_Y] = 0;
-                            }                             
-                    
-                            color COL0 = Shadings[0].get(Image_X, Image_Y);
-                            color COL1 = Shadings[1].get(Image_X, Image_Y);
-                            //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
-                            float COL_V0 = (COL0 >> 8 & 0xFF) / 255.0; 
-                            float COL_V1 = (COL1 >> 8 & 0xFF) / 255.0;
-                           
-                            float COL_Alpha = (COL1 >> 24 & 0xFF);
-                            
-                            Matrix_ARGB[0][Image_X][Image_Y] = COL_Alpha;
-                            
-                            if (Impact_TYPE == Impact_ACTIVE) {  
-                              Matrix_ARGB[2][Image_X][Image_Y] += RAD_VALUE * COL_V1;
-                            }
-                            if (Impact_TYPE == Impact_PASSIVE) {
-                              if (EFF_VALUE < 0) {
-                                Matrix_ARGB[1][Image_X][Image_Y] -= EFF_VALUE * COL_V1;
-                                if (COL_V0 != COL_V1) Matrix_ARGB[3][Image_X][Image_Y] -= EFF_VALUE * (COL_V0 - COL_V1); 
-                              }
-                              else {
-                                Matrix_ARGB[3][Image_X][Image_Y] += EFF_VALUE * COL_V1;
-                                if (COL_V0 != COL_V1) Matrix_ARGB[1][Image_X][Image_Y] += EFF_VALUE * (COL_V0 - COL_V1);
-                              }
-                            }
-                            
-                            if (np == 0) _valuesNUM += 1;
-      
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-    
-              float _valuesMUL = 0;
-              
-              if (_valuesNUM != 0) {
-                //_valuesMUL = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / (1.0 * _valuesNUM);  
-                //_valuesMUL = int(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE)) / (1.0 * _valuesNUM);
-                _valuesMUL = roundTo(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE), 1) / (1.0 * _valuesNUM);
-              }
-             
-              Image_RGBA.loadPixels();
-    
-              for (int np = 0; np < (RES1 * RES2); np++) {
-                int Image_X = np % RES1;
-                int Image_Y = np / RES1;
-    
-                float Image_A = Matrix_ARGB[0][Image_X][Image_Y] * _valuesMUL;
-                float Image_R = Matrix_ARGB[1][Image_X][Image_Y] * _valuesMUL;
-                float Image_G = Matrix_ARGB[2][Image_X][Image_Y] * _valuesMUL;
-                float Image_B = Matrix_ARGB[3][Image_X][Image_Y] * _valuesMUL;
-                
-                total_Matrix_ARGB[0][Image_X][Image_Y] += Image_A;
-                total_Matrix_ARGB[1][Image_X][Image_Y] += Image_R;
-                total_Matrix_ARGB[2][Image_X][Image_Y] += Image_G;
-                total_Matrix_ARGB[3][Image_X][Image_Y] += Image_B; 
-  
-               
-                float[] _c = {0, 0, 0, 0};
-                
-                float _u = 0;
-                
-                float _valuesSUM = FLOAT_undefined;
-                
-                if (Impact_TYPE == Impact_ACTIVE) {
-                  _valuesSUM = Image_G;
-                  
-                  //_u = 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
-                  //_u = (0.1 * PAL_Multiplier * _valuesSUM);
-                  _u = (0.2 * PAL_Multiplier * _valuesSUM);
-                }
-             
-                if (Impact_TYPE == Impact_PASSIVE) {
-                  float AVERAGE, PERCENTAGE, COMPARISON;
-                  
-                  AVERAGE = (Image_B - Image_R);
-                  if ((Image_B + Image_R) > 0.00001) PERCENTAGE = (Image_B - Image_R) / (1.0 * (Image_B + Image_R)); 
-                  else PERCENTAGE = 0.0;
-                  COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
-                  
-                  _valuesSUM = COMPARISON;
-                  
-                  //_u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
-                  _u = 0.5 + 0.5 * 0.75 * (0.2 * PAL_Multiplier * _valuesSUM);
-                }
-                
-                
-                //if ((Image_X == RES1 / 2) && (Image_Y == RES2 / 2)) println("Image Processing: <CENTER> _valuesSUM =", _valuesSUM); 
-                //if ((Image_X == RES1 - 1) && (Image_Y == RES2 - 1)) println("Image Processing: <CORNER> _valuesSUM =", _valuesSUM); 
-                
-                if (PAL_DIR == -1) _u = 1 - _u;
-                if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                if (PAL_DIR == 2) _u =  0.5 * _u;
-                
-                _c = GET_COLOR_STYLE(PAL_TYPE, _u);
-                
-                if (Image_A != 0) Image_RGBA.pixels[np] = color(_c[1], _c[2], _c[3]);
-                else Image_RGBA.pixels[np] = color(223, 223, 223);
-    
-              }
-            
-              Image_RGBA.updatePixels(); 
-              
-              if (camera_variation == 0) {
-                SolarImpact_Image[j + 1] = Image_RGBA;           
-                if (SolarImpact_record_JPG == 1) {
-                  String myFile = get_SolarImpact_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(j + 1, 0) + ".jpg";
-                  SolarImpact_Image[j + 1].save(myFile);
-                  if (j == 0) SOLARCHVISION_explore_output(myFile);
-                  println("File created:" + myFile);                  
-                }
-              }            
-             
-              STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
-              STUDY_Diagrams.stroke(223);
-              STUDY_Diagrams.fill(223); 
-              STUDY_Diagrams.rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / STUDY_U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
-            
-              STUDY_Diagrams.strokeWeight(STUDY_T_scale * 2);
-              STUDY_Diagrams.stroke(255);
-              STUDY_Diagrams.noFill(); 
-              STUDY_Diagrams.rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / STUDY_U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
+          STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
+          STUDY_Diagrams.stroke(223);
+          STUDY_Diagrams.fill(223); 
+          STUDY_Diagrams.rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / STUDY_U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
         
-              STUDY_Diagrams.imageMode(CENTER); 
-              STUDY_Diagrams.image(Image_RGBA, (j + 100 * obj_scale) * sx_Plot, - (1 * p * sx_Plot / STUDY_U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
+          STUDY_Diagrams.strokeWeight(STUDY_T_scale * 2);
+          STUDY_Diagrams.stroke(255);
+          STUDY_Diagrams.noFill(); 
+          STUDY_Diagrams.rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / STUDY_U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
     
-              STUDY_Diagrams.stroke(0);
-              STUDY_Diagrams.fill(0);
-              STUDY_Diagrams.textAlign(CENTER, CENTER); 
-              STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
-              
-              String scenario_text = "";
-              //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
-              //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
-              STUDY_Diagrams.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / STUDY_U_scale);
-              
-            }
-          }
+          STUDY_Diagrams.imageMode(CENTER); 
+          //STUDY_Diagrams.image(Image_RGBA, (j + 100 * obj_scale) * sx_Plot, - (1 * p * sx_Plot / STUDY_U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
+
+          STUDY_Diagrams.stroke(0);
+          STUDY_Diagrams.fill(0);
+          STUDY_Diagrams.textAlign(CENTER, CENTER); 
+          STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
+          
+          String scenario_text = "";
+          //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
+          //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+          STUDY_Diagrams.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / STUDY_U_scale);
+          
         }
         
         //----------------------
@@ -9932,70 +9617,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         
         if (draw_impact_summary == 1) { 
           int j = -1; // << to put the summary graph before the daily graphs
-          
-          total_Image_RGBA.loadPixels();
-          
-          for (int np = 0; np < (RES1 * RES2); np++) {
-            int Image_X = np % RES1;
-            int Image_Y = np / RES1;
-          
-            float Image_A = total_Matrix_ARGB[0][Image_X][Image_Y] / (1.0 * (STUDY_j_end - STUDY_j_start));
-            float Image_R = total_Matrix_ARGB[1][Image_X][Image_Y] / (1.0 * (STUDY_j_end - STUDY_j_start));
-            float Image_G = total_Matrix_ARGB[2][Image_X][Image_Y] / (1.0 * (STUDY_j_end - STUDY_j_start));
-            float Image_B = total_Matrix_ARGB[3][Image_X][Image_Y] / (1.0 * (STUDY_j_end - STUDY_j_start));
-           
-            float[] _c = {0, 0, 0, 0};
-            
-            float _u = 0;
-            
-            float _valuesSUM = FLOAT_undefined;
-            
-            if (Impact_TYPE == Impact_ACTIVE) {
-              _valuesSUM = Image_G;
-              
-              //_u = 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
-              //_u = (0.1 * PAL_Multiplier * _valuesSUM);
-              _u = (0.2 * PAL_Multiplier * _valuesSUM);
-            }
-           
-            if (Impact_TYPE == Impact_PASSIVE) {
-              float AVERAGE, PERCENTAGE, COMPARISON;
-              
-              AVERAGE = (Image_B - Image_R);
-              if ((Image_B + Image_R) > 0.00001) PERCENTAGE = (Image_B - Image_R) / (1.0 * (Image_B + Image_R)); 
-              else PERCENTAGE = 0.0;
-              COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
-              
-              _valuesSUM = COMPARISON;
-              
-              //_valuesSUM *= ParametricGeometries_SpatialImpact_atIJ(Image_X, Image_Y); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-              
-              //_u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
-              _u = 0.5 + 0.5 * 0.75 * (0.2 * PAL_Multiplier * _valuesSUM);
-            }
-            
-            if (PAL_DIR == -1) _u = 1 - _u;
-            if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-            if (PAL_DIR == 2) _u =  0.5 * _u;
-            
-            _c = GET_COLOR_STYLE(PAL_TYPE, _u);
-            
-            if (Image_A != 0) total_Image_RGBA.pixels[np] = color(_c[1], _c[2], _c[3]);
-            else total_Image_RGBA.pixels[np] = color(223, 223, 223);
-          
-          }
-          
-          total_Image_RGBA.updatePixels(); 
-          
-          if (camera_variation == 0) {
-            SolarImpact_Image[0] = total_Image_RGBA;           
-            if (SolarImpact_record_JPG == 1) {
-              String myFile = get_SolarImpact_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(0, 0) + ".jpg";
-              SolarImpact_Image[0].save(myFile);
-              //SOLARCHVISION_explore_output(myFile);
-              println("File created:" + myFile);                
-            }
-          }      
   
           STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
           STUDY_Diagrams.stroke(223);
@@ -10119,7 +9740,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         OBJECTS_Pallet_PASSIVE_DIR = STUDY_Pallet_PASSIVE_DIR;
         OBJECTS_Pallet_PASSIVE_MLT = STUDY_Pallet_PASSIVE_MLT;
       } 
-    
+      
     }
 
     if (Display_SolarImpact_Image != 0) WIN3D_Update = 1;
@@ -24507,8 +24128,599 @@ void SOLARCHVISION_calculate_CurrentSection_SolarImpact () {
 
     cursor(WAIT);
     
+    /*
     
+    {
     
+      SOLARCHVISION_build_SolarImpact_Image_array();
+
+      int RES1 = SolarImpact_RES1;
+      int RES2 = SolarImpact_RES2;
+  
+      if (plot_impacts == 0) Impact_TYPE = Impact_ACTIVE; 
+      if (plot_impacts == 1) Impact_TYPE = Impact_PASSIVE;
+
+      float Pa = FLOAT_undefined;
+      float Pb = FLOAT_undefined;
+      float Pc = FLOAT_undefined;
+      float Pd = FLOAT_undefined;
+      
+      float _values_R_dir;
+      float _values_R_dif;
+      
+      float _values_E_dir;
+      float _values_E_dif;
+      
+      int now_k = 0;
+      int now_i = 0;
+      int now_j = 0;
+  
+      int PAL_TYPE = 0; 
+      int PAL_DIR = 1;
+      
+      if (Impact_TYPE == Impact_ACTIVE) {
+        PAL_TYPE = STUDY_Pallet_ACTIVE_CLR; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;  
+      }
+      if (Impact_TYPE == Impact_PASSIVE) {  
+        PAL_TYPE = STUDY_Pallet_PASSIVE_CLR; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
+      }             
+      
+      float PAL_Multiplier = 1; 
+      if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * STUDY_Pallet_ACTIVE_MLT;
+      if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * STUDY_Pallet_PASSIVE_MLT; 
+  
+      for (int p = 0; p < 1; p += 1) { 
+        int l = impact_layer;
+
+        PImage total_Image_RGBA = createImage(RES1, RES2, RGB);
+        
+        float[][][] total_Matrix_ARGB;
+        total_Matrix_ARGB = new float [4][RES1][RES2];
+  
+        for (int np = 0; np < (RES1 * RES2); np++) {
+          int Image_X = np % RES1;
+          int Image_Y = np / RES1;
+          
+          total_Matrix_ARGB[0][Image_X][Image_Y] = 0;
+          total_Matrix_ARGB[1][Image_X][Image_Y] = 0;
+          total_Matrix_ARGB[2][Image_X][Image_Y] = 0;
+          total_Matrix_ARGB[3][Image_X][Image_Y] = 0; 
+        }
+  
+        for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
+ 
+          now_j = (j * int(per_day) + BEGIN_DAY + 365) % 365;
+      
+          if (now_j >= 365) {
+           now_j = now_j % 365; 
+          }
+          if (now_j < 0) {
+           now_j = (now_j + 365) % 365; 
+          }
+   
+          float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
+  
+          int DATE_ANGLE_approximate = int((DATE_ANGLE + 15) / 30) * 30;
+          if (DATE_ANGLE_approximate == 360) DATE_ANGLE_approximate = 0;
+          
+          float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
+          float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
+          
+          //println(DATE_ANGLE, DATE_ANGLE_approximate);
+  
+          int[] Normals_COL_N;
+          Normals_COL_N = new int [9];
+          Normals_COL_N = SOLARCHVISION_PROCESS_DAILY_SCENARIOS(layers_count, start_z, end_z, j, DATE_ANGLE);
+          
+          //println("j =", j);
+          //println(Normals_COL_N);
+          
+          for (int nk = Normals_COL_N[l]; nk <= Normals_COL_N[l]; nk += 1) {
+            if (nk != -1) {
+              int k = int(nk / num_add_days);
+              int j_ADD = nk % num_add_days; 
+  
+              float[][][] Matrix_ARGB;
+              
+              Matrix_ARGB = new float [4][RES1][RES2];
+  
+              for (int np = 0; np < (RES1 * RES2); np++) {
+                int Image_X = np % RES1;
+                int Image_Y = np / RES1;
+                
+                Matrix_ARGB[0][Image_X][Image_Y] = FLOAT_undefined;
+                Matrix_ARGB[1][Image_X][Image_Y] = FLOAT_undefined;
+                Matrix_ARGB[2][Image_X][Image_Y] = FLOAT_undefined;
+                Matrix_ARGB[3][Image_X][Image_Y] = FLOAT_undefined;
+              }
+  
+              PImage Image_RGBA = createImage(RES1, RES2, RGB);
+  
+  
+
+                
+              int _valuesNUM = 0;  
+  
+              for (int i = 4; i <= 20; i += 1) { // to make it faster. Also the images are not available out of this period. 
+                if (isInHourlyRange(i) == 1) {
+  
+                  float HOUR_ANGLE = i; 
+                  float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
+  
+                  if (SunR[3] > 0) {
+    
+                    now_k = k;
+                    now_i = i;
+                    now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
+        
+                    if (now_j >= 365) {
+                     now_j = now_j % 365; 
+                    }
+                    if (now_j < 0) {
+                     now_j = (now_j + 365) % 365; 
+                    }
+      
+                    if (impacts_source == databaseNumber_CLIMATE_WY2) {
+                        Pa = CLIMATE_WY2[now_i][now_j][_dirnorrad][now_k]; 
+                        Pb = CLIMATE_WY2[now_i][now_j][_difhorrad][now_k]; 
+                        Pc = CLIMATE_WY2[now_i][now_j][_direffect][now_k]; 
+                        Pd = CLIMATE_WY2[now_i][now_j][_difeffect][now_k]; 
+                    }
+                    if (impacts_source == databaseNumber_ENSEMBLE) {
+                        Pa = ENSEMBLE[now_i][now_j][_dirnorrad][now_k]; 
+                        Pb = ENSEMBLE[now_i][now_j][_difhorrad][now_k]; 
+                        Pc = ENSEMBLE[now_i][now_j][_direffect][now_k]; 
+                        Pd = ENSEMBLE[now_i][now_j][_difeffect][now_k]; 
+                    }            
+                    if (impacts_source == databaseNumber_OBSERVED) {
+                        Pa = OBSERVED[now_i][now_j][_dirnorrad][now_k]; 
+                        Pb = OBSERVED[now_i][now_j][_difhorrad][now_k]; 
+                        Pc = OBSERVED[now_i][now_j][_direffect][now_k]; 
+                        Pd = OBSERVED[now_i][now_j][_difeffect][now_k]; 
+                    }   
+                    if (impacts_source == databaseNumber_CLIMATE_EPW) {
+                        Pa = CLIMATE_EPW[now_i][now_j][_dirnorrad][now_k]; 
+                        Pb = CLIMATE_EPW[now_i][now_j][_difhorrad][now_k]; 
+                        Pc = CLIMATE_EPW[now_i][now_j][_direffect][now_k]; 
+                        Pd = CLIMATE_EPW[now_i][now_j][_difeffect][now_k]; 
+                    }   
+      
+                    if ((Pa > 0.9 * FLOAT_undefined) || (Pb > 0.9 * FLOAT_undefined) || (Pc > 0.9 * FLOAT_undefined) || (Pd > 0.9 * FLOAT_undefined)) {
+                      _values_R_dir = FLOAT_undefined;
+                      _values_R_dif = FLOAT_undefined;
+                      _values_E_dir = FLOAT_undefined;
+                      _values_E_dif = FLOAT_undefined; 
+                    }
+                    else {
+        
+                      int drw_count = 0;
+                      if (impacts_source == databaseNumber_CLIMATE_EPW) drw_count = SOLARCHVISION_filter("CLIMATE_EPW", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                      if (impacts_source == databaseNumber_CLIMATE_WY2) drw_count = SOLARCHVISION_filter("CLIMATE_WY2", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                      if (impacts_source == databaseNumber_ENSEMBLE) drw_count = SOLARCHVISION_filter("ENSEMBLE", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                      if (impacts_source == databaseNumber_OBSERVED) drw_count = SOLARCHVISION_filter("OBSERVED", _cloudcover, filter_type, sky_scenario, now_i, now_j, now_k);
+                      
+                      if (drw_count == 1) {
+                        _values_R_dir = 0.001 * Pa;  
+                        _values_R_dif = 0.001 * Pb; 
+                        _values_E_dir = 0.001 * Pc;
+                        _values_E_dif = 0.001 * Pd;
+                        
+                        for (int RAD_TYPE = 0; RAD_TYPE <= 1; RAD_TYPE += 1) { 
+                          float RAD_VALUE = 0;
+                          float EFF_VALUE = 0;
+                          if (RAD_TYPE == 0) {
+                            RAD_VALUE = _values_R_dir; 
+                            EFF_VALUE = _values_E_dir;
+                          }
+                          else { 
+                            //float MULT_dif = 2.0;
+                            float MULT_dif = E; // 2.718
+                            
+                            RAD_VALUE = _values_R_dif * MULT_dif;
+                            EFF_VALUE = _values_E_dif * MULT_dif;
+                          }
+      
+                          PImage[] Shadings = new PImage[2];
+                          for (int SHD = 0; SHD <= 1; SHD += 1) {
+                            String[] STR_SHD = {"F" , "T"};
+                            String File_Name = "";
+      
+                            if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Financial_District")) { 
+                              File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + "Financial_District" + "/";
+                            }   
+                            else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Ryerson_University")) { 
+                              File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + "Ryerson_University" + "/";
+                            }   
+                            else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Place_Bonaventure")) { 
+                              File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + "Place_Bonaventure" + "/";
+                            }                      
+                            else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Montreal_Downtown")) { 
+                              if (camera_variation == 1) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/MONTREAL_DOWNTOWN" + "/";
+                              if (camera_variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/EV_BUILDING" + "/";
+                            }
+                            else {
+                              File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
+                            }                          
+                            
+                            
+                            if (RAD_TYPE == 0) {
+                              File_Name += nf(DATE_ANGLE_approximate, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
+                            }
+                            else {
+                              File_Name += "DIF_" + STR_SHD[SHD];
+                            }
+                            
+                            
+                            if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Financial_District")) { 
+                              File_Name += "_" + "Financial_District" + "_Camera" + nf(camera_variation, 2) + ".PNG";
+                            }    
+                            else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Ryerson_University")) { 
+                              File_Name += "_" + "Ryerson_University" + "_Camera" + nf(camera_variation, 2) + ".PNG";
+                            }    
+                            else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Place_Bonaventure")) { 
+                              File_Name += "_" + "Place_Bonaventure" + "_Camera" + nf(camera_variation, 2) + ".PNG";
+                            }                      
+                            else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Montreal_Downtown")) { 
+                              if (camera_variation == 1) File_Name += "_" + "Montreal_Downtown.PNG";
+                              if (camera_variation == 2) File_Name += "_" + "Montreal_EV_BUILDING_B.PNG";
+                            }
+                            else {
+                              File_Name += "_" + SceneName + "_" + NearLatitude_Stamp() + "_Camera" + nf(camera_variation, 2) + ".PNG";
+                            }
+      
+                            //println (File_Name);
+                            Shadings[SHD]  = loadImage(File_Name);
+                          }   
+         
+                          for (int np = 0; np < (RES1 * RES2); np++) {
+                            int Image_X = np % RES1;
+                            int Image_Y = np / RES1;
+                            
+                            if (Matrix_ARGB[0][Image_X][Image_Y] > 0.9 * FLOAT_undefined) {
+                              Matrix_ARGB[0][Image_X][Image_Y] = 0;
+                              Matrix_ARGB[1][Image_X][Image_Y] = 0;
+                              Matrix_ARGB[2][Image_X][Image_Y] = 0;
+                              Matrix_ARGB[3][Image_X][Image_Y] = 0;
+                            }                             
+                    
+                            color COL0 = Shadings[0].get(Image_X, Image_Y);
+                            color COL1 = Shadings[1].get(Image_X, Image_Y);
+                            //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+                            float COL_V0 = (COL0 >> 8 & 0xFF) / 255.0; 
+                            float COL_V1 = (COL1 >> 8 & 0xFF) / 255.0;
+                           
+                            float COL_Alpha = (COL1 >> 24 & 0xFF);
+                            
+                            Matrix_ARGB[0][Image_X][Image_Y] = COL_Alpha;
+                            
+                            if (Impact_TYPE == Impact_ACTIVE) {  
+                              Matrix_ARGB[2][Image_X][Image_Y] += RAD_VALUE * COL_V1;
+                            }
+                            if (Impact_TYPE == Impact_PASSIVE) {
+                              if (EFF_VALUE < 0) {
+                                Matrix_ARGB[1][Image_X][Image_Y] -= EFF_VALUE * COL_V1;
+                                if (COL_V0 != COL_V1) Matrix_ARGB[3][Image_X][Image_Y] -= EFF_VALUE * (COL_V0 - COL_V1); 
+                              }
+                              else {
+                                Matrix_ARGB[3][Image_X][Image_Y] += EFF_VALUE * COL_V1;
+                                if (COL_V0 != COL_V1) Matrix_ARGB[1][Image_X][Image_Y] += EFF_VALUE * (COL_V0 - COL_V1);
+                              }
+                            }
+                            
+                            if (np == 0) _valuesNUM += 1;
+      
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+    
+              float _valuesMUL = 0;
+              
+              if (_valuesNUM != 0) {
+                //_valuesMUL = SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE) / (1.0 * _valuesNUM);  
+                //_valuesMUL = int(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE)) / (1.0 * _valuesNUM);
+                _valuesMUL = roundTo(SOLARCHVISION_DayTime(LocationLatitude, DATE_ANGLE), 1) / (1.0 * _valuesNUM);
+              }
+             
+              Image_RGBA.loadPixels();
+    
+              for (int np = 0; np < (RES1 * RES2); np++) {
+                int Image_X = np % RES1;
+                int Image_Y = np / RES1;
+    
+                float Image_A = Matrix_ARGB[0][Image_X][Image_Y] * _valuesMUL;
+                float Image_R = Matrix_ARGB[1][Image_X][Image_Y] * _valuesMUL;
+                float Image_G = Matrix_ARGB[2][Image_X][Image_Y] * _valuesMUL;
+                float Image_B = Matrix_ARGB[3][Image_X][Image_Y] * _valuesMUL;
+                
+                total_Matrix_ARGB[0][Image_X][Image_Y] += Image_A;
+                total_Matrix_ARGB[1][Image_X][Image_Y] += Image_R;
+                total_Matrix_ARGB[2][Image_X][Image_Y] += Image_G;
+                total_Matrix_ARGB[3][Image_X][Image_Y] += Image_B; 
+  
+               
+                float[] _c = {0, 0, 0, 0};
+                
+                float _u = 0;
+                
+                float _valuesSUM = FLOAT_undefined;
+                
+                if (Impact_TYPE == Impact_ACTIVE) {
+                  _valuesSUM = Image_G;
+                  
+                  //_u = 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
+                  //_u = (0.1 * PAL_Multiplier * _valuesSUM);
+                  _u = (0.2 * PAL_Multiplier * _valuesSUM);
+                }
+             
+                if (Impact_TYPE == Impact_PASSIVE) {
+                  float AVERAGE, PERCENTAGE, COMPARISON;
+                  
+                  AVERAGE = (Image_B - Image_R);
+                  if ((Image_B + Image_R) > 0.00001) PERCENTAGE = (Image_B - Image_R) / (1.0 * (Image_B + Image_R)); 
+                  else PERCENTAGE = 0.0;
+                  COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+                  
+                  _valuesSUM = COMPARISON;
+                  
+                  //_u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
+                  _u = 0.5 + 0.5 * 0.75 * (0.2 * PAL_Multiplier * _valuesSUM);
+                }
+                
+                
+                //if ((Image_X == RES1 / 2) && (Image_Y == RES2 / 2)) println("Image Processing: <CENTER> _valuesSUM =", _valuesSUM); 
+                //if ((Image_X == RES1 - 1) && (Image_Y == RES2 - 1)) println("Image Processing: <CORNER> _valuesSUM =", _valuesSUM); 
+                
+                if (PAL_DIR == -1) _u = 1 - _u;
+                if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                if (PAL_DIR == 2) _u =  0.5 * _u;
+                
+                _c = GET_COLOR_STYLE(PAL_TYPE, _u);
+                
+                if (Image_A != 0) Image_RGBA.pixels[np] = color(_c[1], _c[2], _c[3]);
+                else Image_RGBA.pixels[np] = color(223, 223, 223);
+    
+              }
+            
+              Image_RGBA.updatePixels(); 
+              
+              if (camera_variation == 0) {
+                SolarImpact_Image[j + 1] = Image_RGBA;           
+                if (SolarImpact_record_JPG == 1) {
+                  String myFile = get_SolarImpact_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(j + 1, 0) + ".jpg";
+                  SolarImpact_Image[j + 1].save(myFile);
+                  if (j == 0) SOLARCHVISION_explore_output(myFile);
+                  println("File created:" + myFile);                  
+                }
+              }            
+             
+              STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
+              STUDY_Diagrams.stroke(223);
+              STUDY_Diagrams.fill(223); 
+              STUDY_Diagrams.rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / STUDY_U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
+            
+              STUDY_Diagrams.strokeWeight(STUDY_T_scale * 2);
+              STUDY_Diagrams.stroke(255);
+              STUDY_Diagrams.noFill(); 
+              STUDY_Diagrams.rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / STUDY_U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
+        
+              STUDY_Diagrams.imageMode(CENTER); 
+              STUDY_Diagrams.image(Image_RGBA, (j + 100 * obj_scale) * sx_Plot, - (1 * p * sx_Plot / STUDY_U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
+    
+              STUDY_Diagrams.stroke(0);
+              STUDY_Diagrams.fill(0);
+              STUDY_Diagrams.textAlign(CENTER, CENTER); 
+              STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
+              
+              String scenario_text = "";
+              //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
+              //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+              STUDY_Diagrams.text(scenario_text, (j - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / STUDY_U_scale);
+              
+            }
+          }
+        }
+        
+        //----------------------
+        if (camera_variation == 0) draw_impact_summary = 1; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        //----------------------
+        
+        if (draw_impact_summary == 1) { 
+          int j = -1; // << to put the summary graph before the daily graphs
+          
+          total_Image_RGBA.loadPixels();
+          
+          for (int np = 0; np < (RES1 * RES2); np++) {
+            int Image_X = np % RES1;
+            int Image_Y = np / RES1;
+          
+            float Image_A = total_Matrix_ARGB[0][Image_X][Image_Y] / (1.0 * (STUDY_j_end - STUDY_j_start));
+            float Image_R = total_Matrix_ARGB[1][Image_X][Image_Y] / (1.0 * (STUDY_j_end - STUDY_j_start));
+            float Image_G = total_Matrix_ARGB[2][Image_X][Image_Y] / (1.0 * (STUDY_j_end - STUDY_j_start));
+            float Image_B = total_Matrix_ARGB[3][Image_X][Image_Y] / (1.0 * (STUDY_j_end - STUDY_j_start));
+           
+            float[] _c = {0, 0, 0, 0};
+            
+            float _u = 0;
+            
+            float _valuesSUM = FLOAT_undefined;
+            
+            if (Impact_TYPE == Impact_ACTIVE) {
+              _valuesSUM = Image_G;
+              
+              //_u = 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
+              //_u = (0.1 * PAL_Multiplier * _valuesSUM);
+              _u = (0.2 * PAL_Multiplier * _valuesSUM);
+            }
+           
+            if (Impact_TYPE == Impact_PASSIVE) {
+              float AVERAGE, PERCENTAGE, COMPARISON;
+              
+              AVERAGE = (Image_B - Image_R);
+              if ((Image_B + Image_R) > 0.00001) PERCENTAGE = (Image_B - Image_R) / (1.0 * (Image_B + Image_R)); 
+              else PERCENTAGE = 0.0;
+              COMPARISON = ((abs(PERCENTAGE)) * AVERAGE);
+              
+              _valuesSUM = COMPARISON;
+              
+              //_valuesSUM *= ParametricGeometries_SpatialImpact_atIJ(Image_X, Image_Y); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+              
+              //_u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
+              _u = 0.5 + 0.5 * 0.75 * (0.2 * PAL_Multiplier * _valuesSUM);
+            }
+            
+            if (PAL_DIR == -1) _u = 1 - _u;
+            if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+            if (PAL_DIR == 2) _u =  0.5 * _u;
+            
+            _c = GET_COLOR_STYLE(PAL_TYPE, _u);
+            
+            if (Image_A != 0) total_Image_RGBA.pixels[np] = color(_c[1], _c[2], _c[3]);
+            else total_Image_RGBA.pixels[np] = color(223, 223, 223);
+          
+          }
+          
+          total_Image_RGBA.updatePixels(); 
+          
+          if (camera_variation == 0) {
+            SolarImpact_Image[0] = total_Image_RGBA;           
+            if (SolarImpact_record_JPG == 1) {
+              String myFile = get_SolarImpact_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(0, 0) + ".jpg";
+              SolarImpact_Image[0].save(myFile);
+              //SOLARCHVISION_explore_output(myFile);
+              println("File created:" + myFile);                
+            }
+          }      
+  
+          STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
+          STUDY_Diagrams.stroke(223);
+          STUDY_Diagrams.fill(223); 
+          //STUDY_Diagrams.rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / STUDY_U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
+          
+          STUDY_Diagrams.strokeWeight(STUDY_T_scale * 2);
+          STUDY_Diagrams.stroke(0);
+          STUDY_Diagrams.noFill(); 
+          //STUDY_Diagrams.rect((j + obj_offset_x - 100 * obj_scale) * sx_Plot, (-100 * obj_scale) * sx_Plot - (1 * p * sx_Plot / STUDY_U_scale), (200 * obj_scale) * sx_Plot, (200 * obj_scale) * sx_Plot);
+          
+          STUDY_Diagrams.imageMode(CENTER); 
+          //STUDY_Diagrams.image(total_Image_RGBA, (j + 100 * obj_scale) * sx_Plot, - (1 * p * sx_Plot / STUDY_U_scale), int((180 * obj_scale) * sx_Plot), int((180 * obj_scale) * sx_Plot));
+          
+          STUDY_Diagrams.stroke(0);
+          STUDY_Diagrams.fill(0);
+          STUDY_Diagrams.textAlign(CENTER, CENTER); 
+          STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
+        }
+        
+        String scenario_text = "";
+        //if (impacts_source == databaseNumber_CLIMATE_WY2) scenario_text += "Year: " + nf(Normals_COL_N[l] + CLIMATE_WY2_start - 1, 0);
+        //if (impacts_source == databaseNumber_ENSEMBLE) scenario_text += "Member: " + nf(Normals_COL_N[l], 0);
+        STUDY_Diagrams.text(scenario_text, ((STUDY_j_start - 1) - ((0 - 12) / 24.0)) * sx_Plot, (0.9 - 1 * (p - 0.25)) * sx_Plot / STUDY_U_scale);
+  
+        STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
+        STUDY_Diagrams.textAlign(RIGHT, CENTER); 
+        STUDY_Diagrams.stroke(0);
+        STUDY_Diagrams.fill(0);
+        STUDY_Diagrams.strokeWeight(0); 
+  
+        STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
+        STUDY_Diagrams.textAlign(RIGHT, CENTER); 
+        STUDY_Diagrams.stroke(0);
+        STUDY_Diagrams.fill(0);
+        STUDY_Diagrams.strokeWeight(0); 
+        
+        if (Impact_TYPE == Impact_ACTIVE) {  
+          STUDY_Diagrams.text(N_Title[l], 0, - (1 * p * sx_Plot / STUDY_U_scale));
+        }
+        if (Impact_TYPE == Impact_PASSIVE) {  
+          STUDY_Diagrams.text(N_Title[reverse_N[l]], 0, - (1 * p * sx_Plot / STUDY_U_scale));
+        }            
+        //?? French
+      }
+
+      float pal_length = 400;
+      for (int q = 0; q < 11; q += 1) {
+        float _u = 0;
+        
+        if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
+        if (Impact_TYPE == Impact_PASSIVE) {
+          _u = 0.2 * q - 0.5;
+          _u = (_u - 0.5) * 0.75 + 0.5;
+        }        
+        
+        if (PAL_DIR == -1) _u = 1 - _u;
+        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+        if (PAL_DIR == 2) _u =  0.5 * _u;
+        
+        float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+        STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+        STUDY_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);         
+        
+        STUDY_Diagrams.strokeWeight(0);
+        STUDY_Diagrams.rect((700 + q * (pal_length / 11.0)) * STUDY_S_View, -175 * STUDY_S_View, (pal_length / 11.0) * STUDY_S_View, 20 * STUDY_S_View); 
+  
+        if (_COL[1] + _COL[2] + _COL[3] > 1.75 * 255) {
+          STUDY_Diagrams.stroke(127);
+          STUDY_Diagrams.fill(127);
+          STUDY_Diagrams.strokeWeight(0);
+        }
+        else {
+          STUDY_Diagrams.stroke(255);
+          STUDY_Diagrams.fill(255);
+          STUDY_Diagrams.strokeWeight(2);
+        }  
+                    
+        STUDY_Diagrams.textSize(15.0 * STUDY_S_View);
+        STUDY_Diagrams.textAlign(CENTER, CENTER);
+        if (Impact_TYPE == Impact_ACTIVE) STUDY_Diagrams.text(nf((roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
+        if (Impact_TYPE == Impact_PASSIVE) STUDY_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), (20 + 700 + q * (pal_length / 11.0)) * STUDY_S_View, (10 - 175 - 0.05 * 20) * STUDY_S_View);
+      }
+  
+      if (STUDY_print_title != 0) {
+      
+        STUDY_Diagrams.stroke(0); 
+        STUDY_Diagrams.fill(0);
+        STUDY_Diagrams.strokeWeight(STUDY_T_scale * 0);
+        
+        STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
+        STUDY_Diagrams.textAlign(RIGHT, TOP); 
+        //if (impacts_source == databaseNumber_CLIMATE_WY2) STUDY_Diagrams.text(("[" + String.valueOf(start_z + CLIMATE_WY2_start - 1) + "-" + String.valueOf(end_z + CLIMATE_WY2_start - 1) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
+        //if (impacts_source == databaseNumber_ENSEMBLE) //STUDY_Diagrams.text(("[Members:" + String.valueOf(start_z) + "-" + String.valueOf(end_z) + "] "), 0, 1.4 * sx_Plot / STUDY_U_scale);
+  
+        String Model_Description = "";
+        //if (camera_variation == 1) Model_Description = "TR: Place-des-Arts";
+        //if (camera_variation == 2) Model_Description = "EV_BUILDING";
+  
+        STUDY_Diagrams.textSize(sx_Plot * 0.250 / STUDY_U_scale);
+        STUDY_Diagrams.textAlign(LEFT, TOP); 
+        if (Impact_TYPE == Impact_ACTIVE) {  
+          STUDY_Diagrams.text((Model_Description + "Analysis of Active Potentials (kW/m²)"), 0, 1.4 * sx_Plot / STUDY_U_scale);
+          //?? French
+        }
+        if (Impact_TYPE == Impact_PASSIVE) {  
+          STUDY_Diagrams.text((Model_Description + "Analysis of Passive Potentials (%kW°C/m²)"), 0, 1.4 * sx_Plot / STUDY_U_scale);
+          //?? French
+        }    
+  
+      }
+  
+      if (Impact_TYPE == Impact_ACTIVE) {
+        OBJECTS_Pallet_ACTIVE_CLR = STUDY_Pallet_ACTIVE_CLR;
+        OBJECTS_Pallet_ACTIVE_DIR = STUDY_Pallet_ACTIVE_DIR;
+        OBJECTS_Pallet_ACTIVE_MLT = STUDY_Pallet_ACTIVE_MLT;
+      } 
+  
+      if (Impact_TYPE == Impact_PASSIVE) {
+        OBJECTS_Pallet_PASSIVE_CLR = STUDY_Pallet_PASSIVE_CLR;
+        OBJECTS_Pallet_PASSIVE_DIR = STUDY_Pallet_PASSIVE_DIR;
+        OBJECTS_Pallet_PASSIVE_MLT = STUDY_Pallet_PASSIVE_MLT;
+      } 
+    
+    }
+    
+    */
     
     
     cursor(ARROW);
