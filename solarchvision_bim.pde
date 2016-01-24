@@ -9728,15 +9728,6 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                           for (int SHD = 0; SHD <= 1; SHD += 1) {
                             String[] STR_SHD = {"F" , "T"};
                             String File_Name = "";
-                            
-                            int Round_Latitude = int(roundTo(LocationLatitude, 5));
-                            if (Round_Latitude > 70) Round_Latitude = 70; // <<<<<<<<<<<<<<<
-                            if (Round_Latitude < -45) Round_Latitude = -45; // <<<<<<<<<<<<<<<
-                            String Near_Latitude = nf(abs(Round_Latitude), 2);
-                            
-                            if (Round_Latitude < 0) Near_Latitude += "S";
-                            else Near_Latitude += "N";
-      
       
                             if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Financial_District")) { 
                               File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + "Financial_District" + "/";
@@ -9752,7 +9743,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                               if (camera_variation == 2) File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/EV_BUILDING" + "/";
                             }
                             else {
-                              File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + defaultSceneName + "_" + Near_Latitude + "/";
+                              File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
                             }                          
                             
                             
@@ -9778,7 +9769,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                               if (camera_variation == 2) File_Name += "_" + "Montreal_EV_BUILDING_B.PNG";
                             }
                             else {
-                              File_Name += "_" + defaultSceneName + "_" + Near_Latitude + "_Camera" + nf(camera_variation, 2) + ".PNG";
+                              File_Name += "_" + SceneName + "_" + NearLatitude_Stamp() + "_Camera" + nf(camera_variation, 2) + ".PNG";
                             }
       
                             //println (File_Name);
@@ -33179,17 +33170,38 @@ float Rendered_SolarImpact_Elevation = FLOAT_undefined;
 float Rendered_SolarImpact_Rotation = FLOAT_undefined;
 
 
+
+
+
+String NearLatitude_Stamp () {
+  
+  int Round_Latitude = int(roundTo(LocationLatitude, 5));
+  if (Round_Latitude > 70) Round_Latitude = 70; // <<<<<<<<<<<<<<<
+  if (Round_Latitude < -45) Round_Latitude = -45; // <<<<<<<<<<<<<<<
+  
+  String a = nf(abs(Round_Latitude), 2);
+  
+  if (Round_Latitude < 0) a += "S";
+  else a += "N";
+  
+  return a;
+}
+
+
+
+
+
+
 PGraphics SHADOW_Diagrams; // to be accessible to Fractal plants
 
 String defaultSceneName = "Complex";
+String SceneName = defaultSceneName;
                   
 void RenderShadowsOnUrbanPlane () {
 
   cursor(WAIT);  
   
-  String SceneName = "Scene";
-
-  defaultSceneName = SceneName;
+  SceneName = ProjectName;
   
   SolarImpact_Rotation =  SpatialImpact_Rotation[SpatialImpact_sectionType];
   SolarImpact_Elevation = 0.1 + SpatialImpact_Elevation[SpatialImpact_sectionType];
@@ -33259,19 +33271,11 @@ void RenderShadowsOnUrbanPlane () {
           String[] STR_SHD = {"F" , "T"};
           String File_Name = "";
           
-          int Round_Latitude = int(roundTo(LocationLatitude, 5));
-          if (Round_Latitude > 70) Round_Latitude = 70; // <<<<<<<<<<<<<<<
-          if (Round_Latitude < -45) Round_Latitude = -45; // <<<<<<<<<<<<<<<
-          String Near_Latitude = nf(abs(Round_Latitude), 2);
-          
-          if (Round_Latitude < 0) Near_Latitude += "S";
-          else Near_Latitude += "N";
-      
-          File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + Near_Latitude + "/";
+          File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
       
           File_Name += nf(DATE_ANGLE, 3) + "_" + STR_SHD[SHD] + "_" + nf(int(roundTo(HOUR_ANGLE * 100, 1.0)), 4);
       
-          File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00";
+          File_Name += "_" +  SceneName + "_" + NearLatitude_Stamp() + "_Camera00";
           
           TREES_Diagrams.beginDraw();
 
@@ -33696,15 +33700,7 @@ void RenderShadowsOnUrbanPlane () {
       String[] STR_SHD = {"F" , "T"};
       String File_Name = "";
       
-      int Round_Latitude = int(roundTo(LocationLatitude, 5));
-      if (Round_Latitude > 70) Round_Latitude = 70; // <<<<<<<<<<<<<<<
-      if (Round_Latitude < -45) Round_Latitude = -45; // <<<<<<<<<<<<<<<
-      String Near_Latitude = nf(abs(Round_Latitude), 2);
-      
-      if (Round_Latitude < 0) Near_Latitude += "S";
-      else Near_Latitude += "N";
-  
-      File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + Near_Latitude + "/";
+      File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + SceneName + "_" + NearLatitude_Stamp() + "/";
   
       File_Name += "DIF_" + STR_SHD[SHD];
 
@@ -34170,7 +34166,7 @@ void RenderShadowsOnUrbanPlane () {
       
       DIFFUSE_Diagrams.endDraw();
 
-      File_Name += "_" +  SceneName + "_" + Near_Latitude + "_Camera00.PNG"; 
+      File_Name += "_" +  SceneName + "_" + NearLatitude_Stamp() + "_Camera00.PNG"; 
 
       DIFFUSE_Diagrams.save(File_Name);
       println (File_Name);
@@ -34433,7 +34429,7 @@ void SOLARCHVISION_draw_Sections () {
         WIN3D_Diagrams.beginShape();
         
         if (Display_SolarImpact_Image != 0) { 
-          WIN3D_Diagrams.texture(allSection_SolarImpact[f][Day_of_Impact_to_Display]);
+          //WIN3D_Diagrams.texture(allSection_SolarImpact[f][Day_of_Impact_to_Display]);
           
           WIN3D_Diagrams.noStroke();
           WIN3D_Diagrams.noFill();
@@ -34481,7 +34477,7 @@ void SOLARCHVISION_draw_Sections () {
 }
 
 
-yyyyyyyyyyyyyyyy
+//yyyyyyyyyyyyyyyy
 
 
 
