@@ -30200,34 +30200,19 @@ void mouseClicked () {
                           
                           Section_Rotation = min_Beta;
                         }
-                        else if (max_y - min_y < max_x - min_x) {
+                        else {
                           Section_Type = 2;
                           
-                          Section_scale_U = max_x - min_x;
+                          Section_scale_U = max_y - min_y;
                           Section_scale_V = max_z - min_z; 
                           
-                          Section_offset_U = G[0];
+                          Section_offset_U = -G[1];
                           Section_offset_V = G[2];        
                           
-                          Section_Elevation = -G[1];
+                          Section_Elevation = -G[0];
           
-                          Section_Rotation = min_Beta;                
-                        }
-                        else {
-                          Section_Type = 3;
-                          
-                          Section_scale_U = max_y - min_y; 
-                          Section_scale_V = max_z - min_z;
-                          
-                          Section_offset_U = -G[1];
-                          Section_offset_V = G[2];     
-                          
-                          Section_Elevation = -G[0];        
-        
-                          Section_Rotation = min_Beta;                   
+                          Section_Rotation = 90 - min_Beta;                            
                         }          
-            
-                               
 
   
                         PVector AG = new PVector(tmpVertices[0][0] - G[0], tmpVertices[0][1] - G[1], tmpVertices[0][2] - G[2]);                       
@@ -30253,7 +30238,7 @@ void mouseClicked () {
                         
                         float V = G2A2xG2B2.dot(GAxGB); 
                         
-                        if (V > 0) {
+                        if (V < 0) {
                           println("flip face!");
                           
                           SpatialImpact_Rotation[SpatialImpact_sectionType] = 180 + SpatialImpact_Rotation[SpatialImpact_sectionType];
@@ -30263,6 +30248,7 @@ void mouseClicked () {
                         else {
                           println("face OK!");
                         }
+                        
                         
                         
                         int number_of_Section_before = allSection_UVERAB.length; 
@@ -34433,6 +34419,36 @@ void SOLARCHVISION_draw_Sections () {
         allSection_Faces[f][3] = f * 4 - 0;  
 
         WIN3D_Diagrams.endShape(CLOSE);
+        
+        {
+          float[] A = SOLARCHVISION_getPoints_Section(0, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+          float[] B = SOLARCHVISION_getPoints_Section(1, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+          float[] C = SOLARCHVISION_getPoints_Section(2, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+          float[] D = SOLARCHVISION_getPoints_Section(3, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2); 
+          
+          float[] G = {0,0,0};
+          
+          for (int j = 0; j < 3; j++) {
+            G[j] = 0.25 * (A[j] + B[j] + C[j] + D[j]);
+          }
+
+          PVector AG = new PVector(A[0] - G[0], A[1] - G[1], A[2] - G[2]);                       
+          PVector BG = new PVector(B[0] - G[0], B[1] - G[1], B[2] - G[2]);
+         
+          PVector GAxGB = AG.cross(BG);
+
+          WIN3D_Diagrams.strokeWeight(5);
+          WIN3D_Diagrams.stroke(0);
+          WIN3D_Diagrams.fill(127,255,127);  
+
+          WIN3D_Diagrams.line(G[0] * OBJECTS_scale * WIN3D_scale3D, -G[1] * OBJECTS_scale * WIN3D_scale3D, G[2] * OBJECTS_scale * WIN3D_scale3D, (G[0] + GAxGB.x) * OBJECTS_scale * WIN3D_scale3D, -(G[1] + GAxGB.y) * OBJECTS_scale * WIN3D_scale3D, (G[2] + GAxGB.z) * OBJECTS_scale * WIN3D_scale3D);
+          
+          WIN3D_Diagrams.endShape(CLOSE);
+          
+          
+        }
+        
+                
 
       }
               
