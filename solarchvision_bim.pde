@@ -30212,11 +30212,25 @@ void mouseClicked () {
                           Section_Elevation = -G[0];
           
                           Section_Rotation = 90 - min_Beta;                            
-                        }          
+                        }       
 
+                      
+                        // recalculating G...  
+                        G[0] = 0;             
+                        G[1] = 0;
+                        G[2] = 0;
+                        for (int j = 0; j < n; j++) {
+                          float x = allVertices[allFaces[f][j]][0];
+                          float y = allVertices[allFaces[f][j]][1];
+                          float z = allVertices[allFaces[f][j]][2];
+                          
+                          G[0] += x / float(n); 
+                          G[1] += y / float(n);
+                          G[2] += z / float(n);
+                        }
   
-                        PVector AG = new PVector(tmpVertices[0][0] - G[0], tmpVertices[0][1] - G[1], tmpVertices[0][2] - G[2]);                       
-                        PVector BG = new PVector(tmpVertices[1][0] - G[0], tmpVertices[1][1] - G[1], tmpVertices[1][2] - G[2]);
+                        PVector AG = new PVector(allVertices[allFaces[f][0]][0] - G[0], allVertices[allFaces[f][0]][1] - G[1], allVertices[allFaces[f][0]][2] - G[2]);                       
+                        PVector BG = new PVector(allVertices[allFaces[f][1]][0] - G[0], allVertices[allFaces[f][1]][1] - G[1], allVertices[allFaces[f][1]][2] - G[2]);
                        
                         PVector GAxGB = AG.cross(BG);
                         
@@ -30235,8 +30249,8 @@ void mouseClicked () {
                         
                         PVector GAxGB_other = AG_other.cross(BG_other);
                         
-                        GAxGB.normalize();
-                        GAxGB_other.normalize();
+                        //GAxGB.normalize();
+                        //GAxGB_other.normalize();
                         
                         println("GAxGB", GAxGB);
                         println("GAxGB_other", GAxGB_other);
