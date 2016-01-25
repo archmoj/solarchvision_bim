@@ -18967,7 +18967,11 @@ void SOLARCHVISION_import_objects (String FileName, int m, int tes, int lyr, int
     
       for (int n = 0; n < newFace.length; n += 1) {
         
-        newFace[n] = importVerticeNumber[int(parts[n + 1])];
+        String[] the_numbers = split(parts[n + 1], '/');
+        
+        int vertexNumber = int(the_numbers[0]);
+        
+        newFace[n] = importVerticeNumber[vertexNumber];
       }
       
       //println(newFace);
