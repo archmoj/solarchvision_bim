@@ -12447,24 +12447,25 @@ void WIN3D_keyPressed (KeyEvent e) {
           
 
  
-        case ENTER :SOLARCHVISION_render_Shadows_selectedSections(); 
+        case ' ' :SOLARCHVISION_render_Shadows_selectedSections(); 
+        
+                  Display_SolarImpact_Image = 1;
+                  Display_SpatialImpact_Image = 0;
+                  /*  
+                  frame_variation = 0; 
+                  SOLARCHVISION_update_frame_layout();
+                  
+                  plot_impacts = abs(plot_impacts) % 2;
+                 
+                  update_impacts = 1;
+                  
+                  STUDY_Update = 1;
+                  */                  
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1; 
+                  break;
                     
-                    frame_variation = 0; 
-                    SOLARCHVISION_update_frame_layout();
-                    
-                    plot_impacts = abs(plot_impacts) % 2;
-                   
-                    update_impacts = 1;
-                    
-                    Display_SolarImpact_Image = 1;
-                    Display_SpatialImpact_Image = 0;
-                    
-                    STUDY_Update = 1;                   
-                    WIN3D_Update = 1;
-                    ROLLOUT_Update = 1; 
-                    break;
-                    
-         case ' '  :SOLARCHVISION_calculate_SolarImpact_selectedSections();
+        case ENTER :SOLARCHVISION_calculate_SolarImpact_selectedSections();
                     WIN3D_Update = 1;
                     break;
         
