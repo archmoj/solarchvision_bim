@@ -30230,14 +30230,21 @@ void mouseClicked () {
                           ImageCenter[j] = 0.25 * (ImageVertex_A[j] + ImageVertex_B[j] + ImageVertex_C[j] + ImageVertex_D[j]);
                         }  
                         
-                        PVector A2G2 = new PVector(ImageVertex_A[0] - ImageCenter[0], ImageVertex_A[1] - ImageCenter[1], ImageVertex_A[2] - ImageCenter[2]);                       
-                        PVector B2G2 = new PVector(ImageVertex_B[0] - ImageCenter[0], ImageVertex_B[1] - ImageCenter[1], ImageVertex_B[2] - ImageCenter[2]);
+                        PVector AG_other = new PVector(ImageVertex_A[0] - ImageCenter[0], ImageVertex_A[1] - ImageCenter[1], ImageVertex_A[2] - ImageCenter[2]);                       
+                        PVector BG_other = new PVector(ImageVertex_B[0] - ImageCenter[0], ImageVertex_B[1] - ImageCenter[1], ImageVertex_B[2] - ImageCenter[2]);
                         
-                        PVector G2A2xG2B2 = A2G2.cross(B2G2);                        
+                        PVector GAxGB_other = AG_other.cross(BG_other);
+                        
+                        GAxGB.normalize();
+                        GAxGB_other.normalize();
+                        
+                        println("GAxGB", GAxGB);
+                        println("GAxGB_other", GAxGB_other);
 
-                        
-                        float V = G2A2xG2B2.dot(GAxGB); 
-                        
+                        float V = GAxGB_other.dot(GAxGB);
+
+                        println("V", nf(V, 0, 6));                        
+
                         if (V < 0) {
                           println("flip face!");
                           
