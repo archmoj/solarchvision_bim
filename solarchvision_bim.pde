@@ -1463,7 +1463,8 @@ void SOLARCHVISION_update_folders () {
   CWEEDSFolder          = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   EPWFolder             = BaseFolder + "/Input/CoordinateFiles/LocationInfo";
   LandFolder            = BaseFolder + "/Input/CoordinateFiles/Land";
-  Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_SEL";
+  Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_ALL_CROP_low";
+  //Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_SEL";
   //Object2DFolder_PEOPLE = BaseFolder + "/Input/BackgroundImages/Standard/Maps/People_ALL";
   Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_SEL";
   //Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_ALL";
@@ -13010,19 +13011,18 @@ void SOLARCHVISION_add_Object2D (String t, int m, float x, float y, float z, flo
   if (r == 0) d = -1; 
 
   int[] TempObject2D_MAP = {d * n}; 
-  
   allObject2D_MAP = concat(allObject2D_MAP, TempObject2D_MAP);
-
   
   float[][] TempObject2D_XYZS = {{x, y, z, s}};
-  
   allObject2D_XYZS = (float[][]) concat(allObject2D_XYZS, TempObject2D_XYZS);
+  
   allObject2D_num += 1;
 }
 
 
 
 PImage[] Object2DImages;
+float[] Object2DImageRatios;
 
 void SOLARCHVISION_LoadObject2DImages () {
 
@@ -13042,6 +13042,7 @@ void SOLARCHVISION_LoadObject2DImages () {
   int n = Object2D_ImagePath.length;
   
   Object2DImages = new PImage [n + 1];
+  Object2DImageRatios = new float [n + 1];
  
   for (int i = 1; i < n; i += 1) { // leaving [0] null  
 
@@ -13056,6 +13057,13 @@ void SOLARCHVISION_LoadObject2DImages () {
   for (int i = 1; i < n; i += 1) {
     //println(Object2D_ImagePath[i]);
     Object2DImages[i] = loadImage(Object2D_ImagePath[i]);
+    
+    if (Object2DImages[i].height != 0) {
+      Object2DImageRatios[i] = float(Object2DImages[i].width) / float(Object2DImages[i].height);
+    }
+    else {
+      Object2DImageRatios[i] = 1;
+    }
   }  
 }
 
@@ -18150,7 +18158,8 @@ void SOLARCHVISION_export_objects () {
       float y = allObject2D_XYZS[f][1];
       float z = allObject2D_XYZS[f][2];
       
-      float r = allObject2D_XYZS[f][3] * 0.5;
+      float rh = allObject2D_XYZS[f][3] * 0.5;
+      float rw = rh * Object2DImageRatios[n];
       
       float t = WIN3D_RZ_coordinate * PI / 180.0;
       if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
@@ -18173,21 +18182,21 @@ void SOLARCHVISION_export_objects () {
         { 
           
           if (_turn == 1) {
-            float x1 = x - r * cos(t);
-            float y1 = y - r * sin(t);
+            float x1 = x - rw * cos(t);
+            float y1 = y - rw * sin(t);
             float z1 = z;
       
-            float x2 = x + r * cos(t);
-            float y2 = y + r * sin(t);
+            float x2 = x + rw * cos(t);
+            float y2 = y + rw * sin(t);
             float z2 = z;
       
-            float x3 = x + r * cos(t);
-            float y3 = y + r * sin(t);
-            float z3 = z + 2 * r;
+            float x3 = x + rw * cos(t);
+            float y3 = y + rw * sin(t);
+            float z3 = z + 2 * rh;
     
-            float x4 = x - r * cos(t);
-            float y4 = y - r * sin(t);
-            float z4 = z + 2 * r;
+            float x4 = x - rw * cos(t);
+            float y4 = y - rw * sin(t);
+            float z4 = z + 2 * rh;
           
             objOutput.println("v " + nf(x1, 0, objExportPrecisionVertex) + " " + nf(y1, 0, objExportPrecisionVertex) + " " + nf(z1, 0, objExportPrecisionVertex));
             objOutput.println("v " + nf(x2, 0, objExportPrecisionVertex) + " " + nf(y2, 0, objExportPrecisionVertex) + " " + nf(z2, 0, objExportPrecisionVertex));
@@ -18244,21 +18253,21 @@ void SOLARCHVISION_export_objects () {
             
               float rot = back_front * PI / 2 + t;
               
-              float x1 = x - r * cos(t);
-              float y1 = y - r * sin(t);
-              float z1 = z + 2 * r * ratio;
+              float x1 = x - rw * cos(t);
+              float y1 = y - rw * sin(t);
+              float z1 = z + 2 * rh * ratio;
         
-              float x2 = x + r * cos(t);
-              float y2 = y + r * sin(t);
-              float z2 = z + 2 * r * ratio;
+              float x2 = x + rw * cos(t);
+              float y2 = y + rw * sin(t);
+              float z2 = z + 2 * rh * ratio;
         
-              float x3 = x + r * cos(t) + r * cos(rot);
-              float y3 = y + r * sin(t) + r * sin(rot);
-              float z3 = z + 2 * r * ratio;
+              float x3 = x + rw * cos(t) + rw * cos(rot);
+              float y3 = y + rw * sin(t) + rw * sin(rot);
+              float z3 = z + 2 * rh * ratio;
       
-              float x4 = x - r * cos(t) + r * cos(rot);
-              float y4 = y - r * sin(t) + r * sin(rot);
-              float z4 = z + 2 * r * ratio;
+              float x4 = x - rw * cos(t) + rw * cos(rot);
+              float y4 = y - rw * sin(t) + rw * sin(rot);
+              float z4 = z + 2 * rh * ratio;
           
               objOutput.println("v " + nf(x1, 0, objExportPrecisionVertex) + " " + nf(y1, 0, objExportPrecisionVertex) + " " + nf(z1, 0, objExportPrecisionVertex));
               objOutput.println("v " + nf(x2, 0, objExportPrecisionVertex) + " " + nf(y2, 0, objExportPrecisionVertex) + " " + nf(z2, 0, objExportPrecisionVertex));
@@ -21898,7 +21907,8 @@ void SOLARCHVISION_draw_2Dobjects () {
         float y = allObject2D_XYZS[f][1] * OBJECTS_scale;
         float z = allObject2D_XYZS[f][2] * OBJECTS_scale;
         
-        float r = allObject2D_XYZS[f][3] * 0.5 * OBJECTS_scale;
+        float rh = allObject2D_XYZS[f][3] * 0.5 * OBJECTS_scale;
+        float rw = rh * Object2DImageRatios[n];
         
         float t = WIN3D_RZ_coordinate * PI / 180.0;
         if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
@@ -21911,29 +21921,29 @@ void SOLARCHVISION_draw_2Dobjects () {
         WIN3D_Diagrams.stroke(255, 255, 255, 0);
         WIN3D_Diagrams.fill(255, 255, 255, 0);
         
-        WIN3D_Diagrams.vertex((x - r * cos(t)) * WIN3D_scale3D, -(y - r * sin(t)) * WIN3D_scale3D, z * WIN3D_scale3D, 0, h);
-        WIN3D_Diagrams.vertex((x + r * cos(t)) * WIN3D_scale3D, -(y + r * sin(t)) * WIN3D_scale3D, z * WIN3D_scale3D, w, h);
-        WIN3D_Diagrams.vertex((x + r * cos(t)) * WIN3D_scale3D, -(y + r * sin(t)) * WIN3D_scale3D, (z + 2 * r) * WIN3D_scale3D, w, 0);
-        WIN3D_Diagrams.vertex((x - r * cos(t)) * WIN3D_scale3D, -(y - r * sin(t)) * WIN3D_scale3D, (z + 2 * r) * WIN3D_scale3D, 0, 0);
+        WIN3D_Diagrams.vertex((x - rw * cos(t)) * WIN3D_scale3D, -(y - rw * sin(t)) * WIN3D_scale3D, z * WIN3D_scale3D, 0, h);
+        WIN3D_Diagrams.vertex((x + rw * cos(t)) * WIN3D_scale3D, -(y + rw * sin(t)) * WIN3D_scale3D, z * WIN3D_scale3D, w, h);
+        WIN3D_Diagrams.vertex((x + rw * cos(t)) * WIN3D_scale3D, -(y + rw * sin(t)) * WIN3D_scale3D, (z + 2 * rh) * WIN3D_scale3D, w, 0);
+        WIN3D_Diagrams.vertex((x - rw * cos(t)) * WIN3D_scale3D, -(y - rw * sin(t)) * WIN3D_scale3D, (z + 2 * rh) * WIN3D_scale3D, 0, 0);
 
         WIN3D_Diagrams.endShape(CLOSE);
         
         {
-          allObject2D_Vertices[f * 4 - 3][0] = (x - r * cos(t)) / OBJECTS_scale;
-          allObject2D_Vertices[f * 4 - 3][1] = (y - r * sin(t)) / OBJECTS_scale;
+          allObject2D_Vertices[f * 4 - 3][0] = (x - rw * cos(t)) / OBJECTS_scale;
+          allObject2D_Vertices[f * 4 - 3][1] = (y - rw * sin(t)) / OBJECTS_scale;
           allObject2D_Vertices[f * 4 - 3][2] = (z) / OBJECTS_scale;
 
-          allObject2D_Vertices[f * 4 - 2][0] = (x + r * cos(t)) / OBJECTS_scale;
-          allObject2D_Vertices[f * 4 - 2][1] = (y + r * sin(t)) / OBJECTS_scale;
+          allObject2D_Vertices[f * 4 - 2][0] = (x + rw * cos(t)) / OBJECTS_scale;
+          allObject2D_Vertices[f * 4 - 2][1] = (y + rw * sin(t)) / OBJECTS_scale;
           allObject2D_Vertices[f * 4 - 2][2] = (z) / OBJECTS_scale;
 
-          allObject2D_Vertices[f * 4 - 1][0] = (x + r * cos(t)) / OBJECTS_scale;
-          allObject2D_Vertices[f * 4 - 1][1] = (y + r * sin(t)) / OBJECTS_scale;
-          allObject2D_Vertices[f * 4 - 1][2] = (z + 2 * r) / OBJECTS_scale;
+          allObject2D_Vertices[f * 4 - 1][0] = (x + rw * cos(t)) / OBJECTS_scale;
+          allObject2D_Vertices[f * 4 - 1][1] = (y + rw * sin(t)) / OBJECTS_scale;
+          allObject2D_Vertices[f * 4 - 1][2] = (z + 2 * rh) / OBJECTS_scale;
 
-          allObject2D_Vertices[f * 4 - 0][0] = (x - r * cos(t)) / OBJECTS_scale;
-          allObject2D_Vertices[f * 4 - 0][1] = (y - r * sin(t)) / OBJECTS_scale;
-          allObject2D_Vertices[f * 4 - 0][2] = (z + 2 * r) / OBJECTS_scale;
+          allObject2D_Vertices[f * 4 - 0][0] = (x - rw * cos(t)) / OBJECTS_scale;
+          allObject2D_Vertices[f * 4 - 0][1] = (y - rw * sin(t)) / OBJECTS_scale;
+          allObject2D_Vertices[f * 4 - 0][2] = (z + 2 * rh) / OBJECTS_scale;
 
           allObject2D_Faces[f][0] = f * 4 - 3;
           allObject2D_Faces[f][1] = f * 4 - 2;
@@ -21957,10 +21967,10 @@ void SOLARCHVISION_draw_2Dobjects () {
             WIN3D_Diagrams.stroke(255, 255, 255, 0);
             WIN3D_Diagrams.fill(255, 255, 255, 0);
             
-            WIN3D_Diagrams.vertex((x - r * cos(t)) * WIN3D_scale3D, -(y - r * sin(t)) * WIN3D_scale3D, (z + 2 * r * ratio) * WIN3D_scale3D, 0, h * ratio);
-            WIN3D_Diagrams.vertex((x + r * cos(t)) * WIN3D_scale3D, -(y + r * sin(t)) * WIN3D_scale3D, (z + 2 * r * ratio) * WIN3D_scale3D, w, h * ratio);
-            WIN3D_Diagrams.vertex((x + r * cos(t) + r * cos(rot)) * WIN3D_scale3D, -(y + r * sin(t) + r * sin(rot)) * WIN3D_scale3D, (z + 2 * r * ratio) * WIN3D_scale3D, w, 0);
-            WIN3D_Diagrams.vertex((x - r * cos(t) + r * cos(rot)) * WIN3D_scale3D, -(y - r * sin(t) + r * sin(rot)) * WIN3D_scale3D, (z + 2 * r * ratio) * WIN3D_scale3D, 0, 0);
+            WIN3D_Diagrams.vertex((x - rw * cos(t)) * WIN3D_scale3D, -(y - rw * sin(t)) * WIN3D_scale3D, (z + 2 * rh * ratio) * WIN3D_scale3D, 0, h * ratio);
+            WIN3D_Diagrams.vertex((x + rw * cos(t)) * WIN3D_scale3D, -(y + rw * sin(t)) * WIN3D_scale3D, (z + 2 * rh * ratio) * WIN3D_scale3D, w, h * ratio);
+            WIN3D_Diagrams.vertex((x + rw * cos(t) + rw * cos(rot)) * WIN3D_scale3D, -(y + rw * sin(t) + rw * sin(rot)) * WIN3D_scale3D, (z + 2 * rh * ratio) * WIN3D_scale3D, w, 0);
+            WIN3D_Diagrams.vertex((x - rw * cos(t) + rw * cos(rot)) * WIN3D_scale3D, -(y - rw * sin(t) + rw * sin(rot)) * WIN3D_scale3D, (z + 2 * rh * ratio) * WIN3D_scale3D, 0, 0);
             
             WIN3D_Diagrams.endShape(CLOSE);
           }    
@@ -41539,5 +41549,7 @@ int allSection_num = 0;
 int selectedSection_displayEdges = 1;
 
 int[] selectedSection_numbers = {0};
+
+float[] Object2DImageRatios;
 
 */
