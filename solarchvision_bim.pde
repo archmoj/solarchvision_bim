@@ -30249,25 +30249,22 @@ void mouseClicked () {
                         
                         PVector GAxGB_other = AG_other.cross(BG_other);
                         
-                        //GAxGB.normalize();
-                        //GAxGB_other.normalize();
-                        
-                        println("GAxGB", GAxGB);
-                        println("GAxGB_other", GAxGB_other);
+                        //println("GAxGB", GAxGB);
+                        //println("GAxGB_other", GAxGB_other);
 
                         float V = GAxGB_other.dot(GAxGB);
 
-                        println("V", nf(V, 0, 6));                        
+                        //println("V", nf(V, 0, 6));                        
 
                         if (V < 0) {
-                          println("flip face!");
+                          //println("flip face!");
                           
-                          SpatialImpact_Rotation[SpatialImpact_sectionType] = 180 + SpatialImpact_Rotation[SpatialImpact_sectionType];
-                          SpatialImpact_Elevation[SpatialImpact_sectionType] *= -1;
-                          SpatialImpact_offset_U[SpatialImpact_sectionType] *= -1;
+                          Section_Rotation = 180 + Section_Rotation;
+                          Section_Elevation *= -1;
+                          Section_offset_U *= -1;
                         }
                         else {
-                          println("face OK!");
+                          //println("face OK!");
                         }
                         
                         
@@ -30287,8 +30284,20 @@ void mouseClicked () {
                           
                           selectedSection_numbers = concat(selectedSection_numbers, newlyAddedSection);
                         }  
+
+                        SpatialImpact_offset_U[SpatialImpact_sectionType] = Section_offset_U;
+                        SpatialImpact_offset_V[SpatialImpact_sectionType] = Section_offset_V;
+                        SpatialImpact_Elevation[SpatialImpact_sectionType] = Section_Elevation;
+                        SpatialImpact_Rotation[SpatialImpact_sectionType] = Section_Rotation;
+                        SpatialImpact_scale_U[SpatialImpact_sectionType] = Section_scale_U;
+                        SpatialImpact_scale_V[SpatialImpact_sectionType] = Section_scale_V;
+                  
+                        SpatialImpact_sectionType = Section_Type;
+                        SpatialImpact_RES1 = Section_RES1;
+                        SpatialImpact_RES2 = Section_RES2;    
         
                         SOLARCHVISION_calculate_SpatialImpact_selectedSections();
+                       
                        
                         SolarImpact_sectionType = Section_Type;                   
                        
@@ -34415,7 +34424,6 @@ void SOLARCHVISION_draw_Sections () {
         }  
         
 
-  
         for (int q = 0; q < 4; q++) {
           
           float[] ImageVertex = SOLARCHVISION_getPoints_Section(q, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
@@ -34441,6 +34449,8 @@ void SOLARCHVISION_draw_Sections () {
 
         WIN3D_Diagrams.endShape(CLOSE);
         
+        /*
+        
         {
           float[] A = SOLARCHVISION_getPoints_Section(0, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
           float[] B = SOLARCHVISION_getPoints_Section(1, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
@@ -34457,6 +34467,8 @@ void SOLARCHVISION_draw_Sections () {
           PVector BG = new PVector(B[0] - G[0], B[1] - G[1], B[2] - G[2]);
          
           PVector GAxGB = AG.cross(BG);
+          
+          GAxGB.normalize();
 
           WIN3D_Diagrams.strokeWeight(5);
           WIN3D_Diagrams.stroke(0);
@@ -34465,9 +34477,8 @@ void SOLARCHVISION_draw_Sections () {
           WIN3D_Diagrams.line(G[0] * OBJECTS_scale * WIN3D_scale3D, -G[1] * OBJECTS_scale * WIN3D_scale3D, G[2] * OBJECTS_scale * WIN3D_scale3D, (G[0] + GAxGB.x) * OBJECTS_scale * WIN3D_scale3D, -(G[1] + GAxGB.y) * OBJECTS_scale * WIN3D_scale3D, (G[2] + GAxGB.z) * OBJECTS_scale * WIN3D_scale3D);
           
           WIN3D_Diagrams.endShape(CLOSE);
-          
-          
         }
+        */
         
                 
 
