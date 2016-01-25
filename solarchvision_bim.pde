@@ -17943,105 +17943,120 @@ void SOLARCHVISION_export_objects () {
   }
 
 
-  if (Display_SolarImpact_Image != 0) {
-    
-    if (SolarImpact_sectionType != 0) {
 
-      String the_filename = "SolarImpact.jpg";
-      
-      if (objExportMaterialLibrary != 0) {
-      
-        String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
-  
-        println("Saving texture:", new_TEXTURE_path);
-        SolarImpact_Image[Day_of_Impact_to_Display].save(new_TEXTURE_path);
-  
-        mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
-        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-        mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-        mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-    
-        mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-        mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-  
-        //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-        mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
-      }
-      
-      float Section_offset_U = SpatialImpact_offset_U[SpatialImpact_sectionType];
-      float Section_offset_V = SpatialImpact_offset_V[SpatialImpact_sectionType];
-      float Section_Elevation = 0.1 + SpatialImpact_Elevation[SpatialImpact_sectionType];
-      float Section_Rotation = SpatialImpact_Rotation[SpatialImpact_sectionType];
-      float Section_scale_U = SpatialImpact_scale_U[SpatialImpact_sectionType];
-      float Section_scale_V = SpatialImpact_scale_V[SpatialImpact_sectionType];
 
-      int Section_Type = SpatialImpact_sectionType;
-      int Section_RES1 = SpatialImpact_RES1;
-      int Section_RES2 = SpatialImpact_RES2;          
+
+
+
+
+  if (Display_Sections != 0) {
+
+    for (int f = 1; f <= allSection_num; f++) {
       
-      int Display_solarch_texture = 0;
-  
+      float Section_offset_U = allSection_UVERAB[f][0];
+      float Section_offset_V = allSection_UVERAB[f][1];
+      float Section_Elevation = allSection_UVERAB[f][2];
+      float Section_Rotation = allSection_UVERAB[f][3];
+      float Section_scale_U = allSection_UVERAB[f][4];
+      float Section_scale_V = allSection_UVERAB[f][5];
+
+      int Section_Type = allSection_Type[f];
+      int Section_RES1 = allSection_RES1[f];
+      int Section_RES2 = allSection_RES2[f];
+
       if (Section_Type != 0) {
 
-        if (objExportPolyToPoly == 1) {
-          obj_lastGroupNumber += 1;  
-          objOutput.println("g SolarImpact");
-        }
-        
+        String the_filename = "Impact_" + nf(f, 0) + ".jpg";
+      
         if (objExportMaterialLibrary != 0) {
-          objOutput.println("usemtl " + the_filename.replace('.', '_'));
+        
+          String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+    
+          if (Display_SolarImpact_Image != 0) {
+            println("Saving texture:", new_TEXTURE_path);
+            allSection_SolarImpact[f][Day_of_Impact_to_Display].save(new_TEXTURE_path);
+          } else if (Display_SpatialImpact_Image != 0) {
+            println("Saving texture:", new_TEXTURE_path);
+            allSection_SpatialImpact[f].save(new_TEXTURE_path);              
+          }
+    
+          mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
+          mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+          mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+          mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+          mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+          mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+          mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+      
+          mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+          mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+          mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+    
+          //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+          mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
         }
         
-        for (int _turn = 1; _turn < 4; _turn += 1) {
-          for (int q = 0; q < 4; q++) {
-              
-            float[] ImageVertex = SOLARCHVISION_getPoints_Section(q, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
-            
-            float x = ImageVertex[0];
-            float y = ImageVertex[1];
-            float z = ImageVertex[2];
-            float u = ImageVertex[3];
-            float v = ImageVertex[4];
-
-            
-            v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
-            
-            if (_turn == 1) {
-              objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z, 0, objExportPrecisionVertex));
-            }
-            
-            if (_turn == 2) {
-              objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
-            }
-            
-            if (_turn == 3) {
-              obj_lastVertexNumber += 1;
-              obj_lastVtextureNumber += 1;
-            }
+        int Display_solarch_texture = 0;
+    
+        if (Section_Type != 0) {
+  
+          if (objExportPolyToPoly == 1) {
+            obj_lastGroupNumber += 1;  
+            objOutput.println("g Impact_" + nf(f, 0));
           }
-        }   
-
-        
-        String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
-        String n2_txt = nf(obj_lastVertexNumber - 2, 0);
-        String n3_txt = nf(obj_lastVertexNumber - 1, 0);
-        String n4_txt = nf(obj_lastVertexNumber - 0, 0);
-        
-        String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
-        String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
-        String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
-        String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
-
-        obj_lastFaceNumber += 1;            
-        objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-      }  
-
+          
+          if (objExportMaterialLibrary != 0) {
+            objOutput.println("usemtl " + the_filename.replace('.', '_'));
+          }
+          
+          for (int _turn = 1; _turn < 4; _turn += 1) {
+            for (int q = 0; q < 4; q++) {
+                
+              float[] ImageVertex = SOLARCHVISION_getPoints_Section(q, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+              
+              float x = ImageVertex[0];
+              float y = ImageVertex[1];
+              float z = ImageVertex[2];
+              float u = ImageVertex[3];
+              float v = ImageVertex[4];
+  
+              
+              v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+              
+              if (_turn == 1) {
+                objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z, 0, objExportPrecisionVertex));
+              }
+              
+              if (_turn == 2) {
+                objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
+              }
+              
+              if (_turn == 3) {
+                obj_lastVertexNumber += 1;
+                obj_lastVtextureNumber += 1;
+              }
+            }
+          }   
+  
+          
+          String n1_txt = nf(obj_lastVertexNumber - 3, 0); 
+          String n2_txt = nf(obj_lastVertexNumber - 2, 0);
+          String n3_txt = nf(obj_lastVertexNumber - 1, 0);
+          String n4_txt = nf(obj_lastVertexNumber - 0, 0);
+          
+          String m1_txt = nf(obj_lastVtextureNumber - 3, 0); 
+          String m2_txt = nf(obj_lastVtextureNumber - 2, 0);
+          String m3_txt = nf(obj_lastVtextureNumber - 1, 0);
+          String m4_txt = nf(obj_lastVtextureNumber - 0, 0);      
+  
+          obj_lastFaceNumber += 1;            
+          objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+        }  
+  
+      }
     }
   }
+
 
 
 
@@ -34424,7 +34439,6 @@ void SOLARCHVISION_draw_Sections () {
           WIN3D_Diagrams.noFill();
         }  
         
-
         for (int q = 0; q < 4; q++) {
           
           float[] ImageVertex = SOLARCHVISION_getPoints_Section(q, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
@@ -34449,46 +34463,10 @@ void SOLARCHVISION_draw_Sections () {
         allSection_Faces[f][3] = f * 4 - 0;  
 
         WIN3D_Diagrams.endShape(CLOSE);
-        
-        /*
-        
-        {
-          float[] A = SOLARCHVISION_getPoints_Section(0, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
-          float[] B = SOLARCHVISION_getPoints_Section(1, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
-          float[] C = SOLARCHVISION_getPoints_Section(2, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
-          float[] D = SOLARCHVISION_getPoints_Section(3, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2); 
-          
-          float[] G = {0,0,0};
-          
-          for (int j = 0; j < 3; j++) {
-            G[j] = 0.25 * (A[j] + B[j] + C[j] + D[j]);
-          }
-
-          PVector AG = new PVector(A[0] - G[0], A[1] - G[1], A[2] - G[2]);                       
-          PVector BG = new PVector(B[0] - G[0], B[1] - G[1], B[2] - G[2]);
-         
-          PVector GAxGB = AG.cross(BG);
-          
-          GAxGB.normalize();
-
-          WIN3D_Diagrams.strokeWeight(5);
-          WIN3D_Diagrams.stroke(0);
-          WIN3D_Diagrams.fill(127,255,127);  
-
-          WIN3D_Diagrams.line(G[0] * OBJECTS_scale * WIN3D_scale3D, -G[1] * OBJECTS_scale * WIN3D_scale3D, G[2] * OBJECTS_scale * WIN3D_scale3D, (G[0] + GAxGB.x) * OBJECTS_scale * WIN3D_scale3D, -(G[1] + GAxGB.y) * OBJECTS_scale * WIN3D_scale3D, (G[2] + GAxGB.z) * OBJECTS_scale * WIN3D_scale3D);
-          
-          WIN3D_Diagrams.endShape(CLOSE);
-        }
-        */
-        
-                
 
       }
-              
     }
   }
-
-
 }
 
 
