@@ -192,7 +192,7 @@ int[] allSection_Type = {0};
 int[] allSection_RES1 = {0};
 int[] allSection_RES2 = {0};
 PImage[] allSection_SpatialImpact = {createImage(2, 2, RGB)};
-PImage[][] allSection_SolarImpact = {{createImage(2, 2, RGB)}}; 
+PImage[][] allSection_SolarImpact = {{createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB)}}; 
 int allSection_num = 0; 
 
 
@@ -40096,8 +40096,47 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   }
 
 
+  {
+    newChild1 = my_xml.addChild("allSection_SpatialImpact");
+    int ni = allSection_SpatialImpact.length;
+    newChild1.setInt("ni", ni);
+    for (int i = 0; i < ni; i++) {
+        
+      String the_filename = "SpatialImpact_" + nf(i, 0) + ".bmp";
   
+      String TEXTURE_path = ProjectsFolder + "/Textures/" + the_filename;
   
+      println("Saving texture:", TEXTURE_path);
+      allSection_SpatialImpact[i].save(TEXTURE_path);
+  
+      newChild2 = newChild1.addChild("Path");
+      newChild2.setInt("id", i); 
+      newChild2.setContent(TEXTURE_path);
+    }
+  }
+
+  {
+    newChild1 = my_xml.addChild("allSection_SolarImpact");
+    int ni = allSection_SolarImpact.length;
+    int nj = allSection_SolarImpact[0].length;
+    newChild1.setInt("ni", ni);
+    newChild1.setInt("nj", nj);
+    for (int i = 0; i < ni; i++) {
+      for (int j = 0; j < nj; j++) {
+        
+        String the_filename = "SolarImpact_" + nf(i * nj + j, 0) + ".bmp";
+    
+        String TEXTURE_path = ProjectsFolder + "/Textures/" + the_filename;
+    
+        println("Saving texture:", TEXTURE_path);
+        allSection_SolarImpact[i][j].save(TEXTURE_path);
+    
+        newChild2 = newChild1.addChild("Path");
+        newChild2.setInt("id", i * nj + j); 
+        newChild2.setContent(TEXTURE_path);
+      }
+    }
+  }
   
 
   newChild1 = my_xml.addChild("DEFINED_STATION");
@@ -41113,7 +41152,7 @@ void SOLARCHVISION_load_project (String myFile) {
             if (Object2D_ImagePath[i].equals("")) {
             }
             else {
-              println("Loading texture(", i + "):", Object2D_ImagePath[i]);
+              println("Loading texture(" + i + "):", Object2D_ImagePath[i]);
               Object2DImages[i] = loadImage(Object2D_ImagePath[i]);
               println("loaded!");
               
@@ -41124,6 +41163,53 @@ void SOLARCHVISION_load_project (String myFile) {
                 Object2DImageRatios[i] = 1;
               }              
             }
+          }
+        }
+      }
+    }
+    
+
+    {
+      children0 = FileAll.getChildren("allSection_SpatialImpact");
+      for (int L = 0; L < children0.length; L++) {
+        int ni = children0[L].getInt("ni");
+        
+        allSection_SpatialImpact = new PImage [ni];
+        
+        XML[] children1 = children0[L].getChildren("Path");         
+        for (int i = 0; i < ni; i++) {      
+          
+          String TEXTURE_path = children1[i].getContent();
+
+          allSection_SpatialImpact[i] = createImage(2, 2, RGB);
+
+          println("Loading texture(" + i + "):", TEXTURE_path);
+          allSection_SpatialImpact[i] = loadImage(TEXTURE_path);
+          println("loaded!");
+          
+        }
+      }
+    }
+
+    {
+      children0 = FileAll.getChildren("allSection_SolarImpact");
+      for (int L = 0; L < children0.length; L++) {
+        int ni = children0[L].getInt("ni");
+        int nj = children0[L].getInt("nj");
+        
+        allSection_SolarImpact = new PImage [ni][nj]; 
+        
+        XML[] children1 = children0[L].getChildren("Path");         
+        for (int i = 0; i < ni; i++) {      
+          for (int j = 0; j < nj; j++) {
+          
+            String TEXTURE_path = children1[i * nj + j].getContent();
+  
+            allSection_SolarImpact[i][j] = createImage(2, 2, RGB);
+  
+            println("Loading texture(" + i + "," + j + "):", TEXTURE_path);
+            allSection_SolarImpact[i][j] = loadImage(TEXTURE_path);
+            println("loaded!");
           }
         }
       }
@@ -41664,6 +41750,10 @@ void SOLARCHVISION_load_project (String myFile) {
 
 bug: delete because scrolling selection+ could add duplicate of the same objects to the list!
 solution: I remarked wheel option for pickSelect for now.
+
+Note: maximum number for PImage[][] allSection_SolarImpact is set to 13! Can't go over day 12 
+
+
 
 
 */
