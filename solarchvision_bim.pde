@@ -112,6 +112,14 @@ String[][] DEFINED_STATIONS = {
 int Selected_STATION = STATION_NUMBER;
 int LOAD_STATION = 0; 
 
+
+int STUDY_i_start = 0;
+int STUDY_i_end = 23;
+
+int STUDY_j_start = 0;
+int STUDY_j_end = 6; //2; //16; // Variable
+
+
 int Load_Default_Models = 0; //3;//0; //3; //5;
 
 
@@ -191,10 +199,15 @@ float[][] allSection_UVERAB = {{0,0,0,0,0,0}};
 int[] allSection_Type = {0};
 int[] allSection_RES1 = {0};
 int[] allSection_RES2 = {0};
+int allSection_num = 0;
 PImage[] allSection_SpatialImpact = {createImage(2, 2, RGB)};
-PImage[][] allSection_SolarImpact = {{createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB)}}; 
-int allSection_num = 0; 
-
+PImage[][] allSection_SolarImpact = new PImage[1][(1 + STUDY_j_end - STUDY_j_start)];
+{
+  int i = 0;
+  for (int j = STUDY_j_start; j <= STUDY_j_end; j += 1) { 
+    allSection_SolarImpact[i][j] = createImage(2, 2, RGB);
+  } 
+}
 
 
 int Display_Output_in_Explorer = 1;
@@ -484,11 +497,6 @@ int WORLD_record_AUTO = 0;
 int WIN3D_record_JPG = 0;
 int WIN3D_record_AUTO = 0;
 
-int STUDY_i_start = 0;
-int STUDY_i_end = 23;
-
-int STUDY_j_start = 0;
-int STUDY_j_end = 6; //2; //16; // Variable
 
 int STUDY_max_j_end_parameters = 16; // Constant
 int STUDY_max_j_end_observations = 0; // Variable
@@ -19306,8 +19314,14 @@ void SOLARCHVISION_remove_Sections () {
   allSection_SpatialImpact = new PImage [1];
   allSection_SpatialImpact[0] = createImage(2, 2, RGB);
 
-  allSection_SolarImpact = new PImage [1][1];
-  allSection_SolarImpact[0][0] = createImage(2, 2, RGB);
+  allSection_SolarImpact = new PImage[1][(1 + STUDY_j_end - STUDY_j_start)];
+  {
+    int i = 0;
+    for (int j = STUDY_j_start; j <= STUDY_j_end; j += 1) { 
+      allSection_SolarImpact[i][j] = createImage(2, 2, RGB);
+    } 
+  }  
+    
 
   allSection_num = 0;
   
@@ -34478,8 +34492,13 @@ void SOLARCHVISION_add_Section (int n, float u, float v, float elev, float rot, 
   PImage[] TempSection_SpatialImpact = {createImage(RES1, RES2, RGB)}; 
   allSection_SpatialImpact = (PImage[]) concat(allSection_SpatialImpact, TempSection_SpatialImpact);
   
-  // dirty way of doing it. Flexible day numbers. But limited number!  
-  PImage[][] TempSection_SolarImpact = {{createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB), createImage(2, 2, RGB)}};
+  PImage[][] TempSection_SolarImpact = new PImage[1][(1 + STUDY_j_end - STUDY_j_start)];
+  {
+    int i = 0;
+    for (int j = STUDY_j_start; j <= STUDY_j_end; j += 1) { 
+      TempSection_SolarImpact[i][j] = createImage(2, 2, RGB);
+    } 
+  }
   allSection_SolarImpact = (PImage[][]) concat(allSection_SolarImpact, TempSection_SolarImpact);    
 
   float[][] TempSection_UVERAB = {{u, v, elev, rot, dU, dV}};
@@ -40121,6 +40140,10 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     int nj = allSection_SolarImpact[0].length;
     newChild1.setInt("ni", ni);
     newChild1.setInt("nj", nj);
+    
+    println("ni",ni);
+    println("nj",nj);
+    
     for (int i = 0; i < ni; i++) {
       for (int j = 0; j < nj; j++) {
         
