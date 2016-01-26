@@ -17978,7 +17978,7 @@ void SOLARCHVISION_export_objects () {
 
       if (Section_Type != 0) {
 
-        String the_filename = "Impact_" + nf(f, 0) + ".jpg";
+        String the_filename = "Impact_" + nf(f, 0) + ".bmp";
       
         if (objExportMaterialLibrary != 0) {
         
@@ -39939,6 +39939,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("selectedPolymesh_displayBox", selectedPolymesh_displayBox);
   newChild1.setInt("selectedObject2D_displayEdges", selectedObject2D_displayEdges);
   newChild1.setInt("selectedFractal_displayEdges", selectedFractal_displayEdges);
+  newChild1.setInt("selectedSection_displayEdges", selectedSection_displayEdges);
   
   newChild1.setFloat("softSelection_Power", softSelection_Power);
   newChild1.setFloat("softSelection_Radius", softSelection_Radius);
@@ -39991,7 +39992,10 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setString("LAND_mid_lon", Double.toString(LAND_mid_lon));
   newChild1.setString("Default_Font", Default_Font);
   newChild1.setInt("Object2D_PEOPLE_Files_Num", Object2D_PEOPLE_Files_Num);
-  newChild1.setInt("Object2D_TREES_Files_Num", Object2D_TREES_Files_Num);  
+  newChild1.setInt("Object2D_TREES_Files_Num", Object2D_TREES_Files_Num); 
+   
+  newChild1.setFloat("softSelection_Power", softSelection_Power);
+  newChild1.setFloat("softSelection_Radius", softSelection_Radius); 
   
   newChild1.setInt("objExportPrecisionVertex", objExportPrecisionVertex);
   newChild1.setInt("objExportPrecisionVtexture", objExportPrecisionVtexture);
@@ -40122,6 +40126,29 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       }
     } 
   }  
+
+  {
+    newChild1 = my_xml.addChild("allSection");
+    int ni = 1 + allSection_num;
+    newChild1.setInt("ni", ni);
+    for (int i = 0; i < ni; i++) {
+      newChild2 = newChild1.addChild("Section");
+      newChild2.setInt("id", i);
+      String lineSTR = "";
+      //for (int j = 0; j < allSection_UVERAB[i].length; j++) {
+      for (int j = 0; j < 6; j++) { // u, v, e, r, a, b
+        lineSTR += nf(allSection_UVERAB[i][j], 0, 4).replace(",", "."); // <<<<
+        lineSTR += ",";
+      }
+      lineSTR += nf(allSection_Type[i], 0);
+      lineSTR += ",";
+      lineSTR += nf(allSection_RES1[i], 0);
+      lineSTR += ",";
+      lineSTR += nf(allSection_RES2[i], 0);
+      
+      newChild2.setContent(lineSTR);
+    } 
+  }
 
   {
     newChild1 = my_xml.addChild("allFractal");
@@ -40370,6 +40397,43 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   }
 
 
+  {
+    newChild1 = my_xml.addChild("selectedVertex_softSelectionVertices");
+    int ni = selectedVertex_softSelectionVertices.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += selectedVertex_softSelectionVertices[i];
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }
+
+
+  {
+    newChild1 = my_xml.addChild("selectedVertex_softSelectionValues");
+    int ni = selectedVertex_softSelectionValues.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += nf(selectedVertex_softSelectionValues[i], 0, 4).replace(",", "."); // <<<<
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }
+  
+
+  {
+    newChild1 = my_xml.addChild("selectedSection_numbers");
+    int ni = selectedSection_numbers.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += selectedSection_numbers[i];
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }
 
   {
     newChild1 = my_xml.addChild("SpatialImpact_Elevation");
@@ -40929,6 +40993,7 @@ void SOLARCHVISION_load_project (String myFile) {
       selectedVertex_displayVertices = children0[L].getInt("selectedVertex_displayVertices");      
       selectedObject2D_displayEdges = children0[L].getInt("selectedObject2D_displayEdges");
       selectedFractal_displayEdges = children0[L].getInt("selectedFractal_displayEdges");
+      selectedSection_displayEdges = children0[L].getInt("selectedSection_displayEdges");
       
       softSelection_Power = children0[L].getFloat("softSelection_Power");
       softSelection_Radius = children0[L].getFloat("softSelection_Radius");
@@ -40981,7 +41046,9 @@ void SOLARCHVISION_load_project (String myFile) {
       LAND_mid_lon = Double.parseDouble(children0[L].getString("LAND_mid_lon"));
       Object2D_PEOPLE_Files_Num = children0[L].getInt("Object2D_PEOPLE_Files_Num");
       Object2D_TREES_Files_Num = children0[L].getInt("Object2D_TREES_Files_Num");
-      /*
+      softSelection_Power = children0[L].getFloat("softSelection_Power");
+      softSelection_Radius = children0[L].getFloat("softSelection_Radius");
+
       objExportPrecisionVertex = children0[L].getInt("objExportPrecisionVertex");
       objExportPrecisionVtexture = children0[L].getInt("objExportPrecisionVtexture");
       objExportPolyToPoly = children0[L].getInt("objExportPolyToPoly");
@@ -40989,7 +41056,7 @@ void SOLARCHVISION_load_project (String myFile) {
       objExportBackSides = children0[L].getInt("objExportBackSides");
       objExportCombinedMaterial = children0[L].getInt("objExportCombinedMaterial");      
       objExportBakingResolution = children0[L].getInt("objExportBakingResolution");
-      */
+
 
       {
         String new_Default_Font = children0[L].getString("Default_Font");
@@ -41029,6 +41096,7 @@ void SOLARCHVISION_load_project (String myFile) {
         
         if (Object2D_ImagePath.length != ni) {
           Object2DImages = new PImage [ni];
+          Object2DImageRatios = new float [ni];
           
           reload_All_textures = 1;
         }
@@ -41048,6 +41116,13 @@ void SOLARCHVISION_load_project (String myFile) {
               println("Loading texture(", i + "):", Object2D_ImagePath[i]);
               Object2DImages[i] = loadImage(Object2D_ImagePath[i]);
               println("loaded!");
+              
+              if (Object2DImages[i].height != 0) {
+                Object2DImageRatios[i] = float(Object2DImages[i].width) / float(Object2DImages[i].height);
+              }
+              else {
+                Object2DImageRatios[i] = 1;
+              }              
             }
           }
         }
@@ -41084,6 +41159,31 @@ void SOLARCHVISION_load_project (String myFile) {
         }
       }
     }
+
+    children0 = FileAll.getChildren("allSection");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      
+      allSection_UVERAB = new float [ni][6];
+      allSection_Type = new int [ni];
+      allSection_RES1 = new int [ni];
+      allSection_RES2 = new int [ni];
+      allSection_num = ni - 1;
+      
+      XML[] children1 = children0[L].getChildren("Section");         
+      for (int i = 0; i < ni; i++) {
+
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < 6; j++) {
+          allSection_UVERAB[i][j] = float(parts[j]);
+        }
+
+        allSection_Type[i] = int(parts[6]);
+        allSection_RES1[i] = int(parts[7]);
+        allSection_RES2[i] = int(parts[8]);
+      }
+    } 
 
  
     children0 = FileAll.getChildren("allFractal");
@@ -41290,16 +41390,16 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     } 
 
-    children0 = FileAll.getChildren("selectedVertex_numbers");
+    children0 = FileAll.getChildren("selectedPolymesh_numbers");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      selectedVertex_numbers = new int [ni];
+      selectedPolymesh_numbers = new int [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        selectedVertex_numbers[i] = int(parts[i]);
+        selectedPolymesh_numbers[i] = int(parts[i]);
       }
-    }
+    } 
     
     children0 = FileAll.getChildren("selectedFace_numbers");
     for (int L = 0; L < children0.length; L++) {
@@ -41312,16 +41412,50 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     }
 
-    children0 = FileAll.getChildren("selectedPolymesh_numbers");
+    children0 = FileAll.getChildren("selectedVertex_numbers");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      selectedPolymesh_numbers = new int [ni];
+      selectedVertex_numbers = new int [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        selectedPolymesh_numbers[i] = int(parts[i]);
+        selectedVertex_numbers[i] = int(parts[i]);
       }
-    } 
+    }
+    
+    children0 = FileAll.getChildren("selectedVertex_softSelectionVertices");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      selectedVertex_softSelectionVertices = new int [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        selectedVertex_softSelectionVertices[i] = int(parts[i]);
+      }
+    }
+
+    children0 = FileAll.getChildren("selectedVertex_softSelectionValues");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      selectedVertex_softSelectionValues = new float [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        selectedVertex_softSelectionValues[i] = float(parts[i]);
+      }
+    }
+    
+
+    children0 = FileAll.getChildren("selectedSection_numbers");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      selectedSection_numbers = new int [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        selectedSection_numbers[i] = int(parts[i]);
+      }
+    }
 
     children0 = FileAll.getChildren("SpatialImpact_Elevation");
     for (int L = 0; L < children0.length; L++) {
@@ -41531,29 +41665,9 @@ void SOLARCHVISION_load_project (String myFile) {
 bug: delete because scrolling selection+ could add duplicate of the same objects to the list!
 solution: I remarked wheel option for pickSelect for now.
 
-// the same messages of View_Select_Create_Modify=6/7 for both Layer/Visibility of polymeshes and DegreeMax/DegreeDif is not good!
-
-float softSelection_Power = 1;
-float softSelection_Radius = 2; // 2 = 2m
-
-int[] selectedVertex_softSelectionVertices = new int[0]; 
-float[] selectedVertex_softSelectionValues = new float[0];
-
-
-
-
-
-
-float[][] allSection_UVERAB = {{0,0,0,0,0,0}};
-int[] allSection_Type = {0};
-int[] allSection_RES1 = {0};
-int[] allSection_RES2 = {0};
-int allSection_num = 0; 
-
-int selectedSection_displayEdges = 1;
-
-int[] selectedSection_numbers = {0};
-
-float[] Object2DImageRatios;
 
 */
+
+
+
+
