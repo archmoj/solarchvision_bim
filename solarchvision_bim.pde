@@ -20059,7 +20059,7 @@ void SOLARCHVISION_calculate_windFlow () {
           //if ((-1 < val) && (val < 2)) {  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           if ((-100 < val) && (val < 100)) {  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   
-            float MinimumDistance_trace = 1.0; //SpatialImpact_Wspd;
+            float MinimumDistance_trace = SpatialImpact_Wspd;
     
             //-----------------------------------------------------------------------------------------------------------------------------------------
             float[][] tracedPoints = SOLARCHVISION_3DtraceContour(MinimumDistance_trace, test_point[0], test_point[1], test_point[2], val);
@@ -20072,37 +20072,12 @@ void SOLARCHVISION_calculate_windFlow () {
             float[] v1 = {deltaX, deltaY, deltaZ};
             
             float[] v2 = {point_min[0] - x, point_min[1] - y, point_min[2] - z};
-            /*
-            float[] v2 = {point_equ[0] - x, point_equ[1] - y, point_equ[2] - z};
-            
-            
-            if (fn_dot(v1, v2) < 0 ){
-              v2[0] *= -1;
-              v2[1] *= -1;
-              v2[2] *= -1;
-            }
-            */
-            v2 = fn_normalize(v2);
-            
-            //float q = -val;
-            //float q = val;
-            
-            //float dx = v1[0] * q + v2[0] * (1 - q) * SpatialImpact_Wspd;
-            //float dy = v1[1] * q + v2[1] * (1 - q) * SpatialImpact_Wspd;
-            //float dz = v1[2] * q + v2[2] * (1 - q) * SpatialImpact_Wspd;
-  
-            //float dx = v1[0] + v2[0] * (1 - q) * SpatialImpact_Wspd;
-            //float dy = v1[1] + v2[1] * (1 - q) * SpatialImpact_Wspd;
-            //float dz = v1[2] + v2[2] * (1 - q) * SpatialImpact_Wspd;
 
-            float dx = v1[0] + v2[0] * SpatialImpact_Wspd;
-            float dy = v1[1] + v2[1] * SpatialImpact_Wspd;
-            float dz = v1[2] + v2[2] * SpatialImpact_Wspd;
-
-  
+            float dx = v1[0] + v2[0];
+            float dy = v1[1] + v2[1];
+            float dz = v1[2] + v2[2];
     
             float scale = 1.0 / float(num_steps);
-            //float scale = 0.1 / float(num_steps); //<<<<<<<<<<<<<<<<<<<<<<<<<
     
             float x1 = test_point[0] - 0.5 * dx * scale;
             float y1 = test_point[1] - 0.5 * dy * scale;
