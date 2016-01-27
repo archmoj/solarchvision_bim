@@ -18031,7 +18031,7 @@ void SOLARCHVISION_export_objects () {
           for (int _turn = 1; _turn < 4; _turn += 1) {
             for (int q = 0; q < 4; q++) {
                 
-              float[] ImageVertex = SOLARCHVISION_getPoints_Section(q, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+              float[] ImageVertex = SOLARCHVISION_getCorners_Section(q, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
               
               float x = ImageVertex[0];
               float y = ImageVertex[1];
@@ -23888,47 +23888,6 @@ float[] SpatialImpact_Rotation = {0, 0, 0, 0};
 float SpatialImpact_positionStep = 1.25;
 
 
-float[] ParametricGeometries_SpatialImpact_atIJ_simple (float i, float j){
-  
-  float x = 0;
-  float y = 0;
-  float z = 0;
-  
-  float val = 0;
-  
-  for (int n = 0; n < SolidObjects.length; n++) {
-
-    float a = (i / SpatialImpact_RES1 - 0.5) * SpatialImpact_scale_U[SpatialImpact_sectionType] + SpatialImpact_offset_U[SpatialImpact_sectionType];
-    float b = (j / SpatialImpact_RES2 - 0.5) * SpatialImpact_scale_V[SpatialImpact_sectionType] - SpatialImpact_offset_V[SpatialImpact_sectionType];
-    float c = SpatialImpact_Elevation[Display_SpatialImpact_Image];
-    
-    if (SpatialImpact_sectionType == 1) {
-      x = a * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) - b * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]);
-      y = -(a * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) + b * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]));
-      z = c;
-    }
-    else if (SpatialImpact_sectionType == 2) {
-      x = a * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]);
-      y = -(a * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]));
-      z = -b; 
-    }
-    else if (SpatialImpact_sectionType == 3) {
-      x = a * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]);
-      y = -(a * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]));
-      z = -b; 
-    }
-      
-    float d = SolidObjects[n].Distance(x, y, z);
-    
-    if (d != 0) {
-      val += 1.0 / pow(d, SpatialImpact_Power);
-    } 
-  }  
-  
-  float[] return_array = {x, y, z, val - 1};
-
-  return return_array;
-}
 
 
 float ParametricGeometries_SpatialImpact_atXYZ_simple (float x, float y, float z) {
@@ -23946,71 +23905,6 @@ float ParametricGeometries_SpatialImpact_atXYZ_simple (float x, float y, float z
   return val - 1;
 }
 
-float[] ParametricGeometries_SpatialImpact_atIJ (float i, float j){
-
-  float deltaX = SpatialImpact_Wspd * cos_ang(SpatialImpact_Wdir);
-  float deltaY = SpatialImpact_Wspd * sin_ang(SpatialImpact_Wdir);
-  
-  float x = 0;
-  float y = 0;
-  float z = 0;
-
-  float[] val = {0,0};
-
-  for (int o = 0; o < 1; o++) {
-  //for (int o = 0; o < 2; o++) {
-    
-    float totalP = 0;    
-    
-    for (int n = 0; n < SolidObjects.length; n++) {
-      
-      float a = (i / SpatialImpact_RES1 - 0.5) * SpatialImpact_scale_U[SpatialImpact_sectionType] + SpatialImpact_offset_U[SpatialImpact_sectionType];
-      float b = (j / SpatialImpact_RES2 - 0.5) * SpatialImpact_scale_V[SpatialImpact_sectionType] - SpatialImpact_offset_V[SpatialImpact_sectionType];
-      float c = SpatialImpact_Elevation[SpatialImpact_sectionType];
-     
-      if (SpatialImpact_sectionType == 1) {
-        x = a * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) - b * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]);
-        y = -(a * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) + b * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]));
-        z = c;
-      }
-      else if (SpatialImpact_sectionType == 2) {
-        x = a * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]);
-        y = -(a * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]));
-        z = -b; 
-      }
-      else if (SpatialImpact_sectionType == 3) {
-        x = a * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]);
-        y = -(a * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]));
-        z = -b; 
-      }
-      
-      for (int m = 1; m <= WindSamples; m++) {
-        
-        //float p = pow(0.5, m); // 0.5, 0.25, 0.125, 0.0625
-        float p = pow(1 - SpatialImpact_Wdie, m);
-        
-        //float q = (o - 0.5) + (m - 1) / float(WindSamples); // 0.0, 0.25, 0.5, 0.75, 1.0
-        float q = o + (m - 1) / float(WindSamples); // 0.0, 0.25, 0.5, 0.75, 1.0
-        
-        float d = SolidObjects[n].Distance(x + q * deltaX , y + q * deltaY, z);
-        if (d != 0) {
-          val[o] += p / pow(d, SpatialImpact_Power);
-          
-          totalP += p;
-        }
-      }      
-    }
-    
-    if (totalP != 0) val[o] /= 0.5 * totalP; 
-  
-    val[o] = val[o] - 1;
-  }
-  
-  float[] return_array = {x, y, z, val[0]};
-  //float[] return_array = {x, y, z, val[1] - val[0]};
-  
-  return return_array;
-}
 
 
 float ParametricGeometries_SpatialImpact_atXYZ (float x, float y, float z) {
@@ -24692,8 +24586,6 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
             
             _valuesSUM = COMPARISON;
             
-            //_valuesSUM *= ParametricGeometries_SpatialImpact_atIJ(Image_X, Image_Y); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            
             //_u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
             _u = 0.5 + 0.5 * 0.75 * (0.2 * PAL_Multiplier * _valuesSUM);
           }
@@ -24891,17 +24783,33 @@ void SOLARCHVISION_calculate_SpatialImpact_CurrentSection () {
     float PAL_Multiplier = SPATIAL_Pallet_MLT;     
     
     SpatialImpact_Image.loadPixels();
+
+    float Section_offset_U = SpatialImpact_offset_U[SpatialImpact_sectionType];
+    float Section_offset_V = SpatialImpact_offset_V[SpatialImpact_sectionType];
+    float Section_Elevation = SpatialImpact_Elevation[SpatialImpact_sectionType];
+    float Section_Rotation = SpatialImpact_Rotation[SpatialImpact_sectionType];
+    float Section_scale_U = SpatialImpact_scale_U[SpatialImpact_sectionType];
+    float Section_scale_V = SpatialImpact_scale_V[SpatialImpact_sectionType];
+
+    int Section_Type = SpatialImpact_sectionType;
+    int Section_RES1 = SpatialImpact_RES1;
+    int Section_RES2 = SpatialImpact_RES2; 
+
+    float[] SectionCorner_A = SOLARCHVISION_getCorners_Section(0, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+    float[] SectionCorner_B = SOLARCHVISION_getCorners_Section(1, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+    float[] SectionCorner_C = SOLARCHVISION_getCorners_Section(2, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+    float[] SectionCorner_D = SOLARCHVISION_getCorners_Section(3, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2); 
     
+
     for (int i = 0; i < SpatialImpact_RES1; i++) {
       for (int j = 0; j < SpatialImpact_RES2; j++) {
-  
-        //float[] SpatialImpactPoint = ParametricGeometries_SpatialImpact_atIJ_simple(i, j);
-        float[] SpatialImpactPoint = ParametricGeometries_SpatialImpact_atIJ(i, j);
         
-        float x = SpatialImpactPoint[0];
-        float y = SpatialImpactPoint[1];
-        float z = SpatialImpactPoint[2];
-        float val = SpatialImpactPoint[3];
+        float x = Bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(SpatialImpact_RES1), 1 - j / float(SpatialImpact_RES2));
+        float y = Bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(SpatialImpact_RES1), 1 - j / float(SpatialImpact_RES2));
+        float z = Bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(SpatialImpact_RES1), 1 - j / float(SpatialImpact_RES2));
+      
+        //float val = ParametricGeometries_SpatialImpact_atXYZ_simple(x, y, z);
+        float val = ParametricGeometries_SpatialImpact_atXYZ(x, y, z);     
         
         float g =      roundTo(SpatialImpact_Grade * val, deltaSpatialImpact) - 0.5 * deltaSpatialImpact;
         float g_line = roundTo(SpatialImpact_Grade * val, deltaSpatialImpactLines);
@@ -30421,18 +30329,18 @@ void mouseClicked () {
                        
                         PVector GAxGB = AG.cross(BG);
                         
-                        float[] ImageVertex_A = SOLARCHVISION_getPoints_Section(0, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
-                        float[] ImageVertex_B = SOLARCHVISION_getPoints_Section(1, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
-                        float[] ImageVertex_C = SOLARCHVISION_getPoints_Section(2, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
-                        float[] ImageVertex_D = SOLARCHVISION_getPoints_Section(3, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2); 
+                        float[] SectionCorner_A = SOLARCHVISION_getCorners_Section(0, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+                        float[] SectionCorner_B = SOLARCHVISION_getCorners_Section(1, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+                        float[] SectionCorner_C = SOLARCHVISION_getCorners_Section(2, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+                        float[] SectionCorner_D = SOLARCHVISION_getCorners_Section(3, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2); 
                         
                         float[] ImageCenter = {0,0,0};
                         for (int j = 0; j < 3; j++) {
-                          ImageCenter[j] = 0.25 * (ImageVertex_A[j] + ImageVertex_B[j] + ImageVertex_C[j] + ImageVertex_D[j]);
+                          ImageCenter[j] = 0.25 * (SectionCorner_A[j] + SectionCorner_B[j] + SectionCorner_C[j] + SectionCorner_D[j]);
                         }  
                         
-                        PVector AG_other = new PVector(ImageVertex_A[0] - ImageCenter[0], ImageVertex_A[1] - ImageCenter[1], ImageVertex_A[2] - ImageCenter[2]);                       
-                        PVector BG_other = new PVector(ImageVertex_B[0] - ImageCenter[0], ImageVertex_B[1] - ImageCenter[1], ImageVertex_B[2] - ImageCenter[2]);
+                        PVector AG_other = new PVector(SectionCorner_A[0] - ImageCenter[0], SectionCorner_A[1] - ImageCenter[1], SectionCorner_A[2] - ImageCenter[2]);                       
+                        PVector BG_other = new PVector(SectionCorner_B[0] - ImageCenter[0], SectionCorner_B[1] - ImageCenter[1], SectionCorner_B[2] - ImageCenter[2]);
                         
                         PVector GAxGB_other = AG_other.cross(BG_other);
                         
@@ -34617,7 +34525,7 @@ void SOLARCHVISION_draw_Sections () {
         
         for (int q = 0; q < 4; q++) {
           
-          float[] ImageVertex = SOLARCHVISION_getPoints_Section(q, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+          float[] ImageVertex = SOLARCHVISION_getCorners_Section(q, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
           
           float x = ImageVertex[0];
           float y = ImageVertex[1];
@@ -34646,7 +34554,7 @@ void SOLARCHVISION_draw_Sections () {
 }
 
 
-float[] SOLARCHVISION_getPoints_Section (int q, int Section_Type, float Section_offset_U, float Section_offset_V, float Section_Elevation, float Section_Rotation, float Section_scale_U, float Section_scale_V, int Section_RES1, int Section_RES2) {
+float[] SOLARCHVISION_getCorners_Section (int q, int Section_Type, float Section_offset_U, float Section_offset_V, float Section_Elevation, float Section_Rotation, float Section_scale_U, float Section_scale_V, int Section_RES1, int Section_RES2) {
   
   float c = Section_Elevation;
 
