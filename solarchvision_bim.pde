@@ -20009,14 +20009,29 @@ void SOLARCHVISION_calculate_windFlow () {
   float deltaZ = 0;   
 
 /* 
+
+  float Section_offset_U = SpatialImpact_offset_U[SpatialImpact_sectionType];
+  float Section_offset_V = SpatialImpact_offset_V[SpatialImpact_sectionType];
+  float Section_Elevation = SpatialImpact_Elevation[SpatialImpact_sectionType];
+  float Section_Rotation = SpatialImpact_Rotation[SpatialImpact_sectionType];
+  float Section_scale_U = SpatialImpact_scale_U[SpatialImpact_sectionType];
+  float Section_scale_V = SpatialImpact_scale_V[SpatialImpact_sectionType];
+
+  int Section_Type = SpatialImpact_sectionType;
+  int Section_RES1 = SpatialImpact_RES1;
+  int Section_RES2 = SpatialImpact_RES2; 
+
+  float[] SectionCorner_A = SOLARCHVISION_getCorners_Section(0, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+  float[] SectionCorner_B = SOLARCHVISION_getCorners_Section(1, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+  float[] SectionCorner_C = SOLARCHVISION_getCorners_Section(2, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+  float[] SectionCorner_D = SOLARCHVISION_getCorners_Section(3, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2); 
+  
   for (int i = 0; i < SpatialImpact_RES1; i += 10) {
     for (int j = 0; j < SpatialImpact_RES2; j += 10) {
-      {
-        float[] SpatialImpactPoint = ParametricGeometries_SpatialImpact_atIJ(i, j);
-        
-        float x = SpatialImpactPoint[0];
-        float y = SpatialImpactPoint[1];
-        float z = SpatialImpactPoint[2];
+      
+      float x = Bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(SpatialImpact_RES1), 1 - j / float(SpatialImpact_RES2));
+      float y = Bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(SpatialImpact_RES1), 1 - j / float(SpatialImpact_RES2));
+      float z = Bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(SpatialImpact_RES1), 1 - j / float(SpatialImpact_RES2));
 
 */   
 
