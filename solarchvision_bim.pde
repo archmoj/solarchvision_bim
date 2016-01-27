@@ -116,7 +116,7 @@ int LOAD_STATION = 0;
 int STUDY_i_start = 0;
 int STUDY_i_end = 23;
 
-int STUDY_j_start = 0;
+int STUDY_j_start = 0; // constant
 int STUDY_j_end = 6; //2; //16; // Variable
 
 
@@ -1325,6 +1325,7 @@ int pre_num_add_days;
 int pre_STUDY_i_start;
 int pre_STUDY_i_end;
 int pre_STUDY_j_end;
+int pre_Day_of_Impact_to_Display;
 int pre_STUDY_setup;
 int pre_impacts_source;
 int pre_STATION_NUMBER;
@@ -2228,6 +2229,7 @@ void draw () {
         pre_STUDY_i_start = STUDY_i_start;
         pre_STUDY_i_end = STUDY_i_end;        
         pre_STUDY_j_end = STUDY_j_end;
+        pre_Day_of_Impact_to_Display = Day_of_Impact_to_Display;
         pre_STUDY_setup = STUDY_setup;
         pre_impacts_source = impacts_source;
         pre_STATION_NUMBER = STATION_NUMBER;
@@ -2382,7 +2384,13 @@ void draw () {
           
           rebuild_SolarProjection_array = 1;
           rebuild_SolarImpact_Image_array = 1;
-          rebuild_WindRose_Image_array = 1;          
+          rebuild_WindRose_Image_array = 1;      
+
+          SOLARCHVISION_resize_allSection_SolarImpact_array(); 
+        }
+        
+        if (pre_Day_of_Impact_to_Display != Day_of_Impact_to_Display) {
+          BAR_d_Update = 1;
         }
         
         if (pre_DATE != _DATE) {
@@ -11680,9 +11688,12 @@ void STUDY_keyPressed (KeyEvent e) {
                   }
                   */
                   update_DevelopDATA = 1;
+
                   rebuild_SolarProjection_array = 1;
                   rebuild_SolarImpact_Image_array = 1;
                   rebuild_WindRose_Image_array = 1;
+                  SOLARCHVISION_resize_allSection_SolarImpact_array();
+
                   BAR_d_Update = 1;STUDY_Update = 1; ROLLOUT_Update = 1; break;
                   
         case '{' :STUDY_j_end -= 1; 
@@ -11697,9 +11708,12 @@ void STUDY_keyPressed (KeyEvent e) {
                   }                  
                   */
                   update_DevelopDATA = 1;
+                  
                   rebuild_SolarProjection_array = 1;
                   rebuild_SolarImpact_Image_array = 1;
-                  rebuild_WindRose_Image_array = 1;                  
+                  rebuild_WindRose_Image_array = 1;   
+                  SOLARCHVISION_resize_allSection_SolarImpact_array();
+               
                   BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
 
         /*      
@@ -19320,13 +19334,26 @@ void SOLARCHVISION_remove_Sections () {
     for (int j = STUDY_j_start; j <= STUDY_j_end; j += 1) { 
       allSection_SolarImpact[i][j] = createImage(2, 2, RGB);
     } 
-  }  
-    
+  }      
 
   allSection_num = 0;
   
   SOLARCHVISION_deselectAll();  
 }
+
+void SOLARCHVISION_resize_allSection_SolarImpact_array () { // called when STUDY_j_end changes
+
+  allSection_SolarImpact = new PImage[1 + allSection_num][(1 + STUDY_j_end - STUDY_j_start)];
+  {
+    for (int i = 0; i <= allSection_num; i++) {
+      for (int j = STUDY_j_start; j <= STUDY_j_end; j += 1) { 
+        allSection_SolarImpact[i][j] = createImage(2, 2, RGB);
+      } 
+    }
+  }  
+
+}
+
 
 void SOLARCHVISION_remove_FractalPlants () {
   allFractal_XYZSRA = new float [1][6]; 
@@ -23783,6 +23810,9 @@ void SOLARCHVISION_add_ParametricGeometries () {
 }
 
 
+
+
+
 void SOLARCHVISION_build_SolarImpact_Image_array () {
 
   SolarImpact_Image = new PImage [(1 + STUDY_j_end - STUDY_j_start)];
@@ -24245,7 +24275,9 @@ float[][] SOLARCHVISION_3DtraceContour (float epsilon, float x, float y, float z
 
 void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
 
-  SOLARCHVISION_build_SolarImpact_Image_array();
+  if (rebuild_SolarProjection_array != 0) {
+    SOLARCHVISION_build_SolarImpact_Image_array();
+  }
   
   if (SolarImpact_sectionType != 0) {
 
@@ -26005,6 +26037,10 @@ int n_dir;
 float[][][]LocationExposure;
 
 
+int rebuild_SolarProjection_array = 1;
+int rebuild_SolarImpact_Image_array = 1;
+int rebuild_WindRose_Image_array = 1; 
+
 
 void SOLARCHVISION_build_SolarProjection_array () {
   
@@ -26027,9 +26063,6 @@ void SOLARCHVISION_build_SolarProjection_array () {
   rebuild_SolarProjection_array = 0;
 }
 
-int rebuild_SolarProjection_array = 1;
-int rebuild_SolarImpact_Image_array = 1;
-int rebuild_WindRose_Image_array = 1; 
 
 void SOLARCHVISION_SolarProjection () {
   
@@ -39723,7 +39756,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("WIN3D_record_AUTO", WIN3D_record_AUTO);
   newChild1.setInt("STUDY_i_start", STUDY_i_start);
   newChild1.setInt("STUDY_i_end", STUDY_i_end);
-  newChild1.setInt("STUDY_j_start", STUDY_j_start);
+  //newChild1.setInt("STUDY_j_start", STUDY_j_start);
   newChild1.setInt("STUDY_j_end", STUDY_j_end);
   newChild1.setInt("STUDY_max_j_end_parameters", STUDY_max_j_end_parameters);
   newChild1.setInt("STUDY_max_j_end_observations", STUDY_max_j_end_observations);
@@ -40819,7 +40852,7 @@ void SOLARCHVISION_load_project (String myFile) {
       WIN3D_record_AUTO = children0[L].getInt("WIN3D_record_AUTO");
       STUDY_i_start = children0[L].getInt("STUDY_i_start");
       STUDY_i_end = children0[L].getInt("STUDY_i_end");
-      STUDY_j_start = children0[L].getInt("STUDY_j_start");
+      //STUDY_j_start = children0[L].getInt("STUDY_j_start");
       STUDY_j_end = children0[L].getInt("STUDY_j_end");
       STUDY_max_j_end_parameters = children0[L].getInt("STUDY_max_j_end_parameters");
       STUDY_max_j_end_observations = children0[L].getInt("STUDY_max_j_end_observations");
