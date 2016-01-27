@@ -20008,8 +20008,8 @@ void SOLARCHVISION_calculate_windFlow () {
   
 
         
-  float deltaX = -SpatialImpact_Wspd * cos_ang(SpatialImpact_Wdir);
-  float deltaY = -SpatialImpact_Wspd * sin_ang(SpatialImpact_Wdir);
+  float deltaX = SpatialImpact_Wspd * cos_ang(SpatialImpact_Wdir);
+  float deltaY = SpatialImpact_Wspd * sin_ang(SpatialImpact_Wdir);
   float deltaZ = 0;   
 
 /* 
@@ -20085,19 +20085,24 @@ void SOLARCHVISION_calculate_windFlow () {
             v2 = fn_normalize(v2);
             
             //float q = -val;
-            float q = val;
+            //float q = val;
             
-            float dx = v1[0] * q + v2[0] * (1 - q) * SpatialImpact_Wspd;
-            float dy = v1[1] * q + v2[1] * (1 - q) * SpatialImpact_Wspd;
-            float dz = v1[2] * q + v2[2] * (1 - q) * SpatialImpact_Wspd;
+            //float dx = v1[0] * q + v2[0] * (1 - q) * SpatialImpact_Wspd;
+            //float dy = v1[1] * q + v2[1] * (1 - q) * SpatialImpact_Wspd;
+            //float dz = v1[2] * q + v2[2] * (1 - q) * SpatialImpact_Wspd;
   
             //float dx = v1[0] + v2[0] * (1 - q) * SpatialImpact_Wspd;
             //float dy = v1[1] + v2[1] * (1 - q) * SpatialImpact_Wspd;
             //float dz = v1[2] + v2[2] * (1 - q) * SpatialImpact_Wspd;
+
+            float dx = v1[0] + v2[0] * SpatialImpact_Wspd;
+            float dy = v1[1] + v2[1] * SpatialImpact_Wspd;
+            float dz = v1[2] + v2[2] * SpatialImpact_Wspd;
+
   
     
-            //float scale = 1.0 / float(num_steps);
-            float scale = 0.1 / float(num_steps); //<<<<<<<<<<<<<<<<<<<<<<<<<
+            float scale = 1.0 / float(num_steps);
+            //float scale = 0.1 / float(num_steps); //<<<<<<<<<<<<<<<<<<<<<<<<<
     
             float x1 = test_point[0] - 0.5 * dx * scale;
             float y1 = test_point[1] - 0.5 * dy * scale;
