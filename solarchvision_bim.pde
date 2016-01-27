@@ -30,6 +30,8 @@ int objExportBakingResolution = 16;
 String _undefined = "N/A";
 float FLOAT_undefined = 1000000000; // it must be a positive big number that is not included in any data
 
+float CubePower = 16; //8; 
+
 double R_earth = 6373000.0;
 float FLOAT_R_earth = (float) R_earth;
 
@@ -260,9 +262,10 @@ float Create_Input_Orientation = 360; //0; // 360: random
 
 
 
-float Create_Input_powX = 8; 
-float Create_Input_powY = 8;
-float Create_Input_powZ = 8;
+
+float Create_Input_powX = CubePower; 
+float Create_Input_powY = CubePower; 
+float Create_Input_powZ = CubePower; 
 
 float Create_Input_powAll = 8;
 int Create_Input_powRnd = 0;
@@ -340,14 +343,15 @@ int Launch_External_Hardware = 0; // inactive
 
 //-------------------------------
 
-float SpatialImpact_Wspd = 1; //8.0; // (8m/s = 30 km/h) 
+float SpatialImpact_Wspd = 8; //8.0; // (8m/s = 30 km/h) 
 float SpatialImpact_Wdir = 180.0;
 float SpatialImpact_Wdie = 0.25; // ??????????
 
 int WindSamples = 8; //4; //1;
 
 
-float SpatialImpact_Power = 2.0; //3.0; //2.0; // 1/2/3
+float SpatialImpact_Power = 1.0; //2.0; //3.0; // 1/2/3 
+float SpatialImpact_Grade = 0.01; //1.0; //0.1; //10.0; //contour lines 
 
 float GlobalAlbedo = 0; // 0-100
 
@@ -1163,7 +1167,7 @@ float ELEVATION_Pallet_MLT = 0.1;
 
 int SPATIAL_Pallet_CLR = 17; //1; 
 int SPATIAL_Pallet_DIR = -1; 
-float SPATIAL_Pallet_MLT = 1; 
+float SPATIAL_Pallet_MLT = 0.01; //1; 
 
 
 
@@ -19091,7 +19095,7 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
   }  
   
   //SOLARCHVISION_add_Box_Core(m, cen_X,cen_Y,cen_Z, X_out,Y_out,Z_out, T_out);
-  SOLARCHVISION_addToSolids(1, cen_X,cen_Y,cen_Z, 8,8,8, X_out,Y_out,Z_out, 0, 0, T_out);
+  SOLARCHVISION_addToSolids(1, cen_X,cen_Y,cen_Z, CubePower,CubePower,CubePower, X_out,Y_out,Z_out, 0, 0, T_out);
   
   return min_Z;
 }  
@@ -23516,7 +23520,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float z = 0;
     float rot = 0;
     SOLARCHVISION_add_Box_Core(8,0,0,1,1, x,y,z, dx, dy, dz, rot); // facades
-    SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
+    SOLARCHVISION_addToSolids(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot); 
 
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     SOLARCHVISION_add_Box_Core(5,0,0,1,1, x,y,z, dx/3, dy/3, dz, rot); // building core
@@ -23539,7 +23543,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float z = 0;
     float rot = 0;
     SOLARCHVISION_add_Box_Core(8,0,0,1,1, x,y,z, dx, dy, dz, rot); // facades
-    SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
+    SOLARCHVISION_addToSolids(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot); 
 
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     SOLARCHVISION_add_Box_Core(5,0,0,1,1, x,y,z, dx/3, dy/3, dz, rot); // building core
@@ -23562,7 +23566,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float z = 0;
     float rot = 0;
     SOLARCHVISION_add_Box_Core(8,0,0,1,1, x,y,z, dx, dy, dz, rot); // facades
-    SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
+    SOLARCHVISION_addToSolids(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot); 
 
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     SOLARCHVISION_add_Box_Core(5,0,0,1,1, x,y,z, dx/3, dy/3, dz, rot); // building core
@@ -23678,7 +23682,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float z = 0;
     float rot = 0;
     SOLARCHVISION_add_House_Core(7,0,0,1,1, x,y,z, dx,dy,dz, dz, rot); // house 
-    SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
+    SOLARCHVISION_addToSolids(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot);
    } 
 
   {
@@ -23703,7 +23707,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float z = -dz;    
     float rot = 0;
     SOLARCHVISION_add_Box_Core(7,0,0,1,1, x,y,z, dx, dy, dz, rot);
-    //SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
+    //SOLARCHVISION_addToSolids(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot); 
   }  
 
   SOLARCHVISION_add_2Dobjects_polar(1, 40, 0,0,0, 40,100); // trees
@@ -23721,7 +23725,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float z = 0;    
     float rot = 0;
     SOLARCHVISION_add_Box_Core(8,0,0,1,1, x,y,z, dx, dy, dz, rot); // facades
-    SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
+    SOLARCHVISION_addToSolids(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot); 
 
     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
     for (float i = 6; i <= dz; i += 6) {
@@ -23789,7 +23793,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float z = 9;    
     float rot = 30;
     SOLARCHVISION_add_Box_Core(4,0,0,1,1, x,y,z, dx, dy, dz, rot);
-    SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot); 
+    SOLARCHVISION_addToSolids(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot); 
   }   
 
   {  
@@ -23802,7 +23806,7 @@ void SOLARCHVISION_add_ParametricGeometries () {
     float z = 0;
     float rot = 0;
     SOLARCHVISION_add_House_Core(6,0,0,1,1, x,y,z, dx,dy,dz, dz, rot); // house 
-    SOLARCHVISION_addToSolids(1, x,y,z, 8,8,8, dx,dy,dz, 0,0,rot);
+    SOLARCHVISION_addToSolids(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot);
    } 
 
   {
@@ -23888,12 +23892,12 @@ float[] SpatialImpact_scale_V = {100, 100, 100, 100}; // i.e. 100m
 float[] SpatialImpact_offset_U = {0, 0, 0, 0}; 
 float[] SpatialImpact_offset_V = {0, 0, 0, 0}; 
 
-int SpatialImpact_RES1 = 200; //400;
-int SpatialImpact_RES2 = 200; //400;
+int SpatialImpact_RES1 = 400; //400;
+int SpatialImpact_RES2 = 400; //400;
 
 PImage SpatialImpact_Image = createImage(SpatialImpact_RES1, SpatialImpact_RES2, ARGB);
 
-float SpatialImpact_Grade = 1.0; //0.1; //10.0; 
+
 
 int Display_SpatialImpact_Image = 1; // 0:false, 1:true
 int SpatialImpact_sectionType = 0; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
@@ -23906,30 +23910,40 @@ float SpatialImpact_positionStep = 1.25;
 
 float ParametricGeometries_SpatialImpact_atXYZ (float x, float y, float z) {
 
-  return ParametricGeometries_SpatialImpact_atXYZ_simple(x, y, z);
-  //return ParametricGeometries_SpatialImpact_atXYZ_complex(x, y, z);
+  //return ParametricGeometries_SpatialImpact_atXYZ_simple(x, y, z);
+  return ParametricGeometries_SpatialImpact_atXYZ_complex(x, y, z);
 
 }
 
 float ParametricGeometries_SpatialImpact_atXYZ_simple (float x, float y, float z) {
-  //float val = 0;
+
   float val = 1;
   
   for (int n = 0; n < SolidObjects.length; n++) {
     
-    float q = SolidObjects[n].value;
+    float r = SolidObjects[n].value;
     float d = SolidObjects[n].Distance(x, y, z);
 
-    val *= (d - q);
+    d *= pow(d, SpatialImpact_Power);
 
-    //if (d != 0) {
-      //val += 1.0 / pow(d, SpatialImpact_Power);
-    //} 
-    
+    if (val < 0) val *= abs(d - r);
+    else {
+      val *= d - r;
+    }
+
   }
   
-  //return val - 1;
-  return val;  // <<<<<<<<<<<<<<<<<<
+  if (SolidObjects.length > 0) {
+    float val_sign = 1;
+    if (val < 0) {
+      val_sign = -1;
+      val = abs(val);
+    } 
+    val = pow(val, 1.0 / float(SolidObjects.length));
+    val *= val_sign;    
+  } 
+
+  return val;  
 }
 
 
@@ -23939,7 +23953,7 @@ float ParametricGeometries_SpatialImpact_atXYZ_complex (float x, float y, float 
   float deltaX = SpatialImpact_Wspd * cos_ang(SpatialImpact_Wdir);
   float deltaY = SpatialImpact_Wspd * sin_ang(SpatialImpact_Wdir);
 
-  float[] val = {0, 0};
+  float[] val = {1, 1};
 
   for (int o = 0; o < 1; o++) {
   //for (int o = 0; o < 2; o++) {
@@ -23956,20 +23970,23 @@ float ParametricGeometries_SpatialImpact_atXYZ_complex (float x, float y, float 
         //float q = (o - 0.5) + (m - 1) / float(WindSamples); // 0.0, 0.25, 0.5, 0.75, 1.0
         float q = o + (m - 1) / float(WindSamples); // 0.0, 0.25, 0.5, 0.75, 1.0
 
-        
+        float r = SolidObjects[n].value;
         float d = SolidObjects[n].Distance(x + q * deltaX , y + q * deltaY, z);
-        if (d != 0) {
-          val[o] += p / pow(d, SpatialImpact_Power);
-          
-          totalP += p;
-        }
+        
+        d *= pow(d, SpatialImpact_Power);
+    
+        if (val[o] < 0) val[o] *= abs(d - r);
+        else {
+          val[o] *= d - r;
+        }        
+        
+        val[o] *= p;
+        totalP += p;
       }      
        
     }
     
-    if (totalP != 0) val[o] /= 0.5 * totalP;
-  
-    val[o] = val[o] - 1;
+    if (totalP != 0) val[o] /= totalP;
   }
   
   
@@ -24852,9 +24869,9 @@ void SOLARCHVISION_calculate_SpatialImpact_CurrentSection () {
           //if ((g == g_line) && (g != 0)) {
           if ((abs(g - g_line) < 0.001) && (g != 0)) {      
             _COL[0] = 0;    
-            _COL[1] = 255;
-            _COL[2] = 255;
-            _COL[3] = 255;
+            _COL[1] = 0;//255;
+            _COL[2] = 0;//255;
+            _COL[3] = 0;//255;
           }
         } 
         
@@ -30881,7 +30898,7 @@ void mouseClicked () {
                   //---------------------------------------------------
                   float A = 1; 
                   // cube volume: 8*r^3, sphere volume: 4*r^3, so maybe:
-                  if (pz == 8) A = 1;
+                  if (pz >= 8) A = 1;
                   else if (pz == 4) A = 0.75;
                   else if (pz == 2) A = 0.5;
                   else if (pz == 1) A = 0.25;
@@ -30902,19 +30919,19 @@ void mouseClicked () {
                 
                 if (Create_Mesh_SuperOBJ == 1) {
     
-                  if ((px == 8) && (py == 8) && (pz == 2)) {
+                  if ((px == CubePower) && (py == CubePower) && (pz == 2)) {
                     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
                     
                     SOLARCHVISION_add_ParametricSurface(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x, y, z, rx, ry, rz, 2, rot);
                   }
                   
-                  else if ((px == 2) && (py == 2) && (pz == 8)) {
+                  else if ((px == 2) && (py == 2) && (pz == CubePower)) {
                     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
                     
                     SOLARCHVISION_add_SuperCylinder(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x, y, z, rx,ry,rz, Create_Cylinder_Degree, rot);
                   }                
       
-                  else if ((px == 8) && (py == 8) && (pz == 8)) {
+                  else if ((px == CubePower) && (py == CubePower) && (pz == CubePower)) {
                     addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
                     
                     SOLARCHVISION_add_Box_Core(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x,y,z, rx,ry,rz, rot);
@@ -31562,10 +31579,10 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Mesh_SuperOBJ = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_SuperOBJ" , Create_Mesh_SuperOBJ, 0, 1, 1), 1));
 
       //Create_Input_powRnd = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powRnd" , Create_Input_powRnd, 0, 1, 1), 1));    
-      Create_Input_powAll = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powAll" , Create_Input_powAll, 0.5, 8, -2);
-      Create_Input_powX = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powX" , Create_Input_powX, 0.5, 8, -2); 
-      Create_Input_powY = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powY" , Create_Input_powY, 0.5, 8, -2); 
-      Create_Input_powZ = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powZ" , Create_Input_powZ, 0.5, 8, -2);
+      Create_Input_powAll = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powAll" , Create_Input_powAll, 0.5, CubePower, -2);
+      Create_Input_powX = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powX" , Create_Input_powX, 0.5, CubePower, -2); 
+      Create_Input_powY = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powY" , Create_Input_powY, 0.5, CubePower, -2); 
+      Create_Input_powZ = MySpinner.update(X_control, Y_control, 0,0,0, "Create_Input_powZ" , Create_Input_powZ, 0.5, CubePower, -2);
 
     }  
 
@@ -31618,8 +31635,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       SpatialImpact_sectionType = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_sectionType" , SpatialImpact_sectionType, 0, 3, 1), 1));
 
 
-      SpatialImpact_Grade = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Grade" , SpatialImpact_Grade, 1.0 / 64.0, 64.0, -2);
-      SpatialImpact_Power = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Power" , SpatialImpact_Power, 1.0 / 64.0, 64.0, -2);      
+      SpatialImpact_Grade = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Grade" , SpatialImpact_Grade, 0.0001, 64.0, -2);
+      SpatialImpact_Power = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Power" , SpatialImpact_Power, 0.0001, 64.0, -2);      
       SpatialImpact_Rotation[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Rotation[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_Rotation[SpatialImpact_sectionType], -360, 360, -2);
       SpatialImpact_Elevation[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Elevation[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_Elevation[SpatialImpact_sectionType], -1000, 1000, -2);
       SpatialImpact_positionStep = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_positionStep" , SpatialImpact_positionStep, 5, 80, -2);
@@ -31630,7 +31647,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       SpatialImpact_offset_V[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_offset_V[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_offset_V[SpatialImpact_sectionType], -10000, 10000, -2);
       
     
-      SpatialImpact_Wspd = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Wspd (m/s)" , SpatialImpact_Wspd, 1, 64, -2); 
+      SpatialImpact_Wspd = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Wspd (m/s)" , SpatialImpact_Wspd, 1, 16, -2); 
       SpatialImpact_Wdir = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Wdir" , SpatialImpact_Wdir, 0, 360, 15);
       SpatialImpact_Wdie = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Wdie" , SpatialImpact_Wdie, 0, 1, 0.125);
       
@@ -31774,7 +31791,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
       SPATIAL_Pallet_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SPATIAL_Pallet_CLR", SPATIAL_Pallet_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
       SPATIAL_Pallet_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SPATIAL_Pallet_DIR", SPATIAL_Pallet_DIR, -1, 1, 2), 1));
-      SPATIAL_Pallet_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SPATIAL_Pallet_MLT", SPATIAL_Pallet_MLT, 0.0001, 10, -2);      
+      SPATIAL_Pallet_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SPATIAL_Pallet_MLT", SPATIAL_Pallet_MLT, 0.0001, 64, -2);      
 
       ELEVATION_Pallet_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ELEVATION_Pallet_CLR", ELEVATION_Pallet_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
       ELEVATION_Pallet_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ELEVATION_Pallet_DIR", ELEVATION_Pallet_DIR, -1, 1, 2), 1));
@@ -38430,9 +38447,9 @@ void set_to_Create_Box () {
   
   Create_Mesh_SuperOBJ = 1;
 
-  Create_Input_powX = 8;  
-  Create_Input_powY = 8;
-  Create_Input_powZ = 8;            
+  Create_Input_powX = CubePower;   
+  Create_Input_powY = CubePower; 
+  Create_Input_powZ = CubePower;             
   
   Work_with_2D_or_3D = 3;  
 }
@@ -38468,7 +38485,7 @@ void set_to_Create_Cylinder () {
 
   Create_Input_powX = 2;  
   Create_Input_powY = 2; 
-  Create_Input_powZ = 8;            
+  Create_Input_powZ = CubePower;             
   
   Work_with_2D_or_3D = 3;
 }
@@ -38478,8 +38495,8 @@ void set_to_Create_Cushion () {
   
   Create_Mesh_SuperOBJ = 1;
 
-  Create_Input_powX = 8;  
-  Create_Input_powY = 8; 
+  Create_Input_powX = CubePower;   
+  Create_Input_powY = CubePower;  
   Create_Input_powZ = 2;            
   
   Work_with_2D_or_3D = 3;  
