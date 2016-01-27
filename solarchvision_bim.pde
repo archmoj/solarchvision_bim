@@ -20008,8 +20008,8 @@ void SOLARCHVISION_calculate_windFlow () {
   
 
         
-  float deltaX = SpatialImpact_Wspd * cos_ang(SpatialImpact_Wdir);
-  float deltaY = SpatialImpact_Wspd * sin_ang(SpatialImpact_Wdir);
+  float deltaX = -SpatialImpact_Wspd * cos_ang(SpatialImpact_Wdir);
+  float deltaY = -SpatialImpact_Wspd * sin_ang(SpatialImpact_Wdir);
   float deltaZ = 0;   
 
 /* 
