@@ -20834,7 +20834,6 @@ float[] SOLARCHVISION_vertexRender_Shade_Surface_Materials (int mt) {
 
 float[] SOLARCHVISION_vertexRender_Shade_Vertex_Spatial (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
 
-  //float val = ParametricGeometries_SpatialImpact_atXYZ_simple(VERTEX_now[0], VERTEX_now[1], VERTEX_now[2]);
   float val = ParametricGeometries_SpatialImpact_atXYZ(VERTEX_now[0], VERTEX_now[1], VERTEX_now[2]);
 
   float _u = PAL_Multiplier * val + 0.5;
@@ -23487,8 +23486,10 @@ class ParametricGeometry {
     y += posY;  
     z += posZ;
 
-    return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value); 
-    
+    //fffffffffffffffffffffff
+    //return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value); 
+    return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))));
+
     
   } 
   
@@ -23903,26 +23904,37 @@ float[] SpatialImpact_Rotation = {0, 0, 0, 0};
 float SpatialImpact_positionStep = 1.25;
 
 
+float ParametricGeometries_SpatialImpact_atXYZ (float x, float y, float z) {
 
+  return ParametricGeometries_SpatialImpact_atXYZ_simple(x, y, z);
+  //return ParametricGeometries_SpatialImpact_atXYZ_complex(x, y, z);
+
+}
 
 float ParametricGeometries_SpatialImpact_atXYZ_simple (float x, float y, float z) {
-  float val = 0;
+  //float val = 0;
+  float val = 1;
+  
   for (int n = 0; n < SolidObjects.length; n++) {
     
+    float q = SolidObjects[n].value;
     float d = SolidObjects[n].Distance(x, y, z);
 
-    if (d != 0) {
-      val += 1.0 / pow(d, SpatialImpact_Power);
-    } 
+    val *= (d - q);
+
+    //if (d != 0) {
+      //val += 1.0 / pow(d, SpatialImpact_Power);
+    //} 
     
   }
   
-  return val - 1;
+  //return val - 1;
+  return val;  // <<<<<<<<<<<<<<<<<<
 }
 
 
 
-float ParametricGeometries_SpatialImpact_atXYZ (float x, float y, float z) {
+float ParametricGeometries_SpatialImpact_atXYZ_complex (float x, float y, float z) {
 
   float deltaX = SpatialImpact_Wspd * cos_ang(SpatialImpact_Wdir);
   float deltaY = SpatialImpact_Wspd * sin_ang(SpatialImpact_Wdir);
@@ -24823,7 +24835,6 @@ void SOLARCHVISION_calculate_SpatialImpact_CurrentSection () {
         float y = Bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(SpatialImpact_RES1), 1 - j / float(SpatialImpact_RES2));
         float z = Bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(SpatialImpact_RES1), 1 - j / float(SpatialImpact_RES2));
       
-        //float val = ParametricGeometries_SpatialImpact_atXYZ_simple(x, y, z);
         float val = ParametricGeometries_SpatialImpact_atXYZ(x, y, z);     
         
         float g =      roundTo(SpatialImpact_Grade * val, deltaSpatialImpact) - 0.5 * deltaSpatialImpact;
