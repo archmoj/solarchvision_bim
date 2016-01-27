@@ -20057,7 +20057,7 @@ void SOLARCHVISION_calculate_windFlow () {
           
           
           //if ((-1 < val) && (val < 2)) {  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-          if ((-20 < val) && (val < 20)) {  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+          if ((-100 < val) && (val < 100)) {  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   
             float MinimumDistance_trace = 1.0; //SpatialImpact_Wspd;
     
@@ -20084,15 +20084,16 @@ void SOLARCHVISION_calculate_windFlow () {
             */
             v2 = fn_normalize(v2);
             
-            float q = -val;
+            //float q = -val;
+            float q = val;
             
-            //float dx = v1[0] * q + v2[0] * (1 - q) * SpatialImpact_Wspd;
-            //float dy = v1[1] * q + v2[1] * (1 - q) * SpatialImpact_Wspd;
-            //float dz = v1[2] * q + v2[2] * (1 - q) * SpatialImpact_Wspd;
+            float dx = v1[0] * q + v2[0] * (1 - q) * SpatialImpact_Wspd;
+            float dy = v1[1] * q + v2[1] * (1 - q) * SpatialImpact_Wspd;
+            float dz = v1[2] * q + v2[2] * (1 - q) * SpatialImpact_Wspd;
   
-            float dx = v1[0] + v2[0] * (1 - q) * SpatialImpact_Wspd;
-            float dy = v1[1] + v2[1] * (1 - q) * SpatialImpact_Wspd;
-            float dz = v1[2] + v2[2] * (1 - q) * SpatialImpact_Wspd;
+            //float dx = v1[0] + v2[0] * (1 - q) * SpatialImpact_Wspd;
+            //float dy = v1[1] + v2[1] * (1 - q) * SpatialImpact_Wspd;
+            //float dz = v1[2] + v2[2] * (1 - q) * SpatialImpact_Wspd;
   
     
             //float scale = 1.0 / float(num_steps);
