@@ -18993,7 +18993,14 @@ void SOLARCHVISION_import_objects (String FileName, int m, int tes, int lyr, int
         
         int vertexNumber = int(the_numbers[0]);
         
-        newFace[n] = importVerticeNumber[vertexNumber];
+        if (vertexNumber > 0) {
+          newFace[n] = importVerticeNumber[vertexNumber];
+        }
+        else if (vertexNumber < 0) { // for negative numbering
+          newFace[n] = allVertices.length - abs(vertexNumber);
+        }
+        else { // case 0
+        }
       }
       
       //println(newFace);
@@ -41806,11 +41813,6 @@ void SOLARCHVISION_load_project (String myFile) {
 
 bug: delete because scrolling selection+ could add duplicate of the same objects to the list!
 solution: I remarked wheel option for pickSelect for now.
-
-Note: maximum number for PImage[][] allSection_SolarImpact is set to 13! Can't go over day 12 
-
-
-
 
 */
 
