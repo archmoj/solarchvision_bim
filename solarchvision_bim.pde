@@ -1279,7 +1279,7 @@ int Display_SKY3D = 0;
 
 int Download_LAND_MESH = 0;
 int Load_LAND_MESH = 1; // 1;
-int Display_LAND_MESH = 1; // 1;
+int Display_LAND_MESH = 0; // 1;
 int Display_LAND_TEXTURE = 0;
 int Display_LAND_DEPTH = 0;
 int Skip_LAND_MESH_Center = 0; //5;
