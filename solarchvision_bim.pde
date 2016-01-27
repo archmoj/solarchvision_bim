@@ -20040,7 +20040,7 @@ void SOLARCHVISION_calculate_windFlow () {
 */   
 
 
-  for (float z = 5; z <= 5; z += 5) {
+  for (float z = 5; z <= 40; z += 5) {
     for (float y = -80; y < 80; y += 5) {
       for (float x = -80; x < 80; x += 5) {
         
