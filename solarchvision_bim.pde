@@ -23955,43 +23955,23 @@ float ParametricGeometries_SpatialImpact_atXYZ_complex (float x, float y, float 
 
   float[] val = {1, 1};
 
-  for (int o = 0; o < 1; o++) {
-  //for (int o = 0; o < 2; o++) {
-    
-    float totalP = 0;
+  for (int o = 0; o < 2; o++) {
 
     for (int n = 0; n < SolidObjects.length; n++) {
-      
-      for (int m = 1; m <= WindSamples; m++) {
-        
-        //float p = pow(0.5, m); // 0.5, 0.25, 0.125, 0.0625
-        float p = pow(1 - SpatialImpact_Wdie, m);
-        
-        //float q = (o - 0.5) + (m - 1) / float(WindSamples); // 0.0, 0.25, 0.5, 0.75, 1.0
-        float q = o + (m - 1) / float(WindSamples); // 0.0, 0.25, 0.5, 0.75, 1.0
 
-        float r = SolidObjects[n].value;
-        float d = SolidObjects[n].Distance(x + q * deltaX , y + q * deltaY, z);
-        
-        d *= pow(d, SpatialImpact_Power);
-    
-        if (val[o] < 0) val[o] *= abs(d - r);
-        else {
-          val[o] *= d - r;
-        }        
-        
-        val[o] *= p;
-        totalP += p;
-      }      
-       
+      float r = SolidObjects[n].value;
+      float d = SolidObjects[n].Distance(x + o * deltaX , y + o * deltaY, z);
+      
+      d *= pow(d, SpatialImpact_Power);
+  
+      if (val[o] < 0) val[o] *= abs(d - r);
+      else {
+        val[o] *= d - r;
+      }        
     }
-    
-    if (totalP != 0) val[o] /= totalP;
   }
   
-  
-  return val[0];
-  //return val[1] - val[0];
+  return val[1] - val[0];
 }
 
 float fn_dot2D (float x1, float y1, float x2, float y2) {
