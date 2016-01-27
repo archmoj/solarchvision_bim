@@ -28227,24 +28227,24 @@ void mouseClicked () {
               ROLLOUT_Update = 1;                                        
             }  
             
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pre-process Shadows on Selected Sections")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pre-bake Selected Sections")) {
               SOLARCHVISION_render_Shadows_selectedSections();              
               WIN3D_Update = 1;                         
             }         
        
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Process Solar Impact on Selected Sections (Active)")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Process Active Impact")) {
               plot_impacts = 0;         
               SOLARCHVISION_calculate_SolarImpact_selectedSections();              
               WIN3D_Update = 1;                         
             }   
             
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Process Solar Impact on Selected Sections (Passive)")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Process Passive Impact")) {
               plot_impacts = 1;         
               SOLARCHVISION_calculate_SolarImpact_selectedSections();              
               WIN3D_Update = 1;                         
             }               
 
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Process Spatial Impact on Selected Sections")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Process Spatial Impact")) {
               SOLARCHVISION_calculate_SpatialImpact_selectedSections();              
               WIN3D_Update = 1;                         
             }  
@@ -37700,7 +37700,7 @@ String[][] BAR_a_Items = {
                         {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
                         {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sections", "Display/Hide Sky", "Display/Hide SunPath", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected Sections", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected Solar Pivots", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Wire", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
-                        {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Pre-process Shadows on Selected Sections", "Process Solar Impact on Selected Sections (Active)", "Process Solar Impact on Selected Sections (Passive)", "Process Spatial Impact on Selected Sections", "Run wind 3D-model"},
+                        {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Pre-bake Selected Sections", "Process Active Impact", "Process Passive Impact", "Process Spatial Impact", "Run wind 3D-model"},
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Pick Study Plane", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
