@@ -20054,77 +20054,73 @@ void SOLARCHVISION_calculate_windFlow () {
         for (int n = 0; n < num_steps; n += 1) {
           
           float val = ParametricGeometries_SpatialImpact_atXYZ(test_point[0], test_point[1], test_point[2]);
+
+  
+          float MinimumDistance_trace = 1;
+  
+          //-----------------------------------------------------------------------------------------------------------------------------------------
+          float[][] tracedPoints = SOLARCHVISION_3DtraceContour(MinimumDistance_trace, test_point[0], test_point[1], test_point[2], val);
+          //-----------------------------------------------------------------------------------------------------------------------------------------
+  
+          float[] point_min = tracedPoints[0];
+          //float[] point_equ = tracedPoints[1];
+          //float[] point_max = tracedPoints[2];
           
-
-          //if ((-100 < val) && (val < 100)) {  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-  
-            float MinimumDistance_trace = SpatialImpact_Wspd;
-    
-            //-----------------------------------------------------------------------------------------------------------------------------------------
-            float[][] tracedPoints = SOLARCHVISION_3DtraceContour(MinimumDistance_trace, test_point[0], test_point[1], test_point[2], val);
-            //-----------------------------------------------------------------------------------------------------------------------------------------
-    
-            float[] point_min = tracedPoints[0];
-            float[] point_equ = tracedPoints[1];
-            float[] point_max = tracedPoints[2];
-            
-            float[] v1 = {deltaX, deltaY, deltaZ};
-            
-            float[] v2 = {point_min[0] - x, point_min[1] - y, point_min[2] - z};
-
-            float dx = v1[0] + v2[0];
-            float dy = v1[1] + v2[1];
-            float dz = v1[2] + v2[2];
-    
-            float scale = 1.0 / float(num_steps);
-    
-            float x1 = test_point[0] - 0.5 * dx * scale;
-            float y1 = test_point[1] - 0.5 * dy * scale;
-            float z1 = test_point[2] - 0.5 * dz * scale;
-            
-            float x2 = test_point[0] + 0.5 * dx * scale;
-            float y2 = test_point[1] + 0.5 * dy * scale;
-            float z2 = test_point[2] + 0.5 * dz * scale;
-  
-
-            float AB = (dist(x1,y1,z1, x2,y2,z2) / scale - SpatialImpact_Wspd) / SpatialImpact_Wspd; 
-        
-            int point_prev = 0;
-            int point_next = 0;
-            
-            {
-              float[][] newVertex = {{x1, y1, z1, AB}};
-              windFlow_Vertices = (float[][]) concat(windFlow_Vertices, newVertex);
-              
-              point_prev = windFlow_Vertices.length - 1;
-            }      
-        
-  
-            {
-              float[][] newVertex = {{x2, y2, z2, AB}};
-              windFlow_Vertices = (float[][]) concat(windFlow_Vertices, newVertex);
-              
-              point_next = windFlow_Vertices.length - 1;
-            }      
-        
-            if ((point_prev != 0) && (point_next != 0)) {
-              int[][] newU1Line = {{point_prev, point_next}};
-              windFlow_Lines = (int[][]) concat(windFlow_Lines, newU1Line);
-              
-              point_prev = point_next; 
-            }      
-     
-     
-            test_point[0] = x2;       
-            test_point[1] = y2;
-            test_point[2] = z2;
-
-  
-          //}
-          //else {
-          //  break;
-          //}
+          float[] v1 = {deltaX, deltaY, deltaZ};
           
+          float[] v2 = {point_min[0] - x, point_min[1] - y, point_min[2] - z};
+
+          float acceleration = 0;
+          float deltaValue = point_min[3] - val; 
+          if (deltaValue != 0) acceleration = SpatialImpact_Wspd / deltaValue;
+
+          float dx = 0 * v1[0] + v2[0] * acceleration;
+          float dy = 0 * v1[1] + v2[1] * acceleration;
+          float dz = 0 * v1[2] + v2[2] * acceleration;
+  
+          float scale = 1.0 / float(num_steps);
+  
+          float x1 = test_point[0] - 0.5 * dx * scale;
+          float y1 = test_point[1] - 0.5 * dy * scale;
+          float z1 = test_point[2] - 0.5 * dz * scale;
+          
+          float x2 = test_point[0] + 0.5 * dx * scale;
+          float y2 = test_point[1] + 0.5 * dy * scale;
+          float z2 = test_point[2] + 0.5 * dz * scale;
+
+
+          float AB = (dist(x1,y1,z1, x2,y2,z2) / scale - SpatialImpact_Wspd) / SpatialImpact_Wspd; 
+      
+          int point_prev = 0;
+          int point_next = 0;
+          
+          {
+            float[][] newVertex = {{x1, y1, z1, AB}};
+            windFlow_Vertices = (float[][]) concat(windFlow_Vertices, newVertex);
+            
+            point_prev = windFlow_Vertices.length - 1;
+          }      
+      
+
+          {
+            float[][] newVertex = {{x2, y2, z2, AB}};
+            windFlow_Vertices = (float[][]) concat(windFlow_Vertices, newVertex);
+            
+            point_next = windFlow_Vertices.length - 1;
+          }      
+      
+          if ((point_prev != 0) && (point_next != 0)) {
+            int[][] newU1Line = {{point_prev, point_next}};
+            windFlow_Lines = (int[][]) concat(windFlow_Lines, newU1Line);
+            
+            point_prev = point_next; 
+          }      
+   
+   
+          test_point[0] = x2;       
+          test_point[1] = y2;
+          test_point[2] = z2;
+
         }
         
       }
@@ -24160,7 +24156,7 @@ float[][] SOLARCHVISION_3DtraceContour (float epsilon, float x, float y, float z
     }     
   }
 
-  float[][] return_array = {{x_min, y_min, z_min}, {x_equ, y_equ, z_equ}, {x_max, y_max, z_max}};
+  float[][] return_array = {{x_min, y_min, z_min, v_min}, {x_equ, y_equ, z_equ, v_equ}, {x_max, y_max, z_max, v_max}};
   
   return return_array;
 }
