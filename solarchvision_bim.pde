@@ -20040,7 +20040,7 @@ void SOLARCHVISION_calculate_windFlow () {
 */   
 
 
-  for (float z = 5; z <= 5; z += 5) {
+  for (float z = 5; z <= 20; z += 5) {
     for (float y = -80; y < 80; y += 5) {
       for (float x = -80; x < 80; x += 5) {
         
@@ -20072,11 +20072,11 @@ void SOLARCHVISION_calculate_windFlow () {
 
           float acceleration = 0;
           float deltaValue = point_min[3] - val; 
-          if (deltaValue != 0) acceleration = SpatialImpact_Wspd / deltaValue;
+          if (deltaValue != 0) acceleration = -SpatialImpact_Wspd / deltaValue;
 
-          float dx = 0 * v1[0] + v2[0] * acceleration;
-          float dy = 0 * v1[1] + v2[1] * acceleration;
-          float dz = 0 * v1[2] + v2[2] * acceleration;
+          float dx = v1[0] + v2[0] * acceleration;
+          float dy = v1[1] + v2[1] * acceleration;
+          float dz = v1[2] + v2[2] * acceleration;
   
           float scale = 1.0 / float(num_steps);
   
