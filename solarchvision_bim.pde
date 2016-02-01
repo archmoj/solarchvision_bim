@@ -24468,14 +24468,7 @@ void SOLARCHVISION_calculate_windFlow () {
           
           float[] v2 = {point_min[0] - x, point_min[1] - y, point_min[2] - z};
 
-          
-          float deltaValue = point_min[3] - val;
-          float acceleration = 0; 
-          if (deltaValue != 0) {
-            //acceleration = -SpatialImpact_Wspd / deltaValue;
-            acceleration = -SpatialImpact_Wspd * deltaValue;
-          }
-
+          float acceleration = -SpatialImpact_Wspd * (point_min[3] - val);
 
           float dx = v1[0] + v2[0] * acceleration;
           float dy = v1[1] + v2[1] * acceleration;
