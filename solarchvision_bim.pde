@@ -350,8 +350,8 @@ float SpatialImpact_Wdie = 0.25; // ??????????
 int WindSamples = 8; //4; //1;
 
 
-float SpatialImpact_Power = 0.001; //1.0; //2.0; //3.0; // 1/2/3 
-float SpatialImpact_Grade = 0.001; //0.01; //1.0; //0.1; //10.0; //contour lines 
+float SpatialImpact_Power = 1.0; //2.0; //3.0; // 1/2/3 
+float SpatialImpact_Grade = 0.01; //1.0; //0.1; //10.0; //contour lines 
 
 float GlobalAlbedo = 0; // 0-100
 
@@ -24447,14 +24447,14 @@ void SOLARCHVISION_calculate_windFlow () {
         float[] test_point = {x, y, z};
 
 
-        int num_steps = 1; //4;
+        int num_steps = 4; //1; //4;
         
         for (int n = 0; n < num_steps; n += 1) {
           
           float val = ParametricGeometries_SpatialImpact_atXYZ(test_point[0], test_point[1], test_point[2]);
 
   
-          float MinimumDistance_trace = 1;
+          float MinimumDistance_trace = 1 / float(num_steps);
   
           //-----------------------------------------------------------------------------------------------------------------------------------------
           float[][] tracedPoints = SOLARCHVISION_3DtraceContour(MinimumDistance_trace, test_point[0], test_point[1], test_point[2], val);
