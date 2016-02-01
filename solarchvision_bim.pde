@@ -19988,151 +19988,6 @@ void SOLARCHVISION_draw_SKY3D () {
 
 
 
-float[][] windFlow_Vertices = {{0,0,0,0}}; // keeping values at the 4th member
-int[][] windFlow_Lines = {{0,0}};
-
-void SOLARCHVISION_calculate_windFlow () {
-
-  cursor(WAIT);  
-  
-  windFlow_Vertices = new float [1][4];
-  windFlow_Vertices[0][0] = 0; 
-  windFlow_Vertices[0][1] = 0; 
-  windFlow_Vertices[0][2] = 0; 
-  windFlow_Vertices[0][3] = 0;   
-
-
-  windFlow_Lines = new int [1][2];
-  windFlow_Lines[0][0] = 0;
-  windFlow_Lines[0][1] = 0;  
-  
-
-        
-  float deltaX = -SpatialImpact_Wspd * cos_ang(SpatialImpact_Wdir);
-  float deltaY = -SpatialImpact_Wspd * sin_ang(SpatialImpact_Wdir);
-  float deltaZ = 0;   
-
-/* 
-
-  float Section_offset_U = SpatialImpact_offset_U[SpatialImpact_sectionType];
-  float Section_offset_V = SpatialImpact_offset_V[SpatialImpact_sectionType];
-  float Section_Elevation = SpatialImpact_Elevation[SpatialImpact_sectionType];
-  float Section_Rotation = SpatialImpact_Rotation[SpatialImpact_sectionType];
-  float Section_scale_U = SpatialImpact_scale_U[SpatialImpact_sectionType];
-  float Section_scale_V = SpatialImpact_scale_V[SpatialImpact_sectionType];
-
-  int Section_Type = SpatialImpact_sectionType;
-  int Section_RES1 = SpatialImpact_RES1;
-  int Section_RES2 = SpatialImpact_RES2; 
-
-  float[] SectionCorner_A = SOLARCHVISION_getCorners_Section(0, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
-  float[] SectionCorner_B = SOLARCHVISION_getCorners_Section(1, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
-  float[] SectionCorner_C = SOLARCHVISION_getCorners_Section(2, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
-  float[] SectionCorner_D = SOLARCHVISION_getCorners_Section(3, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2); 
-  
-  for (int i = 0; i < SpatialImpact_RES1; i += 10) {
-    for (int j = 0; j < SpatialImpact_RES2; j += 10) {
-      
-      float x = Bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(SpatialImpact_RES1), 1 - j / float(SpatialImpact_RES2));
-      float y = Bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(SpatialImpact_RES1), 1 - j / float(SpatialImpact_RES2));
-      float z = Bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(SpatialImpact_RES1), 1 - j / float(SpatialImpact_RES2));
-
-*/   
-
-
-  for (float z = 5; z <= 20; z += 5) {
-    for (float y = -80; y < 80; y += 5) {
-      for (float x = -80; x < 80; x += 5) {
-        
-    
-
-        float[] test_point = {x, y, z};
-
-
-        int num_steps = 1; //4;
-        
-        for (int n = 0; n < num_steps; n += 1) {
-          
-          float val = ParametricGeometries_SpatialImpact_atXYZ(test_point[0], test_point[1], test_point[2]);
-
-  
-          float MinimumDistance_trace = 1;
-  
-          //-----------------------------------------------------------------------------------------------------------------------------------------
-          float[][] tracedPoints = SOLARCHVISION_3DtraceContour(MinimumDistance_trace, test_point[0], test_point[1], test_point[2], val);
-          //-----------------------------------------------------------------------------------------------------------------------------------------
-  
-          float[] point_min = tracedPoints[0];
-          //float[] point_equ = tracedPoints[1];
-          //float[] point_max = tracedPoints[2];
-          
-          float[] v1 = {deltaX, deltaY, deltaZ};
-          
-          float[] v2 = {point_min[0] - x, point_min[1] - y, point_min[2] - z};
-
-          float acceleration = 0;
-          float deltaValue = point_min[3] - val; 
-          if (deltaValue != 0) acceleration = -SpatialImpact_Wspd / deltaValue;
-
-          float dx = v1[0] + v2[0] * acceleration;
-          float dy = v1[1] + v2[1] * acceleration;
-          float dz = v1[2] + v2[2] * acceleration;
-  
-          float scale = 1.0 / float(num_steps);
-  
-          float x1 = test_point[0] - 0.5 * dx * scale;
-          float y1 = test_point[1] - 0.5 * dy * scale;
-          float z1 = test_point[2] - 0.5 * dz * scale;
-          
-          float x2 = test_point[0] + 0.5 * dx * scale;
-          float y2 = test_point[1] + 0.5 * dy * scale;
-          float z2 = test_point[2] + 0.5 * dz * scale;
-
-
-          float AB = (dist(x1,y1,z1, x2,y2,z2) / scale - SpatialImpact_Wspd) / SpatialImpact_Wspd; 
-      
-          int point_prev = 0;
-          int point_next = 0;
-          
-          {
-            float[][] newVertex = {{x1, y1, z1, AB}};
-            windFlow_Vertices = (float[][]) concat(windFlow_Vertices, newVertex);
-            
-            point_prev = windFlow_Vertices.length - 1;
-          }      
-      
-
-          {
-            float[][] newVertex = {{x2, y2, z2, AB}};
-            windFlow_Vertices = (float[][]) concat(windFlow_Vertices, newVertex);
-            
-            point_next = windFlow_Vertices.length - 1;
-          }      
-      
-          if ((point_prev != 0) && (point_next != 0)) {
-            int[][] newU1Line = {{point_prev, point_next}};
-            windFlow_Lines = (int[][]) concat(windFlow_Lines, newU1Line);
-            
-            point_prev = point_next; 
-          }      
-   
-   
-          test_point[0] = x2;       
-          test_point[1] = y2;
-          test_point[2] = z2;
-
-        }
-        
-      }
-    }
-  }  
-  
-  cursor(ARROW);  
-
-  Display_windFlow = 1;                
-  ROLLOUT_Update = 1;
-  
-}
 
 float windFlow_Multiplier = 1;
 int windFlow_Color = 0; //1;
@@ -23861,308 +23716,6 @@ int SolarImpact_RES2 = 200;
 float SolarImpact_Elevation;
 
 
-
-
-float[] SpatialImpact_scale_U = {100, 100, 100, 100}; // i.e. 100m
-float[] SpatialImpact_scale_V = {100, 100, 100, 100}; // i.e. 100m
-
-float[] SpatialImpact_offset_U = {0, 0, 0, 0}; 
-float[] SpatialImpact_offset_V = {0, 0, 0, 0}; 
-
-int SpatialImpact_RES1 = 400; //400;
-int SpatialImpact_RES2 = 400; //400;
-
-PImage SpatialImpact_Image = createImage(SpatialImpact_RES1, SpatialImpact_RES2, ARGB);
-
-
-
-int Display_SpatialImpact_Image = 1; // 0:false, 1:true
-int SpatialImpact_sectionType = 0; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
-
-float[] SpatialImpact_Elevation = {0, 0.1, 0, 0}; // <<<
-float[] SpatialImpact_Rotation = {0, 0, 0, 0};
-
-float SpatialImpact_positionStep = 1.25;
-
-
-float ParametricGeometries_SpatialImpact_atXYZ (float x, float y, float z) {
-
-  //return ParametricGeometries_SpatialImpact_atXYZ_simple(x, y, z);
-  return ParametricGeometries_SpatialImpact_atXYZ_complex(x, y, z);
-
-}
-
-float ParametricGeometries_SpatialImpact_atXYZ_simple (float x, float y, float z) {
-
-  float val = 1;
-  
-  for (int n = 0; n < SolidObjects.length; n++) {
-    
-    float r = SolidObjects[n].value;
-    float d = SolidObjects[n].Distance(x, y, z);
-
-    d *= pow(d, SpatialImpact_Power);
-
-    if (val < 0) val *= abs(d - r);
-    else {
-      val *= d - r;
-    }
-
-  }
-  
-  if (SolidObjects.length > 0) {
-    float val_sign = 1;
-    if (val < 0) {
-      val_sign = -1;
-      val = abs(val);
-    } 
-    val = pow(val, 1.0 / float(SolidObjects.length));
-    val *= val_sign;    
-  } 
-
-  return val;  
-}
-
-
-
-float ParametricGeometries_SpatialImpact_atXYZ_complex (float x, float y, float z) {
-
-  float deltaX = SpatialImpact_Wspd * cos_ang(SpatialImpact_Wdir);
-  float deltaY = SpatialImpact_Wspd * sin_ang(SpatialImpact_Wdir);
-
-  float[] val = {1, 1};
-
-  for (int o = 0; o < 2; o++) {
-
-    for (int n = 0; n < SolidObjects.length; n++) {
-
-      float r = SolidObjects[n].value;
-      float d = SolidObjects[n].Distance(x + o * deltaX , y + o * deltaY, z);
-      
-      d *= pow(d, SpatialImpact_Power);
-  
-      if (val[o] < 0) val[o] *= abs(d - r);
-      else {
-        val[o] *= d - r;
-      }        
-    }
-  }
-  
-  return val[1] - val[0];
-}
-
-float fn_dot2D (float x1, float y1, float x2, float y2) {
-  return x1 * x2 + y1 * y2;
-}
-
-float[] SOLARCHVISION_2DtraceContour (int traceType, float epsilon, float x, float y, float z, float dx, float dy, float dz, float v) {
-
-  float t_max = FLOAT_undefined;
-  float t_min = FLOAT_undefined;
-  float t_equ = 0; //FLOAT_undefined;  
-  
-  float v_max = FLOAT_undefined;
-  float v_min = FLOAT_undefined;
-  float v_equ = FLOAT_undefined;
-  
-  float x_max = FLOAT_undefined;
-  float x_min = FLOAT_undefined;
-  float x_equ = x + dx; //FLOAT_undefined;
-  
-  float y_max = FLOAT_undefined;
-  float y_min = FLOAT_undefined;
-  float y_equ = y + dy; //FLOAT_undefined;
-  
-  float z_max = FLOAT_undefined;
-  float z_min = FLOAT_undefined;
-  float z_equ = z + dz; //FLOAT_undefined;
-  
-  float min_dist = FLOAT_undefined;  
-  
-  float r = epsilon;
-  
-  float t = atan2_ang(dy, dx);
-
-  //for (int test_t = -180; test_t < 180; test_t += 5) { 
-  for (int test_t = -150; test_t <= 150; test_t += 5) { // <<<<
-
-    float a = r * cos_ang(t + test_t);
-    float b = r * sin_ang(t + test_t);
-    float c = 0;
-    
-    if (SpatialImpact_sectionType == 1) {
-      float Qx = a * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) - b * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]);
-      float Qy = -(a * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) + b * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]));
-      float Qz = c;
-      
-      a = Qx; b = Qy; c = Qz; 
-    }
-    else if (SpatialImpact_sectionType == 2) {
-      float Qx = a * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]);
-      float Qy = -(a * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]));
-      float Qz = -b; 
-
-      a = Qx; b = Qy; c = Qz; 
-    }
-    else if (SpatialImpact_sectionType == 3) {
-      float Qx = a * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]);
-      float Qy = -(a * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]));
-      float Qz = -b; 
-
-      a = Qx; b = Qy; c = Qz; 
-    }
-    
-    float test_x = x + a;
-    float test_y = y + b;
-    float test_z = z + c;
-    
-    float test_v = ParametricGeometries_SpatialImpact_atXYZ(test_x, test_y, test_z);        
-    
-    if ((test_v < v_min) || (v_min > 0.9 * FLOAT_undefined)) {
-      v_min = test_v;
-      t_min = test_t;
-      x_min = test_x;
-      y_min = test_y;
-      z_min = test_z;
-    }
-    if ((test_v > v_max) || (v_max > 0.9 * FLOAT_undefined))  {
-      v_max = test_v;
-      t_max = test_t;
-      x_max = test_x;
-      y_max = test_y;          
-      z_max = test_z;
-    }
-    
-    //if (((abs(test_v - v) < min_dist) && (fn_dot2D(test_x - x, test_y - y, dx, dy) >= 0)) || (v_equ > 0.9 * FLOAT_undefined))  {
-    if ((abs(test_v - v) < min_dist) || (v_equ > 0.9 * FLOAT_undefined))  {
-      //if (fn_dot2D(test_x - x, test_y - y, dx, dy) >= 0) {
-      
-        min_dist = abs(test_v - v);
-        
-        v_equ = test_v;
-        t_equ = test_t;
-        x_equ = test_x;
-        y_equ = test_y;          
-        z_equ = test_z;
-      //}
-    }
-    
-  }     
-
-
-  float the_X = 0, the_Y = 0, the_Z = 0, the_T = 0;
-  
-  if (traceType == 0) {
-    the_X = x_equ;
-    the_Y = y_equ;
-    the_Z = z_equ;
-    the_T = t_equ;
-  }
-  if (traceType == -1) {
-    the_X = x_min;
-    the_Y = y_min;
-    the_Z = z_min;
-    the_T = t_min;
-  }
-  if (traceType == 1) {
-    the_X = x_max;
-    the_Y = y_max;
-    the_Z = z_max;
-    the_T = t_max;
-  }
-  
-  float[] return_array = {the_X, the_Y, the_Z, cos_ang(t + the_T), sin_ang(t + the_T), 0};
-  
-  return return_array;
-}
-
-
-float[][] SOLARCHVISION_3DtraceContour (float epsilon, float x, float y, float z, float v) {
-  
-  float tz_max = FLOAT_undefined;
-  float tz_min = FLOAT_undefined;
-  float tz_equ = FLOAT_undefined;  
-
-  float txy_max = FLOAT_undefined;
-  float txy_min = FLOAT_undefined;
-  float txy_equ = FLOAT_undefined;  
-  
-  float v_max = FLOAT_undefined;
-  float v_min = FLOAT_undefined;
-  float v_equ = FLOAT_undefined;
-  
-  float x_max = FLOAT_undefined;
-  float x_min = FLOAT_undefined;
-  float x_equ = FLOAT_undefined;
-  
-  float y_max = FLOAT_undefined;
-  float y_min = FLOAT_undefined;
-  float y_equ = FLOAT_undefined;
-  
-  float z_max = FLOAT_undefined;
-  float z_min = FLOAT_undefined;
-  float z_equ = FLOAT_undefined;
-  
-  float min_dist = FLOAT_undefined;  
-  
-  float r = epsilon;
-
-  for (int test_tz = -90; test_tz <= 90; test_tz += 30) { // in the space 
-  //for (int test_tz = 0; test_tz <= 0; test_tz += 30) { // on the surface! 
-    
-    float c = r * sin_ang(test_tz);
-    
-    for (int test_txy = -180; test_txy < 180; test_txy += 15) { 
-  
-      float a = r * cos_ang(test_tz) * cos_ang(test_txy);
-      float b = r * cos_ang(test_tz) * sin_ang(test_txy);
-      
-      
-      float test_x = x + a;
-      float test_y = y + b;
-      float test_z = z + c;
-      
-      float test_v = ParametricGeometries_SpatialImpact_atXYZ(test_x, test_y, test_z);        
-      
-      if ((test_v < v_min) || (v_min > 0.9 * FLOAT_undefined)) {
-        v_min = test_v;
-        tz_min = test_tz;
-        txy_min = test_txy;
-        x_min = test_x;
-        y_min = test_y;
-        z_min = test_z;
-      }
-      if ((test_v > v_max) || (v_max > 0.9 * FLOAT_undefined))  {
-        v_max = test_v;
-        tz_max = test_tz;
-        txy_max = test_txy;
-        x_max = test_x;
-        y_max = test_y;          
-        z_max = test_z;
-      }
-      
-      if ((abs(test_v - v) < min_dist) || (v_equ > 0.9 * FLOAT_undefined))  {
-        
-        min_dist = abs(test_v - v);
-        
-        v_equ = test_v;
-        tz_equ = test_tz;
-        txy_equ = test_txy;
-        x_equ = test_x;
-        y_equ = test_y;          
-        z_equ = test_z;
-      }
-      
-    }     
-  }
-
-  float[][] return_array = {{x_min, y_min, z_min, v_min}, {x_equ, y_equ, z_equ, v_equ}, {x_max, y_max, z_max, v_max}};
-  
-  return return_array;
-}
-
-
-
 void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
 
   if (rebuild_SolarProjection_array != 0) {
@@ -24726,6 +24279,484 @@ void SOLARCHVISION_calculate_SpatialImpact_selectedSections () {
     }
   }
 }
+
+
+
+
+
+
+float[] SpatialImpact_scale_U = {100, 100, 100, 100}; // i.e. 100m
+float[] SpatialImpact_scale_V = {100, 100, 100, 100}; // i.e. 100m
+
+float[] SpatialImpact_offset_U = {0, 0, 0, 0}; 
+float[] SpatialImpact_offset_V = {0, 0, 0, 0}; 
+
+int SpatialImpact_RES1 = 400; //400;
+int SpatialImpact_RES2 = 400; //400;
+
+PImage SpatialImpact_Image = createImage(SpatialImpact_RES1, SpatialImpact_RES2, ARGB);
+
+
+
+int Display_SpatialImpact_Image = 1; // 0:false, 1:true
+int SpatialImpact_sectionType = 0; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
+
+float[] SpatialImpact_Elevation = {0, 0.1, 0, 0}; // <<<
+float[] SpatialImpact_Rotation = {0, 0, 0, 0};
+
+float SpatialImpact_positionStep = 1.25;
+
+
+float ParametricGeometries_SpatialImpact_atXYZ (float x, float y, float z) {
+
+  //return ParametricGeometries_SpatialImpact_atXYZ_simple(x, y, z);
+  return ParametricGeometries_SpatialImpact_atXYZ_complex(x, y, z);
+
+}
+
+float ParametricGeometries_SpatialImpact_atXYZ_simple (float x, float y, float z) {
+
+  float val = 1;
+  
+  for (int n = 0; n < SolidObjects.length; n++) {
+    
+    float r = SolidObjects[n].value;
+    float d = SolidObjects[n].Distance(x, y, z);
+
+    d *= pow(d, SpatialImpact_Power);
+
+    if (val < 0) val *= abs(d - r);
+    else {
+      val *= d - r;
+    }
+
+  }
+  
+  if (SolidObjects.length > 0) {
+    float val_sign = 1;
+    if (val < 0) {
+      val_sign = -1;
+      val = abs(val);
+    } 
+    val = pow(val, 1.0 / float(SolidObjects.length));
+    val *= val_sign;    
+  } 
+
+  return val;  
+}
+
+
+
+float ParametricGeometries_SpatialImpact_atXYZ_complex (float x, float y, float z) {
+
+  float deltaX = SpatialImpact_Wspd * cos_ang(SpatialImpact_Wdir);
+  float deltaY = SpatialImpact_Wspd * sin_ang(SpatialImpact_Wdir);
+
+  float[] val = {1, 1};
+
+  for (int o = 0; o < 2; o++) {
+
+    for (int n = 0; n < SolidObjects.length; n++) {
+
+      float r = SolidObjects[n].value;
+      float d = SolidObjects[n].Distance(x + o * deltaX , y + o * deltaY, z);
+      
+      d *= pow(d, SpatialImpact_Power);
+  
+      if (val[o] < 0) val[o] *= abs(d - r);
+      else {
+        val[o] *= d - r;
+      }        
+    }
+    
+    if (SolidObjects.length > 0) {
+      float val_sign = 1;
+      if (val[o] < 0) {
+        val_sign = -1;
+        val[o] = abs(val[o]);
+      } 
+      val[o] = pow(val[o], 1.0 / float(SolidObjects.length));
+      val[o] *= val_sign;    
+    }     
+  }
+  
+  return val[1] - val[0];
+}
+
+
+
+
+float[][] windFlow_Vertices = {{0,0,0,0}}; // keeping values at the 4th member
+int[][] windFlow_Lines = {{0,0}};
+
+void SOLARCHVISION_calculate_windFlow () {
+
+  cursor(WAIT);  
+  
+  windFlow_Vertices = new float [1][4];
+  windFlow_Vertices[0][0] = 0; 
+  windFlow_Vertices[0][1] = 0; 
+  windFlow_Vertices[0][2] = 0; 
+  windFlow_Vertices[0][3] = 0;   
+
+
+  windFlow_Lines = new int [1][2];
+  windFlow_Lines[0][0] = 0;
+  windFlow_Lines[0][1] = 0;  
+  
+
+        
+  float deltaX = -SpatialImpact_Wspd * cos_ang(SpatialImpact_Wdir);
+  float deltaY = -SpatialImpact_Wspd * sin_ang(SpatialImpact_Wdir);
+  float deltaZ = 0;   
+
+/* 
+
+  float Section_offset_U = SpatialImpact_offset_U[SpatialImpact_sectionType];
+  float Section_offset_V = SpatialImpact_offset_V[SpatialImpact_sectionType];
+  float Section_Elevation = SpatialImpact_Elevation[SpatialImpact_sectionType];
+  float Section_Rotation = SpatialImpact_Rotation[SpatialImpact_sectionType];
+  float Section_scale_U = SpatialImpact_scale_U[SpatialImpact_sectionType];
+  float Section_scale_V = SpatialImpact_scale_V[SpatialImpact_sectionType];
+
+  int Section_Type = SpatialImpact_sectionType;
+  int Section_RES1 = SpatialImpact_RES1;
+  int Section_RES2 = SpatialImpact_RES2; 
+
+  float[] SectionCorner_A = SOLARCHVISION_getCorners_Section(0, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+  float[] SectionCorner_B = SOLARCHVISION_getCorners_Section(1, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+  float[] SectionCorner_C = SOLARCHVISION_getCorners_Section(2, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+  float[] SectionCorner_D = SOLARCHVISION_getCorners_Section(3, Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2); 
+  
+  for (int i = 0; i < SpatialImpact_RES1; i += 10) {
+    for (int j = 0; j < SpatialImpact_RES2; j += 10) {
+      
+      float x = Bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(SpatialImpact_RES1), 1 - j / float(SpatialImpact_RES2));
+      float y = Bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(SpatialImpact_RES1), 1 - j / float(SpatialImpact_RES2));
+      float z = Bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(SpatialImpact_RES1), 1 - j / float(SpatialImpact_RES2));
+
+*/   
+
+
+  for (float z = 5; z <= 20; z += 5) {
+    for (float y = -80; y < 80; y += 5) {
+      for (float x = -80; x < 80; x += 5) {
+        
+    
+
+        float[] test_point = {x, y, z};
+
+
+        int num_steps = 1; //4;
+        
+        for (int n = 0; n < num_steps; n += 1) {
+          
+          float val = ParametricGeometries_SpatialImpact_atXYZ(test_point[0], test_point[1], test_point[2]);
+
+  
+          float MinimumDistance_trace = 1;
+  
+          //-----------------------------------------------------------------------------------------------------------------------------------------
+          float[][] tracedPoints = SOLARCHVISION_3DtraceContour(MinimumDistance_trace, test_point[0], test_point[1], test_point[2], val);
+          //-----------------------------------------------------------------------------------------------------------------------------------------
+  
+          float[] point_min = tracedPoints[0];
+          //float[] point_equ = tracedPoints[1];
+          //float[] point_max = tracedPoints[2];
+          
+          float[] v1 = {deltaX, deltaY, deltaZ};
+          
+          float[] v2 = {point_min[0] - x, point_min[1] - y, point_min[2] - z};
+
+          
+          float deltaValue = point_min[3] - val;
+          float acceleration = 0; 
+          if (deltaValue != 0) {
+            //acceleration = -SpatialImpact_Wspd / deltaValue;
+            acceleration = -SpatialImpact_Wspd * deltaValue;
+          }
+
+
+          float dx = v1[0] + v2[0] * acceleration;
+          float dy = v1[1] + v2[1] * acceleration;
+          float dz = v1[2] + v2[2] * acceleration;
+  
+          float scale = 1.0 / float(num_steps);
+  
+          float x1 = test_point[0] - 0.5 * dx * scale;
+          float y1 = test_point[1] - 0.5 * dy * scale;
+          float z1 = test_point[2] - 0.5 * dz * scale;
+          
+          float x2 = test_point[0] + 0.5 * dx * scale;
+          float y2 = test_point[1] + 0.5 * dy * scale;
+          float z2 = test_point[2] + 0.5 * dz * scale;
+
+
+          float AB = (dist(x1,y1,z1, x2,y2,z2) / scale - SpatialImpact_Wspd) / SpatialImpact_Wspd; 
+      
+          int point_prev = 0;
+          int point_next = 0;
+          
+          {
+            float[][] newVertex = {{x1, y1, z1, AB}};
+            windFlow_Vertices = (float[][]) concat(windFlow_Vertices, newVertex);
+            
+            point_prev = windFlow_Vertices.length - 1;
+          }      
+      
+
+          {
+            float[][] newVertex = {{x2, y2, z2, AB}};
+            windFlow_Vertices = (float[][]) concat(windFlow_Vertices, newVertex);
+            
+            point_next = windFlow_Vertices.length - 1;
+          }      
+      
+          if ((point_prev != 0) && (point_next != 0)) {
+            int[][] newU1Line = {{point_prev, point_next}};
+            windFlow_Lines = (int[][]) concat(windFlow_Lines, newU1Line);
+            
+            point_prev = point_next; 
+          }      
+   
+   
+          test_point[0] = x2;       
+          test_point[1] = y2;
+          test_point[2] = z2;
+
+        }
+        
+      }
+    }
+  }  
+  
+  cursor(ARROW);  
+
+  Display_windFlow = 1;                
+  ROLLOUT_Update = 1;
+  
+}
+
+
+
+
+
+
+
+
+
+
+float fn_dot2D (float x1, float y1, float x2, float y2) {
+  return x1 * x2 + y1 * y2;
+}
+
+float[] SOLARCHVISION_2DtraceContour (int traceType, float epsilon, float x, float y, float z, float dx, float dy, float dz, float v) {
+
+  float t_max = FLOAT_undefined;
+  float t_min = FLOAT_undefined;
+  float t_equ = 0; //FLOAT_undefined;  
+  
+  float v_max = FLOAT_undefined;
+  float v_min = FLOAT_undefined;
+  float v_equ = FLOAT_undefined;
+  
+  float x_max = FLOAT_undefined;
+  float x_min = FLOAT_undefined;
+  float x_equ = x + dx; //FLOAT_undefined;
+  
+  float y_max = FLOAT_undefined;
+  float y_min = FLOAT_undefined;
+  float y_equ = y + dy; //FLOAT_undefined;
+  
+  float z_max = FLOAT_undefined;
+  float z_min = FLOAT_undefined;
+  float z_equ = z + dz; //FLOAT_undefined;
+  
+  float min_dist = FLOAT_undefined;  
+  
+  float r = epsilon;
+  
+  float t = atan2_ang(dy, dx);
+
+  //for (int test_t = -180; test_t < 180; test_t += 5) { 
+  for (int test_t = -150; test_t <= 150; test_t += 5) { // <<<<
+
+    float a = r * cos_ang(t + test_t);
+    float b = r * sin_ang(t + test_t);
+    float c = 0;
+    
+    if (SpatialImpact_sectionType == 1) {
+      float Qx = a * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) - b * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]);
+      float Qy = -(a * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) + b * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]));
+      float Qz = c;
+      
+      a = Qx; b = Qy; c = Qz; 
+    }
+    else if (SpatialImpact_sectionType == 2) {
+      float Qx = a * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]);
+      float Qy = -(a * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]));
+      float Qz = -b; 
+
+      a = Qx; b = Qy; c = Qz; 
+    }
+    else if (SpatialImpact_sectionType == 3) {
+      float Qx = a * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]);
+      float Qy = -(a * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]));
+      float Qz = -b; 
+
+      a = Qx; b = Qy; c = Qz; 
+    }
+    
+    float test_x = x + a;
+    float test_y = y + b;
+    float test_z = z + c;
+    
+    float test_v = ParametricGeometries_SpatialImpact_atXYZ(test_x, test_y, test_z);        
+    
+    if ((test_v < v_min) || (v_min > 0.9 * FLOAT_undefined)) {
+      v_min = test_v;
+      t_min = test_t;
+      x_min = test_x;
+      y_min = test_y;
+      z_min = test_z;
+    }
+    if ((test_v > v_max) || (v_max > 0.9 * FLOAT_undefined))  {
+      v_max = test_v;
+      t_max = test_t;
+      x_max = test_x;
+      y_max = test_y;          
+      z_max = test_z;
+    }
+    
+    //if (((abs(test_v - v) < min_dist) && (fn_dot2D(test_x - x, test_y - y, dx, dy) >= 0)) || (v_equ > 0.9 * FLOAT_undefined))  {
+    if ((abs(test_v - v) < min_dist) || (v_equ > 0.9 * FLOAT_undefined))  {
+      //if (fn_dot2D(test_x - x, test_y - y, dx, dy) >= 0) {
+      
+        min_dist = abs(test_v - v);
+        
+        v_equ = test_v;
+        t_equ = test_t;
+        x_equ = test_x;
+        y_equ = test_y;          
+        z_equ = test_z;
+      //}
+    }
+    
+  }     
+
+
+  float the_X = 0, the_Y = 0, the_Z = 0, the_T = 0;
+  
+  if (traceType == 0) {
+    the_X = x_equ;
+    the_Y = y_equ;
+    the_Z = z_equ;
+    the_T = t_equ;
+  }
+  if (traceType == -1) {
+    the_X = x_min;
+    the_Y = y_min;
+    the_Z = z_min;
+    the_T = t_min;
+  }
+  if (traceType == 1) {
+    the_X = x_max;
+    the_Y = y_max;
+    the_Z = z_max;
+    the_T = t_max;
+  }
+  
+  float[] return_array = {the_X, the_Y, the_Z, cos_ang(t + the_T), sin_ang(t + the_T), 0};
+  
+  return return_array;
+}
+
+
+float[][] SOLARCHVISION_3DtraceContour (float epsilon, float x, float y, float z, float v) {
+  
+  float tz_max = FLOAT_undefined;
+  float tz_min = FLOAT_undefined;
+  float tz_equ = FLOAT_undefined;  
+
+  float txy_max = FLOAT_undefined;
+  float txy_min = FLOAT_undefined;
+  float txy_equ = FLOAT_undefined;  
+  
+  float v_max = FLOAT_undefined;
+  float v_min = FLOAT_undefined;
+  float v_equ = FLOAT_undefined;
+  
+  float x_max = FLOAT_undefined;
+  float x_min = FLOAT_undefined;
+  float x_equ = FLOAT_undefined;
+  
+  float y_max = FLOAT_undefined;
+  float y_min = FLOAT_undefined;
+  float y_equ = FLOAT_undefined;
+  
+  float z_max = FLOAT_undefined;
+  float z_min = FLOAT_undefined;
+  float z_equ = FLOAT_undefined;
+  
+  float min_dist = FLOAT_undefined;  
+  
+  float r = epsilon;
+
+  for (int test_tz = -90; test_tz <= 90; test_tz += 30) { // in the space 
+  //for (int test_tz = 0; test_tz <= 0; test_tz += 30) { // on the surface! 
+    
+    float c = r * sin_ang(test_tz);
+    
+    for (int test_txy = -180; test_txy < 180; test_txy += 15) { 
+  
+      float a = r * cos_ang(test_tz) * cos_ang(test_txy);
+      float b = r * cos_ang(test_tz) * sin_ang(test_txy);
+      
+      
+      float test_x = x + a;
+      float test_y = y + b;
+      float test_z = z + c;
+      
+      float test_v = ParametricGeometries_SpatialImpact_atXYZ(test_x, test_y, test_z);        
+      
+      if ((test_v < v_min) || (v_min > 0.9 * FLOAT_undefined)) {
+        v_min = test_v;
+        tz_min = test_tz;
+        txy_min = test_txy;
+        x_min = test_x;
+        y_min = test_y;
+        z_min = test_z;
+      }
+      if ((test_v > v_max) || (v_max > 0.9 * FLOAT_undefined))  {
+        v_max = test_v;
+        tz_max = test_tz;
+        txy_max = test_txy;
+        x_max = test_x;
+        y_max = test_y;          
+        z_max = test_z;
+      }
+      
+      if ((abs(test_v - v) < min_dist) || (v_equ > 0.9 * FLOAT_undefined))  {
+        
+        min_dist = abs(test_v - v);
+        
+        v_equ = test_v;
+        tz_equ = test_tz;
+        txy_equ = test_txy;
+        x_equ = test_x;
+        y_equ = test_y;          
+        z_equ = test_z;
+      }
+      
+    }     
+  }
+
+  float[][] return_array = {{x_min, y_min, z_min, v_min}, {x_equ, y_equ, z_equ, v_equ}, {x_max, y_max, z_max, v_max}};
+  
+  return return_array;
+}
+
+
 
 
 
