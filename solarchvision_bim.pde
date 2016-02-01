@@ -345,13 +345,9 @@ int Launch_External_Hardware = 0; // inactive
 
 float SpatialImpact_Wspd = 8; //8.0; // (8m/s = 30 km/h) 
 float SpatialImpact_Wdir = 180.0;
-float SpatialImpact_Wdie = 0.25; // ??????????
-
-int WindSamples = 8; //4; //1;
-
 
 float SpatialImpact_Power = 1.0; //2.0; //3.0; // 1/2/3 
-float SpatialImpact_Grade = 0.01; //1.0; //0.1; //10.0; //contour lines 
+float SpatialImpact_Grade = 0.02; //1.0; //0.1; //10.0; //contour lines 
 
 float GlobalAlbedo = 0; // 0-100
 
@@ -1371,7 +1367,6 @@ float[] pre_SpatialImpact_offset_V = {0,0,0,0};
 
 float pre_SpatialImpact_Wspd; 
 float pre_SpatialImpact_Wdir;
-float pre_SpatialImpact_Wdie;
       
 int pre_PROCESS_subdivisions;
 
@@ -2278,7 +2273,6 @@ void draw () {
         
         pre_SpatialImpact_Wspd = SpatialImpact_Wspd; 
         pre_SpatialImpact_Wdir = SpatialImpact_Wdir;
-        pre_SpatialImpact_Wdie = SpatialImpact_Wdie;
       
         pre_PROCESS_subdivisions = PROCESS_subdivisions;
       
@@ -2727,7 +2721,6 @@ void draw () {
         
         if (pre_SpatialImpact_Wspd != SpatialImpact_Wspd) {SOLARCHVISION_calculate_SpatialImpact_selectedSections(); WIN3D_Update = 1;}
         if (pre_SpatialImpact_Wdir != SpatialImpact_Wdir) {SOLARCHVISION_calculate_SpatialImpact_selectedSections(); WIN3D_Update = 1;}
-        if (pre_SpatialImpact_Wdie != SpatialImpact_Wdie) {SOLARCHVISION_calculate_SpatialImpact_selectedSections(); WIN3D_Update = 1;}
 
 
         if (pre_PROCESS_subdivisions != PROCESS_subdivisions) {SOLARCHVISION_calculate_SpatialImpact_selectedSections(); WIN3D_Update = 1;}
@@ -31630,7 +31623,6 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
       SpatialImpact_Wspd = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Wspd (m/s)" , SpatialImpact_Wspd, 1, 16, -2); 
       SpatialImpact_Wdir = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Wdir" , SpatialImpact_Wdir, 0, 360, 15);
-      SpatialImpact_Wdie = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Wdie" , SpatialImpact_Wdie, 0, 1, 0.125);
       
 
       PROCESS_subdivisions = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "PROCESS_subdivisions" , PROCESS_subdivisions, 0, 3, 1), 1));
@@ -39679,8 +39671,6 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
   newChild1.setFloat("SpatialImpact_Wspd", SpatialImpact_Wspd); 
   newChild1.setFloat("SpatialImpact_Wdir", SpatialImpact_Wdir);
-  newChild1.setFloat("SpatialImpact_Wdie", SpatialImpact_Wdie);
-  newChild1.setInt("WindSamples", WindSamples);
   newChild1.setFloat("SpatialImpact_Power", SpatialImpact_Power);
   newChild1.setFloat("GlobalAlbedo", GlobalAlbedo);
   newChild1.setFloat("MAX_SHADING_DIST", MAX_SHADING_DIST);
@@ -40775,8 +40765,6 @@ void SOLARCHVISION_load_project (String myFile) {
 
       SpatialImpact_Wspd = children0[L].getFloat("SpatialImpact_Wspd"); 
       SpatialImpact_Wdir = children0[L].getFloat("SpatialImpact_Wdir");
-      SpatialImpact_Wdie = children0[L].getFloat("SpatialImpact_Wdie");
-      WindSamples = children0[L].getInt("WindSamples");
       SpatialImpact_Power = children0[L].getFloat("SpatialImpact_Power");
       GlobalAlbedo = children0[L].getFloat("GlobalAlbedo");
       MAX_SHADING_DIST = children0[L].getFloat("MAX_SHADING_DIST");
