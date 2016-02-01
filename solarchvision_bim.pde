@@ -20040,7 +20040,7 @@ void SOLARCHVISION_calculate_windFlow () {
 */   
 
 
-  for (float z = 5; z <= 40; z += 5) {
+  for (float z = 5; z <= 5; z += 5) {
     for (float y = -80; y < 80; y += 5) {
       for (float x = -80; x < 80; x += 5) {
         
@@ -20055,9 +20055,8 @@ void SOLARCHVISION_calculate_windFlow () {
           
           float val = ParametricGeometries_SpatialImpact_atXYZ(test_point[0], test_point[1], test_point[2]);
           
-          
-          //if ((-1 < val) && (val < 2)) {  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-          if ((-100 < val) && (val < 100)) {  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+          //if ((-100 < val) && (val < 100)) {  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   
             float MinimumDistance_trace = SpatialImpact_Wspd;
     
@@ -20121,10 +20120,10 @@ void SOLARCHVISION_calculate_windFlow () {
             test_point[2] = z2;
 
   
-          }
-          else {
-            break;
-          }
+          //}
+          //else {
+          //  break;
+          //}
           
         }
         
