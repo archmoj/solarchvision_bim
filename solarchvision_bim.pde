@@ -19982,7 +19982,7 @@ void SOLARCHVISION_draw_SKY3D () {
 
 
 
-float windFlow_Multiplier = 1;
+float windFlow_Multiplier = 0.25; //1;
 int windFlow_Color = 0; //1;
 
 
@@ -24431,16 +24431,16 @@ void SOLARCHVISION_calculate_windFlow () {
 */   
 
 
-  for (float z = 5; z <= 20; z += 5) {
-    for (float y = -80; y < 80; y += 5) {
-      for (float x = -80; x < 80; x += 5) {
+  for (float z = 2.5; z <= 20; z += 2.5) {
+    for (float y = -80; y < 80; y += 2.5) {
+      for (float x = -80; x < 80; x += 2.5) {
         
     
 
         float[] test_point = {x, y, z};
 
 
-        int num_steps = 4; //1; //4;
+        int num_steps = 1; //1; //4;
         
         for (int n = 0; n < num_steps; n += 1) {
           
@@ -24467,7 +24467,8 @@ void SOLARCHVISION_calculate_windFlow () {
           float dy = v1[1] + v2[1] * acceleration;
           float dz = v1[2] + v2[2] * acceleration;
   
-          float scale = 1.0 / float(num_steps);
+          //float scale = 1.0 / float(num_steps);
+          float scale = 0.1 / float(num_steps); // <<<<<<<<<<<<<<<<<<<<
   
           float x1 = test_point[0] - 0.5 * dx * scale;
           float y1 = test_point[1] - 0.5 * dy * scale;
