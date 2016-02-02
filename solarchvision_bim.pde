@@ -1165,6 +1165,9 @@ int SPATIAL_Pallet_CLR = 17; //1;
 int SPATIAL_Pallet_DIR = -1; 
 float SPATIAL_Pallet_MLT = 0.01; //1; 
 
+int windFlow_Pallet_CLR = 18; 
+int windFlow_Pallet_DIR = -1;  
+float windFlow_Pallet_MLT = 1;
 
 
 int Impact_ACTIVE = 1;
@@ -2977,8 +2980,8 @@ void SOLARCHVISION_draw_WIN3D () {
               
               float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
       
-              WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
-              WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);           
+              WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);
+              WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);           
               //WIN3D_Diagrams.noFill();
       
               WIN3D_Diagrams.strokeWeight(0); // 2; <<<<<<<<<
@@ -3043,8 +3046,8 @@ void SOLARCHVISION_draw_WIN3D () {
               
               float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
       
-              WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
-              //WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);           
+              WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);
+              //WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);           
               WIN3D_Diagrams.noFill();
       
               WIN3D_Diagrams.strokeWeight(2); // 0; <<<<<<<<<
@@ -3365,8 +3368,8 @@ void SOLARCHVISION_draw_WORLD () {
                   float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
         
                   if (_turn == 1) {
-                    WORLD_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
-                    WORLD_Diagrams.fill(_COL[1], _COL[2], _COL[3]);           
+                    WORLD_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);
+                    WORLD_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);           
         
                     WORLD_Diagrams.strokeWeight(0);
                     WORLD_Diagrams.ellipse(0, 0, R_station, R_station);
@@ -3441,8 +3444,8 @@ void SOLARCHVISION_draw_WORLD () {
                   float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);             
         
                   if (_turn == 1) {
-                    WORLD_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
-                    WORLD_Diagrams.fill(_COL[1], _COL[2], _COL[3]);           
+                    WORLD_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);
+                    WORLD_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);           
         
                     WORLD_Diagrams.strokeWeight(0);
                     //WORLD_Diagrams.quad(x1, y1, x2, y2, x3, y3, x4, y4);
@@ -9286,7 +9289,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       
                       float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
                       
-                      WIND_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
+                      WIND_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);
                       
                       WIND_Diagrams.strokeWeight(STUDY_T_scale * 2);
                       WIND_Diagrams.noFill(); 
@@ -9421,7 +9424,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                       if (PAL_DIR == 2) _u =  0.5 * _u;
                       
                       float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
-                      total_WIND_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
+                      total_WIND_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);
                       
                       total_WIND_Diagrams.strokeWeight(STUDY_T_scale * 2);
                       total_WIND_Diagrams.noFill(); 
@@ -19982,8 +19985,6 @@ void SOLARCHVISION_draw_SKY3D () {
 
 
 
-float windFlow_Multiplier = 0.25; //1;
-int windFlow_Color = 0; //1;
 
 
 void SOLARCHVISION_draw_windFlow () {
@@ -19992,9 +19993,11 @@ void SOLARCHVISION_draw_windFlow () {
   
   if (Display_windFlow != 0) {  
 
+    int PAL_TYPE = windFlow_Pallet_CLR; 
+    int PAL_DIR = windFlow_Pallet_DIR; 
+    float PAL_Multiplier = windFlow_Pallet_MLT;
+   
     
-    WIN3D_Diagrams.stroke(127);
-    WIN3D_Diagrams.fill(127);  
 
     for (int q = 1; q < windFlow_Lines.length; q++) {
 
@@ -20009,29 +20012,17 @@ void SOLARCHVISION_draw_windFlow () {
       float y2 = windFlow_Vertices[n2][1];
       float z2 = windFlow_Vertices[n2][2];
       
-      float g = windFlow_Multiplier * windFlow_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
-  
-  
-      if (windFlow_Color == 0) {
-        float[] _COL = SOLARCHVISION_DRYWCBD(g);
-        WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
-        WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
-      }
-      else if (windFlow_Color == 1) {
-        float[] _COL = SOLARCHVISION_DRYWCBD(-g);
-        WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3]);
-        WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3]);
-      } 
-      else if (windFlow_Color == 2) {
-        float[] _COL = SOLARCHVISION_DRYWCBD(-g);
-        WIN3D_Diagrams.stroke(255 - _COL[3], 255 - _COL[2], 255 - _COL[1]);
-        WIN3D_Diagrams.fill(255 - _COL[3], 255 - _COL[2], 255 - _COL[1]);
-      } 
-      else if (windFlow_Color == 3) {
-        float[] _COL = SOLARCHVISION_DRYWCBD(g);
-        WIN3D_Diagrams.stroke(255 - _COL[3], 255 - _COL[2], 255 - _COL[1]);
-        WIN3D_Diagrams.fill(255 - _COL[3], 255 - _COL[2], 255 - _COL[1]);
-      }      
+      float _val = windFlow_Pallet_MLT * windFlow_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
+
+      float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
+      if (PAL_DIR == -1) _u = 1 - _u;
+      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+      if (PAL_DIR == 2) _u =  0.5 * _u;
+      
+      float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);      
+    
+      WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);
+      WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
       
       
       WIN3D_Diagrams.strokeWeight(1);
@@ -31771,7 +31762,12 @@ void SOLARCHVISION_draw_ROLLOUT () {
       ELEVATION_Pallet_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ELEVATION_Pallet_DIR", ELEVATION_Pallet_DIR, -1, 1, 2), 1));
       ELEVATION_Pallet_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "ELEVATION_Pallet_MLT", ELEVATION_Pallet_MLT, 0.01, 1.0, -2);   
 
-
+      windFlow_Pallet_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "windFlow_Pallet_CLR", windFlow_Pallet_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
+      windFlow_Pallet_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "windFlow_Pallet_DIR", windFlow_Pallet_DIR, -1, 1, 2), 1));
+      windFlow_Pallet_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "windFlow_Pallet_MLT", windFlow_Pallet_MLT, 0.01, 1.0, -2);  
+      
+      
+      
 
     }      
     
@@ -39827,6 +39823,9 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("SPATIAL_Pallet_CLR", SPATIAL_Pallet_CLR);
   newChild1.setInt("SPATIAL_Pallet_DIR", SPATIAL_Pallet_DIR);
   newChild1.setFloat("SPATIAL_Pallet_MLT", SPATIAL_Pallet_MLT);
+  newChild1.setInt("windFlow_Pallet_CLR", windFlow_Pallet_CLR);
+  newChild1.setInt("windFlow_Pallet_DIR", windFlow_Pallet_DIR);
+  newChild1.setFloat("windFlow_Pallet_MLT", windFlow_Pallet_MLT);
   newChild1.setInt("Impact_ACTIVE", Impact_ACTIVE);
   newChild1.setInt("Impact_PASSIVE", Impact_PASSIVE);
   newChild1.setInt("Impact_SPD_DIR", Impact_SPD_DIR);
@@ -39947,8 +39946,6 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("WORLD_viewport_ZOOM", WORLD_viewport_ZOOM);
   newChild1.setInt("frame_variation", frame_variation);
   newChild1.setInt("_LAN", _LAN);
-  newChild1.setFloat("windFlow_Multiplier", windFlow_Multiplier);
-  newChild1.setInt("windFlow_Color", windFlow_Color);
   newChild1.setFloat("LAND_TEXTURE_scale_U", LAND_TEXTURE_scale_U);
   newChild1.setFloat("LAND_TEXTURE_scale_V", LAND_TEXTURE_scale_V);
   newChild1.setInt("LAND_n_I_base", LAND_n_I_base);
@@ -40921,6 +40918,9 @@ void SOLARCHVISION_load_project (String myFile) {
       SPATIAL_Pallet_CLR = children0[L].getInt("SPATIAL_Pallet_CLR");
       SPATIAL_Pallet_DIR = children0[L].getInt("SPATIAL_Pallet_DIR");
       SPATIAL_Pallet_MLT = children0[L].getFloat("SPATIAL_Pallet_MLT");
+      windFlow_Pallet_CLR = children0[L].getInt("windFlow_Pallet_CLR");
+      windFlow_Pallet_DIR = children0[L].getInt("windFlow_Pallet_DIR");
+      windFlow_Pallet_MLT = children0[L].getFloat("windFlow_Pallet_MLT");
       Impact_ACTIVE = children0[L].getInt("Impact_ACTIVE");
       Impact_PASSIVE = children0[L].getInt("Impact_PASSIVE");
       Impact_SPD_DIR = children0[L].getInt("Impact_SPD_DIR");
@@ -41042,8 +41042,6 @@ void SOLARCHVISION_load_project (String myFile) {
       WORLD_viewport_ZOOM = children0[L].getInt("WORLD_viewport_ZOOM");
       frame_variation = children0[L].getInt("frame_variation");
       _LAN = children0[L].getInt("_LAN");
-      windFlow_Multiplier = children0[L].getFloat("windFlow_Multiplier");
-      windFlow_Color = children0[L].getInt("windFlow_Color");
       LAND_TEXTURE_scale_U = children0[L].getFloat("LAND_TEXTURE_scale_U");
       LAND_TEXTURE_scale_V = children0[L].getFloat("LAND_TEXTURE_scale_V");
       LAND_n_I_base = children0[L].getInt("LAND_n_I_base");
