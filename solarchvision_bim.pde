@@ -1623,7 +1623,7 @@ float WIN3D_R_View = float(WIN3D_Y_View) / float(WIN3D_X_View);
 float WIN3D_X_coordinate = 0;
 float WIN3D_Y_coordinate = 10;
 float WIN3D_Z_coordinate = 0; 
-float WIN3D_S_coordinate = 10;
+float WIN3D_S_coordinate = 1;
 
 float WIN3D_RX_coordinate = 90; //75; 
 float WIN3D_RY_coordinate = 0;
@@ -12459,7 +12459,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                   WIN3D_Y_coordinate = 0;
                   WIN3D_Z_coordinate = 0;   
                   
-                  WIN3D_S_coordinate = 10;
+                  WIN3D_S_coordinate = 1;
    
                   WIN3D_ZOOM_coordinate = 60;               
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
@@ -27627,8 +27627,8 @@ void mouseDragged () {
   
               if (mouseButton == LEFT) { // pan
   
-                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * OBJECTS_scale;  
-                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * OBJECTS_scale; 
+                WIN3D_X_coordinate += 100 * dx * WIN3D_S_coordinate * OBJECTS_scale;  
+                WIN3D_Y_coordinate += 100 * dy * WIN3D_S_coordinate * OBJECTS_scale; 
                 
                 WIN3D_Update = 1;
               }      
@@ -27658,8 +27658,8 @@ void mouseDragged () {
               
               if (mouseButton == RIGHT) { // pan
   
-                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * OBJECTS_scale;  
-                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * OBJECTS_scale; 
+                WIN3D_X_coordinate += 100 * dx * WIN3D_S_coordinate * OBJECTS_scale;  
+                WIN3D_Y_coordinate += 100 * dy * WIN3D_S_coordinate * OBJECTS_scale; 
                 
                 WIN3D_Update = 1;
               }          
@@ -27698,8 +27698,8 @@ void mouseDragged () {
               
               if (mouseButton == RIGHT) { // pan
   
-                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * OBJECTS_scale;  
-                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * OBJECTS_scale; 
+                WIN3D_X_coordinate += 100 * dx * WIN3D_S_coordinate * OBJECTS_scale;  
+                WIN3D_Y_coordinate += 100 * dy * WIN3D_S_coordinate * OBJECTS_scale; 
                 
                 WIN3D_Update = 1;
               }          
@@ -27740,8 +27740,8 @@ void mouseDragged () {
               
               if (mouseButton == RIGHT) { // pan
   
-                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * OBJECTS_scale;  
-                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * OBJECTS_scale; 
+                WIN3D_X_coordinate += 100 * dx * WIN3D_S_coordinate * OBJECTS_scale;  
+                WIN3D_Y_coordinate += 100 * dy * WIN3D_S_coordinate * OBJECTS_scale; 
                 
                 WIN3D_Update = 1;
               }       
@@ -27752,14 +27752,14 @@ void mouseDragged () {
   
               if (mouseButton == LEFT) { // move Y
     
-                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * OBJECTS_scale;  
+                WIN3D_Y_coordinate += 100 * dy * WIN3D_S_coordinate * OBJECTS_scale;  
                 
                 WIN3D_Update = 1;    
               }              
               
               if (mouseButton == RIGHT) { // move X
     
-                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * OBJECTS_scale;  
+                WIN3D_X_coordinate += 100 * dx * WIN3D_S_coordinate * OBJECTS_scale;  
                 
                 WIN3D_Update = 1;    
               }    
@@ -27770,8 +27770,8 @@ void mouseDragged () {
   
               if (mouseButton == LEFT) { // pan
             
-                WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * OBJECTS_scale;  
-                WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * OBJECTS_scale; 
+                WIN3D_X_coordinate += 100 * dx * WIN3D_S_coordinate * OBJECTS_scale;  
+                WIN3D_Y_coordinate += 100 * dy * WIN3D_S_coordinate * OBJECTS_scale; 
                 
                 WIN3D_Update = 1;
               }   
@@ -27793,14 +27793,14 @@ void mouseDragged () {
               if (Modify_Object_Parameters == 0) { // Truck
   
                 if (View_XYZ_ChangeOption == 0) {
-                  if (mouseButton == LEFT) WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * OBJECTS_scale;  
-                  if (mouseButton == RIGHT) WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * OBJECTS_scale; 
+                  if (mouseButton == LEFT) WIN3D_X_coordinate += 100 * dx * WIN3D_S_coordinate * OBJECTS_scale;  
+                  if (mouseButton == RIGHT) WIN3D_Y_coordinate += 100 * dy * WIN3D_S_coordinate * OBJECTS_scale; 
                   WIN3D_Update = 1;  
                 }
     
                 if (View_XYZ_ChangeOption == 1) {
-                  if (mouseButton == RIGHT) WIN3D_X_coordinate += 10 * dx * WIN3D_S_coordinate * OBJECTS_scale;  
-                  if (mouseButton == LEFT) WIN3D_Y_coordinate += 10 * dy * WIN3D_S_coordinate * OBJECTS_scale; 
+                  if (mouseButton == RIGHT) WIN3D_X_coordinate += 100 * dx * WIN3D_S_coordinate * OBJECTS_scale;  
+                  if (mouseButton == LEFT) WIN3D_Y_coordinate += 100 * dy * WIN3D_S_coordinate * OBJECTS_scale; 
                   WIN3D_Update = 1; 
                 }            
              
