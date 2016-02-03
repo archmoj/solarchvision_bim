@@ -18367,25 +18367,43 @@ void SOLARCHVISION_export_objects () {
     if (Create_Face_Texture == 0) {
 
       if (objExportMaterialLibrary != 0) {
-    
-        for (int mt = 0; mt < Materials_Number; mt++) {
-  
-          float a = Materials_Color[mt][0] / 255.0; 
-          float r = Materials_Color[mt][1] / 255.0; 
-          float g = Materials_Color[mt][2] / 255.0; 
-          float b = Materials_Color[mt][3] / 255.0; 
-          
-          mtlOutput.println("newmtl SurfaceMaterial_" + nf(mt, 0));
-          mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-          mtlOutput.println("\tKa " + nf(r, 0, 3) + " " + nf(g, 0, 3) + " " + nf(b, 0, 3)); // ambient
-          mtlOutput.println("\tKd " + nf(r, 0, 3) + " " + nf(g, 0, 3) + " " + nf(b, 0, 3)); // diffuse
-          mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-          mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-          mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+
+        int[] Materials_Used = new int [Materials_Number];
+        
+        for (int i = 0; i < Materials_Used.length; i++) {
+           Materials_Used[i] = 0;
+        }
+
+        for (int f = 1; f < allFaces.length; f++) {
       
-          mtlOutput.println("\td " + nf(a, 0, 3)); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-          mtlOutput.println("\tTr " + nf(a, 0, 3)); //  0-1 transparency
-          mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter      
+          int mt = allFaces_MTLV[f][0];
+        
+          if (mt != 0) {
+            Materials_Used[mt] += 1;
+          }
+        }    
+        
+        for (int mt = 0; mt < Materials_Number; mt++) {
+          
+          if (Materials_Used[mt] != 0) {
+  
+            float a = Materials_Color[mt][0] / 255.0; 
+            float r = Materials_Color[mt][1] / 255.0; 
+            float g = Materials_Color[mt][2] / 255.0; 
+            float b = Materials_Color[mt][3] / 255.0; 
+            
+            mtlOutput.println("newmtl SurfaceMaterial_" + nf(mt, 0));
+            mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+            mtlOutput.println("\tKa " + nf(r, 0, 3) + " " + nf(g, 0, 3) + " " + nf(b, 0, 3)); // ambient
+            mtlOutput.println("\tKd " + nf(r, 0, 3) + " " + nf(g, 0, 3) + " " + nf(b, 0, 3)); // diffuse
+            mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+            mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+            mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+        
+            mtlOutput.println("\td " + nf(a, 0, 3)); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+            mtlOutput.println("\tTr " + nf(a, 0, 3)); //  0-1 transparency
+            mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter      
+          }
         }
       }
       
@@ -18807,31 +18825,34 @@ void SOLARCHVISION_export_objects () {
   if (Display_FractalPlant != 0) {
 
     if (objExportMaterialLibrary != 0) {
+      
+      if (allFractal_num != 0) {
+        
+        mtlOutput.println("newmtl " + "FractalPlant_Trunk");
+        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+        mtlOutput.println("\tKa 1.000 0.750 0.500"); // ambient
+        mtlOutput.println("\tKd 1.000 0.750 0.500"); // diffuse
+        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
     
-      mtlOutput.println("newmtl " + "FractalPlant_Trunk");
-      mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-      mtlOutput.println("\tKa 1.000 0.750 0.500"); // ambient
-      mtlOutput.println("\tKd 1.000 0.750 0.500"); // diffuse
-      mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-      mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-      mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-  
-      mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-      mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-      mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-  
-  
-      mtlOutput.println("newmtl " + "FractalPlant_Leaf");
-      mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-      mtlOutput.println("\tKa 0.500 0.750 0.250"); // ambient
-      mtlOutput.println("\tKd 0.500 0.750 0.250"); // diffuse
-      mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-      mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-      mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-  
-      mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-      mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-      mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+        mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+        mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+    
+    
+        mtlOutput.println("newmtl " + "FractalPlant_Leaf");
+        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+        mtlOutput.println("\tKa 0.500 0.750 0.250"); // ambient
+        mtlOutput.println("\tKd 0.500 0.750 0.250"); // diffuse
+        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+    
+        mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+        mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+      }
     }
 
     
