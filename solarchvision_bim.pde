@@ -18867,10 +18867,12 @@ void SOLARCHVISION_export_objects () {
     int PAL_TYPE = windFlow_Pallet_CLR; 
     int PAL_DIR = windFlow_Pallet_DIR; 
     float PAL_Multiplier = windFlow_Pallet_MLT;
+    
+    String the_filename = "";
 
     if (objExportMaterialLibrary != 0) {
       
-      String the_filename = "windFlow_Pallet.bmp";
+      the_filename = "windFlow_Pallet.bmp";
       
       String TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
         
@@ -18897,7 +18899,7 @@ void SOLARCHVISION_export_objects () {
       
         float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
         
-        Pallet_Texture.pixels[np] = color(_COL[0], _COL[1], _COL[2], _COL[3]);        
+        Pallet_Texture.pixels[np] = color(_COL[1], _COL[2], _COL[3], _COL[0]);        
       }
       
       Pallet_Texture.updatePixels();   
@@ -18922,9 +18924,8 @@ void SOLARCHVISION_export_objects () {
   
     }    
     
+    num_vertices_added = 0;
     
-    /*
-
     for (int q = 1; q < windFlow_Lines.length; q++) {
 
       int n1 = windFlow_Lines[q][0];
@@ -18937,18 +18938,7 @@ void SOLARCHVISION_export_objects () {
       float x2 = windFlow_Vertices[n2][0];
       float y2 = windFlow_Vertices[n2][1];
       float z2 = windFlow_Vertices[n2][2];
-      
-      float d = dist(x1, y1, z1, x2, y2, z2);
-      
-      float[] W = {x2 - x1, y2 - y1, z2 - z1};
-      W = fn_normalize(W);
-  
-      float Alpha = asin_ang(W[2]);
-      float Beta = atan2_ang(W[1], W[0]) + 90;   
-
-      float[] A = 
-      
-     
+            
       
       float _val = windFlow_Pallet_MLT * windFlow_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
 
@@ -18956,30 +18946,87 @@ void SOLARCHVISION_export_objects () {
       if (PAL_DIR == -1) _u = 1 - _u;
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
       if (PAL_DIR == 2) _u =  0.5 * _u;
+
+      float the_dist = dist(x1, y1, z1, x2, y2, z2);
       
-      float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);      
-    
-      WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);
-      WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+      float[] W = {x2 - x1, y2 - y1, z2 - z1};
+      W = fn_normalize(W);
+  
+      float Alpha = asin_ang(W[2]);
+      float Beta = atan2_ang(W[1], W[0]) + 90;   
+
       
-      
+
       objOutput.println("v " + nf(x1, 0, objExportPrecisionVertex) + " " +  nf(y1, 0, objExportPrecisionVertex) + " " +  nf(z1, 0, objExportPrecisionVertex));
       objOutput.println("v " + nf(x2, 0, objExportPrecisionVertex) + " " +  nf(y2, 0, objExportPrecisionVertex) + " " +  nf(z2, 0, objExportPrecisionVertex));
-      objOutput.println("v " + nf(x3, 0, objExportPrecisionVertex) + " " +  nf(y3, 0, objExportPrecisionVertex) + " " +  nf(z3, 0, objExportPrecisionVertex));
-      objOutput.println("v " + nf(x4, 0, objExportPrecisionVertex) + " " +  nf(y4, 0, objExportPrecisionVertex) + " " +  nf(z4, 0, objExportPrecisionVertex));      
-            
+    
+      for (int i = 0; i < 4; i++) {
+
+        float px = 0.1 * the_dist * cos(i * HALF_PI);
+        float py = 0;
+        float pz = 0.1 * the_dist * sin(i * HALF_PI); 
       
-      WIN3D_Diagrams.strokeWeight(1);
+        float pz_rot = pz;
+        float px_rot = px * cos_ang(Beta) - py * sin_ang(Beta);
+        float py_rot = px * sin_ang(Beta) + py * cos_ang(Beta);  
+        
+        px = px_rot;
+        py = py_rot;
+        pz = pz_rot;
       
-      WIN3D_Diagrams.line(x1 * OBJECTS_scale * WIN3D_scale3D, -y1 * OBJECTS_scale * WIN3D_scale3D, z1 * OBJECTS_scale * WIN3D_scale3D, x2 * OBJECTS_scale * WIN3D_scale3D, -y2 * OBJECTS_scale * WIN3D_scale3D, z2 * OBJECTS_scale * WIN3D_scale3D);
+        px_rot = px;
+        py_rot = py * cos_ang(Alpha) - pz * sin_ang(Alpha);
+        pz_rot = py * sin_ang(Alpha) + pz * cos_ang(Alpha);
+    
+        px = px_rot;
+        py = py_rot;
+        pz = pz_rot;    
+  
+        objOutput.println("v " + nf(x1 + px, 0, objExportPrecisionVertex) + " " +  nf(y1 + py, 0, objExportPrecisionVertex) + " " +  nf(z1 + pz, 0, objExportPrecisionVertex));      
+      }
       
-      WIN3D_Diagrams.strokeWeight(4);      
+      for (int i = 0; i < 6; i++) {
+        
+        float u1 = _u;
+        float v1 = 0; 
+        
+        objOutput.println("vt " + nf(u1, 0, objExportPrecisionVtexture) + " " + nf(v1, 0, objExportPrecisionVtexture) + " 0");
+      }
       
-      WIN3D_Diagrams.line(x1 * OBJECTS_scale * WIN3D_scale3D, -y1 * OBJECTS_scale * WIN3D_scale3D, z1 * OBJECTS_scale * WIN3D_scale3D, 0.5 * (x2 + x1) * OBJECTS_scale * WIN3D_scale3D, -0.5 * (y2 + y1) * OBJECTS_scale * WIN3D_scale3D, 0.5 * (z2 + z1) * OBJECTS_scale * WIN3D_scale3D);
+      num_vertices_added += 6;
+      
+      obj_lastGroupNumber += 1;
+      objOutput.println("g windFlow_" + nf(q, 0));
+      
+      if (objExportMaterialLibrary != 0) {
+        objOutput.println("usemtl windFlow");
+      }      
+
+      String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 5, 0); 
+      String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 4, 0);
+      String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0);
+      String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
+      String n5_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
+      String n6_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
+      
+      String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 5, 0); 
+      String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 4, 0);
+      String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0);
+      String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);          
+      String m5_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);          
+      String m6_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);          
+      
+      objOutput.println("f " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+      objOutput.println("f " + n2_txt + "/" + m2_txt + " " + n4_txt + "/" + m4_txt + " " + n5_txt + "/" + m5_txt);
+      objOutput.println("f " + n2_txt + "/" + m2_txt + " " + n5_txt + "/" + m5_txt + " " + n6_txt + "/" + m6_txt);
+      objOutput.println("f " + n2_txt + "/" + m2_txt + " " + n6_txt + "/" + m6_txt + " " + n3_txt + "/" + m3_txt);
+      
+      obj_lastFaceNumber += 4;
+
     }
 
-    */
-
+    obj_lastVertexNumber += num_vertices_added;
+    obj_lastVtextureNumber += num_vertices_added;         
   }
 
 
@@ -20205,8 +20252,6 @@ void SOLARCHVISION_draw_windFlow () {
         
         WIN3D_Diagrams.endShape(CLOSE);
       }
-      
-
 
     }
 
@@ -24610,9 +24655,9 @@ void SOLARCHVISION_calculate_windFlow () {
 */   
 
 
-  for (float z = 2.5; z <= 40; z += 5) {
-    for (float y = -80; y <= 80; y += 5) {
-      for (float x = -80; x <= 80; x += 5) {
+  for (float z = 2.5; z <= 40; z += 10) {
+    for (float y = -80; y <= 80; y += 10) {
+      for (float x = -80; x <= 80; x += 10) {
         
     
 
