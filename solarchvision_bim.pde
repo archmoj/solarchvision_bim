@@ -18090,72 +18090,95 @@ void SOLARCHVISION_export_objects () {
   if (Display_Trees_People != 0) {
 
     if (objExportMaterialLibrary != 0) {
+      
+      int[] Object2D_ImageUsed = new int [Object2D_ImagePath.length];
+      
+      for (int i = 0; i < Object2D_ImageUsed.length; i++) {
+         Object2D_ImageUsed[i] = 0;
+      }
+      
+      for (int o = 0; o < selectedObject2D_numbers.length; o++) {
+
+        int OBJ_NUM = selectedObject2D_numbers[o];
+  
+        if (OBJ_NUM != 0) {    
+         
+          int n = allObject2D_MAP[OBJ_NUM];      
+         
+          if (n != 0) {
+            Object2D_ImageUsed[n] += 1;
+          }
+        }
+      }
     
       for (int i = 1; i < Object2D_ImagePath.length; i++) {
+        
+        if (Object2D_ImageUsed[i] != 0) {
+        
+          String old_TEXTURE_path = Object2D_ImagePath[i];
+          
+          String new_TEXTURE_path = "";
+          
+          String opacity_TEXTURE_path = "";
+          
+          String the_filename = "";
+          
+          if (Object2D_ImagePath[i].equals("")) {
+          }  
+          else {
+    
+            the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
       
-        String old_TEXTURE_path = Object2D_ImagePath[i];
-        
-        String new_TEXTURE_path = "";
-        
-        String opacity_TEXTURE_path = "";
-        
-        String the_filename = "";
-        
-        if (Object2D_ImagePath[i].equals("")) {
-        }  
-        else {
-  
-          the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
-    
-          new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
-          opacity_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + "opacity_" + the_filename;
-    
-          println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
-          saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
-          
-          println("Making opacity texture:", new_TEXTURE_path);
-          
-          int RES1 = Object2DImages[i].width;
-          int RES2 = Object2DImages[i].height;
-          
-          PImage Opacity_Texture = createImage(RES1, RES2, ARGB);
-  
-          Opacity_Texture.loadPixels();
-          
-          for (int np = 0; np < (RES1 * RES2); np++) {
-            int Image_X = np % RES1;
-            int Image_Y = np / RES1;
-          
-            color COL = Object2DImages[i].get(Image_X, Image_Y);
-            //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+            new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+            opacity_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + "opacity_" + the_filename;
+      
+            println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
+            saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
             
-            float COL_V = (COL >> 24 & 0xFF);
+            println("Making opacity texture:", new_TEXTURE_path);
             
-            Opacity_Texture.pixels[np] = color(COL_V, COL_V, COL_V, COL_V);        
+            int RES1 = Object2DImages[i].width;
+            int RES2 = Object2DImages[i].height;
+            
+            PImage Opacity_Texture = createImage(RES1, RES2, ARGB);
+    
+            Opacity_Texture.loadPixels();
+            
+            for (int np = 0; np < (RES1 * RES2); np++) {
+              int Image_X = np % RES1;
+              int Image_Y = np / RES1;
+            
+              color COL = Object2DImages[i].get(Image_X, Image_Y);
+              //alpha: COL >> 24 & 0xFF; red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+              
+              float COL_V = (COL >> 24 & 0xFF);
+              
+              Opacity_Texture.pixels[np] = color(COL_V, COL_V, COL_V, COL_V);        
+            }
+            
+            Opacity_Texture.updatePixels();
+            
+            Opacity_Texture.save(opacity_TEXTURE_path);
+            
+            
+            mtlOutput.println("newmtl " + "Object2D_" + the_filename.replace('.', '_'));
+            mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+            mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+            mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+            mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+            mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+            mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+        
+            mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+            mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+            mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+    
+            //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+            mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
+            mtlOutput.println("\tmap_d " + mapsSubfolder + "opacity_" + the_filename); // diffuse map
           }
-          
-          Opacity_Texture.updatePixels();
-          
-          Opacity_Texture.save(opacity_TEXTURE_path);
-          
-          
-          mtlOutput.println("newmtl " + "Object2D_" + the_filename.replace('.', '_'));
-          mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-          mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-          mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-          mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-          mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-          mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-      
-          mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-          mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-          mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-  
-          //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-          mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
-          mtlOutput.println("\tmap_d " + mapsSubfolder + "opacity_" + the_filename); // diffuse map
-        }
-      }    
+        }    
+      }
     }
     
     for (int f = 1; f <= allObject2D_num; f++) {
@@ -18987,10 +19010,12 @@ void SOLARCHVISION_export_objects () {
       
       for (int i = 0; i < 6; i++) {
         
-        float u1 = _u;
-        float v1 = 0; 
+        float u1 = 1 - _u;
         
-        objOutput.println("vt " + nf(u1, 0, objExportPrecisionVtexture) + " " + nf(v1, 0, objExportPrecisionVtexture) + " 0");
+        if (u1 > 1) u1 = 1;
+        if (u1 < 0) u1 = 0;
+        
+        objOutput.println("vt " + nf(u1, 0, objExportPrecisionVtexture) + " 0 0");
       }
       
       num_vertices_added += 6;
