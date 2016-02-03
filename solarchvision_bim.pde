@@ -12465,6 +12465,8 @@ void WIN3D_keyPressed (KeyEvent e) {
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
           
         case '2' :Display_Trees_People = (Display_Trees_People + 1) % 2; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        
+        case '3' :Display_Building_Model = (Display_Building_Model + 1) % 2; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
  
 
 
@@ -18454,7 +18456,7 @@ void SOLARCHVISION_export_objects () {
           for (int back_or_front = 1 - objExportBackSides; back_or_front <= 1; back_or_front++) {
           
             String the_filename = "";
-            String new_TEXTURE_path = "";
+            String TEXTURE_path = "";
   
   
             PGraphics[] Face_Texture = new PGraphics [1 + Number_Of_Face_Subdivisions];
@@ -18466,9 +18468,9 @@ void SOLARCHVISION_export_objects () {
   
                 the_filename = "Combined_Texture" + "_obj" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0) + ".bmp";
   
-                new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+                TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
         
-                println("Combined texture:", new_TEXTURE_path);
+                println("Combined texture:", TEXTURE_path);
                 
                 mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
                 mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
@@ -18551,9 +18553,9 @@ void SOLARCHVISION_export_objects () {
                       if (objExportCombinedMaterial == 0) { 
                         the_filename = "Face_Texture" + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0) + ".jpg";
                         
-                        new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+                        TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
                 
-                        println("Baking texture:", new_TEXTURE_path);
+                        println("Baking texture:", TEXTURE_path);
                       }
                    
                       
@@ -18638,7 +18640,7 @@ void SOLARCHVISION_export_objects () {
                       Face_Texture[CurrentFaceTextureNumber].endDraw();
                       
                       if (objExportCombinedMaterial == 0) {
-                        Face_Texture[CurrentFaceTextureNumber].save(new_TEXTURE_path);
+                        Face_Texture[CurrentFaceTextureNumber].save(TEXTURE_path);
   
                         mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
                         mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
@@ -18763,7 +18765,7 @@ void SOLARCHVISION_export_objects () {
                 
                 Combined_Texture.endDraw();
                 
-                Combined_Texture.save(new_TEXTURE_path);
+                Combined_Texture.save(TEXTURE_path);
               }
   
             }            
@@ -18857,6 +18859,129 @@ void SOLARCHVISION_export_objects () {
       }
     }
   }  
+
+
+  
+  if (Display_windFlow != 0) {  
+    
+    int PAL_TYPE = windFlow_Pallet_CLR; 
+    int PAL_DIR = windFlow_Pallet_DIR; 
+    float PAL_Multiplier = windFlow_Pallet_MLT;
+
+    if (objExportMaterialLibrary != 0) {
+      
+      String the_filename = "windFlow_Pallet.bmp";
+      
+      String TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+        
+      println("Saving texture:", TEXTURE_path);
+      
+      int RES1 = 256; // adding two pixels to left and right as margin
+      int RES2 = 2;      
+  
+      PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
+   
+   
+      Pallet_Texture.loadPixels();
+          
+      for (int np = 0; np < (RES1 * RES2); np++) {
+        int Image_X = np % RES1;
+        int Image_Y = np / RES1;
+        
+        float _val = (Image_X / (0.5 * RES1)) - 1; 
+        
+        float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
+        if (PAL_DIR == -1) _u = 1 - _u;
+        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+        if (PAL_DIR == 2) _u =  0.5 * _u;        
+      
+        float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
+        
+        Pallet_Texture.pixels[np] = color(_COL[0], _COL[1], _COL[2], _COL[3]);        
+      }
+      
+      Pallet_Texture.updatePixels();   
+   
+      Pallet_Texture.save(TEXTURE_path);      
+
+    
+      mtlOutput.println("newmtl " + "windFlow");
+      mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+      mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+      mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+      mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+      mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+      mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+  
+      mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+      mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+      mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+
+      //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+      mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
+  
+    }    
+    
+    
+    /*
+
+    for (int q = 1; q < windFlow_Lines.length; q++) {
+
+      int n1 = windFlow_Lines[q][0];
+      int n2 = windFlow_Lines[q][1];
+      
+      float x1 = windFlow_Vertices[n1][0];
+      float y1 = windFlow_Vertices[n1][1];
+      float z1 = windFlow_Vertices[n1][2];
+
+      float x2 = windFlow_Vertices[n2][0];
+      float y2 = windFlow_Vertices[n2][1];
+      float z2 = windFlow_Vertices[n2][2];
+      
+      float d = dist(x1, y1, z1, x2, y2, z2);
+      
+      float[] W = {x2 - x1, y2 - y1, z2 - z1};
+      W = fn_normalize(W);
+  
+      float Alpha = asin_ang(W[2]);
+      float Beta = atan2_ang(W[1], W[0]) + 90;   
+
+      float[] A = 
+      
+     
+      
+      float _val = windFlow_Pallet_MLT * windFlow_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
+
+      float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
+      if (PAL_DIR == -1) _u = 1 - _u;
+      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+      if (PAL_DIR == 2) _u =  0.5 * _u;
+      
+      float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);      
+    
+      WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);
+      WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+      
+      
+      objOutput.println("v " + nf(x1, 0, objExportPrecisionVertex) + " " +  nf(y1, 0, objExportPrecisionVertex) + " " +  nf(z1, 0, objExportPrecisionVertex));
+      objOutput.println("v " + nf(x2, 0, objExportPrecisionVertex) + " " +  nf(y2, 0, objExportPrecisionVertex) + " " +  nf(z2, 0, objExportPrecisionVertex));
+      objOutput.println("v " + nf(x3, 0, objExportPrecisionVertex) + " " +  nf(y3, 0, objExportPrecisionVertex) + " " +  nf(z3, 0, objExportPrecisionVertex));
+      objOutput.println("v " + nf(x4, 0, objExportPrecisionVertex) + " " +  nf(y4, 0, objExportPrecisionVertex) + " " +  nf(z4, 0, objExportPrecisionVertex));      
+            
+      
+      WIN3D_Diagrams.strokeWeight(1);
+      
+      WIN3D_Diagrams.line(x1 * OBJECTS_scale * WIN3D_scale3D, -y1 * OBJECTS_scale * WIN3D_scale3D, z1 * OBJECTS_scale * WIN3D_scale3D, x2 * OBJECTS_scale * WIN3D_scale3D, -y2 * OBJECTS_scale * WIN3D_scale3D, z2 * OBJECTS_scale * WIN3D_scale3D);
+      
+      WIN3D_Diagrams.strokeWeight(4);      
+      
+      WIN3D_Diagrams.line(x1 * OBJECTS_scale * WIN3D_scale3D, -y1 * OBJECTS_scale * WIN3D_scale3D, z1 * OBJECTS_scale * WIN3D_scale3D, 0.5 * (x2 + x1) * OBJECTS_scale * WIN3D_scale3D, -0.5 * (y2 + y1) * OBJECTS_scale * WIN3D_scale3D, 0.5 * (z2 + z1) * OBJECTS_scale * WIN3D_scale3D);
+    }
+
+    */
+
+  }
+
 
 
   if (objExportMaterialLibrary != 0) {
@@ -20013,6 +20138,7 @@ void SOLARCHVISION_draw_windFlow () {
       float x2 = windFlow_Vertices[n2][0];
       float y2 = windFlow_Vertices[n2][1];
       float z2 = windFlow_Vertices[n2][2];
+            
       
       float _val = windFlow_Pallet_MLT * windFlow_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
 
@@ -20022,18 +20148,79 @@ void SOLARCHVISION_draw_windFlow () {
       if (PAL_DIR == 2) _u =  0.5 * _u;
       
       float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);      
-    
+
+      /*    
       WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3], _COL[0]);
       WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
-      
-      
+
       WIN3D_Diagrams.strokeWeight(1);
-      
       WIN3D_Diagrams.line(x1 * OBJECTS_scale * WIN3D_scale3D, -y1 * OBJECTS_scale * WIN3D_scale3D, z1 * OBJECTS_scale * WIN3D_scale3D, x2 * OBJECTS_scale * WIN3D_scale3D, -y2 * OBJECTS_scale * WIN3D_scale3D, z2 * OBJECTS_scale * WIN3D_scale3D);
       
       WIN3D_Diagrams.strokeWeight(4);      
-      
       WIN3D_Diagrams.line(x1 * OBJECTS_scale * WIN3D_scale3D, -y1 * OBJECTS_scale * WIN3D_scale3D, z1 * OBJECTS_scale * WIN3D_scale3D, 0.5 * (x2 + x1) * OBJECTS_scale * WIN3D_scale3D, -0.5 * (y2 + y1) * OBJECTS_scale * WIN3D_scale3D, 0.5 * (z2 + z1) * OBJECTS_scale * WIN3D_scale3D);
+      */
+      
+
+      WIN3D_Diagrams.noStroke();
+
+      float the_dist = dist(x1, y1, z1, x2, y2, z2);
+      
+      float[] W = {x2 - x1, y2 - y1, z2 - z1};
+      W = fn_normalize(W);
+  
+      float Alpha = asin_ang(W[2]);
+      float Beta = atan2_ang(W[1], W[0]) + 90;   
+
+      WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3], 127);
+      WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], 127);
+      WIN3D_Diagrams.noStroke();
+      
+      for (int i = 0; i < 4; i++) {
+        
+        WIN3D_Diagrams.beginShape();
+      
+        WIN3D_Diagrams.vertex(x2 * OBJECTS_scale * WIN3D_scale3D, -y2 * OBJECTS_scale * WIN3D_scale3D, z2 * OBJECTS_scale * WIN3D_scale3D);  
+  
+        for (int j = 0; j < 2; j++) {
+          
+          float px = 0.1 * the_dist * cos((i + j) * HALF_PI);
+          float py = 0;
+          float pz = 0.1 * the_dist * sin((i + j) * HALF_PI); 
+        
+          float pz_rot = pz;
+          float px_rot = px * cos_ang(Beta) - py * sin_ang(Beta);
+          float py_rot = px * sin_ang(Beta) + py * cos_ang(Beta);  
+          
+          px = px_rot;
+          py = py_rot;
+          pz = pz_rot;
+        
+          px_rot = px;
+          py_rot = py * cos_ang(Alpha) - pz * sin_ang(Alpha);
+          pz_rot = py * sin_ang(Alpha) + pz * cos_ang(Alpha);
+      
+          px = px_rot;
+          py = py_rot;
+          pz = pz_rot;          
+      
+          WIN3D_Diagrams.vertex((x1 + px) * OBJECTS_scale * WIN3D_scale3D, -(y1 + py) * OBJECTS_scale * WIN3D_scale3D, (z1 + pz) * OBJECTS_scale * WIN3D_scale3D);  
+        }
+        
+        WIN3D_Diagrams.endShape(CLOSE);
+      }
+      
+
+      
+      
+  
+      
+      
+      
+      
+
+      
+      
+
     }
 
 
@@ -24436,9 +24623,9 @@ void SOLARCHVISION_calculate_windFlow () {
 */   
 
 
-  for (float z = 2.5; z <= 20; z += 2.5) {
-    for (float y = -80; y < 80; y += 2.5) {
-      for (float x = -80; x < 80; x += 2.5) {
+  for (float z = 2.5; z <= 2.5; z += 2.5) {
+    for (float y = -80; y <= 80; y += 2.5) {
+      for (float x = -80; x <= 80; x += 2.5) {
         
     
 
