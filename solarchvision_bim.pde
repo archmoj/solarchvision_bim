@@ -18377,10 +18377,8 @@ void SOLARCHVISION_export_objects () {
         for (int f = 1; f < allFaces.length; f++) {
       
           int mt = allFaces_MTLV[f][0];
-        
-          if (mt != 0) {
-            Materials_Used[mt] += 1;
-          }
+
+          Materials_Used[mt] += 1;
         }    
         
         for (int mt = 0; mt < Materials_Number; mt++) {
