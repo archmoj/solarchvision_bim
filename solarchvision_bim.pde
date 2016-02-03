@@ -20161,8 +20161,6 @@ void SOLARCHVISION_draw_windFlow () {
       */
       
 
-      WIN3D_Diagrams.noStroke();
-
       float the_dist = dist(x1, y1, z1, x2, y2, z2);
       
       float[] W = {x2 - x1, y2 - y1, z2 - z1};
@@ -20171,7 +20169,6 @@ void SOLARCHVISION_draw_windFlow () {
       float Alpha = asin_ang(W[2]);
       float Beta = atan2_ang(W[1], W[0]) + 90;   
 
-      WIN3D_Diagrams.stroke(_COL[1], _COL[2], _COL[3], 127);
       WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], 127);
       WIN3D_Diagrams.noStroke();
       
@@ -20210,16 +20207,6 @@ void SOLARCHVISION_draw_windFlow () {
       }
       
 
-      
-      
-  
-      
-      
-      
-      
-
-      
-      
 
     }
 
@@ -24623,9 +24610,9 @@ void SOLARCHVISION_calculate_windFlow () {
 */   
 
 
-  for (float z = 2.5; z <= 2.5; z += 2.5) {
-    for (float y = -80; y <= 80; y += 2.5) {
-      for (float x = -80; x <= 80; x += 2.5) {
+  for (float z = 2.5; z <= 40; z += 5) {
+    for (float y = -80; y <= 80; y += 5) {
+      for (float x = -80; x <= 80; x += 5) {
         
     
 
