@@ -18404,54 +18404,167 @@ void SOLARCHVISION_export_objects () {
           }
         }
       }
-      
-      num_vertices_added = 0;
-  
-      for (int i = 1; i < allVertices.length; i++) {
 
-        objOutput.println("v " + nf(allVertices[i][0], 0, objExportPrecisionVertex) + " " + nf(allVertices[i][1], 0, objExportPrecisionVertex) + " " + nf(allVertices[i][2], 0, objExportPrecisionVertex));
-            
-        num_vertices_added += 1;
-      }  
-    
+//--------------------------------------    
+
       for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
         
         if (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1]) {
           
-          if (objExportPolyToPoly == 1) {
-            obj_lastGroupNumber += 1;
-            objOutput.println("g Object3D_" + nf(OBJ_NUM, 0));
-          }
-    
-          for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
-
-            if (objExportPolyToPoly == 0) {
-              obj_lastGroupNumber += 1;
-              objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_face" + nf(f, 0));
-            }
-
-            if (objExportMaterialLibrary != 0) {
-              int mt = allFaces_MTLV[f][0];
-              objOutput.println("usemtl SurfaceMaterial_" + nf(mt, 0));
-            }
-                     
-            obj_lastFaceNumber += 1;   
-            objOutput.print("f ");
-            for (int j = 0; j < allFaces[f].length; j++) {
-              objOutput.print(allFaces[f][j] + obj_lastVertexNumber);
+          for (int back_or_front = 1 - objExportBackSides; back_or_front <= 1; back_or_front++) {
+          
+            num_vertices_added = 0;
+            
+            for (int _turn = 1; _turn < 4; _turn += 1) {
               
-              if (j + 1 < allFaces[f].length) {
-                objOutput.print(" ");
+              if (_turn == 3) {
+                if (objExportPolyToPoly == 1) {
+                  obj_lastGroupNumber += 1;
+                  objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0));
+                }
+              }  
+  
+              for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
+                
+                if (_turn == 3) {
+                  if (objExportMaterialLibrary != 0) {
+                    int mt = allFaces_MTLV[f][0];
+                    objOutput.println("usemtl SurfaceMaterial_" + nf(mt, 0));
+                  }                
+                }                  
+      
+                int Tessellation = allFaces_MTLV[f][1];
+                
+                int TotalSubNo = 1;  
+                if (allFaces_MTLV[f][0] == 0) {
+                  Tessellation += MODEL3D_TESSELLATION;
+                }
+                
+                if ((allFaces[f].length != 4) && (Tessellation == 0)) {
+                  Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
+                }                
+                  
+                if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+          
+                float x1 = 0;
+                float y1 = 0;
+                float z1 = 0;
+          
+                float x2 = 0;
+                float y2 = 0;
+                float z2 = 0;
+          
+                float x3 = 0;
+                float y3 = 0;
+                float z3 = 0;
+          
+                float x4 = 0;
+                float y4 = 0;
+                float z4 = 0;
+          
+                for (int n = 0; n < TotalSubNo; n++) {
+
+                 if (_turn == 1) {   
+                   
+                    float[][] base_Vertices = new float [allFaces[f].length][3];
+                    for (int j = 0; j < allFaces[f].length; j++) {
+                      int vNo = allFaces[f][j];
+                      base_Vertices[j][0] = allVertices[vNo][0];
+                      base_Vertices[j][1] = allVertices[vNo][1];
+                      base_Vertices[j][2] = allVertices[vNo][2];
+                    }
+                    
+                    float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+            
+                    for (int s = 0; s < subFace.length; s++) {
+
+                      int s_next = (s + 1) % subFace.length;
+                      int s_prev = (s + subFace.length - 1) % subFace.length;
+                        
+                      if (back_or_front == 0) {
+                        int s_temp = s_next;
+                        s_next = s_prev;
+                        s_prev = s_temp;
+                      }
+                      
+                      if (s == 0) {
+                        x1 = subFace[s][0];
+                        y1 = subFace[s][1];
+                        z1 = subFace[s][2];
+                      }
+                      if (s == 1) {
+                        x2 = subFace[s][0];
+                        y2 = subFace[s][1];
+                        z2 = subFace[s][2];
+                      }            
+                      if (s == 2) { 
+                        x3 = subFace[s][0];
+                        y3 = subFace[s][1];
+                        z3 = subFace[s][2];
+                      }          
+                      if (s == 3) {
+                        x4 = subFace[s][0];
+                        y4 = subFace[s][1];
+                        z4 = subFace[s][2];
+                      }
+                    }
+
+                    objOutput.println("v " + nf(x1, 0, objExportPrecisionVertex) + " " +  nf(y1, 0, objExportPrecisionVertex) + " " +  nf(z1, 0, objExportPrecisionVertex));
+                    objOutput.println("v " + nf(x2, 0, objExportPrecisionVertex) + " " +  nf(y2, 0, objExportPrecisionVertex) + " " +  nf(z2, 0, objExportPrecisionVertex));
+                    objOutput.println("v " + nf(x3, 0, objExportPrecisionVertex) + " " +  nf(y3, 0, objExportPrecisionVertex) + " " +  nf(z3, 0, objExportPrecisionVertex));
+                    objOutput.println("v " + nf(x4, 0, objExportPrecisionVertex) + " " +  nf(y4, 0, objExportPrecisionVertex) + " " +  nf(z4, 0, objExportPrecisionVertex));
+                  }
+                  
+                  if (_turn == 2) {
+                    
+                    objOutput.println("vt 0 1 0");
+                    objOutput.println("vt 1 1 0");
+                    objOutput.println("vt 1 0 0");
+                    objOutput.println("vt 0 0 0");
+                  
+                  }
+                  
+                  if (_turn == 3) {
+
+                    num_vertices_added += 4;
+  
+                    if (objExportPolyToPoly == 0) {
+                      obj_lastGroupNumber += 1;
+                      objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0));
+                    }
+                    
+                    String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0); 
+                    String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
+                    String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
+                    String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
+                    
+                    String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0); 
+                    String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);
+                    String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);
+                    String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);          
+                    
+                    obj_lastFaceNumber += 1;
+                    if (back_or_front == 1) {
+                      objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+                    }
+                    else {
+                      objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+                    }
+                  }
+                  
+                }
               }
-              else {
-                objOutput.println();
-              }          
-            }    
+            }
+  
+            obj_lastVertexNumber += num_vertices_added;
+            obj_lastVtextureNumber += num_vertices_added;              
           }
         }
       }
-    
-      obj_lastVertexNumber += num_vertices_added;
+
+
+
+//--------------------------------------------    
     
     }
     else {
