@@ -10997,7 +10997,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
             
             //-------------- to extend graph to the horizon ---------------
             if (Alpha < 0) {              
-              if (i < 12) {
+              
+              if (SunR[1] > 0) { 
                 float[] SunR_rise = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, _sunrise);
 
                 Alpha = 0;
