@@ -10994,6 +10994,23 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
             
             float Alpha = 90 - acos_ang(SunR[3]);
             float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
+            
+            //-------------- to extend graph to the horizon ---------------
+            if (Alpha < 0) {              
+              if (i < 12) {
+                float[] SunR_rise = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, _sunrise);
+
+                Alpha = 0;
+                Beta = 180 - atan2_ang(SunR_rise[1], SunR_rise[2]);   
+              }
+              else {
+                float[] SunR_set = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, _sunset);
+
+                Alpha = 0;
+                Beta = 180 - atan2_ang(SunR_set[1], SunR_set[2]);   
+              } 
+            }
+            //-----------------------------------------------------------
 
             now_k = k;
             
@@ -11103,18 +11120,20 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
         }
         else {
           for (float i = 0; i < 24; i += 1.0 / float(TES_hour)) {
+            
+            float _valuesSUM = FLOAT_undefined; 
               
             float HOUR_ANGLE = i; 
             float[] SunR = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, HOUR_ANGLE);
             
             float Alpha = 90 - acos_ang(SunR[3]);
             float Beta = 180 - atan2_ang(SunR[1], SunR[2]);
-            
+
             int row_J = more_J / num_add_days;
 
             SunPathMesh[int(i * TES_hour)][row_J][0] = Alpha;
             SunPathMesh[int(i * TES_hour)][row_J][1] = Beta;
-            SunPathMesh[int(i * TES_hour)][row_J][2] = FLOAT_undefined;            
+            SunPathMesh[int(i * TES_hour)][row_J][2] = _valuesSUM;       
           }
         }            
       }
@@ -11139,9 +11158,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
       for (float i = 0; i < 24; i += 1.0 / float(TES_hour)) {  
         if (isInHourlyRange(i) == 1) {
-          //if ((i > _sunrise - 1.0 / float(TES_hour)) && (i < _sunset + 1.0 / float(TES_hour))) {              
-          //if ((i > _sunrise) && (i < _sunset)) 
-          {
+          if ((i > _sunrise - 1.0 / float(TES_hour)) && (i < _sunset + 1.0 / float(TES_hour))) {              
 
             if (target_window == 3) {
               WIN3D_Diagrams.beginShape();
@@ -11174,27 +11191,6 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
               float Alpha = SunPathMesh[a][b][0];
               float Beta = SunPathMesh[a][b][1];
               float _valuesSUM = SunPathMesh[a][b][2];
-              
-              if (Alpha < 0) {              
-              
-                if (i < 12) {
-                  float[] SunR_rise = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, _sunrise);
-  
-                  Alpha = 0;
-                  Beta = 180 - atan2_ang(SunR_rise[1], SunR_rise[2]);   
-                  _valuesSUM = 0; //SunPathMesh[a + 1][b][2];      
-  
-                }
-                else {
-                  float[] SunR_set = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, _sunset);
-  
-                  Alpha = 0;
-                  Beta = 180 - atan2_ang(SunR_set[1], SunR_set[2]);   
-                  _valuesSUM = 0; //SunPathMesh[a - 1][b][2];
-                } 
-              }
-              
-              
 
               if (Alpha >= 0) {
     
@@ -11281,12 +11277,32 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
       
     
       for (int myDATE = 90; myDATE <= 270; myDATE += 30) {
+        
+        float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, myDATE); 
+        float _sunset = SOLARCHVISION_Sunset(LocationLatitude, myDATE);        
+        
         float myHOUR_step = 1.0 / float(TES_hour);
         
         for (float myHOUR = 0; myHOUR < 24; myHOUR += myHOUR_step) {
+
+
           
-          float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, myHOUR);
-          float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, (myHOUR + myHOUR_step));
+          float HourA = myHOUR;
+          float HourB = myHOUR + myHOUR_step;
+
+          float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, HourA);
+          float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, HourB);
+          
+          if ((HourA <= _sunrise) && (HourB >= _sunrise)) {
+            SunA = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, _sunrise);
+            SunA[3] = 0;
+          }
+          if ((HourA <= _sunset) && (HourB >= _sunset)) {
+            SunB = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, _sunset);
+            SunB[3] = 0;
+          }
+
+
           
           if ((SunA[3] >= 0) && (SunB[3] >= 0)) {
           
