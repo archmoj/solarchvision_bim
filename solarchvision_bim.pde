@@ -11293,11 +11293,11 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
           float[] SunA = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, HourA);
           float[] SunB = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, HourB);
           
-          if ((HourA <= _sunrise) && (HourB >= _sunrise)) {
+          if ((HourA < _sunrise) && (HourB > _sunrise)) {
             SunA = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, _sunrise);
             SunA[3] = 0;
           }
-          if ((HourA <= _sunset) && (HourB >= _sunset)) {
+          if ((HourA < _sunset) && (HourB > _sunset)) {
             SunB = SOLARCHVISION_SunPosition(LocationLatitude, myDATE, _sunset);
             SunB[3] = 0;
           }
