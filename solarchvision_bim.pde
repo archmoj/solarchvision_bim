@@ -10887,8 +10887,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot, int l, int target_window) {
 
   // target_window1: 1:STUDY, 2:WORLD, 3:WIN3D
-  
-  
+
   int start_z = get_startZ_endZ(impacts_source)[0];
   int end_z = get_startZ_endZ(impacts_source)[1]; 
   int layers_count = get_startZ_endZ(impacts_source)[2]; 
@@ -11175,29 +11174,29 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
               float Alpha = SunPathMesh[a][b][0];
               float Beta = SunPathMesh[a][b][1];
               float _valuesSUM = SunPathMesh[a][b][2];
-              /*
-              if (i < _sunrise) {
-
-                float[] SunR_rise = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, _sunrise);
-
-                Alpha = 0;
-                Beta = 45; //180 - atan2_ang(SunR_rise[1], SunR_rise[2]);   
-                _valuesSUM = 0; //SunPathMesh[a + 1][b][2];      
-
+              
+              if (Alpha < 0) {              
+              
+                if (i < 12) {
+                  float[] SunR_rise = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, _sunrise);
+  
+                  Alpha = 0;
+                  Beta = 180 - atan2_ang(SunR_rise[1], SunR_rise[2]);   
+                  _valuesSUM = 0; //SunPathMesh[a + 1][b][2];      
+  
+                }
+                else {
+                  float[] SunR_set = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, _sunset);
+  
+                  Alpha = 0;
+                  Beta = 180 - atan2_ang(SunR_set[1], SunR_set[2]);   
+                  _valuesSUM = 0; //SunPathMesh[a - 1][b][2];
+                } 
               }
               
-              if (i > _sunset) {
-                
-                float[] SunR_set = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, _sunset);
-
-                Alpha = 0;
-                Beta = 45; //180 - atan2_ang(SunR_set[1], SunR_set[2]);   
-                _valuesSUM = 0; //SunPathMesh[a - 1][b][2];            
-              } 
-              */
               
 
-              //if (Alpha >= 0) {
+              if (Alpha >= 0) {
     
                 if (_valuesSUM < 0.9 * FLOAT_undefined) {
                 
@@ -11240,7 +11239,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
                   }
 
                 }
-              //}
+              }
             }
             
             if (target_window == 3) {
