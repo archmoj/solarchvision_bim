@@ -16863,7 +16863,7 @@ void SOLARCHVISION_add_House_Core (int m, int tes, int lyr, int vsb, int spv, fl
     SOLARCHVISION_addToFaces(newFace);
   }    
   {//Roof-North
-    int[] newFace = {t1, t2, m2, m1};
+    int[] newFace = {m2, m1, t1, t2};
     if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
     SOLARCHVISION_addToFaces(newFace);
   }    
@@ -18097,18 +18097,11 @@ void SOLARCHVISION_export_objects () {
          Object2D_ImageUsed[i] = 0;
       }
       
-      for (int o = 0; o < selectedObject2D_numbers.length; o++) {
+      for (int f = 1; f <= allObject2D_num; f++) {
 
-        int OBJ_NUM = selectedObject2D_numbers[o];
-  
-        if (OBJ_NUM != 0) {    
-         
-          int n = allObject2D_MAP[OBJ_NUM];      
-         
-          if (n != 0) {
-            Object2D_ImageUsed[n] += 1;
-          }
-        }
+        int n = abs(allObject2D_MAP[f]);
+
+        Object2D_ImageUsed[n] += 1;
       }
     
       for (int i = 1; i < Object2D_ImagePath.length; i++) {
@@ -18422,13 +18415,18 @@ void SOLARCHVISION_export_objects () {
                   objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0));
                 }
               }  
+              
+              int prev_mt = -1;
   
               for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
                 
                 if (_turn == 3) {
                   if (objExportMaterialLibrary != 0) {
                     int mt = allFaces_MTLV[f][0];
-                    objOutput.println("usemtl SurfaceMaterial_" + nf(mt, 0));
+                    if (prev_mt != mt) {
+                      objOutput.println("usemtl SurfaceMaterial_" + nf(mt, 0));
+                      prev_mt = mt;
+                    }
                   }                
                 }                  
       
@@ -18463,8 +18461,8 @@ void SOLARCHVISION_export_objects () {
                       
                       float t = PI / float(subFace.length);
 
-                      float u = cos(2 * s * t);
-                      float v = sin(2 * s * t);
+                      float u = 0.5 * cos((2 * s + 1) * t) / cos(t) + 0.5;
+                      float v = 0.5 * sin((2 * s + 1) * t) / cos(t) + 0.5;
                       
                       objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
                     }
@@ -18645,8 +18643,6 @@ void SOLARCHVISION_export_objects () {
                 float z4 = 0;
           
                 for (int n = 0; n < TotalSubNo; n++) {
-      
-                 
   
                  CurrentFaceTextureNumber += 1;
                  
@@ -19096,8 +19092,8 @@ void SOLARCHVISION_export_objects () {
         
         float u1 = 1 - _u;
         
-        if (u1 > 1) u1 = 1;
-        if (u1 < 0) u1 = 0;
+        if (u1 > 0.999) u1 = 0.999;
+        if (u1 < 0.001) u1 = 0.001;
         
         objOutput.println("vt " + nf(u1, 0, objExportPrecisionVtexture) + " 0 0");
       }
