@@ -10895,7 +10895,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
   
   
-  int TES_hour = 4; // 1 = every 1 hour, 4 = every 15 minutes
+  int TES_hour = 1; //4; // 1 = every 1 hour, 4 = every 15 minutes
 
   if (plot_impacts == 8) Impact_TYPE = Impact_ACTIVE; 
   if (plot_impacts == 9) Impact_TYPE = Impact_PASSIVE;
@@ -10987,7 +10987,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
           float _valuesSUM_RAD = 0;
           float _valuesSUM_EFF = 0;
           int _valuesNUM = 0; 
-
+          
           for (float i = 0; i < 24; i += 1.0 / float(TES_hour)) {
               
             float HOUR_ANGLE = i; 
@@ -11140,7 +11140,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
       for (float i = 0; i < 24; i += 1.0 / float(TES_hour)) {  
         if (isInHourlyRange(i) == 1) {
-          if ((i > _sunrise - 1) && (i < _sunset + 1)) {              
+          //if ((i > _sunrise - 1.0 / float(TES_hour)) && (i < _sunset + 1.0 / float(TES_hour))) {              
 
             if (target_window == 3) {
               WIN3D_Diagrams.beginShape();
@@ -11173,8 +11173,27 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
               float Alpha = SunPathMesh[a][b][0];
               float Beta = SunPathMesh[a][b][1];
               float _valuesSUM = SunPathMesh[a][b][2];
+              
+              if (i < _sunrise) {
 
-              if (Alpha >= 0) {
+                float[] SunR_rise = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, _sunrise);
+
+                Alpha = 0;
+                Beta = 45; //180 - atan2_ang(SunR_rise[1], SunR_rise[2]);   
+                _valuesSUM = 0; //SunPathMesh[a + 1][b][2];      
+
+              }
+              
+              if (i > _sunset) {
+                
+                float[] SunR_set = SOLARCHVISION_SunPosition(LocationLatitude, DATE_ANGLE, _sunset);
+
+                Alpha = 0;
+                Beta = 45; //180 - atan2_ang(SunR_set[1], SunR_set[2]);   
+                _valuesSUM = 0; //SunPathMesh[a - 1][b][2];            
+              }              
+
+              //if (Alpha >= 0) {
     
                 if (_valuesSUM < 0.9 * FLOAT_undefined) {
                 
@@ -11217,7 +11236,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
                   }
 
                 }
-              }
+              //}
             }
             
             if (target_window == 3) {
@@ -11229,7 +11248,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
             else if (target_window == 1) {
               STUDY_Diagrams.endShape(CLOSE);              
             }            
-          }
+          //}
         }
       }
 
@@ -11936,7 +11955,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
 
     
     if (WIN3D_FACES_SHADE == Shade_Surface_Base) {
-      SOLARCHVISION_draw_SunPathCycles(x_SunPath, x_SunPath,x_SunPath, s_SunPath, s_SunPath, s_SunPath, impact_layer, 3);
+      //SOLARCHVISION_draw_SunPathCycles(x_SunPath, x_SunPath,x_SunPath, s_SunPath, s_SunPath, s_SunPath, impact_layer, 3);
     }
     else {
       
@@ -12945,7 +12964,8 @@ float SOLARCHVISION_Sunrise (float Latitude, float DateAngle) {
   }
   else a = acos_ang(q) / 15.0;
   
-  return (a - EquationOfTime(DateAngle));
+  //return (a - EquationOfTime(DateAngle));
+  return a;
 }
 
 float SOLARCHVISION_Sunset (float Latitude, float DateAngle) {
@@ -12964,7 +12984,8 @@ float SOLARCHVISION_Sunset (float Latitude, float DateAngle) {
   else a = acos_ang(q) / 15.0;
   
   
-  return ((24 - a) - EquationOfTime(DateAngle));
+  //return ((24 - a) - EquationOfTime(DateAngle));
+  return (24 - a);
 }
 
 float SOLARCHVISION_DayTime (float Latitude, float DateAngle) {
