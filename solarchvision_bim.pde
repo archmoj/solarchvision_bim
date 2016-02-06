@@ -10890,7 +10890,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
 
 void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot, float sx_Plot, float sy_Plot, float sz_Plot, int l, int target_window) {
 
-  // target_window1: 1:STUDY, 2:WORLD, 3:WIN3D
+  // target_window1: 1:STUDY, 2:WORLD, 3:WIN3D 4:OBJ-export
 
   int start_z = get_startZ_endZ(impacts_source)[0];
   int end_z = get_startZ_endZ(impacts_source)[1]; 
@@ -10900,7 +10900,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
   
   int TES_hour = 1; //4; // 1 = every 1 hour, 4 = every 15 minutes
 
-  if (plot_impacts == 8) Impact_TYPE = Impact_ACTIVE; 
+  //if (plot_impacts == 8) 
+  Impact_TYPE = Impact_ACTIVE; 
   if (plot_impacts == 9) Impact_TYPE = Impact_PASSIVE;
 
   float Pa1 = FLOAT_undefined;
@@ -11959,6 +11960,8 @@ float[] SOLARCHVISION_WYRD (float _variable) {
 
 void SOLARCHVISION_draw_SunPattern3D (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float LocationLatitude) { 
 
+  if (frame_variation == 1) Display_SUN3D_Pattern = 0; // <<<<<<<<<<< to avoid memory problem!
+  
   if (Display_SUN3D_Pattern != 0) {
 
     float keep_per_day = per_day;
