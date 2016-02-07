@@ -2913,7 +2913,7 @@ void SOLARCHVISION_draw_WIN3D () {
     
     SOLARCHVISION_draw_SKY3D();
   
-    SOLARCHVISION_draw_SunPattern3D(0, 0, 0, 0.9 * SKY3D_scale, LocationLatitude);
+    SOLARCHVISION_draw_SunPattern3D(0, 0, 0, 0.9 * SKY3D_scale);
   
     SOLARCHVISION_draw_SunPath3D(0, 0, 0, 0.9 * SKY3D_scale, LocationLatitude);
     
@@ -11145,133 +11145,187 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
       }
     }
   
+    int Number_Of_Face_Subdivisions = (24 * TES_hour) * (1 + int(per_day / num_add_days)); // for combined materials we need to know this number before baking each object.
 
-    int end_turn = 1;
-    if (target_window == 4) end_turn = 3;
-    for (int _turn = 1; _turn =< end_turn; _turn += 1) {
+    if (target_window == 4) {
+
+      String the_filename = "";
+      String TEXTURE_path = "";
+
+
+      PGraphics[] Face_Texture = new PGraphics [1 + Number_Of_Face_Subdivisions];
+      
+      num_vertices_added = 0;
+      
+      if (objExportMaterialLibrary != 0) {
+        if (objExportCombinedMaterial == 1) {            
+
+          the_filename = "Combined_Texture" + "_sunPattern.bmp";
+
+          TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
   
-      for (int more_J = 0; more_J < per_day - num_add_days; more_J += num_add_days) { //count one less!
-  
-        now_j = (more_J + j * int(per_day) + BEGIN_DAY + 365) % 365;
+          println("Combined texture:", TEXTURE_path);
+          
+          mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
+          mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+          mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+          mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+          mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+          mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+          mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+      
+          mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+          mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+          mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
     
-        if (now_j >= 365) {
-         now_j = now_j % 365; 
+          //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
+          mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
+          
         }
-        if (now_j < 0) {
-         now_j = (now_j + 365) % 365; 
-        }
-   
-        float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
-  
-        float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
-        float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
-  
-        for (float i = 0; i < 24; i += 1.0 / float(TES_hour)) {  
-          if (isInHourlyRange(i) == 1) {
-            if ((i > _sunrise - 1.0 / float(TES_hour)) && (i < _sunset + 1.0 / float(TES_hour))) {              
+      }         
 
-              if (target_window == 4) {
-                
-              }             
-              else if (target_window == 3) {
-                WIN3D_Diagrams.beginShape();
-                WIN3D_Diagrams.noStroke();
-              }               
-              else if (target_window == 2) {
-                WORLD_Diagrams.beginShape();
-                WORLD_Diagrams.noStroke();
-              }
-              else if (target_window == 1) {
-                STUDY_Diagrams.beginShape();
-                STUDY_Diagrams.noStroke();
-              }  
-              
-              for (int s = 0; s < 4; s += 1) {
-                
-                int a = int(i * TES_hour);
-                int b = more_J / num_add_days;
-                
-                if ((s == 1) || (s == 2)) {
-                  a += 1;
-                }
+      int end_turn = 1;
+      if (target_window == 4) end_turn = 3;
+      for (int _turn = 1; _turn <= end_turn; _turn += 1) {
+
+        int CurrentFaceTextureNumber = -1;
+        
+        if (_turn == 3) {
+          if (objExportPolyToPoly == 1) {
+            obj_lastGroupNumber += 1;
+            objOutput.println("g Object3D_" + "_sunPattern");
+          }
+          
+          if (objExportMaterialLibrary != 0) {
+            if (objExportCombinedMaterial == 1) { 
+              objOutput.println("usemtl " +  the_filename.replace('.', '_'));
+            }
+          }                 
+        }      
+        
+        for (int more_J = 0; more_J < per_day - num_add_days; more_J += num_add_days) { //count one less!
+    
+          now_j = (more_J + j * int(per_day) + BEGIN_DAY + 365) % 365;
       
-                if ((s == 2) || (s == 3)) {
-                  b += 1;
-                }
-                
-                if (a > (24 * TES_hour - 1)) a = a % (24 * TES_hour);
+          if (now_j >= 365) {
+           now_j = now_j % 365; 
+          }
+          if (now_j < 0) {
+           now_j = (now_j + 365) % 365; 
+          }
+     
+          float DATE_ANGLE = (360 * ((286 + now_j) % 365) / 365.0); 
+    
+          float _sunrise = SOLARCHVISION_Sunrise(LocationLatitude, DATE_ANGLE); 
+          float _sunset = SOLARCHVISION_Sunset(LocationLatitude, DATE_ANGLE);
+    
+          for (float i = 0; i < 24; i += 1.0 / float(TES_hour)) {  
+            if (isInHourlyRange(i) == 1) {
+              if ((i > _sunrise - 1.0 / float(TES_hour)) && (i < _sunset + 1.0 / float(TES_hour))) {              
   
-                float Alpha = SunPathMesh[a][b][0];
-                float Beta = SunPathMesh[a][b][1];
-                float _valuesSUM = SunPathMesh[a][b][2];
-  
-                if (Alpha >= 0) {
-      
-                  if (_valuesSUM < 0.9 * FLOAT_undefined) {
+                if (target_window == 4) {
                   
-                    float _u = 0;
+                }             
+                else if (target_window == 3) {
+                  WIN3D_Diagrams.beginShape();
+                  WIN3D_Diagrams.noStroke();
+                }               
+                else if (target_window == 2) {
+                  WORLD_Diagrams.beginShape();
+                  WORLD_Diagrams.noStroke();
+                }
+                else if (target_window == 1) {
+                  STUDY_Diagrams.beginShape();
+                  STUDY_Diagrams.noStroke();
+                }  
+                
+                for (int s = 0; s < 4; s += 1) {
+                  
+                  int a = int(i * TES_hour);
+                  int b = more_J / num_add_days;
+                  
+                  if ((s == 1) || (s == 2)) {
+                    a += 1;
+                  }
+        
+                  if ((s == 2) || (s == 3)) {
+                    b += 1;
+                  }
+                  
+                  if (a > (24 * TES_hour - 1)) a = a % (24 * TES_hour);
+    
+                  float Alpha = SunPathMesh[a][b][0];
+                  float Beta = SunPathMesh[a][b][1];
+                  float _valuesSUM = SunPathMesh[a][b][2];
+    
+                  if (Alpha >= 0) {
+        
+                    if (_valuesSUM < 0.9 * FLOAT_undefined) {
                     
-                    if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_Multiplier * _valuesSUM);
-                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (PAL_Multiplier * _valuesSUM);
-                    
-                    if (PAL_DIR == -1) _u = 1 - _u;
-                    if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-                    if (PAL_DIR == 2) _u =  0.5 * _u;
-                    
-                    float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
-  
-                    float r = sx_Plot;
-  
-                    if (target_window == 4) {
+                      float _u = 0;
                       
+                      if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_Multiplier * _valuesSUM);
+                      if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (PAL_Multiplier * _valuesSUM);
+                      
+                      if (PAL_DIR == -1) _u = 1 - _u;
+                      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+                      if (PAL_DIR == 2) _u =  0.5 * _u;
+                      
+                      float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+    
+                      float r = sx_Plot;
+    
+                      if (target_window == 4) {
+                        
+                      }
+                      else if (target_window == 3) {
+                        WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], 127);
+                        
+                        float x = cos_ang(Alpha) * (cos_ang(Beta - 90)) * WIN3D_scale3D * r + x_Plot;
+                        float y = cos_ang(Alpha) * (sin_ang(Beta - 90)) * WIN3D_scale3D * r + y_Plot;
+                        float z = sin_ang(Alpha) * WIN3D_scale3D * sz_Plot + z_Plot;
+                        
+                        WIN3D_Diagrams.vertex(x, -y, z);
+                        
+                      }
+                      else if (target_window == 2) {
+                        // ??????????????????????????
+                      }                  
+                      else if (target_window == 1) {
+        
+                        STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+                        
+                        float x = (90 - Alpha) * (cos_ang(Beta - 90)) * obj_scale * r + x_Plot * obj_scale;
+                        float y = (90 - Alpha) * (sin_ang(Beta - 90)) * obj_scale * r + y_Plot * obj_scale;
+                        
+                        float ox = (j + obj_offset_x) * sx_Plot;
+                        
+                        STUDY_Diagrams.vertex(ox + x, -y);
+                      }
+    
                     }
-                    else if (target_window == 3) {
-                      WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], 127);
-                      
-                      float x = cos_ang(Alpha) * (cos_ang(Beta - 90)) * WIN3D_scale3D * r + x_Plot;
-                      float y = cos_ang(Alpha) * (sin_ang(Beta - 90)) * WIN3D_scale3D * r + y_Plot;
-                      float z = sin_ang(Alpha) * WIN3D_scale3D * sz_Plot + z_Plot;
-                      
-                      WIN3D_Diagrams.vertex(x, -y, z);
-                      
-                    }
-                    else if (target_window == 2) {
-                      // ??????????????????????????
-                    }                  
-                    else if (target_window == 1) {
-      
-                      STUDY_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
-                      
-                      float x = (90 - Alpha) * (cos_ang(Beta - 90)) * obj_scale * r + x_Plot * obj_scale;
-                      float y = (90 - Alpha) * (sin_ang(Beta - 90)) * obj_scale * r + y_Plot * obj_scale;
-                      
-                      float ox = (j + obj_offset_x) * sx_Plot;
-                      
-                      STUDY_Diagrams.vertex(ox + x, -y);
-                    }
-  
                   }
                 }
-              }
-              
-              if (target_window == 4) {
                 
+                if (target_window == 4) {
+                  
+                }
+                else if (target_window == 3) {
+                  WIN3D_Diagrams.endShape(CLOSE);
+                }  
+                else if (target_window == 2) {
+                  WORLD_Diagrams.endShape(CLOSE);
+                }
+                else if (target_window == 1) {
+                  STUDY_Diagrams.endShape(CLOSE);              
+                }            
               }
-              else if (target_window == 3) {
-                WIN3D_Diagrams.endShape(CLOSE);
-              }  
-              else if (target_window == 2) {
-                WORLD_Diagrams.endShape(CLOSE);
-              }
-              else if (target_window == 1) {
-                STUDY_Diagrams.endShape(CLOSE);              
-              }            
             }
           }
+    
         }
-  
+        
       }
-      
     }
     
     
@@ -11978,7 +12032,9 @@ float[] SOLARCHVISION_WYRD (float _variable) {
 }
 
 
-void SOLARCHVISION_draw_SunPattern3D (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath, float LocationLatitude) { 
+
+
+void SOLARCHVISION_draw_SunPattern3D (float x_SunPath, float y_SunPath, float z_SunPath, float s_SunPath) { 
 
   if (frame_variation == 1) Display_SUN3D_Pattern = 0; // <<<<<<<<<<< to avoid memory problem!
   
@@ -18959,7 +19015,7 @@ void SOLARCHVISION_export_objects () {
     }
   }
 
-
+  
 
 
   if (Display_FractalPlant != 0) {
@@ -19216,6 +19272,25 @@ void SOLARCHVISION_export_objects () {
   }
 
 
+  if (Display_SUN3D_Pattern != 0) {
+
+    float keep_per_day = per_day;
+    int keep_num_add_days = num_add_days;
+    if ((impacts_source == databaseNumber_ENSEMBLE) || (impacts_source == databaseNumber_OBSERVED)) {
+      per_day = 1;
+      num_add_days = 1;
+    }    
+    
+    float previous_DATE = _DATE;
+    
+    SOLARCHVISION_draw_SunPathCycles(0, 0, 0, 0.9 * SKY3D_scale, 0.9 * SKY3D_scale, 0.9 * SKY3D_scale, impact_layer, 4);
+
+    per_day = keep_per_day;
+    num_add_days = keep_num_add_days; 
+    _DATE = previous_DATE;
+    SOLARCHVISION_update_date();
+  
+  }
 
   if (objExportMaterialLibrary != 0) {
     mtlOutput.flush(); 
