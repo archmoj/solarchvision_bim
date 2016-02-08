@@ -1856,7 +1856,7 @@ void SOLARCHVISION_update_models (int Step) {
    if ((Step == 0) || (Step == 1)) SOLARCHVISION_remove_3Dobjects();
    //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
    if ((Step == 0) || (Step == 3)) SOLARCHVISION_remove_ParametricGeometries();
-   if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
+   //if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
    if ((Step == 0) || (Step == 5)) SOLARCHVISION_calculate_SpatialImpact_selectedSections();
 
 }
@@ -10896,13 +10896,12 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
   int end_z = get_startZ_endZ(impacts_source)[1]; 
   int layers_count = get_startZ_endZ(impacts_source)[2]; 
 
-  
+
   
   int TES_hour = 1; //4; // 1 = every 1 hour, 4 = every 15 minutes
 
-  //if (plot_impacts == 8) 
-  Impact_TYPE = Impact_ACTIVE; 
-  if (plot_impacts == 9) Impact_TYPE = Impact_PASSIVE;
+  if (plot_impacts % 2 == 0) Impact_TYPE = Impact_ACTIVE;
+  else Impact_TYPE = Impact_PASSIVE;
 
   float Pa1 = FLOAT_undefined;
   float Pb1 = FLOAT_undefined;
@@ -10927,36 +10926,44 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
   int PAL_TYPE = 0; 
   int PAL_DIR = 1;
 
-  if (target_window == 3) {
+  float PAL_Multiplier = 1; 
+  if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * STUDY_Pallet_ACTIVE_MLT;
+  if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * STUDY_Pallet_PASSIVE_MLT;
+
+  if ((target_window == 3) || (target_window == 4)) {
     
     if (Impact_TYPE == Impact_ACTIVE) {  
-      PAL_TYPE = SunPath3D_Pallet_ACTIVE_CLR; PAL_DIR = SunPath3D_Pallet_ACTIVE_DIR;
+      PAL_TYPE = SunPath3D_Pallet_ACTIVE_CLR; 
+      PAL_DIR = SunPath3D_Pallet_ACTIVE_DIR;
+      PAL_Multiplier = SunPath3D_Pallet_ACTIVE_MLT;
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = SunPath3D_Pallet_PASSIVE_CLR; PAL_DIR = SunPath3D_Pallet_PASSIVE_DIR;
+      PAL_TYPE = SunPath3D_Pallet_PASSIVE_CLR; 
+      PAL_DIR = SunPath3D_Pallet_PASSIVE_DIR;
+      PAL_Multiplier = SunPath3D_Pallet_PASSIVE_MLT;
     }
   }
   else {
     
     if (Impact_TYPE == Impact_ACTIVE) {  
-      PAL_TYPE = STUDY_Pallet_ACTIVE_CLR; PAL_DIR = STUDY_Pallet_ACTIVE_DIR;
+      PAL_TYPE = STUDY_Pallet_ACTIVE_CLR; 
+      PAL_DIR = STUDY_Pallet_ACTIVE_DIR;
+      PAL_Multiplier = STUDY_Pallet_ACTIVE_MLT;
     }
     if (Impact_TYPE == Impact_PASSIVE) {  
-      PAL_TYPE = STUDY_Pallet_PASSIVE_CLR; PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
+      PAL_TYPE = STUDY_Pallet_PASSIVE_CLR; 
+      PAL_DIR = STUDY_Pallet_PASSIVE_DIR;
+      PAL_Multiplier = STUDY_Pallet_PASSIVE_MLT;
     }
   }  
 
-  float PAL_Multiplier = 1; 
-  if (Impact_TYPE == Impact_ACTIVE) PAL_Multiplier = 1.0 * STUDY_Pallet_ACTIVE_MLT;
-  if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * STUDY_Pallet_PASSIVE_MLT;
 
 
 
-  
+  String the_filename = "";
+  String TEXTURE_path = "";
+
   if (target_window == 4) {
-
-    String the_filename = "";
-    String TEXTURE_path = "";
 
     num_vertices_added = 0;
     
@@ -10982,10 +10989,15 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
         
         float _val = (Image_X / (0.5 * RES1)) - 1; 
         
-        float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
+        float _u = 0;
+        
+        if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_Multiplier * _val);
+        if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (PAL_Multiplier * _val);
+    
         if (PAL_DIR == -1) _u = 1 - _u;
         if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-        if (PAL_DIR == 2) _u =  0.5 * _u;        
+        if (PAL_DIR == 2) _u =  0.5 * _u;
+
       
         float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
         
@@ -10997,7 +11009,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
       Pallet_Texture.save(TEXTURE_path);      
 
     
-      mtlOutput.println("newmtl " + "sunPattern");
+      mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
       mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
       mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
       mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
@@ -11012,12 +11024,12 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
       //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
       mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map  
 
-      objOutput.println("usemtl " +  the_filename.replace('.', '_'));
+      
 
     }    
     
-    obj_lastGroupNumber += 1;
-    objOutput.println("g SunPattern");      
+
+    
   }  
 
 
@@ -11216,10 +11228,27 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
     }
 
 
+    num_vertices_added = 0;
+
     int end_turn = 1;
     if (target_window == 4) end_turn = 3;
     for (int _turn = 1; _turn <= end_turn; _turn += 1) {
+      
+      
 
+      if (target_window == 4) {
+        
+        if (_turn == 3) {
+        
+          obj_lastGroupNumber += 1;
+          objOutput.println("g SunPattern_" + nf(j, 0));
+    
+          if (objExportMaterialLibrary != 0) {      
+            objOutput.println("usemtl " +  the_filename.replace('.', '_'));
+          }
+        }
+      }        
+        
       
       for (int more_J = 0; more_J < per_day - num_add_days; more_J += num_add_days) { //count one less!
   
@@ -11295,6 +11324,28 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
   
                     if (target_window == 4) {
                       
+                      float x = cos_ang(Alpha) * (cos_ang(Beta - 90)) * WIN3D_scale3D * r + x_Plot;
+                      float y = cos_ang(Alpha) * (sin_ang(Beta - 90)) * WIN3D_scale3D * r + y_Plot;
+                      float z = sin_ang(Alpha) * WIN3D_scale3D * sz_Plot + z_Plot;
+
+                      if (_turn == 1) {
+                        objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " +  nf(y, 0, objExportPrecisionVertex) + " " +  nf(z, 0, objExportPrecisionVertex));
+                      }
+                      
+                      if (_turn == 2) { 
+                        float u1 = 1 - _u;
+                        
+                        if (u1 > 0.999) u1 = 0.999;
+                        if (u1 < 0.001) u1 = 0.001;
+                        
+                        objOutput.println("vt " + nf(u1, 0, objExportPrecisionVtexture) + " 0 0");                        
+                      }
+                      
+                      if (_turn == 3) {
+                        num_vertices_added += 1;
+                      }
+
+                      
                     }
                     else if (target_window == 3) {
                       WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], 127);
@@ -11326,6 +11377,21 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
               
               if (target_window == 4) {
                 
+                if (_turn == 3) {
+
+                  String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0);
+                  String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
+                  String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
+                  String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
+                  
+                  String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0);
+                  String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);          
+                  String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);          
+                  String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);          
+                  
+                  objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+                }
+                
               }
               else if (target_window == 3) {
                 WIN3D_Diagrams.endShape(CLOSE);
@@ -11345,7 +11411,10 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
     }
 
     
-    
+    if (target_window == 4) {
+      obj_lastVertexNumber += num_vertices_added;
+      obj_lastVtextureNumber += num_vertices_added;      
+    }    
       
     if (target_window == 3) {
       WIN3D_Diagrams.strokeWeight(1);
