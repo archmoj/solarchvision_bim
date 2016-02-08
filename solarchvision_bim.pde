@@ -10952,11 +10952,77 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
 
 
-  for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
+  
+  if (target_window == 4) {
+
+    String the_filename = "";
+    String TEXTURE_path = "";
+
+    num_vertices_added = 0;
     
-    if (target_window == 3) {
-      println("j", j); 
-    }
+    if (objExportMaterialLibrary != 0) {
+
+      the_filename = "sunPattern_Pallet.bmp";
+
+      TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
+
+      println("Saving texture:", TEXTURE_path);
+      
+      int RES1 = 256; // adding two pixels to left and right as margin
+      int RES2 = 2;      
+  
+      PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
+   
+   
+      Pallet_Texture.loadPixels();
+          
+      for (int np = 0; np < (RES1 * RES2); np++) {
+        int Image_X = np % RES1;
+        int Image_Y = np / RES1;
+        
+        float _val = (Image_X / (0.5 * RES1)) - 1; 
+        
+        float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
+        if (PAL_DIR == -1) _u = 1 - _u;
+        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+        if (PAL_DIR == 2) _u =  0.5 * _u;        
+      
+        float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
+        
+        Pallet_Texture.pixels[np] = color(_COL[1], _COL[2], _COL[3], _COL[0]);        
+      }
+      
+      Pallet_Texture.updatePixels();   
+   
+      Pallet_Texture.save(TEXTURE_path);      
+
+    
+      mtlOutput.println("newmtl " + "sunPattern");
+      mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+      mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+      mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+      mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+      mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+      mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+  
+      mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+      mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+      mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+
+      //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
+      mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map  
+
+      objOutput.println("usemtl " +  the_filename.replace('.', '_'));
+
+    }    
+    
+    obj_lastGroupNumber += 1;
+    objOutput.println("g SunPattern");      
+  }  
+
+
+
+  for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) {
     
     float[][][] SunPathMesh = new float [24 * TES_hour][1 + int(per_day / num_add_days)][3];        
  
@@ -11148,80 +11214,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
         }            
       }
     }
-  
-    int Number_Of_Face_Subdivisions = (24 * TES_hour) * (1 + int(per_day / num_add_days)); // for combined materials we need to know this number before baking each object.
 
-    if (target_window == 4) {
-
-      String the_filename = "";
-      String TEXTURE_path = "";
-
-
-      PGraphics[] Face_Texture = new PGraphics [1 + Number_Of_Face_Subdivisions];
-      
-      num_vertices_added = 0;
-      
-      if (objExportMaterialLibrary != 0) {
-
-        the_filename = "sunPattern_Pallet.bmp";
-
-        TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
-          
-        TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
-          
-        println("Saving texture:", TEXTURE_path);
-        
-        int RES1 = 256; // adding two pixels to left and right as margin
-        int RES2 = 2;      
-    
-        PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
-     
-     
-        Pallet_Texture.loadPixels();
-            
-        for (int np = 0; np < (RES1 * RES2); np++) {
-          int Image_X = np % RES1;
-          int Image_Y = np / RES1;
-          
-          float _val = (Image_X / (0.5 * RES1)) - 1; 
-          
-          float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
-          if (PAL_DIR == -1) _u = 1 - _u;
-          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-          if (PAL_DIR == 2) _u =  0.5 * _u;        
-        
-          float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
-          
-          Pallet_Texture.pixels[np] = color(_COL[1], _COL[2], _COL[3], _COL[0]);        
-        }
-        
-        Pallet_Texture.updatePixels();   
-     
-        Pallet_Texture.save(TEXTURE_path);      
-  
-      
-        mtlOutput.println("newmtl " + "sunPattern");
-        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-        mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-        mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-    
-        mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-        mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-  
-        //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
-        mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map  
-
-        objOutput.println("usemtl " +  the_filename.replace('.', '_'));
-
-      }    
-      
-      obj_lastGroupNumber += 1;
-      objOutput.println("g SunPattern");      
-    }  
 
     int end_turn = 1;
     if (target_window == 4) end_turn = 3;
@@ -12068,9 +12061,6 @@ void SOLARCHVISION_draw_SunPattern3D (float x_SunPath, float y_SunPath, float z_
       per_day = 1;
       num_add_days = 1;
     }    
-
-    int keep_STUDY_j_end = STUDY_j_end;
-    STUDY_j_end = 1 + STUDY_j_start;
     
     float previous_DATE = _DATE;
     
@@ -12078,7 +12068,6 @@ void SOLARCHVISION_draw_SunPattern3D (float x_SunPath, float y_SunPath, float z_
 
     per_day = keep_per_day;
     num_add_days = keep_num_add_days; 
-    STUDY_j_end = keep_STUDY_j_end;
     _DATE = previous_DATE;
     SOLARCHVISION_update_date();
   
