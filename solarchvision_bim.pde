@@ -11162,7 +11162,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
           the_filename = "Combined_Texture" + "_sunPattern.bmp";
 
-          TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+          TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
   
           println("Combined texture:", TEXTURE_path);
           
@@ -11178,8 +11178,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
           mtlOutput.println("\tTr 1.000"); //  0-1 transparency
           mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
     
-          //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-          mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
+          //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
+          mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map  
           
         }
       }         
@@ -17771,15 +17771,17 @@ void SOLARCHVISION_addToFaces_afterSphericalTessellation (int m, int tes, int ly
 
 
  
-
+String objMapsSubfolder = "maps/";
 
 PrintWriter mtlOutput;
 PrintWriter objOutput;
+
 
 int obj_lastVertexNumber;
 int obj_lastVtextureNumber;
 int obj_lastFaceNumber;
 int obj_lastGroupNumber;
+
 
 
 int num_vertices_added = 0;
@@ -17790,8 +17792,7 @@ void SOLARCHVISION_export_objects () {
   
   String objFilename = Model3DFolder + "/" + fileBasename + ".obj";
   String mtlFilename = Model3DFolder + "/" + fileBasename + ".mtl";
-  
-  String mapsSubfolder = "maps/";
+
 
   if (objExportMaterialLibrary != 0) {
     mtlOutput = createWriter(mtlFilename);
@@ -17834,14 +17835,14 @@ void SOLARCHVISION_export_objects () {
         
         String the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
     
-        String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+        String new_TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
     
         println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
         saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
   
-        //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-        mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
-        mtlOutput.println("\tmap_d " + mapsSubfolder + the_filename); // diffuse map
+        //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
+        mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map        
+        mtlOutput.println("\tmap_d " + objMapsSubfolder + the_filename); // diffuse map
       }
     }
     
@@ -18003,14 +18004,14 @@ void SOLARCHVISION_export_objects () {
         
         String the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
     
-        String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+        String new_TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
     
         println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
         saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
   
-        //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-        mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
-        mtlOutput.println("\tmap_d " + mapsSubfolder + the_filename); // diffuse map
+        //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
+        mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map        
+        mtlOutput.println("\tmap_d " + objMapsSubfolder + the_filename); // diffuse map
       }
     }
 
@@ -18130,7 +18131,7 @@ void SOLARCHVISION_export_objects () {
       
         if (objExportMaterialLibrary != 0) {
         
-          String new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+          String new_TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
     
           if (Display_SolarImpact_Image != 0) {
             println("Saving texture:", new_TEXTURE_path);
@@ -18152,8 +18153,8 @@ void SOLARCHVISION_export_objects () {
           mtlOutput.println("\tTr 1.000"); //  0-1 transparency
           mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
     
-          //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-          mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
+          //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
+          mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map        
         }
         
         int Display_solarch_texture = 0;
@@ -18259,8 +18260,8 @@ void SOLARCHVISION_export_objects () {
     
             the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
       
-            new_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
-            opacity_TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + "opacity_" + the_filename;
+            new_TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
+            opacity_TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + "opacity_" + the_filename;
       
             println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
             saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
@@ -18303,9 +18304,9 @@ void SOLARCHVISION_export_objects () {
             mtlOutput.println("\tTr 1.000"); //  0-1 transparency
             mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
     
-            //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-            mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map        
-            mtlOutput.println("\tmap_d " + mapsSubfolder + "opacity_" + the_filename); // diffuse map
+            //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
+            mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map        
+            mtlOutput.println("\tmap_d " + objMapsSubfolder + "opacity_" + the_filename); // diffuse map
           }
         }    
       }
@@ -18707,7 +18708,7 @@ void SOLARCHVISION_export_objects () {
   
                 the_filename = "Combined_Texture" + "_obj" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0) + ".bmp";
   
-                TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+                TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
         
                 println("Combined texture:", TEXTURE_path);
                 
@@ -18723,8 +18724,8 @@ void SOLARCHVISION_export_objects () {
                 mtlOutput.println("\tTr 1.000"); //  0-1 transparency
                 mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
           
-                //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-                mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
+                //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
+                mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map  
                 
               }
             }         
@@ -18790,7 +18791,7 @@ void SOLARCHVISION_export_objects () {
                       if (objExportCombinedMaterial == 0) { 
                         the_filename = "Face_Texture" + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0) + ".jpg";
                         
-                        TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+                        TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
                 
                         println("Baking texture:", TEXTURE_path);
                       }
@@ -18891,8 +18892,8 @@ void SOLARCHVISION_export_objects () {
                         mtlOutput.println("\tTr 1.000"); //  0-1 transparency
                         mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
                   
-                        //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-                        mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
+                        //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
+                        mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map  
                       }
                     }
 
@@ -19114,7 +19115,7 @@ void SOLARCHVISION_export_objects () {
       
       the_filename = "windFlow_Pallet.bmp";
       
-      String TEXTURE_path = Model3DFolder + "/" + mapsSubfolder + the_filename;
+      String TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
         
       println("Saving texture:", TEXTURE_path);
       
@@ -19159,8 +19160,8 @@ void SOLARCHVISION_export_objects () {
       mtlOutput.println("\tTr 1.000"); //  0-1 transparency
       mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
 
-      //mtlOutput.println("\tmap_Ka " + mapsSubfolder + the_filename); // ambient map
-      mtlOutput.println("\tmap_Kd " + mapsSubfolder + the_filename); // diffuse map  
+      //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
+      mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map  
   
     }    
     
