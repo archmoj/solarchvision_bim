@@ -10991,8 +10991,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
         
         float _u = 0;
         
-        if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_Multiplier * _val);
-        if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (PAL_Multiplier * _val);
+        if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
+        if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.75 * _val;
     
         if (PAL_DIR == -1) _u = 1 - _u;
         if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -11336,7 +11336,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
                         float u1 = 0; 
                         
                         if (Impact_TYPE == Impact_ACTIVE) u1 = _u;
-                        if (Impact_TYPE == Impact_PASSIVE) u1 = 1 - _u;
+                        if (Impact_TYPE == Impact_PASSIVE) u1 = 0.75 * 0.5 * (1 - _u);
                         
                         if (u1 > 0.999) u1 = 0.999;
                         if (u1 < 0.001) u1 = 0.001;
