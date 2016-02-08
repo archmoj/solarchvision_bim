@@ -12069,7 +12069,7 @@ void SOLARCHVISION_draw_SunPattern3D (float x_SunPath, float y_SunPath, float z_
       num_add_days = 1;
     }    
 
-    int previous_STUDY_j_end = STUDY_j_end;
+    int keep_STUDY_j_end = STUDY_j_end;
     STUDY_j_end = 1 + STUDY_j_start;
     
     float previous_DATE = _DATE;
@@ -12078,7 +12078,7 @@ void SOLARCHVISION_draw_SunPattern3D (float x_SunPath, float y_SunPath, float z_
 
     per_day = keep_per_day;
     num_add_days = keep_num_add_days; 
-    STUDY_j_end = previous_STUDY_j_end;
+    STUDY_j_end = keep_STUDY_j_end;
     _DATE = previous_DATE;
     SOLARCHVISION_update_date();
   
