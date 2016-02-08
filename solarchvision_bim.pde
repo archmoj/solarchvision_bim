@@ -11333,7 +11333,10 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
                       }
                       
                       if (_turn == 2) { 
-                        float u1 = 1 - _u;
+                        float u1 = 0; 
+                        
+                        if (Impact_TYPE == Impact_ACTIVE) u1 = _u;
+                        if (Impact_TYPE == Impact_PASSIVE) u1 = 1 - _u;
                         
                         if (u1 > 0.999) u1 = 0.999;
                         if (u1 < 0.001) u1 = 0.001;
