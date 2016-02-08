@@ -21,7 +21,8 @@ int objExportMaterialLibrary = 1; // 0-1
 int objExportBackSides = 1; // 0-1
 int objExportCombinedMaterial = 1; // 0-1
 int objExportBakingResolution = 16;
-
+int objExportPalletResolution = 256;
+int objExportUsePalletOrBakeFaces = 0; // 0-1
 
 
 
@@ -1856,7 +1857,7 @@ void SOLARCHVISION_update_models (int Step) {
    if ((Step == 0) || (Step == 1)) SOLARCHVISION_remove_3Dobjects();
    //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
    if ((Step == 0) || (Step == 3)) SOLARCHVISION_remove_ParametricGeometries();
-   //if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
+   if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
    if ((Step == 0) || (Step == 5)) SOLARCHVISION_calculate_SpatialImpact_selectedSections();
 
 }
@@ -10975,8 +10976,8 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
 
       println("Saving texture:", TEXTURE_path);
       
-      int RES1 = 256; // adding two pixels to left and right as margin
-      int RES2 = 2;      
+      int RES1 = objExportPalletResolution; 
+      int RES2 = objExportPalletResolution / 16;      
   
       PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
    
@@ -18823,8 +18824,6 @@ void SOLARCHVISION_export_objects () {
               }
             }         
            
-
-            
             for (int _turn = 1; _turn < 4; _turn += 1) {
               
               int CurrentFaceTextureNumber = -1;
@@ -18881,21 +18880,25 @@ void SOLARCHVISION_export_objects () {
                    
                     if (objExportMaterialLibrary != 0) {
                       
-                      if (objExportCombinedMaterial == 0) { 
-                        the_filename = "Face_Texture" + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0) + ".jpg";
-                        
-                        TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
-                
-                        println("Baking texture:", TEXTURE_path);
+                    
+                      if (objExportUsePalletOrBakeFaces == 1) {
+                        if (objExportCombinedMaterial == 0) { 
+                          the_filename = "Face_Texture" + "_side" + nf(back_or_front, 0) + "_face" + nf(f, 0) + "_sub" + nf(n, 0) + ".jpg";
+                          
+                          TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
+                  
+                          println("Baking texture:", TEXTURE_path);
+                        }
                       }
-                   
-                      
+                    
                       int RES1 = objExportBakingResolution;
                       int RES2 = objExportBakingResolution;                      
                       
-                      Face_Texture[CurrentFaceTextureNumber] = createGraphics(RES1, RES2, P2D);
-  
-                      Face_Texture[CurrentFaceTextureNumber].beginDraw();
+                      if (objExportUsePalletOrBakeFaces == 1) {
+                        Face_Texture[CurrentFaceTextureNumber] = createGraphics(RES1, RES2, P2D);
+    
+                        Face_Texture[CurrentFaceTextureNumber].beginDraw();
+                      }
                       
                       float[][] base_Vertices = new float [allFaces[f].length][3];
                       for (int j = 0; j < allFaces[f].length; j++) {
@@ -18907,87 +18910,104 @@ void SOLARCHVISION_export_objects () {
                       
                       float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
               
-                      Face_Texture[CurrentFaceTextureNumber].noStroke();
-                      Face_Texture[CurrentFaceTextureNumber].beginShape(QUADS);
+                      if (objExportUsePalletOrBakeFaces == 1) {
+                        Face_Texture[CurrentFaceTextureNumber].noStroke();
+                        Face_Texture[CurrentFaceTextureNumber].beginShape(QUADS);
+                      }
                       
                       for (int s = 0; s < subFace.length; s++) {
 
                         float[] _COL = {255, 255, 255, 255};
                   
-                        if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
-                          int s_next = (s + 1) % subFace.length;
-                          int s_prev = (s + subFace.length - 1) % subFace.length;
-                          
-                          if (back_or_front == 0) {
-                            int s_temp = s_next;
-                            s_next = s_prev;
-                            s_prev = s_temp;
-                          }
-                          
-                          _COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                        }              
+                        if (objExportUsePalletOrBakeFaces == 1) {
                     
-                        if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
+                          if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
+                            int s_next = (s + 1) % subFace.length;
+                            int s_prev = (s + subFace.length - 1) % subFace.length;
+                            
+                            if (back_or_front == 0) {
+                              int s_temp = s_next;
+                              s_next = s_prev;
+                              s_prev = s_temp;
+                            }
+                            
+                            _COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                          }              
+                      
+                          if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
+                            
+                            _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Spatial(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                          }                  
                           
-                          _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Spatial(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                        }                  
-                        
-                        if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
-                          
-                          _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                          if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
+                            
+                            _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                          }
+                
+                          Face_Texture[CurrentFaceTextureNumber].fill(_COL[1], _COL[2], _COL[3], _COL[0]);
                         }
-              
-                        Face_Texture[CurrentFaceTextureNumber].fill(_COL[1], _COL[2], _COL[3], _COL[0]);
                         
                         if (s == 0) {
-                          Face_Texture[CurrentFaceTextureNumber].vertex(0, 0);
+                          if (objExportUsePalletOrBakeFaces == 1) {
+                            Face_Texture[CurrentFaceTextureNumber].vertex(0, 0);
+                          }
                           x1 = subFace[s][0];
                           y1 = subFace[s][1];
                           z1 = subFace[s][2];
                         }
                         if (s == 1) {
-                          Face_Texture[CurrentFaceTextureNumber].vertex(RES1, 0);
+                          if (objExportUsePalletOrBakeFaces == 1) {
+                            Face_Texture[CurrentFaceTextureNumber].vertex(RES1, 0);
+                          }
                           x2 = subFace[s][0];
                           y2 = subFace[s][1];
                           z2 = subFace[s][2];
                         }            
                         if (s == 2) { 
-                          Face_Texture[CurrentFaceTextureNumber].vertex(RES1, RES2);
+                          if (objExportUsePalletOrBakeFaces == 1) {
+                            Face_Texture[CurrentFaceTextureNumber].vertex(RES1, RES2);
+                          }
                           x3 = subFace[s][0];
                           y3 = subFace[s][1];
                           z3 = subFace[s][2];
                         }          
                         if (s == 3) {
-                          Face_Texture[CurrentFaceTextureNumber].vertex(0, RES2);
+                          if (objExportUsePalletOrBakeFaces == 1) {
+                            Face_Texture[CurrentFaceTextureNumber].vertex(0, RES2);
+                          }
                           x4 = subFace[s][0];
                           y4 = subFace[s][1];
                           z4 = subFace[s][2];
                         }
                       }
-                    
-                      //Face_Texture[CurrentFaceTextureNumber].endShape(CLOSE);
-                      Face_Texture[CurrentFaceTextureNumber].endShape();
-                 
-                      Face_Texture[CurrentFaceTextureNumber].endDraw();
                       
-                      if (objExportCombinedMaterial == 0) {
-                        Face_Texture[CurrentFaceTextureNumber].save(TEXTURE_path);
-  
-                        mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
-                        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-                        mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-                        mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-                        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-                        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-                        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+                      if (objExportUsePalletOrBakeFaces == 1) {
                     
-                        mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-                        mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-                        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-                  
-                        //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
-                        mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map  
+                        //Face_Texture[CurrentFaceTextureNumber].endShape(CLOSE);
+                        Face_Texture[CurrentFaceTextureNumber].endShape();
+                   
+                        Face_Texture[CurrentFaceTextureNumber].endDraw();
+                        
+                        if (objExportCombinedMaterial == 0) {
+                          Face_Texture[CurrentFaceTextureNumber].save(TEXTURE_path);
+    
+                          mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
+                          mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+                          mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+                          mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+                          mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+                          mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+                          mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+                      
+                          mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+                          mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+                          mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+                    
+                          //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
+                          mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map  
+                        }
                       }
+
                     }
 
                     objOutput.println("v " + nf(x1, 0, objExportPrecisionVertex) + " " +  nf(y1, 0, objExportPrecisionVertex) + " " +  nf(z1, 0, objExportPrecisionVertex));
@@ -19012,19 +19032,90 @@ void SOLARCHVISION_export_objects () {
                     
                     if (objExportCombinedMaterial == 1) {
                       
-                      // also considering two pixles added to the left and right
+                      if (objExportUsePalletOrBakeFaces == 1) {
                       
-                      u1 = (CurrentFaceTextureNumber * (2 + objExportBakingResolution) + 1) / float(Number_Of_Face_Subdivisions * (2 + objExportBakingResolution));
-                      v1 = 1;
+                        // also considering two pixles added to the left and right
+                        
+                        u1 = (CurrentFaceTextureNumber * (2 + objExportBakingResolution) + 1) / float(Number_Of_Face_Subdivisions * (2 + objExportBakingResolution));
+                        v1 = 1;
+                        
+                        u2 = (CurrentFaceTextureNumber * (2 + objExportBakingResolution) + objExportBakingResolution + 1) / float(Number_Of_Face_Subdivisions * (2 + objExportBakingResolution));
+                        v2 = 1;
+                        
+                        u3 = u2;
+                        v3 = 0;
+                        
+                        u4 = u1;
+                        v4 = 0;
                       
-                      u2 = (CurrentFaceTextureNumber * (2 + objExportBakingResolution) + objExportBakingResolution + 1) / float(Number_Of_Face_Subdivisions * (2 + objExportBakingResolution));
-                      v2 = 1;
+                      }
+                      else { 
+                        float[][] base_Vertices = new float [allFaces[f].length][3];
+                        for (int j = 0; j < allFaces[f].length; j++) {
+                          int vNo = allFaces[f][j];
+                          base_Vertices[j][0] = allVertices[vNo][0];
+                          base_Vertices[j][1] = allVertices[vNo][1];
+                          base_Vertices[j][2] = allVertices[vNo][2];
+                        }
+                        
+                        float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+                        
+                        for (int s = 0; s < subFace.length; s++) {
+  
+                          float _u = 0;
+                    
+                          if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
+                            int s_next = (s + 1) % subFace.length;
+                            int s_prev = (s + subFace.length - 1) % subFace.length;
+                            
+                            if (back_or_front == 0) {
+                              int s_temp = s_next;
+                              s_next = s_prev;
+                              s_prev = s_temp;
+                            }
+                            
+                            _u = SOLARCHVISION_vertexU_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                          }              
                       
-                      u3 = u2;
-                      v3 = 0;
+                          if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
+                            
+                            _u = SOLARCHVISION_vertexU_Shade_Vertex_Spatial(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                          }                  
+                          
+                          if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
+                            
+                            _u = SOLARCHVISION_vertexU_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                          }                            
+         
                       
-                      u4 = u1;
-                      v4 = 0;
+                          if (s == 0) {
+                            u1 = 1 - _u;
+                            v1 = 0;
+                          }
+                          if (s == 1) {
+                            u2 = 1 - _u;
+                            v2 = 0;                            
+                          }            
+                          if (s == 2) { 
+                            u3 = 1 - _u;
+                            v3 = 0;                                 
+                          }          
+                          if (s == 3) {
+                            u4 = 1 - _u;
+                            v4 = 0;                                 
+                          }
+                        }
+
+                        if (u1 > 0.999) u1 = 0.999;
+                        if (u1 < 0.001) u1 = 0.001;
+                        if (u2 > 0.999) u2 = 0.999;
+                        if (u2 < 0.001) u2 = 0.001;
+                        if (u3 > 0.999) u3 = 0.999;
+                        if (u3 < 0.001) u3 = 0.001;
+                        if (u4 > 0.999) u4 = 0.999;
+                        if (u4 < 0.001) u4 = 0.001;
+                        
+                      }
                     
                     }
                     
@@ -19075,28 +19166,32 @@ void SOLARCHVISION_export_objects () {
   
   
             if (objExportMaterialLibrary != 0) {
-              if (objExportCombinedMaterial == 1) {            
-  
-                int RES1 = (2 + objExportBakingResolution) * Number_Of_Face_Subdivisions; // adding two pixels to left and right as margin
-                int RES2 = objExportBakingResolution;      
+              
+              if (objExportUsePalletOrBakeFaces == 1) {
+                
+                if (objExportCombinedMaterial == 1) {            
+    
+                  int RES1 = (2 + objExportBakingResolution) * Number_Of_Face_Subdivisions; // adding two pixels to left and right as margin
+                  int RES2 = objExportBakingResolution;      
+              
+                  PGraphics Combined_Texture = createGraphics(RES1, RES2, P2D);          
             
-                PGraphics Combined_Texture = createGraphics(RES1, RES2, P2D);          
-          
-                Combined_Texture.beginDraw();
-          
-                for (int i = 0; i < Number_Of_Face_Subdivisions; i++) {
+                  Combined_Texture.beginDraw();
+            
+                  for (int i = 0; i < Number_Of_Face_Subdivisions; i++) {
+                    
+                    int w = Face_Texture[i].width;
+                    int h = Face_Texture[i].height;
+                    
+                    Combined_Texture.image(Face_Texture[i], i * (2 + objExportBakingResolution), 0, w + 2, h); // first stretching the image by 2 pixel below!
+                    Combined_Texture.image(Face_Texture[i], i * (2 + objExportBakingResolution) + 1, 0); // then adding the original on top.
+    
+                  }
                   
-                  int w = Face_Texture[i].width;
-                  int h = Face_Texture[i].height;
+                  Combined_Texture.endDraw();
                   
-                  Combined_Texture.image(Face_Texture[i], i * (2 + objExportBakingResolution), 0, w + 2, h); // first stretching the image by 2 pixel below!
-                  Combined_Texture.image(Face_Texture[i], i * (2 + objExportBakingResolution) + 1, 0); // then adding the original on top.
-  
+                  Combined_Texture.save(TEXTURE_path);
                 }
-                
-                Combined_Texture.endDraw();
-                
-                Combined_Texture.save(TEXTURE_path);
               }
   
             }            
@@ -19212,8 +19307,8 @@ void SOLARCHVISION_export_objects () {
         
       println("Saving texture:", TEXTURE_path);
       
-      int RES1 = 256; // adding two pixels to left and right as margin
-      int RES2 = 2;      
+      int RES1 = objExportPalletResolution; 
+      int RES2 = objExportPalletResolution / 16;       
   
       PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
    
@@ -21230,6 +21325,16 @@ float[] SOLARCHVISION_vertexRender_Shade_Surface_Materials (int mt) {
 
 float[] SOLARCHVISION_vertexRender_Shade_Vertex_Spatial (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
 
+  float _u = SOLARCHVISION_vertexU_Shade_Vertex_Spatial(VERTEX_now, PAL_TYPE, PAL_DIR, PAL_Multiplier);
+  
+  float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);     
+  
+  return _COL;  
+}
+
+
+float SOLARCHVISION_vertexU_Shade_Vertex_Spatial (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
+
   SpatialImpactType = 0;
   float val = ParametricGeometries_SpatialImpact_atXYZ(VERTEX_now[0], VERTEX_now[1], VERTEX_now[2]);
 
@@ -21238,13 +21343,21 @@ float[] SOLARCHVISION_vertexRender_Shade_Vertex_Spatial (float[] VERTEX_now, int
   if (PAL_DIR == -1) _u = 1 - _u;
   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
   if (PAL_DIR == 2) _u =  0.5 * _u;
-  
-  float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);     
+
+  return _u;  
+}
+
+
+float[] SOLARCHVISION_vertexRender_Shade_Vertex_Elevation (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
+
+  float _u = SOLARCHVISION_vertexU_Shade_Vertex_Elevation(VERTEX_now, PAL_TYPE, PAL_DIR, PAL_Multiplier);
+
+  float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
   
   return _COL;  
 }
 
-float[] SOLARCHVISION_vertexRender_Shade_Vertex_Elevation (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
+float SOLARCHVISION_vertexU_Shade_Vertex_Elevation (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
 
   float _u = PAL_Multiplier * 0.1 * VERTEX_now[2] + 0.5;
 
@@ -21252,13 +21365,20 @@ float[] SOLARCHVISION_vertexRender_Shade_Vertex_Elevation (float[] VERTEX_now, i
   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
   if (PAL_DIR == 2) _u =  0.5 * _u;
 
-  float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
-  
-  return _COL;  
+  return _u;  
 }
 
 
 float[] SOLARCHVISION_vertexRender_Shade_Global_Solar (float[] VERTEX_now, float[] VERTEX_prev, float[] VERTEX_next, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
+  
+  float _u = SOLARCHVISION_vertexU_Shade_Global_Solar(VERTEX_now, VERTEX_prev, VERTEX_next, PAL_TYPE, PAL_DIR, PAL_Multiplier);
+
+  float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
+  
+  return _COL;
+}
+
+float SOLARCHVISION_vertexU_Shade_Global_Solar (float[] VERTEX_now, float[] VERTEX_prev, float[] VERTEX_next, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
   
   PVector U = new PVector(VERTEX_next[0] - VERTEX_now[0], VERTEX_next[1] - VERTEX_now[1], VERTEX_next[2] - VERTEX_now[2]);
   PVector V = new PVector(VERTEX_prev[0] - VERTEX_now[0], VERTEX_prev[1] - VERTEX_now[1], VERTEX_prev[2] - VERTEX_now[2]);
@@ -21279,24 +21399,21 @@ float[] SOLARCHVISION_vertexRender_Shade_Global_Solar (float[] VERTEX_now, float
   
   float _valuesSUM = LocationExposure[Day_of_Impact_to_Display][a][b];
   
-  float[] _COL = {255, 223, 223, 223};
-  
+  float _u = 0;
+
   if (_valuesSUM < 0.9 * FLOAT_undefined) {
   
-    float _u = 0;
-    
     if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
     if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
     
     if (PAL_DIR == -1) _u = 1 - _u;
     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
     if (PAL_DIR == 2) _u =  0.5 * _u;
-
-    _COL = GET_COLOR_STYLE(PAL_TYPE, _u);
   }
-  
-  return _COL;
+
+  return _u;
 }
+
 
 
 int SOLARCHVISION_getShader_PAL_TYPE () {
@@ -32437,7 +32554,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
       objExportMaterialLibrary = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportMaterialLibrary" , objExportMaterialLibrary, 0, 1, 1), 1));
       objExportBackSides = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportBackSides" , objExportBackSides, 0, 1, 1), 1));
       objExportCombinedMaterial = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportCombinedMaterial" , objExportCombinedMaterial, 0, 1, 1), 1));      
-      objExportBakingResolution = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportBakingResolution" , objExportBakingResolution, 0, 1, 1), 1));
+      objExportBakingResolution = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportBakingResolution" , objExportBakingResolution, 4, 256, -2), 1));
+      objExportPalletResolution = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportPalletResolution" , objExportPalletResolution, 32, 2048, -2), 1));
+      objExportUsePalletOrBakeFaces = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportUsePalletOrBakeFaces" , objExportUsePalletOrBakeFaces, 0, 1, 1), 1));
       
 
       Display_Output_in_Explorer = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Display_Output_in_Explorer", Display_Output_in_Explorer, 0, 1, 1), 1));
@@ -40611,6 +40730,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("objExportBackSides", objExportBackSides);
   newChild1.setInt("objExportCombinedMaterial", objExportCombinedMaterial);
   newChild1.setInt("objExportBakingResolution", objExportBakingResolution);
+  newChild1.setInt("objExportPalletResolution", objExportPalletResolution);
+  newChild1.setInt("objExportUsePalletOrBakeFaces", objExportUsePalletOrBakeFaces);
     
   {
     int TEXTURE_copied = 0;
@@ -41706,6 +41827,8 @@ void SOLARCHVISION_load_project (String myFile) {
       objExportBackSides = children0[L].getInt("objExportBackSides");
       objExportCombinedMaterial = children0[L].getInt("objExportCombinedMaterial");      
       objExportBakingResolution = children0[L].getInt("objExportBakingResolution");
+      objExportPalletResolution = children0[L].getInt("objExportPalletResolution");
+      objExportUsePalletOrBakeFaces = children0[L].getInt("objExportUsePalletOrBakeFaces");
 
 
       {
