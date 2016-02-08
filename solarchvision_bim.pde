@@ -18824,28 +18824,31 @@ void SOLARCHVISION_export_objects () {
           
           int Number_Of_Face_Subdivisions = 0; // for combined materials we need to know this number before baking each object.
       
-          if (objExportMaterialLibrary != 0) {
-                
-            for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
-  
-              int Tessellation = allFaces_MTLV[f][1];
-            
-              int TotalSubNo = 1;  
-              if (allFaces_MTLV[f][0] == 0) {
-                Tessellation += MODEL3D_TESSELLATION;
-              }
-              
-              if (objExportUsePalletOrBakeFaces == 1) {
-                if ((allFaces[f].length != 4) && (Tessellation == 0)) {
-                  Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
-                }
-              }
-              
-              if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+          if (objExportUsePalletOrBakeFaces == 1) {
         
-              for (int n = 0; n < TotalSubNo; n++) {
+            if (objExportMaterialLibrary != 0) {
+                  
+              for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
     
-                Number_Of_Face_Subdivisions += 1;
+                int Tessellation = allFaces_MTLV[f][1];
+              
+                int TotalSubNo = 1;  
+                if (allFaces_MTLV[f][0] == 0) {
+                  Tessellation += MODEL3D_TESSELLATION;
+                }
+                
+                if (objExportUsePalletOrBakeFaces == 1) {
+                  if ((allFaces[f].length != 4) && (Tessellation == 0)) {
+                    Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
+                  }
+                }
+                
+                if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+          
+                for (int n = 0; n < TotalSubNo; n++) {
+      
+                  Number_Of_Face_Subdivisions += 1;
+                }
               }
             }
           }
@@ -18892,18 +18895,18 @@ void SOLARCHVISION_export_objects () {
               int CurrentFaceTextureNumber = -1;
               
               if (_turn == 3) {
-                if (objExportUsePalletOrBakeFaces == 1) {
-                  if (objExportPolyToPoly == 1) {
-                    obj_lastGroupNumber += 1;
-                    objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0));
-                  }
-                  
-                  if (objExportMaterialLibrary != 0) {
-                    if (objExportCombinedMaterial == 1) { 
-                      objOutput.println("usemtl " +  the_filename.replace('.', '_'));
-                    }
-                  }                 
+
+                if (objExportPolyToPoly == 1) {
+                  obj_lastGroupNumber += 1;
+                  objOutput.println("g Object3D_" + nf(OBJ_NUM, 0) + "_side" + nf(back_or_front, 0));
                 }
+                
+                if (objExportMaterialLibrary != 0) {
+                  if (objExportCombinedMaterial == 1) { 
+                    objOutput.println("usemtl " +  the_filename.replace('.', '_'));
+                  }
+                }                 
+
               }  
   
               for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
