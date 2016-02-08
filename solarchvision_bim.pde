@@ -18837,10 +18837,9 @@ void SOLARCHVISION_export_objects () {
                   Tessellation += MODEL3D_TESSELLATION;
                 }
                 
-                if (objExportUsePalletOrBakeFaces == 1) {
-                  if ((allFaces[f].length != 4) && (Tessellation == 0)) {
-                    Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
-                  }
+                
+                if ((allFaces[f].length != 4) && (Tessellation == 0)) {
+                  Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
                 }
                 
                 if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -18851,9 +18850,11 @@ void SOLARCHVISION_export_objects () {
                 }
               }
             }
+            
+            println("Number_Of_Face_Subdivisions", Number_Of_Face_Subdivisions);   
           }
        
-          println("Number_Of_Face_Subdivisions", Number_Of_Face_Subdivisions);   
+          
               
           for (int back_or_front = 1 - objExportBackSides; back_or_front <= 1; back_or_front++) {
           
@@ -18918,10 +18919,9 @@ void SOLARCHVISION_export_objects () {
                   Tessellation += MODEL3D_TESSELLATION;
                 }
                 
-                if (objExportUsePalletOrBakeFaces == 1) {
-                  if ((allFaces[f].length != 4) && (Tessellation == 0)) {
-                    Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
-                  }
+                
+                if ((allFaces[f].length != 4) && (Tessellation == 0)) {
+                  Tessellation = 1; // <<<<<<<<<< to enforce all polygons having four vertices during baking process
                 }
                 
                 if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
@@ -19155,35 +19155,43 @@ void SOLARCHVISION_export_objects () {
                           if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
                             
                             _u = SOLARCHVISION_vertexU_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
-                          }                            
+                          }
+
+                          if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
+                            if (Impact_TYPE == Impact_ACTIVE) {
+                              _u = _u;
+                            }
+                            if (Impact_TYPE == Impact_PASSIVE) {
+                              _u = (_u - 0.5) * 0.75 + 0.5;
+                            }
+                          }
+                          else {
+                            _u = 1 - ((_u - 0.5) * 0.75 + 0.5);
+                          }          
          
+         
+                          if (_u > 0.999) _u = 0.999;
+                          if (_u < 0.001) _u = 0.001;
+
                       
                           if (s == 0) {
-                            u1 = 1 - _u;
+                            u1 = _u;
                             v1 = 0;
                           }
                           if (s == 1) {
-                            u2 = 1 - _u;
+                            u2 = _u;
                             v2 = 0;                            
                           }            
                           if (s == 2) { 
-                            u3 = 1 - _u;
+                            u3 = _u;
                             v3 = 0;                                 
                           }          
                           if (s == 3) {
-                            u4 = 1 - _u;
+                            u4 = _u;
                             v4 = 0;                                 
                           }
                         }
 
-                        if (u1 > 0.999) u1 = 0.999;
-                        if (u1 < 0.001) u1 = 0.001;
-                        if (u2 > 0.999) u2 = 0.999;
-                        if (u2 < 0.001) u2 = 0.001;
-                        if (u3 > 0.999) u3 = 0.999;
-                        if (u3 < 0.001) u3 = 0.001;
-                        if (u4 > 0.999) u4 = 0.999;
-                        if (u4 < 0.001) u4 = 0.001;
                         
                       }
                     
