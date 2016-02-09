@@ -1160,7 +1160,7 @@ float SKY3D_Pallet_PASSIVE_MLT = 1; //2;
 
 int ELEVATION_Pallet_CLR = 1; 
 int ELEVATION_Pallet_DIR = -1; 
-float ELEVATION_Pallet_MLT = 0.1; 
+float ELEVATION_Pallet_MLT = 0.05; 
 
 int SPATIAL_Pallet_CLR = 17; //1; 
 int SPATIAL_Pallet_DIR = -1; 
@@ -3206,7 +3206,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
     
     for (int q = 0; q < 11; q += 1) {
       
-      float _u = 0.1 * q;
+      float _u = 0.2 * q - 0.5;
       
       if ((WIN3D_FACES_SHADE == Shade_Vertex_Solar) || (WIN3D_FACES_SHADE == Shade_Global_Solar)) {
         if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
@@ -3258,11 +3258,11 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
       }
 
       if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
-        WIN3D_Diagrams.text(nf(int(roundTo(1.0 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+        WIN3D_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
       }
       
       if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
-        WIN3D_Diagrams.text(nf(int(roundTo(1.0 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
+        WIN3D_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
       }
     }
     
@@ -21592,7 +21592,7 @@ float SOLARCHVISION_vertexU_Shade_Vertex_Spatial (float[] VERTEX_now, int PAL_TY
   SpatialImpactType = 0;
   float val = ParametricGeometries_SpatialImpact_atXYZ(VERTEX_now[0], VERTEX_now[1], VERTEX_now[2]);
 
-  float _u = PAL_Multiplier * val + 0.5;
+  float _u = 0.5 + 0.5 * (PAL_Multiplier * val);
   
   if (PAL_DIR == -1) _u = 1 - _u;
   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -21613,7 +21613,7 @@ float[] SOLARCHVISION_vertexRender_Shade_Vertex_Elevation (float[] VERTEX_now, i
 
 float SOLARCHVISION_vertexU_Shade_Vertex_Elevation (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
 
-  float _u = PAL_Multiplier * 0.1 * VERTEX_now[2] + 0.5;
+  float _u = 0.5 + 0.5 * (PAL_Multiplier * VERTEX_now[2]);
 
   if (PAL_DIR == -1) _u = 1 - _u;
   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -32734,7 +32734,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       ELEVATION_Pallet_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ELEVATION_Pallet_CLR", ELEVATION_Pallet_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
       ELEVATION_Pallet_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ELEVATION_Pallet_DIR", ELEVATION_Pallet_DIR, -2, 2, 2), 1));
-      ELEVATION_Pallet_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "ELEVATION_Pallet_MLT", ELEVATION_Pallet_MLT, 0.01, 1.0, -2);   
+      ELEVATION_Pallet_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "ELEVATION_Pallet_MLT", ELEVATION_Pallet_MLT, 0.001, 0.5, -2);   
 
       windFlow_Pallet_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "windFlow_Pallet_CLR", windFlow_Pallet_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
       windFlow_Pallet_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "windFlow_Pallet_DIR", windFlow_Pallet_DIR, -2, 2, 2), 1));
