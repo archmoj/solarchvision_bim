@@ -11314,7 +11314,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
                       }
                       
                       if (_turn == 2) { 
-                        float u1 = 1 - 0.5 * _u;
+                        float u1 = 0.5 * (_u + 0.5);
                 
                         if ((WIN3D_FACES_SHADE == Shade_Global_Solar) || (WIN3D_FACES_SHADE == Shade_Vertex_Solar)) {
                           if (Impact_TYPE == Impact_ACTIVE) u1 = _u;
@@ -19133,38 +19133,35 @@ void SOLARCHVISION_export_objects () {
                             
                             _u = SOLARCHVISION_vertexU_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                           }
+                          
+
+                          float u0 = 0.5 * (_u + 0.5);
 
                           if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
                             if (Impact_TYPE == Impact_ACTIVE) {
-                              _u = _u;
-                            }
-                            if (Impact_TYPE == Impact_PASSIVE) {
-                              _u = _u;
+                              u0 = _u;
                             }
                           }
-                          else {
-                            _u = 1 - _u;
-                          }          
          
          
-                          if (_u > 0.999) _u = 0.999;
-                          if (_u < 0.001) _u = 0.001;
+                          if (u0 > 0.999) u0 = 0.999;
+                          if (u0 < 0.001) u0 = 0.001;
 
                       
                           if (s == 0) {
-                            u1 = _u;
+                            u1 = u0;
                             v1 = 0;
                           }
                           if (s == 1) {
-                            u2 = _u;
+                            u2 = u0;
                             v2 = 0;                            
                           }            
                           if (s == 2) { 
-                            u3 = _u;
+                            u3 = u0;
                             v3 = 0;                                 
                           }          
                           if (s == 3) {
-                            u4 = _u;
+                            u4 = u0;
                             v4 = 0;                                 
                           }
                         }
@@ -19661,7 +19658,7 @@ void SOLARCHVISION_export_objects () {
               }
               
               if (_turn == 2) { 
-                float u1 = 1 - 0.5 * _u;
+                float u1 = 0.5 * (_u + 0.5);
                 
                 if ((WIN3D_FACES_SHADE == Shade_Global_Solar) || (WIN3D_FACES_SHADE == Shade_Vertex_Solar)) { 
                   if  (Impact_TYPE == Impact_ACTIVE) u1 = _u;
