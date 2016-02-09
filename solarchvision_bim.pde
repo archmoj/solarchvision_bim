@@ -1132,7 +1132,7 @@ float STUDY_Pallet_ACTIVE_MLT = 1; //2;
 
 int STUDY_Pallet_PASSIVE_CLR = 1; 
 int STUDY_Pallet_PASSIVE_DIR = 1;
-float STUDY_Pallet_PASSIVE_MLT = 2; 
+float STUDY_Pallet_PASSIVE_MLT = 1; 
 
 int OBJECTS_Pallet_ACTIVE_CLR = 19; //15; //14;
 int OBJECTS_Pallet_ACTIVE_DIR = 1;
@@ -1140,7 +1140,7 @@ float OBJECTS_Pallet_ACTIVE_MLT = 1; //2;
 
 int OBJECTS_Pallet_PASSIVE_CLR = 1; 
 int OBJECTS_Pallet_PASSIVE_DIR = 1;  
-float OBJECTS_Pallet_PASSIVE_MLT = 2; 
+float OBJECTS_Pallet_PASSIVE_MLT = 1; 
 
 int SunPath3D_Pallet_ACTIVE_CLR = 15;
 int SunPath3D_Pallet_ACTIVE_DIR = 1;
@@ -1148,7 +1148,7 @@ float SunPath3D_Pallet_ACTIVE_MLT = 1;
 
 int SunPath3D_Pallet_PASSIVE_CLR = 18; 
 int SunPath3D_Pallet_PASSIVE_DIR = -1;  
-float SunPath3D_Pallet_PASSIVE_MLT = 2; //1;
+float SunPath3D_Pallet_PASSIVE_MLT = 1; //1;
 
 int SKY3D_Pallet_ACTIVE_CLR = 18; //-1; //7; //8;
 int SKY3D_Pallet_ACTIVE_DIR = 1; //-1;
@@ -1801,7 +1801,7 @@ void SOLARCHVISION_draw_frame_icon () {
   frame_icon.endDraw();
   frame.setIconImage(frame_icon.image);  
   
-  frame.setTitle("SOLARCHVISION-2015");
+  frame.setTitle("SOLARCHVISION-2016");
 }
 
 
@@ -1857,7 +1857,7 @@ void SOLARCHVISION_update_models (int Step) {
    if ((Step == 0) || (Step == 1)) SOLARCHVISION_remove_3Dobjects();
    //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
    if ((Step == 0) || (Step == 3)) SOLARCHVISION_remove_ParametricGeometries();
-   //if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
+   if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
    if ((Step == 0) || (Step == 5)) SOLARCHVISION_calculate_SpatialImpact_selectedSections();
 
 }
@@ -1935,13 +1935,13 @@ void draw () {
     fill(255);
     textAlign(CENTER, CENTER); 
     textSize(3 * MESSAGE_S_View);
-    text("SOLARCHVISION model integrations 2015", 0.5 * width, 0.05 * height); 
+    text("SOLARCHVISION model integrations 2016", 0.5 * width, 0.05 * height); 
 
     stroke(0);
     fill(0);
     textAlign(CENTER, CENTER); 
     textSize(1.5 * MESSAGE_S_View);
-    text("Raz, Mehr, Mehraz solarch studio\n1998-2015\nAuthor: Mojtaba Samimi\nwww.solarchvision.com", 0.5 * width, 0.75 * height);
+    text("Raz, Mehr, Mehraz solarch studio\n1998-2016\nAuthor: Mojtaba Samimi\nwww.solarchvision.com", 0.5 * width, 0.75 * height);
 
     textAlign(CENTER, CENTER); 
     textSize(MESSAGE_S_View);
@@ -3210,10 +3210,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
       
       if ((WIN3D_FACES_SHADE == Shade_Vertex_Solar) || (WIN3D_FACES_SHADE == Shade_Global_Solar)) {
         if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
-        if (Impact_TYPE == Impact_PASSIVE) {
-          _u = 0.2 * q - 0.5;
-          _u = (_u - 0.5) * 0.75 + 0.5;
-        }        
+        if (Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
       }
         
       if (PAL_DIR == -1) _u = 1 - _u;
@@ -4935,7 +4932,8 @@ float[] SOLARCHVISION_VDWBGR (float _variable) {
 }
 
 float[] SOLARCHVISION_DRYWCBD (float _variable) {
-  _variable *= 2.75;
+
+  _variable *= 1.5;
   
   float v;
   float[] COL = {255, 0, 0, 0};
@@ -4990,8 +4988,8 @@ float[] SOLARCHVISION_DRYWCBD (float _variable) {
 }
 
 float[] SOLARCHVISION_DRYWCBDx3 (float _variable) {
-  //_variable *= 3;
-  _variable *= 2.75; // to maintain the ranges with normal DRYWCBD
+
+  _variable *= 1.5;
   
   float v;
   float[] COL = {255, 0, 0, 0};
@@ -5107,16 +5105,16 @@ float[] GET_COLOR_STYLE (int COLOR_STYLE, float j) {
     c[3] = _COL[3];
   } 
   else if (COLOR_STYLE == 18) {
-    //float[] _COL = SOLARCHVISION_DRYWCBDx3(2.0 * (j - 0.5) * (2.0 / 2.75));
-    float[] _COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5) * (2.0 / 2.75));
+    //float[] _COL = SOLARCHVISION_DRYWCBDx3(2.0 * (j - 0.5));
+    float[] _COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5));
     c[0] = 255;
     c[1] = _COL[3];
     c[2] = _COL[2];
     c[3] = _COL[1]; 
   }  
   else if (COLOR_STYLE == 17) {
-    //float[] _COL = SOLARCHVISION_DRYWCBDx3(2.0 * (j - 0.5) * (2.0 / 2.75));
-    float[] _COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5) * (2.0 / 2.75));
+    //float[] _COL = SOLARCHVISION_DRYWCBDx3(2.0 * (j - 0.5));
+    float[] _COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5));
     c[0] = 255;
     c[1] = 255 - _COL[3];
     c[2] = 255 - _COL[2];
@@ -5215,14 +5213,14 @@ float[] GET_COLOR_STYLE (int COLOR_STYLE, float j) {
     c[3] = _COL[3];
   } 
   else if (COLOR_STYLE == 2) {
-    float[] _COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5) * (2.0 / 2.75));
+    float[] _COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5));
     c[0] = STUDY_O_scale;
     c[1] = _COL[1];
     c[2] = _COL[2];
     c[3] = _COL[3];
   }      
   else if (COLOR_STYLE == 1) {
-    float[] _COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5) * (2.0 / 2.75));
+    float[] _COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5));
     c[0] = 255;
     c[1] = _COL[1];
     c[2] = _COL[2];
@@ -5235,7 +5233,7 @@ float[] GET_COLOR_STYLE (int COLOR_STYLE, float j) {
     c[3] = 0;
   }
   else if (COLOR_STYLE == -1) {
-    float[] _COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5) * (2.0 / 2.75));
+    float[] _COL = SOLARCHVISION_DRYWCBD(2.0 * (j - 0.5));
     c[0] = 255;
     c[1] = 255 - _COL[3];
     c[2] = 255 - _COL[2];
@@ -6143,7 +6141,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
 
     if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) {
       File_output_node[(j - STUDY_j_start)].println("Source: " + nf(_YEAR, 4) + nf(_MONTH, 2) + nf(_DAY, 2) + nf(_HOUR, 2) + "_GEPS-NAEFS-RAW_" + DEFINED_STATIONS[STATION_NUMBER][8] + "_" + LAYERS_ENSEMBLE[STUDY_drw_Layer] + "_000-384.xml" + ", Environment Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
-      File_output_node[(j - STUDY_j_start)].println("Interpolated and processed by SOLARCHVISION 2015: www.solarchvision.com");
+      File_output_node[(j - STUDY_j_start)].println("Interpolated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       if (LAYERS_Unit[STUDY_drw_Layer].equals("kW°C/m²") || LAYERS_Unit[STUDY_drw_Layer].equals("W/m²")) File_output_node[(j - STUDY_j_start)].println("Note: direct and diffuse radiation models are derived form cloud cover and air pressure information using SOLARCHVISION program.");
       File_output_node[(j - STUDY_j_start)].flush(); 
       File_output_node[(j - STUDY_j_start)].close(); 
@@ -6151,7 +6149,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
     
     if ((Export_STUDY_info_norm == 1) && (draw_normals == 1)) {
       File_output_norm[(j - STUDY_j_start)].println("Source: " + nf(_YEAR, 4) + nf(_MONTH, 2) + nf(_DAY, 2) + nf(_HOUR, 2) + "_GEPS-NAEFS-RAW_" + DEFINED_STATIONS[STATION_NUMBER][8] + "_" + LAYERS_ENSEMBLE[STUDY_drw_Layer] + "_000-384.xml" + ", Environment Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
-      File_output_norm[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2015: www.solarchvision.com");
+      File_output_norm[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_norm[(j - STUDY_j_start)].println("* : SOLARCHVISION internal algorithm");
       if (LAYERS_Unit[STUDY_drw_Layer].equals("kW°C/m²") || LAYERS_Unit[STUDY_drw_Layer].equals("W/m²")) File_output_norm[(j - STUDY_j_start)].println("Note: direct and diffuse radiation models are derived form cloud cover and air pressure information using SOLARCHVISION program.");
       File_output_norm[(j - STUDY_j_start)].flush(); 
@@ -6160,7 +6158,7 @@ void SOLARCHVISION_PlotENSEMBLE (float x_Plot, float y_Plot, float z_Plot, float
 
     if ((Export_STUDY_info_prob == 1) && (draw_probs == 1)) {
       File_output_prob[(j - STUDY_j_start)].println("Source: " + nf(_YEAR, 4) + nf(_MONTH, 2) + nf(_DAY, 2) + nf(_HOUR, 2) + "_GEPS-NAEFS-RAW_" + DEFINED_STATIONS[STATION_NUMBER][8] + "_" + LAYERS_ENSEMBLE[STUDY_drw_Layer] + "_000-384.xml" + ", Environment Canada: http://dd.weatheroffice.ec.gc.ca/ensemble/naefs/");
-      File_output_prob[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2015: www.solarchvision.com");
+      File_output_prob[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       if (LAYERS_Unit[STUDY_drw_Layer].equals("kW°C/m²") || LAYERS_Unit[STUDY_drw_Layer].equals("W/m²")) File_output_prob[(j - STUDY_j_start)].println("Note: direct and diffuse radiation models are derived form cloud cover and air pressure information using SOLARCHVISION program.");
       File_output_prob[(j - STUDY_j_start)].flush(); 
       File_output_prob[(j - STUDY_j_start)].close(); 
@@ -6548,14 +6546,14 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
     
     if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) {
       File_output_node[(j - STUDY_j_start)].println("Source: " + DEFINED_STATIONS[STATION_NUMBER][9] + ".wy2" + ", Environment Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
-      File_output_node[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2015: www.solarchvision.com");
+      File_output_node[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_node[(j - STUDY_j_start)].flush(); 
       File_output_node[(j - STUDY_j_start)].close(); 
     }
     
     if ((Export_STUDY_info_norm == 1) && (draw_normals == 1)) {
       File_output_norm[(j - STUDY_j_start)].println("Source: " + DEFINED_STATIONS[STATION_NUMBER][9] + ".wy2" + ", Environment Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
-      File_output_norm[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2015: www.solarchvision.com");
+      File_output_norm[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_norm[(j - STUDY_j_start)].println("* : SOLARCHVISION internal algorithm");
       File_output_norm[(j - STUDY_j_start)].flush(); 
       File_output_norm[(j - STUDY_j_start)].close(); 
@@ -6563,7 +6561,7 @@ void SOLARCHVISION_PlotCLIMATE_WY2 (float x_Plot, float y_Plot, float z_Plot, fl
 
     if ((Export_STUDY_info_prob == 1) && (draw_probs == 1)) {
       File_output_prob[(j - STUDY_j_start)].println("Source: " + DEFINED_STATIONS[STATION_NUMBER][9] + ".wy2" + ", Environment Canada: ftp://ftp.tor.ec.gc.ca/Pub/Normals/");
-      File_output_prob[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2015: www.solarchvision.com");
+      File_output_prob[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_prob[(j - STUDY_j_start)].flush(); 
       File_output_prob[(j - STUDY_j_start)].close(); 
     }
@@ -6947,14 +6945,14 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
     
     if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) {
       File_output_node[(j - STUDY_j_start)].println("Source: " + DEFINED_STATIONS[STATION_NUMBER][10] + ".epw");
-      File_output_node[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2015: www.solarchvision.com");
+      File_output_node[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_node[(j - STUDY_j_start)].flush(); 
       File_output_node[(j - STUDY_j_start)].close(); 
     }
     
     if ((Export_STUDY_info_norm == 1) && (draw_normals == 1)) {
       File_output_norm[(j - STUDY_j_start)].println("Source: " + DEFINED_STATIONS[STATION_NUMBER][10] + ".epw");
-      File_output_norm[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2015: www.solarchvision.com");
+      File_output_norm[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_norm[(j - STUDY_j_start)].println("* : SOLARCHVISION internal algorithm");
       File_output_norm[(j - STUDY_j_start)].flush(); 
       File_output_norm[(j - STUDY_j_start)].close(); 
@@ -6962,7 +6960,7 @@ void SOLARCHVISION_PlotCLIMATE_EPW (float x_Plot, float y_Plot, float z_Plot, fl
 
     if ((Export_STUDY_info_prob == 1) && (draw_probs == 1)) {
       File_output_prob[(j - STUDY_j_start)].println("Source: " + DEFINED_STATIONS[STATION_NUMBER][10] + ".epw");
-      File_output_prob[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2015: www.solarchvision.com");
+      File_output_prob[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_prob[(j - STUDY_j_start)].flush(); 
       File_output_prob[(j - STUDY_j_start)].close(); 
     }
@@ -7549,14 +7547,14 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
 
     if ((Export_STUDY_info_node == 1) && (draw_data_lines == 1)) {
       File_output_node[(j - STUDY_j_start)].println("Source: Environment Canada website at http://dd.weatheroffice.ec.gc.ca/observations/swob-ml/");
-      File_output_node[(j - STUDY_j_start)].println("The data might be interpolated and processed by SOLARCHVISION 2015: www.solarchvision.com");
+      File_output_node[(j - STUDY_j_start)].println("The data might be interpolated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_node[(j - STUDY_j_start)].flush(); 
       File_output_node[(j - STUDY_j_start)].close(); 
     }
     
     if ((Export_STUDY_info_norm == 1) && (draw_normals == 1)) {
       File_output_norm[(j - STUDY_j_start)].println("Source: Environment Canada website at http://dd.weatheroffice.ec.gc.ca/observations/swob-ml/");
-      File_output_norm[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2015: www.solarchvision.com");
+      File_output_norm[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_norm[(j - STUDY_j_start)].println("* : SOLARCHVISION internal algorithm");
       File_output_norm[(j - STUDY_j_start)].flush(); 
       File_output_norm[(j - STUDY_j_start)].close(); 
@@ -7564,7 +7562,7 @@ void SOLARCHVISION_PlotOBSERVED (float x_Plot, float y_Plot, float z_Plot, float
 
     if ((Export_STUDY_info_prob == 1) && (draw_probs == 1)) {
       File_output_prob[(j - STUDY_j_start)].println("Source: Environment Canada website at http://dd.weatheroffice.ec.gc.ca/observations/swob-ml/");
-      File_output_prob[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2015: www.solarchvision.com");
+      File_output_prob[(j - STUDY_j_start)].println("Calculated and processed by SOLARCHVISION 2016: www.solarchvision.com");
       File_output_prob[(j - STUDY_j_start)].flush(); 
       File_output_prob[(j - STUDY_j_start)].close(); 
     }
@@ -7945,7 +7943,7 @@ void SOLARCHVISION_draw_sorted (int i, int j, float[] _valuesA, float[] _valuesB
   for (int l = 0; l < (num_sorted_valuesAB - 1); l += 1) {
     float sort_V = 1.1 * (0.5 - ((num_sorted_valuesAB - (l + 1)) / float(num_sorted_valuesAB)));
     
-    float _u = 0.5 + 0.5 * 0.75 * (PAL_Multiplier * sort_V);
+    float _u = 0.5 + 0.5 * (PAL_Multiplier * sort_V);
     
     if (PAL_DIR == -1) _u = 1 - _u;
     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -7982,7 +7980,7 @@ void SOLARCHVISION_draw_sorted (int i, int j, float[] _valuesA, float[] _valuesB
   for (int q = 0; q < 9; q += 1) {
     float sort_V = 1.1 * (q - 4) / 8.0;
     
-    float _u = 0.5 + 0.5 * 0.75 * (PAL_Multiplier * sort_V);
+    float _u = 0.5 + 0.5 * (PAL_Multiplier * sort_V);
     
     if (PAL_DIR == -1) _u = 1 - _u;
     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -9691,10 +9689,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
         float _u = 0;
         
         if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
-        if (Impact_TYPE == Impact_PASSIVE) {
-          _u = 0.2 * q - 0.5;
-          _u = (_u - 0.5) * 0.75 + 0.5;
-        }        
+        if (Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
         
         if (PAL_DIR == -1) _u = 1 - _u;
         if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -9996,7 +9991,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                   float _u = 0;
                   
                   if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
-                  if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
+                  if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
                   
                   if (PAL_DIR == -1) _u = 1 - _u;
                   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -10081,7 +10076,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
               float _u = 0;
 
               if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
-              if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
+              if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
               
               if (PAL_DIR == -1) _u = 1 - _u;
               if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -10160,10 +10155,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       float _u = 0;
       
       if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
-      if (Impact_TYPE == Impact_PASSIVE) {
-        _u = 0.2 * q - 0.5;
-        _u = (_u - 0.5) * 0.75 + 0.5;
-      }        
+      if (Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
       
       if (PAL_DIR == -1) _u = 1 - _u;
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -10386,7 +10378,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
                     float _u = 0;
                     
                     if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_Multiplier * _valuesSUM);
-                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (PAL_Multiplier * _valuesSUM);
+                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_Multiplier * _valuesSUM);
                     
                     if (PAL_DIR == -1) _u = 1 - _u;
                     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -10460,10 +10452,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       float _u = 0;
       
       if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
-      if (Impact_TYPE == Impact_PASSIVE) {
-        _u = 0.2 * q - 0.5;
-        _u = (_u - 0.5) * 0.75 + 0.5;
-      }        
+      if (Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
       
       if (PAL_DIR == -1) _u = 1 - _u;
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -10809,10 +10798,7 @@ void SOLARCHVISION_PlotIMPACT (float x_Plot, float y_Plot, float z_Plot, float s
       float _u = 0;
       
       if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
-      if (Impact_TYPE == Impact_PASSIVE) {
-        _u = 0.2 * q - 0.5;
-        _u = (_u - 0.5) * 0.75 + 0.5;
-      }        
+      if (Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
       
       if (PAL_DIR == -1) _u = 1 - _u;
       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -11308,7 +11294,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
                     float _u = 0;
                     
                     if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_Multiplier * _valuesSUM);
-                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (PAL_Multiplier * _valuesSUM);
+                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_Multiplier * _valuesSUM);
                     
                     if (PAL_DIR == -1) _u = 1 - _u;
                     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -12319,7 +12305,7 @@ void SOLARCHVISION_draw_SunPath3D (float x_SunPath, float y_SunPath, float z_Sun
                   float _u = 0;
                   
                   if (Impact_TYPE == Impact_ACTIVE) _u = (PAL_Multiplier * sun_V);
-                  if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (PAL_Multiplier * sun_V);
+                  if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (PAL_Multiplier * sun_V);
                   
                   if (PAL_DIR == -1) _u = 1 - _u;
                   if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -19158,11 +19144,11 @@ void SOLARCHVISION_export_objects () {
                               _u = _u;
                             }
                             if (Impact_TYPE == Impact_PASSIVE) {
-                              _u = (_u - 0.5) * 0.75 + 0.5;
+                              _u = _u;
                             }
                           }
                           else {
-                            _u = 1 - ((_u - 0.5) * 0.75 + 0.5);
+                            _u = 1 - _u;
                           }          
          
          
@@ -21672,7 +21658,7 @@ float SOLARCHVISION_vertexU_Shade_Global_Solar (float[] VERTEX_now, float[] VERT
   if (_valuesSUM < 0.9 * FLOAT_undefined) {
   
     if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
-    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
+    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
     
     if (PAL_DIR == -1) _u = 1 - _u;
     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -22018,7 +22004,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                       float _u = 0;
                     
                       if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
-                      if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
+                      if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
                       
                       if (PAL_DIR == -1) _u = 1 - _u;
                       if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -22353,7 +22339,7 @@ void SOLARCHVISION_draw_3Dobjects () {
                     float _u = 0;
                     
                     if (Impact_TYPE == Impact_ACTIVE) _u = (0.1 * PAL_Multiplier * _valuesSUM);
-                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
+                    if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
                     
                     if (PAL_DIR == -1) _u = 1 - _u;
                     if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -25014,8 +25000,8 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
                 
                 _valuesSUM = COMPARISON;
                 
-                //_u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
-                _u = 0.5 + 0.5 * 0.75 * (0.2 * PAL_Multiplier * _valuesSUM);
+                //_u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
+                _u = 0.5 + 0.5 * (0.2 * PAL_Multiplier * _valuesSUM);
               }
               
               
@@ -25090,8 +25076,8 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
             
             _valuesSUM = COMPARISON;
             
-            //_u = 0.5 + 0.5 * 0.75 * (0.1 * PAL_Multiplier * _valuesSUM);
-            _u = 0.5 + 0.5 * 0.75 * (0.2 * PAL_Multiplier * _valuesSUM);
+            //_u = 0.5 + 0.5 * (0.1 * PAL_Multiplier * _valuesSUM);
+            _u = 0.5 + 0.5 * (0.2 * PAL_Multiplier * _valuesSUM);
           }
           
           if (PAL_DIR == -1) _u = 1 - _u;
@@ -38604,7 +38590,7 @@ int BAR_a_selected_parent = -1;
 int BAR_a_selected_child = 0;
 
 String[][] BAR_a_Items = {
-                        {"SOLARCHVISION-2015", "Designed & developed by", "Mojtaba Samimi", "www.solarchvision.com"},  
+                        {"SOLARCHVISION-2016", "Designed & developed by", "Mojtaba Samimi", "www.solarchvision.com"},  
                         {"Project", "New", "Save", "Hold", "Fetch", "Open...", "Save As...", "Export 3D-Model", "Import 3D-Model...", "Preferences", "Quit"},
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
