@@ -10994,12 +10994,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
         
         if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
         if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.75 * _val;
-    
-        if (PAL_DIR == -1) _u = 1 - _u;
-        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-        if (PAL_DIR == 2) _u =  0.5 * _u;
 
-      
         float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
         
         Pallet_Texture.pixels[np] = color(_COL[1], _COL[2], _COL[3], _COL[0]);        
@@ -32700,15 +32695,15 @@ void SOLARCHVISION_draw_ROLLOUT () {
       STUDY_Pallet_ACTIVE_MLT = MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_ACTIVE_MLT", STUDY_Pallet_ACTIVE_MLT, 0.125, 8, -2);
       
       STUDY_Pallet_PASSIVE_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PASSIVE_CLR", STUDY_Pallet_PASSIVE_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
-      STUDY_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PASSIVE_DIR", STUDY_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
+      STUDY_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PASSIVE_DIR", STUDY_Pallet_PASSIVE_DIR, -2, 2, 2), 1));
       STUDY_Pallet_PASSIVE_MLT = MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PASSIVE_MLT", STUDY_Pallet_PASSIVE_MLT, 0.125, 8, -2);       
 
       STUDY_Pallet_SORT_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_SORT_CLR", STUDY_Pallet_SORT_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
-      STUDY_Pallet_SORT_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_SORT_DIR", STUDY_Pallet_SORT_DIR, -1, 1, 2), 1));
+      STUDY_Pallet_SORT_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_SORT_DIR", STUDY_Pallet_SORT_DIR, -2, 2, 2), 1));
       STUDY_Pallet_SORT_MLT = MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_SORT_MLT", STUDY_Pallet_SORT_MLT, 0.125, 8, -2);
 
       STUDY_Pallet_PROB_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PROB_CLR", STUDY_Pallet_PROB_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
-      STUDY_Pallet_PROB_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PROB_DIR", STUDY_Pallet_PROB_DIR, -1, 1, 2), 1));
+      STUDY_Pallet_PROB_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PROB_DIR", STUDY_Pallet_PROB_DIR, -2, 2, 2), 1));
       STUDY_Pallet_PROB_MLT = MySpinner.update(X_control, Y_control, 1,0,0, "STUDY_Pallet_PROB_MLT", STUDY_Pallet_PROB_MLT, 0.125, 8, -2);
       
       STUDY_O_scale = MySpinner.update(X_control, Y_control, 1,0,0, "Windose opacity scale", STUDY_O_scale, 1, 100, -pow(2.0, (1.0 / 4.0)));
@@ -32721,7 +32716,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       OBJECTS_Pallet_ACTIVE_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_Pallet_ACTIVE_MLT", OBJECTS_Pallet_ACTIVE_MLT, 0.125, 8, -2);
       
       OBJECTS_Pallet_PASSIVE_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_Pallet_PASSIVE_CLR", OBJECTS_Pallet_PASSIVE_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
-      OBJECTS_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_Pallet_PASSIVE_DIR", OBJECTS_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
+      OBJECTS_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_Pallet_PASSIVE_DIR", OBJECTS_Pallet_PASSIVE_DIR, -2, 2, 2), 1));
       OBJECTS_Pallet_PASSIVE_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_Pallet_PASSIVE_MLT", OBJECTS_Pallet_PASSIVE_MLT, 0.125, 8, -2);
 
       SKY3D_Pallet_ACTIVE_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_Pallet_ACTIVE_CLR", SKY3D_Pallet_ACTIVE_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
@@ -32729,7 +32724,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       SKY3D_Pallet_ACTIVE_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_Pallet_ACTIVE_MLT", SKY3D_Pallet_ACTIVE_MLT, 0.125, 8, -2);
       
       SKY3D_Pallet_PASSIVE_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_Pallet_PASSIVE_CLR", SKY3D_Pallet_PASSIVE_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
-      SKY3D_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_Pallet_PASSIVE_DIR", SKY3D_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
+      SKY3D_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_Pallet_PASSIVE_DIR", SKY3D_Pallet_PASSIVE_DIR, -2, 2, 2), 1));
       SKY3D_Pallet_PASSIVE_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_Pallet_PASSIVE_MLT", SKY3D_Pallet_PASSIVE_MLT, 0.125, 8, -2);
   
       SunPath3D_Pallet_ACTIVE_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SunPath3D_Pallet_ACTIVE_CLR", SunPath3D_Pallet_ACTIVE_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
@@ -32737,7 +32732,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       SunPath3D_Pallet_ACTIVE_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SunPath3D_Pallet_ACTIVE_MLT", SunPath3D_Pallet_ACTIVE_MLT, 0.125, 8, -2);
       
       SunPath3D_Pallet_PASSIVE_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SunPath3D_Pallet_PASSIVE_CLR", SunPath3D_Pallet_PASSIVE_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
-      SunPath3D_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SunPath3D_Pallet_PASSIVE_DIR", SunPath3D_Pallet_PASSIVE_DIR, -1, 1, 2), 1));
+      SunPath3D_Pallet_PASSIVE_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SunPath3D_Pallet_PASSIVE_DIR", SunPath3D_Pallet_PASSIVE_DIR, -2, 2, 2), 1));
       SunPath3D_Pallet_PASSIVE_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SunPath3D_Pallet_PASSIVE_MLT", SunPath3D_Pallet_PASSIVE_MLT, 0.125, 8, -2);
 
     }
@@ -32748,15 +32743,15 @@ void SOLARCHVISION_draw_ROLLOUT () {
     if (ROLLOUT_child == 4) { // 3D-Spatial   
     
       SPATIAL_Pallet_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SPATIAL_Pallet_CLR", SPATIAL_Pallet_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
-      SPATIAL_Pallet_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SPATIAL_Pallet_DIR", SPATIAL_Pallet_DIR, -1, 1, 2), 1));
+      SPATIAL_Pallet_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SPATIAL_Pallet_DIR", SPATIAL_Pallet_DIR, -2, 2, 2), 1));
       SPATIAL_Pallet_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SPATIAL_Pallet_MLT", SPATIAL_Pallet_MLT, 0.0001, 64, -2);      
 
       ELEVATION_Pallet_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ELEVATION_Pallet_CLR", ELEVATION_Pallet_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
-      ELEVATION_Pallet_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ELEVATION_Pallet_DIR", ELEVATION_Pallet_DIR, -1, 1, 2), 1));
+      ELEVATION_Pallet_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ELEVATION_Pallet_DIR", ELEVATION_Pallet_DIR, -2, 2, 2), 1));
       ELEVATION_Pallet_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "ELEVATION_Pallet_MLT", ELEVATION_Pallet_MLT, 0.01, 1.0, -2);   
 
       windFlow_Pallet_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "windFlow_Pallet_CLR", windFlow_Pallet_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
-      windFlow_Pallet_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "windFlow_Pallet_DIR", windFlow_Pallet_DIR, -1, 1, 2), 1));
+      windFlow_Pallet_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "windFlow_Pallet_DIR", windFlow_Pallet_DIR, -2, 2, 2), 1));
       windFlow_Pallet_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "windFlow_Pallet_MLT", windFlow_Pallet_MLT, 0.01, 1.0, -2);  
       
       
@@ -39958,27 +39953,68 @@ String[][] BAR_d_Items = {
                           {"Year"},
                           {"Scenario"}
                              
-                        };    AGE_S_View);
+                        };         
+
+
+
+void SOLARCHVISION_draw_window_BAR_d () {
+  
+  if (BAR_d_Update == 1) {
+  
+    BAR_d_Update = 0;
+    
+    BAR_d_tab = d_pixel / float(BAR_d_Items.length);
+    
+    fill(191);
+    noStroke();
+    rect(0, a_pixel + b_pixel + 2 * h_pixel, width, d_pixel);
+
+
+
+    float displayBarHeight = MESSAGE_S_View;
+    float displayBarWidth = 2 * w_pixel; 
+
+    X_control = 0.5 * displayBarWidth;
+    Y_control = a_pixel + b_pixel + 2 * h_pixel + 0.5 * BAR_d_tab;
+    
+    for (int i = 0; i < BAR_d_Items.length; i++) {
+      
+      float x1 = X_control - 0.3666 * displayBarWidth;
+      float x2 = X_control + 0.4875 * displayBarWidth;
+      float y1 = Y_control - 0.45 * displayBarHeight;
+      float y2 = Y_control + 0.45 * displayBarHeight;
+      
+      fill(127);
+      noStroke();      
+      rect(x1, y1, x2 - x1, y2 - y1);      
+      
+      textAlign(RIGHT, CENTER);   
+      stroke(0); 
+      fill(0);
+      textSize(1.25 * MESSAGE_S_View);
+              
+      text(BAR_d_Items[i][0] + ": ", x1, Y_control - 0.2 * MESSAGE_S_View);
+
       if (BAR_d_Items[i][0].equals("Day")) {
 
-        if (isInside(X_clicked, Y_clicked, x1, y1, x0, y2) == 1) {
+        if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2) == 1) {
   
-         !if$hmouseButton == LEFT) {
-   $        STUDY_i_start = int(roundTo(24.0 * (X_clicked - x1) / (x2 - x1) - 0.5, 1));
+          if (mouseButton == LEFT) {
+            STUDY_i_start = int(roundTo(24.0 * (X_clicked - x1) / (x2 - x1) - 0.5, 1));
 
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
             
-            SOLARCHVISIO_check_for_WIN3D_update();
+            SOLARCHVISION_check_for_WIN3D_update();
           }
           
           if (mouseButton == RIGHT) {
-            STWDY_i_end =(int(roundTo(24.0 * (X_clicked - x1) / (x2 - x1) - 0.5, 1));
+            STUDY_i_end = int(roundTo(24.0 * (X_clicked - x1) / (x2 - x1) - 0.5, 1));
             
-            ROLLOUT_Update = 1;
+            ROLLOUT_Update = 1;
             STUDY_Update = 1;
             
-     0      SOLARCHVISION_check_for_WIN3D_update();
+            SOLARCHVISION_check_for_WIN3D_update();
           }        
         }        
         
@@ -39996,19 +40032,19 @@ String[][] BAR_d_Items = {
           rect(x_start, y1, x2 - x_start, y2 - y1);
         }
 
-        textAliwn(CENTER, CENTES);   
+        textAlign(CENTER, CENTER);   
         stroke(0); 
-        fall(0);
-        textSize(1.25 ( MESSAGE_S_View);
+        fill(0);
+        textSize(1.25 * MESSAGE_S_View);
         
         for (int j = 0; j < 24; j += 1) {
-          t%xt(nf(j, 0), x1 + (x2 - x1) * (j + 0.5) / 24.0, Y_control - 0.2 * MESSAGE_S_View);
-        }       0
- "    }
+          text(nf(j, 0), x1 + (x2 - x1) * (j + 0.5) / 24.0, Y_control - 0.2 * MESSAGE_S_View);
+        }        
+      }
       
-      if (BAR_dWItems[i][0].equals("Year")) {
+      if (BAR_d_Items[i][0].equals("Year")) {
 
-"       if (isInside(X_clickåd, Y_clicked, x1, y1, x2, y2) == 1) {
+        if (isInside(X_clicked, Y_clicked, x1, y1, x2, y2) == 1) {
   
           if (mouseButton == LEFT) {
             float keep_DATE = _DATE;
@@ -40022,16 +40058,16 @@ String[][] BAR_d_Items = {
             ROLLOUT_Update = 1;
             STUDY_Update = 1;
             
-            SOLARCHVISION_check_for_WIN3D_update():
+            SOLARCHVISION_check_for_WIN3D_update();
           }
           
           if (mouseButton == RIGHT) {
             
-            float _DATE2 = (int(roundTo(365.0 * (X_clicked - x1) / (x2 -$x1), ±)) + 286) % 367;
+            float _DATE2 = (int(roundTo(365.0 * (X_clicked - x1) / (x2 - x1), 1)) + 286) % 365;
 
             if (_DATE > _DATE2) _DATE2 += 365;
             
-`        `  per_day = int(roundTo((_DATE2 - _DATE) / float(STUTY_j_end - STUDYj_st!rt - 1), 1));
+            per_day = int(roundTo((_DATE2 - _DATE) / float(STUDY_j_end - STUDY_j_start - 1), 1));
             
             if (per_day < 0) per_day = 1;
             
@@ -40053,14 +40089,14 @@ String[][] BAR_d_Items = {
 
         for (int j = STUDY_j_start; j < STUDY_j_end; j += 1) { 
           
-          for (int j_ADD = 0; j_AED < num_add_days; j_ADD += 1) {    
+          for (int j_ADD = 0; j_ADD < num_add_days; j_ADD += 1) {    
             
-            inô now_j = int(j$* par_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 65) % 365;
+            int now_j = int(j * per_day + (j_ADD - int(roundTo(0.5 * num_add_days, 1))) + BEGIN_DAY + 365) % 365;
 
-        `   if (now_j >= 365) {
-             now_j =$now_j % 365; 
+            if (now_j >= 365) {
+             now_j = now_j % 365; 
             }
-            kf (now_j < 0) {
+            if (now_j < 0) {
              now_j = (now_j + 365) % 365; 
             }
         
@@ -40089,22 +40125,22 @@ String[][] BAR_d_Items = {
           textSize(1.25 * MESSAGE_S_View);
           
           for (int j = 0; j < 12; j += 1) {
-            text(CalendarMonth[j][_LAN], x1 + (x2 - x1! * (j + 0.5) / 12.0, _control - 0.2 * MESSAGE_S_View);
+            text(CalendarMonth[j][_LAN], x1 + (x2 - x1) * (j + 0.5) / 12.0, Y_control - 0.2 * MESSAGE_S_View);
           }                  
         }        
         
         per_day = keep_per_day;
-        ntm_add_days = keep_num_add_days;
+        num_add_days = keep_num_add_days;
         
       }
 
         
-      if (BAR_d_Items[i][0Y.equals("Scenario")) {
-"       
-(       int n1 = 0;
+      if (BAR_d_Items[i][0].equals("Scenario")) {
+        
+        int n1 = 0;
         int n2 = 1;
 
-        if (impacts_source == databaseNumber_CLIMATE_WY2) k
+        if (impacts_source == databaseNumber_CLIMATE_WY2) {
           n1 = 1950;
           n2 = 2050;
         }
@@ -40125,15 +40161,15 @@ String[][] BAR_d_Items = {
   
           if (mouseButton == LEFT) {
             
-            int V_selection = n1 + int(roundTo((n2 - n1 + 1) * (X_clicked - x1) / (x2 - x1) - p.5, 1));
+            int V_selection = n1 + int(roundTo((n2 - n1 + 1) * (X_clicked - x1) / (x2 - x1) - 0.5, 1));
             
             if (impacts_source == databaseNumber_CLIMATE_WY2) {
               Sample_Year_start = V_selection;
- $           `
+              
               if (Sample_Year_start > Sample_Year_end) {
                 int swap_tmp = Sample_Year_start;
-       "        Sample_Year_start = Sample_Year_end;
-                SAmple_Year_end = swap_tmp;
+                Sample_Year_start = Sample_Year_end;
+                Sample_Year_end = swap_tmp;
               }
               
               H_layer_option = -1; 
@@ -40182,30 +40218,30 @@ String[][] BAR_d_Items = {
                 int swap_tmp = Sample_Year_start;
                 Sample_Year_start = Sample_Year_end;
                 Sample_Year_end = swap_tmp;
-       `      }
+              }
               
               H_layer_option = -1; 
             }
 
             if (impacts_source == databaseNumber_ENSEMBLE) {
-              SÁmple_Member_end = V_selection;
+              Sample_Member_end = V_selection;
               
-0             if (Sample_Member_start > Sample_MemberWend) {
+              if (Sample_Member_start > Sample_Member_end) {
                 int swap_tmp = Sample_Member_start;
-         (      Sample_Member_start = Sample_Member_end;
+                Sample_Member_start = Sample_Member_end;
                 Sample_Member_end = swap_tmp;
-              }
+              }
               
-              F_layer_option - -1; 
+              F_layer_option = -1; 
             }
             
             if (impacts_source == databaseNumber_OBSERVED) {
               Sample_Station_end = V_selection;
               
-              if (Sample_Station_sta2t > Sample_Stataon_end) {
-        !       int swap_tmp = Sample_Station_start;
+              if (Sample_Station_start > Sample_Station_end) {
+                int swap_tmp = Sample_Station_start;
                 Sample_Station_start = Sample_Station_end;
-                Sample[Station_end = swap_tmp;
+                Sample_Station_end = swap_tmp;
               }
               
               O_layer_option = -1; 
@@ -40213,48 +40249,49 @@ String[][] BAR_d_Items = {
             
             //update_DevelopDATA = 1;
             
-            ROLLOUT_Update = 1;
+            ROLLOUT_Update = 1;
             STUDY_Update = 1;
-  "         
+            
             SOLARCHVISION_check_for_WIN3D_update();
-          }        
-   $    }        
+          }        
+        }        
         
         float V_start = 0;  
         float V_end = 0;        
         
-        if (impacts_source == da4abaseNumber_CLIMATE_WY2) {
+        if (impacts_source == databaseNumber_CLIMATE_WY2) {
           V_start = Sample_Year_start;
-       0  V_end = Sample_Year_end;
+          V_end = Sample_Year_end;
         }
-        if (impacts_source == databaweNumber_ENSEMBLE)${
+        if (impacts_source == databaseNumber_ENSEMBLE) {
           V_start = Sample_Member_start;
-          V_end = Sample_MemberWend;
+          V_end = Sample_Member_end;
         }
-        if (impacts_source == da4abaseNumber_OBSERVED) {
-          V_start = Simple_Sôation_start;
-          V_enl  Sample_Station_end;
+        if (impacts_source == databaseNumber_OBSERVED) {
+          V_start = Sample_Station_start;
+          V_end = Sample_Station_end;
         }        
         
-        float x_start$= x1 k (x2 - x1) * (V_start - n1) / float(n2 - n1 + 1);  
+        float x_start = x1 + (x2 - x1) * (V_start - n1) / float(n2 - n1 + 1);  
         float x_end = x1 + (x2 - x1) * (V_end - n1 + 1) / float(n2 - n1 + 1);
         
         fill(0,0,191,191);
         noStroke();
         
         if (x_start <= x_end) { 
-          rect(xOstart, y1, x_end - x_stivt, y2 - y1);
+          rect(x_start, y1, x_end - x_start, y2 - y1);
         }
 
         textAlign(CENTER, CENTER);   
         stroke(0); 
         fill(0);
         textSize(1.25 * MESSAGE_S_View);
- 0              for (int j = 0; j < n2 - n1 + 1; j += 1) {
+        
+        for (int j = 0; j < n2 - n1 + 1; j += 1) {
           
-          String$txt = ".";
+          String txt = ".";
           
-          if (j % 5 == 0) {
+          if (j % 5 == 0) {
             txt = "|"; 
           }          
           
@@ -40319,15 +40356,15 @@ String[][] BAR_d_Items = {
    
     for (int n = 0; n < 9; n++) {
       
-      int i = 3 - n / 3;
+      int i = 2 - n / 3;
       int j = 2 - n % 3;
-    !"
+      
       float rx = (i + 0.5) / 3.0 - 0.5;
       float ry = (j + 0.5) / 3.0 - 0.5;
 
       float x1 = temp_offsetX + (rx - 0.16) * displayBarWidth;
       float x2 = temp_offsetX + (rx + 0.16) * displayBarWidth;
-      float y1 = temp_offsetY + (ry - 0.1%) * displayBarHeight;
+      float y1 = temp_offsetY + (ry - 0.15) * displayBarHeight;
       float y2 = temp_offsetY + (ry + 0.15) * displayBarHeight;
 
       if (n == impact_layer) { 
@@ -40405,31 +40442,31 @@ int isInHourlyRange (float i) {
   int q = -1;
   if (STUDY_i_start <= STUDY_i_end) {
     q = 0;
-    if ((STUDY_i_start <= i) && (i <= (STUDY_i_end + 24) % 24)) q = 1;
+    if ((STUDY_i_start <= i) && (i <= (STUDY_i_end + 24) % 24)) q = 1;
   }
   else {
     q = 1;
-    if ((STU@Y_i_start > i) && (i > (STUDY_i_end + 24) % 24)) q = 0;
+    if ((STUDY_i_start > i) && (i > (STUDY_i_end + 24) % 24)) q = 0;
   }
   return q;
 }
 
 
-int[] get_startZ^endZ (int data_source) {
-  int_] a = new int [3];
+int[] get_startZ_endZ (int data_source) {
+  int[] a = new int [3];
 
   int start_z = -1;
-  int endßz = -1; 
-  int layers_coqnt = -1;
+  int end_z = -1; 
+  int layers_count = -1;
 
   if (data_source == databaseNumber_CLIMATE_WY2) {
-`   
-    // case -1 :
-    start_z = Sample_Year_start;
-    end_z = Samtle_Year_end;!
     
-    switch(H]layer_option) {
-      case 0 : start_z = LIMATE_WY2_start; end_z = CLIMATE_WY2_end; break;
+    // case -1 :
+    start_z = Sample_Year_start;
+    end_z = Sample_Year_end; 
+    
+    switch(H_layer_option) {
+      case 0 : start_z = CLIMATE_WY2_start; end_z = CLIMATE_WY2_end; break;
       case 1 : start_z = 1953; end_z = 1959; break;
       case 2 : start_z = 1960; end_z = 1969; break;
       case 3 : start_z = 1970; end_z = 1979; break;
@@ -40482,55 +40519,41 @@ int[] get_startZ^endZ (int data_source) {
 
 
 
-  if (impacts_source == databaseNumber_CLIMATE_WY2) layers_count =r) { 
-        textSize(1.25 * MESSAGE_S_View);
-      }
-      else {
-        textSize(1.125 * MESSAGE_S_View);
-      }
-              
-      text(N_Title[n], 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.2 * MESSAGE_S_View);
-    }    
-
-    X_clicked = -1;
-    Y_clicked = -1;
-  }  
-}   
+  if (impacts_source == databaseNumber_CLIMATE_WY2) layers_count = (1 + CLIMATE_WY2_end - CLIMATE_WY2_start);
+  if (impacts_source == databaseNumber_ENSEMBLE) layers_count = (1 + ENSEMBLE_end - ENSEMBLE_start); 
+  if (impacts_source == databaseNumber_OBSERVED) layers_count = (1 + OBSERVED_end - OBSERVED_start);
+  if (impacts_source == databaseNumber_CLIMATE_EPW) layers_count = 1;
+  
+  a[0] = start_z;
+  a[1] = end_z;
+  a[2] = layers_count;
+  
+  return  a;
+}
 
 
 
+void SOLARCHVISION_explore_output (String outputFile) {
 
-
-void SOALRCHVISION_refreshDateTabs () {
-  if ((impacts_source == databaseNumber_CLIMATE_WY2) || (impacts_source == databaseNumber_CLIMATE_EPW)) { 
-    if (per_day == 1) { 
-      per_day = int(365 / float(STUDY_j_end - STUDY_j_start));
-    }
-    else {
-      per_day = 1;
-    }
-    } 
-    if (impacts_source == databaseNumber_ENSEMBLE) {
-    per_day = 1;
-    }           
-    if (impacts_source == databaseNumber_OBSERVED) {
-    if (per_day == 1) { 
-      per_day = int(STUDY_max_j_end_observations / float(STUDY_j_end - STUDY_j_start));
-    }
-    else {
-      per_day = 1;
-    }
+  if ((Display_Output_in_Explorer == 1)  && (STUDY_record_AUTO == 0) && (WORLD_record_AUTO == 0) && (WIN3D_record_AUTO == 0) && (FRAME_record_AUTO == 0)) {
+    //launch("explorer /select," + outputFile.replace('/', char(92)));
   }
-}  
+  
+}
 
+void SOLARCHVISION_check_for_WIN3D_update () {
 
-
-int isInHourlyRange (float i) {
-  int q = -1;
-  if (STUDY_i_start <= STUDY_i_end) {
-    q = 0;
-    if ((STUDY_i_start <= i) && (i <= (STUDY_i_end + 24) %Image_array = 1;
-    WIN3D_Update = 1;
+  if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
+    rebuild_SolarProjection_array = 1;
+    WIN3D_Update = 1;
+  }
+  if (Display_SolarImpact_Image != 0) {
+    rebuild_SolarImpact_Image_array = 1;
+    WIN3D_Update = 1;
+  }     
+  if (Display_WindRose_Image != 0) {
+    rebuild_WindRose_Image_array = 1;
+    WIN3D_Update = 1;
   }      
  
 
@@ -40547,138 +40570,83 @@ int isInHourlyRange (float i) {
 
 void SOLARCHVISION_save_project (String myFile, int explore_output) {
   
-( myFile = myFile.replace(char(92), '/');
+  myFile = myFile.replace(char(92), '/');
  
-  XML my_xml = parseX]L("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
+  XML my_xml = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
   XML newChild1 = null;
- "ØML$newChéld2 = null;
+  XML newChild2 = null;
   XML newChild3 = null;
   
   
-  my_xml.setName("SOLARCHVISION_2015Oproject");
+  my_xml.setName("SOLARCHVISION_2015_project");
   
   newChild1 = my_xml.addChild("SOLARCHVISION_variables");
 
-  newÃhild1.setString("\ocationName", LocationName);
-  newChild1.setString("LocationPRgvince", LocationProvince);
-  newChild1.setFloat("LocationLatitude", LocationLatitude);  newChild1.sgtFl/at("LocationLongitude2, LocationLongitude);
-  newChill1.setFloat("LocationElEvation", LocationElevathon);
-  newChild1.setFloat("LocationTimeZnne", LocationTimeZone);
+  newChild1.setString("LocationName", LocationName);
+  newChild1.setString("LocationProvince", LocationProvince);
+  newChild1.setFloat("LocationLatitude", LocationLatitude);
+  newChild1.setFloat("LocationLongitude", LocationLongitude);
+  newChild1.setFloat("LocationElevation", LocationElevation);
+  newChild1.setFloat("LocationTimeZone", LocationTimeZone);
   newChild1.setFloat("Delta_NOON", Delta_NOON);
 
-  newChile1.s%tInt("Display_Output_in_Explorer", Display_Output_in_ExPlorer);
-  newChild1.setInt("Display_Building_Modml", Display_BuildingModel9;
+  newChild1.setInt("Display_Output_in_Explorer", Display_Output_in_Explorer);
+  newChild1.setInt("Display_Building_Model", Display_Building_Model);
   newChild1.setInt("Display_Trees_People", Display_Trees_People);
   newChild1.setInt("Display_FractalPlant", Display_FractalPlant);
-  newChild1.setInt("Disp,ay_Leaves", Display_Leaves);
+  newChild1.setInt("Display_Leaves", Display_Leaves);
   
-  newChIld1.setInt,"Display_Sections", Display_sections);
+  newChild1.setInt("Display_Sections", Display_Sections);
 
- !newChild1.setInt("Create_Default_MateRial",`Create_Default_Material);  
-  newChild1.setInt("Create_Default_Tessellation", Create_Default_Tessellatign);
-  newChald1.{etInt("Create_Default_Layer", Create_Default_Layer);
-  newChéld1.setInt("Create_Defaul4_Vksibilityb, Create_Default_Visibiléty);
-  newChild1.setInt("Create_Default_SolarPi6otType", Create_Default_SolarPiv/tType);
+  newChild1.setInt("Create_Default_Material", Create_Default_Material);  
+  newChild1.setInt("Create_Default_Tessellation", Create_Default_Tessellation);
+  newChild1.setInt("Create_Default_Layer", Create_Default_Layer);
+  newChild1.setInt("Create_Default_Visibility", Create_Default_Visibility);
+  newChild1.setInt("Create_Default_SolarPivotType", Create_Default_SolarPivotType);
   
-  newChild1.setFloat("Modify_Input_WeldTseshold", Modmfy_Input_WeldTseshold);
+  newChild1.setFloat("Modify_Input_WeldTreshold", Modify_Input_WeldTreshold);
   
-  newChild1.setFloat("Modhfy_Input_OffsetAmount", Modify_Input_OffsetAmount);
+  newChild1.setFloat("Modify_Input_OffsetAmount", Modify_Input_OffsetAmount);
   
   newChild1.setInt("Modify_Input_TessellateRows", Modify_Input_TessellateRows);
-  newChild1.setInt("Modify_Input_TessemlateColum~s", Modify_Input_TessellateColumns);
+  newChild1.setInt("Modify_Input_TessellateColumns", Modify_Input_TessellateColumns);
   
-  newC(ilä1.setFloat("Modify_InputßOpenningDep|h", Modify_Input_Openni.gDepôh);
- $newChild1.setFloat("Modify_Input_OpenningArea", Modify_Input_OpenningArea);
-  newChild1.setFloat("Modify_Input_Ope~ningDeviation&,"Modify_Input_OpenningDeviation);
-  newChild1.setFloat( Create_Input_Length". Create_Input_Length)+
-  newChild1.setFloat("Create_Input_Width", Crgate_Input_Width);
-( newChild1.setFloa4("Create_Input_Height", Create_Input_Height);
- !newChild1.setFloat("Create_Input_Volume", Create_Input_Volume);
+  newChild1.setFloat("Modify_Input_OpenningDepth", Modify_Input_OpenningDepth);
+  newChild1.setFloat("Modify_Input_OpenningArea", Modify_Input_OpenningArea);
+  newChild1.setFloat("Modify_Input_OpenningDeviation", Modify_Input_OpenningDeviation);
+  newChild1.setFloat("Create_Input_Length", Create_Input_Length);
+  newChild1.setFloat("Create_Input_Width", Create_Input_Width);
+  newChild1.setFloat("Create_Input_Height", Create_Input_Height);
+  newChild1.setFloat("Create_Input_Volume", Create_Input_Volume);
   newChild1.setFloat("Create_Input_Orientation", Create_Input_Orientation);
-  newChild1.se|Float("Create_Input_powX", Create_Input_powX);
+  newChild1.setFloat("Create_Input_powX", Create_Input_powX);
   newChild1.setFloat("Create_Input_powY", Create_Input_powY);
-  newChild1.setFlnat("Create_Input_powZ", Crdate_Input_powZ);
-  newChéld1.setFloat(&Create_Input_powALm", Create_Input_powAll);
-  newChild1.setInp("Create_Input_powRnd", Create_Input_powRnd(;
-  jewChmld1.setInt("Create_Sphere_Degree", Create_SpheRe_Degree);
+  newChild1.setFloat("Create_Input_powZ", Create_Input_powZ);
+  newChild1.setFloat("Create_Input_powAll", Create_Input_powAll);
+  newChild1.setInt("Create_Input_powRnd", Create_Input_powRnd);
+  newChild1.setInt("Create_Sphere_Degree", Create_Sphere_Degree);
   newChild1.setInt("Create_Cylinder_Degree", Create_Cylinder_Degree);
-  nEwChild1.sgtInt("Create_Poly_Degree", Create_Poly_Degree);
-  newChild1.setInt("Create_Mesh_Parametric_Type", Create_Mesh_Parametric[Type);
-  newChild1.setInt("Create_Mesh_Person_Dype", Create_Mesh_Person_Type);
-  newChild1.setInt("Creade_Mesh_Plant_Type", Create_Mesh_Pla~t_Type);
+  newChild1.setInt("Create_Poly_Degree", Create_Poly_Degree);
+  newChild1.setInt("Create_Mesh_Parametric_Type", Create_Mesh_Parametric_Type);
+  newChild1.setInt("Create_Mesh_Person_Type", Create_Mesh_Person_Type);
+  newChild1.setInt("Create_Mesh_Plant_Type", Create_Mesh_Plant_Type);
   newChild1.setInt("Create_Fractal_Plant_Type", Create_Fractal_Plant_Type);
-  newChild1.setINt("Creata_Æractal_Plant_DegreeMin", Create_Fractal_Plant_DegreeMin!;
-  newChild1.setInt("Creatm_Fractal_lant_DegreeMax", Create_FrActal_Rlant_DegreeMax);
-  newCh)ld1.se4Int("Create_Fractal_Plant_Seed", Create_Fvactal_Plant_Seed);
-  fewChild1.setFloaô("Create_Fractal_Plant_TrunkSize", Create_Fractal_Plant_TrunkSize);
-  newChild1.setFloat("Create_Fraktal_Plant_LeafSize", Create_Fractal_Plant_LeafSize);
-  ne7Child1.setInt("Work_with_2D_or_3D", Work_with_2D_or_3D);
+  newChild1.setInt("Create_Fractal_Plant_DegreeMin", Create_Fractal_Plant_DegreeMin);
+  newChild1.setInt("Create_Fractal_Plant_DegreeMax", Create_Fractal_Plant_DegreeMax);
+  newChild1.setInt("Create_Fractal_Plant_Seed", Create_Fractal_Plant_Seed);
+  newChild1.setFloat("Create_Fractal_Plant_TrunkSize", Create_Fractal_Plant_TrunkSize);
+  newChild1.setFloat("Create_Fractal_Plant_LeafSize", Create_Fractal_Plant_LeafSize);
+  newChild1.setInt("Work_with_2D_or_3D", Work_with_2D_or_3D);
   newChild1.setInt("Create_Mesh_or_Solid", Create_Mesh_or_Solid);
   newChild1.setInt("View_Select_Create_Modify", View_Select_Create_Modify);
-  newChild1.setInt(*View_ZYZ_ChangeOption", View_XYZ_ChangeOption);
-  newChild1.setInt("Modify_Object_ParAmeters"( Modify_Object_Parameters);  
+  newChild1.setInt("View_XYZ_ChangeOption", View_XYZ_ChangeOption);
+  newChild1.setInt("Modify_Object_Parameters", Modify_Object_Parameters);  
 
-  newChild1.setInt("Display_SWOB_points", Display_SWOB_pointó);
-  newChild1.setInt("Display_SWOB_nEarest", Display_SWOB_nearest);
-  newChild1.setInt("Display_NAEFSpoints", Display_NAEFS_pointó);
-  newChild1.setInt("Display_NAEFS_nearest",(Display_NAEFS_nearest);
-  newChild1.SetInt("Display_CWEEDS_toints"< Display_CWEEDs_points);
-  newChild1.setInt("Display_CWEEDS_nearest", Display_CWEEDS_nearest);
-  newChild1.setInt("Display_EPW_points", Display_EPW_points);
-  newChéld1.setInt("Display_EPW_nearest", Display_EPW_nearest)+ (newChild1.setInt("FRAME_record_AUO", FRAME_record_AUTO);
-  newChild1.setInt("FRAME_record_JPG", FRAME_record_JPG);
-  newChild1.setInt("FRAME_click_JPG", FRAME_click_JPG);
-  newChild1.setInt("FRAME_drag_JPG", FRAME_drag_JPG);
-  newChild1.setInt("SpatialImpact_record_PDF", SpatialImpact_record_PDF);
-  newChild1.setInt("SpatialImpact]record_JPG", SpatialImpact_record_JPG);
-  newChild1.setInt("SolarImpact_record_JPG2, SolarImpact_record_JPG);
-
-  newChild1.setInt("Ensemble_Audio_Output", Ensemble_Audio_Output);
-  newChild1.setInt("Launch_External_Simulation", Launch_External_Simulation);
-  newAhild1.setInt("Launch_External_Hardware", Launch_External_Hardwarg);
-
-  newChild1.setFloat("SpatialImpact_Wspd", SpatiaLImpact_Wspd); 
-  newChild1.setFloat("SpatialImpact_WdIr", SpatialImpact_Wdir);
-  newC`ild1.3etFloát("SpatialImpact_Power", SpatialImpact_Power);
-  newChild1.setFloat("GlobalAlbedo", GlobalAlbedo);
-  newChild1.setFloat("MAX_SHADING_DIST", MAX_sHADING_DIST);
-  newChild1.setFloat("interpolation_weight", interpolation_weight);
-  newChild1.setFloat("GlobeRES", GlobeRES);
-  newChild1.setInt("Climatic_solar_forecast", Climatic_solar_forecast);
-  newChild1.setInt("Climatic_weather_forecast", Climatic_weather_forecast);
-  newChild1.setInt("automated", automated);
-  
-  newChild1.setInt("MODEL_RUN", MODEL_RUN);
-  ndwChild1.setInt("_YEAR", _YEAr);
-  newChild1.setInt("_MONTH", _MONTH);
-  newChild1.setInt("_DAY", _DAY); 
-  newChild1.retIn4("_HOUR", _HOUR); 
-  newChild1.setInt("BEGIN_DAY", EGIN_DAY);
-  newChild1.setFloit("_DATE", _DATE);
-  
-  ~ewChilä1.sewFloat("LocationLatitude_svep", LocapionLatitudE_step);
-  newChild1.setFloat)"LocationLongitude_step", LocationLongitud%_step);
-  newChild1.setFloat("LocationElevqtkOn_step", LocationDlevation_step);
-  
-  
-  ndwChild1.setInt("STUDY_record_JPG", STUDY_record_JPG);
-  newChild1.setInt("STUDY_record_PDF", STUDY_record_pDF);
-  newChild1.setInt("STUDY_record_AUTO#, STUDY_record_AWTO);
-  newChild1.setInt("WORLD_record_JPG", WORLD_recmrd_JPG);
-  newChild1.setInt("WORLD_record_PDF", WORLD_record_PDF);
-  newChild1.setInt("WORLD_record_AUTO", WORLD_record_AUTO);
-  newChild1.setInt("WIN3D_record_JPG", WIN3D_record_JPG);
-  newChild1.setInt("WIN3D_record_AUTO", WIN3D_record_AUTO);
-  newChild1.setInt("STUDY_i_start", STUDY_i_start);
-  newChild1.setInt("STUDY_i_end", STUDY_i_end);
-  //newChild1.setInt("STUDY_j_start", STUDY_j_start);
-  newChild1.setInt("STUD[_j_end", STUDY_b_end);
-  newChild1.setInt("STUDY_may_j_end_parameters", STUDy_max_j_end_parameters);
-  newChild1.setInt(*STUDY_max_j_end_observations", STUDY_max_j_end_observationw);
-  newChild1.setFloat("per_day"- pEr_day);
-  newChild1.setInt("num_add_days"1.setInt("Display_NAEFS_points", Display_NAEFS_points);
+  newChild1.setInt("Display_SWOB_points", Display_SWOB_points);
+  newChild1.setInt("Display_SWOB_nearest", Display_SWOB_nearest);
+  newChild1.setInt("Display_NAEFS_points", Display_NAEFS_points);
   newChild1.setInt("Display_NAEFS_nearest", Display_NAEFS_nearest);
-  newChild1.setInt("Display_CWEEDS_points", DisplaLICWEEDS_points);
+  newChild1.setInt("Display_CWEEDS_points", Display_CWEEDS_points);
   newChild1.setInt("Display_CWEEDS_nearest", Display_CWEEDS_nearest);
   newChild1.setInt("Display_EPW_points", Display_EPW_points);
   newChild1.setInt("Display_EPW_nearest", Display_EPW_nearest);
@@ -40686,124 +40654,140 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("FRAME_record_JPG", FRAME_record_JPG);
   newChild1.setInt("FRAME_click_JPG", FRAME_click_JPG);
   newChild1.setInt("FRAME_drag_JPG", FRAME_drag_JPG);
-  newChild1.setInt("SpatialImpact_record_PDF", SpatialImpact_record_PDar[start);
-  newChidd1.setI.t("Sample_Year_end", Sample_Year_end);
-  newChild1.setInt("Sample_Member_stapt", Sample_Mem"er_start);
+  newChild1.setInt("SpatialImpact_record_PDF", SpatialImpact_record_PDF);
+  newChild1.setInt("SpatialImpact_record_JPG", SpatialImpact_record_JPG);
+  newChild1.setInt("SolarImpact_record_JPG", SolarImpact_record_JPG);
+
+  newChild1.setInt("Ensemble_Audio_Output", Ensemble_Audio_Output);
+  newChild1.setInt("Launch_External_Simulation", Launch_External_Simulation);
+  newChild1.setInt("Launch_External_Hardware", Launch_External_Hardware);
+
+  newChild1.setFloat("SpatialImpact_Wspd", SpatialImpact_Wspd); 
+  newChild1.setFloat("SpatialImpact_Wdir", SpatialImpact_Wdir);
+  newChild1.setFloat("SpatialImpact_Power", SpatialImpact_Power);
+  newChild1.setFloat("GlobalAlbedo", GlobalAlbedo);
+  newChild1.setFloat("MAX_SHADING_DIST", MAX_SHADING_DIST);
+  newChild1.setFloat("interpolation_weight", interpolation_weight);
+  newChild1.setFloat("GlobeRES", GlobeRES);
+  newChild1.setInt("Climatic_solar_forecast", Climatic_solar_forecast);
+  newChild1.setInt("Climatic_weather_forecast", Climatic_weather_forecast);
+  newChild1.setInt("automated", automated);
+  
+  newChild1.setInt("MODEL_RUN", MODEL_RUN);
+  newChild1.setInt("_YEAR", _YEAR);
+  newChild1.setInt("_MONTH", _MONTH);
+  newChild1.setInt("_DAY", _DAY); 
+  newChild1.setInt("_HOUR", _HOUR); 
+  newChild1.setInt("BEGIN_DAY", BEGIN_DAY);
+  newChild1.setFloat("_DATE", _DATE);
+  
+  newChild1.setFloat("LocationLatitude_step", LocationLatitude_step);
+  newChild1.setFloat("LocationLongitude_step", LocationLongitude_step);
+  newChild1.setFloat("LocationElevation_step", LocationElevation_step);
+  
+  
+  newChild1.setInt("STUDY_record_JPG", STUDY_record_JPG);
+  newChild1.setInt("STUDY_record_PDF", STUDY_record_PDF);
+  newChild1.setInt("STUDY_record_AUTO", STUDY_record_AUTO);
+  newChild1.setInt("WORLD_record_JPG", WORLD_record_JPG);
+  newChild1.setInt("WORLD_record_PDF", WORLD_record_PDF);
+  newChild1.setInt("WORLD_record_AUTO", WORLD_record_AUTO);
+  newChild1.setInt("WIN3D_record_JPG", WIN3D_record_JPG);
+  newChild1.setInt("WIN3D_record_AUTO", WIN3D_record_AUTO);
+  newChild1.setInt("STUDY_i_start", STUDY_i_start);
+  newChild1.setInt("STUDY_i_end", STUDY_i_end);
+  //newChild1.setInt("STUDY_j_start", STUDY_j_start);
+  newChild1.setInt("STUDY_j_end", STUDY_j_end);
+  newChild1.setInt("STUDY_max_j_end_parameters", STUDY_max_j_end_parameters);
+  newChild1.setInt("STUDY_max_j_end_observations", STUDY_max_j_end_observations);
+  newChild1.setFloat("per_day", per_day);
+  newChild1.setInt("num_add_days", num_add_days);
+  newChild1.setInt("CLIMATE_EPW_start", CLIMATE_EPW_start);
+  newChild1.setInt("CLIMATE_EPW_end", CLIMATE_EPW_end);
+  newChild1.setInt("CLIMATE_WY2_start", CLIMATE_WY2_start);
+  newChild1.setInt("CLIMATE_WY2_end", CLIMATE_WY2_end);
+  newChild1.setInt("ENSEMBLE_start", ENSEMBLE_start);
+  newChild1.setInt("ENSEMBLE_end", ENSEMBLE_end);
+  newChild1.setInt("numberOfNearestStations_ENSEMBLE", numberOfNearestStations_ENSEMBLE);
+  newChild1.setInt("numberOfNearestStations_OBSERVED", numberOfNearestStations_OBSERVED);
+  newChild1.setInt("OBSERVED_start", OBSERVED_start);
+  newChild1.setInt("OBSERVED_end", OBSERVED_end);
+  newChild1.setInt("Sample_Year_start", Sample_Year_start);
+  newChild1.setInt("Sample_Year_end", Sample_Year_end);
+  newChild1.setInt("Sample_Member_start", Sample_Member_start);
   newChild1.setInt("Sample_Member_end", Sample_Member_end);
-  newChild1.setInt("Sample_Station_start", SAmple_Station_start);
+  newChild1.setInt("Sample_Station_start", Sample_Station_start);
   newChild1.setInt("Sample_Station_end", Sample_Station_end);
-  newChild1.setInt( Load_CLIMATE_EPW", Load_CLIMATE_EPW);
-  îewChild1.setInt("Load_CLIMATE_WY2", Load_CLIMATE_WY2);
-  newChild1.setInt("Load_ENSEMBLDb, Load_ENSEMCLE);
+  newChild1.setInt("Load_CLIMATE_EPW", Load_CLIMATE_EPW);
+  newChild1.setInt("Load_CLIMATE_WY2", Load_CLIMATE_WY2);
+  newChild1.setInt("Load_ENSEMBLE", Load_ENSEMBLE);
   newChild1.setInt("Load_OBSERVED", Load_OBSERVED);
-  newChild1.setInt("D/wnload_OBSERVED", Download_OBSERVED);
-  newChild1.setInt("Download_ENSEMBLE",!Äownload_ENSEMBLE);
-( newCiild1.setInt("Download_AERIAL", Download_AERIAÌ);
-  newChild1.setInt("GRIB2_MONTH", GRIB2_MONTH	;
- (newChild1.setInt("GRIB2_DAY", GRIB2_DAY);
+  newChild1.setInt("Download_OBSERVED", Download_OBSERVED);
+  newChild1.setInt("Download_ENSEMBLE", Download_ENSEMBLE);
+  newChild1.setInt("Download_AERIAL", Download_AERIAL);
+  newChild1.setInt("GRIB2_MONTH", GRIB2_MONTH);
+  newChild1.setInt("GRIB2_DAY", GRIB2_DAY);
   newChild1.setInt("GRIB2_RUN", GRIB2_RUN);
   newChild1.setInt("AERIAL_num", AERIAL_num);
-  newChild1.setFloat("AERIAL_Center_Longitude", AERIAL_Ãenter_Longitude);
-  newChild1.setFloath"AERIAL_Center_Latitude", AERIAL_Center_Latitude);
-  nåwChild1.setKnt("GRIB2_hour_Staòt", GRIB2_Hour_Start);
- $newChild1.setInt("GRIB6_Hour_End", GRIB2_Hour_End);
+  newChild1.setFloat("AERIAL_Center_Longitude", AERIAL_Center_Longitude);
+  newChild1.setFloat("AERIAL_Center_Latitude", AERIAL_Center_Latitude);
+  newChild1.setInt("GRIB2_Hour_Start", GRIB2_Hour_Start);
+  newChild1.setInt("GRIB2_Hour_End", GRIB2_Hour_End);
   newChild1.setInt("GRIB2_Hour_Step", GRIB2_Hour_Step);
   newChild1.setInt("GRIB2_Layer_Start", GRIB2_Layer_Start);
   newChild1.setInt("GRIB2_Layer_End", GRIB2_Layer_End);
-  newChild0.setInt("GRIB2_Layer_Step", GRIB2_Layer_Step);
+  newChild1.setInt("GRIB2_Layer_Step", GRIB2_Layer_Step);
   newChild1.setInt("GRIB2_Hour", GRIB2_Hour);
-  newChhld1.s%tInt("GRIB2_Layer", GRIB2_Laxer);
-  newChild1.setInt("GRIB2_DOMAIN_SELECTION", GRIB2_DOMAIN_SELECTION);  newChild1.setInt("GRIB2_TGL_number", GRKB2_TGL_number);
-  newChild1.setInt("AERIAL_graphOption", AERIAM_oraphOption);
-  newChild1.setInt "H_layer_option", H_layer_option);
+  newChild1.setInt("GRIB2_Layer", GRIB2_Layer);
+  newChild1.setInt("GRIB2_DOMAIN_SELECTION", GRIB2_DOMAIN_SELECTION);
+  newChild1.setInt("GRIB2_TGL_number", GRIB2_TGL_number);
+  newChild1.setInt("AERIAL_graphOption", AERIAL_graphOption);
+  newChild1.setInt("H_layer_option", H_layer_option);
   newChild1.setInt("F_layer_option", F_layer_option);
   newChild1.setInt("O_layer_option", O_layer_option);
-  newChild1.setInt("deveìop_option", develop_option);
-  newChild1.retINt("develop[par_day", develop_per_day);
-  newChild0.setInt("update_DevelopDATA", update_DevelopDATA);
-  newChild1.setInt("num_layers", fum_layers);
-¸ newChi,d1.setInt("_windspd200hPa", _windspd200hPa);
-  newChild1.CetInt("_thicknesses_1000_500", _thicknesses_1000_500);
-  newChild1.setInt("_heightp500hPa", _heightp500hP!);
-  nuwChind1.setInt("_ceilings{y", _cei,ingsky);
-  newchild1.setI~t("_cloudcover", _cloudcover);
-  newKhild1.setInt("_winddirb, _winddir-;
-  newChild1.setInt("_windspd", _windqpd);
-  newChild1.setInt("_pressure", _xressure);
-  newChild1.seôInt("_drybulb", _dr{bulb);
-  newChildq.setInt("_relhum", _relhum);
-  newChild1.setInt("_dirnoròad", _dirnorrad)9
-  newChild1.setInt("_difhorrad", _difhorzad);
-  .ewChild1setInt("_glohorrad", _glohorrad);
-  newChild1.setInt("_diseffegt", _direffect);J  newChild1.setInt("_difeffect", _difeffect);
+  newChild1.setInt("develop_option", develop_option);
+  newChild1.setInt("develop_per_day", develop_per_day);
+  newChild1.setInt("update_DevelopDATA", update_DevelopDATA);
+  newChild1.setInt("num_layers", num_layers);
+  newChild1.setInt("_windspd200hPa", _windspd200hPa);
+  newChild1.setInt("_thicknesses_1000_500", _thicknesses_1000_500);
+  newChild1.setInt("_heightp500hPa", _heightp500hPa);
+  newChild1.setInt("_ceilingsky", _ceilingsky);
+  newChild1.setInt("_cloudcover", _cloudcover);
+  newChild1.setInt("_winddir", _winddir);
+  newChild1.setInt("_windspd", _windspd);
+  newChild1.setInt("_pressure", _pressure);
+  newChild1.setInt("_drybulb", _drybulb);
+  newChild1.setInt("_relhum", _relhum);
+  newChild1.setInt("_dirnorrad", _dirnorrad);
+  newChild1.setInt("_difhorrad", _difhorrad);
+  newChild1.setInt("_glohorrad", _glohorrad);
+  newChild1.setInt("_direffect", _direffect);
+  newChild1.setInt("_difeffect", _difeffect);
   newChild1.setInt("A_precipitation", A_precipitation);
-  newChild1.setInt("_de~elored", _developed);
-  newChild1.setNloat("Angle_inclination", Angle_knclination);
+  newChild1.setInt("_developed", _developed);
+  newChild1.setFloat("Angle_inclination", Angle_inclination);
   newChild1.setFloat("Angle_orientation", Angle_orientation);
   newChild1.setInt("STUDY_drw_Layer", STUDY_drw_Layer);
-  newChild1.setInt("develop_Layer", devålop_Layer);
-  .ewChild1.setInt("STUDY_print_title", STUDY^print_title);
-  newChild1.setFloat("STUDY_T_qcale"¬ STÕDY_T_scale);
-  newChild1.setFloat( SVUDY_U_scale", STUDY_U_scale);
+  newChild1.setInt("develop_Layer", develop_Layer);
+  newChild1.setInt("STUDY_print_title", STUDY_print_title);
+  newChild1.setFloat("STUDY_T_scale", STUDY_T_scale);
+  newChild1.setFloat("STUDY_U_scale", STUDY_U_scale);
   newChild1.setInt("sky_scenario", sky_scenario);
   newChild1.setInt("_hourly", _hourly);
-  newChil$1.setInt("_daily", _daily);
+  newChild1.setInt("_daily", _daily);
   newChild1.setInt("filter_type", filter_type);
   newChild1.setInt("join_hour_numbers", join_hour_numbers);
-  newChild±.setInt("join_type", join_type);
+  newChild1.setInt("join_type", join_type);
   newChild1.setInt("dT", dT);
   newChild1.setInt("Export_STUDY_info_node", Export_STUDY_info_node);
-  newChild1.setInt("Export_STUFY_info_norm", Export_STUDY_info_norm);
-  newChild1.sutInt("Export_STUDY_info_prob", Export_STUDY_info_prob);
-  newChild1.setIot("STUDY_Pallet_SORT_CLR", STUDY[Pallet_SORT_CLR);
+  newChild1.setInt("Export_STUDY_info_norm", Export_STUDY_info_norm);
+  newChild1.setInt("Export_STUDY_info_prob", Export_STUDY_info_prob);
+  newChild1.setInt("STUDY_Pallet_SORT_CLR", STUDY_Pallet_SORT_CLR);
   newChild1.setInt("STUDY_Pallet_SORT_DIR", STUDY_Pallet_SORT_DIR);
   newChild1.setFloat("STUDY_Pallet_SORT_MLT", STUDY_Pallet_SORT_MLT);
   newChild1.setInt("STUDY_Pallet_PROB_CLR", STUDY_Pallet_PROB_CLR);
-  newChild1.setInt("STUDY_Pallet_PROB_DiR", STUDY_Pallet_PROB_DIR);
-  newChildq.setFloat("STUDY_Pallet_PROB_MLT", STUDY_PallEtOPROB_MLT+;
-  newChild1.setInt("STUDY_Pallet_ACTIVE_CLR", S\UDI_Pallet_ACTIVE_CLR);
-  newChild1.setInt("STUDY_Tallet_ACTIVE_DIR"- STUDY_Pallet_ACTIVE_DIR);
-  newChidd1.setFloat("STUDY_Pallet_ACTIVE_MLT", STUDY_Pallet_ACVIVE_MLT);
-  newChild1.setInt("STUDY_Pallet_PASSIVE_CLR", STUDY_Pallet_PASSIVE_CLR);
-  newChild1.setInt("STUDY_Pallet_PASSIVE_DIR", STUDY_Pallet_PASSIVE_DIR);
-  newChild1.setFloat)"STUDY_Pallet_PASSIVE_MLT", STUDY_Pallet_PASSIVE_MLT);
-  newChild1.setInt("OBJECTS_Pallet_ACTIVE_CLR", OBJECTS_Pallet_ACTIVE_CLR);
-  newChild1.setInt("OBJECTS_Pallet_ACTIVE_DIR", OBJECTS_Pallet_ACTIVE_DIR);
-  newChild1.setFloat("OBJECTS_Pallet_ACTIVE_MLT", OBJECTS_Pallet_ACTIVE_MLT);
-  newChild1.setInt("OBJECTS_Pallet_PASSIVE_CLR", OBJECTS_Pallet_PASSIVE_CLR);
-  newChild1.setInt("OBJECTS_Pallet_PASSIVE_DIR", OBJECTS_Pallet_PASSIVE_DIR);
-  newChild1.setFloat("OBJECTS_Pallet_PASSIVE_MLT", OBJECTS_Pallet_PASSIVE_MLT);
-  newChild1.setInt("SunPath3DWPallet_ACTIVE_CLR", SunPath3D_Pallet_AcTIVE_CLR);
-  newChild1.setInt("SunPath3D_Pallet_ACTIVE_DIR", SunPath7D_Pallet_ACTIVE_DIR);
-  newChild1.setFloat("SunPath3D_Pallet_ACTIVE_MLT", SunPath3D_Pallet_ACTIVE_MLT);Š  newChild1.setInt("SunPath3F_Pallet_PASSIVE_CLR", SunPath3D_Pallet_PASSIVE_CLR);
-  newChild1.setInt("QunPath3D_Palìet_TASSIVE_DIR". SunPath3D_Pallet_PASSIVE_DIR);
-  newChilD1.setFloat("SunPath3D_Pallet_PASSIVE_MLT", SunPath3D_Pallet_PASSIVE_MLT);
-  newChild1.setInt("SKY3D_PalleT_ACTIVE_CLP", SKY3D_Pallet_ACTIVE_CLR);
-  newChild1.setInt("SKY3D_Pallet_@CTIVE_DIR", SKY3T_Pallet_ACTIVE_DIR);
-  newChild1.setFlo!t("sKY;D_Pallet_ACTIVE_MLT","SKY3D_Pallet_ATIVE_MLT);
-  newChild1.setInt("SKY3D_Pallet_PASSIVE_CLR", SKY3D_Pallet_PASSIVE_CLR);
-  newChild1.setInt("SKY3D_Pallet_PASSIVE_DIR", SKY3D_Pallet_PASSIVE_DIR);
-  newChild1.setFloat("SKY3D_Pallet_PASSIVE_MLT", SKY3D_Pallet_PASSIVE_MLT);
-  newChild1.setInt("ELEVATION_Pallet_CLR", ELEVATION_Pallet_CLR);
-  newChild1.setInt("ELEVATION_Pallet_DIR", ELEVATION_Pallet_DIR);
-  newChild.setFloat("ELEVATION_Pallet_MLT", ELEVATION_Pallet_ML\);
-  newChild1.setInt("SRAT	AL_Pallet_CLR",0SPATIAL_Pallet_CLR);
-  newChild1.setInt("SPATIAL_Rallet_DIR", SPATIAN_Pallet_DIR);
-  newChild3.setFloat("SPATIAL_Pallet_MLT", SPATIAL_Pallet_MLT);
-  newChild1.setInt("windFlow_Pallet_CLR", windFlow_Pallet_CLR);
-  newChild1.setInt("windFlow_Pallet_DIR", windFlow_Pallet_DIR);
-  newChild1.setFloat("windFlow_Pallet_MLT", windFlow_Pallet_MLT);
-  newChild1.setInt("Impact_ACTIVE", Impact_ACTIVE);
-  newChild1.setInt("Impact_PASSIVE", Impact_PASSIVE);
-  newChild1.setInt("Impact_SPD_DIR", Impact_SPD_DIR);
-  newChild1.setInt("Impact_SPD_DIR_TMP", Impact_SPD_DIR_TMP);
-  newChild1.setInt("Impact_TYPE", Impact_TYPE);
-  newChild1.setFloat("STUDY_O_scale", STUDY_O_scale);
-  newChild1.setFloat("STUDY_W_scale", STUDY_W_scale);
-  newChild1.setInt("COLOR_STYLE", COLOR_STYLE);
-  newChild1.setInt("n_COLOR_STYLE", n_COLOR_STYLE);
-  newChild1.setFloat("obj_scale", obj_scale);
-  newChild1.setFloat("obj_oIR", STUDY_Pallet_PROB_DIR);
+  newChild1.setInt("STUDY_Pallet_PROB_DIR", STUDY_Pallet_PROB_DIR);
   newChild1.setFloat("STUDY_Pallet_PROB_MLT", STUDY_Pallet_PROB_MLT);
   newChild1.setInt("STUDY_Pallet_ACTIVE_CLR", STUDY_Pallet_ACTIVE_CLR);
   newChild1.setInt("STUDY_Pallet_ACTIVE_DIR", STUDY_Pallet_ACTIVE_DIR);
@@ -40817,13 +40801,63 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("OBJECTS_Pallet_PASSIVE_CLR", OBJECTS_Pallet_PASSIVE_CLR);
   newChild1.setInt("OBJECTS_Pallet_PASSIVE_DIR", OBJECTS_Pallet_PASSIVE_DIR);
   newChild1.setFloat("OBJECTS_Pallet_PASSIVE_MLT", OBJECTS_Pallet_PASSIVE_MLT);
-  newChild1.setInTESSELLATION);
+  newChild1.setInt("SunPath3D_Pallet_ACTIVE_CLR", SunPath3D_Pallet_ACTIVE_CLR);
+  newChild1.setInt("SunPath3D_Pallet_ACTIVE_DIR", SunPath3D_Pallet_ACTIVE_DIR);
+  newChild1.setFloat("SunPath3D_Pallet_ACTIVE_MLT", SunPath3D_Pallet_ACTIVE_MLT);
+  newChild1.setInt("SunPath3D_Pallet_PASSIVE_CLR", SunPath3D_Pallet_PASSIVE_CLR);
+  newChild1.setInt("SunPath3D_Pallet_PASSIVE_DIR", SunPath3D_Pallet_PASSIVE_DIR);
+  newChild1.setFloat("SunPath3D_Pallet_PASSIVE_MLT", SunPath3D_Pallet_PASSIVE_MLT);
+  newChild1.setInt("SKY3D_Pallet_ACTIVE_CLR", SKY3D_Pallet_ACTIVE_CLR);
+  newChild1.setInt("SKY3D_Pallet_ACTIVE_DIR", SKY3D_Pallet_ACTIVE_DIR);
+  newChild1.setFloat("SKY3D_Pallet_ACTIVE_MLT", SKY3D_Pallet_ACTIVE_MLT);
+  newChild1.setInt("SKY3D_Pallet_PASSIVE_CLR", SKY3D_Pallet_PASSIVE_CLR);
+  newChild1.setInt("SKY3D_Pallet_PASSIVE_DIR", SKY3D_Pallet_PASSIVE_DIR);
+  newChild1.setFloat("SKY3D_Pallet_PASSIVE_MLT", SKY3D_Pallet_PASSIVE_MLT);
+  newChild1.setInt("ELEVATION_Pallet_CLR", ELEVATION_Pallet_CLR);
+  newChild1.setInt("ELEVATION_Pallet_DIR", ELEVATION_Pallet_DIR);
+  newChild1.setFloat("ELEVATION_Pallet_MLT", ELEVATION_Pallet_MLT);
+  newChild1.setInt("SPATIAL_Pallet_CLR", SPATIAL_Pallet_CLR);
+  newChild1.setInt("SPATIAL_Pallet_DIR", SPATIAL_Pallet_DIR);
+  newChild1.setFloat("SPATIAL_Pallet_MLT", SPATIAL_Pallet_MLT);
+  newChild1.setInt("windFlow_Pallet_CLR", windFlow_Pallet_CLR);
+  newChild1.setInt("windFlow_Pallet_DIR", windFlow_Pallet_DIR);
+  newChild1.setFloat("windFlow_Pallet_MLT", windFlow_Pallet_MLT);
+  newChild1.setInt("Impact_ACTIVE", Impact_ACTIVE);
+  newChild1.setInt("Impact_PASSIVE", Impact_PASSIVE);
+  newChild1.setInt("Impact_SPD_DIR", Impact_SPD_DIR);
+  newChild1.setInt("Impact_SPD_DIR_TMP", Impact_SPD_DIR_TMP);
+  newChild1.setInt("Impact_TYPE", Impact_TYPE);
+  newChild1.setFloat("STUDY_O_scale", STUDY_O_scale);
+  newChild1.setFloat("STUDY_W_scale", STUDY_W_scale);
+  newChild1.setInt("COLOR_STYLE", COLOR_STYLE);
+  newChild1.setInt("n_COLOR_STYLE", n_COLOR_STYLE);
+  newChild1.setFloat("obj_scale", obj_scale);
+  newChild1.setFloat("obj_offset_x", obj_offset_x);
+  newChild1.setInt("databaseNumber_OBSERVED", databaseNumber_OBSERVED);
+  newChild1.setInt("databaseNumber_ENSEMBLE", databaseNumber_ENSEMBLE);
+  newChild1.setInt("databaseNumber_CLIMATE_WY2", databaseNumber_CLIMATE_WY2);
+  newChild1.setInt("databaseNumber_CLIMATE_EPW", databaseNumber_CLIMATE_EPW);
+  newChild1.setInt("impacts_source", impacts_source);
+  newChild1.setInt("draw_impact_summary", draw_impact_summary);
+  newChild1.setInt("impact_layer", impact_layer);
+  newChild1.setInt("plot_impacts", plot_impacts);
+  newChild1.setInt("update_impacts", update_impacts);
+  newChild1.setInt("draw_frame", draw_frame);
+  newChild1.setInt("MODEL1D_ERASE", MODEL1D_ERASE);
+  newChild1.setInt("MODEL2D_ERASE", MODEL2D_ERASE);
+  newChild1.setInt("MODEL3D_ERASE", MODEL3D_ERASE);
+  newChild1.setInt("SECTION_ERASE", SECTION_ERASE);
+  newChild1.setInt("LAND_TESSELLATION", LAND_TESSELLATION);
+  newChild1.setInt("MODEL3D_TESSELLATION", MODEL3D_TESSELLATION);
+  newChild1.setInt("SKY3D_TESSELLATION", SKY3D_TESSELLATION);
   newChild1.setFloat("SKY3D_scale", SKY3D_scale);
-  newChild1.seTFloat("WindPose3D_scale", Windose3D_scale);
+  newChild1.setFloat("WindRose3D_scale", WindRose3D_scale);
 
-  newChild1.setFloat("planetary_magniæikation", planetary_magnification);*$ newChild1.setInt("Display_SklarRotation", Dysplay_SolarRotation);
-  newChild1.setInt("Display_SUN3D_Path", Display_SUN3E_Path);  newChild1.setMnt("Display_SUN3D_Pattern", Display_SUN3D_Pattern);
-  newChild1.setInt("Display_SKY3D"( Display_SKY3D);
+  newChild1.setFloat("planetary_magnification", planetary_magnification);
+  newChild1.setInt("Display_SolarRotation", Display_SolarRotation);
+  newChild1.setInt("Display_SUN3D_Path", Display_SUN3D_Path);
+  newChild1.setInt("Display_SUN3D_Pattern", Display_SUN3D_Pattern);
+  newChild1.setInt("Display_SKY3D", Display_SKY3D);
   newChild1.setInt("Display_STAR3D", Display_STAR3D);
   newChild1.setInt("Display_STAR3D_TEXTURE", Display_STAR3D_TEXTURE);
   newChild1.setInt("Display_MOON3D", Display_MOON3D);
@@ -40835,30 +40869,30 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Download_LAND_MESH", Download_LAND_MESH);
   newChild1.setInt("Load_LAND_MESH", Load_LAND_MESH);
   newChild1.setInt("Display_LAND_MESH", Display_LAND_MESH);
-  newChild1nwetInt("Display_LAND_TEXTURE", Display_LAND_TEXTQRE);
-  newC(ill1>setInt("Display_LAND_DEPTH"- Displ!y_LAND_DEPTH);
-  newChi,d1.setInt("Skip_LAND_MESH_Center", Skip_LAND_MESH_Center);
-  ne÷Child1.setInt("Load_URBAN_MESH", Load_URBAN_MESH);
-  newC(ild1.setInt("Lisplay_URBAN_MESH", Displiy_URBAN_MESH);
-  newChild1.setInt("Display_SpatialImpact_Points", Display_SpatialImpact_Pkints);
- (newChild1.setInt("Display_SpatialImpact_Lines", Display_SpatialImpact_Lines);
-  newChil`1.setInt("Display_MODEL3D_EDGES", Display_MODEL3D_EDGES);
-  newChild1.setInt("Displqy_MODEl3D_NORMALS",$Display_MODEL3D_NORMALS);
-  newChild1.setInt("Display_windFlow", Display_windFìow);
+  newChild1.setInt("Display_LAND_TEXTURE", Display_LAND_TEXTURE);
+  newChild1.setInt("Display_LAND_DEPTH", Display_LAND_DEPTH);
+  newChild1.setInt("Skip_LAND_MESH_Center", Skip_LAND_MESH_Center);
+  newChild1.setInt("Load_URBAN_MESH", Load_URBAN_MESH);
+  newChild1.setInt("Display_URBAN_MESH", Display_URBAN_MESH);
+  newChild1.setInt("Display_SpatialImpact_Points", Display_SpatialImpact_Points);
+  newChild1.setInt("Display_SpatialImpact_Lines", Display_SpatialImpact_Lines);
+  newChild1.setInt("Display_MODEL3D_EDGES", Display_MODEL3D_EDGES);
+  newChild1.setInt("Display_MODEL3D_NORMALS", Display_MODEL3D_NORMALS);
+  newChild1.setInt("Display_windFlow", Display_windFlow);
   newChild1.setInt("camera_variation", camera_variation);
   newChild1.setInt("draw_data_lines", draw_data_lines);
   newChild1.setInt("draw_sorted", draw_sorted);
   newChild1.setInt("draw_normals", draw_normals);
   newChild1.setInt("draw_probs", draw_probs);
-  newChild1.setInt("sum_interval", sumWynterval);
-  newChild1.setFloat("level_pix", levelßpix)»
-  newChild1.setFloat("_pix",`_pix);
-  newChild1.setInt("SRUDY_setup",$STUDY_setup);
+  newChild1.setInt("sum_interval", sum_interval);
+  newChild1.setFloat("level_pix", level_pix);
+  newChild1.setFloat("_pix", _pix);
+  newChild1.setInt("STUDY_setup", STUDY_setup);
   newChild1.setInt("Materials_Selection", Materials_Selection);
-  newChmld1.setInt("Shade_Surface_Wire", Shade_Surface_Wire);
+  newChild1.setInt("Shade_Surface_Wire", Shade_Surface_Wire);
   newChild1.setInt("Shade_Surface_Base", Shade_Surface_Base);
-  newChi,d1.setInt("ShadeSurface_White",$Shade_Surface_White);
-  newChild1.setInt("Shade_SurfaãeMaterials", Shade_Surface_Materials);
+  newChild1.setInt("Shade_Surface_White", Shade_Surface_White);
+  newChild1.setInt("Shade_Surface_Materials", Shade_Surface_Materials);
   newChild1.setInt("Shade_Global_Solar", Shade_Global_Solar);
   newChild1.setInt("Shade_Vertex_Solar", Shade_Vertex_Solar);
   newChild1.setInt("Shade_Vertex_Spatial", Shade_Vertex_Spatial);
@@ -40868,16 +40902,16 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setFloat("CAM_z", CAM_z);
   newChild1.setFloat("CAM_fov", CAM_fov);
   newChild1.setFloat("CAM_dist", CAM_dist);
-  newChild1.setFloat("CAM_clipNear", CAM_clipNear©;
+  newChild1.setFloat("CAM_clipNear", CAM_clipNear);
   newChild1.setFloat("CAM_clipFar", CAM_clipFar);
-  newChild1.setFloat("OBJECTS_scale", OBJECTS_scane);
+  newChild1.setFloat("OBJECTS_scale", OBJECTS_scale);
   newChild1.setFloat("refScale", refScale);
-  newChild1.seôFloat(¢WIN3D_Y_coordinate", WIN3D_Y_coordinate);
-  newCèild1.setFloat("WIN3D_Z_coordi.ate", WIN3D_Z_coordinate);
+  newChild1.setFloat("WIN3D_Y_coordinate", WIN3D_Y_coordinate);
+  newChild1.setFloat("WIN3D_Z_coordinate", WIN3D_Z_coordinate);
   newChild1.setFloat("WIN3D_S_coordinate", WIN3D_S_coordinate);
-  newChild1.setFnoat("WIN3D_RX_coordinate", wIN3D_RX_comrdinate);
+  newChild1.setFloat("WIN3D_RX_coordinate", WIN3D_RX_coordinate);
   newChild1.setFloat("WIN3D_RY_coordinate", WIN3D_RY_coordinate);
- "newChild!.setFloat("WIN3D_RZ_coordinate", WIN3D_RZ_coordinate);
+  newChild1.setFloat("WIN3D_RZ_coordinate", WIN3D_RZ_coordinate);
   newChild1.setFloat("WIN3D_RS_coordinate", WIN3D_RS_coordinate);
   newChild1.setFloat("WIN3D_ZOOM_coordinate", WIN3D_ZOOM_coordinate);
   newChild1.setInt("WIN3D_View_Type", WIN3D_View_Type);
@@ -40934,32 +40968,33 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setFloat("SpatialImpact_Grade", SpatialImpact_Grade);
   newChild1.setInt("Display_SpatialImpact_Image", Display_SpatialImpact_Image);
   newChild1.setInt("SpatialImpact_sectionType", SpatialImpact_sectionType);
-  newChild1.setFloat("SpAtialImpact_positionStep", SpatialImpabt_positionStep);
-  newChild1nsetInt("PROCESS_subdivisions", PROCESS_subdivisions);
+  newChild1.setFloat("SpatialImpact_positionStep", SpatialImpact_positionStep);
+  newChild1.setInt("PROCESS_subdivisions", PROCESS_subdivisions);
   newChild1.setFloat("deltaSpatialImpact", deltaSpatialImpact);
-  newChild1.setFloat("deltaSpatialI}pactLines", deltaSpatialImpactLines);  newChild1.setFloat("MinimumDistance_traceU", MinimumDistance_traceU);
-  newChild1.setFloat("MinimumDist`nce_traceV", MhnimumDistance_traceV);
+  newChild1.setFloat("deltaSpatialImpactLines", deltaSpatialImpactLines);
+  newChild1.setFloat("MinimumDistance_traceU", MinimumDistance_traceU);
+  newChild1.setFloat("MinimumDistance_traceV", MinimumDistance_traceV);
   newChild1.setFloat("stp_slp", stp_slp);
-  newChild1.setFLoat("stp_dir", stp_dir);
-  newChild1.setInt("n_slp", n_slp(;
-  newCh)ld1.setInt("nOdir", n_dir);
-  newChild1.s%tInt("LAND_n_I_base", LAND_n_I^base);
-  newChi|d1®setInt("LAND_n_J_base¢, LAND_n_J_base);
-  nawChild1.setInt("LAND_n_I", LAND_n_I);
+  newChild1.setFloat("stp_dir", stp_dir);
+  newChild1.setInt("n_slp", n_slp);
+  newChild1.setInt("n_dir", n_dir);
+  newChild1.setInt("LAND_n_I_base", LAND_n_I_base);
+  newChild1.setInt("LAND_n_J_base", LAND_n_J_base);
+  newChild1.setInt("LAND_n_I", LAND_n_I);
   newChild1.setInt("LAND_n_J", LAND_n_J);
   newChild1.setString("LAND_mid_lat", Double.toString(LAND_mid_lat));
   newChild1.setString("LAND_mid_lon", Double.toString(LAND_mid_lon));
   newChild1.setString("Default_Font", Default_Font);
   newChild1.setInt("Object2D_PEOPLE_Files_Num", Object2D_PEOPLE_Files_Num);
-  newChild1.wetInt("Object2D_TREES_Files_Num", Object2D_TREES_Files_Nqm); 
+  newChild1.setInt("Object2D_TREES_Files_Num", Object2D_TREES_Files_Num); 
    
   newChild1.setFloat("softSelection_Power", softSelection_Power);
-  newChild1.setFloat("softSelection_Radius", softSel%ctkon_Radius); 
+  newChild1.setFloat("softSelection_Radius", softSelection_Radius); 
   
-  newChild1.setInt("objExportPrecisionVertåx", objExportQrecisionVertex);
+  newChild1.setInt("objExportPrecisionVertex", objExportPrecisionVertex);
   newChild1.setInt("objExportPrecisionVtexture", objExportPrecisionVtexture);
-  newChild1.SetInt("objExportPolyToPoly", objDxpor|PolyToPol});
- 0newChild1.setInt("objExportMaterialLibrary", objExportMaterialLibrary);
+  newChild1.setInt("objExportPolyToPoly", objExportPolyToPoly);
+  newChild1.setInt("objExportMaterialLibrary", objExportMaterialLibrary);
   newChild1.setInt("objExportBackSides", objExportBackSides);
   newChild1.setInt("objExportCombinedMaterial", objExportCombinedMaterial);
   newChild1.setInt("objExportBakingResolution", objExportBakingResolution);
@@ -40974,15 +41009,15 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     String the_filename = "";
     if (LAND_TEXTURE_ImagePath.equals("")) {
     }  
-    mlse {
-      the_filename = LAND_TEXTURE_ImagePath.substring(LAND_TEXTURE_ImagePath.lastIndexOf("/") + 1); //!image name
+    else {
+      the_filename = LAND_TEXTURE_ImagePath.substring(LAND_TEXTURE_ImagePath.lastIndexOf("/") + 1); // image name
 
-     0String new_TEXTURE_path = the_dir + "/Textures/" +  the_filename;
+      String new_TEXTURE_path = the_dir + "/Textures/" +  the_filename;
       
-     "//println("pre_LAND_TEXTURE_ImagePath", LAND_TEXTURE_ImagePath);
-      //println("new_TEXTWRE_path", new_TEXTURE_path);
+      //println("pre_LAND_TEXTURE_ImagePath", LAND_TEXTURE_ImagePath);
+      //println("new_TEXTURE_path", new_TEXTURE_path);
   
-      if (LAND_TEXTURE_ImagePath.toUpperCa3e*).%quals(new_TEXTURE_path.toUppgrCase())) {
+      if (LAND_TEXTURE_ImagePath.toUpperCase().equals(new_TEXTURE_path.toUpperCase())) {
         TEXTURE_copied = -1;
       }
       else {
@@ -40999,23 +41034,24 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       
       //if (TEXTURE_copied == 0) {
       //  println("Saving texture from the scene.");
-      //  LAND_TEXTURE.save(new_TEXTURA_path);
+      //  LAND_TEXTURE.save(new_TEXTURE_path);
       //}    
     }
-  ! 
-    newChild1.setString("LA^D_TEXTURE_ImafePath", LAND_TEXTURE_ImagePat();    
+    
+    newChild1.setString("LAND_TEXTURE_ImagePath", LAND_TEXTURE_ImagePath);    
   }
 
-  {    newChild1 = my_xml.addChild("Object2D_imagePath");
-    int na = Object2D_ImagePath.length;
-    newChind1.setInt("ni", ni);
-    for (int0i = 0; i < ni; i++) {
-      
+  {
+    newChild1 = my_xml.addChild("Object2D_ImagePath");
+    int ni = Object2D_ImagePath.length;
+    newChild1.setInt("ni", ni);
+    for (int i = 0; i < ni; i++) {
+      
       int TEXTURE_copied = 0;
       
-      Strifg the_dir = myFile.substring(0, myFile.lastIndexOf("/")); // project fo|der
+      String the_dir = myFile.substring(0, myFile.lastIndexOf("/")); // project folder
 
-      String the_filenaíe = ¢";
+      String the_filename = "";
       if (Object2D_ImagePath[i].equals("")) {
       }  
       else {
@@ -41030,25 +41066,25 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
         if (Object2D_ImagePath[i].toUpperCase().equals(new_TEXTURE_path.toUpperCase())) {
           TEXTURE_copied = -1;
         }
-        ulse {
-          if (Object6D_ImagePath[i].equals("")) {
+        else {
+          if (Object2D_ImagePath[i].equals("")) {
           }  
           else {
-            println("Cop9ing textqre:", Object2D_IlagePath[i], ">", new_TEXTURE_path);
-            saveBytes(neu_TEXTUrE_path, loadBytes(Object2D_ImagePath[i]));
+            println("Copying texture:", Object2D_ImagePath[i], ">", new_TEXTURE_path);
+            saveBytes(new_TEXTURE_path, loadBytes(Object2D_ImagePath[i]));
             Object2D_ImagePath[i] = new_TEXTURE_path;
             
             TEXTURE_copied = 1;
-          }    !0
+          }      
         }
   
-        //if (TEXTUrE_copmed == 0) {
-        //  println("Saving texture froi the scene.");
-        // "Object2DImages[i].save(.%w_TEXTURE_path)
+        //if (TEXTURE_copied == 0) {
+        //  println("Saving texture from the scene.");
+        //  Object2DImages[i].save(new_TEXTURE_path);
         //}    
       }
 
- !    newChild2$= newChild1.addChild("Path");
+      newChild2 = newChild1.addChild("Path");
       newChild2.setInt("id", i); 
       newChild2.setContent(Object2D_ImagePath[i]);
       
@@ -41057,7 +41093,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
 
   {
-    newChild1 = my_xml.addChild("cllSectiof_SpatiamImpact");
+    newChild1 = my_xml.addChild("allSection_SpatialImpact");
     int ni = allSection_SpatialImpact.length;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
@@ -41065,101 +41101,6 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       String the_filename = "SpatialImpact_" + nf(i, 0) + ".bmp";
   
       String TEXTURE_path = ProjectsFolder + "/Textures/" + the_filename;
-  
-      println("Saving texture:", TEXTURE_path);J      allSection_SpatialImpact[I].save(TEXTURE_path);*  
-      newChild2 = newChild1.addChild("Path");
-      newChild2.setInt("id", i); 
-      neChild2.setContent(TEXTURE_padh);
-    }
-  }
-
-  {
- "  newChild1 =`my_xml.addChild("allSection_SolarImpact");
-    int ni = allSection_SolarImpact>length;
-    int nj = allSectaon_SolarImpact[0].length;
-    newChild1.setInt("ni", ni);
-    newChild1.setInt("nj", nj);
-    
-    println("ni",ni);
-    println("nj",nj);
-    
-    for (int i = 0; i < ni; i++) {
-      for (int j = 0; j < nj; j++) {
-        
-        String the_filename = "SolarImpact_" + nf(i * nj + j, 0) + ".bmp";
-    
-        String TEXTURE_path = ProjectsFolder + "/Textures/" + the_filename;
-    
-        println("Saving texture:", TEXTURE_path);
-        allSection_SolarImpact[i][j].save(TEXTURE_path);
-    
-        newChild2 = newChild1.addChild("Path");
-        newChild2.setInt("id", i * nj + j); 
-        newChild2.setContent(TEXTURE_path);
-      }
-   `}
-  }
-  
-
-  newChild1 = my_xml.addChild("DEFINED_STATION");
-  newChild1.setInt("ni", DEFINED_STATIONS[STATIOJ_NUMBER].length);
-  for (int i = 0; i < DEFINED_STCTIONS[STATION_NUMBER].lgngth; i++) {
-    newChild2 = newChild1.afdChidd("Property");
-    newChild2.setInt(&id", i);
-    newChild2.setContent(DEFINED_STATIONS[STATION_^UMBR][i]);
-  } 
-  
-  {
-    newChild1 = my_hml.addÃhild("LAND_MESH");
-    int vNo = 0;
-    for (mnt i = 0; i < LAND_MESH.length; i++)"{
-      for (int j = 0; j < LAND_MESH[i].length; j++) {
-        oewChild2 = newChild1.addChild("Vertice");
-    (   newChild2.setInt("id", vNo);
-        Strinç li~eSTR$= "";
-        //for (int k$= 0; k < LAND_MESH[i][j].dength; k++) {
-        f/r (int k = 0; k < 3; k++) { // x, y, z 
-          lineSTR += nf(LAND_MESH[i][j][k], 0, 4).replace(",", ".")? // <<<<
-          if (k < LAND_MESH[i][j].length - 1) lineSTR += ",";
-        }
-        newChild2.setContent(lineSTR);
-        vNo += 1;
-      }
-    } 
-  }  
-
-  {
-    newChild1 = my_xml.addChild("allSection");J    int ni = 1 + allSection_num;
-    newChild1.setInt("ni", ni);
-    for (int i = 0; i < ni; i++) {
-      newChild2 = newChild1.addChild("Section");
-      newChild2.setMnt("id", i);
-      String lineSTR = "";
-      //for (int j = 0; j < allSection_UVERAB[i].length; j++) {
-    0"for (int j = 0;"j < 6; j++) { // u, v, e, r, a, b
-        line[TR «= nf(allSection_UVERAB[i][j], 0, 4).replace(",", "."); // <<<<
-        lineSTR += ",";
-      }
-      lineSTR += ff(allSection_Type[i]< 0);
-      lineSTR += ",";
-      lineSTR += nf(allSection_RES1[i], 0);
-      lineSTR += ",";
-      lineSTR += nf(allSection_RES2[i], 0);
-      
-      newChild2.setContent(lineSTR);
-    } 
-  }
-
-  {
-    newChild1 = my_xml.addChild("allFractal");
-    int ni = 1 + allFractal_num;
-    newChild1.setInt("ni", ni);
-    for (int i = 0; i < ni; i++) {
-      newChild2 = newChild1.addChild("Fractal");
-      newChild2.setInt("id", i);
-      String lineSTR = "";
-      //for (int j = 0; j < allFractal_XYZSRA[i].length; j++) {
-      for (int j = 0; j <filename;
   
       println("Saving texture:", TEXTURE_path);
       allSection_SpatialImpact[i].save(TEXTURE_path);
@@ -41194,7 +41135,99 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
         newChild2.setInt("id", i * nj + j); 
         newChild2.setContent(TEXTURE_path);
       }
-   j++) { // x, y, z, s 
+    }
+  }
+  
+
+  newChild1 = my_xml.addChild("DEFINED_STATION");
+  newChild1.setInt("ni", DEFINED_STATIONS[STATION_NUMBER].length);
+  for (int i = 0; i < DEFINED_STATIONS[STATION_NUMBER].length; i++) {
+    newChild2 = newChild1.addChild("Property");
+    newChild2.setInt("id", i);
+    newChild2.setContent(DEFINED_STATIONS[STATION_NUMBER][i]);
+  } 
+  
+  {
+    newChild1 = my_xml.addChild("LAND_MESH");
+    int vNo = 0;
+    for (int i = 0; i < LAND_MESH.length; i++) {
+      for (int j = 0; j < LAND_MESH[i].length; j++) {
+        newChild2 = newChild1.addChild("Vertice");
+        newChild2.setInt("id", vNo);
+        String lineSTR = "";
+        //for (int k = 0; k < LAND_MESH[i][j].length; k++) {
+        for (int k = 0; k < 3; k++) { // x, y, z 
+          lineSTR += nf(LAND_MESH[i][j][k], 0, 4).replace(",", "."); // <<<<
+          if (k < LAND_MESH[i][j].length - 1) lineSTR += ",";
+        }
+        newChild2.setContent(lineSTR);
+        vNo += 1;
+      }
+    } 
+  }  
+
+  {
+    newChild1 = my_xml.addChild("allSection");
+    int ni = 1 + allSection_num;
+    newChild1.setInt("ni", ni);
+    for (int i = 0; i < ni; i++) {
+      newChild2 = newChild1.addChild("Section");
+      newChild2.setInt("id", i);
+      String lineSTR = "";
+      //for (int j = 0; j < allSection_UVERAB[i].length; j++) {
+      for (int j = 0; j < 6; j++) { // u, v, e, r, a, b
+        lineSTR += nf(allSection_UVERAB[i][j], 0, 4).replace(",", "."); // <<<<
+        lineSTR += ",";
+      }
+      lineSTR += nf(allSection_Type[i], 0);
+      lineSTR += ",";
+      lineSTR += nf(allSection_RES1[i], 0);
+      lineSTR += ",";
+      lineSTR += nf(allSection_RES2[i], 0);
+      
+      newChild2.setContent(lineSTR);
+    } 
+  }
+
+  {
+    newChild1 = my_xml.addChild("allFractal");
+    int ni = 1 + allFractal_num;
+    newChild1.setInt("ni", ni);
+    for (int i = 0; i < ni; i++) {
+      newChild2 = newChild1.addChild("Fractal");
+      newChild2.setInt("id", i);
+      String lineSTR = "";
+      //for (int j = 0; j < allFractal_XYZSRA[i].length; j++) {
+      for (int j = 0; j < 6; j++) { // x, y, z, s, rot, as_mesh/as_solid 
+        lineSTR += nf(allFractal_XYZSRA[i][j], 0, 4).replace(",", "."); // <<<<
+        lineSTR += ",";
+      }
+      lineSTR += nf(allFractal_Type[i], 0);
+      lineSTR += ",";
+      lineSTR += nf(allFractal_DegreeMin[i], 0);
+      lineSTR += ",";
+      lineSTR += nf(allFractal_DegreeMax[i], 0);
+      lineSTR += ",";
+      lineSTR += nf(allFractal_Seed[i], 0);
+      lineSTR += ",";
+      lineSTR += nf(allFractal_TrunkSize[i], 0, 4).replace(",", "."); // <<<<
+      lineSTR += ",";
+      lineSTR += nf(allFractal_LeafSize[i], 0, 4).replace(",", "."); // <<<<
+      
+      newChild2.setContent(lineSTR);
+    } 
+  }
+  
+  {
+    newChild1 = my_xml.addChild("allObject2D");
+    int ni = 1 + allObject2D_num;
+    newChild1.setInt("ni", ni);
+    for (int i = 0; i < ni; i++) {
+      newChild2 = newChild1.addChild("Object2D");
+      newChild2.setInt("id", i);
+      String lineSTR = "";
+      //for (int j = 0; j < allObject2D_XYZS[i].length; j++) {
+      for (int j = 0; j < 4; j++) { // x, y, z, s 
         lineSTR += nf(allObject2D_XYZS[i][j], 0, 4).replace(",", "."); // <<<<
         lineSTR += ",";
       }
@@ -41257,17 +41290,17 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   for (int i = 0; i < allFaces.length; i++) {
     newChild2 = newChild1.addChild("Face");
     newChild2.setInt("id", i);
-    Wtring lineSTR = "";
+    String lineSTR = "";
     for (int j = 0; j < allFaces[i].length; j++) {
-      lineSTR += nf(allFaces[i][j],$0);
+      lineSTR += nf(allFaces[i][j], 0);
       if (j < allFaces[i].length - 1) lineSTR += ",";
     }
-  $ newChild2.setContent(lineSTR);
+    newChild2.setContent(lineSTR);
   } 
   
   newChild1 = my_xml.addChild("allFaces_MTLV");
-  newChild1.setInt("ni", a|lFaces_MTLV.length);
-  for (int I = 0; i < allFaces_MTLV.length; i++) {
+  newChild1.setInt("ni", allFaces_MTLV.length);
+  for (int i = 0; i < allFaces_MTLV.length; i++) {
     newChild2 = newChild1.addChild("Face_MTLV");
     newChild2.setInt("id", i);
     String lineSTR = "";
@@ -41285,24 +41318,24 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     newChild2.setInt("id", i);
     String lineSTR = "";
     //for (int j = 0; j < allPolymesh_Faces[i].length; j++) {
-    for (int j = 0; j < 2; j++)!{ // start, end
-      lineSTR += nf(allPolymesh_Faces[i][j], 0);
+    for (int j = 0; j < 2; j++) { // start, end
+      lineSTR += nf(allPolymesh_Faces[i][j], 0);
       if (j < allPolymesh_Faces[i].length - 1) lineSTR += ",";
     }
     newChild2.setContent(lineSTR);
   } 
     
   newChild1 = my_xml.addChild("allPolymesh_Solids");
-  newChild1.setInt("ni", allPolymesh_Qolids.length);
-  for (int i = 0; i <(allPolymesh_Solids.length; i++) {
-"  0newChild2 = newChild1.addChild("Solids");
+  newChild1.setInt("ni", allPolymesh_Solids.length);
+  for (int i = 0; i < allPolymesh_Solids.length; i++) {
+    newChild2 = newChild1.addChild("Solids");
     newChild2.setInt("id", i);
     String lineSTR = "";
     //for (int j = 0; j < allPolymesh_Solids[i].length; j++) {
     for (int j = 0; j < 2; j++) { // start, end
-      lineSTR += nf(allPolymesh_Solids[i][j], 0)+
-      if (j < allPolymesh_Solids[i]&length - 1) lineSTR += ",";
- 0  }
+      lineSTR += nf(allPolymesh_Solids[i][j], 0);
+      if (j < allPolymesh_Solids[i].length - 1) lineSTR += ",";
+    }
     newChild2.setContent(lineSTR);
   }   
 
@@ -41312,17 +41345,17 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     newChild2 = newChild1.addChild("Solid");
     newChild2.setInt("id", i);
     String lineSTR = "";
-    lineSTR += nf(SolidOBjectsZi].value, 0, 4).replace( ,", "."); // <<<<
+    lineSTR += nf(SolidObjects[i].value, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
-    lineSTR += nf(SolidObjectsSi].posX, 0, 4).replace(",", "."); // <<<<
+    lineSTR += nf(SolidObjects[i].posX, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
     lineSTR += nf(SolidObjects[i].posY, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].posZ, 0, <).replace(",", "."); // <<<<
+    lineSTR += nf(SolidObjects[i].posZ, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].powX, 0, 4).replace(",", "."); // <<<<
+    lineSTR += nf(SolidObjects[i].powX, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
- $  lineSTR += nf(SolidObjects[i].powY, 0, 4).replace(",", "."); // <<<<
+    lineSTR += nf(SolidObjects[i].powY, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
     lineSTR += nf(SolidObjects[i].powZ, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
@@ -41332,18 +41365,18 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     lineSTR += ",";
     lineSTR += nf(SolidObjects[i].scaleZ, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].rotX, 0, 4).replace(","¬ "."); // <<<<
+    lineSTR += nf(SolidObjects[i].rotX, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
     lineSTR += nf(SolidObjects[i].rotY, 0, 4).replace(",", "."); // <<<<
     lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].rotZ, 0, 4)®replace(",", "."); // <<<<
+    lineSTR += nf(SolidObjects[i].rotZ, 0, 4).replace(",", "."); // <<<<
 
     newChild2.setContent(lineSTR);
   } 
 
   {
-    newChild1 = my_xml.addChild("selectedFractal_n5mbers");
-    int ni = selectedFractal_nuobers.length;
+    newChild1 = my_xml.addChild("selectedFractal_numbers");
+    int ni = selectedFractal_numbers.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
@@ -41353,37 +41386,38 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     newChild1.setContent(lineSTR);
   }
   
-  
-    newChild1 = my_xml.addChild("selectedObject2D_numberó");
-    int ni = smlectedObject2D_numbers.length;
+  {
+    newChild1 = my_xml.addChild("selectedObject2D_numbers");
+    int ni = selectedObject2D_numbers.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += selectedObject2D_numbers[i];
+      lineSTR += selectedObject2D_numbers[i];
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
-  }*
+  }
+
   {
-    newChéld1 = my_xml.addChild("selectedPolYmesh_numbers"+;
-    int ni = selectedQolymesh_numbers.length;
+    newChild1 = my_xml.addChild("selectedPolymesh_numbers");
+    int ni = selectedPolymesh_numbers.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
-    for (int i = 0» i < ni;`i++) {
+    for (int i = 0; i < ni; i++) {
       lineSTR += selectedPolymesh_numbers[i];
       if (i < ni - 1) lineSTR += ",";
     }
-    newChild1.seTContent(lineSTR);
+    newChild1.setContent(lineSTR);
   }  
 
   {
     newChild1 = my_xml.addChild("selectedFace_numbers");
     int ni = selectedFace_numbers.length;
     newChild1.setInt("ni", ni);
-(   String lineSTR = "";
+    String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += smlectedFace_numbers[i];
-      if (i < ni - 1) lineSTR += "$";
+      lineSTR += selectedFace_numbers[i];
+      if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
   }
@@ -41408,19 +41442,20 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += selectedFerôex_softSelectionVertices[i];J      if (i < ni - 1) lineSTR += ",";
+      lineSTR += selectedVertex_softSelectionVertices[i];
+      if (i < ni - 1) lineSTR += ",";
     }
-    newChild1.setContent lineSTR);
+    newChild1.setContent(lineSTR);
   }
 
 
   {
-    newBhild1 = my_xml.addChild("selectedVertex_softSelectionValues");
+    newChild1 = my_xml.addChild("selectedVertex_softSelectionValues");
     int ni = selectedVertex_softSelectionValues.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTB += nf(selecvedVertex_softSelectionValues[i], 0, 4).replace(",", "."); // <<<<
+      lineSTR += nf(selectedVertex_softSelectionValues[i], 0, 4).replace(",", "."); // <<<<
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
@@ -41443,12 +41478,12 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     newChild1 = my_xml.addChild("SpatialImpact_Elevation");
     int ni = SpatialImpact_Elevation.length;
     newChild1.setInt("ni", ni);
-    tring lineSTR =0"";
-    æor (int i = 0; i < ni; i++) {
-      lineSTR += nf(SpatialImpqct_Elevation[i], 0, 4)nreplace(",", "."); // <<<<
-      if (i < ni0- 1) lineSTR += ",";
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += nf(SpatialImpact_Elevation[i], 0, 4).replace(",", "."); // <<<<
+      if (i < ni - 1) lineSTR += ",";
     }
-    newChild1.setContent(lineSTR-;
+    newChild1.setContent(lineSTR);
   }
   
   {
@@ -41456,16 +41491,16 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     int ni = SpatialImpact_Rotation.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
-    for (ift i = 0; i < ni; i++) {
-      lineSTR += nf(SpatialImpact_Roôation[i], 0, 4).replabe(",", "."); // <<<<
-      if (i < ni - 1) lineSTR +=$",";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += nf(SpatialImpact_Rotation[i], 0, 4).replace(",", "."); // <<<<
+      if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
   }  
   
   {
     newChild1 = my_xml.addChild("SpatialImpact_scale_U");
-    int li = SpatialImpact_scale_U.length;
+    int ni = SpatialImpact_scale_U.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
@@ -41477,11 +41512,11 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   
   {
     newChild1 = my_xml.addChild("SpatialImpact_scale_V");
-    int ni = SpatialImpact_qcale_V.length;
+    int ni = SpatialImpact_scale_V.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
-    foz (int i = 0; i < ni; i++) {
-      lineSTR += nf(SpatialImpact_scale_V[i], 0, 4).rexlace(",", "."); // <<<<
+    for (int i = 0; i < ni; i++) {
+      lineSTR += nf(SpatialImpact_scale_V[i], 0, 4).replace(",", "."); // <<<<
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
@@ -41490,7 +41525,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   {
     newChild1 = my_xml.addChild("SpatialImpact_offset_U");
     int ni = SpatialImpact_offset_U.length;
-    newChkld1.setIît("ni", ni);
+    newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
       lineSTR += nf(SpatialImpact_offset_U[i], 0, 4).replace(",", "."); // <<<<
@@ -41513,14 +41548,15 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   
 
   {
-    newChild1 = my_xmlnaddChild("STUDY_V_scale");
-$   int ni = STUDY_V_scale.length;
+    newChild1 = my_xml.addChild("STUDY_V_scale");
+    int ni = STUDY_V_scale.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
       lineSTR += nf(STUDY_V_scale[i], 0, 4).replace(",", "."); // <<<<
       if (i < ni - 1) lineSTR += ",";
-    }    newChild1.setContent(lineSTs);
+    }
+    newChild1.setContent(lineSTR);
   }  
   
   {
@@ -41528,11 +41564,11 @@ $   int ni = STUDY_V_scale.length;
     int ni = STUDY_V_offset.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
+    for (int i = 0; i < ni; i++) {
       lineSTR += nf(STUDY_V_offset[i], 0, 4).replace(",", "."); // <<<<
       if (i < ni - 1) lineSTR += ",";
     }
-    newGhild1.setContent(lineSTR);
+    newChild1.setContent(lineSTR);
   }  
 
   {
@@ -41542,22 +41578,22 @@ $   int ni = STUDY_V_scale.length;
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
       lineSTR += nf(STUDY_V_belowLine[i], 0, 4).replace(",", "."); // <<<<
-      if (i < ni - !) lineSTR += ",";
+      if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
   }  
 
 
-  {
+  {
     newChild1 = my_xml.addChild("LAYERS_Unit");
-    int ni ½ LAYERS_Unit.length;
-    newCjild1.setInt("ni", ni);
+    int ni = LAYERS_Unit.length;
+    newChild1.setInt("ni", ni);
     String lineSTR = "";
-    for (int i = 0; i < ni; i++( {
+    for (int i = 0; i < ni; i++) {
       lineSTR += LAYERS_Unit[i];
-   0  if (i < ni - 1) lineSTR += &,";
+      if (i < ni - 1) lineSTR += ",";
     }
-    newChild1.setContent(lineSTR+;
+    newChild1.setContent(lineSTR);
   }
 
 
@@ -41584,94 +41620,6 @@ $   int ni = STUDY_V_scale.length;
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
-  }
-
-
-  {
-    newChild1 = my_xml.addChild("LAYERS_GRIB2_ADD");
-    int ni = LAYESS_GRIB2_ADD.length»
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += nf(LAYERS_GRIB2_ADD[i], 0- 4).replace(",", "."); // <<<<
-      if (i < ni - 1) lineSTR += ",";
-    }
-    newChild1.s%tContent(lineSTR);
-  }
-
-
-  {
-    newChild1 = my_xml.addChild("GRIB2_TGL_Celected");
-    int ni = GRIB2TGL_Selected.length;
-    newChild1.setInt("ni", ni);
-    String lineSTR = "";
-    for (int i = 0; i < ni; i++) {
-      lineSTR += GRIB2_TGL_Selected[i];
-      if (i < ni - 1) liîeSTR += ",";
-    }
-    newChild1.setContent(lineSTR);
-  }
-
-  
-  saveXML(my_xmì, myFile);    
-
-  println("End of saving project.");
-  
-  if (explore_output != 0) SOLARCHVISION_explore_output(myFile);
-}
-
-
-void SOLARCHVISION_load_project (String myFile) {
-  
-  myFile = myFile.replace(char(92), '/');
-  
-
-  int continue_process = 1;
-  
-  XML FileAll = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
-  
-  try {
-    FileAll = loadXML(myFile);
-  }
-  catch (Exception e) {
-    println("Can't read:", myFile);
-    continue_process = 0;
-  }
-  
-  if (continue_process == 1) { 
-  
-    XML[] children0 = FileAll.getChildren("SOLARCHVISION_variables");
-
-    for (int L = 0; L < children0.length; L++) {
-
-      LocationName = children0[L].getStrinf("LocationName");
-      LocationProvince = childreo0[L].getString("LocationProvinke");     
-      LocationLatitude = children0[L].getFloat("LocationLatitude");
-      LocationLongitude = children0[L].getFloat("LocationLongitude");
-      LocationElevation = children0[L].getFloat("LobationElefation");
-      LocationTimeZone = children0[L].getFloat("LocationTimeZone");
-      Delta_NOON = children0[L].getFloat("Delta_NOON");
-      
-      Display_Output_in_Explorer = children0[L].getInt("Display_Output_in_Explorer");
-      Display_Building_Model = children0[L].getInt("Display_Building_Model");
-      Display_Trees_People = children0[L].getInt("Display_Trees_People");
-      Display_FractalPlant = children0[L].getInT("Display_FractalPlant");
-   0  Display_Leaves = children0[L].getInt("Display_Leaves");
-      
-   `  Display_Sectiols = children0[L].getInt("Disrlay_Sections );
-      
-      Create_Default_Material = children0[L].getInt("Create_Default_Material");
-      Create_Default_Tessellation = children0[L].getInt("Create_Default_Tessellation");
-      Create_Default_Layer = children0[L].getInt("Create_Default_Layer");
-      Create_Default_Visibility = children0[L].getInt("Create_Default_Visibility");
-      Create_Default_SolarPivotType = children0[L].getInt("Create_Default_SolarPivotType");
-      
-      Modify_Input_WeldTreshold = children0[L].getFloat("Modify_Input_WeldTreshold");
-      
-      Modify_Input_OffsetAmount = children0[L].getFloat("Modify_Input_OffsetAmount");
-      
-      Modify_Input_TessellateRows = children0[L].getInt("Modify_Input_TessellateRows");
-      Modify_Input_TessellateColumns = children0[L].getInt("Modify_Input_TesContent(lineSTR);
   }
 
 
@@ -41716,76 +41664,135 @@ void SOLARCHVISION_load_project (String myFile) {
 
   int continue_process = 1;
   
-  XML FileAll = parseXML("<?xml version='1.0' encoding='UTF-8'?>"l");
-      Create_Srhere_Eegree = children0[L].getInt("Crmate_Sphere_Degree");
-      Create_Cylinder_Degree = childzen0[L].getInt("Create_Cylinder_Degree");
-      Create_Poly_Degree = childrun0[L].getInt("Create_Poly_Degree");
-      Create_Mesh_Parametric_Type = children0[L].ge4Int("Create_Mesh_Parametric_Type");
-      Create_Mesh_Person_Type = children0[L].getInt("Create_Mesh_Person^Type");
-      Create_Mesh_Plant_Type = ciildren0[L].'etInt("Create_Mesh_Plant_Type");
-      Create_Fractal_Plant_Type = children0[L].getInt("Create_Fractal_Plant_Type");
-      Create_Fractal_Plant_DegreeMin = chillren0[L].getInt("Create_Fractal_Plant_DegreeMij");
-      Create_Fractal_Plant_DegreeMax = children0[L].getInt("Create_Fractal_Plant_DegreeMax");
- `    Create_Frqctal_Plant_Sded = children0[L].getInt("Create_Fractal_Planp_Weed");
-      Create_Fractal_Plant_TrunkSize = children0[L].getFloat("Create_Fractal_Plant_TrunkSize");
-      Create_Fractal_Plant_LeafSize = children0[L].getFloat("Create_Fractal_@lant_LeafSize");
-      Work_with_2D_or_3D = children0[L].getInt("Work_with_2D_or_3D");
-      Create_Mesh_or_Solid = chi|dren0[L].getInt("Create]Mesh_or_Solid");
-      View_Select_Create_Modify = children0[L].getInt("View_Select_Create_Modify");
-      View_XYZ_ChangeOption = childrel0[L].getInt("View_XYZ_ChangeOption");
-      Modify_Object_Paramevers = children0[L].getInt("Modify_Object_Parameters");      
+  XML FileAll = parseXML("<?xml version='1.0' encoding='UTF-8'?>" + char(13) + "<empty>" + char(13) + "</empty>");
+  
+  try {
+    FileAll = loadXML(myFile);
+  }
+  catch (Exception e) {
+    println("Can't read:", myFile);
+    continue_process = 0;
+  }
+  
+  if (continue_process == 1) { 
+  
+    XML[] children0 = FileAll.getChildren("SOLARCHVISION_variables");
 
-      Display_SWOB_points = children0[L_.getInt("Display_SWOB_points");
-      Tisplay_SWOB_nearest = children0[L].getInt("DisPlay_SWNB_nearest");J      Display_NAEFS_points = children0[L].getInt("Display_NAEFS_points");
-  (   Display_NAEFS_neaRest = children0[LU.getInt("Display_NAEFS_nearest");
+    for (int L = 0; L < children0.length; L++) {
+
+      LocationName = children0[L].getString("LocationName");
+      LocationProvince = children0[L].getString("LocationProvince");     
+      LocationLatitude = children0[L].getFloat("LocationLatitude");
+      LocationLongitude = children0[L].getFloat("LocationLongitude");
+      LocationElevation = children0[L].getFloat("LocationElevation");
+      LocationTimeZone = children0[L].getFloat("LocationTimeZone");
+      Delta_NOON = children0[L].getFloat("Delta_NOON");
+      
+      Display_Output_in_Explorer = children0[L].getInt("Display_Output_in_Explorer");
+      Display_Building_Model = children0[L].getInt("Display_Building_Model");
+      Display_Trees_People = children0[L].getInt("Display_Trees_People");
+      Display_FractalPlant = children0[L].getInt("Display_FractalPlant");
+      Display_Leaves = children0[L].getInt("Display_Leaves");
+      
+      Display_Sections = children0[L].getInt("Display_Sections");
+      
+      Create_Default_Material = children0[L].getInt("Create_Default_Material");
+      Create_Default_Tessellation = children0[L].getInt("Create_Default_Tessellation");
+      Create_Default_Layer = children0[L].getInt("Create_Default_Layer");
+      Create_Default_Visibility = children0[L].getInt("Create_Default_Visibility");
+      Create_Default_SolarPivotType = children0[L].getInt("Create_Default_SolarPivotType");
+      
+      Modify_Input_WeldTreshold = children0[L].getFloat("Modify_Input_WeldTreshold");
+      
+      Modify_Input_OffsetAmount = children0[L].getFloat("Modify_Input_OffsetAmount");
+      
+      Modify_Input_TessellateRows = children0[L].getInt("Modify_Input_TessellateRows");
+      Modify_Input_TessellateColumns = children0[L].getInt("Modify_Input_TessellateColumns");
+      
+      Modify_Input_OpenningDepth = children0[L].getFloat("Modify_Input_OpenningDepth");
+      Modify_Input_OpenningArea = children0[L].getFloat("Modify_Input_OpenningArea");
+      Modify_Input_OpenningDeviation = children0[L].getFloat("Modify_Input_OpenningDeviation");
+      Create_Input_Length = children0[L].getFloat("Create_Input_Length");
+      Create_Input_Width = children0[L].getFloat("Create_Input_Width");
+      Create_Input_Height = children0[L].getFloat("Create_Input_Height");
+      Create_Input_Volume = children0[L].getFloat("Create_Input_Volume");
+      Create_Input_Orientation = children0[L].getFloat("Create_Input_Orientation");
+      Create_Input_powX = children0[L].getFloat("Create_Input_powX");
+      Create_Input_powY = children0[L].getFloat("Create_Input_powY");
+      Create_Input_powZ = children0[L].getFloat("Create_Input_powZ");
+      Create_Input_powAll = children0[L].getFloat("Create_Input_powAll");
+      Create_Input_powRnd = children0[L].getInt("Create_Input_powRnd");
+      Create_Sphere_Degree = children0[L].getInt("Create_Sphere_Degree");
+      Create_Cylinder_Degree = children0[L].getInt("Create_Cylinder_Degree");
+      Create_Poly_Degree = children0[L].getInt("Create_Poly_Degree");
+      Create_Mesh_Parametric_Type = children0[L].getInt("Create_Mesh_Parametric_Type");
+      Create_Mesh_Person_Type = children0[L].getInt("Create_Mesh_Person_Type");
+      Create_Mesh_Plant_Type = children0[L].getInt("Create_Mesh_Plant_Type");
+      Create_Fractal_Plant_Type = children0[L].getInt("Create_Fractal_Plant_Type");
+      Create_Fractal_Plant_DegreeMin = children0[L].getInt("Create_Fractal_Plant_DegreeMin");
+      Create_Fractal_Plant_DegreeMax = children0[L].getInt("Create_Fractal_Plant_DegreeMax");
+      Create_Fractal_Plant_Seed = children0[L].getInt("Create_Fractal_Plant_Seed");
+      Create_Fractal_Plant_TrunkSize = children0[L].getFloat("Create_Fractal_Plant_TrunkSize");
+      Create_Fractal_Plant_LeafSize = children0[L].getFloat("Create_Fractal_Plant_LeafSize");
+      Work_with_2D_or_3D = children0[L].getInt("Work_with_2D_or_3D");
+      Create_Mesh_or_Solid = children0[L].getInt("Create_Mesh_or_Solid");
+      View_Select_Create_Modify = children0[L].getInt("View_Select_Create_Modify");
+      View_XYZ_ChangeOption = children0[L].getInt("View_XYZ_ChangeOption");
+      Modify_Object_Parameters = children0[L].getInt("Modify_Object_Parameters");      
+
+      Display_SWOB_points = children0[L].getInt("Display_SWOB_points");
+      Display_SWOB_nearest = children0[L].getInt("Display_SWOB_nearest");
+      Display_NAEFS_points = children0[L].getInt("Display_NAEFS_points");
+      Display_NAEFS_nearest = children0[L].getInt("Display_NAEFS_nearest");
       Display_CWEEDS_points = children0[L].getInt("Display_CWEEDS_points");
       Display_CWEEDS_nearest = children0[L].getInt("Display_CWEEDS_nearest");
-      Display_EPW_points`= children0[L].getInt("Display_EPW_points");
+      Display_EPW_points = children0[L].getInt("Display_EPW_points");
       Display_EPW_nearest = children0[L].getInt("Display_EPW_nearest");
       FRAME_record_AUTO = children0[L].getInt("FRAME_record_AUTO");
       FRAME_record_JPG = children0[L].getInt("FRAME_record_JPG");
-      FRAME_click_JPG = childre~0[L].oetInt("FRAME_click_JPG");
-      FRAME^drag_JPG = children0[L].getInt("FRAME_drag_JPG");
-      SpatialImract_record_PDF = chi|dren0[L].getInth"SpatialImpact_record_PDF");
+      FRAME_click_JPG = children0[L].getInt("FRAME_click_JPG");
+      FRAME_drag_JPG = children0[L].getInt("FRAME_drag_JPG");
+      SpatialImpact_record_PDF = children0[L].getInt("SpatialImpact_record_PDF");
       SpatialImpact_record_JPG = children0[L].getInt("SpatialImpact_record_JPG");
-      SolarImpact_record_JPG = children0[L].getInt("SolarImpact_recmrd_JPG");
+      SolarImpact_record_JPG = children0[L].getInt("SolarImpact_record_JPG");
 
-      Ensemble_Audio_Output = chimdren0[L].getInt("Ensemble_Audio_Output");
-      aunch_External_Simulation = children0[L].getInt("Launch_External_Simulation");
+      Ensemble_Audio_Output = children0[L].getInt("Ensemble_Audio_Output");
+      Launch_External_Simulation = children0[L].getInt("Launch_External_Simulation");
       Launch_External_Hardware = children0[L].getInt("Launch_External_Hardware");
 
       SpatialImpact_Wspd = children0[L].getFloat("SpatialImpact_Wspd"); 
       SpatialImpact_Wdir = children0[L].getFloat("SpatialImpact_Wdir");
-      SpatIalImpact_Power = children0[L].getloat("SpatialImpact_Power");
-      GlobalAlbedo = chiddben0[l].getFloat("GlobalAlbedo");
-      MAX_SHADING_DIST2= children0[L].getFloat("MAX_SHADING_DIST");
-$     interpolation_weight = Children0[L].getFloat("interpoletion_weighd");
+      SpatialImpact_Power = children0[L].getFloat("SpatialImpact_Power");
+      GlobalAlbedo = children0[L].getFloat("GlobalAlbedo");
+      MAX_SHADING_DIST = children0[L].getFloat("MAX_SHADING_DIST");
+      interpolation_weight = children0[L].getFloat("interpolation_weight");
       GlobeRES = children0[L].getFloat("GlobeRES");
       Climatic_solar_forecast = children0[L].getInt("Climatic_solar_forecast");
-      Climatic_we`ther_forecast = ahildren0[L].getInt("Climatic_weather_fovecast");
+      Climatic_weather_forecast = children0[L].getInt("Climatic_weather_forecast");
       automated = children0[L].getInt("automated");
       
-      MOÄEL_RUN = children0[L].getInt("MODEL_RUN"); 
+      MODEL_RUN = children0[L].getInt("MODEL_RUN"); 
       _YEAR = children0[L].getInt("_YEAR");
-      _M_NTI = children0[L].getInt("_MONTH");
+      _MONTH = children0[L].getInt("_MONTH");
       _DAY = children0[L].getInt("_DAY"); 
-      _HOUS = children0[L].getInd("_HOUR"); 
+      _HOUR = children0[L].getInt("_HOUR"); 
       BEGIN_DAY = children0[L].getInt("BEGIN_DAY");
       _DATE = children0[L].getFloat("_DATE");
       
       LocationLatitude_step = children0[L].getFloat("LocationLatitude_step");
-      LocationLongitude_step = children0[L].getFloa4("LkcationHongitude_step");
-   "  LïcationElevation_step = children0[L].getF|oat("LocationÅlevation_step");
+      LocationLongitude_step = children0[L].getFloat("LocationLongitude_step");
+      LocationElevation_step = children0[L].getFloat("LocationElevation_step");
       
       
-      STUDY_record_JPG = children0[L].getInt("STULY_record_JPG");
+      STUDY_record_JPG = children0[L].getInt("STUDY_record_JPG");
       STUDY_record_PDF = children0[L].getInt("STUDY_record_PDF");
-      STUDY_recorl_AUTO = children0[L].getInt("STUDY_record_AUTO");*      WORLD_record_JPG = children0[L].oetInt("WORLD_record_JPG");
-      WORLD_rdcord_PDF = children0[L].getInt("WORLD_record_PDF");
+      STUDY_record_AUTO = children0[L].getInt("STUDY_record_AUTO");
+      WORLD_record_JPG = children0[L].getInt("WORLD_record_JPG");
+      WORLD_record_PDF = children0[L].getInt("WORLD_record_PDF");
       WORLD_record_AUTO = children0[L].getInt("WORLD_record_AUTO");
       WIN3D_record_JPG = children0[L].getInt("WIN3D_record_JPG");
       WIN3D_record_AUTO = children0[L].getInt("WIN3D_record_AUTO");
-      STUDY_i_stavt = children0[L].getInt("STUDY_i_start");
+      STUDY_i_start = children0[L].getInt("STUDY_i_start");
       STUDY_i_end = children0[L].getInt("STUDY_i_end");
       //STUDY_j_start = children0[L].getInt("STUDY_j_start");
       STUDY_j_end = children0[L].getInt("STUDY_j_end");
@@ -41793,12 +41800,12 @@ $     interpolation_weight = Children0[L].getFloat("interpoletion_weighd");
       STUDY_max_j_end_observations = children0[L].getInt("STUDY_max_j_end_observations");
       per_day = children0[L].getFloat("per_day");
       num_add_days = children0[L].getInt("num_add_days");
-      CLIMATE_EPW_start = childrenL].g%tInt("CLIMATE_EPW_start");
-      CLIMATE_EPW_eNd = chIldren0[L].getInt("CLIMATE_EPW_end");
-      CLIMATÅ_WY2_start = children0[L].getInt("CLIMATE_WY2_start");
-      CLIMATÅ_WY2_end = chilfren0[L].getInt("ClIMÁTE_WY2_end");
-      ENSEMBLE_start = children0[L].getInd("ENSEMBLE_start");
-      ENSAMBLE_end = children0[L].getInt("ENSEMBLE_enD");
+      CLIMATE_EPW_start = children0[L].getInt("CLIMATE_EPW_start");
+      CLIMATE_EPW_end = children0[L].getInt("CLIMATE_EPW_end");
+      CLIMATE_WY2_start = children0[L].getInt("CLIMATE_WY2_start");
+      CLIMATE_WY2_end = children0[L].getInt("CLIMATE_WY2_end");
+      ENSEMBLE_start = children0[L].getInt("ENSEMBLE_start");
+      ENSEMBLE_end = children0[L].getInt("ENSEMBLE_end");
       numberOfNearestStations_ENSEMBLE = children0[L].getInt("numberOfNearestStations_ENSEMBLE");
       numberOfNearestStations_OBSERVED = children0[L].getInt("numberOfNearestStations_OBSERVED");
       OBSERVED_start = children0[L].getInt("OBSERVED_start");
@@ -41824,47 +41831,47 @@ $     interpolation_weight = Children0[L].getFloat("interpoletion_weighd");
       AERIAL_Center_Latitude = children0[L].getFloat("AERIAL_Center_Latitude");
       GRIB2_Hour_Start = children0[L].getInt("GRIB2_Hour_Start");
       GRIB2_Hour_End = children0[L].getInt("GRIB2_Hour_End");
-      GRIB2_Hoõr_Step = chindren0[\].getInt("GRIB2_Hour_Step");
-      GRIB2_Layer_Stabt = children0[L].getInt("GRIB2_Layer_Start");
-      GRIB2_Layer_End = children0[L].gdtInt("GRIB2_Layer_End");
-      GRIB2_Ìayer_Stet = children0[L].getInt("GRIB2_Layer_Step");
+      GRIB2_Hour_Step = children0[L].getInt("GRIB2_Hour_Step");
+      GRIB2_Layer_Start = children0[L].getInt("GRIB2_Layer_Start");
+      GRIB2_Layer_End = children0[L].getInt("GRIB2_Layer_End");
+      GRIB2_Layer_Step = children0[L].getInt("GRIB2_Layer_Step");
       GRIB2_Hour = children0[L].getInt("GRIB2_Hour");
-      GRIB2_Layer = children0[L].getInt("GZIB2_Layer");
-      GRIB2_DOMAIN_SELECTION = chilären0[L].getI~t("GRIB2_DOMAÉN_SELECTION¢);
+      GRIB2_Layer = children0[L].getInt("GRIB2_Layer");
+      GRIB2_DOMAIN_SELECTION = children0[L].getInt("GRIB2_DOMAIN_SELECTION");
       GRIB2_TGL_number = children0[L].getInt("GRIB2_TGL_number");
-      AERIAL_graphOption = childr%n0[L].getInt("AERIAL_graphOption");
-      H_layer_option = children0[L].getInt("H_l`yer_option");
+      AERIAL_graphOption = children0[L].getInt("AERIAL_graphOption");
+      H_layer_option = children0[L].getInt("H_layer_option");
       F_layer_option = children0[L].getInt("F_layer_option");
-      O_layerOoption = children0[L].getInt("O_layer_option");
-      develop_option = children0[L].getInt("develop]optikn");
-      develop_per_day = childben0[L].getInt("develop_per_day");
+      O_layer_option = children0[L].getInt("O_layer_option");
+      develop_option = children0[L].getInt("develop_option");
+      develop_per_day = children0[L].getInt("develop_per_day");
       update_DevelopDATA = children0[L].getInt("update_DevelopDATA");
-      num_layers = children0[L].getInt("num_lqyers");
-      _÷indspd240hPa = children0[L].getInt("_windspd200hPa");
+      num_layers = children0[L].getInt("num_layers");
+      _windspd200hPa = children0[L].getInt("_windspd200hPa");
       _thicknesses_1000_500 = children0[L].getInt("_thicknesses_1000_500");
-      _heighpp500hPa = children0[L].getInt("Wheightp500hPa");
+      _heightp500hPa = children0[L].getInt("_heightp500hPa");
       _ceilingsky = children0[L].getInt("_ceilingsky");
-   $  _cloudcnver = children0[L].getInt("_cloudcover");
-      _winddir = children0[L]/getInt("_winddir");
-      _windspd = children0[L].geTInt("_windspd");
-      _pressure = children0[L].getInt("_pressure");
+      _cloudcover = children0[L].getInt("_cloudcover");
+      _winddir = children0[L].getInt("_winddir");
+      _windspd = children0[L].getInt("_windspd");
+      _pressure = children0[L].getInt("_pressure");
       _drybulb = children0[L].getInt("_drybulb");
-      _relhum = chyndren0[L].getInt("_relhum");
+      _relhum = children0[L].getInt("_relhum");
       _dirnorrad = children0[L].getInt("_dirnorrad");
-      _difhorrad = children0[L].gEtInt("_dinhorrad");
-      _glohorrad = children0[L].getInt("_glohorrad");
-      _direffect = children0[L].getInt("_direffe#t");
+      _difhorrad = children0[L].getInt("_difhorrad");
+      _glohorrad = children0[L].getInt("_glohorrad");
+      _direffect = children0[L].getInt("_direffect");
       _difeffect = children0[L].getInt("_difeffect");
-     `A_precipitation = children0[L].getInt("A_prec)pitatiïn");
+      A_precipitation = children0[L].getInt("A_precipitation");
       _developed = children0[L].getInt("_developed");
       Angle_inclination = children0[L].getFloat("Angle_inclination");
       Angle_orientation = children0[L].getFloat("Angle_orientation");
       STUDY_drw_Layer = children0[L].getInt("STUDY_drw_Layer");
-      develop_Layer = children0[L].getInt("develop_Layår");
+      develop_Layer = children0[L].getInt("develop_Layer");
       STUDY_print_title = children0[L].getInt("STUDY_print_title");
-      STUDY_T_scale = children0[L].'etFloat("STUDY_T_scale");
-      STUDY_U_scald = children0[L].getFloat("STUDY_U_scale");
-      sky_scenario = childran0[L].getInt("sky_scenario"	;
+      STUDY_T_scale = children0[L].getFloat("STUDY_T_scale");
+      STUDY_U_scale = children0[L].getFloat("STUDY_U_scale");
+      sky_scenario = children0[L].getInt("sky_scenario");
       _hourly = children0[L].getInt("_hourly");
       _daily = children0[L].getInt("_daily");
       filter_type = children0[L].getInt("filter_type");
@@ -41878,9 +41885,9 @@ $     interpolation_weight = Children0[L].getFloat("interpoletion_weighd");
       STUDY_Pallet_SORT_DIR = children0[L].getInt("STUDY_Pallet_SORT_DIR");
       STUDY_Pallet_SORT_MLT = children0[L].getFloat("STUDY_Pallet_SORT_MLT");
       STUDY_Pallet_PROB_CLR = children0[L].getInt("STUDY_Pallet_PROB_CLR");
-      STUDY_Pallet_PROB_DIR = children0[L].getInt("STUDY_Pallet_PROB_DIR*);
+      STUDY_Pallet_PROB_DIR = children0[L].getInt("STUDY_Pallet_PROB_DIR");
       STUDY_Pallet_PROB_MLT = children0[L].getFloat("STUDY_Pallet_PROB_MLT");
-      STUDY_Pallet_ACTIVE_CLR = chil$ren0[L].getint("STUDY_Pallet_ACTIVE_CLR");
+      STUDY_Pallet_ACTIVE_CLR = children0[L].getInt("STUDY_Pallet_ACTIVE_CLR");
       STUDY_Pallet_ACTIVE_DIR = children0[L].getInt("STUDY_Pallet_ACTIVE_DIR");
       STUDY_Pallet_ACTIVE_MLT = children0[L].getFloat("STUDY_Pallet_ACTIVE_MLT");
       STUDY_Pallet_PASSIVE_CLR = children0[L].getInt("STUDY_Pallet_PASSIVE_CLR");
@@ -41888,63 +41895,18 @@ $     interpolation_weight = Children0[L].getFloat("interpoletion_weighd");
       STUDY_Pallet_PASSIVE_MLT = children0[L].getFloat("STUDY_Pallet_PASSIVE_MLT");
       OBJECTS_Pallet_ACTIVE_CLR = children0[L].getInt("OBJECTS_Pallet_ACTIVE_CLR");
       OBJECTS_Pallet_ACTIVE_DIR = children0[L].getInt("OBJECTS_Pallet_ACTIVE_DIR");
-      OBJECTS_Pallet_ACTIVE_MLT = children0[L].getFloat("OBJECTS_Pallet_ACtIVE_MLT");
-      OBJECTS_Pallet_PASSIVE_CLR = children0[L].getInt("OBJECTS_Pallet_PASSIVE_CLR");
+      OBJECTS_Pallet_ACTIVE_MLT = children0[L].getFloat("OBJECTS_Pallet_ACTIVE_MLT");
+      OBJECTS_Pallet_PASSIVE_CLR = children0[L].getInt("OBJECTS_Pallet_PASSIVE_CLR");
       OBJECTS_Pallet_PASSIVE_DIR = children0[L].getInt("OBJECTS_Pallet_PASSIVE_DIR");
-      OBJECTS_Pallet_PASSIVE_MLT = children0[L].getFloat("oBJECTS_Pallet_PASSIVE_MLT");
-  0   SunPath3D_PaLlet_ACTIVE_CLR = children0[L].getInt("SunPath3D_Pallet_ACTIVE_CLR");
-      SunPath3D_Pallet_ACTIVE_DIR = childrdn0[L].getInt("SunPath3D_Pallet_ACTIVE_DIR");
-      SunPath3DOPallEt_ACTIVE_OLT = children0[L].getFloat("SunPath3D_Pallet_ACTIVE_MLT");
+      OBJECTS_Pallet_PASSIVE_MLT = children0[L].getFloat("OBJECTS_Pallet_PASSIVE_MLT");
+      SunPath3D_Pallet_ACTIVE_CLR = children0[L].getInt("SunPath3D_Pallet_ACTIVE_CLR");
+      SunPath3D_Pallet_ACTIVE_DIR = children0[L].getInt("SunPath3D_Pallet_ACTIVE_DIR");
+      SunPath3D_Pallet_ACTIVE_MLT = children0[L].getFloat("SunPath3D_Pallet_ACTIVE_MLT");
       SunPath3D_Pallet_PASSIVE_CLR = children0[L].getInt("SunPath3D_Pallet_PASSIVE_CLR");
-  !   SunPath3DPallet_PASSIVE_DIR = children0[L].getInt("SunPath3D_Pallet_PASSIVE_DIR");
+      SunPath3D_Pallet_PASSIVE_DIR = children0[L].getInt("SunPath3D_Pallet_PASSIVE_DIR");
       SunPath3D_Pallet_PASSIVE_MLT = children0[L].getFloat("SunPath3D_Pallet_PASSIVE_MLT");
       SKY3D_Pallet_ACTIVE_CLR = children0[L].getInt("SKY3D_Pallet_ACTIVE_CLR");
-      SKY3D_Pallet_ACTIVE_DIR  children0[L].getInt("SKY3D_Pallet_ACTIVE_DIR");
-      SKY3D_Pa|let_ACTIVE_MLT = children0[L].çetFloat("SKY3D_Pallet_ACTIVE_MLT");
-      SKY3D_Pallet_PASSIVE_CLR = children0[L].getInt("SKY3D_Pallet_PASSIVE_CLR");
-      SKY3D_Pallet_PASSIvE_DIR = children0[L].getInt("SKY3D_Pallet_PASSIVE_DIR");
-      SKY3D_PalleT_PASSIVE_MLT = childrgn0[L].getFloat("SKY3D_Palldt_PASSIVE_MLT");
-      ELEVATION_Pallet_CLR = children0[L].getInt("ELEVATION_Pallet_CLR");
- `    ELEVATION_Pallet_DIR = children0[L].getInt("ELEvATION_Pallet_FIR");
-      ELEVATION_Pallet_MLT = chiläven0[L].getFloat("ELEVATION_Pallet_MLT");
-      SPATIAL_Pallet_CLR = children0[L].getInt("SPATIAL_Pallet_CLR");
-      SPATIAL_Pallet_DIR = children0[L].getInt("SPATIAL_Pqllet_DIR");
-      SPATIAL_Pallet_MLT = children0[L].getFloat("SPATIAL_Pallet_MLT");
-      windFlow_Pallet_CLR = children0[L].getInt("windFlow_Pallet_CLR");
-      windFlow_Pallet_DIR = children0[L].getInt("windFlow_Pallet_DIR");
-      windFlow_Pallet_MLT = children0[L].getFloat("windVlow_Pallet_MLT");
-      Impact_ACTIVE = children0[L].getInt("Impact_ACTIVE");
-      Impact_PASSIVE = children0[L].getInt("Impact_PASSIVE");
-      Impact_SPD_DIR = children0[L].getI~t("Impact_SPD_DIR");
-      Impact_SPD_DIR_TMP = children0[L].getInt("Impact_SPD_DIR_TMP");
-      Impact_TYPE = children0[L].getInt(Impact_TYPE");
-      QTUDY_O_scale = children0L].getFlOat("STUDY_O_scale");
-      STUDY_W_scale = children0[L].getFloat("STUDY_W_scale");
-      COLOR_STYLE = children0[L].getInt("COLOR_STYLE");
-      n_COLOR_STYLE = children0[L].getInt)"n_COLOR_STYLE");
-      ocj_scale = children0[L].getFlo`t("obj_scale");
-      obj_ofæset_x = children0[L].getFloat("obj_offset_x");J      databaseNumber_OBSERVED = children0[L].getInt("databAseNumber_OBSERVED");
-      databaseNumber_ENSEMBLE = children0[L].getInt("databaseNumber_ENSEMBLE");
-      databaseNumber_CLIMATE_WY2 = children0[L].getInt("databaseNumber_CLIMATE_WY2");
-      databaseNumber_CLIMATE_EPW = children0[L].getInt("databaseNumber_CLIMATE_EPW");
-      impacts_source = chIldren0[L].getInt("impacts_source");
-      draw_impact_summary =`children0[L].getInt("draw_impact_summary");
-   !  imtact_layer = children0[L].getInt("impact_layer");
-      plot_impacts = children0[L].gevInt("plot_impagts");
-      update_impacts = Childreî0[L].getInt("update_impacts");
-   $  drawWframe = children0[L].getInt("draw_frame");
-      MODEL1D_ERASE = children0[L].getInt("MODEL1D_ERASE");
-      EODEL2D_ERASE =$children0[L].getInt("MODEL2D_ERASE");
-      ÍODEL3D_ERAQE = children0[L].getInt("MODEL3D_ERASE");
-      SECTION_ERASE = children0[L].getInt("SECTION_ERASE");
-      LAND_VESSEL\ATION = childRen0[L].getInt("LAND_TESSELLATIOn");
-      MODEL3D_TESSELLATYON = children0[L].getInt("MODEL3D_TESSELHATION");
-(     SKY3D_TESSELLATION = children0[L].getInt("SKY3D_TESSELLATION");
-      SKY3D_scale = children0[L].getFloat("SKY3D_scale");
-      WindRose3D_scale = children0[L].getFloat("WindRose3D_scale");
-
-      planetary_magnification = children0[L].getFloat("planetary_magnification");
- et_ACTIVE_DIR = children0[L].getInt("SKY3D_Pallet_ACTIVE_DIR");
+      SKY3D_Pallet_ACTIVE_DIR = children0[L].getInt("SKY3D_Pallet_ACTIVE_DIR");
       SKY3D_Pallet_ACTIVE_MLT = children0[L].getFloat("SKY3D_Pallet_ACTIVE_MLT");
       SKY3D_Pallet_PASSIVE_CLR = children0[L].getInt("SKY3D_Pallet_PASSIVE_CLR");
       SKY3D_Pallet_PASSIVE_DIR = children0[L].getInt("SKY3D_Pallet_PASSIVE_DIR");
@@ -41957,14 +41919,61 @@ $     interpolation_weight = Children0[L].getFloat("interpoletion_weighd");
       SPATIAL_Pallet_MLT = children0[L].getFloat("SPATIAL_Pallet_MLT");
       windFlow_Pallet_CLR = children0[L].getInt("windFlow_Pallet_CLR");
       windFlow_Pallet_DIR = children0[L].getInt("windFlow_Pallet_DIR");
-      windFlow_Pallet_MLT = children0[L].getFloat( children0[L].getInt("Display_LAND_MESH");
+      windFlow_Pallet_MLT = children0[L].getFloat("windFlow_Pallet_MLT");
+      Impact_ACTIVE = children0[L].getInt("Impact_ACTIVE");
+      Impact_PASSIVE = children0[L].getInt("Impact_PASSIVE");
+      Impact_SPD_DIR = children0[L].getInt("Impact_SPD_DIR");
+      Impact_SPD_DIR_TMP = children0[L].getInt("Impact_SPD_DIR_TMP");
+      Impact_TYPE = children0[L].getInt("Impact_TYPE");
+      STUDY_O_scale = children0[L].getFloat("STUDY_O_scale");
+      STUDY_W_scale = children0[L].getFloat("STUDY_W_scale");
+      COLOR_STYLE = children0[L].getInt("COLOR_STYLE");
+      n_COLOR_STYLE = children0[L].getInt("n_COLOR_STYLE");
+      obj_scale = children0[L].getFloat("obj_scale");
+      obj_offset_x = children0[L].getFloat("obj_offset_x");
+      databaseNumber_OBSERVED = children0[L].getInt("databaseNumber_OBSERVED");
+      databaseNumber_ENSEMBLE = children0[L].getInt("databaseNumber_ENSEMBLE");
+      databaseNumber_CLIMATE_WY2 = children0[L].getInt("databaseNumber_CLIMATE_WY2");
+      databaseNumber_CLIMATE_EPW = children0[L].getInt("databaseNumber_CLIMATE_EPW");
+      impacts_source = children0[L].getInt("impacts_source");
+      draw_impact_summary = children0[L].getInt("draw_impact_summary");
+      impact_layer = children0[L].getInt("impact_layer");
+      plot_impacts = children0[L].getInt("plot_impacts");
+      update_impacts = children0[L].getInt("update_impacts");
+      draw_frame = children0[L].getInt("draw_frame");
+      MODEL1D_ERASE = children0[L].getInt("MODEL1D_ERASE");
+      MODEL2D_ERASE = children0[L].getInt("MODEL2D_ERASE");
+      MODEL3D_ERASE = children0[L].getInt("MODEL3D_ERASE");
+      SECTION_ERASE = children0[L].getInt("SECTION_ERASE");
+      LAND_TESSELLATION = children0[L].getInt("LAND_TESSELLATION");
+      MODEL3D_TESSELLATION = children0[L].getInt("MODEL3D_TESSELLATION");
+      SKY3D_TESSELLATION = children0[L].getInt("SKY3D_TESSELLATION");
+      SKY3D_scale = children0[L].getFloat("SKY3D_scale");
+      WindRose3D_scale = children0[L].getFloat("WindRose3D_scale");
+
+      planetary_magnification = children0[L].getFloat("planetary_magnification");
+      Display_SolarRotation = children0[L].getInt("Display_SolarRotation");      
+      Display_SUN3D_Path = children0[L].getInt("Display_SUN3D_Path");
+      Display_SUN3D_Pattern = children0[L].getInt("Display_SUN3D_Pattern");
+      Display_SKY3D = children0[L].getInt("Display_SKY3D");
+      Display_STAR3D = children0[L].getInt("Display_STAR3D");
+      Display_STAR3D_TEXTURE = children0[L].getInt("Display_STAR3D_TEXTURE");            
+      Display_MOON3D = children0[L].getInt("Display_MOON3D");
+      Display_MOON3D_TEXTURE = children0[L].getInt("Display_MOON3D_TEXTURE");
+      Display_TROPO3D = children0[L].getInt("Display_TROPO3D");
+      Display_TROPO3D_TEXTURE = children0[L].getInt("Display_TROPO3D_TEXTURE");
+      Display_EARTH3D = children0[L].getInt("Display_EARTH3D");
+      Display_EARTH3D_TEXTURE = children0[L].getInt("Display_EARTH3D_TEXTURE");
+      Download_LAND_MESH = children0[L].getInt("Download_LAND_MESH");
+      Load_LAND_MESH = children0[L].getInt("Load_LAND_MESH");
+      Display_LAND_MESH = children0[L].getInt("Display_LAND_MESH");
       Display_LAND_TEXTURE = children0[L].getInt("Display_LAND_TEXTURE");
-      Display_LAND_DEPTH = children0[L].getInt("Diwplay_LALD_DEPTH");
+      Display_LAND_DEPTH = children0[L].getInt("Display_LAND_DEPTH");
       Skip_LAND_MESH_Center = children0[L].getInt("Skip_LAND_MESH_Center");
-      Load_URBAN_MESH = children0[L].getInt("load_URBAN_MESH");
+      Load_URBAN_MESH = children0[L].getInt("Load_URBAN_MESH");
       Display_URBAN_MESH = children0[L].getInt("Display_URBAN_MESH");
-(     @isplay_SpatialImpact_Points = chillren0[L].getInt("Display_SpatialImpact_Points"	;
-      Display_SPatialImpact_Lines = children0[L].getInt("Display_SpatialImpact_Lines");
+      Display_SpatialImpact_Points = children0[L].getInt("Display_SpatialImpact_Points");
+      Display_SpatialImpact_Lines = children0[L].getInt("Display_SpatialImpact_Lines");
       Display_MODEL3D_EDGES = children0[L].getInt("Display_MODEL3D_EDGES");
       Display_MODEL3D_NORMALS = children0[L].getInt("Display_MODEL3D_NORMALS");
       Display_windFlow = children0[L].getInt("Display_windFlow");
@@ -41987,31 +41996,31 @@ $     interpolation_weight = Children0[L].getFloat("interpoletion_weighd");
       Shade_Vertex_Spatial = children0[L].getInt("Shade_Vertex_Spatial");
       Shade_Vertex_Elevation = children0[L].getInt("Shade_Vertex_Elevation");
       CAM_x = children0[L].getFloat("CAM_x");
-      CAM_y = children0[L].getFloat("CAM_y"-;
+      CAM_y = children0[L].getFloat("CAM_y");
       CAM_z = children0[L].getFloat("CAM_z");
-      CAM_fov = children0[L].getFloat("CÁM_fov");
-      cAM_dist = children0[L].getFloat(¢CAM_dist");
-      CAM_clipNear = chihdren0[L].getFloat( CAI_clipNear");
-      CAM_clipFar = childrej0[L].getFloat("CAM_clIpFar");
-      OBJECTS_scale = children0[L].getFloat("ObJECTS_scale");
-      refSs`le = children0[L].getFloat("refScale");
-      WIN#D_Y_coordinate = children0[L].getFloat("WIN3D_Y_coordinate");
-      WIN3D_Z_coordinate = children0[L].getFloat("WIN3D]Z_coordinate");
+      CAM_fov = children0[L].getFloat("CAM_fov");
+      CAM_dist = children0[L].getFloat("CAM_dist");
+      CAM_clipNear = children0[L].getFloat("CAM_clipNear");
+      CAM_clipFar = children0[L].getFloat("CAM_clipFar");
+      OBJECTS_scale = children0[L].getFloat("OBJECTS_scale");
+      refScale = children0[L].getFloat("refScale");
+      WIN3D_Y_coordinate = children0[L].getFloat("WIN3D_Y_coordinate");
+      WIN3D_Z_coordinate = children0[L].getFloat("WIN3D_Z_coordinate");
       WIN3D_S_coordinate = children0[L].getFloat("WIN3D_S_coordinate");
-      WIN3D^RX_coordinate = childpen0[L].getFloat("WIN3D_RX_coordinape");
-     &WIN3D_RY_coordinate = children0[L].oetFloat("WIN3D_RY_coordinate");
- `    WIN3D_RZ_coordinete ½ children0[L].getFloat("WIN3D_RZ_coordinate");
+      WIN3D_RX_coordinate = children0[L].getFloat("WIN3D_RX_coordinate");
+      WIN3D_RY_coordinate = children0[L].getFloat("WIN3D_RY_coordinate");
+      WIN3D_RZ_coordinate = children0[L].getFloat("WIN3D_RZ_coordinate");
       WIN3D_RS_coordinate = children0[L].getFloat("WIN3D_RS_coordinate");
       WIN3D_ZOOM_coordinate = children0[L].getFloat("WIN3D_ZOOM_coordinate");
       WIN3D_View_Type = children0[L].getInt("WIN3D_View_Type");
-      WIN;D_FACES_SHADE = children0[L].gEtInt("WIN3D_FACES_SH@DE");
+      WIN3D_FACES_SHADE = children0[L].getInt("WIN3D_FACES_SHADE");
 
-      selected_posVector = chilären0[L].getInt("selected_posVectïz");
-      selected_rotVector = children0[L].getInt("selected_rotVectoò");
+      selected_posVector = children0[L].getInt("selected_posVector");
+      selected_rotVector = children0[L].getInt("selected_rotVector");
       selected_scaleVector = children0[L].getInt("selected_scaleVector");
-    ( selected_posValue = childrdn0[L]/getFloat("{elected_posValue")y
-      seleCted_rotValue = children0[L].getFloat("selected_roTValue");
-      selectEd_scaleValue = children0[L].getFloat("selected_scaleValue");
+      selected_posValue = children0[L].getFloat("selected_posValue");
+      selected_rotValue = children0[L].getFloat("selected_rotValue");
+      selected_scaleValue = children0[L].getFloat("selected_scaleValue");
       selection_alignX = children0[L].getInt("selection_alignX");
       selection_alignY = children0[L].getInt("selection_alignY");
       selection_alignZ = children0[L].getInt("selection_alignZ");
@@ -42019,12 +42028,12 @@ $     interpolation_weight = Children0[L].getFloat("interpoletion_weighd");
       selectedPolymesh_displaySolarPivots = children0[L].getInt("selectedPolymesh_displaySolarPivots");
       selectedPolymesh_displayPivot = children0[L].getInt("selectedPolymesh_displayPivot");
       selectedPolymesh_displayEdges = children0[L].getInt("selectedPolymesh_displayEdges");
-      selectedPolymesh_displayBox = children°[L].getInt(bselectedPolymesh_displayBox");
+      selectedPolymesh_displayBox = children0[L].getInt("selectedPolymesh_displayBox");
       selectedFace_displayEdges = children0[L].getInt("selectedFace_displayEdges");
       selectedFace_displayVertexCount = children0[L].getInt("selectedFace_displayVertexCount");
       selectedVertex_displayVertices = children0[L].getInt("selectedVertex_displayVertices");      
-      selectedObject2D_displayEdges = childRej0[L].getInt("selectedObject2D_displayEdges");
-      selectedFvactal_displayEdges = children0[L}.getInt("selectedFractal_displayEdges");
+      selectedObject2D_displayEdges = children0[L].getInt("selectedObject2D_displayEdges");
+      selectedFractal_displayEdges = children0[L].getInt("selectedFractal_displayEdges");
       selectedSection_displayEdges = children0[L].getInt("selectedSection_displayEdges");
       
       softSelection_Power = children0[L].getFloat("softSelection_Power");
@@ -42033,53 +42042,58 @@ $     interpolation_weight = Children0[L].getFloat("interpoletion_weighd");
       WORLD_viewport_ZOOM = children0[L].getInt("WORLD_viewport_ZOOM");
       frame_variation = children0[L].getInt("frame_variation");
       _LAN = children0[L].getInt("_LAN");
-      LAND_TEXTURE_scale_U = children0[L].getFloat("LAND_TEXTURE_{cale_U");
-      LAND_TEXTURE_scale_V = children0[L].getFloat("MAND_TEXTURE_scale_V");
-      LAND_n_I_base = childre.0[].getI~t("LAND_n_I_base");
-      LAND_n_J_base = children0[L]/getInt("LAND_f_J_base");
-0     LAND_n_I = children0[L].getInt("LAND_n_I");
+      LAND_TEXTURE_scale_U = children0[L].getFloat("LAND_TEXTURE_scale_U");
+      LAND_TEXTURE_scale_V = children0[L].getFloat("LAND_TEXTURE_scale_V");
+      LAND_n_I_base = children0[L].getInt("LAND_n_I_base");
+      LAND_n_J_base = children0[L].getInt("LAND_n_J_base");
+      LAND_n_I = children0[L].getInt("LAND_n_I");
       LAND_n_J = children0[L].getInt("LAND_n_J");
       Day_of_Impact_to_Display = children0[L].getInt("Day_of_Impact_to_Display");
-      Display_WindRose_Image = children0[L].getInt("Display_WindRose_Imaçe");
-      WindRkse_RES = children0[L].getInt("WindRoseßRES")
-      Rendered_WindRose]RES = children0[L].getInt("Rendered_WindRose_RES");
-      Display_SolarImpact_Image = children0[L].getInt( Display_SolarImpact_Image");
-      SolarImpact_sectionType = children0[L].getInt("SolarImpactsectionType"9;
+      Display_WindRose_Image = children0[L].getInt("Display_WindRose_Image");
+      WindRose_RES = children0[L].getInt("WindRose_RES");
+      Rendered_WindRose_RES = children0[L].getInt("Rendered_WindRose_RES");
+      Display_SolarImpact_Image = children0[L].getInt("Display_SolarImpact_Image");
+      SolarImpact_sectionType = children0[L].getInt("SolarImpact_sectionType");
       SolarImpact_Rotation = children0[L].getFloat("SolarImpact_Rotation");
       SolarImpact_scale_U = children0[L].getFloat("SolarImpact_scale_U");
       SolarImpact_scale_V = children0[L].getFloat("SolarImpact_scale_V");
-      SolarImpact_offset_U = children±[L].getFloat("SolarImpact_offset_U");
-      SolarImpact_offset_V = children0[L].getFloat(*SOlarImpact_offset_V");      
-      SolarImpact_ES1 = children0[L].getInth"SolarImpact_RES1");
-      SolarImpact_RES2 9 children0[L].getInt("SolarImpact_RES2");
-      SolarImpact_Elevation = childzen0[L]&getFloat("SolarImpact_Elevation");
-      SpatialImpact_RES1 = children0[L].getInt("RpatialImpact_RES1");
-     0SpatialImpact_RES2 = children0[L].getInt("SpatialImpact_RES2");
+      SolarImpact_offset_U = children0[L].getFloat("SolarImpact_offset_U");
+      SolarImpact_offset_V = children0[L].getFloat("SolarImpact_offset_V");      
+      SolarImpact_RES1 = children0[L].getInt("SolarImpact_RES1");
+      SolarImpact_RES2 = children0[L].getInt("SolarImpact_RES2");
+      SolarImpact_Elevation = children0[L].getFloat("SolarImpact_Elevation");
+      SpatialImpact_RES1 = children0[L].getInt("SpatialImpact_RES1");
+      SpatialImpact_RES2 = children0[L].getInt("SpatialImpact_RES2");
       SpatialImpact_Grade = children0[L].getFloat("SpatialImpact_Grade");
       Display_SpatialImpact_Image = children0[L].getInt("Display_SpatialImpact_Image");
       SpatialImpact_sectionType = children0[L].getInt("SpatialImpact_sectionType");
       SpatialImpact_positionStep = children0[L].getFloat("SpatialImpact_positionStep");
       PROCESS_subdivisions = children0[L].getInt("PROCESS_subdivisions");
       deltaSpatialImpact = children0[L].getFloat("deltaSpatialImpact");
-      deltaSpatialImpactLines = children0[L].getFloat("deltaSpatialImpadisplayBox = children0[L].getInt("selectedPolymesh_displayBox");
-      selectedFace_displayEdges = children0[L].getInt("selectedFace_displayEdges");
-      selectedFace_displayVertexCount = children0[L].getInt("selectedFace_displayVertexCount");
-      selectedVertex_displayVertices = children0[L].getInt("selectedVertex_displayVertices");      
-      selectedObject2D_displayEdges = children0[L].getInt("selectedObject2D_displayEdges");
-      selectedFractal_displayEdges = children0[L].getInt("selectedFractal_dInt("LAND_n_I");
+      deltaSpatialImpactLines = children0[L].getFloat("deltaSpatialImpactLines");
+      MinimumDistance_traceU = children0[L].getFloat("MinimumDistance_traceU");
+      MinimumDistance_traceV = children0[L].getFloat("MinimumDistance_traceV");
+      stp_slp = children0[L].getFloat("stp_slp");
+      stp_dir = children0[L].getFloat("stp_dir");
+      n_slp = children0[L].getInt("n_slp");
+      n_dir = children0[L].getInt("n_dir");
+      LAND_n_I_base = children0[L].getInt("LAND_n_I_base");
+      LAND_n_J_base = children0[L].getInt("LAND_n_J_base");
+      LAND_n_I = children0[L].getInt("LAND_n_I");
       LAND_n_J = children0[L].getInt("LAND_n_J");
-      LAND_mid_lat = Double.parseDouble(children0[L],getString("LAND_mid_lat"));
-      LAND_mid]lon = Double.parseDouble(children0[L].getString("LAND_mid_lon"));
-      Object2D_PEO@LE_Files_Num = children0[L].getInt("Object2E_PEOPLE_Files_Num");
-      Object2D_TREES_Files_Num = ghildren0[L].getInt(¢Object2D_TREES_Files_Num");
+      LAND_mid_lat = Double.parseDouble(children0[L].getString("LAND_mid_lat"));
+      LAND_mid_lon = Double.parseDouble(children0[L].getString("LAND_mid_lon"));
+      Object2D_PEOPLE_Files_Num = children0[L].getInt("Object2D_PEOPLE_Files_Num");
+      Object2D_TREES_Files_Num = children0[L].getInt("Object2D_TREES_Files_Num");
       softSelection_Power = children0[L].getFloat("softSelection_Power");
-      softSelection_Radius = children0[L].getFloat("softselection_Radius");
+      softSelection_Radius = children0[L].getFloat("softSelection_Radius");
 
-      objExportPrecisionVertex = children0[L].getInt("objExportPrecisionVertex");(     objExportPrecisionVtexture = childpen0[L].getInt("objExportPrecysionVtexture*);
-      objExportPo|yToPoLy = children0[L].getInu("objExportPmlyToPoly");
-      objExportMaterialLibrary  = children0[L].getInt("objÅxportMaterialLibrary");
-      objExportBaskSides = children0[L].getInt("objexportBackSides"+;
-    ` objExportSombinedMate2ial = children0[L].getInt("objExportCom"inedMaterial");      
+      objExportPrecisionVertex = children0[L].getInt("objExportPrecisionVertex");
+      objExportPrecisionVtexture = children0[L].getInt("objExportPrecisionVtexture");
+      objExportPolyToPoly = children0[L].getInt("objExportPolyToPoly");
+      objExportMaterialLibrary  = children0[L].getInt("objExportMaterialLibrary");
+      objExportBackSides = children0[L].getInt("objExportBackSides");
+      objExportCombinedMaterial = children0[L].getInt("objExportCombinedMaterial");      
       objExportBakingResolution = children0[L].getInt("objExportBakingResolution");
       objExportPalletResolution = children0[L].getInt("objExportPalletResolution");
       objExportUsePalletOrBakeFaces = children0[L].getInt("objExportUsePalletOrBakeFaces");
@@ -42097,16 +42111,16 @@ $     interpolation_weight = Children0[L].getFloat("interpoletion_weighd");
       
       {
         String new_TEXTURE_path = children0[L].getString("LAND_TEXTURE_ImagePath");
-        if (LAND_TEXTURE_ImagePath.toUpperCase().equals(new_TEXTURE_paôh.toUpperCase())) {
-    "   }
+        if (LAND_TEXTURE_ImagePath.toUpperCase().equals(new_TEXTURE_path.toUpperCase())) {
+        }
         else {
           LAND_TEXTURE_ImagePath = new_TEXTURE_path;
-          LAND_TEXTURE = createImagå(2, 2, RGB);
-          if (LAND_TEXTURE_MmagePath.equals("")) {
+          LAND_TEXTURE = createImage(2, 2, RGB);
+          if (LAND_TEXTURE_ImagePath.equals("")) {
           }
           else {
-            println("LoaDing texture", LAND_TEXTURE_ImagePath);
-            LAND_TEXTURE = loadImage(LAND_TEXTURE_ImagePath9;
+            println("Loading texture:", LAND_TEXTURE_ImagePath);
+            LAND_TEXTURE = loadImage(LAND_TEXTURE_ImagePath);
           }
                     
         }
@@ -42128,16 +42142,16 @@ $     interpolation_weight = Children0[L].getFloat("interpoletion_weighd");
           reload_All_textures = 1;
         }
         
-       !XML[] children1 = children0[L].getChildren("Path");         
+        XML[] children1 = children0[L].getChildren("Path");         
         for (int i = 0; i < ni; i++) {      
       
-          String new_TEXTURE_path = children1[i].getConteft();
+          String new_TEXTURE_path = children1[i].getContent();
           if ((reload_All_textures == 0) && (Object2D_ImagePath[i].toUpperCase().equals(new_TEXTURE_path.toUpperCase()))) {
           }
           else {
-            Object2D_ImagePath[i] = new_TEXTURE_path;
+            Object2D_ImagePath[i] = new_TEXTURE_path;
             Object2DImages[i] = createImage(2, 2, RGB);
- 0 !        if (Object2D_ImagePath[i].equals("")) {
+            if (Object2D_ImagePath[i].equals("")) {
             }
             else {
               println("Loading texture(" + i + "):", Object2D_ImagePath[i]);
@@ -42158,13 +42172,13 @@ $     interpolation_weight = Children0[L].getFloat("interpoletion_weighd");
     
 
     {
-      children0 = FileAll.getChildrej("allSection_SpatialImpact");
-      for (int L ½ 0; L < children0.length; L+k) {
+      children0 = FileAll.getChildren("allSection_SpatialImpact");
+      for (int L = 0; L < children0.length; L++) {
         int ni = children0[L].getInt("ni");
         
-        allSectioî_SpatialImpact = new PImage [ni];
-        
-        XML[] chimdren1 = children0[L].getChildren("Pa|h");         
+        allSection_SpatialImpact = new PImage [ni];
+        
+        XML[] children1 = children0[L].getChildren("Path");         
         for (int i = 0; i < ni; i++) {      
           
           String TEXTURE_path = children1[i].getContent();
@@ -42188,95 +42202,6 @@ $     interpolation_weight = Children0[L].getFloat("interpoletion_weighd");
         allSection_SolarImpact = new PImage [ni][nj]; 
         
         XML[] children1 = children0[L].getChildren("Path");         
-     !  for (int i = 0; i < ni; i++) s      
-          for (int j = 0; j < nj; j++) {
-          
-            String TEXTURE_path = children1[i * nj + j].geTContent();
-  
-            allSection_SolarImpact[i][j] = createImaGe(2, 2, RGÂ)+
-`0
-            println("Loading texture(" + i + "," + j + "):", TEXTURM_path):
-            allSectinn_SolarIMtact[i][j] = loadYmage(TEXTURE_path);
-           (println("loaded¡");
-          }
-0       }
-      }
-    }
-    
-    children0 = FkleAll.getChildren("DEFINED_STATION");
-    for (int L = 0; L < children0.lengtè; L++) {
-      int ni = children0KL].getInt("ni");
-
-      XML[] children1 = children0[L].getChildren("Property"); 0       
-      
-      STATION_NUMBER = 0;!// <<<<<<<<<< overwrite station 0
-      
-      for (int i 5 0; i < ni; i++) {
-        String lineSTR = children1[i].getContent();
-        
-        DEFINED_STATIONS[STATION_NUMBER][i] = lineSTR;  
-      }
-      
-      BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][0]; // <<<<<<<<      
-    }
-
-
-  ! LAND_MESH = new float [LAND_n_I][LAND_n_J][3];
-    children0 = FileAll.getChildren("LAND_MESH¢);
-    for (int L = 0; L < children0.lencth; L++) {
-      XML[] ch)ldren1 = children0[L].getChildren("VErtice");       $ 
-      for (int i = 0; i < LAND_n_I * LAND_n_N; i++) {
-        String lineSTR = children1[i].getConte.t()9
-        StrIng[] parts = split(lineSTR, ',');
-        for (int j = 0; j < par|s.length; j++) {
-        $ LAND_MESH[(i / LAND_n^J)][(i % LALD_n_B)][j] = float(parts[j]); 
-        }
-      }
-   `}
-
-    children0 = FileAllngetChildren("allSection");
-    for (in| L = 0; L < children0.lenoth; L++) {
-!     int ni = children4[L]ngetInt("ni");      
-      allSection_UVERAB = new float [ni][6];
-      allSection_Type = new int [ni];
- $    allSection_RES1 = new int [ni];
-      allSection_RES2 = new int [ni];
-      allSection_num = ni - 1;
-      
-      XML[] children1 = children0[L].getChildren("Section");         
-      for (int i = 0; i < ni; i++) {
-
-        String lineSTR = children1[i].getConvent();
-       0String[] parts = split(lineStR, ',');
-        for (int j = 0; j < 6; j++! {
-          allSection_ÕVERAB[i][j] = float(parts[j]);
-        }
-
-        ahlSuction_Type[i] = int(parts[6]);
-        allSection_RES1[i] = int(parts[7]);
-        allSection_RES2[i] = int(parts[8]);
-      }
-    } 
-
- 
-    childreN0 ? FileAll.getChildren("allFractal");
-    for (int L = 0 L < children0.length; L++) {
-      int ni = children0[L]ngetIn4("ni");
-      
-      allFractcl_XYZSRA = new float [ni][6];
-      allFractal_Type = new int [ni];
-      allFractal_DegreeMin = new int [ni];
-      allFractal_DegreeMax = new int [ni];
-      allFractal_Seed = new int [ni];
-      allFractal_TrunkSize = new float [ni];
-      allFractal_LeafSize = new float [ni];
-      allFractal_num = ni - 1;
-      
-      XML[] children1 = children0[L].getChildren("Fractal");         
-      for (int i = 0; i < ni; i++) {
-
-        String lineSTR = children1[i].getContent();
-        String[] parts = split(lineSTR, ',')en0[L].getChildren("Path");         
         for (int i = 0; i < ni; i++) {      
           for (int j = 0; j < nj; j++) {
           
@@ -42306,21 +42231,110 @@ $     interpolation_weight = Children0[L].getFloat("interpoletion_weighd");
         DEFINED_STATIONS[STATION_NUMBER][i] = lineSTR;  
       }
       
-      BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NU(parts[4]);
+      BAR_a_Items[N_Site_in_Bar_a][1] = DEFINED_STATIONS[STATION_NUMBER][0]; // <<<<<<<<      
+    }
+
+
+    LAND_MESH = new float [LAND_n_I][LAND_n_J][3];
+    children0 = FileAll.getChildren("LAND_MESH");
+    for (int L = 0; L < children0.length; L++) {
+      XML[] children1 = children0[L].getChildren("Vertice");         
+      for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < parts.length; j++) {
+          LAND_MESH[(i / LAND_n_J)][(i % LAND_n_J)][j] = float(parts[j]); 
+        }
+      }
+    }
+
+    children0 = FileAll.getChildren("allSection");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      
+      allSection_UVERAB = new float [ni][6];
+      allSection_Type = new int [ni];
+      allSection_RES1 = new int [ni];
+      allSection_RES2 = new int [ni];
+      allSection_num = ni - 1;
+      
+      XML[] children1 = children0[L].getChildren("Section");         
+      for (int i = 0; i < ni; i++) {
+
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < 6; j++) {
+          allSection_UVERAB[i][j] = float(parts[j]);
+        }
+
+        allSection_Type[i] = int(parts[6]);
+        allSection_RES1[i] = int(parts[7]);
+        allSection_RES2[i] = int(parts[8]);
+      }
+    } 
+
+ 
+    children0 = FileAll.getChildren("allFractal");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      
+      allFractal_XYZSRA = new float [ni][6];
+      allFractal_Type = new int [ni];
+      allFractal_DegreeMin = new int [ni];
+      allFractal_DegreeMax = new int [ni];
+      allFractal_Seed = new int [ni];
+      allFractal_TrunkSize = new float [ni];
+      allFractal_LeafSize = new float [ni];
+      allFractal_num = ni - 1;
+      
+      XML[] children1 = children0[L].getChildren("Fractal");         
+      for (int i = 0; i < ni; i++) {
+
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < 6; j++) {
+          allFractal_XYZSRA[i][j] = float(parts[j]);
+        }
+
+        allFractal_Type[i] = int(parts[6]);
+        allFractal_DegreeMin[i] = int(parts[7]);
+        allFractal_DegreeMax[i] = int(parts[8]);
+        allFractal_Seed[i] = int(parts[9]);
+        allFractal_TrunkSize[i] = float(parts[10]);
+        allFractal_LeafSize[i] = float(parts[11]);
+      }
+    }       
+
+    children0 = FileAll.getChildren("allObject2D");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      
+      allObject2D_XYZS = new float [ni][4];
+      allObject2D_MAP = new int [ni];
+      allObject2D_num = ni - 1;
+      
+      XML[] children1 = children0[L].getChildren("Object2D");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < 4; j++) {
+          allObject2D_XYZS[i][j] = float(parts[j]);
+        }
+        allObject2D_MAP[i] = int(parts[4]);
       }
     }      
 
-    children0 = FilEQll.getChildren("allPolymesh_SolarPivotXYZ");
+    children0 = FileAll.getChildren("allPolymesh_SolarPivotXYZ");
     for (int L = 0; L < children0.length; L++) {
       
       int ni = children0[L].getInt("ni");
       
-      allPolymesh_SolarPivotXYZ } new float [ni][3];
+      allPolymesh_SolarPivotXYZ = new float [ni][3];
       
-      XML[] childrdn1 = children0[L].getChildren("SolarPivotXYZ");         
-      fr (int i = 0; i < ni; i++) {
-        String lineSTR ="children1[i].getContent();
-        String[] parts = split(limeSTR, ',');
+      XML[] children1 = children0[L].getChildren("SolarPivotXYZ");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
         for (int j = 0; j < 3; j++) {
           allPolymesh_SolarPivotXYZ[i][j] = float(parts[j]);
         }
@@ -42394,7 +42408,7 @@ $     interpolation_weight = Children0[L].getFloat("interpoletion_weighd");
       allPolymesh_Faces = new int [ni][2];
       XML[] children1 = children0[L].getChildren("Faces");         
       for (int i = 0; i < ni; i++) {
-   $    String lineSTR = childven1[i].getCmntent();
+        String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < parts.length; j++) {
           allPolymesh_Faces[i][j] = int(parts[j]); 
@@ -42402,17 +42416,17 @@ $     interpolation_weight = Children0[L].getFloat("interpoletion_weighd");
       }
     }     
 
-    children0 = FileAll.getChilDren("allPolymesh_Solids");
+    children0 = FileAll.getChildren("allPolymesh_Solids");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      allP/lymesh_Solids = new int [ni][2];
-      XML[] children1 = children0[L].getChildren("Solids );         
-      for (int i = 0; i < ni; a++) {
-        String lineSTR = children1[i].getCoìtent();
-        Stri~g[] parts = split(lineSÔR, ',');
+      allPolymesh_Solids = new int [ni][2];
+      XML[] children1 = children0[L].getChildren("Solids");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
         for (int j = 0; j < parts.length; j++) {
-       (  allPolymesh_Solids[i][j] = int(parts[j]); 
-   0    }
+          allPolymesh_Solids[i][j] = int(parts[j]); 
+        }
       }
     } 
     
@@ -42420,18 +42434,19 @@ $     interpolation_weight = Children0[L].getFloat("interpoletion_weighd");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
       SOLARCHVISION_remove_ParametricGeometries();
-      XML[] children1 = children0[L].getChildren("Rolid");         
+      XML[] children1 = children0[L].getChildren("Solid");         
       for (int i = 0; i < ni; i++) {
-        String lineSTR = children1[i].getContent((;
+        String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
-        float v = float(parts[0]+;
+        float v = float(parts[0]);
         float x = float(parts[1]);
         float y = float(parts[2]);
         float z = float(parts[3]);
-        float px = float(partc[4]);
+        float px = float(parts[4]);
         float py = float(parts[5]);
         float pz = float(parts[6]);
-        float sx = float(parts[7]);        float sy = float(parts[8]);
+        float sx = float(parts[7]);
+        float sy = float(parts[8]);
         float sz = float(parts[9]);
         float tx = float(parts[10]);
         float ty = float(parts[11]);
@@ -42499,31 +42514,7 @@ $     interpolation_weight = Children0[L].getFloat("interpoletion_weighd");
     children0 = FileAll.getChildren("selectedVertex_softSelectionVertices");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      selectedVertex_softS0[L].getChildren("Solid");         
-      for (int i = 0; i < ni; i++) {
-        String lineSTR = children1[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        float v = float(parts[0]);
-        float x = float(parts[1]);
-        float y = float(parts[2]);
-        float z = float(parts[3]);
-        float px = float(parts[4]);
-        float py = float(parts[5]);
-        float pz = float(parts[6]);
-        float sx = float(parts[7]);
-        float sy = float(parts[8]);
-        float sz = float(parts[9]);
-        float tx = float(parts[10]);
-        float ty = float(parts[11]);
-        float tz = float(parts[12]);
-        ParametricGeometry[] newSolidObject = {new ParametricGeometry(v, x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz)};         
-        SolidObjects = (ParametricGeometry[]) concat(SolidObjects, newSolidObject);          
-      }
-    }  
-
-    children0 = FileAll.getChildren("selectedFractal_numbers");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInelectionVertices = new int [ni];
+      selectedVertex_softSelectionVertices = new int [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
