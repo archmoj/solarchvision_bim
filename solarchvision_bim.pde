@@ -19373,11 +19373,8 @@ void SOLARCHVISION_export_objects () {
         
         float _val = (Image_X / (0.5 * RES1)) - 1; 
         
-        float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
-        if (PAL_DIR == -1) _u = 1 - _u;
-        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-        if (PAL_DIR == 2) _u =  0.5 * _u;        
-      
+        float _u = 0.5 + 0.5 * _val;
+
         float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
         
         Pallet_Texture.pixels[np] = color(_COL[1], _COL[2], _COL[3], _COL[0]);        
@@ -19468,7 +19465,7 @@ void SOLARCHVISION_export_objects () {
       
       for (int i = 0; i < 6; i++) {
         
-        float u1 = 1 - _u;
+        float u1 = 0.5 * (_u + 0.5);
         
         if (u1 > 0.999) u1 = 0.999;
         if (u1 < 0.001) u1 = 0.001;
@@ -19514,190 +19511,193 @@ void SOLARCHVISION_export_objects () {
 
 
   if (Display_SKY3D != 0) {
-  
-    for (int f = 1; f < skyFaces.length; f++) {
-      
-      int PAL_TYPE = 0; 
-      int PAL_DIR = 1;
-      float PAL_Multiplier = 1; 
-      
-      if (Impact_TYPE == Impact_ACTIVE) {
-        PAL_TYPE = SKY3D_Pallet_ACTIVE_CLR; 
-        PAL_DIR = SKY3D_Pallet_ACTIVE_DIR;  
-        PAL_Multiplier = 1.0 * SKY3D_Pallet_ACTIVE_MLT;  
-      }
-      if (Impact_TYPE == Impact_PASSIVE) {
-        PAL_TYPE = SKY3D_Pallet_PASSIVE_CLR; 
-        PAL_DIR = SKY3D_Pallet_PASSIVE_DIR;  
-        PAL_Multiplier = 0.05 * SKY3D_Pallet_PASSIVE_MLT; 
-      }             
-      
-
-
-      String the_filename = "";
-      String TEXTURE_path = "";
     
-  
-      num_vertices_added = 0;
-      
-      if (objExportMaterialLibrary != 0) {
-  
-        the_filename = "skyPattern_Pallet.bmp";
-  
-        TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
-  
-        println("Saving texture:", TEXTURE_path);
-        
-        int RES1 = objExportPalletResolution; 
-        int RES2 = objExportPalletResolution / 16;      
+    if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
     
-        PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
-     
-     
-        Pallet_Texture.loadPixels();
-            
-        for (int np = 0; np < (RES1 * RES2); np++) {
-          int Image_X = np % RES1;
-          int Image_Y = np / RES1;
-          
-          float _val = (Image_X / (0.5 * RES1)) - 1; 
-          
-          float _u = 0.5 + _val;
-          
-          if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
+      for (int f = 1; f < skyFaces.length; f++) {
         
-          float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
-          
-          Pallet_Texture.pixels[np] = color(_COL[1], _COL[2], _COL[3], _COL[0]);        
+        int PAL_TYPE = 0; 
+        int PAL_DIR = 1;
+        float PAL_Multiplier = 1; 
+        
+        if (Impact_TYPE == Impact_ACTIVE) {
+          PAL_TYPE = SKY3D_Pallet_ACTIVE_CLR; 
+          PAL_DIR = SKY3D_Pallet_ACTIVE_DIR;  
+          PAL_Multiplier = 1.0 * SKY3D_Pallet_ACTIVE_MLT;  
         }
+        if (Impact_TYPE == Impact_PASSIVE) {
+          PAL_TYPE = SKY3D_Pallet_PASSIVE_CLR; 
+          PAL_DIR = SKY3D_Pallet_PASSIVE_DIR;  
+          PAL_Multiplier = 0.05 * SKY3D_Pallet_PASSIVE_MLT; 
+        }             
         
-        Pallet_Texture.updatePixels();   
-     
-        Pallet_Texture.save(TEXTURE_path);      
   
+  
+        String the_filename = "";
+        String TEXTURE_path = "";
       
-        mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
-        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-        mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-        mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
     
-        mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-        mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-  
-        //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
-        mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map  
-  
+        num_vertices_added = 0;
         
-  
-      }    
+        if (objExportMaterialLibrary != 0) {
+    
+          the_filename = "skyPattern_Pallet.bmp";
+    
+          TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
+    
+          println("Saving texture:", TEXTURE_path);
+          
+          int RES1 = objExportPalletResolution; 
+          int RES2 = objExportPalletResolution / 16;      
       
-  
-      num_vertices_added = 0;
-
-      for (int _turn = 1; _turn < 4; _turn += 1) {
-  
-
-        if (_turn == 3) {
-        
-          obj_lastGroupNumber += 1;
-          objOutput.println("g skyPattern");
-    
-          if (objExportMaterialLibrary != 0) {      
-            objOutput.println("usemtl " +  the_filename.replace('.', '_'));
-          }
-        }
- 
-
-
-
-        int Tessellation = 0;
-        
-        int TotalSubNo = 1;  
-        Tessellation = SKY3D_TESSELLATION;
-        if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-    
-        for (int n = 0; n < TotalSubNo; n++) {
-          
-          float[][] base_Vertices = new float [skyFaces[f].length][3];
-          for (int j = 0; j < skyFaces[f].length; j++) {
-            int vNo = skyFaces[f][j];
-            base_Vertices[j][0] = skyVertices[vNo][0];
-            base_Vertices[j][1] = skyVertices[vNo][1];
-            base_Vertices[j][2] = skyVertices[vNo][2];
-          }
-          
-          float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-          
-          for (int j = 0; j < subFace.length; j++) {
-            subFace[j] = fn_normalize(subFace[j]);
-          }
+          PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
        
-         
+       
+          Pallet_Texture.loadPixels();
+              
+          for (int np = 0; np < (RES1 * RES2); np++) {
+            int Image_X = np % RES1;
+            int Image_Y = np / RES1;
+            
+            float _val = (Image_X / (0.5 * RES1)) - 1; 
+            
+            float _u = 0.5 + _val;
+            
+            if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
           
-          for (int s = 0; s < subFace.length; s++) {
+            float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
             
-            int s_next = (s + 1) % subFace.length;
-            int s_prev = (s + subFace.length - 1) % subFace.length;
+            Pallet_Texture.pixels[np] = color(_COL[1], _COL[2], _COL[3], _COL[0]);        
+          }
+          
+          Pallet_Texture.updatePixels();   
+       
+          Pallet_Texture.save(TEXTURE_path);      
+    
+        
+          mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
+          mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+          mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+          mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+          mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+          mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+          mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+      
+          mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+          mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+          mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+    
+          //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
+          mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map  
+    
+          
+    
+        }    
+        
+    
+        num_vertices_added = 0;
+  
+        for (int _turn = 1; _turn < 4; _turn += 1) {
+    
+  
+          if (_turn == 3) {
+          
+            obj_lastGroupNumber += 1;
+            objOutput.println("g skyPattern");
+      
+            if (objExportMaterialLibrary != 0) {      
+              objOutput.println("usemtl " +  the_filename.replace('.', '_'));
+            }
+          }
+   
+  
+  
+  
+          int Tessellation = 0;
+          
+          int TotalSubNo = 1;  
+          Tessellation = SKY3D_TESSELLATION;
+          if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+      
+          for (int n = 0; n < TotalSubNo; n++) {
             
-            //if ((subFace[s][2] > -0.2) && (subFace[s_prev][2] > -0.2) && (subFace[s_next][2] > -0.2)) // to remove below
-            { 
+            float[][] base_Vertices = new float [skyFaces[f].length][3];
+            for (int j = 0; j < skyFaces[f].length; j++) {
+              int vNo = skyFaces[f][j];
+              base_Vertices[j][0] = skyVertices[vNo][0];
+              base_Vertices[j][1] = skyVertices[vNo][1];
+              base_Vertices[j][2] = skyVertices[vNo][2];
+            }
+            
+            float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+            
+            for (int j = 0; j < subFace.length; j++) {
+              subFace[j] = fn_normalize(subFace[j]);
+            }
+         
+           
+            
+            for (int s = 0; s < subFace.length; s++) {
               
-              float x = subFace[s][0] * SKY3D_scale * WIN3D_scale3D;
-              float y = subFace[s][1] * SKY3D_scale * WIN3D_scale3D;
-              float z = subFace[s][2] * SKY3D_scale * WIN3D_scale3D;
-
-              float _u = SOLARCHVISION_vertexU_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+              int s_next = (s + 1) % subFace.length;
+              int s_prev = (s + subFace.length - 1) % subFace.length;
               
-
-              if (_turn == 1) {
-                objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " +  nf(y, 0, objExportPrecisionVertex) + " " +  nf(z, 0, objExportPrecisionVertex));
-              }
-              
-              if (_turn == 2) { 
-                float u1 = 0.5 * (_u + 0.5);
+              //if ((subFace[s][2] > -0.2) && (subFace[s_prev][2] > -0.2) && (subFace[s_next][2] > -0.2)) // to remove below
+              { 
                 
-                if ((WIN3D_FACES_SHADE == Shade_Global_Solar) || (WIN3D_FACES_SHADE == Shade_Vertex_Solar)) { 
-                  if  (Impact_TYPE == Impact_ACTIVE) u1 = _u;
+                float x = subFace[s][0] * SKY3D_scale * WIN3D_scale3D;
+                float y = subFace[s][1] * SKY3D_scale * WIN3D_scale3D;
+                float z = subFace[s][2] * SKY3D_scale * WIN3D_scale3D;
+  
+                float _u = SOLARCHVISION_vertexU_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                
+  
+                if (_turn == 1) {
+                  objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " +  nf(y, 0, objExportPrecisionVertex) + " " +  nf(z, 0, objExportPrecisionVertex));
                 }
                 
-                if (u1 > 0.999) u1 = 0.999;
-                if (u1 < 0.001) u1 = 0.001;
+                if (_turn == 2) { 
+                  float u1 = 0.5 * (_u + 0.5);
+                  
+                  if ((WIN3D_FACES_SHADE == Shade_Global_Solar) || (WIN3D_FACES_SHADE == Shade_Vertex_Solar)) { 
+                    if  (Impact_TYPE == Impact_ACTIVE) u1 = _u;
+                  }
+                  
+                  if (u1 > 0.999) u1 = 0.999;
+                  if (u1 < 0.001) u1 = 0.001;
+                  
+                  objOutput.println("vt " + nf(u1, 0, objExportPrecisionVtexture) + " 0 0");                        
+                }
                 
-                objOutput.println("vt " + nf(u1, 0, objExportPrecisionVtexture) + " 0 0");                        
-              }
+                if (_turn == 3) {
+                  num_vertices_added += 1;
+                }
+                
+              }            
+            }
+  
+            if (_turn == 3) {
+              String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0);
+              String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
+              String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
+              String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
               
-              if (_turn == 3) {
-                num_vertices_added += 1;
-              }
+              String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0);
+              String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);          
+              String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);          
+              String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);          
               
-            }            
+              objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);            
+            }          
+            
           }
-
-          if (_turn == 3) {
-            String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0);
-            String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
-            String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
-            String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
-            
-            String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0);
-            String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);          
-            String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);          
-            String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);          
-            
-            objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);            
-          }          
           
         }
-        
+  
+  
+        obj_lastVertexNumber += num_vertices_added;
+        obj_lastVtextureNumber += num_vertices_added;       
       }
-
-
-      obj_lastVertexNumber += num_vertices_added;
-      obj_lastVtextureNumber += num_vertices_added;       
     }
   }
   
@@ -25368,9 +25368,9 @@ void SOLARCHVISION_calculate_windFlow () {
 */   
 
 
-  for (float z = 2.5; z <= 40; z += 10) {
-    for (float y = -80; y <= 80; y += 10) {
-      for (float x = -80; x <= 80; x += 10) {
+  for (float z = 2.5; z <= 40; z += 5) {
+    for (float y = -80; y <= 80; y += 5) {
+      for (float x = -80; x <= 80; x += 5) {
         
     
 
