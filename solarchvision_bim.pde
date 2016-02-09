@@ -3119,7 +3119,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
   int PAL_DIR = 1;
   float PAL_Multiplier = 1; 
 
-  if ((WIN3D_FACES_SHADE == Shade_Vertex_Solar) || (WIN3D_FACES_SHADE == Shade_Global_Solar)) {
+  if ((WIN3D_FACES_SHADE == Shade_Global_Solar) || (WIN3D_FACES_SHADE == Shade_Vertex_Solar)) {
     
     if (Impact_TYPE == Impact_ACTIVE) {
       PAL_TYPE = OBJECTS_Pallet_ACTIVE_CLR; 
@@ -3208,7 +3208,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
       
       float _u = 0.2 * q - 0.5;
       
-      if ((WIN3D_FACES_SHADE == Shade_Vertex_Solar) || (WIN3D_FACES_SHADE == Shade_Global_Solar)) {
+      if ((WIN3D_FACES_SHADE == Shade_Global_Solar) || (WIN3D_FACES_SHADE == Shade_Vertex_Solar)) {
         if (Impact_TYPE == Impact_ACTIVE) _u = 0.1 * q;
         if (Impact_TYPE == Impact_PASSIVE) _u = 0.2 * q - 0.5;
       }
@@ -3252,7 +3252,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
       WIN3D_Diagrams.textSize(txtSize);
       WIN3D_Diagrams.textAlign(CENTER, CENTER);
       
-      if ((WIN3D_FACES_SHADE == Shade_Vertex_Solar) || (WIN3D_FACES_SHADE == Shade_Global_Solar)) {
+      if ((WIN3D_FACES_SHADE == Shade_Global_Solar) || (WIN3D_FACES_SHADE == Shade_Vertex_Solar)) {
         if (Impact_TYPE == Impact_ACTIVE) WIN3D_Diagrams.text(nf((roundTo(0.1 * q / PAL_Multiplier, 0.1)), 1, 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
         if (Impact_TYPE == Impact_PASSIVE) WIN3D_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
       }
@@ -10979,7 +10979,7 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
         float _u = 0;
         
         if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
-        if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.75 * _val;
+        if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + _val;
 
         float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
         
@@ -11315,12 +11315,12 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
                       }
                       
                       if (_turn == 2) { 
-                        float u1 = 0; 
-                        
-                        if (Impact_TYPE == Impact_ACTIVE) u1 = _u;
-                        //if (Impact_TYPE == Impact_PASSIVE) u1 = 1 - 0.75 * 0.5 * _u;
-                        if (Impact_TYPE == Impact_PASSIVE) u1 = 1 - _u;
-                        
+                        float u1 = 1 - 0.5 * _u;
+                
+                        if ((WIN3D_FACES_SHADE == Shade_Global_Solar) || (WIN3D_FACES_SHADE == Shade_Vertex_Solar)) {
+                          if (Impact_TYPE == Impact_ACTIVE) u1 = _u;
+                        }
+                
                         if (u1 > 0.999) u1 = 0.999;
                         if (u1 < 0.001) u1 = 0.001;
                         
@@ -18762,11 +18762,12 @@ void SOLARCHVISION_export_objects () {
             
             float _val = (Image_X / (0.5 * RES1)) - 1; 
             
-            float _u = 0;
+            float _u = 0.5 + _val;
             
-            if ((WIN3D_FACES_SHADE == Shade_Global_Solar) && (Impact_TYPE == Impact_ACTIVE)) _u = 0.5 + 0.5 * _val;
-            else _u = 0.5 + 0.75 * _val;
-        
+            if ((WIN3D_FACES_SHADE == Shade_Global_Solar) || (WIN3D_FACES_SHADE == Shade_Vertex_Solar)) {
+              if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
+            }            
+
             if (PAL_DIR == -1) _u = 1 - _u;
             if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
             if (PAL_DIR == 2) _u =  0.5 * _u;
@@ -19573,7 +19574,7 @@ void SOLARCHVISION_export_objects () {
           float _u = 0;
           
           if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
-          if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + 0.75 * _val;
+          if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + _val;
       
           if (PAL_DIR == -1) _u = 1 - _u;
           if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
@@ -19672,10 +19673,11 @@ void SOLARCHVISION_export_objects () {
               }
               
               if (_turn == 2) { 
-                float u1 = 0; 
+                float u1 = 1 - 0.5 * _u;
                 
-                if (Impact_TYPE == Impact_ACTIVE) u1 = _u;
-                if (Impact_TYPE == Impact_PASSIVE) u1 = 1 - 0.75 * 0.5 * _u;
+                if ((WIN3D_FACES_SHADE == Shade_Global_Solar) || (WIN3D_FACES_SHADE == Shade_Vertex_Solar)) { 
+                  if  (Impact_TYPE == Impact_ACTIVE) u1 = _u;
+                }
                 
                 if (u1 > 0.999) u1 = 0.999;
                 if (u1 < 0.001) u1 = 0.001;
