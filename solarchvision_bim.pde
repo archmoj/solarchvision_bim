@@ -10976,10 +10976,9 @@ void SOLARCHVISION_draw_SunPathCycles (float x_Plot, float y_Plot, float z_Plot,
         
         float _val = (Image_X / (0.5 * RES1)) - 1; 
         
-        float _u = 0;
-        
+        float _u = 0.5 + _val;
+
         if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
-        if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + _val;
 
         float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
         
@@ -18767,11 +18766,6 @@ void SOLARCHVISION_export_objects () {
             if ((WIN3D_FACES_SHADE == Shade_Global_Solar) || (WIN3D_FACES_SHADE == Shade_Vertex_Solar)) {
               if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
             }            
-
-            if (PAL_DIR == -1) _u = 1 - _u;
-            if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-            if (PAL_DIR == 2) _u =  0.5 * _u;
-    
           
             float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
             
@@ -19571,15 +19565,9 @@ void SOLARCHVISION_export_objects () {
           
           float _val = (Image_X / (0.5 * RES1)) - 1; 
           
-          float _u = 0;
+          float _u = 0.5 + _val;
           
           if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
-          if (Impact_TYPE == Impact_PASSIVE) _u = 0.5 + _val;
-      
-          if (PAL_DIR == -1) _u = 1 - _u;
-          if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-          if (PAL_DIR == 2) _u =  0.5 * _u;
-  
         
           float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
           
