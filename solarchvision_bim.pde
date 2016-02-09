@@ -55,12 +55,14 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 23;
+int STATION_NUMBER = 2; //24;
 
 String[][] DEFINED_STATIONS = {
                                 {"Tehran_11x12", "XX", "IR", "35.6789", "51.413063", "52.5", "1500", "240.0", "", "", "IRN_TEHRAN_XX_IR"},
   
                                 {"Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
+                                
+                                {"Edinburgh_School", "QC", "CA", "45.457", "-73.660", "-75", "0", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
                                 
                                 {"Hamedan_Site", "XX", "IR", "34.807", "48.455", "52.5", "1988.5", "240.0", "", "", "IRN_HAMEDAN_XX_IR"},
   
@@ -1285,7 +1287,7 @@ int Display_SKY3D = 1;
 
 int Download_LAND_MESH = 0;
 int Load_LAND_MESH = 1; // 1;
-int Display_LAND_MESH = 0; // 1;
+int Display_LAND_MESH = 1; // 0;
 int Display_LAND_TEXTURE = 0;
 int Display_LAND_DEPTH = 0;
 int Skip_LAND_MESH_Center = 0; //5;
@@ -1848,7 +1850,7 @@ void SOLARCHVISION_update_station (int Step) {
   
   if ((Step == 0) || (Step == 8)) SOLARCHVISION_remove_2Dobjects();
   
-  //if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_2Dobjects_onLand();
+  if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_2Dobjects_onLand();
 
 }
 
@@ -20002,14 +20004,14 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
           float b = COL & 0xFF;
                                         
           if ((g > r + 10) && (g > b + 10)) { // looks more green
-            if (g < 127) { // not on grass (light green)
-              if (z + LocationElevation > 5) { // not in water (below see level)
+            if (g < 85) { // not on grass (light green)
+              //if (z + LocationElevation > 5) { // not in water (below see level)
               
-                //float s = 5 + random(10); 
-                float s = 10 + random(20); // bigger trees
+                float s = 5 + random(10); 
+                //float s = 10 + random(20); // bigger trees
     
                 SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, s);
-              }
+              //}
             }
           }
 
@@ -23959,7 +23961,7 @@ void SOLARCHVISION_LoadLAND_TEXTURE (String LandDirectory) {
 //Polar
 int LAND_n_I_base = 0;
 int LAND_n_J_base = 0;
-int LAND_n_I = 13 + 1; //16 + 1; //13 + 1; // 24 + 1;
+int LAND_n_I = 17 + 1; //13 + 1; //16 + 1; //13 + 1; // 24 + 1;
 int LAND_n_J = 24 + 1;     
 
 
@@ -24065,8 +24067,9 @@ void SOLARCHVISION_DownloadLAND_MESH() {
 
     String the_link = "";
 
-    //double stp_lat = 1.0 / 2224.5968; // equals to 50m <<<<<<<< Note: for many locations this one is applied
-    double stp_lat = 40.0 / 2224.5968; // equals to 2km 
+    double stp_lat = 1.0 / 2224.5968; // equals to 50m <<<<<<<< Note: for many locations this one is applied
+    //double stp_lat = 40.0 / 2224.5968; // equals to 2km 
+    
     
     double stp_lon = stp_lat / cos_ang((float) LAND_mid_lat); 
 
@@ -24262,7 +24265,7 @@ void SOLARCHVISION_remove_ParametricGeometries () {
 
 ParametricGeometry[] SolidObjects = {};
 
-void SOLARCHVISION_add_ParametricGeometries () {
+void SOLARCHVISION_add_ParametricGeometries_REAL () {
 
 /*
   {
@@ -24580,7 +24583,44 @@ void SOLARCHVISION_add_ParametricGeometries () {
 }
 
 
+void SOLARCHVISION_add_ParametricGeometries () {
+  
+  int[][] block = {
+                   {1,1,1,1,0,0,0,0,0,0,0},
+                   {1,1,1,1,0,0,0,0,0,0,0},
+                   {1,1,1,1,0,0,0,0,0,0,0},
+                   {1,1,1,1,0,0,0,0,0,0,0},
+                   {1,1,1,1,0,0,0,0,0,0,0},
+                   {1,1,1,1,1,1,0,0,0,0,0},
+                   {1,1,1,1,1,1,0,0,0,0,0},
+                   {1,1,1,1,1,1,1,1,1,1,1},
+                   {1,1,1,1,1,1,1,1,1,1,1},
+                   {1,1,1,1,1,1,1,1,1,1,1},
+                   {1,1,1,1,1,1,1,1,1,1,1}};
 
+
+  for (int i = 0; i < 11; i++) {
+    for (int j = 0; j < 11; j++) {
+      
+      if (block[i][j] != 0) {
+
+        addToLastPolymesh = 0; SOLARCHVISION_beginNewObject(); addToLastPolymesh = 1;
+        
+        float dx = 2.5;
+        float dy = 2.5;
+        float dz = 4;
+        float rot = 60;
+        float x = 2 * (dx * i * cos_ang(rot) - dy * j * sin_ang(rot));
+        float y = 2 * (dx * i * sin_ang(rot) + dy * j * cos_ang(rot));
+        float z = dz;    
+        
+        SOLARCHVISION_add_Box_Core(7,0,0,1,1, x,y,z, dx, dy, dz, rot);
+      }
+
+    }
+  }  
+  
+}
 
 
 void SOLARCHVISION_build_SolarImpact_Image_array () {
