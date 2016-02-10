@@ -12644,25 +12644,42 @@ void WIN3D_keyPressed (KeyEvent e) {
                  ROLLOUT_Update = 1; 
                  break;          
         
-        case LEFT  :WIN3D_X_coordinate += WIN3D_S_coordinate * OBJECTS_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case RIGHT :WIN3D_X_coordinate -= WIN3D_S_coordinate * OBJECTS_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
-        case UP    :WIN3D_Y_coordinate += WIN3D_S_coordinate * OBJECTS_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case DOWN  :WIN3D_Y_coordinate -= WIN3D_S_coordinate * OBJECTS_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case DOWN :
+                  //WIN3D_RX_coordinate += WIN3D_RS_coordinate; 
+                  SOLARCHVISION_rotateZ_Camera_around_Selection(WIN3D_RS_coordinate);
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         
+        case LEFT :
+                  //WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; 
+                  SOLARCHVISION_rotateXY_Camera_around_Selection(-WIN3D_RS_coordinate);
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+                  
+        case RIGHT :
+                  //WIN3D_RZ_coordinate += WIN3D_RS_coordinate; 
+                  SOLARCHVISION_rotateXY_Camera_around_Selection(WIN3D_RS_coordinate);
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
+                  
+        case UP :
+                  //WIN3D_RX_coordinate -= WIN3D_RS_coordinate; 
+                  SOLARCHVISION_rotateZ_Camera_around_Selection(-WIN3D_RS_coordinate);
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+                  
+      
         
       }
     }
     else {
       switch(key) {
+                  
         case '.' :WIN3D_X_coordinate = 0;
                   WIN3D_Y_coordinate = 0;
-                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-                  
-        case '0' :WIN3D_X_coordinate = 0;
-                  WIN3D_Y_coordinate = 0;
                   //WIN3D_ZOOM_coordinate = 60;
-                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;                  
-                  
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        
+       case '0' :WIN3D_RX_coordinate = 90; SOLARCHVISION_reverseTransform_Camera(); 
+                 WIN3D_Update = 1; ROLLOUT_Update = 1; break;  
+
+
         case '5' :WIN3D_RX_coordinate = 0;
                   WIN3D_RY_coordinate = 0;
                   WIN3D_RZ_coordinate = 0; 
@@ -12680,6 +12697,7 @@ void WIN3D_keyPressed (KeyEvent e) {
         
         case '3' :Display_Building_Model = (Display_Building_Model + 1) % 2; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
  
+
 
 
           
@@ -12770,25 +12788,11 @@ void WIN3D_keyPressed (KeyEvent e) {
                   WIN3D_RX_coordinate += WIN3D_RS_coordinate; SOLARCHVISION_reverseTransform_Camera(); 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
   
-        case '2' :
-                  //WIN3D_RX_coordinate += WIN3D_RS_coordinate; 
-                  SOLARCHVISION_rotateZ_Camera_around_Selection(WIN3D_RS_coordinate);
-                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        
-        case '4' :
-                  //WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; 
-                  SOLARCHVISION_rotateXY_Camera_around_Selection(-WIN3D_RS_coordinate);
-                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '4' :WIN3D_X_coordinate += WIN3D_S_coordinate * OBJECTS_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '6' :WIN3D_X_coordinate -= WIN3D_S_coordinate * OBJECTS_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
+        case '8' :WIN3D_Y_coordinate += WIN3D_S_coordinate * OBJECTS_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        case '2' :WIN3D_Y_coordinate -= WIN3D_S_coordinate * OBJECTS_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;                  
                   
-        case '6' :
-                  //WIN3D_RZ_coordinate += WIN3D_RS_coordinate; 
-                  SOLARCHVISION_rotateXY_Camera_around_Selection(WIN3D_RS_coordinate);
-                  WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
-                  
-        case '8' :
-                  //WIN3D_RX_coordinate -= WIN3D_RS_coordinate; 
-                  SOLARCHVISION_rotateZ_Camera_around_Selection(-WIN3D_RS_coordinate);
-                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         
         case '*' ://OBJECTS_scale *= 2.0; SKY3D_scale *= 2.0;
                   SOLARCHVISION_move_Camera_towards_Selection(0.5); 
