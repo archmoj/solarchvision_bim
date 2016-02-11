@@ -31473,23 +31473,15 @@ void mouseClicked () {
                 
                 if (View_Select_Create_Modify == 18) { //PickStudyCamera
 
-                  //CAM_x = RxP[0];
-                  //CAM_y = RxP[1];
-                  //CAM_z = RxP[2] + 1.5; // standing eye level from the point           
-                  
-                  println("CAM_x, CAM_y, CAM_z", CAM_x, CAM_y, CAM_z);
-                  println("RxP[0], RxP[1], RxP[2]", RxP[0], RxP[1], RxP[2]);
-                  println("WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate", WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
-                  
-                  WIN3D_X_coordinate = RxP[0] - CAM_x;
-                  WIN3D_Y_coordinate = RxP[1] - CAM_y;
-                  WIN3D_Z_coordinate = RxP[2] - CAM_z + 1.5; // standing eye level from the point       
-  
-                  //SOLARCHVISION_reverseTransform_Camera(); 
+                  CAM_x = RxP[0];
+                  CAM_y = RxP[1];
+                  CAM_z = RxP[2] + 1.5; // standing eye level from the point           
+
+                  SOLARCHVISION_reverseTransform_Camera();
   
                   WIN3D_Update = 1;                
                   
-                  /*
+                  
                   float Camera_X = WIN3D_X_coordinate;
                   float Camera_Y = WIN3D_Y_coordinate;
                   float Camera_Z = WIN3D_Z_coordinate;
@@ -31501,7 +31493,7 @@ void mouseClicked () {
                   int Camera_Type = WIN3D_View_Type;
           
                   SOLARCHVISION_add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_RX, Camera_RY, Camera_RZ, Camera_F);
-                  */                      
+                                        
                 }
               }
               
