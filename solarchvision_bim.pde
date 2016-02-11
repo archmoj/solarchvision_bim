@@ -36221,79 +36221,77 @@ void SOLARCHVISION_draw_Cameras () {
 
       int Camera_Type = allCamera_Type[f];
 
-      if (Camera_Type != 0) {
+      WIN3D_Diagrams.strokeWeight(1);
+      WIN3D_Diagrams.stroke(0);
+      WIN3D_Diagrams.fill(127,255,127,127);  
+      
+      WIN3D_Diagrams.beginShape();
+      
+      float[][] ImageVertex = SOLARCHVISION_getCorners_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_RX, Camera_RY, Camera_RZ, Camera_F);
+     
+      for (int q = 0; q < 4; q++) {
+      
+        float x = ImageVertex[q][0];
+        float y = ImageVertex[q][1];
+        float z = ImageVertex[q][2];
+ 
+        WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
+        
+        allCamera_Vertices[f * 4 - q][0] = x;
+        allCamera_Vertices[f * 4 - q][1] = y;
+        allCamera_Vertices[f * 4 - q][2] = z;
+        
+      }        
 
-        WIN3D_Diagrams.stroke(0);
-        WIN3D_Diagrams.fill(127,255,127);  
-        
-        WIN3D_Diagrams.beginShape();
-        
-        float[][] ImageVertex = SOLARCHVISION_getCorners_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_RX, Camera_RY, Camera_RZ, Camera_F);
-       
-        for (int q = 0; q < 4; q++) {
-        
+      allCamera_Faces[f][0] = f * 4 - 3;
+      allCamera_Faces[f][1] = f * 4 - 2;
+      allCamera_Faces[f][2] = f * 4 - 1;
+      allCamera_Faces[f][3] = f * 4 - 0;  
+
+      WIN3D_Diagrams.endShape(CLOSE);
+
+      WIN3D_Diagrams.strokeWeight(1);
+      WIN3D_Diagrams.stroke(0);
+      WIN3D_Diagrams.noFill();  
+      
+      WIN3D_Diagrams.beginShape();
+      
+      for (int q = 0; q < 4; q++) {
+     
+        {
           float x = ImageVertex[q][0];
           float y = ImageVertex[q][1];
           float z = ImageVertex[q][2];
  
           WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
+        }
+
+        {
+          int next_q = (q + 1) % 4; 
           
-          allCamera_Vertices[f * 4 - q][0] = x;
-          allCamera_Vertices[f * 4 - q][1] = y;
-          allCamera_Vertices[f * 4 - q][2] = z;
+          float x = ImageVertex[next_q][0];
+          float y = ImageVertex[next_q][1];
+          float z = ImageVertex[next_q][2];
+ 
+          WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
+        }
+
+        {
+          int o = 4; 
           
-        }        
+          float x = ImageVertex[o][0];
+          float y = ImageVertex[o][1];
+          float z = ImageVertex[o][2];
+ 
+          WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
+        }
+      }        
 
-        allCamera_Faces[f][0] = f * 4 - 3;
-        allCamera_Faces[f][1] = f * 4 - 2;
-        allCamera_Faces[f][2] = f * 4 - 1;
-        allCamera_Faces[f][3] = f * 4 - 0;  
+      WIN3D_Diagrams.endShape(CLOSE);
 
-        WIN3D_Diagrams.endShape(CLOSE);
-
-        WIN3D_Diagrams.stroke(1);
-        WIN3D_Diagrams.noFill();  
-        
-        WIN3D_Diagrams.beginShape();
-        
-        for (int q = 0; q < 4; q++) {
-       
-          {
-            float x = ImageVertex[q][0];
-            float y = ImageVertex[q][1];
-            float z = ImageVertex[q][2];
-   
-            WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
-          }
-
-          {
-            int next_q = (q + 1) % 4; 
-            
-            float x = ImageVertex[next_q][0];
-            float y = ImageVertex[next_q][1];
-            float z = ImageVertex[next_q][2];
-   
-            WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
-          }
-
-          {
-            int o = 4; 
-            
-            float x = ImageVertex[o][0];
-            float y = ImageVertex[o][1];
-            float z = ImageVertex[o][2];
-   
-            WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
-          }
-        }        
-
-        WIN3D_Diagrams.endShape(CLOSE);
-
-
-      }
     }
     
-    WIN3D_Diagrams.noStroke();
+    WIN3D_Diagrams.strokeWeight(0);
   }
 }
 
@@ -36341,7 +36339,6 @@ float[][] SOLARCHVISION_getCorners_Camera (int Camera_Type, float Camera_X, floa
       
       SOLARCHVISION_transform_Camera();
 
-      //--------------------
       float x1 = rx * qx;
       float y1 = ry * qy;
       float z1 = rz * qz;
@@ -36357,8 +36354,6 @@ float[][] SOLARCHVISION_getCorners_Camera (int Camera_Type, float Camera_X, floa
       x = CAM_x + x3;
       y = CAM_y + y3;
       z = CAM_z + z3;
-
-      //--------------------
     }
   
     CAM_x = keep_CAM_x;
