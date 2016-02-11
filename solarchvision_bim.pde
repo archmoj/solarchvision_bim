@@ -204,7 +204,7 @@ float[] allFractal_TrunkSize = {0};
 float[] allFractal_LeafSize = {0};
 int allFractal_num = 0; 
 
-float[][] allCamera_XYZRRRF = {{0,0,0,0,0,0,0}};
+float[][] allCamera_PPPRRRF = {{0,0,0,0,0,0,0}};
 int[] allCamera_Type = {0};
 int allCamera_num = 0;
 
@@ -12746,7 +12746,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                  if (Work_with_2D_or_3D == 9) {
                    selectedCamera_numbers[selectedCamera_numbers.length - 1] -= 1;
                    if (selectedCamera_numbers[selectedCamera_numbers.length - 1] < 0) {
-                     selectedCamera_numbers[selectedCamera_numbers.length - 1] = allCamera_XYZRRRF.length - 1;
+                     selectedCamera_numbers[selectedCamera_numbers.length - 1] = allCamera_PPPRRRF.length - 1;
                    }                   
                  }                    
                  
@@ -12804,7 +12804,7 @@ void WIN3D_keyPressed (KeyEvent e) {
       
                  if (Work_with_2D_or_3D == 9) {
                    selectedCamera_numbers[selectedCamera_numbers.length - 1] += 1;
-                   if (selectedCamera_numbers[selectedCamera_numbers.length - 1] > allCamera_XYZRRRF.length - 1) {
+                   if (selectedCamera_numbers[selectedCamera_numbers.length - 1] > allCamera_PPPRRRF.length - 1) {
                      selectedCamera_numbers[selectedCamera_numbers.length - 1] = 0;
                    }
                  }                   
@@ -14186,7 +14186,7 @@ void SOLARCHVISION_duplicateSelection () {
   
   if (Work_with_2D_or_3D == 9) {
     
-    int number_of_Camera_before = allCamera_XYZRRRF.length; 
+    int number_of_Camera_before = allCamera_PPPRRRF.length; 
 
     for (int o = 0; o < selectedCamera_numbers.length; o++) {
 
@@ -14194,13 +14194,13 @@ void SOLARCHVISION_duplicateSelection () {
 
       if (OBJ_NUM != 0) {    
         
-        float Camera_X = allCamera_XYZRRRF[OBJ_NUM][0];
-        float Camera_Y = allCamera_XYZRRRF[OBJ_NUM][1];
-        float Camera_Z = allCamera_XYZRRRF[OBJ_NUM][2];
-        float Camera_RX = allCamera_XYZRRRF[OBJ_NUM][3];
-        float Camera_RY = allCamera_XYZRRRF[OBJ_NUM][4];
-        float Camera_RZ = allCamera_XYZRRRF[OBJ_NUM][5];
-        float Camera_F = allCamera_XYZRRRF[OBJ_NUM][6];
+        float Camera_X = allCamera_PPPRRRF[OBJ_NUM][0];
+        float Camera_Y = allCamera_PPPRRRF[OBJ_NUM][1];
+        float Camera_Z = allCamera_PPPRRRF[OBJ_NUM][2];
+        float Camera_RX = allCamera_PPPRRRF[OBJ_NUM][3];
+        float Camera_RY = allCamera_PPPRRRF[OBJ_NUM][4];
+        float Camera_RZ = allCamera_PPPRRRF[OBJ_NUM][5];
+        float Camera_F = allCamera_PPPRRRF[OBJ_NUM][6];
   
         int Camera_Type = allCamera_Type[OBJ_NUM];
 
@@ -14213,7 +14213,7 @@ void SOLARCHVISION_duplicateSelection () {
     selectedCamera_numbers = new int [1];
     selectedCamera_numbers[0] = 0;
     
-    for (int o = number_of_Camera_before; o < allCamera_XYZRRRF.length; o++) {
+    for (int o = number_of_Camera_before; o < allCamera_PPPRRRF.length; o++) {
       
       int[] newlyAddedCamera = {o};
       
@@ -14241,10 +14241,10 @@ void SOLARCHVISION_deleteSelection () {
       if (OBJ_NUM != 0) {    
 
         {
-          float[][] startList = (float[][]) subset(allCamera_XYZRRRF, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allCamera_XYZRRRF, OBJ_NUM + 1);
+          float[][] startList = (float[][]) subset(allCamera_PPPRRRF, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allCamera_PPPRRRF, OBJ_NUM + 1);
           
-          allCamera_XYZRRRF = (float[][]) concat(startList, endList);
+          allCamera_PPPRRRF = (float[][]) concat(startList, endList);
         }
 
         {
@@ -16639,7 +16639,7 @@ void SOLARCHVISION_selectAll () {
   }  
 
   if (Work_with_2D_or_3D == 9) {
-    selectedCamera_numbers = new int [allCamera_XYZRRRF.length];
+    selectedCamera_numbers = new int [allCamera_PPPRRRF.length];
     for (int i = 0; i < selectedCamera_numbers.length; i++) { 
       selectedCamera_numbers[i] = i;
     }
@@ -16833,7 +16833,7 @@ void SOLARCHVISION_reverseSelection () {
     selectedCamera_numbers = new int [1];
     selectedCamera_numbers[0] = 0;
     
-    for (int i = 1; i < allCamera_XYZRRRF.length; i++) {
+    for (int i = 1; i < allCamera_PPPRRRF.length; i++) {
       int found = -1; 
       
       for (int j = 1; j < pre_selectedCamera_numbers.length; j++) {
@@ -20403,14 +20403,14 @@ void SOLARCHVISION_remove_All () {
 
 
 void SOLARCHVISION_remove_Cameras () {
-  allCamera_XYZRRRF = new float [1][7]; 
-  allCamera_XYZRRRF[0][0] = 0;
-  allCamera_XYZRRRF[0][1] = 0;
-  allCamera_XYZRRRF[0][2] = 0;
-  allCamera_XYZRRRF[0][3] = 0;
-  allCamera_XYZRRRF[0][4] = 0;
-  allCamera_XYZRRRF[0][5] = 0;
-  allCamera_XYZRRRF[0][6] = 0;
+  allCamera_PPPRRRF = new float [1][7]; 
+  allCamera_PPPRRRF[0][0] = 0;
+  allCamera_PPPRRRF[0][1] = 0;
+  allCamera_PPPRRRF[0][2] = 0;
+  allCamera_PPPRRRF[0][3] = 0;
+  allCamera_PPPRRRF[0][4] = 0;
+  allCamera_PPPRRRF[0][5] = 0;
+  allCamera_PPPRRRF[0][6] = 0;
   
   allCamera_Type = new int [1];
   allCamera_Type[0] = 0;
@@ -31530,26 +31530,50 @@ void mouseClicked () {
                 
                 if (View_Select_Create_Modify == 18) { //PickStudyCamera
 
-                  CAM_x = RxP[0];
-                  CAM_y = RxP[1];
-                  CAM_z = RxP[2] + 1.5; // standing eye level from the point           
+                  float keep_CAM_x = CAM_x;
+                  float keep_CAM_y = CAM_y;
+                  float keep_CAM_z = CAM_z;
+                  float keep_WIN3D_X_coordinate = WIN3D_X_coordinate; 
+                  float keep_WIN3D_Y_coordinate = WIN3D_Y_coordinate;
+                  float keep_WIN3D_Z_coordinate = WIN3D_Z_coordinate;
+                  float keep_WIN3D_RX_coordinate = WIN3D_RX_coordinate; 
+                  float keep_WIN3D_RY_coordinate = WIN3D_RY_coordinate;
+                  float keep_WIN3D_RZ_coordinate = WIN3D_RZ_coordinate;
+                  float keep_WIN3D_ZOOM_coordinate = WIN3D_ZOOM_coordinate; 
+                  
+                  {
 
-                  SOLARCHVISION_reverseTransform_Camera();
+                    CAM_x = RxP[0];
+                    CAM_y = RxP[1];
+                    CAM_z = RxP[2] + 1.5; // standing eye level from the point           
   
-                  WIN3D_Update = 1;                
-                  
-                  
-                  float Camera_X = WIN3D_X_coordinate;
-                  float Camera_Y = WIN3D_Y_coordinate;
-                  float Camera_Z = WIN3D_Z_coordinate;
-                  float Camera_RX = WIN3D_RX_coordinate;
-                  float Camera_RY = WIN3D_RY_coordinate;
-                  float Camera_RZ = WIN3D_RZ_coordinate;
-                  float Camera_F = WIN3D_ZOOM_coordinate;
+                    SOLARCHVISION_reverseTransform_Camera();
+    
+                    WIN3D_Update = 1;
+                    
+                    float Camera_X = WIN3D_X_coordinate;
+                    float Camera_Y = WIN3D_Y_coordinate;
+                    float Camera_Z = WIN3D_Z_coordinate;
+                    float Camera_RX = WIN3D_RX_coordinate;
+                    float Camera_RY = WIN3D_RY_coordinate;
+                    float Camera_RZ = WIN3D_RZ_coordinate;
+                    float Camera_F = WIN3D_ZOOM_coordinate;
+              
+                    int Camera_Type = WIN3D_View_Type;
             
-                  int Camera_Type = WIN3D_View_Type;
-          
-                  SOLARCHVISION_add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_RX, Camera_RY, Camera_RZ, Camera_F);
+                    SOLARCHVISION_add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_RX, Camera_RY, Camera_RZ, Camera_F);                    
+                  }  
+                
+                  CAM_x = keep_CAM_x;
+                  CAM_y = keep_CAM_y;
+                  CAM_z = keep_CAM_z;
+                  WIN3D_X_coordinate = keep_WIN3D_X_coordinate; 
+                  WIN3D_Y_coordinate = keep_WIN3D_Y_coordinate;
+                  WIN3D_Z_coordinate = keep_WIN3D_Z_coordinate;
+                  WIN3D_RX_coordinate = keep_WIN3D_RX_coordinate; 
+                  WIN3D_RY_coordinate = keep_WIN3D_RY_coordinate;
+                  WIN3D_RZ_coordinate = keep_WIN3D_RZ_coordinate;
+                  WIN3D_ZOOM_coordinate = keep_WIN3D_ZOOM_coordinate;  
                                         
                 }
               }
@@ -32443,7 +32467,7 @@ void mouseClicked () {
                 int keep_number_of_2DObjects = allObject2D_XYZS.length;
                 int keep_number_of_Fractals = allFractal_XYZSRA.length;
                 int keep_number_of_Sections = allSection_UVERAB.length;
-                int keep_number_of_Cameras = allCamera_XYZRRRF.length;
+                int keep_number_of_Cameras = allCamera_PPPRRRF.length;
                 
                 float x = RxP[0]; 
                 float y = RxP[1]; 
@@ -32655,11 +32679,11 @@ void mouseClicked () {
                   SOLARCHVISION_calculate_selection_Pivot();
                 }           
           
-                if (keep_number_of_Cameras != allCamera_XYZRRRF.length) { // if any Camera created during the process
+                if (keep_number_of_Cameras != allCamera_PPPRRRF.length) { // if any Camera created during the process
 
                   selectedCamera_numbers = new int [2];
                   selectedCamera_numbers[0] = 0;
-                  selectedCamera_numbers[1] = allCamera_XYZRRRF.length - 1;
+                  selectedCamera_numbers[1] = allCamera_PPPRRRF.length - 1;
                   
                   println("SOLARCHVISION_calculate_selection_Pivot 9c");
                   SOLARCHVISION_calculate_selection_Pivot();
@@ -36155,8 +36179,8 @@ void SOLARCHVISION_add_Camera (int n, float x, float y, float z, float rx, float
   int[] TempCamera_Type = {n}; 
   allCamera_Type = concat(allCamera_Type, TempCamera_Type);
 
-  float[][] TempCamera_XYZRRRF = {{x, y, z, rx, ry, rz, f}};
-  allCamera_XYZRRRF = (float[][]) concat(allCamera_XYZRRRF, TempCamera_XYZRRRF);
+  float[][] TempCamera_PPPRRRF = {{x, y, z, rx, ry, rz, f}};
+  allCamera_PPPRRRF = (float[][]) concat(allCamera_PPPRRRF, TempCamera_PPPRRRF);
 
   allCamera_num += 1;
 
@@ -36180,13 +36204,13 @@ void SOLARCHVISION_draw_Cameras () {
 
     for (int f = 1; f <= allCamera_num; f++) {
       
-      float Camera_X = allCamera_XYZRRRF[f][0];
-      float Camera_Y = allCamera_XYZRRRF[f][1];
-      float Camera_Z = allCamera_XYZRRRF[f][2];
-      float Camera_RX = allCamera_XYZRRRF[f][3];
-      float Camera_RY = allCamera_XYZRRRF[f][4];
-      float Camera_RZ = allCamera_XYZRRRF[f][5];
-      float Camera_F = allCamera_XYZRRRF[f][6];
+      float Camera_X = allCamera_PPPRRRF[f][0];
+      float Camera_Y = allCamera_PPPRRRF[f][1];
+      float Camera_Z = allCamera_PPPRRRF[f][2];
+      float Camera_RX = allCamera_PPPRRRF[f][3];
+      float Camera_RY = allCamera_PPPRRRF[f][4];
+      float Camera_RZ = allCamera_PPPRRRF[f][5];
+      float Camera_F = allCamera_PPPRRRF[f][6];
 
       int Camera_Type = allCamera_Type[f];
 
@@ -36239,11 +36263,46 @@ float[] SOLARCHVISION_getCorners_Camera (int q, int Camera_Type, float Camera_X,
 
   float x = 0, y = 0, z = 0;
   
-  //--------------------zzzzzzzzzzzzzzzzzzzz
-  x = Camera_X + 10 * qx;
-  y = Camera_Y + 10 * qy;
-  z = Camera_Z;
-  //--------------------
+  float keep_CAM_x = CAM_x;
+  float keep_CAM_y = CAM_y;
+  float keep_CAM_z = CAM_z;
+  float keep_WIN3D_X_coordinate = WIN3D_X_coordinate; 
+  float keep_WIN3D_Y_coordinate = WIN3D_Y_coordinate;
+  float keep_WIN3D_Z_coordinate = WIN3D_Z_coordinate;
+  float keep_WIN3D_RX_coordinate = WIN3D_RX_coordinate; 
+  float keep_WIN3D_RY_coordinate = WIN3D_RY_coordinate;
+  float keep_WIN3D_RZ_coordinate = WIN3D_RZ_coordinate;
+  float keep_WIN3D_ZOOM_coordinate = WIN3D_ZOOM_coordinate; 
+  {
+
+    WIN3D_X_coordinate = Camera_X;
+    WIN3D_Y_coordinate = Camera_Y;
+    WIN3D_Z_coordinate = Camera_Z;
+    WIN3D_RX_coordinate = Camera_RX; 
+    WIN3D_RY_coordinate = Camera_RY;
+    WIN3D_RZ_coordinate = Camera_RZ;
+    WIN3D_ZOOM_coordinate = Camera_F;      
+    
+    SOLARCHVISION_transform_Camera();
+    
+    //--------------------zzzzzzzzzzzzzzzzzzzz
+    x = CAM_x + 10 * qx;
+    y = CAM_y + 10 * qy;
+    z = CAM_z;
+    //--------------------
+  }
+
+  CAM_x = keep_CAM_x;
+  CAM_y = keep_CAM_y;
+  CAM_z = keep_CAM_z;
+  WIN3D_X_coordinate = keep_WIN3D_X_coordinate; 
+  WIN3D_Y_coordinate = keep_WIN3D_Y_coordinate;
+  WIN3D_Z_coordinate = keep_WIN3D_Z_coordinate;
+  WIN3D_RX_coordinate = keep_WIN3D_RX_coordinate; 
+  WIN3D_RY_coordinate = keep_WIN3D_RY_coordinate;
+  WIN3D_RZ_coordinate = keep_WIN3D_RZ_coordinate;
+  WIN3D_ZOOM_coordinate = keep_WIN3D_ZOOM_coordinate;  
+  
   
   float[] ImageVertex = {x, y, z};
   
@@ -37183,7 +37242,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
       if (Work_with_2D_or_3D == 9) {
         int n = theVertices[q];
         
-        POS_now = allCamera_XYZRRRF[n][j]; 
+        POS_now = allCamera_PPPRRRF[n][j]; 
       }  
       
       if (Work_with_2D_or_3D == 8) {
@@ -37783,9 +37842,9 @@ void SOLARCHVISION_move_selectedCamera (float dx, float dy, float dz) {
     
     int n = selectedCamera_numbers[q];
   
-    allCamera_XYZRRRF[n][0] += dx; 
-    allCamera_XYZRRRF[n][1] += dy;
-    allCamera_XYZRRRF[n][2] += dz;
+    allCamera_PPPRRRF[n][0] += dx; 
+    allCamera_PPPRRRF[n][1] += dy;
+    allCamera_PPPRRRF[n][2] += dz;
   }
 
 }
@@ -37797,24 +37856,24 @@ void SOLARCHVISION_rotate_selectedCamera (float x0, float y0, float z0, float r,
     
     int n = selectedCamera_numbers[q];
 
-    float x = allCamera_XYZRRRF[n][0] - x0; 
-    float y = allCamera_XYZRRRF[n][1] - y0; 
-    float z = allCamera_XYZRRRF[n][2] - z0;
+    float x = allCamera_PPPRRRF[n][0] - x0; 
+    float y = allCamera_PPPRRRF[n][1] - y0; 
+    float z = allCamera_PPPRRRF[n][2] - z0;
     
     if (the_Vector == 2) {
-      allCamera_XYZRRRF[n][0] = x0 + (x * cos(r) - y * sin(r)); 
-      allCamera_XYZRRRF[n][1] = y0 + (x * sin(r) + y * cos(r));
-      allCamera_XYZRRRF[n][2] = z0 + (z);
+      allCamera_PPPRRRF[n][0] = x0 + (x * cos(r) - y * sin(r)); 
+      allCamera_PPPRRRF[n][1] = y0 + (x * sin(r) + y * cos(r));
+      allCamera_PPPRRRF[n][2] = z0 + (z);
     }
     else if (the_Vector == 1) {
-      allCamera_XYZRRRF[n][0] = x0 + (z * sin(r) + x * cos(r)); 
-      allCamera_XYZRRRF[n][1] = y0 + (y);
-      allCamera_XYZRRRF[n][2] = z0 + (z * cos(r) - x * sin(r));
+      allCamera_PPPRRRF[n][0] = x0 + (z * sin(r) + x * cos(r)); 
+      allCamera_PPPRRRF[n][1] = y0 + (y);
+      allCamera_PPPRRRF[n][2] = z0 + (z * cos(r) - x * sin(r));
     }    
     else if (the_Vector == 0) {
-      allCamera_XYZRRRF[n][0] = x0 + (x); 
-      allCamera_XYZRRRF[n][1] = y0 + (y * cos(r) - z * sin(r));
-      allCamera_XYZRRRF[n][2] = z0 + (y * sin(r) + z * cos(r));
+      allCamera_PPPRRRF[n][0] = x0 + (x); 
+      allCamera_PPPRRRF[n][1] = y0 + (y * cos(r) - z * sin(r));
+      allCamera_PPPRRRF[n][2] = z0 + (y * sin(r) + z * cos(r));
     }    
   }
 
@@ -37827,13 +37886,13 @@ void SOLARCHVISION_scale_selectedCamera (float x0, float y0, float z0, float sx,
     
     int n = selectedCamera_numbers[q];
 
-    float x = allCamera_XYZRRRF[n][0] - x0; 
-    float y = allCamera_XYZRRRF[n][1] - y0; 
-    float z = allCamera_XYZRRRF[n][2] - z0;
+    float x = allCamera_PPPRRRF[n][0] - x0; 
+    float y = allCamera_PPPRRRF[n][1] - y0; 
+    float z = allCamera_PPPRRRF[n][2] - z0;
    
-    allCamera_XYZRRRF[n][0] = x0 + sx * x; 
-    allCamera_XYZRRRF[n][1] = y0 + sy * y;
-    allCamera_XYZRRRF[n][2] = z0 + sz * z;
+    allCamera_PPPRRRF[n][0] = x0 + sx * x; 
+    allCamera_PPPRRRF[n][1] = y0 + sy * y;
+    allCamera_PPPRRRF[n][2] = z0 + sz * z;
   }
   
 }
@@ -42090,9 +42149,9 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       newChild2 = newChild1.addChild("Camera");
       newChild2.setInt("id", i);
       String lineSTR = "";
-      //for (int j = 0; j < allCamera_XYZRRRF[i].length; j++) {
+      //for (int j = 0; j < allCamera_PPPRRRF[i].length; j++) {
       for (int j = 0; j < 7; j++) { // x, y, z, rx, ry, rz, f
-        lineSTR += nf(allCamera_XYZRRRF[i][j], 0, 4).replace(",", "."); // <<<<
+        lineSTR += nf(allCamera_PPPRRRF[i][j], 0, 4).replace(",", "."); // <<<<
         lineSTR += ",";
       }
       lineSTR += nf(allCamera_Type[i], 0);
@@ -43203,7 +43262,7 @@ void SOLARCHVISION_load_project (String myFile) {
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
       
-      allCamera_XYZRRRF = new float [ni][7];
+      allCamera_PPPRRRF = new float [ni][7];
       allCamera_Type = new int [ni];
 
       allCamera_num = ni - 1;
@@ -43214,7 +43273,7 @@ void SOLARCHVISION_load_project (String myFile) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < 7; j++) {
-          allCamera_XYZRRRF[i][j] = float(parts[j]);
+          allCamera_PPPRRRF[i][j] = float(parts[j]);
         }
 
         allCamera_Type[i] = int(parts[7]);
