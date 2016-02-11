@@ -32416,7 +32416,7 @@ void mouseClicked () {
                     //}
                   }
 
-                  if (Work_with_2D_or_3D == 8) {
+                  if (Work_with_2D_or_3D == 9) {
                     
                     int OBJ_NUM = int(RxP[4]);
   
@@ -37318,12 +37318,26 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
 
       if (Work_with_2D_or_3D == 9) {
         int n = theVertices[q];
+
+        float Camera_X = allCamera_PPPRRRF[n][0];
+        float Camera_Y = allCamera_PPPRRRF[n][1];
+        float Camera_Z = allCamera_PPPRRRF[n][2];
+        float Camera_RX = allCamera_PPPRRRF[n][3];
+        float Camera_RY = allCamera_PPPRRRF[n][4];
+        float Camera_RZ = allCamera_PPPRRRF[n][5];
+        float Camera_F = allCamera_PPPRRRF[n][6];
+  
+        int Camera_Type = allCamera_Type[n];
+
+        float[][] ImageVertex = SOLARCHVISION_getCorners_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_RX, Camera_RY, Camera_RZ, Camera_F);        
         
-        POS_now = allCamera_PPPRRRF[n][j]; 
+        POS_now = ImageVertex[4][j]; // the fourth vertex is the camera point 
       }  
       
       if (Work_with_2D_or_3D == 8) {
         int n = theVertices[q];
+
+
         
         POS_now = allSection_UVERAB[n][j]; // <<<<<<<<<<<not correct! should pass XYZ instead of UVW zzzzzzzzzzzzzzzzzzzzzzzzzzz
       }  
