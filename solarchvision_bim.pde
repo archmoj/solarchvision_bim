@@ -36251,28 +36251,71 @@ void SOLARCHVISION_draw_Cameras () {
 
         WIN3D_Diagrams.endShape(CLOSE);
 
+        WIN3D_Diagrams.stroke(1);
+        WIN3D_Diagrams.noFill();  
+        
+        WIN3D_Diagrams.beginShape();
+        
+        for (int q = 0; q < 4; q++) {
+       
+          {
+            float x = ImageVertex[q][0];
+            float y = ImageVertex[q][1];
+            float z = ImageVertex[q][2];
+   
+            WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
+          }
+
+          {
+            int next_q = (q + 1) % 4; 
+            
+            float x = ImageVertex[next_q][0];
+            float y = ImageVertex[next_q][1];
+            float z = ImageVertex[next_q][2];
+   
+            WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
+          }
+
+          {
+            int o = 4; 
+            
+            float x = ImageVertex[o][0];
+            float y = ImageVertex[o][1];
+            float z = ImageVertex[o][2];
+   
+            WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
+          }
+        }        
+
+        WIN3D_Diagrams.endShape(CLOSE);
+
+
       }
     }
+    
+    WIN3D_Diagrams.noStroke();
   }
 }
 
 float[][] SOLARCHVISION_getCorners_Camera (int Camera_Type, float Camera_X, float Camera_Y, float Camera_Z, float Camera_RX, float Camera_RY, float Camera_RZ, float Camera_F) {
 
-  float[][] ImageVertex = new float [4][3];
+  float[][] ImageVertex = new float [5][3];
 
   float r = 10; // <<<<<<
     
-  float rx = cos_ang(0.5 * Camera_F);
-  float ry = sin_ang(0.5 * Camera_F);    
+  float rx = r * sin_ang(0.5 * Camera_F);
+  float ry = r * sin_ang(0.5 * Camera_F);  
+  float rz = r * cos_ang(0.5 * Camera_F);  
   
-  for (int q = 0; q < 4; q++) {  
+  for (int q = 0; q < 5; q++) {  
     
-    float qx = 0, qy = 0, u = 0, v = 0;
+    float qx = 0, qy = 0, qz = 0;
 
-    if (q == 0)      {qx = -1; qy = -1;}
-    else if (q == 1) {qx = -1; qy = 1;}
-    else if (q == 2) {qx = 1; qy = 1;}
-    else if (q == 3) {qx = 1; qy = -1;}
+    if (q == 0)      {qx = -1; qy = -1; qz = -1;}
+    else if (q == 1) {qx = -1; qy = 1; qz = -1;}
+    else if (q == 2) {qx = 1; qy = 1; qz = -1;}
+    else if (q == 3) {qx = 1; qy = -1; qz = -1;}
+    else if (q == 4) {qx = 0; qy = 0; qz = 0;}
   
     float x = 0, y = 0, z = 0;
     
@@ -36299,14 +36342,9 @@ float[][] SOLARCHVISION_getCorners_Camera (int Camera_Type, float Camera_X, floa
       SOLARCHVISION_transform_Camera();
 
       //--------------------
-      
-
-      
       float x1 = rx * qx;
       float y1 = ry * qy;
-      float z1 = 0;
-
-println("Camera_RX", Camera_RX);
+      float z1 = rz * qz;
 
       float x2 = x1;
       float y2 = y1 * cos_ang(Camera_RX) - z1 * sin_ang(Camera_RX);
@@ -36319,6 +36357,7 @@ println("Camera_RX", Camera_RX);
       x = CAM_x + x3;
       y = CAM_y + y3;
       z = CAM_z + z3;
+
       //--------------------
     }
   
@@ -36453,6 +36492,8 @@ void SOLARCHVISION_draw_Sections () {
 
       }
     }
+    
+    WIN3D_Diagrams.noStroke();
   }
 }
 
