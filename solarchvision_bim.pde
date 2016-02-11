@@ -1,5 +1,3 @@
-// View_Select_Create_Modify == 18  //PickCamera ... not active
-
 import processing.pdf.*;
 
 void launch (String s) {open(s);}
@@ -315,7 +313,7 @@ int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:Face, 5:Vertex, 6:Soft 7
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
-int View_Select_Create_Modify = 17; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunkSize 12:LeafSize 13:AllFractalProps 14:SolarPivot 15:FaceNormal 16:FaceFirstVertex 17:PickStudyPlane 18:PickCamera
+int View_Select_Create_Modify = 18; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunkSize 12:LeafSize 13:AllFractalProps 14:SolarPivot 15:FaceNormal 16:FaceFirstVertex 17:PickStudyPlane 18:MakeCameraFromPerspective
 int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. fractal trees
 
@@ -31676,8 +31674,21 @@ void mouseClicked () {
                     
                     int f = int(RxP[4]);
                     
-                    if (View_Select_Create_Modify == 18) { //PickCamera
+                    if (View_Select_Create_Modify == 18) { //MakeCameraFromPerspective
                     
+                      println("MakeCameraFromPerspective");
+                    
+                      float Camera_X = WIN3D_X_coordinate;
+                      float Camera_Y = WIN3D_Y_coordinate;
+                      float Camera_Z = WIN3D_Z_coordinate;
+                      float Camera_RX = WIN3D_RX_coordinate;
+                      float Camera_RY = WIN3D_RY_coordinate;
+                      float Camera_RZ = WIN3D_RZ_coordinate;
+                      float Camera_F = WIN3D_ZOOM_coordinate;
+                
+                      int Camera_Type = WIN3D_View_Type;
+              
+                      SOLARCHVISION_add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_RX, Camera_RY, Camera_RZ, Camera_F);                      
                     }
                   }
                   
