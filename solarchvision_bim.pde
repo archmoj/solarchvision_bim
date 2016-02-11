@@ -1,4 +1,3 @@
-// View_Select_Create_Modify == 18 PickStudyCamera not working yet
 // Work_with_2D_or_3D = 0 not working yet!
 // we don't have display_SOLIDS! use Ctrl+7 for
 
@@ -36233,10 +36232,10 @@ float[] SOLARCHVISION_getCorners_Camera (int q, int Camera_Type, float Camera_X,
     
   float qx = 0, qy = 0, u = 0, v = 0;
   
-  if (q == 0)      {qx = -1; qy = -1; u = 0; v = 1;}
-  else if (q == 1) {qx = 1; qy = -1; u = 1; v = 1;}
-  else if (q == 2) {qx = 1; qy = 1; u = 1; v = 0;}
-  else if (q == 3) {qx = -1; qy = 1; u = 0; v = 0;}    
+  if (q == 0)      {qx = -1; qy = -1;}
+  else if (q == 1) {qx = 1; qy = -1;}
+  else if (q == 2) {qx = 1; qy = 1;}
+  else if (q == 3) {qx = -1; qy = 1;}    
 
   float x = 0, y = 0, z = 0;
   
@@ -36246,7 +36245,7 @@ float[] SOLARCHVISION_getCorners_Camera (int q, int Camera_Type, float Camera_X,
   z = Camera_Z;
   //--------------------
   
-  float[] ImageVertex = {x, -y, z, u, v};
+  float[] ImageVertex = {x, y, z};
   
   return ImageVertex;
 
