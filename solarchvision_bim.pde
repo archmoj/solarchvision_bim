@@ -37914,7 +37914,12 @@ void SOLARCHVISION_scale_selectedSection (float sx, float sy) {
 
 
 void SOLARCHVISION_move_selectedCamera (float dx, float dy, float dz) {
-
+  
+  // swapping y and z vectors to match camera's local coordinate
+  float tmp = dz;
+  dz = dy;
+  dy = tmp;
+  
   for (int q = 1; q < selectedCamera_numbers.length; q++) {
     
     int n = selectedCamera_numbers[q];
@@ -37929,6 +37934,10 @@ void SOLARCHVISION_move_selectedCamera (float dx, float dy, float dz) {
 
 void SOLARCHVISION_rotate_selectedCamera (float x0, float y0, float z0, float r, int the_Vector) {
 
+  // swapping y and z vectors to match camera's local coordinate
+  if (the_Vector == 2) the_Vector = 1;
+  else if (the_Vector == 1) the_Vector = 2;
+  
   for (int q = 1; q < selectedCamera_numbers.length; q++) {
     
     int n = selectedCamera_numbers[q];
@@ -37958,6 +37967,11 @@ void SOLARCHVISION_rotate_selectedCamera (float x0, float y0, float z0, float r,
 
 
 void SOLARCHVISION_scale_selectedCamera (float x0, float y0, float z0, float sx, float sy, float sz) {
+
+  // swapping y and z vectors to match camera's local coordinate
+  float tmp = sz;
+  sz = sy;
+  sy = tmp;
   
   for (int q = 1; q < selectedCamera_numbers.length; q++) {
     
