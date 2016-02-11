@@ -32002,8 +32002,8 @@ void mouseClicked () {
                         SOLARCHVISION_calculate_SpatialImpact_selectedSections();
                        
                        
-                        SolarImpact_sectionType = Section_Type;                   
-                       
+                        SolarImpact_sectionType = Section_Type;          
+               
                         WIN3D_Update = 1; 
                         ROLLOUT_Update = 1;  
                       }
@@ -32644,8 +32644,7 @@ void mouseClicked () {
                   SOLARCHVISION_add_Object2D("PEOPLE", Create_Mesh_Person_Type, x, y, z, 2.5);
                 }
                 
-                
-    
+  
                 if (keep_number_of_Polymeshes != allPolymesh_Faces.length) { // if any 3D-mesh created during the process
                   
                   selectedPolymesh_numbers = new int [2];
@@ -32657,7 +32656,7 @@ void mouseClicked () {
                 }
                 
                 if (keep_number_of_2DObjects != allObject2D_XYZS.length) { // if any 2D-mesh created during the process
-
+  
                   selectedObject2D_numbers = new int [2];
                   selectedObject2D_numbers[0] = 0;
                   selectedObject2D_numbers[1] = allObject2D_XYZS.length - 1;
@@ -32667,7 +32666,7 @@ void mouseClicked () {
                 }            
     
                 if (keep_number_of_Fractals != allFractal_XYZSRA.length) { // if any Fractal created during the process
-
+  
                   selectedFractal_numbers = new int [2];
                   selectedFractal_numbers[0] = 0;
                   selectedFractal_numbers[1] = allFractal_XYZSRA.length - 1;
@@ -32677,7 +32676,7 @@ void mouseClicked () {
                 } 
                 
                 if (keep_number_of_Sections != allSection_UVERAB.length) { // if any Section created during the process
-
+  
                   selectedSection_numbers = new int [2];
                   selectedSection_numbers[0] = 0;
                   selectedSection_numbers[1] = allSection_UVERAB.length - 1;
@@ -32687,7 +32686,7 @@ void mouseClicked () {
                 }           
           
                 if (keep_number_of_Cameras != allCamera_PPPRRRF.length) { // if any Camera created during the process
-
+  
                   selectedCamera_numbers = new int [2];
                   selectedCamera_numbers[0] = 0;
                   selectedCamera_numbers[1] = allCamera_PPPRRRF.length - 1;
@@ -32697,9 +32696,8 @@ void mouseClicked () {
                 }                  
                 
                 if (SOLID_created != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-              
+                
               }
-              
             }          
             
             WIN3D_Update = 1;
@@ -36485,7 +36483,47 @@ void SOLARCHVISION_draw_Sections () {
 
         WIN3D_Diagrams.endShape(CLOSE);
 
+        WIN3D_Diagrams.strokeWeight(1);
+        WIN3D_Diagrams.stroke(127);
+        WIN3D_Diagrams.noFill();  
+        
+        WIN3D_Diagrams.beginShape();
+        
+        for (int q = 0; q < 4; q++) {
+       
+          {
+            float x = ImageVertex[q][0];
+            float y = ImageVertex[q][1];
+            float z = ImageVertex[q][2];
+   
+            WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
+          }
+  
+          {
+            int next_q = (q + 1) % 4; 
+            
+            float x = ImageVertex[next_q][0];
+            float y = ImageVertex[next_q][1];
+            float z = ImageVertex[next_q][2];
+   
+            WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
+          }
+  
+          {
+            int o = 4; 
+            
+            float x = ImageVertex[o][0];
+            float y = ImageVertex[o][1];
+            float z = ImageVertex[o][2];
+   
+            WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
+          }
+        }        
+  
+        WIN3D_Diagrams.endShape(CLOSE);
+
       }
+      
     }
     
     WIN3D_Diagrams.noStroke();
@@ -36495,9 +36533,9 @@ void SOLARCHVISION_draw_Sections () {
 
 float[][] SOLARCHVISION_getCorners_Section (int Section_Type, float Section_offset_U, float Section_offset_V, float Section_Elevation, float Section_Rotation, float Section_scale_U, float Section_scale_V, int Section_RES1, int Section_RES2) {
 
-  float[][] ImageVertex = new float [4][5];
+  float[][] ImageVertex = new float [5][5];
   
-  for (int q = 0; q < 4; q++) {
+  for (int q = 0; q < 5; q++) {
 
     float qx = 0, qy = 0, u = 0, v = 0;
     
@@ -36505,6 +36543,7 @@ float[][] SOLARCHVISION_getCorners_Section (int Section_Type, float Section_offs
     else if (q == 1) {qx = 1; qy = -1; u = 1; v = 1;}
     else if (q == 2) {qx = 1; qy = 1; u = 1; v = 0;}
     else if (q == 3) {qx = -1; qy = 1; u = 0; v = 0;}    
+    else if (q == 4) {qx = 0; qy = 0; u = 0.5; v = 0.5;} // center
     
     float a = qx * 0.5 * Section_scale_U + Section_offset_U;
     float b = qy * 0.5 * Section_scale_V + Section_offset_V;
@@ -37280,7 +37319,7 @@ int saved_alignY = 0;
 int saved_alignZ = 0;
 
 void SOLARCHVISION_calculate_selection_BoundingBox () {
-  
+
   int[] theVertices = {};
 
   if (Work_with_2D_or_3D == 9) {
@@ -37337,9 +37376,20 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
       if (Work_with_2D_or_3D == 8) {
         int n = theVertices[q];
 
-
+        float Section_offset_U = allSection_UVERAB[n][0];
+        float Section_offset_V = allSection_UVERAB[n][1];
+        float Section_Elevation = allSection_UVERAB[n][2];
+        float Section_Rotation = allSection_UVERAB[n][3];
+        float Section_scale_U = allSection_UVERAB[n][4];
+        float Section_scale_V = allSection_UVERAB[n][5];
+  
+        int Section_Type = allSection_Type[n];
+        int Section_RES1 = allSection_RES1[n];
+        int Section_RES2 = allSection_RES2[n];
         
-        POS_now = allSection_UVERAB[n][j]; // <<<<<<<<<<<not correct! should pass XYZ instead of UVW zzzzzzzzzzzzzzzzzzzzzzzzzzz
+        float[][] ImageVertex = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+
+        POS_now = ImageVertex[4][j]; // the fourth vertex is the center of section plane 
       }  
       
       if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4) || (Work_with_2D_or_3D == 5) || (Work_with_2D_or_3D == 6)) {
