@@ -36259,15 +36259,20 @@ void SOLARCHVISION_draw_Cameras () {
 float[][] SOLARCHVISION_getCorners_Camera (int Camera_Type, float Camera_X, float Camera_Y, float Camera_Z, float Camera_RX, float Camera_RY, float Camera_RZ, float Camera_F) {
 
   float[][] ImageVertex = new float [4][3];
+
+  float r = 10; // <<<<<<
     
+  float rx = cos_ang(0.5 * Camera_F);
+  float ry = sin_ang(0.5 * Camera_F);    
+  
   for (int q = 0; q < 4; q++) {  
     
     float qx = 0, qy = 0, u = 0, v = 0;
 
-    if (q == 0)      {qx = 0; qy = 0;}
-    else if (q == 1) {qx = 0; qy = 0;}
-    else if (q == 2) {qx = cos_ang(0.5 * Camera_F); qy = sin_ang(0.5 * Camera_F);}
-    else if (q == 3) {qx = cos_ang(0.5 * Camera_F); qy = -sin_ang(0.5 * Camera_F);}
+    if (q == 0)      {qx = -1; qy = -1;}
+    else if (q == 1) {qx = -1; qy = 1;}
+    else if (q == 2) {qx = 1; qy = 1;}
+    else if (q == 3) {qx = 1; qy = -1;}
   
     float x = 0, y = 0, z = 0;
     
@@ -36292,23 +36297,28 @@ float[][] SOLARCHVISION_getCorners_Camera (int Camera_Type, float Camera_X, floa
       WIN3D_ZOOM_coordinate = Camera_F;      
       
       SOLARCHVISION_transform_Camera();
-      
+
       //--------------------
       
-      float r = 10; // <<<<<<
+
       
-      float x1 = r * qx;
-      float y1 = r * qy;
+      float x1 = rx * qx;
+      float y1 = ry * qy;
       float z1 = 0;
+
+println("Camera_RX", Camera_RX);
+
+      float x2 = x1;
+      float y2 = y1 * cos_ang(Camera_RX) - z1 * sin_ang(Camera_RX);
+      float z2 = y1 * sin_ang(Camera_RX) + z1 * cos_ang(Camera_RX);
       
-      float x2 = x1 * cos_ang(90 + Camera_RZ) - y1 * sin_ang(90 + Camera_RZ);
-      float y2 = x1 * sin_ang(90 + Camera_RZ) + y1 * cos_ang(90 + Camera_RZ);
-      float z2 = z1;
-  
-      
-      x = CAM_x + x2;
-      y = CAM_y + y2;
-      z = CAM_z + z2;
+      float x3 = x2 * cos_ang(Camera_RZ) - y2 * sin_ang(Camera_RZ);
+      float y3 = x2 * sin_ang(Camera_RZ) + y2 * cos_ang(Camera_RZ);
+      float z3 = z2;
+
+      x = CAM_x + x3;
+      y = CAM_y + y3;
+      z = CAM_z + z3;
       //--------------------
     }
   
