@@ -1,3 +1,5 @@
+// View_Select_Create_Modify == 18 PickStudyCamera not working yet
+
 import processing.pdf.*;
 
 void launch (String s) {open(s);}
@@ -313,7 +315,7 @@ int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:Face, 5:Vertex, 6:Soft 7
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
-int View_Select_Create_Modify = 18; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunkSize 12:LeafSize 13:AllFractalProps 14:SolarPivot 15:FaceNormal 16:FaceFirstVertex 17:PickStudyPlane 18:MakeCameraFromPerspective
+int View_Select_Create_Modify = 18; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunkSize 12:LeafSize 13:AllFractalProps 14:SolarPivot 15:FaceNormal 16:FaceFirstVertex 17:PickStudySection 18:PickStudyCamera
 int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. fractal trees
 
@@ -30377,9 +30379,15 @@ void mouseClicked () {
               WIN3D_Update = 1;
             }
 
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pick Study Plane")) {
-              set_to_Pick_Study_Plane();
-              SOLARCHVISION_highlight_in_BAR_b("PSP");
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pick Study Section")) {
+              set_to_Pick_Study_Section();
+              SOLARCHVISION_highlight_in_BAR_b("PSS");
+              BAR_b_Update = 1;  
+            }
+
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pick Study Camera")) {
+              set_to_Pick_Study_Camera();
+              SOLARCHVISION_highlight_in_BAR_b("PSC");
               BAR_b_Update = 1;  
             }
             
@@ -31382,19 +31390,16 @@ void mouseClicked () {
               RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
             }
             else if (mouseButton == LEFT) {
-              //if ((Work_with_2D_or_3D == 9) && ((View_Select_Create_Modify == -1) || (View_Select_Create_Modify > 1) && (View_Select_Create_Modify != 18)))  { // only if the user wants to select a Camera
+           
               if ((Work_with_2D_or_3D == 9) && ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1) && (View_Select_Create_Modify != 18)))  { // only if the user wants to select a Camera
                 RxP = SOLARCHVISION_9Dintersect(ray_start, ray_direction, max_dist);
               }             
-              //else if ((Work_with_2D_or_3D == 8) && ((View_Select_Create_Modify == -1) || (View_Select_Create_Modify > 1) && (View_Select_Create_Modify != 17)))  { // only if the user wants to select a Section
               else if ((Work_with_2D_or_3D == 8) && ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1) && (View_Select_Create_Modify != 17)))  { // only if the user wants to select a Section
                 RxP = SOLARCHVISION_8Dintersect(ray_start, ray_direction, max_dist);
               }                      
-              //else if ((Work_with_2D_or_3D == 1) && ((View_Select_Create_Modify == -1) || (View_Select_Create_Modify > 1)))  { // only if the user wants to select a Fractal-Tree 
               else if ((Work_with_2D_or_3D == 1) && ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1)))  { // only if the user wants to select a Fractal-Tree
                 RxP = SOLARCHVISION_1Dintersect(ray_start, ray_direction, max_dist);
               }        
-              //else if ((Work_with_2D_or_3D == 2) && ((View_Select_Create_Modify == -1) || (View_Select_Create_Modify > 1)))  { // only if the user wants to select a 2D-object
               else if ((Work_with_2D_or_3D == 2) && ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1)))  { // only if the user wants to select a 2D-object 
                 RxP = SOLARCHVISION_2Dintersect(ray_start, ray_direction, max_dist);
               }
@@ -31460,6 +31465,45 @@ void mouseClicked () {
                 }
                 
               }   
+
+
+              if (Work_with_2D_or_3D == 9) { // working with cameras              
+                
+                int f = int(RxP[4]);
+                
+                if (View_Select_Create_Modify == 18) { //PickStudyCamera
+
+                  //CAM_x = RxP[0];
+                  //CAM_y = RxP[1];
+                  //CAM_z = RxP[2] + 1.5; // standing eye level from the point           
+                  
+                  println("CAM_x, CAM_y, CAM_z", CAM_x, CAM_y, CAM_z);
+                  println("RxP[0], RxP[1], RxP[2]", RxP[0], RxP[1], RxP[2]);
+                  println("WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate", WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate);
+                  
+                  WIN3D_X_coordinate = RxP[0] - CAM_x;
+                  WIN3D_Y_coordinate = RxP[1] - CAM_y;
+                  WIN3D_Z_coordinate = RxP[2] - CAM_z + 1.5; // standing eye level from the point       
+  
+                  //SOLARCHVISION_reverseTransform_Camera(); 
+  
+                  WIN3D_Update = 1;                
+                  
+                  /*
+                  float Camera_X = WIN3D_X_coordinate;
+                  float Camera_Y = WIN3D_Y_coordinate;
+                  float Camera_Z = WIN3D_Z_coordinate;
+                  float Camera_RX = WIN3D_RX_coordinate;
+                  float Camera_RY = WIN3D_RY_coordinate;
+                  float Camera_RZ = WIN3D_RZ_coordinate;
+                  float Camera_F = WIN3D_ZOOM_coordinate;
+            
+                  int Camera_Type = WIN3D_View_Type;
+          
+                  SOLARCHVISION_add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_RX, Camera_RY, Camera_RZ, Camera_F);
+                  */                      
+                }
+              }
               
               if (mouseButton == LEFT) { // modify should work only with left click because the right click returns the land info, not objects info
               
@@ -31670,34 +31714,14 @@ void mouseClicked () {
                   } 
                   
                   
-                  if (Work_with_2D_or_3D == 9) { // working with cameras              
-                    
-                    int f = int(RxP[4]);
-                    
-                    if (View_Select_Create_Modify == 18) { //MakeCameraFromPerspective
-                    
-                      println("MakeCameraFromPerspective");
-                    
-                      float Camera_X = WIN3D_X_coordinate;
-                      float Camera_Y = WIN3D_Y_coordinate;
-                      float Camera_Z = WIN3D_Z_coordinate;
-                      float Camera_RX = WIN3D_RX_coordinate;
-                      float Camera_RY = WIN3D_RY_coordinate;
-                      float Camera_RZ = WIN3D_RZ_coordinate;
-                      float Camera_F = WIN3D_ZOOM_coordinate;
-                
-                      int Camera_Type = WIN3D_View_Type;
-              
-                      SOLARCHVISION_add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_RX, Camera_RY, Camera_RZ, Camera_F);                      
-                    }
-                  }
+
                   
 
                   if (Work_with_2D_or_3D == 8) { // working with sections              
                     
                     int f = int(RxP[4]);
                     
-                    if (View_Select_Create_Modify == 17) { //PickStudyPlane
+                    if (View_Select_Create_Modify == 17) { //PickStudySection
 
                       int n = allFaces[f].length;
                       
@@ -39437,7 +39461,7 @@ String[][] BAR_a_Items = {
                         {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Pre-bake Selected Sections", "Process Active Impact", "Process Passive Impact", "Process Spatial Impact", "Run wind 3D-model"},
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
-                        {"Create", "Pick Study Plane", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
+                        {"Create", "Pick Study Camera", "Pick Study Plane", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Section",  "Select Camera", "Select Fractal", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Soft Selection", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
                         {"Edit", "Duplicate Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces"},
                         {"Modify", "Save Current Pivot", "Reset Saved Pivot", "Use Selection Pivot", "Use Origin Pivot", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
@@ -39786,7 +39810,8 @@ String[][] BAR_b_Items = {
                           //{"1", "lfSz0", "lfSz1", "lfSz2", "Change LeafSize", "1.0"},
                           //{"1", "allFP0", "allFP1", "allFP2", "AllFractalProps", "1.0"},
                           
-                          //{"1", "PSP", "Pick Study Plane", "1.0"},
+                          //{"1", "PSS", "Pick Study Section", "1.0"},
+                          //{"1", "PSC", "Pick Study Camera", "1.0"},
                         };         
 
 
@@ -40419,7 +40444,7 @@ void set_to_Modify_FaceFirstVertex (int n) {
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Pick_Study_Plane () {
+void set_to_Pick_Study_Section () {
   
   Modify_Object_Parameters = 1;
   
@@ -40431,6 +40456,17 @@ void set_to_Pick_Study_Plane () {
   ROLLOUT_Update = 1; 
 }
 
+void set_to_Pick_Study_Camera () {
+  
+  Modify_Object_Parameters = 1;
+  
+  View_Select_Create_Modify = 18;
+  
+  Work_with_2D_or_3D = 9; // << because it only works with cameras
+  //BAR_b_Update = 1;
+  
+  ROLLOUT_Update = 1; 
+}
 
 
 
