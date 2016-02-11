@@ -36256,10 +36256,17 @@ float[] SOLARCHVISION_getCorners_Camera (int q, int Camera_Type, float Camera_X,
     
   float qx = 0, qy = 0, u = 0, v = 0;
   
+  /*
   if (q == 0)      {qx = -1; qy = -1;}
   else if (q == 1) {qx = 1; qy = -1;}
   else if (q == 2) {qx = 1; qy = 1;}
-  else if (q == 3) {qx = -1; qy = 1;}    
+  else if (q == 3) {qx = -1; qy = 1;}
+  */  
+  
+  if (q == 0)      {qx = 0; qy = 0;}
+  else if (q == 1) {qx = 0; qy = 0;}
+  else if (q == 2) {qx = cos_ang(0.5 * Camera_F); qy = sin_ang(0.5 * Camera_F);}
+  else if (q == 3) {qx = cos_ang(0.5 * Camera_F); qy = -sin_ang(0.5 * Camera_F);}
 
   float x = 0, y = 0, z = 0;
   
@@ -36285,10 +36292,22 @@ float[] SOLARCHVISION_getCorners_Camera (int q, int Camera_Type, float Camera_X,
     
     SOLARCHVISION_transform_Camera();
     
-    //--------------------zzzzzzzzzzzzzzzzzzzz
-    x = CAM_x + 10 * qx;
-    y = CAM_y + 10 * qy;
-    z = CAM_z;
+    //--------------------
+    
+    float r = 10; // <<<<<<
+    
+    float x1 = r * qx;
+    float y1 = r * qy;
+    float z1 = 0;
+    
+    float x2 = x1 * cos_ang(90 + Camera_RZ) - y1 * sin_ang(90 + Camera_RZ);
+    float y2 = x1 * sin_ang(90 + Camera_RZ) + y1 * cos_ang(90 + Camera_RZ);
+    float z2 = z1;
+
+    
+    x = CAM_x + x2;
+    y = CAM_y + y2;
+    z = CAM_z + z2;
     //--------------------
   }
 
