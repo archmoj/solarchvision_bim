@@ -1,4 +1,6 @@
 // View_Select_Create_Modify == 18 PickStudyCamera not working yet
+// Work_with_2D_or_3D = 0 not working yet!
+// we don't have display_SOLIDS! use Ctrl+7 for
 
 import processing.pdf.*;
 
@@ -11743,6 +11745,46 @@ void STUDY_keyPressed (KeyEvent e) {
     if (key == CODED) { 
       switch(keyCode) {
 
+        case 35  :_DATE += 1;
+                  if (int(_DATE) == 365) _DATE -= 365;
+                  if (int(_DATE) == 286) _YEAR += 1;
+                  SOLARCHVISION_update_date(); 
+                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
+                  update_DevelopDATA = 1;
+                  BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+                  
+        case 36  :_DATE -= 1;
+                  if (int(_DATE) < 0) _DATE += 365;
+                  if (int(_DATE) == 285) _YEAR -= 1;
+                  SOLARCHVISION_update_date(); 
+                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
+                  update_DevelopDATA = 1;
+                  BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+     
+        case 33:_DATE += 1; 
+                  if (_DATE >= 365) _DATE -= 365;
+                  if ((_DATE == 286) || (_DATE == 286.5)) _YEAR += 1;
+                  SOLARCHVISION_update_date(); 
+                  BEGIN_DAY = int(BEGIN_DAY + 1) % 365; 
+                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
+                  update_DevelopDATA = 1;
+                  BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break; 
+                  
+        case 34 :_DATE -= 1; 
+                  if (_DATE < 0) _DATE += 365;
+                  if ((_DATE == 285) || (_DATE == 285.5)) _YEAR -= 1;
+                  SOLARCHVISION_update_date(); 
+                  BEGIN_DAY = int(365 + BEGIN_DAY - 1) % 365;
+                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
+                  update_DevelopDATA = 1;
+                  BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break; 
+                 
+        case LEFT  :BEGIN_DAY = (365 + BEGIN_DAY - 1) % 365; update_DevelopDATA = 1; BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case RIGHT :BEGIN_DAY = (BEGIN_DAY + 1) % 365; update_DevelopDATA = 1; BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+              
+        case UP   :STUDY_drw_Layer = (STUDY_drw_Layer + 1) % num_layers; STUDY_Update = 1; ROLLOUT_Update = 1; break;
+        case DOWN :STUDY_drw_Layer = (STUDY_drw_Layer + num_layers - 1) % num_layers; STUDY_Update = 1; ROLLOUT_Update = 1; break;         
+        
       }
     }
     else {
@@ -11799,30 +11841,12 @@ void STUDY_keyPressed (KeyEvent e) {
   
     if (key == CODED) { 
       switch(keyCode) {
-        /*
-        case 112 : develop_option = DEV_OP_1; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 113 : develop_option = DEV_OP_2; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 114 : develop_option = DEV_OP_3; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 115 : develop_option = DEV_OP_4; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 116 : develop_option = DEV_OP_5; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 117 : develop_option = DEV_OP_6; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 118 : develop_option = DEV_OP_7; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 119 : develop_option = DEV_OP_8; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 120 : develop_option = DEV_OP_9; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 121 : develop_option = DEV_OP_10; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case 122 : develop_option = DEV_OP_11; update_DevelopDATA = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        */
 
         case 112 : impacts_source = databaseNumber_ENSEMBLE; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         case 113 : impacts_source = databaseNumber_OBSERVED; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         case 114 : impacts_source = databaseNumber_CLIMATE_WY2; STUDY_Update = 1; ROLLOUT_Update = 1; break;
         case 115 : impacts_source = databaseNumber_CLIMATE_EPW; STUDY_Update = 1; ROLLOUT_Update = 1; break;          
 
-        /*
-        case 115 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 6)) || (plot_impacts == 7)) plot_impacts = 6;
-                   else plot_impacts = 7; 
-                   STUDY_Update = 1; ROLLOUT_Update = 1; break;        
-        */
         case 116 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != 4)) || (plot_impacts == 5)) plot_impacts = 4;
                    else plot_impacts = 5; 
                    STUDY_Update = 1; ROLLOUT_Update = 1; break;
@@ -11835,47 +11859,7 @@ void STUDY_keyPressed (KeyEvent e) {
         case 119 : if (((abs(plot_impacts) % 2 == 0) && (plot_impacts != -2)) || (plot_impacts == -1)) plot_impacts = -2;
                    else plot_impacts = -1; 
                    STUDY_Update = 1; ROLLOUT_Update = 1; break;
-
         
-        case 35  :_DATE += 1;
-                  if (int(_DATE) == 365) _DATE -= 365;
-                  if (int(_DATE) == 286) _YEAR += 1;
-                  SOLARCHVISION_update_date(); 
-                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
-                  update_DevelopDATA = 1;
-                  BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-                  
-        case 36  :_DATE -= 1;
-                  if (int(_DATE) < 0) _DATE += 365;
-                  if (int(_DATE) == 285) _YEAR -= 1;
-                  SOLARCHVISION_update_date(); 
-                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
-                  update_DevelopDATA = 1;
-                  BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-     
-        case 33:_DATE += 1; 
-                  if (_DATE >= 365) _DATE -= 365;
-                  if ((_DATE == 286) || (_DATE == 286.5)) _YEAR += 1;
-                  SOLARCHVISION_update_date(); 
-                  BEGIN_DAY = int(BEGIN_DAY + 1) % 365; 
-                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
-                  update_DevelopDATA = 1;
-                  BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break; 
-                  
-        case 34 :_DATE -= 1; 
-                  if (_DATE < 0) _DATE += 365;
-                  if ((_DATE == 285) || (_DATE == 285.5)) _YEAR -= 1;
-                  SOLARCHVISION_update_date(); 
-                  BEGIN_DAY = int(365 + BEGIN_DAY - 1) % 365;
-                  SOLARCHVISION_try_update_ENSEMBLE(_YEAR, _MONTH, _DAY, _HOUR);
-                  update_DevelopDATA = 1;
-                  BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break; 
-                 
-        case LEFT  :BEGIN_DAY = (365 + BEGIN_DAY - 1) % 365; update_DevelopDATA = 1; BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case RIGHT :BEGIN_DAY = (BEGIN_DAY + 1) % 365; update_DevelopDATA = 1; BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-              
-        case UP   :STUDY_drw_Layer = (STUDY_drw_Layer + 1) % num_layers; STUDY_Update = 1; ROLLOUT_Update = 1; break;
-        case DOWN :STUDY_drw_Layer = (STUDY_drw_Layer + num_layers - 1) % num_layers; STUDY_Update = 1; ROLLOUT_Update = 1; break; 
       }
     }
   }
@@ -12566,6 +12550,156 @@ void WIN3D_keyPressed (KeyEvent e) {
     if (key == CODED) { 
       switch(keyCode) {
 
+                  
+      
+        
+      }
+    }
+    else {
+      switch(key) {
+
+        case '*': SOLARCHVISION_selectAll();
+                  WIN3D_Update = 1;
+                  ROLLOUT_Update = 1;
+                  break;             
+        
+        case '.' :WIN3D_X_coordinate = 0;
+                  WIN3D_Y_coordinate = 0;
+                  //WIN3D_ZOOM_coordinate = 60;
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                  break;
+        
+       case '-' :WIN3D_RX_coordinate = 90; SOLARCHVISION_reverseTransform_Camera(); 
+                 WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                 break;  
+
+
+        case '+' :WIN3D_RX_coordinate = 0;
+                  WIN3D_RY_coordinate = 0;
+                  WIN3D_RZ_coordinate = 0; 
+                  
+                  WIN3D_X_coordinate = 0;
+                  WIN3D_Y_coordinate = 0;
+                  WIN3D_Z_coordinate = 0;   
+                  
+                  WIN3D_S_coordinate = 1;
+   
+                  WIN3D_ZOOM_coordinate = 60;               
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                  break;
+
+        case '0' :Display_LAND_MESH = (Display_LAND_MESH + 1) % 2;
+                  if (Display_LAND_MESH != 0) {
+                    Work_with_2D_or_3D = 0;
+                    BAR_b_Update = 1;
+                  }
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                  break;
+
+        case '1' :Display_FractalPlant = (Display_FractalPlant + 1) % 2;
+                  if (Display_FractalPlant != 0) {
+                    Work_with_2D_or_3D = 1;
+                    BAR_b_Update = 1;
+                  }
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                  break;
+          
+        case '2' :Display_Trees_People = (Display_Trees_People + 1) % 2;
+                  if (Display_Trees_People != 0) {
+                    Work_with_2D_or_3D = 2;
+                    BAR_b_Update = 1;
+                  }
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                  break;
+        
+        case '3' :Display_Building_Model = (Display_Building_Model + 1) % 2;
+                  if (Display_Building_Model != 0) {
+                    Work_with_2D_or_3D = 3;
+                    BAR_b_Update = 1;
+                  } 
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                  break;
+                  
+        case '4' :Display_Building_Model = (Display_Building_Model + 1) % 2;
+                  if (Display_Building_Model != 0) {
+                    Work_with_2D_or_3D = 4;
+                    BAR_b_Update = 1;
+                  } 
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                  break;                  
+
+        case '5' :Display_Building_Model = (Display_Building_Model + 1) % 2;
+                  if (Display_Building_Model != 0) {
+                    Work_with_2D_or_3D = 5;
+                    BAR_b_Update = 1;
+                  } 
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                  break;  
+                
+        case '6' :Display_Building_Model = (Display_Building_Model + 1) % 2;
+                  if (Display_Building_Model != 0) {
+                    Work_with_2D_or_3D = 6;
+                    BAR_b_Update = 1;
+                  } 
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                  break;                      
+
+        case '8' :Display_Sections = (Display_Sections + 1) % 2;
+                  if (Display_Sections != 0) {
+                    Work_with_2D_or_3D = 8;
+                    BAR_b_Update = 1;
+                  } 
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                  break; 
+
+        case '9' :Display_Cameras = (Display_Cameras + 1) % 2;
+                  if (Display_Cameras != 0) {
+                    Work_with_2D_or_3D = 9;
+                    BAR_b_Update = 1;
+                  } 
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                  break; 
+
+
+          
+
+ 
+        case ' ' :SOLARCHVISION_render_Shadows_selectedSections(); 
+                  WIN3D_Update = 1;
+                  break;
+                    
+        case ENTER :SOLARCHVISION_calculate_SolarImpact_selectedSections();
+                    WIN3D_Update = 1;
+                    break;
+        
+      }
+    }    
+  }
+
+  if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
+
+    if (key == CODED) { 
+      switch(keyCode) {
+
+        case DOWN :
+                  //WIN3D_RX_coordinate += WIN3D_RS_coordinate; 
+                  SOLARCHVISION_rotateZ_Camera_around_Selection(WIN3D_RS_coordinate);
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+        
+        case LEFT :
+                  //WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; 
+                  SOLARCHVISION_rotateXY_Camera_around_Selection(-WIN3D_RS_coordinate);
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+                  
+        case RIGHT :
+                  //WIN3D_RZ_coordinate += WIN3D_RS_coordinate; 
+                  SOLARCHVISION_rotateXY_Camera_around_Selection(WIN3D_RS_coordinate);
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
+                  
+        case UP :
+                  //WIN3D_RX_coordinate -= WIN3D_RS_coordinate; 
+                  SOLARCHVISION_rotateZ_Camera_around_Selection(-WIN3D_RS_coordinate);
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;       
         
         case 33: 
                  if (Work_with_2D_or_3D == 1) {
@@ -12685,82 +12819,6 @@ void WIN3D_keyPressed (KeyEvent e) {
                  ROLLOUT_Update = 1; 
                  break;          
         
-        case DOWN :
-                  //WIN3D_RX_coordinate += WIN3D_RS_coordinate; 
-                  SOLARCHVISION_rotateZ_Camera_around_Selection(WIN3D_RS_coordinate);
-                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        
-        case LEFT :
-                  //WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; 
-                  SOLARCHVISION_rotateXY_Camera_around_Selection(-WIN3D_RS_coordinate);
-                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-                  
-        case RIGHT :
-                  //WIN3D_RZ_coordinate += WIN3D_RS_coordinate; 
-                  SOLARCHVISION_rotateXY_Camera_around_Selection(WIN3D_RS_coordinate);
-                  WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
-                  
-        case UP :
-                  //WIN3D_RX_coordinate -= WIN3D_RS_coordinate; 
-                  SOLARCHVISION_rotateZ_Camera_around_Selection(-WIN3D_RS_coordinate);
-                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-                  
-      
-        
-      }
-    }
-    else {
-      switch(key) {
-                  
-        case '.' :WIN3D_X_coordinate = 0;
-                  WIN3D_Y_coordinate = 0;
-                  //WIN3D_ZOOM_coordinate = 60;
-                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        
-       case '0' :WIN3D_RX_coordinate = 90; SOLARCHVISION_reverseTransform_Camera(); 
-                 WIN3D_Update = 1; ROLLOUT_Update = 1; break;  
-
-
-        case '5' :WIN3D_RX_coordinate = 0;
-                  WIN3D_RY_coordinate = 0;
-                  WIN3D_RZ_coordinate = 0; 
-                  
-                  WIN3D_X_coordinate = 0;
-                  WIN3D_Y_coordinate = 0;
-                  WIN3D_Z_coordinate = 0;   
-                  
-                  WIN3D_S_coordinate = 1;
-   
-                  WIN3D_ZOOM_coordinate = 60;               
-                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-          
-        case '2' :Display_Trees_People = (Display_Trees_People + 1) % 2; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        
-        case '3' :Display_Building_Model = (Display_Building_Model + 1) % 2; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
- 
-
-
-
-          
-
- 
-        case ' ' :SOLARCHVISION_render_Shadows_selectedSections(); 
-                  WIN3D_Update = 1;
-                  break;
-                    
-        case ENTER :SOLARCHVISION_calculate_SolarImpact_selectedSections();
-                    WIN3D_Update = 1;
-                    break;
-        
-      }
-    }    
-  }
-
-  if ((e.isAltDown() != true) && (e.isControlDown() != true)) {
-
-    if (key == CODED) { 
-      switch(keyCode) {
-
         case 155: // INSERT 
                   SOLARCHVISION_deselectAll();
 
