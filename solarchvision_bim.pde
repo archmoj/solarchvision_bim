@@ -316,7 +316,7 @@ int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:Face, 5:Vertex, 6:Soft 7
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
-int View_Select_Create_Modify = 18; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunkSize 12:LeafSize 13:AllFractalProps 14:SolarPivot 15:FaceNormal 16:FaceFirstVertex 17:PickStudySection 18:PickStudyCamera
+int View_Select_Create_Modify = 0; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunkSize 12:LeafSize 13:AllFractalProps 14:SolarPivot 15:FaceNormal 16:FaceFirstVertex 17:PickStudySection 18:PickStudyCamera
 int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. fractal trees
 
@@ -31453,20 +31453,26 @@ void mouseClicked () {
             }
             else if (mouseButton == LEFT) {
            
-              if ((Work_with_2D_or_3D == 9) && ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1) && (View_Select_Create_Modify != 18)))  { // only if the user wants to select a Camera
-                RxP = SOLARCHVISION_9Dintersect(ray_start, ray_direction, max_dist);
-              }             
-              else if ((Work_with_2D_or_3D == 8) && ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1) && (View_Select_Create_Modify != 17)))  { // only if the user wants to select a Section
-                RxP = SOLARCHVISION_8Dintersect(ray_start, ray_direction, max_dist);
-              }                      
-              else if ((Work_with_2D_or_3D == 1) && ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1)))  { // only if the user wants to select a Fractal-Tree
-                RxP = SOLARCHVISION_1Dintersect(ray_start, ray_direction, max_dist);
-              }        
-              else if ((Work_with_2D_or_3D == 2) && ((View_Select_Create_Modify != 0) && (View_Select_Create_Modify != 1)))  { // only if the user wants to select a 2D-object 
-                RxP = SOLARCHVISION_2Dintersect(ray_start, ray_direction, max_dist);
+              if ((View_Select_Create_Modify == 0) || (View_Select_Create_Modify == 1)) {
+                RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
               }
               else {
-                RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
+              
+                if (Work_with_2D_or_3D == 9) {
+                  RxP = SOLARCHVISION_9Dintersect(ray_start, ray_direction, max_dist);
+                }             
+                else if (Work_with_2D_or_3D == 8) {
+                  RxP = SOLARCHVISION_8Dintersect(ray_start, ray_direction, max_dist);
+                }                      
+                else if (Work_with_2D_or_3D == 1) {
+                  RxP = SOLARCHVISION_1Dintersect(ray_start, ray_direction, max_dist);
+                }        
+                else if (Work_with_2D_or_3D == 2) {
+                  RxP = SOLARCHVISION_2Dintersect(ray_start, ray_direction, max_dist);
+                }
+                else {
+                  RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
+                }
               }
             }
             
@@ -31529,59 +31535,7 @@ void mouseClicked () {
               }   
 
 
-              if (Work_with_2D_or_3D == 9) { // working with cameras              
-                
-                int f = int(RxP[4]);
-                
-                if (View_Select_Create_Modify == 18) { //PickStudyCamera
 
-                  float keep_CAM_x = CAM_x;
-                  float keep_CAM_y = CAM_y;
-                  float keep_CAM_z = CAM_z;
-                  float keep_WIN3D_X_coordinate = WIN3D_X_coordinate; 
-                  float keep_WIN3D_Y_coordinate = WIN3D_Y_coordinate;
-                  float keep_WIN3D_Z_coordinate = WIN3D_Z_coordinate;
-                  float keep_WIN3D_RX_coordinate = WIN3D_RX_coordinate; 
-                  float keep_WIN3D_RY_coordinate = WIN3D_RY_coordinate;
-                  float keep_WIN3D_RZ_coordinate = WIN3D_RZ_coordinate;
-                  float keep_WIN3D_ZOOM_coordinate = WIN3D_ZOOM_coordinate; 
-                  
-                  {
-
-                    CAM_x = RxP[0];
-                    CAM_y = RxP[1];
-                    CAM_z = RxP[2] + 1.5; // standing eye level from the point           
-  
-                    SOLARCHVISION_reverseTransform_Camera();
-    
-                    WIN3D_Update = 1;
-                    
-                    float Camera_X = WIN3D_X_coordinate;
-                    float Camera_Y = WIN3D_Y_coordinate;
-                    float Camera_Z = WIN3D_Z_coordinate;
-                    float Camera_RX = WIN3D_RX_coordinate;
-                    float Camera_RY = WIN3D_RY_coordinate;
-                    float Camera_RZ = WIN3D_RZ_coordinate;
-                    float Camera_F = WIN3D_ZOOM_coordinate;
-              
-                    int Camera_Type = WIN3D_View_Type;
-            
-                    SOLARCHVISION_add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_RX, Camera_RY, Camera_RZ, Camera_F);                    
-                  }  
-                
-                  CAM_x = keep_CAM_x;
-                  CAM_y = keep_CAM_y;
-                  CAM_z = keep_CAM_z;
-                  WIN3D_X_coordinate = keep_WIN3D_X_coordinate; 
-                  WIN3D_Y_coordinate = keep_WIN3D_Y_coordinate;
-                  WIN3D_Z_coordinate = keep_WIN3D_Z_coordinate;
-                  WIN3D_RX_coordinate = keep_WIN3D_RX_coordinate; 
-                  WIN3D_RY_coordinate = keep_WIN3D_RY_coordinate;
-                  WIN3D_RZ_coordinate = keep_WIN3D_RZ_coordinate;
-                  WIN3D_ZOOM_coordinate = keep_WIN3D_ZOOM_coordinate;  
-                                        
-                }
-              }
               
               if (mouseButton == LEFT) { // modify should work only with left click because the right click returns the land info, not objects info
               
@@ -31795,221 +31749,7 @@ void mouseClicked () {
 
                   
 
-                  if (Work_with_2D_or_3D == 8) { // working with sections              
-                    
-                    int f = int(RxP[4]);
-                    
-                    if (View_Select_Create_Modify == 17) { //PickStudySection
-
-                      int n = allFaces[f].length;
-                      
-                      if (n > 2) {
-                        
-                        //float min_Alpha = 90;
-                        float min_Beta = 360;
-                        
-                        for (int j = 0; j < n; j++) {
-                          
-                          int j_next = (j + 1) % n;
-                          
-                          float x1 = allVertices[allFaces[f][j]][0];
-                          float y1 = allVertices[allFaces[f][j]][1];
-                          float z1 = allVertices[allFaces[f][j]][2];                        
-  
-                          float x2 = allVertices[allFaces[f][j_next]][0];
-                          float y2 = allVertices[allFaces[f][j_next]][1];
-                          float z2 = allVertices[allFaces[f][j_next]][2];                        
-  
-                          
-                          //float Alpha = asin_ang(z2 - z1);
-                          float Beta = atan2_ang(y2 - y1, x2 - x1) + 90;
-  
-                          //if (min_Alpha > Alpha) min_Alpha = Alpha;                      
-                          if (min_Beta > Beta) min_Beta = Beta;
-                          
-                        }
-                       
-                        //println("min_Alpha", min_Alpha);
-                        
-                        float[][] tmpVertices = new float[n][3];
-                        
-                        
-                        for (int j = 0; j < n; j++) {
-                          
-                          float x1 = allVertices[allFaces[f][j]][0];
-                          float y1 = allVertices[allFaces[f][j]][1];
-                          float z1 = allVertices[allFaces[f][j]][2];
-                          
-                          float x2 = x1 * cos_ang(-min_Beta) - y1 * sin_ang(-min_Beta);
-                          float y2 = x1 * sin_ang(-min_Beta) + y1 * cos_ang(-min_Beta);
-                          float z2 = z1;
-                          
-                          tmpVertices[j][0] = x2;
-                          tmpVertices[j][1] = y2;
-                          tmpVertices[j][2] = z2;
-
-                        }    
-
-                        float min_x = FLOAT_undefined;
-                        float max_x = -FLOAT_undefined;
-                        float min_y = FLOAT_undefined;
-                        float max_y = -FLOAT_undefined;
-                        float min_z = FLOAT_undefined;
-                        float max_z = -FLOAT_undefined;
-                        
-                        float[] G = {0,0,0}; 
-                        for (int j = 0; j < n; j++) {
-                          float x = tmpVertices[j][0];
-                          float y = tmpVertices[j][1];
-                          float z = tmpVertices[j][2];
-                          
-                          G[0] += x / float(n); 
-                          G[1] += y / float(n);
-                          G[2] += z / float(n);
-                          
-                          if (min_x > x) min_x = x; 
-                          if (max_x < x) max_x = x; 
-                          if (min_y > y) min_y = y; 
-                          if (max_y < y) max_y = y; 
-                          if (min_z > z) min_z = z; 
-                          if (max_z < z) max_z = z;
-                        }
-                        
-                        float Section_offset_U = SpatialImpact_offset_U[SpatialImpact_sectionType];
-                        float Section_offset_V = SpatialImpact_offset_V[SpatialImpact_sectionType];
-                        float Section_Elevation = SpatialImpact_Elevation[SpatialImpact_sectionType];
-                        float Section_Rotation = SpatialImpact_Rotation[SpatialImpact_sectionType];
-                        float Section_scale_U = SpatialImpact_scale_U[SpatialImpact_sectionType];
-                        float Section_scale_V = SpatialImpact_scale_V[SpatialImpact_sectionType];
                   
-                        int Section_Type = SpatialImpact_sectionType;
-                        int Section_RES1 = SpatialImpact_RES1;
-                        int Section_RES2 = SpatialImpact_RES2;                        
-                        
-
-
-                        if ((max_z - min_z < max_x - min_x) && (max_z - min_z < max_y - min_y)) {
-                          Section_Type = 1;
-  
-                          Section_scale_U = max_x - min_x; 
-                          Section_scale_V = max_y - min_y;
-                          
-                          Section_offset_U = G[0];
-                          Section_offset_V = G[1];
-                          
-                          Section_Elevation = G[2];
-                          
-                          Section_Rotation = min_Beta;
-                        }
-                        else {
-                          Section_Type = 2;
-                          
-                          Section_scale_U = max_y - min_y;
-                          Section_scale_V = max_z - min_z; 
-                          
-                          Section_offset_U = -G[1];
-                          Section_offset_V = G[2];        
-                          
-                          Section_Elevation = -G[0];
-          
-                          Section_Rotation = 90 - min_Beta;                            
-                        }       
-
-                      
-                        // recalculating G...  
-                        G[0] = 0;             
-                        G[1] = 0;
-                        G[2] = 0;
-                        for (int j = 0; j < n; j++) {
-                          float x = allVertices[allFaces[f][j]][0];
-                          float y = allVertices[allFaces[f][j]][1];
-                          float z = allVertices[allFaces[f][j]][2];
-                          
-                          G[0] += x / float(n); 
-                          G[1] += y / float(n);
-                          G[2] += z / float(n);
-                        }
-  
-                        PVector AG = new PVector(allVertices[allFaces[f][0]][0] - G[0], allVertices[allFaces[f][0]][1] - G[1], allVertices[allFaces[f][0]][2] - G[2]);                       
-                        PVector BG = new PVector(allVertices[allFaces[f][1]][0] - G[0], allVertices[allFaces[f][1]][1] - G[1], allVertices[allFaces[f][1]][2] - G[2]);
-                       
-                        PVector GAxGB = AG.cross(BG);
-                        
-                        float[][] ImageVertex = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
-                        
-                        float[] SectionCorner_A = ImageVertex[0];
-                        float[] SectionCorner_B = ImageVertex[1];
-                        float[] SectionCorner_C = ImageVertex[2];
-                        float[] SectionCorner_D = ImageVertex[3]; 
-                        
-                        float[] ImageCenter = {0,0,0};
-                        for (int j = 0; j < 3; j++) {
-                          ImageCenter[j] = 0.25 * (SectionCorner_A[j] + SectionCorner_B[j] + SectionCorner_C[j] + SectionCorner_D[j]);
-                        }  
-                        
-                        PVector AG_other = new PVector(SectionCorner_A[0] - ImageCenter[0], SectionCorner_A[1] - ImageCenter[1], SectionCorner_A[2] - ImageCenter[2]);                       
-                        PVector BG_other = new PVector(SectionCorner_B[0] - ImageCenter[0], SectionCorner_B[1] - ImageCenter[1], SectionCorner_B[2] - ImageCenter[2]);
-                        
-                        PVector GAxGB_other = AG_other.cross(BG_other);
-                        
-                        //println("GAxGB", GAxGB);
-                        //println("GAxGB_other", GAxGB_other);
-
-                        float V = GAxGB_other.dot(GAxGB);
-
-                        //println("V", nf(V, 0, 6));                        
-
-                        if (V < 0) {
-                          //println("flip face!");
-                          
-                          Section_Rotation = 180 + Section_Rotation;
-                          Section_Elevation *= -1;
-                          Section_offset_U *= -1;
-                        }
-                        else {
-                          //println("face OK!");
-                        }
-                        
-                        
-                        
-                        int number_of_Section_before = allSection_UVERAB.length; 
-                        
-                        SOLARCHVISION_add_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
-
-                        // selecting new objetcs
-                        
-                        selectedSection_numbers = new int [1];
-                        selectedSection_numbers[0] = 0;
-                        
-                        for (int o = number_of_Section_before; o < allSection_UVERAB.length; o++) {
-                          
-                          int[] newlyAddedSection = {o};
-                          
-                          selectedSection_numbers = concat(selectedSection_numbers, newlyAddedSection);
-                        }  
-
-                        SpatialImpact_offset_U[SpatialImpact_sectionType] = Section_offset_U;
-                        SpatialImpact_offset_V[SpatialImpact_sectionType] = Section_offset_V;
-                        SpatialImpact_Elevation[SpatialImpact_sectionType] = Section_Elevation;
-                        SpatialImpact_Rotation[SpatialImpact_sectionType] = Section_Rotation;
-                        SpatialImpact_scale_U[SpatialImpact_sectionType] = Section_scale_U;
-                        SpatialImpact_scale_V[SpatialImpact_sectionType] = Section_scale_V;
-                  
-                        SpatialImpact_sectionType = Section_Type;
-                        SpatialImpact_RES1 = Section_RES1;
-                        SpatialImpact_RES2 = Section_RES2;    
-        
-                        SOLARCHVISION_calculate_SpatialImpact_selectedSections();
-                       
-                       
-                        SolarImpact_sectionType = Section_Type;          
-               
-                        WIN3D_Update = 1; 
-                        ROLLOUT_Update = 1;  
-                      }
-                    }          
-                    
-                  }
                   
                   
                   
@@ -32643,7 +32383,280 @@ void mouseClicked () {
                   randomSeed(millis());
                   SOLARCHVISION_add_Object2D("PEOPLE", Create_Mesh_Person_Type, x, y, z, 2.5);
                 }
+
+  
+                if (Work_with_2D_or_3D == 9) { // working with cameras              
+                  
+                  int f = int(RxP[4]);
+                  
+                  if (View_Select_Create_Modify == 18) { //PickStudyCamera
+  
+                    float keep_CAM_x = CAM_x;
+                    float keep_CAM_y = CAM_y;
+                    float keep_CAM_z = CAM_z;
+                    float keep_WIN3D_X_coordinate = WIN3D_X_coordinate; 
+                    float keep_WIN3D_Y_coordinate = WIN3D_Y_coordinate;
+                    float keep_WIN3D_Z_coordinate = WIN3D_Z_coordinate;
+                    float keep_WIN3D_RX_coordinate = WIN3D_RX_coordinate; 
+                    float keep_WIN3D_RY_coordinate = WIN3D_RY_coordinate;
+                    float keep_WIN3D_RZ_coordinate = WIN3D_RZ_coordinate;
+                    float keep_WIN3D_ZOOM_coordinate = WIN3D_ZOOM_coordinate; 
+                    
+                    {
+  
+                      CAM_x = RxP[0];
+                      CAM_y = RxP[1];
+                      CAM_z = RxP[2] + 1.5; // standing eye level from the point           
+    
+                      SOLARCHVISION_reverseTransform_Camera();
+      
+                      WIN3D_Update = 1;
+                      
+                      float Camera_X = WIN3D_X_coordinate;
+                      float Camera_Y = WIN3D_Y_coordinate;
+                      float Camera_Z = WIN3D_Z_coordinate;
+                      float Camera_RX = WIN3D_RX_coordinate;
+                      float Camera_RY = WIN3D_RY_coordinate;
+                      float Camera_RZ = WIN3D_RZ_coordinate;
+                      float Camera_F = WIN3D_ZOOM_coordinate;
                 
+                      int Camera_Type = WIN3D_View_Type;
+              
+                      SOLARCHVISION_add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_RX, Camera_RY, Camera_RZ, Camera_F);                    
+                    }  
+                  
+                    CAM_x = keep_CAM_x;
+                    CAM_y = keep_CAM_y;
+                    CAM_z = keep_CAM_z;
+                    WIN3D_X_coordinate = keep_WIN3D_X_coordinate; 
+                    WIN3D_Y_coordinate = keep_WIN3D_Y_coordinate;
+                    WIN3D_Z_coordinate = keep_WIN3D_Z_coordinate;
+                    WIN3D_RX_coordinate = keep_WIN3D_RX_coordinate; 
+                    WIN3D_RY_coordinate = keep_WIN3D_RY_coordinate;
+                    WIN3D_RZ_coordinate = keep_WIN3D_RZ_coordinate;
+                    WIN3D_ZOOM_coordinate = keep_WIN3D_ZOOM_coordinate;  
+                                          
+                  }
+                }
+
+
+                if (Work_with_2D_or_3D == 8) { // working with sections              
+                  
+                  int f = int(RxP[4]);
+                  
+                  if (View_Select_Create_Modify == 17) { //PickStudySection
+
+                    int n = allFaces[f].length;
+                    
+                    if (n > 2) {
+                      
+                      //float min_Alpha = 90;
+                      float min_Beta = 360;
+                      
+                      for (int j = 0; j < n; j++) {
+                        
+                        int j_next = (j + 1) % n;
+                        
+                        float x1 = allVertices[allFaces[f][j]][0];
+                        float y1 = allVertices[allFaces[f][j]][1];
+                        float z1 = allVertices[allFaces[f][j]][2];                        
+
+                        float x2 = allVertices[allFaces[f][j_next]][0];
+                        float y2 = allVertices[allFaces[f][j_next]][1];
+                        float z2 = allVertices[allFaces[f][j_next]][2];                        
+
+                        
+                        //float Alpha = asin_ang(z2 - z1);
+                        float Beta = atan2_ang(y2 - y1, x2 - x1) + 90;
+
+                        //if (min_Alpha > Alpha) min_Alpha = Alpha;                      
+                        if (min_Beta > Beta) min_Beta = Beta;
+                        
+                      }
+                     
+                      //println("min_Alpha", min_Alpha);
+                      
+                      float[][] tmpVertices = new float[n][3];
+                      
+                      
+                      for (int j = 0; j < n; j++) {
+                        
+                        float x1 = allVertices[allFaces[f][j]][0];
+                        float y1 = allVertices[allFaces[f][j]][1];
+                        float z1 = allVertices[allFaces[f][j]][2];
+                        
+                        float x2 = x1 * cos_ang(-min_Beta) - y1 * sin_ang(-min_Beta);
+                        float y2 = x1 * sin_ang(-min_Beta) + y1 * cos_ang(-min_Beta);
+                        float z2 = z1;
+                        
+                        tmpVertices[j][0] = x2;
+                        tmpVertices[j][1] = y2;
+                        tmpVertices[j][2] = z2;
+
+                      }    
+
+                      float min_x = FLOAT_undefined;
+                      float max_x = -FLOAT_undefined;
+                      float min_y = FLOAT_undefined;
+                      float max_y = -FLOAT_undefined;
+                      float min_z = FLOAT_undefined;
+                      float max_z = -FLOAT_undefined;
+                      
+                      float[] G = {0,0,0}; 
+                      for (int j = 0; j < n; j++) {
+                        float the_x = tmpVertices[j][0];
+                        float the_y = tmpVertices[j][1];
+                        float the_z = tmpVertices[j][2];
+                        
+                        G[0] += the_x / float(n); 
+                        G[1] += the_y / float(n);
+                        G[2] += the_z / float(n);
+                        
+                        if (min_x > the_x) min_x = the_x; 
+                        if (max_x < the_x) max_x = the_x; 
+                        if (min_y > the_y) min_y = the_y; 
+                        if (max_y < the_y) max_y = the_y; 
+                        if (min_z > the_z) min_z = the_z; 
+                        if (max_z < the_z) max_z = the_z;
+                      }
+                      
+                      float Section_offset_U = SpatialImpact_offset_U[SpatialImpact_sectionType];
+                      float Section_offset_V = SpatialImpact_offset_V[SpatialImpact_sectionType];
+                      float Section_Elevation = SpatialImpact_Elevation[SpatialImpact_sectionType];
+                      float Section_Rotation = SpatialImpact_Rotation[SpatialImpact_sectionType];
+                      float Section_scale_U = SpatialImpact_scale_U[SpatialImpact_sectionType];
+                      float Section_scale_V = SpatialImpact_scale_V[SpatialImpact_sectionType];
+                
+                      int Section_Type = SpatialImpact_sectionType;
+                      int Section_RES1 = SpatialImpact_RES1;
+                      int Section_RES2 = SpatialImpact_RES2;                        
+                      
+
+
+                      if ((max_z - min_z < max_x - min_x) && (max_z - min_z < max_y - min_y)) {
+                        Section_Type = 1;
+
+                        Section_scale_U = max_x - min_x; 
+                        Section_scale_V = max_y - min_y;
+                        
+                        Section_offset_U = G[0];
+                        Section_offset_V = G[1];
+                        
+                        Section_Elevation = G[2];
+                        
+                        Section_Rotation = min_Beta;
+                      }
+                      else {
+                        Section_Type = 2;
+                        
+                        Section_scale_U = max_y - min_y;
+                        Section_scale_V = max_z - min_z; 
+                        
+                        Section_offset_U = -G[1];
+                        Section_offset_V = G[2];        
+                        
+                        Section_Elevation = -G[0];
+        
+                        Section_Rotation = 90 - min_Beta;                            
+                      }       
+
+                    
+                      // recalculating G...  
+                      G[0] = 0;             
+                      G[1] = 0;
+                      G[2] = 0;
+                      for (int j = 0; j < n; j++) {
+                        float the_x = allVertices[allFaces[f][j]][0];
+                        float the_y = allVertices[allFaces[f][j]][1];
+                        float the_z = allVertices[allFaces[f][j]][2];
+                        
+                        G[0] += the_x / float(n); 
+                        G[1] += the_y / float(n);
+                        G[2] += the_z / float(n);
+                      }
+
+                      PVector AG = new PVector(allVertices[allFaces[f][0]][0] - G[0], allVertices[allFaces[f][0]][1] - G[1], allVertices[allFaces[f][0]][2] - G[2]);                       
+                      PVector BG = new PVector(allVertices[allFaces[f][1]][0] - G[0], allVertices[allFaces[f][1]][1] - G[1], allVertices[allFaces[f][1]][2] - G[2]);
+                     
+                      PVector GAxGB = AG.cross(BG);
+                      
+                      float[][] ImageVertex = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+                      
+                      float[] SectionCorner_A = ImageVertex[0];
+                      float[] SectionCorner_B = ImageVertex[1];
+                      float[] SectionCorner_C = ImageVertex[2];
+                      float[] SectionCorner_D = ImageVertex[3]; 
+                      
+                      float[] ImageCenter = {0,0,0};
+                      for (int j = 0; j < 3; j++) {
+                        ImageCenter[j] = 0.25 * (SectionCorner_A[j] + SectionCorner_B[j] + SectionCorner_C[j] + SectionCorner_D[j]);
+                      }  
+                      
+                      PVector AG_other = new PVector(SectionCorner_A[0] - ImageCenter[0], SectionCorner_A[1] - ImageCenter[1], SectionCorner_A[2] - ImageCenter[2]);                       
+                      PVector BG_other = new PVector(SectionCorner_B[0] - ImageCenter[0], SectionCorner_B[1] - ImageCenter[1], SectionCorner_B[2] - ImageCenter[2]);
+                      
+                      PVector GAxGB_other = AG_other.cross(BG_other);
+                      
+                      //println("GAxGB", GAxGB);
+                      //println("GAxGB_other", GAxGB_other);
+
+                      float V = GAxGB_other.dot(GAxGB);
+
+                      //println("V", nf(V, 0, 6));                        
+
+                      if (V < 0) {
+                        println("flip face!");
+                        
+                        Section_Rotation = 180 + Section_Rotation;
+                        Section_Elevation *= -1;
+                        Section_offset_U *= -1;
+                      }
+                      else {
+                        println("face OK!");
+                      }
+                      
+                      
+                      
+                      int number_of_Section_before = allSection_UVERAB.length; 
+                      
+                      SOLARCHVISION_add_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+
+                      // selecting new objetcs
+                      
+                      selectedSection_numbers = new int [1];
+                      selectedSection_numbers[0] = 0;
+                      
+                      for (int o = number_of_Section_before; o < allSection_UVERAB.length; o++) {
+                        
+                        int[] newlyAddedSection = {o};
+                        
+                        selectedSection_numbers = concat(selectedSection_numbers, newlyAddedSection);
+                      }  
+
+                      SpatialImpact_offset_U[SpatialImpact_sectionType] = Section_offset_U;
+                      SpatialImpact_offset_V[SpatialImpact_sectionType] = Section_offset_V;
+                      SpatialImpact_Elevation[SpatialImpact_sectionType] = Section_Elevation;
+                      SpatialImpact_Rotation[SpatialImpact_sectionType] = Section_Rotation;
+                      SpatialImpact_scale_U[SpatialImpact_sectionType] = Section_scale_U;
+                      SpatialImpact_scale_V[SpatialImpact_sectionType] = Section_scale_V;
+                
+                      SpatialImpact_sectionType = Section_Type;
+                      SpatialImpact_RES1 = Section_RES1;
+                      SpatialImpact_RES2 = Section_RES2;    
+      
+                      SOLARCHVISION_calculate_SpatialImpact_selectedSections();
+                     
+                     
+                      SolarImpact_sectionType = Section_Type;          
+             
+                      WIN3D_Update = 1; 
+                      ROLLOUT_Update = 1;  
+                    }
+                  }          
+                  
+                }
+
+              
   
                 if (keep_number_of_Polymeshes != allPolymesh_Faces.length) { // if any 3D-mesh created during the process
                   
@@ -40709,8 +40722,6 @@ void set_to_Modify_FaceFirstVertex (int n) {
 
 void set_to_Pick_Study_Section () {
   
-  Modify_Object_Parameters = 1;
-  
   View_Select_Create_Modify = 17;
   
   Work_with_2D_or_3D = 8; // << because it only works with sections
@@ -40720,9 +40731,7 @@ void set_to_Pick_Study_Section () {
 }
 
 void set_to_Pick_Study_Camera () {
-  
-  Modify_Object_Parameters = 1;
-  
+
   View_Select_Create_Modify = 18;
   
   Work_with_2D_or_3D = 9; // << because it only works with cameras
