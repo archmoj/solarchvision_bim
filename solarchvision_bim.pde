@@ -36391,6 +36391,7 @@ void SOLARCHVISION_draw_Cameras () {
   }
 }
 
+
 float[][] SOLARCHVISION_getCorners_Camera (int Camera_Type, float Camera_X, float Camera_Y, float Camera_Z, float Camera_S, float Camera_RX, float Camera_RY, float Camera_RZ, float Camera_ZOOM) {
 
   float[][] ImageVertex = new float [5][3];
