@@ -33279,6 +33279,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       MODEL3D_ERASE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL3D_ERASE" , MODEL3D_ERASE, 0, 1, 1), 1));
       
       SECTION_ERASE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SECTION_ERASE" , SECTION_ERASE, 0, 1, 1), 1));
+      
+      CAMERA_ERASE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "CAMERA_ERASE" , CAMERA_ERASE, 0, 1, 1), 1));
    
       Load_Default_Models = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Load_Default_Models" , Load_Default_Models, 0, MAX_Default_Models_Number, 1), 1));
     }
@@ -42109,10 +42111,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("plot_impacts", plot_impacts);
   newChild1.setInt("update_impacts", update_impacts);
   newChild1.setInt("draw_frame", draw_frame);
-  newChild1.setInt("MODEL1D_ERASE", MODEL1D_ERASE);
-  newChild1.setInt("MODEL2D_ERASE", MODEL2D_ERASE);
-  newChild1.setInt("MODEL3D_ERASE", MODEL3D_ERASE);
-  newChild1.setInt("SECTION_ERASE", SECTION_ERASE);
+
   newChild1.setInt("LAND_TESSELLATION", LAND_TESSELLATION);
   newChild1.setInt("MODEL3D_TESSELLATION", MODEL3D_TESSELLATION);
   newChild1.setInt("SKY3D_TESSELLATION", SKY3D_TESSELLATION);
@@ -43241,10 +43240,7 @@ void SOLARCHVISION_load_project (String myFile) {
       plot_impacts = children0[L].getInt("plot_impacts");
       update_impacts = children0[L].getInt("update_impacts");
       draw_frame = children0[L].getInt("draw_frame");
-      MODEL1D_ERASE = children0[L].getInt("MODEL1D_ERASE");
-      MODEL2D_ERASE = children0[L].getInt("MODEL2D_ERASE");
-      MODEL3D_ERASE = children0[L].getInt("MODEL3D_ERASE");
-      SECTION_ERASE = children0[L].getInt("SECTION_ERASE");
+
       LAND_TESSELLATION = children0[L].getInt("LAND_TESSELLATION");
       MODEL3D_TESSELLATION = children0[L].getInt("MODEL3D_TESSELLATION");
       SKY3D_TESSELLATION = children0[L].getInt("SKY3D_TESSELLATION");
