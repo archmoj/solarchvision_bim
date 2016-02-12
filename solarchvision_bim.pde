@@ -30919,6 +30919,45 @@ void mouseClicked () {
               BAR_b_Update = 1;  
             }
             
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Viewport >> Camera")) {
+              
+              float Camera_X = WIN3D_X_coordinate;
+              float Camera_Y = WIN3D_Y_coordinate;
+              float Camera_Z = WIN3D_Z_coordinate;
+              float Camera_S = WIN3D_S_coordinate;
+              float Camera_RX = WIN3D_RX_coordinate;
+              float Camera_RY = WIN3D_RY_coordinate;
+              float Camera_RZ = WIN3D_RZ_coordinate;
+              float Camera_ZOOM = WIN3D_ZOOM_coordinate;
+
+              int Camera_Type = WIN3D_View_Type;
+      
+              SOLARCHVISION_add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);
+
+              WIN3D_Update = 1;   
+            }            
+
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Camera >> Viewport")) {
+              
+              int OBJ_NUM = selectedCamera_numbers[selectedCamera_numbers.length - 1];
+              
+              if (OBJ_NUM != 0) {
+                
+                WIN3D_X_coordinate = allCamera_PPPSRRRF[OBJ_NUM][0];
+                WIN3D_Y_coordinate = allCamera_PPPSRRRF[OBJ_NUM][1];
+                WIN3D_Z_coordinate = allCamera_PPPSRRRF[OBJ_NUM][2];
+                WIN3D_S_coordinate = allCamera_PPPSRRRF[OBJ_NUM][3];
+                WIN3D_RX_coordinate = allCamera_PPPSRRRF[OBJ_NUM][4];
+                WIN3D_RY_coordinate = allCamera_PPPSRRRF[OBJ_NUM][5];
+                WIN3D_RZ_coordinate = allCamera_PPPSRRRF[OBJ_NUM][6];
+                WIN3D_ZOOM_coordinate = allCamera_PPPSRRRF[OBJ_NUM][7];
+                
+                WIN3D_View_Type = allCamera_Type[OBJ_NUM];
+                
+                WIN3D_Update = 1;   
+              }
+            }  
+            
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change Seed/Material")) {
               set_to_Modify_Seed(0);
               SOLARCHVISION_highlight_in_BAR_b("Mat0");
@@ -32494,9 +32533,7 @@ void mouseClicked () {
                     CAM_z = RxP[2] + 1.5; // standing eye level from the point           
   
                     SOLARCHVISION_reverseTransform_Camera();
-    
-                    WIN3D_Update = 1;
-                    
+
                     float Camera_X = WIN3D_X_coordinate;
                     float Camera_Y = WIN3D_Y_coordinate;
                     float Camera_Z = WIN3D_Z_coordinate;
@@ -32508,7 +32545,9 @@ void mouseClicked () {
 
                     int Camera_Type = WIN3D_View_Type;
             
-                    SOLARCHVISION_add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);                    
+                    SOLARCHVISION_add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);
+
+                    WIN3D_Update = 1;                    
                   }  
                 
                   CAM_x = keep_CAM_x;
@@ -36315,11 +36354,9 @@ void SOLARCHVISION_draw_Cameras () {
 
       int Camera_Type = allCamera_Type[f];
 
-
-
       WIN3D_Diagrams.strokeWeight(1);
       WIN3D_Diagrams.stroke(0);
-      WIN3D_Diagrams.fill(127,255,127,127);  
+      WIN3D_Diagrams.noFill();  
       
       WIN3D_Diagrams.beginShape();
       
@@ -36348,7 +36385,7 @@ void SOLARCHVISION_draw_Cameras () {
 
       WIN3D_Diagrams.strokeWeight(1);
       WIN3D_Diagrams.stroke(0);
-      WIN3D_Diagrams.noFill();  
+      WIN3D_Diagrams.fill(127,255,127,127);
       
       WIN3D_Diagrams.beginShape();
       
@@ -39822,13 +39859,13 @@ String[][] BAR_a_Items = {
                         {"Project", "New", "Save", "Hold", "Fetch", "Open...", "Save As...", "Export 3D-Model", "Import 3D-Model...", "Preferences", "Quit"},
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
-                        {"View", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
+                        {"View", "Camera >> Viewport", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
                         {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sections", "Display/Hide Cameras", "Display/Hide Sky", "Display/Hide Sun Path", "Display/Hide Sun Pattern", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected Sections", "Display/Hide Selected Cameras", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected Solar Pivots", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Wire", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Pre-bake Selected Sections", "Process Active Impact", "Process Passive Impact", "Process Spatial Impact", "Run wind 3D-model"},
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
-                        {"Create", "Camera", "Section", "Fractal_Plant", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
+                        {"Create", "Viewport >> Camera", "Camera", "Section", "Fractal_Plant", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Section",  "Select Camera", "Select Fractal_Plant", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Soft Selection", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
                         {"Edit", "Duplicate Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces"},
                         {"Modify", "Save Current Pivot", "Reset Saved Pivot", "Use Selection Pivot", "Use Origin Pivot", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
