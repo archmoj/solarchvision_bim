@@ -12722,7 +12722,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                  }
                  
                  if (Work_with_2D_or_3D == 5) {
-                   int nextIndex = SOLARCHVISION_nextUnselected(-1,selectedVertex_numbers.length - 1);
+                   int nextIndex = SOLARCHVISION_nextUnselected(-1, selectedVertex_numbers.length - 1);
                    if (nextIndex != -1) selectedVertex_numbers[selectedVertex_numbers.length - 1] = nextIndex;
                  }
                  
@@ -12767,7 +12767,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                  }
                  
                  if (Work_with_2D_or_3D == 5) {
-                   int nextIndex = SOLARCHVISION_nextUnselected(1,selectedVertex_numbers.length - 1);
+                   int nextIndex = SOLARCHVISION_nextUnselected(1, selectedVertex_numbers.length - 1);
                    if (nextIndex != -1) selectedVertex_numbers[selectedVertex_numbers.length - 1] = nextIndex;
                  }
                  
@@ -27747,47 +27747,56 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
 
 
   int length_of_indexes = 0;
+  int start_index_OBJ_NUM = 0;
   
   if (Work_with_2D_or_3D == 1) {
     length_of_indexes = allFractal_Plant_num;
+    start_index_OBJ_NUM = selectedFractal_Plant_numbers[start_index];
   }    
 
   if (Work_with_2D_or_3D == 2) {
     length_of_indexes = allObject2D_num;
+    start_index_OBJ_NUM = selectedObject2D_numbers[start_index];
   }    
   
   if (Work_with_2D_or_3D == 3) {
     length_of_indexes = allPolymesh_Faces.length;
+    start_index_OBJ_NUM = selectedPolymesh_numbers[start_index];
   }
  
   if (Work_with_2D_or_3D == 4) {
     length_of_indexes = allFaces.length; 
+    start_index_OBJ_NUM = selectedFace_numbers[start_index];
   }                
   
   if (Work_with_2D_or_3D == 5) {
     length_of_indexes = allVertices.length; 
+    start_index_OBJ_NUM = selectedVertex_numbers[start_index];
   }             
   
   if (Work_with_2D_or_3D == 8) {
     length_of_indexes = allSection_num;
+    start_index_OBJ_NUM = selectedSection_numbers[start_index];
   }  
   
 
   if (Work_with_2D_or_3D == 9) {
     length_of_indexes = allCamera_num;
+    start_index_OBJ_NUM = selectedCamera_numbers[start_index];
   }
+  
 
   
   int return_OBJ_NUM = 0;
 
-  for (int i = 1; i < length_of_indexes; i++) {
+  for (int i = 0; i < length_of_indexes; i++) {
 
-    int OBJ_NUM = start_index + i * go_direction;
+    int OBJ_NUM = start_index_OBJ_NUM + i * go_direction;
     
     if (OBJ_NUM < 0) OBJ_NUM += length_of_indexes;
     if (OBJ_NUM >= length_of_indexes) OBJ_NUM -= length_of_indexes;
     
-    if (OBJ_NUM != 0) {
+    if ((OBJ_NUM != 0) && (OBJ_NUM != start_index_OBJ_NUM)) {
       
       int found_at = -1;
     
@@ -27796,8 +27805,8 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
           if (selectedFractal_Plant_numbers[o] == OBJ_NUM) {
             found_at = o;
             break;
-          } 
-        }
+          }
+        } 
       }
     
       if (Work_with_2D_or_3D == 2) {
@@ -27805,16 +27814,17 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
           if (selectedObject2D_numbers[o] == OBJ_NUM) {
             found_at = o;
             break;
-          } 
+          }
         }
       }
     
       if (Work_with_2D_or_3D == 3) {
         for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
+
           if (selectedPolymesh_numbers[o] == OBJ_NUM) {
             found_at = o;
             break;
-          } 
+          }
         }
       }
     
@@ -27858,13 +27868,18 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
       }
 
 
-      if ((found_at == -1) && (found_at != start_index)){
+      if (found_at == -1) {
         return_OBJ_NUM = OBJ_NUM;
         break;
       }      
     }
 
   }
+  
+  println("start_index", start_index);
+  println("start_index_OBJ_NUM", start_index_OBJ_NUM);
+  println("return_OBJ_NUM", return_OBJ_NUM);
+  
   
 
   return return_OBJ_NUM; 
