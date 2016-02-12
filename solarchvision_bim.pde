@@ -27865,6 +27865,138 @@ void SOLARCHVISION_draw_logo (float cx, float cy, float cz, float cr, int the_vi
 }
 
 
+int SOLARCHVISION_nextUnselected(int start_intex, int go_direction) { 
+  
+  //go_direction: 1=next -1=previous
+
+
+  int length_of_indexes = 0;
+  
+  if (Work_with_2D_or_3D == 1) {
+    length_of_indexes = allFractal_Plant_num;
+  }    
+
+  if (Work_with_2D_or_3D == 2) {
+    length_of_indexes = allObject2D_num;
+  }    
+  
+  if (Work_with_2D_or_3D == 3) {
+    length_of_indexes = allPolymesh_Faces.length;
+  }
+ 
+  if (Work_with_2D_or_3D == 4) {
+    length_of_indexes = allFaces.length; 
+  }                
+  
+  if (Work_with_2D_or_3D == 5) {
+    length_of_indexes = allVertices.length; 
+  }             
+  
+  if (Work_with_2D_or_3D == 8) {
+    length_of_indexes = allSection_num;
+  }  
+  
+
+  if (Work_with_2D_or_3D == 9) {
+    length_of_indexes = allCamera_num;
+  }
+
+  
+  int return_OBJ_NUM = -1;
+
+  for (int i = 1; i < length_of_indexes; i++) {
+
+    int OBJ_NUM = start_intex + i * go_direction;
+    if (OBJ_NUM < 0) OBJ_NUM += length_of_indexes;
+    if (OBJ_NUM >= length_of_indexes) OBJ_NUM -= length_of_indexes;
+    
+    
+    int found_at = -1;
+    
+    if (OBJ_NUM != 0) {
+    
+      if (Work_with_2D_or_3D == 1) {
+        for (int o = selectedFractal_Plant_numbers.length - 1; o >= 0; o--) {
+          if (selectedFractal_Plant_numbers[o] == OBJ_NUM) {
+            found_at = o;
+            break;
+          } 
+        }
+      }
+    
+      if (Work_with_2D_or_3D == 2) {
+        for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
+          if (selectedObject2D_numbers[o] == OBJ_NUM) {
+            found_at = o;
+            break;
+          } 
+        }
+      }
+    
+      if (Work_with_2D_or_3D == 3) {
+        for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
+          if (selectedPolymesh_numbers[o] == OBJ_NUM) {
+            found_at = o;
+            break;
+          } 
+        }
+      }
+    
+      if (Work_with_2D_or_3D == 4) {
+        for (int o = selectedFace_numbers.length - 1; o >= 0; o--) {
+          if (selectedFace_numbers[o] == OBJ_NUM) {
+            found_at = o;
+            break;
+          } 
+        }
+      }
+    
+      if (Work_with_2D_or_3D == 5) {
+        for (int o = selectedVertex_numbers.length - 1; o >= 0; o--) {
+          if (selectedVertex_numbers[o] == OBJ_NUM) {
+            found_at = o;
+            break;
+          } 
+        }
+      }
+    
+    
+    
+    
+      if (Work_with_2D_or_3D == 8) {
+        for (int o = selectedSection_numbers.length - 1; o >= 0; o--) {
+          if (selectedSection_numbers[o] == OBJ_NUM) {
+            found_at = o;
+            break;
+          } 
+        }
+      }
+    
+      if (Work_with_2D_or_3D == 9) {
+        for (int o = selectedCamera_numbers.length - 1; o >= 0; o--) {
+          if (selectedCamera_numbers[o] == OBJ_NUM) {
+            found_at = o;
+            break;
+          } 
+        }
+      }
+      
+    }
+    
+    
+    
+    if (found_at != -1) {
+      return_OBJ_NUM = OBJ_NUM;
+      break;
+    }
+  }
+  
+
+  
+  return return_OBJ_NUM; 
+}
+
+
 
 void SOLARCHVISION_PickSelect(float[] RxP) {
 
