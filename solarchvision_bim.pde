@@ -12700,7 +12700,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                   SOLARCHVISION_rotateZ_Camera_around_Selection(-WIN3D_RS_coordinate);
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;       
         
-        case 33: 
+        case 34: 
                  if (Work_with_2D_or_3D == 1) {
                    selectedFractal_numbers[selectedFractal_numbers.length - 1] -= 1;
                    if (selectedFractal_numbers[selectedFractal_numbers.length - 1] < 0) {
@@ -12759,7 +12759,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                  ROLLOUT_Update = 1; 
                  break;  
 
-        case 34: 
+        case 33: 
                  if (Work_with_2D_or_3D == 1) {
                    selectedFractal_numbers[selectedFractal_numbers.length - 1] += 1;
                    if (selectedFractal_numbers[selectedFractal_numbers.length - 1] > allFractal_XYZSRA.length - 1) {
@@ -12817,6 +12817,105 @@ void WIN3D_keyPressed (KeyEvent e) {
                  WIN3D_Update = 1;
                  ROLLOUT_Update = 1; 
                  break;          
+
+        case 35: 
+                 if (Work_with_2D_or_3D == 1) {
+                   selectedFractal_numbers[selectedFractal_numbers.length - 1] = allFractal_XYZSRA.length - 1;
+                 }
+
+                 if (Work_with_2D_or_3D == 2) {
+                   selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = allObject2D_XYZS.length - 1;
+                 }        
+        
+                 if (Work_with_2D_or_3D == 3) {
+                   selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = allPolymesh_Faces.length - 1;
+                 }
+
+                 if (Work_with_2D_or_3D == 4) {
+                   selectedFace_numbers[selectedFace_numbers.length - 1] = allFaces.length - 1;
+                 }
+                 
+                 if (Work_with_2D_or_3D == 5) {
+                   selectedVertex_numbers[selectedVertex_numbers.length - 1] = allVertices.length - 1;
+                 }
+                 
+                 if (Work_with_2D_or_3D == 8) {
+                   selectedSection_numbers[selectedSection_numbers.length - 1] = allSection_UVERAB.length - 1;
+                 }     
+     
+                 if (Work_with_2D_or_3D == 9) {
+                   selectedCamera_numbers[selectedCamera_numbers.length - 1] = allCamera_PPPRRRF.length - 1;
+                 }                    
+                 
+                 println("SOLARCHVISION_calculate_selection_Pivot 27b");
+                 SOLARCHVISION_calculate_selection_Pivot();
+                 
+                 SOLARCHVISION_reset_selectedRefValues();  
+                 
+                 WIN3D_Update = 1;
+                 ROLLOUT_Update = 1; 
+                 break;  
+
+        case 36: 
+                 if (Work_with_2D_or_3D == 1) {
+                   selectedFractal_numbers[selectedFractal_numbers.length - 1] = 1;
+                   if (selectedFractal_numbers[selectedFractal_numbers.length - 1] > allFractal_XYZSRA.length - 1) {
+                     selectedFractal_numbers[selectedFractal_numbers.length - 1] = 0;
+                   }
+                 }         
+        
+                 if (Work_with_2D_or_3D == 2) {
+                   selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = 1;
+                   if (selectedObject2D_numbers[selectedObject2D_numbers.length - 1] > allObject2D_XYZS.length - 1) {
+                     selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = 0;
+                   }
+                 } 
+                 
+                 if (Work_with_2D_or_3D == 3) {
+                   selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = 1;
+                   if (selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] > allPolymesh_Faces.length - 1) {
+                     selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = 0;
+                   }
+                 }  
+
+                 if (Work_with_2D_or_3D == 4) {
+                   selectedFace_numbers[selectedFace_numbers.length - 1] = 1;
+                   if (selectedFace_numbers[selectedFace_numbers.length - 1] > allFaces.length - 1) {
+                     selectedFace_numbers[selectedFace_numbers.length - 1] = 0;
+                   }
+                 }  
+
+                 if (Work_with_2D_or_3D == 5) {
+                   selectedVertex_numbers[selectedVertex_numbers.length - 1] = 1;
+                   if (selectedVertex_numbers[selectedVertex_numbers.length - 1] > allVertices.length - 1) {
+                     selectedVertex_numbers[selectedVertex_numbers.length - 1] = 0;
+                   }
+                 }  
+                 
+                 if (Work_with_2D_or_3D == 8) {
+                   selectedSection_numbers[selectedSection_numbers.length - 1] = 1;
+                   if (selectedSection_numbers[selectedSection_numbers.length - 1] > allSection_UVERAB.length - 1) {
+                     selectedSection_numbers[selectedSection_numbers.length - 1] = 0;
+                   }
+                 }        
+      
+                 if (Work_with_2D_or_3D == 9) {
+                   selectedCamera_numbers[selectedCamera_numbers.length - 1] = 1;
+                   if (selectedCamera_numbers[selectedCamera_numbers.length - 1] > allCamera_PPPRRRF.length - 1) {
+                     selectedCamera_numbers[selectedCamera_numbers.length - 1] = 0;
+                   }
+                 }                   
+                 
+                 println("SOLARCHVISION_calculate_selection_Pivot 28b");
+                 SOLARCHVISION_calculate_selection_Pivot();
+                 
+                 SOLARCHVISION_reset_selectedRefValues();  
+                 
+                 WIN3D_Update = 1;
+                 ROLLOUT_Update = 1; 
+                 break;          
+        
+
         
         case 155: // INSERT 
                   SOLARCHVISION_deselectAll();
