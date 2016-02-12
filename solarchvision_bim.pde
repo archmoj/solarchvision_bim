@@ -129,99 +129,6 @@ int STUDY_j_start = 0; // constant
 int STUDY_j_end = 6; //2; //16; // Variable
 
 
-int Load_Default_Models = 0; //3;//0; //3; //5;
-
-
-int addToLastPolymesh = 1;
-
-
-
-int selected_posVector = 2; // 0:X, 1:Y, 2:Z, 3: All
-int selected_rotVector = 2; // 0:X, 1:Y, 2:Z
-int selected_scaleVector = 2; // 0:X, 1:Y, 2:Z, 3:All
-
-float selected_posValue = 0;
-float selected_rotValue = 0;  
-float selected_scaleValue = 0; 
-
-int selection_alignX = 0;
-int selection_alignY = 0;
-int selection_alignZ = 0;
-
-
-int selectedPolymesh_displaySolarPivots = 1;
-int selectedPolymesh_displayPivot = 1;
-int selectedPolymesh_displayEdges = 1; //0;
-int selectedPolymesh_displayBox = 1;
-
-int selectedFace_displayEdges = 1;
-int selectedFace_displayVertexCount = 1;
-int selectedVertex_displayVertices = 1;
- 
-
-int selectedObject2D_displayEdges = 1;
-int selectedFractal_Plant_displayEdges = 1;
-int selectedSection_displayEdges = 1;
-int selectedCamera_displayEdges = 1;
-
-int[] selectedCamera_numbers = {0};
-int[] selectedSection_numbers = {0};
-int[] selectedFractal_Plant_numbers = {0};
-int[] selectedObject2D_numbers = {0};
-int[] selectedPolymesh_numbers = {0};
-int[] selectedFace_numbers = {0};
-int[] selectedVertex_numbers = {0};
-
-float softSelection_Power = 1;
-float softSelection_Radius = 2; // 2 = 2m
-
-int addNewSelectionToPreviousSelection = 0;
-
-float[][] allVertices = {{0,0,0}};
-int[][] allFaces = {{0,0,0}};
-int[][] allFaces_MTLV = {{0,0,0,0}}; // 0:material, 1:teselation, 2:layer, 3:visibility
-
-int[][] allPolymesh_Faces = {{0,0}}; // start face - end face
-int[][] allPolymesh_Solids = {{0,0}}; // start solid - end solid
-
-float[][] allPolymesh_SolarPivotXYZ = {{0,0,0}}; 
-int[][] allPolymesh_SolarPivotType = {{0}}; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
-
-
-
-
-float[][] allObject2D_XYZS = {{0,0,0,0}};
-int[] allObject2D_MAP = {0};
-int allObject2D_num = 0; 
-
-
-
-float[][] allFractal_Plant_XYZSRA = {{0,0,0,0,0,0}};
-int[] allFractal_Plant_Type = {0};
-int[] allFractal_Plant_DegreeMin = {0};
-int[] allFractal_Plant_DegreeMax = {0};
-int[] allFractal_Plant_Seed = {0};
-float[] allFractal_Plant_TrunkSize = {0};
-float[] allFractal_Plant_LeafSize = {0};
-int allFractal_Plant_num = 0; 
-
-float[][] allCamera_PPPSRRRF = {{0,0,0,1,0,0,0,1}};
-int[] allCamera_Type = {0};
-int allCamera_num = 0;
-
-float[][] allSection_UVERAB = {{0,0,0,0,0,0}};
-int[] allSection_Type = {0};
-int[] allSection_RES1 = {0};
-int[] allSection_RES2 = {0};
-int allSection_num = 0;
-PImage[] allSection_SpatialImpact = {createImage(2, 2, RGB)};
-PImage[][] allSection_SolarImpact = new PImage[1][(1 + STUDY_j_end - STUDY_j_start)];
-{
-  int i = 0;
-  for (int j = STUDY_j_start; j <= STUDY_j_end; j += 1) { 
-    allSection_SolarImpact[i][j] = createImage(2, 2, RGB);
-  } 
-}
 
 
 int Display_Output_in_Explorer = 1;
@@ -1734,11 +1641,6 @@ int MESSAGE_X_View = 2 * w_pixel + ROLLOUT_X_View;
 int MESSAGE_Y_View = int(1.5 * MESSAGE_S_View);
 
 
-
-
-
-
-
 float CAM_x;
 float CAM_y;
 float CAM_z;
@@ -1747,6 +1649,119 @@ float CAM_dist;
 
 float CAM_clipNear = 0.001;
 float CAM_clipFar = 1000000000.0;
+
+
+float[][] allVertices = {{0,0,0}};
+int[][] allFaces = {{0,0,0}};
+int[][] allFaces_MTLV = {{0,0,0,0}}; // 0:material, 1:teselation, 2:layer, 3:visibility
+
+int[][] allPolymesh_Faces = {{0,0}}; // start face - end face
+int[][] allPolymesh_Solids = {{0,0}}; // start solid - end solid
+
+float[][] allPolymesh_SolarPivotXYZ = {{0,0,0}}; 
+int[][] allPolymesh_SolarPivotType = {{0}}; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
+
+
+
+
+float[][] allObject2D_XYZS = {{0,0,0,0}};
+int[] allObject2D_MAP = {0};
+int allObject2D_num = 0; 
+
+
+
+float[][] allFractal_Plant_XYZSRA = {{0,0,0,0,0,0}};
+int[] allFractal_Plant_Type = {0};
+int[] allFractal_Plant_DegreeMin = {0};
+int[] allFractal_Plant_DegreeMax = {0};
+int[] allFractal_Plant_Seed = {0};
+float[] allFractal_Plant_TrunkSize = {0};
+float[] allFractal_Plant_LeafSize = {0};
+int allFractal_Plant_num = 0; 
+
+
+
+float[][] allSection_UVERAB = {{0,0,0,0,0,0}};
+int[] allSection_Type = {0};
+int[] allSection_RES1 = {0};
+int[] allSection_RES2 = {0};
+int allSection_num = 0;
+PImage[] allSection_SpatialImpact = {createImage(2, 2, RGB)};
+PImage[][] allSection_SolarImpact = new PImage[1][(1 + STUDY_j_end - STUDY_j_start)];
+{
+  int i = 0;
+  for (int j = STUDY_j_start; j <= STUDY_j_end; j += 1) { 
+    allSection_SolarImpact[i][j] = createImage(2, 2, RGB);
+  } 
+}
+
+float[][] allCamera_PPPSRRRF = {{0,0,0,1,0,0,0,1}};
+int[] allCamera_Type = {0};
+int allCamera_num = 0;
+
+int active_Camera = 0;
+
+int selected_posVector = 2; // 0:X, 1:Y, 2:Z, 3: All
+int selected_rotVector = 2; // 0:X, 1:Y, 2:Z
+int selected_scaleVector = 2; // 0:X, 1:Y, 2:Z, 3:All
+
+float selected_posValue = 0;
+float selected_rotValue = 0;  
+float selected_scaleValue = 0; 
+
+int selection_alignX = 0;
+int selection_alignY = 0;
+int selection_alignZ = 0;
+
+
+int selectedPolymesh_displaySolarPivots = 1;
+int selectedPolymesh_displayPivot = 1;
+int selectedPolymesh_displayEdges = 1; //0;
+int selectedPolymesh_displayBox = 1;
+
+int selectedFace_displayEdges = 1;
+int selectedFace_displayVertexCount = 1;
+int selectedVertex_displayVertices = 1;
+ 
+
+int selectedObject2D_displayEdges = 1;
+int selectedFractal_Plant_displayEdges = 1;
+int selectedSection_displayEdges = 1;
+int selectedCamera_displayEdges = 1;
+
+int[] selectedCamera_numbers = {0};
+int[] selectedSection_numbers = {0};
+int[] selectedFractal_Plant_numbers = {0};
+int[] selectedObject2D_numbers = {0};
+int[] selectedPolymesh_numbers = {0};
+int[] selectedFace_numbers = {0};
+int[] selectedVertex_numbers = {0};
+
+float softSelection_Power = 1;
+float softSelection_Radius = 2; // 2 = 2m
+
+int addNewSelectionToPreviousSelection = 0;
+
+int addToLastPolymesh = 1;
+
+int Load_Default_Models = 0; //3;//0; //3; //5;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
