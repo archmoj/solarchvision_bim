@@ -12702,53 +12702,39 @@ void WIN3D_keyPressed (KeyEvent e) {
         
         case 34: 
                  if (Work_with_2D_or_3D == 1) {
-                   selectedFractal_Plant_numbers[selectedFractal_Plant_numbers.length - 1] -= 1;
-                   if (selectedFractal_Plant_numbers[selectedFractal_Plant_numbers.length - 1] < 0) {
-                     selectedFractal_Plant_numbers[selectedFractal_Plant_numbers.length - 1] = allFractal_Plant_XYZSRA.length - 1;
-                   }                   
+                   int nextIndex = SOLARCHVISION_nextUnselected(-1, selectedFractal_Plant_numbers.length - 1);
+                   if (nextIndex != -1) selectedFractal_Plant_numbers[selectedFractal_Plant_numbers.length - 1] = nextIndex;
                  }
 
                  if (Work_with_2D_or_3D == 2) {
-                   selectedObject2D_numbers[selectedObject2D_numbers.length - 1] -= 1;
-                   if (selectedObject2D_numbers[selectedObject2D_numbers.length - 1] < 0) {
-                     selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = allObject2D_XYZS.length - 1;
-                   }
+                   int nextIndex = SOLARCHVISION_nextUnselected(-1, selectedObject2D_numbers.length - 1);
+                   if (nextIndex != -1) selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = nextIndex;
                  }        
         
                  if (Work_with_2D_or_3D == 3) {
-                   selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] -= 1;
-                   if (selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] < 0) {
-                     selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = allPolymesh_Faces.length - 1;
-                   }
+                   int nextIndex = SOLARCHVISION_nextUnselected(-1, selectedPolymesh_numbers.length - 1);
+                   if (nextIndex != -1) selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = nextIndex;
                  }
 
                  if (Work_with_2D_or_3D == 4) {
-                   selectedFace_numbers[selectedFace_numbers.length - 1] -= 1;
-                   if (selectedFace_numbers[selectedFace_numbers.length - 1] < 0) {
-                     selectedFace_numbers[selectedFace_numbers.length - 1] = allFaces.length - 1;
-                   }
+                   int nextIndex = SOLARCHVISION_nextUnselected(-1, selectedFace_numbers.length - 1);
+                   if (nextIndex != -1) selectedFace_numbers[selectedFace_numbers.length - 1] = nextIndex;
                  }
                  
                  if (Work_with_2D_or_3D == 5) {
-                   selectedVertex_numbers[selectedVertex_numbers.length - 1] -= 1;
-                   if (selectedVertex_numbers[selectedVertex_numbers.length - 1] < 0) {
-                     selectedVertex_numbers[selectedVertex_numbers.length - 1] = allVertices.length - 1;
-                   }
+                   int nextIndex = SOLARCHVISION_nextUnselected(-1,selectedVertex_numbers.length - 1);
+                   if (nextIndex != -1) selectedVertex_numbers[selectedVertex_numbers.length - 1] = nextIndex;
                  }
                  
                  if (Work_with_2D_or_3D == 8) {
-                   selectedSection_numbers[selectedSection_numbers.length - 1] -= 1;
-                   if (selectedSection_numbers[selectedSection_numbers.length - 1] < 0) {
-                     selectedSection_numbers[selectedSection_numbers.length - 1] = allSection_UVERAB.length - 1;
-                   }                   
+                   int nextIndex = SOLARCHVISION_nextUnselected(-1, selectedSection_numbers.length - 1);
+                   if (nextIndex != -1) selectedSection_numbers[selectedSection_numbers.length - 1] = nextIndex;
                  }     
      
                  if (Work_with_2D_or_3D == 9) {
-                   selectedCamera_numbers[selectedCamera_numbers.length - 1] -= 1;
-                   if (selectedCamera_numbers[selectedCamera_numbers.length - 1] < 0) {
-                     selectedCamera_numbers[selectedCamera_numbers.length - 1] = allCamera_PPPRRRF.length - 1;
-                   }                   
-                 }                    
+                   int nextIndex = SOLARCHVISION_nextUnselected(-1, selectedCamera_numbers.length - 1);
+                   if (nextIndex != -1) selectedCamera_numbers[selectedCamera_numbers.length - 1] = nextIndex;
+                 }         
                  
                  println("SOLARCHVISION_calculate_selection_Pivot 27");
                  SOLARCHVISION_calculate_selection_Pivot();
@@ -12761,53 +12747,40 @@ void WIN3D_keyPressed (KeyEvent e) {
 
         case 33: 
                  if (Work_with_2D_or_3D == 1) {
-                   selectedFractal_Plant_numbers[selectedFractal_Plant_numbers.length - 1] += 1;
-                   if (selectedFractal_Plant_numbers[selectedFractal_Plant_numbers.length - 1] > allFractal_Plant_XYZSRA.length - 1) {
-                     selectedFractal_Plant_numbers[selectedFractal_Plant_numbers.length - 1] = 0;
-                   }
-                 }         
-        
+                   int nextIndex = SOLARCHVISION_nextUnselected(1, selectedFractal_Plant_numbers.length - 1);
+                   if (nextIndex != -1) selectedFractal_Plant_numbers[selectedFractal_Plant_numbers.length - 1] = nextIndex;
+                 }
+
                  if (Work_with_2D_or_3D == 2) {
-                   selectedObject2D_numbers[selectedObject2D_numbers.length - 1] += 1;
-                   if (selectedObject2D_numbers[selectedObject2D_numbers.length - 1] > allObject2D_XYZS.length - 1) {
-                     selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = 0;
-                   }
-                 } 
-                 
+                   int nextIndex = SOLARCHVISION_nextUnselected(1, selectedObject2D_numbers.length - 1);
+                   if (nextIndex != -1) selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = nextIndex;
+                 }        
+        
                  if (Work_with_2D_or_3D == 3) {
-                   selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] += 1;
-                   if (selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] > allPolymesh_Faces.length - 1) {
-                     selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = 0;
-                   }
-                 }  
+                   int nextIndex = SOLARCHVISION_nextUnselected(1, selectedPolymesh_numbers.length - 1);
+                   if (nextIndex != -1) selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = nextIndex;
+                 }
 
                  if (Work_with_2D_or_3D == 4) {
-                   selectedFace_numbers[selectedFace_numbers.length - 1] += 1;
-                   if (selectedFace_numbers[selectedFace_numbers.length - 1] > allFaces.length - 1) {
-                     selectedFace_numbers[selectedFace_numbers.length - 1] = 0;
-                   }
-                 }  
-
+                   int nextIndex = SOLARCHVISION_nextUnselected(1, selectedFace_numbers.length - 1);
+                   if (nextIndex != -1) selectedFace_numbers[selectedFace_numbers.length - 1] = nextIndex;
+                 }
+                 
                  if (Work_with_2D_or_3D == 5) {
-                   selectedVertex_numbers[selectedVertex_numbers.length - 1] += 1;
-                   if (selectedVertex_numbers[selectedVertex_numbers.length - 1] > allVertices.length - 1) {
-                     selectedVertex_numbers[selectedVertex_numbers.length - 1] = 0;
-                   }
-                 }  
+                   int nextIndex = SOLARCHVISION_nextUnselected(1,selectedVertex_numbers.length - 1);
+                   if (nextIndex != -1) selectedVertex_numbers[selectedVertex_numbers.length - 1] = nextIndex;
+                 }
                  
                  if (Work_with_2D_or_3D == 8) {
-                   selectedSection_numbers[selectedSection_numbers.length - 1] += 1;
-                   if (selectedSection_numbers[selectedSection_numbers.length - 1] > allSection_UVERAB.length - 1) {
-                     selectedSection_numbers[selectedSection_numbers.length - 1] = 0;
-                   }
-                 }        
-      
+                   int nextIndex = SOLARCHVISION_nextUnselected(1, selectedSection_numbers.length - 1);
+                   if (nextIndex != -1) selectedSection_numbers[selectedSection_numbers.length - 1] = nextIndex;
+                 }     
+     
                  if (Work_with_2D_or_3D == 9) {
-                   selectedCamera_numbers[selectedCamera_numbers.length - 1] += 1;
-                   if (selectedCamera_numbers[selectedCamera_numbers.length - 1] > allCamera_PPPRRRF.length - 1) {
-                     selectedCamera_numbers[selectedCamera_numbers.length - 1] = 0;
-                   }
-                 }                   
+                   int nextIndex = SOLARCHVISION_nextUnselected(1, selectedCamera_numbers.length - 1);
+                   if (nextIndex != -1) selectedCamera_numbers[selectedCamera_numbers.length - 1] = nextIndex;
+                 }         
+                 
                  
                  println("SOLARCHVISION_calculate_selection_Pivot 28");
                  SOLARCHVISION_calculate_selection_Pivot();
@@ -12818,103 +12791,6 @@ void WIN3D_keyPressed (KeyEvent e) {
                  ROLLOUT_Update = 1; 
                  break;          
 
-        case 35: 
-                 if (Work_with_2D_or_3D == 1) {
-                   selectedFractal_Plant_numbers[selectedFractal_Plant_numbers.length - 1] = allFractal_Plant_XYZSRA.length - 1;
-                 }
-
-                 if (Work_with_2D_or_3D == 2) {
-                   selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = allObject2D_XYZS.length - 1;
-                 }        
-        
-                 if (Work_with_2D_or_3D == 3) {
-                   selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = allPolymesh_Faces.length - 1;
-                 }
-
-                 if (Work_with_2D_or_3D == 4) {
-                   selectedFace_numbers[selectedFace_numbers.length - 1] = allFaces.length - 1;
-                 }
-                 
-                 if (Work_with_2D_or_3D == 5) {
-                   selectedVertex_numbers[selectedVertex_numbers.length - 1] = allVertices.length - 1;
-                 }
-                 
-                 if (Work_with_2D_or_3D == 8) {
-                   selectedSection_numbers[selectedSection_numbers.length - 1] = allSection_UVERAB.length - 1;
-                 }     
-     
-                 if (Work_with_2D_or_3D == 9) {
-                   selectedCamera_numbers[selectedCamera_numbers.length - 1] = allCamera_PPPRRRF.length - 1;
-                 }                    
-                 
-                 println("SOLARCHVISION_calculate_selection_Pivot 27b");
-                 SOLARCHVISION_calculate_selection_Pivot();
-                 
-                 SOLARCHVISION_reset_selectedRefValues();  
-                 
-                 WIN3D_Update = 1;
-                 ROLLOUT_Update = 1; 
-                 break;  
-
-        case 36: 
-                 if (Work_with_2D_or_3D == 1) {
-                   selectedFractal_Plant_numbers[selectedFractal_Plant_numbers.length - 1] = 1;
-                   if (selectedFractal_Plant_numbers[selectedFractal_Plant_numbers.length - 1] > allFractal_Plant_XYZSRA.length - 1) {
-                     selectedFractal_Plant_numbers[selectedFractal_Plant_numbers.length - 1] = 0;
-                   }
-                 }         
-        
-                 if (Work_with_2D_or_3D == 2) {
-                   selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = 1;
-                   if (selectedObject2D_numbers[selectedObject2D_numbers.length - 1] > allObject2D_XYZS.length - 1) {
-                     selectedObject2D_numbers[selectedObject2D_numbers.length - 1] = 0;
-                   }
-                 } 
-                 
-                 if (Work_with_2D_or_3D == 3) {
-                   selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = 1;
-                   if (selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] > allPolymesh_Faces.length - 1) {
-                     selectedPolymesh_numbers[selectedPolymesh_numbers.length - 1] = 0;
-                   }
-                 }  
-
-                 if (Work_with_2D_or_3D == 4) {
-                   selectedFace_numbers[selectedFace_numbers.length - 1] = 1;
-                   if (selectedFace_numbers[selectedFace_numbers.length - 1] > allFaces.length - 1) {
-                     selectedFace_numbers[selectedFace_numbers.length - 1] = 0;
-                   }
-                 }  
-
-                 if (Work_with_2D_or_3D == 5) {
-                   selectedVertex_numbers[selectedVertex_numbers.length - 1] = 1;
-                   if (selectedVertex_numbers[selectedVertex_numbers.length - 1] > allVertices.length - 1) {
-                     selectedVertex_numbers[selectedVertex_numbers.length - 1] = 0;
-                   }
-                 }  
-                 
-                 if (Work_with_2D_or_3D == 8) {
-                   selectedSection_numbers[selectedSection_numbers.length - 1] = 1;
-                   if (selectedSection_numbers[selectedSection_numbers.length - 1] > allSection_UVERAB.length - 1) {
-                     selectedSection_numbers[selectedSection_numbers.length - 1] = 0;
-                   }
-                 }        
-      
-                 if (Work_with_2D_or_3D == 9) {
-                   selectedCamera_numbers[selectedCamera_numbers.length - 1] = 1;
-                   if (selectedCamera_numbers[selectedCamera_numbers.length - 1] > allCamera_PPPRRRF.length - 1) {
-                     selectedCamera_numbers[selectedCamera_numbers.length - 1] = 0;
-                   }
-                 }                   
-                 
-                 println("SOLARCHVISION_calculate_selection_Pivot 28b");
-                 SOLARCHVISION_calculate_selection_Pivot();
-                 
-                 SOLARCHVISION_reset_selectedRefValues();  
-                 
-                 WIN3D_Update = 1;
-                 ROLLOUT_Update = 1; 
-                 break;          
-        
 
         
         case 155: // INSERT 
@@ -27865,7 +27741,7 @@ void SOLARCHVISION_draw_logo (float cx, float cy, float cz, float cr, int the_vi
 }
 
 
-int SOLARCHVISION_nextUnselected(int start_intex, int go_direction) { 
+int SOLARCHVISION_nextUnselected (int go_direction, int start_index) { 
   
   //go_direction: 1=next -1=previous
 
@@ -27902,18 +27778,18 @@ int SOLARCHVISION_nextUnselected(int start_intex, int go_direction) {
   }
 
   
-  int return_OBJ_NUM = -1;
+  int return_OBJ_NUM = 0;
 
   for (int i = 1; i < length_of_indexes; i++) {
 
-    int OBJ_NUM = start_intex + i * go_direction;
+    int OBJ_NUM = start_index + i * go_direction;
+    
     if (OBJ_NUM < 0) OBJ_NUM += length_of_indexes;
     if (OBJ_NUM >= length_of_indexes) OBJ_NUM -= length_of_indexes;
     
-    
-    int found_at = -1;
-    
     if (OBJ_NUM != 0) {
+      
+      int found_at = -1;
     
       if (Work_with_2D_or_3D == 1) {
         for (int o = selectedFractal_Plant_numbers.length - 1; o >= 0; o--) {
@@ -27980,25 +27856,23 @@ int SOLARCHVISION_nextUnselected(int start_intex, int go_direction) {
           } 
         }
       }
-      
+
+
+      if ((found_at == -1) && (found_at != start_index)){
+        return_OBJ_NUM = OBJ_NUM;
+        break;
+      }      
     }
-    
-    
-    
-    if (found_at != -1) {
-      return_OBJ_NUM = OBJ_NUM;
-      break;
-    }
+
   }
   
 
-  
   return return_OBJ_NUM; 
 }
 
 
 
-void SOLARCHVISION_PickSelect(float[] RxP) {
+void SOLARCHVISION_PickSelect (float[] RxP) {
 
   if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselectAll();
   
@@ -28389,7 +28263,7 @@ void SOLARCHVISION_PickSelect(float[] RxP) {
 }
 
 
-void SOLARCHVISION_RectSelect(float corner1x, float corner1y, float corner2x, float corner2y) {
+void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, float corner2y) {
 
   if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselectAll();
   
