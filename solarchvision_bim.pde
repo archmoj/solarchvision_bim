@@ -36400,9 +36400,9 @@ float[][] SOLARCHVISION_getCorners_Camera (int Camera_Type, float Camera_X, floa
 
   float[][] ImageVertex = new float [5][3];
 
-  float r = 10; // <<<<<<
+  float r = Camera_S * 5; // <<<<<<
     
-  float rx = r * sin_ang(0.5 * Camera_ZOOM);
+  float rx = r * sin_ang(0.5 * Camera_ZOOM) /  WIN3D_R_View;
   float ry = r * sin_ang(0.5 * Camera_ZOOM);  
   float rz = r * cos_ang(0.5 * Camera_ZOOM);  
   
