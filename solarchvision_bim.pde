@@ -1206,7 +1206,7 @@ int Download_LAND_MESH = 0;
 int Load_LAND_MESH = 1; 
 
 int Display_LAND_MESH = 1; 
-int Display_LAND_POINTS = 0;
+int Display_LAND_POINTS = 1;
 int Display_LAND_TEXTURE = 0;
 int Display_LAND_DEPTH = 0;
 int Skip_LAND_MESH_Center = 0; //5;
@@ -16740,7 +16740,7 @@ void SOLARCHVISION_reverseSelection () {
     selectedLandPoint_numbers = new int [1];
     selectedLandPoint_numbers[0] = 0;
     
-    for (int i = 1; i < allLandPoint_XYZSRA.length; i++) {
+    for (int i = 1; i < 1 + LAND_n_I * LAND_n_J; i++) {
       int found = -1; 
       
       for (int j = 1; j < pre_selectedLandPoint_numbers.length; j++) {
@@ -27951,7 +27951,7 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
   int start_index_OBJ_NUM = 0;
 
   if (Work_with_2D_or_3D == 0) {
-    length_of_indexes = allLandPoint_num;
+    length_of_indexes = LAND_n_I * LAND_n_J;
     start_index_OBJ_NUM = selectedLandPoint_numbers[start_index];
   }  
   
@@ -28547,7 +28547,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
   if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselectAll();
 
 
-  if (Work_with_2D_or_3D == 0) {
+  /*if (Work_with_2D_or_3D == 0) {
     
     for (int OBJ_NUM = 1; OBJ_NUM < allLandPoint_Faces.length; OBJ_NUM++) {
 
@@ -28638,7 +28638,8 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
         
       }
     }
-  }    
+  }   
+ */ 
 
   
   if (Work_with_2D_or_3D == 1) {
@@ -32411,7 +32412,7 @@ void mouseClicked () {
                   SOLARCHVISION_move_Selection(dx, dy, dz);
                 }
                 
-                if (Work_with_2D_or_3D == 0) {
+                /*if (Work_with_2D_or_3D == 0) {
     
                   float dx = x0 - allLandPoint_XYZSRA[selectedLandPoint_numbers[selectedLandPoint_numbers.length - 1]][0]; 
                   float dy = y0 - allLandPoint_XYZSRA[selectedLandPoint_numbers[selectedLandPoint_numbers.length - 1]][1]; 
@@ -32425,6 +32426,7 @@ void mouseClicked () {
     
                   SOLARCHVISION_move_Selection(dx, dy, dz);
                 }
+                */
                                 
               }   
 
@@ -38727,16 +38729,18 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
       int OBJ_NUM = selectedLandPoint_numbers[o];
         
       if (OBJ_NUM != 0) {      
-    
-        float x = allLandPoint_XYZSRA[OBJ_NUM][0] - x0; 
-        float y = allLandPoint_XYZSRA[OBJ_NUM][1] - y0; 
-        //float z = allLandPoint_XYZSRA[OBJ_NUM][2] - z0;
         
-        allLandPoint_XYZSRA[OBJ_NUM][0] = x0 + sx * x; 
-        allLandPoint_XYZSRA[OBJ_NUM][1] = y0 + sy * y;
-        //allLandPoint_XYZSRA[OBJ_NUM][2] = z0 + sz * z;
+        int i = (OBJ_NUM - 1) / LAND_n_J;
+        int j = (OBJ_NUM - 1) % LAND_n_J;
+    
+        float x = LAND_MESH[i][j][0] - x0; 
+        float y = LAND_MESH[i][j][1] - y0; 
+        //float z = LAND_MESH[i][j][2] - z0;
+        
+        LAND_MESH[i][j][0] = x0 + sx * x; 
+        LAND_MESH[i][j][1] = y0 + sy * y;
+        //LAND_MESH[i][j][2] = z0 + sz * z;
 
-        allLandPoint_XYZSRA[OBJ_NUM][3] *= sz; // <<<<<<<<<<<<<<
       }
     }
   }    
@@ -38797,17 +38801,8 @@ void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int 
     }
   }   
  
-    if (Work_with_2D_or_3D == 0) {
+  if (Work_with_2D_or_3D == 0) {
 
-    for (int o = selectedLandPoint_numbers.length - 1; o >= 0; o--) {
-      
-      int OBJ_NUM = selectedLandPoint_numbers[o];
-      
-      if (OBJ_NUM != 0) {      
-        
-        allLandPoint_XYZSRA[OBJ_NUM][4] += r; 
-      }
-    }
   } 
 
 } 
@@ -38888,10 +38883,13 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
       int OBJ_NUM = selectedLandPoint_numbers[o];
       
       if (OBJ_NUM != 0) {      
+
+        int i = (OBJ_NUM - 1) / LAND_n_J;
+        int j = (OBJ_NUM - 1) % LAND_n_J;
         
-        allLandPoint_XYZSRA[OBJ_NUM][0] += dx; 
-        allLandPoint_XYZSRA[OBJ_NUM][1] += dy; 
-        allLandPoint_XYZSRA[OBJ_NUM][2] += dz;
+        LAND_MESH[i][j][0] += dx; 
+        LAND_MESH[i][j][1] += dy; 
+        LAND_MESH[i][j][2] += dz;
       }
     }
   }    
@@ -40511,7 +40509,7 @@ void SOLARCHVISION_draw_window_BAR_a () {
                 if (Display_LAND_TEXTURE == 0) {stroke(127); fill(127);}
               }    
               if (BAR_a_Items[i][j].equals("Display/Hide Land Points")) {
-                if (Display_LAND_TEXTURE == 0) {stroke(127); fill(127);}
+                if (Display_LAND_POINTS == 0) {stroke(127); fill(127);}
               }    
               if (BAR_a_Items[i][j].equals("Display/Hide Land Depth")) {
                 if (Display_LAND_DEPTH == 0) {stroke(127); fill(127);}
