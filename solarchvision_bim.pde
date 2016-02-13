@@ -12886,37 +12886,48 @@ void WIN3D_keyPressed (KeyEvent e) {
                   break;
                   
         case '5' :
-                  //WIN3D_RX_coordinate = 0; WIN3D_RY_coordinate = 0; WIN3D_RZ_coordinate = 0;
                   SOLARCHVISION_look_Camera_towards_Selection(); 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         
         case '4' :
-                  //WIN3D_RZ_coordinate = 315; 
-                  WIN3D_RZ_coordinate += WIN3D_RS_coordinate; SOLARCHVISION_reverseTransform_Camera(); 
+                  WIN3D_RZ_coordinate += WIN3D_RS_coordinate; 
+                  SOLARCHVISION_reverseTransform_Camera(); 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         case '6' :
-                  //WIN3D_RZ_coordinate = 45; 
-                  WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; SOLARCHVISION_reverseTransform_Camera();
+                  WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; 
+                  SOLARCHVISION_reverseTransform_Camera();
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         case '2' :
-                  //WIN3D_RZ_coordinate = 225;
-                  WIN3D_RX_coordinate -= WIN3D_RS_coordinate; SOLARCHVISION_reverseTransform_Camera(); 
+                  WIN3D_RX_coordinate -= WIN3D_RS_coordinate; 
+                  SOLARCHVISION_reverseTransform_Camera(); 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         case '8' :
-                  //WIN3D_RZ_coordinate = 135;
-                  WIN3D_RX_coordinate += WIN3D_RS_coordinate; SOLARCHVISION_reverseTransform_Camera(); 
+                  WIN3D_RX_coordinate += WIN3D_RS_coordinate; 
+                  SOLARCHVISION_reverseTransform_Camera(); 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
   
-        case '1' :WIN3D_X_coordinate += WIN3D_S_coordinate * OBJECTS_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case '3' :WIN3D_X_coordinate -= WIN3D_S_coordinate * OBJECTS_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
-        case '9' :WIN3D_Y_coordinate += WIN3D_S_coordinate * OBJECTS_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case '7' :WIN3D_Y_coordinate -= WIN3D_S_coordinate * OBJECTS_scale; WIN3D_Update = 1; ROLLOUT_Update = 1; break;                  
+        case '1' :
+                  WIN3D_X_coordinate += WIN3D_S_coordinate * OBJECTS_scale; 
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                  break;
+        case '3' :
+                  WIN3D_X_coordinate -= WIN3D_S_coordinate * OBJECTS_scale; 
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                  break; 
+        case '9' :
+                  WIN3D_Y_coordinate += WIN3D_S_coordinate * OBJECTS_scale; 
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                  break;
+        case '7' :
+                  WIN3D_Y_coordinate -= WIN3D_S_coordinate * OBJECTS_scale; 
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; 
+                  break;                  
                   
         
-        case '*' ://OBJECTS_scale *= 2.0; SKY3D_scale *= 2.0;
+        case '*' :
                   SOLARCHVISION_move_Camera_towards_Selection(0.5); 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case '/' ://OBJECTS_scale /= 2.0; SKY3D_scale /= 2.0; 
+        case '/' : 
                   SOLARCHVISION_move_Camera_towards_Selection(2.0);
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
   
@@ -33104,8 +33115,8 @@ class SOLARCHVISION_Spinner {
 
 
 String[][] ROLLOUTS = {
-                        {"Location & Data", "Point", "Weather", "Environment"}, 
-                        {"Geometries & Space", "General", "Create", "Modify", "Solid", "Surface", "Living", "Viewport", "Simulation"},
+                        {"Location & Data", "Point", "Weather", "Atmosphere"}, 
+                        {"Geometries & Space", "General", "Create", "Modify", "Solid", "Surface", "Living", "Environment", "Viewport", "Simulation"},
                         {"Time & Scenarios", "Period", "Ranges", "Filters"}, 
                         {"Illustration Options", "2D-Layers", "2D-Colors", "3D-Solar", "3D-Spatial", "Selection"},
                         {"Post-Processing", "Interpolation", "Developed", "Impacts"}, 
@@ -33284,55 +33295,23 @@ void SOLARCHVISION_draw_ROLLOUT () {
       GRIB2_Layer_Step = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,1, "GRIB2_Layer_Step" , GRIB2_Layer_Step, 1, num_layers, 1), 1));
       
     }
-    
-    if (ROLLOUT_child == 3) { // Environment
-   
-      Download_LAND_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Download_LAND_MESH" , Download_LAND_MESH, 0, 1, 1), 1));
-      Load_LAND_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Load_LAND_MESH" , Load_LAND_MESH, 0, 1, 1), 1));
-      Skip_LAND_MESH_Center = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Skip_LAND_MESH_Center" , Skip_LAND_MESH_Center, 0, LAND_n_I - 1, 1), 1));
-      Display_LAND_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_LAND_MESH" , Display_LAND_MESH, 0, 1, 1), 1));
-      Display_LAND_TEXTURE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_LAND_TEXTURE" , Display_LAND_TEXTURE, 0, 1, 1), 1));     
-      Display_LAND_DEPTH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_LAND_DEPTH" , Display_LAND_DEPTH, 0, 1, 1), 1));
 
-      Display_Trees_People = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_Trees_People" , Display_Trees_People, 0, 1, 1), 1));
-      Display_Fractal_PlantPlant = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_Fractal_PlantPlant" , Display_Fractal_PlantPlant, 0, 1, 1), 1));
-      Display_Leaves = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_Leaves" , Display_Leaves, 0, 1, 1), 1));
-      Display_Building_Model = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_Building_Model" , Display_Building_Model, 0, 1, 1), 1));
-
-      Display_URBAN_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_URBAN_MESH" , Display_URBAN_MESH, 0, 1, 1), 1));
-      
-      Display_Sections = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_Sections" , Display_Sections, 0, 1, 1), 1));
-
-      Display_Cameras = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_Cameras" , Display_Cameras, 0, 1, 1), 1));    
-
-      Display_WindRose_Image = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_WindRose_Image" , Display_WindRose_Image, 0, 1, 1), 1));
-
-      WindRose3D_scale = MySpinner.update(X_control, Y_control, 0,1,0, "WindRose3D_scale" , WindRose3D_scale, 50, 3200, -2);
-      WindRose_RES = int(MySpinner.update(X_control, Y_control, 0,1,0, "WindRose3D_resolution" , WindRose_RES, 200, 600, 100));
-      
-
-      
-      Display_SKY3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SKY3D" , Display_SKY3D, 0, 1, 1), 1));
-      
-      Display_SUN3D_Path = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SUN3D_Path" , Display_SUN3D_Path, 0, 1, 1), 1));
-      Display_SUN3D_Pattern = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SUN3D_Pattern" , Display_SUN3D_Pattern, 0, 1, 1), 1));
-      
+    if (ROLLOUT_child == 3) { // Atmosphere
 
       Display_TROPO3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_TROPO3D" , Display_TROPO3D, 0, 1, 1), 1));
-      //Display_TROPO3D_TEXTURE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_TROPO3D_TEXTURE" , Display_TROPO3D_TEXTURE, 0, 1, 1), 1));      
+      Display_TROPO3D_TEXTURE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_TROPO3D_TEXTURE" , Display_TROPO3D_TEXTURE, 0, 1, 1), 1));      
 
       Display_EARTH3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_EARTH3D" , Display_EARTH3D, 0, 1, 1), 1));
-      //Display_EARTH3D_TEXTURE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_EARTH3D_TEXTURE" , Display_EARTH3D_TEXTURE, 0, 1, 1), 1));
+      Display_EARTH3D_TEXTURE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_EARTH3D_TEXTURE" , Display_EARTH3D_TEXTURE, 0, 1, 1), 1));
 
       Display_MOON3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MOON3D" , Display_MOON3D, 0, 1, 1), 1));
-      //Display_MOON3D_TEXTURE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MOON3D_TEXTURE" , Display_MOON3D_TEXTURE, 0, 1, 1), 1));
+      Display_MOON3D_TEXTURE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MOON3D_TEXTURE" , Display_MOON3D_TEXTURE, 0, 1, 1), 1));
 
       Display_STAR3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_STAR3D" , Display_STAR3D, 0, 1, 1), 1));
-      //Display_STAR3D_TEXTURE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_STAR3D_TEXTURE" , Display_STAR3D_TEXTURE, 0, 1, 1), 1));      
+      Display_STAR3D_TEXTURE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_STAR3D_TEXTURE" , Display_STAR3D_TEXTURE, 0, 1, 1), 1));      
       
       planetary_magnification = MySpinner.update(X_control, Y_control, 0,1,0, "planetary_magnification" , planetary_magnification, 1, 100, 1.0);
-
-      
+    
     }
     
 
@@ -33343,7 +33322,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       Create_Mesh_or_Solid = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_or_Solid" , Create_Mesh_or_Solid, 1, 2, 1), 1));
     
-      //Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 1, 8, 1), 1));
+      //Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 0, 9, 1), 1));
     
       //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -17, 16, 1), 1));
       //View_XYZ_ChangeOption = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_ChangeOption" , View_XYZ_ChangeOption, 0, 6, 1), 1));
@@ -33465,9 +33444,46 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Fractal_Plant_TrunkSize = roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_Plant_TrunkSize" , Create_Fractal_Plant_TrunkSize, 0, 10, 0.1), 0.1);
       Create_Fractal_Plant_LeafSize = roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_Plant_LeafSize" , Create_Fractal_Plant_LeafSize, 0, 10, 0.1), 0.1);    
     }    
+
+    if (ROLLOUT_child == 7) { // Environment
+
+      Download_LAND_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Download_LAND_MESH" , Download_LAND_MESH, 0, 1, 1), 1));
+      Load_LAND_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Load_LAND_MESH" , Load_LAND_MESH, 0, 1, 1), 1));
+      Skip_LAND_MESH_Center = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Skip_LAND_MESH_Center" , Skip_LAND_MESH_Center, 0, LAND_n_I - 1, 1), 1));
+      Display_LAND_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_LAND_MESH" , Display_LAND_MESH, 0, 1, 1), 1));
+      Display_LAND_TEXTURE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_LAND_TEXTURE" , Display_LAND_TEXTURE, 0, 1, 1), 1));     
+      Display_LAND_DEPTH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_LAND_DEPTH" , Display_LAND_DEPTH, 0, 1, 1), 1));
+
+      Display_Trees_People = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_Trees_People" , Display_Trees_People, 0, 1, 1), 1));
+      Display_Fractal_PlantPlant = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_Fractal_PlantPlant" , Display_Fractal_PlantPlant, 0, 1, 1), 1));
+      Display_Leaves = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_Leaves" , Display_Leaves, 0, 1, 1), 1));
+      Display_Building_Model = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_Building_Model" , Display_Building_Model, 0, 1, 1), 1));
+
+      Display_URBAN_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_URBAN_MESH" , Display_URBAN_MESH, 0, 1, 1), 1));
+      
+      Display_Sections = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_Sections" , Display_Sections, 0, 1, 1), 1));
+
+        
+
+      Display_WindRose_Image = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_WindRose_Image" , Display_WindRose_Image, 0, 1, 1), 1));
+
+      WindRose3D_scale = MySpinner.update(X_control, Y_control, 0,1,0, "WindRose3D_scale" , WindRose3D_scale, 50, 3200, -2);
+      WindRose_RES = int(MySpinner.update(X_control, Y_control, 0,1,0, "WindRose3D_resolution" , WindRose_RES, 200, 600, 100));
+      
+
+      
+      Display_SKY3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SKY3D" , Display_SKY3D, 0, 1, 1), 1));
+      
+      Display_SUN3D_Path = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SUN3D_Path" , Display_SUN3D_Path, 0, 1, 1), 1));
+      Display_SUN3D_Pattern = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SUN3D_Pattern" , Display_SUN3D_Pattern, 0, 1, 1), 1));
+      
+
+
+  
+    }
     
 
-    if (ROLLOUT_child == 7) { // Viewport
+    if (ROLLOUT_child == 8) { // Viewport
 
       Current_Camera = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Current_Camera" , Current_Camera, 0, allCamera_num, 1), 1));
       
@@ -33479,10 +33495,12 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Display_MODEL3D_EDGES = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MODEL3D_EDGES" , Display_MODEL3D_EDGES, 0, 1, 1), 1));
       Display_MODEL3D_NORMALS = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MODEL3D_NORMALS" , Display_MODEL3D_NORMALS, 0, 1, 1), 1));
       
+      Display_Cameras = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_Cameras" , Display_Cameras, 0, 1, 1), 1));  
+      
     }    
   
 
-    if (ROLLOUT_child == 8) { // Simulation
+    if (ROLLOUT_child == 9) { // Simulation
 
       Day_of_Impact_to_Display = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Day_of_Impact_to_Display" , Day_of_Impact_to_Display, 0, STUDY_j_end - STUDY_j_start, 1), 1));
 
@@ -40301,7 +40319,7 @@ String[][] BAR_b_Items = {
                           {"1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "BuildingType", "2.5"},
                           {"1", "as_Mesh", "as_Solid", "Mesh|Solid", "2.0"},  
                           
-                          {"2", "∞-D", "2½D", "3-D", "Face", "Vertex", "Soft", "Solid", "Section", "Camera", "LayerType", "2.0"},
+                          {"4", "Land", "∞-D", "2½D", "3-D", "Face", "Vertex", "Soft", "Solid", "Section", "Camera", "LayerType", "2.0"},
                           {"1", "±CS", "+CS", "-CS", "ClickSelect", "1.0"},
                           {"1", "±WS", "+WS", "-WS", "WindowSelect", "1.0"},                          
                           {"2", "X<", "X|", "X>", "PivotX", "1.0"},
