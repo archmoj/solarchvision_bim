@@ -1337,7 +1337,7 @@ int pre_selectedFace_displayVertexCount;
 int pre_selectedVertex_displayVertices;
  
 
-
+int pre_Current_Camera;
 
 int pre_WIN3D_FACES_SHADE;
 
@@ -2342,6 +2342,8 @@ void draw () {
         pre_selectedFace_displayVertexCount = selectedFace_displayVertexCount;
         pre_selectedVertex_displayVertices = selectedVertex_displayVertices;
 
+        pre_Current_Camera = Current_Camera; 
+
         pre_WIN3D_FACES_SHADE = WIN3D_FACES_SHADE;
   
         pre_MODEL3D_TESSELLATION = MODEL3D_TESSELLATION;
@@ -2643,6 +2645,12 @@ void draw () {
 
 
         
+        if (pre_Current_Camera != Current_Camera) {
+          SOLARCHVISION_apply_Current_Camera();
+          
+          SOLARCHVISION_modify_Viewport_Title();
+          WIN3D_Update = 1;
+        }
         
 
         if (pre_WIN3D_FACES_SHADE != WIN3D_FACES_SHADE) {
@@ -12720,13 +12728,8 @@ void WIN3D_keyPressed (KeyEvent e) {
                   Current_Camera += 1;
                   if (Current_Camera > allCamera_num) Current_Camera = 0;
                   SOLARCHVISION_apply_Current_Camera();
-                  
-                  String CamTxt = "Cam" + nf(Current_Camera, 2);
-                  int l = BAR_b_Items[0].length;
-                  BAR_b_Items[0][l - 3] = CamTxt;
-                  SOLARCHVISION_highlight_in_BAR_b(CamTxt);
-                
-                  BAR_b_Update = 1;  
+
+                  SOLARCHVISION_modify_Viewport_Title();
                   
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
@@ -12737,12 +12740,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                   if (Current_Camera < 0) Current_Camera = allCamera_num;
                   SOLARCHVISION_apply_Current_Camera();
 
-                  String CamTxt = "Cam" + nf(Current_Camera, 2);
-                  int l = BAR_b_Items[0].length;
-                  BAR_b_Items[0][l - 3] = CamTxt;
-                  SOLARCHVISION_highlight_in_BAR_b(CamTxt);
-                
-                  BAR_b_Update = 1;  
+                  SOLARCHVISION_modify_Viewport_Title();
                   
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
@@ -14284,7 +14282,9 @@ void SOLARCHVISION_deleteSelection () {
       }
       
       if (OBJ_NUM == Current_Camera) {
+
         Current_Camera = 0;
+        SOLARCHVISION_modify_Viewport_Title();
       }
 
     }
@@ -31041,7 +31041,7 @@ void mouseClicked () {
               allCamera_Type[0] = allCamera_Type[Current_Camera];
               
               Current_Camera = 0;
-              BAR_b_Update = 1;
+              SOLARCHVISION_modify_Viewport_Title();
               
               WIN3D_Update = 1;   
               BAR_b_Update = 1;  
@@ -33372,6 +33372,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       CAMERA_ERASE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "CAMERA_ERASE" , CAMERA_ERASE, 0, 1, 1), 1));
    
       Load_Default_Models = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Load_Default_Models" , Load_Default_Models, 0, MAX_Default_Models_Number, 1), 1));
+      
     }
     
 
@@ -33466,14 +33467,17 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
 
     if (ROLLOUT_child == 7) { // Viewport
+
+      Current_Camera = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Current_Camera" , Current_Camera, 0, allCamera_num, 1), 1));
+      
+      CAM_clipNear = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipNear" , CAM_clipNear, 0.0001, 1000000000, -2);
+      CAM_clipFar = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipFar" , CAM_clipFar, 0.0001, 1000000000, -2);
     
       //WIN3D_FACES_SHADE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "WIN3D_FACES_SHADE", WIN3D_FACES_SHADE, 0, number_of_shading_options - 1, 1), 1));
 
       Display_MODEL3D_EDGES = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MODEL3D_EDGES" , Display_MODEL3D_EDGES, 0, 1, 1), 1));
       Display_MODEL3D_NORMALS = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_MODEL3D_NORMALS" , Display_MODEL3D_NORMALS, 0, 1, 1), 1));
       
-      CAM_clipNear = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipNear" , CAM_clipNear, 0.0001, 1000000000, -2);
-      CAM_clipFar = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipFar" , CAM_clipFar, 0.0001, 1000000000, -2);
     }    
   
 
@@ -40256,6 +40260,17 @@ void SOLARCHVISION_draw_window_BAR_a () {
 }
 
 
+void SOLARCHVISION_modify_Viewport_Title () {
+
+  String s = "Cam" + nf(Current_Camera, 2);
+  int l = BAR_b_Items[0].length;
+  BAR_b_Items[0][l - 3] = s;
+  SOLARCHVISION_highlight_in_BAR_b(s);
+  
+  BAR_b_Update = 1;
+}  
+
+
 
 int BAR_b_Update = 1;
 
@@ -42270,6 +42285,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setFloat("CAM_dist", CAM_dist);
   newChild1.setFloat("CAM_clipNear", CAM_clipNear);
   newChild1.setFloat("CAM_clipFar", CAM_clipFar);
+  newChild1.setInt("Current_Camera", Current_Camera);
   newChild1.setFloat("OBJECTS_scale", OBJECTS_scale);
   newChild1.setFloat("refScale", refScale);
   newChild1.setFloat("WIN3D_Y_coordinate", WIN3D_Y_coordinate);
@@ -43399,6 +43415,7 @@ void SOLARCHVISION_load_project (String myFile) {
       CAM_dist = children0[L].getFloat("CAM_dist");
       CAM_clipNear = children0[L].getFloat("CAM_clipNear");
       CAM_clipFar = children0[L].getFloat("CAM_clipFar");
+      Current_Camera = children0[L].getInt("Current_Camera");
       OBJECTS_scale = children0[L].getFloat("OBJECTS_scale");
       refScale = children0[L].getFloat("refScale");
       WIN3D_Y_coordinate = children0[L].getFloat("WIN3D_Y_coordinate");
@@ -44173,6 +44190,7 @@ void SOLARCHVISION_load_project (String myFile) {
   
   SOLARCHVISION_calculate_SpatialImpact_selectedSections();
 
+  SOLARCHVISION_modify_Viewport_Title();
 }
 
 
