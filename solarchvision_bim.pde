@@ -1699,7 +1699,7 @@ float[][] allCamera_PPPSRRRF = {{0,0,0,1,0,0,0,1}};
 int[] allCamera_Type = {0};
 int allCamera_num = 0;
 
-int active_Camera = 0;
+int Current_Camera = 0; // 0 = Free Viewport | etc.= Saved Viewport
 
 int selected_posVector = 2; // 0:X, 1:Y, 2:Z, 3: All
 int selected_rotVector = 2; // 0:X, 1:Y, 2:Z
@@ -1745,19 +1745,6 @@ int addNewSelectionToPreviousSelection = 0;
 int addToLastPolymesh = 1;
 
 int Load_Default_Models = 0; //3;//0; //3; //5;
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -12697,24 +12684,42 @@ void WIN3D_keyPressed (KeyEvent e) {
       switch(keyCode) {
 
         case DOWN :
-                  //WIN3D_RX_coordinate += WIN3D_RS_coordinate; 
                   SOLARCHVISION_rotateZ_Camera_around_Selection(WIN3D_RS_coordinate);
-                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+                  WIN3D_Update = 1; 
+                  ROLLOUT_Update = 1; 
+                  break;
         
         case LEFT :
-                  //WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; 
                   SOLARCHVISION_rotateXY_Camera_around_Selection(-WIN3D_RS_coordinate);
-                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+                  WIN3D_Update = 1; 
+                  ROLLOUT_Update = 1; 
+                  break;
                   
         case RIGHT :
-                  //WIN3D_RZ_coordinate += WIN3D_RS_coordinate; 
                   SOLARCHVISION_rotateXY_Camera_around_Selection(WIN3D_RS_coordinate);
-                  WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
+                  WIN3D_Update = 1; 
+                  ROLLOUT_Update = 1; 
+                  break;
                   
         case UP :
-                  //WIN3D_RX_coordinate -= WIN3D_RS_coordinate; 
                   SOLARCHVISION_rotateZ_Camera_around_Selection(-WIN3D_RS_coordinate);
-                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;       
+                  WIN3D_Update = 1; 
+                  ROLLOUT_Update = 1; 
+                  break;     
+                  
+        case 36: 
+                  Current_Camera += 1;
+                  if (Current_Camera > allCamera_num - 1) Current_Camera = 0;
+                  WIN3D_Update = 1; 
+                  ROLLOUT_Update = 1; 
+                  break;
+
+        case 35: 
+                  Current_Camera -= 1;
+                  if (Current_Camera < 0) Current_Camera = allCamera_num - 1;
+                  WIN3D_Update = 1; 
+                  ROLLOUT_Update = 1; 
+                  break;
         
         case 34: 
                  if (Work_with_2D_or_3D == 1) {
@@ -22890,6 +22895,23 @@ void SOLARCHVISION_transform_Camera () {
 
 void SOLARCHVISION_put_Camera () {  
   
+  if (Current_Camera != 0) {
+    
+    WIN3D_X_coordinate = allCamera_PPPSRRRF[Current_Camera][0];
+    WIN3D_Y_coordinate = allCamera_PPPSRRRF[Current_Camera][1];
+    WIN3D_Z_coordinate = allCamera_PPPSRRRF[Current_Camera][2];
+    WIN3D_S_coordinate = allCamera_PPPSRRRF[Current_Camera][3];
+    WIN3D_RX_coordinate = allCamera_PPPSRRRF[Current_Camera][4];
+    WIN3D_RY_coordinate = allCamera_PPPSRRRF[Current_Camera][5];
+    WIN3D_RZ_coordinate = allCamera_PPPSRRRF[Current_Camera][6];
+    WIN3D_ZOOM_coordinate = allCamera_PPPSRRRF[Current_Camera][7];
+    
+    WIN3D_View_Type = allCamera_Type[Current_Camera];
+    
+    WIN3D_Update = 1;   
+    BAR_b_Update = 1;  
+  }
+  
   if (WIN3D_View_Type == 1) {
 
     float aspect = 1.0 / WIN3D_R_View;
@@ -30948,28 +30970,30 @@ void mouseClicked () {
               int Camera_Type = WIN3D_View_Type;
       
               SOLARCHVISION_add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);
+              
+              Current_Camera = allCamera_num - 1;
 
               WIN3D_Update = 1;   
+              BAR_b_Update = 1;  
             }            
 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Camera >> Viewport")) {
-              
-              int OBJ_NUM = selectedCamera_numbers[selectedCamera_numbers.length - 1];
-              
-              if (OBJ_NUM != 0) {
+
+              if (Current_Camera != 0) {
                 
-                WIN3D_X_coordinate = allCamera_PPPSRRRF[OBJ_NUM][0];
-                WIN3D_Y_coordinate = allCamera_PPPSRRRF[OBJ_NUM][1];
-                WIN3D_Z_coordinate = allCamera_PPPSRRRF[OBJ_NUM][2];
-                WIN3D_S_coordinate = allCamera_PPPSRRRF[OBJ_NUM][3];
-                WIN3D_RX_coordinate = allCamera_PPPSRRRF[OBJ_NUM][4];
-                WIN3D_RY_coordinate = allCamera_PPPSRRRF[OBJ_NUM][5];
-                WIN3D_RZ_coordinate = allCamera_PPPSRRRF[OBJ_NUM][6];
-                WIN3D_ZOOM_coordinate = allCamera_PPPSRRRF[OBJ_NUM][7];
+                WIN3D_X_coordinate = allCamera_PPPSRRRF[Current_Camera][0];
+                WIN3D_Y_coordinate = allCamera_PPPSRRRF[Current_Camera][1];
+                WIN3D_Z_coordinate = allCamera_PPPSRRRF[Current_Camera][2];
+                WIN3D_S_coordinate = allCamera_PPPSRRRF[Current_Camera][3];
+                WIN3D_RX_coordinate = allCamera_PPPSRRRF[Current_Camera][4];
+                WIN3D_RY_coordinate = allCamera_PPPSRRRF[Current_Camera][5];
+                WIN3D_RZ_coordinate = allCamera_PPPSRRRF[Current_Camera][6];
+                WIN3D_ZOOM_coordinate = allCamera_PPPSRRRF[Current_Camera][7];
                 
-                WIN3D_View_Type = allCamera_Type[OBJ_NUM];
+                WIN3D_View_Type = allCamera_Type[Current_Camera];
                 
                 WIN3D_Update = 1;   
+                BAR_b_Update = 1;  
               }
             }  
             
