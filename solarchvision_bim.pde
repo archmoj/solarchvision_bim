@@ -12712,7 +12712,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                   ROLLOUT_Update = 1; 
                   break;     
                   
-        case 36: 
+        case 33: 
                   Current_Camera += 1;
                   if (Current_Camera > allCamera_num) Current_Camera = 0;
                   SOLARCHVISION_apply_Current_Camera();
@@ -12721,7 +12721,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                   ROLLOUT_Update = 1; 
                   break;
 
-        case 35: 
+        case 34: 
                   Current_Camera -= 1;
                   if (Current_Camera < 0) Current_Camera = allCamera_num;
                   SOLARCHVISION_apply_Current_Camera();
@@ -12730,7 +12730,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                   ROLLOUT_Update = 1; 
                   break;
         
-        case 34: 
+        case 35: 
                  if (Work_with_2D_or_3D == 1) {
                    int nextIndex = SOLARCHVISION_nextUnselected(-1, selectedFractal_Plant_numbers.length - 1);
                    if (nextIndex != -1) selectedFractal_Plant_numbers[selectedFractal_Plant_numbers.length - 1] = nextIndex;
@@ -12775,7 +12775,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                  ROLLOUT_Update = 1; 
                  break;  
 
-        case 33: 
+        case 36: 
                  if (Work_with_2D_or_3D == 1) {
                    int nextIndex = SOLARCHVISION_nextUnselected(1, selectedFractal_Plant_numbers.length - 1);
                    if (nextIndex != -1) selectedFractal_Plant_numbers[selectedFractal_Plant_numbers.length - 1] = nextIndex;
@@ -36453,7 +36453,8 @@ void SOLARCHVISION_draw_Cameras () {
 
       WIN3D_Diagrams.strokeWeight(1);
       WIN3D_Diagrams.stroke(0);
-      WIN3D_Diagrams.fill(127,255,127,127);
+      //WIN3D_Diagrams.fill(127,255,127,127);
+      WIN3D_Diagrams.noFill();
       
       WIN3D_Diagrams.beginShape();
       
