@@ -38762,11 +38762,11 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
     
         float x = LAND_MESH[i][j][0] - x0; 
         float y = LAND_MESH[i][j][1] - y0; 
-        //float z = LAND_MESH[i][j][2] - z0;
+        float z = LAND_MESH[i][j][2] - z0;
         
         LAND_MESH[i][j][0] = x0 + sx * x; 
         LAND_MESH[i][j][1] = y0 + sy * y;
-        //LAND_MESH[i][j][2] = z0 + sz * z;
+        LAND_MESH[i][j][2] = z0 + sz * z;
 
       }
     }
