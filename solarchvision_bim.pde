@@ -12721,8 +12721,6 @@ void WIN3D_keyPressed (KeyEvent e) {
                   if (Current_Camera > allCamera_num) Current_Camera = 0;
                   SOLARCHVISION_apply_Current_Camera();
                   
-                  BAR_b_Update = 1;
-                  
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
                   break;
@@ -12731,8 +12729,6 @@ void WIN3D_keyPressed (KeyEvent e) {
                   Current_Camera -= 1;
                   if (Current_Camera < 0) Current_Camera = allCamera_num;
                   SOLARCHVISION_apply_Current_Camera();
-                  
-                  BAR_b_Update = 1;
                   
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
@@ -22902,6 +22898,13 @@ void SOLARCHVISION_apply_Current_Camera () {
   WIN3D_ZOOM_coordinate = allCamera_PPPSRRRF[Current_Camera][7];
   
   WIN3D_View_Type = allCamera_Type[Current_Camera];
+  
+  String s = "C_" + nf(Current_Camera, 2);
+  int l = BAR_b_Items[0].length;
+  BAR_b_Items[0][l - 3] = s;
+  SOLARCHVISION_highlight_in_BAR_b(s);
+
+  BAR_b_Update = 1;  
 
 }  
 
@@ -40252,7 +40255,7 @@ int BAR_b_Update = 1;
 float BAR_b_tab = b_pixel;
 
 String[][] BAR_b_Items = {
-                          {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "3DViewPoint", "2.0"},
+                          {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "C_00", "3DViewPoint", "2.0"},
                           {"2", "AllViewsports", "Expand3DView", "3DViewSpace", "1"},
                           
                           {"2", "P<>", "P><", "ProjectionType", "1.0"},
