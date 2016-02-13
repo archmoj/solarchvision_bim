@@ -59,7 +59,7 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 2; //24;
+int STATION_NUMBER = 5; //24;
 
 String[][] DEFINED_STATIONS = {
                                 {"Tehran_11x12", "XX", "IR", "35.6789", "51.413063", "52.5", "1500", "240.0", "", "", "IRN_TEHRAN_XX_IR"},
@@ -1203,8 +1203,10 @@ int Display_SUN3D_Pattern = 0;
 int Display_SKY3D = 1;
 
 int Download_LAND_MESH = 0;
-int Load_LAND_MESH = 1; // 1;
-int Display_LAND_MESH = 1; // 0;
+int Load_LAND_MESH = 1; 
+
+int Display_LAND_MESH = 1; 
+int Display_LAND_POINTS = 0;
 int Display_LAND_TEXTURE = 0;
 int Display_LAND_DEPTH = 0;
 int Skip_LAND_MESH_Center = 0; //5;
@@ -1312,6 +1314,7 @@ int pre_selectedObject2D_displayEdges;
 int pre_selectedSection_displayEdges;
 
 int pre_selectedCamera_displayEdges;
+
 
 int pre_Display_MODEL3D_EDGES;
 int pre_Display_MODEL3D_NORMALS;
@@ -21841,6 +21844,33 @@ void SOLARCHVISION_draw_land () {
         
       }
     }
+
+
+    if (Display_LAND_POINTS != 0) {
+  
+      WIN3D_Diagrams.fill(191,191,0); 
+      WIN3D_Diagrams.noStroke();
+  
+      WIN3D_Diagrams.sphereDetail(6, 4);
+      
+      for (int i = Skip_LAND_MESH_Center; i < LAND_n_I; i += 1) {
+        for (int j = 0; j < LAND_n_J; j += 1) {
+  
+          float x = LAND_MESH[i][j][0];
+          float y = LAND_MESH[i][j][1];
+          float z = LAND_MESH[i][j][2];
+             
+          float R = 2.0 * OBJECTS_scale; // <<<<<<<<<<
+             
+          WIN3D_Diagrams.pushMatrix();
+          WIN3D_Diagrams.translate(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
+          WIN3D_Diagrams.sphere(R);
+          WIN3D_Diagrams.popMatrix();
+  
+        }
+
+      }
+    }
     
   }
 
@@ -24459,7 +24489,7 @@ void SOLARCHVISION_LoadLAND_TEXTURE (String LandDirectory) {
 //Polar
 int LAND_n_I_base = 0;
 int LAND_n_J_base = 0;
-int LAND_n_I = 17 + 1; //13 + 1; //16 + 1; //13 + 1; // 24 + 1;
+int LAND_n_I = 13 + 1; //17 + 1; //13 + 1; //16 + 1; // 24 + 1;
 int LAND_n_J = 24 + 1;     
 
 
@@ -30565,7 +30595,13 @@ void mouseClicked () {
               
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
-            }           
+            }       
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Land Points")) {
+              Display_LAND_POINTS = (Display_LAND_POINTS + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }                 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Land Depth")) {
               Display_LAND_DEPTH = (Display_LAND_DEPTH + 1) % 2;
               
@@ -33332,9 +33368,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
       
       MODEL3D_TESSELLATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL3D_TESSELLATION" , MODEL3D_TESSELLATION, 0, 4, 1), 1));
       
-      LAND_TESSELLATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "LAND_TESSELLATION" , LAND_TESSELLATION, 0, 5, 1), 1));
+      LAND_TESSELLATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "LAND_TESSELLATION" , LAND_TESSELLATION, 0, 4, 1), 1));
       
-      SKY3D_TESSELLATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_TESSELLATION" , SKY3D_TESSELLATION, 0, 5, 1), 1));   
+      SKY3D_TESSELLATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_TESSELLATION" , SKY3D_TESSELLATION, 0, 4, 1), 1));   
       SKY3D_scale = MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_scale" , SKY3D_scale, 0.0000001, 1000000, -2);
 
       OBJECTS_scale = MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_scale" , OBJECTS_scale, 0.0000001, 1000000, -2);      
@@ -33451,7 +33487,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Load_LAND_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Load_LAND_MESH" , Load_LAND_MESH, 0, 1, 1), 1));
       Skip_LAND_MESH_Center = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Skip_LAND_MESH_Center" , Skip_LAND_MESH_Center, 0, LAND_n_I - 1, 1), 1));
       Display_LAND_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_LAND_MESH" , Display_LAND_MESH, 0, 1, 1), 1));
-      Display_LAND_TEXTURE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_LAND_TEXTURE" , Display_LAND_TEXTURE, 0, 1, 1), 1));     
+      Display_LAND_TEXTURE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_LAND_TEXTURE" , Display_LAND_TEXTURE, 0, 1, 1), 1));
+      Display_LAND_POINTS = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_LAND_POINTS" , Display_LAND_POINTS, 0, 1, 1), 1));     
       Display_LAND_DEPTH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_LAND_DEPTH" , Display_LAND_DEPTH, 0, 1, 1), 1));
 
       Display_Trees_People = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_Trees_People" , Display_Trees_People, 0, 1, 1), 1));
@@ -39981,7 +40018,7 @@ String[][] BAR_a_Items = {
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
                         {"View", "Camera >> Viewport", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
-                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sections", "Display/Hide Cameras", "Display/Hide Sky", "Display/Hide Sun Path", "Display/Hide Sun Pattern", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected Sections", "Display/Hide Selected Cameras", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected Solar Pivots", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
+                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Points", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sections", "Display/Hide Cameras", "Display/Hide Sky", "Display/Hide Sun Path", "Display/Hide Sun Pattern", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected Sections", "Display/Hide Selected Cameras", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected Solar Pivots", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Wire", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Pre-bake Selected Sections", "Process Active Impact", "Process Passive Impact", "Process Spatial Impact", "Run wind 3D-model"},
                         {"Layer"}, // Parameters 
@@ -40142,7 +40179,10 @@ void SOLARCHVISION_draw_window_BAR_a () {
               }       
               if (BAR_a_Items[i][j].equals("Display/Hide Land Texture")) {
                 if (Display_LAND_TEXTURE == 0) {stroke(127); fill(127);}
-              }           
+              }    
+              if (BAR_a_Items[i][j].equals("Display/Hide Land Points")) {
+                if (Display_LAND_TEXTURE == 0) {stroke(127); fill(127);}
+              }    
               if (BAR_a_Items[i][j].equals("Display/Hide Land Depth")) {
                 if (Display_LAND_DEPTH == 0) {stroke(127); fill(127);}
               }          
@@ -42269,6 +42309,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Download_LAND_MESH", Download_LAND_MESH);
   newChild1.setInt("Load_LAND_MESH", Load_LAND_MESH);
   newChild1.setInt("Display_LAND_MESH", Display_LAND_MESH);
+  newChild1.setInt("Display_LAND_POINTS", Display_LAND_POINTS);
   newChild1.setInt("Display_LAND_TEXTURE", Display_LAND_TEXTURE);
   newChild1.setInt("Display_LAND_DEPTH", Display_LAND_DEPTH);
   newChild1.setInt("Skip_LAND_MESH_Center", Skip_LAND_MESH_Center);
@@ -43399,6 +43440,7 @@ void SOLARCHVISION_load_project (String myFile) {
       Download_LAND_MESH = children0[L].getInt("Download_LAND_MESH");
       Load_LAND_MESH = children0[L].getInt("Load_LAND_MESH");
       Display_LAND_MESH = children0[L].getInt("Display_LAND_MESH");
+      Display_LAND_POINTS = children0[L].getInt("Display_LAND_POINTS");
       Display_LAND_TEXTURE = children0[L].getInt("Display_LAND_TEXTURE");
       Display_LAND_DEPTH = children0[L].getInt("Display_LAND_DEPTH");
       Skip_LAND_MESH_Center = children0[L].getInt("Skip_LAND_MESH_Center");
