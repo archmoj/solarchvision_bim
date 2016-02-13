@@ -12602,7 +12602,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                   WIN3D_ZOOM_coordinate = 60;        
            
                   Current_Camera = 0;
-                  BAR_b_Update = 1;
+                  SOLARCHVISION_modify_Viewport_Title();
                   
                   WIN3D_Update = 1; ROLLOUT_Update = 1; 
                   break;
@@ -31022,6 +31022,7 @@ void mouseClicked () {
               
               Current_Camera = allCamera_num;
               SOLARCHVISION_apply_Current_Camera();
+              SOLARCHVISION_modify_Viewport_Title();
 
               WIN3D_Update = 1;   
               BAR_b_Update = 1;  
@@ -40263,8 +40264,8 @@ void SOLARCHVISION_draw_window_BAR_a () {
 void SOLARCHVISION_modify_Viewport_Title () {
 
   String s = "Cam" + nf(Current_Camera, 2);
-  int l = BAR_b_Items[0].length;
-  BAR_b_Items[0][l - 3] = s;
+
+  BAR_b_Items[0][11] = s; // <<<<< Note: 3DViewPoint is the first index on BAR_b 
   SOLARCHVISION_highlight_in_BAR_b(s);
   
   BAR_b_Update = 1;
@@ -40277,7 +40278,7 @@ int BAR_b_Update = 1;
 float BAR_b_tab = b_pixel;
 
 String[][] BAR_b_Items = {
-                          {"1", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "Cam00", "3DViewPoint", "2.0"},
+                          {"11", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "Cam00", "3DViewPoint", "2.0"},
                           {"2", "AllViewsports", "Expand3DView", "3DViewSpace", "1"},
                           
                           {"2", "P<>", "P><", "ProjectionType", "1.0"},
@@ -41320,7 +41321,7 @@ void set_to_View_3DViewPoint (int n) {
   
   WIN3D_Update = 1;   
   
-  //ROLLOUT_Update = 1;   
+  ROLLOUT_Update = 1;   
 } 
 
 
