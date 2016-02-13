@@ -12591,7 +12591,11 @@ void WIN3D_keyPressed (KeyEvent e) {
                   
                   WIN3D_S_coordinate = 1;
    
-                  WIN3D_ZOOM_coordinate = 60;               
+                  WIN3D_ZOOM_coordinate = 60;        
+           
+                  Current_Camera = 0;
+                  BAR_b_Update = 1;
+                  
                   WIN3D_Update = 1; ROLLOUT_Update = 1; 
                   break;
 
@@ -12717,6 +12721,8 @@ void WIN3D_keyPressed (KeyEvent e) {
                   if (Current_Camera > allCamera_num) Current_Camera = 0;
                   SOLARCHVISION_apply_Current_Camera();
                   
+                  BAR_b_Update = 1;
+                  
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
                   break;
@@ -12725,6 +12731,8 @@ void WIN3D_keyPressed (KeyEvent e) {
                   Current_Camera -= 1;
                   if (Current_Camera < 0) Current_Camera = allCamera_num;
                   SOLARCHVISION_apply_Current_Camera();
+                  
+                  BAR_b_Update = 1;
                   
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
@@ -14263,6 +14271,10 @@ void SOLARCHVISION_deleteSelection () {
         }
 
         allCamera_num -= 1;
+      }
+      
+      if (OBJ_NUM == Current_Camera) {
+        Current_Camera = 0;
       }
 
     }
@@ -31019,6 +31031,7 @@ void mouseClicked () {
               allCamera_Type[0] = allCamera_Type[Current_Camera];
               
               Current_Camera = 0;
+              BAR_b_Update = 1;
               
               WIN3D_Update = 1;   
               BAR_b_Update = 1;  
@@ -38201,6 +38214,8 @@ void SOLARCHVISION_move_selectedCamera (float dx, float dy, float dz) {
     allCamera_PPPSRRRF[n][0] += dx; 
     allCamera_PPPSRRRF[n][1] += dy;
     allCamera_PPPSRRRF[n][2] += dz;
+    
+    if (n == Current_Camera) SOLARCHVISION_apply_Current_Camera();
   }
 
 }
@@ -38235,6 +38250,8 @@ void SOLARCHVISION_rotate_selectedCamera (float x0, float y0, float z0, float r,
       allCamera_PPPSRRRF[n][1] = y0 + (y * cos(r) - z * sin(r));
       allCamera_PPPSRRRF[n][2] = z0 + (y * sin(r) + z * cos(r));
     }    
+    
+    if (n == Current_Camera) SOLARCHVISION_apply_Current_Camera();
   }
 
 }
@@ -38258,6 +38275,8 @@ void SOLARCHVISION_scale_selectedCamera (float x0, float y0, float z0, float sx,
     allCamera_PPPSRRRF[n][0] = x0 + sx * x; 
     allCamera_PPPSRRRF[n][1] = y0 + sy * y;
     allCamera_PPPSRRRF[n][2] = z0 + sz * z;
+    
+    if (n == Current_Camera) SOLARCHVISION_apply_Current_Camera();
   }
   
 }
@@ -41268,6 +41287,9 @@ void set_to_View_3DViewPoint (int n) {
     SOLARCHVISION_rotateZ_Camera_around_Selection(90 - WIN3D_RX_coordinate); 
     SOLARCHVISION_rotateXY_Camera_around_Selection(-135 - WIN3D_RZ_coordinate); 
   }
+  
+  Current_Camera = 0;
+  BAR_b_Update = 1;
   
   WIN3D_Update = 1;   
   
