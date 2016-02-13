@@ -12716,14 +12716,14 @@ void WIN3D_keyPressed (KeyEvent e) {
                   
         case 36: 
                   Current_Camera += 1;
-                  if (Current_Camera > allCamera_num - 1) Current_Camera = 0;
+                  if (Current_Camera > allCamera_num) Current_Camera = 0;
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
                   break;
 
         case 35: 
                   Current_Camera -= 1;
-                  if (Current_Camera < 0) Current_Camera = allCamera_num - 1;
+                  if (Current_Camera < 0) Current_Camera = allCamera_num;
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
                   break;
@@ -22869,6 +22869,9 @@ void SOLARCHVISION_record_Current_Viewport () {
   allCamera_PPPSRRRF[Current_Camera][7] = WIN3D_ZOOM_coordinate;
   
   allCamera_Type[Current_Camera] = WIN3D_View_Type;
+  
+  println("allCamera_num", allCamera_num);
+  println("Current_Camera", Current_Camera);
 
 }  
 
@@ -30993,7 +30996,7 @@ void mouseClicked () {
       
               SOLARCHVISION_add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);
               
-              Current_Camera = allCamera_num - 1;
+              Current_Camera = allCamera_num;
 
               WIN3D_Update = 1;   
               BAR_b_Update = 1;  
