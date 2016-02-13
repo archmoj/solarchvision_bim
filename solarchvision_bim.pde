@@ -2942,9 +2942,7 @@ void SOLARCHVISION_draw_WIN3D () {
   
     WIN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
     
-    SOLARCHVISION_record_Current_Viewport();
-    
-    //SOLARCHVISION_activate_Current_Camera();
+    SOLARCHVISION_record_last_Viewport();
     
     SOLARCHVISION_transform_Camera();
     
@@ -12717,6 +12715,8 @@ void WIN3D_keyPressed (KeyEvent e) {
         case 36: 
                   Current_Camera += 1;
                   if (Current_Camera > allCamera_num) Current_Camera = 0;
+                  SOLARCHVISION_apply_Current_Camera();
+                  
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
                   break;
@@ -12724,6 +12724,8 @@ void WIN3D_keyPressed (KeyEvent e) {
         case 35: 
                   Current_Camera -= 1;
                   if (Current_Camera < 0) Current_Camera = allCamera_num;
+                  SOLARCHVISION_apply_Current_Camera();
+                  
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
                   break;
@@ -22857,7 +22859,7 @@ void SOLARCHVISION_reverseTransform_Camera () { // computing WIN3D_X_coordinate,
 }
 
 
-void SOLARCHVISION_record_Current_Viewport () {
+void SOLARCHVISION_record_last_Viewport () {
   
   allCamera_PPPSRRRF[Current_Camera][0] = WIN3D_X_coordinate;
   allCamera_PPPSRRRF[Current_Camera][1] = WIN3D_Y_coordinate;
@@ -22876,7 +22878,7 @@ void SOLARCHVISION_record_Current_Viewport () {
 }  
 
 
-void SOLARCHVISION_activate_Current_Camera () {
+void SOLARCHVISION_apply_Current_Camera () {
   
   WIN3D_X_coordinate = allCamera_PPPSRRRF[Current_Camera][0];
   WIN3D_Y_coordinate = allCamera_PPPSRRRF[Current_Camera][1];
@@ -30997,6 +30999,7 @@ void mouseClicked () {
               SOLARCHVISION_add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);
               
               Current_Camera = allCamera_num;
+              SOLARCHVISION_apply_Current_Camera();
 
               WIN3D_Update = 1;   
               BAR_b_Update = 1;  
@@ -32596,7 +32599,7 @@ void mouseClicked () {
                     CAM_z = RxP[2] + 1.5; // standing eye level from the point           
   
                     SOLARCHVISION_reverseTransform_Camera();
-
+                    
                     float Camera_X = WIN3D_X_coordinate;
                     float Camera_Y = WIN3D_Y_coordinate;
                     float Camera_Z = WIN3D_Z_coordinate;
