@@ -1,5 +1,6 @@
 // delete uisng PgUp/Dn or mouseWheel may not work because the selection made at index 0! 
-// Work_with_2D_or_3D = 0 not working yet!
+// should write selected LandPoints to file!
+// some features not working e.g. RectSelect while Work_with_2D_or_3D = 0
 // we don't have display_SOLIDS! use Ctrl+7 for
 
 import processing.pdf.*;
@@ -59,9 +60,12 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 5; //24;
+int STATION_NUMBER = 0; 
 
 String[][] DEFINED_STATIONS = {
+  
+                                {"Vancouver_A", "BC", "CA", "49.28793", "-123.11415", "-120", "0", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"},
+                                
                                 {"Tehran_11x12", "XX", "IR", "35.6789", "51.413063", "52.5", "1500", "240.0", "", "", "IRN_TEHRAN_XX_IR"},
   
                                 {"Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
@@ -1206,8 +1210,8 @@ int Download_LAND_MESH = 0;
 int Load_LAND_MESH = 1; 
 
 int Display_LAND_MESH = 1; 
-int Display_LAND_POINTS = 1;
-int Display_LAND_TEXTURE = 0;
+int Display_LAND_POINTS = 0;
+int Display_LAND_TEXTURE = 1;
 int Display_LAND_DEPTH = 0;
 int Skip_LAND_MESH_Center = 0; //5;
 
@@ -1882,7 +1886,7 @@ void SOLARCHVISION_update_models (int Step) {
    if ((Step == 0) || (Step == 1)) SOLARCHVISION_remove_3Dobjects();
    //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
    if ((Step == 0) || (Step == 3)) SOLARCHVISION_remove_ParametricGeometries();
-   if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
+   //if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
    if ((Step == 0) || (Step == 5)) SOLARCHVISION_calculate_SpatialImpact_selectedSections();
 
 }
@@ -24555,7 +24559,7 @@ void SOLARCHVISION_LoadLAND_TEXTURE (String LandDirectory) {
 //Polar
 int LAND_n_I_base = 0;
 int LAND_n_J_base = 0;
-int LAND_n_I = 13 + 1; //17 + 1; //13 + 1; //16 + 1; // 24 + 1;
+int LAND_n_I = 29 + 1; //17 + 1; //13 + 1; //16 + 1; // 24 + 1;
 int LAND_n_J = 24 + 1;     
 
 
