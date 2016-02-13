@@ -1695,8 +1695,11 @@ PImage[][] allSection_SolarImpact = new PImage[1][(1 + STUDY_j_end - STUDY_j_sta
   } 
 }
 
-float[][] allCamera_PPPSRRRF = {{0,0,0,1,0,0,0,1}};
-int[] allCamera_Type = {0};
+
+
+
+float[][] allCamera_PPPSRRRF = {{WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate, WIN3D_S_coordinate, WIN3D_RX_coordinate, WIN3D_RY_coordinate, WIN3D_RZ_coordinate, WIN3D_ZOOM_coordinate}};
+int[] allCamera_Type = {WIN3D_View_Type};
 int allCamera_num = 0;
 
 int Current_Camera = 0; // 0 = Free Viewport | etc.= Saved Viewport
@@ -2938,6 +2941,10 @@ void SOLARCHVISION_draw_WIN3D () {
     WIN3D_Diagrams.pushMatrix();
   
     WIN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
+    
+    SOLARCHVISION_record_Current_Viewport();
+    
+    //SOLARCHVISION_activate_Current_Camera();
     
     SOLARCHVISION_transform_Camera();
     
@@ -13165,6 +13172,8 @@ void keyPressed (KeyEvent e) {
   
       if ((STUDY_Update != 0) || (WORLD_Update != 0) || (WIN3D_Update != 0) || (ROLLOUT_Update != 0)) redraw();    
     }
+    
+    
   }
 }
 
@@ -20402,19 +20411,17 @@ void SOLARCHVISION_remove_All () {
 
 void SOLARCHVISION_remove_Cameras () {
   allCamera_PPPSRRRF = new float [1][8]; 
-  allCamera_PPPSRRRF[0][0] = 0;
-  allCamera_PPPSRRRF[0][1] = 0;
-  allCamera_PPPSRRRF[0][2] = 0;
-  allCamera_PPPSRRRF[0][3] = 0;
-  allCamera_PPPSRRRF[0][4] = 0;
-  allCamera_PPPSRRRF[0][5] = 0;
-  allCamera_PPPSRRRF[0][6] = 0;
-  allCamera_PPPSRRRF[0][7] = 0;
-  allCamera_PPPSRRRF[0][8] = 0;
-
+  allCamera_PPPSRRRF[0][0] = WIN3D_X_coordinate;
+  allCamera_PPPSRRRF[0][1] = WIN3D_Y_coordinate;
+  allCamera_PPPSRRRF[0][2] = WIN3D_Z_coordinate;
+  allCamera_PPPSRRRF[0][3] = WIN3D_S_coordinate;
+  allCamera_PPPSRRRF[0][4] = WIN3D_RX_coordinate;
+  allCamera_PPPSRRRF[0][5] = WIN3D_RY_coordinate;
+  allCamera_PPPSRRRF[0][6] = WIN3D_RZ_coordinate;
+  allCamera_PPPSRRRF[0][7] = WIN3D_ZOOM_coordinate;
   
   allCamera_Type = new int [1];
-  allCamera_Type[0] = 0;
+  allCamera_Type[0] = WIN3D_View_Type;
 
   allCamera_num = 0;
   
@@ -22850,6 +22857,38 @@ void SOLARCHVISION_reverseTransform_Camera () { // computing WIN3D_X_coordinate,
 }
 
 
+void SOLARCHVISION_record_Current_Viewport () {
+  
+  allCamera_PPPSRRRF[Current_Camera][0] = WIN3D_X_coordinate;
+  allCamera_PPPSRRRF[Current_Camera][1] = WIN3D_Y_coordinate;
+  allCamera_PPPSRRRF[Current_Camera][2] = WIN3D_Z_coordinate;
+  allCamera_PPPSRRRF[Current_Camera][3] = WIN3D_S_coordinate;
+  allCamera_PPPSRRRF[Current_Camera][4] = WIN3D_RX_coordinate;
+  allCamera_PPPSRRRF[Current_Camera][5] = WIN3D_RY_coordinate;
+  allCamera_PPPSRRRF[Current_Camera][6] = WIN3D_RZ_coordinate;
+  allCamera_PPPSRRRF[Current_Camera][7] = WIN3D_ZOOM_coordinate;
+  
+  allCamera_Type[Current_Camera] = WIN3D_View_Type;
+
+}  
+
+
+void SOLARCHVISION_activate_Current_Camera () {
+  
+  WIN3D_X_coordinate = allCamera_PPPSRRRF[Current_Camera][0];
+  WIN3D_Y_coordinate = allCamera_PPPSRRRF[Current_Camera][1];
+  WIN3D_Z_coordinate = allCamera_PPPSRRRF[Current_Camera][2];
+  WIN3D_S_coordinate = allCamera_PPPSRRRF[Current_Camera][3];
+  WIN3D_RX_coordinate = allCamera_PPPSRRRF[Current_Camera][4];
+  WIN3D_RY_coordinate = allCamera_PPPSRRRF[Current_Camera][5];
+  WIN3D_RZ_coordinate = allCamera_PPPSRRRF[Current_Camera][6];
+  WIN3D_ZOOM_coordinate = allCamera_PPPSRRRF[Current_Camera][7];
+  
+  WIN3D_View_Type = allCamera_Type[Current_Camera];
+
+}  
+
+
 void SOLARCHVISION_transform_Camera () {
   
   CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
@@ -22894,23 +22933,6 @@ void SOLARCHVISION_transform_Camera () {
  
 
 void SOLARCHVISION_put_Camera () {  
-  
-  if (Current_Camera != 0) {
-    
-    WIN3D_X_coordinate = allCamera_PPPSRRRF[Current_Camera][0];
-    WIN3D_Y_coordinate = allCamera_PPPSRRRF[Current_Camera][1];
-    WIN3D_Z_coordinate = allCamera_PPPSRRRF[Current_Camera][2];
-    WIN3D_S_coordinate = allCamera_PPPSRRRF[Current_Camera][3];
-    WIN3D_RX_coordinate = allCamera_PPPSRRRF[Current_Camera][4];
-    WIN3D_RY_coordinate = allCamera_PPPSRRRF[Current_Camera][5];
-    WIN3D_RZ_coordinate = allCamera_PPPSRRRF[Current_Camera][6];
-    WIN3D_ZOOM_coordinate = allCamera_PPPSRRRF[Current_Camera][7];
-    
-    WIN3D_View_Type = allCamera_Type[Current_Camera];
-    
-    WIN3D_Update = 1;   
-    BAR_b_Update = 1;  
-  }
   
   if (WIN3D_View_Type == 1) {
 
@@ -30978,23 +31000,22 @@ void mouseClicked () {
             }            
 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Camera >> Viewport")) {
-
-              if (Current_Camera != 0) {
-                
-                WIN3D_X_coordinate = allCamera_PPPSRRRF[Current_Camera][0];
-                WIN3D_Y_coordinate = allCamera_PPPSRRRF[Current_Camera][1];
-                WIN3D_Z_coordinate = allCamera_PPPSRRRF[Current_Camera][2];
-                WIN3D_S_coordinate = allCamera_PPPSRRRF[Current_Camera][3];
-                WIN3D_RX_coordinate = allCamera_PPPSRRRF[Current_Camera][4];
-                WIN3D_RY_coordinate = allCamera_PPPSRRRF[Current_Camera][5];
-                WIN3D_RZ_coordinate = allCamera_PPPSRRRF[Current_Camera][6];
-                WIN3D_ZOOM_coordinate = allCamera_PPPSRRRF[Current_Camera][7];
-                
-                WIN3D_View_Type = allCamera_Type[Current_Camera];
-                
-                WIN3D_Update = 1;   
-                BAR_b_Update = 1;  
-              }
+              
+              allCamera_PPPSRRRF[0][0] = allCamera_PPPSRRRF[Current_Camera][0];
+              allCamera_PPPSRRRF[0][1] = allCamera_PPPSRRRF[Current_Camera][1];
+              allCamera_PPPSRRRF[0][2] = allCamera_PPPSRRRF[Current_Camera][2];
+              allCamera_PPPSRRRF[0][3] = allCamera_PPPSRRRF[Current_Camera][3];
+              allCamera_PPPSRRRF[0][4] = allCamera_PPPSRRRF[Current_Camera][4];
+              allCamera_PPPSRRRF[0][5] = allCamera_PPPSRRRF[Current_Camera][5];
+              allCamera_PPPSRRRF[0][6] = allCamera_PPPSRRRF[Current_Camera][6];
+              allCamera_PPPSRRRF[0][7] = allCamera_PPPSRRRF[Current_Camera][7];
+              
+              allCamera_Type[0] = allCamera_Type[Current_Camera];
+              
+              Current_Camera = 0;
+              
+              WIN3D_Update = 1;   
+              BAR_b_Update = 1;  
             }  
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Change Seed/Material")) {
