@@ -1315,6 +1315,7 @@ int pre_selectedSection_displayEdges;
 
 int pre_selectedCamera_displayEdges;
 
+int pre_selectedLandPoint_displayPoints;
 
 int pre_Display_MODEL3D_EDGES;
 int pre_Display_MODEL3D_NORMALS;
@@ -1734,7 +1735,9 @@ int selectedObject2D_displayEdges = 1;
 int selectedFractal_Plant_displayEdges = 1;
 int selectedSection_displayEdges = 1;
 int selectedCamera_displayEdges = 1;
+int selectedLandPoint_displayPoints = 1;
 
+int[] selectedLandPoint_numbers = {0};
 int[] selectedCamera_numbers = {0};
 int[] selectedSection_numbers = {0};
 int[] selectedFractal_Plant_numbers = {0};
@@ -2319,6 +2322,8 @@ void draw () {
         
         pre_selectedCamera_displayEdges = selectedCamera_displayEdges;
         
+        pre_selectedLandPoint_displayPoints = selectedLandPoint_displayPoints;
+        
         pre_selectedFractal_Plant_displayEdges = selectedFractal_Plant_displayEdges;
         pre_selectedObject2D_displayEdges = selectedObject2D_displayEdges;
         pre_Display_MODEL3D_EDGES = Display_MODEL3D_EDGES;
@@ -2494,7 +2499,12 @@ void draw () {
 
         if (pre_selectedCamera_displayEdges != selectedCamera_displayEdges) {
           WIN3D_Update = 1;
-        }        
+        }    
+    
+        if (pre_selectedLandPoint_displayPoints != selectedLandPoint_displayPoints) {
+          WIN3D_Update = 1;
+        }          
+          
 
         if (pre_selectedFractal_Plant_displayEdges != selectedFractal_Plant_displayEdges) {
           WIN3D_Update = 1;
@@ -12750,6 +12760,11 @@ void WIN3D_keyPressed (KeyEvent e) {
                   break;
         
         case 35: 
+                 if (Work_with_2D_or_3D == 0) {
+                   int nextIndex = SOLARCHVISION_nextUnselected(-1, selectedLandPoint_numbers.length - 1);
+                   if (nextIndex != -1) selectedLandPoint_numbers[selectedLandPoint_numbers.length - 1] = nextIndex;
+                 }   
+        
                  if (Work_with_2D_or_3D == 1) {
                    int nextIndex = SOLARCHVISION_nextUnselected(-1, selectedFractal_Plant_numbers.length - 1);
                    if (nextIndex != -1) selectedFractal_Plant_numbers[selectedFractal_Plant_numbers.length - 1] = nextIndex;
@@ -12795,6 +12810,10 @@ void WIN3D_keyPressed (KeyEvent e) {
                  break;  
 
         case 36: 
+                 if (Work_with_2D_or_3D == 0) {
+                   int nextIndex = SOLARCHVISION_nextUnselected(1, selectedLandPoint_numbers.length - 1);
+                   if (nextIndex != -1) selectedLandPoint_numbers[selectedLandPoint_numbers.length - 1] = nextIndex;
+                 }   
                  if (Work_with_2D_or_3D == 1) {
                    int nextIndex = SOLARCHVISION_nextUnselected(1, selectedFractal_Plant_numbers.length - 1);
                    if (nextIndex != -1) selectedFractal_Plant_numbers[selectedFractal_Plant_numbers.length - 1] = nextIndex;
@@ -13911,6 +13930,10 @@ void SOLARCHVISION_beginNewObject () {
 
        
 void SOLARCHVISION_duplicateSelection () {
+  
+  if (Work_with_2D_or_3D == 0) {
+    
+  }
 
   if (Work_with_2D_or_3D == 1) {
     
@@ -14268,100 +14291,8 @@ void SOLARCHVISION_duplicateSelection () {
 
 void SOLARCHVISION_deleteSelection () {
 
-    if (Work_with_2D_or_3D == 9) {
+  if (Work_with_2D_or_3D == 0) {
     
-    selectedCamera_numbers = sort(selectedCamera_numbers);
-    
-    for (int o = selectedCamera_numbers.length - 1; o > 0; o--) { // the first node is null 
-
-      int OBJ_NUM = selectedCamera_numbers[o];
-      
-      if (OBJ_NUM != 0) {    
-
-        {
-          float[][] startList = (float[][]) subset(allCamera_PPPSRRRF, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allCamera_PPPSRRRF, OBJ_NUM + 1);
-          
-          allCamera_PPPSRRRF = (float[][]) concat(startList, endList);
-        }
-
-        {
-          int[] startList = (int[]) subset(allCamera_Type, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allCamera_Type, OBJ_NUM + 1);
-          
-          allCamera_Type = (int[]) concat(startList, endList);
-        }
-
-        allCamera_num -= 1;
-      }
-      
-      if (OBJ_NUM == Current_Camera) {
-
-        Current_Camera = 0;
-        SOLARCHVISION_modify_Viewport_Title();
-      }
-
-    }
-
-  }
-  
-  if (Work_with_2D_or_3D == 8) {
-    
-    selectedSection_numbers = sort(selectedSection_numbers);
-    
-    for (int o = selectedSection_numbers.length - 1; o > 0; o--) { // the first node is null 
-
-      int OBJ_NUM = selectedSection_numbers[o];
-      
-      if (OBJ_NUM != 0) {    
-
-        {
-          float[][] startList = (float[][]) subset(allSection_UVERAB, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allSection_UVERAB, OBJ_NUM + 1);
-          
-          allSection_UVERAB = (float[][]) concat(startList, endList);
-        }
-
-        {
-          int[] startList = (int[]) subset(allSection_Type, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allSection_Type, OBJ_NUM + 1);
-          
-          allSection_Type = (int[]) concat(startList, endList);
-        }
-
-        {
-          int[] startList = (int[]) subset(allSection_RES1, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allSection_RES1, OBJ_NUM + 1);
-          
-          allSection_RES1 = (int[]) concat(startList, endList);
-        }
-        
-        {
-          int[] startList = (int[]) subset(allSection_RES2, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allSection_RES2, OBJ_NUM + 1);
-          
-          allSection_RES2 = (int[]) concat(startList, endList);
-        }
-
-        {
-          PImage[] startList = (PImage[]) subset(allSection_SpatialImpact, 0, OBJ_NUM);
-          PImage[] endList = (PImage[]) subset(allSection_SpatialImpact, OBJ_NUM + 1);
-          
-          allSection_SpatialImpact = (PImage[]) concat(startList, endList);
-        }
-        
-        {
-          PImage[][] startList = (PImage[][]) subset(allSection_SolarImpact, 0, OBJ_NUM);
-          PImage[][] endList = (PImage[][]) subset(allSection_SolarImpact, OBJ_NUM + 1);
-          
-          allSection_SolarImpact = (PImage[][]) concat(startList, endList);
-        }        
-    
-        allSection_num -= 1;
-      }
-
-    }
-
   }
 
   
@@ -14683,6 +14614,102 @@ void SOLARCHVISION_deleteSelection () {
     SOLARCHVISION_deleteIsolatedVerticesSelection(); // <<<<<<
   }  
 
+    if (Work_with_2D_or_3D == 8) {
+    
+    selectedSection_numbers = sort(selectedSection_numbers);
+    
+    for (int o = selectedSection_numbers.length - 1; o > 0; o--) { // the first node is null 
+
+      int OBJ_NUM = selectedSection_numbers[o];
+      
+      if (OBJ_NUM != 0) {    
+
+        {
+          float[][] startList = (float[][]) subset(allSection_UVERAB, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allSection_UVERAB, OBJ_NUM + 1);
+          
+          allSection_UVERAB = (float[][]) concat(startList, endList);
+        }
+
+        {
+          int[] startList = (int[]) subset(allSection_Type, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(allSection_Type, OBJ_NUM + 1);
+          
+          allSection_Type = (int[]) concat(startList, endList);
+        }
+
+        {
+          int[] startList = (int[]) subset(allSection_RES1, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(allSection_RES1, OBJ_NUM + 1);
+          
+          allSection_RES1 = (int[]) concat(startList, endList);
+        }
+        
+        {
+          int[] startList = (int[]) subset(allSection_RES2, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(allSection_RES2, OBJ_NUM + 1);
+          
+          allSection_RES2 = (int[]) concat(startList, endList);
+        }
+
+        {
+          PImage[] startList = (PImage[]) subset(allSection_SpatialImpact, 0, OBJ_NUM);
+          PImage[] endList = (PImage[]) subset(allSection_SpatialImpact, OBJ_NUM + 1);
+          
+          allSection_SpatialImpact = (PImage[]) concat(startList, endList);
+        }
+        
+        {
+          PImage[][] startList = (PImage[][]) subset(allSection_SolarImpact, 0, OBJ_NUM);
+          PImage[][] endList = (PImage[][]) subset(allSection_SolarImpact, OBJ_NUM + 1);
+          
+          allSection_SolarImpact = (PImage[][]) concat(startList, endList);
+        }        
+    
+        allSection_num -= 1;
+      }
+
+    }
+
+  }
+  
+    if (Work_with_2D_or_3D == 9) {
+    
+    selectedCamera_numbers = sort(selectedCamera_numbers);
+    
+    for (int o = selectedCamera_numbers.length - 1; o > 0; o--) { // the first node is null 
+
+      int OBJ_NUM = selectedCamera_numbers[o];
+      
+      if (OBJ_NUM != 0) {    
+
+        {
+          float[][] startList = (float[][]) subset(allCamera_PPPSRRRF, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allCamera_PPPSRRRF, OBJ_NUM + 1);
+          
+          allCamera_PPPSRRRF = (float[][]) concat(startList, endList);
+        }
+
+        {
+          int[] startList = (int[]) subset(allCamera_Type, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(allCamera_Type, OBJ_NUM + 1);
+          
+          allCamera_Type = (int[]) concat(startList, endList);
+        }
+
+        allCamera_num -= 1;
+      }
+      
+      if (OBJ_NUM == Current_Camera) {
+
+        Current_Camera = 0;
+        SOLARCHVISION_modify_Viewport_Title();
+      }
+
+    }
+
+  }
+  
 
 }
 
@@ -16613,11 +16640,8 @@ void SOLARCHVISION_isolateSelection () {
 
 void SOLARCHVISION_deselectAll () {
 
-  selectedCamera_numbers = new int [1];
-  selectedCamera_numbers[0] = 0;   
-  
-  selectedSection_numbers = new int [1];
-  selectedSection_numbers[0] = 0;  
+  selectedLandPoint_numbers = new int [1];
+  selectedLandPoint_numbers[0] = 0;  
   
   selectedFractal_Plant_numbers = new int [1];
   selectedFractal_Plant_numbers[0] = 0;
@@ -16633,6 +16657,12 @@ void SOLARCHVISION_deselectAll () {
 
   selectedVertex_numbers = new int [1];
   selectedVertex_numbers[0] = 0;  
+
+  selectedSection_numbers = new int [1];
+  selectedSection_numbers[0] = 0;  
+
+  selectedCamera_numbers = new int [1];
+  selectedCamera_numbers[0] = 0;   
   
   println("SOLARCHVISION_calculate_selection_Pivot 0");
   SOLARCHVISION_calculate_selection_Pivot();
@@ -16640,6 +16670,13 @@ void SOLARCHVISION_deselectAll () {
 
 void SOLARCHVISION_selectAll () {
 
+  if (Work_with_2D_or_3D == 0) {
+    selectedLandPoint_numbers = new int [1 + LAND_n_I * LAND_n_J];
+    for (int i = 0; i < selectedLandPoint_numbers.length; i++) { 
+      selectedLandPoint_numbers[i] = i;
+    }
+  }  
+  
   if (Work_with_2D_or_3D == 1) {
     selectedFractal_Plant_numbers = new int [allFractal_Plant_XYZSRA.length];
     for (int i = 0; i < selectedFractal_Plant_numbers.length; i++) { 
@@ -16696,6 +16733,35 @@ void SOLARCHVISION_selectAll () {
 
 void SOLARCHVISION_reverseSelection () {
 
+  if (Work_with_2D_or_3D == 0) {
+    int[] pre_selectedLandPoint_numbers = sort(selectedLandPoint_numbers);
+    selectedLandPoint_numbers[0] = 0; 
+    
+    selectedLandPoint_numbers = new int [1];
+    selectedLandPoint_numbers[0] = 0;
+    
+    for (int i = 1; i < allLandPoint_XYZSRA.length; i++) {
+      int found = -1; 
+      
+      for (int j = 1; j < pre_selectedLandPoint_numbers.length; j++) {
+        
+        if (pre_selectedLandPoint_numbers[j] == i) {
+          found = 1;
+          break;
+        }
+        else if (pre_selectedLandPoint_numbers[j] > i) {
+          break; 
+        }
+      }
+      
+      if (found == -1) {
+        int[] new_Item = {i};
+        
+        selectedLandPoint_numbers = concat(selectedLandPoint_numbers, new_Item);
+      }
+    }
+  }     
+  
   if (Work_with_2D_or_3D == 1) {
     int[] pre_selectedFractal_Plant_numbers = sort(selectedFractal_Plant_numbers);
     selectedFractal_Plant_numbers[0] = 0; 
@@ -21853,7 +21919,7 @@ void SOLARCHVISION_draw_land () {
   
       WIN3D_Diagrams.sphereDetail(6, 4);
       
-      for (int i = Skip_LAND_MESH_Center; i < LAND_n_I; i += 1) {
+      for (int i = 0; i < LAND_n_I; i += 1) {
         for (int j = 0; j < LAND_n_J; j += 1) {
   
           float x = LAND_MESH[i][j][0];
@@ -27883,6 +27949,11 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
 
   int length_of_indexes = 0;
   int start_index_OBJ_NUM = 0;
+
+  if (Work_with_2D_or_3D == 0) {
+    length_of_indexes = allLandPoint_num;
+    start_index_OBJ_NUM = selectedLandPoint_numbers[start_index];
+  }  
   
   if (Work_with_2D_or_3D == 1) {
     length_of_indexes = allFractal_Plant_num;
@@ -27934,6 +28005,15 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
     if ((OBJ_NUM != 0) && (OBJ_NUM != start_index_OBJ_NUM)) {
       
       int found_at = -1;
+
+      if (Work_with_2D_or_3D == 0) {
+        for (int o = selectedLandPoint_numbers.length - 1; o >= 0; o--) {
+          if (selectedLandPoint_numbers[o] == OBJ_NUM) {
+            found_at = o;
+            break;
+          }
+        } 
+      }
     
       if (Work_with_2D_or_3D == 1) {
         for (int o = selectedFractal_Plant_numbers.length - 1; o >= 0; o--) {
@@ -28023,6 +28103,57 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
 void SOLARCHVISION_PickSelect (float[] RxP) {
 
   if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselectAll();
+
+
+  if (Work_with_2D_or_3D == 0) {
+    
+    int OBJ_NUM = int(RxP[4]);
+
+    int found_at = -1;
+    
+    int use_it = 0; // 0:nothing 1:add -1:subtract
+    
+    if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+    if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+    if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+    
+    if (addNewSelectionToPreviousSelection != 0) {
+
+      for (int o = selectedLandPoint_numbers.length - 1; o >= 0; o--) {
+        if (selectedLandPoint_numbers[o] == OBJ_NUM) {
+          found_at = o;
+          if (addNewSelectionToPreviousSelection == 1) {
+            use_it = 0;
+          }
+          if (addNewSelectionToPreviousSelection == -1) {
+            use_it = -1; 
+          }
+          break;
+        } 
+      }
+    }
+    
+    if (use_it == -1) {
+      int[] startList = (int[]) subset(selectedLandPoint_numbers, 0, found_at);
+      int[] endList = (int[]) subset(selectedLandPoint_numbers, found_at + 1);
+      
+      selectedLandPoint_numbers = (int[]) concat(startList, endList);
+    }
+    
+    if (use_it == 1) {
+      int[] new_OBJ_number = {OBJ_NUM};
+      
+      selectedLandPoint_numbers = (int[]) concat(selectedLandPoint_numbers, new_OBJ_number);
+    }
+    
+    WIN3D_Update = 1;
+
+    //if (pre_selectedLandPoint_numbers_lastItem != selectedLandPoint_numbers[selectedLandPoint_numbers.length - 1]) {
+      println("SOLARCHVISION_calculate_selection_Pivot 6");
+      SOLARCHVISION_calculate_selection_Pivot();
+    //}
+  }
+
   
   if (Work_with_2D_or_3D == 1) {
     
@@ -28414,6 +28545,101 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
 void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, float corner2y) {
 
   if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselectAll();
+
+
+  if (Work_with_2D_or_3D == 0) {
+    
+    for (int OBJ_NUM = 1; OBJ_NUM < allLandPoint_Faces.length; OBJ_NUM++) {
+
+      int break_loops = 0;
+      
+      int include_OBJ_in_newSelection = -1;    
+
+      if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
+      if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
+      
+      int f = OBJ_NUM;
+
+      for (int j = 0; j < allLandPoint_Faces[f].length; j++) {
+        
+        int vNo = allLandPoint_Faces[f][j];
+        
+        float x = allLandPoint_Vertices[vNo][0] * OBJECTS_scale;
+        float y = allLandPoint_Vertices[vNo][1] * OBJECTS_scale;
+        float z = -allLandPoint_Vertices[vNo][2] * OBJECTS_scale;
+        
+        float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+
+        if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+          if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+            if (mouseButton == RIGHT) {
+              include_OBJ_in_newSelection = 1;
+              break_loops = 1;
+            }
+          }
+          else {
+            if (mouseButton == LEFT) {
+              include_OBJ_in_newSelection = 0;
+              break_loops = 1;
+            }                          
+          }
+          
+          if (break_loops == 1) break;
+        }
+        else {
+          if (mouseButton == LEFT) {
+            include_OBJ_in_newSelection = 0;
+            break_loops = 1;
+          }                          
+        }                  
+        
+        if (break_loops == 1) break;                  
+      }
+
+      
+      if (include_OBJ_in_newSelection == 1) {
+
+        int found_at = -1;
+        
+        int use_it = 0; // 0:nothing 1:add -1:subtract
+        
+        if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+        if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+        if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+        
+        if (addNewSelectionToPreviousSelection != 0) {
+
+          for (int o = selectedLandPoint_numbers.length - 1; o >= 0; o--) {
+            if (selectedLandPoint_numbers[o] == OBJ_NUM) {
+              found_at = o;
+              if (addNewSelectionToPreviousSelection == 1) {
+                use_it = 0;
+              }
+              if (addNewSelectionToPreviousSelection == -1) {
+                use_it = -1; 
+              }
+              break;
+            } 
+          }
+        }
+        
+        if (use_it == -1) {
+          int[] startList = (int[]) subset(selectedLandPoint_numbers, 0, found_at);
+          int[] endList = (int[]) subset(selectedLandPoint_numbers, found_at + 1);
+          
+          selectedLandPoint_numbers = (int[]) concat(startList, endList);
+        }
+        
+        if (use_it == 1) {
+          int[] new_OBJ_number = {OBJ_NUM};
+          
+          selectedLandPoint_numbers = (int[]) concat(selectedLandPoint_numbers, new_OBJ_number);
+        }
+        
+      }
+    }
+  }    
+
   
   if (Work_with_2D_or_3D == 1) {
     
@@ -29342,6 +29568,11 @@ void mouseWheel(MouseEvent event) {
               if (View_Select_Create_Modify == -1) { // PickSelect 
               
                  int go_direction = int(Wheel_Value);
+
+                 if (Work_with_2D_or_3D == 0) {
+                   int nextIndex = SOLARCHVISION_nextUnselected(go_direction, selectedLandPoint_numbers.length - 1);
+                   if (nextIndex != -1) selectedLandPoint_numbers[selectedLandPoint_numbers.length - 1] = nextIndex;
+                 }
 
                  if (Work_with_2D_or_3D == 1) {
                    int nextIndex = SOLARCHVISION_nextUnselected(go_direction, selectedFractal_Plant_numbers.length - 1);
@@ -30723,7 +30954,13 @@ void mouseClicked () {
               
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
-            }            
+            }     
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected LandPoints")) {
+              selectedLandPoint_displayPoints = (selectedLandPoint_displayPoints + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }                  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Wind Flow")) {
               Display_windFlow = (Display_windFlow + 1) % 2;
               
@@ -32174,6 +32411,21 @@ void mouseClicked () {
                   SOLARCHVISION_move_Selection(dx, dy, dz);
                 }
                 
+                if (Work_with_2D_or_3D == 0) {
+    
+                  float dx = x0 - allLandPoint_XYZSRA[selectedLandPoint_numbers[selectedLandPoint_numbers.length - 1]][0]; 
+                  float dy = y0 - allLandPoint_XYZSRA[selectedLandPoint_numbers[selectedLandPoint_numbers.length - 1]][1]; 
+                  float dz = z0 - allLandPoint_XYZSRA[selectedLandPoint_numbers[selectedLandPoint_numbers.length - 1]][2];              
+  
+                  int the_Vector = selected_posVector;
+                
+                  if (the_Vector == 0) {dy = 0; dz = 0;}  
+                  if (the_Vector == 1) {dz = 0; dx = 0;}  
+                  if (the_Vector == 2) {dx = 0; dy = 0;} 
+    
+                  SOLARCHVISION_move_Selection(dx, dy, dz);
+                }
+                                
               }   
 
 
@@ -33736,6 +33988,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       selectedSection_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedSection_displayEdges" , selectedSection_displayEdges, 0, 1, 1), 1));
 
       selectedCamera_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedCamera_displayEdges" , selectedCamera_displayEdges, 0, 1, 1), 1));
+      
+      selectedLandPoint_displayPoints = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedLandPoint_displayPoints" , selectedLandPoint_displayPoints, 0, 1, 1), 1));
     }      
   
   }
@@ -34632,6 +34886,30 @@ float[] SOLARCHVISION_calculate_Perspective_Internally (float x, float y, float 
 
 void SOLARCHVISION_draw_Perspective_Internally () {
 
+   if (Work_with_2D_or_3D == 0) {
+
+    if (selectedLandPoint_displayPoints != 0) {
+      
+      pushMatrix();
+    
+      translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+      
+      noFill();
+      
+      stroke(255,127,0); 
+      strokeWeight(2);
+    
+      {
+        
+      }
+          
+      strokeWeight(0);   
+    
+      popMatrix();
+    }  
+    
+  }      
+  
    if (Work_with_2D_or_3D == 9) {
 
     if (selectedCamera_displayEdges != 0) {
@@ -37637,6 +37915,9 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
   if (Work_with_2D_or_3D == 1) {
     theVertices = selectedFractal_Plant_numbers;
   }  
+  if (Work_with_2D_or_3D == 0) {
+    theVertices = selectedLandPoint_numbers;
+  }    
   
   for (int j = 0; j < 3; j++) {
     
@@ -38438,6 +38719,27 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
       }
     }
   }  
+  
+  if (Work_with_2D_or_3D == 0) {
+    
+    for (int o = selectedLandPoint_numbers.length - 1; o >= 0; o--) {
+      
+      int OBJ_NUM = selectedLandPoint_numbers[o];
+        
+      if (OBJ_NUM != 0) {      
+    
+        float x = allLandPoint_XYZSRA[OBJ_NUM][0] - x0; 
+        float y = allLandPoint_XYZSRA[OBJ_NUM][1] - y0; 
+        //float z = allLandPoint_XYZSRA[OBJ_NUM][2] - z0;
+        
+        allLandPoint_XYZSRA[OBJ_NUM][0] = x0 + sx * x; 
+        allLandPoint_XYZSRA[OBJ_NUM][1] = y0 + sy * y;
+        //allLandPoint_XYZSRA[OBJ_NUM][2] = z0 + sz * z;
+
+        allLandPoint_XYZSRA[OBJ_NUM][3] *= sz; // <<<<<<<<<<<<<<
+      }
+    }
+  }    
 }
 
 
@@ -38493,7 +38795,20 @@ void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int 
         allFractal_Plant_XYZSRA[OBJ_NUM][4] += r; 
       }
     }
-  }    
+  }   
+ 
+    if (Work_with_2D_or_3D == 0) {
+
+    for (int o = selectedLandPoint_numbers.length - 1; o >= 0; o--) {
+      
+      int OBJ_NUM = selectedLandPoint_numbers[o];
+      
+      if (OBJ_NUM != 0) {      
+        
+        allLandPoint_XYZSRA[OBJ_NUM][4] += r; 
+      }
+    }
+  } 
 
 } 
 
@@ -38562,6 +38877,21 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
         allFractal_Plant_XYZSRA[OBJ_NUM][0] += dx; 
         allFractal_Plant_XYZSRA[OBJ_NUM][1] += dy; 
         allFractal_Plant_XYZSRA[OBJ_NUM][2] += dz;
+      }
+    }
+  }    
+
+  if (Work_with_2D_or_3D == 0) {
+
+    for (int o = selectedLandPoint_numbers.length - 1; o >= 0; o--) {
+      
+      int OBJ_NUM = selectedLandPoint_numbers[o];
+      
+      if (OBJ_NUM != 0) {      
+        
+        allLandPoint_XYZSRA[OBJ_NUM][0] += dx; 
+        allLandPoint_XYZSRA[OBJ_NUM][1] += dy; 
+        allLandPoint_XYZSRA[OBJ_NUM][2] += dz;
       }
     }
   }    
@@ -40018,7 +40348,7 @@ String[][] BAR_a_Items = {
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
                         {"View", "Camera >> Viewport", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W."},
-                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Points", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sections", "Display/Hide Cameras", "Display/Hide Sky", "Display/Hide Sun Path", "Display/Hide Sun Pattern", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected Sections", "Display/Hide Selected Cameras", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected Solar Pivots", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
+                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Points", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sections", "Display/Hide Cameras", "Display/Hide Sky", "Display/Hide Sun Path", "Display/Hide Sun Pattern", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected Sections", "Display/Hide Selected Cameras", "Display/Hide Selected LandPoints", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected Solar Pivots", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Wire", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
                         {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Pre-bake Selected Sections", "Process Active Impact", "Process Passive Impact", "Process Spatial Impact", "Run wind 3D-model"},
                         {"Layer"}, // Parameters 
@@ -40247,6 +40577,9 @@ void SOLARCHVISION_draw_window_BAR_a () {
               }          
               if (BAR_a_Items[i][j].equals("Display/Hide Selected Cameras")) {
                 if (selectedCamera_displayEdges == 0) {stroke(127); fill(127);}
+              }        
+              if (BAR_a_Items[i][j].equals("Display/Hide Selected LandPoints")) {
+                if (selectedLandPoint_displayPoints == 0) {stroke(127); fill(127);}
               }                
               if (BAR_a_Items[i][j].equals("Display/Hide Selected Faces")) {
                 if (selectedPolymesh_displayPivot == 0) {stroke(127); fill(127);}
@@ -42379,6 +42712,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("selectedFractal_Plant_displayEdges", selectedFractal_Plant_displayEdges);
   newChild1.setInt("selectedSection_displayEdges", selectedSection_displayEdges);
   newChild1.setInt("selectedCamera_displayEdges", selectedCamera_displayEdges);
+  newChild1.setInt("selectedLandPoint_displayPoints", selectedLandPoint_displayPoints);
   
   newChild1.setFloat("softSelection_Power", softSelection_Power);
   newChild1.setFloat("softSelection_Radius", softSelection_Radius);
@@ -43511,6 +43845,7 @@ void SOLARCHVISION_load_project (String myFile) {
       selectedFractal_Plant_displayEdges = children0[L].getInt("selectedFractal_Plant_displayEdges");
       selectedSection_displayEdges = children0[L].getInt("selectedSection_displayEdges");
       selectedCamera_displayEdges = children0[L].getInt("selectedCamera_displayEdges");
+      selectedLandPoint_displayPoints = children0[L].getInt("selectedLandPoint_displayPoints");
       
       softSelection_Power = children0[L].getFloat("softSelection_Power");
       softSelection_Radius = children0[L].getFloat("softSelection_Radius");
