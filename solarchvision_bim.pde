@@ -31566,7 +31566,12 @@ void mouseClicked () {
               Work_with_2D_or_3D = 9;
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
-            }               
+            }  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select LandPoint")) {
+              Work_with_2D_or_3D = 0;
+              WIN3D_Update = 1;
+              BAR_b_Update = 1;  
+            }              
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select Fractal_Plant")) {
               Work_with_2D_or_3D = 1;
               WIN3D_Update = 1;
@@ -34888,31 +34893,53 @@ float[] SOLARCHVISION_calculate_Perspective_Internally (float x, float y, float 
 
 void SOLARCHVISION_draw_Perspective_Internally () {
 
-   if (Work_with_2D_or_3D == 0) {
-
+   if (Work_with_2D_or_3D == 0) {    
+    
     if (selectedLandPoint_displayPoints != 0) {
-      
+  
       pushMatrix();
     
       translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
       
       noFill();
       
-      stroke(255,127,0); 
+      stroke(255,0,255,127);
+      
       strokeWeight(2);
-    
-      {
+      
+      ellipseMode(CENTER);
+      
+      float R = 10;
+      
+      for (int o = selectedLandPoint_numbers.length - 1; o >= 0; o--) {
         
-      }
+        int OBJ_NUM = selectedLandPoint_numbers[o];
+        
+        if (OBJ_NUM != 0) {     
+       
+          int i = (OBJ_NUM - 1) / LAND_n_J;
+          int j = (OBJ_NUM - 1) % LAND_n_J;
+
+          float x = LAND_MESH[i][j][0] * OBJECTS_scale;
+          float y = LAND_MESH[i][j][1] * OBJECTS_scale;
+          float z = -LAND_MESH[i][j][2] * OBJECTS_scale;
+    
+          float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
           
+          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+            if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View + R, -0.5 * WIN3D_Y_View + R, 0.5 * WIN3D_X_View - R, 0.5 * WIN3D_Y_View - R) == 1) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
+          }
+    
+        }    
+      }
+      
       strokeWeight(0);   
     
-      popMatrix();
-    }  
-    
-  }      
+      popMatrix();    
+    }
+  }  
   
-   if (Work_with_2D_or_3D == 9) {
+  if (Work_with_2D_or_3D == 9) {
 
     if (selectedCamera_displayEdges != 0) {
       
@@ -40352,7 +40379,7 @@ String[][] BAR_a_Items = {
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Viewport >> Camera", "Camera", "Section", "Fractal_Plant", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
-                        {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Section",  "Select Camera", "Select Fractal_Plant", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Soft Selection", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
+                        {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Section",  "Select Camera", "Select LandPoint", "Select Fractal_Plant", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Soft Selection", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
                         {"Edit", "Duplicate Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces"},
                         {"Modify", "Save Current Pivot", "Reset Saved Pivot", "Use Selection Pivot", "Use Origin Pivot", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
                         {"Match", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunkSize", "Pick LeafSize", "Pick AllFractal_PlantProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunkSize", "Assign LeafSize", "Assign AllFractal_PlantProps", "Assign SolarPivot"},
@@ -40690,7 +40717,7 @@ String[][] BAR_b_Items = {
                           {"1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "BuildingType", "2.5"},
                           {"1", "as_Mesh", "as_Solid", "Mesh|Solid", "2.0"},  
                           
-                          {"4", "Land", "∞-D", "2½D", "3-D", "Face", "Vertex", "Soft", "Solid", "Section", "Camera", "LayerType", "2.0"},
+                          {"4", "LandPoint", "∞-D", "2½D", "3-D", "Face", "Vertex", "Soft", "Solid", "Section", "Camera", "LayerType", "2.0"},
                           {"1", "±CS", "+CS", "-CS", "ClickSelect", "1.0"},
                           {"1", "±WS", "+WS", "-WS", "WindowSelect", "1.0"},                          
                           {"2", "X<", "X|", "X>", "PivotX", "1.0"},
@@ -40773,7 +40800,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
         String Bar_Switch = BAR_b_Items[i][BAR_b_Items[i].length - 2];
         
         if (Bar_Switch.equals("LayerType")) {
-          BAR_b_Items[i][0] = nf(Work_with_2D_or_3D, 0);
+          BAR_b_Items[i][0] = nf(1 + Work_with_2D_or_3D, 0);
         }
       }
 
