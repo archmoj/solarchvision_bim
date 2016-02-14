@@ -228,7 +228,7 @@ int Work_with_2D_or_3D = 3; // 1:Fractal_Plants 2:2D, 3:3D, 4:Face, 5:Vertex, 6:
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
-int View_Select_Create_Modify = 0; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunkSize 12:LeafSize 13:AllFractal_PlantProps 14:SolarPivot 15:FaceNormal 16:FaceFirstVertex 
+int View_Select_Create_Modify = 0; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunkSize 12:LeafSize 13:AllFractal_PlantProps 14:SolarPivot 15:FaceNormal 16:FaceFirstVertex 17:Drop 
 int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. fractal trees
 
@@ -31174,6 +31174,26 @@ void mouseClicked () {
               BAR_b_Update = 1;  
             }
             
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Drop on LandSurface (Down)")) {
+              set_to_Modify_Drop(0);
+              SOLARCHVISION_highlight_in_BAR_b("DrLD");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Drop on LandSurface (Up)")) {
+              set_to_Modify_Drop(1);
+              SOLARCHVISION_highlight_in_BAR_b("DrLU");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Drop on ModelSurface (Up)")) {
+              set_to_Modify_Drop(2);
+              SOLARCHVISION_highlight_in_BAR_b("DrMU");
+              BAR_b_Update = 1;  
+            }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Drop on ModelSurface (Down)")) {
+              set_to_Modify_Drop(3);
+              SOLARCHVISION_highlight_in_BAR_b("DrMD");
+              BAR_b_Update = 1;  
+            }                      
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Move")) {
               //set_to_Modify_Move(selected_posVector);
@@ -33614,7 +33634,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
       //Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 0, 9, 1), 1));
     
-      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -17, 16, 1), 1));
+      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -17, 17, 1), 1));
       //View_XYZ_ChangeOption = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_ChangeOption" , View_XYZ_ChangeOption, 0, 6, 1), 1));
       //Modify_Object_Parameters = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Object_Parameters" , Modify_Object_Parameters, 0, 9, 1), 1));
 
@@ -39326,6 +39346,56 @@ void dessin_WindowSelect (int _type, float x, float y, float r) {
 }
 
 
+void dessin_Drop (int _type, float x, float y, float r) {
+  
+  pushMatrix();
+  translate(x, y);
+
+  strokeWeight(1);
+  stroke(255); 
+  fill(0);
+  
+  float d = 0.8 * r;
+
+  if ((_type == 1) || (_type == 2)) {
+    ellipse(0, 0, 2 * d, d);
+  } 
+  if ((_type == 3) || (_type == 4)) {
+    beginShape();
+    vertex(0, 0.5 * d);
+    vertex(cos_ang(30) * d, 0);
+    vertex(0, -0.5 * d);
+    vertex(-cos_ang(30) * d, 0);
+    endShape(CLOSE);
+  } 
+
+  
+
+
+  strokeWeight(2);
+  stroke(255); 
+  fill(0);
+
+  if ((_type == 1) || (_type == 4)) {
+    line(0, 0.25 * d, 0, -d);  
+    line(0, 0.25 * d, 0 - 0.25 * d, 0);
+    line(0, 0.25 * d, 0 + 0.25 * d, 0);
+  }
+  
+  if ((_type == 2) || (_type == 3)) {
+    line(0, 0.25 * -d, 0, d);  
+    line(0, 0.25 * -d, 0 - 0.25 * d, 0);
+    line(0, 0.25 * -d, 0 + 0.25 * d, 0);
+  }  
+
+  strokeWeight(0);
+
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+
 void dessin_Move (int _type, float x, float y, float r) {
   
   pushMatrix();
@@ -40441,7 +40511,7 @@ String[][] BAR_a_Items = {
                         {"Create", "Viewport >> Camera", "Camera", "Section", "Fractal_Plant", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Section",  "Select Camera", "Select LandPoint", "Select Fractal_Plant", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Soft Selection", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
                         {"Edit", "Duplicate Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces"},
-                        {"Modify", "Save Current Pivot", "Reset Saved Pivot", "Use Selection Pivot", "Use Origin Pivot", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
+                        {"Modify", "Save Current Pivot", "Reset Saved Pivot", "Use Selection Pivot", "Use Origin Pivot", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Drop on LandSurface (Up)", "Drop on LandSurface (Down)", "Drop on ModelSurface (Up)", "Drop on ModelSurface (Down)", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
                         {"Match", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunkSize", "Pick LeafSize", "Pick AllFractal_PlantProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunkSize", "Assign LeafSize", "Assign AllFractal_PlantProps", "Assign SolarPivot"},
                         {"Action", "Undo", "Redo", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
 
@@ -40783,6 +40853,7 @@ String[][] BAR_b_Items = {
                           {"2", "X<", "X|", "X>", "PivotX", "1.0"},
                           {"2", "Y<","Y|", "Y>", "PivotY", "1.0"},
                           {"2", "Z<","Z|", "Z>", "PivotZ", "1.0"},
+                          {"1", "DrLD", "DrLU", "DrMU", "DrMD", "Drop", "1.0"},
                           {"3", "MVx", "MVy", "MVz", "MV³", "Move", "1.0"},
                           {"3", "SCx", "SCy", "SCz", "SC³", "Scale", "1.0"}, 
                           {"3", "RTx", "RTy", "RTz", "Rotate", "1.0"}, 
@@ -41002,6 +41073,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("Rotate")) set_to_Modify_Rotate(j - 1);
         if (Bar_Switch.equals("Scale")) set_to_Modify_Scale(j - 1);
         if (Bar_Switch.equals("Move")) set_to_Modify_Move(j - 1);
+        if (Bar_Switch.equals("Drop")) set_to_Modify_Drop(j - 1);
 
         if (Bar_Switch.equals("ProjectionType")) set_to_View_ProjectionType(j - 1);
 
@@ -41057,6 +41129,9 @@ void SOLARCHVISION_draw_window_BAR_b () {
         
         String Bar_Switch = BAR_b_Items[i][BAR_b_Items[i].length - 2];
 
+        if (Bar_Switch.equals("Drop")) {
+          dessin_Drop(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }
         if (Bar_Switch.equals("Move")) {
           dessin_Move(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }
@@ -41316,7 +41391,6 @@ void set_to_Create_Cushion () {
 
 
 
-
 void set_to_Modify_Move (int n) {
   View_Select_Create_Modify = 1;
   
@@ -41437,6 +41511,17 @@ void set_to_Modify_FaceFirstVertex (int n) {
 
   ROLLOUT_Update = 1; 
 }
+
+
+void set_to_Modify_Drop (int n) {
+  View_Select_Create_Modify = 17;
+  
+  Modify_Object_Parameters = n; // 0:LandSurface 1:ModelSurface
+  
+  ROLLOUT_Update = 1;
+}
+
+
 
 void set_to_Pick_Study_Section () {
   
