@@ -60,11 +60,12 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 0; 
+int STATION_NUMBER = 1; 
 
 String[][] DEFINED_STATIONS = {
   
                                 {"Vancouver_A", "BC", "CA", "49.28793", "-123.11415", "-120", "0", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"},
+                                {"Vancouver_B", "BC", "CA", "49.274166", "-123.103353", "-120", "0", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"},
                                 
                                 {"Tehran_11x12", "XX", "IR", "35.6789", "51.413063", "52.5", "1500", "240.0", "", "", "IRN_TEHRAN_XX_IR"},
   
