@@ -32370,7 +32370,7 @@ void mouseClicked () {
             if (RxP[4] > 0) {
                            
               if (View_Select_Create_Modify == 1) { // move
-    
+              
                 float x0 = RxP[0];
                 float y0 = RxP[1];
                 float z0 = RxP[2];
@@ -32419,22 +32419,6 @@ void mouseClicked () {
     
                   SOLARCHVISION_move_Selection(dx, dy, dz);
                 }
-                
-                /*if (Work_with_2D_or_3D == 0) {
-    
-                  float dx = x0 - allLandPoint_XYZSRA[selectedLandPoint_numbers[selectedLandPoint_numbers.length - 1]][0]; 
-                  float dy = y0 - allLandPoint_XYZSRA[selectedLandPoint_numbers[selectedLandPoint_numbers.length - 1]][1]; 
-                  float dz = z0 - allLandPoint_XYZSRA[selectedLandPoint_numbers[selectedLandPoint_numbers.length - 1]][2];              
-  
-                  int the_Vector = selected_posVector;
-                
-                  if (the_Vector == 0) {dy = 0; dz = 0;}  
-                  if (the_Vector == 1) {dz = 0; dx = 0;}  
-                  if (the_Vector == 2) {dx = 0; dy = 0;} 
-    
-                  SOLARCHVISION_move_Selection(dx, dy, dz);
-                }
-                */
                                 
               }   
 
@@ -38012,7 +37996,23 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
         int n = theVertices[q];
         
         POS_now = allFractal_Plant_XYZSRA[n][j];
-      }        
+      }  
+      if (Work_with_2D_or_3D == 0) {
+        int n = theVertices[q];
+        
+        int OBJ_NUM = n;
+        
+        if (OBJ_NUM != 0) {     
+       
+          int the_i = (OBJ_NUM - 1) / LAND_n_J;
+          int the_j = (OBJ_NUM - 1) % LAND_n_J;
+
+          POS_now = LAND_MESH[the_i][the_j][j];
+        }
+        else {
+          POS_now = 0;
+        }
+      }             
      
       if (POS_min > POS_now) POS_min = POS_now;   
       if (POS_max < POS_now) POS_max = POS_now;   
