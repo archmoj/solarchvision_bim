@@ -1,6 +1,5 @@
 // delete uisng PgUp/Dn or mouseWheel may not work because the selection made at index 0! 
 // should write selected LandPoints to file!
-// some features not working e.g. RectSelect while Work_with_2D_or_3D = 0
 // we don't have display_SOLIDS! use Ctrl+7 for
 
 import processing.pdf.*;
@@ -23006,9 +23005,6 @@ void SOLARCHVISION_record_last_Viewport () {
   
   allCamera_Type[Current_Camera] = WIN3D_View_Type;
   
-  println("allCamera_num", allCamera_num);
-  println("Current_Camera", Current_Camera);
-
 }  
 
 
@@ -40920,7 +40916,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
 
 
         if (Bar_Switch.equals("LayerType")) {
-          Work_with_2D_or_3D = j;
+          Work_with_2D_or_3D = j - 1;
           
           if (Work_with_2D_or_3D == 6) {
             SOLARCHVISION_convertVertex2softSelection();
@@ -44155,7 +44151,7 @@ void SOLARCHVISION_load_project (String myFile) {
           allCamera_PPPSRRRF[i][j] = float(parts[j]);
         }
 
-        allCamera_Type[i] = int(parts[7]);
+        allCamera_Type[i] = int(parts[8]);
       }
     } 
 
