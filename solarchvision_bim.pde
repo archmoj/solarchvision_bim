@@ -28552,9 +28552,12 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
   if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselectAll();
 
 
-  /*if (Work_with_2D_or_3D == 0) {
+  if (Work_with_2D_or_3D == 0) {
     
-    for (int OBJ_NUM = 1; OBJ_NUM < allLandPoint_Faces.length; OBJ_NUM++) {
+    for (int OBJ_NUM = 1; OBJ_NUM < 1 + LAND_n_I * LAND_n_J; OBJ_NUM++) {
+      
+      int i = (OBJ_NUM - 1) / LAND_n_J;
+      int j = (OBJ_NUM - 1) % LAND_n_J;      
 
       int break_loops = 0;
       
@@ -28563,18 +28566,14 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
       if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
       if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
       
-      int f = OBJ_NUM;
-
-      for (int j = 0; j < allLandPoint_Faces[f].length; j++) {
-        
-        int vNo = allLandPoint_Faces[f][j];
-        
-        float x = allLandPoint_Vertices[vNo][0] * OBJECTS_scale;
-        float y = allLandPoint_Vertices[vNo][1] * OBJECTS_scale;
-        float z = -allLandPoint_Vertices[vNo][2] * OBJECTS_scale;
+      for (int k = 0; k < 1; k++) { // just a loop to make those break commands relevant!  
+      
+        float x = LAND_MESH[i][j][0] * OBJECTS_scale;
+        float y = LAND_MESH[i][j][1] * OBJECTS_scale;
+        float z = -LAND_MESH[i][j][2] * OBJECTS_scale;
         
         float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
-
+  
         if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
           if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
             if (mouseButton == RIGHT) {
@@ -28596,10 +28595,9 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
             include_OBJ_in_newSelection = 0;
             break_loops = 1;
           }                          
-        }                  
+        }         
+      }        
         
-        if (break_loops == 1) break;                  
-      }
 
       
       if (include_OBJ_in_newSelection == 1) {
@@ -28644,7 +28642,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
       }
     }
   }   
- */ 
+
 
   
   if (Work_with_2D_or_3D == 1) {
