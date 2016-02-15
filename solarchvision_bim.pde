@@ -24559,7 +24559,7 @@ void SOLARCHVISION_LoadLAND_TEXTURE (String LandDirectory) {
 //Polar
 int LAND_n_I_base = 0;
 int LAND_n_J_base = 0;
-int LAND_n_I = 29 + 1; //17 + 1; //13 + 1; //16 + 1; // 24 + 1;
+int LAND_n_I = 13 + 1; //29 + 1; //17 + 1; //13 + 1; //16 + 1; // 24 + 1;
 int LAND_n_J = 24 + 1;     
 
 
@@ -24581,9 +24581,9 @@ void SOLARCHVISION_LoadLAND_MESH (String ProjectSite) {
   
   for (int i = 0; i < LAND_n_I; i += 1) {
     for (int j = 0; j < LAND_n_J; j += 1) {
-      LAND_MESH[i][j][0] = 0; //FLOAT_undefined;
-      LAND_MESH[i][j][1] = 0; //FLOAT_undefined;
-      LAND_MESH[i][j][2] = 0; //FLOAT_undefined;
+      LAND_MESH[i][j][0] = FLOAT_undefined;
+      LAND_MESH[i][j][1] = FLOAT_undefined;
+      LAND_MESH[i][j][2] = FLOAT_undefined;
     }
   }
 
@@ -29983,8 +29983,8 @@ void mouseReleased () {
                 float dy = y2 - y1;
                 float dz = z2 - z1;
                 
-                float dx_rot = dx * cos_ang(WIN3D_RZ_coordinate) - dy * sin_ang(WIN3D_RZ_coordinate);
-                float dy_rot = dx * sin_ang(WIN3D_RZ_coordinate) + dy * cos_ang(WIN3D_RZ_coordinate);
+                float dx_rot = dx * cos_ang(-WIN3D_RZ_coordinate) - dy * sin_ang(-WIN3D_RZ_coordinate);
+                float dy_rot = dx * sin_ang(-WIN3D_RZ_coordinate) + dy * cos_ang(-WIN3D_RZ_coordinate);
                 float dz_rot = dz;
                 
                 if (Modify_Object_Parameters == 0) {
