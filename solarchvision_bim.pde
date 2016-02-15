@@ -1,6 +1,7 @@
 // delete uisng PgUp/Dn or mouseWheel may not work because the selection made at index 0! 
 // should write selected LandPoints to file!
 // we don't have display_SOLIDS! use Ctrl+7 for
+// drop functions only works for living objects
 
 import processing.pdf.*;
 
@@ -36,6 +37,8 @@ String _undefined = "N/A";
 float FLOAT_undefined = 1000000000; // it must be a positive big number that is not included in any data
 
 float CubePower = 16; //8; 
+
+float eyeLevel = 1.5; // 1.5 abouve ground - applied for setting cameras - intreanl!
 
 double R_earth = 6373000.0;
 float FLOAT_R_earth = (float) R_earth;
@@ -31175,23 +31178,28 @@ void mouseClicked () {
             }
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Drop on LandSurface")) {
-              
-              SOLARCHVISION_drop_Selection_onLandSurface();
-              WIN3D_Update = 1;
-              
               set_to_Modify_Drop(0);
               SOLARCHVISION_highlight_in_BAR_b("DrL±");
               BAR_b_Update = 1;  
+              
+              SOLARCHVISION_drop_Selection();
+              WIN3D_Update = 1;              
             }
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Drop on ModelSurface (Down)")) {
               set_to_Modify_Drop(1);
               SOLARCHVISION_highlight_in_BAR_b("DrM-");
               BAR_b_Update = 1;  
+              
+              SOLARCHVISION_drop_Selection(); 
+              WIN3D_Update = 1;                  
             }                      
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Drop on ModelSurface (Up)")) {
               set_to_Modify_Drop(2);
               SOLARCHVISION_highlight_in_BAR_b("DrM+");
               BAR_b_Update = 1;  
+              
+              SOLARCHVISION_drop_Selection();
+              WIN3D_Update = 1;                  
             }
 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Move")) {
@@ -32940,7 +32948,7 @@ void mouseClicked () {
 
                     CAM_x = RxP[0];
                     CAM_y = RxP[1];
-                    CAM_z = RxP[2] + 1.5; // standing eye level from the point           
+                    CAM_z = RxP[2] + eyeLevel;       
   
                     SOLARCHVISION_reverseTransform_Camera();
                     
@@ -39007,7 +39015,7 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
 }
 
 
-void SOLARCHVISION_drop_Selection_onLandSurface () {
+void SOLARCHVISION_drop_Selection () {
 
   float max_dist = 100; // <<<<<< 100m tolerance 
 
@@ -39058,7 +39066,15 @@ void SOLARCHVISION_drop_Selection_onLandSurface () {
 
         float[] RxP = new float [5];
 
-        RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
+        if (Modify_Object_Parameters == 0) { 
+          RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
+        }
+        else if (Modify_Object_Parameters == 1) {
+          RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
+        }
+        else {
+          RxP[4] = -1; // undefined
+        }
 
         if (RxP[4] > 0) {
           allObject2D_XYZS[OBJ_NUM][0] = RxP[0]; 
@@ -39067,7 +39083,16 @@ void SOLARCHVISION_drop_Selection_onLandSurface () {
         }
         else {
           ray_direction[2] = 1; // <<<< going upwards
-          RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
+          
+          if (Modify_Object_Parameters == 0) { 
+            RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
+          }
+          else if (Modify_Object_Parameters == 2) {
+            RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
+          }          
+          else {
+            RxP[4] = -1; // undefined
+          }
           
           if (RxP[4] > 0) {
             allObject2D_XYZS[OBJ_NUM][0] = RxP[0]; 
@@ -39081,19 +39106,60 @@ void SOLARCHVISION_drop_Selection_onLandSurface () {
   }  
   
   if (Work_with_2D_or_3D == 1) {
-/*
+    
     for (int o = selectedFractal_Plant_numbers.length - 1; o >= 0; o--) {
-      
+    
       int OBJ_NUM = selectedFractal_Plant_numbers[o];
       
       if (OBJ_NUM != 0) {      
         
-        allFractal_Plant_XYZSRA[OBJ_NUM][0] += dx; 
-        allFractal_Plant_XYZSRA[OBJ_NUM][1] += dy; 
-        allFractal_Plant_XYZSRA[OBJ_NUM][2] += dz;
+        float x = allFractal_Plant_XYZSRA[OBJ_NUM][0];
+        float y = allFractal_Plant_XYZSRA[OBJ_NUM][1];
+        float z = allFractal_Plant_XYZSRA[OBJ_NUM][2];
+
+        float[] ray_start = {x, y, z};
+
+        float[] ray_direction = {0,0,-1};
+
+        float[] RxP = new float [5];
+
+        if (Modify_Object_Parameters == 0) { 
+          RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
+        }
+        else if (Modify_Object_Parameters == 1) {
+          RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
+        }
+        else {
+          RxP[4] = -1; // undefined
+        }
+
+        if (RxP[4] > 0) {
+          allFractal_Plant_XYZSRA[OBJ_NUM][0] = RxP[0]; 
+          allFractal_Plant_XYZSRA[OBJ_NUM][1] = RxP[1]; 
+          allFractal_Plant_XYZSRA[OBJ_NUM][2] = RxP[2];
+        }
+        else {
+          ray_direction[2] = 1; // <<<< going upwards
+          
+          if (Modify_Object_Parameters == 0) { 
+            RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
+          }
+          else if (Modify_Object_Parameters == 2) {
+            RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
+          }          
+          else {
+            RxP[4] = -1; // undefined
+          }
+          
+          if (RxP[4] > 0) {
+            allFractal_Plant_XYZSRA[OBJ_NUM][0] = RxP[0]; 
+            allFractal_Plant_XYZSRA[OBJ_NUM][1] = RxP[1]; 
+            allFractal_Plant_XYZSRA[OBJ_NUM][2] = RxP[2];
+          }          
+        }
+          
       }
     }
-*/    
   }    
 
   if (Work_with_2D_or_3D == 0) {
@@ -40964,7 +41030,7 @@ String[][] BAR_b_Items = {
                           {"2", "X<", "X|", "X>", "PivotX", "1.0"},
                           {"2", "Y<","Y|", "Y>", "PivotY", "1.0"},
                           {"2", "Z<","Z|", "Z>", "PivotZ", "1.0"},
-                          {"1", "DrL±", "DrM+", "DrM-", "Drop", "1.0"},
+                          //{"1", "DrL±", "DrM+", "DrM-", "Drop", "1.0"},
                           {"3", "MVx", "MVy", "MVz", "MV³", "Move", "1.0"},
                           {"3", "SCx", "SCy", "SCz", "SC³", "Scale", "1.0"}, 
                           {"3", "RTx", "RTy", "RTz", "Rotate", "1.0"}, 
@@ -41627,7 +41693,7 @@ void set_to_Modify_FaceFirstVertex (int n) {
 void set_to_Modify_Drop (int n) {
   View_Select_Create_Modify = 17;
   
-  Modify_Object_Parameters = n; // 0:LandSurface± 1:ModelSurface+ 2:ModelSurface-
+  Modify_Object_Parameters = n; // 0:LandSurface± 1:ModelSurface- 2:ModelSurface+
   
   ROLLOUT_Update = 1;
 }
