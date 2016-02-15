@@ -31177,6 +31177,7 @@ void mouseClicked () {
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Drop on LandSurface")) {
               
               SOLARCHVISION_drop_Selection_onLandSurface();
+              WIN3D_Update = 1;
               
               set_to_Modify_Drop(0);
               SOLARCHVISION_highlight_in_BAR_b("DrL±");
@@ -39007,6 +39008,9 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
 
 
 void SOLARCHVISION_drop_Selection_onLandSurface () {
+
+  float max_dist = 100; // <<<<<< 100m tolerance 
+
   
   if (Work_with_2D_or_3D == 9) {
 
@@ -39047,17 +39051,10 @@ void SOLARCHVISION_drop_Selection_onLandSurface () {
         float x = allObject2D_XYZS[OBJ_NUM][0];
         float y = allObject2D_XYZS[OBJ_NUM][1];
         float z = allObject2D_XYZS[OBJ_NUM][2];
-        
 
-        float[] ray_direction = new float [3];
         float[] ray_start = {x, y, z};
-        float[] ray_end = {x, y, z - 1000};
 
-        ray_direction[0] = ray_end[0] - ray_start[0];
-        ray_direction[1] = ray_end[1] - ray_start[1];
-        ray_direction[2] = ray_end[2] - ray_start[2];
-        
-        float max_dist = 2 * dist(ray_start[0], ray_start[1], ray_start[2], ray_end[0], ray_end[1], ray_end[2]);
+        float[] ray_direction = {0,0,-1};
 
         float[] RxP = new float [5];
 
@@ -39068,6 +39065,17 @@ void SOLARCHVISION_drop_Selection_onLandSurface () {
           allObject2D_XYZS[OBJ_NUM][1] = RxP[1]; 
           allObject2D_XYZS[OBJ_NUM][2] = RxP[2];
         }
+        else {
+          ray_direction[2] = 1; // <<<< going upwards
+          RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
+          
+          if (RxP[4] > 0) {
+            allObject2D_XYZS[OBJ_NUM][0] = RxP[0]; 
+            allObject2D_XYZS[OBJ_NUM][1] = RxP[1]; 
+            allObject2D_XYZS[OBJ_NUM][2] = RxP[2];
+          }          
+        }
+          
       }
     }
   }  
