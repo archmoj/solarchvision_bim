@@ -31174,27 +31174,22 @@ void mouseClicked () {
               BAR_b_Update = 1;  
             }
             
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Drop on LandSurface (Down)")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Drop on LandSurface")) {
               set_to_Modify_Drop(0);
-              SOLARCHVISION_highlight_in_BAR_b("DrLD");
-              BAR_b_Update = 1;  
-            }
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Drop on LandSurface (Up)")) {
-              set_to_Modify_Drop(1);
-              SOLARCHVISION_highlight_in_BAR_b("DrLU");
-              BAR_b_Update = 1;  
-            }
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Drop on ModelSurface (Up)")) {
-              set_to_Modify_Drop(2);
-              SOLARCHVISION_highlight_in_BAR_b("DrMU");
+              SOLARCHVISION_highlight_in_BAR_b("DrL±");
               BAR_b_Update = 1;  
             }
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Drop on ModelSurface (Down)")) {
-              set_to_Modify_Drop(3);
-              SOLARCHVISION_highlight_in_BAR_b("DrMD");
+              set_to_Modify_Drop(1);
+              SOLARCHVISION_highlight_in_BAR_b("DrM-");
               BAR_b_Update = 1;  
             }                      
-            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Drop on ModelSurface (Up)")) {
+              set_to_Modify_Drop(2);
+              SOLARCHVISION_highlight_in_BAR_b("DrM+");
+              BAR_b_Update = 1;  
+            }
+
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Move")) {
               //set_to_Modify_Move(selected_posVector);
               set_to_Modify_Move(3);
@@ -39357,10 +39352,10 @@ void dessin_Drop (int _type, float x, float y, float r) {
   
   float d = 0.8 * r;
 
-  if ((_type == 1) || (_type == 2)) {
+  if (_type == 1) {
     ellipse(0, 0, 2 * d, d);
   } 
-  if ((_type == 3) || (_type == 4)) {
+  if ((_type == 2) || (_type == 3)) {
     beginShape();
     vertex(0, 0.5 * d);
     vertex(cos_ang(30) * d, 0);
@@ -39376,13 +39371,23 @@ void dessin_Drop (int _type, float x, float y, float r) {
   stroke(255); 
   fill(0);
 
-  if ((_type == 1) || (_type == 4)) {
+  if (_type == 1) {
+    line(0, 0, 0, -d);  
+    line(0, 0, 0 - 0.25 * d, 0.25 * -d);
+    line(0, 0, 0 + 0.25 * d, 0.25 * -d);
+    
+    line(0, 0, 0, d);  
+    line(0, 0, 0 - 0.25 * d, 0.25 * d);
+    line(0, 0, 0 + 0.25 * d, 0.25 * d);    
+  }
+
+  if (_type == 2) {
     line(0, 0.25 * d, 0, -d);  
     line(0, 0.25 * d, 0 - 0.25 * d, 0);
     line(0, 0.25 * d, 0 + 0.25 * d, 0);
   }
   
-  if ((_type == 2) || (_type == 3)) {
+  if (_type == 3) {
     line(0, 0.25 * -d, 0, d);  
     line(0, 0.25 * -d, 0 - 0.25 * d, 0);
     line(0, 0.25 * -d, 0 + 0.25 * d, 0);
@@ -40512,7 +40517,7 @@ String[][] BAR_a_Items = {
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Section",  "Select Camera", "Select LandPoint", "Select Fractal_Plant", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Soft Selection", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
                         {"Edit", "Duplicate Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces"},
                         {"Modify", "Save Current Pivot", "Reset Saved Pivot", "Use Selection Pivot", "Use Origin Pivot", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
-                        {"Match", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunkSize", "Pick LeafSize", "Pick AllFractal_PlantProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunkSize", "Assign LeafSize", "Assign AllFractal_PlantProps", "Assign SolarPivot", "Drop on LandSurface (Up)", "Drop on LandSurface (Down)", "Drop on ModelSurface (Up)", "Drop on ModelSurface (Down)",},
+                        {"Match", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunkSize", "Pick LeafSize", "Pick AllFractal_PlantProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunkSize", "Assign LeafSize", "Assign AllFractal_PlantProps", "Assign SolarPivot", "Drop on LandSurface", "Drop on ModelSurface (Up)", "Drop on ModelSurface (Down)"},
                         {"Action", "Undo", "Redo", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
 
                       };
@@ -40853,7 +40858,7 @@ String[][] BAR_b_Items = {
                           {"2", "X<", "X|", "X>", "PivotX", "1.0"},
                           {"2", "Y<","Y|", "Y>", "PivotY", "1.0"},
                           {"2", "Z<","Z|", "Z>", "PivotZ", "1.0"},
-                          {"1", "DrLD", "DrLU", "DrMU", "DrMD", "Drop", "1.0"},
+                          {"1", "DrL±", "DrM+", "DrM-", "Drop", "1.0"},
                           {"3", "MVx", "MVy", "MVz", "MV³", "Move", "1.0"},
                           {"3", "SCx", "SCy", "SCz", "SC³", "Scale", "1.0"}, 
                           {"3", "RTx", "RTy", "RTz", "Rotate", "1.0"}, 
@@ -41516,7 +41521,7 @@ void set_to_Modify_FaceFirstVertex (int n) {
 void set_to_Modify_Drop (int n) {
   View_Select_Create_Modify = 17;
   
-  Modify_Object_Parameters = n; // 0:LandSurface 1:ModelSurface
+  Modify_Object_Parameters = n; // 0:LandSurface± 1:ModelSurface+ 2:ModelSurface-
   
   ROLLOUT_Update = 1;
 }
