@@ -231,7 +231,7 @@ int Work_with_2D_or_3D = 3; // 1:Fractal_Plants 2:2D, 3:3D, 4:Face, 5:Vertex, 6:
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
-int View_Select_Create_Modify = 0; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunkSize 12:LeafSize 13:AllFractal_PlantProps 14:SolarPivot 15:FaceNormal 16:FaceFirstVertex 17:Drop 
+int View_Select_Create_Modify = 0; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunkSize 12:LeafSize 13:AllFractal_PlantProps 14:SolarPivot 15:FaceNormal 16:FaceFirstVertex 17:Drop 18:GetLength 
 int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. fractal trees
 
@@ -24581,9 +24581,9 @@ void SOLARCHVISION_LoadLAND_MESH (String ProjectSite) {
   
   for (int i = 0; i < LAND_n_I; i += 1) {
     for (int j = 0; j < LAND_n_J; j += 1) {
-      LAND_MESH[i][j][0] = FLOAT_undefined;
-      LAND_MESH[i][j][1] = FLOAT_undefined;
-      LAND_MESH[i][j][2] = FLOAT_undefined;
+      LAND_MESH[i][j][0] = 0; //FLOAT_undefined;
+      LAND_MESH[i][j][1] = 0; //FLOAT_undefined;
+      LAND_MESH[i][j][2] = 0; //FLOAT_undefined;
     }
   }
 
@@ -29898,6 +29898,120 @@ void mouseReleased () {
                 WIN3D_Update = 1;                        
                 
               }
+              
+      
+              if (View_Select_Create_Modify == 18) {      
+               
+                float x1 = 0;
+                float y1 = 0;
+                float z1 = 0;
+                
+                float x2 = 0;
+                float y2 = 0;
+                float z2 = 0;
+                
+                for (int q = 0; q < 2; q++) {
+                
+                  float Image_X = 0;
+                  float Image_Y = 0;
+                  
+                  if (q == 0) {
+                    Image_X = X_click1 - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
+                    Image_Y = Y_click1 - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);
+                  }
+                  if (q == 1) {
+                    Image_X = X_click2 - (WIN3D_CX_View + 0.5 * WIN3D_X_View);
+                    Image_Y = Y_click2 - (WIN3D_CY_View + 0.5 * WIN3D_Y_View);                    
+                  }
+          
+                  float[] ray_direction = new float [3];
+          
+                  float[] ray_start = {CAM_x, CAM_y, CAM_z};
+          
+                  float[] ray_end = SOLARCHVISION_calculate_Click3D(Image_X, Image_Y);
+                  
+                  ray_start[0] /= OBJECTS_scale;
+                  ray_start[1] /= OBJECTS_scale;
+                  ray_start[2] /= OBJECTS_scale;          
+                  
+                  ray_end[0] /= OBJECTS_scale;
+                  ray_end[1] /= OBJECTS_scale;
+                  ray_end[2] /= OBJECTS_scale;
+          
+                  if (WIN3D_View_Type == 0) {
+                    float[] ray_center = SOLARCHVISION_calculate_Click3D(0, 0);
+          
+                    ray_center[0] /= OBJECTS_scale;
+                    ray_center[1] /= OBJECTS_scale;
+                    ray_center[2] /= OBJECTS_scale;
+                    
+                    ray_start[0] += ray_end[0] - ray_center[0];
+                    ray_start[1] += ray_end[1] - ray_center[1];
+                    ray_start[2] += ray_end[2] - ray_center[2];
+                  }
+                  
+                  ray_direction[0] = ray_end[0] - ray_start[0];
+                  ray_direction[1] = ray_end[1] - ray_start[1];
+                  ray_direction[2] = ray_end[2] - ray_start[2];
+                  
+                  float max_dist = 2 * dist(ray_start[0], ray_start[1], ray_start[2], ray_end[0], ray_end[1], ray_end[2]);
+
+                  float[] RxP = new float [5]; 
+
+                  if (mouseButton == RIGHT) {
+                    RxP = SOLARCHVISION_0Dintersect(ray_start, ray_direction, max_dist);
+                  }
+                  else if (mouseButton == LEFT) {
+                    RxP = SOLARCHVISION_3Dintersect(ray_start, ray_direction, max_dist);
+                  }
+                  
+                  if (RxP[4] > 0) {
+                    if (q == 0) {
+                      x1 = RxP[0];
+                      y1 = RxP[1];
+                      z1 = RxP[2];
+                    }
+                    if (q == 1) {
+                      x2 = RxP[0];
+                      y2 = RxP[1];
+                      z2 = RxP[2];
+                    }
+                  }
+                }
+
+                float dx = x2 - x1;
+                float dy = y2 - y1;
+                float dz = z2 - z1;
+                
+                float dx_rot = dx * cos_ang(WIN3D_RZ_coordinate) - dy * sin_ang(WIN3D_RZ_coordinate);
+                float dy_rot = dx * sin_ang(WIN3D_RZ_coordinate) + dy * cos_ang(WIN3D_RZ_coordinate);
+                float dz_rot = dz;
+                
+                if (Modify_Object_Parameters == 0) {
+                  Create_Input_Length = dist(x1, y1, z1, x2, y2, z2);
+                }
+                if (Modify_Object_Parameters == 1) {
+                  Create_Input_Width = dist(x1, y1, z1, x2, y2, z2);
+                }
+                if (Modify_Object_Parameters == 2) {
+                  Create_Input_Height = dist(x1, y1, z1, x2, y2, z2);
+                }
+                if (Modify_Object_Parameters == 3) {
+                  Create_Input_Length = abs(dx_rot);
+                  Create_Input_Width = abs(dy_rot);
+                  Create_Input_Height = abs(dz_rot);
+                }
+                if (Modify_Object_Parameters == 4) {
+                  Create_Input_Length = abs(dx_rot);
+                  Create_Input_Width = abs(dy_rot);
+                }
+                if (Modify_Object_Parameters == 5) {
+                  Create_Input_Orientation = atan2_ang(y2 - y1, x2 - x1) + 90;
+                }
+                  
+                ROLLOUT_Update = 1;
+                
+              }              
             }
           }
           
@@ -31202,12 +31316,38 @@ void mouseClicked () {
               WIN3D_Update = 1;                  
             }
 
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Move")) {
-              //set_to_Modify_Move(selected_posVector);
-              set_to_Modify_Move(3);
-              SOLARCHVISION_highlight_in_BAR_b("MV³");
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Get dX")) {
+              set_to_Modify_GetLength(0);
+              SOLARCHVISION_highlight_in_BAR_b("GLx");
               BAR_b_Update = 1;  
             }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Get dY")) {
+              set_to_Modify_GetLength(1);
+              SOLARCHVISION_highlight_in_BAR_b("GLy");
+              BAR_b_Update = 1;  
+            }              
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Get dZ")) {
+              set_to_Modify_GetLength(2);
+              SOLARCHVISION_highlight_in_BAR_b("GLz");
+              BAR_b_Update = 1;  
+            }             
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Get dXYZ")) {
+              set_to_Modify_GetLength(3);
+              SOLARCHVISION_highlight_in_BAR_b("GL³");
+              BAR_b_Update = 1;  
+            }            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Get dXY")) {
+              set_to_Modify_GetLength(4);
+              SOLARCHVISION_highlight_in_BAR_b("GL²");
+              BAR_b_Update = 1;  
+            }      
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Get Angle")) {
+              set_to_Modify_GetLength(5);
+              SOLARCHVISION_highlight_in_BAR_b("GLa");
+              BAR_b_Update = 1;  
+            }               
+
+
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("MoveX")) {
               set_to_Modify_Move(0);
               SOLARCHVISION_highlight_in_BAR_b("MVx");
@@ -31222,13 +31362,14 @@ void mouseClicked () {
               set_to_Modify_Move(2);
               SOLARCHVISION_highlight_in_BAR_b("MVz");
               BAR_b_Update = 1;  
-            }              
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Scale")) {
-              //set_to_Modify_Scale(selected_scaleVector);
-              set_to_Modify_Scale(3);
-              SOLARCHVISION_highlight_in_BAR_b("SC³");
+            }             
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Move")) {
+              set_to_Modify_Move(3);
+              SOLARCHVISION_highlight_in_BAR_b("MV³");
               BAR_b_Update = 1;  
             }
+            
+
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("ScaleX")) {
               set_to_Modify_Scale(0);
               SOLARCHVISION_highlight_in_BAR_b("SCx");
@@ -31243,12 +31384,14 @@ void mouseClicked () {
               set_to_Modify_Scale(2);
               SOLARCHVISION_highlight_in_BAR_b("SCz");
               BAR_b_Update = 1;  
-            }                
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Rotate")) {
-              //set_to_Modify_Rotate(selected_rotVector);
-              set_to_Modify_Rotate(2); // <<<<<<
+            }    
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Scale")) {
+              set_to_Modify_Scale(3);
+              SOLARCHVISION_highlight_in_BAR_b("SC³");
               BAR_b_Update = 1;  
             }
+            
+
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("RotateX")) {
               set_to_Modify_Rotate(0);
               SOLARCHVISION_highlight_in_BAR_b("RTx");
@@ -31264,6 +31407,10 @@ void mouseClicked () {
               SOLARCHVISION_highlight_in_BAR_b("RTz");
               BAR_b_Update = 1;  
             }
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Rotate")) {
+              set_to_Modify_Rotate(2);
+              BAR_b_Update = 1;  
+            }            
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("SolarPivot")) {
               set_to_Modify_SolarPivot(0);
@@ -33641,7 +33788,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
       //Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 0, 9, 1), 1));
     
-      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -17, 17, 1), 1));
+      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -17, 18, 1), 1));
       //View_XYZ_ChangeOption = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_ChangeOption" , View_XYZ_ChangeOption, 0, 6, 1), 1));
       //Modify_Object_Parameters = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Object_Parameters" , Modify_Object_Parameters, 0, 9, 1), 1));
 
@@ -39573,6 +39720,96 @@ void dessin_Drop (int _type, float x, float y, float r) {
 }
 
 
+void dessin_GetLength (int _type, float x, float y, float r) {
+
+  pushMatrix();
+  translate(x, y);
+
+  strokeWeight(1);
+  stroke(255); 
+  noFill();
+
+
+  float d = 0.8 * r;
+
+  beginShape();
+  vertex(0, 0);
+  vertex(cos_ang(30) * d, -sin_ang(30) * d);
+  vertex(0, -d);
+  vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+  endShape(CLOSE);
+
+  beginShape();
+  vertex(cos_ang(30) * d, -sin_ang(30) * d);
+  vertex(0, 0);
+  vertex(0, d);
+  vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
+  endShape(CLOSE);
+
+  beginShape();
+  vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+  vertex(0, 0);
+  vertex(0, d);
+  vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
+  endShape(CLOSE);
+
+
+  strokeWeight(2);
+  stroke(0,127,255); 
+  fill(0);
+  
+  if (_type == 1) {
+    line(0, 0, cos_ang(30) * d, -sin_ang(30) * d);
+  }
+  if (_type == 2) {
+    line(0, 0, cos_ang(30) * d, -sin_ang(30) * d);
+  }    
+  if (_type == 3) {
+    line(0, 0, -cos_ang(30) * d, -sin_ang(30) * d);    
+  }      
+  if (_type == 4) {
+    beginShape();
+    vertex(0, 0);
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, -d);
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    endShape(CLOSE);  
+    
+    beginShape();
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0, d);
+    vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    endShape(CLOSE);
+  
+    beginShape();
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, 0);
+    vertex(0, d);
+    vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
+    endShape(CLOSE);    
+  }     
+  if (_type == 5) {
+    beginShape();
+    vertex(0, 0);
+    vertex(cos_ang(30) * d, -sin_ang(30) * d);
+    vertex(0, -d);
+    vertex(-cos_ang(30) * d, -sin_ang(30) * d);
+    endShape(CLOSE);  
+  }    
+  if (_type == 6) {
+    line(0, 0, 0, -d);
+  }      
+
+
+  strokeWeight(0);
+  
+  popMatrix();
+
+  BAR_b_Display_Text = 0;
+}
+
+
 void dessin_Move (int _type, float x, float y, float r) {
   
   pushMatrix();
@@ -39998,14 +40235,14 @@ void dessin_ProjectionType (int _type, float x, float y, float r) {
     beginShape();
     vertex(cos_ang(30) * d, -sin_ang(30) * d);
     vertex(0, 0);
-    vertex(0,d);
+    vertex(0, d);
     vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
     endShape(CLOSE);
 
     beginShape();
     vertex(-cos_ang(30) * d, -sin_ang(30) * d);
     vertex(0, 0);
-    vertex(0,d);
+    vertex(0, d);
     vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
     endShape(CLOSE);
 
@@ -40023,14 +40260,14 @@ void dessin_ProjectionType (int _type, float x, float y, float r) {
     beginShape();
     vertex(cos_ang(30) * d, -sin_ang(30) * d);
     vertex(0, 0);
-    vertex(0,d);
+    vertex(0, d);
     vertex(0.75 * sin_ang(120) * d, 0.75 * -cos_ang(120) * d);
     endShape(CLOSE);
 
     beginShape();
     vertex(-cos_ang(30) * d, -sin_ang(30) * d);
     vertex(0, 0);
-    vertex(0,d);
+    vertex(0, d);
     vertex(0.75 * sin_ang(240) * d, 0.75 * -cos_ang(240) * d);
     endShape(CLOSE);
   }
@@ -40077,14 +40314,14 @@ void dessin_Truck (int _type, float x, float y, float r) {
     beginShape();
     vertex(cos_ang(30) * d, -sin_ang(30) * d);
     vertex(0, 0);
-    vertex(0,d);
+    vertex(0, d);
     vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
     endShape(CLOSE);
   
     beginShape();
     vertex(-cos_ang(30) * d, -sin_ang(30) * d);
     vertex(0, 0);
-    vertex(0,d);
+    vertex(0, d);
     vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
     endShape(CLOSE);
   
@@ -40109,14 +40346,14 @@ void dessin_Truck (int _type, float x, float y, float r) {
     beginShape();
     vertex(cos_ang(30) * d, -sin_ang(30) * d);
     vertex(0, 0);
-    vertex(0,d);
+    vertex(0, d);
     vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
     endShape(CLOSE);
   
     beginShape();
     vertex(-cos_ang(30) * d, -sin_ang(30) * d);
     vertex(0, 0);
-    vertex(0,d);
+    vertex(0, d);
     vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
     endShape(CLOSE);
   
@@ -40365,14 +40602,14 @@ void dessin_LookAtSelection (int _type, float x, float y, float r) {
     beginShape();
     vertex(cos_ang(30) * d, -sin_ang(30) * d);
     vertex(0, 0);
-    vertex(0,d);
+    vertex(0, d);
     vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
     endShape(CLOSE);
   
     beginShape();
     vertex(-cos_ang(30) * d, -sin_ang(30) * d);
     vertex(0, 0);
-    vertex(0,d);
+    vertex(0, d);
     vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
     endShape(CLOSE);
   }    
@@ -40417,14 +40654,14 @@ void dessin_CameraRoll (int _type, float x, float y, float r) {
     beginShape();
     vertex(cos_ang(30) * d, -sin_ang(30) * d);
     vertex(0, 0);
-    vertex(0,d);
+    vertex(0, d);
     vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
     endShape(CLOSE);
   
     beginShape();
     vertex(-cos_ang(30) * d, -sin_ang(30) * d);
     vertex(0, 0);
-    vertex(0,d);
+    vertex(0, d);
     vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
     endShape(CLOSE);
   }  
@@ -40586,14 +40823,14 @@ void dessin_CameraDistance (int _type, float x, float y, float r) {
     beginShape();
     vertex(cos_ang(30) * d, -sin_ang(30) * d);
     vertex(0, 0);
-    vertex(0,d);
+    vertex(0, d);
     vertex(cos_ang(30) * d, (1 - sin_ang(30)) * d);
     endShape(CLOSE);
   
     beginShape();
     vertex(-cos_ang(30) * d, -sin_ang(30) * d);
     vertex(0, 0);
-    vertex(0,d);
+    vertex(0, d);
     vertex(-cos_ang(30) * d, (1 - sin_ang(30)) * d);
     endShape(CLOSE);
   }  
@@ -40685,7 +40922,7 @@ String[][] BAR_a_Items = {
                         {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Pre-bake Selected Sections", "Process Active Impact", "Process Passive Impact", "Process Spatial Impact", "Run wind 3D-model"},
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
-                        {"Create", "Viewport >> Camera", "Camera", "Section", "Fractal_Plant", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7"}, 
+                        {"Create", "Viewport >> Camera", "Camera", "Section", "Fractal_Plant", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"},
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Section",  "Select Camera", "Select LandPoint", "Select Fractal_Plant", "Select Object2D", "Select Polymesh", "Select Face", "Select Vertex", "Soft Selection", "Polymesh >> Face", "Polymesh >> Vertex", "Vertex >> Polymesh", "Vertex >> Face", "Face >> Vertex", "Face >> Polymesh", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
                         {"Edit", "Duplicate Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces"},
                         {"Modify", "Save Current Pivot", "Reset Saved Pivot", "Use Selection Pivot", "Use Origin Pivot", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
@@ -41031,6 +41268,7 @@ String[][] BAR_b_Items = {
                           {"2", "Y<","Y|", "Y>", "PivotY", "1.0"},
                           {"2", "Z<","Z|", "Z>", "PivotZ", "1.0"},
                           //{"1", "DrL±", "DrM+", "DrM-", "Drop", "1.0"},
+                          {"4", "GLx", "GLy", "GLz", "GL³", "GL²", "GLa", "GetLength", "1.0"},
                           {"3", "MVx", "MVy", "MVz", "MV³", "Move", "1.0"},
                           {"3", "SCx", "SCy", "SCz", "SC³", "Scale", "1.0"}, 
                           {"3", "RTx", "RTy", "RTz", "Rotate", "1.0"}, 
@@ -41250,6 +41488,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("Rotate")) set_to_Modify_Rotate(j - 1);
         if (Bar_Switch.equals("Scale")) set_to_Modify_Scale(j - 1);
         if (Bar_Switch.equals("Move")) set_to_Modify_Move(j - 1);
+        if (Bar_Switch.equals("GetLength")) set_to_Modify_GetLength(j - 1);
         if (Bar_Switch.equals("Drop")) set_to_Modify_Drop(j - 1);
 
         if (Bar_Switch.equals("ProjectionType")) set_to_View_ProjectionType(j - 1);
@@ -41309,6 +41548,9 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("Drop")) {
           dessin_Drop(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }
+        if (Bar_Switch.equals("GetLength")) {
+          dessin_GetLength(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
+        }        
         if (Bar_Switch.equals("Move")) {
           dessin_Move(j, cx + 0.5 * Item_width, cy, 0.5 * b_pixel);
         }
@@ -41697,6 +41939,16 @@ void set_to_Modify_Drop (int n) {
   
   ROLLOUT_Update = 1;
 }
+
+
+void set_to_Modify_GetLength (int n) {
+  View_Select_Create_Modify = 18;
+  
+  Modify_Object_Parameters = n; // 0:x 1:y 2:z 3:xyz 4:xy 5:angle(on XY plane) 
+  
+  ROLLOUT_Update = 1;
+}
+
 
 
 
