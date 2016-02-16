@@ -18855,8 +18855,8 @@ void SOLARCHVISION_export_objects () {
       float rh = allObject2D_XYZS[f][3] * 0.5;
       float rw = rh * Object2DImageRatios[n];
       
-      float t = WIN3D_RZ_coordinate * PI / 180.0;
-      if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
+      float t = 0; //WIN3D_RZ_coordinate * PI / 180.0;
+      //if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
       
       if (allObject2D_MAP[f] < 0) t += PI;            
       
