@@ -62,7 +62,7 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 1; 
+int STATION_NUMBER = 7; 
 
 String[][] DEFINED_STATIONS = {
   
@@ -1880,7 +1880,7 @@ void SOLARCHVISION_update_station (int Step) {
   
   if ((Step == 0) || (Step == 8)) SOLARCHVISION_remove_2Dobjects();
   
-  if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_2Dobjects_onLand();
+  //if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_2Dobjects_onLand();
 
 }
 
@@ -1889,7 +1889,7 @@ void SOLARCHVISION_update_models (int Step) {
    if ((Step == 0) || (Step == 1)) SOLARCHVISION_remove_3Dobjects();
    //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
    if ((Step == 0) || (Step == 3)) SOLARCHVISION_remove_ParametricGeometries();
-   //if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
+   if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricGeometries();
    if ((Step == 0) || (Step == 5)) SOLARCHVISION_calculate_SpatialImpact_selectedSections();
 
 }
@@ -19733,106 +19733,117 @@ void SOLARCHVISION_export_objects () {
     }    
     
     num_vertices_added = 0;
-    
-    for (int q = 1; q < windFlow_Lines.length; q++) {
-
-      int n1 = windFlow_Lines[q][0];
-      int n2 = windFlow_Lines[q][1];
-      
-      float x1 = windFlow_Vertices[n1][0];
-      float y1 = windFlow_Vertices[n1][1];
-      float z1 = windFlow_Vertices[n1][2];
-
-      float x2 = windFlow_Vertices[n2][0];
-      float y2 = windFlow_Vertices[n2][1];
-      float z2 = windFlow_Vertices[n2][2];
             
+    for (int _turn = 1; _turn < 4; _turn += 1) {    
       
-      float _val = windFlow_Pallet_MLT * windFlow_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
-
-      float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
-      if (PAL_DIR == -1) _u = 1 - _u;
-      if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
-      if (PAL_DIR == 2) _u =  0.5 * _u;
-
-      float the_dist = dist(x1, y1, z1, x2, y2, z2);
-      
-      float[] W = {x2 - x1, y2 - y1, z2 - z1};
-      W = fn_normalize(W);
-  
-      float Alpha = asin_ang(W[2]);
-      float Beta = atan2_ang(W[1], W[0]) + 90;   
-
-      
-
-      objOutput.println("v " + nf(x1, 0, objExportPrecisionVertex) + " " +  nf(y1, 0, objExportPrecisionVertex) + " " +  nf(z1, 0, objExportPrecisionVertex));
-      objOutput.println("v " + nf(x2, 0, objExportPrecisionVertex) + " " +  nf(y2, 0, objExportPrecisionVertex) + " " +  nf(z2, 0, objExportPrecisionVertex));
+      if (_turn == 3) {
+        obj_lastGroupNumber += 1;
+        objOutput.println("g windFlow");
+        
+        if (objExportMaterialLibrary != 0) {
+          objOutput.println("usemtl windFlow");
+        }               
+      }        
     
-      for (int i = 0; i < 4; i++) {
-
-        float px = 0.1 * the_dist * cos(i * HALF_PI);
-        float py = 0;
-        float pz = 0.1 * the_dist * sin(i * HALF_PI); 
-      
-        float pz_rot = pz;
-        float px_rot = px * cos_ang(Beta) - py * sin_ang(Beta);
-        float py_rot = px * sin_ang(Beta) + py * cos_ang(Beta);  
-        
-        px = px_rot;
-        py = py_rot;
-        pz = pz_rot;
-      
-        px_rot = px;
-        py_rot = py * cos_ang(Alpha) - pz * sin_ang(Alpha);
-        pz_rot = py * sin_ang(Alpha) + pz * cos_ang(Alpha);
-    
-        px = px_rot;
-        py = py_rot;
-        pz = pz_rot;    
+      for (int q = 1; q < windFlow_Lines.length; q++) {
   
-        objOutput.println("v " + nf(x1 + px, 0, objExportPrecisionVertex) + " " +  nf(y1 + py, 0, objExportPrecisionVertex) + " " +  nf(z1 + pz, 0, objExportPrecisionVertex));      
+        int n1 = windFlow_Lines[q][0];
+        int n2 = windFlow_Lines[q][1];
+        
+        float x1 = windFlow_Vertices[n1][0];
+        float y1 = windFlow_Vertices[n1][1];
+        float z1 = windFlow_Vertices[n1][2];
+  
+        float x2 = windFlow_Vertices[n2][0];
+        float y2 = windFlow_Vertices[n2][1];
+        float z2 = windFlow_Vertices[n2][2];
+              
+        
+        float _val = windFlow_Pallet_MLT * windFlow_Vertices[n1][3]; // startpoint value = endpoint value <<<<<<<<<<
+  
+        float _u = 0.5 + 0.5 * (PAL_Multiplier * _val);
+        if (PAL_DIR == -1) _u = 1 - _u;
+        if (PAL_DIR == -2) _u = 0.5 - 0.5 * _u;
+        if (PAL_DIR == 2) _u =  0.5 * _u;
+  
+        float the_dist = dist(x1, y1, z1, x2, y2, z2);
+        
+        float[] W = {x2 - x1, y2 - y1, z2 - z1};
+        W = fn_normalize(W);
+    
+        float Alpha = asin_ang(W[2]);
+        float Beta = atan2_ang(W[1], W[0]) + 90;   
+  
+        
+        if (_turn == 1) {
+          objOutput.println("v " + nf(x1, 0, objExportPrecisionVertex) + " " +  nf(y1, 0, objExportPrecisionVertex) + " " +  nf(z1, 0, objExportPrecisionVertex));
+          objOutput.println("v " + nf(x2, 0, objExportPrecisionVertex) + " " +  nf(y2, 0, objExportPrecisionVertex) + " " +  nf(z2, 0, objExportPrecisionVertex));
+        
+          for (int i = 0; i < 4; i++) {
+    
+            float px = 0.1 * the_dist * cos(i * HALF_PI);
+            float py = 0;
+            float pz = 0.1 * the_dist * sin(i * HALF_PI); 
+          
+            float pz_rot = pz;
+            float px_rot = px * cos_ang(Beta) - py * sin_ang(Beta);
+            float py_rot = px * sin_ang(Beta) + py * cos_ang(Beta);  
+            
+            px = px_rot;
+            py = py_rot;
+            pz = pz_rot;
+          
+            px_rot = px;
+            py_rot = py * cos_ang(Alpha) - pz * sin_ang(Alpha);
+            pz_rot = py * sin_ang(Alpha) + pz * cos_ang(Alpha);
+        
+            px = px_rot;
+            py = py_rot;
+            pz = pz_rot;    
+      
+            objOutput.println("v " + nf(x1 + px, 0, objExportPrecisionVertex) + " " +  nf(y1 + py, 0, objExportPrecisionVertex) + " " +  nf(z1 + pz, 0, objExportPrecisionVertex));      
+          }
+        }
+        
+        
+        if (_turn == 2) {
+          for (int i = 0; i < 6; i++) {
+            
+            float u1 = 0.5 * (_u + 0.5);
+            
+            if (u1 > 0.999) u1 = 0.999;
+            if (u1 < 0.001) u1 = 0.001;
+            
+            objOutput.println("vt " + nf(u1, 0, objExportPrecisionVtexture) + " 0 0");
+          }
+        }
+        
+        if (_turn == 3) {
+          num_vertices_added += 6;
+  
+          String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 5, 0); 
+          String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 4, 0);
+          String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0);
+          String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
+          String n5_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
+          String n6_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
+          
+          String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 5, 0); 
+          String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 4, 0);
+          String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0);
+          String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);          
+          String m5_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);          
+          String m6_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);          
+          
+          objOutput.println("f " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+          objOutput.println("f " + n2_txt + "/" + m2_txt + " " + n4_txt + "/" + m4_txt + " " + n5_txt + "/" + m5_txt);
+          objOutput.println("f " + n2_txt + "/" + m2_txt + " " + n5_txt + "/" + m5_txt + " " + n6_txt + "/" + m6_txt);
+          objOutput.println("f " + n2_txt + "/" + m2_txt + " " + n6_txt + "/" + m6_txt + " " + n3_txt + "/" + m3_txt);
+          
+          obj_lastFaceNumber += 4;
+        }
+  
       }
-      
-      for (int i = 0; i < 6; i++) {
-        
-        float u1 = 0.5 * (_u + 0.5);
-        
-        if (u1 > 0.999) u1 = 0.999;
-        if (u1 < 0.001) u1 = 0.001;
-        
-        objOutput.println("vt " + nf(u1, 0, objExportPrecisionVtexture) + " 0 0");
-      }
-      
-      num_vertices_added += 6;
-      
-      obj_lastGroupNumber += 1;
-      objOutput.println("g windFlow_" + nf(q, 0));
-      
-      if (objExportMaterialLibrary != 0) {
-        objOutput.println("usemtl windFlow");
-      }      
-
-      String n1_txt = nf(obj_lastVertexNumber + num_vertices_added - 5, 0); 
-      String n2_txt = nf(obj_lastVertexNumber + num_vertices_added - 4, 0);
-      String n3_txt = nf(obj_lastVertexNumber + num_vertices_added - 3, 0);
-      String n4_txt = nf(obj_lastVertexNumber + num_vertices_added - 2, 0);
-      String n5_txt = nf(obj_lastVertexNumber + num_vertices_added - 1, 0);
-      String n6_txt = nf(obj_lastVertexNumber + num_vertices_added - 0, 0);
-      
-      String m1_txt = nf(obj_lastVtextureNumber + num_vertices_added - 5, 0); 
-      String m2_txt = nf(obj_lastVtextureNumber + num_vertices_added - 4, 0);
-      String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 3, 0);
-      String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 2, 0);          
-      String m5_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);          
-      String m6_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);          
-      
-      objOutput.println("f " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-      objOutput.println("f " + n2_txt + "/" + m2_txt + " " + n4_txt + "/" + m4_txt + " " + n5_txt + "/" + m5_txt);
-      objOutput.println("f " + n2_txt + "/" + m2_txt + " " + n5_txt + "/" + m5_txt + " " + n6_txt + "/" + m6_txt);
-      objOutput.println("f " + n2_txt + "/" + m2_txt + " " + n6_txt + "/" + m6_txt + " " + n3_txt + "/" + m3_txt);
-      
-      obj_lastFaceNumber += 4;
-
     }
 
     obj_lastVertexNumber += num_vertices_added;
