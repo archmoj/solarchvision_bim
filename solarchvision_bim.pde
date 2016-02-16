@@ -18557,10 +18557,10 @@ void SOLARCHVISION_export_objects () {
           
           if (i + 1 < LAND_n_I) {
             
-            int A = i * LAND_n_J + j + 1;
-            int B = (i + 1) * LAND_n_J + j + 1;
-            int C = (i + 1) * LAND_n_J + j + 2;
-            int D = i * LAND_n_J + j + 2;
+            int A = 2 * (i * LAND_n_J + j + 1) + 0;
+            int B = 2 * (i * LAND_n_J + j + 1) + 1;
+            int C = 2 * ((i + 1) * LAND_n_J + j + 1) + 1;
+            int D = 2 * ((i + 1) * LAND_n_J + j + 1) + 0;
             
             int vNo1 = GRID_firstVertexNumber + A;
             int vNo2 = GRID_firstVertexNumber + B;
