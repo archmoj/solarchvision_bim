@@ -18420,196 +18420,216 @@ void SOLARCHVISION_export_objects () {
         mtlOutput.println("\tmap_d " + objMapsSubfolder + the_filename); // diffuse map
       }
     }
-
-    obj_lastGroupNumber += 1;  
-    objOutput.println("g LandMesh");
-
-    if (objExportMaterialLibrary != 0) {
-      objOutput.println("usemtl LandMesh");
-    }
     
-    num_vertices_added = 0;
-    
-    for (int _turn = 1; _turn < 4; _turn += 1) {
-    
-      for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
-        
-        int the_I = i / LAND_n_J;
-        int the_J = i % LAND_n_J;
-        
-        float x = LAND_MESH[the_I][the_J][0];
-        float y = LAND_MESH[the_I][the_J][1];
-        float z = LAND_MESH[the_I][the_J][2];
+    {
   
-        float u = x / LAND_TEXTURE_scale_U + 0.5;
-        float v = y / LAND_TEXTURE_scale_V + 0.5;
-        
-        if (_turn == 1) {
-          objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z, 0, objExportPrecisionVertex));
-        }
-        
-        if (_turn == 2) {
-          objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
-        }
+      obj_lastGroupNumber += 1;  
+      objOutput.println("g LandMesh");
   
-        if (_turn == 3) {
-          obj_lastVertexNumber += 1;
-          obj_lastVtextureNumber += 1;
+      if (objExportMaterialLibrary != 0) {
+        objOutput.println("usemtl LandMesh");
+      }
+      
+      int GRID_firstVertexNumber = obj_lastVertexNumber;
+      int GRID_firstVtextureNumber = obj_lastVtextureNumber;
+      
+      for (int _turn = 1; _turn < 4; _turn += 1) {
+      
+        for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
           
-          if (the_I < LAND_n_I - 1) { 
-
-            String n1_txt = nf(obj_lastVertexNumber - num_vertices_added + 1, 0); 
-            String n2_txt = nf(obj_lastVertexNumber - num_vertices_added + 2, 0);
-            String n3_txt = nf(obj_lastVertexNumber - num_vertices_added + 3, 0);
-            String n4_txt = nf(obj_lastVertexNumber - num_vertices_added + 4, 0);
-            
-            String m1_txt = nf(obj_lastVtextureNumber - num_vertices_added + 1, 0); 
-            String m2_txt = nf(obj_lastVtextureNumber - num_vertices_added + 2, 0);
-            String m3_txt = nf(obj_lastVtextureNumber - num_vertices_added + 3, 0);
-            String m4_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4, 0);    
-            
-            obj_lastFaceNumber += 1;            
-            objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-            if (objExportBackSides != 0) {
-              obj_lastFaceNumber += 1;
-              objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
-            }   
-            
+          int the_I = i / LAND_n_J;
+          int the_J = i % LAND_n_J;
+          
+          float x = LAND_MESH[the_I][the_J][0];
+          float y = LAND_MESH[the_I][the_J][1];
+          float z = LAND_MESH[the_I][the_J][2];
+    
+          float u = x / LAND_TEXTURE_scale_U + 0.5;
+          float v = y / LAND_TEXTURE_scale_V + 0.5;
+          
+          if (_turn == 1) {
+            objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z, 0, objExportPrecisionVertex));
+          }
+          
+          if (_turn == 2) {
+            objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
+          }
+    
+          if (_turn == 3) {
+            obj_lastVertexNumber += 1;
+            obj_lastVtextureNumber += 1;
           }
           
         }
-        
+      }
+      
+      int f = 0;
+      for (int i = 0; i < LAND_n_I - 1; i += 1) {
+        for (int j = 0; j < LAND_n_J - 1; j += 1) {
+          f += 1;
+          
+          int A = i * LAND_n_J + j + 1;
+          int B = (i + 1) * LAND_n_J + j + 1;
+          int C = (i + 1) * LAND_n_J + j + 2;
+          int D = i * LAND_n_J + j + 2;
+          
+          int vNo1 = GRID_firstVertexNumber + A;
+          int vNo2 = GRID_firstVertexNumber + B;
+          int vNo3 = GRID_firstVertexNumber + C;
+          int vNo4 = GRID_firstVertexNumber + D;
+          
+          int vtNo1 = GRID_firstVtextureNumber + A;
+          int vtNo2 = GRID_firstVtextureNumber + B;
+          int vtNo3 = GRID_firstVtextureNumber + C;
+          int vtNo4 = GRID_firstVtextureNumber + D;
+  
+          String n1_txt = nf(vNo1, 0); 
+          String n2_txt = nf(vNo2, 0); 
+          String n3_txt = nf(vNo3, 0); 
+          String n4_txt = nf(vNo4, 0); 
+          
+          String m1_txt = nf(vtNo1, 0);
+          String m2_txt = nf(vtNo2, 0);
+          String m3_txt = nf(vtNo3, 0);
+          String m4_txt = nf(vtNo4, 0);
+          
+          obj_lastFaceNumber += 1;            
+          objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+          if (objExportBackSides != 0) {
+            obj_lastFaceNumber += 1;
+            objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+          }      
+        }  
+
       }
     }
     
-    int f = 0;
-    for (int i = 0; i < LAND_n_I - 1; i += 1) {
-      for (int j = 0; j < LAND_n_J - 1; j += 1) {
-        f += 1;
-        
-        int A = i * LAND_n_J + j + 1;
-        int B = (i + 1) * LAND_n_J + j + 1;
-        int C = (i + 1) * LAND_n_J + j + 2;
-        int D = i * LAND_n_J + j + 2;
-
-     
-
+    
+    
+    if (Display_LAND_DEPTH != 0) {    
+  
+      obj_lastGroupNumber += 1;  
+      objOutput.println("g LandMesh_depth");
+  
+      if (objExportMaterialLibrary != 0) {
+        objOutput.println("usemtl LandMesh");
       }
-    }
-    
-    obj_lastVertexNumber += num_vertices_added;
-    obj_lastVtextureNumber += num_vertices_added; 
-
-    
-    
-    /*
-    if (Display_LAND_TEXTURE != 0) {
       
-      if (Display_LAND_DEPTH != 0) {
-
-        obj_lastGroupNumber += 1;  
-        objOutput.println("g LandMesh_depth");
+      int GRID_firstVertexNumber = obj_lastVertexNumber;
+      int GRID_firstVtextureNumber = obj_lastVtextureNumber;
+      
+      for (int _turn = 1; _turn < 4; _turn += 1) {
+      
+        for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
+          
+          int the_I = i / LAND_n_J;
+          int the_J = i % LAND_n_J;
+          
+          float x = LAND_MESH[the_I][the_J][0];
+          float y = LAND_MESH[the_I][the_J][1];
+          float z = LAND_MESH[the_I][the_J][2];
     
-        if (objExportMaterialLibrary != 0) {
-          objOutput.println("usemtl LandMesh");
-        }
-        
-        num_vertices_added = 0;
-        
-        for (int _turn = 1; _turn < 4; _turn += 1) {
-        
-          for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
-            
-            int the_I = i / LAND_n_J;
-            int the_J = i % LAND_n_J;
-            
-            float x = LAND_MESH[the_I][the_J][0];
-            float y = LAND_MESH[the_I][the_J][1];
-            float z = LAND_MESH[the_I][the_J][2];
-      
-            float u = x / LAND_TEXTURE_scale_U + 0.5;
-            float v = y / LAND_TEXTURE_scale_V + 0.5;
-            
-            if (_turn == 1) {
-              objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z, 0, objExportPrecisionVertex));
-              objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z - CrustDepth, 0, objExportPrecisionVertex));
-            }
-            
-            if (_turn == 2) {
-              objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
-              objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
-            }
-      
-            if (_turn == 3) {
-              obj_lastVertexNumber += 2;
-              obj_lastVtextureNumber += 2;
-            }
-            
+          float u = x / LAND_TEXTURE_scale_U + 0.5;
+          float v = y / LAND_TEXTURE_scale_V + 0.5;
+          
+          if (_turn == 1) {
+            objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z, 0, objExportPrecisionVertex));
+            objOutput.println("v " + nf(x, 0, objExportPrecisionVertex) + " " + nf(y, 0, objExportPrecisionVertex) + " " + nf(z - CrustDepth, 0, objExportPrecisionVertex));
           }
+          
+          if (_turn == 2) {
+            objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
+            objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " 0");
+          }
+    
+          if (_turn == 3) {
+            obj_lastVertexNumber += 2;
+            obj_lastVtextureNumber += 2;
+          }
+          
         }
-        
-        int f = 0;
-        for (int i = 0; i < LAND_n_I - 1; i += 1) {
-          for (int j = 0; j < LAND_n_J - 1; j += 1) {
-            f += 1;
+      }
+      
+      int f = 0;
+      for (int i = 0; i < LAND_n_I; i += 1) {
+        for (int j = 0; j < LAND_n_J; j += 1) {
+          f += 1;
+          
+          if (i + 1 < LAND_n_I) {
             
             int A = i * LAND_n_J + j + 1;
             int B = (i + 1) * LAND_n_J + j + 1;
             int C = (i + 1) * LAND_n_J + j + 2;
             int D = i * LAND_n_J + j + 2;
             
-            String n1_txt = nf(obj_lastVertexNumber - num_vertices_added + 1, 0); 
-            String n2_txt = nf(obj_lastVertexNumber - num_vertices_added + 2, 0);
-            String n3_txt = nf(obj_lastVertexNumber - num_vertices_added + 3, 0);
-            String n4_txt = nf(obj_lastVertexNumber - num_vertices_added + 4, 0);
+            int vNo1 = GRID_firstVertexNumber + A;
+            int vNo2 = GRID_firstVertexNumber + B;
+            int vNo3 = GRID_firstVertexNumber + C;
+            int vNo4 = GRID_firstVertexNumber + D;
             
-            String m1_txt = nf(obj_lastVtextureNumber - num_vertices_added + 1, 0); 
-            String m2_txt = nf(obj_lastVtextureNumber - num_vertices_added + 2, 0);
-            String m3_txt = nf(obj_lastVtextureNumber - num_vertices_added + 3, 0);
-            String m4_txt = nf(obj_lastVtextureNumber - num_vertices_added + 4, 0);    
+            int vtNo1 = GRID_firstVtextureNumber + A;
+            int vtNo2 = GRID_firstVtextureNumber + B;
+            int vtNo3 = GRID_firstVtextureNumber + C;
+            int vtNo4 = GRID_firstVtextureNumber + D;
+    
+            String n1_txt = nf(vNo1, 0); 
+            String n2_txt = nf(vNo2, 0); 
+            String n3_txt = nf(vNo3, 0); 
+            String n4_txt = nf(vNo4, 0); 
+            
+            String m1_txt = nf(vtNo1, 0);
+            String m2_txt = nf(vtNo2, 0);
+            String m3_txt = nf(vtNo3, 0);
+            String m4_txt = nf(vtNo4, 0);
             
             obj_lastFaceNumber += 1;            
             objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
             if (objExportBackSides != 0) {
               obj_lastFaceNumber += 1;
               objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
-            }        
+            }    
+          }  
+
+          if (j + 1 < LAND_n_J) {
+            
+            int A = 2 * (i * LAND_n_J + j + 1) + 0;
+            int B = 2 * (i * LAND_n_J + j + 1) + 1;
+            int C = 2 * (i * LAND_n_J + j + 2) + 1;
+            int D = 2 * (i * LAND_n_J + j + 2) + 0;
+            
+            int vNo1 = GRID_firstVertexNumber + A;
+            int vNo2 = GRID_firstVertexNumber + B;
+            int vNo3 = GRID_firstVertexNumber + C;
+            int vNo4 = GRID_firstVertexNumber + D;
+            
+            int vtNo1 = GRID_firstVtextureNumber + A;
+            int vtNo2 = GRID_firstVtextureNumber + B;
+            int vtNo3 = GRID_firstVtextureNumber + C;
+            int vtNo4 = GRID_firstVtextureNumber + D;
     
-          }
-        }        
-        
-        
-
-        for (int s = 0; s < subFace.length; s++) {
-
-          int s_next = (s + 1) % subFace.length;
-        
-          float u = (subFace[s][0] / LAND_TEXTURE_scale_U + 0.5);
-          float v = (-subFace[s][1] / LAND_TEXTURE_scale_V + 0.5);
-
-          float u_next = (subFace[s_next][0] / LAND_TEXTURE_scale_U + 0.5);
-          float v_next = (-subFace[s_next][1] / LAND_TEXTURE_scale_V + 0.5);
+            String n1_txt = nf(vNo1, 0); 
+            String n2_txt = nf(vNo2, 0); 
+            String n3_txt = nf(vNo3, 0); 
+            String n4_txt = nf(vNo4, 0); 
+            
+            String m1_txt = nf(vtNo1, 0);
+            String m2_txt = nf(vtNo2, 0);
+            String m3_txt = nf(vtNo3, 0);
+            String m4_txt = nf(vtNo4, 0);
+            
+            obj_lastFaceNumber += 1;            
+            objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+            if (objExportBackSides != 0) {
+              obj_lastFaceNumber += 1;
+              objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+            }    
+          }  
           
-          WIN3D_Diagrams.beginShape();
           
-          WIN3D_Diagrams.texture(LAND_TEXTURE);                  
-          
-          WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, u * LAND_TEXTURE.width, v * LAND_TEXTURE.height);
-          WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s_next][2] * OBJECTS_scale * WIN3D_scale3D, u_next * LAND_TEXTURE.width, v_next * LAND_TEXTURE.height);
-          WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_scale3D, (subFace[s_next][2] - CrustDepth) * OBJECTS_scale * WIN3D_scale3D, u_next * LAND_TEXTURE.width, v_next * LAND_TEXTURE.height);
-          WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, (subFace[s][2] - CrustDepth) * OBJECTS_scale * WIN3D_scale3D, u * LAND_TEXTURE.width, v * LAND_TEXTURE.height);
+        }  
 
-          WIN3D_Diagrams.endShape(CLOSE);
-
-        }
-        
-        obj_lastVertexNumber += num_vertices_added;
-        obj_lastVtextureNumber += num_vertices_added;   
       }
-    }
-    */
-
-
+    }    
   }
 
 
