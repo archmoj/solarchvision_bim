@@ -1714,10 +1714,7 @@ PImage[][] allSection_SolarImpact = new PImage[1][(1 + STUDY_j_end - STUDY_j_sta
 
 
 
-float[][] allSolid_UVERAB = {{0,0,0,0,0,0}};
-int[] allSolid_Type = {0};
-int[] allSolid_RES1 = {0};
-int[] allSolid_RES2 = {0};
+float[][] allSolid_XYZPPPSSSRRRV = {{0,0,0,2,2,2,1,1,1,1}};
 int allSolid_num = 0;
 
 
@@ -13955,11 +13952,16 @@ int SOLARCHVISION_add_Face (int[] f) {
   return(allFaces.length - 1);
 }
 
-int SOLARCHVISION_addToSolids (float v, float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float tx, float ty, float tz) {
-  
-  ParametricSolid[] newSolidObject = {new ParametricSolid(v, x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz)}; 
-  SolidObjects = (ParametricSolid[]) concat(SolidObjects, newSolidObject);  
-  
+
+void SOLARCHVISION_add_Solid (float v, float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float tx, float ty, float tz) {
+
+  float[][] TempSolid_XYZPPPSSSRRRV = {{v, x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz}};
+  allSolid_XYZPPPSSSRRRV = (float[][]) concat(allSolid_XYZPPPSSSRRRV, TempSolid_XYZPPPSSSRRRV);
+
+  allSolid_num += 1;
+
+
+
   if (addToLastPolymesh == 0) {
     // no nead to call SOLARCHVISION_beginNewPolymesh(); here again!
   }
@@ -13967,8 +13969,9 @@ int SOLARCHVISION_addToSolids (float v, float x, float y, float z, float px, flo
     allPolymesh_Solids[allPolymesh_Solids.length - 1][1] = SolidObjects.length - 1;
   }
 
-  return(SolidObjects.length - 1);
 }
+
+
 
 void SOLARCHVISION_beginNewPolymesh () {
   
@@ -14110,7 +14113,7 @@ void SOLARCHVISION_duplicateSelection () {
           
           if ((0 <= allPolymesh_Solids[OBJ_NUM][1]) && (allPolymesh_Solids[OBJ_NUM][0] <= allPolymesh_Solids[OBJ_NUM][1])) { 
             for (int s = allPolymesh_Solids[OBJ_NUM][0]; s <= allPolymesh_Solids[OBJ_NUM][1]; s++) {
-              SOLARCHVISION_addToSolids(SolidObjects[s].value, SolidObjects[s].posX, SolidObjects[s].posY, SolidObjects[s].posZ, SolidObjects[s].powX, SolidObjects[s].powY, SolidObjects[s].powZ, SolidObjects[s].scaleX, SolidObjects[s].scaleY, SolidObjects[s].scaleZ, -SolidObjects[s].rotX, -SolidObjects[s].rotY, -SolidObjects[s].rotZ);
+              SOLARCHVISION_add_Solid(SolidObjects[s].value, SolidObjects[s].posX, SolidObjects[s].posY, SolidObjects[s].posZ, SolidObjects[s].powX, SolidObjects[s].powY, SolidObjects[s].powZ, SolidObjects[s].scaleX, SolidObjects[s].scaleY, SolidObjects[s].scaleZ, -SolidObjects[s].rotX, -SolidObjects[s].rotY, -SolidObjects[s].rotZ);
               
               SOLID_added += 1;
             }
@@ -14275,7 +14278,7 @@ void SOLARCHVISION_duplicateSelection () {
 
   if (Work_with_2D_or_3D == 7) {
     
-    int number_of_Solid_before = allSolid_UVERAB.length; 
+    int number_of_Solid_before = allSolid_XYZPPPSSSRRRV.length; 
 
     for (int o = 0; o < selectedSolid_numbers.length; o++) {
 
@@ -14283,16 +14286,12 @@ void SOLARCHVISION_duplicateSelection () {
 
       if (OBJ_NUM != 0) {    
         
-        float Solid_offset_U = allSolid_UVERAB[OBJ_NUM][0];
-        float Solid_offset_V = allSolid_UVERAB[OBJ_NUM][1];
-        float Solid_Elevation = allSolid_UVERAB[OBJ_NUM][2];
-        float Solid_Rotation = allSolid_UVERAB[OBJ_NUM][3];
-        float Solid_scale_U = allSolid_UVERAB[OBJ_NUM][4];
-        float Solid_scale_V = allSolid_UVERAB[OBJ_NUM][5];
-  
-        int Solid_Type = allSolid_Type[OBJ_NUM];
-        int Solid_RES1 = allSolid_RES1[OBJ_NUM];
-        int Solid_RES2 = allSolid_RES2[OBJ_NUM];
+        float Solid_offset_U = allSolid_XYZPPPSSSRRRV[OBJ_NUM][0];
+        float Solid_offset_V = allSolid_XYZPPPSSSRRRV[OBJ_NUM][1];
+        float Solid_Elevation = allSolid_XYZPPPSSSRRRV[OBJ_NUM][2];
+        float Solid_Rotation = allSolid_XYZPPPSSSRRRV[OBJ_NUM][3];
+        float Solid_scale_U = allSolid_XYZPPPSSSRRRV[OBJ_NUM][4];
+        float Solid_scale_V = allSolid_XYZPPPSSSRRRV[OBJ_NUM][5];
 
         SOLARCHVISION_add_Solid(Solid_Type, Solid_offset_U, Solid_offset_V, Solid_Elevation, Solid_Rotation, Solid_scale_U, Solid_scale_V, Solid_RES1, Solid_RES2);        
       }
@@ -14303,7 +14302,7 @@ void SOLARCHVISION_duplicateSelection () {
     selectedSolid_numbers = new int [1];
     selectedSolid_numbers[0] = 0;
     
-    for (int o = number_of_Solid_before; o < allSolid_UVERAB.length; o++) {
+    for (int o = number_of_Solid_before; o < allSolid_XYZPPPSSSRRRV.length; o++) {
       
       int[] newlyAddedSolid = {o};
       
@@ -14731,31 +14730,10 @@ void SOLARCHVISION_deleteSelection () {
       if (OBJ_NUM != 0) {    
 
         {
-          float[][] startList = (float[][]) subset(allSolid_UVERAB, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allSolid_UVERAB, OBJ_NUM + 1);
+          float[][] startList = (float[][]) subset(allSolid_XYZPPPSSSRRRV, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allSolid_XYZPPPSSSRRRV, OBJ_NUM + 1);
           
-          allSolid_UVERAB = (float[][]) concat(startList, endList);
-        }
-
-        {
-          int[] startList = (int[]) subset(allSolid_Type, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allSolid_Type, OBJ_NUM + 1);
-          
-          allSolid_Type = (int[]) concat(startList, endList);
-        }
-
-        {
-          int[] startList = (int[]) subset(allSolid_RES1, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allSolid_RES1, OBJ_NUM + 1);
-          
-          allSolid_RES1 = (int[]) concat(startList, endList);
-        }
-        
-        {
-          int[] startList = (int[]) subset(allSolid_RES2, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allSolid_RES2, OBJ_NUM + 1);
-          
-          allSolid_RES2 = (int[]) concat(startList, endList);
+          allSolid_XYZPPPSSSRRRV = (float[][]) concat(startList, endList);
         }
 
         allSolid_num -= 1;
@@ -16867,7 +16845,7 @@ void SOLARCHVISION_selectAll () {
   }
   
   if (Work_with_2D_or_3D == 7) {
-    selectedSolid_numbers = new int [allSolid_UVERAB.length];
+    selectedSolid_numbers = new int [allSolid_XYZPPPSSSRRRV.length];
     for (int i = 0; i < selectedSolid_numbers.length; i++) { 
       selectedSolid_numbers[i] = i;
     }
@@ -17075,7 +17053,7 @@ void SOLARCHVISION_reverseSelection () {
     selectedSolid_numbers = new int [1];
     selectedSolid_numbers[0] = 0;
     
-    for (int i = 1; i < allSolid_UVERAB.length; i++) {
+    for (int i = 1; i < allSolid_XYZPPPSSSRRRV.length; i++) {
       int found = -1; 
       
       for (int j = 1; j < pre_selectedSolid_numbers.length; j++) {
@@ -20602,7 +20580,7 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
   }  
   
   //SOLARCHVISION_add_Box_Core(m, cen_X,cen_Y,cen_Z, X_out,Y_out,Z_out, T_out);
-  SOLARCHVISION_addToSolids(1, cen_X,cen_Y,cen_Z, CubePower,CubePower,CubePower, X_out,Y_out,Z_out, 0, 0, T_out);
+  SOLARCHVISION_add_Solid(1, cen_X,cen_Y,cen_Z, CubePower,CubePower,CubePower, X_out,Y_out,Z_out, 0, 0, T_out);
   
   return min_Z;
 }  
@@ -20892,22 +20870,13 @@ void SOLARCHVISION_remove_Sections () {
 
 
 void SOLARCHVISION_remove_Solids () {
-  allSolid_UVERAB = new float [1][6]; 
-  allSolid_UVERAB[0][0] = 0;
-  allSolid_UVERAB[0][1] = 0;
-  allSolid_UVERAB[0][2] = 0;
-  allSolid_UVERAB[0][3] = 0;
-  allSolid_UVERAB[0][4] = 0;
-  allSolid_UVERAB[0][5] = 0;
-  
-  allSolid_Type = new int [1];
-  allSolid_Type[0] = 0;
-
-  allSolid_RES1 = new int [1];
-  allSolid_RES1[0] = 0;
-
-  allSolid_RES2 = new int [1];
-  allSolid_RES2[0] = 0;
+  allSolid_XYZPPPSSSRRRV = new float [1][6]; 
+  allSolid_XYZPPPSSSRRRV[0][0] = 0;
+  allSolid_XYZPPPSSSRRRV[0][1] = 0;
+  allSolid_XYZPPPSSSRRRV[0][2] = 0;
+  allSolid_XYZPPPSSSRRRV[0][3] = 0;
+  allSolid_XYZPPPSSSRRRV[0][4] = 0;
+  allSolid_XYZPPPSSSRRRV[0][5] = 0;
   
   allSolid_num = 0;
   
@@ -21197,7 +21166,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float z = 0;
       float r = 10;
       SOLARCHVISION_add_Fractal_PlantSphere(1,0,0,1,1, x,y,z, r, 5, 0, 90);
-      SOLARCHVISION_addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
+      SOLARCHVISION_add_Solid(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
     }
   
     {
@@ -21207,7 +21176,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float z = 0;
       float r = 8;
       SOLARCHVISION_add_Fractal_PlantSphere(2,0,0,1,1, x,y,z, r, 4, 0, 90);
-      SOLARCHVISION_addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
+      SOLARCHVISION_add_Solid(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
     }
   
     {
@@ -21217,7 +21186,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float z = 0;
       float r = 8;
       SOLARCHVISION_add_Fractal_PlantSphere(3,0,0,1,1, x,y,z, r, 3, 0, 90);
-      SOLARCHVISION_addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
+      SOLARCHVISION_add_Solid(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
     }
   }
  
@@ -25291,7 +25260,7 @@ void SOLARCHVISION_add_ParametricSolids () {
     float z = 0;
     float rot = 0;
     SOLARCHVISION_add_Box_Core(8,0,0,1,1, x,y,z, dx, dy, dz, rot); // facades
-    SOLARCHVISION_addToSolids(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot); 
+    SOLARCHVISION_add_Solid(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot); 
 
     addToLastPolymesh = 0; SOLARCHVISION_beginNewPolymesh(); addToLastPolymesh = 1;
     SOLARCHVISION_add_Box_Core(5,0,0,1,1, x,y,z, dx/3, dy/3, dz, rot); // building core
@@ -25314,7 +25283,7 @@ void SOLARCHVISION_add_ParametricSolids () {
     float z = 0;
     float rot = 0;
     SOLARCHVISION_add_Box_Core(8,0,0,1,1, x,y,z, dx, dy, dz, rot); // facades
-    SOLARCHVISION_addToSolids(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot); 
+    SOLARCHVISION_add_Solid(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot); 
 
     addToLastPolymesh = 0; SOLARCHVISION_beginNewPolymesh(); addToLastPolymesh = 1;
     SOLARCHVISION_add_Box_Core(5,0,0,1,1, x,y,z, dx/3, dy/3, dz, rot); // building core
@@ -25337,7 +25306,7 @@ void SOLARCHVISION_add_ParametricSolids () {
     float z = 0;
     float rot = 0;
     SOLARCHVISION_add_Box_Core(8,0,0,1,1, x,y,z, dx, dy, dz, rot); // facades
-    SOLARCHVISION_addToSolids(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot); 
+    SOLARCHVISION_add_Solid(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot); 
 
     addToLastPolymesh = 0; SOLARCHVISION_beginNewPolymesh(); addToLastPolymesh = 1;
     SOLARCHVISION_add_Box_Core(5,0,0,1,1, x,y,z, dx/3, dy/3, dz, rot); // building core
@@ -25453,7 +25422,7 @@ void SOLARCHVISION_add_ParametricSolids () {
     float z = 0;
     float rot = 0;
     SOLARCHVISION_add_House_Core(7,0,0,1,1, x,y,z, dx,dy,dz, dz, rot); // house 
-    SOLARCHVISION_addToSolids(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot);
+    SOLARCHVISION_add_Solid(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot);
    } 
 
   {
@@ -25464,7 +25433,7 @@ void SOLARCHVISION_add_ParametricSolids () {
     float z = r;
     //SOLARCHVISION_add_Fractal_PlantSphere(1,0,0,1,1, x,y,z, r, 2, 0, 0);
     SOLARCHVISION_add_Fractal_PlantSphere(1,0,0,1,1, x,y,z, r, 4, 0, 0);
-    SOLARCHVISION_addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
+    SOLARCHVISION_add_Solid(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
   }    
 */
 
@@ -25478,7 +25447,7 @@ void SOLARCHVISION_add_ParametricSolids () {
     float z = -dz;    
     float rot = 0;
     SOLARCHVISION_add_Box_Core(7,0,0,1,1, x,y,z, dx, dy, dz, rot);
-    //SOLARCHVISION_addToSolids(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot); 
+    //SOLARCHVISION_add_Solid(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot); 
   }  
 
 //  SOLARCHVISION_add_2Dobjects_polar(1, 40, 0,0,0, 40,100); // trees
@@ -25496,7 +25465,7 @@ void SOLARCHVISION_add_ParametricSolids () {
     float z = 0;    
     float rot = 0;
     SOLARCHVISION_add_Box_Core(8,0,0,1,1, x,y,z, dx, dy, dz, rot); // facades
-    SOLARCHVISION_addToSolids(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot); 
+    SOLARCHVISION_add_Solid(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot); 
 
     addToLastPolymesh = 0; SOLARCHVISION_beginNewPolymesh(); addToLastPolymesh = 1;
     for (float i = 6; i <= dz; i += 6) {
@@ -25564,7 +25533,7 @@ void SOLARCHVISION_add_ParametricSolids () {
     float z = 9;    
     float rot = 30;
     SOLARCHVISION_add_Box_Core(4,0,0,1,1, x,y,z, dx, dy, dz, rot);
-    SOLARCHVISION_addToSolids(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot); 
+    SOLARCHVISION_add_Solid(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot); 
   }   
 
   {  
@@ -25577,7 +25546,7 @@ void SOLARCHVISION_add_ParametricSolids () {
     float z = 0;
     float rot = 0;
     SOLARCHVISION_add_House_Core(6,0,0,1,1, x,y,z, dx,dy,dz, dz, rot); // house 
-    SOLARCHVISION_addToSolids(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot);
+    SOLARCHVISION_add_Solid(1, x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot);
    } 
 
   {
@@ -25587,7 +25556,7 @@ void SOLARCHVISION_add_ParametricSolids () {
     float y = -50;
     float z = r;
     SOLARCHVISION_add_Fractal_PlantSphere(2,0,0,1,1, x,y,z, r, 3, 0, 0);
-    SOLARCHVISION_addToSolids(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
+    SOLARCHVISION_add_Solid(1, x,y,z, 2,2,2, r,r,r, 0,0,0);
   }      
 
   addToLastPolymesh = 0; SOLARCHVISION_beginNewPolymesh(); addToLastPolymesh = 1;
@@ -33512,7 +33481,7 @@ void mouseClicked () {
                 int keep_number_of_Polymeshes = allPolymesh_Faces.length;
                 int keep_number_of_2DObjects = allObject2D_XYZS.length;
                 int keep_number_of_Fractal_Plants = allFractal_Plant_XYZSRA.length;
-                int keep_number_of_Solids = allSolid_UVERAB.length;
+                int keep_number_of_Solids = allSolid_XYZPPPSSSRRRV.length;
                 int keep_number_of_Sections = allSection_UVERAB.length;
                 int keep_number_of_Cameras = allCamera_PPPSRRRF.length;
                 
@@ -33611,7 +33580,7 @@ void mouseClicked () {
                   
                   
                   if (Create_Mesh_or_Solid == 2) {
-                    SOLARCHVISION_addToSolids(1, x,y,z, px,py,pz, rx,ry,rz, 0,0,rot);
+                    SOLARCHVISION_add_Solid(1, x,y,z, px,py,pz, rx,ry,rz, 0,0,rot);
                     
                     SOLID_created = 1;
                   }                
@@ -34009,11 +33978,11 @@ void mouseClicked () {
                   SOLARCHVISION_calculate_selection_Pivot();
                 }     
    
-                if (keep_number_of_Solids != allSolid_UVERAB.length) { // if any Solid created during the process
+                if (keep_number_of_Solids != allSolid_XYZPPPSSSRRRV.length) { // if any Solid created during the process
   
                   selectedSolid_numbers = new int [2];
                   selectedSolid_numbers[0] = 0;
-                  selectedSolid_numbers[1] = allSolid_UVERAB.length - 1;
+                  selectedSolid_numbers[1] = allSolid_XYZPPPSSSRRRV.length - 1;
                   
                   println("SOLARCHVISION_calculate_selection_Pivot 9d");
                   SOLARCHVISION_calculate_selection_Pivot();
@@ -38039,27 +38008,6 @@ float[][] SOLARCHVISION_getCorners_Section (int Section_Type, float Section_offs
 
 
 
-
-
-void SOLARCHVISION_add_Solid (int n, float u, float v, float elev, float rot, float dU, float dV, int RES1, int RES2) {
-
-  int[] TempSolid_Type = {n}; 
-  allSolid_Type = concat(allSolid_Type, TempSolid_Type);
-
-  int[] TempSolid_RES1 = {RES1}; 
-  allSolid_RES1 = concat(allSolid_RES1, TempSolid_RES1);
-
-  int[] TempSolid_RES2 = {RES2}; 
-  allSolid_RES2 = concat(allSolid_RES2, TempSolid_RES2);
-  
-  float[][] TempSolid_UVERAB = {{u, v, elev, rot, dU, dV}};
-  allSolid_UVERAB = (float[][]) concat(allSolid_UVERAB, TempSolid_UVERAB);
-
-  allSolid_num += 1;
-
-}
-
-
 float[][] allSolid_Vertices;
 int[][] allSolid_Faces;
 
@@ -38077,50 +38025,43 @@ void SOLARCHVISION_draw_Solids () {
 
     for (int f = 1; f <= allSolid_num; f++) {
       
-      float Solid_offset_U = allSolid_UVERAB[f][0];
-      float Solid_offset_V = allSolid_UVERAB[f][1];
-      float Solid_Elevation = allSolid_UVERAB[f][2];
-      float Solid_Rotation = allSolid_UVERAB[f][3];
-      float Solid_scale_U = allSolid_UVERAB[f][4];
-      float Solid_scale_V = allSolid_UVERAB[f][5];
+      float Solid_offset_U = allSolid_XYZPPPSSSRRRV[f][0];
+      float Solid_offset_V = allSolid_XYZPPPSSSRRRV[f][1];
+      float Solid_Elevation = allSolid_XYZPPPSSSRRRV[f][2];
+      float Solid_Rotation = allSolid_XYZPPPSSSRRRV[f][3];
+      float Solid_scale_U = allSolid_XYZPPPSSSRRRV[f][4];
+      float Solid_scale_V = allSolid_XYZPPPSSSRRRV[f][5];
 
-      int Solid_Type = allSolid_Type[f];
-      int Solid_RES1 = allSolid_RES1[f];
-      int Solid_RES2 = allSolid_RES2[f];
-
-      if (Solid_Type != 0) {
-
-        WIN3D_Diagrams.stroke(0);
-        WIN3D_Diagrams.fill(127,255,127);  
+      WIN3D_Diagrams.stroke(0);
+      WIN3D_Diagrams.fill(127,255,127);  
+      
+      WIN3D_Diagrams.beginShape();
+      
+      float[][] ImageVertex = SOLARCHVISION_getCorners_Solid(Solid_Type, Solid_offset_U, Solid_offset_V, Solid_Elevation, Solid_Rotation, Solid_scale_U, Solid_scale_V, Solid_RES1, Solid_RES2);
+      
+      for (int q = 0; q < 4; q++) {
         
-        WIN3D_Diagrams.beginShape();
-        
-        float[][] ImageVertex = SOLARCHVISION_getCorners_Solid(Solid_Type, Solid_offset_U, Solid_offset_V, Solid_Elevation, Solid_Rotation, Solid_scale_U, Solid_scale_V, Solid_RES1, Solid_RES2);
-        
-        for (int q = 0; q < 4; q++) {
-          
-          float x = ImageVertex[q][0];
-          float y = ImageVertex[q][1];
-          float z = ImageVertex[q][2];
-          float u = ImageVertex[q][3];
-          float v = ImageVertex[q][4];
+        float x = ImageVertex[q][0];
+        float y = ImageVertex[q][1];
+        float z = ImageVertex[q][2];
+        float u = ImageVertex[q][3];
+        float v = ImageVertex[q][4];
  
-          WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D, u * Solid_RES1, v * Solid_RES2);
-          
-          allSolid_Vertices[f * 4 - q][0] = x;
-          allSolid_Vertices[f * 4 - q][1] = y;
-          allSolid_Vertices[f * 4 - q][2] = z;
-          
-        }        
+        WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D, u * Solid_RES1, v * Solid_RES2);
+        
+        allSolid_Vertices[f * 4 - q][0] = x;
+        allSolid_Vertices[f * 4 - q][1] = y;
+        allSolid_Vertices[f * 4 - q][2] = z;
+        
+      }        
 
-        allSolid_Faces[f][0] = f * 4 - 3;
-        allSolid_Faces[f][1] = f * 4 - 2;
-        allSolid_Faces[f][2] = f * 4 - 1;
-        allSolid_Faces[f][3] = f * 4 - 0;  
+      allSolid_Faces[f][0] = f * 4 - 3;
+      allSolid_Faces[f][1] = f * 4 - 2;
+      allSolid_Faces[f][2] = f * 4 - 1;
+      allSolid_Faces[f][3] = f * 4 - 0;  
 
-        WIN3D_Diagrams.endShape(CLOSE);
+      WIN3D_Diagrams.endShape(CLOSE);
 
-      }
       
     }
     
@@ -38606,7 +38547,7 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
    
       if (as_Solid != 0) {
         float r0 = 0.5 * LeafSize;
-        SOLARCHVISION_addToSolids(as_Solid, x0,y0,z0, 2,2,2, r0,r0,r0, 0,0,0);
+        SOLARCHVISION_add_Solid(as_Solid, x0,y0,z0, 2,2,2, r0,r0,r0, 0,0,0);
       }
   
     }
@@ -38997,16 +38938,12 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
       if (Work_with_2D_or_3D == 7) {
         int n = theVertices[q];
 
-        float Solid_offset_U = allSolid_UVERAB[n][0];
-        float Solid_offset_V = allSolid_UVERAB[n][1];
-        float Solid_Elevation = allSolid_UVERAB[n][2];
-        float Solid_Rotation = allSolid_UVERAB[n][3];
-        float Solid_scale_U = allSolid_UVERAB[n][4];
-        float Solid_scale_V = allSolid_UVERAB[n][5];
-  
-        int Solid_Type = allSolid_Type[n];
-        int Solid_RES1 = allSolid_RES1[n];
-        int Solid_RES2 = allSolid_RES2[n];
+        float Solid_offset_U = allSolid_XYZPPPSSSRRRV[n][0];
+        float Solid_offset_V = allSolid_XYZPPPSSSRRRV[n][1];
+        float Solid_Elevation = allSolid_XYZPPPSSSRRRV[n][2];
+        float Solid_Rotation = allSolid_XYZPPPSSSRRRV[n][3];
+        float Solid_scale_U = allSolid_XYZPPPSSSRRRV[n][4];
+        float Solid_scale_V = allSolid_XYZPPPSSSRRRV[n][5];
         
         float[][] ImageVertex = SOLARCHVISION_getCorners_Solid(Solid_Type, Solid_offset_U, Solid_offset_V, Solid_Elevation, Solid_Rotation, Solid_scale_U, Solid_scale_V, Solid_RES1, Solid_RES2);
 
@@ -39565,9 +39502,9 @@ void SOLARCHVISION_move_selectedSolid (float dx, float dy, float dz) {
     
     int n = selectedSolid_numbers[q];
   
-    allSolid_UVERAB[n][0] += dx; 
-    allSolid_UVERAB[n][1] += dy;
-    allSolid_UVERAB[n][2] += dz;
+    allSolid_XYZPPPSSSRRRV[n][0] += dx; 
+    allSolid_XYZPPPSSSRRRV[n][1] += dy;
+    allSolid_XYZPPPSSSRRRV[n][2] += dz;
 
   }
   
@@ -39582,24 +39519,24 @@ void SOLARCHVISION_rotate_selectedSolid (float x0, float y0, float z0, float r, 
     
     int n = selectedSolid_numbers[q];
 
-    float x = allSolid_UVERAB[n][0] - x0; 
-    float y = allSolid_UVERAB[n][1] - y0; 
-    float z = allSolid_UVERAB[n][2] - z0;
+    float x = allSolid_XYZPPPSSSRRRV[n][0] - x0; 
+    float y = allSolid_XYZPPPSSSRRRV[n][1] - y0; 
+    float z = allSolid_XYZPPPSSSRRRV[n][2] - z0;
     
     if (the_Vector == 2) {
-      allSolid_UVERAB[n][0] = x0 + (x * cos(r) - y * sin(r)); 
-      allSolid_UVERAB[n][1] = y0 + (x * sin(r) + y * cos(r));
-      allSolid_UVERAB[n][2] = z0 + (z);
+      allSolid_XYZPPPSSSRRRV[n][0] = x0 + (x * cos(r) - y * sin(r)); 
+      allSolid_XYZPPPSSSRRRV[n][1] = y0 + (x * sin(r) + y * cos(r));
+      allSolid_XYZPPPSSSRRRV[n][2] = z0 + (z);
     }
     else if (the_Vector == 1) {
-      allSolid_UVERAB[n][0] = x0 + (z * sin(r) + x * cos(r)); 
-      allSolid_UVERAB[n][1] = y0 + (y);
-      allSolid_UVERAB[n][2] = z0 + (z * cos(r) - x * sin(r));
+      allSolid_XYZPPPSSSRRRV[n][0] = x0 + (z * sin(r) + x * cos(r)); 
+      allSolid_XYZPPPSSSRRRV[n][1] = y0 + (y);
+      allSolid_XYZPPPSSSRRRV[n][2] = z0 + (z * cos(r) - x * sin(r));
     }    
     else if (the_Vector == 0) {
-      allSolid_UVERAB[n][0] = x0 + (x); 
-      allSolid_UVERAB[n][1] = y0 + (y * cos(r) - z * sin(r));
-      allSolid_UVERAB[n][2] = z0 + (y * sin(r) + z * cos(r));
+      allSolid_XYZPPPSSSRRRV[n][0] = x0 + (x); 
+      allSolid_XYZPPPSSSRRRV[n][1] = y0 + (y * cos(r) - z * sin(r));
+      allSolid_XYZPPPSSSRRRV[n][2] = z0 + (y * sin(r) + z * cos(r));
     }    
     
   }
@@ -39617,13 +39554,13 @@ void SOLARCHVISION_scale_selectedSolid (float x0, float y0, float z0, float sx, 
     
     int n = selectedSolid_numbers[q];
 
-    float x = allSolid_UVERAB[n][0] - x0; 
-    float y = allSolid_UVERAB[n][1] - y0; 
-    float z = allSolid_UVERAB[n][2] - z0;
+    float x = allSolid_XYZPPPSSSRRRV[n][0] - x0; 
+    float y = allSolid_XYZPPPSSSRRRV[n][1] - y0; 
+    float z = allSolid_XYZPPPSSSRRRV[n][2] - z0;
    
-    allSolid_UVERAB[n][0] = x0 + sx * x; 
-    allSolid_UVERAB[n][1] = y0 + sy * y;
-    allSolid_UVERAB[n][2] = z0 + sz * z;
+    allSolid_XYZPPPSSSRRRV[n][0] = x0 + sx * x; 
+    allSolid_XYZPPPSSSRRRV[n][1] = y0 + sy * y;
+    allSolid_XYZPPPSSSRRRV[n][2] = z0 + sz * z;
     
   }
   
@@ -44534,16 +44471,11 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       newChild2 = newChild1.addChild("Solid");
       newChild2.setInt("id", i);
       String lineSTR = "";
-      //for (int j = 0; j < allSolid_UVERAB[i].length; j++) {
+      //for (int j = 0; j < allSolid_XYZPPPSSSRRRV[i].length; j++) {
       for (int j = 0; j < 6; j++) { // u, v, e, r, a, b
-        lineSTR += nf(allSolid_UVERAB[i][j], 0, 4).replace(",", "."); // <<<<
-        lineSTR += ",";
+        lineSTR += nf(allSolid_XYZPPPSSSRRRV[i][j], 0, 4).replace(",", "."); // <<<<
+        if (j + 1 != allSolid_XYZPPPSSSRRRV[i].length) lineSTR += ",";
       }
-      lineSTR += nf(allSolid_Type[i], 0);
-      lineSTR += ",";
-      lineSTR += nf(allSolid_RES1[i], 0);
-      lineSTR += ",";
-      lineSTR += nf(allSolid_RES2[i], 0);
       
       newChild2.setContent(lineSTR);
     } 
@@ -45689,10 +45621,7 @@ void SOLARCHVISION_load_project (String myFile) {
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
       
-      allSolid_UVERAB = new float [ni][6];
-      allSolid_Type = new int [ni];
-      allSolid_RES1 = new int [ni];
-      allSolid_RES2 = new int [ni];
+      allSolid_XYZPPPSSSRRRV = new float [ni][6];
       allSolid_num = ni - 1;
       
       XML[] children1 = children0[L].getChildren("Solid");         
@@ -45701,12 +45630,9 @@ void SOLARCHVISION_load_project (String myFile) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < 6; j++) {
-          allSolid_UVERAB[i][j] = float(parts[j]);
+          allSolid_XYZPPPSSSRRRV[i][j] = float(parts[j]);
         }
 
-        allSolid_Type[i] = int(parts[6]);
-        allSolid_RES1[i] = int(parts[7]);
-        allSolid_RES2[i] = int(parts[8]);
       }
     } 
  
