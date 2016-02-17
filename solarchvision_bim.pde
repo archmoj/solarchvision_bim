@@ -14617,7 +14617,7 @@ void SOLARCHVISION_deleteSelection () {
           
           allSolid_XYZPPPSSSRRRV = (float[][]) concat(startList, endList);
           
-          allSolid_num = allSolid_XYZPPPSSSRRRV.length - 1;
+          allSolid_num = allSolid_XYZPPPSSSRRRV.length - 1; // ??????
           
           Solids_updated = 1;
           
@@ -39143,7 +39143,7 @@ void SOLARCHVISION_move_selectedPolymeshes (float dx, float dy, float dz) {
       }
       
       for (int g = allPolymesh_Solids[OBJ_NUM][0]; g <= allPolymesh_Solids[OBJ_NUM][1]; g++) {
-        if ((0 < g) && (g < allSolid_num)) {
+        if ((0 < g) && (g <= allSolid_num)) {
           
           float Solid_posX = allSolid_XYZPPPSSSRRRV[g][0];
           float Solid_posY = allSolid_XYZPPPSSSRRRV[g][1];
@@ -39225,7 +39225,7 @@ void SOLARCHVISION_rotate_selectedPolymeshes (float x0, float y0, float z0, floa
       }    
       
       for (int g = allPolymesh_Solids[OBJ_NUM][0]; g <= allPolymesh_Solids[OBJ_NUM][1]; g++) {
-        if ((0 < g) && (g < allSolid_num)) {
+        if ((0 < g) && (g <= allSolid_num)) {
 
           float Solid_posX = allSolid_XYZPPPSSSRRRV[g][0];
           float Solid_posY = allSolid_XYZPPPSSSRRRV[g][1];
@@ -39310,7 +39310,7 @@ void SOLARCHVISION_scale_selectedPolymeshes (float x0, float y0, float z0, float
       }
       
       for (int g = allPolymesh_Solids[OBJ_NUM][0]; g <= allPolymesh_Solids[OBJ_NUM][1]; g++) {
-        if ((0 < g) && (g < allSolid_num)) {
+        if ((0 < g) && (g <= allSolid_num)) {
           
           float Solid_posX = allSolid_XYZPPPSSSRRRV[g][0];
           float Solid_posY = allSolid_XYZPPPSSSRRRV[g][1];
