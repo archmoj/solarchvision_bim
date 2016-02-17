@@ -18985,7 +18985,7 @@ void SOLARCHVISION_export_objects () {
             
             float[][] ImageVertex = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
             
-            for (int q = 0; q < 4; q++) {
+            for (int q = 1; q <= 4; q++) { //  skip the center point
 
               float x = ImageVertex[q][0];
               float y = ImageVertex[q][1];
@@ -26510,10 +26510,10 @@ void SOLARCHVISION_calculate_windFlow () {
 
   float[][] ImageVertex = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2); 
 
-  float[] SectionCorner_A = ImageVertex[0];
-  float[] SectionCorner_B = ImageVertex[1];
-  float[] SectionCorner_C = ImageVertex[2];
-  float[] SectionCorner_D = ImageVertex[3]; 
+  float[] SectionCorner_A = ImageVertex[1];
+  float[] SectionCorner_B = ImageVertex[2];
+  float[] SectionCorner_C = ImageVertex[3];
+  float[] SectionCorner_D = ImageVertex[4]; 
   
   for (int i = 0; i < SolidImpact_RES1; i += 10) {
     for (int j = 0; j < SolidImpact_RES2; j += 10) {
@@ -26917,10 +26917,10 @@ void SOLARCHVISION_calculate_SolidImpact_CurrentSection () {
     
     float[][] ImageVertex = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
 
-    float[] SectionCorner_A = ImageVertex[0];
-    float[] SectionCorner_B = ImageVertex[1];
-    float[] SectionCorner_C = ImageVertex[2];
-    float[] SectionCorner_D = ImageVertex[3]; 
+    float[] SectionCorner_A = ImageVertex[1];
+    float[] SectionCorner_B = ImageVertex[2];
+    float[] SectionCorner_C = ImageVertex[3];
+    float[] SectionCorner_D = ImageVertex[4]; 
     
     for (int i = 0; i < SolidImpact_RES1; i++) {
       for (int j = 0; j < SolidImpact_RES2; j++) {
@@ -33987,10 +33987,10 @@ void mouseClicked () {
                     
                     float[][] ImageVertex = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
                     
-                    float[] SectionCorner_A = ImageVertex[0];
-                    float[] SectionCorner_B = ImageVertex[1];
-                    float[] SectionCorner_C = ImageVertex[2];
-                    float[] SectionCorner_D = ImageVertex[3]; 
+                    float[] SectionCorner_A = ImageVertex[1];
+                    float[] SectionCorner_B = ImageVertex[2];
+                    float[] SectionCorner_C = ImageVertex[3];
+                    float[] SectionCorner_D = ImageVertex[4]; 
                     
                     float[] ImageCenter = {0,0,0};
                     for (int j = 0; j < 3; j++) {
@@ -37776,7 +37776,7 @@ void SOLARCHVISION_draw_Cameras () {
       
       float[][] ImageVertex = SOLARCHVISION_getCorners_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);
      
-      for (int q = 0; q < 4; q++) {
+      for (int q = 1; q <= 4; q++) {
       
         float x = ImageVertex[q][0];
         float y = ImageVertex[q][1];
@@ -37784,9 +37784,9 @@ void SOLARCHVISION_draw_Cameras () {
  
         WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
         
-        allCamera_Vertices[f * 4 - q][0] = x;
-        allCamera_Vertices[f * 4 - q][1] = y;
-        allCamera_Vertices[f * 4 - q][2] = z;
+        allCamera_Vertices[f * 4 - q + 1][0] = x;
+        allCamera_Vertices[f * 4 - q + 1][1] = y;
+        allCamera_Vertices[f * 4 - q + 1][2] = z;
         
       }        
 
@@ -37804,7 +37804,7 @@ void SOLARCHVISION_draw_Cameras () {
       
       WIN3D_Diagrams.beginShape();
       
-      for (int q = 0; q < 4; q++) {
+      for (int q = 1; q <= 4; q++) {
      
         {
           float x = ImageVertex[q][0];
@@ -37815,7 +37815,7 @@ void SOLARCHVISION_draw_Cameras () {
         }
 
         {
-          int next_q = (q + 1) % 4; 
+          int next_q = 1 + (q % 4); 
           
           float x = ImageVertex[next_q][0];
           float y = ImageVertex[next_q][1];
@@ -37825,7 +37825,7 @@ void SOLARCHVISION_draw_Cameras () {
         }
 
         {
-          int o = 4; 
+          int o = 0; 
           
           float x = ImageVertex[o][0];
           float y = ImageVertex[o][1];
@@ -37858,11 +37858,11 @@ float[][] SOLARCHVISION_getCorners_Camera (int Camera_Type, float Camera_X, floa
     
     float qx = 0, qy = 0, qz = 0;
 
-    if (q == 0)      {qx = -1; qy = -1; qz = -1;}
-    else if (q == 1) {qx = -1; qy = 1; qz = -1;}
-    else if (q == 2) {qx = 1; qy = 1; qz = -1;}
-    else if (q == 3) {qx = 1; qy = -1; qz = -1;}
-    else if (q == 4) {qx = 0; qy = 0; qz = 0;}
+    if (q == 0) {qx = 0; qy = 0; qz = 0;}
+    else if (q == 1) {qx = -1; qy = -1; qz = -1;}
+    else if (q == 2) {qx = -1; qy = 1; qz = -1;}
+    else if (q == 3) {qx = 1; qy = 1; qz = -1;}
+    else if (q == 4) {qx = 1; qy = -1; qz = -1;}
   
     float x = 0, y = 0, z = 0;
     
@@ -38015,7 +38015,7 @@ void SOLARCHVISION_draw_Sections () {
         
         float[][] ImageVertex = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
         
-        for (int q = 0; q < 4; q++) {
+        for (int q = 1; q <= 4; q++) {
           
           float x = ImageVertex[q][0];
           float y = ImageVertex[q][1];
@@ -38024,10 +38024,10 @@ void SOLARCHVISION_draw_Sections () {
           float v = ImageVertex[q][4];
  
           WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D, u * Section_RES1, v * Section_RES2);
-          
-          allSection_Vertices[f * 4 - q][0] = x;
-          allSection_Vertices[f * 4 - q][1] = y;
-          allSection_Vertices[f * 4 - q][2] = z;
+
+          allSection_Vertices[f * 4 - q + 1][0] = x;
+          allSection_Vertices[f * 4 - q + 1][1] = y;
+          allSection_Vertices[f * 4 - q + 1][2] = z;
           
         }        
 
@@ -38044,8 +38044,8 @@ void SOLARCHVISION_draw_Sections () {
         
         WIN3D_Diagrams.beginShape();
         
-        for (int q = 0; q < 4; q++) {
-       
+        for (int q = 1; q <= 4; q++) {
+
           {
             float x = ImageVertex[q][0];
             float y = ImageVertex[q][1];
@@ -38055,7 +38055,7 @@ void SOLARCHVISION_draw_Sections () {
           }
   
           {
-            int next_q = (q + 1) % 4; 
+            int next_q = 1 + (q % 4); 
             
             float x = ImageVertex[next_q][0];
             float y = ImageVertex[next_q][1];
@@ -38065,7 +38065,7 @@ void SOLARCHVISION_draw_Sections () {
           }
   
           {
-            int o = 4; 
+            int o = 0; 
             
             float x = ImageVertex[o][0];
             float y = ImageVertex[o][1];
@@ -38093,12 +38093,12 @@ float[][] SOLARCHVISION_getCorners_Section (int Section_Type, float Section_offs
   for (int q = 0; q < 5; q++) {
 
     float qx = 0, qy = 0, u = 0, v = 0;
-    
-    if (q == 0)      {qx = -1; qy = -1; u = 0; v = 1;}
-    else if (q == 1) {qx = 1; qy = -1; u = 1; v = 1;}
-    else if (q == 2) {qx = 1; qy = 1; u = 1; v = 0;}
-    else if (q == 3) {qx = -1; qy = 1; u = 0; v = 0;}    
-    else if (q == 4) {qx = 0; qy = 0; u = 0.5; v = 0.5;} // center
+
+    if (q == 0) {qx = 0; qy = 0; u = 0.5; v = 0.5;} // center    
+    else if (q == 1) {qx = -1; qy = -1; u = 0; v = 1;}
+    else if (q == 2) {qx = 1; qy = -1; u = 1; v = 1;}
+    else if (q == 3) {qx = 1; qy = 1; u = 1; v = 0;}
+    else if (q == 4) {qx = -1; qy = 1; u = 0; v = 0;}    
     
     float a = qx * 0.5 * Section_scale_U + Section_offset_U;
     float b = qy * 0.5 * Section_scale_V + Section_offset_V;
@@ -38140,11 +38140,13 @@ float[][] allSolid_Vertices;
 int[][] allSolid_Faces;
 
 
+int Solids_DisplayDegree = 4;// internal
+
 void SOLARCHVISION_draw_Solids () {
   
-  allSolid_Faces = new int [1 + allSolid_num][4];
+  allSolid_Faces = new int [1 + allSolid_num][Solids_DisplayDegree];
     
-  allSolid_Vertices = new float [4 * allSolid_num + 1][3];
+  allSolid_Vertices = new float [(Solids_DisplayDegree + 1) * allSolid_num + 1][3];
   allSolid_Vertices[0][0] = 0;
   allSolid_Vertices[0][1] = 0;
   allSolid_Vertices[0][2] = 0;
@@ -38174,28 +38176,25 @@ void SOLARCHVISION_draw_Solids () {
       
       float[][] ImageVertex = SOLARCHVISION_getCorners_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
       
-      for (int q = 0; q < 4; q++) {
-        
+      for (int q = 1; q <= Solids_DisplayDegree; q++) {
+       
         float x = ImageVertex[q][0];
         float y = ImageVertex[q][1];
         float z = ImageVertex[q][2];
  
         WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
         
-        allSolid_Vertices[f * 4 - q][0] = x;
-        allSolid_Vertices[f * 4 - q][1] = y;
-        allSolid_Vertices[f * 4 - q][2] = z;
-        
+        if (q != 0) {
+          allSolid_Vertices[f * (Solids_DisplayDegree + 1) - q - 1][0] = x;
+          allSolid_Vertices[f * (Solids_DisplayDegree + 1) - q - 1][1] = y;
+          allSolid_Vertices[f * (Solids_DisplayDegree + 1) - q - 1][2] = z;
+          
+          allSolid_Faces[f][q - 1] = (f - 1) * Solids_DisplayDegree - q;
+        }
       }        
-
-      allSolid_Faces[f][0] = f * 4 - 3;
-      allSolid_Faces[f][1] = f * 4 - 2;
-      allSolid_Faces[f][2] = f * 4 - 1;
-      allSolid_Faces[f][3] = f * 4 - 0;  
 
       WIN3D_Diagrams.endShape(CLOSE);
 
-      
     }
     
     WIN3D_Diagrams.noStroke();
@@ -38205,17 +38204,17 @@ void SOLARCHVISION_draw_Solids () {
 
 float[][] SOLARCHVISION_getCorners_Solid (float Solid_posX, float Solid_posY, float Solid_posZ, float Solid_powX, float Solid_powY, float Solid_powZ, float Solid_scaleX, float Solid_scaleY, float Solid_scaleZ, float Solid_rotX, float Solid_rotY, float Solid_rotZ, float Solid_value) {
 
-  float[][] ImageVertex = new float [5][3];
+  float[][] ImageVertex = new float [Solids_DisplayDegree + 1][3];
   
-  for (int q = 0; q < 5; q++) {
-
-    float qx = 0, qy = 0, u = 0, v = 0;
+  for (int q = 0; q <= Solids_DisplayDegree; q++) {
     
-    if (q == 0)      {qx = -1; qy = -1; u = 0; v = 1;}
-    else if (q == 1) {qx = 1; qy = -1; u = 1; v = 1;}
-    else if (q == 2) {qx = 1; qy = 1; u = 1; v = 0;}
-    else if (q == 3) {qx = -1; qy = 1; u = 0; v = 0;}    
-    else if (q == 4) {qx = 0; qy = 0; u = 0.5; v = 0.5;} // center
+    float qx = 0;
+    float qy = 0;
+    
+    if (q != 0) {
+      qx = cos_ang(q * 360.0 / float(Solids_DisplayDegree));
+      qy = sin_ang(q * 360.0 / float(Solids_DisplayDegree));
+    }
     
     float a = qx * Solid_scaleX;
     float b = qy * Solid_scaleY;
@@ -39039,7 +39038,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
 
         float[][] ImageVertex = SOLARCHVISION_getCorners_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);        
         
-        POS_now = ImageVertex[4][j]; // the fourth vertex is the camera point 
+        POS_now = ImageVertex[0][j]; // the first vertex is the Camera point 
       }  
       
       if (Work_with_2D_or_3D == 8) {
@@ -39058,7 +39057,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
         
         float[][] ImageVertex = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
 
-        POS_now = ImageVertex[4][j]; // the fourth vertex is the center of section plane 
+        POS_now = ImageVertex[0][j]; // the first vertex is the center of Section plane 
       }  
 
       if (Work_with_2D_or_3D == 7) {
@@ -39080,7 +39079,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
         
         float[][] ImageVertex = SOLARCHVISION_getCorners_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
 
-        POS_now = ImageVertex[4][j]; // the fourth vertex is the center of Solid plane 
+        POS_now = ImageVertex[0][j]; // the first vertex is the center of Solid plane 
       }  
       
       
@@ -41923,7 +41922,7 @@ String[][] BAR_a_Items = {
                         {"Project", "New", "Save", "Hold", "Fetch", "Open...", "Save As...", "Export 3D-Model", "Import 3D-Model...", "Preferences", "Quit"},
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
-                        {"View", "Camera >> Viewport", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "GoTo Selected Camera"},
+                        {"View", "Camera >> Viewport", "GoTo Selected Camera", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance",  "3DModelSize", "SkydomeSize"},
                         {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Points", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Solids", "Display/Hide Sections", "Display/Hide Cameras", "Display/Hide Sky", "Display/Hide Sun Path", "Display/Hide Sun Pattern", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Solar Section", "Display/Hide Solid Section", "Display/Hide Wind Flow", "Display/Hide Selected Solids", "Display/Hide Selected Sections", "Display/Hide Selected Cameras", "Display/Hide Selected LandPoints", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected Solar Pivots", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Wire", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Solid", "Shade Vertex Elevation"},
                         {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Pre-bake Selected Sections", "Process Active Impact", "Process Passive Impact", "Process Solid Impact", "Run wind 3D-model"},
