@@ -28924,7 +28924,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
     WIN3D_Update = 1;
 
     //if (pre_selectedSolid_numbers_lastItem != selectedSolid_numbers[selectedSolid_numbers.length - 1]) {
-      println("SOLARCHVISION_calculate_selection_Pivot 6b");
+      println("SOLARCHVISION_calculate_selection_Pivot 6e");
       SOLARCHVISION_calculate_selection_Pivot();
     //}
   }
@@ -33142,7 +33142,10 @@ void mouseClicked () {
                 }             
                 else if (Work_with_2D_or_3D == 8) {
                   RxP = SOLARCHVISION_8Dintersect(ray_start, ray_direction, max_dist);
-                }                      
+                }        
+                else if (Work_with_2D_or_3D == 7) {
+                  RxP = SOLARCHVISION_7Dintersect(ray_start, ray_direction, max_dist);
+                }                     
                 else if (Work_with_2D_or_3D == 1) {
                   RxP = SOLARCHVISION_1Dintersect(ray_start, ray_direction, max_dist);
                 }        
@@ -33739,6 +33742,8 @@ void mouseClicked () {
 
                 if (Work_with_2D_or_3D == 7) { // working with solids
                    //zzzzzzzzzzzzzzzzz
+                   
+                   println("Here!");
                 }         
 
 
