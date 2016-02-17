@@ -2,7 +2,7 @@
 // drop functions only works for living objects
 // still duplicate not working for solid layer!
 // create solid not working yet.
-// deleting solids may creat conflict with polymeshes that has those solids
+// deleting solids may create conflict with polymeshes that has those solids
 // should add solid option to trees? 
 
 import processing.pdf.*;
