@@ -1,4 +1,4 @@
-// delete uisng PgUp/Dn or mouseWheel may not work because the selection made at index 0! 
+ 
 // should write selected LandPoints to file!
 // we don't have display_SOLIDS! use Ctrl+7 for
 // drop functions only works for living objects
@@ -14427,7 +14427,7 @@ void SOLARCHVISION_delete_Selection () {
     
     selectedSolid_numbers = sort(selectedSolid_numbers);
     
-    for (int o = selectedSolid_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedSolid_numbers.length - 1; o >= 0; o--) {
 
       int OBJ_NUM = selectedSolid_numbers[o];
       
@@ -14456,7 +14456,7 @@ void SOLARCHVISION_delete_Selection () {
     
     selectedSection_numbers = sort(selectedSection_numbers);
     
-    for (int o = selectedSection_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedSection_numbers.length - 1; o >= 0; o--) {
 
       int OBJ_NUM = selectedSection_numbers[o];
       
@@ -14515,7 +14515,7 @@ void SOLARCHVISION_delete_Selection () {
     
     selectedCamera_numbers = sort(selectedCamera_numbers);
     
-    for (int o = selectedCamera_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedCamera_numbers.length - 1; o >= 0; o--) {
 
       int OBJ_NUM = selectedCamera_numbers[o];
       
@@ -14554,7 +14554,7 @@ void SOLARCHVISION_delete_Selection () {
     
     selectedFractal_numbers = sort(selectedFractal_numbers);
     
-    for (int o = selectedFractal_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedFractal_numbers.length - 1; o >= 0; o--) {
       
       int OBJ_NUM = selectedFractal_numbers[o];
       
@@ -14621,7 +14621,7 @@ void SOLARCHVISION_delete_Selection () {
     
     selectedObject2D_numbers = sort(selectedObject2D_numbers);
     
-    for (int o = selectedObject2D_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
       
       int OBJ_NUM = selectedObject2D_numbers[o];
       
@@ -14659,7 +14659,7 @@ void SOLARCHVISION_delete_Selection () {
     
     int Solids_updated = 0;  
 
-    for (int o = selectedPolymesh_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
       
       int OBJ_NUM = selectedPolymesh_numbers[o];
       
@@ -14775,20 +14775,20 @@ void SOLARCHVISION_delete_Selection () {
 
     selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
 
-    for (int o = selectedPolymesh_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
       
       int OBJ_NUM = selectedPolymesh_numbers[o];
       
       if (OBJ_NUM != 0) {
 
-        for (int q = selectedFace_numbers.length - 1; q > 0; q--) { // the first node is null
+        for (int q = selectedFace_numbers.length - 1; q >= 0; q--) {
 
           int f = selectedFace_numbers[q];
           
           int startFace = allPolymesh_Faces[OBJ_NUM][0];
           int endFace = allPolymesh_Faces[OBJ_NUM][1];          
           
-          if ((startFace <= f) && (f <= endFace)) {
+          if ((f != 0) && (startFace <= f) && (f <= endFace)) {
             
             for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
               for (int j = 0; j < 2; j++) {
@@ -14837,22 +14837,25 @@ void SOLARCHVISION_delete_Selection () {
     
     selectedVertex_numbers = sort(selectedVertex_numbers);
 
-    for (int q = selectedVertex_numbers.length - 1; q > 0; q--) { // the first node is null
+    for (int q = selectedVertex_numbers.length - 1; q >= 0; q--) { 
 
       int vNo = selectedVertex_numbers[q];
       
-      {
-        float[][] startList = (float[][]) subset(allVertices, 0, vNo);
-        float[][] endList = (float[][]) subset(allVertices, vNo + 1);
-        
-        allVertices = (float[][]) concat(startList, endList);
-      }
+      if (vNo != 0) {
       
-      for (int i = 1; i < allFaces.length; i++) { // the first node is null
-        for (int j = 0; j < allFaces[i].length; j++) {
-          if (allFaces[i][j] > vNo) {
-            
-            allFaces[i][j] -= 1;
+        {
+          float[][] startList = (float[][]) subset(allVertices, 0, vNo);
+          float[][] endList = (float[][]) subset(allVertices, vNo + 1);
+          
+          allVertices = (float[][]) concat(startList, endList);
+        }
+        
+        for (int i = 1; i < allFaces.length; i++) { // the first node is null
+          for (int j = 0; j < allFaces[i].length; j++) {
+            if (allFaces[i][j] > vNo) {
+              
+              allFaces[i][j] -= 1;
+            }
           }
         }
       }
@@ -14878,42 +14881,45 @@ void SOLARCHVISION_deleteIsolatedVerticesSelection () {
 
   selectedVertex_numbers = sort(selectedVertex_numbers);
   
-  for (int q = selectedVertex_numbers.length - 1; q > 0; q--) { // the first node is null
-  
-    int vNo = selectedVertex_numbers[q];
-  
-    int found = -1;
-  
-    for (int i = 1; i < allFaces.length; i++) { // the first node is null
-      for (int j = 0; j < allFaces[i].length; j++) {
-        if (allFaces[i][j] == vNo) {
-          found = 1;
-        }
-      }
-    }
+    for (int q = selectedVertex_numbers.length - 1; q >= 0; q--) { 
     
-    if (found == -1) {
-      {
-        float[][] startList = (float[][]) subset(allVertices, 0, vNo);
-        float[][] endList = (float[][]) subset(allVertices, vNo + 1);
-        
-        allVertices = (float[][]) concat(startList, endList);
-      }
+      int vNo = selectedVertex_numbers[q];
+    
+      if (vNo != 0) {  
       
+      int found = -1;
+    
       for (int i = 1; i < allFaces.length; i++) { // the first node is null
         for (int j = 0; j < allFaces[i].length; j++) {
-          if (allFaces[i][j] > vNo) {
-            
-            allFaces[i][j] -= 1;
-
+          if (allFaces[i][j] == vNo) {
+            found = 1;
           }
         }
       }
-    }
-    
-    
-    WIN3D_update_VerticesSolarValue = 1;  
-  } 
+      
+      if (found == -1) {
+        {
+          float[][] startList = (float[][]) subset(allVertices, 0, vNo);
+          float[][] endList = (float[][]) subset(allVertices, vNo + 1);
+          
+          allVertices = (float[][]) concat(startList, endList);
+        }
+        
+        for (int i = 1; i < allFaces.length; i++) { // the first node is null
+          for (int j = 0; j < allFaces[i].length; j++) {
+            if (allFaces[i][j] > vNo) {
+              
+              allFaces[i][j] -= 1;
+  
+            }
+          }
+        }
+      }
+      
+      
+      WIN3D_update_VerticesSolarValue = 1;  
+    } 
+  }
 
   selectedVertex_numbers = new int [1];
   selectedVertex_numbers[0] = 0;  
@@ -15030,31 +15036,34 @@ void SOLARCHVISION_selectNearVertices () {
 
       int isNearEnough = -1;
 
-      for (int i = 1; i < pre_selectedVertex_numbers.length; i++) { // the first node is null
+      for (int i = 0; i < pre_selectedVertex_numbers.length; i++) {
 
         int q = pre_selectedVertex_numbers[i];
         
-        int found = -1;
+        if (q != 0) {
         
-        for (int j = 0; j < selectedVertex_numbers.length; j++) {
+          int found = -1;
           
-          if (vNo == selectedVertex_numbers[j]) {
+          for (int j = 0; j < selectedVertex_numbers.length; j++) {
             
-            found = 1;
-
-            break;
-          }
-        } 
-        
-        if (found == -1) { 
+            if (vNo == selectedVertex_numbers[j]) {
+              
+              found = 1;
+  
+              break;
+            }
+          } 
           
-          float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
-          
-          if (d <= Modify_Input_WeldTreshold) { 
-
-            isNearEnough = 1;
+          if (found == -1) { 
             
-            break;
+            float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
+            
+            if (d <= Modify_Input_WeldTreshold) { 
+  
+              isNearEnough = 1;
+              
+              break;
+            }
           }
         }
       }
@@ -15093,52 +15102,55 @@ void SOLARCHVISION_weldSceneVerticesSelection () {
     
     selectedVertex_numbers = sort(selectedVertex_numbers);
   
-    for (int o = selectedVertex_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedVertex_numbers.length - 1; o >= 0; o--) {
   
       int vNo = selectedVertex_numbers[o];
-    
-      int found = -1;
-    
-      for (int i = 1; i < allFaces.length; i++) { // the first node is null
-        for (int j = 0; j < allFaces[i].length; j++) {
-          
-          int q = allFaces[i][j];
-          
-          if (q > vNo) { // it is faster than (q != vNo)
-          
-            float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
-            
-            if (d <= Modify_Input_WeldTreshold) { 
-            
-              allFaces[i][j] = vNo;
-
-              found = q;
-            }
-          }
-        }
-      }
       
-      if (found != -1) {
-        
-        int q = found;
-
-        {
-          float[][] startList = (float[][]) subset(allVertices, 0, q);
-          float[][] endList = (float[][]) subset(allVertices, q + 1);
-          
-          allVertices = (float[][]) concat(startList, endList);
-        }
-        
+      if (vNo != 0) {
+    
+        int found = -1;
+      
         for (int i = 1; i < allFaces.length; i++) { // the first node is null
           for (int j = 0; j < allFaces[i].length; j++) {
-            if (allFaces[i][j] > q) {
+            
+            int q = allFaces[i][j];
+            
+            if (q > vNo) { // it is faster than (q != vNo)
+            
+              float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
               
-              allFaces[i][j] -= 1;
+              if (d <= Modify_Input_WeldTreshold) { 
+              
+                allFaces[i][j] = vNo;
+  
+                found = q;
+              }
+            }
+          }
+        }
+        
+        if (found != -1) {
+          
+          int q = found;
+  
+          {
+            float[][] startList = (float[][]) subset(allVertices, 0, q);
+            float[][] endList = (float[][]) subset(allVertices, q + 1);
+            
+            allVertices = (float[][]) concat(startList, endList);
+          }
+          
+          for (int i = 1; i < allFaces.length; i++) { // the first node is null
+            for (int j = 0; j < allFaces[i].length; j++) {
+              if (allFaces[i][j] > q) {
+                
+                allFaces[i][j] -= 1;
+              }
             }
           }
         }
       }
-      
+        
     } 
   
     selectedVertex_numbers = new int [1];
@@ -15171,51 +15183,60 @@ void SOLARCHVISION_weldObjectsVerticesSelection () {
     
     selectedVertex_numbers = sort(selectedVertex_numbers);
     
-    for (int o = selectedVertex_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedVertex_numbers.length - 1; o >= 0; o--) {  
   
       int vNo = selectedVertex_numbers[o];
       
-      int found = -1;
-    
-      for (int m = o - 1; m > 0; m--) { // the first node is null 
+      if (vNo != 0) {
+      
+        int found = -1;
+      
+        for (int m = o - 1; m >= 0; m--) {
+            
+          int q = selectedVertex_numbers[m];
           
-        int q = selectedVertex_numbers[m];
-
-        float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
-        
-        if (d <= Modify_Input_WeldTreshold) { 
-          
-          for (int i = 1; i < selectedFace_numbers.length; i++) { // the first node is null
-           int f = selectedFace_numbers[i];
-          
-            for (int j = 0; j < allFaces[f].length; j++) {
-              if (allFaces[f][j] == q) {
+          if (q != 0) {
+  
+            float d = dist(allVertices[q][0], allVertices[q][1], allVertices[q][2], allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]);
+            
+            if (d <= Modify_Input_WeldTreshold) { 
+              
+              for (int i = 0; i < selectedFace_numbers.length; i++) {
+                int f = selectedFace_numbers[i];
                 
-                allFaces[f][j] = vNo;
-                
-                found = q;
+                if (f != 0) {
+                              
+                  for (int j = 0; j < allFaces[f].length; j++) {
+                    if (allFaces[f][j] == q) {
+                      
+                      allFaces[f][j] = vNo;
+                      
+                      found = q;
+                    }
+                  }
+                }
               }
             }
           }
         }
-      }
-      
-      if (found != -1) {
         
-        int q = found;
-
-        {
-          float[][] startList = (float[][]) subset(allVertices, 0, q);
-          float[][] endList = (float[][]) subset(allVertices, q + 1);
+        if (found != -1) {
           
-          allVertices = (float[][]) concat(startList, endList);
-        }
-        
-        for (int i = 1; i < allFaces.length; i++) { // the first node is null
-          for (int j = 0; j < allFaces[i].length; j++) {
-            if (allFaces[i][j] > q) {
-              
-              allFaces[i][j] -= 1;
+          int q = found;
+  
+          {
+            float[][] startList = (float[][]) subset(allVertices, 0, q);
+            float[][] endList = (float[][]) subset(allVertices, q + 1);
+            
+            allVertices = (float[][]) concat(startList, endList);
+          }
+          
+          for (int i = 1; i < allFaces.length; i++) { // the first node is null
+            for (int j = 0; j < allFaces[i].length; j++) {
+              if (allFaces[i][j] > q) {
+                
+                allFaces[i][j] -= 1;
+              }
             }
           }
         }
@@ -15238,13 +15259,16 @@ void SOLARCHVISION_repositionVerticesSelection () {
    
     SOLARCHVISION_calculate_selection_BoundingBox();
     
-    for (int o = selectedVertex_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedVertex_numbers.length - 1; o >= 0; o--) { 
   
       int vNo = selectedVertex_numbers[o];
+      
+      if (vNo != 0) {
 
-      allVertices[vNo][0] = selection_BoundingBox[1][0]; // center
-      allVertices[vNo][1] = selection_BoundingBox[1][1]; // center
-      allVertices[vNo][2] = selection_BoundingBox[1][2]; // center
+        allVertices[vNo][0] = selection_BoundingBox[1][0]; // center
+        allVertices[vNo][1] = selection_BoundingBox[1][1]; // center
+        allVertices[vNo][2] = selection_BoundingBox[1][2]; // center
+      }
 
     } 
     
@@ -15273,17 +15297,20 @@ void SOLARCHVISION_separateVerticesSelection () {
     
     selectedVertex_numbers = sort(selectedVertex_numbers);
   
-    for (int o = selectedVertex_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedVertex_numbers.length - 1; o >= 0; o--) { 
   
       int vNo = selectedVertex_numbers[o];
-    
-      for (int i = 1; i < allFaces.length; i++) { // the first node is null
-        for (int j = 0; j < allFaces[i].length; j++) {
-          
-          if (allFaces[i][j] == vNo) { 
-          
-            allFaces[i][j] = SOLARCHVISION_add_Vertex(allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]); 
-          
+      
+      if (vNo != 0) {
+      
+        for (int i = 1; i < allFaces.length; i++) { // the first node is null
+          for (int j = 0; j < allFaces[i].length; j++) {
+            
+            if (allFaces[i][j] == vNo) { 
+            
+              allFaces[i][j] = SOLARCHVISION_add_Vertex(allVertices[vNo][0], allVertices[vNo][1], allVertices[vNo][2]); 
+            
+            }
           }
         }
       }
@@ -15325,120 +15352,127 @@ void SOLARCHVISION_inserCornerOpenningsSelection () {
     
     int[] new_selectedFace_numbers = selectedFace_numbers;
     
-    for (int o = selectedPolymesh_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
       
       int OBJ_NUM = selectedPolymesh_numbers[o];
       
       if (OBJ_NUM != 0) {
 
-        for (int q = selectedFace_numbers.length - 1; q > 0; q--) { // the first node is null
+        for (int q = selectedFace_numbers.length - 1; q >= 0; q--) { 
 
           int f = selectedFace_numbers[q];
           
-          int startFace = allPolymesh_Faces[OBJ_NUM][0];
-          int endFace = allPolymesh_Faces[OBJ_NUM][1];          
+          if (f != 0) {
           
-          if ((startFace <= f) && (f <= endFace)) {
+            int startFace = allPolymesh_Faces[OBJ_NUM][0];
+            int endFace = allPolymesh_Faces[OBJ_NUM][1];          
             
-            for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
-              for (int j = 0; j < 2; j++) {
-                allPolymesh_Faces[i][j] += allFaces[f].length;
-              }
-            }  
-            allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
-
-            for (int p = new_selectedFace_numbers.length - 1; p > 0; p--) { // the first node is null
-              if (new_selectedFace_numbers[p] > f) {  
-                new_selectedFace_numbers[p] += allFaces[f].length;
-              }
-            }              
-
-
-            int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
-            int[][] midList_Faces = (int[][]) subset(allFaces, f, 1);
-            int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
-            
-            
-            int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
-            int[][] midList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f, 1);
-            int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
-
-            { 
-              float[][] base_Vertices = new float [allFaces[f].length][3];
-
-              for(int i = 0; i < allFaces[f].length; i++) {
-                for (int j = 0; j < 3; j++) {
-                  base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+            if ((startFace <= f) && (f <= endFace)) {
+              
+              for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
+                for (int j = 0; j < 2; j++) {
+                  allPolymesh_Faces[i][j] += allFaces[f].length;
                 }
-              }
-              
-              float[] G_face = {0,0,0};  
-              
-              for(int i = 0; i < allFaces[f].length; i++) {
-                for (int j = 0; j < 3; j++) {
-                  G_face[j] += base_Vertices[i][j] / float(allFaces[f].length);
-                }
-              }
-              
-              float[][] new_Vertices = new float [allFaces[f].length][3];
-            
-              for(int i = 0; i < allFaces[f].length; i++) {
-                for (int j = 0; j < 3; j++) {
-                  
-                  new_Vertices[i][j] = pow(Modify_Input_OpenningArea, 0.5) * base_Vertices[i][j] + (1 - pow(Modify_Input_OpenningArea, 0.5)) * G_face[j];
-                }
-              }
-              
-              int[] new_Vertex_numbers = new int [allFaces[f].length];
-              
-              for(int s = 0; s < allFaces[f].length; s++) {
-                
-                new_Vertex_numbers[s] = SOLARCHVISION_add_Vertex(new_Vertices[s][0], new_Vertices[s][1], new_Vertices[s][2]); 
-              } 
-            
-              defaultMaterial = allFaces_MTLV[f][0];
-              defaultTessellation = allFaces_MTLV[f][1];
-              defaultLayer = allFaces_MTLV[f][2];
-              defaultVisibility = allFaces_MTLV[f][3];              
-            
-              for(int s = 0; s < allFaces[f].length; s++) { 
-                
-                int s_next = (s + 1) % allFaces[f].length;
-
-                int[][] newFace = {{new_Vertex_numbers[s], allFaces[f][s], allFaces[f][s_next], new_Vertex_numbers[s_next]}};
-                int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
-              
-                midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV);           
-              }
-    
-                       
-              { // modifying the base face to shape the openning  
-                for(int s = 0; s < allFaces[f].length; s++) {
-                  allFaces[f][s] = new_Vertex_numbers[s];
-                }
-              } 
-              
-            }
-           
-            startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-            startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
-
-            allFaces = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
+              }  
+              allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
   
-            { // to avoid processing the faces twice they should be deleted from the list.
-              for (int i = q + 1; i < selectedFace_numbers.length; i++) {
-                selectedFace_numbers[i] -= 1;
+              for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
+               
+                if (new_selectedFace_numbers[p] != 0) {
+                
+                  if (new_selectedFace_numbers[p] > f) {  
+                    new_selectedFace_numbers[p] += allFaces[f].length;
+                  }
+                }
               }              
-            
-              int[] startList = (int[]) subset(selectedFace_numbers, 0, q);
-              int[] endList = (int[]) subset(selectedFace_numbers, q + 1);
+  
+  
+              int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
+              int[][] midList_Faces = (int[][]) subset(allFaces, f, 1);
+              int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
               
-              selectedFace_numbers = (int[]) concat(startList, endList);         
+              
+              int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
+              int[][] midList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f, 1);
+              int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
+  
+              { 
+                float[][] base_Vertices = new float [allFaces[f].length][3];
+  
+                for(int i = 0; i < allFaces[f].length; i++) {
+                  for (int j = 0; j < 3; j++) {
+                    base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+                  }
+                }
+                
+                float[] G_face = {0,0,0};  
+                
+                for(int i = 0; i < allFaces[f].length; i++) {
+                  for (int j = 0; j < 3; j++) {
+                    G_face[j] += base_Vertices[i][j] / float(allFaces[f].length);
+                  }
+                }
+                
+                float[][] new_Vertices = new float [allFaces[f].length][3];
+              
+                for(int i = 0; i < allFaces[f].length; i++) {
+                  for (int j = 0; j < 3; j++) {
+                    
+                    new_Vertices[i][j] = pow(Modify_Input_OpenningArea, 0.5) * base_Vertices[i][j] + (1 - pow(Modify_Input_OpenningArea, 0.5)) * G_face[j];
+                  }
+                }
+                
+                int[] new_Vertex_numbers = new int [allFaces[f].length];
+                
+                for(int s = 0; s < allFaces[f].length; s++) {
+                  
+                  new_Vertex_numbers[s] = SOLARCHVISION_add_Vertex(new_Vertices[s][0], new_Vertices[s][1], new_Vertices[s][2]); 
+                } 
+              
+                defaultMaterial = allFaces_MTLV[f][0];
+                defaultTessellation = allFaces_MTLV[f][1];
+                defaultLayer = allFaces_MTLV[f][2];
+                defaultVisibility = allFaces_MTLV[f][3];              
+              
+                for(int s = 0; s < allFaces[f].length; s++) { 
+                  
+                  int s_next = (s + 1) % allFaces[f].length;
+  
+                  int[][] newFace = {{new_Vertex_numbers[s], allFaces[f][s], allFaces[f][s_next], new_Vertex_numbers[s_next]}};
+                  int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
+                
+                  midList_Faces = (int[][]) concat(midList_Faces, newFace);
+                  midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV);           
+                }
+      
+                         
+                { // modifying the base face to shape the openning  
+                  for(int s = 0; s < allFaces[f].length; s++) {
+                    allFaces[f][s] = new_Vertex_numbers[s];
+                  }
+                } 
+                
+              }
+             
+              startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
+              startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
+  
+              allFaces = (int[][]) concat(startList_Faces, endList_Faces);
+              allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
+    
+              { // to avoid processing the faces twice they should be deleted from the list.
+                for (int i = q + 1; i < selectedFace_numbers.length; i++) {
+                  selectedFace_numbers[i] -= 1;
+                }              
+              
+                int[] startList = (int[]) subset(selectedFace_numbers, 0, q);
+                int[] endList = (int[]) subset(selectedFace_numbers, q + 1);
+                
+                selectedFace_numbers = (int[]) concat(startList, endList);         
+              }
+  
+   
             }
-
- 
           }
   
         }
@@ -15488,148 +15522,154 @@ void SOLARCHVISION_insertParallelOpenningsSelection () {
     
     int[] new_selectedFace_numbers = selectedFace_numbers;
     
-    for (int o = selectedPolymesh_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) {
       
       int OBJ_NUM = selectedPolymesh_numbers[o];
       
       if (OBJ_NUM != 0) {
 
-        for (int q = selectedFace_numbers.length - 1; q > 0; q--) { // the first node is null
+        for (int q = selectedFace_numbers.length - 1; q >= 0; q--) {
 
           int f = selectedFace_numbers[q];
           
-          int startFace = allPolymesh_Faces[OBJ_NUM][0];
-          int endFace = allPolymesh_Faces[OBJ_NUM][1];          
+          if (f != 0) {
           
-          if ((startFace <= f) && (f <= endFace)) {
+            int startFace = allPolymesh_Faces[OBJ_NUM][0];
+            int endFace = allPolymesh_Faces[OBJ_NUM][1];          
             
-            for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
-              for (int j = 0; j < 2; j++) {
-                allPolymesh_Faces[i][j] += 2 * allFaces[f].length;
-              }
-            }  
-            allPolymesh_Faces[OBJ_NUM][1] += 2 * allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
-
-            for (int p = new_selectedFace_numbers.length - 1; p > 0; p--) { // the first node is null
-              if (new_selectedFace_numbers[p] > f) {  
-                new_selectedFace_numbers[p] += 2 * allFaces[f].length;
-              }
-            }              
-
-
-            int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
-            int[][] midList_Faces = (int[][]) subset(allFaces, f, 1);
-            int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
-            
-            
-            int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
-            int[][] midList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f, 1);
-            int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
-
-            { 
-              float[][] base_Vertices = new float [allFaces[f].length][3];
-
-              for(int i = 0; i < allFaces[f].length; i++) {
-                for (int j = 0; j < 3; j++) {
-                  base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+            if ((startFace <= f) && (f <= endFace)) {
+              
+              for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
+                for (int j = 0; j < 2; j++) {
+                  allPolymesh_Faces[i][j] += 2 * allFaces[f].length;
                 }
-              }
-              
-              float[] G_face = {0,0,0};  
-              
-              for(int i = 0; i < allFaces[f].length; i++) {
-                for (int j = 0; j < 3; j++) {
-                  G_face[j] += base_Vertices[i][j] / float(allFaces[f].length);
-                }
-              }
-              
-              
-              float[][] new_A_EdgeVertices = new float [allFaces[f].length][3];
-              float[][] new_B_EdgeVertices = new float [allFaces[f].length][3];
-              float[][] new_CenterVertices = new float [allFaces[f].length][3];
-            
-              for(int s = 0; s < allFaces[f].length; s++) {
-
-                int s_prev = (s + allFaces[f].length - 1) % allFaces[f].length;
-                int s_next = (s + 1) % allFaces[f].length;
-                
-                for (int j = 0; j < 3; j++) {
-                  
-                  new_A_EdgeVertices[s][j] = Modify_Input_OpenningDeviation * base_Vertices[s][j] + (1 - Modify_Input_OpenningDeviation) * 0.5 * (base_Vertices[s_prev][j] + base_Vertices[s][j]);
-                  new_B_EdgeVertices[s][j] = Modify_Input_OpenningDeviation * base_Vertices[s][j] + (1 - Modify_Input_OpenningDeviation) * 0.5 * (base_Vertices[s_next][j] + base_Vertices[s][j]);
-                  
-                  new_CenterVertices[s][j] = pow(Modify_Input_OpenningArea, 0.5) * base_Vertices[s][j] + (1 - pow(Modify_Input_OpenningArea, 0.5)) * G_face[j];
-                }
-              }
-              
-              int[] new_A_EdgeVertex_numbers = new int [allFaces[f].length]; // on the edge (1/3)
-              int[] new_B_EdgeVertex_numbers = new int [allFaces[f].length]; // on the other edge (2/3)
-              int[] new_CenterVertex_numbers = new int [allFaces[f].length]; // in the center
-              
-              for(int s = 0; s < allFaces[f].length; s++) {
-                
-                new_A_EdgeVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_A_EdgeVertices[s][0], new_A_EdgeVertices[s][1], new_A_EdgeVertices[s][2]); 
-                new_B_EdgeVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_B_EdgeVertices[s][0], new_B_EdgeVertices[s][1], new_B_EdgeVertices[s][2]);
-                new_CenterVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_CenterVertices[s][0], new_CenterVertices[s][1], new_CenterVertices[s][2]);
-              }               
-              
-
-            
-              defaultMaterial = allFaces_MTLV[f][0];
-              defaultTessellation = allFaces_MTLV[f][1];
-              defaultLayer = allFaces_MTLV[f][2];
-              defaultVisibility = allFaces_MTLV[f][3];
-            
-              for(int s = 0; s < allFaces[f].length; s++) { 
-                
-                int s_next = (s + 1) % allFaces[f].length;
-                
-                {
-                  int[][] newFace = {{allFaces[f][s], new_B_EdgeVertex_numbers[s], new_CenterVertex_numbers[s], new_A_EdgeVertex_numbers[s]}};
-                  int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
-              
-                  midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                  midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV);
-                }   
-        
-                {
-                  int[][] newFace = {{new_B_EdgeVertex_numbers[s], new_A_EdgeVertex_numbers[s_next], new_CenterVertex_numbers[s_next], new_CenterVertex_numbers[s]}};
-                  int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
-              
-                  midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                  midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV);
-                }                 
-              }
-    
-                       
-              { // modifying the base face to shape the openning  
-                for(int s = 0; s < allFaces[f].length; s++) {
-                  allFaces[f][s] = new_CenterVertex_numbers[s];
-                }
-              } 
-              
-            }
-           
-            startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-            startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
-
-            allFaces = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
+              }  
+              allPolymesh_Faces[OBJ_NUM][1] += 2 * allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
   
-            { // to avoid processing the faces twice they should be deleted from the list.
-              for (int i = q + 1; i < selectedFace_numbers.length; i++) {
-                selectedFace_numbers[i] -= 1;
+              for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
+               
+                if (new_selectedFace_numbers[p] != 0) { 
+                
+                  if (new_selectedFace_numbers[p] > f) {  
+                    new_selectedFace_numbers[p] += 2 * allFaces[f].length;
+                  }
+                }
               }              
-            
-              int[] startList = (int[]) subset(selectedFace_numbers, 0, q);
-              int[] endList = (int[]) subset(selectedFace_numbers, q + 1);
-              
-              selectedFace_numbers = (int[]) concat(startList, endList);         
-            }
-
- 
-          }
   
+  
+              int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
+              int[][] midList_Faces = (int[][]) subset(allFaces, f, 1);
+              int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
+              
+              
+              int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
+              int[][] midList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f, 1);
+              int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
+  
+              { 
+                float[][] base_Vertices = new float [allFaces[f].length][3];
+  
+                for(int i = 0; i < allFaces[f].length; i++) {
+                  for (int j = 0; j < 3; j++) {
+                    base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+                  }
+                }
+                
+                float[] G_face = {0,0,0};  
+                
+                for(int i = 0; i < allFaces[f].length; i++) {
+                  for (int j = 0; j < 3; j++) {
+                    G_face[j] += base_Vertices[i][j] / float(allFaces[f].length);
+                  }
+                }
+                
+                
+                float[][] new_A_EdgeVertices = new float [allFaces[f].length][3];
+                float[][] new_B_EdgeVertices = new float [allFaces[f].length][3];
+                float[][] new_CenterVertices = new float [allFaces[f].length][3];
+              
+                for(int s = 0; s < allFaces[f].length; s++) {
+  
+                  int s_prev = (s + allFaces[f].length - 1) % allFaces[f].length;
+                  int s_next = (s + 1) % allFaces[f].length;
+                  
+                  for (int j = 0; j < 3; j++) {
+                    
+                    new_A_EdgeVertices[s][j] = Modify_Input_OpenningDeviation * base_Vertices[s][j] + (1 - Modify_Input_OpenningDeviation) * 0.5 * (base_Vertices[s_prev][j] + base_Vertices[s][j]);
+                    new_B_EdgeVertices[s][j] = Modify_Input_OpenningDeviation * base_Vertices[s][j] + (1 - Modify_Input_OpenningDeviation) * 0.5 * (base_Vertices[s_next][j] + base_Vertices[s][j]);
+                    
+                    new_CenterVertices[s][j] = pow(Modify_Input_OpenningArea, 0.5) * base_Vertices[s][j] + (1 - pow(Modify_Input_OpenningArea, 0.5)) * G_face[j];
+                  }
+                }
+                
+                int[] new_A_EdgeVertex_numbers = new int [allFaces[f].length]; // on the edge (1/3)
+                int[] new_B_EdgeVertex_numbers = new int [allFaces[f].length]; // on the other edge (2/3)
+                int[] new_CenterVertex_numbers = new int [allFaces[f].length]; // in the center
+                
+                for(int s = 0; s < allFaces[f].length; s++) {
+                  
+                  new_A_EdgeVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_A_EdgeVertices[s][0], new_A_EdgeVertices[s][1], new_A_EdgeVertices[s][2]); 
+                  new_B_EdgeVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_B_EdgeVertices[s][0], new_B_EdgeVertices[s][1], new_B_EdgeVertices[s][2]);
+                  new_CenterVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_CenterVertices[s][0], new_CenterVertices[s][1], new_CenterVertices[s][2]);
+                }               
+                
+  
+              
+                defaultMaterial = allFaces_MTLV[f][0];
+                defaultTessellation = allFaces_MTLV[f][1];
+                defaultLayer = allFaces_MTLV[f][2];
+                defaultVisibility = allFaces_MTLV[f][3];
+              
+                for(int s = 0; s < allFaces[f].length; s++) { 
+                  
+                  int s_next = (s + 1) % allFaces[f].length;
+                  
+                  {
+                    int[][] newFace = {{allFaces[f][s], new_B_EdgeVertex_numbers[s], new_CenterVertex_numbers[s], new_A_EdgeVertex_numbers[s]}};
+                    int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
+                
+                    midList_Faces = (int[][]) concat(midList_Faces, newFace);
+                    midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV);
+                  }   
+          
+                  {
+                    int[][] newFace = {{new_B_EdgeVertex_numbers[s], new_A_EdgeVertex_numbers[s_next], new_CenterVertex_numbers[s_next], new_CenterVertex_numbers[s]}};
+                    int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
+                
+                    midList_Faces = (int[][]) concat(midList_Faces, newFace);
+                    midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV);
+                  }                 
+                }
+      
+                         
+                { // modifying the base face to shape the openning  
+                  for(int s = 0; s < allFaces[f].length; s++) {
+                    allFaces[f][s] = new_CenterVertex_numbers[s];
+                  }
+                } 
+                
+              }
+             
+              startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
+              startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
+  
+              allFaces = (int[][]) concat(startList_Faces, endList_Faces);
+              allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
+    
+              { // to avoid processing the faces twice they should be deleted from the list.
+                for (int i = q + 1; i < selectedFace_numbers.length; i++) {
+                  selectedFace_numbers[i] -= 1;
+                }              
+              
+                int[] startList = (int[]) subset(selectedFace_numbers, 0, q);
+                int[] endList = (int[]) subset(selectedFace_numbers, q + 1);
+                
+                selectedFace_numbers = (int[]) concat(startList, endList);         
+              }
+  
+   
+            }
+          }
         }
 
       }
@@ -15677,132 +15717,138 @@ void SOLARCHVISION_insertRotatedOpenningsSelection () {
     
     int[] new_selectedFace_numbers = selectedFace_numbers;
     
-    for (int o = selectedPolymesh_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) { 
       
       int OBJ_NUM = selectedPolymesh_numbers[o];
       
       if (OBJ_NUM != 0) {
 
-        for (int q = selectedFace_numbers.length - 1; q > 0; q--) { // the first node is null
+        for (int q = selectedFace_numbers.length - 1; q >= 0; q--) {
 
           int f = selectedFace_numbers[q];
           
-          int startFace = allPolymesh_Faces[OBJ_NUM][0];
-          int endFace = allPolymesh_Faces[OBJ_NUM][1];          
+          if (f != 0) {
           
-          if ((startFace <= f) && (f <= endFace)) {
+            int startFace = allPolymesh_Faces[OBJ_NUM][0];
+            int endFace = allPolymesh_Faces[OBJ_NUM][1];          
             
-            for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
-              for (int j = 0; j < 2; j++) {
-                allPolymesh_Faces[i][j] += allFaces[f].length;
-              }
-            }  
-            allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
-
-            for (int p = new_selectedFace_numbers.length - 1; p > 0; p--) { // the first node is null
-              if (new_selectedFace_numbers[p] > f) {  
-                new_selectedFace_numbers[p] += allFaces[f].length;
-              }
-            }              
-
-
-            int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
-            int[][] midList_Faces = (int[][]) subset(allFaces, f, 1);
-            int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
-            
-            
-            int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
-            int[][] midList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f, 1);
-            int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
-
-            { 
-              float[][] base_Vertices = new float [allFaces[f].length][3];
-
-              for(int i = 0; i < allFaces[f].length; i++) {
-                for (int j = 0; j < 3; j++) {
-                  base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+            if ((startFace <= f) && (f <= endFace)) {
+              
+              for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
+                for (int j = 0; j < 2; j++) {
+                  allPolymesh_Faces[i][j] += allFaces[f].length;
                 }
-              }
-              
-              float[] G_face = {0,0,0};  
-              
-              for(int i = 0; i < allFaces[f].length; i++) {
-                for (int j = 0; j < 3; j++) {
-                  G_face[j] += base_Vertices[i][j] / float(allFaces[f].length);
-                }
-              }
-              
-              float[][] new_EdgeVertices = new float [allFaces[f].length][3];
-              float[][] new_CenterVertices = new float [allFaces[f].length][3];
-            
-              for(int s = 0; s < allFaces[f].length; s++) {
-
-                int s_prev = (s + allFaces[f].length - 1) % allFaces[f].length;
-                
-                for (int j = 0; j < 3; j++) {
-                  
-                  new_EdgeVertices[s][j] = Modify_Input_OpenningDeviation * base_Vertices[s][j] + (1 - Modify_Input_OpenningDeviation) * base_Vertices[s_prev][j];
-                  
-                  new_CenterVertices[s][j] = pow(Modify_Input_OpenningArea, 0.5) * new_EdgeVertices[s][j] + (1 - pow(Modify_Input_OpenningArea, 0.5)) * G_face[j];
-                }
-              }
-              
-              int[] new_EdgeVertex_numbers = new int [allFaces[f].length]; // on the edge
-              int[] new_CenterVertex_numbers = new int [allFaces[f].length]; // in the center
-              
-              for(int s = 0; s < allFaces[f].length; s++) {
-                
-                new_EdgeVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]); 
-                new_CenterVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_CenterVertices[s][0], new_CenterVertices[s][1], new_CenterVertices[s][2]);
-              } 
-              
-              
-            
-              defaultMaterial = allFaces_MTLV[f][0];
-              defaultTessellation = allFaces_MTLV[f][1];
-              defaultLayer = allFaces_MTLV[f][2];
-              defaultVisibility = allFaces_MTLV[f][3];
-              
-              for(int s = 0; s < allFaces[f].length; s++) { 
-                
-                int s_next = (s + 1) % allFaces[f].length;
-
-                int[][] newFace = {{new_EdgeVertex_numbers[s], allFaces[f][s], new_EdgeVertex_numbers[s_next], new_CenterVertex_numbers[s_next], new_CenterVertex_numbers[s]}};
-                int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
-              
-                midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV);           
-              }
-    
-                       
-              { // modifying the base face to match new center face
-                for(int s = 0; s < allFaces[f].length; s++) {
-                  allFaces[f][s] = new_CenterVertex_numbers[s];
-                }
-              } 
-              
-            }
-           
-            startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-            startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
-
-            allFaces = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
+              }  
+              allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
   
-            { // to avoid processing the faces twice they should be deleted from the list.
-              for (int i = q + 1; i < selectedFace_numbers.length; i++) {
-                selectedFace_numbers[i] -= 1;
+              for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
+                
+                if (new_selectedFace_numbers[p] != 0) {
+                
+                  if (new_selectedFace_numbers[p] > f) {  
+                    new_selectedFace_numbers[p] += allFaces[f].length;
+                  }
+                }
               }              
-            
-              int[] startList = (int[]) subset(selectedFace_numbers, 0, q);
-              int[] endList = (int[]) subset(selectedFace_numbers, q + 1);
-              
-              selectedFace_numbers = (int[]) concat(startList, endList);         
-            }
-
- 
-          }
   
+  
+              int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
+              int[][] midList_Faces = (int[][]) subset(allFaces, f, 1);
+              int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
+              
+              
+              int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
+              int[][] midList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f, 1);
+              int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
+  
+              { 
+                float[][] base_Vertices = new float [allFaces[f].length][3];
+  
+                for(int i = 0; i < allFaces[f].length; i++) {
+                  for (int j = 0; j < 3; j++) {
+                    base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+                  }
+                }
+                
+                float[] G_face = {0,0,0};  
+                
+                for(int i = 0; i < allFaces[f].length; i++) {
+                  for (int j = 0; j < 3; j++) {
+                    G_face[j] += base_Vertices[i][j] / float(allFaces[f].length);
+                  }
+                }
+                
+                float[][] new_EdgeVertices = new float [allFaces[f].length][3];
+                float[][] new_CenterVertices = new float [allFaces[f].length][3];
+              
+                for(int s = 0; s < allFaces[f].length; s++) {
+  
+                  int s_prev = (s + allFaces[f].length - 1) % allFaces[f].length;
+                  
+                  for (int j = 0; j < 3; j++) {
+                    
+                    new_EdgeVertices[s][j] = Modify_Input_OpenningDeviation * base_Vertices[s][j] + (1 - Modify_Input_OpenningDeviation) * base_Vertices[s_prev][j];
+                    
+                    new_CenterVertices[s][j] = pow(Modify_Input_OpenningArea, 0.5) * new_EdgeVertices[s][j] + (1 - pow(Modify_Input_OpenningArea, 0.5)) * G_face[j];
+                  }
+                }
+                
+                int[] new_EdgeVertex_numbers = new int [allFaces[f].length]; // on the edge
+                int[] new_CenterVertex_numbers = new int [allFaces[f].length]; // in the center
+                
+                for(int s = 0; s < allFaces[f].length; s++) {
+                  
+                  new_EdgeVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]); 
+                  new_CenterVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_CenterVertices[s][0], new_CenterVertices[s][1], new_CenterVertices[s][2]);
+                } 
+                
+                
+              
+                defaultMaterial = allFaces_MTLV[f][0];
+                defaultTessellation = allFaces_MTLV[f][1];
+                defaultLayer = allFaces_MTLV[f][2];
+                defaultVisibility = allFaces_MTLV[f][3];
+                
+                for(int s = 0; s < allFaces[f].length; s++) { 
+                  
+                  int s_next = (s + 1) % allFaces[f].length;
+  
+                  int[][] newFace = {{new_EdgeVertex_numbers[s], allFaces[f][s], new_EdgeVertex_numbers[s_next], new_CenterVertex_numbers[s_next], new_CenterVertex_numbers[s]}};
+                  int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
+                
+                  midList_Faces = (int[][]) concat(midList_Faces, newFace);
+                  midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV);           
+                }
+      
+                         
+                { // modifying the base face to match new center face
+                  for(int s = 0; s < allFaces[f].length; s++) {
+                    allFaces[f][s] = new_CenterVertex_numbers[s];
+                  }
+                } 
+                
+              }
+             
+              startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
+              startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
+  
+              allFaces = (int[][]) concat(startList_Faces, endList_Faces);
+              allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
+    
+              { // to avoid processing the faces twice they should be deleted from the list.
+                for (int i = q + 1; i < selectedFace_numbers.length; i++) {
+                  selectedFace_numbers[i] -= 1;
+                }              
+              
+                int[] startList = (int[]) subset(selectedFace_numbers, 0, q);
+                int[] endList = (int[]) subset(selectedFace_numbers, q + 1);
+                
+                selectedFace_numbers = (int[]) concat(startList, endList);         
+              }
+  
+   
+            }
+          }    
         }
 
       }
@@ -15849,128 +15895,134 @@ void SOLARCHVISION_insertEdgeOpenningsSelection () {
     
     int[] new_selectedFace_numbers = selectedFace_numbers;
     
-    for (int o = selectedPolymesh_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) { 
       
       int OBJ_NUM = selectedPolymesh_numbers[o];
       
       if (OBJ_NUM != 0) {
 
-        for (int q = selectedFace_numbers.length - 1; q > 0; q--) { // the first node is null
+        for (int q = selectedFace_numbers.length - 1; q >= 0; q--) { 
 
           int f = selectedFace_numbers[q];
           
-          int startFace = allPolymesh_Faces[OBJ_NUM][0];
-          int endFace = allPolymesh_Faces[OBJ_NUM][1];          
+          if (f != 0){
           
-          if ((startFace <= f) && (f <= endFace)) {
+            int startFace = allPolymesh_Faces[OBJ_NUM][0];
+            int endFace = allPolymesh_Faces[OBJ_NUM][1];          
             
-            for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
-              for (int j = 0; j < 2; j++) {
-                allPolymesh_Faces[i][j] += allFaces[f].length;
-              }
-            }  
-            allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
-
-            for (int p = new_selectedFace_numbers.length - 1; p > 0; p--) { // the first node is null
-              if (new_selectedFace_numbers[p] > f) {  
-                new_selectedFace_numbers[p] += allFaces[f].length;
-              }
-            }              
-
-
-            int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
-            int[][] midList_Faces = (int[][]) subset(allFaces, f, 1);
-            int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
-            
-            
-            int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
-            int[][] midList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f, 1);
-            int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
-
-            { 
-              float[][] base_Vertices = new float [allFaces[f].length][3];
-
-              for(int i = 0; i < allFaces[f].length; i++) {
-                for (int j = 0; j < 3; j++) {
-                  base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+            if ((startFace <= f) && (f <= endFace)) {
+              
+              for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
+                for (int j = 0; j < 2; j++) {
+                  allPolymesh_Faces[i][j] += allFaces[f].length;
                 }
-              }
-              
-              float[] G_face = {0,0,0};  
-              
-              for(int i = 0; i < allFaces[f].length; i++) {
-                for (int j = 0; j < 3; j++) {
-                  G_face[j] += base_Vertices[i][j] / float(allFaces[f].length);
-                }
-              }
-              
-              float[][] new_EdgeVertices = new float [allFaces[f].length][3];
-            
-              for(int s = 0; s < allFaces[f].length; s++) {
-
-                int s_prev = (s + allFaces[f].length - 1) % allFaces[f].length;
+              }  
+              allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
+  
+              for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
                 
-                for (int j = 0; j < 3; j++) {
+                if (new_selectedFace_numbers[p] != 0) {
                   
-                  new_EdgeVertices[s][j] = Modify_Input_OpenningDeviation * base_Vertices[s][j] + (1 - Modify_Input_OpenningDeviation) * base_Vertices[s_prev][j];
-
+                  if (new_selectedFace_numbers[p] > f) {  
+                    new_selectedFace_numbers[p] += allFaces[f].length;
+                  }
                 }
-              }
-              
-              int[] new_EdgeVertex_numbers = new int [allFaces[f].length]; // on the edge
-              
-              for(int s = 0; s < allFaces[f].length; s++) {
-                
-                new_EdgeVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]); 
-              } 
-              
-              
-            
-              defaultMaterial = allFaces_MTLV[f][0];
-              defaultTessellation = allFaces_MTLV[f][1];
-              defaultLayer = allFaces_MTLV[f][2];
-              defaultVisibility = allFaces_MTLV[f][3];
-            
-              for(int s = 0; s < allFaces[f].length; s++) { 
-                
-                int s_next = (s + 1) % allFaces[f].length;
-
-                int[][] newFace = {{new_EdgeVertex_numbers[s], allFaces[f][s], new_EdgeVertex_numbers[s_next]}};
-                int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
-              
-                midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV);           
-              }
-    
-                       
-              { // modifying the base face to match new center face
-                for(int s = 0; s < allFaces[f].length; s++) {
-                  allFaces[f][s] = new_EdgeVertex_numbers[s];
-                }
-              } 
-              
-            }
-           
-            startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-            startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
-
-            allFaces = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
-  
-            { // to avoid processing the faces twice they should be deleted from the list.
-              for (int i = q + 1; i < selectedFace_numbers.length; i++) {
-                selectedFace_numbers[i] -= 1;
               }              
-            
-              int[] startList = (int[]) subset(selectedFace_numbers, 0, q);
-              int[] endList = (int[]) subset(selectedFace_numbers, q + 1);
-              
-              selectedFace_numbers = (int[]) concat(startList, endList);         
-            }
-
- 
-          }
   
+  
+              int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
+              int[][] midList_Faces = (int[][]) subset(allFaces, f, 1);
+              int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
+              
+              
+              int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
+              int[][] midList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f, 1);
+              int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
+  
+              { 
+                float[][] base_Vertices = new float [allFaces[f].length][3];
+  
+                for(int i = 0; i < allFaces[f].length; i++) {
+                  for (int j = 0; j < 3; j++) {
+                    base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+                  }
+                }
+                
+                float[] G_face = {0,0,0};  
+                
+                for(int i = 0; i < allFaces[f].length; i++) {
+                  for (int j = 0; j < 3; j++) {
+                    G_face[j] += base_Vertices[i][j] / float(allFaces[f].length);
+                  }
+                }
+                
+                float[][] new_EdgeVertices = new float [allFaces[f].length][3];
+              
+                for(int s = 0; s < allFaces[f].length; s++) {
+  
+                  int s_prev = (s + allFaces[f].length - 1) % allFaces[f].length;
+                  
+                  for (int j = 0; j < 3; j++) {
+                    
+                    new_EdgeVertices[s][j] = Modify_Input_OpenningDeviation * base_Vertices[s][j] + (1 - Modify_Input_OpenningDeviation) * base_Vertices[s_prev][j];
+  
+                  }
+                }
+                
+                int[] new_EdgeVertex_numbers = new int [allFaces[f].length]; // on the edge
+                
+                for(int s = 0; s < allFaces[f].length; s++) {
+                  
+                  new_EdgeVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]); 
+                } 
+                
+                
+              
+                defaultMaterial = allFaces_MTLV[f][0];
+                defaultTessellation = allFaces_MTLV[f][1];
+                defaultLayer = allFaces_MTLV[f][2];
+                defaultVisibility = allFaces_MTLV[f][3];
+              
+                for(int s = 0; s < allFaces[f].length; s++) { 
+                  
+                  int s_next = (s + 1) % allFaces[f].length;
+  
+                  int[][] newFace = {{new_EdgeVertex_numbers[s], allFaces[f][s], new_EdgeVertex_numbers[s_next]}};
+                  int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
+                
+                  midList_Faces = (int[][]) concat(midList_Faces, newFace);
+                  midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV);           
+                }
+      
+                         
+                { // modifying the base face to match new center face
+                  for(int s = 0; s < allFaces[f].length; s++) {
+                    allFaces[f][s] = new_EdgeVertex_numbers[s];
+                  }
+                } 
+                
+              }
+             
+              startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
+              startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
+  
+              allFaces = (int[][]) concat(startList_Faces, endList_Faces);
+              allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
+    
+              { // to avoid processing the faces twice they should be deleted from the list.
+                for (int i = q + 1; i < selectedFace_numbers.length; i++) {
+                  selectedFace_numbers[i] -= 1;
+                }              
+              
+                int[] startList = (int[]) subset(selectedFace_numbers, 0, q);
+                int[] endList = (int[]) subset(selectedFace_numbers, q + 1);
+                
+                selectedFace_numbers = (int[]) concat(startList, endList);         
+              }
+  
+   
+            }
+          }    
         }
 
       }
@@ -16017,156 +16069,162 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
     
     int[] new_selectedFace_numbers = selectedFace_numbers;
     
-    for (int o = selectedPolymesh_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) { 
       
       int OBJ_NUM = selectedPolymesh_numbers[o];
       
       if (OBJ_NUM != 0) {
 
-        for (int q = selectedFace_numbers.length - 1; q > 0; q--) { // the first node is null
+        for (int q = selectedFace_numbers.length - 1; q >= 0; q--) { 
 
           int f = selectedFace_numbers[q];
           
-          int startFace = allPolymesh_Faces[OBJ_NUM][0];
-          int endFace = allPolymesh_Faces[OBJ_NUM][1];          
+          if (f != 0) {
           
-          if ((startFace <= f) && (f <= endFace)) {
+            int startFace = allPolymesh_Faces[OBJ_NUM][0];
+            int endFace = allPolymesh_Faces[OBJ_NUM][1];          
             
-            if (allFaces[f].length == 4) {
-            
-              for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
-                for (int j = 0; j < 2; j++) {
-                  allPolymesh_Faces[i][j] += Modify_Input_TessellateRows * Modify_Input_TessellateColumns - 1;
-                }
-              }  
-              allPolymesh_Faces[OBJ_NUM][1] += Modify_Input_TessellateRows * Modify_Input_TessellateColumns - 1; // because adding the faces also changes the end pointer of the same object 
-  
-              for (int p = new_selectedFace_numbers.length - 1; p > 0; p--) { // the first node is null
-                if (new_selectedFace_numbers[p] > f) {  
-                  new_selectedFace_numbers[p] += Modify_Input_TessellateRows * Modify_Input_TessellateColumns - 1;
-                }
-              }             
-  
-  
-              int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
-              int[][] midList_Faces = new int [0][0];
-              int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
+            if ((startFace <= f) && (f <= endFace)) {
               
+              if (allFaces[f].length == 4) {
               
-              int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
-              int[][] midList_Faces_MTLV = new int [0][0];
-              int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
-  
-              { 
-                float[][] base_Vertices = new float [allFaces[f].length][3];
-  
-                for(int i = 0; i < allFaces[f].length; i++) {
-                  for (int j = 0; j < 3; j++) {
-                    base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+                for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
+                  for (int j = 0; j < 2; j++) {
+                    allPolymesh_Faces[i][j] += Modify_Input_TessellateRows * Modify_Input_TessellateColumns - 1;
                   }
-                }
-                
+                }  
+                allPolymesh_Faces[OBJ_NUM][1] += Modify_Input_TessellateRows * Modify_Input_TessellateColumns - 1; // because adding the faces also changes the end pointer of the same object 
     
-                
-                float[][] new_EdgeVertices = new float [(Modify_Input_TessellateRows + 1) * (Modify_Input_TessellateColumns + 1)][3];
-              
-                for (int i = 0; i <= Modify_Input_TessellateRows; i++) {
+                for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
                   
-                  for (int j = 0; j <= Modify_Input_TessellateColumns; j++) {
-                    
-                    int s = i * (Modify_Input_TessellateColumns + 1) + j;
-
-                    for (int k = 0; k < 3; k++) {
+                  if (new_selectedFace_numbers[p] != 0) {
                       
-                      float u = i / float(Modify_Input_TessellateRows);
-                      float v = j / float(Modify_Input_TessellateColumns);
-                      
-                      new_EdgeVertices[s][k] = Bilinear(base_Vertices[0][k], base_Vertices[1][k], base_Vertices[2][k], base_Vertices[3][k], u, v);
-  
+                    if (new_selectedFace_numbers[p] > f) {  
+                      new_selectedFace_numbers[p] += Modify_Input_TessellateRows * Modify_Input_TessellateColumns - 1;
                     }
                   }
-                }
+                }             
+    
+    
+                int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
+                int[][] midList_Faces = new int [0][0];
+                int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
                 
-                int[] new_EdgeVertex_numbers = new int [(Modify_Input_TessellateRows + 1) * (Modify_Input_TessellateColumns + 1)]; // on the edge
                 
-                for (int i = 0; i <= Modify_Input_TessellateRows; i++) {
+                int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
+                int[][] midList_Faces_MTLV = new int [0][0];
+                int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
+    
+                { 
+                  float[][] base_Vertices = new float [allFaces[f].length][3];
+    
+                  for(int i = 0; i < allFaces[f].length; i++) {
+                    for (int j = 0; j < 3; j++) {
+                      base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+                    }
+                  }
                   
-                  for (int j = 0; j <= Modify_Input_TessellateColumns; j++) {
+      
+                  
+                  float[][] new_EdgeVertices = new float [(Modify_Input_TessellateRows + 1) * (Modify_Input_TessellateColumns + 1)][3];
+                
+                  for (int i = 0; i <= Modify_Input_TessellateRows; i++) {
                     
-                    int s = i * (Modify_Input_TessellateColumns + 1) + j;
+                    for (int j = 0; j <= Modify_Input_TessellateColumns; j++) {
+                      
+                      int s = i * (Modify_Input_TessellateColumns + 1) + j;
+  
+                      for (int k = 0; k < 3; k++) {
+                        
+                        float u = i / float(Modify_Input_TessellateRows);
+                        float v = j / float(Modify_Input_TessellateColumns);
+                        
+                        new_EdgeVertices[s][k] = Bilinear(base_Vertices[0][k], base_Vertices[1][k], base_Vertices[2][k], base_Vertices[3][k], u, v);
+    
+                      }
+                    }
+                  }
                   
-                    if ((i == 0) && (j == 0)) {
-                      new_EdgeVertex_numbers[s] = allFaces[f][0];
-                    }
-                    else if ((i == Modify_Input_TessellateRows) && (j == 0)) {
-                      new_EdgeVertex_numbers[s] = allFaces[f][1];
-                    }
-                    else if ((i == Modify_Input_TessellateRows) && (j == Modify_Input_TessellateColumns)) {
-                      new_EdgeVertex_numbers[s] = allFaces[f][2];
-                    }
-                    else if ((i == 0) && (j == Modify_Input_TessellateColumns)) {
-                      new_EdgeVertex_numbers[s] = allFaces[f][3];
-                    }                    
-                    else {
-                      new_EdgeVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
+                  int[] new_EdgeVertex_numbers = new int [(Modify_Input_TessellateRows + 1) * (Modify_Input_TessellateColumns + 1)]; // on the edge
+                  
+                  for (int i = 0; i <= Modify_Input_TessellateRows; i++) {
+                    
+                    for (int j = 0; j <= Modify_Input_TessellateColumns; j++) {
+                      
+                      int s = i * (Modify_Input_TessellateColumns + 1) + j;
+                    
+                      if ((i == 0) && (j == 0)) {
+                        new_EdgeVertex_numbers[s] = allFaces[f][0];
+                      }
+                      else if ((i == Modify_Input_TessellateRows) && (j == 0)) {
+                        new_EdgeVertex_numbers[s] = allFaces[f][1];
+                      }
+                      else if ((i == Modify_Input_TessellateRows) && (j == Modify_Input_TessellateColumns)) {
+                        new_EdgeVertex_numbers[s] = allFaces[f][2];
+                      }
+                      else if ((i == 0) && (j == Modify_Input_TessellateColumns)) {
+                        new_EdgeVertex_numbers[s] = allFaces[f][3];
+                      }                    
+                      else {
+                        new_EdgeVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]);
+                      } 
                     } 
-                  } 
-                }
-                          
-  
-                defaultMaterial = allFaces_MTLV[f][0];
-                defaultTessellation = allFaces_MTLV[f][1];
-                defaultLayer = allFaces_MTLV[f][2];
-                defaultVisibility = allFaces_MTLV[f][3];
-             
-                for (int i = 0; i < Modify_Input_TessellateRows; i++) {
-                  
-                  for (int j = 0; j < Modify_Input_TessellateColumns; j++) {
-                    
-                    int s = i * Modify_Input_TessellateColumns + j;  // number of face
-                    
-                    // number of vertices
-                    int s00 = i * (Modify_Input_TessellateColumns + 1) + j; 
-                    int s01 = s00 + 1;
-                    int s10 = s00 + (Modify_Input_TessellateColumns + 1);
-                    int s11 = s00 + (Modify_Input_TessellateColumns + 1) + 1;
-    
-                    int[][] newFace = {{new_EdgeVertex_numbers[s00], new_EdgeVertex_numbers[s10], new_EdgeVertex_numbers[s11], new_EdgeVertex_numbers[s01]}};
-                    int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
-                  
-                    midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                    midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV); 
-       
-                    if (s > 0) { // the first teselated face was replaced by the base face... so only add other items
-                      int[] newFace_number = {f + s}; 
-                      new_selectedFace_numbers = (int[]) concat(new_selectedFace_numbers, newFace_number);  
-                    }        
                   }
-                }
-  
-              }
-             
-              startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-              startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
-  
-              allFaces = (int[][]) concat(startList_Faces, endList_Faces);
-              allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
+                            
     
-              { // to avoid processing the faces twice they should be deleted from the list.
-                for (int i = q + 1; i < selectedFace_numbers.length; i++) {
-                  selectedFace_numbers[i] -= 1;
-                }              
-              
-                int[] startList = (int[]) subset(selectedFace_numbers, 0, q);
-                int[] endList = (int[]) subset(selectedFace_numbers, q + 1);
+                  defaultMaterial = allFaces_MTLV[f][0];
+                  defaultTessellation = allFaces_MTLV[f][1];
+                  defaultLayer = allFaces_MTLV[f][2];
+                  defaultVisibility = allFaces_MTLV[f][3];
+               
+                  for (int i = 0; i < Modify_Input_TessellateRows; i++) {
+                    
+                    for (int j = 0; j < Modify_Input_TessellateColumns; j++) {
+                      
+                      int s = i * Modify_Input_TessellateColumns + j;  // number of face
+                      
+                      // number of vertices
+                      int s00 = i * (Modify_Input_TessellateColumns + 1) + j; 
+                      int s01 = s00 + 1;
+                      int s10 = s00 + (Modify_Input_TessellateColumns + 1);
+                      int s11 = s00 + (Modify_Input_TessellateColumns + 1) + 1;
+      
+                      int[][] newFace = {{new_EdgeVertex_numbers[s00], new_EdgeVertex_numbers[s10], new_EdgeVertex_numbers[s11], new_EdgeVertex_numbers[s01]}};
+                      int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
+                    
+                      midList_Faces = (int[][]) concat(midList_Faces, newFace);
+                      midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV); 
+         
+                      if (s > 0) { // the first teselated face was replaced by the base face... so only add other items
+                        int[] newFace_number = {f + s}; 
+                        new_selectedFace_numbers = (int[]) concat(new_selectedFace_numbers, newFace_number);  
+                      }        
+                    }
+                  }
+    
+                }
+               
+                startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
+                startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
+    
+                allFaces = (int[][]) concat(startList_Faces, endList_Faces);
+                allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
+      
+                { // to avoid processing the faces twice they should be deleted from the list.
+                  for (int i = q + 1; i < selectedFace_numbers.length; i++) {
+                    selectedFace_numbers[i] -= 1;
+                  }              
                 
-                selectedFace_numbers = (int[]) concat(startList, endList);         
+                  int[] startList = (int[]) subset(selectedFace_numbers, 0, q);
+                  int[] endList = (int[]) subset(selectedFace_numbers, q + 1);
+                  
+                  selectedFace_numbers = (int[]) concat(startList, endList);         
+                }
               }
-            }
-
- 
-          }
   
+   
+            }
+          }    
         }
 
       }
@@ -16212,126 +16270,132 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
     
     int[] new_selectedFace_numbers = selectedFace_numbers;
     
-    for (int o = selectedPolymesh_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) { 
       
       int OBJ_NUM = selectedPolymesh_numbers[o];
       
       if (OBJ_NUM != 0) {
 
-        for (int q = selectedFace_numbers.length - 1; q > 0; q--) { // the first node is null
+        for (int q = selectedFace_numbers.length - 1; q >= 0; q--) { 
 
           int f = selectedFace_numbers[q];
           
-          int startFace = allPolymesh_Faces[OBJ_NUM][0];
-          int endFace = allPolymesh_Faces[OBJ_NUM][1];          
+          if (f != 0) {
           
-          if ((startFace <= f) && (f <= endFace)) {
+            int startFace = allPolymesh_Faces[OBJ_NUM][0];
+            int endFace = allPolymesh_Faces[OBJ_NUM][1];          
             
-            for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
-              for (int j = 0; j < 2; j++) {
-                allPolymesh_Faces[i][j] += allFaces[f].length - 1;
-              }
-            }  
-            allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length - 1; // because adding the faces also changes the end pointer of the same object 
-
-            for (int p = new_selectedFace_numbers.length - 1; p > 0; p--) { // the first node is null
-              if (new_selectedFace_numbers[p] > f) {  
-                new_selectedFace_numbers[p] += allFaces[f].length - 1;
-              }
-            }             
-
-
-            int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
-            int[][] midList_Faces = new int [0][0];
-            int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
-            
-            
-            int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
-            int[][] midList_Faces_MTLV = new int [0][0];
-            int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
-
-            { 
-              float[][] base_Vertices = new float [allFaces[f].length][3];
-
-              for(int i = 0; i < allFaces[f].length; i++) {
-                for (int j = 0; j < 3; j++) {
-                  base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+            if ((startFace <= f) && (f <= endFace)) {
+              
+              for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
+                for (int j = 0; j < 2; j++) {
+                  allPolymesh_Faces[i][j] += allFaces[f].length - 1;
                 }
-              }
-              
-              float[] G_face = {0,0,0};  
-              
-              for(int i = 0; i < allFaces[f].length; i++) {
-                for (int j = 0; j < 3; j++) {
-                  G_face[j] += base_Vertices[i][j] / float(allFaces[f].length);
-                }
-              }
-              
-              float[][] new_EdgeVertices = new float [allFaces[f].length][3];
-            
-              for(int s = 0; s < allFaces[f].length; s++) {
-
-                int s_prev = (s + allFaces[f].length - 1) % allFaces[f].length;
-                
-                for (int j = 0; j < 3; j++) {
-                  new_EdgeVertices[s][j] = 0.5 * base_Vertices[s][j] + 0.5 * base_Vertices[s_prev][j];
-                }
-              }
-              
-              int[] new_EdgeVertex_numbers = new int [allFaces[f].length]; // on the edge
-              
-              for(int s = 0; s < allFaces[f].length; s++) {
-                
-                new_EdgeVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]); 
-              } 
-              
-              int new_CenterVertex_number = 0; // at the center
-              new_CenterVertex_number = SOLARCHVISION_add_Vertex(G_face[0], G_face[1], G_face[2]); 
-                        
-
-              defaultMaterial = allFaces_MTLV[f][0];
-              defaultTessellation = allFaces_MTLV[f][1];
-              defaultLayer = allFaces_MTLV[f][2];
-              defaultVisibility = allFaces_MTLV[f][3];              
-            
-              for(int s = 0; s < allFaces[f].length; s++) { 
-                
-                int s_next = (s + 1) % allFaces[f].length;
-
-                int[][] newFace = {{new_EdgeVertex_numbers[s], allFaces[f][s], new_EdgeVertex_numbers[s_next], new_CenterVertex_number}};
-                int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
-              
-                midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV); 
-      
-                if (s > 0) { // the first teselated face was replaced by the base face... so only add other items
-                  int[] newFace_number = {f + s}; 
-                  new_selectedFace_numbers = (int[]) concat(new_selectedFace_numbers, newFace_number);  
-                }        
-              }
-
-            }
-           
-            startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-            startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
-
-            allFaces = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
+              }  
+              allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length - 1; // because adding the faces also changes the end pointer of the same object 
   
-            { // to avoid processing the faces twice they should be deleted from the list.
-              for (int i = q + 1; i < selectedFace_numbers.length; i++) {
-                selectedFace_numbers[i] -= 1;
-              }              
-            
-              int[] startList = (int[]) subset(selectedFace_numbers, 0, q);
-              int[] endList = (int[]) subset(selectedFace_numbers, q + 1);
+              for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
+                
+                if (new_selectedFace_numbers[p] != 0) {
+                  
+                  if (new_selectedFace_numbers[p] > f) {  
+                    new_selectedFace_numbers[p] += allFaces[f].length - 1;
+                  }
+                }
+              }             
+  
+  
+              int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
+              int[][] midList_Faces = new int [0][0];
+              int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
               
-              selectedFace_numbers = (int[]) concat(startList, endList);         
+              
+              int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
+              int[][] midList_Faces_MTLV = new int [0][0];
+              int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
+  
+              { 
+                float[][] base_Vertices = new float [allFaces[f].length][3];
+  
+                for(int i = 0; i < allFaces[f].length; i++) {
+                  for (int j = 0; j < 3; j++) {
+                    base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+                  }
+                }
+                
+                float[] G_face = {0,0,0};  
+                
+                for(int i = 0; i < allFaces[f].length; i++) {
+                  for (int j = 0; j < 3; j++) {
+                    G_face[j] += base_Vertices[i][j] / float(allFaces[f].length);
+                  }
+                }
+                
+                float[][] new_EdgeVertices = new float [allFaces[f].length][3];
+              
+                for(int s = 0; s < allFaces[f].length; s++) {
+  
+                  int s_prev = (s + allFaces[f].length - 1) % allFaces[f].length;
+                  
+                  for (int j = 0; j < 3; j++) {
+                    new_EdgeVertices[s][j] = 0.5 * base_Vertices[s][j] + 0.5 * base_Vertices[s_prev][j];
+                  }
+                }
+                
+                int[] new_EdgeVertex_numbers = new int [allFaces[f].length]; // on the edge
+                
+                for(int s = 0; s < allFaces[f].length; s++) {
+                  
+                  new_EdgeVertex_numbers[s] = SOLARCHVISION_add_Vertex(new_EdgeVertices[s][0], new_EdgeVertices[s][1], new_EdgeVertices[s][2]); 
+                } 
+                
+                int new_CenterVertex_number = 0; // at the center
+                new_CenterVertex_number = SOLARCHVISION_add_Vertex(G_face[0], G_face[1], G_face[2]); 
+                          
+  
+                defaultMaterial = allFaces_MTLV[f][0];
+                defaultTessellation = allFaces_MTLV[f][1];
+                defaultLayer = allFaces_MTLV[f][2];
+                defaultVisibility = allFaces_MTLV[f][3];              
+              
+                for(int s = 0; s < allFaces[f].length; s++) { 
+                  
+                  int s_next = (s + 1) % allFaces[f].length;
+  
+                  int[][] newFace = {{new_EdgeVertex_numbers[s], allFaces[f][s], new_EdgeVertex_numbers[s_next], new_CenterVertex_number}};
+                  int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
+                
+                  midList_Faces = (int[][]) concat(midList_Faces, newFace);
+                  midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV); 
+        
+                  if (s > 0) { // the first teselated face was replaced by the base face... so only add other items
+                    int[] newFace_number = {f + s}; 
+                    new_selectedFace_numbers = (int[]) concat(new_selectedFace_numbers, newFace_number);  
+                  }        
+                }
+  
+              }
+             
+              startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
+              startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
+  
+              allFaces = (int[][]) concat(startList_Faces, endList_Faces);
+              allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
+    
+              { // to avoid processing the faces twice they should be deleted from the list.
+                for (int i = q + 1; i < selectedFace_numbers.length; i++) {
+                  selectedFace_numbers[i] -= 1;
+                }              
+              
+                int[] startList = (int[]) subset(selectedFace_numbers, 0, q);
+                int[] endList = (int[]) subset(selectedFace_numbers, q + 1);
+                
+                selectedFace_numbers = (int[]) concat(startList, endList);         
+              }
+  
+   
             }
-
- 
           }
-  
         }
 
       }
@@ -16377,109 +16441,115 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
     
     int[] new_selectedFace_numbers = selectedFace_numbers;
     
-    for (int o = selectedPolymesh_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) { 
       
       int OBJ_NUM = selectedPolymesh_numbers[o];
       
       if (OBJ_NUM != 0) {
 
-        for (int q = selectedFace_numbers.length - 1; q > 0; q--) { // the first node is null
+        for (int q = selectedFace_numbers.length - 1; q >= 0; q--) {
 
           int f = selectedFace_numbers[q];
           
-          int startFace = allPolymesh_Faces[OBJ_NUM][0];
-          int endFace = allPolymesh_Faces[OBJ_NUM][1];          
+          if (f != 0) {
           
-          if ((startFace <= f) && (f <= endFace)) {
+            int startFace = allPolymesh_Faces[OBJ_NUM][0];
+            int endFace = allPolymesh_Faces[OBJ_NUM][1];          
             
-            for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
-              for (int j = 0; j < 2; j++) {
-                allPolymesh_Faces[i][j] += allFaces[f].length - 1;
-              }
-            }  
-            allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length - 1; // because adding the faces also changes the end pointer of the same object 
-
-            for (int p = new_selectedFace_numbers.length - 1; p > 0; p--) { // the first node is null
-              if (new_selectedFace_numbers[p] > f) {  
-                new_selectedFace_numbers[p] += allFaces[f].length - 1;
-              }
-            }             
-
-
-            int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
-            int[][] midList_Faces = new int [0][0];
-            int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
-            
-            
-            int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
-            int[][] midList_Faces_MTLV = new int [0][0];
-            int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
-
-            { 
-              float[][] base_Vertices = new float [allFaces[f].length][3];
-
-              for(int i = 0; i < allFaces[f].length; i++) {
-                for (int j = 0; j < 3; j++) {
-                  base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+            if ((startFace <= f) && (f <= endFace)) {
+              
+              for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
+                for (int j = 0; j < 2; j++) {
+                  allPolymesh_Faces[i][j] += allFaces[f].length - 1;
                 }
-              }
-              
-              float[] G_face = {0,0,0};  
-              
-              for(int i = 0; i < allFaces[f].length; i++) {
-                for (int j = 0; j < 3; j++) {
-                  G_face[j] += base_Vertices[i][j] / float(allFaces[f].length);
+              }  
+              allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length - 1; // because adding the faces also changes the end pointer of the same object 
+  
+              for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
+               
+                if (new_selectedFace_numbers[p] != 0) {
+                  
+                  if (new_selectedFace_numbers[p] > f) {  
+                    new_selectedFace_numbers[p] += allFaces[f].length - 1;
+                  }
                 }
-              }
+              }             
+  
+  
+              int[][] startList_Faces = (int[][]) subset(allFaces, 0, f);
+              int[][] midList_Faces = new int [0][0];
+              int[][] endList_Faces = (int[][]) subset(allFaces, f + 1);
               
               
-              int new_CenterVertex_number = 0; // at the center
-              new_CenterVertex_number = SOLARCHVISION_add_Vertex(G_face[0], G_face[1], G_face[2]); 
-                        
-
-              defaultMaterial = allFaces_MTLV[f][0];
-              defaultTessellation = allFaces_MTLV[f][1];
-              defaultLayer = allFaces_MTLV[f][2];
-              defaultVisibility = allFaces_MTLV[f][3];                
-            
-              for(int s = 0; s < allFaces[f].length; s++) { 
+              int[][] startList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, 0, f);
+              int[][] midList_Faces_MTLV = new int [0][0];
+              int[][] endList_Faces_MTLV = (int[][]) subset(allFaces_MTLV, f + 1);
+  
+              { 
+                float[][] base_Vertices = new float [allFaces[f].length][3];
+  
+                for(int i = 0; i < allFaces[f].length; i++) {
+                  for (int j = 0; j < 3; j++) {
+                    base_Vertices[i][j] = allVertices[(allFaces[f][i])][j];
+                  }
+                }
                 
-                int s_next = (s + 1) % allFaces[f].length;
-
-                int[][] newFace = {{allFaces[f][s], allFaces[f][s_next], new_CenterVertex_number}};
-                int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
+                float[] G_face = {0,0,0};  
+                
+                for(int i = 0; i < allFaces[f].length; i++) {
+                  for (int j = 0; j < 3; j++) {
+                    G_face[j] += base_Vertices[i][j] / float(allFaces[f].length);
+                  }
+                }
+                
+                
+                int new_CenterVertex_number = 0; // at the center
+                new_CenterVertex_number = SOLARCHVISION_add_Vertex(G_face[0], G_face[1], G_face[2]); 
+                          
+  
+                defaultMaterial = allFaces_MTLV[f][0];
+                defaultTessellation = allFaces_MTLV[f][1];
+                defaultLayer = allFaces_MTLV[f][2];
+                defaultVisibility = allFaces_MTLV[f][3];                
               
-                midList_Faces = (int[][]) concat(midList_Faces, newFace);
-                midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV); 
-      
-                if (s > 0) { // the first teselated face was replaced by the base face... so only add other items
-                  int[] newFace_number = {f + s}; 
-                  new_selectedFace_numbers = (int[]) concat(new_selectedFace_numbers, newFace_number);  
-                }        
+                for(int s = 0; s < allFaces[f].length; s++) { 
+                  
+                  int s_next = (s + 1) % allFaces[f].length;
+  
+                  int[][] newFace = {{allFaces[f][s], allFaces[f][s_next], new_CenterVertex_number}};
+                  int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
+                
+                  midList_Faces = (int[][]) concat(midList_Faces, newFace);
+                  midList_Faces_MTLV = (int[][]) concat(midList_Faces_MTLV, newFace_MTLV); 
+        
+                  if (s > 0) { // the first teselated face was replaced by the base face... so only add other items
+                    int[] newFace_number = {f + s}; 
+                    new_selectedFace_numbers = (int[]) concat(new_selectedFace_numbers, newFace_number);  
+                  }        
+                }
+  
               }
-
-            }
-           
-            startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
-            startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
-
-            allFaces = (int[][]) concat(startList_Faces, endList_Faces);
-            allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
+             
+              startList_Faces = (int[][]) concat(startList_Faces, midList_Faces);
+              startList_Faces_MTLV = (int[][]) concat(startList_Faces_MTLV, midList_Faces_MTLV);  
   
-            { // to avoid processing the faces twice they should be deleted from the list.
-              for (int i = q + 1; i < selectedFace_numbers.length; i++) {
-                selectedFace_numbers[i] -= 1;
-              }              
-            
-              int[] startList = (int[]) subset(selectedFace_numbers, 0, q);
-              int[] endList = (int[]) subset(selectedFace_numbers, q + 1);
+              allFaces = (int[][]) concat(startList_Faces, endList_Faces);
+              allFaces_MTLV = (int[][]) concat(startList_Faces_MTLV, endList_Faces_MTLV);                      
+    
+              { // to avoid processing the faces twice they should be deleted from the list.
+                for (int i = q + 1; i < selectedFace_numbers.length; i++) {
+                  selectedFace_numbers[i] -= 1;
+                }              
               
-              selectedFace_numbers = (int[]) concat(startList, endList);         
-            }
-
- 
-          }
+                int[] startList = (int[]) subset(selectedFace_numbers, 0, q);
+                int[] endList = (int[]) subset(selectedFace_numbers, q + 1);
+                
+                selectedFace_numbers = (int[]) concat(startList, endList);         
+              }
   
+   
+            }
+          }    
         }
 
       }
@@ -16523,7 +16593,7 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
     
     int[] new_selectedFace_numbers = {0};
     
-    for (int o = selectedPolymesh_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedPolymesh_numbers.length - 1; o >= 0; o--) { 
       
       int OBJ_NUM = selectedPolymesh_numbers[o];
       
@@ -16531,87 +16601,90 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
         
         addToLastPolymesh = 0; SOLARCHVISION_beginNewPolymesh(); addToLastPolymesh = 1;
 
-        for (int q = selectedFace_numbers.length - 1; q > 0; q--) { // the first node is null
+        for (int q = selectedFace_numbers.length - 1; q >= 0; q--) { 
 
           int f = selectedFace_numbers[q];
           
-          int startFace = allPolymesh_Faces[OBJ_NUM][0];
-          int endFace = allPolymesh_Faces[OBJ_NUM][1];          
+          if (f != 0) {
           
-          if ((startFace <= f) && (f <= endFace)) {
-          
-            float[][] base_Vertices = new float [allFaces[f].length][3];
-            float[][] top_Vertices = new float [allFaces[f].length][3];
+            int startFace = allPolymesh_Faces[OBJ_NUM][0];
+            int endFace = allPolymesh_Faces[OBJ_NUM][1];          
             
-            for (int s = 0; s < allFaces[f].length; s++) {
-              int vNo = allFaces[f][s];
-              
-              base_Vertices[s][0] = allVertices[vNo][0];
-              base_Vertices[s][1] = allVertices[vNo][1];
-              base_Vertices[s][2] = allVertices[vNo][2];
-              
-              top_Vertices[s][0] = allVertices[vNo][0];
-              top_Vertices[s][1] = allVertices[vNo][1];
-              top_Vertices[s][2] = allVertices[vNo][2];              
-            }
-              
-            for (int s = 0; s < allFaces[f].length; s++) {
-      
-              int s_next = (s + 1) % allFaces[f].length;
-              int s_prev = (s + allFaces[f].length - 1) % allFaces[f].length;
-              
-              PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]);
-              PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]);
-              PVector UV = U.cross(V);
-              float[] W = {UV.x, UV.y, UV.z};
-              W = fn_normalize(W);
-    
-              top_Vertices[s][0] += W[0] * Modify_Input_OpenningDepth;
-              top_Vertices[s][1] += W[1] * Modify_Input_OpenningDepth;
-              top_Vertices[s][2] += W[2] * Modify_Input_OpenningDepth;
-            }  
+            if ((startFace <= f) && (f <= endFace)) {
             
-            int[] base_Vertex_numbers = new int [allFaces[f].length];
-            int[] top_Vertex_numbers = new int [allFaces[f].length];
-            
-            for(int s = 0; s < allFaces[f].length; s++) {
+              float[][] base_Vertices = new float [allFaces[f].length][3];
+              float[][] top_Vertices = new float [allFaces[f].length][3];
               
-              base_Vertex_numbers[s] = SOLARCHVISION_add_Vertex(base_Vertices[s][0], base_Vertices[s][1], base_Vertices[s][2]); 
-              top_Vertex_numbers[s] = SOLARCHVISION_add_Vertex(top_Vertices[s][0], top_Vertices[s][1], top_Vertices[s][2]);
-            }        
-       
-            for(int s = 0; s < allFaces[f].length; s++) {
-              
-              int s_next = (s + 1) % allFaces[f].length;
-
-              if (Modify_Input_OpenningDepth < 0) { // reverse direction for negative extrude heights
-                int[][] newFace = {{base_Vertex_numbers[s], top_Vertex_numbers[s], top_Vertex_numbers[s_next], base_Vertex_numbers[s_next]}};  
-                allFaces = (int[][]) concat(allFaces, newFace);
+              for (int s = 0; s < allFaces[f].length; s++) {
+                int vNo = allFaces[f][s];
+                
+                base_Vertices[s][0] = allVertices[vNo][0];
+                base_Vertices[s][1] = allVertices[vNo][1];
+                base_Vertices[s][2] = allVertices[vNo][2];
+                
+                top_Vertices[s][0] = allVertices[vNo][0];
+                top_Vertices[s][1] = allVertices[vNo][1];
+                top_Vertices[s][2] = allVertices[vNo][2];              
               }
-              else {
-                int[][] newFace = {{base_Vertex_numbers[s], base_Vertex_numbers[s_next], top_Vertex_numbers[s_next], top_Vertex_numbers[s]}};  
-                allFaces = (int[][]) concat(allFaces, newFace);         
-              }       
+                
+              for (int s = 0; s < allFaces[f].length; s++) {
+        
+                int s_next = (s + 1) % allFaces[f].length;
+                int s_prev = (s + allFaces[f].length - 1) % allFaces[f].length;
+                
+                PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]);
+                PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]);
+                PVector UV = U.cross(V);
+                float[] W = {UV.x, UV.y, UV.z};
+                W = fn_normalize(W);
+      
+                top_Vertices[s][0] += W[0] * Modify_Input_OpenningDepth;
+                top_Vertices[s][1] += W[1] * Modify_Input_OpenningDepth;
+                top_Vertices[s][2] += W[2] * Modify_Input_OpenningDepth;
+              }  
               
-              int[][] newFace_MTLV = {{allFaces_MTLV[f][0], allFaces_MTLV[f][1], allFaces_MTLV[f][2], allFaces_MTLV[f][3]}}; 
-              allFaces_MTLV =  (int[][]) concat(allFaces_MTLV, newFace_MTLV);
-            }  
-            
-            { // adding the cap
-              int[][] newFace = {top_Vertex_numbers};  
-              allFaces = (int[][]) concat(allFaces, newFace);         
-     
-              int[][] newFace_MTLV = {{allFaces_MTLV[f][0], allFaces_MTLV[f][1], allFaces_MTLV[f][2], allFaces_MTLV[f][3]}}; 
-              allFaces_MTLV =  (int[][]) concat(allFaces_MTLV, newFace_MTLV);  
+              int[] base_Vertex_numbers = new int [allFaces[f].length];
+              int[] top_Vertex_numbers = new int [allFaces[f].length];
               
-              int[] lastFace = {allFaces.length - 1};
+              for(int s = 0; s < allFaces[f].length; s++) {
+                
+                base_Vertex_numbers[s] = SOLARCHVISION_add_Vertex(base_Vertices[s][0], base_Vertices[s][1], base_Vertices[s][2]); 
+                top_Vertex_numbers[s] = SOLARCHVISION_add_Vertex(top_Vertices[s][0], top_Vertices[s][1], top_Vertices[s][2]);
+              }        
+         
+              for(int s = 0; s < allFaces[f].length; s++) {
+                
+                int s_next = (s + 1) % allFaces[f].length;
   
-              new_selectedFace_numbers = (int[]) concat(new_selectedFace_numbers, lastFace);       
+                if (Modify_Input_OpenningDepth < 0) { // reverse direction for negative extrude heights
+                  int[][] newFace = {{base_Vertex_numbers[s], top_Vertex_numbers[s], top_Vertex_numbers[s_next], base_Vertex_numbers[s_next]}};  
+                  allFaces = (int[][]) concat(allFaces, newFace);
+                }
+                else {
+                  int[][] newFace = {{base_Vertex_numbers[s], base_Vertex_numbers[s_next], top_Vertex_numbers[s_next], top_Vertex_numbers[s]}};  
+                  allFaces = (int[][]) concat(allFaces, newFace);         
+                }       
+                
+                int[][] newFace_MTLV = {{allFaces_MTLV[f][0], allFaces_MTLV[f][1], allFaces_MTLV[f][2], allFaces_MTLV[f][3]}}; 
+                allFaces_MTLV =  (int[][]) concat(allFaces_MTLV, newFace_MTLV);
+              }  
+              
+              { // adding the cap
+                int[][] newFace = {top_Vertex_numbers};  
+                allFaces = (int[][]) concat(allFaces, newFace);         
+       
+                int[][] newFace_MTLV = {{allFaces_MTLV[f][0], allFaces_MTLV[f][1], allFaces_MTLV[f][2], allFaces_MTLV[f][3]}}; 
+                allFaces_MTLV =  (int[][]) concat(allFaces_MTLV, newFace_MTLV);  
+                
+                int[] lastFace = {allFaces.length - 1};
+    
+                new_selectedFace_numbers = (int[]) concat(new_selectedFace_numbers, lastFace);       
+              }
+              
+              
+              allPolymesh_Faces[allPolymesh_Faces.length - 1][1] = allFaces.length - 1;
+  
             }
-            
-            
-            allPolymesh_Faces[allPolymesh_Faces.length - 1][1] = allFaces.length - 1;
-
           }
         }
 
@@ -16658,46 +16731,49 @@ void SOLARCHVISION_offsetVerticesSelection (int _type, float _amount) {
     
     selectedVertex_numbers = sort(selectedVertex_numbers);
   
-    for (int o = selectedVertex_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedVertex_numbers.length - 1; o >= 0; o--) {
   
       int vNo = selectedVertex_numbers[o];
+      
+      if (vNo != 0) {
     
-      for (int f = 1; f < allFaces.length; f++) { // the first node is null
-        for (int j = 0; j < allFaces[f].length; j++) {
-          
-          if (allFaces[f][j] == vNo) { 
+        for (int f = 1; f < allFaces.length; f++) { // the first node is null
+          for (int j = 0; j < allFaces[f].length; j++) {
             
-            float[][] base_Vertices = new float [allFaces[f].length][3];
-            
-            for (int s = 0; s < allFaces[f].length; s++) {
-
-              base_Vertices[s][0] = allVertices[allFaces[f][s]][0];
-              base_Vertices[s][1] = allVertices[allFaces[f][s]][1];
-              base_Vertices[s][2] = allVertices[allFaces[f][s]][2];
-            }
-            
-            for(int s = 0; s < base_Vertices.length; s++) {
+            if (allFaces[f][j] == vNo) { 
               
-              int s_next = (s + 1) % base_Vertices.length;
-              int s_prev = (s + base_Vertices.length - 1) % base_Vertices.length;
+              float[][] base_Vertices = new float [allFaces[f].length][3];
+              
+              for (int s = 0; s < allFaces[f].length; s++) {
   
-              PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]); 
-              PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]); 
-              PVector UV = new PVector(0,0,0);
+                base_Vertices[s][0] = allVertices[allFaces[f][s]][0];
+                base_Vertices[s][1] = allVertices[allFaces[f][s]][1];
+                base_Vertices[s][2] = allVertices[allFaces[f][s]][2];
+              }
               
-              if (_type == 0) UV = U.cross(V);
-              if (_type == 1) UV = PVector.add(U, V);
-              
-              float[] W = {UV.x, UV.y, UV.z};
-              W = fn_normalize(W);
-              
-              selectedVertex_offsetValues[o][0] += W[0] * _amount;
-              selectedVertex_offsetValues[o][1] += W[1] * _amount;
-              selectedVertex_offsetValues[o][2] += W[2] * _amount;
-              
-              selectedVertex_offsetNum[o] += 1;
+              for(int s = 0; s < base_Vertices.length; s++) {
+                
+                int s_next = (s + 1) % base_Vertices.length;
+                int s_prev = (s + base_Vertices.length - 1) % base_Vertices.length;
+    
+                PVector U = new PVector(base_Vertices[s_next][0] - base_Vertices[s][0], base_Vertices[s_next][1] - base_Vertices[s][1], base_Vertices[s_next][2] - base_Vertices[s][2]); 
+                PVector V = new PVector(base_Vertices[s_prev][0] - base_Vertices[s][0], base_Vertices[s_prev][1] - base_Vertices[s][1], base_Vertices[s_prev][2] - base_Vertices[s][2]); 
+                PVector UV = new PVector(0,0,0);
+                
+                if (_type == 0) UV = U.cross(V);
+                if (_type == 1) UV = PVector.add(U, V);
+                
+                float[] W = {UV.x, UV.y, UV.z};
+                W = fn_normalize(W);
+                
+                selectedVertex_offsetValues[o][0] += W[0] * _amount;
+                selectedVertex_offsetValues[o][1] += W[1] * _amount;
+                selectedVertex_offsetValues[o][2] += W[2] * _amount;
+                
+                selectedVertex_offsetNum[o] += 1;
+              }
+                        
             }
-                      
           }
         }
       }
@@ -16712,13 +16788,16 @@ void SOLARCHVISION_offsetVerticesSelection (int _type, float _amount) {
     } 
 
 
-    for (int o = selectedVertex_numbers.length - 1; o > 0; o--) { // the first node is null 
+    for (int o = selectedVertex_numbers.length - 1; o >= 0; o--) {
   
       int vNo = selectedVertex_numbers[o];
+      
+      if (vNo != 0) {
     
-      allVertices[vNo][0] += selectedVertex_offsetValues[o][0];
-      allVertices[vNo][1] += selectedVertex_offsetValues[o][1];
-      allVertices[vNo][2] += selectedVertex_offsetValues[o][2];
+        allVertices[vNo][0] += selectedVertex_offsetValues[o][0];
+        allVertices[vNo][1] += selectedVertex_offsetValues[o][1];
+        allVertices[vNo][2] += selectedVertex_offsetValues[o][2];
+      }
     } 
 
     println("SOLARCHVISION_calculate_selection_Pivot 102");
@@ -16748,11 +16827,13 @@ void SOLARCHVISION_changeVisibilityFacesSelection (int new_vsb) {
       
     }
     
-    for (int o = selectedFace_numbers.length - 1; o > 0; o--) { // the first node is null
+    for (int o = selectedFace_numbers.length - 1; o >= 0; o--) {
       
       int f = selectedFace_numbers[o];
     
-      allFaces_MTLV[f][3] = new_vsb;
+      if (f != 0) {
+        allFaces_MTLV[f][3] = new_vsb;
+      }
     }
     
   }
