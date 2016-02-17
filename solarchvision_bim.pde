@@ -33373,9 +33373,8 @@ void mouseClicked () {
                     
                       if (Work_with_2D_or_3D == 4) {
                         
-                        selectedFace_numbers = new int [2];
-                        selectedFace_numbers[0] = 0;
-                        selectedFace_numbers[1] = f;       
+                        selectedFace_numbers = new int [1];
+                        selectedFace_numbers[0] = f;       
                         
                         selectedFace_displayVertexCount = 1;                 
                         
@@ -33477,9 +33476,8 @@ void mouseClicked () {
                     
                       if (Work_with_2D_or_3D == 4) {
                         
-                        selectedFace_numbers = new int [2];
-                        selectedFace_numbers[0] = 0;
-                        selectedFace_numbers[1] = f;
+                        selectedFace_numbers = new int [1];
+                        selectedFace_numbers[0] = f;
                         
                         selectedFace_displayVertexCount = 1;
 
@@ -34052,9 +34050,8 @@ void mouseClicked () {
   
                 if (keep_number_of_Polymeshes != allPolymesh_Faces.length) { // if any 3D-mesh created during the process
                   
-                  selectedPolymesh_numbers = new int [2];
-                  selectedPolymesh_numbers[0] = 0;
-                  selectedPolymesh_numbers[1] = allPolymesh_Faces.length - 1;
+                  selectedPolymesh_numbers = new int [1];
+                  selectedPolymesh_numbers[0] = allPolymesh_Faces.length - 1;
                   
                   println("SOLARCHVISION_calculate_selection_Pivot 7");
                   SOLARCHVISION_calculate_selection_Pivot();
@@ -34062,9 +34059,8 @@ void mouseClicked () {
                 
                 if (keep_number_of_2DObjects != allObject2D_XYZS.length) { // if any 2D-mesh created during the process
   
-                  selectedObject2D_numbers = new int [2];
-                  selectedObject2D_numbers[0] = 0;
-                  selectedObject2D_numbers[1] = allObject2D_XYZS.length - 1;
+                  selectedObject2D_numbers = new int [1];
+                  selectedObject2D_numbers[0] = allObject2D_XYZS.length - 1;
                   
                   println("SOLARCHVISION_calculate_selection_Pivot 8");
                   SOLARCHVISION_calculate_selection_Pivot();
@@ -34072,9 +34068,8 @@ void mouseClicked () {
     
                 if (keep_number_of_Fractals != allFractal_XYZSRA.length) { // if any Fractal created during the process
   
-                  selectedFractal_numbers = new int [2];
-                  selectedFractal_numbers[0] = 0;
-                  selectedFractal_numbers[1] = allFractal_XYZSRA.length - 1;
+                  selectedFractal_numbers = new int [1];
+                  selectedFractal_numbers[0] = allFractal_XYZSRA.length - 1;
                   
                   println("SOLARCHVISION_calculate_selection_Pivot 9");
                   SOLARCHVISION_calculate_selection_Pivot();
@@ -34083,9 +34078,8 @@ void mouseClicked () {
 
                 if (keep_number_of_Sections != allSection_UVERAB.length) { // if any Section created during the process
   
-                  selectedSection_numbers = new int [2];
-                  selectedSection_numbers[0] = 0;
-                  selectedSection_numbers[1] = allSection_UVERAB.length - 1;
+                  selectedSection_numbers = new int [1];
+                  selectedSection_numbers[0] = allSection_UVERAB.length - 1;
                   
                   println("SOLARCHVISION_calculate_selection_Pivot 9b");
                   SOLARCHVISION_calculate_selection_Pivot();
@@ -34093,9 +34087,8 @@ void mouseClicked () {
           
                 if (keep_number_of_Cameras != allCamera_PPPSRRRF.length) { // if any Camera created during the process
   
-                  selectedCamera_numbers = new int [2];
-                  selectedCamera_numbers[0] = 0;
-                  selectedCamera_numbers[1] = allCamera_PPPSRRRF.length - 1;
+                  selectedCamera_numbers = new int [1];
+                  selectedCamera_numbers[0] = allCamera_PPPSRRRF.length - 1;
                   
                   println("SOLARCHVISION_calculate_selection_Pivot 9c");
                   SOLARCHVISION_calculate_selection_Pivot();
@@ -34103,9 +34096,8 @@ void mouseClicked () {
    
                 if (keep_number_of_Solids != allSolid_XYZPPPSSSRRRV.length) { // if any Solid created during the process
   
-                  selectedSolid_numbers = new int [2];
-                  selectedSolid_numbers[0] = 0;
-                  selectedSolid_numbers[1] = allSolid_XYZPPPSSSRRRV.length - 1;
+                  selectedSolid_numbers = new int [1];
+                  selectedSolid_numbers[0] = allSolid_XYZPPPSSSRRRV.length - 1;
                   
                   println("SOLARCHVISION_calculate_selection_Pivot 9d");
                   SOLARCHVISION_calculate_selection_Pivot();
