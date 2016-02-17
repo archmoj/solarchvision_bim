@@ -1,9 +1,9 @@
- 
-// should write selected LandPoints to file!
-// we don't have display_SOLIDS! use Ctrl+7 for
+// improve display_SOLIDS!
 // drop functions only works for living objects
 // still duplicate not working for solid layer!
 // create solid not working yet.
+// deleting solids may creat conflict with polymeshes that has those solids
+// should add solid option to trees? 
 
 import processing.pdf.*;
 
@@ -44771,7 +44771,19 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       if (j < allPolymesh_Solids[i].length - 1) lineSTR += ",";
     }
     newChild2.setContent(lineSTR);
-  }   
+  }
+
+  {
+    newChild1 = my_xml.addChild("selectedLandPoint_numbers");
+    int ni = selectedLandPoint_numbers.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += selectedLandPoint_numbers[i];
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }    
 
   {
     newChild1 = my_xml.addChild("selectedFractal_numbers");
@@ -44862,16 +44874,16 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
 
   {
-    newChild1 = my_xml.addChild("selectedCamera_numbers");
-    int ni = selectedCamera_numbers.length;
+    newChild1 = my_xml.addChild("selectedSolid_numbers");
+    int ni = selectedSolid_numbers.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += selectedCamera_numbers[i];
+      lineSTR += selectedSolid_numbers[i];
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
-  }  
+  }
 
   {
     newChild1 = my_xml.addChild("selectedSection_numbers");
@@ -44884,18 +44896,20 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     }
     newChild1.setContent(lineSTR);
   }
-
+  
   {
-    newChild1 = my_xml.addChild("selectedSolid_numbers");
-    int ni = selectedSolid_numbers.length;
+    newChild1 = my_xml.addChild("selectedCamera_numbers");
+    int ni = selectedCamera_numbers.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += selectedSolid_numbers[i];
+      lineSTR += selectedCamera_numbers[i];
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
-  }
+  }    
+
+
 
   {
     newChild1 = my_xml.addChild("SolidImpact_Elevation");
@@ -45901,6 +45915,17 @@ void SOLARCHVISION_load_project (String myFile) {
 
 
 
+    children0 = FileAll.getChildren("selectedLandPoint_numbers");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      selectedLandPoint_numbers = new int [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        selectedLandPoint_numbers[i] = int(parts[i]);
+      }
+    }
+
     children0 = FileAll.getChildren("selectedFractal_numbers");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
@@ -45978,16 +46003,18 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     }
     
-    children0 = FileAll.getChildren("selectedCamera_numbers");
+
+    children0 = FileAll.getChildren("selectedSolid_numbers");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      selectedCamera_numbers = new int [ni];
+      selectedSolid_numbers = new int [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        selectedCamera_numbers[i] = int(parts[i]);
+        selectedSolid_numbers[i] = int(parts[i]);
       }
     }
+
     
     children0 = FileAll.getChildren("selectedSection_numbers");
     for (int L = 0; L < children0.length; L++) {
@@ -46000,16 +46027,18 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     }
 
-    children0 = FileAll.getChildren("selectedSolid_numbers");
+    children0 = FileAll.getChildren("selectedCamera_numbers");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      selectedSolid_numbers = new int [ni];
+      selectedCamera_numbers = new int [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        selectedSolid_numbers[i] = int(parts[i]);
+        selectedCamera_numbers[i] = int(parts[i]);
       }
     }
+
+
 
     children0 = FileAll.getChildren("SolidImpact_Elevation");
     for (int L = 0; L < children0.length; L++) {
