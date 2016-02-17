@@ -1901,7 +1901,7 @@ void SOLARCHVISION_update_models (int Step) {
    if ((Step == 0) || (Step == 1)) SOLARCHVISION_remove_3Dobjects();
    //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
    if ((Step == 0) || (Step == 3)) SOLARCHVISION_remove_Solids();
-   if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricSolids();
+   if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ProjectModel();
    if ((Step == 0) || (Step == 5)) SOLARCHVISION_calculate_SolidImpact_selectedSections();
 
 }
@@ -2217,7 +2217,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_add_ParametricSolids", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_add_ProjectModel", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 23) {
     SOLARCHVISION_update_models(4);
@@ -14113,8 +14113,23 @@ void SOLARCHVISION_duplicateSelection () {
           
           if ((0 < allPolymesh_Solids[OBJ_NUM][1]) && (allPolymesh_Solids[OBJ_NUM][0] <= allPolymesh_Solids[OBJ_NUM][1])) { 
             for (int s = allPolymesh_Solids[OBJ_NUM][0]; s <= allPolymesh_Solids[OBJ_NUM][1]; s++) {
-              SOLARCHVISION_add_Solid(SolidObjects[s].posX, SolidObjects[s].posY, SolidObjects[s].posZ, SolidObjects[s].powX, SolidObjects[s].powY, SolidObjects[s].powZ, SolidObjects[s].scaleX, SolidObjects[s].scaleY, SolidObjects[s].scaleZ, -SolidObjects[s].rotX, -SolidObjects[s].rotY, -SolidObjects[s].rotZ, SolidObjects[s].value);
               
+              float Solid_posX = allSolid_XYZPPPSSSRRRV[s][0];
+              float Solid_posY = allSolid_XYZPPPSSSRRRV[s][1];
+              float Solid_posZ = allSolid_XYZPPPSSSRRRV[s][2];
+              float Solid_powX = allSolid_XYZPPPSSSRRRV[s][3];
+              float Solid_powY = allSolid_XYZPPPSSSRRRV[s][4];
+              float Solid_powZ = allSolid_XYZPPPSSSRRRV[s][5];
+              float Solid_scaleX = allSolid_XYZPPPSSSRRRV[s][6];
+              float Solid_scaleY = allSolid_XYZPPPSSSRRRV[s][7];
+              float Solid_scaleZ = allSolid_XYZPPPSSSRRRV[s][8];
+              float Solid_rotX = allSolid_XYZPPPSSSRRRV[s][9];
+              float Solid_rotY = allSolid_XYZPPPSSSRRRV[s][10];
+              float Solid_rotZ = allSolid_XYZPPPSSSRRRV[s][11];
+              float Solid_value = allSolid_XYZPPPSSSRRRV[s][12];
+      
+              SOLARCHVISION_add_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
+                    
               SOLID_added += 1;
             }
           }
@@ -21207,7 +21222,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
   }
  
   if (n == 7) {
-    SOLARCHVISION_add_ParametricSolids();
+    SOLARCHVISION_add_ProjectModel();
   }      
 
  
@@ -22304,7 +22319,7 @@ float[] SOLARCHVISION_vertexRender_Shade_Vertex_Solid (float[] VERTEX_now, int P
 float SOLARCHVISION_vertexU_Shade_Vertex_Solid (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
 
   SolidImpactType = 0;
-  float val = ParametricSolids_SolidImpact_atXYZ(VERTEX_now[0], VERTEX_now[1], VERTEX_now[2]);
+  float val = SOLARCHVISION_calculate_SolidImpact_atXYZ(VERTEX_now[0], VERTEX_now[1], VERTEX_now[2]);
 
   float _u = 0.5 + 0.5 * (PAL_Multiplier * val);
   
@@ -25263,7 +25278,7 @@ void SOLARCHVISION_DownloadLAND_MESH() {
  
 
 
-void SOLARCHVISION_add_ParametricSolids () {
+void SOLARCHVISION_add_ProjectModel () {
 
 /*
   {
@@ -25581,7 +25596,7 @@ void SOLARCHVISION_add_ParametricSolids () {
 }
 
 
-void SOLARCHVISION_add_ParametricSolids_SCHOOL () {
+void SOLARCHVISION_add_ProjectModel_SCHOOL () {
   
   int[][] block = {
                    {1,1,1,1,0,0,0,0,0,0,0},
@@ -26270,24 +26285,24 @@ float SolidImpact_positionStep = 1.25;
 
 int SolidImpactType = 0; // INTERNAL! 0:simple 1:complex
 
-float ParametricSolids_SolidImpact_atXYZ (float x, float y, float z) {
+float SOLARCHVISION_calculate_SolidImpact_atXYZ (float x, float y, float z) {
 
   float v = 0;
   
-  if (SolidImpactType == 0) v = ParametricSolids_SolidImpact_atXYZ_simple(x, y, z);
-  else v = ParametricSolids_SolidImpact_atXYZ_complex(x, y, z);
+  if (SolidImpactType == 0) v = SOLARCHVISION_calculate_SolidImpact_atXYZ_simple(x, y, z);
+  else v = SOLARCHVISION_calculate_SolidImpact_atXYZ_complex(x, y, z);
   
   return v;
 }
 
-float ParametricSolids_SolidImpact_atXYZ_simple (float x, float y, float z) {
+float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple (float x, float y, float z) {
 
   float val = 1;
   
-  for (int n = 0; n < SolidObjects.length; n++) {
+  for (int n = 1; n <= allSolid_num; n++) {
     
-    float r = SolidObjects[n].value;
-    float d = SolidObjects[n].Distance(x, y, z);
+    float r = Solid_get_value(n);
+    float d = Solid_get_Distance(n, x, y, z);
 
     d *= pow(d, SolidImpact_Power);
 
@@ -26298,13 +26313,13 @@ float ParametricSolids_SolidImpact_atXYZ_simple (float x, float y, float z) {
 
   }
   
-  if (SolidObjects.length > 0) {
+  if (allSolid_num > 0) {
     float val_sign = 1;
     if (val < 0) {
       val_sign = -1;
       val = abs(val);
     } 
-    val = pow(val, 1.0 / float(SolidObjects.length));
+    val = pow(val, 1.0 / float(allSolid_num));
     val *= val_sign;    
   } 
 
@@ -26313,7 +26328,7 @@ float ParametricSolids_SolidImpact_atXYZ_simple (float x, float y, float z) {
 
 
 
-float ParametricSolids_SolidImpact_atXYZ_complex (float x, float y, float z) {
+float SOLARCHVISION_calculate_SolidImpact_atXYZ_complex (float x, float y, float z) {
 
   float deltaX = SolidImpact_Wspd * cos_ang(SolidImpact_Wdir);
   float deltaY = SolidImpact_Wspd * sin_ang(SolidImpact_Wdir);
@@ -26322,10 +26337,10 @@ float ParametricSolids_SolidImpact_atXYZ_complex (float x, float y, float z) {
 
   for (int o = 0; o < 2; o++) {
 
-    for (int n = 0; n < SolidObjects.length; n++) {
+    for (int n = 1; n <= allSolid_num; n++) {
 
-      float r = SolidObjects[n].value;
-      float d = SolidObjects[n].Distance(x + o * deltaX , y + o * deltaY, z);
+      float r = Solid_get_value(n);
+      float d = Solid_get_Distance(n, x + o * deltaX , y + o * deltaY, z);
       
       d *= pow(d, SolidImpact_Power);
   
@@ -26335,13 +26350,13 @@ float ParametricSolids_SolidImpact_atXYZ_complex (float x, float y, float z) {
       }        
     }
     
-    if (SolidObjects.length > 0) {
+    if (allSolid_num > 0) {
       float val_sign = 1;
       if (val[o] < 0) {
         val_sign = -1;
         val[o] = abs(val[o]);
       } 
-      val[o] = pow(val[o], 1.0 / float(SolidObjects.length));
+      val[o] = pow(val[o], 1.0 / float(allSolid_num));
       val[o] *= val_sign;    
     }     
   }
@@ -26422,12 +26437,12 @@ void SOLARCHVISION_calculate_windFlow () {
         for (int n = 0; n < num_steps; n += 1) {
           
           SolidImpactType = 0;
-          float inside_or_outside = ParametricSolids_SolidImpact_atXYZ(test_point[0], test_point[1], test_point[2]);
+          float inside_or_outside = SOLARCHVISION_calculate_SolidImpact_atXYZ(test_point[0], test_point[1], test_point[2]);
           
           if (inside_or_outside > 0) {
           
             SolidImpactType = 1;
-            float val = ParametricSolids_SolidImpact_atXYZ(test_point[0], test_point[1], test_point[2]);
+            float val = SOLARCHVISION_calculate_SolidImpact_atXYZ(test_point[0], test_point[1], test_point[2]);
   
     
             float MinimumDistance_trace = 1 / float(num_steps);
@@ -26582,7 +26597,7 @@ float[] SOLARCHVISION_2DtraceContour (int traceType, float epsilon, float x, flo
     float test_y = y + b;
     float test_z = z + c;
     
-    float test_v = ParametricSolids_SolidImpact_atXYZ(test_x, test_y, test_z);        
+    float test_v = SOLARCHVISION_calculate_SolidImpact_atXYZ(test_x, test_y, test_z);        
     
     if ((test_v < v_min) || (v_min > 0.9 * FLOAT_undefined)) {
       v_min = test_v;
@@ -26688,7 +26703,7 @@ float[][] SOLARCHVISION_3DtraceContour (float epsilon, float x, float y, float z
       float test_y = y + b;
       float test_z = z + c;
       
-      float test_v = ParametricSolids_SolidImpact_atXYZ(test_x, test_y, test_z);        
+      float test_v = SOLARCHVISION_calculate_SolidImpact_atXYZ(test_x, test_y, test_z);        
       
       if ((test_v < v_min) || (v_min > 0.9 * FLOAT_undefined)) {
         v_min = test_v;
@@ -26813,7 +26828,7 @@ void SOLARCHVISION_calculate_SolidImpact_CurrentSection () {
         float z = Bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(SolidImpact_RES1), 1 - j / float(SolidImpact_RES2));
       
         SolidImpactType = 0;
-        float val = ParametricSolids_SolidImpact_atXYZ(x, y, z);     
+        float val = SOLARCHVISION_calculate_SolidImpact_atXYZ(x, y, z);     
         
         float g =      roundTo(SolidImpact_Grade * val, deltaSolidImpact) - 0.5 * deltaSolidImpact;
         float g_line = roundTo(SolidImpact_Grade * val, deltaSolidImpactLines);
@@ -26876,7 +26891,7 @@ void SOLARCHVISION_calculate_SolidImpact_CurrentSection () {
         float y = SolidImpact_Contours_U1Vertices[k][1];
         float z = SolidImpact_Contours_U1Vertices[k][2];
         
-        float val = SolidImpact_Contours_U1Vertices[k][3]; //ParametricSolids_SolidImpact_atXYZ(x, y, z);
+        float val = SolidImpact_Contours_U1Vertices[k][3]; //SOLARCHVISION_calculate_SolidImpact_atXYZ(x, y, z);
         
         float g =      roundTo(SolidImpact_Grade * val, deltaSolidImpact) - 0.5 * deltaSolidImpact;
         float g_line = roundTo(SolidImpact_Grade * val, deltaSolidImpactLines);
@@ -27302,7 +27317,7 @@ void SOLARCHVISION_trace_V1Line (float[] test_point_dir, float g_line, int n_Tri
       int[][] newV1Line = {{point_prev, point_next}};
       SolidImpact_Contours_V1Lines = (int[][]) concat(SolidImpact_Contours_V1Lines, newV1Line);
       
-      float val_new = ParametricSolids_SolidImpact_atXYZ(test_point_dir[0], test_point_dir[1], test_point_dir[2]);
+      float val_new = SOLARCHVISION_calculate_SolidImpact_atXYZ(test_point_dir[0], test_point_dir[1], test_point_dir[2]);
       float g_new =      roundTo(SolidImpact_Grade * val_new, deltaSolidImpact) - 0.5 * deltaSolidImpact;
       float g_line_new = roundTo(SolidImpact_Grade * val_new, deltaSolidImpactLines);
       
@@ -39126,8 +39141,13 @@ void SOLARCHVISION_move_selectedPolymeshes (float dx, float dy, float dz) {
       }
       
       for (int g = allPolymesh_Solids[OBJ_NUM][0]; g <= allPolymesh_Solids[OBJ_NUM][1]; g++) {
-        if ((0 < g) && (g < SolidObjects.length)) {
-          SolidObjects[g].updatePosition(SolidObjects[g].posX + dx, SolidObjects[g].posY + dy, SolidObjects[g].posZ + dz);
+        if ((0 < g) && (g < allSolid_num)) {
+          
+          float Solid_posX = allSolid_XYZPPPSSSRRRV[g][0];
+          float Solid_posY = allSolid_XYZPPPSSSRRRV[g][1];
+          float Solid_posZ = allSolid_XYZPPPSSSRRRV[g][2];
+          
+          Solid_updatePosition(g, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
     
           Solids_updated = 1;  
         }
@@ -39203,26 +39223,30 @@ void SOLARCHVISION_rotate_selectedPolymeshes (float x0, float y0, float z0, floa
       }    
       
       for (int g = allPolymesh_Solids[OBJ_NUM][0]; g <= allPolymesh_Solids[OBJ_NUM][1]; g++) {
-        if ((0 < g) && (g < SolidObjects.length)) {
+        if ((0 < g) && (g < allSolid_num)) {
+
+          float Solid_posX = allSolid_XYZPPPSSSRRRV[g][0];
+          float Solid_posY = allSolid_XYZPPPSSSRRRV[g][1];
+          float Solid_posZ = allSolid_XYZPPPSSSRRRV[g][2];          
           
-          float x = SolidObjects[g].posX - x0; 
-          float y = SolidObjects[g].posY - y0; 
-          float z = SolidObjects[g].posZ - z0;
+          float x = Solid_posX - x0; 
+          float y = Solid_posY - y0; 
+          float z = Solid_posZ - z0;
           
           if (the_Vector == 2) {
-            SolidObjects[g].updatePosition(x0 + (x * cos(r) - y * sin(r)), y0 + (x * sin(r) + y * cos(r)), z0 + (z));
+            Solid_updatePosition(g, x0 + (x * cos(r) - y * sin(r)), y0 + (x * sin(r) + y * cos(r)), z0 + (z));
           
-            SolidObjects[g].RotateZ(r * 180 / PI);
+            Solid_RotateZ(g, r * 180 / PI);
           }
           else if (the_Vector == 1) {
-            SolidObjects[g].updatePosition(x0 + (z * sin(r) + x * cos(r)), y0 + (y), z0 + (z * cos(r) - x * sin(r)));
+            Solid_updatePosition(g, x0 + (z * sin(r) + x * cos(r)), y0 + (y), z0 + (z * cos(r) - x * sin(r)));
           
-            SolidObjects[g].RotateY(r * 180 / PI);
+            Solid_RotateY(g, r * 180 / PI);
           }
           else if (the_Vector == 0) {
-            SolidObjects[g].updatePosition(x0 + (x), y0 + (y * cos(r) - z * sin(r)), z0 + (y * sin(r) + z * cos(r)));
+            Solid_updatePosition(g, x0 + (x), y0 + (y * cos(r) - z * sin(r)), z0 + (y * sin(r) + z * cos(r)));
           
-            SolidObjects[g].RotateX(r * 180 / PI);
+            Solid_RotateX(g, r * 180 / PI);
           }
           
           Solids_updated = 1;  
@@ -39284,10 +39308,15 @@ void SOLARCHVISION_scale_selectedPolymeshes (float x0, float y0, float z0, float
       }
       
       for (int g = allPolymesh_Solids[OBJ_NUM][0]; g <= allPolymesh_Solids[OBJ_NUM][1]; g++) {
-        if ((0 < g) && (g < SolidObjects.length)) {
-          SolidObjects[g].updatePosition((SolidObjects[g].posX - x0) * sx + x0, (SolidObjects[g].posY - y0) * sy + y0, (SolidObjects[g].posZ - z0) * sz + z0);
+        if ((0 < g) && (g < allSolid_num)) {
           
-          SolidObjects[g].Scale(sx, sy, sz);
+          float Solid_posX = allSolid_XYZPPPSSSRRRV[g][0];
+          float Solid_posY = allSolid_XYZPPPSSSRRRV[g][1];
+          float Solid_posZ = allSolid_XYZPPPSSSRRRV[g][2];          
+          
+          Solid_updatePosition(g, (Solid_posX - x0) * sx + x0, (Solid_posY - y0) * sy + y0, (Solid_posZ - z0) * sz + z0);
+          
+          Solid_Scale(g, sx, sy, sz);
     
           Solids_updated = 1;  
         }
@@ -44648,41 +44677,6 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     newChild2.setContent(lineSTR);
   }   
 
-  newChild1 = my_xml.addChild("SolidObjects");
-  newChild1.setInt("ni", SolidObjects.length);
-  for (int i = 0; i < SolidObjects.length; i++) {
-    newChild2 = newChild1.addChild("Solid");
-    newChild2.setInt("id", i);
-    String lineSTR = "";
-    lineSTR += nf(SolidObjects[i].value, 0, 4).replace(",", "."); // <<<<
-    lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].posX, 0, 4).replace(",", "."); // <<<<
-    lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].posY, 0, 4).replace(",", "."); // <<<<
-    lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].posZ, 0, 4).replace(",", "."); // <<<<
-    lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].powX, 0, 4).replace(",", "."); // <<<<
-    lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].powY, 0, 4).replace(",", "."); // <<<<
-    lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].powZ, 0, 4).replace(",", "."); // <<<<
-    lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].scaleX, 0, 4).replace(",", "."); // <<<<
-    lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].scaleY, 0, 4).replace(",", "."); // <<<<
-    lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].scaleZ, 0, 4).replace(",", "."); // <<<<
-    lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].rotX, 0, 4).replace(",", "."); // <<<<
-    lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].rotY, 0, 4).replace(",", "."); // <<<<
-    lineSTR += ",";
-    lineSTR += nf(SolidObjects[i].rotZ, 0, 4).replace(",", "."); // <<<<
-
-    newChild2.setContent(lineSTR);
-  } 
-
   {
     newChild1 = my_xml.addChild("selectedFractal_Plant_numbers");
     int ni = selectedFractal_Plant_numbers.length;
@@ -45808,32 +45802,8 @@ void SOLARCHVISION_load_project (String myFile) {
         }
       }
     } 
-    
-    children0 = FileAll.getChildren("SolidObjects");
-    for (int L = 0; L < children0.length; L++) {
-      int ni = children0[L].getInt("ni");
-      SOLARCHVISION_remove_Solids();
-      XML[] children1 = children0[L].getChildren("Solid");         
-      for (int i = 0; i < ni; i++) {
-        String lineSTR = children1[i].getContent();
-        String[] parts = split(lineSTR, ',');
-        float v = float(parts[0]);
-        float x = float(parts[1]);
-        float y = float(parts[2]);
-        float z = float(parts[3]);
-        float px = float(parts[4]);
-        float py = float(parts[5]);
-        float pz = float(parts[6]);
-        float sx = float(parts[7]);
-        float sy = float(parts[8]);
-        float sz = float(parts[9]);
-        float tx = float(parts[10]);
-        float ty = float(parts[11]);
-        float tz = float(parts[12]);
-        ParametricSolid[] newSolidObject = {new ParametricSolid(v, x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz)};         
-        SolidObjects = (ParametricSolid[]) concat(SolidObjects, newSolidObject);          
-      }
-    }  
+
+
 
     children0 = FileAll.getChildren("selectedFractal_Plant_numbers");
     for (int L = 0; L < children0.length; L++) {
@@ -46238,4 +46208,3 @@ class ParametricSolid {
 } 
 
 
-ParametricSolid[] SolidObjects = {};
