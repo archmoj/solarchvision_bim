@@ -33573,7 +33573,7 @@ void mouseClicked () {
                 y -= ry * selection_alignY;
                 z -= rz * selection_alignZ;
                 
-                int SOLID_created = 0;
+                
                 
                 if (Create_Mesh_SuperOBJ == 1) {
     
@@ -33612,8 +33612,6 @@ void mouseClicked () {
                   
                   if (Create_Mesh_or_Solid == 2) {
                     SOLARCHVISION_add_Solid(x,y,z, px,py,pz, rx,ry,rz, 0,0,rot, 1);
-                    
-                    SOLID_created = 1;
                   }                
                 }
                 
@@ -34017,10 +34015,10 @@ void mouseClicked () {
                   
                   println("SOLARCHVISION_calculate_selection_Pivot 9d");
                   SOLARCHVISION_calculate_selection_Pivot();
+                  
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections();
                 }    
-                // zzzzzzzzzzzzz should join the code above and below! 
-                
-                if (SOLID_created != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections(); //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
                 
               }
             }          
