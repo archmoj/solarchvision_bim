@@ -38118,21 +38118,25 @@ float[][] SOLARCHVISION_getCorners_Solid (float Solid_posX, float Solid_posY, fl
     else if (q == 3) {qx = -1; qy = 1; u = 0; v = 0;}    
     else if (q == 4) {qx = 0; qy = 0; u = 0.5; v = 0.5;} // center
     
-    float a = qx * 0.5 * Solid_powY + Solid_posX;
-    float b = qy * 0.5 * Solid_powZ + Solid_posY;
-    float c = Solid_posZ;  
+    float a = qx * Solid_scaleX;
+    float b = qy * Solid_scaleY;
+    float c = 0;  
   
     float x = 0, y = 0, z = 0;
     
     //////////////////////////
-    x = a * cos_ang(-Solid_powX) - -b * sin_ang(-Solid_powX);
-    y = a * sin_ang(-Solid_powX) + -b * cos_ang(-Solid_powX);
+    x = a * cos_ang(Solid_rotZ) - b * sin_ang(Solid_rotZ);
+    y = a * sin_ang(Solid_rotZ) + b * cos_ang(Solid_rotZ);
     z = c;         
     //////////////////////////
      
+
+    x += Solid_posX;
+    y += Solid_posY;
+    z += Solid_posZ;  
   
     ImageVertex[q][0] = x;
-    ImageVertex[q][1] = -y;
+    ImageVertex[q][1] = y;
     ImageVertex[q][2] = z;
 
   }
