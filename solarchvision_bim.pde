@@ -3033,7 +3033,7 @@ void SOLARCHVISION_draw_WIN3D () {
     
     SOLARCHVISION_draw_Cameras();
     
-    //SOLARCHVISION_draw_Solids();
+    SOLARCHVISION_draw_Solids();
   
     SOLARCHVISION_draw_SolidImpact_lines();
     
@@ -38027,7 +38027,7 @@ int[][] allSolid_Faces;
 
 
 void SOLARCHVISION_draw_Solids () {
-
+  
   allSolid_Faces = new int [1 + allSolid_num][4];
     
   allSolid_Vertices = new float [4 * allSolid_num + 1][3];
@@ -38038,7 +38038,7 @@ void SOLARCHVISION_draw_Solids () {
   if (Display_Solids != 0) {
 
     for (int f = 1; f <= allSolid_num; f++) {
-      
+
       float Solid_posX = allSolid_XYZPPPSSSRRRV[f][0];
       float Solid_posY = allSolid_XYZPPPSSSRRRV[f][1];
       float Solid_posZ = allSolid_XYZPPPSSSRRRV[f][2];
@@ -38053,7 +38053,6 @@ void SOLARCHVISION_draw_Solids () {
       float Solid_rotZ = allSolid_XYZPPPSSSRRRV[f][11];
       float Solid_value = allSolid_XYZPPPSSSRRRV[f][12];
 
-
       WIN3D_Diagrams.stroke(0);
       WIN3D_Diagrams.fill(127,255,127);  
       
@@ -38066,8 +38065,6 @@ void SOLARCHVISION_draw_Solids () {
         float x = ImageVertex[q][0];
         float y = ImageVertex[q][1];
         float z = ImageVertex[q][2];
-        float u = ImageVertex[q][3];
-        float v = ImageVertex[q][4];
  
         WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
         
