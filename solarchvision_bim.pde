@@ -14430,9 +14430,7 @@ void SOLARCHVISION_delete_Selection () {
     for (int o = selectedSolid_numbers.length - 1; o >= 0; o--) {
 
       int OBJ_NUM = selectedSolid_numbers[o];
-      
-      println("OBJ_NUM", OBJ_NUM);
-      
+
       if (OBJ_NUM != 0) {    
         
         
@@ -46242,9 +46240,9 @@ void SOLARCHVISION_load_project (String myFile) {
 
 void Solid_updatePosition (int n, float a, float b, float c) {
   
-  allSolid_XYZPPPSSSRRRV[n][0] *= a;
-  allSolid_XYZPPPSSSRRRV[n][1] *= b;
-  allSolid_XYZPPPSSSRRRV[n][2] *= c;  
+  allSolid_XYZPPPSSSRRRV[n][0] = a;
+  allSolid_XYZPPPSSSRRRV[n][1] = b;
+  allSolid_XYZPPPSSSRRRV[n][2] = c;  
 
 } 
 
