@@ -1900,7 +1900,7 @@ void SOLARCHVISION_update_models (int Step) {
  
    if ((Step == 0) || (Step == 1)) SOLARCHVISION_remove_3Dobjects();
    //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
-   if ((Step == 0) || (Step == 3)) SOLARCHVISION_remove_ParametricSolids();
+   if ((Step == 0) || (Step == 3)) SOLARCHVISION_remove_Solids();
    if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricSolids();
    if ((Step == 0) || (Step == 5)) SOLARCHVISION_calculate_SolidImpact_selectedSections();
 
@@ -2207,7 +2207,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_remove_ParametricSolids", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_remove_Solids", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 22) {
     SOLARCHVISION_update_models(3);    
@@ -2725,7 +2725,7 @@ void draw () {
           
           SOLARCHVISION_remove_3Dobjects();
           
-          SOLARCHVISION_remove_ParametricSolids();
+          SOLARCHVISION_remove_Solids();
           
           SOLARCHVISION_add_3Dbase(-2, 0, 0, 1, 0);
           
@@ -2776,7 +2776,7 @@ void draw () {
           
           SOLARCHVISION_remove_3Dobjects();
           
-          SOLARCHVISION_remove_ParametricSolids();
+          SOLARCHVISION_remove_Solids();
           
           SOLARCHVISION_add_3Dbase(-2, 0, 0, 1, 0);
 
@@ -13966,7 +13966,7 @@ void SOLARCHVISION_add_Solid (float x, float y, float z, float px, float py, flo
     // no nead to call SOLARCHVISION_beginNewPolymesh(); here again!
   }
   else {
-    allPolymesh_Solids[allPolymesh_Solids.length - 1][1] = SolidObjects.length - 1;
+    allPolymesh_Solids[allPolymesh_Solids.length - 1][1] = allSolid_num;
   }
 
 }
@@ -13977,7 +13977,7 @@ void SOLARCHVISION_beginNewPolymesh () {
   
   if (addToLastPolymesh == 0) { 
 
-    int[][] newObject_Solids = {{SolidObjects.length, -1}}; // i.e. null because start > end 
+    int[][] newObject_Solids = {{allSolid_XYZPPPSSSRRRV.length, 0}}; // i.e. null because start > end 
     
     allPolymesh_Solids = (int[][]) concat(allPolymesh_Solids, newObject_Solids);      
     
@@ -20997,7 +20997,7 @@ void SOLARCHVISION_remove_3Dobjects () {
   allPolymesh_Solids[0][0] = 0;
   allPolymesh_Solids[0][1] = -1;
   
-  SOLARCHVISION_remove_ParametricSolids();
+  SOLARCHVISION_remove_Solids();
 
   addToLastPolymesh = 0; SOLARCHVISION_beginNewPolymesh(); addToLastPolymesh = 1;
  
@@ -45810,7 +45810,7 @@ void SOLARCHVISION_load_project (String myFile) {
     children0 = FileAll.getChildren("SolidObjects");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      SOLARCHVISION_remove_ParametricSolids();
+      SOLARCHVISION_remove_Solids();
       XML[] children1 = children0[L].getChildren("Solid");         
       for (int i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
@@ -46234,11 +46234,6 @@ class ParametricSolid {
   } 
   
 } 
-
-
-void SOLARCHVISION_remove_ParametricSolids () {
-  SolidObjects = new ParametricSolid[0];
-}
 
 
 ParametricSolid[] SolidObjects = {};
