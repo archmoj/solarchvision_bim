@@ -13955,7 +13955,7 @@ int SOLARCHVISION_add_Face (int[] f) {
 
 void SOLARCHVISION_add_Solid (float v, float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float tx, float ty, float tz) {
 
-  float[][] TempSolid_XYZPPPSSSRRRV = {{v, x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz}};
+  float[][] TempSolid_XYZPPPSSSRRRV = {{x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz, v}};
   allSolid_XYZPPPSSSRRRV = (float[][]) concat(allSolid_XYZPPPSSSRRRV, TempSolid_XYZPPPSSSRRRV);
 
   allSolid_num += 1;
@@ -14286,14 +14286,21 @@ void SOLARCHVISION_duplicateSelection () {
 
       if (OBJ_NUM != 0) {    
         
-        float Solid_offset_U = allSolid_XYZPPPSSSRRRV[OBJ_NUM][0];
-        float Solid_offset_V = allSolid_XYZPPPSSSRRRV[OBJ_NUM][1];
-        float Solid_Elevation = allSolid_XYZPPPSSSRRRV[OBJ_NUM][2];
-        float Solid_Rotation = allSolid_XYZPPPSSSRRRV[OBJ_NUM][3];
-        float Solid_scale_U = allSolid_XYZPPPSSSRRRV[OBJ_NUM][4];
-        float Solid_scale_V = allSolid_XYZPPPSSSRRRV[OBJ_NUM][5];
+        float Solid_posX = allSolid_XYZPPPSSSRRRV[OBJ_NUM][0];
+        float Solid_posY = allSolid_XYZPPPSSSRRRV[OBJ_NUM][1];
+        float Solid_posZ = allSolid_XYZPPPSSSRRRV[OBJ_NUM][2];
+        float Solid_powX = allSolid_XYZPPPSSSRRRV[OBJ_NUM][3];
+        float Solid_powY = allSolid_XYZPPPSSSRRRV[OBJ_NUM][4];
+        float Solid_powZ = allSolid_XYZPPPSSSRRRV[OBJ_NUM][5];
+        float Solid_scaleX = allSolid_XYZPPPSSSRRRV[OBJ_NUM][6];
+        float Solid_scaleY = allSolid_XYZPPPSSSRRRV[OBJ_NUM][7];
+        float Solid_scaleZ = allSolid_XYZPPPSSSRRRV[OBJ_NUM][8];
+        float Solid_rotX = allSolid_XYZPPPSSSRRRV[OBJ_NUM][9];
+        float Solid_rotY = allSolid_XYZPPPSSSRRRV[OBJ_NUM][10];
+        float Solid_rotZ = allSolid_XYZPPPSSSRRRV[OBJ_NUM][11];
+        float Solid_value = allSolid_XYZPPPSSSRRRV[OBJ_NUM][12];
 
-        SOLARCHVISION_add_Solid(Solid_Type, Solid_offset_U, Solid_offset_V, Solid_Elevation, Solid_Rotation, Solid_scale_U, Solid_scale_V, Solid_RES1, Solid_RES2);        
+        SOLARCHVISION_add_Solid(Solid_value, Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ);        
       }
     }
     
@@ -38025,19 +38032,27 @@ void SOLARCHVISION_draw_Solids () {
 
     for (int f = 1; f <= allSolid_num; f++) {
       
-      float Solid_offset_U = allSolid_XYZPPPSSSRRRV[f][0];
-      float Solid_offset_V = allSolid_XYZPPPSSSRRRV[f][1];
-      float Solid_Elevation = allSolid_XYZPPPSSSRRRV[f][2];
-      float Solid_Rotation = allSolid_XYZPPPSSSRRRV[f][3];
-      float Solid_scale_U = allSolid_XYZPPPSSSRRRV[f][4];
-      float Solid_scale_V = allSolid_XYZPPPSSSRRRV[f][5];
+      float Solid_posX = allSolid_XYZPPPSSSRRRV[f][0];
+      float Solid_posY = allSolid_XYZPPPSSSRRRV[f][1];
+      float Solid_posZ = allSolid_XYZPPPSSSRRRV[f][2];
+      float Solid_powX = allSolid_XYZPPPSSSRRRV[f][3];
+      float Solid_powY = allSolid_XYZPPPSSSRRRV[f][4];
+      float Solid_powZ = allSolid_XYZPPPSSSRRRV[f][5];
+      float Solid_scaleX = allSolid_XYZPPPSSSRRRV[f][6];
+      float Solid_scaleY = allSolid_XYZPPPSSSRRRV[f][7];
+      float Solid_scaleZ = allSolid_XYZPPPSSSRRRV[f][8];
+      float Solid_rotX = allSolid_XYZPPPSSSRRRV[f][9];
+      float Solid_rotY = allSolid_XYZPPPSSSRRRV[f][10];
+      float Solid_rotZ = allSolid_XYZPPPSSSRRRV[f][11];
+      float Solid_value = allSolid_XYZPPPSSSRRRV[f][12];
+
 
       WIN3D_Diagrams.stroke(0);
       WIN3D_Diagrams.fill(127,255,127);  
       
       WIN3D_Diagrams.beginShape();
       
-      float[][] ImageVertex = SOLARCHVISION_getCorners_Solid(Solid_Type, Solid_offset_U, Solid_offset_V, Solid_Elevation, Solid_Rotation, Solid_scale_U, Solid_scale_V, Solid_RES1, Solid_RES2);
+      float[][] ImageVertex = SOLARCHVISION_getCorners_Solid(Solid_value, Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ);
       
       for (int q = 0; q < 4; q++) {
         
@@ -38047,7 +38062,7 @@ void SOLARCHVISION_draw_Solids () {
         float u = ImageVertex[q][3];
         float v = ImageVertex[q][4];
  
-        WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D, u * Solid_RES1, v * Solid_RES2);
+        WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
         
         allSolid_Vertices[f * 4 - q][0] = x;
         allSolid_Vertices[f * 4 - q][1] = y;
@@ -38070,9 +38085,9 @@ void SOLARCHVISION_draw_Solids () {
 }
 
 
-float[][] SOLARCHVISION_getCorners_Solid (int Solid_Type, float Solid_offset_U, float Solid_offset_V, float Solid_Elevation, float Solid_Rotation, float Solid_scale_U, float Solid_scale_V, int Solid_RES1, int Solid_RES2) {
+float[][] SOLARCHVISION_getCorners_Solid (float Solid_value, float Solid_posX, float Solid_posY, float Solid_posZ, float Solid_powX, float Solid_powY, float Solid_powZ, float Solid_scaleX, float Solid_scaleY, float Solid_scaleZ, float Solid_rotX, float Solid_rotY, float Solid_rotZ) {
 
-  float[][] ImageVertex = new float [5][5];
+  float[][] ImageVertex = new float [5][3];
   
   for (int q = 0; q < 5; q++) {
 
@@ -38084,33 +38099,22 @@ float[][] SOLARCHVISION_getCorners_Solid (int Solid_Type, float Solid_offset_U, 
     else if (q == 3) {qx = -1; qy = 1; u = 0; v = 0;}    
     else if (q == 4) {qx = 0; qy = 0; u = 0.5; v = 0.5;} // center
     
-    float a = qx * 0.5 * Solid_scale_U + Solid_offset_U;
-    float b = qy * 0.5 * Solid_scale_V + Solid_offset_V;
-    float c = Solid_Elevation;  
+    float a = qx * 0.5 * Solid_powY + Solid_posX;
+    float b = qy * 0.5 * Solid_powZ + Solid_posY;
+    float c = Solid_posZ;  
   
     float x = 0, y = 0, z = 0;
     
-    if (Solid_Type == 1) {
-      x = a * cos_ang(-Solid_Rotation) - -b * sin_ang(-Solid_Rotation);
-      y = a * sin_ang(-Solid_Rotation) + -b * cos_ang(-Solid_Rotation);
-      z = c;         
-    }
-    else if (Solid_Type == 2) {
-      x = a * cos_ang(Solid_Rotation) - c * sin_ang(Solid_Rotation);
-      y = a * sin_ang(Solid_Rotation) + c * cos_ang(Solid_Rotation);
-      z = b;        
-    }
-    else if (Solid_Type == 3) {
-      x = a * cos_ang(90 - Solid_Rotation) - c * sin_ang(90 - Solid_Rotation);
-      y = a * sin_ang(90 - Solid_Rotation) + c * cos_ang(90 - Solid_Rotation);
-      z = b;    
-    }      
+    //////////////////////////
+    x = a * cos_ang(-Solid_powX) - -b * sin_ang(-Solid_powX);
+    y = a * sin_ang(-Solid_powX) + -b * cos_ang(-Solid_powX);
+    z = c;         
+    //////////////////////////
+     
   
     ImageVertex[q][0] = x;
     ImageVertex[q][1] = -y;
     ImageVertex[q][2] = z;
-    ImageVertex[q][3] = u;
-    ImageVertex[q][4] = v;
 
   }
   
@@ -38938,14 +38942,21 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
       if (Work_with_2D_or_3D == 7) {
         int n = theVertices[q];
 
-        float Solid_offset_U = allSolid_XYZPPPSSSRRRV[n][0];
-        float Solid_offset_V = allSolid_XYZPPPSSSRRRV[n][1];
-        float Solid_Elevation = allSolid_XYZPPPSSSRRRV[n][2];
-        float Solid_Rotation = allSolid_XYZPPPSSSRRRV[n][3];
-        float Solid_scale_U = allSolid_XYZPPPSSSRRRV[n][4];
-        float Solid_scale_V = allSolid_XYZPPPSSSRRRV[n][5];
+        float Solid_posX = allSolid_XYZPPPSSSRRRV[n][0];
+        float Solid_posY = allSolid_XYZPPPSSSRRRV[n][1];
+        float Solid_posZ = allSolid_XYZPPPSSSRRRV[n][2];
+        float Solid_powX = allSolid_XYZPPPSSSRRRV[n][3];
+        float Solid_powY = allSolid_XYZPPPSSSRRRV[n][4];
+        float Solid_powZ = allSolid_XYZPPPSSSRRRV[n][5];
+        float Solid_scaleX = allSolid_XYZPPPSSSRRRV[n][6];
+        float Solid_scaleY = allSolid_XYZPPPSSSRRRV[n][7];
+        float Solid_scaleZ = allSolid_XYZPPPSSSRRRV[n][8];
+        float Solid_rotX = allSolid_XYZPPPSSSRRRV[n][9];
+        float Solid_rotY = allSolid_XYZPPPSSSRRRV[n][10];
+        float Solid_rotZ = allSolid_XYZPPPSSSRRRV[n][11];
+        float Solid_value = allSolid_XYZPPPSSSRRRV[n][12];
         
-        float[][] ImageVertex = SOLARCHVISION_getCorners_Solid(Solid_Type, Solid_offset_U, Solid_offset_V, Solid_Elevation, Solid_Rotation, Solid_scale_U, Solid_scale_V, Solid_RES1, Solid_RES2);
+        float[][] ImageVertex = SOLARCHVISION_getCorners_Solid(Solid_value, Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ);
 
         POS_now = ImageVertex[4][j]; // the fourth vertex is the center of Solid plane 
       }  
