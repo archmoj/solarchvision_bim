@@ -1888,9 +1888,9 @@ void SOLARCHVISION_update_station (int Step) {
 
   if ((Step == 0) || (Step == 6)) SOLARCHVISION_LoadLAND_MESH(LocationName);
   
-  //if ((Step == 0) || (Step == 7)) SOLARCHVISION_remove_Fractals();
+  //if ((Step == 0) || (Step == 7)) SOLARCHVISION_delete_Fractals();
   
-  if ((Step == 0) || (Step == 8)) SOLARCHVISION_remove_2Dobjects();
+  if ((Step == 0) || (Step == 8)) SOLARCHVISION_delete_2Dobjects();
   
   //if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_2Dobjects_onLand();
 
@@ -1898,9 +1898,9 @@ void SOLARCHVISION_update_station (int Step) {
 
 void SOLARCHVISION_update_models (int Step) {
  
-   if ((Step == 0) || (Step == 1)) SOLARCHVISION_remove_3Dobjects();
+   if ((Step == 0) || (Step == 1)) SOLARCHVISION_delete_3Dobjects();
    //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
-   if ((Step == 0) || (Step == 3)) SOLARCHVISION_remove_Solids();
+   if ((Step == 0) || (Step == 3)) SOLARCHVISION_delete_Solids();
    if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ProjectModel();
    if ((Step == 0) || (Step == 5)) SOLARCHVISION_calculate_SolidImpact_selectedSections();
 
@@ -2148,7 +2148,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_remove_Fractals", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_delete_Fractals", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 17) {
     SOLARCHVISION_update_station(7);
@@ -2163,7 +2163,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_remove_2Dobjects", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_delete_2Dobjects", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 18) {
     SOLARCHVISION_update_station(8);
@@ -2185,7 +2185,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_remove_3Dobjects", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_delete_3Dobjects", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 20) {
     SOLARCHVISION_update_models(1);
@@ -2207,7 +2207,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_remove_Solids", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_delete_Solids", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 22) {
     SOLARCHVISION_update_models(3);    
@@ -2702,7 +2702,7 @@ void draw () {
 
 
         if (MODEL1D_ERASE == 1) {
-          SOLARCHVISION_remove_Fractals();
+          SOLARCHVISION_delete_Fractals();
           
           WIN3D_Update = 1;
       
@@ -2712,7 +2712,7 @@ void draw () {
         }      
 
         if (MODEL2D_ERASE == 1) {
-          SOLARCHVISION_remove_2Dobjects();
+          SOLARCHVISION_delete_2Dobjects();
           
           WIN3D_Update = 1;
       
@@ -2723,9 +2723,9 @@ void draw () {
         
         if (MODEL3D_ERASE == 1) {
           
-          SOLARCHVISION_remove_3Dobjects();
+          SOLARCHVISION_delete_3Dobjects();
           
-          SOLARCHVISION_remove_Solids();
+          SOLARCHVISION_delete_Solids();
           
           SOLARCHVISION_add_3Dbase(-2, 0, 0, 1, 0);
           
@@ -2739,7 +2739,7 @@ void draw () {
         }
         
         if (SOLID_ERASE == 1) {
-          SOLARCHVISION_remove_Solids();
+          SOLARCHVISION_delete_Solids();
           
           WIN3D_Update = 1;
       
@@ -2749,7 +2749,7 @@ void draw () {
         }          
         
         if (SECTION_ERASE == 1) {
-          SOLARCHVISION_remove_Sections();
+          SOLARCHVISION_delete_Sections();
           
           WIN3D_Update = 1;
       
@@ -2759,7 +2759,7 @@ void draw () {
         }       
    
         if (CAMERA_ERASE == 1) {
-          SOLARCHVISION_remove_Cameras();
+          SOLARCHVISION_delete_Cameras();
           
           WIN3D_Update = 1;
       
@@ -2770,13 +2770,13 @@ void draw () {
         
         if (pre_Load_Default_Models != Load_Default_Models) {
           
-          SOLARCHVISION_remove_Fractals();
+          SOLARCHVISION_delete_Fractals();
           
-          SOLARCHVISION_remove_2Dobjects();
+          SOLARCHVISION_delete_2Dobjects();
           
-          SOLARCHVISION_remove_3Dobjects();
+          SOLARCHVISION_delete_3Dobjects();
           
-          SOLARCHVISION_remove_Solids();
+          SOLARCHVISION_delete_Solids();
           
           SOLARCHVISION_add_3Dbase(-2, 0, 0, 1, 0);
 
@@ -20826,20 +20826,20 @@ void SOLARCHVISION_add_2Dobjects_Mesh2 (int people_or_trees, int n, float x1, fl
 
 
               
-void SOLARCHVISION_remove_All () {
+void SOLARCHVISION_delete_All () {
   
-  SOLARCHVISION_remove_Fractals();
-  SOLARCHVISION_remove_2Dobjects();
-  SOLARCHVISION_remove_3Dobjects();
-  SOLARCHVISION_remove_Solids();
-  SOLARCHVISION_remove_Sections();
-  SOLARCHVISION_remove_Cameras();
+  SOLARCHVISION_delete_Fractals();
+  SOLARCHVISION_delete_2Dobjects();
+  SOLARCHVISION_delete_3Dobjects();
+  SOLARCHVISION_delete_Solids();
+  SOLARCHVISION_delete_Sections();
+  SOLARCHVISION_delete_Cameras();
   
   WIN3D_Update = 1;
 }
 
 
-void SOLARCHVISION_remove_Cameras () {
+void SOLARCHVISION_delete_Cameras () {
   allCamera_PPPSRRRF = new float [1][8]; 
   allCamera_PPPSRRRF[0][0] = WIN3D_X_coordinate;
   allCamera_PPPSRRRF[0][1] = WIN3D_Y_coordinate;
@@ -20858,7 +20858,7 @@ void SOLARCHVISION_remove_Cameras () {
   SOLARCHVISION_deselectAll();  
 }
 
-void SOLARCHVISION_remove_Sections () {
+void SOLARCHVISION_delete_Sections () {
   allSection_UVERAB = new float [1][6]; 
   allSection_UVERAB[0][0] = 0;
   allSection_UVERAB[0][1] = 0;
@@ -20893,7 +20893,7 @@ void SOLARCHVISION_remove_Sections () {
 }
 
 
-void SOLARCHVISION_remove_Solids () {
+void SOLARCHVISION_delete_Solids () {
   allSolid_XYZPPPSSSRRRV = new float [1][13]; 
   allSolid_XYZPPPSSSRRRV[0][0] = 0;
   allSolid_XYZPPPSSSRRRV[0][1] = 0;
@@ -20929,7 +20929,7 @@ void SOLARCHVISION_resize_allSection_SolarImpact_array () { // called when STUDY
 }
 
 
-void SOLARCHVISION_remove_Fractals () {
+void SOLARCHVISION_delete_Fractals () {
   allFractal_XYZSRA = new float [1][6]; 
   allFractal_XYZSRA[0][0] = 0;
   allFractal_XYZSRA[0][1] = 0;
@@ -20961,7 +20961,7 @@ void SOLARCHVISION_remove_Fractals () {
   SOLARCHVISION_deselectAll();  
 }
 
-void SOLARCHVISION_remove_2Dobjects () {
+void SOLARCHVISION_delete_2Dobjects () {
   allObject2D_XYZS = new float [1][4]; 
   allObject2D_XYZS[0][0] = 0;
   allObject2D_XYZS[0][1] = 0;
@@ -20976,7 +20976,7 @@ void SOLARCHVISION_remove_2Dobjects () {
   SOLARCHVISION_deselectAll();
 }
 
-void SOLARCHVISION_remove_3Dobjects () {
+void SOLARCHVISION_delete_3Dobjects () {
   
   defaultMaterial = 7;
   defaultTessellation = 0;
@@ -21014,7 +21014,7 @@ void SOLARCHVISION_remove_3Dobjects () {
   allPolymesh_Solids[0][0] = 0;
   allPolymesh_Solids[0][1] = -1;
   
-  SOLARCHVISION_remove_Solids();
+  SOLARCHVISION_delete_Solids();
 
   addToLastPolymesh = 0; SOLARCHVISION_beginNewPolymesh(); addToLastPolymesh = 1;
  
@@ -31016,7 +31016,7 @@ void mouseClicked () {
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("New")) { 
               selectInput("Specify project name:", "SOLARCHVISION_fileSelected_New");
 
-              SOLARCHVISION_remove_All();
+              SOLARCHVISION_delete_All();
 
 
               //SOLARCHVISION_update_station(0);
