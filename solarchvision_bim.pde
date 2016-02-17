@@ -1,3 +1,4 @@
+// not updating because of deselectAll! 
 // improve display_SOLIDS!
 // drop functions only works for living objects
 // still duplicate not working for solid layer!
@@ -26312,6 +26313,8 @@ void SOLARCHVISION_calculate_SolarImpact_selectedSections () {
 
 
 void SOLARCHVISION_calculate_SolidImpact_selectedSections () {
+  
+  println("SOLARCHVISION_calculate_SolidImpact_selectedSections");
   
   for (int o = selectedSection_numbers.length - 1; o >= 0; o--) {
     
