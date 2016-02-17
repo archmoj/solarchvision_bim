@@ -46123,95 +46123,101 @@ void SOLARCHVISION_load_project (String myFile) {
 
 
 
-class ParametricSolid { 
-  float value, posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotX, rotY, rotZ; 
+void Solid_updatePosition (int n, float a, float b, float c) {
   
-  ParametricSolid (float v, float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float tx, float ty, float tz) {  
-    value = v;
-    posX = x;
-    posY = y; 
-    posZ = z;    
-    powX = px;
-    powY = py;
-    powZ = pz;    
-    scaleX = sx;
-    scaleY = sy; 
-    scaleZ = sz;
-    rotX = -tx;
-    rotY = -ty;
-    rotZ = -tz;
-  } 
+  allSolid_XYZPPPSSSRRRV[n][0] *= a;
+  allSolid_XYZPPPSSSRRRV[n][1] *= b;
+  allSolid_XYZPPPSSSRRRV[n][2] *= c;  
+
+} 
+
+void Solid_Scale (int n, float a, float b, float c) {
   
-  void updatePosition (float x, float y, float z) {  
-    posX = x;
-    posY = y; 
-    posZ = z;
-  }   
+  allSolid_XYZPPPSSSRRRV[n][6] *= a;
+  allSolid_XYZPPPSSSRRRV[n][7] *= b;
+  allSolid_XYZPPPSSSRRRV[n][8] *= c;  
+
+} 
+
+
+void Solid_RotateX (int n, float t) {
   
-  void RotateX (float t) {  
-    rotX -= t;
-  }
+  allSolid_XYZPPPSSSRRRV[n][9] += t;
 
-  void RotateY (float t) {  
-    rotY -= t;
-  }   
+} 
 
-  void RotateZ (float t) {  
-    rotZ -= t;
-  }     
- 
-  void Scale (float a, float b, float c) {  
-    scaleX *= a;
-    scaleY *= b;
-    scaleZ *= c;
-  }     
+void Solid_RotateY (int n, float t) {
   
-  float Distance (float a, float b, float c) {
-    a -= posX;
-    b -= posY;    
-    c -= posZ;
-    
-    
-///////////////////////// NOT SURE START!    
-    float x1 = a;
-    float y1 = b * cos_ang(rotX) - c * sin_ang(rotX); 
-    float z1 = b * sin_ang(rotX) + c * cos_ang(rotX);
-   
-    a = x1;
-    b = y1;
-    c = z1;  
+  allSolid_XYZPPPSSSRRRV[n][10] += t;
 
-    float x2 = c * sin_ang(rotY) + a * cos_ang(rotY);
-    float y2 = b; 
-    float z2 = c * cos_ang(rotY) - a * sin_ang(rotY);
-    
-    a = x2;
-    b = y2;
-    c = z2;      
-///////////////////////// NOT SURE END!
-    
-    float x = a * cos_ang(rotZ) - b * sin_ang(rotZ);
-    float y = a * sin_ang(rotZ) + b * cos_ang(rotZ); 
-    float z = c;    
+} 
 
-    x += posX;
-    y += posY;  
-    z += posZ;
-
-    //fffffffffffffffffffffff
-    //return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value); 
-    return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))));
-
-    
-  } 
+void Solid_RotateZ (int n, float t) {
   
+  allSolid_XYZPPPSSSRRRV[n][11] += t;
+
 } 
 
 
 float Solid_get_value (int n) {
- 
-  get
+  
+  return allSolid_XYZPPPSSSRRRV[n][12];
  
 } 
 
 
+float Solid_get_Distance (int n, float a, float b, float c) {
+  
+  float posX = allSolid_XYZPPPSSSRRRV[n][0];
+  float posY = allSolid_XYZPPPSSSRRRV[n][1];
+  float posZ = allSolid_XYZPPPSSSRRRV[n][2];
+  float powX = allSolid_XYZPPPSSSRRRV[n][3];
+  float powY = allSolid_XYZPPPSSSRRRV[n][4];
+  float powZ = allSolid_XYZPPPSSSRRRV[n][5];
+  float scaleX = allSolid_XYZPPPSSSRRRV[n][6];
+  float scaleY = allSolid_XYZPPPSSSRRRV[n][7];
+  float scaleZ = allSolid_XYZPPPSSSRRRV[n][8];
+  float rotX = allSolid_XYZPPPSSSRRRV[n][9];
+  float rotY = allSolid_XYZPPPSSSRRRV[n][10];
+  float rotZ = allSolid_XYZPPPSSSRRRV[n][11];
+  float value = allSolid_XYZPPPSSSRRRV[n][12];
+
+
+
+  a -= posX;
+  b -= posY;    
+  c -= posZ;
+  
+  
+///////////////////////// NOT SURE START!    
+  float x1 = a;
+  float y1 = b * cos_ang(-rotX) - c * sin_ang(-rotX); 
+  float z1 = b * sin_ang(-rotX) + c * cos_ang(-rotX);
+ 
+  a = x1;
+  b = y1;
+  c = z1;  
+
+  float x2 = c * sin_ang(-rotY) + a * cos_ang(-rotY);
+  float y2 = b; 
+  float z2 = c * cos_ang(-rotY) - a * sin_ang(-rotY);
+  
+  a = x2;
+  b = y2;
+  c = z2;      
+///////////////////////// NOT SURE END!
+  
+  float x = a * cos_ang(-rotZ) - b * sin_ang(-rotZ);
+  float y = a * sin_ang(-rotZ) + b * cos_ang(-rotZ); 
+  float z = c;    
+
+  x += posX;
+  y += posY;  
+  z += posZ;
+
+
+  //return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value); 
+  return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))));  
+ 
+
+}
