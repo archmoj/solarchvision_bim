@@ -3,6 +3,7 @@
 // we don't have display_SOLIDS! use Ctrl+7 for
 // drop functions only works for living objects
 // still duplicate not working for solid layer!
+// create solid not working yet.
 
 import processing.pdf.*;
 
@@ -2573,12 +2574,12 @@ void draw () {
         
 
         if (pre_softSelection_Power != softSelection_Power) {    
-          SOLARCHVISION_convertVertex2softSelection();
+          SOLARCHVISION_convert_Vertex2softSelection();
           WIN3D_Update = 1;
         }  
 
         if (pre_softSelection_Radius != softSelection_Radius) {
-          SOLARCHVISION_convertVertex2softSelection();
+          SOLARCHVISION_convert_Vertex2softSelection();
           WIN3D_Update = 1;
         }  
 
@@ -12624,7 +12625,7 @@ void WIN3D_keyPressed (KeyEvent e) {
     else {
       switch(key) {
 
-        case '*': SOLARCHVISION_selectAll();
+        case '*': SOLARCHVISION_select_All();
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;
                   break;             
@@ -12926,7 +12927,7 @@ void WIN3D_keyPressed (KeyEvent e) {
 
         
         case 155: // INSERT 
-                  SOLARCHVISION_deselectAll();
+                  SOLARCHVISION_deselect_All();
 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;
@@ -14422,6 +14423,132 @@ void SOLARCHVISION_delete_Selection () {
     
   }
 
+  if (Work_with_2D_or_3D == 7) {
+    
+    selectedSolid_numbers = sort(selectedSolid_numbers);
+    
+    for (int o = selectedSolid_numbers.length - 1; o > 0; o--) { // the first node is null 
+
+      int OBJ_NUM = selectedSolid_numbers[o];
+      
+      println("OBJ_NUM", OBJ_NUM);
+      
+      if (OBJ_NUM != 0) {    
+        
+        
+        // first should first find it in polymeshes ZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
+
+        {
+          float[][] startList = (float[][]) subset(allSolid_XYZPPPSSSRRRV, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allSolid_XYZPPPSSSRRRV, OBJ_NUM + 1);
+          
+          allSolid_XYZPPPSSSRRRV = (float[][]) concat(startList, endList);
+        }
+
+        allSolid_num -= 1;
+      }
+
+    }
+
+  }  
+
+  if (Work_with_2D_or_3D == 8) {
+    
+    selectedSection_numbers = sort(selectedSection_numbers);
+    
+    for (int o = selectedSection_numbers.length - 1; o > 0; o--) { // the first node is null 
+
+      int OBJ_NUM = selectedSection_numbers[o];
+      
+      if (OBJ_NUM != 0) {    
+
+        {
+          float[][] startList = (float[][]) subset(allSection_UVERAB, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allSection_UVERAB, OBJ_NUM + 1);
+          
+          allSection_UVERAB = (float[][]) concat(startList, endList);
+        }
+
+        {
+          int[] startList = (int[]) subset(allSection_Type, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(allSection_Type, OBJ_NUM + 1);
+          
+          allSection_Type = (int[]) concat(startList, endList);
+        }
+
+        {
+          int[] startList = (int[]) subset(allSection_RES1, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(allSection_RES1, OBJ_NUM + 1);
+          
+          allSection_RES1 = (int[]) concat(startList, endList);
+        }
+        
+        {
+          int[] startList = (int[]) subset(allSection_RES2, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(allSection_RES2, OBJ_NUM + 1);
+          
+          allSection_RES2 = (int[]) concat(startList, endList);
+        }
+
+        {
+          PImage[] startList = (PImage[]) subset(allSection_SolidImpact, 0, OBJ_NUM);
+          PImage[] endList = (PImage[]) subset(allSection_SolidImpact, OBJ_NUM + 1);
+          
+          allSection_SolidImpact = (PImage[]) concat(startList, endList);
+        }
+        
+        {
+          PImage[][] startList = (PImage[][]) subset(allSection_SolarImpact, 0, OBJ_NUM);
+          PImage[][] endList = (PImage[][]) subset(allSection_SolarImpact, OBJ_NUM + 1);
+          
+          allSection_SolarImpact = (PImage[][]) concat(startList, endList);
+        }        
+    
+        allSection_num -= 1;
+      }
+
+    }
+
+  }
+  
+    if (Work_with_2D_or_3D == 9) {
+    
+    selectedCamera_numbers = sort(selectedCamera_numbers);
+    
+    for (int o = selectedCamera_numbers.length - 1; o > 0; o--) { // the first node is null 
+
+      int OBJ_NUM = selectedCamera_numbers[o];
+      
+      if (OBJ_NUM != 0) {    
+
+        {
+          float[][] startList = (float[][]) subset(allCamera_PPPSRRRF, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allCamera_PPPSRRRF, OBJ_NUM + 1);
+          
+          allCamera_PPPSRRRF = (float[][]) concat(startList, endList);
+        }
+
+        {
+          int[] startList = (int[]) subset(allCamera_Type, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(allCamera_Type, OBJ_NUM + 1);
+          
+          allCamera_Type = (int[]) concat(startList, endList);
+        }
+
+        allCamera_num -= 1;
+      }
+      
+      if (OBJ_NUM == Current_Camera) {
+
+        Current_Camera = 0;
+        SOLARCHVISION_modify_Viewport_Title();
+      }
+
+    }
+
+  }
+
+
   
   if (Work_with_2D_or_3D == 1) {
     
@@ -14525,7 +14652,7 @@ void SOLARCHVISION_delete_Selection () {
   int[] keep_selectedVertex_numbers = {0};
   if (Work_with_2D_or_3D == 3) {
 
-    SOLARCHVISION_convertPolymesh2Vertex(); // finding & then keeping objects vertices so that we could delete the isolated ones later  
+    SOLARCHVISION_convert_Polymesh2Vertex(); // finding & then keeping objects vertices so that we could delete the isolated ones later  
     keep_selectedVertex_numbers = selectedVertex_numbers;
 
     selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
@@ -14638,13 +14765,13 @@ void SOLARCHVISION_delete_Selection () {
       
       selectedFace_numbers = sort(selectedFace_numbers);
       
-      SOLARCHVISION_convertVertex2Face(); 
+      SOLARCHVISION_convert_Vertex2Face(); 
       
     }
     
     selectedFace_numbers = sort(selectedFace_numbers);
 
-    SOLARCHVISION_convertFace2Polymesh();    
+    SOLARCHVISION_convert_Face2Polymesh();    
 
     selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
 
@@ -14734,7 +14861,7 @@ void SOLARCHVISION_delete_Selection () {
   }
 
 
-  SOLARCHVISION_deselectAll();
+  SOLARCHVISION_deselect_All();
   
   if (Work_with_2D_or_3D == 3) {
     
@@ -14743,125 +14870,6 @@ void SOLARCHVISION_delete_Selection () {
     SOLARCHVISION_deleteIsolatedVerticesSelection(); // <<<<<<
   }  
   
-  if (Work_with_2D_or_3D == 7) {
-    
-    selectedSolid_numbers = sort(selectedSolid_numbers);
-    
-    for (int o = selectedSolid_numbers.length - 1; o > 0; o--) { // the first node is null 
-
-      int OBJ_NUM = selectedSolid_numbers[o];
-      
-      if (OBJ_NUM != 0) {    
-
-        {
-          float[][] startList = (float[][]) subset(allSolid_XYZPPPSSSRRRV, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allSolid_XYZPPPSSSRRRV, OBJ_NUM + 1);
-          
-          allSolid_XYZPPPSSSRRRV = (float[][]) concat(startList, endList);
-        }
-
-        allSolid_num -= 1;
-      }
-
-    }
-
-  }  
-
-  if (Work_with_2D_or_3D == 8) {
-    
-    selectedSection_numbers = sort(selectedSection_numbers);
-    
-    for (int o = selectedSection_numbers.length - 1; o > 0; o--) { // the first node is null 
-
-      int OBJ_NUM = selectedSection_numbers[o];
-      
-      if (OBJ_NUM != 0) {    
-
-        {
-          float[][] startList = (float[][]) subset(allSection_UVERAB, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allSection_UVERAB, OBJ_NUM + 1);
-          
-          allSection_UVERAB = (float[][]) concat(startList, endList);
-        }
-
-        {
-          int[] startList = (int[]) subset(allSection_Type, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allSection_Type, OBJ_NUM + 1);
-          
-          allSection_Type = (int[]) concat(startList, endList);
-        }
-
-        {
-          int[] startList = (int[]) subset(allSection_RES1, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allSection_RES1, OBJ_NUM + 1);
-          
-          allSection_RES1 = (int[]) concat(startList, endList);
-        }
-        
-        {
-          int[] startList = (int[]) subset(allSection_RES2, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allSection_RES2, OBJ_NUM + 1);
-          
-          allSection_RES2 = (int[]) concat(startList, endList);
-        }
-
-        {
-          PImage[] startList = (PImage[]) subset(allSection_SolidImpact, 0, OBJ_NUM);
-          PImage[] endList = (PImage[]) subset(allSection_SolidImpact, OBJ_NUM + 1);
-          
-          allSection_SolidImpact = (PImage[]) concat(startList, endList);
-        }
-        
-        {
-          PImage[][] startList = (PImage[][]) subset(allSection_SolarImpact, 0, OBJ_NUM);
-          PImage[][] endList = (PImage[][]) subset(allSection_SolarImpact, OBJ_NUM + 1);
-          
-          allSection_SolarImpact = (PImage[][]) concat(startList, endList);
-        }        
-    
-        allSection_num -= 1;
-      }
-
-    }
-
-  }
-  
-    if (Work_with_2D_or_3D == 9) {
-    
-    selectedCamera_numbers = sort(selectedCamera_numbers);
-    
-    for (int o = selectedCamera_numbers.length - 1; o > 0; o--) { // the first node is null 
-
-      int OBJ_NUM = selectedCamera_numbers[o];
-      
-      if (OBJ_NUM != 0) {    
-
-        {
-          float[][] startList = (float[][]) subset(allCamera_PPPSRRRF, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allCamera_PPPSRRRF, OBJ_NUM + 1);
-          
-          allCamera_PPPSRRRF = (float[][]) concat(startList, endList);
-        }
-
-        {
-          int[] startList = (int[]) subset(allCamera_Type, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allCamera_Type, OBJ_NUM + 1);
-          
-          allCamera_Type = (int[]) concat(startList, endList);
-        }
-
-        allCamera_num -= 1;
-      }
-      
-      if (OBJ_NUM == Current_Camera) {
-
-        Current_Camera = 0;
-        SOLARCHVISION_modify_Viewport_Title();
-      }
-
-    }
-
-  }
   
 
 }
@@ -15004,13 +15012,13 @@ void SOLARCHVISION_selectNearVertices () {
 
     if (Work_with_2D_or_3D == 3) { 
 
-      SOLARCHVISION_convertPolymesh2Vertex();    
+      SOLARCHVISION_convert_Polymesh2Vertex();    
       
     }
     
     if (Work_with_2D_or_3D == 4) { 
       
-      SOLARCHVISION_convertFace2Vertex(); 
+      SOLARCHVISION_convert_Face2Vertex(); 
       
     }
     
@@ -15073,13 +15081,13 @@ void SOLARCHVISION_weldSceneVerticesSelection () {
 
     if (Work_with_2D_or_3D == 3) { 
 
-      SOLARCHVISION_convertPolymesh2Vertex();    
+      SOLARCHVISION_convert_Polymesh2Vertex();    
       
     }
     
     if (Work_with_2D_or_3D == 4) { 
       
-      SOLARCHVISION_convertFace2Vertex(); 
+      SOLARCHVISION_convert_Face2Vertex(); 
       
     }
     
@@ -15149,17 +15157,17 @@ void SOLARCHVISION_weldObjectsVerticesSelection () {
 
     if (Work_with_2D_or_3D == 3) { 
 
-      SOLARCHVISION_convertPolymesh2Vertex();    
+      SOLARCHVISION_convert_Polymesh2Vertex();    
       
     }
     
     if (Work_with_2D_or_3D == 4) { 
       
-      SOLARCHVISION_convertFace2Vertex(); 
+      SOLARCHVISION_convert_Face2Vertex(); 
       
     }
     
-    SOLARCHVISION_convertVertex2Face();
+    SOLARCHVISION_convert_Vertex2Face();
     
     selectedVertex_numbers = sort(selectedVertex_numbers);
     
@@ -15253,13 +15261,13 @@ void SOLARCHVISION_separateVerticesSelection () {
 
     if (Work_with_2D_or_3D == 3) { 
 
-      SOLARCHVISION_convertPolymesh2Vertex();    
+      SOLARCHVISION_convert_Polymesh2Vertex();    
       
     }
     
     if (Work_with_2D_or_3D == 4) { 
       
-      SOLARCHVISION_convertFace2Vertex(); 
+      SOLARCHVISION_convert_Face2Vertex(); 
       
     }
     
@@ -15299,7 +15307,7 @@ void SOLARCHVISION_inserCornerOpenningsSelection () {
       
       selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
 
-      SOLARCHVISION_convertPolymesh2Face();    
+      SOLARCHVISION_convert_Polymesh2Face();    
   
       selectedFace_numbers = sort(selectedFace_numbers);
       
@@ -15309,7 +15317,7 @@ void SOLARCHVISION_inserCornerOpenningsSelection () {
       
       selectedFace_numbers = sort(selectedFace_numbers);
 
-      SOLARCHVISION_convertFace2Polymesh();    
+      SOLARCHVISION_convert_Face2Polymesh();    
   
       selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
       
@@ -15462,7 +15470,7 @@ void SOLARCHVISION_insertParallelOpenningsSelection () {
       
       selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
 
-      SOLARCHVISION_convertPolymesh2Face();    
+      SOLARCHVISION_convert_Polymesh2Face();    
   
       selectedFace_numbers = sort(selectedFace_numbers);
       
@@ -15472,7 +15480,7 @@ void SOLARCHVISION_insertParallelOpenningsSelection () {
       
       selectedFace_numbers = sort(selectedFace_numbers);
 
-      SOLARCHVISION_convertFace2Polymesh();    
+      SOLARCHVISION_convert_Face2Polymesh();    
   
       selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
       
@@ -15651,7 +15659,7 @@ void SOLARCHVISION_insertRotatedOpenningsSelection () {
       
       selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
 
-      SOLARCHVISION_convertPolymesh2Face();    
+      SOLARCHVISION_convert_Polymesh2Face();    
   
       selectedFace_numbers = sort(selectedFace_numbers);
       
@@ -15661,7 +15669,7 @@ void SOLARCHVISION_insertRotatedOpenningsSelection () {
       
       selectedFace_numbers = sort(selectedFace_numbers);
 
-      SOLARCHVISION_convertFace2Polymesh();    
+      SOLARCHVISION_convert_Face2Polymesh();    
   
       selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
       
@@ -15823,7 +15831,7 @@ void SOLARCHVISION_insertEdgeOpenningsSelection () {
       
       selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
 
-      SOLARCHVISION_convertPolymesh2Face();    
+      SOLARCHVISION_convert_Polymesh2Face();    
   
       selectedFace_numbers = sort(selectedFace_numbers);
       
@@ -15833,7 +15841,7 @@ void SOLARCHVISION_insertEdgeOpenningsSelection () {
       
       selectedFace_numbers = sort(selectedFace_numbers);
 
-      SOLARCHVISION_convertFace2Polymesh();    
+      SOLARCHVISION_convert_Face2Polymesh();    
   
       selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
       
@@ -15991,7 +15999,7 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
       
       selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
 
-      SOLARCHVISION_convertPolymesh2Face();    
+      SOLARCHVISION_convert_Polymesh2Face();    
   
       selectedFace_numbers = sort(selectedFace_numbers);
       
@@ -16001,7 +16009,7 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
       
       selectedFace_numbers = sort(selectedFace_numbers);
 
-      SOLARCHVISION_convertFace2Polymesh();    
+      SOLARCHVISION_convert_Face2Polymesh();    
   
       selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
       
@@ -16186,7 +16194,7 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
       
       selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
 
-      SOLARCHVISION_convertPolymesh2Face();    
+      SOLARCHVISION_convert_Polymesh2Face();    
   
       selectedFace_numbers = sort(selectedFace_numbers);
       
@@ -16196,7 +16204,7 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
       
       selectedFace_numbers = sort(selectedFace_numbers);
 
-      SOLARCHVISION_convertFace2Polymesh();    
+      SOLARCHVISION_convert_Face2Polymesh();    
   
       selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
       
@@ -16351,7 +16359,7 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
       
       selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
 
-      SOLARCHVISION_convertPolymesh2Face();    
+      SOLARCHVISION_convert_Polymesh2Face();    
   
       selectedFace_numbers = sort(selectedFace_numbers);
       
@@ -16361,7 +16369,7 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
       
       selectedFace_numbers = sort(selectedFace_numbers);
 
-      SOLARCHVISION_convertFace2Polymesh();    
+      SOLARCHVISION_convert_Face2Polymesh();    
   
       selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
       
@@ -16497,7 +16505,7 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
       
       selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
 
-      SOLARCHVISION_convertPolymesh2Face();    
+      SOLARCHVISION_convert_Polymesh2Face();    
   
       selectedFace_numbers = sort(selectedFace_numbers);
       
@@ -16507,7 +16515,7 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
       
       selectedFace_numbers = sort(selectedFace_numbers);
 
-      SOLARCHVISION_convertFace2Polymesh();    
+      SOLARCHVISION_convert_Face2Polymesh();    
   
       selectedPolymesh_numbers = sort(selectedPolymesh_numbers);
       
@@ -16627,13 +16635,13 @@ void SOLARCHVISION_offsetVerticesSelection (int _type, float _amount) {
 
     if (Work_with_2D_or_3D == 3) { 
 
-      SOLARCHVISION_convertPolymesh2Vertex();    
+      SOLARCHVISION_convert_Polymesh2Vertex();    
       
     }
     
     if (Work_with_2D_or_3D == 4) { 
       
-      SOLARCHVISION_convertFace2Vertex(); 
+      SOLARCHVISION_convert_Face2Vertex(); 
       
     }
     
@@ -16730,13 +16738,13 @@ void SOLARCHVISION_changeVisibilityFacesSelection (int new_vsb) {
     
     if (Work_with_2D_or_3D == 3) { 
   
-      SOLARCHVISION_convertPolymesh2Face();    
+      SOLARCHVISION_convert_Polymesh2Face();    
       
     }
     
     if (Work_with_2D_or_3D == 5) { 
       
-      SOLARCHVISION_convertVertex2Face(); 
+      SOLARCHVISION_convert_Vertex2Face(); 
       
     }
     
@@ -16791,7 +16799,7 @@ void SOLARCHVISION_isolateSelection () {
 
 
 
-void SOLARCHVISION_deselectAll () {
+void SOLARCHVISION_deselect_All () {
 
   selectedLandPoint_numbers = new int [1];
   selectedLandPoint_numbers[0] = 0;  
@@ -16824,7 +16832,7 @@ void SOLARCHVISION_deselectAll () {
   SOLARCHVISION_calculate_selection_Pivot();
 }
 
-void SOLARCHVISION_selectAll () {
+void SOLARCHVISION_select_All () {
 
   if (Work_with_2D_or_3D == 0) {
     selectedLandPoint_numbers = new int [1 + LAND_n_I * LAND_n_J];
@@ -16894,7 +16902,7 @@ void SOLARCHVISION_selectAll () {
 }
 
 
-void SOLARCHVISION_reverseSelection () {
+void SOLARCHVISION_reverse_Selection () {
 
   if (Work_with_2D_or_3D == 0) {
     int[] pre_selectedLandPoint_numbers = sort(selectedLandPoint_numbers);
@@ -17165,7 +17173,7 @@ void SOLARCHVISION_reverseSelection () {
 
 
 
-void SOLARCHVISION_convertFace2Polymesh () {
+void SOLARCHVISION_convert_Face2Polymesh () {
   
   selectedPolymesh_numbers = new int [1];
   selectedPolymesh_numbers[0] = 0; 
@@ -17199,7 +17207,7 @@ void SOLARCHVISION_convertFace2Polymesh () {
 }
 
 
-void SOLARCHVISION_convertVertex2Polymesh () {
+void SOLARCHVISION_convert_Vertex2Polymesh () {
 
   selectedPolymesh_numbers = new int [1];
   selectedPolymesh_numbers[0] = 0; 
@@ -17239,7 +17247,7 @@ void SOLARCHVISION_convertVertex2Polymesh () {
 }
 
 
-void SOLARCHVISION_convertVertex2Face () {
+void SOLARCHVISION_convert_Vertex2Face () {
 
   selectedFace_numbers = new int [1];
   selectedFace_numbers[0] = 0; 
@@ -17274,7 +17282,7 @@ void SOLARCHVISION_convertVertex2Face () {
 
 
 
-void SOLARCHVISION_convertPolymesh2Face () {
+void SOLARCHVISION_convert_Polymesh2Face () {
 
   selectedFace_numbers = new int [1];
   selectedFace_numbers[0] = 0; 
@@ -17302,7 +17310,7 @@ void SOLARCHVISION_convertPolymesh2Face () {
 }
 
 
-void SOLARCHVISION_convertPolymesh2Vertex () {
+void SOLARCHVISION_convert_Polymesh2Vertex () {
   
   selectedVertex_numbers = new int [1];
   selectedVertex_numbers[0] = 0; 
@@ -17335,7 +17343,7 @@ void SOLARCHVISION_convertPolymesh2Vertex () {
 }
 
 
-void SOLARCHVISION_convertFace2Vertex () {
+void SOLARCHVISION_convert_Face2Vertex () {
 
   selectedVertex_numbers = new int [1];
   selectedVertex_numbers[0] = 0; 
@@ -17368,13 +17376,13 @@ void SOLARCHVISION_convertFace2Vertex () {
 int[] selectedVertex_softSelectionVertices = new int[0]; 
 float[] selectedVertex_softSelectionValues = new float[0];
 
-void SOLARCHVISION_convertVertex2softSelection () { 
+void SOLARCHVISION_convert_Vertex2softSelection () { 
 
   int[] keep_selectedVertex_numbers = selectedVertex_numbers;
   
-  SOLARCHVISION_convertVertex2Polymesh();
+  SOLARCHVISION_convert_Vertex2Polymesh();
   
-  SOLARCHVISION_convertPolymesh2Vertex();
+  SOLARCHVISION_convert_Polymesh2Vertex();
   
   selectedVertex_softSelectionVertices = new int[selectedVertex_numbers.length]; 
   selectedVertex_softSelectionValues = new float[selectedVertex_numbers.length];
@@ -20855,7 +20863,7 @@ void SOLARCHVISION_delete_Cameras () {
 
   allCamera_num = 0;
   
-  SOLARCHVISION_deselectAll();  
+  SOLARCHVISION_deselect_All();  
 }
 
 void SOLARCHVISION_delete_Sections () {
@@ -20889,7 +20897,7 @@ void SOLARCHVISION_delete_Sections () {
 
   allSection_num = 0;
   
-  SOLARCHVISION_deselectAll();  
+  SOLARCHVISION_deselect_All();  
 }
 
 
@@ -20911,7 +20919,7 @@ void SOLARCHVISION_delete_Solids () {
   
   allSolid_num = 0;
   
-  SOLARCHVISION_deselectAll();  
+  SOLARCHVISION_deselect_All();  
 }
 
 
@@ -20958,7 +20966,7 @@ void SOLARCHVISION_delete_Fractals () {
   
   allFractal_num = 0;
   
-  SOLARCHVISION_deselectAll();  
+  SOLARCHVISION_deselect_All();  
 }
 
 void SOLARCHVISION_delete_2Dobjects () {
@@ -20973,7 +20981,7 @@ void SOLARCHVISION_delete_2Dobjects () {
   
   allObject2D_num = 0;
   
-  SOLARCHVISION_deselectAll();
+  SOLARCHVISION_deselect_All();
 }
 
 void SOLARCHVISION_delete_3Dobjects () {
@@ -21018,7 +21026,7 @@ void SOLARCHVISION_delete_3Dobjects () {
 
   addToLastPolymesh = 0; SOLARCHVISION_beginNewPolymesh(); addToLastPolymesh = 1;
  
-  SOLARCHVISION_deselectAll();
+  SOLARCHVISION_deselect_All();
  
   urbanVertices_start = 0;
   urbanVertices_end = 0;
@@ -28540,7 +28548,7 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
 
 void SOLARCHVISION_PickSelect (float[] RxP) {
 
-  if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselectAll();
+  if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselect_All();
 
 
   if (Work_with_2D_or_3D == 0) {
@@ -29034,7 +29042,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
 
 void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, float corner2y) {
 
-  if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselectAll();
+  if (addNewSelectionToPreviousSelection == 0) SOLARCHVISION_deselect_All();
 
 
   if (Work_with_2D_or_3D == 0) {
@@ -32335,15 +32343,15 @@ void mouseClicked () {
             }   
 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Reverse Selection")) {
-              SOLARCHVISION_reverseSelection();
+              SOLARCHVISION_reverse_Selection();
               WIN3D_Update = 1;
             }             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Deselect All")) {
-              SOLARCHVISION_deselectAll();
+              SOLARCHVISION_deselect_All();
               WIN3D_Update = 1;
             } 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select All")) {
-              SOLARCHVISION_selectAll();
+              SOLARCHVISION_select_All();
               WIN3D_Update = 1;
             }           
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select Solid")) {
@@ -32392,44 +32400,44 @@ void mouseClicked () {
               BAR_b_Update = 1;  
             } 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Soft Selection")) {
-              SOLARCHVISION_convertVertex2softSelection();
+              SOLARCHVISION_convert_Vertex2softSelection();
               
               Work_with_2D_or_3D = 6;
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
             }                 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Vertex >> Polymesh")) {
-              SOLARCHVISION_convertVertex2Polymesh();
+              SOLARCHVISION_convert_Vertex2Polymesh();
               Work_with_2D_or_3D = 3;
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
             }             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Face >> Polymesh")) {
-              SOLARCHVISION_convertFace2Polymesh();
+              SOLARCHVISION_convert_Face2Polymesh();
               Work_with_2D_or_3D = 3;
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
             }             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Polymesh >> Face")) {
-              SOLARCHVISION_convertPolymesh2Face();
+              SOLARCHVISION_convert_Polymesh2Face();
               Work_with_2D_or_3D = 4;
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
             }              
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Polymesh >> Vertex")) {
-              SOLARCHVISION_convertPolymesh2Vertex();
+              SOLARCHVISION_convert_Polymesh2Vertex();
               Work_with_2D_or_3D = 5;
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Face >> Vertex")) {
-              SOLARCHVISION_convertFace2Vertex();
+              SOLARCHVISION_convert_Face2Vertex();
               Work_with_2D_or_3D = 5;
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
             } 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Vertex >> Face")) {
-              SOLARCHVISION_convertVertex2Face();
+              SOLARCHVISION_convert_Vertex2Face();
               Work_with_2D_or_3D = 4;
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
@@ -42337,7 +42345,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
           Work_with_2D_or_3D = j - 1;
           
           if (Work_with_2D_or_3D == 6) {
-            SOLARCHVISION_convertVertex2softSelection();
+            SOLARCHVISION_convert_Vertex2softSelection();
           }
           
           ROLLOUT_Update = 1;   
