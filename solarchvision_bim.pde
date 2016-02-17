@@ -46208,3 +46208,10 @@ class ParametricSolid {
 } 
 
 
+float Solid_get_value (int n) {
+ 
+  get
+ 
+} 
+
+
