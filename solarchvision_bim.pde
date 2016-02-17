@@ -38008,23 +38008,23 @@ float[][] SOLARCHVISION_getCorners_Section (int Section_Type, float Section_offs
     float x = 0, y = 0, z = 0;
     
     if (Section_Type == 1) {
-      x = a * cos_ang(-Section_Rotation) - -b * sin_ang(-Section_Rotation);
-      y = a * sin_ang(-Section_Rotation) + -b * cos_ang(-Section_Rotation);
+      x = a * cos_ang(Section_Rotation) - b * sin_ang(Section_Rotation);
+      y = a * sin_ang(Section_Rotation) + b * cos_ang(Section_Rotation);
       z = c;         
     }
     else if (Section_Type == 2) {
       x = a * cos_ang(Section_Rotation) - c * sin_ang(Section_Rotation);
-      y = a * sin_ang(Section_Rotation) + c * cos_ang(Section_Rotation);
+      y = -(a * sin_ang(Section_Rotation) + c * cos_ang(Section_Rotation));
       z = b;        
     }
     else if (Section_Type == 3) {
-      x = a * cos_ang(90 - Section_Rotation) - c * sin_ang(90 - Section_Rotation);
-      y = a * sin_ang(90 - Section_Rotation) + c * cos_ang(90 - Section_Rotation);
+      x = a * cos_ang(90 - Section_Rotation) - c * sin_ang(90 - Section_Rotation); // ????????????
+      y = -(a * sin_ang(90 - Section_Rotation) + c * cos_ang(90 - Section_Rotation)); // ????????????
       z = b;    
     }      
   
     ImageVertex[q][0] = x;
-    ImageVertex[q][1] = -y;
+    ImageVertex[q][1] = y;
     ImageVertex[q][2] = z;
     ImageVertex[q][3] = u;
     ImageVertex[q][4] = v;
