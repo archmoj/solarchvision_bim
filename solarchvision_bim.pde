@@ -259,8 +259,8 @@ int FRAME_record_JPG = 0;
 int FRAME_click_JPG = 0;
 int FRAME_drag_JPG = 0;
 
-int SpatialImpact_record_PDF = 0;
-int SpatialImpact_record_JPG = 0;
+int SolidImpact_record_PDF = 0;
+int SolidImpact_record_JPG = 0;
 
 int SolarImpact_record_JPG = 0;  
 
@@ -272,11 +272,11 @@ int Launch_External_Hardware = 0; // inactive
 
 //-------------------------------
 
-float SpatialImpact_Wspd = 8; //8.0; // (8m/s = 30 km/h) 
-float SpatialImpact_Wdir = 180.0;
+float SolidImpact_Wspd = 8; //8.0; // (8m/s = 30 km/h) 
+float SolidImpact_Wdir = 180.0;
 
-float SpatialImpact_Power = 1.0; //2.0; //3.0; // 1/2/3 
-float SpatialImpact_Grade = 0.02; //1.0; //0.1; //10.0; //contour lines 
+float SolidImpact_Power = 1.0; //2.0; //3.0; // 1/2/3 
+float SolidImpact_Grade = 0.02; //1.0; //0.1; //10.0; //contour lines 
 
 float GlobalAlbedo = 0; // 0-100
 
@@ -384,9 +384,9 @@ String MAKE_mainname () {
 
 }
 
-String get_SpatialImpact_Filename () {
+String get_SolidImpact_Filename () {
   
-  return DiagramsFolder + "/" + nf(_YEAR, 2) + "-" + nf(_MONTH, 2) + "-" + nf(_DAY, 2) + "/" + databaseString[impacts_source] + "/Impacts/SpatialImpact" + nf(SpatialImpact_sectionType, 0) + "h" + nf(int(roundTo(SpatialImpact_Elevation[SpatialImpact_sectionType], 1)), 4) + "r" + nf(int(roundTo(SpatialImpact_Rotation[SpatialImpact_sectionType], 1)), 3) + "p" + nf(SpatialImpact_Power, 2, 2).replace(".", "_") + "m" + nf(SpatialImpact_Grade, 2, 2).replace(".", "_");
+  return DiagramsFolder + "/" + nf(_YEAR, 2) + "-" + nf(_MONTH, 2) + "-" + nf(_DAY, 2) + "/" + databaseString[impacts_source] + "/Impacts/SolidImpact" + nf(SolidImpact_sectionType, 0) + "h" + nf(int(roundTo(SolidImpact_Elevation[SolidImpact_sectionType], 1)), 4) + "r" + nf(int(roundTo(SolidImpact_Rotation[SolidImpact_sectionType], 1)), 3) + "p" + nf(SolidImpact_Power, 2, 2).replace(".", "_") + "m" + nf(SolidImpact_Grade, 2, 2).replace(".", "_");
 }
 
 String get_SolarImpact_Filename () {
@@ -1090,9 +1090,9 @@ int ELEVATION_Pallet_CLR = 1;
 int ELEVATION_Pallet_DIR = -1; 
 float ELEVATION_Pallet_MLT = 0.05; 
 
-int SPATIAL_Pallet_CLR = 17; //1; 
-int SPATIAL_Pallet_DIR = -1; 
-float SPATIAL_Pallet_MLT = 0.01; //1; 
+int SOLID_Pallet_CLR = 17; //1; 
+int SOLID_Pallet_DIR = -1; 
+float SOLID_Pallet_MLT = 0.01; //1; 
 
 int windFlow_Pallet_CLR = 18; 
 int windFlow_Pallet_DIR = -1;  
@@ -1224,8 +1224,8 @@ int Skip_LAND_MESH_Center = 0; //5;
 int Load_URBAN_MESH = 0;
 int Display_URBAN_MESH = 1;
 
-int Display_SpatialImpact_Points = 0;
-int Display_SpatialImpact_Lines = 1;
+int Display_SolidImpact_Points = 0;
+int Display_SolidImpact_Lines = 1;
 
 int Display_MODEL3D_EDGES = 1;
 int Display_MODEL3D_NORMALS = 0;
@@ -1285,30 +1285,30 @@ int pre_WORLD_VIEW_Auto;
 int pre_Load_LAND_MESH;
 int pre_Load_URBAN_MESH;
 
-int pre_SPATIAL_Pallet_CLR;
-int pre_SPATIAL_Pallet_DIR; 
-float pre_SPATIAL_Pallet_MLT; 
+int pre_SOLID_Pallet_CLR;
+int pre_SOLID_Pallet_DIR; 
+float pre_SOLID_Pallet_MLT; 
 
 float pre_Create_Input_powAll;
 
 
 
-float pre_SpatialImpact_Grade;
-float pre_SpatialImpact_Power;
-float[] pre_SpatialImpact_Rotation = {0,0,0,0};
-float[] pre_SpatialImpact_Elevation = {0,0,0,0};
-float[] pre_SpatialImpact_scale_U = {0,0,0,0};
-float[] pre_SpatialImpact_scale_V = {0,0,0,0};
-float[] pre_SpatialImpact_offset_U = {0,0,0,0};
-float[] pre_SpatialImpact_offset_V = {0,0,0,0};
+float pre_SolidImpact_Grade;
+float pre_SolidImpact_Power;
+float[] pre_SolidImpact_Rotation = {0,0,0,0};
+float[] pre_SolidImpact_Elevation = {0,0,0,0};
+float[] pre_SolidImpact_scale_U = {0,0,0,0};
+float[] pre_SolidImpact_scale_V = {0,0,0,0};
+float[] pre_SolidImpact_offset_U = {0,0,0,0};
+float[] pre_SolidImpact_offset_V = {0,0,0,0};
 
-float pre_SpatialImpact_Wspd; 
-float pre_SpatialImpact_Wdir;
+float pre_SolidImpact_Wspd; 
+float pre_SolidImpact_Wdir;
       
 int pre_PROCESS_subdivisions;
 
-int pre_Display_SpatialImpact_Points;
-int pre_Display_SpatialImpact_Lines;
+int pre_Display_SolidImpact_Points;
+int pre_Display_SolidImpact_Lines;
 
 int pre_Display_windFlow;
 
@@ -1584,7 +1584,7 @@ int Shade_Surface_White = 1;
 int Shade_Surface_Materials = 2;
 int Shade_Global_Solar = 3;
 int Shade_Vertex_Solar = 4;
-int Shade_Vertex_Spatial = 5;
+int Shade_Vertex_Solid = 5;
 int Shade_Vertex_Elevation = 6;
 
 int number_of_shading_options = 7;
@@ -1700,7 +1700,7 @@ int[] allSection_Type = {0};
 int[] allSection_RES1 = {0};
 int[] allSection_RES2 = {0};
 int allSection_num = 0;
-PImage[] allSection_SpatialImpact = {createImage(2, 2, RGB)};
+PImage[] allSection_SolidImpact = {createImage(2, 2, RGB)};
 PImage[][] allSection_SolarImpact = new PImage[1][(1 + STUDY_j_end - STUDY_j_start)];
 {
   int i = 0;
@@ -1893,7 +1893,7 @@ void SOLARCHVISION_update_models (int Step) {
    //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
    if ((Step == 0) || (Step == 3)) SOLARCHVISION_remove_ParametricSolids();
    if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ParametricSolids();
-   if ((Step == 0) || (Step == 5)) SOLARCHVISION_calculate_SpatialImpact_selectedSections();
+   if ((Step == 0) || (Step == 5)) SOLARCHVISION_calculate_SolidImpact_selectedSections();
 
 }
 
@@ -2219,7 +2219,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_calculate_SpatialImpact_selectedSections", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_calculate_SolidImpact_selectedSections", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 24) {
     SOLARCHVISION_update_models(5);
@@ -2295,30 +2295,30 @@ void draw () {
         pre_Load_LAND_MESH = Load_LAND_MESH;
         pre_Load_URBAN_MESH = Load_URBAN_MESH;
         
-        pre_SPATIAL_Pallet_CLR = SPATIAL_Pallet_CLR;
-        pre_SPATIAL_Pallet_DIR = SPATIAL_Pallet_DIR; 
-        pre_SPATIAL_Pallet_MLT = SPATIAL_Pallet_MLT;         
+        pre_SOLID_Pallet_CLR = SOLID_Pallet_CLR;
+        pre_SOLID_Pallet_DIR = SOLID_Pallet_DIR; 
+        pre_SOLID_Pallet_MLT = SOLID_Pallet_MLT;         
         
         pre_Create_Input_powAll = Create_Input_powAll;
         
-        pre_SpatialImpact_scale_U = SpatialImpact_scale_U;
-        pre_SpatialImpact_scale_V = SpatialImpact_scale_V;
+        pre_SolidImpact_scale_U = SolidImpact_scale_U;
+        pre_SolidImpact_scale_V = SolidImpact_scale_V;
 
-        pre_SpatialImpact_offset_U = SpatialImpact_offset_U;
-        pre_SpatialImpact_offset_V = SpatialImpact_offset_V;
+        pre_SolidImpact_offset_U = SolidImpact_offset_U;
+        pre_SolidImpact_offset_V = SolidImpact_offset_V;
         
-        pre_SpatialImpact_Grade = SpatialImpact_Grade;
-        pre_SpatialImpact_Power = SpatialImpact_Power;
-        pre_SpatialImpact_Rotation[SpatialImpact_sectionType] = SpatialImpact_Rotation[SpatialImpact_sectionType];
-        pre_SpatialImpact_Elevation[SpatialImpact_sectionType] = SpatialImpact_Elevation[SpatialImpact_sectionType];
+        pre_SolidImpact_Grade = SolidImpact_Grade;
+        pre_SolidImpact_Power = SolidImpact_Power;
+        pre_SolidImpact_Rotation[SolidImpact_sectionType] = SolidImpact_Rotation[SolidImpact_sectionType];
+        pre_SolidImpact_Elevation[SolidImpact_sectionType] = SolidImpact_Elevation[SolidImpact_sectionType];
         
-        pre_SpatialImpact_Wspd = SpatialImpact_Wspd; 
-        pre_SpatialImpact_Wdir = SpatialImpact_Wdir;
+        pre_SolidImpact_Wspd = SolidImpact_Wspd; 
+        pre_SolidImpact_Wdir = SolidImpact_Wdir;
       
         pre_PROCESS_subdivisions = PROCESS_subdivisions;
       
-        pre_Display_SpatialImpact_Points = Display_SpatialImpact_Points;
-        pre_Display_SpatialImpact_Lines = Display_SpatialImpact_Lines;
+        pre_Display_SolidImpact_Points = Display_SolidImpact_Points;
+        pre_Display_SolidImpact_Lines = Display_SolidImpact_Lines;
         
         pre_Display_windFlow = Display_windFlow;
         
@@ -2713,7 +2713,7 @@ void draw () {
           
           SOLARCHVISION_add_3Dbase(-2, 0, 0, 1, 0);
           
-          SOLARCHVISION_calculate_SpatialImpact_selectedSections();
+          SOLARCHVISION_calculate_SolidImpact_selectedSections();
 
           WIN3D_Update = 1;
       
@@ -2756,7 +2756,7 @@ void draw () {
 
           SOLARCHVISION_add_DefaultModel(Load_Default_Models);
           
-          SOLARCHVISION_calculate_SpatialImpact_selectedSections();
+          SOLARCHVISION_calculate_SolidImpact_selectedSections();
           
           WIN3D_Update = 1;
       
@@ -2773,31 +2773,31 @@ void draw () {
         }
 
 
-        if (pre_SPATIAL_Pallet_CLR != SPATIAL_Pallet_CLR) {SOLARCHVISION_calculate_SpatialImpact_selectedSections(); WIN3D_Update = 1;}
-        if (pre_SPATIAL_Pallet_DIR != SPATIAL_Pallet_DIR) {SOLARCHVISION_calculate_SpatialImpact_selectedSections(); WIN3D_Update = 1;}
-        if (pre_SPATIAL_Pallet_MLT != SPATIAL_Pallet_MLT) {SOLARCHVISION_calculate_SpatialImpact_selectedSections(); WIN3D_Update = 1;}
+        if (pre_SOLID_Pallet_CLR != SOLID_Pallet_CLR) {SOLARCHVISION_calculate_SolidImpact_selectedSections(); WIN3D_Update = 1;}
+        if (pre_SOLID_Pallet_DIR != SOLID_Pallet_DIR) {SOLARCHVISION_calculate_SolidImpact_selectedSections(); WIN3D_Update = 1;}
+        if (pre_SOLID_Pallet_MLT != SOLID_Pallet_MLT) {SOLARCHVISION_calculate_SolidImpact_selectedSections(); WIN3D_Update = 1;}
 
-        if (pre_SpatialImpact_Grade != SpatialImpact_Grade) {SOLARCHVISION_calculate_SpatialImpact_selectedSections(); WIN3D_Update = 1;}
-        if (pre_SpatialImpact_Power != SpatialImpact_Power) {SOLARCHVISION_calculate_SpatialImpact_selectedSections(); WIN3D_Update = 1;}
-        if (pre_SpatialImpact_Rotation[SpatialImpact_sectionType] != SpatialImpact_Rotation[SpatialImpact_sectionType]) {SOLARCHVISION_calculate_SpatialImpact_selectedSections(); WIN3D_Update = 1;}
-        if (pre_SpatialImpact_Elevation[SpatialImpact_sectionType] != SpatialImpact_Elevation[SpatialImpact_sectionType]) {SOLARCHVISION_calculate_SpatialImpact_selectedSections(); WIN3D_Update = 1;}
+        if (pre_SolidImpact_Grade != SolidImpact_Grade) {SOLARCHVISION_calculate_SolidImpact_selectedSections(); WIN3D_Update = 1;}
+        if (pre_SolidImpact_Power != SolidImpact_Power) {SOLARCHVISION_calculate_SolidImpact_selectedSections(); WIN3D_Update = 1;}
+        if (pre_SolidImpact_Rotation[SolidImpact_sectionType] != SolidImpact_Rotation[SolidImpact_sectionType]) {SOLARCHVISION_calculate_SolidImpact_selectedSections(); WIN3D_Update = 1;}
+        if (pre_SolidImpact_Elevation[SolidImpact_sectionType] != SolidImpact_Elevation[SolidImpact_sectionType]) {SOLARCHVISION_calculate_SolidImpact_selectedSections(); WIN3D_Update = 1;}
 
-        if (pre_SpatialImpact_scale_U[SpatialImpact_sectionType] != SpatialImpact_scale_U[SpatialImpact_sectionType]) {SOLARCHVISION_calculate_SpatialImpact_selectedSections(); WIN3D_Update = 1;}
-        if (pre_SpatialImpact_scale_V[SpatialImpact_sectionType] != SpatialImpact_scale_V[SpatialImpact_sectionType]) {SOLARCHVISION_calculate_SpatialImpact_selectedSections(); WIN3D_Update = 1;}
+        if (pre_SolidImpact_scale_U[SolidImpact_sectionType] != SolidImpact_scale_U[SolidImpact_sectionType]) {SOLARCHVISION_calculate_SolidImpact_selectedSections(); WIN3D_Update = 1;}
+        if (pre_SolidImpact_scale_V[SolidImpact_sectionType] != SolidImpact_scale_V[SolidImpact_sectionType]) {SOLARCHVISION_calculate_SolidImpact_selectedSections(); WIN3D_Update = 1;}
 
-        if (pre_SpatialImpact_offset_U[SpatialImpact_sectionType] != SpatialImpact_offset_U[SpatialImpact_sectionType]) {SOLARCHVISION_calculate_SpatialImpact_selectedSections(); WIN3D_Update = 1;}
-        if (pre_SpatialImpact_offset_V[SpatialImpact_sectionType] != SpatialImpact_offset_V[SpatialImpact_sectionType]) {SOLARCHVISION_calculate_SpatialImpact_selectedSections(); WIN3D_Update = 1;}
+        if (pre_SolidImpact_offset_U[SolidImpact_sectionType] != SolidImpact_offset_U[SolidImpact_sectionType]) {SOLARCHVISION_calculate_SolidImpact_selectedSections(); WIN3D_Update = 1;}
+        if (pre_SolidImpact_offset_V[SolidImpact_sectionType] != SolidImpact_offset_V[SolidImpact_sectionType]) {SOLARCHVISION_calculate_SolidImpact_selectedSections(); WIN3D_Update = 1;}
 
         
         
-        if (pre_SpatialImpact_Wspd != SpatialImpact_Wspd) {SOLARCHVISION_calculate_SpatialImpact_selectedSections(); WIN3D_Update = 1;}
-        if (pre_SpatialImpact_Wdir != SpatialImpact_Wdir) {SOLARCHVISION_calculate_SpatialImpact_selectedSections(); WIN3D_Update = 1;}
+        if (pre_SolidImpact_Wspd != SolidImpact_Wspd) {SOLARCHVISION_calculate_SolidImpact_selectedSections(); WIN3D_Update = 1;}
+        if (pre_SolidImpact_Wdir != SolidImpact_Wdir) {SOLARCHVISION_calculate_SolidImpact_selectedSections(); WIN3D_Update = 1;}
 
 
-        if (pre_PROCESS_subdivisions != PROCESS_subdivisions) {SOLARCHVISION_calculate_SpatialImpact_selectedSections(); WIN3D_Update = 1;}
+        if (pre_PROCESS_subdivisions != PROCESS_subdivisions) {SOLARCHVISION_calculate_SolidImpact_selectedSections(); WIN3D_Update = 1;}
 
-        if (pre_Display_SpatialImpact_Points != Display_SpatialImpact_Points) WIN3D_Update = 1;
-        if (pre_Display_SpatialImpact_Lines != Display_SpatialImpact_Lines) WIN3D_Update = 1;
+        if (pre_Display_SolidImpact_Points != Display_SolidImpact_Points) WIN3D_Update = 1;
+        if (pre_Display_SolidImpact_Lines != Display_SolidImpact_Lines) WIN3D_Update = 1;
         
         if (pre_Display_MODEL3D_EDGES != Display_MODEL3D_EDGES) WIN3D_Update = 1;
         if (pre_Display_MODEL3D_NORMALS != Display_MODEL3D_NORMALS) WIN3D_Update = 1;
@@ -3007,9 +3007,9 @@ void SOLARCHVISION_draw_WIN3D () {
     
     SOLARCHVISION_draw_Cameras();
   
-    SOLARCHVISION_draw_SpatialImpact_lines();
+    SOLARCHVISION_draw_SolidImpact_lines();
     
-    SOLARCHVISION_draw_SpatialImpact_points();
+    SOLARCHVISION_draw_SolidImpact_points();
     
     SOLARCHVISION_draw_2Dobjects();  
     
@@ -3213,11 +3213,11 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
     draw_pal = 1;      
   }
 
-  if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
+  if (WIN3D_FACES_SHADE == Shade_Vertex_Solid) {
 
-    PAL_TYPE = SPATIAL_Pallet_CLR; 
-    PAL_DIR = SPATIAL_Pallet_DIR;
-    PAL_Multiplier = SPATIAL_Pallet_MLT;
+    PAL_TYPE = SOLID_Pallet_CLR; 
+    PAL_DIR = SOLID_Pallet_DIR;
+    PAL_Multiplier = SOLID_Pallet_MLT;
           
     draw_pal = 1;      
   }          
@@ -3330,7 +3330,7 @@ void SOLARCHVISION_draw_pallet_on_WIN3D () {
         WIN3D_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
       }
       
-      if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
+      if (WIN3D_FACES_SHADE == Shade_Vertex_Solid) {
         WIN3D_Diagrams.text(nf(int(roundTo(0.4 * (q - 5) / PAL_Multiplier, 1)), 1), 0.5 * (x1 + x2), 0.5 * (y1 + y2) - 0.1 * txtSize, 0);
       }
     }
@@ -12446,45 +12446,45 @@ void WIN3D_keyPressed (KeyEvent e) {
     if (key == CODED) { 
       switch(keyCode) {
 
-        case RIGHT :SpatialImpact_Rotation[SpatialImpact_sectionType] = (SpatialImpact_Rotation[SpatialImpact_sectionType] + 15) % 360; 
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case RIGHT :SolidImpact_Rotation[SolidImpact_sectionType] = (SolidImpact_Rotation[SolidImpact_sectionType] + 15) % 360; 
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
-        case LEFT :SpatialImpact_Rotation[SpatialImpact_sectionType] = (SpatialImpact_Rotation[SpatialImpact_sectionType] + 360 - 15) % 360; 
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case LEFT :SolidImpact_Rotation[SolidImpact_sectionType] = (SolidImpact_Rotation[SolidImpact_sectionType] + 360 - 15) % 360; 
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;           
         
-        case UP   :SpatialImpact_Elevation[SpatialImpact_sectionType] += SpatialImpact_positionStep;
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case UP   :SolidImpact_Elevation[SolidImpact_sectionType] += SolidImpact_positionStep;
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;        
-        case DOWN :SpatialImpact_Elevation[SpatialImpact_sectionType] -= SpatialImpact_positionStep; 
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case DOWN :SolidImpact_Elevation[SolidImpact_sectionType] -= SolidImpact_positionStep; 
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1; ROLLOUT_Update = 1;  
                   break; 
 
-        case 33 :SpatialImpact_Elevation[SpatialImpact_sectionType] += 4 * SpatialImpact_positionStep;
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case 33 :SolidImpact_Elevation[SolidImpact_sectionType] += 4 * SolidImpact_positionStep;
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;        
-        case 34 :SpatialImpact_Elevation[SpatialImpact_sectionType] -= 4 * SpatialImpact_positionStep; 
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case 34 :SolidImpact_Elevation[SolidImpact_sectionType] -= 4 * SolidImpact_positionStep; 
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break; 
         
-        case 35 :SpatialImpact_scale_U[SpatialImpact_sectionType] *= pow(2.0, 0.5); SpatialImpact_scale_V[SpatialImpact_sectionType] *= pow(2.0, 0.5); 
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case 35 :SolidImpact_scale_U[SolidImpact_sectionType] *= pow(2.0, 0.5); SolidImpact_scale_V[SolidImpact_sectionType] *= pow(2.0, 0.5); 
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;
-        case 36 :SpatialImpact_scale_U[SpatialImpact_sectionType] /= pow(2.0, 0.5); SpatialImpact_scale_V[SpatialImpact_sectionType] /= pow(2.0, 0.5);                   
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case 36 :SolidImpact_scale_U[SolidImpact_sectionType] /= pow(2.0, 0.5); SolidImpact_scale_V[SolidImpact_sectionType] /= pow(2.0, 0.5);                   
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;
@@ -12494,83 +12494,83 @@ void WIN3D_keyPressed (KeyEvent e) {
     else {
       switch(key) {
         
-        case 'U' :SpatialImpact_offset_U[SpatialImpact_sectionType] += SpatialImpact_positionStep;
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case 'U' :SolidImpact_offset_U[SolidImpact_sectionType] += SolidImpact_positionStep;
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;
-        case 'u' :SpatialImpact_offset_U[SpatialImpact_sectionType] -= SpatialImpact_positionStep;
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case 'u' :SolidImpact_offset_U[SolidImpact_sectionType] -= SolidImpact_positionStep;
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;        
-        case 'V' :SpatialImpact_offset_V[SpatialImpact_sectionType] += SpatialImpact_positionStep;
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case 'V' :SolidImpact_offset_V[SolidImpact_sectionType] += SolidImpact_positionStep;
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;
-        case 'v' :SpatialImpact_offset_V[SpatialImpact_sectionType] -= SpatialImpact_positionStep;
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case 'v' :SolidImpact_offset_V[SolidImpact_sectionType] -= SolidImpact_positionStep;
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;  
                   
-        case ']' :SpatialImpact_sectionType = (SpatialImpact_sectionType + 1) % 4;
-                  SolarImpact_sectionType = SpatialImpact_sectionType; 
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case ']' :SolidImpact_sectionType = (SolidImpact_sectionType + 1) % 4;
+                  SolarImpact_sectionType = SolidImpact_sectionType; 
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
                   break;
-        case '[' :SpatialImpact_sectionType = (SpatialImpact_sectionType + 4 - 1) % 4;
-                  SolarImpact_sectionType = SpatialImpact_sectionType;
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case '[' :SolidImpact_sectionType = (SolidImpact_sectionType + 4 - 1) % 4;
+                  SolarImpact_sectionType = SolidImpact_sectionType;
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
                   break;        
         
-        case '0' :SpatialImpact_Elevation[SpatialImpact_sectionType] = 0; 
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case '0' :SolidImpact_Elevation[SolidImpact_sectionType] = 0; 
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
                   
-        case '.' :SpatialImpact_Rotation[SpatialImpact_sectionType] = 0; 
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections();
+        case '.' :SolidImpact_Rotation[SolidImpact_sectionType] = 0; 
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections();
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;                   
                   break;                  
         
-        case '/' :SpatialImpact_Power *= pow(2.0, 0.5); 
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case '/' :SolidImpact_Power *= pow(2.0, 0.5); 
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
-        case '*' :SpatialImpact_Power /= pow(2.0, 0.5);  
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case '*' :SolidImpact_Power /= pow(2.0, 0.5);  
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
         
-        case '+' :SpatialImpact_Grade *= pow(2.0, 0.5); 
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case '+' :SolidImpact_Grade *= pow(2.0, 0.5); 
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
-        case '-' :SpatialImpact_Grade /= pow(2.0, 0.5); 
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case '-' :SolidImpact_Grade /= pow(2.0, 0.5); 
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
 
-        case '>' :SpatialImpact_Grade /= pow(2.0, 0.25); 
-                  SpatialImpact_Power /= pow(2.0, 0.5); 
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case '>' :SolidImpact_Grade /= pow(2.0, 0.25); 
+                  SolidImpact_Power /= pow(2.0, 0.5); 
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
-        case '<' :SpatialImpact_Grade *= pow(2.0, 0.25); 
-                  SpatialImpact_Power *= pow(2.0, 0.5); 
-                  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+        case '<' :SolidImpact_Grade *= pow(2.0, 0.25); 
+                  SolidImpact_Power *= pow(2.0, 0.5); 
+                  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1;  
                   break;
@@ -14131,7 +14131,7 @@ void SOLARCHVISION_duplicateSelection () {
     }       
   
     
-    if (SOLID_added != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections();
+    if (SOLID_added != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections();
   }
 
 
@@ -14507,7 +14507,7 @@ void SOLARCHVISION_deleteSelection () {
       }
     }
     
-    if (Solids_updated != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections();
+    if (Solids_updated != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections();
     
     WIN3D_update_VerticesSolarValue = 1;
 
@@ -14663,10 +14663,10 @@ void SOLARCHVISION_deleteSelection () {
         }
 
         {
-          PImage[] startList = (PImage[]) subset(allSection_SpatialImpact, 0, OBJ_NUM);
-          PImage[] endList = (PImage[]) subset(allSection_SpatialImpact, OBJ_NUM + 1);
+          PImage[] startList = (PImage[]) subset(allSection_SolidImpact, 0, OBJ_NUM);
+          PImage[] endList = (PImage[]) subset(allSection_SolidImpact, OBJ_NUM + 1);
           
-          allSection_SpatialImpact = (PImage[]) concat(startList, endList);
+          allSection_SolidImpact = (PImage[]) concat(startList, endList);
         }
         
         {
@@ -18665,9 +18665,9 @@ void SOLARCHVISION_export_objects () {
           if (Display_SolarImpact_Image != 0) {
             println("Saving texture:", new_TEXTURE_path);
             allSection_SolarImpact[f][Day_of_Impact_to_Display].save(new_TEXTURE_path);
-          } else if (Display_SpatialImpact_Image != 0) {
+          } else if (Display_SolidImpact_Image != 0) {
             println("Saving texture:", new_TEXTURE_path);
-            allSection_SpatialImpact[f].save(new_TEXTURE_path);              
+            allSection_SolidImpact[f].save(new_TEXTURE_path);              
           }
     
           mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
@@ -19021,7 +19021,7 @@ void SOLARCHVISION_export_objects () {
     
     int Create_Face_Texture = 0;
     
-    if ((WIN3D_FACES_SHADE == Shade_Global_Solar) || (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) || (WIN3D_FACES_SHADE == Shade_Vertex_Elevation)) {
+    if ((WIN3D_FACES_SHADE == Shade_Global_Solar) || (WIN3D_FACES_SHADE == Shade_Vertex_Solid) || (WIN3D_FACES_SHADE == Shade_Vertex_Elevation)) {
       Create_Face_Texture = 1;
     }
     
@@ -19436,9 +19436,9 @@ void SOLARCHVISION_export_objects () {
                             _COL = SOLARCHVISION_vertexRender_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                           }              
                       
-                          if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
+                          if (WIN3D_FACES_SHADE == Shade_Vertex_Solid) {
                             
-                            _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Spatial(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                            _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                           }                  
                           
                           if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
@@ -19579,9 +19579,9 @@ void SOLARCHVISION_export_objects () {
                             _u = SOLARCHVISION_vertexU_Shade_Global_Solar(subFace[s], subFace[s_prev], subFace[s_next], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                           }              
                       
-                          if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
+                          if (WIN3D_FACES_SHADE == Shade_Vertex_Solid) {
                             
-                            _u = SOLARCHVISION_vertexU_Shade_Vertex_Spatial(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                            _u = SOLARCHVISION_vertexU_Shade_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                           }                  
                           
                           if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
@@ -20693,8 +20693,8 @@ void SOLARCHVISION_remove_Sections () {
   allSection_RES2 = new int [1];
   allSection_RES2[0] = 0;
   
-  allSection_SpatialImpact = new PImage [1];
-  allSection_SpatialImpact[0] = createImage(2, 2, RGB);
+  allSection_SolidImpact = new PImage [1];
+  allSection_SolidImpact[0] = createImage(2, 2, RGB);
 
   allSection_SolarImpact = new PImage[1][(1 + STUDY_j_end - STUDY_j_start)];
   {
@@ -21984,9 +21984,9 @@ void SOLARCHVISION_draw_land () {
                   _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Elevation(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                 }              
                 
-                if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
+                if (WIN3D_FACES_SHADE == Shade_Vertex_Solid) {
                   
-                  _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Spatial(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                  _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                 }                  
   
   
@@ -22100,9 +22100,9 @@ float[] SOLARCHVISION_vertexRender_Shade_Surface_Materials (int mt) {
 }
 
 
-float[] SOLARCHVISION_vertexRender_Shade_Vertex_Spatial (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
+float[] SOLARCHVISION_vertexRender_Shade_Vertex_Solid (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
 
-  float _u = SOLARCHVISION_vertexU_Shade_Vertex_Spatial(VERTEX_now, PAL_TYPE, PAL_DIR, PAL_Multiplier);
+  float _u = SOLARCHVISION_vertexU_Shade_Vertex_Solid(VERTEX_now, PAL_TYPE, PAL_DIR, PAL_Multiplier);
   
   float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);     
   
@@ -22110,10 +22110,10 @@ float[] SOLARCHVISION_vertexRender_Shade_Vertex_Spatial (float[] VERTEX_now, int
 }
 
 
-float SOLARCHVISION_vertexU_Shade_Vertex_Spatial (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
+float SOLARCHVISION_vertexU_Shade_Vertex_Solid (float[] VERTEX_now, int PAL_TYPE, int PAL_DIR, float PAL_Multiplier) {
 
-  SpatialImpactType = 0;
-  float val = ParametricSolids_SpatialImpact_atXYZ(VERTEX_now[0], VERTEX_now[1], VERTEX_now[2]);
+  SolidImpactType = 0;
+  float val = ParametricSolids_SolidImpact_atXYZ(VERTEX_now[0], VERTEX_now[1], VERTEX_now[2]);
 
   float _u = 0.5 + 0.5 * (PAL_Multiplier * val);
   
@@ -22202,8 +22202,8 @@ int SOLARCHVISION_getShader_PAL_TYPE () {
     if (Impact_TYPE == Impact_PASSIVE) PAL_TYPE = OBJECTS_Pallet_PASSIVE_CLR; 
   }              
 
-  if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
-    PAL_TYPE = SPATIAL_Pallet_CLR; 
+  if (WIN3D_FACES_SHADE == Shade_Vertex_Solid) {
+    PAL_TYPE = SOLID_Pallet_CLR; 
   }                  
   
   if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
@@ -22223,8 +22223,8 @@ int SOLARCHVISION_getShader_PAL_DIR () {
     if (Impact_TYPE == Impact_PASSIVE) PAL_DIR = OBJECTS_Pallet_PASSIVE_DIR;
   }              
 
-  if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
-    PAL_DIR = SPATIAL_Pallet_DIR;
+  if (WIN3D_FACES_SHADE == Shade_Vertex_Solid) {
+    PAL_DIR = SOLID_Pallet_DIR;
   }                  
   
   if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
@@ -22244,8 +22244,8 @@ float SOLARCHVISION_getShader_PAL_Multiplier () {
     if (Impact_TYPE == Impact_PASSIVE) PAL_Multiplier = 0.05 * OBJECTS_Pallet_PASSIVE_MLT;    
   }              
   
-  if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
-    PAL_Multiplier = SPATIAL_Pallet_MLT;
+  if (WIN3D_FACES_SHADE == Shade_Vertex_Solid) {
+    PAL_Multiplier = SOLID_Pallet_MLT;
   }                  
   
   if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
@@ -22363,7 +22363,7 @@ void SOLARCHVISION_draw_3Dobjects () {
   
     }     
     
-    if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
+    if (WIN3D_FACES_SHADE == Shade_Vertex_Solid) {
   
     }                  
     
@@ -22448,9 +22448,9 @@ void SOLARCHVISION_draw_3Dobjects () {
                       _COL = SOLARCHVISION_vertexRender_Shade_Surface_White(255);
                     }     
                     
-                    if (WIN3D_FACES_SHADE == Shade_Vertex_Spatial) {
+                    if (WIN3D_FACES_SHADE == Shade_Vertex_Solid) {
                       
-                      _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Spatial(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
+                      _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                     }                  
                     
                     if (WIN3D_FACES_SHADE == Shade_Vertex_Elevation) {
@@ -25897,7 +25897,7 @@ void SOLARCHVISION_render_Shadows_selectedSections () {
   }
 
   Display_SolarImpact_Image = 1;
-  Display_SpatialImpact_Image = 0;
+  Display_SolidImpact_Image = 0;
   ROLLOUT_Update = 1; 
 
 }
@@ -25943,7 +25943,7 @@ void SOLARCHVISION_calculate_SolarImpact_selectedSections () {
 
 
 
-void SOLARCHVISION_calculate_SpatialImpact_selectedSections () {
+void SOLARCHVISION_calculate_SolidImpact_selectedSections () {
   
   for (int o = selectedSection_numbers.length - 1; o >= 0; o--) {
     
@@ -25951,24 +25951,24 @@ void SOLARCHVISION_calculate_SpatialImpact_selectedSections () {
     
     if (f != 0) {        
       
-      SpatialImpact_sectionType = allSection_Type[f];
-      SpatialImpact_RES1 = allSection_RES1[f];
-      SpatialImpact_RES2 = allSection_RES2[f];     
+      SolidImpact_sectionType = allSection_Type[f];
+      SolidImpact_RES1 = allSection_RES1[f];
+      SolidImpact_RES2 = allSection_RES2[f];     
 
-      SpatialImpact_offset_U[SpatialImpact_sectionType] = allSection_UVERAB[f][0];
-      SpatialImpact_offset_V[SpatialImpact_sectionType] = allSection_UVERAB[f][1];
-      SpatialImpact_Elevation[SpatialImpact_sectionType] = allSection_UVERAB[f][2];
-      SpatialImpact_Rotation[SpatialImpact_sectionType] = allSection_UVERAB[f][3];
-      SpatialImpact_scale_U[SpatialImpact_sectionType] = allSection_UVERAB[f][4];
-      SpatialImpact_scale_V[SpatialImpact_sectionType] = allSection_UVERAB[f][5];
+      SolidImpact_offset_U[SolidImpact_sectionType] = allSection_UVERAB[f][0];
+      SolidImpact_offset_V[SolidImpact_sectionType] = allSection_UVERAB[f][1];
+      SolidImpact_Elevation[SolidImpact_sectionType] = allSection_UVERAB[f][2];
+      SolidImpact_Rotation[SolidImpact_sectionType] = allSection_UVERAB[f][3];
+      SolidImpact_scale_U[SolidImpact_sectionType] = allSection_UVERAB[f][4];
+      SolidImpact_scale_V[SolidImpact_sectionType] = allSection_UVERAB[f][5];
       
       {
-        if ((SpatialImpact_Image.width != SpatialImpact_RES1) || (SpatialImpact_Image.height != SpatialImpact_RES2)) {
-          SpatialImpact_Image = createImage(SpatialImpact_RES1, SpatialImpact_RES2, ARGB);
+        if ((SolidImpact_Image.width != SolidImpact_RES1) || (SolidImpact_Image.height != SolidImpact_RES2)) {
+          SolidImpact_Image = createImage(SolidImpact_RES1, SolidImpact_RES2, ARGB);
         }
-        SOLARCHVISION_calculate_SpatialImpact_CurrentSection();
+        SOLARCHVISION_calculate_SolidImpact_CurrentSection();
         
-        allSection_SpatialImpact[f].copy(SpatialImpact_Image, 0, 0, SpatialImpact_RES1, SpatialImpact_RES2, 0, 0, SpatialImpact_RES1, SpatialImpact_RES2); 
+        allSection_SolidImpact[f].copy(SolidImpact_Image, 0, 0, SolidImpact_RES1, SolidImpact_RES2, 0, 0, SolidImpact_RES1, SolidImpact_RES2); 
       }
       
     }
@@ -25980,41 +25980,41 @@ void SOLARCHVISION_calculate_SpatialImpact_selectedSections () {
 
 
 
-float[] SpatialImpact_scale_U = {100, 100, 100, 100}; // i.e. 100m
-float[] SpatialImpact_scale_V = {100, 100, 100, 100}; // i.e. 100m
+float[] SolidImpact_scale_U = {100, 100, 100, 100}; // i.e. 100m
+float[] SolidImpact_scale_V = {100, 100, 100, 100}; // i.e. 100m
 
-float[] SpatialImpact_offset_U = {0, 0, 0, 0}; 
-float[] SpatialImpact_offset_V = {0, 0, 0, 0}; 
+float[] SolidImpact_offset_U = {0, 0, 0, 0}; 
+float[] SolidImpact_offset_V = {0, 0, 0, 0}; 
 
-int SpatialImpact_RES1 = 400; //400;
-int SpatialImpact_RES2 = 400; //400;
+int SolidImpact_RES1 = 400; //400;
+int SolidImpact_RES2 = 400; //400;
 
-PImage SpatialImpact_Image = createImage(SpatialImpact_RES1, SpatialImpact_RES2, ARGB);
-
-
-
-int Display_SpatialImpact_Image = 1; // 0:false, 1:true
-int SpatialImpact_sectionType = 0; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
-
-float[] SpatialImpact_Elevation = {0, 0.1, 0, 0}; // <<<
-float[] SpatialImpact_Rotation = {0, 0, 0, 0};
-
-float SpatialImpact_positionStep = 1.25;
+PImage SolidImpact_Image = createImage(SolidImpact_RES1, SolidImpact_RES2, ARGB);
 
 
-int SpatialImpactType = 0; // INTERNAL! 0:simple 1:complex
 
-float ParametricSolids_SpatialImpact_atXYZ (float x, float y, float z) {
+int Display_SolidImpact_Image = 1; // 0:false, 1:true
+int SolidImpact_sectionType = 0; // 0:off, 1:horizontal, 2:vertical(front), 3:vertical(side)
+
+float[] SolidImpact_Elevation = {0, 0.1, 0, 0}; // <<<
+float[] SolidImpact_Rotation = {0, 0, 0, 0};
+
+float SolidImpact_positionStep = 1.25;
+
+
+int SolidImpactType = 0; // INTERNAL! 0:simple 1:complex
+
+float ParametricSolids_SolidImpact_atXYZ (float x, float y, float z) {
 
   float v = 0;
   
-  if (SpatialImpactType == 0) v = ParametricSolids_SpatialImpact_atXYZ_simple(x, y, z);
-  else v = ParametricSolids_SpatialImpact_atXYZ_complex(x, y, z);
+  if (SolidImpactType == 0) v = ParametricSolids_SolidImpact_atXYZ_simple(x, y, z);
+  else v = ParametricSolids_SolidImpact_atXYZ_complex(x, y, z);
   
   return v;
 }
 
-float ParametricSolids_SpatialImpact_atXYZ_simple (float x, float y, float z) {
+float ParametricSolids_SolidImpact_atXYZ_simple (float x, float y, float z) {
 
   float val = 1;
   
@@ -26023,7 +26023,7 @@ float ParametricSolids_SpatialImpact_atXYZ_simple (float x, float y, float z) {
     float r = SolidObjects[n].value;
     float d = SolidObjects[n].Distance(x, y, z);
 
-    d *= pow(d, SpatialImpact_Power);
+    d *= pow(d, SolidImpact_Power);
 
     if (val < 0) val *= abs(d - r);
     else {
@@ -26047,10 +26047,10 @@ float ParametricSolids_SpatialImpact_atXYZ_simple (float x, float y, float z) {
 
 
 
-float ParametricSolids_SpatialImpact_atXYZ_complex (float x, float y, float z) {
+float ParametricSolids_SolidImpact_atXYZ_complex (float x, float y, float z) {
 
-  float deltaX = SpatialImpact_Wspd * cos_ang(SpatialImpact_Wdir);
-  float deltaY = SpatialImpact_Wspd * sin_ang(SpatialImpact_Wdir);
+  float deltaX = SolidImpact_Wspd * cos_ang(SolidImpact_Wdir);
+  float deltaY = SolidImpact_Wspd * sin_ang(SolidImpact_Wdir);
 
   float[] val = {1, 1};
 
@@ -26061,7 +26061,7 @@ float ParametricSolids_SpatialImpact_atXYZ_complex (float x, float y, float z) {
       float r = SolidObjects[n].value;
       float d = SolidObjects[n].Distance(x + o * deltaX , y + o * deltaY, z);
       
-      d *= pow(d, SpatialImpact_Power);
+      d *= pow(d, SolidImpact_Power);
   
       if (val[o] < 0) val[o] *= abs(d - r);
       else {
@@ -26108,22 +26108,22 @@ void SOLARCHVISION_calculate_windFlow () {
 
 
         
-  float deltaX = -SpatialImpact_Wspd * cos_ang(SpatialImpact_Wdir);
-  float deltaY = -SpatialImpact_Wspd * sin_ang(SpatialImpact_Wdir);
+  float deltaX = -SolidImpact_Wspd * cos_ang(SolidImpact_Wdir);
+  float deltaY = -SolidImpact_Wspd * sin_ang(SolidImpact_Wdir);
   float deltaZ = 0;   
 
 /* 
 
-  float Section_offset_U = SpatialImpact_offset_U[SpatialImpact_sectionType];
-  float Section_offset_V = SpatialImpact_offset_V[SpatialImpact_sectionType];
-  float Section_Elevation = SpatialImpact_Elevation[SpatialImpact_sectionType];
-  float Section_Rotation = SpatialImpact_Rotation[SpatialImpact_sectionType];
-  float Section_scale_U = SpatialImpact_scale_U[SpatialImpact_sectionType];
-  float Section_scale_V = SpatialImpact_scale_V[SpatialImpact_sectionType];
+  float Section_offset_U = SolidImpact_offset_U[SolidImpact_sectionType];
+  float Section_offset_V = SolidImpact_offset_V[SolidImpact_sectionType];
+  float Section_Elevation = SolidImpact_Elevation[SolidImpact_sectionType];
+  float Section_Rotation = SolidImpact_Rotation[SolidImpact_sectionType];
+  float Section_scale_U = SolidImpact_scale_U[SolidImpact_sectionType];
+  float Section_scale_V = SolidImpact_scale_V[SolidImpact_sectionType];
 
-  int Section_Type = SpatialImpact_sectionType;
-  int Section_RES1 = SpatialImpact_RES1;
-  int Section_RES2 = SpatialImpact_RES2; 
+  int Section_Type = SolidImpact_sectionType;
+  int Section_RES1 = SolidImpact_RES1;
+  int Section_RES2 = SolidImpact_RES2; 
 
   float[][] ImageVertex = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2); 
 
@@ -26132,12 +26132,12 @@ void SOLARCHVISION_calculate_windFlow () {
   float[] SectionCorner_C = ImageVertex[2];
   float[] SectionCorner_D = ImageVertex[3]; 
   
-  for (int i = 0; i < SpatialImpact_RES1; i += 10) {
-    for (int j = 0; j < SpatialImpact_RES2; j += 10) {
+  for (int i = 0; i < SolidImpact_RES1; i += 10) {
+    for (int j = 0; j < SolidImpact_RES2; j += 10) {
       
-      float x = Bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(SpatialImpact_RES1), 1 - j / float(SpatialImpact_RES2));
-      float y = Bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(SpatialImpact_RES1), 1 - j / float(SpatialImpact_RES2));
-      float z = Bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(SpatialImpact_RES1), 1 - j / float(SpatialImpact_RES2));
+      float x = Bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(SolidImpact_RES1), 1 - j / float(SolidImpact_RES2));
+      float y = Bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(SolidImpact_RES1), 1 - j / float(SolidImpact_RES2));
+      float z = Bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(SolidImpact_RES1), 1 - j / float(SolidImpact_RES2));
 
 */   
 
@@ -26155,13 +26155,13 @@ void SOLARCHVISION_calculate_windFlow () {
         
         for (int n = 0; n < num_steps; n += 1) {
           
-          SpatialImpactType = 0;
-          float inside_or_outside = ParametricSolids_SpatialImpact_atXYZ(test_point[0], test_point[1], test_point[2]);
+          SolidImpactType = 0;
+          float inside_or_outside = ParametricSolids_SolidImpact_atXYZ(test_point[0], test_point[1], test_point[2]);
           
           if (inside_or_outside > 0) {
           
-            SpatialImpactType = 1;
-            float val = ParametricSolids_SpatialImpact_atXYZ(test_point[0], test_point[1], test_point[2]);
+            SolidImpactType = 1;
+            float val = ParametricSolids_SolidImpact_atXYZ(test_point[0], test_point[1], test_point[2]);
   
     
             float MinimumDistance_trace = 1 / float(num_steps);
@@ -26178,7 +26178,7 @@ void SOLARCHVISION_calculate_windFlow () {
             
             float[] v2 = {point_min[0] - x, point_min[1] - y, point_min[2] - z};
   
-            float acceleration = -SpatialImpact_Wspd * (point_min[3] - val);
+            float acceleration = -SolidImpact_Wspd * (point_min[3] - val);
   
             float dx = v1[0] + v2[0] * acceleration;
             float dy = v1[1] + v2[1] * acceleration;
@@ -26196,7 +26196,7 @@ void SOLARCHVISION_calculate_windFlow () {
             float z2 = test_point[2] + 0.5 * dz * scale;
   
   
-            float AB = (dist(x1,y1,z1, x2,y2,z2) / scale - SpatialImpact_Wspd) / SpatialImpact_Wspd; 
+            float AB = (dist(x1,y1,z1, x2,y2,z2) / scale - SolidImpact_Wspd) / SolidImpact_Wspd; 
         
             int point_prev = 0;
             int point_next = 0;
@@ -26290,23 +26290,23 @@ float[] SOLARCHVISION_2DtraceContour (int traceType, float epsilon, float x, flo
     float b = r * sin_ang(t + test_t);
     float c = 0;
     
-    if (SpatialImpact_sectionType == 1) {
-      float Qx = a * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) - b * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]);
-      float Qy = -(a * sin_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]) + b * cos_ang(-SpatialImpact_Rotation[SpatialImpact_sectionType]));
+    if (SolidImpact_sectionType == 1) {
+      float Qx = a * cos_ang(-SolidImpact_Rotation[SolidImpact_sectionType]) - b * sin_ang(-SolidImpact_Rotation[SolidImpact_sectionType]);
+      float Qy = -(a * sin_ang(-SolidImpact_Rotation[SolidImpact_sectionType]) + b * cos_ang(-SolidImpact_Rotation[SolidImpact_sectionType]));
       float Qz = c;
       
       a = Qx; b = Qy; c = Qz; 
     }
-    else if (SpatialImpact_sectionType == 2) {
-      float Qx = a * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]);
-      float Qy = -(a * sin_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(SpatialImpact_Rotation[SpatialImpact_sectionType]));
+    else if (SolidImpact_sectionType == 2) {
+      float Qx = a * cos_ang(SolidImpact_Rotation[SolidImpact_sectionType]) - c * sin_ang(SolidImpact_Rotation[SolidImpact_sectionType]);
+      float Qy = -(a * sin_ang(SolidImpact_Rotation[SolidImpact_sectionType]) + c * cos_ang(SolidImpact_Rotation[SolidImpact_sectionType]));
       float Qz = -b; 
 
       a = Qx; b = Qy; c = Qz; 
     }
-    else if (SpatialImpact_sectionType == 3) {
-      float Qx = a * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) - c * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]);
-      float Qy = -(a * sin_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]) + c * cos_ang(90 - SpatialImpact_Rotation[SpatialImpact_sectionType]));
+    else if (SolidImpact_sectionType == 3) {
+      float Qx = a * cos_ang(90 - SolidImpact_Rotation[SolidImpact_sectionType]) - c * sin_ang(90 - SolidImpact_Rotation[SolidImpact_sectionType]);
+      float Qy = -(a * sin_ang(90 - SolidImpact_Rotation[SolidImpact_sectionType]) + c * cos_ang(90 - SolidImpact_Rotation[SolidImpact_sectionType]));
       float Qz = -b; 
 
       a = Qx; b = Qy; c = Qz; 
@@ -26316,7 +26316,7 @@ float[] SOLARCHVISION_2DtraceContour (int traceType, float epsilon, float x, flo
     float test_y = y + b;
     float test_z = z + c;
     
-    float test_v = ParametricSolids_SpatialImpact_atXYZ(test_x, test_y, test_z);        
+    float test_v = ParametricSolids_SolidImpact_atXYZ(test_x, test_y, test_z);        
     
     if ((test_v < v_min) || (v_min > 0.9 * FLOAT_undefined)) {
       v_min = test_v;
@@ -26422,7 +26422,7 @@ float[][] SOLARCHVISION_3DtraceContour (float epsilon, float x, float y, float z
       float test_y = y + b;
       float test_z = z + c;
       
-      float test_v = ParametricSolids_SpatialImpact_atXYZ(test_x, test_y, test_z);        
+      float test_v = ParametricSolids_SolidImpact_atXYZ(test_x, test_y, test_z);        
       
       if ((test_v < v_min) || (v_min > 0.9 * FLOAT_undefined)) {
         v_min = test_v;
@@ -26465,72 +26465,72 @@ float[][] SOLARCHVISION_3DtraceContour (float epsilon, float x, float y, float z
 
 
 
-float[][] SpatialImpact_Contours_U1Vertices = {{0,0,0,0}}; // keeping SpatialImpact value at the 4th member
-float[][] SpatialImpact_Contours_V1Vertices = {{0,0,0,0}}; // keeping SpatialImpact value at the 4th member
-float[][] SpatialImpact_Contours_V2Vertices = {{0,0,0,0}}; // keeping SpatialImpact value at the 4th member
-int[][] SpatialImpact_Contours_U1Lines = {{0,0}};
-int[][] SpatialImpact_Contours_V1Lines = {{0,0}};
-int[][] SpatialImpact_Contours_V2Lines = {{0,0}};
+float[][] SolidImpact_Contours_U1Vertices = {{0,0,0,0}}; // keeping SolidImpact value at the 4th member
+float[][] SolidImpact_Contours_V1Vertices = {{0,0,0,0}}; // keeping SolidImpact value at the 4th member
+float[][] SolidImpact_Contours_V2Vertices = {{0,0,0,0}}; // keeping SolidImpact value at the 4th member
+int[][] SolidImpact_Contours_U1Lines = {{0,0}};
+int[][] SolidImpact_Contours_V1Lines = {{0,0}};
+int[][] SolidImpact_Contours_V2Lines = {{0,0}};
 
 int PROCESS_subdivisions = 1; //1; // 0,1,2,3
 
-float deltaSpatialImpact = 0.05;
-float deltaSpatialImpactLines = 0.1 * deltaSpatialImpact;
+float deltaSolidImpact = 0.05;
+float deltaSolidImpactLines = 0.1 * deltaSolidImpact;
 
 
-void SOLARCHVISION_calculate_SpatialImpact_CurrentSection () {
+void SOLARCHVISION_calculate_SolidImpact_CurrentSection () {
 
-  if (SpatialImpact_sectionType != 0) {
+  if (SolidImpact_sectionType != 0) {
 
     cursor(WAIT);
   
-    SpatialImpact_Contours_U1Vertices = new float [1][4];
-    SpatialImpact_Contours_U1Vertices[0][0] = 0; 
-    SpatialImpact_Contours_U1Vertices[0][1] = 0; 
-    SpatialImpact_Contours_U1Vertices[0][2] = 0; 
-    SpatialImpact_Contours_U1Vertices[0][3] = 0;   
+    SolidImpact_Contours_U1Vertices = new float [1][4];
+    SolidImpact_Contours_U1Vertices[0][0] = 0; 
+    SolidImpact_Contours_U1Vertices[0][1] = 0; 
+    SolidImpact_Contours_U1Vertices[0][2] = 0; 
+    SolidImpact_Contours_U1Vertices[0][3] = 0;   
     
-    SpatialImpact_Contours_V1Vertices = new float [1][4];
-    SpatialImpact_Contours_V1Vertices[0][0] = 0; 
-    SpatialImpact_Contours_V1Vertices[0][1] = 0; 
-    SpatialImpact_Contours_V1Vertices[0][2] = 0; 
-    SpatialImpact_Contours_V1Vertices[0][3] = 0;
+    SolidImpact_Contours_V1Vertices = new float [1][4];
+    SolidImpact_Contours_V1Vertices[0][0] = 0; 
+    SolidImpact_Contours_V1Vertices[0][1] = 0; 
+    SolidImpact_Contours_V1Vertices[0][2] = 0; 
+    SolidImpact_Contours_V1Vertices[0][3] = 0;
   
-    SpatialImpact_Contours_V2Vertices = new float [1][4];
-    SpatialImpact_Contours_V2Vertices[0][0] = 0; 
-    SpatialImpact_Contours_V2Vertices[0][1] = 0; 
-    SpatialImpact_Contours_V2Vertices[0][2] = 0; 
-    SpatialImpact_Contours_V2Vertices[0][3] = 0;
+    SolidImpact_Contours_V2Vertices = new float [1][4];
+    SolidImpact_Contours_V2Vertices[0][0] = 0; 
+    SolidImpact_Contours_V2Vertices[0][1] = 0; 
+    SolidImpact_Contours_V2Vertices[0][2] = 0; 
+    SolidImpact_Contours_V2Vertices[0][3] = 0;
   
-    SpatialImpact_Contours_U1Lines = new int [1][2];
-    SpatialImpact_Contours_U1Lines[0][0] = 0;
-    SpatialImpact_Contours_U1Lines[0][1] = 0;
+    SolidImpact_Contours_U1Lines = new int [1][2];
+    SolidImpact_Contours_U1Lines[0][0] = 0;
+    SolidImpact_Contours_U1Lines[0][1] = 0;
   
-    SpatialImpact_Contours_V1Lines = new int [1][2];
-    SpatialImpact_Contours_V1Lines[0][0] = 0;
-    SpatialImpact_Contours_V1Lines[0][1] = 0;
+    SolidImpact_Contours_V1Lines = new int [1][2];
+    SolidImpact_Contours_V1Lines[0][0] = 0;
+    SolidImpact_Contours_V1Lines[0][1] = 0;
   
-    SpatialImpact_Contours_V2Lines = new int [1][2];
-    SpatialImpact_Contours_V2Lines[0][0] = 0;
-    SpatialImpact_Contours_V2Lines[0][1] = 0;  
+    SolidImpact_Contours_V2Lines = new int [1][2];
+    SolidImpact_Contours_V2Lines[0][0] = 0;
+    SolidImpact_Contours_V2Lines[0][1] = 0;  
   
   
-    int PAL_TYPE = SPATIAL_Pallet_CLR; 
-    int PAL_DIR = SPATIAL_Pallet_DIR;
-    float PAL_Multiplier = SPATIAL_Pallet_MLT;     
+    int PAL_TYPE = SOLID_Pallet_CLR; 
+    int PAL_DIR = SOLID_Pallet_DIR;
+    float PAL_Multiplier = SOLID_Pallet_MLT;     
     
-    SpatialImpact_Image.loadPixels();
+    SolidImpact_Image.loadPixels();
 
-    float Section_offset_U = SpatialImpact_offset_U[SpatialImpact_sectionType];
-    float Section_offset_V = SpatialImpact_offset_V[SpatialImpact_sectionType];
-    float Section_Elevation = SpatialImpact_Elevation[SpatialImpact_sectionType];
-    float Section_Rotation = SpatialImpact_Rotation[SpatialImpact_sectionType];
-    float Section_scale_U = SpatialImpact_scale_U[SpatialImpact_sectionType];
-    float Section_scale_V = SpatialImpact_scale_V[SpatialImpact_sectionType];
+    float Section_offset_U = SolidImpact_offset_U[SolidImpact_sectionType];
+    float Section_offset_V = SolidImpact_offset_V[SolidImpact_sectionType];
+    float Section_Elevation = SolidImpact_Elevation[SolidImpact_sectionType];
+    float Section_Rotation = SolidImpact_Rotation[SolidImpact_sectionType];
+    float Section_scale_U = SolidImpact_scale_U[SolidImpact_sectionType];
+    float Section_scale_V = SolidImpact_scale_V[SolidImpact_sectionType];
 
-    int Section_Type = SpatialImpact_sectionType;
-    int Section_RES1 = SpatialImpact_RES1;
-    int Section_RES2 = SpatialImpact_RES2; 
+    int Section_Type = SolidImpact_sectionType;
+    int Section_RES1 = SolidImpact_RES1;
+    int Section_RES2 = SolidImpact_RES2; 
     
     float[][] ImageVertex = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
 
@@ -26539,18 +26539,18 @@ void SOLARCHVISION_calculate_SpatialImpact_CurrentSection () {
     float[] SectionCorner_C = ImageVertex[2];
     float[] SectionCorner_D = ImageVertex[3]; 
     
-    for (int i = 0; i < SpatialImpact_RES1; i++) {
-      for (int j = 0; j < SpatialImpact_RES2; j++) {
+    for (int i = 0; i < SolidImpact_RES1; i++) {
+      for (int j = 0; j < SolidImpact_RES2; j++) {
         
-        float x = Bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(SpatialImpact_RES1), 1 - j / float(SpatialImpact_RES2));
-        float y = Bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(SpatialImpact_RES1), 1 - j / float(SpatialImpact_RES2));
-        float z = Bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(SpatialImpact_RES1), 1 - j / float(SpatialImpact_RES2));
+        float x = Bilinear(SectionCorner_A[0], SectionCorner_B[0], SectionCorner_C[0], SectionCorner_D[0], i / float(SolidImpact_RES1), 1 - j / float(SolidImpact_RES2));
+        float y = Bilinear(SectionCorner_A[1], SectionCorner_B[1], SectionCorner_C[1], SectionCorner_D[1], i / float(SolidImpact_RES1), 1 - j / float(SolidImpact_RES2));
+        float z = Bilinear(SectionCorner_A[2], SectionCorner_B[2], SectionCorner_C[2], SectionCorner_D[2], i / float(SolidImpact_RES1), 1 - j / float(SolidImpact_RES2));
       
-        SpatialImpactType = 0;
-        float val = ParametricSolids_SpatialImpact_atXYZ(x, y, z);     
+        SolidImpactType = 0;
+        float val = ParametricSolids_SolidImpact_atXYZ(x, y, z);     
         
-        float g =      roundTo(SpatialImpact_Grade * val, deltaSpatialImpact) - 0.5 * deltaSpatialImpact;
-        float g_line = roundTo(SpatialImpact_Grade * val, deltaSpatialImpactLines);
+        float g =      roundTo(SolidImpact_Grade * val, deltaSolidImpact) - 0.5 * deltaSolidImpact;
+        float g_line = roundTo(SolidImpact_Grade * val, deltaSolidImpactLines);
         
         float _u = PAL_Multiplier * val + 0.5;
         
@@ -26573,7 +26573,7 @@ void SOLARCHVISION_calculate_SpatialImpact_CurrentSection () {
         if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
    
           if ((abs(g - g_line) < 0.0001) && (g != 0) && (g_line <= 1)) {
-          //if ((g_line > 1 - deltaSpatialImpactLines) && (g_line <= 1)) { // not sure!
+          //if ((g_line > 1 - deltaSolidImpactLines) && (g_line <= 1)) { // not sure!
   
             float dx = 1;
             float dy = 0;
@@ -26586,16 +26586,16 @@ void SOLARCHVISION_calculate_SpatialImpact_CurrentSection () {
           }
         }
   
-        SpatialImpact_Image.pixels[i + j * SpatialImpact_RES1] = color(_COL[1], _COL[2], _COL[3], _COL[0]);
+        SolidImpact_Image.pixels[i + j * SolidImpact_RES1] = color(_COL[1], _COL[2], _COL[3], _COL[0]);
         
       }
     }
    
-    SpatialImpact_Image.updatePixels();
+    SolidImpact_Image.updatePixels();
     
-    if (SpatialImpact_record_JPG == 1) {
-      String myFile = get_SpatialImpact_Filename() + ".jpg";
-      SpatialImpact_Image.save(myFile);
+    if (SolidImpact_record_JPG == 1) {
+      String myFile = get_SolidImpact_Filename() + ".jpg";
+      SolidImpact_Image.save(myFile);
       SOLARCHVISION_explore_output(myFile);
       println("File created:" + myFile);        
     }    
@@ -26604,16 +26604,16 @@ void SOLARCHVISION_calculate_SpatialImpact_CurrentSection () {
   
     if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
   /*    
-      for (int k = 1; k < SpatialImpact_Contours_U1Vertices.length; k++) {  
+      for (int k = 1; k < SolidImpact_Contours_U1Vertices.length; k++) {  
   
-        float x = SpatialImpact_Contours_U1Vertices[k][0];
-        float y = SpatialImpact_Contours_U1Vertices[k][1];
-        float z = SpatialImpact_Contours_U1Vertices[k][2];
+        float x = SolidImpact_Contours_U1Vertices[k][0];
+        float y = SolidImpact_Contours_U1Vertices[k][1];
+        float z = SolidImpact_Contours_U1Vertices[k][2];
         
-        float val = SpatialImpact_Contours_U1Vertices[k][3]; //ParametricSolids_SpatialImpact_atXYZ(x, y, z);
+        float val = SolidImpact_Contours_U1Vertices[k][3]; //ParametricSolids_SolidImpact_atXYZ(x, y, z);
         
-        float g =      roundTo(SpatialImpact_Grade * val, deltaSpatialImpact) - 0.5 * deltaSpatialImpact;
-        float g_line = roundTo(SpatialImpact_Grade * val, deltaSpatialImpactLines);
+        float g =      roundTo(SolidImpact_Grade * val, deltaSolidImpact) - 0.5 * deltaSolidImpact;
+        float g_line = roundTo(SolidImpact_Grade * val, deltaSolidImpactLines);
   
         float dx = 1;
         float dy = 0;
@@ -26623,14 +26623,14 @@ void SOLARCHVISION_calculate_SpatialImpact_CurrentSection () {
   
         // making the first VVertex on the UVertice
         {
-          float[][] newVertex = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SpatialImpact_Grade}};
-          SpatialImpact_Contours_V1Vertices = (float[][]) concat(SpatialImpact_Contours_V1Vertices, newVertex);
+          float[][] newVertex = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SolidImpact_Grade}};
+          SolidImpact_Contours_V1Vertices = (float[][]) concat(SolidImpact_Contours_V1Vertices, newVertex);
         }      
         
         // making the first WVertex on the UVertice
         {
-          float[][] newVertex = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SpatialImpact_Grade}};
-          SpatialImpact_Contours_V2Vertices = (float[][]) concat(SpatialImpact_Contours_V2Vertices, newVertex);
+          float[][] newVertex = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SolidImpact_Grade}};
+          SolidImpact_Contours_V2Vertices = (float[][]) concat(SolidImpact_Contours_V2Vertices, newVertex);
         }      
         
   
@@ -26641,46 +26641,46 @@ void SOLARCHVISION_calculate_SpatialImpact_CurrentSection () {
   
     }
   
-    if (SpatialImpact_record_PDF == 1) {
+    if (SolidImpact_record_PDF == 1) {
       
-      String myFile = get_SpatialImpact_Filename() + ".pdf";
+      String myFile = get_SolidImpact_Filename() + ".pdf";
       
-      PGraphics SpatialImpact_PDF = createGraphics(SpatialImpact_RES1, SpatialImpact_RES2, PDF, myFile);
+      PGraphics SolidImpact_PDF = createGraphics(SolidImpact_RES1, SolidImpact_RES2, PDF, myFile);
       
-      SpatialImpact_PDF.beginDraw();
+      SolidImpact_PDF.beginDraw();
       
-      SpatialImpact_PDF.image(SpatialImpact_Image, 0, 0, SpatialImpact_RES1, SpatialImpact_RES2);
+      SolidImpact_PDF.image(SolidImpact_Image, 0, 0, SolidImpact_RES1, SolidImpact_RES2);
   
       if ((PROCESS_subdivisions == 2) || (PROCESS_subdivisions == 3)) {
-        if (Display_SpatialImpact_Lines != 0) {
+        if (Display_SolidImpact_Lines != 0) {
           
           for (int U_or_V_or_W = 0; U_or_V_or_W < 3; U_or_V_or_W++) {
       
             if (U_or_V_or_W == 0) {
-              SpatialImpact_PDF.strokeWeight(0.25);
-              SpatialImpact_PDF.stroke(255, 0, 0);
-              SpatialImpact_PDF.fill(255, 0, 0);  
+              SolidImpact_PDF.strokeWeight(0.25);
+              SolidImpact_PDF.stroke(255, 0, 0);
+              SolidImpact_PDF.fill(255, 0, 0);  
               } 
             if (U_or_V_or_W == 1) {
-              SpatialImpact_PDF.strokeWeight(0.25);
-              SpatialImpact_PDF.stroke(0, 255, 0);
-              SpatialImpact_PDF.fill(0, 255, 0);  
+              SolidImpact_PDF.strokeWeight(0.25);
+              SolidImpact_PDF.stroke(0, 255, 0);
+              SolidImpact_PDF.fill(0, 255, 0);  
             }
             if (U_or_V_or_W == 2) {
-              SpatialImpact_PDF.strokeWeight(0.25);
-              SpatialImpact_PDF.stroke(0, 0, 255);
-              SpatialImpact_PDF.fill(0, 0, 255);  
+              SolidImpact_PDF.strokeWeight(0.25);
+              SolidImpact_PDF.stroke(0, 0, 255);
+              SolidImpact_PDF.fill(0, 0, 255);  
             }
             
             int q_num = 0;
             if (U_or_V_or_W == 0) {
-              q_num = SpatialImpact_Contours_U1Lines.length;
+              q_num = SolidImpact_Contours_U1Lines.length;
             } 
             if (U_or_V_or_W == 1) {
-              q_num = SpatialImpact_Contours_V1Lines.length;
+              q_num = SolidImpact_Contours_V1Lines.length;
             }
             if (U_or_V_or_W == 2) {
-              q_num = SpatialImpact_Contours_V2Lines.length;
+              q_num = SolidImpact_Contours_V2Lines.length;
             }
             
             for (int q = 1; q < q_num; q++) {
@@ -26694,34 +26694,34 @@ void SOLARCHVISION_calculate_SpatialImpact_CurrentSection () {
                 float x0 = 0, y0 = 0, z0 = 0;
                 
                 if (U_or_V_or_W == 0) {
-                  n = SpatialImpact_Contours_U1Lines[q][p];
-                  x0 = SpatialImpact_Contours_U1Vertices[n][0];
-                  y0 = SpatialImpact_Contours_U1Vertices[n][1];
-                  z0 = SpatialImpact_Contours_U1Vertices[n][2];                
+                  n = SolidImpact_Contours_U1Lines[q][p];
+                  x0 = SolidImpact_Contours_U1Vertices[n][0];
+                  y0 = SolidImpact_Contours_U1Vertices[n][1];
+                  z0 = SolidImpact_Contours_U1Vertices[n][2];                
                 }
                 if (U_or_V_or_W == 1) {
-                  n = SpatialImpact_Contours_V1Lines[q][p];        
-                  x0 = SpatialImpact_Contours_V1Vertices[n][0];
-                  y0 = SpatialImpact_Contours_V1Vertices[n][1];
-                  z0 = SpatialImpact_Contours_V1Vertices[n][2];
+                  n = SolidImpact_Contours_V1Lines[q][p];        
+                  x0 = SolidImpact_Contours_V1Vertices[n][0];
+                  y0 = SolidImpact_Contours_V1Vertices[n][1];
+                  z0 = SolidImpact_Contours_V1Vertices[n][2];
                 }
                 if (U_or_V_or_W == 2) {
-                  n = SpatialImpact_Contours_V2Lines[q][p];        
-                  x0 = SpatialImpact_Contours_V2Vertices[n][0];
-                  y0 = SpatialImpact_Contours_V2Vertices[n][1];
-                  z0 = SpatialImpact_Contours_V2Vertices[n][2];
+                  n = SolidImpact_Contours_V2Lines[q][p];        
+                  x0 = SolidImpact_Contours_V2Vertices[n][0];
+                  y0 = SolidImpact_Contours_V2Vertices[n][1];
+                  z0 = SolidImpact_Contours_V2Vertices[n][2];
                 }
                 
                 float r = 0;
                 
-                if (SpatialImpact_sectionType == 1) {
-                  r = -SpatialImpact_Rotation[SpatialImpact_sectionType];
+                if (SolidImpact_sectionType == 1) {
+                  r = -SolidImpact_Rotation[SolidImpact_sectionType];
                 }
-                else if (SpatialImpact_sectionType == 2) {
-                  r = SpatialImpact_Rotation[SpatialImpact_sectionType];
+                else if (SolidImpact_sectionType == 2) {
+                  r = SolidImpact_Rotation[SolidImpact_sectionType];
                 }
-                else if (SpatialImpact_sectionType == 3) {
-                  r = -SpatialImpact_Rotation[SpatialImpact_sectionType];              
+                else if (SolidImpact_sectionType == 3) {
+                  r = -SolidImpact_Rotation[SolidImpact_sectionType];              
                 }     
                 
                 float x = x0 * cos_ang(r) - y0 * sin_ang(r);
@@ -26731,51 +26731,51 @@ void SOLARCHVISION_calculate_SpatialImpact_CurrentSection () {
                 float a = 0;
                 float b = 0;
                 
-                if (SpatialImpact_sectionType == 1) {
+                if (SolidImpact_sectionType == 1) {
                   a = x;
                   b = -y;
                 }
-                else if (SpatialImpact_sectionType == 2) {
+                else if (SolidImpact_sectionType == 2) {
                   a = x;
                   b = -z;
                 }
-                else if (SpatialImpact_sectionType == 3) {
+                else if (SolidImpact_sectionType == 3) {
                   a = -y;
                   b = -z;
                 }
                
-                i[p] = SpatialImpact_RES1 * ((a - SpatialImpact_offset_U[SpatialImpact_sectionType]) / SpatialImpact_scale_U[SpatialImpact_sectionType] + 0.5);
-                j[p] = SpatialImpact_RES2 * ((b + SpatialImpact_offset_V[SpatialImpact_sectionType]) / SpatialImpact_scale_V[SpatialImpact_sectionType] + 0.5); 
+                i[p] = SolidImpact_RES1 * ((a - SolidImpact_offset_U[SolidImpact_sectionType]) / SolidImpact_scale_U[SolidImpact_sectionType] + 0.5);
+                j[p] = SolidImpact_RES2 * ((b + SolidImpact_offset_V[SolidImpact_sectionType]) / SolidImpact_scale_V[SolidImpact_sectionType] + 0.5); 
             
               }   
                   
-              SpatialImpact_PDF.line(i[0], j[0], i[1], j[1]);
+              SolidImpact_PDF.line(i[0], j[0], i[1], j[1]);
             }
           }
         }
         
-        if (Display_SpatialImpact_Points != 0) {
-          SpatialImpact_PDF.strokeWeight(0.5);
-          SpatialImpact_PDF.stroke(255, 127, 0);
-          SpatialImpact_PDF.noFill();  
-          SpatialImpact_PDF.ellipseMode(CENTER);
+        if (Display_SolidImpact_Points != 0) {
+          SolidImpact_PDF.strokeWeight(0.5);
+          SolidImpact_PDF.stroke(255, 127, 0);
+          SolidImpact_PDF.noFill();  
+          SolidImpact_PDF.ellipseMode(CENTER);
           
-          for (int n = 1; n < SpatialImpact_Contours_U1Vertices.length; n++) {
+          for (int n = 1; n < SolidImpact_Contours_U1Vertices.length; n++) {
             
-            float x0 = SpatialImpact_Contours_U1Vertices[n][0];
-            float y0 = SpatialImpact_Contours_U1Vertices[n][1];
-            float z0 = SpatialImpact_Contours_U1Vertices[n][2];
+            float x0 = SolidImpact_Contours_U1Vertices[n][0];
+            float y0 = SolidImpact_Contours_U1Vertices[n][1];
+            float z0 = SolidImpact_Contours_U1Vertices[n][2];
   
             float r = 0;
             
-            if (SpatialImpact_sectionType == 1) {
-              r = -SpatialImpact_Rotation[SpatialImpact_sectionType];
+            if (SolidImpact_sectionType == 1) {
+              r = -SolidImpact_Rotation[SolidImpact_sectionType];
             }
-            else if (SpatialImpact_sectionType == 2) {
-              r = SpatialImpact_Rotation[SpatialImpact_sectionType];
+            else if (SolidImpact_sectionType == 2) {
+              r = SolidImpact_Rotation[SolidImpact_sectionType];
             }
-            else if (SpatialImpact_sectionType == 3) {
-              r = -SpatialImpact_Rotation[SpatialImpact_sectionType];              
+            else if (SolidImpact_sectionType == 3) {
+              r = -SolidImpact_Rotation[SolidImpact_sectionType];              
             }     
             
             float x = x0 * cos_ang(r) - y0 * sin_ang(r);
@@ -26785,34 +26785,34 @@ void SOLARCHVISION_calculate_SpatialImpact_CurrentSection () {
             float a = 0;
             float b = 0;
             
-            if (SpatialImpact_sectionType == 1) {
+            if (SolidImpact_sectionType == 1) {
               a = x;
               b = -y;
             }
-            else if (SpatialImpact_sectionType == 2) {
+            else if (SolidImpact_sectionType == 2) {
               a = x;
               b = -z;
             }
-            else if (SpatialImpact_sectionType == 3) {
+            else if (SolidImpact_sectionType == 3) {
               a = -y;
               b = -z;
             }
   
-            float i = SpatialImpact_RES1 * ((a - SpatialImpact_offset_U[SpatialImpact_sectionType]) / SpatialImpact_scale_U[SpatialImpact_sectionType] + 0.5);
-            float j = SpatialImpact_RES2 * ((b + SpatialImpact_offset_V[SpatialImpact_sectionType]) / SpatialImpact_scale_V[SpatialImpact_sectionType] + 0.5);
+            float i = SolidImpact_RES1 * ((a - SolidImpact_offset_U[SolidImpact_sectionType]) / SolidImpact_scale_U[SolidImpact_sectionType] + 0.5);
+            float j = SolidImpact_RES2 * ((b + SolidImpact_offset_V[SolidImpact_sectionType]) / SolidImpact_scale_V[SolidImpact_sectionType] + 0.5);
           
-            SpatialImpact_PDF.ellipse(i, j, 1, 1);
+            SolidImpact_PDF.ellipse(i, j, 1, 1);
           }
       
-          SpatialImpact_PDF.strokeWeight(0);
+          SolidImpact_PDF.strokeWeight(0);
       
         }
       }
   
     
-      SpatialImpact_PDF.dispose();
+      SolidImpact_PDF.dispose();
       
-      SpatialImpact_PDF.endDraw();
+      SolidImpact_PDF.endDraw();
       
       SOLARCHVISION_explore_output(myFile);
       println("File created:" + myFile);       
@@ -26824,26 +26824,26 @@ void SOLARCHVISION_calculate_SpatialImpact_CurrentSection () {
 
 
 
-void SOLARCHVISION_draw_SpatialImpact_lines () {
+void SOLARCHVISION_draw_SolidImpact_lines () {
 
-  if (Display_SpatialImpact_Lines != 0) {
+  if (Display_SolidImpact_Lines != 0) {
 
     WIN3D_Diagrams.strokeWeight(1);
     WIN3D_Diagrams.stroke(255, 0, 0);
     WIN3D_Diagrams.fill(255, 0, 0);  
 
-    for (int q = 1; q < SpatialImpact_Contours_U1Lines.length; q++) {
+    for (int q = 1; q < SolidImpact_Contours_U1Lines.length; q++) {
       
-      int n1 = SpatialImpact_Contours_U1Lines[q][0];
-      int n2 = SpatialImpact_Contours_U1Lines[q][1];
+      int n1 = SolidImpact_Contours_U1Lines[q][0];
+      int n2 = SolidImpact_Contours_U1Lines[q][1];
       
-      float x1 = SpatialImpact_Contours_U1Vertices[n1][0];
-      float y1 = SpatialImpact_Contours_U1Vertices[n1][1];
-      float z1 = SpatialImpact_Contours_U1Vertices[n1][2];
+      float x1 = SolidImpact_Contours_U1Vertices[n1][0];
+      float y1 = SolidImpact_Contours_U1Vertices[n1][1];
+      float z1 = SolidImpact_Contours_U1Vertices[n1][2];
 
-      float x2 = SpatialImpact_Contours_U1Vertices[n2][0];
-      float y2 = SpatialImpact_Contours_U1Vertices[n2][1];
-      float z2 = SpatialImpact_Contours_U1Vertices[n2][2];
+      float x2 = SolidImpact_Contours_U1Vertices[n2][0];
+      float y2 = SolidImpact_Contours_U1Vertices[n2][1];
+      float z2 = SolidImpact_Contours_U1Vertices[n2][2];
       
       WIN3D_Diagrams.line(x1 * OBJECTS_scale * WIN3D_scale3D, -y1 * OBJECTS_scale * WIN3D_scale3D, z1 * OBJECTS_scale * WIN3D_scale3D, x2 * OBJECTS_scale * WIN3D_scale3D, -y2 * OBJECTS_scale * WIN3D_scale3D, z2 * OBJECTS_scale * WIN3D_scale3D);
     }
@@ -26852,18 +26852,18 @@ void SOLARCHVISION_draw_SpatialImpact_lines () {
     WIN3D_Diagrams.stroke(0, 255, 0);
     WIN3D_Diagrams.fill(0, 255, 0);  
 
-    for (int q = 1; q < SpatialImpact_Contours_V1Lines.length; q++) {
+    for (int q = 1; q < SolidImpact_Contours_V1Lines.length; q++) {
       
-      int n1 = SpatialImpact_Contours_V1Lines[q][0];
-      int n2 = SpatialImpact_Contours_V1Lines[q][1];
+      int n1 = SolidImpact_Contours_V1Lines[q][0];
+      int n2 = SolidImpact_Contours_V1Lines[q][1];
       
-      float x1 = SpatialImpact_Contours_V1Vertices[n1][0];
-      float y1 = SpatialImpact_Contours_V1Vertices[n1][1];
-      float z1 = SpatialImpact_Contours_V1Vertices[n1][2];
+      float x1 = SolidImpact_Contours_V1Vertices[n1][0];
+      float y1 = SolidImpact_Contours_V1Vertices[n1][1];
+      float z1 = SolidImpact_Contours_V1Vertices[n1][2];
 
-      float x2 = SpatialImpact_Contours_V1Vertices[n2][0];
-      float y2 = SpatialImpact_Contours_V1Vertices[n2][1];
-      float z2 = SpatialImpact_Contours_V1Vertices[n2][2];
+      float x2 = SolidImpact_Contours_V1Vertices[n2][0];
+      float y2 = SolidImpact_Contours_V1Vertices[n2][1];
+      float z2 = SolidImpact_Contours_V1Vertices[n2][2];
       
       WIN3D_Diagrams.line(x1 * OBJECTS_scale * WIN3D_scale3D, -y1 * OBJECTS_scale * WIN3D_scale3D, z1 * OBJECTS_scale * WIN3D_scale3D, x2 * OBJECTS_scale * WIN3D_scale3D, -y2 * OBJECTS_scale * WIN3D_scale3D, z2 * OBJECTS_scale * WIN3D_scale3D);
     }
@@ -26872,18 +26872,18 @@ void SOLARCHVISION_draw_SpatialImpact_lines () {
     WIN3D_Diagrams.stroke(255, 0, 0);
     WIN3D_Diagrams.fill(255, 0, 0);  
 
-    for (int q = 1; q < SpatialImpact_Contours_V2Lines.length; q++) {
+    for (int q = 1; q < SolidImpact_Contours_V2Lines.length; q++) {
       
-      int n1 = SpatialImpact_Contours_V2Lines[q][0];
-      int n2 = SpatialImpact_Contours_V2Lines[q][1];
+      int n1 = SolidImpact_Contours_V2Lines[q][0];
+      int n2 = SolidImpact_Contours_V2Lines[q][1];
       
-      float x1 = SpatialImpact_Contours_V2Vertices[n1][0];
-      float y1 = SpatialImpact_Contours_V2Vertices[n1][1];
-      float z1 = SpatialImpact_Contours_V2Vertices[n1][2];
+      float x1 = SolidImpact_Contours_V2Vertices[n1][0];
+      float y1 = SolidImpact_Contours_V2Vertices[n1][1];
+      float z1 = SolidImpact_Contours_V2Vertices[n1][2];
 
-      float x2 = SpatialImpact_Contours_V2Vertices[n2][0];
-      float y2 = SpatialImpact_Contours_V2Vertices[n2][1];
-      float z2 = SpatialImpact_Contours_V2Vertices[n2][2];
+      float x2 = SolidImpact_Contours_V2Vertices[n2][0];
+      float y2 = SolidImpact_Contours_V2Vertices[n2][1];
+      float z2 = SolidImpact_Contours_V2Vertices[n2][2];
       
       WIN3D_Diagrams.line(x1 * OBJECTS_scale * WIN3D_scale3D, -y1 * OBJECTS_scale * WIN3D_scale3D, z1 * OBJECTS_scale * WIN3D_scale3D, x2 * OBJECTS_scale * WIN3D_scale3D, -y2 * OBJECTS_scale * WIN3D_scale3D, z2 * OBJECTS_scale * WIN3D_scale3D);
     }
@@ -26894,8 +26894,8 @@ void SOLARCHVISION_draw_SpatialImpact_lines () {
   
 }
 
-void SOLARCHVISION_draw_SpatialImpact_points () {
-  if (Display_SpatialImpact_Points != 0) {
+void SOLARCHVISION_draw_SolidImpact_points () {
+  if (Display_SolidImpact_Points != 0) {
 
     WIN3D_Diagrams.strokeWeight(0);
     WIN3D_Diagrams.stroke(255, 127, 0);
@@ -26903,11 +26903,11 @@ void SOLARCHVISION_draw_SpatialImpact_points () {
     
     float R = 1; //0.2;
     
-    for (int n = 1; n < SpatialImpact_Contours_U1Vertices.length; n++) {
+    for (int n = 1; n < SolidImpact_Contours_U1Vertices.length; n++) {
 
-      float x = SpatialImpact_Contours_U1Vertices[n][0];
-      float y = SpatialImpact_Contours_U1Vertices[n][1];
-      float z = SpatialImpact_Contours_U1Vertices[n][2];
+      float x = SolidImpact_Contours_U1Vertices[n][0];
+      float y = SolidImpact_Contours_U1Vertices[n][1];
+      float z = SolidImpact_Contours_U1Vertices[n][2];
       
       WIN3D_Diagrams.pushMatrix();
       WIN3D_Diagrams.translate(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
@@ -26928,17 +26928,17 @@ void SOLARCHVISION_trace_U1Line (float[] test_point_dir, float g_line, int n_Tri
   
   for (int n = 0; n < n_Tries; n++) {
 
-    float[][] preVertex = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SpatialImpact_Grade}};
+    float[][] preVertex = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SolidImpact_Grade}};
     
     if (point_prev == 0) {
       float nearestPointDist = FLOAT_undefined;
       int nearestPointNum = 0;
       
-      for (int q = 1; q < SpatialImpact_Contours_U1Vertices.length; q++) {
-        //if (preVertex[0][3] == SpatialImpact_Contours_U1Vertices[q][3]) {
-        if (preVertex[0][3] - SpatialImpact_Contours_U1Vertices[q][3] < 0.0001) {
+      for (int q = 1; q < SolidImpact_Contours_U1Vertices.length; q++) {
+        //if (preVertex[0][3] == SolidImpact_Contours_U1Vertices[q][3]) {
+        if (preVertex[0][3] - SolidImpact_Contours_U1Vertices[q][3] < 0.0001) {
           
-          float d = dist(preVertex[0][0], preVertex[0][1], preVertex[0][2], SpatialImpact_Contours_U1Vertices[q][0], SpatialImpact_Contours_U1Vertices[q][1], SpatialImpact_Contours_U1Vertices[q][2]);
+          float d = dist(preVertex[0][0], preVertex[0][1], preVertex[0][2], SolidImpact_Contours_U1Vertices[q][0], SolidImpact_Contours_U1Vertices[q][1], SolidImpact_Contours_U1Vertices[q][2]);
           
           if (nearestPointDist > d)  {
             nearestPointDist = d;
@@ -26950,17 +26950,17 @@ void SOLARCHVISION_trace_U1Line (float[] test_point_dir, float g_line, int n_Tri
       if (nearestPointDist < 0.5) {  //i.e. 0.5m 
         point_prev = nearestPointNum;
         
-        test_point_dir[0] = SpatialImpact_Contours_U1Vertices[point_prev][0];
-        test_point_dir[1] = SpatialImpact_Contours_U1Vertices[point_prev][1];
-        test_point_dir[2] = SpatialImpact_Contours_U1Vertices[point_prev][2];
+        test_point_dir[0] = SolidImpact_Contours_U1Vertices[point_prev][0];
+        test_point_dir[1] = SolidImpact_Contours_U1Vertices[point_prev][1];
+        test_point_dir[2] = SolidImpact_Contours_U1Vertices[point_prev][2];
       }             
     } 
 
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    test_point_dir = SOLARCHVISION_2DtraceContour(0, MinimumDistance_traceU, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / SpatialImpact_Grade);
+    test_point_dir = SOLARCHVISION_2DtraceContour(0, MinimumDistance_traceU, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / SolidImpact_Grade);
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    float[][] newVertex = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SpatialImpact_Grade}};
+    float[][] newVertex = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SolidImpact_Grade}};
     point_next = 0; 
 
     float nearestPointDist = FLOAT_undefined;
@@ -26968,11 +26968,11 @@ void SOLARCHVISION_trace_U1Line (float[] test_point_dir, float g_line, int n_Tri
 
     int next_point_existed = 0;
     
-    for (int q = 1; q < SpatialImpact_Contours_U1Vertices.length; q++) {
-      //if (newVertex[0][3] == SpatialImpact_Contours_U1Vertices[q][3]) {
-      if (abs(newVertex[0][3] - SpatialImpact_Contours_U1Vertices[q][3]) < 0.0001) {
+    for (int q = 1; q < SolidImpact_Contours_U1Vertices.length; q++) {
+      //if (newVertex[0][3] == SolidImpact_Contours_U1Vertices[q][3]) {
+      if (abs(newVertex[0][3] - SolidImpact_Contours_U1Vertices[q][3]) < 0.0001) {
         
-        float d = dist(newVertex[0][0], newVertex[0][1], newVertex[0][2], SpatialImpact_Contours_U1Vertices[q][0], SpatialImpact_Contours_U1Vertices[q][1], SpatialImpact_Contours_U1Vertices[q][2]);
+        float d = dist(newVertex[0][0], newVertex[0][1], newVertex[0][2], SolidImpact_Contours_U1Vertices[q][0], SolidImpact_Contours_U1Vertices[q][1], SolidImpact_Contours_U1Vertices[q][2]);
 
         if ((nearestPointDist > d) && (point_prev != q)) { 
           nearestPointDist = d;
@@ -26984,9 +26984,9 @@ void SOLARCHVISION_trace_U1Line (float[] test_point_dir, float g_line, int n_Tri
     if (nearestPointDist < MinimumDistance_traceU) {
       point_next = nearestPointNum;
       
-      test_point_dir[0] = SpatialImpact_Contours_U1Vertices[point_next][0];
-      test_point_dir[1] = SpatialImpact_Contours_U1Vertices[point_next][1];
-      test_point_dir[2] = SpatialImpact_Contours_U1Vertices[point_next][2];
+      test_point_dir[0] = SolidImpact_Contours_U1Vertices[point_next][0];
+      test_point_dir[1] = SolidImpact_Contours_U1Vertices[point_next][1];
+      test_point_dir[2] = SolidImpact_Contours_U1Vertices[point_next][2];
 
       next_point_existed = 1;        
     }
@@ -26994,13 +26994,13 @@ void SOLARCHVISION_trace_U1Line (float[] test_point_dir, float g_line, int n_Tri
     
     if (point_next == 0) {
       
-      SpatialImpact_Contours_U1Vertices = (float[][]) concat(SpatialImpact_Contours_U1Vertices, newVertex);              
-      point_next = SpatialImpact_Contours_U1Vertices.length - 1;
+      SolidImpact_Contours_U1Vertices = (float[][]) concat(SolidImpact_Contours_U1Vertices, newVertex);              
+      point_next = SolidImpact_Contours_U1Vertices.length - 1;
     } 
         
     if ((point_prev != 0) && (point_next != 0)) {
         int[][] newU1Line = {{point_prev, point_next}};
-        SpatialImpact_Contours_U1Lines = (int[][]) concat(SpatialImpact_Contours_U1Lines, newU1Line);
+        SolidImpact_Contours_U1Lines = (int[][]) concat(SolidImpact_Contours_U1Lines, newU1Line);
         
         point_prev = point_next; 
     }
@@ -27014,44 +27014,44 @@ void SOLARCHVISION_trace_U1Line (float[] test_point_dir, float g_line, int n_Tri
 
 void SOLARCHVISION_trace_V1Line (float[] test_point_dir, float g_line, int n_Tries) {
 
-  int point_prev = SpatialImpact_Contours_V1Vertices.length - 1; // the last added point
+  int point_prev = SolidImpact_Contours_V1Vertices.length - 1; // the last added point
   int point_next = 0;
   
   for (int n = 0; n < n_Tries; n++) {
 
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    test_point_dir = SOLARCHVISION_2DtraceContour(-1, MinimumDistance_traceV, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / SpatialImpact_Grade);
+    test_point_dir = SOLARCHVISION_2DtraceContour(-1, MinimumDistance_traceV, test_point_dir[0], test_point_dir[1], test_point_dir[2], test_point_dir[3], test_point_dir[4], test_point_dir[5], g_line / SolidImpact_Grade);
     //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     
-    float[][] newVertex = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SpatialImpact_Grade}};
+    float[][] newVertex = {{test_point_dir[0], test_point_dir[1], test_point_dir[2], g_line / SolidImpact_Grade}};
 
     point_next = 0;
     
     {
-      SpatialImpact_Contours_V1Vertices = (float[][]) concat(SpatialImpact_Contours_V1Vertices, newVertex);              
-      point_next = SpatialImpact_Contours_V1Vertices.length - 1;
+      SolidImpact_Contours_V1Vertices = (float[][]) concat(SolidImpact_Contours_V1Vertices, newVertex);              
+      point_next = SolidImpact_Contours_V1Vertices.length - 1;
     }
     
     if ((point_prev != 0) && (point_next != 0)) {
       int[][] newV1Line = {{point_prev, point_next}};
-      SpatialImpact_Contours_V1Lines = (int[][]) concat(SpatialImpact_Contours_V1Lines, newV1Line);
+      SolidImpact_Contours_V1Lines = (int[][]) concat(SolidImpact_Contours_V1Lines, newV1Line);
       
-      float val_new = ParametricSolids_SpatialImpact_atXYZ(test_point_dir[0], test_point_dir[1], test_point_dir[2]);
-      float g_new =      roundTo(SpatialImpact_Grade * val_new, deltaSpatialImpact) - 0.5 * deltaSpatialImpact;
-      float g_line_new = roundTo(SpatialImpact_Grade * val_new, deltaSpatialImpactLines);
+      float val_new = ParametricSolids_SolidImpact_atXYZ(test_point_dir[0], test_point_dir[1], test_point_dir[2]);
+      float g_new =      roundTo(SolidImpact_Grade * val_new, deltaSolidImpact) - 0.5 * deltaSolidImpact;
+      float g_line_new = roundTo(SolidImpact_Grade * val_new, deltaSolidImpactLines);
       
-      if (g_line - g_line_new >= deltaSpatialImpact) {
+      if (g_line - g_line_new >= deltaSolidImpact) {
         
 
         float nearestPointDist = FLOAT_undefined;
         int nearestPointNum = 0;
         
-        for (int q = 1; q < SpatialImpact_Contours_U1Vertices.length; q++) {
+        for (int q = 1; q < SolidImpact_Contours_U1Vertices.length; q++) {
 
-          //if (abs(g_line_new / SpatialImpact_Grade - SpatialImpact_Contours_U1Vertices[q][3]) < 0.0001) {
-          if (g_line - g_line_new < 2 * deltaSpatialImpact) {
+          //if (abs(g_line_new / SolidImpact_Grade - SolidImpact_Contours_U1Vertices[q][3]) < 0.0001) {
+          if (g_line - g_line_new < 2 * deltaSolidImpact) {
             
-            float d = dist(test_point_dir[0], test_point_dir[1], test_point_dir[2], SpatialImpact_Contours_U1Vertices[q][0], SpatialImpact_Contours_U1Vertices[q][1], SpatialImpact_Contours_U1Vertices[q][2]);
+            float d = dist(test_point_dir[0], test_point_dir[1], test_point_dir[2], SolidImpact_Contours_U1Vertices[q][0], SolidImpact_Contours_U1Vertices[q][1], SolidImpact_Contours_U1Vertices[q][2]);
     
             if (nearestPointDist > d) { 
               nearestPointDist = d;
@@ -27065,11 +27065,11 @@ void SOLARCHVISION_trace_V1Line (float[] test_point_dir, float g_line, int n_Tri
           
           int q = nearestPointNum;
           
-          float[][] endVertex = {{SpatialImpact_Contours_U1Vertices[q][0], SpatialImpact_Contours_U1Vertices[q][1], SpatialImpact_Contours_U1Vertices[q][2], SpatialImpact_Contours_U1Vertices[q][3]}};
-          SpatialImpact_Contours_V2Vertices = (float[][]) concat(SpatialImpact_Contours_V2Vertices, endVertex);
+          float[][] endVertex = {{SolidImpact_Contours_U1Vertices[q][0], SolidImpact_Contours_U1Vertices[q][1], SolidImpact_Contours_U1Vertices[q][2], SolidImpact_Contours_U1Vertices[q][3]}};
+          SolidImpact_Contours_V2Vertices = (float[][]) concat(SolidImpact_Contours_V2Vertices, endVertex);
   
-          int[][] newV2Line = {{SpatialImpact_Contours_V2Vertices.length - 2, SpatialImpact_Contours_V2Vertices.length - 1}}; // last two WVertices
-          SpatialImpact_Contours_V2Lines = (int[][]) concat(SpatialImpact_Contours_V2Lines, newV2Line);      
+          int[][] newV2Line = {{SolidImpact_Contours_V2Vertices.length - 2, SolidImpact_Contours_V2Vertices.length - 1}}; // last two WVertices
+          SolidImpact_Contours_V2Lines = (int[][]) concat(SolidImpact_Contours_V2Lines, newV2Line);      
         }
         
         
@@ -30748,8 +30748,8 @@ void mouseClicked () {
               WIN3D_Update = 1;                         
             }               
 
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Process Spatial Impact")) {
-              SOLARCHVISION_calculate_SpatialImpact_selectedSections();              
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Process Solid Impact")) {
+              SOLARCHVISION_calculate_SolidImpact_selectedSections();              
               WIN3D_Update = 1;                         
             }  
 
@@ -30830,7 +30830,7 @@ void mouseClicked () {
               ROLLOUT_Update = 1;  
             } 
 
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("REC. Spatial Graph")) { 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("REC. Solid Graph")) { 
               STUDY_record_AUTO = 0;
               STUDY_record_JPG = 0;
               STUDY_record_PDF = 0;
@@ -30884,7 +30884,7 @@ void mouseClicked () {
               WORLD_Update = 1;
             }   
     
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("JPG Spatial Graph")) { 
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("JPG Solid Graph")) { 
               WIN3D_record_JPG = 1;
               WIN3D_Update = 1;
             } 
@@ -31053,8 +31053,8 @@ void mouseClicked () {
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
             }           
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Vertex Spatial")) {
-              WIN3D_FACES_SHADE = Shade_Vertex_Spatial;
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Shade Vertex Solid")) {
+              WIN3D_FACES_SHADE = Shade_Vertex_Solid;
               
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
@@ -31188,8 +31188,8 @@ void mouseClicked () {
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
             }  
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Spatial Section")) {
-              Display_SpatialImpact_Image = (Display_SpatialImpact_Image + 1) % 2;
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Solid Section")) {
+              Display_SolidImpact_Image = (Display_SolidImpact_Image + 1) % 2;
               
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
@@ -33342,16 +33342,16 @@ void mouseClicked () {
                       if (max_z < the_z) max_z = the_z;
                     }
                     
-                    float Section_offset_U = SpatialImpact_offset_U[SpatialImpact_sectionType];
-                    float Section_offset_V = SpatialImpact_offset_V[SpatialImpact_sectionType];
-                    float Section_Elevation = SpatialImpact_Elevation[SpatialImpact_sectionType];
-                    float Section_Rotation = SpatialImpact_Rotation[SpatialImpact_sectionType];
-                    float Section_scale_U = SpatialImpact_scale_U[SpatialImpact_sectionType];
-                    float Section_scale_V = SpatialImpact_scale_V[SpatialImpact_sectionType];
+                    float Section_offset_U = SolidImpact_offset_U[SolidImpact_sectionType];
+                    float Section_offset_V = SolidImpact_offset_V[SolidImpact_sectionType];
+                    float Section_Elevation = SolidImpact_Elevation[SolidImpact_sectionType];
+                    float Section_Rotation = SolidImpact_Rotation[SolidImpact_sectionType];
+                    float Section_scale_U = SolidImpact_scale_U[SolidImpact_sectionType];
+                    float Section_scale_V = SolidImpact_scale_V[SolidImpact_sectionType];
               
-                    int Section_Type = SpatialImpact_sectionType;
-                    int Section_RES1 = SpatialImpact_RES1;
-                    int Section_RES2 = SpatialImpact_RES2;                        
+                    int Section_Type = SolidImpact_sectionType;
+                    int Section_RES1 = SolidImpact_RES1;
+                    int Section_RES2 = SolidImpact_RES2;                        
                     
 
 
@@ -33455,18 +33455,18 @@ void mouseClicked () {
                       selectedSection_numbers = concat(selectedSection_numbers, newlyAddedSection);
                     }  
 
-                    SpatialImpact_offset_U[SpatialImpact_sectionType] = Section_offset_U;
-                    SpatialImpact_offset_V[SpatialImpact_sectionType] = Section_offset_V;
-                    SpatialImpact_Elevation[SpatialImpact_sectionType] = Section_Elevation;
-                    SpatialImpact_Rotation[SpatialImpact_sectionType] = Section_Rotation;
-                    SpatialImpact_scale_U[SpatialImpact_sectionType] = Section_scale_U;
-                    SpatialImpact_scale_V[SpatialImpact_sectionType] = Section_scale_V;
+                    SolidImpact_offset_U[SolidImpact_sectionType] = Section_offset_U;
+                    SolidImpact_offset_V[SolidImpact_sectionType] = Section_offset_V;
+                    SolidImpact_Elevation[SolidImpact_sectionType] = Section_Elevation;
+                    SolidImpact_Rotation[SolidImpact_sectionType] = Section_Rotation;
+                    SolidImpact_scale_U[SolidImpact_sectionType] = Section_scale_U;
+                    SolidImpact_scale_V[SolidImpact_sectionType] = Section_scale_V;
               
-                    SpatialImpact_sectionType = Section_Type;
-                    SpatialImpact_RES1 = Section_RES1;
-                    SpatialImpact_RES2 = Section_RES2;    
+                    SolidImpact_sectionType = Section_Type;
+                    SolidImpact_RES1 = Section_RES1;
+                    SolidImpact_RES2 = Section_RES2;    
     
-                    SOLARCHVISION_calculate_SpatialImpact_selectedSections();
+                    SOLARCHVISION_calculate_SolidImpact_selectedSections();
                    
                    
                     SolarImpact_sectionType = Section_Type;          
@@ -33528,7 +33528,7 @@ void mouseClicked () {
                   SOLARCHVISION_calculate_selection_Pivot();
                 }                  
                 
-                if (SOLID_created != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections(); //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                if (SOLID_created != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections(); //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                 
               }
             }          
@@ -34104,32 +34104,32 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Day_of_Impact_to_Display = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Day_of_Impact_to_Display" , Day_of_Impact_to_Display, 0, STUDY_j_end - STUDY_j_start, 1), 1));
 
       Display_SolarImpact_Image = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SolarImpact_Image" , Display_SolarImpact_Image, 0, 1, 1), 1));
-      Display_SpatialImpact_Image = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SpatialImpact_Image" , Display_SpatialImpact_Image, 0, 1, 1), 1));
+      Display_SolidImpact_Image = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Display_SolidImpact_Image" , Display_SolidImpact_Image, 0, 1, 1), 1));
 
       SolarImpact_sectionType = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SolarImpact_sectionType" , SolarImpact_sectionType, 0, 3, 1), 1));      
-      SpatialImpact_sectionType = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_sectionType" , SpatialImpact_sectionType, 0, 3, 1), 1));
+      SolidImpact_sectionType = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SolidImpact_sectionType" , SolidImpact_sectionType, 0, 3, 1), 1));
 
 
-      SpatialImpact_Grade = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Grade" , SpatialImpact_Grade, 0.0001, 64.0, -2);
-      SpatialImpact_Power = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Power" , SpatialImpact_Power, 0.0001, 64.0, -2);      
-      SpatialImpact_Rotation[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Rotation[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_Rotation[SpatialImpact_sectionType], -360, 360, -2);
-      SpatialImpact_Elevation[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Elevation[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_Elevation[SpatialImpact_sectionType], -1000, 1000, -2);
-      SpatialImpact_positionStep = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_positionStep" , SpatialImpact_positionStep, 5, 80, -2);
+      SolidImpact_Grade = MySpinner.update(X_control, Y_control, 0,1,0, "SolidImpact_Grade" , SolidImpact_Grade, 0.0001, 64.0, -2);
+      SolidImpact_Power = MySpinner.update(X_control, Y_control, 0,1,0, "SolidImpact_Power" , SolidImpact_Power, 0.0001, 64.0, -2);      
+      SolidImpact_Rotation[SolidImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SolidImpact_Rotation[" + nf(SolidImpact_sectionType, 0) + "]" , SolidImpact_Rotation[SolidImpact_sectionType], -360, 360, -2);
+      SolidImpact_Elevation[SolidImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SolidImpact_Elevation[" + nf(SolidImpact_sectionType, 0) + "]" , SolidImpact_Elevation[SolidImpact_sectionType], -1000, 1000, -2);
+      SolidImpact_positionStep = MySpinner.update(X_control, Y_control, 0,1,0, "SolidImpact_positionStep" , SolidImpact_positionStep, 5, 80, -2);
       
-      SpatialImpact_scale_U[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_scale_U[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_scale_U[SpatialImpact_sectionType], 0.125, 3200, -2);
-      SpatialImpact_scale_V[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_scale_V[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_scale_V[SpatialImpact_sectionType], 0.125, 3200, -2);
-      SpatialImpact_offset_U[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_offset_U[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_offset_U[SpatialImpact_sectionType], -10000, 10000, -2);
-      SpatialImpact_offset_V[SpatialImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_offset_V[" + nf(SpatialImpact_sectionType, 0) + "]" , SpatialImpact_offset_V[SpatialImpact_sectionType], -10000, 10000, -2);
+      SolidImpact_scale_U[SolidImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SolidImpact_scale_U[" + nf(SolidImpact_sectionType, 0) + "]" , SolidImpact_scale_U[SolidImpact_sectionType], 0.125, 3200, -2);
+      SolidImpact_scale_V[SolidImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SolidImpact_scale_V[" + nf(SolidImpact_sectionType, 0) + "]" , SolidImpact_scale_V[SolidImpact_sectionType], 0.125, 3200, -2);
+      SolidImpact_offset_U[SolidImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SolidImpact_offset_U[" + nf(SolidImpact_sectionType, 0) + "]" , SolidImpact_offset_U[SolidImpact_sectionType], -10000, 10000, -2);
+      SolidImpact_offset_V[SolidImpact_sectionType] = MySpinner.update(X_control, Y_control, 0,1,0, "SolidImpact_offset_V[" + nf(SolidImpact_sectionType, 0) + "]" , SolidImpact_offset_V[SolidImpact_sectionType], -10000, 10000, -2);
       
     
-      SpatialImpact_Wspd = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Wspd (m/s)" , SpatialImpact_Wspd, 1, 16, -2); 
-      SpatialImpact_Wdir = MySpinner.update(X_control, Y_control, 0,1,0, "SpatialImpact_Wdir" , SpatialImpact_Wdir, 0, 360, 15);
+      SolidImpact_Wspd = MySpinner.update(X_control, Y_control, 0,1,0, "SolidImpact_Wspd (m/s)" , SolidImpact_Wspd, 1, 16, -2); 
+      SolidImpact_Wdir = MySpinner.update(X_control, Y_control, 0,1,0, "SolidImpact_Wdir" , SolidImpact_Wdir, 0, 360, 15);
       
 
       PROCESS_subdivisions = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "PROCESS_subdivisions" , PROCESS_subdivisions, 0, 3, 1), 1));
 
-      Display_SpatialImpact_Points = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Display_SpatialImpact_Points" , Display_SpatialImpact_Points, 0, 1, 1), 1));
-      Display_SpatialImpact_Lines = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Display_SpatialImpact_Lines" , Display_SpatialImpact_Lines, 0, 1, 1), 1));
+      Display_SolidImpact_Points = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Display_SolidImpact_Points" , Display_SolidImpact_Points, 0, 1, 1), 1));
+      Display_SolidImpact_Lines = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Display_SolidImpact_Lines" , Display_SolidImpact_Lines, 0, 1, 1), 1));
 
       Display_windFlow = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Display_windFlow" , Display_windFlow, 0, 1, 1), 1));
       
@@ -34261,11 +34261,11 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
 
     
-    if (ROLLOUT_child == 4) { // 3D-Spatial   
+    if (ROLLOUT_child == 4) { // 3D-Solid   
     
-      SPATIAL_Pallet_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SPATIAL_Pallet_CLR", SPATIAL_Pallet_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
-      SPATIAL_Pallet_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SPATIAL_Pallet_DIR", SPATIAL_Pallet_DIR, -2, 2, 2), 1));
-      SPATIAL_Pallet_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SPATIAL_Pallet_MLT", SPATIAL_Pallet_MLT, 0.0001, 64, -2);      
+      SOLID_Pallet_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SOLID_Pallet_CLR", SOLID_Pallet_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
+      SOLID_Pallet_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SOLID_Pallet_DIR", SOLID_Pallet_DIR, -2, 2, 2), 1));
+      SOLID_Pallet_MLT = MySpinner.update(X_control, Y_control, 0,1,0, "SOLID_Pallet_MLT", SOLID_Pallet_MLT, 0.0001, 64, -2);      
 
       ELEVATION_Pallet_CLR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ELEVATION_Pallet_CLR", ELEVATION_Pallet_CLR, -1, (n_COLOR_STYLE - 1), 1), 1));
       ELEVATION_Pallet_DIR = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ELEVATION_Pallet_DIR", ELEVATION_Pallet_DIR, -2, 2, 2), 1));
@@ -34368,8 +34368,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       FRAME_click_JPG = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Screenshot with click mark", FRAME_click_JPG, 0, 1, 1), 1));
       FRAME_drag_JPG = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Screenshot with drag mark", FRAME_drag_JPG, 0, 1, 1), 1));
       
-      SpatialImpact_record_JPG = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Record SpatialImpact in JPG", SpatialImpact_record_JPG, 0, 1, 1), 1));
-      SpatialImpact_record_PDF = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Record SpatialImpact in PDF", SpatialImpact_record_PDF, 0, 1, 1), 1));
+      SolidImpact_record_JPG = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Record SolidImpact in JPG", SolidImpact_record_JPG, 0, 1, 1), 1));
+      SolidImpact_record_PDF = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Record SolidImpact in PDF", SolidImpact_record_PDF, 0, 1, 1), 1));
       
       SolarImpact_record_JPG = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Record Solar Analysis in JPG", SolarImpact_record_JPG, 0, 1, 1), 1));
     }
@@ -36014,7 +36014,7 @@ String Section_Stamp () {
   
   String s = "";
  
-  s += "t" + nf(SpatialImpact_sectionType, 0);
+  s += "t" + nf(SolidImpact_sectionType, 0);
   s += "u" + nf(SolarImpact_offset_U, 0, 3);
   s += "v" + nf(SolarImpact_offset_V, 0, 3);
   s += "w" + nf(SolarImpact_Elevation, 0, 3);
@@ -37026,7 +37026,7 @@ void SOLARCHVISION_draw_WindRose_Image () {
 
     WIN3D_Diagrams.beginShape();
     
-    float WindRose_Elevation = 0.0 + SpatialImpact_Elevation[1];
+    float WindRose_Elevation = 0.0 + SolidImpact_Elevation[1];
     float WindRose_scale_U = WindRose3D_scale; 
     float WindRose_scale_V = WindRose3D_scale;
     
@@ -37292,8 +37292,8 @@ void SOLARCHVISION_add_Section (int n, float u, float v, float elev, float rot, 
   int[] TempSection_RES2 = {RES2}; 
   allSection_RES2 = concat(allSection_RES2, TempSection_RES2);
   
-  PImage[] TempSection_SpatialImpact = {createImage(RES1, RES2, RGB)}; 
-  allSection_SpatialImpact = (PImage[]) concat(allSection_SpatialImpact, TempSection_SpatialImpact);
+  PImage[] TempSection_SolidImpact = {createImage(RES1, RES2, RGB)}; 
+  allSection_SolidImpact = (PImage[]) concat(allSection_SolidImpact, TempSection_SolidImpact);
   
   PImage[][] TempSection_SolarImpact = new PImage[1][(1 + STUDY_j_end - STUDY_j_start)];
   {
@@ -37353,8 +37353,8 @@ void SOLARCHVISION_draw_Sections () {
           WIN3D_Diagrams.noStroke();
           WIN3D_Diagrams.noFill();
         }
-        else if (Display_SpatialImpact_Image != 0){
-          WIN3D_Diagrams.texture(allSection_SpatialImpact[f]);
+        else if (Display_SolidImpact_Image != 0){
+          WIN3D_Diagrams.texture(allSection_SolidImpact[f]);
           
           WIN3D_Diagrams.noStroke();
           WIN3D_Diagrams.noFill();
@@ -38466,7 +38466,7 @@ void SOLARCHVISION_move_selectedPolymeshes (float dx, float dy, float dz) {
     }
   }
   
-  if (Solids_updated != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections();  
+  if (Solids_updated != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections();  
   
 }
 
@@ -38561,7 +38561,7 @@ void SOLARCHVISION_rotate_selectedPolymeshes (float x0, float y0, float z0, floa
     }
   }
   
-  if (Solids_updated != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections();   
+  if (Solids_updated != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections();   
   
 }
 
@@ -38625,7 +38625,7 @@ void SOLARCHVISION_scale_selectedPolymeshes (float x0, float y0, float z0, float
     }
   }
       
-  if (Solids_updated != 0) SOLARCHVISION_calculate_SpatialImpact_selectedSections();        
+  if (Solids_updated != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections();        
   
 }
 
@@ -38856,7 +38856,7 @@ void SOLARCHVISION_move_selectedSection (float dx, float dy, float dz) {
 
   }
 
-  SOLARCHVISION_calculate_SpatialImpact_selectedSections();
+  SOLARCHVISION_calculate_SolidImpact_selectedSections();
   
   WIN3D_Update = 1;
   ROLLOUT_Update = 1;    
@@ -38874,7 +38874,7 @@ void SOLARCHVISION_rotate_selectedSection (float r) {
     
   }
   
-  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
   
   WIN3D_Update = 1;
   ROLLOUT_Update = 1;       
@@ -38893,7 +38893,7 @@ void SOLARCHVISION_scale_selectedSection (float sx, float sy) {
     
   }
   
-  SOLARCHVISION_calculate_SpatialImpact_selectedSections(); 
+  SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
   
   WIN3D_Update = 1;
   ROLLOUT_Update = 1;      
@@ -41051,9 +41051,9 @@ String[][] BAR_a_Items = {
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
                         {"View", "Camera >> Viewport", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance",  "3DModelSize", "SkydomeSize", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "View Selected Camera"},
-                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Points", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sections", "Display/Hide Cameras", "Display/Hide Sky", "Display/Hide Sun Path", "Display/Hide Sun Pattern", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Spatial Section", "Display/Hide Wind Flow", "Display/Hide Selected Sections", "Display/Hide Selected Cameras", "Display/Hide Selected LandPoints", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected Solar Pivots", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
-                        {"Shade", "Shade Surface Wire", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Spatial", "Shade Vertex Elevation"},
-                        {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Pre-bake Selected Sections", "Process Active Impact", "Process Passive Impact", "Process Spatial Impact", "Run wind 3D-model"},
+                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Points", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Sections", "Display/Hide Cameras", "Display/Hide Sky", "Display/Hide Sun Path", "Display/Hide Sun Pattern", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Shading Section", "Display/Hide Solid Section", "Display/Hide Wind Flow", "Display/Hide Selected Sections", "Display/Hide Selected Cameras", "Display/Hide Selected LandPoints", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected Solar Pivots", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
+                        {"Shade", "Shade Surface Wire", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Solid", "Shade Vertex Elevation"},
+                        {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Pre-bake Selected Sections", "Process Active Impact", "Process Passive Impact", "Process Solid Impact", "Run wind 3D-model"},
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Viewport >> Camera", "Camera", "Section", "Fractal_Plant", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"},
@@ -41061,7 +41061,7 @@ String[][] BAR_a_Items = {
                         {"Edit", "Duplicate Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces"},
                         {"Modify", "Save Current Pivot", "Reset Saved Pivot", "Use Selection Pivot", "Use Origin Pivot", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Move", "MoveX", "MoveY", "MoveZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
                         {"Match", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunkSize", "Pick LeafSize", "Pick AllFractal_PlantProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunkSize", "Assign LeafSize", "Assign AllFractal_PlantProps", "Assign SolarPivot", "Drop on LandSurface", "Drop on ModelSurface (Up)", "Drop on ModelSurface (Down)"},
-                        {"Action", "Undo", "Redo", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Spatial Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Spatial Graph", "REC. Screenshot", "Stop REC."}
+                        {"Action", "Undo", "Redo", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Solid Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Solid Graph", "REC. Screenshot", "Stop REC."}
 
                       };
 
@@ -41269,8 +41269,8 @@ void SOLARCHVISION_draw_window_BAR_a () {
               if (BAR_a_Items[i][j].equals("Display/Hide Shading Section")) {
                 if (Display_SolarImpact_Image == 0) {stroke(127); fill(127);}
               }  
-              if (BAR_a_Items[i][j].equals("Display/Hide Spatial Section")) {
-                if (Display_SpatialImpact_Image == 0) {stroke(127); fill(127);}
+              if (BAR_a_Items[i][j].equals("Display/Hide Solid Section")) {
+                if (Display_SolidImpact_Image == 0) {stroke(127); fill(127);}
               } 
               if (BAR_a_Items[i][j].equals("Display/Hide Wind Flow")) {
                 if (Display_windFlow == 0) {stroke(127); fill(127);}
@@ -43163,17 +43163,17 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("FRAME_record_JPG", FRAME_record_JPG);
   newChild1.setInt("FRAME_click_JPG", FRAME_click_JPG);
   newChild1.setInt("FRAME_drag_JPG", FRAME_drag_JPG);
-  newChild1.setInt("SpatialImpact_record_PDF", SpatialImpact_record_PDF);
-  newChild1.setInt("SpatialImpact_record_JPG", SpatialImpact_record_JPG);
+  newChild1.setInt("SolidImpact_record_PDF", SolidImpact_record_PDF);
+  newChild1.setInt("SolidImpact_record_JPG", SolidImpact_record_JPG);
   newChild1.setInt("SolarImpact_record_JPG", SolarImpact_record_JPG);
 
   newChild1.setInt("Ensemble_Audio_Output", Ensemble_Audio_Output);
   newChild1.setInt("Launch_External_Simulation", Launch_External_Simulation);
   newChild1.setInt("Launch_External_Hardware", Launch_External_Hardware);
 
-  newChild1.setFloat("SpatialImpact_Wspd", SpatialImpact_Wspd); 
-  newChild1.setFloat("SpatialImpact_Wdir", SpatialImpact_Wdir);
-  newChild1.setFloat("SpatialImpact_Power", SpatialImpact_Power);
+  newChild1.setFloat("SolidImpact_Wspd", SolidImpact_Wspd); 
+  newChild1.setFloat("SolidImpact_Wdir", SolidImpact_Wdir);
+  newChild1.setFloat("SolidImpact_Power", SolidImpact_Power);
   newChild1.setFloat("GlobalAlbedo", GlobalAlbedo);
   newChild1.setFloat("MAX_SHADING_DIST", MAX_SHADING_DIST);
   newChild1.setFloat("interpolation_weight", interpolation_weight);
@@ -43325,9 +43325,9 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("ELEVATION_Pallet_CLR", ELEVATION_Pallet_CLR);
   newChild1.setInt("ELEVATION_Pallet_DIR", ELEVATION_Pallet_DIR);
   newChild1.setFloat("ELEVATION_Pallet_MLT", ELEVATION_Pallet_MLT);
-  newChild1.setInt("SPATIAL_Pallet_CLR", SPATIAL_Pallet_CLR);
-  newChild1.setInt("SPATIAL_Pallet_DIR", SPATIAL_Pallet_DIR);
-  newChild1.setFloat("SPATIAL_Pallet_MLT", SPATIAL_Pallet_MLT);
+  newChild1.setInt("SOLID_Pallet_CLR", SOLID_Pallet_CLR);
+  newChild1.setInt("SOLID_Pallet_DIR", SOLID_Pallet_DIR);
+  newChild1.setFloat("SOLID_Pallet_MLT", SOLID_Pallet_MLT);
   newChild1.setInt("windFlow_Pallet_CLR", windFlow_Pallet_CLR);
   newChild1.setInt("windFlow_Pallet_DIR", windFlow_Pallet_DIR);
   newChild1.setFloat("windFlow_Pallet_MLT", windFlow_Pallet_MLT);
@@ -43381,8 +43381,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Skip_LAND_MESH_Center", Skip_LAND_MESH_Center);
   newChild1.setInt("Load_URBAN_MESH", Load_URBAN_MESH);
   newChild1.setInt("Display_URBAN_MESH", Display_URBAN_MESH);
-  newChild1.setInt("Display_SpatialImpact_Points", Display_SpatialImpact_Points);
-  newChild1.setInt("Display_SpatialImpact_Lines", Display_SpatialImpact_Lines);
+  newChild1.setInt("Display_SolidImpact_Points", Display_SolidImpact_Points);
+  newChild1.setInt("Display_SolidImpact_Lines", Display_SolidImpact_Lines);
   newChild1.setInt("Display_MODEL3D_EDGES", Display_MODEL3D_EDGES);
   newChild1.setInt("Display_MODEL3D_NORMALS", Display_MODEL3D_NORMALS);
   newChild1.setInt("Display_windFlow", Display_windFlow);
@@ -43402,7 +43402,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("Shade_Surface_Materials", Shade_Surface_Materials);
   newChild1.setInt("Shade_Global_Solar", Shade_Global_Solar);
   newChild1.setInt("Shade_Vertex_Solar", Shade_Vertex_Solar);
-  newChild1.setInt("Shade_Vertex_Spatial", Shade_Vertex_Spatial);
+  newChild1.setInt("Shade_Vertex_Solid", Shade_Vertex_Solid);
   newChild1.setInt("Shade_Vertex_Elevation", Shade_Vertex_Elevation);
   newChild1.setFloat("CAM_x", CAM_x);
   newChild1.setFloat("CAM_y", CAM_y);
@@ -43473,15 +43473,15 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("SolarImpact_RES1", SolarImpact_RES1);
   newChild1.setInt("SolarImpact_RES2", SolarImpact_RES2);
   newChild1.setFloat("SolarImpact_Elevation", SolarImpact_Elevation);
-  newChild1.setInt("SpatialImpact_RES1", SpatialImpact_RES1);
-  newChild1.setInt("SpatialImpact_RES2", SpatialImpact_RES2);
-  newChild1.setFloat("SpatialImpact_Grade", SpatialImpact_Grade);
-  newChild1.setInt("Display_SpatialImpact_Image", Display_SpatialImpact_Image);
-  newChild1.setInt("SpatialImpact_sectionType", SpatialImpact_sectionType);
-  newChild1.setFloat("SpatialImpact_positionStep", SpatialImpact_positionStep);
+  newChild1.setInt("SolidImpact_RES1", SolidImpact_RES1);
+  newChild1.setInt("SolidImpact_RES2", SolidImpact_RES2);
+  newChild1.setFloat("SolidImpact_Grade", SolidImpact_Grade);
+  newChild1.setInt("Display_SolidImpact_Image", Display_SolidImpact_Image);
+  newChild1.setInt("SolidImpact_sectionType", SolidImpact_sectionType);
+  newChild1.setFloat("SolidImpact_positionStep", SolidImpact_positionStep);
   newChild1.setInt("PROCESS_subdivisions", PROCESS_subdivisions);
-  newChild1.setFloat("deltaSpatialImpact", deltaSpatialImpact);
-  newChild1.setFloat("deltaSpatialImpactLines", deltaSpatialImpactLines);
+  newChild1.setFloat("deltaSolidImpact", deltaSolidImpact);
+  newChild1.setFloat("deltaSolidImpactLines", deltaSolidImpactLines);
   newChild1.setFloat("MinimumDistance_traceU", MinimumDistance_traceU);
   newChild1.setFloat("MinimumDistance_traceV", MinimumDistance_traceV);
   newChild1.setFloat("stp_slp", stp_slp);
@@ -43603,17 +43603,17 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
 
   {
-    newChild1 = my_xml.addChild("allSection_SpatialImpact");
-    int ni = allSection_SpatialImpact.length;
+    newChild1 = my_xml.addChild("allSection_SolidImpact");
+    int ni = allSection_SolidImpact.length;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
         
-      String the_filename = "SpatialImpact_" + nf(i, 0) + ".bmp";
+      String the_filename = "SolidImpact_" + nf(i, 0) + ".bmp";
   
       String TEXTURE_path = ProjectsFolder + "/Textures/" + the_filename;
   
       println("Saving texture:", TEXTURE_path);
-      allSection_SpatialImpact[i].save(TEXTURE_path);
+      allSection_SolidImpact[i].save(TEXTURE_path);
   
       newChild2 = newChild1.addChild("Path");
       newChild2.setInt("id", i); 
@@ -44017,72 +44017,72 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   }
 
   {
-    newChild1 = my_xml.addChild("SpatialImpact_Elevation");
-    int ni = SpatialImpact_Elevation.length;
+    newChild1 = my_xml.addChild("SolidImpact_Elevation");
+    int ni = SolidImpact_Elevation.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += nf(SpatialImpact_Elevation[i], 0, 4).replace(",", "."); // <<<<
+      lineSTR += nf(SolidImpact_Elevation[i], 0, 4).replace(",", "."); // <<<<
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
   }
   
   {
-    newChild1 = my_xml.addChild("SpatialImpact_Rotation");
-    int ni = SpatialImpact_Rotation.length;
+    newChild1 = my_xml.addChild("SolidImpact_Rotation");
+    int ni = SolidImpact_Rotation.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += nf(SpatialImpact_Rotation[i], 0, 4).replace(",", "."); // <<<<
+      lineSTR += nf(SolidImpact_Rotation[i], 0, 4).replace(",", "."); // <<<<
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
   }  
   
   {
-    newChild1 = my_xml.addChild("SpatialImpact_scale_U");
-    int ni = SpatialImpact_scale_U.length;
+    newChild1 = my_xml.addChild("SolidImpact_scale_U");
+    int ni = SolidImpact_scale_U.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += nf(SpatialImpact_scale_U[i], 0, 4).replace(",", "."); // <<<<
+      lineSTR += nf(SolidImpact_scale_U[i], 0, 4).replace(",", "."); // <<<<
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
   }    
   
   {
-    newChild1 = my_xml.addChild("SpatialImpact_scale_V");
-    int ni = SpatialImpact_scale_V.length;
+    newChild1 = my_xml.addChild("SolidImpact_scale_V");
+    int ni = SolidImpact_scale_V.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += nf(SpatialImpact_scale_V[i], 0, 4).replace(",", "."); // <<<<
+      lineSTR += nf(SolidImpact_scale_V[i], 0, 4).replace(",", "."); // <<<<
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
   }    
 
   {
-    newChild1 = my_xml.addChild("SpatialImpact_offset_U");
-    int ni = SpatialImpact_offset_U.length;
+    newChild1 = my_xml.addChild("SolidImpact_offset_U");
+    int ni = SolidImpact_offset_U.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += nf(SpatialImpact_offset_U[i], 0, 4).replace(",", "."); // <<<<
+      lineSTR += nf(SolidImpact_offset_U[i], 0, 4).replace(",", "."); // <<<<
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
   }    
   
   {
-    newChild1 = my_xml.addChild("SpatialImpact_offset_V");
-    int ni = SpatialImpact_offset_V.length;
+    newChild1 = my_xml.addChild("SolidImpact_offset_V");
+    int ni = SolidImpact_offset_V.length;
     newChild1.setInt("ni", ni);
     String lineSTR = "";
     for (int i = 0; i < ni; i++) {
-      lineSTR += nf(SpatialImpact_offset_V[i], 0, 4).replace(",", "."); // <<<<
+      lineSTR += nf(SolidImpact_offset_V[i], 0, 4).replace(",", "."); // <<<<
       if (i < ni - 1) lineSTR += ",";
     }
     newChild1.setContent(lineSTR);
@@ -44295,17 +44295,17 @@ void SOLARCHVISION_load_project (String myFile) {
       FRAME_record_JPG = children0[L].getInt("FRAME_record_JPG");
       FRAME_click_JPG = children0[L].getInt("FRAME_click_JPG");
       FRAME_drag_JPG = children0[L].getInt("FRAME_drag_JPG");
-      SpatialImpact_record_PDF = children0[L].getInt("SpatialImpact_record_PDF");
-      SpatialImpact_record_JPG = children0[L].getInt("SpatialImpact_record_JPG");
+      SolidImpact_record_PDF = children0[L].getInt("SolidImpact_record_PDF");
+      SolidImpact_record_JPG = children0[L].getInt("SolidImpact_record_JPG");
       SolarImpact_record_JPG = children0[L].getInt("SolarImpact_record_JPG");
 
       Ensemble_Audio_Output = children0[L].getInt("Ensemble_Audio_Output");
       Launch_External_Simulation = children0[L].getInt("Launch_External_Simulation");
       Launch_External_Hardware = children0[L].getInt("Launch_External_Hardware");
 
-      SpatialImpact_Wspd = children0[L].getFloat("SpatialImpact_Wspd"); 
-      SpatialImpact_Wdir = children0[L].getFloat("SpatialImpact_Wdir");
-      SpatialImpact_Power = children0[L].getFloat("SpatialImpact_Power");
+      SolidImpact_Wspd = children0[L].getFloat("SolidImpact_Wspd"); 
+      SolidImpact_Wdir = children0[L].getFloat("SolidImpact_Wdir");
+      SolidImpact_Power = children0[L].getFloat("SolidImpact_Power");
       GlobalAlbedo = children0[L].getFloat("GlobalAlbedo");
       MAX_SHADING_DIST = children0[L].getFloat("MAX_SHADING_DIST");
       interpolation_weight = children0[L].getFloat("interpolation_weight");
@@ -44457,9 +44457,9 @@ void SOLARCHVISION_load_project (String myFile) {
       ELEVATION_Pallet_CLR = children0[L].getInt("ELEVATION_Pallet_CLR");
       ELEVATION_Pallet_DIR = children0[L].getInt("ELEVATION_Pallet_DIR");
       ELEVATION_Pallet_MLT = children0[L].getFloat("ELEVATION_Pallet_MLT");
-      SPATIAL_Pallet_CLR = children0[L].getInt("SPATIAL_Pallet_CLR");
-      SPATIAL_Pallet_DIR = children0[L].getInt("SPATIAL_Pallet_DIR");
-      SPATIAL_Pallet_MLT = children0[L].getFloat("SPATIAL_Pallet_MLT");
+      SOLID_Pallet_CLR = children0[L].getInt("SOLID_Pallet_CLR");
+      SOLID_Pallet_DIR = children0[L].getInt("SOLID_Pallet_DIR");
+      SOLID_Pallet_MLT = children0[L].getFloat("SOLID_Pallet_MLT");
       windFlow_Pallet_CLR = children0[L].getInt("windFlow_Pallet_CLR");
       windFlow_Pallet_DIR = children0[L].getInt("windFlow_Pallet_DIR");
       windFlow_Pallet_MLT = children0[L].getFloat("windFlow_Pallet_MLT");
@@ -44513,8 +44513,8 @@ void SOLARCHVISION_load_project (String myFile) {
       Skip_LAND_MESH_Center = children0[L].getInt("Skip_LAND_MESH_Center");
       Load_URBAN_MESH = children0[L].getInt("Load_URBAN_MESH");
       Display_URBAN_MESH = children0[L].getInt("Display_URBAN_MESH");
-      Display_SpatialImpact_Points = children0[L].getInt("Display_SpatialImpact_Points");
-      Display_SpatialImpact_Lines = children0[L].getInt("Display_SpatialImpact_Lines");
+      Display_SolidImpact_Points = children0[L].getInt("Display_SolidImpact_Points");
+      Display_SolidImpact_Lines = children0[L].getInt("Display_SolidImpact_Lines");
       Display_MODEL3D_EDGES = children0[L].getInt("Display_MODEL3D_EDGES");
       Display_MODEL3D_NORMALS = children0[L].getInt("Display_MODEL3D_NORMALS");
       Display_windFlow = children0[L].getInt("Display_windFlow");
@@ -44534,7 +44534,7 @@ void SOLARCHVISION_load_project (String myFile) {
       Shade_Surface_Materials = children0[L].getInt("Shade_Surface_Materials");
       Shade_Global_Solar = children0[L].getInt("Shade_Global_Solar");
       Shade_Vertex_Solar = children0[L].getInt("Shade_Vertex_Solar");
-      Shade_Vertex_Spatial = children0[L].getInt("Shade_Vertex_Spatial");
+      Shade_Vertex_Solid = children0[L].getInt("Shade_Vertex_Solid");
       Shade_Vertex_Elevation = children0[L].getInt("Shade_Vertex_Elevation");
       CAM_x = children0[L].getFloat("CAM_x");
       CAM_y = children0[L].getFloat("CAM_y");
@@ -44606,15 +44606,15 @@ void SOLARCHVISION_load_project (String myFile) {
       SolarImpact_RES1 = children0[L].getInt("SolarImpact_RES1");
       SolarImpact_RES2 = children0[L].getInt("SolarImpact_RES2");
       SolarImpact_Elevation = children0[L].getFloat("SolarImpact_Elevation");
-      SpatialImpact_RES1 = children0[L].getInt("SpatialImpact_RES1");
-      SpatialImpact_RES2 = children0[L].getInt("SpatialImpact_RES2");
-      SpatialImpact_Grade = children0[L].getFloat("SpatialImpact_Grade");
-      Display_SpatialImpact_Image = children0[L].getInt("Display_SpatialImpact_Image");
-      SpatialImpact_sectionType = children0[L].getInt("SpatialImpact_sectionType");
-      SpatialImpact_positionStep = children0[L].getFloat("SpatialImpact_positionStep");
+      SolidImpact_RES1 = children0[L].getInt("SolidImpact_RES1");
+      SolidImpact_RES2 = children0[L].getInt("SolidImpact_RES2");
+      SolidImpact_Grade = children0[L].getFloat("SolidImpact_Grade");
+      Display_SolidImpact_Image = children0[L].getInt("Display_SolidImpact_Image");
+      SolidImpact_sectionType = children0[L].getInt("SolidImpact_sectionType");
+      SolidImpact_positionStep = children0[L].getFloat("SolidImpact_positionStep");
       PROCESS_subdivisions = children0[L].getInt("PROCESS_subdivisions");
-      deltaSpatialImpact = children0[L].getFloat("deltaSpatialImpact");
-      deltaSpatialImpactLines = children0[L].getFloat("deltaSpatialImpactLines");
+      deltaSolidImpact = children0[L].getFloat("deltaSolidImpact");
+      deltaSolidImpactLines = children0[L].getFloat("deltaSolidImpactLines");
       MinimumDistance_traceU = children0[L].getFloat("MinimumDistance_traceU");
       MinimumDistance_traceV = children0[L].getFloat("MinimumDistance_traceV");
       stp_slp = children0[L].getFloat("stp_slp");
@@ -44716,21 +44716,21 @@ void SOLARCHVISION_load_project (String myFile) {
     
 
     {
-      children0 = FileAll.getChildren("allSection_SpatialImpact");
+      children0 = FileAll.getChildren("allSection_SolidImpact");
       for (int L = 0; L < children0.length; L++) {
         int ni = children0[L].getInt("ni");
         
-        allSection_SpatialImpact = new PImage [ni];
+        allSection_SolidImpact = new PImage [ni];
         
         XML[] children1 = children0[L].getChildren("Path");         
         for (int i = 0; i < ni; i++) {      
           
           String TEXTURE_path = children1[i].getContent();
 
-          allSection_SpatialImpact[i] = createImage(2, 2, RGB);
+          allSection_SolidImpact[i] = createImage(2, 2, RGB);
 
           println("Loading texture(" + i + "):", TEXTURE_path);
-          allSection_SpatialImpact[i] = loadImage(TEXTURE_path);
+          allSection_SolidImpact[i] = loadImage(TEXTURE_path);
           println("loaded!");
           
         }
@@ -45122,69 +45122,69 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     }
 
-    children0 = FileAll.getChildren("SpatialImpact_Elevation");
+    children0 = FileAll.getChildren("SolidImpact_Elevation");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      SpatialImpact_Elevation = new float [ni];
+      SolidImpact_Elevation = new float [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        SpatialImpact_Elevation[i] = float(parts[i]);
+        SolidImpact_Elevation[i] = float(parts[i]);
       }
     } 
 
-    children0 = FileAll.getChildren("SpatialImpact_Rotation");
+    children0 = FileAll.getChildren("SolidImpact_Rotation");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      SpatialImpact_Rotation = new float [ni];
+      SolidImpact_Rotation = new float [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        SpatialImpact_Rotation[i] = float(parts[i]);
+        SolidImpact_Rotation[i] = float(parts[i]);
       }
     } 
 
-    children0 = FileAll.getChildren("SpatialImpact_scale_U");
+    children0 = FileAll.getChildren("SolidImpact_scale_U");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      SpatialImpact_scale_U = new float [ni];
+      SolidImpact_scale_U = new float [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        SpatialImpact_scale_U[i] = float(parts[i]);
+        SolidImpact_scale_U[i] = float(parts[i]);
       }
     } 
     
-    children0 = FileAll.getChildren("SpatialImpact_scale_V");
+    children0 = FileAll.getChildren("SolidImpact_scale_V");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      SpatialImpact_scale_V = new float [ni];
+      SolidImpact_scale_V = new float [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        SpatialImpact_scale_V[i] = float(parts[i]);
+        SolidImpact_scale_V[i] = float(parts[i]);
       }
     }     
     
-    children0 = FileAll.getChildren("SpatialImpact_offset_U");
+    children0 = FileAll.getChildren("SolidImpact_offset_U");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      SpatialImpact_offset_U = new float [ni];
+      SolidImpact_offset_U = new float [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        SpatialImpact_offset_U[i] = float(parts[i]);
+        SolidImpact_offset_U[i] = float(parts[i]);
       }
     } 
     
-    children0 = FileAll.getChildren("SpatialImpact_offset_V");
+    children0 = FileAll.getChildren("SolidImpact_offset_V");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      SpatialImpact_offset_V = new float [ni];
+      SolidImpact_offset_V = new float [ni];
       String lineSTR = children0[L].getContent();
       String[] parts = split(lineSTR, ',');
       for (int i = 0; i < ni; i++) {
-        SpatialImpact_offset_V[i] = float(parts[i]);
+        SolidImpact_offset_V[i] = float(parts[i]);
       }
     }         
     
@@ -45317,7 +45317,7 @@ void SOLARCHVISION_load_project (String myFile) {
   rebuild_SolarImpact_Image_array = 1;
   rebuild_WindRose_Image_array = 1; 
   
-  SOLARCHVISION_calculate_SpatialImpact_selectedSections();
+  SOLARCHVISION_calculate_SolidImpact_selectedSections();
 
   SOLARCHVISION_modify_Viewport_Title();
 }
