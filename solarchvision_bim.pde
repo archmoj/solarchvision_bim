@@ -1,4 +1,3 @@
-// not updating because of deselectAll! 
 // improve display_SOLIDS!
 // drop functions only works for living objects
 // still duplicate not working for solid layer!
@@ -16881,32 +16880,45 @@ void SOLARCHVISION_isolateSelection () {
 
 void SOLARCHVISION_deselect_All () {
 
-  selectedLandPoint_numbers = new int [1];
-  selectedLandPoint_numbers[0] = 0;  
+  if (Work_with_2D_or_3D == 0) {
+    selectedLandPoint_numbers = new int [1];
+    selectedLandPoint_numbers[0] = 0;
+  }  
   
-  selectedFractal_numbers = new int [1];
-  selectedFractal_numbers[0] = 0;
-
-  selectedObject2D_numbers = new int [1];
-  selectedObject2D_numbers[0] = 0;
-
-  selectedPolymesh_numbers = new int [1];
-  selectedPolymesh_numbers[0] = 0;
+  if (Work_with_2D_or_3D == 1) {
+    selectedFractal_numbers = new int [1];
+    selectedFractal_numbers[0] = 0;
+  }  
   
-  selectedFace_numbers = new int [1];
-  selectedFace_numbers[0] = 0;
+  if (Work_with_2D_or_3D == 2) {
+    selectedObject2D_numbers = new int [1];
+    selectedObject2D_numbers[0] = 0;
+  }  
+  
+  if ((Work_with_2D_or_3D == 3) || (Work_with_2D_or_3D == 4) || (Work_with_2D_or_3D == 5) || (Work_with_2D_or_3D == 6) || (Work_with_2D_or_3D == 7)) {  
 
-  selectedVertex_numbers = new int [1];
-  selectedVertex_numbers[0] = 0;  
+    selectedPolymesh_numbers = new int [1];
+    selectedPolymesh_numbers[0] = 0;
 
-  selectedSolid_numbers = new int [1];
-  selectedSolid_numbers[0] = 0;  
+    selectedFace_numbers = new int [1];
+    selectedFace_numbers[0] = 0;
 
-  selectedSection_numbers = new int [1];
-  selectedSection_numbers[0] = 0;  
+    selectedVertex_numbers = new int [1];
+    selectedVertex_numbers[0] = 0;  
 
-  selectedCamera_numbers = new int [1];
-  selectedCamera_numbers[0] = 0;   
+    selectedSolid_numbers = new int [1];
+    selectedSolid_numbers[0] = 0;  
+  }  
+  
+  if (Work_with_2D_or_3D == 8) {  
+    selectedSection_numbers = new int [1];
+    selectedSection_numbers[0] = 0;  
+  }  
+  
+  if (Work_with_2D_or_3D == 9) {  
+    selectedCamera_numbers = new int [1];
+    selectedCamera_numbers[0] = 0;   
+  }
   
   println("SOLARCHVISION_calculate_selection_Pivot 0");
   SOLARCHVISION_calculate_selection_Pivot();
