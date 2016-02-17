@@ -12937,7 +12937,7 @@ void WIN3D_keyPressed (KeyEvent e) {
       switch(key) {
 
         case DELETE: 
-                  SOLARCHVISION_deleteSelection();
+                  SOLARCHVISION_delete_Selection();
                   
                   WIN3D_Update = 1;
                   ROLLOUT_Update = 1; 
@@ -14416,7 +14416,7 @@ void SOLARCHVISION_duplicateSelection () {
 
 
 
-void SOLARCHVISION_deleteSelection () {
+void SOLARCHVISION_delete_Selection () {
 
   if (Work_with_2D_or_3D == 0) {
     
@@ -28370,17 +28370,17 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
   int start_index_OBJ_NUM = 0;
 
   if (Work_with_2D_or_3D == 0) {
-    length_of_indexes = LAND_n_I * LAND_n_J;
+    length_of_indexes = LAND_n_I * LAND_n_J + 1;
     start_index_OBJ_NUM = selectedLandPoint_numbers[start_index];
   }  
   
   if (Work_with_2D_or_3D == 1) {
-    length_of_indexes = allFractal_num;
+    length_of_indexes = allFractal_num + 1;
     start_index_OBJ_NUM = selectedFractal_numbers[start_index];
   }    
 
   if (Work_with_2D_or_3D == 2) {
-    length_of_indexes = allObject2D_num;
+    length_of_indexes = allObject2D_num + 1;
     start_index_OBJ_NUM = selectedObject2D_numbers[start_index];
   }    
   
@@ -28404,18 +28404,18 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
   }  
 
   if (Work_with_2D_or_3D == 7) {
-    length_of_indexes = allSolid_num;
+    length_of_indexes = allSolid_num + 1;
     start_index_OBJ_NUM = selectedSolid_numbers[start_index];
   }   
   
   if (Work_with_2D_or_3D == 8) {
-    length_of_indexes = allSection_num;
+    length_of_indexes = allSection_num + 1;
     start_index_OBJ_NUM = selectedSection_numbers[start_index];
   }  
   
 
   if (Work_with_2D_or_3D == 9) {
-    length_of_indexes = allCamera_num;
+    length_of_indexes = allCamera_num + 1;
     start_index_OBJ_NUM = selectedCamera_numbers[start_index];
   }
   
@@ -32502,7 +32502,7 @@ void mouseClicked () {
               WIN3D_Update = 1;  
             }              
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Delete Selection")) {
-              SOLARCHVISION_deleteSelection();
+              SOLARCHVISION_delete_Selection();
               WIN3D_Update = 1;              
             }      
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Duplicate Selection")) {
