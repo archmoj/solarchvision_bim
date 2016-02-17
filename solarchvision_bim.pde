@@ -14111,7 +14111,7 @@ void SOLARCHVISION_duplicateSelection () {
           allPolymesh_SolarPivotXYZ[new_OBJ_NUM][1] = allPolymesh_SolarPivotXYZ[OBJ_NUM][1];
           allPolymesh_SolarPivotXYZ[new_OBJ_NUM][2] = allPolymesh_SolarPivotXYZ[OBJ_NUM][2];
           
-          if ((0 <= allPolymesh_Solids[OBJ_NUM][1]) && (allPolymesh_Solids[OBJ_NUM][0] <= allPolymesh_Solids[OBJ_NUM][1])) { 
+          if ((0 < allPolymesh_Solids[OBJ_NUM][1]) && (allPolymesh_Solids[OBJ_NUM][0] <= allPolymesh_Solids[OBJ_NUM][1])) { 
             for (int s = allPolymesh_Solids[OBJ_NUM][0]; s <= allPolymesh_Solids[OBJ_NUM][1]; s++) {
               SOLARCHVISION_add_Solid(SolidObjects[s].posX, SolidObjects[s].posY, SolidObjects[s].posZ, SolidObjects[s].powX, SolidObjects[s].powY, SolidObjects[s].powZ, SolidObjects[s].scaleX, SolidObjects[s].scaleY, SolidObjects[s].scaleZ, -SolidObjects[s].rotX, -SolidObjects[s].rotY, -SolidObjects[s].rotZ, SolidObjects[s].value);
               
@@ -14595,12 +14595,14 @@ void SOLARCHVISION_deleteSelection () {
         }  
     
         
-        if ((0 <= startSolid) && (startSolid <= endSolid)) {
+        if ((0 < startSolid) && (startSolid <= endSolid)) {
           
-          ParametricSolid[] startList = (ParametricSolid[]) subset(SolidObjects, 0, startSolid);
-          ParametricSolid[] endList = (ParametricSolid[]) subset(SolidObjects, endSolid + 1);
+          float[][] startList = (float[][]) subset(allSolid_XYZPPPSSSRRRV, 0, startSolid);
+          float[][] endList = (float[][]) subset(allSolid_XYZPPPSSSRRRV, endSolid + 1);
           
-          SolidObjects = (ParametricSolid[]) concat(startList, endList);
+          allSolid_XYZPPPSSSRRRV = (float[][]) concat(startList, endList);
+          
+          allSolid_num = allSolid_XYZPPPSSSRRRV.length - 1;
           
           Solids_updated = 1;
           
@@ -39124,7 +39126,7 @@ void SOLARCHVISION_move_selectedPolymeshes (float dx, float dy, float dz) {
       }
       
       for (int g = allPolymesh_Solids[OBJ_NUM][0]; g <= allPolymesh_Solids[OBJ_NUM][1]; g++) {
-        if ((0 <= g) && (g < SolidObjects.length)) {
+        if ((0 < g) && (g < SolidObjects.length)) {
           SolidObjects[g].updatePosition(SolidObjects[g].posX + dx, SolidObjects[g].posY + dy, SolidObjects[g].posZ + dz);
     
           Solids_updated = 1;  
@@ -39201,7 +39203,7 @@ void SOLARCHVISION_rotate_selectedPolymeshes (float x0, float y0, float z0, floa
       }    
       
       for (int g = allPolymesh_Solids[OBJ_NUM][0]; g <= allPolymesh_Solids[OBJ_NUM][1]; g++) {
-        if ((0 <= g) && (g < SolidObjects.length)) {
+        if ((0 < g) && (g < SolidObjects.length)) {
           
           float x = SolidObjects[g].posX - x0; 
           float y = SolidObjects[g].posY - y0; 
@@ -39282,7 +39284,7 @@ void SOLARCHVISION_scale_selectedPolymeshes (float x0, float y0, float z0, float
       }
       
       for (int g = allPolymesh_Solids[OBJ_NUM][0]; g <= allPolymesh_Solids[OBJ_NUM][1]; g++) {
-        if ((0 <= g) && (g < SolidObjects.length)) {
+        if ((0 < g) && (g < SolidObjects.length)) {
           SolidObjects[g].updatePosition((SolidObjects[g].posX - x0) * sx + x0, (SolidObjects[g].posY - y0) * sy + y0, (SolidObjects[g].posZ - z0) * sz + z0);
           
           SolidObjects[g].Scale(sx, sy, sz);
