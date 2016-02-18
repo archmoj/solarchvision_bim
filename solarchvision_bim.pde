@@ -38157,7 +38157,7 @@ float[][] allSolid_Vertices;
 int[][] allSolid_Faces;
 
 int Solids_DisplayFaces = 3; // internal - number of faces: XY, YZ, ZX
-int Solids_DisplayDegree = 8; // internal - number of each face corners 
+int Solids_DisplayDegree = 16; //8; // internal - number of each face corners 
 
 
 void SOLARCHVISION_draw_Solids () {
@@ -38268,18 +38268,46 @@ float[][] SOLARCHVISION_getCorners_Solid (int plane_type, float Solid_posX, floa
       }
     }
     
+    if (q != 0) { // normalizing
+      
+      float d = pow(pow(abs(qx), Solid_powX) + pow(abs(qy), Solid_powY) + pow(abs(qz), Solid_powZ), 3.0 / (Solid_powX + Solid_powY + Solid_powZ));
+      
+      if (d != 0) {
+        qx /= d;
+        qy /= d;
+        qz /= d; 
+      }
+      
+    }
+    
+    
     float a = qx * Solid_scaleX;
     float b = qy * Solid_scaleY;
     float c = qz * Solid_scaleZ;  
-  
-    float x = 0, y = 0, z = 0;
+
+  ///////////////////////// NOT SURE START!    
     
-    //////////////////////////
-    x = a * cos_ang(Solid_rotZ) - b * sin_ang(Solid_rotZ);
-    y = a * sin_ang(Solid_rotZ) + b * cos_ang(Solid_rotZ);
-    z = c;         
-    //////////////////////////
-     
+    float y1 = b * cos_ang(Solid_rotX) - c * sin_ang(Solid_rotX); 
+    float z1 = b * sin_ang(Solid_rotX) + c * cos_ang(Solid_rotX);
+    float x1 = a;
+   
+    a = x1;
+    b = y1;
+    c = z1;  
+  
+    float z2 = c * cos_ang(Solid_rotY) - a * sin_ang(Solid_rotY);
+    float x2 = c * sin_ang(Solid_rotY) + a * cos_ang(Solid_rotY);
+    float y2 = b; 
+    
+    a = x2;
+    b = y2;
+    c = z2;      
+  ///////////////////////// NOT SURE END!
+
+    float x = a * cos_ang(Solid_rotZ) - b * sin_ang(Solid_rotZ);
+    float y = a * sin_ang(Solid_rotZ) + b * cos_ang(Solid_rotZ);
+    float z = c;         
+
 
     x += Solid_posX;
     y += Solid_posY;
@@ -46364,24 +46392,24 @@ float Solid_get_Distance (int n, float a, float b, float c) {
   float value = allSolid_XYZPPPSSSRRRV[n][12];
 
 
-
   a -= posX;
   b -= posY;    
   c -= posZ;
   
   
 ///////////////////////// NOT SURE START!    
-  float x1 = a;
+  
   float y1 = b * cos_ang(-rotX) - c * sin_ang(-rotX); 
   float z1 = b * sin_ang(-rotX) + c * cos_ang(-rotX);
+  float x1 = a;
  
   a = x1;
   b = y1;
   c = z1;  
 
+  float z2 = c * cos_ang(-rotY) - a * sin_ang(-rotY);
   float x2 = c * sin_ang(-rotY) + a * cos_ang(-rotY);
   float y2 = b; 
-  float z2 = c * cos_ang(-rotY) - a * sin_ang(-rotY);
   
   a = x2;
   b = y2;
