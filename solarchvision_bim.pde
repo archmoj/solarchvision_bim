@@ -38140,7 +38140,7 @@ float[][] allSolid_Vertices;
 int[][] allSolid_Faces;
 
 
-int Solids_DisplayDegree = 4;// internal
+int Solids_DisplayDegree = 8; //8;// internal
 
 void SOLARCHVISION_draw_Solids () {
   
@@ -38185,11 +38185,11 @@ void SOLARCHVISION_draw_Solids () {
         WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
         
         if (q != 0) {
-          allSolid_Vertices[f * (Solids_DisplayDegree + 1) - q - 1][0] = x;
-          allSolid_Vertices[f * (Solids_DisplayDegree + 1) - q - 1][1] = y;
-          allSolid_Vertices[f * (Solids_DisplayDegree + 1) - q - 1][2] = z;
+          allSolid_Vertices[f * Solids_DisplayDegree - q + 1][0] = x;
+          allSolid_Vertices[f * Solids_DisplayDegree - q + 1][1] = y;
+          allSolid_Vertices[f * Solids_DisplayDegree - q + 1][2] = z;
           
-          allSolid_Faces[f][q - 1] = (f - 1) * Solids_DisplayDegree - q;
+          allSolid_Faces[f][q - 1] = f * Solids_DisplayDegree - q + 1;
         }
       }        
 
