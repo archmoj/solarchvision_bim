@@ -29684,9 +29684,9 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
   }             
   
 
-  if (Work_with_2D_or_3D == 7) { // Note: this is slightly different from the others: reversed f and OBJ_NUM, etc.
+  if (Work_with_2D_or_3D == 7) { // Note: this is slightly different from the others
     
-    for (int f = 1; f < allSolid_Faces.length; f += Solids_DisplayFaces) {
+    for (int h = 1; h < allSolid_Faces.length; h += Solids_DisplayFaces) {
       
       int objectProcessed = 0;
       
@@ -29701,8 +29701,9 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
           if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
           if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
           
-          int OBJ_NUM = 1 + int((f + plane_type - 1) / Solids_DisplayFaces);
-    
+          int f = h + plane_type;
+          int OBJ_NUM = 1 + int((f - 1) / Solids_DisplayFaces);
+
           for (int j = 0; j < allSolid_Faces[f].length; j++) {
             
             int vNo = allSolid_Faces[f][j];
