@@ -40422,6 +40422,53 @@ void SOLARCHVISION_drop_Selection () {
 
 void SOLARCHVISION_changeProperties_Selection (int p) {
 
+  if (Work_with_2D_or_3D == 8) {
+    
+    int Solids_updated = 0;  
+
+    for (int o = selectedSection_numbers.length - 1; o >= 0; o--) {
+      
+      int OBJ_NUM = selectedSection_numbers[o];
+      
+      if (OBJ_NUM != 0) {      
+        
+        int f = OBJ_NUM;
+      
+        if (View_Select_Create_Modify == 4) {
+          int n = allSection_Type[f];
+          n += p;
+          if (n > 2) n = 0;
+          if (n < 0) n = 2;
+          allSection_Type[f] = n;         
+     
+          Solids_updated = 1;      
+        }        
+      
+        if (View_Select_Create_Modify == 5) {
+          int n = allSection_RES1[f];
+          if (p > 0) n *= 2;
+          if (p < 0) n /= 2;
+          
+          if (n > 1600) n = 100;
+          if (n < 100) n = 1600;
+          allSection_RES1[f] = n;
+          
+          allSection_RES2[f] = n; // also modifying the other one
+          
+          println("RES:", n);
+          
+          Solids_updated = 1;  
+        }
+        
+
+      }
+    } 
+      
+    if (Solids_updated != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
+    
+  }  
+  
+  
   if (Work_with_2D_or_3D == 4) {
 
     for (int o = selectedFace_numbers.length - 1; o >= 0; o--) {
