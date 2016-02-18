@@ -2999,11 +2999,11 @@ void SOLARCHVISION_draw_WIN3D () {
   
     WIN3D_Diagrams.hint(ENABLE_DEPTH_TEST);
     
-    SOLARCHVISION_record_last_Viewport();
+    SOLARCHVISION_record_last_3DViewport();
     
-    SOLARCHVISION_transform_Camera();
+    SOLARCHVISION_transform_3DViewport();
     
-    SOLARCHVISION_put_Camera();
+    SOLARCHVISION_put_3DViewport();
     
     SOLARCHVISION_draw_SKY3D();
   
@@ -12635,7 +12635,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                   WIN3D_Update = 1; ROLLOUT_Update = 1; 
                   break;
         
-       case '-' :WIN3D_RX_coordinate = 90; SOLARCHVISION_reverseTransform_Camera(); 
+       case '-' :WIN3D_RX_coordinate = 90; SOLARCHVISION_reverseTransform_3DViewport(); 
                  WIN3D_Update = 1; ROLLOUT_Update = 1; 
                  break;  
 
@@ -12760,25 +12760,25 @@ void WIN3D_keyPressed (KeyEvent e) {
       switch(keyCode) {
 
         case DOWN :
-                  SOLARCHVISION_rotateZ_Camera_around_Selection(WIN3D_RS_coordinate);
+                  SOLARCHVISION_rotateZ_3DViewport_around_Selection(WIN3D_RS_coordinate);
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
                   break;
         
         case LEFT :
-                  SOLARCHVISION_rotateXY_Camera_around_Selection(-WIN3D_RS_coordinate);
+                  SOLARCHVISION_rotateXY_3DViewport_around_Selection(-WIN3D_RS_coordinate);
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
                   break;
                   
         case RIGHT :
-                  SOLARCHVISION_rotateXY_Camera_around_Selection(WIN3D_RS_coordinate);
+                  SOLARCHVISION_rotateXY_3DViewport_around_Selection(WIN3D_RS_coordinate);
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
                   break;
                   
         case UP :
-                  SOLARCHVISION_rotateZ_Camera_around_Selection(-WIN3D_RS_coordinate);
+                  SOLARCHVISION_rotateZ_3DViewport_around_Selection(-WIN3D_RS_coordinate);
                   WIN3D_Update = 1; 
                   ROLLOUT_Update = 1; 
                   break;     
@@ -12972,24 +12972,24 @@ void WIN3D_keyPressed (KeyEvent e) {
                   break;
                   
         case '5' :
-                  SOLARCHVISION_look_Camera_towards_Selection(); 
+                  SOLARCHVISION_look_3DViewport_towards_Selection(); 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         
         case '4' :
                   WIN3D_RZ_coordinate += WIN3D_RS_coordinate; 
-                  SOLARCHVISION_reverseTransform_Camera(); 
+                  SOLARCHVISION_reverseTransform_3DViewport(); 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         case '6' :
                   WIN3D_RZ_coordinate -= WIN3D_RS_coordinate; 
-                  SOLARCHVISION_reverseTransform_Camera();
+                  SOLARCHVISION_reverseTransform_3DViewport();
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         case '2' :
                   WIN3D_RX_coordinate -= WIN3D_RS_coordinate; 
-                  SOLARCHVISION_reverseTransform_Camera(); 
+                  SOLARCHVISION_reverseTransform_3DViewport(); 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         case '8' :
                   WIN3D_RX_coordinate += WIN3D_RS_coordinate; 
-                  SOLARCHVISION_reverseTransform_Camera(); 
+                  SOLARCHVISION_reverseTransform_3DViewport(); 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
   
         case '1' :
@@ -13011,10 +13011,10 @@ void WIN3D_keyPressed (KeyEvent e) {
                   
         
         case '*' :
-                  SOLARCHVISION_move_Camera_towards_Selection(0.5); 
+                  SOLARCHVISION_move_3DViewport_towards_Selection(0.5); 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         case '/' : 
-                  SOLARCHVISION_move_Camera_towards_Selection(2.0);
+                  SOLARCHVISION_move_3DViewport_towards_Selection(2.0);
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
   
         case '+' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1; ROLLOUT_Update = 1; break;
@@ -23204,13 +23204,13 @@ float Orthographic_Zoom () {
 }
 
 
-void SOLARCHVISION_look_Camera_towards_Selection () {
+void SOLARCHVISION_look_3DViewport_towards_Selection () {
   
-  SOLARCHVISION_lookXY_Camera_towards_Selection();
-  SOLARCHVISION_lookZ_Camera_towards_Selection();
+  SOLARCHVISION_lookXY_3DViewport_towards_Selection();
+  SOLARCHVISION_lookZ_3DViewport_towards_Selection();
 }
 
-void SOLARCHVISION_lookXY_Camera_towards_Selection () {
+void SOLARCHVISION_lookXY_3DViewport_towards_Selection () {
 
   float xO = CAM_x / OBJECTS_scale;
   float yO = CAM_y / OBJECTS_scale;
@@ -23227,12 +23227,12 @@ void SOLARCHVISION_lookXY_Camera_towards_Selection () {
 
   WIN3D_RZ_coordinate += atan2_ang((yB - yO), (xB - xO)) - atan2_ang((yA - yO), (xA - xO));
   
-  SOLARCHVISION_reverseTransform_Camera();
+  SOLARCHVISION_reverseTransform_3DViewport();
 
 }
 
 
-void SOLARCHVISION_lookZ_Camera_towards_Selection () {
+void SOLARCHVISION_lookZ_3DViewport_towards_Selection () {
 
   float xO = CAM_x / OBJECTS_scale;
   float yO = CAM_y / OBJECTS_scale;
@@ -23249,11 +23249,11 @@ void SOLARCHVISION_lookZ_Camera_towards_Selection () {
 
   WIN3D_RX_coordinate += atan2_ang((zB - zO), pow(pow(yB - yO, 2) + pow(xB - xO, 2), 0.5)) - atan2_ang((zA - zO), pow(pow(yA - yO, 2) + pow(xA - xO, 2), 0.5));
   
-  SOLARCHVISION_reverseTransform_Camera();
+  SOLARCHVISION_reverseTransform_3DViewport();
 
 }
 
-void SOLARCHVISION_move_Camera_towards_Mouse (float t) {
+void SOLARCHVISION_move_3DViewport_towards_Mouse (float t) {
   
   float xA = CAM_x / OBJECTS_scale;
   float yA = CAM_y / OBJECTS_scale;
@@ -23279,13 +23279,13 @@ void SOLARCHVISION_move_Camera_towards_Mouse (float t) {
   CAM_y = yB * OBJECTS_scale;
   CAM_z = zB * OBJECTS_scale;     
   
-  SOLARCHVISION_reverseTransform_Camera();
+  SOLARCHVISION_reverseTransform_3DViewport();
 
 
   WIN3D_S_coordinate *= t; // just to adjust panning better
 }
 
-void SOLARCHVISION_move_Camera_towards_Selection (float t) {
+void SOLARCHVISION_move_3DViewport_towards_Selection (float t) {
   
   float xA = CAM_x / OBJECTS_scale;
   float yA = CAM_y / OBJECTS_scale;
@@ -23307,13 +23307,13 @@ void SOLARCHVISION_move_Camera_towards_Selection (float t) {
   CAM_y = yB * OBJECTS_scale;
   CAM_z = zB * OBJECTS_scale;     
   
-  SOLARCHVISION_reverseTransform_Camera();
+  SOLARCHVISION_reverseTransform_3DViewport();
   
 
   WIN3D_S_coordinate *= t; // just to adjust panning better
 }
 
-void SOLARCHVISION_rotateZ_Camera_around_Selection (float t) {
+void SOLARCHVISION_rotateZ_3DViewport_around_Selection (float t) {
   
   WIN3D_RX_coordinate += t;
 
@@ -23355,12 +23355,12 @@ void SOLARCHVISION_rotateZ_Camera_around_Selection (float t) {
   CAM_y = yF * OBJECTS_scale;
   CAM_z = zF * OBJECTS_scale; 
   
-  SOLARCHVISION_reverseTransform_Camera();
+  SOLARCHVISION_reverseTransform_3DViewport();
   
 }
 
 
-void SOLARCHVISION_rotateXY_Camera_around_Selection (float t) {
+void SOLARCHVISION_rotateXY_3DViewport_around_Selection (float t) {
   
   WIN3D_RZ_coordinate += t;
 
@@ -23383,12 +23383,12 @@ void SOLARCHVISION_rotateXY_Camera_around_Selection (float t) {
   CAM_y = yB * OBJECTS_scale;
   CAM_z = zB * OBJECTS_scale;   
   
-  SOLARCHVISION_reverseTransform_Camera();
+  SOLARCHVISION_reverseTransform_3DViewport();
   
 }
 
 
-void SOLARCHVISION_reverseTransform_Camera () { // computing WIN3D_X_coordinate, WIN3D_Y_coordinate and WIN3D_Z_coordinate from new set of camera start and end points.
+void SOLARCHVISION_reverseTransform_3DViewport () { // computing WIN3D_X_coordinate, WIN3D_Y_coordinate and WIN3D_Z_coordinate from new set of camera start and end points.
 
   float px, py, pz;
   
@@ -23434,7 +23434,7 @@ void SOLARCHVISION_reverseTransform_Camera () { // computing WIN3D_X_coordinate,
 }
 
 
-void SOLARCHVISION_record_last_Viewport () {
+void SOLARCHVISION_record_last_3DViewport () {
   
   allCamera_PPPSRRRF[Current_Camera][0] = WIN3D_X_coordinate;
   allCamera_PPPSRRRF[Current_Camera][1] = WIN3D_Y_coordinate;
@@ -23466,7 +23466,7 @@ void SOLARCHVISION_apply_Current_Camera () {
 }  
 
 
-void SOLARCHVISION_transform_Camera () {
+void SOLARCHVISION_transform_3DViewport () {
   
   CAM_fov = WIN3D_ZOOM_coordinate * PI / 180;
 
@@ -23509,7 +23509,7 @@ void SOLARCHVISION_transform_Camera () {
 
  
 
-void SOLARCHVISION_put_Camera () {  
+void SOLARCHVISION_put_3DViewport () {  
   
   if (WIN3D_View_Type == 1) {
 
@@ -30438,13 +30438,13 @@ void mouseWheel(MouseEvent event) {
                 if (View_XYZ_ChangeOption == 0) {   
                   WIN3D_RX_coordinate += Wheel_Value * WIN3D_RS_coordinate;
                   
-                  SOLARCHVISION_reverseTransform_Camera(); 
+                  SOLARCHVISION_reverseTransform_3DViewport(); 
                 }
                 
                 if (View_XYZ_ChangeOption == 1) {   
                   WIN3D_RZ_coordinate += Wheel_Value * WIN3D_RS_coordinate;
                   
-                  SOLARCHVISION_reverseTransform_Camera(); 
+                  SOLARCHVISION_reverseTransform_3DViewport(); 
                 }              
   
                 WIN3D_Update = 1;
@@ -30454,12 +30454,12 @@ void mouseWheel(MouseEvent event) {
   
                 if (View_XYZ_ChangeOption == 0) {   
   
-                  SOLARCHVISION_rotateZ_Camera_around_Selection(Wheel_Value * WIN3D_RS_coordinate);
+                  SOLARCHVISION_rotateZ_3DViewport_around_Selection(Wheel_Value * WIN3D_RS_coordinate);
                 }
                 
                 if (View_XYZ_ChangeOption == 1) {   
   
-                  SOLARCHVISION_rotateXY_Camera_around_Selection(Wheel_Value * WIN3D_RS_coordinate);
+                  SOLARCHVISION_rotateXY_3DViewport_around_Selection(Wheel_Value * WIN3D_RS_coordinate);
                 }    
   
                 WIN3D_Update = 1;
@@ -30468,7 +30468,7 @@ void mouseWheel(MouseEvent event) {
               
               if (View_Select_Create_Modify == -13) { // viewport:CameraDistance
   
-                SOLARCHVISION_move_Camera_towards_Selection(pow(2, -0.5 * Wheel_Value));
+                SOLARCHVISION_move_3DViewport_towards_Selection(pow(2, -0.5 * Wheel_Value));
   
                 WIN3D_Update = 1;
       
@@ -30492,7 +30492,7 @@ void mouseWheel(MouseEvent event) {
               
               if (View_Select_Create_Modify == -17) { // viewport:DistMouseXY
               
-                SOLARCHVISION_move_Camera_towards_Mouse(pow(2, -0.5 * Wheel_Value));
+                SOLARCHVISION_move_3DViewport_towards_Mouse(pow(2, -0.5 * Wheel_Value));
   
                 WIN3D_Update = 1;
       
@@ -30760,14 +30760,14 @@ void mouseDragged () {
   
               if (mouseButton == LEFT) { // CameraRollXY
                 
-                SOLARCHVISION_rotateXY_Camera_around_Selection(10 * dx * WIN3D_RS_coordinate);
+                SOLARCHVISION_rotateXY_3DViewport_around_Selection(10 * dx * WIN3D_RS_coordinate);
                 
                 WIN3D_Update = 1;
               }
               
               if (mouseButton == RIGHT) { // CameraRollZ
                 
-                SOLARCHVISION_rotateZ_Camera_around_Selection(10 * dy * WIN3D_RS_coordinate);
+                SOLARCHVISION_rotateZ_3DViewport_around_Selection(10 * dy * WIN3D_RS_coordinate);
                 
                 WIN3D_Update = 1;
               }     
@@ -30788,7 +30788,7 @@ void mouseDragged () {
                 WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
                 WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
                 
-                SOLARCHVISION_reverseTransform_Camera(); 
+                SOLARCHVISION_reverseTransform_3DViewport(); 
                 
                 WIN3D_Update = 1;
               }
@@ -30799,9 +30799,9 @@ void mouseDragged () {
             
               if (mouseButton == LEFT) { // CameraRoll
   
-                SOLARCHVISION_rotateXY_Camera_around_Selection(10 * dx * WIN3D_RS_coordinate);
+                SOLARCHVISION_rotateXY_3DViewport_around_Selection(10 * dx * WIN3D_RS_coordinate);
                 
-                SOLARCHVISION_rotateZ_Camera_around_Selection(10 * dy * WIN3D_RS_coordinate);
+                SOLARCHVISION_rotateZ_3DViewport_around_Selection(10 * dy * WIN3D_RS_coordinate);
                 
                 WIN3D_Update = 1;
               }
@@ -30820,14 +30820,14 @@ void mouseDragged () {
             
               if (mouseButton == LEFT) { // CameraRollXY
                 
-                SOLARCHVISION_rotateXY_Camera_around_Selection(10 * dx * WIN3D_RS_coordinate);
+                SOLARCHVISION_rotateXY_3DViewport_around_Selection(10 * dx * WIN3D_RS_coordinate);
                 
                 WIN3D_Update = 1;
               }
               
               if (mouseButton == RIGHT) { // CameraRollZ
                 
-                SOLARCHVISION_rotateZ_Camera_around_Selection(10 * dy * WIN3D_RS_coordinate);
+                SOLARCHVISION_rotateZ_3DViewport_around_Selection(10 * dy * WIN3D_RS_coordinate);
                 
                 WIN3D_Update = 1;
               }          
@@ -30841,7 +30841,7 @@ void mouseDragged () {
                 WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
                 WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
                 
-                SOLARCHVISION_reverseTransform_Camera(); 
+                SOLARCHVISION_reverseTransform_3DViewport(); 
                 
                 WIN3D_Update = 1;
               }
@@ -30862,7 +30862,7 @@ void mouseDragged () {
   
                 WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
                 
-                SOLARCHVISION_reverseTransform_Camera(); 
+                SOLARCHVISION_reverseTransform_3DViewport(); 
                 
                 WIN3D_Update = 1;
               }
@@ -30871,7 +30871,7 @@ void mouseDragged () {
   
                 WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
                 
-                SOLARCHVISION_reverseTransform_Camera(); 
+                SOLARCHVISION_reverseTransform_3DViewport(); 
                 
                 WIN3D_Update = 1;
               }          
@@ -30931,7 +30931,7 @@ void mouseDragged () {
                 WIN3D_RZ_coordinate += 10 * dx * WIN3D_RS_coordinate; 
                 WIN3D_RX_coordinate += 10 * dy * WIN3D_RS_coordinate;
                 
-                SOLARCHVISION_reverseTransform_Camera(); 
+                SOLARCHVISION_reverseTransform_3DViewport(); 
                 
                 WIN3D_Update = 1;
               }
@@ -33823,7 +33823,7 @@ void mouseClicked () {
                     CAM_y = RxP[1];
                     CAM_z = RxP[2] + eyeLevel;       
   
-                    SOLARCHVISION_reverseTransform_Camera();
+                    SOLARCHVISION_reverseTransform_3DViewport();
                     
                     float Camera_X = WIN3D_X_coordinate;
                     float Camera_Y = WIN3D_Y_coordinate;
@@ -37908,7 +37908,7 @@ float[][] SOLARCHVISION_getCorners_Camera (int Camera_Type, float Camera_X, floa
       WIN3D_RZ_coordinate = Camera_RZ;
       WIN3D_ZOOM_coordinate = Camera_ZOOM;
 
-      SOLARCHVISION_transform_Camera();
+      SOLARCHVISION_transform_3DViewport();
 
       float x1 = rx * qx;
       float y1 = ry * qy;
@@ -43343,7 +43343,7 @@ void set_to_View_Orbit (int n) {
 
 void set_to_View_LookAtSelection (int n) {
 
-  SOLARCHVISION_look_Camera_towards_Selection();
+  SOLARCHVISION_look_3DViewport_towards_Selection();
 
   { // automatically set another choice of ineterest
     set_to_View_CameraDistance(0);
@@ -43450,53 +43450,53 @@ void set_to_View_3DViewPoint (int n) {
   SOLARCHVISION_apply_Current_Camera();
   
   if (n == 0) {
-    SOLARCHVISION_rotateZ_Camera_around_Selection(0 - WIN3D_RX_coordinate);
-    SOLARCHVISION_rotateXY_Camera_around_Selection(0 - WIN3D_RZ_coordinate);  
+    SOLARCHVISION_rotateZ_3DViewport_around_Selection(0 - WIN3D_RX_coordinate);
+    SOLARCHVISION_rotateXY_3DViewport_around_Selection(0 - WIN3D_RZ_coordinate);  
   }
   
   if (n == 1) {
-    SOLARCHVISION_rotateZ_Camera_around_Selection(90 - WIN3D_RX_coordinate); 
-    SOLARCHVISION_rotateXY_Camera_around_Selection(0 - WIN3D_RZ_coordinate); 
+    SOLARCHVISION_rotateZ_3DViewport_around_Selection(90 - WIN3D_RX_coordinate); 
+    SOLARCHVISION_rotateXY_3DViewport_around_Selection(0 - WIN3D_RZ_coordinate); 
   }          
 
   if (n == 2) {
-    SOLARCHVISION_rotateZ_Camera_around_Selection(90 - WIN3D_RX_coordinate); 
-    SOLARCHVISION_rotateXY_Camera_around_Selection(-90 - WIN3D_RZ_coordinate); 
+    SOLARCHVISION_rotateZ_3DViewport_around_Selection(90 - WIN3D_RX_coordinate); 
+    SOLARCHVISION_rotateXY_3DViewport_around_Selection(-90 - WIN3D_RZ_coordinate); 
   }    
 
   if (n == 3) {
-    SOLARCHVISION_rotateZ_Camera_around_Selection(90 - WIN3D_RX_coordinate); 
-    SOLARCHVISION_rotateXY_Camera_around_Selection(180 - WIN3D_RZ_coordinate); 
+    SOLARCHVISION_rotateZ_3DViewport_around_Selection(90 - WIN3D_RX_coordinate); 
+    SOLARCHVISION_rotateXY_3DViewport_around_Selection(180 - WIN3D_RZ_coordinate); 
   }   
 
   if (n == 4) {
-    SOLARCHVISION_rotateZ_Camera_around_Selection(90 - WIN3D_RX_coordinate); 
-    SOLARCHVISION_rotateXY_Camera_around_Selection(90 - WIN3D_RZ_coordinate); 
+    SOLARCHVISION_rotateZ_3DViewport_around_Selection(90 - WIN3D_RX_coordinate); 
+    SOLARCHVISION_rotateXY_3DViewport_around_Selection(90 - WIN3D_RZ_coordinate); 
   }  
  
   if (n == 5) {
-    SOLARCHVISION_rotateZ_Camera_around_Selection(180 - WIN3D_RX_coordinate);
-    SOLARCHVISION_rotateXY_Camera_around_Selection(0 - WIN3D_RZ_coordinate);  
+    SOLARCHVISION_rotateZ_3DViewport_around_Selection(180 - WIN3D_RX_coordinate);
+    SOLARCHVISION_rotateXY_3DViewport_around_Selection(0 - WIN3D_RZ_coordinate);  
   }             
 
   if (n == 6) {
-    SOLARCHVISION_rotateZ_Camera_around_Selection(90 - WIN3D_RX_coordinate); 
-    SOLARCHVISION_rotateXY_Camera_around_Selection(-45 - WIN3D_RZ_coordinate); 
+    SOLARCHVISION_rotateZ_3DViewport_around_Selection(90 - WIN3D_RX_coordinate); 
+    SOLARCHVISION_rotateXY_3DViewport_around_Selection(-45 - WIN3D_RZ_coordinate); 
   }             
   
   if (n == 7) {
-    SOLARCHVISION_rotateZ_Camera_around_Selection(90 - WIN3D_RX_coordinate); 
-    SOLARCHVISION_rotateXY_Camera_around_Selection(45 - WIN3D_RZ_coordinate); 
+    SOLARCHVISION_rotateZ_3DViewport_around_Selection(90 - WIN3D_RX_coordinate); 
+    SOLARCHVISION_rotateXY_3DViewport_around_Selection(45 - WIN3D_RZ_coordinate); 
   }     
 
   if (n == 8) {
-    SOLARCHVISION_rotateZ_Camera_around_Selection(90 - WIN3D_RX_coordinate); 
-    SOLARCHVISION_rotateXY_Camera_around_Selection(135 - WIN3D_RZ_coordinate); 
+    SOLARCHVISION_rotateZ_3DViewport_around_Selection(90 - WIN3D_RX_coordinate); 
+    SOLARCHVISION_rotateXY_3DViewport_around_Selection(135 - WIN3D_RZ_coordinate); 
   }
 
   if (n == 9) {
-    SOLARCHVISION_rotateZ_Camera_around_Selection(90 - WIN3D_RX_coordinate); 
-    SOLARCHVISION_rotateXY_Camera_around_Selection(-135 - WIN3D_RZ_coordinate); 
+    SOLARCHVISION_rotateZ_3DViewport_around_Selection(90 - WIN3D_RX_coordinate); 
+    SOLARCHVISION_rotateXY_3DViewport_around_Selection(-135 - WIN3D_RZ_coordinate); 
   }
   
   
