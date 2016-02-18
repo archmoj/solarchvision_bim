@@ -38140,7 +38140,7 @@ float[][] allSolid_Vertices;
 int[][] allSolid_Faces;
 
 
-int Solids_DisplayDegree = 8; //8;// internal
+int Solids_DisplayDegree = 16; //8;// internal
 
 void SOLARCHVISION_draw_Solids () {
   
