@@ -1,8 +1,9 @@
-// drop functions only works for living objects
-// still duplicate not working for solid layer!
+// scale and rotate are not working very well on solid mode
+// option to modify solid properties
 // create solid not working yet.
 // deleting solids may create conflict with polymeshes that has those solids
 // should add solid option to trees? 
+// drop functions only works for living objects
 
 import processing.pdf.*;
 
