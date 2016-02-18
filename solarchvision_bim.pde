@@ -38139,14 +38139,15 @@ float[][] SOLARCHVISION_getCorners_Section (int Section_Type, float Section_offs
 float[][] allSolid_Vertices;
 int[][] allSolid_Faces;
 
+int Solids_DisplayFaces = 3; // internal - number of faces: XY, YZ, ZX
+int Solids_DisplayDegree = 16; // internal - number of each face corners 
 
-int Solids_DisplayDegree = 16; //8;// internal
 
 void SOLARCHVISION_draw_Solids () {
   
-  allSolid_Faces = new int [3 * allSolid_num + 1][Solids_DisplayDegree];
+  allSolid_Faces = new int [Solids_DisplayFaces * allSolid_num + 1][Solids_DisplayDegree];
     
-  allSolid_Vertices = new float [3 * (Solids_DisplayDegree + 1) * allSolid_num + 1][3];
+  allSolid_Vertices = new float [Solids_DisplayFaces * (Solids_DisplayDegree + 1) * allSolid_num + 1][3];
   allSolid_Vertices[0][0] = 0;
   allSolid_Vertices[0][1] = 0;
   allSolid_Vertices[0][2] = 0;
@@ -38171,21 +38172,20 @@ void SOLARCHVISION_draw_Solids () {
       float Solid_rotZ = allSolid_XYZPPPSSSRRRV[f][11];
       float Solid_value = allSolid_XYZPPPSSSRRRV[f][12];
       
-      for (int plane_type = 0; plane_type <= 2; plane_type++) {
+      for (int plane_type = 0; plane_type <= Solids_DisplayFaces; plane_type++) {
 
+        WIN3D_Diagrams.noFill();        
+        WIN3D_Diagrams.stroke(0);
+        
         if (plane_type == 0) {
           WIN3D_Diagrams.stroke(0, 255, 0);
-          WIN3D_Diagrams.noFill();
         }  
         if (plane_type == 1) {
           WIN3D_Diagrams.stroke(255, 0 ,0);
-          WIN3D_Diagrams.noFill();
         }          
         if (plane_type == 2) {
           WIN3D_Diagrams.stroke(0, 0, 255);
-          WIN3D_Diagrams.noFill();
         }          
-
         
         WIN3D_Diagrams.beginShape();
         
@@ -38200,11 +38200,16 @@ void SOLARCHVISION_draw_Solids () {
           WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
           
           if (q != 0) {
-            allSolid_Vertices[(3 * f - 2) * Solids_DisplayDegree - q + 1][0] = x;
-            allSolid_Vertices[(3 * f - 2) * Solids_DisplayDegree - q + 1][1] = y;
-            allSolid_Vertices[(3 * f - 2) * Solids_DisplayDegree - q + 1][2] = z;
             
-            allSolid_Faces[3 * f - 2][q - 1] = f * Solids_DisplayDegree - q + 1;
+            int vNo = (Solids_DisplayFaces * (f - 1) + 1) * Solids_DisplayDegree - q + 1;
+            
+            allSolid_Vertices[vNo][0] = x;
+            allSolid_Vertices[vNo][1] = y;
+            allSolid_Vertices[vNo][2] = z;
+            
+            int fNo = (Solids_DisplayFaces * (f - 1) + 1);
+            
+            allSolid_Faces[fNo][q - 1] = f * Solids_DisplayDegree - q + 1;
           }
         }        
   
