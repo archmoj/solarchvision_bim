@@ -26347,7 +26347,10 @@ void SOLARCHVISION_calculate_SolidImpact_selectedSections () {
       {
         if ((SolidImpact_Image.width != SolidImpact_RES1) || (SolidImpact_Image.height != SolidImpact_RES2)) {
           SolidImpact_Image = createImage(SolidImpact_RES1, SolidImpact_RES2, ARGB);
+          
+          allSection_SolidImpact[f] = createImage(SolidImpact_RES1, SolidImpact_RES2, ARGB); 
         }
+        
         SOLARCHVISION_calculate_SolidImpact_CurrentSection();
         
         allSection_SolidImpact[f].copy(SolidImpact_Image, 0, 0, SolidImpact_RES1, SolidImpact_RES2, 0, 0, SolidImpact_RES1, SolidImpact_RES2); 
@@ -40422,6 +40425,30 @@ void SOLARCHVISION_drop_Selection () {
 
 void SOLARCHVISION_changeProperties_Selection (int p) {
 
+  if (Work_with_2D_or_3D == 9) {
+
+    for (int o = selectedCamera_numbers.length - 1; o >= 0; o--) {
+      
+      int OBJ_NUM = selectedCamera_numbers[o];
+      
+      if (OBJ_NUM != 0) {      
+        
+        int f = OBJ_NUM;
+      
+        if (View_Select_Create_Modify == 4) {
+          int n = allCamera_Type[f];
+          n += p;
+          if (n > 1) n = 0;
+          if (n < 0) n = 1;
+          allCamera_Type[f] = n;         
+          
+          if (f == Current_Camera) WIN3D_View_Type = allCamera_Type[f]; 
+
+        }        
+      }
+    } 
+  }    
+  
   if (Work_with_2D_or_3D == 8) {
     
     int Solids_updated = 0;  
@@ -40437,8 +40464,8 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         if (View_Select_Create_Modify == 4) {
           int n = allSection_Type[f];
           n += p;
-          if (n > 2) n = 0;
-          if (n < 0) n = 2;
+          if (n > 3) n = 0;
+          if (n < 0) n = 3;
           allSection_Type[f] = n;         
      
           Solids_updated = 1;      
