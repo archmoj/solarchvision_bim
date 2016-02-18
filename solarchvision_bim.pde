@@ -24764,12 +24764,15 @@ float[] SOLARCHVISION_7Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
         return_point[1] = hy;
         return_point[2] = hz;
         return_point[3] = hd;
-        return_point[4] = f;
+        //return_point[4] = f;
+        return_point[4] = 1 + int((f - 1) / Solids_DisplayFaces);
+        
+        println("f:", f, ">>", return_point[4]);
       }
     
     //}
   }
- 
+
   return return_point;
   
 }
@@ -35968,32 +35971,36 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           
           int OBJ_NUM = selectedSolid_numbers[o];
           
-          if (OBJ_NUM != 0) {            
+          if (OBJ_NUM != 0) {  
             
-            int f = OBJ_NUM; 
+            for (int plane_type = 0; plane_type <= Solids_DisplayFaces; plane_type++) {          
+            
+              int f = 1 + int((OBJ_NUM - 1) / Solids_DisplayFaces) + plane_type ; 
     
-            if ((0 < f) && (f < allSolid_Faces.length)) { 
+              if ((0 < f) && (f < allSolid_Faces.length)) { 
+                  
+                beginShape();
                 
-              beginShape();
-              
-              for (int j = 0; j < allSolid_Faces[f].length; j++) {
-                
-                int vNo = allSolid_Faces[f][j];
-                
-                float x = allSolid_Vertices[vNo][0] * OBJECTS_scale;
-                float y = allSolid_Vertices[vNo][1] * OBJECTS_scale;
-                float z = -allSolid_Vertices[vNo][2] * OBJECTS_scale;
-                
-                float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
-                
-                if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                  if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+                for (int j = 0; j < allSolid_Faces[f].length; j++) {
+                  
+                  int vNo = allSolid_Faces[f][j];
+                  
+                  float x = allSolid_Vertices[vNo][0] * OBJECTS_scale;
+                  float y = allSolid_Vertices[vNo][1] * OBJECTS_scale;
+                  float z = -allSolid_Vertices[vNo][2] * OBJECTS_scale;
+                  
+                  float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+                  
+                  if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+                    if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+                  }
+                  
                 }
                 
+                endShape(CLOSE);
               }
-              
-              endShape(CLOSE);
             }
+
           }
         }
       }
@@ -38140,12 +38147,13 @@ float[][] allSolid_Vertices;
 int[][] allSolid_Faces;
 
 int Solids_DisplayFaces = 3; // internal - number of faces: XY, YZ, ZX
-int Solids_DisplayDegree = 16; // internal - number of each face corners 
+int Solids_DisplayDegree = 4; // internal - number of each face corners 
 
 
 void SOLARCHVISION_draw_Solids () {
   
-  allSolid_Faces = new int [Solids_DisplayFaces * allSolid_num + 1][Solids_DisplayDegree];
+  //allSolid_Faces = new int [Solids_DisplayFaces * allSolid_num + 1][Solids_DisplayDegree];
+  allSolid_Faces = new int [Solids_DisplayFaces * (allSolid_num + 1)][Solids_DisplayDegree]; //???????????
     
   allSolid_Vertices = new float [Solids_DisplayFaces * (Solids_DisplayDegree + 1) * allSolid_num + 1][3];
   allSolid_Vertices[0][0] = 0;
@@ -38201,15 +38209,17 @@ void SOLARCHVISION_draw_Solids () {
           
           if (q != 0) {
             
-            int vNo = (Solids_DisplayFaces * (f - 1) + 1) * Solids_DisplayDegree - q + 1;
+            int h = (Solids_DisplayFaces * (f - 1) + 1);
+            
+            int vNo = h * Solids_DisplayDegree - q + 1;
             
             allSolid_Vertices[vNo][0] = x;
             allSolid_Vertices[vNo][1] = y;
             allSolid_Vertices[vNo][2] = z;
             
-            int fNo = (Solids_DisplayFaces * (f - 1) + 1);
+            int fNo = h + plane_type;
             
-            allSolid_Faces[fNo][q - 1] = f * Solids_DisplayDegree - q + 1;
+            allSolid_Faces[fNo][q - 1] = h * Solids_DisplayDegree - q + 1;
           }
         }        
   
