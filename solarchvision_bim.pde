@@ -29686,95 +29686,105 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
   if (Work_with_2D_or_3D == 7) { // Note: this is slightly different from the others: reversed f and OBJ_NUM, etc.
     
-    for (int f = 1; f < allSolid_Faces.length; f++) {
-
-      int break_loops = 0;
+    for (int f = 1; f < allSolid_Faces.length; f += Solids_DisplayFaces) {
       
-      int include_OBJ_in_newSelection = -1;    
-
-      if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
-      if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
+      int objectProcessed = 0;
       
-      int OBJ_NUM = 1 + int((f - 1) / Solids_DisplayFaces);
+      for (int plane_type = 0; plane_type < Solids_DisplayFaces; plane_type++) {     
       
-      println("OBJ_NUM", OBJ_NUM);
-
-      for (int j = 0; j < allSolid_Faces[f].length; j++) {
-        
-        int vNo = allSolid_Faces[f][j];
-        
-        float x = allSolid_Vertices[vNo][0] * OBJECTS_scale;
-        float y = allSolid_Vertices[vNo][1] * OBJECTS_scale;
-        float z = -allSolid_Vertices[vNo][2] * OBJECTS_scale;
-        
-        float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
-
-        if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-          if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
-            if (mouseButton == RIGHT) {
-              include_OBJ_in_newSelection = 1;
-              break_loops = 1;
+        if (objectProcessed == 0) {
+  
+          int break_loops = 0;
+          
+          int include_OBJ_in_newSelection = -1;    
+    
+          if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
+          if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
+          
+          int OBJ_NUM = 1 + int((f + plane_type - 1) / Solids_DisplayFaces);
+    
+          for (int j = 0; j < allSolid_Faces[f].length; j++) {
+            
+            int vNo = allSolid_Faces[f][j];
+            
+            float x = allSolid_Vertices[vNo][0] * OBJECTS_scale;
+            float y = allSolid_Vertices[vNo][1] * OBJECTS_scale;
+            float z = -allSolid_Vertices[vNo][2] * OBJECTS_scale;
+            
+            float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+    
+            if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+              if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+                if (mouseButton == RIGHT) {
+                  include_OBJ_in_newSelection = 1;
+                  break_loops = 1;
+                }
+              }
+              else {
+                if (mouseButton == LEFT) {
+                  include_OBJ_in_newSelection = 0;
+                  break_loops = 1;
+                }                          
+              }
+              
+              if (break_loops == 1) break;
             }
+            else {
+              if (mouseButton == LEFT) {
+                include_OBJ_in_newSelection = 0;
+                break_loops = 1;
+              }                          
+            }                  
+            
+            if (break_loops == 1) break;                  
           }
-          else {
-            if (mouseButton == LEFT) {
-              include_OBJ_in_newSelection = 0;
-              break_loops = 1;
-            }                          
-          }
+    
           
-          if (break_loops == 1) break;
-        }
-        else {
-          if (mouseButton == LEFT) {
-            include_OBJ_in_newSelection = 0;
-            break_loops = 1;
-          }                          
-        }                  
-        
-        if (break_loops == 1) break;                  
-      }
-
-      
-      if (include_OBJ_in_newSelection == 1) {
-
-        int found_at = -1;
-        
-        int use_it = 0; // 0:nothing 1:add -1:subtract
-        
-        if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-        if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-        if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-        
-        if (addNewSelectionToPreviousSelection != 0) {
-
-          for (int o = selectedSolid_numbers.length - 1; o >= 0; o--) {
-            if (selectedSolid_numbers[o] == OBJ_NUM) {
-              found_at = o;
-              if (addNewSelectionToPreviousSelection == 1) {
-                use_it = 0;
+          if (include_OBJ_in_newSelection == 1) {
+    
+            int found_at = -1;
+            
+            int use_it = 0; // 0:nothing 1:add -1:subtract
+            
+            if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+            if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+            if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+            
+            if (addNewSelectionToPreviousSelection != 0) {
+    
+              for (int o = selectedSolid_numbers.length - 1; o >= 0; o--) {
+                if (selectedSolid_numbers[o] == OBJ_NUM) {
+                  found_at = o;
+                  if (addNewSelectionToPreviousSelection == 1) {
+                    use_it = 0;
+                  }
+                  if (addNewSelectionToPreviousSelection == -1) {
+                    use_it = -1; 
+                  }
+                  break;
+                } 
               }
-              if (addNewSelectionToPreviousSelection == -1) {
-                use_it = -1; 
-              }
-              break;
-            } 
+            }
+            
+            if (use_it == -1) {
+              int[] startList = (int[]) subset(selectedSolid_numbers, 0, found_at);
+              int[] endList = (int[]) subset(selectedSolid_numbers, found_at + 1);
+              
+              selectedSolid_numbers = (int[]) concat(startList, endList);
+              
+              objectProcessed = 1;
+            }
+            
+            if (use_it == 1) {
+              int[] new_OBJ_number = {OBJ_NUM};
+              
+              selectedSolid_numbers = (int[]) concat(selectedSolid_numbers, new_OBJ_number);
+              
+              objectProcessed = 1;
+            }
+    
           }
         }
-        
-        if (use_it == -1) {
-          int[] startList = (int[]) subset(selectedSolid_numbers, 0, found_at);
-          int[] endList = (int[]) subset(selectedSolid_numbers, found_at + 1);
-          
-          selectedSolid_numbers = (int[]) concat(startList, endList);
-        }
-        
-        if (use_it == 1) {
-          int[] new_OBJ_number = {OBJ_NUM};
-          
-          selectedSolid_numbers = (int[]) concat(selectedSolid_numbers, new_OBJ_number);
-        }
-
       }
     }
   }  
