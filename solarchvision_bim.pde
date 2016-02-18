@@ -24764,10 +24764,7 @@ float[] SOLARCHVISION_7Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
         return_point[1] = hy;
         return_point[2] = hz;
         return_point[3] = hd;
-        //return_point[4] = f;
         return_point[4] = 1 + int((f - 1) / Solids_DisplayFaces);
-        
-        println("f:", f, ">>", return_point[4]);
       }
     
     //}
@@ -29687,9 +29684,9 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
   }             
   
 
-  if (Work_with_2D_or_3D == 7) {
+  if (Work_with_2D_or_3D == 7) { // Note: this is slightly different from the others: reversed f and OBJ_NUM, etc.
     
-    for (int OBJ_NUM = 1; OBJ_NUM < allSolid_Faces.length; OBJ_NUM++) {
+    for (int f = 1; f < allSolid_Faces.length; f++) {
 
       int break_loops = 0;
       
@@ -29698,7 +29695,9 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
       if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
       if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
       
-      int f = OBJ_NUM;
+      int OBJ_NUM = 1 + int((f - 1) / Solids_DisplayFaces);
+      
+      println("OBJ_NUM", OBJ_NUM);
 
       for (int j = 0; j < allSolid_Faces[f].length; j++) {
         
@@ -29775,7 +29774,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
           
           selectedSolid_numbers = (int[]) concat(selectedSolid_numbers, new_OBJ_number);
         }
-        
+
       }
     }
   }  
@@ -38214,7 +38213,7 @@ void SOLARCHVISION_draw_Solids () {
             allSolid_Vertices[vNo][1] = y;
             allSolid_Vertices[vNo][2] = z;
 
-            int fNo = (Solids_DisplayFaces * (f - 1) + plane_type);
+            int fNo = (Solids_DisplayFaces * (f - 1) + plane_type) + 1;
             
             allSolid_Faces[fNo][q - 1] = vNo;
           }
