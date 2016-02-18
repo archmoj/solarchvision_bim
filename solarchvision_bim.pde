@@ -35975,8 +35975,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             
             for (int plane_type = 0; plane_type < Solids_DisplayFaces; plane_type++) {          
             
-              int f = 1 + int((OBJ_NUM - 1) / Solids_DisplayFaces) + plane_type ; 
-    
+              int f = (OBJ_NUM - 1) * Solids_DisplayFaces + plane_type + 1; 
+
               if ((0 < f) && (f < allSolid_Faces.length)) { 
                   
                 beginShape();
@@ -38147,7 +38147,7 @@ float[][] allSolid_Vertices;
 int[][] allSolid_Faces;
 
 int Solids_DisplayFaces = 3; // internal - number of faces: XY, YZ, ZX
-int Solids_DisplayDegree = 4; // internal - number of each face corners 
+int Solids_DisplayDegree = 8; // internal - number of each face corners 
 
 
 void SOLARCHVISION_draw_Solids () {
@@ -38164,8 +38164,6 @@ void SOLARCHVISION_draw_Solids () {
     WIN3D_Diagrams.strokeWeight(2);
     
     for (int f = 1; f <= allSolid_num; f++) {
-
-      println("___________________");
       
       float Solid_posX = allSolid_XYZPPPSSSRRRV[f][0];
       float Solid_posY = allSolid_XYZPPPSSSRRRV[f][1];
@@ -38212,15 +38210,13 @@ void SOLARCHVISION_draw_Solids () {
             
             int vNo = (Solids_DisplayFaces * (f - 1) + plane_type) * Solids_DisplayDegree + q;
             
-            println("f, vNo", f, vNo);
-            
             allSolid_Vertices[vNo][0] = x;
             allSolid_Vertices[vNo][1] = y;
             allSolid_Vertices[vNo][2] = z;
 
-            //println("fNo", fNo);
+            int fNo = (Solids_DisplayFaces * (f - 1) + plane_type);
             
-            //allSolid_Faces[fNo][q - 1] = h * Solids_DisplayDegree - q + 1;
+            allSolid_Faces[fNo][q - 1] = vNo;
           }
         }        
   
