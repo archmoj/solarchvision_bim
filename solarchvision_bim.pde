@@ -1,4 +1,3 @@
-// scale and rotate are not working very well on solid mode
 // option to modify solid properties
 // create solid not working yet.
 // deleting solids may create conflict with polymeshes that has those solids
@@ -39722,82 +39721,100 @@ void SOLARCHVISION_softScale_selectedVertices (float x0, float y0, float z0, flo
 }
 
 
-void SOLARCHVISION_move_selectedSolid (float dx, float dy, float dz) {
+void SOLARCHVISION_move_selectedSolids (float dx, float dy, float dz) {
+
+  int Solids_updated = 0; 
   
   for (int q = 1; q < selectedSolid_numbers.length; q++) {
-    
-    int n = selectedSolid_numbers[q];
   
-    allSolid_XYZPPPSSSRRRV[n][0] += dx; 
-    allSolid_XYZPPPSSSRRRV[n][1] += dy;
-    allSolid_XYZPPPSSSRRRV[n][2] += dz;
+    int g = selectedSolid_numbers[q];
+
+    float Solid_posX = allSolid_XYZPPPSSSRRRV[g][0];
+    float Solid_posY = allSolid_XYZPPPSSSRRRV[g][1];
+    float Solid_posZ = allSolid_XYZPPPSSSRRRV[g][2];          
+    
+    Solid_updatePosition(g, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
+    
+    Solids_updated = 1;  
 
   }
-  
-  SOLARCHVISION_calculate_SolidImpact_selectedSections();
+      
+  if (Solids_updated != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
 
 }
 
 
-void SOLARCHVISION_rotate_selectedSolid (float x0, float y0, float z0, float r, int the_Vector) {
+void SOLARCHVISION_rotate_selectedSolids (float x0, float y0, float z0, float r, int the_Vector) {
 
+  int Solids_updated = 0; 
+  
   for (int q = 1; q < selectedSolid_numbers.length; q++) {
-    
-    int n = selectedSolid_numbers[q];
 
-    float x = allSolid_XYZPPPSSSRRRV[n][0] - x0; 
-    float y = allSolid_XYZPPPSSSRRRV[n][1] - y0; 
-    float z = allSolid_XYZPPPSSSRRRV[n][2] - z0;
+    int g = selectedSolid_numbers[q];
+
+    float Solid_posX = allSolid_XYZPPPSSSRRRV[g][0];
+    float Solid_posY = allSolid_XYZPPPSSSRRRV[g][1];
+    float Solid_posZ = allSolid_XYZPPPSSSRRRV[g][2];          
+    
+    float x = Solid_posX - x0; 
+    float y = Solid_posY - y0; 
+    float z = Solid_posZ - z0;
     
     if (the_Vector == 2) {
-      allSolid_XYZPPPSSSRRRV[n][0] = x0 + (x * cos(r) - y * sin(r)); 
-      allSolid_XYZPPPSSSRRRV[n][1] = y0 + (x * sin(r) + y * cos(r));
-      allSolid_XYZPPPSSSRRRV[n][2] = z0 + (z);
+      Solid_updatePosition(g, x0 + (x * cos(r) - y * sin(r)), y0 + (x * sin(r) + y * cos(r)), z0 + (z));
+    
+      Solid_RotateZ(g, r * 180 / PI);
     }
     else if (the_Vector == 1) {
-      allSolid_XYZPPPSSSRRRV[n][0] = x0 + (z * sin(r) + x * cos(r)); 
-      allSolid_XYZPPPSSSRRRV[n][1] = y0 + (y);
-      allSolid_XYZPPPSSSRRRV[n][2] = z0 + (z * cos(r) - x * sin(r));
-    }    
-    else if (the_Vector == 0) {
-      allSolid_XYZPPPSSSRRRV[n][0] = x0 + (x); 
-      allSolid_XYZPPPSSSRRRV[n][1] = y0 + (y * cos(r) - z * sin(r));
-      allSolid_XYZPPPSSSRRRV[n][2] = z0 + (y * sin(r) + z * cos(r));
-    }    
+      Solid_updatePosition(g, x0 + (z * sin(r) + x * cos(r)), y0 + (y), z0 + (z * cos(r) - x * sin(r)));
     
-  }
-  
-  SOLARCHVISION_calculate_SolidImpact_selectedSections();
+      Solid_RotateY(g, r * 180 / PI);
+    }
+    else if (the_Vector == 0) {
+      Solid_updatePosition(g, x0 + (x), y0 + (y * cos(r) - z * sin(r)), z0 + (y * sin(r) + z * cos(r)));
+    
+      Solid_RotateX(g, r * 180 / PI);
+    }
+          
+    Solids_updated = 1;  
 
+  }
+      
+  if (Solids_updated != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections();   
+  
 }
 
 
 
 
-void SOLARCHVISION_scale_selectedSolid (float x0, float y0, float z0, float sx, float sy, float sz) {
+void SOLARCHVISION_scale_selectedSolids (float x0, float y0, float z0, float sx, float sy, float sz) {
 
+  int Solids_updated = 0; 
+  
   for (int q = 1; q < selectedSolid_numbers.length; q++) {
     
-    int n = selectedSolid_numbers[q];
+    int g = selectedSolid_numbers[q];
 
-    float x = allSolid_XYZPPPSSSRRRV[n][0] - x0; 
-    float y = allSolid_XYZPPPSSSRRRV[n][1] - y0; 
-    float z = allSolid_XYZPPPSSSRRRV[n][2] - z0;
-   
-    allSolid_XYZPPPSSSRRRV[n][0] = x0 + sx * x; 
-    allSolid_XYZPPPSSSRRRV[n][1] = y0 + sy * y;
-    allSolid_XYZPPPSSSRRRV[n][2] = z0 + sz * z;
+    float Solid_posX = allSolid_XYZPPPSSSRRRV[g][0];
+    float Solid_posY = allSolid_XYZPPPSSSRRRV[g][1];
+    float Solid_posZ = allSolid_XYZPPPSSSRRRV[g][2];          
     
+    Solid_updatePosition(g, (Solid_posX - x0) * sx + x0, (Solid_posY - y0) * sy + y0, (Solid_posZ - z0) * sz + z0);
+    
+    Solid_Scale(g, sx, sy, sz);
+
+    Solids_updated = 1;  
+
   }
-  
-  SOLARCHVISION_calculate_SolidImpact_selectedSections();
+      
+  if (Solids_updated != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
   
 }
 
 
 
 
-void SOLARCHVISION_move_selectedSection (float dx, float dy, float dz) {
+void SOLARCHVISION_move_selectedSections (float dx, float dy, float dz) {
 
   for (int q = 1; q < selectedSection_numbers.length; q++) {
     
@@ -39817,7 +39834,7 @@ void SOLARCHVISION_move_selectedSection (float dx, float dy, float dz) {
 }
 
 
-void SOLARCHVISION_rotate_selectedSection (float r) {
+void SOLARCHVISION_rotate_selectedSections (float r) {
 
   for (int q = 1; q < selectedSection_numbers.length; q++) {
     
@@ -39834,7 +39851,7 @@ void SOLARCHVISION_rotate_selectedSection (float r) {
 
 }
 
-void SOLARCHVISION_scale_selectedSection (float sx, float sy) {
+void SOLARCHVISION_scale_selectedSections (float sx, float sy) {
 
   for (int q = 1; q < selectedSection_numbers.length; q++) {
     
@@ -39853,7 +39870,7 @@ void SOLARCHVISION_scale_selectedSection (float sx, float sy) {
 }
 
 
-void SOLARCHVISION_move_selectedCamera (float dx, float dy, float dz) {
+void SOLARCHVISION_move_selectedCameras (float dx, float dy, float dz) {
   
   // swapping y and z vectors to match camera's local coordinate
   float tmp = dz;
@@ -39874,7 +39891,7 @@ void SOLARCHVISION_move_selectedCamera (float dx, float dy, float dz) {
 }
 
 
-void SOLARCHVISION_rotate_selectedCamera (float x0, float y0, float z0, float r, int the_Vector) {
+void SOLARCHVISION_rotate_selectedCameras (float x0, float y0, float z0, float r, int the_Vector) {
 
   // swapping y and z vectors to match camera's local coordinate
   if (the_Vector == 2) the_Vector = 1;
@@ -39910,7 +39927,7 @@ void SOLARCHVISION_rotate_selectedCamera (float x0, float y0, float z0, float r,
 }
 
 
-void SOLARCHVISION_scale_selectedCamera (float x0, float y0, float z0, float sx, float sy, float sz) {
+void SOLARCHVISION_scale_selectedCameras (float x0, float y0, float z0, float sx, float sy, float sz) {
 
   // swapping y and z vectors to match camera's local coordinate
   float tmp = sz;
@@ -40021,16 +40038,16 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
 
   if (Work_with_2D_or_3D == 9) {
 
-    SOLARCHVISION_scale_selectedCamera(x0, y0, z0, sx, sy, sz);
+    SOLARCHVISION_scale_selectedCameras(x0, y0, z0, sx, sy, sz);
   }   
   
   if (Work_with_2D_or_3D == 8) {
 
-    SOLARCHVISION_scale_selectedSection(sx, sy);
+    SOLARCHVISION_scale_selectedSections(sx, sy);
   }   
   
   if (Work_with_2D_or_3D == 7) {
-    SOLARCHVISION_scale_selectedSolid(x0, y0, z0, sx, sy, sz);
+    SOLARCHVISION_scale_selectedSolids(x0, y0, z0, sx, sy, sz);
   }       
     
   if (Work_with_2D_or_3D == 6) {
@@ -40113,17 +40130,17 @@ void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int 
 
   if (Work_with_2D_or_3D == 9) {
 
-    SOLARCHVISION_rotate_selectedCamera(x0, y0, z0, r, the_Vector);
+    SOLARCHVISION_rotate_selectedCameras(x0, y0, z0, r, the_Vector);
   }  
   
   if (Work_with_2D_or_3D == 8) {
 
-    SOLARCHVISION_rotate_selectedSection(r);
+    SOLARCHVISION_rotate_selectedSections(r);
   }   
   
   if (Work_with_2D_or_3D == 7) {
 
-    SOLARCHVISION_rotate_selectedSolid(x0, y0, z0, r, the_Vector);
+    SOLARCHVISION_rotate_selectedSolids(x0, y0, z0, r, the_Vector);
   }       
   
   if (Work_with_2D_or_3D == 6) {
@@ -40177,17 +40194,17 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
 
   if (Work_with_2D_or_3D == 9) {
 
-    SOLARCHVISION_move_selectedCamera(dx, dy, dz);
+    SOLARCHVISION_move_selectedCameras(dx, dy, dz);
   }     
   
   if (Work_with_2D_or_3D == 8) {
 
-    SOLARCHVISION_move_selectedSection(dx, dy, dz);
+    SOLARCHVISION_move_selectedSections(dx, dy, dz);
   }   
   
   if (Work_with_2D_or_3D == 7) {
 
-    SOLARCHVISION_move_selectedSolid(dx, dy, dz);
+    SOLARCHVISION_move_selectedSolids(dx, dy, dz);
   }      
   
   if (Work_with_2D_or_3D == 6) {
