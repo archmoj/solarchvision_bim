@@ -1,4 +1,3 @@
-// improve display_SOLIDS!
 // drop functions only works for living objects
 // still duplicate not working for solid layer!
 // create solid not working yet.
