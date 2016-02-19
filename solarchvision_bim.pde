@@ -1,3 +1,5 @@
+// note I remarked: //for (int j = 0; j < allObject2Ds[f].length; j++) { and the one for solids on reverse function below! maybe we could delete the lines : )
+
 // should add solid option to trees?
 // could add create polygroup --> startPolyGroup ...
 // drop functions only works for living objects
@@ -2591,12 +2593,12 @@ void draw () {
         
 
         if (pre_softSelection_Power != softSelection_Power) {    
-          SOLARCHVISION_convert_Vertex2softSelection();
+          SOLARCHVISION_convert_Vertex_to_softSelection();
           WIN3D_Update = 1;
         }  
 
         if (pre_softSelection_Radius != softSelection_Radius) {
-          SOLARCHVISION_convert_Vertex2softSelection();
+          SOLARCHVISION_convert_Vertex_to_softSelection();
           WIN3D_Update = 1;
         }  
 
@@ -14742,7 +14744,7 @@ void SOLARCHVISION_delete_Selection () {
   int[] keep_selectedVertex_numbers = {0};
   if (Current_ObjectCategory == ObjectCategory_Polygroups) {
 
-    SOLARCHVISION_convert_Polygroup2Vertex(); // finding & then keeping objects vertices so that we could delete the isolated ones later  
+    SOLARCHVISION_convert_Polygroup_to_Vertex(); // finding & then keeping objects vertices so that we could delete the isolated ones later  
     keep_selectedVertex_numbers = selectedVertex_numbers;
 
     selectedPolygroup_numbers = sort(selectedPolygroup_numbers);
@@ -14896,13 +14898,13 @@ void SOLARCHVISION_delete_Selection () {
       
       selectedFace_numbers = sort(selectedFace_numbers);
       
-      SOLARCHVISION_convert_Vertex2Face(); 
+      SOLARCHVISION_convert_Vertex_to_Face(); 
       
     }
     
     selectedFace_numbers = sort(selectedFace_numbers);
 
-    SOLARCHVISION_convert_Face2Polygroup();    
+    SOLARCHVISION_convert_Face_to_Polygroup();    
 
     selectedPolygroup_numbers = sort(selectedPolygroup_numbers);
 
@@ -15149,13 +15151,13 @@ void SOLARCHVISION_selectNearVertices () {
 
     if (Current_ObjectCategory == ObjectCategory_Polygroups) { 
 
-      SOLARCHVISION_convert_Polygroup2Vertex();    
+      SOLARCHVISION_convert_Polygroup_to_Vertex();    
       
     }
     
     if (Current_ObjectCategory == ObjectCategory_Faces) { 
       
-      SOLARCHVISION_convert_Face2Vertex(); 
+      SOLARCHVISION_convert_Face_to_Vertex(); 
       
     }
     
@@ -15221,13 +15223,13 @@ void SOLARCHVISION_weldSceneVerticesSelection () {
 
     if (Current_ObjectCategory == ObjectCategory_Polygroups) { 
 
-      SOLARCHVISION_convert_Polygroup2Vertex();    
+      SOLARCHVISION_convert_Polygroup_to_Vertex();    
       
     }
     
     if (Current_ObjectCategory == ObjectCategory_Faces) { 
       
-      SOLARCHVISION_convert_Face2Vertex(); 
+      SOLARCHVISION_convert_Face_to_Vertex(); 
       
     }
     
@@ -15300,17 +15302,17 @@ void SOLARCHVISION_weldObjectsVerticesSelection () {
 
     if (Current_ObjectCategory == ObjectCategory_Polygroups) { 
 
-      SOLARCHVISION_convert_Polygroup2Vertex();    
+      SOLARCHVISION_convert_Polygroup_to_Vertex();    
       
     }
     
     if (Current_ObjectCategory == ObjectCategory_Faces) { 
       
-      SOLARCHVISION_convert_Face2Vertex(); 
+      SOLARCHVISION_convert_Face_to_Vertex(); 
       
     }
     
-    SOLARCHVISION_convert_Vertex2Face();
+    SOLARCHVISION_convert_Vertex_to_Face();
     
     selectedVertex_numbers = sort(selectedVertex_numbers);
     
@@ -15416,13 +15418,13 @@ void SOLARCHVISION_separateVerticesSelection () {
 
     if (Current_ObjectCategory == ObjectCategory_Polygroups) { 
 
-      SOLARCHVISION_convert_Polygroup2Vertex();    
+      SOLARCHVISION_convert_Polygroup_to_Vertex();    
       
     }
     
     if (Current_ObjectCategory == ObjectCategory_Faces) { 
       
-      SOLARCHVISION_convert_Face2Vertex(); 
+      SOLARCHVISION_convert_Face_to_Vertex(); 
       
     }
     
@@ -15465,7 +15467,7 @@ void SOLARCHVISION_inserCornerOpenningsSelection () {
       
       selectedPolygroup_numbers = sort(selectedPolygroup_numbers);
 
-      SOLARCHVISION_convert_Polygroup2Face();    
+      SOLARCHVISION_convert_Polygroup_to_Face();    
   
       selectedFace_numbers = sort(selectedFace_numbers);
       
@@ -15475,7 +15477,7 @@ void SOLARCHVISION_inserCornerOpenningsSelection () {
       
       selectedFace_numbers = sort(selectedFace_numbers);
 
-      SOLARCHVISION_convert_Face2Polygroup();    
+      SOLARCHVISION_convert_Face_to_Polygroup();    
   
       selectedPolygroup_numbers = sort(selectedPolygroup_numbers);
       
@@ -15635,7 +15637,7 @@ void SOLARCHVISION_insertParallelOpenningsSelection () {
       
       selectedPolygroup_numbers = sort(selectedPolygroup_numbers);
 
-      SOLARCHVISION_convert_Polygroup2Face();    
+      SOLARCHVISION_convert_Polygroup_to_Face();    
   
       selectedFace_numbers = sort(selectedFace_numbers);
       
@@ -15645,7 +15647,7 @@ void SOLARCHVISION_insertParallelOpenningsSelection () {
       
       selectedFace_numbers = sort(selectedFace_numbers);
 
-      SOLARCHVISION_convert_Face2Polygroup();    
+      SOLARCHVISION_convert_Face_to_Polygroup();    
   
       selectedPolygroup_numbers = sort(selectedPolygroup_numbers);
       
@@ -15830,7 +15832,7 @@ void SOLARCHVISION_insertRotatedOpenningsSelection () {
       
       selectedPolygroup_numbers = sort(selectedPolygroup_numbers);
 
-      SOLARCHVISION_convert_Polygroup2Face();    
+      SOLARCHVISION_convert_Polygroup_to_Face();    
   
       selectedFace_numbers = sort(selectedFace_numbers);
       
@@ -15840,7 +15842,7 @@ void SOLARCHVISION_insertRotatedOpenningsSelection () {
       
       selectedFace_numbers = sort(selectedFace_numbers);
 
-      SOLARCHVISION_convert_Face2Polygroup();    
+      SOLARCHVISION_convert_Face_to_Polygroup();    
   
       selectedPolygroup_numbers = sort(selectedPolygroup_numbers);
       
@@ -16008,7 +16010,7 @@ void SOLARCHVISION_insertEdgeOpenningsSelection () {
       
       selectedPolygroup_numbers = sort(selectedPolygroup_numbers);
 
-      SOLARCHVISION_convert_Polygroup2Face();    
+      SOLARCHVISION_convert_Polygroup_to_Face();    
   
       selectedFace_numbers = sort(selectedFace_numbers);
       
@@ -16018,7 +16020,7 @@ void SOLARCHVISION_insertEdgeOpenningsSelection () {
       
       selectedFace_numbers = sort(selectedFace_numbers);
 
-      SOLARCHVISION_convert_Face2Polygroup();    
+      SOLARCHVISION_convert_Face_to_Polygroup();    
   
       selectedPolygroup_numbers = sort(selectedPolygroup_numbers);
       
@@ -16182,7 +16184,7 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
       
       selectedPolygroup_numbers = sort(selectedPolygroup_numbers);
 
-      SOLARCHVISION_convert_Polygroup2Face();    
+      SOLARCHVISION_convert_Polygroup_to_Face();    
   
       selectedFace_numbers = sort(selectedFace_numbers);
       
@@ -16192,7 +16194,7 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
       
       selectedFace_numbers = sort(selectedFace_numbers);
 
-      SOLARCHVISION_convert_Face2Polygroup();    
+      SOLARCHVISION_convert_Face_to_Polygroup();    
   
       selectedPolygroup_numbers = sort(selectedPolygroup_numbers);
       
@@ -16383,7 +16385,7 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
       
       selectedPolygroup_numbers = sort(selectedPolygroup_numbers);
 
-      SOLARCHVISION_convert_Polygroup2Face();    
+      SOLARCHVISION_convert_Polygroup_to_Face();    
   
       selectedFace_numbers = sort(selectedFace_numbers);
       
@@ -16393,7 +16395,7 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
       
       selectedFace_numbers = sort(selectedFace_numbers);
 
-      SOLARCHVISION_convert_Face2Polygroup();    
+      SOLARCHVISION_convert_Face_to_Polygroup();    
   
       selectedPolygroup_numbers = sort(selectedPolygroup_numbers);
       
@@ -16554,7 +16556,7 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
       
       selectedPolygroup_numbers = sort(selectedPolygroup_numbers);
 
-      SOLARCHVISION_convert_Polygroup2Face();    
+      SOLARCHVISION_convert_Polygroup_to_Face();    
   
       selectedFace_numbers = sort(selectedFace_numbers);
       
@@ -16564,7 +16566,7 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
       
       selectedFace_numbers = sort(selectedFace_numbers);
 
-      SOLARCHVISION_convert_Face2Polygroup();    
+      SOLARCHVISION_convert_Face_to_Polygroup();    
   
       selectedPolygroup_numbers = sort(selectedPolygroup_numbers);
       
@@ -16706,7 +16708,7 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
       
       selectedPolygroup_numbers = sort(selectedPolygroup_numbers);
 
-      SOLARCHVISION_convert_Polygroup2Face();    
+      SOLARCHVISION_convert_Polygroup_to_Face();    
   
       selectedFace_numbers = sort(selectedFace_numbers);
       
@@ -16716,7 +16718,7 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
       
       selectedFace_numbers = sort(selectedFace_numbers);
 
-      SOLARCHVISION_convert_Face2Polygroup();    
+      SOLARCHVISION_convert_Face_to_Polygroup();    
   
       selectedPolygroup_numbers = sort(selectedPolygroup_numbers);
       
@@ -16839,13 +16841,13 @@ void SOLARCHVISION_offsetVerticesSelection (int _type, float _amount) {
 
     if (Current_ObjectCategory == ObjectCategory_Polygroups) { 
 
-      SOLARCHVISION_convert_Polygroup2Vertex();    
+      SOLARCHVISION_convert_Polygroup_to_Vertex();    
       
     }
     
     if (Current_ObjectCategory == ObjectCategory_Faces) { 
       
-      SOLARCHVISION_convert_Face2Vertex(); 
+      SOLARCHVISION_convert_Face_to_Vertex(); 
       
     }
     
@@ -16948,13 +16950,13 @@ void SOLARCHVISION_changeVisibilityFacesSelection (int new_vsb) {
     
     if (Current_ObjectCategory == ObjectCategory_Polygroups) { 
   
-      SOLARCHVISION_convert_Polygroup2Face();    
+      SOLARCHVISION_convert_Polygroup_to_Face();    
       
     }
     
     if (Current_ObjectCategory == ObjectCategory_Vertices) { 
       
-      SOLARCHVISION_convert_Vertex2Face(); 
+      SOLARCHVISION_convert_Vertex_to_Face(); 
       
     }
     
@@ -17395,33 +17397,29 @@ void SOLARCHVISION_reverse_Selection () {
 }  
 
 
-
-void SOLARCHVISION_convert_Solid2Polygroup () {
+void SOLARCHVISION_convert_Object2D_to_Polygroup () {
   
   selectedPolygroup_numbers = new int [1];
   selectedPolygroup_numbers[0] = 0; 
   
-  for (int i = 1; i < selectedSolid_numbers.length; i++) {
+  for (int i = 1; i < selectedObject2D_numbers.length; i++) {
     
-    int f = selectedSolid_numbers[i];
+    int f = selectedObject2D_numbers[i];
+      
+    for (int OBJ_NUM = 1; OBJ_NUM < allPolygroups_Object2Ds.length; OBJ_NUM++) {
     
-    for (int j = 0; j < allSolids[f].length; j++) {
+      if ((allPolygroups_Object2Ds[OBJ_NUM][0] <= f) && (f <= allPolygroups_Object2Ds[OBJ_NUM][1])) { 
       
-      for (int OBJ_NUM = 1; OBJ_NUM < allPolygroups_Solids.length; OBJ_NUM++) {
-      
-        if ((allPolygroups_Solids[OBJ_NUM][0] <= f) && (f <= allPolygroups_Solids[OBJ_NUM][1])) { 
-        
-          int previously_added = 0;
-          for (int q = 0; q < selectedPolygroup_numbers.length; q++) {
-            if (selectedPolygroup_numbers[q] == OBJ_NUM) {
-              previously_added = 1;
-              break;
-            }
+        int previously_added = 0;
+        for (int q = 0; q < selectedPolygroup_numbers.length; q++) {
+          if (selectedPolygroup_numbers[q] == OBJ_NUM) {
+            previously_added = 1;
+            break;
           }
-          if (previously_added == 0) {
-            int[] new_Item = {OBJ_NUM};
-            selectedPolygroup_numbers = concat(selectedPolygroup_numbers, new_Item);
-          }
+        }
+        if (previously_added == 0) {
+          int[] new_Item = {OBJ_NUM};
+          selectedPolygroup_numbers = concat(selectedPolygroup_numbers, new_Item);
         }
       }
     }
@@ -17429,7 +17427,39 @@ void SOLARCHVISION_convert_Solid2Polygroup () {
 
 }
 
-void SOLARCHVISION_convert_Face2Polygroup () {
+
+
+void SOLARCHVISION_convert_Solid_to_Polygroup () {
+  
+  selectedPolygroup_numbers = new int [1];
+  selectedPolygroup_numbers[0] = 0; 
+  
+  for (int i = 1; i < selectedSolid_numbers.length; i++) {
+    
+    int f = selectedSolid_numbers[i];
+          
+    for (int OBJ_NUM = 1; OBJ_NUM < allPolygroups_Solids.length; OBJ_NUM++) {
+    
+      if ((allPolygroups_Solids[OBJ_NUM][0] <= f) && (f <= allPolygroups_Solids[OBJ_NUM][1])) { 
+      
+        int previously_added = 0;
+        for (int q = 0; q < selectedPolygroup_numbers.length; q++) {
+          if (selectedPolygroup_numbers[q] == OBJ_NUM) {
+            previously_added = 1;
+            break;
+          }
+        }
+        if (previously_added == 0) {
+          int[] new_Item = {OBJ_NUM};
+          selectedPolygroup_numbers = concat(selectedPolygroup_numbers, new_Item);
+        }
+      }
+    }
+  }  
+
+}
+
+void SOLARCHVISION_convert_Face_to_Polygroup () {
   
   selectedPolygroup_numbers = new int [1];
   selectedPolygroup_numbers[0] = 0; 
@@ -17463,7 +17493,7 @@ void SOLARCHVISION_convert_Face2Polygroup () {
 }
 
 
-void SOLARCHVISION_convert_Vertex2Polygroup () {
+void SOLARCHVISION_convert_Vertex_to_Polygroup () {
 
   selectedPolygroup_numbers = new int [1];
   selectedPolygroup_numbers[0] = 0; 
@@ -17503,7 +17533,7 @@ void SOLARCHVISION_convert_Vertex2Polygroup () {
 }
 
 
-void SOLARCHVISION_convert_Vertex2Face () {
+void SOLARCHVISION_convert_Vertex_to_Face () {
 
   selectedFace_numbers = new int [1];
   selectedFace_numbers[0] = 0; 
@@ -17537,8 +17567,36 @@ void SOLARCHVISION_convert_Vertex2Face () {
 }
 
 
+void SOLARCHVISION_convert_Polygroup_to_Object2D () {
 
-void SOLARCHVISION_convert_Polygroup2Solid () {
+  selectedObject2D_numbers = new int [1];
+  selectedObject2D_numbers[0] = 0; 
+  
+  for (int i = 1; i < selectedPolygroup_numbers.length; i++) {
+    
+    int OBJ_NUM = selectedPolygroup_numbers[i];
+    
+    for (int f = allPolygroups_Object2Ds[OBJ_NUM][0]; f <= allPolygroups_Object2Ds[OBJ_NUM][1]; f++) { 
+      
+      int previously_added = 0;
+      for (int q = 0; q < selectedObject2D_numbers.length; q++) {
+        if (selectedObject2D_numbers[q] == f) {
+          previously_added = 1;
+          break;
+        }
+      }
+      if (previously_added == 0) {
+        int[] new_Item = {f};
+        selectedObject2D_numbers = concat(selectedObject2D_numbers, new_Item);
+      }
+    }  
+  }
+
+}
+
+
+
+void SOLARCHVISION_convert_Polygroup_to_Solid () {
 
   selectedSolid_numbers = new int [1];
   selectedSolid_numbers[0] = 0; 
@@ -17567,7 +17625,7 @@ void SOLARCHVISION_convert_Polygroup2Solid () {
 
 
 
-void SOLARCHVISION_convert_Polygroup2Face () {
+void SOLARCHVISION_convert_Polygroup_to_Face () {
 
   selectedFace_numbers = new int [1];
   selectedFace_numbers[0] = 0; 
@@ -17595,7 +17653,7 @@ void SOLARCHVISION_convert_Polygroup2Face () {
 }
 
 
-void SOLARCHVISION_convert_Polygroup2Vertex () {
+void SOLARCHVISION_convert_Polygroup_to_Vertex () {
   
   selectedVertex_numbers = new int [1];
   selectedVertex_numbers[0] = 0; 
@@ -17628,7 +17686,7 @@ void SOLARCHVISION_convert_Polygroup2Vertex () {
 }
 
 
-void SOLARCHVISION_convert_Face2Vertex () {
+void SOLARCHVISION_convert_Face_to_Vertex () {
 
   selectedVertex_numbers = new int [1];
   selectedVertex_numbers[0] = 0; 
@@ -17661,13 +17719,13 @@ void SOLARCHVISION_convert_Face2Vertex () {
 int[] selectedVertex_softSelectionVertices = new int[0]; 
 float[] selectedVertex_softSelectionValues = new float[0];
 
-void SOLARCHVISION_convert_Vertex2softSelection () { 
+void SOLARCHVISION_convert_Vertex_to_softSelection () { 
 
   int[] keep_selectedVertex_numbers = selectedVertex_numbers;
   
-  SOLARCHVISION_convert_Vertex2Polygroup();
+  SOLARCHVISION_convert_Vertex_to_Polygroup();
   
-  SOLARCHVISION_convert_Polygroup2Vertex();
+  SOLARCHVISION_convert_Polygroup_to_Vertex();
   
   selectedVertex_softSelectionVertices = new int[selectedVertex_numbers.length]; 
   selectedVertex_softSelectionValues = new float[selectedVertex_numbers.length];
@@ -21122,8 +21180,7 @@ void SOLARCHVISION_add_2Dobjects_Mesh2 (int people_or_trees, int n, float x1, fl
 void SOLARCHVISION_delete_All () {
   
   SOLARCHVISION_delete_Fractals();
-  SOLARCHVISION_delete_2Dobjects();
-  SOLARCHVISION_delete_3Dobjects();
+  SOLARCHVISION_delete_3Dobjects(); // also includes Object2Ds and Solids
   SOLARCHVISION_delete_Sections();
   SOLARCHVISION_delete_Cameras();
   
@@ -21303,8 +21360,14 @@ void SOLARCHVISION_delete_3Dobjects () {
   allPolygroups_Solids = new int [1][2];
   allPolygroups_Solids[0][0] = 0;
   allPolygroups_Solids[0][1] = -1;
+
+  allPolygroups_Object2Ds = new int [1][2];
+  allPolygroups_Object2Ds[0][0] = 0;
+  allPolygroups_Object2Ds[0][1] = -1;  
   
   SOLARCHVISION_delete_Solids();
+  
+  SOLARCHVISION_delete_Object2Ds();
 
   SOLARCHVISION_beginNewPolygroup();
  
@@ -32721,61 +32784,73 @@ void mouseClicked () {
               BAR_b_Update = 1;  
             } 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Soft Selection")) {
-              SOLARCHVISION_convert_Vertex2softSelection();
+              SOLARCHVISION_convert_Vertex_to_softSelection();
               
               Current_ObjectCategory = ObjectCategory_SoftVerts;
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
             }                 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Vertex >> Polygroup")) {
-              SOLARCHVISION_convert_Vertex2Polygroup();
+              SOLARCHVISION_convert_Vertex_to_Polygroup();
               Current_ObjectCategory = ObjectCategory_Polygroups;
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
             }             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Face >> Polygroup")) {
-              SOLARCHVISION_convert_Face2Polygroup();
+              SOLARCHVISION_convert_Face_to_Polygroup();
               Current_ObjectCategory = ObjectCategory_Polygroups;
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
             }             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Polygroup >> Face")) {
-              SOLARCHVISION_convert_Polygroup2Face();
+              SOLARCHVISION_convert_Polygroup_to_Face();
               Current_ObjectCategory = ObjectCategory_Faces;
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
             }              
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Polygroup >> Vertex")) {
-              SOLARCHVISION_convert_Polygroup2Vertex();
+              SOLARCHVISION_convert_Polygroup_to_Vertex();
               Current_ObjectCategory = ObjectCategory_Vertices;
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Face >> Vertex")) {
-              SOLARCHVISION_convert_Face2Vertex();
+              SOLARCHVISION_convert_Face_to_Vertex();
               Current_ObjectCategory = ObjectCategory_Vertices;
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
             } 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Vertex >> Face")) {
-              SOLARCHVISION_convert_Vertex2Face();
+              SOLARCHVISION_convert_Vertex_to_Face();
               Current_ObjectCategory = ObjectCategory_Faces;
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
             }    
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Solid >> Polygroup")) {
-              SOLARCHVISION_convert_Solid2Polygroup();
+              SOLARCHVISION_convert_Solid_to_Polygroup();
               Current_ObjectCategory = ObjectCategory_Polygroups;
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
             }             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Polygroup >> Solid")) {
-              SOLARCHVISION_convert_Polygroup2Solid();
+              SOLARCHVISION_convert_Polygroup_to_Solid();
               Current_ObjectCategory = ObjectCategory_Solids;
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
             }                
-         
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Object2D >> Polygroup")) {
+              SOLARCHVISION_convert_Object2D_to_Polygroup();
+              Current_ObjectCategory = ObjectCategory_Polygroups;
+              WIN3D_Update = 1;
+              BAR_b_Update = 1;  
+            }             
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Polygroup >> Object2D")) {
+              SOLARCHVISION_convert_Polygroup_to_Object2D();
+              Current_ObjectCategory = ObjectCategory_Object2Ds;
+              WIN3D_Update = 1;
+              BAR_b_Update = 1;  
+            }             
+            
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Click Select")) {
               set_to_View_ClickSelect(0);
@@ -42439,7 +42514,7 @@ String[][] BAR_a_Items = {
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Viewport >> Camera", "Camera", "Section", "Solid", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"},
-                        {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Solid", "Select Section",  "Select Camera", "Select LandPoint", "Select Fractal", "Select Object2D", "Select Polygroup", "Select Face", "Select Vertex", "Soft Selection", "Solid >> Polygroup", "Polygroup >> Solid", "Polygroup >> Face", "Polygroup >> Vertex", "Vertex >> Polygroup", "Vertex >> Face", "Face >> Vertex", "Face >> Polygroup", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
+                        {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Solid", "Select Section",  "Select Camera", "Select LandPoint", "Select Fractal", "Select Object2D", "Select Polygroup", "Select Face", "Select Vertex", "Soft Selection", "Polygroup >> Vertex", "Polygroup >> Face", "Polygroup >> Solid", "Polygroup >> Object2D", "Object2D >> Polygroup", "Solid >> Polygroup",  "Face >> Polygroup", "Vertex >> Polygroup",  "Vertex >> Face", "Face >> Vertex", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
                         {"Edit", "Duplicate Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Power", "PowerX", "PowerY", "PowerZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
                         {"Match", "Save Current Pivot", "Reset Saved Pivot", "Use Selection Pivot", "Use Origin Pivot", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunkSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunkSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot", "Drop on LandSurface", "Drop on ModelSurface (Up)", "Drop on ModelSurface (Down)"},
@@ -42941,7 +43016,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
           Current_ObjectCategory = j - 1;
           
           if (Current_ObjectCategory == ObjectCategory_SoftVerts) {
-            SOLARCHVISION_convert_Vertex2softSelection();
+            SOLARCHVISION_convert_Vertex_to_softSelection();
           }
           
           ROLLOUT_Update = 1;   
