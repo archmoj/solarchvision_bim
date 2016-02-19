@@ -1,4 +1,3 @@
-// deleting solids may create conflict with polygroups that has those solids
 // should add solid option to trees?
 // could add create polygroup --> startPolyGroup ...
 // drop functions only works for living objects
@@ -14629,20 +14628,17 @@ void SOLARCHVISION_delete_Selection () {
   if (Current_ObjectCategory == ObjectCategory_Solids) {
     
     selectedSolid_numbers = sort(selectedSolid_numbers);
-    
+
     for (int o = selectedSolid_numbers.length - 1; o >= 0; o--) {
 
       int OBJ_NUM = selectedSolid_numbers[o];
 
       if (OBJ_NUM != 0) {    
         
-//------------------------------------       qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
-
-        
         for (int q = 0; q < allPolygroups_Solids.length; q++) {
           if ((allPolygroups_Solids[q][0] <= OBJ_NUM) && (OBJ_NUM <= allPolygroups_Solids[q][1])) {
             
-            println("solid found at group:", q);
+            //println("solid found at group:", q);
             
             int startSolid = allPolygroups_Solids[q][0];
             int endSolid = allPolygroups_Solids[q][1];
@@ -14651,25 +14647,22 @@ void SOLARCHVISION_delete_Selection () {
     
             if (startSolid <= endSolid) {
               
-              zzzzzzzzz
-            
               for (int i = q + 1; i < allPolygroups_Solids.length; i++) {
                 for (int j = 0; j < 2; j++) {
                   
-                  allPolygroups_Solids[i][j] -= 1 + endSolid - startSolid;
+                  allPolygroups_Solids[i][j] -= 1;
                   
                   if (allPolygroups_Solids[i][j] < 0) allPolygroups_Solids[i][j] = 0; 
                 }
               }  
+              allPolygroups_Solids[q][1] -= 1; // because deleting a solid also changes the end pointer of the same object 
+              
             }  
 
             break;
           }
         }
       
-
-//------------------------------------      
-        
 
         {
           float[][] startList = (float[][]) subset(allSolids, 0, OBJ_NUM);
