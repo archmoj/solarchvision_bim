@@ -23198,8 +23198,6 @@ float Orthographic_Zoom () {
 
   float ZOOM = 0.5 * WIN3D_ZOOM_coordinate * PI / 180;
   
-  ZOOM *= CAM_z / 56.0;
-
   return ZOOM;
 }
 
