@@ -14617,17 +14617,47 @@ void SOLARCHVISION_delete_Selection () {
     }
     
   }
-  
-  
+
+
+
   if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
     
     selectedObject2D_numbers = sort(selectedObject2D_numbers);
-    
+
     for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
-      
+
       int OBJ_NUM = selectedObject2D_numbers[o];
-      
+
       if (OBJ_NUM != 0) {    
+        
+        for (int q = 0; q < allPolygroups_Object2Ds.length; q++) {
+          if ((allPolygroups_Object2Ds[q][0] <= OBJ_NUM) && (OBJ_NUM <= allPolygroups_Object2Ds[q][1])) {
+            
+            //println("object2D found at group:", q);
+            
+            int startObject2D = allPolygroups_Object2Ds[q][0];
+            int endObject2D = allPolygroups_Object2Ds[q][1];
+            
+            println(startObject2D, endObject2D);
+    
+            if (startObject2D <= endObject2D) {
+              
+              for (int i = q + 1; i < allPolygroups_Object2Ds.length; i++) {
+                for (int j = 0; j < 2; j++) {
+                  
+                  allPolygroups_Object2Ds[i][j] -= 1;
+                  
+                  if (allPolygroups_Object2Ds[i][j] < 0) allPolygroups_Object2Ds[i][j] = 0; 
+                }
+              }  
+              allPolygroups_Object2Ds[q][1] -= 1; // because deleting a object2D also changes the end pointer of the same object 
+              
+            }  
+
+            break;
+          }
+        }
+      
 
         {
           float[][] startList = (float[][]) subset(allObject2Ds_XYZS, 0, OBJ_NUM);
@@ -14635,7 +14665,7 @@ void SOLARCHVISION_delete_Selection () {
           
           allObject2Ds_XYZS = (float[][]) concat(startList, endList);
         }
-    
+        
         {
           int[] startList = (int[]) subset(allObject2Ds_MAP, 0, OBJ_NUM);
           int[] endList = (int[]) subset(allObject2Ds_MAP, OBJ_NUM + 1);
@@ -14643,12 +14673,16 @@ void SOLARCHVISION_delete_Selection () {
           allObject2Ds_MAP = (int[]) concat(startList, endList);
         }   
         
-        allObject2Ds_num -= 1;
+        allObject2Ds_num -= 1;        
+
       }
 
     }
-    
-  }
+
+  }  
+  
+  
+
 
 
   if (Current_ObjectCategory == ObjectCategory_Solids) {
@@ -14772,6 +14806,47 @@ void SOLARCHVISION_delete_Selection () {
           allFaces_MTLV = (int[][]) concat(startList, endList);          
         }
         
+
+        int startObject2D = allPolygroups_Object2Ds[OBJ_NUM][0];
+        int endObject2D = allPolygroups_Object2Ds[OBJ_NUM][1];
+        
+        {
+          
+          if (startObject2D <= endObject2D) {
+            for (int i = OBJ_NUM + 1; i < allPolygroups_Object2Ds.length; i++) {
+            
+              for (int j = 0; j < 2; j++) {
+                allPolygroups_Object2Ds[i][j] -= 1 + endObject2D - startObject2D;
+              }
+            }    
+          }
+          
+          int[][] startList = (int[][]) subset(allPolygroups_Object2Ds, 0, OBJ_NUM);
+          int[][] endList = (int[][]) subset(allPolygroups_Object2Ds, OBJ_NUM + 1);
+          
+          allPolygroups_Object2Ds = (int[][]) concat(startList, endList);
+        }  
+    
+        
+        if ((0 < startObject2D) && (startObject2D <= endObject2D)) {
+          
+          {
+            float[][] startList = (float[][]) subset(allObject2Ds_XYZS, 0, startObject2D);
+            float[][] endList = (float[][]) subset(allObject2Ds_XYZS, endObject2D + 1);
+          
+            allObject2Ds_XYZS = (float[][]) concat(startList, endList);
+          }
+
+          {
+            int[] startList = (int[]) subset(allObject2Ds_MAP, 0, startObject2D);
+            int[] endList = (int[]) subset(allObject2Ds_MAP, endObject2D + 1);
+          
+            allObject2Ds_MAP = (int[]) concat(startList, endList);
+          }
+          
+          allObject2Ds_num -= 1;
+
+        }
         
         
         int startSolid = allPolygroups_Solids[OBJ_NUM][0];
@@ -25690,8 +25765,8 @@ void SOLARCHVISION_add_ProjectModel () {
     //SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
   }  
 
-//  SOLARCHVISION_add_2Dobjects_polar(1, 40, 0,0,0, 40,100); // trees
-//  SOLARCHVISION_add_2Dobjects_polar(0, 100, 0,0,0, 0,100); // people
+  SOLARCHVISION_add_2Dobjects_polar(1, 40, 0,0,0, 40,100); // trees
+  SOLARCHVISION_add_2Dobjects_polar(0, 100, 0,0,0, 0,100); // people
   
 
 
@@ -25718,10 +25793,10 @@ void SOLARCHVISION_add_ProjectModel () {
 
       }
       
-//      SOLARCHVISION_add_2Dobjects_Mesh2(0, 10, x-dx,y-dy,i, x-dx/3.0,y+dy/3.0,i); // people  
-//      SOLARCHVISION_add_2Dobjects_Mesh2(0, 10, x-dx,y+dy/3.0,i, x+dx/3.0,y+dy,i); // people
-//      SOLARCHVISION_add_2Dobjects_Mesh2(0, 10, x+dx/3.0,y-dy/3.0,i, x+dx,y+dy,i); // people
-//      SOLARCHVISION_add_2Dobjects_Mesh2(0, 10, x-dx/3.0,y-dy,i, x+dx,y-dy/3.0,i); // people
+      SOLARCHVISION_add_2Dobjects_Mesh2(0, 10, x-dx,y-dy,i, x-dx/3.0,y+dy/3.0,i); // people  
+      SOLARCHVISION_add_2Dobjects_Mesh2(0, 10, x-dx,y+dy/3.0,i, x+dx/3.0,y+dy,i); // people
+      SOLARCHVISION_add_2Dobjects_Mesh2(0, 10, x+dx/3.0,y-dy/3.0,i, x+dx,y+dy,i); // people
+      SOLARCHVISION_add_2Dobjects_Mesh2(0, 10, x-dx/3.0,y-dy,i, x+dx,y-dy/3.0,i); // people
     }   
     
     SOLARCHVISION_beginNewPolygroup();
