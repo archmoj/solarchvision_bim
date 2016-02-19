@@ -1773,7 +1773,7 @@ float softSelection_Radius = 2; // 2 = 2m
 
 int addNewSelectionToPreviousSelection = 0; // internal
 
-int addToLastPolygroup = 0; //1; // internal
+int addToLastPolygroup = 1; // internal
 
 int Load_Default_Models = 0; // internal
 
