@@ -1768,11 +1768,14 @@ int[] selectedVertex_numbers = {0};
 float softSelection_Power = 1;
 float softSelection_Radius = 2; // 2 = 2m
 
-int addNewSelectionToPreviousSelection = 0;
 
-int addToLastPolygroup = 1;
 
-int Load_Default_Models = 0; //3;//0; //3; //5;
+
+int addNewSelectionToPreviousSelection = 0; // internal
+
+int addToLastPolygroup = 1; // internal
+
+int Load_Default_Models = 0; // internal
 
 
 
@@ -46514,8 +46517,6 @@ void SOLARCHVISION_load_project (String myFile) {
   ///////////////////////////////
   
   addNewSelectionToPreviousSelection = 0;
-  
-  addToLastPolygroup = 0;
   
   set_to_Create_Nothing();
   
