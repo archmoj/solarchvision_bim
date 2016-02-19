@@ -13967,6 +13967,12 @@ int SOLARCHVISION_add_Solid (float x, float y, float z, float px, float py, floa
 
 
 void SOLARCHVISION_beginNewPolygroup () {
+  
+  println("Called SOLARCHVISION_beginNewPolygroup");
+  println("Solids", allSolids.length - 1);
+  println("Faces", allFaces.length - 1);
+  
+  
 
   int[][] newObject_Solids = {{allSolids.length, 0}}; // i.e. null because start > end 
   
@@ -20916,7 +20922,6 @@ void SOLARCHVISION_delete_All () {
   SOLARCHVISION_delete_Fractals();
   SOLARCHVISION_delete_2Dobjects();
   SOLARCHVISION_delete_3Dobjects();
-  SOLARCHVISION_delete_Solids();
   SOLARCHVISION_delete_Sections();
   SOLARCHVISION_delete_Cameras();
   
@@ -21107,10 +21112,6 @@ void SOLARCHVISION_delete_3Dobjects () {
   urbanVertices_end = 0;
   urbanFaces_start = 0;
   urbanFaces_end = 0; 
-  
-  //rebuild_SolarProjection_array = 1;
-  //rebuild_SolarImpact_Image_array = 1;
-  //rebuild_WindRose_Image_array = 1;  
   
   WIN3D_update_VerticesSolarValue = 1;  
  
@@ -27556,8 +27557,8 @@ void SOLARCHVISION_add_FractalSphere (int m, int tes, int lyr, int vsb, int spv,
   }
 
 
-  println("Vertices:", POINTER_TempObjectVertices);
-  println("Faces:", POINTER_TempObjectFaces);
+  //println("Vertices:", POINTER_TempObjectVertices);
+  //println("Faces:", POINTER_TempObjectFaces);
 
   if (isSky == 0) {
     SOLARCHVISION_addTempObjectToScene(m,tes,lyr,vsb,spv,cx,cy,cz,r,r,r,t);
