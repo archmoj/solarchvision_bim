@@ -14118,19 +14118,19 @@ void SOLARCHVISION_duplicateSelection () {
           if ((0 < allPolymesh_Solids[OBJ_NUM][1]) && (allPolymesh_Solids[OBJ_NUM][0] <= allPolymesh_Solids[OBJ_NUM][1])) { 
             for (int s = allPolymesh_Solids[OBJ_NUM][0]; s <= allPolymesh_Solids[OBJ_NUM][1]; s++) {
               
-              float Solid_posX = allSolid_XYZPPPSSSRRRV[s][0];
-              float Solid_posY = allSolid_XYZPPPSSSRRRV[s][1];
-              float Solid_posZ = allSolid_XYZPPPSSSRRRV[s][2];
-              float Solid_powX = allSolid_XYZPPPSSSRRRV[s][3];
-              float Solid_powY = allSolid_XYZPPPSSSRRRV[s][4];
-              float Solid_powZ = allSolid_XYZPPPSSSRRRV[s][5];
-              float Solid_scaleX = allSolid_XYZPPPSSSRRRV[s][6];
-              float Solid_scaleY = allSolid_XYZPPPSSSRRRV[s][7];
-              float Solid_scaleZ = allSolid_XYZPPPSSSRRRV[s][8];
-              float Solid_rotX = allSolid_XYZPPPSSSRRRV[s][9];
-              float Solid_rotY = allSolid_XYZPPPSSSRRRV[s][10];
-              float Solid_rotZ = allSolid_XYZPPPSSSRRRV[s][11];
-              float Solid_value = allSolid_XYZPPPSSSRRRV[s][12];
+              float Solid_posX = Solid_get_posX(s);
+              float Solid_posY = Solid_get_posY(s);
+              float Solid_posZ = Solid_get_posZ(s);
+              float Solid_powX = Solid_get_powX(s);
+              float Solid_powY = Solid_get_powY(s);
+              float Solid_powZ = Solid_get_powZ(s);
+              float Solid_scaleX = Solid_get_scaleX(s);
+              float Solid_scaleY = Solid_get_scaleY(s);
+              float Solid_scaleZ = Solid_get_scaleZ(s);
+              float Solid_rotX = Solid_get_rotX(s);
+              float Solid_rotY = Solid_get_rotY(s);
+              float Solid_rotZ = Solid_get_rotZ(s);
+              float Solid_value = Solid_get_value(s);
       
               SOLARCHVISION_add_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
                     
@@ -14305,19 +14305,19 @@ void SOLARCHVISION_duplicateSelection () {
 
       if (OBJ_NUM != 0) {    
         
-        float Solid_posX = allSolid_XYZPPPSSSRRRV[OBJ_NUM][0];
-        float Solid_posY = allSolid_XYZPPPSSSRRRV[OBJ_NUM][1];
-        float Solid_posZ = allSolid_XYZPPPSSSRRRV[OBJ_NUM][2];
-        float Solid_powX = allSolid_XYZPPPSSSRRRV[OBJ_NUM][3];
-        float Solid_powY = allSolid_XYZPPPSSSRRRV[OBJ_NUM][4];
-        float Solid_powZ = allSolid_XYZPPPSSSRRRV[OBJ_NUM][5];
-        float Solid_scaleX = allSolid_XYZPPPSSSRRRV[OBJ_NUM][6];
-        float Solid_scaleY = allSolid_XYZPPPSSSRRRV[OBJ_NUM][7];
-        float Solid_scaleZ = allSolid_XYZPPPSSSRRRV[OBJ_NUM][8];
-        float Solid_rotX = allSolid_XYZPPPSSSRRRV[OBJ_NUM][9];
-        float Solid_rotY = allSolid_XYZPPPSSSRRRV[OBJ_NUM][10];
-        float Solid_rotZ = allSolid_XYZPPPSSSRRRV[OBJ_NUM][11];
-        float Solid_value = allSolid_XYZPPPSSSRRRV[OBJ_NUM][12];
+        float Solid_posX = Solid_get_posX(OBJ_NUM);
+        float Solid_posY = Solid_get_posY(OBJ_NUM);
+        float Solid_posZ = Solid_get_posZ(OBJ_NUM);
+        float Solid_powX = Solid_get_powX(OBJ_NUM);
+        float Solid_powY = Solid_get_powY(OBJ_NUM);
+        float Solid_powZ = Solid_get_powZ(OBJ_NUM);
+        float Solid_scaleX = Solid_get_scaleX(OBJ_NUM);
+        float Solid_scaleY = Solid_get_scaleY(OBJ_NUM);
+        float Solid_scaleZ = Solid_get_scaleZ(OBJ_NUM);
+        float Solid_rotX = Solid_get_rotX(OBJ_NUM);
+        float Solid_rotY = Solid_get_rotY(OBJ_NUM);
+        float Solid_rotZ = Solid_get_rotZ(OBJ_NUM);
+        float Solid_value = Solid_get_value(OBJ_NUM);
 
         SOLARCHVISION_add_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);        
       }
@@ -38198,19 +38198,19 @@ void SOLARCHVISION_draw_Solids () {
     
     for (int f = 1; f <= allSolid_num; f++) {
       
-      float Solid_posX = allSolid_XYZPPPSSSRRRV[f][0];
-      float Solid_posY = allSolid_XYZPPPSSSRRRV[f][1];
-      float Solid_posZ = allSolid_XYZPPPSSSRRRV[f][2];
-      float Solid_powX = allSolid_XYZPPPSSSRRRV[f][3];
-      float Solid_powY = allSolid_XYZPPPSSSRRRV[f][4];
-      float Solid_powZ = allSolid_XYZPPPSSSRRRV[f][5];
-      float Solid_scaleX = allSolid_XYZPPPSSSRRRV[f][6];
-      float Solid_scaleY = allSolid_XYZPPPSSSRRRV[f][7];
-      float Solid_scaleZ = allSolid_XYZPPPSSSRRRV[f][8];
-      float Solid_rotX = allSolid_XYZPPPSSSRRRV[f][9];
-      float Solid_rotY = allSolid_XYZPPPSSSRRRV[f][10];
-      float Solid_rotZ = allSolid_XYZPPPSSSRRRV[f][11];
-      float Solid_value = allSolid_XYZPPPSSSRRRV[f][12];
+      float Solid_posX = Solid_get_posX(f);
+      float Solid_posY = Solid_get_posY(f);
+      float Solid_posZ = Solid_get_posZ(f);
+      float Solid_powX = Solid_get_powX(f);
+      float Solid_powY = Solid_get_powY(f);
+      float Solid_powZ = Solid_get_powZ(f);
+      float Solid_scaleX = Solid_get_scaleX(f);
+      float Solid_scaleY = Solid_get_scaleY(f);
+      float Solid_scaleZ = Solid_get_scaleZ(f);
+      float Solid_rotX = Solid_get_rotX(f);
+      float Solid_rotY = Solid_get_rotY(f);
+      float Solid_rotZ = Solid_get_rotZ(f);
+      float Solid_value = Solid_get_value(f);
       
       for (int plane_type = 0; plane_type < Solids_DisplayFaces; plane_type++) {
 
@@ -39166,19 +39166,19 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
       if (Work_with_2D_or_3D == 7) {
         int n = theVertices[q];
 
-        float Solid_posX = allSolid_XYZPPPSSSRRRV[n][0];
-        float Solid_posY = allSolid_XYZPPPSSSRRRV[n][1];
-        float Solid_posZ = allSolid_XYZPPPSSSRRRV[n][2];
-        float Solid_powX = allSolid_XYZPPPSSSRRRV[n][3];
-        float Solid_powY = allSolid_XYZPPPSSSRRRV[n][4];
-        float Solid_powZ = allSolid_XYZPPPSSSRRRV[n][5];
-        float Solid_scaleX = allSolid_XYZPPPSSSRRRV[n][6];
-        float Solid_scaleY = allSolid_XYZPPPSSSRRRV[n][7];
-        float Solid_scaleZ = allSolid_XYZPPPSSSRRRV[n][8];
-        float Solid_rotX = allSolid_XYZPPPSSSRRRV[n][9];
-        float Solid_rotY = allSolid_XYZPPPSSSRRRV[n][10];
-        float Solid_rotZ = allSolid_XYZPPPSSSRRRV[n][11];
-        float Solid_value = allSolid_XYZPPPSSSRRRV[n][12];
+        float Solid_posX = Solid_get_posX(n);
+        float Solid_posY = Solid_get_posY(n);
+        float Solid_posZ = Solid_get_posZ(n);
+        float Solid_powX = Solid_get_powX(n);
+        float Solid_powY = Solid_get_powY(n);
+        float Solid_powZ = Solid_get_powZ(n);
+        float Solid_scaleX = Solid_get_scaleX(n);
+        float Solid_scaleY = Solid_get_scaleY(n);
+        float Solid_scaleZ = Solid_get_scaleZ(n);
+        float Solid_rotX = Solid_get_rotX(n);
+        float Solid_rotY = Solid_get_rotY(n);
+        float Solid_rotZ = Solid_get_rotZ(n);
+        float Solid_value = Solid_get_value(n);
         
         float[][] ImageVertex = SOLARCHVISION_getCorners_Solid(0, Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
 
@@ -39346,9 +39346,9 @@ void SOLARCHVISION_move_selectedPolymeshes (float dx, float dy, float dz) {
       for (int g = allPolymesh_Solids[OBJ_NUM][0]; g <= allPolymesh_Solids[OBJ_NUM][1]; g++) {
         if ((0 < g) && (g <= allSolid_num)) {
           
-          float Solid_posX = allSolid_XYZPPPSSSRRRV[g][0];
-          float Solid_posY = allSolid_XYZPPPSSSRRRV[g][1];
-          float Solid_posZ = allSolid_XYZPPPSSSRRRV[g][2];
+          float Solid_posX = Solid_get_posX(g);
+          float Solid_posY = Solid_get_posY(g);
+          float Solid_posZ = Solid_get_posZ(g);
           
           Solid_updatePosition(g, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
     
@@ -39428,9 +39428,10 @@ void SOLARCHVISION_rotate_selectedPolymeshes (float x0, float y0, float z0, floa
       for (int g = allPolymesh_Solids[OBJ_NUM][0]; g <= allPolymesh_Solids[OBJ_NUM][1]; g++) {
         if ((0 < g) && (g <= allSolid_num)) {
 
-          float Solid_posX = allSolid_XYZPPPSSSRRRV[g][0];
-          float Solid_posY = allSolid_XYZPPPSSSRRRV[g][1];
-          float Solid_posZ = allSolid_XYZPPPSSSRRRV[g][2];          
+          float Solid_posX = Solid_get_posX(g);
+          float Solid_posY = Solid_get_posY(g);
+          float Solid_posZ = Solid_get_posZ(g);
+
           
           float x = Solid_posX - x0; 
           float y = Solid_posY - y0; 
@@ -39513,9 +39514,10 @@ void SOLARCHVISION_scale_selectedPolymeshes (float x0, float y0, float z0, float
       for (int g = allPolymesh_Solids[OBJ_NUM][0]; g <= allPolymesh_Solids[OBJ_NUM][1]; g++) {
         if ((0 < g) && (g <= allSolid_num)) {
           
-          float Solid_posX = allSolid_XYZPPPSSSRRRV[g][0];
-          float Solid_posY = allSolid_XYZPPPSSSRRRV[g][1];
-          float Solid_posZ = allSolid_XYZPPPSSSRRRV[g][2];          
+          float Solid_posX = Solid_get_posX(g);
+          float Solid_posY = Solid_get_posY(g);
+          float Solid_posZ = Solid_get_posZ(g);
+   
           
           Solid_updatePosition(g, (Solid_posX - x0) * sx + x0, (Solid_posY - y0) * sy + y0, (Solid_posZ - z0) * sz + z0);
           
@@ -39753,9 +39755,9 @@ void SOLARCHVISION_move_selectedSolids (float dx, float dy, float dz) {
   
     int g = selectedSolid_numbers[q];
 
-    float Solid_posX = allSolid_XYZPPPSSSRRRV[g][0];
-    float Solid_posY = allSolid_XYZPPPSSSRRRV[g][1];
-    float Solid_posZ = allSolid_XYZPPPSSSRRRV[g][2];          
+    float Solid_posX = Solid_get_posX(g);
+    float Solid_posY = Solid_get_posY(g);
+    float Solid_posZ = Solid_get_posZ(g);
     
     Solid_updatePosition(g, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
     
@@ -39776,9 +39778,10 @@ void SOLARCHVISION_rotate_selectedSolids (float x0, float y0, float z0, float r,
 
     int g = selectedSolid_numbers[q];
 
-    float Solid_posX = allSolid_XYZPPPSSSRRRV[g][0];
-    float Solid_posY = allSolid_XYZPPPSSSRRRV[g][1];
-    float Solid_posZ = allSolid_XYZPPPSSSRRRV[g][2];          
+    float Solid_posX = Solid_get_posX(g);
+    float Solid_posY = Solid_get_posY(g);
+    float Solid_posZ = Solid_get_posZ(g);
+
     
     float x = Solid_posX - x0; 
     float y = Solid_posY - y0; 
@@ -39819,9 +39822,10 @@ void SOLARCHVISION_scale_selectedSolids (float x0, float y0, float z0, float sx,
     
     int g = selectedSolid_numbers[q];
 
-    float Solid_posX = allSolid_XYZPPPSSSRRRV[g][0];
-    float Solid_posY = allSolid_XYZPPPSSSRRRV[g][1];
-    float Solid_posZ = allSolid_XYZPPPSSSRRRV[g][2];          
+    float Solid_posX = Solid_get_posX(g);
+    float Solid_posY = Solid_get_posY(g);
+    float Solid_posZ = Solid_get_posZ(g);
+
     
     Solid_updatePosition(g, (Solid_posX - x0) * sx + x0, (Solid_posY - y0) * sy + y0, (Solid_posZ - z0) * sz + z0);
     
@@ -40531,9 +40535,11 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
       
         if ((View_Select_Create_Modify == 19) ||  (View_Select_Create_Modify == 20) ||  (View_Select_Create_Modify == 21) ||  (View_Select_Create_Modify == 22)) {
           
-          float Solid_powX = allSolid_XYZPPPSSSRRRV[f][3];
-          float Solid_powY = allSolid_XYZPPPSSSRRRV[f][4];
-          float Solid_powZ = allSolid_XYZPPPSSSRRRV[f][5];
+
+          float Solid_powX = Solid_get_powX(f);
+          float Solid_powY = Solid_get_powY(f);
+          float Solid_powZ = Solid_get_powZ(f);
+
           
           float n = 2;
           
@@ -46603,11 +46609,99 @@ void Solid_RotateZ (int n, float t) {
 } 
 
 
-float Solid_get_value (int n) {
-  
-  return allSolid_XYZPPPSSSRRRV[n][12];
- 
+
+
+float Solid_get_posX (int n) { 
+
+  return allSolid_XYZPPPSSSRRRV[n][0];
+
 } 
+
+
+float Solid_get_posY (int n) { 
+
+  return allSolid_XYZPPPSSSRRRV[n][1];
+
+} 
+
+
+float Solid_get_posZ (int n) { 
+
+  return allSolid_XYZPPPSSSRRRV[n][2];
+
+} 
+
+
+float Solid_get_powX (int n) { 
+
+  return allSolid_XYZPPPSSSRRRV[n][3];
+
+} 
+
+
+float Solid_get_powY (int n) { 
+
+  return allSolid_XYZPPPSSSRRRV[n][4];
+
+} 
+
+
+float Solid_get_powZ (int n) { 
+
+  return allSolid_XYZPPPSSSRRRV[n][5];
+
+} 
+
+
+float Solid_get_scaleX (int n) { 
+
+  return allSolid_XYZPPPSSSRRRV[n][6];
+
+} 
+
+
+float Solid_get_scaleY (int n) { 
+
+  return allSolid_XYZPPPSSSRRRV[n][7];
+
+} 
+
+
+float Solid_get_scaleZ (int n) { 
+
+  return allSolid_XYZPPPSSSRRRV[n][8];
+
+} 
+
+
+float Solid_get_rotX (int n) { 
+
+  return allSolid_XYZPPPSSSRRRV[n][9];
+
+} 
+
+
+float Solid_get_rotY (int n) { 
+
+  return allSolid_XYZPPPSSSRRRV[n][10];
+
+} 
+
+
+float Solid_get_rotZ (int n) { 
+
+  return allSolid_XYZPPPSSSRRRV[n][11];
+
+} 
+
+
+
+float Solid_get_value (int n) { 
+
+  return allSolid_XYZPPPSSSRRRV[n][12];
+
+} 
+
 
 
 float Solid_get_Distance (int n, float a, float b, float c) {
