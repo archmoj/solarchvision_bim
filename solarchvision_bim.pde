@@ -13952,7 +13952,7 @@ int SOLARCHVISION_add_Face (int[] f) {
 }
 
 
-void SOLARCHVISION_add_Solid (float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float tx, float ty, float tz, float v) {
+int SOLARCHVISION_add_Solid (float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float tx, float ty, float tz, float v) {
 
   float[][] TempSolid_XYZPPPSSSRRRV = {{x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz, v}};
   allSolids_XYZPPPSSSRRRV = (float[][]) concat(allSolids_XYZPPPSSSRRRV, TempSolid_XYZPPPSSSRRRV);
@@ -13961,6 +13961,7 @@ void SOLARCHVISION_add_Solid (float x, float y, float z, float px, float py, flo
     allPolygroups_Solids[allPolygroups_Solids.length - 1][1] = allSolids_XYZPPPSSSRRRV.length - 1;
   }
 
+  return(allSolids_XYZPPPSSSRRRV.length - 1);
 }
 
 
