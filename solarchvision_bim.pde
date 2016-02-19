@@ -1,6 +1,6 @@
-// could add create polygroup --> startPolyGroup ...
 // deleting solids may create conflict with polygroups that has those solids
-// should add solid option to trees? 
+// should add solid option to trees?
+// could add create polygroup --> startPolyGroup ...
 // drop functions only works for living objects
 // should export tropo layer in obj format
 
@@ -32631,7 +32631,19 @@ void mouseClicked () {
               Current_ObjectCategory = ObjectCategory_Faces;
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
-            }       
+            }    
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Solid >> Polygroup")) {
+              SOLARCHVISION_convert_Solid2Polygroup();
+              Current_ObjectCategory = ObjectCategory_Polygroups;
+              WIN3D_Update = 1;
+              BAR_b_Update = 1;  
+            }             
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Polygroup >> Solid")) {
+              SOLARCHVISION_convert_Polygroup2Solid();
+              Current_ObjectCategory = ObjectCategory_Solids;
+              WIN3D_Update = 1;
+              BAR_b_Update = 1;  
+            }                
          
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Click Select")) {
@@ -42296,7 +42308,7 @@ String[][] BAR_a_Items = {
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Viewport >> Camera", "Camera", "Section", "Solid", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"},
-                        {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Solid", "Select Section",  "Select Camera", "Select LandPoint", "Select Fractal", "Select Object2D", "Select Polygroup", "Select Face", "Select Vertex", "Soft Selection", "Polygroup >> Face", "Polygroup >> Vertex", "Vertex >> Polygroup", "Vertex >> Face", "Face >> Vertex", "Face >> Polygroup", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
+                        {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Solid", "Select Section",  "Select Camera", "Select LandPoint", "Select Fractal", "Select Object2D", "Select Polygroup", "Select Face", "Select Vertex", "Soft Selection", "Solid >> Polygroup", "Polygroup >> Solid", "Polygroup >> Face", "Polygroup >> Vertex", "Vertex >> Polygroup", "Vertex >> Face", "Face >> Vertex", "Face >> Polygroup", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
                         {"Edit", "Duplicate Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Power", "PowerX", "PowerY", "PowerZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
                         {"Match", "Save Current Pivot", "Reset Saved Pivot", "Use Selection Pivot", "Use Origin Pivot", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunkSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunkSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot", "Drop on LandSurface", "Drop on ModelSurface (Up)", "Drop on ModelSurface (Down)"},
