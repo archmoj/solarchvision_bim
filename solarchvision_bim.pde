@@ -1,9 +1,7 @@
-// should complete it from SOLARCHVISION_move_selectedPolygroups 
-
-// should add solid option to trees?
+// could add solid option to trees?
 // could add create polygroup --> startPolyGroup ...
 // drop functions only works for living objects
-// should export tropo layer in obj format
+// could export tropo layer in obj format
 
 import processing.pdf.*;
 
