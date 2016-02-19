@@ -1,8 +1,3 @@
-
-// search for (View_Select_Create_Modify == 19)
-
-// option to modify solid properties
-// create solid not working yet.
 // deleting solids may create conflict with polymeshes that has those solids
 // should add solid option to trees? 
 // drop functions only works for living objects
@@ -33829,6 +33824,14 @@ void mouseClicked () {
                   SOLARCHVISION_add_Object2D("PEOPLE", Create_Mesh_Person_Type, x, y, z, 2.5);
                 }
 
+                if (Work_with_2D_or_3D == 7) { // working with solids
+                
+                   addToLastPolymesh = 0; SOLARCHVISION_beginNewPolymesh(); addToLastPolymesh = 1; // starting new object???? zzzzzzzzzzzzzz 
+                
+                   SOLARCHVISION_add_Solid(x,y,z, px,py,pz, rx,ry,rz, 0,0,rot, 1);
+
+                }        
+
   
                 if (Work_with_2D_or_3D == 9) { // working with cameras              
                   
@@ -33883,13 +33886,6 @@ void mouseClicked () {
                   WIN3D_ZOOM_coordinate = keep_WIN3D_ZOOM_coordinate;
 
                 }
-
-                if (Work_with_2D_or_3D == 7) { // working with solids
-                   //zzzzzzzzzzzzzzzzz
-                   
-                   println("Here!");
-                }         
-
 
                 if (Work_with_2D_or_3D == 8) { // working with sections              
                   
@@ -34103,6 +34099,9 @@ void mouseClicked () {
                   }
                 }
 
+ 
+              
+              
               
   
                 if (keep_number_of_Polymeshes != allPolymesh_Faces.length) { // if any 3D-mesh created during the process
