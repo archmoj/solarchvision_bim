@@ -1,6 +1,7 @@
 // deleting solids may create conflict with polymeshes that has those solids
 // should add solid option to trees? 
 // drop functions only works for living objects
+// should export tropo layer in obj format
 
 import processing.pdf.*;
 
