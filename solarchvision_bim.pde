@@ -1772,7 +1772,7 @@ float softSelection_Radius = 2; // 2 = 2m
 
 int addNewSelectionToPreviousSelection = 0; // internal
 
-int addToLastPolygroup = 1; // internal
+int addToLastPolygroup = 0; //1; // internal
 
 int Load_Default_Models = 0; // internal
 
@@ -13943,11 +13943,9 @@ int SOLARCHVISION_add_Face (int[] f) {
   int[][] newFace = {f}; 
   
   allFaces = (int[][]) concat(allFaces, newFace);
-  
-  if (addToLastPolygroup == 1) {
-    allPolygroups_Faces[allPolygroups_Faces.length - 1][1] = allFaces.length - 1;
-  }
 
+  allPolygroups_Faces[allPolygroups_Faces.length - 1][1] = allFaces.length - 1;
+  
   return(allFaces.length - 1);
 }
 
@@ -13957,9 +13955,7 @@ int SOLARCHVISION_add_Solid (float x, float y, float z, float px, float py, floa
   float[][] newSolid = {{x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz, v}};
   allSolids = (float[][]) concat(allSolids, newSolid);
 
-  if (addToLastPolygroup == 1) {
-    allPolygroups_Solids[allPolygroups_Solids.length - 1][1] = allSolids.length - 1;
-  }
+  allPolygroups_Solids[allPolygroups_Solids.length - 1][1] = allSolids.length - 1;
 
   return(allSolids.length - 1);
 }
