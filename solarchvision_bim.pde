@@ -1,4 +1,4 @@
-// note I remarked: //for (int j = 0; j < allObject2Ds[f].length; j++) { and the one for solids on reverse function below! maybe we could delete the lines : )
+// should complete it from SOLARCHVISION_move_selectedPolygroups 
 
 // should add solid option to trees?
 // could add create polygroup --> startPolyGroup ...
@@ -21367,7 +21367,7 @@ void SOLARCHVISION_delete_3Dobjects () {
   
   SOLARCHVISION_delete_Solids();
   
-  SOLARCHVISION_delete_Object2Ds();
+  SOLARCHVISION_delete_2Dobjects();
 
   SOLARCHVISION_beginNewPolygroup();
  
@@ -39632,14 +39632,14 @@ void SOLARCHVISION_move_selectedPolygroups (float dx, float dy, float dz) {
         allPolygroups_SolarPivotXYZ[OBJ_NUM][2] += dz;
       }
       
-      for (int g = allPolygroups_Solids[OBJ_NUM][0]; g <= allPolygroups_Solids[OBJ_NUM][1]; g++) {
-        if ((0 < g) && (g <= allSolids.length - 1)) {
+      for (int f = allPolygroups_Solids[OBJ_NUM][0]; f <= allPolygroups_Solids[OBJ_NUM][1]; f++) {
+        if ((0 < f) && (f <= allSolids.length - 1)) {
           
-          float Solid_posX = Solid_get_posX(g);
-          float Solid_posY = Solid_get_posY(g);
-          float Solid_posZ = Solid_get_posZ(g);
+          float Solid_posX = Solid_get_posX(f);
+          float Solid_posY = Solid_get_posY(f);
+          float Solid_posZ = Solid_get_posZ(f);
           
-          Solid_updatePosition(g, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
+          Solid_updatePosition(f, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
     
           Solids_updated = 1;  
         }
@@ -39714,12 +39714,12 @@ void SOLARCHVISION_rotate_selectedPolygroups (float x0, float y0, float z0, floa
         }          
       }    
       
-      for (int g = allPolygroups_Solids[OBJ_NUM][0]; g <= allPolygroups_Solids[OBJ_NUM][1]; g++) {
-        if ((0 < g) && (g <= allSolids.length - 1)) {
+      for (int f = allPolygroups_Solids[OBJ_NUM][0]; f <= allPolygroups_Solids[OBJ_NUM][1]; f++) {
+        if ((0 < f) && (f <= allSolids.length - 1)) {
 
-          float Solid_posX = Solid_get_posX(g);
-          float Solid_posY = Solid_get_posY(g);
-          float Solid_posZ = Solid_get_posZ(g);
+          float Solid_posX = Solid_get_posX(f);
+          float Solid_posY = Solid_get_posY(f);
+          float Solid_posZ = Solid_get_posZ(f);
 
           
           float x = Solid_posX - x0; 
@@ -39727,19 +39727,19 @@ void SOLARCHVISION_rotate_selectedPolygroups (float x0, float y0, float z0, floa
           float z = Solid_posZ - z0;
           
           if (the_Vector == 2) {
-            Solid_updatePosition(g, x0 + (x * cos(r) - y * sin(r)), y0 + (x * sin(r) + y * cos(r)), z0 + (z));
+            Solid_updatePosition(f, x0 + (x * cos(r) - y * sin(r)), y0 + (x * sin(r) + y * cos(r)), z0 + (z));
           
-            Solid_RotateZ(g, r * 180 / PI);
+            Solid_RotateZ(f, r * 180 / PI);
           }
           else if (the_Vector == 1) {
-            Solid_updatePosition(g, x0 + (z * sin(r) + x * cos(r)), y0 + (y), z0 + (z * cos(r) - x * sin(r)));
+            Solid_updatePosition(f, x0 + (z * sin(r) + x * cos(r)), y0 + (y), z0 + (z * cos(r) - x * sin(r)));
           
-            Solid_RotateY(g, r * 180 / PI);
+            Solid_RotateY(f, r * 180 / PI);
           }
           else if (the_Vector == 0) {
-            Solid_updatePosition(g, x0 + (x), y0 + (y * cos(r) - z * sin(r)), z0 + (y * sin(r) + z * cos(r)));
+            Solid_updatePosition(f, x0 + (x), y0 + (y * cos(r) - z * sin(r)), z0 + (y * sin(r) + z * cos(r)));
           
-            Solid_RotateX(g, r * 180 / PI);
+            Solid_RotateX(f, r * 180 / PI);
           }
           
           Solids_updated = 1;  
@@ -39800,17 +39800,17 @@ void SOLARCHVISION_scale_selectedPolygroups (float x0, float y0, float z0, float
         allPolygroups_SolarPivotXYZ[OBJ_NUM][2] = z0 + sz * (allPolygroups_SolarPivotXYZ[OBJ_NUM][2] - z0);
       }
       
-      for (int g = allPolygroups_Solids[OBJ_NUM][0]; g <= allPolygroups_Solids[OBJ_NUM][1]; g++) {
-        if ((0 < g) && (g <= allSolids.length - 1)) {
+      for (int f = allPolygroups_Solids[OBJ_NUM][0]; f <= allPolygroups_Solids[OBJ_NUM][1]; f++) {
+        if ((0 < f) && (f <= allSolids.length - 1)) {
           
-          float Solid_posX = Solid_get_posX(g);
-          float Solid_posY = Solid_get_posY(g);
-          float Solid_posZ = Solid_get_posZ(g);
+          float Solid_posX = Solid_get_posX(f);
+          float Solid_posY = Solid_get_posY(f);
+          float Solid_posZ = Solid_get_posZ(f);
    
           
-          Solid_updatePosition(g, (Solid_posX - x0) * sx + x0, (Solid_posY - y0) * sy + y0, (Solid_posZ - z0) * sz + z0);
+          Solid_updatePosition(f, (Solid_posX - x0) * sx + x0, (Solid_posY - y0) * sy + y0, (Solid_posZ - z0) * sz + z0);
           
-          Solid_Scale(g, sx, sy, sz);
+          Solid_Scale(f, sx, sy, sz);
     
           Solids_updated = 1;  
         }
@@ -45380,6 +45380,21 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     newChild2.setContent(lineSTR);
   }
 
+  newChild1 = my_xml.addChild("allPolygroups_Object2Ds");
+  newChild1.setInt("ni", allPolygroups_Object2Ds.length);
+  for (int i = 0; i < allPolygroups_Object2Ds.length; i++) {
+    newChild2 = newChild1.addChild("Object2Ds");
+    newChild2.setInt("id", i);
+    String lineSTR = "";
+    //for (int j = 0; j < allPolygroups_Object2Ds[i].length; j++) {
+    for (int j = 0; j < 2; j++) { // start, end
+      lineSTR += nf(allPolygroups_Object2Ds[i][j], 0);
+      if (j < allPolygroups_Object2Ds[i].length - 1) lineSTR += ",";
+    }
+    newChild2.setContent(lineSTR);
+  }
+
+
   {
     newChild1 = my_xml.addChild("selectedLandPoint_numbers");
     int ni = selectedLandPoint_numbers.length;
@@ -46520,6 +46535,21 @@ void SOLARCHVISION_load_project (String myFile) {
         }
       }
     } 
+
+    children0 = FileAll.getChildren("allPolygroups_Object2Ds");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      allPolygroups_Object2Ds = new int [ni][2];
+      XML[] children1 = children0[L].getChildren("Object2Ds");         
+      for (int i = 0; i < ni; i++) {
+        String lineSTR = children1[i].getContent();
+        String[] parts = split(lineSTR, ',');
+        for (int j = 0; j < parts.length; j++) {
+          allPolygroups_Object2Ds[i][j] = int(parts[j]); 
+        }
+      }
+    } 
+
 
 
 
