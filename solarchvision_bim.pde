@@ -14094,6 +14094,8 @@ void SOLARCHVISION_duplicateSelection () {
 
   if (Current_ObjectCategory == ObjectCategory_Polygroups) {
     
+    int n1 = Object2D_PEOPLE_Files_Num;
+    
     int SOLID_added = 0;
     
     int number_of_Polygroups_before = allPolygroups_Faces.length;
@@ -14117,27 +14119,49 @@ void SOLARCHVISION_duplicateSelection () {
           allPolygroups_SolarPivotXYZ[new_OBJ_NUM][0] = allPolygroups_SolarPivotXYZ[OBJ_NUM][0];
           allPolygroups_SolarPivotXYZ[new_OBJ_NUM][1] = allPolygroups_SolarPivotXYZ[OBJ_NUM][1];
           allPolygroups_SolarPivotXYZ[new_OBJ_NUM][2] = allPolygroups_SolarPivotXYZ[OBJ_NUM][2];
+
+          if ((0 < allPolygroups_Object2Ds[OBJ_NUM][1]) && (allPolygroups_Object2Ds[OBJ_NUM][0] <= allPolygroups_Object2Ds[OBJ_NUM][1])) { 
+            for (int q = allPolygroups_Object2Ds[OBJ_NUM][0]; q <= allPolygroups_Object2Ds[OBJ_NUM][1]; q++) {
+
+              if (q != 0) {
+              
+                float x = allObject2Ds_XYZS[q][0];
+                float y = allObject2Ds_XYZS[q][1];
+                float z = allObject2Ds_XYZS[q][2];
+                float s = allObject2Ds_XYZS[q][3];
+                
+                int n = allObject2Ds_MAP[q];
+                
+                if (abs(n) > n1) SOLARCHVISION_add_Object2D("TREES", n, x, y, z, s);
+                else SOLARCHVISION_add_Object2D("PEOPLE", n, x, y, z, s);
+              }
+      
+            }
+          }
           
           if ((0 < allPolygroups_Solids[OBJ_NUM][1]) && (allPolygroups_Solids[OBJ_NUM][0] <= allPolygroups_Solids[OBJ_NUM][1])) { 
-            for (int s = allPolygroups_Solids[OBJ_NUM][0]; s <= allPolygroups_Solids[OBJ_NUM][1]; s++) {
+            for (int q = allPolygroups_Solids[OBJ_NUM][0]; q <= allPolygroups_Solids[OBJ_NUM][1]; q++) {
               
-              float Solid_posX = Solid_get_posX(s);
-              float Solid_posY = Solid_get_posY(s);
-              float Solid_posZ = Solid_get_posZ(s);
-              float Solid_powX = Solid_get_powX(s);
-              float Solid_powY = Solid_get_powY(s);
-              float Solid_powZ = Solid_get_powZ(s);
-              float Solid_scaleX = Solid_get_scaleX(s);
-              float Solid_scaleY = Solid_get_scaleY(s);
-              float Solid_scaleZ = Solid_get_scaleZ(s);
-              float Solid_rotX = Solid_get_rotX(s);
-              float Solid_rotY = Solid_get_rotY(s);
-              float Solid_rotZ = Solid_get_rotZ(s);
-              float Solid_value = Solid_get_value(s);
-      
-              SOLARCHVISION_add_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
-                    
-              SOLID_added += 1;
+              if (q != 0) {
+              
+                float Solid_posX = Solid_get_posX(q);
+                float Solid_posY = Solid_get_posY(q);
+                float Solid_posZ = Solid_get_posZ(q);
+                float Solid_powX = Solid_get_powX(q);
+                float Solid_powY = Solid_get_powY(q);
+                float Solid_powZ = Solid_get_powZ(q);
+                float Solid_scaleX = Solid_get_scaleX(q);
+                float Solid_scaleY = Solid_get_scaleY(q);
+                float Solid_scaleZ = Solid_get_scaleZ(q);
+                float Solid_rotX = Solid_get_rotX(q);
+                float Solid_rotY = Solid_get_rotY(q);
+                float Solid_rotZ = Solid_get_rotZ(q);
+                float Solid_value = Solid_get_value(q);
+        
+                SOLARCHVISION_add_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
+                      
+                SOLID_added += 1;
+              }
             }
           }
 
@@ -46830,49 +46854,5 @@ float Solid_get_Distance (int n, float a, float b, float c) {
   //return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value); 
   return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))));  
 }
-
-
-
-
-
-
-void Object2D_updatePosition (int n, float a, float b, float c) {
-  
-  allObject2Ds_XYZS[n][0] = a;
-  allObject2Ds_XYZS[n][1] = b;
-  allObject2Ds_XYZS[n][2] = c;  
-
-} 
-
-void Object2D_Scale (int n, float a) {
-  
-  allObject2Ds_XYZS[n][3] *= a;
-} 
-
-float Object2D_get_posX (int n) { 
-
-  return allObject2Ds_XYZS[n][0];
-} 
-
-float Object2D_get_posY (int n) { 
-
-  return allObject2Ds_XYZS[n][1];
-} 
-
-float Object2D_get_posZ (int n) { 
-
-  return allObject2Ds_XYZS[n][2];
-} 
-
-float Object2D_get_scale (int n) { 
-
-  return allObject2Ds_XYZS[n][3];
-} 
-
-int Object2D_get_MAP (int n) { 
-
-  return allObject2Ds_MAP[n];
-} 
-
 
 
