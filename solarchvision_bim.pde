@@ -232,16 +232,17 @@ int Create_Fractal_Seed = -1; // -1:random, 0-99 choice
 float Create_Fractal_TrunkSize = 1; //0.5;
 float Create_Fractal_LeafSize = 1; //1; 
 
+
 int ObjectCategory_LandPoint = 0; 
 int ObjectCategory_Fractals = 1; 
 int ObjectCategory_Object2Ds = 2; 
-int ObjectCategory_Polygroups = 3; 
+int ObjectCategory_Polygroups = 3;
 int ObjectCategory_Faces = 4; 
 int ObjectCategory_Vertices = 5; 
-int ObjectCategory_softVertices = 6; 
-int ObjectCategory_Solids = 7; 
-int ObjectCategory_Sections = 8; 
-int ObjectCategory_Cameras = 9; 
+int ObjectCategory_SoftVerts = 6;
+int ObjectCategory_Solids = 7;
+int ObjectCategory_Sections = 8;
+int ObjectCategory_Cameras = 9;
 
 int Current_ObjectCategory = ObjectCategory_Polygroups; 
 
@@ -12724,7 +12725,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                 
         case '6' :Display_Building_Model = (Display_Building_Model + 1) % 2;
                   if (Display_Building_Model != 0) {
-                    Current_ObjectCategory = ObjectCategory_softVertices;
+                    Current_ObjectCategory = ObjectCategory_SoftVerts;
                     BAR_b_Update = 1;
                   } 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; 
@@ -12852,7 +12853,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                    if (nextIndex != -1) selectedVertex_numbers[selectedVertex_numbers.length - 1] = nextIndex;
                  }
                  
-                 if (Current_ObjectCategory == ObjectCategory_softVertices) {
+                 if (Current_ObjectCategory == ObjectCategory_SoftVerts) {
                    
                  }
                  
@@ -12910,7 +12911,7 @@ void WIN3D_keyPressed (KeyEvent e) {
                    if (nextIndex != -1) selectedVertex_numbers[selectedVertex_numbers.length - 1] = nextIndex;
                  }
                  
-                 if (Current_ObjectCategory == ObjectCategory_softVertices) {
+                 if (Current_ObjectCategory == ObjectCategory_SoftVerts) {
                    
                  }
                  
@@ -16896,7 +16897,7 @@ void SOLARCHVISION_deselect_All () {
     selectedObject2D_numbers[0] = 0;
   }  
   
-  if ((Current_ObjectCategory == ObjectCategory_Polygroups) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices) || (Current_ObjectCategory == ObjectCategory_softVertices) || (Current_ObjectCategory == ObjectCategory_Solids)) {  
+  if ((Current_ObjectCategory == ObjectCategory_Polygroups) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices) || (Current_ObjectCategory == ObjectCategory_SoftVerts) || (Current_ObjectCategory == ObjectCategory_Solids)) {  
 
     selectedPolygroup_numbers = new int [1];
     selectedPolygroup_numbers[0] = 0;
@@ -28556,7 +28557,7 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
     start_index_OBJ_NUM = selectedVertex_numbers[start_index];
   }     
 
-  if (Current_ObjectCategory == ObjectCategory_softVertices) {
+  if (Current_ObjectCategory == ObjectCategory_SoftVerts) {
   
   }  
 
@@ -28646,7 +28647,7 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
         }
       }
       
-      if (Current_ObjectCategory == ObjectCategory_softVertices) {
+      if (Current_ObjectCategory == ObjectCategory_SoftVerts) {
         
       }
     
@@ -30354,7 +30355,7 @@ void mouseWheel(MouseEvent event) {
                    if (nextIndex != -1) selectedVertex_numbers[selectedVertex_numbers.length - 1] = nextIndex;
                  }
                  
-                 if (Current_ObjectCategory == ObjectCategory_softVertices) {
+                 if (Current_ObjectCategory == ObjectCategory_SoftVerts) {
                    
                  }
 
@@ -32591,7 +32592,7 @@ void mouseClicked () {
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Soft Selection")) {
               SOLARCHVISION_convert_Vertex2softSelection();
               
-              Current_ObjectCategory = ObjectCategory_softVertices;
+              Current_ObjectCategory = ObjectCategory_SoftVerts;
               WIN3D_Update = 1;
               BAR_b_Update = 1;  
             }                 
@@ -36429,7 +36430,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
   }
 
 
-  if ((Current_ObjectCategory == ObjectCategory_Polygroups) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices) || (Current_ObjectCategory == ObjectCategory_softVertices)) {   
+  if ((Current_ObjectCategory == ObjectCategory_Polygroups) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices) || (Current_ObjectCategory == ObjectCategory_SoftVerts)) {   
     if (selectedPolygroup_displayPivot != 0) {
       
       pushMatrix();
@@ -36644,7 +36645,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
   }  
   
   
-  if (Current_ObjectCategory == ObjectCategory_softVertices) {    
+  if (Current_ObjectCategory == ObjectCategory_SoftVerts) {    
     
     if (selectedVertex_displayVertices != 0) {
 
@@ -39167,7 +39168,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     theVertices = selectedSolid_numbers;
   } 
 
-  if ((Current_ObjectCategory == ObjectCategory_Vertices) || (Current_ObjectCategory == ObjectCategory_softVertices))  {
+  if ((Current_ObjectCategory == ObjectCategory_Vertices) || (Current_ObjectCategory == ObjectCategory_SoftVerts))  {
     theVertices = selectedVertex_numbers;
   }
   if (Current_ObjectCategory == ObjectCategory_Faces) {
@@ -39256,7 +39257,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
       }  
       
       
-      if ((Current_ObjectCategory == ObjectCategory_Polygroups) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices) || (Current_ObjectCategory == ObjectCategory_softVertices)) {
+      if ((Current_ObjectCategory == ObjectCategory_Polygroups) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices) || (Current_ObjectCategory == ObjectCategory_SoftVerts)) {
         int n = theVertices[q];
         
         POS_now = allVertices[n][j];
@@ -40148,7 +40149,7 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
     SOLARCHVISION_scale_selectedSolids(x0, y0, z0, sx, sy, sz);
   }       
     
-  if (Current_ObjectCategory == ObjectCategory_softVertices) {
+  if (Current_ObjectCategory == ObjectCategory_SoftVerts) {
     
     SOLARCHVISION_softScale_selectedVertices(x0, y0, z0, sx, sy, sz);
   }    
@@ -40241,7 +40242,7 @@ void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int 
     SOLARCHVISION_rotate_selectedSolids(x0, y0, z0, r, the_Vector);
   }       
   
-  if (Current_ObjectCategory == ObjectCategory_softVertices) {
+  if (Current_ObjectCategory == ObjectCategory_SoftVerts) {
     
     SOLARCHVISION_softRotate_selectedVertices(x0, y0, z0, r, the_Vector);
   }  
@@ -40305,7 +40306,7 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
     SOLARCHVISION_move_selectedSolids(dx, dy, dz);
   }      
   
-  if (Current_ObjectCategory == ObjectCategory_softVertices) {
+  if (Current_ObjectCategory == ObjectCategory_SoftVerts) {
 
     SOLARCHVISION_softMove_selectedVertices(dx, dy, dz);
   }    
@@ -40380,7 +40381,7 @@ void SOLARCHVISION_drop_Selection () {
 
   }      
   
-  if (Current_ObjectCategory == ObjectCategory_softVertices) {
+  if (Current_ObjectCategory == ObjectCategory_SoftVerts) {
 
   }    
   
@@ -42726,7 +42727,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
         String Bar_Switch = BAR_b_Items[i][BAR_b_Items[i].length - 2];
         
         if (Bar_Switch.equals("LayerType")) {
-          BAR_b_Items[i][0] = nf(1 + Current_ObjectCategory, 0);
+          BAR_b_Items[i][0] = nf(Current_ObjectCategory + 1, 0);
         }
       }
 
@@ -42796,7 +42797,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
         if (Bar_Switch.equals("LayerType")) {
           Current_ObjectCategory = j - 1;
           
-          if (Current_ObjectCategory == ObjectCategory_softVertices) {
+          if (Current_ObjectCategory == ObjectCategory_SoftVerts) {
             SOLARCHVISION_convert_Vertex2softSelection();
           }
           
