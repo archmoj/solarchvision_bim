@@ -1679,12 +1679,22 @@ float CAM_clipNear = 0.001;
 float CAM_clipFar = 1000000000.0;
 
 
+
+
+
 float[][] allVertices = {{0,0,0}};
 int[][] allFaces = {{0,0,0}};
 int[][] allFaces_MTLV = {{0,0,0,0}}; // 0:material, 1:teselation, 2:layer, 3:visibility
 
+float[][] allSolids = {{0,0,0,2,2,2,1,1,1,0,0,0,1}};
+
+float[][] allObject2Ds_XYZS = {{0,0,0,0}};
+int[] allObject2Ds_MAP = {0};
+int allObject2Ds_num = 0; 
+
 int[][] allPolygroups_Faces = {{0,0}}; // start face - end face
 int[][] allPolygroups_Solids = {{0,0}}; // start solid - end solid
+int[][] allPolygroups_Object2Ds = {{0,0}}; // start object2D - end object2D
 
 float[][] allPolygroups_SolarPivotXYZ = {{0,0,0}}; 
 int[][] allPolygroups_SolarPivotType = {{0}}; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
@@ -1692,9 +1702,7 @@ int[][] allPolygroups_SolarPivotType = {{0}}; // 0: no solar rotation, 1: allow 
 
 
 
-float[][] allObject2Ds_XYZS = {{0,0,0,0}};
-int[] allObject2Ds_MAP = {0};
-int allObject2Ds_num = 0; 
+
 
 
 
@@ -1722,12 +1730,6 @@ PImage[][] allSections_SolarImpact = new PImage[1][(1 + STUDY_j_end - STUDY_j_st
     allSections_SolarImpact[i][j] = createImage(2, 2, RGB);
   } 
 }
-
-
-
-
-float[][] allSolids = {{0,0,0,2,2,2,1,1,1,0,0,0,1}};
-
 
 
 float[][] allCamera_PPPSRRRF = {{WIN3D_X_coordinate, WIN3D_Y_coordinate, WIN3D_Z_coordinate, WIN3D_S_coordinate, WIN3D_RX_coordinate, WIN3D_RY_coordinate, WIN3D_RZ_coordinate, WIN3D_ZOOM_coordinate}};
@@ -13480,6 +13482,9 @@ void SOLARCHVISION_add_Object2D (String t, int m, float x, float y, float z, flo
   allObject2Ds_XYZS = (float[][]) concat(allObject2Ds_XYZS, TempObject2D_XYZS);
   
   allObject2Ds_num += 1;
+  
+    
+  allPolygroups_Object2Ds[allPolygroups_Object2Ds.length - 1][1] = allObject2Ds_num;
 }
 
 
@@ -13975,14 +13980,11 @@ int SOLARCHVISION_add_Solid (float x, float y, float z, float px, float py, floa
 }
 
 
-
 void SOLARCHVISION_beginNewPolygroup () {
+
+  int[][] newObject_Object2Ds = {{allObject2Ds_num + 1, 0}}; // i.e. null because start > end 
   
-  println("Called SOLARCHVISION_beginNewPolygroup");
-  println("Solids", allSolids.length - 1);
-  println("Faces", allFaces.length - 1);
-  
-  
+  allPolygroups_Object2Ds = (int[][]) concat(allPolygroups_Object2Ds, newObject_Object2Ds);   
 
   int[][] newObject_Solids = {{allSolids.length, 0}}; // i.e. null because start > end 
   
