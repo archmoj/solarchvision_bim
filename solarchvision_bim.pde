@@ -14643,19 +14643,17 @@ void SOLARCHVISION_delete_Selection () {
             
             println(startObject2D, endObject2D);
     
-            if (startObject2D <= endObject2D) {
-              
-              for (int i = q + 1; i < allPolygroups_Object2Ds.length; i++) {
-                for (int j = 0; j < 2; j++) {
-                  
-                  allPolygroups_Object2Ds[i][j] -= 1;
-                  
-                  if (allPolygroups_Object2Ds[i][j] < 0) allPolygroups_Object2Ds[i][j] = 0; 
-                }
-              }  
-              allPolygroups_Object2Ds[q][1] -= 1; // because deleting a object2D also changes the end pointer of the same object 
-              
+            for (int i = q + 1; i < allPolygroups_Object2Ds.length; i++) {
+              for (int j = 0; j < 2; j++) {
+                
+                allPolygroups_Object2Ds[i][j] -= 1;
+                
+                if (allPolygroups_Object2Ds[i][j] < 0) allPolygroups_Object2Ds[i][j] = 0; 
+              }
             }  
+            allPolygroups_Object2Ds[q][1] -= 1; // because deleting a object2D also changes the end pointer of the same object 
+            
+ 
 
             break;
           }
@@ -14707,20 +14705,16 @@ void SOLARCHVISION_delete_Selection () {
             int endSolid = allPolygroups_Solids[q][1];
             
             println(startSolid, endSolid);
-    
-            if (startSolid <= endSolid) {
-              
-              for (int i = q + 1; i < allPolygroups_Solids.length; i++) {
-                for (int j = 0; j < 2; j++) {
-                  
-                  allPolygroups_Solids[i][j] -= 1;
-                  
-                  if (allPolygroups_Solids[i][j] < 0) allPolygroups_Solids[i][j] = 0; 
-                }
-              }  
-              allPolygroups_Solids[q][1] -= 1; // because deleting a solid also changes the end pointer of the same object 
-              
+
+            for (int i = q + 1; i < allPolygroups_Solids.length; i++) {
+              for (int j = 0; j < 2; j++) {
+                
+                allPolygroups_Solids[i][j] -= 1;
+                
+                if (allPolygroups_Solids[i][j] < 0) allPolygroups_Solids[i][j] = 0; 
+              }
             }  
+            allPolygroups_Solids[q][1] -= 1; // because deleting a solid also changes the end pointer of the same object 
 
             break;
           }
@@ -14815,14 +14809,19 @@ void SOLARCHVISION_delete_Selection () {
         
         {
           
-          if (startObject2D <= endObject2D) {
-            for (int i = OBJ_NUM + 1; i < allPolygroups_Object2Ds.length; i++) {
+          for (int i = OBJ_NUM + 1; i < allPolygroups_Object2Ds.length; i++) {
+          
+            println("before:", allPolygroups_Object2Ds[i][0], allPolygroups_Object2Ds[i][1]);
             
-              for (int j = 0; j < 2; j++) {
-                allPolygroups_Object2Ds[i][j] -= 1 + endObject2D - startObject2D;
-              }
-            }    
-          }
+            for (int j = 0; j < 2; j++) {
+              
+              allPolygroups_Object2Ds[i][j] -= 1 + endObject2D - startObject2D;
+              
+              if (allPolygroups_Object2Ds[i][j] < 0) allPolygroups_Object2Ds[i][j] = 0; 
+            }
+            
+            println("after:", allPolygroups_Object2Ds[i][0], allPolygroups_Object2Ds[i][1]);
+          }    
           
           int[][] startList = (int[][]) subset(allPolygroups_Object2Ds, 0, OBJ_NUM);
           int[][] endList = (int[][]) subset(allPolygroups_Object2Ds, OBJ_NUM + 1);
@@ -14847,9 +14846,11 @@ void SOLARCHVISION_delete_Selection () {
             allObject2Ds_MAP = (int[]) concat(startList, endList);
           }
           
-          allObject2Ds_num -= 1;
+          allObject2Ds_num = allObject2Ds_XYZS.length - 1;
 
         }
+        
+        println("allObject2Ds_num", allObject2Ds_num);
         
         
         int startSolid = allPolygroups_Solids[OBJ_NUM][0];
@@ -14857,14 +14858,14 @@ void SOLARCHVISION_delete_Selection () {
         
         {
           
-          if (startSolid <= endSolid) {
-            for (int i = OBJ_NUM + 1; i < allPolygroups_Solids.length; i++) {
-            
-              for (int j = 0; j < 2; j++) {
-                allPolygroups_Solids[i][j] -= 1 + endSolid - startSolid;
-              }
-            }    
-          }
+          for (int i = OBJ_NUM + 1; i < allPolygroups_Solids.length; i++) {
+          
+            for (int j = 0; j < 2; j++) {
+              allPolygroups_Solids[i][j] -= 1 + endSolid - startSolid;
+              
+              if (allPolygroups_Solids[i][j] < 0) allPolygroups_Solids[i][j] = 0; 
+            }
+          }    
           
           int[][] startList = (int[][]) subset(allPolygroups_Solids, 0, OBJ_NUM);
           int[][] endList = (int[][]) subset(allPolygroups_Solids, OBJ_NUM + 1);
