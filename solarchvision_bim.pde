@@ -14428,31 +14428,6 @@ void SOLARCHVISION_delete_Selection () {
     
   }
 
-  if (Current_ObjectCategory == ObjectCategory_Solids) {
-    
-    selectedSolid_numbers = sort(selectedSolid_numbers);
-    
-    for (int o = selectedSolid_numbers.length - 1; o >= 0; o--) {
-
-      int OBJ_NUM = selectedSolid_numbers[o];
-
-      if (OBJ_NUM != 0) {    
-        
-        
-        // first should find it in polygroups ZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
-
-        {
-          float[][] startList = (float[][]) subset(allSolids, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allSolids, OBJ_NUM + 1);
-          
-          allSolids = (float[][]) concat(startList, endList);
-        }
-
-      }
-
-    }
-
-  }  
 
   if (Current_ObjectCategory == ObjectCategory_Sections) {
     
@@ -14651,6 +14626,66 @@ void SOLARCHVISION_delete_Selection () {
   }
 
 
+  if (Current_ObjectCategory == ObjectCategory_Solids) {
+    
+    selectedSolid_numbers = sort(selectedSolid_numbers);
+    
+    for (int o = selectedSolid_numbers.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = selectedSolid_numbers[o];
+
+      if (OBJ_NUM != 0) {    
+        
+//------------------------------------       qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+
+        
+        for (int q = 0; q < allPolygroups_Solids.length; q++) {
+          if ((allPolygroups_Solids[q][0] <= OBJ_NUM) && (OBJ_NUM <= allPolygroups_Solids[q][1])) {
+            
+            println("solid found at group:", q);
+            
+            int startSolid = allPolygroups_Solids[q][0];
+            int endSolid = allPolygroups_Solids[q][1];
+            
+            println(startSolid, endSolid);
+    
+            if (startSolid <= endSolid) {
+              
+              zzzzzzzzz
+            
+              for (int i = q + 1; i < allPolygroups_Solids.length; i++) {
+                for (int j = 0; j < 2; j++) {
+                  
+                  allPolygroups_Solids[i][j] -= 1 + endSolid - startSolid;
+                  
+                  if (allPolygroups_Solids[i][j] < 0) allPolygroups_Solids[i][j] = 0; 
+                }
+              }  
+            }  
+
+            break;
+          }
+        }
+      
+
+//------------------------------------      
+        
+
+        {
+          float[][] startList = (float[][]) subset(allSolids, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allSolids, OBJ_NUM + 1);
+          
+          allSolids = (float[][]) concat(startList, endList);
+        }
+
+      }
+
+    }
+
+  }  
+
+
+
   int[] keep_selectedVertex_numbers = {0};
   if (Current_ObjectCategory == ObjectCategory_Polygroups) {
 
@@ -14692,6 +14727,8 @@ void SOLARCHVISION_delete_Selection () {
             for (int i = OBJ_NUM + 1; i < allPolygroups_Faces.length; i++) {
               for (int j = 0; j < 2; j++) {
                 allPolygroups_Faces[i][j] -= 1 + endFace - startFace;
+                
+                if (allPolygroups_Faces[i][j] < 0) allPolygroups_Faces[i][j] = 0; 
               }
             }  
           }  
@@ -14880,12 +14917,12 @@ void SOLARCHVISION_delete_Selection () {
 void SOLARCHVISION_deleteIsolatedVerticesSelection () {
 
   selectedVertex_numbers = sort(selectedVertex_numbers);
+
+  for (int q = selectedVertex_numbers.length - 1; q >= 0; q--) { 
   
-    for (int q = selectedVertex_numbers.length - 1; q >= 0; q--) { 
-    
-      int vNo = selectedVertex_numbers[q];
-    
-      if (vNo != 0) {  
+    int vNo = selectedVertex_numbers[q];
+  
+    if (vNo != 0) {  
       
       int found = -1;
     
@@ -15905,7 +15942,7 @@ void SOLARCHVISION_insertEdgeOpenningsSelection () {
 
           int f = selectedFace_numbers[q];
           
-          if (f != 0){
+          if (f != 0) {
           
             int startFace = allPolygroups_Faces[OBJ_NUM][0];
             int endFace = allPolygroups_Faces[OBJ_NUM][1];          
