@@ -13966,27 +13966,23 @@ void SOLARCHVISION_add_Solid (float x, float y, float z, float px, float py, flo
 
 
 void SOLARCHVISION_beginNewPolygroup () {
+
+  int[][] newObject_Solids = {{allSolids_XYZPPPSSSRRRV.length, 0}}; // i.e. null because start > end 
   
-  if (addToLastPolygroup == 0) { 
-
-    int[][] newObject_Solids = {{allSolids_XYZPPPSSSRRRV.length, 0}}; // i.e. null because start > end 
-    
-    allPolygroups_Solids = (int[][]) concat(allPolygroups_Solids, newObject_Solids);      
-    
-    int[][] newObject_Faces = {{allFaces.length, 0}}; // i.e. null because start > end   
-    
-    allPolygroups_Faces = (int[][]) concat(allPolygroups_Faces, newObject_Faces);
-    
-    float[][] newObject_PivotXYZ = {{0,0,0}}; 
-    
-    allPolygroups_SolarPivotXYZ = (float[][]) concat(allPolygroups_SolarPivotXYZ, newObject_PivotXYZ);
-
-    int[][] newObject_Pivot = {{defaultSolarPivotType}};
-
-    allPolygroups_SolarPivotType = (int[][]) concat(allPolygroups_SolarPivotType, newObject_Pivot);        
-  }
-
+  allPolygroups_Solids = (int[][]) concat(allPolygroups_Solids, newObject_Solids);      
   
+  int[][] newObject_Faces = {{allFaces.length, 0}}; // i.e. null because start > end   
+  
+  allPolygroups_Faces = (int[][]) concat(allPolygroups_Faces, newObject_Faces);
+  
+  float[][] newObject_PivotXYZ = {{0,0,0}}; 
+  
+  allPolygroups_SolarPivotXYZ = (float[][]) concat(allPolygroups_SolarPivotXYZ, newObject_PivotXYZ);
+
+  int[][] newObject_Pivot = {{defaultSolarPivotType}};
+
+  allPolygroups_SolarPivotType = (int[][]) concat(allPolygroups_SolarPivotType, newObject_Pivot);        
+
 }
 
 
@@ -14093,7 +14089,7 @@ void SOLARCHVISION_duplicateSelection () {
 
           int number_of_Vertices_before = allVertices.length;
           
-          addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+          SOLARCHVISION_beginNewPolygroup();
           
           int new_OBJ_NUM = allPolygroups_Faces.length - 1;
           
@@ -14212,7 +14208,7 @@ void SOLARCHVISION_duplicateSelection () {
       
       int f = selectedFace_numbers[o];        
 
-      addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+      SOLARCHVISION_beginNewPolygroup();
 
       int number_of_Vertices_before = allVertices.length;
       
@@ -16588,7 +16584,7 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
       
       if (OBJ_NUM != 0) {
         
-        addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+        SOLARCHVISION_beginNewPolygroup();
 
         for (int q = selectedFace_numbers.length - 1; q >= 0; q--) { 
 
@@ -20550,7 +20546,7 @@ void SOLARCHVISION_import_objects (String FileName, int m, int tes, int lyr, int
     if (parts[0].toLowerCase().equals("g")) {
       if (m == -1) defaultMaterial = 1 + (defaultMaterial % 8);
       
-      addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+      SOLARCHVISION_beginNewPolygroup();
     }
     
     if (parts[0].toLowerCase().equals("v")) {
@@ -21107,7 +21103,7 @@ void SOLARCHVISION_delete_3Dobjects () {
   
   SOLARCHVISION_delete_Solids();
 
-  addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+  SOLARCHVISION_beginNewPolygroup();
  
   SOLARCHVISION_deselect_All();
  
@@ -21177,31 +21173,31 @@ void SOLARCHVISION_add_DefaultModel (int n) {
 
   
   //if (n != 0) {
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     SOLARCHVISION_add_Mesh2(8,0,0,1,1, -100, -100, 0, 100, 100, 0);
   //}
   
   if (n == 1) {
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     SOLARCHVISION_add_House_Core(0,0,0,1,1, 0, 0, 0, 6, 6, 6, 6, 90);
   }
   
   if (n == 2) {
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     SOLARCHVISION_add_House_Core(0,0,0,1,1, 0, 0, 0, 6, 6, 6, 6, 0);
   }  
   
   if (n == 3) {
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     SOLARCHVISION_add_PolygonHyper(0,0,0,1,1, 0, 0, 5,  10, 10, 4, 0);
     
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     SOLARCHVISION_add_House_Core(7,0,0,1,1, 25, 25, 0, 6, 6, 6, 6, 0);    
   }   
 
   if (n == 4) {
     for (int i = 0; i < int(10 + random(10)); i++) {
-      addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+      SOLARCHVISION_beginNewPolygroup();
       SOLARCHVISION_add_House_Core(7,0,0,1,1, random(-80, 80), random(-80, 80), 0, random(5, 10), random(5, 10), random(5, 10), random(2.5, 7.5), random(360));
     }
   }    
@@ -21282,7 +21278,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
 
   if (n == 6) {
     {
-      addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+      SOLARCHVISION_beginNewPolygroup();
       float x = 0;
       float y = 0;
       float z = 0;
@@ -21292,7 +21288,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
     }
   
     {
-      addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+      SOLARCHVISION_beginNewPolygroup();
       float x = 30;
       float y = 0;
       float z = 0;
@@ -21302,7 +21298,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
     }
   
     {
-      addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+      SOLARCHVISION_beginNewPolygroup();
       float x = 0;
       float y = 20;
       float z = 0;
@@ -25371,7 +25367,7 @@ void SOLARCHVISION_add_ProjectModel () {
 
 /*
   {
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     float dx = 10;
     float dy = 10;
     float dz = 45;
@@ -25382,10 +25378,10 @@ void SOLARCHVISION_add_ProjectModel () {
     SOLARCHVISION_add_Box_Core(8,0,0,1,1, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
 
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     SOLARCHVISION_add_Box_Core(5,0,0,1,1, x,y,z, dx/3, dy/3, dz, rot); // building core
     
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     for (float i = 0; i < 45; i += 3) {
       SOLARCHVISION_add_Mesh2(2,0,0,1,1, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
@@ -25394,7 +25390,7 @@ void SOLARCHVISION_add_ProjectModel () {
   }  
 
   {
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     float dx = 10;
     float dy = 10;
     float dz = 45;
@@ -25405,10 +25401,10 @@ void SOLARCHVISION_add_ProjectModel () {
     SOLARCHVISION_add_Box_Core(8,0,0,1,1, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
 
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     SOLARCHVISION_add_Box_Core(5,0,0,1,1, x,y,z, dx/3, dy/3, dz, rot); // building core
     
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     for (float i = 0; i < 45; i += 3) {
       SOLARCHVISION_add_Mesh2(2,0,0,1,1, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
@@ -25417,7 +25413,7 @@ void SOLARCHVISION_add_ProjectModel () {
   }    
 
   {
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     float dx = 10;
     float dy = 10;
     float dz = 45;
@@ -25428,10 +25424,10 @@ void SOLARCHVISION_add_ProjectModel () {
     SOLARCHVISION_add_Box_Core(8,0,0,1,1, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
 
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     SOLARCHVISION_add_Box_Core(5,0,0,1,1, x,y,z, dx/3, dy/3, dz, rot); // building core
     
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     for (float i = 0; i < 45; i += 3) {
       SOLARCHVISION_add_Mesh2(2,0,0,1,1, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
@@ -25441,7 +25437,7 @@ void SOLARCHVISION_add_ProjectModel () {
 
 
   {
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     float d = 1.0;
     for (float i = 0; i < 45; i += d) {
       SOLARCHVISION_add_H_shade(1,0,0,1,1, 30,0,i, 20,d, 90-4*i,0); // south
@@ -25449,7 +25445,7 @@ void SOLARCHVISION_add_ProjectModel () {
   }
   
   {
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     float d = 1.0;
     for (float i = -10; i <= 10; i += d) {
       SOLARCHVISION_add_V_shade(6,0,0,1,1, i-30,0,22.5, 45,d, 4.5*i,0); // south
@@ -25460,7 +25456,7 @@ void SOLARCHVISION_add_ProjectModel () {
   {
     float d = 1.0;
     for (float i = 0; i < 45; i += d) {
-      addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+      SOLARCHVISION_beginNewPolygroup();
       
       float x = 0;
       float y = 0;
@@ -25477,7 +25473,7 @@ void SOLARCHVISION_add_ProjectModel () {
     }
     
     for (float i = -10; i <= 10; i += d) {
-      addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+      SOLARCHVISION_beginNewPolygroup();
       
       float x = i;
       float y = 0;
@@ -25497,7 +25493,7 @@ void SOLARCHVISION_add_ProjectModel () {
  
   /* 
   {
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
        
     float d = 1.0;
     
@@ -25528,12 +25524,12 @@ void SOLARCHVISION_add_ProjectModel () {
   //SOLARCHVISION_add_2Dobjects_plane(1, 25, 0,40,0, 50,10); // trees back
   //SOLARCHVISION_add_2Dobjects_plane(1, 25, 0,-30,0, 50,20); // trees front
 /*
-  addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+  SOLARCHVISION_beginNewPolygroup();
   SOLARCHVISION_add_PolygonHyper(0,0,0,1,1, 30,-30,4.5, 9, 9, 6, 0);  // hyper
   
 
   {  
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     float dx = 5;
     float dy = 5;
     float dz = 5;
@@ -25546,7 +25542,7 @@ void SOLARCHVISION_add_ProjectModel () {
    } 
 
   {
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     float r = 5;    
     float x = 0;
     float y = -30;
@@ -25558,7 +25554,7 @@ void SOLARCHVISION_add_ProjectModel () {
 */
 
   {
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     float dx = 100;
     float dy = 100;
     float dz = 10;
@@ -25576,7 +25572,7 @@ void SOLARCHVISION_add_ProjectModel () {
 
 
   {
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     float dx = 24;
     float dy = 24;
     float dz = 18;
@@ -25587,7 +25583,7 @@ void SOLARCHVISION_add_ProjectModel () {
     SOLARCHVISION_add_Box_Core(8,0,0,1,1, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
 
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     for (float i = 6; i <= dz; i += 6) {
       if (i != dz) {
         
@@ -25604,10 +25600,10 @@ void SOLARCHVISION_add_ProjectModel () {
 //      SOLARCHVISION_add_2Dobjects_Mesh2(0, 10, x-dx/3.0,y-dy,i, x+dx,y-dy/3.0,i); // people
     }   
     
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     SOLARCHVISION_add_PolygonHyper(0,1,0,1,1, x-0.5*dx,y+0.5*dy,z+dz+4.5, 9, 9, 4, 0);  // hyper
     
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     for (float i = 0; i < dy; i += 6) {
       SOLARCHVISION_add_H_shade(1,0,0,1,1, x+0.5*dx,-i,z+dz+2, dx,2, -45,0); // south
     }     
@@ -25615,7 +25611,7 @@ void SOLARCHVISION_add_ProjectModel () {
 
 
   {
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
        
 
     SOLARCHVISION_add_H_shade(1,0,0,1,1, 12,-24,3, 24,6, 0,0); // south
@@ -25644,7 +25640,7 @@ void SOLARCHVISION_add_ProjectModel () {
   }
 
   {  
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     float dx = 12;
     float dy = 9;
     float dz = 6;
@@ -25657,7 +25653,7 @@ void SOLARCHVISION_add_ProjectModel () {
   }   
 
   {  
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     float dx = 5;
     float dy = 5;
     float dz = 5;
@@ -25670,7 +25666,7 @@ void SOLARCHVISION_add_ProjectModel () {
    } 
 
   {
-    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+    SOLARCHVISION_beginNewPolygroup();
     float r = 5;    
     float x = 0;
     float y = -50;
@@ -25679,7 +25675,7 @@ void SOLARCHVISION_add_ProjectModel () {
     SOLARCHVISION_add_Solid(x,y,z, 2,2,2, r,r,r, 0,0,0, 1);
   }      
 
-  addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+  SOLARCHVISION_beginNewPolygroup();
   SOLARCHVISION_add_PolygonHyper(0,1,0,1,1, -50,-50,4.5, 9, 9, 6, 0);  // hyper
 
 }
@@ -25706,7 +25702,7 @@ void SOLARCHVISION_add_ProjectModel_SCHOOL () {
       
       if (block[i][j] != 0) {
 
-        addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+        SOLARCHVISION_beginNewPolygroup();
         
         float dx = 2.5;
         float dy = 2.5;
@@ -33713,31 +33709,31 @@ void mouseClicked () {
                 if (Create_Mesh_SuperOBJ == 1) {
     
                   if ((px == CubePower) && (py == CubePower) && (pz == 2)) {
-                    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+                    SOLARCHVISION_beginNewPolygroup();
                     
                     SOLARCHVISION_add_ParametricSurface(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x, y, z, rx, ry, rz, 2, rot);
                   }
                   
                   else if ((px == 2) && (py == 2) && (pz == CubePower)) {
-                    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+                    SOLARCHVISION_beginNewPolygroup();
                     
                     SOLARCHVISION_add_SuperCylinder(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x, y, z, rx,ry,rz, Create_Cylinder_Degree, rot);
                   }                
       
                   else if ((px == CubePower) && (py == CubePower) && (pz == CubePower)) {
-                    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+                    SOLARCHVISION_beginNewPolygroup();
                     
                     SOLARCHVISION_add_Box_Core(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x,y,z, rx,ry,rz, rot);
                   }
                   
                   else if ((px == 1) && (py == 1) && (pz == 1)) {
-                    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+                    SOLARCHVISION_beginNewPolygroup();
                     
                     SOLARCHVISION_add_Octahedron(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x,y,z, rx,ry,rz, rot);
                   }
                   
                   else {
-                    addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+                    SOLARCHVISION_beginNewPolygroup();
                     
                     SOLARCHVISION_add_SuperSphere(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x,y,z, pz,py,pz, rx,ry,rz, Create_Sphere_Degree, rot);
                   }
@@ -33756,7 +33752,7 @@ void mouseClicked () {
   
                   
                 if (Create_Mesh_Tri == 1) {
-                  addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1; 
+                  SOLARCHVISION_beginNewPolygroup(); 
                   
                   SOLARCHVISION_add_Mesh3(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
                   SOLARCHVISION_add_Mesh3(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
@@ -33765,37 +33761,37 @@ void mouseClicked () {
                 }
                 
                 if (Create_Mesh_Quad == 1) {
-                  addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1; 
+                  SOLARCHVISION_beginNewPolygroup(); 
                   
                   SOLARCHVISION_add_Mesh4(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
                 }
                 
                 if (Create_Mesh_Poly == 1) {
-                  addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1; 
+                  SOLARCHVISION_beginNewPolygroup(); 
                   
                   SOLARCHVISION_add_PolygonHyper(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
                 }
     
                 if (Create_Mesh_Extrude == 1) {       
-                  addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1;
+                  SOLARCHVISION_beginNewPolygroup();
                   
                   SOLARCHVISION_add_PolygonExtrude(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
                 }
     
                 if (Create_Mesh_House == 1) {   
-                  addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1; 
+                  SOLARCHVISION_beginNewPolygroup(); 
        
                   SOLARCHVISION_add_House_Core(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x, y, z, rx, ry, rz, ry, rot);
                 }
     
                 if (Create_Mesh_Parametric != 0) {
-                  addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1; 
+                  SOLARCHVISION_beginNewPolygroup(); 
                   
                   SOLARCHVISION_add_ParametricSurface(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x, y, z, rx, ry, rz, Create_Mesh_Parametric_Type, rot);
                 }
     
                 if (Create_Fractal != 0) {
-                  //addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1; // maybe requiered if passing as solid! 
+                  //SOLARCHVISION_beginNewPolygroup(); // maybe requiered if passing as solid! 
                   
                   float as_Solid = 1;
                   
@@ -33818,8 +33814,6 @@ void mouseClicked () {
                 }
 
                 if (Work_with_2D_or_3D == 7) { // working with solids
-                
-                   addToLastPolygroup = 0; SOLARCHVISION_beginNewPolygroup(); addToLastPolygroup = 1; // starting new object???? zzzzzzzzzzzzzz 
                 
                    SOLARCHVISION_add_Solid(x,y,z, px,py,pz, rx,ry,rz, 0,0,rot, 1);
 
