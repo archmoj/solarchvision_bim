@@ -1,3 +1,4 @@
+// could add create polygroup --> startPolyGroup ...
 // deleting solids may create conflict with polygroups that has those solids
 // should add solid option to trees? 
 // drop functions only works for living objects
@@ -1768,13 +1769,15 @@ float softSelection_Power = 1;
 float softSelection_Radius = 2; // 2 = 2m
 
 
+int addToLastPolygroup = 0;
 
+
+int Load_Default_Models = 0; // internal
 
 int addNewSelectionToPreviousSelection = 0; // internal
 
-int addToLastPolygroup = 0; //1; // internal
 
-int Load_Default_Models = 0; // internal
+
 
 
 
@@ -34579,6 +34582,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
     if (ROLLOUT_child == 2) { // Create
 
 
+      addToLastPolygroup = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "addToLastPolygroup" , addToLastPolygroup, 0, 1, 1), 1));
+      
       
 
       Create_Default_Material = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Default_Material" , Create_Default_Material, -1, 8, 1), 1));
@@ -44696,6 +44701,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
    
   newChild1.setFloat("softSelection_Power", softSelection_Power);
   newChild1.setFloat("softSelection_Radius", softSelection_Radius); 
+
+  newChild1.setInt("addToLastPolygroup", addToLastPolygroup);
   
   newChild1.setInt("objExportPrecisionVertex", objExportPrecisionVertex);
   newChild1.setInt("objExportPrecisionVtexture", objExportPrecisionVtexture);
@@ -45838,6 +45845,8 @@ void SOLARCHVISION_load_project (String myFile) {
       Object2D_TREES_Files_Num = children0[L].getInt("Object2D_TREES_Files_Num");
       softSelection_Power = children0[L].getFloat("softSelection_Power");
       softSelection_Radius = children0[L].getFloat("softSelection_Radius");
+
+      addToLastPolygroup = children0[L].getInt("addToLastPolygroup");      
 
       objExportPrecisionVertex = children0[L].getInt("objExportPrecisionVertex");
       objExportPrecisionVtexture = children0[L].getInt("objExportPrecisionVtexture");
