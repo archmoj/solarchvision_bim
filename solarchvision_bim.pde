@@ -17253,7 +17253,38 @@ void SOLARCHVISION_reverse_Selection () {
 
 
 
+void SOLARCHVISION_convert_Solid2Polygroup () {
+  
+  selectedPolygroup_numbers = new int [1];
+  selectedPolygroup_numbers[0] = 0; 
+  
+  for (int i = 1; i < selectedSolid_numbers.length; i++) {
+    
+    int f = selectedSolid_numbers[i];
+    
+    for (int j = 0; j < allSolids[f].length; j++) {
+      
+      for (int OBJ_NUM = 1; OBJ_NUM < allPolygroups_Solids.length; OBJ_NUM++) {
+      
+        if ((allPolygroups_Solids[OBJ_NUM][0] <= f) && (f <= allPolygroups_Solids[OBJ_NUM][1])) { 
+        
+          int previously_added = 0;
+          for (int q = 0; q < selectedPolygroup_numbers.length; q++) {
+            if (selectedPolygroup_numbers[q] == OBJ_NUM) {
+              previously_added = 1;
+              break;
+            }
+          }
+          if (previously_added == 0) {
+            int[] new_Item = {OBJ_NUM};
+            selectedPolygroup_numbers = concat(selectedPolygroup_numbers, new_Item);
+          }
+        }
+      }
+    }
+  }  
 
+}
 
 void SOLARCHVISION_convert_Face2Polygroup () {
   
@@ -17360,6 +17391,35 @@ void SOLARCHVISION_convert_Vertex2Face () {
     }  
   }
   
+}
+
+
+
+void SOLARCHVISION_convert_Polygroup2Solid () {
+
+  selectedSolid_numbers = new int [1];
+  selectedSolid_numbers[0] = 0; 
+  
+  for (int i = 1; i < selectedPolygroup_numbers.length; i++) {
+    
+    int OBJ_NUM = selectedPolygroup_numbers[i];
+    
+    for (int f = allPolygroups_Solids[OBJ_NUM][0]; f <= allPolygroups_Solids[OBJ_NUM][1]; f++) { 
+      
+      int previously_added = 0;
+      for (int q = 0; q < selectedSolid_numbers.length; q++) {
+        if (selectedSolid_numbers[q] == f) {
+          previously_added = 1;
+          break;
+        }
+      }
+      if (previously_added == 0) {
+        int[] new_Item = {f};
+        selectedSolid_numbers = concat(selectedSolid_numbers, new_Item);
+      }
+    }  
+  }
+
 }
 
 
