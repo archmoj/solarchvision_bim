@@ -46678,23 +46678,18 @@ void SOLARCHVISION_load_project (String myFile) {
 
 
 
-
-
 void Solid_updatePosition (int n, float a, float b, float c) {
   
   allSolids[n][0] = a;
   allSolids[n][1] = b;
   allSolids[n][2] = c;  
-
 } 
-
 
 void Solid_updatePowers (int n, float a, float b, float c) {
   
   allSolids[n][3] = a;
   allSolids[n][4] = b;
   allSolids[n][5] = c;  
-
 } 
 
 void Solid_Scale (int n, float a, float b, float c) {
@@ -46702,123 +46697,88 @@ void Solid_Scale (int n, float a, float b, float c) {
   allSolids[n][6] *= a;
   allSolids[n][7] *= b;
   allSolids[n][8] *= c;  
-
 } 
-
 
 void Solid_RotateX (int n, float t) {
   
   allSolids[n][9] += t;
-
 } 
 
 void Solid_RotateY (int n, float t) {
   
   allSolids[n][10] += t;
-
 } 
 
 void Solid_RotateZ (int n, float t) {
   
   allSolids[n][11] += t;
-
 } 
-
-
-
 
 float Solid_get_posX (int n) { 
 
   return allSolids[n][0];
-
 } 
-
 
 float Solid_get_posY (int n) { 
 
   return allSolids[n][1];
-
 } 
-
 
 float Solid_get_posZ (int n) { 
 
   return allSolids[n][2];
-
 } 
-
 
 float Solid_get_powX (int n) { 
 
   return allSolids[n][3];
-
 } 
-
 
 float Solid_get_powY (int n) { 
 
   return allSolids[n][4];
-
 } 
-
 
 float Solid_get_powZ (int n) { 
 
   return allSolids[n][5];
-
 } 
-
 
 float Solid_get_scaleX (int n) { 
 
   return allSolids[n][6];
-
 } 
-
 
 float Solid_get_scaleY (int n) { 
 
   return allSolids[n][7];
-
 } 
-
 
 float Solid_get_scaleZ (int n) { 
 
   return allSolids[n][8];
-
 } 
-
 
 float Solid_get_rotX (int n) { 
 
   return allSolids[n][9];
-
 } 
 
 
 float Solid_get_rotY (int n) { 
 
   return allSolids[n][10];
-
 } 
-
 
 float Solid_get_rotZ (int n) { 
 
   return allSolids[n][11];
-
 } 
-
-
 
 float Solid_get_value (int n) { 
 
   return allSolids[n][12];
-
 } 
-
-
 
 float Solid_get_Distance (int n, float a, float b, float c) {
   
@@ -46836,11 +46796,9 @@ float Solid_get_Distance (int n, float a, float b, float c) {
   float rotZ = allSolids[n][11];
   float value = allSolids[n][12];
 
-
   a -= posX;
   b -= posY;    
   c -= posZ;
-  
   
 ///////////////////////// NOT SURE START!    
   
@@ -46869,9 +46827,52 @@ float Solid_get_Distance (int n, float a, float b, float c) {
   y += posY;  
   z += posZ;
 
-
   //return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value); 
   return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))));  
- 
-
 }
+
+
+
+
+
+
+void Object2D_updatePosition (int n, float a, float b, float c) {
+  
+  allObject2Ds_XYZS[n][0] = a;
+  allObject2Ds_XYZS[n][1] = b;
+  allObject2Ds_XYZS[n][2] = c;  
+
+} 
+
+void Object2D_Scale (int n, float a) {
+  
+  allObject2Ds_XYZS[n][3] *= a;
+} 
+
+float Object2D_get_posX (int n) { 
+
+  return allObject2Ds_XYZS[n][0];
+} 
+
+float Object2D_get_posY (int n) { 
+
+  return allObject2Ds_XYZS[n][1];
+} 
+
+float Object2D_get_posZ (int n) { 
+
+  return allObject2Ds_XYZS[n][2];
+} 
+
+float Object2D_get_scale (int n) { 
+
+  return allObject2Ds_XYZS[n][3];
+} 
+
+int Object2D_get_MAP (int n) { 
+
+  return allObject2Ds_MAP[n];
+} 
+
+
+
