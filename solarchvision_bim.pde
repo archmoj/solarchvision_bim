@@ -1670,51 +1670,51 @@ float[][] allVertices = {{0,0,0}};
 int[][] allFaces = {{0,0,0}};
 int[][] allFaces_MTLV = {{0,0,0,0}}; // 0:material, 1:teselation, 2:layer, 3:visibility
 
-int[][] allPolymesh_Faces = {{0,0}}; // start face - end face
-int[][] allPolymesh_Solids = {{0,0}}; // start solid - end solid
+int[][] allPolymeshes_Faces = {{0,0}}; // start face - end face
+int[][] allPolymeshes_Solids = {{0,0}}; // start solid - end solid
 
-float[][] allPolymesh_SolarPivotXYZ = {{0,0,0}}; 
-int[][] allPolymesh_SolarPivotType = {{0}}; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
-
-
-
-
-float[][] allObject2D_XYZS = {{0,0,0,0}};
-int[] allObject2D_MAP = {0};
-int allObject2D_num = 0; 
+float[][] allPolymeshes_SolarPivotXYZ = {{0,0,0}}; 
+int[][] allPolymeshes_SolarPivotType = {{0}}; // 0: no solar rotation, 1: allow X-axis solar rotation, 2: allow X-axis solar rotation, 3: allow Z-axis solar rotation 4: free solar rotation (double axis tracking)
 
 
 
-float[][] allFractal_XYZSRA = {{0,0,0,0,0,0}};
-int[] allFractal_Type = {0};
-int[] allFractal_DegreeMin = {0};
-int[] allFractal_DegreeMax = {0};
-int[] allFractal_Seed = {0};
-float[] allFractal_TrunkSize = {0};
-float[] allFractal_LeafSize = {0};
-int allFractal_num = 0; 
+
+float[][] allObject2Ds_XYZS = {{0,0,0,0}};
+int[] allObject2Ds_MAP = {0};
+int allObject2Ds_num = 0; 
 
 
 
-float[][] allSection_UVERAB = {{0,0,0,0,0,0}};
-int[] allSection_Type = {0};
-int[] allSection_RES1 = {0};
-int[] allSection_RES2 = {0};
-int allSection_num = 0;
-PImage[] allSection_SolidImpact = {createImage(2, 2, RGB)};
-PImage[][] allSection_SolarImpact = new PImage[1][(1 + STUDY_j_end - STUDY_j_start)];
+float[][] allFractals_XYZSRA = {{0,0,0,0,0,0}};
+int[] allFractals_Type = {0};
+int[] allFractals_DegreeMin = {0};
+int[] allFractals_DegreeMax = {0};
+int[] allFractals_Seed = {0};
+float[] allFractals_TrunkSize = {0};
+float[] allFractals_LeafSize = {0};
+int allFractals_num = 0; 
+
+
+
+float[][] allSections_UVERAB = {{0,0,0,0,0,0}};
+int[] allSections_Type = {0};
+int[] allSections_RES1 = {0};
+int[] allSections_RES2 = {0};
+int allSections_num = 0;
+PImage[] allSections_SolidImpact = {createImage(2, 2, RGB)};
+PImage[][] allSections_SolarImpact = new PImage[1][(1 + STUDY_j_end - STUDY_j_start)];
 {
   int i = 0;
   for (int j = STUDY_j_start; j <= STUDY_j_end; j += 1) { 
-    allSection_SolarImpact[i][j] = createImage(2, 2, RGB);
+    allSections_SolarImpact[i][j] = createImage(2, 2, RGB);
   } 
 }
 
 
 
 
-float[][] allSolid_XYZPPPSSSRRRV = {{0,0,0,2,2,2,1,1,1,0,0,0,1}};
-int allSolid_num = 0;
+float[][] allSolids_XYZPPPSSSRRRV = {{0,0,0,2,2,2,1,1,1,0,0,0,1}};
+int allSolids_num = 0;
 
 
 
@@ -2441,7 +2441,7 @@ void draw () {
           rebuild_SolarImpact_Image_array = 1;
           rebuild_WindRose_Image_array = 1;      
 
-          SOLARCHVISION_resize_allSection_SolarImpact_array(); 
+          SOLARCHVISION_resize_allSections_SolarImpact_array(); 
         }
         
         if (pre_Day_of_Impact_to_Display != Day_of_Impact_to_Display) {
@@ -11963,7 +11963,7 @@ void STUDY_keyPressed (KeyEvent e) {
                   rebuild_SolarProjection_array = 1;
                   rebuild_SolarImpact_Image_array = 1;
                   rebuild_WindRose_Image_array = 1;
-                  SOLARCHVISION_resize_allSection_SolarImpact_array();
+                  SOLARCHVISION_resize_allSections_SolarImpact_array();
 
                   BAR_d_Update = 1;STUDY_Update = 1; ROLLOUT_Update = 1; break;
                   
@@ -11983,7 +11983,7 @@ void STUDY_keyPressed (KeyEvent e) {
                   rebuild_SolarProjection_array = 1;
                   rebuild_SolarImpact_Image_array = 1;
                   rebuild_WindRose_Image_array = 1;   
-                  SOLARCHVISION_resize_allSection_SolarImpact_array();
+                  SOLARCHVISION_resize_allSections_SolarImpact_array();
                
                   BAR_d_Update = 1; STUDY_Update = 1; ROLLOUT_Update = 1; break;
 
@@ -13457,12 +13457,12 @@ void SOLARCHVISION_add_Object2D (String t, int m, float x, float y, float z, flo
   if (r == 0) d = -1; 
 
   int[] TempObject2D_MAP = {d * n}; 
-  allObject2D_MAP = concat(allObject2D_MAP, TempObject2D_MAP);
+  allObject2Ds_MAP = concat(allObject2Ds_MAP, TempObject2D_MAP);
   
   float[][] TempObject2D_XYZS = {{x, y, z, s}};
-  allObject2D_XYZS = (float[][]) concat(allObject2D_XYZS, TempObject2D_XYZS);
+  allObject2Ds_XYZS = (float[][]) concat(allObject2Ds_XYZS, TempObject2D_XYZS);
   
-  allObject2D_num += 1;
+  allObject2Ds_num += 1;
 }
 
 
@@ -13945,7 +13945,7 @@ int SOLARCHVISION_add_Face (int[] f) {
     SOLARCHVISION_beginNewPolymesh();
   }
   else {
-    allPolymesh_Faces[allPolymesh_Faces.length - 1][1] = allFaces.length - 1;
+    allPolymeshes_Faces[allPolymeshes_Faces.length - 1][1] = allFaces.length - 1;
   }
 
   return(allFaces.length - 1);
@@ -13955,9 +13955,9 @@ int SOLARCHVISION_add_Face (int[] f) {
 void SOLARCHVISION_add_Solid (float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float tx, float ty, float tz, float v) {
 
   float[][] TempSolid_XYZPPPSSSRRRV = {{x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz, v}};
-  allSolid_XYZPPPSSSRRRV = (float[][]) concat(allSolid_XYZPPPSSSRRRV, TempSolid_XYZPPPSSSRRRV);
+  allSolids_XYZPPPSSSRRRV = (float[][]) concat(allSolids_XYZPPPSSSRRRV, TempSolid_XYZPPPSSSRRRV);
 
-  allSolid_num += 1;
+  allSolids_num += 1;
 
 
 
@@ -13965,7 +13965,7 @@ void SOLARCHVISION_add_Solid (float x, float y, float z, float px, float py, flo
     // no nead to call SOLARCHVISION_beginNewPolymesh(); here again!
   }
   else {
-    allPolymesh_Solids[allPolymesh_Solids.length - 1][1] = allSolid_num;
+    allPolymeshes_Solids[allPolymeshes_Solids.length - 1][1] = allSolids_num;
   }
 
 }
@@ -13976,21 +13976,21 @@ void SOLARCHVISION_beginNewPolymesh () {
   
   if (addToLastPolymesh == 0) { 
 
-    int[][] newObject_Solids = {{allSolid_XYZPPPSSSRRRV.length, 0}}; // i.e. null because start > end 
+    int[][] newObject_Solids = {{allSolids_XYZPPPSSSRRRV.length, 0}}; // i.e. null because start > end 
     
-    allPolymesh_Solids = (int[][]) concat(allPolymesh_Solids, newObject_Solids);      
+    allPolymeshes_Solids = (int[][]) concat(allPolymeshes_Solids, newObject_Solids);      
     
     int[][] newObject_Faces = {{allFaces.length, 0}}; // i.e. null because start > end   
     
-    allPolymesh_Faces = (int[][]) concat(allPolymesh_Faces, newObject_Faces);
+    allPolymeshes_Faces = (int[][]) concat(allPolymeshes_Faces, newObject_Faces);
     
     float[][] newObject_PivotXYZ = {{0,0,0}}; 
     
-    allPolymesh_SolarPivotXYZ = (float[][]) concat(allPolymesh_SolarPivotXYZ, newObject_PivotXYZ);
+    allPolymeshes_SolarPivotXYZ = (float[][]) concat(allPolymeshes_SolarPivotXYZ, newObject_PivotXYZ);
 
     int[][] newObject_Pivot = {{defaultSolarPivotType}};
 
-    allPolymesh_SolarPivotType = (int[][]) concat(allPolymesh_SolarPivotType, newObject_Pivot);        
+    allPolymeshes_SolarPivotType = (int[][]) concat(allPolymeshes_SolarPivotType, newObject_Pivot);        
   }
 
   WIN3D_update_VerticesSolarValue = 1; // <<<<<<<
@@ -14006,7 +14006,7 @@ void SOLARCHVISION_duplicateSelection () {
 
   if (Work_with_2D_or_3D == 1) {
     
-    int number_of_Fractal_before = allFractal_XYZSRA.length; 
+    int number_of_Fractal_before = allFractals_XYZSRA.length; 
 
     for (int o = 0; o < selectedFractal_numbers.length; o++) {
 
@@ -14014,19 +14014,19 @@ void SOLARCHVISION_duplicateSelection () {
 
       if (OBJ_NUM != 0) {    
         
-        float x = allFractal_XYZSRA[OBJ_NUM][0];
-        float y = allFractal_XYZSRA[OBJ_NUM][1];
-        float z = allFractal_XYZSRA[OBJ_NUM][2];
-        float d = allFractal_XYZSRA[OBJ_NUM][3];
-        float rot = allFractal_XYZSRA[OBJ_NUM][4];
-        float as_Solid = allFractal_XYZSRA[OBJ_NUM][5];
+        float x = allFractals_XYZSRA[OBJ_NUM][0];
+        float y = allFractals_XYZSRA[OBJ_NUM][1];
+        float z = allFractals_XYZSRA[OBJ_NUM][2];
+        float d = allFractals_XYZSRA[OBJ_NUM][3];
+        float rot = allFractals_XYZSRA[OBJ_NUM][4];
+        float as_Solid = allFractals_XYZSRA[OBJ_NUM][5];
         
-        int n = allFractal_Type[OBJ_NUM];
-        int dMin = allFractal_DegreeMin[OBJ_NUM];
-        int dMax = allFractal_DegreeMax[OBJ_NUM];
-        int s = allFractal_Seed[OBJ_NUM];
-        float TrunkSize = allFractal_TrunkSize[OBJ_NUM];
-        float LeafSize = allFractal_LeafSize[OBJ_NUM];
+        int n = allFractals_Type[OBJ_NUM];
+        int dMin = allFractals_DegreeMin[OBJ_NUM];
+        int dMax = allFractals_DegreeMax[OBJ_NUM];
+        int s = allFractals_Seed[OBJ_NUM];
+        float TrunkSize = allFractals_TrunkSize[OBJ_NUM];
+        float LeafSize = allFractals_LeafSize[OBJ_NUM];
         
         randomSeed(millis());
         SOLARCHVISION_add_Fractal(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize, as_Solid);        
@@ -14038,7 +14038,7 @@ void SOLARCHVISION_duplicateSelection () {
     selectedFractal_numbers = new int [1];
     selectedFractal_numbers[0] = 0;
     
-    for (int o = number_of_Fractal_before; o < allFractal_XYZSRA.length; o++) {
+    for (int o = number_of_Fractal_before; o < allFractals_XYZSRA.length; o++) {
       
       int[] newlyAddedFractal = {o};
       
@@ -14050,7 +14050,7 @@ void SOLARCHVISION_duplicateSelection () {
 
     int n1 = Object2D_PEOPLE_Files_Num;
    
-    int number_of_Object2D_before = allObject2D_XYZS.length; 
+    int number_of_Object2D_before = allObject2Ds_XYZS.length; 
 
     for (int o = 0; o < selectedObject2D_numbers.length; o++) {
 
@@ -14058,12 +14058,12 @@ void SOLARCHVISION_duplicateSelection () {
 
       if (OBJ_NUM != 0) {    
         
-        float x = allObject2D_XYZS[OBJ_NUM][0];
-        float y = allObject2D_XYZS[OBJ_NUM][1];
-        float z = allObject2D_XYZS[OBJ_NUM][2];
-        float s = allObject2D_XYZS[OBJ_NUM][3];
+        float x = allObject2Ds_XYZS[OBJ_NUM][0];
+        float y = allObject2Ds_XYZS[OBJ_NUM][1];
+        float z = allObject2Ds_XYZS[OBJ_NUM][2];
+        float s = allObject2Ds_XYZS[OBJ_NUM][3];
         
-        int n = allObject2D_MAP[OBJ_NUM];
+        int n = allObject2Ds_MAP[OBJ_NUM];
         
         if (abs(n) > n1) SOLARCHVISION_add_Object2D("TREES", n, x, y, z, s);
         else SOLARCHVISION_add_Object2D("PEOPLE", n, x, y, z, s);
@@ -14075,7 +14075,7 @@ void SOLARCHVISION_duplicateSelection () {
     selectedObject2D_numbers = new int [1];
     selectedObject2D_numbers[0] = 0;
     
-    for (int o = number_of_Object2D_before; o < allObject2D_XYZS.length; o++) {
+    for (int o = number_of_Object2D_before; o < allObject2Ds_XYZS.length; o++) {
       
       int[] newlyAddedObject2D = {o};
       
@@ -14088,7 +14088,7 @@ void SOLARCHVISION_duplicateSelection () {
     
     int SOLID_added = 0;
     
-    int number_of_Polymeshes_before = allPolymesh_Faces.length;
+    int number_of_Polymeshes_before = allPolymeshes_Faces.length;
     
     for (int o = 0; o < selectedPolymesh_numbers.length; o++) {
     
@@ -14096,22 +14096,22 @@ void SOLARCHVISION_duplicateSelection () {
       
       if (OBJ_NUM != 0) {
         
-        if ((0 < allPolymesh_Faces[OBJ_NUM][0]) && (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1])) { 
+        if ((0 < allPolymeshes_Faces[OBJ_NUM][0]) && (allPolymeshes_Faces[OBJ_NUM][0] <= allPolymeshes_Faces[OBJ_NUM][1])) { 
 
           int number_of_Vertices_before = allVertices.length;
           
           addToLastPolymesh = 0; SOLARCHVISION_beginNewPolymesh(); addToLastPolymesh = 1;
           
-          int new_OBJ_NUM = allPolymesh_Faces.length - 1;
+          int new_OBJ_NUM = allPolymeshes_Faces.length - 1;
           
-          allPolymesh_SolarPivotType[new_OBJ_NUM][0] = allPolymesh_SolarPivotType[OBJ_NUM][0];
+          allPolymeshes_SolarPivotType[new_OBJ_NUM][0] = allPolymeshes_SolarPivotType[OBJ_NUM][0];
           
-          allPolymesh_SolarPivotXYZ[new_OBJ_NUM][0] = allPolymesh_SolarPivotXYZ[OBJ_NUM][0];
-          allPolymesh_SolarPivotXYZ[new_OBJ_NUM][1] = allPolymesh_SolarPivotXYZ[OBJ_NUM][1];
-          allPolymesh_SolarPivotXYZ[new_OBJ_NUM][2] = allPolymesh_SolarPivotXYZ[OBJ_NUM][2];
+          allPolymeshes_SolarPivotXYZ[new_OBJ_NUM][0] = allPolymeshes_SolarPivotXYZ[OBJ_NUM][0];
+          allPolymeshes_SolarPivotXYZ[new_OBJ_NUM][1] = allPolymeshes_SolarPivotXYZ[OBJ_NUM][1];
+          allPolymeshes_SolarPivotXYZ[new_OBJ_NUM][2] = allPolymeshes_SolarPivotXYZ[OBJ_NUM][2];
           
-          if ((0 < allPolymesh_Solids[OBJ_NUM][1]) && (allPolymesh_Solids[OBJ_NUM][0] <= allPolymesh_Solids[OBJ_NUM][1])) { 
-            for (int s = allPolymesh_Solids[OBJ_NUM][0]; s <= allPolymesh_Solids[OBJ_NUM][1]; s++) {
+          if ((0 < allPolymeshes_Solids[OBJ_NUM][1]) && (allPolymeshes_Solids[OBJ_NUM][0] <= allPolymeshes_Solids[OBJ_NUM][1])) { 
+            for (int s = allPolymeshes_Solids[OBJ_NUM][0]; s <= allPolymeshes_Solids[OBJ_NUM][1]; s++) {
               
               float Solid_posX = Solid_get_posX(s);
               float Solid_posY = Solid_get_posY(s);
@@ -14137,7 +14137,7 @@ void SOLARCHVISION_duplicateSelection () {
           int[] PolymeshVertices_OLD = {0}; // keeps the list of exiting vertex numbers
           int[] PolymeshVertices_NEW = {0}; // keeps the list of new vertex numbers
       
-          for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
+          for (int f = allPolymeshes_Faces[OBJ_NUM][0]; f <= allPolymeshes_Faces[OBJ_NUM][1]; f++) {
   
             if ((0 < f) && (f < allFaces.length)) {
            
@@ -14197,7 +14197,7 @@ void SOLARCHVISION_duplicateSelection () {
     selectedPolymesh_numbers = new int [1];
     selectedPolymesh_numbers[0] = 0;
     
-    for (int o = number_of_Polymeshes_before; o < allPolymesh_Faces.length; o++) {
+    for (int o = number_of_Polymeshes_before; o < allPolymeshes_Faces.length; o++) {
       
       int[] newlyAddedPolymesh = {o};
       
@@ -14292,7 +14292,7 @@ void SOLARCHVISION_duplicateSelection () {
 
   if (Work_with_2D_or_3D == 7) {
     
-    int number_of_Solid_before = allSolid_XYZPPPSSSRRRV.length; 
+    int number_of_Solid_before = allSolids_XYZPPPSSSRRRV.length; 
 
     for (int o = 0; o < selectedSolid_numbers.length; o++) {
 
@@ -14323,7 +14323,7 @@ void SOLARCHVISION_duplicateSelection () {
     selectedSolid_numbers = new int [1];
     selectedSolid_numbers[0] = 0;
     
-    for (int o = number_of_Solid_before; o < allSolid_XYZPPPSSSRRRV.length; o++) {
+    for (int o = number_of_Solid_before; o < allSolids_XYZPPPSSSRRRV.length; o++) {
       
       int[] newlyAddedSolid = {o};
       
@@ -14334,7 +14334,7 @@ void SOLARCHVISION_duplicateSelection () {
   
   if (Work_with_2D_or_3D == 8) {
     
-    int number_of_Section_before = allSection_UVERAB.length; 
+    int number_of_Section_before = allSections_UVERAB.length; 
 
     for (int o = 0; o < selectedSection_numbers.length; o++) {
 
@@ -14342,16 +14342,16 @@ void SOLARCHVISION_duplicateSelection () {
 
       if (OBJ_NUM != 0) {    
         
-        float Section_offset_U = allSection_UVERAB[OBJ_NUM][0];
-        float Section_offset_V = allSection_UVERAB[OBJ_NUM][1];
-        float Section_Elevation = allSection_UVERAB[OBJ_NUM][2];
-        float Section_Rotation = allSection_UVERAB[OBJ_NUM][3];
-        float Section_scale_U = allSection_UVERAB[OBJ_NUM][4];
-        float Section_scale_V = allSection_UVERAB[OBJ_NUM][5];
+        float Section_offset_U = allSections_UVERAB[OBJ_NUM][0];
+        float Section_offset_V = allSections_UVERAB[OBJ_NUM][1];
+        float Section_Elevation = allSections_UVERAB[OBJ_NUM][2];
+        float Section_Rotation = allSections_UVERAB[OBJ_NUM][3];
+        float Section_scale_U = allSections_UVERAB[OBJ_NUM][4];
+        float Section_scale_V = allSections_UVERAB[OBJ_NUM][5];
   
-        int Section_Type = allSection_Type[OBJ_NUM];
-        int Section_RES1 = allSection_RES1[OBJ_NUM];
-        int Section_RES2 = allSection_RES2[OBJ_NUM];
+        int Section_Type = allSections_Type[OBJ_NUM];
+        int Section_RES1 = allSections_RES1[OBJ_NUM];
+        int Section_RES2 = allSections_RES2[OBJ_NUM];
 
         SOLARCHVISION_add_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);        
       }
@@ -14362,7 +14362,7 @@ void SOLARCHVISION_duplicateSelection () {
     selectedSection_numbers = new int [1];
     selectedSection_numbers[0] = 0;
     
-    for (int o = number_of_Section_before; o < allSection_UVERAB.length; o++) {
+    for (int o = number_of_Section_before; o < allSections_UVERAB.length; o++) {
       
       int[] newlyAddedSection = {o};
       
@@ -14435,13 +14435,13 @@ void SOLARCHVISION_delete_Selection () {
         // first should first find it in polymeshes ZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
 
         {
-          float[][] startList = (float[][]) subset(allSolid_XYZPPPSSSRRRV, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allSolid_XYZPPPSSSRRRV, OBJ_NUM + 1);
+          float[][] startList = (float[][]) subset(allSolids_XYZPPPSSSRRRV, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allSolids_XYZPPPSSSRRRV, OBJ_NUM + 1);
           
-          allSolid_XYZPPPSSSRRRV = (float[][]) concat(startList, endList);
+          allSolids_XYZPPPSSSRRRV = (float[][]) concat(startList, endList);
         }
 
-        allSolid_num -= 1;
+        allSolids_num -= 1;
       }
 
     }
@@ -14459,48 +14459,48 @@ void SOLARCHVISION_delete_Selection () {
       if (OBJ_NUM != 0) {    
 
         {
-          float[][] startList = (float[][]) subset(allSection_UVERAB, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allSection_UVERAB, OBJ_NUM + 1);
+          float[][] startList = (float[][]) subset(allSections_UVERAB, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allSections_UVERAB, OBJ_NUM + 1);
           
-          allSection_UVERAB = (float[][]) concat(startList, endList);
+          allSections_UVERAB = (float[][]) concat(startList, endList);
         }
 
         {
-          int[] startList = (int[]) subset(allSection_Type, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allSection_Type, OBJ_NUM + 1);
+          int[] startList = (int[]) subset(allSections_Type, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(allSections_Type, OBJ_NUM + 1);
           
-          allSection_Type = (int[]) concat(startList, endList);
+          allSections_Type = (int[]) concat(startList, endList);
         }
 
         {
-          int[] startList = (int[]) subset(allSection_RES1, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allSection_RES1, OBJ_NUM + 1);
+          int[] startList = (int[]) subset(allSections_RES1, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(allSections_RES1, OBJ_NUM + 1);
           
-          allSection_RES1 = (int[]) concat(startList, endList);
+          allSections_RES1 = (int[]) concat(startList, endList);
         }
         
         {
-          int[] startList = (int[]) subset(allSection_RES2, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allSection_RES2, OBJ_NUM + 1);
+          int[] startList = (int[]) subset(allSections_RES2, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(allSections_RES2, OBJ_NUM + 1);
           
-          allSection_RES2 = (int[]) concat(startList, endList);
+          allSections_RES2 = (int[]) concat(startList, endList);
         }
 
         {
-          PImage[] startList = (PImage[]) subset(allSection_SolidImpact, 0, OBJ_NUM);
-          PImage[] endList = (PImage[]) subset(allSection_SolidImpact, OBJ_NUM + 1);
+          PImage[] startList = (PImage[]) subset(allSections_SolidImpact, 0, OBJ_NUM);
+          PImage[] endList = (PImage[]) subset(allSections_SolidImpact, OBJ_NUM + 1);
           
-          allSection_SolidImpact = (PImage[]) concat(startList, endList);
+          allSections_SolidImpact = (PImage[]) concat(startList, endList);
         }
         
         {
-          PImage[][] startList = (PImage[][]) subset(allSection_SolarImpact, 0, OBJ_NUM);
-          PImage[][] endList = (PImage[][]) subset(allSection_SolarImpact, OBJ_NUM + 1);
+          PImage[][] startList = (PImage[][]) subset(allSections_SolarImpact, 0, OBJ_NUM);
+          PImage[][] endList = (PImage[][]) subset(allSections_SolarImpact, OBJ_NUM + 1);
           
-          allSection_SolarImpact = (PImage[][]) concat(startList, endList);
+          allSections_SolarImpact = (PImage[][]) concat(startList, endList);
         }        
     
-        allSection_num -= 1;
+        allSections_num -= 1;
       }
 
     }
@@ -14557,55 +14557,55 @@ void SOLARCHVISION_delete_Selection () {
       if (OBJ_NUM != 0) {    
 
         {
-          float[][] startList = (float[][]) subset(allFractal_XYZSRA, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allFractal_XYZSRA, OBJ_NUM + 1);
+          float[][] startList = (float[][]) subset(allFractals_XYZSRA, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allFractals_XYZSRA, OBJ_NUM + 1);
           
-          allFractal_XYZSRA = (float[][]) concat(startList, endList);
+          allFractals_XYZSRA = (float[][]) concat(startList, endList);
         }
 
         {
-          int[] startList = (int[]) subset(allFractal_Type, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allFractal_Type, OBJ_NUM + 1);
+          int[] startList = (int[]) subset(allFractals_Type, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(allFractals_Type, OBJ_NUM + 1);
           
-          allFractal_Type = (int[]) concat(startList, endList);
+          allFractals_Type = (int[]) concat(startList, endList);
         }
 
         {
-          int[] startList = (int[]) subset(allFractal_DegreeMin, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allFractal_DegreeMin, OBJ_NUM + 1);
+          int[] startList = (int[]) subset(allFractals_DegreeMin, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(allFractals_DegreeMin, OBJ_NUM + 1);
           
-          allFractal_DegreeMin = (int[]) concat(startList, endList);
+          allFractals_DegreeMin = (int[]) concat(startList, endList);
         }
         
         {
-          int[] startList = (int[]) subset(allFractal_DegreeMax, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allFractal_DegreeMax, OBJ_NUM + 1);
+          int[] startList = (int[]) subset(allFractals_DegreeMax, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(allFractals_DegreeMax, OBJ_NUM + 1);
           
-          allFractal_DegreeMax = (int[]) concat(startList, endList);
+          allFractals_DegreeMax = (int[]) concat(startList, endList);
         }
 
         {
-          int[] startList = (int[]) subset(allFractal_Seed, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allFractal_Seed, OBJ_NUM + 1);
+          int[] startList = (int[]) subset(allFractals_Seed, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(allFractals_Seed, OBJ_NUM + 1);
           
-          allFractal_Seed = (int[]) concat(startList, endList);
+          allFractals_Seed = (int[]) concat(startList, endList);
         }
 
         {
-          float[] startList = (float[]) subset(allFractal_TrunkSize, 0, OBJ_NUM);
-          float[] endList = (float[]) subset(allFractal_TrunkSize, OBJ_NUM + 1);
+          float[] startList = (float[]) subset(allFractals_TrunkSize, 0, OBJ_NUM);
+          float[] endList = (float[]) subset(allFractals_TrunkSize, OBJ_NUM + 1);
           
-          allFractal_TrunkSize = (float[]) concat(startList, endList);
+          allFractals_TrunkSize = (float[]) concat(startList, endList);
         }
 
         {
-          float[] startList = (float[]) subset(allFractal_LeafSize, 0, OBJ_NUM);
-          float[] endList = (float[]) subset(allFractal_LeafSize, OBJ_NUM + 1);
+          float[] startList = (float[]) subset(allFractals_LeafSize, 0, OBJ_NUM);
+          float[] endList = (float[]) subset(allFractals_LeafSize, OBJ_NUM + 1);
           
-          allFractal_LeafSize = (float[]) concat(startList, endList);
+          allFractals_LeafSize = (float[]) concat(startList, endList);
         }
     
-        allFractal_num -= 1;
+        allFractals_num -= 1;
       }
 
     }
@@ -14624,20 +14624,20 @@ void SOLARCHVISION_delete_Selection () {
       if (OBJ_NUM != 0) {    
 
         {
-          float[][] startList = (float[][]) subset(allObject2D_XYZS, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allObject2D_XYZS, OBJ_NUM + 1);
+          float[][] startList = (float[][]) subset(allObject2Ds_XYZS, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allObject2Ds_XYZS, OBJ_NUM + 1);
           
-          allObject2D_XYZS = (float[][]) concat(startList, endList);
+          allObject2Ds_XYZS = (float[][]) concat(startList, endList);
         }
     
         {
-          int[] startList = (int[]) subset(allObject2D_MAP, 0, OBJ_NUM);
-          int[] endList = (int[]) subset(allObject2D_MAP, OBJ_NUM + 1);
+          int[] startList = (int[]) subset(allObject2Ds_MAP, 0, OBJ_NUM);
+          int[] endList = (int[]) subset(allObject2Ds_MAP, OBJ_NUM + 1);
           
-          allObject2D_MAP = (int[]) concat(startList, endList);
+          allObject2Ds_MAP = (int[]) concat(startList, endList);
         }   
         
-        allObject2D_num -= 1;
+        allObject2Ds_num -= 1;
       }
 
     }
@@ -14661,21 +14661,21 @@ void SOLARCHVISION_delete_Selection () {
       
       if (OBJ_NUM != 0) {
       
-        int startFace = allPolymesh_Faces[OBJ_NUM][0];
-        int endFace = allPolymesh_Faces[OBJ_NUM][1];
+        int startFace = allPolymeshes_Faces[OBJ_NUM][0];
+        int endFace = allPolymeshes_Faces[OBJ_NUM][1];
         
         {
-          float[][] startList = (float[][]) subset(allPolymesh_SolarPivotXYZ, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allPolymesh_SolarPivotXYZ, OBJ_NUM + 1);
+          float[][] startList = (float[][]) subset(allPolymeshes_SolarPivotXYZ, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allPolymeshes_SolarPivotXYZ, OBJ_NUM + 1);
           
-          allPolymesh_SolarPivotXYZ = (float[][]) concat(startList, endList);
+          allPolymeshes_SolarPivotXYZ = (float[][]) concat(startList, endList);
         } 
 
         {
-          int[][] startList = (int[][]) subset(allPolymesh_SolarPivotType, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(allPolymesh_SolarPivotType, OBJ_NUM + 1);
+          int[][] startList = (int[][]) subset(allPolymeshes_SolarPivotType, 0, OBJ_NUM);
+          int[][] endList = (int[][]) subset(allPolymeshes_SolarPivotType, OBJ_NUM + 1);
           
-          allPolymesh_SolarPivotType = (int[][]) concat(startList, endList);
+          allPolymeshes_SolarPivotType = (int[][]) concat(startList, endList);
         } 
 
           
@@ -14683,17 +14683,17 @@ void SOLARCHVISION_delete_Selection () {
         
           if (startFace <= endFace) {
           
-            for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
+            for (int i = OBJ_NUM + 1; i < allPolymeshes_Faces.length; i++) {
               for (int j = 0; j < 2; j++) {
-                allPolymesh_Faces[i][j] -= 1 + endFace - startFace;
+                allPolymeshes_Faces[i][j] -= 1 + endFace - startFace;
               }
             }  
           }  
           
-          int[][] startList = (int[][]) subset(allPolymesh_Faces, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(allPolymesh_Faces, OBJ_NUM + 1);
+          int[][] startList = (int[][]) subset(allPolymeshes_Faces, 0, OBJ_NUM);
+          int[][] endList = (int[][]) subset(allPolymeshes_Faces, OBJ_NUM + 1);
           
-          allPolymesh_Faces = (int[][]) concat(startList, endList);
+          allPolymeshes_Faces = (int[][]) concat(startList, endList);
         }  
        
         {
@@ -14712,35 +14712,35 @@ void SOLARCHVISION_delete_Selection () {
         
         
         
-        int startSolid = allPolymesh_Solids[OBJ_NUM][0];
-        int endSolid = allPolymesh_Solids[OBJ_NUM][1];
+        int startSolid = allPolymeshes_Solids[OBJ_NUM][0];
+        int endSolid = allPolymeshes_Solids[OBJ_NUM][1];
         
         {
           
           if (startSolid <= endSolid) {
-            for (int i = OBJ_NUM + 1; i < allPolymesh_Solids.length; i++) {
+            for (int i = OBJ_NUM + 1; i < allPolymeshes_Solids.length; i++) {
             
               for (int j = 0; j < 2; j++) {
-                allPolymesh_Solids[i][j] -= 1 + endSolid - startSolid;
+                allPolymeshes_Solids[i][j] -= 1 + endSolid - startSolid;
               }
             }    
           }
           
-          int[][] startList = (int[][]) subset(allPolymesh_Solids, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(allPolymesh_Solids, OBJ_NUM + 1);
+          int[][] startList = (int[][]) subset(allPolymeshes_Solids, 0, OBJ_NUM);
+          int[][] endList = (int[][]) subset(allPolymeshes_Solids, OBJ_NUM + 1);
           
-          allPolymesh_Solids = (int[][]) concat(startList, endList);
+          allPolymeshes_Solids = (int[][]) concat(startList, endList);
         }  
     
         
         if ((0 < startSolid) && (startSolid <= endSolid)) {
           
-          float[][] startList = (float[][]) subset(allSolid_XYZPPPSSSRRRV, 0, startSolid);
-          float[][] endList = (float[][]) subset(allSolid_XYZPPPSSSRRRV, endSolid + 1);
+          float[][] startList = (float[][]) subset(allSolids_XYZPPPSSSRRRV, 0, startSolid);
+          float[][] endList = (float[][]) subset(allSolids_XYZPPPSSSRRRV, endSolid + 1);
           
-          allSolid_XYZPPPSSSRRRV = (float[][]) concat(startList, endList);
+          allSolids_XYZPPPSSSRRRV = (float[][]) concat(startList, endList);
           
-          allSolid_num = allSolid_XYZPPPSSSRRRV.length - 1; // ??????
+          allSolids_num = allSolids_XYZPPPSSSRRRV.length - 1; // ??????
           
           Solids_updated = 1;
           
@@ -14781,17 +14781,17 @@ void SOLARCHVISION_delete_Selection () {
 
           int f = selectedFace_numbers[q];
           
-          int startFace = allPolymesh_Faces[OBJ_NUM][0];
-          int endFace = allPolymesh_Faces[OBJ_NUM][1];          
+          int startFace = allPolymeshes_Faces[OBJ_NUM][0];
+          int endFace = allPolymeshes_Faces[OBJ_NUM][1];          
           
           if ((f != 0) && (startFace <= f) && (f <= endFace)) {
             
-            for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
+            for (int i = OBJ_NUM + 1; i < allPolymeshes_Faces.length; i++) {
               for (int j = 0; j < 2; j++) {
-                allPolymesh_Faces[i][j] -= 1;
+                allPolymeshes_Faces[i][j] -= 1;
               }
             }  
-            allPolymesh_Faces[OBJ_NUM][1] -= 1; // because deleting a face also changes the end pointer of the same object 
+            allPolymeshes_Faces[OBJ_NUM][1] -= 1; // because deleting a face also changes the end pointer of the same object 
 
             {
               int[][] startList = (int[][]) subset(allFaces, 0, f);
@@ -15360,17 +15360,17 @@ void SOLARCHVISION_inserCornerOpenningsSelection () {
           
           if (f != 0) {
           
-            int startFace = allPolymesh_Faces[OBJ_NUM][0];
-            int endFace = allPolymesh_Faces[OBJ_NUM][1];          
+            int startFace = allPolymeshes_Faces[OBJ_NUM][0];
+            int endFace = allPolymeshes_Faces[OBJ_NUM][1];          
             
             if ((startFace <= f) && (f <= endFace)) {
               
-              for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
+              for (int i = OBJ_NUM + 1; i < allPolymeshes_Faces.length; i++) {
                 for (int j = 0; j < 2; j++) {
-                  allPolymesh_Faces[i][j] += allFaces[f].length;
+                  allPolymeshes_Faces[i][j] += allFaces[f].length;
                 }
               }  
-              allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
+              allPolymeshes_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
   
               for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
                
@@ -15530,17 +15530,17 @@ void SOLARCHVISION_insertParallelOpenningsSelection () {
           
           if (f != 0) {
           
-            int startFace = allPolymesh_Faces[OBJ_NUM][0];
-            int endFace = allPolymesh_Faces[OBJ_NUM][1];          
+            int startFace = allPolymeshes_Faces[OBJ_NUM][0];
+            int endFace = allPolymeshes_Faces[OBJ_NUM][1];          
             
             if ((startFace <= f) && (f <= endFace)) {
               
-              for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
+              for (int i = OBJ_NUM + 1; i < allPolymeshes_Faces.length; i++) {
                 for (int j = 0; j < 2; j++) {
-                  allPolymesh_Faces[i][j] += 2 * allFaces[f].length;
+                  allPolymeshes_Faces[i][j] += 2 * allFaces[f].length;
                 }
               }  
-              allPolymesh_Faces[OBJ_NUM][1] += 2 * allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
+              allPolymeshes_Faces[OBJ_NUM][1] += 2 * allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
   
               for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
                
@@ -15725,17 +15725,17 @@ void SOLARCHVISION_insertRotatedOpenningsSelection () {
           
           if (f != 0) {
           
-            int startFace = allPolymesh_Faces[OBJ_NUM][0];
-            int endFace = allPolymesh_Faces[OBJ_NUM][1];          
+            int startFace = allPolymeshes_Faces[OBJ_NUM][0];
+            int endFace = allPolymeshes_Faces[OBJ_NUM][1];          
             
             if ((startFace <= f) && (f <= endFace)) {
               
-              for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
+              for (int i = OBJ_NUM + 1; i < allPolymeshes_Faces.length; i++) {
                 for (int j = 0; j < 2; j++) {
-                  allPolymesh_Faces[i][j] += allFaces[f].length;
+                  allPolymeshes_Faces[i][j] += allFaces[f].length;
                 }
               }  
-              allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
+              allPolymeshes_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
   
               for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
                 
@@ -15903,17 +15903,17 @@ void SOLARCHVISION_insertEdgeOpenningsSelection () {
           
           if (f != 0){
           
-            int startFace = allPolymesh_Faces[OBJ_NUM][0];
-            int endFace = allPolymesh_Faces[OBJ_NUM][1];          
+            int startFace = allPolymeshes_Faces[OBJ_NUM][0];
+            int endFace = allPolymeshes_Faces[OBJ_NUM][1];          
             
             if ((startFace <= f) && (f <= endFace)) {
               
-              for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
+              for (int i = OBJ_NUM + 1; i < allPolymeshes_Faces.length; i++) {
                 for (int j = 0; j < 2; j++) {
-                  allPolymesh_Faces[i][j] += allFaces[f].length;
+                  allPolymeshes_Faces[i][j] += allFaces[f].length;
                 }
               }  
-              allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
+              allPolymeshes_Faces[OBJ_NUM][1] += allFaces[f].length; // because adding the faces also changes the end pointer of the same object 
   
               for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
                 
@@ -16077,19 +16077,19 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
           
           if (f != 0) {
           
-            int startFace = allPolymesh_Faces[OBJ_NUM][0];
-            int endFace = allPolymesh_Faces[OBJ_NUM][1];          
+            int startFace = allPolymeshes_Faces[OBJ_NUM][0];
+            int endFace = allPolymeshes_Faces[OBJ_NUM][1];          
             
             if ((startFace <= f) && (f <= endFace)) {
               
               if (allFaces[f].length == 4) {
               
-                for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
+                for (int i = OBJ_NUM + 1; i < allPolymeshes_Faces.length; i++) {
                   for (int j = 0; j < 2; j++) {
-                    allPolymesh_Faces[i][j] += Modify_Input_TessellateRows * Modify_Input_TessellateColumns - 1;
+                    allPolymeshes_Faces[i][j] += Modify_Input_TessellateRows * Modify_Input_TessellateColumns - 1;
                   }
                 }  
-                allPolymesh_Faces[OBJ_NUM][1] += Modify_Input_TessellateRows * Modify_Input_TessellateColumns - 1; // because adding the faces also changes the end pointer of the same object 
+                allPolymeshes_Faces[OBJ_NUM][1] += Modify_Input_TessellateRows * Modify_Input_TessellateColumns - 1; // because adding the faces also changes the end pointer of the same object 
     
                 for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
                   
@@ -16278,17 +16278,17 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
           
           if (f != 0) {
           
-            int startFace = allPolymesh_Faces[OBJ_NUM][0];
-            int endFace = allPolymesh_Faces[OBJ_NUM][1];          
+            int startFace = allPolymeshes_Faces[OBJ_NUM][0];
+            int endFace = allPolymeshes_Faces[OBJ_NUM][1];          
             
             if ((startFace <= f) && (f <= endFace)) {
               
-              for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
+              for (int i = OBJ_NUM + 1; i < allPolymeshes_Faces.length; i++) {
                 for (int j = 0; j < 2; j++) {
-                  allPolymesh_Faces[i][j] += allFaces[f].length - 1;
+                  allPolymeshes_Faces[i][j] += allFaces[f].length - 1;
                 }
               }  
-              allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length - 1; // because adding the faces also changes the end pointer of the same object 
+              allPolymeshes_Faces[OBJ_NUM][1] += allFaces[f].length - 1; // because adding the faces also changes the end pointer of the same object 
   
               for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
                 
@@ -16449,17 +16449,17 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
           
           if (f != 0) {
           
-            int startFace = allPolymesh_Faces[OBJ_NUM][0];
-            int endFace = allPolymesh_Faces[OBJ_NUM][1];          
+            int startFace = allPolymeshes_Faces[OBJ_NUM][0];
+            int endFace = allPolymeshes_Faces[OBJ_NUM][1];          
             
             if ((startFace <= f) && (f <= endFace)) {
               
-              for (int i = OBJ_NUM + 1; i < allPolymesh_Faces.length; i++) {
+              for (int i = OBJ_NUM + 1; i < allPolymeshes_Faces.length; i++) {
                 for (int j = 0; j < 2; j++) {
-                  allPolymesh_Faces[i][j] += allFaces[f].length - 1;
+                  allPolymeshes_Faces[i][j] += allFaces[f].length - 1;
                 }
               }  
-              allPolymesh_Faces[OBJ_NUM][1] += allFaces[f].length - 1; // because adding the faces also changes the end pointer of the same object 
+              allPolymeshes_Faces[OBJ_NUM][1] += allFaces[f].length - 1; // because adding the faces also changes the end pointer of the same object 
   
               for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
                
@@ -16603,8 +16603,8 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
           
           if (f != 0) {
           
-            int startFace = allPolymesh_Faces[OBJ_NUM][0];
-            int endFace = allPolymesh_Faces[OBJ_NUM][1];          
+            int startFace = allPolymeshes_Faces[OBJ_NUM][0];
+            int endFace = allPolymeshes_Faces[OBJ_NUM][1];          
             
             if ((startFace <= f) && (f <= endFace)) {
             
@@ -16678,7 +16678,7 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
               }
               
               
-              allPolymesh_Faces[allPolymesh_Faces.length - 1][1] = allFaces.length - 1;
+              allPolymeshes_Faces[allPolymeshes_Faces.length - 1][1] = allFaces.length - 1;
   
             }
           }
@@ -16932,21 +16932,21 @@ void SOLARCHVISION_select_All () {
   }  
   
   if (Work_with_2D_or_3D == 1) {
-    selectedFractal_numbers = new int [allFractal_XYZSRA.length];
+    selectedFractal_numbers = new int [allFractals_XYZSRA.length];
     for (int i = 0; i < selectedFractal_numbers.length; i++) { 
       selectedFractal_numbers[i] = i;
     }
   }
 
   if (Work_with_2D_or_3D == 2) {
-    selectedObject2D_numbers = new int [allObject2D_XYZS.length];
+    selectedObject2D_numbers = new int [allObject2Ds_XYZS.length];
     for (int i = 0; i < selectedObject2D_numbers.length; i++) { 
       selectedObject2D_numbers[i] = i;
     }
   }
   
   if (Work_with_2D_or_3D == 3) {
-    selectedPolymesh_numbers = new int [allPolymesh_Faces.length];
+    selectedPolymesh_numbers = new int [allPolymeshes_Faces.length];
     for (int i = 0; i < selectedPolymesh_numbers.length; i++) { 
       selectedPolymesh_numbers[i] = i;
     }
@@ -16967,14 +16967,14 @@ void SOLARCHVISION_select_All () {
   }
   
   if (Work_with_2D_or_3D == 7) {
-    selectedSolid_numbers = new int [allSolid_XYZPPPSSSRRRV.length];
+    selectedSolid_numbers = new int [allSolids_XYZPPPSSSRRRV.length];
     for (int i = 0; i < selectedSolid_numbers.length; i++) { 
       selectedSolid_numbers[i] = i;
     }
   }  
   
   if (Work_with_2D_or_3D == 8) {
-    selectedSection_numbers = new int [allSection_UVERAB.length];
+    selectedSection_numbers = new int [allSections_UVERAB.length];
     for (int i = 0; i < selectedSection_numbers.length; i++) { 
       selectedSection_numbers[i] = i;
     }
@@ -17030,7 +17030,7 @@ void SOLARCHVISION_reverse_Selection () {
     selectedFractal_numbers = new int [1];
     selectedFractal_numbers[0] = 0;
     
-    for (int i = 1; i < allFractal_XYZSRA.length; i++) {
+    for (int i = 1; i < allFractals_XYZSRA.length; i++) {
       int found = -1; 
       
       for (int j = 1; j < pre_selectedFractal_numbers.length; j++) {
@@ -17059,7 +17059,7 @@ void SOLARCHVISION_reverse_Selection () {
     selectedObject2D_numbers = new int [1];
     selectedObject2D_numbers[0] = 0;
     
-    for (int i = 1; i < allObject2D_XYZS.length; i++) {
+    for (int i = 1; i < allObject2Ds_XYZS.length; i++) {
       int found = -1; 
       
       for (int j = 1; j < pre_selectedObject2D_numbers.length; j++) {
@@ -17088,7 +17088,7 @@ void SOLARCHVISION_reverse_Selection () {
     selectedPolymesh_numbers = new int [1];
     selectedPolymesh_numbers[0] = 0;
     
-    for (int i = 1; i < allPolymesh_Faces.length; i++) {
+    for (int i = 1; i < allPolymeshes_Faces.length; i++) {
       int found = -1; 
       
       for (int j = 1; j < pre_selectedPolymesh_numbers.length; j++) {
@@ -17175,7 +17175,7 @@ void SOLARCHVISION_reverse_Selection () {
     selectedSolid_numbers = new int [1];
     selectedSolid_numbers[0] = 0;
     
-    for (int i = 1; i < allSolid_XYZPPPSSSRRRV.length; i++) {
+    for (int i = 1; i < allSolids_XYZPPPSSSRRRV.length; i++) {
       int found = -1; 
       
       for (int j = 1; j < pre_selectedSolid_numbers.length; j++) {
@@ -17204,7 +17204,7 @@ void SOLARCHVISION_reverse_Selection () {
     selectedSection_numbers = new int [1];
     selectedSection_numbers[0] = 0;
     
-    for (int i = 1; i < allSection_UVERAB.length; i++) {
+    for (int i = 1; i < allSections_UVERAB.length; i++) {
       int found = -1; 
       
       for (int j = 1; j < pre_selectedSection_numbers.length; j++) {
@@ -17274,9 +17274,9 @@ void SOLARCHVISION_convert_Face2Polymesh () {
     
     for (int j = 0; j < allFaces[f].length; j++) {
       
-      for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
+      for (int OBJ_NUM = 1; OBJ_NUM < allPolymeshes_Faces.length; OBJ_NUM++) {
       
-        if ((allPolymesh_Faces[OBJ_NUM][0] <= f) && (f <= allPolymesh_Faces[OBJ_NUM][1])) { 
+        if ((allPolymeshes_Faces[OBJ_NUM][0] <= f) && (f <= allPolymeshes_Faces[OBJ_NUM][1])) { 
         
           int previously_added = 0;
           for (int q = 0; q < selectedPolymesh_numbers.length; q++) {
@@ -17312,9 +17312,9 @@ void SOLARCHVISION_convert_Vertex2Polymesh () {
         
         if (allFaces[f][j] == vNo) { 
         
-          for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
+          for (int OBJ_NUM = 1; OBJ_NUM < allPolymeshes_Faces.length; OBJ_NUM++) {
           
-            if ((allPolymesh_Faces[OBJ_NUM][0] <= f) && (f <= allPolymesh_Faces[OBJ_NUM][1])) { 
+            if ((allPolymeshes_Faces[OBJ_NUM][0] <= f) && (f <= allPolymeshes_Faces[OBJ_NUM][1])) { 
             
               int previously_added = 0;
               for (int q = 0; q < selectedPolymesh_numbers.length; q++) {
@@ -17381,7 +17381,7 @@ void SOLARCHVISION_convert_Polymesh2Face () {
     
     int OBJ_NUM = selectedPolymesh_numbers[i];
     
-    for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) { 
+    for (int f = allPolymeshes_Faces[OBJ_NUM][0]; f <= allPolymeshes_Faces[OBJ_NUM][1]; f++) { 
       
       int previously_added = 0;
       for (int q = 0; q < selectedFace_numbers.length; q++) {
@@ -17409,7 +17409,7 @@ void SOLARCHVISION_convert_Polymesh2Vertex () {
     
     int OBJ_NUM = selectedPolymesh_numbers[i];
     
-    for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) { 
+    for (int f = allPolymeshes_Faces[OBJ_NUM][0]; f <= allPolymeshes_Faces[OBJ_NUM][1]; f++) { 
       
       for (int j = 0; j < allFaces[f].length; j++) {
         
@@ -18921,18 +18921,18 @@ void SOLARCHVISION_export_objects () {
 
   if (Display_Sections != 0) {
 
-    for (int f = 1; f <= allSection_num; f++) {
+    for (int f = 1; f <= allSections_num; f++) {
       
-      float Section_offset_U = allSection_UVERAB[f][0];
-      float Section_offset_V = allSection_UVERAB[f][1];
-      float Section_Elevation = allSection_UVERAB[f][2];
-      float Section_Rotation = allSection_UVERAB[f][3];
-      float Section_scale_U = allSection_UVERAB[f][4];
-      float Section_scale_V = allSection_UVERAB[f][5];
+      float Section_offset_U = allSections_UVERAB[f][0];
+      float Section_offset_V = allSections_UVERAB[f][1];
+      float Section_Elevation = allSections_UVERAB[f][2];
+      float Section_Rotation = allSections_UVERAB[f][3];
+      float Section_scale_U = allSections_UVERAB[f][4];
+      float Section_scale_V = allSections_UVERAB[f][5];
 
-      int Section_Type = allSection_Type[f];
-      int Section_RES1 = allSection_RES1[f];
-      int Section_RES2 = allSection_RES2[f];
+      int Section_Type = allSections_Type[f];
+      int Section_RES1 = allSections_RES1[f];
+      int Section_RES2 = allSections_RES2[f];
 
       if (Section_Type != 0) {
 
@@ -18944,10 +18944,10 @@ void SOLARCHVISION_export_objects () {
     
           if (Display_SolarImpact_Image != 0) {
             println("Saving texture:", new_TEXTURE_path);
-            allSection_SolarImpact[f][Day_of_Impact_to_Display].save(new_TEXTURE_path);
+            allSections_SolarImpact[f][Day_of_Impact_to_Display].save(new_TEXTURE_path);
           } else if (Display_SolidImpact_Image != 0) {
             println("Saving texture:", new_TEXTURE_path);
-            allSection_SolidImpact[f].save(new_TEXTURE_path);              
+            allSections_SolidImpact[f].save(new_TEXTURE_path);              
           }
     
           mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
@@ -19045,9 +19045,9 @@ void SOLARCHVISION_export_objects () {
          Object2D_ImageUsed[i] = 0;
       }
       
-      for (int f = 1; f <= allObject2D_num; f++) {
+      for (int f = 1; f <= allObject2Ds_num; f++) {
 
-        int n = abs(allObject2D_MAP[f]);
+        int n = abs(allObject2Ds_MAP[f]);
 
         Object2D_ImageUsed[n] += 1;
       }
@@ -19122,24 +19122,24 @@ void SOLARCHVISION_export_objects () {
       }
     }
     
-    for (int f = 1; f <= allObject2D_num; f++) {
+    for (int f = 1; f <= allObject2Ds_num; f++) {
 
-      int n = abs(allObject2D_MAP[f]);
+      int n = abs(allObject2Ds_MAP[f]);
       
       int w = Object2DImages[n].width; 
       int h = Object2DImages[n].height;
               
-      float x = allObject2D_XYZS[f][0];
-      float y = allObject2D_XYZS[f][1];
-      float z = allObject2D_XYZS[f][2];
+      float x = allObject2Ds_XYZS[f][0];
+      float y = allObject2Ds_XYZS[f][1];
+      float z = allObject2Ds_XYZS[f][2];
       
-      float rh = allObject2D_XYZS[f][3] * 0.5;
+      float rh = allObject2Ds_XYZS[f][3] * 0.5;
       float rw = rh * Object2DImageRatios[n];
       
       float t = 0; //WIN3D_RZ_coordinate * PI / 180.0;
       //if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
       
-      if (allObject2D_MAP[f] < 0) t += PI;            
+      if (allObject2Ds_MAP[f] < 0) t += PI;            
       
       if (objExportPolyToPoly == 1) {
         obj_lastGroupNumber += 1;  
@@ -19347,9 +19347,9 @@ void SOLARCHVISION_export_objects () {
       }
 
 
-      for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
+      for (int OBJ_NUM = 1; OBJ_NUM < allPolymeshes_Faces.length; OBJ_NUM++) {
         
-        if (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1]) {
+        if (allPolymeshes_Faces[OBJ_NUM][0] <= allPolymeshes_Faces[OBJ_NUM][1]) {
           
           for (int back_or_front = 1 - objExportBackSides; back_or_front <= 1; back_or_front++) {
           
@@ -19366,7 +19366,7 @@ void SOLARCHVISION_export_objects () {
               
               int prev_mt = -1;
   
-              for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
+              for (int f = allPolymeshes_Faces[OBJ_NUM][0]; f <= allPolymeshes_Faces[OBJ_NUM][1]; f++) {
                 
                 if (_turn == 3) {
                   if (objExportMaterialLibrary != 0) {
@@ -19530,9 +19530,9 @@ void SOLARCHVISION_export_objects () {
       }
 
 
-      for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
+      for (int OBJ_NUM = 1; OBJ_NUM < allPolymeshes_Faces.length; OBJ_NUM++) {
         
-        if (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1]) {
+        if (allPolymeshes_Faces[OBJ_NUM][0] <= allPolymeshes_Faces[OBJ_NUM][1]) {
           
           int Number_Of_Face_Subdivisions = 0; // for combined materials we need to know this number before baking each object.
       
@@ -19540,7 +19540,7 @@ void SOLARCHVISION_export_objects () {
         
             if (objExportMaterialLibrary != 0) {
                   
-              for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
+              for (int f = allPolymeshes_Faces[OBJ_NUM][0]; f <= allPolymeshes_Faces[OBJ_NUM][1]; f++) {
     
                 int Tessellation = allFaces_MTLV[f][1];
               
@@ -19622,7 +19622,7 @@ void SOLARCHVISION_export_objects () {
 
               }  
   
-              for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
+              for (int f = allPolymeshes_Faces[OBJ_NUM][0]; f <= allPolymeshes_Faces[OBJ_NUM][1]; f++) {
       
                 int Tessellation = allFaces_MTLV[f][1];
                 
@@ -19998,7 +19998,7 @@ void SOLARCHVISION_export_objects () {
 
     if (objExportMaterialLibrary != 0) {
       
-      if (allFractal_num != 0) {
+      if (allFractals_num != 0) {
         
         mtlOutput.println("newmtl " + "Fractal_Trunk");
         mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
@@ -20028,27 +20028,27 @@ void SOLARCHVISION_export_objects () {
     }
 
     
-    for (int f = 1; f <= allFractal_num; f++) {
+    for (int f = 1; f <= allFractals_num; f++) {
 
-      float x = allFractal_XYZSRA[f][0];
-      float y = allFractal_XYZSRA[f][1];
-      float z = allFractal_XYZSRA[f][2];
+      float x = allFractals_XYZSRA[f][0];
+      float y = allFractals_XYZSRA[f][1];
+      float z = allFractals_XYZSRA[f][2];
       
-      float r = allFractal_XYZSRA[f][3] * 0.5;
-      float rot = allFractal_XYZSRA[f][4];
-      float as_Solid = allFractal_XYZSRA[f][5];
+      float r = allFractals_XYZSRA[f][3] * 0.5;
+      float rot = allFractals_XYZSRA[f][4];
+      float as_Solid = allFractals_XYZSRA[f][5];
 
-      int n = allFractal_Type[f];
+      int n = allFractals_Type[f];
 
-      int dMin = allFractal_DegreeMin[f];
+      int dMin = allFractals_DegreeMin[f];
 
-      int dMax = allFractal_DegreeMax[f];
+      int dMax = allFractals_DegreeMax[f];
 
-      int s = allFractal_Seed[f];
+      int s = allFractals_Seed[f];
 
-      float TrunkSize = allFractal_TrunkSize[f];
+      float TrunkSize = allFractals_TrunkSize[f];
       
-      float LeafSize = allFractal_LeafSize[f];
+      float LeafSize = allFractals_LeafSize[f];
       
       randomSeed(s);
 
@@ -20957,69 +20957,69 @@ void SOLARCHVISION_delete_Cameras () {
 }
 
 void SOLARCHVISION_delete_Sections () {
-  allSection_UVERAB = new float [1][6]; 
-  allSection_UVERAB[0][0] = 0;
-  allSection_UVERAB[0][1] = 0;
-  allSection_UVERAB[0][2] = 0;
-  allSection_UVERAB[0][3] = 0;
-  allSection_UVERAB[0][4] = 0;
-  allSection_UVERAB[0][5] = 0;
+  allSections_UVERAB = new float [1][6]; 
+  allSections_UVERAB[0][0] = 0;
+  allSections_UVERAB[0][1] = 0;
+  allSections_UVERAB[0][2] = 0;
+  allSections_UVERAB[0][3] = 0;
+  allSections_UVERAB[0][4] = 0;
+  allSections_UVERAB[0][5] = 0;
   
-  allSection_Type = new int [1];
-  allSection_Type[0] = 0;
+  allSections_Type = new int [1];
+  allSections_Type[0] = 0;
 
-  allSection_RES1 = new int [1];
-  allSection_RES1[0] = 0;
+  allSections_RES1 = new int [1];
+  allSections_RES1[0] = 0;
 
-  allSection_RES2 = new int [1];
-  allSection_RES2[0] = 0;
+  allSections_RES2 = new int [1];
+  allSections_RES2[0] = 0;
   
-  allSection_SolidImpact = new PImage [1];
-  allSection_SolidImpact[0] = createImage(2, 2, RGB);
+  allSections_SolidImpact = new PImage [1];
+  allSections_SolidImpact[0] = createImage(2, 2, RGB);
 
-  allSection_SolarImpact = new PImage[1][(1 + STUDY_j_end - STUDY_j_start)];
+  allSections_SolarImpact = new PImage[1][(1 + STUDY_j_end - STUDY_j_start)];
   {
     int i = 0;
     for (int j = STUDY_j_start; j <= STUDY_j_end; j += 1) { 
-      allSection_SolarImpact[i][j] = createImage(2, 2, RGB);
+      allSections_SolarImpact[i][j] = createImage(2, 2, RGB);
     } 
   }      
 
-  allSection_num = 0;
+  allSections_num = 0;
   
   SOLARCHVISION_deselect_All();  
 }
 
 
 void SOLARCHVISION_delete_Solids () {
-  allSolid_XYZPPPSSSRRRV = new float [1][13]; 
-  allSolid_XYZPPPSSSRRRV[0][0] = 0;
-  allSolid_XYZPPPSSSRRRV[0][1] = 0;
-  allSolid_XYZPPPSSSRRRV[0][2] = 0;
-  allSolid_XYZPPPSSSRRRV[0][3] = 2;
-  allSolid_XYZPPPSSSRRRV[0][4] = 2;
-  allSolid_XYZPPPSSSRRRV[0][5] = 2;
-  allSolid_XYZPPPSSSRRRV[0][6] = 1;
-  allSolid_XYZPPPSSSRRRV[0][7] = 1;
-  allSolid_XYZPPPSSSRRRV[0][8] = 1;
-  allSolid_XYZPPPSSSRRRV[0][9] = 0;
-  allSolid_XYZPPPSSSRRRV[0][10] = 0;
-  allSolid_XYZPPPSSSRRRV[0][11] = 0;
-  allSolid_XYZPPPSSSRRRV[0][12] = 1;
+  allSolids_XYZPPPSSSRRRV = new float [1][13]; 
+  allSolids_XYZPPPSSSRRRV[0][0] = 0;
+  allSolids_XYZPPPSSSRRRV[0][1] = 0;
+  allSolids_XYZPPPSSSRRRV[0][2] = 0;
+  allSolids_XYZPPPSSSRRRV[0][3] = 2;
+  allSolids_XYZPPPSSSRRRV[0][4] = 2;
+  allSolids_XYZPPPSSSRRRV[0][5] = 2;
+  allSolids_XYZPPPSSSRRRV[0][6] = 1;
+  allSolids_XYZPPPSSSRRRV[0][7] = 1;
+  allSolids_XYZPPPSSSRRRV[0][8] = 1;
+  allSolids_XYZPPPSSSRRRV[0][9] = 0;
+  allSolids_XYZPPPSSSRRRV[0][10] = 0;
+  allSolids_XYZPPPSSSRRRV[0][11] = 0;
+  allSolids_XYZPPPSSSRRRV[0][12] = 1;
   
-  allSolid_num = 0;
+  allSolids_num = 0;
   
   SOLARCHVISION_deselect_All();  
 }
 
 
-void SOLARCHVISION_resize_allSection_SolarImpact_array () { // called when STUDY_j_end changes
+void SOLARCHVISION_resize_allSections_SolarImpact_array () { // called when STUDY_j_end changes
 
-  allSection_SolarImpact = new PImage[1 + allSection_num][(1 + STUDY_j_end - STUDY_j_start)];
+  allSections_SolarImpact = new PImage[1 + allSections_num][(1 + STUDY_j_end - STUDY_j_start)];
   {
-    for (int i = 0; i <= allSection_num; i++) {
+    for (int i = 0; i <= allSections_num; i++) {
       for (int j = STUDY_j_start; j <= STUDY_j_end; j += 1) { 
-        allSection_SolarImpact[i][j] = createImage(2, 2, RGB);
+        allSections_SolarImpact[i][j] = createImage(2, 2, RGB);
       } 
     }
   }  
@@ -21028,48 +21028,48 @@ void SOLARCHVISION_resize_allSection_SolarImpact_array () { // called when STUDY
 
 
 void SOLARCHVISION_delete_Fractals () {
-  allFractal_XYZSRA = new float [1][6]; 
-  allFractal_XYZSRA[0][0] = 0;
-  allFractal_XYZSRA[0][1] = 0;
-  allFractal_XYZSRA[0][2] = 0;
-  allFractal_XYZSRA[0][3] = 0;
-  allFractal_XYZSRA[0][4] = 0;
-  allFractal_XYZSRA[0][5] = 0;
+  allFractals_XYZSRA = new float [1][6]; 
+  allFractals_XYZSRA[0][0] = 0;
+  allFractals_XYZSRA[0][1] = 0;
+  allFractals_XYZSRA[0][2] = 0;
+  allFractals_XYZSRA[0][3] = 0;
+  allFractals_XYZSRA[0][4] = 0;
+  allFractals_XYZSRA[0][5] = 0;
   
-  allFractal_Type = new int [1];
-  allFractal_Type[0] = 0;
+  allFractals_Type = new int [1];
+  allFractals_Type[0] = 0;
 
-  allFractal_DegreeMin = new int [1];
-  allFractal_DegreeMin[0] = 0;
+  allFractals_DegreeMin = new int [1];
+  allFractals_DegreeMin[0] = 0;
 
-  allFractal_DegreeMax = new int [1];
-  allFractal_DegreeMax[0] = 0;
+  allFractals_DegreeMax = new int [1];
+  allFractals_DegreeMax[0] = 0;
 
-  allFractal_Seed = new int [1];
-  allFractal_Seed[0] = 0;
+  allFractals_Seed = new int [1];
+  allFractals_Seed[0] = 0;
 
-  allFractal_TrunkSize = new float [1];
-  allFractal_TrunkSize[0] = 0;
+  allFractals_TrunkSize = new float [1];
+  allFractals_TrunkSize[0] = 0;
 
-  allFractal_LeafSize = new float [1];
-  allFractal_LeafSize[0] = 0;
+  allFractals_LeafSize = new float [1];
+  allFractals_LeafSize[0] = 0;
   
-  allFractal_num = 0;
+  allFractals_num = 0;
   
   SOLARCHVISION_deselect_All();  
 }
 
 void SOLARCHVISION_delete_2Dobjects () {
-  allObject2D_XYZS = new float [1][4]; 
-  allObject2D_XYZS[0][0] = 0;
-  allObject2D_XYZS[0][1] = 0;
-  allObject2D_XYZS[0][2] = 0;
-  allObject2D_XYZS[0][3] = 0;
+  allObject2Ds_XYZS = new float [1][4]; 
+  allObject2Ds_XYZS[0][0] = 0;
+  allObject2Ds_XYZS[0][1] = 0;
+  allObject2Ds_XYZS[0][2] = 0;
+  allObject2Ds_XYZS[0][3] = 0;
   
-  allObject2D_MAP = new int [1];
-  allObject2D_MAP[0] = 0;
+  allObject2Ds_MAP = new int [1];
+  allObject2Ds_MAP[0] = 0;
   
-  allObject2D_num = 0;
+  allObject2Ds_num = 0;
   
   SOLARCHVISION_deselect_All();
 }
@@ -21096,21 +21096,21 @@ void SOLARCHVISION_delete_3Dobjects () {
   allFaces_MTLV[0][2] = 0;
   allFaces_MTLV[0][3] = 0;
 
-  allPolymesh_SolarPivotXYZ = new float [1][3];
-  allPolymesh_SolarPivotXYZ[0][0] = 0;
-  allPolymesh_SolarPivotXYZ[0][1] = 0;
-  allPolymesh_SolarPivotXYZ[0][2] = 0;
+  allPolymeshes_SolarPivotXYZ = new float [1][3];
+  allPolymeshes_SolarPivotXYZ[0][0] = 0;
+  allPolymeshes_SolarPivotXYZ[0][1] = 0;
+  allPolymeshes_SolarPivotXYZ[0][2] = 0;
   
-  allPolymesh_SolarPivotType = new int [1][1];
-  allPolymesh_SolarPivotType[0][0] = 0;
+  allPolymeshes_SolarPivotType = new int [1][1];
+  allPolymeshes_SolarPivotType[0][0] = 0;
   
-  allPolymesh_Faces = new int [1][2];
-  allPolymesh_Faces[0][0] = 0;
-  allPolymesh_Faces[0][1] = -1;
+  allPolymeshes_Faces = new int [1][2];
+  allPolymeshes_Faces[0][0] = 0;
+  allPolymeshes_Faces[0][1] = -1;
 
-  allPolymesh_Solids = new int [1][2];
-  allPolymesh_Solids[0][0] = 0;
-  allPolymesh_Solids[0][1] = -1;
+  allPolymeshes_Solids = new int [1][2];
+  allPolymeshes_Solids[0][0] = 0;
+  allPolymeshes_Solids[0][1] = -1;
   
   SOLARCHVISION_delete_Solids();
 
@@ -23539,36 +23539,36 @@ void SOLARCHVISION_put_3DViewport () {
   
 
 
-float[][] allObject2D_Vertices;
-int[][] allObject2D_Faces;
+float[][] allObject2Ds_Vertices;
+int[][] allObject2Ds_Faces;
 
 void SOLARCHVISION_draw_2Dobjects () {
 
-  allObject2D_Faces = new int [1 + allObject2D_num][4];
+  allObject2Ds_Faces = new int [1 + allObject2Ds_num][4];
     
-  allObject2D_Vertices = new float [4 * allObject2D_num + 1][3];
-  allObject2D_Vertices[0][0] = 0;
-  allObject2D_Vertices[0][1] = 0;
-  allObject2D_Vertices[0][2] = 0;
+  allObject2Ds_Vertices = new float [4 * allObject2Ds_num + 1][3];
+  allObject2Ds_Vertices[0][0] = 0;
+  allObject2Ds_Vertices[0][1] = 0;
+  allObject2Ds_Vertices[0][2] = 0;
 
   if (Display_Trees_People != 0) {
     
-    float[] DistZ = new float [1 + allObject2D_num];
+    float[] DistZ = new float [1 + allObject2Ds_num];
    
-    for (int f = 1; f <= allObject2D_num; f++) {
-      float x = allObject2D_XYZS[f][0] * OBJECTS_scale;
-      float y = allObject2D_XYZS[f][1] * OBJECTS_scale;
-      float z = allObject2D_XYZS[f][2] * OBJECTS_scale;
+    for (int f = 1; f <= allObject2Ds_num; f++) {
+      float x = allObject2Ds_XYZS[f][0] * OBJECTS_scale;
+      float y = allObject2Ds_XYZS[f][1] * OBJECTS_scale;
+      float z = allObject2Ds_XYZS[f][2] * OBJECTS_scale;
       
       DistZ[f] = dist(x, y, z, CAM_x, CAM_y, CAM_z);
     }
     
-    for (int g = 1; g <= allObject2D_num; g++) {
+    for (int g = 1; g <= allObject2Ds_num; g++) {
       
       int f = 0;
       float max_dist = -1;
       
-      for (int q = 1; q <= allObject2D_num; q++) {
+      for (int q = 1; q <= allObject2Ds_num; q++) {
         if (max_dist < DistZ[q]) {
           max_dist = DistZ[q];
           f = q;
@@ -23581,22 +23581,22 @@ void SOLARCHVISION_draw_2Dobjects () {
       
       if (f != 0) {
 
-        int n = abs(allObject2D_MAP[f]);
+        int n = abs(allObject2Ds_MAP[f]);
       
         int w = Object2DImages[n].width; 
         int h = Object2DImages[n].height;
                 
-        float x = allObject2D_XYZS[f][0] * OBJECTS_scale;
-        float y = allObject2D_XYZS[f][1] * OBJECTS_scale;
-        float z = allObject2D_XYZS[f][2] * OBJECTS_scale;
+        float x = allObject2Ds_XYZS[f][0] * OBJECTS_scale;
+        float y = allObject2Ds_XYZS[f][1] * OBJECTS_scale;
+        float z = allObject2Ds_XYZS[f][2] * OBJECTS_scale;
         
-        float rh = allObject2D_XYZS[f][3] * 0.5 * OBJECTS_scale;
+        float rh = allObject2Ds_XYZS[f][3] * 0.5 * OBJECTS_scale;
         float rw = rh * Object2DImageRatios[n];
         
         float t = WIN3D_RZ_coordinate * PI / 180.0;
         if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
         
-        if (allObject2D_MAP[f] < 0) t += PI;         
+        if (allObject2Ds_MAP[f] < 0) t += PI;         
         
         WIN3D_Diagrams.beginShape();
         
@@ -23612,26 +23612,26 @@ void SOLARCHVISION_draw_2Dobjects () {
         WIN3D_Diagrams.endShape(CLOSE);
         
         {
-          allObject2D_Vertices[f * 4 - 3][0] = (x - rw * cos(t)) / OBJECTS_scale;
-          allObject2D_Vertices[f * 4 - 3][1] = (y - rw * sin(t)) / OBJECTS_scale;
-          allObject2D_Vertices[f * 4 - 3][2] = (z) / OBJECTS_scale;
+          allObject2Ds_Vertices[f * 4 - 3][0] = (x - rw * cos(t)) / OBJECTS_scale;
+          allObject2Ds_Vertices[f * 4 - 3][1] = (y - rw * sin(t)) / OBJECTS_scale;
+          allObject2Ds_Vertices[f * 4 - 3][2] = (z) / OBJECTS_scale;
 
-          allObject2D_Vertices[f * 4 - 2][0] = (x + rw * cos(t)) / OBJECTS_scale;
-          allObject2D_Vertices[f * 4 - 2][1] = (y + rw * sin(t)) / OBJECTS_scale;
-          allObject2D_Vertices[f * 4 - 2][2] = (z) / OBJECTS_scale;
+          allObject2Ds_Vertices[f * 4 - 2][0] = (x + rw * cos(t)) / OBJECTS_scale;
+          allObject2Ds_Vertices[f * 4 - 2][1] = (y + rw * sin(t)) / OBJECTS_scale;
+          allObject2Ds_Vertices[f * 4 - 2][2] = (z) / OBJECTS_scale;
 
-          allObject2D_Vertices[f * 4 - 1][0] = (x + rw * cos(t)) / OBJECTS_scale;
-          allObject2D_Vertices[f * 4 - 1][1] = (y + rw * sin(t)) / OBJECTS_scale;
-          allObject2D_Vertices[f * 4 - 1][2] = (z + 2 * rh) / OBJECTS_scale;
+          allObject2Ds_Vertices[f * 4 - 1][0] = (x + rw * cos(t)) / OBJECTS_scale;
+          allObject2Ds_Vertices[f * 4 - 1][1] = (y + rw * sin(t)) / OBJECTS_scale;
+          allObject2Ds_Vertices[f * 4 - 1][2] = (z + 2 * rh) / OBJECTS_scale;
 
-          allObject2D_Vertices[f * 4 - 0][0] = (x - rw * cos(t)) / OBJECTS_scale;
-          allObject2D_Vertices[f * 4 - 0][1] = (y - rw * sin(t)) / OBJECTS_scale;
-          allObject2D_Vertices[f * 4 - 0][2] = (z + 2 * rh) / OBJECTS_scale;
+          allObject2Ds_Vertices[f * 4 - 0][0] = (x - rw * cos(t)) / OBJECTS_scale;
+          allObject2Ds_Vertices[f * 4 - 0][1] = (y - rw * sin(t)) / OBJECTS_scale;
+          allObject2Ds_Vertices[f * 4 - 0][2] = (z + 2 * rh) / OBJECTS_scale;
 
-          allObject2D_Faces[f][0] = f * 4 - 3;
-          allObject2D_Faces[f][1] = f * 4 - 2;
-          allObject2D_Faces[f][2] = f * 4 - 1;
-          allObject2D_Faces[f][3] = f * 4 - 0;
+          allObject2Ds_Faces[f][0] = f * 4 - 3;
+          allObject2Ds_Faces[f][1] = f * 4 - 2;
+          allObject2Ds_Faces[f][2] = f * 4 - 1;
+          allObject2Ds_Faces[f][3] = f * 4 - 0;
         }        
         
 
@@ -23949,22 +23949,22 @@ float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
   float[] ray_normal = fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float [allObject2D_Faces.length][4];
+  float[][] hitPoint = new float [allObject2Ds_Faces.length][4];
 
-  for (int f = 1; f < allObject2D_Faces.length; f++) {
+  for (int f = 1; f < allObject2Ds_Faces.length; f++) {
     hitPoint[f][0] = FLOAT_undefined;
     hitPoint[f][1] = FLOAT_undefined;
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
   }
   
-  float[] pre_angle_to_allObject2D_Faces = new float [allObject2D_Faces.length];
+  float[] pre_angle_to_allObject2Ds_Faces = new float [allObject2Ds_Faces.length];
   
-  for (int f = 1; f < allObject2D_Faces.length; f++) {
-    pre_angle_to_allObject2D_Faces[f] = FLOAT_undefined;
+  for (int f = 1; f < allObject2Ds_Faces.length; f++) {
+    pre_angle_to_allObject2Ds_Faces[f] = FLOAT_undefined;
   }
   
-  for (int f = 1; f < allObject2D_Faces.length; f++) {
+  for (int f = 1; f < allObject2Ds_Faces.length; f++) {
 
     float backAngles = FLOAT_undefined;  
     float foreAngles = FLOAT_undefined;
@@ -23999,11 +23999,11 @@ float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
         
         AnglesAll[o] = 0;      
       
-        for (int i = 0; i < allObject2D_Faces[f].length; i++) {
-          int next_i = (i + 1) % allObject2D_Faces[f].length;
+        for (int i = 0; i < allObject2Ds_Faces[f].length; i++) {
+          int next_i = (i + 1) % allObject2Ds_Faces[f].length;
           
-          float[] vectA = {allObject2D_Vertices[allObject2D_Faces[f][i]][0] - x[o], allObject2D_Vertices[allObject2D_Faces[f][i]][1] - y[o], allObject2D_Vertices[allObject2D_Faces[f][i]][2] - z[o]}; 
-          float[] vectB = {allObject2D_Vertices[allObject2D_Faces[f][next_i]][0] - x[o], allObject2D_Vertices[allObject2D_Faces[f][next_i]][1] - y[o], allObject2D_Vertices[allObject2D_Faces[f][next_i]][2] - z[o]};
+          float[] vectA = {allObject2Ds_Vertices[allObject2Ds_Faces[f][i]][0] - x[o], allObject2Ds_Vertices[allObject2Ds_Faces[f][i]][1] - y[o], allObject2Ds_Vertices[allObject2Ds_Faces[f][i]][2] - z[o]}; 
+          float[] vectB = {allObject2Ds_Vertices[allObject2Ds_Faces[f][next_i]][0] - x[o], allObject2Ds_Vertices[allObject2Ds_Faces[f][next_i]][1] - y[o], allObject2Ds_Vertices[allObject2Ds_Faces[f][next_i]][2] - z[o]};
           
           float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
           
@@ -24055,8 +24055,8 @@ float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
       //if (MAX_AnglesAll > 359) {
       if (MAX_AnglesAll > 357) { // <<<<<<<<<<<<<<<<<<<<<<<<<
-        if (pre_angle_to_allObject2D_Faces[f] < MAX_AnglesAll) {
-          pre_angle_to_allObject2D_Faces[f] = MAX_AnglesAll;
+        if (pre_angle_to_allObject2Ds_Faces[f] < MAX_AnglesAll) {
+          pre_angle_to_allObject2Ds_Faces[f] = MAX_AnglesAll;
           
           hitPoint[f][0] = x[MAX_o];
           hitPoint[f][1] = y[MAX_o];
@@ -24065,8 +24065,8 @@ float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
         }        
       }
       
-      if (pre_angle_to_allObject2D_Faces[f] > 0.9 * FLOAT_undefined) {
-        pre_angle_to_allObject2D_Faces[f] = MAX_AnglesAll;
+      if (pre_angle_to_allObject2Ds_Faces[f] > 0.9 * FLOAT_undefined) {
+        pre_angle_to_allObject2Ds_Faces[f] = MAX_AnglesAll;
       }       
 
       
@@ -24078,7 +24078,7 @@ float[] SOLARCHVISION_2Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
   
   float pre_dist = FLOAT_undefined;
   
-  for (int f = 1; f < allObject2D_Faces.length; f++) {
+  for (int f = 1; f < allObject2Ds_Faces.length; f++) {
     
     float hx = hitPoint[f][0];
     float hy = hitPoint[f][1];
@@ -24114,22 +24114,22 @@ float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
   float[] ray_normal = fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float [allFractal_Faces.length][4];
+  float[][] hitPoint = new float [allFractals_Faces.length][4];
 
-  for (int f = 1; f < allFractal_Faces.length; f++) {
+  for (int f = 1; f < allFractals_Faces.length; f++) {
     hitPoint[f][0] = FLOAT_undefined;
     hitPoint[f][1] = FLOAT_undefined;
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
   }
   
-  float[] pre_angle_to_allFractal_Faces = new float [allFractal_Faces.length];
+  float[] pre_angle_to_allFractals_Faces = new float [allFractals_Faces.length];
   
-  for (int f = 1; f < allFractal_Faces.length; f++) {
-    pre_angle_to_allFractal_Faces[f] = FLOAT_undefined;
+  for (int f = 1; f < allFractals_Faces.length; f++) {
+    pre_angle_to_allFractals_Faces[f] = FLOAT_undefined;
   }
   
-  for (int f = 1; f < allFractal_Faces.length; f++) {
+  for (int f = 1; f < allFractals_Faces.length; f++) {
 
     float backAngles = FLOAT_undefined;  
     float foreAngles = FLOAT_undefined;
@@ -24164,11 +24164,11 @@ float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
         
         AnglesAll[o] = 0;      
       
-        for (int i = 0; i < allFractal_Faces[f].length; i++) {
-          int next_i = (i + 1) % allFractal_Faces[f].length;
+        for (int i = 0; i < allFractals_Faces[f].length; i++) {
+          int next_i = (i + 1) % allFractals_Faces[f].length;
           
-          float[] vectA = {allFractal_Vertices[allFractal_Faces[f][i]][0] - x[o], allFractal_Vertices[allFractal_Faces[f][i]][1] - y[o], allFractal_Vertices[allFractal_Faces[f][i]][2] - z[o]}; 
-          float[] vectB = {allFractal_Vertices[allFractal_Faces[f][next_i]][0] - x[o], allFractal_Vertices[allFractal_Faces[f][next_i]][1] - y[o], allFractal_Vertices[allFractal_Faces[f][next_i]][2] - z[o]};
+          float[] vectA = {allFractals_Vertices[allFractals_Faces[f][i]][0] - x[o], allFractals_Vertices[allFractals_Faces[f][i]][1] - y[o], allFractals_Vertices[allFractals_Faces[f][i]][2] - z[o]}; 
+          float[] vectB = {allFractals_Vertices[allFractals_Faces[f][next_i]][0] - x[o], allFractals_Vertices[allFractals_Faces[f][next_i]][1] - y[o], allFractals_Vertices[allFractals_Faces[f][next_i]][2] - z[o]};
           
           float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
           
@@ -24220,8 +24220,8 @@ float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
       //if (MAX_AnglesAll > 359) {
       if (MAX_AnglesAll > 357) { // <<<<<<<<<<<<<<<<<<<<<<<<<
-        if (pre_angle_to_allFractal_Faces[f] < MAX_AnglesAll) {
-          pre_angle_to_allFractal_Faces[f] = MAX_AnglesAll;
+        if (pre_angle_to_allFractals_Faces[f] < MAX_AnglesAll) {
+          pre_angle_to_allFractals_Faces[f] = MAX_AnglesAll;
           
           hitPoint[f][0] = x[MAX_o];
           hitPoint[f][1] = y[MAX_o];
@@ -24230,8 +24230,8 @@ float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
         }        
       }
       
-      if (pre_angle_to_allFractal_Faces[f] > 0.9 * FLOAT_undefined) {
-        pre_angle_to_allFractal_Faces[f] = MAX_AnglesAll;
+      if (pre_angle_to_allFractals_Faces[f] > 0.9 * FLOAT_undefined) {
+        pre_angle_to_allFractals_Faces[f] = MAX_AnglesAll;
       }       
 
       
@@ -24243,7 +24243,7 @@ float[] SOLARCHVISION_1Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
   
   float pre_dist = FLOAT_undefined;
   
-  for (int f = 1; f < allFractal_Faces.length; f++) {
+  for (int f = 1; f < allFractals_Faces.length; f++) {
     
     float hx = hitPoint[f][0];
     float hy = hitPoint[f][1];
@@ -24445,22 +24445,22 @@ float[] SOLARCHVISION_8Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
   float[] ray_normal = fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float [allSection_Faces.length][4];
+  float[][] hitPoint = new float [allSections_Faces.length][4];
 
-  for (int f = 1; f < allSection_Faces.length; f++) {
+  for (int f = 1; f < allSections_Faces.length; f++) {
     hitPoint[f][0] = FLOAT_undefined;
     hitPoint[f][1] = FLOAT_undefined;
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
   }
   
-  float[] pre_angle_to_allSection_Faces = new float [allSection_Faces.length];
+  float[] pre_angle_to_allSections_Faces = new float [allSections_Faces.length];
   
-  for (int f = 1; f < allSection_Faces.length; f++) {
-    pre_angle_to_allSection_Faces[f] = FLOAT_undefined;
+  for (int f = 1; f < allSections_Faces.length; f++) {
+    pre_angle_to_allSections_Faces[f] = FLOAT_undefined;
   }
   
-  for (int f = 1; f < allSection_Faces.length; f++) {
+  for (int f = 1; f < allSections_Faces.length; f++) {
 
     float backAngles = FLOAT_undefined;  
     float foreAngles = FLOAT_undefined;
@@ -24495,11 +24495,11 @@ float[] SOLARCHVISION_8Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
         
         AnglesAll[o] = 0;      
       
-        for (int i = 0; i < allSection_Faces[f].length; i++) {
-          int next_i = (i + 1) % allSection_Faces[f].length;
+        for (int i = 0; i < allSections_Faces[f].length; i++) {
+          int next_i = (i + 1) % allSections_Faces[f].length;
           
-          float[] vectA = {allSection_Vertices[allSection_Faces[f][i]][0] - x[o], allSection_Vertices[allSection_Faces[f][i]][1] - y[o], allSection_Vertices[allSection_Faces[f][i]][2] - z[o]}; 
-          float[] vectB = {allSection_Vertices[allSection_Faces[f][next_i]][0] - x[o], allSection_Vertices[allSection_Faces[f][next_i]][1] - y[o], allSection_Vertices[allSection_Faces[f][next_i]][2] - z[o]};
+          float[] vectA = {allSections_Vertices[allSections_Faces[f][i]][0] - x[o], allSections_Vertices[allSections_Faces[f][i]][1] - y[o], allSections_Vertices[allSections_Faces[f][i]][2] - z[o]}; 
+          float[] vectB = {allSections_Vertices[allSections_Faces[f][next_i]][0] - x[o], allSections_Vertices[allSections_Faces[f][next_i]][1] - y[o], allSections_Vertices[allSections_Faces[f][next_i]][2] - z[o]};
           
           float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
           
@@ -24551,8 +24551,8 @@ float[] SOLARCHVISION_8Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
       //if (MAX_AnglesAll > 359) {
       if (MAX_AnglesAll > 357) { // <<<<<<<<<<<<<<<<<<<<<<<<<
-        if (pre_angle_to_allSection_Faces[f] < MAX_AnglesAll) {
-          pre_angle_to_allSection_Faces[f] = MAX_AnglesAll;
+        if (pre_angle_to_allSections_Faces[f] < MAX_AnglesAll) {
+          pre_angle_to_allSections_Faces[f] = MAX_AnglesAll;
           
           hitPoint[f][0] = x[MAX_o];
           hitPoint[f][1] = y[MAX_o];
@@ -24561,8 +24561,8 @@ float[] SOLARCHVISION_8Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
         }        
       }
       
-      if (pre_angle_to_allSection_Faces[f] > 0.9 * FLOAT_undefined) {
-        pre_angle_to_allSection_Faces[f] = MAX_AnglesAll;
+      if (pre_angle_to_allSections_Faces[f] > 0.9 * FLOAT_undefined) {
+        pre_angle_to_allSections_Faces[f] = MAX_AnglesAll;
       }       
 
       
@@ -24574,7 +24574,7 @@ float[] SOLARCHVISION_8Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
   
   float pre_dist = FLOAT_undefined;
   
-  for (int f = 1; f < allSection_Faces.length; f++) {
+  for (int f = 1; f < allSections_Faces.length; f++) {
     
     float hx = hitPoint[f][0];
     float hy = hitPoint[f][1];
@@ -24610,22 +24610,22 @@ float[] SOLARCHVISION_7Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
   float[] ray_normal = fn_normalize(ray_dir);   
 
-  float[][] hitPoint = new float [allSolid_Faces.length][4];
+  float[][] hitPoint = new float [allSolids_Faces.length][4];
 
-  for (int f = 1; f < allSolid_Faces.length; f++) {
+  for (int f = 1; f < allSolids_Faces.length; f++) {
     hitPoint[f][0] = FLOAT_undefined;
     hitPoint[f][1] = FLOAT_undefined;
     hitPoint[f][2] = FLOAT_undefined;
     hitPoint[f][3] = FLOAT_undefined;
   }
   
-  float[] pre_angle_to_allSolid_Faces = new float [allSolid_Faces.length];
+  float[] pre_angle_to_allSolids_Faces = new float [allSolids_Faces.length];
   
-  for (int f = 1; f < allSolid_Faces.length; f++) {
-    pre_angle_to_allSolid_Faces[f] = FLOAT_undefined;
+  for (int f = 1; f < allSolids_Faces.length; f++) {
+    pre_angle_to_allSolids_Faces[f] = FLOAT_undefined;
   }
   
-  for (int f = 1; f < allSolid_Faces.length; f++) {
+  for (int f = 1; f < allSolids_Faces.length; f++) {
 
     float backAngles = FLOAT_undefined;  
     float foreAngles = FLOAT_undefined;
@@ -24660,11 +24660,11 @@ float[] SOLARCHVISION_7Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
         
         AnglesAll[o] = 0;      
       
-        for (int i = 0; i < allSolid_Faces[f].length; i++) {
-          int next_i = (i + 1) % allSolid_Faces[f].length;
+        for (int i = 0; i < allSolids_Faces[f].length; i++) {
+          int next_i = (i + 1) % allSolids_Faces[f].length;
           
-          float[] vectA = {allSolid_Vertices[allSolid_Faces[f][i]][0] - x[o], allSolid_Vertices[allSolid_Faces[f][i]][1] - y[o], allSolid_Vertices[allSolid_Faces[f][i]][2] - z[o]}; 
-          float[] vectB = {allSolid_Vertices[allSolid_Faces[f][next_i]][0] - x[o], allSolid_Vertices[allSolid_Faces[f][next_i]][1] - y[o], allSolid_Vertices[allSolid_Faces[f][next_i]][2] - z[o]};
+          float[] vectA = {allSolids_Vertices[allSolids_Faces[f][i]][0] - x[o], allSolids_Vertices[allSolids_Faces[f][i]][1] - y[o], allSolids_Vertices[allSolids_Faces[f][i]][2] - z[o]}; 
+          float[] vectB = {allSolids_Vertices[allSolids_Faces[f][next_i]][0] - x[o], allSolids_Vertices[allSolids_Faces[f][next_i]][1] - y[o], allSolids_Vertices[allSolids_Faces[f][next_i]][2] - z[o]};
           
           float t = acos_ang(fn_dot(fn_normalize(vectA), fn_normalize(vectB)));
           
@@ -24716,8 +24716,8 @@ float[] SOLARCHVISION_7Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
 
       //if (MAX_AnglesAll > 359) {
       if (MAX_AnglesAll > 357) { // <<<<<<<<<<<<<<<<<<<<<<<<<
-        if (pre_angle_to_allSolid_Faces[f] < MAX_AnglesAll) {
-          pre_angle_to_allSolid_Faces[f] = MAX_AnglesAll;
+        if (pre_angle_to_allSolids_Faces[f] < MAX_AnglesAll) {
+          pre_angle_to_allSolids_Faces[f] = MAX_AnglesAll;
           
           hitPoint[f][0] = x[MAX_o];
           hitPoint[f][1] = y[MAX_o];
@@ -24726,8 +24726,8 @@ float[] SOLARCHVISION_7Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
         }        
       }
       
-      if (pre_angle_to_allSolid_Faces[f] > 0.9 * FLOAT_undefined) {
-        pre_angle_to_allSolid_Faces[f] = MAX_AnglesAll;
+      if (pre_angle_to_allSolids_Faces[f] > 0.9 * FLOAT_undefined) {
+        pre_angle_to_allSolids_Faces[f] = MAX_AnglesAll;
       }       
 
       
@@ -24739,7 +24739,7 @@ float[] SOLARCHVISION_7Dintersect (float[] ray_pnt, float[] ray_dir, float max_d
   
   float pre_dist = FLOAT_undefined;
   
-  for (int f = 1; f < allSolid_Faces.length; f++) {
+  for (int f = 1; f < allSolids_Faces.length; f++) {
     
     float hx = hitPoint[f][0];
     float hy = hitPoint[f][1];
@@ -25476,11 +25476,11 @@ void SOLARCHVISION_add_ProjectModel () {
       
       SOLARCHVISION_add_H_shade(1,0,spv,1,1, x,y,z, 20,d, 0,0); // south
       
-      int n = allPolymesh_SolarPivotXYZ.length - 1;
+      int n = allPolymeshes_SolarPivotXYZ.length - 1;
       
-      allPolymesh_SolarPivotXYZ[n][0] = x;
-      allPolymesh_SolarPivotXYZ[n][1] = y;
-      allPolymesh_SolarPivotXYZ[n][2] = z;
+      allPolymeshes_SolarPivotXYZ[n][0] = x;
+      allPolymeshes_SolarPivotXYZ[n][1] = y;
+      allPolymeshes_SolarPivotXYZ[n][2] = z;
     }
     
     for (float i = -10; i <= 10; i += d) {
@@ -25493,11 +25493,11 @@ void SOLARCHVISION_add_ProjectModel () {
       
       SOLARCHVISION_add_V_shade(3,0,spv,1,1, x,y,z, 45,d, 0,0); // south
       
-      int n = allPolymesh_SolarPivotXYZ.length - 1;
+      int n = allPolymeshes_SolarPivotXYZ.length - 1;
       
-      allPolymesh_SolarPivotXYZ[n][0] = x;
-      allPolymesh_SolarPivotXYZ[n][1] = y;
-      allPolymesh_SolarPivotXYZ[n][2] = z;
+      allPolymeshes_SolarPivotXYZ[n][0] = x;
+      allPolymeshes_SolarPivotXYZ[n][1] = y;
+      allPolymeshes_SolarPivotXYZ[n][2] = z;
     }    
   }    
 */  
@@ -26255,16 +26255,16 @@ void SOLARCHVISION_render_Shadows_selectedSections () {
     
     if (f != 0) {        
       
-      SolarImpact_sectionType = allSection_Type[f];
-      SolarImpact_RES1 = allSection_RES1[f];
-      SolarImpact_RES2 = allSection_RES2[f];     
+      SolarImpact_sectionType = allSections_Type[f];
+      SolarImpact_RES1 = allSections_RES1[f];
+      SolarImpact_RES2 = allSections_RES2[f];     
 
-      SolarImpact_offset_U = allSection_UVERAB[f][0];
-      SolarImpact_offset_V = allSection_UVERAB[f][1];
-      SolarImpact_Elevation = 0.1 + allSection_UVERAB[f][2];
-      SolarImpact_Rotation = allSection_UVERAB[f][3];
-      SolarImpact_scale_U = allSection_UVERAB[f][4];
-      SolarImpact_scale_V = allSection_UVERAB[f][5];
+      SolarImpact_offset_U = allSections_UVERAB[f][0];
+      SolarImpact_offset_V = allSections_UVERAB[f][1];
+      SolarImpact_Elevation = 0.1 + allSections_UVERAB[f][2];
+      SolarImpact_Rotation = allSections_UVERAB[f][3];
+      SolarImpact_scale_U = allSections_UVERAB[f][4];
+      SolarImpact_scale_V = allSections_UVERAB[f][5];
       
       SceneName = "temp_" + Section_Stamp();
 
@@ -26290,25 +26290,25 @@ void SOLARCHVISION_calculate_SolarImpact_selectedSections () {
     
     if (f != 0) {        
       
-      SolarImpact_sectionType = allSection_Type[f];
-      SolarImpact_RES1 = allSection_RES1[f];
-      SolarImpact_RES2 = allSection_RES2[f];     
+      SolarImpact_sectionType = allSections_Type[f];
+      SolarImpact_RES1 = allSections_RES1[f];
+      SolarImpact_RES2 = allSections_RES2[f];     
 
-      SolarImpact_offset_U = allSection_UVERAB[f][0];
-      SolarImpact_offset_V = allSection_UVERAB[f][1];
-      SolarImpact_Elevation = 0.1 + allSection_UVERAB[f][2];
-      SolarImpact_Rotation = allSection_UVERAB[f][3];
-      SolarImpact_scale_U = allSection_UVERAB[f][4];
-      SolarImpact_scale_V = allSection_UVERAB[f][5];
+      SolarImpact_offset_U = allSections_UVERAB[f][0];
+      SolarImpact_offset_V = allSections_UVERAB[f][1];
+      SolarImpact_Elevation = 0.1 + allSections_UVERAB[f][2];
+      SolarImpact_Rotation = allSections_UVERAB[f][3];
+      SolarImpact_scale_U = allSections_UVERAB[f][4];
+      SolarImpact_scale_V = allSections_UVERAB[f][5];
       
       SceneName = "temp_" + Section_Stamp();
 
       SOLARCHVISION_calculate_SolarImpact_CurrentSection();
       for (int j = STUDY_j_start - 1; j < STUDY_j_end; j += 1) {
 
-        allSection_SolarImpact[f][j + 1] = createImage(SolarImpact_RES1, SolarImpact_RES2, RGB);
+        allSections_SolarImpact[f][j + 1] = createImage(SolarImpact_RES1, SolarImpact_RES2, RGB);
         
-        allSection_SolarImpact[f][j + 1].copy(SolarImpact_Image[j + 1], 0, 0, SolarImpact_RES1, SolarImpact_RES2, 0, 0, SolarImpact_RES1, SolarImpact_RES2);
+        allSections_SolarImpact[f][j + 1].copy(SolarImpact_Image[j + 1], 0, 0, SolarImpact_RES1, SolarImpact_RES2, 0, 0, SolarImpact_RES1, SolarImpact_RES2);
 
       } 
 
@@ -26330,27 +26330,27 @@ void SOLARCHVISION_calculate_SolidImpact_selectedSections () {
     
     if (f != 0) {        
       
-      SolidImpact_sectionType = allSection_Type[f];
-      SolidImpact_RES1 = allSection_RES1[f];
-      SolidImpact_RES2 = allSection_RES2[f];     
+      SolidImpact_sectionType = allSections_Type[f];
+      SolidImpact_RES1 = allSections_RES1[f];
+      SolidImpact_RES2 = allSections_RES2[f];     
 
-      SolidImpact_offset_U[SolidImpact_sectionType] = allSection_UVERAB[f][0];
-      SolidImpact_offset_V[SolidImpact_sectionType] = allSection_UVERAB[f][1];
-      SolidImpact_Elevation[SolidImpact_sectionType] = allSection_UVERAB[f][2];
-      SolidImpact_Rotation[SolidImpact_sectionType] = allSection_UVERAB[f][3];
-      SolidImpact_scale_U[SolidImpact_sectionType] = allSection_UVERAB[f][4];
-      SolidImpact_scale_V[SolidImpact_sectionType] = allSection_UVERAB[f][5];
+      SolidImpact_offset_U[SolidImpact_sectionType] = allSections_UVERAB[f][0];
+      SolidImpact_offset_V[SolidImpact_sectionType] = allSections_UVERAB[f][1];
+      SolidImpact_Elevation[SolidImpact_sectionType] = allSections_UVERAB[f][2];
+      SolidImpact_Rotation[SolidImpact_sectionType] = allSections_UVERAB[f][3];
+      SolidImpact_scale_U[SolidImpact_sectionType] = allSections_UVERAB[f][4];
+      SolidImpact_scale_V[SolidImpact_sectionType] = allSections_UVERAB[f][5];
       
       {
         if ((SolidImpact_Image.width != SolidImpact_RES1) || (SolidImpact_Image.height != SolidImpact_RES2)) {
           SolidImpact_Image = createImage(SolidImpact_RES1, SolidImpact_RES2, ARGB);
           
-          allSection_SolidImpact[f] = createImage(SolidImpact_RES1, SolidImpact_RES2, ARGB); 
+          allSections_SolidImpact[f] = createImage(SolidImpact_RES1, SolidImpact_RES2, ARGB); 
         }
         
         SOLARCHVISION_calculate_SolidImpact_CurrentSection();
         
-        allSection_SolidImpact[f].copy(SolidImpact_Image, 0, 0, SolidImpact_RES1, SolidImpact_RES2, 0, 0, SolidImpact_RES1, SolidImpact_RES2); 
+        allSections_SolidImpact[f].copy(SolidImpact_Image, 0, 0, SolidImpact_RES1, SolidImpact_RES2, 0, 0, SolidImpact_RES1, SolidImpact_RES2); 
       }
       
     }
@@ -26400,7 +26400,7 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple (float x, float y, float 
 
   float val = 1;
   
-  for (int n = 1; n <= allSolid_num; n++) {
+  for (int n = 1; n <= allSolids_num; n++) {
     
     float r = Solid_get_value(n);
     float d = Solid_get_Distance(n, x, y, z);
@@ -26414,13 +26414,13 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple (float x, float y, float 
 
   }
   
-  if (allSolid_num > 0) {
+  if (allSolids_num > 0) {
     float val_sign = 1;
     if (val < 0) {
       val_sign = -1;
       val = abs(val);
     } 
-    val = pow(val, 1.0 / float(allSolid_num));
+    val = pow(val, 1.0 / float(allSolids_num));
     val *= val_sign;    
   } 
 
@@ -26438,7 +26438,7 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_complex (float x, float y, float
 
   for (int o = 0; o < 2; o++) {
 
-    for (int n = 1; n <= allSolid_num; n++) {
+    for (int n = 1; n <= allSolids_num; n++) {
 
       float r = Solid_get_value(n);
       float d = Solid_get_Distance(n, x + o * deltaX , y + o * deltaY, z);
@@ -26451,13 +26451,13 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_complex (float x, float y, float
       }        
     }
     
-    if (allSolid_num > 0) {
+    if (allSolids_num > 0) {
       float val_sign = 1;
       if (val[o] < 0) {
         val_sign = -1;
         val[o] = abs(val[o]);
       } 
-      val[o] = pow(val[o], 1.0 / float(allSolid_num));
+      val[o] = pow(val[o], 1.0 / float(allSolids_num));
       val[o] *= val_sign;    
     }     
   }
@@ -28476,17 +28476,17 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
   }  
   
   if (Work_with_2D_or_3D == 1) {
-    length_of_indexes = allFractal_num + 1;
+    length_of_indexes = allFractals_num + 1;
     start_index_OBJ_NUM = selectedFractal_numbers[start_index];
   }    
 
   if (Work_with_2D_or_3D == 2) {
-    length_of_indexes = allObject2D_num + 1;
+    length_of_indexes = allObject2Ds_num + 1;
     start_index_OBJ_NUM = selectedObject2D_numbers[start_index];
   }    
   
   if (Work_with_2D_or_3D == 3) {
-    length_of_indexes = allPolymesh_Faces.length;
+    length_of_indexes = allPolymeshes_Faces.length;
     start_index_OBJ_NUM = selectedPolymesh_numbers[start_index];
   }
  
@@ -28505,12 +28505,12 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
   }  
 
   if (Work_with_2D_or_3D == 7) {
-    length_of_indexes = allSolid_num + 1;
+    length_of_indexes = allSolids_num + 1;
     start_index_OBJ_NUM = selectedSolid_numbers[start_index];
   }   
   
   if (Work_with_2D_or_3D == 8) {
-    length_of_indexes = allSection_num + 1;
+    length_of_indexes = allSections_num + 1;
     start_index_OBJ_NUM = selectedSection_numbers[start_index];
   }  
   
@@ -28800,8 +28800,8 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
     
     int OBJ_NUM = 0;
     
-    for (int i = 0; i < allPolymesh_Faces.length; i++) {
-      if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
+    for (int i = 0; i < allPolymeshes_Faces.length; i++) {
+      if ((allPolymeshes_Faces[i][0] <= f) && (f <= allPolymeshes_Faces[i][1])) {
         
         OBJ_NUM = i;
         
@@ -29233,7 +29233,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
   
   if (Work_with_2D_or_3D == 1) {
     
-    for (int OBJ_NUM = 1; OBJ_NUM < allFractal_Faces.length; OBJ_NUM++) {
+    for (int OBJ_NUM = 1; OBJ_NUM < allFractals_Faces.length; OBJ_NUM++) {
 
       int break_loops = 0;
       
@@ -29244,13 +29244,13 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
       
       int f = OBJ_NUM;
 
-      for (int j = 0; j < allFractal_Faces[f].length; j++) {
+      for (int j = 0; j < allFractals_Faces[f].length; j++) {
         
-        int vNo = allFractal_Faces[f][j];
+        int vNo = allFractals_Faces[f][j];
         
-        float x = allFractal_Vertices[vNo][0] * OBJECTS_scale;
-        float y = allFractal_Vertices[vNo][1] * OBJECTS_scale;
-        float z = -allFractal_Vertices[vNo][2] * OBJECTS_scale;
+        float x = allFractals_Vertices[vNo][0] * OBJECTS_scale;
+        float y = allFractals_Vertices[vNo][1] * OBJECTS_scale;
+        float z = -allFractals_Vertices[vNo][2] * OBJECTS_scale;
         
         float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
 
@@ -29326,7 +29326,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
   if (Work_with_2D_or_3D == 2) {
     
-    for (int OBJ_NUM = 1; OBJ_NUM < allObject2D_Faces.length; OBJ_NUM++) {
+    for (int OBJ_NUM = 1; OBJ_NUM < allObject2Ds_Faces.length; OBJ_NUM++) {
 
       int break_loops = 0;
       
@@ -29337,13 +29337,13 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
       
       int f = OBJ_NUM;
       
-      for (int j = 0; j < allObject2D_Faces[f].length; j++) {
+      for (int j = 0; j < allObject2Ds_Faces[f].length; j++) {
         
-        int vNo = allObject2D_Faces[f][j];
+        int vNo = allObject2Ds_Faces[f][j];
         
-        float x = allObject2D_Vertices[vNo][0] * OBJECTS_scale;
-        float y = allObject2D_Vertices[vNo][1] * OBJECTS_scale;
-        float z = -allObject2D_Vertices[vNo][2] * OBJECTS_scale;
+        float x = allObject2Ds_Vertices[vNo][0] * OBJECTS_scale;
+        float y = allObject2Ds_Vertices[vNo][1] * OBJECTS_scale;
+        float z = -allObject2Ds_Vertices[vNo][2] * OBJECTS_scale;
         
         float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
 
@@ -29418,18 +29418,18 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
   
   if (Work_with_2D_or_3D == 3) {
     
-    for (int OBJ_NUM = 1; OBJ_NUM < allPolymesh_Faces.length; OBJ_NUM++) {
+    for (int OBJ_NUM = 1; OBJ_NUM < allPolymeshes_Faces.length; OBJ_NUM++) {
       
       int break_loops = 0;
       
       int include_OBJ_in_newSelection = -1;    
 
-      if (allPolymesh_Faces[OBJ_NUM][0] <= allPolymesh_Faces[OBJ_NUM][1]) {
+      if (allPolymeshes_Faces[OBJ_NUM][0] <= allPolymeshes_Faces[OBJ_NUM][1]) {
         
         if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
         if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
 
-        for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
+        for (int f = allPolymeshes_Faces[OBJ_NUM][0]; f <= allPolymeshes_Faces[OBJ_NUM][1]; f++) {
           if ((0 < f) && (f < allFaces.length)) { 
       
             for (int j = 0; j < allFaces[f].length; j++) {
@@ -29685,7 +29685,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
   if (Work_with_2D_or_3D == 7) { // Note: this is slightly different from the others
     
-    for (int h = 1; h < allSolid_Faces.length; h += Solids_DisplayFaces) {
+    for (int h = 1; h < allSolids_Faces.length; h += Solids_DisplayFaces) {
       
       int objectProcessed = 0;
       
@@ -29703,13 +29703,13 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
           int f = h + plane_type;
           int OBJ_NUM = 1 + int((f - 1) / Solids_DisplayFaces);
 
-          for (int j = 0; j < allSolid_Faces[f].length; j++) {
+          for (int j = 0; j < allSolids_Faces[f].length; j++) {
             
-            int vNo = allSolid_Faces[f][j];
+            int vNo = allSolids_Faces[f][j];
             
-            float x = allSolid_Vertices[vNo][0] * OBJECTS_scale;
-            float y = allSolid_Vertices[vNo][1] * OBJECTS_scale;
-            float z = -allSolid_Vertices[vNo][2] * OBJECTS_scale;
+            float x = allSolids_Vertices[vNo][0] * OBJECTS_scale;
+            float y = allSolids_Vertices[vNo][1] * OBJECTS_scale;
+            float z = -allSolids_Vertices[vNo][2] * OBJECTS_scale;
             
             float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
     
@@ -29791,7 +29791,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
   if (Work_with_2D_or_3D == 8) {
     
-    for (int OBJ_NUM = 1; OBJ_NUM < allSection_Faces.length; OBJ_NUM++) {
+    for (int OBJ_NUM = 1; OBJ_NUM < allSections_Faces.length; OBJ_NUM++) {
 
       int break_loops = 0;
       
@@ -29802,13 +29802,13 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
       
       int f = OBJ_NUM;
 
-      for (int j = 0; j < allSection_Faces[f].length; j++) {
+      for (int j = 0; j < allSections_Faces[f].length; j++) {
         
-        int vNo = allSection_Faces[f][j];
+        int vNo = allSections_Faces[f][j];
         
-        float x = allSection_Vertices[vNo][0] * OBJECTS_scale;
-        float y = allSection_Vertices[vNo][1] * OBJECTS_scale;
-        float z = -allSection_Vertices[vNo][2] * OBJECTS_scale;
+        float x = allSections_Vertices[vNo][0] * OBJECTS_scale;
+        float y = allSections_Vertices[vNo][1] * OBJECTS_scale;
+        float z = -allSections_Vertices[vNo][2] * OBJECTS_scale;
         
         float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
 
@@ -31066,16 +31066,16 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
     
     println("Importing:", Filename);
     
-    int NUM_allPolymesh_Faces_Before = allPolymesh_Faces.length;
+    int NUM_allPolymeshes_Faces_Before = allPolymeshes_Faces.length;
     
     //SOLARCHVISION_import_objects(Filename, -1,0,0,1,1, 0,0,0, 1,1,1); // different objects: different materials
     SOLARCHVISION_import_objects(Filename, Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, 0,0,0, 1,1,1); // apply default material
     
-    int NUM_allPolymesh_Faces_After = allPolymesh_Faces.length;
+    int NUM_allPolymeshes_Faces_After = allPolymeshes_Faces.length;
     
-    selectedPolymesh_numbers = new int [1 + NUM_allPolymesh_Faces_After - NUM_allPolymesh_Faces_Before];
+    selectedPolymesh_numbers = new int [1 + NUM_allPolymeshes_Faces_After - NUM_allPolymeshes_Faces_Before];
     for (int i = 0; i < selectedPolymesh_numbers.length - 1; i++) { 
-      selectedPolymesh_numbers[i] = i + NUM_allPolymesh_Faces_Before;
+      selectedPolymesh_numbers[i] = i + NUM_allPolymeshes_Faces_Before;
       //println(selectedPolymesh_numbers[i]);
     }
 
@@ -33327,9 +33327,9 @@ void mouseClicked () {
     
                 if (Work_with_2D_or_3D == 2) {
     
-                  float dx = x0 - allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][0]; 
-                  float dy = y0 - allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][1]; 
-                  float dz = z0 - allObject2D_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][2];              
+                  float dx = x0 - allObject2Ds_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][0]; 
+                  float dy = y0 - allObject2Ds_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][1]; 
+                  float dz = z0 - allObject2Ds_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][2];              
   
                   int the_Vector = selected_posVector;
                 
@@ -33342,9 +33342,9 @@ void mouseClicked () {
     
                 if (Work_with_2D_or_3D == 1) {
     
-                  float dx = x0 - allFractal_XYZSRA[selectedFractal_numbers[selectedFractal_numbers.length - 1]][0]; 
-                  float dy = y0 - allFractal_XYZSRA[selectedFractal_numbers[selectedFractal_numbers.length - 1]][1]; 
-                  float dz = z0 - allFractal_XYZSRA[selectedFractal_numbers[selectedFractal_numbers.length - 1]][2];              
+                  float dx = x0 - allFractals_XYZSRA[selectedFractal_numbers[selectedFractal_numbers.length - 1]][0]; 
+                  float dy = y0 - allFractals_XYZSRA[selectedFractal_numbers[selectedFractal_numbers.length - 1]][1]; 
+                  float dz = z0 - allFractals_XYZSRA[selectedFractal_numbers[selectedFractal_numbers.length - 1]][2];              
   
                   int the_Vector = selected_posVector;
                 
@@ -33384,14 +33384,14 @@ void mouseClicked () {
                       }
                       if (Modify_Object_Parameters == 3) { // Assign(all) 
                         int OBJ_NUM = 0;
-                        for (int i = 0; i < allPolymesh_Faces.length; i++) {
-                          if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
+                        for (int i = 0; i < allPolymeshes_Faces.length; i++) {
+                          if ((allPolymeshes_Faces[i][0] <= f) && (f <= allPolymeshes_Faces[i][1])) {
                             OBJ_NUM = i;
                             break;
                           }
                         }
                         if (OBJ_NUM != 0) {
-                          for (int q = allPolymesh_Faces[OBJ_NUM][0]; q <= allPolymesh_Faces[OBJ_NUM][1]; q++) {                    
+                          for (int q = allPolymeshes_Faces[OBJ_NUM][0]; q <= allPolymeshes_Faces[OBJ_NUM][1]; q++) {                    
                             if (View_Select_Create_Modify == 4) allFaces_MTLV[q][0] = Create_Default_Material;
                             if (View_Select_Create_Modify == 5) allFaces_MTLV[q][1] = Create_Default_Tessellation;
                             if (View_Select_Create_Modify == 6) allFaces_MTLV[q][2] = Create_Default_Layer;
@@ -33407,16 +33407,16 @@ void mouseClicked () {
                       }     
                       if (Modify_Object_Parameters == 2) { // Assign
                         int OBJ_NUM = 0;
-                        for (int i = 0; i < allPolymesh_Faces.length; i++) {
-                          if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
+                        for (int i = 0; i < allPolymeshes_Faces.length; i++) {
+                          if ((allPolymeshes_Faces[i][0] <= f) && (f <= allPolymeshes_Faces[i][1])) {
                             OBJ_NUM = i;
                             break;
                           }
                         }
                         if (OBJ_NUM != 0) {
-                          allPolymesh_SolarPivotXYZ[OBJ_NUM][0] = selection_BoundingBox[1 + selection_alignX][0];
-                          allPolymesh_SolarPivotXYZ[OBJ_NUM][1] = selection_BoundingBox[1 + selection_alignY][1];
-                          allPolymesh_SolarPivotXYZ[OBJ_NUM][2] = selection_BoundingBox[1 + selection_alignZ][2];
+                          allPolymeshes_SolarPivotXYZ[OBJ_NUM][0] = selection_BoundingBox[1 + selection_alignX][0];
+                          allPolymeshes_SolarPivotXYZ[OBJ_NUM][1] = selection_BoundingBox[1 + selection_alignY][1];
+                          allPolymeshes_SolarPivotXYZ[OBJ_NUM][2] = selection_BoundingBox[1 + selection_alignZ][2];
                         }
                       }                   
                     }
@@ -33472,14 +33472,14 @@ void mouseClicked () {
                       
                       if (Work_with_2D_or_3D == 3) {
                         int OBJ_NUM = 0;
-                        for (int i = 0; i < allPolymesh_Faces.length; i++) {
-                          if ((allPolymesh_Faces[i][0] <= f) && (f <= allPolymesh_Faces[i][1])) {
+                        for (int i = 0; i < allPolymeshes_Faces.length; i++) {
+                          if ((allPolymeshes_Faces[i][0] <= f) && (f <= allPolymeshes_Faces[i][1])) {
                             OBJ_NUM = i;
                             break;
                           }
                         }
                         if (OBJ_NUM != 0) {         
-                          for (int q = allPolymesh_Faces[OBJ_NUM][0]; q <= allPolymesh_Faces[OBJ_NUM][1]; q++) {                    
+                          for (int q = allPolymeshes_Faces[OBJ_NUM][0]; q <= allPolymeshes_Faces[OBJ_NUM][1]; q++) {                    
                             int n = allFaces[q].length;
                             
                             if (n > 2) {
@@ -33579,7 +33579,7 @@ void mouseClicked () {
       
                     int OBJ_NUM = int(RxP[4]);
                     
-                    int n = allObject2D_MAP[OBJ_NUM];
+                    int n = allObject2Ds_MAP[OBJ_NUM];
                     int sign_n = 1;
                     if (n < 0) sign_n = -1;
                     n = abs(n);
@@ -33598,10 +33598,10 @@ void mouseClicked () {
                       } 
                       if ((Modify_Object_Parameters == 2) || (Modify_Object_Parameters == 3)) { // Assign
                         if (n <= n1) { // case: people 
-                          allObject2D_MAP[OBJ_NUM] = sign_n * Create_Mesh_Person_Type;
+                          allObject2Ds_MAP[OBJ_NUM] = sign_n * Create_Mesh_Person_Type;
                         }
                         else { // case: trees
-                          allObject2D_MAP[OBJ_NUM] = sign_n * (Create_Mesh_Plant_Type + n1);
+                          allObject2Ds_MAP[OBJ_NUM] = sign_n * (Create_Mesh_Plant_Type + n1);
                         }
                       }
                     }
@@ -33613,29 +33613,29 @@ void mouseClicked () {
                     int OBJ_NUM = int(RxP[4]);
                       
                     if (Modify_Object_Parameters == 1) { // Pick 
-                      if (View_Select_Create_Modify == 8) Create_Fractal_DegreeMax = allFractal_DegreeMax[OBJ_NUM];
-                      if (View_Select_Create_Modify == 9) {Create_Fractal_DegreeMax = allFractal_DegreeMax[OBJ_NUM]; Create_Fractal_DegreeMin = allFractal_DegreeMin[OBJ_NUM];}
-                      if (View_Select_Create_Modify == 10) Create_Fractal_DegreeMin = allFractal_DegreeMin[OBJ_NUM];
-                      if (View_Select_Create_Modify == 11) Create_Fractal_TrunkSize = allFractal_TrunkSize[OBJ_NUM];
-                      if (View_Select_Create_Modify == 12) Create_Fractal_LeafSize = allFractal_LeafSize[OBJ_NUM];
+                      if (View_Select_Create_Modify == 8) Create_Fractal_DegreeMax = allFractals_DegreeMax[OBJ_NUM];
+                      if (View_Select_Create_Modify == 9) {Create_Fractal_DegreeMax = allFractals_DegreeMax[OBJ_NUM]; Create_Fractal_DegreeMin = allFractals_DegreeMin[OBJ_NUM];}
+                      if (View_Select_Create_Modify == 10) Create_Fractal_DegreeMin = allFractals_DegreeMin[OBJ_NUM];
+                      if (View_Select_Create_Modify == 11) Create_Fractal_TrunkSize = allFractals_TrunkSize[OBJ_NUM];
+                      if (View_Select_Create_Modify == 12) Create_Fractal_LeafSize = allFractals_LeafSize[OBJ_NUM];
                       if (View_Select_Create_Modify == 13) { // all properties
-                        Create_Fractal_DegreeMax = allFractal_DegreeMax[OBJ_NUM];
-                        Create_Fractal_DegreeMin = allFractal_DegreeMin[OBJ_NUM];
-                        Create_Fractal_TrunkSize = allFractal_TrunkSize[OBJ_NUM];
-                        Create_Fractal_LeafSize = allFractal_LeafSize[OBJ_NUM];
+                        Create_Fractal_DegreeMax = allFractals_DegreeMax[OBJ_NUM];
+                        Create_Fractal_DegreeMin = allFractals_DegreeMin[OBJ_NUM];
+                        Create_Fractal_TrunkSize = allFractals_TrunkSize[OBJ_NUM];
+                        Create_Fractal_LeafSize = allFractals_LeafSize[OBJ_NUM];
                       }                      
                     } 
                     if (Modify_Object_Parameters == 2) { //Assign
-                      if (View_Select_Create_Modify == 8) allFractal_DegreeMax[OBJ_NUM] = Create_Fractal_DegreeMax;                    
-                      if (View_Select_Create_Modify == 9) {allFractal_DegreeMax[OBJ_NUM] = Create_Fractal_DegreeMax; allFractal_DegreeMin[OBJ_NUM] = Create_Fractal_DegreeMin;}                 
-                      if (View_Select_Create_Modify == 10) allFractal_DegreeMin[OBJ_NUM] = Create_Fractal_DegreeMin;                    
-                      if (View_Select_Create_Modify == 11) allFractal_TrunkSize[OBJ_NUM] = Create_Fractal_TrunkSize;                    
-                      if (View_Select_Create_Modify == 12) allFractal_LeafSize[OBJ_NUM] = Create_Fractal_LeafSize;
+                      if (View_Select_Create_Modify == 8) allFractals_DegreeMax[OBJ_NUM] = Create_Fractal_DegreeMax;                    
+                      if (View_Select_Create_Modify == 9) {allFractals_DegreeMax[OBJ_NUM] = Create_Fractal_DegreeMax; allFractals_DegreeMin[OBJ_NUM] = Create_Fractal_DegreeMin;}                 
+                      if (View_Select_Create_Modify == 10) allFractals_DegreeMin[OBJ_NUM] = Create_Fractal_DegreeMin;                    
+                      if (View_Select_Create_Modify == 11) allFractals_TrunkSize[OBJ_NUM] = Create_Fractal_TrunkSize;                    
+                      if (View_Select_Create_Modify == 12) allFractals_LeafSize[OBJ_NUM] = Create_Fractal_LeafSize;
                       if (View_Select_Create_Modify == 13) { // all properties
-                        allFractal_DegreeMax[OBJ_NUM] = Create_Fractal_DegreeMax;
-                        allFractal_DegreeMin[OBJ_NUM] = Create_Fractal_DegreeMin;                    
-                        allFractal_TrunkSize[OBJ_NUM] = Create_Fractal_TrunkSize;                    
-                        allFractal_LeafSize[OBJ_NUM] = Create_Fractal_LeafSize;                    
+                        allFractals_DegreeMax[OBJ_NUM] = Create_Fractal_DegreeMax;
+                        allFractals_DegreeMin[OBJ_NUM] = Create_Fractal_DegreeMin;                    
+                        allFractals_TrunkSize[OBJ_NUM] = Create_Fractal_TrunkSize;                    
+                        allFractals_LeafSize[OBJ_NUM] = Create_Fractal_LeafSize;                    
                       }                      
                     }
                   }                        
@@ -33651,11 +33651,11 @@ void mouseClicked () {
               
               if (View_Select_Create_Modify == 0) { // create
     
-                int keep_number_of_Polymeshes = allPolymesh_Faces.length;
-                int keep_number_of_2DObjects = allObject2D_XYZS.length;
-                int keep_number_of_Fractals = allFractal_XYZSRA.length;
-                int keep_number_of_Solids = allSolid_XYZPPPSSSRRRV.length;
-                int keep_number_of_Sections = allSection_UVERAB.length;
+                int keep_number_of_Polymeshes = allPolymeshes_Faces.length;
+                int keep_number_of_2DObjects = allObject2Ds_XYZS.length;
+                int keep_number_of_Fractals = allFractals_XYZSRA.length;
+                int keep_number_of_Solids = allSolids_XYZPPPSSSRRRV.length;
+                int keep_number_of_Sections = allSections_UVERAB.length;
                 int keep_number_of_Cameras = allCamera_PPPSRRRF.length;
                 
                 float x = RxP[0]; 
@@ -34062,7 +34062,7 @@ void mouseClicked () {
                     
                     
                     
-                    int number_of_Section_before = allSection_UVERAB.length; 
+                    int number_of_Section_before = allSections_UVERAB.length; 
                     
                     SOLARCHVISION_add_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
 
@@ -34071,7 +34071,7 @@ void mouseClicked () {
                     selectedSection_numbers = new int [1];
                     selectedSection_numbers[0] = 0;
                     
-                    for (int o = number_of_Section_before; o < allSection_UVERAB.length; o++) {
+                    for (int o = number_of_Section_before; o < allSections_UVERAB.length; o++) {
                       
                       int[] newlyAddedSection = {o};
                       
@@ -34104,38 +34104,38 @@ void mouseClicked () {
               
               
   
-                if (keep_number_of_Polymeshes != allPolymesh_Faces.length) { // if any 3D-mesh created during the process
+                if (keep_number_of_Polymeshes != allPolymeshes_Faces.length) { // if any 3D-mesh created during the process
                   
                   selectedPolymesh_numbers = new int [1];
-                  selectedPolymesh_numbers[0] = allPolymesh_Faces.length - 1;
+                  selectedPolymesh_numbers[0] = allPolymeshes_Faces.length - 1;
                   
                   println("SOLARCHVISION_calculate_selection_Pivot 7");
                   SOLARCHVISION_calculate_selection_Pivot();
                 }
                 
-                if (keep_number_of_2DObjects != allObject2D_XYZS.length) { // if any 2D-mesh created during the process
+                if (keep_number_of_2DObjects != allObject2Ds_XYZS.length) { // if any 2D-mesh created during the process
   
                   selectedObject2D_numbers = new int [1];
-                  selectedObject2D_numbers[0] = allObject2D_XYZS.length - 1;
+                  selectedObject2D_numbers[0] = allObject2Ds_XYZS.length - 1;
                   
                   println("SOLARCHVISION_calculate_selection_Pivot 8");
                   SOLARCHVISION_calculate_selection_Pivot();
                 }            
     
-                if (keep_number_of_Fractals != allFractal_XYZSRA.length) { // if any Fractal created during the process
+                if (keep_number_of_Fractals != allFractals_XYZSRA.length) { // if any Fractal created during the process
   
                   selectedFractal_numbers = new int [1];
-                  selectedFractal_numbers[0] = allFractal_XYZSRA.length - 1;
+                  selectedFractal_numbers[0] = allFractals_XYZSRA.length - 1;
                   
                   println("SOLARCHVISION_calculate_selection_Pivot 9");
                   SOLARCHVISION_calculate_selection_Pivot();
                 } 
 
 
-                if (keep_number_of_Sections != allSection_UVERAB.length) { // if any Section created during the process
+                if (keep_number_of_Sections != allSections_UVERAB.length) { // if any Section created during the process
   
                   selectedSection_numbers = new int [1];
-                  selectedSection_numbers[0] = allSection_UVERAB.length - 1;
+                  selectedSection_numbers[0] = allSections_UVERAB.length - 1;
                   
                   println("SOLARCHVISION_calculate_selection_Pivot 9b");
                   SOLARCHVISION_calculate_selection_Pivot();
@@ -34150,10 +34150,10 @@ void mouseClicked () {
                   SOLARCHVISION_calculate_selection_Pivot();
                 }     
    
-                if (keep_number_of_Solids != allSolid_XYZPPPSSSRRRV.length) { // if any Solid created during the process
+                if (keep_number_of_Solids != allSolids_XYZPPPSSSRRRV.length) { // if any Solid created during the process
   
                   selectedSolid_numbers = new int [1];
-                  selectedSolid_numbers[0] = allSolid_XYZPPPSSSRRRV.length - 1;
+                  selectedSolid_numbers[0] = allSolids_XYZPPPSSSRRRV.length - 1;
                   
                   println("SOLARCHVISION_calculate_selection_Pivot 9d");
                   SOLARCHVISION_calculate_selection_Pivot();
@@ -35952,17 +35952,17 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             
             int f = OBJ_NUM; 
     
-            if ((0 < f) && (f < allSection_Faces.length)) { 
+            if ((0 < f) && (f < allSections_Faces.length)) { 
                 
               beginShape();
               
-              for (int j = 0; j < allSection_Faces[f].length; j++) {
+              for (int j = 0; j < allSections_Faces[f].length; j++) {
                 
-                int vNo = allSection_Faces[f][j];
+                int vNo = allSections_Faces[f][j];
                 
-                float x = allSection_Vertices[vNo][0] * OBJECTS_scale;
-                float y = allSection_Vertices[vNo][1] * OBJECTS_scale;
-                float z = -allSection_Vertices[vNo][2] * OBJECTS_scale;
+                float x = allSections_Vertices[vNo][0] * OBJECTS_scale;
+                float y = allSections_Vertices[vNo][1] * OBJECTS_scale;
+                float z = -allSections_Vertices[vNo][2] * OBJECTS_scale;
                 
                 float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
                 
@@ -36009,17 +36009,17 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             
               int f = (OBJ_NUM - 1) * Solids_DisplayFaces + plane_type + 1; 
 
-              if ((0 < f) && (f < allSolid_Faces.length)) { 
+              if ((0 < f) && (f < allSolids_Faces.length)) { 
                   
                 beginShape();
                 
-                for (int j = 0; j < allSolid_Faces[f].length; j++) {
+                for (int j = 0; j < allSolids_Faces[f].length; j++) {
                   
-                  int vNo = allSolid_Faces[f][j];
+                  int vNo = allSolids_Faces[f][j];
                   
-                  float x = allSolid_Vertices[vNo][0] * OBJECTS_scale;
-                  float y = allSolid_Vertices[vNo][1] * OBJECTS_scale;
-                  float z = -allSolid_Vertices[vNo][2] * OBJECTS_scale;
+                  float x = allSolids_Vertices[vNo][0] * OBJECTS_scale;
+                  float y = allSolids_Vertices[vNo][1] * OBJECTS_scale;
+                  float z = -allSolids_Vertices[vNo][2] * OBJECTS_scale;
                   
                   float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
                   
@@ -36066,17 +36066,17 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             
             int f = OBJ_NUM; 
     
-            if ((0 < f) && (f < allFractal_Faces.length)) { 
+            if ((0 < f) && (f < allFractals_Faces.length)) { 
                 
               beginShape();
               
-              for (int j = 0; j < allFractal_Faces[f].length; j++) {
+              for (int j = 0; j < allFractals_Faces[f].length; j++) {
                 
-                int vNo = allFractal_Faces[f][j];
+                int vNo = allFractals_Faces[f][j];
                 
-                float x = allFractal_Vertices[vNo][0] * OBJECTS_scale;
-                float y = allFractal_Vertices[vNo][1] * OBJECTS_scale;
-                float z = -allFractal_Vertices[vNo][2] * OBJECTS_scale;
+                float x = allFractals_Vertices[vNo][0] * OBJECTS_scale;
+                float y = allFractals_Vertices[vNo][1] * OBJECTS_scale;
+                float z = -allFractals_Vertices[vNo][2] * OBJECTS_scale;
                 
                 float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
                 
@@ -36121,17 +36121,17 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             
             int f = OBJ_NUM; 
     
-            if ((0 < f) && (f < allObject2D_Faces.length)) { 
+            if ((0 < f) && (f < allObject2Ds_Faces.length)) { 
                 
               beginShape();
               
-              for (int j = 0; j < allObject2D_Faces[f].length; j++) {
+              for (int j = 0; j < allObject2Ds_Faces[f].length; j++) {
                 
-                int vNo = allObject2D_Faces[f][j];
+                int vNo = allObject2Ds_Faces[f][j];
                 
-                float x = allObject2D_Vertices[vNo][0] * OBJECTS_scale;
-                float y = allObject2D_Vertices[vNo][1] * OBJECTS_scale;
-                float z = -allObject2D_Vertices[vNo][2] * OBJECTS_scale;
+                float x = allObject2Ds_Vertices[vNo][0] * OBJECTS_scale;
+                float y = allObject2Ds_Vertices[vNo][1] * OBJECTS_scale;
+                float z = -allObject2Ds_Vertices[vNo][2] * OBJECTS_scale;
                 
                 float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
                 
@@ -36175,7 +36175,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         
         if (OBJ_NUM != 0) {
     
-          for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
+          for (int f = allPolymeshes_Faces[OBJ_NUM][0]; f <= allPolymeshes_Faces[OBJ_NUM][1]; f++) {
             if ((0 < f) && (f < allFaces.length)) { 
         
               int Tessellation = allFaces_MTLV[f][1];
@@ -36305,9 +36305,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         if (OBJ_NUM != 0) {
 
       
-          float Pivot_X = allPolymesh_SolarPivotXYZ[OBJ_NUM][0];
-          float Pivot_Y = allPolymesh_SolarPivotXYZ[OBJ_NUM][1];
-          float Pivot_Z = allPolymesh_SolarPivotXYZ[OBJ_NUM][2];
+          float Pivot_X = allPolymeshes_SolarPivotXYZ[OBJ_NUM][0];
+          float Pivot_Y = allPolymeshes_SolarPivotXYZ[OBJ_NUM][1];
+          float Pivot_Z = allPolymeshes_SolarPivotXYZ[OBJ_NUM][2];
           
           float[][] BoundingBox_Vertices = {{Pivot_X, Pivot_Y, Pivot_Z},
                                             {Pivot_X + 20, Pivot_Y, Pivot_Z},
@@ -36319,9 +36319,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
           int f_start = 0;
           int f_end = BoundingBox_Lines.length - 1;
           
-          if (allPolymesh_SolarPivotType[OBJ_NUM][0] == 1) {f_start = 0; f_end = f_start;}
-          if (allPolymesh_SolarPivotType[OBJ_NUM][0] == 2) {f_start = 1; f_end = f_start;}
-          if (allPolymesh_SolarPivotType[OBJ_NUM][0] == 3) {f_start = 2; f_end = f_start;}
+          if (allPolymeshes_SolarPivotType[OBJ_NUM][0] == 1) {f_start = 0; f_end = f_start;}
+          if (allPolymeshes_SolarPivotType[OBJ_NUM][0] == 2) {f_start = 1; f_end = f_start;}
+          if (allPolymeshes_SolarPivotType[OBJ_NUM][0] == 3) {f_start = 2; f_end = f_start;}
       
           for (int f = f_start; f <= f_end; f++) {
             
@@ -36812,18 +36812,18 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
             
             if (Display_Trees_People != 0) {
 
-              for (int f = 1; f <= allObject2D_num; f++) {
+              for (int f = 1; f <= allObject2Ds_num; f++) {
 
-                int n = abs(allObject2D_MAP[f]);
+                int n = abs(allObject2Ds_MAP[f]);
                 
                 int w = Object2DImages[n].width; 
                 int h = Object2DImages[n].height;
 
-                float r = allObject2D_XYZS[f][3] * 0.5;
+                float r = allObject2Ds_XYZS[f][3] * 0.5;
                 
                 float t = atan2(SunR[2], SunR[1]) + 0.5 * PI; 
                 
-                if (allObject2D_MAP[f] < 0) t += PI;         
+                if (allObject2Ds_MAP[f] < 0) t += PI;         
                
                 if (r > 2.5) { // to select only trees!               
                   
@@ -36834,9 +36834,9 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                     
                     TREES_Diagrams.texture(Object2DImages[n]); 
 
-                    x = allObject2D_XYZS[f][0];
-                    y = allObject2D_XYZS[f][1];
-                    z = allObject2D_XYZS[f][2];
+                    x = allObject2Ds_XYZS[f][0];
+                    y = allObject2Ds_XYZS[f][1];
+                    z = allObject2Ds_XYZS[f][2];
                     
                     float[] TX = {0,0,0,0};
                     float[] TY = {0,0,0,0};
@@ -36935,9 +36935,9 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                       
                       TREES_Diagrams.texture(Object2DImages[n]); 
                       
-                      x = allObject2D_XYZS[f][0];
-                      y = allObject2D_XYZS[f][1];
-                      z = allObject2D_XYZS[f][2];                      
+                      x = allObject2Ds_XYZS[f][0];
+                      y = allObject2Ds_XYZS[f][1];
+                      z = allObject2Ds_XYZS[f][2];                      
 
                       float[] TX = {0,0,0,0};
                       float[] TY = {0,0,0,0};
@@ -37138,26 +37138,26 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
             //now calculating Fractal plants
             if (Display_Fractals != 0) {
               
-              for (int f = 1; f <= allFractal_num; f++) {
+              for (int f = 1; f <= allFractals_num; f++) {
 
-                float x = allFractal_XYZSRA[f][0];
-                float y = allFractal_XYZSRA[f][1];
-                float z = allFractal_XYZSRA[f][2];
+                float x = allFractals_XYZSRA[f][0];
+                float y = allFractals_XYZSRA[f][1];
+                float z = allFractals_XYZSRA[f][2];
                 
-                float r = allFractal_XYZSRA[f][3] * 0.5;
-                float rot = allFractal_XYZSRA[f][4];      
+                float r = allFractals_XYZSRA[f][3] * 0.5;
+                float rot = allFractals_XYZSRA[f][4];      
           
-                int n = allFractal_Type[f];
+                int n = allFractals_Type[f];
 
-                int dMin = allFractal_DegreeMin[f];
+                int dMin = allFractals_DegreeMin[f];
           
-                int dMax = allFractal_DegreeMax[f];
+                int dMax = allFractals_DegreeMax[f];
           
-                int s = allFractal_Seed[f];
+                int s = allFractals_Seed[f];
                 
-                float TrunkSize = allFractal_TrunkSize[f];
+                float TrunkSize = allFractals_TrunkSize[f];
                 
-                float LeafSize = allFractal_LeafSize[f];
+                float LeafSize = allFractals_LeafSize[f];
                 
                 randomSeed(s);
           
@@ -37267,33 +37267,33 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           
           if (Display_Trees_People != 0) {
 
-            for (int f = 1; f <= allObject2D_num; f++) {
+            for (int f = 1; f <= allObject2Ds_num; f++) {
 
-              int n = abs(allObject2D_MAP[f]);
+              int n = abs(allObject2Ds_MAP[f]);
               
               int w = Object2DImages[n].width; 
               int h = Object2DImages[n].height;
 
-              float r = allObject2D_XYZS[f][3] * 0.5;
+              float r = allObject2Ds_XYZS[f][3] * 0.5;
               
               float t = atan2(SunR[2], SunR[1]) + 0.5 * PI;
               
-              if (allObject2D_MAP[f] < 0) t += PI;         
+              if (allObject2Ds_MAP[f] < 0) t += PI;         
              
               if (r > 2.5) { // to select only trees!               
 
-                float x = allObject2D_XYZS[f][0];
-                float y = allObject2D_XYZS[f][1];
-                float z = allObject2D_XYZS[f][2];
+                float x = allObject2Ds_XYZS[f][0];
+                float y = allObject2Ds_XYZS[f][1];
+                float z = allObject2Ds_XYZS[f][2];
 
                 { // Vertical mask
                   TREES_Diagrams.beginShape();
                   
                   TREES_Diagrams.texture(Object2DImages[n]); 
 
-                  x = allObject2D_XYZS[f][0];
-                  y = allObject2D_XYZS[f][1];
-                  z = allObject2D_XYZS[f][2];
+                  x = allObject2Ds_XYZS[f][0];
+                  y = allObject2Ds_XYZS[f][1];
+                  z = allObject2Ds_XYZS[f][2];
                   
                   float[] TX = {0,0,0,0};
                   float[] TY = {0,0,0,0};
@@ -37589,26 +37589,26 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
           //now calculating Fractal plants
           if (Display_Fractals != 0) {
             
-            for (int f = 1; f <= allFractal_num; f++) {
+            for (int f = 1; f <= allFractals_num; f++) {
 
-              float x = allFractal_XYZSRA[f][0];
-              float y = allFractal_XYZSRA[f][1];
-              float z = allFractal_XYZSRA[f][2];
+              float x = allFractals_XYZSRA[f][0];
+              float y = allFractals_XYZSRA[f][1];
+              float z = allFractals_XYZSRA[f][2];
               
-              float r = allFractal_XYZSRA[f][3] * 0.5;
-              float rot = allFractal_XYZSRA[f][4];      
+              float r = allFractals_XYZSRA[f][3] * 0.5;
+              float rot = allFractals_XYZSRA[f][4];      
         
-              int n = allFractal_Type[f];
+              int n = allFractals_Type[f];
 
-              int dMin = allFractal_DegreeMin[f];
+              int dMin = allFractals_DegreeMin[f];
         
-              int dMax = allFractal_DegreeMax[f];
+              int dMax = allFractals_DegreeMax[f];
         
-              int s = allFractal_Seed[f];
+              int s = allFractals_Seed[f];
               
-              float TrunkSize = allFractal_TrunkSize[f];
+              float TrunkSize = allFractals_TrunkSize[f];
               
-              float LeafSize = allFractal_LeafSize[f];
+              float LeafSize = allFractals_LeafSize[f];
               
               randomSeed(s);
         
@@ -37976,16 +37976,16 @@ float[][] SOLARCHVISION_getCorners_Camera (int Camera_Type, float Camera_X, floa
 void SOLARCHVISION_add_Section (int n, float u, float v, float elev, float rot, float dU, float dV, int RES1, int RES2) {
 
   int[] TempSection_Type = {n}; 
-  allSection_Type = concat(allSection_Type, TempSection_Type);
+  allSections_Type = concat(allSections_Type, TempSection_Type);
 
   int[] TempSection_RES1 = {RES1}; 
-  allSection_RES1 = concat(allSection_RES1, TempSection_RES1);
+  allSections_RES1 = concat(allSections_RES1, TempSection_RES1);
 
   int[] TempSection_RES2 = {RES2}; 
-  allSection_RES2 = concat(allSection_RES2, TempSection_RES2);
+  allSections_RES2 = concat(allSections_RES2, TempSection_RES2);
   
   PImage[] TempSection_SolidImpact = {createImage(RES1, RES2, RGB)}; 
-  allSection_SolidImpact = (PImage[]) concat(allSection_SolidImpact, TempSection_SolidImpact);
+  allSections_SolidImpact = (PImage[]) concat(allSections_SolidImpact, TempSection_SolidImpact);
   
   PImage[][] TempSection_SolarImpact = new PImage[1][(1 + STUDY_j_end - STUDY_j_start)];
   {
@@ -37994,43 +37994,43 @@ void SOLARCHVISION_add_Section (int n, float u, float v, float elev, float rot, 
       TempSection_SolarImpact[i][j] = createImage(2, 2, RGB);
     } 
   }
-  allSection_SolarImpact = (PImage[][]) concat(allSection_SolarImpact, TempSection_SolarImpact);    
+  allSections_SolarImpact = (PImage[][]) concat(allSections_SolarImpact, TempSection_SolarImpact);    
 
   float[][] TempSection_UVERAB = {{u, v, elev, rot, dU, dV}};
-  allSection_UVERAB = (float[][]) concat(allSection_UVERAB, TempSection_UVERAB);
+  allSections_UVERAB = (float[][]) concat(allSections_UVERAB, TempSection_UVERAB);
 
-  allSection_num += 1;
+  allSections_num += 1;
 
 }
 
 
-float[][] allSection_Vertices;
-int[][] allSection_Faces;
+float[][] allSections_Vertices;
+int[][] allSections_Faces;
 
 
 void SOLARCHVISION_draw_Sections () {
 
-  allSection_Faces = new int [allSection_num + 1][4];
+  allSections_Faces = new int [allSections_num + 1][4];
     
-  allSection_Vertices = new float [4 * allSection_num + 1][3];
-  allSection_Vertices[0][0] = 0;
-  allSection_Vertices[0][1] = 0;
-  allSection_Vertices[0][2] = 0;
+  allSections_Vertices = new float [4 * allSections_num + 1][3];
+  allSections_Vertices[0][0] = 0;
+  allSections_Vertices[0][1] = 0;
+  allSections_Vertices[0][2] = 0;
   
   if (Display_Sections != 0) {
 
-    for (int f = 1; f <= allSection_num; f++) {
+    for (int f = 1; f <= allSections_num; f++) {
       
-      float Section_offset_U = allSection_UVERAB[f][0];
-      float Section_offset_V = allSection_UVERAB[f][1];
-      float Section_Elevation = allSection_UVERAB[f][2];
-      float Section_Rotation = allSection_UVERAB[f][3];
-      float Section_scale_U = allSection_UVERAB[f][4];
-      float Section_scale_V = allSection_UVERAB[f][5];
+      float Section_offset_U = allSections_UVERAB[f][0];
+      float Section_offset_V = allSections_UVERAB[f][1];
+      float Section_Elevation = allSections_UVERAB[f][2];
+      float Section_Rotation = allSections_UVERAB[f][3];
+      float Section_scale_U = allSections_UVERAB[f][4];
+      float Section_scale_V = allSections_UVERAB[f][5];
 
-      int Section_Type = allSection_Type[f];
-      int Section_RES1 = allSection_RES1[f];
-      int Section_RES2 = allSection_RES2[f];
+      int Section_Type = allSections_Type[f];
+      int Section_RES1 = allSections_RES1[f];
+      int Section_RES2 = allSections_RES2[f];
 
       if (Section_Type != 0) {
 
@@ -38040,13 +38040,13 @@ void SOLARCHVISION_draw_Sections () {
         WIN3D_Diagrams.beginShape();
         
         if (Display_SolarImpact_Image != 0) { 
-          WIN3D_Diagrams.texture(allSection_SolarImpact[f][Day_of_Impact_to_Display]);
+          WIN3D_Diagrams.texture(allSections_SolarImpact[f][Day_of_Impact_to_Display]);
           
           WIN3D_Diagrams.noStroke();
           WIN3D_Diagrams.noFill();
         }
         else if (Display_SolidImpact_Image != 0){
-          WIN3D_Diagrams.texture(allSection_SolidImpact[f]);
+          WIN3D_Diagrams.texture(allSections_SolidImpact[f]);
           
           WIN3D_Diagrams.noStroke();
           WIN3D_Diagrams.noFill();
@@ -38064,16 +38064,16 @@ void SOLARCHVISION_draw_Sections () {
  
           WIN3D_Diagrams.vertex(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D, u * Section_RES1, v * Section_RES2);
 
-          allSection_Vertices[f * 4 - q + 1][0] = x;
-          allSection_Vertices[f * 4 - q + 1][1] = y;
-          allSection_Vertices[f * 4 - q + 1][2] = z;
+          allSections_Vertices[f * 4 - q + 1][0] = x;
+          allSections_Vertices[f * 4 - q + 1][1] = y;
+          allSections_Vertices[f * 4 - q + 1][2] = z;
           
         }        
 
-        allSection_Faces[f][0] = f * 4 - 3;
-        allSection_Faces[f][1] = f * 4 - 2;
-        allSection_Faces[f][2] = f * 4 - 1;
-        allSection_Faces[f][3] = f * 4 - 0;  
+        allSections_Faces[f][0] = f * 4 - 3;
+        allSections_Faces[f][1] = f * 4 - 2;
+        allSections_Faces[f][2] = f * 4 - 1;
+        allSections_Faces[f][3] = f * 4 - 0;  
 
         WIN3D_Diagrams.endShape(CLOSE);
 
@@ -38175,8 +38175,8 @@ float[][] SOLARCHVISION_getCorners_Section (int Section_Type, float Section_offs
 
 
 
-float[][] allSolid_Vertices;
-int[][] allSolid_Faces;
+float[][] allSolids_Vertices;
+int[][] allSolids_Faces;
 
 int Solids_DisplayFaces = 3; // internal - number of faces: XY, YZ, ZX
 int Solids_DisplayDegree = 16; //8; // internal - number of each face corners 
@@ -38184,18 +38184,18 @@ int Solids_DisplayDegree = 16; //8; // internal - number of each face corners
 
 void SOLARCHVISION_draw_Solids () {
   
-  allSolid_Faces = new int [Solids_DisplayFaces * allSolid_num + 1][Solids_DisplayDegree]; 
+  allSolids_Faces = new int [Solids_DisplayFaces * allSolids_num + 1][Solids_DisplayDegree]; 
     
-  allSolid_Vertices = new float [Solids_DisplayFaces * Solids_DisplayDegree * allSolid_num + 1][3];
-  allSolid_Vertices[0][0] = 0;
-  allSolid_Vertices[0][1] = 0;
-  allSolid_Vertices[0][2] = 0;
+  allSolids_Vertices = new float [Solids_DisplayFaces * Solids_DisplayDegree * allSolids_num + 1][3];
+  allSolids_Vertices[0][0] = 0;
+  allSolids_Vertices[0][1] = 0;
+  allSolids_Vertices[0][2] = 0;
   
   if (Display_Solids != 0) {
 
     WIN3D_Diagrams.strokeWeight(2);
     
-    for (int f = 1; f <= allSolid_num; f++) {
+    for (int f = 1; f <= allSolids_num; f++) {
       
       float Solid_posX = Solid_get_posX(f);
       float Solid_posY = Solid_get_posY(f);
@@ -38242,13 +38242,13 @@ void SOLARCHVISION_draw_Solids () {
             
             int vNo = (Solids_DisplayFaces * (f - 1) + plane_type) * Solids_DisplayDegree + q;
             
-            allSolid_Vertices[vNo][0] = x;
-            allSolid_Vertices[vNo][1] = y;
-            allSolid_Vertices[vNo][2] = z;
+            allSolids_Vertices[vNo][0] = x;
+            allSolids_Vertices[vNo][1] = y;
+            allSolids_Vertices[vNo][2] = z;
 
             int fNo = (Solids_DisplayFaces * (f - 1) + plane_type) + 1;
             
-            allSolid_Faces[fNo][q - 1] = vNo;
+            allSolids_Faces[fNo][q - 1] = vNo;
           }
         }        
   
@@ -38350,69 +38350,69 @@ float[][] SOLARCHVISION_getCorners_Solid (int plane_type, float Solid_posX, floa
 void SOLARCHVISION_add_Fractal (int PlantType, float x, float y, float z, float s, float rot, int PlantDegreeMin, int PlantDegreeMax, int PlantSeed, float TrunkSize, float LeafSize, float as_Solid) {
 
   float[] TempFractal_TrunkSize = {TrunkSize}; 
-  allFractal_TrunkSize = concat(allFractal_TrunkSize, TempFractal_TrunkSize);  
+  allFractals_TrunkSize = concat(allFractals_TrunkSize, TempFractal_TrunkSize);  
   
   float[] TempFractal_LeafSize = {LeafSize}; 
-  allFractal_LeafSize = concat(allFractal_LeafSize, TempFractal_LeafSize);
+  allFractals_LeafSize = concat(allFractals_LeafSize, TempFractal_LeafSize);
   
   int[] TempFractal_Type = {PlantType}; 
-  allFractal_Type = concat(allFractal_Type, TempFractal_Type);
+  allFractals_Type = concat(allFractals_Type, TempFractal_Type);
 
   int[] TempFractal_DegreeMin = {PlantDegreeMin}; 
-  allFractal_DegreeMin = concat(allFractal_DegreeMin, TempFractal_DegreeMin);
+  allFractals_DegreeMin = concat(allFractals_DegreeMin, TempFractal_DegreeMin);
   
   int[] TempFractal_DegreeMax = {PlantDegreeMax}; 
-  allFractal_DegreeMax = concat(allFractal_DegreeMax, TempFractal_DegreeMax);
+  allFractals_DegreeMax = concat(allFractals_DegreeMax, TempFractal_DegreeMax);
 
   int q = PlantSeed;
   if (q == -1) q = int(random(0, 100));
 
   int[] TempFractal_Seed = {q}; 
-  allFractal_Seed = concat(allFractal_Seed, TempFractal_Seed);
+  allFractals_Seed = concat(allFractals_Seed, TempFractal_Seed);
 
   float[][] TempFractal_XYZSRA = {{x, y, z, s, rot, as_Solid}};
-  allFractal_XYZSRA = (float[][]) concat(allFractal_XYZSRA, TempFractal_XYZSRA);
+  allFractals_XYZSRA = (float[][]) concat(allFractals_XYZSRA, TempFractal_XYZSRA);
 
-  allFractal_num += 1;
+  allFractals_num += 1;
 
 }
 
-float[][] allFractal_Vertices;
-int[][] allFractal_Faces;
+float[][] allFractals_Vertices;
+int[][] allFractals_Faces;
 
 
 void SOLARCHVISION_draw_Fractals () {
 
-  allFractal_Faces = new int [1 + allFractal_num][4];
+  allFractals_Faces = new int [1 + allFractals_num][4];
     
-  allFractal_Vertices = new float [4 * allFractal_num + 1][3];
-  allFractal_Vertices[0][0] = 0;
-  allFractal_Vertices[0][1] = 0;
-  allFractal_Vertices[0][2] = 0;
+  allFractals_Vertices = new float [4 * allFractals_num + 1][3];
+  allFractals_Vertices[0][0] = 0;
+  allFractals_Vertices[0][1] = 0;
+  allFractals_Vertices[0][2] = 0;
   
   if (Display_Fractals != 0) {
 
-    for (int f = 1; f <= allFractal_num; f++) {
+    for (int f = 1; f <= allFractals_num; f++) {
 
-      float x = allFractal_XYZSRA[f][0];
-      float y = allFractal_XYZSRA[f][1];
-      float z = allFractal_XYZSRA[f][2];
+      float x = allFractals_XYZSRA[f][0];
+      float y = allFractals_XYZSRA[f][1];
+      float z = allFractals_XYZSRA[f][2];
       
-      float r = allFractal_XYZSRA[f][3] * 0.5;
-      float rot = allFractal_XYZSRA[f][4];
-      float as_Solid = allFractal_XYZSRA[f][5];
+      float r = allFractals_XYZSRA[f][3] * 0.5;
+      float rot = allFractals_XYZSRA[f][4];
+      float as_Solid = allFractals_XYZSRA[f][5];
 
-      int n = allFractal_Type[f];
+      int n = allFractals_Type[f];
 
-      int dMin = allFractal_DegreeMin[f];
+      int dMin = allFractals_DegreeMin[f];
 
-      int dMax = allFractal_DegreeMax[f];
+      int dMax = allFractals_DegreeMax[f];
 
-      int s = allFractal_Seed[f];
+      int s = allFractals_Seed[f];
 
-      float TrunkSize = allFractal_TrunkSize[f];
+      float TrunkSize = allFractals_TrunkSize[f];
       
-      float LeafSize = allFractal_LeafSize[f];
+      float LeafSize = allFractals_LeafSize[f];
       
       randomSeed(s);
 
@@ -38424,7 +38424,7 @@ void SOLARCHVISION_draw_Fractals () {
         SOLARCHVISION_Plant_branch(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize, as_Solid);
         
         if (as_Solid != 0) {
-          allFractal_XYZSRA[f][5] = 0; 
+          allFractals_XYZSRA[f][5] = 0; 
         }
         
         
@@ -38439,26 +38439,26 @@ void SOLARCHVISION_draw_Fractals () {
         if (WIN3D_View_Type == 1) t = atan2(y - CAM_y, x - CAM_x) + 0.5 * PI; 
 
         {
-          allFractal_Vertices[f * 4 - 3][0] = (x - r * cos(t)) / OBJECTS_scale;
-          allFractal_Vertices[f * 4 - 3][1] = (y - r * sin(t)) / OBJECTS_scale;
-          allFractal_Vertices[f * 4 - 3][2] = (z) / OBJECTS_scale;
+          allFractals_Vertices[f * 4 - 3][0] = (x - r * cos(t)) / OBJECTS_scale;
+          allFractals_Vertices[f * 4 - 3][1] = (y - r * sin(t)) / OBJECTS_scale;
+          allFractals_Vertices[f * 4 - 3][2] = (z) / OBJECTS_scale;
 
-          allFractal_Vertices[f * 4 - 2][0] = (x + r * cos(t)) / OBJECTS_scale;
-          allFractal_Vertices[f * 4 - 2][1] = (y + r * sin(t)) / OBJECTS_scale;
-          allFractal_Vertices[f * 4 - 2][2] = (z) / OBJECTS_scale;
+          allFractals_Vertices[f * 4 - 2][0] = (x + r * cos(t)) / OBJECTS_scale;
+          allFractals_Vertices[f * 4 - 2][1] = (y + r * sin(t)) / OBJECTS_scale;
+          allFractals_Vertices[f * 4 - 2][2] = (z) / OBJECTS_scale;
 
-          allFractal_Vertices[f * 4 - 1][0] = (x + r * cos(t)) / OBJECTS_scale;
-          allFractal_Vertices[f * 4 - 1][1] = (y + r * sin(t)) / OBJECTS_scale;
-          allFractal_Vertices[f * 4 - 1][2] = (z + 2 * r) / OBJECTS_scale;
+          allFractals_Vertices[f * 4 - 1][0] = (x + r * cos(t)) / OBJECTS_scale;
+          allFractals_Vertices[f * 4 - 1][1] = (y + r * sin(t)) / OBJECTS_scale;
+          allFractals_Vertices[f * 4 - 1][2] = (z + 2 * r) / OBJECTS_scale;
 
-          allFractal_Vertices[f * 4 - 0][0] = (x - r * cos(t)) / OBJECTS_scale;
-          allFractal_Vertices[f * 4 - 0][1] = (y - r * sin(t)) / OBJECTS_scale;
-          allFractal_Vertices[f * 4 - 0][2] = (z + 2 * r) / OBJECTS_scale;
+          allFractals_Vertices[f * 4 - 0][0] = (x - r * cos(t)) / OBJECTS_scale;
+          allFractals_Vertices[f * 4 - 0][1] = (y - r * sin(t)) / OBJECTS_scale;
+          allFractals_Vertices[f * 4 - 0][2] = (z + 2 * r) / OBJECTS_scale;
 
-          allFractal_Faces[f][0] = f * 4 - 3;
-          allFractal_Faces[f][1] = f * 4 - 2;
-          allFractal_Faces[f][2] = f * 4 - 1;
-          allFractal_Faces[f][3] = f * 4 - 0;
+          allFractals_Faces[f][0] = f * 4 - 3;
+          allFractals_Faces[f][1] = f * 4 - 2;
+          allFractals_Faces[f][2] = f * 4 - 1;
+          allFractals_Faces[f][3] = f * 4 - 0;
         }        
                 
       }
@@ -39038,7 +39038,7 @@ int[] SOLARCHVISION_get_selectedPolymesh_Vertices () {
     
     if (OBJ_NUM != 0) {
   
-      for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
+      for (int f = allPolymeshes_Faces[OBJ_NUM][0]; f <= allPolymeshes_Faces[OBJ_NUM][1]; f++) {
 
         if ((0 < f) && (f < allFaces.length)) { 
           for (int j = 0; j < allFaces[f].length; j++) {
@@ -39146,16 +39146,16 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
       if (Work_with_2D_or_3D == 8) {
         int n = theVertices[q];
 
-        float Section_offset_U = allSection_UVERAB[n][0];
-        float Section_offset_V = allSection_UVERAB[n][1];
-        float Section_Elevation = allSection_UVERAB[n][2];
-        float Section_Rotation = allSection_UVERAB[n][3];
-        float Section_scale_U = allSection_UVERAB[n][4];
-        float Section_scale_V = allSection_UVERAB[n][5];
+        float Section_offset_U = allSections_UVERAB[n][0];
+        float Section_offset_V = allSections_UVERAB[n][1];
+        float Section_Elevation = allSections_UVERAB[n][2];
+        float Section_Rotation = allSections_UVERAB[n][3];
+        float Section_scale_U = allSections_UVERAB[n][4];
+        float Section_scale_V = allSections_UVERAB[n][5];
   
-        int Section_Type = allSection_Type[n];
-        int Section_RES1 = allSection_RES1[n];
-        int Section_RES2 = allSection_RES2[n];
+        int Section_Type = allSections_Type[n];
+        int Section_RES1 = allSections_RES1[n];
+        int Section_RES2 = allSections_RES2[n];
         
         float[][] ImageVertex = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
 
@@ -39193,12 +39193,12 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
       if (Work_with_2D_or_3D == 2) {
         int n = theVertices[q];
         
-        POS_now = allObject2D_XYZS[n][j];
+        POS_now = allObject2Ds_XYZS[n][j];
       }     
       if (Work_with_2D_or_3D == 1) {
         int n = theVertices[q];
         
-        POS_now = allFractal_XYZSRA[n][j];
+        POS_now = allFractals_XYZSRA[n][j];
       }  
       if (Work_with_2D_or_3D == 0) {
         int n = theVertices[q];
@@ -39337,13 +39337,13 @@ void SOLARCHVISION_move_selectedPolymeshes (float dx, float dy, float dz) {
     if (OBJ_NUM != 0) {  
       
       {
-        allPolymesh_SolarPivotXYZ[OBJ_NUM][0] += dx;
-        allPolymesh_SolarPivotXYZ[OBJ_NUM][1] += dy;
-        allPolymesh_SolarPivotXYZ[OBJ_NUM][2] += dz;
+        allPolymeshes_SolarPivotXYZ[OBJ_NUM][0] += dx;
+        allPolymeshes_SolarPivotXYZ[OBJ_NUM][1] += dy;
+        allPolymeshes_SolarPivotXYZ[OBJ_NUM][2] += dz;
       }
       
-      for (int g = allPolymesh_Solids[OBJ_NUM][0]; g <= allPolymesh_Solids[OBJ_NUM][1]; g++) {
-        if ((0 < g) && (g <= allSolid_num)) {
+      for (int g = allPolymeshes_Solids[OBJ_NUM][0]; g <= allPolymeshes_Solids[OBJ_NUM][1]; g++) {
+        if ((0 < g) && (g <= allSolids_num)) {
           
           float Solid_posX = Solid_get_posX(g);
           float Solid_posY = Solid_get_posY(g);
@@ -39403,29 +39403,29 @@ void SOLARCHVISION_rotate_selectedPolymeshes (float x0, float y0, float z0, floa
     if (OBJ_NUM != 0) {  
       
       { 
-        float x = allPolymesh_SolarPivotXYZ[OBJ_NUM][0] - x0; 
-        float y = allPolymesh_SolarPivotXYZ[OBJ_NUM][1] - y0; 
-        float z = allPolymesh_SolarPivotXYZ[OBJ_NUM][2] - z0;
+        float x = allPolymeshes_SolarPivotXYZ[OBJ_NUM][0] - x0; 
+        float y = allPolymeshes_SolarPivotXYZ[OBJ_NUM][1] - y0; 
+        float z = allPolymeshes_SolarPivotXYZ[OBJ_NUM][2] - z0;
         
         if (the_Vector == 2) {
-          allPolymesh_SolarPivotXYZ[OBJ_NUM][0] = x0 + (x * cos(r) - y * sin(r)); 
-          allPolymesh_SolarPivotXYZ[OBJ_NUM][1] = y0 + (x * sin(r) + y * cos(r));
-          allPolymesh_SolarPivotXYZ[OBJ_NUM][2] = z0 + (z);
+          allPolymeshes_SolarPivotXYZ[OBJ_NUM][0] = x0 + (x * cos(r) - y * sin(r)); 
+          allPolymeshes_SolarPivotXYZ[OBJ_NUM][1] = y0 + (x * sin(r) + y * cos(r));
+          allPolymeshes_SolarPivotXYZ[OBJ_NUM][2] = z0 + (z);
         }
         else if (the_Vector == 1) {
-          allPolymesh_SolarPivotXYZ[OBJ_NUM][0] = x0 + (z * sin(r) + x * cos(r)); 
-          allPolymesh_SolarPivotXYZ[OBJ_NUM][1] = y0 + (y);
-          allPolymesh_SolarPivotXYZ[OBJ_NUM][2] = z0 + (z * cos(r) - x * sin(r));
+          allPolymeshes_SolarPivotXYZ[OBJ_NUM][0] = x0 + (z * sin(r) + x * cos(r)); 
+          allPolymeshes_SolarPivotXYZ[OBJ_NUM][1] = y0 + (y);
+          allPolymeshes_SolarPivotXYZ[OBJ_NUM][2] = z0 + (z * cos(r) - x * sin(r));
         }    
         else if (the_Vector == 0) {
-          allPolymesh_SolarPivotXYZ[OBJ_NUM][0] = x0 + (x); 
-          allPolymesh_SolarPivotXYZ[OBJ_NUM][1] = y0 + (y * cos(r) - z * sin(r));
-          allPolymesh_SolarPivotXYZ[OBJ_NUM][2] = z0 + (y * sin(r) + z * cos(r));
+          allPolymeshes_SolarPivotXYZ[OBJ_NUM][0] = x0 + (x); 
+          allPolymeshes_SolarPivotXYZ[OBJ_NUM][1] = y0 + (y * cos(r) - z * sin(r));
+          allPolymeshes_SolarPivotXYZ[OBJ_NUM][2] = z0 + (y * sin(r) + z * cos(r));
         }          
       }    
       
-      for (int g = allPolymesh_Solids[OBJ_NUM][0]; g <= allPolymesh_Solids[OBJ_NUM][1]; g++) {
-        if ((0 < g) && (g <= allSolid_num)) {
+      for (int g = allPolymeshes_Solids[OBJ_NUM][0]; g <= allPolymeshes_Solids[OBJ_NUM][1]; g++) {
+        if ((0 < g) && (g <= allSolids_num)) {
 
           float Solid_posX = Solid_get_posX(g);
           float Solid_posY = Solid_get_posY(g);
@@ -39505,13 +39505,13 @@ void SOLARCHVISION_scale_selectedPolymeshes (float x0, float y0, float z0, float
     if (OBJ_NUM != 0) {
       
       {
-        allPolymesh_SolarPivotXYZ[OBJ_NUM][0] = x0 + sx * (allPolymesh_SolarPivotXYZ[OBJ_NUM][0] - x0);
-        allPolymesh_SolarPivotXYZ[OBJ_NUM][1] = y0 + sy * (allPolymesh_SolarPivotXYZ[OBJ_NUM][1] - y0);
-        allPolymesh_SolarPivotXYZ[OBJ_NUM][2] = z0 + sz * (allPolymesh_SolarPivotXYZ[OBJ_NUM][2] - z0);
+        allPolymeshes_SolarPivotXYZ[OBJ_NUM][0] = x0 + sx * (allPolymeshes_SolarPivotXYZ[OBJ_NUM][0] - x0);
+        allPolymeshes_SolarPivotXYZ[OBJ_NUM][1] = y0 + sy * (allPolymeshes_SolarPivotXYZ[OBJ_NUM][1] - y0);
+        allPolymeshes_SolarPivotXYZ[OBJ_NUM][2] = z0 + sz * (allPolymeshes_SolarPivotXYZ[OBJ_NUM][2] - z0);
       }
       
-      for (int g = allPolymesh_Solids[OBJ_NUM][0]; g <= allPolymesh_Solids[OBJ_NUM][1]; g++) {
-        if ((0 < g) && (g <= allSolid_num)) {
+      for (int g = allPolymeshes_Solids[OBJ_NUM][0]; g <= allPolymeshes_Solids[OBJ_NUM][1]; g++) {
+        if ((0 < g) && (g <= allSolids_num)) {
           
           float Solid_posX = Solid_get_posX(g);
           float Solid_posY = Solid_get_posY(g);
@@ -39847,9 +39847,9 @@ void SOLARCHVISION_move_selectedSections (float dx, float dy, float dz) {
     
     int n = selectedSection_numbers[q];
     
-    allSection_UVERAB[n][0] += dx;
-    allSection_UVERAB[n][1] += dy;
-    allSection_UVERAB[n][2] += dz;
+    allSections_UVERAB[n][0] += dx;
+    allSections_UVERAB[n][1] += dy;
+    allSections_UVERAB[n][2] += dz;
 
   }
 
@@ -39867,7 +39867,7 @@ void SOLARCHVISION_rotate_selectedSections (float r) {
     
     int n = selectedSection_numbers[q];
     
-    allSection_UVERAB[n][3] += r * 180.0 / PI; 
+    allSections_UVERAB[n][3] += r * 180.0 / PI; 
     
   }
   
@@ -39884,8 +39884,8 @@ void SOLARCHVISION_scale_selectedSections (float sx, float sy) {
     
     int n = selectedSection_numbers[q];
     
-    allSection_UVERAB[n][4] *= sx;
-    allSection_UVERAB[n][5] *= sy;
+    allSections_UVERAB[n][4] *= sx;
+    allSections_UVERAB[n][5] *= sy;
     
   }
   
@@ -40107,18 +40107,18 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
       
       if (OBJ_NUM != 0) {      
     
-        float x = allObject2D_XYZS[OBJ_NUM][0] - x0; 
-        float y = allObject2D_XYZS[OBJ_NUM][1] - y0; 
-        //float z = allObject2D_XYZS[OBJ_NUM][2] - z0;
+        float x = allObject2Ds_XYZS[OBJ_NUM][0] - x0; 
+        float y = allObject2Ds_XYZS[OBJ_NUM][1] - y0; 
+        //float z = allObject2Ds_XYZS[OBJ_NUM][2] - z0;
        
-        allObject2D_XYZS[OBJ_NUM][0] = x0 + sx * x; 
-        allObject2D_XYZS[OBJ_NUM][1] = y0 + sy * y;
-        //allObject2D_XYZS[OBJ_NUM][2] = z0 + sz * z;
+        allObject2Ds_XYZS[OBJ_NUM][0] = x0 + sx * x; 
+        allObject2Ds_XYZS[OBJ_NUM][1] = y0 + sy * y;
+        //allObject2Ds_XYZS[OBJ_NUM][2] = z0 + sz * z;
 
-        int n = allObject2D_MAP[OBJ_NUM];
+        int n = allObject2Ds_MAP[OBJ_NUM];
 
         if (abs(n) > n1) { // does not scale poeple!    
-          allObject2D_XYZS[OBJ_NUM][3] *= sz; 
+          allObject2Ds_XYZS[OBJ_NUM][3] *= sz; 
         }
       }
     }
@@ -40132,15 +40132,15 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
         
       if (OBJ_NUM != 0) {      
     
-        float x = allFractal_XYZSRA[OBJ_NUM][0] - x0; 
-        float y = allFractal_XYZSRA[OBJ_NUM][1] - y0; 
-        //float z = allFractal_XYZSRA[OBJ_NUM][2] - z0;
+        float x = allFractals_XYZSRA[OBJ_NUM][0] - x0; 
+        float y = allFractals_XYZSRA[OBJ_NUM][1] - y0; 
+        //float z = allFractals_XYZSRA[OBJ_NUM][2] - z0;
         
-        allFractal_XYZSRA[OBJ_NUM][0] = x0 + sx * x; 
-        allFractal_XYZSRA[OBJ_NUM][1] = y0 + sy * y;
-        //allFractal_XYZSRA[OBJ_NUM][2] = z0 + sz * z;
+        allFractals_XYZSRA[OBJ_NUM][0] = x0 + sx * x; 
+        allFractals_XYZSRA[OBJ_NUM][1] = y0 + sy * y;
+        //allFractals_XYZSRA[OBJ_NUM][2] = z0 + sz * z;
 
-        allFractal_XYZSRA[OBJ_NUM][3] *= sz; // <<<<<<<<<<<<<<
+        allFractals_XYZSRA[OBJ_NUM][3] *= sz; // <<<<<<<<<<<<<<
       }
     }
   }  
@@ -40202,7 +40202,7 @@ void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int 
       
       if (OBJ_NUM != 0) {      
         
-        allFractal_XYZSRA[OBJ_NUM][4] += r; 
+        allFractals_XYZSRA[OBJ_NUM][4] += r; 
       }
     }
   }   
@@ -40262,9 +40262,9 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
       
       if (OBJ_NUM != 0) {      
         
-        allObject2D_XYZS[OBJ_NUM][0] += dx; 
-        allObject2D_XYZS[OBJ_NUM][1] += dy; 
-        allObject2D_XYZS[OBJ_NUM][2] += dz;
+        allObject2Ds_XYZS[OBJ_NUM][0] += dx; 
+        allObject2Ds_XYZS[OBJ_NUM][1] += dy; 
+        allObject2Ds_XYZS[OBJ_NUM][2] += dz;
       }
     }
   }  
@@ -40277,9 +40277,9 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
       
       if (OBJ_NUM != 0) {      
         
-        allFractal_XYZSRA[OBJ_NUM][0] += dx; 
-        allFractal_XYZSRA[OBJ_NUM][1] += dy; 
-        allFractal_XYZSRA[OBJ_NUM][2] += dz;
+        allFractals_XYZSRA[OBJ_NUM][0] += dx; 
+        allFractals_XYZSRA[OBJ_NUM][1] += dy; 
+        allFractals_XYZSRA[OBJ_NUM][2] += dz;
       }
     }
   }    
@@ -40333,9 +40333,9 @@ void SOLARCHVISION_drop_Selection () {
       
       if (OBJ_NUM != 0) {      
         
-        float x = allObject2D_XYZS[OBJ_NUM][0];
-        float y = allObject2D_XYZS[OBJ_NUM][1];
-        float z = allObject2D_XYZS[OBJ_NUM][2];
+        float x = allObject2Ds_XYZS[OBJ_NUM][0];
+        float y = allObject2Ds_XYZS[OBJ_NUM][1];
+        float z = allObject2Ds_XYZS[OBJ_NUM][2];
 
         float[] ray_start = {x, y, z};
 
@@ -40354,9 +40354,9 @@ void SOLARCHVISION_drop_Selection () {
         }
 
         if (RxP[4] > 0) {
-          allObject2D_XYZS[OBJ_NUM][0] = RxP[0]; 
-          allObject2D_XYZS[OBJ_NUM][1] = RxP[1]; 
-          allObject2D_XYZS[OBJ_NUM][2] = RxP[2];
+          allObject2Ds_XYZS[OBJ_NUM][0] = RxP[0]; 
+          allObject2Ds_XYZS[OBJ_NUM][1] = RxP[1]; 
+          allObject2Ds_XYZS[OBJ_NUM][2] = RxP[2];
         }
         else {
           ray_direction[2] = 1; // <<<< going upwards
@@ -40372,9 +40372,9 @@ void SOLARCHVISION_drop_Selection () {
           }
           
           if (RxP[4] > 0) {
-            allObject2D_XYZS[OBJ_NUM][0] = RxP[0]; 
-            allObject2D_XYZS[OBJ_NUM][1] = RxP[1]; 
-            allObject2D_XYZS[OBJ_NUM][2] = RxP[2];
+            allObject2Ds_XYZS[OBJ_NUM][0] = RxP[0]; 
+            allObject2Ds_XYZS[OBJ_NUM][1] = RxP[1]; 
+            allObject2Ds_XYZS[OBJ_NUM][2] = RxP[2];
           }          
         }
           
@@ -40390,9 +40390,9 @@ void SOLARCHVISION_drop_Selection () {
       
       if (OBJ_NUM != 0) {      
         
-        float x = allFractal_XYZSRA[OBJ_NUM][0];
-        float y = allFractal_XYZSRA[OBJ_NUM][1];
-        float z = allFractal_XYZSRA[OBJ_NUM][2];
+        float x = allFractals_XYZSRA[OBJ_NUM][0];
+        float y = allFractals_XYZSRA[OBJ_NUM][1];
+        float z = allFractals_XYZSRA[OBJ_NUM][2];
 
         float[] ray_start = {x, y, z};
 
@@ -40411,9 +40411,9 @@ void SOLARCHVISION_drop_Selection () {
         }
 
         if (RxP[4] > 0) {
-          allFractal_XYZSRA[OBJ_NUM][0] = RxP[0]; 
-          allFractal_XYZSRA[OBJ_NUM][1] = RxP[1]; 
-          allFractal_XYZSRA[OBJ_NUM][2] = RxP[2];
+          allFractals_XYZSRA[OBJ_NUM][0] = RxP[0]; 
+          allFractals_XYZSRA[OBJ_NUM][1] = RxP[1]; 
+          allFractals_XYZSRA[OBJ_NUM][2] = RxP[2];
         }
         else {
           ray_direction[2] = 1; // <<<< going upwards
@@ -40429,9 +40429,9 @@ void SOLARCHVISION_drop_Selection () {
           }
           
           if (RxP[4] > 0) {
-            allFractal_XYZSRA[OBJ_NUM][0] = RxP[0]; 
-            allFractal_XYZSRA[OBJ_NUM][1] = RxP[1]; 
-            allFractal_XYZSRA[OBJ_NUM][2] = RxP[2];
+            allFractals_XYZSRA[OBJ_NUM][0] = RxP[0]; 
+            allFractals_XYZSRA[OBJ_NUM][1] = RxP[1]; 
+            allFractals_XYZSRA[OBJ_NUM][2] = RxP[2];
           }          
         }
           
@@ -40486,25 +40486,25 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         int f = OBJ_NUM;
       
         if (View_Select_Create_Modify == 4) {
-          int n = allSection_Type[f];
+          int n = allSections_Type[f];
           n += p;
           if (n > 3) n = 0;
           if (n < 0) n = 3;
-          allSection_Type[f] = n;         
+          allSections_Type[f] = n;         
      
           Solids_updated = 1;      
         }        
       
         if (View_Select_Create_Modify == 5) {
-          int n = allSection_RES1[f];
+          int n = allSections_RES1[f];
           if (p > 0) n *= 2;
           if (p < 0) n /= 2;
           
           if (n > 1600) n = 100;
           if (n < 100) n = 1600;
-          allSection_RES1[f] = n;
+          allSections_RES1[f] = n;
           
-          allSection_RES2[f] = n; // also modifying the other one
+          allSections_RES2[f] = n; // also modifying the other one
           
           println("RES:", n);
           
@@ -40631,7 +40631,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
       
       if (OBJ_NUM != 0) {      
         
-        for (int f = allPolymesh_Faces[OBJ_NUM][0]; f <= allPolymesh_Faces[OBJ_NUM][1]; f++) {
+        for (int f = allPolymeshes_Faces[OBJ_NUM][0]; f <= allPolymeshes_Faces[OBJ_NUM][1]; f++) {
           if ((0 < f) && (f < allFaces.length)) {
         
             if (View_Select_Create_Modify == 4) {
@@ -40681,7 +40681,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
         
         if (View_Select_Create_Modify == 4) {
          
-          int n = allObject2D_MAP[OBJ_NUM];
+          int n = allObject2Ds_MAP[OBJ_NUM];
           int sign_n = 1;
           if (n < 0) sign_n = -1;
           
@@ -40708,7 +40708,7 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           
           n *= sign_n;
           
-          allObject2D_MAP[OBJ_NUM] = n;
+          allObject2Ds_MAP[OBJ_NUM] = n;
         } 
       }
     }    
@@ -40724,24 +40724,24 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
 
         if (View_Select_Create_Modify == 4) {
           
-          allFractal_Seed[OBJ_NUM] += p;
+          allFractals_Seed[OBJ_NUM] += p;
           
         } 
         if (View_Select_Create_Modify == 8) {
-          int q = allFractal_DegreeMax[OBJ_NUM];
+          int q = allFractals_DegreeMax[OBJ_NUM];
           
           q += p;
           
           if (q < 0) q = 0;
           
-          allFractal_DegreeMax[OBJ_NUM] = q;
+          allFractals_DegreeMax[OBJ_NUM] = q;
 
           Create_Fractal_DegreeMax = q;
           ROLLOUT_Update = 1;
         }
         if (View_Select_Create_Modify == 9) {
-          int q1 = allFractal_DegreeMin[OBJ_NUM];
-          int q2 = allFractal_DegreeMax[OBJ_NUM];
+          int q1 = allFractals_DegreeMin[OBJ_NUM];
+          int q2 = allFractals_DegreeMax[OBJ_NUM];
           q1 += p;
           q2 += p;
           
@@ -40752,8 +40752,8 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           
           if (change_them == 1) {
           
-            allFractal_DegreeMin[OBJ_NUM] = q1;
-            allFractal_DegreeMax[OBJ_NUM] = q2;
+            allFractals_DegreeMin[OBJ_NUM] = q1;
+            allFractals_DegreeMax[OBJ_NUM] = q2;
   
             Create_Fractal_DegreeMin = q1;
             Create_Fractal_DegreeMax = q2;
@@ -40762,37 +40762,37 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
           }
         }
         if (View_Select_Create_Modify == 10) {
-          int q = allFractal_DegreeMin[OBJ_NUM];
+          int q = allFractals_DegreeMin[OBJ_NUM];
           
           q += p;
           
           if (q < 0) q = 0;
           
-          allFractal_DegreeMin[OBJ_NUM] = q;
+          allFractals_DegreeMin[OBJ_NUM] = q;
 
           Create_Fractal_DegreeMin = q;
           ROLLOUT_Update = 1;
         }        
         if (View_Select_Create_Modify == 11) {
-          float q = allFractal_TrunkSize[OBJ_NUM];
+          float q = allFractals_TrunkSize[OBJ_NUM];
           
           q += 0.25 * p;
           
           if (q < 0) q = 0;
           
-          allFractal_TrunkSize[OBJ_NUM] = q;
+          allFractals_TrunkSize[OBJ_NUM] = q;
           
           Create_Fractal_TrunkSize = q;
           ROLLOUT_Update = 1;
         }
         if (View_Select_Create_Modify == 12) {
-          float q = allFractal_LeafSize[OBJ_NUM];
+          float q = allFractals_LeafSize[OBJ_NUM];
           
           q += 0.25 * p;
           
           if (q < 0) q = 0;
           
-          allFractal_LeafSize[OBJ_NUM] = q;
+          allFractals_LeafSize[OBJ_NUM] = q;
 
           Create_Fractal_LeafSize = q;
           ROLLOUT_Update = 1;
@@ -44804,8 +44804,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
 
   {
-    newChild1 = my_xml.addChild("allSection_SolidImpact");
-    int ni = allSection_SolidImpact.length;
+    newChild1 = my_xml.addChild("allSections_SolidImpact");
+    int ni = allSections_SolidImpact.length;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
         
@@ -44814,7 +44814,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       String TEXTURE_path = ProjectsFolder + "/Textures/" + the_filename;
   
       println("Saving texture:", TEXTURE_path);
-      allSection_SolidImpact[i].save(TEXTURE_path);
+      allSections_SolidImpact[i].save(TEXTURE_path);
   
       newChild2 = newChild1.addChild("Path");
       newChild2.setInt("id", i); 
@@ -44823,9 +44823,9 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   }
 
   {
-    newChild1 = my_xml.addChild("allSection_SolarImpact");
-    int ni = allSection_SolarImpact.length;
-    int nj = allSection_SolarImpact[0].length;
+    newChild1 = my_xml.addChild("allSections_SolarImpact");
+    int ni = allSections_SolarImpact.length;
+    int nj = allSections_SolarImpact[0].length;
     newChild1.setInt("ni", ni);
     newChild1.setInt("nj", nj);
     
@@ -44840,7 +44840,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
         String TEXTURE_path = ProjectsFolder + "/Textures/" + the_filename;
     
         println("Saving texture:", TEXTURE_path);
-        allSection_SolarImpact[i][j].save(TEXTURE_path);
+        allSections_SolarImpact[i][j].save(TEXTURE_path);
     
         newChild2 = newChild1.addChild("Path");
         newChild2.setInt("id", i * nj + j); 
@@ -44898,40 +44898,40 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   }  
 
   {
-    newChild1 = my_xml.addChild("allSection");
-    int ni = 1 + allSection_num;
+    newChild1 = my_xml.addChild("allSections");
+    int ni = 1 + allSections_num;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
       newChild2 = newChild1.addChild("Section");
       newChild2.setInt("id", i);
       String lineSTR = "";
-      //for (int j = 0; j < allSection_UVERAB[i].length; j++) {
+      //for (int j = 0; j < allSections_UVERAB[i].length; j++) {
       for (int j = 0; j < 6; j++) { // u, v, e, r, a, b
-        lineSTR += nf(allSection_UVERAB[i][j], 0, 4).replace(",", "."); // <<<<
+        lineSTR += nf(allSections_UVERAB[i][j], 0, 4).replace(",", "."); // <<<<
         lineSTR += ",";
       }
-      lineSTR += nf(allSection_Type[i], 0);
+      lineSTR += nf(allSections_Type[i], 0);
       lineSTR += ",";
-      lineSTR += nf(allSection_RES1[i], 0);
+      lineSTR += nf(allSections_RES1[i], 0);
       lineSTR += ",";
-      lineSTR += nf(allSection_RES2[i], 0);
+      lineSTR += nf(allSections_RES2[i], 0);
       
       newChild2.setContent(lineSTR);
     } 
   }
   
   {
-    newChild1 = my_xml.addChild("allSolid");
-    int ni = 1 + allSolid_num;
+    newChild1 = my_xml.addChild("allSolids");
+    int ni = 1 + allSolids_num;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
       newChild2 = newChild1.addChild("Solid");
       newChild2.setInt("id", i);
       String lineSTR = "";
-      //for (int j = 0; j < allSolid_XYZPPPSSSRRRV[i].length; j++) {
+      //for (int j = 0; j < allSolids_XYZPPPSSSRRRV[i].length; j++) {
       for (int j = 0; j < 13; j++) { // x, y, y, px, py, pz, sx, sy, sz, rx, ry, rz, v
-        lineSTR += nf(allSolid_XYZPPPSSSRRRV[i][j], 0, 4).replace(",", "."); // <<<<
-        if (j + 1 != allSolid_XYZPPPSSSRRRV[i].length) lineSTR += ",";
+        lineSTR += nf(allSolids_XYZPPPSSSRRRV[i][j], 0, 4).replace(",", "."); // <<<<
+        if (j + 1 != allSolids_XYZPPPSSSRRRV[i].length) lineSTR += ",";
       }
       
       newChild2.setContent(lineSTR);
@@ -44939,48 +44939,48 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   }  
 
   {
-    newChild1 = my_xml.addChild("allFractal");
-    int ni = 1 + allFractal_num;
+    newChild1 = my_xml.addChild("allFractals");
+    int ni = 1 + allFractals_num;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
       newChild2 = newChild1.addChild("Fractal");
       newChild2.setInt("id", i);
       String lineSTR = "";
-      //for (int j = 0; j < allFractal_XYZSRA[i].length; j++) {
+      //for (int j = 0; j < allFractals_XYZSRA[i].length; j++) {
       for (int j = 0; j < 6; j++) { // x, y, z, s, rot, as_mesh/as_solid 
-        lineSTR += nf(allFractal_XYZSRA[i][j], 0, 4).replace(",", "."); // <<<<
+        lineSTR += nf(allFractals_XYZSRA[i][j], 0, 4).replace(",", "."); // <<<<
         lineSTR += ",";
       }
-      lineSTR += nf(allFractal_Type[i], 0);
+      lineSTR += nf(allFractals_Type[i], 0);
       lineSTR += ",";
-      lineSTR += nf(allFractal_DegreeMin[i], 0);
+      lineSTR += nf(allFractals_DegreeMin[i], 0);
       lineSTR += ",";
-      lineSTR += nf(allFractal_DegreeMax[i], 0);
+      lineSTR += nf(allFractals_DegreeMax[i], 0);
       lineSTR += ",";
-      lineSTR += nf(allFractal_Seed[i], 0);
+      lineSTR += nf(allFractals_Seed[i], 0);
       lineSTR += ",";
-      lineSTR += nf(allFractal_TrunkSize[i], 0, 4).replace(",", "."); // <<<<
+      lineSTR += nf(allFractals_TrunkSize[i], 0, 4).replace(",", "."); // <<<<
       lineSTR += ",";
-      lineSTR += nf(allFractal_LeafSize[i], 0, 4).replace(",", "."); // <<<<
+      lineSTR += nf(allFractals_LeafSize[i], 0, 4).replace(",", "."); // <<<<
       
       newChild2.setContent(lineSTR);
     } 
   }
   
   {
-    newChild1 = my_xml.addChild("allObject2D");
-    int ni = 1 + allObject2D_num;
+    newChild1 = my_xml.addChild("allObject2Ds");
+    int ni = 1 + allObject2Ds_num;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
       newChild2 = newChild1.addChild("Object2D");
       newChild2.setInt("id", i);
       String lineSTR = "";
-      //for (int j = 0; j < allObject2D_XYZS[i].length; j++) {
+      //for (int j = 0; j < allObject2Ds_XYZS[i].length; j++) {
       for (int j = 0; j < 4; j++) { // x, y, z, s 
-        lineSTR += nf(allObject2D_XYZS[i][j], 0, 4).replace(",", "."); // <<<<
+        lineSTR += nf(allObject2Ds_XYZS[i][j], 0, 4).replace(",", "."); // <<<<
         lineSTR += ",";
       }
-      lineSTR += allObject2D_MAP[i];
+      lineSTR += allObject2Ds_MAP[i];
       
       newChild2.setContent(lineSTR);
     } 
@@ -44988,32 +44988,32 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   
   
   {
-    newChild1 = my_xml.addChild("allPolymesh_SolarPivotXYZ");
-    int ni = allPolymesh_SolarPivotXYZ.length;
+    newChild1 = my_xml.addChild("allPolymeshes_SolarPivotXYZ");
+    int ni = allPolymeshes_SolarPivotXYZ.length;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
       newChild2 = newChild1.addChild("SolarPivotXYZ");
       newChild2.setInt("id", i);
       String lineSTR = "";
-      for (int j = 0; j < allPolymesh_SolarPivotXYZ[i].length; j++) {
-        lineSTR += nf(allPolymesh_SolarPivotXYZ[i][j], 0, 4).replace(",", "."); // <<<<
-        if (j + 1 < allPolymesh_SolarPivotXYZ[i].length) lineSTR += ",";
+      for (int j = 0; j < allPolymeshes_SolarPivotXYZ[i].length; j++) {
+        lineSTR += nf(allPolymeshes_SolarPivotXYZ[i][j], 0, 4).replace(",", "."); // <<<<
+        if (j + 1 < allPolymeshes_SolarPivotXYZ[i].length) lineSTR += ",";
       }
       newChild2.setContent(lineSTR);
     } 
   }  
 
   {
-    newChild1 = my_xml.addChild("allPolymesh_SolarPivotType");
-    int ni = allPolymesh_SolarPivotType.length;
+    newChild1 = my_xml.addChild("allPolymeshes_SolarPivotType");
+    int ni = allPolymeshes_SolarPivotType.length;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
       newChild2 = newChild1.addChild("SolarPivotType");
       newChild2.setInt("id", i);
       String lineSTR = "";
-      for (int j = 0; j < allPolymesh_SolarPivotType[i].length; j++) {
-        lineSTR += nf(allPolymesh_SolarPivotType[i][j], 0, 4).replace(",", "."); // <<<<
-        if (j + 1 < allPolymesh_SolarPivotType[i].length) lineSTR += ",";
+      for (int j = 0; j < allPolymeshes_SolarPivotType[i].length; j++) {
+        lineSTR += nf(allPolymeshes_SolarPivotType[i][j], 0, 4).replace(",", "."); // <<<<
+        if (j + 1 < allPolymeshes_SolarPivotType[i].length) lineSTR += ",";
       }
       newChild2.setContent(lineSTR);
     } 
@@ -45060,30 +45060,30 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     newChild2.setContent(lineSTR);
   }   
 
-  newChild1 = my_xml.addChild("allPolymesh_Faces");
-  newChild1.setInt("ni", allPolymesh_Faces.length);
-  for (int i = 0; i < allPolymesh_Faces.length; i++) {
+  newChild1 = my_xml.addChild("allPolymeshes_Faces");
+  newChild1.setInt("ni", allPolymeshes_Faces.length);
+  for (int i = 0; i < allPolymeshes_Faces.length; i++) {
     newChild2 = newChild1.addChild("Faces");
     newChild2.setInt("id", i);
     String lineSTR = "";
-    //for (int j = 0; j < allPolymesh_Faces[i].length; j++) {
+    //for (int j = 0; j < allPolymeshes_Faces[i].length; j++) {
     for (int j = 0; j < 2; j++) { // start, end
-      lineSTR += nf(allPolymesh_Faces[i][j], 0);
-      if (j < allPolymesh_Faces[i].length - 1) lineSTR += ",";
+      lineSTR += nf(allPolymeshes_Faces[i][j], 0);
+      if (j < allPolymeshes_Faces[i].length - 1) lineSTR += ",";
     }
     newChild2.setContent(lineSTR);
   } 
     
-  newChild1 = my_xml.addChild("allPolymesh_Solids");
-  newChild1.setInt("ni", allPolymesh_Solids.length);
-  for (int i = 0; i < allPolymesh_Solids.length; i++) {
+  newChild1 = my_xml.addChild("allPolymeshes_Solids");
+  newChild1.setInt("ni", allPolymeshes_Solids.length);
+  for (int i = 0; i < allPolymeshes_Solids.length; i++) {
     newChild2 = newChild1.addChild("Solids");
     newChild2.setInt("id", i);
     String lineSTR = "";
-    //for (int j = 0; j < allPolymesh_Solids[i].length; j++) {
+    //for (int j = 0; j < allPolymeshes_Solids[i].length; j++) {
     for (int j = 0; j < 2; j++) { // start, end
-      lineSTR += nf(allPolymesh_Solids[i][j], 0);
-      if (j < allPolymesh_Solids[i].length - 1) lineSTR += ",";
+      lineSTR += nf(allPolymeshes_Solids[i][j], 0);
+      if (j < allPolymeshes_Solids[i].length - 1) lineSTR += ",";
     }
     newChild2.setContent(lineSTR);
   }
@@ -45928,21 +45928,21 @@ void SOLARCHVISION_load_project (String myFile) {
     
 
     {
-      children0 = FileAll.getChildren("allSection_SolidImpact");
+      children0 = FileAll.getChildren("allSections_SolidImpact");
       for (int L = 0; L < children0.length; L++) {
         int ni = children0[L].getInt("ni");
         
-        allSection_SolidImpact = new PImage [ni];
+        allSections_SolidImpact = new PImage [ni];
         
         XML[] children1 = children0[L].getChildren("Path");         
         for (int i = 0; i < ni; i++) {      
           
           String TEXTURE_path = children1[i].getContent();
 
-          allSection_SolidImpact[i] = createImage(2, 2, RGB);
+          allSections_SolidImpact[i] = createImage(2, 2, RGB);
 
           println("Loading texture(" + i + "):", TEXTURE_path);
-          allSection_SolidImpact[i] = loadImage(TEXTURE_path);
+          allSections_SolidImpact[i] = loadImage(TEXTURE_path);
           println("loaded!");
           
         }
@@ -45950,12 +45950,12 @@ void SOLARCHVISION_load_project (String myFile) {
     }
 
     {
-      children0 = FileAll.getChildren("allSection_SolarImpact");
+      children0 = FileAll.getChildren("allSections_SolarImpact");
       for (int L = 0; L < children0.length; L++) {
         int ni = children0[L].getInt("ni");
         int nj = children0[L].getInt("nj");
         
-        allSection_SolarImpact = new PImage [ni][nj]; 
+        allSections_SolarImpact = new PImage [ni][nj]; 
         
         XML[] children1 = children0[L].getChildren("Path");         
         for (int i = 0; i < ni; i++) {      
@@ -45963,10 +45963,10 @@ void SOLARCHVISION_load_project (String myFile) {
           
             String TEXTURE_path = children1[i * nj + j].getContent();
   
-            allSection_SolarImpact[i][j] = createImage(2, 2, RGB);
+            allSections_SolarImpact[i][j] = createImage(2, 2, RGB);
   
             println("Loading texture(" + i + "," + j + "):", TEXTURE_path);
-            allSection_SolarImpact[i][j] = loadImage(TEXTURE_path);
+            allSections_SolarImpact[i][j] = loadImage(TEXTURE_path);
             println("loaded!");
           }
         }
@@ -46027,15 +46027,15 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     } 
 
-    children0 = FileAll.getChildren("allSection");
+    children0 = FileAll.getChildren("allSections");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
       
-      allSection_UVERAB = new float [ni][6];
-      allSection_Type = new int [ni];
-      allSection_RES1 = new int [ni];
-      allSection_RES2 = new int [ni];
-      allSection_num = ni - 1;
+      allSections_UVERAB = new float [ni][6];
+      allSections_Type = new int [ni];
+      allSections_RES1 = new int [ni];
+      allSections_RES2 = new int [ni];
+      allSections_num = ni - 1;
       
       XML[] children1 = children0[L].getChildren("Section");         
       for (int i = 0; i < ni; i++) {
@@ -46043,22 +46043,22 @@ void SOLARCHVISION_load_project (String myFile) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < 6; j++) {
-          allSection_UVERAB[i][j] = float(parts[j]);
+          allSections_UVERAB[i][j] = float(parts[j]);
         }
 
-        allSection_Type[i] = int(parts[6]);
-        allSection_RES1[i] = int(parts[7]);
-        allSection_RES2[i] = int(parts[8]);
+        allSections_Type[i] = int(parts[6]);
+        allSections_RES1[i] = int(parts[7]);
+        allSections_RES2[i] = int(parts[8]);
       }
     } 
 
 
-    children0 = FileAll.getChildren("allSolid");
+    children0 = FileAll.getChildren("allSolids");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
       
-      allSolid_XYZPPPSSSRRRV = new float [ni][13];
-      allSolid_num = ni - 1;
+      allSolids_XYZPPPSSSRRRV = new float [ni][13];
+      allSolids_num = ni - 1;
       
       XML[] children1 = children0[L].getChildren("Solid");         
       for (int i = 0; i < ni; i++) {
@@ -46066,24 +46066,24 @@ void SOLARCHVISION_load_project (String myFile) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < 13; j++) {
-          allSolid_XYZPPPSSSRRRV[i][j] = float(parts[j]);
+          allSolids_XYZPPPSSSRRRV[i][j] = float(parts[j]);
         }
 
       }
     } 
  
-    children0 = FileAll.getChildren("allFractal");
+    children0 = FileAll.getChildren("allFractals");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
       
-      allFractal_XYZSRA = new float [ni][6];
-      allFractal_Type = new int [ni];
-      allFractal_DegreeMin = new int [ni];
-      allFractal_DegreeMax = new int [ni];
-      allFractal_Seed = new int [ni];
-      allFractal_TrunkSize = new float [ni];
-      allFractal_LeafSize = new float [ni];
-      allFractal_num = ni - 1;
+      allFractals_XYZSRA = new float [ni][6];
+      allFractals_Type = new int [ni];
+      allFractals_DegreeMin = new int [ni];
+      allFractals_DegreeMax = new int [ni];
+      allFractals_Seed = new int [ni];
+      allFractals_TrunkSize = new float [ni];
+      allFractals_LeafSize = new float [ni];
+      allFractals_num = ni - 1;
       
       XML[] children1 = children0[L].getChildren("Fractal");         
       for (int i = 0; i < ni; i++) {
@@ -46091,66 +46091,66 @@ void SOLARCHVISION_load_project (String myFile) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < 6; j++) {
-          allFractal_XYZSRA[i][j] = float(parts[j]);
+          allFractals_XYZSRA[i][j] = float(parts[j]);
         }
 
-        allFractal_Type[i] = int(parts[6]);
-        allFractal_DegreeMin[i] = int(parts[7]);
-        allFractal_DegreeMax[i] = int(parts[8]);
-        allFractal_Seed[i] = int(parts[9]);
-        allFractal_TrunkSize[i] = float(parts[10]);
-        allFractal_LeafSize[i] = float(parts[11]);
+        allFractals_Type[i] = int(parts[6]);
+        allFractals_DegreeMin[i] = int(parts[7]);
+        allFractals_DegreeMax[i] = int(parts[8]);
+        allFractals_Seed[i] = int(parts[9]);
+        allFractals_TrunkSize[i] = float(parts[10]);
+        allFractals_LeafSize[i] = float(parts[11]);
       }
     }       
 
-    children0 = FileAll.getChildren("allObject2D");
+    children0 = FileAll.getChildren("allObject2Ds");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
       
-      allObject2D_XYZS = new float [ni][4];
-      allObject2D_MAP = new int [ni];
-      allObject2D_num = ni - 1;
+      allObject2Ds_XYZS = new float [ni][4];
+      allObject2Ds_MAP = new int [ni];
+      allObject2Ds_num = ni - 1;
       
       XML[] children1 = children0[L].getChildren("Object2D");         
       for (int i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < 4; j++) {
-          allObject2D_XYZS[i][j] = float(parts[j]);
+          allObject2Ds_XYZS[i][j] = float(parts[j]);
         }
-        allObject2D_MAP[i] = int(parts[4]);
+        allObject2Ds_MAP[i] = int(parts[4]);
       }
     }      
 
-    children0 = FileAll.getChildren("allPolymesh_SolarPivotXYZ");
+    children0 = FileAll.getChildren("allPolymeshes_SolarPivotXYZ");
     for (int L = 0; L < children0.length; L++) {
       
       int ni = children0[L].getInt("ni");
       
-      allPolymesh_SolarPivotXYZ = new float [ni][3];
+      allPolymeshes_SolarPivotXYZ = new float [ni][3];
       
       XML[] children1 = children0[L].getChildren("SolarPivotXYZ");         
       for (int i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < 3; j++) {
-          allPolymesh_SolarPivotXYZ[i][j] = float(parts[j]);
+          allPolymeshes_SolarPivotXYZ[i][j] = float(parts[j]);
         }
       }
     }  
 
-    children0 = FileAll.getChildren("allPolymesh_SolarPivotType");
+    children0 = FileAll.getChildren("allPolymeshes_SolarPivotType");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
       
-      allPolymesh_SolarPivotType = new int [ni][1];
+      allPolymeshes_SolarPivotType = new int [ni][1];
       
       XML[] children1 = children0[L].getChildren("SolarPivotType");         
       for (int i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < 1; j++) {
-          allPolymesh_SolarPivotType[i][j] = int(parts[j]);
+          allPolymeshes_SolarPivotType[i][j] = int(parts[j]);
         }
       }
     }          
@@ -46200,30 +46200,30 @@ void SOLARCHVISION_load_project (String myFile) {
       }
     }    
     
-    children0 = FileAll.getChildren("allPolymesh_Faces");
+    children0 = FileAll.getChildren("allPolymeshes_Faces");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      allPolymesh_Faces = new int [ni][2];
+      allPolymeshes_Faces = new int [ni][2];
       XML[] children1 = children0[L].getChildren("Faces");         
       for (int i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < parts.length; j++) {
-          allPolymesh_Faces[i][j] = int(parts[j]); 
+          allPolymeshes_Faces[i][j] = int(parts[j]); 
         }
       }
     }     
 
-    children0 = FileAll.getChildren("allPolymesh_Solids");
+    children0 = FileAll.getChildren("allPolymeshes_Solids");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
-      allPolymesh_Solids = new int [ni][2];
+      allPolymeshes_Solids = new int [ni][2];
       XML[] children1 = children0[L].getChildren("Solids");         
       for (int i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < parts.length; j++) {
-          allPolymesh_Solids[i][j] = int(parts[j]); 
+          allPolymeshes_Solids[i][j] = int(parts[j]); 
         }
       }
     } 
@@ -46565,45 +46565,45 @@ void SOLARCHVISION_load_project (String myFile) {
 
 void Solid_updatePosition (int n, float a, float b, float c) {
   
-  allSolid_XYZPPPSSSRRRV[n][0] = a;
-  allSolid_XYZPPPSSSRRRV[n][1] = b;
-  allSolid_XYZPPPSSSRRRV[n][2] = c;  
+  allSolids_XYZPPPSSSRRRV[n][0] = a;
+  allSolids_XYZPPPSSSRRRV[n][1] = b;
+  allSolids_XYZPPPSSSRRRV[n][2] = c;  
 
 } 
 
 
 void Solid_updatePowers (int n, float a, float b, float c) {
   
-  allSolid_XYZPPPSSSRRRV[n][3] = a;
-  allSolid_XYZPPPSSSRRRV[n][4] = b;
-  allSolid_XYZPPPSSSRRRV[n][5] = c;  
+  allSolids_XYZPPPSSSRRRV[n][3] = a;
+  allSolids_XYZPPPSSSRRRV[n][4] = b;
+  allSolids_XYZPPPSSSRRRV[n][5] = c;  
 
 } 
 
 void Solid_Scale (int n, float a, float b, float c) {
   
-  allSolid_XYZPPPSSSRRRV[n][6] *= a;
-  allSolid_XYZPPPSSSRRRV[n][7] *= b;
-  allSolid_XYZPPPSSSRRRV[n][8] *= c;  
+  allSolids_XYZPPPSSSRRRV[n][6] *= a;
+  allSolids_XYZPPPSSSRRRV[n][7] *= b;
+  allSolids_XYZPPPSSSRRRV[n][8] *= c;  
 
 } 
 
 
 void Solid_RotateX (int n, float t) {
   
-  allSolid_XYZPPPSSSRRRV[n][9] += t;
+  allSolids_XYZPPPSSSRRRV[n][9] += t;
 
 } 
 
 void Solid_RotateY (int n, float t) {
   
-  allSolid_XYZPPPSSSRRRV[n][10] += t;
+  allSolids_XYZPPPSSSRRRV[n][10] += t;
 
 } 
 
 void Solid_RotateZ (int n, float t) {
   
-  allSolid_XYZPPPSSSRRRV[n][11] += t;
+  allSolids_XYZPPPSSSRRRV[n][11] += t;
 
 } 
 
@@ -46612,84 +46612,84 @@ void Solid_RotateZ (int n, float t) {
 
 float Solid_get_posX (int n) { 
 
-  return allSolid_XYZPPPSSSRRRV[n][0];
+  return allSolids_XYZPPPSSSRRRV[n][0];
 
 } 
 
 
 float Solid_get_posY (int n) { 
 
-  return allSolid_XYZPPPSSSRRRV[n][1];
+  return allSolids_XYZPPPSSSRRRV[n][1];
 
 } 
 
 
 float Solid_get_posZ (int n) { 
 
-  return allSolid_XYZPPPSSSRRRV[n][2];
+  return allSolids_XYZPPPSSSRRRV[n][2];
 
 } 
 
 
 float Solid_get_powX (int n) { 
 
-  return allSolid_XYZPPPSSSRRRV[n][3];
+  return allSolids_XYZPPPSSSRRRV[n][3];
 
 } 
 
 
 float Solid_get_powY (int n) { 
 
-  return allSolid_XYZPPPSSSRRRV[n][4];
+  return allSolids_XYZPPPSSSRRRV[n][4];
 
 } 
 
 
 float Solid_get_powZ (int n) { 
 
-  return allSolid_XYZPPPSSSRRRV[n][5];
+  return allSolids_XYZPPPSSSRRRV[n][5];
 
 } 
 
 
 float Solid_get_scaleX (int n) { 
 
-  return allSolid_XYZPPPSSSRRRV[n][6];
+  return allSolids_XYZPPPSSSRRRV[n][6];
 
 } 
 
 
 float Solid_get_scaleY (int n) { 
 
-  return allSolid_XYZPPPSSSRRRV[n][7];
+  return allSolids_XYZPPPSSSRRRV[n][7];
 
 } 
 
 
 float Solid_get_scaleZ (int n) { 
 
-  return allSolid_XYZPPPSSSRRRV[n][8];
+  return allSolids_XYZPPPSSSRRRV[n][8];
 
 } 
 
 
 float Solid_get_rotX (int n) { 
 
-  return allSolid_XYZPPPSSSRRRV[n][9];
+  return allSolids_XYZPPPSSSRRRV[n][9];
 
 } 
 
 
 float Solid_get_rotY (int n) { 
 
-  return allSolid_XYZPPPSSSRRRV[n][10];
+  return allSolids_XYZPPPSSSRRRV[n][10];
 
 } 
 
 
 float Solid_get_rotZ (int n) { 
 
-  return allSolid_XYZPPPSSSRRRV[n][11];
+  return allSolids_XYZPPPSSSRRRV[n][11];
 
 } 
 
@@ -46697,7 +46697,7 @@ float Solid_get_rotZ (int n) {
 
 float Solid_get_value (int n) { 
 
-  return allSolid_XYZPPPSSSRRRV[n][12];
+  return allSolids_XYZPPPSSSRRRV[n][12];
 
 } 
 
@@ -46705,19 +46705,19 @@ float Solid_get_value (int n) {
 
 float Solid_get_Distance (int n, float a, float b, float c) {
   
-  float posX = allSolid_XYZPPPSSSRRRV[n][0];
-  float posY = allSolid_XYZPPPSSSRRRV[n][1];
-  float posZ = allSolid_XYZPPPSSSRRRV[n][2];
-  float powX = allSolid_XYZPPPSSSRRRV[n][3];
-  float powY = allSolid_XYZPPPSSSRRRV[n][4];
-  float powZ = allSolid_XYZPPPSSSRRRV[n][5];
-  float scaleX = allSolid_XYZPPPSSSRRRV[n][6];
-  float scaleY = allSolid_XYZPPPSSSRRRV[n][7];
-  float scaleZ = allSolid_XYZPPPSSSRRRV[n][8];
-  float rotX = allSolid_XYZPPPSSSRRRV[n][9];
-  float rotY = allSolid_XYZPPPSSSRRRV[n][10];
-  float rotZ = allSolid_XYZPPPSSSRRRV[n][11];
-  float value = allSolid_XYZPPPSSSRRRV[n][12];
+  float posX = allSolids_XYZPPPSSSRRRV[n][0];
+  float posY = allSolids_XYZPPPSSSRRRV[n][1];
+  float posZ = allSolids_XYZPPPSSSRRRV[n][2];
+  float powX = allSolids_XYZPPPSSSRRRV[n][3];
+  float powY = allSolids_XYZPPPSSSRRRV[n][4];
+  float powZ = allSolids_XYZPPPSSSRRRV[n][5];
+  float scaleX = allSolids_XYZPPPSSSRRRV[n][6];
+  float scaleY = allSolids_XYZPPPSSSRRRV[n][7];
+  float scaleZ = allSolids_XYZPPPSSSRRRV[n][8];
+  float rotX = allSolids_XYZPPPSSSRRRV[n][9];
+  float rotY = allSolids_XYZPPPSSSRRRV[n][10];
+  float rotZ = allSolids_XYZPPPSSSRRRV[n][11];
+  float value = allSolids_XYZPPPSSSRRRV[n][12];
 
 
   a -= posX;
