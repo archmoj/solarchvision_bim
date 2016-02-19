@@ -1715,7 +1715,6 @@ PImage[][] allSections_SolarImpact = new PImage[1][(1 + STUDY_j_end - STUDY_j_st
 
 
 float[][] allSolids_XYZPPPSSSRRRV = {{0,0,0,2,2,2,1,1,1,0,0,0,1}};
-int allSolids_num = 0;
 
 
 
@@ -13958,8 +13957,6 @@ void SOLARCHVISION_add_Solid (float x, float y, float z, float px, float py, flo
   float[][] TempSolid_XYZPPPSSSRRRV = {{x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz, v}};
   allSolids_XYZPPPSSSRRRV = (float[][]) concat(allSolids_XYZPPPSSSRRRV, TempSolid_XYZPPPSSSRRRV);
 
-  allSolids_num += 1;
-
   if (addToLastPolygroup == 1) {
     allPolygroups_Solids[allPolygroups_Solids.length - 1][1] = allSolids_XYZPPPSSSRRRV.length - 1;
   }
@@ -14433,7 +14430,6 @@ void SOLARCHVISION_delete_Selection () {
           allSolids_XYZPPPSSSRRRV = (float[][]) concat(startList, endList);
         }
 
-        allSolids_num -= 1;
       }
 
     }
@@ -14731,8 +14727,6 @@ void SOLARCHVISION_delete_Selection () {
           float[][] endList = (float[][]) subset(allSolids_XYZPPPSSSRRRV, endSolid + 1);
           
           allSolids_XYZPPPSSSRRRV = (float[][]) concat(startList, endList);
-          
-          allSolids_num = allSolids_XYZPPPSSSRRRV.length - 1; // ??????
           
           Solids_updated = 1;
           
@@ -20999,8 +20993,6 @@ void SOLARCHVISION_delete_Solids () {
   allSolids_XYZPPPSSSRRRV[0][11] = 0;
   allSolids_XYZPPPSSSRRRV[0][12] = 1;
   
-  allSolids_num = 0;
-  
   SOLARCHVISION_deselect_All();  
 }
 
@@ -26392,7 +26384,7 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple (float x, float y, float 
 
   float val = 1;
   
-  for (int n = 1; n <= allSolids_num; n++) {
+  for (int n = 1; n < allSolids_XYZPPPSSSRRRV.length; n++) {
     
     float r = Solid_get_value(n);
     float d = Solid_get_Distance(n, x, y, z);
@@ -26406,13 +26398,13 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple (float x, float y, float 
 
   }
   
-  if (allSolids_num > 0) {
+  if (allSolids_XYZPPPSSSRRRV.length - 1 > 0) {
     float val_sign = 1;
     if (val < 0) {
       val_sign = -1;
       val = abs(val);
     } 
-    val = pow(val, 1.0 / float(allSolids_num));
+    val = pow(val, 1.0 / float(allSolids_XYZPPPSSSRRRV.length - 1));
     val *= val_sign;    
   } 
 
@@ -26430,7 +26422,7 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_complex (float x, float y, float
 
   for (int o = 0; o < 2; o++) {
 
-    for (int n = 1; n <= allSolids_num; n++) {
+    for (int n = 1; n < allSolids_XYZPPPSSSRRRV.length; n++) {
 
       float r = Solid_get_value(n);
       float d = Solid_get_Distance(n, x + o * deltaX , y + o * deltaY, z);
@@ -26443,13 +26435,13 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_complex (float x, float y, float
       }        
     }
     
-    if (allSolids_num > 0) {
+    if (allSolids_XYZPPPSSSRRRV.length - 1 > 0) {
       float val_sign = 1;
       if (val[o] < 0) {
         val_sign = -1;
         val[o] = abs(val[o]);
       } 
-      val[o] = pow(val[o], 1.0 / float(allSolids_num));
+      val[o] = pow(val[o], 1.0 / float(allSolids_XYZPPPSSSRRRV.length - 1));
       val[o] *= val_sign;    
     }     
   }
@@ -28497,7 +28489,7 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
   }  
 
   if (Work_with_2D_or_3D == 7) {
-    length_of_indexes = allSolids_num + 1;
+    length_of_indexes = allSolids_XYZPPPSSSRRRV.length;
     start_index_OBJ_NUM = selectedSolid_numbers[start_index];
   }   
   
@@ -38189,9 +38181,9 @@ int Solids_DisplayDegree = 16; //8; // internal - number of each face corners
 
 void SOLARCHVISION_draw_Solids () {
   
-  allSolids_Faces = new int [Solids_DisplayFaces * allSolids_num + 1][Solids_DisplayDegree]; 
+  allSolids_Faces = new int [Solids_DisplayFaces * allSolids_XYZPPPSSSRRRV.length][Solids_DisplayDegree]; 
     
-  allSolids_Vertices = new float [Solids_DisplayFaces * Solids_DisplayDegree * allSolids_num + 1][3];
+  allSolids_Vertices = new float [Solids_DisplayFaces * Solids_DisplayDegree * allSolids_XYZPPPSSSRRRV.length][3];
   allSolids_Vertices[0][0] = 0;
   allSolids_Vertices[0][1] = 0;
   allSolids_Vertices[0][2] = 0;
@@ -38200,7 +38192,7 @@ void SOLARCHVISION_draw_Solids () {
 
     WIN3D_Diagrams.strokeWeight(2);
     
-    for (int f = 1; f <= allSolids_num; f++) {
+    for (int f = 1; f < allSolids_XYZPPPSSSRRRV.length; f++) {
       
       float Solid_posX = Solid_get_posX(f);
       float Solid_posY = Solid_get_posY(f);
@@ -39348,7 +39340,7 @@ void SOLARCHVISION_move_selectedPolygroups (float dx, float dy, float dz) {
       }
       
       for (int g = allPolygroups_Solids[OBJ_NUM][0]; g <= allPolygroups_Solids[OBJ_NUM][1]; g++) {
-        if ((0 < g) && (g <= allSolids_num)) {
+        if ((0 < g) && (g <= allSolids_XYZPPPSSSRRRV.length - 1)) {
           
           float Solid_posX = Solid_get_posX(g);
           float Solid_posY = Solid_get_posY(g);
@@ -39430,7 +39422,7 @@ void SOLARCHVISION_rotate_selectedPolygroups (float x0, float y0, float z0, floa
       }    
       
       for (int g = allPolygroups_Solids[OBJ_NUM][0]; g <= allPolygroups_Solids[OBJ_NUM][1]; g++) {
-        if ((0 < g) && (g <= allSolids_num)) {
+        if ((0 < g) && (g <= allSolids_XYZPPPSSSRRRV.length - 1)) {
 
           float Solid_posX = Solid_get_posX(g);
           float Solid_posY = Solid_get_posY(g);
@@ -39516,7 +39508,7 @@ void SOLARCHVISION_scale_selectedPolygroups (float x0, float y0, float z0, float
       }
       
       for (int g = allPolygroups_Solids[OBJ_NUM][0]; g <= allPolygroups_Solids[OBJ_NUM][1]; g++) {
-        if ((0 < g) && (g <= allSolids_num)) {
+        if ((0 < g) && (g <= allSolids_XYZPPPSSSRRRV.length - 1)) {
           
           float Solid_posX = Solid_get_posX(g);
           float Solid_posY = Solid_get_posY(g);
@@ -44927,7 +44919,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   
   {
     newChild1 = my_xml.addChild("allSolids");
-    int ni = 1 + allSolids_num;
+    int ni = allSolids_XYZPPPSSSRRRV.length;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
       newChild2 = newChild1.addChild("Solid");
@@ -46063,7 +46055,6 @@ void SOLARCHVISION_load_project (String myFile) {
       int ni = children0[L].getInt("ni");
       
       allSolids_XYZPPPSSSRRRV = new float [ni][13];
-      allSolids_num = ni - 1;
       
       XML[] children1 = children0[L].getChildren("Solid");         
       for (int i = 0; i < ni; i++) {
