@@ -41,6 +41,7 @@ String _undefined = "N/A";
 float FLOAT_undefined = 1000000000; // it must be a positive big number that is not included in any data
 
 float CubePower = 16; //8; 
+float StarPower = 0.25; 
 
 float eyeLevel = 1.5; // 1.5 abouve ground - applied for setting cameras - intreanl!
 
@@ -238,7 +239,7 @@ int Work_with_2D_or_3D = 3; // 1:Fractals 2:2D, 3:3D, 4:Face, 5:Vertex, 6:Soft 7
 
 int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
 
-int View_Select_Create_Modify = 0; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunkSize 12:LeafSize 13:AllFractalProps 14:SolarPivot 15:FaceNormal 16:FaceFirstVertex 17:Drop 18:GetLength 19:Power 
+int View_Select_Create_Modify = 0; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunkSize 12:LeafSize 13:AllFractalProps 14:SolarPivot 15:FaceNormal 16:FaceFirstVertex 17:Drop 18:GetLength 19:PowerX 20:PowerY 21:PowerZ 22:PowerXYZ 
 int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. Fractals
 
@@ -30198,19 +30199,8 @@ void mouseWheel(MouseEvent event) {
               float x0 = selected_Pivot_XYZ[0];
               float y0 = selected_Pivot_XYZ[1];
               float z0 = selected_Pivot_XYZ[2];
-              
-              if (Modify_Object_Parameters == 0) {
-                if (View_Select_Create_Modify >= 4) { // other properties
-        
-                  int p = int(Wheel_Value);
-                  
-                  SOLARCHVISION_changeProperties_Selection(p);
-                  
-                  WIN3D_Update = 1;
-                  
-                }   
-              }
-              
+
+  
               if (View_Select_Create_Modify == 3) { // rotate
       
                 float r = (15 * Wheel_Value) * PI / 180.0;
@@ -30222,7 +30212,7 @@ void mouseWheel(MouseEvent event) {
                 WIN3D_Update = 1;
                 
               }   
-              
+
               if (View_Select_Create_Modify == 2) { // scale
       
                 float s = pow(pow(2.0, 0.25), Wheel_Value);
@@ -30241,8 +30231,9 @@ void mouseWheel(MouseEvent event) {
                 
                 WIN3D_Update = 1;
       
-              }          
-      
+              }       
+
+
               if (View_Select_Create_Modify == 1) { // move
               
                 float d = Wheel_Value;
@@ -30263,26 +30254,21 @@ void mouseWheel(MouseEvent event) {
                 
               }   
               
-              if (View_Select_Create_Modify == 19) { // power
-              /*
-                float d = Wheel_Value;
-      
-                float dx = d;
-                float dy = d;
-                float dz = d;
-                
-                int the_Vector = selected_posVector;
+
               
-                if (the_Vector == 0) {dy = 0; dz = 0;}  
-                if (the_Vector == 1) {dz = 0; dx = 0;}  
-                if (the_Vector == 2) {dx = 0; dy = 0;}  
+              if (Modify_Object_Parameters == 0) {
+                if (View_Select_Create_Modify >= 4) { // other properties
+        
+                  int p = int(Wheel_Value);
+                  
+                  SOLARCHVISION_changeProperties_Selection(p);
+                  
+                  WIN3D_Update = 1;
+                  
+                }   
+              }
+              
       
-                SOLARCHVISION_move_Selection(dx, dy, dz);
-                
-                WIN3D_Update = 1;
-               */
-              }                 
-                        
               if (View_Select_Create_Modify == -1) { // PickSelect 
               
                  int go_direction = int(Wheel_Value);
@@ -34567,14 +34553,6 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       Create_Mesh_or_Solid = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_or_Solid" , Create_Mesh_or_Solid, 1, 2, 1), 1));
     
-      //Work_with_2D_or_3D = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Work_with_2D_or_3D" , Work_with_2D_or_3D, 0, 9, 1), 1));
-    
-      //View_Select_Create_Modify = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_Select_Create_Modify" , View_Select_Create_Modify, -17, 19, 1), 1));
-      //View_XYZ_ChangeOption = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "View_XYZ_ChangeOption" , View_XYZ_ChangeOption, 0, 6, 1), 1));
-      //Modify_Object_Parameters = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Modify_Object_Parameters" , Modify_Object_Parameters, 0, 9, 1), 1));
-
-
-      
       MODEL3D_TESSELLATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL3D_TESSELLATION" , MODEL3D_TESSELLATION, 0, 4, 1), 1));
       
       LAND_TESSELLATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "LAND_TESSELLATION" , LAND_TESSELLATION, 0, 4, 1), 1));
@@ -40539,6 +40517,61 @@ void SOLARCHVISION_changeProperties_Selection (int p) {
   }  
   
   
+  if (Work_with_2D_or_3D == 7) {
+    
+    int Solids_updated = 0;  
+
+    for (int o = selectedSolid_numbers.length - 1; o >= 0; o--) {
+      
+      int OBJ_NUM = selectedSolid_numbers[o];
+      
+      if (OBJ_NUM != 0) {      
+        
+        int f = OBJ_NUM;
+      
+        if ((View_Select_Create_Modify == 19) ||  (View_Select_Create_Modify == 20) ||  (View_Select_Create_Modify == 21) ||  (View_Select_Create_Modify == 22)) {
+          
+          float Solid_powX = allSolid_XYZPPPSSSRRRV[f][3];
+          float Solid_powY = allSolid_XYZPPPSSSRRRV[f][4];
+          float Solid_powZ = allSolid_XYZPPPSSSRRRV[f][5];
+          
+          float n = 2;
+          
+          if (View_Select_Create_Modify == 19) n = Solid_powX; 
+          if (View_Select_Create_Modify == 20) n = Solid_powY; 
+          if (View_Select_Create_Modify == 21) n = Solid_powZ; 
+          if (View_Select_Create_Modify == 22) {
+            n = Solid_powX;
+          }          
+
+          if (p > 0) n *= 2;
+          if (p < 0) n /= 2;
+
+          if (n > CubePower) n = StarPower;
+          if (n < StarPower) n = CubePower;
+          
+          if (View_Select_Create_Modify == 19) Solid_powX = n; 
+          if (View_Select_Create_Modify == 20) Solid_powY = n; 
+          if (View_Select_Create_Modify == 21) Solid_powZ = n; 
+          if (View_Select_Create_Modify == 22) {
+            Solid_powX = n;
+            Solid_powY = n;
+            Solid_powZ = n;
+          } 
+          
+          Solid_updatePowers(f, Solid_powX, Solid_powY, Solid_powZ);          
+     
+          Solids_updated = 1;      
+        }        
+      
+      }
+    } 
+      
+    if (Solids_updated != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections(); 
+    
+  }    
+  
+  
   if (Work_with_2D_or_3D == 4) {
 
     for (int o = selectedFace_numbers.length - 1; o >= 0; o--) {
@@ -43225,10 +43258,14 @@ void set_to_Modify_GetLength (int n) {
 }
 
 void set_to_Modify_Power (int n) {
-  View_Select_Create_Modify = 19;
-  
-  selected_scaleVector = n;
 
+  if (n == 0) View_Select_Create_Modify = 19; // x 
+  if (n == 1) View_Select_Create_Modify = 20; // y 
+  if (n == 2) View_Select_Create_Modify = 21; // z 
+  if (n == 3) View_Select_Create_Modify = 22; // xyz
+
+  Modify_Object_Parameters = 0; // 0:change
+    
   ROLLOUT_Update = 1;
 }
 
@@ -46526,6 +46563,15 @@ void Solid_updatePosition (int n, float a, float b, float c) {
   allSolid_XYZPPPSSSRRRV[n][0] = a;
   allSolid_XYZPPPSSSRRRV[n][1] = b;
   allSolid_XYZPPPSSSRRRV[n][2] = c;  
+
+} 
+
+
+void Solid_updatePowers (int n, float a, float b, float c) {
+  
+  allSolid_XYZPPPSSSRRRV[n][3] = a;
+  allSolid_XYZPPPSSSRRRV[n][4] = b;
+  allSolid_XYZPPPSSSRRRV[n][5] = c;  
 
 } 
 
