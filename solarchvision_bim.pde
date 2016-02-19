@@ -13942,10 +13942,7 @@ int SOLARCHVISION_add_Face (int[] f) {
   
   allFaces = (int[][]) concat(allFaces, newFace);
   
-  if (addToLastPolygroup == 0) {
-    // no nead to call SOLARCHVISION_beginNewPolygroup(); here again!
-  }
-  else {
+  if (addToLastPolygroup == 1) {
     allPolygroups_Faces[allPolygroups_Faces.length - 1][1] = allFaces.length - 1;
   }
 
@@ -13960,12 +13957,7 @@ void SOLARCHVISION_add_Solid (float x, float y, float z, float px, float py, flo
 
   allSolids_num += 1;
 
-
-
-  if (addToLastPolygroup == 0) {
-    // no nead to call SOLARCHVISION_beginNewPolygroup(); here again!
-  }
-  else {
+  if (addToLastPolygroup == 1) {
     allPolygroups_Solids[allPolygroups_Solids.length - 1][1] = allSolids_XYZPPPSSSRRRV.length - 1;
   }
 
