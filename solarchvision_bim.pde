@@ -1204,12 +1204,12 @@ String[] ENSEMBLE_XML_Files = getfiles(ENSEMBLE_directory);
 String[] OBSERVED_XML_Files = getfiles(OBSERVED_directory);
 
 
-int MODEL1D_ERASE = 0;
+int ERASE_Fractals = 0;
 int MODEL2D_ERASE = 0;
-int MODEL3D_ERASE = 0;
-int SOLID_ERASE = 0;
-int SECTION_ERASE = 0;
-int CAMERA_ERASE = 0;
+int ERASE_Polygroups = 0;
+int ERASE_Solids = 0;
+int ERASE_Sections = 0;
+int ERASE_Cameras = 0;
 
 int LAND_TESSELLATION = 2;
 
@@ -1908,16 +1908,16 @@ void SOLARCHVISION_update_station (int Step) {
   
   //if ((Step == 0) || (Step == 7)) SOLARCHVISION_delete_Fractals();
   
-  if ((Step == 0) || (Step == 8)) SOLARCHVISION_delete_2Dobjects();
+  if ((Step == 0) || (Step == 8)) SOLARCHVISION_delete_Objects2Ds();
   
-  //if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_2Dobjects_onLand();
+  //if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_Objects2Ds_onLand();
 
 }
 
 void SOLARCHVISION_update_models (int Step) {
  
-   if ((Step == 0) || (Step == 1)) SOLARCHVISION_delete_3Dobjects();
-   //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_3Dobjects();
+   if ((Step == 0) || (Step == 1)) SOLARCHVISION_delete_Polygroups();
+   //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_Polygroups();
    if ((Step == 0) || (Step == 3)) SOLARCHVISION_delete_Solids();
    if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ProjectModel();
    if ((Step == 0) || (Step == 5)) SOLARCHVISION_calculate_SolidImpact_selectedSections();
@@ -2181,7 +2181,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_delete_2Dobjects", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_delete_Objects2Ds", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 18) {
     SOLARCHVISION_update_station(8);
@@ -2192,7 +2192,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_add_2Dobjects_onLand", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_add_Objects2Ds_onLand", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 19) {
     SOLARCHVISION_update_station(9);
@@ -2203,7 +2203,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_delete_3Dobjects", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_delete_Polygroups", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 20) {
     SOLARCHVISION_update_models(1);
@@ -2214,7 +2214,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_add_3Dobjects", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_add_Polygroups", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 21) {
     SOLARCHVISION_update_models(2);
@@ -2719,18 +2719,18 @@ void draw () {
         }
 
 
-        if (MODEL1D_ERASE == 1) {
+        if (ERASE_Fractals == 1) {
           SOLARCHVISION_delete_Fractals();
           
           WIN3D_Update = 1;
       
           ROLLOUT_Update = 1;
       
-          MODEL1D_ERASE = 0;    
+          ERASE_Fractals = 0;    
         }      
 
         if (MODEL2D_ERASE == 1) {
-          SOLARCHVISION_delete_2Dobjects();
+          SOLARCHVISION_delete_Objects2Ds();
           
           WIN3D_Update = 1;
       
@@ -2739,9 +2739,9 @@ void draw () {
           MODEL2D_ERASE = 0;    
         }        
         
-        if (MODEL3D_ERASE == 1) {
+        if (ERASE_Polygroups == 1) {
           
-          SOLARCHVISION_delete_3Dobjects();
+          SOLARCHVISION_delete_Polygroups();
           
           SOLARCHVISION_delete_Solids();
           
@@ -2753,46 +2753,46 @@ void draw () {
       
           ROLLOUT_Update = 1;
       
-          MODEL3D_ERASE = 0;    
+          ERASE_Polygroups = 0;    
         }
         
-        if (SOLID_ERASE == 1) {
+        if (ERASE_Solids == 1) {
           SOLARCHVISION_delete_Solids();
           
           WIN3D_Update = 1;
       
           ROLLOUT_Update = 1;
       
-          SOLID_ERASE = 0;    
+          ERASE_Solids = 0;    
         }          
         
-        if (SECTION_ERASE == 1) {
+        if (ERASE_Sections == 1) {
           SOLARCHVISION_delete_Sections();
           
           WIN3D_Update = 1;
       
           ROLLOUT_Update = 1;
       
-          SECTION_ERASE = 0;    
+          ERASE_Sections = 0;    
         }       
    
-        if (CAMERA_ERASE == 1) {
+        if (ERASE_Cameras == 1) {
           SOLARCHVISION_delete_Cameras();
           
           WIN3D_Update = 1;
       
           ROLLOUT_Update = 1;
       
-          CAMERA_ERASE = 0;    
+          ERASE_Cameras = 0;    
         }            
         
         if (pre_Load_Default_Models != Load_Default_Models) {
           
           SOLARCHVISION_delete_Fractals();
           
-          SOLARCHVISION_delete_2Dobjects();
+          SOLARCHVISION_delete_Objects2Ds();
           
-          SOLARCHVISION_delete_3Dobjects();
+          SOLARCHVISION_delete_Polygroups();
           
           SOLARCHVISION_delete_Solids();
           
@@ -3041,7 +3041,7 @@ void SOLARCHVISION_draw_WIN3D () {
     
     SOLARCHVISION_draw_land();
 
-    SOLARCHVISION_draw_3Dobjects();
+    SOLARCHVISION_draw_Polygroups();
 
     SOLARCHVISION_draw_Fractals();
     
@@ -3057,7 +3057,7 @@ void SOLARCHVISION_draw_WIN3D () {
     
     SOLARCHVISION_draw_SolidImpact_points();
     
-    SOLARCHVISION_draw_2Dobjects();  
+    SOLARCHVISION_draw_Objects2Ds();  
     
     SOLARCHVISION_draw_windFlow();
   
@@ -20961,7 +20961,7 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
 
 
 
-void SOLARCHVISION_add_2Dobjects_onLand () {
+void SOLARCHVISION_add_Objects2Ds_onLand () {
   
   randomSeed(0);
   
@@ -21094,7 +21094,7 @@ void SOLARCHVISION_add_2Dobjects_onLand () {
 
 }
 
-void SOLARCHVISION_add_2Dobjects_polar (int people_or_trees, int n, float x0, float y0, float z0, float r1, float r2) {
+void SOLARCHVISION_add_Objects2Ds_polar (int people_or_trees, int n, float x0, float y0, float z0, float r1, float r2) {
   
   for (int i = 0; i < n; i += 1) {
     
@@ -21114,7 +21114,7 @@ void SOLARCHVISION_add_2Dobjects_polar (int people_or_trees, int n, float x0, fl
   }  
 }
 
-void SOLARCHVISION_add_2Dobjects_plane (int people_or_trees, int n, float x0, float y0, float z0, float rx, float ry) {
+void SOLARCHVISION_add_Objects2Ds_plane (int people_or_trees, int n, float x0, float y0, float z0, float rx, float ry) {
   
   for (int i = 0; i < n; i += 1) {
     
@@ -21138,7 +21138,7 @@ void SOLARCHVISION_add_2Dobjects_plane (int people_or_trees, int n, float x0, fl
   }  
 }
 
-void SOLARCHVISION_add_2Dobjects_Mesh2 (int people_or_trees, int n, float x1, float y1, float z1, float x2, float y2, float z2) {
+void SOLARCHVISION_add_Objects2Ds_Mesh2 (int people_or_trees, int n, float x1, float y1, float z1, float x2, float y2, float z2) {
   
   float x0 = 0.5 * (x1 + x2);
   float y0 = 0.5 * (y1 + y2);
@@ -21178,7 +21178,7 @@ void SOLARCHVISION_add_2Dobjects_Mesh2 (int people_or_trees, int n, float x1, fl
 void SOLARCHVISION_delete_All () {
   
   SOLARCHVISION_delete_Fractals();
-  SOLARCHVISION_delete_3Dobjects(); // also includes Object2Ds and Solids
+  SOLARCHVISION_delete_Polygroups(); // also includes Object2Ds and Solids
   SOLARCHVISION_delete_Sections();
   SOLARCHVISION_delete_Cameras();
   
@@ -21306,7 +21306,7 @@ void SOLARCHVISION_delete_Fractals () {
   SOLARCHVISION_deselect_All();  
 }
 
-void SOLARCHVISION_delete_2Dobjects () {
+void SOLARCHVISION_delete_Objects2Ds () {
   allObject2Ds_XYZS = new float [1][4]; 
   allObject2Ds_XYZS[0][0] = 0;
   allObject2Ds_XYZS[0][1] = 0;
@@ -21321,7 +21321,7 @@ void SOLARCHVISION_delete_2Dobjects () {
   SOLARCHVISION_deselect_All();
 }
 
-void SOLARCHVISION_delete_3Dobjects () {
+void SOLARCHVISION_delete_Polygroups () {
   
   defaultMaterial = 7;
   defaultTessellation = 0;
@@ -21365,7 +21365,7 @@ void SOLARCHVISION_delete_3Dobjects () {
   
   SOLARCHVISION_delete_Solids();
   
-  SOLARCHVISION_delete_2Dobjects();
+  SOLARCHVISION_delete_Objects2Ds();
 
   SOLARCHVISION_beginNewPolygroup();
  
@@ -21423,11 +21423,11 @@ int MAX_Default_Models_Number = 7;
 void SOLARCHVISION_add_DefaultModel (int n) {
 
   if (Load_LAND_MESH == 1) {
-    SOLARCHVISION_add_2Dobjects_onLand(); 
+    SOLARCHVISION_add_Objects2Ds_onLand(); 
   }    
   else {
-    //SOLARCHVISION_add_2Dobjects_polar(0, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // people
-    //SOLARCHVISION_add_2Dobjects_polar(1, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // trees
+    //SOLARCHVISION_add_Objects2Ds_polar(0, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // people
+    //SOLARCHVISION_add_Objects2Ds_polar(1, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // trees
   }  
 
 
@@ -21575,7 +21575,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
  
 }
 
-void SOLARCHVISION_add_3Dobjects () {
+void SOLARCHVISION_add_Polygroups () {
   
   SOLARCHVISION_add_3Dbase(-2, 0, 0, 1, 0);
   
@@ -22810,7 +22810,7 @@ float SOLARCHVISION_getShader_PAL_Multiplier () {
 
 
 
-void SOLARCHVISION_draw_3Dobjects () {
+void SOLARCHVISION_draw_Polygroups () {
 
   if (Display_Building_Model != 0) {
     
@@ -23791,7 +23791,7 @@ void SOLARCHVISION_put_3DViewport () {
 float[][] allObject2Ds_Vertices;
 int[][] allObject2Ds_Faces;
 
-void SOLARCHVISION_draw_2Dobjects () {
+void SOLARCHVISION_draw_Objects2Ds () {
 
   allObject2Ds_Faces = new int [1 + allObject2Ds_num][4];
     
@@ -25645,7 +25645,7 @@ void SOLARCHVISION_add_ProjectModel () {
     for (float i = 0; i < 45; i += 3) {
       SOLARCHVISION_add_Mesh2(2,0,0,1,1, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
-      SOLARCHVISION_add_2Dobjects_plane(0, 10, x,y,i, dx, dy); // people  
+      SOLARCHVISION_add_Objects2Ds_plane(0, 10, x,y,i, dx, dy); // people  
     }   
   }  
 
@@ -25668,7 +25668,7 @@ void SOLARCHVISION_add_ProjectModel () {
     for (float i = 0; i < 45; i += 3) {
       SOLARCHVISION_add_Mesh2(2,0,0,1,1, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
-      SOLARCHVISION_add_2Dobjects_plane(0, 10, x,y,i, dx, dy); // people  
+      SOLARCHVISION_add_Objects2Ds_plane(0, 10, x,y,i, dx, dy); // people  
     }   
   }    
 
@@ -25691,7 +25691,7 @@ void SOLARCHVISION_add_ProjectModel () {
     for (float i = 0; i < 45; i += 3) {
       SOLARCHVISION_add_Mesh2(2,0,0,1,1, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
-      SOLARCHVISION_add_2Dobjects_plane(0, 10, x,y,i, dx, dy); // people  
+      SOLARCHVISION_add_Objects2Ds_plane(0, 10, x,y,i, dx, dy); // people  
     }    
   }    
 
@@ -25780,9 +25780,9 @@ void SOLARCHVISION_add_ProjectModel () {
 
 
   
-  //SOLARCHVISION_add_2Dobjects_plane(0, 100, 0,0,0, 50,50); // people
-  //SOLARCHVISION_add_2Dobjects_plane(1, 25, 0,40,0, 50,10); // trees back
-  //SOLARCHVISION_add_2Dobjects_plane(1, 25, 0,-30,0, 50,20); // trees front
+  //SOLARCHVISION_add_Objects2Ds_plane(0, 100, 0,0,0, 50,50); // people
+  //SOLARCHVISION_add_Objects2Ds_plane(1, 25, 0,40,0, 50,10); // trees back
+  //SOLARCHVISION_add_Objects2Ds_plane(1, 25, 0,-30,0, 50,20); // trees front
 /*
   SOLARCHVISION_beginNewPolygroup();
   SOLARCHVISION_add_PolygonHyper(0,0,0,1,1, 30,-30,4.5, 9, 9, 6, 0);  // hyper
@@ -25826,8 +25826,8 @@ void SOLARCHVISION_add_ProjectModel () {
     //SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
   }  
 
-  SOLARCHVISION_add_2Dobjects_polar(1, 40, 0,0,0, 40,100); // trees
-  SOLARCHVISION_add_2Dobjects_polar(0, 100, 0,0,0, 0,100); // people
+  SOLARCHVISION_add_Objects2Ds_polar(1, 40, 0,0,0, 40,100); // trees
+  SOLARCHVISION_add_Objects2Ds_polar(0, 100, 0,0,0, 0,100); // people
   
 
 
@@ -25854,10 +25854,10 @@ void SOLARCHVISION_add_ProjectModel () {
 
       }
       
-      SOLARCHVISION_add_2Dobjects_Mesh2(0, 10, x-dx,y-dy,i, x-dx/3.0,y+dy/3.0,i); // people  
-      SOLARCHVISION_add_2Dobjects_Mesh2(0, 10, x-dx,y+dy/3.0,i, x+dx/3.0,y+dy,i); // people
-      SOLARCHVISION_add_2Dobjects_Mesh2(0, 10, x+dx/3.0,y-dy/3.0,i, x+dx,y+dy,i); // people
-      SOLARCHVISION_add_2Dobjects_Mesh2(0, 10, x-dx/3.0,y-dy,i, x+dx,y-dy/3.0,i); // people
+      SOLARCHVISION_add_Objects2Ds_Mesh2(0, 10, x-dx,y-dy,i, x-dx/3.0,y+dy/3.0,i); // people  
+      SOLARCHVISION_add_Objects2Ds_Mesh2(0, 10, x-dx,y+dy/3.0,i, x+dx/3.0,y+dy,i); // people
+      SOLARCHVISION_add_Objects2Ds_Mesh2(0, 10, x+dx/3.0,y-dy/3.0,i, x+dx,y+dy,i); // people
+      SOLARCHVISION_add_Objects2Ds_Mesh2(0, 10, x-dx/3.0,y-dy,i, x+dx,y-dy/3.0,i); // people
     }   
     
     SOLARCHVISION_beginNewPolygroup();
@@ -33925,7 +33925,7 @@ void mouseClicked () {
               if (View_Select_Create_Modify == 0) { // create
     
                 int keep_number_of_Polygroups = allPolygroups_Faces.length;
-                int keep_number_of_2DObjects = allObject2Ds_XYZS.length;
+                int keep_number_of_Objects2Ds = allObject2Ds_XYZS.length;
                 int keep_number_of_Fractals = allFractals_XYZSRA.length;
                 int keep_number_of_Solids = allSolids.length;
                 int keep_number_of_Sections = allSections_UVERAB.length;
@@ -34390,7 +34390,7 @@ void mouseClicked () {
               
               
   
-                if (keep_number_of_Polygroups != allPolygroups_Faces.length) { // if any 3D-mesh created during the process
+                if (keep_number_of_Polygroups != allPolygroups_Faces.length) { // if any Polygroup created during the process
                   
                   selectedPolygroup_numbers = new int [1];
                   selectedPolygroup_numbers[0] = allPolygroups_Faces.length - 1;
@@ -34399,7 +34399,7 @@ void mouseClicked () {
                   SOLARCHVISION_calculate_selection_Pivot();
                 }
                 
-                if (keep_number_of_2DObjects != allObject2Ds_XYZS.length) { // if any 2D-mesh created during the process
+                if (keep_number_of_Objects2Ds != allObject2Ds_XYZS.length) { // if any Objects2D created during the process
   
                   selectedObject2D_numbers = new int [1];
                   selectedObject2D_numbers[0] = allObject2Ds_XYZS.length - 1;
@@ -34849,17 +34849,17 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       Load_URBAN_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Load_URBAN_MESH" , Load_URBAN_MESH, 0, 1, 1), 1));
 
-      MODEL1D_ERASE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL1D_ERASE" , MODEL1D_ERASE, 0, 1, 1), 1));
+      ERASE_Fractals = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ERASE_Fractals" , ERASE_Fractals, 0, 1, 1), 1));
     
       MODEL2D_ERASE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL2D_ERASE" , MODEL2D_ERASE, 0, 1, 1), 1));
       
-      MODEL3D_ERASE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL3D_ERASE" , MODEL3D_ERASE, 0, 1, 1), 1));
+      ERASE_Polygroups = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ERASE_Polygroups" , ERASE_Polygroups, 0, 1, 1), 1));
       
-      SOLID_ERASE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SOLID_ERASE" , SOLID_ERASE, 0, 1, 1), 1));
+      ERASE_Solids = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ERASE_Solids" , ERASE_Solids, 0, 1, 1), 1));
       
-      SECTION_ERASE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SECTION_ERASE" , SECTION_ERASE, 0, 1, 1), 1));
+      ERASE_Sections = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ERASE_Sections" , ERASE_Sections, 0, 1, 1), 1));
       
-      CAMERA_ERASE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "CAMERA_ERASE" , CAMERA_ERASE, 0, 1, 1), 1));
+      ERASE_Cameras = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ERASE_Cameras" , ERASE_Cameras, 0, 1, 1), 1));
    
       Load_Default_Models = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Load_Default_Models" , Load_Default_Models, 0, MAX_Default_Models_Number, 1), 1));
       
