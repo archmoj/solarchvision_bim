@@ -1,4 +1,4 @@
-// deleting solids may create conflict with polygroupes that has those solids
+// deleting solids may create conflict with polygroups that has those solids
 // should add solid option to trees? 
 // drop functions only works for living objects
 // should export tropo layer in obj format
@@ -13943,7 +13943,7 @@ int SOLARCHVISION_add_Face (int[] f) {
   allFaces = (int[][]) concat(allFaces, newFace);
   
   if (addToLastPolygroup == 0) {
-    SOLARCHVISION_beginNewPolygroup();
+    // no nead to call SOLARCHVISION_beginNewPolygroup(); here again!
   }
   else {
     allPolygroups_Faces[allPolygroups_Faces.length - 1][1] = allFaces.length - 1;
@@ -13966,7 +13966,7 @@ void SOLARCHVISION_add_Solid (float x, float y, float z, float px, float py, flo
     // no nead to call SOLARCHVISION_beginNewPolygroup(); here again!
   }
   else {
-    allPolygroups_Solids[allPolygroups_Solids.length - 1][1] = allSolids_num;
+    allPolygroups_Solids[allPolygroups_Solids.length - 1][1] = allSolids_XYZPPPSSSRRRV.length - 1;
   }
 
 }
@@ -13994,7 +13994,7 @@ void SOLARCHVISION_beginNewPolygroup () {
     allPolygroups_SolarPivotType = (int[][]) concat(allPolygroups_SolarPivotType, newObject_Pivot);        
   }
 
-  WIN3D_update_VerticesSolarValue = 1; // <<<<<<<
+  
 }
 
 
@@ -14433,7 +14433,7 @@ void SOLARCHVISION_delete_Selection () {
       if (OBJ_NUM != 0) {    
         
         
-        // first should first find it in polygroupes ZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
+        // first should find it in polygroups ZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
 
         {
           float[][] startList = (float[][]) subset(allSolids_XYZPPPSSSRRRV, 0, OBJ_NUM);
@@ -43177,7 +43177,7 @@ void set_to_Modify_Visibility (int n) {
   ROLLOUT_Update = 1; 
 }
  
-// the same messages of View_Select_Create_Modify=6/7 for both Layer/Visibility of polygroupes and DegreeMax/DegreeDif is not good!
+// the same messages of View_Select_Create_Modify=6/7 for both Layer/Visibility of polygroups and DegreeMax/DegreeDif is not good!
 
 void set_to_Modify_DegreeMax (int n) {
   View_Select_Create_Modify = 8;
