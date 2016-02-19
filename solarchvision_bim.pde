@@ -1714,7 +1714,7 @@ PImage[][] allSections_SolarImpact = new PImage[1][(1 + STUDY_j_end - STUDY_j_st
 
 
 
-float[][] allSolids_XYZPPPSSSRRRV = {{0,0,0,2,2,2,1,1,1,0,0,0,1}};
+float[][] allSolids = {{0,0,0,2,2,2,1,1,1,0,0,0,1}};
 
 
 
@@ -13954,21 +13954,21 @@ int SOLARCHVISION_add_Face (int[] f) {
 
 int SOLARCHVISION_add_Solid (float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float tx, float ty, float tz, float v) {
 
-  float[][] TempSolid_XYZPPPSSSRRRV = {{x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz, v}};
-  allSolids_XYZPPPSSSRRRV = (float[][]) concat(allSolids_XYZPPPSSSRRRV, TempSolid_XYZPPPSSSRRRV);
+  float[][] newSolid = {{x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz, v}};
+  allSolids = (float[][]) concat(allSolids, newSolid);
 
   if (addToLastPolygroup == 1) {
-    allPolygroups_Solids[allPolygroups_Solids.length - 1][1] = allSolids_XYZPPPSSSRRRV.length - 1;
+    allPolygroups_Solids[allPolygroups_Solids.length - 1][1] = allSolids.length - 1;
   }
 
-  return(allSolids_XYZPPPSSSRRRV.length - 1);
+  return(allSolids.length - 1);
 }
 
 
 
 void SOLARCHVISION_beginNewPolygroup () {
 
-  int[][] newObject_Solids = {{allSolids_XYZPPPSSSRRRV.length, 0}}; // i.e. null because start > end 
+  int[][] newObject_Solids = {{allSolids.length, 0}}; // i.e. null because start > end 
   
   allPolygroups_Solids = (int[][]) concat(allPolygroups_Solids, newObject_Solids);      
   
@@ -14282,7 +14282,7 @@ void SOLARCHVISION_duplicateSelection () {
 
   if (Work_with_2D_or_3D == 7) {
     
-    int number_of_Solid_before = allSolids_XYZPPPSSSRRRV.length; 
+    int number_of_Solid_before = allSolids.length; 
 
     for (int o = 0; o < selectedSolid_numbers.length; o++) {
 
@@ -14313,7 +14313,7 @@ void SOLARCHVISION_duplicateSelection () {
     selectedSolid_numbers = new int [1];
     selectedSolid_numbers[0] = 0;
     
-    for (int o = number_of_Solid_before; o < allSolids_XYZPPPSSSRRRV.length; o++) {
+    for (int o = number_of_Solid_before; o < allSolids.length; o++) {
       
       int[] newlyAddedSolid = {o};
       
@@ -14425,10 +14425,10 @@ void SOLARCHVISION_delete_Selection () {
         // first should find it in polygroups ZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
 
         {
-          float[][] startList = (float[][]) subset(allSolids_XYZPPPSSSRRRV, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allSolids_XYZPPPSSSRRRV, OBJ_NUM + 1);
+          float[][] startList = (float[][]) subset(allSolids, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allSolids, OBJ_NUM + 1);
           
-          allSolids_XYZPPPSSSRRRV = (float[][]) concat(startList, endList);
+          allSolids = (float[][]) concat(startList, endList);
         }
 
       }
@@ -14724,10 +14724,10 @@ void SOLARCHVISION_delete_Selection () {
         
         if ((0 < startSolid) && (startSolid <= endSolid)) {
           
-          float[][] startList = (float[][]) subset(allSolids_XYZPPPSSSRRRV, 0, startSolid);
-          float[][] endList = (float[][]) subset(allSolids_XYZPPPSSSRRRV, endSolid + 1);
+          float[][] startList = (float[][]) subset(allSolids, 0, startSolid);
+          float[][] endList = (float[][]) subset(allSolids, endSolid + 1);
           
-          allSolids_XYZPPPSSSRRRV = (float[][]) concat(startList, endList);
+          allSolids = (float[][]) concat(startList, endList);
           
           Solids_updated = 1;
           
@@ -16954,7 +16954,7 @@ void SOLARCHVISION_select_All () {
   }
   
   if (Work_with_2D_or_3D == 7) {
-    selectedSolid_numbers = new int [allSolids_XYZPPPSSSRRRV.length];
+    selectedSolid_numbers = new int [allSolids.length];
     for (int i = 0; i < selectedSolid_numbers.length; i++) { 
       selectedSolid_numbers[i] = i;
     }
@@ -17162,7 +17162,7 @@ void SOLARCHVISION_reverse_Selection () {
     selectedSolid_numbers = new int [1];
     selectedSolid_numbers[0] = 0;
     
-    for (int i = 1; i < allSolids_XYZPPPSSSRRRV.length; i++) {
+    for (int i = 1; i < allSolids.length; i++) {
       int found = -1; 
       
       for (int j = 1; j < pre_selectedSolid_numbers.length; j++) {
@@ -20979,20 +20979,20 @@ void SOLARCHVISION_delete_Sections () {
 
 
 void SOLARCHVISION_delete_Solids () {
-  allSolids_XYZPPPSSSRRRV = new float [1][13]; 
-  allSolids_XYZPPPSSSRRRV[0][0] = 0;
-  allSolids_XYZPPPSSSRRRV[0][1] = 0;
-  allSolids_XYZPPPSSSRRRV[0][2] = 0;
-  allSolids_XYZPPPSSSRRRV[0][3] = 2;
-  allSolids_XYZPPPSSSRRRV[0][4] = 2;
-  allSolids_XYZPPPSSSRRRV[0][5] = 2;
-  allSolids_XYZPPPSSSRRRV[0][6] = 1;
-  allSolids_XYZPPPSSSRRRV[0][7] = 1;
-  allSolids_XYZPPPSSSRRRV[0][8] = 1;
-  allSolids_XYZPPPSSSRRRV[0][9] = 0;
-  allSolids_XYZPPPSSSRRRV[0][10] = 0;
-  allSolids_XYZPPPSSSRRRV[0][11] = 0;
-  allSolids_XYZPPPSSSRRRV[0][12] = 1;
+  allSolids = new float [1][13]; 
+  allSolids[0][0] = 0;
+  allSolids[0][1] = 0;
+  allSolids[0][2] = 0;
+  allSolids[0][3] = 2;
+  allSolids[0][4] = 2;
+  allSolids[0][5] = 2;
+  allSolids[0][6] = 1;
+  allSolids[0][7] = 1;
+  allSolids[0][8] = 1;
+  allSolids[0][9] = 0;
+  allSolids[0][10] = 0;
+  allSolids[0][11] = 0;
+  allSolids[0][12] = 1;
   
   SOLARCHVISION_deselect_All();  
 }
@@ -26385,7 +26385,7 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple (float x, float y, float 
 
   float val = 1;
   
-  for (int n = 1; n < allSolids_XYZPPPSSSRRRV.length; n++) {
+  for (int n = 1; n < allSolids.length; n++) {
     
     float r = Solid_get_value(n);
     float d = Solid_get_Distance(n, x, y, z);
@@ -26399,13 +26399,13 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple (float x, float y, float 
 
   }
   
-  if (allSolids_XYZPPPSSSRRRV.length - 1 > 0) {
+  if (allSolids.length - 1 > 0) {
     float val_sign = 1;
     if (val < 0) {
       val_sign = -1;
       val = abs(val);
     } 
-    val = pow(val, 1.0 / float(allSolids_XYZPPPSSSRRRV.length - 1));
+    val = pow(val, 1.0 / float(allSolids.length - 1));
     val *= val_sign;    
   } 
 
@@ -26423,7 +26423,7 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_complex (float x, float y, float
 
   for (int o = 0; o < 2; o++) {
 
-    for (int n = 1; n < allSolids_XYZPPPSSSRRRV.length; n++) {
+    for (int n = 1; n < allSolids.length; n++) {
 
       float r = Solid_get_value(n);
       float d = Solid_get_Distance(n, x + o * deltaX , y + o * deltaY, z);
@@ -26436,13 +26436,13 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_complex (float x, float y, float
       }        
     }
     
-    if (allSolids_XYZPPPSSSRRRV.length - 1 > 0) {
+    if (allSolids.length - 1 > 0) {
       float val_sign = 1;
       if (val[o] < 0) {
         val_sign = -1;
         val[o] = abs(val[o]);
       } 
-      val[o] = pow(val[o], 1.0 / float(allSolids_XYZPPPSSSRRRV.length - 1));
+      val[o] = pow(val[o], 1.0 / float(allSolids.length - 1));
       val[o] *= val_sign;    
     }     
   }
@@ -28490,7 +28490,7 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
   }  
 
   if (Work_with_2D_or_3D == 7) {
-    length_of_indexes = allSolids_XYZPPPSSSRRRV.length;
+    length_of_indexes = allSolids.length;
     start_index_OBJ_NUM = selectedSolid_numbers[start_index];
   }   
   
@@ -33639,7 +33639,7 @@ void mouseClicked () {
                 int keep_number_of_Polygroups = allPolygroups_Faces.length;
                 int keep_number_of_2DObjects = allObject2Ds_XYZS.length;
                 int keep_number_of_Fractals = allFractals_XYZSRA.length;
-                int keep_number_of_Solids = allSolids_XYZPPPSSSRRRV.length;
+                int keep_number_of_Solids = allSolids.length;
                 int keep_number_of_Sections = allSections_UVERAB.length;
                 int keep_number_of_Cameras = allCamera_PPPSRRRF.length;
                 
@@ -34148,10 +34148,10 @@ void mouseClicked () {
                   SOLARCHVISION_calculate_selection_Pivot();
                 }     
    
-                if (keep_number_of_Solids != allSolids_XYZPPPSSSRRRV.length) { // if any Solid created during the process
+                if (keep_number_of_Solids != allSolids.length) { // if any Solid created during the process
   
                   selectedSolid_numbers = new int [1];
-                  selectedSolid_numbers[0] = allSolids_XYZPPPSSSRRRV.length - 1;
+                  selectedSolid_numbers[0] = allSolids.length - 1;
                   
                   println("SOLARCHVISION_calculate_selection_Pivot 9d");
                   SOLARCHVISION_calculate_selection_Pivot();
@@ -38182,9 +38182,9 @@ int Solids_DisplayDegree = 16; //8; // internal - number of each face corners
 
 void SOLARCHVISION_draw_Solids () {
   
-  allSolids_Faces = new int [Solids_DisplayFaces * allSolids_XYZPPPSSSRRRV.length][Solids_DisplayDegree]; 
+  allSolids_Faces = new int [Solids_DisplayFaces * allSolids.length][Solids_DisplayDegree]; 
     
-  allSolids_Vertices = new float [Solids_DisplayFaces * Solids_DisplayDegree * allSolids_XYZPPPSSSRRRV.length][3];
+  allSolids_Vertices = new float [Solids_DisplayFaces * Solids_DisplayDegree * allSolids.length][3];
   allSolids_Vertices[0][0] = 0;
   allSolids_Vertices[0][1] = 0;
   allSolids_Vertices[0][2] = 0;
@@ -38193,7 +38193,7 @@ void SOLARCHVISION_draw_Solids () {
 
     WIN3D_Diagrams.strokeWeight(2);
     
-    for (int f = 1; f < allSolids_XYZPPPSSSRRRV.length; f++) {
+    for (int f = 1; f < allSolids.length; f++) {
       
       float Solid_posX = Solid_get_posX(f);
       float Solid_posY = Solid_get_posY(f);
@@ -39341,7 +39341,7 @@ void SOLARCHVISION_move_selectedPolygroups (float dx, float dy, float dz) {
       }
       
       for (int g = allPolygroups_Solids[OBJ_NUM][0]; g <= allPolygroups_Solids[OBJ_NUM][1]; g++) {
-        if ((0 < g) && (g <= allSolids_XYZPPPSSSRRRV.length - 1)) {
+        if ((0 < g) && (g <= allSolids.length - 1)) {
           
           float Solid_posX = Solid_get_posX(g);
           float Solid_posY = Solid_get_posY(g);
@@ -39423,7 +39423,7 @@ void SOLARCHVISION_rotate_selectedPolygroups (float x0, float y0, float z0, floa
       }    
       
       for (int g = allPolygroups_Solids[OBJ_NUM][0]; g <= allPolygroups_Solids[OBJ_NUM][1]; g++) {
-        if ((0 < g) && (g <= allSolids_XYZPPPSSSRRRV.length - 1)) {
+        if ((0 < g) && (g <= allSolids.length - 1)) {
 
           float Solid_posX = Solid_get_posX(g);
           float Solid_posY = Solid_get_posY(g);
@@ -39509,7 +39509,7 @@ void SOLARCHVISION_scale_selectedPolygroups (float x0, float y0, float z0, float
       }
       
       for (int g = allPolygroups_Solids[OBJ_NUM][0]; g <= allPolygroups_Solids[OBJ_NUM][1]; g++) {
-        if ((0 < g) && (g <= allSolids_XYZPPPSSSRRRV.length - 1)) {
+        if ((0 < g) && (g <= allSolids.length - 1)) {
           
           float Solid_posX = Solid_get_posX(g);
           float Solid_posY = Solid_get_posY(g);
@@ -44920,16 +44920,16 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   
   {
     newChild1 = my_xml.addChild("allSolids");
-    int ni = allSolids_XYZPPPSSSRRRV.length;
+    int ni = allSolids.length;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
       newChild2 = newChild1.addChild("Solid");
       newChild2.setInt("id", i);
       String lineSTR = "";
-      //for (int j = 0; j < allSolids_XYZPPPSSSRRRV[i].length; j++) {
+      //for (int j = 0; j < allSolids[i].length; j++) {
       for (int j = 0; j < 13; j++) { // x, y, y, px, py, pz, sx, sy, sz, rx, ry, rz, v
-        lineSTR += nf(allSolids_XYZPPPSSSRRRV[i][j], 0, 4).replace(",", "."); // <<<<
-        if (j + 1 != allSolids_XYZPPPSSSRRRV[i].length) lineSTR += ",";
+        lineSTR += nf(allSolids[i][j], 0, 4).replace(",", "."); // <<<<
+        if (j + 1 != allSolids[i].length) lineSTR += ",";
       }
       
       newChild2.setContent(lineSTR);
@@ -46055,7 +46055,7 @@ void SOLARCHVISION_load_project (String myFile) {
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
       
-      allSolids_XYZPPPSSSRRRV = new float [ni][13];
+      allSolids = new float [ni][13];
       
       XML[] children1 = children0[L].getChildren("Solid");         
       for (int i = 0; i < ni; i++) {
@@ -46063,7 +46063,7 @@ void SOLARCHVISION_load_project (String myFile) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
         for (int j = 0; j < 13; j++) {
-          allSolids_XYZPPPSSSRRRV[i][j] = float(parts[j]);
+          allSolids[i][j] = float(parts[j]);
         }
 
       }
@@ -46560,45 +46560,45 @@ void SOLARCHVISION_load_project (String myFile) {
 
 void Solid_updatePosition (int n, float a, float b, float c) {
   
-  allSolids_XYZPPPSSSRRRV[n][0] = a;
-  allSolids_XYZPPPSSSRRRV[n][1] = b;
-  allSolids_XYZPPPSSSRRRV[n][2] = c;  
+  allSolids[n][0] = a;
+  allSolids[n][1] = b;
+  allSolids[n][2] = c;  
 
 } 
 
 
 void Solid_updatePowers (int n, float a, float b, float c) {
   
-  allSolids_XYZPPPSSSRRRV[n][3] = a;
-  allSolids_XYZPPPSSSRRRV[n][4] = b;
-  allSolids_XYZPPPSSSRRRV[n][5] = c;  
+  allSolids[n][3] = a;
+  allSolids[n][4] = b;
+  allSolids[n][5] = c;  
 
 } 
 
 void Solid_Scale (int n, float a, float b, float c) {
   
-  allSolids_XYZPPPSSSRRRV[n][6] *= a;
-  allSolids_XYZPPPSSSRRRV[n][7] *= b;
-  allSolids_XYZPPPSSSRRRV[n][8] *= c;  
+  allSolids[n][6] *= a;
+  allSolids[n][7] *= b;
+  allSolids[n][8] *= c;  
 
 } 
 
 
 void Solid_RotateX (int n, float t) {
   
-  allSolids_XYZPPPSSSRRRV[n][9] += t;
+  allSolids[n][9] += t;
 
 } 
 
 void Solid_RotateY (int n, float t) {
   
-  allSolids_XYZPPPSSSRRRV[n][10] += t;
+  allSolids[n][10] += t;
 
 } 
 
 void Solid_RotateZ (int n, float t) {
   
-  allSolids_XYZPPPSSSRRRV[n][11] += t;
+  allSolids[n][11] += t;
 
 } 
 
@@ -46607,84 +46607,84 @@ void Solid_RotateZ (int n, float t) {
 
 float Solid_get_posX (int n) { 
 
-  return allSolids_XYZPPPSSSRRRV[n][0];
+  return allSolids[n][0];
 
 } 
 
 
 float Solid_get_posY (int n) { 
 
-  return allSolids_XYZPPPSSSRRRV[n][1];
+  return allSolids[n][1];
 
 } 
 
 
 float Solid_get_posZ (int n) { 
 
-  return allSolids_XYZPPPSSSRRRV[n][2];
+  return allSolids[n][2];
 
 } 
 
 
 float Solid_get_powX (int n) { 
 
-  return allSolids_XYZPPPSSSRRRV[n][3];
+  return allSolids[n][3];
 
 } 
 
 
 float Solid_get_powY (int n) { 
 
-  return allSolids_XYZPPPSSSRRRV[n][4];
+  return allSolids[n][4];
 
 } 
 
 
 float Solid_get_powZ (int n) { 
 
-  return allSolids_XYZPPPSSSRRRV[n][5];
+  return allSolids[n][5];
 
 } 
 
 
 float Solid_get_scaleX (int n) { 
 
-  return allSolids_XYZPPPSSSRRRV[n][6];
+  return allSolids[n][6];
 
 } 
 
 
 float Solid_get_scaleY (int n) { 
 
-  return allSolids_XYZPPPSSSRRRV[n][7];
+  return allSolids[n][7];
 
 } 
 
 
 float Solid_get_scaleZ (int n) { 
 
-  return allSolids_XYZPPPSSSRRRV[n][8];
+  return allSolids[n][8];
 
 } 
 
 
 float Solid_get_rotX (int n) { 
 
-  return allSolids_XYZPPPSSSRRRV[n][9];
+  return allSolids[n][9];
 
 } 
 
 
 float Solid_get_rotY (int n) { 
 
-  return allSolids_XYZPPPSSSRRRV[n][10];
+  return allSolids[n][10];
 
 } 
 
 
 float Solid_get_rotZ (int n) { 
 
-  return allSolids_XYZPPPSSSRRRV[n][11];
+  return allSolids[n][11];
 
 } 
 
@@ -46692,7 +46692,7 @@ float Solid_get_rotZ (int n) {
 
 float Solid_get_value (int n) { 
 
-  return allSolids_XYZPPPSSSRRRV[n][12];
+  return allSolids[n][12];
 
 } 
 
@@ -46700,19 +46700,19 @@ float Solid_get_value (int n) {
 
 float Solid_get_Distance (int n, float a, float b, float c) {
   
-  float posX = allSolids_XYZPPPSSSRRRV[n][0];
-  float posY = allSolids_XYZPPPSSSRRRV[n][1];
-  float posZ = allSolids_XYZPPPSSSRRRV[n][2];
-  float powX = allSolids_XYZPPPSSSRRRV[n][3];
-  float powY = allSolids_XYZPPPSSSRRRV[n][4];
-  float powZ = allSolids_XYZPPPSSSRRRV[n][5];
-  float scaleX = allSolids_XYZPPPSSSRRRV[n][6];
-  float scaleY = allSolids_XYZPPPSSSRRRV[n][7];
-  float scaleZ = allSolids_XYZPPPSSSRRRV[n][8];
-  float rotX = allSolids_XYZPPPSSSRRRV[n][9];
-  float rotY = allSolids_XYZPPPSSSRRRV[n][10];
-  float rotZ = allSolids_XYZPPPSSSRRRV[n][11];
-  float value = allSolids_XYZPPPSSSRRRV[n][12];
+  float posX = allSolids[n][0];
+  float posY = allSolids[n][1];
+  float posZ = allSolids[n][2];
+  float powX = allSolids[n][3];
+  float powY = allSolids[n][4];
+  float powZ = allSolids[n][5];
+  float scaleX = allSolids[n][6];
+  float scaleY = allSolids[n][7];
+  float scaleZ = allSolids[n][8];
+  float rotX = allSolids[n][9];
+  float rotY = allSolids[n][10];
+  float rotZ = allSolids[n][11];
+  float value = allSolids[n][12];
 
 
   a -= posX;
