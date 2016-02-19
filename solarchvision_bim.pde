@@ -1,3 +1,6 @@
+// there is a bug in delete function at Polygroups level. 
+// SOLARCHVISION_delete_Objects2Ds could produce problems nowthat we have Object2Ds in Polygroups... should modify that.
+
 // could add solid option to trees?
 // could add create polygroup --> startPolyGroup ...
 // drop functions only works for living objects
@@ -1205,7 +1208,7 @@ String[] OBSERVED_XML_Files = getfiles(OBSERVED_directory);
 
 
 int ERASE_Fractals = 0;
-int MODEL2D_ERASE = 0;
+int ERASE_Object2Ds = 0;
 int ERASE_Polygroups = 0;
 int ERASE_Solids = 0;
 int ERASE_Sections = 0;
@@ -2729,14 +2732,14 @@ void draw () {
           ERASE_Fractals = 0;    
         }      
 
-        if (MODEL2D_ERASE == 1) {
+        if (ERASE_Object2Ds == 1) {
           SOLARCHVISION_delete_Objects2Ds();
           
           WIN3D_Update = 1;
       
           ROLLOUT_Update = 1;
       
-          MODEL2D_ERASE = 0;    
+          ERASE_Object2Ds = 0;    
         }        
         
         if (ERASE_Polygroups == 1) {
@@ -34851,7 +34854,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       ERASE_Fractals = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ERASE_Fractals" , ERASE_Fractals, 0, 1, 1), 1));
     
-      MODEL2D_ERASE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL2D_ERASE" , MODEL2D_ERASE, 0, 1, 1), 1));
+      ERASE_Object2Ds = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ERASE_Object2Ds" , ERASE_Object2Ds, 0, 1, 1), 1));
       
       ERASE_Polygroups = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ERASE_Polygroups" , ERASE_Polygroups, 0, 1, 1), 1));
       
