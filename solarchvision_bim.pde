@@ -1,3 +1,8 @@
+// should add rotation. functionality to object2ds in polygroup and in general.
+// could put the move/scale/roatte function of 2Ds and Fractals outside. (to avoid writting something several times!) 
+
+//search for (// no rotation.)
+
 // SOLARCHVISION_delete_Objects2Ds could produce problems nowthat we have Object2Ds in Polygroups... should modify that.
 
 // could add solid option to trees?
@@ -39629,6 +39634,15 @@ void SOLARCHVISION_move_selectedPolygroups (float dx, float dy, float dz) {
         allPolygroups_SolarPivotXYZ[OBJ_NUM][1] += dy;
         allPolygroups_SolarPivotXYZ[OBJ_NUM][2] += dz;
       }
+
+      for (int f = allPolygroups_Object2Ds[OBJ_NUM][0]; f <= allPolygroups_Object2Ds[OBJ_NUM][1]; f++) {
+        if ((0 < f) && (f <= allObject2Ds_num)) {
+          
+          allObject2Ds_XYZS[f][0] += dx;
+          allObject2Ds_XYZS[f][1] += dy;
+          allObject2Ds_XYZS[f][2] += dz;
+        }
+      }
       
       for (int f = allPolygroups_Solids[OBJ_NUM][0]; f <= allPolygroups_Solids[OBJ_NUM][1]; f++) {
         if ((0 < f) && (f <= allSolids.length - 1)) {
@@ -39681,6 +39695,9 @@ void SOLARCHVISION_rotate_selectedPolygroups (float x0, float y0, float z0, floa
   
   //println("SOLARCHVISION_calculate_selection_Pivot 11");
   //SOLARCHVISION_calculate_selection_Pivot(); 
+
+
+  int OBJ_NUM = selectedPolygroup_numbers[o];
   
   int Solids_updated = 0;
   
@@ -39711,6 +39728,13 @@ void SOLARCHVISION_rotate_selectedPolygroups (float x0, float y0, float z0, floa
           allPolygroups_SolarPivotXYZ[OBJ_NUM][2] = z0 + (y * sin(r) + z * cos(r));
         }          
       }    
+      
+      for (int f = allPolygroups_Object2Ds[OBJ_NUM][0]; f <= allPolygroups_Object2Ds[OBJ_NUM][1]; f++) {
+        if ((0 < f) && (f <= allObject2Ds_num)) {
+          
+          // no rotation.
+        }
+      }         
       
       for (int f = allPolygroups_Solids[OBJ_NUM][0]; f <= allPolygroups_Solids[OBJ_NUM][1]; f++) {
         if ((0 < f) && (f <= allSolids.length - 1)) {
@@ -39783,6 +39807,7 @@ void SOLARCHVISION_scale_selectedPolygroups (float x0, float y0, float z0, float
   
   
   
+  int n1 = Object2D_PEOPLE_Files_Num;
   
   int Solids_updated = 0;
 
@@ -39797,6 +39822,27 @@ void SOLARCHVISION_scale_selectedPolygroups (float x0, float y0, float z0, float
         allPolygroups_SolarPivotXYZ[OBJ_NUM][1] = y0 + sy * (allPolygroups_SolarPivotXYZ[OBJ_NUM][1] - y0);
         allPolygroups_SolarPivotXYZ[OBJ_NUM][2] = z0 + sz * (allPolygroups_SolarPivotXYZ[OBJ_NUM][2] - z0);
       }
+
+
+      for (int f = allPolygroups_Object2Ds[OBJ_NUM][0]; f <= allPolygroups_Object2Ds[OBJ_NUM][1]; f++) {
+        if ((0 < f) && (f <= allObject2Ds_num)) {
+          
+          float x = allObject2Ds_XYZS[f][0] - x0; 
+          float y = allObject2Ds_XYZS[f][1] - y0; 
+          //float z = allObject2Ds_XYZS[f][2] - z0;
+         
+          allObject2Ds_XYZS[f][0] = x0 + sx * x; 
+          allObject2Ds_XYZS[f][1] = y0 + sy * y;
+          //allObject2Ds_XYZS[f][2] = z0 + sz * z;
+  
+          int n = allObject2Ds_MAP[f];
+  
+          if (abs(n) > n1) { // does not scale poeple!    
+            allObject2Ds_XYZS[f][3] *= sz; 
+          }          
+          
+        }
+      }     
       
       for (int f = allPolygroups_Solids[OBJ_NUM][0]; f <= allPolygroups_Solids[OBJ_NUM][1]; f++) {
         if ((0 < f) && (f <= allSolids.length - 1)) {
