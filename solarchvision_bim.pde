@@ -1,4 +1,3 @@
-// there is a bug in delete function at Polygroups level. 
 // SOLARCHVISION_delete_Objects2Ds could produce problems nowthat we have Object2Ds in Polygroups... should modify that.
 
 // could add solid option to trees?
@@ -14811,8 +14810,6 @@ void SOLARCHVISION_delete_Selection () {
           
           for (int i = OBJ_NUM + 1; i < allPolygroups_Object2Ds.length; i++) {
           
-            println("before:", allPolygroups_Object2Ds[i][0], allPolygroups_Object2Ds[i][1]);
-            
             for (int j = 0; j < 2; j++) {
               
               allPolygroups_Object2Ds[i][j] -= 1 + endObject2D - startObject2D;
@@ -14820,7 +14817,6 @@ void SOLARCHVISION_delete_Selection () {
               if (allPolygroups_Object2Ds[i][j] < 0) allPolygroups_Object2Ds[i][j] = 0; 
             }
             
-            println("after:", allPolygroups_Object2Ds[i][0], allPolygroups_Object2Ds[i][1]);
           }    
           
           int[][] startList = (int[][]) subset(allPolygroups_Object2Ds, 0, OBJ_NUM);
@@ -14846,12 +14842,12 @@ void SOLARCHVISION_delete_Selection () {
             allObject2Ds_MAP = (int[]) concat(startList, endList);
           }
           
-          allObject2Ds_num = allObject2Ds_XYZS.length - 1;
+          //allObject2Ds_num = allObject2Ds_XYZS.length - 1;
+          allObject2Ds_num -= 1 + endObject2D - startObject2D;
 
         }
         
-        println("allObject2Ds_num", allObject2Ds_num);
-        
+
         
         int startSolid = allPolygroups_Solids[OBJ_NUM][0];
         int endSolid = allPolygroups_Solids[OBJ_NUM][1];
