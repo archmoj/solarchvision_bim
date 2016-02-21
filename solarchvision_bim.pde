@@ -13491,7 +13491,7 @@ void SOLARCHVISION_add_Object2D (String t, int m, float x, float y, float z, flo
   allObject2Ds_num += 1;
   
     
-  allPolygroups_Object2Ds[allPolygroups_Object2Ds.length - 1][1] = allObject2Ds_num;
+  allPolygroups_Object2Ds[allPolygroups_num][1] = allObject2Ds_num;
 }
 
 
@@ -14637,7 +14637,7 @@ void SOLARCHVISION_delete_Selection () {
 
       if (OBJ_NUM != 0) {    
         
-        for (int q = 0; q < allPolygroups_Object2Ds.length; q++) {
+        for (int q = 0; q < allPolygroups_num + 1; q++) {
           if ((allPolygroups_Object2Ds[q][0] <= OBJ_NUM) && (OBJ_NUM <= allPolygroups_Object2Ds[q][1])) {
             
             //println("object2D found at group:", q);
@@ -14647,7 +14647,7 @@ void SOLARCHVISION_delete_Selection () {
             
             println(startObject2D, endObject2D);
     
-            for (int i = q + 1; i < allPolygroups_Object2Ds.length; i++) {
+            for (int i = q + 1; i < allPolygroups_num + 1; i++) {
               for (int j = 0; j < 2; j++) {
                 
                 allPolygroups_Object2Ds[i][j] -= 1;
@@ -14813,7 +14813,7 @@ void SOLARCHVISION_delete_Selection () {
         
         {
           
-          for (int i = OBJ_NUM + 1; i < allPolygroups_Object2Ds.length; i++) {
+          for (int i = OBJ_NUM + 1; i < allPolygroups_num + 1; i++) {
           
             for (int j = 0; j < 2; j++) {
               
@@ -17409,7 +17409,7 @@ void SOLARCHVISION_convert_Object2D_to_Polygroup () {
     
     int f = selectedObject2D_numbers[i];
       
-    for (int OBJ_NUM = 1; OBJ_NUM < allPolygroups_Object2Ds.length; OBJ_NUM++) {
+    for (int OBJ_NUM = 1; OBJ_NUM < allPolygroups_num + 1; OBJ_NUM++) {
     
       if ((allPolygroups_Object2Ds[OBJ_NUM][0] <= f) && (f <= allPolygroups_Object2Ds[OBJ_NUM][1])) { 
       
@@ -33930,7 +33930,7 @@ void mouseClicked () {
               if (View_Select_Create_Modify == 0) { // create
     
                 int keep_number_of_Polygroups = allPolygroups_num + 1;
-                int keep_number_of_Objects2Ds = allObject2Ds_XYZS.length;
+                int keep_number_of_Object2Ds = allObject2Ds_XYZS.length;
                 int keep_number_of_Fractals = allFractals_XYZSRA.length;
                 int keep_number_of_Solids = allSolids.length;
                 int keep_number_of_Sections = allSections_UVERAB.length;
@@ -45422,8 +45422,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   }
 
   newChild1 = my_xml.addChild("allPolygroups_Object2Ds");
-  newChild1.setInt("ni", allPolygroups_Object2Ds.length);
-  for (int i = 0; i < allPolygroups_Object2Ds.length; i++) {
+  newChild1.setInt("ni", allPolygroups_num + 1);
+  for (int i = 0; i < allPolygroups_num + 1; i++) {
     newChild2 = newChild1.addChild("Object2Ds");
     newChild2.setInt("id", i);
     String lineSTR = "";
