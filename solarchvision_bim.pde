@@ -29890,10 +29890,10 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
       
       int objectProcessed = 0;
       
-      for (int plane_type = 0; plane_type < Solids_DisplayFaces; plane_type++) {     
-      
-        if (objectProcessed == 0) {
-  
+      for (int plane_type = 0; plane_type < Solids_DisplayFaces; plane_type++) {    
+         
+        if (objectProcessed == 0) { 
+        
           int break_loops = 0;
           
           int include_OBJ_in_newSelection = -1;    
@@ -29902,44 +29902,50 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
           if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
           
           int f = h + plane_type;
-          int OBJ_NUM = 1 + int((f - 1) / Solids_DisplayFaces);
-
+          int OBJ_NUM = int((f - 1) / Solids_DisplayFaces);
+          
+          println("OBJ_NUM", OBJ_NUM);
+  
           for (int j = 0; j < allSolids_Faces[f].length; j++) {
+              
+            if (objectProcessed == 0) {
             
-            int vNo = allSolids_Faces[f][j];
-            
-            float x = allSolids_Vertices[vNo][0] * OBJECTS_scale;
-            float y = allSolids_Vertices[vNo][1] * OBJECTS_scale;
-            float z = -allSolids_Vertices[vNo][2] * OBJECTS_scale;
-            
-            float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
-    
-            if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-              if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
-                if (mouseButton == RIGHT) {
-                  include_OBJ_in_newSelection = 1;
-                  break_loops = 1;
+              int vNo = allSolids_Faces[f][j];
+              
+              float x = allSolids_Vertices[vNo][0] * OBJECTS_scale;
+              float y = allSolids_Vertices[vNo][1] * OBJECTS_scale;
+              float z = -allSolids_Vertices[vNo][2] * OBJECTS_scale;
+              
+              float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+      
+              if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+                if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+                  if (mouseButton == RIGHT) {
+                    include_OBJ_in_newSelection = 1;
+                    break_loops = 1;
+                  }
                 }
+                else {
+                  if (mouseButton == LEFT) {
+                    include_OBJ_in_newSelection = 0;
+                    break_loops = 1;
+                  }                          
+                }
+                
+                if (break_loops == 1) break;
               }
               else {
                 if (mouseButton == LEFT) {
                   include_OBJ_in_newSelection = 0;
                   break_loops = 1;
                 }                          
-              }
+              }                  
               
-              if (break_loops == 1) break;
+              if (break_loops == 1) break;                  
             }
-            else {
-              if (mouseButton == LEFT) {
-                include_OBJ_in_newSelection = 0;
-                break_loops = 1;
-              }                          
-            }                  
             
-            if (break_loops == 1) break;                  
+            if (include_OBJ_in_newSelection == 1) break; // ???????????
           }
-    
           
           if (include_OBJ_in_newSelection == 1) {
     
@@ -29985,6 +29991,8 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
             }
     
           }
+          
+  
         }
       }
     }
