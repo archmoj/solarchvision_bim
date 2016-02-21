@@ -1,7 +1,3 @@
-// SOLARCHVISION_rotate_selectedFractals  not working!!!!
-
-// should add rotation. functionality to object2ds in polygroup and in general.
-
 // SOLARCHVISION_delete_Objects2Ds could produce problems nowthat we have Object2Ds in Polygroups... should modify that.
 
 // could add solid option to trees?
@@ -14016,7 +14012,7 @@ void SOLARCHVISION_beginNewPolygroup () {
 
 
        
-void SOLARCHVISION_duplicateSelection () {
+void SOLARCHVISION_duplicate_Selection () {
   
   if (Current_ObjectCategory == ObjectCategory_LandPoint) {
     
@@ -32930,7 +32926,7 @@ void mouseClicked () {
               WIN3D_Update = 1;              
             }      
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Duplicate Selection")) {
-              SOLARCHVISION_duplicateSelection();
+              SOLARCHVISION_duplicate_Selection();
               WIN3D_Update = 1;              
             }      
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Insert Corner Opennings")) {
