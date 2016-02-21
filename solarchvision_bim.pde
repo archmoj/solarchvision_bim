@@ -14021,7 +14021,7 @@ void SOLARCHVISION_duplicateSelection () {
 
   if (Current_ObjectCategory == ObjectCategory_Fractals) {
     
-    int number_of_Fractal_before = allFractals_XYZSRA.length; 
+    int number_of_Fractal_before = allFractals_num + 1; 
 
     for (int o = 0; o < selectedFractal_numbers.length; o++) {
 
@@ -14053,7 +14053,7 @@ void SOLARCHVISION_duplicateSelection () {
     selectedFractal_numbers = new int [1];
     selectedFractal_numbers[0] = 0;
     
-    for (int o = number_of_Fractal_before; o < allFractals_XYZSRA.length; o++) {
+    for (int o = number_of_Fractal_before; o < allFractals_num + 1; o++) {
       
       int[] newlyAddedFractal = {o};
       
@@ -14065,7 +14065,7 @@ void SOLARCHVISION_duplicateSelection () {
 
     int n1 = Object2D_PEOPLE_Files_Num;
    
-    int number_of_Object2D_before = allObject2Ds_XYZS.length; 
+    int number_of_Object2D_before = allObject2Ds_num + 1; 
 
     for (int o = 0; o < selectedObject2D_numbers.length; o++) {
 
@@ -14090,7 +14090,7 @@ void SOLARCHVISION_duplicateSelection () {
     selectedObject2D_numbers = new int [1];
     selectedObject2D_numbers[0] = 0;
     
-    for (int o = number_of_Object2D_before; o < allObject2Ds_XYZS.length; o++) {
+    for (int o = number_of_Object2D_before; o < allObject2Ds_num + 1; o++) {
       
       int[] newlyAddedObject2D = {o};
       
@@ -14373,7 +14373,7 @@ void SOLARCHVISION_duplicateSelection () {
   
   if (Current_ObjectCategory == ObjectCategory_Sections) {
     
-    int number_of_Section_before = allSections_UVERAB.length; 
+    int number_of_Section_before = allSections_num + 1; 
 
     for (int o = 0; o < selectedSection_numbers.length; o++) {
 
@@ -14401,7 +14401,7 @@ void SOLARCHVISION_duplicateSelection () {
     selectedSection_numbers = new int [1];
     selectedSection_numbers[0] = 0;
     
-    for (int o = number_of_Section_before; o < allSections_UVERAB.length; o++) {
+    for (int o = number_of_Section_before; o < allSections_num + 1; o++) {
       
       int[] newlyAddedSection = {o};
       
@@ -14411,7 +14411,7 @@ void SOLARCHVISION_duplicateSelection () {
   
   if (Current_ObjectCategory == ObjectCategory_Cameras) {
     
-    int number_of_Camera_before = allCameras_PPPSRRRF.length; 
+    int number_of_Camera_before = allCameras_num + 1; 
 
     for (int o = 0; o < selectedCamera_numbers.length; o++) {
 
@@ -14439,7 +14439,7 @@ void SOLARCHVISION_duplicateSelection () {
     selectedCamera_numbers = new int [1];
     selectedCamera_numbers[0] = 0;
     
-    for (int o = number_of_Camera_before; o < allCameras_PPPSRRRF.length; o++) {
+    for (int o = number_of_Camera_before; o < allCameras_num + 1; o++) {
       
       int[] newlyAddedCamera = {o};
       
@@ -14847,7 +14847,6 @@ void SOLARCHVISION_delete_Selection () {
             allObject2Ds_MAP = (int[]) concat(startList, endList);
           }
           
-          //allObject2Ds_num = allObject2Ds_XYZS.length - 1;
           allObject2Ds_num -= 1 + endObject2D - startObject2D;
 
         }
@@ -17072,14 +17071,14 @@ void SOLARCHVISION_select_All () {
   }  
   
   if (Current_ObjectCategory == ObjectCategory_Fractals) {
-    selectedFractal_numbers = new int [allFractals_XYZSRA.length];
+    selectedFractal_numbers = new int [allFractals_num + 1];
     for (int i = 0; i < selectedFractal_numbers.length; i++) { 
       selectedFractal_numbers[i] = i;
     }
   }
 
   if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
-    selectedObject2D_numbers = new int [allObject2Ds_XYZS.length];
+    selectedObject2D_numbers = new int [allObject2Ds_num + 1];
     for (int i = 0; i < selectedObject2D_numbers.length; i++) { 
       selectedObject2D_numbers[i] = i;
     }
@@ -17114,14 +17113,14 @@ void SOLARCHVISION_select_All () {
   }  
   
   if (Current_ObjectCategory == ObjectCategory_Sections) {
-    selectedSection_numbers = new int [allSections_UVERAB.length];
+    selectedSection_numbers = new int [allSections_num + 1];
     for (int i = 0; i < selectedSection_numbers.length; i++) { 
       selectedSection_numbers[i] = i;
     }
   }  
 
   if (Current_ObjectCategory == ObjectCategory_Cameras) {
-    selectedCamera_numbers = new int [allCameras_PPPSRRRF.length];
+    selectedCamera_numbers = new int [allCameras_num + 1];
     for (int i = 0; i < selectedCamera_numbers.length; i++) { 
       selectedCamera_numbers[i] = i;
     }
@@ -17170,7 +17169,7 @@ void SOLARCHVISION_reverse_Selection () {
     selectedFractal_numbers = new int [1];
     selectedFractal_numbers[0] = 0;
     
-    for (int i = 1; i < allFractals_XYZSRA.length; i++) {
+    for (int i = 1; i < allFractals_num + 1; i++) {
       int found = -1; 
       
       for (int j = 1; j < pre_selectedFractal_numbers.length; j++) {
@@ -17199,7 +17198,7 @@ void SOLARCHVISION_reverse_Selection () {
     selectedObject2D_numbers = new int [1];
     selectedObject2D_numbers[0] = 0;
     
-    for (int i = 1; i < allObject2Ds_XYZS.length; i++) {
+    for (int i = 1; i < allObject2Ds_num + 1; i++) {
       int found = -1; 
       
       for (int j = 1; j < pre_selectedObject2D_numbers.length; j++) {
@@ -17344,7 +17343,7 @@ void SOLARCHVISION_reverse_Selection () {
     selectedSection_numbers = new int [1];
     selectedSection_numbers[0] = 0;
     
-    for (int i = 1; i < allSections_UVERAB.length; i++) {
+    for (int i = 1; i < allSections_num + 1; i++) {
       int found = -1; 
       
       for (int j = 1; j < pre_selectedSection_numbers.length; j++) {
@@ -17373,7 +17372,7 @@ void SOLARCHVISION_reverse_Selection () {
     selectedCamera_numbers = new int [1];
     selectedCamera_numbers[0] = 0;
     
-    for (int i = 1; i < allCameras_PPPSRRRF.length; i++) {
+    for (int i = 1; i < allCameras_num + 1; i++) {
       int found = -1; 
       
       for (int j = 1; j < pre_selectedCamera_numbers.length; j++) {
@@ -33930,11 +33929,11 @@ void mouseClicked () {
               if (View_Select_Create_Modify == 0) { // create
     
                 int keep_number_of_Polygroups = allPolygroups_num + 1;
-                int keep_number_of_Object2Ds = allObject2Ds_XYZS.length;
-                int keep_number_of_Fractals = allFractals_XYZSRA.length;
+                int keep_number_of_Object2Ds = allObject2Ds_num + 1;
+                int keep_number_of_Fractals = allFractals_num + 1;
                 int keep_number_of_Solids = allSolids.length;
-                int keep_number_of_Sections = allSections_UVERAB.length;
-                int keep_number_of_Cameras = allCameras_PPPSRRRF.length;
+                int keep_number_of_Sections = allSections_num + 1;
+                int keep_number_of_Cameras = allCameras_num + 1;
                 
                 float x = RxP[0]; 
                 float y = RxP[1]; 
@@ -34353,14 +34352,14 @@ void mouseClicked () {
                     
                     SOLARCHVISION_add_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
 
-                    if (keep_number_of_Sections != allSections_UVERAB.length) { // if any Section created during the process
+                    if (keep_number_of_Sections != allSections_num + 1) { // if any Section created during the process
       
                       selectedSection_numbers = new int [1];
                       selectedSection_numbers[0] = 0;
                       
-                      for (int o = keep_number_of_Sections; o < allSections_UVERAB.length; o++) {
+                      for (int o = keep_number_of_Sections; o < allSections_num + 1; o++) {
                         
-                        int[] newlyAddedSection = {allSections_UVERAB.length - 1};
+                        int[] newlyAddedSection = {allSections_num};
                         
                         selectedSection_numbers = concat(selectedSection_numbers, newlyAddedSection);
                       }  
@@ -34410,14 +34409,14 @@ void mouseClicked () {
                 
               
                 
-                if (keep_number_of_Cameras != allCameras_PPPSRRRF.length) { // if any Camera created during the process
+                if (keep_number_of_Cameras != allCameras_num + 1) { // if any Camera created during the process
   
                   selectedCamera_numbers = new int [1];
                   selectedCamera_numbers[0] = 0;
                   
-                  for (int o = keep_number_of_Cameras; o < allCameras_PPPSRRRF.length; o++) {
+                  for (int o = keep_number_of_Cameras; o < allCameras_num + 1; o++) {
                     
-                    int[] newlyAddedCamera = {allCameras_PPPSRRRF.length - 1};
+                    int[] newlyAddedCamera = {allCameras_num};
                     
                     selectedCamera_numbers = concat(selectedCamera_numbers, newlyAddedCamera);
                   }  
