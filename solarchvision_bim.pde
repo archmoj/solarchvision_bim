@@ -251,7 +251,7 @@ int ObjectCategory_Cameras = 9;
 
 int Current_ObjectCategory = ObjectCategory_Polygroups; 
 
-int Create_Mesh_or_Solid = 1; // 1:Mesh 2:Solid
+int Create_Mesh_as_Solid = 0; // 0:Mesh 1:Solid
 
 int View_Select_Create_Modify = 0; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunkSize 12:LeafSize 13:AllFractalProps 14:SolarPivot 15:FaceNormal 16:FaceFirstVertex 17:Drop 18:GetLength 19:PowerX 20:PowerY 21:PowerZ 22:PowerXYZ 
 int View_XYZ_ChangeOption = 0; // 0-1
@@ -34034,7 +34034,7 @@ void mouseClicked () {
                   
                   
                   
-                  if (Create_Mesh_or_Solid == 2) {
+                  if (Create_Mesh_as_Solid == 1) {
                    
                     SOLARCHVISION_add_Solid(x,y,z, px,py,pz, rx,ry,rz, 0,0,rot, 1);
                   }                
@@ -34840,7 +34840,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
     if (ROLLOUT_child == 1) { // General
 
-      Create_Mesh_or_Solid = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_or_Solid" , Create_Mesh_or_Solid, 1, 2, 1), 1));
+      Create_Mesh_as_Solid = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Mesh_as_Solid" , Create_Mesh_as_Solid, 0, 1, 1), 1));
     
       MODEL3D_TESSELLATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "MODEL3D_TESSELLATION" , MODEL3D_TESSELLATION, 0, 4, 1), 1));
       
@@ -43023,7 +43023,7 @@ void SOLARCHVISION_draw_window_BAR_b () {
         }
         
         if (Bar_Switch.equals("Mesh|Solid")) {
-          Create_Mesh_or_Solid = j;
+          Create_Mesh_as_Solid = j - 1;
           
           ROLLOUT_Update = 1;          
         }        
@@ -44635,7 +44635,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setFloat("Create_Fractal_TrunkSize", Create_Fractal_TrunkSize);
   newChild1.setFloat("Create_Fractal_LeafSize", Create_Fractal_LeafSize);
   newChild1.setInt("Current_ObjectCategory", Current_ObjectCategory);
-  newChild1.setInt("Create_Mesh_or_Solid", Create_Mesh_or_Solid);
+  newChild1.setInt("Create_Mesh_as_Solid", Create_Mesh_as_Solid);
   newChild1.setInt("View_Select_Create_Modify", View_Select_Create_Modify);
   newChild1.setInt("View_XYZ_ChangeOption", View_XYZ_ChangeOption);
   newChild1.setInt("Modify_Object_Parameters", Modify_Object_Parameters);  
@@ -45795,7 +45795,7 @@ void SOLARCHVISION_load_project (String myFile) {
       Create_Fractal_TrunkSize = children0[L].getFloat("Create_Fractal_TrunkSize");
       Create_Fractal_LeafSize = children0[L].getFloat("Create_Fractal_LeafSize");
       Current_ObjectCategory = children0[L].getInt("Current_ObjectCategory");
-      Create_Mesh_or_Solid = children0[L].getInt("Create_Mesh_or_Solid");
+      Create_Mesh_as_Solid = children0[L].getInt("Create_Mesh_as_Solid");
       View_Select_Create_Modify = children0[L].getInt("View_Select_Create_Modify");
       View_XYZ_ChangeOption = children0[L].getInt("View_XYZ_ChangeOption");
       Modify_Object_Parameters = children0[L].getInt("Modify_Object_Parameters");      
