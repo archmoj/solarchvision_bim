@@ -1,7 +1,6 @@
-// should add rotation. functionality to object2ds in polygroup and in general.
-// could put the move/scale/roatte function of 2Ds and Fractals outside. (to avoid writting something several times!) 
+// SOLARCHVISION_rotate_selectedFractals  not working!!!!
 
-//search for (// no rotation.)
+// should add rotation. functionality to object2ds in polygroup and in general.
 
 // SOLARCHVISION_delete_Objects2Ds could produce problems nowthat we have Object2Ds in Polygroups... should modify that.
 
@@ -40458,23 +40457,7 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
   
   if (Current_ObjectCategory == ObjectCategory_Fractals) {
     
-    for (int o = selectedFractal_numbers.length - 1; o >= 0; o--) {
-      
-      int OBJ_NUM = selectedFractal_numbers[o];
-        
-      if (OBJ_NUM != 0) {      
-    
-        float x = allFractals_XYZSRA[OBJ_NUM][0] - x0; 
-        float y = allFractals_XYZSRA[OBJ_NUM][1] - y0; 
-        //float z = allFractals_XYZSRA[OBJ_NUM][2] - z0;
-        
-        allFractals_XYZSRA[OBJ_NUM][0] = x0 + sx * x; 
-        allFractals_XYZSRA[OBJ_NUM][1] = y0 + sy * y;
-        //allFractals_XYZSRA[OBJ_NUM][2] = z0 + sz * z;
-
-        allFractals_XYZSRA[OBJ_NUM][3] *= sz; // <<<<<<<<<<<<<<
-      }
-    }
+    SOLARCHVISION_scale_selectedFractals(x0, y0, z0, sx, sy, sz);
   }  
   
   if (Current_ObjectCategory == ObjectCategory_LandPoint) {
@@ -40528,16 +40511,8 @@ void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int 
   }
 
   if (Current_ObjectCategory == ObjectCategory_Fractals) {
-
-    for (int o = selectedFractal_numbers.length - 1; o >= 0; o--) {
-      
-      int OBJ_NUM = selectedFractal_numbers[o];
-      
-      if (OBJ_NUM != 0) {      
-        
-        allFractals_XYZSRA[OBJ_NUM][4] += r; 
-      }
-    }
+    
+    SOLARCHVISION_rotate_selectedFractals(x0, y0, z0, r, the_Vector);
   }   
  
   if (Current_ObjectCategory == ObjectCategory_LandPoint) {
@@ -40594,17 +40569,8 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
   
   if (Current_ObjectCategory == ObjectCategory_Fractals) {
 
-    for (int o = selectedFractal_numbers.length - 1; o >= 0; o--) {
-      
-      int OBJ_NUM = selectedFractal_numbers[o];
-      
-      if (OBJ_NUM != 0) {      
-        
-        allFractals_XYZSRA[OBJ_NUM][0] += dx; 
-        allFractals_XYZSRA[OBJ_NUM][1] += dy; 
-        allFractals_XYZSRA[OBJ_NUM][2] += dz;
-      }
-    }
+    SOLARCHVISION_move_selectedFractals(dx, dy, dz);
+    
   }    
 
   if (Current_ObjectCategory == ObjectCategory_LandPoint) {
@@ -47143,5 +47109,83 @@ void SOLARCHVISION_move_selectedObject2Ds (float dx, float dy, float dz) {
     }
   }
 } 
+
+
+
+
+
+void SOLARCHVISION_scale_selectedFractals (float x0, float y0, float z0, float sx, float sy, float sz) { 
+  
+  for (int o = selectedFractal_numbers.length - 1; o >= 0; o--) {
+    
+    int OBJ_NUM = selectedFractal_numbers[o];
+      
+    if (OBJ_NUM != 0) {      
+  
+      float x = allFractals_XYZSRA[OBJ_NUM][0] - x0; 
+      float y = allFractals_XYZSRA[OBJ_NUM][1] - y0; 
+      //float z = allFractals_XYZSRA[OBJ_NUM][2] - z0;
+      
+      allFractals_XYZSRA[OBJ_NUM][0] = x0 + sx * x; 
+      allFractals_XYZSRA[OBJ_NUM][1] = y0 + sy * y;
+      //allFractals_XYZSRA[OBJ_NUM][2] = z0 + sz * z;
+
+      allFractals_XYZSRA[OBJ_NUM][3] *= sz; // <<<<<<<<<<<<<<
+    }
+  }
+}
+
+
+
+
+
+void SOLARCHVISION_rotate_selectedFractals (float x0, float y0, float z0, float r, int the_Vector) {
+
+  for (int q = 1; q < selectedFractal_numbers.length; q++) {
+    
+    int n = selectedFractal_numbers[q];
+
+    float x = allFractals_XYZSRA[n][0] - x0; 
+    float y = allFractals_XYZSRA[n][1] - y0; 
+    float z = allFractals_XYZSRA[n][2] - z0;
+    
+    if (the_Vector == 2) {
+      allFractals_XYZSRA[n][0] = x0 + (x * cos(r) - y * sin(r)); 
+      allFractals_XYZSRA[n][1] = y0 + (x * sin(r) + y * cos(r));
+      allFractals_XYZSRA[n][2] = z0 + (z);
+      
+      allFractals_XYZSRA[n][4] += r; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    }
+    else if (the_Vector == 1) {
+      allFractals_XYZSRA[n][0] = x0 + (z * sin(r) + x * cos(r)); 
+      allFractals_XYZSRA[n][1] = y0 + (y);
+      allFractals_XYZSRA[n][2] = z0 + (z * cos(r) - x * sin(r));
+    }    
+    else if (the_Vector == 0) {
+      allFractals_XYZSRA[n][0] = x0 + (x); 
+      allFractals_XYZSRA[n][1] = y0 + (y * cos(r) - z * sin(r));
+      allFractals_XYZSRA[n][2] = z0 + (y * sin(r) + z * cos(r));
+    }    
+  }
+
+}
+
+
+void SOLARCHVISION_move_selectedFractals (float dx, float dy, float dz) {
+    
+  for (int o = selectedFractal_numbers.length - 1; o >= 0; o--) {
+    
+    int OBJ_NUM = selectedFractal_numbers[o];
+    
+    if (OBJ_NUM != 0) {      
+      
+      allFractals_XYZSRA[OBJ_NUM][0] += dx; 
+      allFractals_XYZSRA[OBJ_NUM][1] += dy; 
+      allFractals_XYZSRA[OBJ_NUM][2] += dz;
+    }
+  }
+} 
+
+
 
 
