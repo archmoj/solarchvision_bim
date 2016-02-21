@@ -1,4 +1,5 @@
-// SOLARCHVISION_delete_Objects2Ds could produce problems nowthat we have Object2Ds in Polygroups... should modify that.
+// bug in RectSel when applied on Solids!
+// SOLARCHVISION_delete_Objects2Ds (and maybe delete_Solids) could produce problems nowthat we have Object2Ds in Polygroups... should modify that.
 
 // could add solid option to trees?
 // could add create polygroup --> startPolyGroup ...
@@ -1920,10 +1921,7 @@ void SOLARCHVISION_update_station (int Step) {
 void SOLARCHVISION_update_models (int Step) {
  
    if ((Step == 0) || (Step == 1)) SOLARCHVISION_delete_Polygroups();
-   //if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_Polygroups();
-   if ((Step == 0) || (Step == 3)) SOLARCHVISION_delete_Solids();
-   if ((Step == 0) || (Step == 4)) SOLARCHVISION_add_ProjectModel();
-   if ((Step == 0) || (Step == 5)) SOLARCHVISION_calculate_SolidImpact_selectedSections();
+   if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_ProjectModel();
 
 }
 
@@ -2217,7 +2215,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_add_Polygroups", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_add_ProjectModel", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 21) {
     SOLARCHVISION_update_models(2);
@@ -2228,42 +2226,10 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_delete_Solids", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
-  }
-  else if (frameCount == 22) {
-    SOLARCHVISION_update_models(3);    
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
-
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_add_ProjectModel", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
-  }
-  else if (frameCount == 23) {
-    SOLARCHVISION_update_models(4);
-    
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
-
-    stroke(255);
-    fill(255);
-    text("SOLARCHVISION_calculate_SolidImpact_selectedSections", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
-  }
-  else if (frameCount == 24) {
-    SOLARCHVISION_update_models(5);
-    
-    stroke(0);
-    fill(0);
-    rect(MESSAGE_CX_View, MESSAGE_CY_View, MESSAGE_X_View, MESSAGE_Y_View); 
-
-    stroke(255);
-    fill(255);
     text("SOLARCHVISION_build_SkySphere", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
     
   }    
-  else if (frameCount == 25) {
+  else if (frameCount == 22) {
     
     SOLARCHVISION_build_SkySphere(2); //1 - 3 
     
@@ -2745,11 +2711,7 @@ void draw () {
         if (ERASE_Polygroups == 1) {
           
           SOLARCHVISION_delete_Polygroups();
-          
-          SOLARCHVISION_delete_Solids();
-          
-          SOLARCHVISION_add_3Dbase(-2, 0, 0, 1, 0);
-          
+
           SOLARCHVISION_calculate_SolidImpact_selectedSections();
 
           WIN3D_Update = 1;
@@ -2791,15 +2753,7 @@ void draw () {
         
         if (pre_Load_Default_Models != Load_Default_Models) {
           
-          SOLARCHVISION_delete_Fractals();
-          
-          SOLARCHVISION_delete_Objects2Ds();
-          
-          SOLARCHVISION_delete_Polygroups();
-          
-          SOLARCHVISION_delete_Solids();
-          
-          SOLARCHVISION_add_3Dbase(-2, 0, 0, 1, 0);
+          SOLARCHVISION_delete_All();
 
           SOLARCHVISION_add_DefaultModel(Load_Default_Models);
           
@@ -21412,9 +21366,7 @@ void SOLARCHVISION_add_urban () {
 void SOLARCHVISION_add_3Dbase (int m, int tes, int lyr, int vsb, int spv) {
   
   if (Load_LAND_MESH != 0) {
-  
-    //SOLARCHVISION_add_Mesh2(-2, -150, -150, 0, 150, 150, 0);
-    
+
     for (int i = 0; i < Skip_LAND_MESH_Center; i += 1) {  
       for (int j = 0; j < LAND_n_J - 1; j += 1) {
         // Material -2 for colored elevations
@@ -21581,13 +21533,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
  
 }
 
-void SOLARCHVISION_add_Polygroups () {
-  
-  SOLARCHVISION_add_3Dbase(-2, 0, 0, 1, 0);
-  
-  SOLARCHVISION_add_DefaultModel(Load_Default_Models);
-  
-}
+
 
 
 
@@ -39461,62 +39407,71 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
 
       if (Current_ObjectCategory == ObjectCategory_Cameras) {
         int n = theVertices[q];
-
-        float Camera_X = allCameras_PPPSRRRF[n][0];
-        float Camera_Y = allCameras_PPPSRRRF[n][1];
-        float Camera_Z = allCameras_PPPSRRRF[n][2];
-        float Camera_S = allCameras_PPPSRRRF[n][3];
-        float Camera_RX = allCameras_PPPSRRRF[n][4];
-        float Camera_RY = allCameras_PPPSRRRF[n][5];
-        float Camera_RZ = allCameras_PPPSRRRF[n][6];
-        float Camera_ZOOM = allCameras_PPPSRRRF[n][7];
-  
-        int Camera_Type = allCameras_Type[n];
-
-        float[][] ImageVertex = SOLARCHVISION_getCorners_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);        
         
-        POS_now = ImageVertex[0][j]; // the first vertex is the Camera point 
+        if ((n != 0) && (n < allCameras_num +  1)) {
+  
+          float Camera_X = allCameras_PPPSRRRF[n][0];
+          float Camera_Y = allCameras_PPPSRRRF[n][1];
+          float Camera_Z = allCameras_PPPSRRRF[n][2];
+          float Camera_S = allCameras_PPPSRRRF[n][3];
+          float Camera_RX = allCameras_PPPSRRRF[n][4];
+          float Camera_RY = allCameras_PPPSRRRF[n][5];
+          float Camera_RZ = allCameras_PPPSRRRF[n][6];
+          float Camera_ZOOM = allCameras_PPPSRRRF[n][7];
+    
+          int Camera_Type = allCameras_Type[n];
+  
+          float[][] ImageVertex = SOLARCHVISION_getCorners_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);
+          
+          POS_now = ImageVertex[0][j]; // the first vertex is the Camera point
+        } 
       }  
       
       if (Current_ObjectCategory == ObjectCategory_Sections) {
         int n = theVertices[q];
-
-        float Section_offset_U = allSections_UVERAB[n][0];
-        float Section_offset_V = allSections_UVERAB[n][1];
-        float Section_Elevation = allSections_UVERAB[n][2];
-        float Section_Rotation = allSections_UVERAB[n][3];
-        float Section_scale_U = allSections_UVERAB[n][4];
-        float Section_scale_V = allSections_UVERAB[n][5];
-  
-        int Section_Type = allSections_Type[n];
-        int Section_RES1 = allSections_RES1[n];
-        int Section_RES2 = allSections_RES2[n];
         
-        float[][] ImageVertex = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+        if ((n != 0) && (n < allSections_num +  1)) {
 
-        POS_now = ImageVertex[0][j]; // the first vertex is the center of Section plane 
+          float Section_offset_U = allSections_UVERAB[n][0];
+          float Section_offset_V = allSections_UVERAB[n][1];
+          float Section_Elevation = allSections_UVERAB[n][2];
+          float Section_Rotation = allSections_UVERAB[n][3];
+          float Section_scale_U = allSections_UVERAB[n][4];
+          float Section_scale_V = allSections_UVERAB[n][5];
+    
+          int Section_Type = allSections_Type[n];
+          int Section_RES1 = allSections_RES1[n];
+          int Section_RES2 = allSections_RES2[n];
+          
+          float[][] ImageVertex = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
+
+          POS_now = ImageVertex[0][j]; // the first vertex is the center of Section plane
+        } 
       }  
 
       if (Current_ObjectCategory == ObjectCategory_Solids) {
         int n = theVertices[q];
-
-        float Solid_posX = Solid_get_posX(n);
-        float Solid_posY = Solid_get_posY(n);
-        float Solid_posZ = Solid_get_posZ(n);
-        float Solid_powX = Solid_get_powX(n);
-        float Solid_powY = Solid_get_powY(n);
-        float Solid_powZ = Solid_get_powZ(n);
-        float Solid_scaleX = Solid_get_scaleX(n);
-        float Solid_scaleY = Solid_get_scaleY(n);
-        float Solid_scaleZ = Solid_get_scaleZ(n);
-        float Solid_rotX = Solid_get_rotX(n);
-        float Solid_rotY = Solid_get_rotY(n);
-        float Solid_rotZ = Solid_get_rotZ(n);
-        float Solid_value = Solid_get_value(n);
         
-        float[][] ImageVertex = SOLARCHVISION_getCorners_Solid(0, Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
+        if ((n != 0) && (n < allSolids.length)) {
 
-        POS_now = ImageVertex[0][j]; // the first vertex is the center of Solid plane 
+          float Solid_posX = Solid_get_posX(n);
+          float Solid_posY = Solid_get_posY(n);
+          float Solid_posZ = Solid_get_posZ(n);
+          float Solid_powX = Solid_get_powX(n);
+          float Solid_powY = Solid_get_powY(n);
+          float Solid_powZ = Solid_get_powZ(n);
+          float Solid_scaleX = Solid_get_scaleX(n);
+          float Solid_scaleY = Solid_get_scaleY(n);
+          float Solid_scaleZ = Solid_get_scaleZ(n);
+          float Solid_rotX = Solid_get_rotX(n);
+          float Solid_rotY = Solid_get_rotY(n);
+          float Solid_rotZ = Solid_get_rotZ(n);
+          float Solid_value = Solid_get_value(n);
+          
+          float[][] ImageVertex = SOLARCHVISION_getCorners_Solid(0, Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
+
+          POS_now = ImageVertex[0][j]; // the first vertex is the center of Solid plane
+        } 
       }  
       
       
@@ -47231,4 +47186,8 @@ void SOLARCHVISION_move_selectedFractals (float dx, float dy, float dz) {
 
 
 
-
+void SOLARCHVISION_add_Polygroups () {
+  
+  
+  
+}
