@@ -39697,8 +39697,6 @@ void SOLARCHVISION_rotate_selectedPolygroups (float x0, float y0, float z0, floa
   //SOLARCHVISION_calculate_selection_Pivot(); 
 
 
-  int OBJ_NUM = selectedPolygroup_numbers[o];
-  
   int Solids_updated = 0;
   
   for (int o = selectedPolygroup_numbers.length - 1; o >= 0; o--) {
@@ -39732,7 +39730,29 @@ void SOLARCHVISION_rotate_selectedPolygroups (float x0, float y0, float z0, floa
       for (int f = allPolygroups_Object2Ds[OBJ_NUM][0]; f <= allPolygroups_Object2Ds[OBJ_NUM][1]; f++) {
         if ((0 < f) && (f <= allObject2Ds_num)) {
           
-          // no rotation.
+          float x = allObject2Ds_XYZS[f][0] - x0; 
+          float y = allObject2Ds_XYZS[f][1] - y0; 
+          float z = allObject2Ds_XYZS[f][2] - z0;
+          
+          if (the_Vector == 2) {
+            
+            allObject2Ds_XYZS[f][0] = x0 + (x * cos(r) - y * sin(r));
+            allObject2Ds_XYZS[f][1] = y0 + (x * sin(r) + y * cos(r));
+            allObject2Ds_XYZS[f][2] = z0 + (z);
+          }
+          else if (the_Vector == 1) {
+           
+            allObject2Ds_XYZS[f][0] = x0 + (z * sin(r) + x * cos(r));
+            allObject2Ds_XYZS[f][1] = y0 + (y);
+            allObject2Ds_XYZS[f][2] = z0 + (z * cos(r) - x * sin(r));
+          }
+          else if (the_Vector == 0) {
+
+            allObject2Ds_XYZS[f][0] = x0 + (x);
+            allObject2Ds_XYZS[f][1] = y0 + (y * cos(r) - z * sin(r));
+            allObject2Ds_XYZS[f][2] = z0 + (y * sin(r) + z * cos(r));
+          }
+
         }
       }         
       
@@ -40432,30 +40452,8 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
   }
 
   if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
-
-    int n1 = Object2D_PEOPLE_Files_Num;    
     
-    for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
-      
-      int OBJ_NUM = selectedObject2D_numbers[o];
-      
-      if (OBJ_NUM != 0) {      
-    
-        float x = allObject2Ds_XYZS[OBJ_NUM][0] - x0; 
-        float y = allObject2Ds_XYZS[OBJ_NUM][1] - y0; 
-        //float z = allObject2Ds_XYZS[OBJ_NUM][2] - z0;
-       
-        allObject2Ds_XYZS[OBJ_NUM][0] = x0 + sx * x; 
-        allObject2Ds_XYZS[OBJ_NUM][1] = y0 + sy * y;
-        //allObject2Ds_XYZS[OBJ_NUM][2] = z0 + sz * z;
-
-        int n = allObject2Ds_MAP[OBJ_NUM];
-
-        if (abs(n) > n1) { // does not scale poeple!    
-          allObject2Ds_XYZS[OBJ_NUM][3] *= sz; 
-        }
-      }
-    }
+    SOLARCHVISION_scale_selectedObject2Ds(x0, y0, z0, sx, sy, sz);
   }
   
   if (Current_ObjectCategory == ObjectCategory_Fractals) {
@@ -40525,7 +40523,8 @@ void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int 
   }
   
   if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
-    // no rotation.
+    
+    SOLARCHVISION_rotate_selectedObject2Ds(x0, y0, z0, r, the_Vector);
   }
 
   if (Current_ObjectCategory == ObjectCategory_Fractals) {
@@ -40590,17 +40589,7 @@ void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
 
   if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
 
-    for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
-      
-      int OBJ_NUM = selectedObject2D_numbers[o];
-      
-      if (OBJ_NUM != 0) {      
-        
-        allObject2Ds_XYZS[OBJ_NUM][0] += dx; 
-        allObject2Ds_XYZS[OBJ_NUM][1] += dy; 
-        allObject2Ds_XYZS[OBJ_NUM][2] += dz;
-      }
-    }
+    SOLARCHVISION_move_selectedObject2Ds(dx, dy, dz);
   }  
   
   if (Current_ObjectCategory == ObjectCategory_Fractals) {
@@ -47078,5 +47067,81 @@ float Solid_get_Distance (int n, float a, float b, float c) {
   //return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))) / value); 
   return(pow((pow(abs(x - posX) / scaleX, powX) + pow(abs(y - posY) / scaleY, powY) + pow(abs(z - posZ) / scaleZ, powZ)), (3.0 / (powX + powY + powZ))));  
 }
+
+
+
+void SOLARCHVISION_scale_selectedObject2Ds (float x0, float y0, float z0, float sx, float sy, float sz) { 
+
+  int n1 = Object2D_PEOPLE_Files_Num;    
+  
+  for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
+    
+    int OBJ_NUM = selectedObject2D_numbers[o];
+    
+    if (OBJ_NUM != 0) {      
+  
+      float x = allObject2Ds_XYZS[OBJ_NUM][0] - x0; 
+      float y = allObject2Ds_XYZS[OBJ_NUM][1] - y0; 
+      //float z = allObject2Ds_XYZS[OBJ_NUM][2] - z0;
+     
+      allObject2Ds_XYZS[OBJ_NUM][0] = x0 + sx * x; 
+      allObject2Ds_XYZS[OBJ_NUM][1] = y0 + sy * y;
+      //allObject2Ds_XYZS[OBJ_NUM][2] = z0 + sz * z;
+
+      int n = allObject2Ds_MAP[OBJ_NUM];
+
+      if (abs(n) > n1) { // does not scale poeple!    
+        allObject2Ds_XYZS[OBJ_NUM][3] *= sz; 
+      }
+    }
+  }
+}
+
+
+void SOLARCHVISION_rotate_selectedObject2Ds (float x0, float y0, float z0, float r, int the_Vector) {
+
+  for (int q = 1; q < selectedObject2D_numbers.length; q++) {
+    
+    int n = selectedObject2D_numbers[q];
+
+    float x = allObject2Ds_XYZS[n][0] - x0; 
+    float y = allObject2Ds_XYZS[n][1] - y0; 
+    float z = allObject2Ds_XYZS[n][2] - z0;
+    
+    if (the_Vector == 2) {
+      allObject2Ds_XYZS[n][0] = x0 + (x * cos(r) - y * sin(r)); 
+      allObject2Ds_XYZS[n][1] = y0 + (x * sin(r) + y * cos(r));
+      allObject2Ds_XYZS[n][2] = z0 + (z);
+    }
+    else if (the_Vector == 1) {
+      allObject2Ds_XYZS[n][0] = x0 + (z * sin(r) + x * cos(r)); 
+      allObject2Ds_XYZS[n][1] = y0 + (y);
+      allObject2Ds_XYZS[n][2] = z0 + (z * cos(r) - x * sin(r));
+    }    
+    else if (the_Vector == 0) {
+      allObject2Ds_XYZS[n][0] = x0 + (x); 
+      allObject2Ds_XYZS[n][1] = y0 + (y * cos(r) - z * sin(r));
+      allObject2Ds_XYZS[n][2] = z0 + (y * sin(r) + z * cos(r));
+    }    
+  }
+
+}
+
+
+
+void SOLARCHVISION_move_selectedObject2Ds (float dx, float dy, float dz) {
+    
+  for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
+    
+    int OBJ_NUM = selectedObject2D_numbers[o];
+    
+    if (OBJ_NUM != 0) {      
+      
+      allObject2Ds_XYZS[OBJ_NUM][0] += dx; 
+      allObject2Ds_XYZS[OBJ_NUM][1] += dy; 
+      allObject2Ds_XYZS[OBJ_NUM][2] += dz;
+    }
+  }
+} 
 
 
