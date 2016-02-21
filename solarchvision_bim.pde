@@ -13970,7 +13970,7 @@ int SOLARCHVISION_add_Face (int[] f) {
   
   allFaces = (int[][]) concat(allFaces, newFace);
 
-  allPolygroups_Faces[allPolygroups_Faces.length - 1][1] = allFaces.length - 1;
+  allPolygroups_Faces[allPolygroups_num][1] = allFaces.length - 1;
   
   return(allFaces.length - 1);
 }
@@ -13981,7 +13981,7 @@ int SOLARCHVISION_add_Solid (float x, float y, float z, float px, float py, floa
   float[][] newSolid = {{x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz, v}};
   allSolids = (float[][]) concat(allSolids, newSolid);
 
-  allPolygroups_Solids[allPolygroups_Solids.length - 1][1] = allSolids.length - 1;
+  allPolygroups_Solids[allPolygroups_num][1] = allSolids.length - 1;
 
   return(allSolids.length - 1);
 }
@@ -14105,7 +14105,7 @@ void SOLARCHVISION_duplicateSelection () {
     
     int SOLID_added = 0;
     
-    int number_of_Polygroups_before = allPolygroups_Faces.length;
+    int number_of_Polygroups_before = allPolygroups_num + 1;
     
     for (int o = 0; o < selectedPolygroup_numbers.length; o++) {
     
@@ -14119,7 +14119,7 @@ void SOLARCHVISION_duplicateSelection () {
           
           SOLARCHVISION_beginNewPolygroup();
           
-          int new_OBJ_NUM = allPolygroups_Faces.length - 1;
+          int new_OBJ_NUM = allPolygroups_num;
           
           allPolygroups_SolarPivotType[new_OBJ_NUM][0] = allPolygroups_SolarPivotType[OBJ_NUM][0];
           
@@ -14236,7 +14236,7 @@ void SOLARCHVISION_duplicateSelection () {
     selectedPolygroup_numbers = new int [1];
     selectedPolygroup_numbers[0] = 0;
     
-    for (int o = number_of_Polygroups_before; o < allPolygroups_Faces.length; o++) {
+    for (int o = number_of_Polygroups_before; o < allPolygroups_num + 1; o++) {
       
       int[] newlyAddedPolygroup = {o};
       
@@ -14700,7 +14700,7 @@ void SOLARCHVISION_delete_Selection () {
 
       if (OBJ_NUM != 0) {    
         
-        for (int q = 0; q < allPolygroups_Solids.length; q++) {
+        for (int q = 0; q < allPolygroups_num + 1; q++) {
           if ((allPolygroups_Solids[q][0] <= OBJ_NUM) && (OBJ_NUM <= allPolygroups_Solids[q][1])) {
             
             //println("solid found at group:", q);
@@ -14710,7 +14710,7 @@ void SOLARCHVISION_delete_Selection () {
             
             println(startSolid, endSolid);
 
-            for (int i = q + 1; i < allPolygroups_Solids.length; i++) {
+            for (int i = q + 1; i < allPolygroups_num + 1; i++) {
               for (int j = 0; j < 2; j++) {
                 
                 allPolygroups_Solids[i][j] -= 1;
@@ -14778,7 +14778,7 @@ void SOLARCHVISION_delete_Selection () {
         
           if (startFace <= endFace) {
           
-            for (int i = OBJ_NUM + 1; i < allPolygroups_Faces.length; i++) {
+            for (int i = OBJ_NUM + 1; i < allPolygroups_num + 1; i++) {
               for (int j = 0; j < 2; j++) {
                 allPolygroups_Faces[i][j] -= 1 + endFace - startFace;
                 
@@ -14859,7 +14859,7 @@ void SOLARCHVISION_delete_Selection () {
         
         {
           
-          for (int i = OBJ_NUM + 1; i < allPolygroups_Solids.length; i++) {
+          for (int i = OBJ_NUM + 1; i < allPolygroups_num + 1; i++) {
           
             for (int j = 0; j < 2; j++) {
               allPolygroups_Solids[i][j] -= 1 + endSolid - startSolid;
@@ -14926,7 +14926,7 @@ void SOLARCHVISION_delete_Selection () {
           
           if ((f != 0) && (startFace <= f) && (f <= endFace)) {
             
-            for (int i = OBJ_NUM + 1; i < allPolygroups_Faces.length; i++) {
+            for (int i = OBJ_NUM + 1; i < allPolygroups_num + 1; i++) {
               for (int j = 0; j < 2; j++) {
                 allPolygroups_Faces[i][j] -= 1;
               }
@@ -15505,7 +15505,7 @@ void SOLARCHVISION_inserCornerOpenningsSelection () {
             
             if ((startFace <= f) && (f <= endFace)) {
               
-              for (int i = OBJ_NUM + 1; i < allPolygroups_Faces.length; i++) {
+              for (int i = OBJ_NUM + 1; i < allPolygroups_num + 1; i++) {
                 for (int j = 0; j < 2; j++) {
                   allPolygroups_Faces[i][j] += allFaces[f].length;
                 }
@@ -15675,7 +15675,7 @@ void SOLARCHVISION_insertParallelOpenningsSelection () {
             
             if ((startFace <= f) && (f <= endFace)) {
               
-              for (int i = OBJ_NUM + 1; i < allPolygroups_Faces.length; i++) {
+              for (int i = OBJ_NUM + 1; i < allPolygroups_num + 1; i++) {
                 for (int j = 0; j < 2; j++) {
                   allPolygroups_Faces[i][j] += 2 * allFaces[f].length;
                 }
@@ -15870,7 +15870,7 @@ void SOLARCHVISION_insertRotatedOpenningsSelection () {
             
             if ((startFace <= f) && (f <= endFace)) {
               
-              for (int i = OBJ_NUM + 1; i < allPolygroups_Faces.length; i++) {
+              for (int i = OBJ_NUM + 1; i < allPolygroups_num + 1; i++) {
                 for (int j = 0; j < 2; j++) {
                   allPolygroups_Faces[i][j] += allFaces[f].length;
                 }
@@ -16048,7 +16048,7 @@ void SOLARCHVISION_insertEdgeOpenningsSelection () {
             
             if ((startFace <= f) && (f <= endFace)) {
               
-              for (int i = OBJ_NUM + 1; i < allPolygroups_Faces.length; i++) {
+              for (int i = OBJ_NUM + 1; i < allPolygroups_num + 1; i++) {
                 for (int j = 0; j < 2; j++) {
                   allPolygroups_Faces[i][j] += allFaces[f].length;
                 }
@@ -16224,7 +16224,7 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
               
               if (allFaces[f].length == 4) {
               
-                for (int i = OBJ_NUM + 1; i < allPolygroups_Faces.length; i++) {
+                for (int i = OBJ_NUM + 1; i < allPolygroups_num + 1; i++) {
                   for (int j = 0; j < 2; j++) {
                     allPolygroups_Faces[i][j] += Modify_Input_TessellateRows * Modify_Input_TessellateColumns - 1;
                   }
@@ -16423,7 +16423,7 @@ void SOLARCHVISION_tessellateRectangularFaceSelection () {
             
             if ((startFace <= f) && (f <= endFace)) {
               
-              for (int i = OBJ_NUM + 1; i < allPolygroups_Faces.length; i++) {
+              for (int i = OBJ_NUM + 1; i < allPolygroups_num + 1; i++) {
                 for (int j = 0; j < 2; j++) {
                   allPolygroups_Faces[i][j] += allFaces[f].length - 1;
                 }
@@ -16594,7 +16594,7 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
             
             if ((startFace <= f) && (f <= endFace)) {
               
-              for (int i = OBJ_NUM + 1; i < allPolygroups_Faces.length; i++) {
+              for (int i = OBJ_NUM + 1; i < allPolygroups_num + 1; i++) {
                 for (int j = 0; j < 2; j++) {
                   allPolygroups_Faces[i][j] += allFaces[f].length - 1;
                 }
@@ -16818,7 +16818,7 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
               }
               
               
-              allPolygroups_Faces[allPolygroups_Faces.length - 1][1] = allFaces.length - 1;
+              allPolygroups_Faces[allPolygroups_num][1] = allFaces.length - 1;
   
             }
           }
@@ -17086,7 +17086,7 @@ void SOLARCHVISION_select_All () {
   }
   
   if (Current_ObjectCategory == ObjectCategory_Polygroups) {
-    selectedPolygroup_numbers = new int [allPolygroups_Faces.length];
+    selectedPolygroup_numbers = new int [allPolygroups_num + 1];
     for (int i = 0; i < selectedPolygroup_numbers.length; i++) { 
       selectedPolygroup_numbers[i] = i;
     }
@@ -17228,7 +17228,7 @@ void SOLARCHVISION_reverse_Selection () {
     selectedPolygroup_numbers = new int [1];
     selectedPolygroup_numbers[0] = 0;
     
-    for (int i = 1; i < allPolygroups_Faces.length; i++) {
+    for (int i = 1; i < allPolygroups_num + 1; i++) {
       int found = -1; 
       
       for (int j = 1; j < pre_selectedPolygroup_numbers.length; j++) {
@@ -17441,7 +17441,7 @@ void SOLARCHVISION_convert_Solid_to_Polygroup () {
     
     int f = selectedSolid_numbers[i];
           
-    for (int OBJ_NUM = 1; OBJ_NUM < allPolygroups_Solids.length; OBJ_NUM++) {
+    for (int OBJ_NUM = 1; OBJ_NUM < allPolygroups_num + 1; OBJ_NUM++) {
     
       if ((allPolygroups_Solids[OBJ_NUM][0] <= f) && (f <= allPolygroups_Solids[OBJ_NUM][1])) { 
       
@@ -17473,7 +17473,7 @@ void SOLARCHVISION_convert_Face_to_Polygroup () {
     
     for (int j = 0; j < allFaces[f].length; j++) {
       
-      for (int OBJ_NUM = 1; OBJ_NUM < allPolygroups_Faces.length; OBJ_NUM++) {
+      for (int OBJ_NUM = 1; OBJ_NUM < allPolygroups_num + 1; OBJ_NUM++) {
       
         if ((allPolygroups_Faces[OBJ_NUM][0] <= f) && (f <= allPolygroups_Faces[OBJ_NUM][1])) { 
         
@@ -17511,7 +17511,7 @@ void SOLARCHVISION_convert_Vertex_to_Polygroup () {
         
         if (allFaces[f][j] == vNo) { 
         
-          for (int OBJ_NUM = 1; OBJ_NUM < allPolygroups_Faces.length; OBJ_NUM++) {
+          for (int OBJ_NUM = 1; OBJ_NUM < allPolygroups_num + 1; OBJ_NUM++) {
           
             if ((allPolygroups_Faces[OBJ_NUM][0] <= f) && (f <= allPolygroups_Faces[OBJ_NUM][1])) { 
             
@@ -19603,7 +19603,7 @@ void SOLARCHVISION_export_objects () {
       }
 
 
-      for (int OBJ_NUM = 1; OBJ_NUM < allPolygroups_Faces.length; OBJ_NUM++) {
+      for (int OBJ_NUM = 1; OBJ_NUM < allPolygroups_num + 1; OBJ_NUM++) {
         
         if (allPolygroups_Faces[OBJ_NUM][0] <= allPolygroups_Faces[OBJ_NUM][1]) {
           
@@ -19786,7 +19786,7 @@ void SOLARCHVISION_export_objects () {
       }
 
 
-      for (int OBJ_NUM = 1; OBJ_NUM < allPolygroups_Faces.length; OBJ_NUM++) {
+      for (int OBJ_NUM = 1; OBJ_NUM < allPolygroups_num + 1; OBJ_NUM++) {
         
         if (allPolygroups_Faces[OBJ_NUM][0] <= allPolygroups_Faces[OBJ_NUM][1]) {
           
@@ -28740,7 +28740,7 @@ int SOLARCHVISION_nextUnselected (int go_direction, int start_index) {
   }    
   
   if (Current_ObjectCategory == ObjectCategory_Polygroups) {
-    length_of_indexes = allPolygroups_Faces.length;
+    length_of_indexes = allPolygroups_num + 1;
     start_index_OBJ_NUM = selectedPolygroup_numbers[start_index];
   }
  
@@ -29054,7 +29054,7 @@ void SOLARCHVISION_PickSelect (float[] RxP) {
     
     int OBJ_NUM = 0;
     
-    for (int i = 0; i < allPolygroups_Faces.length; i++) {
+    for (int i = 0; i < allPolygroups_num + 1; i++) {
       if ((allPolygroups_Faces[i][0] <= f) && (f <= allPolygroups_Faces[i][1])) {
         
         OBJ_NUM = i;
@@ -29672,7 +29672,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
   
   if (Current_ObjectCategory == ObjectCategory_Polygroups) {
     
-    for (int OBJ_NUM = 1; OBJ_NUM < allPolygroups_Faces.length; OBJ_NUM++) {
+    for (int OBJ_NUM = 1; OBJ_NUM < allPolygroups_num + 1; OBJ_NUM++) {
       
       int break_loops = 0;
       
@@ -31320,12 +31320,12 @@ void SOLARCHVISION_SelectFile_Import_3DModel (File selectedFile) {
     
     println("Importing:", Filename);
     
-    int NUM_allPolygroups_Faces_Before = allPolygroups_Faces.length;
+    int NUM_allPolygroups_Faces_Before = allPolygroups_num + 1;
     
     //SOLARCHVISION_import_objects(Filename, -1,0,0,1,1, 0,0,0, 1,1,1); // different objects: different materials
     SOLARCHVISION_import_objects(Filename, Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, 0,0,0, 1,1,1); // apply default material
     
-    int NUM_allPolygroups_Faces_After = allPolygroups_Faces.length;
+    int NUM_allPolygroups_Faces_After = allPolygroups_num + 1;
     
     selectedPolygroup_numbers = new int [1 + NUM_allPolygroups_Faces_After - NUM_allPolygroups_Faces_Before];
     for (int i = 0; i < selectedPolygroup_numbers.length - 1; i++) { 
@@ -33662,7 +33662,7 @@ void mouseClicked () {
                       }
                       if (Modify_Object_Parameters == 3) { // Assign(all) 
                         int OBJ_NUM = 0;
-                        for (int i = 0; i < allPolygroups_Faces.length; i++) {
+                        for (int i = 0; i < allPolygroups_num + 1; i++) {
                           if ((allPolygroups_Faces[i][0] <= f) && (f <= allPolygroups_Faces[i][1])) {
                             OBJ_NUM = i;
                             break;
@@ -33685,7 +33685,7 @@ void mouseClicked () {
                       }     
                       if (Modify_Object_Parameters == 2) { // Assign
                         int OBJ_NUM = 0;
-                        for (int i = 0; i < allPolygroups_Faces.length; i++) {
+                        for (int i = 0; i < allPolygroups_num + 1; i++) {
                           if ((allPolygroups_Faces[i][0] <= f) && (f <= allPolygroups_Faces[i][1])) {
                             OBJ_NUM = i;
                             break;
@@ -33750,7 +33750,7 @@ void mouseClicked () {
                       
                       if (Current_ObjectCategory == ObjectCategory_Polygroups) {
                         int OBJ_NUM = 0;
-                        for (int i = 0; i < allPolygroups_Faces.length; i++) {
+                        for (int i = 0; i < allPolygroups_num + 1; i++) {
                           if ((allPolygroups_Faces[i][0] <= f) && (f <= allPolygroups_Faces[i][1])) {
                             OBJ_NUM = i;
                             break;
@@ -33929,7 +33929,7 @@ void mouseClicked () {
               
               if (View_Select_Create_Modify == 0) { // create
     
-                int keep_number_of_Polygroups = allPolygroups_Faces.length;
+                int keep_number_of_Polygroups = allPolygroups_num + 1;
                 int keep_number_of_Objects2Ds = allObject2Ds_XYZS.length;
                 int keep_number_of_Fractals = allFractals_XYZSRA.length;
                 int keep_number_of_Solids = allSolids.length;
@@ -34427,10 +34427,10 @@ void mouseClicked () {
                 }                   
 
   
-                if (keep_number_of_Polygroups != allPolygroups_Faces.length) { // if any Polygroup created during the process
+                if (keep_number_of_Polygroups != allPolygroups_num + 1) { // if any Polygroup created during the process
                   
                   selectedPolygroup_numbers = new int [1];
-                  selectedPolygroup_numbers[0] = allPolygroups_Faces.length - 1;
+                  selectedPolygroup_numbers[0] = allPolygroups_num;
                   
                   println("SOLARCHVISION_calculate_selection_Pivot 7");
                   SOLARCHVISION_calculate_selection_Pivot();
@@ -45394,8 +45394,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   }   
 
   newChild1 = my_xml.addChild("allPolygroups_Faces");
-  newChild1.setInt("ni", allPolygroups_Faces.length);
-  for (int i = 0; i < allPolygroups_Faces.length; i++) {
+  newChild1.setInt("ni", allPolygroups_num + 1);
+  for (int i = 0; i < allPolygroups_num + 1; i++) {
     newChild2 = newChild1.addChild("Faces");
     newChild2.setInt("id", i);
     String lineSTR = "";
@@ -45408,8 +45408,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   } 
     
   newChild1 = my_xml.addChild("allPolygroups_Solids");
-  newChild1.setInt("ni", allPolygroups_Solids.length);
-  for (int i = 0; i < allPolygroups_Solids.length; i++) {
+  newChild1.setInt("ni", allPolygroups_num + 1);
+  for (int i = 0; i < allPolygroups_num + 1; i++) {
     newChild2 = newChild1.addChild("Solids");
     newChild2.setInt("id", i);
     String lineSTR = "";
