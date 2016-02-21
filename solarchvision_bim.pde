@@ -14008,6 +14008,9 @@ void SOLARCHVISION_beginNewPolygroup () {
   int[][] newObject_Pivot = {{defaultSolarPivotType}};
 
   allPolygroups_SolarPivotType = (int[][]) concat(allPolygroups_SolarPivotType, newObject_Pivot);
+  
+  
+  allPolygroups_num += 1;
 
 }
 
@@ -14884,6 +14887,9 @@ void SOLARCHVISION_delete_Selection () {
           Solids_updated = 1;
           
         }
+
+
+        allPolygroups_num -= 1; 
 
       }
     }
@@ -25729,7 +25735,7 @@ void SOLARCHVISION_add_ProjectModel () {
       
       SOLARCHVISION_add_H_shade(1,0,spv,1,1, x,y,z, 20,d, 0,0); // south
       
-      int n = allPolygroups_SolarPivotXYZ.length - 1;
+      int n = allPolygroups_num;
       
       allPolygroups_SolarPivotXYZ[n][0] = x;
       allPolygroups_SolarPivotXYZ[n][1] = y;
@@ -25746,7 +25752,7 @@ void SOLARCHVISION_add_ProjectModel () {
       
       SOLARCHVISION_add_V_shade(3,0,spv,1,1, x,y,z, 45,d, 0,0); // south
       
-      int n = allPolygroups_SolarPivotXYZ.length - 1;
+      int n = allPolygroups_num;
       
       allPolygroups_SolarPivotXYZ[n][0] = x;
       allPolygroups_SolarPivotXYZ[n][1] = y;
@@ -45321,7 +45327,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   
   {
     newChild1 = my_xml.addChild("allPolygroups_SolarPivotXYZ");
-    int ni = allPolygroups_SolarPivotXYZ.length;
+    int ni = allPolygroups_num + 1;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
       newChild2 = newChild1.addChild("SolarPivotXYZ");
@@ -45337,7 +45343,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
   {
     newChild1 = my_xml.addChild("allPolygroups_SolarPivotType");
-    int ni = allPolygroups_SolarPivotType.length;
+    int ni = allPolygroups_num + 1;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
       newChild2 = newChild1.addChild("SolarPivotType");
