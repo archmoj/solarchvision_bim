@@ -1,5 +1,8 @@
+// should check if we load models correct?
+
+// we need unGroup function!
+
 // could add solid option to trees?
-// could add create group3D --> startGroup3D ...
 // could add create face
 // could add create vertex
 // drop functions only works for living objects and not at Group3D level
@@ -25926,6 +25929,11 @@ void SOLARCHVISION_add_ProjectModel () {
   SOLARCHVISION_beginNewGroup3D();
   SOLARCHVISION_add_PolygonHyper(0,1,0,1,1, -50,-50,4.5, 9, 9, 6, 0);  // hyper
 
+
+  SOLARCHVISION_beginNewGroup3D();
+  
+  addToLastGroup3D = 0;
+
 }
 
 
@@ -32424,20 +32432,26 @@ void mouseClicked () {
               WIN3D_Update = 1;
             }
             
+            
+
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Begin New Group3D")) {
+              SOLARCHVISION_beginNewGroup3D();
+            }    
+            
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Solid")) {
-              set_to_Pick_Study_Solid();
+              set_to_Create_Solid();
               SOLARCHVISION_highlight_in_BAR_b("SLD");
               BAR_b_Update = 1;  
             }            
 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Section")) {
-              set_to_Pick_Study_Section();
+              set_to_Create_Section();
               SOLARCHVISION_highlight_in_BAR_b("SEC");
               BAR_b_Update = 1;  
             }
 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Camera")) {
-              set_to_Pick_Study_Camera();
+              set_to_Create_Camera();
               SOLARCHVISION_highlight_in_BAR_b("CAM");
               BAR_b_Update = 1;  
             }
@@ -42747,7 +42761,7 @@ String[][] BAR_a_Items = {
                         {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Pre-bake Selected Sections", "Process Active Impact", "Process Passive Impact", "Process Solid Impact", "Run wind 3D-model"},
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
-                        {"Create", "Viewport >> Camera", "Camera", "Section", "Solid", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"},
+                        {"Create", "Begin New Group3D", "Viewport >> Camera", "Camera", "Section", "Solid", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"},
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Solid", "Select Section",  "Select Camera", "Select LandPoint", "Select Fractal", "Select Object2D", "Select Group3D", "Select Face", "Select Vertex", "Soft Selection", "Group3D >> Vertex", "Group3D >> Face", "Group3D >> Solid", "Group3D >> Object2D", "Object2D >> Group3D", "Solid >> Group3D",  "Face >> Group3D", "Vertex >> Group3D",  "Vertex >> Face", "Face >> Vertex", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
                         {"Edit", "Duplicate Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Power", "PowerX", "PowerY", "PowerZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
@@ -43799,7 +43813,7 @@ void set_to_Modify_Power (int n) {
 }
 
 
-void set_to_Pick_Study_Solid () {
+void set_to_Create_Solid () {
   
   View_Select_Create_Modify = 0; 
   
@@ -43809,7 +43823,7 @@ void set_to_Pick_Study_Solid () {
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Pick_Study_Section () {
+void set_to_Create_Section () {
   
   View_Select_Create_Modify = 0; 
   
@@ -43819,7 +43833,7 @@ void set_to_Pick_Study_Section () {
   ROLLOUT_Update = 1; 
 }
 
-void set_to_Pick_Study_Camera () {
+void set_to_Create_Camera () {
 
   View_Select_Create_Modify = 0;
   
