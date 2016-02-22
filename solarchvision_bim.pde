@@ -1,3 +1,5 @@
+// SOLARCHVISION_deleteIsolatedVerticesSelection --> seems like it produced some errors. I removed it below!
+
 // should check if we load models correct?
 // should check ... sometimes we may write in Group3D[0]!
 
@@ -15018,9 +15020,9 @@ void SOLARCHVISION_delete_Selection () {
   
   if ((Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Group3Ds)) { 
     
-    println("deleteIsolatedVerticesSelection");
+    //println("deleteIsolatedVerticesSelection");
     
-    SOLARCHVISION_deleteIsolatedVerticesSelection(); 
+    //SOLARCHVISION_deleteIsolatedVerticesSelection(); 
   }  
 
   SOLARCHVISION_deselect_All();
