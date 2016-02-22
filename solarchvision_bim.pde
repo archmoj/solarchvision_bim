@@ -14767,7 +14767,7 @@ void SOLARCHVISION_delete_Selection () {
           
         {
         
-          if (startFace <= endFace) {
+          if ((0 < startFace) && (startFace <= endFace)) {
           
             for (int i = OBJ_NUM + 1; i < allGroup3Ds_num + 1; i++) {
               for (int j = 0; j < 2; j++) {
@@ -14784,7 +14784,7 @@ void SOLARCHVISION_delete_Selection () {
           allGroup3Ds_Faces = (int[][]) concat(startList, endList);
         }  
        
-        if (startFace <= endFace) {
+        if ((0 < startFace) && (startFace <= endFace)) {
           {
             int[][] startList = (int[][]) subset(allFaces, 0, startFace);
             int[][] endList = (int[][]) subset(allFaces, endFace + 1);
@@ -14805,7 +14805,7 @@ void SOLARCHVISION_delete_Selection () {
         
         {
           
-          if (startObject2D <= endObject2D) {
+          if ((0 < startFace) && (startFace <= endFace)) {
           
             for (int i = OBJ_NUM + 1; i < allGroup3Ds_num + 1; i++) {
             
@@ -14851,7 +14851,7 @@ void SOLARCHVISION_delete_Selection () {
         int endSolid = allGroup3Ds_Solids[OBJ_NUM][1];
         
         {
-          if (startSolid <= endSolid) {
+          if ((0 < startSolid) && (startSolid <= endSolid)) {
             for (int i = OBJ_NUM + 1; i < allGroup3Ds_num + 1; i++) {
             
               for (int j = 0; j < 2; j++) {
