@@ -21237,6 +21237,7 @@ void SOLARCHVISION_resize_allSections_SolarImpact_array () { // called when STUD
 
 
 void SOLARCHVISION_delete_Fractals () {
+  
   allFractals_XYZSRA = new float [1][6]; 
   allFractals_XYZSRA[0][0] = 0;
   allFractals_XYZSRA[0][1] = 0;
@@ -21269,6 +21270,7 @@ void SOLARCHVISION_delete_Fractals () {
 }
 
 void SOLARCHVISION_delete_Object2Ds () {
+  
   allObject2Ds_XYZS = new float [1][4]; 
   allObject2Ds_XYZS[0][0] = 0;
   allObject2Ds_XYZS[0][1] = 0;
@@ -21288,17 +21290,8 @@ void SOLARCHVISION_delete_Object2Ds () {
   SOLARCHVISION_deselect_All();
 }
 
-void SOLARCHVISION_delete_Polygroups () {
+void SOLARCHVISION_delete_Faces () {
   
-  SOLARCHVISION_delete_Solids();
-  
-  SOLARCHVISION_delete_Object2Ds();
-
-  allVertices = new float [1][3];
-  allVertices[0][0] = 0;
-  allVertices[0][1] = 0;
-  allVertices[0][2] = 0;
-   
   allFaces = new int [1][3];
   allFaces[0][0] = 0;
   allFaces[0][1] = 0;
@@ -21310,13 +21303,38 @@ void SOLARCHVISION_delete_Polygroups () {
   allFaces_MTLV[0][2] = 0;
   allFaces_MTLV[0][3] = 0;
 
-  allPolygroups_SolarPivotXYZ = new float [1][3];
-  allPolygroups_SolarPivotXYZ[0][0] = 0;
-  allPolygroups_SolarPivotXYZ[0][1] = 0;
-  allPolygroups_SolarPivotXYZ[0][2] = 0;
+  for (int q = 0; q < allPolygroups_num + 1; q++) {
+    allPolygroups_Faces[q][0] = 0;
+    allPolygroups_Faces[q][1] = -1;
+  }  
   
-  allPolygroups_SolarPivotType = new int [1][1];
-  allPolygroups_SolarPivotType[0][0] = 0;
+  SOLARCHVISION_deselect_All();
+}
+
+void SOLARCHVISION_delete_Vertices () {
+  
+  allVertices = new float [1][3];
+  allVertices[0][0] = 0;
+  allVertices[0][1] = 0;
+  allVertices[0][2] = 0;
+ 
+  SOLARCHVISION_deselect_All();
+}
+
+void SOLARCHVISION_delete_Polygroups () {
+/*
+  SOLARCHVISION_delete_Object2Ds();
+  
+  SOLARCHVISION_delete_Solids();
+  
+  SOLARCHVISION_delete_Faces();
+  
+  SOLARCHVISION_delete_Vertices();
+*/
+
+  allPolygroups_Object2Ds = new int [1][2];
+  allPolygroups_Object2Ds[0][0] = 0;
+  allPolygroups_Object2Ds[0][1] = -1;  
   
   allPolygroups_Faces = new int [1][2];
   allPolygroups_Faces[0][0] = 0;
@@ -21326,11 +21344,18 @@ void SOLARCHVISION_delete_Polygroups () {
   allPolygroups_Solids[0][0] = 0;
   allPolygroups_Solids[0][1] = -1;
 
-  allPolygroups_Object2Ds = new int [1][2];
-  allPolygroups_Object2Ds[0][0] = 0;
-  allPolygroups_Object2Ds[0][1] = -1;  
+  allPolygroups_SolarPivotXYZ = new float [1][3];
+  allPolygroups_SolarPivotXYZ[0][0] = 0;
+  allPolygroups_SolarPivotXYZ[0][1] = 0;
+  allPolygroups_SolarPivotXYZ[0][2] = 0;
   
-
+  allPolygroups_SolarPivotType = new int [1][1];
+  allPolygroups_SolarPivotType[0][0] = 0;
+  
+  allPolygroups_num = 0;
+  
+  SOLARCHVISION_deselect_All();
+  
 
   defaultMaterial = 7;
   defaultTessellation = 0;
@@ -21338,7 +21363,7 @@ void SOLARCHVISION_delete_Polygroups () {
 
   SOLARCHVISION_beginNewPolygroup();
  
-  SOLARCHVISION_deselect_All();
+  
  
   urbanVertices_start = 0;
   urbanVertices_end = 0;
@@ -45208,7 +45233,6 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     }
   }
   
-
   newChild1 = my_xml.addChild("DEFINED_STATION");
   newChild1.setInt("ni", DEFINED_STATIONS[STATION_NUMBER].length);
   for (int i = 0; i < DEFINED_STATIONS[STATION_NUMBER].length; i++) {
@@ -45235,7 +45259,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       }
     } 
   }  
-  
+println("Camera");  
   {
     newChild1 = my_xml.addChild("allCamera");
     int ni = 1 + allCameras_num;
@@ -45255,7 +45279,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       newChild2.setContent(lineSTR);
     } 
   }  
-
+println("Section");
   {
     newChild1 = my_xml.addChild("allSections");
     int ni = 1 + allSections_num;
@@ -45278,7 +45302,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       newChild2.setContent(lineSTR);
     } 
   }
-  
+println("Solid");  
   {
     newChild1 = my_xml.addChild("allSolids");
     int ni = allSolids.length;
@@ -45296,7 +45320,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       newChild2.setContent(lineSTR);
     } 
   }  
-
+println("Fractal");
   {
     newChild1 = my_xml.addChild("allFractals");
     int ni = 1 + allFractals_num;
@@ -45325,7 +45349,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       newChild2.setContent(lineSTR);
     } 
   }
-  
+println("Object2D");  
   {
     newChild1 = my_xml.addChild("allObject2Ds");
     int ni = 1 + allObject2Ds_num;
@@ -45345,7 +45369,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     } 
   }
   
-  
+println("Pivot");  
   {
     newChild1 = my_xml.addChild("allPolygroups_SolarPivotXYZ");
     int ni = allPolygroups_num + 1;
@@ -45378,7 +45402,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     } 
   }    
   
-
+println("Vertex");
   newChild1 = my_xml.addChild("allVertices");
   newChild1.setInt("ni", allVertices.length);
   for (int i = 0; i < allVertices.length; i++) {
@@ -45392,7 +45416,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     }
     newChild2.setContent(lineSTR);
   } 
-
+println("Face");
   newChild1 = my_xml.addChild("allFaces");
   newChild1.setInt("ni", allFaces.length);
   for (int i = 0; i < allFaces.length; i++) {
@@ -45405,7 +45429,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     }
     newChild2.setContent(lineSTR);
   } 
-  
+println("Face_MTLV");  
   newChild1 = my_xml.addChild("allFaces_MTLV");
   newChild1.setInt("ni", allFaces_MTLV.length);
   for (int i = 0; i < allFaces_MTLV.length; i++) {
@@ -45418,7 +45442,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     }
     newChild2.setContent(lineSTR);
   }   
-
+println("Face_group");
   newChild1 = my_xml.addChild("allPolygroups_Faces");
   newChild1.setInt("ni", allPolygroups_num + 1);
   for (int i = 0; i < allPolygroups_num + 1; i++) {
@@ -45432,7 +45456,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     }
     newChild2.setContent(lineSTR);
   } 
-    
+println("Face_Solid");    
   newChild1 = my_xml.addChild("allPolygroups_Solids");
   newChild1.setInt("ni", allPolygroups_num + 1);
   for (int i = 0; i < allPolygroups_num + 1; i++) {
@@ -45446,7 +45470,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     }
     newChild2.setContent(lineSTR);
   }
-
+println("Face_Object2D");
   newChild1 = my_xml.addChild("allPolygroups_Object2Ds");
   newChild1.setInt("ni", allPolygroups_num + 1);
   for (int i = 0; i < allPolygroups_num + 1; i++) {
@@ -45461,7 +45485,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     newChild2.setContent(lineSTR);
   }
 
-
+println("Hello!");
   {
     newChild1 = my_xml.addChild("selectedLandPoint_numbers");
     int ni = selectedLandPoint_numbers.length;
