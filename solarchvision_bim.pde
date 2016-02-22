@@ -43092,7 +43092,7 @@ String[][] BAR_b_Items = {
                           {"1", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric", "BuildingType", "2.5"},
                           {"1", "as_Mesh", "as_Solid", "Mesh|Solid", "2.0"},  
                           
-                          {"4", "LandPoint", "∞-D", "2½D", "Group", "Face", "Vertex", "Soft", "Solid", "Section", "Camera", "LayerType", "2.0"},
+                          {"4", "LandP", "Fractal", "2½D", "Group", "Face", "Vertex", "Soft", "Solid", "Section", "Camera", "LayerType", "2.0"},
                           {"1", "±CS", "+CS", "-CS", "ClickSelect", "1.0"},
                           {"1", "±WS", "+WS", "-WS", "WindowSelect", "1.0"},                          
                           {"2", "X<", "X|", "X>", "PivotX", "1.0"},
