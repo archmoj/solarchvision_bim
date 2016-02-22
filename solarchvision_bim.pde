@@ -1,4 +1,4 @@
-// bug in RectSel when applied on Solids!
+// display edges of selected object2Ds and Solids on Polygroups 
 // SOLARCHVISION_delete_Objects2Ds (and maybe delete_Solids) could produce problems nowthat we have Object2Ds in Polygroups... should modify that.
 
 // could add solid option to trees?
@@ -36496,6 +36496,70 @@ void SOLARCHVISION_draw_Perspective_Internally () {
               }
             }
           }
+          
+          
+          for (int f = allPolygroups_Object2Ds[OBJ_NUM][0]; f <= allPolygroups_Object2Ds[OBJ_NUM][1]; f++) {
+            
+            if ((0 < f) && (f < allObject2Ds_Faces.length)) { 
+                
+              beginShape();
+              
+              for (int j = 0; j < allObject2Ds_Faces[f].length; j++) {
+                
+                int vNo = allObject2Ds_Faces[f][j];
+                
+                float x = allObject2Ds_Vertices[vNo][0] * OBJECTS_scale;
+                float y = allObject2Ds_Vertices[vNo][1] * OBJECTS_scale;
+                float z = -allObject2Ds_Vertices[vNo][2] * OBJECTS_scale;
+                
+                float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+                
+                if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+                  if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+                }
+                
+              }
+              
+              endShape(CLOSE);
+            } 
+          }
+    
+          for (int q = allPolygroups_Solids[OBJ_NUM][0]; q <= allPolygroups_Solids[OBJ_NUM][1]; q++) {
+            
+            if ((0 < q) && (q < allSolids_Faces.length)) {
+             
+              for (int plane_type = 0; plane_type < Solids_DisplayFaces; plane_type++) {          
+                          
+                int f = (q - 1) * Solids_DisplayFaces + plane_type + 1; 
+  
+                if ((0 < f) && (f < allSolids_Faces.length)) {               
+                
+                  beginShape();
+                  
+                  for (int j = 0; j < allSolids_Faces[f].length; j++) {
+                    
+                    int vNo = allSolids_Faces[f][j];
+                    
+                    float x = allSolids_Vertices[vNo][0] * OBJECTS_scale;
+                    float y = allSolids_Vertices[vNo][1] * OBJECTS_scale;
+                    float z = -allSolids_Vertices[vNo][2] * OBJECTS_scale;
+                    
+                    float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+                    
+                    if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+                      if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+                    }
+                    
+                  }
+                  
+                  endShape(CLOSE);
+                }
+              }
+            }
+          }
+
+          
+          
         }
       }
       
