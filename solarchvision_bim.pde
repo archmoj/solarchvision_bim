@@ -1,5 +1,7 @@
 // could add solid option to trees?
 // could add create polygroup --> startPolyGroup ...
+// could add create face
+// could add create vertex
 // drop functions only works for living objects
 // could export tropo layer in obj format
 
@@ -1917,7 +1919,7 @@ void SOLARCHVISION_update_station (int Step) {
 
 void SOLARCHVISION_update_models (int Step) {
  
-   if ((Step == 0) || (Step == 1)) SOLARCHVISION_delete_Polygroups();
+   if ((Step == 0) || (Step == 1)) SOLARCHVISION_delete_All();
    if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_ProjectModel();
 
 }
@@ -21135,7 +21137,13 @@ void SOLARCHVISION_add_Object2Ds_Mesh2 (int people_or_trees, int n, float x1, fl
 void SOLARCHVISION_delete_All () {
   
   SOLARCHVISION_delete_Fractals();
-  SOLARCHVISION_delete_Polygroups(); // also includes Object2Ds and Solids
+  
+  SOLARCHVISION_delete_Object2Ds();
+  SOLARCHVISION_delete_Solids();
+  SOLARCHVISION_delete_Faces();
+  SOLARCHVISION_delete_Vertices();
+  SOLARCHVISION_delete_Polygroups(); 
+  
   SOLARCHVISION_delete_Sections();
   SOLARCHVISION_delete_Cameras();
   
@@ -21322,15 +21330,6 @@ void SOLARCHVISION_delete_Vertices () {
 }
 
 void SOLARCHVISION_delete_Polygroups () {
-/*
-  SOLARCHVISION_delete_Object2Ds();
-  
-  SOLARCHVISION_delete_Solids();
-  
-  SOLARCHVISION_delete_Faces();
-  
-  SOLARCHVISION_delete_Vertices();
-*/
 
   allPolygroups_Object2Ds = new int [1][2];
   allPolygroups_Object2Ds[0][0] = 0;
@@ -25829,10 +25828,13 @@ void SOLARCHVISION_add_ProjectModel () {
     SOLARCHVISION_add_Box_Core(8,0,0,1,1, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
 
-    SOLARCHVISION_beginNewPolygroup();
+    
     for (float i = 6; i <= dz; i += 6) {
+      
+      SOLARCHVISION_beginNewPolygroup();
+      
       if (i != dz) {
-        
+
         SOLARCHVISION_add_Mesh2(6,0,0,1,1, x-dx,y-dy,i, x-dx/3.0,y+dy/3.0,i); // floors
         SOLARCHVISION_add_Mesh2(6,0,0,1,1, x-dx,y+dy/3.0,i, x+dx/3.0,y+dy,i); // floors
         SOLARCHVISION_add_Mesh2(6,0,0,1,1, x+dx/3.0,y-dy/3.0,i, x+dx,y+dy,i); // floors
