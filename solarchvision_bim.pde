@@ -1,4 +1,5 @@
 // should check if we load models correct?
+// should check ... sometimes we may write in Group3D[0]!
 
 // we need unGroup function!
 
@@ -14406,6 +14407,37 @@ void SOLARCHVISION_duplicate_Selection () {
 }
        
 
+
+
+void SOLARCHVISION_ungroup_Selection () {
+
+  if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
+
+    selectedGroup3D_numbers = sort(selectedGroup3D_numbers);
+    
+
+    for (int o = selectedGroup3D_numbers.length - 1; o >= 0; o--) {
+      
+      int OBJ_NUM = selectedGroup3D_numbers[o];
+      
+      if (OBJ_NUM != 0) {
+      
+        allGroup3Ds_Faces[OBJ_NUM][0] = 0;
+        allGroup3Ds_Faces[OBJ_NUM][1] = -1;
+          
+        allGroup3Ds_Object2Ds[OBJ_NUM][0] = 0;
+        allGroup3Ds_Object2Ds[OBJ_NUM][1] = -1;
+        
+        allGroup3Ds_Solids[OBJ_NUM][0] = 0;
+        allGroup3Ds_Solids[OBJ_NUM][1] = -1;
+        
+      }
+    }
+
+    SOLARCHVISION_delete_Selection();
+  }
+
+}
 
 
 
@@ -32918,6 +32950,10 @@ void mouseClicked () {
               SOLARCHVISION_delete_Selection();
               WIN3D_Update = 1;              
             }      
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Ungroup Selection")) {
+              SOLARCHVISION_ungroup_Selection();
+              WIN3D_Update = 1;              
+            }               
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Duplicate Selection")) {
               SOLARCHVISION_duplicate_Selection();
               WIN3D_Update = 1;              
@@ -42763,7 +42799,7 @@ String[][] BAR_a_Items = {
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Begin New Group3D", "Viewport >> Camera", "Camera", "Section", "Solid", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"},
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Solid", "Select Section",  "Select Camera", "Select LandPoint", "Select Fractal", "Select Object2D", "Select Group3D", "Select Face", "Select Vertex", "Soft Selection", "Group3D >> Vertex", "Group3D >> Face", "Group3D >> Solid", "Group3D >> Object2D", "Object2D >> Group3D", "Solid >> Group3D",  "Face >> Group3D", "Vertex >> Group3D",  "Vertex >> Face", "Face >> Vertex", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
-                        {"Edit", "Duplicate Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces"},
+                        {"Edit", "Duplicate Selection", "Ungroup Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Power", "PowerX", "PowerY", "PowerZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
                         {"Match", "Save Current Pivot", "Reset Saved Pivot", "Use Selection Pivot", "Use Origin Pivot", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunkSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunkSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot", "Drop on LandSurface", "Drop on ModelSurface (Up)", "Drop on ModelSurface (Down)"},
                         {"Action", "Undo", "Redo", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Solid Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Solid Graph", "REC. Screenshot", "Stop REC."}
@@ -45415,7 +45451,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       }
     } 
   }  
-println("Camera");  
+
   {
     newChild1 = my_xml.addChild("allCamera");
     int ni = 1 + allCameras_num;
@@ -45435,7 +45471,7 @@ println("Camera");
       newChild2.setContent(lineSTR);
     } 
   }  
-println("Section");
+
   {
     newChild1 = my_xml.addChild("allSections");
     int ni = 1 + allSections_num;
@@ -45458,7 +45494,7 @@ println("Section");
       newChild2.setContent(lineSTR);
     } 
   }
-println("Solid");  
+
   {
     newChild1 = my_xml.addChild("allSolids");
     int ni = allSolids.length;
@@ -45476,7 +45512,7 @@ println("Solid");
       newChild2.setContent(lineSTR);
     } 
   }  
-println("Fractal");
+
   {
     newChild1 = my_xml.addChild("allFractals");
     int ni = 1 + allFractals_num;
@@ -45505,7 +45541,7 @@ println("Fractal");
       newChild2.setContent(lineSTR);
     } 
   }
-println("Object2D");  
+
   {
     newChild1 = my_xml.addChild("allObject2Ds");
     int ni = 1 + allObject2Ds_num;
@@ -45525,7 +45561,6 @@ println("Object2D");
     } 
   }
   
-println("Pivot");  
   {
     newChild1 = my_xml.addChild("allGroup3Ds_SolarPivotXYZ");
     int ni = allGroup3Ds_num + 1;
@@ -45558,7 +45593,6 @@ println("Pivot");
     } 
   }    
   
-println("Vertex");
   newChild1 = my_xml.addChild("allVertices");
   newChild1.setInt("ni", allVertices.length);
   for (int i = 0; i < allVertices.length; i++) {
@@ -45572,7 +45606,7 @@ println("Vertex");
     }
     newChild2.setContent(lineSTR);
   } 
-println("Face");
+
   newChild1 = my_xml.addChild("allFaces");
   newChild1.setInt("ni", allFaces.length);
   for (int i = 0; i < allFaces.length; i++) {
@@ -45585,7 +45619,7 @@ println("Face");
     }
     newChild2.setContent(lineSTR);
   } 
-println("Face_MTLV");  
+  
   newChild1 = my_xml.addChild("allFaces_MTLV");
   newChild1.setInt("ni", allFaces_MTLV.length);
   for (int i = 0; i < allFaces_MTLV.length; i++) {
@@ -45598,7 +45632,7 @@ println("Face_MTLV");
     }
     newChild2.setContent(lineSTR);
   }   
-println("Face_group");
+
   newChild1 = my_xml.addChild("allGroup3Ds_Faces");
   newChild1.setInt("ni", allGroup3Ds_num + 1);
   for (int i = 0; i < allGroup3Ds_num + 1; i++) {
@@ -45612,7 +45646,7 @@ println("Face_group");
     }
     newChild2.setContent(lineSTR);
   } 
-println("Face_Solid");    
+    
   newChild1 = my_xml.addChild("allGroup3Ds_Solids");
   newChild1.setInt("ni", allGroup3Ds_num + 1);
   for (int i = 0; i < allGroup3Ds_num + 1; i++) {
@@ -45626,7 +45660,7 @@ println("Face_Solid");
     }
     newChild2.setContent(lineSTR);
   }
-println("Face_Object2D");
+
   newChild1 = my_xml.addChild("allGroup3Ds_Object2Ds");
   newChild1.setInt("ni", allGroup3Ds_num + 1);
   for (int i = 0; i < allGroup3Ds_num + 1; i++) {
@@ -45641,7 +45675,7 @@ println("Face_Object2D");
     newChild2.setContent(lineSTR);
   }
 
-println("Hello!");
+
   {
     newChild1 = my_xml.addChild("selectedLandPoint_numbers");
     int ni = selectedLandPoint_numbers.length;
