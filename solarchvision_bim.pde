@@ -14943,7 +14943,7 @@ void SOLARCHVISION_delete_Selection () {
           int startFace = allGroup3Ds_Faces[OBJ_NUM][0];
           int endFace = allGroup3Ds_Faces[OBJ_NUM][1];          
           
-          if ((f != 0) && (startFace <= f) && (f <= endFace)) {
+          if ((0 < f) && (startFace <= f) && (f <= endFace)) {
             
             for (int i = OBJ_NUM + 1; i < allGroup3Ds_num + 1; i++) {
               for (int j = 0; j < 2; j++) {
