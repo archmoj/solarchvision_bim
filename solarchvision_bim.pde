@@ -1,3 +1,4 @@
+// This is last version with old algorithm for deleting Faces/Vertices from Group3D!
 // should check if we load models correct?
 // should check ... sometimes we may write in Group3D[0]!
 
