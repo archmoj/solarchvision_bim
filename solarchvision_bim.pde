@@ -29981,14 +29981,10 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
               selectedSolid_numbers = (int[]) concat(selectedSolid_numbers, new_OBJ_number);
           }
         }
-        
 
-        
       }
     }
     
-    println("selectedSolid_numbers");
-    println(selectedSolid_numbers);
   }
 
   if (Current_ObjectCategory == ObjectCategory_Sections) {
@@ -38466,7 +38462,7 @@ int Solids_DisplayDegree = 16; //8; // internal - number of each face corners
 
 void SOLARCHVISION_draw_Solids () {
   
-  allSolids_Faces = new int [Solids_DisplayFaces * allSolids.length][Solids_DisplayDegree]; 
+  allSolids_Faces = new int [1 + Solids_DisplayFaces * (allSolids.length - 1)][Solids_DisplayDegree]; 
     
   allSolids_Vertices = new float [Solids_DisplayFaces * Solids_DisplayDegree * allSolids.length][3];
   allSolids_Vertices[0][0] = 0;
