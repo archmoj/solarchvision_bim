@@ -1,4 +1,3 @@
-// This is last version with old algorithm for deleting Faces/Vertices from Group3D!
 // should check if we load models correct?
 // should check ... sometimes we may write in Group3D[0]!
 
@@ -14746,12 +14745,118 @@ void SOLARCHVISION_delete_Selection () {
   }  
 
 
+  if (Current_ObjectCategory == ObjectCategory_Faces) {
+    
+    selectedFace_numbers = sort(selectedFace_numbers);
 
-  int[] keep_selectedVertex_numbers = {0};
+    for (int o = selectedFace_numbers.length - 1; o >= 0; o--) {
+
+      int OBJ_NUM = selectedFace_numbers[o];
+
+      if (OBJ_NUM != 0) {    
+        
+        for (int q = 0; q < allGroup3Ds_num + 1; q++) {
+          if ((allGroup3Ds_Faces[q][0] <= OBJ_NUM) && (OBJ_NUM <= allGroup3Ds_Faces[q][1])) {
+            
+            //println("Face found at group:", q);
+            
+            int startFace = allGroup3Ds_Faces[q][0];
+            int endFace = allGroup3Ds_Faces[q][1];
+            
+            println(startFace, endFace);
+
+            for (int i = q + 1; i < allGroup3Ds_num + 1; i++) {
+              for (int j = 0; j < 2; j++) {
+                
+                allGroup3Ds_Faces[i][j] -= 1;
+                
+                if (allGroup3Ds_Faces[i][j] < 0) allGroup3Ds_Faces[i][j] = 0; 
+              }
+            }  
+            allGroup3Ds_Faces[q][1] -= 1; // because deleting a Face also changes the end pointer of the same object 
+
+            break;
+          }
+        }
+      
+
+        {
+          int[][] startList = (int[][]) subset(allFaces, 0, OBJ_NUM);
+          int[][] endList = (int[][]) subset(allFaces, OBJ_NUM + 1);
+          
+          allFaces = (int[][]) concat(startList, endList);
+        }
+
+        {
+          int[][] startList = (int[][]) subset(allFaces_MTLV, 0, OBJ_NUM);
+          int[][] endList = (int[][]) subset(allFaces_MTLV, OBJ_NUM + 1);
+          
+          allFaces_MTLV = (int[][]) concat(startList, endList);          
+        } 
+
+
+      }
+
+    }
+
+  }  
+
+
+  if (Current_ObjectCategory == ObjectCategory_Vertices) { 
+    
+    selectedVertex_numbers = sort(selectedVertex_numbers);
+
+    for (int o = selectedVertex_numbers.length - 1; o >= 0; o--) { 
+
+      int vNo = selectedVertex_numbers[o];
+      
+      if (vNo != 0) {
+      
+        int found = -1;
+        
+        for (int i = 1; i < allFaces.length; i++) { // the first node is null
+          for (int j = 0; j < allFaces[i].length; j++) {
+            if (allFaces[i][j] == vNo) {
+              
+              found = 1;
+            }
+            
+            if (found != -1) break;
+          }
+          
+          if (found != -1) break;
+        }  
+     
+        if (found == -1) {
+          
+          for (int i = 1; i < allFaces.length; i++) { // the first node is null
+            for (int j = 0; j < allFaces[i].length; j++) {
+              if (allFaces[i][j] > vNo) {
+                
+                allFaces[i][j] -= 1;
+              }
+            }
+          }             
+          
+          float[][] startList = (float[][]) subset(allVertices, 0, vNo);
+          float[][] endList = (float[][]) subset(allVertices, vNo + 1);
+          
+          allVertices = (float[][]) concat(startList, endList);
+        }
+     
+        
+      }
+      
+    } 
+  }
+
+
+
+  //int[] keep_selectedVertex_numbers = {0};
   if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
 
-    SOLARCHVISION_convert_Group3D_to_Vertex(); // finding & then keeping objects vertices so that we could delete the isolated ones later  
-    keep_selectedVertex_numbers = selectedVertex_numbers;
+    //SOLARCHVISION_convert_Group3D_to_Vertex(); // finding & then keeping objects vertices so that we could delete the isolated ones later  
+    //keep_selectedVertex_numbers = selectedVertex_numbers;
 
     selectedGroup3D_numbers = sort(selectedGroup3D_numbers);
     
@@ -14905,7 +15010,7 @@ void SOLARCHVISION_delete_Selection () {
     WIN3D_update_VerticesSolarValue = 1;
 
   }
-
+/*
   if ((Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices)) { // note that for deleting vertices we should first delete the faces that have those vertices...
     
     println("selectedFace_numbers_before");
@@ -14988,7 +15093,9 @@ void SOLARCHVISION_delete_Selection () {
     WIN3D_update_VerticesSolarValue = 1;
     
   }
-  
+*/  
+
+/*
   if (Current_ObjectCategory == ObjectCategory_Vertices) { // note that for deleting vertices we first deleted the faces that have those vertices above 
     
     selectedVertex_numbers = sort(selectedVertex_numbers);
@@ -15018,17 +15125,18 @@ void SOLARCHVISION_delete_Selection () {
       
     } 
   }
-
+*/
 
   SOLARCHVISION_deselect_All();
-  
+
+/*  
   if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
     
     selectedVertex_numbers = keep_selectedVertex_numbers;
     
     SOLARCHVISION_deleteIsolatedVerticesSelection(); // <<<<<<
   }  
-  
+*/  
   
 
 }
