@@ -29882,121 +29882,101 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
       }                
     }
   }             
-  
 
-  if (Current_ObjectCategory == ObjectCategory_Solids) { // Note: this is slightly different from the others
+
+//zzzzzzzzz  
+  if (Current_ObjectCategory == ObjectCategory_Solids) {
     
-    for (int h = 1; h < allSolids_Faces.length; h += Solids_DisplayFaces) {
+    for (int OBJ_NUM = 1; OBJ_NUM < allSolids_Faces.length; OBJ_NUM++) {
+
+      int break_loops = 0;
       
-      int objectProcessed = 0;
+      int include_OBJ_in_newSelection = -1;    
+
+      if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
+      if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
       
-      for (int plane_type = 0; plane_type < Solids_DisplayFaces; plane_type++) {    
-         
-        if (objectProcessed == 0) { 
+      int f = OBJ_NUM;
+
+      for (int j = 0; j < allSolids_Faces[f].length; j++) {
         
-          int break_loops = 0;
-          
-          int include_OBJ_in_newSelection = -1;    
-    
-          if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
-          if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
-          
-          int f = h + plane_type;
-          int OBJ_NUM = int((f - 1) / Solids_DisplayFaces);
-          
-          println("OBJ_NUM", OBJ_NUM);
-  
-          for (int j = 0; j < allSolids_Faces[f].length; j++) {
-              
-            if (objectProcessed == 0) {
-            
-              int vNo = allSolids_Faces[f][j];
-              
-              float x = allSolids_Vertices[vNo][0] * OBJECTS_scale;
-              float y = allSolids_Vertices[vNo][1] * OBJECTS_scale;
-              float z = -allSolids_Vertices[vNo][2] * OBJECTS_scale;
-              
-              float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
-      
-              if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
-                  if (mouseButton == RIGHT) {
-                    include_OBJ_in_newSelection = 1;
-                    break_loops = 1;
-                  }
-                }
-                else {
-                  if (mouseButton == LEFT) {
-                    include_OBJ_in_newSelection = 0;
-                    break_loops = 1;
-                  }                          
-                }
-                
-                if (break_loops == 1) break;
-              }
-              else {
-                if (mouseButton == LEFT) {
-                  include_OBJ_in_newSelection = 0;
-                  break_loops = 1;
-                }                          
-              }                  
-              
-              if (break_loops == 1) break;                  
+        int vNo = allSolids_Faces[f][j];
+        
+        float x = allSolids_Vertices[vNo][0] * OBJECTS_scale;
+        float y = allSolids_Vertices[vNo][1] * OBJECTS_scale;
+        float z = -allSolids_Vertices[vNo][2] * OBJECTS_scale;
+        
+        float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+
+        if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+          if (isInside(Image_XYZ[0], Image_XYZ[1], corner1x, corner1y, corner2x, corner2y) == 1) {
+            if (mouseButton == RIGHT) {
+              include_OBJ_in_newSelection = 1;
+              break_loops = 1;
             }
-            
-            if (include_OBJ_in_newSelection == 1) break; // ???????????
+          }
+          else {
+            if (mouseButton == LEFT) {
+              include_OBJ_in_newSelection = 0;
+              break_loops = 1;
+            }                          
           }
           
-          if (include_OBJ_in_newSelection == 1) {
-    
-            int found_at = -1;
-            
-            int use_it = 0; // 0:nothing 1:add -1:subtract
-            
-            if (addNewSelectionToPreviousSelection == 0) use_it = 1;
-            if (addNewSelectionToPreviousSelection == 1) use_it = 1;
-            if (addNewSelectionToPreviousSelection == -1) use_it = 0;
-            
-            if (addNewSelectionToPreviousSelection != 0) {
-    
-              for (int o = selectedSolid_numbers.length - 1; o >= 0; o--) {
-                if (selectedSolid_numbers[o] == OBJ_NUM) {
-                  found_at = o;
-                  if (addNewSelectionToPreviousSelection == 1) {
-                    use_it = 0;
-                  }
-                  if (addNewSelectionToPreviousSelection == -1) {
-                    use_it = -1; 
-                  }
-                  break;
-                } 
-              }
-            }
-            
-            if (use_it == -1) {
-              int[] startList = (int[]) subset(selectedSolid_numbers, 0, found_at);
-              int[] endList = (int[]) subset(selectedSolid_numbers, found_at + 1);
-              
-              selectedSolid_numbers = (int[]) concat(startList, endList);
-              
-              objectProcessed = 1;
-            }
-            
-            if (use_it == 1) {
-              int[] new_OBJ_number = {OBJ_NUM};
-              
-              selectedSolid_numbers = (int[]) concat(selectedSolid_numbers, new_OBJ_number);
-              
-              objectProcessed = 1;
-            }
-    
-          }
-          
-  
+          if (break_loops == 1) break;
         }
+        else {
+          if (mouseButton == LEFT) {
+            include_OBJ_in_newSelection = 0;
+            break_loops = 1;
+          }                          
+        }                  
+        
+        if (break_loops == 1) break;                  
+      }
+
+      
+      if (include_OBJ_in_newSelection == 1) {
+
+        int found_at = -1;
+        
+        int use_it = 0; // 0:nothing 1:add -1:subtract
+        
+        if (addNewSelectionToPreviousSelection == 0) use_it = 1;
+        if (addNewSelectionToPreviousSelection == 1) use_it = 1;
+        if (addNewSelectionToPreviousSelection == -1) use_it = 0;
+        
+        if (addNewSelectionToPreviousSelection != 0) {
+
+          for (int o = selectedSolid_numbers.length - 1; o >= 0; o--) {
+            if (selectedSolid_numbers[o] == OBJ_NUM) {
+              found_at = o;
+              if (addNewSelectionToPreviousSelection == 1) {
+                use_it = 0;
+              }
+              if (addNewSelectionToPreviousSelection == -1) {
+                use_it = -1; 
+              }
+              break;
+            } 
+          }
+        }
+        
+        if (use_it == -1) {
+          int[] startList = (int[]) subset(selectedSolid_numbers, 0, found_at);
+          int[] endList = (int[]) subset(selectedSolid_numbers, found_at + 1);
+          
+          selectedSolid_numbers = (int[]) concat(startList, endList);
+        }
+        
+        if (use_it == 1) {
+          int[] new_OBJ_number = {OBJ_NUM};
+          
+          selectedSolid_numbers = (int[]) concat(selectedSolid_numbers, new_OBJ_number);
+        }
+        
       }
     }
-  }  
+  }
 
   if (Current_ObjectCategory == ObjectCategory_Sections) {
     
@@ -38467,7 +38447,7 @@ float[][] SOLARCHVISION_getCorners_Section (int Section_Type, float Section_offs
 float[][] allSolids_Vertices;
 int[][] allSolids_Faces;
 
-int Solids_DisplayFaces = 3; // internal - number of faces: XY, YZ, ZX
+int Solids_DisplayFaces = 1; //3; // internal - number of faces: XY, YZ, ZX
 int Solids_DisplayDegree = 16; //8; // internal - number of each face corners 
 
 
