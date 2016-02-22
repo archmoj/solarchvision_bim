@@ -1209,7 +1209,8 @@ String[] CLIMATE_WY2_Files = getfiles(CLIMATE_WY2_directory);
 String[] ENSEMBLE_XML_Files = getfiles(ENSEMBLE_directory);
 String[] OBSERVED_XML_Files = getfiles(OBSERVED_directory);
 
-
+int ERASE_All = 0;
+int ERASE_Faces = 0;
 int ERASE_Fractals = 0;
 int ERASE_Object2Ds = 0;
 int ERASE_Group3Ds = 0;
@@ -2752,7 +2753,27 @@ void draw () {
           ROLLOUT_Update = 1;
       
           ERASE_Cameras = 0;    
-        }            
+        }    
+
+        if (ERASE_Faces == 1) {
+          SOLARCHVISION_delete_Faces();
+          
+          WIN3D_Update = 1;
+      
+          ROLLOUT_Update = 1;
+      
+          ERASE_Faces = 0;    
+        }             
+
+        if (ERASE_All == 1) {
+          SOLARCHVISION_delete_All();
+          
+          WIN3D_Update = 1;
+      
+          ROLLOUT_Update = 1;
+      
+          ERASE_All = 0;    
+        }  
         
         if (pre_Load_Default_Models != Load_Default_Models) {
           
@@ -14740,24 +14761,9 @@ void SOLARCHVISION_delete_Selection () {
       int OBJ_NUM = selectedGroup3D_numbers[o];
       
       if (OBJ_NUM != 0) {
-      
+
         int startFace = allGroup3Ds_Faces[OBJ_NUM][0];
         int endFace = allGroup3Ds_Faces[OBJ_NUM][1];
-        
-        {
-          float[][] startList = (float[][]) subset(allGroup3Ds_SolarPivotXYZ, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allGroup3Ds_SolarPivotXYZ, OBJ_NUM + 1);
-          
-          allGroup3Ds_SolarPivotXYZ = (float[][]) concat(startList, endList);
-        } 
-
-        {
-          int[][] startList = (int[][]) subset(allGroup3Ds_SolarPivotType, 0, OBJ_NUM);
-          int[][] endList = (int[][]) subset(allGroup3Ds_SolarPivotType, OBJ_NUM + 1);
-          
-          allGroup3Ds_SolarPivotType = (int[][]) concat(startList, endList);
-        } 
-
           
         {
         
@@ -14778,18 +14784,20 @@ void SOLARCHVISION_delete_Selection () {
           allGroup3Ds_Faces = (int[][]) concat(startList, endList);
         }  
        
-        {
-          int[][] startList = (int[][]) subset(allFaces, 0, startFace);
-          int[][] endList = (int[][]) subset(allFaces, endFace + 1);
+        if (startFace <= endFace) {
+          {
+            int[][] startList = (int[][]) subset(allFaces, 0, startFace);
+            int[][] endList = (int[][]) subset(allFaces, endFace + 1);
+            
+            allFaces = (int[][]) concat(startList, endList);
+          }
           
-          allFaces = (int[][]) concat(startList, endList);
-        }
-        
-        {
-          int[][] startList = (int[][]) subset(allFaces_MTLV, 0, startFace);
-          int[][] endList = (int[][]) subset(allFaces_MTLV, endFace + 1);
-          
-          allFaces_MTLV = (int[][]) concat(startList, endList);          
+          {
+            int[][] startList = (int[][]) subset(allFaces_MTLV, 0, startFace);
+            int[][] endList = (int[][]) subset(allFaces_MTLV, endFace + 1);
+            
+            allFaces_MTLV = (int[][]) concat(startList, endList);          
+          }
         }
 
         int startObject2D = allGroup3Ds_Object2Ds[OBJ_NUM][0];
@@ -14817,7 +14825,6 @@ void SOLARCHVISION_delete_Selection () {
           allGroup3Ds_Object2Ds = (int[][]) concat(startList, endList);
         }  
     
-        
         if ((0 < startObject2D) && (startObject2D <= endObject2D)) {
           
           {
@@ -14861,7 +14868,6 @@ void SOLARCHVISION_delete_Selection () {
           allGroup3Ds_Solids = (int[][]) concat(startList, endList);
         }  
     
-        
         if ((0 < startSolid) && (startSolid <= endSolid)) {
           
           float[][] startList = (float[][]) subset(allSolids, 0, startSolid);
@@ -14872,6 +14878,21 @@ void SOLARCHVISION_delete_Selection () {
           Solids_updated = 1;
           
         }
+
+
+        {
+          float[][] startList = (float[][]) subset(allGroup3Ds_SolarPivotXYZ, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allGroup3Ds_SolarPivotXYZ, OBJ_NUM + 1);
+          
+          allGroup3Ds_SolarPivotXYZ = (float[][]) concat(startList, endList);
+        } 
+
+        {
+          int[][] startList = (int[][]) subset(allGroup3Ds_SolarPivotType, 0, OBJ_NUM);
+          int[][] endList = (int[][]) subset(allGroup3Ds_SolarPivotType, OBJ_NUM + 1);
+          
+          allGroup3Ds_SolarPivotType = (int[][]) concat(startList, endList);
+        } 
 
         allGroup3Ds_num -= 1; 
 
@@ -34932,10 +34953,14 @@ void SOLARCHVISION_draw_ROLLOUT () {
       ERASE_Group3Ds = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ERASE_Group3Ds" , ERASE_Group3Ds, 0, 1, 1), 1));
       
       ERASE_Solids = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ERASE_Solids" , ERASE_Solids, 0, 1, 1), 1));
+
+      ERASE_Faces = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ERASE_Faces" , ERASE_Faces, 0, 1, 1), 1));
       
       ERASE_Sections = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ERASE_Sections" , ERASE_Sections, 0, 1, 1), 1));
       
       ERASE_Cameras = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ERASE_Cameras" , ERASE_Cameras, 0, 1, 1), 1));
+      
+      ERASE_All = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "ERASE_All" , ERASE_All, 0, 1, 1), 1));      
    
       Load_Default_Models = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Load_Default_Models" , Load_Default_Models, 0, MAX_Default_Models_Number, 1), 1));
       
