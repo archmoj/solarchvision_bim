@@ -1,6 +1,3 @@
-// display edges of selected object2Ds and Solids on Polygroups 
-// SOLARCHVISION_delete_Objects2Ds (and maybe delete_Solids) could produce problems nowthat we have Object2Ds in Polygroups... should modify that.
-
 // could add solid option to trees?
 // could add create polygroup --> startPolyGroup ...
 // drop functions only works for living objects
@@ -1912,9 +1909,9 @@ void SOLARCHVISION_update_station (int Step) {
   
   //if ((Step == 0) || (Step == 7)) SOLARCHVISION_delete_Fractals();
   
-  if ((Step == 0) || (Step == 8)) SOLARCHVISION_delete_Objects2Ds();
+  if ((Step == 0) || (Step == 8)) SOLARCHVISION_delete_Object2Ds();
   
-  //if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_Objects2Ds_onLand();
+  //if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_Object2Ds_onLand();
 
 }
 
@@ -2182,7 +2179,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_delete_Objects2Ds", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_delete_Object2Ds", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 18) {
     SOLARCHVISION_update_station(8);
@@ -2193,7 +2190,7 @@ void draw () {
 
     stroke(255);
     fill(255);
-    text("SOLARCHVISION_add_Objects2Ds_onLand", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
+    text("SOLARCHVISION_add_Object2Ds_onLand", MESSAGE_CX_View + 0.5 * MESSAGE_X_View, MESSAGE_CY_View + 0.5 * MESSAGE_Y_View);
   }
   else if (frameCount == 19) {
     SOLARCHVISION_update_station(9);
@@ -2699,7 +2696,7 @@ void draw () {
         }      
 
         if (ERASE_Object2Ds == 1) {
-          SOLARCHVISION_delete_Objects2Ds();
+          SOLARCHVISION_delete_Object2Ds();
           
           WIN3D_Update = 1;
       
@@ -3014,7 +3011,7 @@ void SOLARCHVISION_draw_WIN3D () {
     
     SOLARCHVISION_draw_SolidImpact_points();
     
-    SOLARCHVISION_draw_Objects2Ds();  
+    SOLARCHVISION_draw_Object2Ds();  
     
     SOLARCHVISION_draw_windFlow();
   
@@ -14610,8 +14607,6 @@ void SOLARCHVISION_delete_Selection () {
             }  
             allPolygroups_Object2Ds[q][1] -= 1; // because deleting a object2D also changes the end pointer of the same object 
             
- 
-
             break;
           }
         }
@@ -20923,7 +20918,7 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
 
 
 
-void SOLARCHVISION_add_Objects2Ds_onLand () {
+void SOLARCHVISION_add_Object2Ds_onLand () {
   
   randomSeed(0);
   
@@ -21056,7 +21051,7 @@ void SOLARCHVISION_add_Objects2Ds_onLand () {
 
 }
 
-void SOLARCHVISION_add_Objects2Ds_polar (int people_or_trees, int n, float x0, float y0, float z0, float r1, float r2) {
+void SOLARCHVISION_add_Object2Ds_polar (int people_or_trees, int n, float x0, float y0, float z0, float r1, float r2) {
   
   for (int i = 0; i < n; i += 1) {
     
@@ -21076,7 +21071,7 @@ void SOLARCHVISION_add_Objects2Ds_polar (int people_or_trees, int n, float x0, f
   }  
 }
 
-void SOLARCHVISION_add_Objects2Ds_plane (int people_or_trees, int n, float x0, float y0, float z0, float rx, float ry) {
+void SOLARCHVISION_add_Object2Ds_plane (int people_or_trees, int n, float x0, float y0, float z0, float rx, float ry) {
   
   for (int i = 0; i < n; i += 1) {
     
@@ -21100,7 +21095,7 @@ void SOLARCHVISION_add_Objects2Ds_plane (int people_or_trees, int n, float x0, f
   }  
 }
 
-void SOLARCHVISION_add_Objects2Ds_Mesh2 (int people_or_trees, int n, float x1, float y1, float z1, float x2, float y2, float z2) {
+void SOLARCHVISION_add_Object2Ds_Mesh2 (int people_or_trees, int n, float x1, float y1, float z1, float x2, float y2, float z2) {
   
   float x0 = 0.5 * (x1 + x2);
   float y0 = 0.5 * (y1 + y2);
@@ -21218,6 +21213,11 @@ void SOLARCHVISION_delete_Solids () {
   allSolids[0][11] = 0;
   allSolids[0][12] = 1;
   
+  for (int q = 0; q < allPolygroups_num + 1; q++) {
+    allPolygroups_Solids[q][0] = 0;
+    allPolygroups_Solids[q][1] = -1;
+  }
+
   SOLARCHVISION_deselect_All();  
 }
 
@@ -21268,7 +21268,7 @@ void SOLARCHVISION_delete_Fractals () {
   SOLARCHVISION_deselect_All();  
 }
 
-void SOLARCHVISION_delete_Objects2Ds () {
+void SOLARCHVISION_delete_Object2Ds () {
   allObject2Ds_XYZS = new float [1][4]; 
   allObject2Ds_XYZS[0][0] = 0;
   allObject2Ds_XYZS[0][1] = 0;
@@ -21280,14 +21280,19 @@ void SOLARCHVISION_delete_Objects2Ds () {
   
   allObject2Ds_num = 0;
   
+  for (int q = 0; q < allPolygroups_num + 1; q++) {
+    allPolygroups_Object2Ds[q][0] = 0;
+    allPolygroups_Object2Ds[q][1] = -1;
+  }  
+  
   SOLARCHVISION_deselect_All();
 }
 
 void SOLARCHVISION_delete_Polygroups () {
   
-  defaultMaterial = 7;
-  defaultTessellation = 0;
-  defaultSolarPivotType = 0;
+  SOLARCHVISION_delete_Solids();
+  
+  SOLARCHVISION_delete_Object2Ds();
 
   allVertices = new float [1][3];
   allVertices[0][0] = 0;
@@ -21325,9 +21330,11 @@ void SOLARCHVISION_delete_Polygroups () {
   allPolygroups_Object2Ds[0][0] = 0;
   allPolygroups_Object2Ds[0][1] = -1;  
   
-  SOLARCHVISION_delete_Solids();
-  
-  SOLARCHVISION_delete_Objects2Ds();
+
+
+  defaultMaterial = 7;
+  defaultTessellation = 0;
+  defaultSolarPivotType = 0;
 
   SOLARCHVISION_beginNewPolygroup();
  
@@ -21383,11 +21390,11 @@ int MAX_Default_Models_Number = 7;
 void SOLARCHVISION_add_DefaultModel (int n) {
 
   if (Load_LAND_MESH == 1) {
-    SOLARCHVISION_add_Objects2Ds_onLand(); 
+    SOLARCHVISION_add_Object2Ds_onLand(); 
   }    
   else {
-    //SOLARCHVISION_add_Objects2Ds_polar(0, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // people
-    //SOLARCHVISION_add_Objects2Ds_polar(1, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // trees
+    //SOLARCHVISION_add_Object2Ds_polar(0, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // people
+    //SOLARCHVISION_add_Object2Ds_polar(1, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // trees
   }  
 
 
@@ -23745,7 +23752,7 @@ void SOLARCHVISION_put_3DViewport () {
 float[][] allObject2Ds_Vertices;
 int[][] allObject2Ds_Faces;
 
-void SOLARCHVISION_draw_Objects2Ds () {
+void SOLARCHVISION_draw_Object2Ds () {
 
   allObject2Ds_Faces = new int [1 + allObject2Ds_num][4];
     
@@ -25599,7 +25606,7 @@ void SOLARCHVISION_add_ProjectModel () {
     for (float i = 0; i < 45; i += 3) {
       SOLARCHVISION_add_Mesh2(2,0,0,1,1, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
-      SOLARCHVISION_add_Objects2Ds_plane(0, 10, x,y,i, dx, dy); // people  
+      SOLARCHVISION_add_Object2Ds_plane(0, 10, x,y,i, dx, dy); // people  
     }   
   }  
 
@@ -25622,7 +25629,7 @@ void SOLARCHVISION_add_ProjectModel () {
     for (float i = 0; i < 45; i += 3) {
       SOLARCHVISION_add_Mesh2(2,0,0,1,1, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
-      SOLARCHVISION_add_Objects2Ds_plane(0, 10, x,y,i, dx, dy); // people  
+      SOLARCHVISION_add_Object2Ds_plane(0, 10, x,y,i, dx, dy); // people  
     }   
   }    
 
@@ -25645,7 +25652,7 @@ void SOLARCHVISION_add_ProjectModel () {
     for (float i = 0; i < 45; i += 3) {
       SOLARCHVISION_add_Mesh2(2,0,0,1,1, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
-      SOLARCHVISION_add_Objects2Ds_plane(0, 10, x,y,i, dx, dy); // people  
+      SOLARCHVISION_add_Object2Ds_plane(0, 10, x,y,i, dx, dy); // people  
     }    
   }    
 
@@ -25734,9 +25741,9 @@ void SOLARCHVISION_add_ProjectModel () {
 
 
   
-  //SOLARCHVISION_add_Objects2Ds_plane(0, 100, 0,0,0, 50,50); // people
-  //SOLARCHVISION_add_Objects2Ds_plane(1, 25, 0,40,0, 50,10); // trees back
-  //SOLARCHVISION_add_Objects2Ds_plane(1, 25, 0,-30,0, 50,20); // trees front
+  //SOLARCHVISION_add_Object2Ds_plane(0, 100, 0,0,0, 50,50); // people
+  //SOLARCHVISION_add_Object2Ds_plane(1, 25, 0,40,0, 50,10); // trees back
+  //SOLARCHVISION_add_Object2Ds_plane(1, 25, 0,-30,0, 50,20); // trees front
 /*
   SOLARCHVISION_beginNewPolygroup();
   SOLARCHVISION_add_PolygonHyper(0,0,0,1,1, 30,-30,4.5, 9, 9, 6, 0);  // hyper
@@ -25780,8 +25787,8 @@ void SOLARCHVISION_add_ProjectModel () {
     //SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
   }  
 
-  SOLARCHVISION_add_Objects2Ds_polar(1, 40, 0,0,0, 40,100); // trees
-  SOLARCHVISION_add_Objects2Ds_polar(0, 100, 0,0,0, 0,100); // people
+  SOLARCHVISION_add_Object2Ds_polar(1, 40, 0,0,0, 40,100); // trees
+  SOLARCHVISION_add_Object2Ds_polar(0, 100, 0,0,0, 0,100); // people
   
 
 
@@ -25808,10 +25815,10 @@ void SOLARCHVISION_add_ProjectModel () {
 
       }
       
-      SOLARCHVISION_add_Objects2Ds_Mesh2(0, 10, x-dx,y-dy,i, x-dx/3.0,y+dy/3.0,i); // people  
-      SOLARCHVISION_add_Objects2Ds_Mesh2(0, 10, x-dx,y+dy/3.0,i, x+dx/3.0,y+dy,i); // people
-      SOLARCHVISION_add_Objects2Ds_Mesh2(0, 10, x+dx/3.0,y-dy/3.0,i, x+dx,y+dy,i); // people
-      SOLARCHVISION_add_Objects2Ds_Mesh2(0, 10, x-dx/3.0,y-dy,i, x+dx,y-dy/3.0,i); // people
+      SOLARCHVISION_add_Object2Ds_Mesh2(0, 10, x-dx,y-dy,i, x-dx/3.0,y+dy/3.0,i); // people  
+      SOLARCHVISION_add_Object2Ds_Mesh2(0, 10, x-dx,y+dy/3.0,i, x+dx/3.0,y+dy,i); // people
+      SOLARCHVISION_add_Object2Ds_Mesh2(0, 10, x+dx/3.0,y-dy/3.0,i, x+dx,y+dy,i); // people
+      SOLARCHVISION_add_Object2Ds_Mesh2(0, 10, x-dx/3.0,y-dy,i, x+dx,y-dy/3.0,i); // people
     }   
     
     SOLARCHVISION_beginNewPolygroup();
