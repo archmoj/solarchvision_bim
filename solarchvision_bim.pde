@@ -1,8 +1,6 @@
 // should check if we load models correct?
 // should check ... sometimes we may write in Group3D[0]!
 
-// we need unGroup function!
-
 // could add solid option to trees?
 // could add create face
 // could add create vertex
