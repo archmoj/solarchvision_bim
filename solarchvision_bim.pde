@@ -14907,6 +14907,9 @@ void SOLARCHVISION_delete_Selection () {
 
   if ((Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices)) { // note that for deleting vertices we should first delete the faces that have those vertices...
     
+    println("selectedFace_numbers_before");
+    println(selectedFace_numbers);
+    
     if (Current_ObjectCategory == ObjectCategory_Vertices) { 
       
       selectedFace_numbers = sort(selectedFace_numbers);
@@ -14920,6 +14923,12 @@ void SOLARCHVISION_delete_Selection () {
     SOLARCHVISION_convert_Face_to_Group3D();    
 
     selectedGroup3D_numbers = sort(selectedGroup3D_numbers);
+
+    println("selectedFace_numbers_after");
+    println(selectedFace_numbers);
+
+    println("selectedGroup3D_numbers_after");
+    println(selectedGroup3D_numbers);
 
     for (int o = selectedGroup3D_numbers.length - 1; o >= 0; o--) {
       
