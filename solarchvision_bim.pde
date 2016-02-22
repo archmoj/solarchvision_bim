@@ -14866,7 +14866,7 @@ void SOLARCHVISION_delete_Selection () {
     for (int o = selectedGroup3D_numbers.length - 1; o >= 0; o--) {
       
       int OBJ_NUM = selectedGroup3D_numbers[o];
-      
+
       if (OBJ_NUM != 0) {
 
         int startFace = allGroup3Ds_Faces[OBJ_NUM][0];
@@ -14912,7 +14912,7 @@ void SOLARCHVISION_delete_Selection () {
         
         {
           
-          if ((0 < startFace) && (startFace <= endFace)) {
+          if ((0 < startObject2D) && (startObject2D <= endObject2D)) {
           
             for (int i = OBJ_NUM + 1; i < allGroup3Ds_num + 1; i++) {
             
@@ -15019,6 +15019,8 @@ void SOLARCHVISION_delete_Selection () {
 
   
   if ((Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Group3Ds)) { 
+    
+    println("deleteIsolatedVerticesSelection");
     
     SOLARCHVISION_deleteIsolatedVerticesSelection(); 
   }  
