@@ -14759,23 +14759,25 @@ void SOLARCHVISION_delete_Selection () {
           
           allFaces_MTLV = (int[][]) concat(startList, endList);          
         }
-        
 
         int startObject2D = allPolygroups_Object2Ds[OBJ_NUM][0];
         int endObject2D = allPolygroups_Object2Ds[OBJ_NUM][1];
         
         {
           
-          for (int i = OBJ_NUM + 1; i < allPolygroups_num + 1; i++) {
+          if (startObject2D <= endObject2D) {
           
-            for (int j = 0; j < 2; j++) {
-              
-              allPolygroups_Object2Ds[i][j] -= 1 + endObject2D - startObject2D;
-              
-              if (allPolygroups_Object2Ds[i][j] < 0) allPolygroups_Object2Ds[i][j] = 0; 
-            }
+            for (int i = OBJ_NUM + 1; i < allPolygroups_num + 1; i++) {
             
-          }    
+              for (int j = 0; j < 2; j++) {
+  
+                allPolygroups_Object2Ds[i][j] -= 1 + endObject2D - startObject2D;
+                
+                if (allPolygroups_Object2Ds[i][j] < 0) allPolygroups_Object2Ds[i][j] = 0; 
+              }
+              
+            } 
+          }   
           
           int[][] startList = (int[][]) subset(allPolygroups_Object2Ds, 0, OBJ_NUM);
           int[][] endList = (int[][]) subset(allPolygroups_Object2Ds, OBJ_NUM + 1);
@@ -14800,25 +14802,26 @@ void SOLARCHVISION_delete_Selection () {
             allObject2Ds_MAP = (int[]) concat(startList, endList);
           }
           
-          allObject2Ds_num -= 1 + endObject2D - startObject2D;
+          //allObject2Ds_num -= 1 + endObject2D - startObject2D;
+          allObject2Ds_num = allObject2Ds_XYZS.length - 1;
 
         }
-        
 
         
         int startSolid = allPolygroups_Solids[OBJ_NUM][0];
         int endSolid = allPolygroups_Solids[OBJ_NUM][1];
         
         {
-          
-          for (int i = OBJ_NUM + 1; i < allPolygroups_num + 1; i++) {
-          
-            for (int j = 0; j < 2; j++) {
-              allPolygroups_Solids[i][j] -= 1 + endSolid - startSolid;
-              
-              if (allPolygroups_Solids[i][j] < 0) allPolygroups_Solids[i][j] = 0; 
-            }
-          }    
+          if (startSolid <= endSolid) {
+            for (int i = OBJ_NUM + 1; i < allPolygroups_num + 1; i++) {
+            
+              for (int j = 0; j < 2; j++) {
+                allPolygroups_Solids[i][j] -= 1 + endSolid - startSolid;
+                
+                if (allPolygroups_Solids[i][j] < 0) allPolygroups_Solids[i][j] = 0; 
+              }
+            }  
+          }  
           
           int[][] startList = (int[][]) subset(allPolygroups_Solids, 0, OBJ_NUM);
           int[][] endList = (int[][]) subset(allPolygroups_Solids, OBJ_NUM + 1);
@@ -14837,7 +14840,6 @@ void SOLARCHVISION_delete_Selection () {
           Solids_updated = 1;
           
         }
-
 
         allPolygroups_num -= 1; 
 
