@@ -29884,10 +29884,10 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
   }             
 
 
-//zzzzzzzzz  
+
   if (Current_ObjectCategory == ObjectCategory_Solids) {
     
-    for (int OBJ_NUM = 1; OBJ_NUM < allSolids_Faces.length; OBJ_NUM++) {
+    for (int f = 1; f < allSolids_Faces.length; f++) {
 
       int break_loops = 0;
       
@@ -29895,8 +29895,10 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
 
       if (mouseButton == RIGHT) include_OBJ_in_newSelection = 0;
       if (mouseButton == LEFT) include_OBJ_in_newSelection = 1;
+
+      int OBJ_NUM = 1 + ((f - 1) / Solids_DisplayFaces);
       
-      int f = OBJ_NUM;
+      println(f, OBJ_NUM);
 
       for (int j = 0; j < allSolids_Faces[f].length; j++) {
         
@@ -29961,6 +29963,7 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
           }
         }
         
+
         if (use_it == -1) {
           int[] startList = (int[]) subset(selectedSolid_numbers, 0, found_at);
           int[] endList = (int[]) subset(selectedSolid_numbers, found_at + 1);
@@ -29968,14 +29971,24 @@ void SOLARCHVISION_RectSelect (float corner1x, float corner1y, float corner2x, f
           selectedSolid_numbers = (int[]) concat(startList, endList);
         }
         
+        
+        
         if (use_it == 1) {
-          int[] new_OBJ_number = {OBJ_NUM};
-          
-          selectedSolid_numbers = (int[]) concat(selectedSolid_numbers, new_OBJ_number);
+          if (selectedSolid_numbers[selectedSolid_numbers.length - 1] != OBJ_NUM) { // check if added during the previous loop
+              
+              int[] new_OBJ_number = {OBJ_NUM};
+              
+              selectedSolid_numbers = (int[]) concat(selectedSolid_numbers, new_OBJ_number);
+          }
         }
+        
+
         
       }
     }
+    
+    println("selectedSolid_numbers");
+    println(selectedSolid_numbers);
   }
 
   if (Current_ObjectCategory == ObjectCategory_Sections) {
@@ -38447,7 +38460,7 @@ float[][] SOLARCHVISION_getCorners_Section (int Section_Type, float Section_offs
 float[][] allSolids_Vertices;
 int[][] allSolids_Faces;
 
-int Solids_DisplayFaces = 1; //3; // internal - number of faces: XY, YZ, ZX
+int Solids_DisplayFaces = 3; // internal - number of faces: XY, YZ, ZX
 int Solids_DisplayDegree = 16; //8; // internal - number of each face corners 
 
 
