@@ -1,3 +1,5 @@
+// search for //zzzzzzzzzzzzzzzzz might not correct!
+
 // should check if we load models correct?
 // should check ... sometimes we may write in Group3D[0]!
 
@@ -13441,28 +13443,33 @@ void ResetFontStyle () {
 
 void SOLARCHVISION_add_Object2D (String t, int m, float x, float y, float z, float s) {
 
-  int n = m;
+  if (allGroup3Ds_num == 0) SOLARCHVISION_beginNewGroup3D();
   
-  if (n == 0) {
-    if (t.equals("PEOPLE")) n = int(random(1, 1 + Object2D_PEOPLE_Files_Num));
-    else if (t.equals("TREES")) n = int(random(1 + Object2D_PEOPLE_Files_Num, 1 + Object2D_PEOPLE_Files_Num + Object2D_TREES_Files_Num));
+  {
+  
+    int n = m;
+    
+    if (n == 0) {
+      if (t.equals("PEOPLE")) n = int(random(1, 1 + Object2D_PEOPLE_Files_Num));
+      else if (t.equals("TREES")) n = int(random(1 + Object2D_PEOPLE_Files_Num, 1 + Object2D_PEOPLE_Files_Num + Object2D_TREES_Files_Num));
+    }
+  
+    //println(t, n);
+    
+    int d = 1; 
+    int r = int(random(2));
+    if (r == 0) d = -1; 
+  
+    int[] TempObject2D_MAP = {d * n}; 
+    allObject2Ds_MAP = concat(allObject2Ds_MAP, TempObject2D_MAP);
+    
+    float[][] TempObject2D_XYZS = {{x, y, z, s}};
+    allObject2Ds_XYZS = (float[][]) concat(allObject2Ds_XYZS, TempObject2D_XYZS);
+    
+    allObject2Ds_num += 1;
+  
   }
 
-  //println(t, n);
-  
-  int d = 1; 
-  int r = int(random(2));
-  if (r == 0) d = -1; 
-
-  int[] TempObject2D_MAP = {d * n}; 
-  allObject2Ds_MAP = concat(allObject2Ds_MAP, TempObject2D_MAP);
-  
-  float[][] TempObject2D_XYZS = {{x, y, z, s}};
-  allObject2Ds_XYZS = (float[][]) concat(allObject2Ds_XYZS, TempObject2D_XYZS);
-  
-  allObject2Ds_num += 1;
-  
-    
   allGroup3Ds_Object2Ds[allGroup3Ds_num][1] = allObject2Ds_num;
 }
 
@@ -13934,15 +13941,23 @@ int SOLARCHVISION_add_Vertex (float x, float y, float z) {
 
 int SOLARCHVISION_add_Face (int[] f) {
 
-  int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
+  if (allGroup3Ds_num == 0) SOLARCHVISION_beginNewGroup3D();
   
-  allFaces_MTLV =  (int[][]) concat(allFaces_MTLV, newFace_MTLV);
+  {
   
-  int[][] newFace = {f}; 
-  
-  allFaces = (int[][]) concat(allFaces, newFace);
+    int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
+    
+    allFaces_MTLV =  (int[][]) concat(allFaces_MTLV, newFace_MTLV);
+    
+    int[][] newFace = {f}; 
+    
+    allFaces = (int[][]) concat(allFaces, newFace);
 
+  }
+  
   allGroup3Ds_Faces[allGroup3Ds_num][1] = allFaces.length - 1;
+  
+  
   
   return(allFaces.length - 1);
 }
@@ -13950,10 +13965,17 @@ int SOLARCHVISION_add_Face (int[] f) {
 
 int SOLARCHVISION_add_Solid (float x, float y, float z, float px, float py, float pz, float sx, float sy, float sz, float tx, float ty, float tz, float v) {
 
-  float[][] newSolid = {{x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz, v}};
-  allSolids = (float[][]) concat(allSolids, newSolid);
+  if (allGroup3Ds_num == 0) SOLARCHVISION_beginNewGroup3D();
+  
+  {
+    
+    float[][] newSolid = {{x, y, z, px, py, pz, sx, sy, sz, tx, ty, tz, v}};
+    allSolids = (float[][]) concat(allSolids, newSolid);
 
+  }
+  
   allGroup3Ds_Solids[allGroup3Ds_num][1] = allSolids.length - 1;
+
 
   return(allSolids.length - 1);
 }
@@ -16786,10 +16808,10 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
     
                 new_selectedFace_numbers = (int[]) concat(new_selectedFace_numbers, lastFace);       
               }
-              
-              
+//zzzzzzzzzzzzzzzzz might not correct!              
+              //if (allGroup3Ds_num == 0) SOLARCHVISION_beginNewGroup3D();
               allGroup3Ds_Faces[allGroup3Ds_num][1] = allFaces.length - 1;
-  
+//zzzzzzzzzzzzzzzzz might not correct!  
             }
           }
         }
