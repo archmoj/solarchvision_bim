@@ -17428,13 +17428,15 @@ void SOLARCHVISION_convert_Solid_to_Group3D () {
   for (int i = 1; i < selectedSolid_numbers.length; i++) {
     
     int f = selectedSolid_numbers[i];
-          
+    
     for (int OBJ_NUM = 1; OBJ_NUM < allGroup3Ds_num + 1; OBJ_NUM++) {
     
       if ((allGroup3Ds_Solids[OBJ_NUM][0] <= f) && (f <= allGroup3Ds_Solids[OBJ_NUM][1])) { 
       
         int previously_added = 0;
         for (int q = 0; q < selectedGroup3D_numbers.length; q++) {
+
+          
           if (selectedGroup3D_numbers[q] == OBJ_NUM) {
             previously_added = 1;
             break;
