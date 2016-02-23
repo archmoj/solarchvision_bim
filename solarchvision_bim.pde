@@ -21204,9 +21204,11 @@ void SOLARCHVISION_add_Object2Ds_onLand () {
             if (g < 85) { // not on grass (light green)
               //if (z + LocationElevation > 5) { // not in water (below see level)
               
+                int people_or_trees = 1; // <<< for fractal trees change it to 2!
+              
                 //float s = 5 + random(10); 
                 float s = 5 + random(12.5);
-                //float s = 10 + random(20); // bigger trees              
+                //float s = 10 + random(20); // bigger trees        
               
                 int foundNearTree = 0;
                 
@@ -21225,8 +21227,14 @@ void SOLARCHVISION_add_Object2Ds_onLand () {
                 }
                 
                 if (foundNearTree == 0) {
-
-                  SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, s);
+                  
+                  if (people_or_trees == 1) {
+                    SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, s);
+                  }
+                  else {
+                    SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, s, random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize, Create_Mesh_as_Solid);
+                  }                  
+                  
                   
                   float[][] newTree = {{x, y, z, s}};
                   treesXYZS = (float [][]) concat(treesXYZS, newTree);
@@ -21268,20 +21276,23 @@ void SOLARCHVISION_add_Object2Ds_onLand () {
           
             if (dist(x,y,0,0) > 2.5) { // i.e. No 2D at the center!
             
-              int t = 1;
+              int people_or_trees = 1;
   
               float r = random(i + 1); //  to illustrate more people at the center
               
-              if (r < 1) t = 0; 
+              if (r < 1) people_or_trees = 0; 
   
               
-              if (dist(x,y,0,0) < 25) t = 0; // i.e. No tree around the center!
+              if (dist(x,y,0,0) < 25) people_or_trees = 0; // i.e. No tree around the center!
               
-              if (t == 0) {
+              if (people_or_trees == 0) {
                 SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
               }
-              else {
+              else if (people_or_trees == 1) {
                 SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
+              }
+              else {
+                SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 5 + random(10), random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize, Create_Mesh_as_Solid);
               }
     
             }
@@ -21308,8 +21319,11 @@ void SOLARCHVISION_add_Object2Ds_polar (int people_or_trees, int n, float x0, fl
     if (people_or_trees == 0) {
       SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
     }
-    else {
+    else if (people_or_trees == 1) {
       SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
+    }
+    else {
+      SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 5 + random(10), random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize, Create_Mesh_as_Solid);
     }
   }  
 }
@@ -21332,8 +21346,11 @@ void SOLARCHVISION_add_Object2Ds_plane (int people_or_trees, int n, float x0, fl
     if (people_or_trees == 0) {
       SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
     }
-    else {
+    else if (people_or_trees == 1) {
       SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
+    }
+    else {
+      SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 5 + random(10), random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize, Create_Mesh_as_Solid);
     }
   }  
 }
@@ -21363,8 +21380,11 @@ void SOLARCHVISION_add_Object2Ds_Mesh2 (int people_or_trees, int n, float x1, fl
     if (people_or_trees == 0) {
       SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
     }
-    else {
+    else if (people_or_trees == 1) {
       SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
+    }
+    else {
+      SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 5 + random(10), random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize, Create_Mesh_as_Solid);
     }
   }  
 }
