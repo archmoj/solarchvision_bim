@@ -26081,7 +26081,8 @@ void SOLARCHVISION_add_ProjectModel () {
     //SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
   }  
 
-  SOLARCHVISION_add_Object2Ds_polar(1, 40, 0,0,0, 40,100); // trees
+  SOLARCHVISION_add_Object2Ds_polar(2, 40, 0,0,0, 40,100); // fractal trees
+  //SOLARCHVISION_add_Object2Ds_polar(1, 40, 0,0,0, 40,100); // 2D trees
   SOLARCHVISION_add_Object2Ds_polar(0, 100, 0,0,0, 0,100); // people
   
 
