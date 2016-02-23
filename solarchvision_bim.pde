@@ -14926,7 +14926,7 @@ void SOLARCHVISION_delete_Selection () {
           allObject2Ds_num = allObject2Ds_XYZS.length - 1;
 
         }
-
+        
         
         int startSolid = allGroup3Ds_Solids[OBJ_NUM][0];
         int endSolid = allGroup3Ds_Solids[OBJ_NUM][1];
@@ -14987,9 +14987,7 @@ void SOLARCHVISION_delete_Selection () {
   }
 
 
-  
 
-  
   
   
   if ((Current_ObjectCategory == ObjectCategory_Vertices) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Group3Ds)) { 
@@ -17019,16 +17017,14 @@ void SOLARCHVISION_deselect_All () {
     selectedFractal_numbers = new int [1];
     selectedFractal_numbers[0] = 0;
   }  
-  
-  if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
-    selectedObject2D_numbers = new int [1];
-    selectedObject2D_numbers[0] = 0;
-  }  
-  
-  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices) || (Current_ObjectCategory == ObjectCategory_SoftVerts) || (Current_ObjectCategory == ObjectCategory_Solids)) {  
+
+  if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Object2Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices) || (Current_ObjectCategory == ObjectCategory_SoftVerts) || (Current_ObjectCategory == ObjectCategory_Solids)) {  
 
     selectedGroup3D_numbers = new int [1];
     selectedGroup3D_numbers[0] = 0;
+
+    selectedObject2D_numbers = new int [1];
+    selectedObject2D_numbers[0] = 0;
 
     selectedFace_numbers = new int [1];
     selectedFace_numbers[0] = 0;
@@ -33736,8 +33732,9 @@ void mouseClicked () {
                     
                       if (Current_ObjectCategory == ObjectCategory_Faces) {
                         
-                        selectedFace_numbers = new int [1];
-                        selectedFace_numbers[0] = f;       
+                        selectedFace_numbers = new int [2];
+                        selectedFace_numbers[0] = 0;
+                        selectedFace_numbers[1] = f;       
                         
                         selectedFace_displayVertexCount = 1;                 
                         
@@ -33839,8 +33836,9 @@ void mouseClicked () {
                     
                       if (Current_ObjectCategory == ObjectCategory_Faces) {
                         
-                        selectedFace_numbers = new int [1];
-                        selectedFace_numbers[0] = f;
+                        selectedFace_numbers = new int [2];
+                        selectedFace_numbers[0] = 0;
+                        selectedFace_numbers[1] = f;
                         
                         selectedFace_displayVertexCount = 1;
 
@@ -34460,15 +34458,6 @@ void mouseClicked () {
                 }                   
 
   
-                if (keep_number_of_Group3Ds != allGroup3Ds_num + 1) { // if any Group3D created during the process
-                  
-                  selectedGroup3D_numbers = new int [1];
-                  selectedGroup3D_numbers[0] = allGroup3Ds_num;
-                  
-                  println("SOLARCHVISION_calculate_selection_Pivot 7");
-                  SOLARCHVISION_calculate_selection_Pivot();
-                }
-
                 if (keep_number_of_Group3Ds != allGroup3Ds_num + 1) { // if any Group3D created during the process
   
                   selectedGroup3D_numbers = new int [1];
