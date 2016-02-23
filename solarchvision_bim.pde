@@ -1,9 +1,10 @@
+// could add solid option to trees?
+
 // search for //zzzzzzzzzzzzzzzzz might not correct!
 
 // should check if we load models correct?
-// should check ... sometimes we may write in Group3D[0]!
 
-// could add solid option to trees?
+
 // could add create face
 // could add create vertex
 // drop functions only works for living objects and not at Group3D level
@@ -21570,7 +21571,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float y = 0;
       float z = 0;
       float r = 10;
-      SOLARCHVISION_add_FractalSphere(1,0,0,1,1, x,y,z, r, 5, 0, 90);
+      SOLARCHVISION_add_CrystalSphere(1,0,0,1,1, x,y,z, r, 5, 0, 90);
       SOLARCHVISION_add_Solid(x,y,z, 2,2,2, r,r,r, 0,0,0, 1);
     }
   
@@ -21580,7 +21581,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float y = 0;
       float z = 0;
       float r = 8;
-      SOLARCHVISION_add_FractalSphere(2,0,0,1,1, x,y,z, r, 4, 0, 90);
+      SOLARCHVISION_add_CrystalSphere(2,0,0,1,1, x,y,z, r, 4, 0, 90);
       SOLARCHVISION_add_Solid(x,y,z, 2,2,2, r,r,r, 0,0,0, 1);
     }
   
@@ -21590,7 +21591,7 @@ void SOLARCHVISION_add_DefaultModel (int n) {
       float y = 20;
       float z = 0;
       float r = 8;
-      SOLARCHVISION_add_FractalSphere(3,0,0,1,1, x,y,z, r, 3, 0, 90);
+      SOLARCHVISION_add_CrystalSphere(3,0,0,1,1, x,y,z, r, 3, 0, 90);
       SOLARCHVISION_add_Solid(x,y,z, 2,2,2, r,r,r, 0,0,0, 1);
     }
   }
@@ -21732,7 +21733,7 @@ void SOLARCHVISION_add_ParametricSurface (int m, int tes, int lyr, int vsb, int 
 
 void SOLARCHVISION_build_SkySphere (int Tessellation) {
   
-  SOLARCHVISION_add_FractalSphere(0,0,0,1,1, 0,0,0, 1, Tessellation, 1, 90); // SKY
+  SOLARCHVISION_add_CrystalSphere(0,0,0,1,1, 0,0,0, 1, Tessellation, 1, 90); // SKY
   
 }
 
@@ -25828,8 +25829,8 @@ void SOLARCHVISION_add_ProjectModel () {
     float x = 0;
     float y = -30;
     float z = r;
-    //SOLARCHVISION_add_FractalSphere(1,0,0,1,1, x,y,z, r, 2, 0, 0);
-    SOLARCHVISION_add_FractalSphere(1,0,0,1,1, x,y,z, r, 4, 0, 0);
+    //SOLARCHVISION_add_CrystalSphere(1,0,0,1,1, x,y,z, r, 2, 0, 0);
+    SOLARCHVISION_add_CrystalSphere(1,0,0,1,1, x,y,z, r, 4, 0, 0);
     SOLARCHVISION_add_Solid(x,y,z, 2,2,2, r,r,r, 0,0,0, 1);
   }    
 */
@@ -25955,7 +25956,7 @@ void SOLARCHVISION_add_ProjectModel () {
     float x = 0;
     float y = -50;
     float z = r;
-    SOLARCHVISION_add_FractalSphere(2,0,0,1,1, x,y,z, r, 3, 0, 0);
+    SOLARCHVISION_add_CrystalSphere(2,0,0,1,1, x,y,z, r, 3, 0, 0);
     SOLARCHVISION_add_Solid(x,y,z, 2,2,2, r,r,r, 0,0,0, 1);
   }      
 
@@ -27758,7 +27759,7 @@ int[][] TempObjectFaces = {{0}};
 int POINTER_TempObjectVertices = 1;
 int POINTER_TempObjectFaces = 1;
 
-void SOLARCHVISION_add_FractalSphere (int m, int tes, int lyr, int vsb, int spv, float cx, float cy, float cz, float r, int Tessellation, int isSky, float t) {
+void SOLARCHVISION_add_CrystalSphere (int m, int tes, int lyr, int vsb, int spv, float cx, float cy, float cz, float r, int Tessellation, int isSky, float t) {
 
   defaultMaterial = m;
   defaultTessellation = tes;
@@ -27907,7 +27908,7 @@ void SOLARCHVISION_add_SuperSphere (int m, int tes, int lyr, int vsb, int spv, f
   defaultVisibility = vsb;
   defaultSolarPivotType = spv; 
   
-  SOLARCHVISION_add_FractalSphere(m, tes, lyr, vsb, spv, cx, cy, cz, 1, Tessellation, -1, 90); // passing with isSky:-1
+  SOLARCHVISION_add_CrystalSphere(m, tes, lyr, vsb, spv, cx, cy, cz, 1, Tessellation, -1, 90); // passing with isSky:-1
 
   float value, posX, posY, posZ, powX, powY, powZ, scaleX, scaleY, scaleZ, rotZ; 
   value = 1;
@@ -34124,16 +34125,13 @@ void mouseClicked () {
                   SOLARCHVISION_add_ParametricSurface(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_SolarPivotType, x, y, z, rx, ry, rz, Create_Mesh_Parametric_Type, rot);
                 }
     
-                if (Create_Fractal != 0) {
-                  
-                  if (addToLastGroup3D == 0) SOLARCHVISION_beginNewGroup3D(); // maybe requiered if passing as solid! 
-                  
-                  float as_Solid = 1;
+  
+                if (Create_Mesh_Person != 0) {
                   
                   randomSeed(millis());
-                  SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 2 * rz, rot, Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize, as_Solid);
-                }      
-  
+                  SOLARCHVISION_add_Object2D("PEOPLE", Create_Mesh_Person_Type, x, y, z, 2.5);
+                }
+                
                 if (Create_Mesh_Plant != 0) {
                   int n = 0;
                   if (Create_Mesh_Plant_Type > 0) n = Create_Mesh_Plant_Type + Object2D_PEOPLE_Files_Num;
@@ -34141,12 +34139,15 @@ void mouseClicked () {
                   randomSeed(millis());
                   SOLARCHVISION_add_Object2D("TREES", n, x, y, z, 2 * rz);
                 }    
-    
-                if (Create_Mesh_Person != 0) {
+
+                if (Create_Fractal != 0) {
+                  
+                  if (addToLastGroup3D == 0) SOLARCHVISION_beginNewGroup3D(); 
                   
                   randomSeed(millis());
-                  SOLARCHVISION_add_Object2D("PEOPLE", Create_Mesh_Person_Type, x, y, z, 2.5);
-                }
+                  SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 2 * rz, rot, Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize, Create_Mesh_as_Solid);
+                }        
+
 
                 if (Current_ObjectCategory == ObjectCategory_Solids) { // working with solids
                   
