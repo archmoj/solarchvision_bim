@@ -26112,11 +26112,11 @@ void SOLARCHVISION_add_ProjectModel () {
 
   
   int keep_Create_Mesh_as_Solid = Create_Mesh_as_Solid;
-  Create_Mesh_as_Solid = 1;
+  Create_Mesh_as_Solid = 0; // 1;
   
-  //SOLARCHVISION_add_Object2Ds_polar(1, 100, 0,0,0, 0,100); // people
-  //SOLARCHVISION_add_Object2Ds_polar(2, 30, 0,0,0, 40,100); // 2D trees
-  SOLARCHVISION_add_Object2Ds_polar(3, 5, 0,0,0, 40,100); // fractal trees
+  SOLARCHVISION_add_Object2Ds_polar(1, 100, 0,0,0, 0,100); // people
+  SOLARCHVISION_add_Object2Ds_polar(2, 30, 0,0,0, 40,100); // 2D trees
+  SOLARCHVISION_add_Object2Ds_polar(3, 15, 0,0,0, 40,100); // fractal trees
   
   Create_Mesh_as_Solid = keep_Create_Mesh_as_Solid;
 
