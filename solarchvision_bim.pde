@@ -1,7 +1,5 @@
 // could add solid option to trees?
 
-// search for //zzzzzzzzzzzzzzzzz might not correct!
-
 // should check if we load models correct?
 
 
@@ -14046,7 +14044,7 @@ void SOLARCHVISION_duplicate_Selection () {
         float TrunkSize = allFractals_TrunkSize[OBJ_NUM];
         float LeafSize = allFractals_LeafSize[OBJ_NUM];
         
-        randomSeed(millis());
+        //randomSeed(millis());
         SOLARCHVISION_add_Fractal(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize, as_Solid);        
       }
     }
@@ -14155,7 +14153,7 @@ void SOLARCHVISION_duplicate_Selection () {
                 
                 float LeafSize = allFractals_LeafSize[q];
                 
-                randomSeed(millis());
+                //randomSeed(millis());
                 SOLARCHVISION_add_Fractal(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize, as_Solid);    
               }
       
@@ -16952,13 +16950,15 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
     
                 new_selectedFace_numbers = (int[]) concat(new_selectedFace_numbers, lastFace);       
               }
-//zzzzzzzzzzzzzzzzz might not correct!              
-              //if (allGroup3Ds_num == 0) SOLARCHVISION_beginNewGroup3D();
+
               allGroup3Ds_Faces[allGroup3Ds_num][1] = allFaces.length - 1;
-//zzzzzzzzzzzzzzzzz might not correct!  
+
             }
           }
         }
+        
+        
+        
 
       }
     }
