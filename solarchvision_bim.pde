@@ -14014,7 +14014,7 @@ void SOLARCHVISION_beginNewGroup3D () {
 
 
        
-void SOLARCHVISION_duplicate_Selection () {
+void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
   
   if (Current_ObjectCategory == ObjectCategory_LandPoint) {
     
@@ -14044,7 +14044,7 @@ void SOLARCHVISION_duplicate_Selection () {
         float TrunkSize = allFractals_TrunkSize[OBJ_NUM];
         float LeafSize = allFractals_LeafSize[OBJ_NUM];
         
-        //randomSeed(millis());
+        if (produce_another_variation == 1) randomSeed(millis());
         SOLARCHVISION_add_Fractal(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize, as_Solid);        
       }
     }
@@ -14080,9 +14080,14 @@ void SOLARCHVISION_duplicate_Selection () {
         float s = allObject2Ds_XYZS[OBJ_NUM][3];
         
         int n = allObject2Ds_MAP[OBJ_NUM];
-        
-        if (abs(n) > n1) SOLARCHVISION_add_Object2D("TREES", n, x, y, z, s);
-        else SOLARCHVISION_add_Object2D("PEOPLE", n, x, y, z, s);
+        if (abs(n) > n1) {
+          if (produce_another_variation == 1) n = 0; // this makes it random
+          SOLARCHVISION_add_Object2D("TREES", n, x, y, z, s);
+        }
+        else {
+          if (produce_another_variation == 1) n = 0; // this makes it random
+          SOLARCHVISION_add_Object2D("PEOPLE", n, x, y, z, s);
+        }
       }
     }
     
@@ -14153,7 +14158,12 @@ void SOLARCHVISION_duplicate_Selection () {
                 
                 float LeafSize = allFractals_LeafSize[q];
                 
-                //randomSeed(millis());
+                if (produce_another_variation == 1) {
+                  randomSeed(millis());
+                  
+                  rot = random(360);
+                  s = int(random(32767));
+                }
                 SOLARCHVISION_add_Fractal(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize, as_Solid);    
               }
       
@@ -14172,8 +14182,15 @@ void SOLARCHVISION_duplicate_Selection () {
                 
                 int n = allObject2Ds_MAP[q];
                 
-                if (abs(n) > n1) SOLARCHVISION_add_Object2D("TREES", n, x, y, z, s);
-                else SOLARCHVISION_add_Object2D("PEOPLE", n, x, y, z, s);
+                if (abs(n) > n1) {
+                  if (produce_another_variation == 1) n = 0; // this makes it random
+                  SOLARCHVISION_add_Object2D("TREES", n, x, y, z, s);
+                }
+                else {
+                  if (produce_another_variation == 1) n = 0; // this makes it random
+                  SOLARCHVISION_add_Object2D("PEOPLE", n, x, y, z, s);
+                }
+
               }
       
             }
@@ -33200,10 +33217,14 @@ void mouseClicked () {
               SOLARCHVISION_ungroup_Selection();
               WIN3D_Update = 1;              
             }               
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Duplicate Selection")) {
-              SOLARCHVISION_duplicate_Selection();
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Duplicate Selection (Identical)")) {
+              SOLARCHVISION_duplicate_Selection(0);
               WIN3D_Update = 1;              
             }      
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Duplicate Selection (Variation)")) {
+              SOLARCHVISION_duplicate_Selection(1);
+              WIN3D_Update = 1;              
+            } 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Insert Corner Opennings")) {
               SOLARCHVISION_inserCornerOpenningsSelection();
               WIN3D_Update = 1;              
@@ -35271,7 +35292,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Create_Fractal_Type = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_Type" , Create_Fractal_Type, 0, 0, 1), 1));
       Create_Fractal_DegreeMin = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_DegreeMin" , Create_Fractal_DegreeMin, 1, 9, 1), 1));
       Create_Fractal_DegreeMax = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_DegreeMax" , Create_Fractal_DegreeMax, 1, 9, 1), 1));
-      Create_Fractal_Seed = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_Seed" , Create_Fractal_Seed, -1, 100, 1), 1));
+      Create_Fractal_Seed = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_Seed" , Create_Fractal_Seed, -1, 32767, 1), 1));
       Create_Fractal_TrunkSize = roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_TrunkSize" , Create_Fractal_TrunkSize, 0, 10, 0.1), 0.1);
       Create_Fractal_LeafSize = roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "Create_Fractal_LeafSize" , Create_Fractal_LeafSize, 0, 10, 0.1), 0.1);    
     }    
@@ -39065,7 +39086,7 @@ void SOLARCHVISION_add_Fractal (int PlantType, float x, float y, float z, float 
     allFractals_DegreeMax = concat(allFractals_DegreeMax, TempFractal_DegreeMax);
   
     int q = PlantSeed;
-    if (q == -1) q = int(random(0, 100));
+    if (q == -1) q = int(random(32767));
   
     int[] TempFractal_Seed = {q}; 
     allFractals_Seed = concat(allFractals_Seed, TempFractal_Seed);
@@ -43132,7 +43153,7 @@ String[][] BAR_a_Items = {
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Begin New Group3D", "Viewport >> Camera", "Camera", "Section", "Solid", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"},
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Solid", "Select Section",  "Select Camera", "Select LandPoint", "Select Fractal", "Select Object2D", "Select Group3D", "Select Face", "Select Vertex", "Soft Selection", "Group3D >> Vertex", "Group3D >> Face", "Group3D >> Solid", "Group3D >> Object2D", "Group3D >> Fractal", "Fractal >> Group3D", "Object2D >> Group3D", "Solid >> Group3D", "Face >> Group3D", "Vertex >> Group3D", "Vertex >> Face", "Face >> Vertex", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
-                        {"Edit", "Duplicate Selection", "Ungroup Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces"},
+                        {"Edit", "Duplicate Selection (Identical)", "Duplicate Selection (Variation)", "Ungroup Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Power", "PowerX", "PowerY", "PowerZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
                         {"Match", "Save Current Pivot", "Reset Saved Pivot", "Use Selection Pivot", "Use Origin Pivot", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunkSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunkSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot", "Drop on LandSurface", "Drop on ModelSurface (Up)", "Drop on ModelSurface (Down)"},
                         {"Action", "Undo", "Redo", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Solid Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Solid Graph", "REC. Screenshot", "Stop REC."}
