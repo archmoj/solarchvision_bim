@@ -1714,7 +1714,7 @@ int[][] allGroup3Ds_SolarPivotType = {{0}}; // 0: no solar rotation, 1: allow X-
 
 
 
-float[][] allFractals_XYZSRA = {{0,0,0,0,0,0}};
+float[][] allFractals_XYZSR = {{0,0,0,0,0}};
 int[] allFractals_Type = {0};
 int[] allFractals_DegreeMin = {0};
 int[] allFractals_DegreeMax = {0};
@@ -14030,12 +14030,11 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
 
       if (OBJ_NUM != 0) {    
         
-        float x = allFractals_XYZSRA[OBJ_NUM][0];
-        float y = allFractals_XYZSRA[OBJ_NUM][1];
-        float z = allFractals_XYZSRA[OBJ_NUM][2];
-        float d = allFractals_XYZSRA[OBJ_NUM][3];
-        float rot = allFractals_XYZSRA[OBJ_NUM][4];
-        float as_Solid = allFractals_XYZSRA[OBJ_NUM][5];
+        float x = allFractals_XYZSR[OBJ_NUM][0];
+        float y = allFractals_XYZSR[OBJ_NUM][1];
+        float z = allFractals_XYZSR[OBJ_NUM][2];
+        float d = allFractals_XYZSR[OBJ_NUM][3];
+        float rot = allFractals_XYZSR[OBJ_NUM][4];
         
         int n = allFractals_Type[OBJ_NUM];
         int dMin = allFractals_DegreeMin[OBJ_NUM];
@@ -14045,7 +14044,7 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
         float LeafSize = allFractals_LeafSize[OBJ_NUM];
         
         if (produce_another_variation == 1) randomSeed(millis());
-        SOLARCHVISION_add_Fractal(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize, as_Solid);        
+        SOLARCHVISION_add_Fractal(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);        
       }
     }
     
@@ -14138,13 +14137,12 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
 
               if (q != 0) {
               
-                float x = allFractals_XYZSRA[q][0];
-                float y = allFractals_XYZSRA[q][1];
-                float z = allFractals_XYZSRA[q][2];
+                float x = allFractals_XYZSR[q][0];
+                float y = allFractals_XYZSR[q][1];
+                float z = allFractals_XYZSR[q][2];
                 
-                float d = allFractals_XYZSRA[q][3];
-                float rot = allFractals_XYZSRA[q][4];
-                float as_Solid = allFractals_XYZSRA[q][5];
+                float d = allFractals_XYZSR[q][3];
+                float rot = allFractals_XYZSR[q][4];
           
                 int n = allFractals_Type[q];
           
@@ -14164,7 +14162,7 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
                   rot = random(360);
                   s = int(random(32767));
                 }
-                SOLARCHVISION_add_Fractal(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize, as_Solid);    
+                SOLARCHVISION_add_Fractal(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);    
               }
       
             }
@@ -14679,10 +14677,10 @@ void SOLARCHVISION_delete_Selection () {
         
         
         {
-          float[][] startList = (float[][]) subset(allFractals_XYZSRA, 0, OBJ_NUM);
-          float[][] endList = (float[][]) subset(allFractals_XYZSRA, OBJ_NUM + 1);
+          float[][] startList = (float[][]) subset(allFractals_XYZSR, 0, OBJ_NUM);
+          float[][] endList = (float[][]) subset(allFractals_XYZSR, OBJ_NUM + 1);
           
-          allFractals_XYZSRA = (float[][]) concat(startList, endList);
+          allFractals_XYZSR = (float[][]) concat(startList, endList);
         }
 
         {
@@ -14990,10 +14988,10 @@ void SOLARCHVISION_delete_Selection () {
         if ((0 < startFractal) && (startFractal <= endFractal)) {
 
           {
-            float[][] startList = (float[][]) subset(allFractals_XYZSRA, 0, startFractal);
-            float[][] endList = (float[][]) subset(allFractals_XYZSRA, endFractal + 1);
+            float[][] startList = (float[][]) subset(allFractals_XYZSR, 0, startFractal);
+            float[][] endList = (float[][]) subset(allFractals_XYZSR, endFractal + 1);
             
-            allFractals_XYZSRA = (float[][]) concat(startList, endList);
+            allFractals_XYZSR = (float[][]) concat(startList, endList);
           }
   
           {
@@ -15039,7 +15037,7 @@ void SOLARCHVISION_delete_Selection () {
           }
   
 
-          allFractals_num = allFractals_XYZSRA.length - 1;
+          allFractals_num = allFractals_XYZSR.length - 1;
 
         }
 
@@ -20498,13 +20496,12 @@ void SOLARCHVISION_export_objects () {
     
     for (int f = 1; f <= allFractals_num; f++) {
 
-      float x = allFractals_XYZSRA[f][0];
-      float y = allFractals_XYZSRA[f][1];
-      float z = allFractals_XYZSRA[f][2];
+      float x = allFractals_XYZSR[f][0];
+      float y = allFractals_XYZSR[f][1];
+      float z = allFractals_XYZSR[f][2];
       
-      float r = allFractals_XYZSRA[f][3] * 0.5;
-      float rot = allFractals_XYZSRA[f][4];
-      float as_Solid = allFractals_XYZSRA[f][5];
+      float r = allFractals_XYZSR[f][3] * 0.5;
+      float rot = allFractals_XYZSR[f][4];
 
       int n = allFractals_Type[f];
 
@@ -20534,7 +20531,7 @@ void SOLARCHVISION_export_objects () {
         float Beta = rot; 
         
         for (int _turn = 1; _turn < 4; _turn += 1) {
-          SOLARCHVISION_Plant_branch_objExport(_turn, x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize, as_Solid);
+          SOLARCHVISION_Plant_branch_objExport(_turn, x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
         }
 
         obj_lastVertexNumber += num_vertices_added;
@@ -21249,7 +21246,7 @@ void SOLARCHVISION_add_Object2Ds_onLand () {
                     SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, s);
                   }
                   else {
-                    SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, s, random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize, Create_Mesh_as_Solid);
+                    SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, s, random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize);
                   }                  
                   
                   
@@ -21309,7 +21306,7 @@ void SOLARCHVISION_add_Object2Ds_onLand () {
                 SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
               }
               else {
-                SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 5 + random(10), random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize, Create_Mesh_as_Solid);
+                SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 5 + random(10), random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize);
               }
     
             }
@@ -21340,7 +21337,7 @@ void SOLARCHVISION_add_Object2Ds_polar (int people_or_trees, int n, float x0, fl
       SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
     }
     else {
-      SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 5 + random(10), random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize, Create_Mesh_as_Solid);
+      SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 5 + random(10), random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize);
     }
   }  
 }
@@ -21367,7 +21364,7 @@ void SOLARCHVISION_add_Object2Ds_plane (int people_or_trees, int n, float x0, fl
       SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
     }
     else {
-      SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 5 + random(10), random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize, Create_Mesh_as_Solid);
+      SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 5 + random(10), random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize);
     }
   }  
 }
@@ -21401,7 +21398,7 @@ void SOLARCHVISION_add_Object2Ds_Mesh2 (int people_or_trees, int n, float x1, fl
       SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
     }
     else {
-      SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 5 + random(10), random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize, Create_Mesh_as_Solid);
+      SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 5 + random(10), random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize);
     }
   }  
 }
@@ -21524,13 +21521,12 @@ void SOLARCHVISION_resize_allSections_SolarImpact_array () { // called when STUD
 
 void SOLARCHVISION_delete_Fractals () {
   
-  allFractals_XYZSRA = new float [1][6]; 
-  allFractals_XYZSRA[0][0] = 0;
-  allFractals_XYZSRA[0][1] = 0;
-  allFractals_XYZSRA[0][2] = 0;
-  allFractals_XYZSRA[0][3] = 0;
-  allFractals_XYZSRA[0][4] = 0;
-  allFractals_XYZSRA[0][5] = 0;
+  allFractals_XYZSR = new float [1][5]; 
+  allFractals_XYZSR[0][0] = 0;
+  allFractals_XYZSR[0][1] = 0;
+  allFractals_XYZSR[0][2] = 0;
+  allFractals_XYZSR[0][3] = 0;
+  allFractals_XYZSR[0][4] = 0;
   
   allFractals_Type = new int [1];
   allFractals_Type[0] = 0;
@@ -33917,9 +33913,9 @@ void mouseClicked () {
     
                 if (Current_ObjectCategory == ObjectCategory_Fractals) {
     
-                  float dx = x0 - allFractals_XYZSRA[selectedFractal_numbers[selectedFractal_numbers.length - 1]][0]; 
-                  float dy = y0 - allFractals_XYZSRA[selectedFractal_numbers[selectedFractal_numbers.length - 1]][1]; 
-                  float dz = z0 - allFractals_XYZSRA[selectedFractal_numbers[selectedFractal_numbers.length - 1]][2];              
+                  float dx = x0 - allFractals_XYZSR[selectedFractal_numbers[selectedFractal_numbers.length - 1]][0]; 
+                  float dy = y0 - allFractals_XYZSR[selectedFractal_numbers[selectedFractal_numbers.length - 1]][1]; 
+                  float dz = z0 - allFractals_XYZSR[selectedFractal_numbers[selectedFractal_numbers.length - 1]][2];              
   
                   int the_Vector = selected_posVector;
                 
@@ -34410,7 +34406,7 @@ void mouseClicked () {
                   if (addToLastGroup3D == 0) SOLARCHVISION_beginNewGroup3D(); 
                   
                   randomSeed(millis());
-                  SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 2 * rz, rot, Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize, Create_Mesh_as_Solid);
+                  SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 2 * rz, rot, Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize);
                 }        
 
 
@@ -37858,12 +37854,12 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
               
               for (int f = 1; f <= allFractals_num; f++) {
 
-                float x = allFractals_XYZSRA[f][0];
-                float y = allFractals_XYZSRA[f][1];
-                float z = allFractals_XYZSRA[f][2];
+                float x = allFractals_XYZSR[f][0];
+                float y = allFractals_XYZSR[f][1];
+                float z = allFractals_XYZSR[f][2];
                 
-                float r = allFractals_XYZSRA[f][3] * 0.5;
-                float rot = allFractals_XYZSRA[f][4];      
+                float r = allFractals_XYZSR[f][3] * 0.5;
+                float rot = allFractals_XYZSR[f][4];      
           
                 int n = allFractals_Type[f];
 
@@ -38309,12 +38305,12 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
             
             for (int f = 1; f <= allFractals_num; f++) {
 
-              float x = allFractals_XYZSRA[f][0];
-              float y = allFractals_XYZSRA[f][1];
-              float z = allFractals_XYZSRA[f][2];
+              float x = allFractals_XYZSR[f][0];
+              float y = allFractals_XYZSR[f][1];
+              float z = allFractals_XYZSR[f][2];
               
-              float r = allFractals_XYZSRA[f][3] * 0.5;
-              float rot = allFractals_XYZSRA[f][4];      
+              float r = allFractals_XYZSR[f][3] * 0.5;
+              float rot = allFractals_XYZSR[f][4];      
         
               int n = allFractals_Type[f];
 
@@ -39065,7 +39061,7 @@ float[][] SOLARCHVISION_getCorners_Solid (int plane_type, float Solid_posX, floa
 
 
 
-void SOLARCHVISION_add_Fractal (int PlantType, float x, float y, float z, float s, float rot, int PlantDegreeMin, int PlantDegreeMax, int PlantSeed, float TrunkSize, float LeafSize, float as_Solid) {
+void SOLARCHVISION_add_Fractal (int PlantType, float x, float y, float z, float s, float rot, int PlantDegreeMin, int PlantDegreeMax, int PlantSeed, float TrunkSize, float LeafSize) {
 
   if (allGroup3Ds_num == 0) SOLARCHVISION_beginNewGroup3D();
   
@@ -39091,8 +39087,8 @@ void SOLARCHVISION_add_Fractal (int PlantType, float x, float y, float z, float 
     int[] TempFractal_Seed = {q}; 
     allFractals_Seed = concat(allFractals_Seed, TempFractal_Seed);
   
-    float[][] TempFractal_XYZSRA = {{x, y, z, s, rot, as_Solid}};
-    allFractals_XYZSRA = (float[][]) concat(allFractals_XYZSRA, TempFractal_XYZSRA);
+    float[][] TempFractal_XYZSR = {{x, y, z, s, rot}};
+    allFractals_XYZSR = (float[][]) concat(allFractals_XYZSR, TempFractal_XYZSR);
   
     allFractals_num += 1;
   
@@ -39118,14 +39114,13 @@ void SOLARCHVISION_draw_Fractals () {
 
     for (int f = 1; f <= allFractals_num; f++) {
 
-      float x = allFractals_XYZSRA[f][0];
-      float y = allFractals_XYZSRA[f][1];
-      float z = allFractals_XYZSRA[f][2];
+      float x = allFractals_XYZSR[f][0];
+      float y = allFractals_XYZSR[f][1];
+      float z = allFractals_XYZSR[f][2];
       
-      float r = allFractals_XYZSRA[f][3] * 0.5;
-      float rot = allFractals_XYZSRA[f][4];
-      float as_Solid = allFractals_XYZSRA[f][5];
-
+      float r = allFractals_XYZSR[f][3] * 0.5;
+      float rot = allFractals_XYZSR[f][4];
+      
       int n = allFractals_Type[f];
 
       int dMin = allFractals_DegreeMin[f];
@@ -39145,12 +39140,7 @@ void SOLARCHVISION_draw_Fractals () {
         float Alpha = 0;
         float Beta = rot; 
       
-        SOLARCHVISION_Plant_branch(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize, as_Solid);
-        
-        if (as_Solid != 0) {
-          allFractals_XYZSRA[f][5] = 0; 
-        }
-        
+        SOLARCHVISION_Plant_branch(x, y, z, Alpha, Beta, r, dMin, dMin, dMax, TrunkSize, LeafSize);
         
         // ----------------
         x *= OBJECTS_scale;
@@ -39195,7 +39185,7 @@ void SOLARCHVISION_draw_Fractals () {
 
 
 
-void SOLARCHVISION_Plant_branch_objExport (int _turn, float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize, float as_Solid) {
+void SOLARCHVISION_Plant_branch_objExport (int _turn, float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize) {
   
   h *= getRatio_Plant_branch(d);
 
@@ -39300,7 +39290,7 @@ void SOLARCHVISION_Plant_branch_objExport (int _turn, float x0, float y0, float 
         }
       }
 
-      SOLARCHVISION_Plant_branch_objExport(_turn, x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize, as_Solid);
+      SOLARCHVISION_Plant_branch_objExport(_turn, x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize);
 
     }
   } else {
@@ -39399,7 +39389,7 @@ float getRatio_Plant_branch (float d) {
  return (0.75 / pow(d, 0.06125));
 }
 
-void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize, float as_Solid) {
+void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize) {
   
   h *= getRatio_Plant_branch(d);
 
@@ -39472,7 +39462,7 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
         }
       }
 
-      SOLARCHVISION_Plant_branch(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize, as_Solid);
+      SOLARCHVISION_Plant_branch(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize);
 
     }
   } else {
@@ -39496,9 +39486,9 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
       WIN3D_Diagrams.sphere(0.5 * LeafSize * OBJECTS_scale * WIN3D_scale3D);
       WIN3D_Diagrams.popMatrix();
    
-      if (as_Solid != 0) {
+      if (Create_Mesh_as_Solid != 0) {
         float r0 = 0.5 * LeafSize;
-        SOLARCHVISION_add_Solid(x0,y0,z0, 2,2,2, r0,r0,r0, 0,0,0, as_Solid);
+        SOLARCHVISION_add_Solid(x0,y0,z0, 2,2,2, r0,r0,r0, 0,0,0, Create_Mesh_as_Solid);
       }
   
     }
@@ -39931,7 +39921,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
       if (Current_ObjectCategory == ObjectCategory_Fractals) {
         int n = theVertices[q];
         
-        POS_now = allFractals_XYZSRA[n][j];
+        POS_now = allFractals_XYZSR[n][j];
       }  
       if (Current_ObjectCategory == ObjectCategory_LandPoint) {
         int n = theVertices[q];
@@ -40078,9 +40068,9 @@ void SOLARCHVISION_move_selectedGroup3Ds (float dx, float dy, float dz) {
       for (int f = allGroup3Ds_Fractals[OBJ_NUM][0]; f <= allGroup3Ds_Fractals[OBJ_NUM][1]; f++) {
         if ((0 < f) && (f <= allFractals_num)) {
           
-          allFractals_XYZSRA[f][0] += dx;
-          allFractals_XYZSRA[f][1] += dy;
-          allFractals_XYZSRA[f][2] += dz;
+          allFractals_XYZSR[f][0] += dx;
+          allFractals_XYZSR[f][1] += dy;
+          allFractals_XYZSR[f][2] += dz;
         }
       }
 
@@ -40180,29 +40170,29 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float 
       for (int f = allGroup3Ds_Fractals[OBJ_NUM][0]; f <= allGroup3Ds_Fractals[OBJ_NUM][1]; f++) {
         if ((0 < f) && (f <= allFractals_num)) {
           
-          float x = allFractals_XYZSRA[f][0] - x0; 
-          float y = allFractals_XYZSRA[f][1] - y0; 
-          float z = allFractals_XYZSRA[f][2] - z0;
+          float x = allFractals_XYZSR[f][0] - x0; 
+          float y = allFractals_XYZSR[f][1] - y0; 
+          float z = allFractals_XYZSR[f][2] - z0;
           
           if (the_Vector == 2) {
             
-            allFractals_XYZSRA[f][0] = x0 + (x * cos(r) - y * sin(r));
-            allFractals_XYZSRA[f][1] = y0 + (x * sin(r) + y * cos(r));
-            allFractals_XYZSRA[f][2] = z0 + (z);
+            allFractals_XYZSR[f][0] = x0 + (x * cos(r) - y * sin(r));
+            allFractals_XYZSR[f][1] = y0 + (x * sin(r) + y * cos(r));
+            allFractals_XYZSR[f][2] = z0 + (z);
             
-            allFractals_XYZSRA[f][4] += r; // <<<<<<<<<
+            allFractals_XYZSR[f][4] += r; // <<<<<<<<<
           }
           else if (the_Vector == 1) {
            
-            allFractals_XYZSRA[f][0] = x0 + (z * sin(r) + x * cos(r));
-            allFractals_XYZSRA[f][1] = y0 + (y);
-            allFractals_XYZSRA[f][2] = z0 + (z * cos(r) - x * sin(r));
+            allFractals_XYZSR[f][0] = x0 + (z * sin(r) + x * cos(r));
+            allFractals_XYZSR[f][1] = y0 + (y);
+            allFractals_XYZSR[f][2] = z0 + (z * cos(r) - x * sin(r));
           }
           else if (the_Vector == 0) {
 
-            allFractals_XYZSRA[f][0] = x0 + (x);
-            allFractals_XYZSRA[f][1] = y0 + (y * cos(r) - z * sin(r));
-            allFractals_XYZSRA[f][2] = z0 + (y * sin(r) + z * cos(r));
+            allFractals_XYZSR[f][0] = x0 + (x);
+            allFractals_XYZSR[f][1] = y0 + (y * cos(r) - z * sin(r));
+            allFractals_XYZSR[f][2] = z0 + (y * sin(r) + z * cos(r));
           }
 
         }
@@ -40328,15 +40318,15 @@ void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float s
       for (int f = allGroup3Ds_Fractals[OBJ_NUM][0]; f <= allGroup3Ds_Fractals[OBJ_NUM][1]; f++) {
         if ((0 < f) && (f <= allFractals_num)) {
           
-          float x = allFractals_XYZSRA[f][0] - x0; 
-          float y = allFractals_XYZSRA[f][1] - y0; 
-          //float z = allFractals_XYZSRA[f][2] - z0;
+          float x = allFractals_XYZSR[f][0] - x0; 
+          float y = allFractals_XYZSR[f][1] - y0; 
+          //float z = allFractals_XYZSR[f][2] - z0;
          
-          allFractals_XYZSRA[f][0] = x0 + sx * x; 
-          allFractals_XYZSRA[f][1] = y0 + sy * y;
-          //allFractals_XYZSRA[f][2] = z0 + sz * z;
+          allFractals_XYZSR[f][0] = x0 + sx * x; 
+          allFractals_XYZSR[f][1] = y0 + sy * y;
+          //allFractals_XYZSR[f][2] = z0 + sz * z;
 
-          allFractals_XYZSRA[f][3] *= sz; 
+          allFractals_XYZSR[f][3] *= sz; 
           
         }
       }  
@@ -40680,15 +40670,15 @@ void SOLARCHVISION_scale_selectedFractals (float x0, float y0, float z0, float s
       
     if (OBJ_NUM != 0) {      
   
-      float x = allFractals_XYZSRA[OBJ_NUM][0] - x0; 
-      float y = allFractals_XYZSRA[OBJ_NUM][1] - y0; 
-      //float z = allFractals_XYZSRA[OBJ_NUM][2] - z0;
+      float x = allFractals_XYZSR[OBJ_NUM][0] - x0; 
+      float y = allFractals_XYZSR[OBJ_NUM][1] - y0; 
+      //float z = allFractals_XYZSR[OBJ_NUM][2] - z0;
       
-      allFractals_XYZSRA[OBJ_NUM][0] = x0 + sx * x; 
-      allFractals_XYZSRA[OBJ_NUM][1] = y0 + sy * y;
-      //allFractals_XYZSRA[OBJ_NUM][2] = z0 + sz * z;
+      allFractals_XYZSR[OBJ_NUM][0] = x0 + sx * x; 
+      allFractals_XYZSR[OBJ_NUM][1] = y0 + sy * y;
+      //allFractals_XYZSR[OBJ_NUM][2] = z0 + sz * z;
 
-      allFractals_XYZSRA[OBJ_NUM][3] *= sz; // <<<<<<<<<<<<<<
+      allFractals_XYZSR[OBJ_NUM][3] *= sz; // <<<<<<<<<<<<<<
     }
   }
 }
@@ -40700,26 +40690,26 @@ void SOLARCHVISION_rotate_selectedFractals (float x0, float y0, float z0, float 
     
     int n = selectedFractal_numbers[q];
 
-    float x = allFractals_XYZSRA[n][0] - x0; 
-    float y = allFractals_XYZSRA[n][1] - y0; 
-    float z = allFractals_XYZSRA[n][2] - z0;
+    float x = allFractals_XYZSR[n][0] - x0; 
+    float y = allFractals_XYZSR[n][1] - y0; 
+    float z = allFractals_XYZSR[n][2] - z0;
     
     if (the_Vector == 2) {
-      allFractals_XYZSRA[n][0] = x0 + (x * cos(r) - y * sin(r)); 
-      allFractals_XYZSRA[n][1] = y0 + (x * sin(r) + y * cos(r));
-      allFractals_XYZSRA[n][2] = z0 + (z);
+      allFractals_XYZSR[n][0] = x0 + (x * cos(r) - y * sin(r)); 
+      allFractals_XYZSR[n][1] = y0 + (x * sin(r) + y * cos(r));
+      allFractals_XYZSR[n][2] = z0 + (z);
       
-      allFractals_XYZSRA[n][4] += r; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      allFractals_XYZSR[n][4] += r; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     }
     else if (the_Vector == 1) {
-      allFractals_XYZSRA[n][0] = x0 + (z * sin(r) + x * cos(r)); 
-      allFractals_XYZSRA[n][1] = y0 + (y);
-      allFractals_XYZSRA[n][2] = z0 + (z * cos(r) - x * sin(r));
+      allFractals_XYZSR[n][0] = x0 + (z * sin(r) + x * cos(r)); 
+      allFractals_XYZSR[n][1] = y0 + (y);
+      allFractals_XYZSR[n][2] = z0 + (z * cos(r) - x * sin(r));
     }    
     else if (the_Vector == 0) {
-      allFractals_XYZSRA[n][0] = x0 + (x); 
-      allFractals_XYZSRA[n][1] = y0 + (y * cos(r) - z * sin(r));
-      allFractals_XYZSRA[n][2] = z0 + (y * sin(r) + z * cos(r));
+      allFractals_XYZSR[n][0] = x0 + (x); 
+      allFractals_XYZSR[n][1] = y0 + (y * cos(r) - z * sin(r));
+      allFractals_XYZSR[n][2] = z0 + (y * sin(r) + z * cos(r));
     }    
   }
 
@@ -40734,9 +40724,9 @@ void SOLARCHVISION_move_selectedFractals (float dx, float dy, float dz) {
     
     if (OBJ_NUM != 0) {      
       
-      allFractals_XYZSRA[OBJ_NUM][0] += dx; 
-      allFractals_XYZSRA[OBJ_NUM][1] += dy; 
-      allFractals_XYZSRA[OBJ_NUM][2] += dz;
+      allFractals_XYZSR[OBJ_NUM][0] += dx; 
+      allFractals_XYZSR[OBJ_NUM][1] += dy; 
+      allFractals_XYZSR[OBJ_NUM][2] += dz;
     }
   }
 } 
@@ -41318,9 +41308,9 @@ void SOLARCHVISION_drop_Selection () {
       
       if (OBJ_NUM != 0) {      
         
-        float x = allFractals_XYZSRA[OBJ_NUM][0];
-        float y = allFractals_XYZSRA[OBJ_NUM][1];
-        float z = allFractals_XYZSRA[OBJ_NUM][2];
+        float x = allFractals_XYZSR[OBJ_NUM][0];
+        float y = allFractals_XYZSR[OBJ_NUM][1];
+        float z = allFractals_XYZSR[OBJ_NUM][2];
 
         float[] ray_start = {x, y, z};
 
@@ -41339,9 +41329,9 @@ void SOLARCHVISION_drop_Selection () {
         }
 
         if (RxP[4] > 0) {
-          allFractals_XYZSRA[OBJ_NUM][0] = RxP[0]; 
-          allFractals_XYZSRA[OBJ_NUM][1] = RxP[1]; 
-          allFractals_XYZSRA[OBJ_NUM][2] = RxP[2];
+          allFractals_XYZSR[OBJ_NUM][0] = RxP[0]; 
+          allFractals_XYZSR[OBJ_NUM][1] = RxP[1]; 
+          allFractals_XYZSR[OBJ_NUM][2] = RxP[2];
         }
         else {
           ray_direction[2] = 1; // <<<< going upwards
@@ -41357,9 +41347,9 @@ void SOLARCHVISION_drop_Selection () {
           }
           
           if (RxP[4] > 0) {
-            allFractals_XYZSRA[OBJ_NUM][0] = RxP[0]; 
-            allFractals_XYZSRA[OBJ_NUM][1] = RxP[1]; 
-            allFractals_XYZSRA[OBJ_NUM][2] = RxP[2];
+            allFractals_XYZSR[OBJ_NUM][0] = RxP[0]; 
+            allFractals_XYZSR[OBJ_NUM][1] = RxP[1]; 
+            allFractals_XYZSR[OBJ_NUM][2] = RxP[2];
           }          
         }
           
@@ -45875,9 +45865,9 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       newChild2 = newChild1.addChild("Fractal");
       newChild2.setInt("id", i);
       String lineSTR = "";
-      //for (int j = 0; j < allFractals_XYZSRA[i].length; j++) {
-      for (int j = 0; j < 6; j++) { // x, y, z, s, rot, as_mesh/as_solid 
-        lineSTR += nf(allFractals_XYZSRA[i][j], 0, 4).replace(",", "."); // <<<<
+      //for (int j = 0; j < allFractals_XYZSR[i].length; j++) {
+      for (int j = 0; j < 5; j++) { // x, y, z, s, rot
+        lineSTR += nf(allFractals_XYZSR[i][j], 0, 4).replace(",", "."); // <<<<
         lineSTR += ",";
       }
       lineSTR += nf(allFractals_Type[i], 0);
@@ -47032,7 +47022,7 @@ void SOLARCHVISION_load_project (String myFile) {
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
       
-      allFractals_XYZSRA = new float [ni][6];
+      allFractals_XYZSR = new float [ni][5];
       allFractals_Type = new int [ni];
       allFractals_DegreeMin = new int [ni];
       allFractals_DegreeMax = new int [ni];
@@ -47046,8 +47036,8 @@ void SOLARCHVISION_load_project (String myFile) {
 
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
-        for (int j = 0; j < 6; j++) {
-          allFractals_XYZSRA[i][j] = float(parts[j]);
+        for (int j = 0; j < 5; j++) {
+          allFractals_XYZSR[i][j] = float(parts[j]);
         }
 
         allFractals_Type[i] = int(parts[6]);
