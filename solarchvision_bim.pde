@@ -1,5 +1,3 @@
-// could add solid option to trees?
-
 // should check if we load models correct?
 
 
@@ -39114,6 +39112,16 @@ void SOLARCHVISION_add_Fractal (int PlantType, float x, float y, float z, float 
     allFractals_XYZSR = (float[][]) concat(allFractals_XYZSR, TempFractal_XYZSR);
   
     allFractals_num += 1;
+    
+    
+    
+    if (Create_Mesh_as_Solid != 0) {
+  
+      randomSeed(q);
+      
+      SOLARCHVISION_Plant_branch_addSolids(x, y, z, 0, rot, 0.5 * s, PlantDegreeMin, PlantDegreeMin, PlantDegreeMax, TrunkSize, LeafSize);
+  
+    }    
   
   }
   
@@ -39121,13 +39129,7 @@ void SOLARCHVISION_add_Fractal (int PlantType, float x, float y, float z, float 
 
 
   
-  if (Create_Mesh_as_Solid != 0) {
 
-    randomSeed(PlantSeed);
-    
-    SOLARCHVISION_Plant_branch_addSolids(x, y, z, 0, rot, 0.5 * s, PlantDegreeMin,  PlantDegreeMin, PlantDegreeMax,  TrunkSize, LeafSize);
-
-  }
 }
 
 float[][] allFractals_Vertices;
@@ -39564,7 +39566,8 @@ void SOLARCHVISION_Plant_branch_addSolids (float x0, float y0, float z0, float A
       float the_thickness = 0.025 * w * h;
       float rx = 0.5 * the_thickness;
       float ry = 0.5 * the_thickness;
-      float rz = 0.5 * abs(z_new - z0);
+      //float rz = 0.5 * abs(z_new - z0);
+      float rz = 0.5 * abs(z_new - z0) * 1.25; // <<<<<<< to somehow compensate the shrinkage!
       
       SOLARCHVISION_add_Solid(cx,cy,cz, 2,2,2, rx,ry,rz, 0,(rotZX * 180 / PI),(rotXY * 180 / PI), Create_Mesh_as_Solid);
 
