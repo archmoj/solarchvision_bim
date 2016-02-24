@@ -26116,9 +26116,9 @@ void SOLARCHVISION_add_ProjectModel () {
   int keep_Create_Mesh_as_Solid = Create_Mesh_as_Solid;
   Create_Mesh_as_Solid = 1;
   
-  SOLARCHVISION_add_Object2Ds_polar(1, 100, 0,0,0, 0,100); // people
-  SOLARCHVISION_add_Object2Ds_polar(2, 30, 0,0,0, 40,100); // 2D trees
-  //SOLARCHVISION_add_Object2Ds_polar(3, 15, 0,0,0, 40,100); // fractal trees
+  //SOLARCHVISION_add_Object2Ds_polar(1, 100, 0,0,0, 0,100); // people
+  //SOLARCHVISION_add_Object2Ds_polar(2, 30, 0,0,0, 40,100); // 2D trees
+  SOLARCHVISION_add_Object2Ds_polar(3, 5, 0,0,0, 40,100); // fractal trees
   
   Create_Mesh_as_Solid = keep_Create_Mesh_as_Solid;
 
@@ -39118,6 +39118,14 @@ void SOLARCHVISION_add_Fractal (int PlantType, float x, float y, float z, float 
   }
   
   allGroup3Ds_Fractals[allGroup3Ds_num][1] = allFractals_num;
+  
+  if (Create_Mesh_as_Solid != 0) {
+
+    randomSeed(PlantSeed);
+    
+    SOLARCHVISION_Plant_branch_addSolids(x, y, z, 0, rot, 0.5 * s, PlantDegreeMin,  PlantDegreeMin, PlantDegreeMax,  TrunkSize, LeafSize);
+
+  }
 }
 
 float[][] allFractals_Vertices;
@@ -39509,16 +39517,75 @@ void SOLARCHVISION_Plant_branch (float x0, float y0, float z0, float Alpha, floa
       WIN3D_Diagrams.sphere(0.5 * LeafSize * OBJECTS_scale * WIN3D_scale3D);
       WIN3D_Diagrams.popMatrix();
    
-      if (Create_Mesh_as_Solid != 0) {
-        float r0 = 0.5 * LeafSize;
-        SOLARCHVISION_add_Solid(x0,y0,z0, 2,2,2, r0,r0,r0, 0,0,0, Create_Mesh_as_Solid);
-      }
-  
     }
 
   }
 }
 
+
+void SOLARCHVISION_Plant_branch_addSolids (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize) {
+
+  
+  h *= getRatio_Plant_branch(d);
+
+  int birth = 1;
+
+  if ((birth != 0) && (d < Plant_max_degree)) {
+
+    for (int i = 1; i <= d; i++) {  
+      
+      float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
+      float rotXY = Beta + random(-PI, PI);
+             
+      float w = TrunkSize * 0.5 * pow(Plant_max_degree - d + 1, 1.25);
+      
+
+      float x_dif = 0;
+      float y_dif = 0;
+      float z_dif = h;
+
+      float x_rot = z_dif * sin(rotZX) +  x_dif * cos(rotZX);
+      float y_rot = y_dif;
+      float z_rot = z_dif * cos(rotZX) - x_dif * sin(rotZX);
+      
+      float x_new = x0 + x_rot * cos(rotXY) - y_rot * sin(rotXY);
+      float y_new = y0 + x_rot * sin(rotXY) + y_rot * cos(rotXY);
+      float z_new = z0 + z_rot; 
+
+
+
+
+      float cx = 0.5 * (x0 + x_new); 
+      float cy = 0.5 * (y0 + y_new); 
+      float cz = 0.5 * (z0 + z_new);
+      
+      float the_thickness = 0.025 * w * h;
+      float rx = 0.5 * the_thickness;
+      float ry = 0.5 * the_thickness;
+      float rz = 0.5 * abs(z_new - z0);
+      
+      SOLARCHVISION_add_Solid(cx,cy,cz, 2,2,2, rx,ry,rz, rotZX,0,rotXY, Create_Mesh_as_Solid);
+
+
+      SOLARCHVISION_Plant_branch_addSolids(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize);
+
+    }
+  } else {
+    
+    // must pass all the random values here.
+    float rotZX = Alpha + (1 + d - Plant_min_degree) * random(-PI / 8, PI / 8);
+    float rotXY = Beta + random(-PI, PI);
+    int c = int(random(127));  
+    
+    if (Display_Leaves != 0) {
+      
+      float r0 = 0.5 * LeafSize;
+      SOLARCHVISION_add_Solid(x0,y0,z0, 2,2,2, r0,r0,r0, 0,0,0, Create_Mesh_as_Solid);
+  
+    }
+
+  }
+}
 
 void SOLARCHVISION_Plant_branch_SHADOW (float x0, float y0, float z0, float Alpha, float Beta, float h, int Plant_min_degree, int d, int Plant_max_degree, float TrunkSize, float LeafSize, float[] SunR_Rotated, float Shades_scaleX, float Shades_scaleY, float Shades_offsetX, float Shades_offsetY) {
   
