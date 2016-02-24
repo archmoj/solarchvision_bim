@@ -13446,16 +13446,17 @@ void SOLARCHVISION_add_Object2D (String t, int m, float x, float y, float z, flo
   if (allGroup3Ds_num == 0) SOLARCHVISION_beginNewGroup3D();
   
   {
+    
+    int n1 = Object2D_PEOPLE_Files_Num;    
+    int n2 = Object2D_PEOPLE_Files_Num + Object2D_TREES_Files_Num;
   
     int n = m;
     
     if (n == 0) {
-      if (t.equals("PEOPLE")) n = int(random(1, 1 + Object2D_PEOPLE_Files_Num));
-      else if (t.equals("TREES")) n = int(random(1 + Object2D_PEOPLE_Files_Num, 1 + Object2D_PEOPLE_Files_Num + Object2D_TREES_Files_Num));
+      if (t.equals("PEOPLE")) n = int(random(1, 1 + n1));
+      else if (t.equals("TREES")) n = int(random(1 + n1, 1 + n2));
     }
-  
-    //println(t, n);
-    
+      
     int d = 1; 
     int r = int(random(2));
     if (r == 0) d = -1; 
@@ -13467,10 +13468,27 @@ void SOLARCHVISION_add_Object2D (String t, int m, float x, float y, float z, flo
     allObject2Ds_XYZS = (float[][]) concat(allObject2Ds_XYZS, TempObject2D_XYZS);
     
     allObject2Ds_num += 1;
+    
+    if (abs(n) > n1) {
+    
+      if (Create_Mesh_as_Solid != 0) {
+        
+        float x0 = x;
+        float y0 = y;
+        float z0 = 0.5 * s + z;
+        float r0 = 0.4 * s; // <<<<<<< approximate
+        
+        SOLARCHVISION_add_Solid(x0,y0,z0, 2,2,2, r0,r0,r0, 0,0,0, Create_Mesh_as_Solid);
+      }
+    }
   
   }
 
   allGroup3Ds_Object2Ds[allGroup3Ds_num][1] = allObject2Ds_num;
+
+
+  
+
 }
 
 
@@ -26095,9 +26113,14 @@ void SOLARCHVISION_add_ProjectModel () {
   }  
 
   
+  int keep_Create_Mesh_as_Solid = Create_Mesh_as_Solid;
+  Create_Mesh_as_Solid = 1;
+  
   SOLARCHVISION_add_Object2Ds_polar(1, 100, 0,0,0, 0,100); // people
   SOLARCHVISION_add_Object2Ds_polar(2, 30, 0,0,0, 40,100); // 2D trees
-  SOLARCHVISION_add_Object2Ds_polar(3, 15, 0,0,0, 40,100); // fractal trees
+  //SOLARCHVISION_add_Object2Ds_polar(3, 15, 0,0,0, 40,100); // fractal trees
+  
+  Create_Mesh_as_Solid = keep_Create_Mesh_as_Solid;
 
   {
     SOLARCHVISION_beginNewGroup3D();
