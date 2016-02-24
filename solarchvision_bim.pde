@@ -39118,6 +39118,8 @@ void SOLARCHVISION_add_Fractal (int PlantType, float x, float y, float z, float 
   }
   
   allGroup3Ds_Fractals[allGroup3Ds_num][1] = allFractals_num;
+
+
   
   if (Create_Mesh_as_Solid != 0) {
 
@@ -39564,7 +39566,7 @@ void SOLARCHVISION_Plant_branch_addSolids (float x0, float y0, float z0, float A
       float ry = 0.5 * the_thickness;
       float rz = 0.5 * abs(z_new - z0);
       
-      SOLARCHVISION_add_Solid(cx,cy,cz, 2,2,2, rx,ry,rz, rotZX,0,rotXY, Create_Mesh_as_Solid);
+      SOLARCHVISION_add_Solid(cx,cy,cz, 2,2,2, rx,ry,rz, 0,(rotZX * 180 / PI),(rotXY * 180 / PI), Create_Mesh_as_Solid);
 
 
       SOLARCHVISION_Plant_branch_addSolids(x_new, y_new, z_new, rotZX, rotXY, h, Plant_min_degree, d + 1, Plant_max_degree, TrunkSize, LeafSize);
