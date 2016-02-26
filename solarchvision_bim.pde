@@ -26995,7 +26995,8 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_complex (float x, float y, float
       float r = Solid_get_value(n);
       float d = Solid_get_Distance(n, x + o * deltaX , y + o * deltaY, z);
       
-      d *= pow(d, SolidImpact_Power);
+      //d *= pow(d, SolidImpact_Power);
+      d *= pow(d, SolidImpact_Power / float(allSolids.length - 1));
   
       if (val[o] < 0) val[o] *= abs(d - r);
       else {
