@@ -26949,7 +26949,7 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ (float x, float y, float z) {
 float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_PLUS (float x, float y, float z) {
 
   float val = 0;
-  
+
   for (int n = 1; n < allSolids.length; n++) {
     
     float r = Solid_get_value(n);
@@ -26957,18 +26957,10 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_PLUS (float x, float y, f
 
     d += pow(d, SolidImpact_Power);
 
-    if ((d - r >= 0) && (val >= 0)) { 
-    
-      val += (d - r) / float(allSolids.length - 1);
-    }
-    else {
-      
-      val = -1;
-      break;
+    if (val < d - r) { 
+      val = d - r;
     }
   }
-  
-  if (val < 0) val = 0;
   
   return val;  
 }
