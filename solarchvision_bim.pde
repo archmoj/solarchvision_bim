@@ -26114,7 +26114,7 @@ void SOLARCHVISION_add_ProjectModel () {
   Create_Mesh_as_Solid = 1; // 0;
   
   SOLARCHVISION_add_Object2Ds_polar(1, 100, 0,0,0, 0,100); // people
-  SOLARCHVISION_add_Object2Ds_polar(2, 50, 0,0,0, 10,100); // 2D trees
+  SOLARCHVISION_add_Object2Ds_polar(2, 15, 0,0,0, 40,100); // 2D trees
   //SOLARCHVISION_add_Object2Ds_polar(3, 15, 0,0,0, 40,100); // fractal trees
   
   Create_Mesh_as_Solid = keep_Create_Mesh_as_Solid;
@@ -26936,8 +26936,8 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ (float x, float y, float z) {
   float v = 0;
   
   if (SolidImpactType == 0) {
-    v = SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_PLUS(x, y, z);
-    //v = SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_MULT(x, y, z);
+    //v = SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_PLUS(x, y, z);
+    v = SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_MULT(x, y, z);
   }
   else {
     v = SOLARCHVISION_calculate_SolidImpact_atXYZ_complex(x, y, z);
@@ -26949,18 +26949,28 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ (float x, float y, float z) {
 float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_PLUS (float x, float y, float z) {
 
   float val = 0;
-
+  
   for (int n = 1; n < allSolids.length; n++) {
     
-    float r = Solid_get_value(n);
+    //float r = Solid_get_value(n);
+    float r = Solid_get_value(n) * 2; // <<<<<<<<<<<
+    
     float d = Solid_get_Distance(n, x, y, z);
 
     d += pow(d, SolidImpact_Power);
 
-    if (val < d - r) { 
-      val = d - r;
+    if ((d - r >= 0) && (val >= 0)) { 
+    
+      val += (d - r) / float(allSolids.length - 1);
+    }
+    else {
+      
+      val = -1;
+      break;
     }
   }
+  
+  if (val < 0) val = 0;
   
   return val;  
 }
