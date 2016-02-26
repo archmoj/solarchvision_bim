@@ -1,3 +1,5 @@
+// change solid impact from multiply to plus
+
 // should check if we load models correct?
 
 
@@ -1916,7 +1918,7 @@ void SOLARCHVISION_update_station (int Step) {
   
   if ((Step == 0) || (Step == 8)) SOLARCHVISION_delete_Object2Ds();
   
-  if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_Object2Ds_onLand(2); // 2 = 2D trees
+  //if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_Object2Ds_onLand(2); // 2 = 2D trees
 
 }
 
@@ -26109,10 +26111,10 @@ void SOLARCHVISION_add_ProjectModel () {
 
   
   int keep_Create_Mesh_as_Solid = Create_Mesh_as_Solid;
-  Create_Mesh_as_Solid = 0; // 1;
+  Create_Mesh_as_Solid = 1; // 0;
   
   SOLARCHVISION_add_Object2Ds_polar(1, 100, 0,0,0, 0,100); // people
-  SOLARCHVISION_add_Object2Ds_polar(2, 50, 0,0,0, 40,100); // 2D trees
+  SOLARCHVISION_add_Object2Ds_polar(2, 50, 0,0,0, 10,100); // 2D trees
   //SOLARCHVISION_add_Object2Ds_polar(3, 15, 0,0,0, 40,100); // fractal trees
   
   Create_Mesh_as_Solid = keep_Create_Mesh_as_Solid;
@@ -26933,13 +26935,46 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ (float x, float y, float z) {
 
   float v = 0;
   
-  if (SolidImpactType == 0) v = SOLARCHVISION_calculate_SolidImpact_atXYZ_simple(x, y, z);
-  else v = SOLARCHVISION_calculate_SolidImpact_atXYZ_complex(x, y, z);
+  if (SolidImpactType == 0) {
+    v = SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_PLUS(x, y, z);
+    //v = SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_MULT(x, y, z);
+  }
+  else {
+    v = SOLARCHVISION_calculate_SolidImpact_atXYZ_complex(x, y, z);
+  }
   
   return v;
 }
 
-float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple (float x, float y, float z) {
+float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_PLUS (float x, float y, float z) {
+
+  float val = 0;
+  
+  for (int n = 1; n < allSolids.length; n++) {
+    
+    float r = Solid_get_value(n);
+    float d = Solid_get_Distance(n, x, y, z);
+
+    d += pow(d, SolidImpact_Power);
+
+    if ((d - r >= 0) && (val >= 0)) { 
+    
+      val += (d - r) / float(allSolids.length - 1);
+    }
+    else {
+      
+      val = -1;
+      break;
+    }
+  }
+  
+  if (val < 0) val = 0;
+  
+  return val;  
+}
+
+
+float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_MULT (float x, float y, float z) {
 
   float val = 1;
   
