@@ -26936,7 +26936,6 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ (float x, float y, float z) {
   float v = 0;
   
   if (SolidImpactType == 0) {
-    //v = SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_PLUS(x, y, z);
     v = SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_MULT(x, y, z);
   }
   else {
@@ -26946,34 +26945,6 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ (float x, float y, float z) {
   return v;
 }
 
-float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_PLUS (float x, float y, float z) {
-
-  float val = 0;
-  
-  for (int n = 1; n < allSolids.length; n++) {
-    
-    //float r = Solid_get_value(n);
-    float r = Solid_get_value(n) * 2; // <<<<<<<<<<<
-    
-    float d = Solid_get_Distance(n, x, y, z);
-
-    d += pow(d, SolidImpact_Power);
-
-    if ((d - r >= 0) && (val >= 0)) { 
-    
-      val += (d - r) / float(allSolids.length - 1);
-    }
-    else {
-      
-      val = -1;
-      break;
-    }
-  }
-  
-  if (val < 0) val = 0;
-  
-  return val;  
-}
 
 
 float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_MULT (float x, float y, float z) {
@@ -26985,7 +26956,8 @@ float SOLARCHVISION_calculate_SolidImpact_atXYZ_simple_MULT (float x, float y, f
     float r = Solid_get_value(n);
     float d = Solid_get_Distance(n, x, y, z);
 
-    d *= pow(d, SolidImpact_Power);
+    //d *= pow(d, SolidImpact_Power);
+    d *= pow(d, SolidImpact_Power / float(allSolids.length - 1));    
 
     if (val < 0) val *= abs(d - r);
     else {
