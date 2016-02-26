@@ -229,7 +229,7 @@ int Create_Mesh_Person_Type = 0;
 int Create_Mesh_Plant_Type = 0;
 int Create_Fractal_Type = 0;
 int Create_Fractal_DegreeMin = 1; //2; 
-int Create_Fractal_DegreeMax = 5; //6; //8;
+int Create_Fractal_DegreeMax = 6; //5; //8;
 int Create_Fractal_Seed = -1; // -1:random, 0-99 choice
 float Create_Fractal_TrunkSize = 1; //0.5;
 float Create_Fractal_LeafSize = 1; //1; 
@@ -1916,7 +1916,7 @@ void SOLARCHVISION_update_station (int Step) {
   
   if ((Step == 0) || (Step == 8)) SOLARCHVISION_delete_Object2Ds();
   
-  //if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_Object2Ds_onLand();
+  if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_Object2Ds_onLand(2); // 2 = 2D trees
 
 }
 
@@ -3004,9 +3004,9 @@ void SOLARCHVISION_draw_WIN3D () {
     
     SOLARCHVISION_draw_SKY3D();
   
-    SOLARCHVISION_draw_SunPattern3D(0, 0, 0, 0.9 * SKY3D_scale);
+    SOLARCHVISION_draw_SunPattern3D(0, 0, 0, 0.975 * SKY3D_scale);
   
-    SOLARCHVISION_draw_SunPath3D(0, 0, 0, 0.9 * SKY3D_scale, LocationLatitude);
+    SOLARCHVISION_draw_SunPath3D(0, 0, 0, 0.975 * SKY3D_scale, LocationLatitude);
     
     SOLARCHVISION_draw_SolarRotation(0, 0, 0, (150000.0 * 1000000) * OBJECTS_scale, LocationLatitude);
     
@@ -20940,7 +20940,7 @@ void SOLARCHVISION_export_objects () {
     
     float previous_DATE = _DATE;
     
-    SOLARCHVISION_draw_SunPathCycles(0, 0, 0, 0.9 * SKY3D_scale, 0.9 * SKY3D_scale, 0.9 * SKY3D_scale, impact_layer, 4);
+    SOLARCHVISION_draw_SunPathCycles(0, 0, 0, 0.975 * SKY3D_scale, 0.975 * SKY3D_scale, 0.975 * SKY3D_scale, impact_layer, 4);
 
     per_day = keep_per_day;
     num_add_days = keep_num_add_days; 
@@ -21191,13 +21191,13 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
 
 
 
-void SOLARCHVISION_add_Object2Ds_onLand () {
+void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
   
   randomSeed(0);
   
   float[][] treesXYZS = {{0,0,0,0}};
   
-  if (Display_LAND_TEXTURE != 0) {
+  if ((Display_LAND_TEXTURE != 0) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
   
     for (int i = 0; i < LAND_n_I - 1; i += 1) {
       for (int j = 0; j < LAND_n_J - 1; j += 1) {
@@ -21233,9 +21233,7 @@ void SOLARCHVISION_add_Object2Ds_onLand () {
           if ((g > r + 10) && (g > b + 10)) { // looks more green
             if (g < 85) { // not on grass (light green)
               //if (z + LocationElevation > 5) { // not in water (below see level)
-              
-                int people_or_trees = 1; // <<< for fractal trees change it to 2!
-              
+
                 //float s = 5 + random(10); 
                 float s = 5 + random(12.5);
                 //float s = 10 + random(20); // bigger trees        
@@ -21306,8 +21304,6 @@ void SOLARCHVISION_add_Object2Ds_onLand () {
           
             if (dist(x,y,0,0) > 2.5) { // i.e. No 2D at the center!
             
-              int people_or_trees = 2;
-  
               float r = random(i + 1); //  to illustrate more people at the center
               
               if (r < 1) people_or_trees = 1; 
@@ -21713,7 +21709,7 @@ int MAX_Default_Models_Number = 7;
 void SOLARCHVISION_add_DefaultModel (int n) {
 
   if (Load_LAND_MESH == 1) {
-    SOLARCHVISION_add_Object2Ds_onLand(); 
+    SOLARCHVISION_add_Object2Ds_onLand(2); // 2 = 2D trees
   }    
   else {
     //SOLARCHVISION_add_Object2Ds_polar(1, 50, 0,0,0, 0,50); // (t, n, x, y, z, r1, r2) // people
@@ -21995,7 +21991,8 @@ void SOLARCHVISION_add_ParametricSurface (int m, int tes, int lyr, int vsb, int 
 
 void SOLARCHVISION_build_SkySphere (int Tessellation) {
   
-  SOLARCHVISION_add_CrystalSphere(0,0,0,1,1, 0,0,0, 1, Tessellation, 1, 90); // SKY
+  //SOLARCHVISION_add_CrystalSphere(0,0,0,1,1, 0,0,0, 1, Tessellation, 1, 90); // SKY
+  SOLARCHVISION_add_CrystalSphere(0,0,0,1,1, 0,0,0, 1, 4, 1, 90); // SKY
   
 }
 
@@ -26115,8 +26112,8 @@ void SOLARCHVISION_add_ProjectModel () {
   Create_Mesh_as_Solid = 0; // 1;
   
   SOLARCHVISION_add_Object2Ds_polar(1, 100, 0,0,0, 0,100); // people
-  SOLARCHVISION_add_Object2Ds_polar(2, 30, 0,0,0, 40,100); // 2D trees
-  SOLARCHVISION_add_Object2Ds_polar(3, 15, 0,0,0, 40,100); // fractal trees
+  SOLARCHVISION_add_Object2Ds_polar(2, 50, 0,0,0, 40,100); // 2D trees
+  //SOLARCHVISION_add_Object2Ds_polar(3, 15, 0,0,0, 40,100); // fractal trees
   
   Create_Mesh_as_Solid = keep_Create_Mesh_as_Solid;
 
@@ -39407,8 +39404,8 @@ void SOLARCHVISION_Plant_branch_objExport (int _turn, float x0, float y0, float 
           obj_lastFaceNumber += 1;
           objOutput.println("f " + n1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);   
           if (objExportBackSides != 0) {
-            //obj_lastFaceNumber += 1;
-            //objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+            obj_lastFaceNumber += 1;
+            objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
           }    
         }  
       }
