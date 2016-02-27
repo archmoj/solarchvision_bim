@@ -70,12 +70,15 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 7; 
+int STATION_NUMBER = 2; 
 
 String[][] DEFINED_STATIONS = {
   
+  
                                 {"Vancouver_A", "BC", "CA", "49.28793", "-123.11415", "-120", "0", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"},
                                 {"Vancouver_B", "BC", "CA", "49.274166", "-123.103353", "-120", "0", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"},
+  
+                                {"Yazd", "XX", "IR", "31.8916", "54.3712", "52.5", "1144", "240.0", "", "", "IRN_Yazd_XX_IR"},
                                 
                                 {"Tehran_11x12", "XX", "IR", "35.6789", "51.413063", "52.5", "1500", "240.0", "", "", "IRN_TEHRAN_XX_IR"},
   
@@ -25692,7 +25695,7 @@ void SOLARCHVISION_LoadLAND_TEXTURE (String LandDirectory) {
 //Polar
 int LAND_n_I_base = 0;
 int LAND_n_J_base = 0;
-int LAND_n_I = 13 + 1; //29 + 1; //17 + 1; //13 + 1; //16 + 1; // 24 + 1;
+int LAND_n_I = 13 + 1; //25 + 1; //13 + 1; //29 + 1; //17 + 1; //13 + 1; //16 + 1; // 24 + 1;
 int LAND_n_J = 24 + 1;     
 
 
@@ -25809,9 +25812,9 @@ void SOLARCHVISION_DownloadLAND_MESH() {
       float t = j * 360.0 / (LAND_n_J - 1);
       
       //float q = 2;
-      //float q = pow(2, 0.5); // <<<<<<<< Note: for many locations this one is applied
+      float q = pow(2, 0.5); // <<<<<<<< Note: for many locations this one is applied
       //float q = 1.25;
-      float q = 1.125;
+      //float q = 1.125;
 
       
       float r = 0;
