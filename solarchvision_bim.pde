@@ -290,7 +290,7 @@ int Launch_External_Hardware = 0; // inactive
 
 //-------------------------------
 
-float SolidImpact_Wspd = 8; //8.0; // (8m/s = 30 km/h) 
+float SolidImpact_Wspd = 5; // (5m/s = 18 km/h) 
 float SolidImpact_Wdir = 180.0;
 
 float SolidImpact_Power = 1.0; //2.0; //3.0; // 1/2/3 
@@ -27077,9 +27077,9 @@ void SOLARCHVISION_calculate_windFlow () {
 */   
 
 
-  for (float z = 2.5; z <= 40; z += 5) {
-    for (float y = -80; y <= 80; y += 5) {
-      for (float x = -80; x <= 80; x += 5) {
+  for (float z = 2.5; z <= 30; z += 2.5) {
+    for (float y = -80; y <= 80; y += 2.5) {
+      for (float x = -80; x <= 80; x += 2.5) {
         
     
 
