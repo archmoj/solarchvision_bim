@@ -21,6 +21,8 @@ int maximum_undo_number = 3;
 
 
 
+float objExportScale = 1.0;
+int objFlipZYaxis = 0;
 
 int objExportPrecisionVertex = 6; 
 int objExportPrecisionVtexture = 4;
@@ -35820,6 +35822,9 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Export_STUDY_info_node = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Export ASCII data", Export_STUDY_info_node, 0, 1, 1), 1));
       Export_STUDY_info_norm = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Export ASCII statistics", Export_STUDY_info_norm, 0, 1, 1), 1));
       Export_STUDY_info_prob = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Export ASCII probabilities", Export_STUDY_info_prob, 0, 1, 1), 1));
+      
+      objExportScale = roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportScale" , objExportScale, 0, 1, 1), 1);
+      objFlipZYaxis = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objFlipZYaxis" , objFlipZYaxis, 0, 1, 1), 1));
 
       objExportPrecisionVertex = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportPrecisionVertex" , objExportPrecisionVertex, 0, 6, 1), 1));
       objExportPrecisionVtexture = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportPrecisionVtexture" , objExportPrecisionVtexture, 0, 6, 1), 1));
@@ -45940,6 +45945,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
   newChild1.setInt("addToLastGroup3D", addToLastGroup3D);
   
+  newChild1.setFloat("objExportScale", objExportScale);
+  newChild1.setInt("objFlipZYaxis", objFlipZYaxis);
   newChild1.setInt("objExportPrecisionVertex", objExportPrecisionVertex);
   newChild1.setInt("objExportPrecisionVtexture", objExportPrecisionVtexture);
   newChild1.setInt("objExportPolyToPoly", objExportPolyToPoly);
@@ -47109,6 +47116,8 @@ void SOLARCHVISION_load_project (String myFile) {
 
       addToLastGroup3D = children0[L].getInt("addToLastGroup3D");      
 
+      objExportScale = children0[L].getFloat("objExportScale");
+      objFlipZYaxis = children0[L].getInt("objFlipZYaxis");
       objExportPrecisionVertex = children0[L].getInt("objExportPrecisionVertex");
       objExportPrecisionVtexture = children0[L].getInt("objExportPrecisionVtexture");
       objExportPolyToPoly = children0[L].getInt("objExportPolyToPoly");
