@@ -21145,6 +21145,32 @@ void SOLARCHVISION_export_objects () {
   SOLARCHVISION_explore_output(objFilename);
 }
 
+void SOLARCHVISION_OBJprintVertex (float x, float y, float z) {
+
+  float a = x * objExportScale;
+  float b = y * objExportScale;
+  float c = z * objExportScale;
+  
+  if (objFlipZYaxis == 0) {
+    
+    objOutput.println("v " + nf(a, 0, objExportPrecisionVertex) + " " +  nf(b, 0, objExportPrecisionVertex) + " " +  nf(c, 0, objExportPrecisionVertex));
+  }
+  else {
+   
+   objOutput.println("v " + nf(-a, 0, objExportPrecisionVertex) + " " +  nf(c, 0, objExportPrecisionVertex) + " " +  nf(b, 0, objExportPrecisionVertex));
+  } 
+
+}
+
+
+
+void SOLARCHVISION_OBJprintVtexture (float u, float v, float w) {
+
+  objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " " + nf(w, 0, objExportPrecisionVtexture));
+
+}  
+
+
 
 
 void SOLARCHVISION_export_objects_script () {
@@ -48011,27 +48037,4 @@ float Solid_get_Distance (int n, float a, float b, float c) {
 
 
 
-void SOLARCHVISION_OBJprintVertex (float x, float y, float z) {
 
-  float a = x * objExportScale;
-  float b = y * objExportScale;
-  float c = z * objExportScale;
-  
-  if (objFlipZYaxis == 0) {
-    
-    objOutput.println("v " + nf(a, 0, objExportPrecisionVertex) + " " +  nf(b, 0, objExportPrecisionVertex) + " " +  nf(c, 0, objExportPrecisionVertex));
-  }
-  else {
-   
-   objOutput.println("v " + nf(a, 0, objExportPrecisionVertex) + " " +  nf(c, 0, objExportPrecisionVertex) + " " +  nf(-b, 0, objExportPrecisionVertex));
-  } 
-
-}
-
-
-
-void SOLARCHVISION_OBJprintVtexture (float u, float v, float w) {
-
-  objOutput.println("vt " + nf(u, 0, objExportPrecisionVtexture) + " " + nf(v, 0, objExportPrecisionVtexture) + " " + nf(w, 0, objExportPrecisionVtexture));
-
-}  
