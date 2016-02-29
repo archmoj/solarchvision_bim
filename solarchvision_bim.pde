@@ -22,7 +22,7 @@ int maximum_undo_number = 3;
 
 
 float objExportScale = 0.1; 
-int objFlipZYaxis = 0; // 1: to fit in Unity3D
+int objFlipZYaxis = 1; // 1: to fit in Unity3D
 
 int objExportPrecisionVertex = 6; 
 int objExportPrecisionVtexture = 4;
@@ -55,7 +55,7 @@ float FLOAT_R_earth = (float) R_earth;
 int Display_EARTH3D = 1;
 int Display_EARTH3D_TEXTURE = 1;
 
-int Display_TROPO3D = 1;
+int Display_TROPO3D = 0;
 int Display_TROPO3D_TEXTURE = 1;
 
 int Display_STAR3D = 0;
@@ -18987,6 +18987,9 @@ void SOLARCHVISION_export_objects () {
   obj_lastGroupNumber = 0;
 
 
+
+
+
   if (Display_TROPO3D != 0) {
     
     for (int TROPO_level = 0; TROPO_level < TROPO_IMAGES.length; TROPO_level++) {    
@@ -20934,106 +20937,93 @@ void SOLARCHVISION_export_objects () {
   if (Display_SKY3D != 0) {
     
     if (WIN3D_FACES_SHADE == Shade_Global_Solar) {
+
+      int PAL_TYPE = 0; 
+      int PAL_DIR = 1;
+      float PAL_Multiplier = 1; 
+      
+      if (Impact_TYPE == Impact_ACTIVE) {
+        PAL_TYPE = SKY3D_Pallet_ACTIVE_CLR; 
+        PAL_DIR = SKY3D_Pallet_ACTIVE_DIR;  
+        PAL_Multiplier = 1.0 * SKY3D_Pallet_ACTIVE_MLT;  
+      }
+      if (Impact_TYPE == Impact_PASSIVE) {
+        PAL_TYPE = SKY3D_Pallet_PASSIVE_CLR; 
+        PAL_DIR = SKY3D_Pallet_PASSIVE_DIR;  
+        PAL_Multiplier = 0.05 * SKY3D_Pallet_PASSIVE_MLT; 
+      }             
+      
+
+
+      String the_filename = "";
+      String TEXTURE_path = "";  
+      
+      if (objExportMaterialLibrary != 0) {
+  
+        the_filename = "skyPattern_Pallet.bmp";
+  
+        TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
+  
+        println("Saving texture:", TEXTURE_path);
+        
+        int RES1 = objExportPalletResolution; 
+        int RES2 = objExportPalletResolution / 16;      
     
-      for (int f = 1; f < skyFaces.length; f++) {
+        PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
+     
+     
+        Pallet_Texture.loadPixels();
+            
+        for (int np = 0; np < (RES1 * RES2); np++) {
+          int Image_X = np % RES1;
+          int Image_Y = np / RES1;
+          
+          float _val = (Image_X / (0.5 * RES1)) - 1; 
+          
+          float _u = 0.5 + _val;
+          
+          if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
         
-        int PAL_TYPE = 0; 
-        int PAL_DIR = 1;
-        float PAL_Multiplier = 1; 
-        
-        if (Impact_TYPE == Impact_ACTIVE) {
-          PAL_TYPE = SKY3D_Pallet_ACTIVE_CLR; 
-          PAL_DIR = SKY3D_Pallet_ACTIVE_DIR;  
-          PAL_Multiplier = 1.0 * SKY3D_Pallet_ACTIVE_MLT;  
+          float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
+          
+          Pallet_Texture.pixels[np] = color(_COL[1], _COL[2], _COL[3], _COL[0]);        
         }
-        if (Impact_TYPE == Impact_PASSIVE) {
-          PAL_TYPE = SKY3D_Pallet_PASSIVE_CLR; 
-          PAL_DIR = SKY3D_Pallet_PASSIVE_DIR;  
-          PAL_Multiplier = 0.05 * SKY3D_Pallet_PASSIVE_MLT; 
-        }             
         
+        Pallet_Texture.updatePixels();   
+     
+        Pallet_Texture.save(TEXTURE_path);      
   
-  
-        String the_filename = "";
-        String TEXTURE_path = "";
       
+        mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
+        mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
+        mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
+        mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
+        mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
+        mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
+        mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
     
-        num_vertices_added = 0;
-        
-        if (objExportMaterialLibrary != 0) {
-    
-          the_filename = "skyPattern_Pallet.bmp";
-    
-          TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
-    
-          println("Saving texture:", TEXTURE_path);
-          
-          int RES1 = objExportPalletResolution; 
-          int RES2 = objExportPalletResolution / 16;      
+        mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
+        mtlOutput.println("\tTr 1.000"); //  0-1 transparency
+        mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
+  
+        //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
+        mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map  
+
+      }      
       
-          PImage Pallet_Texture = createImage(RES1, RES2, ARGB);       
-       
-       
-          Pallet_Texture.loadPixels();
-              
-          for (int np = 0; np < (RES1 * RES2); np++) {
-            int Image_X = np % RES1;
-            int Image_Y = np / RES1;
-            
-            float _val = (Image_X / (0.5 * RES1)) - 1; 
-            
-            float _u = 0.5 + _val;
-            
-            if (Impact_TYPE == Impact_ACTIVE) _u = 0.5 + 0.5 * _val;
-          
-            float[] _COL = GET_COLOR_STYLE(PAL_TYPE, _u);  
-            
-            Pallet_Texture.pixels[np] = color(_COL[1], _COL[2], _COL[3], _COL[0]);        
-          }
-          
-          Pallet_Texture.updatePixels();   
-       
-          Pallet_Texture.save(TEXTURE_path);      
-    
-        
-          mtlOutput.println("newmtl " + the_filename.replace('.', '_'));
-          mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-          mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-          mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-          mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-          mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-          mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
+      obj_lastGroupNumber += 1;
+      objOutput.println("g skyPattern");
+
+      if (objExportMaterialLibrary != 0) {      
+        objOutput.println("usemtl " +  the_filename.replace('.', '_'));
+      }      
+
+      num_vertices_added = 0;
+  
+      for (int _turn = 1; _turn < 4; _turn += 1) {
       
-          mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-          mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-          mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-    
-          //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
-          mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map  
-    
-          
-    
-        }    
-        
-    
-        num_vertices_added = 0;
-  
-        for (int _turn = 1; _turn < 4; _turn += 1) {
-    
-  
-          if (_turn == 3) {
-          
-            obj_lastGroupNumber += 1;
-            objOutput.println("g skyPattern");
-      
-            if (objExportMaterialLibrary != 0) {      
-              objOutput.println("usemtl " +  the_filename.replace('.', '_'));
-            }
-          }
-   
-  
-  
-  
+        for (int f = 1; f < skyFaces.length; f++) {
+
           int Tessellation = 0;
           
           int TotalSubNo = 1;  
@@ -21074,7 +21064,7 @@ void SOLARCHVISION_export_objects () {
                 
   
                 if (_turn == 1) {
-
+  
                   SOLARCHVISION_OBJprintVertex(x,y,z);
                 }
                 
@@ -21111,15 +21101,12 @@ void SOLARCHVISION_export_objects () {
               
               objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);            
             }          
-            
           }
-          
         }
-  
-  
-        obj_lastVertexNumber += num_vertices_added;
-        obj_lastVtextureNumber += num_vertices_added;       
       }
+      
+      obj_lastVertexNumber += num_vertices_added;
+      obj_lastVtextureNumber += num_vertices_added;           
     }
   }
   
@@ -48036,7 +48023,7 @@ void SOLARCHVISION_OBJprintVertex (float x, float y, float z) {
   }
   else {
    
-   objOutput.println("v " + nf(-a, 0, objExportPrecisionVertex) + " " +  nf(c, 0, objExportPrecisionVertex) + " " +  nf(b, 0, objExportPrecisionVertex));
+   objOutput.println("v " + nf(a, 0, objExportPrecisionVertex) + " " +  nf(c, 0, objExportPrecisionVertex) + " " +  nf(-b, 0, objExportPrecisionVertex));
   } 
 
 }
