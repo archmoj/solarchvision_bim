@@ -1,12 +1,11 @@
-// change solid impact from multiply to plus
-
-// should check if we load models correct?
+// could export tropo layer in obj format
 
 
 // could add create face
 // could add create vertex
 // drop functions only works for living objects and not at Group3D level
-// could export tropo layer in obj format
+
+// should check if we load models correct?
 
 import processing.pdf.*;
 
@@ -54,7 +53,7 @@ float FLOAT_R_earth = (float) R_earth;
 int Display_EARTH3D = 0;
 int Display_EARTH3D_TEXTURE = 1;
 
-int Display_TROPO3D = 0;
+int Display_TROPO3D = 1;
 int Display_TROPO3D_TEXTURE = 1;
 
 int Display_STAR3D = 0;
@@ -19040,8 +19039,8 @@ void SOLARCHVISION_export_objects () {
     float CEN_lon = 0; //0.5 * (EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0] + EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][1]);
     float CEN_lat = 0; //0.5 * (EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][0] + EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1]);
     
-    float delta_Alpha = -7.5; //-2.5;
-    float delta_Beta = -7.5; //-2.5;
+    float delta_Alpha = -2.5; //-7.5;
+    float delta_Beta = -2.5; //-7.5;
     
     float r = FLOAT_R_earth;
 
@@ -19145,8 +19144,12 @@ void SOLARCHVISION_export_objects () {
           if (_turn == 3) {
             obj_lastFaceNumber += 1;            
             objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+            if (objExportBackSides != 0) {
+              obj_lastFaceNumber += 1;
+              objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
+            } 
           }        
-        
+       
         }
       }
     }
