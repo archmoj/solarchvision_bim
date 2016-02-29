@@ -15174,7 +15174,7 @@ void SOLARCHVISION_delete_Selection () {
     
     println("deleteIsolatedVerticesSelection");
     
-    SOLARCHVISION_deleteIsolatedVerticesSelection(); 
+    SOLARCHVISION_deleteIsolatedVertices_Selection(); 
   }  
   
   
@@ -15185,7 +15185,7 @@ void SOLARCHVISION_delete_Selection () {
 
 }
 
-void SOLARCHVISION_deleteIsolatedVerticesSelection () { 
+void SOLARCHVISION_deleteIsolatedVertices_Selection () { 
     
   selectedVertex_numbers = sort(selectedVertex_numbers);
 
@@ -15238,7 +15238,7 @@ void SOLARCHVISION_deleteIsolatedVerticesSelection () {
 }
 
 
-void SOLARCHVISION_deleteIsolatedVerticesScene () {
+void SOLARCHVISION_deleteIsolatedVertices_Scene () {
 
   for (int vNo = allVertices.length - 1; vNo > 0; vNo--) { // the first node is null
   
@@ -15281,7 +15281,7 @@ void SOLARCHVISION_deleteIsolatedVerticesScene () {
 }
 
 
-void SOLARCHVISION_selectIsolatedVertices () {
+void SOLARCHVISION_selectIsolatedVertices_Scene () {
   
   selectedVertex_numbers = new int [1];
   selectedVertex_numbers[0] = 0;  
@@ -15318,7 +15318,7 @@ void SOLARCHVISION_selectIsolatedVertices () {
 
 
 
-void SOLARCHVISION_selectNearVertices () {
+void SOLARCHVISION_selectNearVertices_Selection () {
   
   if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices)) { 
 
@@ -15390,7 +15390,7 @@ void SOLARCHVISION_selectNearVertices () {
 
 
 
-void SOLARCHVISION_weldSceneVerticesSelection () {
+void SOLARCHVISION_weldSceneVertices_Selection () {
 
   if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices)) { 
 
@@ -15469,7 +15469,7 @@ void SOLARCHVISION_weldSceneVerticesSelection () {
 
 
 
-void SOLARCHVISION_weldObjectsVerticesSelection () {
+void SOLARCHVISION_weldObjectsVertices_Selection () {
 
   if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices)) { 
 
@@ -15559,7 +15559,7 @@ void SOLARCHVISION_weldObjectsVerticesSelection () {
 
 
 
-void SOLARCHVISION_repositionVerticesSelection () {
+void SOLARCHVISION_repositionVertices_Selection () {
 
   if (Current_ObjectCategory == ObjectCategory_Vertices) { 
    
@@ -15585,7 +15585,7 @@ void SOLARCHVISION_repositionVerticesSelection () {
 
 
 
-void SOLARCHVISION_separateVerticesSelection () {
+void SOLARCHVISION_separateVertices_Selection () {
 
   if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices)) { 
 
@@ -15632,7 +15632,7 @@ void SOLARCHVISION_separateVerticesSelection () {
 
 
 
-void SOLARCHVISION_inserCornerOpenningsSelection () {
+void SOLARCHVISION_inserCornerOpennings_Selection () {
 
   if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) { 
 
@@ -15802,7 +15802,7 @@ void SOLARCHVISION_inserCornerOpenningsSelection () {
 }
 
 
-void SOLARCHVISION_insertParallelOpenningsSelection () {
+void SOLARCHVISION_insertParallelOpennings_Selection () {
 
   if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) { 
 
@@ -15997,7 +15997,7 @@ void SOLARCHVISION_insertParallelOpenningsSelection () {
 
 
 
-void SOLARCHVISION_insertRotatedOpenningsSelection () {
+void SOLARCHVISION_insertRotatedOpennings_Selection () {
 
   if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) { 
 
@@ -16175,7 +16175,7 @@ void SOLARCHVISION_insertRotatedOpenningsSelection () {
 }
 
 
-void SOLARCHVISION_insertEdgeOpenningsSelection () {
+void SOLARCHVISION_insertEdgeOpennings_Selection () {
 
   if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) { 
 
@@ -16873,7 +16873,7 @@ void SOLARCHVISION_tessellateTriangularFaceSelection () {
   }
 }
 
-void SOLARCHVISION_extrudeFaceEdgesSelection () {
+void SOLARCHVISION_extrudeFaceEdges_Selection () {
 
   if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces)) { 
 
@@ -17010,7 +17010,7 @@ void SOLARCHVISION_extrudeFaceEdgesSelection () {
 
 
 
-void SOLARCHVISION_offsetVerticesSelection (int _type, float _amount) {
+void SOLARCHVISION_offsetVertices_Selection (int _type, float _amount) {
 
   if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices)) { 
 
@@ -17119,7 +17119,7 @@ void SOLARCHVISION_offsetVerticesSelection (int _type, float _amount) {
 
 
 
-void SOLARCHVISION_changeVisibilityFacesSelection (int new_vsb) {
+void SOLARCHVISION_changeVisibilityFaces_Selection (int new_vsb) {
 
   if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices)) { 
     
@@ -17149,7 +17149,7 @@ void SOLARCHVISION_changeVisibilityFacesSelection (int new_vsb) {
 }
 
 
-void SOLARCHVISION_changeVisibilityFacesScene (int new_vsb) {
+void SOLARCHVISION_changeVisibilityFaces_Scene (int new_vsb) {
   
   for (int f = allFaces.length - 1; f > 0; f--) { // the first node is null
     allFaces_MTLV[f][3] = new_vsb;
@@ -17158,7 +17158,7 @@ void SOLARCHVISION_changeVisibilityFacesScene (int new_vsb) {
 }
 
 
-void SOLARCHVISION_reverseVisibilityFacesScene () {
+void SOLARCHVISION_reverseVisibilityFaces_Scene () {
   
   for (int f = allFaces.length - 1; f > 0; f--) { // the first node is null
     
@@ -17174,12 +17174,12 @@ void SOLARCHVISION_reverseVisibilityFacesScene () {
 }
 
 
-void SOLARCHVISION_isolateSelection () {
+void SOLARCHVISION_isolate_Selection () {
 
   if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices)) { 
     
-    SOLARCHVISION_changeVisibilityFacesScene(0);
-    SOLARCHVISION_changeVisibilityFacesSelection(1);
+    SOLARCHVISION_changeVisibilityFaces_Scene(0);
+    SOLARCHVISION_changeVisibilityFaces_Selection(1);
   }
 }
 
@@ -32560,6 +32560,8 @@ void mouseClicked () {
               SOLARCHVISION_highlight_in_BAR_b("Cushion");
               BAR_b_Update = 1;  
             }
+
+
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Drop on LandSurface")) {
               set_to_Modify_Drop(0);
@@ -32585,6 +32587,8 @@ void mouseClicked () {
               SOLARCHVISION_drop_Selection();
               WIN3D_Update = 1;                  
             }
+          
+            
 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Get dX")) {
               set_to_Modify_GetLength(0);
@@ -33203,37 +33207,37 @@ void mouseClicked () {
               BAR_b_Update = 1;  
             }
             
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select Near Vertices")) {
-              SOLARCHVISION_selectNearVertices();
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select Near Vertices Selection")) {
+              SOLARCHVISION_selectNearVertices_Selection();
               WIN3D_Update = 1;  
             }
 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Weld Objects Vertices Selection")) {
-              SOLARCHVISION_weldObjectsVerticesSelection();
+              SOLARCHVISION_weldObjectsVertices_Selection();
               WIN3D_Update = 1;  
             }            
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Weld Scene Vertices Selection")) {
-              SOLARCHVISION_weldSceneVerticesSelection();
+              SOLARCHVISION_weldSceneVertices_Selection();
               WIN3D_Update = 1;  
             }
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Reposition Vertices Selection")) {
-              SOLARCHVISION_repositionVerticesSelection();
+              SOLARCHVISION_repositionVertices_Selection();
               WIN3D_Update = 1;  
             }          
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Separate Vertices Selection")) {
-              SOLARCHVISION_separateVerticesSelection();
+              SOLARCHVISION_separateVertices_Selection();
               WIN3D_Update = 1;  
             }          
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select Isolated Vertices")) {
-              SOLARCHVISION_selectIsolatedVertices();
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Select All Isolated Vertices")) {
+              SOLARCHVISION_selectIsolatedVertices_Scene();
               WIN3D_Update = 1;  
             }             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Delete All Isolated Vertices")) {
-              SOLARCHVISION_deleteIsolatedVerticesScene();
+              SOLARCHVISION_deleteIsolatedVertices_Scene();
               WIN3D_Update = 1;  
             }   
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Delete Isolated Vertices Selection")) {
-              SOLARCHVISION_deleteIsolatedVerticesSelection();
+              SOLARCHVISION_deleteIsolatedVertices_Selection();
               WIN3D_Update = 1;  
             }              
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Delete Selection")) {
@@ -33253,19 +33257,19 @@ void mouseClicked () {
               WIN3D_Update = 1;              
             } 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Insert Corner Opennings")) {
-              SOLARCHVISION_inserCornerOpenningsSelection();
+              SOLARCHVISION_inserCornerOpennings_Selection();
               WIN3D_Update = 1;              
             }
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Insert Parallel Opennings")) {
-              SOLARCHVISION_insertParallelOpenningsSelection();              
+              SOLARCHVISION_insertParallelOpennings_Selection();              
               WIN3D_Update = 1;              
             }     
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Insert Rotated Opennings")) {
-              SOLARCHVISION_insertRotatedOpenningsSelection();
+              SOLARCHVISION_insertRotatedOpennings_Selection();
               WIN3D_Update = 1;              
             }       
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Insert Edge Opennings")) {
-              SOLARCHVISION_insertEdgeOpenningsSelection();
+              SOLARCHVISION_insertEdgeOpennings_Selection();
               WIN3D_Update = 1;              
             } 
             
@@ -33282,50 +33286,56 @@ void mouseClicked () {
               WIN3D_Update = 1;              
             }            
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Extrude Face Edges")) {
-              SOLARCHVISION_extrudeFaceEdgesSelection();
+              SOLARCHVISION_extrudeFaceEdges_Selection();
               WIN3D_Update = 1;              
             }    
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Offset(above) Vertices")) {
-              SOLARCHVISION_offsetVerticesSelection(0, abs(Modify_Input_OffsetAmount));
+              SOLARCHVISION_offsetVertices_Selection(0, abs(Modify_Input_OffsetAmount));
               WIN3D_Update = 1;              
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Offset(below) Vertices")) {
-              SOLARCHVISION_offsetVerticesSelection(0, -abs(Modify_Input_OffsetAmount));
+              SOLARCHVISION_offsetVertices_Selection(0, -abs(Modify_Input_OffsetAmount));
               WIN3D_Update = 1;              
             }             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Offset(expand) Vertices")) {
-              SOLARCHVISION_offsetVerticesSelection(1, -abs(Modify_Input_OffsetAmount));
+              SOLARCHVISION_offsetVertices_Selection(1, -abs(Modify_Input_OffsetAmount));
               WIN3D_Update = 1;              
             }   
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Offset(shrink) Vertices")) {
-              SOLARCHVISION_offsetVerticesSelection(1, abs(Modify_Input_OffsetAmount));
+              SOLARCHVISION_offsetVertices_Selection(1, abs(Modify_Input_OffsetAmount));
               WIN3D_Update = 1;              
             }               
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Reverse Visibility of All Faces")) {
-              SOLARCHVISION_reverseVisibilityFacesScene();
+              SOLARCHVISION_reverseVisibilityFaces_Scene();
               WIN3D_Update = 1;              
             } 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Hide All Faces")) {
-              SOLARCHVISION_changeVisibilityFacesScene(0);
+              SOLARCHVISION_changeVisibilityFaces_Scene(0);
               WIN3D_Update = 1;              
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Unhide All Faces")) {
-              SOLARCHVISION_changeVisibilityFacesScene(1);
+              SOLARCHVISION_changeVisibilityFaces_Scene(1);
               WIN3D_Update = 1;              
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Hide Selected Faces")) {
-              SOLARCHVISION_changeVisibilityFacesSelection(0);
+              SOLARCHVISION_changeVisibilityFaces_Selection(0);
               WIN3D_Update = 1;              
             }  
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Unhide Selected Faces")) {
-              SOLARCHVISION_changeVisibilityFacesSelection(1);
+              SOLARCHVISION_changeVisibilityFaces_Selection(1);
               WIN3D_Update = 1;              
             }     
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Isolate Selected Faces")) {
-              SOLARCHVISION_isolateSelection();
+              SOLARCHVISION_isolate_Selection();
               WIN3D_Update = 1;              
             }         
+
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Flatten Selected LandPoints")) {
+              
+              SOLARCHVISION_flatten_selectedLandPoints();
+              WIN3D_Update = 1;              
+            }
    
                
             
@@ -41066,6 +41076,25 @@ void SOLARCHVISION_scale_selectedCameras (float x0, float y0, float z0, float sx
 }
 
 
+void SOLARCHVISION_flatten_selectedLandPoints () {
+
+  for (int q = 1; q < selectedLandPoint_numbers.length; q++) {
+    
+    int OBJ_NUM = selectedLandPoint_numbers[q];
+    
+    if (OBJ_NUM != 0) {      
+        
+      int i = (OBJ_NUM - 1) / LAND_n_J;
+      int j = (OBJ_NUM - 1) % LAND_n_J;
+
+      LAND_MESH[i][j][2] = 0;
+    }
+  }
+
+}
+
+
+
 void SOLARCHVISION_move_selectedLandPoints (float dx, float dy, float dz) {
 
   for (int q = 1; q < selectedLandPoint_numbers.length; q++) {
@@ -43247,8 +43276,8 @@ String[][] BAR_a_Items = {
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Begin New Group3D", "Viewport >> Camera", "Camera", "Section", "Solid", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"},
-                        {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Solid", "Select Section",  "Select Camera", "Select LandPoint", "Select Fractal", "Select Object2D", "Select Group3D", "Select Face", "Select Vertex", "Soft Selection", "Group3D >> Vertex", "Group3D >> Face", "Group3D >> Solid", "Group3D >> Object2D", "Group3D >> Fractal", "Fractal >> Group3D", "Object2D >> Group3D", "Solid >> Group3D", "Face >> Group3D", "Vertex >> Group3D", "Vertex >> Face", "Face >> Vertex", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices", "Select Isolated Vertices"},
-                        {"Edit", "Duplicate Selection (Identical)", "Duplicate Selection (Variation)", "Ungroup Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces"},
+                        {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Solid", "Select Section",  "Select Camera", "Select LandPoint", "Select Fractal", "Select Object2D", "Select Group3D", "Select Face", "Select Vertex", "Soft Selection", "Group3D >> Vertex", "Group3D >> Face", "Group3D >> Solid", "Group3D >> Object2D", "Group3D >> Fractal", "Fractal >> Group3D", "Object2D >> Group3D", "Solid >> Group3D", "Face >> Group3D", "Vertex >> Group3D", "Vertex >> Face", "Face >> Vertex", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices Selection", "Select All Isolated Vertices"},
+                        {"Edit", "Duplicate Selection (Identical)", "Duplicate Selection (Variation)", "Ungroup Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces", "Flatten Selected LandPoints"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Power", "PowerX", "PowerY", "PowerZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
                         {"Match", "Save Current Pivot", "Reset Saved Pivot", "Use Selection Pivot", "Use Origin Pivot", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunkSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunkSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot", "Drop on LandSurface", "Drop on ModelSurface (Up)", "Drop on ModelSurface (Down)"},
                         {"Action", "Undo", "Redo", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Solid Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Solid Graph", "REC. Screenshot", "Stop REC."}
