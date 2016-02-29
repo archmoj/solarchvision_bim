@@ -71,7 +71,7 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 2; 
+int STATION_NUMBER = 3; 
 
 String[][] DEFINED_STATIONS = {
   
@@ -19125,6 +19125,12 @@ void SOLARCHVISION_export_objects () {
               }
   
               if (_turn == 2) {
+                
+                if (u > 1) u = 1;
+                if (u < 0) u = 0;
+                if (v > 1) v = 1;
+                if (v < 0) v = 0;
+                              
                 SOLARCHVISION_OBJprintVtexture(u,v,0);
               }
               
@@ -19173,6 +19179,15 @@ void SOLARCHVISION_export_objects () {
 
   if (Display_EARTH3D != 0) {
     
+    float EARTH_IMAGES_OffsetX = 0;
+    float EARTH_IMAGES_OffsetY = 0;
+    
+    float EARTH_IMAGES_ScaleX = 1;
+    float EARTH_IMAGES_ScaleY = 1;
+
+    float CEN_lon = 0;
+    float CEN_lat = 0;    
+    
     if (objExportMaterialLibrary != 0) {
   
       mtlOutput.println("newmtl EarthSphere");
@@ -19204,6 +19219,16 @@ void SOLARCHVISION_export_objects () {
         //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
         mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map        
         mtlOutput.println("\tmap_d " + objMapsSubfolder + the_filename); // diffuse map
+        
+        EARTH_IMAGES_OffsetX = EARTH_IMAGES_BoundariesX[n][0] + 180;
+        EARTH_IMAGES_OffsetY = EARTH_IMAGES_BoundariesY[n][1] - 90;
+        
+        EARTH_IMAGES_ScaleX = (EARTH_IMAGES_BoundariesX[n][1] - EARTH_IMAGES_BoundariesX[n][0]) / 360.0;
+        EARTH_IMAGES_ScaleY = (EARTH_IMAGES_BoundariesY[n][1] - EARTH_IMAGES_BoundariesY[n][0]) / 180.0;
+    
+        CEN_lon = 0.5 * (EARTH_IMAGES_BoundariesX[n][0] + EARTH_IMAGES_BoundariesX[n][1]);
+        CEN_lat = 0.5 * (EARTH_IMAGES_BoundariesY[n][0] + EARTH_IMAGES_BoundariesY[n][1]);        
+        
       }
     }
     
@@ -19218,14 +19243,7 @@ void SOLARCHVISION_export_objects () {
     }
     
 
-    float EARTH_IMAGES_OffsetX = 0; //EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0] + 180;
-    float EARTH_IMAGES_OffsetY = 0; //EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1] - 90;
-    
-    float EARTH_IMAGES_ScaleX = 1; //(EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][1] - EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0]) / 360.0;
-    float EARTH_IMAGES_ScaleY = 1; //(EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1] - EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][0]) / 180.0;
 
-    float CEN_lon = 0; //0.5 * (EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0] + EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][1]);
-    float CEN_lat = 0; //0.5 * (EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][0] + EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1]);
     
     float delta_Alpha = -2.5;
     float delta_Beta = -2.5; 
@@ -19266,7 +19284,7 @@ void SOLARCHVISION_export_objects () {
             // calculating u and v
             subFace[s][3] = (_lon / EARTH_IMAGES_ScaleX / 360.0 + 0.5); 
             subFace[s][4] = (-_lat / EARTH_IMAGES_ScaleY / 180.0 + 0.5);
-          
+            
             
             // rotating to location coordinates 
             float tb = -LocationLongitude;
@@ -19303,6 +19321,12 @@ void SOLARCHVISION_export_objects () {
             }
 
             if (_turn == 2) {
+              
+              if (u > 1) u = 1;
+              if (u < 0) u = 0;
+              if (v > 1) v = 1;
+              if (v < 0) v = 0;
+              
               SOLARCHVISION_OBJprintVtexture(u,v,0);
             }
             
@@ -21099,7 +21123,11 @@ void SOLARCHVISION_export_objects () {
               String m3_txt = nf(obj_lastVtextureNumber + num_vertices_added - 1, 0);          
               String m4_txt = nf(obj_lastVtextureNumber + num_vertices_added - 0, 0);          
               
-              objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);            
+              objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);  
+              if (objExportBackSides != 0) {
+                obj_lastFaceNumber += 1;
+                objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
+              }            
             }          
           }
         }
@@ -22627,19 +22655,37 @@ void SOLARCHVISION_draw_TROPO3D () {
 
 PImage[] EARTH_IMAGES;
 
+float[][] EARTH_IMAGES_BoundariesX;
+float[][] EARTH_IMAGES_BoundariesY;
+
 String EARTH_IMAGES_Path = "C:/SOLARCHVISION_2015/Input/BackgroundImages/Standard/Maps/EarthSurface";
 
 String[] EARTH_IMAGES_Filenames = sort(getfiles(EARTH_IMAGES_Path));
 
 void Load_EARTH_IMAGES () {
   
-  EARTH_IMAGES = new PImage [EARTH_IMAGES_Filenames.length];
+  int n = EARTH_IMAGES_Filenames.length;
+  
+  EARTH_IMAGES = new PImage [n];
+  
+  EARTH_IMAGES_BoundariesX = new float [n][2];
+  EARTH_IMAGES_BoundariesY = new float [n][2];
   
   for (int i = 0; i < EARTH_IMAGES_Filenames.length; i++) {
-   
-    println("Loading:", EARTH_IMAGES_Path + "/" + EARTH_IMAGES_Filenames[i]);
     
-    EARTH_IMAGES[i] = loadImage(EARTH_IMAGES_Path + "/" + EARTH_IMAGES_Filenames[i]);
+    String MapFilename = EARTH_IMAGES_Path + "/" + EARTH_IMAGES_Filenames[i];
+    
+    String[] Parts = split(EARTH_IMAGES_Filenames[i], '_');
+    
+    EARTH_IMAGES_BoundariesX[i][0] = -float(Parts[1]) * 0.001;
+    EARTH_IMAGES_BoundariesY[i][0] =  float(Parts[2]) * 0.001;
+    EARTH_IMAGES_BoundariesX[i][1] = -float(Parts[3]) * 0.001;
+    EARTH_IMAGES_BoundariesY[i][1] =  float(Parts[4]) * 0.001;
+    
+    println("Loading:", MapFilename);
+    
+    EARTH_IMAGES[i] = loadImage(MapFilename);
+
   }
 }
 
@@ -22652,14 +22698,14 @@ void SOLARCHVISION_draw_EARTH3D () {
     int n = 0;
     if (Day_of_Impact_to_Display < EARTH_IMAGES.length) n = Day_of_Impact_to_Display;
 
-    float EARTH_IMAGES_OffsetX = 0; //EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0] + 180;
-    float EARTH_IMAGES_OffsetY = 0; //EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1] - 90;
+    float EARTH_IMAGES_OffsetX = EARTH_IMAGES_BoundariesX[n][0] + 180;
+    float EARTH_IMAGES_OffsetY = EARTH_IMAGES_BoundariesY[n][1] - 90;
     
-    float EARTH_IMAGES_ScaleX = 1; //(EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][1] - EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0]) / 360.0;
-    float EARTH_IMAGES_ScaleY = 1; //(EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1] - EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][0]) / 180.0;
+    float EARTH_IMAGES_ScaleX = (EARTH_IMAGES_BoundariesX[n][1] - EARTH_IMAGES_BoundariesX[n][0]) / 360.0;
+    float EARTH_IMAGES_ScaleY = (EARTH_IMAGES_BoundariesY[n][1] - EARTH_IMAGES_BoundariesY[n][0]) / 180.0;
 
-    float CEN_lon = 0; //0.5 * (EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][0] + EARTH_IMAGES_BoundariesX[EARTH_IMAGES_Number][1]);
-    float CEN_lat = 0; //0.5 * (EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][0] + EARTH_IMAGES_BoundariesY[EARTH_IMAGES_Number][1]);
+    float CEN_lon = 0.5 * (EARTH_IMAGES_BoundariesX[n][0] + EARTH_IMAGES_BoundariesX[n][1]);
+    float CEN_lat = 0.5 * (EARTH_IMAGES_BoundariesY[n][0] + EARTH_IMAGES_BoundariesY[n][1]);
     
     float delta_Alpha = -2.5;
     float delta_Beta = -2.5;
