@@ -26176,7 +26176,6 @@ void SOLARCHVISION_add_ProjectModel () {
 
 /*
   {
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
     float dx = 10;
     float dy = 10;
     float dz = 45;
@@ -26184,13 +26183,15 @@ void SOLARCHVISION_add_ProjectModel () {
     float y = 10.1;
     float z = 0;
     float rot = 0;
+    
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
     SOLARCHVISION_add_Box_Core(8,0,0,1,1, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
 
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
     SOLARCHVISION_add_Box_Core(5,0,0,1,1, x,y,z, dx/3, dy/3, dz, rot); // building core
     
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
     for (float i = 0; i < 45; i += 3) {
       SOLARCHVISION_add_Mesh2(2,0,0,1,1, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
@@ -26199,7 +26200,6 @@ void SOLARCHVISION_add_ProjectModel () {
   }  
 
   {
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
     float dx = 10;
     float dy = 10;
     float dz = 45;
@@ -26207,13 +26207,15 @@ void SOLARCHVISION_add_ProjectModel () {
     float y = 10.1;
     float z = 0;
     float rot = 0;
+    
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
     SOLARCHVISION_add_Box_Core(8,0,0,1,1, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
 
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
     SOLARCHVISION_add_Box_Core(5,0,0,1,1, x,y,z, dx/3, dy/3, dz, rot); // building core
     
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
     for (float i = 0; i < 45; i += 3) {
       SOLARCHVISION_add_Mesh2(2,0,0,1,1, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
@@ -26222,7 +26224,6 @@ void SOLARCHVISION_add_ProjectModel () {
   }    
 
   {
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
     float dx = 10;
     float dy = 10;
     float dz = 45;
@@ -26230,13 +26231,15 @@ void SOLARCHVISION_add_ProjectModel () {
     float y = 10.1;
     float z = 0;
     float rot = 0;
+    
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
     SOLARCHVISION_add_Box_Core(8,0,0,1,1, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
 
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
     SOLARCHVISION_add_Box_Core(5,0,0,1,1, x,y,z, dx/3, dy/3, dz, rot); // building core
     
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
     for (float i = 0; i < 45; i += 3) {
       SOLARCHVISION_add_Mesh2(2,0,0,1,1, x-dx,y-dy,i, x+dx,y+dy,i); // floors
       
@@ -26246,7 +26249,7 @@ void SOLARCHVISION_add_ProjectModel () {
 
 
   {
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
     float d = 1.0;
     for (float i = 0; i < 45; i += d) {
       SOLARCHVISION_add_H_shade(1,0,0,1,1, 30,0,i, 20,d, 90-4*i,0); // south
@@ -26254,7 +26257,7 @@ void SOLARCHVISION_add_ProjectModel () {
   }
   
   {
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
     float d = 1.0;
     for (float i = -10; i <= 10; i += d) {
       SOLARCHVISION_add_V_shade(6,0,0,1,1, i-30,0,22.5, 45,d, 4.5*i,0); // south
@@ -26284,8 +26287,6 @@ void SOLARCHVISION_add_ProjectModel () {
       
       // Z-axis
       defaultPivotType = 3; SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,0); defaultPivotType = 0;
-      
-      int xtr = 3; // Z-axis
       
       SOLARCHVISION_add_V_shade(3,0,0,1,1, x,y,z, 45,d, 0,0); // south
     }    
@@ -26330,7 +26331,6 @@ void SOLARCHVISION_add_ProjectModel () {
   
 
   {  
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
     float dx = 5;
     float dy = 5;
     float dz = 5;
@@ -26338,16 +26338,18 @@ void SOLARCHVISION_add_ProjectModel () {
     float y = -30;
     float z = 0;
     float rot = 0;
+    
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);    
     SOLARCHVISION_add_House_Core(7,0,0,1,1, x,y,z, dx,dy,dz, dz, rot); // house 
     SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1);
    } 
 
   {
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
     float r = 5;    
     float x = 0;
     float y = -30;
     float z = r;
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
     //SOLARCHVISION_add_CrystalSphere(1,0,0,1,1, x,y,z, r, 2, 0, 0);
     SOLARCHVISION_add_CrystalSphere(1,0,0,1,1, x,y,z, r, 4, 0, 0);
     SOLARCHVISION_add_Solid(x,y,z, 2,2,2, r,r,r, 0,0,0, 1);
@@ -26355,7 +26357,6 @@ void SOLARCHVISION_add_ProjectModel () {
 */
 
   {
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
     float dx = 100;
     float dy = 100;
     float dz = 10;
@@ -26363,6 +26364,7 @@ void SOLARCHVISION_add_ProjectModel () {
     float y = 0;
     float z = -dz;    
     float rot = 0;
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
     SOLARCHVISION_add_Box_Core(7,0,0,1,1, x,y,z, dx, dy, dz, rot);
     //SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
   }  
@@ -26378,7 +26380,6 @@ void SOLARCHVISION_add_ProjectModel () {
   Create_Mesh_as_Solid = keep_Create_Mesh_as_Solid;
 
   {
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
     float dx = 24;
     float dy = 24;
     float dz = 18;
@@ -26386,13 +26387,14 @@ void SOLARCHVISION_add_ProjectModel () {
     float y = 0;
     float z = 0;    
     float rot = 0;
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
     SOLARCHVISION_add_Box_Core(8,0,0,1,1, x,y,z, dx, dy, dz, rot); // facades
     SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
 
     
     for (float i = 6; i <= dz; i += 6) {
       
-      SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
+      SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
       
       if (i != dz) {
 
@@ -26409,10 +26411,10 @@ void SOLARCHVISION_add_ProjectModel () {
       SOLARCHVISION_add_Object2Ds_Mesh2(1, 10, x-dx/3.0,y-dy,i, x+dx,y-dy/3.0,i); // people
     }   
     
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
     SOLARCHVISION_add_PolygonHyper(0,1,0,1,1, x-0.5*dx,y+0.5*dy,z+dz+4.5, 9, 9, 4, 0);  // hyper
     
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
     for (float i = 0; i < dy; i += 6) {
       SOLARCHVISION_add_H_shade(1,0,0,1,1, x+0.5*dx,-i,z+dz+2, dx,2, -45,0); // south
     }     
@@ -26421,7 +26423,6 @@ void SOLARCHVISION_add_ProjectModel () {
 
   {
     SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
-       
 
     SOLARCHVISION_add_H_shade(1,0,0,1,1, 12,-24,3, 24,6, 0,0); // south
     SOLARCHVISION_add_H_shade(1,0,0,1,1, -12,-24,9, 24,1, 0,0); // south
@@ -26449,7 +26450,6 @@ void SOLARCHVISION_add_ProjectModel () {
   }
 
   {  
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
     float dx = 12;
     float dy = 9;
     float dz = 6;
@@ -26457,12 +26457,12 @@ void SOLARCHVISION_add_ProjectModel () {
     float y = 30;
     float z = 9;    
     float rot = 30;
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
     SOLARCHVISION_add_Box_Core(4,0,0,1,1, x,y,z, dx, dy, dz, rot);
     SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
   }   
 
   {  
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
     float dx = 5;
     float dy = 5;
     float dz = 5;
@@ -26470,23 +26470,31 @@ void SOLARCHVISION_add_ProjectModel () {
     float y = -50;
     float z = 0;
     float rot = 0;
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
     SOLARCHVISION_add_House_Core(6,0,0,1,1, x,y,z, dx,dy,dz, dz, rot); // house 
     SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1);
    } 
 
   {
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
     float r = 5;    
     float x = 0;
     float y = -50;
     float z = r;
+    float rot = 0;
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
     SOLARCHVISION_add_CrystalSphere(2,0,0,1,1, x,y,z, r, 3, 0, 0);
     SOLARCHVISION_add_Solid(x,y,z, 2,2,2, r,r,r, 0,0,0, 1);
   }      
 
-  SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
-  SOLARCHVISION_add_PolygonHyper(0,1,0,1,1, -50,-50,4.5, 9, 9, 6, 0);  // hyper
-
+  {
+    float r = 5;    
+    float x = -50;
+    float y = -50;
+    float z = r;
+    float rot = 0;    
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
+    SOLARCHVISION_add_PolygonHyper(0,1,0,1,1, x,y,z, 2 * r, 2 * r, 6, 0);  // hyper
+  }
 
   SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
   
