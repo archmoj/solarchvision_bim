@@ -19,9 +19,8 @@ int undo_pointer = -1; // -1:current, 0: previous, 1, 2, 3, etc.
 int maximum_undo_number = 3;
 
 
-
-
-float objExportScale = 0.001; 
+float BiosphereStep = 5.0; //2.5; // 5: 5 degrees
+float objExportScale = 0.001; // 0.001: 1km --> 1
 int objFlipZYaxis = 1; // 1: to fit in Unity3D
 
 int objExportPrecisionVertex = 6; 
@@ -35,6 +34,7 @@ int objExportBakingResolution = 16;
 int objExportPalletResolution = 256;
 int objExportUsePalletOrBakeFaces = 0; // 0-1
 
+ 
 
 
 
@@ -19010,8 +19010,10 @@ void SOLARCHVISION_export_objects () {
     
         if (Display_TROPO3D_TEXTURE != 0) {
           
-          int n = 0;
-          if (Day_of_Impact_to_Display < TROPO_IMAGES.length) n = Day_of_Impact_to_Display;
+          //int n = 0;
+          //if (Day_of_Impact_to_Display < TROPO_IMAGES.length) n = Day_of_Impact_to_Display;
+          
+          int n = TROPO_level; // <<<<<<<<
                 
           String old_TEXTURE_path = TROPO_IMAGES_Path + "/" + TROPO_IMAGES_Filenames[n];
           
@@ -19048,8 +19050,8 @@ void SOLARCHVISION_export_objects () {
       float CEN_lon = 0; //0.5 * (TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][1]);
       float CEN_lat = 0; //0.5 * (TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1]);
       
-      float delta_Alpha = -2.5; 
-      float delta_Beta = -2.5;
+      float delta_Alpha = -BiosphereStep; 
+      float delta_Beta = -BiosphereStep;
       
       float r = FLOAT_R_earth + (TROPO_IMAGES.length - TROPO_level) * 17000;
   
@@ -19244,8 +19246,8 @@ void SOLARCHVISION_export_objects () {
 
 
     
-    float delta_Alpha = -2.5;
-    float delta_Beta = -2.5; 
+    float delta_Alpha = -BiosphereStep;
+    float delta_Beta = -BiosphereStep; 
     
     float r = FLOAT_R_earth;
 
@@ -22536,8 +22538,8 @@ void SOLARCHVISION_draw_windFlow () {
 
 PImage[] TROPO_IMAGES;
 
-//String TROPO_IMAGES_Path = "C:/SOLARCHVISION_2015/Output/2015-12-04/GDPS_00/World/Winds";
-String TROPO_IMAGES_Path = "C:/SOLARCHVISION_2015/Output/2015-12-04/GDPS_00/World/Winds_less";
+String TROPO_IMAGES_Path = "C:/SOLARCHVISION_2015/Output/2015-12-04/GDPS_00/World/Winds";
+//String TROPO_IMAGES_Path = "C:/SOLARCHVISION_2015/Output/2015-12-04/GDPS_00/World/Winds_less";
 
 String[] TROPO_IMAGES_Filenames;
 
@@ -22572,8 +22574,8 @@ void SOLARCHVISION_draw_TROPO3D () {
       float CEN_lon = 0; //0.5 * (TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesX[TROPO_IMAGES_Number][1]);
       float CEN_lat = 0; //0.5 * (TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][0] + TROPO_IMAGES_BoundariesY[TROPO_IMAGES_Number][1]);
       
-      float delta_Alpha = -2.5;
-      float delta_Beta = -2.5;
+      float delta_Alpha = -BiosphereStep;
+      float delta_Beta = -BiosphereStep;
       
       float r = FLOAT_R_earth + (TROPO_IMAGES.length - TROPO_level) * 17000;
       
@@ -22706,8 +22708,8 @@ void SOLARCHVISION_draw_EARTH3D () {
     float CEN_lon = 0.5 * (EARTH_IMAGES_BoundariesX[n][0] + EARTH_IMAGES_BoundariesX[n][1]);
     float CEN_lat = 0.5 * (EARTH_IMAGES_BoundariesY[n][0] + EARTH_IMAGES_BoundariesY[n][1]);
     
-    float delta_Alpha = -2.5;
-    float delta_Beta = -2.5;
+    float delta_Alpha = -BiosphereStep;
+    float delta_Beta = -BiosphereStep;
     
     float r = FLOAT_R_earth;
     
@@ -35467,6 +35469,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
       SKY3D_TESSELLATION = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_TESSELLATION" , SKY3D_TESSELLATION, 0, 4, 1), 1));   
       SKY3D_scale = MySpinner.update(X_control, Y_control, 0,1,0, "SKY3D_scale" , SKY3D_scale, 0.0000001, 1000000, -2);
 
+      BiosphereStep = roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "BiosphereStep" , BiosphereStep, 1, 10, 1), 1);
+
       OBJECTS_scale = MySpinner.update(X_control, Y_control, 0,1,0, "OBJECTS_scale" , OBJECTS_scale, 0.0000001, 1000000, -2);      
 
       Load_URBAN_MESH = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Load_URBAN_MESH" , Load_URBAN_MESH, 0, 1, 1), 1));
@@ -35885,6 +35889,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
       Export_STUDY_info_node = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Export ASCII data", Export_STUDY_info_node, 0, 1, 1), 1));
       Export_STUDY_info_norm = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Export ASCII statistics", Export_STUDY_info_norm, 0, 1, 1), 1));
       Export_STUDY_info_prob = int(roundTo(MySpinner.update(X_control, Y_control, 1,0,0, "Export ASCII probabilities", Export_STUDY_info_prob, 0, 1, 1), 1));
+      
       
       objExportScale = roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objExportScale" , objExportScale, .000001, 1000000, -0.1), 1);
       objFlipZYaxis = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "objFlipZYaxis" , objFlipZYaxis, 0, 1, 1), 1));
@@ -46012,6 +46017,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
 
   newChild1.setInt("addToLastGroup3D", addToLastGroup3D);
   
+  newChild1.setFloat("BiosphereStep", BiosphereStep);
   newChild1.setFloat("objExportScale", objExportScale);
   newChild1.setInt("objFlipZYaxis", objFlipZYaxis);
   newChild1.setInt("objExportPrecisionVertex", objExportPrecisionVertex);
@@ -47183,6 +47189,8 @@ void SOLARCHVISION_load_project (String myFile) {
 
       addToLastGroup3D = children0[L].getInt("addToLastGroup3D");      
 
+      BiosphereStep = children0[L].getFloat("BiosphereStep");
+      
       objExportScale = children0[L].getFloat("objExportScale");
       objFlipZYaxis = children0[L].getInt("objFlipZYaxis");
       objExportPrecisionVertex = children0[L].getInt("objExportPrecisionVertex");
