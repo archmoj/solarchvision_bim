@@ -169,7 +169,7 @@ int defaultMaterial = 7;
 int defaultTessellation = 0;
 int defaultLayer = 0;
 int defaultVisibility = 1;
-int defaultSolarPivotType = 0;
+int defaultPivotType = 0;
 
 
 
@@ -259,7 +259,7 @@ int Current_ObjectCategory = ObjectCategory_Group3Ds;
 
 int Create_Mesh_as_Solid = 0; // 0:Mesh 1:Solid
 
-int View_Select_Create_Modify = 0; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunkSize 12:LeafSize 13:AllFractalProps 14:SolarPivot 15:FaceNormal 16:FaceFirstVertex 17:Drop 18:GetLength 19:PowerX 20:PowerY 21:PowerZ 22:PowerXYZ 
+int View_Select_Create_Modify = 0; //-17:DistMouseXY/TargetRollXY/TargetRollZ -16:PanY/TargetRollXY/TargetRollZ -15:PanX/TargetRollXY/TargetRollZ -14:Pan/TargetRoll -13:CameraDistance/TargetRollXY/TargetRollZ -12:TargetRoll/Pan -11:TargetRollXY/TargetRollZ -10:TargetRoll/Pan -9:TargetRollXY/TargetRollZ -8:AllModelSize -7:SkydomeSize -6:Truck/Orbit -5:3DModelSize/Pan/TargetRoll -4:Pan/Height -3:Zoom/Orbit/Pan -2:RectSelect -1:PickSelect 0:Create 1:Move 2:Scale 3:Rotate 4:Seed/Material 5:Tessellation 6:Layer 7:Visibility 8:DegreeMax 9:DegreeDif 10:DegreeMin 11:TrunkSize 12:LeafSize 13:AllFractalProps 14:Pivot 15:FaceNormal 16:FaceFirstVertex 17:Drop 18:GetLength 19:PowerX 20:PowerY 21:PowerZ 22:PowerXYZ 
 int View_XYZ_ChangeOption = 0; // 0-1
 int Modify_Object_Parameters = 0; //to modify objects with several parameters e.g. Fractals
 
@@ -1372,7 +1372,7 @@ int pre_selectedGroup3D_displayPivot;
 int pre_selectedGroup3D_displayEdges;
 int pre_selectedGroup3D_displayBox;      
 
-int pre_selectedGroup3D_displaySolarPivots;
+int pre_selectedGroup3D_displayPivots;
 int pre_selectedFace_displayEdges;
 int pre_selectedFace_displayVertexCount;
 int pre_selectedVertex_displayVertices;
@@ -1766,7 +1766,7 @@ int selection_alignY = 0;
 int selection_alignZ = 0;
 
 
-int selectedGroup3D_displaySolarPivots = 1;
+int selectedGroup3D_displayPivots = 1;
 int selectedGroup3D_displayPivot = 1;
 int selectedGroup3D_displayEdges = 1; //0;
 int selectedGroup3D_displayBox = 1;
@@ -2364,7 +2364,7 @@ void draw () {
         pre_selectedGroup3D_displayEdges = selectedGroup3D_displayEdges;
         pre_selectedGroup3D_displayBox = selectedGroup3D_displayBox;        
 
-        pre_selectedGroup3D_displaySolarPivots = selectedGroup3D_displaySolarPivots;
+        pre_selectedGroup3D_displayPivots = selectedGroup3D_displayPivots;
         pre_selectedFace_displayEdges = selectedFace_displayEdges;
         pre_selectedFace_displayVertexCount = selectedFace_displayVertexCount;
         pre_selectedVertex_displayVertices = selectedVertex_displayVertices;
@@ -2664,7 +2664,7 @@ void draw () {
           WIN3D_Update = 1;
         }     
 
-        if (pre_selectedGroup3D_displaySolarPivots != selectedGroup3D_displaySolarPivots) {
+        if (pre_selectedGroup3D_displayPivots != selectedGroup3D_displayPivots) {
           WIN3D_Update = 1;
         }     
 
@@ -14029,7 +14029,7 @@ void SOLARCHVISION_beginNewGroup3D () {
   
   allGroup3Ds_PivotXYZSSSRRR = (float[][]) concat(allGroup3Ds_PivotXYZSSSRRR, newObject_PivotXYZSSSRRR);
 
-  int[][] newObject_Pivot = {{defaultSolarPivotType}};
+  int[][] newObject_Pivot = {{defaultPivotType}};
 
   allGroup3Ds_PivotType = (int[][]) concat(allGroup3Ds_PivotType, newObject_Pivot);
   
@@ -18002,7 +18002,7 @@ void SOLARCHVISION_add_Octahedron (int m, int tes, int lyr, int vsb, int spv, fl
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv;
+  defaultPivotType = spv;
   
   float teta = rot * PI / 180.0;
   
@@ -18098,7 +18098,7 @@ void SOLARCHVISION_add_House_Core (int m, int tes, int lyr, int vsb, int spv, fl
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv;
+  defaultPivotType = spv;
   
   float teta = rot * PI / 180.0;
 
@@ -18198,7 +18198,7 @@ void SOLARCHVISION_add_Box_Core (int m, int tes, int lyr, int vsb, int spv, floa
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv;
+  defaultPivotType = spv;
   
   float teta = rot * PI / 180.0;
 
@@ -18254,7 +18254,7 @@ void SOLARCHVISION_add_Box_Corners (int m, int tes, int lyr, int vsb, int spv, f
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv;
+  defaultPivotType = spv;
   
   int t1 = SOLARCHVISION_add_Vertex(x2, y2, z2);
   int t2 = SOLARCHVISION_add_Vertex(x1, y2, z2);
@@ -18309,7 +18309,7 @@ void SOLARCHVISION_add_H_shade (int m, int tes, int lyr, int vsb, int spv, float
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv;
+  defaultPivotType = spv;
   
   float rx = 0.5 * d * cos_ang(Beta);
   float ry = 0.5 * d * sin_ang(Beta);
@@ -18353,7 +18353,7 @@ void SOLARCHVISION_add_V_shade (int m, int tes, int lyr, int vsb, int spv, float
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv;
+  defaultPivotType = spv;
   
   float dx = d * cos_ang(t + t0 - 90);
   float dy = d * sin_ang(t + t0 - 90);
@@ -18394,7 +18394,7 @@ void SOLARCHVISION_add_Mesh2 (int m, int tes, int lyr, int vsb, int spv, float x
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv; 
+  defaultPivotType = spv; 
   
   float x2 = x3;
   float y2 = y3;
@@ -18436,7 +18436,7 @@ void SOLARCHVISION_add_Mesh4 (int m, int tes, int lyr, int vsb, int spv, float x
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv;  
+  defaultPivotType = spv;  
   
   int v1 = SOLARCHVISION_add_Vertex(x1, y1, z1);
   int v2 = SOLARCHVISION_add_Vertex(x2, y2, z2);
@@ -18456,7 +18456,7 @@ void SOLARCHVISION_add_Mesh3 (int m, int tes, int lyr, int vsb, int spv, float x
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv;
+  defaultPivotType = spv;
   
   int v1 = SOLARCHVISION_add_Vertex(x1, y1, z1);
   int v2 = SOLARCHVISION_add_Vertex(x2, y2, z2);
@@ -18475,7 +18475,7 @@ void SOLARCHVISION_add_Mesh5 (int m, int tes, int lyr, int vsb, int spv, float x
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv;
+  defaultPivotType = spv;
   
   int v1 = SOLARCHVISION_add_Vertex(x1, y1, z1);
   int v2 = SOLARCHVISION_add_Vertex(x2, y2, z2);
@@ -18496,7 +18496,7 @@ void SOLARCHVISION_add_Polygon (int m, int tes, int lyr, int vsb, int spv, float
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv;
+  defaultPivotType = spv;
   
   int[] newFace = {SOLARCHVISION_add_Vertex(cx + r * cos_ang(0), cy + r * sin_ang(0), cz)};
   for (int i = 1; i < n; i++) {
@@ -18517,7 +18517,7 @@ void SOLARCHVISION_add_PolygonExtrude (int m, int tes, int lyr, int vsb, int spv
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv;
+  defaultPivotType = spv;
   
   int[] vT = new int [n];
   int[] vB = new int [n];
@@ -18564,7 +18564,7 @@ void SOLARCHVISION_add_PolygonHyper (int m, int tes, int lyr, int vsb, int spv, 
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv;
+  defaultPivotType = spv;
   
   int[] newFace = {SOLARCHVISION_add_Vertex(cx + r * cos_ang(rot), cy + r * sin_ang(rot), cz - 0.5 * h)};
   for (int i = 1; i < n; i++) {
@@ -18585,7 +18585,7 @@ void SOLARCHVISION_add_Icosahedron (int m, int tes, int lyr, int vsb, int spv, f
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv;
+  defaultPivotType = spv;
   
   int[] vT = new int [6];
   int[] vB = new int [6];
@@ -18657,7 +18657,7 @@ void SOLARCHVISION_add_QuadSphere (int m, int tes, int lyr, int vsb, int spv, fl
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv; 
+  defaultPivotType = spv; 
   
   // i.e. Rhombic Triacontahedron
   
@@ -18873,7 +18873,7 @@ void SOLARCHVISION_add_Face_afterSphericalTessellation (int m, int tes, int lyr,
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv;
+  defaultPivotType = spv;
   
   int A = f[0];
   int B = f[1];
@@ -21899,7 +21899,7 @@ void SOLARCHVISION_delete_Group3Ds () {
 
   defaultMaterial = 7;
   defaultTessellation = 0;
-  defaultSolarPivotType = 0;
+  defaultPivotType = 0;
 
   SOLARCHVISION_beginNewGroup3D();
  
@@ -22117,7 +22117,7 @@ void SOLARCHVISION_add_ParametricSurface (int m, int tes, int lyr, int vsb, int 
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv; 
+  defaultPivotType = spv; 
   
   if (m == -1) defaultMaterial = 0;
   else defaultMaterial = m;  
@@ -28302,7 +28302,7 @@ void SOLARCHVISION_add_CrystalSphere (int m, int tes, int lyr, int vsb, int spv,
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv;
+  defaultPivotType = spv;
   
   int[] vT = new int [6];
   int[] vB = new int [6];
@@ -28443,7 +28443,7 @@ void SOLARCHVISION_add_SuperSphere (int m, int tes, int lyr, int vsb, int spv, f
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv; 
+  defaultPivotType = spv; 
   
   SOLARCHVISION_add_CrystalSphere(m, tes, lyr, vsb, spv, cx, cy, cz, 1, Tessellation, -1, 90); // passing with isSky:-1
 
@@ -28488,7 +28488,7 @@ void SOLARCHVISION_add_SuperCylinder (int m, int tes, int lyr, int vsb, int spv,
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv; 
+  defaultPivotType = spv; 
   
   int[] vT = new int [n];
   int[] vB = new int [n];
@@ -28668,7 +28668,7 @@ void SOLARCHVISION_addTempObjectToScene (int m, int tes, int lyr, int vsb, int s
   defaultTessellation = tes;
   defaultLayer = lyr;
   defaultVisibility = vsb;
-  defaultSolarPivotType = spv;
+  defaultPivotType = spv;
   
   if (m == -1) defaultMaterial = 0;
   else defaultMaterial = m;
@@ -32633,7 +32633,7 @@ void mouseClicked () {
               ROLLOUT_Update = 1;
             }   
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected Solar Pivots")) {
-              selectedGroup3D_displaySolarPivots = (selectedGroup3D_displaySolarPivots + 1) % 2;
+              selectedGroup3D_displayPivots = (selectedGroup3D_displayPivots + 1) % 2;
               
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
@@ -32968,17 +32968,17 @@ void mouseClicked () {
               BAR_b_Update = 1;  
             }            
             
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("SolarPivot")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pivot")) {
               set_to_Modify_Pivot(0);
               SOLARCHVISION_highlight_in_BAR_b("SPvt0");
               BAR_b_Update = 1;  
             }
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pick SolarPivot")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Pick Pivot")) {
               set_to_Modify_Pivot(1);
               SOLARCHVISION_highlight_in_BAR_b("SPvt1");
               BAR_b_Update = 1;  
             }
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Assign SolarPivot")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Assign Pivot")) {
               set_to_Modify_Pivot(2);
               SOLARCHVISION_highlight_in_BAR_b("SPvt2");
               BAR_b_Update = 1;  
@@ -35841,7 +35841,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
     if (ROLLOUT_child == 5) { // Selection
     
-      selectedGroup3D_displaySolarPivots = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedGroup3D_displaySolarPivots" , selectedGroup3D_displaySolarPivots, 0, 1, 1), 1));
+      selectedGroup3D_displayPivots = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedGroup3D_displayPivots" , selectedGroup3D_displayPivots, 0, 1, 1), 1));
       selectedGroup3D_displayPivot = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedGroup3D_displayPivot" , selectedGroup3D_displayPivot, 0, 1, 1), 1));
       selectedGroup3D_displayBox = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedGroup3D_displayBox" , selectedGroup3D_displayBox, 0, 1, 1), 1));
       selectedGroup3D_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedGroup3D_displayEdges" , selectedGroup3D_displayEdges, 0, 1, 1), 1));
@@ -37307,7 +37307,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     
     
     
-    if (selectedGroup3D_displaySolarPivots != 0) {
+    if (selectedGroup3D_displayPivots != 0) {
       
       pushMatrix();
     
@@ -43549,7 +43549,7 @@ String[][] BAR_a_Items = {
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Solid", "Select Section",  "Select Camera", "Select LandPoint", "Select Fractal", "Select Object2D", "Select Group3D", "Select Face", "Select Vertex", "Soft Selection", "Group3D >> Vertex", "Group3D >> Face", "Group3D >> Solid", "Group3D >> Object2D", "Group3D >> Fractal", "Fractal >> Group3D", "Object2D >> Group3D", "Solid >> Group3D", "Face >> Group3D", "Vertex >> Group3D", "Vertex >> Face", "Face >> Vertex", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices Selection", "Select All Isolated Vertices"},
                         {"Edit", "Duplicate Selection (Identical)", "Duplicate Selection (Variation)", "Ungroup Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces", "Flatten Selected LandPoints"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Power", "PowerX", "PowerY", "PowerZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
-                        {"Match", "Save Current Pivot", "Reset Saved Pivot", "Use Selection Pivot", "Use Origin Pivot", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunkSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunkSize", "Assign LeafSize", "Assign AllFractalProps", "Assign SolarPivot", "Drop on LandSurface", "Drop on ModelSurface (Up)", "Drop on ModelSurface (Down)"},
+                        {"Match", "Save Current Pivot", "Reset Saved Pivot", "Use Selection Pivot", "Use Origin Pivot", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunkSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunkSize", "Assign LeafSize", "Assign AllFractalProps", "Assign Pivot", "Drop on LandSurface", "Drop on ModelSurface (Up)", "Drop on ModelSurface (Down)"},
                         {"Action", "Undo", "Redo", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Solid Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Solid Graph", "REC. Screenshot", "Stop REC."}
 
                       };
@@ -43911,7 +43911,7 @@ String[][] BAR_b_Items = {
                           
                           //{"1", "<pvt>", ">pvt<", "|pvt|", ".pvt.", "Get/Set Pivot", "1.0"},
                           
-                          //{"1", "SPvt0", "SPvt1", "SPvt2", "SolarPivot", "1.0"},
+                          //{"1", "SPvt0", "SPvt1", "SPvt2", "Pivot", "1.0"},
                           
                           //{"1", "dgMax0", "dgMax1", "dgMax2", "Change DegreeMax", "1.0"},
                           //{"1", "dgDif0", "dgDif1", "dgDif2", "Change DegreeDif", "1.0"},
@@ -45959,7 +45959,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("selectedFace_displayEdges", selectedFace_displayEdges);
   newChild1.setInt("selectedFace_displayVertexCount", selectedFace_displayVertexCount);
   newChild1.setInt("selectedVertex_displayVertices", selectedVertex_displayVertices);
-  newChild1.setInt("selectedGroup3D_displaySolarPivots", selectedGroup3D_displaySolarPivots);  
+  newChild1.setInt("selectedGroup3D_displayPivots", selectedGroup3D_displayPivots);  
   newChild1.setInt("selectedGroup3D_displayPivot", selectedGroup3D_displayPivot);
   newChild1.setInt("selectedGroup3D_displayEdges", selectedGroup3D_displayEdges);
   newChild1.setInt("selectedGroup3D_displayBox", selectedGroup3D_displayBox);
@@ -46317,7 +46317,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     int ni = allGroup3Ds_num + 1;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
-      newChild2 = newChild1.addChild("SolarPivotXYZ");
+      newChild2 = newChild1.addChild("PivotXYZ");
       newChild2.setInt("id", i);
       String lineSTR = "";
       for (int j = 0; j < allGroup3Ds_PivotXYZSSSRRR[i].length; j++) {
@@ -46333,7 +46333,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     int ni = allGroup3Ds_num + 1;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
-      newChild2 = newChild1.addChild("SolarPivotType");
+      newChild2 = newChild1.addChild("PivotType");
       newChild2.setInt("id", i);
       String lineSTR = "";
       for (int j = 0; j < allGroup3Ds_PivotType[i].length; j++) {
@@ -47130,7 +47130,7 @@ void SOLARCHVISION_load_project (String myFile) {
       selection_alignY = children0[L].getInt("selection_alignY");
       selection_alignZ = children0[L].getInt("selection_alignZ");
 
-      selectedGroup3D_displaySolarPivots = children0[L].getInt("selectedGroup3D_displaySolarPivots");
+      selectedGroup3D_displayPivots = children0[L].getInt("selectedGroup3D_displayPivots");
       selectedGroup3D_displayPivot = children0[L].getInt("selectedGroup3D_displayPivot");
       selectedGroup3D_displayEdges = children0[L].getInt("selectedGroup3D_displayEdges");
       selectedGroup3D_displayBox = children0[L].getInt("selectedGroup3D_displayBox");
@@ -47486,7 +47486,7 @@ void SOLARCHVISION_load_project (String myFile) {
       
       allGroup3Ds_PivotXYZSSSRRR = new float [ni][9];
       
-      XML[] children1 = children0[L].getChildren("SolarPivotXYZ");         
+      XML[] children1 = children0[L].getChildren("PivotXYZ");         
       for (int i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
@@ -47502,7 +47502,7 @@ void SOLARCHVISION_load_project (String myFile) {
       
       allGroup3Ds_PivotType = new int [ni][1];
       
-      XML[] children1 = children0[L].getChildren("SolarPivotType");         
+      XML[] children1 = children0[L].getChildren("PivotType");         
       for (int i = 0; i < ni; i++) {
         String lineSTR = children1[i].getContent();
         String[] parts = split(lineSTR, ',');
