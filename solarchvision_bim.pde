@@ -1,9 +1,12 @@
-// could export tropo layer in obj format
+// local pivot
 
 
 // could add create face
 // could add create vertex
 // drop functions only works for living objects and not at Group3D level
+
+// Note: different tropo layer exported in obj format but only at frame 0.
+// Note: still cannot use regional layers as tropo.
 
 // should check if we load models correct?
 
