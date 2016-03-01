@@ -1368,6 +1368,8 @@ int pre_selection_alignX;
 int pre_selection_alignY;
 int pre_selection_alignZ;
       
+int pre_selected_displayReferencePivot;
+
 int pre_selectedGroup3D_displayPivot;
 int pre_selectedGroup3D_displayEdges;
 int pre_selectedGroup3D_displayBox;      
@@ -1764,6 +1766,8 @@ int selection_alignX = 0;
 int selection_alignY = 0;
 int selection_alignZ = 0;
 
+
+int selected_displayReferencePivot = 1;
 
 int selectedGroup3D_displayPivot = 1;
 int selectedGroup3D_displayEdges = 1; //0;
@@ -2358,10 +2362,12 @@ void draw () {
         pre_selection_alignY = selection_alignY;
         pre_selection_alignZ = selection_alignZ;
         
+        pre_selected_displayReferencePivot = selected_displayReferencePivot;
+        
         pre_selectedGroup3D_displayPivot = selectedGroup3D_displayPivot;
         pre_selectedGroup3D_displayEdges = selectedGroup3D_displayEdges;
         pre_selectedGroup3D_displayBox = selectedGroup3D_displayBox;        
-
+        
         pre_selectedFace_displayEdges = selectedFace_displayEdges;
         pre_selectedFace_displayVertexCount = selectedFace_displayVertexCount;
         pre_selectedVertex_displayVertices = selectedVertex_displayVertices;
@@ -2649,9 +2655,13 @@ void draw () {
         }        
 
 
-        if (pre_selectedGroup3D_displayPivot != selectedGroup3D_displayPivot) {
+        if (pre_selected_displayReferencePivot != selected_displayReferencePivot) {
           WIN3D_Update = 1;          
         }
+        
+        if (pre_selectedGroup3D_displayPivot != selectedGroup3D_displayPivot) {
+          WIN3D_Update = 1;
+        }             
         
         if (pre_selectedGroup3D_displayEdges != selectedGroup3D_displayEdges) {
           WIN3D_Update = 1;          
@@ -3020,7 +3030,7 @@ void SOLARCHVISION_draw_WIN3D () {
     
     SOLARCHVISION_draw_TROPO3D();
     
-    SOLARCHVISION_draw_Land();
+    SOLARCHVISION_draw_land();
 
     SOLARCHVISION_draw_Group3Ds();
 
@@ -22989,7 +22999,7 @@ void SOLARCHVISION_draw_STAR3D () {
 
 
 
-void SOLARCHVISION_draw_Land () {
+void SOLARCHVISION_draw_land () {
 
   if ((Display_LAND_MESH == 1) && (Load_LAND_MESH == 1)) {
     
@@ -32625,19 +32635,25 @@ void mouseClicked () {
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
             }   
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 3-D Pivot")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected REF Pivot")) {
+              selected_displayReferencePivot = (selected_displayReferencePivot + 1) % 2;
+              
+              WIN3D_Update = 1;  
+              ROLLOUT_Update = 1;
+            }        
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected Group Pivot")) {
               selectedGroup3D_displayPivot = (selectedGroup3D_displayPivot + 1) % 2;
               
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
-            }          
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 3-D Edges")) {
+            }  
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected Group Edges")) {
               selectedGroup3D_displayEdges = (selectedGroup3D_displayEdges + 1) % 2;
               
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
             }    
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 3-D Box")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected Group Box")) {
               selectedGroup3D_displayBox = (selectedGroup3D_displayBox + 1) % 2;
               
               WIN3D_Update = 1;  
@@ -35829,6 +35845,7 @@ void SOLARCHVISION_draw_ROLLOUT () {
     if (ROLLOUT_child == 5) { // Selection
     
       selectedGroup3D_displayPivot = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedGroup3D_displayPivot" , selectedGroup3D_displayPivot, 0, 1, 1), 1));
+      selected_displayReferencePivot = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selected_displayReferencePivot" , selected_displayReferencePivot, 0, 1, 1), 1));
       selectedGroup3D_displayBox = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedGroup3D_displayBox" , selectedGroup3D_displayBox, 0, 1, 1), 1));
       selectedGroup3D_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedGroup3D_displayEdges" , selectedGroup3D_displayEdges, 0, 1, 1), 1));
       
@@ -37366,7 +37383,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
 
   if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices) || (Current_ObjectCategory == ObjectCategory_SoftVerts)) {   
-    if (selectedGroup3D_displayPivot != 0) {
+    if (selected_displayReferencePivot != 0) {
       
       pushMatrix();
     
@@ -43526,7 +43543,7 @@ String[][] BAR_a_Items = {
                         {"Site"}, // Locations
                         {"Data", "Typical Year (TMY)", "Long-term (CWEEDS)", "Real-time Observed (SWOB)", "Weather Forecast (NAEFS)"},
                         {"View", "Camera >> Viewport", "GoTo Selected Camera", "Top", "Front", "Left", "Back", "Right", "Bottom", "S.W.", "S.E.", "N.E.", "N.W.", "Shrink 3DViewSpace", "Enlarge 3DViewSpace", "Perspective", "Orthographic", "Zoom", "Zoom as default", "Look at origin", "Look at selection", "Pan", "PanX", "PanY", "Orbit", "OrbitXY", "OrbitZ", "CameraRoll", "CameraRollXY", "CameraRollZ", "TargetRoll", "TargetRollXY", "TargetRollZ", "TruckX", "TruckY", "TruckZ", "DistZ", "DistMouseXY", "CameraDistance",  "3DModelSize", "SkydomeSize"},
-                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Points", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Solids", "Display/Hide Sections", "Display/Hide Cameras", "Display/Hide Sky", "Display/Hide Sun Path", "Display/Hide Sun Pattern", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Solar Section", "Display/Hide Solid Section", "Display/Hide Wind Flow", "Display/Hide Selected Solids", "Display/Hide Selected Sections", "Display/Hide Selected Cameras", "Display/Hide Selected LandPoints", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected Pivots", "Display/Hide Selected 3-D Pivot", "Display/Hide Selected 3-D Edges", "Display/Hide Selected 3-D Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
+                        {"Display", "Display/Hide Land Mesh", "Display/Hide Land Texture", "Display/Hide Land Points", "Display/Hide Land Depth", "Display/Hide Edges", "Display/Hide Normals", "Display/Hide Leaves", "Display/Hide Living Objects", "Display/Hide Building Objects", "Display/Hide Urban", "Display/Hide Solids", "Display/Hide Sections", "Display/Hide Cameras", "Display/Hide Sky", "Display/Hide Sun Path", "Display/Hide Sun Pattern", "Display/Hide Star", "Display/Hide Moon", "Display/Hide Troposphere", "Display/Hide Earth", "Display/Hide Solar Section", "Display/Hide Solid Section", "Display/Hide Wind Flow", "Display/Hide Selected Solids", "Display/Hide Selected Sections", "Display/Hide Selected Cameras", "Display/Hide Selected LandPoints", "Display/Hide Selected Faces", "Display/Hide Selected Faces Vertex Count", "Display/Hide Selected Vertices", "Display/Hide Selected REF Pivot", "Display/Hide Selected Group Pivot", "Display/Hide Selected Group Edges", "Display/Hide Selected Group Box", "Display/Hide Selected 2½D Edges", "Display/Hide Selected ∞-D Edges", "Display/Hide SWOB points", "Display/Hide SWOB nearest", "Display/Hide NAEFS points", "Display/Hide NAEFS nearest", "Display/Hide CWEEDS points", "Display/Hide CWEEDS nearest", "Display/Hide EPW points", "Display/Hide EPW nearest"},
                         {"Shade", "Shade Surface Wire", "Shade Surface Base", "Shade Surface White", "Shade Surface Materials", "Shade Global Solar", "Shade Vertex Solar", "Shade Vertex Solid", "Shade Vertex Elevation"},
                         {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Pre-bake Selected Sections", "Process Active Impact", "Process Passive Impact", "Process Solid Impact", "Run wind 3D-model"},
                         {"Layer"}, // Parameters 
@@ -43764,26 +43781,26 @@ void SOLARCHVISION_draw_window_BAR_a () {
               }        
               if (BAR_a_Items[i][j].equals("Display/Hide Selected LandPoints")) {
                 if (selectedLandPoint_displayPoints == 0) {stroke(127); fill(127);}
-              }                
+              }              
               if (BAR_a_Items[i][j].equals("Display/Hide Selected Faces")) {
-                if (selectedGroup3D_displayPivot == 0) {stroke(127); fill(127);}
+                if (selectedFace_displayEdges == 0) {stroke(127); fill(127);}
               }      
               if (BAR_a_Items[i][j].equals("Display/Hide Selected Faces Vertex Count")) {
-                if (selectedGroup3D_displayPivot == 0) {stroke(127); fill(127);}
-              }               
+                if (selectedFace_displayVertexCount == 0) {stroke(127); fill(127);}
+              }   
               if (BAR_a_Items[i][j].equals("Display/Hide Selected Vertices")) {
-                if (selectedGroup3D_displayPivot == 0) {stroke(127); fill(127);}
-              }      
-              if (BAR_a_Items[i][j].equals("Display/Hide Selected Pivots")) {
-                if (selectedGroup3D_displayPivot == 0) {stroke(127); fill(127);}
+                if (selectedVertex_displayVertices == 0) {stroke(127); fill(127);}
+              }               
+              if (BAR_a_Items[i][j].equals("Display/Hide Selected REF Pivot")) {
+                if (selected_displayReferencePivot == 0) {stroke(127); fill(127);}
+              }                 
+              if (BAR_a_Items[i][j].equals("Display/Hide Selected Group Pivot")) {
+                if (selected_displayReferencePivot == 0) {stroke(127); fill(127);}
               }                    
-              if (BAR_a_Items[i][j].equals("Display/Hide Selected 3-D Pivot")) {
-                if (selectedGroup3D_displayPivot == 0) {stroke(127); fill(127);}
-              }          
-              if (BAR_a_Items[i][j].equals("Display/Hide Selected 3-D Edges")) {
+              if (BAR_a_Items[i][j].equals("Display/Hide Selected Group Edges")) {
                 if (selectedGroup3D_displayEdges == 0) {stroke(127); fill(127);}
               }    
-              if (BAR_a_Items[i][j].equals("Display/Hide Selected 3-D Box")) {
+              if (BAR_a_Items[i][j].equals("Display/Hide Selected Group Box")) {
                 if (selectedGroup3D_displayBox == 0) {stroke(127); fill(127);}
               }    
               if (BAR_a_Items[i][j].equals("Display/Hide Selected 2½D Edges")) {
@@ -45945,7 +45962,8 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("selectedFace_displayEdges", selectedFace_displayEdges);
   newChild1.setInt("selectedFace_displayVertexCount", selectedFace_displayVertexCount);
   newChild1.setInt("selectedVertex_displayVertices", selectedVertex_displayVertices);
-  newChild1.setInt("selectedGroup3D_displayPivot", selectedGroup3D_displayPivot);
+  newChild1.setInt("selectedGroup3D_displayPivot", selectedGroup3D_displayPivot);  
+  newChild1.setInt("selected_displayReferencePivot", selected_displayReferencePivot);
   newChild1.setInt("selectedGroup3D_displayEdges", selectedGroup3D_displayEdges);
   newChild1.setInt("selectedGroup3D_displayBox", selectedGroup3D_displayBox);
   newChild1.setInt("selectedObject2D_displayEdges", selectedObject2D_displayEdges);
@@ -47115,6 +47133,7 @@ void SOLARCHVISION_load_project (String myFile) {
       selection_alignY = children0[L].getInt("selection_alignY");
       selection_alignZ = children0[L].getInt("selection_alignZ");
 
+      selected_displayReferencePivot = children0[L].getInt("selected_displayReferencePivot");
       selectedGroup3D_displayPivot = children0[L].getInt("selectedGroup3D_displayPivot");
       selectedGroup3D_displayEdges = children0[L].getInt("selectedGroup3D_displayEdges");
       selectedGroup3D_displayBox = children0[L].getInt("selectedGroup3D_displayBox");
