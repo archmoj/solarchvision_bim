@@ -1372,7 +1372,6 @@ int pre_selectedGroup3D_displayPivot;
 int pre_selectedGroup3D_displayEdges;
 int pre_selectedGroup3D_displayBox;      
 
-int pre_selectedGroup3D_displayPivots;
 int pre_selectedFace_displayEdges;
 int pre_selectedFace_displayVertexCount;
 int pre_selectedVertex_displayVertices;
@@ -1766,7 +1765,6 @@ int selection_alignY = 0;
 int selection_alignZ = 0;
 
 
-int selectedGroup3D_displayPivots = 1;
 int selectedGroup3D_displayPivot = 1;
 int selectedGroup3D_displayEdges = 1; //0;
 int selectedGroup3D_displayBox = 1;
@@ -2364,7 +2362,6 @@ void draw () {
         pre_selectedGroup3D_displayEdges = selectedGroup3D_displayEdges;
         pre_selectedGroup3D_displayBox = selectedGroup3D_displayBox;        
 
-        pre_selectedGroup3D_displayPivots = selectedGroup3D_displayPivots;
         pre_selectedFace_displayEdges = selectedFace_displayEdges;
         pre_selectedFace_displayVertexCount = selectedFace_displayVertexCount;
         pre_selectedVertex_displayVertices = selectedVertex_displayVertices;
@@ -2661,10 +2658,6 @@ void draw () {
         }
 
         if (pre_selectedGroup3D_displayBox != selectedGroup3D_displayBox) {
-          WIN3D_Update = 1;
-        }     
-
-        if (pre_selectedGroup3D_displayPivots != selectedGroup3D_displayPivots) {
           WIN3D_Update = 1;
         }     
 
@@ -32632,12 +32625,6 @@ void mouseClicked () {
               WIN3D_Update = 1;  
               ROLLOUT_Update = 1;
             }   
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected Pivots")) {
-              selectedGroup3D_displayPivots = (selectedGroup3D_displayPivots + 1) % 2;
-              
-              WIN3D_Update = 1;  
-              ROLLOUT_Update = 1;
-            }               
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Display/Hide Selected 3-D Pivot")) {
               selectedGroup3D_displayPivot = (selectedGroup3D_displayPivot + 1) % 2;
               
@@ -35841,7 +35828,6 @@ void SOLARCHVISION_draw_ROLLOUT () {
     
     if (ROLLOUT_child == 5) { // Selection
     
-      selectedGroup3D_displayPivots = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedGroup3D_displayPivots" , selectedGroup3D_displayPivots, 0, 1, 1), 1));
       selectedGroup3D_displayPivot = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedGroup3D_displayPivot" , selectedGroup3D_displayPivot, 0, 1, 1), 1));
       selectedGroup3D_displayBox = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedGroup3D_displayBox" , selectedGroup3D_displayBox, 0, 1, 1), 1));
       selectedGroup3D_displayEdges = int(roundTo(MySpinner.update(X_control, Y_control, 0,0,0, "selectedGroup3D_displayEdges" , selectedGroup3D_displayEdges, 0, 1, 1), 1));
@@ -37307,7 +37293,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     
     
     
-    if (selectedGroup3D_displayPivots != 0) {
+    if (selectedGroup3D_displayPivot != 0) {
       
       pushMatrix();
     
@@ -45959,7 +45945,6 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("selectedFace_displayEdges", selectedFace_displayEdges);
   newChild1.setInt("selectedFace_displayVertexCount", selectedFace_displayVertexCount);
   newChild1.setInt("selectedVertex_displayVertices", selectedVertex_displayVertices);
-  newChild1.setInt("selectedGroup3D_displayPivots", selectedGroup3D_displayPivots);  
   newChild1.setInt("selectedGroup3D_displayPivot", selectedGroup3D_displayPivot);
   newChild1.setInt("selectedGroup3D_displayEdges", selectedGroup3D_displayEdges);
   newChild1.setInt("selectedGroup3D_displayBox", selectedGroup3D_displayBox);
@@ -47130,7 +47115,6 @@ void SOLARCHVISION_load_project (String myFile) {
       selection_alignY = children0[L].getInt("selection_alignY");
       selection_alignZ = children0[L].getInt("selection_alignZ");
 
-      selectedGroup3D_displayPivots = children0[L].getInt("selectedGroup3D_displayPivots");
       selectedGroup3D_displayPivot = children0[L].getInt("selectedGroup3D_displayPivot");
       selectedGroup3D_displayEdges = children0[L].getInt("selectedGroup3D_displayEdges");
       selectedGroup3D_displayBox = children0[L].getInt("selectedGroup3D_displayBox");
