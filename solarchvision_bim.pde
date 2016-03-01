@@ -21,7 +21,7 @@ int maximum_undo_number = 3;
 
 
 
-float objExportScale = 0.1; 
+float objExportScale = 0.001; 
 int objFlipZYaxis = 1; // 1: to fit in Unity3D
 
 int objExportPrecisionVertex = 6; 
@@ -19121,7 +19121,6 @@ void SOLARCHVISION_export_objects () {
               
               if (_turn == 1) {
                 SOLARCHVISION_OBJprintVertex(x,y,z);
-                SOLARCHVISION_OBJprintVtexture(u,v,0);
               }
   
               if (_turn == 2) {
