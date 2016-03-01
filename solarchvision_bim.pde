@@ -26267,37 +26267,27 @@ void SOLARCHVISION_add_ProjectModel () {
   {
     float d = 1.0;
     for (float i = 0; i < 45; i += d) {
-      SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
       
       float x = 0;
       float y = 0;
       float z = i;
       int spv = 1; // X-axis
       
+      SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,0);
+      
       SOLARCHVISION_add_H_shade(1,0,spv,1,1, x,y,z, 20,d, 0,0); // south
-      
-      int n = allGroup3Ds_num;
-      
-      allGroup3Ds_PivotXYZSSSRRR[n][0] = x;
-      allGroup3Ds_PivotXYZSSSRRR[n][1] = y;
-      allGroup3Ds_PivotXYZSSSRRR[n][2] = z;
     }
     
     for (float i = -10; i <= 10; i += d) {
-      SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
-      
+
       float x = i;
       float y = 0;
       float z = 22.5;
       int spv = 3; // Z-axis
       
+      SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,0);
+      
       SOLARCHVISION_add_V_shade(3,0,spv,1,1, x,y,z, 45,d, 0,0); // south
-      
-      int n = allGroup3Ds_num;
-      
-      allGroup3Ds_PivotXYZSSSRRR[n][0] = x;
-      allGroup3Ds_PivotXYZSSSRRR[n][1] = y;
-      allGroup3Ds_PivotXYZSSSRRR[n][2] = z;
     }    
   }    
 */  
