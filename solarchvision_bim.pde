@@ -1,9 +1,9 @@
-// serach for void SOLARCHVISION_move_selectedGroup3Ds (float dx, float dy, float dz) {
+// serach for void SOLARCHVISION_scale_selectedGroup3Ds ... maybe could reverse pivot scales by rotations...?
 // local pivot
 
 // some rotations are not in degrees e.g. solids, fractals??, what else?
 
-
+// colud add create group <<<< we have it :)
 // could add create face
 // could add create vertex
 // drop functions only works for living objects and not at Group3D level
@@ -40809,9 +40809,12 @@ void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float s
         allGroup3Ds_PivotXYZ[OBJ_NUM][1] = y0 + sy * (allGroup3Ds_PivotXYZ[OBJ_NUM][1] - y0);
         allGroup3Ds_PivotXYZ[OBJ_NUM][2] = z0 + sz * (allGroup3Ds_PivotXYZ[OBJ_NUM][2] - z0);
         
+        
+        // ???????
         allGroup3Ds_PivotXYZ[OBJ_NUM][3] *= sx; 
         allGroup3Ds_PivotXYZ[OBJ_NUM][4] *= sy;
         allGroup3Ds_PivotXYZ[OBJ_NUM][5] *= sz;
+        // ???????
       }
 
 
