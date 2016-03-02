@@ -37268,23 +37268,72 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       
       stroke(0,127,0,127);
       strokeWeight(2);
-      
-      float min_X = selection_BoundingBox[0][0];
-      float min_Y = selection_BoundingBox[0][1];
-      float min_Z = selection_BoundingBox[0][2];
+
+      float posX_min = selection_BoundingBox[0][0];
+      float posY_min = selection_BoundingBox[0][1];
+      float posZ_min = selection_BoundingBox[0][2];
   
-      float max_X = selection_BoundingBox[2][0];
-      float max_Y = selection_BoundingBox[2][1];
-      float max_Z = selection_BoundingBox[2][2];
+      float posX_max = selection_BoundingBox[2][0];
+      float posY_max = selection_BoundingBox[2][1];
+      float posZ_max = selection_BoundingBox[2][2];
       
-      float[][] BoundingBox_Vertices = {{min_X, min_Y, min_Z},
-                                        {max_X, min_Y, min_Z}, 
-                                        {max_X, max_Y, min_Z}, 
-                                        {min_X, max_Y, min_Z}, 
-                                        {min_X, min_Y, max_Z},
-                                        {max_X, min_Y, max_Z}, 
-                                        {max_X, max_Y, max_Z}, 
-                                        {min_X, max_Y, max_Z}}; 
+      float[][] BoundingBox_Vertices = {{posX_min, posY_min, posZ_min},
+                                        {posX_max, posY_min, posZ_min}, 
+                                        {posX_max, posY_max, posZ_min}, 
+                                        {posX_min, posY_max, posZ_min}, 
+                                        {posX_min, posY_min, posZ_max},
+                                        {posX_max, posY_min, posZ_max}, 
+                                        {posX_max, posY_max, posZ_max}, 
+                                        {posX_min, posY_max, posZ_max}}; 
+                                        
+
+      float scaleX = selection_BoundingBox[1][3];
+      float scaleY = selection_BoundingBox[1][4];
+      float scaleZ = selection_BoundingBox[1][5];
+      
+      float rotX = selection_BoundingBox[1][6];
+      float rotY = selection_BoundingBox[1][7];
+      float rotZ = selection_BoundingBox[1][8];
+                                        
+      for (int i = 0; i < BoundingBox_Vertices.length; i++) {
+        
+        float a = BoundingBox_Vertices[i][0];
+        float b = BoundingBox_Vertices[i][1];
+        float c = BoundingBox_Vertices[i][2];
+        
+        a *= scaleX;
+        b *= scaleY;
+        c *= scaleZ;
+        
+        float y1 = b * cos_ang(rotX) - c * sin_ang(rotX); 
+        float z1 = b * sin_ang(rotX) + c * cos_ang(rotX);
+        float x1 = a;
+       
+        a = x1;
+        b = y1;
+        c = z1;  
+      
+        float z2 = c * cos_ang(rotY) - a * sin_ang(rotY);
+        float x2 = c * sin_ang(rotY) + a * cos_ang(rotY);
+        float y2 = b; 
+        
+        a = x2;
+        b = y2;
+        c = z2;      
+        
+        float x = a * cos_ang(rotZ) - b * sin_ang(rotZ);
+        float y = a * sin_ang(rotZ) + b * cos_ang(rotZ); 
+        float z = c;    
+/*      
+        x += allGroup3Ds_PivotXYZ[OBJ_NUM][0];
+        y += allGroup3Ds_PivotXYZ[OBJ_NUM][1];
+        z += allGroup3Ds_PivotXYZ[OBJ_NUM][2];
+*/        
+        BoundingBox_Vertices[i][0] = x;
+        BoundingBox_Vertices[i][1] = y;
+        BoundingBox_Vertices[i][2] = z;
+
+      }                                     
       
       int[][] BoundingBox_Faces = {{3,2,1,0}, {0,1,5,4}, {1,2,6,5}, {2,3,7,6}, {3,0,4,7}, {4,5,6,7}};
   
