@@ -37324,11 +37324,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         float x = a * cos_ang(rotZ) - b * sin_ang(rotZ);
         float y = a * sin_ang(rotZ) + b * cos_ang(rotZ); 
         float z = c;    
-/*      
-        x += allGroup3Ds_PivotXYZ[OBJ_NUM][0];
-        y += allGroup3Ds_PivotXYZ[OBJ_NUM][1];
-        z += allGroup3Ds_PivotXYZ[OBJ_NUM][2];
-*/        
+
+       
         BoundingBox_Vertices[i][0] = x;
         BoundingBox_Vertices[i][1] = y;
         BoundingBox_Vertices[i][2] = z;
@@ -40358,13 +40355,28 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     theVertices = selectedLandPoint_numbers;
   }    
 
-  float scaleX = 1;  
-  float scaleY = 1;  
-  float scaleZ = 1;  
+  float scaleX = 1; 
+  float scaleY = 1; 
+  float scaleZ = 1; 
   
-  float rotX = 0;  
-  float rotY = 0;  
-  float rotZ = 30; //0;  
+  float rotX = 0;
+  float rotY = 0;
+  float rotZ = 0;
+  
+  if (Current_ObjectCategory == ObjectCategory_Group3Ds) { 
+    
+    int o = selectedGroup3D_numbers.length - 1; // applying the local coordinates of the last selected object <<<<<<<<<<<<<<<<<<<<<<<
+  
+    int OBJ_NUM = selectedGroup3D_numbers[o];
+    
+    scaleX = allGroup3Ds_PivotXYZ[OBJ_NUM][3];
+    scaleY = allGroup3Ds_PivotXYZ[OBJ_NUM][4];
+    scaleZ = allGroup3Ds_PivotXYZ[OBJ_NUM][5];
+    
+    rotX = allGroup3Ds_PivotXYZ[OBJ_NUM][6];
+    rotY = allGroup3Ds_PivotXYZ[OBJ_NUM][7];
+    rotZ = allGroup3Ds_PivotXYZ[OBJ_NUM][8];
+  }
 
   float posX_min = FLOAT_undefined;
   float posY_min = FLOAT_undefined;
@@ -40546,75 +40558,6 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     if (posY_max < posY_now) posY_max = posY_now;   
     if (posZ_max < posZ_now) posZ_max = posZ_now;
   }   
-
-  {
-    float a = posX_min;
-    float b = posY_min;
-    float c = posZ_min;
-
-    a *= scaleX;
-    b *= scaleY;
-    c *= scaleZ;
-    
-    float y1 = b * cos_ang(rotX) - c * sin_ang(rotX); 
-    float z1 = b * sin_ang(rotX) + c * cos_ang(rotX);
-    float x1 = a;
-    
-    a = x1;
-    b = y1;
-    c = z1;  
-  
-    float z2 = c * cos_ang(rotY) - a * sin_ang(rotY);
-    float x2 = c * sin_ang(rotY) + a * cos_ang(rotY);
-    float y2 = b; 
-    
-    a = x2;
-    b = y2;
-    c = z2;      
-
-    float x = a * cos_ang(rotZ) - b * sin_ang(rotZ);
-    float y = a * sin_ang(rotZ) + b * cos_ang(rotZ); 
-    float z = c;        
-
-    posX_min = x;
-    posY_min = y;
-    posZ_min = z;
-  }
-
-  {
-    float a = posX_max;
-    float b = posY_max;
-    float c = posZ_max;
-
-    a *= scaleX;
-    b *= scaleY;
-    c *= scaleZ;
-    
-    float y1 = b * cos_ang(rotX) - c * sin_ang(rotX); 
-    float z1 = b * sin_ang(rotX) + c * cos_ang(rotX);
-    float x1 = a;
-    
-    a = x1;
-    b = y1;
-    c = z1;  
-  
-    float z2 = c * cos_ang(rotY) - a * sin_ang(rotY);
-    float x2 = c * sin_ang(rotY) + a * cos_ang(rotY);
-    float y2 = b; 
-    
-    a = x2;
-    b = y2;
-    c = z2;      
-
-    float x = a * cos_ang(rotZ) - b * sin_ang(rotZ);
-    float y = a * sin_ang(rotZ) + b * cos_ang(rotZ); 
-    float z = c;        
-
-    posX_max = x;
-    posY_max = y;
-    posZ_max = z;
-  }
-    
 
   
   for (int i = 0; i < 3; i++) {
