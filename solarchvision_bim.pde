@@ -1,3 +1,4 @@
+// serach for void SOLARCHVISION_move_selectedGroup3Ds (float dx, float dy, float dz) {
 // local pivot
 
 
@@ -15587,6 +15588,7 @@ void SOLARCHVISION_repositionVertices_Selection () {
         allVertices[vNo][0] = selection_BoundingBox[1][0]; // center
         allVertices[vNo][1] = selection_BoundingBox[1][1]; // center
         allVertices[vNo][2] = selection_BoundingBox[1][2]; // center
+        
       }
 
     } 
@@ -37332,16 +37334,16 @@ void SOLARCHVISION_draw_Perspective_Internally () {
         
         if (OBJ_NUM != 0) {
           
-          float[][] BoundingBox_Vertices = {{0,0,0},
+          float[][] Pivot_Vertices = {{0,0,0},
                                             {1,0,0},
                                             {0,1,0},
                                             {0,0,1}}; 
                                             
-          for (int i = 0; i < BoundingBox_Vertices.length; i++) {
+          for (int i = 0; i < Pivot_Vertices.length; i++) {
             
-            float a = BoundingBox_Vertices[i][0];
-            float b = BoundingBox_Vertices[i][1];
-            float c = BoundingBox_Vertices[i][2];
+            float a = Pivot_Vertices[i][0];
+            float b = Pivot_Vertices[i][1];
+            float c = Pivot_Vertices[i][2];
             
             float r = 10; // <<<<<<<<< display size
             
@@ -37377,16 +37379,16 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             y += allGroup3Ds_PivotXYZ[OBJ_NUM][1];
             z += allGroup3Ds_PivotXYZ[OBJ_NUM][2];
             
-            BoundingBox_Vertices[i][0] = x;
-            BoundingBox_Vertices[i][1] = y;
-            BoundingBox_Vertices[i][2] = z;
+            Pivot_Vertices[i][0] = x;
+            Pivot_Vertices[i][1] = y;
+            Pivot_Vertices[i][2] = z;
 
           }
           
-          int[][] BoundingBox_Lines = {{0,1}, {0,2}, {0,3}};
+          int[][] Pivot_Lines = {{0,1}, {0,2}, {0,3}};
           
           int f_start = 0;
-          int f_end = BoundingBox_Lines.length - 1;
+          int f_end = Pivot_Lines.length - 1;
           
           if (allGroup3Ds_PivotType[OBJ_NUM][0] == 1) {f_start = 0; f_end = f_start;}
           if (allGroup3Ds_PivotType[OBJ_NUM][0] == 2) {f_start = 1; f_end = f_start;}
@@ -37394,16 +37396,16 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       
           for (int f = f_start; f <= f_end; f++) {
             
-            int a = BoundingBox_Lines[f][0];
-            int b = BoundingBox_Lines[f][1];
+            int a = Pivot_Lines[f][0];
+            int b = Pivot_Lines[f][1];
       
-            float x1 = BoundingBox_Vertices[a][0] * OBJECTS_scale;
-            float y1 = BoundingBox_Vertices[a][1] * OBJECTS_scale;            
-            float z1 = -BoundingBox_Vertices[a][2] * OBJECTS_scale;
+            float x1 = Pivot_Vertices[a][0] * OBJECTS_scale;
+            float y1 = Pivot_Vertices[a][1] * OBJECTS_scale;            
+            float z1 = -Pivot_Vertices[a][2] * OBJECTS_scale;
       
-            float x2 = BoundingBox_Vertices[b][0] * OBJECTS_scale;
-            float y2 = BoundingBox_Vertices[b][1] * OBJECTS_scale;            
-            float z2 = -BoundingBox_Vertices[b][2] * OBJECTS_scale;
+            float x2 = Pivot_Vertices[b][0] * OBJECTS_scale;
+            float y2 = Pivot_Vertices[b][1] * OBJECTS_scale;            
+            float z2 = -Pivot_Vertices[b][2] * OBJECTS_scale;
             
             float[] Image_XYZa = SOLARCHVISION_calculate_Perspective_Internally(x1,y1,z1);            
             float[] Image_XYZb = SOLARCHVISION_calculate_Perspective_Internally(x2,y2,z2);
@@ -37438,33 +37440,76 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     
     strokeWeight(2);
     
-    float Pivot_X = selection_BoundingBox[1 + selection_alignX][0];
-    float Pivot_Y = selection_BoundingBox[1 + selection_alignY][1];
-    float Pivot_Z = selection_BoundingBox[1 + selection_alignZ][2];
+    float[][] Pivot_Vertices = {{0,0,0},
+                                      {1,0,0},
+                                      {0,1,0},
+                                      {0,0,1}}; 
+                                      
+    for (int i = 0; i < Pivot_Vertices.length; i++) {
+      
+      float a = Pivot_Vertices[i][0];
+      float b = Pivot_Vertices[i][1];
+      float c = Pivot_Vertices[i][2];
+      
+      float r = 5; // <<<<<<<<< display size
+      
+      a *= r * selection_BoundingBox[1 + selection_alignX][3];
+      b *= r * selection_BoundingBox[1 + selection_alignY][4];
+      c *= r * selection_BoundingBox[1 + selection_alignZ][5];
+      
+      float rotX = selection_BoundingBox[1 + selection_alignX][6];
+      float rotY = selection_BoundingBox[1 + selection_alignY][7];
+      float rotZ = selection_BoundingBox[1 + selection_alignZ][8];
+      
+      float y1 = b * cos_ang(rotX) - c * sin_ang(rotX); 
+      float z1 = b * sin_ang(rotX) + c * cos_ang(rotX);
+      float x1 = a;
+     
+      a = x1;
+      b = y1;
+      c = z1;  
     
-    float[][] BoundingBox_Vertices = {{Pivot_X, Pivot_Y, Pivot_Z},
-                                      {Pivot_X + 5, Pivot_Y, Pivot_Z},
-                                      {Pivot_X, Pivot_Y + 5, Pivot_Z},
-                                      {Pivot_X, Pivot_Y, Pivot_Z + 5}}; 
+      float z2 = c * cos_ang(rotY) - a * sin_ang(rotY);
+      float x2 = c * sin_ang(rotY) + a * cos_ang(rotY);
+      float y2 = b; 
+      
+      a = x2;
+      b = y2;
+      c = z2;      
+      
+      float x = a * cos_ang(rotZ) - b * sin_ang(rotZ);
+      float y = a * sin_ang(rotZ) + b * cos_ang(rotZ); 
+      float z = c;    
     
-    int[][] BoundingBox_Lines = {{0,1}, {0,2}, {0,3}};
+      x += selection_BoundingBox[1 + selection_alignX][0];
+      y += selection_BoundingBox[1 + selection_alignY][1];
+      z += selection_BoundingBox[1 + selection_alignZ][2];
+      
+      Pivot_Vertices[i][0] = x;
+      Pivot_Vertices[i][1] = y;
+      Pivot_Vertices[i][2] = z;
 
-    for (int f = 0; f < BoundingBox_Lines.length; f++) {
+    }
+    
+    int[][] Pivot_Lines = {{0,1}, {0,2}, {0,3}};
+    
+          
+    for (int f = 0; f < Pivot_Lines.length; f++) {
       
       if (f == 0) stroke(255,0,0);
       if (f == 1) stroke(0,0,255);
       if (f == 2) stroke(127,127,0);
       
-      int a = BoundingBox_Lines[f][0];
-      int b = BoundingBox_Lines[f][1];
+      int a = Pivot_Lines[f][0];
+      int b = Pivot_Lines[f][1];
 
-      float x1 = BoundingBox_Vertices[a][0] * OBJECTS_scale;
-      float y1 = BoundingBox_Vertices[a][1] * OBJECTS_scale;            
-      float z1 = -BoundingBox_Vertices[a][2] * OBJECTS_scale;
+      float x1 = Pivot_Vertices[a][0] * OBJECTS_scale;
+      float y1 = Pivot_Vertices[a][1] * OBJECTS_scale;            
+      float z1 = -Pivot_Vertices[a][2] * OBJECTS_scale;
 
-      float x2 = BoundingBox_Vertices[b][0] * OBJECTS_scale;
-      float y2 = BoundingBox_Vertices[b][1] * OBJECTS_scale;            
-      float z2 = -BoundingBox_Vertices[b][2] * OBJECTS_scale;
+      float x2 = Pivot_Vertices[b][0] * OBJECTS_scale;
+      float y2 = Pivot_Vertices[b][1] * OBJECTS_scale;            
+      float z2 = -Pivot_Vertices[b][2] * OBJECTS_scale;
       
       float[] Image_XYZa = SOLARCHVISION_calculate_Perspective_Internally(x1,y1,z1);            
       float[] Image_XYZb = SOLARCHVISION_calculate_Perspective_Internally(x2,y2,z2);
@@ -40218,11 +40263,11 @@ int[] SOLARCHVISION_get_selectedGroup3D_Vertices () {
 
 
 
-float[][] selection_BoundingBox = {{0,0,0}, {0,0,0}, {0,0,0}}; // [min|mid|max]
-float[] selected_Pivot_XYZ = {0,0,0};
+float[][] selection_BoundingBox = {{0,0,0,1,1,1,0,0,0}, {0,0,0,1,1,1,0,0,0}, {0,0,0,1,1,1,0,0,0}}; // [min|mid|max]
+float[] selected_Pivot_XYZ = {0,0,0,1,1,1,0,0,0};
 
-float[][] saved_BoundingBox = {{0,0,0}, {0,0,0}, {0,0,0}};
-float[] saved_Pivot_XYZ = {0,0,0};
+float[][] saved_BoundingBox = {{0,0,0,1,1,1,0,0,0}, {0,0,0,1,1,1,0,0,0}, {0,0,0,1,1,1,0,0,0}};
+float[] saved_Pivot_XYZ = {0,0,0,1,1,1,0,0,0};
 int saved_alignX = 0;
 int saved_alignY = 0;
 int saved_alignZ = 0;
@@ -40400,7 +40445,7 @@ void SOLARCHVISION_calculate_selection_ReferencePivot () {
 void SOLARCHVISION_save_selection_ReferencePivot () {
 
   for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
+    for (int j = 0; j < 9; j++) {
       saved_BoundingBox[i][j] = selection_BoundingBox[i][j];
     }
     saved_Pivot_XYZ[i] = selected_Pivot_XYZ[i];
@@ -40415,7 +40460,7 @@ void SOLARCHVISION_save_selection_ReferencePivot () {
 void SOLARCHVISION_apply_saved_Pivot () {
   
   for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
+    for (int j = 0; j < 9; j++) {
       selection_BoundingBox[i][j] = saved_BoundingBox[i][j];
     }
     selected_Pivot_XYZ[i] = saved_Pivot_XYZ[i];
@@ -40430,9 +40475,18 @@ void SOLARCHVISION_apply_saved_Pivot () {
 void SOLARCHVISION_apply_origin_Pivot () {
   
   for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
-      selection_BoundingBox[i][j] = 0;
-    }
+    selection_BoundingBox[i][0] = 0;
+    selection_BoundingBox[i][1] = 0;
+    selection_BoundingBox[i][2] = 0;
+    selection_BoundingBox[i][3] = 1;
+    selection_BoundingBox[i][4] = 1;
+    selection_BoundingBox[i][5] = 1;
+    selection_BoundingBox[i][6] = 0;
+    selection_BoundingBox[i][7] = 0;
+    selection_BoundingBox[i][8] = 0;
+  }
+    
+  for (int i = 0; i < 3; i++) { 
     selected_Pivot_XYZ[i] = 0;
   } 
   
