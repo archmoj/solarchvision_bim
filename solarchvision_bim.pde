@@ -37498,12 +37498,20 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       float a = Pivot_Vertices[i][0];
       float b = Pivot_Vertices[i][1];
       float c = Pivot_Vertices[i][2];
-      
+
       float r = 5; // <<<<<<<<< display size
       
-      a *= r * selection_BoundingBox[1 + selection_alignX][3];
-      b *= r * selection_BoundingBox[1 + selection_alignY][4];
-      c *= r * selection_BoundingBox[1 + selection_alignZ][5];
+      a *= r;
+      b *= r;
+      c *= r;
+
+      a += selection_BoundingBox[1 + selection_alignX][0];
+      b += selection_BoundingBox[1 + selection_alignY][1];
+      c += selection_BoundingBox[1 + selection_alignZ][2];
+      
+      a *= selection_BoundingBox[1 + selection_alignX][3];
+      b *= selection_BoundingBox[1 + selection_alignY][4];
+      c *= selection_BoundingBox[1 + selection_alignZ][5];      
       
       float rotX = selection_BoundingBox[1 + selection_alignX][6];
       float rotY = selection_BoundingBox[1 + selection_alignY][7];
@@ -37528,11 +37536,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       float x = a * cos_ang(rotZ) - b * sin_ang(rotZ);
       float y = a * sin_ang(rotZ) + b * cos_ang(rotZ); 
       float z = c;    
-    
-      x += selection_BoundingBox[1 + selection_alignX][0];
-      y += selection_BoundingBox[1 + selection_alignY][1];
-      z += selection_BoundingBox[1 + selection_alignZ][2];
-      
+     
       Pivot_Vertices[i][0] = x;
       Pivot_Vertices[i][1] = y;
       Pivot_Vertices[i][2] = z;
