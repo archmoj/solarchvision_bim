@@ -1,6 +1,8 @@
 // serach for void SOLARCHVISION_move_selectedGroup3Ds (float dx, float dy, float dz) {
 // local pivot
 
+// some rotations are not in degrees e.g. solids, fractals??, what else?
+
 
 // could add create face
 // could add create vertex
@@ -40619,6 +40621,7 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float 
     }    
   }
   
+
   //println("SOLARCHVISION_calculate_selection_ReferencePivot 11");
   //SOLARCHVISION_calculate_selection_ReferencePivot(); 
 
@@ -40640,16 +40643,22 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float 
           allGroup3Ds_PivotXYZ[OBJ_NUM][0] = x0 + (x * cos(r) - y * sin(r)); 
           allGroup3Ds_PivotXYZ[OBJ_NUM][1] = y0 + (x * sin(r) + y * cos(r));
           allGroup3Ds_PivotXYZ[OBJ_NUM][2] = z0 + (z);
+          
+          allGroup3Ds_PivotXYZ[OBJ_NUM][8] += r * 180.0 / PI;
         }
         else if (the_Vector == 1) {
           allGroup3Ds_PivotXYZ[OBJ_NUM][0] = x0 + (z * sin(r) + x * cos(r)); 
           allGroup3Ds_PivotXYZ[OBJ_NUM][1] = y0 + (y);
           allGroup3Ds_PivotXYZ[OBJ_NUM][2] = z0 + (z * cos(r) - x * sin(r));
+          
+          allGroup3Ds_PivotXYZ[OBJ_NUM][7] += r * 180.0 / PI;
         }    
         else if (the_Vector == 0) {
           allGroup3Ds_PivotXYZ[OBJ_NUM][0] = x0 + (x); 
           allGroup3Ds_PivotXYZ[OBJ_NUM][1] = y0 + (y * cos(r) - z * sin(r));
           allGroup3Ds_PivotXYZ[OBJ_NUM][2] = z0 + (y * sin(r) + z * cos(r));
+          
+          allGroup3Ds_PivotXYZ[OBJ_NUM][6] += r * 180.0 / PI;
         }          
       }    
 
@@ -40799,6 +40808,10 @@ void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float s
         allGroup3Ds_PivotXYZ[OBJ_NUM][0] = x0 + sx * (allGroup3Ds_PivotXYZ[OBJ_NUM][0] - x0);
         allGroup3Ds_PivotXYZ[OBJ_NUM][1] = y0 + sy * (allGroup3Ds_PivotXYZ[OBJ_NUM][1] - y0);
         allGroup3Ds_PivotXYZ[OBJ_NUM][2] = z0 + sz * (allGroup3Ds_PivotXYZ[OBJ_NUM][2] - z0);
+        
+        allGroup3Ds_PivotXYZ[OBJ_NUM][3] *= sx; 
+        allGroup3Ds_PivotXYZ[OBJ_NUM][4] *= sy;
+        allGroup3Ds_PivotXYZ[OBJ_NUM][5] *= sz;
       }
 
 
