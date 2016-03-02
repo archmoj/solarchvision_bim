@@ -1,4 +1,4 @@
-// serach for void SOLARCHVISION_scale_selectedGroup3Ds ... maybe could reverse pivot scales by rotations...?
+// serach for SOLARCHVISION_move_Selection( need to make them all correct for local pivots!
 // local pivot
 
 // some rotations are not in degrees e.g. solids, fractals??, what else?
@@ -34191,9 +34191,11 @@ void mouseClicked () {
               
                 if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
     
-                  float dx = x0 - selected_Pivot_XYZ[0]; 
-                  float dy = y0 - selected_Pivot_XYZ[1]; 
-                  float dz = z0 - selected_Pivot_XYZ[2];
+                  float[] p = SOLARCHVISION_translateInside_ReferencePivot(x0 - selected_Pivot_XYZ[0], y0 - selected_Pivot_XYZ[1], z0 - selected_Pivot_XYZ[2]);
+  
+                  float dx = p[0]; 
+                  float dy = p[1];
+                  float dz = p[2];
   
                   int the_Vector = selected_posVector;
                 
@@ -41824,8 +41826,50 @@ void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int 
 
 
 
+float[] SOLARCHVISION_translateInside_ReferencePivot (float a, float b, float c) {
+  
+  a *= selection_BoundingBox[1 + selection_alignX][3];
+  b *= selection_BoundingBox[1 + selection_alignY][4];
+  c *= selection_BoundingBox[1 + selection_alignZ][5];      
+  
+  float rotX = selection_BoundingBox[1 + selection_alignX][6];
+  float rotY = selection_BoundingBox[1 + selection_alignY][7];
+  float rotZ = selection_BoundingBox[1 + selection_alignZ][8];
+  
+  float y1 = b * cos_ang(rotX) - c * sin_ang(rotX); 
+  float z1 = b * sin_ang(rotX) + c * cos_ang(rotX);
+  float x1 = a;
+ 
+  a = x1;
+  b = y1;
+  c = z1;  
 
-void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
+  float z2 = c * cos_ang(rotY) - a * sin_ang(rotY);
+  float x2 = c * sin_ang(rotY) + a * cos_ang(rotY);
+  float y2 = b; 
+  
+  a = x2;
+  b = y2;
+  c = z2;      
+  
+  float x = a * cos_ang(rotZ) - b * sin_ang(rotZ);
+  float y = a * sin_ang(rotZ) + b * cos_ang(rotZ); 
+  float z = c;      
+  
+  float[] return_array = {x,y,z};
+  
+  return return_array;  
+}
+
+
+
+void SOLARCHVISION_move_Selection (float deltaX, float deltaY, float deltaZ) {
+
+  float[] p = SOLARCHVISION_translateInside_ReferencePivot(deltaX, deltaY, deltaZ);
+  
+  float dx = p[0];
+  float dy = p[1]; 
+  float dz = p[2];   
 
   if (Current_ObjectCategory == ObjectCategory_Cameras) {
 
