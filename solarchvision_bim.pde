@@ -40308,9 +40308,14 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
   if (Current_ObjectCategory == ObjectCategory_LandPoint) {
     theVertices = selectedLandPoint_numbers;
   }    
+
+  float ScaleX = 1;  
+  float ScaleY = 1;  
+  float ScaleZ = 1;  
   
-  
-  
+  float RotX = 0;  
+  float RotY = 0;  
+  float RotZ = 0;  
 
   float PosX_min = FLOAT_undefined;
   float PosY_min = FLOAT_undefined;
@@ -40469,6 +40474,14 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     selection_BoundingBox[i][0] = (1 - ratio) * PosX_min + ratio * PosX_max;
     selection_BoundingBox[i][1] = (1 - ratio) * PosY_min + ratio * PosY_max;
     selection_BoundingBox[i][2] = (1 - ratio) * PosZ_min + ratio * PosZ_max;
+    
+    selection_BoundingBox[i][3] = ScaleX;
+    selection_BoundingBox[i][4] = ScaleY;
+    selection_BoundingBox[i][5] = ScaleZ;
+
+    selection_BoundingBox[i][6] = RotX;
+    selection_BoundingBox[i][7] = RotY;
+    selection_BoundingBox[i][8] = RotZ;
   } 
 
   
