@@ -40309,6 +40309,8 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     theVertices = selectedLandPoint_numbers;
   }    
   
+  
+  
   for (int j = 0; j < 3; j++) {
     
     float POS_min = FLOAT_undefined;
@@ -40419,6 +40421,11 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
           POS_now = 0;
         }
       }             
+      
+      
+      
+      
+      
      
       if (POS_min > POS_now) POS_min = POS_now;   
       if (POS_max < POS_now) POS_max = POS_now;   
