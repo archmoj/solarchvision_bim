@@ -40458,10 +40458,6 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
       float a = posX_now;
       float b = posY_now;
       float c = posZ_now;
-
-      a /= scaleX;
-      b /= scaleY;
-      c /= scaleZ;
       
       float x1 = a * cos_ang(-rotZ) - b * sin_ang(-rotZ);
       float y1 = a * sin_ang(-rotZ) + b * cos_ang(-rotZ); 
@@ -40482,6 +40478,10 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
       float y = b * cos_ang(-rotX) - c * sin_ang(-rotX); 
       float z = b * sin_ang(-rotX) + c * cos_ang(-rotX);
       float x = a;
+      
+      x /= scaleX;
+      y /= scaleY;
+      z /= scaleZ;      
 
       posX_now = x;
       posY_now = y;
