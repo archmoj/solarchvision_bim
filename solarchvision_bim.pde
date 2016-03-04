@@ -1,6 +1,6 @@
 // still not sure if these two functions work 100% correct! SOLARCHVISION_translateInside_ReferencePivot and SOLARCHVISION_translateOutside_ReferencePivot
 
-// serach for SOLARCHVISION_move_Selection( need to make them all correct for local pivots!
+// serach for SOLARCHVISION_scale_Selection( need to make them all correct for local pivots!
 // local pivot
 
 // some rotations are not in degrees e.g. solids, fractals??, what else?
@@ -41695,8 +41695,15 @@ void SOLARCHVISION_scale_selectedLandPoints (float x0, float y0, float z0, float
 
 
 
-void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, float sy, float sz) {
+void SOLARCHVISION_scale_Selection (float x, float y, float z, float sx, float sy, float sz) {
 
+  float[] p = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
+  
+  float x0 = p[0];
+  float y0 = p[1]; 
+  float z0 = p[2];   
+  
+  
   if (Current_ObjectCategory == ObjectCategory_Cameras) {
 
     SOLARCHVISION_scale_selectedCameras(x0, y0, z0, sx, sy, sz);
