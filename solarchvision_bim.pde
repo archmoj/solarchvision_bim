@@ -34216,13 +34216,11 @@ void mouseClicked () {
                 float y2 = RxP[1];
                 float z2 = RxP[2];
     
-                //float[] p = {x2 - x1, y2 - y1, z2 - z1};
-                //float[] p = SOLARCHVISION_translateInside_ReferencePivot(x2 - x1, y2 - y1, z2 - z1);
-                float[] p = SOLARCHVISION_translateOutside_ReferencePivot(x2 - x1, y2 - y1, z2 - z1);
+                float[] p = SOLARCHVISION_translateOutside_ReferencePivot(x2, y2, z2);
 
-                float dx = p[0]; 
-                float dy = p[1];
-                float dz = p[2];
+                float dx = p[0] - x1; 
+                float dy = p[1] - y1;
+                float dz = p[2] - z1;
 
                 int the_Vector = selected_posVector;
               
