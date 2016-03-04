@@ -1,3 +1,5 @@
+// scale only corrected for Group3D ... there is still bug when want to rescale!
+
 // still not sure if these two functions work 100% correct! SOLARCHVISION_translateInside_ReferencePivot and SOLARCHVISION_translateOutside_ReferencePivot
 
 // serach for SOLARCHVISION_scale_Selection( need to make them all correct for local pivots!
@@ -41940,11 +41942,10 @@ float[] SOLARCHVISION_translateInside_ReferencePivot (float a, float b, float c)
 
 float[] SOLARCHVISION_translateOutside_ReferencePivot (float a, float b, float c) {
 
-  
+
   a -= selection_BoundingBox[1 + selection_alignX][0];
   b -= selection_BoundingBox[1 + selection_alignY][1];
   c -= selection_BoundingBox[1 + selection_alignZ][2];   
-
 
   
   float rotX = selection_BoundingBox[1 + selection_alignX][6];
