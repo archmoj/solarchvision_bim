@@ -34187,9 +34187,9 @@ void mouseClicked () {
                            
               if (View_Select_Create_Modify == 1) { // move
 
-                float x1 = 0;
-                float y1 = 0;
-                float z1 = 0;
+                float x1 = FLOAT_undefined;
+                float y1 = FLOAT_undefined;
+                float z1 = FLOAT_undefined;
 
                 if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
     
@@ -34210,29 +34210,46 @@ void mouseClicked () {
                   x1 = allFractals_XYZSR[selectedFractal_numbers[selectedFractal_numbers.length - 1]][0]; 
                   y1 = allFractals_XYZSR[selectedFractal_numbers[selectedFractal_numbers.length - 1]][1]; 
                   z1 = allFractals_XYZSR[selectedFractal_numbers[selectedFractal_numbers.length - 1]][2];              
-                }                
-              
-                float x2 = RxP[0];
-                float y2 = RxP[1];
-                float z2 = RxP[2];
+                }            
+            
+                if (Current_ObjectCategory == ObjectCategory_Solids) {
     
-                float[] p = SOLARCHVISION_translateOutside_ReferencePivot(x2, y2, z2);
+                  x1 = allSolids[selectedSolid_numbers[selectedSolid_numbers.length - 1]][0]; 
+                  y1 = allSolids[selectedSolid_numbers[selectedSolid_numbers.length - 1]][1]; 
+                  z1 = allSolids[selectedSolid_numbers[selectedSolid_numbers.length - 1]][2];              
+                }                 
 
-                float dx = p[0] - x1; 
-                float dy = p[1] - y1;
-                float dz = p[2] - z1;
-
-                int the_Vector = selected_posVector;
+                if (Current_ObjectCategory == ObjectCategory_Vertices) {
+    
+                  x1 = allVertices[selectedVertex_numbers[selectedVertex_numbers.length - 1]][0]; 
+                  y1 = allVertices[selectedVertex_numbers[selectedVertex_numbers.length - 1]][1]; 
+                  z1 = allVertices[selectedVertex_numbers[selectedVertex_numbers.length - 1]][2];              
+                }             
+          
+                if ((x1 != FLOAT_undefined) && (y1 != FLOAT_undefined) && (z1 != FLOAT_undefined)) {       
               
-                if (the_Vector == 0) {dy = 0; dz = 0;}  
-                if (the_Vector == 1) {dz = 0; dx = 0;}  
-                if (the_Vector == 2) {dx = 0; dy = 0;} 
+                  float x2 = RxP[0];
+                  float y2 = RxP[1];
+                  float z2 = RxP[2];
+      
+                  float[] p = SOLARCHVISION_translateOutside_ReferencePivot(x2, y2, z2);
   
-                SOLARCHVISION_move_Selection(dx, dy, dz);
-
-                println("SOLARCHVISION_calculate_selection_ReferencePivot 10");
-                SOLARCHVISION_calculate_selection_ReferencePivot();
-                WIN3D_Update = 1;    
+                  float dx = p[0] - x1; 
+                  float dy = p[1] - y1;
+                  float dz = p[2] - z1;
+  
+                  int the_Vector = selected_posVector;
+                
+                  if (the_Vector == 0) {dy = 0; dz = 0;}  
+                  if (the_Vector == 1) {dz = 0; dx = 0;}  
+                  if (the_Vector == 2) {dx = 0; dy = 0;} 
+    
+                  SOLARCHVISION_move_Selection(dx, dy, dz);
+  
+                  println("SOLARCHVISION_calculate_selection_ReferencePivot 10");
+                  SOLARCHVISION_calculate_selection_ReferencePivot();
+                  WIN3D_Update = 1;    
+                }
 
                                 
               }   
