@@ -40907,6 +40907,8 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float 
   
 }
 
+
+
 void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float sx, float sy, float sz) {
 
   int[] Group3DVertices = SOLARCHVISION_get_selectedGroup3D_Vertices();
@@ -40916,6 +40918,8 @@ void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float s
   x0 = O[0];
   y0 = O[1];
   z0 = O[2];
+  
+  
  
   for (int q = 1; q < Group3DVertices.length; q++) {
     
@@ -40932,10 +40936,14 @@ void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float s
     z = sz * (A[2] - z0) + z0;
 
     float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
-
-    allVertices[n][0] = B[0]; 
-    allVertices[n][1] = B[1];
-    allVertices[n][2] = B[2];
+    
+    x = B[0];
+    y = B[1];
+    z = B[2];
+    
+    allVertices[n][0] = x; 
+    allVertices[n][1] = y;
+    allVertices[n][2] = z;
   }
   
   int n1 = Object2D_PEOPLE_Files_Num;
@@ -40949,11 +40957,26 @@ void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float s
     if (OBJ_NUM != 0) {
       
       {
-        allGroup3Ds_PivotXYZ[OBJ_NUM][0] = x0 + sx * (allGroup3Ds_PivotXYZ[OBJ_NUM][0] - x0);
-        allGroup3Ds_PivotXYZ[OBJ_NUM][1] = y0 + sy * (allGroup3Ds_PivotXYZ[OBJ_NUM][1] - y0);
-        allGroup3Ds_PivotXYZ[OBJ_NUM][2] = z0 + sz * (allGroup3Ds_PivotXYZ[OBJ_NUM][2] - z0);
+        float x = allGroup3Ds_PivotXYZ[OBJ_NUM][0]; 
+        float y = allGroup3Ds_PivotXYZ[OBJ_NUM][1]; 
+        float z = allGroup3Ds_PivotXYZ[OBJ_NUM][2];
+    
+        float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
+      
+        x = sx * (A[0] - x0) + x0;
+        y = sy * (A[1] - y0) + y0;
+        z = sz * (A[2] - z0) + z0;
+    
+        float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
         
+        x = B[0];
+        y = B[1];
+        z = B[2];
         
+        allGroup3Ds_PivotXYZ[OBJ_NUM][0] = x; 
+        allGroup3Ds_PivotXYZ[OBJ_NUM][1] = y;
+        allGroup3Ds_PivotXYZ[OBJ_NUM][2] = z;        
+
         // ???????
         allGroup3Ds_PivotXYZ[OBJ_NUM][3] *= sx; 
         allGroup3Ds_PivotXYZ[OBJ_NUM][4] *= sy;
@@ -40965,13 +40988,25 @@ void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float s
       for (int f = allGroup3Ds_Fractals[OBJ_NUM][0]; f <= allGroup3Ds_Fractals[OBJ_NUM][1]; f++) {
         if ((0 < f) && (f <= allFractals_num)) {
           
-          float x = allFractals_XYZSR[f][0] - x0; 
-          float y = allFractals_XYZSR[f][1] - y0; 
-          //float z = allFractals_XYZSR[f][2] - z0;
-         
-          allFractals_XYZSR[f][0] = x0 + sx * x; 
-          allFractals_XYZSR[f][1] = y0 + sy * y;
-          //allFractals_XYZSR[f][2] = z0 + sz * z;
+          float x = allFractals_XYZSR[f][0];
+          float y = allFractals_XYZSR[f][1]; 
+          float z = allFractals_XYZSR[f][2];
+
+          float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
+        
+          x = sx * (A[0] - x0) + x0;
+          y = sy * (A[1] - y0) + y0;
+          z = sz * (A[2] - z0) + z0;
+      
+          float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
+          
+          x = B[0];
+          y = B[1];
+          z = B[2];
+           
+          allFractals_XYZSR[f][0] = x;
+          allFractals_XYZSR[f][1] = y;
+          allFractals_XYZSR[f][2] = z;
 
           allFractals_XYZSR[f][3] *= sz; 
           
@@ -40982,13 +41017,25 @@ void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float s
       for (int f = allGroup3Ds_Object2Ds[OBJ_NUM][0]; f <= allGroup3Ds_Object2Ds[OBJ_NUM][1]; f++) {
         if ((0 < f) && (f <= allObject2Ds_num)) {
           
-          float x = allObject2Ds_XYZS[f][0] - x0; 
-          float y = allObject2Ds_XYZS[f][1] - y0; 
-          //float z = allObject2Ds_XYZS[f][2] - z0;
+          float x = allObject2Ds_XYZS[f][0];
+          float y = allObject2Ds_XYZS[f][1]; 
+          float z = allObject2Ds_XYZS[f][2];
          
-          allObject2Ds_XYZS[f][0] = x0 + sx * x; 
-          allObject2Ds_XYZS[f][1] = y0 + sy * y;
-          //allObject2Ds_XYZS[f][2] = z0 + sz * z;
+          float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
+        
+          x = sx * (A[0] - x0) + x0;
+          y = sy * (A[1] - y0) + y0;
+          z = sz * (A[2] - z0) + z0;
+      
+          float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
+          
+          x = B[0];
+          y = B[1];
+          z = B[2];         
+         
+          allObject2Ds_XYZS[f][0] = x; 
+          allObject2Ds_XYZS[f][1] = y;
+          allObject2Ds_XYZS[f][2] = z;
   
           int n = allObject2Ds_MAP[f];
   
