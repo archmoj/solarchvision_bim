@@ -1,3 +1,5 @@
+// still not sure if these two functions work 100% correct! SOLARCHVISION_translateInside_ReferencePivot and SOLARCHVISION_translateOutside_ReferencePivot
+
 // serach for SOLARCHVISION_move_Selection( need to make them all correct for local pivots!
 // local pivot
 
@@ -34184,57 +34186,56 @@ void mouseClicked () {
             if (RxP[4] > 0) {
                            
               if (View_Select_Create_Modify == 1) { // move
-              
-                float x0 = RxP[0];
-                float y0 = RxP[1];
-                float z0 = RxP[2];
-              
+
+                float x1 = 0;
+                float y1 = 0;
+                float z1 = 0;
+
                 if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
     
-                  float[] p = SOLARCHVISION_translateInside_ReferencePivot(x0 - selected_Pivot_XYZ[0], y0 - selected_Pivot_XYZ[1], z0 - selected_Pivot_XYZ[2]);
-  
-                  float dx = p[0]; 
-                  float dy = p[1];
-                  float dz = p[2];
-  
-                  int the_Vector = selected_posVector;
-                
-                  if (the_Vector == 0) {dy = 0; dz = 0;}  
-                  if (the_Vector == 1) {dz = 0; dx = 0;}  
-                  if (the_Vector == 2) {dx = 0; dy = 0;} 
-    
-                  SOLARCHVISION_move_Selection(dx, dy, dz);
+                  x1 = selected_Pivot_XYZ[0];                
+                  y1 = selected_Pivot_XYZ[1];
+                  z1 = selected_Pivot_XYZ[2];
                 }
-    
+                
                 if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
     
-                  float dx = x0 - allObject2Ds_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][0]; 
-                  float dy = y0 - allObject2Ds_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][1]; 
-                  float dz = z0 - allObject2Ds_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][2];              
-  
-                  int the_Vector = selected_posVector;
-                
-                  if (the_Vector == 0) {dy = 0; dz = 0;}  
-                  if (the_Vector == 1) {dz = 0; dx = 0;}  
-                  if (the_Vector == 2) {dx = 0; dy = 0;} 
-    
-                  SOLARCHVISION_move_Selection(dx, dy, dz);
+                  x1 = allObject2Ds_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][0]; 
+                  y1 = allObject2Ds_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][1]; 
+                  z1 = allObject2Ds_XYZS[selectedObject2D_numbers[selectedObject2D_numbers.length - 1]][2];              
                 }
-    
+                
                 if (Current_ObjectCategory == ObjectCategory_Fractals) {
     
-                  float dx = x0 - allFractals_XYZSR[selectedFractal_numbers[selectedFractal_numbers.length - 1]][0]; 
-                  float dy = y0 - allFractals_XYZSR[selectedFractal_numbers[selectedFractal_numbers.length - 1]][1]; 
-                  float dz = z0 - allFractals_XYZSR[selectedFractal_numbers[selectedFractal_numbers.length - 1]][2];              
-  
-                  int the_Vector = selected_posVector;
-                
-                  if (the_Vector == 0) {dy = 0; dz = 0;}  
-                  if (the_Vector == 1) {dz = 0; dx = 0;}  
-                  if (the_Vector == 2) {dx = 0; dy = 0;} 
+                  x1 = allFractals_XYZSR[selectedFractal_numbers[selectedFractal_numbers.length - 1]][0]; 
+                  y1 = allFractals_XYZSR[selectedFractal_numbers[selectedFractal_numbers.length - 1]][1]; 
+                  z1 = allFractals_XYZSR[selectedFractal_numbers[selectedFractal_numbers.length - 1]][2];              
+                }                
+              
+                float x2 = RxP[0];
+                float y2 = RxP[1];
+                float z2 = RxP[2];
     
-                  SOLARCHVISION_move_Selection(dx, dy, dz);
-                }
+                //float[] p = {x2 - x1, y2 - y1, z2 - z1};
+                //float[] p = SOLARCHVISION_translateInside_ReferencePivot(x2 - x1, y2 - y1, z2 - z1);
+                float[] p = SOLARCHVISION_translateOutside_ReferencePivot(x2 - x1, y2 - y1, z2 - z1);
+
+                float dx = p[0]; 
+                float dy = p[1];
+                float dz = p[2];
+
+                int the_Vector = selected_posVector;
+              
+                if (the_Vector == 0) {dy = 0; dz = 0;}  
+                if (the_Vector == 1) {dz = 0; dx = 0;}  
+                if (the_Vector == 2) {dx = 0; dy = 0;} 
+  
+                SOLARCHVISION_move_Selection(dx, dy, dz);
+
+                println("SOLARCHVISION_calculate_selection_ReferencePivot 10");
+                SOLARCHVISION_calculate_selection_ReferencePivot();
+                WIN3D_Update = 1;    
+
                                 
               }   
 
@@ -41789,6 +41790,7 @@ void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int 
 
 
 
+
 float[] SOLARCHVISION_translateInside_ReferencePivot (float a, float b, float c) {
   
   a *= selection_BoundingBox[1 + selection_alignX][3];
@@ -41820,6 +41822,46 @@ float[] SOLARCHVISION_translateInside_ReferencePivot (float a, float b, float c)
   float z = c;      
   
   float[] return_array = {x,y,z};
+  
+  return return_array;  
+}
+
+
+float[] SOLARCHVISION_translateOutside_ReferencePivot (float a, float b, float c) {
+  
+  println("a,b,c", a,b,c);
+
+  float rotX = selection_BoundingBox[1 + selection_alignX][6];
+  float rotY = selection_BoundingBox[1 + selection_alignY][7];
+  float rotZ = selection_BoundingBox[1 + selection_alignZ][8];
+  
+  float x1 = a * cos_ang(-rotZ) - b * sin_ang(-rotZ);
+  float y1 = a * sin_ang(-rotZ) + b * cos_ang(-rotZ); 
+  float z1 = c;      
+ 
+  a = x1;
+  b = y1;
+  c = z1;  
+
+  float z2 = c * cos_ang(-rotY) - a * sin_ang(-rotY);
+  float x2 = c * sin_ang(-rotY) + a * cos_ang(-rotY);
+  float y2 = b; 
+  
+  a = x2;
+  b = y2;
+  c = z2;      
+  
+  float y = b * cos_ang(-rotX) - c * sin_ang(-rotX); 
+  float z = b * sin_ang(-rotX) + c * cos_ang(-rotX);
+  float x = a;  
+  
+  x /= selection_BoundingBox[1 + selection_alignX][3];
+  y /= selection_BoundingBox[1 + selection_alignY][4];
+  z /= selection_BoundingBox[1 + selection_alignZ][5];        
+  
+  float[] return_array = {x,y,z};
+  
+  println("x,y,z", x,y,z);
   
   return return_array;  
 }
