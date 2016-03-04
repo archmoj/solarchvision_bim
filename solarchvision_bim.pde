@@ -41888,11 +41888,14 @@ float[] SOLARCHVISION_translateOutside_ReferencePivot (float a, float b, float c
 
 void SOLARCHVISION_move_Selection (float dx, float dy, float dz) {
 
-  float[] p = SOLARCHVISION_translateInside_ReferencePivot(dx, dy, dz);
+  float[] A = SOLARCHVISION_translateInside_ReferencePivot(0, 0, 0);
+  float[] B = SOLARCHVISION_translateInside_ReferencePivot(dx, dy, dz);
 
-  dx = p[0];
-  dy = p[1]; 
-  dz = p[2];   
+  dx = B[0] - A[0];
+  dy = B[1] - A[1];
+  dz = B[2] - A[2];
+  
+  
 
 
   if (Current_ObjectCategory == ObjectCategory_Cameras) {
