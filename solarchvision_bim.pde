@@ -41696,6 +41696,13 @@ void SOLARCHVISION_scale_selectedLandPoints (float x0, float y0, float z0, float
 
 void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, float sy, float sz) {
 
+  float[] A = SOLARCHVISION_translateInside_ReferencePivot(0, 0, 0);
+  float[] B = SOLARCHVISION_translateInside_ReferencePivot(x0, y0, z0);
+
+  x0 = B[0] - A[0];
+  y0 = B[1] - A[1];
+  z0 = B[2] - A[2];    
+
   if (Current_ObjectCategory == ObjectCategory_Cameras) {
 
     SOLARCHVISION_scale_selectedCameras(x0, y0, z0, sx, sy, sz);
@@ -41750,6 +41757,14 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
 
 void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int the_Vector) {
 
+  float[] A = SOLARCHVISION_translateInside_ReferencePivot(0, 0, 0);
+  float[] B = SOLARCHVISION_translateInside_ReferencePivot(x0, y0, z0);
+
+  x0 = B[0] - A[0];
+  y0 = B[1] - A[1];
+  z0 = B[2] - A[2];  
+  
+  
   if (Current_ObjectCategory == ObjectCategory_Cameras) {
 
     SOLARCHVISION_rotate_selectedCameras(x0, y0, z0, r, the_Vector);
