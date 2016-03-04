@@ -37509,9 +37509,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     strokeWeight(2);
     
     float[][] Pivot_Vertices = {{0,0,0},
-                                      {1,0,0},
-                                      {0,1,0},
-                                      {0,0,1}}; 
+                                {1,0,0},
+                                {0,1,0},
+                                {0,0,1}}; 
                                       
     for (int i = 0; i < Pivot_Vertices.length; i++) {
       
@@ -40915,14 +40915,6 @@ void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float s
 
   int[] Group3DVertices = SOLARCHVISION_get_selectedGroup3D_Vertices();
 
-/*
-  float[] O = SOLARCHVISION_translateOutside_ReferencePivot(x0, y0, z0);
-  x0 = O[0];
-  y0 = O[1];
-  z0 = O[2];
-*/  
-  
- 
   for (int q = 1; q < Group3DVertices.length; q++) {
     
     int n = Group3DVertices[q];
@@ -41770,12 +41762,17 @@ void SOLARCHVISION_scale_selectedLandPoints (float x0, float y0, float z0, float
 
 void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, float sy, float sz) {
 
-  float[] A = SOLARCHVISION_translateOutside_ReferencePivot(0, 0, 0);
-  float[] B = SOLARCHVISION_translateOutside_ReferencePivot(x0, y0, z0);
+  float[] O = SOLARCHVISION_translateOutside_ReferencePivot(x0, y0, z0);
 
-  x0 = B[0] - A[0];
-  y0 = B[1] - A[1];
-  z0 = B[2] - A[2];    
+  x0 = O[0];
+  y0 = O[1];
+  z0 = O[2];    
+
+
+  println("O:");
+  println(O);
+
+
   
   if (Current_ObjectCategory == ObjectCategory_Cameras) {
 
@@ -41896,11 +41893,17 @@ void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int 
 
 float[] SOLARCHVISION_translateInside_ReferencePivot (float a, float b, float c) {
 
+  
+/*
+  a += selection_BoundingBox[1 + selection_alignX][0];
+  b += selection_BoundingBox[1 + selection_alignY][1];
+  c += selection_BoundingBox[1 + selection_alignZ][2];     
+  
     
-  //a *= selection_BoundingBox[1 + selection_alignX][3];
-  //b *= selection_BoundingBox[1 + selection_alignY][4];
-  //c *= selection_BoundingBox[1 + selection_alignZ][5];  
-
+  a *= selection_BoundingBox[1 + selection_alignX][3];
+  b *= selection_BoundingBox[1 + selection_alignY][4];
+  c *= selection_BoundingBox[1 + selection_alignZ][5];  
+*/
   
   float rotX = selection_BoundingBox[1 + selection_alignX][6];
   float rotY = selection_BoundingBox[1 + selection_alignY][7];
@@ -41927,25 +41930,17 @@ float[] SOLARCHVISION_translateInside_ReferencePivot (float a, float b, float c)
   float z = c;      
 
 
-
-
-  //x += selection_BoundingBox[1 + selection_alignX][0];
-  //y += selection_BoundingBox[1 + selection_alignY][1];
-  //z += selection_BoundingBox[1 + selection_alignZ][2];   
-
-
   float[] return_array = {x,y,z};
   
   return return_array;  
 }
 
 
+
 float[] SOLARCHVISION_translateOutside_ReferencePivot (float a, float b, float c) {
 
 
-  //a -= selection_BoundingBox[1 + selection_alignX][0];
-  //b -= selection_BoundingBox[1 + selection_alignY][1];
-  //c -= selection_BoundingBox[1 + selection_alignZ][2];   
+  
 
   
   float rotX = selection_BoundingBox[1 + selection_alignX][6];
@@ -41973,10 +41968,16 @@ float[] SOLARCHVISION_translateOutside_ReferencePivot (float a, float b, float c
   float x = a;  
   
 
-  //x /= selection_BoundingBox[1 + selection_alignX][3];
-  //y /= selection_BoundingBox[1 + selection_alignY][4];
-  //z /= selection_BoundingBox[1 + selection_alignZ][5];    
-  
+
+/*
+  x /= selection_BoundingBox[1 + selection_alignX][3];
+  y /= selection_BoundingBox[1 + selection_alignY][4];
+  z /= selection_BoundingBox[1 + selection_alignZ][5];    
+
+  x -= selection_BoundingBox[1 + selection_alignX][0];
+  y -= selection_BoundingBox[1 + selection_alignY][1];
+  z -= selection_BoundingBox[1 + selection_alignZ][2];   
+*/
     
 
   float[] return_array = {x,y,z};
