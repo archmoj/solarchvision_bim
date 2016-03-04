@@ -40918,6 +40918,8 @@ void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float s
     float x = allVertices[n][0] - x0; 
     float y = allVertices[n][1] - y0; 
     float z = allVertices[n][2] - z0;
+    
+  
    
     allVertices[n][0] = x0 + sx * x; 
     allVertices[n][1] = y0 + sy * y;
