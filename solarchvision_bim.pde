@@ -40980,9 +40980,9 @@ void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float s
         allGroup3Ds_PivotXYZ[OBJ_NUM][2] = z;        
 
         // ???????
-        allGroup3Ds_PivotXYZ[OBJ_NUM][3] *= sx; 
-        allGroup3Ds_PivotXYZ[OBJ_NUM][4] *= sy;
-        allGroup3Ds_PivotXYZ[OBJ_NUM][5] *= sz;
+        //allGroup3Ds_PivotXYZ[OBJ_NUM][3] *= sx; 
+        //allGroup3Ds_PivotXYZ[OBJ_NUM][4] *= sy;
+        //allGroup3Ds_PivotXYZ[OBJ_NUM][5] *= sz;
         // ???????
       }
 
