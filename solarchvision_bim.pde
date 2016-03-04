@@ -40915,13 +40915,21 @@ void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float s
     
     int n = Group3DVertices[q];
 
-    float x = allVertices[n][0] - x0; 
-    float y = allVertices[n][1] - y0; 
-    float z = allVertices[n][2] - z0;
+    float x = allVertices[n][0]; 
+    float y = allVertices[n][1]; 
+    float z = allVertices[n][2];
 
-    allVertices[n][0] = x0 + sx * x; 
-    allVertices[n][1] = y0 + sy * y;
-    allVertices[n][2] = z0 + sz * z;
+    float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
+  
+    x = sx * (A[0] - x0) + x0;
+    y = sy * (A[1] - y0) + y0;
+    z = sz * (A[2] - z0) + z0;
+
+    float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
+
+    allVertices[n][0] = B[0]; 
+    allVertices[n][1] = B[1];
+    allVertices[n][2] = B[2];
   }
   
   int n1 = Object2D_PEOPLE_Files_Num;
