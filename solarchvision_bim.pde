@@ -41002,12 +41002,23 @@ void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float s
       for (int f = allGroup3Ds_Solids[OBJ_NUM][0]; f <= allGroup3Ds_Solids[OBJ_NUM][1]; f++) {
         if ((0 < f) && (f <= allSolids.length - 1)) {
           
-          float Solid_posX = Solid_get_posX(f);
-          float Solid_posY = Solid_get_posY(f);
-          float Solid_posZ = Solid_get_posZ(f);
-   
+          float x = Solid_get_posX(f);
+          float y = Solid_get_posY(f);
+          float z = Solid_get_posZ(f);
+
+          float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
+        
+          x = sx * (A[0] - x0) + x0;
+          y = sy * (A[1] - y0) + y0;
+          z = sz * (A[2] - z0) + z0;
+      
+          float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
+      
+          x = B[0]; 
+          y = B[1];
+          z = B[2];
           
-          Solid_updatePosition(f, (Solid_posX - x0) * sx + x0, (Solid_posY - y0) * sy + y0, (Solid_posZ - z0) * sz + z0);
+          Solid_updatePosition(f, x, y, z);
           
           Solid_Scale(f, sx, sy, sz);
     
@@ -41709,14 +41720,14 @@ void SOLARCHVISION_scale_selectedLandPoints (float x0, float y0, float z0, float
 
 
 void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, float sy, float sz) {
-
+/*
   float[] A = SOLARCHVISION_translateInside_ReferencePivot(0, 0, 0);
   float[] B = SOLARCHVISION_translateInside_ReferencePivot(x0, y0, z0);
 
   x0 = B[0] - A[0];
   y0 = B[1] - A[1];
   z0 = B[2] - A[2];    
-  
+*/  
   if (Current_ObjectCategory == ObjectCategory_Cameras) {
 
     SOLARCHVISION_scale_selectedCameras(x0, y0, z0, sx, sy, sz);
