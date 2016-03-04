@@ -40674,12 +40674,18 @@ void SOLARCHVISION_move_selectedGroup3Ds (float dx, float dy, float dz) {
     allVertices[n][1] += dy;
     allVertices[n][2] += dz;
   }
-  
- 
-  
-  
+
   //println("SOLARCHVISION_calculate_selection_ReferencePivot 10");
   //SOLARCHVISION_calculate_selection_ReferencePivot();   
+  
+/*
+  float[] p = SOLARCHVISION_translateInside_ReferencePivot(x0 - selected_Pivot_XYZ[0], y0 - selected_Pivot_XYZ[1], z0 - selected_Pivot_XYZ[2]);
+
+  float dx = p[0]; 
+  float dy = p[1];
+  float dz = p[2];  
+  
+
   for (int i = 0; i < 3; i++) {
     selection_BoundingBox[i][0] += dx;
     selection_BoundingBox[i][1] += dy;
@@ -40688,7 +40694,7 @@ void SOLARCHVISION_move_selectedGroup3Ds (float dx, float dy, float dz) {
   selected_Pivot_XYZ[0] += dx;
   selected_Pivot_XYZ[1] += dy;
   selected_Pivot_XYZ[2] += dz;
-
+*/
   
   
   int Solids_updated = 0;
@@ -40933,6 +40939,8 @@ void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float s
   
   //println("SOLARCHVISION_calculate_selection_ReferencePivot 12");
   //SOLARCHVISION_calculate_selection_ReferencePivot();
+  
+/*  
   for (int i = 0; i < 3; i++) {
     float x = selection_BoundingBox[i][0] - x0; 
     float y = selection_BoundingBox[i][1] - y0; 
@@ -40942,7 +40950,7 @@ void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float s
     selection_BoundingBox[i][1] = y0 + sy * y;
     selection_BoundingBox[i][2] = z0 + sz * z;
   }  
-  
+*/  
   
   
   int n1 = Object2D_PEOPLE_Files_Num;
