@@ -26472,6 +26472,33 @@ void SOLARCHVISION_add_ProjectModel () {
     SOLARCHVISION_add_Box_Core(4,0,0,1,1, x,y,z, dx, dy, dz, rot);
     SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
   }   
+  
+  
+  {  
+    float dx = 12;
+    float dy = 9;
+    float dz = 6;
+    float x = 30;
+    float y = -30;
+    float z = 9;    
+    float rot = 30;
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
+    SOLARCHVISION_add_Box_Core(4,0,0,1,1, x,y,z, dx, dy, dz, rot);
+    SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
+  }     
+
+  {  
+    float dx = 12;
+    float dy = 9;
+    float dz = 6;
+    float x = -30;
+    float y = -30;
+    float z = 9;    
+    float rot = 45;
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
+    SOLARCHVISION_add_Box_Core(4,0,0,1,1, x,y,z, dx, dy, dz, rot);
+    SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
+  }  
 
   {  
     float dx = 5;
@@ -40621,7 +40648,19 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
   }   
 
   if ((posX_min != FLOAT_undefined) && (posX_max != -FLOAT_undefined) && (posY_min != FLOAT_undefined) && (posY_max != -FLOAT_undefined) && (posZ_min != FLOAT_undefined) && (posZ_max != -FLOAT_undefined)) {
-  
+
+    float[] B = SOLARCHVISION_translateInside_ReferencePivot(posX_min, posY_min, posZ_min);
+    
+    posX_min = B[0];
+    posY_min = B[1];
+    posZ_min = B[2];  
+
+    float[] C = SOLARCHVISION_translateInside_ReferencePivot(posX_max, posY_max, posZ_max);
+    
+    posX_max = C[0];
+    posY_max = C[1];
+    posZ_max = C[2]; 
+    
     for (int i = 0; i < 3; i++) {
       float ratio = 0.5 * i;
       selection_BoundingBox[i][0] = (1 - ratio) * posX_min + ratio * posX_max;
@@ -40652,6 +40691,8 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
       selection_BoundingBox[i][8] = 0;    
     }    
   }
+  
+  
 
   
 }
