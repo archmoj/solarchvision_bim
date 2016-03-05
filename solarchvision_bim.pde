@@ -41975,11 +41975,11 @@ float[] SOLARCHVISION_translateInside_ReferencePivot (float a, float b, float c)
   x *= selection_BoundingBox[1 + selection_alignX][3];
   y *= selection_BoundingBox[1 + selection_alignY][4];
   z *= selection_BoundingBox[1 + selection_alignZ][5]; 
-
+/*
   x += selection_BoundingBox[1 + selection_alignX][0];
   y += selection_BoundingBox[1 + selection_alignY][1];
   z += selection_BoundingBox[1 + selection_alignZ][2];  
-
+*/
   float[] return_array = {x,y,z};
   
   return return_array;  
@@ -41988,11 +41988,11 @@ float[] SOLARCHVISION_translateInside_ReferencePivot (float a, float b, float c)
 
 
 float[] SOLARCHVISION_translateOutside_ReferencePivot (float a, float b, float c) {
-
+/*
   a -= selection_BoundingBox[1 + selection_alignX][0];
   b -= selection_BoundingBox[1 + selection_alignY][1];
   c -= selection_BoundingBox[1 + selection_alignZ][2];   
-  
+*/  
   a /= selection_BoundingBox[1 + selection_alignX][3];
   b /= selection_BoundingBox[1 + selection_alignY][4];
   c /= selection_BoundingBox[1 + selection_alignZ][5];    
