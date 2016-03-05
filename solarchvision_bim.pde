@@ -37529,7 +37529,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       float posX_min = selection_BoundingBox[0][0];
       float posY_min = selection_BoundingBox[0][1];
       float posZ_min = selection_BoundingBox[0][2];
-  
+
       float posX_max = selection_BoundingBox[2][0];
       float posY_max = selection_BoundingBox[2][1];
       float posZ_max = selection_BoundingBox[2][2];
@@ -40430,9 +40430,9 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
 
   for (int q = 1; q < theVertices.length; q++) {
  
-    float posX_now = 0;
-    float posY_now = 0;
-    float posZ_now = 0;
+    float x = 0;
+    float y = 0;
+    float z = 0;
 
     if (Current_ObjectCategory == ObjectCategory_Cameras) {
       int n = theVertices[q];
@@ -40453,9 +40453,9 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
         float[][] ImageVertex = SOLARCHVISION_getCorners_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);
         
         // the first vertex is the Camera point
-        posX_now = ImageVertex[0][0]; 
-        posY_now = ImageVertex[0][1]; 
-        posZ_now = ImageVertex[0][2]; 
+        x = ImageVertex[0][0]; 
+        y = ImageVertex[0][1]; 
+        z = ImageVertex[0][2]; 
       } 
     }  
     
@@ -40478,9 +40478,9 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
         float[][] ImageVertex = SOLARCHVISION_getCorners_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);
 
         // the first vertex is the center of Section plane
-        posX_now = ImageVertex[0][0]; 
-        posY_now = ImageVertex[0][1]; 
-        posZ_now = ImageVertex[0][2]; 
+        x = ImageVertex[0][0]; 
+        y = ImageVertex[0][1]; 
+        z = ImageVertex[0][2]; 
       } 
     }  
 
@@ -40506,9 +40506,9 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
         float[][] ImageVertex = SOLARCHVISION_getCorners_Solid(0, Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);
 
         // the first vertex is the center of Solid plane
-        posX_now = ImageVertex[0][0]; 
-        posY_now = ImageVertex[0][1]; 
-        posZ_now = ImageVertex[0][2];         
+        x = ImageVertex[0][0]; 
+        y = ImageVertex[0][1]; 
+        z = ImageVertex[0][2];         
       } 
     }  
     
@@ -40516,23 +40516,23 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Faces) || (Current_ObjectCategory == ObjectCategory_Vertices) || (Current_ObjectCategory == ObjectCategory_SoftVerts)) {
       int n = theVertices[q];
       
-      posX_now = allVertices[n][0];
-      posY_now = allVertices[n][1];
-      posZ_now = allVertices[n][2];
+      x = allVertices[n][0];
+      y = allVertices[n][1];
+      z = allVertices[n][2];
     }
     if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
       int n = theVertices[q];
       
-      posX_now = allObject2Ds_XYZS[n][0];
-      posY_now = allObject2Ds_XYZS[n][1];
-      posZ_now = allObject2Ds_XYZS[n][2];
+      x = allObject2Ds_XYZS[n][0];
+      y = allObject2Ds_XYZS[n][1];
+      z = allObject2Ds_XYZS[n][2];
     }     
     if (Current_ObjectCategory == ObjectCategory_Fractals) {
       int n = theVertices[q];
       
-      posX_now = allFractals_XYZSR[n][0];
-      posY_now = allFractals_XYZSR[n][1];
-      posZ_now = allFractals_XYZSR[n][2];
+      x = allFractals_XYZSR[n][0];
+      y = allFractals_XYZSR[n][1];
+      z = allFractals_XYZSR[n][2];
     }  
     if (Current_ObjectCategory == ObjectCategory_LandPoint) {
       int n = theVertices[q];
@@ -40544,36 +40544,52 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
         int the_i = (OBJ_NUM - 1) / LAND_n_J;
         int the_j = (OBJ_NUM - 1) % LAND_n_J;
 
-        posX_now = LAND_MESH[the_i][the_j][0];
-        posY_now = LAND_MESH[the_i][the_j][1];
-        posZ_now = LAND_MESH[the_i][the_j][2];
+        x = LAND_MESH[the_i][the_j][0];
+        y = LAND_MESH[the_i][the_j][1];
+        z = LAND_MESH[the_i][the_j][2];
       }
       else {
-        posX_now = 0;
-        posY_now = 0;
-        posZ_now = 0;
+        x = 0;
+        y = 0;
+        z = 0;
       }
     }             
   
   
-    float[] A = SOLARCHVISION_translateOutside_ReferencePivot(posX_now, posY_now, posZ_now);
+    float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
     
-    posX_now = A[0];
-    posY_now = A[1];
-    posZ_now = A[2];
+    x = A[0];
+    y = A[1];
+    z = A[2];
 
    
-    if (posX_min > posX_now) posX_min = posX_now;   
-    if (posY_min > posY_now) posY_min = posY_now;   
-    if (posZ_min > posZ_now) posZ_min = posZ_now;
+    if (posX_min > x) posX_min = x;   
+    if (posY_min > y) posY_min = y;   
+    if (posZ_min > z) posZ_min = z;
     
-    if (posX_max < posX_now) posX_max = posX_now;   
-    if (posY_max < posY_now) posY_max = posY_now;   
-    if (posZ_max < posZ_now) posZ_max = posZ_now;
+    if (posX_max < x) posX_max = x;   
+    if (posY_max < y) posY_max = y;   
+    if (posZ_max < z) posZ_max = z;
   }   
 
   if ((posX_min != FLOAT_undefined) && (posX_max != -FLOAT_undefined) && (posY_min != FLOAT_undefined) && (posY_max != -FLOAT_undefined) && (posZ_min != FLOAT_undefined) && (posZ_max != -FLOAT_undefined)) {
-   
+/*   
+    float[] O = SOLARCHVISION_translateInside_ReferencePivot(0, 0, 0);
+    float[] A = SOLARCHVISION_translateInside_ReferencePivot(posX, posY, posZ);
+    
+    float dx = A[0] - O[0];
+    float dy = A[1] - O[1];
+    float dz = A[2] - O[2];
+    
+    posX_min += dx;
+    posY_min += dy;
+    posZ_min += dz;    
+    
+    posX_max += dx;
+    posY_max += dy;
+    posZ_max += dz;   
+    */
+    
     for (int i = 0; i < 3; i++) {
       float ratio = 0.5 * i;
       selection_BoundingBox[i][0] = (1 - ratio) * posX_min + ratio * posX_max;
