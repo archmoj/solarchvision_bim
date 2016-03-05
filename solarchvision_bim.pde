@@ -40575,7 +40575,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
         posZ_now = 0;
       }
     }             
-    
+/*    
     {
       float a = posX_now;
       float b = posY_now;
@@ -40609,7 +40609,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
       posY_now = y;
       posZ_now = z;
     }
-    
+*/    
    
     if (posX_min > posX_now) posX_min = posX_now;   
     if (posY_min > posY_now) posY_min = posY_now;   
@@ -41930,7 +41930,7 @@ void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int 
 
 float[] SOLARCHVISION_translateInside_ReferencePivot (float a, float b, float c) {
 
-  
+
 /*
   a += selection_BoundingBox[1 + selection_alignX][0];
   b += selection_BoundingBox[1 + selection_alignY][1];
@@ -41967,6 +41967,8 @@ float[] SOLARCHVISION_translateInside_ReferencePivot (float a, float b, float c)
   float z = c;      
 
 
+
+
   float[] return_array = {x,y,z};
   
   return return_array;  
@@ -41976,8 +41978,6 @@ float[] SOLARCHVISION_translateInside_ReferencePivot (float a, float b, float c)
 
 float[] SOLARCHVISION_translateOutside_ReferencePivot (float a, float b, float c) {
 
-
-  
 
   
   float rotX = selection_BoundingBox[1 + selection_alignX][6];
@@ -42016,6 +42016,7 @@ float[] SOLARCHVISION_translateOutside_ReferencePivot (float a, float b, float c
   z -= selection_BoundingBox[1 + selection_alignZ][2];   
 */
     
+
 
   float[] return_array = {x,y,z};
 
