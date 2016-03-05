@@ -41988,6 +41988,7 @@ float[] SOLARCHVISION_translateInside_ReferencePivot (float a, float b, float c)
 
 
 float[] SOLARCHVISION_translateOutside_ReferencePivot (float a, float b, float c) {
+
 /*
   a -= selection_BoundingBox[1 + selection_alignX][0];
   b -= selection_BoundingBox[1 + selection_alignY][1];
