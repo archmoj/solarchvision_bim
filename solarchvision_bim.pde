@@ -3061,6 +3061,8 @@ void SOLARCHVISION_draw_WIN3D () {
     SOLARCHVISION_draw_Object2Ds();  
     
     SOLARCHVISION_draw_windFlow();
+    
+    
   
   
     WIN3D_Diagrams.sphereDetail(6, 4);
@@ -3185,11 +3187,12 @@ void SOLARCHVISION_draw_WIN3D () {
       }
     }   
 
-
+    WIN3D_Diagrams.hint(DISABLE_DEPTH_TEST);
+    
+    SOLARCHVISION_draw_referencePivot();
     
     WIN3D_Diagrams.popMatrix();
     
-    WIN3D_Diagrams.hint(DISABLE_DEPTH_TEST);
     
     SOLARCHVISION_draw_pallet_on_WIN3D();  
     
@@ -37117,6 +37120,213 @@ void SOLARCHVISION_draw_Perspective_Internally () {
   }
 
 
+  if (Current_ObjectCategory == ObjectCategory_Faces) {    
+    
+    if (selectedFace_displayEdges != 0) {
+      
+      pushMatrix();
+    
+      translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+      
+      noFill();
+      
+      stroke(127,0,255); 
+      strokeWeight(2);
+      
+      for (int o = selectedFace_numbers.length - 1; o >= 0; o--) {
+        
+        int f = selectedFace_numbers[o];
+        
+        if (f != 0) {
+
+          int Tessellation = allFaces_MTLV[f][1];
+          
+          int TotalSubNo = 1;  
+          if (allFaces_MTLV[f][0] == 0) {
+            Tessellation += MODEL3D_TESSELLATION;
+          }
+          if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+      
+          for (int n = 0; n < TotalSubNo; n++) {
+            
+            float[][] base_Vertices = new float [allFaces[f].length][3];
+            for (int j = 0; j < allFaces[f].length; j++) {
+              int vNo = allFaces[f][j];
+              base_Vertices[j][0] = allVertices[vNo][0];
+              base_Vertices[j][1] = allVertices[vNo][1];
+              base_Vertices[j][2] = allVertices[vNo][2];
+            }
+            
+            float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+         
+            beginShape();
+            
+            for (int s = 0; s < subFace.length; s++) {
+  
+              float x = subFace[s][0] * OBJECTS_scale;
+              float y = subFace[s][1] * OBJECTS_scale;            
+              float z = -subFace[s][2] * OBJECTS_scale;
+              
+              float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+              
+              if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+                if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
+              }
+              
+            }
+            
+            endShape(CLOSE);
+          }
+        }
+      }
+      
+      strokeWeight(0);   
+    
+      popMatrix();
+    }
+    
+    
+    if (selectedFace_displayVertexCount != 0) {
+      
+      pushMatrix();
+    
+      translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+
+      fill(0);
+      
+      stroke(0); 
+      strokeWeight(0);
+
+      textSize(1.5 * MESSAGE_S_View);
+      textAlign(CENTER, BOTTOM);
+      
+      for (int o = selectedFace_numbers.length - 1; o >= 0; o--) {
+        
+        int f = selectedFace_numbers[o];
+        
+        if (f != 0) {
+
+          for (int j = 0; j < allFaces[f].length; j++) {
+            int vNo = allFaces[f][j];
+          
+            float x = allVertices[vNo][0] * OBJECTS_scale;
+            float y = allVertices[vNo][1] * OBJECTS_scale;            
+            float z = -allVertices[vNo][2] * OBJECTS_scale;
+            
+            float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+
+            if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) {
+                text(nf(j + 1, 0), Image_XYZ[0], Image_XYZ[1]);
+              }
+            }
+
+          }
+        }
+      }
+      
+      strokeWeight(0);   
+    
+      popMatrix();
+    }    
+  }
+
+  
+  if (Current_ObjectCategory == ObjectCategory_Vertices) {    
+    
+    if (selectedVertex_displayVertices != 0) {
+  
+      pushMatrix();
+    
+      translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+      
+      noFill();
+      
+      stroke(255,0,255,127);
+      
+      strokeWeight(2);
+      
+      ellipseMode(CENTER);
+      
+      float R = 10;
+      
+      for (int o = selectedVertex_numbers.length - 1; o >= 0; o--) {
+        
+        int vNo = selectedVertex_numbers[o];
+        
+        if (vNo != 0) {        
+    
+          float x = allVertices[vNo][0] * OBJECTS_scale;
+          float y = allVertices[vNo][1] * OBJECTS_scale;
+          float z = -allVertices[vNo][2] * OBJECTS_scale;
+    
+          float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+          
+          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+            if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View + R, -0.5 * WIN3D_Y_View + R, 0.5 * WIN3D_X_View - R, 0.5 * WIN3D_Y_View - R) == 1) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
+          }
+    
+        }    
+      }
+      
+      strokeWeight(0);   
+    
+      popMatrix();    
+    }
+  }  
+  
+  
+  if (Current_ObjectCategory == ObjectCategory_SoftVerts) {    
+    
+    if (selectedVertex_displayVertices != 0) {
+
+      pushMatrix();
+    
+      translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
+      
+      strokeWeight(0);
+      
+      ellipseMode(CENTER);
+      
+      float R = 5;
+
+      for (int q = 1; q < selectedVertex_softSelectionVertices.length; q++) {
+        
+        int vNo = selectedVertex_softSelectionVertices[q];
+        
+        float _u = selectedVertex_softSelectionValues[q];    
+        
+        if (vNo != 0) {        
+          
+          float x = allVertices[vNo][0] * OBJECTS_scale;
+          float y = allVertices[vNo][1] * OBJECTS_scale;
+          float z = -allVertices[vNo][2] * OBJECTS_scale;
+    
+          float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
+          
+          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
+            if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View + R, -0.5 * WIN3D_Y_View + R, 0.5 * WIN3D_X_View - R, 0.5 * WIN3D_Y_View - R) == 1) {
+              
+              float[] _COL = GET_COLOR_STYLE(14, _u); // <<<<<<<<<<<<<<<<<
+              fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+              stroke(_COL[1], _COL[2], _COL[3], _COL[0]); 
+
+              ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
+            }
+          }
+    
+        }    
+      }
+      
+      strokeWeight(0);   
+    
+      popMatrix();    
+
+    }
+    
+     
+  }    
+
     
   if (Current_ObjectCategory == ObjectCategory_Group3Ds) {    
     
@@ -37603,212 +37813,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
 
 
-  if (Current_ObjectCategory == ObjectCategory_Faces) {    
-    
-    if (selectedFace_displayEdges != 0) {
-      
-      pushMatrix();
-    
-      translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
-      
-      noFill();
-      
-      stroke(127,0,255); 
-      strokeWeight(2);
-      
-      for (int o = selectedFace_numbers.length - 1; o >= 0; o--) {
-        
-        int f = selectedFace_numbers[o];
-        
-        if (f != 0) {
 
-          int Tessellation = allFaces_MTLV[f][1];
-          
-          int TotalSubNo = 1;  
-          if (allFaces_MTLV[f][0] == 0) {
-            Tessellation += MODEL3D_TESSELLATION;
-          }
-          if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-      
-          for (int n = 0; n < TotalSubNo; n++) {
-            
-            float[][] base_Vertices = new float [allFaces[f].length][3];
-            for (int j = 0; j < allFaces[f].length; j++) {
-              int vNo = allFaces[f][j];
-              base_Vertices[j][0] = allVertices[vNo][0];
-              base_Vertices[j][1] = allVertices[vNo][1];
-              base_Vertices[j][2] = allVertices[vNo][2];
-            }
-            
-            float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
-         
-            beginShape();
-            
-            for (int s = 0; s < subFace.length; s++) {
-  
-              float x = subFace[s][0] * OBJECTS_scale;
-              float y = subFace[s][1] * OBJECTS_scale;            
-              float z = -subFace[s][2] * OBJECTS_scale;
-              
-              float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
-              
-              if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-                if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) vertex(Image_XYZ[0], Image_XYZ[1]);
-              }
-              
-            }
-            
-            endShape(CLOSE);
-          }
-        }
-      }
-      
-      strokeWeight(0);   
-    
-      popMatrix();
-    }
-    
-    
-    if (selectedFace_displayVertexCount != 0) {
-      
-      pushMatrix();
-    
-      translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
-
-      fill(0);
-      
-      stroke(0); 
-      strokeWeight(0);
-
-      textSize(1.5 * MESSAGE_S_View);
-      textAlign(CENTER, BOTTOM);
-      
-      for (int o = selectedFace_numbers.length - 1; o >= 0; o--) {
-        
-        int f = selectedFace_numbers[o];
-        
-        if (f != 0) {
-
-          for (int j = 0; j < allFaces[f].length; j++) {
-            int vNo = allFaces[f][j];
-          
-            float x = allVertices[vNo][0] * OBJECTS_scale;
-            float y = allVertices[vNo][1] * OBJECTS_scale;            
-            float z = -allVertices[vNo][2] * OBJECTS_scale;
-            
-            float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
-
-            if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-              if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View, -0.5 * WIN3D_Y_View, 0.5 * WIN3D_X_View, 0.5 * WIN3D_Y_View) == 1) {
-                text(nf(j + 1, 0), Image_XYZ[0], Image_XYZ[1]);
-              }
-            }
-
-          }
-        }
-      }
-      
-      strokeWeight(0);   
-    
-      popMatrix();
-    }    
-  }
-
-  
-  if (Current_ObjectCategory == ObjectCategory_Vertices) {    
-    
-    if (selectedVertex_displayVertices != 0) {
-  
-      pushMatrix();
-    
-      translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
-      
-      noFill();
-      
-      stroke(255,0,255,127);
-      
-      strokeWeight(2);
-      
-      ellipseMode(CENTER);
-      
-      float R = 10;
-      
-      for (int o = selectedVertex_numbers.length - 1; o >= 0; o--) {
-        
-        int vNo = selectedVertex_numbers[o];
-        
-        if (vNo != 0) {        
-    
-          float x = allVertices[vNo][0] * OBJECTS_scale;
-          float y = allVertices[vNo][1] * OBJECTS_scale;
-          float z = -allVertices[vNo][2] * OBJECTS_scale;
-    
-          float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
-          
-          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View + R, -0.5 * WIN3D_Y_View + R, 0.5 * WIN3D_X_View - R, 0.5 * WIN3D_Y_View - R) == 1) ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
-          }
-    
-        }    
-      }
-      
-      strokeWeight(0);   
-    
-      popMatrix();    
-    }
-  }  
-  
-  
-  if (Current_ObjectCategory == ObjectCategory_SoftVerts) {    
-    
-    if (selectedVertex_displayVertices != 0) {
-
-      pushMatrix();
-    
-      translate(WIN3D_CX_View + 0.5 * WIN3D_X_View, WIN3D_CY_View + 0.5 * WIN3D_Y_View);  
-      
-      strokeWeight(0);
-      
-      ellipseMode(CENTER);
-      
-      float R = 5;
-
-      for (int q = 1; q < selectedVertex_softSelectionVertices.length; q++) {
-        
-        int vNo = selectedVertex_softSelectionVertices[q];
-        
-        float _u = selectedVertex_softSelectionValues[q];    
-        
-        if (vNo != 0) {        
-          
-          float x = allVertices[vNo][0] * OBJECTS_scale;
-          float y = allVertices[vNo][1] * OBJECTS_scale;
-          float z = -allVertices[vNo][2] * OBJECTS_scale;
-    
-          float[] Image_XYZ = SOLARCHVISION_calculate_Perspective_Internally(x,y,z);            
-          
-          if (Image_XYZ[2] > 0) { // it also illuminates undefined Z values whereas negative value passed in the Calculate function.
-            if (isInside(Image_XYZ[0], Image_XYZ[1], -0.5 * WIN3D_X_View + R, -0.5 * WIN3D_Y_View + R, 0.5 * WIN3D_X_View - R, 0.5 * WIN3D_Y_View - R) == 1) {
-              
-              float[] _COL = GET_COLOR_STYLE(14, _u); // <<<<<<<<<<<<<<<<<
-              fill(_COL[1], _COL[2], _COL[3], _COL[0]);
-              stroke(_COL[1], _COL[2], _COL[3], _COL[0]); 
-
-              ellipse(Image_XYZ[0], Image_XYZ[1], R, R);
-            }
-          }
-    
-        }    
-      }
-      
-      strokeWeight(0);   
-    
-      popMatrix();    
-
-    }
-    
-     
-  }    
   
 }
 
@@ -38948,6 +38953,38 @@ void SOLARCHVISION_draw_WindRose_Image () {
     WIN3D_Diagrams.endShape(CLOSE);
   }
 }
+
+
+
+
+
+
+
+void SOLARCHVISION_draw_referencePivot () {
+
+
+  WIN3D_Diagrams.strokeWeight(3);
+  WIN3D_Diagrams.stroke(127,0,255);
+  WIN3D_Diagrams.fill(127,0,255);  
+
+  float x = selection_BoundingBox[1 + selection_alignX][0];
+  float y = selection_BoundingBox[1 + selection_alignY][1];
+  float z = selection_BoundingBox[1 + selection_alignZ][2];
+
+
+  WIN3D_Diagrams.pushMatrix(); 
+  WIN3D_Diagrams.translate(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D);
+  WIN3D_Diagrams.sphere(5);
+  WIN3D_Diagrams.popMatrix();
+  
+  WIN3D_Diagrams.strokeWeight(0);
+
+}
+
+
+
+
+
 
 
 
