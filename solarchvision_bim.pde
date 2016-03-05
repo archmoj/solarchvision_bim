@@ -40636,7 +40636,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     posX_now = A[0];
     posY_now = A[1];
     posZ_now = A[2];
-    
+ 
    
     if (posX_min > posX_now) posX_min = posX_now;   
     if (posY_min > posY_now) posY_min = posY_now;   
@@ -40648,19 +40648,22 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
   }   
 
   if ((posX_min != FLOAT_undefined) && (posX_max != -FLOAT_undefined) && (posY_min != FLOAT_undefined) && (posY_max != -FLOAT_undefined) && (posZ_min != FLOAT_undefined) && (posZ_max != -FLOAT_undefined)) {
-
-    float[] B = SOLARCHVISION_translateInside_ReferencePivot(posX_min, posY_min, posZ_min);
+/*
+    float[] O = SOLARCHVISION_translateInside_ReferencePivot(0, 0, 0);
+    float[] A = SOLARCHVISION_translateInside_ReferencePivot(posX_min, posY_min, posZ_min);
+    float[] B = SOLARCHVISION_translateInside_ReferencePivot(posX_max, posY_max, posZ_max);
     
-    posX_min = B[0];
-    posY_min = B[1];
-    posZ_min = B[2];  
-
-    float[] C = SOLARCHVISION_translateInside_ReferencePivot(posX_max, posY_max, posZ_max);
+    println("O");
+    println(O);
     
-    posX_max = C[0];
-    posY_max = C[1];
-    posZ_max = C[2]; 
-    
+    posX_min = A[0] - O[0];
+    posY_min = A[1] - O[1];
+    posZ_min = A[2] - O[2];  
+   
+    posX_max = B[0] - O[0];
+    posY_max = B[1] - O[1];
+    posZ_max = B[2] - O[2]; 
+*/    
     for (int i = 0; i < 3; i++) {
       float ratio = 0.5 * i;
       selection_BoundingBox[i][0] = (1 - ratio) * posX_min + ratio * posX_max;
