@@ -37543,52 +37543,25 @@ void SOLARCHVISION_draw_Perspective_Internally () {
                                         {posX_max, posY_max, posZ_max}, 
                                         {posX_min, posY_max, posZ_max}}; 
                                         
-/*
-      float scaleX = selection_BoundingBox[1][3];
-      float scaleY = selection_BoundingBox[1][4];
-      float scaleZ = selection_BoundingBox[1][5];
-      
-      float rotX = selection_BoundingBox[1][6];
-      float rotY = selection_BoundingBox[1][7];
-      float rotZ = selection_BoundingBox[1][8];
-                                        
+
       for (int i = 0; i < BoundingBox_Vertices.length; i++) {
         
-        float a = BoundingBox_Vertices[i][0];
-        float b = BoundingBox_Vertices[i][1];
-        float c = BoundingBox_Vertices[i][2];
+        float x = BoundingBox_Vertices[i][0];
+        float y = BoundingBox_Vertices[i][1];
+        float z = BoundingBox_Vertices[i][2];
         
-        a *= scaleX;
-        b *= scaleY;
-        c *= scaleZ;
-        
-        float y1 = b * cos_ang(rotX) - c * sin_ang(rotX); 
-        float z1 = b * sin_ang(rotX) + c * cos_ang(rotX);
-        float x1 = a;
-       
-        a = x1;
-        b = y1;
-        c = z1;  
+        float[] A = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
       
-        float z2 = c * cos_ang(rotY) - a * sin_ang(rotY);
-        float x2 = c * sin_ang(rotY) + a * cos_ang(rotY);
-        float y2 = b; 
-        
-        a = x2;
-        b = y2;
-        c = z2;      
-        
-        float x = a * cos_ang(rotZ) - b * sin_ang(rotZ);
-        float y = a * sin_ang(rotZ) + b * cos_ang(rotZ); 
-        float z = c;    
-
+        x = A[0];
+        y = A[1];
+        z = A[2]; 
        
         BoundingBox_Vertices[i][0] = x;
         BoundingBox_Vertices[i][1] = y;
         BoundingBox_Vertices[i][2] = z;
 
       }                                     
-*/      
+      
       int[][] BoundingBox_Faces = {{3,2,1,0}, {0,1,5,4}, {1,2,6,5}, {2,3,7,6}, {3,0,4,7}, {4,5,6,7}};
   
       for (int f = 0; f < BoundingBox_Faces.length; f++) {
@@ -37647,44 +37620,22 @@ void SOLARCHVISION_draw_Perspective_Internally () {
                                          
           for (int i = 0; i < Pivot_Vertices.length; i++) {
             
-            float a = Pivot_Vertices[i][0];
-            float b = Pivot_Vertices[i][1];
-            float c = Pivot_Vertices[i][2];
+            float x = Pivot_Vertices[i][0];
+            float y = Pivot_Vertices[i][1];
+            float z = Pivot_Vertices[i][2];
             
             float r = 10; // <<<<<<<<< display size
-            
-            a *= r * allGroup3Ds_PivotXYZ[OBJ_NUM][3];
-            b *= r * allGroup3Ds_PivotXYZ[OBJ_NUM][4];
-            c *= r * allGroup3Ds_PivotXYZ[OBJ_NUM][5];
-            
-            float rotX = allGroup3Ds_PivotXYZ[OBJ_NUM][6];
-            float rotY = allGroup3Ds_PivotXYZ[OBJ_NUM][7];
-            float rotZ = allGroup3Ds_PivotXYZ[OBJ_NUM][8];
-            
-            float y1 = b * cos_ang(rotX) - c * sin_ang(rotX); 
-            float z1 = b * sin_ang(rotX) + c * cos_ang(rotX);
-            float x1 = a;
-           
-            a = x1;
-            b = y1;
-            c = z1;  
+
+            x *= r;
+            y *= r;
+            z *= r;
+
+            float[] A = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
           
-            float z2 = c * cos_ang(rotY) - a * sin_ang(rotY);
-            float x2 = c * sin_ang(rotY) + a * cos_ang(rotY);
-            float y2 = b; 
-            
-            a = x2;
-            b = y2;
-            c = z2;      
-            
-            float x = a * cos_ang(rotZ) - b * sin_ang(rotZ);
-            float y = a * sin_ang(rotZ) + b * cos_ang(rotZ); 
-            float z = c;    
+            x = A[0];
+            y = A[1];
+            z = A[2]; 
           
-            x += allGroup3Ds_PivotXYZ[OBJ_NUM][0];
-            y += allGroup3Ds_PivotXYZ[OBJ_NUM][1];
-            z += allGroup3Ds_PivotXYZ[OBJ_NUM][2];
-            
             Pivot_Vertices[i][0] = x;
             Pivot_Vertices[i][1] = y;
             Pivot_Vertices[i][2] = z;
