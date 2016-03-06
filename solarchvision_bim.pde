@@ -81,10 +81,12 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 3; 
+int STATION_NUMBER = 0; 
 
 String[][] DEFINED_STATIONS = {
   
+  
+                                {"Hamedan_Site", "XX", "IR", "34.807", "48.455", "52.5", "1988.5", "240.0", "", "", "IRN_HAMEDAN_XX_IR"},
   
                                 {"Vancouver_A", "BC", "CA", "49.28793", "-123.11415", "-120", "0", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"},
                                 {"Vancouver_B", "BC", "CA", "49.274166", "-123.103353", "-120", "0", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"},
@@ -97,8 +99,6 @@ String[][] DEFINED_STATIONS = {
                                 
                                 {"Edinburgh_School", "QC", "CA", "45.457", "-73.660", "-75", "0", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
                                 
-                                {"Hamedan_Site", "XX", "IR", "34.807", "48.455", "52.5", "1988.5", "240.0", "", "", "IRN_HAMEDAN_XX_IR"},
-  
                                 {"Berlin_Museum_of_the_20th_Century", "BB", "DE", "52.5080", "13.3685", "15", "36.7", "240.0", "", "", "DEU_Berlin.103840_IWEC"},
   
                                 {"Villa-Matina", "XX", "GR", "36.644", "22.383", "15", "0", "240.0", "", "", "GRC_Andravida.166820_IWEC"},                              
@@ -26190,9 +26190,32 @@ void SOLARCHVISION_DownloadLAND_MESH() {
 
 
  
-
-
 void SOLARCHVISION_add_ProjectModel () {
+
+  SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
+  
+  
+  String[] FileALL = loadStrings("C:/SOLARCHVISION_2015/Import/Hamedan_PEOPLE.txt");
+
+  String lineSTR;  
+  
+  for (int f = 0; f < FileALL.length; f += 1) {
+    
+    lineSTR = FileALL[f];
+    //println (lineSTR);
+    
+    String[] parts = split(lineSTR, ',');
+
+    float x = float(parts[0]);
+    float y = float(parts[1]);
+    float z = float(parts[2]);
+    
+    SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
+  }
+  
+}
+
+void SOLARCHVISION_add_ProjectModel_BASIC () {
 
 /*
   {
