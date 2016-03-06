@@ -21285,7 +21285,14 @@ void SOLARCHVISION_import_objects (String FileName, int m, int tes, int lyr, int
     
   //println("lines = ", FileALL.length);
 
+  float Progress = 0;
+
   for (int f = 0; f < FileALL.length; f += 1) {
+    
+    if (10 + Progress < 100 * f / float(FileALL.length)) { 
+      Progress = 100 * f / float(FileALL.length);
+      println("Progress:", int(Progress), "%");
+    }
     
     lineSTR = FileALL[f];
     //println (lineSTR);
@@ -21345,6 +21352,8 @@ void SOLARCHVISION_import_objects (String FileName, int m, int tes, int lyr, int
     }
     
   }
+  
+  println("Progress: 100 %");
 }  
 
 
