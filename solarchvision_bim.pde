@@ -40373,6 +40373,8 @@ int saved_alignZ = 0;
 
 void SOLARCHVISION_calculate_selection_BoundingBox () {
 
+
+  
   int[] theVertices = {};
 
   if (Current_ObjectCategory == ObjectCategory_Cameras) {
@@ -40590,7 +40592,9 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
         z = 0;
       }
     }             
-  
+
+    
+
   
     float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
     
@@ -40614,14 +40618,6 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     float dy = posY;
     float dz = posZ;
     
-    float[] A = SOLARCHVISION_translateOutside_ReferencePivot(dx, dy, dz);
-    
-    dx = A[0];
-    dy = A[1];
-    dz = A[2];
-
-    
-
     posX_min += dx;
     posY_min += dy;
     posZ_min += dz;    
@@ -40661,9 +40657,8 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     }    
   }
   
-  
 
-  
+
 }
 
 void SOLARCHVISION_calculate_selection_ReferencePivot () {
