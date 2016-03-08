@@ -37558,6 +37558,14 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       stroke(0,127,0,127);
       strokeWeight(2);
 
+      int keep_selection_alignX = selection_alignX;
+      int keep_selection_alignY = selection_alignY;
+      int keep_selection_alignZ = selection_alignZ;
+    
+      selection_alignX = 0; // apply the centre
+      selection_alignY = 0; // apply the centre
+      selection_alignZ = 0; // apply the centre
+
       float posX = selection_BoundingBox[1 + selection_alignX][0];
       float posY = selection_BoundingBox[1 + selection_alignY][1];
       float posZ = selection_BoundingBox[1 + selection_alignZ][2];
@@ -37625,6 +37633,11 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       strokeWeight(0);   
     
       popMatrix();
+      
+      
+      selection_alignX = keep_selection_alignX;
+      selection_alignY = keep_selection_alignY;
+      selection_alignZ = keep_selection_alignZ;
     }  
 
     
