@@ -37792,6 +37792,12 @@ void SOLARCHVISION_draw_Perspective_Internally () {
                                 {1,0,0},
                                 {0,1,0},
                                 {0,0,1}}; 
+
+    float[] P = getPivot();
+    
+    float x0 = P[0];
+    float y0 = P[1];
+    float z0 = P[2];
                                   
     for (int i = 0; i < Pivot_Vertices.length; i++) {
       
@@ -37805,15 +37811,16 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       y *= r;
       z *= r;
 
+      float[] O = SOLARCHVISION_translateInside_ReferencePivot(0, 0, 0);
       float[] A = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
       
-      x = A[0];
-      y = A[1];
-      z = A[2]; 
- 
-      Pivot_Vertices[i][0] = x;
-      Pivot_Vertices[i][1] = y;
-      Pivot_Vertices[i][2] = z;
+      float dx = A[0] - O[0];
+      float dy = A[1] - O[1];
+      float dz = A[2] - O[2];
+
+      Pivot_Vertices[i][0] = x0 + dx;
+      Pivot_Vertices[i][1] = y0 + dy;
+      Pivot_Vertices[i][2] = z0 + dz;
 
     }
    
