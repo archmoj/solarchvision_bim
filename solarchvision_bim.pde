@@ -48645,17 +48645,36 @@ float[] SOLARCHVISION_translateOutside_ReferencePivot (float a, float b, float c
 
 
 float[] getPivot () {
+
+  float posX = selection_BoundingBox[1][0];
+  float posY = selection_BoundingBox[1][1];
+  float posZ = selection_BoundingBox[1][2];
  
-  float x = selection_BoundingBox[1 + selection_alignX][0];
-  float y = selection_BoundingBox[1 + selection_alignY][1];
-  float z = selection_BoundingBox[1 + selection_alignZ][2];
-/*
-  float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);  
+  float x = selection_BoundingBox[1 + selection_alignX][0] - posX;
+  float y = selection_BoundingBox[1 + selection_alignY][1] - posY;
+  float z = selection_BoundingBox[1 + selection_alignZ][2] - posZ;
+
+  {
+    int keep_selection_alignX = selection_alignX;
+    int keep_selection_alignY = selection_alignY;
+    int keep_selection_alignZ = selection_alignZ;
   
-  x = A[0];
-  y = A[1];
-  z = A[2];
-*/  
+    selection_alignX = 0; // apply the centre
+    selection_alignY = 0; // apply the centre
+    selection_alignZ = 0; // apply the centre
+  
+    float[] A = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);  
+    
+    x = A[0];
+    y = A[1];
+    z = A[2];
+    
+    selection_alignX = keep_selection_alignX;
+    selection_alignY = keep_selection_alignY;
+    selection_alignZ = keep_selection_alignZ;
+    
+  }
+    
   float[] return_array = {x,y,z};
   
   return return_array;
