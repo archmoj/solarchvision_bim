@@ -1,5 +1,5 @@
 
-// serach for SOLARCHVISION_rotate_Selection( need to make them all correct for local pivots!
+// serach for SOLARCHVISION_rotate_Selection ( need to make them all correct for local pivots!
 // local pivot
 
 // some rotations are not in degrees e.g. solids, fractals??, what else?
@@ -40866,25 +40866,51 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float 
     
     int n = Group3DVertices[q];
 
-    float x = allVertices[n][0] - x0; 
-    float y = allVertices[n][1] - y0; 
-    float z = allVertices[n][2] - z0;
-    
+
+    float x = allVertices[n][0]; 
+    float y = allVertices[n][1]; 
+    float z = allVertices[n][2];
+
+    float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
+  
+    x = A[0] - x0;
+    y = A[1] - y0;
+    z = A[2] - z0;
+  
+    float a = x;
+    float b = y;
+    float c = z;
+  
     if (the_Vector == 2) {
-      allVertices[n][0] = x0 + (x * cos(r) - y * sin(r)); 
-      allVertices[n][1] = y0 + (x * sin(r) + y * cos(r));
-      allVertices[n][2] = z0 + (z);
+      a = x0 + (x * cos(r) - y * sin(r)); 
+      b = y0 + (x * sin(r) + y * cos(r));
+      c = z0 + (z);
     }
     else if (the_Vector == 1) {
-      allVertices[n][0] = x0 + (z * sin(r) + x * cos(r)); 
-      allVertices[n][1] = y0 + (y);
-      allVertices[n][2] = z0 + (z * cos(r) - x * sin(r));
+      a = x0 + (z * sin(r) + x * cos(r)); 
+      b = y0 + (y);
+      c = z0 + (z * cos(r) - x * sin(r));
     }    
     else if (the_Vector == 0) {
-      allVertices[n][0] = x0 + (x); 
-      allVertices[n][1] = y0 + (y * cos(r) - z * sin(r));
-      allVertices[n][2] = z0 + (y * sin(r) + z * cos(r));
-    }    
+      a = x0 + (x); 
+      b = y0 + (y * cos(r) - z * sin(r));
+      c = z0 + (y * sin(r) + z * cos(r));
+    }   
+
+    x = a;
+    y = b;
+    z = c;
+
+    float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
+    
+    x = B[0];
+    y = B[1];
+    z = B[2];
+    
+    allVertices[n][0] = x; 
+    allVertices[n][1] = y;
+    allVertices[n][2] = z;
+ 
   }
 
   int Solids_updated = 0;
