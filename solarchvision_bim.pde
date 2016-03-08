@@ -41194,11 +41194,11 @@ void SOLARCHVISION_move_selectedFaces (float dx, float dy, float dz) {
   
   for (int q = 1; q < FaceVertices.length; q++) {
     
-    int n = FaceVertices[q];
+    int f = FaceVertices[q];
   
-    allVertices[n][0] += dx; 
-    allVertices[n][1] += dy;
-    allVertices[n][2] += dz;
+    allVertices[f][0] += dx; 
+    allVertices[f][1] += dy;
+    allVertices[f][2] += dz;
   }
   
 }
@@ -41209,26 +41209,26 @@ void SOLARCHVISION_rotate_selectedFaces (float x0, float y0, float z0, float r, 
   
   for (int q = 1; q < FaceVertices.length; q++) {
     
-    int n = FaceVertices[q];
+    int f = FaceVertices[q];
 
-    float x = allVertices[n][0] - x0; 
-    float y = allVertices[n][1] - y0; 
-    float z = allVertices[n][2] - z0;
+    float x = allVertices[f][0] - x0; 
+    float y = allVertices[f][1] - y0; 
+    float z = allVertices[f][2] - z0;
     
     if (the_Vector == 2) {
-      allVertices[n][0] = x0 + (x * cos(r) - y * sin(r)); 
-      allVertices[n][1] = y0 + (x * sin(r) + y * cos(r));
-      allVertices[n][2] = z0 + (z);
+      allVertices[f][0] = x0 + (x * cos(r) - y * sin(r)); 
+      allVertices[f][1] = y0 + (x * sin(r) + y * cos(r));
+      allVertices[f][2] = z0 + (z);
     }
     else if (the_Vector == 1) {
-      allVertices[n][0] = x0 + (z * sin(r) + x * cos(r)); 
-      allVertices[n][1] = y0 + (y);
-      allVertices[n][2] = z0 + (z * cos(r) - x * sin(r));
+      allVertices[f][0] = x0 + (z * sin(r) + x * cos(r)); 
+      allVertices[f][1] = y0 + (y);
+      allVertices[f][2] = z0 + (z * cos(r) - x * sin(r));
     }    
     else if (the_Vector == 0) {
-      allVertices[n][0] = x0 + (x); 
-      allVertices[n][1] = y0 + (y * cos(r) - z * sin(r));
-      allVertices[n][2] = z0 + (y * sin(r) + z * cos(r));
+      allVertices[f][0] = x0 + (x); 
+      allVertices[f][1] = y0 + (y * cos(r) - z * sin(r));
+      allVertices[f][2] = z0 + (y * sin(r) + z * cos(r));
     }    
   }
   
@@ -41240,11 +41240,11 @@ void SOLARCHVISION_scale_selectedFaces (float x0, float y0, float z0, float sx, 
   
   for (int q = 1; q < FaceVertices.length; q++) {
     
-    int n = FaceVertices[q];
+    int f = FaceVertices[q];
 
-    float x = allVertices[n][0];
-    float y = allVertices[n][1];
-    float z = allVertices[n][2];
+    float x = allVertices[f][0];
+    float y = allVertices[f][1];
+    float z = allVertices[f][2];
     
     float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
   
@@ -41258,9 +41258,9 @@ void SOLARCHVISION_scale_selectedFaces (float x0, float y0, float z0, float sx, 
     y = B[1];
     z = B[2];    
     
-    allVertices[n][0] = x; 
-    allVertices[n][1] = y;
-    allVertices[n][2] = z;    
+    allVertices[f][0] = x; 
+    allVertices[f][1] = y;
+    allVertices[f][2] = z;    
     
   }
 
@@ -41271,11 +41271,11 @@ void SOLARCHVISION_move_selectedVertices (float dx, float dy, float dz) {
 
   for (int q = 1; q < selectedVertex_numbers.length; q++) {
     
-    int n = selectedVertex_numbers[q];
+    int f = selectedVertex_numbers[q];
   
-    allVertices[n][0] += dx; 
-    allVertices[n][1] += dy;
-    allVertices[n][2] += dz;
+    allVertices[f][0] += dx; 
+    allVertices[f][1] += dy;
+    allVertices[f][2] += dz;
   }
 
 }
@@ -41285,26 +41285,26 @@ void SOLARCHVISION_rotate_selectedVertices (float x0, float y0, float z0, float 
 
   for (int q = 1; q < selectedVertex_numbers.length; q++) {
     
-    int n = selectedVertex_numbers[q];
+    int f = selectedVertex_numbers[q];
 
-    float x = allVertices[n][0] - x0; 
-    float y = allVertices[n][1] - y0; 
-    float z = allVertices[n][2] - z0;
+    float x = allVertices[f][0] - x0; 
+    float y = allVertices[f][1] - y0; 
+    float z = allVertices[f][2] - z0;
     
     if (the_Vector == 2) {
-      allVertices[n][0] = x0 + (x * cos(r) - y * sin(r)); 
-      allVertices[n][1] = y0 + (x * sin(r) + y * cos(r));
-      allVertices[n][2] = z0 + (z);
+      allVertices[f][0] = x0 + (x * cos(r) - y * sin(r)); 
+      allVertices[f][1] = y0 + (x * sin(r) + y * cos(r));
+      allVertices[f][2] = z0 + (z);
     }
     else if (the_Vector == 1) {
-      allVertices[n][0] = x0 + (z * sin(r) + x * cos(r)); 
-      allVertices[n][1] = y0 + (y);
-      allVertices[n][2] = z0 + (z * cos(r) - x * sin(r));
+      allVertices[f][0] = x0 + (z * sin(r) + x * cos(r)); 
+      allVertices[f][1] = y0 + (y);
+      allVertices[f][2] = z0 + (z * cos(r) - x * sin(r));
     }    
     else if (the_Vector == 0) {
-      allVertices[n][0] = x0 + (x); 
-      allVertices[n][1] = y0 + (y * cos(r) - z * sin(r));
-      allVertices[n][2] = z0 + (y * sin(r) + z * cos(r));
+      allVertices[f][0] = x0 + (x); 
+      allVertices[f][1] = y0 + (y * cos(r) - z * sin(r));
+      allVertices[f][2] = z0 + (y * sin(r) + z * cos(r));
     }    
   }
 
@@ -41315,11 +41315,11 @@ void SOLARCHVISION_scale_selectedVertices (float x0, float y0, float z0, float s
   
   for (int q = 1; q < selectedVertex_numbers.length; q++) {
     
-    int n = selectedVertex_numbers[q];
+    int f = selectedVertex_numbers[q];
 
-    float x = allVertices[n][0]; 
-    float y = allVertices[n][1]; 
-    float z = allVertices[n][2];
+    float x = allVertices[f][0]; 
+    float y = allVertices[f][1]; 
+    float z = allVertices[f][2];
 
     float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
   
@@ -41333,9 +41333,9 @@ void SOLARCHVISION_scale_selectedVertices (float x0, float y0, float z0, float s
     y = B[1];
     z = B[2];
     
-    allVertices[n][0] = x; 
-    allVertices[n][1] = y;
-    allVertices[n][2] = z;
+    allVertices[f][0] = x; 
+    allVertices[f][1] = y;
+    allVertices[f][2] = z;
   }
   
 }
@@ -41358,13 +41358,13 @@ void SOLARCHVISION_softMove_selectedVertices (float dx, float dy, float dz) {
   
   for (int q = 1; q < selectedVertex_softSelectionVertices.length; q++) {
     
-    int n = selectedVertex_softSelectionVertices[q];
+    int f = selectedVertex_softSelectionVertices[q];
     
     float v = selectedVertex_softSelectionValues[q];
   
-    allVertices[n][0] += dx * v; 
-    allVertices[n][1] += dy * v;
-    allVertices[n][2] += dz * v;
+    allVertices[f][0] += dx * v; 
+    allVertices[f][1] += dy * v;
+    allVertices[f][2] += dz * v;
   }
  
 }
@@ -41374,28 +41374,28 @@ void SOLARCHVISION_softRotate_selectedVertices (float x0, float y0, float z0, fl
   
   for (int q = 1; q < selectedVertex_softSelectionVertices.length; q++) {
     
-    int n = selectedVertex_softSelectionVertices[q];
+    int f = selectedVertex_softSelectionVertices[q];
     
     float v = selectedVertex_softSelectionValues[q];
 
-    float x = allVertices[n][0] - x0; 
-    float y = allVertices[n][1] - y0; 
-    float z = allVertices[n][2] - z0;
+    float x = allVertices[f][0] - x0; 
+    float y = allVertices[f][1] - y0; 
+    float z = allVertices[f][2] - z0;
     
     if (the_Vector == 2) {
-      allVertices[n][0] = x0 + (x * cos(r * v) - y * sin(r * v)); 
-      allVertices[n][1] = y0 + (x * sin(r * v) + y * cos(r * v));
-      allVertices[n][2] = z0 + (z);
+      allVertices[f][0] = x0 + (x * cos(r * v) - y * sin(r * v)); 
+      allVertices[f][1] = y0 + (x * sin(r * v) + y * cos(r * v));
+      allVertices[f][2] = z0 + (z);
     }
     else if (the_Vector == 1) {
-      allVertices[n][0] = x0 + (z * sin(r * v) + x * cos(r * v)); 
-      allVertices[n][1] = y0 + (y);
-      allVertices[n][2] = z0 + (z * cos(r * v) - x * sin(r * v));
+      allVertices[f][0] = x0 + (z * sin(r * v) + x * cos(r * v)); 
+      allVertices[f][1] = y0 + (y);
+      allVertices[f][2] = z0 + (z * cos(r * v) - x * sin(r * v));
     }    
     else if (the_Vector == 0) {
-      allVertices[n][0] = x0 + (x); 
-      allVertices[n][1] = y0 + (y * cos(r * v) - z * sin(r * v));
-      allVertices[n][2] = z0 + (y * sin(r * v) + z * cos(r * v));
+      allVertices[f][0] = x0 + (x); 
+      allVertices[f][1] = y0 + (y * cos(r * v) - z * sin(r * v));
+      allVertices[f][2] = z0 + (y * sin(r * v) + z * cos(r * v));
     }    
   }
   
@@ -41407,17 +41407,17 @@ void SOLARCHVISION_softScale_selectedVertices (float x0, float y0, float z0, flo
   
   for (int q = 1; q < selectedVertex_softSelectionVertices.length; q++) {
     
-    int n = selectedVertex_softSelectionVertices[q];
+    int f = selectedVertex_softSelectionVertices[q];
     
     float v = selectedVertex_softSelectionValues[q];    
 
-    float x = allVertices[n][0] - x0; 
-    float y = allVertices[n][1] - y0; 
-    float z = allVertices[n][2] - z0;
+    float x = allVertices[f][0] - x0; 
+    float y = allVertices[f][1] - y0; 
+    float z = allVertices[f][2] - z0;
    
-    allVertices[n][0] = (x0 + sx * x) * v + (x0 + x) * (1 - v); 
-    allVertices[n][1] = (y0 + sy * y) * v + (y0 + y) * (1 - v); 
-    allVertices[n][2] = (z0 + sz * z) * v + (z0 + z) * (1 - v); 
+    allVertices[f][0] = (x0 + sx * x) * v + (x0 + x) * (1 - v); 
+    allVertices[f][1] = (y0 + sy * y) * v + (y0 + y) * (1 - v); 
+    allVertices[f][2] = (z0 + sz * z) * v + (z0 + z) * (1 - v); 
   }
   
 }
@@ -41701,11 +41701,11 @@ void SOLARCHVISION_move_selectedSections (float dx, float dy, float dz) {
 
   for (int q = 1; q < selectedSection_numbers.length; q++) {
     
-    int n = selectedSection_numbers[q];
+    int f = selectedSection_numbers[q];
     
-    allSections_UVERAB[n][0] += dx;
-    allSections_UVERAB[n][1] += dy;
-    allSections_UVERAB[n][2] += dz;
+    allSections_UVERAB[f][0] += dx;
+    allSections_UVERAB[f][1] += dy;
+    allSections_UVERAB[f][2] += dz;
 
   }
 
@@ -41721,9 +41721,9 @@ void SOLARCHVISION_rotate_selectedSections (float r) {
 
   for (int q = 1; q < selectedSection_numbers.length; q++) {
     
-    int n = selectedSection_numbers[q];
+    int f = selectedSection_numbers[q];
     
-    allSections_UVERAB[n][3] += r * 180.0 / PI; 
+    allSections_UVERAB[f][3] += r * 180.0 / PI; 
     
   }
   
@@ -41738,10 +41738,10 @@ void SOLARCHVISION_scale_selectedSections (float sx, float sy) {
 
   for (int q = 1; q < selectedSection_numbers.length; q++) {
     
-    int n = selectedSection_numbers[q];
+    int f = selectedSection_numbers[q];
     
-    allSections_UVERAB[n][4] *= sx;
-    allSections_UVERAB[n][5] *= sy;
+    allSections_UVERAB[f][4] *= sx;
+    allSections_UVERAB[f][5] *= sy;
     
   }
   
@@ -41762,13 +41762,13 @@ void SOLARCHVISION_move_selectedCameras (float dx, float dy, float dz) {
   
   for (int q = 1; q < selectedCamera_numbers.length; q++) {
     
-    int n = selectedCamera_numbers[q];
+    int f = selectedCamera_numbers[q];
   
-    allCameras_PPPSRRRF[n][0] += dx; 
-    allCameras_PPPSRRRF[n][1] += dy;
-    allCameras_PPPSRRRF[n][2] += dz;
+    allCameras_PPPSRRRF[f][0] += dx; 
+    allCameras_PPPSRRRF[f][1] += dy;
+    allCameras_PPPSRRRF[f][2] += dz;
     
-    if (n == Current_Camera) SOLARCHVISION_apply_Current_Camera();
+    if (f == Current_Camera) SOLARCHVISION_apply_Current_Camera();
   }
 
 }
@@ -41782,29 +41782,29 @@ void SOLARCHVISION_rotate_selectedCameras (float x0, float y0, float z0, float r
   
   for (int q = 1; q < selectedCamera_numbers.length; q++) {
     
-    int n = selectedCamera_numbers[q];
+    int f = selectedCamera_numbers[q];
 
-    float x = allCameras_PPPSRRRF[n][0] - x0; 
-    float y = allCameras_PPPSRRRF[n][1] - y0; 
-    float z = allCameras_PPPSRRRF[n][2] - z0;
+    float x = allCameras_PPPSRRRF[f][0] - x0; 
+    float y = allCameras_PPPSRRRF[f][1] - y0; 
+    float z = allCameras_PPPSRRRF[f][2] - z0;
     
     if (the_Vector == 2) {
-      allCameras_PPPSRRRF[n][0] = x0 + (x * cos(r) - y * sin(r)); 
-      allCameras_PPPSRRRF[n][1] = y0 + (x * sin(r) + y * cos(r));
-      allCameras_PPPSRRRF[n][2] = z0 + (z);
+      allCameras_PPPSRRRF[f][0] = x0 + (x * cos(r) - y * sin(r)); 
+      allCameras_PPPSRRRF[f][1] = y0 + (x * sin(r) + y * cos(r));
+      allCameras_PPPSRRRF[f][2] = z0 + (z);
     }
     else if (the_Vector == 1) {
-      allCameras_PPPSRRRF[n][0] = x0 + (z * sin(r) + x * cos(r)); 
-      allCameras_PPPSRRRF[n][1] = y0 + (y);
-      allCameras_PPPSRRRF[n][2] = z0 + (z * cos(r) - x * sin(r));
+      allCameras_PPPSRRRF[f][0] = x0 + (z * sin(r) + x * cos(r)); 
+      allCameras_PPPSRRRF[f][1] = y0 + (y);
+      allCameras_PPPSRRRF[f][2] = z0 + (z * cos(r) - x * sin(r));
     }    
     else if (the_Vector == 0) {
-      allCameras_PPPSRRRF[n][0] = x0 + (x); 
-      allCameras_PPPSRRRF[n][1] = y0 + (y * cos(r) - z * sin(r));
-      allCameras_PPPSRRRF[n][2] = z0 + (y * sin(r) + z * cos(r));
+      allCameras_PPPSRRRF[f][0] = x0 + (x); 
+      allCameras_PPPSRRRF[f][1] = y0 + (y * cos(r) - z * sin(r));
+      allCameras_PPPSRRRF[f][2] = z0 + (y * sin(r) + z * cos(r));
     }    
     
-    if (n == Current_Camera) SOLARCHVISION_apply_Current_Camera();
+    if (f == Current_Camera) SOLARCHVISION_apply_Current_Camera();
   }
 
 }
@@ -41819,17 +41819,17 @@ void SOLARCHVISION_scale_selectedCameras (float x0, float y0, float z0, float sx
   
   for (int q = 1; q < selectedCamera_numbers.length; q++) {
     
-    int n = selectedCamera_numbers[q];
+    int f = selectedCamera_numbers[q];
 
-    float x = allCameras_PPPSRRRF[n][0] - x0; 
-    float y = allCameras_PPPSRRRF[n][1] - y0; 
-    float z = allCameras_PPPSRRRF[n][2] - z0;
+    float x = allCameras_PPPSRRRF[f][0] - x0; 
+    float y = allCameras_PPPSRRRF[f][1] - y0; 
+    float z = allCameras_PPPSRRRF[f][2] - z0;
    
-    allCameras_PPPSRRRF[n][0] = x0 + sx * x; 
-    allCameras_PPPSRRRF[n][1] = y0 + sy * y;
-    allCameras_PPPSRRRF[n][2] = z0 + sz * z;
+    allCameras_PPPSRRRF[f][0] = x0 + sx * x; 
+    allCameras_PPPSRRRF[f][1] = y0 + sy * y;
+    allCameras_PPPSRRRF[f][2] = z0 + sz * z;
     
-    if (n == Current_Camera) SOLARCHVISION_apply_Current_Camera();
+    if (f == Current_Camera) SOLARCHVISION_apply_Current_Camera();
   }
   
 }
@@ -41839,12 +41839,12 @@ void SOLARCHVISION_flatten_selectedLandPoints () {
 
   for (int q = 1; q < selectedLandPoint_numbers.length; q++) {
     
-    int OBJ_NUM = selectedLandPoint_numbers[q];
+    int f = selectedLandPoint_numbers[q];
     
-    if (OBJ_NUM != 0) {      
+    if (f != 0) {      
         
-      int i = (OBJ_NUM - 1) / LAND_n_J;
-      int j = (OBJ_NUM - 1) % LAND_n_J;
+      int i = (f - 1) / LAND_n_J;
+      int j = (f - 1) % LAND_n_J;
 
       LAND_MESH[i][j][2] = 0;
     }
@@ -41858,12 +41858,12 @@ void SOLARCHVISION_move_selectedLandPoints (float dx, float dy, float dz) {
 
   for (int q = 1; q < selectedLandPoint_numbers.length; q++) {
     
-    int OBJ_NUM = selectedLandPoint_numbers[q];
+    int f = selectedLandPoint_numbers[q];
     
-    if (OBJ_NUM != 0) {      
+    if (f != 0) {      
         
-      int i = (OBJ_NUM - 1) / LAND_n_J;
-      int j = (OBJ_NUM - 1) % LAND_n_J;
+      int i = (f - 1) / LAND_n_J;
+      int j = (f - 1) % LAND_n_J;
   
       LAND_MESH[i][j][0] += dx; 
       LAND_MESH[i][j][1] += dy;
@@ -41878,12 +41878,12 @@ void SOLARCHVISION_rotate_selectedLandPoints (float x0, float y0, float z0, floa
 
   for (int q = 1; q < selectedLandPoint_numbers.length; q++) {
     
-    int OBJ_NUM = selectedLandPoint_numbers[q];
+    int f = selectedLandPoint_numbers[q];
 
-    if (OBJ_NUM != 0) {      
+    if (f != 0) {      
         
-      int i = (OBJ_NUM - 1) / LAND_n_J;
-      int j = (OBJ_NUM - 1) % LAND_n_J;
+      int i = (f - 1) / LAND_n_J;
+      int j = (f - 1) % LAND_n_J;
   
       float x = LAND_MESH[i][j][0] - x0; 
       float y = LAND_MESH[i][j][1] - y0; 
@@ -41914,12 +41914,12 @@ void SOLARCHVISION_scale_selectedLandPoints (float x0, float y0, float z0, float
   
   for (int q = 1; q < selectedLandPoint_numbers.length; q++) {
     
-    int OBJ_NUM = selectedLandPoint_numbers[q];
+    int f = selectedLandPoint_numbers[q];
 
-    if (OBJ_NUM != 0) {      
+    if (f != 0) {      
         
-      int i = (OBJ_NUM - 1) / LAND_n_J;
-      int j = (OBJ_NUM - 1) % LAND_n_J;
+      int i = (f - 1) / LAND_n_J;
+      int j = (f - 1) % LAND_n_J;
       
       float x = LAND_MESH[i][j][0];
       float y = LAND_MESH[i][j][1]; 
