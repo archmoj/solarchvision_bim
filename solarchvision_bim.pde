@@ -26190,7 +26190,7 @@ void SOLARCHVISION_DownloadLAND_MESH() {
 
 
  
-void SOLARCHVISION_add_ProjectModel () {
+void SOLARCHVISION_add_ProjectModel_2DsFromFile () {
 
   SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
   
@@ -26199,7 +26199,7 @@ void SOLARCHVISION_add_ProjectModel () {
 
   String lineSTR;  
   
-  for (int f = 0; f < FileALL.length; f += 1) {
+  for (int f = 1; f < FileALL.length; f += 1) { // skip the first line.
     
     lineSTR = FileALL[f];
     //println (lineSTR);
@@ -26215,7 +26215,7 @@ void SOLARCHVISION_add_ProjectModel () {
   
 }
 
-void SOLARCHVISION_add_ProjectModel_BASIC () {
+void SOLARCHVISION_add_ProjectModel () {
 
 /*
   {
@@ -40605,14 +40605,11 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
   }   
 
   if ((posX_min != FLOAT_undefined) && (posX_max != -FLOAT_undefined) && (posY_min != FLOAT_undefined) && (posY_max != -FLOAT_undefined) && (posZ_min != FLOAT_undefined) && (posZ_max != -FLOAT_undefined)) {
-/*   
-    float[] O = SOLARCHVISION_translateInside_ReferencePivot(0, 0, 0);
-    float[] A = SOLARCHVISION_translateInside_ReferencePivot(posX, posY, posZ);
-    
-    float dx = A[0] - O[0];
-    float dy = A[1] - O[1];
-    float dz = A[2] - O[2];
-    
+
+    float dx = posX;
+    float dy = posY;
+    float dz = posZ;
+
     posX_min += dx;
     posY_min += dy;
     posZ_min += dz;    
@@ -40620,7 +40617,13 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     posX_max += dx;
     posY_max += dy;
     posZ_max += dz;   
-    */
+
+    
+    println("min/max: x,y,z");
+    println(posX_min, posX_max);
+    println(posY_min, posY_max);
+    println(posZ_min, posZ_max);
+    
     
     for (int i = 0; i < 3; i++) {
       float ratio = 0.5 * i;
