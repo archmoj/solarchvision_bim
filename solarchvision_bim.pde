@@ -40613,17 +40613,29 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
 
   if ((posX_min != FLOAT_undefined) && (posX_max != -FLOAT_undefined) && (posY_min != FLOAT_undefined) && (posY_max != -FLOAT_undefined) && (posZ_min != FLOAT_undefined) && (posZ_max != -FLOAT_undefined)) {
 
-    float dx = posX;
-    float dy = posY;
-    float dz = posZ;
+    float x = posX;
+    float y = posY;
+    float z = posZ;
     
-    posX_min += dx;
-    posY_min += dy;
-    posZ_min += dz;    
+    println("IN :", x,y,z);
     
-    posX_max += dx;
-    posY_max += dy;
-    posZ_max += dz;   
+    float[] A = SOLARCHVISION_translateInside_ReferencePivot(-x, -y, -z);
+    
+    x = A[0];
+    y = A[1];
+    z = A[2];    
+    
+    
+    println("OUT:", x,y,z);
+    
+    
+    posX_min -= x;
+    posY_min -= y;
+    posZ_min -= z;    
+    
+    posX_max -= x;
+    posY_max -= y;
+    posZ_max -= z;   
 
     for (int i = 0; i < 3; i++) {
       float ratio = 0.5 * i;
