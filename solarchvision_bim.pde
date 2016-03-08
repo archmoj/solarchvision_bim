@@ -37558,6 +37558,10 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       stroke(0,127,0,127);
       strokeWeight(2);
 
+      float posX = selection_BoundingBox[1 + selection_alignX][0];
+      float posY = selection_BoundingBox[1 + selection_alignY][1];
+      float posZ = selection_BoundingBox[1 + selection_alignZ][2];
+
       float posX_min = selection_BoundingBox[0][0];
       float posY_min = selection_BoundingBox[0][1];
       float posZ_min = selection_BoundingBox[0][2];
@@ -37578,9 +37582,9 @@ void SOLARCHVISION_draw_Perspective_Internally () {
 
       for (int i = 0; i < BoundingBox_Vertices.length; i++) {
         
-        float x = BoundingBox_Vertices[i][0];
-        float y = BoundingBox_Vertices[i][1];
-        float z = BoundingBox_Vertices[i][2];
+        float x = BoundingBox_Vertices[i][0] - posX;
+        float y = BoundingBox_Vertices[i][1] - posY;
+        float z = BoundingBox_Vertices[i][2] - posZ;
         
         float[] A = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
       
@@ -40618,13 +40622,6 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     posY_max += dy;
     posZ_max += dz;   
 
-    
-    println("min/max: x,y,z");
-    println(posX_min, posX_max);
-    println(posY_min, posY_max);
-    println(posZ_min, posZ_max);
-    
-    
     for (int i = 0; i < 3; i++) {
       float ratio = 0.5 * i;
       selection_BoundingBox[i][0] = (1 - ratio) * posX_min + ratio * posX_max;
