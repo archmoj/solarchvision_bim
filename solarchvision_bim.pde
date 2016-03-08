@@ -40372,7 +40372,14 @@ int saved_alignZ = 0;
 
 void SOLARCHVISION_calculate_selection_BoundingBox () {
 
+  
+  int keep_selection_alignX = selection_alignX;
+  int keep_selection_alignY = selection_alignY;
+  int keep_selection_alignZ = selection_alignZ;
 
+  selection_alignX = 0; // apply the centre
+  selection_alignY = 0; // apply the centre
+  selection_alignZ = 0; // apply the centre
   
   int[] theVertices = {};
 
@@ -40613,29 +40620,17 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
 
   if ((posX_min != FLOAT_undefined) && (posX_max != -FLOAT_undefined) && (posY_min != FLOAT_undefined) && (posY_max != -FLOAT_undefined) && (posZ_min != FLOAT_undefined) && (posZ_max != -FLOAT_undefined)) {
 
-    float x = posX;
-    float y = posY;
-    float z = posZ;
+    float dx = posX;
+    float dy = posY;
+    float dz = posZ;
     
-    println("IN :", x,y,z);
+    posX_min += dx;
+    posY_min += dy;
+    posZ_min += dz;    
     
-    float[] A = SOLARCHVISION_translateInside_ReferencePivot(-x, -y, -z);
-    
-    x = A[0];
-    y = A[1];
-    z = A[2];    
-    
-    
-    println("OUT:", x,y,z);
-    
-    
-    posX_min -= x;
-    posY_min -= y;
-    posZ_min -= z;    
-    
-    posX_max -= x;
-    posY_max -= y;
-    posZ_max -= z;   
+    posX_max += dx;
+    posY_max += dy;
+    posZ_max += dz;   
 
     for (int i = 0; i < 3; i++) {
       float ratio = 0.5 * i;
@@ -40669,6 +40664,9 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
   }
   
 
+  selection_alignX = keep_selection_alignX;
+  selection_alignY = keep_selection_alignY;
+  selection_alignZ = keep_selection_alignZ;
 
 }
 
