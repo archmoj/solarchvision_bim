@@ -1,8 +1,5 @@
-// scale only corrected for Group3D ... there is still bug when want to rescale!
 
-// still not sure if these two functions work 100% correct! SOLARCHVISION_translateInside_ReferencePivot and SOLARCHVISION_translateOutside_ReferencePivot
-
-// serach for SOLARCHVISION_scale_Selection( need to make them all correct for local pivots!
+// serach for SOLARCHVISION_rotate_Selection( need to make them all correct for local pivots!
 // local pivot
 
 // some rotations are not in degrees e.g. solids, fractals??, what else?
