@@ -48609,5 +48609,21 @@ float Solid_get_Distance (int n, float a, float b, float c) {
 
 
 
+float[] getPivot () {
+ 
+  float x = selection_BoundingBox[1 + selection_alignX][0];
+  float y = selection_BoundingBox[1 + selection_alignY][1];
+  float z = selection_BoundingBox[1 + selection_alignZ][2];
 
+  float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);  
+  
+  x = A[0];
+  y = A[1];
+  z = A[2];
+  
+  float[] return_array = {x,y,z};
+  
+  return return_array;
+  
+}
 
