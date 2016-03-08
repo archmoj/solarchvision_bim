@@ -40613,6 +40613,14 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
     float dx = posX;
     float dy = posY;
     float dz = posZ;
+    
+    float[] A = SOLARCHVISION_translateOutside_ReferencePivot(dx, dy, dz);
+    
+    dx = A[0];
+    dy = A[1];
+    dz = A[2];
+
+    
 
     posX_min += dx;
     posY_min += dy;
