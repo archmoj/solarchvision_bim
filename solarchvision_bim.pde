@@ -41245,13 +41245,26 @@ void SOLARCHVISION_scale_selectedFaces (float x0, float y0, float z0, float sx, 
     
     int n = FaceVertices[q];
 
-    float x = allVertices[n][0] - x0; 
-    float y = allVertices[n][1] - y0; 
-    float z = allVertices[n][2] - z0;
-   
-    allVertices[n][0] = x0 + sx * x; 
-    allVertices[n][1] = y0 + sy * y;
-    allVertices[n][2] = z0 + sz * z;
+    float x = allVertices[n][0];
+    float y = allVertices[n][1];
+    float z = allVertices[n][2];
+    
+    float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
+  
+    x = sx * (A[0] - x0) + x0;
+    y = sy * (A[1] - y0) + y0;
+    z = sz * (A[2] - z0) + z0;
+
+    float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
+    
+    x = B[0];
+    y = B[1];
+    z = B[2];    
+    
+    allVertices[n][0] = x; 
+    allVertices[n][1] = y;
+    allVertices[n][2] = z;    
+    
   }
 
 }
@@ -41307,13 +41320,25 @@ void SOLARCHVISION_scale_selectedVertices (float x0, float y0, float z0, float s
     
     int n = selectedVertex_numbers[q];
 
-    float x = allVertices[n][0] - x0; 
-    float y = allVertices[n][1] - y0; 
-    float z = allVertices[n][2] - z0;
-   
-    allVertices[n][0] = x0 + sx * x; 
-    allVertices[n][1] = y0 + sy * y;
-    allVertices[n][2] = z0 + sz * z;
+    float x = allVertices[n][0]; 
+    float y = allVertices[n][1]; 
+    float z = allVertices[n][2];
+
+    float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
+  
+    x = sx * (A[0] - x0) + x0;
+    y = sy * (A[1] - y0) + y0;
+    z = sz * (A[2] - z0) + z0;
+
+    float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
+    
+    x = B[0];
+    y = B[1];
+    z = B[2];
+    
+    allVertices[n][0] = x; 
+    allVertices[n][1] = y;
+    allVertices[n][2] = z;
   }
   
 }
@@ -41408,22 +41433,35 @@ void SOLARCHVISION_scale_selectedObject2Ds (float x0, float y0, float z0, float 
   
   for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
     
-    int OBJ_NUM = selectedObject2D_numbers[o];
+    int f = selectedObject2D_numbers[o];
     
-    if (OBJ_NUM != 0) {      
-  
-      float x = allObject2Ds_XYZS[OBJ_NUM][0] - x0; 
-      float y = allObject2Ds_XYZS[OBJ_NUM][1] - y0; 
-      //float z = allObject2Ds_XYZS[OBJ_NUM][2] - z0;
-     
-      allObject2Ds_XYZS[OBJ_NUM][0] = x0 + sx * x; 
-      allObject2Ds_XYZS[OBJ_NUM][1] = y0 + sy * y;
-      //allObject2Ds_XYZS[OBJ_NUM][2] = z0 + sz * z;
+    if (f != 0) {      
 
-      int n = allObject2Ds_MAP[OBJ_NUM];
+      float x = allObject2Ds_XYZS[f][0];
+      float y = allObject2Ds_XYZS[f][1]; 
+      float z = allObject2Ds_XYZS[f][2];
+     
+      float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
+    
+      x = sx * (A[0] - x0) + x0;
+      y = sy * (A[1] - y0) + y0;
+      z = sz * (A[2] - z0) + z0;
+  
+      float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
+      
+      x = B[0];
+      y = B[1];
+      z = B[2];         
+     
+      allObject2Ds_XYZS[f][0] = x; 
+      allObject2Ds_XYZS[f][1] = y;
+      allObject2Ds_XYZS[f][2] = z;    
+    
+      
+      int n = allObject2Ds_MAP[f];
 
       if (abs(n) > n1) { // does not scale poeple!    
-        allObject2Ds_XYZS[OBJ_NUM][3] *= sz; 
+        allObject2Ds_XYZS[f][3] *= sz; 
       }
     }
   }
@@ -41434,26 +41472,26 @@ void SOLARCHVISION_rotate_selectedObject2Ds (float x0, float y0, float z0, float
 
   for (int q = 1; q < selectedObject2D_numbers.length; q++) {
     
-    int n = selectedObject2D_numbers[q];
+    int f = selectedObject2D_numbers[q];
 
-    float x = allObject2Ds_XYZS[n][0] - x0; 
-    float y = allObject2Ds_XYZS[n][1] - y0; 
-    float z = allObject2Ds_XYZS[n][2] - z0;
+    float x = allObject2Ds_XYZS[f][0] - x0; 
+    float y = allObject2Ds_XYZS[f][1] - y0; 
+    float z = allObject2Ds_XYZS[f][2] - z0;
     
     if (the_Vector == 2) {
-      allObject2Ds_XYZS[n][0] = x0 + (x * cos(r) - y * sin(r)); 
-      allObject2Ds_XYZS[n][1] = y0 + (x * sin(r) + y * cos(r));
-      allObject2Ds_XYZS[n][2] = z0 + (z);
+      allObject2Ds_XYZS[f][0] = x0 + (x * cos(r) - y * sin(r)); 
+      allObject2Ds_XYZS[f][1] = y0 + (x * sin(r) + y * cos(r));
+      allObject2Ds_XYZS[f][2] = z0 + (z);
     }
     else if (the_Vector == 1) {
-      allObject2Ds_XYZS[n][0] = x0 + (z * sin(r) + x * cos(r)); 
-      allObject2Ds_XYZS[n][1] = y0 + (y);
-      allObject2Ds_XYZS[n][2] = z0 + (z * cos(r) - x * sin(r));
+      allObject2Ds_XYZS[f][0] = x0 + (z * sin(r) + x * cos(r)); 
+      allObject2Ds_XYZS[f][1] = y0 + (y);
+      allObject2Ds_XYZS[f][2] = z0 + (z * cos(r) - x * sin(r));
     }    
     else if (the_Vector == 0) {
-      allObject2Ds_XYZS[n][0] = x0 + (x); 
-      allObject2Ds_XYZS[n][1] = y0 + (y * cos(r) - z * sin(r));
-      allObject2Ds_XYZS[n][2] = z0 + (y * sin(r) + z * cos(r));
+      allObject2Ds_XYZS[f][0] = x0 + (x); 
+      allObject2Ds_XYZS[f][1] = y0 + (y * cos(r) - z * sin(r));
+      allObject2Ds_XYZS[f][2] = z0 + (y * sin(r) + z * cos(r));
     }    
   }
 
@@ -41465,13 +41503,13 @@ void SOLARCHVISION_move_selectedObject2Ds (float dx, float dy, float dz) {
     
   for (int o = selectedObject2D_numbers.length - 1; o >= 0; o--) {
     
-    int OBJ_NUM = selectedObject2D_numbers[o];
+    int f = selectedObject2D_numbers[o];
     
-    if (OBJ_NUM != 0) {      
+    if (f != 0) {      
       
-      allObject2Ds_XYZS[OBJ_NUM][0] += dx; 
-      allObject2Ds_XYZS[OBJ_NUM][1] += dy; 
-      allObject2Ds_XYZS[OBJ_NUM][2] += dz;
+      allObject2Ds_XYZS[f][0] += dx; 
+      allObject2Ds_XYZS[f][1] += dy; 
+      allObject2Ds_XYZS[f][2] += dz;
     }
   }
 } 
@@ -41481,19 +41519,32 @@ void SOLARCHVISION_scale_selectedFractals (float x0, float y0, float z0, float s
   
   for (int o = selectedFractal_numbers.length - 1; o >= 0; o--) {
     
-    int OBJ_NUM = selectedFractal_numbers[o];
+    int f = selectedFractal_numbers[o];
       
-    if (OBJ_NUM != 0) {      
-  
-      float x = allFractals_XYZSR[OBJ_NUM][0] - x0; 
-      float y = allFractals_XYZSR[OBJ_NUM][1] - y0; 
-      //float z = allFractals_XYZSR[OBJ_NUM][2] - z0;
-      
-      allFractals_XYZSR[OBJ_NUM][0] = x0 + sx * x; 
-      allFractals_XYZSR[OBJ_NUM][1] = y0 + sy * y;
-      //allFractals_XYZSR[OBJ_NUM][2] = z0 + sz * z;
+    if (f != 0) {      
 
-      allFractals_XYZSR[OBJ_NUM][3] *= sz; // <<<<<<<<<<<<<<
+      float x = allFractals_XYZSR[f][0];
+      float y = allFractals_XYZSR[f][1]; 
+      float z = allFractals_XYZSR[f][2];
+
+      float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
+    
+      x = sx * (A[0] - x0) + x0;
+      y = sy * (A[1] - y0) + y0;
+      z = sz * (A[2] - z0) + z0;
+  
+      float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
+      
+      x = B[0];
+      y = B[1];
+      z = B[2];
+       
+      allFractals_XYZSR[f][0] = x;
+      allFractals_XYZSR[f][1] = y;
+      allFractals_XYZSR[f][2] = z;
+
+      allFractals_XYZSR[f][3] *= sz;     
+      
     }
   }
 }
@@ -41503,28 +41554,28 @@ void SOLARCHVISION_rotate_selectedFractals (float x0, float y0, float z0, float 
 
   for (int q = 1; q < selectedFractal_numbers.length; q++) {
     
-    int n = selectedFractal_numbers[q];
+    int f = selectedFractal_numbers[q];
 
-    float x = allFractals_XYZSR[n][0] - x0; 
-    float y = allFractals_XYZSR[n][1] - y0; 
-    float z = allFractals_XYZSR[n][2] - z0;
+    float x = allFractals_XYZSR[f][0] - x0; 
+    float y = allFractals_XYZSR[f][1] - y0; 
+    float z = allFractals_XYZSR[f][2] - z0;
     
     if (the_Vector == 2) {
-      allFractals_XYZSR[n][0] = x0 + (x * cos(r) - y * sin(r)); 
-      allFractals_XYZSR[n][1] = y0 + (x * sin(r) + y * cos(r));
-      allFractals_XYZSR[n][2] = z0 + (z);
+      allFractals_XYZSR[f][0] = x0 + (x * cos(r) - y * sin(r)); 
+      allFractals_XYZSR[f][1] = y0 + (x * sin(r) + y * cos(r));
+      allFractals_XYZSR[f][2] = z0 + (z);
       
-      allFractals_XYZSR[n][4] += r; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      allFractals_XYZSR[f][4] += r; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     }
     else if (the_Vector == 1) {
-      allFractals_XYZSR[n][0] = x0 + (z * sin(r) + x * cos(r)); 
-      allFractals_XYZSR[n][1] = y0 + (y);
-      allFractals_XYZSR[n][2] = z0 + (z * cos(r) - x * sin(r));
+      allFractals_XYZSR[f][0] = x0 + (z * sin(r) + x * cos(r)); 
+      allFractals_XYZSR[f][1] = y0 + (y);
+      allFractals_XYZSR[f][2] = z0 + (z * cos(r) - x * sin(r));
     }    
     else if (the_Vector == 0) {
-      allFractals_XYZSR[n][0] = x0 + (x); 
-      allFractals_XYZSR[n][1] = y0 + (y * cos(r) - z * sin(r));
-      allFractals_XYZSR[n][2] = z0 + (y * sin(r) + z * cos(r));
+      allFractals_XYZSR[f][0] = x0 + (x); 
+      allFractals_XYZSR[f][1] = y0 + (y * cos(r) - z * sin(r));
+      allFractals_XYZSR[f][2] = z0 + (y * sin(r) + z * cos(r));
     }    
   }
 
@@ -41535,13 +41586,13 @@ void SOLARCHVISION_move_selectedFractals (float dx, float dy, float dz) {
     
   for (int o = selectedFractal_numbers.length - 1; o >= 0; o--) {
     
-    int OBJ_NUM = selectedFractal_numbers[o];
+    int f = selectedFractal_numbers[o];
     
-    if (OBJ_NUM != 0) {      
+    if (f != 0) {      
       
-      allFractals_XYZSR[OBJ_NUM][0] += dx; 
-      allFractals_XYZSR[OBJ_NUM][1] += dy; 
-      allFractals_XYZSR[OBJ_NUM][2] += dz;
+      allFractals_XYZSR[f][0] += dx; 
+      allFractals_XYZSR[f][1] += dy; 
+      allFractals_XYZSR[f][2] += dz;
     }
   }
 } 
@@ -41553,13 +41604,13 @@ void SOLARCHVISION_move_selectedSolids (float dx, float dy, float dz) {
   
   for (int q = 1; q < selectedSolid_numbers.length; q++) {
   
-    int g = selectedSolid_numbers[q];
+    int f = selectedSolid_numbers[q];
 
-    float Solid_posX = Solid_get_posX(g);
-    float Solid_posY = Solid_get_posY(g);
-    float Solid_posZ = Solid_get_posZ(g);
+    float Solid_posX = Solid_get_posX(f);
+    float Solid_posY = Solid_get_posY(f);
+    float Solid_posZ = Solid_get_posZ(f);
     
-    Solid_updatePosition(g, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
+    Solid_updatePosition(f, Solid_posX + dx, Solid_posY + dy, Solid_posZ + dz);
     
     Solids_updated = 1;  
 
@@ -41576,11 +41627,11 @@ void SOLARCHVISION_rotate_selectedSolids (float x0, float y0, float z0, float r,
   
   for (int q = 1; q < selectedSolid_numbers.length; q++) {
 
-    int g = selectedSolid_numbers[q];
+    int f = selectedSolid_numbers[q];
 
-    float Solid_posX = Solid_get_posX(g);
-    float Solid_posY = Solid_get_posY(g);
-    float Solid_posZ = Solid_get_posZ(g);
+    float Solid_posX = Solid_get_posX(f);
+    float Solid_posY = Solid_get_posY(f);
+    float Solid_posZ = Solid_get_posZ(f);
 
     
     float x = Solid_posX - x0; 
@@ -41588,19 +41639,19 @@ void SOLARCHVISION_rotate_selectedSolids (float x0, float y0, float z0, float r,
     float z = Solid_posZ - z0;
     
     if (the_Vector == 2) {
-      Solid_updatePosition(g, x0 + (x * cos(r) - y * sin(r)), y0 + (x * sin(r) + y * cos(r)), z0 + (z));
+      Solid_updatePosition(f, x0 + (x * cos(r) - y * sin(r)), y0 + (x * sin(r) + y * cos(r)), z0 + (z));
     
-      Solid_RotateZ(g, r * 180 / PI);
+      Solid_RotateZ(f, r * 180 / PI);
     }
     else if (the_Vector == 1) {
-      Solid_updatePosition(g, x0 + (z * sin(r) + x * cos(r)), y0 + (y), z0 + (z * cos(r) - x * sin(r)));
+      Solid_updatePosition(f, x0 + (z * sin(r) + x * cos(r)), y0 + (y), z0 + (z * cos(r) - x * sin(r)));
     
-      Solid_RotateY(g, r * 180 / PI);
+      Solid_RotateY(f, r * 180 / PI);
     }
     else if (the_Vector == 0) {
-      Solid_updatePosition(g, x0 + (x), y0 + (y * cos(r) - z * sin(r)), z0 + (y * sin(r) + z * cos(r)));
+      Solid_updatePosition(f, x0 + (x), y0 + (y * cos(r) - z * sin(r)), z0 + (y * sin(r) + z * cos(r)));
     
-      Solid_RotateX(g, r * 180 / PI);
+      Solid_RotateX(f, r * 180 / PI);
     }
           
     Solids_updated = 1;  
@@ -41618,16 +41669,27 @@ void SOLARCHVISION_scale_selectedSolids (float x0, float y0, float z0, float sx,
   
   for (int q = 1; q < selectedSolid_numbers.length; q++) {
     
-    int g = selectedSolid_numbers[q];
-
-    float Solid_posX = Solid_get_posX(g);
-    float Solid_posY = Solid_get_posY(g);
-    float Solid_posZ = Solid_get_posZ(g);
-
+    int f = selectedSolid_numbers[q];
     
-    Solid_updatePosition(g, (Solid_posX - x0) * sx + x0, (Solid_posY - y0) * sy + y0, (Solid_posZ - z0) * sz + z0);
+    float x = Solid_get_posX(f);
+    float y = Solid_get_posY(f);
+    float z = Solid_get_posZ(f);
+
+    float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
+  
+    x = sx * (A[0] - x0) + x0;
+    y = sy * (A[1] - y0) + y0;
+    z = sz * (A[2] - z0) + z0;
+
+    float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
+
+    x = B[0]; 
+    y = B[1];
+    z = B[2];
     
-    Solid_Scale(g, sx, sy, sz);
+    Solid_updatePosition(f, x, y, z);
+    
+    Solid_Scale(f, sx, sy, sz);    
 
     Solids_updated = 1;  
 
@@ -41862,13 +41924,25 @@ void SOLARCHVISION_scale_selectedLandPoints (float x0, float y0, float z0, float
       int i = (OBJ_NUM - 1) / LAND_n_J;
       int j = (OBJ_NUM - 1) % LAND_n_J;
       
-      float x = LAND_MESH[i][j][0] - x0; 
-      float y = LAND_MESH[i][j][1] - y0; 
-      float z = LAND_MESH[i][j][2] - z0;
-     
-      LAND_MESH[i][j][0] = x0 + sx * x; 
-      LAND_MESH[i][j][1] = y0 + sy * y;
-      LAND_MESH[i][j][2] = z0 + sz * z;
+      float x = LAND_MESH[i][j][0];
+      float y = LAND_MESH[i][j][1]; 
+      float z = LAND_MESH[i][j][2];
+  
+      float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
+    
+      x = sx * (A[0] - x0) + x0;
+      y = sy * (A[1] - y0) + y0;
+      z = sz * (A[2] - z0) + z0;
+  
+      float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
+      
+      x = B[0];
+      y = B[1];
+      z = B[2];
+      
+      LAND_MESH[i][j][0] = x; 
+      LAND_MESH[i][j][1] = y;
+      LAND_MESH[i][j][2] = z;
     }
   }
   
@@ -41883,11 +41957,6 @@ void SOLARCHVISION_scale_Selection (float x0, float y0, float z0, float sx, floa
   x0 = O[0];
   y0 = O[1];
   z0 = O[2];    
-
-
-  println("O:");
-  println(O);
-
 
   
   if (Current_ObjectCategory == ObjectCategory_Cameras) {
