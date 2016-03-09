@@ -26466,13 +26466,23 @@ void SOLARCHVISION_add_ProjectModel () {
       SOLARCHVISION_add_Object2Ds_Mesh2(1, 10, x-dx/3.0,y-dy,i, x+dx,y-dy/3.0,i); // people
     }   
     
-    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
-    SOLARCHVISION_add_PolygonHyper(0,1,0,1,1, x-0.5*dx,y+0.5*dy,z+dz+4.5, 9, 9, 4, 0);  // hyper
+    {
+      float x2 = x - 0.5 * dx;
+      float y2 = y + 0.5 * dy;
+      float z2 = z + dz + 4.5;
+      
+      SOLARCHVISION_beginNewGroup3D(x2,y2,z2,1,1,1,0,0,rot);
+      SOLARCHVISION_add_PolygonHyper(0,1,0,1,1, x2,y2,z2, 9, 9, 4, 0);  // hyper
+    }
     
-    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
-    for (float i = 0; i < dy; i += 6) {
-      SOLARCHVISION_add_H_shade(1,0,0,1,1, x+0.5*dx,-i,z+dz+2, dx,2, -45,0); // south
-    }     
+    {
+      SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
+      
+      for (float i = 0; i < dy; i += 6) {
+        
+        SOLARCHVISION_add_H_shade(1,0,0,1,1, x+0.5*dx,-i,z+dz+2, dx,2, -45,0); // south
+      }   
+    }  
   }  
 
 
@@ -26543,6 +26553,20 @@ void SOLARCHVISION_add_ProjectModel () {
     SOLARCHVISION_add_Box_Core(4,0,0,1,1, x,y,z, dx, dy, dz, rot);
     SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
   }  
+
+  {  
+    float dx = 12;
+    float dy = 9;
+    float dz = 6;
+    float x = -30;
+    float y = 30;
+    float z = 9;    
+    float rot = 0;
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
+    SOLARCHVISION_add_Box_Core(4,0,0,1,1, x,y,z, dx, dy, dz, rot);
+    SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
+  }  
+
 
   {  
     float dx = 5;
@@ -40874,9 +40898,13 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float 
     float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
     float[] O = SOLARCHVISION_translateOutside_ReferencePivot(x0, y0, z0);
   
-    x = A[0] - O[0];
-    y = A[1] - O[1];
-    z = A[2] - O[2];
+    x = A[0];
+    y = A[1];
+    z = A[2];
+    
+    x -= O[0];
+    y -= O[1];
+    z -= O[2];      
 
     {    
       float a = x;
