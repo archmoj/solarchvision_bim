@@ -40900,8 +40900,76 @@ void SOLARCHVISION_move_selectedGroup3Ds (float dx, float dy, float dz) {
 void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float r, int the_Vector) {
 
   int[] Group3DVertices = SOLARCHVISION_get_selectedGroup3D_Vertices();
+
+  println("x0,y0,z0");
+  println(x0,y0,z0);
+
+
+  float[] P = SOLARCHVISION_translateOutside_ReferencePivot(x0, y0, z0);
+  
+  println("P");
+  println(P);
   
   for (int q = 1; q < Group3DVertices.length; q++) {
+
+    int n = Group3DVertices[q];
+
+    float x = allVertices[n][0]; 
+    float y = allVertices[n][1]; 
+    float z = allVertices[n][2];
+
+    float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
+ 
+    x = A[0];
+    y = A[1];
+    z = A[2];
+
+    x -= P[0];
+    y -= P[1];
+    z -= P[2];
+
+    {    
+      float a = x;
+      float b = y;
+      float c = z;
+    
+      if (the_Vector == 2) {
+        a = x * cos(r) - y * sin(r); 
+        b = x * sin(r) + y * cos(r);
+        c = z;
+      }
+      else if (the_Vector == 1) {
+        a = z * sin(r) + x * cos(r); 
+        b = y;
+        c = z * cos(r) - x * sin(r);
+      }    
+      else if (the_Vector == 0) {
+        a = x; 
+        b = y * cos(r) - z * sin(r);
+        c = y * sin(r) + z * cos(r);
+      }   
+  
+      x = a;
+      y = b;
+      z = c;
+    }
+
+    x += P[0];
+    y += P[1];
+    z += P[2];
+    
+    float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
+    
+    x = B[0];
+    y = B[1];
+    z = B[2];
+    
+    allVertices[n][0] = x; 
+    allVertices[n][1] = y;
+    allVertices[n][2] = z;
+
+    
+    /*
     
     int n = Group3DVertices[q];
 
@@ -40971,6 +41039,8 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float 
     allVertices[n][0] = x; 
     allVertices[n][1] = y;
     allVertices[n][2] = z;
+    
+    */
  
   }
 
