@@ -40871,19 +40871,12 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float 
     float y = allVertices[n][1]; 
     float z = allVertices[n][2];
 
-
-
-
     float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
+    float[] O = SOLARCHVISION_translateOutside_ReferencePivot(x0, y0, z0);
   
-    x = A[0];
-    y = A[1];
-    z = A[2];
-/*
-    x -= x0;
-    y -= y0;
-    z -= z0;
-*/
+    x = A[0] - O[0];
+    y = A[1] - O[1];
+    z = A[2] - O[2];
 
     {    
       float a = x;
@@ -40911,17 +40904,16 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float 
       z = c;
     }
 
-/*
-    x += x0;
-    y += y0;
-    z += z0;       
-*/
+    x += O[0];
+    y += O[1];
+    z += O[2];    
+
     float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
     
     x = B[0];
     y = B[1];
     z = B[2];
- 
+
 
 
     
