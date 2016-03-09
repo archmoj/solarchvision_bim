@@ -26434,6 +26434,7 @@ void SOLARCHVISION_add_ProjectModel () {
   
   Create_Mesh_as_Solid = keep_Create_Mesh_as_Solid;
 
+/*
   {
     float dx = 24;
     float dy = 24;
@@ -26484,7 +26485,7 @@ void SOLARCHVISION_add_ProjectModel () {
       }   
     }  
   }  
-
+*/
 
   {
     SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
@@ -26553,6 +26554,20 @@ void SOLARCHVISION_add_ProjectModel () {
     SOLARCHVISION_add_Box_Core(4,0,0,1,1, x,y,z, dx, dy, dz, rot);
     SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
   }  
+  
+  
+  {  
+    float dx = 12;
+    float dy = 9;
+    float dz = 6;
+    float x = 0;
+    float y = 0;
+    float z = 0;    
+    float rot = 30;
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
+    SOLARCHVISION_add_Box_Core(4,0,0,1,1, x,y,z, dx, dy, dz, rot);
+    SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
+  }    
 
   {  
     float dx = 12;
@@ -40895,16 +40910,20 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float 
     float y = allVertices[n][1]; 
     float z = allVertices[n][2];
 
+    float[] P = SOLARCHVISION_translateOutside_ReferencePivot(x0, y0, z0);
+
+    x -= P[0];
+    y -= P[1];
+    z -= P[2]; 
+
     float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
-    float[] O = SOLARCHVISION_translateOutside_ReferencePivot(x0, y0, z0);
+
   
     x = A[0];
     y = A[1];
     z = A[2];
     
-    x -= O[0];
-    y -= O[1];
-    z -= O[2];      
+     
 
     {    
       float a = x;
@@ -40932,9 +40951,7 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float 
       z = c;
     }
 
-    x += O[0];
-    y += O[1];
-    z += O[2];    
+   
 
     float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
     
@@ -40943,7 +40960,9 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float 
     z = B[2];
 
 
-
+    x += P[0];
+    y += P[1];
+    z += P[2]; 
     
     allVertices[n][0] = x; 
     allVertices[n][1] = y;
