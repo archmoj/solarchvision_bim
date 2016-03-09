@@ -1,4 +1,4 @@
-
+// void SOLARCHVISION_rotate_selectedGroup3Ds 
 // serach for SOLARCHVISION_rotate_Selection ( need to make them all correct for local pivots!
 // local pivot
 
@@ -40871,41 +40871,59 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float 
     float y = allVertices[n][1]; 
     float z = allVertices[n][2];
 
+
+
+
     float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
   
-    x = A[0] - x0;
-    y = A[1] - y0;
-    z = A[2] - z0;
+    x = A[0];
+    y = A[1];
+    z = A[2];
+/*
+    x -= x0;
+    y -= y0;
+    z -= z0;
+*/
+
+    {    
+      float a = x;
+      float b = y;
+      float c = z;
+    
+      if (the_Vector == 2) {
+        a = x * cos(r) - y * sin(r); 
+        b = x * sin(r) + y * cos(r);
+        c = z;
+      }
+      else if (the_Vector == 1) {
+        a = z * sin(r) + x * cos(r); 
+        b = y;
+        c = z * cos(r) - x * sin(r);
+      }    
+      else if (the_Vector == 0) {
+        a = x; 
+        b = y * cos(r) - z * sin(r);
+        c = y * sin(r) + z * cos(r);
+      }   
   
-    float a = x;
-    float b = y;
-    float c = z;
-  
-    if (the_Vector == 2) {
-      a = x0 + (x * cos(r) - y * sin(r)); 
-      b = y0 + (x * sin(r) + y * cos(r));
-      c = z0 + (z);
+      x = a;
+      y = b;
+      z = c;
     }
-    else if (the_Vector == 1) {
-      a = x0 + (z * sin(r) + x * cos(r)); 
-      b = y0 + (y);
-      c = z0 + (z * cos(r) - x * sin(r));
-    }    
-    else if (the_Vector == 0) {
-      a = x0 + (x); 
-      b = y0 + (y * cos(r) - z * sin(r));
-      c = z0 + (y * sin(r) + z * cos(r));
-    }   
 
-    x = a;
-    y = b;
-    z = c;
-
+/*
+    x += x0;
+    y += y0;
+    z += z0;       
+*/
     float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
     
     x = B[0];
     y = B[1];
     z = B[2];
+ 
+
+
     
     allVertices[n][0] = x; 
     allVertices[n][1] = y;
