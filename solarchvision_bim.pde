@@ -2,6 +2,9 @@
 // serach for SOLARCHVISION_rotate_Selection ( need to make them all correct for local pivots!
 // local pivot
 
+
+// solid rotations inside groups should be translated to locals to avoid problems!
+
 // some rotations are not in degrees e.g. solids, fractals??, what else?
 
 // colud add create group <<<< we have it :)
@@ -40897,21 +40900,10 @@ void SOLARCHVISION_move_selectedGroup3Ds (float dx, float dy, float dz) {
   
 }
 
-void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float r, int the_Vector) {
+void SOLARCHVISION_rotate_selectedGroup3Ds (float r, int the_Vector) {
 
   int[] Group3DVertices = SOLARCHVISION_get_selectedGroup3D_Vertices();
   
-  
-  
-  float keep_pivotX = selection_BoundingBox[1 + selection_alignX][0];
-  float keep_pivotY = selection_BoundingBox[1 + selection_alignY][1];
-  float keep_pivotZ = selection_BoundingBox[1 + selection_alignZ][2];
-  
-  selection_BoundingBox[1 + selection_alignX][0] = x0;
-  selection_BoundingBox[1 + selection_alignY][1] = y0;
-  selection_BoundingBox[1 + selection_alignZ][2] = z0;
-  
-
   for (int q = 1; q < Group3DVertices.length; q++) {
 
     int n = Group3DVertices[q];
@@ -40919,18 +40911,18 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float 
     float x = allVertices[n][0]; 
     float y = allVertices[n][1]; 
     float z = allVertices[n][2];
-
+    
     float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
  
     x = A[0];
     y = A[1];
     z = A[2];
 
-    {    
+    {
       float a = x;
       float b = y;
       float c = z;
-    
+      
       if (the_Vector == 2) {
         a = x * cos(r) - y * sin(r); 
         b = x * sin(r) + y * cos(r);
@@ -40942,7 +40934,7 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float 
         c = z * cos(r) - x * sin(r);
       }    
       else if (the_Vector == 0) {
-        a = x; 
+        a = x;
         b = y * cos(r) - z * sin(r);
         c = y * sin(r) + z * cos(r);
       }   
@@ -40952,26 +40944,16 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float 
       z = c;
     }
 
-
     float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
     
     x = B[0];
     y = B[1];
     z = B[2];
-    
+
     allVertices[n][0] = x; 
     allVertices[n][1] = y;
     allVertices[n][2] = z;
- 
   }
-  
-  selection_BoundingBox[1 + selection_alignX][0] = keep_pivotX;
-  selection_BoundingBox[1 + selection_alignY][1] = keep_pivotY;
-  selection_BoundingBox[1 + selection_alignZ][2] = keep_pivotZ;
-  
-  
-  
-  
   
   
   
@@ -40987,29 +40969,59 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float 
     if (OBJ_NUM != 0) {  
       
       { 
-        float x = allGroup3Ds_PivotXYZ[OBJ_NUM][0] - x0; 
-        float y = allGroup3Ds_PivotXYZ[OBJ_NUM][1] - y0; 
-        float z = allGroup3Ds_PivotXYZ[OBJ_NUM][2] - z0;
-        
-        if (the_Vector == 2) {
-          allGroup3Ds_PivotXYZ[OBJ_NUM][0] = x0 + (x * cos(r) - y * sin(r)); 
-          allGroup3Ds_PivotXYZ[OBJ_NUM][1] = y0 + (x * sin(r) + y * cos(r));
-          allGroup3Ds_PivotXYZ[OBJ_NUM][2] = z0 + (z);
+        float x = allGroup3Ds_PivotXYZ[OBJ_NUM][0]; 
+        float y = allGroup3Ds_PivotXYZ[OBJ_NUM][1]; 
+        float z = allGroup3Ds_PivotXYZ[OBJ_NUM][2];
+    
+        float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
+     
+        x = A[0];
+        y = A[1];
+        z = A[2];
+    
+        {
+          float a = x;
+          float b = y;
+          float c = z;
           
+          if (the_Vector == 2) {
+            a = x * cos(r) - y * sin(r); 
+            b = x * sin(r) + y * cos(r);
+            c = z;
+          }
+          else if (the_Vector == 1) {
+            a = z * sin(r) + x * cos(r); 
+            b = y;
+            c = z * cos(r) - x * sin(r);
+          }    
+          else if (the_Vector == 0) {
+            a = x;
+            b = y * cos(r) - z * sin(r);
+            c = y * sin(r) + z * cos(r);
+          }   
+      
+          x = a;
+          y = b;
+          z = c;
+        }
+    
+        float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
+        
+        x = B[0];
+        y = B[1];
+        z = B[2];
+        
+        allGroup3Ds_PivotXYZ[OBJ_NUM][0] = x;
+        allGroup3Ds_PivotXYZ[OBJ_NUM][1] = y;
+        allGroup3Ds_PivotXYZ[OBJ_NUM][2] = z;
+
+        if (the_Vector == 2) {
           allGroup3Ds_PivotXYZ[OBJ_NUM][8] += r * 180.0 / PI;
         }
         else if (the_Vector == 1) {
-          allGroup3Ds_PivotXYZ[OBJ_NUM][0] = x0 + (z * sin(r) + x * cos(r)); 
-          allGroup3Ds_PivotXYZ[OBJ_NUM][1] = y0 + (y);
-          allGroup3Ds_PivotXYZ[OBJ_NUM][2] = z0 + (z * cos(r) - x * sin(r));
-          
           allGroup3Ds_PivotXYZ[OBJ_NUM][7] += r * 180.0 / PI;
         }    
         else if (the_Vector == 0) {
-          allGroup3Ds_PivotXYZ[OBJ_NUM][0] = x0 + (x); 
-          allGroup3Ds_PivotXYZ[OBJ_NUM][1] = y0 + (y * cos(r) - z * sin(r));
-          allGroup3Ds_PivotXYZ[OBJ_NUM][2] = z0 + (y * sin(r) + z * cos(r));
-          
           allGroup3Ds_PivotXYZ[OBJ_NUM][6] += r * 180.0 / PI;
         }          
       }    
@@ -41018,29 +41030,61 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float 
       for (int f = allGroup3Ds_Fractals[OBJ_NUM][0]; f <= allGroup3Ds_Fractals[OBJ_NUM][1]; f++) {
         if ((0 < f) && (f <= allFractals_num)) {
           
-          float x = allFractals_XYZSR[f][0] - x0; 
-          float y = allFractals_XYZSR[f][1] - y0; 
-          float z = allFractals_XYZSR[f][2] - z0;
+          float x = allFractals_XYZSR[f][0]; 
+          float y = allFractals_XYZSR[f][1]; 
+          float z = allFractals_XYZSR[f][2];
+
+          float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
+       
+          x = A[0];
+          y = A[1];
+          z = A[2];
+      
+          {
+            float a = x;
+            float b = y;
+            float c = z;
+            
+            if (the_Vector == 2) {
+              a = x * cos(r) - y * sin(r); 
+              b = x * sin(r) + y * cos(r);
+              c = z;
+            }
+            else if (the_Vector == 1) {
+              a = z * sin(r) + x * cos(r); 
+              b = y;
+              c = z * cos(r) - x * sin(r);
+            }    
+            else if (the_Vector == 0) {
+              a = x;
+              b = y * cos(r) - z * sin(r);
+              c = y * sin(r) + z * cos(r);
+            }   
+        
+            x = a;
+            y = b;
+            z = c;
+          }
+      
+          float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
+          
+          x = B[0];
+          y = B[1];
+          z = B[2];
+          
+          allFractals_XYZSR[f][0] = x;
+          allFractals_XYZSR[f][1] = y;
+          allFractals_XYZSR[f][2] = z;
+          
           
           if (the_Vector == 2) {
-            
-            allFractals_XYZSR[f][0] = x0 + (x * cos(r) - y * sin(r));
-            allFractals_XYZSR[f][1] = y0 + (x * sin(r) + y * cos(r));
-            allFractals_XYZSR[f][2] = z0 + (z);
-            
             allFractals_XYZSR[f][4] += r; // <<<<<<<<<
           }
           else if (the_Vector == 1) {
-           
-            allFractals_XYZSR[f][0] = x0 + (z * sin(r) + x * cos(r));
-            allFractals_XYZSR[f][1] = y0 + (y);
-            allFractals_XYZSR[f][2] = z0 + (z * cos(r) - x * sin(r));
+
           }
           else if (the_Vector == 0) {
 
-            allFractals_XYZSR[f][0] = x0 + (x);
-            allFractals_XYZSR[f][1] = y0 + (y * cos(r) - z * sin(r));
-            allFractals_XYZSR[f][2] = z0 + (y * sin(r) + z * cos(r));
           }
 
         }
@@ -41049,28 +41093,51 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float 
       for (int f = allGroup3Ds_Object2Ds[OBJ_NUM][0]; f <= allGroup3Ds_Object2Ds[OBJ_NUM][1]; f++) {
         if ((0 < f) && (f <= allObject2Ds_num)) {
           
-          float x = allObject2Ds_XYZS[f][0] - x0; 
-          float y = allObject2Ds_XYZS[f][1] - y0; 
-          float z = allObject2Ds_XYZS[f][2] - z0;
-          
-          if (the_Vector == 2) {
-            
-            allObject2Ds_XYZS[f][0] = x0 + (x * cos(r) - y * sin(r));
-            allObject2Ds_XYZS[f][1] = y0 + (x * sin(r) + y * cos(r));
-            allObject2Ds_XYZS[f][2] = z0 + (z);
-          }
-          else if (the_Vector == 1) {
-           
-            allObject2Ds_XYZS[f][0] = x0 + (z * sin(r) + x * cos(r));
-            allObject2Ds_XYZS[f][1] = y0 + (y);
-            allObject2Ds_XYZS[f][2] = z0 + (z * cos(r) - x * sin(r));
-          }
-          else if (the_Vector == 0) {
+          float x = allObject2Ds_XYZS[f][0]; 
+          float y = allObject2Ds_XYZS[f][1]; 
+          float z = allObject2Ds_XYZS[f][2];
 
-            allObject2Ds_XYZS[f][0] = x0 + (x);
-            allObject2Ds_XYZS[f][1] = y0 + (y * cos(r) - z * sin(r));
-            allObject2Ds_XYZS[f][2] = z0 + (y * sin(r) + z * cos(r));
+          float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
+       
+          x = A[0];
+          y = A[1];
+          z = A[2];
+      
+          {
+            float a = x;
+            float b = y;
+            float c = z;
+            
+            if (the_Vector == 2) {
+              a = x * cos(r) - y * sin(r); 
+              b = x * sin(r) + y * cos(r);
+              c = z;
+            }
+            else if (the_Vector == 1) {
+              a = z * sin(r) + x * cos(r); 
+              b = y;
+              c = z * cos(r) - x * sin(r);
+            }    
+            else if (the_Vector == 0) {
+              a = x;
+              b = y * cos(r) - z * sin(r);
+              c = y * sin(r) + z * cos(r);
+            }   
+        
+            x = a;
+            y = b;
+            z = c;
           }
+      
+          float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
+          
+          x = B[0];
+          y = B[1];
+          z = B[2];
+          
+          allObject2Ds_XYZS[f][0] = x;
+          allObject2Ds_XYZS[f][1] = y;
+          allObject2Ds_XYZS[f][2] = z;
 
         }
       }         
@@ -41078,28 +41145,59 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float x0, float y0, float z0, float 
       for (int f = allGroup3Ds_Solids[OBJ_NUM][0]; f <= allGroup3Ds_Solids[OBJ_NUM][1]; f++) {
         if ((0 < f) && (f <= allSolids.length - 1)) {
 
-          float Solid_posX = Solid_get_posX(f);
-          float Solid_posY = Solid_get_posY(f);
-          float Solid_posZ = Solid_get_posZ(f);
+          float x = Solid_get_posX(f);
+          float y = Solid_get_posY(f);
+          float z = Solid_get_posZ(f);
 
+          float[] A = SOLARCHVISION_translateOutside_ReferencePivot(x, y, z);
+       
+          x = A[0];
+          y = A[1];
+          z = A[2];
+      
+          {
+            float a = x;
+            float b = y;
+            float c = z;
+            
+            if (the_Vector == 2) {
+              a = x * cos(r) - y * sin(r); 
+              b = x * sin(r) + y * cos(r);
+              c = z;
+            }
+            else if (the_Vector == 1) {
+              a = z * sin(r) + x * cos(r); 
+              b = y;
+              c = z * cos(r) - x * sin(r);
+            }    
+            else if (the_Vector == 0) {
+              a = x;
+              b = y * cos(r) - z * sin(r);
+              c = y * sin(r) + z * cos(r);
+            }   
+        
+            x = a;
+            y = b;
+            z = c;
+          }
+      
+          float[] B = SOLARCHVISION_translateInside_ReferencePivot(x, y, z);
           
-          float x = Solid_posX - x0; 
-          float y = Solid_posY - y0; 
-          float z = Solid_posZ - z0;
+          x = B[0];
+          y = B[1];
+          z = B[2];
           
+          
+          Solid_updatePosition(f, x, y, z);
+
+          // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Note: these rotations could be translated to locals to avoid problems!
           if (the_Vector == 2) {
-            Solid_updatePosition(f, x0 + (x * cos(r) - y * sin(r)), y0 + (x * sin(r) + y * cos(r)), z0 + (z));
-          
             Solid_RotateZ(f, r * 180 / PI);
           }
           else if (the_Vector == 1) {
-            Solid_updatePosition(f, x0 + (z * sin(r) + x * cos(r)), y0 + (y), z0 + (z * cos(r) - x * sin(r)));
-          
             Solid_RotateY(f, r * 180 / PI);
           }
           else if (the_Vector == 0) {
-            Solid_updatePosition(f, x0 + (x), y0 + (y * cos(r) - z * sin(r)), z0 + (y * sin(r) + z * cos(r)));
-          
             Solid_RotateX(f, r * 180 / PI);
           }
           
@@ -42141,7 +42239,7 @@ void SOLARCHVISION_rotate_Selection (float x0, float y0, float z0, float r, int 
   
   if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
     
-    SOLARCHVISION_rotate_selectedGroup3Ds(x0, y0, z0, r, the_Vector);
+    SOLARCHVISION_rotate_selectedGroup3Ds(r, the_Vector);
   }
   
   if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
