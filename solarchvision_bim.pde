@@ -33138,9 +33138,38 @@ void mouseClicked () {
             
             
 
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Begin New Group3D")) {
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Begin New Group3D at Origin")) {
               SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
+              
+              selectedGroup3D_numbers = new int [2];
+              selectedGroup3D_numbers[0] = 0;
+              selectedGroup3D_numbers[1] = allGroup3Ds_num;
+              
+              WIN3D_Update = 1;
             }    
+            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Begin New Group3D at Pivot")) {
+
+              float x = selection_BoundingBox[1 + selection_alignX][0];
+              float y = selection_BoundingBox[1 + selection_alignY][1];
+              float z = selection_BoundingBox[1 + selection_alignZ][2];
+              
+              float sx = selection_BoundingBox[1 + selection_alignX][3];
+              float sy = selection_BoundingBox[1 + selection_alignY][4];
+              float sz = selection_BoundingBox[1 + selection_alignZ][5];
+              
+              float rx = selection_BoundingBox[1 + selection_alignX][6];
+              float ry = selection_BoundingBox[1 + selection_alignY][7];
+              float rz = selection_BoundingBox[1 + selection_alignZ][8];              
+
+              SOLARCHVISION_beginNewGroup3D(x,y,z,sx,sy,sz,rx,ry,rz);
+              
+              selectedGroup3D_numbers = new int [2];
+              selectedGroup3D_numbers[0] = 0;
+              selectedGroup3D_numbers[1] = allGroup3Ds_num;       
+       
+              WIN3D_Update = 1;       
+            }              
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Solid")) {
               set_to_Create_Solid();
@@ -34748,10 +34777,14 @@ void mouseClicked () {
                   rz /= pow(A, (1.0 / 3.0));
                   //---------------------------------------------------
                 }
-  
-                x -= rx * selection_alignX;
-                y -= ry * selection_alignY;
-                z -= rz * selection_alignZ;
+                
+                
+                if ((Current_ObjectCategory != ObjectCategory_Object2Ds) && (Current_ObjectCategory != ObjectCategory_Fractals) && (Current_ObjectCategory != ObjectCategory_Cameras) && (Current_ObjectCategory != ObjectCategory_Sections)) {
+
+                  x -= rx * selection_alignX;
+                  y -= ry * selection_alignY;
+                  z -= rz * selection_alignZ;
+                }
                 
                 
                 
@@ -34853,7 +34886,7 @@ void mouseClicked () {
     
   
                 if (Create_Mesh_Person != 0) {
-                  
+
                   randomSeed(millis());
                   SOLARCHVISION_add_Object2D("PEOPLE", Create_Mesh_Person_Type, x, y, z, 2.5);
                 }
@@ -39054,8 +39087,8 @@ void SOLARCHVISION_draw_referencePivot () {
 
 
   WIN3D_Diagrams.strokeWeight(3);
-  WIN3D_Diagrams.stroke(127,0,255);
-  WIN3D_Diagrams.fill(127,0,255);  
+  WIN3D_Diagrams.stroke(127,0,255,127);
+  WIN3D_Diagrams.fill(127,0,255,127);  
 
   float[] P = getPivot();
   
@@ -39066,7 +39099,9 @@ void SOLARCHVISION_draw_referencePivot () {
 
   WIN3D_Diagrams.pushMatrix(); 
   WIN3D_Diagrams.translate(x * WIN3D_scale3D, -y * WIN3D_scale3D, z * WIN3D_scale3D);
-  WIN3D_Diagrams.sphere(5);
+  
+  WIN3D_Diagrams.sphere(1); // <<<<<< size
+  
   WIN3D_Diagrams.popMatrix();
   
   WIN3D_Diagrams.strokeWeight(0);
@@ -40749,21 +40784,7 @@ void SOLARCHVISION_calculate_selection_BoundingBox () {
       selection_BoundingBox[i][8] = rotZ;
     } 
   }
-  else { 
-    for (int i = 0; i < 3; i++) {
-      selection_BoundingBox[i][0] = 0;
-      selection_BoundingBox[i][1] = 0;
-      selection_BoundingBox[i][2] = 0;
-      
-      selection_BoundingBox[i][3] = 1;
-      selection_BoundingBox[i][4] = 1;
-      selection_BoundingBox[i][5] = 1;
-  
-      selection_BoundingBox[i][6] = 0;
-      selection_BoundingBox[i][7] = 0;
-      selection_BoundingBox[i][8] = 0;    
-    }    
-  }
+
   
 
   selection_alignX = keep_selection_alignX;
@@ -44261,7 +44282,7 @@ String[][] BAR_a_Items = {
                         {"Study", "Wind pattern (active)", "Wind pattern (passive)", "Urban solar potential (active)", "Urban solar potential (passive)", "Orientation potential (active)", "Orientation potential (passive)", "Hourly sun position (active)", "Hourly sun position (passive)", "View from sun & sky (active)", "View from sun & sky (passive)", "Annual cycle sun path (active)", "Annual cycle sun path (passive)", "Pre-bake Selected Sections", "Process Active Impact", "Process Passive Impact", "Process Solid Impact", "Run wind 3D-model"},
                         {"Layer"}, // Parameters 
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
-                        {"Create", "Begin New Group3D", "Viewport >> Camera", "Camera", "Section", "Solid", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"},
+                        {"Create", "Begin New Group3D at Origin", "Begin New Group3D at Pivot", "Viewport >> Camera", "Camera", "Section", "Solid", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"},
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Solid", "Select Section",  "Select Camera", "Select LandPoint", "Select Fractal", "Select Object2D", "Select Group3D", "Select Face", "Select Vertex", "Soft Selection", "Group3D >> Vertex", "Group3D >> Face", "Group3D >> Solid", "Group3D >> Object2D", "Group3D >> Fractal", "Fractal >> Group3D", "Object2D >> Group3D", "Solid >> Group3D", "Face >> Group3D", "Vertex >> Group3D", "Vertex >> Face", "Face >> Vertex", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices Selection", "Select All Isolated Vertices"},
                         {"Edit", "Duplicate Selection (Identical)", "Duplicate Selection (Variation)", "Ungroup Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces", "Flatten Selected LandPoints"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Power", "PowerX", "PowerY", "PowerZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
