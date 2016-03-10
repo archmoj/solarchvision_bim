@@ -33150,19 +33150,7 @@ void mouseClicked () {
             
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Begin New Group3D at Pivot")) {
 
-              float x = selection_BoundingBox[1 + selection_alignX][0];
-              float y = selection_BoundingBox[1 + selection_alignY][1];
-              float z = selection_BoundingBox[1 + selection_alignZ][2];
-              
-              float sx = selection_BoundingBox[1 + selection_alignX][3];
-              float sy = selection_BoundingBox[1 + selection_alignY][4];
-              float sz = selection_BoundingBox[1 + selection_alignZ][5];
-              
-              float rx = selection_BoundingBox[1 + selection_alignX][6];
-              float ry = selection_BoundingBox[1 + selection_alignY][7];
-              float rz = selection_BoundingBox[1 + selection_alignZ][8];              
-
-              SOLARCHVISION_beginNewGroup3D(x,y,z,sx,sy,sz,rx,ry,rz);
+              SOLARCHVISION_beginNewGroup3D(selection_BoundingBox[1 + selection_alignX][0], selection_BoundingBox[1 + selection_alignX][1], selection_BoundingBox[1 + selection_alignX][2], selection_BoundingBox[1 + selection_alignX][3], selection_BoundingBox[1 + selection_alignX][4], selection_BoundingBox[1 + selection_alignX][5], selection_BoundingBox[1 + selection_alignX][6], selection_BoundingBox[1 + selection_alignX][7], selection_BoundingBox[1 + selection_alignX][8]);
               
               selectedGroup3D_numbers = new int [2];
               selectedGroup3D_numbers[0] = 0;
@@ -34779,49 +34767,51 @@ void mouseClicked () {
                 }
                 
                 
-                if ((Current_ObjectCategory != ObjectCategory_Object2Ds) && (Current_ObjectCategory != ObjectCategory_Fractals) && (Current_ObjectCategory != ObjectCategory_Cameras) && (Current_ObjectCategory != ObjectCategory_Sections)) {
+                if ((Current_ObjectCategory != ObjectCategory_Fractals) && (Current_ObjectCategory != ObjectCategory_Object2Ds) && (Current_ObjectCategory != ObjectCategory_LandPoint) && (Current_ObjectCategory != ObjectCategory_Cameras) && (Current_ObjectCategory != ObjectCategory_Sections)) {
 
                   x -= rx * selection_alignX;
                   y -= ry * selection_alignY;
                   z -= rz * selection_alignZ;
+
                 }
                 
                 
                 
+                if ((Current_ObjectCategory == ObjectCategory_Group3Ds) || (Current_ObjectCategory == ObjectCategory_Solids) || (Current_ObjectCategory == ObjectCategory_Fractals) || (Current_ObjectCategory == ObjectCategory_Object2Ds)) {
+                    
+                  if (addToLastGroup3D == 0) {
+
+                    SOLARCHVISION_beginNewGroup3D(x, y, z, 1, 1, 1, 0, 0, rot);
+                  }
+                }
+                
+
+
+                
                 if (Create_Mesh_SuperOBJ == 1) {
     
                   if ((px == CubePower) && (py == CubePower) && (pz == 2)) {
-                    
-                    if (addToLastGroup3D == 0) SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
-                    
+
                     SOLARCHVISION_add_ParametricSurface(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x, y, z, rx, ry, rz, 2, rot);
                   }
                   
                   else if ((px == 2) && (py == 2) && (pz == CubePower)) {
-                    
-                    if (addToLastGroup3D == 0) SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
-                    
+
                     SOLARCHVISION_add_SuperCylinder(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x, y, z, rx,ry,rz, Create_Cylinder_Degree, rot);
                   }                
       
                   else if ((px == CubePower) && (py == CubePower) && (pz == CubePower)) {
-                    
-                    if (addToLastGroup3D == 0) SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
                     
                     SOLARCHVISION_add_Box_Core(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x,y,z, rx,ry,rz, rot);
                   }
                   
                   else if ((px == 1) && (py == 1) && (pz == 1)) {
                     
-                    if (addToLastGroup3D == 0) SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
-                    
                     SOLARCHVISION_add_Octahedron(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x,y,z, rx,ry,rz, rot);
                   }
                   
                   else {
-                    
-                    if (addToLastGroup3D == 0) SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
-                    
+
                     SOLARCHVISION_add_SuperSphere(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x,y,z, pz,py,pz, rx,ry,rz, Create_Sphere_Degree, rot);
                   }
                   
@@ -34841,8 +34831,6 @@ void mouseClicked () {
                   
                 if (Create_Mesh_Tri == 1) {
                   
-                  if (addToLastGroup3D == 0) SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0); 
-                  
                   SOLARCHVISION_add_Mesh3(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x-rx, y-ry, z-rz, x+rx, y-ry, z-rz, x, y, z+rz);
                   SOLARCHVISION_add_Mesh3(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x+rx, y-ry, z-rz, x+rx, y+ry, z-rz, x, y, z+rz);
                   SOLARCHVISION_add_Mesh3(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x+rx, y+ry, z-rz, x-rx, y+ry, z-rz, x, y, z+rz);
@@ -34851,35 +34839,25 @@ void mouseClicked () {
                 
                 if (Create_Mesh_Quad == 1) {
                   
-                  if (addToLastGroup3D == 0) SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0); 
-                  
                   SOLARCHVISION_add_Mesh4(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x-rx, y-ry, z-rz, x+rx, y-ry, z+rz, x+rx, y+ry, z-rz, x-rx, y+ry, z+rz);
                 }
                 
                 if (Create_Mesh_Poly == 1) {
-                  
-                  if (addToLastGroup3D == 0) SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0); 
-                  
+
                   SOLARCHVISION_add_PolygonHyper(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
                 }
     
                 if (Create_Mesh_Extrude == 1) {       
-                  
-                  if (addToLastGroup3D == 0) SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
-                  
+
                   SOLARCHVISION_add_PolygonExtrude(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x, y, z, rx, 2 * rz, Create_Poly_Degree, rot);
                 }
     
                 if (Create_Mesh_House == 1) {   
-                  
-                  if (addToLastGroup3D == 0) SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0); 
        
                   SOLARCHVISION_add_House_Core(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x, y, z, rx, ry, rz, ry, rot);
                 }
     
                 if (Create_Mesh_Parametric != 0) {
-                  
-                  if (addToLastGroup3D == 0) SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0); 
                   
                   SOLARCHVISION_add_ParametricSurface(Create_Default_Material, Create_Default_Tessellation,  Create_Default_Layer,  Create_Default_Visibility, Create_Default_ExtraType, x, y, z, rx, ry, rz, Create_Mesh_Parametric_Type, rot);
                 }
@@ -34901,16 +34879,12 @@ void mouseClicked () {
 
                 if (Create_Fractal != 0) {
                   
-                  if (addToLastGroup3D == 0) SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0); 
-                  
                   randomSeed(millis());
                   SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 2 * rz, rot, Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize);
                 }        
 
 
                 if (Current_ObjectCategory == ObjectCategory_Solids) { // working with solids
-                  
-                  if (addToLastGroup3D == 0) SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0); 
                    
                   SOLARCHVISION_add_Solid(x,y,z, px,py,pz, rx,ry,rz, 0,0,rot, 1);
 
