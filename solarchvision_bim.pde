@@ -86,7 +86,7 @@ int STATION_NUMBER = 0;
 String[][] DEFINED_STATIONS = {
   
   
-                                {"Hamedan_Site", "XX", "IR", "34.807", "48.455", "52.5", "1988.5", "240.0", "", "", "IRN_HAMEDAN_XX_IR"},
+                                {"Hamedan", "XX", "IR", "34.807", "48.455", "52.5", "1988.5", "240.0", "", "", "IRN_HAMEDAN_XX_IR"},
   
                                 {"Vancouver_A", "BC", "CA", "49.28793", "-123.11415", "-120", "0", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"},
                                 {"Vancouver_B", "BC", "CA", "49.274166", "-123.103353", "-120", "0", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"},
@@ -5455,12 +5455,12 @@ void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY
 
         int File_Found = -1;
 
-        //println (FN);
+        //println(FN);
         for (int i = ENSEMBLE_XML_Files.length - 1; i >= 0; i--) { // reverse search is faster 
           //println(ENSEMBLE_XML_Files[i]); 
             
           if (ENSEMBLE_XML_Files[i].equals(FN)) {
-            //println ("FILE FOUND:", FN);
+            //println("FILE FOUND:", FN);
             File_Found = i;
             
             break; // <<<<<<<<<<
@@ -5490,7 +5490,7 @@ void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY
               */
             } 
             catch (Exception e) {
-              println ("LINK NOT AVAILABLE:", the_link); 
+              println("LINK NOT AVAILABLE:", the_link); 
             }              
           } 
         }
@@ -5512,12 +5512,12 @@ void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY
 
         int File_Found = -1;
 
-        //println (FN);
+        //println(FN);
         for (int i = ENSEMBLE_XML_Files.length - 1; i >= 0; i--) { // reverse search is faster 
           //println(ENSEMBLE_XML_Files[i]); 
             
           if (ENSEMBLE_XML_Files[i].equals(FN)) {
-            //println ("FILE FOUND:", FN);
+            //println("FILE FOUND:", FN);
             File_Found = i;
             
             break; // <<<<<<<<<<
@@ -5526,7 +5526,7 @@ void SOLARCHVISION_try_update_ENSEMBLE (int THE_YEAR, int THE_MONTH, int THE_DAY
 
 
         if (File_Found != -1) SOLARCHVISION_LoadENSEMBLE((ENSEMBLE_directory + "/" + FN), f);
-        else println ("FILE NOT FOUND:", FN);
+        else println("FILE NOT FOUND:", FN);
       }
     }
     
@@ -5959,7 +5959,7 @@ void SOLARCHVISION_LoadENSEMBLE (String FileName, int Load_Layer) {
   
   if (continue_process == 1) { 
   
-    //println (_YEAR, _MONTH, _DAY, _HOUR);
+    //println(_YEAR, _MONTH, _DAY, _HOUR);
    
     XML[] children0 = FileALL.getChildren("forecast");
    
@@ -5977,12 +5977,12 @@ void SOLARCHVISION_LoadENSEMBLE (String FileName, int Load_Layer) {
         int THE_DAY = int(_a2.substring(6, 8));
         int THE_HOUR = int(_a2.substring(8));
         
-        //println (THE_YEAR, THE_MONTH, THE_DAY, THE_HOUR);
+        //println(THE_YEAR, THE_MONTH, THE_DAY, THE_HOUR);
   
         int now_i = int(THE_HOUR);
         int now_j = Convert2Date(THE_MONTH, THE_DAY);
         
-        //println (now_i, now_j);
+        //println(now_i, now_j);
         
         now_i -= int(-LocationTimeZone / 15);
         if (now_i < 0) {
@@ -5993,8 +5993,8 @@ void SOLARCHVISION_LoadENSEMBLE (String FileName, int Load_Layer) {
           } 
         }
         
-        //println (now_i, now_j);
-        //println ("-------------");
+        //println(now_i, now_j);
+        //println("-------------");
         
         XML[] _c = children0[Li].getChildren("model");
         //println("number of members:", _c.length);
@@ -6319,11 +6319,11 @@ void SOLARCHVISION_try_update_CLIMATE_WY2 () {
   
     int File_Found = -1;
   
-    //println (FN);
+    //println(FN);
     for (int i = 0; i < CLIMATE_WY2_Files.length; i++) {
 
       if (CLIMATE_WY2_Files[i].toLowerCase().equals(FN.toLowerCase())) {
-        //println ("FILE FOUND:", FN);
+        //println("FILE FOUND:", FN);
         File_Found = i;
         
         break; // <<<<<<<<<<
@@ -6331,7 +6331,7 @@ void SOLARCHVISION_try_update_CLIMATE_WY2 () {
     }
     
     if (File_Found != -1) SOLARCHVISION_LoadCLIMATE_WY2((CLIMATE_WY2_directory + "/" + FN));
-    else println ("FILE NOT FOUND:", FN);
+    else println("FILE NOT FOUND:", FN);
   }
 
 }
@@ -6349,20 +6349,20 @@ void SOLARCHVISION_LoadCLIMATE_WY2 (String FileName) {
   for (int f = 0; f < FileALL.length; f += 1) {
     
     lineSTR = FileALL[f];
-    //println (lineSTR);
+    //println(lineSTR);
     
     int CLIMATE_YEAR = int(lineSTR.substring(6, 10));
     int CLIMATE_MONTH = int(lineSTR.substring(10, 12));
     int CLIMATE_DAY = int(lineSTR.substring(12, 14));
     int CLIMATE_HOUR = int(lineSTR.substring(14, 16));
     
-    //println (CLIMATE_YEAR, CLIMATE_MONTH, CLIMATE_DAY, CLIMATE_HOUR);
+    //println(CLIMATE_YEAR, CLIMATE_MONTH, CLIMATE_DAY, CLIMATE_HOUR);
     
     int i = int(CLIMATE_HOUR) - 1;
     int j = Convert2Date(CLIMATE_MONTH, CLIMATE_DAY);
     int k = (CLIMATE_YEAR - CLIMATE_WY2_start);
     
-    //println (i);
+    //println(i);
     
     CLIMATE_WY2[i][j][_pressure][k] = float(lineSTR.substring(85, 90)); // 10 times in Pa
     CLIMATE_WY2[i][j][_drybulb][k] = float(lineSTR.substring(91, 95)); // 10 times in °C
@@ -6719,11 +6719,11 @@ void SOLARCHVISION_try_update_CLIMATE_EPW () {
   
     int File_Found = -1;
   
-    //println (FN);
+    //println(FN);
     for (int i = 0; i < CLIMATE_EPW_Files.length; i++) {
 
       if (CLIMATE_EPW_Files[i].toLowerCase().equals(FN.toLowerCase())) {
-        //println ("FILE FOUND:", FN);
+        //println("FILE FOUND:", FN);
         File_Found = i;
         
         break; // <<<<<<<<<<
@@ -6731,7 +6731,7 @@ void SOLARCHVISION_try_update_CLIMATE_EPW () {
     }
     
     if (File_Found != -1) SOLARCHVISION_LoadCLIMATE_EPW((CLIMATE_EPW_directory + "/" + FN));
-    else println ("FILE NOT FOUND:", FN);
+    else println("FILE NOT FOUND:", FN);
   }
 
 }
@@ -7196,7 +7196,7 @@ void SOLARCHVISION_try_update_OBSERVED () {
   
           int File_Found = -1;
 
-          //println (FN);
+          //println(FN);
           for (int i = OBSERVED_XML_Files.length - 1; i >= 0; i--) { // reverse search is faster 
             //println(OBSERVED_XML_Files[i]); 
             
@@ -7230,7 +7230,7 @@ void SOLARCHVISION_try_update_OBSERVED () {
           }
   
           if (File_Found != -1) SOLARCHVISION_LoadOBSERVED((OBSERVED_directory + "/" + FN), q);
-          else println ("FILE NOT FOUND:", FN);
+          else println("FILE NOT FOUND:", FN);
         }
       }
       
@@ -7337,12 +7337,12 @@ void SOLARCHVISION_LoadOBSERVED (String FileName, int Load_Layer) {
   int THE_DAY = int(_TimeInstant.substring(8, 10));
   int THE_HOUR = int(_TimeInstant.substring(11, 13));
   
-  //println (THE_YEAR, THE_MONTH, THE_DAY, THE_HOUR);
+  //println(THE_YEAR, THE_MONTH, THE_DAY, THE_HOUR);
 
   int now_i = int(THE_HOUR);
   int now_j = Convert2Date(THE_MONTH, THE_DAY);
   
-  //println (now_i, now_j);
+  //println(now_i, now_j);
   
   now_i -= int(-LocationTimeZone / 15);
   
@@ -7354,8 +7354,8 @@ void SOLARCHVISION_LoadOBSERVED (String FileName, int Load_Layer) {
     } 
   }
   
-  //println (now_i, now_j);
-  //println ("-------------");
+  //println(now_i, now_j);
+  //println("-------------");
   
   children2 = children1[0].getChildren("om:result");
   children3 = children2[0].getChildren("elements");
@@ -7853,7 +7853,7 @@ void SOLARCHVISION_draw_Grid_DAILY (float x_Plot, float y_Plot, float z_Plot, fl
       
       STUDY_Diagrams.text(CalendarDay[int((365 + i * per_day + 286 + BEGIN_DAY) % 365)][_LAN], (i - ((0 - 12) / 24.0)) * sx_Plot, -1.25 * sx_Plot / STUDY_U_scale);
       if (num_add_days > 1) {
-        STUDY_Diagrams.text(("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s"), (0 + i - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
+        //STUDY_Diagrams.text(("±" + int(num_add_days / 2) + _WORDS[2][_LAN] + "s"), (0 + i - ((0 - 12) / 24.0)) * sx_Plot, -1 * sx_Plot);
       }
     }
   }
@@ -11819,16 +11819,16 @@ void STUDY_keyPressed (KeyEvent e) {
     }
     else {
       switch(key) {
-        case '0' : camera_variation = 0; STUDY_Update = 1; STUDY_record_PDF = 1;break;
-        case '1' : camera_variation = 1; STUDY_Update = 1; STUDY_record_PDF = 1;break;
-        case '2' : camera_variation = 2; STUDY_Update = 1; STUDY_record_PDF = 1;break;
-        case '3' : camera_variation = 3; STUDY_Update = 1; STUDY_record_PDF = 1;break;
-        case '4' : camera_variation = 4; STUDY_Update = 1; STUDY_record_PDF = 1;break;
-        case '5' : camera_variation = 5; STUDY_Update = 1; STUDY_record_PDF = 1;break;
-        case '6' : camera_variation = 6; STUDY_Update = 1; STUDY_record_PDF = 1;break;
-        //case '7' : camera_variation = 7; STUDY_Update = 1; STUDY_record_PDF = 1;break;
-        //case '8' : camera_variation = 8; STUDY_Update = 1; STUDY_record_PDF = 1;break;
-        //case '9' : camera_variation = 9; STUDY_Update = 1; STUDY_record_PDF = 1;break;
+        case '0' : camera_variation = 0; STUDY_Update = 1; break;
+        case '1' : camera_variation = 1; STUDY_Update = 1; break;
+        case '2' : camera_variation = 2; STUDY_Update = 1; break;
+        case '3' : camera_variation = 3; STUDY_Update = 1; break;
+        case '4' : camera_variation = 4; STUDY_Update = 1; break;
+        case '5' : camera_variation = 5; STUDY_Update = 1; break;
+        case '6' : camera_variation = 6; STUDY_Update = 1; break;
+        //case '7' : camera_variation = 7; STUDY_Update = 1; break;
+        //case '8' : camera_variation = 8; STUDY_Update = 1; break;
+        //case '9' : camera_variation = 9; STUDY_Update = 1; break;
         
  
       }
@@ -21299,7 +21299,7 @@ void SOLARCHVISION_import_objects (String FileName, int m, int tes, int lyr, int
     }
     
     lineSTR = FileALL[f];
-    //println (lineSTR);
+    //println(lineSTR);
     
     lineSTR = lineSTR.replace("  ", " ");
     
@@ -21375,7 +21375,7 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
   for (int f = 0; f < FileALL.length; f += 1) {
     
     lineSTR = FileALL[f];
-    //println (lineSTR);
+    //println(lineSTR);
     
     lineSTR = lineSTR.replace("  ", " ");
     
@@ -22574,8 +22574,8 @@ void SOLARCHVISION_draw_windFlow () {
 
 PImage[] TROPO_IMAGES;
 
-String TROPO_IMAGES_Path = "C:/SOLARCHVISION_2015/Output/2015-12-04/GDPS_00/World/Winds";
-//String TROPO_IMAGES_Path = "C:/SOLARCHVISION_2015/Output/2015-12-04/GDPS_00/World/Winds_less";
+//String TROPO_IMAGES_Path = "C:/SOLARCHVISION_2015/Output/2015-12-04/GDPS_00/World/Winds";
+String TROPO_IMAGES_Path = "C:/SOLARCHVISION_2015/Output/2015-12-04/GDPS_00/World/Winds_less";
 
 String[] TROPO_IMAGES_Filenames;
 
@@ -26217,7 +26217,7 @@ void SOLARCHVISION_add_ProjectModel_2DsFromFile () {
   for (int f = 1; f < FileALL.length; f += 1) { // skip the first line.
     
     lineSTR = FileALL[f];
-    //println (lineSTR);
+    //println(lineSTR);
     
     String[] parts = split(lineSTR, ',');
 
@@ -26725,12 +26725,13 @@ float SolarImpact_Elevation;
 
 void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
 
+  
   if (rebuild_SolarProjection_array != 0) {
     SOLARCHVISION_build_SolarImpact_Image_array();
   }
   
   if (SolarImpact_sectionType != 0) {
-
+    
     cursor(WAIT);
     
     int start_z = get_startZ_endZ(impacts_source)[0];
@@ -26929,8 +26930,11 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
                         for (int SHD = 0; SHD <= 1; SHD += 1) {
                           String[] STR_SHD = {"F" , "T"};
                           String File_Name = "";
-    
-                          if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Financial_District")) { 
+
+                          if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Hamedan")) { 
+                            File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + "Hamedan" + "/";
+                          }     
+                          else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Financial_District")) { 
                             File_Name = "C:/SOLARCHVISION_2015/Input/ShadingAnalysis/" + "Financial_District" + "/";
                           }   
                           else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Ryerson_University")) { 
@@ -26955,8 +26959,10 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
                             File_Name += "DIF_" + STR_SHD[SHD];
                           }
                           
-                          
-                          if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Financial_District")) { 
+                          if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Hamedan")) { 
+                            File_Name += "_" + "Hamedan" + "_Camera" + nf(camera_variation, 2) + ".PNG";
+                          }                            
+                          else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Financial_District")) { 
                             File_Name += "_" + "Financial_District" + "_Camera" + nf(camera_variation, 2) + ".PNG";
                           }    
                           else if (DEFINED_STATIONS[STATION_NUMBER][0].equals("Ryerson_University")) { 
@@ -26973,7 +26979,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
                             File_Name += "_" + SceneName + "_" + NearLatitude_Stamp() + "_Camera" + nf(camera_variation, 2) + ".PNG";
                           }
     
-                          //println (File_Name);
+                          //println(File_Name);
                           Shadings[SHD]  = loadImage(File_Name);
                         }   
        
@@ -27092,7 +27098,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
           
             Image_RGBA.updatePixels(); 
             
-            if (camera_variation == 0) {
+            //if (camera_variation == 0) {
               SolarImpact_Image[j + 1] = Image_RGBA;           
               if (SolarImpact_record_JPG == 1) {
                 String myFile = get_SolarImpact_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(j + 1, 0) + ".jpg";
@@ -27100,7 +27106,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
                 if (j == 0) SOLARCHVISION_explore_output(myFile);
                 println("File created:" + myFile);                  
               }
-            }            
+            //}            
           }
         }
       }
@@ -27164,7 +27170,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
         
         total_Image_RGBA.updatePixels(); 
         
-        if (camera_variation == 0) {
+        //if (camera_variation == 0) {
           SolarImpact_Image[0] = total_Image_RGBA;           
           if (SolarImpact_record_JPG == 1) {
             String myFile = get_SolarImpact_Filename() + "_solar_" + nf(Impact_TYPE, 1) + "_" + nf(0, 0) + ".jpg";
@@ -27172,7 +27178,7 @@ void SOLARCHVISION_calculate_SolarImpact_CurrentSection () {
             //SOLARCHVISION_explore_output(myFile);
             println("File created:" + myFile);                
           }
-        }      
+        //}      
       }
     }
     
@@ -38009,7 +38015,7 @@ String Section_Stamp () {
 
 PGraphics SHADOW_Diagrams; // to be accessible to Fractal plants
 
-String defaultSceneName = "Complex";
+String defaultSceneName = "Hamedan"; //"Complex";
 String SceneName = defaultSceneName;
                   
 void SOLARCHVISION_render_Shadows_CurrentSection () {
@@ -38970,7 +38976,7 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
       File_Name += "_" +  SceneName + "_" + NearLatitude_Stamp() + "_Camera00.PNG"; 
 
       DIFFUSE_Diagrams.save(File_Name);
-      println (File_Name);
+      println(File_Name);
    
     }
   }
