@@ -81,7 +81,7 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 0; 
+int STATION_NUMBER = 4; 
 
 String[][] DEFINED_STATIONS = {
                                 {"Tehran_Adib", "XX", "IR", "35.797", "51.352", "52.5", "1769", "240.0", "", "", "IRN_TEHRAN_XX_IR"},
@@ -25995,7 +25995,7 @@ void SOLARCHVISION_LoadLAND_TEXTURE (String LandDirectory) {
 //Polar
 int LAND_n_I_base = 0;
 int LAND_n_J_base = 0;
-int LAND_n_I = 13 + 1; //25 + 1; //13 + 1; //29 + 1; //17 + 1; //13 + 1; //16 + 1; // 24 + 1;
+int LAND_n_I = 25 + 1; //13 + 1; //29 + 1; //17 + 1; //13 + 1; //16 + 1; // 24 + 1;
 int LAND_n_J = 24 + 1;     
 
 
@@ -37215,7 +37215,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     }  
     
   }
-  
+
+
   if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
 
     if (selectedObject2D_displayEdges != 0) {
@@ -37383,7 +37384,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     }    
   }
 
-  
+
   if (Current_ObjectCategory == ObjectCategory_Vertices) {    
     
     if (selectedVertex_displayVertices != 0) {
@@ -37426,6 +37427,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       popMatrix();    
     }
   }  
+  
   
   
   if (Current_ObjectCategory == ObjectCategory_SoftVerts) {    
@@ -37479,7 +37481,8 @@ void SOLARCHVISION_draw_Perspective_Internally () {
      
   }    
 
-    
+
+
   if (Current_ObjectCategory == ObjectCategory_Group3Ds) {    
     
     if (selectedGroup3D_displayEdges != 0) {
@@ -37640,6 +37643,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
       popMatrix();
     }
     
+
     if (selectedGroup3D_displayBox != 0) {
       
       pushMatrix();
@@ -37835,7 +37839,7 @@ void SOLARCHVISION_draw_Perspective_Internally () {
     
   }
 
-
+println("SEC:07");
 
   if (selected_displayReferencePivot != 0) {
     
@@ -47967,6 +47971,7 @@ void SOLARCHVISION_load_project (String myFile) {
       }
 
     }
+
 
     {
       children0 = FileAll.getChildren("Object2D_ImagePath");
