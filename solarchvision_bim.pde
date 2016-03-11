@@ -84,7 +84,9 @@ int _LAN = _EN;
 int STATION_NUMBER = 0; 
 
 String[][] DEFINED_STATIONS = {
-  
+                                {"Tehran_Adib", "XX", "IR", "35.797", "51.352", "52.5", "1769", "240.0", "", "", "IRN_TEHRAN_XX_IR"},
+                                
+                                {"Tehran_11x12", "XX", "IR", "35.6789", "51.413063", "52.5", "1500", "240.0", "", "", "IRN_TEHRAN_XX_IR"},
   
                                 {"Hamedan", "XX", "IR", "34.807", "48.455", "52.5", "1988.5", "240.0", "", "", "IRN_HAMEDAN_XX_IR"},
   
@@ -93,8 +95,6 @@ String[][] DEFINED_STATIONS = {
   
                                 {"Yazd", "XX", "IR", "31.8916", "54.3712", "52.5", "1144", "240.0", "", "", "IRN_Yazd_XX_IR"},
                                 
-                                {"Tehran_11x12", "XX", "IR", "35.6789", "51.413063", "52.5", "1500", "240.0", "", "", "IRN_TEHRAN_XX_IR"},
-  
                                 {"Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
                                 
                                 {"Edinburgh_School", "QC", "CA", "45.457", "-73.660", "-75", "0", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
@@ -1937,7 +1937,7 @@ void SOLARCHVISION_update_station (int Step) {
   
   if ((Step == 0) || (Step == 8)) SOLARCHVISION_delete_Object2Ds();
   
-  //if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_Object2Ds_onLand(2); // 2 = 2D trees
+  if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_Object2Ds_onLand(2); // 2 = 2D trees
 
 }
 
@@ -21503,7 +21503,9 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
           float b = COL & 0xFF;
                                         
           if ((g > r + 10) && (g > b + 10)) { // looks more green
-            if (g < 85) { // not on grass (light green)
+          
+            if (g < 85) { // not on grass (light green) 
+            
               //if (z + LocationElevation > 5) { // not in water (below see level)
 
                 //float s = 5 + random(10); 
@@ -26230,7 +26232,12 @@ void SOLARCHVISION_add_ProjectModel_2DsFromFile () {
   
 }
 
+
 void SOLARCHVISION_add_ProjectModel () {
+  
+}
+
+void SOLARCHVISION_add_ProjectModel_BASIC () {
 
 /*
   {
@@ -38015,7 +38022,7 @@ String Section_Stamp () {
 
 PGraphics SHADOW_Diagrams; // to be accessible to Fractal plants
 
-String defaultSceneName = "Hamedan"; //"Complex";
+String defaultSceneName = "Complex";
 String SceneName = defaultSceneName;
                   
 void SOLARCHVISION_render_Shadows_CurrentSection () {
