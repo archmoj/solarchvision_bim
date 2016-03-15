@@ -83,7 +83,7 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 1; 
+int STATION_NUMBER = 0; 
 
 String[][] DEFINED_STATIONS = {
   
