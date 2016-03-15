@@ -83,7 +83,7 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 0; 
+int STATION_NUMBER = 1; 
 
 String[][] DEFINED_STATIONS = {
   
@@ -35891,8 +35891,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       Current_Camera = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Current_Camera" , Current_Camera, 0, allCameras_num, 1), 1));
       
-      CAM_clipNear = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipNear" , CAM_clipNear, 0.0001, 2000000, -2);
-      CAM_clipFar = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipFar" , CAM_clipFar, 0.0001, 2000000000, -2);
+      CAM_clipNear = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipNear" , CAM_clipNear, 0.01, 100, -2);
+      CAM_clipFar = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipFar" , CAM_clipFar, 1000, 2000000000, -2);
     
       //WIN3D_FACES_SHADE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "WIN3D_FACES_SHADE", WIN3D_FACES_SHADE, 0, number_of_shading_options - 1, 1), 1));
 
@@ -46768,12 +46768,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("WORLD_viewport_ZOOM", WORLD_viewport_ZOOM);
   newChild1.setInt("frame_variation", frame_variation);
   newChild1.setInt("_LAN", _LAN);
-  //newChild1.setFloat("LAND_TEXTURE_scale_U", LAND_TEXTURE_scale_U);
-  //newChild1.setFloat("LAND_TEXTURE_scale_V", LAND_TEXTURE_scale_V);
-  newChild1.setInt("LAND_n_I_base", LAND_n_I_base);
-  newChild1.setInt("LAND_n_J_base", LAND_n_J_base);
-  newChild1.setInt("LAND_n_I", LAND_n_I);
-  newChild1.setInt("LAND_n_J", LAND_n_J);
+
   newChild1.setInt("Day_of_Impact_to_Display", Day_of_Impact_to_Display);
   newChild1.setInt("Display_WindRose_Image", Display_WindRose_Image);
   newChild1.setInt("WindRose_RES", WindRose_RES);
@@ -46809,7 +46804,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("LAND_n_J", LAND_n_J);
   newChild1.setString("LAND_mid_lat", Double.toString(LAND_mid_lat));
   newChild1.setString("LAND_mid_lon", Double.toString(LAND_mid_lon));
-  newChild1.setString("Default_Font", Default_Font);
+  
   newChild1.setInt("Object2D_PEOPLE_Files_Num", Object2D_PEOPLE_Files_Num);
   newChild1.setInt("Object2D_TREES_Files_Num", Object2D_TREES_Files_Num); 
    
@@ -46830,46 +46825,92 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
   newChild1.setInt("objExportBakingResolution", objExportBakingResolution);
   newChild1.setInt("objExportPalletResolution", objExportPalletResolution);
   newChild1.setInt("objExportUsePalletOrBakeFaces", objExportUsePalletOrBakeFaces);
-/*    
+  
+  newChild1.setString("Default_Font", Default_Font);
+  
+  newChild1.setInt("LAND_n_I_base", LAND_n_I_base);
+  newChild1.setInt("LAND_n_J_base", LAND_n_J_base);
+  newChild1.setInt("LAND_n_I", LAND_n_I);
+  newChild1.setInt("LAND_n_J", LAND_n_J);
+
+  newChild1.setInt("LAND_TEXTURE_num", LAND_TEXTURE_num);
+
+  {
+    newChild1 = my_xml.addChild("LAND_TEXTURE_scale_U");
+    int ni = LAND_TEXTURE_scale_U.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += nf(LAND_TEXTURE_scale_U[i], 0, 4).replace(",", "."); // <<<<
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }
+
+
+  {
+    newChild1 = my_xml.addChild("LAND_TEXTURE_scale_V");
+    int ni = LAND_TEXTURE_scale_V.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += nf(LAND_TEXTURE_scale_V[i], 0, 4).replace(",", "."); // <<<<
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }
+
+
   {
     int TEXTURE_copied = 0;
 
     String the_dir = myFile.substring(0, myFile.lastIndexOf("/")); // project folder
+
+    for (int q = 1; q <= LAND_TEXTURE_num; q++) {
   
-    String the_filename = "";
-    if (LAND_TEXTURE_ImagePath.equals("")) {
-    }  
-    else {
-      the_filename = LAND_TEXTURE_ImagePath.substring(LAND_TEXTURE_ImagePath.lastIndexOf("/") + 1); // image name
+      int n_Map = q; 
+  
+      String the_filename = LAND_TEXTURE_ImagePath[n_Map].substring(LAND_TEXTURE_ImagePath[n_Map].lastIndexOf("/") + 1); // image name
 
       String new_TEXTURE_path = the_dir + "/Textures/" +  the_filename;
       
-      //println("pre_LAND_TEXTURE_ImagePath", LAND_TEXTURE_ImagePath);
+      //println("pre_LAND_TEXTURE_ImagePath", LAND_TEXTURE_ImagePath[n_Map]);
       //println("new_TEXTURE_path", new_TEXTURE_path);
   
-      if (LAND_TEXTURE_ImagePath.toUpperCase().equals(new_TEXTURE_path.toUpperCase())) {
+      if (LAND_TEXTURE_ImagePath[n_Map].toUpperCase().equals(new_TEXTURE_path.toUpperCase())) {
         TEXTURE_copied = -1;
       }
       else {
-        if (LAND_TEXTURE_ImagePath.equals("")) {
-        }  
-        else {
-          println("Copying texture:", LAND_TEXTURE_ImagePath, ">", new_TEXTURE_path);
-          saveBytes(new_TEXTURE_path, loadBytes(LAND_TEXTURE_ImagePath));
-          LAND_TEXTURE_ImagePath = new_TEXTURE_path;
-          
-          TEXTURE_copied = 1;
-        }      
+
+        println("Copying texture:", LAND_TEXTURE_ImagePath[n_Map], ">", new_TEXTURE_path);
+        saveBytes(new_TEXTURE_path, loadBytes(LAND_TEXTURE_ImagePath[n_Map]));
+        LAND_TEXTURE_ImagePath[n_Map] = new_TEXTURE_path;
+        
+        TEXTURE_copied = 1;
+
       }
       
       //if (TEXTURE_copied == 0) {
       //  println("Saving texture from the scene.");
-      //  LAND_TEXTURE.save(new_TEXTURE_path);
+      //  LAND_TEXTURE[n_Map].save(new_TEXTURE_path);
       //}    
+
     }
-    
-    newChild1.setString("LAND_TEXTURE_ImagePath", LAND_TEXTURE_ImagePath);    
   }
+
+  {
+    newChild1 = my_xml.addChild("LAND_TEXTURE_ImagePath");
+    int ni = LAND_TEXTURE_ImagePath.length;
+    newChild1.setInt("ni", ni);
+    String lineSTR = "";
+    for (int i = 0; i < ni; i++) {
+      lineSTR += LAND_TEXTURE_ImagePath[i];
+      if (i < ni - 1) lineSTR += ",";
+    }
+    newChild1.setContent(lineSTR);
+  }
+
+
 
   {
     newChild1 = my_xml.addChild("Object2D_ImagePath");
@@ -46920,7 +46961,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       
     }
   }
-*/
+
 
   {
     newChild1 = my_xml.addChild("allSections_SolidImpact");
@@ -47943,12 +47984,7 @@ void SOLARCHVISION_load_project (String myFile) {
       WORLD_viewport_ZOOM = children0[L].getInt("WORLD_viewport_ZOOM");
       frame_variation = children0[L].getInt("frame_variation");
       _LAN = children0[L].getInt("_LAN");
-      //LAND_TEXTURE_scale_U = children0[L].getFloat("LAND_TEXTURE_scale_U");
-      //LAND_TEXTURE_scale_V = children0[L].getFloat("LAND_TEXTURE_scale_V");
-      LAND_n_I_base = children0[L].getInt("LAND_n_I_base");
-      LAND_n_J_base = children0[L].getInt("LAND_n_J_base");
-      LAND_n_I = children0[L].getInt("LAND_n_I");
-      LAND_n_J = children0[L].getInt("LAND_n_J");
+
       Day_of_Impact_to_Display = children0[L].getInt("Day_of_Impact_to_Display");
       Display_WindRose_Image = children0[L].getInt("Display_WindRose_Image");
       WindRose_RES = children0[L].getInt("WindRose_RES");
@@ -48015,24 +48051,78 @@ void SOLARCHVISION_load_project (String myFile) {
           LoadDefaultFontStyle();
         }
       } 
-/*      
-      {
-        String new_TEXTURE_path = children0[L].getString("LAND_TEXTURE_ImagePath");
-        if (LAND_TEXTURE_ImagePath.toUpperCase().equals(new_TEXTURE_path.toUpperCase())) {
+      
+      LAND_n_I_base = children0[L].getInt("LAND_n_I_base");
+      LAND_n_J_base = children0[L].getInt("LAND_n_J_base");
+      LAND_n_I = children0[L].getInt("LAND_n_I");
+      LAND_n_J = children0[L].getInt("LAND_n_J");
+
+
+      int pre_LAND_TEXTURE_num = LAND_TEXTURE_num;
+      LAND_TEXTURE_num = children0[L].getInt("LAND_TEXTURE_num");
+      
+      if (pre_LAND_TEXTURE_num != LAND_TEXTURE_num) {
+      
+        int ni = 1 + LAND_TEXTURE_num;
+        
+        LAND_TEXTURE_ImagePath = new String [ni];
+        LAND_TEXTURE = new PImage [ni];
+        
+        for (int i = 0; i < ni; i++) {
+          
+          LAND_TEXTURE_ImagePath[i] = "";
+          LAND_TEXTURE[i] = createImage(2, 2, RGB);
+        }      
+      }
+    }
+
+    children0 = FileAll.getChildren("LAND_TEXTURE_ImagePath");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+
+        String new_TEXTURE_path = parts[i];
+
+        if (LAND_TEXTURE_ImagePath[i].toUpperCase().equals(new_TEXTURE_path.toUpperCase())) {
         }
         else {
-          LAND_TEXTURE_ImagePath = new_TEXTURE_path;
-          LAND_TEXTURE = createImage(2, 2, RGB);
-          if (LAND_TEXTURE_ImagePath.equals("")) {
+          
+          LAND_TEXTURE_ImagePath[i] = new_TEXTURE_path;
+
+          if (LAND_TEXTURE_ImagePath[i].equals("")) {
           }
           else {
-            println("Loading texture:", LAND_TEXTURE_ImagePath);
-            LAND_TEXTURE = loadImage(LAND_TEXTURE_ImagePath);
+            println("Loading texture:", LAND_TEXTURE_ImagePath[i]);
+            LAND_TEXTURE[i] = loadImage(LAND_TEXTURE_ImagePath[i]);
           }
-                    
         }
+             
       }
-*/
+    }
+
+    children0 = FileAll.getChildren("LAND_TEXTURE_scale_U");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      LAND_TEXTURE_scale_U = new float [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        LAND_TEXTURE_scale_U[i] = float(parts[i]);
+      }
+    }
+
+    children0 = FileAll.getChildren("LAND_TEXTURE_scale_V");
+    for (int L = 0; L < children0.length; L++) {
+      int ni = children0[L].getInt("ni");
+      LAND_TEXTURE_scale_V = new float [ni];
+      String lineSTR = children0[L].getContent();
+      String[] parts = split(lineSTR, ',');
+      for (int i = 0; i < ni; i++) {
+        LAND_TEXTURE_scale_V[i] = float(parts[i]);
+      }
     }
 
 
@@ -49024,11 +49114,5 @@ float[] getPivot () {
   
 }
 
-
-
-/*
-should write/read int LAND_TEXTURE_num 
-
-*/
 
 
