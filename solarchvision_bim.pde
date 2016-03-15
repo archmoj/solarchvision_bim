@@ -52,7 +52,7 @@ int objExportUsePalletOrBakeFaces = 0; // 0-1
 
 
 String _undefined = "N/A";
-float FLOAT_undefined = 1000000000; // it must be a positive big number that is not included in any data
+float FLOAT_undefined = 2000000000; // it must be a positive big number that is not included in any data
 
 float CubePower = 16; //8; 
 float StarPower = 0.25; 
@@ -1708,8 +1708,8 @@ float CAM_z;
 float CAM_fov;
 float CAM_dist;
 
-float CAM_clipNear = 0.001;
-float CAM_clipFar = 1000000000.0;
+float CAM_clipNear = 0.01;
+float CAM_clipFar = 2000000000.0;
 
 
 
@@ -13045,13 +13045,14 @@ void WIN3D_keyPressed (KeyEvent e) {
                   WIN3D_Update = 1; ROLLOUT_Update = 1; 
                   break;                  
                   
-        
-        case '*' :
+
+        case '*' : 
+                  SOLARCHVISION_move_3DViewport_towards_Selection(2.0);
+                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;        
+        case '/' :
                   SOLARCHVISION_move_3DViewport_towards_Selection(0.5); 
                   WIN3D_Update = 1; ROLLOUT_Update = 1; break;
-        case '/' : 
-                  SOLARCHVISION_move_3DViewport_towards_Selection(2.0);
-                  WIN3D_Update = 1; ROLLOUT_Update = 1; break;
+
   
         case '+' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.0 / 1.1) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1; ROLLOUT_Update = 1; break;
         case '-' :WIN3D_ZOOM_coordinate = 2 * atan_ang((1.1 / 1.0) * tan_ang(0.5 * WIN3D_ZOOM_coordinate)); WIN3D_Update = 1; ROLLOUT_Update = 1; break; 
@@ -23083,12 +23084,35 @@ void SOLARCHVISION_draw_land () {
 
           float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
           
-
+          int n_Map = 0; 
+          { // increase the resolution until all the vertices located inside the appropriate map
+            
+            for (int q = 1; q <= LAND_TEXTURE_num; q++) {
+          
+              n_Map = q; 
+              
+              for (int s = 0; s < subFace.length; s++) {
+                
+                float u = (subFace[s][0] / LAND_TEXTURE_scale_U[q] + 0.5);
+                float v = (-subFace[s][1] / LAND_TEXTURE_scale_V[q] + 0.5);
+           
+                if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
+                    
+                  n_Map = 0;
+                  
+                  break;
+                }
+              }
+              
+              if (n_Map == q)  break;
+              
+            }
+          }
           
           WIN3D_Diagrams.beginShape();
           
           if (Display_LAND_TEXTURE != 0) {
-            WIN3D_Diagrams.texture(LAND_TEXTURE[LAND_TEXTURE_num]);
+            WIN3D_Diagrams.texture(LAND_TEXTURE[n_Map]);
           }
           
           for (int s = 0; s < subFace.length; s++) {
@@ -23138,10 +23162,10 @@ void SOLARCHVISION_draw_land () {
                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D);
             }              
             else {              
-              float u = (subFace[s][0] / LAND_TEXTURE_scale_U[LAND_TEXTURE_num] + 0.5);
-              float v = (-subFace[s][1] / LAND_TEXTURE_scale_V[LAND_TEXTURE_num] + 0.5);
+              float u = (subFace[s][0] / LAND_TEXTURE_scale_U[n_Map] + 0.5);
+              float v = (-subFace[s][1] / LAND_TEXTURE_scale_V[n_Map] + 0.5);
 
-              WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, u * LAND_TEXTURE[LAND_TEXTURE_num].width, v * LAND_TEXTURE[LAND_TEXTURE_num].height);  
+              WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, u * LAND_TEXTURE[n_Map].width, v * LAND_TEXTURE[n_Map].height);  
             }
 
           }
@@ -23160,20 +23184,20 @@ void SOLARCHVISION_draw_land () {
     
                 int s_next = (s + 1) % subFace.length;
               
-                float u = (subFace[s][0] / LAND_TEXTURE_scale_U[LAND_TEXTURE_num] + 0.5);
-                float v = (-subFace[s][1] / LAND_TEXTURE_scale_V[LAND_TEXTURE_num] + 0.5);
+                float u = (subFace[s][0] / LAND_TEXTURE_scale_U[n_Map] + 0.5);
+                float v = (-subFace[s][1] / LAND_TEXTURE_scale_V[n_Map] + 0.5);
     
-                float u_next = (subFace[s_next][0] / LAND_TEXTURE_scale_U[LAND_TEXTURE_num] + 0.5);
-                float v_next = (-subFace[s_next][1] / LAND_TEXTURE_scale_V[LAND_TEXTURE_num] + 0.5);
+                float u_next = (subFace[s_next][0] / LAND_TEXTURE_scale_U[n_Map] + 0.5);
+                float v_next = (-subFace[s_next][1] / LAND_TEXTURE_scale_V[n_Map] + 0.5);
                 
                 WIN3D_Diagrams.beginShape();
                 
-                WIN3D_Diagrams.texture(LAND_TEXTURE[LAND_TEXTURE_num]);                  
+                WIN3D_Diagrams.texture(LAND_TEXTURE[n_Map]);                  
                 
-                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, u * LAND_TEXTURE[LAND_TEXTURE_num].width, v * LAND_TEXTURE[LAND_TEXTURE_num].height);
-                WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s_next][2] * OBJECTS_scale * WIN3D_scale3D, u_next * LAND_TEXTURE[LAND_TEXTURE_num].width, v_next * LAND_TEXTURE[LAND_TEXTURE_num].height);
-                WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_scale3D, (subFace[s_next][2] - CrustDepth) * OBJECTS_scale * WIN3D_scale3D, u_next * LAND_TEXTURE[LAND_TEXTURE_num].width, v_next * LAND_TEXTURE[LAND_TEXTURE_num].height);
-                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, (subFace[s][2] - CrustDepth) * OBJECTS_scale * WIN3D_scale3D, u * LAND_TEXTURE[LAND_TEXTURE_num].width, v * LAND_TEXTURE[LAND_TEXTURE_num].height);
+                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, u * LAND_TEXTURE[n_Map].width, v * LAND_TEXTURE[n_Map].height);
+                WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s_next][2] * OBJECTS_scale * WIN3D_scale3D, u_next * LAND_TEXTURE[n_Map].width, v_next * LAND_TEXTURE[n_Map].height);
+                WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_scale3D, (subFace[s_next][2] - CrustDepth) * OBJECTS_scale * WIN3D_scale3D, u_next * LAND_TEXTURE[n_Map].width, v_next * LAND_TEXTURE[n_Map].height);
+                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, (subFace[s][2] - CrustDepth) * OBJECTS_scale * WIN3D_scale3D, u * LAND_TEXTURE[n_Map].width, v * LAND_TEXTURE[n_Map].height);
     
                 WIN3D_Diagrams.endShape(CLOSE);
     
@@ -25999,10 +26023,8 @@ void SOLARCHVISION_LoadLAND_TEXTURE (String LandDirectory) {
             
             float h = float(Parts[1]);
             
-            println("h", h, Parts[1]);
-            
             {
-              float[] new_item = {h * 1.63636};
+              float[] new_item = {h * 1.16363};
               
               LAND_TEXTURE_scale_U = (float[]) concat(LAND_TEXTURE_scale_U, new_item);
             }  
@@ -35869,8 +35891,8 @@ void SOLARCHVISION_draw_ROLLOUT () {
 
       Current_Camera = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "Current_Camera" , Current_Camera, 0, allCameras_num, 1), 1));
       
-      CAM_clipNear = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipNear" , CAM_clipNear, 0.0001, 1000000000, -2);
-      CAM_clipFar = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipFar" , CAM_clipFar, 0.0001, 1000000000, -2);
+      CAM_clipNear = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipNear" , CAM_clipNear, 0.0001, 2000000, -2);
+      CAM_clipFar = MySpinner.update(X_control, Y_control, 0,1,0, "CAM_clipFar" , CAM_clipFar, 0.0001, 2000000000, -2);
     
       //WIN3D_FACES_SHADE = int(roundTo(MySpinner.update(X_control, Y_control, 0,1,0, "WIN3D_FACES_SHADE", WIN3D_FACES_SHADE, 0, number_of_shading_options - 1, 1), 1));
 
