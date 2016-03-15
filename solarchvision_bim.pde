@@ -1465,7 +1465,7 @@ void SOLARCHVISION_update_folders () {
   Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_SEL";
   //Object2DFolder_TREES  = BaseFolder + "/Input/BackgroundImages/Standard/Maps/Trees_ALL";
   ExportFolder          = BaseFolder + "/Export";
-  ProjectsFolder        = BaseFolder + "/Projects/Project_A01";  
+  ProjectsFolder        = BaseFolder + "/Projects/Project_B01";  
   DiagramsFolder        = ExportFolder + "/Diagrams";  
   Model3DFolder         = ExportFolder + "/Model_3D" + "/" + nf(year(), 4) + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2);  
   
