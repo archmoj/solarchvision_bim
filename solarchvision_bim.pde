@@ -23122,24 +23122,25 @@ void SOLARCHVISION_draw_land (int target_window) {
             }
           }
           
-          WIN3D_Diagrams.strokeWeight(1);
-          WIN3D_Diagrams.stroke(0, 0, 0);
-          if (Display_MODEL3D_EDGES == 0) WIN3D_Diagrams.noStroke();
-          if (Display_LAND_TEXTURE != 0) WIN3D_Diagrams.noStroke();
-            
-            
-            
-          WIN3D_Diagrams.beginShape();
+          if (target_window == 3) {
           
-          if (Display_LAND_TEXTURE != 0) {
-            if (n_Map != 0) {
-              WIN3D_Diagrams.texture(LAND_TEXTURE[n_Map]);
+            WIN3D_Diagrams.beginShape();
+
+            WIN3D_Diagrams.strokeWeight(1);
+            WIN3D_Diagrams.stroke(0, 0, 0);
+            if (Display_MODEL3D_EDGES == 0) WIN3D_Diagrams.noStroke();
+            if (Display_LAND_TEXTURE != 0) WIN3D_Diagrams.noStroke();
+
+            if (Display_LAND_TEXTURE != 0) {
+              if (n_Map != 0) {
+                WIN3D_Diagrams.texture(LAND_TEXTURE[n_Map]);
+              }
+              else {
+                WIN3D_Diagrams.noFill();   
+                WIN3D_Diagrams.strokeWeight(1);
+                WIN3D_Diagrams.stroke(0, 0, 0);               
+              }            
             }
-            else {
-              WIN3D_Diagrams.noFill();   
-              WIN3D_Diagrams.strokeWeight(1);
-              WIN3D_Diagrams.stroke(0, 0, 0);               
-            }            
           }
           
           for (int s = 0; s < subFace.length; s++) {
@@ -23178,15 +23179,21 @@ void SOLARCHVISION_draw_land (int target_window) {
                   _COL = SOLARCHVISION_vertexRender_Shade_Vertex_Solid(subFace[s], PAL_TYPE, PAL_DIR, PAL_Multiplier);
                 }                  
   
-  
-                WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);              
-                //if (subFace[s][2] + LocationElevation < 0) WIN3D_Diagrams.fill(127, 127, 255); // i.e. water
+                if (target_window == 3) {
+                  WIN3D_Diagrams.fill(_COL[1], _COL[2], _COL[3], _COL[0]);
+                }              
+
               }
               else {
-                WIN3D_Diagrams.noFill();    
+                
+                if (target_window == 3) {
+                  WIN3D_Diagrams.noFill();
+                }    
               }
-
-              WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D);
+              
+              if (target_window == 3) {
+                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D);
+              }
             }              
             else {       
               
@@ -23194,25 +23201,33 @@ void SOLARCHVISION_draw_land (int target_window) {
                 
                 float u = (subFace[s][0] / LAND_TEXTURE_scale_U[n_Map] + 0.5);
                 float v = (-subFace[s][1] / LAND_TEXTURE_scale_V[n_Map] + 0.5);
-  
-                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, u * LAND_TEXTURE[n_Map].width, v * LAND_TEXTURE[n_Map].height);
+                
+                if (target_window == 3) {
+                  WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, u * LAND_TEXTURE[n_Map].width, v * LAND_TEXTURE[n_Map].height);
+                }
               }  
               else {
-                 WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D);
+                if (target_window == 3) {
+                  WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D);
+                }
               }                  
             }
 
           }
           
-          WIN3D_Diagrams.endShape(CLOSE);
-
+          if (target_window == 3) {
+            WIN3D_Diagrams.endShape(CLOSE);
+          }
 
           if (Display_LAND_TEXTURE != 0) {
             
             if (Display_LAND_DEPTH != 0) {
             
-              WIN3D_Diagrams.fill(223, 223, 223);
-              WIN3D_Diagrams.noStroke();
+              
+              if (target_window == 3) {
+                WIN3D_Diagrams.fill(223, 223, 223);
+                WIN3D_Diagrams.noStroke();
+              }
   
               for (int s = 0; s < subFace.length; s++) {
     
@@ -23224,16 +23239,19 @@ void SOLARCHVISION_draw_land (int target_window) {
                 float u_next = (subFace[s_next][0] / LAND_TEXTURE_scale_U[n_Map] + 0.5);
                 float v_next = (-subFace[s_next][1] / LAND_TEXTURE_scale_V[n_Map] + 0.5);
                 
-                WIN3D_Diagrams.beginShape();
-                
-                WIN3D_Diagrams.texture(LAND_TEXTURE[n_Map]);                  
-                
-                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, u * LAND_TEXTURE[n_Map].width, v * LAND_TEXTURE[n_Map].height);
-                WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s_next][2] * OBJECTS_scale * WIN3D_scale3D, u_next * LAND_TEXTURE[n_Map].width, v_next * LAND_TEXTURE[n_Map].height);
-                WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_scale3D, (subFace[s_next][2] - CrustDepth) * OBJECTS_scale * WIN3D_scale3D, u_next * LAND_TEXTURE[n_Map].width, v_next * LAND_TEXTURE[n_Map].height);
-                WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, (subFace[s][2] - CrustDepth) * OBJECTS_scale * WIN3D_scale3D, u * LAND_TEXTURE[n_Map].width, v * LAND_TEXTURE[n_Map].height);
-    
-                WIN3D_Diagrams.endShape(CLOSE);
+                if (target_window == 3) {
+                  
+                  WIN3D_Diagrams.beginShape();
+                  
+                  WIN3D_Diagrams.texture(LAND_TEXTURE[n_Map]);                  
+                  
+                  WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s][2] * OBJECTS_scale * WIN3D_scale3D, u * LAND_TEXTURE[n_Map].width, v * LAND_TEXTURE[n_Map].height);
+                  WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_scale3D, subFace[s_next][2] * OBJECTS_scale * WIN3D_scale3D, u_next * LAND_TEXTURE[n_Map].width, v_next * LAND_TEXTURE[n_Map].height);
+                  WIN3D_Diagrams.vertex(subFace[s_next][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s_next][1] * OBJECTS_scale * WIN3D_scale3D, (subFace[s_next][2] - CrustDepth) * OBJECTS_scale * WIN3D_scale3D, u_next * LAND_TEXTURE[n_Map].width, v_next * LAND_TEXTURE[n_Map].height);
+                  WIN3D_Diagrams.vertex(subFace[s][0] * OBJECTS_scale * WIN3D_scale3D, -subFace[s][1] * OBJECTS_scale * WIN3D_scale3D, (subFace[s][2] - CrustDepth) * OBJECTS_scale * WIN3D_scale3D, u * LAND_TEXTURE[n_Map].width, v * LAND_TEXTURE[n_Map].height);
+      
+                  WIN3D_Diagrams.endShape(CLOSE);
+                }
     
               }
             }
@@ -23248,30 +23266,30 @@ void SOLARCHVISION_draw_land (int target_window) {
       }
     }
 
-
-    if (Display_LAND_POINTS != 0) {
-  
-      WIN3D_Diagrams.fill(191,191,0); 
-      WIN3D_Diagrams.noStroke();
-  
-      WIN3D_Diagrams.sphereDetail(6, 4);
-      
-      for (int i = 0; i < LAND_n_I; i += 1) {
-        for (int j = 0; j < LAND_n_J; j += 1) {
-  
-          float x = LAND_MESH[i][j][0];
-          float y = LAND_MESH[i][j][1];
-          float z = LAND_MESH[i][j][2];
-             
-          float R = 2.0 * OBJECTS_scale; // <<<<<<<<<<
-             
-          WIN3D_Diagrams.pushMatrix();
-          WIN3D_Diagrams.translate(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
-          WIN3D_Diagrams.sphere(R);
-          WIN3D_Diagrams.popMatrix();
-  
+    if (target_window == 3) {
+      if (Display_LAND_POINTS != 0) {
+    
+        WIN3D_Diagrams.fill(191,191,0); 
+        WIN3D_Diagrams.noStroke();
+    
+        WIN3D_Diagrams.sphereDetail(6, 4);
+        
+        for (int i = 0; i < LAND_n_I; i += 1) {
+          for (int j = 0; j < LAND_n_J; j += 1) {
+    
+            float x = LAND_MESH[i][j][0];
+            float y = LAND_MESH[i][j][1];
+            float z = LAND_MESH[i][j][2];
+               
+            float R = 2.0 * OBJECTS_scale; // <<<<<<<<<<
+               
+            WIN3D_Diagrams.pushMatrix();
+            WIN3D_Diagrams.translate(x * OBJECTS_scale * WIN3D_scale3D, -y * OBJECTS_scale * WIN3D_scale3D, z * OBJECTS_scale * WIN3D_scale3D);
+            WIN3D_Diagrams.sphere(R);
+            WIN3D_Diagrams.popMatrix();
+    
+          }
         }
-
       }
     }
     
