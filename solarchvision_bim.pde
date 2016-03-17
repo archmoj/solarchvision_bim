@@ -21299,18 +21299,11 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
 
           if (n_Map != 0) {
           
-            // note: AC x BD
-            float pixel_area = dist(subFace[0][0], subFace[0][1], subFace[2][0], subFace[2][1]) * dist(subFace[1][0], subFace[1][1], subFace[3][0], subFace[3][1]);
+            int max_o = 50; // number of tries to find green points!
             
-            //int max_o = int(pixel_area / 200.0);
-            //int max_o = int(pixel_area / 50.0);
-            int max_o = int(pixel_area / 20.0);
-    
-            
-            if (max_o > 100) max_o = 100;
-            
+            if (max_o > 50) max_o = 50;
            
-            //if (i > 8) max_n = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+            if (i > 8) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
            
             for (int o = 0; o < max_o; o += 1) {
               
@@ -21408,15 +21401,10 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
 
           float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
       
-          // note: AC x BD
-          float pixel_area = dist(subFace[0][0], subFace[0][1], subFace[2][0], subFace[2][1]) * dist(subFace[1][0], subFace[1][1], subFace[3][0], subFace[3][1]);
+          int max_o = int(4 * pow(random(1), 8)); // i.e. maximum 3 people in each pixel // <<<<<<<<<<<<<<<<<<<<
           
-          int max_o = int(pixel_area / 100.0);
           
-          if (max_o > 10) max_o = 10; // <<<<<<<<<<<
-         
           if (i > 3) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
-         
          
           for (int o = 0; o < max_o; o += 1) {
             
@@ -21429,7 +21417,7 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
             
             if (z + LocationElevation > 0) { // i.e. above sea level 
             
-              if (dist(x,y,0,0) > 2.5) { // i.e. No 2D at the center!
+              if (dist(x,y,0,0) > 10.0) { // i.e. No 2D at the center!
               
                 if (people_or_trees == 1) {
                   SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
