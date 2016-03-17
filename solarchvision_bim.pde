@@ -21305,12 +21305,12 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
             float pixel_area = dist(base_Vertices[0][0], base_Vertices[0][1], base_Vertices[2][0], base_Vertices[2][1]) * dist(base_Vertices[1][0], base_Vertices[1][1], base_Vertices[3][0], base_Vertices[3][1]);
             
             //int max_o = int(pixel_area / 200.0);
-            int max_o = int(pixel_area / 50.0);
+            //int max_o = int(pixel_area / 50.0);
+            int max_o = int(pixel_area / 20.0);
     
             
-            //if (max_o > 100) max_o = 100;
-            
-            if (max_o > 10) max_o = 10;
+            if (max_o > 100) max_o = 100;
+            //if (max_o > 10) max_o = 10;
             
            
             //if (i > 8) max_n = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
@@ -21338,7 +21338,7 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
                                             
               if ((g > r + 10) && (g > b + 10)) { // looks more green
               
-                if (g < 85) { // not on grass (light green) 
+                if (g < 40) { // not on grass (light green) 
                 
                   //if (z + LocationElevation > 5) { // not in water (below see level)
     
