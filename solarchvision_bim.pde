@@ -19416,260 +19416,6 @@ void SOLARCHVISION_export_objects () {
   }
 
 
-/*
-  if (Display_LAND_MESH != 0) {
-    
-    if (objExportMaterialLibrary != 0) {
-
-      mtlOutput.println("newmtl LandMesh");
-      mtlOutput.println("\tilum 2"); // 0:Color on and Ambient off, 1:Color on and Ambient on, 2:Highlight on, etc.
-      mtlOutput.println("\tKa 1.000 1.000 1.000"); // ambient
-      mtlOutput.println("\tKd 1.000 1.000 1.000"); // diffuse
-      mtlOutput.println("\tKs 0.000 0.000 0.000"); // specular
-      mtlOutput.println("\tNs 10.00"); // 0-1000 specular exponent
-      mtlOutput.println("\tNi 1.500"); // 0.001-10 (glass:1.5) optical_density (index of refraction)
-  
-      mtlOutput.println("\td 1.000"); //  0-1 transparency  d = Tr, or maybe d = 1 - Tr
-      mtlOutput.println("\tTr 1.000"); //  0-1 transparency
-      mtlOutput.println("\tTf 1.000 1.000 1.000"); //  transmission filter
-  
-      if (Display_LAND_TEXTURE != 0) {
-
-        String old_TEXTURE_path = LAND_TEXTURE_ImagePath[n_Map]; // using the last <<<<<<<<<<<
-        
-        String the_filename = old_TEXTURE_path.substring(old_TEXTURE_path.lastIndexOf("/") + 1); // image name
-    
-        String new_TEXTURE_path = Model3DFolder + "/" + objMapsSubfolder + the_filename;
-    
-        println("Copying texture:", old_TEXTURE_path, ">", new_TEXTURE_path);
-        saveBytes(new_TEXTURE_path, loadBytes(old_TEXTURE_path));
-  
-        //mtlOutput.println("\tmap_Ka " + objMapsSubfolder + the_filename); // ambient map
-        mtlOutput.println("\tmap_Kd " + objMapsSubfolder + the_filename); // diffuse map        
-        mtlOutput.println("\tmap_d " + objMapsSubfolder + the_filename); // diffuse map
-      }
-
-    }
-
-
-    {
-  
-      obj_lastGroupNumber += 1;  
-      objOutput.println("g LandMesh");
-  
-      if (objExportMaterialLibrary != 0) {
-        objOutput.println("usemtl LandMesh");
-      }
-      
-      int GRID_firstVertexNumber = obj_lastVertexNumber;
-      int GRID_firstVtextureNumber = obj_lastVtextureNumber;
-      
-      for (int _turn = 1; _turn < 4; _turn += 1) {
-      
-        for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
-          
-          int the_I = i / LAND_n_J;
-          int the_J = i % LAND_n_J;
-          
-          float x = LAND_MESH[the_I][the_J][0];
-          float y = LAND_MESH[the_I][the_J][1];
-          float z = LAND_MESH[the_I][the_J][2];
-    
-          float u = x / LAND_TEXTURE_scale_U[n_Map] + 0.5; // using the last <<<<<<<<<<<
-          float v = y / LAND_TEXTURE_scale_V[n_Map] + 0.5; // using the last <<<<<<<<<<<
-          
-          if (_turn == 1) {
-            SOLARCHVISION_OBJprintVertex(x,y,z);
-          }
-          
-          if (_turn == 2) {
-            SOLARCHVISION_OBJprintVtexture(u,v,0);
-          }
-    
-          if (_turn == 3) {
-            obj_lastVertexNumber += 1;
-            obj_lastVtextureNumber += 1;
-          }
-          
-        }
-      }
-      
-      int f = 0;
-      for (int i = 0; i < LAND_n_I - 1; i += 1) {
-        for (int j = 0; j < LAND_n_J - 1; j += 1) {
-          f += 1;
-          
-          int A = i * LAND_n_J + j + 1;
-          int B = (i + 1) * LAND_n_J + j + 1;
-          int C = (i + 1) * LAND_n_J + j + 2;
-          int D = i * LAND_n_J + j + 2;
-          
-          int vNo1 = GRID_firstVertexNumber + A;
-          int vNo2 = GRID_firstVertexNumber + B;
-          int vNo3 = GRID_firstVertexNumber + C;
-          int vNo4 = GRID_firstVertexNumber + D;
-          
-          int vtNo1 = GRID_firstVtextureNumber + A;
-          int vtNo2 = GRID_firstVtextureNumber + B;
-          int vtNo3 = GRID_firstVtextureNumber + C;
-          int vtNo4 = GRID_firstVtextureNumber + D;
-  
-          String n1_txt = nf(vNo1, 0); 
-          String n2_txt = nf(vNo2, 0); 
-          String n3_txt = nf(vNo3, 0); 
-          String n4_txt = nf(vNo4, 0); 
-          
-          String m1_txt = nf(vtNo1, 0);
-          String m2_txt = nf(vtNo2, 0);
-          String m3_txt = nf(vtNo3, 0);
-          String m4_txt = nf(vtNo4, 0);
-          
-          obj_lastFaceNumber += 1;            
-          objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-          if (objExportBackSides != 0) {
-            obj_lastFaceNumber += 1;
-            objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
-          }      
-        }  
-
-      }
-    }
-    
-    
-    
-    if (Display_LAND_DEPTH != 0) {    
-  
-      obj_lastGroupNumber += 1;  
-      objOutput.println("g LandMesh_depth");
-  
-      if (objExportMaterialLibrary != 0) {
-        objOutput.println("usemtl LandMesh");
-      }
-      
-      int GRID_firstVertexNumber = obj_lastVertexNumber;
-      int GRID_firstVtextureNumber = obj_lastVtextureNumber;
-      
-      for (int _turn = 1; _turn < 4; _turn += 1) {
-      
-        for (int i = 0; i < LAND_n_I * LAND_n_J; i++) {
-          
-          int the_I = i / LAND_n_J;
-          int the_J = i % LAND_n_J;
-          
-          float x = LAND_MESH[the_I][the_J][0];
-          float y = LAND_MESH[the_I][the_J][1];
-          float z = LAND_MESH[the_I][the_J][2];
-
-          float u = x / LAND_TEXTURE_scale_U[n_Map] + 0.5; // using the last <<<<<<<<<<<
-          float v = y / LAND_TEXTURE_scale_V[n_Map] + 0.5; // using the last <<<<<<<<<<<
-
-          if (_turn == 1) {
-            SOLARCHVISION_OBJprintVertex(x,y,z);
-            SOLARCHVISION_OBJprintVertex(x,y,z - CrustDepth);
-          }
-          
-          if (_turn == 2) {
-            SOLARCHVISION_OBJprintVtexture(u,v,0);
-            SOLARCHVISION_OBJprintVtexture(u,v,0);                
-          }
-    
-          if (_turn == 3) {
-            obj_lastVertexNumber += 2;
-            obj_lastVtextureNumber += 2;
-          }
-          
-        }
-      }
-      
-      int f = 0;
-      for (int i = 0; i < LAND_n_I; i += 1) {
-        for (int j = 0; j < LAND_n_J; j += 1) {
-          f += 1;
-          
-          if (i + 1 < LAND_n_I) {
-            
-            int A = 2 * (i * LAND_n_J + j + 1) + 0;
-            int B = 2 * (i * LAND_n_J + j + 1) + 1;
-            int C = 2 * ((i + 1) * LAND_n_J + j + 1) + 1;
-            int D = 2 * ((i + 1) * LAND_n_J + j + 1) + 0;
-            
-            int vNo1 = GRID_firstVertexNumber + A;
-            int vNo2 = GRID_firstVertexNumber + B;
-            int vNo3 = GRID_firstVertexNumber + C;
-            int vNo4 = GRID_firstVertexNumber + D;
-            
-            int vtNo1 = GRID_firstVtextureNumber + A;
-            int vtNo2 = GRID_firstVtextureNumber + B;
-            int vtNo3 = GRID_firstVtextureNumber + C;
-            int vtNo4 = GRID_firstVtextureNumber + D;
-    
-            String n1_txt = nf(vNo1, 0); 
-            String n2_txt = nf(vNo2, 0); 
-            String n3_txt = nf(vNo3, 0); 
-            String n4_txt = nf(vNo4, 0); 
-            
-            String m1_txt = nf(vtNo1, 0);
-            String m2_txt = nf(vtNo2, 0);
-            String m3_txt = nf(vtNo3, 0);
-            String m4_txt = nf(vtNo4, 0);
-            
-            obj_lastFaceNumber += 1;            
-            objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-            if (objExportBackSides != 0) {
-              obj_lastFaceNumber += 1;
-              objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
-            }    
-          }  
-
-          if (j + 1 < LAND_n_J) {
-            
-            int A = 2 * (i * LAND_n_J + j + 1) + 0;
-            int B = 2 * (i * LAND_n_J + j + 1) + 1;
-            int C = 2 * (i * LAND_n_J + j + 2) + 1;
-            int D = 2 * (i * LAND_n_J + j + 2) + 0;
-            
-            int vNo1 = GRID_firstVertexNumber + A;
-            int vNo2 = GRID_firstVertexNumber + B;
-            int vNo3 = GRID_firstVertexNumber + C;
-            int vNo4 = GRID_firstVertexNumber + D;
-            
-            int vtNo1 = GRID_firstVtextureNumber + A;
-            int vtNo2 = GRID_firstVtextureNumber + B;
-            int vtNo3 = GRID_firstVtextureNumber + C;
-            int vtNo4 = GRID_firstVtextureNumber + D;
-    
-            String n1_txt = nf(vNo1, 0); 
-            String n2_txt = nf(vNo2, 0); 
-            String n3_txt = nf(vNo3, 0); 
-            String n4_txt = nf(vNo4, 0); 
-            
-            String m1_txt = nf(vtNo1, 0);
-            String m2_txt = nf(vtNo2, 0);
-            String m3_txt = nf(vtNo3, 0);
-            String m4_txt = nf(vtNo4, 0);
-            
-            obj_lastFaceNumber += 1;            
-            objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n2_txt + "/" + m2_txt + " " + n3_txt + "/" + m3_txt + " " + n4_txt + "/" + m4_txt);
-            if (objExportBackSides != 0) {
-              obj_lastFaceNumber += 1;
-              objOutput.println("f " + n1_txt + "/" + m1_txt + " " + n4_txt + "/" + m4_txt + " " + n3_txt + "/" + m3_txt + " " + n2_txt + "/" + m2_txt);
-            }    
-          }  
-          
-          
-        }  
-
-      }
-    }    
-  }
-*/
-
-
-
-
-
-
-
 
   if (Display_Sections != 0) {
 
@@ -21488,6 +21234,8 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
 
 
 void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
+
+  println("SOLARCHVISION_add_Object2Ds_onLand");
   
   randomSeed(0);
   
@@ -21505,6 +21253,7 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
 
         
         if (max_n > 100) max_n = 100;
+        
        
         //if (i > 8) max_n = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
        
@@ -21517,55 +21266,79 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
           float y = Bilinear(LAND_MESH[i][j][1], LAND_MESH[i][j+1][1], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j][1], di, dj);
           float z = Bilinear(LAND_MESH[i][j][2], LAND_MESH[i][j+1][2], LAND_MESH[i+1][j+1][2], LAND_MESH[i+1][j][2], di, dj);
           
-          float u = (x / LAND_TEXTURE_scale_U[LAND_TEXTURE_num] + 0.5) * LAND_TEXTURE[LAND_TEXTURE_num].width;
-          float v = (-y / LAND_TEXTURE_scale_V[LAND_TEXTURE_num] + 0.5) * LAND_TEXTURE[LAND_TEXTURE_num].height;          
+          float u = 0;
+          float v = 0;
           
-          color COL = LAND_TEXTURE[LAND_TEXTURE_num].get(int(u), int(v));
-          //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
-          float r = COL >> 16 & 0xFF; 
-          float g = COL >> 8 & 0xFF;
-          float b = COL & 0xFF;
-                                        
-          if ((g > r + 10) && (g > b + 10)) { // looks more green
-          
-            if (g < 85) { // not on grass (light green) 
+          int n_Map = 0; 
+          for (int q = 1; q <= LAND_TEXTURE_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
+        
+            n_Map = q; 
             
-              //if (z + LocationElevation > 5) { // not in water (below see level)
+            u = (x / LAND_TEXTURE_scale_U[q] + 0.5);
+            v = (-y / LAND_TEXTURE_scale_V[q] + 0.5);
+       
+            if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
+                
+              n_Map = 0;
+            }
+            
+            if (n_Map == q) break;
+          }
+          
+          
+          
+          if (n_Map != 0) {
 
-                //float s = 5 + random(10); 
-                float s = 5 + random(12.5);
-                //float s = 10 + random(20); // bigger trees        
+            int u_pixel = int(u * LAND_TEXTURE[n_Map].width);
+            int v_pixel = int(v * LAND_TEXTURE[n_Map].height);
+          
+            color COL = LAND_TEXTURE[n_Map].get(u_pixel, v_pixel);
+            //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+            float r = COL >> 16 & 0xFF; 
+            float g = COL >> 8 & 0xFF;
+            float b = COL & 0xFF;
+                                          
+            if ((g > r + 10) && (g > b + 10)) { // looks more green
+            
+              if (g < 85) { // not on grass (light green) 
               
-                int foundNearTree = 0;
+                //if (z + LocationElevation > 5) { // not in water (below see level)
+  
+                  //float s = 5 + random(10); 
+                  float s = 5 + random(12.5);
+                  //float s = 10 + random(20); // bigger trees        
                 
-                for (int f = 1; f < treesXYZS.length; f++) {
-                    
-                  float x0 = treesXYZS[f][0];
-                  float y0 = treesXYZS[f][1];
-                  float z0 = treesXYZS[f][2];
-                  float s0 = treesXYZS[f][3];
-
-                  if (dist(x0, y0, z0, x, y, z) < 0.25 * (s0 + s)) { //avoids creating trees close to each other 
-                    foundNearTree = 1;
-                
-                    break;
-                  }  
-                }
-                
-                if (foundNearTree == 0) {
+                  int foundNearTree = 0;
                   
-                  if (people_or_trees == 2) {
-                    SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, s);
+                  for (int f = 1; f < treesXYZS.length; f++) {
+                      
+                    float x0 = treesXYZS[f][0];
+                    float y0 = treesXYZS[f][1];
+                    float z0 = treesXYZS[f][2];
+                    float s0 = treesXYZS[f][3];
+  
+                    if (dist(x0, y0, z0, x, y, z) < 0.25 * (s0 + s)) { //avoids creating trees close to each other 
+                      foundNearTree = 1;
+                  
+                      break;
+                    }  
                   }
-                  else {
-                    SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, s, random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize);
-                  }                  
                   
-                  
-                  float[][] newTree = {{x, y, z, s}};
-                  treesXYZS = (float [][]) concat(treesXYZS, newTree);
-                }
-              //}
+                  if (foundNearTree == 0) {
+                    
+                    if (people_or_trees == 2) {
+                      SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, s);
+                    }
+                    else {
+                      SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, s, random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize);
+                    }                  
+                    
+                    
+                    float[][] newTree = {{x, y, z, s}};
+                    treesXYZS = (float [][]) concat(treesXYZS, newTree);
+                  }
+                //}
+              }
             }
           }
 
@@ -23159,9 +22932,9 @@ void SOLARCHVISION_draw_land (int target_window) {
             float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
             
             int n_Map = 0; 
-            if (Display_LAND_TEXTURE != 0) { // increase the resolution until all the vertices located inside the appropriate map
+            if (Display_LAND_TEXTURE != 0) { 
               
-              for (int q = 1; q <= LAND_TEXTURE_num; q++) {
+              for (int q = 1; q <= LAND_TEXTURE_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
             
                 n_Map = q; 
                 
@@ -23178,7 +22951,7 @@ void SOLARCHVISION_draw_land (int target_window) {
                   }
                 }
                 
-                if (n_Map == q)  break;
+                if (n_Map == q) break;
                 
               }
             }
