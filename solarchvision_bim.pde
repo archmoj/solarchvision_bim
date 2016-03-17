@@ -19890,17 +19890,17 @@ void SOLARCHVISION_export_objects () {
                 }
                 
                 if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-          
+
+                float[][] base_Vertices = new float [allFaces[f].length][3];
+                for (int j = 0; j < allFaces[f].length; j++) {
+                  int vNo = allFaces[f][j];
+                  base_Vertices[j][0] = allVertices[vNo][0];
+                  base_Vertices[j][1] = allVertices[vNo][1];
+                  base_Vertices[j][2] = allVertices[vNo][2];
+                }
+        
                 for (int n = 0; n < TotalSubNo; n++) {
-                 
-                  float[][] base_Vertices = new float [allFaces[f].length][3];
-                  for (int j = 0; j < allFaces[f].length; j++) {
-                    int vNo = allFaces[f][j];
-                    base_Vertices[j][0] = allVertices[vNo][0];
-                    base_Vertices[j][1] = allVertices[vNo][1];
-                    base_Vertices[j][2] = allVertices[vNo][2];
-                  }
-                  
+
                   float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
           
                   for (int s = 0; s < subFace.length; s++) {
@@ -20157,12 +20157,22 @@ void SOLARCHVISION_export_objects () {
                 float x4 = 0;
                 float y4 = 0;
                 float z4 = 0;
+
+                float[][] base_Vertices = new float [allFaces[f].length][3];
+                for (int j = 0; j < allFaces[f].length; j++) {
+                  int vNo = allFaces[f][j];
+                  base_Vertices[j][0] = allVertices[vNo][0];
+                  base_Vertices[j][1] = allVertices[vNo][1];
+                  base_Vertices[j][2] = allVertices[vNo][2];
+                }
           
                 for (int n = 0; n < TotalSubNo; n++) {
+                  
+                  float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
   
-                 CurrentFaceTextureNumber += 1;
+                  CurrentFaceTextureNumber += 1;
                  
-                 if (_turn == 1) {   
+                  if (_turn == 1) {   
                    
                     if (objExportMaterialLibrary != 0) {
                       
@@ -20186,15 +20196,7 @@ void SOLARCHVISION_export_objects () {
                         Face_Texture[CurrentFaceTextureNumber].beginDraw();
                       }
                       
-                      float[][] base_Vertices = new float [allFaces[f].length][3];
-                      for (int j = 0; j < allFaces[f].length; j++) {
-                        int vNo = allFaces[f][j];
-                        base_Vertices[j][0] = allVertices[vNo][0];
-                        base_Vertices[j][1] = allVertices[vNo][1];
-                        base_Vertices[j][2] = allVertices[vNo][2];
-                      }
-                      
-                      float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+
               
                       if (objExportUsePalletOrBakeFaces == 1) {
                         Face_Texture[CurrentFaceTextureNumber].noStroke();
@@ -20336,15 +20338,6 @@ void SOLARCHVISION_export_objects () {
                       
                       }
                       else { 
-                        float[][] base_Vertices = new float [allFaces[f].length][3];
-                        for (int j = 0; j < allFaces[f].length; j++) {
-                          int vNo = allFaces[f][j];
-                          base_Vertices[j][0] = allVertices[vNo][0];
-                          base_Vertices[j][1] = allVertices[vNo][1];
-                          base_Vertices[j][2] = allVertices[vNo][2];
-                        }
-                        
-                        float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
                         
                         for (int s = 0; s < subFace.length; s++) {
   
@@ -20855,16 +20848,16 @@ void SOLARCHVISION_export_objects () {
           int TotalSubNo = 1;  
           Tessellation = SKY3D_TESSELLATION;
           if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+
+          float[][] base_Vertices = new float [skyFaces[f].length][3];
+          for (int j = 0; j < skyFaces[f].length; j++) {
+            int vNo = skyFaces[f][j];
+            base_Vertices[j][0] = skyVertices[vNo][0];
+            base_Vertices[j][1] = skyVertices[vNo][1];
+            base_Vertices[j][2] = skyVertices[vNo][2];
+          }
       
           for (int n = 0; n < TotalSubNo; n++) {
-            
-            float[][] base_Vertices = new float [skyFaces[f].length][3];
-            for (int j = 0; j < skyFaces[f].length; j++) {
-              int vNo = skyFaces[f][j];
-              base_Vertices[j][0] = skyVertices[vNo][0];
-              base_Vertices[j][1] = skyVertices[vNo][1];
-              base_Vertices[j][2] = skyVertices[vNo][2];
-            }
             
             float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
             
@@ -21426,8 +21419,6 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
          
          
           for (int o = 0; o < max_o; o += 1) {
-            
-             println("max_o", max_o);
             
             float di = random(1);
             float dj = random(1);
@@ -22190,17 +22181,17 @@ PGraphics ViewFromTheSky (int SKY2D_X_View, int SKY2D_Y_View, float SKY2D_ZOOM_c
         Tessellation += MODEL3D_TESSELLATION;
       }
       if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+
+      float[][] base_Vertices = new float [allFaces[f].length][3];
+      for (int j = 0; j < allFaces[f].length; j++) {
+        int vNo = allFaces[f][j];
+        base_Vertices[j][0] = allVertices[vNo][0];
+        base_Vertices[j][1] = allVertices[vNo][1];
+        base_Vertices[j][2] = allVertices[vNo][2];
+      }
   
       for (int n = 0; n < TotalSubNo; n++) {
-        
-        float[][] base_Vertices = new float [allFaces[f].length][3];
-        for (int j = 0; j < allFaces[f].length; j++) {
-          int vNo = allFaces[f][j];
-          base_Vertices[j][0] = allVertices[vNo][0];
-          base_Vertices[j][1] = allVertices[vNo][1];
-          base_Vertices[j][2] = allVertices[vNo][2];
-        }
-        
+
         float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
      
         SKY2D_Diagrams.beginShape();
@@ -22276,16 +22267,16 @@ void SOLARCHVISION_draw_SKY3D () {
         int TotalSubNo = 1;  
         Tessellation = SKY3D_TESSELLATION;
         if (Tessellation > 0) TotalSubNo = skyFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+
+        float[][] base_Vertices = new float [skyFaces[f].length][3];
+        for (int j = 0; j < skyFaces[f].length; j++) {
+          int vNo = skyFaces[f][j];
+          base_Vertices[j][0] = skyVertices[vNo][0];
+          base_Vertices[j][1] = skyVertices[vNo][1];
+          base_Vertices[j][2] = skyVertices[vNo][2];
+        }
     
         for (int n = 0; n < TotalSubNo; n++) {
-          
-          float[][] base_Vertices = new float [skyFaces[f].length][3];
-          for (int j = 0; j < skyFaces[f].length; j++) {
-            int vNo = skyFaces[f][j];
-            base_Vertices[j][0] = skyVertices[vNo][0];
-            base_Vertices[j][1] = skyVertices[vNo][1];
-            base_Vertices[j][2] = skyVertices[vNo][2];
-          }
           
           float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
           
@@ -22970,27 +22961,27 @@ void SOLARCHVISION_draw_land (int target_window) {
   
       for (int i = Skip_LAND_MESH_Center; i < LAND_n_I - 1; i += 1) {
         for (int j = 0; j < LAND_n_J - 1; j += 1) {
-  
+
+          float[][] base_Vertices = new float [4][3];
+
+          base_Vertices[0][0] = LAND_MESH[i][j][0];
+          base_Vertices[0][1] = LAND_MESH[i][j][1];
+          base_Vertices[0][2] = LAND_MESH[i][j][2];
+
+          base_Vertices[1][0] = LAND_MESH[i+1][j][0];
+          base_Vertices[1][1] = LAND_MESH[i+1][j][1];
+          base_Vertices[1][2] = LAND_MESH[i+1][j][2];
+
+          base_Vertices[2][0] = LAND_MESH[i+1][j+1][0];
+          base_Vertices[2][1] = LAND_MESH[i+1][j+1][1];
+          base_Vertices[2][2] = LAND_MESH[i+1][j+1][2];
+          
+          base_Vertices[3][0] = LAND_MESH[i][j+1][0];
+          base_Vertices[3][1] = LAND_MESH[i][j+1][1];
+          base_Vertices[3][2] = LAND_MESH[i][j+1][2];        
+        
           for (int n = 0; n < TotalSubNo; n++) {
             
-            float[][] base_Vertices = new float [4][3];
-  
-            base_Vertices[0][0] = LAND_MESH[i][j][0];
-            base_Vertices[0][1] = LAND_MESH[i][j][1];
-            base_Vertices[0][2] = LAND_MESH[i][j][2];
-  
-            base_Vertices[1][0] = LAND_MESH[i+1][j][0];
-            base_Vertices[1][1] = LAND_MESH[i+1][j][1];
-            base_Vertices[1][2] = LAND_MESH[i+1][j][2];
-  
-            base_Vertices[2][0] = LAND_MESH[i+1][j+1][0];
-            base_Vertices[2][1] = LAND_MESH[i+1][j+1][1];
-            base_Vertices[2][2] = LAND_MESH[i+1][j+1][2];
-            
-            base_Vertices[3][0] = LAND_MESH[i][j+1][0];
-            base_Vertices[3][1] = LAND_MESH[i][j+1][1];
-            base_Vertices[3][2] = LAND_MESH[i][j+1][2];
-  
             float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
             
             int n_Map = 0; 
@@ -23574,16 +23565,16 @@ void SOLARCHVISION_draw_Group3Ds () {
                 Tessellation += MODEL3D_TESSELLATION;
               }
               if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-          
+
+              float[][] base_Vertices = new float [allFaces[f].length][3];
+              for (int j = 0; j < allFaces[f].length; j++) {
+                int vNo = allFaces[f][j];
+                base_Vertices[j][0] = allVertices[vNo][0];
+                base_Vertices[j][1] = allVertices[vNo][1];
+                base_Vertices[j][2] = allVertices[vNo][2];
+              }
+              
               for (int n = 0; n < TotalSubNo; n++) {
-                
-                float[][] base_Vertices = new float [allFaces[f].length][3];
-                for (int j = 0; j < allFaces[f].length; j++) {
-                  int vNo = allFaces[f][j];
-                  base_Vertices[j][0] = allVertices[vNo][0];
-                  base_Vertices[j][1] = allVertices[vNo][1];
-                  base_Vertices[j][2] = allVertices[vNo][2];
-                }
                 
                 float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
              
@@ -23661,16 +23652,16 @@ void SOLARCHVISION_draw_Group3Ds () {
                   Tessellation += MODEL3D_TESSELLATION;
                 }
                 if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
+
+                float[][] base_Vertices = new float [allFaces[f].length][3];
+                for (int j = 0; j < allFaces[f].length; j++) {
+                  int vNo = allFaces[f][j];
+                  base_Vertices[j][0] = allVertices[vNo][0];
+                  base_Vertices[j][1] = allVertices[vNo][1];
+                  base_Vertices[j][2] = allVertices[vNo][2];
+                }     
                 
                 for (int n = 0; n < TotalSubNo; n++) {
-                  
-                  float[][] base_Vertices = new float [allFaces[f].length][3];
-                  for (int j = 0; j < allFaces[f].length; j++) {
-                    int vNo = allFaces[f][j];
-                    base_Vertices[j][0] = allVertices[vNo][0];
-                    base_Vertices[j][1] = allVertices[vNo][1];
-                    base_Vertices[j][2] = allVertices[vNo][2];
-                  }            
                   
                   float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
                
@@ -23767,16 +23758,16 @@ void SOLARCHVISION_draw_Group3Ds () {
                 Tessellation += MODEL3D_TESSELLATION;
               }
               if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-                      
+
+              float[][] base_Vertices = new float [allFaces[f].length][3];
+              for (int j = 0; j < allFaces[f].length; j++) {
+                int vNo = allFaces[f][j];
+                base_Vertices[j][0] = allVertices[vNo][0];
+                base_Vertices[j][1] = allVertices[vNo][1];
+                base_Vertices[j][2] = allVertices[vNo][2];
+              }     
+                
               for (int n = 0; n < TotalSubNo; n++) {
-    
-                float[][] base_Vertices = new float [allFaces[f].length][3];
-                for (int j = 0; j < allFaces[f].length; j++) {
-                  int vNo = allFaces[f][j];
-                  base_Vertices[j][0] = allVertices[vNo][0];
-                  base_Vertices[j][1] = allVertices[vNo][1];
-                  base_Vertices[j][2] = allVertices[vNo][2];
-                }            
                 
                 float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
                 
@@ -37366,16 +37357,16 @@ void SOLARCHVISION_draw_Perspective_Internally () {
             Tessellation += MODEL3D_TESSELLATION;
           }
           if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-      
+
+          float[][] base_Vertices = new float [allFaces[f].length][3];
+          for (int j = 0; j < allFaces[f].length; j++) {
+            int vNo = allFaces[f][j];
+            base_Vertices[j][0] = allVertices[vNo][0];
+            base_Vertices[j][1] = allVertices[vNo][1];
+            base_Vertices[j][2] = allVertices[vNo][2];
+          }
+          
           for (int n = 0; n < TotalSubNo; n++) {
-            
-            float[][] base_Vertices = new float [allFaces[f].length][3];
-            for (int j = 0; j < allFaces[f].length; j++) {
-              int vNo = allFaces[f][j];
-              base_Vertices[j][0] = allVertices[vNo][0];
-              base_Vertices[j][1] = allVertices[vNo][1];
-              base_Vertices[j][2] = allVertices[vNo][2];
-            }
             
             float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
          
@@ -37579,16 +37570,16 @@ void SOLARCHVISION_draw_Perspective_Internally () {
                 Tessellation += MODEL3D_TESSELLATION;
               }
               if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-          
+        
+              float[][] base_Vertices = new float [allFaces[f].length][3];
+              for (int j = 0; j < allFaces[f].length; j++) {
+                int vNo = allFaces[f][j];
+                base_Vertices[j][0] = allVertices[vNo][0];
+                base_Vertices[j][1] = allVertices[vNo][1];
+                base_Vertices[j][2] = allVertices[vNo][2];
+              }
+
               for (int n = 0; n < TotalSubNo; n++) {
-                
-                float[][] base_Vertices = new float [allFaces[f].length][3];
-                for (int j = 0; j < allFaces[f].length; j++) {
-                  int vNo = allFaces[f][j];
-                  base_Vertices[j][0] = allVertices[vNo][0];
-                  base_Vertices[j][1] = allVertices[vNo][1];
-                  base_Vertices[j][2] = allVertices[vNo][2];
-                }
                 
                 float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
              
@@ -38403,17 +38394,17 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                     Tessellation += MODEL3D_TESSELLATION;
                   }
                   if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-                
+                  
+                  float[][] base_Vertices = new float [allFaces[f].length][3];
+                  for (int g = 0; g < allFaces[f].length; g++) {
+                    int vNo = allFaces[f][g];
+                    base_Vertices[g][0] = allVertices[vNo][0];
+                    base_Vertices[g][1] = allVertices[vNo][1];
+                    base_Vertices[g][2] = allVertices[vNo][2];
+                  }
+                                  
                   for (int n = 0; n < TotalSubNo; n++) {
-                    
-                    float[][] base_Vertices = new float [allFaces[f].length][3];
-                    for (int g = 0; g < allFaces[f].length; g++) {
-                      int vNo = allFaces[f][g];
-                      base_Vertices[g][0] = allVertices[vNo][0];
-                      base_Vertices[g][1] = allVertices[vNo][1];
-                      base_Vertices[g][2] = allVertices[vNo][2];
-                    }
-                    
+
                     float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
                     float[][] subFace_Rotated = subFace;
                     
@@ -38856,17 +38847,17 @@ void SOLARCHVISION_render_Shadows_CurrentSection () {
                   Tessellation += MODEL3D_TESSELLATION;
                 }
                 if (Tessellation > 0) TotalSubNo = allFaces[f].length * int(roundTo(pow(4, Tessellation - 1), 1));
-              
+                
+                float[][] base_Vertices = new float [allFaces[f].length][3];
+                for (int g = 0; g < allFaces[f].length; g++) {
+                  int vNo = allFaces[f][g];
+                  base_Vertices[g][0] = allVertices[vNo][0];
+                  base_Vertices[g][1] = allVertices[vNo][1];
+                  base_Vertices[g][2] = allVertices[vNo][2];
+                }
+                              
                 for (int n = 0; n < TotalSubNo; n++) {
-                  
-                  float[][] base_Vertices = new float [allFaces[f].length][3];
-                  for (int g = 0; g < allFaces[f].length; g++) {
-                    int vNo = allFaces[f][g];
-                    base_Vertices[g][0] = allVertices[vNo][0];
-                    base_Vertices[g][1] = allVertices[vNo][1];
-                    base_Vertices[g][2] = allVertices[vNo][2];
-                  }
-                  
+
                   float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
                   float[][] subFace_Rotated = subFace;
                   
