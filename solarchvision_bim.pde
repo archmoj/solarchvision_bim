@@ -1954,7 +1954,7 @@ void SOLARCHVISION_update_station (int Step) {
 
 void SOLARCHVISION_update_models (int Step) {
  
-   if ((Step == 0) || (Step == 1)) SOLARCHVISION_delete_All();
+   if ((Step == 0) || (Step == 1)) SOLARCHVISION_delete_Group3Ds(); //not deleting all
    if ((Step == 0) || (Step == 2)) SOLARCHVISION_add_ProjectModel();
 
 }
@@ -21240,129 +21240,168 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
   randomSeed(0);
   
   float[][] treesXYZS = {{0,0,0,0}};
+
+  int Tessellation = LAND_TESSELLATION;
+  if (WIN3D_FACES_SHADE == Shade_Surface_Base) {
+    Tessellation = 0;
+  }
+    
+  int TotalSubNo = 1;  
+  if (Tessellation > 0) TotalSubNo = 4 * int(roundTo(pow(4, Tessellation - 1), 1)); // = 4 * ... because in LAND grid the cell has 4 points.
+  
+
   
   if ((Display_LAND_TEXTURE != 0) && (people_or_trees != 1)) { // using another algorithm for people << i.e. no image processing from green colors of the map!
-  
-    for (int i = 0; i < LAND_n_I - 1; i += 1) {
-      for (int j = 0; j < LAND_n_J - 1; j += 1) {
-        
-        float pixel_area = dist(LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1]) * dist(LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1]);
-        
-        //int max_n = int(pixel_area / 200.0);
-        int max_n = int(pixel_area / 50.0);
 
-        
-        if (max_n > 100) max_n = 100;
-        
-       
-        //if (i > 8) max_n = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
-       
-        for (int n = 0; n < max_n; n += 1) {
-          
-          float di = random(1);
-          float dj = random(1);
+    for (int i = Skip_LAND_MESH_Center; i < LAND_n_I - 1; i += 1) {
+      for (int j = 0; j < LAND_n_J - 1; j += 1) {
   
-          float x = Bilinear(LAND_MESH[i][j][0], LAND_MESH[i][j+1][0], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j][0], di, dj);
-          float y = Bilinear(LAND_MESH[i][j][1], LAND_MESH[i][j+1][1], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j][1], di, dj);
-          float z = Bilinear(LAND_MESH[i][j][2], LAND_MESH[i][j+1][2], LAND_MESH[i+1][j+1][2], LAND_MESH[i+1][j][2], di, dj);
+        for (int n = 0; n < TotalSubNo; n++) {
+                    
+          float[][] base_Vertices = new float [4][3];
+
+          base_Vertices[0][0] = LAND_MESH[i][j][0];
+          base_Vertices[0][1] = LAND_MESH[i][j][1];
+          base_Vertices[0][2] = LAND_MESH[i][j][2];
+
+          base_Vertices[1][0] = LAND_MESH[i+1][j][0];
+          base_Vertices[1][1] = LAND_MESH[i+1][j][1];
+          base_Vertices[1][2] = LAND_MESH[i+1][j][2];
+
+          base_Vertices[2][0] = LAND_MESH[i+1][j+1][0];
+          base_Vertices[2][1] = LAND_MESH[i+1][j+1][1];
+          base_Vertices[2][2] = LAND_MESH[i+1][j+1][2];
           
-          float u = 0;
-          float v = 0;
-          
+          base_Vertices[3][0] = LAND_MESH[i][j+1][0];
+          base_Vertices[3][1] = LAND_MESH[i][j+1][1];
+          base_Vertices[3][2] = LAND_MESH[i][j+1][2];
+
+          float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+
           int n_Map = 0; 
           for (int q = 1; q <= LAND_TEXTURE_num; q++) { // increase the resolution until all the vertices located inside the appropriate map
         
             n_Map = q; 
             
-            u = (x / LAND_TEXTURE_scale_U[q] + 0.5);
-            v = (-y / LAND_TEXTURE_scale_V[q] + 0.5);
-       
-            if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
+            for (int s = 0; s < subFace.length; s++) {
+              
+              float u = (subFace[s][0] / LAND_TEXTURE_scale_U[q] + 0.5);
+              float v = (-subFace[s][1] / LAND_TEXTURE_scale_V[q] + 0.5);
+         
+              if ((0 > u) || (u > 1) || (0 > v) || (v > 1)) {
+                  
+                n_Map = 0;
                 
-              n_Map = 0;
-            }
+                break;
+              }
+            }            
             
             if (n_Map == q) break;
           }
-          
-          
-          
-          if (n_Map != 0) {
 
-            int u_pixel = int(u * LAND_TEXTURE[n_Map].width);
-            int v_pixel = int(v * LAND_TEXTURE[n_Map].height);
+          if (n_Map != 0) {
           
-            color COL = LAND_TEXTURE[n_Map].get(u_pixel, v_pixel);
-            //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
-            float r = COL >> 16 & 0xFF; 
-            float g = COL >> 8 & 0xFF;
-            float b = COL & 0xFF;
-                                          
-            if ((g > r + 10) && (g > b + 10)) { // looks more green
+            // note: AC * BD
+            float pixel_area = dist(base_Vertices[0][0], base_Vertices[0][1], base_Vertices[2][0], base_Vertices[2][1]) * dist(base_Vertices[1][0], base_Vertices[1][1], base_Vertices[3][0], base_Vertices[3][1]);
             
-              if (g < 85) { // not on grass (light green) 
+            //int max_o = int(pixel_area / 200.0);
+            int max_o = int(pixel_area / 50.0);
+    
+            
+            //if (max_o > 100) max_o = 100;
+            
+            if (max_o > 10) max_o = 10;
+            
+           
+            //if (i > 8) max_n = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+           
+            for (int o = 0; o < max_o; o += 1) {
               
-                //if (z + LocationElevation > 5) { // not in water (below see level)
+              float di = random(1);
+              float dj = random(1);
+      
+              float x = Bilinear(base_Vertices[0][0], base_Vertices[1][0], base_Vertices[2][0], base_Vertices[3][0], di, dj);
+              float y = Bilinear(base_Vertices[0][1], base_Vertices[1][1], base_Vertices[2][1], base_Vertices[3][1], di, dj);
+              float z = Bilinear(base_Vertices[0][2], base_Vertices[1][2], base_Vertices[2][2], base_Vertices[3][2], di, dj);
+
+              float u = (x / LAND_TEXTURE_scale_U[n_Map] + 0.5);
+              float v = (-y / LAND_TEXTURE_scale_V[n_Map] + 0.5);
   
-                  //float s = 5 + random(10); 
-                  float s = 5 + random(12.5);
-                  //float s = 10 + random(20); // bigger trees        
+              int u_pixel = int(u * LAND_TEXTURE[n_Map].width);
+              int v_pixel = int(v * LAND_TEXTURE[n_Map].height);
+            
+              color COL = LAND_TEXTURE[n_Map].get(u_pixel, v_pixel);
+              //red: COL >> 16 & 0xFF; green: COL >>8 & 0xFF; blue: COL & 0xFF;
+              float r = COL >> 16 & 0xFF; 
+              float g = COL >> 8 & 0xFF;
+              float b = COL & 0xFF;
+                                            
+              if ((g > r + 10) && (g > b + 10)) { // looks more green
+              
+                if (g < 85) { // not on grass (light green) 
                 
-                  int foundNearTree = 0;
+                  //if (z + LocationElevation > 5) { // not in water (below see level)
+    
+                    //float s = 5 + random(10); 
+                    float s = 5 + random(12.5);
+                    //float s = 10 + random(20); // bigger trees        
                   
-                  for (int f = 1; f < treesXYZS.length; f++) {
-                      
-                    float x0 = treesXYZS[f][0];
-                    float y0 = treesXYZS[f][1];
-                    float z0 = treesXYZS[f][2];
-                    float s0 = treesXYZS[f][3];
-  
-                    if (dist(x0, y0, z0, x, y, z) < 0.25 * (s0 + s)) { //avoids creating trees close to each other 
-                      foundNearTree = 1;
-                  
-                      break;
-                    }  
-                  }
-                  
-                  if (foundNearTree == 0) {
+                    int foundNearTree = 0;
                     
-                    if (people_or_trees == 2) {
-                      SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, s);
+                    for (int f = 1; f < treesXYZS.length; f++) {
+                        
+                      float x0 = treesXYZS[f][0];
+                      float y0 = treesXYZS[f][1];
+                      float z0 = treesXYZS[f][2];
+                      float s0 = treesXYZS[f][3];
+    
+                      if (dist(x0, y0, z0, x, y, z) < 0.25 * (s0 + s)) { //avoids creating trees close to each other 
+                        foundNearTree = 1;
+                    
+                        break;
+                      }  
                     }
-                    else {
-                      SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, s, random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize);
-                    }                  
                     
-                    
-                    float[][] newTree = {{x, y, z, s}};
-                    treesXYZS = (float [][]) concat(treesXYZS, newTree);
-                  }
-                //}
+                    if (foundNearTree == 0) {
+                      
+                      if (people_or_trees == 2) {
+                        SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, s);
+                      }
+                      else {
+                        SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, s, random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize);
+                      }                  
+                      
+                      
+                      float[][] newTree = {{x, y, z, s}};
+                      treesXYZS = (float [][]) concat(treesXYZS, newTree);
+                    }
+                  //}
+                }
               }
             }
-          }
-
-        }  
+          }  
+        }
       }
     }    
   }
   else {
   
-    for (int i = 0; i < LAND_n_I - 1; i += 1) {
+    for (int i = Skip_LAND_MESH_Center; i < LAND_n_I - 1; i += 1) {
       for (int j = 0; j < LAND_n_J - 1; j += 1) {
         
+        // note: AC * BD
         float pixel_area = dist(LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1]) * dist(LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1]);
         
-        int max_n = int(pixel_area / 500.0);
-        if (max_n > 100) max_n = 100;
+        int max_o = int(pixel_area / 500.0);
+        if (max_o > 100) max_o = 100;
        
-        if (i > 2) max_n = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+        if (i > 2) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
        
-        //if (i < Skip_LAND_MESH_Center) max_n = 10;
-        //else max_n = 0; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        //if (i < Skip_LAND_MESH_Center) max_o = 10;
+        //else max_o = 0; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         
-        //for (int n = 0; n < 10; n += 1) {
-        for (int n = 0; n < max_n; n += 1) {
+        //for (int o = 0; o < 10; o += 1) {
+        for (int o = 0; o < max_o; o += 1) {
           
           float di = random(1);
           float dj = random(1);
