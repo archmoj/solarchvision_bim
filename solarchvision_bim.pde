@@ -1948,7 +1948,12 @@ void SOLARCHVISION_update_station (int Step) {
   
   if ((Step == 0) || (Step == 8)) SOLARCHVISION_delete_Object2Ds();
   
-  if ((Step == 0) || (Step == 9)) SOLARCHVISION_add_Object2Ds_onLand(2); // 2 = 2D trees
+  if ((Step == 0) || (Step == 9)) {
+    
+    SOLARCHVISION_add_Object2Ds_onLand(1); // 1 = people
+    
+    SOLARCHVISION_add_Object2Ds_onLand(2); // 2 = 2D trees
+  }
 
 }
 
@@ -21310,7 +21315,6 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
     
             
             if (max_o > 100) max_o = 100;
-            //if (max_o > 10) max_o = 10;
             
            
             //if (i > 8) max_n = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
@@ -21388,52 +21392,70 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
   
     for (int i = Skip_LAND_MESH_Center; i < LAND_n_I - 1; i += 1) {
       for (int j = 0; j < LAND_n_J - 1; j += 1) {
-        
-        // note: AC * BD
-        float pixel_area = dist(LAND_MESH[i][j][0], LAND_MESH[i][j][1], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j+1][1]) * dist(LAND_MESH[i+1][j][0], LAND_MESH[i+1][j][1], LAND_MESH[i][j+1][0], LAND_MESH[i][j+1][1]);
-        
-        int max_o = int(pixel_area / 500.0);
-        if (max_o > 100) max_o = 100;
-       
-        if (i > 2) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
-       
-        //if (i < Skip_LAND_MESH_Center) max_o = 10;
-        //else max_o = 0; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        
-        //for (int o = 0; o < 10; o += 1) {
-        for (int o = 0; o < max_o; o += 1) {
-          
-          float di = random(1);
-          float dj = random(1);
   
-          float x = Bilinear(LAND_MESH[i][j][0], LAND_MESH[i][j+1][0], LAND_MESH[i+1][j+1][0], LAND_MESH[i+1][j][0], di, dj);
-          float y = Bilinear(LAND_MESH[i][j][1], LAND_MESH[i][j+1][1], LAND_MESH[i+1][j+1][1], LAND_MESH[i+1][j][1], di, dj);
-          float z = Bilinear(LAND_MESH[i][j][2], LAND_MESH[i][j+1][2], LAND_MESH[i+1][j+1][2], LAND_MESH[i+1][j][2], di, dj);
+        for (int n = 0; n < TotalSubNo; n++) {
+                    
+          float[][] base_Vertices = new float [4][3];
+
+          base_Vertices[0][0] = LAND_MESH[i][j][0];
+          base_Vertices[0][1] = LAND_MESH[i][j][1];
+          base_Vertices[0][2] = LAND_MESH[i][j][2];
+
+          base_Vertices[1][0] = LAND_MESH[i+1][j][0];
+          base_Vertices[1][1] = LAND_MESH[i+1][j][1];
+          base_Vertices[1][2] = LAND_MESH[i+1][j][2];
+
+          base_Vertices[2][0] = LAND_MESH[i+1][j+1][0];
+          base_Vertices[2][1] = LAND_MESH[i+1][j+1][1];
+          base_Vertices[2][2] = LAND_MESH[i+1][j+1][2];
           
-          if (z + LocationElevation > 0) { // i.e. above sea level 
+          base_Vertices[3][0] = LAND_MESH[i][j+1][0];
+          base_Vertices[3][1] = LAND_MESH[i][j+1][1];
+          base_Vertices[3][2] = LAND_MESH[i][j+1][2];
+
+          float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
+      
+          // note: AC * BD
+          float pixel_area = dist(base_Vertices[0][0], base_Vertices[0][1], base_Vertices[2][0], base_Vertices[2][1]) * dist(base_Vertices[1][0], base_Vertices[1][1], base_Vertices[3][0], base_Vertices[3][1]);
+
           
-            if (dist(x,y,0,0) > 2.5) { // i.e. No 2D at the center!
+          int max_o = int(pixel_area / 500.0);
+          
+          if (max_o > 2) max_o = 2;
+         
+          if (i > 2) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+          
+         
+         
+          for (int o = 0; o < max_o; o += 1) {
             
-              float r = random(i + 1); //  to illustrate more people at the center
-              
-              if (r < 1) people_or_trees = 1; 
-  
-              
-              if (dist(x,y,0,0) < 25) people_or_trees = 0; // i.e. No tree around the center!
-              
-              if (people_or_trees == 1) {
-                SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
-              }
-              else if (people_or_trees == 2) {
-                SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
-              }
-              else {
-                SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 5 + random(10), random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize);
-              }
+             println("max_o", max_o);
+            
+            float di = random(1);
+            float dj = random(1);
     
+            float x = Bilinear(base_Vertices[0][0], base_Vertices[1][0], base_Vertices[2][0], base_Vertices[3][0], di, dj);
+            float y = Bilinear(base_Vertices[0][1], base_Vertices[1][1], base_Vertices[2][1], base_Vertices[3][1], di, dj);
+            float z = Bilinear(base_Vertices[0][2], base_Vertices[1][2], base_Vertices[2][2], base_Vertices[3][2], di, dj);
+            
+            if (z + LocationElevation > 0) { // i.e. above sea level 
+            
+              if (dist(x,y,0,0) > 2.5) { // i.e. No 2D at the center!
+              
+                if (people_or_trees == 1) {
+                  SOLARCHVISION_add_Object2D("PEOPLE", 0, x, y, z, 2.5);
+                }
+                else if (people_or_trees == 2) {
+                  SOLARCHVISION_add_Object2D("TREES", 0, x, y, z, 5 + random(10));
+                }
+                else {
+                  SOLARCHVISION_add_Fractal(Create_Fractal_Type, x, y, z, 5 + random(10), random(360), Create_Fractal_DegreeMin, Create_Fractal_DegreeMax, Create_Fractal_Seed, Create_Fractal_TrunkSize, Create_Fractal_LeafSize);
+                }
+      
+              }
             }
-          }
-        }  
+          }  
+        }
       }
     }
   }
@@ -21820,6 +21842,9 @@ int MAX_Default_Models_Number = 7;
 void SOLARCHVISION_add_DefaultModel (int n) {
 
   if (Load_LAND_MESH == 1) {
+    
+    SOLARCHVISION_add_Object2Ds_onLand(1); // 1 = people
+    
     SOLARCHVISION_add_Object2Ds_onLand(2); // 2 = 2D trees
   }    
   else {
