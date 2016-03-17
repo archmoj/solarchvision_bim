@@ -1245,7 +1245,7 @@ int ERASE_Solids = 0;
 int ERASE_Sections = 0;
 int ERASE_Cameras = 0;
 
-int LAND_TESSELLATION = 2;
+int LAND_TESSELLATION = 0; //2;
 
 int MODEL3D_TESSELLATION = 2;
 
@@ -21299,11 +21299,11 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
 
           if (n_Map != 0) {
           
-            int max_o = 50; // number of tries to find green points!
+            int max_o = int(10000 / pow(2, LAND_TESSELLATION)); // number of tries to find green points!
             
-            if (max_o > 50) max_o = 50;
+            //if (max_o > 100) max_o = 100;
            
-            if (i > 8) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+            if (i > 12) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
            
             for (int o = 0; o < max_o; o += 1) {
               
@@ -21401,10 +21401,10 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
 
           float[][] subFace = getSubFace(base_Vertices, Tessellation, n);
       
-          int max_o = int(4 * pow(random(1), 8)); // i.e. maximum 3 people in each pixel // <<<<<<<<<<<<<<<<<<<<
+          int max_o = int((16.0 / pow(2, LAND_TESSELLATION)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
           
           
-          if (i > 3) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+          if (i > 8) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
          
           for (int o = 0; o < max_o; o += 1) {
             
