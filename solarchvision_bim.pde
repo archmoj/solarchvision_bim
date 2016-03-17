@@ -83,7 +83,7 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 0; 
+int STATION_NUMBER = 1; 
 
 String[][] DEFINED_STATIONS = {
   
@@ -91,7 +91,7 @@ String[][] DEFINED_STATIONS = {
                                 {"Montreal_Biosphere", "QC", "CA", "45.5141", "-73.53145", "-75", "9", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"},  
   
   
-  
+                                {"Tehran_SBU", "XX", "IR", "35.797", "51.395", "52.5", "1672", "240.0", "", "", "IRN_TEHRAN_XX_IR"},
   
                                 {"Tehran_Adib", "XX", "IR", "35.797", "51.352", "52.5", "1769", "240.0", "", "", "IRN_TEHRAN_XX_IR"},
                                 
@@ -23281,6 +23281,9 @@ void SOLARCHVISION_draw_land (int target_window) {
                     SOLARCHVISION_OBJprintVertex(subFace[s][0],subFace[s][1],subFace[s][2]);
                   }
                   if (_turn == 2) { 
+                    
+                    v = 1 - v; // mirroring the image <<<<<<<<<<<<<<<<<<
+                    
                     SOLARCHVISION_OBJprintVtexture(u,v,0);
                   }
                   if (_turn == 3) {
@@ -26148,64 +26151,68 @@ void SOLARCHVISION_LoadLAND_TEXTURE (String LandDirectory) {
   LAND_TEXTURE_ImagePath[0] = "";
   
   Display_LAND_TEXTURE = 0;
-  
+
+  try {     
  
-  String[] filenames = sort(getfiles(LandDirectory)); // important to sort
-
-  if (filenames != null) {
-    for (int i = 0; i < filenames.length; i++) {
-      println(filenames[i]);
-
-      int _L = filenames[i].length();
-      String _Extention = filenames[i].substring(_L - 4,_L);
-      //println(_Extention);
-      if (_Extention.toLowerCase().equals(".jpg")) {
-        
-        String[] Parts = split(filenames[i], '_');
-        
-        if (Parts[0].toUpperCase().equals("ELEV")) {
+    String[] filenames = sort(getfiles(LandDirectory)); // important to sort
+  
+    if (filenames != null) {
+      for (int i = 0; i < filenames.length; i++) {
+        println(filenames[i]);
+  
+        int _L = filenames[i].length();
+        String _Extention = filenames[i].substring(_L - 4,_L);
+        //println(_Extention);
+        if (_Extention.toLowerCase().equals(".jpg")) {
           
-          if (Parts.length > 1) {
+          String[] Parts = split(filenames[i], '_');
+          
+          if (Parts[0].toUpperCase().equals("ELEV")) {
             
-            String dir = LandDirectory + "/" + filenames[i];
-            
-            {
-              String[] new_item = {dir};
-            
-              LAND_TEXTURE_ImagePath = (String[]) concat(LAND_TEXTURE_ImagePath, new_item);
-            }
-            
-            {
-              PImage[] new_item = {loadImage(dir)};
+            if (Parts.length > 1) {
               
-              LAND_TEXTURE = (PImage[]) concat(LAND_TEXTURE, new_item);
-            }
-            
-            float h = float(Parts[1]);
-            
-            {
-              float[] new_item = {h * 1.16363};
+              String dir = LandDirectory + "/" + filenames[i];
               
-              LAND_TEXTURE_scale_U = (float[]) concat(LAND_TEXTURE_scale_U, new_item);
-            }  
+              {
+                String[] new_item = {dir};
               
-            {
-              float[] new_item = {h * 0.66084};
+                LAND_TEXTURE_ImagePath = (String[]) concat(LAND_TEXTURE_ImagePath, new_item);
+              }
               
-              LAND_TEXTURE_scale_V = (float[]) concat(LAND_TEXTURE_scale_V, new_item);
-            }
-            
-            LAND_TEXTURE_num += 1;
-            
-            
-            Display_LAND_TEXTURE = 1;
-
-          } 
+              {
+                PImage[] new_item = {loadImage(dir)};
+                
+                LAND_TEXTURE = (PImage[]) concat(LAND_TEXTURE, new_item);
+              }
+              
+              float h = float(Parts[1]);
+              
+              {
+                float[] new_item = {h * 1.16363};
+                
+                LAND_TEXTURE_scale_U = (float[]) concat(LAND_TEXTURE_scale_U, new_item);
+              }  
+                
+              {
+                float[] new_item = {h * 0.66084};
+                
+                LAND_TEXTURE_scale_V = (float[]) concat(LAND_TEXTURE_scale_V, new_item);
+              }
+              
+              LAND_TEXTURE_num += 1;
+              
+              
+              Display_LAND_TEXTURE = 1;
+  
+            } 
+          }
         }
       }
     }
   }
-
+  catch (Exception e) {
+    println("ERROR loading LAND_TEXTURE!");  
+  }
 }
 
    
