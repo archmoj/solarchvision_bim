@@ -26279,9 +26279,34 @@ void SOLARCHVISION_add_ProjectModel_2DsFromFile () {
 }
 
 
-void SOLARCHVISION_add_ProjectModel () {
+void SOLARCHVISION_add_ProjectModel () { //CMC
+
+
+  {
+    float dx = 5 * 4.5;
+    float dy = 3 * 4.5;
+    float dz = 5 * 3.0;
+    float x = 0;
+    float y = 0;
+    float z = dz;    
+    float rot = 34;
+    SOLARCHVISION_beginNewGroup3D(x,y,z,1,1,1,0,0,rot);
+    SOLARCHVISION_add_Box_Core(7,0,0,1,1, x,y,z, dx, dy, dz, rot);
+    //SOLARCHVISION_add_Solid(x,y,z, CubePower,CubePower,CubePower, dx,dy,dz, 0,0,rot, 1); 
+  }  
+
+
+
+
+
+
+
+  SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
   
+  addToLastGroup3D = 0;
+
 }
+
 
 void SOLARCHVISION_add_ProjectModel_BASIC () {
 
