@@ -15018,16 +15018,13 @@ void SOLARCHVISION_delete_Selection () {
       if (OBJ_NUM != 0) {    
         
         for (int q = 0; q < allGroup3Ds_num + 1; q++) {
-          if ((allGroup3Ds_Object2Ds[q][0] <= OBJ_NUM) && (OBJ_NUM <= allGroup3Ds_Object2Ds[q][1])) {
+          if (allGroup3Ds_Object2Ds[q][0] <= OBJ_NUM) {
             
-            //println("object2D found at group:", q);
+            if (OBJ_NUM <= allGroup3Ds_Object2Ds[q][1]) { // object is inside the group so the first pointer should be kept
+              allGroup3Ds_Object2Ds[q][0] = +1; 
+            }
             
-            int startObject2D = allGroup3Ds_Object2Ds[q][0];
-            int endObject2D = allGroup3Ds_Object2Ds[q][1];
-            
-            println(startObject2D, endObject2D);
-    
-            for (int i = q + 1; i < allGroup3Ds_num + 1; i++) {
+            for (int i = q; i < allGroup3Ds_num + 1; i++) {
               for (int j = 0; j < 2; j++) {
                 
                 allGroup3Ds_Object2Ds[i][j] -= 1;
@@ -15035,7 +15032,6 @@ void SOLARCHVISION_delete_Selection () {
                 if (allGroup3Ds_Object2Ds[i][j] < 0) allGroup3Ds_Object2Ds[i][j] = 0; 
               }
             }  
-            allGroup3Ds_Object2Ds[q][1] -= 1; // because deleting a object2D also changes the end pointer of the same object 
             
             break;
           }
