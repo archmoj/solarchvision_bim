@@ -1,3 +1,5 @@
+// problems deleteing when object2D/etc. added outside the groups. should modify the delete function to also modify the pointers of the groups that comes after those objects. 
+
 // exporting shaded land is not written. 
 
 // void SOLARCHVISION_rotate_selectedGroup3Ds 
