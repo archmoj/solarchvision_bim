@@ -14752,12 +14752,9 @@ void SOLARCHVISION_group_Selection () {
     addToLastGroup3D = pre_addToLastGroup3D;
     
 
+    SOLARCHVISION_delete_Selection();
 
-    //SOLARCHVISION_delete_Selection(); 
-    
-
-    // selecting resulted group i.e. the last group)
-    
+   
     selectedGroup3D_numbers = new int [2];
     selectedGroup3D_numbers[0] = 0;
     selectedGroup3D_numbers[1] = allGroup3Ds_num;
