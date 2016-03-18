@@ -1,4 +1,4 @@
-// now only exports the last land texture to obj file! 
+// exporting shaded land is not written. 
 
 // void SOLARCHVISION_rotate_selectedGroup3Ds 
 // serach for SOLARCHVISION_rotate_Selection ( need to make them all correct for local pivots!
@@ -9,7 +9,8 @@
 
 // some rotations are not in degrees e.g. solids, fractals??, what else?
 
-// colud add create group <<<< we have it :)
+// could add join/explode groups ?
+
 // could add create face
 // could add create vertex
 // drop functions only works for living objects and not at Group3D level
@@ -14171,6 +14172,204 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
   }
 
 
+  if (Current_ObjectCategory == ObjectCategory_Faces) {
+    
+    int number_of_Faces_before = allFaces.length;
+    
+    for (int o = 0; o < selectedFace_numbers.length; o++) {
+      
+      int f = selectedFace_numbers[o];        
+
+      SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
+
+      int number_of_Vertices_before = allVertices.length;
+      
+      int[] Group3DVertices_OLD = {0}; // keeps the list of exiting vertex numbers
+      int[] Group3DVertices_NEW = {0}; // keeps the list of new vertex numbers
+  
+      if ((0 < f) && (f < allFaces.length)) {
+     
+        int[] newFace = {};
+        
+        for (int j = 0; j < allFaces[f].length; j++) {
+          int vNo = allFaces[f][j];
+          
+          int vertex_listed = 0;
+          
+          for (int q = 1; q < Group3DVertices_OLD.length; q++) {
+            if (vNo == Group3DVertices_OLD[q]) {
+              vertex_listed = q;
+              break;                      
+            }
+          }         
+         
+          if (vertex_listed == 0) {
+            int[] newVertexListed = {vNo};
+            Group3DVertices_OLD = concat(Group3DVertices_OLD, newVertexListed);
+          
+            float x = allVertices[vNo][0];
+            float y = allVertices[vNo][1];
+            float z = allVertices[vNo][2];
+
+            int[] newVertexAdded = {SOLARCHVISION_add_Vertex(x, y, z)};
+            Group3DVertices_NEW = concat(Group3DVertices_NEW, newVertexAdded);
+            
+            vertex_listed = Group3DVertices_OLD.length - 1;
+          } 
+          
+          //println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
+          
+          int[] new_vertexItem = {number_of_Vertices_before + vertex_listed - 1};
+          
+          newFace = concat(newFace, new_vertexItem); 
+        }
+        
+        defaultMaterial = allFaces_MTLV[f][0];
+        defaultTessellation = allFaces_MTLV[f][1];
+        defaultLayer = allFaces_MTLV[f][2];
+        defaultVisibility = allFaces_MTLV[f][3];        
+        
+        SOLARCHVISION_add_Face(newFace);
+        
+
+      }
+
+    }
+    
+    
+    // selecting new objetcs
+    
+    selectedFace_numbers = new int [1];
+    selectedFace_numbers[0] = 0;
+    
+    for (int o = number_of_Faces_before; o < allFaces.length; o++) {
+      
+      int[] newlyAddedFace = {o};
+      
+      selectedFace_numbers = concat(selectedFace_numbers, newlyAddedFace);
+    }      
+  }
+
+
+  if (Current_ObjectCategory == ObjectCategory_Solids) {
+    
+    int number_of_Solid_before = allSolids.length; 
+
+    for (int o = 0; o < selectedSolid_numbers.length; o++) {
+
+      int OBJ_NUM = selectedSolid_numbers[o];
+
+      if (OBJ_NUM != 0) {    
+        
+        float Solid_posX = Solid_get_posX(OBJ_NUM);
+        float Solid_posY = Solid_get_posY(OBJ_NUM);
+        float Solid_posZ = Solid_get_posZ(OBJ_NUM);
+        float Solid_powX = Solid_get_powX(OBJ_NUM);
+        float Solid_powY = Solid_get_powY(OBJ_NUM);
+        float Solid_powZ = Solid_get_powZ(OBJ_NUM);
+        float Solid_scaleX = Solid_get_scaleX(OBJ_NUM);
+        float Solid_scaleY = Solid_get_scaleY(OBJ_NUM);
+        float Solid_scaleZ = Solid_get_scaleZ(OBJ_NUM);
+        float Solid_rotX = Solid_get_rotX(OBJ_NUM);
+        float Solid_rotY = Solid_get_rotY(OBJ_NUM);
+        float Solid_rotZ = Solid_get_rotZ(OBJ_NUM);
+        float Solid_value = Solid_get_value(OBJ_NUM);
+
+        SOLARCHVISION_add_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);        
+      }
+    }
+    
+    // selecting new objetcs
+    
+    selectedSolid_numbers = new int [1];
+    selectedSolid_numbers[0] = 0;
+    
+    for (int o = number_of_Solid_before; o < allSolids.length; o++) {
+      
+      int[] newlyAddedSolid = {o};
+      
+      selectedSolid_numbers = concat(selectedSolid_numbers, newlyAddedSolid);
+    }     
+  }    
+
+  
+  if (Current_ObjectCategory == ObjectCategory_Sections) {
+    
+    int number_of_Section_before = allSections_num + 1; 
+
+    for (int o = 0; o < selectedSection_numbers.length; o++) {
+
+      int OBJ_NUM = selectedSection_numbers[o];
+
+      if (OBJ_NUM != 0) {    
+        
+        float Section_offset_U = allSections_UVERAB[OBJ_NUM][0];
+        float Section_offset_V = allSections_UVERAB[OBJ_NUM][1];
+        float Section_Elevation = allSections_UVERAB[OBJ_NUM][2];
+        float Section_Rotation = allSections_UVERAB[OBJ_NUM][3];
+        float Section_scale_U = allSections_UVERAB[OBJ_NUM][4];
+        float Section_scale_V = allSections_UVERAB[OBJ_NUM][5];
+  
+        int Section_Type = allSections_Type[OBJ_NUM];
+        int Section_RES1 = allSections_RES1[OBJ_NUM];
+        int Section_RES2 = allSections_RES2[OBJ_NUM];
+
+        SOLARCHVISION_add_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);        
+      }
+    }
+    
+    // selecting new objetcs
+    
+    selectedSection_numbers = new int [1];
+    selectedSection_numbers[0] = 0;
+    
+    for (int o = number_of_Section_before; o < allSections_num + 1; o++) {
+      
+      int[] newlyAddedSection = {o};
+      
+      selectedSection_numbers = concat(selectedSection_numbers, newlyAddedSection);
+    }     
+  }  
+  
+  if (Current_ObjectCategory == ObjectCategory_Cameras) {
+    
+    int number_of_Camera_before = allCameras_num + 1; 
+
+    for (int o = 0; o < selectedCamera_numbers.length; o++) {
+
+      int OBJ_NUM = selectedCamera_numbers[o];
+
+      if (OBJ_NUM != 0) {    
+        
+        float Camera_X = allCameras_PPPSRRRF[OBJ_NUM][0];
+        float Camera_Y = allCameras_PPPSRRRF[OBJ_NUM][1];
+        float Camera_Z = allCameras_PPPSRRRF[OBJ_NUM][2];
+        float Camera_S = allCameras_PPPSRRRF[OBJ_NUM][3];
+        float Camera_RX = allCameras_PPPSRRRF[OBJ_NUM][4];
+        float Camera_RY = allCameras_PPPSRRRF[OBJ_NUM][5];
+        float Camera_RZ = allCameras_PPPSRRRF[OBJ_NUM][6];
+        float Camera_ZOOM = allCameras_PPPSRRRF[OBJ_NUM][7];
+  
+        int Camera_Type = allCameras_Type[OBJ_NUM];
+
+        SOLARCHVISION_add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);        
+      }
+    }
+    
+    // selecting new objetcs
+    
+    selectedCamera_numbers = new int [1];
+    selectedCamera_numbers[0] = 0;
+    
+    for (int o = number_of_Camera_before; o < allCameras_num + 1; o++) {
+      
+      int[] newlyAddedCamera = {o};
+      
+      selectedCamera_numbers = concat(selectedCamera_numbers, newlyAddedCamera);
+    }     
+  }  
+
+
   if (Current_ObjectCategory == ObjectCategory_Group3Ds) {
     
     int n1 = Object2D_PEOPLE_Files_Num;
@@ -14323,7 +14522,7 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
                   vertex_listed = Group3DVertices_OLD.length - 1;
                 } 
                 
-                println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
+                //println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
                 
                 int[] new_vertexItem = {number_of_Vertices_before + vertex_listed - 1};
                 
@@ -14361,210 +14560,218 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
     
     if (SOLID_added != 0) SOLARCHVISION_calculate_SolidImpact_selectedSections();
   }
-
-
-
-
-  if (Current_ObjectCategory == ObjectCategory_Faces) {
-    
-    int number_of_Faces_before = allFaces.length;
-    
-    for (int o = 0; o < selectedFace_numbers.length; o++) {
-      
-      int f = selectedFace_numbers[o];        
-
-      SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
-
-      int number_of_Vertices_before = allVertices.length;
-      
-      int[] Group3DVertices_OLD = {0}; // keeps the list of exiting vertex numbers
-      int[] Group3DVertices_NEW = {0}; // keeps the list of new vertex numbers
-  
-      if ((0 < f) && (f < allFaces.length)) {
-     
-        int[] newFace = {};
-        
-        for (int j = 0; j < allFaces[f].length; j++) {
-          int vNo = allFaces[f][j];
-          
-          int vertex_listed = 0;
-          
-          for (int q = 1; q < Group3DVertices_OLD.length; q++) {
-            if (vNo == Group3DVertices_OLD[q]) {
-              vertex_listed = q;
-              break;                      
-            }
-          }         
-         
-          if (vertex_listed == 0) {
-            int[] newVertexListed = {vNo};
-            Group3DVertices_OLD = concat(Group3DVertices_OLD, newVertexListed);
-          
-            float x = allVertices[vNo][0];
-            float y = allVertices[vNo][1];
-            float z = allVertices[vNo][2];
-
-            int[] newVertexAdded = {SOLARCHVISION_add_Vertex(x, y, z)};
-            Group3DVertices_NEW = concat(Group3DVertices_NEW, newVertexAdded);
-            
-            vertex_listed = Group3DVertices_OLD.length - 1;
-          } 
-          
-          println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
-          
-          int[] new_vertexItem = {number_of_Vertices_before + vertex_listed - 1};
-          
-          newFace = concat(newFace, new_vertexItem); 
-        }
-        
-        defaultMaterial = allFaces_MTLV[f][0];
-        defaultTessellation = allFaces_MTLV[f][1];
-        defaultLayer = allFaces_MTLV[f][2];
-        defaultVisibility = allFaces_MTLV[f][3];        
-        
-        SOLARCHVISION_add_Face(newFace);
-        
-
-      }
-
-    }
-    
-    
-    // selecting new objetcs
-    
-    selectedFace_numbers = new int [1];
-    selectedFace_numbers[0] = 0;
-    
-    for (int o = number_of_Faces_before; o < allFaces.length; o++) {
-      
-      int[] newlyAddedFace = {o};
-      
-      selectedFace_numbers = concat(selectedFace_numbers, newlyAddedFace);
-    }      
-  }
-
-
-  if (Current_ObjectCategory == ObjectCategory_Solids) {
-    
-    int number_of_Solid_before = allSolids.length; 
-
-    for (int o = 0; o < selectedSolid_numbers.length; o++) {
-
-      int OBJ_NUM = selectedSolid_numbers[o];
-
-      if (OBJ_NUM != 0) {    
-        
-        float Solid_posX = Solid_get_posX(OBJ_NUM);
-        float Solid_posY = Solid_get_posY(OBJ_NUM);
-        float Solid_posZ = Solid_get_posZ(OBJ_NUM);
-        float Solid_powX = Solid_get_powX(OBJ_NUM);
-        float Solid_powY = Solid_get_powY(OBJ_NUM);
-        float Solid_powZ = Solid_get_powZ(OBJ_NUM);
-        float Solid_scaleX = Solid_get_scaleX(OBJ_NUM);
-        float Solid_scaleY = Solid_get_scaleY(OBJ_NUM);
-        float Solid_scaleZ = Solid_get_scaleZ(OBJ_NUM);
-        float Solid_rotX = Solid_get_rotX(OBJ_NUM);
-        float Solid_rotY = Solid_get_rotY(OBJ_NUM);
-        float Solid_rotZ = Solid_get_rotZ(OBJ_NUM);
-        float Solid_value = Solid_get_value(OBJ_NUM);
-
-        SOLARCHVISION_add_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);        
-      }
-    }
-    
-    // selecting new objetcs
-    
-    selectedSolid_numbers = new int [1];
-    selectedSolid_numbers[0] = 0;
-    
-    for (int o = number_of_Solid_before; o < allSolids.length; o++) {
-      
-      int[] newlyAddedSolid = {o};
-      
-      selectedSolid_numbers = concat(selectedSolid_numbers, newlyAddedSolid);
-    }     
-  }    
-
-  
-  if (Current_ObjectCategory == ObjectCategory_Sections) {
-    
-    int number_of_Section_before = allSections_num + 1; 
-
-    for (int o = 0; o < selectedSection_numbers.length; o++) {
-
-      int OBJ_NUM = selectedSection_numbers[o];
-
-      if (OBJ_NUM != 0) {    
-        
-        float Section_offset_U = allSections_UVERAB[OBJ_NUM][0];
-        float Section_offset_V = allSections_UVERAB[OBJ_NUM][1];
-        float Section_Elevation = allSections_UVERAB[OBJ_NUM][2];
-        float Section_Rotation = allSections_UVERAB[OBJ_NUM][3];
-        float Section_scale_U = allSections_UVERAB[OBJ_NUM][4];
-        float Section_scale_V = allSections_UVERAB[OBJ_NUM][5];
-  
-        int Section_Type = allSections_Type[OBJ_NUM];
-        int Section_RES1 = allSections_RES1[OBJ_NUM];
-        int Section_RES2 = allSections_RES2[OBJ_NUM];
-
-        SOLARCHVISION_add_Section(Section_Type, Section_offset_U, Section_offset_V, Section_Elevation, Section_Rotation, Section_scale_U, Section_scale_V, Section_RES1, Section_RES2);        
-      }
-    }
-    
-    // selecting new objetcs
-    
-    selectedSection_numbers = new int [1];
-    selectedSection_numbers[0] = 0;
-    
-    for (int o = number_of_Section_before; o < allSections_num + 1; o++) {
-      
-      int[] newlyAddedSection = {o};
-      
-      selectedSection_numbers = concat(selectedSection_numbers, newlyAddedSection);
-    }     
-  }  
-  
-  if (Current_ObjectCategory == ObjectCategory_Cameras) {
-    
-    int number_of_Camera_before = allCameras_num + 1; 
-
-    for (int o = 0; o < selectedCamera_numbers.length; o++) {
-
-      int OBJ_NUM = selectedCamera_numbers[o];
-
-      if (OBJ_NUM != 0) {    
-        
-        float Camera_X = allCameras_PPPSRRRF[OBJ_NUM][0];
-        float Camera_Y = allCameras_PPPSRRRF[OBJ_NUM][1];
-        float Camera_Z = allCameras_PPPSRRRF[OBJ_NUM][2];
-        float Camera_S = allCameras_PPPSRRRF[OBJ_NUM][3];
-        float Camera_RX = allCameras_PPPSRRRF[OBJ_NUM][4];
-        float Camera_RY = allCameras_PPPSRRRF[OBJ_NUM][5];
-        float Camera_RZ = allCameras_PPPSRRRF[OBJ_NUM][6];
-        float Camera_ZOOM = allCameras_PPPSRRRF[OBJ_NUM][7];
-  
-        int Camera_Type = allCameras_Type[OBJ_NUM];
-
-        SOLARCHVISION_add_Camera(Camera_Type, Camera_X, Camera_Y, Camera_Z, Camera_S, Camera_RX, Camera_RY, Camera_RZ, Camera_ZOOM);        
-      }
-    }
-    
-    // selecting new objetcs
-    
-    selectedCamera_numbers = new int [1];
-    selectedCamera_numbers[0] = 0;
-    
-    for (int o = number_of_Camera_before; o < allCameras_num + 1; o++) {
-      
-      int[] newlyAddedCamera = {o};
-      
-      selectedCamera_numbers = concat(selectedCamera_numbers, newlyAddedCamera);
-    }     
-  }  
    
 
 }
        
+
+
+void SOLARCHVISION_group_Selection () {
+
+
+  int make_group = 0;
+  
+  if (Current_ObjectCategory == ObjectCategory_Solids) {
+
+    make_group = 1;
+  }      
+  
+  if (Current_ObjectCategory == ObjectCategory_Faces) {
+    
+    make_group = 1;
+  }  
+  
+  if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+
+    make_group = 1;
+  }  
+  
+  if (Current_ObjectCategory == ObjectCategory_Fractals) {
+
+    make_group = 1;
+  }    
+  
+
+  
+
+  if (make_group == 1) {
+   
+
+
+    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);  
+
+    int pre_addToLastGroup3D = addToLastGroup3D;
+    addToLastGroup3D = 1;
+  
+  
+    if (Current_ObjectCategory == ObjectCategory_Fractals) {
+  
+      for (int o = 0; o < selectedFractal_numbers.length; o++) {
+  
+        int OBJ_NUM = selectedFractal_numbers[o];
+  
+        if (OBJ_NUM != 0) {    
+          
+          float x = allFractals_XYZSR[OBJ_NUM][0];
+          float y = allFractals_XYZSR[OBJ_NUM][1];
+          float z = allFractals_XYZSR[OBJ_NUM][2];
+          float d = allFractals_XYZSR[OBJ_NUM][3];
+          float rot = allFractals_XYZSR[OBJ_NUM][4];
+          
+          int n = allFractals_Type[OBJ_NUM];
+          int dMin = allFractals_DegreeMin[OBJ_NUM];
+          int dMax = allFractals_DegreeMax[OBJ_NUM];
+          int s = allFractals_Seed[OBJ_NUM];
+          float TrunkSize = allFractals_TrunkSize[OBJ_NUM];
+          float LeafSize = allFractals_LeafSize[OBJ_NUM];
+
+          SOLARCHVISION_add_Fractal(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);        
+        }
+      }
+    }  
+  
+    if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+  
+      int n1 = Object2D_PEOPLE_Files_Num;
+  
+      for (int o = 0; o < selectedObject2D_numbers.length; o++) {
+  
+        int OBJ_NUM = selectedObject2D_numbers[o];
+  
+        if (OBJ_NUM != 0) {    
+          
+          float x = allObject2Ds_XYZS[OBJ_NUM][0];
+          float y = allObject2Ds_XYZS[OBJ_NUM][1];
+          float z = allObject2Ds_XYZS[OBJ_NUM][2];
+          float s = allObject2Ds_XYZS[OBJ_NUM][3];
+          
+          int n = allObject2Ds_MAP[OBJ_NUM];
+          if (abs(n) > n1) {
+            SOLARCHVISION_add_Object2D("TREES", n, x, y, z, s);
+          }
+          else {
+            SOLARCHVISION_add_Object2D("PEOPLE", n, x, y, z, s);
+          }
+        }
+      }
+    }
+
+    if (Current_ObjectCategory == ObjectCategory_Faces) {
+      
+      for (int o = 0; o < selectedFace_numbers.length; o++) {
+        
+        int f = selectedFace_numbers[o];        
+  
+        SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
+  
+        int number_of_Vertices_before = allVertices.length;
+        
+        int[] Group3DVertices_OLD = {0}; // keeps the list of exiting vertex numbers
+        int[] Group3DVertices_NEW = {0}; // keeps the list of new vertex numbers
+    
+        if ((0 < f) && (f < allFaces.length)) {
+       
+          int[] newFace = {};
+          
+          for (int j = 0; j < allFaces[f].length; j++) {
+            int vNo = allFaces[f][j];
+            
+            int vertex_listed = 0;
+            
+            for (int q = 1; q < Group3DVertices_OLD.length; q++) {
+              if (vNo == Group3DVertices_OLD[q]) {
+                vertex_listed = q;
+                break;                      
+              }
+            }         
+           
+            if (vertex_listed == 0) {
+              int[] newVertexListed = {vNo};
+              Group3DVertices_OLD = concat(Group3DVertices_OLD, newVertexListed);
+            
+              float x = allVertices[vNo][0];
+              float y = allVertices[vNo][1];
+              float z = allVertices[vNo][2];
+  
+              int[] newVertexAdded = {SOLARCHVISION_add_Vertex(x, y, z)};
+              Group3DVertices_NEW = concat(Group3DVertices_NEW, newVertexAdded);
+              
+              vertex_listed = Group3DVertices_OLD.length - 1;
+            } 
+            
+            //println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
+            
+            int[] new_vertexItem = {number_of_Vertices_before + vertex_listed - 1};
+            
+            newFace = concat(newFace, new_vertexItem); 
+          }
+          
+          defaultMaterial = allFaces_MTLV[f][0];
+          defaultTessellation = allFaces_MTLV[f][1];
+          defaultLayer = allFaces_MTLV[f][2];
+          defaultVisibility = allFaces_MTLV[f][3];        
+          
+          SOLARCHVISION_add_Face(newFace);
+
+        }
+  
+      }    
+    }
+  
+  
+    if (Current_ObjectCategory == ObjectCategory_Solids) {
+  
+      for (int o = 0; o < selectedSolid_numbers.length; o++) {
+  
+        int OBJ_NUM = selectedSolid_numbers[o];
+  
+        if (OBJ_NUM != 0) {    
+          
+          float Solid_posX = Solid_get_posX(OBJ_NUM);
+          float Solid_posY = Solid_get_posY(OBJ_NUM);
+          float Solid_posZ = Solid_get_posZ(OBJ_NUM);
+          float Solid_powX = Solid_get_powX(OBJ_NUM);
+          float Solid_powY = Solid_get_powY(OBJ_NUM);
+          float Solid_powZ = Solid_get_powZ(OBJ_NUM);
+          float Solid_scaleX = Solid_get_scaleX(OBJ_NUM);
+          float Solid_scaleY = Solid_get_scaleY(OBJ_NUM);
+          float Solid_scaleZ = Solid_get_scaleZ(OBJ_NUM);
+          float Solid_rotX = Solid_get_rotX(OBJ_NUM);
+          float Solid_rotY = Solid_get_rotY(OBJ_NUM);
+          float Solid_rotZ = Solid_get_rotZ(OBJ_NUM);
+          float Solid_value = Solid_get_value(OBJ_NUM);
+  
+          SOLARCHVISION_add_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);        
+        }
+      }   
+    }    
+  
+
+    
+
+    addToLastGroup3D = pre_addToLastGroup3D;
+    
+
+
+    //SOLARCHVISION_delete_Selection(); 
+    
+
+    // selecting resulted group i.e. the last group)
+    
+    selectedGroup3D_numbers = new int [2];
+    selectedGroup3D_numbers[0] = 0;
+    selectedGroup3D_numbers[1] = allGroup3Ds_num;
+
+    
+    
+    Current_ObjectCategory = ObjectCategory_Group3Ds;
+    
+    BAR_b_Update = 1;
+    WIN3D_Update = 1;
+   
+  }
+
+}
 
 
 
@@ -33737,7 +33944,11 @@ void mouseClicked () {
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Ungroup Selection")) {
               SOLARCHVISION_ungroup_Selection();
               WIN3D_Update = 1;              
-            }               
+            }      
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Group Selection")) {
+              SOLARCHVISION_group_Selection();
+              WIN3D_Update = 1;              
+            }              
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Duplicate Selection (Identical)")) {
               SOLARCHVISION_duplicate_Selection(0);
               WIN3D_Update = 1;              
@@ -44346,7 +44557,7 @@ String[][] BAR_a_Items = {
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Begin New Group3D at Origin", "Begin New Group3D at Pivot", "Viewport >> Camera", "Camera", "Section", "Solid", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"},
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Solid", "Select Section",  "Select Camera", "Select LandPoint", "Select Fractal", "Select Object2D", "Select Group3D", "Select Face", "Select Vertex", "Soft Selection", "Group3D >> Vertex", "Group3D >> Face", "Group3D >> Solid", "Group3D >> Object2D", "Group3D >> Fractal", "Fractal >> Group3D", "Object2D >> Group3D", "Solid >> Group3D", "Face >> Group3D", "Vertex >> Group3D", "Vertex >> Face", "Face >> Vertex", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices Selection", "Select All Isolated Vertices"},
-                        {"Edit", "Duplicate Selection (Identical)", "Duplicate Selection (Variation)", "Ungroup Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces", "Flatten Selected LandPoints"},
+                        {"Edit", "Duplicate Selection (Identical)", "Duplicate Selection (Variation)", "Group Selection", "Ungroup Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces", "Flatten Selected LandPoints"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Power", "PowerX", "PowerY", "PowerZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
                         {"Match", "Save Current ReferenceBox", "Reset Saved ReferenceBox", "Use Selection ReferenceBox", "Use Origin ReferenceBox", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunkSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunkSize", "Assign LeafSize", "Assign AllFractalProps", "Assign Pivot", "Drop on LandSurface", "Drop on ModelSurface (Up)", "Drop on ModelSurface (Down)"},
                         {"Action", "Undo", "Redo", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Solid Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Solid Graph", "REC. Screenshot", "Stop REC."}
