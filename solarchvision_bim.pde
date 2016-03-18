@@ -1,4 +1,5 @@
-// problems deleteing when object2D/etc. added outside the groups. should modify the delete function to also modify the pointers of the groups that comes after those objects. 
+// check modifications for this: problems deleteing when object2D/etc. added outside the groups. should modify the delete function to also modify the pointers of the groups that comes after those objects.
+// create groups not woking fine for faces? should also check solids and fractals.
 
 // exporting shaded land is not written. 
 
@@ -14925,16 +14926,13 @@ void SOLARCHVISION_delete_Selection () {
       if (OBJ_NUM != 0) {    
 
         for (int q = 0; q < allGroup3Ds_num + 1; q++) {
-          if ((allGroup3Ds_Fractals[q][0] <= OBJ_NUM) && (OBJ_NUM <= allGroup3Ds_Fractals[q][1])) {
+          if (allGroup3Ds_Fractals[q][0] <= OBJ_NUM) {
             
-            //println("Fractal found at group:", q);
+            if (OBJ_NUM <= allGroup3Ds_Fractals[q][1]) { // object is inside the group so the first pointer should be kept
+              allGroup3Ds_Fractals[q][0] = +1; 
+            }
             
-            int startFractal = allGroup3Ds_Fractals[q][0];
-            int endFractal = allGroup3Ds_Fractals[q][1];
-            
-            println(startFractal, endFractal);
-    
-            for (int i = q + 1; i < allGroup3Ds_num + 1; i++) {
+            for (int i = q; i < allGroup3Ds_num + 1; i++) {
               for (int j = 0; j < 2; j++) {
                 
                 allGroup3Ds_Fractals[i][j] -= 1;
@@ -14942,11 +14940,10 @@ void SOLARCHVISION_delete_Selection () {
                 if (allGroup3Ds_Fractals[i][j] < 0) allGroup3Ds_Fractals[i][j] = 0; 
               }
             }  
-            allGroup3Ds_Fractals[q][1] -= 1; // because deleting a Fractal also changes the end pointer of the same object 
             
             break;
           }
-        }        
+        }
         
         
         {
@@ -15075,16 +15072,13 @@ void SOLARCHVISION_delete_Selection () {
       if (OBJ_NUM != 0) {    
         
         for (int q = 0; q < allGroup3Ds_num + 1; q++) {
-          if ((allGroup3Ds_Solids[q][0] <= OBJ_NUM) && (OBJ_NUM <= allGroup3Ds_Solids[q][1])) {
+          if (allGroup3Ds_Solids[q][0] <= OBJ_NUM) {
             
-            //println("solid found at group:", q);
+            if (OBJ_NUM <= allGroup3Ds_Solids[q][1]) { // object is inside the group so the first pointer should be kept
+              allGroup3Ds_Solids[q][0] = +1; 
+            }
             
-            int startSolid = allGroup3Ds_Solids[q][0];
-            int endSolid = allGroup3Ds_Solids[q][1];
-            
-            println(startSolid, endSolid);
-
-            for (int i = q + 1; i < allGroup3Ds_num + 1; i++) {
+            for (int i = q; i < allGroup3Ds_num + 1; i++) {
               for (int j = 0; j < 2; j++) {
                 
                 allGroup3Ds_Solids[i][j] -= 1;
@@ -15092,8 +15086,7 @@ void SOLARCHVISION_delete_Selection () {
                 if (allGroup3Ds_Solids[i][j] < 0) allGroup3Ds_Solids[i][j] = 0; 
               }
             }  
-            allGroup3Ds_Solids[q][1] -= 1; // because deleting a solid also changes the end pointer of the same object 
-
+            
             break;
           }
         }
@@ -15131,16 +15124,13 @@ void SOLARCHVISION_delete_Selection () {
       if (OBJ_NUM != 0) {    
         
         for (int q = 0; q < allGroup3Ds_num + 1; q++) {
-          if ((allGroup3Ds_Faces[q][0] <= OBJ_NUM) && (OBJ_NUM <= allGroup3Ds_Faces[q][1])) {
+          if (allGroup3Ds_Faces[q][0] <= OBJ_NUM) {
             
-            //println("Face found at group:", q);
+            if (OBJ_NUM <= allGroup3Ds_Faces[q][1]) { // object is inside the group so the first pointer should be kept
+              allGroup3Ds_Faces[q][0] = +1; 
+            }
             
-            int startFace = allGroup3Ds_Faces[q][0];
-            int endFace = allGroup3Ds_Faces[q][1];
-            
-            println(startFace, endFace);
-
-            for (int i = q + 1; i < allGroup3Ds_num + 1; i++) {
+            for (int i = q; i < allGroup3Ds_num + 1; i++) {
               for (int j = 0; j < 2; j++) {
                 
                 allGroup3Ds_Faces[i][j] -= 1;
@@ -15148,8 +15138,7 @@ void SOLARCHVISION_delete_Selection () {
                 if (allGroup3Ds_Faces[i][j] < 0) allGroup3Ds_Faces[i][j] = 0; 
               }
             }  
-            allGroup3Ds_Faces[q][1] -= 1; // because deleting a Face also changes the end pointer of the same object 
-
+            
             break;
           }
         }
