@@ -14929,7 +14929,7 @@ void SOLARCHVISION_delete_Selection () {
           if (allGroup3Ds_Fractals[q][0] <= OBJ_NUM) {
             
             if (OBJ_NUM <= allGroup3Ds_Fractals[q][1]) { // object is inside the group so the first pointer should be kept
-              allGroup3Ds_Fractals[q][0] = +1; 
+              allGroup3Ds_Fractals[q][0] += 1; 
             }
             
             for (int i = q; i < allGroup3Ds_num + 1; i++) {
@@ -15018,7 +15018,7 @@ void SOLARCHVISION_delete_Selection () {
           if (allGroup3Ds_Object2Ds[q][0] <= OBJ_NUM) {
             
             if (OBJ_NUM <= allGroup3Ds_Object2Ds[q][1]) { // object is inside the group so the first pointer should be kept
-              allGroup3Ds_Object2Ds[q][0] = +1; 
+              allGroup3Ds_Object2Ds[q][0] += 1; 
             }
             
             for (int i = q; i < allGroup3Ds_num + 1; i++) {
@@ -15075,7 +15075,7 @@ void SOLARCHVISION_delete_Selection () {
           if (allGroup3Ds_Solids[q][0] <= OBJ_NUM) {
             
             if (OBJ_NUM <= allGroup3Ds_Solids[q][1]) { // object is inside the group so the first pointer should be kept
-              allGroup3Ds_Solids[q][0] = +1; 
+              allGroup3Ds_Solids[q][0] += 1; 
             }
             
             for (int i = q; i < allGroup3Ds_num + 1; i++) {
@@ -15127,7 +15127,7 @@ void SOLARCHVISION_delete_Selection () {
           if (allGroup3Ds_Faces[q][0] <= OBJ_NUM) {
             
             if (OBJ_NUM <= allGroup3Ds_Faces[q][1]) { // object is inside the group so the first pointer should be kept
-              allGroup3Ds_Faces[q][0] = +1; 
+              allGroup3Ds_Faces[q][0] += 1; 
             }
             
             for (int i = q; i < allGroup3Ds_num + 1; i++) {
