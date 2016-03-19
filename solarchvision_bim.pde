@@ -14927,21 +14927,13 @@ void SOLARCHVISION_delete_Selection () {
 
         for (int q = 0; q < allGroup3Ds_num + 1; q++) {
           if (allGroup3Ds_Fractals[q][0] <= OBJ_NUM) {
+
+            if (allGroup3Ds_Fractals[q][0] > 0) allGroup3Ds_Fractals[q][0] -= 1;
+            if (allGroup3Ds_Fractals[q][1] > 0) allGroup3Ds_Fractals[q][1] -= 1;
             
             if (OBJ_NUM <= allGroup3Ds_Fractals[q][1]) { // object is inside the group so the first pointer should be kept
-              allGroup3Ds_Fractals[q][0] += 1; 
+              allGroup3Ds_Fractals[q][0] += 1;
             }
-            
-            for (int i = q; i < allGroup3Ds_num + 1; i++) {
-              for (int j = 0; j < 2; j++) {
-                
-                allGroup3Ds_Fractals[i][j] -= 1;
-                
-                if (allGroup3Ds_Fractals[i][j] < 0) allGroup3Ds_Fractals[i][j] = 0; 
-              }
-            }  
-            
-            break;
           }
         }
         
