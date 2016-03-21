@@ -1,5 +1,3 @@
-// create groups not woking fine for faces? 
-
 // exporting shaded land is not written. 
 
 // void SOLARCHVISION_rotate_selectedGroup3Ds 
@@ -14182,8 +14180,6 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
       
       int f = selectedFace_numbers[o];        
 
-      SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
-
       int number_of_Vertices_before = allVertices.length;
       
       int[] PolymeshVertices_OLD = {0}; // keeps the list of exiting vertex numbers
@@ -14693,8 +14689,6 @@ void SOLARCHVISION_group_Selection () {
       for (int o = 0; o < selectedFace_numbers.length; o++) {
         
         int f = selectedFace_numbers[o];        
-  
-        SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
   
         int number_of_Vertices_before = allVertices.length;
         
