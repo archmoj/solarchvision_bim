@@ -1,5 +1,4 @@
-// check modifications for this: problems deleteing when object2D/etc. added outside the groups. should modify the delete function to also modify the pointers of the groups that comes after those objects.
-// create groups not woking fine for faces? should also check solids and fractals.
+// create groups not woking fine for faces? 
 
 // exporting shaded land is not written. 
 
@@ -14187,8 +14186,8 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
 
       int number_of_Vertices_before = allVertices.length;
       
-      int[] Group3DVertices_OLD = {0}; // keeps the list of exiting vertex numbers
-      int[] Group3DVertices_NEW = {0}; // keeps the list of new vertex numbers
+      int[] PolymeshVertices_OLD = {0}; // keeps the list of exiting vertex numbers
+      int[] PolymeshVertices_NEW = {0}; // keeps the list of new vertex numbers
   
       if ((0 < f) && (f < allFaces.length)) {
      
@@ -14199,8 +14198,8 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
           
           int vertex_listed = 0;
           
-          for (int q = 1; q < Group3DVertices_OLD.length; q++) {
-            if (vNo == Group3DVertices_OLD[q]) {
+          for (int q = 1; q < PolymeshVertices_OLD.length; q++) {
+            if (vNo == PolymeshVertices_OLD[q]) {
               vertex_listed = q;
               break;                      
             }
@@ -14208,16 +14207,16 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
          
           if (vertex_listed == 0) {
             int[] newVertexListed = {vNo};
-            Group3DVertices_OLD = concat(Group3DVertices_OLD, newVertexListed);
+            PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
           
             float x = allVertices[vNo][0];
             float y = allVertices[vNo][1];
             float z = allVertices[vNo][2];
 
             int[] newVertexAdded = {SOLARCHVISION_add_Vertex(x, y, z)};
-            Group3DVertices_NEW = concat(Group3DVertices_NEW, newVertexAdded);
+            PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
             
-            vertex_listed = Group3DVertices_OLD.length - 1;
+            vertex_listed = PolymeshVertices_OLD.length - 1;
           } 
           
           //println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
@@ -14490,8 +14489,8 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
           }
 
  
-          int[] Group3DVertices_OLD = {0}; // keeps the list of exiting vertex numbers
-          int[] Group3DVertices_NEW = {0}; // keeps the list of new vertex numbers
+          int[] PolymeshVertices_OLD = {0}; // keeps the list of exiting vertex numbers
+          int[] PolymeshVertices_NEW = {0}; // keeps the list of new vertex numbers
       
           for (int f = allGroup3Ds_Faces[OBJ_NUM][0]; f <= allGroup3Ds_Faces[OBJ_NUM][1]; f++) {
   
@@ -14504,8 +14503,8 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
                 
                 int vertex_listed = 0;
                 
-                for (int q = 1; q < Group3DVertices_OLD.length; q++) {
-                  if (vNo == Group3DVertices_OLD[q]) {
+                for (int q = 1; q < PolymeshVertices_OLD.length; q++) {
+                  if (vNo == PolymeshVertices_OLD[q]) {
                     vertex_listed = q;
                     break;                      
                   }
@@ -14513,16 +14512,16 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
                
                 if (vertex_listed == 0) {
                   int[] newVertexListed = {vNo};
-                  Group3DVertices_OLD = concat(Group3DVertices_OLD, newVertexListed);
+                  PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
                 
                   float x = allVertices[vNo][0];
                   float y = allVertices[vNo][1];
                   float z = allVertices[vNo][2];
   
                   int[] newVertexAdded = {SOLARCHVISION_add_Vertex(x, y, z)};
-                  Group3DVertices_NEW = concat(Group3DVertices_NEW, newVertexAdded);
+                  PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
                   
-                  vertex_listed = Group3DVertices_OLD.length - 1;
+                  vertex_listed = PolymeshVertices_OLD.length - 1;
                 } 
                 
                 //println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
@@ -14669,8 +14668,8 @@ void SOLARCHVISION_group_Selection () {
   
         int number_of_Vertices_before = allVertices.length;
         
-        int[] Group3DVertices_OLD = {0}; // keeps the list of exiting vertex numbers
-        int[] Group3DVertices_NEW = {0}; // keeps the list of new vertex numbers
+        int[] PolymeshVertices_OLD = {0}; // keeps the list of exiting vertex numbers
+        int[] PolymeshVertices_NEW = {0}; // keeps the list of new vertex numbers
     
         if ((0 < f) && (f < allFaces.length)) {
        
@@ -14681,8 +14680,8 @@ void SOLARCHVISION_group_Selection () {
             
             int vertex_listed = 0;
             
-            for (int q = 1; q < Group3DVertices_OLD.length; q++) {
-              if (vNo == Group3DVertices_OLD[q]) {
+            for (int q = 1; q < PolymeshVertices_OLD.length; q++) {
+              if (vNo == PolymeshVertices_OLD[q]) {
                 vertex_listed = q;
                 break;                      
               }
@@ -14690,16 +14689,16 @@ void SOLARCHVISION_group_Selection () {
            
             if (vertex_listed == 0) {
               int[] newVertexListed = {vNo};
-              Group3DVertices_OLD = concat(Group3DVertices_OLD, newVertexListed);
+              PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
             
               float x = allVertices[vNo][0];
               float y = allVertices[vNo][1];
               float z = allVertices[vNo][2];
   
               int[] newVertexAdded = {SOLARCHVISION_add_Vertex(x, y, z)};
-              Group3DVertices_NEW = concat(Group3DVertices_NEW, newVertexAdded);
+              PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
               
-              vertex_listed = Group3DVertices_OLD.length - 1;
+              vertex_listed = PolymeshVertices_OLD.length - 1;
             } 
             
             //println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
@@ -40681,7 +40680,7 @@ int[] SOLARCHVISION_get_selectedFace_Vertices () {
 
 int[] SOLARCHVISION_get_selectedGroup3D_Vertices () {
 
-  int[] Group3DVertices = {0};
+  int[] PolymeshVertices = {0};
   
   for (int o = selectedGroup3D_numbers.length - 1; o >= 0; o--) {
     
@@ -40698,8 +40697,8 @@ int[] SOLARCHVISION_get_selectedGroup3D_Vertices () {
             
             int vertex_listed = 0;
             
-            for (int q = 1; q < Group3DVertices.length; q++) {
-              if (vNo == Group3DVertices[q]) {
+            for (int q = 1; q < PolymeshVertices.length; q++) {
+              if (vNo == PolymeshVertices[q]) {
                 vertex_listed = 1;
                 break;                      
               }
@@ -40707,7 +40706,7 @@ int[] SOLARCHVISION_get_selectedGroup3D_Vertices () {
            
             if (vertex_listed == 0) {
               int[] newVertexListed = {vNo};
-              Group3DVertices = concat(Group3DVertices, newVertexListed);  
+              PolymeshVertices = concat(PolymeshVertices, newVertexListed);  
             } 
           }
         }
@@ -40715,7 +40714,7 @@ int[] SOLARCHVISION_get_selectedGroup3D_Vertices () {
     }
   }
   
-  return Group3DVertices;
+  return PolymeshVertices;
 } 
 
 
@@ -41081,11 +41080,11 @@ void SOLARCHVISION_reset_selectedRefValues () {
 
 void SOLARCHVISION_move_selectedGroup3Ds (float dx, float dy, float dz) {
 
-  int[] Group3DVertices = SOLARCHVISION_get_selectedGroup3D_Vertices();
+  int[] PolymeshVertices = SOLARCHVISION_get_selectedGroup3D_Vertices();
   
-  for (int q = 1; q < Group3DVertices.length; q++) {
+  for (int q = 1; q < PolymeshVertices.length; q++) {
     
-    int n = Group3DVertices[q];
+    int n = PolymeshVertices[q];
   
     allVertices[n][0] += dx; 
     allVertices[n][1] += dy;
@@ -41146,11 +41145,11 @@ void SOLARCHVISION_move_selectedGroup3Ds (float dx, float dy, float dz) {
 
 void SOLARCHVISION_rotate_selectedGroup3Ds (float r, int the_Vector) {
 
-  int[] Group3DVertices = SOLARCHVISION_get_selectedGroup3D_Vertices();
+  int[] PolymeshVertices = SOLARCHVISION_get_selectedGroup3D_Vertices();
   
-  for (int q = 1; q < Group3DVertices.length; q++) {
+  for (int q = 1; q < PolymeshVertices.length; q++) {
 
-    int n = Group3DVertices[q];
+    int n = PolymeshVertices[q];
 
     float x = allVertices[n][0]; 
     float y = allVertices[n][1]; 
@@ -41459,11 +41458,11 @@ void SOLARCHVISION_rotate_selectedGroup3Ds (float r, int the_Vector) {
 
 void SOLARCHVISION_scale_selectedGroup3Ds (float x0, float y0, float z0, float sx, float sy, float sz) {
 
-  int[] Group3DVertices = SOLARCHVISION_get_selectedGroup3D_Vertices();
+  int[] PolymeshVertices = SOLARCHVISION_get_selectedGroup3D_Vertices();
 
-  for (int q = 1; q < Group3DVertices.length; q++) {
+  for (int q = 1; q < PolymeshVertices.length; q++) {
     
-    int n = Group3DVertices[q];
+    int n = PolymeshVertices[q];
 
     float x = allVertices[n][0]; 
     float y = allVertices[n][1]; 
