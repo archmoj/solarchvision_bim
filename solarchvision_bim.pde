@@ -14658,6 +14658,36 @@ void SOLARCHVISION_group_Selection () {
       }
     }
 
+
+    if (Current_ObjectCategory == ObjectCategory_Solids) {
+  
+      for (int o = 0; o < selectedSolid_numbers.length; o++) {
+  
+        int OBJ_NUM = selectedSolid_numbers[o];
+  
+        if (OBJ_NUM != 0) {    
+          
+          float Solid_posX = Solid_get_posX(OBJ_NUM);
+          float Solid_posY = Solid_get_posY(OBJ_NUM);
+          float Solid_posZ = Solid_get_posZ(OBJ_NUM);
+          float Solid_powX = Solid_get_powX(OBJ_NUM);
+          float Solid_powY = Solid_get_powY(OBJ_NUM);
+          float Solid_powZ = Solid_get_powZ(OBJ_NUM);
+          float Solid_scaleX = Solid_get_scaleX(OBJ_NUM);
+          float Solid_scaleY = Solid_get_scaleY(OBJ_NUM);
+          float Solid_scaleZ = Solid_get_scaleZ(OBJ_NUM);
+          float Solid_rotX = Solid_get_rotX(OBJ_NUM);
+          float Solid_rotY = Solid_get_rotY(OBJ_NUM);
+          float Solid_rotZ = Solid_get_rotZ(OBJ_NUM);
+          float Solid_value = Solid_get_value(OBJ_NUM);
+  
+          SOLARCHVISION_add_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);        
+        }
+      }   
+    }    
+  
+
+
     if (Current_ObjectCategory == ObjectCategory_Faces) {
       
       for (int o = 0; o < selectedFace_numbers.length; o++) {
@@ -14721,33 +14751,7 @@ void SOLARCHVISION_group_Selection () {
     }
   
   
-    if (Current_ObjectCategory == ObjectCategory_Solids) {
-  
-      for (int o = 0; o < selectedSolid_numbers.length; o++) {
-  
-        int OBJ_NUM = selectedSolid_numbers[o];
-  
-        if (OBJ_NUM != 0) {    
-          
-          float Solid_posX = Solid_get_posX(OBJ_NUM);
-          float Solid_posY = Solid_get_posY(OBJ_NUM);
-          float Solid_posZ = Solid_get_posZ(OBJ_NUM);
-          float Solid_powX = Solid_get_powX(OBJ_NUM);
-          float Solid_powY = Solid_get_powY(OBJ_NUM);
-          float Solid_powZ = Solid_get_powZ(OBJ_NUM);
-          float Solid_scaleX = Solid_get_scaleX(OBJ_NUM);
-          float Solid_scaleY = Solid_get_scaleY(OBJ_NUM);
-          float Solid_scaleZ = Solid_get_scaleZ(OBJ_NUM);
-          float Solid_rotX = Solid_get_rotX(OBJ_NUM);
-          float Solid_rotY = Solid_get_rotY(OBJ_NUM);
-          float Solid_rotZ = Solid_get_rotZ(OBJ_NUM);
-          float Solid_value = Solid_get_value(OBJ_NUM);
-  
-          SOLARCHVISION_add_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);        
-        }
-      }   
-    }    
-  
+
 
     
 
