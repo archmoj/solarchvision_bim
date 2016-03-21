@@ -14916,6 +14916,11 @@ void SOLARCHVISION_delete_Selection () {
 
   
   if (Current_ObjectCategory == ObjectCategory_Fractals) {
+
+    for (int q = 0; q < allGroup3Ds_num + 1; q++) {
+      println(q, ":", allGroup3Ds_Fractals[q][0], ",", allGroup3Ds_Fractals[q][1]);
+    }
+
     
     selectedFractal_numbers = sort(selectedFractal_numbers);
     
@@ -14924,17 +14929,23 @@ void SOLARCHVISION_delete_Selection () {
       int OBJ_NUM = selectedFractal_numbers[o];
       
       if (OBJ_NUM != 0) {    
+        
+        println("OBJ_NUM", OBJ_NUM);
 
         for (int q = 0; q < allGroup3Ds_num + 1; q++) {
-          if (allGroup3Ds_Fractals[q][0] <= OBJ_NUM) {
 
-            if (allGroup3Ds_Fractals[q][0] > 0) allGroup3Ds_Fractals[q][0] -= 1;
-            if (allGroup3Ds_Fractals[q][1] > 0) allGroup3Ds_Fractals[q][1] -= 1;
-            
-            if (OBJ_NUM <= allGroup3Ds_Fractals[q][1]) { // object is inside the group so the first pointer should be kept
-              allGroup3Ds_Fractals[q][0] += 1;
-            }
+          println("before:", q, ":", allGroup3Ds_Fractals[q][0], ",", allGroup3Ds_Fractals[q][1]);
+      
+          
+          if ((allGroup3Ds_Fractals[q][0] <= OBJ_NUM) && (OBJ_NUM <= allGroup3Ds_Fractals[q][1])) {
+            if (allGroup3Ds_Fractals[q][1] > 0) allGroup3Ds_Fractals[q][1] -= 1;            
           }
+          else if (allGroup3Ds_Fractals[q][0] > OBJ_NUM) {
+            if (allGroup3Ds_Fractals[q][0] > 0) allGroup3Ds_Fractals[q][0] -= 1;
+            if (allGroup3Ds_Fractals[q][1] > 0) allGroup3Ds_Fractals[q][1] -= 1;               
+          }
+          
+          println("after:", q, ":", allGroup3Ds_Fractals[q][0], ",", allGroup3Ds_Fractals[q][1]);
         }
         
         
@@ -14992,6 +15003,11 @@ void SOLARCHVISION_delete_Selection () {
 
     }
     
+    
+
+    for (int q = 0; q < allGroup3Ds_num + 1; q++) {
+      println(q, ":", allGroup3Ds_Fractals[q][0], ",", allGroup3Ds_Fractals[q][1]);
+    }    
   }
 
 
