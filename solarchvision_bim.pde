@@ -1,4 +1,5 @@
-// yet don't have add to or subtract from group.
+// yet don't have dettach selection from a group.
+// yet don't have attach to the last group.
 
 // exporting shaded land is not written. 
 
@@ -14595,11 +14596,18 @@ void SOLARCHVISION_group_Selection () {
   
 
   if (make_group == 1) {
-   
-    //SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
-    //SOLARCHVISION_beginNewGroup3D(selection_BoundingBox[1 + selection_alignX][0], selection_BoundingBox[1 + selection_alignX][1], selection_BoundingBox[1 + selection_alignX][2], selection_BoundingBox[1 + selection_alignX][3], selection_BoundingBox[1 + selection_alignX][4], selection_BoundingBox[1 + selection_alignX][5], selection_BoundingBox[1 + selection_alignX][6], selection_BoundingBox[1 + selection_alignX][7], selection_BoundingBox[1 + selection_alignX][8]);  
-    SOLARCHVISION_beginNewGroup3D(selection_BoundingBox[1 + selection_alignX][0], selection_BoundingBox[1 + selection_alignX][1], selection_BoundingBox[1 + selection_alignX][2], 1,1,1,0,0,0);
-    
+
+    {
+      float x = selection_BoundingBox[1 + selection_alignX][0];
+      float y = selection_BoundingBox[1 + selection_alignX][1];
+      float z = selection_BoundingBox[1 + selection_alignX][2];
+
+      float rot = Create_Input_Orientation;
+      if (rot == 360) rot = WIN3D_RZ_coordinate;
+       
+      SOLARCHVISION_beginNewGroup3D(x, y, z, 1, 1, 1, 0, 0, rot);
+    }
+
 
     int pre_addToLastGroup3D = addToLastGroup3D;
     addToLastGroup3D = 1;
@@ -14763,11 +14771,13 @@ void SOLARCHVISION_group_Selection () {
     selectedGroup3D_numbers[1] = allGroup3Ds_num;
 
     
-    
     Current_ObjectCategory = ObjectCategory_Group3Ds;
     
     BAR_b_Update = 1;
     WIN3D_Update = 1;
+
+    println("SOLARCHVISION_calculate_selection_BoundingBox 731");
+    SOLARCHVISION_calculate_selection_BoundingBox();  
    
   }
 
@@ -35006,10 +35016,9 @@ void mouseClicked () {
                 float z = RxP[2];             
   
                 float rot = Create_Input_Orientation;
-                if (rot == 360) {
-                  //rot = 15 * (int(random(24)));
-                  rot = WIN3D_RZ_coordinate;
-                }
+                if (rot == 360) rot = WIN3D_RZ_coordinate;
+
+
       
                 float rx = 0.5 * Create_Input_Length;
                 if (rx < 0) rx = random(0.25 * abs(rx), abs(rx));
