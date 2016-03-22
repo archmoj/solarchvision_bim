@@ -1,3 +1,5 @@
+// yet don't have add to or subtract from group.
+
 // exporting shaded land is not written. 
 
 // void SOLARCHVISION_rotate_selectedGroup3Ds 
@@ -14594,9 +14596,10 @@ void SOLARCHVISION_group_Selection () {
 
   if (make_group == 1) {
    
-
-
-    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);  
+    //SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
+    //SOLARCHVISION_beginNewGroup3D(selection_BoundingBox[1 + selection_alignX][0], selection_BoundingBox[1 + selection_alignX][1], selection_BoundingBox[1 + selection_alignX][2], selection_BoundingBox[1 + selection_alignX][3], selection_BoundingBox[1 + selection_alignX][4], selection_BoundingBox[1 + selection_alignX][5], selection_BoundingBox[1 + selection_alignX][6], selection_BoundingBox[1 + selection_alignX][7], selection_BoundingBox[1 + selection_alignX][8]);  
+    SOLARCHVISION_beginNewGroup3D(selection_BoundingBox[1 + selection_alignX][0], selection_BoundingBox[1 + selection_alignX][1], selection_BoundingBox[1 + selection_alignX][2], 1,1,1,0,0,0);
+    
 
     int pre_addToLastGroup3D = addToLastGroup3D;
     addToLastGroup3D = 1;
@@ -14803,6 +14806,45 @@ void SOLARCHVISION_ungroup_Selection () {
     SOLARCHVISION_delete_Selection();
   }
 
+}
+
+
+void SOLARCHVISION_deleteEmptyGroups_Scene () {
+
+  int pre_Current_ObjectCategory = Current_ObjectCategory;
+  
+  Current_ObjectCategory = ObjectCategory_Group3Ds;
+
+  if (Current_ObjectCategory == ObjectCategory_Group3Ds) {  
+  
+    selectedGroup3D_numbers = new int [1];
+    selectedGroup3D_numbers[0] = 0;
+    
+    for (int OBJ_NUM = 1; OBJ_NUM < allGroup3Ds_num + 1; OBJ_NUM++) {
+
+      int notEmpty = 0;
+      
+      if ((0 < allGroup3Ds_Faces[OBJ_NUM][0]) && (allGroup3Ds_Faces[OBJ_NUM][0] <= allGroup3Ds_Faces[OBJ_NUM][1])) notEmpty = 1;
+      if ((0 < allGroup3Ds_Fractals[OBJ_NUM][0]) && (allGroup3Ds_Fractals[OBJ_NUM][0] <= allGroup3Ds_Fractals[OBJ_NUM][1])) notEmpty = 1;
+      if ((0 < allGroup3Ds_Object2Ds[OBJ_NUM][0]) && (allGroup3Ds_Object2Ds[OBJ_NUM][0] <= allGroup3Ds_Object2Ds[OBJ_NUM][1])) notEmpty = 1;
+      if ((0 < allGroup3Ds_Solids[OBJ_NUM][0]) && (allGroup3Ds_Solids[OBJ_NUM][0] <= allGroup3Ds_Solids[OBJ_NUM][1])) notEmpty = 1;
+      
+      if (notEmpty == 0) {
+ 
+        int[] emptyGroup3D = {OBJ_NUM};
+        
+        selectedGroup3D_numbers = concat(selectedGroup3D_numbers, emptyGroup3D);
+       
+      }
+
+    }
+  
+    SOLARCHVISION_delete_Selection();  
+    
+  }
+  
+  Current_ObjectCategory = pre_Current_ObjectCategory;
+  
 }
 
 
@@ -33884,6 +33926,10 @@ void mouseClicked () {
               SOLARCHVISION_deleteIsolatedVertices_Selection();
               WIN3D_Update = 1;  
             }              
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Delete All Empty Groups")) {
+              SOLARCHVISION_deleteEmptyGroups_Scene();
+              WIN3D_Update = 1;  
+            }               
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Delete Selection")) {
               SOLARCHVISION_delete_Selection();
               WIN3D_Update = 1;              
@@ -33895,7 +33941,7 @@ void mouseClicked () {
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Group Selection")) {
               SOLARCHVISION_group_Selection();
               WIN3D_Update = 1;              
-            }              
+            }      
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Duplicate Selection (Identical)")) {
               SOLARCHVISION_duplicate_Selection(0);
               WIN3D_Update = 1;              
@@ -44504,7 +44550,7 @@ String[][] BAR_a_Items = {
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Begin New Group3D at Origin", "Begin New Group3D at Pivot", "Viewport >> Camera", "Camera", "Section", "Solid", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"},
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Solid", "Select Section",  "Select Camera", "Select LandPoint", "Select Fractal", "Select Object2D", "Select Group3D", "Select Face", "Select Vertex", "Soft Selection", "Group3D >> Vertex", "Group3D >> Face", "Group3D >> Solid", "Group3D >> Object2D", "Group3D >> Fractal", "Fractal >> Group3D", "Object2D >> Group3D", "Solid >> Group3D", "Face >> Group3D", "Vertex >> Group3D", "Vertex >> Face", "Face >> Vertex", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices Selection", "Select All Isolated Vertices"},
-                        {"Edit", "Duplicate Selection (Identical)", "Duplicate Selection (Variation)", "Group Selection", "Ungroup Selection", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces", "Flatten Selected LandPoints"},
+                        {"Edit", "Duplicate Selection (Identical)", "Duplicate Selection (Variation)", "Group Selection", "Ungroup Selection", "Delete All Empty Groups", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces", "Flatten Selected LandPoints"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Power", "PowerX", "PowerY", "PowerZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
                         {"Match", "Save Current ReferenceBox", "Reset Saved ReferenceBox", "Use Selection ReferenceBox", "Use Origin ReferenceBox", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunkSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunkSize", "Assign LeafSize", "Assign AllFractalProps", "Assign Pivot", "Drop on LandSurface", "Drop on ModelSurface (Up)", "Drop on ModelSurface (Down)"},
                         {"Action", "Undo", "Redo", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Solid Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Solid Graph", "REC. Screenshot", "Stop REC."}
