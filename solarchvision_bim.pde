@@ -14567,35 +14567,211 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
        
 
 
+void SOLARCHVISION_dettachFromGroups_Selection () {
+
+  int run_process = 0;
+  
+  if (Current_ObjectCategory == ObjectCategory_Solids) run_process = 1;
+  if (Current_ObjectCategory == ObjectCategory_Faces) run_process = 1;
+  if (Current_ObjectCategory == ObjectCategory_Object2Ds) run_process = 1;
+  if (Current_ObjectCategory == ObjectCategory_Fractals) run_process = 1;
+
+  if (run_process == 1) {
+
+    int pre_addToLastGroup3D = addToLastGroup3D;
+    addToLastGroup3D = 0;
+  
+  
+    if (Current_ObjectCategory == ObjectCategory_Fractals) {
+  
+      for (int o = 0; o < selectedFractal_numbers.length; o++) {
+  
+        int OBJ_NUM = selectedFractal_numbers[o];
+  
+        if (OBJ_NUM != 0) {    
+          
+          float x = allFractals_XYZSR[OBJ_NUM][0];
+          float y = allFractals_XYZSR[OBJ_NUM][1];
+          float z = allFractals_XYZSR[OBJ_NUM][2];
+          float d = allFractals_XYZSR[OBJ_NUM][3];
+          float rot = allFractals_XYZSR[OBJ_NUM][4];
+          
+          int n = allFractals_Type[OBJ_NUM];
+          int dMin = allFractals_DegreeMin[OBJ_NUM];
+          int dMax = allFractals_DegreeMax[OBJ_NUM];
+          int s = allFractals_Seed[OBJ_NUM];
+          float TrunkSize = allFractals_TrunkSize[OBJ_NUM];
+          float LeafSize = allFractals_LeafSize[OBJ_NUM];
+
+          SOLARCHVISION_add_Fractal(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);        
+        }
+      }
+    }  
+  
+    if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
+  
+      int n1 = Object2D_PEOPLE_Files_Num;
+  
+      for (int o = 0; o < selectedObject2D_numbers.length; o++) {
+  
+        int OBJ_NUM = selectedObject2D_numbers[o];
+  
+        if (OBJ_NUM != 0) {    
+          
+          float x = allObject2Ds_XYZS[OBJ_NUM][0];
+          float y = allObject2Ds_XYZS[OBJ_NUM][1];
+          float z = allObject2Ds_XYZS[OBJ_NUM][2];
+          float s = allObject2Ds_XYZS[OBJ_NUM][3];
+          
+          int n = allObject2Ds_MAP[OBJ_NUM];
+          if (abs(n) > n1) {
+            SOLARCHVISION_add_Object2D("TREES", n, x, y, z, s);
+          }
+          else {
+            SOLARCHVISION_add_Object2D("PEOPLE", n, x, y, z, s);
+          }
+        }
+      }
+    }
+
+
+    if (Current_ObjectCategory == ObjectCategory_Solids) {
+  
+      for (int o = 0; o < selectedSolid_numbers.length; o++) {
+  
+        int OBJ_NUM = selectedSolid_numbers[o];
+  
+        if (OBJ_NUM != 0) {    
+          
+          float Solid_posX = Solid_get_posX(OBJ_NUM);
+          float Solid_posY = Solid_get_posY(OBJ_NUM);
+          float Solid_posZ = Solid_get_posZ(OBJ_NUM);
+          float Solid_powX = Solid_get_powX(OBJ_NUM);
+          float Solid_powY = Solid_get_powY(OBJ_NUM);
+          float Solid_powZ = Solid_get_powZ(OBJ_NUM);
+          float Solid_scaleX = Solid_get_scaleX(OBJ_NUM);
+          float Solid_scaleY = Solid_get_scaleY(OBJ_NUM);
+          float Solid_scaleZ = Solid_get_scaleZ(OBJ_NUM);
+          float Solid_rotX = Solid_get_rotX(OBJ_NUM);
+          float Solid_rotY = Solid_get_rotY(OBJ_NUM);
+          float Solid_rotZ = Solid_get_rotZ(OBJ_NUM);
+          float Solid_value = Solid_get_value(OBJ_NUM);
+  
+          SOLARCHVISION_add_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);        
+        }
+      }   
+    }    
+  
+
+
+    if (Current_ObjectCategory == ObjectCategory_Faces) {
+      
+      for (int o = 0; o < selectedFace_numbers.length; o++) {
+        
+        int f = selectedFace_numbers[o];        
+  
+        int number_of_Vertices_before = allVertices.length;
+        
+        int[] PolymeshVertices_OLD = {0}; // keeps the list of exiting vertex numbers
+        int[] PolymeshVertices_NEW = {0}; // keeps the list of new vertex numbers
+    
+        if ((0 < f) && (f < allFaces.length)) {
+       
+          int[] newFace = {};
+          
+          for (int j = 0; j < allFaces[f].length; j++) {
+            int vNo = allFaces[f][j];
+            
+            int vertex_listed = 0;
+            
+            for (int q = 1; q < PolymeshVertices_OLD.length; q++) {
+              if (vNo == PolymeshVertices_OLD[q]) {
+                vertex_listed = q;
+                break;                      
+              }
+            }         
+           
+            if (vertex_listed == 0) {
+              int[] newVertexListed = {vNo};
+              PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
+            
+              float x = allVertices[vNo][0];
+              float y = allVertices[vNo][1];
+              float z = allVertices[vNo][2];
+  
+              int[] newVertexAdded = {SOLARCHVISION_add_Vertex(x, y, z)};
+              PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
+              
+              vertex_listed = PolymeshVertices_OLD.length - 1;
+            } 
+            
+            //println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
+            
+            int[] new_vertexItem = {number_of_Vertices_before + vertex_listed - 1};
+            
+            newFace = concat(newFace, new_vertexItem); 
+          }
+          
+          defaultMaterial = allFaces_MTLV[f][0];
+          defaultTessellation = allFaces_MTLV[f][1];
+          defaultLayer = allFaces_MTLV[f][2];
+          defaultVisibility = allFaces_MTLV[f][3];        
+          
+          SOLARCHVISION_add_Face(newFace);
+
+        }
+  
+      }    
+    }
+  
+  
+
+
+    
+
+    addToLastGroup3D = pre_addToLastGroup3D;
+    
+
+    SOLARCHVISION_delete_Selection();
+
+
+    println("SOLARCHVISION_calculate_selection_BoundingBox 732");
+    SOLARCHVISION_calculate_selection_BoundingBox();    
+    
+  }
+  
+  
+}
+
+void SOLARCHVISION_attachToLastGroup_Selection () {
+
+  int run_process = 0;
+  
+  if (Current_ObjectCategory == ObjectCategory_Solids) run_process = 1;
+  if (Current_ObjectCategory == ObjectCategory_Faces) run_process = 1;
+  if (Current_ObjectCategory == ObjectCategory_Object2Ds) run_process = 1;
+  if (Current_ObjectCategory == ObjectCategory_Fractals) run_process = 1;
+
+  if (run_process == 1) {
+    
+    SOLARCHVISION_dettachFromGroups_Selection();
+  }
+  
+  
+}
+
+
 void SOLARCHVISION_group_Selection () {
 
 
-  int make_group = 0;
+  int run_process = 0;
   
-  if (Current_ObjectCategory == ObjectCategory_Solids) {
+  if (Current_ObjectCategory == ObjectCategory_Solids) run_process = 1;
+  if (Current_ObjectCategory == ObjectCategory_Faces) run_process = 1;
+  if (Current_ObjectCategory == ObjectCategory_Object2Ds) run_process = 1;
+  if (Current_ObjectCategory == ObjectCategory_Fractals) run_process = 1;
 
-    make_group = 1;
-  }      
-  
-  if (Current_ObjectCategory == ObjectCategory_Faces) {
-    
-    make_group = 1;
-  }  
-  
-  if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
-
-    make_group = 1;
-  }  
-  
-  if (Current_ObjectCategory == ObjectCategory_Fractals) {
-
-    make_group = 1;
-  }    
-  
-
-  
-
-  if (make_group == 1) {
+  if (run_process == 1) {
 
     {
       float x = selection_BoundingBox[1 + selection_alignX][0];
@@ -14772,9 +14948,7 @@ void SOLARCHVISION_group_Selection () {
 
     
     Current_ObjectCategory = ObjectCategory_Group3Ds;
-    
     BAR_b_Update = 1;
-    WIN3D_Update = 1;
 
     println("SOLARCHVISION_calculate_selection_BoundingBox 731");
     SOLARCHVISION_calculate_selection_BoundingBox();  
@@ -33952,6 +34126,15 @@ void mouseClicked () {
               SOLARCHVISION_group_Selection();
               WIN3D_Update = 1;              
             }      
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Dettach from Groups")) {
+              SOLARCHVISION_attachToLastGroup_Selection();
+              WIN3D_Update = 1;              
+            }              
+            
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Attach to Last Group")) {
+              SOLARCHVISION_attachToLastGroup_Selection();
+              WIN3D_Update = 1;              
+            }                 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Duplicate Selection (Identical)")) {
               SOLARCHVISION_duplicate_Selection(0);
               WIN3D_Update = 1;              
@@ -44559,7 +44742,7 @@ String[][] BAR_a_Items = {
                         {"Layout", "Layout -2", "Layout -1", "Layout 0", "Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6", "Layout 7", "Layout 8", "Layout 9", "Layout 10", "Layout 11", "Layout 12", "Layout 13", "Layout 14"}, 
                         {"Create", "Begin New Group3D at Origin", "Begin New Group3D at Pivot", "Viewport >> Camera", "Camera", "Section", "Solid", "Fractal", "Tree", "Person", "House", "Box", "Cushion", "Cylinder", "Sphere", "Octahedron", "Tri", "Hyper", "Poly", "Extrude", "Parametric 1", "Parametric 2", "Parametric 3", "Parametric 4", "Parametric 5", "Parametric 6", "Parametric 7", "Get dX", "Get dY", "Get dZ", "Get dXYZ", "Get dXY", "Get Angle"},
                         {"Select", "Reverse Selection", "Deselect All", "Select All", "Select Solid", "Select Section",  "Select Camera", "Select LandPoint", "Select Fractal", "Select Object2D", "Select Group3D", "Select Face", "Select Vertex", "Soft Selection", "Group3D >> Vertex", "Group3D >> Face", "Group3D >> Solid", "Group3D >> Object2D", "Group3D >> Fractal", "Fractal >> Group3D", "Object2D >> Group3D", "Solid >> Group3D", "Face >> Group3D", "Vertex >> Group3D", "Vertex >> Face", "Face >> Vertex", "Click Select", "Click Select+", "Click Select-", "Window Select", "Window Select+", "Window Select-", "Select Near Vertices Selection", "Select All Isolated Vertices"},
-                        {"Edit", "Duplicate Selection (Identical)", "Duplicate Selection (Variation)", "Group Selection", "Ungroup Selection", "Delete All Empty Groups", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces", "Flatten Selected LandPoints"},
+                        {"Edit", "Duplicate Selection (Identical)", "Duplicate Selection (Variation)", "Attach to Last Group", "Dettach from Groups", "Group Selection", "Ungroup Selection", "Delete All Empty Groups", "Delete Selection", "Delete All Isolated Vertices", "Delete Isolated Vertices Selection", "Separate Vertices Selection", "Reposition Vertices Selection", "Weld Objects Vertices Selection", "Weld Scene Vertices Selection", "Offset(above) Vertices", "Offset(below) Vertices", "Offset(expand) Vertices", "Offset(shrink) Vertices", "Extrude Face Edges", "Tessellation Triangular", "Tessellate Rectangular", "Tessellate Rows & Columns", "Insert Corner Opennings", "Insert Parallel Opennings", "Insert Rotated Opennings", "Insert Edge Opennings", "Reverse Visibility of All Faces", "Hide All Faces", "Hide Selected Faces", "Unhide Selected Faces", "Unhide All Faces", "Isolate Selected Faces", "Flatten Selected LandPoints"},
                         {"Modify", "Move", "MoveX", "MoveY", "MoveZ", "Rotate", "RotateX", "RotateY", "RotateZ", "Scale", "ScaleX", "ScaleY", "ScaleZ", "Power", "PowerX", "PowerY", "PowerZ", "Flip FaceNormal", "Set-Out FaceNormal", "Set-In FaceNormal", "Get FaceFirstVertex", "Change Seed/Material", "Change Tessellation", "Change Layer", "Change Visibility", "Change DegreeMax", "Change DegreeDif", "Change DegreeMin", "Change TrunkSize", "Change LeafSize"},
                         {"Match", "Save Current ReferenceBox", "Reset Saved ReferenceBox", "Use Selection ReferenceBox", "Use Origin ReferenceBox", "PivotX:Minimum", "PivotX:Center", "PivotX:Maximum", "PivotY:Minimum", "PivotY:Center", "PivotY:Maximum", "PivotZ:Minimum", "PivotZ:Center", "PivotZ:Maximum", "Pick Seed/Material", "Pick Tessellation", "Pick Layer", "Pick Visibility", "Pick DegreeMax", "Pick DegreeDif", "Pick DegreeMin", "Pick TrunkSize", "Pick LeafSize", "Pick AllFractalProps", "Assign Seed/Material", "Assign Tessellation", "Assign Layer", "Assign Visibility", "Assign DegreeMax", "Assign DegreeDif", "Assign DegreeMin", "Assign TrunkSize", "Assign LeafSize", "Assign AllFractalProps", "Assign Pivot", "Drop on LandSurface", "Drop on ModelSurface (Up)", "Drop on ModelSurface (Down)"},
                         {"Action", "Undo", "Redo", "JPG Time Graph", "PDF Time Graph", "JPG Location Graph", "PDF Location Graph", "JPG Solid Graph", "Screenshot", "Screenshot+Click", "Screenshot+Drag", "REC. Time Graph", "REC. Location Graph", "REC. Solid Graph", "REC. Screenshot", "Stop REC."}
