@@ -1,6 +1,3 @@
-// yet don't have dettach selection from a group.
-// yet don't have attach to the last group.
-
 // exporting shaded land is not written. 
 
 // void SOLARCHVISION_rotate_selectedGroup3Ds 
@@ -14567,201 +14564,9 @@ void SOLARCHVISION_duplicate_Selection (int produce_another_variation) {
        
 
 
-void SOLARCHVISION_dettachFromGroups_Selection () {
-
-  int run_process = 0;
-  
-  if (Current_ObjectCategory == ObjectCategory_Solids) run_process = 1;
-  if (Current_ObjectCategory == ObjectCategory_Faces) run_process = 1;
-  if (Current_ObjectCategory == ObjectCategory_Object2Ds) run_process = 1;
-  if (Current_ObjectCategory == ObjectCategory_Fractals) run_process = 1;
-
-  if (run_process == 1) {
-
-    int pre_addToLastGroup3D = addToLastGroup3D;
-    addToLastGroup3D = 0;
-  
-  
-    if (Current_ObjectCategory == ObjectCategory_Fractals) {
-  
-      for (int o = 0; o < selectedFractal_numbers.length; o++) {
-  
-        int OBJ_NUM = selectedFractal_numbers[o];
-  
-        if (OBJ_NUM != 0) {    
-          
-          float x = allFractals_XYZSR[OBJ_NUM][0];
-          float y = allFractals_XYZSR[OBJ_NUM][1];
-          float z = allFractals_XYZSR[OBJ_NUM][2];
-          float d = allFractals_XYZSR[OBJ_NUM][3];
-          float rot = allFractals_XYZSR[OBJ_NUM][4];
-          
-          int n = allFractals_Type[OBJ_NUM];
-          int dMin = allFractals_DegreeMin[OBJ_NUM];
-          int dMax = allFractals_DegreeMax[OBJ_NUM];
-          int s = allFractals_Seed[OBJ_NUM];
-          float TrunkSize = allFractals_TrunkSize[OBJ_NUM];
-          float LeafSize = allFractals_LeafSize[OBJ_NUM];
-
-          SOLARCHVISION_add_Fractal(n, x, y, z, d, rot, dMin, dMax, s, TrunkSize, LeafSize);        
-        }
-      }
-    }  
-  
-    if (Current_ObjectCategory == ObjectCategory_Object2Ds) {
-  
-      int n1 = Object2D_PEOPLE_Files_Num;
-  
-      for (int o = 0; o < selectedObject2D_numbers.length; o++) {
-  
-        int OBJ_NUM = selectedObject2D_numbers[o];
-  
-        if (OBJ_NUM != 0) {    
-          
-          float x = allObject2Ds_XYZS[OBJ_NUM][0];
-          float y = allObject2Ds_XYZS[OBJ_NUM][1];
-          float z = allObject2Ds_XYZS[OBJ_NUM][2];
-          float s = allObject2Ds_XYZS[OBJ_NUM][3];
-          
-          int n = allObject2Ds_MAP[OBJ_NUM];
-          if (abs(n) > n1) {
-            SOLARCHVISION_add_Object2D("TREES", n, x, y, z, s);
-          }
-          else {
-            SOLARCHVISION_add_Object2D("PEOPLE", n, x, y, z, s);
-          }
-        }
-      }
-    }
 
 
-    if (Current_ObjectCategory == ObjectCategory_Solids) {
-  
-      for (int o = 0; o < selectedSolid_numbers.length; o++) {
-  
-        int OBJ_NUM = selectedSolid_numbers[o];
-  
-        if (OBJ_NUM != 0) {    
-          
-          float Solid_posX = Solid_get_posX(OBJ_NUM);
-          float Solid_posY = Solid_get_posY(OBJ_NUM);
-          float Solid_posZ = Solid_get_posZ(OBJ_NUM);
-          float Solid_powX = Solid_get_powX(OBJ_NUM);
-          float Solid_powY = Solid_get_powY(OBJ_NUM);
-          float Solid_powZ = Solid_get_powZ(OBJ_NUM);
-          float Solid_scaleX = Solid_get_scaleX(OBJ_NUM);
-          float Solid_scaleY = Solid_get_scaleY(OBJ_NUM);
-          float Solid_scaleZ = Solid_get_scaleZ(OBJ_NUM);
-          float Solid_rotX = Solid_get_rotX(OBJ_NUM);
-          float Solid_rotY = Solid_get_rotY(OBJ_NUM);
-          float Solid_rotZ = Solid_get_rotZ(OBJ_NUM);
-          float Solid_value = Solid_get_value(OBJ_NUM);
-  
-          SOLARCHVISION_add_Solid(Solid_posX, Solid_posY, Solid_posZ, Solid_powX, Solid_powY, Solid_powZ, Solid_scaleX, Solid_scaleY, Solid_scaleZ, Solid_rotX, Solid_rotY, Solid_rotZ, Solid_value);        
-        }
-      }   
-    }    
-  
-
-
-    if (Current_ObjectCategory == ObjectCategory_Faces) {
-      
-      for (int o = 0; o < selectedFace_numbers.length; o++) {
-        
-        int f = selectedFace_numbers[o];        
-  
-        int number_of_Vertices_before = allVertices.length;
-        
-        int[] PolymeshVertices_OLD = {0}; // keeps the list of exiting vertex numbers
-        int[] PolymeshVertices_NEW = {0}; // keeps the list of new vertex numbers
-    
-        if ((0 < f) && (f < allFaces.length)) {
-       
-          int[] newFace = {};
-          
-          for (int j = 0; j < allFaces[f].length; j++) {
-            int vNo = allFaces[f][j];
-            
-            int vertex_listed = 0;
-            
-            for (int q = 1; q < PolymeshVertices_OLD.length; q++) {
-              if (vNo == PolymeshVertices_OLD[q]) {
-                vertex_listed = q;
-                break;                      
-              }
-            }         
-           
-            if (vertex_listed == 0) {
-              int[] newVertexListed = {vNo};
-              PolymeshVertices_OLD = concat(PolymeshVertices_OLD, newVertexListed);
-            
-              float x = allVertices[vNo][0];
-              float y = allVertices[vNo][1];
-              float z = allVertices[vNo][2];
-  
-              int[] newVertexAdded = {SOLARCHVISION_add_Vertex(x, y, z)};
-              PolymeshVertices_NEW = concat(PolymeshVertices_NEW, newVertexAdded);
-              
-              vertex_listed = PolymeshVertices_OLD.length - 1;
-            } 
-            
-            //println("number_of_Vertices_before + vertex_listed - 1", number_of_Vertices_before + vertex_listed - 1);
-            
-            int[] new_vertexItem = {number_of_Vertices_before + vertex_listed - 1};
-            
-            newFace = concat(newFace, new_vertexItem); 
-          }
-          
-          defaultMaterial = allFaces_MTLV[f][0];
-          defaultTessellation = allFaces_MTLV[f][1];
-          defaultLayer = allFaces_MTLV[f][2];
-          defaultVisibility = allFaces_MTLV[f][3];        
-          
-          SOLARCHVISION_add_Face(newFace);
-
-        }
-  
-      }    
-    }
-  
-  
-
-
-    
-
-    addToLastGroup3D = pre_addToLastGroup3D;
-    
-
-    SOLARCHVISION_delete_Selection();
-
-
-    println("SOLARCHVISION_calculate_selection_BoundingBox 732");
-    SOLARCHVISION_calculate_selection_BoundingBox();    
-    
-  }
-  
-  
-}
-
-void SOLARCHVISION_attachToLastGroup_Selection () {
-
-  int run_process = 0;
-  
-  if (Current_ObjectCategory == ObjectCategory_Solids) run_process = 1;
-  if (Current_ObjectCategory == ObjectCategory_Faces) run_process = 1;
-  if (Current_ObjectCategory == ObjectCategory_Object2Ds) run_process = 1;
-  if (Current_ObjectCategory == ObjectCategory_Fractals) run_process = 1;
-
-  if (run_process == 1) {
-    
-    SOLARCHVISION_dettachFromGroups_Selection();
-  }
-  
-  
-}
-
-
-void SOLARCHVISION_group_Selection () {
+void SOLARCHVISION_group_Selection (int createNewGroup) { // if this option == 0 then the objects are added to the last group
 
 
   int run_process = 0;
@@ -14773,7 +14578,7 @@ void SOLARCHVISION_group_Selection () {
 
   if (run_process == 1) {
 
-    {
+    if (createNewGroup == 1) {
       float x = selection_BoundingBox[1 + selection_alignX][0];
       float y = selection_BoundingBox[1 + selection_alignX][1];
       float z = selection_BoundingBox[1 + selection_alignX][2];
@@ -14990,6 +14795,13 @@ void SOLARCHVISION_ungroup_Selection () {
     SOLARCHVISION_delete_Selection();
   }
 
+}
+
+
+void SOLARCHVISION_dettachFromGroups_Selection () {
+  
+  SOLARCHVISION_group_Selection(1);
+  SOLARCHVISION_ungroup_Selection();
 }
 
 
@@ -34118,21 +33930,20 @@ void mouseClicked () {
               SOLARCHVISION_delete_Selection();
               WIN3D_Update = 1;              
             }      
+            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Dettach from Groups")) {
+              SOLARCHVISION_dettachFromGroups_Selection();
+              WIN3D_Update = 1;              
+            }                
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Ungroup Selection")) {
               SOLARCHVISION_ungroup_Selection();
               WIN3D_Update = 1;              
             }      
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Group Selection")) {
-              SOLARCHVISION_group_Selection();
+              SOLARCHVISION_group_Selection(1);
               WIN3D_Update = 1;              
             }      
-            if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Dettach from Groups")) {
-              SOLARCHVISION_attachToLastGroup_Selection();
-              WIN3D_Update = 1;              
-            }              
-            
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Attach to Last Group")) {
-              SOLARCHVISION_attachToLastGroup_Selection();
+              SOLARCHVISION_group_Selection(0);
               WIN3D_Update = 1;              
             }                 
             if (BAR_a_Items[BAR_a_selected_parent][BAR_a_selected_child].equals("Duplicate Selection (Identical)")) {
