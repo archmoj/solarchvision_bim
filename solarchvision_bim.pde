@@ -47198,14 +47198,18 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     }
   }
   
-  newChild1 = my_xml.addChild("DEFINED_STATION");
-  newChild1.setInt("ni", DEFINED_STATIONS[STATION_NUMBER].length);
-  for (int i = 0; i < DEFINED_STATIONS[STATION_NUMBER].length; i++) {
-    newChild2 = newChild1.addChild("Property");
-    newChild2.setInt("id", i);
-    newChild2.setContent(DEFINED_STATIONS[STATION_NUMBER][i]);
-  } 
+  println("Saving:STATION");
+  {
+    newChild1 = my_xml.addChild("DEFINED_STATION");
+    newChild1.setInt("ni", DEFINED_STATIONS[STATION_NUMBER].length);
+    for (int i = 0; i < DEFINED_STATIONS[STATION_NUMBER].length; i++) {
+      newChild2 = newChild1.addChild("Property");
+      newChild2.setInt("id", i);
+      newChild2.setContent(DEFINED_STATIONS[STATION_NUMBER][i]);
+    } 
+  }
   
+  println("Saving:LAND_MESH");
   {
     newChild1 = my_xml.addChild("LAND_MESH");
     int vNo = 0;
@@ -47225,8 +47229,9 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     } 
   }  
 
+  println("Saving:Cameras");
   {
-    newChild1 = my_xml.addChild("allCamera");
+    newChild1 = my_xml.addChild("allCameras");
     int ni = 1 + allCameras_num;
     newChild1.setInt("ni", ni);
     for (int i = 0; i < ni; i++) {
@@ -47245,6 +47250,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     } 
   }  
 
+  println("Saving:Sections");
   {
     newChild1 = my_xml.addChild("allSections");
     int ni = 1 + allSections_num;
@@ -47268,6 +47274,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     } 
   }
 
+  println("Saving:Solids");
   {
     newChild1 = my_xml.addChild("allSolids");
     int ni = allSolids.length;
@@ -47286,6 +47293,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     } 
   }  
 
+  println("Saving:Fractals");
   {
     newChild1 = my_xml.addChild("allFractals");
     int ni = 1 + allFractals_num;
@@ -47315,6 +47323,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     } 
   }
 
+  println("Saving:Object2Ds");
   {
     newChild1 = my_xml.addChild("allObject2Ds");
     int ni = 1 + allObject2Ds_num;
@@ -47333,7 +47342,131 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       newChild2.setContent(lineSTR);
     } 
   }
+
+  println("Saving:Vertices");
+  {
+    newChild1 = my_xml.addChild("allVertices");
+    newChild1.setInt("ni", allVertices.length);
+    for (int i = 0; i < allVertices.length; i++) {
+      newChild2 = newChild1.addChild("Vertice");
+      newChild2.setInt("id", i);
+      String lineSTR = "";
+      //for (int j = 0; j < allVertices[i].length; j++) {
+      for (int j = 0; j < 3; j++) { // x, y, z 
+        lineSTR += nf(allVertices[i][j], 0, 4).replace(",", "."); // <<<<
+        if (j < allVertices[i].length - 1) lineSTR += ",";
+      }
+      newChild2.setContent(lineSTR);
+    } 
+  }
+
+  println("Saving:Faces");
+  {
+    newChild1 = my_xml.addChild("allFaces");
+    newChild1.setInt("ni", allFaces.length);
+    for (int i = 0; i < allFaces.length; i++) {
+      newChild2 = newChild1.addChild("Face");
+      newChild2.setInt("id", i);
+      String lineSTR = "";
+      for (int j = 0; j < allFaces[i].length; j++) {
+        lineSTR += nf(allFaces[i][j], 0);
+        if (j < allFaces[i].length - 1) lineSTR += ",";
+      }
+      newChild2.setContent(lineSTR);
+    } 
+  }
   
+  println("Saving:Faces_MTLV");
+  {
+    newChild1 = my_xml.addChild("allFaces_MTLV");
+    newChild1.setInt("ni", allFaces_MTLV.length);
+    for (int i = 0; i < allFaces_MTLV.length; i++) {
+      newChild2 = newChild1.addChild("Face_MTLV");
+      newChild2.setInt("id", i);
+      String lineSTR = "";
+      for (int j = 0; j < allFaces_MTLV[i].length; j++) {
+        lineSTR += nf(allFaces_MTLV[i][j], 0);
+        if (j < allFaces_MTLV[i].length - 1) lineSTR += ",";
+      }
+      newChild2.setContent(lineSTR);
+    }   
+  }
+
+  
+
+
+
+
+  println("Saving:Group3Ds_Object2Ds");
+  {
+    newChild1 = my_xml.addChild("allGroup3Ds_Object2Ds");
+    newChild1.setInt("ni", allGroup3Ds_num + 1);
+    for (int i = 0; i < allGroup3Ds_num + 1; i++) {
+      newChild2 = newChild1.addChild("Object2Ds");
+      newChild2.setInt("id", i);
+      String lineSTR = "";
+      //for (int j = 0; j < allGroup3Ds_Object2Ds[i].length; j++) {
+      for (int j = 0; j < 2; j++) { // start, end
+        lineSTR += nf(allGroup3Ds_Object2Ds[i][j], 0);
+        if (j < allGroup3Ds_Object2Ds[i].length - 1) lineSTR += ",";
+      }
+      newChild2.setContent(lineSTR);
+    }
+  }
+
+  println("Saving:Group3Ds_Fractals");
+  {
+    newChild1 = my_xml.addChild("allGroup3Ds_Fractals");
+    newChild1.setInt("ni", allGroup3Ds_num + 1);
+    for (int i = 0; i < allGroup3Ds_num + 1; i++) {
+      newChild2 = newChild1.addChild("Fractals");
+      newChild2.setInt("id", i);
+      String lineSTR = "";
+      //for (int j = 0; j < allGroup3Ds_Fractals[i].length; j++) {
+      for (int j = 0; j < 2; j++) { // start, end
+        lineSTR += nf(allGroup3Ds_Fractals[i][j], 0);
+        if (j < allGroup3Ds_Fractals[i].length - 1) lineSTR += ",";
+      }
+      newChild2.setContent(lineSTR);
+    }
+  }
+
+  println("Saving:Group3Ds_Faces");
+  {
+    newChild1 = my_xml.addChild("allGroup3Ds_Faces");
+    newChild1.setInt("ni", allGroup3Ds_num + 1);
+    for (int i = 0; i < allGroup3Ds_num + 1; i++) {
+      newChild2 = newChild1.addChild("Faces");
+      newChild2.setInt("id", i);
+      String lineSTR = "";
+      //for (int j = 0; j < allGroup3Ds_Faces[i].length; j++) {
+      for (int j = 0; j < 2; j++) { // start, end
+        lineSTR += nf(allGroup3Ds_Faces[i][j], 0);
+        if (j < allGroup3Ds_Faces[i].length - 1) lineSTR += ",";
+      }
+      newChild2.setContent(lineSTR);
+    } 
+  }
+    
+  println("Saving:Group3Ds_Solids");
+  {    
+    newChild1 = my_xml.addChild("allGroup3Ds_Solids");
+    newChild1.setInt("ni", allGroup3Ds_num + 1);
+    for (int i = 0; i < allGroup3Ds_num + 1; i++) {
+      newChild2 = newChild1.addChild("Solids");
+      newChild2.setInt("id", i);
+      String lineSTR = "";
+      //for (int j = 0; j < allGroup3Ds_Solids[i].length; j++) {
+      for (int j = 0; j < 2; j++) { // start, end
+        lineSTR += nf(allGroup3Ds_Solids[i][j], 0);
+        if (j < allGroup3Ds_Solids[i].length - 1) lineSTR += ",";
+      }
+      newChild2.setContent(lineSTR);
+    }
+  }
+
+
+  println("Saving:Group3Ds_PivotXYZ");
   {
     newChild1 = my_xml.addChild("allGroup3Ds_PivotXYZ");
     int ni = allGroup3Ds_num + 1;
@@ -47350,6 +47483,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
     } 
   }  
 
+  println("Saving:Group3Ds_PivotType");
   {
     newChild1 = my_xml.addChild("allGroup3Ds_PivotType");
     int ni = allGroup3Ds_num + 1;
@@ -47365,102 +47499,7 @@ void SOLARCHVISION_save_project (String myFile, int explore_output) {
       newChild2.setContent(lineSTR);
     } 
   }    
-  
-  newChild1 = my_xml.addChild("allVertices");
-  newChild1.setInt("ni", allVertices.length);
-  for (int i = 0; i < allVertices.length; i++) {
-    newChild2 = newChild1.addChild("Vertice");
-    newChild2.setInt("id", i);
-    String lineSTR = "";
-    //for (int j = 0; j < allVertices[i].length; j++) {
-    for (int j = 0; j < 3; j++) { // x, y, z 
-      lineSTR += nf(allVertices[i][j], 0, 4).replace(",", "."); // <<<<
-      if (j < allVertices[i].length - 1) lineSTR += ",";
-    }
-    newChild2.setContent(lineSTR);
-  } 
 
-  newChild1 = my_xml.addChild("allFaces");
-  newChild1.setInt("ni", allFaces.length);
-  for (int i = 0; i < allFaces.length; i++) {
-    newChild2 = newChild1.addChild("Face");
-    newChild2.setInt("id", i);
-    String lineSTR = "";
-    for (int j = 0; j < allFaces[i].length; j++) {
-      lineSTR += nf(allFaces[i][j], 0);
-      if (j < allFaces[i].length - 1) lineSTR += ",";
-    }
-    newChild2.setContent(lineSTR);
-  } 
-  
-  newChild1 = my_xml.addChild("allFaces_MTLV");
-  newChild1.setInt("ni", allFaces_MTLV.length);
-  for (int i = 0; i < allFaces_MTLV.length; i++) {
-    newChild2 = newChild1.addChild("Face_MTLV");
-    newChild2.setInt("id", i);
-    String lineSTR = "";
-    for (int j = 0; j < allFaces_MTLV[i].length; j++) {
-      lineSTR += nf(allFaces_MTLV[i][j], 0);
-      if (j < allFaces_MTLV[i].length - 1) lineSTR += ",";
-    }
-    newChild2.setContent(lineSTR);
-  }   
-
-  newChild1 = my_xml.addChild("allGroup3Ds_Faces");
-  newChild1.setInt("ni", allGroup3Ds_num + 1);
-  for (int i = 0; i < allGroup3Ds_num + 1; i++) {
-    newChild2 = newChild1.addChild("Faces");
-    newChild2.setInt("id", i);
-    String lineSTR = "";
-    //for (int j = 0; j < allGroup3Ds_Faces[i].length; j++) {
-    for (int j = 0; j < 2; j++) { // start, end
-      lineSTR += nf(allGroup3Ds_Faces[i][j], 0);
-      if (j < allGroup3Ds_Faces[i].length - 1) lineSTR += ",";
-    }
-    newChild2.setContent(lineSTR);
-  } 
-    
-  newChild1 = my_xml.addChild("allGroup3Ds_Solids");
-  newChild1.setInt("ni", allGroup3Ds_num + 1);
-  for (int i = 0; i < allGroup3Ds_num + 1; i++) {
-    newChild2 = newChild1.addChild("Solids");
-    newChild2.setInt("id", i);
-    String lineSTR = "";
-    //for (int j = 0; j < allGroup3Ds_Solids[i].length; j++) {
-    for (int j = 0; j < 2; j++) { // start, end
-      lineSTR += nf(allGroup3Ds_Solids[i][j], 0);
-      if (j < allGroup3Ds_Solids[i].length - 1) lineSTR += ",";
-    }
-    newChild2.setContent(lineSTR);
-  }
-
-  newChild1 = my_xml.addChild("allGroup3Ds_Object2Ds");
-  newChild1.setInt("ni", allGroup3Ds_num + 1);
-  for (int i = 0; i < allGroup3Ds_num + 1; i++) {
-    newChild2 = newChild1.addChild("Object2Ds");
-    newChild2.setInt("id", i);
-    String lineSTR = "";
-    //for (int j = 0; j < allGroup3Ds_Object2Ds[i].length; j++) {
-    for (int j = 0; j < 2; j++) { // start, end
-      lineSTR += nf(allGroup3Ds_Object2Ds[i][j], 0);
-      if (j < allGroup3Ds_Object2Ds[i].length - 1) lineSTR += ",";
-    }
-    newChild2.setContent(lineSTR);
-  }
-
-  newChild1 = my_xml.addChild("allGroup3Ds_Fractals");
-  newChild1.setInt("ni", allGroup3Ds_num + 1);
-  for (int i = 0; i < allGroup3Ds_num + 1; i++) {
-    newChild2 = newChild1.addChild("Fractals");
-    newChild2.setInt("id", i);
-    String lineSTR = "";
-    //for (int j = 0; j < allGroup3Ds_Fractals[i].length; j++) {
-    for (int j = 0; j < 2; j++) { // start, end
-      lineSTR += nf(allGroup3Ds_Fractals[i][j], 0);
-      if (j < allGroup3Ds_Fractals[i].length - 1) lineSTR += ",";
-    }
-    newChild2.setContent(lineSTR);
-  }
 
   {
     newChild1 = my_xml.addChild("selectedLandPoint_numbers");
@@ -48437,7 +48476,7 @@ void SOLARCHVISION_load_project (String myFile) {
     }
 
 
-    children0 = FileAll.getChildren("allCamera");
+    children0 = FileAll.getChildren("allCameras");
     for (int L = 0; L < children0.length; L++) {
       int ni = children0[L].getInt("ni");
       
