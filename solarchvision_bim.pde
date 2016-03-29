@@ -85,6 +85,9 @@ int STATION_NUMBER = 0;
 
 String[][] DEFINED_STATIONS = {
   
+  
+                                {"Isle_of_Man", "XX", "UK", "54.216539", "-4.683195", "0", "0", "240.0", "", "", "GBR_Aughton.033220_IWEC"},
+  
                                 {"Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
 
                                 {"Montreal_Biosphere", "QC", "CA", "45.5141", "-73.53145", "-75", "9", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"},  
@@ -21492,7 +21495,8 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
             
             //if (max_o > 100) max_o = 100;
            
-            if (i > 12) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+            //if (i > 12) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+            if (i > 16) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
            
             for (int o = 0; o < max_o; o += 1) {
               
@@ -21517,7 +21521,7 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
                                             
               if ((g > r + 10) && (g > b + 10)) { // looks more green
               
-                if (g < 40) { // not on grass (light green) 
+                if (g < 80) { // not on grass (light green) 
                 
                   //if (z + LocationElevation > 5) { // not in water (below see level)
     
@@ -21593,7 +21597,8 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
           int max_o = int((16.0 / pow(2, LAND_TESSELLATION)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
           
           
-          if (i > 8) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+          //if (i > 12) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+          if (i > 16) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
          
           for (int o = 0; o < max_o; o += 1) {
             
