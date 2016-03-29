@@ -81,7 +81,7 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 0; 
+int STATION_NUMBER = 1; 
 
 String[][] DEFINED_STATIONS = {
   
@@ -1251,7 +1251,7 @@ int LAND_TESSELLATION = 0; //2;
 int MODEL3D_TESSELLATION = 2;
 
 int SKY3D_TESSELLATION = 0; //3;
-float SKY3D_scale = 10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
+float SKY3D_scale = 25000; //10000; //10km:Troposphere 25km:Ozone layer 100km:Karman line.
 
 float WindRose3D_scale = 400;
 
@@ -21495,8 +21495,8 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
             
             //if (max_o > 100) max_o = 100;
            
-            //if (i > 12) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
-            if (i > 16) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+            if (i > 14) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+            if (i < 4) max_o = 0; // <<<<<<< do not create at near distances <<<<<<<<<<<<<<<
            
             for (int o = 0; o < max_o; o += 1) {
               
@@ -21519,9 +21519,10 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
               float g = COL >> 8 & 0xFF;
               float b = COL & 0xFF;
                                             
-              if ((g > r + 10) && (g > b + 10)) { // looks more green
+              //if ((g > r + 8) && (g > b + 16)) { // looks more green
+              if ((g > r - 4) && (g > b + 16)) { // looks more green, slightly red is acceptible
               
-                if (g < 80) { // not on grass (light green) 
+                if (g < 56) { // not on grass (light green) 
                 
                   //if (z + LocationElevation > 5) { // not in water (below see level)
     
@@ -21538,7 +21539,8 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
                       float z0 = treesXYZS[f][2];
                       float s0 = treesXYZS[f][3];
     
-                      if (dist(x0, y0, z0, x, y, z) < 0.25 * (s0 + s)) { //avoids creating trees close to each other 
+                      //if (dist(x0, y0, z0, x, y, z) < 0.25 * (s0 + s)) { //avoids creating trees close to each other 
+                      if (dist(x0, y0, z0, x, y, z) < 0.5 * (s0 + s)) { //avoids creating trees close to each other
                         foundNearTree = 1;
                     
                         break;
@@ -21598,7 +21600,7 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
           
           
           //if (i > 12) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
-          if (i > 16) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+          if (i > 14) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
          
           for (int o = 0; o < max_o; o += 1) {
             
