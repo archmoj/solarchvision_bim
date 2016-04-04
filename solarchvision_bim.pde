@@ -81,18 +81,53 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 1; 
+int STATION_NUMBER = 15; 
 
 String[][] DEFINED_STATIONS = {
-  
-  
-                                {"Isle_of_Man", "XX", "UK", "54.216539", "-4.683195", "0", "0", "240.0", "", "", "GBR_Aughton.033220_IWEC"},
-  
-                                {"Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
 
+                                {"Isle_of_Man", "XX", "UK", "54.216539", "-4.683195", "0", "0", "240.0", "", "", "GBR_Aughton.033220_IWEC"},
+                                {"Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
                                 {"Montreal_Biosphere", "QC", "CA", "45.5141", "-73.53145", "-75", "9", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"},  
+                                {"Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
+                                {"Place_Bonaventure", "QC", "CA", "45.4995", "-73.5650", "-75", "30", "692.82", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"},
+                                {"Ryerson_University", "ON", "CA", "43.6593", "-79.3779", "-75", "95", "461.88", "TORONTO_ISLAND_ON_CA", "ON_TORONTO_4367_7937_7500", "CAN_ON_Toronto.716240_CWEC"}, 
+                                {"Financial_District", "ON", "CA", "43.6488", "-79.3817", "-75", "86", "692.82", "TORONTO_ISLAND_ON_CA", "ON_TORONTO-ISLAND-A_4363_7940_7500", "CAN_ON_Toronto.716240_CWEC"},
+                                {"TORONTO-ISLAND", "ON", "CA", "43.6275", "-79.396111", "-75", "76.8", "240.0", "TORONTO_ISLAND_ON_CA", "ON_TORONTO-ISLAND-A_4363_7940_7500", "CAN_ON_Toronto.716240_CWEC"}, 
+                                {"TORONTO-PEARSON", "ON", "CA", "43.676667", "-79.630556", "-75", "173.4", "240.0", "TORONTO_PEARSON_INTL_ON_CA", "ON_TORONTO-PEARSON-INT'L_4367_7962_7500", "CAN_ON_Toronto.716240_CWEC"}, 
+                                {"CALGARY", "AB", "CA", "51.113889", "-114.02", "-120", "1084.1", "240.0", "CALGARY_INTL_AB_CA", "AB_CALGARY-INT'L-A_5110_11402_10500", "CAN_AB_Calgary.718770_CWEC"}, 
+                                {"EDMONTON", "AB", "CA", "53.31", "-113.579444", "-120", "723.3", "240.0", "EDMONTON_INTL_A_AB_CA", "AB_EDMONTON-INT'L-A_5332_11358_10500", "CAN_AB_Edmonton.711230_CWEC"},  
+                                {"HALIFAX", "NS", "CA", "44.881111", "-63.508611", "-60", "145.4", "240.0", "HALIFAX_INTL_AIRPORT_NS_CA", "NS_HALIFAX-INT'L-A_4488_6352_6000", "CAN_NS_Shearwater.716010_CWEC"},  
+                                {"OTTAWA", "ON", "CA", "45.383333", "-75.716667", "-75", "79.2", "240.0", "OTTAWA_INTL_ON_CA", "ON_OTTAWA-CDA_4538_7572_7500", "CAN_ON_Ottawa.716280_CWEC"}, 
+                                {"QUEBEC", "QC", "CA", "46.803611", "-71.381667", "-75", "60", "240.0", "QUEBEC_QC_CA", "QC_QUEBEC-A_4680_7137_7500", "CAN_PQ_Quebec.717140_CWEC"}, 
+                                {"SUDBURY", "ON", "CA", "46.625556", "-80.797778", "-75", "348.4", "240.0", "SUDBURY_ON_CA", "ON_SUDBURY-A_4662_8080_7500", "CAN_ON_North.Bay.717310_CWEC"}, 
+                                {"VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"}, 
+                                {"WINNIPEG", "MB", "CA", "49.91", "-97.24", "-90", "238.7", "240.0", "WINNIPEG_INTL_MB_CA", "MB_WINNIPEG-INT'L-A_4990_9723_9000", "CAN_MB_Winnipeg.718520_CWEC"}, 
   
+                                {"BOSTON", "MA", "US", "42.35843", "-71.05978", "-75", "15.0", "240.0", "BOSTON_MA_US", "WY2-filename", "USA_MA_Boston-Logan.Intl.AP.725090_TMY3"}, 
+                                {"CHICAGO", "IL", "US", "41.878113", "-87.6298", "-90", "181.0", "240.0", "CHICAGO_IL_US", "WY2-filename", "USA_IL_Chicago-Midway.AP.725340_TMY3"}, 
+                                {"DENVER", "CO", "US", "39.737568", "-104.98472", "-105", "1608.0", "240.0", "DENVER_CO_US", "WY2-filename", "USA_CO_Golden-NREL.724666_TMY3"}, 
+                                {"HOUSTON", "TX", "US", "29.760193", "-95.36939", "-90", "15.0", "240.0", "HOUSTON_TX_US", "WY2-filename", "USA_TX_Houston-William.P.Hobby.AP.722435_TMY3"}, 
+                                {"LAS_VEGAS", "NV", "US", "36.16994", "-115.13983", "-120", "611.0", "240.0", "LAS_VEGAS_NV_US", "WY2-filename", "USA_NV_Las.Vegas-McCarran.Intl.AP.723860_TMY3"}, 
+                                {"LOS_ANGELES", "CA", "US", "34.052235", "-118.24368", "-120", "87.0", "240.0", "LOS_ANGELES_CA_US", "WY2-filename", "USA_CA_Hawthorne-Jack.Northrop.Field.722956_TMY3"}, 
+                                {"MIAMI", "FL", "US", "25.789097", "-80.20404", "-75", "3.0", "240.0", "MIAMI_FL_US", "WY2-filename", "USA_FL_Miami.Intl.AP.722020_TMY3"}, 
+                                {"NEW_YORK_CITY", "NY", "US", "40.712784", "-74.00594", "-75", "10.0", "240.0", "NEW_YORK_CITY_NY_US", "WY2-filename", "USA_NY_New.York-Central.Park.725033_TMY3"}, 
+                                {"WASHINGTON", "DC", "US", "38.907192", "-77.03687", "-75", "22.0", "240.0", "WASHINGTON_DC_US", "WY2-filename", "USA_VA_Arlington-Ronald.Reagan.Washington.Natl.AP.724050_TMY3"}, 
+
+                                {"BRASILIA", "XX", "BR", "-29.176456", "-51.22032", "-45", "774.0", "240.0", "BRASILIA_XX_BR", "WY2-filename", "BRA_Santa.Maria.839360_SWERA"}, 
+                                {"RIO_DE_JANEIRO", "XX", "BR", "-22.893467", "-43.21391", "-45", "6.0", "240.0", "RIO_DE_JANEIRO_XX_BR", "WY2-filename", "BRA_Rio.de.Janeiro-Santos.Dumont.837550_SWERA"}, 
+                                {"SAO_PAULO", "XX", "BR", "-23.5500", "-46.6333", "-45", "768.0", "240.0", "SAO_PAULO_XX_BR", "WY2-filename", "BRA_Bom.Jesus.da.Lapa.832880_SWERA"}, 
                                 
+                                {"MEXICO_CITY", "DF", "MX", "19.432608", "-99.13321", "-105", "2230.0", "240.0", "CIUDAD_DE_MEXICO_DF_MX", "WY2-filename", "MEX_Mexico.City.766790_IWEC"}, 
+                                {"HAVANA", "XX", "CU", "23.05407", "-82.34519", "-75", "93.0", "240.0", "HAVANA_XX_CU", "WY2-filename", "CUB_Havana-Jose.Marti.782240_SWERA"}, 
+                                {"SANTO_DOMINGO", "XX", "DO", "18.482439", "-69.96518", "-75", "62.0", "240.0", "SANTO_DOMINGO_XX_DO", "WY2-filename", "PRI_Mayaguez-Eugenio.Maria.de.Hostos.AP.785145_TMY3"}, 
+                                {"SAN_SALVADOR", "XX", "SV", "13.679502", "-89.21397", "-90", "796.0", "240.0", "SAN_SALVADOR_XX_SV", "WY2-filename", "SLV_San.Salvador-Ilopango.786630_SWERA"}, 
+                                {"CARACAS", "XX", "VE", "10.960712", "-63.920437", "-60", "32.0", "240.0", "CARACAS_XX_VEe", "WY2-filename", "VEN_Caracas.804150_IWEC"}, 
+                                {"BOGOTA", "XX", "CO", "7.894716", "-72.504616", "-75", "302.0", "240.0", "BOGOTA_XX_CO", "WY2-filename", "COL_Bogota.802220_IWEC"}, 
+                                {"GUAYAQUIL", "XX", "EC", "-2.1241937", "-79.59123", "-75", "11.0", "240.0", "GUAYAQUIL_XX_EC", "WY2-filename", "ECU_Quito.840710_IWEC"}, 
+                                {"LIMA", "XX", "PE", "-12.032012", "-76.92987", "-75", "336.0", "240.0", "LIMA_XX_PE", "WY2-filename", "PER_Lima.846280_IWEC"}, 
+                                {"ANTOFAGASTA", "XX", "CL", "-23.65", "-70.4", "-75", "13.0", "240.0", "ANTOFAGASTA_XX_CL", "WY2-filename", "CHL_Antofagasta.854420_IWEC"},                                
+
+                                                                
   
                                 {"Tehran_SBU", "XX", "IR", "35.797", "51.395", "52.5", "1672", "240.0", "", "", "IRN_TEHRAN_XX_IR"},
   
@@ -107,53 +142,17 @@ String[][] DEFINED_STATIONS = {
   
                                 {"Yazd", "XX", "IR", "31.8916", "54.3712", "52.5", "1144", "240.0", "", "", "IRN_Yazd_XX_IR"},
                                 
-                                {"Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
-                                
+
                                 {"Edinburgh_School", "QC", "CA", "45.457", "-73.660", "-75", "0", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
                                 
                                 {"Berlin_Museum_of_the_20th_Century", "BB", "DE", "52.5080", "13.3685", "15", "36.7", "240.0", "", "", "DEU_Berlin.103840_IWEC"},
   
                                 {"Villa-Matina", "XX", "GR", "36.644", "22.383", "15", "0", "240.0", "", "", "GRC_Andravida.166820_IWEC"},                              
 
-                                {"Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
-                                {"Place_Bonaventure", "QC", "CA", "45.4995", "-73.5650", "-75", "30", "692.82", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"},
-                                {"Ryerson_University", "ON", "CA", "43.6593", "-79.3779", "-75", "95", "461.88", "TORONTO_ISLAND_ON_CA", "ON_TORONTO_4367_7937_7500", "CAN_ON_Toronto.716240_CWEC"}, 
-                                {"Financial_District", "ON", "CA", "43.6488", "-79.3817", "-75", "86", "692.82", "TORONTO_ISLAND_ON_CA", "ON_TORONTO-ISLAND-A_4363_7940_7500", "CAN_ON_Toronto.716240_CWEC"},
+                                
 
-                                {"CALGARY", "AB", "CA", "51.113889", "-114.02", "-120", "1084.1", "240.0", "CALGARY_INTL_AB_CA", "AB_CALGARY-INT'L-A_5110_11402_10500", "CAN_AB_Calgary.718770_CWEC"}, 
-                                {"EDMONTON", "AB", "CA", "53.31", "-113.579444", "-120", "723.3", "240.0", "EDMONTON_INTL_A_AB_CA", "AB_EDMONTON-INT'L-A_5332_11358_10500", "CAN_AB_Edmonton.711230_CWEC"},  
-                                {"HALIFAX", "NS", "CA", "44.881111", "-63.508611", "-60", "145.4", "240.0", "HALIFAX_INTL_AIRPORT_NS_CA", "NS_HALIFAX-INT'L-A_4488_6352_6000", "CAN_NS_Shearwater.716010_CWEC"},  
-                                {"OTTAWA", "ON", "CA", "45.383333", "-75.716667", "-75", "79.2", "240.0", "OTTAWA_INTL_ON_CA", "ON_OTTAWA-CDA_4538_7572_7500", "CAN_ON_Ottawa.716280_CWEC"}, 
-                                {"QUEBEC", "QC", "CA", "46.803611", "-71.381667", "-75", "60", "240.0", "QUEBEC_QC_CA", "QC_QUEBEC-A_4680_7137_7500", "CAN_PQ_Quebec.717140_CWEC"}, 
-                                {"SUDBURY", "ON", "CA", "46.625556", "-80.797778", "-75", "348.4", "240.0", "SUDBURY_ON_CA", "ON_SUDBURY-A_4662_8080_7500", "CAN_ON_North.Bay.717310_CWEC"}, 
-                                {"TORONTO-ISLAND", "ON", "CA", "43.6275", "-79.396111", "-75", "76.8", "240.0", "TORONTO_ISLAND_ON_CA", "ON_TORONTO-ISLAND-A_4363_7940_7500", "CAN_ON_Toronto.716240_CWEC"}, 
-                                {"TORONTO-PEARSON", "ON", "CA", "43.676667", "-79.630556", "-75", "173.4", "240.0", "TORONTO_PEARSON_INTL_ON_CA", "ON_TORONTO-PEARSON-INT'L_4367_7962_7500", "CAN_ON_Toronto.716240_CWEC"}, 
-                                {"VANCOUVER_Harbour", "BC", "CA", "49.295353", "-123.121869", "-120", "2.5", "240.0", "VANCOUVER_INTL_BC_CA", "BC_VANCOUVER-INT'L_4925_12325_12000", "CAN_BC_Vancouver.718920_CWEC"}, 
-                                {"WINNIPEG", "MB", "CA", "49.91", "-97.24", "-90", "238.7", "240.0", "WINNIPEG_INTL_MB_CA", "MB_WINNIPEG-INT'L-A_4990_9723_9000", "CAN_MB_Winnipeg.718520_CWEC"}, 
-                                
-                                {"BOSTON", "MA", "US", "42.35843", "-71.05978", "-75", "15.0", "240.0", "BOSTON_MA_US", "WY2-filename", "USA_MA_Boston-Logan.Intl.AP.725090_TMY3"}, 
-                                {"CHICAGO", "IL", "US", "41.878113", "-87.6298", "-90", "181.0", "240.0", "CHICAGO_IL_US", "WY2-filename", "USA_IL_Chicago-Midway.AP.725340_TMY3"}, 
-                                {"DENVER", "CO", "US", "39.737568", "-104.98472", "-105", "1608.0", "240.0", "DENVER_CO_US", "WY2-filename", "USA_CO_Golden-NREL.724666_TMY3"}, 
-                                {"HOUSTON", "TX", "US", "29.760193", "-95.36939", "-90", "15.0", "240.0", "HOUSTON_TX_US", "WY2-filename", "USA_TX_Houston-William.P.Hobby.AP.722435_TMY3"}, 
-                                {"LAS_VEGAS", "NV", "US", "36.16994", "-115.13983", "-120", "611.0", "240.0", "LAS_VEGAS_NV_US", "WY2-filename", "USA_NV_Las.Vegas-McCarran.Intl.AP.723860_TMY3"}, 
-                                {"LOS_ANGELES", "CA", "US", "34.052235", "-118.24368", "-120", "87.0", "240.0", "LOS_ANGELES_CA_US", "WY2-filename", "USA_CA_Hawthorne-Jack.Northrop.Field.722956_TMY3"}, 
-                                {"MIAMI", "FL", "US", "25.789097", "-80.20404", "-75", "3.0", "240.0", "MIAMI_FL_US", "WY2-filename", "USA_FL_Miami.Intl.AP.722020_TMY3"}, 
-                                {"NEW_YORK_CITY", "NY", "US", "40.712784", "-74.00594", "-75", "10.0", "240.0", "NEW_YORK_CITY_NY_US", "WY2-filename", "USA_NY_New.York-Central.Park.725033_TMY3"}, 
-                                {"WASHINGTON", "DC", "US", "38.907192", "-77.03687", "-75", "22.0", "240.0", "WASHINGTON_DC_US", "WY2-filename", "USA_VA_Arlington-Ronald.Reagan.Washington.Natl.AP.724050_TMY3"}, 
-                                
-                                {"BRASILIA", "XX", "BR", "-29.176456", "-51.22032", "-45", "774.0", "240.0", "BRASILIA_XX_BR", "WY2-filename", "BRA_Santa.Maria.839360_SWERA"}, 
-                                {"RIO_DE_JANEIRO", "XX", "BR", "-22.893467", "-43.21391", "-45", "6.0", "240.0", "RIO_DE_JANEIRO_XX_BR", "WY2-filename", "BRA_Rio.de.Janeiro-Santos.Dumont.837550_SWERA"}, 
-                                {"SAO_PAULO", "XX", "BR", "-23.5500", "-46.6333", "-45", "768.0", "240.0", "SAO_PAULO_XX_BR", "WY2-filename", "BRA_Bom.Jesus.da.Lapa.832880_SWERA"}, 
-                                
-                                {"MEXICO_CITY", "DF", "MX", "19.432608", "-99.13321", "-105", "2230.0", "240.0", "CIUDAD_DE_MEXICO_DF_MX", "WY2-filename", "MEX_Mexico.City.766790_IWEC"}, 
-                                {"HAVANA", "XX", "CU", "23.05407", "-82.34519", "-75", "93.0", "240.0", "HAVANA_XX_CU", "WY2-filename", "CUB_Havana-Jose.Marti.782240_SWERA"}, 
-                                {"SANTO_DOMINGO", "XX", "DO", "18.482439", "-69.96518", "-75", "62.0", "240.0", "SANTO_DOMINGO_XX_DO", "WY2-filename", "PRI_Mayaguez-Eugenio.Maria.de.Hostos.AP.785145_TMY3"}, 
-                                {"SAN_SALVADOR", "XX", "SV", "13.679502", "-89.21397", "-90", "796.0", "240.0", "SAN_SALVADOR_XX_SV", "WY2-filename", "SLV_San.Salvador-Ilopango.786630_SWERA"}, 
-                                {"CARACAS", "XX", "VE", "10.960712", "-63.920437", "-60", "32.0", "240.0", "CARACAS_XX_VEe", "WY2-filename", "VEN_Caracas.804150_IWEC"}, 
-                                {"BOGOTA", "XX", "CO", "7.894716", "-72.504616", "-75", "302.0", "240.0", "BOGOTA_XX_CO", "WY2-filename", "COL_Bogota.802220_IWEC"}, 
-                                {"GUAYAQUIL", "XX", "EC", "-2.1241937", "-79.59123", "-75", "11.0", "240.0", "GUAYAQUIL_XX_EC", "WY2-filename", "ECU_Quito.840710_IWEC"}, 
-                                {"LIMA", "XX", "PE", "-12.032012", "-76.92987", "-75", "336.0", "240.0", "LIMA_XX_PE", "WY2-filename", "PER_Lima.846280_IWEC"}, 
-                                {"ANTOFAGASTA", "XX", "CL", "-23.65", "-70.4", "-75", "13.0", "240.0", "ANTOFAGASTA_XX_CL", "WY2-filename", "CHL_Antofagasta.854420_IWEC"}
+
+
                               
                            
                               };
@@ -21425,6 +21424,8 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
 
 void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
 
+  /*
+  
   println("SOLARCHVISION_add_Object2Ds_onLand");
   
   randomSeed(0);
@@ -21633,6 +21634,8 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
     }
   }
   
+  
+  */
 
 }
 
@@ -24317,7 +24320,7 @@ void SOLARCHVISION_move_3DViewport_towards_Mouse (float t) {
   SOLARCHVISION_reverseTransform_3DViewport();
 
 
-  WIN3D_S_coordinate *= t; // just to adjust panning better
+  //WIN3D_S_coordinate *= t; // just to adjust panning better
 }
 
 void SOLARCHVISION_move_3DViewport_towards_Selection (float t) {
@@ -24347,7 +24350,7 @@ void SOLARCHVISION_move_3DViewport_towards_Selection (float t) {
   SOLARCHVISION_reverseTransform_3DViewport();
   
 
-  WIN3D_S_coordinate *= t; // just to adjust panning better
+  //WIN3D_S_coordinate *= t; // just to adjust panning better
 }
 
 void SOLARCHVISION_rotateZ_3DViewport_around_Selection (float t) {
@@ -26475,7 +26478,7 @@ void SOLARCHVISION_add_ProjectModel_2DsFromFile () {
 }
 
 
-void SOLARCHVISION_add_ProjectModel () { //CMC
+void SOLARCHVISION_add_ProjectModel_CMC () { //CMC
 
 
   {
@@ -26504,7 +26507,7 @@ void SOLARCHVISION_add_ProjectModel () { //CMC
 }
 
 
-void SOLARCHVISION_add_ProjectModel_BASIC () {
+void SOLARCHVISION_add_ProjectModel () {
 
 /*
   {
@@ -26711,7 +26714,7 @@ void SOLARCHVISION_add_ProjectModel_BASIC () {
   
   Create_Mesh_as_Solid = keep_Create_Mesh_as_Solid;
 
-/*
+
   {
     float dx = 24;
     float dy = 24;
@@ -26762,7 +26765,6 @@ void SOLARCHVISION_add_ProjectModel_BASIC () {
       }   
     }  
   }  
-*/
 
   {
     SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
