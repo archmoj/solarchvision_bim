@@ -81,11 +81,16 @@ int _EN = 0;
 int _FR = 1;
 int _LAN = _EN;
 
-int STATION_NUMBER = 15; 
+int STATION_NUMBER = 1; 
 
 String[][] DEFINED_STATIONS = {
 
+  
+  
                                 {"Isle_of_Man", "XX", "UK", "54.216539", "-4.683195", "0", "0", "240.0", "", "", "GBR_Aughton.033220_IWEC"},
+                                
+                                {"Montreal_WestStation", "QC", "CA", "45.455158", "-73.640696", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"},
+                                
                                 {"Montreal_CMC", "QC", "CA", "45.4834", "-73.7879", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
                                 {"Montreal_Biosphere", "QC", "CA", "45.5141", "-73.53145", "-75", "9", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-JEAN-BREBEUF_4550_7362_7500", "CAN_PQ_Montreal.Jean.Brebeuf.716278_CWEC"},  
                                 {"Montreal_Dorval", "QC", "CA", "45.470556", "-73.740833", "-75", "36", "240.0", "MONTREAL_DORVAL_QC_CA", "QC_MONTREAL-INT'L-A_4547_7375_7500", "CAN_PQ_Montreal.Intl.AP.716270_CWEC"},
@@ -1795,7 +1800,7 @@ int selectedGroup3D_displayEdges = 1; //0;
 int selectedGroup3D_displayBox = 1;
 
 int selectedFace_displayEdges = 1;
-int selectedFace_displayVertexCount = 1;
+int selectedFace_displayVertexCount = 0;
 int selectedVertex_displayVertices = 1;
  
 
@@ -16634,17 +16639,17 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
               
                 for (int i = OBJ_NUM + 1; i < allGroup3Ds_num + 1; i++) {
                   for (int j = 0; j < 2; j++) {
-                    allGroup3Ds_Faces[i][j] += Modify_Input_TessellateRows * Modify_Input_TessellateColumns - 1;
+                    allGroup3Ds_Faces[i][j] += Modify_Input_TessellateColumns * Modify_Input_TessellateRows - 1;
                   }
                 }  
-                allGroup3Ds_Faces[OBJ_NUM][1] += Modify_Input_TessellateRows * Modify_Input_TessellateColumns - 1; // because adding the faces also changes the end pointer of the same object 
+                allGroup3Ds_Faces[OBJ_NUM][1] += Modify_Input_TessellateColumns * Modify_Input_TessellateRows - 1; // because adding the faces also changes the end pointer of the same object 
     
                 for (int p = new_selectedFace_numbers.length - 1; p >= 0; p--) {
                   
                   if (new_selectedFace_numbers[p] != 0) {
                       
                     if (new_selectedFace_numbers[p] > f) {  
-                      new_selectedFace_numbers[p] += Modify_Input_TessellateRows * Modify_Input_TessellateColumns - 1;
+                      new_selectedFace_numbers[p] += Modify_Input_TessellateColumns * Modify_Input_TessellateRows - 1;
                     }
                   }
                 }             
@@ -16670,18 +16675,18 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
                   
       
                   
-                  float[][] new_EdgeVertices = new float [(Modify_Input_TessellateRows + 1) * (Modify_Input_TessellateColumns + 1)][3];
+                  float[][] new_EdgeVertices = new float [(Modify_Input_TessellateColumns + 1) * (Modify_Input_TessellateRows + 1)][3];
                 
-                  for (int i = 0; i <= Modify_Input_TessellateRows; i++) {
+                  for (int i = 0; i <= Modify_Input_TessellateColumns; i++) {
                     
-                    for (int j = 0; j <= Modify_Input_TessellateColumns; j++) {
+                    for (int j = 0; j <= Modify_Input_TessellateRows; j++) {
                       
-                      int s = i * (Modify_Input_TessellateColumns + 1) + j;
+                      int s = i * (Modify_Input_TessellateRows + 1) + j;
   
                       for (int k = 0; k < 3; k++) {
                         
-                        float u = i / float(Modify_Input_TessellateRows);
-                        float v = j / float(Modify_Input_TessellateColumns);
+                        float u = i / float(Modify_Input_TessellateColumns);
+                        float v = j / float(Modify_Input_TessellateRows);
                         
                         new_EdgeVertices[s][k] = Bilinear(base_Vertices[0][k], base_Vertices[1][k], base_Vertices[2][k], base_Vertices[3][k], u, v);
     
@@ -16689,24 +16694,24 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
                     }
                   }
                   
-                  int[] new_EdgeVertex_numbers = new int [(Modify_Input_TessellateRows + 1) * (Modify_Input_TessellateColumns + 1)]; // on the edge
+                  int[] new_EdgeVertex_numbers = new int [(Modify_Input_TessellateColumns + 1) * (Modify_Input_TessellateRows + 1)]; // on the edge
                   
-                  for (int i = 0; i <= Modify_Input_TessellateRows; i++) {
+                  for (int i = 0; i <= Modify_Input_TessellateColumns; i++) {
                     
-                    for (int j = 0; j <= Modify_Input_TessellateColumns; j++) {
+                    for (int j = 0; j <= Modify_Input_TessellateRows; j++) {
                       
-                      int s = i * (Modify_Input_TessellateColumns + 1) + j;
+                      int s = i * (Modify_Input_TessellateRows + 1) + j;
                     
                       if ((i == 0) && (j == 0)) {
                         new_EdgeVertex_numbers[s] = allFaces[f][0];
                       }
-                      else if ((i == Modify_Input_TessellateRows) && (j == 0)) {
+                      else if ((i == Modify_Input_TessellateColumns) && (j == 0)) {
                         new_EdgeVertex_numbers[s] = allFaces[f][1];
                       }
-                      else if ((i == Modify_Input_TessellateRows) && (j == Modify_Input_TessellateColumns)) {
+                      else if ((i == Modify_Input_TessellateColumns) && (j == Modify_Input_TessellateRows)) {
                         new_EdgeVertex_numbers[s] = allFaces[f][2];
                       }
-                      else if ((i == 0) && (j == Modify_Input_TessellateColumns)) {
+                      else if ((i == 0) && (j == Modify_Input_TessellateRows)) {
                         new_EdgeVertex_numbers[s] = allFaces[f][3];
                       }                    
                       else {
@@ -16721,17 +16726,17 @@ void SOLARCHVISION_tessellateRowsColumnsFaceSelection () {
                   defaultLayer = allFaces_MTLV[f][2];
                   defaultVisibility = allFaces_MTLV[f][3];
                
-                  for (int i = 0; i < Modify_Input_TessellateRows; i++) {
+                  for (int i = 0; i < Modify_Input_TessellateColumns; i++) {
                     
-                    for (int j = 0; j < Modify_Input_TessellateColumns; j++) {
+                    for (int j = 0; j < Modify_Input_TessellateRows; j++) {
                       
-                      int s = i * Modify_Input_TessellateColumns + j;  // number of face
+                      int s = i * Modify_Input_TessellateRows + j;  // number of face
                       
                       // number of vertices
-                      int s00 = i * (Modify_Input_TessellateColumns + 1) + j; 
+                      int s00 = i * (Modify_Input_TessellateRows + 1) + j; 
                       int s01 = s00 + 1;
-                      int s10 = s00 + (Modify_Input_TessellateColumns + 1);
-                      int s11 = s00 + (Modify_Input_TessellateColumns + 1) + 1;
+                      int s10 = s00 + (Modify_Input_TessellateRows + 1);
+                      int s11 = s00 + (Modify_Input_TessellateRows + 1) + 1;
       
                       int[][] newFace = {{new_EdgeVertex_numbers[s00], new_EdgeVertex_numbers[s10], new_EdgeVertex_numbers[s11], new_EdgeVertex_numbers[s01]}};
                       int[][] newFace_MTLV = {{defaultMaterial, defaultTessellation, defaultLayer, defaultVisibility}}; 
@@ -18448,6 +18453,7 @@ void SOLARCHVISION_add_Box_Core (int m, int tes, int lyr, int vsb, int xtr, floa
   if (m == -1) defaultMaterial = 0;
   else defaultMaterial = m;
 
+
   {//West
     int[] newFace = {t3, t2, b2, b3};
     if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
@@ -18477,7 +18483,7 @@ void SOLARCHVISION_add_Box_Core (int m, int tes, int lyr, int vsb, int xtr, floa
     int[] newFace = {b4, b3, b2, b1};
     if (m == -1) defaultMaterial = 1 + (defaultMaterial % (Materials_Number - 1));
     SOLARCHVISION_add_Face(newFace);
-  }     
+  }    
 }
 
 
@@ -21424,7 +21430,6 @@ float SOLARCHVISION_import_objects_asParametricBox (String FileName, int m, floa
 
 void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
 
-  /*
   
   println("SOLARCHVISION_add_Object2Ds_onLand");
   
@@ -21496,8 +21501,9 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
             
             //if (max_o > 100) max_o = 100;
            
-            if (i > 14) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
-            if (i < 4) max_o = 0; // <<<<<<< do not create at near distances <<<<<<<<<<<<<<<
+            if (i > 6) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+            //if (i > 14) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+            //if (i < 4) max_o = 0; // <<<<<<< do not create at near distances <<<<<<<<<<<<<<<
            
             for (int o = 0; o < max_o; o += 1) {
               
@@ -21600,8 +21606,8 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
           int max_o = int((16.0 / pow(2, LAND_TESSELLATION)) * pow(random(1), 8)); // i.e. maximum 3 people in each pixel for tes=2
           
           
-          //if (i > 12) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
-          if (i > 14) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+          if (i > 6) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
+          //if (i > 14) max_o = 0; // <<<<<<< do not create at far distances <<<<<<<<<<<<<<<
          
           for (int o = 0; o < max_o; o += 1) {
             
@@ -21633,10 +21639,7 @@ void SOLARCHVISION_add_Object2Ds_onLand (int people_or_trees) {
       }
     }
   }
-  
-  
-  */
-
+ 
 }
 
 void SOLARCHVISION_add_Object2Ds_polar (int people_or_trees, int n, float x0, float y0, float z0, float r1, float r2) {
@@ -26507,7 +26510,75 @@ void SOLARCHVISION_add_ProjectModel_CMC () { //CMC
 }
 
 
-void SOLARCHVISION_add_ProjectModel () {
+void SOLARCHVISION_add_ProjectModel () { //Home
+
+
+
+  {
+    SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
+    
+    int lvl = 12; // levels
+    
+    {
+      float dx = 10;
+      float dy = 10;
+      float dz = 17.5;
+      float x = 0;
+      float y = 0;
+      float z = dz;    
+    
+      SOLARCHVISION_add_Box_Core(7,0,0,1,1, x,y,z, dx, dy, dz, 0);
+      for (float i = 0; i < 2 * dz; i += 2 * dz / lvl) {
+        SOLARCHVISION_add_Mesh2(2,0,0,1,1, x-dx,y-dy,i, x+dx,y+dy,i); // floors
+        SOLARCHVISION_add_Object2Ds_plane(1, 10, x,y,i, dx, dy); // people
+      }  
+    }  
+    
+    {
+      float dx = 35;
+      float dy = 10;
+      float dz = 17.5;
+      float x = 0;
+      float y = 20;
+      float z = dz;    
+    
+      SOLARCHVISION_add_Box_Core(7,0,0,1,1, x,y,z, dx, dy, dz, 0);
+      for (float i = 0; i < 2 * dz; i += 2 * dz / lvl) {
+        SOLARCHVISION_add_Mesh2(2,0,0,1,1, x-dx,y-dy,i, x+dx,y+dy,i); // floors
+        SOLARCHVISION_add_Object2Ds_plane(1, 10, x,y,i, dx, dy); // people
+      }  
+    }      
+    
+    
+    {
+      float dx = 25;
+      float dy = 10;
+      float dz = 17.5;
+      float x = -10;
+      float y = -20;
+      float z = dz;    
+    
+      SOLARCHVISION_add_Box_Core(7,0,0,1,1, x,y,z, dx, dy, dz, 0);
+      for (float i = 0; i < 2 * dz; i += 2 * dz / lvl) {
+        SOLARCHVISION_add_Mesh2(2,0,0,1,1, x-dx,y-dy,i, x+dx,y+dy,i); // floors
+        SOLARCHVISION_add_Object2Ds_plane(1, 10, x,y,i, dx, dy); // people
+      }  
+    }          
+    
+     
+  }  
+
+
+
+
+  SOLARCHVISION_beginNewGroup3D(0,0,0,1,1,1,0,0,0);
+  
+  addToLastGroup3D = 0;
+
+}
+
+
+void SOLARCHVISION_add_ProjectModel_BASIC () {
 
 /*
   {
