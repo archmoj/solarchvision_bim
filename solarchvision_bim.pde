@@ -30,8 +30,8 @@ void launch (String[] s) {open(s);}
 
 
 float BiosphereStep = 5.0; //2.5; // 5: 5 degrees
-float objExportScale = 0.001; // 0.001: 1km --> 1
-int objFlipZYaxis = 1; // 1: to fit in Unity3D
+float objExportScale = 1; //0.001; // 0.001: 1km --> 1
+int objFlipZYaxis = 0; //1; // 1: to fit in Unity3D
 
 int objExportPrecisionVertex = 6; 
 int objExportPrecisionVtexture = 4;
